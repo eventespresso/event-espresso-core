@@ -1,0 +1,1448 @@
+# Advanced Events Registration Pro translation file
+# Copyright (C) 2010 Seth Shoultes
+# This file is distributed under the same license as the PACKAGE package.
+# Seth Shoultes <seth@smartwebutah.com>, 2010
+# For information on translating this plugin, please refer to http://codex.wordpress.org/Translating_WordPress
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/event_regis.php:180
+msgid "Settings"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/event_regis.php:181
+msgid "Events"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/event_regis.php:291
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/event_regis.php:312
+msgid "Sorry, you did not enter the correct anti-spam phrase. Please click your browser's back button and try again."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/event_regis.php:442
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/event_regis.php:502
+msgid "No participant data has been collected."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/event_regis.php:508
+msgid "This Is Not A Valid Selection!"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/add_attedees_to_db.php:253
+msgid "This is a free event. Details have been sent to your email."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/add_attedees_to_db.php:255
+msgid "Payment must be made to complete registration. Please click the button below to pay for your registration."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:5
+msgid "Manage Event Discounts"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:17
+msgid "Discounts have been successfully deleted from the database."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:33
+msgid "The discount "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:35
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:52
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:54
+msgid "The discount code "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:66
+msgid "Add New Dicount Code"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:75
+msgid "Add a Discount Code"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:79
+msgid "Discount Code"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:80
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:127
+msgid "Price Discount"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:81
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:128
+msgid "Is this a percentage discount?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:82
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:129
+msgid "Yes"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:83
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:130
+msgid "No"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:85
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:132
+msgid "Discount Code Description"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:92
+msgid "Add New Discount Code"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:121
+msgid "Edit Discount:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:126
+msgid "Dicount Code:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:139
+msgid "Update Discount"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:153
+msgid "Current Discount Codes"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:158
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:169
+msgid "Delete"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:159
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:170
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:33
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:94
+msgid "ID"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:160
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:171
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:34
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:95
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:40
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:53
+msgid "Name"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:161
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:172
+msgid "Price"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:162
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:173
+msgid "Description"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:163
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:174
+msgid "Percentage"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:164
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:175
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:47
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:60
+msgid "Action"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:200
+msgid "Edit Discount"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:205
+msgid "No Record Found!"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:211
+msgid "Check All"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_event_discounts.php:212
+msgid "Delete Discount"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:26
+msgid "Export Current Attendee List To Excel"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:35
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:96
+msgid "Email"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:36
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:97
+msgid "City"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:37
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:98
+msgid "State"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:38
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:99
+msgid "Phone"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:87
+msgid "DELETE"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_list_attendees.php:87
+msgid "Are you sure you want to delete record for"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:29
+msgid "No Record Found"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:33
+msgid "Attendees/Payments"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:34
+msgid "Select an event to view attendee details and payments"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:39
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:52
+msgid "Event ID"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:41
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:54
+msgid "Cost"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:42
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:55
+msgid "Start Date"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:43
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:56
+msgid "End Date"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:44
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:57
+msgid "Status"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:45
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:58
+msgid "# Attendees"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:46
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:59
+msgid "Export"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:97
+msgid "EXPIRED"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:99
+msgid "ACTIVE EVENT"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:101
+msgid "NOT ACTIVE"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:121
+msgid "Export To Excel"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:122
+msgid "View Attendees"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:122
+msgid "Edit Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_process_payments.php:122
+msgid "View Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_support.php:53
+msgid "Run Upgrade Script"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_support.php:207
+msgid "Event data has been updated!"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/admin_support.php:209
+msgid "There was an error in your submission, please try again."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:117
+msgid "Attendee Management"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:119
+msgid "Attendee details saved for "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:123
+msgid "Attendee #"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:125
+msgid "First Name:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:126
+msgid "Last Name:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:127
+msgid "Address:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:128
+msgid "City:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:130
+msgid "Zip:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:131
+msgid "Email:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:132
+msgid "Phone:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:133
+msgid "How is attendee paying for registration?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:136
+msgid "Credit Card or Paypal"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:137
+msgid "Cash"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:138
+msgid "Check"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/edit_attendee_record.php:172
+msgid "Update Record"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:56
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:163
+msgid "Event Registration with PayPal IPN"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:119
+msgid "Events stats"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:120
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:164
+msgid "View Attendees/Payments"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:135
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:178
+msgid "Total Active Events"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:136
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:179
+msgid "All Time Attendees"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:137
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:180
+msgid "All Time Paid"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:138
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:181
+msgid "All Time Not Paid"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:139
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:182
+msgid "All Time Payments"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:198
+msgid "Next 3 Upcoming Events"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:231
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:230
+msgid "Start Date:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_regis_dashboard_widget.php:231
+msgid "Attendees:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:81
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:86
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:91
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:96
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:101
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:106
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:111
+msgid "Invalid E-mail ID"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:119
+msgid "Please enter your first name."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:123
+msgid "Please enter your last name."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:129
+msgid "Please Enter your Email address"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:139
+msgid "Please enter your email address."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:144
+msgid "Please enter your phone number."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:148
+msgid "Please enter your address."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:152
+msgid "Please enter your city."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:157
+msgid "Please enter your state."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:161
+msgid "Please enter your zip code."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:198
+msgid "The following fields need to be completed before you can submit."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:225
+msgid "We are sorry but this event has reached the maximum number of attendees!"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:226
+msgid "Please check back in the event someone cancels."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:227
+msgid "Current Number of Attendees:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:238
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:254
+msgid "<p align=\"left\"><strong>Start Time:</strong> "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:244
+msgid "<strong>Choose a Start Time:</strong> "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:269
+msgid "<strong>Price:</strong>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:273
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/get_event_details.php:52
+msgid "Free Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:276
+msgid "<strong>Choose an Option:</strong>"
+msgstr "Hello"
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:286
+msgid "Description:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:304
+msgid "Address/Street/Number:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:307
+msgid "City/Town/Village:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:310
+msgid "State/County/Province:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:313
+msgid "Zip/Postal Code:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:340
+msgid "Additional attendees?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:350
+msgid "The # of people who will be attending IN ADDITION TO yourself."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:361
+msgid "Do you have a promo code?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:376
+msgid "Anti-Spam Measure: Please enter the following phrase"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_register_attendees.php:389
+msgid "Sorry, this event has expired or is no longer available."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/functions.php:23
+msgid "NO DATE SUPPLIED"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/get_event_details.php:29
+msgid "EVENT FULL"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/get_event_details.php:47
+msgid "Price:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/get_event_details.php:57
+msgid "Date:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/get_event_details.php:60
+msgid "Spaces Available:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/get_event_details.php:63
+msgid "Register Online"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:71
+msgid "Organization details saved."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:79
+msgid "Organization Settings"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:81
+msgid "Set up Your Organization to Recieve Payments"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:87
+msgid "Organization Name <span>*</span>:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:91
+msgid "Organization Street 1 <span>*</span>:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:95
+msgid "Organization Street 2:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:99
+msgid "Organization City <span>*</span>:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:103
+msgid "Organization State <span>*</span>:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:107
+msgid "Organization Zip Code <span>*</span>:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:111
+msgid "Primary contact email <span>*</span>:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:115
+msgid "All areas marked by <span>*</span> must be filled in."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:116
+msgid "Main Events Page"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:117
+msgid "Main registration page:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:120
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:237
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:251
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:265
+msgid "Main page"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:126
+msgid ""
+"<h2>Main Events Page</h2>\n"
+"      <p>This is the page that displays your events.</p>\n"
+"      <p>This page should contain the <strong>{EVENTREGIS}</strong> shortcode.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:130
+msgid "Do you want to show a single event or all events on the registration page?<span>*"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:135
+msgid "Single Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:136
+msgid "All Events"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:141
+msgid "<strong>Use <a href=\"http://recaptcha.net/||http://recaptcha.net/learnmore.html||https://admin.recaptcha.net/accounts/login/?next=/recaptcha/sites/||http://recaptcha.net/apidocs/captcha/client.html\" title=\"reCAPTCHA Home Page||What is reCAPTCHA||reCAPTCHA Account||reCAPTCHA Client API Documentation\" target=\"_blank\">reCAPTCHA</a> to block spam registrations</strong>:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:146
+msgid "Public Key:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:149
+msgid "Private Key:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:151
+msgid "Look &amp; Feel Customization"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:152
+msgid "Theme:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:155
+msgid "Red"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:156
+msgid "White"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:157
+msgid "Blackglass"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:158
+msgid "Clean"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:161
+msgid "Language:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:164
+msgid "English"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:165
+msgid "Dutch"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:166
+msgid "French"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:167
+msgid "German"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:168
+msgid "Portuguese"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:169
+msgid "Russian"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:170
+msgid "Spanish"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:171
+msgid "Turkish"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:177
+msgid ""
+"<h2>Cancel Return URL</h2>\n"
+"      <p>reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a <a href=\"http://recaptcha.net/captcha.html\">CAPTCHA</a> to\n"
+"ensure that only humans perform certain actions.</p>\n"
+"<p>You must sign up for a <a href=\"https://admin.recaptcha.net/accounts/signup/?next=%2Frecaptcha%2Fsites%2F\" target=\"_blank\">free reCAPTCHA</a> account to use it with this plugin. If you already have a reCAPTCHA account enter your \"Public\" and \"Private\" keys on this page.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:183
+msgid "Event Listing Types"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:184
+msgid "If set to \"Single Event\", only one event will be displayed on the page.</p> <p class=\"red_text\">**Attention** Setting this option to \"Single Event\" will disable the \"Event Registration Widget\" and \"SINGLEEVENT\" shortcode functionality."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:186
+msgid "PayPal Settings"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:187
+msgid "Paypal I.D."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:188
+msgid "Typically payment@yourdomain.com - leave blank if you do not want to accept paypal:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:191
+msgid "PayPal Currency"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:193
+msgid "Select the <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/mc_receive-outside||https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/mc_convert-outside||https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/mc_wa-outside\" title=\"Receiving Money||Currency Conversion||Website Payments\" target=\"_blank\">PayPal Currency</a> for your country:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:196
+msgid "U.S. Dollars ($)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:197
+msgid "Australian Dollars (A $)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:198
+msgid "Pounds Sterling (&pound;)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:199
+msgid "Canadian Dollars (C $)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:200
+msgid "Czech Koruna"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:201
+msgid "Danish Krone"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:202
+msgid "Euros (&#8364;)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:203
+msgid "Hong Kong Dollar ($)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:204
+msgid "Hungarian Forint"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:205
+msgid "Israeli Shekel"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:206
+msgid "Yen (&yen;)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:207
+msgid "Mexican Peso"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:208
+msgid "New Zealand Dollar ($)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:209
+msgid "Norwegian Krone"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:210
+msgid "Polish Zloty"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:211
+msgid "Singapore Dollar ($)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:212
+msgid "Swedish Krona"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:213
+msgid "Brazilian Real (only for Brazilian users)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:214
+msgid "Malaysian Ringgits (only for Malaysian users)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:215
+msgid "Philippine Pesos"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:216
+msgid "Taiwan New Dollars"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:217
+msgid "Thai Baht"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:221
+msgid ""
+" <h2>PayPal Currency Settings</h2>\n"
+"      <p>Now you can accept payments on your website in any of the currencies supported by PayPal through the Multiple Currencies feature.</p>\n"
+"      <p>PayPal launched Multiple Currencies to facilitate payments among our diverse base of international members. PayPal is pleased to offer conversion rates that are competitive with those of other consumer services.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:225
+msgid "Custom PayPal Settings"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:226
+msgid "Image URL (used for your personal logo on the PayPal page):"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:230
+msgid "PayPal Image URL (logo for PayPal page)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:231
+msgid "The URL of the 150x50-pixel image displayed as your logo in the upper left corner of the PayPal checkout pages."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:232
+msgid "Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:234
+msgid "<a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=p/mer/express_return_summary-outside\" title=\"Auto Return Overview\" target=\"_blank\">Auto Return URL</a> (used for return to make payments):"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:243
+msgid ""
+"<h2>Auto Return URL</h2>\n"
+"      <p>The URL to which the payer\"s browser is redirected after completing the payment; for example, a URL on your site that displays a \"Thank you for your payment\" page.</p>\n"
+"      <p>This page should contain the <strong>{EVENTREGPAY}</strong> shortcode.</p>\n"
+"      <p class=\"red_text\"><strong>ATTENTION:</strong><br />This page should be hidden from from your navigation menu. Exclude pages by using the \"Exclude Pages\" plugin from http://wordpress.org/extend/plugins/exclude-pages/ or using the \"exclude\" parameter in your \"wp_list_pages\" template tag. Please refer to http://codex.wordpress.org/Template_Tags/wp_list_pages for more inforamation about excluding pages.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:248
+msgid "Cancel Return URL (used for cancelled payments):"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:257
+msgid ""
+"<h2>Cancel Return URL</h2>\n"
+"      <p>A URL to which the payer's browser is redirected if payment is cancelled; for example, a URL on your website that displays a \"Payment Canceled\" page.</p>\n"
+"      <p>This should be a page on your website that contains a cancelled message. No short tags are needed.</p>\n"
+"      <p class=\"red_text\"><strong>ATTENTION:</strong><br />This page should be hidden from from your navigation menu. Exclude pages by using the \"Exclude Pages\" plugin from http://wordpress.org/extend/plugins/exclude-pages/ or using the \"exclude\" parameter in your \"wp_list_pages\" template tag. Please refer to http://codex.wordpress.org/Template_Tags/wp_list_pages for more inforamation about excluding pages.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:271
+msgid ""
+"<h2>Notify URL</h2>\n"
+"      <p>The URL to which PayPal posts information about the transaction, in the form of Instant Payment Notification messages.</p>\n"
+"      <p>This page should contain the <strong>{EVENTPAYPALTXN}</strong> shortcode.</p>\n"
+"      <p class=\"red_text\"><strong>ATTENTION:</strong><br />This page should be hidden from from your navigation menu. Exclude pages by using the \"Exclude Pages\" plugin from http://wordpress.org/extend/plugins/exclude-pages/ or using the \"exclude\" parameter in your \"wp_list_pages\" template tag. Please refer to http://codex.wordpress.org/Template_Tags/wp_list_pages for more inforamation about excluding pages.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:276
+msgid "Debugging"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:277
+msgid "Use the debugging feature and the <a href=\"https://developer.paypal.com/devscr?cmd=_home||https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox||https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started\" title=\"PayPal Sandbox Login||Sandbox Tutorial||Getting Started with PayPal Sandbox\" target=\"_blank\">PayPal Sandbox</a>?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:283
+msgid ""
+"<h2>PayPal Sandbox</h2>\n"
+"      <p>In addition to using the PayPal Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all PayPal variables.</p>\n"
+"      <hr />\n"
+"      <p>The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:289
+msgid "Email Settings"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:290
+msgid "Do You Want To Send Payment Confirmation Emails? (This option must be enable to send custom mails in events)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:295
+msgid "Payment Confirmation Email:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:296
+msgid "Email Subject:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:297
+msgid "Email Body:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:303
+msgid "Default Registration Confirmation Email"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:310
+msgid "Email Examples"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:311
+msgid ""
+" <p><strong>Email Confirmations:</strong><br>\n"
+"<p>For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.</p>\n"
+"  <p>[fname], [lname], [phone], [event],[description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link]</p>\n"
+"\n"
+"<p>***This is an automated response - Do Not Reply***</p> <p>Thank you [fname] [lname] for registering for [event].</p><p>Start time: [start_time]</p><p>Location:<br>[location]</p><p>Phone: [location_phone]</p><p>Google Map: [google_map_link]</p><p> We hope that you will find this event both informative and enjoyable. Should have any questions, please contact [contact].</p><p>If you have not done so already, please submit your payment in the amount of $[cost].</p><p>Click here to review your payment information [payment_url].</p><p>Thank You.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/organization_config_mnu.php:320
+msgid "Save Options"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:228
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:101
+msgid "<p><strong>You are using discount code:</strong> "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:236
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:109
+msgid "<p><font color=\"red\">Sorry, that coupon code is invalid or expired.</font></p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:245
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:118
+msgid "Please verify your registration details:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:248
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:121
+msgid "Event Name/Price:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:252
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:125
+msgid "Attendee Name:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:256
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:129
+msgid "Email Address:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:261
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:271
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:134
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:144
+msgid "Total Registrants:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:271
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:144
+msgid "Reg. ID:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:271
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:144
+msgid "Name:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:301
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:174
+msgid "Please check your email for payment information."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:361
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:234
+msgid "<br><br><strong>Thank You "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:363
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:236
+msgid "Our records indicate you have paid"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:364
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:237
+msgid "Our records indicate your payment is pending."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:364
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:237
+msgid "Amount pending:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:372
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:245
+msgid "Payment By Credit Card, Debit Card or Pay Pal Account"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:373
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:246
+msgid "(a PayPal account is not required to pay by credit card)."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:374
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:247
+msgid "Payment will be in the amount of"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page-tier.php:375
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/payment_page.php:248
+msgid "PayPal Payments will be sent to:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/paypal.class.php:143
+msgid "Pay Registration Fee"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/paypal.class.php:251
+msgid "Field Name"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/paypal.class.php:252
+msgid "Value"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/widget.php:11
+msgid "A widget to display your upcoming events."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/widget.php:17
+msgid "Event Registration Widget"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/widget.php:79
+msgid "Upcoming Events"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/widget.php:84
+msgid "Title:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/category_management/add_new_category.php:33
+msgid "Add New Category"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/category_management/edit_event_category.php:45
+msgid "Update Category"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_event_to_db.php:75
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_to_calendar.php:29
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/copy_event.php:92
+msgid "The event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_event_to_db.php:75
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_to_calendar.php:29
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/copy_event.php:92
+msgid "has been added."
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_event_to_db.php:77
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_to_calendar.php:31
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/copy_event.php:94
+msgid "There was an error in your submission, please try again. The event was not saved!"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:8
+msgid "Add An Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:14
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:86
+msgid "Event Location Information"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:20
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:131
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:93
+msgid "Do you want to display the event description on registration page?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:24
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:133
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:98
+msgid "Event Description:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:25
+msgid "<p>This is a sample description in HTML</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:29
+msgid "Do you want to send a custom confirmation email?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:33
+msgid "Custom Confirmation Email For This Event:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:34
+msgid "<p>***This is an automated response - Do Not Reply***</p> <p>Thank you [fname] [lname] for registering for [event].</p><p>Start time: [start_time]</p><p>Location:<br>[location]</p><p>Phone: [location_phone]</p><p>Google Map: [google_map_link]</p><p> We hope that you will find this event both informative and enjoyable. Should have any questions, please contact [contact].</p><p>If you have not done so already, please submit your payment in the amount of $[cost].</p><p>Click here to review your payment information [payment_url].</p><p>Thank You.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:41
+msgid "Submit New Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:47
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:126
+msgid "Event Name:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:48
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:129
+msgid "Unique Event Identifier:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:50
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:132
+msgid "Event Date(s):"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:52
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:134
+msgid "from"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:68
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:151
+msgid "to"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:85
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:155
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:170
+msgid "Event Times:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:90
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:102
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:191
+msgid "Start Time"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:91
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:102
+msgid "End Time:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:95
+msgid "Add A Time"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:108
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:206
+msgid "Cost of the Event:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:118
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:219
+msgid "Add A Price"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:119
+msgid "(leave blank for free events, enter 2 place decimal i.e. 7.00)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:135
+msgid "Attendee Limit:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:136
+msgid "(leave blank for unlimited attendees)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:137
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:199
+msgid "Allow payment for more than one person at a time?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:140
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:203
+msgid "Max Number of Additional Attendees:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:144
+msgid "Is this event active?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:146
+msgid "Y"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:147
+msgid "N"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:150
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:241
+msgid "Event Category:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:164
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:256
+msgid "Allow promo codes for this event?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/add_new_event.php:169
+msgid "Event Discounts:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:11
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:110
+msgid "Add New Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:13
+msgid "Current Events"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:82
+msgid "View event page"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:82
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:79
+msgid "End Date:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:89
+msgid "Edit this Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:96
+msgid "Copy This Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:96
+msgid "Are you sure you want to copy "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:103
+msgid "Delete This Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:103
+msgid "Are you sure you want to delete "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:116
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:119
+msgid "No Attendees"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:119
+msgid "Export Payment List to Excel"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:124
+msgid "Event Location: "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:130
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:92
+msgid "Google Map Link:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:136
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:144
+msgid "PLEASE UPDATE THIS EVENT"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:140
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:106
+msgid "Send custom confirmation emails for this event?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:149
+msgid "Custom Confirmation Mail:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:153
+msgid "Event Identifier:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:161
+msgid "Start time:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:161
+msgid "End time:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:166
+msgid "Event Prices:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:177
+msgid "Allow payment for more than one person at a time? (max # people "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:179
+msgid "Event Categories:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:200
+msgid "No category selected"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:203
+msgid "Allow discount codes for this event?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:204
+msgid "Event Discount Codes:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:224
+msgid "No discount selected"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:228
+msgid "Options"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:230
+msgid "Unique Url for this event:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:233
+msgid "Shortcode for Page:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:238
+msgid "It looks like you are using the \"<a href=\"http://wordpress.org/extend/plugins/calendar/\" target=\"_blank\" title=\"Calendar developed and supported by Kieran O'Shea\">Calendar</a>\" plugin. Would you like to add this event to the calendar?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:240
+msgid "Choose a <a href=\"admin.php?page=calendar-categories\">Calendar Category</a>:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/display_event_details.php:253
+msgid "Add Event to Calendar"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:68
+msgid "<span style=\"color: #F00; padding-left:30px; font-weight:bold;\">EXPIRED</span>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:70
+msgid "<span style=\"color: #090; padding-left:20px; font-weight:bold;\">ACTIVE EVENT</span>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:72
+msgid "<span style=\"color: #F00; padding-left:30px; font-weight:bold;\">NOT ACTIVE</span>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:79
+msgid "Edit"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:79
+msgid " Attendees:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:111
+msgid "Custom Confirmation Email:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:118
+msgid "Update Event"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:184
+msgid "Add Additional Time"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:191
+msgid "End Time"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:197
+msgid "Attendee Limit"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:198
+msgid "(leave blank for unlimited)"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:220
+msgid "(leave blank for free events, enter 2 place decimal i.e. "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:236
+msgid "Is this an active event?"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/edit_event.php:261
+msgid "Available Event Discounts:"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/index.php:14
+msgid "Event Management"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/index.php:58
+msgid ""
+"<h2>Coupon/Promo Code</h2>\n"
+"      <p>This is used to apply discounts to events.</p>\n"
+"      <p>A coupon or promo code could can be anything you want. For example: Say you have an event that costs "
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/index.php:63
+msgid ""
+"<h2>Event Identifier</h2>\n"
+"      <p>This should be a unique identifier for the event. Example: \"Event1\" (without qoutes.)</p>\n"
+"      <p>The unique ID can also be used in individual pages using the [SINGLEEVENT single_event_id=\"Unique Event ID\"] shortcode.</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/index.php:68
+msgid ""
+"<h2>Email Confirmations</h2>\n"
+"  <p>For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.</p>\n"
+"  <p>[fname], [lname], [phone], [event],[description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link]</p>"
+msgstr ""
+
+#: /Volumes/Storage/Websites/801Website/new-event/wp-content/plugins/advanced-events-registration-pro-version/includes/event_management/update_event.php:81
+msgid "Event details saved for"
+msgstr ""

@@ -1,0 +1,6322 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Event Espresso\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-06-23 12:03-0700\n"
+"PO-Revision-Date: 2011-06-23 12:04-0700\n"
+"Last-Translator: Chris Reynolds <chris@arcanepalette.com>\n"
+"Language-Team: Seth Shoultes <support@eventespresso.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ../event-multi-registration-1.0.b1\n"
+"X-Poedit-SearchPath-2: ../espresso-calendar\n"
+"X-Poedit-SearchPath-3: ../espresso-groupons\n"
+"X-Poedit-SearchPath-4: ../espresso-mailchimp\n"
+"X-Poedit-SearchPath-5: ../espresso-members\n"
+"X-Poedit-SearchPath-6: ../espresso-multi-registration\n"
+"X-Poedit-SearchPath-7: ../espresso-permissions\n"
+"X-Poedit-SearchPath-8: ../espresso-recurring-events\n"
+"X-Poedit-SearchPath-9: ../espresso-social\n"
+"X-Poedit-SearchPath-10: ../../uploads/espresso\n"
+"X-Poedit-SearchPath-11: ../../../espresso-services\n"
+
+#: espresso.php:429
+msgid "Event Espresso"
+msgstr ""
+
+#: espresso.php:432
+msgid "Event Espresso - General Settings"
+msgstr ""
+
+#: espresso.php:432
+msgid "General Settings"
+msgstr ""
+
+#: espresso.php:435
+msgid "Event Espresso - Event Overview"
+msgstr ""
+
+#: espresso.php:435
+msgid "Event Overview"
+msgstr ""
+
+#: espresso.php:439
+msgid "Event Espresso - Venue Manager"
+msgstr ""
+
+#: espresso.php:439
+msgid "Venue Manager"
+msgstr ""
+
+#: espresso.php:444
+msgid "Event Espresso - Staff Manager"
+msgstr ""
+
+#: espresso.php:444
+msgid "Staff Manager"
+msgstr ""
+
+#: espresso.php:448
+msgid "Event Espresso - Questions"
+msgstr ""
+
+#: espresso.php:448
+msgid "Questions"
+msgstr ""
+
+#: espresso.php:451
+msgid "Event Espresso - Question Groups"
+msgstr ""
+
+#: espresso.php:451
+msgid "Question Groups"
+msgstr ""
+
+#: espresso.php:454
+msgid "Event Espresso - Manage Event Categories"
+msgstr ""
+
+#: espresso.php:454
+msgid "Categories"
+msgstr ""
+
+#: espresso.php:458
+msgid "Event Espresso - Discounts"
+msgstr ""
+
+#: espresso.php:458
+msgid "Discounts"
+msgstr ""
+
+#: espresso.php:463
+msgid "Groupons"
+msgstr ""
+
+#: espresso.php:463
+msgid "Groupon Codes"
+msgstr ""
+
+#: espresso.php:468
+msgid "Event Espresso - Email Manager"
+msgstr ""
+
+#: espresso.php:468
+msgid "Email Manager"
+msgstr ""
+
+#: espresso.php:473
+msgid "Event Espresso - Calendar Settings"
+msgstr ""
+
+#: espresso.php:473
+msgid "Calendar Settings"
+msgstr ""
+
+#: espresso.php:478
+msgid "Event Espresso - Payment Settings"
+msgstr ""
+
+#: espresso.php:478
+msgid "Payment Settings"
+msgstr ""
+
+#: espresso.php:483
+msgid "Event Espresso - Member Settings"
+msgstr ""
+
+#: espresso.php:483
+msgid "Member Settings"
+msgstr ""
+
+#: espresso.php:488
+msgid "Event Espresso - MailChimp Integration"
+msgstr ""
+
+#: espresso.php:488
+msgid "MailChimp Integration"
+msgstr ""
+
+#: espresso.php:493
+msgid "Event Espresso - Facebook Settings"
+msgstr ""
+
+#: espresso.php:493
+msgid "Facebook Settings"
+msgstr ""
+
+#: espresso.php:498
+msgid "Event Espresso - Social Media Settings"
+msgstr ""
+
+#: espresso.php:498
+msgid "Social Media"
+msgstr ""
+
+#: espresso.php:502
+msgid "Event Espresso - Addons"
+msgstr ""
+
+#: espresso.php:502
+msgid "Addons"
+msgstr ""
+
+#: espresso.php:505
+msgid "Event Espresso - Help/Support"
+msgstr ""
+
+#: espresso.php:505
+msgid "<span style=\"color: red;\">Help/Support</span>"
+msgstr ""
+
+#: espresso.php:522
+msgid "Settings"
+msgstr ""
+
+#: espresso.php:523
+msgid "Events"
+msgstr ""
+
+#: gateways/gateway_display.php:4
+msgid "Online Payments"
+msgstr ""
+
+#: gateways/gateway_display.php:98
+msgid "Off-line Payments"
+msgstr ""
+
+#: gateways/gateway_display.php:109
+msgid "Attention!"
+msgstr ""
+
+#: gateways/gateway_display.php:110
+msgid "If paying with cash or check, please make note of the information below, then"
+msgstr ""
+
+#: gateways/gateway_display.php:111
+msgid "Finalize your registration"
+msgstr ""
+
+#: gateways/gateway_display.php:111
+msgid "click here to finalize your registration"
+msgstr ""
+
+#: gateways/PaymentGateway.php:217
+msgid "Field Name"
+msgstr ""
+
+#: gateways/PaymentGateway.php:218
+msgid "Value"
+msgstr ""
+
+#: gateways/payment_gateways.php:10
+msgid "Manage Payment Gateways"
+msgstr ""
+
+#: gateways/payment_gateways.php:121
+msgid "Need more payment options?"
+msgstr ""
+
+#: gateways/payment_gateways.php:121
+msgid "Upgrade Now!"
+msgstr ""
+
+#: gateways/payment_gateways.php:131
+msgid "Button Image URL"
+msgstr ""
+
+#: gateways/payment_gateways.php:132
+msgid "A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the \"file url\" here (optional.)"
+msgstr ""
+
+#: gateways/payment_gateways.php:135
+msgid "By-passing the Confirmation Page"
+msgstr ""
+
+#: gateways/payment_gateways.php:136
+msgid "This will allow you to send your customers directly to the payment gateway of your choice."
+msgstr ""
+
+#: gateways/process_payments.php:121
+msgid "Problem With Your Website Payment IPN"
+msgstr ""
+
+#: gateways/process_payments.php:122
+#: gateways/process_payments.php:129
+msgid "The IPN for "
+msgstr ""
+
+#: gateways/process_payments.php:128
+msgid "Website Payment IPN Not Setup"
+msgstr ""
+
+#: gateways/aim/aim_ipn.php:41
+msgid "Thank You!"
+msgstr ""
+
+#: gateways/aim/aim_ipn.php:42
+msgid "Your transaction has been processed."
+msgstr ""
+
+#: gateways/aim/aim_ipn.php:43
+msgid "Transaction ID:"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:6
+msgid "Debug Mode Is Turned On"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:10
+msgid "Billing Information"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:13
+msgid "First Name"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:17
+msgid "Last Name"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:21
+msgid "Email Address"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:25
+msgid "Address"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:29
+msgid "City"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:33
+msgid "State"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:37
+msgid "Zip"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:40
+msgid "Credit Card Information"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:42
+msgid "Card Number"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:46
+msgid "Exp. Date"
+msgstr ""
+
+#: gateways/aim/aim_vars.php:54
+msgid "Complete Purchase"
+msgstr ""
+
+#: gateways/aim/settings.php:13
+msgid "Authorize.net AIM settings saved."
+msgstr ""
+
+#: gateways/aim/settings.php:19
+msgid "Authorize.net AIM Settings"
+msgstr ""
+
+#: gateways/aim/settings.php:36
+msgid "Authorize.net AIM Gateway is Installed."
+msgstr ""
+
+#: gateways/aim/settings.php:37
+msgid "Activate Authorize.net AIM Gateway?"
+msgstr ""
+
+#: gateways/aim/settings.php:40
+msgid "Deactivate Authorize.net AIM Gateway?"
+msgstr ""
+
+#: gateways/aim/settings.php:44
+msgid "The Authorize.net AIM gateway is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/aim/settings.php:74
+msgid "Authorize.net AIM Login I.D."
+msgstr ""
+
+#: gateways/aim/settings.php:81
+msgid "Authorize.net AIM Transaction Key"
+msgstr ""
+
+#: gateways/aim/settings.php:91
+msgid "Use the test mode feature for Autorize.net AIM?"
+msgstr ""
+
+#: gateways/aim/settings.php:100
+msgid "Update Authorize.net AIM Settings"
+msgstr ""
+
+#: gateways/aim/settings.php:105
+msgid "Authorize.net AIM Test Mode"
+msgstr ""
+
+#: gateways/aim/settings.php:106
+msgid "Test Mode allows you to submit test transactions to the payment gateway. Transactions that are submitted while Test Mode is ON are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers."
+msgstr ""
+
+#: gateways/aim/settings.php:106
+msgid "American Express"
+msgstr ""
+
+#: gateways/aim/settings.php:106
+msgid "Discover"
+msgstr ""
+
+#: gateways/aim/settings.php:106
+msgid "Master Card"
+msgstr ""
+
+#: gateways/aim/settings.php:106
+msgid "Visa"
+msgstr ""
+
+#: gateways/alipay/index.php:31
+msgid "Pay using Alipay"
+msgstr ""
+
+#: gateways/alipay/settings.php:15
+msgid "Alipay settings saved."
+msgstr ""
+
+#: gateways/alipay/settings.php:22
+msgid "Alipay Settings"
+msgstr ""
+
+#: gateways/alipay/settings.php:38
+msgid "Alipay Gateway is Installed."
+msgstr ""
+
+#: gateways/alipay/settings.php:39
+msgid "Activate Alipay Gateway?"
+msgstr ""
+
+#: gateways/alipay/settings.php:42
+msgid "Deactivate Alipay Gateway?"
+msgstr ""
+
+#: gateways/alipay/settings.php:46
+msgid "The Alipay gateway is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/alipay/settings.php:73
+msgid "Alipay partner I.D."
+msgstr ""
+
+#: gateways/alipay/settings.php:80
+msgid "Alipay security code"
+msgstr ""
+
+#: gateways/alipay/settings.php:88
+msgid "Button Image URL: "
+msgstr ""
+
+#: gateways/alipay/settings.php:100
+msgid "Update Alipay Settings"
+msgstr ""
+
+#: gateways/authnet/authnet_ipn.php:74
+msgid "There was an error processing your transaction!"
+msgstr ""
+
+#: gateways/authnet/authnet_vars.php:26
+msgid "Reg. ID:"
+msgstr ""
+
+#: gateways/authnet/authnet_vars.php:26
+msgid "Name:"
+msgstr ""
+
+#: gateways/authnet/authnet_vars.php:26
+msgid "Total Registrants:"
+msgstr ""
+
+#: gateways/authnet/settings.php:14
+msgid "Authorize.net settings saved."
+msgstr ""
+
+#: gateways/authnet/settings.php:20
+msgid "Authorize.net SIM Settings"
+msgstr ""
+
+#: gateways/authnet/settings.php:41
+msgid "Activate Authorize.net SIM Gateway?"
+msgstr ""
+
+#: gateways/authnet/settings.php:44
+msgid "Deactivate Authorize.net SIM Gateway?"
+msgstr ""
+
+#: gateways/authnet/settings.php:48
+msgid "The Authorize.net  SIM Gateway is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/authnet/settings.php:77
+msgid "Authorize.net Login I.D."
+msgstr ""
+
+#: gateways/authnet/settings.php:84
+msgid "Authorize.net Transaction Key"
+msgstr ""
+
+#: gateways/authnet/settings.php:99
+msgid "Image URL:"
+msgstr ""
+
+#: gateways/authnet/settings.php:105
+msgid "(used for your business/personal logo on the Authorize.net SIM payment page)"
+msgstr ""
+
+#: gateways/authnet/settings.php:110
+msgid "Relay Response URL :"
+msgstr ""
+
+#: gateways/authnet/settings.php:115
+msgid "Use the test mode feature for Autorize.net SIM?"
+msgstr ""
+
+#: gateways/authnet/settings.php:121
+msgid "By-pass the payment confirmation page?"
+msgstr ""
+
+#: gateways/authnet/settings.php:124
+msgid "Yes"
+msgstr ""
+
+#: gateways/authnet/settings.php:125
+msgid "No"
+msgstr ""
+
+#: gateways/authnet/settings.php:129
+msgid "Current Button Image:"
+msgstr ""
+
+#: gateways/authnet/settings.php:137
+msgid "Update Authorize.net SIM Settings"
+msgstr ""
+
+#: gateways/authnet/settings.php:141
+msgid "Relay Response"
+msgstr ""
+
+#: gateways/authnet/settings.php:142
+msgid "This shows the specific the URL to which the gateway should return the relay response for a transaction. This the page should be set in your Authorize.net account. Login to Authorize.net, goto Account > Response/Receipt URLs > Add URL and enter the following URL."
+msgstr ""
+
+#: gateways/authnet/settings.php:143
+msgid "Relay Response URL:"
+msgstr ""
+
+#: gateways/authnet/settings.php:144
+msgid "Note:"
+msgstr ""
+
+#: gateways/authnet/settings.php:144
+msgid "This URL can be changed in the \"Organization Settings\" page."
+msgstr ""
+
+#: gateways/authnet/settings.php:145
+msgid "For complete information on configuring relay response, please refer to"
+msgstr ""
+
+#: gateways/authnet/settings.php:145
+msgid "Reference &amp; User Guides"
+msgstr ""
+
+#: gateways/authnet/settings.php:149
+msgid "Authorize.net SIM Image URL (logo for payment page)"
+msgstr ""
+
+#: gateways/authnet/settings.php:152
+msgid "The URL of the image displayed as your logo in the header of the Authorize.net checkout pages."
+msgstr ""
+
+#: gateways/authnet/settings.php:156
+msgid "Authorize.net Test Mode"
+msgstr ""
+
+#: gateways/bank/bank_payment_vars.php:10
+#: gateways/bank/settings.php:88
+msgid "Name on Account:"
+msgstr ""
+
+#: gateways/bank/bank_payment_vars.php:11
+msgid "Account Number:"
+msgstr ""
+
+#: gateways/bank/bank_payment_vars.php:12
+msgid "Financial Institution:"
+msgstr ""
+
+#: gateways/bank/bank_payment_vars.php:13
+msgid "Address:"
+msgstr ""
+
+#: gateways/bank/settings.php:13
+msgid "Electronic Funds Transfer settings saved."
+msgstr ""
+
+#: gateways/bank/settings.php:21
+msgid "Electronic Funds Transfer Settings"
+msgstr ""
+
+#: gateways/bank/settings.php:42
+msgid "Activate Electronic Funds Transfers?"
+msgstr ""
+
+#: gateways/bank/settings.php:45
+msgid "Deactivate Electronic Funds Transfers?"
+msgstr ""
+
+#: gateways/bank/settings.php:49
+msgid "The Electronic Funds Transfers is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/bank/settings.php:72
+#: gateways/check/settings.php:68
+msgid "Title:"
+msgstr ""
+
+#: gateways/bank/settings.php:75
+msgid "Electronic Funds Transfers"
+msgstr ""
+
+#: gateways/bank/settings.php:79
+#: gateways/check/settings.php:71
+msgid "Payment Instructions:"
+msgstr ""
+
+#: gateways/bank/settings.php:82
+msgid "Please initiate an electronic payment using the bank information below. Payment must be received within 48 hours of event date."
+msgstr ""
+
+#: gateways/bank/settings.php:95
+msgid "Bank Account#:"
+msgstr ""
+
+#: gateways/bank/settings.php:102
+msgid "Bank Name:"
+msgstr ""
+
+#: gateways/bank/settings.php:109
+msgid "Bank Address:"
+msgstr ""
+
+#: gateways/bank/settings.php:119
+msgid "Update Electronic Funds Transfer Settings"
+msgstr ""
+
+#: gateways/check/check_payment_vars.php:10
+msgid "Payable to:"
+msgstr ""
+
+#: gateways/check/check_payment_vars.php:11
+msgid "Payment Address:"
+msgstr ""
+
+#: gateways/check/settings.php:11
+msgid "Check/Money Order Payment settings saved."
+msgstr ""
+
+#: gateways/check/settings.php:18
+msgid "Check/Money Order Payment Settings"
+msgstr ""
+
+#: gateways/check/settings.php:39
+msgid "Activate Check/Money Order Payments?"
+msgstr ""
+
+#: gateways/check/settings.php:42
+msgid "Deactivate Check/Money Order Payments?"
+msgstr ""
+
+#: gateways/check/settings.php:46
+msgid "The Check/Money Order Payments is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/check/settings.php:69
+msgid "Check/Money Order Payments"
+msgstr ""
+
+#: gateways/check/settings.php:72
+msgid "Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date."
+msgstr ""
+
+#: gateways/check/settings.php:74
+msgid "Payable To:"
+msgstr ""
+
+#: gateways/check/settings.php:77
+msgid "Address to Send Payment:"
+msgstr ""
+
+#: gateways/check/settings.php:98
+msgid "Update Check/Money Order Payment Settings"
+msgstr ""
+
+#: gateways/firstdata/firstdata_vars.php:40
+msgid "Card Card Type"
+msgstr ""
+
+#: gateways/firstdata/firstdata_vars.php:59
+msgid "Expiration Month"
+msgstr ""
+
+#: gateways/firstdata/firstdata_vars.php:73
+msgid "Expiration Year"
+msgstr ""
+
+#: gateways/firstdata/firstdata_vars.php:90
+msgid "CVV Code"
+msgstr ""
+
+#: gateways/firstdata/settings.php:10
+#: gateways/ideal/settings.php:9
+msgid "First Data settings saved."
+msgstr ""
+
+#: gateways/firstdata/settings.php:18
+msgid "First Data Settings"
+msgstr ""
+
+#: gateways/firstdata/settings.php:39
+msgid "Activate First Data?"
+msgstr ""
+
+#: gateways/firstdata/settings.php:42
+msgid "Deactivate First Data?"
+msgstr ""
+
+#: gateways/firstdata/settings.php:47
+msgid "The First Data support is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/firstdata/settings.php:77
+msgid "First Data Store Number"
+msgstr ""
+
+#: gateways/firstdata/settings.php:85
+msgid "Accepted Credit Cards"
+msgstr ""
+
+#: gateways/firstdata/settings.php:105
+msgid "Place the .pem file in the following folder.  Make sure the .pem file has the same name as your store number."
+msgstr ""
+
+#: gateways/firstdata/settings.php:112
+msgid "Update First Data Settings"
+msgstr ""
+
+#: gateways/ideal/ideal_vars.php:70
+msgid "Please use your browser's back button and select a bank."
+msgstr ""
+
+#: gateways/ideal/settings.php:17
+msgid "iDEAL (Mollie) Settings"
+msgstr ""
+
+#: gateways/ideal/settings.php:38
+msgid "Activate iDEAL (Mollie)?"
+msgstr ""
+
+#: gateways/ideal/settings.php:41
+msgid "Deactivate iDEAL (Mollie)?"
+msgstr ""
+
+#: gateways/ideal/settings.php:46
+msgid "The iDEAL (Mollie) support is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/ideal/settings.php:68
+msgid "iDEAL (Mollie) partner id"
+msgstr ""
+
+#: gateways/ideal/settings.php:76
+msgid "Use Mollie in test mode"
+msgstr ""
+
+#: gateways/ideal/settings.php:80
+msgid "(Make sure you enable test mode in your Mollie account)."
+msgstr ""
+
+#: gateways/ideal/settings.php:88
+msgid "Update Settings"
+msgstr ""
+
+#: gateways/invoice/invoice_vars.php:14
+#: gateways/invoice/multi_invoice_content.php:141
+msgid "Download PDF Invoice"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:48
+msgid "No ID Supplied"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:57
+msgid "No records found."
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:75
+#: gateways/invoice/settings.php:126
+msgid "Invoice"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:79
+#: gateways/invoice/template.php:198
+msgid "Event Name"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:79
+msgid "Date"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:79
+msgid "Time"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:79
+msgid "Location"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:118
+msgid "View Your Payment Details"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:120
+msgid "Primary Attendee"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:120
+msgid "id"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:121
+msgid "Total Due"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:153
+msgid " attendees"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:165
+msgid "Download/Print Ticket"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:188
+msgid " attendee(s)"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:192
+#: gateways/invoice/multi_invoice_content.php:366
+msgid " registration confirmation"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:354
+msgid "Number of Attendees:"
+msgstr ""
+
+#: gateways/invoice/multi_invoice_content.php:366
+msgid "Event Registration Notification"
+msgstr ""
+
+#: gateways/invoice/settings.php:14
+msgid "Invoice Payment settings saved."
+msgstr ""
+
+#: gateways/invoice/settings.php:22
+msgid "Invoice Payment Settings"
+msgstr ""
+
+#: gateways/invoice/settings.php:43
+msgid "Activate Invoice Payments?"
+msgstr ""
+
+#: gateways/invoice/settings.php:46
+msgid "Deactivate Invoice Payments?"
+msgstr ""
+
+#: gateways/invoice/settings.php:50
+msgid "The Invoice Payments is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/invoice/settings.php:77
+msgid "Invoice Payments"
+msgstr ""
+
+#: gateways/invoice/settings.php:81
+msgid "Invoice Instructions:"
+msgstr ""
+
+#: gateways/invoice/settings.php:84
+msgid "Please send Invoice to the address below. Payment must be received within 48 hours of event date."
+msgstr ""
+
+#: gateways/invoice/settings.php:119
+msgid "PDF Settings"
+msgstr ""
+
+#: gateways/invoice/settings.php:123
+msgid "PDF Title (top right of the invoice):"
+msgstr ""
+
+#: gateways/invoice/settings.php:130
+msgid "Logo URL (logo for the top left of the invoice):"
+msgstr ""
+
+#: gateways/invoice/settings.php:137
+msgid "Invoice Instructions in PDF:"
+msgstr ""
+
+#: gateways/invoice/settings.php:140
+msgid "Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date."
+msgstr ""
+
+#: gateways/invoice/settings.php:147
+msgid "Update Invoice Payment Settings"
+msgstr ""
+
+#: gateways/invoice/template.php:146
+msgid "Page"
+msgstr ""
+
+#: gateways/invoice/template.php:166
+msgid "Date: "
+msgstr ""
+
+#: gateways/invoice/template.php:167
+msgid "Attendee ID: "
+msgstr ""
+
+#: gateways/invoice/template.php:185
+msgid "Bill To: "
+msgstr ""
+
+#: gateways/invoice/template.php:198
+msgid "Event Date"
+msgstr ""
+
+#: gateways/invoice/template.php:198
+msgid "Amount Owed"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:14
+msgid "Mwarrior settings saved."
+msgstr ""
+
+#: gateways/mwarrior/settings.php:22
+msgid "Merchant Warrior Settings"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:40
+msgid "Activate Merchant Warrior IPN?"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:43
+msgid "Deactivate Merchant Warrior IPN?"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:50
+msgid "The Merchant Warrior IPN addon is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:77
+msgid "MW Merchant UUID"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:84
+msgid "MW API Key"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:91
+msgid "MW API Passphrase"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:98
+#: gateways/paypal/settings.php:86
+msgid "Select the currency for your country:"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:103
+#: gateways/paypal/settings.php:95
+msgid "Australian Dollars (A $)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:106
+#: gateways/paypal/settings.php:92
+msgid "U.S. Dollars ($)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:109
+#: gateways/paypal/settings.php:98
+msgid "Pounds Sterling (&pound;)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:112
+#: gateways/paypal/settings.php:101
+msgid "Canadian Dollars (C $)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:115
+#: gateways/paypal/settings.php:110
+msgid "Euros (&#8364;)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:118
+#: gateways/paypal/settings.php:122
+msgid "Yen (&yen;)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:121
+#: gateways/paypal/settings.php:128
+msgid "New Zealand Dollar ($)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:124
+#: gateways/paypal/settings.php:137
+msgid "Singapore Dollar ($)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:137
+#: gateways/paypal/settings.php:168
+msgid "Image URL (logo for payment page):"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:142
+msgid "(used for your business/personal logo on the Merchant Warrior page)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:157
+msgid "Use the Test Mode for Merchant Warrior"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:171
+msgid "Update Merchant Warrior Settings"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:175
+msgid "Merchant Warrior Test Mode"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:176
+msgid "Test Mode allows you to submit test transactions to the payment gateway. This allows you to test your entire integration before submitting transactions to the live Merchant Warrior environment. "
+msgstr ""
+
+#: gateways/mwarrior/settings.php:180
+msgid "Merchant Warrior Image URL (logo for payment page)"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:183
+msgid "The URL of the image displayed as your logo in the header of the Merchant Warrior checkout pages."
+msgstr ""
+
+#: gateways/mwarrior/settings.php:187
+msgid "Merchant Warrior Currency"
+msgstr ""
+
+#: gateways/mwarrior/settings.php:188
+msgid "Merchant Warrior uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is Australian Dollars (AUD). If you want to accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that Merchant Warrior (currently) supports."
+msgstr ""
+
+#: gateways/paypal/paypal_vars.php:24
+msgid "Registrant Email:"
+msgstr ""
+
+#: gateways/paypal/settings.php:14
+msgid "PayPal settings saved."
+msgstr ""
+
+#: gateways/paypal/settings.php:22
+msgid "PayPal Settings"
+msgstr ""
+
+#: gateways/paypal/settings.php:43
+msgid "Activate PayPal IPN?"
+msgstr ""
+
+#: gateways/paypal/settings.php:46
+msgid "Deactivate PayPal IPN?"
+msgstr ""
+
+#: gateways/paypal/settings.php:51
+msgid "The PayPal IPN addon is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/paypal/settings.php:77
+msgid "Paypal I.D."
+msgstr ""
+
+#: gateways/paypal/settings.php:82
+msgid "(Typically payment@yourdomain.com)"
+msgstr ""
+
+#: gateways/paypal/settings.php:104
+msgid "Czech Koruna"
+msgstr ""
+
+#: gateways/paypal/settings.php:107
+msgid "Danish Krone"
+msgstr ""
+
+#: gateways/paypal/settings.php:113
+msgid "Hong Kong Dollar ($)"
+msgstr ""
+
+#: gateways/paypal/settings.php:116
+msgid "Hungarian Forint"
+msgstr ""
+
+#: gateways/paypal/settings.php:119
+msgid "Israeli Shekel"
+msgstr ""
+
+#: gateways/paypal/settings.php:125
+msgid "Mexican Peso"
+msgstr ""
+
+#: gateways/paypal/settings.php:131
+msgid "Norwegian Krone"
+msgstr ""
+
+#: gateways/paypal/settings.php:134
+msgid "Polish Zloty"
+msgstr ""
+
+#: gateways/paypal/settings.php:140
+msgid "Swedish Krona"
+msgstr ""
+
+#: gateways/paypal/settings.php:143
+msgid "Brazilian Real (only for Brazilian users)"
+msgstr ""
+
+#: gateways/paypal/settings.php:146
+msgid "Malaysian Ringgits (only for Malaysian users)"
+msgstr ""
+
+#: gateways/paypal/settings.php:149
+msgid "Philippine Pesos"
+msgstr ""
+
+#: gateways/paypal/settings.php:152
+msgid "Taiwan New Dollars"
+msgstr ""
+
+#: gateways/paypal/settings.php:155
+msgid "Thai Baht"
+msgstr ""
+
+#: gateways/paypal/settings.php:173
+msgid "(used for your business/personal logo on the PayPal page)"
+msgstr ""
+
+#: gateways/paypal/settings.php:187
+msgid "Shipping address options?"
+msgstr ""
+
+#: gateways/paypal/settings.php:190
+msgid "Do not prompt for an address"
+msgstr ""
+
+#: gateways/paypal/settings.php:191
+msgid "Prompt for an address, but do not require one"
+msgstr ""
+
+#: gateways/paypal/settings.php:192
+msgid "Prompt for an address, and require one"
+msgstr ""
+
+#: gateways/paypal/settings.php:197
+msgid "Use the debugging feature and the"
+msgstr ""
+
+#: gateways/paypal/settings.php:197
+#: gateways/paypal/settings.php:216
+#: gateways/paypal-pro/settings.php:146
+msgid "PayPal Sandbox"
+msgstr ""
+
+#: gateways/paypal/settings.php:206
+msgid "Paypal Notes:"
+msgstr ""
+
+#: gateways/paypal/settings.php:206
+msgid "For Paypal IPN to work, you need a Business or Premier account."
+msgstr ""
+
+#: gateways/paypal/settings.php:212
+msgid "Update PayPal Settings"
+msgstr ""
+
+#: gateways/paypal/settings.php:217
+#: gateways/paypal-pro/settings.php:147
+msgid "In addition to using the PayPal Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all PayPal variables."
+msgstr ""
+
+#: gateways/paypal/settings.php:219
+#: gateways/paypal-pro/settings.php:149
+msgid "The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts."
+msgstr ""
+
+#: gateways/paypal/settings.php:223
+#: gateways/paypal-pro/settings.php:153
+msgid "PayPal Image URL (logo for payment page)"
+msgstr ""
+
+#: gateways/paypal/settings.php:226
+#: gateways/paypal-pro/settings.php:156
+msgid "The URL of the 150x50-pixel image displayed as your logo in the upper left corner of the PayPal checkout pages."
+msgstr ""
+
+#: gateways/paypal/settings.php:229
+#: gateways/paypal-pro/settings.php:159
+msgid "Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account."
+msgstr ""
+
+#: gateways/paypal/settings.php:233
+#: gateways/paypal-pro/settings.php:163
+msgid "PayPal Currency"
+msgstr ""
+
+#: gateways/paypal/settings.php:234
+#: gateways/paypal-pro/settings.php:164
+msgid "PayPal uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that PayPal (currently) supports."
+msgstr ""
+
+#: gateways/paypal/settings.php:237
+#: gateways/paypal-pro/settings.php:167
+msgid "Payment Surcharge"
+msgstr ""
+
+#: gateways/paypal/settings.php:238
+#: gateways/paypal-pro/settings.php:168
+msgid "Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation."
+msgstr ""
+
+#: gateways/paypal/settings.php:240
+#: gateways/paypal-pro/settings.php:170
+msgid "Shipping Address"
+msgstr ""
+
+#: gateways/paypal/settings.php:241
+#: gateways/paypal-pro/settings.php:171
+msgid "By default, PayPal will display shipping address information on the PayPal payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event."
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:14
+msgid "PayPal Pro settings saved."
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:22
+msgid "PayPal Pro Settings"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:43
+msgid "Activate PayPal PRO?"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:46
+msgid "Deactivate PayPal PRO?"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:51
+msgid "The PayPal PRO support is installed. Would you like to activate it?"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:78
+msgid "Paypal PRO email"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:86
+msgid "Paypal API username"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:94
+msgid "Paypal API password"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:103
+msgid "Paypal API signature"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:130
+msgid "Use PayPal PRO in Sandbox mode"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:134
+msgid "(Make sure you enter the sandbox credentials above.)"
+msgstr ""
+
+#: gateways/paypal-pro/settings.php:142
+msgid "Update PayPal PRO Settings"
+msgstr ""
+
+#: includes/admin_support.php:8
+msgid "Help and Support"
+msgstr ""
+
+#: includes/admin_support.php:21
+msgid "Contact Support"
+msgstr ""
+
+#: includes/admin_support.php:26
+msgid "If you are having any problems that are not discussed here, suggestions, comments or gripes please visit the"
+msgstr ""
+
+#: includes/admin_support.php:27
+msgid "Event Espresso forums"
+msgstr ""
+
+#: includes/admin_support.php:29
+msgid "or feel free to send us an"
+msgstr ""
+
+#: includes/admin_support.php:30
+msgid "email"
+msgstr ""
+
+#: includes/admin_support.php:32
+msgid "Premium Support Options"
+msgstr ""
+
+#: includes/admin_support.php:35
+msgid "We offer premium support to customers who desire or require a level of support beyond the complimentary support included with all Event Espresso products."
+msgstr ""
+
+#: includes/admin_support.php:38
+msgid "Support Tokens"
+msgstr ""
+
+#: includes/admin_support.php:41
+msgid "A support token can be used to get priority support for a single  incident. It can be used to schedule support via phone or IM for a  single incident (up to 30 minutes), or to receive priority e-mail  support. A support token can be used for &ldquo;how to&rdquo; questions, technical  issues, &ldquo;best practice&rdquo; questions or for custom development consulting. A  support token consists of the PayPal Transaction ID you received from  PayPal at the time of your purchase."
+msgstr ""
+
+#: includes/admin_support.php:44
+msgid "<strong>You can purchase support tokens</strong> on the <a href=\"http://eventespresso.com/support/premium-support-options/\">Premium Support page</a>. Tokens can be purchased one at a time, or in blocks of three at a discount."
+msgstr ""
+
+#: includes/admin_support.php:60
+msgid "Installation"
+msgstr ""
+
+#: includes/admin_support.php:73
+msgid "Trouble Shooting and Frequently Asked Questions"
+msgstr ""
+
+#: includes/admin_support.php:78
+msgid "Registration page just refreshes?"
+msgstr ""
+
+#: includes/admin_support.php:80
+msgid "Usually its because you need to point the &quot;Main registration page:&quot; (in the Organization Settings page) to whatever page you have the shortcode"
+msgstr ""
+
+#: includes/admin_support.php:82
+msgid "on"
+msgstr ""
+
+#: includes/admin_support.php:84
+msgid "Paypal IPN Problem?"
+msgstr ""
+
+#: includes/admin_support.php:85
+msgid "Four things to check with PayPal when payments notifications are not being sent to Event Espresso."
+msgstr ""
+
+#: includes/admin_support.php:86
+msgid "Make sure you have a standard or a business PayPal account, personal accounts don't work."
+msgstr ""
+
+#: includes/admin_support.php:87
+msgid "Turn on your IPN."
+msgstr ""
+
+#: includes/admin_support.php:88
+msgid "Make sure your PayPal account is verified."
+msgstr ""
+
+#: includes/admin_support.php:89
+msgid "Make sure your Event Espresso pages are not protected or private."
+msgstr ""
+
+#: includes/admin_support.php:92
+msgid "Why are mails are not being sent when somone registers?"
+msgstr ""
+
+#: includes/admin_support.php:93
+msgid "Check your email settings on the"
+msgstr ""
+
+#: includes/admin_support.php:94
+msgid "If you're using WP SMTP with Gmail, also check your spam box to make sure Gmail isn't filtering the confirmation emails as spam."
+msgstr ""
+
+#: includes/admin_support.php:97
+msgid "Problems after upgrading?"
+msgstr ""
+
+#: includes/admin_support.php:99
+msgid "If you have just upgraded  from  the free version of this plugin, your event dates, times, and categories may be out of order, missing, showing an error, or are wrong.  Pressing the &quot;Run Upgrade Script&quot; button below should fix all of these problems."
+msgstr ""
+
+#: includes/admin_support.php:104
+msgid "Run Upgrade Script"
+msgstr ""
+
+#: includes/admin_support.php:108
+msgid "If you have clicked the button above and event dates that should be expired, are showing an error or seem to be out of order. Go into the &quot;<a href=\"admin.php?page=events\">Event Management</a>&quot; page and click the &quot;Edit this Event&quot; button then click the &quot;Update Event&quot; button on each event that is displaying the wrong date(s). This process should fix the problem. If it doesn't then send a support request using the help and support button above."
+msgstr ""
+
+#: includes/admin_support.php:115
+msgid "Attendee information is outdated"
+msgstr ""
+
+#: includes/admin_support.php:118
+msgid "Due to recent changes in the way attendee information is handled, attendee data may appear to be missing from some events. In order to reassign attendees to events, please run the attendee update script by pressing the button below."
+msgstr ""
+
+#: includes/admin_support.php:123
+msgid "Run Attendee Update Script"
+msgstr ""
+
+#: includes/admin_support.php:269
+msgid "Event data has been updated!"
+msgstr ""
+
+#: includes/admin_support.php:276
+msgid "There was an error in your submission, please try again."
+msgstr ""
+
+#: includes/database_install.new.php:307
+msgid "Payment Received for [event_name]"
+msgstr ""
+
+#: includes/database_install.new.php:308
+msgid "<p>***This Is An Automated Response*** </p><p>Thank You [fname] [lname]</p>  <p>We have just  received a payment in the amount of [event_price] for your registration to [event_name].</p> <p>Transaction ID: [txn_id]</p>"
+msgstr ""
+
+#: includes/database_install.new.php:310
+msgid "<p>***This is an automated response - Do Not Reply***</p> <p>Thank you [fname] [lname] for registering for [event].</p><p>Start time: [start_time]</p><p>Location:<br>[location]</p><p>Phone: [location_phone]</p><p>Google Map: [google_map_link]</p><p> We hope that you will find this event both informative and enjoyable. Should you have any questions, please contact [contact].</p><p>If you have not done so already, please submit your payment in the amount of [cost].</p><p>Click here to review your payment information [payment_url].</p><p>Thank You.</p>"
+msgstr ""
+
+#: includes/event_espresso_form_build.inc.php:130
+msgid "Select One"
+msgstr ""
+
+#: includes/organization_config.php:107
+msgid "Organization details saved."
+msgstr ""
+
+#: includes/organization_config.php:133
+msgid "Organization Settings"
+msgstr ""
+
+#: includes/organization_config.php:140
+msgid "Organization Name:"
+msgstr ""
+
+#: includes/organization_config.php:146
+msgid "Organization Street 1:"
+msgstr ""
+
+#: includes/organization_config.php:152
+msgid "Organization Street 2:"
+msgstr ""
+
+#: includes/organization_config.php:158
+msgid "Organization City:"
+msgstr ""
+
+#: includes/organization_config.php:164
+msgid "Organization State:"
+msgstr ""
+
+#: includes/organization_config.php:170
+msgid "Organization Zip/Postal Code:"
+msgstr ""
+
+#: includes/organization_config.php:176
+msgid "Organization Country:"
+msgstr ""
+
+#: includes/organization_config.php:181
+msgid "Primary contact email:"
+msgstr ""
+
+#: includes/organization_config.php:185
+msgid "Time and Date Settings"
+msgstr ""
+
+#: includes/organization_config.php:186
+msgid "Current Time"
+msgstr ""
+
+#: includes/organization_config.php:187
+msgid "Change timezone and date format settings?"
+msgstr ""
+
+#: includes/organization_config.php:187
+msgid "You must set the time zone for your city, or the city closest to you. UTC time will not work."
+msgstr ""
+
+#: includes/organization_config.php:191
+msgid "Events expire on registration end date?"
+msgstr ""
+
+#: includes/organization_config.php:196
+#: includes/organization_config.php:332
+#: includes/organization_config.php:400
+msgid "Save Options"
+msgstr ""
+
+#: includes/organization_config.php:206
+msgid "Page Settings"
+msgstr ""
+
+#: includes/organization_config.php:219
+msgid "Use SSL for registration process?"
+msgstr ""
+
+#: includes/organization_config.php:236
+msgid ""
+"If you plan on using one of the gateways that collects Credit Card info (e.g. PayPal PRO, Authorize.net AIM),\n"
+"                       <br />you need to make sure a SSL is installed on this domain and Yes is selected in this dropdown."
+msgstr ""
+
+#: includes/organization_config.php:238
+msgid "<br />This feature is in beta.  Please notify support@eventespresso.com if you notice issues."
+msgstr ""
+
+#: includes/organization_config.php:247
+msgid "Main registration page:"
+msgstr ""
+
+#: includes/organization_config.php:251
+#: includes/organization_config.php:272
+#: includes/organization_config.php:296
+#: includes/organization_config.php:315
+msgid "Main page"
+msgstr ""
+
+#: includes/organization_config.php:257
+#: includes/organization_config.php:264
+#: includes/organization_config.php:278
+#: includes/organization_config.php:321
+#: includes/organization_config.php:328
+msgid "This page should contain the"
+msgstr ""
+
+#: includes/organization_config.php:259
+msgid "shortcode. <br />This page can be hidden from navigation if desired, <br />but should always contain the [ESPRESSO_EVENTS] shortcode."
+msgstr ""
+
+#: includes/organization_config.php:262
+msgid "Main Events Page"
+msgstr ""
+
+#: includes/organization_config.php:263
+msgid "This is the page that displays your events."
+msgstr ""
+
+#: includes/organization_config.php:264
+#: includes/organization_config.php:328
+msgid "shortcode."
+msgstr ""
+
+#: includes/organization_config.php:268
+msgid "Auto Return URL (Thank You and Return Payment page):"
+msgstr ""
+
+#: includes/organization_config.php:280
+msgid ""
+"shortcode. <br />\n"
+"This page should hidden from your navigation, <br />\n"
+"but still viewable to the public (not password protected.)"
+msgstr ""
+
+#: includes/organization_config.php:285
+msgid "Auto Return URL"
+msgstr ""
+
+#: includes/organization_config.php:286
+msgid "The URL to which the payer\"s browser is redirected after completing the payment; for example, a URL on your site that displays a \"Thank you for your payment\" page."
+msgstr ""
+
+#: includes/organization_config.php:287
+msgid "This page should contain the <strong>[ESPRESSO_PAYMENTS]</strong> shortcode."
+msgstr ""
+
+#: includes/organization_config.php:288
+#: includes/organization_config.php:307
+#: includes/organization_config.php:329
+msgid "ATTENTION:"
+msgstr ""
+
+#: includes/organization_config.php:288
+#: includes/organization_config.php:307
+#: includes/organization_config.php:329
+msgid "This page should be hidden from from your navigation menu. Exclude pages by using the \"Exclude Pages\" plugin from http://wordpress.org/extend/plugins/exclude-pages/ or using the \"exclude\" parameter in your \"wp_list_pages\" template tag. Please refer to http://codex.wordpress.org/Template_Tags/wp_list_pages for more inforamation about excluding pages."
+msgstr ""
+
+#: includes/organization_config.php:292
+msgid "Cancel Return URL (used for cancelled payments):"
+msgstr ""
+
+#: includes/organization_config.php:302
+msgid "This should be a page on your website that contains a cancelled message. <br />No short tags are needed. This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)"
+msgstr ""
+
+#: includes/organization_config.php:304
+msgid "Cancel Return URL"
+msgstr ""
+
+#: includes/organization_config.php:305
+msgid "A URL to which the payer's browser is redirected if payment is cancelled; for example, a URL on your website that displays a \"Payment Canceled\" page."
+msgstr ""
+
+#: includes/organization_config.php:306
+msgid "This should be a page on your website that contains a cancelled message. No short tags are needed."
+msgstr ""
+
+#: includes/organization_config.php:311
+msgid "Notify URL (used to process payments):"
+msgstr ""
+
+#: includes/organization_config.php:323
+msgid "shortcode. <br />This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)"
+msgstr ""
+
+#: includes/organization_config.php:325
+msgid "Notify URL"
+msgstr ""
+
+#: includes/organization_config.php:327
+msgid "The URL to which PayPal posts information about the transaction, in the form of Instant Payment Notification messages."
+msgstr ""
+
+#: includes/organization_config.php:342
+msgid "Email Settings"
+msgstr ""
+
+#: includes/organization_config.php:352
+msgid "Send payment confirmation emails?"
+msgstr ""
+
+#: includes/organization_config.php:356
+msgid "Send registration confirmation emails before payment is received?"
+msgstr ""
+
+#: includes/organization_config.php:360
+msgid "Payment Confirmation Email:"
+msgstr ""
+
+#: includes/organization_config.php:364
+msgid "Email Subject:"
+msgstr ""
+
+#: includes/organization_config.php:375
+#: includes/organization_config.php:391
+msgid "View Custom Email Tags"
+msgstr ""
+
+#: includes/organization_config.php:382
+msgid "Default Registration Confirmation Email:"
+msgstr ""
+
+#: includes/organization_config.php:393
+msgid "Example"
+msgstr ""
+
+#: includes/organization_config.php:407
+msgid "Advanced Features"
+msgstr ""
+
+#: includes/organization_config.php:422
+msgid "Developers Only"
+msgstr ""
+
+#: includes/organization_config.php:432
+msgid "Optional Event Settings"
+msgstr ""
+
+#: includes/organization_config.php:433
+#: includes/organization_config.php:451
+msgid "Please purchase a"
+msgstr ""
+
+#: includes/organization_config.php:433
+#: includes/organization_config.php:451
+msgid "support license"
+msgstr ""
+
+#: includes/organization_config.php:433
+msgid "to gain access to these features."
+msgstr ""
+
+#: includes/organization_config.php:434
+msgid "Additional features include:"
+msgstr ""
+
+#: includes/organization_config.php:436
+msgid "Upcoming events widget in the admin dashboard"
+msgstr ""
+
+#: includes/organization_config.php:437
+msgid "Registration limits on time slots"
+msgstr ""
+
+#: includes/organization_config.php:438
+msgid "Ability to display short descriptions in the event listings"
+msgstr ""
+
+#: includes/organization_config.php:439
+msgid "Custom post types for events"
+msgstr ""
+
+#: includes/organization_config.php:440
+msgid "Attendee pre-approval feature"
+msgstr ""
+
+#: includes/organization_config.php:441
+msgid "Event Venue/Staff Manager"
+msgstr ""
+
+#: includes/organization_config.php:450
+msgid "reCAPTCHA Settings"
+msgstr ""
+
+#: includes/organization_config.php:451
+msgid "to gain access to this feature."
+msgstr ""
+
+#: includes/organization_config.php:452
+msgid "reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a"
+msgstr ""
+
+#: includes/organization_config.php:452
+msgid "to ensure that only humans perform certain actions."
+msgstr ""
+
+#: includes/shortcodes.php:39
+msgid "No Category ID Supplied"
+msgstr ""
+
+#: includes/shortcodes.php:293
+msgid "<h3 class=\"expired_event\">This event has passed.</h3>"
+msgstr ""
+
+#: includes/shortcodes.php:299
+msgid "We are sorry but registration for this event is now closed."
+msgstr ""
+
+#: includes/shortcodes.php:300
+msgid "Please <a href=\"contact\" title=\"contact us\">contact us</a> if you would like to know if spaces are still available."
+msgstr ""
+
+#: includes/shortcodes.php:308
+msgid "We are sorry but this event is not yet open for registration."
+msgstr ""
+
+#: includes/shortcodes.php:309
+msgid "You will be able to register starting "
+msgstr ""
+
+#: includes/shortcodes.php:363
+msgid "Anti-Spam Measure: Please enter the following phrase"
+msgstr ""
+
+#: includes/shortcodes.php:369
+msgid "Submit"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:8
+msgid "Manage Addons"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:16
+msgid "Recurring Events Manager"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:24
+#: includes/admin-files/admin_addons.php:48
+#: includes/admin-files/admin_addons.php:72
+msgid "Installed"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:37
+msgid "Groupon Integration Module"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:42
+msgid "About Groupon"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:62
+msgid "Members Integration Module"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:87
+msgid "Custom Files"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:91
+msgid "These files offer support for custom templates, functions, and shortcodes. Virtually allowing you to customize the plugin to your needs and making your custom changes future proof."
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:93
+#: includes/admin-files/admin_addons.php:94
+#: includes/admin-files/admin_addons.php:95
+msgid " - Installed"
+msgstr ""
+
+#: includes/admin-files/admin_addons.php:93
+#: includes/admin-files/admin_addons.php:94
+#: includes/admin-files/admin_addons.php:95
+msgid " - Not Installed"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:8
+msgid "All Events"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:9
+#: includes/admin-files/admin_reports_filters.php:15
+msgid "Today"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:10
+#: includes/admin-files/admin_reports_filters.php:16
+msgid "This Month"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:13
+msgid "Attendees"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:14
+msgid "All Attendees"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:38
+msgid "Show All Completed/Incomplete"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:38
+msgid "Completed"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:38
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Pending"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:38
+msgid "Incomplete"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:38
+msgid "Payment Declined"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:43
+#: includes/admin-files/admin_reports_filters.php:59
+msgid "Reset Filters"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Show Active/Inactive"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Active"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Inactive"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Draft"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Waitlist"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Ongoing"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Denied"
+msgstr ""
+
+#: includes/admin-files/admin_reports_filters.php:54
+msgid "Deleted"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:6
+msgid "Event Posts"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:7
+msgid "Event"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:8
+msgid "Add New"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:9
+msgid "Add New Event"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:10
+msgid "Edit"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:11
+msgid "Edit Event"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:12
+msgid "New Event"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:13
+msgid "View Event"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:14
+msgid "View Events"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:15
+msgid "Search Events"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:16
+msgid "No events found"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:17
+msgid "No events found in Trash"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:18
+msgid "Parent Event"
+msgstr ""
+
+#: includes/admin-files/custom_post_type.php:21
+msgid "Event Thumbnail"
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:19
+msgid "Event(s) have been permanently deleted."
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:31
+#: includes/admin-files/coupon-management/index.php:54
+msgid "Name"
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:33
+msgid "Status"
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:66
+msgid "todays' events"
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:96
+#: includes/admin-files/coupon-management/index.php:83
+msgid "Delete"
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:96
+msgid "Export"
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:116
+#: includes/admin-files/coupon-management/index.php:117
+msgid "Live Search Filter"
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:117
+#: includes/admin-files/coupon-management/index.php:118
+msgid "No Records Found!"
+msgstr ""
+
+#: includes/admin-files/dashboard_widget.php:143
+msgid "Upcoming Events"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:35
+msgid "Send an Email to the Attendees of"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:38
+msgid "Use a <a href=\"admin.php?page=event_emails\">pre-existing email</a>? "
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:39
+msgid "OR"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:41
+msgid "Email Subject Line"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:42
+msgid "Email Text"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:45
+msgid "Email Example"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:49
+msgid "Send Newsletter"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:57
+msgid "<< Back to"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:63
+msgid "Pre-existing Emails"
+msgstr ""
+
+#: includes/admin-files/event_newsletter.php:64
+msgid "This will override the custom email below if selected."
+msgstr ""
+
+#: includes/admin-files/functions.php:86
+msgid "Select a Venue"
+msgstr ""
+
+#: includes/admin-files/functions.php:102
+msgid "Edit this venue"
+msgstr ""
+
+#: includes/admin-files/functions.php:163
+msgid "Please add at least one person."
+msgstr ""
+
+#: includes/admin-files/functions.php:180
+msgid "Select a Person"
+msgstr ""
+
+#: includes/admin-files/functions.php:189
+msgid "Primary"
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:5
+msgid "Developers Section"
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:13
+#: includes/admin-files/template_files.php:97
+msgid "Remember, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates."
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:16
+msgid "Modifying and adding payment gateways is easy."
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:19
+msgid "You just need to add/edit the appropriate files in the following location."
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:22
+#: includes/admin-files/gateway_developer.php:44
+#: includes/admin-files/template_files.php:40
+#: includes/admin-files/template_files.php:114
+msgid "Path:"
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:32
+msgid "Your gateways have been moved."
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:42
+#: includes/admin-files/template_files.php:107
+msgid "The permissions on your templates directory are incorrect."
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:43
+msgid "Please set the permissions to 775 on the following directory."
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:49
+msgid "If you plan on adding additional payment gateways. Please use the link below to move your gateway files to a safe place. Only use this option if you absolutely need to or instructed to by a represntative from Event Espresso. "
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:50
+msgid "Your gateway files have not been moved."
+msgstr ""
+
+#: includes/admin-files/gateway_developer.php:51
+#: includes/admin-files/template_files.php:125
+#, php-format
+msgid "Click here to <a href='%s'>Move your files</a> to a safe place."
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:19
+msgid " Default Surcharge (this value will be automatically filled in for each price type when creating an event): "
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:30
+msgid "Show the Upcoming Events widget in the dashboard?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:32
+msgid "Show the next"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:32
+msgid "days of events in the dashboard."
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:36
+msgid ""
+"Use registration limits on time slots?<br />\n"
+"\t\t\t\t\t\t\t<span style=\"color:red\">(This function is experimental and may not function as expected. You should adjust your attendee limit accordingly.)</span>"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:42
+msgid "Use a custom time zone for each event?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:48
+msgid "Display short descriptions in the event listings? (Be sure to use the \"More...\" tag in your event description)"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:53
+msgid "Display adresses in the event listings?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:58
+msgid "Use the custom post types feature?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:63
+msgid "Enable attendee pre-approval feature?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:68
+msgid "Enable default style sheet?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:74
+msgid "Show payment options for \"Pending Payments\" on the Payment Overview page?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:80
+msgid "Use the Venue Manager?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:86
+msgid "Use the Staff Manager?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:92
+msgid "Show a link to Event Espresso in your event pages?"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:94
+msgid "Affiliate ID:"
+msgstr ""
+
+#: includes/admin-files/optional_event_settings.php:94
+msgid "(optional)"
+msgstr ""
+
+#: includes/admin-files/promotions_box.php:5
+msgid "Event Promotions"
+msgstr ""
+
+#: includes/admin-files/promotions_box.php:9
+msgid "Early Registration Discount"
+msgstr ""
+
+#: includes/admin-files/promotions_box.php:11
+msgid "End Date:"
+msgstr ""
+
+#: includes/admin-files/promotions_box.php:12
+msgid "Amount:"
+msgstr ""
+
+#: includes/admin-files/promotions_box.php:12
+msgid "Percentage:"
+msgstr ""
+
+#: includes/admin-files/promotions_box.php:14
+msgid "(Leave blank if not applicable)"
+msgstr ""
+
+#: includes/admin-files/promotions_box.php:16
+msgid "Allow discount codes?"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:14
+msgid "Use"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:14
+msgid "reCAPTCHA"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:14
+msgid "to block spam registrations"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:26
+msgid "Public Key:"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:32
+msgid "Private Key:"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:38
+msgid "Look &amp; Feel Customization"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:43
+msgid "Width:"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:49
+msgid "Theme:"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:53
+msgid "Red"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:54
+msgid "White"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:55
+msgid "Blackglass"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:56
+msgid "Clean"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:62
+msgid "Language:"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:66
+msgid "English"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:67
+msgid "Spanish"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:68
+msgid "Dutch"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:69
+msgid "French"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:70
+msgid "German"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:71
+msgid "Portuguese"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:72
+msgid "Russian"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:73
+msgid "Turkish"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:80
+msgid "reCAPTCHA Information"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:82
+msgid "You must sign up for a"
+msgstr ""
+
+#: includes/admin-files/recaptcha_form.php:82
+msgid "account to use it with this plugin. If you already have a reCAPTCHA account enter your \"Public\" and \"Private\" keys on this page."
+msgstr ""
+
+#: includes/admin-files/template_files.php:8
+msgid "Template Customization"
+msgstr ""
+
+#: includes/admin-files/template_files.php:20
+msgid "Your templates have been copied."
+msgstr ""
+
+#: includes/admin-files/template_files.php:34
+msgid "Modifying your event listings and registration pages is easy."
+msgstr ""
+
+#: includes/admin-files/template_files.php:37
+msgid "You just need to edit the appropriate files in the following location."
+msgstr ""
+
+#: includes/admin-files/template_files.php:44
+msgid "Current Template Files"
+msgstr ""
+
+#: includes/admin-files/template_files.php:52
+msgid "(displays a list of attendees)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:55
+msgid "(logic for displaying the list of events)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:58
+msgid "(displays a list of events)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:61
+msgid "(create-a-post template)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:64
+msgid "(displays your payment page text)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:67
+msgid "(logic for displaying the registration form)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:70
+msgid "(displays your registration form)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:73
+msgid "(displays a confimration page for free events)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:76
+msgid "(page that is displayed when returning to pay)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:79
+msgid "(creates a widget for use in your theme)"
+msgstr ""
+
+#: includes/admin-files/template_files.php:86
+msgid " - Moved"
+msgstr ""
+
+#: includes/admin-files/template_files.php:89
+msgid " - Not Moved"
+msgstr ""
+
+#: includes/admin-files/template_files.php:104
+msgid "In order to use this this feature, you will need to move the files located in the"
+msgstr ""
+
+#: includes/admin-files/template_files.php:104
+msgid "directory into the"
+msgstr ""
+
+#: includes/admin-files/template_files.php:104
+msgid "directory"
+msgstr ""
+
+#: includes/admin-files/template_files.php:110
+msgid "To move your files automatically, please set the permissions to 775 on the following directory."
+msgstr ""
+
+#: includes/admin-files/template_files.php:120
+msgid "If you plan on modifying the look of your event listings, registration page, or attendee list. Use the option below to move these templates to a safe place. Keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates."
+msgstr ""
+
+#: includes/admin-files/template_files.php:123
+msgid "Your template files have not been moved."
+msgstr ""
+
+#: includes/admin-files/coupon-management/add_discount.php:15
+msgid "The discount code  has been added."
+msgstr ""
+
+#: includes/admin-files/coupon-management/add_discount.php:22
+msgid "The discount code  was not saved."
+msgstr ""
+
+#: includes/admin-files/coupon-management/delete_discount.php:28
+msgid "Discounts have been successfully deleted from the database."
+msgstr ""
+
+#: includes/admin-files/coupon-management/edit_discount.php:37
+msgid "Edit Discount:"
+msgstr ""
+
+#: includes/admin-files/coupon-management/edit_discount.php:53
+msgid "Dicount Code:"
+msgstr ""
+
+#: includes/admin-files/coupon-management/edit_discount.php:65
+#: includes/admin-files/coupon-management/new_discount.php:21
+msgid "Price Discount"
+msgstr ""
+
+#: includes/admin-files/coupon-management/edit_discount.php:75
+#: includes/admin-files/coupon-management/new_discount.php:26
+msgid "Is this a percentage discount?"
+msgstr ""
+
+#: includes/admin-files/coupon-management/edit_discount.php:95
+#: includes/admin-files/coupon-management/new_discount.php:33
+msgid "Discount Code Description"
+msgstr ""
+
+#: includes/admin-files/coupon-management/edit_discount.php:107
+msgid "Update"
+msgstr ""
+
+#: includes/admin-files/coupon-management/index.php:7
+msgid "Manage Event Discounts"
+msgstr ""
+
+#: includes/admin-files/coupon-management/index.php:9
+#: includes/admin-files/coupon-management/index.php:101
+msgid "Add New Discount"
+msgstr ""
+
+#: includes/admin-files/coupon-management/index.php:53
+msgid "ID"
+msgstr ""
+
+#: includes/admin-files/coupon-management/index.php:56
+msgid "Creator"
+msgstr ""
+
+#: includes/admin-files/coupon-management/index.php:58
+msgid "Amount"
+msgstr ""
+
+#: includes/admin-files/coupon-management/index.php:59
+msgid "Percentaage"
+msgstr ""
+
+#: includes/admin-files/coupon-management/index.php:97
+msgid "Check All"
+msgstr ""
+
+#: includes/admin-files/coupon-management/index.php:99
+msgid "Delete Discount"
+msgstr ""
+
+#: includes/admin-files/coupon-management/new_discount.php:7
+msgid "Add a Discount Code"
+msgstr ""
+
+#: includes/admin-files/coupon-management/new_discount.php:15
+msgid "Discount Code"
+msgstr ""
+
+#: includes/admin-files/coupon-management/update_discount.php:15
+msgid "The discount  has been updated."
+msgstr ""
+
+#: includes/admin-files/coupon-management/update_discount.php:19
+msgid "The discount code was not updated."
+msgstr ""
+
+#: includes/admin-files/coupon-management/use_coupon_code.php:34
+msgid "You are using discount code:"
+msgstr ""
+
+#: includes/admin-files/coupon-management/use_coupon_code.php:34
+msgid "discount"
+msgstr ""
+
+#: includes/admin-files/coupon-management/use_coupon_code.php:71
+msgid "Sorry, that coupon code is invalid or expired."
+msgstr ""
+
+#: includes/admin-files/coupon-management/use_coupon_code.php:88
+msgid "Enter Promo Code"
+msgstr ""
+
+#: includes/admin-files/email-manager/add_new_email.php:13
+msgid "Add an Email"
+msgstr ""
+
+#: includes/admin-files/email-manager/add_new_email.php:18
+msgid "Email Name"
+msgstr ""
+
+#: includes/admin-files/email-manager/add_new_email.php:27
+msgid "Add Email"
+msgstr ""
+
+#: includes/admin-files/email-manager/edit_email.php:21
+msgid "Edit Email:"
+msgstr ""
+
+#: includes/admin-files/email-manager/edit_email.php:27
+msgid "Email Name:"
+msgstr ""
+
+#: includes/admin-files/email-manager/edit_email.php:27
+msgid "Email Subject Line:"
+msgstr ""
+
+#: includes/admin-files/email-manager/edit_email.php:28
+msgid "Email Text:"
+msgstr ""
+
+#: includes/admin-files/email-manager/edit_email.php:34
+msgid "Update Email"
+msgstr ""
+
+#: includes/admin-files/email-manager/index.php:13
+msgid "Manage Event Emails"
+msgstr ""
+
+#: includes/admin-files/email-manager/index.php:15
+msgid "Add New Email"
+msgstr ""
+
+#: includes/admin-files/email-manager/index.php:38
+msgid "Emails have been successfully deleted."
+msgstr ""
+
+#: includes/admin-files/email-manager/index.php:51
+msgid "Create customized emails for use in multiple events."
+msgstr ""
+
+#: includes/admin-files/email-manager/index.php:62
+msgid "Action"
+msgstr ""
+
+#: includes/admin-files/email-manager/index.php:90
+msgid "Edit Email"
+msgstr ""
+
+#: includes/admin-files/email-manager/index.php:103
+msgid "Delete Email"
+msgstr ""
+
+#: includes/admin-files/email-manager/update_email.php:16
+#: includes/admin-files/email-manager/update_email.php:18
+msgid "The email"
+msgstr ""
+
+#: includes/admin-files/email-manager/update_email.php:16
+msgid "has been updated"
+msgstr ""
+
+#: includes/admin-files/email-manager/update_email.php:18
+msgid "was not updated"
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:25
+msgid "Personal Information only"
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:26
+msgid "Full registration information"
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:32
+msgid " Scroll down and select additional attendee questions below."
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:37
+msgid "Additional Attendee Registration info?"
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:41
+msgid "Advanced Options:"
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:43
+#: includes/admin-files/event-management/advanced_settings.php:48
+msgid "Event Status: "
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:43
+msgid "PENDING"
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:47
+msgid "Is this an active event? "
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:51
+msgid "Display  description? "
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:52
+msgid "Display  registration form? "
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:54
+msgid "Use an alternate registration page?"
+msgstr ""
+
+#: includes/admin-files/event-management/advanced_settings.php:56
+msgid "Use an alternate email address?"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:5
+#: includes/admin-files/event-management/new_event_post.php:5
+msgid "Create a Post"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:20
+msgid "Add/Update post for this event?"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:20
+msgid "If no, delete current post?"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:29
+#: includes/admin-files/event-management/new_event_post.php:29
+msgid "Espresso Event"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:30
+#: includes/admin-files/event-management/new_event_post.php:30
+msgid "Post"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:47
+msgid "Author:"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:48
+#: includes/admin-files/event-management/new_event_post.php:44
+msgid "Post Type"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:49
+#: includes/admin-files/event-management/new_event_post.php:52
+msgid "Post templates are stored in the \"templates\" directory of the plugin."
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:50
+msgid "Tags:"
+msgstr ""
+
+#: includes/admin-files/event-management/edit_event_post.php:51
+#: includes/admin-files/event-management/new_event_post.php:46
+msgid "Post Categories:"
+msgstr ""
+
+#: includes/admin-files/event-management/new_event_post.php:9
+msgid "Create a post for this event?"
+msgstr ""
+
+#: includes/admin-files/event-management/new_event_post.php:43
+msgid "Author"
+msgstr ""
+
+#: includes/admin-files/event-management/new_event_post.php:45
+msgid "Tags"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/delete_group.php:31
+msgid "Question Groups have been successfully deleted."
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/insert_group.php:39
+msgid "The group has been added."
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/insert_group.php:42
+msgid "There was an error in your submission, please try again. The group was not saved!"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:8
+msgid "Add New Group"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:15
+msgid "Add new groups using the form below."
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:16
+msgid "Group Name:"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:18
+msgid "Group Order:"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:21
+msgid "Group Identifier:"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:23
+msgid "Description:"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:25
+msgid "Show group name on registration page?"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:27
+msgid "Show group description on registration page?"
+msgstr ""
+
+#: includes/admin-files/form-builder/groups/new_group.php:72
+msgid "Add Questions:"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/delete_question.php:31
+msgid "Questions have been successfully deleted."
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:7
+msgid "Add New Questions"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:11
+msgid "Add questions using the form below.  By default all participants will be asked for their first name, last name, and email address."
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:12
+msgid "Question:"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:14
+msgid "Type:"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:23
+msgid "Values:"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:24
+msgid "A comma seperated list of values. Eg. black, blue, red"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:26
+msgid "Required:"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:29
+msgid "Admin view only:"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:34
+msgid "Required Text:"
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:36
+msgid "Text displayed if not completed."
+msgstr ""
+
+#: includes/admin-files/form-builder/questions/new_question.php:40
+msgid "Order/Sequence:"
+msgstr ""
+
+#: includes/admin-files/locale-management/add_locale_to_db.php:14
+msgid "The locale  has been added."
+msgstr ""
+
+#: includes/admin-files/locale-management/add_locale_to_db.php:21
+msgid "The locale  was not saved."
+msgstr ""
+
+#: includes/admin-files/locale-management/add_new_locale.php:18
+msgid "Add a Locale"
+msgstr ""
+
+#: includes/admin-files/locale-management/add_new_locale.php:32
+msgid "Save Locale"
+msgstr ""
+
+#: includes/admin-files/locale-management/edit_locale.php:26
+msgid "Edit Locale:"
+msgstr ""
+
+#: includes/admin-files/locale-management/edit_locale.php:41
+msgid "Update Locale"
+msgstr ""
+
+#: includes/admin-files/locale-management/index.php:7
+msgid "Manage Locales/Regions"
+msgstr ""
+
+#: includes/admin-files/locale-management/index.php:9
+#: includes/admin-files/locale-management/index.php:92
+msgid "Add New Locale"
+msgstr ""
+
+#: includes/admin-files/locale-management/index.php:41
+msgid "Locales have been successfully deleted from the event."
+msgstr ""
+
+#: includes/admin-files/locale-management/index.php:91
+msgid "Delete Locale"
+msgstr ""
+
+#: includes/admin-files/locale-management/index.php:101
+msgid "Locale Locale"
+msgstr ""
+
+#: includes/admin-files/locale-management/index.php:102
+msgid "This can be used to group locales together in your custom queries or shortcodes"
+msgstr ""
+
+#: includes/admin-files/locale-management/update_locale.php:17
+msgid "The locale  has been updated."
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:18
+msgid "Add a Staff Member"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:41
+#: includes/admin-files/staff-management/edit_staff.php:52
+#: includes/admin-files/venue-management/add_new_venue.php:118
+#: includes/admin-files/venue-management/edit_venue.php:121
+msgid "Phone"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:47
+#: includes/admin-files/staff-management/edit_staff.php:58
+#: includes/admin-files/venue-management/add_new_venue.php:124
+#: includes/admin-files/venue-management/edit_venue.php:127
+msgid "Twitter"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:53
+#: includes/admin-files/staff-management/edit_staff.php:64
+#: includes/admin-files/venue-management/add_new_venue.php:130
+#: includes/admin-files/venue-management/edit_venue.php:133
+msgid "Website"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:59
+#: includes/admin-files/staff-management/edit_staff.php:70
+#: includes/admin-files/venue-management/add_new_venue.php:136
+#: includes/admin-files/venue-management/edit_venue.php:139
+msgid "Image/Logo URL"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:66
+#: includes/admin-files/staff-management/edit_staff.php:77
+msgid "Role"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:72
+#: includes/admin-files/staff-management/edit_staff.php:83
+msgid "Organization"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:78
+#: includes/admin-files/staff-management/edit_staff.php:89
+msgid "Title"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:84
+#: includes/admin-files/staff-management/edit_staff.php:95
+msgid "Industry"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:96
+#: includes/admin-files/staff-management/edit_staff.php:107
+#: includes/admin-files/venue-management/add_new_venue.php:65
+#: includes/admin-files/venue-management/edit_venue.php:82
+msgid "Country"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:105
+#: includes/admin-files/staff-management/edit_staff.php:116
+#: includes/admin-files/venue-management/add_new_venue.php:146
+#: includes/admin-files/venue-management/edit_venue.php:149
+msgid "Description"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_new_staff.php:113
+msgid "Save Staff Member"
+msgstr ""
+
+#: includes/admin-files/staff-management/add_staff_to_db.php:30
+msgid "The person  has been added."
+msgstr ""
+
+#: includes/admin-files/staff-management/add_staff_to_db.php:37
+msgid "The person  was not saved."
+msgstr ""
+
+#: includes/admin-files/staff-management/edit_staff.php:29
+msgid "Edit Staff Member:"
+msgstr ""
+
+#: includes/admin-files/staff-management/edit_staff.php:123
+msgid "Update Staff Member"
+msgstr ""
+
+#: includes/admin-files/staff-management/index.php:11
+msgid "Manage Staff Members"
+msgstr ""
+
+#: includes/admin-files/staff-management/index.php:13
+#: includes/admin-files/staff-management/index.php:114
+msgid "Add New Staff Member"
+msgstr ""
+
+#: includes/admin-files/staff-management/index.php:46
+msgid "Staff member(s) have been successfully deleted from the event."
+msgstr ""
+
+#: includes/admin-files/staff-management/index.php:69
+#: includes/admin-files/venue-management/index.php:68
+msgid "Shortcode"
+msgstr ""
+
+#: includes/admin-files/staff-management/index.php:113
+msgid "Delete Staff Member(s)"
+msgstr ""
+
+#: includes/admin-files/staff-management/update_staff.php:34
+msgid "The person  has been updated."
+msgstr ""
+
+#: includes/admin-files/venue-management/add_new_venue.php:19
+msgid "Add a Venue"
+msgstr ""
+
+#: includes/admin-files/venue-management/add_new_venue.php:41
+#: includes/admin-files/venue-management/edit_venue.php:58
+msgid "Address 2"
+msgstr ""
+
+#: includes/admin-files/venue-management/add_new_venue.php:72
+#: includes/admin-files/venue-management/edit_venue.php:89
+msgid "Locale/Region"
+msgstr ""
+
+#: includes/admin-files/venue-management/add_new_venue.php:112
+#: includes/admin-files/venue-management/edit_venue.php:115
+msgid "Contact"
+msgstr ""
+
+#: includes/admin-files/venue-management/add_new_venue.php:154
+msgid "Save Venue"
+msgstr ""
+
+#: includes/admin-files/venue-management/add_venue_to_db.php:34
+msgid "The venue  has been added."
+msgstr ""
+
+#: includes/admin-files/venue-management/add_venue_to_db.php:41
+msgid "The venue  was not saved."
+msgstr ""
+
+#: includes/admin-files/venue-management/edit_venue.php:35
+msgid "Edit Venue:"
+msgstr ""
+
+#: includes/admin-files/venue-management/edit_venue.php:156
+msgid "Update Venue"
+msgstr ""
+
+#: includes/admin-files/venue-management/index.php:7
+msgid "Manage Venues"
+msgstr ""
+
+#: includes/admin-files/venue-management/index.php:9
+#: includes/admin-files/venue-management/index.php:114
+msgid "Add New Venue"
+msgstr ""
+
+#: includes/admin-files/venue-management/index.php:46
+msgid "Venues have been successfully deleted from the event."
+msgstr ""
+
+#: includes/admin-files/venue-management/index.php:113
+msgid "Delete Venue"
+msgstr ""
+
+#: includes/admin-files/venue-management/index.php:123
+msgid "Venue Locale/Region"
+msgstr ""
+
+#: includes/admin-files/venue-management/index.php:124
+msgid "This can be used to group venues together by locales/regions."
+msgstr ""
+
+#: includes/admin-files/venue-management/update_venue.php:38
+msgid "The venue  has been updated."
+msgstr ""
+
+#: includes/admin-reports/add_new_attendee.php:11
+msgid "Added Attendee to Database"
+msgstr ""
+
+#: includes/admin-reports/add_new_attendee.php:88
+msgid "Start Date:"
+msgstr ""
+
+#: includes/admin-reports/add_new_attendee.php:118
+msgid "Amount Paid:"
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:246
+msgid "Attendee details saved for "
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:250
+msgid "Registration Id #"
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:257
+msgid "How is attendee paying for registration?"
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:260
+msgid "N/A"
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:262
+msgid "Credit Card"
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:337
+msgid "Update Record"
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:346
+msgid "Additional Attendees"
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:350
+msgid "Edit Attendee"
+msgstr ""
+
+#: includes/admin-reports/edit_attendee_record.php:352
+msgid "Delete Attendee"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:98
+msgid "Payment details saved for"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:100
+msgid "Payment notification has been sent."
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:109
+msgid "Attendee"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:109
+msgid "Registered For:"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:113
+msgid "Payment Details"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:114
+msgid "Invoice/Payment Reminder"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:122
+msgid "Payment Status:"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:124
+msgid "None"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:132
+msgid "Transaction Type:"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:137
+msgid "Coupon Code"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:139
+msgid "How Many People:"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:141
+msgid "Date Paid:"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:143
+msgid "Do you want to send a payment recieved notice to registrant?"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:161
+msgid "Invoice Subject"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:161
+msgid "Payment Reminder for [event]"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:162
+msgid "Message"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:164
+msgid "Dear [fname] [lname], <p>Our records show that we have not received your payment of [cost] for [event_link].</p> <p>Please visit [payment_url] to view your payment options.</p><p>[invoice_link]</p><p>Sincerely,<br />"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:172
+msgid "Attendee approved?"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:180
+msgid "If not approved then invoice will not be sent.)"
+msgstr ""
+
+#: includes/admin-reports/enter_attendee_payments.php:190
+msgid "Back to List"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:19
+msgid "Customer(s) have been successfully deleted from the event."
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:48
+msgid "Scanned tickets cannot be redeemed/un-redeemed here."
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:60
+msgid "Customer(s) attendance data successfully updated for this event."
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:76
+msgid "Advanced filters are available in the premium versions."
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:95
+msgid "Attendee Report for Event ID:"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:105
+msgid "Attendee Name"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:109
+msgid "Reg ID"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:113
+msgid "Registered"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:118
+#: includes/event-management/add_new_event.php:253
+#: includes/event-management/add_new_event.php:256
+#: includes/event-management/edit_event.php:424
+#: includes/event-management/edit_event.php:427
+msgid "Event Title"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:122
+msgid "Event Time"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:127
+msgid "Attended"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:132
+msgid "Option"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:136
+msgid "Payment"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:140
+msgid "Type"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:144
+msgid "Coupon"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:149
+msgid "Transaction ID"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:271
+msgid "Total Attendees"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:306
+msgid "Registration #: "
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:314
+msgid "View attendees for this event"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:319
+#: includes/admin-reports/event_list_attendees.php:321
+#: includes/admin-reports/event_list_attendees.php:326
+#: includes/admin-reports/event_list_attendees.php:329
+msgid "Edit Payment"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:326
+msgid "Resend Registration Details"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:331
+msgid "Approved"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:333
+msgid "Awaiting approval"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:378
+msgid "Delete Attendee(s)"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:380
+msgid "Mark as Attended"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:382
+msgid "Unmark as Attended"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:385
+#: includes/event-management/event_list.php:350
+msgid "Import CSV"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:387
+#: includes/admin-reports/process_payments.php:98
+#: includes/event-management/event_list.php:251
+#: includes/event-management/event_list.php:292
+#: includes/event-management/event_list.php:352
+#: includes/event-management/event_list.php:353
+msgid "Export to Excel"
+msgstr ""
+
+#: includes/admin-reports/event_list_attendees.php:389
+msgid "Add Attendee"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:28
+msgid "Select an event to view attendee details and payments"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:33
+msgid "Export All Event Attendees to Excel"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:46
+msgid "Records"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:47
+#: includes/admin-reports/process_payments.php:144
+#: includes/event-management/add_new_event.php:148
+#: includes/event-management/add_new_event.php:183
+#: includes/event-management/edit_event.php:319
+#: includes/event-management/edit_event.php:354
+msgid "of"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:49
+msgid "Reset"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:59
+msgid "Event ID"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:61
+#: includes/event-management/edit_event.php:151
+#: includes/event-management/event_list.php:164
+msgid "Start Date"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:63
+msgid "# Attendees"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:94
+#: includes/admin-reports/process_payments.php:98
+#: includes/event-management/edit_event.php:158
+#: includes/event-management/event_list.php:288
+msgid "View Attendees"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:98
+#: includes/event-management/event_list.php:294
+msgid "Export to CSV"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:99
+#: includes/event-management/edit_event.php:161
+msgid "Send Event Newsletter"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:99
+#: includes/event-management/edit_event.php:161
+msgid "Newsletter"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:105
+msgid "No Record Found!"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:116
+#: includes/event-management/event_list.php:346
+msgid "Permanently Delete Events(s)"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:130
+msgid "View All"
+msgstr ""
+
+#: includes/admin-reports/process_payments.php:142
+msgid "Entries Per Page"
+msgstr ""
+
+#: includes/category-management/add_cat_to_db.php:17
+msgid "The category has been added."
+msgstr ""
+
+#: includes/category-management/add_cat_to_db.php:19
+msgid "The category   was not saved."
+msgstr ""
+
+#: includes/category-management/add_new_category.php:16
+msgid "Add a Category"
+msgstr ""
+
+#: includes/category-management/add_new_category.php:21
+msgid "Category Name"
+msgstr ""
+
+#: includes/category-management/add_new_category.php:22
+msgid "Unique ID For Category"
+msgstr ""
+
+#: includes/category-management/add_new_category.php:23
+#: includes/category-management/edit_event_category.php:35
+msgid "Do you want to display the category description on the events page?"
+msgstr ""
+
+#: includes/category-management/add_new_category.php:36
+msgid "Category Description"
+msgstr ""
+
+#: includes/category-management/edit_event_category.php:27
+msgid "Edit Category:"
+msgstr ""
+
+#: includes/category-management/edit_event_category.php:33
+msgid "Category Name:"
+msgstr ""
+
+#: includes/category-management/edit_event_category.php:34
+msgid "Unique Category Identifier:"
+msgstr ""
+
+#: includes/category-management/edit_event_category.php:44
+msgid "Category Description:"
+msgstr ""
+
+#: includes/category-management/index.php:11
+msgid "Manage Event Categories"
+msgstr ""
+
+#: includes/category-management/index.php:13
+#: includes/category-management/index.php:114
+msgid "Add New Category"
+msgstr ""
+
+#: includes/category-management/index.php:45
+msgid "Categories have been successfully deleted from the event."
+msgstr ""
+
+#: includes/category-management/index.php:113
+msgid "Delete Category"
+msgstr ""
+
+#: includes/category-management/index.php:123
+msgid "Unique Category Identifier"
+msgstr ""
+
+#: includes/category-management/index.php:124
+msgid "This should be a unique identifier for the category. Example: \"category1\" (without qoutes.)"
+msgstr ""
+
+#: includes/category-management/index.php:125
+msgid " unique ID can also be used in individual pages using the"
+msgstr ""
+
+#: includes/category-management/index.php:125
+#: includes/event-management/event_list.php:400
+msgid "shortcode"
+msgstr ""
+
+#: includes/category-management/update_event_category.php:19
+msgid "The category has been updated."
+msgstr ""
+
+#: includes/category-management/update_event_category.php:21
+msgid "The category was not updated."
+msgstr ""
+
+#: includes/event-management/add_new_event.php:28
+msgid "Are you sure you want to cancel "
+msgstr ""
+
+#: includes/event-management/add_new_event.php:29
+msgid "Cancel"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:32
+msgid "Submit New Event"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:62
+#: includes/event-management/edit_event.php:225
+msgid "Attendee Limit"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:63
+#: includes/event-management/edit_event.php:226
+msgid "leave blank for unlimited"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:64
+#: includes/event-management/edit_event.php:227
+msgid "Allow group registrations?"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:65
+#: includes/event-management/edit_event.php:228
+msgid "Max Group Registrants"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:77
+#: includes/event-management/edit_event.php:239
+msgid "Attendee pre-approval required?"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:98
+#: includes/event-management/edit_event.php:259
+msgid "Member Options"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:115
+#: includes/event-management/add_new_event.php:117
+#: includes/event-management/edit_event.php:279
+#: includes/event-management/edit_event.php:281
+msgid "Post to Facebook"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:125
+#: includes/event-management/edit_event.php:292
+msgid "Event Category"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:143
+#: includes/event-management/edit_event.php:314
+msgid "Event Questions for Primary Attendee"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:148
+#: includes/event-management/add_new_event.php:183
+#: includes/event-management/edit_event.php:319
+#: includes/event-management/edit_event.php:354
+msgid "Add a pre-populated"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:148
+#: includes/event-management/add_new_event.php:183
+#: includes/event-management/edit_event.php:319
+#: includes/event-management/edit_event.php:354
+msgid "group"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:148
+#: includes/event-management/add_new_event.php:183
+#: includes/event-management/edit_event.php:319
+#: includes/event-management/edit_event.php:354
+msgid "questions"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:148
+#: includes/event-management/add_new_event.php:183
+#: includes/event-management/edit_event.php:319
+#: includes/event-management/edit_event.php:354
+msgid "to your event. The personal information group is rquired for all events."
+msgstr ""
+
+#: includes/event-management/add_new_event.php:169
+#: includes/event-management/add_new_event.php:203
+#: includes/event-management/edit_event.php:340
+#: includes/event-management/edit_event.php:374
+msgid "Need more questions?"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:178
+#: includes/event-management/edit_event.php:349
+msgid "Event Questions for Additional Attendees"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:216
+msgid "Personnel Information"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:233
+#: includes/event-management/edit_event.php:405
+msgid "Groupon Options"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:263
+#: includes/event-management/edit_event.php:434
+msgid "Unique Event Identifier:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:266
+msgid "Get Shortcode"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:267
+msgid "Get URL"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:273
+#: includes/event-management/edit_event.php:446
+msgid "Event Description"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:300
+#: includes/event-management/edit_event.php:473
+msgid "Event Date/Times"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:307
+#: includes/event-management/edit_event.php:479
+msgid "Registration Dates"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:307
+#: includes/event-management/edit_event.php:479
+msgid "Registration Start:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:308
+#: includes/event-management/edit_event.php:480
+msgid "Registration End:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:310
+#: includes/event-management/edit_event.php:482
+msgid "Event Dates"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:310
+msgid "Event Start Date:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:311
+msgid "Event End Date:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:313
+#: includes/event-management/edit_event.php:485
+msgid "Event Timezone"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:320
+msgid "Recurring Event Manager Now Available!"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:324
+#: includes/event-management/edit_event.php:491
+msgid "Registration Times"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:327
+#: includes/event-management/edit_event.php:494
+msgid "Event Times"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:359
+#: includes/event-management/edit_event.php:523
+msgid "Event Pricing"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:376
+#: includes/event-management/edit_event.php:539
+msgid "Advanced Options"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:381
+#: includes/event-management/edit_event.php:544
+msgid "Additional Event/Venue Information"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:390
+#: includes/event-management/add_new_event.php:427
+#: includes/event-management/edit_event.php:551
+#: includes/event-management/edit_event.php:593
+msgid "Venue Information"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:393
+#: includes/event-management/edit_event.php:554
+msgid "Physical Location"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:400
+#: includes/event-management/edit_event.php:561
+msgid "Address 2:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:405
+#: includes/event-management/edit_event.php:566
+msgid "City:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:410
+#: includes/event-management/edit_event.php:571
+msgid "State:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:415
+#: includes/event-management/edit_event.php:576
+msgid "Zip/Postal Code:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:420
+#: includes/event-management/edit_event.php:581
+msgid "Country:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:436
+#: includes/event-management/edit_event.php:600
+msgid "Website:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:441
+#: includes/event-management/add_new_event.php:456
+#: includes/event-management/edit_event.php:605
+#: includes/event-management/edit_event.php:620
+msgid "Phone:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:446
+#: includes/event-management/edit_event.php:610
+msgid "Image:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:453
+#: includes/event-management/edit_event.php:617
+msgid "Virtual Location"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:460
+#: includes/event-management/edit_event.php:625
+msgid "URL of Event:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:465
+#: includes/event-management/edit_event.php:630
+msgid "Call in Number:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:477
+#: includes/event-management/edit_event.php:642
+msgid "Event Meta"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:488
+#: includes/event-management/edit_event.php:653
+msgid "Email Confirmation:"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:493
+#: includes/event-management/edit_event.php:659
+msgid "Send custom confirmation emails for this event?"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:494
+msgid "Use a"
+msgstr ""
+
+#: includes/event-management/add_new_event.php:496
+#: includes/event-management/edit_event.php:662
+msgid "Create a custom email"
+msgstr ""
+
+#: includes/event-management/add_to_calendar.php:25
+#: includes/event-management/copy_event.php:176
+msgid "The event"
+msgstr ""
+
+#: includes/event-management/add_to_calendar.php:25
+#: includes/event-management/copy_event.php:176
+msgid "has been added."
+msgstr ""
+
+#: includes/event-management/add_to_calendar.php:27
+#: includes/event-management/copy_event.php:178
+msgid "There was an error in your submission, please try again. The event was not saved!"
+msgstr ""
+
+#: includes/event-management/edit_event.php:111
+msgid "Personal Info"
+msgstr ""
+
+#: includes/event-management/edit_event.php:112
+msgid "Full Registration Info"
+msgstr ""
+
+#: includes/event-management/edit_event.php:117
+msgid "Sorry, you do not have permission to edit this event."
+msgstr ""
+
+#: includes/event-management/edit_event.php:129
+msgid "Quick Overview"
+msgstr ""
+
+#: includes/event-management/edit_event.php:140
+msgid "Are you sure you want to copy "
+msgstr ""
+
+#: includes/event-management/edit_event.php:141
+msgid "Duplicate Event"
+msgstr ""
+
+#: includes/event-management/edit_event.php:155
+msgid "Current Status:"
+msgstr ""
+
+#: includes/event-management/edit_event.php:170
+msgid "Submitted By:"
+msgstr ""
+
+#: includes/event-management/edit_event.php:171
+msgid "Email:"
+msgstr ""
+
+#: includes/event-management/edit_event.php:172
+msgid "Organization:"
+msgstr ""
+
+#: includes/event-management/edit_event.php:173
+msgid "Date Submitted:"
+msgstr ""
+
+#: includes/event-management/edit_event.php:188
+#: includes/event-management/edit_event.php:192
+msgid "Are you sure you want to delete "
+msgstr ""
+
+#: includes/event-management/edit_event.php:189
+msgid "Delete all events in this series"
+msgstr ""
+
+#: includes/event-management/edit_event.php:193
+msgid "Delete Event"
+msgstr ""
+
+#: includes/event-management/edit_event.php:198
+msgid "Update Event"
+msgstr ""
+
+#: includes/event-management/edit_event.php:283
+msgid "Event Page On Facebook"
+msgstr ""
+
+#: includes/event-management/edit_event.php:388
+msgid "Event Staff"
+msgstr ""
+
+#: includes/event-management/edit_event.php:438
+msgid "Short URL"
+msgstr ""
+
+#: includes/event-management/edit_event.php:439
+msgid "Full URL"
+msgstr ""
+
+#: includes/event-management/edit_event.php:482
+msgid "Event Start Date"
+msgstr ""
+
+#: includes/event-management/edit_event.php:483
+msgid "Event End Date"
+msgstr ""
+
+#: includes/event-management/edit_event.php:586
+msgid "Google Map Link (for email):"
+msgstr ""
+
+#: includes/event-management/edit_event.php:660
+msgid "Use a "
+msgstr ""
+
+#: includes/event-management/edit_event.php:660
+msgid "pre-existing email"
+msgstr ""
+
+#: includes/event-management/event_functions.php:14
+#: includes/event-management/event_functions.php:21
+msgid "Reg Start Time"
+msgstr ""
+
+#: includes/event-management/event_functions.php:14
+msgid "Reg End Time"
+msgstr ""
+
+#: includes/event-management/event_functions.php:21
+msgid "Reg End Time:"
+msgstr ""
+
+#: includes/event-management/event_functions.php:37
+#: includes/event-management/event_functions.php:56
+msgid "Start"
+msgstr ""
+
+#: includes/event-management/event_functions.php:37
+msgid "End"
+msgstr ""
+
+#: includes/event-management/event_functions.php:37
+#: includes/event-management/event_functions.php:42
+msgid "Qty"
+msgstr ""
+
+#: includes/event-management/event_functions.php:42
+msgid "Start:"
+msgstr ""
+
+#: includes/event-management/event_functions.php:42
+msgid "End:"
+msgstr ""
+
+#: includes/event-management/event_functions.php:50
+msgid "Add Additional Time"
+msgstr ""
+
+#: includes/event-management/event_functions.php:56
+msgid "End: "
+msgstr ""
+
+#: includes/event-management/event_functions.php:56
+msgid "Qty: "
+msgstr ""
+
+#: includes/event-management/event_functions.php:85
+#: includes/event-management/event_functions.php:99
+#: includes/event-management/event_functions.php:101
+#: includes/event-management/event_functions.php:114
+msgid "Key:"
+msgstr ""
+
+#: includes/event-management/event_functions.php:90
+#: includes/event-management/event_functions.php:99
+#: includes/event-management/event_functions.php:101
+#: includes/event-management/event_functions.php:114
+msgid "Value:"
+msgstr ""
+
+#: includes/event-management/event_functions.php:92
+#: includes/event-management/event_functions.php:99
+#: includes/event-management/event_functions.php:101
+#: includes/event-management/event_functions.php:114
+msgid "Remove Meta"
+msgstr ""
+
+#: includes/event-management/event_functions.php:106
+msgid "Add A Meta Box"
+msgstr ""
+
+#: includes/event-management/event_functions.php:138
+msgid "Standard Pricing"
+msgstr ""
+
+#: includes/event-management/event_functions.php:147
+#: includes/event-management/event_functions.php:200
+msgid "Price"
+msgstr ""
+
+#: includes/event-management/event_functions.php:149
+#: includes/event-management/event_functions.php:174
+msgid "Surcharge:"
+msgstr ""
+
+#: includes/event-management/event_functions.php:150
+#: includes/event-management/event_functions.php:177
+msgid "Surcharge Type:"
+msgstr ""
+
+#: includes/event-management/event_functions.php:154
+#: includes/event-management/event_functions.php:179
+#: includes/event-management/event_functions.php:200
+msgid "Flat Rate"
+msgstr ""
+
+#: includes/event-management/event_functions.php:155
+#: includes/event-management/event_functions.php:180
+#: includes/event-management/event_functions.php:200
+msgid "Percent"
+msgstr ""
+
+#: includes/event-management/event_functions.php:160
+#: includes/event-management/event_functions.php:182
+#: includes/event-management/event_functions.php:200
+msgid "Remove Attendee"
+msgstr ""
+
+#: includes/event-management/event_functions.php:170
+msgid "Price:"
+msgstr ""
+
+#: includes/event-management/event_functions.php:189
+msgid "enter 0.00 for free events, enter 2 place decimal i.e."
+msgstr ""
+
+#: includes/event-management/event_functions.php:192
+msgid "Add A Price"
+msgstr ""
+
+#: includes/event-management/event_functions.php:200
+msgid "Surcharge"
+msgstr ""
+
+#: includes/event-management/event_functions.php:200
+msgid "Surcharge Type"
+msgstr ""
+
+#: includes/event-management/event_functions.php:236
+msgid "No Categories"
+msgstr ""
+
+#: includes/event-management/event_list.php:52
+msgid "Advanced filters are now available in the premium versions."
+msgstr ""
+
+#: includes/event-management/event_list.php:62
+msgid "row(s) starting from record #"
+msgstr ""
+
+#: includes/event-management/event_list.php:159
+msgid "Venue"
+msgstr ""
+
+#: includes/event-management/event_list.php:169
+msgid "Start Time"
+msgstr ""
+
+#: includes/event-management/event_list.php:174
+msgid "DoW"
+msgstr ""
+
+#: includes/event-management/event_list.php:179
+msgid "Reg Begins"
+msgstr ""
+
+#: includes/event-management/event_list.php:200
+msgid "Instructor"
+msgstr ""
+
+#: includes/event-management/event_list.php:204
+msgid "Actions"
+msgstr ""
+
+#: includes/event-management/event_list.php:251
+msgid "View"
+msgstr ""
+
+#: includes/event-management/event_list.php:290
+msgid "Get Short URL/Shortcode"
+msgstr ""
+
+#: includes/event-management/event_list.php:296
+msgid "Email Attendees"
+msgstr ""
+
+#: includes/event-management/event_list.php:299
+msgid "<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class=\"updated fade\">"
+msgstr ""
+
+#: includes/event-management/event_list.php:348
+msgid "Delete Events(s)"
+msgstr ""
+
+#: includes/event-management/event_list.php:352
+msgid "Export All Attendee Data"
+msgstr ""
+
+#: includes/event-management/event_list.php:353
+msgid "Export All Event Data"
+msgstr ""
+
+#: includes/event-management/event_list.php:397
+msgid "Coupon/Promo Code"
+msgstr ""
+
+#: includes/event-management/event_list.php:397
+msgid "This is used to apply discounts to events."
+msgstr ""
+
+#: includes/event-management/event_list.php:397
+msgid "A coupon or promo code could can be anything you want. For example: Say you have an event that costs"
+msgstr ""
+
+#: includes/event-management/event_list.php:397
+msgid "If you supplied a promo like \"PROMO50\" and entered 50.00 into the \"Discount w/Promo Code\" field your event will be discounted"
+msgstr ""
+
+#: includes/event-management/event_list.php:397
+msgid "Bringing the cost of the event to"
+msgstr ""
+
+#: includes/event-management/event_list.php:400
+msgid "Event Identifier"
+msgstr ""
+
+#: includes/event-management/event_list.php:400
+msgid "This should be a unique identifier for the event. Example: \"Event1\" (without qoutes.)</p><p>The unique ID can also be used in individual pages using the"
+msgstr ""
+
+#: includes/event-management/event_list.php:400
+msgid "Unique Event ID"
+msgstr ""
+
+#: includes/event-management/index.php:18
+#: includes/event-management/index.php:188
+msgid "Attendee Reports"
+msgstr ""
+
+#: includes/event-management/index.php:20
+#: includes/event-management/index.php:30
+msgid "Add New Attendee"
+msgstr ""
+
+#: includes/event-management/index.php:24
+msgid "Edit Attendee Data"
+msgstr ""
+
+#: includes/event-management/index.php:27
+msgid "Edit Attendee Payment Record"
+msgstr ""
+
+#: includes/event-management/index.php:33
+msgid "Event Newsletter"
+msgstr ""
+
+#: includes/event-management/index.php:37
+msgid "Event Management"
+msgstr ""
+
+#: includes/event-management/index.php:161
+msgid "These emails will override the custom email if a pre-existing email is selected. You must select \"Yes\" in the \"Send custom confirmation emails for this event?\" above."
+msgstr ""
+
+#: includes/event-management/index.php:170
+msgid "Waitlist Events"
+msgstr ""
+
+#: includes/event-management/index.php:171
+msgid "These types of events can be used as a overflow or waiting list events."
+msgstr ""
+
+#: includes/event-management/index.php:172
+msgid "If an event is set up as an \"Waitlist Event,\" it can be set to not appear in your event listings template. You may need to customize your event_listing.php file to make this work. For more information, please"
+msgstr ""
+
+#: includes/event-management/index.php:172
+#: includes/event-management/index.php:186
+#: includes/event-management/index.php:187
+msgid "visit the forums"
+msgstr ""
+
+#: includes/event-management/index.php:175
+msgid "Off-site Registration Page"
+msgstr ""
+
+#: includes/event-management/index.php:176
+msgid "If an off-site registration page is entered, it will override your registration page and send attendees to the URL that is entered."
+msgstr ""
+
+#: includes/event-management/index.php:179
+msgid "Alternate Email Address"
+msgstr ""
+
+#: includes/event-management/index.php:180
+msgid "If an alternate email address is entered. Admin email notifications wil be sent to this address instead."
+msgstr ""
+
+#: includes/event-management/index.php:183
+msgid "Event Status Types"
+msgstr ""
+
+#: includes/event-management/index.php:185
+msgid "This type if event should always appear in the event lsiting. It is a live event (not deleted, ongoing or secondary.)"
+msgstr ""
+
+#: includes/event-management/index.php:186
+msgid "This type of event can be hidden and used as a waiting list for a primary event. Template customizations may be required. For more information, please"
+msgstr ""
+
+#: includes/event-management/index.php:187
+msgid "This type of an event can be set to appear in your event listings and display a registration page. Template customizations are required. For more information, please"
+msgstr ""
+
+#: includes/event-management/index.php:188
+msgid "This is event type will not appear in the event listings and will not dispaly a registrations page. Deleted events can still be accessed in the"
+msgstr ""
+
+#: includes/event-management/index.php:188
+msgid "page"
+msgstr ""
+
+#: includes/event-management/insert_event.php:311
+#: includes/event-management/update_event.php:424
+msgid "General Admission"
+msgstr ""
+
+#: includes/event-management/insert_event.php:312
+#: includes/event-management/update_event.php:425
+msgid "Members Admission"
+msgstr ""
+
+#: includes/event-management/insert_event.php:323
+#: includes/event-management/update_event.php:433
+msgid "Free"
+msgstr ""
+
+#: includes/event-management/insert_event.php:344
+#: includes/event-management/update_event.php:480
+msgid "There was error finding a post template. Please verify your post templates are available."
+msgstr ""
+
+#: includes/event-management/insert_event.php:405
+msgid "has been added for "
+msgstr ""
+
+#: includes/event-management/insert_event.php:405
+msgid "Edit this event?"
+msgstr ""
+
+#: includes/event-management/update_event.php:587
+msgid "Event details updated for"
+msgstr ""
+
+#: includes/form-builder/index.php:17
+msgid "Manage Questions"
+msgstr ""
+
+#: includes/form-builder/index.php:19
+#: includes/form-builder/index.php:148
+msgid "Add New Question"
+msgstr ""
+
+#: includes/form-builder/index.php:63
+#: includes/form-builder/groups/index.php:58
+#: includes/form-builder/groups/index.php:73
+msgid "This function is not available in the free version of Event Espresso."
+msgstr ""
+
+#: includes/form-builder/index.php:81
+msgid "Question"
+msgstr ""
+
+#: includes/form-builder/index.php:84
+msgid "Values"
+msgstr ""
+
+#: includes/form-builder/index.php:90
+msgid "Required"
+msgstr ""
+
+#: includes/form-builder/index.php:93
+msgid "Admin Only"
+msgstr ""
+
+#: includes/form-builder/index.php:147
+msgid "Delete Question"
+msgstr ""
+
+#: includes/form-builder/groups/edit_group.php:32
+msgid "Group Information"
+msgstr ""
+
+#: includes/form-builder/groups/index.php:16
+msgid "Manage Question Groups"
+msgstr ""
+
+#: includes/form-builder/groups/index.php:87
+msgid "Group Name"
+msgstr ""
+
+#: includes/form-builder/groups/index.php:91
+msgid "Indentifier"
+msgstr ""
+
+#: includes/form-builder/groups/index.php:139
+msgid "Delete Question Group"
+msgstr ""
+
+#: includes/form-builder/groups/index.php:152
+msgid "Question Groups Overview"
+msgstr ""
+
+#: includes/form-builder/groups/index.php:153
+msgid "Question Groups are pre-populated groups of "
+msgstr ""
+
+#: includes/form-builder/groups/index.php:153
+msgid "that can be added your events. These groups of questions are what make up your customized regsistration forms. The personal information group is required for all events and is shown by default on all registration forms."
+msgstr ""
+
+#: includes/form-builder/groups/index.php:155
+msgid "Question Groups can be organized or re-ordered by dragging and dropping individual table rows into the desired positions."
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:24
+msgid "Edit Question"
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:30
+msgid "Edit the question using the form below.  By default all participants will be asked for their first name, last name, and email address."
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:45
+msgid "Text"
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:46
+msgid "Text Area"
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:47
+msgid "Single"
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:48
+msgid "Drop Down"
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:49
+msgid "Multiple"
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:63
+msgid "Mark this question as required."
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:71
+msgid "Admin View Only:"
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:73
+msgid "Only the administrator can see this field."
+msgstr ""
+
+#: includes/form-builder/questions/edit_question.php:105
+msgid "Nothing found!"
+msgstr ""
+
+#: includes/functions/admin.php:102
+msgid "No ID  Supplied"
+msgstr ""
+
+#: includes/functions/admin.php:435
+#: includes/functions/admin.php:683
+#: includes/functions/admin.php:696
+msgid "No country selected"
+msgstr ""
+
+#: includes/functions/admin.php:832
+msgid "New @ Event Espresso"
+msgstr ""
+
+#: includes/functions/admin.php:839
+msgid "From the Blog"
+msgstr ""
+
+#: includes/functions/admin.php:841
+msgid "From the Forums"
+msgstr ""
+
+#: includes/functions/admin.php:850
+msgid "Helpful Plugin Links"
+msgstr ""
+
+#: includes/functions/admin.php:854
+msgid "Installation &amp; Usage Guide"
+msgstr ""
+
+#: includes/functions/admin.php:855
+msgid "Customization Forums"
+msgstr ""
+
+#: includes/functions/admin.php:856
+msgid "Plugin Support Forums"
+msgstr ""
+
+#: includes/functions/admin.php:857
+msgid "Feature Request Forums"
+msgstr ""
+
+#: includes/functions/admin.php:858
+msgid "Bug Submission Forums"
+msgstr ""
+
+#: includes/functions/admin.php:859
+msgid "Changelog"
+msgstr ""
+
+#: includes/functions/admin.php:860
+msgid "Plugins and Addons"
+msgstr ""
+
+#: includes/functions/admin.php:870
+msgid "Sponsors"
+msgstr ""
+
+#: includes/functions/admin.php:890
+msgid "Email Confirmations"
+msgstr ""
+
+#: includes/functions/admin.php:891
+msgid "For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email."
+msgstr ""
+
+#: includes/functions/admin.php:983
+#: includes/functions/admin.php:985
+msgid "Event Espresso must be configured. Go to"
+msgstr ""
+
+#: includes/functions/admin.php:983
+#: includes/functions/admin.php:985
+msgid "the Organization Settings page"
+msgstr ""
+
+#: includes/functions/admin.php:983
+#: includes/functions/admin.php:985
+msgid "to configure the plugin \"Page Settings.\""
+msgstr ""
+
+#: includes/functions/admin.php:992
+#: includes/functions/admin.php:994
+msgid "Event Espresso attendee data needs to be updated. Please visit the "
+msgstr ""
+
+#: includes/functions/admin.php:992
+#: includes/functions/admin.php:994
+msgid "Support page"
+msgstr ""
+
+#: includes/functions/admin.php:992
+#: includes/functions/admin.php:994
+msgid "to configure update the attendee information."
+msgstr ""
+
+#: includes/functions/admin.php:1019
+msgid "Assign a Waitlist Event? "
+msgstr ""
+
+#: includes/functions/admin.php:1020
+msgid "Overflow Event"
+msgstr ""
+
+#: includes/functions/admin.php:1053
+msgid "Select Value"
+msgstr ""
+
+#: includes/functions/admin.php:1066
+#: includes/functions/admin.php:1165
+msgid "No Results"
+msgstr ""
+
+#: includes/functions/admin.php:1092
+msgid "Show All Categories"
+msgstr ""
+
+#: includes/functions/admin.php:1152
+msgid "Select a Month/Year"
+msgstr ""
+
+#: includes/functions/attendee_functions.php:48
+msgid "Form Questions:"
+msgstr ""
+
+#: includes/functions/cart.php:556
+#, php-format
+msgid "For %s, please make sure to select between 1 and %d attendees or delete it from your cart."
+msgstr ""
+
+#: includes/functions/cart.php:576
+msgid "Confirm and go to payment page"
+msgstr ""
+
+#: includes/functions/cart.php:578
+msgid " or "
+msgstr ""
+
+#: includes/functions/cart.php:581
+msgid "Edit Cart"
+msgstr ""
+
+#: includes/functions/cart.php:779
+msgid "Email"
+msgstr ""
+
+#: includes/functions/cart.php:817
+msgid "Add to cart"
+msgstr ""
+
+#: includes/functions/cart.php:831
+msgid "View Cart"
+msgstr ""
+
+#: includes/functions/cart.php:858
+msgid "It looks like you are attempting to refresh a page after completing your registration or your cart is empty.  Please go to the events page and try again."
+msgstr ""
+
+#: includes/functions/cart.php:931
+msgid " Early Pricing"
+msgstr ""
+
+#: includes/functions/cart.php:988
+#, php-format
+msgid "You can register a maximum of %d attendees for this event."
+msgstr ""
+
+#: includes/functions/cart.php:998
+msgid "Free Event"
+msgstr ""
+
+#: includes/functions/cart.php:999
+msgid "free event"
+msgstr ""
+
+#: includes/functions/email.php:125
+msgid "(Primary Attendee)"
+msgstr ""
+
+#: includes/functions/email.php:358
+msgid "Registration Summary:"
+msgstr ""
+
+#: includes/functions/email.php:371
+msgid "Additional Information:"
+msgstr ""
+
+#: includes/functions/email.php:648
+#: includes/functions/email.php:887
+#: includes/functions/email.php:1087
+msgid "Download Ticket Now!"
+msgstr ""
+
+#: includes/functions/email.php:805
+msgid "Event Cancellation Notice"
+msgstr ""
+
+#: includes/functions/email.php:806
+msgid " has been cancelled."
+msgstr ""
+
+#: includes/functions/email.php:807
+msgid "For more information, please email "
+msgstr ""
+
+#: includes/functions/email.php:1199
+msgid "Email Sent to "
+msgstr ""
+
+#: includes/functions/export.php:81
+#: includes/functions/export.php:275
+msgid "all-events"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Group"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Payment Method"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Reg Date"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Pay Status"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Type of Payment"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Date Paid"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Price Option"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Website Check-in"
+msgstr ""
+
+#: includes/functions/export.php:172
+msgid "Tickets Scanned"
+msgstr ""
+
+#: includes/functions/export.php:386
+msgid "No participant data has been collected."
+msgstr ""
+
+#: includes/functions/export.php:392
+msgid "This Is Not A Valid Selection!"
+msgstr ""
+
+#: includes/functions/main.php:68
+msgid "Add More Attendees? (click to toggle, limit "
+msgstr ""
+
+#: includes/functions/main.php:68
+msgid "Add an Additonal Attendee"
+msgstr ""
+
+#: includes/functions/main.php:117
+msgid "ONGOING"
+msgstr ""
+
+#: includes/functions/main.php:124
+msgid "WAITLIST"
+msgstr ""
+
+#: includes/functions/main.php:131
+msgid "DRAFT"
+msgstr ""
+
+#: includes/functions/main.php:145
+msgid "DENIED"
+msgstr ""
+
+#: includes/functions/main.php:154
+msgid "CLOSED"
+msgstr ""
+
+#: includes/functions/main.php:154
+msgid "Closed"
+msgstr ""
+
+#: includes/functions/main.php:161
+msgid "NOT_OPEN"
+msgstr ""
+
+#: includes/functions/main.php:161
+msgid "Not Open"
+msgstr ""
+
+#: includes/functions/main.php:168
+msgid "OPEN"
+msgstr ""
+
+#: includes/functions/main.php:168
+msgid "Open"
+msgstr ""
+
+#: includes/functions/main.php:177
+msgid "EXPIRED"
+msgstr ""
+
+#: includes/functions/main.php:177
+msgid "Expired"
+msgstr ""
+
+#: includes/functions/main.php:184
+msgid "ACTIVE"
+msgstr ""
+
+#: includes/functions/main.php:191
+msgid "NOT_ACTIVE"
+msgstr ""
+
+#: includes/functions/main.php:191
+msgid "Not Active"
+msgstr ""
+
+#: includes/functions/main.php:198
+msgid "DELETED"
+msgstr ""
+
+#: includes/functions/main.php:561
+#: includes/functions/main.php:692
+msgid " (including "
+msgstr ""
+
+#: includes/functions/main.php:607
+#: includes/functions/main.php:610
+msgid "0.00"
+msgstr ""
+
+#: includes/functions/main.php:655
+msgid "Choose an Option: "
+msgstr ""
+
+#: includes/functions/main.php:721
+msgid "No prices id results."
+msgstr ""
+
+#: includes/functions/main.php:936
+msgid "PayPal"
+msgstr ""
+
+#: includes/functions/main.php:942
+msgid "CC"
+msgstr ""
+
+#: includes/functions/main.php:948
+msgid "Cash/Check"
+msgstr ""
+
+#: includes/functions/time_date.php:35
+#: includes/functions/time_date.php:37
+#: includes/functions/time_date.php:39
+msgid "in"
+msgstr ""
+
+#: includes/functions/time_date.php:35
+#: includes/functions/time_date.php:45
+#: includes/functions/time_date.php:80
+#: includes/functions/time_date.php:87
+#: includes/functions/time_date.php:121
+#: includes/functions/time_date.php:130
+msgid "hours"
+msgstr ""
+
+#: includes/functions/time_date.php:37
+msgid "today"
+msgstr ""
+
+#: includes/functions/time_date.php:37
+#: includes/functions/time_date.php:123
+msgid "minutes"
+msgstr ""
+
+#: includes/functions/time_date.php:41
+#: includes/functions/time_date.php:83
+#: includes/functions/time_date.php:126
+msgid "day"
+msgstr ""
+
+#: includes/functions/time_date.php:43
+#: includes/functions/time_date.php:85
+#: includes/functions/time_date.php:128
+msgid "days"
+msgstr ""
+
+#: includes/functions/time_date.php:45
+#: includes/functions/time_date.php:87
+#: includes/functions/time_date.php:130
+msgid "and"
+msgstr ""
+
+#: includes/functions/time_date.php:80
+#: includes/functions/time_date.php:87
+msgid "ago"
+msgstr ""
+
+#: includes/functions/time_date.php:117
+msgid "allday"
+msgstr ""
+
+#: includes/functions/time_date.php:119
+msgid "duration"
+msgstr ""
+
+#: includes/functions/time_date.php:181
+msgid "Start Time:</span> "
+msgstr ""
+
+#: includes/functions/time_date.php:184
+msgid "End Time: "
+msgstr ""
+
+#: includes/functions/time_date.php:184
+msgid " to "
+msgstr ""
+
+#: includes/functions/time_date.php:190
+msgid "Choose an Event Time: "
+msgstr ""
+
+#: includes/functions/time_date.php:203
+msgid "available spaces"
+msgstr ""
+
+#: includes/functions/time_date.php:295
+msgid "Start Time: "
+msgstr ""
+
+#: includes/functions/time_date.php:297
+msgid "<br />End Time: "
+msgstr ""
+
+#: includes/functions/time_date.php:467
+msgid "Choose a city in the same timezone as the event."
+msgstr ""
+
+#: includes/functions/time_date.php:470
+#, php-format
+msgid "<abbr title=\"Coordinated Universal Time\">UTC</abbr> time is <code>%s</code>"
+msgstr ""
+
+#: includes/functions/time_date.php:472
+#, php-format
+msgid "Local time is <code>%1$s</code>"
+msgstr ""
+
+#: includes/functions/time_date.php:483
+msgid "This timezone is currently in daylight saving time."
+msgstr ""
+
+#: includes/functions/time_date.php:485
+msgid "This timezone is currently in standard time."
+msgstr ""
+
+#: includes/functions/time_date.php:504
+#, php-format
+msgid "Daylight saving time begins on: <code>%s</code>."
+msgstr ""
+
+#: includes/functions/time_date.php:505
+#, php-format
+msgid "Standard time begins  on: <code>%s</code>."
+msgstr ""
+
+#: includes/functions/time_date.php:509
+msgid "This timezone does not observe daylight saving time."
+msgstr ""
+
+#: includes/process-registration/add_attendees_to_db.php:123
+msgid "Sorry, you did not enter the correct anti-spam phrase. Please click your browser's back button and try again."
+msgstr ""
+
+#: includes/process-registration/add_attendees_to_db.php:269
+msgid " events"
+msgstr ""
+
+#: includes/process-registration/add_attendees_to_db.php:340
+msgid "Edit Registrant Information"
+msgstr ""
+
+#: includes/process-registration/add_attendees_to_db.php:343
+msgid "Your registration is not complete until payment is received."
+msgstr ""
+
+#: includes/process-registration/add_attendees_to_db.php:346
+msgid "Amount due: "
+msgstr ""
+
+#: includes/process-registration/add_attendees_to_db.php:349
+#: includes/process-registration/add_attendees_to_db.php:378
+msgid "A confirmation email has been sent with additional details of your registration."
+msgstr ""
+
+#: includes/process-registration/add_attendees_to_db.php:351
+msgid "Please choose a payment option:"
+msgstr ""
+
+#: includes/process-registration/add_attendees_to_db.php:376
+msgid "Thank you! Your registration is confirmed for"
+msgstr ""
+
+#: includes/process-registration/attendee_edit_record.php:125
+msgid "Registration For:"
+msgstr ""
+
+#: includes/process-registration/payment_page.php:138
+msgid "Discount of "
+msgstr ""
+
+#: includes/process-registration/payment_page.php:138
+msgid " applied"
+msgstr ""
+
+#: includes/process-registration/payment_page.php:395
+msgid "Please check your email for payment information."
+msgstr ""
+
+#: post-type-samples/page-event_list.php:128
+#: post-type-samples/single-espresso_event.php:39
+msgid "Pages:"
+msgstr ""
+
+#: post-type-samples/single-espresso_event.php:52
+#, php-format
+msgid "View all posts by %s <span class=\"meta-nav\">&rarr;</span>"
+msgstr ""
+
+#: templates/attendee_list.php:56
+msgid "Attendee Listing For: "
+msgstr ""
+
+#: templates/confirmation_display.php:10
+msgid "Please verify your registration details:"
+msgstr ""
+
+#: templates/confirmation_display.php:15
+msgid "Event Name:"
+msgstr ""
+
+#: templates/confirmation_display.php:21
+msgid "Price per attendee:"
+msgstr ""
+
+#: templates/confirmation_display.php:21
+msgid "Type/Price per attendee:"
+msgstr ""
+
+#: templates/confirmation_display.php:27
+msgid "Attendee Name:"
+msgstr ""
+
+#: templates/confirmation_display.php:60
+msgid "Total Price:"
+msgstr ""
+
+#: templates/confirmation_display.php:66
+#: templates/confirmation_display.php:82
+msgid "Confirm Registration"
+msgstr ""
+
+#: templates/confirmation_display.php:70
+msgid "Additional Information for:"
+msgstr ""
+
+#: templates/event_list_display.php:39
+msgid "Regsitration is Closed"
+msgstr ""
+
+#: templates/event_list_display.php:64
+msgid "Price: "
+msgstr ""
+
+#: templates/event_list_display.php:88
+#: templates/event_list_display.php:95
+msgid "Available Spaces:"
+msgstr ""
+
+#: templates/event_list_display.php:90
+msgid "Join Waiting List"
+msgstr ""
+
+#: templates/event_list_display.php:99
+msgid "Register for this Event"
+msgstr ""
+
+#: templates/event_list_display.php:113
+msgid "Add to Cart and Add More Events"
+msgstr ""
+
+#: templates/event_list_display.php:132
+msgid "View Details"
+msgstr ""
+
+#: templates/event_post.php:63
+msgid "View Map"
+msgstr ""
+
+#: templates/event_post.php:63
+#: templates/event_post.php:69
+msgid "Register"
+msgstr ""
+
+#: templates/multi_registration_page.php:153
+#: templates/registration_page.php:178
+msgid "We are sorry but this event has reached the maximum number of attendees!"
+msgstr ""
+
+#: templates/multi_registration_page.php:154
+#: templates/registration_page.php:179
+msgid "Please check back in the event someone cancels."
+msgstr ""
+
+#: templates/multi_registration_page.php:155
+#: templates/registration_page.php:180
+msgid "Current Number of Attendees:"
+msgstr ""
+
+#: templates/multi_registration_page.php:185
+#: templates/registration_page.php:203
+msgid "<h3>This event has expired or is no longer available.</h3>"
+msgstr ""
+
+#: templates/multi_registration_page_display.php:17
+msgid "Price Type:"
+msgstr ""
+
+#: templates/multi_registration_page_display.php:105
+#: templates/multi_registration_page_display.php:158
+msgid "Attendee "
+msgstr ""
+
+#: templates/payment_overview.php:2
+msgid "Payment Overview"
+msgstr ""
+
+#: templates/payment_overview.php:3
+msgid "Class/Event:"
+msgstr ""
+
+#: templates/payment_overview.php:4
+msgid "Primary Attendee:"
+msgstr ""
+
+#: templates/payment_overview.php:5
+msgid "Payment Type:"
+msgstr ""
+
+#: templates/payment_overview.php:6
+msgid "Payment Date:"
+msgstr ""
+
+#: templates/payment_overview.php:7
+msgid "Amount Paid/Owed:"
+msgstr ""
+
+#: templates/payment_overview.php:9
+msgid "Registration ID:"
+msgstr ""
+
+#: templates/payment_page.php:13
+#: templates/payment_page.php:25
+#: templates/pending_approval.php:10
+msgid "Your Registration ID:"
+msgstr ""
+
+#: templates/pending_approval.php:4
+msgid "Your registration is not complete until admin approves."
+msgstr ""
+
+#: templates/return_payment.php:21
+msgid "Pending Payment"
+msgstr ""
+
+#: templates/return_payment.php:39
+msgid "Sorry, there are not enough spaces available to complete your registration."
+msgstr ""
+
+#: templates/return_payment.php:40
+msgid "Quantity in your Party:"
+msgstr ""
+
+#: templates/return_payment.php:41
+msgid "Spaces Available:"
+msgstr ""
+
+#: templates/shopping_cart.php:115
+msgid "Enter Coupon Code "
+msgstr ""
+
+#: templates/shopping_cart.php:127
+msgid "REFRESH TOTAL"
+msgstr ""
+
+#: templates/shopping_cart.php:130
+msgid "Total ("
+msgstr ""
+
+#: templates/shopping_cart.php:138
+msgid "Continue to registration page"
+msgstr ""
+
+#: templates/widget.php:8
+msgid "A widget to display your upcoming events."
+msgstr ""
+
+#: templates/widget.php:14
+msgid "Event Espresso Widget"
+msgstr ""
+
+#: templates/widget.php:154
+msgid "false"
+msgstr ""
+
+#: templates/widget.php:173
+msgid "Event Category:"
+msgstr ""
+
+#: templates/widget.php:178
+msgid "Limit:"
+msgstr ""
+
+#: templates/widget.php:182
+msgid "Optional Settings:"
+msgstr ""
+
+#: templates/widget.php:183
+msgid "Show Expired Events?"
+msgstr ""
+
+#: templates/widget.php:184
+msgid "Show Waitlist Events?"
+msgstr ""
+
+#: templates/widget.php:185
+msgid "Show Deleted Events?"
+msgstr ""
+
+#: templates/widget.php:186
+msgid "Show Recurring Events?"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:95
+msgid "Calendar details saved."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:150
+msgid "Directions:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:151
+msgid " Add [ESPRESSO_CALENDAR] to any page or post to display a calendar of Event Espresso events. Use [ESPRESSO_CALENDAR event_category_id=\"your_category_identifier\"] to show events of a certain category (also creates a CSS using the category_identifier as the class name.) Use [ESPRESSO_CALENDAR show_expired=\"true\"] to show expired events, can also be used in  conjunction with the category ID."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:152
+msgid "Examples Shortcodes:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:158
+msgid "Styles/Colors:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:159
+msgid "To edit the calendar styles, copy the CSS file located in the plugin folder to your \"wp-content/uploads/espresso/\" directory. Then edit as needed. Refer to <a href=\"http://arshaw.com/fullcalendar/docs/event_rendering/Colors/\" target=\"_blank\">this page</a> for an example of styling the calendar and colors."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:162
+msgid "Category Colors:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:163
+msgid "Event Categories can have their own colors on the calendar. To use this feature, simply create a class in theme CSS file with the names of your event categories. For more inforamtion <a href=\"http://eventespresso.com/forums/?p=650\" target=\"_blank\">please visit the tutorial</a> for this topic."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:170
+msgid "Basic Settings"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:175
+msgid "First Day of the Week:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:177
+msgid "(Sunday=0, Monday=1, Tuesday=2, etc.)"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:183
+msgid "Show Weekends:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:195
+msgid "Height:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:196
+msgid "Will make the entire calendar (including header) a pixel height."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:200
+msgid "Page(s) displaying the calendar:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:201
+msgid "This tells the plugin to load the calendar CSS file on these pages. This should be a comma seperated list of page ids. The default value is \"0\", meaning the CSS will load on all pages of your website. The list of page ids will need to be updated if you add/delete/move your calendar page(s). If you have are uncertian on what this setting does, please do not modify the default value."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:205
+msgid "Links go to post or registration page?"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:206
+msgid "If you are using the \"Create a Post\" feature. Use this option to link to the posts that are created by Event Espresso."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:207
+msgid "Registration Page"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:211
+#: ../espresso-calendar/espresso-calendar.php:295
+msgid "Save Calendar Options"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:216
+msgid "Advanced Settings"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:224
+msgid "Header Style:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:224
+msgid "Defines the buttons and title at the top of the calendar."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:225
+#: ../espresso-calendar/espresso-calendar.php:234
+#: ../espresso-calendar/espresso-calendar.php:249
+#: ../espresso-calendar/espresso-calendar.php:257
+#: ../espresso-calendar/espresso-calendar.php:265
+#: ../espresso-calendar/espresso-calendar.php:271
+#: ../espresso-calendar/espresso-calendar.php:277
+#: ../espresso-calendar/espresso-calendar.php:283
+msgid "Example:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:227
+#: ../espresso-calendar/espresso-calendar.php:243
+#: ../espresso-calendar/espresso-calendar.php:258
+msgid "More Ino:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:233
+msgid "Button Text:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:233
+msgid "Text that will be displayed on buttons of the header."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:247
+msgid "Title Format:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:248
+#: ../espresso-calendar/espresso-calendar.php:256
+msgid "For date formatting options."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:250
+msgid "For date formatting options, please refer to: "
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:255
+msgid "Column Format:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:263
+msgid "Month Names:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:264
+msgid "Full names of months."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:269
+msgid "Month Names Short:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:270
+msgid "Abbreviated names of months."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:275
+msgid "Day Names:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:276
+msgid "Full names of days-of-week."
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:281
+msgid "Day Names Short:"
+msgstr ""
+
+#: ../espresso-calendar/espresso-calendar.php:282
+msgid "Abbreviated names of days-of-week."
+msgstr ""
+
+#: ../espresso-groupons/event_management_functions.php:4
+#: ../espresso-groupons/event_management_functions.php:11
+msgid "Allow GROUPON codes?"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:8
+msgid "Manage Groupon Codes"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:10
+#: ../espresso-groupons/groupons_admin_page.php:98
+msgid "Add New Groupon Code"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:34
+msgid "Groupon Code(s) have been successfully deleted from the database."
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:49
+#: ../espresso-groupons/groupons_admin_page.php:51
+#: ../espresso-groupons/groupons_admin_page.php:68
+#: ../espresso-groupons/groupons_admin_page.php:70
+msgid "The groupon code "
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:83
+msgid "Add a Groupon Code"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:89
+#: ../espresso-groupons/groupons_admin_page.php:137
+msgid "Groupon Code: "
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:91
+#: ../espresso-groupons/groupons_admin_page.php:139
+msgid "Groupon Status: "
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:93
+#: ../espresso-groupons/groupons_admin_page.php:142
+msgid "Used"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:95
+#: ../espresso-groupons/groupons_admin_page.php:145
+msgid "Groupon Holder: "
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:130
+msgid "Edit Groupon Code:"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:148
+msgid "Update Groupon Code"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:169
+msgid "Code"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:171
+msgid "Groupon Holder"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:187
+msgid "USED"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:198
+msgid "Edit Groupon"
+msgstr ""
+
+#: ../espresso-groupons/groupons_admin_page.php:208
+msgid "Delete Groupon"
+msgstr ""
+
+#: ../espresso-groupons/use_groupon_code.php:19
+msgid "<p id=\"event_espresso_valid_groupon\"><strong>You are using groupon code:</strong> "
+msgstr ""
+
+#: ../espresso-groupons/use_groupon_code.php:43
+msgid "Sorry, that groupon code is invalid or has already been used."
+msgstr ""
+
+#: ../espresso-groupons/use_groupon_code.php:52
+msgid "Do you have a GROUPON code?"
+msgstr ""
+
+#: ../espresso-mailchimp/mailchimp.view.class.php:58
+#: ../espresso-mailchimp/mailchimp.view.class.php:65
+msgid "MailChimp List Integration"
+msgstr ""
+
+#: ../espresso-mailchimp/mailchimp.view.class.php:66
+msgid "The following information will be sent to the selected MailChimp list for future communications <ul><li>Registrant's First Name</li><li>Registrant's Last Name</li><li>Registrant's Email Address</li></ul>"
+msgstr ""
+
+#: ../espresso-mailchimp/mailchimp.view.class.php:79
+msgid "Manage MailChimp Integration Settings"
+msgstr ""
+
+#: ../espresso-mailchimp/mailchimp.view.class.php:82
+msgid "Mail Chimp Integration Settings"
+msgstr ""
+
+#: ../espresso-mailchimp/mailchimp.view.class.php:97
+msgid "MailChimp API Key"
+msgstr ""
+
+#: ../espresso-mailchimp/mailchimp.view.class.php:98
+msgid "If you do not have a MailChimp API key, please <a href='http://kb.mailchimp.com/article/where-can-i-find-my-api-key/' target='_blank'>click here</a> to learn how to create one. </p><p>An API key is required for this plugin."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:12
+msgid "Events Profile Information"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:17
+msgid "Address/Street/Number"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:21
+msgid "Please enter your Address/Street/Number."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:25
+msgid "City/Town/Village"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:29
+msgid "Please enter your City/Town/Village."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:33
+msgid "State/County/Province"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:37
+msgid "Please enter your State/County/Province."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:41
+msgid "Zip/Postal Code"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:45
+msgid "Please enter your Zip/Postal Code."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:49
+msgid "Phone Number"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:53
+msgid "Please enter your Phone Number."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:91
+msgid "My Events"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:111
+msgid "You are not logged in."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:112
+msgid "Before you can reserve a spot, you must register."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:113
+#: ../espresso-members/member_functions.php:138
+msgid "Login"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:115
+msgid "New users please"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:117
+msgid "Member registration is closed for this site. Please contact the site owner."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:123
+msgid "Member only event? "
+msgstr ""
+
+#: ../espresso-members/member_functions.php:185
+msgid "Member Pricing"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:192
+msgid "Add A Member Price"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:215
+msgid "(enter 0.00 for free events, enter 2 place decimal i.e. "
+msgstr ""
+
+#: ../espresso-members/member_functions.php:217
+msgid "<span style=\"color:red;\">Note:</span> A non-member price MUST be entered for each row, even if this is a member only event."
+msgstr ""
+
+#: ../espresso-members/member_functions.php:250
+msgid "(enter 0.00 for free events, enter 2 place decimal i.e. 7.00)"
+msgstr ""
+
+#: ../espresso-members/member_functions.php:252
+msgid "<span style=\"color:red;\">Note:</span> A non-member price MUST be entered, even if this is a member only event."
+msgstr ""
+
+#: ../espresso-members/my_events_page.php:11
+msgid "My Events Management"
+msgstr ""
+
+#: ../espresso-members/my_events_page.php:27
+msgid "Your event(s) have been successfully removed from your account."
+msgstr ""
+
+#: ../espresso-members/my_events_page.php:40
+msgid "Payment Status"
+msgstr ""
+
+#: ../espresso-members/my_events_page.php:41
+msgid "Cost"
+msgstr ""
+
+#: ../espresso-members/my_events_page.php:84
+msgid "<h2>Event Information</h2>"
+msgstr ""
+
+#: ../espresso-members/my_events_page.php:88
+msgid "Start Time:"
+msgstr ""
+
+#: ../espresso-members/my_events_page.php:102
+msgid "Cancel Registration"
+msgstr ""
+
+#: ../espresso-members/my_events_page.php:103
+msgid "Your Profile"
+msgstr ""
+
+#: ../espresso-members/user_settings_page.php:10
+msgid "Member settings saved."
+msgstr ""
+
+#: ../espresso-members/user_settings_page.php:18
+msgid "Manage Member Settings"
+msgstr ""
+
+#: ../espresso-members/user_settings_page.php:26
+msgid "Login page (if different from default Wordpress login page): "
+msgstr ""
+
+#: ../espresso-members/user_settings_page.php:29
+msgid "New user registration is currently closed. If you would like to set a custom user regsistration page, you must enable \"Anyone can register\" in your Wordpress \"<a href=\"options-general.php\">General Settings</a>\" page."
+msgstr ""
+
+#: ../espresso-members/user_settings_page.php:31
+msgid "Member registration page (if different from default Wordpress register page): "
+msgstr ""
+
+#: ../espresso-members/user_settings_page.php:35
+msgid "Require login for all events? "
+msgstr ""
+
+#: ../espresso-members/user_settings_page.php:44
+msgid "Save Settings"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:289
+#: ../espresso-permissions/espresso-permissions.php:526
+msgid "Event Espresso - Event Manager Permissions"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:289
+msgid "Permissions"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:290
+msgid "Event Espresso - Event Manager Roles"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:290
+msgid "User Roles"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:292
+msgid "Event Espresso - Locales/Regions"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:292
+msgid "Locales/Regions"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:293
+#: ../espresso-permissions/espresso-permissions.php:426
+msgid "Event Espresso - Regional Managers"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:293
+msgid "Regional Managers"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:443
+#: ../espresso-permissions/espresso-permissions.php:461
+msgid "Event Espresso - User Roles Manager"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:483
+msgid "Manager details saved."
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:516
+msgid "Administrator"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:517
+msgid "Event Admin"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:518
+msgid "Event Manager"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:519
+msgid "Regional Manager"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:534
+msgid "Current Roles/Capabilities"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:559
+#, php-format
+msgid "%1$s <span class=\"count\">(%2$s)</span>"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:562
+msgid "Access to all admin pages and all events/attendees."
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:565
+msgid "Access to selected admin pages below and all events/attendees."
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:568
+msgid "Access to events/attendees created by the user of this role and the selected pages below."
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:571
+msgid "Access to events/attendees created by the user of this role, the selected pages below, and any events/attendees within the locales/regions assigned to this user."
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:586
+msgid "Minimum Page Permissions"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:592
+msgid "General Settings Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:598
+msgid "Event Listings Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:604
+msgid "Categories Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:610
+msgid "Discounts Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:617
+msgid "Groupons Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:624
+msgid "Questions Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:630
+msgid "Question Groups Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:636
+msgid "Venue Manager Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:642
+msgid "Staff Manager Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:648
+msgid "Email Manager Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:654
+msgid "Payment Settings Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:660
+msgid "Member Settings Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:666
+msgid "Calendar Settings Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:672
+msgid "Social Media Settings Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:678
+msgid "Addons Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:684
+msgid "Support Page"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:702
+msgid "Events created by \"Event Managers\" require approval?"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:708
+msgid "Save Permissions"
+msgstr ""
+
+#: ../espresso-permissions/espresso-permissions.php:711
+msgid "Reset Permissions?"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-groups.php:9
+#: ../espresso-permissions/includes/default-groups.php:17
+msgid "UserName"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-groups.php:11
+#: ../espresso-permissions/includes/default-groups.php:19
+msgid "Nice Name"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-groups.php:37
+#: ../espresso-permissions/includes/default-groups.php:39
+#: ../espresso-permissions/includes/default-roles.php:93
+#: ../espresso-permissions/includes/default-roles.php:95
+#, php-format
+msgid "Edit the %1$s role"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:29
+msgid "Edit Active Roles"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:33
+msgid "Edit Inactive Roles"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:37
+msgid "Edit Roles"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:49
+msgid "All"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:56
+#: ../espresso-permissions/includes/default-roles.php:142
+msgid "Bulk Actions"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:59
+#: ../espresso-permissions/includes/default-roles.php:145
+msgid "Apply"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:67
+#: ../espresso-permissions/includes/default-roles.php:76
+msgid "Role Name"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:69
+#: ../espresso-permissions/includes/default-roles.php:78
+msgid "Users"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:70
+#: ../espresso-permissions/includes/default-roles.php:79
+msgid "Capabilities"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:99
+#, php-format
+msgid "Delete the %1$s role"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:102
+msgid "Change default role"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:102
+msgid "Default Role"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:105
+#: ../espresso-permissions/includes/default-roles.php:115
+#: ../espresso-permissions/includes/default-roles.php:117
+#, php-format
+msgid "View all users with the %1$s role"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:105
+msgid "View Users"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:115
+#, php-format
+msgid "%1$s Users"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:117
+msgid "1 User"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:119
+msgid "No users have this role."
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:128
+#, php-format
+msgid "%1$s Capabilities"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:129
+msgid "1 Capability"
+msgstr ""
+
+#: ../espresso-permissions/includes/default-roles.php:132
+msgid "This role has no capabilities"
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-groups.php:9
+msgid "Manager updated."
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-groups.php:15
+msgid "<strong>Locales/Regions:</strong> "
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-groups.php:20
+msgid "Select which locales/regions this user should manage."
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-groups.php:42
+msgid "You have no created any locales/regions yet."
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-groups.php:42
+msgid "Please click here to add locales"
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-groups.php:50
+msgid "Update Manager"
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-roles.php:24
+msgid "Role updated."
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-roles.php:30
+#, php-format
+msgid "<strong>Role:</strong> %1$s"
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-roles.php:38
+msgid "Select which capabilities this role should have. Make sure you understand what the capability does before giving it to just any role. This is a powerful feature, but it can cause you some grief if you give regular ol' Joe more capabilities than yourself."
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-roles.php:54
+msgid "New Capabilities"
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-roles.php:57
+msgid "Add up to six new capabilities with this form for this role (more can be added later). Please only use letters, numbers, and underscores."
+msgstr ""
+
+#: ../espresso-permissions/includes/edit-roles.php:83
+msgid "Update Role"
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:123
+#, php-format
+msgid "Welcome, %1$s!"
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:133
+msgid "Username:"
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:138
+msgid "Password:"
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:143
+msgid "Log In"
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:144
+msgid "Remember me"
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:200
+#, php-format
+msgid "Posts by %s"
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:208
+msgid "Role deleted."
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:212
+msgid "Selected roles deleted."
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:217
+msgid "No role currently has the <code>edit_roles</code> capability.  Please add this to each role that should be able to manage/edit roles. If you do not change this, any user that has the <code>edit_users</code> capability will be able to edit roles."
+msgstr ""
+
+#: ../espresso-permissions/includes/functions.php:237
+msgid "To create new roles, you must give the <code>create_roles</code> capability to at least one role."
+msgstr ""
+
+#: ../espresso-permissions/includes/groups.php:13
+msgid "Edit Regional Managers"
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:17
+msgid "Add a new user role"
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:18
+#, php-format
+msgid "The %1$s role has been created."
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:24
+msgid "Create a new user role"
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:29
+#, php-format
+msgid "Here you can create as many new roles as you'd like.  Roles are a way of grouping your users.  You can give individual users a role from the <a href=\"%1$s\" title=\"Manage Users\">user management</a> screen.  This will allow you to do specific things for users with a specific role.  Once you've created a new role, you can manage it with the <em>Edit Roles</em> component."
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:34
+msgid "Role:"
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:37
+msgid "<strong>Required:</strong> Enter the name of your role.  This is a unique key that should only contain numbers, letters, and underscores.  Please don't add spaces or other odd characters."
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:45
+msgid "Role Label:"
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:48
+msgid "<strong>Required:</strong> Enter a label your role.  This will be the title that is displayed in most cases."
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:56
+msgid "Capabilities:"
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:59
+msgid "<strong>Optional:</strong> Select which capabilities your new role should have.  These may be changed later using the <em>Edit Roles</em> component."
+msgstr ""
+
+#: ../espresso-permissions/includes/new-role.php:73
+msgid "Create Role"
+msgstr ""
+
+#: ../espresso-permissions/includes/roles.php:59
+#: ../espresso-permissions/includes/roles.php:65
+msgid "Edit Role"
+msgstr ""
+
+#: ../espresso-recurring-events/espresso-recurring-events.php:175
+msgid "Projected recurrences of this event."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:39
+msgid "Recurring Event Manager"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:52
+msgid "IF THIS IS A RECURRING EVENT, A RECORD WILL BE CREATED FOR EACH INSTANCE. "
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:61
+msgid "Would you like to apply any of the changes that you have made to this event to:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:65
+msgid "Only this instance."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:67
+msgid "All events in the series"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:69
+msgid "This and all upcoming events."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:74
+msgid "Is this a recurring event?"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:87
+msgid "Create dates automatically or select manually?"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:91
+msgid "Automatic"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:94
+msgid "Manual"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:104
+msgid ""
+"If you plan on using different registration dates for each event,\n"
+"                                            please enter the First Event's Registration Start/End Dates below.\n"
+"                                            Otherwise, enter the registration dates that will cover all events in the series."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:109
+msgid "Registration Starts On:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:114
+msgid "Registration Ends On:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:123
+msgid "Are all events available between the registration dates above?"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:129
+msgid "No (each event's registration start and end dates will be incremented according to a formula)."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:133
+msgid "Yes (all created events are available for registration between the above registration dates)."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:140
+msgid "Each Event's Visibility: "
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:144
+msgid "Blank"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:144
+msgid " Visible Immediately"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:145
+msgid "Visible on Registration Start Date"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:146
+msgid " Visible X Days Before Registration Start Date"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:157
+msgid "First Event Date:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:161
+msgid "First Event End Date:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:168
+msgid "Last Event Date:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:186
+msgid "Event Repeats:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:189
+msgid "Daily"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:190
+msgid "Weekly"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:191
+msgid "Monthly"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:195
+msgid "Every:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:214
+msgid "Repeats On:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:233
+msgid "Sun"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:236
+msgid "Mon"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:240
+msgid "Tue"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:244
+msgid "Wed"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:247
+msgid "Thu"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:251
+msgid "Fri"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:254
+msgid "Sat"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:259
+msgid "Repeat By:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:262
+msgid "Day of Month"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:264
+msgid "Day of Week"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:279
+msgid "You can add as many days as you would like.  Start with the very first event date."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:294
+#: ../espresso-recurring-events/functions/re_view_functions.php:701
+msgid "Event Date:"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:329
+msgid "Other events in this series."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:339
+msgid "Immediate Response Window"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:427
+msgid "If you are making changes to the recurrence formula, please select \"All events in the series\" or \"All upcoming events\" for the changes to take effect."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:577
+msgid "weeks"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:582
+msgid "months"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:655
+msgid "Registration Start"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:656
+msgid "Registration End"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:711
+msgid " attendees.  Can't be deleted until attendees are deleted."
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:726
+msgid ""
+"<h2>Registration Date Usage</h2>\n"
+"      <p>\n"
+"      <ul>\n"
+"      <li>\n"
+"No:  Use this if each event in the series will have its own registration start and end dates.\n"
+"    <b>Make sure to enter the <u>First Event's Registration Start and End dates above</u>.</b>\n"
+"    </li>\n"
+"    <li>\n"
+"Yes: Use this if all events are only available between the above registration start and end dates.\n"
+"    </li>\n"
+"</p>"
+msgstr ""
+
+#: ../espresso-recurring-events/functions/re_view_functions.php:740
+msgid ""
+"<h2>Recurrence Type</h2>\n"
+"      <p>\n"
+"      <ul>\n"
+"      <li>\n"
+"Automatic:  The events will be created automatically, based on the information that you select below.\n"
+"    </li>\n"
+"    <li>\n"
+"Manual: You will be given the option to manually select as many different dates as you would like.\n"
+"    </li>\n"
+"NOTE: Once you create events in Automatic mode, those events can't be switched to Manual, and vise versa.\n"
+"</ul>\n"
+"</p>"
+msgstr ""
+
+#: ../espresso-recurring-events/recurring-event-templates/event_list_display.php:39
+msgid "Please Select a Date"
+msgstr ""
+
+#: ../espresso-recurring-events/recurring-event-templates/event_list_display.php:56
+msgid "(Join Waiting List)"
+msgstr ""
+
+#: ../espresso-recurring-events/recurring-event-templates/event_list_display.php:85
+msgid "Register Now"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:75
+msgid "Facebook details saved."
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:94
+msgid "Twitter details saved."
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:128
+msgid "Layout Style:"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:132
+msgid "Button Count"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:133
+msgid "Standard"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:134
+msgid "Box Count"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:141
+msgid "Show Faces:"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:154
+msgid "Font:"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:158
+msgid "arial"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:159
+msgid "lucida grande"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:160
+msgid "segoe ui"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:161
+msgid "tahoma"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:162
+msgid "trebuchet ms"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:163
+msgid "verdana"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:170
+msgid "Color Scheme:"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:174
+msgid "Light"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:175
+msgid "Dark"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:194
+msgid "Save Facebook Options"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:209
+msgid "Twitter Settings"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:217
+msgid "Twitter Username:"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:223
+msgid "Default Twitter Text:"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:230
+msgid "Count Box Position:"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:235
+msgid "Horizontal"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:236
+msgid "Vertical"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:243
+msgid "The language for the Tweet Button:"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:248
+msgid "Danish"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:259
+msgid "Save Twitter Options"
+msgstr ""
+
+#: ../espresso-social/espresso-social.php:328
+msgid "Register for"
+msgstr ""
+
+#: ../../uploads/espresso/custom_functions.php:44
+msgid "This event is expired."
+msgstr ""
+
+#: ../../uploads/espresso/custom_functions.php:48
+msgid "This event is active."
+msgstr ""
+
+#: ../../uploads/espresso/custom_functions.php:52
+msgid "This event is not active."
+msgstr ""
+
+#: ../../uploads/espresso/custom_functions.php:56
+msgid "This is an ongoing event."
+msgstr ""
+
+#: ../../uploads/espresso/custom_functions.php:60
+msgid "This is a secondary/waiting list event."
+msgstr ""
+
+#: ../../uploads/espresso/custom_shortcodes.php:15
+msgid "No Date Supplied"
+msgstr ""
+
+#: ../../uploads/espresso/--templates/espresso_table.php:75
+msgid "Course"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/date_range_display.php:58
+msgid "Event Full"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/date_range_display.php:62
+msgid "Unlimited"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/event_list_secondary.php:121
+#: ../../uploads/espresso/custom-files-addon/templates/ongoing_event_list.php:120
+msgid "Register Online"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/event_list_table.php:86
+msgid "Open Spots"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/event_list_table.php:87
+msgid "Register Link"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/event_list_table.php:88
+msgid "Boat Captain?"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/movie_list.php:63
+msgid "Tickets"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/ongoing_events_widget.php:24
+msgid "Event Registration Widget"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/ongoing_event_list.php:114
+msgid "Date:"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/table_display.php:24
+msgid "Times"
+msgstr ""
+
+#: ../../uploads/espresso/custom-files-addon/templates/table_display.php:88
+msgid "Sorry, there are no events here."
+msgstr ""
+
+#: ../../uploads/espresso/dabble/templates/confirmation_display.php:9
+msgid "please verify your class details"
+msgstr ""
+
+#: ../../uploads/espresso/dabble/templates/confirmation_display.php:11
+msgid "Class Name:"
+msgstr ""
+
+#: ../../uploads/espresso/dabble/templates/confirmation_display.php:19
+msgid "Attendee(s):"
+msgstr ""
+
+#: ../../uploads/espresso/logikal-templates/event_list_table.php:83
+#: ../../uploads/espresso/redred-templates/event_list_table.php:84
+msgid "Places Left"
+msgstr ""
+
+#: ../../uploads/espresso/logikal-templates/widget.php:141
+#: ../../uploads/espresso/redred-templates/widget.php:191
+msgid "Show Secondary Events?"
+msgstr ""
+

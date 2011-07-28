@@ -1,0 +1,4736 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Event Espresso\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-04-15 17:39+0100\n"
+"PO-Revision-Date: 2011-04-15 17:44+0100\n"
+"Last-Translator: Massimiliano Losego <losegomax@gmail.com>\n"
+"Language-Team: --- <losegomax@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Language: Italian\n"
+"X-Poedit-Country: ITALY\n"
+"X-Poedit-SearchPath-0: I:\\Desktop\\event-espresso\n"
+
+#: I:\Desktop\event-espresso/espresso.php:330
+msgid "Event Espresso"
+msgstr "Eventi "
+
+#: I:\Desktop\event-espresso/espresso.php:333
+msgid "Event Espresso - General Settings"
+msgstr "Event Espresso - Impostazioni Generali"
+
+#: I:\Desktop\event-espresso/espresso.php:333
+msgid "General Settings"
+msgstr "Settaggio Generale "
+
+#: I:\Desktop\event-espresso/espresso.php:336
+msgid "Event Espresso - Event Overview"
+msgstr "Event Espresso - Impostazioni Evento "
+
+#: I:\Desktop\event-espresso/espresso.php:336
+msgid "Event Overview"
+msgstr " Impostazioni Evento "
+
+#: I:\Desktop\event-espresso/espresso.php:342
+msgid "Event Espresso - Manage Event Categories"
+msgstr "Event Espresso - Amministra Categorie Eventi"
+
+#: I:\Desktop\event-espresso/espresso.php:342
+msgid "Categories"
+msgstr "Categorie"
+
+#: I:\Desktop\event-espresso/espresso.php:345
+msgid "Event Espresso - Discounts"
+msgstr "Event Espresso - Sconti"
+
+#: I:\Desktop\event-espresso/espresso.php:345
+msgid "Discounts"
+msgstr "Sconti"
+
+#: I:\Desktop\event-espresso/espresso.php:349
+msgid "Groupons"
+msgstr "Groupon"
+
+#: I:\Desktop\event-espresso/espresso.php:349
+msgid "Groupon Codes"
+msgstr "Codici di Sconto"
+
+#: I:\Desktop\event-espresso/espresso.php:354
+msgid "Event Espresso - Questions"
+msgstr "Event Espresso - Domande"
+
+#: I:\Desktop\event-espresso/espresso.php:354
+msgid "Questions"
+msgstr "Domande"
+
+#: I:\Desktop\event-espresso/espresso.php:357
+msgid "Event Espresso - Question Groups"
+msgstr "Event Espresso - Domande su Gruppi"
+
+#: I:\Desktop\event-espresso/espresso.php:357
+msgid "Question Groups"
+msgstr "Domande su Gruppi"
+
+#: I:\Desktop\event-espresso/espresso.php:360
+msgid "Event Espresso - Email Manager"
+msgstr "Event Espresso - Manager Email"
+
+#: I:\Desktop\event-espresso/espresso.php:360
+msgid "Email Manager"
+msgstr "Manager Email"
+
+#: I:\Desktop\event-espresso/espresso.php:365
+msgid "Event Espresso - Payment Settings"
+msgstr "Event Espresso - Impostazioni Pagamento"
+
+#: I:\Desktop\event-espresso/espresso.php:365
+msgid "Payment Settings"
+msgstr "Impostazioni Pagamento"
+
+#: I:\Desktop\event-espresso/espresso.php:370
+msgid "Event Espresso - Member Settings"
+msgstr "Event Espresso - Impostazioni Parteciapante"
+
+#: I:\Desktop\event-espresso/espresso.php:370
+msgid "Member Settings"
+msgstr "Impostazioni Utente"
+
+#: I:\Desktop\event-espresso/espresso.php:375
+msgid "Event Espresso - Calendar Settings"
+msgstr "Event Espresso - Impostazioni Calendario"
+
+#: I:\Desktop\event-espresso/espresso.php:375
+msgid "Calendar Settings"
+msgstr "Impostazioni Calendario"
+
+#: I:\Desktop\event-espresso/espresso.php:380
+msgid "Event Espresso - Social Media Settings"
+msgstr "Event Espresso - Impostazioni Social Media"
+
+#: I:\Desktop\event-espresso/espresso.php:380
+msgid "Social Media"
+msgstr "Social Media"
+
+#: I:\Desktop\event-espresso/espresso.php:384
+msgid "Event Espresso - Addons"
+msgstr "Aggiunte - Event Espresso"
+
+#: I:\Desktop\event-espresso/espresso.php:384
+msgid "Addons"
+msgstr "Aggiunte"
+
+#: I:\Desktop\event-espresso/espresso.php:387
+msgid "Event Espresso - Help/Support"
+msgstr "Event Espresso - Aiuto/Supporto"
+
+#: I:\Desktop\event-espresso/espresso.php:387
+msgid "Help/Support"
+msgstr "Aiuto/Supporto"
+
+#: I:\Desktop\event-espresso/espresso.php:404
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: I:\Desktop\event-espresso/espresso.php:405
+msgid "Events"
+msgstr "Eventi"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Group"
+msgstr "Gruppo"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Reg ID"
+msgstr "ID Registrazione"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Last Name"
+msgstr "Cognome:"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "First Name"
+msgstr "Nome:"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Email"
+msgstr "Email"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Address"
+msgstr "Indirizzo:"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Address 2"
+msgstr "Indirizzo:"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "City"
+msgstr "Città"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "State"
+msgstr "Nazione"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Zip"
+msgstr "CAP"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Phone"
+msgstr "Telefono"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Payment Method"
+msgstr "Metodo di Pagamento"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Reg Date"
+msgstr "Data registrazione"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Pay Status"
+msgstr "Stato Pagamento"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Type of Payment"
+msgstr "Tipo di Pagamento"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Transaction ID"
+msgstr "codice ID Transazione"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Payment"
+msgstr "Pagamento"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Coupon Code"
+msgstr "Codice di Sconto:"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "# Attendees"
+msgstr "# Partecipanti"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Date Paid"
+msgstr "Data Pagamento"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Event Name"
+msgstr "Corso:"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Price Option"
+msgstr "Opzioni Prezzo"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Event Date"
+msgstr "Data(e) Evento:"
+
+#: I:\Desktop\event-espresso/espresso.php:483
+msgid "Event Time"
+msgstr "Orari Evento:"
+
+#: I:\Desktop\event-espresso/espresso.php:539
+msgid "all-events"
+msgstr "Tutti gli Eventi"
+
+#: I:\Desktop\event-espresso/espresso.php:637
+msgid "No participant data has been collected."
+msgstr "Nessuna informazione sul partecipante acquisita."
+
+#: I:\Desktop\event-espresso/espresso.php:643
+msgid "This Is Not A Valid Selection!"
+msgstr "Questa non è una Selezione Valida!"
+
+#: I:\Desktop\event-espresso/gateways/gateway_display.php:4
+msgid "Online Payments"
+msgstr "Pagamenti On-line"
+
+#: I:\Desktop\event-espresso/gateways/gateway_display.php:54
+msgid "Off-line Payments"
+msgstr "Pagamenti Off-line"
+
+#: I:\Desktop\event-espresso/gateways/gateway_display.php:65
+msgid "Attention!"
+msgstr "**Attenzione**"
+
+#: I:\Desktop\event-espresso/gateways/gateway_display.php:66
+msgid "If paying with cash or check, please make note of the information below, then"
+msgstr "Se pagherà con soldi o check, per favore annota le informazioni qui sotto, poi"
+
+#: I:\Desktop\event-espresso/gateways/gateway_display.php:67
+msgid "Finalize your registration"
+msgstr "Completa la tua registrazione"
+
+#: I:\Desktop\event-espresso/gateways/gateway_display.php:67
+msgid "click here to finalize your registration"
+msgstr "clicca qui per completare la tua registrazione"
+
+#: I:\Desktop\event-espresso/gateways/PaymentGateway.php:217
+msgid "Field Name"
+msgstr "Nome Campo"
+
+#: I:\Desktop\event-espresso/gateways/PaymentGateway.php:218
+msgid "Value"
+msgstr "Valore"
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:10
+msgid "Manage Payment Gateways"
+msgstr "Amministra Gateway di Pagamento"
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:76
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:102
+msgid "Move Your Payment Gateways"
+msgstr "Sposta Gateway di Pagamento"
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:82
+msgid "Modifying and adding payment gateways is easy."
+msgstr "Modificare e aggiungere gateway per il pagamento è semplice."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:85
+msgid "You just need to add/edit the appropriate files in the following location."
+msgstr "Devi solo aggiungere/modificare i file appropriati al seguente indirizzo."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:88
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:127
+msgid "Path:"
+msgstr "Indirizzo:"
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:91
+msgid "Remember, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates."
+msgstr "Ricorda chedovrai aggiornare il tuo template customizzato se saranno fatti aggiornamenti o se saranno aggiunte funzionalità a questi template."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:114
+msgid "Your gateways have been moved."
+msgstr "I tuoi Gateway di Pagamento sono stati spostati."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:125
+msgid "The permissions on your templates directory are incorrect."
+msgstr "I permessi relativi alla tua directory di template non sono corretti."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:126
+msgid "Please set the permissions to 775 on the following directory."
+msgstr "Imposta i peemssi a 775 alla seguente directory."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:132
+msgid "If you plan on adding additional payment gateways. Please use the link below to move your gateway files to a safe place. Only use this option if you absolutely need to or instructed to by a represntative from Event Espresso. "
+msgstr "Se hai intenzione di aggungere gateway di pagamento. Per favore usa il link qui sotto per sospsare i file del gateway in un posto sicuro. Utilizza quest'opzione solo se è assolutamente necessario o incaricato di un rappresentante da Event Espresso."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:133
+msgid "Your gateway files have not been moved."
+msgstr "I tuoi file gateway non sono stati spostati."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:134
+#, php-format
+msgid "Click here to <a href='%s'>Move your files</a> to a safe place."
+msgstr "Clicca qui per <a href='%s'>Spostare i tuoi </a> in un posto sicuro."
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:149
+msgid "Button Image URL"
+msgstr "Url Immagine Bottone"
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:150
+msgid "A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the \"file url\" here (optional.)"
+msgstr "Viene fornito un bottone predefinito per i pagamenti. Può essere usato un bottone personalizzato, seleziona la tua immagine o caricane una nuova e copia l'indirizzo url qui (opzionale.)"
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:153
+msgid "By-passing the Confirmation Page"
+msgstr "Salta Pagina di Conferma"
+
+#: I:\Desktop\event-espresso/gateways/payment_gateways.php:154
+msgid "This will allow you to send your customers directly to the payment gateway of your choice."
+msgstr "Questo ti abilita a spedire ai tuoi clienti direttamente il gateway di pagamento di tua scelta."
+
+#: I:\Desktop\event-espresso/gateways/process_payments.php:65
+msgid "Problem With Your Website Payment IPN"
+msgstr "Proablema con l'IPN di Pagamento del tuo sito"
+
+#: I:\Desktop\event-espresso/gateways/process_payments.php:66
+#: I:\Desktop\event-espresso/gateways/process_payments.php:73
+msgid "The IPN for "
+msgstr "L'IPN per"
+
+#: I:\Desktop\event-espresso/gateways/process_payments.php:72
+msgid "Website Payment IPN Not Setup"
+msgstr "Pagamento con IPN non Settato"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_ipn.php:40
+#: I:\Desktop\event-espresso/gateways/authnet/authnet_ipn.php:40
+msgid "Thank You!"
+msgstr "Grazie!"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_ipn.php:41
+#: I:\Desktop\event-espresso/gateways/authnet/authnet_ipn.php:41
+msgid "Your transaction has been processed."
+msgstr "La tua transazione è in lavorazione."
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_ipn.php:42
+msgid "Transaction ID:"
+msgstr "ID Transazione:"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_vars.php:6
+#: I:\Desktop\event-espresso/gateways/authnet/authnet_vars.php:65
+msgid "Debug Mode Is Turned On"
+msgstr "Modo DEBUG ATTIVO"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_vars.php:10
+msgid "Billing Information"
+msgstr "Informazioni di Fatturazione"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_vars.php:21
+msgid "Email Address"
+msgstr "Indirizzo Email"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_vars.php:40
+msgid "Credit Card Information"
+msgstr "Informazioni Carta di Credito"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_vars.php:42
+msgid "Card Number"
+msgstr "Numero di Carta"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_vars.php:46
+msgid "Exp. Date"
+msgstr "Data di Scadenza"
+
+#: I:\Desktop\event-espresso/gateways/aim/aim_vars.php:54
+msgid "Complete Purchase"
+msgstr "Completa Pagamento"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:12
+msgid "Authorize.net AIM settings saved."
+msgstr "Impostazioni Authorize.net Salvate."
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:18
+msgid "Authorize.net AIM Settings"
+msgstr "Impostazioni Authorize.net"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:34
+msgid "Authorize.net AIM Gateway is Installed."
+msgstr "Authorize.net AIM Gateway è installato."
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:35
+msgid "Activate Authorize.net AIM Gateway?"
+msgstr "Attivare Authorize.net AIM Gateway?"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:38
+msgid "Deactivate Authorize.net AIM Gateway?"
+msgstr "Disattivare Authorize.net AIM Gateway?"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:42
+msgid "The Authorize.net AIM gateway is installed. Would you like to activate it?"
+msgstr "Il modulo Authorize.net AIM Gateway è installato, vuoi attivalo?"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:69
+msgid "Authorize.net AIM Login I.D."
+msgstr "Authorize.net AIM Login I.D."
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:76
+msgid "Authorize.net AIM Transaction Key"
+msgstr "Chiave di Transazione Authorize.net AIM"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:95
+msgid "Use the test mode feature for Autorize.net AIM?"
+msgstr "Usa la modalità di test per Authorize.net AIM?"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:105
+msgid "Update Authorize.net AIM Settings"
+msgstr "Aggiorna Impostazioni Authorize.net AIM"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:110
+msgid "Authorize.net AIM Test Mode"
+msgstr "Authorize.net AIM Modalita di Test"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:111
+msgid "Test Mode allows you to submit test transactions to the payment gateway. Transactions that are submitted while Test Mode is ON are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers."
+msgstr "La modalità di test ti permette di effetture transazioni sul tuo gateway. Le transazioni inviate con il Test Mode Attivato non saranno processate. Il risultato della transazione dipende dal numero della carta inviata e dall'ammontare della fattura. Se vuoi che la transazione sia approvata usa uno dei seguenti numeri di carta."
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:111
+msgid "American Express"
+msgstr "American Express"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:111
+msgid "Discover"
+msgstr "Scopri"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:111
+msgid "Master Card"
+msgstr "Master Card"
+
+#: I:\Desktop\event-espresso/gateways/aim/settings.php:111
+msgid "Visa"
+msgstr "Visa"
+
+#: I:\Desktop\event-espresso/gateways/authnet/authnet_ipn.php:46
+msgid "There was an error processing your transaction!"
+msgstr "C'è stato un errore nella tua conferma, per favore riprova."
+
+#: I:\Desktop\event-espresso/gateways/authnet/authnet_vars.php:26
+msgid "Reg. ID:"
+msgstr "ID Registrazione:"
+
+#: I:\Desktop\event-espresso/gateways/authnet/authnet_vars.php:26
+msgid "Name:"
+msgstr "Nome:"
+
+#: I:\Desktop\event-espresso/gateways/authnet/authnet_vars.php:26
+msgid "Total Registrants:"
+msgstr "Totale Registrati:"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:13
+msgid "Authorize.net settings saved."
+msgstr "Impostazioni Authorize.net Salvate Correttamente."
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:19
+msgid "Authorize.net SIM Settings"
+msgstr "Impostazioni Authorize.net SIM"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:39
+msgid "Activate Authorize.net SIM Gateway?"
+msgstr "Attivare Authorize.net SIM Gateway?"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:42
+msgid "Deactivate Authorize.net SIM Gateway?"
+msgstr "Disattivare Authorize.net SIM Gateway?"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:46
+msgid "The Authorize.net  SIM Gateway is installed. Would you like to activate it?"
+msgstr "Il modulo Authorize.net SIM Gateway è installato, vuoi attivalo?"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:73
+msgid "Authorize.net Login I.D."
+msgstr "Authorize.net Login I.D."
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:80
+msgid "Authorize.net Transaction Key"
+msgstr "Authorize.net Chiave di Tansazione"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:87
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:158
+msgid "Button Image URL: "
+msgstr "Url Immagine Bottone: "
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:95
+msgid "Image URL:"
+msgstr "URL Immagine:"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:101
+msgid "(used for your business/personal logo on the Authorize.net SIM payment page)"
+msgstr "(usata per il tuo logo business/personale nella pagina  Authorize.net SIM):"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:106
+msgid "Relay Response URL :"
+msgstr "URL Riposta Trasmissione:"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:111
+msgid "Use the test mode feature for Autorize.net SIM?"
+msgstr "Usa la modalità the per Autorize.net SIM?"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:117
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:182
+msgid "By-pass the payment confirmation page?"
+msgstr "Salta pagina Conferma Pagamento?"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:120
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:186
+msgid "Yes"
+msgstr "Sì"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:121
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:185
+msgid "No"
+msgstr "No"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:125
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:207
+msgid "Current Button Image:"
+msgstr "Attuale Url Immagine Bottone:"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:133
+msgid "Update Authorize.net SIM Settings"
+msgstr "Aggiorna Impostazioni Authorize.net SIM"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:137
+msgid "Relay Response"
+msgstr "Riposta Trasmissione"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:138
+msgid "This shows the specific the URL to which the gateway should return the relay response for a transaction. This the page should be set in your Authorize.net account. Login to Authorize.net, goto Account > Response/Receipt URLs > Add URL and enter the following URL."
+msgstr "Questo mostra l'indirizzo specifico a cui il gateway tornerà dopo la transazione. Questa pagina va settata nel suo account Authorize.net. Acceda a Authorize.net, vada su Account > Response/Receipt Urls > Add Url e inserisca qui il seguente URL."
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:139
+msgid "Relay Response URL:"
+msgstr "URL Riposta Trasmissione:"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:140
+msgid "Note:"
+msgstr "Note:"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:140
+msgid "This URL can be changed in the \"Organization Settings\" page."
+msgstr "Questo URL può essere modificato nella pagina \"Impostazioni Organizzazione\"."
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:141
+msgid "For complete information on configuring relay response, please refer to"
+msgstr "Per informazioni complete sulla configurazione della risposta per favore faccia riferimento a"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:141
+msgid "Reference &amp; User Guides"
+msgstr "Referenza &amp; Guida Utente"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:145
+msgid "Authorize.net SIM Image URL (logo for payment page)"
+msgstr "URL Immagine Authorize.net SIM (logo per la pagina dei pagamenti)"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:148
+msgid "The URL of the image displayed as your logo in the header of the Authorize.net checkout pages."
+msgstr "L' URL dell'immagine mostrata come tuo logo nell'intestazione delle pagine di Authorize.net"
+
+#: I:\Desktop\event-espresso/gateways/authnet/settings.php:152
+msgid "Authorize.net Test Mode"
+msgstr "Modalità di TEST Authorize.net"
+
+#: I:\Desktop\event-espresso/gateways/bank/bank_payment_vars.php:10
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:86
+msgid "Name on Account:"
+msgstr "Nome nell'Account:"
+
+#: I:\Desktop\event-espresso/gateways/bank/bank_payment_vars.php:11
+msgid "Account Number:"
+msgstr "Numero dlel'Account:"
+
+#: I:\Desktop\event-espresso/gateways/bank/bank_payment_vars.php:12
+msgid "Financial Institution:"
+msgstr "Istituzione Finanziaria:"
+
+#: I:\Desktop\event-espresso/gateways/bank/bank_payment_vars.php:13
+msgid "Address:"
+msgstr "Indirizzo:"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:13
+msgid "Electronic Funds Transfer settings saved."
+msgstr "Impostazioni Trasferimento Elettronico di Fondi Salvate Correttamente."
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:21
+msgid "Electronic Funds Transfer Settings"
+msgstr "Impostazioni Trasferimento Elettronico di Fondi"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:41
+msgid "Activate Electronic Funds Transfers?"
+msgstr "Attivare il Trasferimento Elettronico di Fondi?"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:44
+msgid "Deactivate Electronic Funds Transfers?"
+msgstr "Disattivare il Trasferimento Elettronico di Fondi?"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:48
+msgid "The Electronic Funds Transfers is installed. Would you like to activate it?"
+msgstr "Il Trasferimento Elettronico di Fondi è installato, vuoi attivarlo?"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:70
+#: I:\Desktop\event-espresso/gateways/check/settings.php:65
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:71
+msgid "Title:"
+msgstr "Titolo:"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:73
+msgid "Electronic Funds Transfers"
+msgstr "Trasferimento Elettronico di Fondi"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:77
+#: I:\Desktop\event-espresso/gateways/check/settings.php:68
+msgid "Payment Instructions:"
+msgstr "Istruzioni per il Pagamento:"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:80
+msgid "Please initiate an electronic payment using the bank information below. Payment must be received within 48 hours of event date."
+msgstr "Si prega di avviare un pagamento elettronico utilizzando le informazioni della banca qui sotto. Il pagamento deve essere effettuato almeno 48 ore prima dalla data dell'evento."
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:93
+msgid "Bank Account#:"
+msgstr "Conto Bancario#:"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:100
+msgid "Bank Name:"
+msgstr "Nome Banca:"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:107
+msgid "Bank Address:"
+msgstr "Indirizzo Banca:"
+
+#: I:\Desktop\event-espresso/gateways/bank/settings.php:117
+msgid "Update Electronic Funds Transfer Settings"
+msgstr "Aggiorna Impostazioni Trasferimento Elettronico di Fondi"
+
+#: I:\Desktop\event-espresso/gateways/check/check_payment_vars.php:10
+msgid "Payable to:"
+msgstr "Pagabile a:"
+
+#: I:\Desktop\event-espresso/gateways/check/check_payment_vars.php:11
+msgid "Payment Address:"
+msgstr "Indirizzo Pagamento:"
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:11
+msgid "Check/Money Order Payment settings saved."
+msgstr "Impostazioni Salvate per Pagamento Ordine con Check/Soldi."
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:18
+msgid "Check/Money Order Payment Settings"
+msgstr "Impostazioni di Pagamento Ordine con Check/Soldi"
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:38
+msgid "Activate Check/Money Order Payments?"
+msgstr "Attiva Pagamento Ordine con Check/Soldi?"
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:41
+msgid "Deactivate Check/Money Order Payments?"
+msgstr "Disattiva Pagamento Ordine con Check/Soldi?"
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:45
+msgid "The Check/Money Order Payments is installed. Would you like to activate it?"
+msgstr "Il modulo di Pagamento Ordine con Check/Soldi è installato, vuoi attivarlo?"
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:66
+msgid "Check/Money Order Payments"
+msgstr "Attiva Pagamento Ordine con Check/Soldi?"
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:69
+msgid "Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date."
+msgstr "Si prega di inviare l'Ordine in Check/Soldi al seguente indirizzo. Il pagamento deve essere effettuato almeno 48 ore prima della data dell'evento."
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:71
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:85
+msgid "Payable To:"
+msgstr "Pagabile a:"
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:74
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:92
+msgid "Address to Send Payment:"
+msgstr "Indirizzo per spedire il Pagamento:"
+
+#: I:\Desktop\event-espresso/gateways/check/settings.php:95
+msgid "Update Check/Money Order Payment Settings"
+msgstr "Aggiorna le Impostazioni per Pagamento Ordine con Check/Soldi."
+
+#: I:\Desktop\event-espresso/gateways/invoice/invoice_vars.php:10
+msgid "Download PDF Invoice"
+msgstr "Scarica Fattura PDF"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:14
+msgid "Invoice Payment settings saved."
+msgstr "Impostazioni Salvate per Pagamento con Fattura"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:22
+msgid "Invoice Payment Settings"
+msgstr "Impostazioni Pagamento con Fattura"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:42
+msgid "Activate Invoice Payments?"
+msgstr "Attiva Pagamento con Fattura?"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:45
+msgid "Deactivate Invoice Payments?"
+msgstr "Disattiva Pagamento con Fattura?"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:49
+msgid "The Invoice Payments is installed. Would you like to activate it?"
+msgstr "Il modulo di Pagamento con Fattura è installato, vuoi attivarlo?"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:74
+msgid "Invoice Payments"
+msgstr "Pagamenti Fattura"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:78
+msgid "Invoice Instructions:"
+msgstr "Istruzioni Fattura:"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:81
+msgid "Please send Invoice to the address below. Payment must be received within 48 hours of event date."
+msgstr "Per favore spedisci questa fattura all'indirizzo qui sotto. Il pagamento deve essere ricevuto entro almeno 48 ore dalla data dell'evento."
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:116
+msgid "PDF Settings"
+msgstr "Impostazioni PDF"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:120
+msgid "PDF Title (top right of the invoice):"
+msgstr "Titolo PDF (in alto a destra nella fattura):"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:123
+msgid "Invoice"
+msgstr "Fattura"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:127
+msgid "Logo URL (logo for the top left of the invoice):"
+msgstr "URL Logo (in alto a sinistra nella fattura):"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:134
+msgid "Invoice Instructions in PDF:"
+msgstr "Istruzioni Fatturazione in PDF:"
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:137
+msgid "Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date."
+msgstr "Per favore spedisci questa fattura con il pagamento in allegato all'indirizzo qui sotto, o una il link di pagamento. Il pagamento deve essere ricevuto entro almeno 48 ore dalla data dell'evento."
+
+#: I:\Desktop\event-espresso/gateways/invoice/settings.php:144
+msgid "Update Invoice Payment Settings"
+msgstr "Aggiorna le Impostazioni di Fatturazione"
+
+#: I:\Desktop\event-espresso/gateways/invoice/template.php:128
+msgid "Page"
+msgstr "Pagina"
+
+#: I:\Desktop\event-espresso/gateways/invoice/template.php:145
+msgid "Date: "
+msgstr "Data:"
+
+#: I:\Desktop\event-espresso/gateways/invoice/template.php:146
+msgid "Attendee ID: "
+msgstr "ID Partecipante:"
+
+#: I:\Desktop\event-espresso/gateways/invoice/template.php:158
+msgid "Bill To: "
+msgstr "Fattura a:"
+
+#: I:\Desktop\event-espresso/gateways/invoice/template.php:171
+msgid "Amount Owed"
+msgstr "Importo Dovuto"
+
+#: I:\Desktop\event-espresso/gateways/paypal/paypal_vars.php:24
+msgid "Registrant Email:"
+msgstr "Email Partecipante:"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:14
+msgid "PayPal settings saved."
+msgstr "Impostazioni PayPal Salvate Correttamente."
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:21
+msgid "PayPal Settings"
+msgstr "PayPal Setting"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:41
+msgid "Activate PayPal IPN?"
+msgstr "Attiva IPN PayPal?"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:44
+msgid "Deactivate PayPal IPN?"
+msgstr "Disattiva IPN PayPal?"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:49
+msgid "The PayPal IPN addon is installed. Would you like to activate it?"
+msgstr "Il modulo IPN PayPal è installato, vuoi attivarlo?"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:74
+msgid "Paypal I.D."
+msgstr "Paypal I.D."
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:79
+msgid "(Typically payment@yourdomain.com)"
+msgstr "(Tipicamente pagamento@tuodominio.com)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:83
+msgid "Select the currency for your country:"
+msgstr "Seleziona la vlauta per il tuo paese:"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:89
+msgid "U.S. Dollars ($)"
+msgstr "U.S. Dollars ($)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:92
+msgid "Australian Dollars (A $)"
+msgstr "Australian Dollars (A $)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:95
+msgid "Pounds Sterling (&pound;)"
+msgstr "Pounds Sterling (&pound;)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:98
+msgid "Canadian Dollars (C $)"
+msgstr "Canadian Dollars (C $)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:101
+msgid "Czech Koruna"
+msgstr "Czech Koruna"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:104
+msgid "Danish Krone"
+msgstr "Danish Krone"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:107
+msgid "Euros (&#8364;)"
+msgstr "Euro (&#8364;)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:110
+msgid "Hong Kong Dollar ($)"
+msgstr "Hong Kong Dollar ($)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:113
+msgid "Hungarian Forint"
+msgstr "Hungarian Forint"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:116
+msgid "Israeli Shekel"
+msgstr "Israeli Shekel"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:119
+msgid "Yen (&yen;)"
+msgstr "Yen (&yen;)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:122
+msgid "Mexican Peso"
+msgstr "Mexican Peso"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:125
+msgid "New Zealand Dollar ($)"
+msgstr "New Zealand Dollar ($)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:128
+msgid "Norwegian Krone"
+msgstr "Norwegian Krone"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:131
+msgid "Polish Zloty"
+msgstr "Polish Zloty"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:134
+msgid "Singapore Dollar ($)"
+msgstr "Singapore Dollar ($)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:137
+msgid "Swedish Krona"
+msgstr "Swedish Krona"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:140
+msgid "Brazilian Real (only for Brazilian users)"
+msgstr "Brazilian Real (only for Brazilian users)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:143
+msgid "Malaysian Ringgits (only for Malaysian users)"
+msgstr "Malaysian Ringgits (only for Malaysian users)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:146
+msgid "Philippine Pesos"
+msgstr "Philippine Pesos"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:149
+msgid "Taiwan New Dollars"
+msgstr "Taiwan New Dollars"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:152
+msgid "Thai Baht"
+msgstr "Thai Baht"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:165
+msgid "Image URL (logo for payment page):"
+msgstr "URL Immagine (logo per pagina Pagamenti)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:170
+msgid "(used for your business/personal logo on the PayPal page)"
+msgstr "(usata per il tuo logo aziendale/personale nella pagina PayPal)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:176
+msgid "% Surcharge (Added to the total): "
+msgstr "% Supplemento (aggiunto al totale):"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:191
+msgid "Shipping address options?"
+msgstr "Opzioni Indirizzo di Spedizione?"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:194
+msgid "Do not prompt for an address"
+msgstr "Non Chiedere un Indirizzo"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:195
+msgid "Prompt for an address, but do not require one"
+msgstr "Chiedi un indirizzo, ma non richiederlo"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:196
+msgid "Prompt for an address, and require one"
+msgstr "Chiedi un indirizzo e richiederlo"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:201
+msgid "Use the debugging feature and the"
+msgstr "Usa la funzione di debug e il"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:201
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:219
+msgid "PayPal Sandbox"
+msgstr "PayPal Sandbox"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:215
+msgid "Update PayPal Settings"
+msgstr "Aggiorna Impostazioni PayPal"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:220
+msgid "In addition to using the PayPal Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all PayPal variables."
+msgstr "Oltre a utilizzare il fetaure PayPal Sandbox. La funzionalità di debug sarà anche l'uscita del varibales modulo alla pagina di pagamento, inviare una e-mail per l'amministratore che contiene le tutte le variabili PayPal."
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:222
+msgid "The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts."
+msgstr "La Sandbox PayPal è un ambiente di test che è un duplicato di PayPal, tranne che per il fatto che non vengono scambiati davvero soldi. La Sandbox consente di testare la vostra integrazione prima di effettuare una transazione reale nell'ambiente PayPal. Creare e gestire account di prova, ed visualizzare le email e lecredenziali API per gli account di prova."
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:226
+msgid "PayPal Image URL (logo for payment page)"
+msgstr "PayPal Image URL (logo per pagina di pagamento)"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:229
+msgid "The URL of the 150x50-pixel image displayed as your logo in the upper left corner of the PayPal checkout pages."
+msgstr "L' URL dell'immagine di  150x50-pixel mostrata come tuo logo nella parte sinistra alta delle pagine di checkout di PayPal."
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:232
+msgid "Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account."
+msgstr "Opzione Pre-definita - Nome della tua azienda, se hai un Business Account, o il tuo indirizzo Email, se hai un Account Premier o Personal."
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:236
+msgid "PayPal Currency"
+msgstr "Valuta PayPal"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:237
+msgid "PayPal uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that PayPal (currently) supports."
+msgstr "PayPal utilizza 3 codici carattere ISO-4217 per specificare le valute nei campi e le variabili. </p><p>Il codice di valuta predefinita è il dollaro (USD). Se si desidera richiedere o accettare pagamenti in altre valute, selezionare la valuta che si desidera utilizzare. Il menu a discesa che elenca tutte le valute che PayPal (attualmente) supporta."
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:240
+msgid "Payment Surcharge"
+msgstr "Supplemento di pagamento"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:241
+msgid "Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation."
+msgstr "Si prega di inserire un numero decimale che indica una percentuale di supplemento. Ad esempio, se si immette 3.00, sarà aggiunto un 3% al prezzo finale dell evento durante il checkout. Se il prezzo evento è inizialmente di 100 Euro, il prezzo con la maggiorazione sarà di 103 Euro.<br/> Questo sovrapprezzo si applica a tutti i nuovi eventi. Tuttavia, si avrà la possibilità di modificare questo valore durante la creazione dell'evento."
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:243
+msgid "Shipping Address"
+msgstr "Indirizzo di Spedizione"
+
+#: I:\Desktop\event-espresso/gateways/paypal/settings.php:244
+msgid "By default, PayPal will display shipping address information on the PayPal payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event."
+msgstr "Per impostazione predefinita, PayPal visualizza l'indirizzo di spedizione sullo schermata di pagamento. Se hai intenzione di spedire gli oggetti a un dichiarante (camicie, fatture, etc) devi utilizzare questa opzione. In caso contrario, non deve essere utilizzata, in quanto richiede un indirizzo di spedizione quando qualcuno si registra ad un evento."
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:8
+msgid "Manage Addons"
+msgstr "Amministra Addons"
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:12
+msgid "Recurring Events Manager"
+msgstr "Manager Eventi Riccorenti"
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:20
+#: I:\Desktop\event-espresso/includes/admin_addons.php:44
+#: I:\Desktop\event-espresso/includes/admin_addons.php:68
+msgid "Installed"
+msgstr "Installato"
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:33
+msgid "Groupon Integration Module"
+msgstr "Modulo di Integrazione Groupon"
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:38
+msgid "About Groupon"
+msgstr "Su Groupon"
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:58
+msgid "Members Integration Module"
+msgstr "Modulo di Integrazione Membri"
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:83
+msgid "Custom Files"
+msgstr "File Custom"
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:87
+msgid "These files offer support for custom templates, functions, and shortcodes. Virtually allowing you to customize the plugin to your needs and making your custom changes future proof."
+msgstr "Questi file offrono un supporto per i template custom, funzioni e shortcode. Virtualmente ti abilitano a customizzare il plugin per le tue necessita e aggiungere le tue modifiche alle versioni successive."
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:89
+#: I:\Desktop\event-espresso/includes/admin_addons.php:90
+#: I:\Desktop\event-espresso/includes/admin_addons.php:91
+msgid " - Installed"
+msgstr " - Installato"
+
+#: I:\Desktop\event-espresso/includes/admin_addons.php:89
+#: I:\Desktop\event-espresso/includes/admin_addons.php:90
+#: I:\Desktop\event-espresso/includes/admin_addons.php:91
+msgid " - Not Installed"
+msgstr " - Non Installato"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:5
+msgid "Help and Support"
+msgstr "Aiuto e Supporto"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:12
+msgid "Contact Support"
+msgstr "Contatta Supporto"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:16
+msgid "If you are having any problems that are not discussed here, suggestions, comments or gripes please visit the"
+msgstr "Se hai problemi non discussi qui, suggerimenti, commenti o lamentele, per favore vista il"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:16
+msgid "Event Espresso forums"
+msgstr "Event Espresso Forum"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:16
+msgid "or feel free to send us an"
+msgstr "o sentiti libero di mandarci un "
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:16
+msgid "email"
+msgstr "Email "
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:26
+msgid "For URL link back to the payment/thank you page use"
+msgstr "Per il link di ritorno alla pagina di pagamento/ringraziamento usa"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:26
+#: I:\Desktop\event-espresso/includes/admin_support.php:27
+msgid "on a new page"
+msgstr "in una nuova pagina"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:27
+msgid "For PayPal to notify about payment confirmation use"
+msgstr "Per notificare PayPal sulla conferma di pagamento usa"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:28
+msgid "To display a single event on a page use the"
+msgstr "Per mostrare un singolo evento in una pagina usa il"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:29
+msgid "To display list of attendees of an active event use"
+msgstr "Per mostrare una lista dei partecipanti di un evento attivo usa"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:29
+msgid "on a page or post"
+msgstr "in una pagina o in un post"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:30
+msgid "To display a list of events in sidebar, use the Event Registration Widget. If your theme doesn't use widgets, you can use"
+msgstr "Per visualizzare un elenco degli eventi nella sidebar, utilizzare il Widget di registrazione all'event . Se il vostro tema non fa uso di widget, si può usare"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:30
+msgid "in theme code"
+msgstr "nel codice del tema"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:31
+msgid "This page should be hidden from from your navigation menu. Exclude pages by using the &lsquo;Exclude Pages&rsquo; plugin from"
+msgstr "Questa pagina dovrebbe essere nascosta dal menu di navigazione. Escludi le pagine usando il plugin &lsquo;Eescludere Pagine&lsquo; da"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:31
+msgid "or using the &lsquo;exclude&rsquo; parameter in your &lsquo;wp_list_pages&rsquo; template tag. Please refer to"
+msgstr "oppure utilizzando il parametro di &lsquo;escludere&lsquo; nel tuo tag &lsquo;wp_list_pages&lsquo; del template. Si prega di fare riferimento a"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:31
+msgid "for more inforamation about excluding pages"
+msgstr "per ulteriori informazioni sulle pagine escluse"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:32
+msgid "Email Confirmations<br />  For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email."
+msgstr "Conferma via E-mail <br/> Per le email di conferma personalizzate, i seguenti tag possono essere messi nel form email e estrarranno i dati da includere nella e-mail dal database."
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:48
+msgid "Trouble Shooting and Frequently Asked Questions"
+msgstr "Risoluzione dei problemi e Domande Frequenti FAQ"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:52
+msgid "Registration Page Just Refreshes"
+msgstr "Pagina di Registrazione si Ricaricherà"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:53
+msgid "Usually its because you need to point the &quot;Main registration page:&quot; (in the Organization Settings page) to whatever page you have the shortcode"
+msgstr "Di solito è perché è necessario il puntare la &quot;Pagina di registrazione principale:&quot; (nella pagina delle Impostazioni Organizzazione) a qualsiasi pagina abbia il relativo shortcode"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:53
+msgid "on"
+msgstr "il"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:54
+msgid "Problems After Upgrading"
+msgstr "Problemi dopo l'aggiornamento"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:55
+msgid "If you have just upgraded  from  the free version of this plugin, your event dates, times, and categories may be out of order, missing, showing an error, or are wrong.  Pressing the &quot;Run Upgrade Script&quot; button below should fix all of these problems."
+msgstr "Se avete appena aggiornato dalla versione gratuita di questo plugin, le date di eventi, gli orari, e le categorie possono essere errate, mancanti, mostrando un errore, o essere sbagliate. Premendo il pulsante &quot;Esegui Upgrade Script&quot; qui sotto si dovrebbero risolvere tutti questi problemi."
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:59
+msgid "Run Upgrade Script"
+msgstr "Avvia lo Script di Aggiornamento"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:63
+msgid "If you have clicked the button above and event dates that should be expired, are showing an error or seem to be out of order. Go into the &quot;<a href=\"admin.php?page=events\">Event Management</a>&quot; page and click the &quot;Edit this Event&quot; button then click the &quot;Update Event&quot; button on each event that is displaying the wrong date(s). This process should fix the problem. If it doesn't then send a support request using the help and support button above."
+msgstr "Se avete cliccato il pulsante sopra e le date degli eventi che dovrebbero essere scaduti, stanno mostrando un errore o sembrano essere in disordine. Andate nella pagina &quot;<a href=\"admin.php?page=events\">Amministrazione Eventi</ a>&quot; e fate clic su &quot;Modifica Evento&quot; quindi su &quot;Aggiorna Evento&quot; su evento con data/date sbagliata/sbagliate. Questo processo dovrebbe risolvere il problema. Se non capita, poi inviare una richiesta di assistenza tramite l'aiuto e il pulsante di supporto qui sopra."
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:68
+msgid "Attendee Information is Outdated"
+msgstr "Le informazioni Partecipante sono Datate"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:69
+msgid "Due to recent changes in the way attendee information is handled, attendee data may appear to be missing from some events. In order to reassign attendees to events, please run the attendee update script by pressing the button below."
+msgstr "A causa di recenti cambiamenti nelle informazioni partecipante modalità di gestione, i dati dei partecipanti può apparire mancante di alcuni eventi. Al fine di riassegnare i partecipanti agli eventi, eseguire lo script di aggiornamento partecipante premendo il pulsante in basso."
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:73
+msgid "Run Attendee Update Script"
+msgstr "Avvia lo Script di Aggiornamento Partecipanti"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:133
+msgid "Attendee data has been updated!"
+msgstr "Le informazioni del partecipante sono state aggiornate!"
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:136
+#: I:\Desktop\event-espresso/includes/admin_support.php:269
+msgid "There was an error in your submission, please try again."
+msgstr "C'è stato un errore nella tua conferma, per favore riprova."
+
+#: I:\Desktop\event-espresso/includes/admin_support.php:266
+msgid "Event data has been updated!"
+msgstr "Le informazione dell'Evento sono state aggiornate!"
+
+#: I:\Desktop\event-espresso/includes/database_install.new.php:216
+msgid "Payment Received for [event_name]"
+msgstr "Pagamento Ricevuto per il  [event_name]"
+
+#: I:\Desktop\event-espresso/includes/database_install.new.php:217
+msgid "<p>***This Is An Automated Response*** </p><p>Thank You [fname] [lname]</p>  <p>We have just  received a payment in the amount of [event_price] for your registration to [event_name].</p> <p>PayPal transaction ID: [txn_id]</p>"
+msgstr "<p> *** Questa è una risposta automatica *** </p><p> Grazie [fname] [lname] </p> <p> Abbiamo appena ricevuto il pagamento per un importo di [event_price] per la tua registrazione a [EVENT_NAME] </p> <p> ID transazione PayPal:. [txn_id] </ p>"
+
+#: I:\Desktop\event-espresso/includes/database_install.new.php:219
+msgid "<p>***This is an automated response - Do Not Reply***</p> <p>Thank you [fname] [lname] for registering for [event].</p><p>Start time: [start_time]</p><p>Location:<br>[location]</p><p>Phone: [location_phone]</p><p>Google Map: [google_map_link]</p><p> We hope that you will find this event both informative and enjoyable. Should you have any questions, please contact [contact].</p><p>If you have not done so already, please submit your payment in the amount of [cost].</p><p>Click here to review your payment information [payment_url].</p><p>Thank You.</p>"
+msgstr "<p> *** Questa è una risposta automatica - Non rispondere ***</p> <p> Grazie [fname] [lname] per la registrazione a [eventi] </p><p> Ora di Inizio: [start_time] </ p> Luogo: <br> [location] </ p> Telefono: [location_phone] </p><p> Google Map: [google_map_link] </p><p> Ci auguriamo che questo evento possa essere sia istruttivo che piacevole. Se avete domande, siete pregati di contattare [contact]. </p><p> Se non lo avete già fatto, si prega di inviare il pagamento per un importo di [cost]. </p><p> Cliccate qui per rivedere i dati di pagamento [payment_url]. </p><p> Grazie. </p>"
+
+#: I:\Desktop\event-espresso/includes/event_espresso_form_build.inc.php:129
+msgid "Select One"
+msgstr "Seleziona Uno"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:95
+msgid "Organization details saved."
+msgstr "Dettagli Organizzazione Salvati Correttaemente."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:116
+msgid "Organization Settings"
+msgstr "Setting Organizzazione "
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:124
+msgid "Organization Name:"
+msgstr "Nome Organizzazione:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:130
+msgid "Organization Street 1:"
+msgstr "Via Organizzazione 1:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:136
+msgid "Organization Street 2:"
+msgstr "Organizzazione via 2:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:142
+msgid "Organization City:"
+msgstr "Città Organizzazione:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:148
+msgid "Organization State:"
+msgstr "Nazione Organizzazione:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:154
+msgid "Organization Zip/Postal Code:"
+msgstr "CAP Organizzazione:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:160
+msgid "Organization Country:"
+msgstr "Paese Organizzazione:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:165
+msgid "Primary contact email:"
+msgstr "Email Contatto Primario:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:169
+msgid "Time and Date Settings"
+msgstr "Impostazioni Data e Ora"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:170
+msgid "Current Time"
+msgstr "Orario Corrente"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:171
+msgid "Change timezone and date format settings?"
+msgstr "Cambia fuso orario e le impostazioni di formato della data?"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:171
+msgid "You must set the time zone for your city, or the city closest to you. UTC time will not work."
+msgstr "È necessario impostare il fuso orario per la tua città, o la città più vicina a voi. Altrimnti l'Orario UTC non funzionerà."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:175
+msgid "Events expire on registration end date?"
+msgstr "Eventi scadono al termine della data di registrazione?"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:180
+#: I:\Desktop\event-espresso/includes/organization_config.php:286
+#: I:\Desktop\event-espresso/includes/organization_config.php:353
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:50
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:86
+msgid "Save Options"
+msgstr "Salva Opzioni"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:188
+msgid "Page Settings"
+msgstr "Pagina Impostazioni"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:201
+msgid "Main registration page:"
+msgstr "Pagina Principale Registrazione:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:205
+#: I:\Desktop\event-espresso/includes/organization_config.php:226
+#: I:\Desktop\event-espresso/includes/organization_config.php:250
+#: I:\Desktop\event-espresso/includes/organization_config.php:269
+msgid "Main page"
+msgstr "Pagina Principale"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:211
+#: I:\Desktop\event-espresso/includes/organization_config.php:218
+#: I:\Desktop\event-espresso/includes/organization_config.php:232
+#: I:\Desktop\event-espresso/includes/organization_config.php:275
+#: I:\Desktop\event-espresso/includes/organization_config.php:282
+msgid "This page should contain the"
+msgstr "Questa pagina può contenere lo"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:213
+msgid "shortcode. <br />This page can be hidden from navigation if desired, <br />but should always contain the [ESPRESSO_EVENTS] shortcode."
+msgstr "shortcode. <br />Questa pagina può essere nascosta dalla navigazione, se desiderato, <br />ma deve sempre contenere lo shortcode [ESPRESSO_EVENTS] ."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:216
+msgid "Main Events Page"
+msgstr "Pagina Principale Eventi"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:217
+msgid "This is the page that displays your events."
+msgstr "Questa è la pagina che visualizza i suoi eventi."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:218
+#: I:\Desktop\event-espresso/includes/organization_config.php:282
+msgid "shortcode."
+msgstr "shortcode."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:222
+msgid "Auto Return URL (Thank You and Return Payment page):"
+msgstr "Auto URL di ritorno (Pagine di Ritono per Ringraziamento e Pagamento):"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:234
+msgid ""
+"shortcode. <br />\n"
+"This page should hidden from your navigation, <br />\n"
+"but still viewable to the public (not password protected.)"
+msgstr ""
+"shortcode. <br /> \n"
+"Questa pagina deve essere nascosta dalla tua navigazione, <br /> \n"
+"ma ancora visibile al pubblico (non protetto da password.)"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:239
+msgid "Auto Return URL"
+msgstr "Url di Auto Ritorno"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:240
+msgid "The URL to which the payer\"s browser is redirected after completing the payment; for example, a URL on your site that displays a \"Thank you for your payment\" page."
+msgstr "L'URL al quale viene reindirizzato il browser dell'acquirente \"s dopo aver completato il pagamento; ad esempio, un URL del tuo sito che visualizza una pagina \"Grazie per il vostro pagamento \" ."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:241
+msgid "This page should contain the <strong>[ESPRESSO_PAYMENTS]</strong> shortcode."
+msgstr "Questa pagina deve contenere lo shortcode <strong> [ESPRESSO_PAYMENTS] </strong> ."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:242
+#: I:\Desktop\event-espresso/includes/organization_config.php:261
+#: I:\Desktop\event-espresso/includes/organization_config.php:283
+msgid "ATTENTION:"
+msgstr "**Attenzione**"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:242
+#: I:\Desktop\event-espresso/includes/organization_config.php:261
+#: I:\Desktop\event-espresso/includes/organization_config.php:283
+msgid "This page should be hidden from from your navigation menu. Exclude pages by using the \"Exclude Pages\" plugin from http://wordpress.org/extend/plugins/exclude-pages/ or using the \"exclude\" parameter in your \"wp_list_pages\" template tag. Please refer to http://codex.wordpress.org/Template_Tags/wp_list_pages for more inforamation about excluding pages."
+msgstr "Questa pagina dovrebbe essere nascosta dal menu di navigazione. Escludi le pagine usando plugin \"Exclude Pages\" da http://wordpress.org/extend/plugins/exclude-pages/ o utilizzando il parametro \"exclude\" nel tag  \"wp_list_pages\" del template. Si prega di fare riferimento a http://codex.wordpress.org/Template_Tags/wp_list_pages per più inforamazioni sulle pagine escluse."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:246
+msgid "Cancel Return URL (used for cancelled payments):"
+msgstr "Cancel Return URL (usato per i pagamenti cancellati):"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:256
+msgid "This should be a page on your website that contains a cancelled message. <br />No short tags are needed. This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)"
+msgstr "Questa dovrebbe essere una pagina del tuo sito web che contiene un messaggio cancellato. <br /> Non è necessario alcun tag breve. Questa pagina deve essere nascosta dalla tua navigazione, <br /> ma ancora visibile al pubblico (non protetto da password.)"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:258
+msgid "Cancel Return URL"
+msgstr "Cancella Url di Ritorno"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:259
+msgid "A URL to which the payer's browser is redirected if payment is cancelled; for example, a URL on your website that displays a \"Payment Canceled\" page."
+msgstr "Un URL a cui il browser dell'acquirente viene reindirizzato se il pagamento viene annullato; per esempio, un URL sul tuo sito web che visualizza una pagina \"Pagamento Annullato \" ."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:260
+msgid "This should be a page on your website that contains a cancelled message. No short tags are needed."
+msgstr "Questa dovrebbe essere una pagina del tuo sito web che contiene un messaggio cancellato. Non è necessario alcun tag breve."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:265
+msgid "Notify URL (used to process payments):"
+msgstr "URL di Notifica (usato per processare i pagamenti):"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:277
+msgid "shortcode. <br />This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)"
+msgstr "shortcode. <br /> Questa pagina dovrebbe nascosta dalla tua navigazione, <br /> ma ancora visibile al pubblico (non protetto da password.)"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:279
+msgid "Notify URL"
+msgstr "URL di Notifica"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:281
+msgid "The URL to which PayPal posts information about the transaction, in the form of Instant Payment Notification messages."
+msgstr "L'URL a cui PayPal posta informazioni della transazione, in forma di messaggi di Notifica Immediata del Pagamento."
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:294
+msgid "Email Settings"
+msgstr "Settaggio Email"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:305
+msgid "Send payment confirmation emails?"
+msgstr "Spedisci Email di Conferma Pagamento?"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:309
+msgid "Send registration confirmation emails before payment is received?"
+msgstr "Spedire email di conferma registrazione prima della ricezione del Pagamento?"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:313
+msgid "Payment Confirmation Email:"
+msgstr "Email Conferma Pagamento:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:317
+msgid "Email Subject:"
+msgstr "Oggetto dell'Email:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:328
+#: I:\Desktop\event-espresso/includes/organization_config.php:344
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:43
+msgid "View Custom Email Tags"
+msgstr "Visualizza Tag Email Personalizzati"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:335
+msgid "Default Registration Confirmation Email:"
+msgstr "Email di Conferma Registrazione Pre-Definita:"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:346
+msgid "Example"
+msgstr "Esempio"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:359
+msgid "Advanced Features"
+msgstr "Opzioni Avanzate"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:379
+msgid "Purchase a"
+msgstr "Acquistare una"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:379
+msgid "support license"
+msgstr "Licenza s i Supporto"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:379
+msgid "to gain access to adavanced features such as CAPTCHA and"
+msgstr "per avere accesso alle funzioni avanzate come CAPTCHA e"
+
+#: I:\Desktop\event-espresso/includes/organization_config.php:379
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:7
+msgid "Template Customization"
+msgstr "Personalizzazione Template"
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:15
+msgid "No ID Supplied"
+msgstr "Non è stato fornito ID"
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:39
+msgid "No Category ID Supplied"
+msgstr "Non è stato fornito ID CAtegoria"
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:290
+msgid "<h3 class=\"expired_event\">This event has passed.</h3>"
+msgstr "<h3 class=\"expired_event\">Questo Evento è Trascorso.</h3>"
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:296
+msgid "We are sorry but registration for this event is now closed."
+msgstr "Siamo spiacenti, ma si sono concluse le registrazioni per questo evento!"
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:297
+msgid "Please <a href=\"contact\" title=\"contact us\">contact us</a> if you would like to know if spaces are still available."
+msgstr "Per Favore <a href=\"contact\" title=\"contact us\">contattaci</a> se vuole sare gli spazi disponibili."
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:305
+msgid "We are sorry but this event is not yet open for registration."
+msgstr "Siamo spiacenti, ma non sono ancora aperte le registrazioni per questo evento!"
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:306
+msgid "You will be able to register starting "
+msgstr "Sarete in grado di Iniziare la Registrazioned"
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:360
+msgid "Anti-Spam Measure: Please enter the following phrase"
+msgstr "Anti-Spam: Digita le 2 parole che appaiono in basso"
+
+#: I:\Desktop\event-espresso/includes/shortcodes.php:366
+msgid "Submit"
+msgstr "Invia"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:42
+msgid "All Events"
+msgstr "Tutti gli Eventi"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:43
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:49
+msgid "Today"
+msgstr "Oggi"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:44
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:50
+msgid "This Month"
+msgstr "Questo Mese"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:47
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:34
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:96
+msgid "Attendees"
+msgstr "Partecipanti"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:48
+msgid "All Attendees"
+msgstr "Tutti gli Iscritti"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:71
+msgid "Show All Completed/Incomplete"
+msgstr "Mostra tutti Completi/Incompleti"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:71
+msgid "Completed"
+msgstr "Completato"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:71
+msgid "Pending"
+msgstr "In lavorazione"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:71
+msgid "Incomplete"
+msgstr "Incompleto"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:71
+msgid "Payment Declined"
+msgstr "Pagamento Rifiutato"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:76
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:88
+msgid "Reset Filters"
+msgstr "Resetta Filtri"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:85
+msgid "Show Active/Inactive"
+msgstr "Mostra Attivi/Inattivi"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:85
+msgid "Active"
+msgstr "Attivo"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:85
+msgid "Inactive"
+msgstr "Inattivo"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:85
+msgid "Secondary"
+msgstr "Secondario"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:85
+msgid "Ongoing"
+msgstr "IN CORSO"
+
+#: I:\Desktop\event-espresso/includes/admin-files/admin_reports_filters.php:85
+msgid "Deleted"
+msgstr "Cancellato"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:6
+msgid "Event Posts"
+msgstr "Post Eventi "
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:7
+msgid "Event"
+msgstr "Evento"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:8
+msgid "Add New"
+msgstr "Aggiungi Nuovo"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:9
+msgid "Add New Event"
+msgstr "Aggiungi nuovo Evento"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:10
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:96
+msgid "Edit"
+msgstr "Modifica"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:11
+msgid "Edit Event"
+msgstr "Modifica Evento"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:12
+msgid "New Event"
+msgstr "Aggiungi nuovo Evento"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:13
+msgid "View Event"
+msgstr "Vedi Evento"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:14
+msgid "View Events"
+msgstr "Mostra Eventi"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:15
+msgid "Search Events"
+msgstr "Cerca Eventi"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:16
+msgid "No events found"
+msgstr "Nessuna Corrispondenza Trovata!"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:17
+msgid "No events found in Trash"
+msgstr "Nessun Evento nel Cestino"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:18
+msgid "Parent Event"
+msgstr "Evento Superiore"
+
+#: I:\Desktop\event-espresso/includes/admin-files/custom_post_type.php:21
+msgid "Event Thumbnail"
+msgstr "Immagine Evento"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:19
+msgid "Event(s) have been permanently deleted."
+msgstr "L'evento è stato cancellato definitivamente"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:31
+msgid "Name"
+msgstr "Nome"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:32
+msgid "Date"
+msgstr "Data"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:33
+msgid "Status"
+msgstr "Status"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:66
+msgid "todays' events"
+msgstr "Eventi di oggi"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:96
+msgid "Delete"
+msgstr "Cancella"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:96
+msgid "Export"
+msgstr "Esporta"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:116
+msgid "Live Search Filter"
+msgstr "Filtro di ricerca Live"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:117
+msgid "No Records Found!"
+msgstr "Nessuna Corrispondenza Trovata!"
+
+#: I:\Desktop\event-espresso/includes/admin-files/dashboard_widget.php:141
+msgid "Upcoming Events"
+msgstr "Prossimi Eventi"
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:33
+msgid "Send an Email to the Attendees of"
+msgstr "Spedisci una mail ai Partecipanti di"
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:36
+msgid "Use a <a href=\"admin.php?page=event_emails\">pre-existing email</a>? "
+msgstr "Usa un <a href=\"admin.php?page=event_emails\">email esistente</a>? "
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:39
+msgid "Email Subject Line"
+msgstr "Oggetto dell'Email "
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:40
+msgid "Email Text"
+msgstr "Testo dell'Email"
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:43
+msgid "Email Example"
+msgstr "Esempio Emial"
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:47
+msgid "Send Newsletter"
+msgstr "Invia Newsletter"
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:55
+msgid "<< Back to"
+msgstr "<< Torna a"
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:58
+msgid "Pre-existing Emails"
+msgstr "Email Pre-esistenti"
+
+#: I:\Desktop\event-espresso/includes/admin-files/event_newsletter.php:59
+msgid "This will override the custom email below if selected."
+msgstr "Questo, se selezionato, avrà la precedenza sull'email personalizzata qui sotto."
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:10
+msgid "Optional Event Settings"
+msgstr "Impostazioni Evento Opzionali"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:18
+msgid "Show the Upcoming Events widget in the dashboard?"
+msgstr "Mostra Widget Eventi in Arrivo  nella dashboard?"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:20
+msgid "Show the next"
+msgstr "Mostra il Successivo"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:20
+msgid "days of events in the dashboard."
+msgstr "giorni degli eventi nella dashboard."
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:24
+msgid "Use registration limits on time slots?"
+msgstr "Usa il limite di registrazione su base oraria?"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:29
+msgid "Display short descriptions in the event listings? (Be sure to use the \"More...\" tag in your event description)"
+msgstr "Mostra la descrizione breve nella lista degli eventi? (Assicurati di usare il tag \"More\" nella tua descrizione)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:34
+msgid "Display adresses in the event listings?"
+msgstr "Mostra indirizzo nella lista eventi?"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:39
+msgid "Use the custom post types feature?"
+msgstr "Usa la funzionalità post personalizzato?"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:44
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:80
+msgid "reCAPTCHA Information"
+msgstr "Informazioni reCAPTCHA"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:45
+msgid "reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a <a href=\"http://recaptcha.net/captcha.html\">CAPTCHA</a> to ensure that only humans perform certain actions."
+msgstr "reCAPTCHA aiuta a prevenire l'abuso automatizzata del vostro sito (come lo spam nei commenti o le registrazioni fasulle) utilizzando un <a href=\"http://recaptcha.net/captcha.html\">CAPTCHA</ a> per assicurare che solo gli esseri umani possano eseguire determinate azioni."
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:46
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:82
+msgid "You must sign up for a"
+msgstr "Devi iscriverti a un"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:46
+msgid "free reCAPTCHA"
+msgstr "reCAPTCHA gratuito"
+
+#: I:\Desktop\event-espresso/includes/admin-files/optional_event_settings.php:46
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:82
+msgid "account to use it with this plugin. If you already have a reCAPTCHA account enter your \"Public\" and \"Private\" keys on this page."
+msgstr "account da usare con questo plugin. Se hai già un account reCAPTCHA inserisci la tua chiave \"Pubblica\"  in questa pagina."
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:6
+msgid "reCAPTCHA Settings"
+msgstr "Impostazioni reCAPTCHA"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:14
+msgid "Use"
+msgstr "Usa"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:14
+msgid "reCAPTCHA"
+msgstr "reCAPTCHA"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:14
+msgid "to block spam registrations"
+msgstr "per bloccare lo spam nelle registrazioni"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:26
+msgid "Public Key:"
+msgstr "Public Key:"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:32
+msgid "Private Key:"
+msgstr "Private Key:"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:38
+msgid "Look &amp; Feel Customization"
+msgstr "Configurazione Aspetto"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:43
+msgid "Width:"
+msgstr "Larghezza: "
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:49
+msgid "Theme:"
+msgstr "Tema:"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:53
+msgid "Red"
+msgstr "Rosso"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:54
+msgid "White"
+msgstr "Bianco"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:55
+msgid "Blackglass"
+msgstr "Vetro nero"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:56
+msgid "Clean"
+msgstr "Pulisci"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:62
+msgid "Language:"
+msgstr "Lingua:"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:66
+msgid "English"
+msgstr "English"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:67
+msgid "Spanish"
+msgstr "Spanish"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:68
+msgid "Dutch"
+msgstr "Dutch"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:69
+msgid "French"
+msgstr "French"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:70
+msgid "German"
+msgstr "German"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:71
+msgid "Portuguese"
+msgstr "Portuguese"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:72
+msgid "Russian"
+msgstr "Russian"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:73
+msgid "Turkish"
+msgstr "Turkish"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:81
+msgid "reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a"
+msgstr "reCAPTCHA aiuta a prevenire l'abuso automatizzata del vostro sito (come lo spam nei commenti o registrazioni fasulli) utilizzando un"
+
+#: I:\Desktop\event-espresso/includes/admin-files/recaptcha_form.php:81
+msgid "to ensure that only humans perform certain actions."
+msgstr "per essere certi che solo gli umani possano effettuare alcune operazioni."
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:20
+msgid "Your templates have been copied."
+msgstr "I tuoi templare sono stati copiati."
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:34
+msgid "Modifying your event listings and registration pages is easy."
+msgstr "Modificare la pagina con la lista degli eventi e di registrazione è semplice."
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:37
+msgid "You just need to edit the appropriate files in the following location."
+msgstr "Devi solo modificare i file appropriati al seguente indirizzo."
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:44
+msgid "Current Template Files"
+msgstr "File Template Corrente"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:52
+msgid "(displays a list of attendees)"
+msgstr "(mostra la lista dei Partecipanti)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:55
+msgid "(logic for displaying the list of events)"
+msgstr "(logica per visualizzare la lista degli eventi)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:58
+msgid "(displays a list of events)"
+msgstr "(mostra la lista degli Eventi)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:61
+msgid "(create-a-post template)"
+msgstr "(crea un Template per il Post)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:64
+msgid "(displays your payment page text)"
+msgstr "(mostra la  pagina testuale per i pagamenti)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:67
+msgid "(logic for displaying the registration form)"
+msgstr "(logica per visualizzare il form di registrazione)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:70
+msgid "(displays your registration form)"
+msgstr "(mostra il form di registrazione)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:73
+msgid "(displays a confimration page for free events)"
+msgstr "(mostra un pagina di conferma per gli eventi gratuiti)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:76
+msgid "(page that is displayed when returning to pay)"
+msgstr "(pagina visualizzata al ritorno dal pagamento)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:79
+msgid "(creates a widget for use in your theme)"
+msgstr "(crea un widget da usare nel tuo tema)"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:86
+msgid " - Moved"
+msgstr " - Spostato"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:89
+msgid " - Not Moved"
+msgstr "- Non Spostato"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:104
+msgid "In order to use this this feature, you will need to move the files located in the"
+msgstr "Per usare questa funzionalità, deve spostare i file presenti nella "
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:104
+msgid "directory into the"
+msgstr "directory in "
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:104
+msgid "directory"
+msgstr "directory"
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:110
+msgid "To move your files automatically, please set the permissions to 775 on the following directory."
+msgstr "Per spostare i file automaticamente, per favore setta i permessi a 755 nella seguante directory."
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:120
+msgid "If you plan on modifying the look of your event listings, registration page, or attendee list. Use the option below to move these templates to a safe place. Keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates."
+msgstr "Se si prevede di modificare l'aspetto del vostro elenco degli eventi, delle pagina di registrazione, o dell'elenco dei partecipanti. Utilizzate l'opzione qui sotto per spostare questi modelli per un posto sicuro. Tenetelo a mente, se saranno fatti aggiornamenti o se saranno aggiunti elementi a questi modelli anche in futuro. Nel caso, sarà necessario eseguire gli aggiornamenti di modelli personalizzati."
+
+#: I:\Desktop\event-espresso/includes/admin-files/template_files.php:123
+msgid "Your template files have not been moved."
+msgstr "I file del tuo template non sono stati spostati."
+
+#: I:\Desktop\event-espresso/includes/admin-reports/add_new_attendee.php:11
+msgid "Added Attendee to Database"
+msgstr "Aggiungi Partecipante al Database"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/add_new_attendee.php:88
+msgid "Start Date:"
+msgstr "Data Inizio:"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/add_new_attendee.php:118
+msgid "Amount Paid:"
+msgstr "Ammontare Pagato:"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:146
+msgid "Attendee details saved for "
+msgstr "Dettagli Partecpante salvati per"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:150
+msgid "Registration Id #"
+msgstr "ID Registrazione #"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:159
+msgid "How is attendee paying for registration?"
+msgstr "Il Partecipante come sta pagando per la registrazione?"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:162
+msgid "Credit Card or Paypal"
+msgstr "Carta di credito o PayPal"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:163
+msgid "Cash"
+msgstr "Contanti"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:164
+msgid "Check"
+msgstr "Controllo"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:224
+msgid "Update Record"
+msgstr "Aggiorna Voce Database"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:233
+msgid "Additional Attendees"
+msgstr "Iscritti Addizionali"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:237
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:163
+msgid "Edit Attendee"
+msgstr "Modifica Partecipante"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/edit_attendee_record.php:239
+msgid "Delete Attendee"
+msgstr "Cancella Partecipante"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:87
+msgid "Payment details saved for"
+msgstr "Dettagli pagamento salvati per"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:89
+msgid "Payment notification has been sent."
+msgstr "Sono state spedite le notifiche di Pagamento."
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:98
+msgid "Attendee"
+msgstr "Partecipante"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:98
+msgid "Registered For:"
+msgstr "Registrato per:"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:102
+msgid "Payment Details"
+msgstr "Dettagli Pagamento"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:103
+msgid "Invoice/Payment Reminder"
+msgstr "Fattura/Promemoria Pagamento"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:111
+msgid "Payment Status:"
+msgstr "Stato Pagamento"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:113
+msgid "None"
+msgstr "Niente"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:121
+msgid "Transaction Type:"
+msgstr "Tipo di Transazione:"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:125
+msgid "Amount:"
+msgstr "Ammontare:"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:128
+msgid "How Many People:"
+msgstr "Qaunte persone:"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:130
+msgid "Date Paid:"
+msgstr "Data Pagamento:"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:139
+msgid "Do you want to send a payment recieved notice to registrant?"
+msgstr "Vuoi spedire la ricevuta di ricezione del pagamento all'utente?"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:157
+msgid "Invoice Subject"
+msgstr "Oggetto della fattura"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:157
+msgid "Payment Reminder for [event]"
+msgstr "Promemoria di Pagamento per [event]"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:158
+msgid "Message"
+msgstr "Messaggio"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/enter_attendee_payments.php:160
+msgid "Dear [fname] [lname], <p>Our records show that we have not received your payment of [cost] for [event_link].</p> <p>Please visit [payment_url] to view your payment options.</p><p>Sincerely,<br />"
+msgstr "Ciao [fname] [lname], <p>Il tuo pagamento di [cost] per il [event_link] è in lavorazione.</p> <p>Clicca sul link seguente  [payment_url] per vedere i dettagli del tuo pagamento.</p><p>Cordialmente<br>ArsEtMedia<BR>"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:19
+msgid "Customer(s) have been successfully deleted from the event."
+msgstr "L'utente(i) è stato cancellato con successo dall'evento."
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:36
+msgid "Attendee Name"
+msgstr "Nome Partecipante"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:37
+msgid "Registered"
+msgstr "Registrato"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:39
+msgid "Option"
+msgstr "Opzioni"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:40
+msgid "Time"
+msgstr "Ora"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:42
+msgid "Type"
+msgstr "Tipo"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:43
+msgid "Coupon"
+msgstr "Codice di Sconto"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:46
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:64
+msgid "Action"
+msgstr "Azione"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:117
+msgid "Total Attendees"
+msgstr "Iscritti Totali"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:148
+msgid "Registration #: "
+msgstr "Registrazione #:"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:154
+msgid "View attendees for this event"
+msgstr "Mostra Partecipanti per questo evento"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:157
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:159
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:163
+msgid "Edit Payment"
+msgstr "Modifica Pagamento"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:163
+msgid "Resend Registration Details"
+msgstr "Reinvia i Dettagli di Registrazione"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:196
+msgid "Delete Attendee(s)"
+msgstr "Cancella Partecipante(i)"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:198
+msgid "Import CSV"
+msgstr "Importa CSV"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:200
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:98
+msgid "Export to Excel"
+msgstr "Esporta su Excel"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/event_list_attendees.php:202
+msgid "Add Attendee"
+msgstr "Aggiungi Nuovi Partecipanti"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:28
+msgid "Select an event to view attendee details and payments"
+msgstr "Seleziona un evento per vedere tutti i dettagli dell'scritto"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:33
+msgid "Export All Event Attendees to Excel"
+msgstr "Esporta Tutti i Partecipanti su Excel"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:46
+msgid "Records"
+msgstr "Record"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:47
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:144
+msgid "of"
+msgstr "di"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:49
+msgid "Reset"
+msgstr "Reset"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:59
+msgid "Event ID"
+msgstr "ID Evento"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:61
+msgid "Start Date"
+msgstr "Data Inizio"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:94
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:98
+msgid "View Attendees"
+msgstr "Vedi Iscritti"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:98
+msgid "Export to CSV"
+msgstr "Esporta su CSV"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:99
+msgid "Send Event Newsletter"
+msgstr "Invia Newsletter Evento"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:99
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:105
+msgid "No Record Found!"
+msgstr "Nessuna Corrispondenza Trovata!"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:114
+#: I:\Desktop\event-espresso/includes/category-management/index.php:96
+#: I:\Desktop\event-espresso/includes/coupon-management/index.php:86
+msgid "Check All"
+msgstr "Seleziona tutto"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:116
+msgid "Permanently Delete Events(s)"
+msgstr "Evento cancellato definitivamente"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:130
+msgid "View All"
+msgstr "Vedi Tutto"
+
+#: I:\Desktop\event-espresso/includes/admin-reports/process_payments.php:142
+msgid "Entries Per Page"
+msgstr "Voci per pagina"
+
+#: I:\Desktop\event-espresso/includes/category-management/add_cat_to_db.php:16
+msgid "The category has been added."
+msgstr "La categoria è stato aggiunta."
+
+#: I:\Desktop\event-espresso/includes/category-management/add_cat_to_db.php:18
+msgid "The category   was not saved."
+msgstr "La categoria non è stata salvata."
+
+# Advanced Events Registration Pro translation file
+# Copyright (C) 2010 Seth Shoultes
+# This file is distributed under the same license as the PACKAGE package.
+# Seth Shoultes <seth@smartwebutah.com>, 2010
+# For information on translating this plugin, please refer to http://codex.wordpress.org/Translating_WordPress
+#: I:\Desktop\event-espresso/includes/category-management/add_new_category.php:12
+msgid "Add a Category"
+msgstr "Aggiungi una Categoria"
+
+#: I:\Desktop\event-espresso/includes/category-management/add_new_category.php:17
+msgid "Category Name"
+msgstr "Nome Categoria:"
+
+#: I:\Desktop\event-espresso/includes/category-management/add_new_category.php:18
+msgid "Unique ID For Category"
+msgstr "Identificatore Unico Categoria:"
+
+#: I:\Desktop\event-espresso/includes/category-management/add_new_category.php:19
+#: I:\Desktop\event-espresso/includes/category-management/edit_event_category.php:30
+msgid "Do you want to display the category description on the events page?"
+msgstr "Vuoi visualizzare la descrizione della categoria nella pagina degli eventi?"
+
+#: I:\Desktop\event-espresso/includes/category-management/add_new_category.php:32
+msgid "Category Description"
+msgstr "Descrizione Categoria"
+
+#: I:\Desktop\event-espresso/includes/category-management/edit_event_category.php:22
+msgid "Edit Category:"
+msgstr "Modifica Categoria:"
+
+#: I:\Desktop\event-espresso/includes/category-management/edit_event_category.php:28
+msgid "Category Name:"
+msgstr "Nome Categoria:"
+
+#: I:\Desktop\event-espresso/includes/category-management/edit_event_category.php:29
+msgid "Unique Category Identifier:"
+msgstr "Unico Identificatore Evento:"
+
+#: I:\Desktop\event-espresso/includes/category-management/edit_event_category.php:39
+msgid "Category Description:"
+msgstr "Descrizione Categoria:"
+
+#: I:\Desktop\event-espresso/includes/category-management/edit_event_category.php:44
+#: I:\Desktop\event-espresso/includes/coupon-management/edit_discount.php:107
+msgid "Update"
+msgstr "Aggiorna"
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:13
+msgid "Manage Event Categories"
+msgstr "Gestisci Categorie Evento:"
+
+# Advanced Events Registration Pro translation file
+# Copyright (C) 2010 Seth Shoultes
+# This file is distributed under the same license as the PACKAGE package.
+# Seth Shoultes <seth@smartwebutah.com>, 2010
+# For information on translating this plugin, please refer to http://codex.wordpress.org/Translating_WordPress
+#: I:\Desktop\event-espresso/includes/category-management/index.php:15
+msgid "Add New Category"
+msgstr "Aggiungi Nuova Categoria"
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:43
+msgid "Categories have been successfully deleted from the event."
+msgstr "Le Categorie sono state cancellate con successo dall evento."
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:60
+#: I:\Desktop\event-espresso/includes/coupon-management/index.php:51
+msgid "ID"
+msgstr "ID"
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:62
+msgid "Shortcode"
+msgstr "Shortcode per Pagina:"
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:98
+msgid "Delete Category"
+msgstr "Cancella Categoria"
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:105
+msgid "Unique Category Identifier"
+msgstr "Unico Identificatore Categoria:"
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:106
+msgid "This should be a unique identifier for the category. Example: \"category1\" (without qoutes.)"
+msgstr "Questo dovrebbe essere un identificatore unico per la categoria. Esempio: \"categoria1 \" (senza virgolette.)"
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:107
+msgid " unique ID can also be used in individual pages using the"
+msgstr " ID univoco può essere anche usato in pagine individuali usando il "
+
+#: I:\Desktop\event-espresso/includes/category-management/index.php:107
+msgid "shortcode"
+msgstr "Shortcode"
+
+#: I:\Desktop\event-espresso/includes/category-management/update_event_category.php:19
+msgid "The category has been updated."
+msgstr "La categoria è stato aggiornata."
+
+#: I:\Desktop\event-espresso/includes/category-management/update_event_category.php:21
+msgid "The category was not updated."
+msgstr "La categoria non è stato aggiunta."
+
+#: I:\Desktop\event-espresso/includes/coupon-management/add_discount.php:31
+msgid "The discount code  has been added."
+msgstr "Il codice di sconto è stato aggiunto."
+
+#: I:\Desktop\event-espresso/includes/coupon-management/add_discount.php:43
+msgid "The discount code  was not saved."
+msgstr "Il Codice di Sconto non è stato salvato."
+
+#: I:\Desktop\event-espresso/includes/coupon-management/delete_discount.php:28
+msgid "Discounts have been successfully deleted from the database."
+msgstr "Gli Sconti sono stati cancellati con successo dal database."
+
+#: I:\Desktop\event-espresso/includes/coupon-management/edit_discount.php:37
+msgid "Edit Discount:"
+msgstr "Modifica Sconto:"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/edit_discount.php:53
+msgid "Dicount Code:"
+msgstr "Codice di Sconto:"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/edit_discount.php:65
+#: I:\Desktop\event-espresso/includes/coupon-management/new_discount.php:39
+msgid "Price Discount"
+msgstr "Sconto"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/edit_discount.php:75
+#: I:\Desktop\event-espresso/includes/coupon-management/new_discount.php:49
+msgid "Is this a percentage discount?"
+msgstr "Questo è uno sconto a percentuale?"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/edit_discount.php:95
+#: I:\Desktop\event-espresso/includes/coupon-management/new_discount.php:63
+msgid "Discount Code Description"
+msgstr "Descrizione Codice di Sconto"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/index.php:8
+msgid "Manage Event Discounts"
+msgstr "Gestisci Sconti Eventi"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/index.php:10
+#: I:\Desktop\event-espresso/includes/coupon-management/index.php:90
+msgid "Add New Discount"
+msgstr "Aggiungi nuovo Codice di Sconto"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/index.php:53
+msgid "Amount"
+msgstr "Ammontare"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/index.php:54
+msgid "Percentage"
+msgstr "Percentuale"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/index.php:88
+msgid "Delete Discount"
+msgstr "Cancella Sconto"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/new_discount.php:13
+msgid "Add a Discount Code"
+msgstr "Aggiungi un Codice di Sconto"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/new_discount.php:27
+msgid "Discount Code"
+msgstr "Codice di Sconto"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/update_discount.php:16
+msgid "The discount  has been updated."
+msgstr "Lo sconto è stato aggiornato"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/update_discount.php:22
+msgid "The discount code was not updated."
+msgstr "Il Codice di Sconto non è stato aggiornato."
+
+#: I:\Desktop\event-espresso/includes/coupon-management/use_coupon_code.php:33
+msgid "You are using discount code:"
+msgstr "Stai usando il codice di sconto:"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/use_coupon_code.php:33
+msgid "discount"
+msgstr "Sconto"
+
+#: I:\Desktop\event-espresso/includes/coupon-management/use_coupon_code.php:70
+msgid "Sorry, that coupon code is invalid or expired."
+msgstr "Per favore, questo codice di coupon non è valido o scaduto."
+
+#: I:\Desktop\event-espresso/includes/coupon-management/use_coupon_code.php:86
+msgid "Enter Promo Code"
+msgstr "Inserisci Codice Promozionale"
+
+#: I:\Desktop\event-espresso/includes/email-manager/add_new_email.php:13
+msgid "Add an Email"
+msgstr "Aggiungi Email"
+
+#: I:\Desktop\event-espresso/includes/email-manager/add_new_email.php:18
+msgid "Email Name"
+msgstr "Nome Email:"
+
+#: I:\Desktop\event-espresso/includes/email-manager/add_new_email.php:27
+msgid "Add Email"
+msgstr "Aggiungi Email"
+
+#: I:\Desktop\event-espresso/includes/email-manager/edit_email.php:21
+msgid "Edit Email:"
+msgstr "Modifica Email:"
+
+#: I:\Desktop\event-espresso/includes/email-manager/edit_email.php:27
+msgid "Email Name:"
+msgstr "Nome Email:"
+
+#: I:\Desktop\event-espresso/includes/email-manager/edit_email.php:27
+msgid "Email Subject Line:"
+msgstr "Oggetto dell'Email:"
+
+#: I:\Desktop\event-espresso/includes/email-manager/edit_email.php:28
+msgid "Email Text:"
+msgstr "Testo dell'Email"
+
+#: I:\Desktop\event-espresso/includes/email-manager/edit_email.php:34
+msgid "Update Email"
+msgstr "Aggiorna Email"
+
+#: I:\Desktop\event-espresso/includes/email-manager/index.php:13
+msgid "Manage Event Emails"
+msgstr "Gestisci Email Evento"
+
+#: I:\Desktop\event-espresso/includes/email-manager/index.php:28
+msgid "Emails have been successfully deleted."
+msgstr "Le Email son state cancellate con successo."
+
+#: I:\Desktop\event-espresso/includes/email-manager/index.php:42
+msgid "Current Emails"
+msgstr "Email Attuali"
+
+#: I:\Desktop\event-espresso/includes/email-manager/index.php:52
+msgid "Add New Email"
+msgstr "Aggiungi Nuova Email"
+
+#: I:\Desktop\event-espresso/includes/email-manager/index.php:55
+msgid "Create customized emails for use in multiple events."
+msgstr "Creare email personalizzare per usare in eventi multipli."
+
+#: I:\Desktop\event-espresso/includes/email-manager/index.php:110
+msgid "Edit Email"
+msgstr "Modifica Email"
+
+#: I:\Desktop\event-espresso/includes/email-manager/index.php:127
+msgid "Delete Email"
+msgstr "Cancella Email"
+
+#: I:\Desktop\event-espresso/includes/email-manager/update_email.php:16
+#: I:\Desktop\event-espresso/includes/email-manager/update_email.php:18
+msgid "The email"
+msgstr "Email"
+
+#: I:\Desktop\event-espresso/includes/email-manager/update_email.php:16
+msgid "has been updated"
+msgstr "è stato aggiornato"
+
+#: I:\Desktop\event-espresso/includes/email-manager/update_email.php:18
+msgid "was not updated"
+msgstr "non è stato aggiornato"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:23
+msgid "Are you sure you want to cancel "
+msgstr "Sei sicuro di voler cancellare "
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:24
+msgid "Cancel"
+msgstr "Annulla"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:27
+msgid "Submit New Event"
+msgstr "Inserisci Nuovo Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:43
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:181
+#: I:\Desktop\event-espresso/includes/event-management/index.php:157
+msgid "Primary"
+msgstr "Primario "
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:47
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:105
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:185
+msgid "No info required"
+msgstr "Nessun Informazione Richiesta"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:48
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:186
+msgid "Personal Info only"
+msgstr "Solo Informazioni Personali"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:49
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:187
+msgid "Full registration info"
+msgstr "Informazioni Complete Registrato"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:54
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:192
+msgid "Additional Attendee Registration info?"
+msgstr "Informazioni di Registrazioni Addizionali per il Partecipante?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:57
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:195
+msgid "Attendee Limit"
+msgstr "Limite Partecipanti"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:58
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:196
+msgid "leave blank for unlimited"
+msgstr "(lascia vuoto per numero illimitato)"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:59
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:197
+msgid "Allow group registrations?"
+msgstr "Permetti la registrazione di gruppi?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:60
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:198
+msgid "Max Group Registrants"
+msgstr "Massimi Registrati per Gruppo"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:63
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:201
+msgid "Advanced Options:"
+msgstr "Opzioni Avanzate:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:65
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:204
+msgid "Is this an active event? "
+msgstr "Questo è un evento attivo? "
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:66
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:205
+msgid "Event Status: "
+msgstr "Stato Evento:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:67
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:206
+msgid "Display  description? "
+msgstr "Mostra Descrizione?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:68
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:207
+msgid "Display  registration form? "
+msgstr "Mostra Form di Registrazione?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:70
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:209
+msgid "Use an alternate registration page?"
+msgstr "Usa Pagina Registrazione alternativa?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:72
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:211
+msgid "Use an alternate email address?"
+msgstr "Usa Indirizzo Email alternativo?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:82
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:221
+msgid "Member Options"
+msgstr "Opzioni Utente"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:96
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:235
+msgid "Event Category"
+msgstr "Categorie Eventi"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:111
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:250
+msgid "Event Promotions"
+msgstr "Promozione Eventi"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:114
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:254
+msgid "Early Registration Discount"
+msgstr "Sconto per Registrazione Anticipata"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:116
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:256
+msgid "End Date:"
+msgstr "Data fine:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:118
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:257
+msgid "Percentage:"
+msgstr "Percentuale:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:120
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:259
+msgid "(Leave blank if not applicable)"
+msgstr "(lascia vuoto se non applicabile)"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:122
+msgid "Allow discount codes? "
+msgstr "Abilita Codici di Sconto?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:149
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:291
+msgid "Event Questions"
+msgstr "Domande Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:154
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:296
+msgid "Add a pre-populated"
+msgstr "Aggiungi un pre-popolato"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:154
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:296
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:331
+msgid "group"
+msgstr "Gruppo"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:154
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:296
+msgid "questions"
+msgstr "domande"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:154
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:296
+msgid "to your event. The personal information group is rquired for all events."
+msgstr "al tuo evento. Il gruppo di informazioni personali è richiesto per tutti gli eventi."
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:185
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:362
+msgid "Groupon Options"
+msgstr "Opzioni Geuppo"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:200
+msgid "Calendar Options"
+msgstr "Opzioni Calendario"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:203
+msgid "It looks like you are using the \"<a href=\"http://wordpress.org/extend/plugins/calendar/\" target=\"_blank\" title=\"Calendar developed and supported by Kieran O'Shea\">Calendar</a>\" plugin. Would you like to add this event to the calendar?"
+msgstr "Sembra che tu stia usando \"<a href=\"http://wordpress.org/extend/plugins/calendar/\" target=\"_blank\" title=\"Calendar plugin sviluppato e supportato da Kieran O'Shea\">Calendar</a>\". Vuoi aggiungere questo evento al calendario?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:204
+msgid "Choose a <a href=\"admin.php?page=calendar-categories\">Calendar Category</a>:"
+msgstr "Scegli una <a href=\"admin.php?page=calendar-categories\">Categoria Calendario</a>:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:214
+msgid "Add to Calendar:"
+msgstr "Aggiungi Evento al Calendario:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:229
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:232
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:381
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:384
+msgid "Event Title"
+msgstr "Titolo Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:239
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:391
+msgid "Unique Event Identifier:"
+msgstr "Unico Identificatore Evento:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:242
+msgid "Get Shortcode"
+msgstr "Shortcode per Pagina:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:243
+msgid "Get URL"
+msgstr "Ottieni un URL"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:249
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:403
+msgid "Event Description"
+msgstr "Descrizione Evento:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:276
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:430
+msgid "Event Date/Times"
+msgstr "Data/Ora Evento:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:283
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:436
+msgid "Registration Dates"
+msgstr "Dati iscrizione"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:283
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:436
+msgid "Registration Start:"
+msgstr "Inizio Iscrizione:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:284
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:437
+msgid "Registration End:"
+msgstr "Fine Iscrizione:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:286
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:439
+msgid "Event Dates"
+msgstr "Dati Evento:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:286
+msgid "Event Start Date:"
+msgstr "Data Inizio Evento:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:287
+msgid "Event End Date:"
+msgstr "Data Fine Evento:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:296
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:444
+msgid "Registration Times"
+msgstr "Tempi Registrazione"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:299
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:447
+msgid "Event Times"
+msgstr "Tempi Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:333
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:474
+msgid "Event Pricing"
+msgstr "Costo Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:350
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:490
+msgid "Advanced Options"
+msgstr "Opzioni Avanzate"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:355
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:495
+msgid "Additional Event/Venue Information"
+msgstr "Informazioni Addizionali Evento/Sede"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:364
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:501
+msgid "Physical Location"
+msgstr "Localita Fisica"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:371
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:508
+msgid "Address 2:"
+msgstr "Indirizzo 2:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:376
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:513
+msgid "City:"
+msgstr "Città:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:381
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:518
+msgid "State:"
+msgstr "Nazione:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:386
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:523
+msgid "Zip/Postal Code:"
+msgstr "CAP:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:391
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:528
+msgid "Country:"
+msgstr "Città:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:398
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:539
+msgid "Venue Information"
+msgstr "Informazioni Luogo"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:406
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:547
+msgid "Website:"
+msgstr "Sito:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:411
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:425
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:552
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:566
+msgid "Phone:"
+msgstr "Telefono:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:416
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:557
+msgid "Image:"
+msgstr "Immagine:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:422
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:563
+msgid "Virtual Location"
+msgstr "Localita Virtuale"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:430
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:571
+msgid "URL of Event:"
+msgstr "URL dell'Evento:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:435
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:576
+msgid "Call in Number:"
+msgstr "Chiama il Numero:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:448
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:590
+msgid "Email Confirmation:"
+msgstr "<h2>Email di Conferma:</h2"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:453
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:596
+msgid "Send custom confirmation emails for this event?"
+msgstr "Spedire email di conferma personalizzata per questo evento?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:454
+msgid "Use a"
+msgstr "Unsa un"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:456
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:599
+msgid "Create a custom email"
+msgstr "Crea un Email Personalizzata"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:481
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:620
+msgid "Create a Post"
+msgstr "Crea un Post"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:485
+msgid "Create a post for this event?"
+msgstr "Crea un Post per questo evento?"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:505
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:644
+msgid "Espresso Event"
+msgstr "Event Espresso"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:506
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:645
+msgid "Post"
+msgstr "Post"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:519
+msgid "Author"
+msgstr "Autore"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:520
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:663
+msgid "Post Type"
+msgstr "Tipo di Post"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:521
+msgid "Tags"
+msgstr "Tag"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:522
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:666
+msgid "Post Categories:"
+msgstr "Categorie Post:"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_new_event.php:527
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:664
+msgid "Post templates are stored in the \"templates\" directory of the plugin."
+msgstr "Template per i Post sono memorizzati nella cartella \"templates \" del plugin."
+
+#: I:\Desktop\event-espresso/includes/event-management/add_to_calendar.php:25
+#: I:\Desktop\event-espresso/includes/event-management/copy_event.php:176
+#: I:\Desktop\event-espresso/includes/event-management/insert_event.php:351
+msgid "The event"
+msgstr "L'evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_to_calendar.php:25
+#: I:\Desktop\event-espresso/includes/event-management/copy_event.php:176
+msgid "has been added."
+msgstr "è stato aggiunto"
+
+#: I:\Desktop\event-espresso/includes/event-management/add_to_calendar.php:27
+#: I:\Desktop\event-espresso/includes/event-management/copy_event.php:178
+#: I:\Desktop\event-espresso/includes/event-management/insert_event.php:356
+msgid "There was an error in your submission, please try again. The event was not saved!"
+msgstr "C'è stato un errore nella tua conferma, per favore riprova. L'evento non è stato salvato!"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:106
+msgid "Personal Info"
+msgstr "Informazioni Personali"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:107
+msgid "Full Registration Info"
+msgstr "Informazioni Complete Registrato"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:123
+msgid "Quick Overview"
+msgstr "Introduzione Veloce"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:134
+msgid "Are you sure you want to copy "
+msgstr "Sei sicuro di voler copiare la voce di"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:135
+msgid "Duplicate Event"
+msgstr "Duplica Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:149
+msgid "Current Status:"
+msgstr "Stato Attuali"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:163
+msgid "Are you sure you want to delete "
+msgstr "Sei sicuro di voler cancellare "
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:164
+msgid "Delete Event"
+msgstr "Cancella Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:167
+msgid "Update Event"
+msgstr "Aggiorna Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:261
+msgid "Allow discount codes?"
+msgstr "Abilita Codici di Sconto?"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:326
+msgid "Cart Items"
+msgstr "Oggetti in Carrello"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:330
+msgid "Item Groups"
+msgstr "Gruppi Oggetto"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:331
+msgid "Add a pre-populated "
+msgstr "Aggiungi un pre-popolato"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:331
+msgid "items"
+msgstr "oggetti"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:331
+msgid "to your event"
+msgstr "al tuo evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:395
+msgid "Short URL"
+msgstr "Short URL"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:396
+msgid "Full URL"
+msgstr "URL Esteso"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:439
+msgid "Event Start Date"
+msgstr "Data Inizio Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:440
+msgid "Event End Date"
+msgstr "Data Fine Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:533
+msgid "Google Map Link (for email):"
+msgstr "Google Map Link (per email):"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:597
+msgid "Use a "
+msgstr "Usa un"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:597
+msgid "pre-existing email"
+msgstr "Email Pre-esistente"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:635
+msgid "Add/Update post for this event?"
+msgstr "Aggiungi/Aggiorna post per questo evento?"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:635
+msgid "If no, delete current post?"
+msgstr "Se no, cancellare il post corrente?"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:662
+msgid "Author:"
+msgstr "Autore:"
+
+#: I:\Desktop\event-espresso/includes/event-management/edit_event.php:665
+msgid "Tags:"
+msgstr "Tags:"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:14
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:21
+msgid "Reg Start Time"
+msgstr "Ora Inizio Registrazione"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:14
+msgid "Reg End Time"
+msgstr "Ora Fine Registrazione"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:21
+msgid "Reg End Time:"
+msgstr "Ora Fine Registrazione:"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:37
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:54
+msgid "Start"
+msgstr "Inizio"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:37
+msgid "End"
+msgstr "Fine"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:37
+msgid "Qty"
+msgstr "Quantità"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:42
+msgid "Start Time:"
+msgstr "Ora Inizio: "
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:42
+msgid "End Time:"
+msgstr "Ora Fine:"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:48
+msgid "Add Additional Time"
+msgstr "Aggiungi un Orario Aggiuntivo"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:54
+msgid "End: "
+msgstr "Fine:"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:54
+msgid "Qty: "
+msgstr "Quantità:"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:70
+msgid "Standard Pricing"
+msgstr "Prezzo Standard"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:79
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:117
+msgid "Price"
+msgstr "Prezzo"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:81
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:96
+msgid "Surcharge:"
+msgstr "Ricarico"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:82
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:100
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:117
+msgid "Remove Attendee"
+msgstr "Rimuovi Partecipante"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:92
+msgid "Price:"
+msgstr "Prezzo:"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:107
+msgid "enter 0.00 for free events, enter 2 place decimal i.e."
+msgstr "Inserisci 0.00 per gli eventi gratuiti, inserisci 2 decimali es. 7.00"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:109
+msgid "Add A Price"
+msgstr "Aggiungi un costo"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:117
+msgid "Surcharge"
+msgstr "Ricarico"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_functions.php:153
+msgid "No Categories"
+msgstr "Nessuna Categoria"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:62
+msgid "row(s) starting from record #"
+msgstr "riga/righe a partire dal record #"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:119
+msgid "Start Date & Time"
+msgstr "Data e Ora Inizio"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:120
+msgid "Reg Begins"
+msgstr "Inizio Registrazione"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:123
+msgid "Actions"
+msgstr "Azioni"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:162
+msgid "View"
+msgstr "Vedi"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:177
+msgid "Get Short URL/Shortcode"
+msgstr "Ottieni Short URL/Shortcode"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:183
+msgid "Email Attendees"
+msgstr "Email Partecipanti"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:186
+msgid "<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class=\"updated fade\">"
+msgstr "<h2>/Shortcode URL breve</ h2> <p>Questo è l'URL breve a questo evento:</p><p><span class=\"updated fade\">"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:235
+msgid "Delete Events(s)"
+msgstr "Cancella Evento(i)"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:239
+msgid "Export All Attendee Data"
+msgstr "Esporta Informazioni di tutti i Partecipanti"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:280
+#: I:\Desktop\event-espresso/includes/event-management/index.php:136
+msgid "Coupon/Promo Code"
+msgstr "Codice Promozionale"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:280
+#: I:\Desktop\event-espresso/includes/event-management/index.php:136
+msgid "This is used to apply discounts to events."
+msgstr "Questo è usato per applicare uno sconto agli eventi."
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:280
+#: I:\Desktop\event-espresso/includes/event-management/index.php:136
+msgid "A coupon or promo code could can be anything you want. For example: Say you have an event that costs"
+msgstr "Un codice coupon o promo potrebbe essere qualsiasi cosa desideri. Per esempio: Diciamo che sono un evento che i costi"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:280
+#: I:\Desktop\event-espresso/includes/event-management/index.php:136
+msgid "If you supplied a promo like \"PROMO50\" and entered 50.00 into the \"Discount w/Promo Code\" field your event will be discounted"
+msgstr "Se avete fornito codie promo come \"PROMO50\" ed inserite 50,00 nel  campo \"Codice Sconto w/Promo \" l'evento sarà scontato"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:280
+#: I:\Desktop\event-espresso/includes/event-management/index.php:136
+msgid "Bringing the cost of the event to"
+msgstr "Porta il costo della manifestazione a"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:283
+#: I:\Desktop\event-espresso/includes/event-management/index.php:139
+msgid "Event Identifier"
+msgstr "Identificatore Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:283
+#: I:\Desktop\event-espresso/includes/event-management/index.php:139
+msgid "This should be a unique identifier for the event. Example: \"Event1\" (without qoutes.)</p><p>The unique ID can also be used in individual pages using the"
+msgstr "Questo dovrebbe essere un identificatore univoco per l'evento. Esempio: \"EVENT1 \" (senza virgolette.) </p><p> L'ID univoco può essere utilizzato anche nelle singole pagine utilizzando il "
+
+#: I:\Desktop\event-espresso/includes/event-management/event_list.php:283
+#: I:\Desktop\event-espresso/includes/event-management/index.php:139
+msgid "Unique Event ID"
+msgstr "Unico Identificatore Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:17
+#: I:\Desktop\event-espresso/includes/event-management/index.php:160
+msgid "Attendee Reports"
+msgstr "Partecipanti:"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:19
+#: I:\Desktop\event-espresso/includes/event-management/index.php:29
+msgid "Add New Attendee"
+msgstr "Aggiungi Nuovi Partecipanti"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:23
+msgid "Edit Attendee Data"
+msgstr "Modifica Informazioni Partecipante"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:26
+msgid "Edit Attendee Payment Record"
+msgstr "Modifica Informazioni Pagamento Partecipante"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:32
+msgid "Event Newsletter"
+msgstr "Newsletter Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:36
+msgid "Event Management"
+msgstr "Gestione Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:133
+msgid "These emails will override the custom email if a pre-existing email is selected. You must select \"Yes\" in the \"Send custom confirmation emails for this event?\" above."
+msgstr "Queste email sostituiranno l'e-mail personalizzata se un e-mail pre-esistente è selezionata. È necessario selezionare \"Si\" nel box \"Inviare email di conferma personalizzata per questo evento? \" in alto."
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:142
+msgid "Secondary Events"
+msgstr "Eventi Secondari"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:143
+msgid "These types of events can be used as a overflow or waiting list events."
+msgstr "Questi tipi di evento possono essere usati come un overflow o lista di eventi in attesa."
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:144
+msgid "If an event is set up as an \"Secondary Event,\" it can be set to not appear in your event listings template. You will need to customize your event_listing.php file to make this work. For more information, please"
+msgstr "Se un evento è impostato come \"Evento Secondario,\" può essere impostato per non apparire nel template con l'elenco. Sarà necessario personalizzare il file event_listing.php per questa funzionalità. Per ulteriori informazioni, si prega di "
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:144
+#: I:\Desktop\event-espresso/includes/event-management/index.php:158
+#: I:\Desktop\event-espresso/includes/event-management/index.php:159
+msgid "visit the forums"
+msgstr "visita i forum"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:147
+msgid "Off-site Registration Page"
+msgstr "Pagina di Registrazione suori dal sito"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:148
+msgid "If an off-site registration page is entered, it will override your registration page and send attendees to the URL that is entered."
+msgstr "Se è inserita una pagina di registrazione all'esterno del sito, essa avrà la precedenza nella pagina di registrazione e indirizzerà i partecipanti all'URL che viene inserito."
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:151
+msgid "Alternate Email Address"
+msgstr "Indirizzo Email alternativo:"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:152
+msgid "If an alternate email address is entered. Admin email notifications wil be sent to this address instead."
+msgstr "Se è inserito un indirizzo email alternativo. Le notifiche all'Amministratore saranno inviate a questo indirizzo."
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:155
+msgid "Event Status Types"
+msgstr "Tipi di Stato Evento"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:157
+msgid "This type if event should always appear in the event lsiting. It is a live event (not deleted, ongoing or secondary.)"
+msgstr "Questo tipo di evento può sempre apparire nell'elenco degli eventi. Si tratta di un evento attivo (non eliminato, in corso o secondario.)"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:158
+msgid "This type of event can be hidden and used as a waiting list for a primary event. Template customizations are required. For more information, please"
+msgstr "Questo tipo di evento può essere nascosto e usato come una lista d'attesa per un evento primario. Sono obbligatori Template personalizzati. Per ulteriori informazioni, si prega di"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:159
+msgid "This type of an event can be set to appear in your event listings and display a registration page. Template customizations are required. For more information, please"
+msgstr "Questo tipo di un evento può essere impostato per apparire nel vostro elenco degli eventi e visualizzare una pagina di registrazione.  Sono obbligatori Template personalizzati. Per ulteriori informazioni, si prega di"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:160
+msgid "This is event type will not appear in the event listings and will not dispaly a registrations page. Deleted events can still be accessed in the"
+msgstr "Questo è il tipo di evento che non appare nella lista degli eventi e non mostra una pagina di registrazione. Eventi cancellati possono ancora accessibili in"
+
+#: I:\Desktop\event-espresso/includes/event-management/index.php:160
+msgid "page"
+msgstr "Pagina"
+
+#: I:\Desktop\event-espresso/includes/event-management/insert_event.php:293
+msgid "There was error finding a post template. Please verify your post templates are available."
+msgstr "C'è stato errore nel trovare un Template per i post. Per favore verifica Template per i post disponibili."
+
+#: I:\Desktop\event-espresso/includes/event-management/insert_event.php:354
+msgid "has been added for "
+msgstr "è stato aggiunto per "
+
+#: I:\Desktop\event-espresso/includes/event-management/insert_event.php:354
+msgid "Edit this event?"
+msgstr "Modifica questo Evento?"
+
+#: I:\Desktop\event-espresso/includes/event-management/update_event.php:517
+msgid "Event details updated for"
+msgstr "Dettagli dell'evento aggiornati per"
+
+#: I:\Desktop\event-espresso/includes/form-builder/index.php:9
+msgid "Manage Additional Questions"
+msgstr "Amministra Domande Aggiuntive"
+
+#: I:\Desktop\event-espresso/includes/form-builder/index.php:38
+msgid "Current Questions"
+msgstr "Domande Attuali"
+
+#: I:\Desktop\event-espresso/includes/form-builder/index.php:45
+msgid "Add New Question"
+msgstr "Aggiungi Nuova Domanda"
+
+#: I:\Desktop\event-espresso/includes/form-builder/index.php:74
+msgid "Question"
+msgstr "Domanda"
+
+#: I:\Desktop\event-espresso/includes/form-builder/index.php:77
+msgid "Values"
+msgstr "Valori"
+
+#: I:\Desktop\event-espresso/includes/form-builder/index.php:83
+msgid "Required"
+msgstr "Obbligatorio"
+
+#: I:\Desktop\event-espresso/includes/form-builder/index.php:86
+msgid "Sequence"
+msgstr "Sequenza"
+
+#: I:\Desktop\event-espresso/includes/form-builder/index.php:132
+msgid "Delete Question"
+msgstr "Cancella Domanda"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/delete_group.php:31
+msgid "Question Groups have been successfully deleted."
+msgstr "Le domande sui Gruppi son state cancellate con successo."
+
+# Advanced Events Registration Pro translation file
+# Copyright (C) 2010 Seth Shoultes
+# This file is distributed under the same license as the PACKAGE package.
+# Seth Shoultes <seth@smartwebutah.com>, 2010
+# For information on translating this plugin, please refer to http://codex.wordpress.org/Translating_WordPress
+#: I:\Desktop\event-espresso/includes/form-builder/groups/edit_group.php:25
+#: I:\Desktop\event-espresso/includes/form-builder/groups/index.php:48
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:8
+msgid "Add New Group"
+msgstr "Aggiungi Nuovo Gruppo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/edit_group.php:32
+msgid "Group Information"
+msgstr "Informazioni sul Gruppo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/edit_group.php:33
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:16
+msgid "Group Name:"
+msgstr "Nome Gruppo:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/edit_group.php:35
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:18
+msgid "Group Order:"
+msgstr "Ordine Gruppo:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/edit_group.php:37
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:21
+msgid "Group Identifier:"
+msgstr "Identificatore Gruppo:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/edit_group.php:39
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:23
+msgid "Description:"
+msgstr "Descrizione:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/edit_group.php:41
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:25
+msgid "Show group name on registration page?"
+msgstr "Mostra nome del gruppo nella pagina di registrazione?"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/edit_group.php:43
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:27
+msgid "Show group description on registration page?"
+msgstr "Mostra descrizione gruppo nella pagina di registrazione?"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/index.php:9
+msgid "Manage Additional Question Groups"
+msgstr "Amministra Gruppi Domande Aggiuntive"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/index.php:42
+msgid "Current Groups"
+msgstr "Gruppi Attuali"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/index.php:79
+msgid "Group Name"
+msgstr "Nome Gruppo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/index.php:83
+msgid "Indentifier"
+msgstr "Identificatore"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/index.php:86
+msgid "Description"
+msgstr "Descrizione"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/index.php:89
+msgid "Order"
+msgstr "Ordine"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/index.php:135
+msgid "Delete Question Group"
+msgstr "Cancella Domanda Gruppo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/insert_group.php:40
+msgid "The group has been added."
+msgstr "Il gruppo è stato aggiunto."
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/insert_group.php:43
+msgid "There was an error in your submission, please try again. The group was not saved!"
+msgstr "C'è stato un errore nella tua conferma, per favore riprova. L'evento non è stato salvato!"
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:15
+msgid "Add new groups using the form below."
+msgstr "Aggiungi nuovo gruppo usando il form qui sotto."
+
+#: I:\Desktop\event-espresso/includes/form-builder/groups/new_group.php:37
+msgid "Add Questions:"
+msgstr "Aggiungi Domanda:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/delete_question.php:31
+msgid "Questions have been successfully deleted."
+msgstr "Le domande son state cancellate con successo."
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:23
+msgid "Edit Question"
+msgstr "Modifica Domanda:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:29
+msgid "Edit the question using the form below.  By default all participants will be asked for their first name, last name, and email address."
+msgstr "Modificare le domande utilizzando il form seguente. Di default a tutti i partecipanti sarà chiesto il loro nome, cognome, e indirizzo email."
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:33
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:12
+msgid "Question:"
+msgstr "Domanda:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:40
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:14
+msgid "Type:"
+msgstr "Tipo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:44
+msgid "Text"
+msgstr "Testo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:45
+msgid "Text Area"
+msgstr "Area di Testo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:46
+msgid "Single"
+msgstr "Evento Singolo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:47
+msgid "Drop Down"
+msgstr "Drop Down"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:48
+msgid "Multiple"
+msgstr "Multiplo"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:53
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:23
+msgid "Values:"
+msgstr "Valori:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:55
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:24
+msgid "A comma seperated list of values. Eg. black, blue, red"
+msgstr "Una lista di valori separati da virgola Es. nero, blu, rosso"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:60
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:26
+msgid "Required:"
+msgstr "Obbligatorio"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:62
+msgid "Mark this question as required."
+msgstr "Marca questa domanda come richiesta."
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:70
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:31
+msgid "Required Text:"
+msgstr "Testo Richiesto:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:72
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:33
+msgid "Text displayed if not completed."
+msgstr "Testo visualizzato se non completo."
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:77
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:37
+msgid "Order/Sequence:"
+msgstr "Ordine/Sequenza:"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/edit_question.php:94
+msgid "Nothing found!"
+msgstr "Non Trovato!!"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:7
+msgid "Add New Questions"
+msgstr "Aggiungi nuova Domanda"
+
+#: I:\Desktop\event-espresso/includes/form-builder/questions/new_question.php:11
+msgid "Add questions using the form below.  By default all participants will be asked for their first name, last name, and email address."
+msgstr "Aggiungere le domande utilizzando il form seguente. Di default a tutti i partecipanti sarà chiesto il loro nome, cognome, e indirizzo email."
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:401
+#: I:\Desktop\event-espresso/includes/functions/admin.php:664
+#: I:\Desktop\event-espresso/includes/functions/admin.php:677
+msgid "No country selected"
+msgstr "Nessuna nazione selezionata"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:941
+msgid "New @ Event Espresso"
+msgstr "Nuovo @ Event Espresso"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:947
+msgid "From the Blog"
+msgstr "Dal Blog "
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:949
+msgid "From the Forums"
+msgstr "Dai Forum"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:959
+msgid "Helpful Plugin Links"
+msgstr "Link di Aiuto per il Plugin"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:964
+msgid "Installation &amp; Usage Guide"
+msgstr "Installazione &amp; Guida d'utilizzo"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:987
+msgid "Email Confirmations"
+msgstr "Conferme Emial"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:988
+msgid "For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email."
+msgstr "Per email di conferma personalizzare, possono essere  usati i seguenti tag in forma e-mail, essi estrarranno i dati dal database per includerli nelle e-mail."
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1020
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1022
+msgid "Event Espresso must be configured. Go to"
+msgstr "Event Espresso deve essere configurato. Vai a"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1020
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1022
+msgid "the Organization Settings page"
+msgstr "Pagina Impostazioni Organizzazione "
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1020
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1022
+msgid "to configure the plugin \"Page Settings.\""
+msgstr "per configurare il plugin \"Impostazioni Pagina.\""
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1029
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1031
+msgid "Event Espresso attendee data needs to be updated. Please visit the "
+msgstr "Devono essere aggiornati i dati partecipante in Event Espresso. Per favore visiti il "
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1029
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1031
+msgid "Support page"
+msgstr "Supporto"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1029
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1031
+msgid "to configure update the attendee information."
+msgstr "per configurare, aggiorni le informazioni partecipante."
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1055
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1311
+msgid "Assign a Secondary Event? "
+msgstr "Assegna un Evento Secondario?"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1056
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1312
+msgid "Overflow Event"
+msgstr "Eccedenza Evento"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1088
+msgid "Select Value"
+msgstr "Seleziona Valore"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1103
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1207
+msgid "No Results"
+msgstr "Nessun Risultato"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1130
+msgid "Show All Categories"
+msgstr "Mostra tutte le Categorie"
+
+#: I:\Desktop\event-espresso/includes/functions/admin.php:1192
+msgid "Select a Month/Year"
+msgstr "Seleziona Mese/Anno"
+
+#: I:\Desktop\event-espresso/includes/functions/attendee_functions.php:47
+msgid "Form Questions:"
+msgstr "Form Domande:"
+
+#: I:\Desktop\event-espresso/includes/functions/cart.php:504
+msgid "Confirm and go to payment page"
+msgstr "Conferma e vai alla Pagina di Pagamento"
+
+#: I:\Desktop\event-espresso/includes/functions/cart.php:506
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:297
+#: I:\Desktop\event-espresso/templates/event_list_display.php:75
+msgid " or "
+msgstr " o "
+
+#: I:\Desktop\event-espresso/includes/functions/cart.php:508
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:296
+msgid "Edit Cart"
+msgstr "Modifica Carrello"
+
+#: I:\Desktop\event-espresso/includes/functions/cart.php:733
+msgid "View Cart"
+msgstr "Controlla Carrello"
+
+#: I:\Desktop\event-espresso/includes/functions/cart.php:760
+msgid "It looks like you are attempting to refresh a page after completing your registration.  Please go to the events page and try again."
+msgstr "Sembra che lei stia tentando di aggiornare una pagina dopo avere completato la registrazione. Per favore vada alla pagina Eventi e Riprovi."
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:65
+msgid "No records found."
+msgstr "Nessuna Corrispondenza Trovata."
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:72
+msgid "Location"
+msgstr "Luogo Evento:"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:111
+#: I:\Desktop\event-espresso/includes/functions/email.php:502
+#: I:\Desktop\event-espresso/includes/functions/email.php:723
+#: I:\Desktop\event-espresso/includes/functions/email.php:886
+msgid "View Your Payment Details"
+msgstr "Dettagli Pagamento"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:113
+msgid "(Primary Attendee)"
+msgstr "(Partecipante Primario)"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:129
+msgid "Download/Print Ticket"
+msgstr "Scarica/Stampa  Fattura PDF"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:147
+msgid " attendees"
+msgstr " partecipanti"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:187
+msgid " attendee(s)"
+msgstr " partecipante(i)"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:191
+msgid " registration confirmation"
+msgstr " conferma registrazione"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:345
+msgid "Registration Summary:"
+msgstr "Sommario Registrazione:"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:350
+msgid "Number of Attendees:"
+msgstr "Attuale numero di Partecipanti:"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:358
+msgid "Additional Information:"
+msgstr "Informazioni Aggiuntive:"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:364
+msgid "Event Registration Notification"
+msgstr "Widget Registrazione Eventi"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:506
+#: I:\Desktop\event-espresso/includes/functions/email.php:890
+msgid "Download Ticket Now!"
+msgstr "Scarica Fattura PDF"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:651
+msgid "Event Cancellation Notice"
+msgstr "Notifica Cancellazione Evento"
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:652
+msgid " has been cancelled."
+msgstr "è stato cancellato."
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:653
+msgid "For more information, please email "
+msgstr "Per ulteriori informazioni, vi preghiamo di scrivere a "
+
+#: I:\Desktop\event-espresso/includes/functions/email.php:997
+msgid "Email Sent to "
+msgstr "Spedisci Email a "
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:67
+msgid "Add More Attendees? (click to toggle, limit "
+msgstr "Aggiungere più Partecipanti? (clicca per aggiungere, limite "
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:67
+msgid "Add an Additonal Attendee"
+msgstr "Aggiungi un partecipante aggiuntivo"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:116
+msgid "ONGOING"
+msgstr "IN CORSO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:123
+msgid "SECONDARY"
+msgstr "SECONDARIO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:132
+msgid "CLOSED"
+msgstr "CHIUSO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:139
+msgid "NOT_OPEN"
+msgstr "NOT_APERTO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:146
+msgid "OPEN"
+msgstr "APERTO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:155
+msgid "EXPIRED"
+msgstr "SCADUTO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:162
+msgid "ACTIVE"
+msgstr "ATTIVO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:169
+msgid "NOT_ACTIVE"
+msgstr "NON ATTIVO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:176
+msgid "DELETED"
+msgstr "CANCELLATO"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:519
+#: I:\Desktop\event-espresso/includes/functions/main.php:636
+msgid " (including "
+msgstr " (includendo "
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:526
+#: I:\Desktop\event-espresso/includes/functions/main.php:529
+#: I:\Desktop\event-espresso/includes/functions/main.php:645
+msgid "Free Event"
+msgstr "Evento Gratuito"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:559
+#: I:\Desktop\event-espresso/includes/functions/main.php:562
+msgid "0.00"
+msgstr "0.00"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:606
+msgid "Choose an Option: "
+msgstr "Scegli un'Opzione"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:617
+msgid " Early Pricing"
+msgstr "Prezzo Anticipo"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:641
+#: I:\Desktop\event-espresso/templates/event_list_display.php:25
+msgid "Price: "
+msgstr "Prezzo:"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:646
+msgid "free event"
+msgstr "Evento Gratuito"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:834
+msgid "PayPal"
+msgstr "PayPal"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:837
+#: I:\Desktop\event-espresso/includes/functions/main.php:840
+msgid "CC"
+msgstr "CC"
+
+#: I:\Desktop\event-espresso/includes/functions/main.php:846
+msgid "Cash/Check"
+msgstr "Cash/Check"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:35
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:37
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:39
+msgid "in"
+msgstr "in "
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:35
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:45
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:80
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:87
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:121
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:130
+msgid "hours"
+msgstr "Ore"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:37
+msgid "today"
+msgstr "oggi"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:37
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:123
+msgid "minutes"
+msgstr "minuti"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:41
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:83
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:126
+msgid "day"
+msgstr "giorno"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:43
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:85
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:128
+msgid "days"
+msgstr "giorni "
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:45
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:87
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:130
+msgid "and"
+msgstr "e "
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:80
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:87
+msgid "ago"
+msgstr "fa "
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:117
+msgid "allday"
+msgstr "Tutto il giorno"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:119
+msgid "duration"
+msgstr "Durata:"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:167
+msgid "Start Time:</span> "
+msgstr "Ora Inizio:</span> "
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:170
+msgid "End Time: "
+msgstr "Ora Fine:"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:170
+msgid " to "
+msgstr "a"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:176
+msgid "Choose an Event Time: "
+msgstr "Scegli Orari Evento:"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:247
+msgid "Start Time: "
+msgstr "Ora Inizio: "
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:249
+msgid "<br />End Time: "
+msgstr "<br />Ora Fine:"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:300
+msgid "NO DATE SUPPLIED"
+msgstr "DATA NON FORNITA"
+
+#: I:\Desktop\event-espresso/includes/functions/time_date.php:412
+msgid "Choose Event Timezone:"
+msgstr "Scegli la tua Timezone:"
+
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:107
+msgid "Sorry, you did not enter the correct anti-spam phrase. Please click your browser's back button and try again."
+msgstr "Spiacenti, non hai inserito correttamente la frase anti-spam. Per favore clicca sul bottone del tuo browser che ti farà tornare indietro di una pagina."
+
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:238
+msgid " events"
+msgstr "Eventi"
+
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:298
+msgid "Edit Registrant Information"
+msgstr "Modifica Imformazioni Registrato:"
+
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:301
+msgid "Your registration is not complete until payment is received."
+msgstr "La tua registrazione non sarà completa fino alla ricezione del pagamento."
+
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:304
+msgid "Amount due: "
+msgstr "Importo dovuto:"
+
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:307
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:336
+msgid "A confirmation email has been sent with additional details of your registration."
+msgstr "É stata spedita una mail di conferma con i dettagli addizionali della tua registrazione."
+
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:309
+msgid "Please choose a payment option:"
+msgstr "Per favore scegli un Opzione di pagamento:"
+
+#: I:\Desktop\event-espresso/includes/process-registration/add_attendees_to_db.php:334
+msgid "Thank you! Your registration is confirmed for"
+msgstr "Grazie! La tua registrazione è stata confermata per "
+
+#: I:\Desktop\event-espresso/includes/process-registration/attendee_edit_record.php:127
+msgid "Registration For:"
+msgstr "Registrazione per:"
+
+#: I:\Desktop\event-espresso/includes/process-registration/payment_page.php:146
+msgid "Free"
+msgstr "Gratuito"
+
+#: I:\Desktop\event-espresso/includes/process-registration/payment_page.php:367
+msgid "Please check your email for payment information."
+msgstr "Grazie per aver scelto ArsEtMedia.<BR>Il tuo pagamento è in lavorazione.<BR>Controlla la tua posta elettronica per i dettagli di pagamento."
+
+#: I:\Desktop\event-espresso/post-type-samples/page-event_list.php:128
+#: I:\Desktop\event-espresso/post-type-samples/single-espresso_event.php:39
+msgid "Pages:"
+msgstr "Pagine:"
+
+#: I:\Desktop\event-espresso/post-type-samples/single-espresso_event.php:52
+#, php-format
+msgid "View all posts by %s <span class=\"meta-nav\">&rarr;</span>"
+msgstr "Guarda tutti i posts per %s <span class=\"meta-nav\">&rarr;</span>"
+
+#: I:\Desktop\event-espresso/templates/attendee_list.php:55
+msgid "Attendee Listing For: "
+msgstr "Lista dei Partecipanti per:"
+
+#: I:\Desktop\event-espresso/templates/confirmation_display.php:10
+msgid "Please verify your registration details:"
+msgstr "Per favore verifica i dettagli della tua registrazione:"
+
+#: I:\Desktop\event-espresso/templates/confirmation_display.php:15
+msgid "Event Name:"
+msgstr "Corso:"
+
+#: I:\Desktop\event-espresso/templates/confirmation_display.php:21
+msgid "Type/Price:"
+msgstr "Prezzo:"
+
+#: I:\Desktop\event-espresso/templates/confirmation_display.php:27
+msgid "Attendee Name:"
+msgstr "Nome Partecipante:"
+
+#: I:\Desktop\event-espresso/templates/confirmation_display.php:59
+#: I:\Desktop\event-espresso/templates/confirmation_display.php:75
+msgid "Confirm Registration"
+msgstr "Conferma Registrazione"
+
+#: I:\Desktop\event-espresso/templates/confirmation_display.php:63
+msgid "Additional Information for:"
+msgstr "Imformazioni Aggiuntive per:"
+
+#: I:\Desktop\event-espresso/templates/event_list_display.php:49
+#: I:\Desktop\event-espresso/templates/event_list_display.php:56
+msgid "Available Spaces:"
+msgstr "Posti Disponibili:"
+
+#: I:\Desktop\event-espresso/templates/event_list_display.php:51
+msgid "Join Waiting List"
+msgstr "Aggiungiti alla Lista di Attesa"
+
+#: I:\Desktop\event-espresso/templates/event_list_display.php:60
+msgid "Register for this Event"
+msgstr "Registrati per questo Evento"
+
+#: I:\Desktop\event-espresso/templates/event_list_display.php:72
+msgid "Add to Cart and Add More Events"
+msgstr "Aggiungi al Carrello e Aggiungi Più Eventi"
+
+#: I:\Desktop\event-espresso/templates/event_list_display.php:90
+msgid "View Details"
+msgstr "Vedi Dettagli"
+
+#: I:\Desktop\event-espresso/templates/event_post.php:63
+msgid "View Map"
+msgstr "Vedi Mappa"
+
+#: I:\Desktop\event-espresso/templates/event_post.php:63
+#: I:\Desktop\event-espresso/templates/event_post.php:69
+msgid "Register"
+msgstr "Registrati Online"
+
+#: I:\Desktop\event-espresso/templates/multi_registration_page.php:151
+#: I:\Desktop\event-espresso/templates/registration_page.php:154
+msgid "We are sorry but this event has reached the maximum number of attendees!"
+msgstr "Siamo spiacenti, ma questo evento ha raggiunto il numero massimo di partecipanti!"
+
+#: I:\Desktop\event-espresso/templates/multi_registration_page.php:152
+#: I:\Desktop\event-espresso/templates/registration_page.php:155
+msgid "Please check back in the event someone cancels."
+msgstr "Per favore torna agli eventi in caso qualcuno si cancelli."
+
+#: I:\Desktop\event-espresso/templates/multi_registration_page.php:153
+#: I:\Desktop\event-espresso/templates/registration_page.php:156
+msgid "Current Number of Attendees:"
+msgstr "Attuale numero di Partecipanti:"
+
+#: I:\Desktop\event-espresso/templates/multi_registration_page.php:182
+#: I:\Desktop\event-espresso/templates/registration_page.php:179
+msgid "<h3>This event has expired or is no longer available.</h3>"
+msgstr "<h3>Spiacenti, questo evento è scaduto o non è più disponibile.</h3>"
+
+#: I:\Desktop\event-espresso/templates/multi_registration_page_display.php:111
+#: I:\Desktop\event-espresso/templates/multi_registration_page_display.php:144
+msgid "Attendee "
+msgstr "Partecipante"
+
+#: I:\Desktop\event-espresso/templates/payment_overview.php:2
+msgid "Payment Overview"
+msgstr "Dettagli Pagamento"
+
+#: I:\Desktop\event-espresso/templates/payment_overview.php:3
+msgid "Class/Event:"
+msgstr "Classe/Evento:"
+
+#: I:\Desktop\event-espresso/templates/payment_overview.php:4
+msgid "Primary Attendee:"
+msgstr "Partecipante Primario:"
+
+#: I:\Desktop\event-espresso/templates/payment_overview.php:5
+msgid "Payment Type:"
+msgstr "Tipo di Pagamento:"
+
+#: I:\Desktop\event-espresso/templates/payment_overview.php:6
+msgid "Payment Date:"
+msgstr "Data Pagamento:"
+
+#: I:\Desktop\event-espresso/templates/payment_overview.php:7
+msgid "Amount Paid/Owed:"
+msgstr "Ammontare Pagato/Dovuto:"
+
+#: I:\Desktop\event-espresso/templates/payment_overview.php:9
+msgid "Registration ID:"
+msgstr "ID Registrazione:"
+
+#: I:\Desktop\event-espresso/templates/payment_page.php:13
+#: I:\Desktop\event-espresso/templates/payment_page.php:25
+msgid "Your Registration ID:"
+msgstr "Il tuo ID registrazione:"
+
+#: I:\Desktop\event-espresso/templates/return_payment.php:12
+msgid "Our records indicate you have paid"
+msgstr "Il tuo pagamento è stato completato."
+
+#: I:\Desktop\event-espresso/templates/return_payment.php:32
+msgid "Sorry, there are not enough spaces available to complete your registration."
+msgstr "Spiacenti, non ci sono abbastanza spazi disponibili per completare la sua registrazione."
+
+#: I:\Desktop\event-espresso/templates/return_payment.php:33
+msgid "Quantity in your Party:"
+msgstr "Quantità nel suo Partito: "
+
+#: I:\Desktop\event-espresso/templates/return_payment.php:34
+msgid "Spaces Available:"
+msgstr "Posti Disponibili:"
+
+#: I:\Desktop\event-espresso/templates/shopping_cart.php:56
+msgid "Dates:"
+msgstr "Date:"
+
+#: I:\Desktop\event-espresso/templates/shopping_cart.php:64
+msgid "# of Attendees"
+msgstr "# Partecipanti"
+
+#: I:\Desktop\event-espresso/templates/shopping_cart.php:108
+msgid "Enter Coupon Code "
+msgstr "Inserisce Codice di Sconto:"
+
+#: I:\Desktop\event-espresso/templates/shopping_cart.php:120
+msgid "REFRESH TOTAL"
+msgstr "RICARICA TOTALE"
+
+#: I:\Desktop\event-espresso/templates/shopping_cart.php:123
+msgid "Total ("
+msgstr "Totale ("
+
+#: I:\Desktop\event-espresso/templates/shopping_cart.php:131
+msgid "Continue to registration page"
+msgstr "Vai alla Pagina di Registrazione"
+
+#: I:\Desktop\event-espresso/templates/widget.php:8
+msgid "A widget to display your upcoming events."
+msgstr "Un widget per visualizzare i tuoi prossimi eventi. "
+
+#: I:\Desktop\event-espresso/templates/widget.php:14
+msgid "Event Espresso Widget"
+msgstr "Widget Registrazione Eventi"
+
+#: I:\Desktop\event-espresso/templates/widget.php:111
+msgid "false"
+msgstr "falso"
+
+#: I:\Desktop\event-espresso/templates/widget.php:130
+msgid "Event Category:"
+msgstr "Categoria Evento:"
+
+#: I:\Desktop\event-espresso/templates/widget.php:135
+msgid "Limit:"
+msgstr "Limite:"
+
+#: I:\Desktop\event-espresso/templates/widget.php:139
+msgid "Optional Settings:"
+msgstr "Settaggi Opzionali:"
+
+#: I:\Desktop\event-espresso/templates/widget.php:140
+msgid "Show Expired Events?"
+msgstr "Mostra Eventi Scaduti?"
+
+#: I:\Desktop\event-espresso/templates/widget.php:141
+msgid "Show Secondary Events?"
+msgstr "Mostra Eventi Secondari?"
+
+#: I:\Desktop\event-espresso/templates/widget.php:142
+msgid "Show Deleted Events?"
+msgstr "Mostra Eventi Cancellati?"
+
+#: I:\Desktop\event-espresso/templates/widget.php:143
+msgid "Show Recurring Events?"
+msgstr "Mostra Eventi Riccorenti?"
+
+#~ msgid "Plug N Pay settings saved."
+#~ msgstr "Impostazioni Plug N Pay  Salvate Correttamente."
+
+#~ msgid "Plug N Pay Settings"
+#~ msgstr "Impostazioni Plug N Pay "
+
+#~ msgid "Activate Plug N Pay IPN?"
+#~ msgstr "Attiva Plug N Pay IPN?"
+
+#~ msgid "Deactivate Plug N Pay IPN?"
+#~ msgstr "Disattiva Plug N Pay IPN?"
+
+#~ msgid ""
+#~ "The Plug N Pay IPN addon is installed. Would you like to activate it?"
+#~ msgstr "Il Plugin Plug N Pay IPN è installato, vuoi attivarlo?"
+
+#~ msgid "Plug N Pay I.D."
+#~ msgstr "I.D. Plug N Pay "
+
+#~ msgid "(used for your business/personal logo on the Plug N Pay page)"
+#~ msgstr ""
+#~ "(usata per il tuo logo aziendale/personale nella pagina Plug N Pay):"
+
+#~ msgid "Update Plug N Pay Settings"
+#~ msgstr "Aggiorna Impostazioni Plug N Pay ."
+
+#~ msgid "Plug N Pay Image URL (logo for payment page)"
+#~ msgstr "URL Immagine Plug N Pay (logo per pagina pagamento)"
+
+#~ msgid ""
+#~ "The URL of the 150x50-pixel image displayed as your logo in the upper "
+#~ "left corner of the Plug N Pay checkout pages."
+#~ msgstr ""
+#~ "L' URL dell'immagine di  150x50-pixel mostrata come tuo logo nella parte "
+#~ "sinistra alta delle pagine di checkout di Plug N Pay."
+
+#~ msgid ""
+#~ "This should be a unique identifier for the event. Example: \"Event1"
+#~ "\" (without qoutes.)"
+#~ msgstr ""
+#~ "Questo dovrebbe essere un identificatore univoco per l'evento. Esempio: "
+#~ "\"EVENT1\" (senza virgolette.)"
+
+#~ msgid "The unique ID can also be used in individual pages using the"
+#~ msgstr ""
+#~ "L'unico ID può essere usato anche nelle pagine individuali usando il "
+
+#~ msgid "Thank You "
+#~ msgstr "Grazie!"
+
+#~ msgid " for registering for "
+#~ msgstr " per esserti iscritto al "
+
+#~ msgid "Our records indicate your payment is pending."
+#~ msgstr "Il tuo pagamento è in lavorazione."
+
+#~ msgid "Amount pending:"
+#~ msgstr "Importo in Sospeso: "
+
+#~ msgid "Payment will be in the amount of"
+#~ msgstr "Il pagamento è di "
+
+#~ msgid "Payment Options:"
+#~ msgstr "Opzioni per il Pagamento:"
+
+#~ msgid "Checkout"
+#~ msgstr "Vai alla cassa"
+
+#, fuzzy
+#~ msgid "Event Setup"
+#~ msgstr "Nome Evento:"
+
+#, fuzzy
+#~ msgid "Event Espresso - Attendees/Payments"
+#~ msgstr "Vedi Partecipanti/Pagamenti"
+
+#~ msgid "Attendees/Payments"
+#~ msgstr "Partecipanti/Pagamenti"
+
+#~ msgid "Event Espresso - General Coupons"
+#~ msgstr "Event Espresso - Buoni Sconto"
+
+#~ msgid "General Coupons"
+#~ msgstr "Buoni Sconto"
+
+#, fuzzy
+#~ msgid "Gateway Settings"
+#~ msgstr "PayPal Setting"
+
+#~ msgid "Form Questions"
+#~ msgstr "Domande su Form"
+
+#~ msgid "Facebook Settings"
+#~ msgstr "Settaggi Facebook"
+
+#~ msgid ""
+#~ "Use the debugging feature and the <a href=\"https://developer.paypal.com/"
+#~ "devscr?cmd=_home||https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-"
+#~ "content&amp;content_ID=developer/howto_testing_sandbox||https://cms."
+#~ "paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/"
+#~ "howto_testing_sandbox_get_started\" title=\"PayPal Sandbox Login||Sandbox "
+#~ "Tutorial||Getting Started with PayPal Sandbox\" target=\"_blank\">PayPal "
+#~ "Sandbox</a>?"
+#~ msgstr ""
+#~ "Usa la funzione di debugging  e <a href=\"https://developer.paypal.com/"
+#~ "devscr?cmd=_home||https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-"
+#~ "content&amp;content_ID=developer/howto_testing_sandbox||https://cms."
+#~ "paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/"
+#~ "howto_testing_sandbox_get_started\" title=\"PayPal Sandbox Login||Sandbox "
+#~ "Tutorial||Getting Started with PayPal Sandbox\" target=\"_blank\">PayPal "
+#~ "Sandbox</a>?"
+
+#, fuzzy
+#~ msgid "Not Active"
+#~ msgstr "Azione"
+
+#~ msgid "Event Registration with PayPal IPN"
+#~ msgstr "Registrazione Evento con PayPal IPN"
+
+#~ msgid "View Attendees/Payments"
+#~ msgstr "Vedi Iscritti/Pagamenti"
+
+#~ msgid "Total Active Events"
+#~ msgstr "Totale Eventi Attivi"
+
+#~ msgid "All Time Paid"
+#~ msgstr "Tutti i Partecipanti che hanno pagato"
+
+#~ msgid "All Time Not Paid"
+#~ msgstr "Tutti i Partecipanti che non hanno pagato"
+
+#~ msgid "Next 3 Upcoming Events"
+#~ msgstr "Prossimi 3 Eventi"
+
+#~ msgid "Attendees:"
+#~ msgstr "Partecipanti:"
+
+#~ msgid "Set up Your Organization to Recieve Payments"
+#~ msgstr "Configura la tua Organizzazione per Ricevere Pagamenti "
+
+#~ msgid ""
+#~ "<strong>Use <a href=\"http://recaptcha.net/||http://recaptcha.net/"
+#~ "learnmore.html||https://admin.recaptcha.net/accounts/login/?next=/"
+#~ "recaptcha/sites/||http://recaptcha.net/apidocs/captcha/client.html\" "
+#~ "title=\"reCAPTCHA Home Page||What is reCAPTCHA||reCAPTCHA Account||"
+#~ "reCAPTCHA Client API Documentation\" target=\"_blank\">reCAPTCHA</a> to "
+#~ "block spam registrations</strong>:"
+#~ msgstr ""
+#~ "<strong>Usa <a href=\"http://recaptcha.net/||http://recaptcha.net/"
+#~ "learnmore.html||https://admin.recaptcha.net/accounts/login/?next=/"
+#~ "recaptcha/sites/||http://recaptcha.net/apidocs/captcha/client.html\" "
+#~ "title=\"reCAPTCHA Home Page||What is reCAPTCHA||reCAPTCHA Account||"
+#~ "reCAPTCHA Client API Documentation\" target=\"_blank\">reCAPTCHA</a> per "
+#~ "bloccare registrazioni spam</strong>:"
+
+#~ msgid "Event Listing Types"
+#~ msgstr "Tipi di Liste Evento"
+
+#~ msgid ""
+#~ "If set to \"Single Event\", only one event will be displayed on the page."
+#~ "</p> <p class=\"red_text\">**Attention** Setting this option to \"Single "
+#~ "Event\" will disable the \"Event Registration Widget\" and \"SINGLEEVENT"
+#~ "\" shortcode functionality."
+#~ msgstr ""
+#~ "Se si sceglie \"Evento Singolo\", solo un evento sarà visualizzato nella "
+#~ "pagina.</p> <p class=\"red_text\">**Attenzione** Scegliendo \"Evento "
+#~ "Singolo\" si disattiverà la funzionalità \"Widget Registrazione Evento\"  "
+#~ "\"SINGLEEVENT\"."
+
+#~ msgid ""
+#~ " <h2>Sample Mail Send:</h2>\n"
+#~ "\n"
+#~ "<p>***This is an automated response - Do Not Reply***</p>\n"
+#~ "<p>Thank you [fname] [lname] for registering for [event]. We hope that "
+#~ "you will find this event both informative and enjoyable. Should have any "
+#~ "questions, please contact [contact].</p>\n"
+#~ "<p>If you have not done so already, please submit your payment in the "
+#~ "amount of [cost].</p>\n"
+#~ "<p>Click here to review your payment information [payment_url].</p>\n"
+#~ "<p>Thank You.</p>"
+#~ msgstr ""
+#~ "<p>***Questa è una risposta automatica - Non Rispondere***</p> <p>Ciao "
+#~ "[fname] [lname], grazie per esserti registrato all'evento [event].</"
+#~ "p><p>Ora d'inizio: [start_time]</p><p>Luogo:<br>[location]</"
+#~ "p><p>Telefono: [location_phone]</p><p>Google Map: [google_map_link]</"
+#~ "p><p> Speriamo che l'evento sia utile e piacevole. Dovessi avere qualche "
+#~ "domanda, ti preghiamo di contattare [contact].</p><p>Se non l'hai ancora "
+#~ "fatto, ti preghiamo di procedere al pagamento di € [cost].</p><p>Clicca "
+#~ "qui per rivedere le tue informazioni di pagamento [payment_url] .</"
+#~ "p><p>Grazie.</p>"
+
+#~ msgid "First Name:"
+#~ msgstr "Nome:"
+
+#~ msgid "Last Name:"
+#~ msgstr "Cognome:"
+
+#, fuzzy
+#~ msgid "Attendee Payments"
+#~ msgstr "Partecipanti/Pagamenti"
+
+#, fuzzy
+#~ msgid "Edit Attendee Payment"
+#~ msgstr "Vedi Iscritti/Pagamenti"
+
+#~ msgid "View event page"
+#~ msgstr "Vedi Pagina Evento"
+
+#, fuzzy
+#~ msgid "Delete Customer(s)"
+#~ msgstr "Cancella Partecipanti:"
+
+#, fuzzy
+#~ msgid "Do you want to display the event description on the events page?"
+#~ msgstr ""
+#~ "Vuoi visualizzare la descrizione dell'evento nella pagina di "
+#~ "registrazione?"
+
+#~ msgid "Update Category"
+#~ msgstr "Aggiorna Categoria"
+
+#, fuzzy
+#~ msgid "Current Categories"
+#~ msgstr "Categorie Evento:"
+
+#~ msgid "Update Discount"
+#~ msgstr "Aggiorna Sconto"
+
+#~ msgid "Current Discount Codes"
+#~ msgstr "Codici di Sconto Correnti"
+
+#~ msgid "Add New Discount Code"
+#~ msgstr "Aggiungi nuovo Codice di Sconto"
+
+#, fuzzy
+#~ msgid ""
+#~ "<p id=\"event_espresso_valid_coupon\"><strong>You are using discount code:"
+#~ "</strong> "
+#~ msgstr "<strong>Scegli un'Opzione:</strong>"
+
+#~ msgid "Do you have a promo code?"
+#~ msgstr "Hai un Codice Promozionale?"
+
+#, fuzzy
+#~ msgid "Is this an on-going event? "
+#~ msgstr "Questo è un evento attivo? "
+
+#, fuzzy
+#~ msgid "Category"
+#~ msgstr "Aggiorna Categoria"
+
+#, fuzzy
+#~ msgid "Registration / Event Dates"
+#~ msgstr "Paga la Quota di Registrazione"
+
+#~ msgid "Full Address (country included):"
+#~ msgstr "Indirizzo Completo"
+
+#, fuzzy
+#~ msgid "Category:"
+#~ msgstr "Categoria Evento:"
+
+#, fuzzy
+#~ msgid "<strong>Allow discount codes?</strong> "
+#~ msgstr "<strong>Scegli un'Opzione:</strong>"
+
+#, fuzzy
+#~ msgid "Registration Start"
+#~ msgstr "Paga la Quota di Registrazione"
+
+#, fuzzy
+#~ msgid "Email address is"
+#~ msgstr "Indirizzo Email:"
+
+#~ msgid "Zip:"
+#~ msgstr "CAP:"
+
+#~ msgid "EVENT FULL"
+#~ msgstr "CORSO COMPLETO"
+
+#~ msgid "This is a free event. Details have been sent to your email."
+#~ msgstr ""
+#~ "Questo è un evento gratuito. I dettagli ti sono stati spediti via email. "
+
+#~ msgid "Your Registration data has been added to our records."
+#~ msgstr "La tua iscrizione è stata registrata"
+
+#~ msgid "Event Name/Price:"
+#~ msgstr "Nome/Costo Evento"
+
+#~ msgid "<br><br><strong>Thank You "
+#~ msgstr "<br><br><strong>Grazie "
+
+#~ msgid "Payment By Credit Card, Debit Card or Pay Pal Account"
+#~ msgstr ""
+#~ "Pagamento tramite Carta di Credito, Pre-Pagata, Bancomat o Account Pay Pal"
+
+#~ msgid "(a PayPal account is not required to pay by credit card)."
+#~ msgstr ""
+#~ "(Non è necessario un account PayPal per pagare con carta di credito)"
+
+#~ msgid "PayPal Payments will be sent to:"
+#~ msgstr "I Pagamenti PayPal saranno mandati a:"
+
+#, fuzzy
+#~ msgid ""
+#~ "<strong id=\"event_espresso_no_payment\">No Payment Necessary</strong>"
+#~ msgstr "<strong>Costo:</strong>"
+
+#~ msgid "Register Online"
+#~ msgstr "Iscriviti Adesso"
+
+#, fuzzy
+#~ msgid "Event Questions -"
+#~ msgstr "Descrizione Evento:"
+
+#, fuzzy
+#~ msgid "Prezzo: "
+#~ msgstr "Prezzo:"
+
+#, fuzzy
+#~ msgid "Ora Inizio:</span> "
+#~ msgstr "Orario Inizio"
+
+#, fuzzy
+#~ msgid "Ora Inizio: "
+#~ msgstr "Organizzazione via 2:"
+
+#, fuzzy
+#~ msgid "<br />Ora Fine: "
+#~ msgstr "Orario Finale:"
+
+#, fuzzy
+#~ msgid "Descrizione:"
+#~ msgstr "Descrizione:"
+
+#, fuzzy
+#~ msgid "Discount Codes"
+#~ msgstr "Codice di Sconto"
+
+#~ msgid ""
+#~ "Payment must be made to complete registration. Please click the button "
+#~ "below to pay for your registration."
+#~ msgstr ""
+#~ "Per il completamento della registrazione deve essere effettuato il "
+#~ "pagamento. Per favore clicca sul bottone sotto per pagare la tua "
+#~ "registrazione."
+
+#~ msgid "Add New Dicount Code"
+#~ msgstr "Aggiungi nuovo Codice di Sconto"
+
+#~ msgid "Invalid E-mail ID"
+#~ msgstr "ID E-Mail non valido"
+
+#~ msgid "Please enter your first name."
+#~ msgstr "Per favore inserisci il tuo nome."
+
+#~ msgid "Please enter your last name."
+#~ msgstr "Per favore inserisci il tuo cognome."
+
+#~ msgid "Please Enter your Email address"
+#~ msgstr "Per favore inserisci il tuo indirizzo Email"
+
+#~ msgid "Please enter your phone number."
+#~ msgstr "Per favore inserisci il tuo numero di telefono."
+
+#~ msgid "Please enter your address."
+#~ msgstr "Per favore inserisci il tuo indirizzo."
+
+#~ msgid "Please enter your city."
+#~ msgstr "Per favore inserisci la tua città."
+
+#~ msgid "Please enter your state."
+#~ msgstr "Per favore inserisci la tua Nazione."
+
+#~ msgid "Please enter your zip code."
+#~ msgstr "Per favore inserisci il tuo CAP."
+
+#, fuzzy
+#~ msgid "Please enter your country."
+#~ msgstr "Per favore inserisci la tua città."
+
+#, fuzzy
+#~ msgid "Please select your payment method."
+#~ msgstr "Per favore inserisci il tuo cognome."
+
+#~ msgid "The following fields need to be completed before you can submit."
+#~ msgstr "I seguenti campi devono essere riempiti prima di poter confermare."
+
+#, fuzzy
+#~ msgid "Organization Vat Number:"
+#~ msgstr "Organizzazione via 2:"
+
+#~ msgid "Address/Street/Number:"
+#~ msgstr "Indirizzo/Via/Numero:"
+
+#~ msgid "City/Town/Village:"
+#~ msgstr "Città"
+
+#~ msgid "State/County/Province:"
+#~ msgstr "Provincia:"
+
+#~ msgid "<p align=\"left\"><strong>Start Time:</strong> "
+#~ msgstr "<p align=\"left\"><strong>Ora d'inizio:</strong> "
+
+#~ msgid "<strong>Choose a Start Time:</strong> "
+#~ msgstr "<strong>Scegli un orario di inizio:</strong> "
+
+#~ msgid "<strong>Price:</strong>"
+#~ msgstr "<strong>Costo:</strong>"
+
+#~ msgid "The # of people who will be attending IN ADDITION TO yourself."
+#~ msgstr "Il n. di persone che parteciperanno oltre a te stesso."
+
+#, fuzzy
+#~ msgid "<strong>Choose payment method:</strong> "
+#~ msgstr "<strong>Scegli un'Opzione:</strong>"
+
+#~ msgid "ACTIVE EVENT"
+#~ msgstr "EVENTO ATTIVO"
+
+#, fuzzy
+#~ msgid "Event Full"
+#~ msgstr "ID Evento"
+
+#~ msgid "Organization Name <span>*</span>:"
+#~ msgstr "Nome Organizzazione <span>*</span>:"
+
+#~ msgid "Organization Street 1 <span>*</span>:"
+#~ msgstr "Organizzazione via 1 <span>*</span>:"
+
+#~ msgid "Organization City <span>*</span>:"
+#~ msgstr "Città Organizzazione <span>*</span>:"
+
+#~ msgid "Organization State <span>*</span>:"
+#~ msgstr "Stato Organizzazione <span>*</span>:"
+
+#~ msgid "Organization Zip Code <span>*</span>:"
+#~ msgstr "Organizzazione CAP:"
+
+#, fuzzy
+#~ msgid "Organization Country<span>*</span>:"
+#~ msgstr "Città Organizzazione <span>*</span>:"
+
+#~ msgid ""
+#~ "<a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=p/mer/"
+#~ "express_return_summary-outside\" title=\"Auto Return Overview\" target="
+#~ "\"_blank\">Auto Return URL</a> (used for return to make payments):"
+#~ msgstr ""
+#~ "<a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=p/mer/"
+#~ "express_return_summary-outside\" title=\"Auto Return Overview\" target="
+#~ "\"_blank\">Auto Return URL</a> (used for return to make payments):"
+
+#~ msgid ""
+#~ "Do You Want To Send Payment Confirmation Emails? (This option must be "
+#~ "enable to send custom mails in events)"
+#~ msgstr ""
+#~ "Vuoi spedire Email di conferma? (Questa opzione deve essere abilitata per "
+#~ "spedire email personalizzate per gli eventi)"
+
+#~ msgid "Email Body:"
+#~ msgstr "Corpo dell'Email:"
+
+#, fuzzy
+#~ msgid "Not active event"
+#~ msgstr "Totale Eventi Attivi"
+
+#, fuzzy
+#~ msgid "Start Payment"
+#~ msgstr "Data Inizio"
+
+#, fuzzy
+#~ msgid "Please retry or contact organization."
+#~ msgstr "Per favore inserisci il tuo cognome."
+
+#~ msgid "Are you sure you want to delete record for"
+#~ msgstr "Sei sicuro di voler cancellare la voce di"
+
+#~ msgid "Export To Excel"
+#~ msgstr "Esporta su Excel"
+
+#~ msgid "Attendee Management"
+#~ msgstr "Gestione Partecipante"
+
+#~ msgid "Add An Event"
+#~ msgstr "Aggiungi un Evento"
+
+#~ msgid "<p>This is a sample description in HTML</p>"
+#~ msgstr "<p>Questa è una descrizione campione in HTML</p>"
+
+#~ msgid "Do you want to send a custom confirmation email?"
+#~ msgstr "Vuoi spedire una Email di conferma personalizzata? "
+
+#~ msgid "Custom Confirmation Email For This Event:"
+#~ msgstr "Conferma Email Personalizzata per questo Evento:"
+
+#~ msgid "Event Date(s):"
+#~ msgstr "Data(e) Evento:"
+
+#~ msgid "from"
+#~ msgstr "da"
+
+#~ msgid "Add A Time"
+#~ msgstr "Aggiungi un Orario"
+
+#~ msgid "(leave blank for free events, enter 2 place decimal i.e. 7.00)"
+#~ msgstr ""
+#~ "(lascia vuoto per gli eventi gratuiti, inserisci 2 decimali es. 7.00)"
+
+#~ msgid "(leave blank for unlimited attendees)"
+#~ msgstr "(lascia vuoto per numero illimitato di partecipanti)"
+
+#~ msgid "Allow payment for more than one person at a time?"
+#~ msgstr "Permetti pagamenti per più di una persona alla volta?"
+
+#~ msgid "Max Number of Additional Attendees:"
+#~ msgstr "Numero Massimo di Partecipanti addizionali:"
+
+#~ msgid "Is this event active?"
+#~ msgstr "Questo evento è attivo?"
+
+#~ msgid "Y"
+#~ msgstr "S"
+
+#~ msgid "N"
+#~ msgstr "N"
+
+#~ msgid "Event Discounts:"
+#~ msgstr "Codici di Sconto:"
+
+#~ msgid "Copy This Event"
+#~ msgstr "Copia questo Evento"
+
+#, fuzzy
+#~ msgid "Phone: "
+#~ msgstr "Telefono:"
+
+#~ msgid "PLEASE UPDATE THIS EVENT"
+#~ msgstr "PER FAVORE AGGIORNA QUESTO EVENTO"
+
+#~ msgid "Custom Confirmation Mail:"
+#~ msgstr "Conferma Email Personalizzata:"
+
+#~ msgid "Export Payment List to Excel"
+#~ msgstr "Esporta Lista Pagamento su Excel"
+
+#~ msgid "Start time:"
+#~ msgstr "Orario Inizio:"
+
+#~ msgid "End time:"
+#~ msgstr "Orario finale:"
+
+#, fuzzy
+#~ msgid "Allow payment for more than one person at a time? (max # people "
+#~ msgstr "Permetti pagamenti per più di una persona alla volta?"
+
+#~ msgid "Event Categories:"
+#~ msgstr "Categorie Evento:"
+
+#, fuzzy
+#~ msgid "Category Shortcode for"
+#~ msgstr "Shortcode per Pagina:"
+
+#~ msgid "No category selected"
+#~ msgstr "Nessuna categoria selezionata"
+
+#~ msgid "Allow discount codes for this event?"
+#~ msgstr "Permetti codici di sconto per questo evento?"
+
+#~ msgid "Event Discount Codes:"
+#~ msgstr "Codici di Sconto Evento:"
+
+#, fuzzy
+#~ msgid "Discount Code:"
+#~ msgstr "Codice di Sconto:"
+
+#~ msgid "No discount selected"
+#~ msgstr "Nessuno sconto selezionato"
+
+#~ msgid "Shortcode for Page:"
+#~ msgstr "Shortcode per Pagina:"
+
+#~ msgid "Custom Confirmation Email:"
+#~ msgstr "Conferma Email Personalizzata:"
+
+#, fuzzy
+#~ msgid "Prices:"
+#~ msgstr "Costo:"
+
+#, fuzzy
+#~ msgid "Event tax percentage"
+#~ msgstr "Gestione Evento"
+
+#, fuzzy
+#~ msgid "Promo:"
+#~ msgstr "da"
+
+#, fuzzy
+#~ msgid "No module selected"
+#~ msgstr "Nessuno sconto selezionato"
+
+#, fuzzy
+#~ msgid "Attendee Name/Email:"
+#~ msgstr "Nome Partecipante:"
+
+#, fuzzy
+#~ msgid "Payment module has been updated"
+#~ msgstr "Le informazione dell'Evento sono state aggiornate!"
+
+#~ msgid " <h2>PayPal Currency Settings</h2"
+#~ msgstr "<h2>Impostazione Valuta PayPal</h2>"
+
+#~ msgid " <p><strong>Email Confirmations:</strong><br"
+#~ msgstr " <p><strong>Conferma Email:</strong><br"
+
+#~ msgid "<h2>Event Identifier</h2"
+#~ msgstr "<h2>Identificatore Eventi</h2"
+
+#~ msgid ""
+#~ "<span style=\"color: #090; padding-left:20px; font-weight:bold;\">ACTIVE "
+#~ "EVENT</span>"
+#~ msgstr ""
+#~ "<span style=\"color: #090; padding-left:20px; font-weight:bold;\">EVENTO "
+#~ "ATTIVO</span>"
+
+#~ msgid ""
+#~ "<span style=\"color: #F00; padding-left:30px; font-weight:bold;"
+#~ "\">EXPIRED</span>"
+#~ msgstr ""
+#~ "<span style=\"color: #F00; padding-left:30px; font-weight:bold;"
+#~ "\">SCADUTO</span>"
+
+#~ msgid ""
+#~ "<span style=\"color: #F00; padding-left:30px; font-weight:bold;\">NOT "
+#~ "ACTIVE</span>"
+#~ msgstr ""
+#~ "<span style=\"color: #F00; padding-left:30px; font-weight:bold;\">NON "
+#~ "ATTIVO</span>"
+
+#~ msgid "All areas marked by <span>*</span> must be filled in."
+#~ msgstr ""
+#~ "Tutte le aree contrassegnate da <span>*</span> devono essere compilate."
+
+#~ msgid "Custom PayPal Settings"
+#~ msgstr "Settaggi Personalizzati PayPal:"
+
+#~ msgid "Debugging"
+#~ msgstr "Debugging"
+
+#~ msgid ""
+#~ "Select the <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/"
+#~ "mc_receive-outside||https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/"
+#~ "mc_convert-outside||https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/mc/"
+#~ "mc_wa-outside\" title=\"Receiving Money||Currency Conversion||Website "
+#~ "Payments\" target=\"_blank\">PayPal Currency</a> for your country:"
+#~ msgstr ""
+#~ "Seleziona il <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/"
+#~ "mc/mc_receive-outside||https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/"
+#~ "mc/mc_convert-outside||https://www.paypal.com/cgi-bin/webscr?cmd=p/sell/"
+#~ "mc/mc_wa-outside\" title=\"Receiving Money||Currency Conversion||Website "
+#~ "Payments\" target=\"_blank\">PayPal Currency</a> per la tua Nazione:"
+
+#~ msgid ""
+#~ "Typically payment@yourdomain.com - leave blank if you do not want to "
+#~ "accept paypal:"
+#~ msgstr ""
+#~ "Tipicamente pagamento@tuodominio.com - lascia vuoto se non vuoi accettare "
+#~ "PayPal:"
