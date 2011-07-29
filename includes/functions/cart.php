@@ -754,13 +754,13 @@ if (!function_exists('event_espresso_cart_link')) {
 
     function event_espresso_cart_link($atts) {
 
-        global $org_options;
+        global $org_options,$this_event_id;
 
         $events_in_session = $_SESSION['events_in_session'];
 
         extract(shortcode_atts(
                         array(
-                    'event_id' => NULL,
+                    'event_id' => $this_event_id,
                     'anchor' => __('Add to cart', 'event_espresso'),
                     'event_name' => ' ',
                     'separator' => NULL,
