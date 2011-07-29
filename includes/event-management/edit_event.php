@@ -89,7 +89,8 @@ function edit_event($event_id = 0) {
 
         $email_id = $event->email_id;
         $wp_user = $event->wp_user;
-		$date_submitted = $event->submitted != '0000-00-00 00:00:00'? event_date_display(empty($date_submitted) ? '' : $date_submitted, get_option('date_format')):'N/A';
+		//echo 'date_submitted = '.$event->submitted;
+		$date_submitted = $event->submitted != '0000-00-00 00:00:00'? (empty($event->submitted) ? '' : event_date_display( $event->submitted, get_option('date_format')) ):'N/A';
 
         $google_map_link = espresso_google_map_link(array('address' => $address, 'city' => $city, 'state' => $state, 'zip' => $zip, 'country' => $country));
 
