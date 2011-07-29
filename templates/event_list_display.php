@@ -66,71 +66,71 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 
 <?php
 //Show short descriptions
-if ($event_desc != '' && isset($org_options['display_short_description_in_event_list']) && $org_options['display_short_description_in_event_list'] == 'Y') {
-    ?>
-        <p><?php echo stripslashes_deep(wpautop($event_desc)); ?></p>
-    <?php } ?>
+if ($event_desc != '' && isset($org_options['display_short_description_in_event_list']) && $org_options['display_short_description_in_event_list'] == 'Y') {?>
+	<p><?php echo stripslashes_deep(wpautop($event_desc)); ?></p>
+<?php 
+} 
+?>
 
-    <?php if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
-        <p class="event_address" id="event_address-<?php echo $event_id ?>"><?php echo __('Address:', 'event_espresso'); ?> <br />
-            <?php echo stripslashes_deep($location); ?><br />
-            <?php echo $google_map_link; ?>
-        </p>
-    <?php } ?>
+<?php 
+if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
+	<p class="event_address" id="event_address-<?php echo $event_id ?>"><?php echo __('Address:', 'event_espresso'); ?> <br />
+		<?php echo stripslashes_deep($location); ?><br />
+		<?php echo $google_map_link; ?>
+	</p>
+<?php 
+}
+?>
 
-    <p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
+	<p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
 
     <?php
     $num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
     if ($num_attendees >= $reg_limit) {
         ?>
         <p id="available_spaces-<?php echo $event_id ?>"><?php _e('Available Spaces:', 'event_espresso') ?> <?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved') ?></p>
-        <?php if ($overflow_event_id != '0' && $allow_overflow == 'Y') { ?>
+<?php 
+		if ($overflow_event_id != '0' && $allow_overflow == 'Y') { ?>
             <p id="register_link-<?php echo $overflow_event_id ?>"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>&regevent_action=register&event_id=<?php echo $overflow_event_id ?>&name_of_event=<?php echo stripslashes_deep($event_name) ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
-        <?php
-        }
+<?php
+		}
     } else {
-        if ($display_reg_form == 'Y' || ($multi_reg && $display_reg_form == 'N' && $externalURL == '')) {
-            ?>
+		/**
+		* Load the multi event link.
+		**/
+				 
+		//Un-comment these next lines to check if the event is active
+		//echo event_espresso_get_status($event_id);
+		//print_r( event_espresso_get_is_active($event_id));
+				
+		if ($multi_reg && event_espresso_get_status($event_id)=='ACTIVE') {
+
+			$params = array(
+			//REQUIRED, the id of the event that needs to be added to the cart
+			'event_id' => $event_id,
+			//REQUIRED, Anchor of the link, can use text or image
+			'anchor' => __("Add to Cart and Add More Events", 'event_espresso'), //'anchor' => '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/cart_add.png" />',
+			//REQUIRED, if not available at this point, use the next line before this array declaration
+			// $event_name = get_event_field('event_name', EVENTS_DETAIL_TABLE, ' WHERE id = ' . $event_id);
+			'event_name' => $event_name,
+			//OPTIONAL, will place this term before the link
+			'separator' => __(" or ", 'event_espresso')
+			);
+
+			$cart_link= event_espresso_cart_link($params);
+		}
+		if ($display_reg_form == 'Y') {
+?>
             <p id="available_spaces-<?php echo $event_id ?>"><?php _e('Available Spaces:', 'event_espresso') ?> <?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces') ?></p>
 
             <p id="register_link-<?php echo $event_id ?>">
 
-                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a>
-
-                <?php
-                /**
-                 * Load the multi event link.
-                 */
-				 
-				//Un-comment these next lines to check if the event is active
-				//echo event_espresso_get_status($event_id);
-				//print_r( event_espresso_get_is_active($event_id));
-				
-                if ($multi_reg && event_espresso_get_status($event_id)=='ACTIVE') {
-
-                    $params = array(
-                        //REQUIRED, the id of the event that needs to be added to the cart
-                        'event_id' => $event_id,
-                        //REQUIRED, Anchor of the link, can use text or image
-                        'anchor' => __("Add to Cart and Add More Events", 'event_espresso'), //'anchor' => '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/cart_add.png" />',
-                        //REQUIRED, if not available at this point, use the next line before this array declaration
-                        // $event_name = get_event_field('event_name', EVENTS_DETAIL_TABLE, ' WHERE id = ' . $event_id);
-                        'event_name' => $event_name,
-                        //OPTIONAL, will place this term before the link
-                        'separator' => __(" or ", 'event_espresso')
-                    );
-
-                    echo event_espresso_cart_link($params);
-                }
-                ?>
-
-            </p>
+                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a> <?php echo isset($cart_link)?$cart_link:'';?></p>
                 <?php
             } else {
                 ?>
             <p id="register_link-<?php echo $event_id ?>">
-                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('View Details', 'event_espresso'); ?></a>
+                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('View Details', 'event_espresso'); ?></a> <?php echo isset($cart_link)&&$externalURL == ''?$cart_link :'';?>
             </p>
             <?php
         }
