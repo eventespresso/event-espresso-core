@@ -90,7 +90,7 @@ if ($event_desc != '' && isset($org_options['display_short_description_in_event_
         <?php
         }
     } else {
-        if ($display_reg_form == 'Y') {
+        if ($display_reg_form == 'Y' || ($multi_reg && $display_reg_form == 'N' && $externalURL == '')) {
             ?>
             <p id="available_spaces-<?php echo $event_id ?>"><?php _e('Available Spaces:', 'event_espresso') ?> <?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces') ?></p>
 
@@ -102,7 +102,12 @@ if ($event_desc != '' && isset($org_options['display_short_description_in_event_
                 /**
                  * Load the multi event link.
                  */
-                if ($multi_reg && $status['status'] == 'REGISTRATION_OPEN') {
+				 
+				//Un-comment these next lines to check if the event is active
+				//echo event_espresso_get_status($event_id);
+				//print_r( event_espresso_get_is_active($event_id));
+				
+                if ($multi_reg && event_espresso_get_status($event_id)=='ACTIVE') {
 
                     $params = array(
                         //REQUIRED, the id of the event that needs to be added to the cart
