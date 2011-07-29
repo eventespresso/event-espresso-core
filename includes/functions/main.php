@@ -857,27 +857,31 @@ if (!function_exists('event_espresso_add_question_groups')) {
             $FILTER = '';
             if (isset($_REQUEST['regevent_action']))
                 $FILTER = " AND q.admin_only = 'N' ";
-
-            //Only personal inforamation for the additional attendees in each group
+			
+			//echo 'additional_attendee_reg_info = '.$meta['additional_attendee_reg_info'].'<br />';
+            
+			//Only personal inforamation for the additional attendees in each group
             if (isset($meta['additional_attendee_reg_info']) && $meta['additional_attendee_reg_info'] == '2' && isset($meta['attendee_number']) && $meta['attendee_number'] > 1)
                 $FILTER .= " AND qg.system_group = 1 ";
-
-            foreach ($question_groups as $g_id)
+            
+			foreach ($question_groups as $g_id){
                 $questions_in .= $g_id . ',';
+			}
 
             $questions_in = substr($questions_in, 0, -1);
             $group_name = '';
             $counter = 0;
-
-            $questions = $wpdb->get_results("SELECT q.*, qg.group_name,qg.group_description, qg.show_group_name, qg.show_group_description, qg.group_identifier
-                                                                FROM " . EVENTS_QUESTION_TABLE . " q
-                                                                JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr
-                                                                ON q.id = qgr.question_id
-                                                                JOIN " . EVENTS_QST_GROUP_TABLE . " qg
-                                                                ON qg.id = qgr.group_id
-                                                                WHERE qgr.group_id in ( " . $questions_in . ")
-                                                                $FILTER
-                                                                ORDER BY qg.group_order ASC, qg.id, q.sequence, q.id ASC");
+			
+			$sql = "SELECT q.*, qg.group_name, qg.group_description, qg.show_group_name, qg.show_group_description, qg.group_identifier
+					FROM " . EVENTS_QUESTION_TABLE . " q
+					JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON q.id = qgr.question_id
+					JOIN " . EVENTS_QST_GROUP_TABLE . " qg ON qg.id = qgr.group_id
+					WHERE qgr.group_id in ( " . $questions_in . ") 
+					".$FILTER." 
+					ORDER BY qg.group_order ASC, qg.id, q.sequence, q.id ASC";
+			//echo $sql;
+            
+			$questions = $wpdb->get_results($sql);
 
             $num_rows = $wpdb->num_rows;
 
@@ -886,7 +890,6 @@ if (!function_exists('event_espresso_add_question_groups')) {
                 foreach ($questions as $question) {
                     if (!in_array($question->id, $questions_displayed)) {
                         $questions_displayed[] = $question->id;
-
 
                         //if new group, close fieldset
                         echo ($group_name != '' && $group_name != $question->group_name) ? '</div>' : '';
@@ -907,8 +910,6 @@ if (!function_exists('event_espresso_add_question_groups')) {
         }
     }
 }
-
-
 
 //Social media buttons
 if (!function_exists('espresso_show_social_media')) {
