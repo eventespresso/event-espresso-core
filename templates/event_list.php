@@ -46,7 +46,7 @@ if (!function_exists('display_event_espresso_categories')) {
 
 //Events Listing - Shows the events on your page. 
 if (!function_exists('event_espresso_get_event_details')) {
-	function event_espresso_get_event_details($sql, $css_class=NULL){
+	function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override=0){
 		//echo $sql;
 		global $wpdb, $org_options, $events_in_session;
                  $multi_reg = false;
@@ -126,22 +126,40 @@ if (!function_exists('event_espresso_get_event_details')) {
 			}else{
 	//Serve up the event list
 	//As of version 3.0.17 the event list details have been moved to event_list_display.php
-		 		switch (event_espresso_get_status($event_id)){
-						case 'NOT_ACTIVE':
-							//Don't show the event if any of the above are true
-						break;
-						
-						case 'PENDING':
-							if ( current_user_can('administrator')||function_exists('espresso_member_data') && espresso_can_view_event($event_id)==true ){
-								echo '<div class="pending_event">';
+
+		 		if ($allow_override==1){
+					//Uncomment to show active status array
+					//print_r( event_espresso_get_is_active($event_id));
+					include('event_list_display.php');
+				}else{
+					switch (event_espresso_get_status($event_id)){
+							case 'NOT_ACTIVE':
+								//Don't show the event
+								
+								//Uncomment the following two lines to show events that are not active and the active status array
+								//print_r( event_espresso_get_is_active($event_id));
+								//include('event_list_display.php');
+							break;
+							
+							case 'PENDING':
+								if ( current_user_can('administrator')||function_exists('espresso_member_data') && espresso_can_view_event($event_id)==true ){
+									//Uncomment to show active status array
+									//print_r( event_espresso_get_is_active($event_id));
+									
+									echo '<div class="pending_event">';
+									include('event_list_display.php');
+									echo '</div>';
+								}
+							break;
+							
+							default:
+								
+								//Uncomment to show active status array
+								//print_r( event_espresso_get_is_active($event_id));
+								
 								include('event_list_display.php');
-								echo '</div>';
-							}
-						break;
-						
-						default:
-							include('event_list_display.php');
-						break;
+							break;
+					}
 				}
 			} 
 		}

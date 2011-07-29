@@ -499,7 +499,7 @@ if (!function_exists('display_event_list_sc')) {
 		//template located in event_list_dsiplay.php
 		ob_start();
 		//echo $sql;
-		event_espresso_get_event_details($sql, $css_class);
+		event_espresso_get_event_details($sql, $css_class,$allow_override=1);
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		return $buffer;
