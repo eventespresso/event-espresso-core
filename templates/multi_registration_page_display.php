@@ -34,11 +34,7 @@ $this_event_id = $event_id;
         <?php
 
         }//End display description
-//print_r( event_espresso_get_is_active($event_id));
-        /* Displays the social media buttons */
-        ?>
-        <p><?php echo espresso_show_social_media( $event_id, 'twitter' ); ?> <?php echo espresso_show_social_media( $event_id, 'facebook' ); ?></p>
-        <?php
+		//print_r( event_espresso_get_is_active($event_id));
 
         switch ( $is_active['status'] ){
             case 'EXPIRED': //only show the event description.
@@ -65,23 +61,16 @@ $this_event_id = $event_id;
                 break;
 
             default:
-                /* Display the address and google map link if available */
-                //if ( $location != '' ){}
-
-                /*
-                 * *
-                  This section shows the registration form if it is an active event
-                 * *
-                 */
-
-
+                /** This section shows the registration form if it is an active event **/
                     if ( is_array( $add_attendee_question_groups ) && count( $add_attendee_question_groups ) > 0 && $meta['attendee_number'] > 1 ){
                         $question_groups = $add_attendee_question_groups;
                         $meta['additional_attendee_reg_info'] = 9; //this will override the deprecated way of doing the additional attendee questions
                         $increase_attende_num = true;
                     }
-
+					//echo "additional_attendee_reg_info = ".$meta['additional_attendee_reg_info'];
+					//echo "Attendee # ".$meta['attendee_number'];
                     $attendee_number = $meta['attendee_number'];
+					
 
                     $price_group_att_counter = 1; //this will keep track of the attendee number inside each event inside each price type
                     //Outputs the custom form questions.
@@ -90,6 +79,7 @@ $this_event_id = $event_id;
                     echo "<h2>" . __( 'Attendee ', 'event_espresso' ) . $attendee_number . "</h2>";
 
                     $meta['attendee_number'] = $price_group_att_counter;
+					//echo "Attendee # ".$attendee_number;
 
                     echo event_espresso_copy_dd( $event_id, $meta );
                     echo event_espresso_add_question_groups( $question_groups, $events_in_session, $event_id, 1, $meta );
@@ -118,26 +108,32 @@ $this_event_id = $event_id;
                         //This returns the additional attendee form fields.
                         //
                         if ( $meta['attendee_quantity'] > 1 ){
-
-
-							if(is_array($add_attendee_question_groups)){//this is a check for events that have been made before additional attendee questions functionality
-								$question_groups = $add_attendee_question_groups;
-								$meta['additional_attendee_reg_info'] = 9; //this will override the deprecated way of doing the additional attendee questions
+							//echo 'attendee_quantity = '.$meta['attendee_quantity'];
 							
+							//If the "Personal Information only" question is selected in the event 
+							//then only show the registration form for the first attendee
+							if ($event_meta['additional_attendee_reg_info'] == 1) {
+								echo '<input name="num_people" type="hidden" value="'.$meta['attendee_quantity'].'" />';
+							}else{
+
+								//this is a check for events that have been made before additional attendee questions functionality
+								if(is_array($add_attendee_question_groups)){
+									$question_groups = $add_attendee_question_groups;
+								}
+	
+								//The offset of 2 since this is attendee 2 and on
+								//adding 1 since the primary attendee is added
+								//in the above function call (c.a. line 104)
+								//Used for "Attendee #" display
+								for ( $i = $attendee_number, $cnt = $meta['attendee_quantity'] + $attendee_number - 1; $i < $cnt; $i++ ) {
+									$price_group_att_counter++;
+									//echo 'price_group_att_counter = '.$price_group_att_counter;
+									$meta['attendee_number'] = $price_group_att_counter;
+									echo "<h2>" . __( 'Attendee ', 'event_espresso' ) . $i . "</h2>";
+									echo event_espresso_copy_dd( $event_id, $meta );
+									event_espresso_add_question_groups($question_groups, $events_in_session, $event_id, 1, $meta );
+								}
 							}
-
-
-                            //The offset of 2 since this is attendee 2 and on
-                            //adding 1 since the primary attendee is added
-                            //in the above function call (c.a. line 104)
-                            //Used for "Attendee #" display
-                            for ( $i = $attendee_number, $cnt = $meta['attendee_quantity'] + $attendee_number - 1; $i < $cnt; $i++ ) {
-                                $price_group_att_counter++;
-                                $meta['attendee_number'] = $price_group_att_counter;
-                                echo "<h2>" . __( 'Attendee ', 'event_espresso' ) . $i . "</h2>";
-                                echo event_espresso_copy_dd( $event_id, $meta );
-                                event_espresso_add_question_groups($question_groups, $events_in_session, $event_id, 1, $meta );
-                            }
 						}
 					}else{
 					}//End allow multiple

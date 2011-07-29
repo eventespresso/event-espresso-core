@@ -108,7 +108,7 @@ if (!function_exists('multi_register_attendees')) {
 
                 //This function gets the status of the event.
                 $is_active = array();
-                $is_active = event_espresso_get_is_active($event_id);
+                $is_active = event_espresso_get_status($event_id);
 
                 //If the coupon code system is intalled then use it
                 if (function_exists('event_espresso_coupon_registration_page')) {
