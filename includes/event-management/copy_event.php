@@ -67,23 +67,17 @@ global $wpdb, $current_user;
 				$venue_url = $result->venue_url;
 				$venue_phone = $result->venue_phone;
 				$venue_image = $result->venue_image;
+				$event_meta = $result->event_meta;
+				$require_pre_approval = $result->require_pre_approval;
+				$timezone_string = $result->timezone_string;
 				
 				
-		$sql=array('event_code' => $event_code, 'event_name'=>$event_name, 'event_desc'=>$event_desc, 'display_desc'=>$display_desc, 'display_reg_form'=>$display_reg_form, 'event_identifier'=>$event_identifier,
-			       'address'=>$address, 'address2'=>$address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'country' => $country, 'phone'=>$phone, 'virtual_url'=>$virtual_url, 
-				   'virtual_phone'=>$virtual_phone, 'registration_start'=>$registration_start, 'registration_end'=>$registration_end, 'start_date'=>$start_date, 'end_date'=>$end_date, 
-				   'allow_multiple'=>$allow_multiple, 'send_mail'=>$send_mail, 'is_active'=>$is_active, 'event_status'=>$event_status,
-				   'conf_mail'=>$conf_mail, 'use_coupon_code'=>$use_coupon_code, 'member_only'=>$member_only,'externalURL' => $externalURL,
-				   'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email, 
-				    'question_groups' => $question_groups, 'post_type' => $post_type, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 
-					'venue_title' => $venue_title, 'venue_url' => $venue_url, 'venue_phone' => $venue_phone, 'venue_image' => $venue_image,
-					'reg_limit'=>$reg_limit, 'additional_limit'=>$additional_limit, 'recurrence_id'=>$recurrence_id, 'email_id' => $email_id, 
-					'wp_user' => $current_user->ID,'post_id' => $post_id);
+		$sql=array('event_code' => $event_code, 'event_name'=>$event_name, 'event_desc'=>$event_desc, 'display_desc'=>$display_desc, 'display_reg_form'=>$display_reg_form, 'event_identifier'=>$event_identifier, 'address'=>$address, 'address2'=>$address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'country' => $country, 'phone'=>$phone, 'virtual_url'=>$virtual_url, 'virtual_phone'=>$virtual_phone, 'registration_start'=>$registration_start, 'registration_end'=>$registration_end, 'start_date'=>$start_date, 'end_date'=>$end_date, 'allow_multiple'=>$allow_multiple, 'send_mail'=>$send_mail, 'is_active'=>$is_active, 'event_status'=>$event_status, 'conf_mail'=>$conf_mail, 'use_coupon_code'=>$use_coupon_code, 'member_only'=>$member_only,'externalURL' => $externalURL, 'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email, 'question_groups' => $question_groups, 'post_type' => $post_type, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'venue_title' => $venue_title, 'venue_url' => $venue_url, 'venue_phone' => $venue_phone, 'venue_image' => $venue_image,'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()), 'reg_limit'=>$reg_limit, 'additional_limit'=>$additional_limit, 'recurrence_id'=>$recurrence_id, 'email_id' => $email_id, 'wp_user' => $current_user->ID,'post_id' => $post_id);
 		}
 		
 		$sql_data = array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
 						  '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
-						  '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%d','%d','%d','%d', '%d', '%d');
+						  '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', '%s', '%s', '%s','%d','%d','%d','%d', '%d', '%d');
 		
 		/*//check the counts to make sure the data is matched up correctly
 		echo 'SQL Count ';		
