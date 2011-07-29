@@ -95,6 +95,11 @@ if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?
 <?php
 		}
     } else {
+		if ($display_reg_form == 'Y'&&$externalURL == '') {
+?>			<p id="available_spaces-<?php echo $event_id ?>"><?php _e('Available Spaces:', 'event_espresso') ?> <?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces') ?></p>
+<?php
+		}
+		
 		/**
 		* Load the multi event link.
 		**/
@@ -121,11 +126,9 @@ if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?
 		}
 		if ($display_reg_form == 'Y') {
 ?>
-            <p id="available_spaces-<?php echo $event_id ?>"><?php _e('Available Spaces:', 'event_espresso') ?> <?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces') ?></p>
-
             <p id="register_link-<?php echo $event_id ?>">
 
-                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a> <?php echo isset($cart_link)?$cart_link:'';?></p>
+                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a> <?php echo isset($cart_link)&&$externalURL == ''?$cart_link:'';?></p>
                 <?php
             } else {
                 ?>
