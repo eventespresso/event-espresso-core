@@ -28,10 +28,8 @@ $this_event_id = $event_id;
 
         <?php
 
-        if ( $display_desc == "Y" && $org_options['display_description_on_multi_reg_page'] != 'N')
-        {//Show the description or not
+        if ( $display_desc == "Y" && $org_options['display_description_on_multi_reg_page'] != 'N'){//Show the description or not
         ?>
-
             <div class="event_description"><?php echo wpautop( do_shortcode($event_desc) ); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.    ?></div>
         <?php
 
@@ -42,8 +40,7 @@ $this_event_id = $event_id;
         <p><?php echo espresso_show_social_media( $event_id, 'twitter' ); ?> <?php echo espresso_show_social_media( $event_id, 'facebook' ); ?></p>
         <?php
 
-        switch ( $is_active['status'] )
-        {
+        switch ( $is_active['status'] ){
             case 'EXPIRED': //only show the event description.
                 _e( '<h3 class="expired_event">This event has passed.</h3>', 'event_espresso' );
                 break;
@@ -77,15 +74,8 @@ $this_event_id = $event_id;
                  * *
                  */
 
-                if ( $display_reg_form == 'Y' )
-                {
-        ?>
 
-
-        <?php
-
-                    if ( is_array( $add_attendee_question_groups ) && count( $add_attendee_question_groups ) > 0 && $meta['attendee_number'] > 1 )
-                    {
+                    if ( is_array( $add_attendee_question_groups ) && count( $add_attendee_question_groups ) > 0 && $meta['attendee_number'] > 1 ){
                         $question_groups = $add_attendee_question_groups;
                         $meta['additional_attendee_reg_info'] = 9; //this will override the deprecated way of doing the additional attendee questions
                         $increase_attende_num = true;
@@ -104,43 +94,37 @@ $this_event_id = $event_id;
                     echo event_espresso_copy_dd( $event_id, $meta );
                     echo event_espresso_add_question_groups( $question_groups, $events_in_session, $event_id, 1, $meta );
 
-                    if ( $meta['attendee_number'] == 1 || $increase_attende_num )
-                    {
+                    if ( $meta['attendee_number'] == 1 || $increase_attende_num ){
                         $meta['attendee_number']++;
                         $attendee_number++;
                     }
 
                     //Outputs the shopping cart items
-                    if ( function_exists( 'event_espresso_add_cart_item_groups' ) )
-                    {
+                    if ( function_exists( 'event_espresso_add_cart_item_groups' ) ){
                         echo event_espresso_add_cart_item_groups( $item_groups );
                     }
 
                     //Coupons
-                    if ( function_exists( 'event_espresso_coupon_registration_page' ) )
-                    {
+                    if ( function_exists( 'event_espresso_coupon_registration_page' ) ){
                         // echo event_espresso_coupon_registration_page( $use_coupon_code, $event_id );
                     }//End coupons display
                     //Groupons
-                    if ( function_exists( 'event_espresso_groupon_registration_page' ) )
-                    {
+                    if ( function_exists( 'event_espresso_groupon_registration_page' ) ){
                         //echo event_espresso_groupon_registration_page( $use_groupon_code, $event_id );
                     }//End groupons display
                     //Multiple Attendees
-                    if ( $allow_multiple == "Y" )
-                    {
+                    if ( $allow_multiple == "Y" ){
 
                         //This returns the additional attendee form fields.
                         //
-                        if ( $meta['attendee_quantity'] > 1 )
-                        {
+                        if ( $meta['attendee_quantity'] > 1 ){
 
 
-if(is_array($add_attendee_question_groups)){//this is a check for events that have been made before additional attendee questions functionality
-    $question_groups = $add_attendee_question_groups;
-    $meta['additional_attendee_reg_info'] = 9; //this will override the deprecated way of doing the additional attendee questions
-
-}
+							if(is_array($add_attendee_question_groups)){//this is a check for events that have been made before additional attendee questions functionality
+								$question_groups = $add_attendee_question_groups;
+								$meta['additional_attendee_reg_info'] = 9; //this will override the deprecated way of doing the additional attendee questions
+							
+							}
 
 
                             //The offset of 2 since this is attendee 2 and on
@@ -154,21 +138,11 @@ if(is_array($add_attendee_question_groups)){//this is a check for events that ha
                                 echo event_espresso_copy_dd( $event_id, $meta );
                                 event_espresso_add_question_groups($question_groups, $events_in_session, $event_id, 1, $meta );
                             }
-                        }
-                    }
-                    else
-                    {
-        ?>
-
-        <?php }//End allow multiple    ?>
-
-        <?php
-
-                }
-                break;
+						}
+					}else{
+					}//End allow multiple
+			break;
         }//End Switch statement to check the status of the event
         ?>
-
     </div>
 </div>
-
