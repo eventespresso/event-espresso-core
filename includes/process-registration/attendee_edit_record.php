@@ -1,10 +1,8 @@
 <?php
 function attendee_edit_record() {
     global $wpdb, $org_options;
-   
 
-        if ( $_REQUEST[ 'delete_attendee' ] == 'true' )
-        {
+        if ( $_REQUEST[ 'delete_attendee' ] == 'true' ){
             $id = $_REQUEST[ 'id' ];
             $registration_id = $_REQUEST[ 'registration_id' ];
             $sql = " DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='$id'";
@@ -17,8 +15,7 @@ function attendee_edit_record() {
         /*
          * Update the attendee information
          */
-         if ( $_REQUEST[ 'attendee_action' ] == 'update_attendee' )
-        {
+         if ( $_REQUEST[ 'attendee_action' ] == 'update_attendee' ){
             $id = $_REQUEST[ 'id' ];
 			$registration_id = $_REQUEST[ 'registration_id' ];
             $fname = $_POST[ 'fname' ];
@@ -45,11 +42,9 @@ function attendee_edit_record() {
                             ON t1.question_id=t2.id
                             WHERE attendee_id = '" . $id . "' " );
             
-            if ( $questions )
-            {
+            if ( $questions ){
                 foreach ( $questions as $question ) {
-                    switch ( $question->question_type )
-                    {
+                    switch ( $question->question_type ){
                        case "TEXT" :
                         case "TEXTAREA" :
                         case "DROPDOWN" :
@@ -84,7 +79,7 @@ function attendee_edit_record() {
         $counter = 0;
         $additional_attendees = NULL;
 
-        $results = $wpdb->get_results( "SELECT  t1.*, t2.event_name, t2.question_groups FROM " . EVENTS_ATTENDEE_TABLE  . " t1
+        $results = $wpdb->get_results( "SELECT  t1.*, t2.event_name, t2.question_groups, t2.event_meta FROM " . EVENTS_ATTENDEE_TABLE  . " t1
                  JOIN " . EVENTS_DETAIL_TABLE  . " t2
                  ON t1.event_id = t2.id
                  WHERE t1.id = " . $_REQUEST[ 'id' ] . "
@@ -93,7 +88,7 @@ function attendee_edit_record() {
         foreach ( $results as $result ) {
             if ( $counter == 0 ){
            
-           	$id = $result->id;
+           		$id = $result->id;
                 $registration_id=$result->registration_id;
                 $lname = $result->lname;
                 $fname = $result->fname;
@@ -114,81 +109,79 @@ function attendee_edit_record() {
                 $payment_date = $result->payment_date;
                 $event_id = $result->event_id;
                 $event_name = stripslashes_deep($result->event_name);
-                  $question_groups = unserialize($result->question_groups);
-
-            $counter = 1;
+                $question_groups = unserialize($result->question_groups);
+				$event_meta = unserialize($result->event_meta);
+            	$counter = 1;
             } else {
                 $additional_attendees[$result->id] = array('full_name' => $result->fname . ' ' . $result->lname, 'email' => $result->email, 'phone' => $result->phone);
             }
         }
 ?>       
 <h3><?php _e('Registration For:', 'event_espresso' ); ?> <?php echo $event_name ?></h3>
-   
-  
 	<form method="post" action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>" class="espresso_form">
 	<?php
 	if (count($question_groups) > 0){
-                                        $questions_in = '';
+		$questions_in = '';
 
-                                        foreach ($question_groups as $g_id) $questions_in .= $g_id . ',';
+		foreach ($question_groups as $g_id) $questions_in .= $g_id . ',';
 
-                                        $questions_in = substr($questions_in,0,-1);
-                                        $group_name = '';
-                                        $counter = 0;
+			$questions_in = substr($questions_in,0,-1);
+			$group_name = '';
+			$counter = 0;
+			
+			if (isset($event_meta['additional_attendee_reg_info']) && $event_meta['additional_attendee_reg_info'] == '2' && isset($_REQUEST['attendee_num']) && $_REQUEST['attendee_num'] > 1){
+                $FILTER .= " AND qg.system_group = 1 ";
+			}
+				
+			$sql = "SELECT q.*, at.*, qg.group_name, qg.show_group_description, qg.show_group_name FROM " . EVENTS_QUESTION_TABLE . " q
+					LEFT JOIN " .  EVENTS_ANSWER_TABLE . " at on q.id = at.question_id
+					JOIN " .  EVENTS_QST_GROUP_REL_TABLE . " qgr on q.id = qgr.question_id
+					JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
+					WHERE qgr.group_id in (" .$questions_in. ") 
+					AND (at.attendee_id IS NULL OR at.attendee_id = '" . $id . "') 
+					AND q.admin_only = 'N' 
+					".$FILTER." 
+					ORDER BY qg.id, q.id ASC";
+			$questions = $wpdb->get_results($sql);
 
-                                        $questions = $wpdb->get_results("SELECT q.*,at.*, qg.group_name
-                                                            FROM " . EVENTS_QUESTION_TABLE . " q
-                                                            LEFT JOIN " .  EVENTS_ANSWER_TABLE . " at
-                                                                on q.id = at.question_id
-                                                            JOIN " .  EVENTS_QST_GROUP_REL_TABLE . " qgr
-                                                                on q.id = qgr.question_id
-                                                            JOIN " . EVENTS_QST_GROUP_TABLE . " qg
-                                                                on qg.id = qgr.group_id
-                                                                WHERE qgr.group_id in ( " .   $questions_in
-                                                        . ") AND (at.attendee_id IS NULL OR at.attendee_id = '" . $id . "') AND q.admin_only = 'N' ORDER BY qg.id, q.id ASC");
+			$num_rows = $wpdb->num_rows;
 
-                                         $num_rows = $wpdb->num_rows;
-
-                                         if ($num_rows > 0 ){
-										 		$question_displayed = array();
-												foreach($questions as $question)
-												{
-													if ( !in_array($question->question_id,$question_displayed) ) {
-														$question_displayed[] = $question->question_id;
+			if ($num_rows > 0 ){
+				$question_displayed = array();
+				foreach($questions as $question){
+					if ( !in_array($question->question_id,$question_displayed) ) {
+						$question_displayed[] = $question->question_id;
 														
-                                                    //if new group, close fieldset
-													echo ($group_name != '' &&  $group_name != $question->group_name) ?'</div>':'';
+						//if new group, close fieldset
+						echo ($group_name != '' &&  $group_name != $question->group_name) ?'</div>':'';
 
-                                                    if ($group_name != $question->group_name){
-                                                        echo '<div class="event_questions" id="' . $question->group_identifier . '">';
-														echo $question->show_group_name != 0?"<h3 style='clear:both;'>$question->group_name</h3>":'';
-														echo $question->show_group_description != 0?"<p>$question->group_description</p>":'';
-                                                        $group_name = $question->group_name;
+						if ($group_name != $question->group_name){
+							echo '<div class="event_questions" id="' . $question->group_identifier . '">';
+							echo $question->show_group_name != 0?"<h3 style='clear:both;'>$question->group_name</h3>":'';
+							echo $question->show_group_description != 0?"<p>$question->group_description</p>":'';
+							$group_name = $question->group_name;
+						}
 
-                                                    }
+					echo '<p>';
+					event_form_build_edit($question, ($question->system_name != '') ? ${$question->system_name} : $question->answer);
+					echo "</p>";
 
-							echo '<p>';
-							event_form_build_edit($question, ($question->system_name != '')?${$question->system_name}:$question->answer);
-							echo "</p>";
+					$counter++;
+					echo $counter == $num_rows?'</div>':'';
 
+					}
+				}
 
-                                                    $counter++;
-                                                   echo $counter == $num_rows?'</div>':'';
-
-						 	}
-						 }
-
-                                            }//end questions display
-	}            
-                ?>
-                <input type="hidden" name="id" value="<?php echo $id ?>" />
-                <input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
-      <input type="hidden" name="form_action" value="edit_attendee" />
-      <input type="hidden" name="attendee_action" value="update_attendee" />
+			}//end questions display
+	}
+?>
+	<input type="hidden" name="id" value="<?php echo $id ?>" />
+	<input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
+	<input type="hidden" name="form_action" value="edit_attendee" />
+	<input type="hidden" name="attendee_action" value="update_attendee" />
 	<input type="hidden" name="regevent_action" value="register" />
-    <input type="hidden" name="primary" value="<?php echo $_REQUEST[ 'primary' ] ?>" />
-                <p class="espresso_confirm_registration"><input type="submit" name="submit" value="<?php _e( 'Update Record', 'event_espresso' ); ?>" /></p>
-
+	<input type="hidden" name="primary" value="<?php echo $_REQUEST[ 'primary' ] ?>" />
+	<p class="espresso_confirm_registration"><input type="submit" name="submit" value="<?php _e( 'Update Record', 'event_espresso' ); ?>" /></p>
 </form>
 <?php
 }
