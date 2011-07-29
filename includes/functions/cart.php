@@ -699,8 +699,8 @@ if (!function_exists('event_espresso_multi_qty_dd')) {
  * @return JSON object
  */
 if (!function_exists('event_espresso_multi_additional_attendees')) {
-
-
+//Need to verify
+//Doesn't look like this function is used anywhere in the plugin
     function event_espresso_multi_additional_attendees($additional_limit, $available_spaces, $event_id = null) {
         if ($additional_limit == 0)
             return;
@@ -819,8 +819,9 @@ if (!function_exists('event_espresso_invoke_cart_error')) {
 
 
 if (!function_exists('event_espresso_clear_session')) {
-
-
+//Need to verify
+//This function should probably be invoked when a payment is confirmed or when the attendee confirms the registration on free events.
+//Right now it only seems to be used in th add_attendees_to_db.php when an attendee confirms a paid registration, but I am not sure it is working.
     function event_espresso_clear_session() {
 
         $_SESSION['espresso_session_id'] = '';
