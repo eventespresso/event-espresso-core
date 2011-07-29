@@ -284,6 +284,7 @@ if (!function_exists('event_espresso_get_status')) {
 
             case 'ACTIVE':
             case 'ONGOING':
+			case 'SECONDARY':
             case 'REGISTRATION_OPEN':
                 return 'ACTIVE';
                 break;
