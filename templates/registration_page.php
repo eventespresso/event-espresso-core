@@ -69,6 +69,8 @@ if (!function_exists('register_attendees')) {
         //Build the registration page
         if ($wpdb->get_results($sql)) {
             $events = $wpdb->get_results($sql);
+			//Create a log file
+			//espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " $sql] [ sqldump = " . var_export($events, true) ) );
             //These are the variables that can be used throughout the regsitration page
             foreach ($events as $event) {
 				global $this_event_id;
