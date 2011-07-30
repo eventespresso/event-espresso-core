@@ -291,6 +291,7 @@ function event_espresso_create_upload_directories() {
         EVENT_ESPRESSO_UPLOAD_DIR,
         EVENT_ESPRESSO_TEMPLATE_DIR,
         EVENT_ESPRESSO_GATEWAY_DIR,
+		EVENT_ESPRESSO_UPLOAD_DIR.'/logs/',
     );
     foreach ($folders as $folder) {
         wp_mkdir_p($folder);
