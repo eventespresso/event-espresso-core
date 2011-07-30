@@ -167,7 +167,7 @@ require_once("includes/functions/admin.php");
 require_once("includes/functions/time_date.php");
 
 //Install/Update Tables when plugin is activated
-require_once("includes/database_install.new.php");
+require_once("includes/functions/database_install.php");
 register_activation_hook(__FILE__, 'events_data_tables_install');
 
 //Define all of the plugins database tables
