@@ -383,45 +383,41 @@ function event_list_attendees() {
     <?php echo $_REQUEST['event_id'] != '' ? '<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=edit&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Edit Event', 'event_espresso') . '</a>' : ''; ?>
                                 </div>
                                 </form>
-                                <script>
-                                    jQuery(document).ready(function($) {
-
-                                        /* show the table data */
-                                        var mytable = $('#table').dataTable( {
-                                            "sDom": 'Clfrtip',
-                                            "bAutoWidth": false,
-                                            "bStateSave": true,
-                                            "sPaginationType": "full_numbers",
-
-                                            "oLanguage": {    "sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong> (eg, email, txn id, event, etc.)",
-                                                "sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" },
-                                            "aoColumns": [
-                                                { "bSortable": false },
-                                                null,
-												<?php echo $ticketing_installed == true ? 'null,' : '' ?>
-												null,
-												null,
-												null,
-												null,
-												null,
-												null,
-												null,
-												null,
-												null,
-												{ "bSortable": false }
-											],
-											"aoColumnDefs": [
-												{ "bVisible": false, "aTargets": [ 3, <?php if ($_REQUEST['all_a'] != 'true') {echo '4,';} ?> <?php echo $ticketing_installed == true ? '10,11' : '9,10'; ?> ] }
-											],
-											"oColVis": {
-											"aiExclude": [ 0, 1],
-											"buttonText": "Filter: Show / Hide Columns",
-											"bRestore": true
-											},
-
-										} );
-
-									});
-                                </script>
-    <?php
+	<script>
+		jQuery(document).ready(function($) {
+			/* show the table data */
+			var mytable = $('#table').dataTable( {
+				"sDom": 'Clfrtip',
+				"bAutoWidth": false,
+				"bStateSave": true,
+				"sPaginationType": "full_numbers",
+				"oLanguage": {    "sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong> (eg, email, txn id, event, etc.)",
+				"sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" },
+				"aoColumns": [
+					{ "bSortable": false },
+					null,
+					<?php echo $ticketing_installed == true ? 'null,' : '' ?>
+					null,
+					null,
+					null,
+					null,
+					null,
+					null,
+					null,
+					null,
+					null,
+					{ "bSortable": false }
+				],
+				"aoColumnDefs": [
+					{ "bVisible": false, "aTargets": [  <?php if ($_REQUEST['event_id'] != '') {echo '4,';}else{ echo '2,';} ?> <?php echo $ticketing_installed == true ? '10,11' : '9,10'; ?> ] }
+				],
+				"oColVis": {
+					"aiExclude": [ 0, 1],
+					"buttonText": "Filter: Show / Hide Columns",
+					"bRestore": true
+				},
+			});
+		});
+	</script>
+<?php
 }
