@@ -7,13 +7,11 @@ function event_list_attendees() {
         if (is_array($_POST['checkbox'])) {
             while (list($key, $value) = each($_POST['checkbox'])):
                 $del_id = $key;
-
                 $sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id = '$del_id'";
                 $wpdb->query($sql);
             endwhile;
         }
         ?>
-
         <div id="message" class="updated fade">
             <p><strong>
                     <?php _e('Customer(s) have been successfully deleted from the event.', 'event_espresso'); ?>
@@ -21,18 +19,12 @@ function event_list_attendees() {
         </div>
         <?php
     }
-
-///
     //	MARKING USERS AS ATTENDED (OR NOT)
-    ///
-
     if ((!empty($_POST['attended_customer']) || !empty($_POST['unattended_customer'])) && $ticketing_installed == true) {
         if (is_array($_POST['checkbox'])) {
             while (list($key, $value) = each($_POST['checkbox'])):
                 $del_id = $key;
-
                 //echo $del_id . " / " . $value . "<br />\n";
-
                 if ($value == "on" && $_POST['attended_customer']) {
                     $checker = 1;
                 } else {
@@ -247,12 +239,12 @@ function event_list_attendees() {
         $sql_a .= $sql_clause . " e.wp_user = '" . espresso_member_data('id') . "' ";
     }
     $sql_a .= ") ORDER BY date DESC, id ASC ";
-    //	echo $sql_a;
-
+	
     $attendees = $wpdb->get_results($sql_a);
 	//echo $sql_a;
 	
     $total_attendees = $wpdb->num_rows;
+	$quantity =0;
     if ($total_attendees > 0) {
         for ($i = 0; $i <= $total_attendees; $i++) {
             $attendee = $attendees[$i];
@@ -267,7 +259,6 @@ function event_list_attendees() {
             $email = '<span style="visibility:hidden"' . $attendee->email . '</span>';
             $phone = $attendee->phone;
             $quantity = $attendee->quantity > 1 ? '<br />(' . __('Total Attendees', 'event_espresso') . ': ' . $attendee->quantity . ')' : '';
-
             if ($temp_reg_id == '') {
                 $id = $attendee->id;
                 $temp_reg_id = $registration_id;
@@ -275,9 +266,7 @@ function event_list_attendees() {
 
                 $attended = $attendee->checked_in;
                 $ticket_scanned = $attendee->checked_in_quantity;
-
                 $amount_pd = $attendee->amount_pd;
-                // $total_cost = $attendee->total_cost!=0.00?$org_options[ 'currency_symbol' ].$attendee->total_cost:'N/A';
                 $payment_status = $attendee->payment_status;
                 $payment_date = $attendee->payment_date;
                 $date = $attendee->date;
@@ -290,15 +279,17 @@ function event_list_attendees() {
                 $event_name = $attendee->event_name;
             }
             if ($temp_reg_id == $registration_id) {
-                $attendees_group .= "<li>$fname $lname $email <span style=\"visibility:hidden\"" . $registration_id . "</span></li>";
-                //$payment_status = $attendee->payment_status; //Seems to be showing the wrong status, moved into the upper loop
-				//echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
-				//echo 'Amount: '. espresso_attendee_price($registration_id).'<br />';
+                $attendees_group .= "<li>$fname $lname $email <span style=\"visibility:hidden\"" . $registration_id . "</span>$quantity</li>";
+                /*echo '<p>';
+				echo $payment_status.'<br />';
+				echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
+				echo 'Amount: '. espresso_attendee_price($registration_id).'<br />';
+				echo '</p>';*/
 				$amount_pd = espresso_attendee_price($registration_id);
             } else {
                 $go = true;
 			}
-
+//echo $attendee->quantity;
             if ($go || $total_attendees == $counter) {
                 ?>
                                                 <tr>
@@ -318,9 +309,7 @@ function event_list_attendees() {
                                                     <td nowrap="nowrap"><?php echo event_date_display($event_time, get_option('time_format')) ?></td>
                 <?php if ($ticketing_installed == true) { ?><td nowrap="nowrap"><?php echo ($attended == 1 || $ticket_scanned >= 1) ? "Yes" : "No"; ?></td><?php } ?>
                                                     <td nowrap="nowrap"><?php echo $price_option ?></td>
-                                                    <td class="date column-date"><a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>">
-                <?php event_espresso_paid_status_icon($payment_status) ?>
-                                                        </a> <a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>"><?php echo $org_options['currency_symbol'] ?><?php echo $amount_pd ?></a></td>
+                                                    <td class="date column-date"><a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>"><?php event_espresso_paid_status_icon($payment_status) ?></a> <a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>"><?php echo $org_options['currency_symbol'] ?><?php echo $amount_pd ?></a></td>
                                                     <td class="date column-date"><?php echo espresso_payment_type($txn_type); ?></td>
                                                     <td class="date column-date"><?php echo $coupon_code ?></td>
                                                     <td class="date column-date"><?php echo $txn_id ?></td>
@@ -340,22 +329,15 @@ function event_list_attendees() {
 
                                                 </tr>
                                                         <?php
+														echo '<p>';
+				
                                                         $id = $attendee->id;
                                                         $temp_reg_id = $registration_id;
                                                         $email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
                                                         $attendees_group = "<li>$fname $lname $email $quantity</li>";
                                                         $go = false;
-                                                        /* $lname = $attendee->lname;
-                                                          $fname = $attendee->fname;
-                                                          $address = $attendee->address;
-                                                          $city = $attendee->city;
-                                                          $state = $attendee->state;
-                                                          $zip = $attendee->zip;
-                                                          $email = $attendee->email;
-                                                          $phone = $attendee->phone;
-                                                          $quantity = $attendee->quantity >1?'('.$attendee->quantity.')':''; */
+                                                       
                                                         $amount_pd = $attendee->amount_pd;
-                                                        //$total_cost = $attendee->total_cost!=0.00?$org_options[ 'currency_symbol' ].$attendee->total_cost:'N/A';
                                                         $attended = $attendee->checked_in;
                                                         $ticket_scanned = $attendee->checked_in_quantity;
                                                         $payment_status = $attendee->payment_status;
@@ -369,7 +351,14 @@ function event_list_attendees() {
                                                         $event_time = $attendee->event_time;
                                                         $price_option = $attendee->price_option;
                                                         $event_date = $attendee->start_date;
-                                                    }
+														
+/*														echo '<p>';
+														echo 'Quantity: ' .$quantity .'<br />';
+														echo 'Payment: '.$payment_status.'<br />';
+														echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
+														echo 'Amount: '. espresso_attendee_price($registration_id).'<br />';
+														echo '</p>';
+*/                                                    }
                                                     $counter++;
                                                 }
                                             }
@@ -409,33 +398,30 @@ function event_list_attendees() {
                                             "aoColumns": [
                                                 { "bSortable": false },
                                                 null,
-    <?php echo $ticketing_installed == true ? 'null,' : '' ?>
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        null,
-                                                                                                        { "bSortable": false }
-                                                                                                    ],
-                                                                                                    "aoColumnDefs": [
-                                                                                                        { "bVisible": false, "aTargets": [ 3, <?php if ($_REQUEST['all_a'] != 'true') {
-        echo '4,';
-    } ?> <?php echo $ticketing_installed == true ? '10,11' : '9,10'; ?> ] }
-                                                                                                    ],
-                                                                                                    "oColVis": {
-                                                                                                        "aiExclude": [ 0, 1],
-                                                                                                        "buttonText": "Filter: Show / Hide Columns",
-                                                                                                        "bRestore": true
-                                                                                                    },
+												<?php echo $ticketing_installed == true ? 'null,' : '' ?>
+												null,
+												null,
+												null,
+												null,
+												null,
+												null,
+												null,
+												null,
+												null,
+												{ "bSortable": false }
+											],
+											"aoColumnDefs": [
+												{ "bVisible": false, "aTargets": [ 3, <?php if ($_REQUEST['all_a'] != 'true') {echo '4,';} ?> <?php echo $ticketing_installed == true ? '10,11' : '9,10'; ?> ] }
+											],
+											"oColVis": {
+											"aiExclude": [ 0, 1],
+											"buttonText": "Filter: Show / Hide Columns",
+											"bRestore": true
+											},
 
-                                                                                                } );
+										} );
 
-                                                                                            } );
+									});
                                 </script>
-
     <?php
 }
