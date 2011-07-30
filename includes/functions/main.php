@@ -352,199 +352,84 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 
     function get_number_of_attendees_reg_limit($event_id, $type = 'NULL', $full_text = 'EVENT FULL') {
         global $wpdb;
+		
+		$sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
+		$reg_limit = $wpdb->get_var($sql_reg_limit);
+	
+				
+		$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity >= 1 AND (payment_status='Completed' OR payment_status='Pending') ";
+		$attendees = $wpdb->get_results($a_sql, ARRAY_A);
+		$num_attendees = 0;
+		if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
+			$num_attendees =  $wpdb->last_result[0]->quantity;
+		}
+		
+		$number_available_spaces = 0;
+		if ($reg_limit > $num_attendees) {
+			$number_available_spaces = $reg_limit - $num_attendees;
+		}
+		
+		$num_incomplete = 0;
+		$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Incomplete'";
+		$wpdb->get_results($a_sql);
+		if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
+			$num_incomplete =  $wpdb->last_result[0]->quantity;
+		}
 
         switch ($type) {
             case 'number_available_spaces' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending') ");
-                $num_attendees = $wpdb->num_rows;
-                //echo $num_attendees;
-                $sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-                $reg_limit = $wpdb->get_var($sql_reg_limit);
-                //echo $reg_limit;
-                $attendees = $wpdb->get_results("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity > 1 AND (payment_status='Completed' OR payment_status='Pending') ");
-                //echo $wpdb->num_rows;
-                if ($wpdb->num_rows > 0) {
-                    $num_row = $wpdb->num_rows;
-                    //echo $num_row;
-                    $quantity = 0;
-                    //$num_attendees=0;
-                    foreach ($attendees as $attendee) {
-                        $quantity = $attendee->quantity;
-                        $num_attendees = $quantity + $num_attendees;
-                    }
-                    // echo  ($qty);
-                    $num_attendees = $num_attendees - $num_row;
-                }
-                if ($reg_limit > $num_attendees) {
-                    $number_available_spaces = $reg_limit - $num_attendees;
-                }
                 return $number_available_spaces;
                 break;
             case 'available_spaces' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending') ");
-                $num_attendees = $wpdb->num_rows;
-                $sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-                $reg_limit = $wpdb->get_var($sql_reg_limit);
-
-
-                $attendees = $wpdb->get_results("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity > 1 AND (payment_status='Completed' OR payment_status='Pending') ");
-
-                if ($wpdb->num_rows > 0) {
-                    $num_row = $wpdb->num_rows;
-                    //echo $num_row;
-                    $quantity = 0;
-                    //$num_attendees=0;
-                    foreach ($attendees as $attendee) {
-                        $quantity = $attendee->quantity;
-                        $num_attendees = $quantity + $num_attendees;
-                    }
-                    // echo  ($qty);
-                    $num_attendees = $num_attendees - $num_row;
+                if ($reg_limit >= 999) {
+                    $number_available_spaces = "Unlimited";
                 }
-
-
-                if ($reg_limit > $num_attendees) {
-                    $available_spaces = $reg_limit - $num_attendees;
-                } else if ($reg_limit <= $num_attendees) {
-                    $available_spaces = '<span style="color: #F00; font-weight:bold;">' . $full_text . '</span>';
-                }
-                if ($reg_limit == "" || $reg_limit == " " || $reg_limit == "999") {
-                    $available_spaces = "Unlimited";
-                }
-                return $available_spaces;
+                return $number_available_spaces;
                 break;
             case 'num_attendees' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending') ");
-                $num_attendees = $wpdb->num_rows;
-
-
-                $attendees = $wpdb->get_results("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity > 1 AND (payment_status='Completed' OR payment_status='Pending') ");
-
-                if ($wpdb->num_rows > 0) {
-                    $num_row = $wpdb->num_rows;
-                    //echo $num_row;
-                    $quantity = 0;
-                    //$num_attendees=0;
-                    foreach ($attendees as $attendee) {
-                        $quantity = $attendee->quantity;
-                        $num_attendees = $quantity + $num_attendees;
-                    }
-                    // echo  ($qty);
-                    $num_attendees = $num_attendees - $num_row;
-                }
-
-
                 return $num_attendees;
                 break;
-
             case 'all_attendees' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE (payment_status='Completed' OR payment_status='Pending') ");
-                $num_attendees = $wpdb->num_rows;
-
-
-                $attendees = $wpdb->get_results("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity > 1 AND (payment_status='Completed' OR payment_status='Pending') ");
-
-                if ($wpdb->num_rows > 0) {
-                    $num_row = $wpdb->num_rows;
-                    //echo $num_row;
-                    $quantity = 0;
-                    //$num_attendees=0;
-                    foreach ($attendees as $attendee) {
-                        $quantity = $attendee->quantity;
-                        $num_attendees = $quantity + $num_attendees;
-                    }
-                    // echo  ($qty);
-                    $num_attendees = $num_attendees - $num_row;
-                }
-
-
+				$num_attendees = 0;
+				$a_sql = "SELECT SUM(quantity) quantity  FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity >= 1 ";
+                $attendees = $wpdb->get_results($a_sql);
+				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
+					$num_attendees =  $wpdb->last_result[0]->quantity;
+				}
                 return $num_attendees;
                 break;
-
-
             case 'reg_limit' :
-                $sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-                $reg_limit = $wpdb->get_var($sql_reg_limit);
                 return $reg_limit;
                 break;
-            case 'num_incomplete' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Incomplete'");
-                $num_incomplete = $wpdb->num_rows;
+            case 'num_incomplete' :			
                 return $num_incomplete;
                 break;
             case 'num_completed' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Completed' ");
-                $num_completed = $wpdb->num_rows;
+				$num_completed = 0;
+				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Completed' ";
+                $wpdb->get_results($a_sql);
+                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
+					$num_completed =  $wpdb->last_result[0]->quantity;
+				}
                 return $num_completed;
                 break;
             case 'num_pending' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND  payment_status='Pending' ");
-                $num_pending = $wpdb->num_rows;
+				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND  payment_status='Pending'";
+                $wpdb->get_results($a_sql);
+                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
+					$num_pending =  $wpdb->last_result[0]->quantity;
+				}
                 return $num_pending;
                 break;
-            case 'num_completed_slash_incomplete' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending') ");
-                $num_completed = $wpdb->num_rows;
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Incomplete'");
-                $num_incomplete = $wpdb->num_rows;
-                return '<font color="green">' . $num_completed . '</font>/<font color="red">' . $num_incomplete . '</font>/';
+            case 'num_completed_slash_incomplete' :             
+                return '<font color="green">' . $num_attendees . '</font>/<font color="red">' . $num_incomplete . '</font>';
                 break;
 
             case 'avail_spaces_slash_reg_limit' :
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Completed' OR payment_status='Pending' ");
-                $num_attendees = $wpdb->num_rows;
-                $sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-                $reg_limit = $wpdb->get_var($sql_reg_limit);
-
-                $attendees = $wpdb->get_results("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity > 1 AND (payment_status='Completed' OR payment_status='Pending') ");
-
-                if ($wpdb->num_rows > 0) {
-                    $num_row = $wpdb->num_rows;
-                    //echo $num_row;
-                    $quantity = 0;
-                    //$num_attendees=0;
-                    foreach ($attendees as $attendee) {
-                        $quantity = $attendee->quantity;
-                        $num_attendees = $quantity + $num_attendees;
-                    }
-                    // echo  ($qty);
-                    $num_attendees = $num_attendees - $num_row;
-                }
-                if ($reg_limit > $num_attendees) {
-                    $number_available_spaces = $reg_limit - $num_attendees;
-                }
                 return $number_available_spaces . '/' . $reg_limit;
-
                 break;
-
-
             case 'num_attendees_slash_reg_limit' :
             default:
-                $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending') ");
-                $num_attendees = $wpdb->num_rows;
-                $sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-                $reg_limit = $wpdb->get_var($sql_reg_limit);
-
-                if ($reg_limit == "" || $reg_limit == " " || $reg_limit == "999") {
-                    $reg_limit = "Unlimited";
-                }
-
-                $attendees = $wpdb->get_results("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity > 1 AND (payment_status='Completed' OR payment_status='Pending') ");
-
-                if ($wpdb->num_rows > 0) {
-                    $num_row = $wpdb->num_rows;
-                    //echo $num_row;
-                    $quantity = 0;
-                    //$num_attendees=0;
-                    foreach ($attendees as $attendee) {
-                        $quantity = $attendee->quantity;
-                        $num_attendees = $quantity + $num_attendees;
-                    }
-                    // echo  ($qty);
-                    $num_attendees = $num_attendees - $num_row;
-                }
-
-
                 return $num_attendees . '/' . $reg_limit;
                 break;
         }
