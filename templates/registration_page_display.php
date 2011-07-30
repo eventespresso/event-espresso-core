@@ -4,14 +4,14 @@
 //There should be a copy of this file in your wp-content/uploads/espresso/ folder.
 ?>
 <div id="event_espresso_registration_form">
-    <div class = "event_espresso_form_wrapper">
+    <div class="event_espresso_form_wrapper event-data-display">
         <form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
-            <h3 class="event_title" id="event_title-<?php echo $event_id; ?>">
+            <h2 class="event_title" id="event_title-<?php echo $event_id; ?>">
                 <?php echo $event_name ?>
                 <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?>
                 <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?>
                 <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?>
-            </h3>
+            </h2>
             <?php /* Venue details. Un-comment to display. */ ?>
             <?php //echo $venue_title != ''?'<p id="event_venue_name-'.$event_id.'" class="event_venue_name">'.stripslashes_deep($venue_title).'</p>':''?>
             <?php //echo $venue_address != ''?'<p id="event_venue_address-'.$event_id.'" class="event_venue_address">'.stripslashes_deep($venue_address).'</p>':''?>
@@ -21,24 +21,25 @@
             <?php //echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
             <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
            <p class="start_date">
-<?php 		if($end_date !== $start_date) {
-				_e('Start Date: ','event_espresso');
-			} else{
-				_e('Date: ','event_espresso');
-			}
+<?php 		if($end_date !== $start_date) {?>
+						<span class="section-title"><?php _e('Start Date: ','event_espresso');?></span>
+<?php			} else{ ?>
+				<span class="section-title"><?php _e('Date: ','event_espresso');?></span>
+	<?php		}
 			echo event_date_display($start_date, get_option('date_format'));
 			if($end_date !== $start_date) {
-				echo '<br />';
-				_e('End Date: ','event_espresso');
-			echo event_date_display($end_date, get_option('date_format'));
+				echo '<br />'; ?>
+				<span class="section-title"><?php _e('End Date: ','event_espresso');?></span>
+			<?php echo event_date_display($end_date, get_option('date_format'));
 			} ?>
 			</p>
 <?php 		if ($display_desc == "Y") {//Show the description or not ?>
-                <div class="event_description"><?php echo wpautop(do_shortcode($event_desc)); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description. ?></div>
+                <p class="section-title"><?php _e('Event Description', 'event_espresso') ?></p>
+									<div class="event_description clearfix"><?php echo wpautop(do_shortcode($event_desc)); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description. ?></div>
 <?php
             }//End display description
             //Uncomment the following line to show the personnel assigned to this event
-            //echo espresso_show_personnel($event_id, array('wrapper_start'=>'<ul style="event_staff">','wrapper_end'=>'</ul>','before'=>'<li>','after'=>'</li>', 'limit'=>1, 'show_info'=>true, 'staff_id'=>16) );
+            echo espresso_show_personnel($event_id, array('wrapper_start'=>'<ul style="event_staff">','wrapper_end'=>'</ul>','before'=>'<li>','after'=>'</li>', 'limit'=>1, 'show_info'=>true, 'staff_id'=>16) );
             //print_r( event_espresso_get_is_active($event_id));
             /* Displays the social media buttons */
             ?>
@@ -71,9 +72,9 @@
                     /* Display the address and google map link if available */
                     if ($location != '') {
 ?>
-                        <p class="event_address" id="event_address-<?php echo $event_id ?>"><?php echo __('Address:', 'event_espresso'); ?> <br />
-                            <?php echo stripslashes_deep($location); ?><br />
-                        	<?php echo $google_map_link; ?>
+                        <p class="event_address" id="event_address-<?php echo $event_id ?>"><?php echo __('Event Address:', 'event_espresso'); ?> <br />
+                         <span class="address-block">   <?php echo stripslashes_deep($location); ?><br />
+                        	<?php echo $google_map_link; ?></span>
                         </p>
 <?php
                     }
@@ -99,11 +100,16 @@
 
 
                         <p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text ?></p>
-<?php
-                        //Outputs the custom form questions. This function can be overridden using the custom files addon
-                        echo event_espresso_add_question_groups($question_groups);
 
-                        //Coupons
+                        <fieldset id="event-reg-form-groups">
+													<legend>Personal registration information</legend>
+														<h2 class="section-heading"><?php _e('Attendees Registration Details', 'event_espresso'); ?></h2>
+													<?php	
+														//Outputs the custom form questions. This function can be overridden using the custom files addon
+															echo event_espresso_add_question_groups($question_groups); 
+													?>
+													</fieldset>
+                        <?php //Coupons
                         if (function_exists('event_espresso_coupon_registration_page')) {
                             echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
                         }//End coupons display

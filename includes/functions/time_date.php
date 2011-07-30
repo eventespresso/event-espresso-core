@@ -313,10 +313,10 @@ if (!function_exists('event_espresso_display_selected_time')) {
                 case 'end' :
                     echo event_date_display($time->end_time, get_option('time_format'));
                     break;
-                default :
-                    _e('Start Time: ', 'event_espresso');
-                    echo event_date_display($time->start_time, get_option('time_format'));
-                    _e('<br />End Time: ', 'event_espresso');
+                default :?>
+                   <span class="section-title"><?php _e('Start Time:  ', 'event_espresso'); ?></span> <?php
+                    echo event_date_display($time->start_time, get_option('time_format')); ?>
+                   <br /><span class="section-title"><?php _e('End Time: ', 'event_espresso'); ?></span><?php
                     echo event_date_display($time->end_time, get_option('time_format'));
                     break;
             }
