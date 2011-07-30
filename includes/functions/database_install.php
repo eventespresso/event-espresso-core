@@ -11,7 +11,6 @@ function event_espresso_rename_tables ($old_table_name, $new_table_name){
 	if($wpdb->get_var("SHOW TABLES LIKE '".$old_table_name."'") == $old_table_name) {
 		$wpdb->query("ALTER TABLE ".$old_table_name." RENAME TO ".$new_table_name);
 	}
-
 }
 
 function events_data_tables_install () {
@@ -670,8 +669,20 @@ function events_data_tables_install () {
 		}
 	}
 	
+	function espresso_update_attendee_qty(){
+		global $wpdb;
+		$sql = "SELECT id FROM " . $wpdb->prefix . "events_attendee WHERE quantity = 0 ";
+		$results = $wpdb->get_results($sql);
+		if ($wpdb->num_rows > 0) {
+			$update_attendee_qty = $wpdb->query( "UPDATE " . $wpdb->prefix . "events_attendee SET quantity = 1 WHERE quantity = 0");
+			//Create a log file
+			espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " sqldump = ".var_export($results, true)." ] [ rows affected = " . var_export($update_attendee_qty, true) ) );
+		}
+	}
+
 	event_espresso_install_system_names();
 	event_espresso_create_upload_directories(); //Create template directories
 	event_espresso_update_shortcodes();//Fix all of the old shortcodes
 	event_espresso_update_attendee_data(); //Update/add the attendee registration ids
+	espresso_update_attendee_qty();
 }
