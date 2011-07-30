@@ -150,6 +150,8 @@ require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/SimpleMath.php';
 global $simpleMath;
 $simpleMath = new SimpleMath();
 
+require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/espresso_log.php';
+
 //Set the default time zone
 //If the default time zone is set up in the WP Settings, then we will use that as the default.
 if (get_option('timezone_string') != '') {
