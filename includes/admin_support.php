@@ -1,7 +1,6 @@
 <?php
-
 function event_espresso_support() {
-    ?>
+?>
 
     <div class="wrap">
         <div id="icon-options-event" class="icon32"></div>
@@ -25,14 +24,222 @@ function event_espresso_support() {
             <div id="post-body">
                 <div id="post-body-content">
                     <ul id="event_espresso-sortables">
-                        <li>
+                    	<li>
                             <div class="metabox-holder">
                                 <div class="postbox">
-                                    <h3>
-    <?php _e('Contact Support', 'event_espresso'); ?>
-                                    </h3>
+                                    <h3><?php _e('Quick Links', 'event_espresso'); ?></h3>
+                                    <div class="padding">
+                                        <ul>
+                                        <li><a href="#install"><?php _e('Installation', 'event_espresso'); ?></a></li>
+                                        <li><a href="#shortcodes"><?php _e('Shortcodes', 'event_espresso'); ?></a></li>
+                                        <li><a href="#details"><?php _e('Important Information', 'event_espresso'); ?></a></li>
+                                        <li><a href="#support"><?php _e('Contact Support', 'event_espresso'); ?></a></li>
+                                        
+                                        <li><a href="#faq"><?php _e('Frequently Asked Questions', 'event_espresso'); ?></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a name="install" id="install"></a>
+                            <div class="metabox-holder">
+                                <div class="postbox">
+                                    <h3><?php _e('Installation', 'event_espresso'); ?></h3>
+                                    <div class="padding">
+                                        <p><?php _e('For the latest installation instructions please visit:', 'event_espresso'); ?> <a href="http://eventespresso.com/support/installation/" target="_blank">http://eventespresso.com/support/installation/</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="metabox-holder">
+                                <div class="postbox"><a name="shortcodes" id="shortcodes"></a>
+                                    <h3><?php _e('Shortcodes', 'event_espresso'); ?></h3>
+                                    <div class="padding">
+                                    <p><?php _e('For more information, please visit:', 'event_espresso'); ?> <br /><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/" target="_blank">http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/</a></p>
+                                    <hr />
+                                    <h4><?php _e('Single Events', 'event_espresso'); ?></h4>
+                                    <p><?php _e('Displays a single event on a page or post', 'event_espresso'); ?></p>
+                                    <p>[SINGLEEVENT single_event_id="your_event_identifier"]</p>
+                                    <hr />
+                                    <h4><?php _e('Add Events to Cart', 'event_espresso'); ?></h4>
+                                    <p><?php _e('Displays an "Add Event to Cart" link that can be added to the event details, page, or post. Requires the <a href="http://eventespresso.com/download/plugins-and-addons/multiple-event-registration/" target="_blank">Multiple Event Registration addon</a>.', 'event_espresso'); ?></p>
+                                    <p>[ESPRESSO_CART_LINK]</p>
+                                    <p><strong><?php _e('Additonal Examples:', 'event_espresso'); ?></strong></p>
+                                    <p>[ESPRESSO_CART_LINK direct_to_cart=1 moving_to_cart="Redirecting to cart..."]<br />
+<?php _e('(Used to redirect to the shopping cart page. Must be added to an event description.)', 'event_espresso'); ?></p>
+                                    <p>[ESPRESSO_CART_LINK event_id="add_event_id_here" direct_to_cart=1 moving_to_cart="Redirecting to cart..."]<br />
+<?php _e('(Same as above, but uses the event_id paramter and can be added to a page or post.)', 'event_espresso'); ?></p>
+                                    <hr />
+                                    <h4><?php _e('Event List', 'event_espresso'); ?></h4>
+                                        <p><?php _e('Returns a list of events', 'event_espresso'); ?></p>
+                                        <p>[EVENT_LIST]<br>
+                                        [EVENT_LIST limit=1]<br>
+                                        [EVENT_LIST show_expired=true]<br>
+                                        [EVENT_LIST show_deleted=true]<br>
+                                        [EVENT_LIST show_secondary=true]<br>
+                                        [EVENT_LIST show_recurrence=true]<br>
+                                        
+                                        [EVENT_LIST category_identifier=your_category_identifier]<br>
+                                        [EVENT_LIST order_by=date(start_date),id]</p>
+                                        <p><strong><?php _e('Order by parameters:', 'event_espresso'); ?><br>
+                                        </strong><?php _e('(comma separated)', 'event_espresso'); ?></p>
+                                        <p>id<br>
+                                        date(start_date)<br>
+                                        date(end_date)<br>
+                                        event_name<br>
+                                        date(registration_start)<br>
+                                        
+                                        date(registration_end)<br>
+                                        city<br>
+                                        state<br>
+                                        category_id<br>
+                                        venue_title</p>
+                                        <p class="yellow_alert"><strong><?php _e('Attention:', 'event_espresso'); ?></strong><br /><?php _e('The [EVENT_LIST] shortcode should not be used as a replacement for the [ESPRESSO_EVENTS] shortcode. Replacing the [ESPRESSO_EVENTS] shortcode will break your registration pages.', 'event_espresso'); ?></p>
+										<hr />
+                                        <h4><?php _e('Attendee Listings', 'event_espresso'); ?></h4>
+                                        <p>[LISTATTENDEES]<br>
+                                        [LISTATTENDEES limit="30"] //Number of events to show on the page<br>
+                                        [LISTATTENDEES show_expired="true"] //Show expired events<br>
+                                        [LISTATTENDEES show_deleted="true"] //Show deleted events<br>
+                                        
+                                        [LISTATTENDEES show_secondary="true"] //Show secondary/backup events<br>
+                                        [LISTATTENDEES show_gravatar="true"] //Show a Gravatar of the attendee<br>
+                                        [LISTATTENDEES show_recurrence="false"] //Exclude recurring events<br>
+                                        [LISTATTENDEES event_identifier="your_event_identifier"] //Show a single event using the event identifier<br>
+                                        [LISTATTENDEES category_identifier="your_category_identifier"] //Show a group of events in a category using the category identifier</p>
+                                        <p><?php _e('For more information about the attendee listing shortcodes and customizations. Please view the <a href="http://eventespresso.com/forums/2010/10/attendee-listing-shortcodes/">Attendee Listing Shortcodes</a> page.', 'event_espresso'); ?>
+                                        </p>
+                                        <hr />
+                                        <h4><?php _e('Venue Shortcodes', 'event_espresso'); ?></h4>
+                                        
+                                        <p><strong><?php _e('As of Event Espresso version 3.1', 'event_espresso'); ?></strong><br>
+                                        <a name="venue_shortcode" id="venue_shortcode"></a></p>
+                                        <p><?php _e('Event Description Example:', 'event_espresso'); ?><br>
+                                        <?php _e('If you want to display venue details within an event, the venue id is not needed. Just add [ESPRESSO_VENUE] to your event description.', 'event_espresso'); ?></p>
+                                        <p><?php _e('Example with Optional Parameters:', 'event_espresso'); ?><br>
+                                        [ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>
+                                        <p><?php _e('Page/Post Example:', 'event_espresso'); ?><br>
+                                        <?php _e('You can display the details of any venue to a page, post or event by adding the id of the venue to the shortcode.', 'event_espresso'); ?><br>
+                                        [ESPRESSO_VENUE id="3"]</p>
+                                        
+                                        <p><?php _e('Page/Post Example #2:', 'event_espresso'); ?><br>
+                                        <?php _e('If you want to display a the details of a venue on a page, post or event add the event id to the  [ESPRESSO_VENUE] shortcode.', 'event_espresso'); ?><br>
+                                        [ESPRESSO_VENUE event_id="8"]</p>
+                                        <p><strong><?php _e('Available parameters:', 'event_espresso'); ?></strong></p>
+                                        <p>outside_wrapper_class = class name for the outside wrapper. Eg. event_venue<br>
+                                        outside_wrapper = outside wrapper element. Eg. div<br>
+                                        inside_wrapper_class = class name for the outside wrapper. Eg. venue_details<br>
+                                        inside_wrapper = inside wrapper element. Eg. p<br>
+                                        title_class = class name for the title Eg. venue_name<br>
+                                        
+                                        title_wrapper = title wrapper element. Eg. h3<br>
+                                        show_title = show the venue name? (true|false default true)<br>
+                                        image_class = class name for the image. Eg. venue_image<br>
+                                        show_image = show the image? (true|false default true)<br>
+                                        show_description = show the description? (true|false default true)<br>
+                                        show_address = show the address of the venue? (true|false default true)<br>
+                                        show_additional_details = show the additional details? (true|false default true)<br>
+                                        show_google_map_link = show the Google map link? (true|false default true)<br>
+                                        map_link_text = text to display in the link. Eg. Map and Directions</p>
+                                        
+                                        <hr />
+                                        <h4><?php _e('Staff Shortcodes', 'event_espresso'); ?></h4>
+                                        <p><strong><?php _e('As of Event Espresso version 3.1', 'event_espresso'); ?></strong><br>
+                                        <a name="staff_shortcode" id="staff_shortcode"></a></p>
+                                        <p><?php _e('Event Description Example:', 'event_espresso'); ?><br>
+                                        <?php _e('If you want to display a list of staff members within an event, the staff id is not needed. Just add [ESPRESSO_STAFF] to your event description.', 'event_espresso'); ?></p>
+                                        <p><?php _e('Example with Optional Parameters:', 'event_espresso'); ?><br>
+                                        [ESPRESSO_STAFF outside_wrapper="div" outside_wrapper_class="event_staff" inside_wrapper="p" inside_wrapper_class="event_person"]</p>
+                                        <p><?php _e('Page/Post Example:', 'event_espresso'); ?><br>
+                                        <?php _e('You can display the details of any staff member to a page, post or event by adding the id of the staff member to the shortcode.', 'event_espresso'); ?><br>
+                                        
+                                        [ESPRESSO_STAFF id="3"]</p>
+                                        <p><?php _e('Page/Post Example #2:', 'event_espresso'); ?><br>
+                                        <?php _e('If you want to display a list of staff members assigned to an event, to a page, post or event add the event id to the  [ESPRESSO_STAFF] shortcode.', 'event_espresso'); ?><br>
+                                        [ESPRESSO_STAFF event_id="8"]</p>
+                                        <p><strong>Available parameters:</strong></p>
+                                        <p>outside_wrapper_class = class name for the outside wrapper. Eg. event_staff<br>
+                                        outside_wrapper = outside wrapper element. Eg. div<br>
+                                        inside_wrapper_class = class name for the outside wrapper. Eg. event_person<br>
+                                        inside_wrapper = inside wrapper element. Eg. p<br>
+                                        
+                                        name_class = class name for the persons name<br>
+                                        name_wrapper = name wrapper element. Eg. strong<br>
+                                        image_class = class name for the image. Eg. venue_image<br>
+                                        show_image = show the persons image? (true|false default true)<br>
+                                        show_staff_titles = show the role/title? (true|false default true)<br>
+                                        show_staff_details = show the details? (true|false default true)<br>
+                                        show_image = show the image? (true|false default true)<br>
+                                        show_description = show the description? (true|false default true)</p>
+                                        
+                                        <hr />
+                                        <h4>Claendar Shortcodes</h4>
+                                        <p>[ESPRESSO_CALENDAR]<br>
+                                        [ESPRESSO_CALENDAR show_expired="true"]<br>
+                                        [ESPRESSO_CALENDAR event_category_id="your_category_identifier"]<br>
+                                        [ESPRESSO_CALENDAR event_category_id="your_category_identifier" show_expired="true"]<br>
+                                        [ESPRESSO_CALENDAR cal_view="month"] (Available parameters: month, basicWeek, basicDay, agendaWeek, agendaDay)</p>
+                                        <hr />
+                                        <h4>Category Shortcodes</h4>
+                                        <p>[EVENT_ESPRESSO_CATEGORY event_category_id="your_category_indentifier"]</p>
+              
+
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a name="details" id="details"></a>
+                            <div class="metabox-holder">
+                                <div class="postbox">
+                                    <h3><?php _e('Important Information', 'event_espresso'); ?></h3>
 
                                     <div class="padding">
+                                    <?php 
+										global $wpdb, $wp_version;
+										$wp_req_version = '3.1';
+										$php_req_version = '5.2';
+										$mysql_req_version = '5.0';
+										$is_php_valid = version_compare(phpversion(), $php_req_version, '>');
+										$is_mysql_valid = version_compare($wpdb->db_version(), $mysql_req_version, '>');
+										
+										if ( !version_compare( $wp_version, $wp_req_version, '>=' ) ) {
+											echo '<p class="red_alert">'.__('This version of Event Espresso requires WordPress version', 'event_espresso').' '. $wp_req_version.'+. '.__('Please upgrade to the latest version of WordPress.', 'event_espresso').'</p>';
+										}
+										if(!$is_php_valid){
+											echo '<p class="red_alert">'.__('Your version of PHP is out of date, please update to the latest version of PHP. <br>Required version of PHP:', 'event_espresso'). ' ' .$php_req_version.'</p>';
+										}
+										if(!$is_mysql_valid){
+											echo '<p class="red_alert">'.__('Your version of MySQL is out of date, please update to the latest version of MySQL. <br>Required version of MySQL:', 'event_espresso'). ' ' .$mysql_req_version.'</p>';
+										}
+									?>
+                                        <p><strong><?php _e('WordPress Version:', 'event_espresso'); ?></strong><br /><?php echo $wp_version; ?></p>
+                                        <p><strong><?php _e('PHP Version:', 'event_espresso'); ?></strong><br /><?php echo phpversion(); ?></p>
+                                        <p><strong><?php _e('MySQL Version:', 'event_espresso'); ?></strong><br /><?php echo $wpdb->db_version(); ?></p>
+                                        <p><strong>Event Espresso Version:</strong><br /><?php echo EVENT_ESPRESSO_VERSION ?></p>
+                                        <p><strong><?php _e('WordPress Address (URL):', 'event_espresso'); ?></strong><br /><?php echo site_url(); ?></p>
+                                        <p><strong><?php _e('WordPress Content Directory:', 'event_espresso'); ?></strong><br /><?php echo WP_CONTENT_DIR; ?></p>
+                                        <p><strong><?php _e('Site address (URL):', 'event_espresso'); ?></strong><br /><?php echo home_url(); ?></p>
+                                        <p><strong><?php _e('Event Espresso Plugin URL:', 'event_espresso'); ?></strong><br /><?php echo EVENT_ESPRESSO_PLUGINFULLURL ?></p>
+                                        <p><strong><?php _e('Event Espresso Plugin Path:', 'event_espresso'); ?></strong><br /><?php echo EVENT_ESPRESSO_PLUGINFULLPATH; ?></p>
+                                        <p><strong><?php _e('Event Espresso Upload URL:', 'event_espresso'); ?></strong><br /><?php echo EVENT_ESPRESSO_UPLOAD_URL; ?></p>
+                                        <p><strong><?php _e('Event Espresso Upload Path:', 'event_espresso'); ?></strong><br /><?php echo EVENT_ESPRESSO_UPLOAD_DIR; ?></p>
+                                        <p><strong><?php _e('Event Espresso Template Path:', 'event_espresso'); ?></strong><br /><?php echo EVENT_ESPRESSO_TEMPLATE_DIR; ?></p>
+                                        <p><strong><?php _e('Event Espresso Gateway Path:', 'event_espresso'); ?></strong><br /><?php echo EVENT_ESPRESSO_GATEWAY_DIR; ?></p>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                         
+                        <li><a name="support" id="support"></a>
+                            <div class="metabox-holder">
+                                <div class="postbox">
+                                    <h3><?php _e('Contact Support', 'event_espresso'); ?></h3>
+
+                                    <div class="padding">
+                                    <p><strong><?php _e('Attention:', 'event_espresso'); ?></strong><br /><?php _e('When requesting support. Please copy and paste the details displayed of the <a href="admin.php?page=support#details">Important Information</a> section above. This will help us determine potential problems with your server, WordPress installation, and/or the Event Espresso plugin. Please also include a list (or screenshot) of all <a href="plugins.php?plugin_status=active">active plugins</a>.', 'event_espresso'); ?></p>
+    
                                         <p>
     <?php _e('If you are having any problems that are not discussed here, suggestions, comments or gripes please visit the', 'event_espresso'); ?>
                                             <a href="http://eventespresso.com/forums/"><?php _e('Event Espresso forums', 'event_espresso'); ?></a>
@@ -44,6 +251,7 @@ function event_espresso_support() {
                                         </h4>
                                         <p>
     <?php _e('We offer premium support to customers who desire or require a level of support beyond the complimentary support included with all Event Espresso products.', 'event_espresso'); ?>
+    
                                         </p>
                                         <p><strong>
     <?php _e('Support Tokens', 'event_espresso'); ?>
@@ -63,26 +271,12 @@ function event_espresso_support() {
                                 </div>
                             </div>
                         </li>
-                        <li> </li>
+                        
+                          
                         <li>
                             <div class="metabox-holder">
-                                <div class="postbox">
-                                    <h3>
-    <?php _e('Installation', 'event_espresso'); ?>
-                                    </h3>
-
-                                    <div class="padding">
-                                        <p>For the latest installation instructions please visit: <a href="http://eventespresso.com/support/installation/" target="_blank">http://eventespresso.com/support/installation/</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="metabox-holder">
-                                <div class="postbox">
-                                    <h3>
-    <?php _e('Trouble Shooting and Frequently Asked Questions', 'event_espresso'); ?>
-                                    </h3>
+                                <div class="postbox"><a name="faq" id="faq"></a>
+                                    <h3><?php _e('Frequently Asked Questions', 'event_espresso'); ?></h3>
 
                                     <div class="padding">
                                         <p><strong>
@@ -98,8 +292,8 @@ function event_espresso_support() {
                                             </li><li><?php _e('Turn on your IPN.', 'event_espresso'); ?></li>
                                             <li> <?php _e('Make sure your PayPal account is verified.', 'event_espresso'); ?></li>
                                             <li><?php _e('Make sure your Event Espresso pages are not protected or private.', 'event_espresso'); ?></li></ol>
-                                        More information can be found here:<br />
-                                        <a href="http://eventespresso.com/forums/?submit.x=0&submit.y=0&s=ipn" target="_blank"> http://eventespresso.com/forums/?submit.x=0&submit.y=0&s=ipn</a>
+                                        <p><?php _e('More information can be found here:', 'event_espresso'); ?><br />
+                                        <a href="http://eventespresso.com/forums/?submit.x=0&submit.y=0&s=ipn" target="_blank"> http://eventespresso.com/forums/?submit.x=0&amp;submit.y=0&amp;s=ipn</a></p>
                                         <p><strong><?php _e('Why are mails are not being sent when somone registers?', 'event_espresso'); ?></strong><br />
     <?php _e('Check your email settings on the', 'event_espresso'); ?> <a href="admin.php?page=event_espresso#email-settings">Event Espresso > General Settings > Email Settings</a> page<br />
                                             <img src="http://ee-updates.s3.amazonaws.com/images/email-settings.png" width="472" height="120" /></p><p><?php _e('If you\'re using WP SMTP with Gmail, also check your spam box to make sure Gmail isn\'t filtering the confirmation emails as spam.', 'event_espresso'); ?>
