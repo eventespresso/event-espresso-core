@@ -781,8 +781,8 @@ if (!function_exists('event_espresso_add_question_groups')) {
 
                         if ($group_name != $question->group_name) {
                             echo '<div class="event_questions" id="' . $question->group_identifier . '">';
-                            echo $question->show_group_name != 0 ? "<h3 style='clear:both;'>$question->group_name</h3>" : '';
-                            echo $question->show_group_description != 0 ? "<p>$question->group_description</p>" : '';
+                            echo $question->show_group_name != 0 ? "<h3>$question->group_name</h3>" : '';
+                            echo $question->show_group_description != 0 && true == $question->group_description ? "<p class='quest-group-descript'>$question->group_description</p>" : '';
                             $group_name = $question->group_name;
                         }
 
