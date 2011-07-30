@@ -246,6 +246,7 @@ $values=array(
                       </h2>
                       <em class="messages important"><?php echo __('If you plan on using one of the gateways that collects Credit Card info (e.g. PayPal PRO, Authorize.net AIM). you need to make sure a SSL certificate is installed on this domain and "Yes" is selected in this dropdown.', 'event_espresso'); ?></em>
                     </div>
+                    <p><?php _e('The following shortcodes and page settinngs are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view <a href="admin.php?page=support#shortcodes">this page</a> for a list of optional shortcodes.', 'event_espresso'); ?></p>
                     <p>
                       <label for="event_page_id">
                         <?php _e('Main registration page:','event_espresso'); ?>
@@ -356,7 +357,6 @@ $values=array(
                         <?php _e('This page should be hidden from from your navigation menu. Exclude pages by using the "Exclude Pages" plugin from http://wordpress.org/extend/plugins/exclude-pages/ or using the "exclude" parameter in your "wp_list_pages" template tag. Please refer to http://codex.wordpress.org/Template_Tags/wp_list_pages for more inforamation about excluding pages.', 'event_espresso'); ?></em>
                       </p>
                     </div>
-<?php ##### close popup help box ##### ?>
                     <p>
                       <input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_2" />
                     </p>
