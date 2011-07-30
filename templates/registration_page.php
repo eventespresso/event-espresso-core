@@ -189,8 +189,6 @@ if (!function_exists('register_attendees')) {
             $available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces'); //Gets a count of the available spaces
             $number_available_spaces = get_number_of_attendees_reg_limit($event_id, 'number_available_spaces'); //Gets the number of available spaces
             //echo $number_available_spaces;
-            //get attendee count
-            if ($available_spaces == "Unlimited" || $available_spaces >= $number_available_spaces) {
                 //(Shows the regsitration form if enough spaces exist)
                 if ($num_attendees >= $reg_limit) {
                     ?>
@@ -217,7 +215,6 @@ if (!function_exists('register_attendees')) {
                         require_once('registration_page_display.php');
                     }
                 }//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
-            }//End ($available_spaces == "Unlimited" || $available_spaces >= $number_available_spaces)
         }//End Build the registration page
         else {//If there are no results from the query, display this message
             _e('<h3>This event has expired or is no longer available.</h3>', 'event_espresso');
