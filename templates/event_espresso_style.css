@@ -39,14 +39,19 @@
 #event_espresso_registration_form,
 .event_description,
 #event-reg-form-groups,
+.multi_reg_cart_block,
+#event_espresso_coupon_wrapper,
+#event_espresso_total_wrapper,
 div#event-meta ul,
+#cart-reg-details,
 #event-reg-form-groups .event_questions {
 	-moz-box-shadow: 0 0 3px #d2d2d2;
 	-webkit-box-shadow: 0 0 3px #d2d2d2;
 	box-shadow: 0 0  3px #d2d2d2;
 }
 .btn_event_form_submit,
-.event_staff {
+.event_staff,
+table.price_list {
 	-moz-box-shadow: 0 2px 5px #d2d2d2;
 	-webkit-box-shadow: 0 2px 5px #d2d2d2;
 	box-shadow: 0 2px  5px #d2d2d2;
@@ -56,6 +61,16 @@ div#event-meta ul,
 	-moz-box-shadow: 0 2px 3px #eaeaea;
 	-webkit-box-shadow: 0 2px 3px #eaeaea;
 	box-shadow: 0 2px  3px #eaeaea;
+}
+ {/* inset shadow */
+	-moz-box-shadow:  inset 0 0 3px #eaeaea;
+	-webkit-box-shadow: inset 0 0 3px #eaeaea;
+	box-shadow: inset 0 0  3px #ddd;
+}
+{/* rounded corners */
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
 /*___ General site wide styles for event-data / espresso_events ___*/
 
@@ -69,7 +84,10 @@ div#event-meta ul,
 }
 #content .event_data,
 #content .espresso_event,
-#event_espresso_registration_form { /* event list boxes */
+#event_espresso_registration_form,
+#event_espresso_coupon_wrapper,
+#event_espresso_total_wrapper,
+.multi_reg_cart_block { /* event list boxes */
 	border: 1px solid #bebebe;
 	margin-bottom: 1em;
 	padding: 10px;
@@ -103,6 +121,14 @@ div#event-meta ul,
 	font-weight: bold;
 }
 
+#additional_header a,
+#event_espresso_refresh_total  { /* floating links */
+	border-bottom: 1px solid #ccc;
+	color: #868C68;
+	font-weight: bold;
+	padding-bottom: 3px;
+	text-decoration: none;
+}
 
 /* >Pages
 ------------------------------------------------------------------------------*/
@@ -186,16 +212,50 @@ div.event-entry-meta ul li {
 	margin: -20px auto 20px ;
 	width: 86%;
 }
-#additional_header a {
-	border-bottom: 1px solid #ccc;
-	color: #868C68;
-	font-weight: bold;
-	padding-bottom: 3px;
-	text-decoration: none;
-}
+
 .espresso_add_attendee a.add {
 	margin-left: 85px;
 }
+
+/*___ Multi Registration page styles ___*/
+
+
+#event_espresso_checkout_form {
+	border: 2px solid #e8e8e8;
+	margin: 5px 0;
+	padding: 5px;
+}
+.multi_reg_cart_block {
+	background: #fafafa;
+}
+.event_total_price {
+	color: #333;
+	font-size: 140%;
+	float: right;
+	text-align: right;
+	padding: 5px;
+	width: 130px;
+}
+#event_total_price {width: auto;}
+#event_espresso_coupon_wrapper {
+	text-align: right;
+}
+#event_espresso_total_wrapper {
+	overflow: hidden;
+}
+#event_espresso_registration_form {
+	margin: 10px 3px;
+}
+span.remove-cart-item {
+	float: right;
+	margin-right: 3px;
+}
+
+#event_espresso_refresh_total  {
+	line-height: 2.2;
+}
+/** end multi reg **/
+
 /* >Forms
 ------------------------------------------------------------------------------*/
 /* override WP styles */
@@ -208,50 +268,10 @@ div.event-entry-meta ul li {
 	padding: 4px 10px;
 	letter-spacing: 1px;
 	}
-
-/*___ Multi Registration form styles ___*/
-
-
-#event_espresso_checkout_form {
-	border: 2px solid #e8e8e8;
-	margin: 5px 0;
-	padding: 5px;
+#event_espresso_shopping_cart label {
+	font-weight: bold;
+	font-size: 87.50%;
 }
-.event_total_price {
-	color: #333333;
-	font-size: 25px;
-	float: right;
-	text-align: right;
-	padding: 5px;
-	width: 100px;
-}
-.multi_reg_cart_block{
-	margin: 5px;
-	border: 2px solid #d1d1d1;
-	padding: 5px;
-}
-#event_espresso_coupon_wrapper {
-	margin: 5px;
-	border: 2px solid #d1d1d1;
-	padding: 5px;
-	overflow: hidden;
-	text-align: right;
-}
-#event_espresso_total_wrapper {
-	margin:5px;
-	border: 2px solid #d1d1d1;
-	padding: 5px;
-	overflow: hidden;
-}
-#event_espresso_shopping_cart table{
-	width:70%;
-	text-align: left;
-}
-#event_espresso_registration_form {
-	margin: 10px 3px;
-}
-
-/** end multi reg **/
 
 /*
 * from http://vesess.com/sandbox/form_template.html#
@@ -339,12 +359,13 @@ div.event-entry-meta ul li {
 .btn_event_form_submit {
 	background: #FAF9EF;
 	border: 1px solid #bfbfbf;
-	width: 120px;
+	width: auto;
 	height: 40px;
 }
 .btn_event_form_submit:hover {
-	background: #B9BEA3;
-	color:#FF9 !important;
+	background: #D7DCBD;
+	color: #000 !important;
+	cursor: pointer;
 }
 .espresso_confirm_registration #confirm, .espresso_confirm_registration #confirm2 {
 	height: 40px;
@@ -384,26 +405,42 @@ div.event-entry-meta ul li {
 /* Tables
 ------------------------------------------------------------------------------*/
 
-table.price_list{
-	margin: 10px auto;
+table#cart-reg-details {
+	background: #fff;
+	border: 1px solid #bebebe;
+}
+table#cart-reg-details {
 	width: 90%;
+	margin: 0 auto;
+	text-align: left;
+}
+#event_espresso_shopping_cart table th  {
+	font-size: 100%;
+}
+#event_espresso_shopping_cart table.price_list {
+	margin: 10px auto;
+	width: 98%;
 	border: 1px;
 	font-size: 1.1em;
 }
-table.price_list tr{
-	background-color: #c7e9c8;
+table.price_list tr {
+	background-color: #D7DCBD;
 }
 table.price_list td{
 	padding: 5px;
 }
-table.price_list td.price_type{
+table.price_list td.price_type {
 	width: 150px;
 }
-table.price_list td.price{
+table.price_list td.price {
 	width: 150px;
 }
-table.price_list td.selection{
+table.price_list td.selection {
 	width: 20px;
+}
+table.price_list td.reg-allowed-limit {
+	font-size: 84.60%;
+	text-align: center;
 }
 pre {
 	height: 200px;
@@ -432,11 +469,11 @@ pre {
 /*** clearfix clearing rules ***/	
 .clearfix:before,
 .clearfix:after {
-	content:"";
-	display:table;
+	content: "";
+	display: table;
 }
 .clearfix:after {
-	clear:both;
+	clear: both;
 }
 /* For IE 6/7 (trigger hasLayout) */
 

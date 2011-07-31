@@ -866,7 +866,7 @@ if (!function_exists('event_espresso_group_price_dropdown')) {
             //echo $label==1?'<label for="event_cost">' . __('Choose an Option: ','event_espresso') . '</label>':'';
             //echo '<input type="radio" name="price_option' . $multi_name_adjust . '" id="price_option-' . $event_id . '">';
             ?>
-            <table class ="price_list">
+            <table class="price_list">
                 <?php
                 $available_spaces = get_number_of_attendees_reg_limit($event_id, 'number_available_spaces');
                 foreach ($results as $result) {
@@ -934,7 +934,7 @@ if (!function_exists('event_espresso_group_price_dropdown')) {
                 }
                 ?>
                 <tr>
-                    <td colspan="3" style="font-size:9px;"><?php printf(__("You can register a maximum of %d attendees for this event.", 'event_espresso'), $attendee_limit); ?></td>
+                    <td colspan="3" class="reg-allowed-limit"><?php printf(__("You can register a maximum of %d attendees for this event.", 'event_espresso'), $attendee_limit); ?></td>
 
                 </tr>
             </table>
