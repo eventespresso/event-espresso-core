@@ -167,7 +167,7 @@ function edit_event($event_id = 0) {
 										</div>
 
 										<div class="misc-pub-section" id="visibility">
-											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" /> <?php echo !empty($number_attendees) ? __('Attendees', 'event_espresso') : '<a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=' . $event_id . '">' . __('Attendees', 'event_espresso') . '</a>'; ?>: <?php echo get_number_of_attendees_reg_limit($event_id, $reg_limit); ?>
+											<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" /> <?php echo !empty($number_attendees) ? __('Attendees', 'event_espresso') : '<a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=' . $event_id . '">' . __('Attendees', 'event_espresso') . '</a>'; ?>: <?php echo get_number_of_attendees_reg_limit($event_id,'num_attendees_slash_reg_limit'); ?>
 										</div>
 
 										<div class="misc-pub-section <?php echo (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) ? '' : 'misc-pub-section-last'; ?>" id="visibility2">

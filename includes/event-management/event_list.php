@@ -1,5 +1,4 @@
 <?php
-
 function event_espresso_edit_list() {
     global $wpdb, $org_options;
 	$wpdb->show_errors();
@@ -37,9 +36,7 @@ function event_espresso_edit_list() {
     }
 
     $recurrence_icon = '';
-
     if (defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE')) {
-
         $recurrence_icon = '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/arrow_rotate_clockwise.png" alt="Recurring Event" title="Recurring Event" class="re_fr" />';
     }
 
@@ -50,7 +47,7 @@ function event_espresso_edit_list() {
     } else {
         echo '<p><strong>' . __('Advanced filters are now available in the premium versions.', 'event_espresso') . '</strong> <a href="http://eventespresso.com/download/" target="_blank">' . __('Upgrade Now!', 'event_espresso') . '</a></p>';
     }
-    if ($total_events > 500) {
+    if (espresso_total_events() > 500) {
         $max_rows = $_POST['max_rows'] == "" ? 500 : $_POST['max_rows'];
         $start_rec = $_POST['start_rec'] == "" ? 0 : $_POST['start_rec'];
         ?>
@@ -65,7 +62,7 @@ function event_espresso_edit_list() {
         $records_to_show = " LIMIT $max_rows OFFSET $start_rec ";
     } else
         $records_to_show = '';
-    if ($total_events > 0) {
+    if (espresso_total_events() > 0) {
 
         if (isset($_REQUEST['month_range'])) {
             $pieces = explode('-', $_REQUEST['month_range'], 3);
@@ -289,7 +286,7 @@ function event_espresso_edit_list() {
                                 </td>
             <?php } ?>
 
-                            <td class="author"><a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id); ?></a></td>
+                            <td class="author"><a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id,'num_attendees_slash_reg_limit'); ?></a></td>
                             <td class="date"><div style="width:150px;"><a href="<?php echo home_url() ?>/?page_id=<?php echo $org_options['event_page_id'] ?>&regevent_action=register&event_id=<?php echo $event_id ?>&name_of_event=<?php echo $event_name ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank"><div class="view_btn"></div></a>
                               
                               <a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Event', 'event_espresso'); ?>"><div class="edit_btn"></div></a>
@@ -363,6 +360,7 @@ function event_espresso_edit_list() {
                 <a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=add_new_event"><?php _e('Add New Event', 'event_espresso'); ?></a>
     <?php } ?>  </div>
     </form>
+    
     <script>
         jQuery(document).ready(function($) {						
             /* show the table data */
