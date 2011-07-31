@@ -1323,3 +1323,21 @@ if (!function_exists('espresso_event_list_attendee_title')) {
     }
 
 }
+
+function espresso_payment_reports($atts){
+	global $wpdb;
+	extract($atts);
+	$sql = "SELECT SUM(a.amount_pd) quantity FROM " . EVENTS_ATTENDEE_TABLE . " a WHERE a.quantity >= 1 AND (a.payment_status='Completed' OR a.payment_status='Pending') AND a.event_id = '" . $event_id . "' ";
+	$payments = $wpdb->get_results($sql, ARRAY_A);
+	$total = 0;
+	if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
+		$total =  $wpdb->last_result[0]->quantity;
+	}
+	echo $sql;
+	switch ($type) {
+		case 'total_payments':
+			return $total;
+		break;
+	}
+	
+}
