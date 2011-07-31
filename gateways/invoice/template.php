@@ -29,14 +29,14 @@ $attendees = $wpdb->get_results("SELECT * FROM ". EVENTS_ATTENDEE_TABLE ." WHERE
 		$attendee_session = $attendee->attendee_session;
 		$registration_id=$attendee->registration_id;
 	}
-	
+
 	$num_people = isset($num_people) && $num_people > 0 ? $num_people : espresso_count_attendees_for_registration($attendee_id);
 	$event_meta = event_espresso_get_event_meta($event_id);
 //	$event_data['additional_attendee_reg_info']
 	$payment_status= 'Pending';
 	$txn_type = 'INV';
 	$payment_date = date("d-m-Y");
-	
+
 	$sql = "UPDATE ". EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $payment_status . "', txn_type = '" . $txn_type . "', payment_date ='" . $payment_date . "'  WHERE registration_id ='" . espresso_registration_id($attendee_id) . "'";
 
 	$wpdb->query($sql);
@@ -51,21 +51,21 @@ $attendees = $wpdb->get_results("SELECT * FROM ". EVENTS_ATTENDEE_TABLE ." WHERE
 			$event_identifier = $event->event_identifier;
 			$start_date = $event->start_date;
 	}
-	
+
 	//This is an example of how to get custom questions for an attendee
 	//Get the questions for the attendee
-		/*$q_sql = "SELECT ea.answer, eq.question 
-					FROM " . EVENTS_ANSWER_TABLE . " ea 
+		/*$q_sql = "SELECT ea.answer, eq.question
+					FROM " . EVENTS_ANSWER_TABLE . " ea
 					LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id
 					WHERE ea.registration_id = '".$registration_id."'";
 		$q_sql .= " AND ea.question_id = '9' ";
 		$q_sql .= " ORDER BY eq.sequence asc ";
 		$wpdb->get_results($q_sql);
-		
+
 		$organization_name = $wpdb->last_result[0]->answer;//question_id = '9'*/
-		
-		
-//Build the PDF			
+
+
+//Build the PDF
 function pdftext($val){
 	return iconv("UTF-8", "ISO-8859-1",$val);
 }
@@ -81,7 +81,7 @@ class PDF extends FPDF{
 			$this->SetFont('Arial','B',15);
 			$this->Cell(10,10,pdftext($org_options['organization']),0,0,'L');//If no logo, then display the organizatin name
 		}
-			
+
 		//Arial bold 15
 		$this->SetFont('Arial','B',15);
 		//Move to the right
@@ -89,12 +89,12 @@ class PDF extends FPDF{
 		//Title
 		if(isset($invoice_payment_settings['pdf_title']))
 			$this->MultiCell(100,10,pdftext($invoice_payment_settings['pdf_title']),0,'R');//Set the right header
-		else 
+		else
 			$this->MultiCell(100,10,pdftext(''),0,'R');//Set the right header
 		//Line break
 		$this->Ln(20);
 	}
-	
+
 	function LoadData($file){
 		$lines=$file;
 		$data=array();
@@ -102,8 +102,8 @@ class PDF extends FPDF{
 			$data[]=explode(';',chop($line));
 		return $data;
 	}
-	
-	
+
+
 	//Better table
 	function ImprovedTable($header,$event_data,$w=array(100,35,40)){
 		global $org_options;
@@ -179,12 +179,12 @@ $pdf->Ln(0);
 $pdf->SetFont('Times','BI',14);
 if(isset($invoice_payment_settings['payable_to']))
     $pdf->MultiCell(0,10,pdftext($invoice_payment_settings['payable_to']),0,'L');//Set payable to
-else 
+else
     $pdf->MultiCell(0,10,pdftext(''),0,'L');//Set payable to
 $pdf->SetFont('Times','',12);
 if(isset($invoice_payment_settings['payment_address']))
     $pdf->MultiCell(50,5,pdftext($invoice_payment_settings['payment_address']),0, 'L');//Set address
-else 
+else
     $pdf->MultiCell(50,5,pdftext(''),0, 'L');//Set address
 $pdf->Ln(5);
 
@@ -230,9 +230,9 @@ if( $num_people > 1 ){
                 $alname = $row['lname'];
                 $aemail = $row['email'];
 				$event_data[] = $pdf->LoadData( array(
-					pdftext($event_name) . ' ;' . 
-					pdftext($afname." ".$alname) . ';' . 
-					date('m-d-Y',strtotime($start_date)) . ';' . 
+					pdftext($event_name) . ' ;' .
+					pdftext($afname." ".$alname) . ';' .
+					date('m-d-Y',strtotime($start_date)) . ';' .
 					doubleval($div)
 				) );
                 $i++;
@@ -252,7 +252,7 @@ $multi_events = $wpdb->get_results("SELECT COUNT(*) as cnt, " . EVENTS_DETAIL_TA
 			$start_date = $s_event->start_date;
 			$cost = doubleval($s_event->event_cost * $s_event->cnt );
 			$event_data[] = $pdf->LoadData (array(pdftext("#".$s_event->event_id." ".$s_event->event_name) . ';' . pdftext( $s_event->cnt) . ';' . date('m-d-Y',strtotime($s_event->start_date)) . ';' . doubleval($s_event->event_cost) . ';' . $cost ) );
-			$cost_total += $cost;
+			empty($cost_total) ? $cost_total = $cost : $cost_total += $cost;
 		}
 	}else{
 		$w=array(100,35,40);
@@ -272,7 +272,7 @@ $pdf->Ln(10);
 //Build the payment link and instructions
 if(isset($invoice_payment_settings['pdf_instructions']))
     $pdf->MultiCell(100,5,pdftext($invoice_payment_settings['pdf_instructions']),0,'L');//Set instructions
-else 
+else
     $pdf->MultiCell(100,5,pdftext(''),0,'L');//Set instructions
 
 $pdf->SetFont('Arial','BU',20);
