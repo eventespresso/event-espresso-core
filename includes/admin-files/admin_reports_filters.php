@@ -5,16 +5,15 @@ if ($espresso_premium != true)
 ?>
 <ul class="subsubsub">
     <li><strong><?php _e('Events', 'event_espresso'); ?>: </strong> </li>
-    <li><a <?php echo $_REQUEST['all'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&all=true"><?php _e('All Events', 'event_espresso'); ?> <span class="count">(<?php echo $total_events ?>)</span></a> |</li>
-    <li><a <?php echo $_REQUEST['today'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&today=true"><?php _e('Today', 'event_espresso'); ?> <span class="count">(<?php echo $total_events_today ?>)</span></a> |</li>
-    <li><a <?php echo $_REQUEST['this_month'] == 'true' ? ' class="current" ' : '' ?>  href="admin.php?page=events&this_month=true"><?php _e('This Month', 'event_espresso'); ?> <span class="count">(<?php echo $total_events_this_month ?>)</span></a></li>
+    <li><a <?php echo $_REQUEST['all'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&all=true"><?php _e('All Events', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_events(); ?>)</span></a> |</li>
+    <li><a <?php echo $_REQUEST['today'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&today=true"><?php _e('Today', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_events_today(); ?>)</span></a> |</li>
+    <li><a <?php echo $_REQUEST['this_month'] == 'true' ? ' class="current" ' : '' ?>  href="admin.php?page=events&this_month=true"><?php _e('This Month', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_events_this_month(); ?>)</span></a></li>
 </ul>
 <ul class="subsubsub">
     <li><strong><?php _e('Attendees', 'event_espresso'); ?>: </strong> </li>
-    <li><a <?php echo $_REQUEST['all_a'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&all_a=true"><?php _e('All Attendees', 'event_espresso'); ?> <span class="count">(<?php echo $total_a ?>)</span></a> | </li>
-    <li><a <?php echo $_REQUEST['today_a'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&today_a=true"><?php _e('Today', 'event_espresso'); ?> <span class="count">(<?php echo $total_a_today ?>)</span></a> |</li>
-    <li><a <?php echo $_REQUEST['this_month_a'] == 'true' ? ' class="current" ' : '' ?>  href="admin.php?page=events&event_admin_reports=event_list_attendees&this_month_a=true"><?php _e('This Month', 'event_espresso'); ?> <span class="count">(<?php echo $total_a_this_month ?>)</span></a> </li>
-
+    <li><a <?php echo $_REQUEST['all_a'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&all_a=true"><?php _e('All Attendees', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_all_attendees(); ?>)</span></a> | </li>
+    <li><a <?php echo $_REQUEST['today_a'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&today_a=true"><?php _e('Today', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_attendees_today(); ?>)</span></a> |</li>
+    <li><a <?php echo $_REQUEST['this_month_a'] == 'true' ? ' class="current" ' : '' ?>  href="admin.php?page=events&event_admin_reports=event_list_attendees&this_month_a=true"><?php _e('This Month', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_attendees_this_month(); ?>)</span></a> </li>
 </ul>
 <?php if ($_REQUEST['page'] == 'events') { ?>
     <div class="tablenav">
@@ -66,5 +65,5 @@ if ($espresso_premium != true)
             </form>
         </div>
     </div>
-    <?php
-}?>
+<?php
+}
