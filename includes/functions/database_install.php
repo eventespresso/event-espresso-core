@@ -320,6 +320,22 @@ function events_data_tables_install () {
 	event_espresso_run_install ($table_name, $table_version, $sql);
 	//Discounts database install end
 
+//Added by Imon	
+	//Multi event registration id group database install
+	$table_name = "events_multi_event_registration_id_group";
+	$sql = "primary_registration_id varchar(255) DEFAULT NULL,        
+			registration_id varchar(255) DEFAULT NULL  ";
+	event_espresso_run_install ($table_name, $table_version, $sql);										 
+	//Multi event registration id group database install end
+	
+	//Attendee cost info database install
+	$table_name = "events_attendee_cost";
+	$sql = "attendee_id int(11) DEFAULT NULL,     
+			cost decimal(20,2) DEFAULT '0.00',              
+			quantity int(11) DEFAULT NULL  ";
+	event_espresso_run_install ($table_name, $table_version, $sql);										 
+	//Attendee cost info database install end	
+
 	//Organzization options install
 	function events_organization_tbl_install () {
 		global $wpdb;

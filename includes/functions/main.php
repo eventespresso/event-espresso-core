@@ -560,7 +560,6 @@ if (!function_exists('event_espresso_get_price')) {
  * @params int $event_id
  */
 if (!function_exists('event_espresso_get_final_price')) {
-
     function event_espresso_get_final_price($price_id, $event_id = 0) {
         global $wpdb, $org_options;
         $results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type FROM " . EVENTS_PRICES_TABLE . " WHERE id='" . $price_id . "' ORDER BY id ASC LIMIT 1");
@@ -591,7 +590,6 @@ if (!function_exists('event_espresso_get_final_price')) {
 
         return empty($event_cost) ? 0 : $event_cost;
     }
-
 }
 
 
@@ -1184,4 +1182,35 @@ if (!function_exists('event_espresso_require_file')) {
         }
     }
 
+}
+
+//Added by Imon
+//Function to clean up left out data from multi event registration id group table
+if (!function_exists('event_espresso_cleanup_multi_event_registration_id_group_data') )
+{
+	/**
+	 * event_espresso_cleanup_multi_event_registration_id_group_data()
+	 *
+	 * Usage: event_espresso_cleanup_multi_event_registration_id_group_data()
+	 */
+	function event_espresso_cleanup_multi_event_registration_id_group_data()
+	{
+		global $wpdb;
+		$wpdb->query(" delete emerig from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." emerig left join ".EVENTS_ATTENDEE_TABLE."  ea on emerig.registration_id = ea.registration_id where ea.registration_id is null ");
+	}
+}
+
+//Function to clean up left out data from attendee cost table
+if (!function_exists('event_espresso_cleanup_attendee_cost_data') )
+{
+	/**
+	 * event_espresso_cleanup_attendee_cost_data()
+	 *
+	 * Usage: event_espresso_cleanup_attendee_cost_data()
+	 */
+	function event_espresso_cleanup_attendee_cost_data()
+	{
+		global $wpdb;
+		$wpdb->query(" delete eac from ".EVENTS_ATTENDEE_COST_TABLE." eac left join ".EVENTS_ATTENDEE_TABLE."  ea on eac.attendee_id = ea.id where ea.id is null ");
+	}
 }

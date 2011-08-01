@@ -10,15 +10,26 @@ function enter_attendee_payments() {
     $event_id = $_REQUEST[ 'event_id' ];
     $today = date( "d-m-Y" );
 
-    //$org_options = get_option('events_organization_settings');
-
+//Added by Imon
+	$multi_reg = false;
+	$registration_id = $_REQUEST['registration_id'];
+	$registration_ids = array();
+	$check = $wpdb->get_row("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ");
+	if ( $check !== NULL )
+	{
+		$registration_id = $check->primary_registration_id;
+		$registration_ids = $wpdb->get_results("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where primary_registration_id = '$registration_id' ", ARRAY_A);
+		$multi_reg = true;
+	}
     switch ( $_REQUEST[ 'form_action' ] )
     {
         //Add payment info
         case 'payment':
             if ( $_REQUEST[ 'attendee_action' ] == 'post_payment' )
             {
-                $registration_id = $_REQUEST[ 'registration_id' ];
+//Added by Imon
+				$primary_row = $wpdb->get_row("select id from ".EVENTS_ATTENDEE_TABLE." where registration_id = '$registration_id' limit 0,1 order by id ");
+				$primary_attendee_id = $primary_row->id; // GET the primary attendee id because amount paid info is kept with the primary attendee 
                 $payment_status = $_REQUEST[ 'payment_status' ];
                 $txn_type = $_REQUEST[ 'txn_type' ];
                 $txn_id = $_REQUEST[ 'txn_id' ];
@@ -26,8 +37,28 @@ function enter_attendee_payments() {
                 $amount_pd = $_REQUEST[ 'amount_pd' ];
                 $payment_date = $_REQUEST[ 'payment_date' ];
                 $coupon_code = $_REQUEST[ 'coupon_code' ];
-                $sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', amount_pd = '$amount_pd', quantity = '$quantity', payment_date ='$payment_date', coupon_code ='$coupon_code' WHERE registration_id ='" . $registration_id . "'";
-                $wpdb->query( $sql );
+
+//Added/updated by Imon
+				//Update payment status information for primary attendee
+				$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', amount_pd = '$amount_pd', payment_date ='$payment_date', quantity = '$quantity',  coupon_code ='$coupon_code' WHERE registration_id ='" . $registration_id . "' and id = $primary_attendee_id ";
+				$wpdb->query( $sql );
+				
+				if ( count($registration_ids) > 0 )
+				{
+					foreach($registration_ids as $reg_id)
+					{
+						// Update payment status information for all attendees
+						$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', payment_date ='$payment_date', coupon_code ='$coupon_code' WHERE registration_id ='" . $reg_id['registration_id']. "' ";
+						$wpdb->query( $sql );
+					}
+				}
+				else
+				{
+					// Update payment status information for all attendees
+					$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', payment_date ='$payment_date', coupon_code ='$coupon_code' WHERE registration_id ='" . $registration_id . "' ";
+					$wpdb->query( $sql );
+				}
+				
                 //Send Payment Recieved Email
                 if ( $_REQUEST[ 'send_payment_rec' ] == "send_message" )
                 {
@@ -35,34 +66,68 @@ function enter_attendee_payments() {
                      * @todo Do we send an email to each attendee in a group or just the main?
                      */
                     //event_espresso_send_payment_notification( $id );
-					event_espresso_send_payment_notification(array('registration_id'=>$registration_id));
+//Added by Imon
+					if ( count($registration_ids) > 0 )
+					{
+						foreach($registration_ids as $reg_id)
+						{
+							event_espresso_send_payment_notification(array('registration_id'=>$reg_id['registration_id']));
+						}
+					}
+					else
+					{
+						event_espresso_send_payment_notification(array('registration_id'=>$registration_id));
+					}
                 }
             }
             break;
 
         //Send Invoice
         case 'send_invoice':
-			$registration_id = $_REQUEST[ 'registration_id' ];
+//Added by Imon
 			if ( $org_options["use_attendee_pre_approval"] == "Y" ) {
 				$pre_approve = $_REQUEST['pre_approve'];
-				$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET pre_approve = '$pre_approve' WHERE registration_id ='" . $registration_id . "'";
-				$wpdb->query( $sql );
+				if ( count($registration_ids) > 0 )
+				{
+					foreach($registration_ids as $reg_id)
+					{
+						$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET pre_approve = '$pre_approve' WHERE registration_id ='" . $reg_id['registration_id'] . "'";
+						$wpdb->query( $sql );
+					}
+				}
+				else
+				{
+					$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET pre_approve = '$pre_approve' WHERE registration_id ='" . $registration_id . "'";
+					$wpdb->query( $sql );
+				}
+				
 			} else {
 				$pre_approve = 0;
 			}
 			if ( $pre_approve == "0" ) {
-	            event_espresso_send_invoice( $_REQUEST[ 'registration_id' ], $_REQUEST[ 'invoice_subject' ], $_REQUEST[ 'invoice_message' ] );
+	            
+				if ( count($registration_ids) > 0 )
+				{
+					foreach($registration_ids as $reg_id)
+					{
+						event_espresso_send_invoice( $reg_id['registration_id'], $_REQUEST[ 'invoice_subject' ], $_REQUEST[ 'invoice_message' ] );
+					}
+				}
+				else
+				{
+					event_espresso_send_invoice( $registration_id , $_REQUEST[ 'invoice_subject' ], $_REQUEST[ 'invoice_message' ] );
+				}
 				echo '<div id="message" class="updated fade"><p><strong>'.__('Invoice Sent', 'event_espresso').'</strong></p></div>';
 			}
             break;
     }
 
     //Show the forms.
-    $id = $_REQUEST[ 'registration_id' ];
+    $id = $registration_id ;
     $attendees = $wpdb->get_results( "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $id . "' ORDER BY ID LIMIT 1" );
     foreach ( $attendees as $attendee ) {
         $id = $attendee->id;
-		$registration_id = $attendee->registration_id;
+		//$registration_id = $attendee->registration_id;//Removed by Imon
         $lname = $attendee->lname;
         $fname = $attendee->fname;
         $address = $attendee->address;
@@ -107,8 +172,33 @@ function enter_attendee_payments() {
 
             <div class="metabox-holder">
                 <div class="postbox">
+                	<?php
+						if ( !$multi_reg )
+						{
+					?>
                     <h3><?php _e( 'Attendee', 'event_espresso' ); ?> #<?php echo $id ?> | <?php _e( 'Name:', 'event_espresso' ); ?> <?php echo $fname ?> <?php echo $lname ?> | <?php _e( 'Registered For:', 'event_espresso' ); ?> <?php echo $event_name ?></h3>
-<div class="inside">
+                    <?php
+						}
+						else
+						{
+					?>
+                    <h3>
+						<?php 
+							_e('Payment info for registration ids - ', 'event_espresso'); 
+							if ( count($registration_ids) > 0 )
+							{
+								foreach($registration_ids as $reg_id)
+								{
+									_e(' #'.$reg_id['registration_id'], 'event_espresso');
+								}
+							}
+						?> 
+                    </h3>
+                    <?php
+						}
+					?>
+
+					<div class="inside">
                     <table width="100%" border="0">
                         <tr>
                             <td><strong><?php _e( 'Payment Details', 'event_espresso' ); ?></strong></td>
@@ -178,11 +268,9 @@ function enter_attendee_payments() {
     	<?php 
 		$pre_approval_values=array(array('id'=>'0','text'=> __('Yes','event_espresso')), array('id'=>'1','text'=> __('No','event_espresso')));
 		echo select_input("pre_approve",$pre_approval_values,$pre_approve);
-		/*?><select name="pre_approve">
-        <option value="1" <?php if ( $pre_approve ) { echo 'selected="selected"'; } ?> >Yes</option>
-        <option value="0" <?php if ( !$pre_approve ) { echo 'selected="selected"';} ?> >No</option>
-	</select><?php */?> <br />
-(<?php _e("If not approved then invoice will not be sent.)","event_espresso"); ?>
+		?> 
+        <br />
+		<?php _e("(If not approved then invoice will not be sent.)","event_espresso"); ?>
 	</li>
 	<?php } ?>
 	<li><input type="submit" name="Submit" value="Send Invoice"></li>
@@ -192,9 +280,15 @@ function enter_attendee_payments() {
                                                                                                    </td>
                                                                                                </tr>
                                                                                            </table>
-	<p><strong><a href="admin.php?page=events&event_id=<?php echo $event_id; ?>&event_admin_reports=list_attendee_payments"><< <?php _e('Back to List', 'event_espresso'); ?></a></strong></p>
-                                                                                       </div></div>
-<?php
+	<p>
+    	<strong>
+        	<a href="admin.php?page=events&event_id=<?php echo $event_id; ?>&event_admin_reports=list_attendee_payments">
+    			&lt;&lt;<?php _e('Back to List', 'event_espresso'); ?>
+			</a>
+		</strong>
+	</p>
+    </div></div>
+	<?php
 
                                                                                        //This show what tags can be added to a custom email.
 																					   event_espresso_custom_email_info();

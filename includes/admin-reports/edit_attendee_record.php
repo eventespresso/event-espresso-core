@@ -26,6 +26,11 @@ function edit_attendee_record() {
             $wpdb->query($sql);
             $sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantitay > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
             $wpdb->query($sql);
+//Added by Imon
+			$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantitay > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
+            $wpdb->query($sql);
+			event_espresso_cleanup_multi_event_registration_id_group_data();
+			event_espresso_cleanup_attendee_cost_data();
         }
 
         /*

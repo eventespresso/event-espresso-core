@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.0.19.P.55
+  Version: 3.0.19.P.56
 
   Author: Seth Shoultes
   Author URI: http://www.eventespresso.com
@@ -30,7 +30,7 @@
 
 //Define the version of the plugin
 function espresso_version() {
-    return '3.0.19.P.55';
+    return '3.0.19.P.56';
 }
 
 function ee_init_session() {
@@ -194,6 +194,10 @@ define("EVENTS_LOCALE_TABLE", get_option('events_locale_tbl'));
 define("EVENTS_LOCALE_REL_TABLE", get_option('events_locale_rel_tbl'));
 define("EVENTS_PERSONNEL_TABLE", get_option('events_personnel_tbl'));
 define("EVENTS_PERSONNEL_REL_TABLE", get_option('events_personnel_rel_tbl'));
+
+//Added by Imon
+define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", get_option('events_multi_event_registration_id_group_tbl'));
+define("EVENTS_ATTENDEE_COST_TABLE", get_option('events_attendee_cost_tbl'));
 
 
 //Wordpress function for setting the locale.

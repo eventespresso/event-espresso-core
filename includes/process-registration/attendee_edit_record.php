@@ -7,8 +7,15 @@ function attendee_edit_record() {
             $registration_id = $_REQUEST[ 'registration_id' ];
             $sql = " DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='$id'";
             $wpdb->query( $sql );
-            $sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(IS NULL quantity,NULL,quantity-1 WHERE registration_id ='$registration_id'";
-            $wpdb->query( $sql );
+//Added by Imon            
+#$sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(IS NULL quantity,NULL,quantity-1 WHERE registration_id ='$registration_id'";
+            #$wpdb->query( $sql );
+			$sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantitay > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
+            $wpdb->query($sql);
+			$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantitay > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
+            $wpdb->query($sql);
+			event_espresso_cleanup_multi_event_registration_id_group_data();
+			event_espresso_cleanup_attendee_cost_data();
 			return events_payment_page($_REQUEST[ 'primary' ], $_REQUEST[ 'p_id' ]);
         }
 
