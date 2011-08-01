@@ -2,6 +2,13 @@
 function event_espresso_edit_list() {
     global $wpdb, $org_options;
 	$wpdb->show_errors();
+	
+	//Dates
+	$curdate = date("Y-m-d");
+	$pieces = explode('-',$curdate, 3);
+	$this_year_r = $pieces[0];
+	$this_month_r = $pieces[1];
+	$days_this_month = date('t', strtotime($curdate));
 
     if (isset($_POST['delete_event'])) {
         if (is_array($_POST['checkbox'])) {

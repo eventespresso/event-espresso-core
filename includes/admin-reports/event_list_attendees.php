@@ -1,7 +1,13 @@
 <?php
-
 function event_list_attendees() {
     global $wpdb, $org_options, $ticketing_installed;
+	
+	//Dates
+	$curdate = date("Y-m-d");
+	$pieces = explode('-',$curdate, 3);
+	$this_year_r = $pieces[0];
+	$this_month_r = $pieces[1];
+	$days_this_month = date('t', strtotime($curdate));
 
     if (!empty($_POST['delete_customer'])) {
         if (is_array($_POST['checkbox'])) {
