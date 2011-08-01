@@ -34,17 +34,16 @@
 {font-family: 'Lucida Bright', Lucidabright, 'Lucida Serif', Lucida,  'Bitstream Vera Serif', 'Liberation Serif', Georgia, serif;}
 
 /** box shadows **/
-.event_data,
+
 .espresso_event,
-#event_espresso_registration_form,
 .event_description,
 #event-reg-form-groups,
-.multi_reg_cart_block,
-#event_espresso_coupon_wrapper,
-#event_espresso_total_wrapper,
 div#event-meta ul,
 #cart-reg-details,
-#event-reg-form-groups .event_questions {
+#event-reg-form-groups .event_questions,
+#content .event-display-boxes,
+#content .event-messages,
+#content table.event-display-tables {
 	-moz-box-shadow: 0 0 3px #d2d2d2;
 	-webkit-box-shadow: 0 0 3px #d2d2d2;
 	box-shadow: 0 0  3px #d2d2d2;
@@ -67,10 +66,10 @@ table.price_list {
 	-webkit-box-shadow: inset 0 0 3px #eaeaea;
 	box-shadow: inset 0 0  3px #ddd;
 }
-{/* rounded corners */
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
+.event-messages {/* rounded corners */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 }
 /*___ General site wide styles for event-data / espresso_events ___*/
 
@@ -82,12 +81,8 @@ table.price_list {
 #content .espresso_event p.section-title {
 	margin-bottom: 8px;
 }
-#content .event_data,
 #content .espresso_event,
-#event_espresso_registration_form,
-#event_espresso_coupon_wrapper,
-#event_espresso_total_wrapper,
-.multi_reg_cart_block { /* event list boxes */
+#content .event-display-boxes { /* event list boxes */
 	border: 1px solid #bebebe;
 	margin-bottom: 1em;
 	padding: 10px;
@@ -129,7 +124,14 @@ table.price_list {
 	padding-bottom: 3px;
 	text-decoration: none;
 }
-
+#content .event-messages {
+	background: #EBD8CF;
+	border: 1px solid #bebebe;
+	padding: .4em;
+}
+#content .event-messages p {
+	margin: .5em 0;
+}
 /* >Pages
 ------------------------------------------------------------------------------*/
 /*___ page event list ___*/
@@ -142,7 +144,7 @@ table.price_list {
 #content span.address-block {
 	border: 1px solid #bfbfbf;
 	background: #FAF9EF;
-	display: table;
+	display: inline-block;
 	padding: 10px;
 }
 #content .entry-content .register-link-footer	{
@@ -212,7 +214,6 @@ div.event-entry-meta ul li {
 	margin: -20px auto 20px ;
 	width: 86%;
 }
-
 .espresso_add_attendee a.add {
 	margin-left: 85px;
 }
@@ -302,7 +303,6 @@ span.remove-cart-item {
 	width: 150px;
 	text-align: right;
 }
-#event-reg-form-groups legend {display: none;}
 .event_espresso_form_wrapper p.coupon_code {text-align: left;}
 .event_espresso_form_wrapper p.coupon_code label,
 .event_espresso_form_wrapper p#groupon_code- label {
@@ -367,13 +367,6 @@ span.remove-cart-item {
 	color: #000 !important;
 	cursor: pointer;
 }
-.espresso_confirm_registration #confirm, .espresso_confirm_registration #confirm2 {
-	height: 40px;
-}
-.espresso_confirm_registration #confirm:hover, .espresso_confirm_registration #confirm2:hover {
-	background: #58B366;
-	color: #FF9;
-}
 .event_espresso_form_wrapper ul {
 	margin-left: 125px;
 }
@@ -405,17 +398,30 @@ span.remove-cart-item {
 /* Tables
 ------------------------------------------------------------------------------*/
 
-table#cart-reg-details {
+#content table.event-display-tables {
 	background: #fff;
 	border: 1px solid #bebebe;
-}
-table#cart-reg-details {
-	width: 90%;
 	margin: 0 auto;
-	text-align: left;
+	text-align: left;	
+	width: 90%;
 }
-#event_espresso_shopping_cart table th  {
+#event_espresso_attendee_verify tr td,
+#event_espresso_attendee_verify_questions tr td,
+#event_espresso_attendee_verify tr th.header {
+	border-top: 1px solid #bebebe;
+	vertical-align: middle;
+}
+#event_espresso_attendee_verify tr th.header {
+	border-right: 1px solid #dcdcdc;
+}
+#content table.event-display-tables th.header {
+	font-weight: bold;
+	font-size: 90%;
+	color: #000;	
+}
+#content #event_espresso_shopping_cart table th  {
 	font-size: 100%;
+	text-align: left;
 }
 #event_espresso_shopping_cart table.price_list {
 	margin: 10px auto;
@@ -423,6 +429,7 @@ table#cart-reg-details {
 	border: 1px;
 	font-size: 1.1em;
 }
+
 table.price_list tr {
 	background-color: #D7DCBD;
 }

@@ -3,7 +3,7 @@
 //This is a template file for displaying a registration form for an event on a page.
 //There should be a copy of this file in your wp-content/uploads/espresso/ folder.
 ?>
-<div id="event_espresso_registration_form">
+<div id="event_espresso_registration_form" class="event-display-boxes">
     <div class="event_espresso_form_wrapper event-data-display">
         <form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
             <h2 class="event_title" id="event_title-<?php echo $event_id; ?>">
@@ -53,8 +53,11 @@
                 case 'REGISTRATION_CLOSED': //only show the event description.
                     // if todays date is after $reg_end_date
                     ?>
-                    <p class="event_full"><strong><?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?></strong></p>
+                    <div class="event-registration-closed event-display-boxes">
+											<h3 class="event_title"><?php echo stripslashes_deep($event_name)?></h3>
+											<p class="event_full"><strong><?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?></strong></p>
                     <p class="event_full"><strong><?php _e('Please <a href="contact" title="contact us">contact us</a> if you would like to know if spaces are still available.', 'event_espresso'); ?></strong></p>
+											</div>
 <?php
                     break;
 
@@ -62,8 +65,12 @@
                     // if todays date is after $reg_end_date
                     // if todays date is prior to $reg_start_date
 ?>
+											<div class="event-registration-pending event-messages">
+											
                     <p class="event_full"><strong><?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?></strong></p>
                     <p class="event_full"><strong><?php _e('You will be able to register starting ' . event_espresso_no_format_date($reg_start_date, 'F d, Y'), 'event_espresso'); ?></strong></p>
+											
+											</div>
 <?php
                     break;
 
@@ -72,7 +79,7 @@
                     /* Display the address and google map link if available */
                     if ($location != '') {
 ?>
-                        <p class="event_address" id="event_address-<?php echo $event_id ?>"><?php echo __('Event Address:', 'event_espresso'); ?> <br />
+                        <p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Event Address:', 'event_espresso'); ?></span> <br />
                          <span class="address-block">   <?php echo stripslashes_deep($location); ?><br />
                         	<?php echo $google_map_link; ?></span>
                         </p>
@@ -102,7 +109,7 @@
                         <p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text ?></p>
 
                         <fieldset id="event-reg-form-groups">
-													<legend>Personal registration information</legend>
+		
 														<h2 class="section-heading"><?php _e('Attendees Registration Details', 'event_espresso'); ?></h2>
 													<?php	
 														//Outputs the custom form questions. This function can be overridden using the custom files addon
@@ -155,6 +162,6 @@
 ?>
         </form>
         <?php if(isset($ee_style['event_espresso_form_wrapper_close'])) echo $ee_style['event_espresso_form_wrapper_close']; ?>
-        <?php echo '<p>' . espresso_edit_this($event_id) . '</p>' ?>
+        <?php echo '<p class="register-link-footer">' . espresso_edit_this($event_id) . '</p>' ?>
     </div>
 </div>

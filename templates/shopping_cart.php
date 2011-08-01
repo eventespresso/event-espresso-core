@@ -46,7 +46,7 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) )
                 $number_available_spaces = get_number_of_attendees_reg_limit( $r->id, 'number_available_spaces' ); //Gets the number of available spaces
                 //echo "<pre>$r->id, $num_attendees,$available_spaces,$number_available_spaces</pre>";
     ?>
-                <div class="multi_reg_cart_block"  id ="multi_reg_cart_block-<?php echo $r->id ?>">
+                <div class="multi_reg_cart_block event-display-boxes"  id ="multi_reg_cart_block-<?php echo $r->id ?>">
                     <h3 class="event_title"><?php echo stripslashes_deep( $r->event_name ) ?>
                         <span class="remove-cart-item">
                             <img class="ee_delete_item_from_cart" id="cart_link_<?php echo $r->id ?>" alt="Remove this item from your cart" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/remove.gif" />
@@ -54,7 +54,7 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) )
                     </h3>
                	 
 												<div>
-													<table id="cart-reg-details">
+													<table id="cart-reg-details" class="event-display-tables">
 														<tr>
 															
 															<th><?php _e( 'Date', 'event_espresso' ); ?></th>
@@ -99,7 +99,7 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) )
 											<input type="hidden" name="event_name[<?php echo $r->id; ?>]" value="<?php echo stripslashes_deep( $r->event_name ); ?>" />
 											<input type="hidden" name="regevent_action" value="load_checkout_page" />
 								
-									<div id="event_espresso_coupon_wrapper" class="clearfix">
+									<div id="event_espresso_coupon_wrapper" class="clearfix event-display-boxes">
 
 										<label class="coupon-code" for="event_espresso_coupon_code">
 											<?php _e( 'Enter Coupon Code ', 'event_espresso' ); ?>
@@ -109,7 +109,7 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) )
                     
 									</div>
 
-                <div id="event_espresso_total_wrapper" class="clearfix">
+                <div id="event_espresso_total_wrapper" class="clearfix event-display-boxes">
 
 										<span id="event_total_price" class="event_total_price"><?php echo $_SESSION['event_espresso_grand_total']; ?></span>
                     <a href="#" id="event_espresso_refresh_total"><?php _e( 'REFRESH TOTAL', 'event_espresso' ); ?></a><span class="event_total_price" style="">
