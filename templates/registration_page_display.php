@@ -39,7 +39,7 @@
 <?php
             }//End display description
             //Uncomment the following line to show the personnel assigned to this event
-            echo espresso_show_personnel($event_id, array('wrapper_start'=>'<ul style="event_staff">','wrapper_end'=>'</ul>','before'=>'<li>','after'=>'</li>', 'limit'=>1, 'show_info'=>true, 'staff_id'=>16) );
+            //echo espresso_show_personnel($event_id, array('wrapper_start'=>'<ul style="event_staff">','wrapper_end'=>'</ul>','before'=>'<li>','after'=>'</li>', 'limit'=>1, 'show_info'=>true, 'staff_id'=>16) );
             //print_r( event_espresso_get_is_active($event_id));
             /* Displays the social media buttons */
             ?>
