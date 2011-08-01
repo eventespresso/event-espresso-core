@@ -153,7 +153,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
     //Add the cost and payment status to the attendee
     $update_id = array('id' => $attendee_id);
     $wpdb->update(EVENTS_ATTENDEE_TABLE, $sql, $update_id, $sql_data, array('%d'));
-	
+
 	//If this is a group registration, we need to make sure all attendees have the same payment status
 	if (espresso_count_attendees_for_registration($attendee_id) >1){
 		$wpdb->query( "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status' WHERE registration_id ='" . $registration_id . "'");
@@ -359,7 +359,7 @@ function event_espresso_pay() {
         $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
 
-        if ($_REQUEST['payment_type'] == 'cash_check') {
+        if (!empty($_REQUEST['payment_type']) && $_REQUEST['payment_type'] == 'cash_check') {
 
             $payment_status = 'Pending';
             $txn_type = 'OFFLINE';

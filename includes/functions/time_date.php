@@ -176,7 +176,7 @@ if (!function_exists('event_espresso_time_dropdown')) {
         $sql = "SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' ";
         $events = $wpdb->get_results($sql);
         foreach ($events as $event) {
-            $timezone_string = $event->timezone_string;
+            $timezone_string = empty($event->timezone_string) ? '' : $event->timezone_string;
         }
 
         //This is the initial check to see if we time slot are controlled by registration limits.
