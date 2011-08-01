@@ -50,9 +50,9 @@ function event_espresso_form_builder_edit(){
 						$values	=	array(					
 							array('id'=>'TEXT','text'=> __('Text','event_espresso')),
 							array('id'=>'TEXTAREA','text'=> __('Text Area','event_espresso')),
-							array('id'=>'SINGLE','text'=> __('Single','event_espresso')),
+							array('id'=>'SINGLE','text'=> __('Radio Button','event_espresso')),
 							array('id'=>'DROPDOWN','text'=> __('Drop Down','event_espresso')),
-							array('id'=>'MULTIPLE','text'=> __('Multiple','event_espresso'))
+							array('id'=>'MULTIPLE','text'=> __('Checkbox','event_espresso'))
 							);
 						if ($system_question == true){
 							$values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));

@@ -20,8 +20,8 @@ function event_espresso_form_builder_new(){
   				<select name="question_type" id="question_type">
   			  	<option value="TEXT">Text</option>
   			  	<option value="TEXTAREA">Text Area</option>
-  			  	<option value="SINGLE">Single</option>
-  			  	<option value="MULTIPLE">Multiple</option>
+  			  	<option value="SINGLE">Radio Button</option>
+  			  	<option value="MULTIPLE">Checkbox</option>
   			  	<option value="DROPDOWN">Drop Down</option>
   				</select>
 				</li>
