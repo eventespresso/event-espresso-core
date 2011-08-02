@@ -389,7 +389,7 @@ function event_list_attendees() {
     <?php echo $_REQUEST['event_id'] != '' ? '<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=edit&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Edit Event', 'event_espresso') . '</a>' : ''; ?>
                                 </div>
                                 </form>
-                                <?php echo espresso_payment_reports(array('event_id'=>$_REQUEST['event_id'], 'type'=>'total_payments')); ?>
+                                <?php //echo espresso_payment_reports(array('event_id'=>$_REQUEST['event_id'], 'type'=>'total_payments')); ?>
 	<script>
 		jQuery(document).ready(function($) {
 			/* show the table data */
