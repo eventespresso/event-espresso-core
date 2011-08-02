@@ -823,12 +823,12 @@ if (!function_exists('espresso_show_social_media')) {
         switch ($type) {
             case 'twitter':
                 if (function_exists('espresso_twitter_button')) {
-                    echo espresso_twitter_button($event_id);
+                    return espresso_twitter_button($event_id);
                 }
                 break;
             case 'facebook':
                 if (function_exists('espresso_facebook_button')) {
-                    echo espresso_facebook_button($event_id);
+                    return espresso_facebook_button($event_id);
                 }
                 break;
             default:

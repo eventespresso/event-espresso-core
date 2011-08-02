@@ -38,13 +38,12 @@
 									<div class="event_description clearfix"><?php echo wpautop(do_shortcode($event_desc)); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description. ?></div>
 <?php
             }//End display description
-            //Uncomment the following line to show the personnel assigned to this event
-            //echo espresso_show_personnel($event_id, array('wrapper_start'=>'<ul style="event_staff">','wrapper_end'=>'</ul>','before'=>'<li>','after'=>'</li>', 'limit'=>1, 'show_info'=>true, 'staff_id'=>16) );
-            //print_r( event_espresso_get_is_active($event_id));
+            
+			
             /* Displays the social media buttons */
-            ?>
-            <p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
-<?php
+          	if (function_exists('espresso_show_social_media')){
+				echo '<p class="espresso_social">'.espresso_show_social_media($event_id, 'twitter').' '.espresso_show_social_media($event_id, 'facebook').'</p>'; 
+			}
             switch ($is_active['status']) {
                 case 'EXPIRED': //only show the event description.
                     _e('<h3 class="expired_event">This event has passed.</h3>', 'event_espresso');
