@@ -3,7 +3,11 @@ global $espresso_premium;
 if ($espresso_premium != true)
     return;
 ?>
+
 <ul class="subsubsub">
+<li><?php if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!=''){?>
+    	<h3><?php espresso_event_list_attendee_title($_REQUEST['event_id']); ?></h3>
+<?php }?></li>
     <li><strong><?php _e('Events', 'event_espresso'); ?>: </strong> </li>
     <li><a <?php echo $_REQUEST['all'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&all=true"><?php _e('All Events', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_events(); ?>)</span></a> |</li>
     <li><a <?php echo $_REQUEST['today'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&today=true"><?php _e('Today', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_events_today(); ?>)</span></a> |</li>

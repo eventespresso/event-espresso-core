@@ -85,11 +85,11 @@ function event_list_attendees() {
         .view_btn:hover, .edit_btn:hover, .complete_btn:hover, .shortcode_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover  {height: 18px; margin: 2px 3px 0 0;}
     </style>
 
-    <?php if (!empty($_REQUEST['event_id'])) { ?>
+    <?php /*if (!empty($_REQUEST['event_id'])) { ?>
 
         <h3 style="margin-bottom:15px;"><?php _e('Attendee Report for Event ID:', 'event_espresso'); ?> <?php espresso_event_list_attendee_title($_REQUEST['event_id']); ?></h3>
 
-    <?php } ?>
+    <?php }*/ ?>
 
     <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
         <table id="table" class="widefat fixed" width="100%">

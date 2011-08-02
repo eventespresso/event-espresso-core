@@ -56,7 +56,6 @@ function event_espresso_config_page_scripts() {
                 wp_enqueue_script('editor-functions');
                 wp_enqueue_script('media-upload');
                 wp_enqueue_script('post');
-                /* Need to remove this */wp_enqueue_script('tiny_table', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/tiny-table.js', array('jquery')); //Events core table script
                 wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
                 wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery')); //Events core table column hide/show script
 
@@ -1315,9 +1314,10 @@ if (!function_exists('espresso_event_list_attendee_title')) {
             $title_event_name = stripslashes_deep($event->event_name);
         }
 
-        echo $event_id;
-        echo ' | ';
+        
         echo $title_event_name;
+        echo ' | ';
+		echo 'ID: '.$event_id;
         echo ' | ';
         echo espresso_event_time($event_id, 'start_date_time');
     }
