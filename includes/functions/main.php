@@ -1214,3 +1214,17 @@ if (!function_exists('event_espresso_cleanup_attendee_cost_data') )
 		$wpdb->query(" delete eac from ".EVENTS_ATTENDEE_COST_TABLE." eac left join ".EVENTS_ATTENDEE_TABLE."  ea on eac.attendee_id = ea.id where ea.id is null ");
 	}
 }
+
+function espresso_check_scripts(){
+	if (function_exists('wp_script_is')){
+		if (!wp_script_is('jquery')){
+			echo '<div class="event_espresso_error"><p><em>'.__('Jquery is not loaded!', 'event_espresso').'</em><br />'.__('Event Espresso is unable to load Jquery do to a conflict with your theme or another plugin.', 'event_espresso').'</p></div>';
+		}
+	}
+	if (!function_exists('wp_head')){
+		echo '<div class="event_espresso_error"><p><em>'.__('Missing wp_head() Function', 'event_espresso').'</em><br />'.__('The WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso').'</p></div>';
+	}
+	if (!function_exists('wp_footer')){
+		echo '<div class="event_espresso_error"><p><em>'.__('Missing wp_footer() Function', 'event_espresso').'</em><br />'.__('The WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso').'</p></div>';
+	}
+}

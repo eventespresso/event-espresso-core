@@ -555,6 +555,10 @@ if (!function_exists('event_espresso_run')) {
 
         $load_espresso_scripts = true; //This tells the plugin to load the required scripts
         ob_start();
+		
+		//Make sure scripts are loading
+		echo espresso_check_scripts();
+		
         // Get action type
         $regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
 
