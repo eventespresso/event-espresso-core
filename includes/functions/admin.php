@@ -14,10 +14,17 @@ function event_espresso_config_page_styles() {
             case ( 'espresso_reports' ):
             case ( 'event_categories' ):
                 wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-lightness/jquery-ui-1.7.3.custom.css');
-                
                 break;
         }
+		if (isset($_REQUEST['event_admin_reports'])) {
+			switch ($_REQUEST['event_admin_reports']) {
+				case 'charts':
+					wp_enqueue_style('jquery-jqplot-css', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.css');
+					break;
+			}
+		}
     }
+	
 }
 
 function event_espresso_config_page_scripts() {
@@ -64,6 +71,19 @@ function event_espresso_config_page_scripts() {
                     wp_register_script('jquery.validate.pack', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.pack.js"), false, '1.7');
                     wp_enqueue_script('jquery.validate.pack');
                 }
+				
+				if (isset($_REQUEST['event_admin_reports'])) {
+					switch ($_REQUEST['event_admin_reports']) {
+						case 'charts':
+							wp_enqueue_script('jquery-jqplot-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.min.js', array('jquery'));
+							wp_enqueue_script('jqplot-barRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.barRenderer.js', array('jquery'));
+							wp_enqueue_script('jqplot-pieRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pieRenderer.js', array('jquery'));
+							wp_enqueue_script('jqplot-categoryAxisRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.categoryAxisRenderer.js', array('jquery'));
+							wp_enqueue_script('jqplot-highlighter-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.highlighter.js', array('jquery'));
+							wp_enqueue_script('jqplot-pointLabels-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pointLabels.js', array('jquery'));
+							break;
+					}
+				}
                 remove_all_filters('mce_external_plugins');
                 break;
         }
@@ -1327,13 +1347,13 @@ if (!function_exists('espresso_event_list_attendee_title')) {
 function espresso_payment_reports($atts){
 	global $wpdb;
 	extract($atts);
-	$sql = "SELECT SUM(a.amount_pd) quantity FROM " . EVENTS_ATTENDEE_TABLE . " a WHERE a.quantity >= 1 AND (a.payment_status='Completed' OR a.payment_status='Pending') AND a.event_id = '" . $event_id . "' ";
+	$sql = "SELECT SUM(a.amount_pd) quantity FROM " . EVENTS_ATTENDEE_TABLE . " a WHERE a.quantity >= 1 AND a.payment_status='Completed' AND a.event_id = '" . $event_id . "' ";
 	$payments = $wpdb->get_results($sql, ARRAY_A);
 	$total = 0;
 	if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
 		$total =  $wpdb->last_result[0]->quantity;
 	}
-	echo $sql;
+	//echo $sql;
 	switch ($type) {
 		case 'total_payments':
 			return $total;

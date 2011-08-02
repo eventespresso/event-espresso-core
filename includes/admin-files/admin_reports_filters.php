@@ -5,9 +5,9 @@ if ($espresso_premium != true)
 ?>
 
 <ul class="subsubsub">
-<li><?php if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!=''){?>
-    	<h3><?php espresso_event_list_attendee_title($_REQUEST['event_id']); ?></h3>
-<?php }?></li>
+<?php if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!='' && $_REQUEST['event_admin_reports'] != 'charts'){?>
+    	<li><h3><?php espresso_event_list_attendee_title($_REQUEST['event_id']); ?></h3></li>
+<?php }?>
     <li><strong><?php _e('Events', 'event_espresso'); ?>: </strong> </li>
     <li><a <?php echo $_REQUEST['all'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&all=true"><?php _e('All Events', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_events(); ?>)</span></a> |</li>
     <li><a <?php echo $_REQUEST['today'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&today=true"><?php _e('Today', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_events_today(); ?>)</span></a> |</li>
@@ -18,6 +18,7 @@ if ($espresso_premium != true)
     <li><a <?php echo $_REQUEST['all_a'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&all_a=true"><?php _e('All Attendees', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_all_attendees(); ?>)</span></a> | </li>
     <li><a <?php echo $_REQUEST['today_a'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&today_a=true"><?php _e('Today', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_attendees_today(); ?>)</span></a> |</li>
     <li><a <?php echo $_REQUEST['this_month_a'] == 'true' ? ' class="current" ' : '' ?>  href="admin.php?page=events&event_admin_reports=event_list_attendees&this_month_a=true"><?php _e('This Month', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_attendees_this_month(); ?>)</span></a> </li>
+    <?php if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!='' && $_REQUEST['event_admin_reports'] != 'charts'){?><li> | <a href="admin.php?page=events&event_admin_reports=charts&event_id=<?php echo $_REQUEST['event_id'] ?>"><?php _e('View Report', 'event_espresso'); ?></a></li><?php }?>
 </ul>
 <?php if ($_REQUEST['page'] == 'events') { ?>
     <div class="tablenav">
@@ -31,7 +32,8 @@ if ($espresso_premium != true)
                     case'resend_email':
                     case'enter_attendee_payments':
                     case'list_attendee_payments':
-                    case'add_new_attendee';
+                    case'add_new_attendee':
+					case'charts':
                         ?>
                         <?php espresso_attendees_by_month_dropdown(isset($_POST['month_range']) ? $_POST['month_range'] : ''); //echo $_POST[ 'month_range' ];  ?>
                         <input type="submit" class="button-secondary" value="Filter Month" id="post-query-month">

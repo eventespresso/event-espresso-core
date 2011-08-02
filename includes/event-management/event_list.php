@@ -294,11 +294,13 @@ function event_espresso_edit_list() {
             <?php } ?>
 
                             <td class="author"><a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id,'num_attendees_slash_reg_limit'); ?></a></td>
-                            <td class="date"><div style="width:150px;"><a href="<?php echo home_url() ?>/?page_id=<?php echo $org_options['event_page_id'] ?>&regevent_action=register&event_id=<?php echo $event_id ?>&name_of_event=<?php echo $event_name ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank"><div class="view_btn"></div></a>
+                            <td class="date"><div style="width:180px;"><a href="<?php echo home_url() ?>/?page_id=<?php echo $org_options['event_page_id'] ?>&regevent_action=register&event_id=<?php echo $event_id ?>&name_of_event=<?php echo $event_name ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank"><div class="view_btn"></div></a>
                               
                               <a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Event', 'event_espresso'); ?>"><div class="edit_btn"></div></a>
                               
                               <a href="admin.php?page=events&amp;event_id=<?php echo $event_id ?>&amp;event_admin_reports=list_attendee_payments" title="<?php _e('View Attendees', 'event_espresso'); ?>"><div class="complete_btn"></div></a>
+                              <a href="admin.php?page=events&event_admin_reports=charts&event_id=<?php echo $event_id ?>" title="<?php _e('View Report', 'event_espresso'); ?>"><div class="reports_btn"></div></a>
+                              
                               
                               <a class="ev_reg-fancylink" href="#unique_id_info_<?php echo $event_id ?>" title="<?php _e('Get Short URL/Shortcode', 'event_espresso'); ?>"><div class="shortcode_btn"></div></a>
                               

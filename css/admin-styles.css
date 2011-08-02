@@ -1499,10 +1499,12 @@ label.error {
 .newsletter_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/email_go.png) no-repeat; text-indent: -9000px; outline: none; }
 .newsletter_btn:hover { margin: 4px 3px 0 0; height: 20px; }
 
+.reports_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/chart_bar.png) no-repeat; text-indent: -9000px; outline: none; }
+
 .shortcode_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/tag.png) no-repeat; text-indent: -9000px; outline: none; }
 .shortcode_btn:hover { margin: 4px 3px 0 0; height: 20px; }
 /*fixing this -  what does this mean?*/
-.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .shortcode_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover  {height: 18px; margin: 2px 3px 0 0;}
+.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .shortcode_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {height: 18px; margin: 2px 3px 0 0;}
 
 div#button .optionsparent { position: relative; float: left; }
 div#button .showoptions { position: absolute; top: 18px; display: none; float: left; background: #fff; border: 1px solid #ccc; padding: 4px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px; z-index: 200; white-space: nowrap; }

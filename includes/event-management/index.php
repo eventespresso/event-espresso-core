@@ -12,7 +12,10 @@ function event_espresso_manage_events() {
                 <?php
                 if ($_REQUEST['page'] == 'events' && (isset($_REQUEST['event_admin_reports']))) {
                     switch ($_REQUEST['event_admin_reports']) {
-                        case 'event_list_attendees':
+                        case 'charts':
+							_e('Attendee Reports', 'event_espresso');
+							break;
+						case 'event_list_attendees':
                         case 'resend_email':
                         case 'list_attendee_payments':
                             _e('Attendee Reports', 'event_espresso');
@@ -108,32 +111,37 @@ function event_espresso_manage_events() {
                 //If we are not adding or editing an event then show the list of events
                 if (isset($_REQUEST['event_admin_reports'])) {
                     switch ($_REQUEST['event_admin_reports']) {
-                        case 'list_attendee_payments':
-                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/event_list_attendees.php");
+                        case 'charts':
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/charts.php");
+                            espresso_charts();
+                            break;
+						case 'list_attendee_payments':
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
                             event_list_attendees();
                             break;
                         case 'event_list_attendees':
-                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/event_list_attendees.php");
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
                             event_list_attendees();
                             break;
                         case 'edit_attendee_record':
-                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/event_list_attendees.php");
-                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/edit_attendee_record.php");
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/edit_attendee_record.php");
                             edit_attendee_record();
                             break;
                         case 'enter_attendee_payments':
-                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/event_list_attendees.php");
-                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/enter_attendee_payments.php");
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/enter_attendee_payments.php");
                             enter_attendee_payments();
                             break;
                         case 'add_new_attendee':
-                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/event_list_attendees.php");
-                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/add_new_attendee.php");
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+                            require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/add_new_attendee.php");
                             add_new_attendee($_REQUEST['event_id']);
                             break;
                         case 'event_newsletter':
-                            if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-files/event_newsletter.php")) {
-                                require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-files/event_newsletter.php");
+                            if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . "admin-files/event_newsletter.php")) {
+                                require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-files/event_newsletter.php");
                                 event_newsletter($_REQUEST['event_id']);
                             } else {
                                 require_once("event_newsletter.php");
