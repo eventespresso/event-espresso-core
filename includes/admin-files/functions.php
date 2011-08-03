@@ -249,3 +249,90 @@ if ( !function_exists( 'espresso_personnel_dd' ) ){
 			}
 	}
 }
+if (!function_exists('espresso_chart_display')){
+	function espresso_chart_display($event_id, $type){
+		global $wpdb, $org_options;
+		$retVAl = array();
+		switch ($type){
+			case 'total_reg':
+				//Total Registrations/Transactions
+				$title = __('Total Registrations/Transactions', 'event_espresso');
+				$sql = "SELECT SUM(a.amount_pd) amount, SUM(a.quantity) quantity, DATE_FORMAT(a.date,'%b %d') date FROM wp_events_attendee a WHERE event_id =".$event_id." GROUP BY DATE_FORMAT(a.date,'%m-%d-%Y')";
+			break;
+			
+			case 'total_completed':
+				//Completed Registrations/Transactions
+				$title = __('Completed Registrations/Transactions', 'event_espresso');
+				$sql = "SELECT SUM(a.amount_pd) amount, SUM(a.quantity) quantity, DATE_FORMAT(a.date,'%b %d') date FROM wp_events_attendee a WHERE event_id =".$_REQUEST['event_id']." AND payment_status='Completed' GROUP BY DATE_FORMAT(a.date,'%m-%d-%Y')";
+			break;
+			
+			case 'total_pending':
+				//Pending Registrations/Transactions
+				$title = __('Pending Registrations/Transactions', 'event_espresso');
+				$sql = "SELECT SUM(a.amount_pd) amount, SUM(a.quantity) quantity, DATE_FORMAT(a.date,'%b %d') date FROM wp_events_attendee a WHERE event_id =".$_REQUEST['event_id']." AND payment_status='Pending' GROUP BY DATE_FORMAT(a.date,'%m-%d-%Y')";
+			break;
+			
+			case 'total_incomplete':
+				//Incomplete Registrations/Transactions
+				$title = __('Incomplete Registrations/Transactions', 'event_espresso');
+				$sql = "SELECT SUM(a.amount_pd) amount, SUM(a.quantity) quantity, DATE_FORMAT(a.date,'%b %d') date FROM wp_events_attendee a WHERE event_id =".$_REQUEST['event_id']." AND (payment_status='Incomplete' OR payment_status='Payment Declined') GROUP BY DATE_FORMAT(a.date,'%m-%d-%Y')";
+			break;
+		}
+		
+		$results = $wpdb->get_results($sql);
+		foreach ($results as $row) {
+			$retVal[] = $row;
+		}
+	 
+		$attendees = '';
+		$amount ='';
+		$date = '';
+		foreach($retVal as $rec ){
+			$amount .= $rec->amount.',';
+			$date .= "'".$rec->date."', ";
+			$attendees .= $rec->quantity.", ";
+		}
+	 //echo "<pre>".print_r($retVal,true)."</pre>";
+	  ?>
+		<script>
+		 jQuery(document).ready(function() {
+				var line1 = [<?php echo $attendees ?>];//bottom column
+				var line2 = [<?php echo $amount ?>];
+				var ticks = [<?php echo $date ?>];
+				
+				plot1 = jQuery.jqplot('<?php echo $type; ?>', [line1, line2], {
+					//stackSeries: true,
+					title: '<?php echo $title; ?>',
+					seriesDefaults:{
+						renderer:jQuery.jqplot.BarRenderer,
+						pointLabels: { show: true },
+					},
+					axes: {
+						xaxis: {
+							renderer: jQuery.jqplot.CategoryAxisRenderer,
+							ticks: ticks
+						}
+					},
+					series: [{
+						label: '# Attendees'
+					},
+					{
+						label: '<?php echo $org_options['currency_symbol'] ?> <?php _e('Amount', 'event_espresso'); ?>',
+						pointLabels: { formatString:'<?php echo utf8_encode(html_entity_decode($org_options['currency_symbol'])); ?>%.2f' },
+					}],
+					legend: {
+						show: true,
+						location: 'ne',     // compass direction, nw, n, ne, e, se, s, sw, w.
+						placement: 'outsideGrid'
+		
+					},
+		
+				});
+				
+			});
+		  </script>
+		  <!-- <?php echo $title; ?> -->
+		<div id="<?php echo $type; ?>" style="margin-top:20px; margin-left:20px; width:600px; height:200px; float:left;"></div>
+	<?php 
+	} 
+}
