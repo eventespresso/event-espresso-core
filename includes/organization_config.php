@@ -401,7 +401,7 @@ $values=array(
 											</div>
 											
 											<div id="payment-conf-email" class="postbox">
-                      <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo stripslashes_deep($org_options['payment_message']);?></textarea>
+                      <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo wpautop(stripslashes_deep($org_options['payment_message']));?></textarea>
                       <table id="payment-confirmation-form" cellspacing="0">
                         <tbody>
                           <tr>
@@ -423,7 +423,7 @@ $values=array(
 											</div>											
                     
 											<div id="reg-conf-email" class="postbox">
-                      <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo stripslashes_deep($org_options['message']);?></textarea>
+                      <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo wpautop(stripslashes_deep($org_options['message']));?></textarea>
                       <table id="email-confirmation-form" cellspacing="0">
                         <tbody>
                           <tr>
@@ -501,6 +501,9 @@ $values=array(
                       </li>
                       <li>
                         <?php _e('Event Venue/Staff Manager', 'event_espresso'); ?>
+                      </li>
+                      <li>
+                        <?php _e('Graphical Reports', 'event_espresso'); ?>
                       </li>
                     </ol>
                   </div>

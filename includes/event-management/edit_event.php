@@ -1,13 +1,6 @@
 <?php
-
 function edit_event($event_id = 0) {
     global $wpdb, $org_options, $espresso_premium;
-
-    wp_tiny_mce(false, // true makes the editor "teeny"
-            array(
-        "editor_selector" => "theEditor"//This is the class name of your text field
-            )
-    );
 
     if (function_exists('wp_tiny_mce_preload_dialogs')) {
         add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
@@ -717,7 +710,14 @@ function edit_event($event_id = 0) {
     <input type="hidden" name="recurrence_id" value="<?php echo $recurrence_id; ?>">
     <input type="hidden" name="action" value="edit">
     <input type="hidden" name="event_id" value="<?php echo $event_id ?>">
-
+<?php
+  wp_tiny_mce(false, 
+		
+		array(
+			"editor_selector" => "theEditor"
+			)
+		);
+?>
     <script type="text/javascript" charset="utf-8">
  		//<![CDATA[
 				jQuery(document).ready(function() {
