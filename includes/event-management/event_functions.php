@@ -170,9 +170,9 @@ function event_espresso_multi_price_update($event_id) {
                     </select>
 
             <?php
-            echo '<img class="remove-item" title="' . __('Remove this Price', 'event_regis') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Price', 'event_espresso') . '" />';
-            //echo '<input type="button" value="Remove" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"/>';
-            echo '</p></li>';
+            echo '</p>';
+			 echo '<img class="remove-item" title="' . __('Remove this Price', 'event_regis') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Price', 'event_espresso') . '" />';
+			 echo '</li>';
         }
     }else {
         ?>
