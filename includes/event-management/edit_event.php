@@ -2,10 +2,6 @@
 function edit_event($event_id = 0) {
     global $wpdb, $org_options, $espresso_premium;
 
-    if (function_exists('wp_tiny_mce_preload_dialogs')) {
-        add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
-    }
-
 	$events = $wpdb->get_results( $wpdb->prepare("SELECT e.*, ev.id as venue_id
 	    FROM ".EVENTS_DETAIL_TABLE." e
 	    LEFT JOIN ".EVENTS_VENUE_REL_TABLE." vr ON e.id = vr.event_id
@@ -716,7 +712,16 @@ function edit_event($event_id = 0) {
 		array(
 			"editor_selector" => "theEditor"
 			)
-		);
+	);
+	/*if (function_exists('wp_tiny_mce_preload_dialogs')) {
+        add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
+    }
+	*/
+	if (function_exists('wp_tiny_mce_preload_dialogs')) {
+            add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
+        }else {
+          wp_preload_dialogs( array( 'plugins' => 'wpdialogs,wplink,wpfullscreen' ) );
+        }  
 ?>
     <script type="text/javascript" charset="utf-8">
  		//<![CDATA[
