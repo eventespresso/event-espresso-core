@@ -56,6 +56,7 @@ function organization_config_mnu()	{
 		$org_options['use_event_timezones'] = $_POST['use_event_timezones'];
 		$org_options['surcharge'] = $_POST['surcharge'];
 		$org_options['surcharge_type'] = $_POST['surcharge_type'];
+		$org_options['surcharge_text'] = $_POST['surcharge_text'];
 		$org_options['show_reg_footer'] = $_POST['show_reg_footer'];
 		$org_options['affiliate_id'] = $_POST['affiliate_id'];
 		$org_options['default_payment_status'] = $_POST['default_payment_status'];
