@@ -10,9 +10,9 @@ function edit_event_email(){
 	$results = $wpdb->get_results("SELECT * FROM ". EVENTS_EMAIL_TABLE ." WHERE id =".$id);
 	foreach ($results as $result){
 		$email_id= $result->id;
-		$email_name=stripslashes($result->email_name);
-		$email_subject=stripslashes($result->email_subject);
-		$email_text=stripslashes($result->email_text);
+		$email_name=stripslashes_deep($result->email_name);
+		$email_subject=stripslashes_deep($result->email_subject);
+		$email_text=stripslashes_deep($result->email_text);
 	}
 	?>
 <!--Add event display-->
@@ -44,7 +44,7 @@ function edit_event_email(){
 					<p><a class="toggleVisual"><?php _e('Visual', 'event_espresso'); ?></a> <a class="toggleHTML"><?php _e('HTML', 'event_espresso'); ?></a></p>
 				</div>			
 				<div class="postbox">   
-		 		<textarea class="theEditor std-textarea" id="email_text_new" name="email_text"><?php echo $email_text; ?></textarea>
+		 		<textarea class="theEditor std-textarea" id="email_text_new" name="email_text"><?php echo wpautop($email_text); ?></textarea>
 					
 				<table id="manage-event-email-form" cellspacing="0">
 					<tbody>
