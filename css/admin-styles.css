@@ -45,10 +45,9 @@
 	padding-top: 0;
 }
 .postbox .padding > ul > li {
- margin-bottom: 15px;
-} 
-#side-info-column .postbox h3,
-#post-body-content .postbox h3 {
+	margin-bottom: 15px;
+}
+#side-info-column .postbox h3, #post-body-content .postbox h3 {
 	font-weight: bold;
 }
 .postarea {
@@ -85,7 +84,6 @@
 	padding:10px;
 	overflow:hidden;
 }
-
 /*** Main Structure Styles ***/
 
 div.box-mid-head {
@@ -183,7 +181,6 @@ div.box-right-body ul li strong {
 	color:#454545;
 	font-weight:bold;
 }
-
 /*___ Donations Section Styles ___*/
 
 .event_espressodonation-box p {
@@ -216,7 +213,6 @@ div.box-right-body ul li strong {
 	position:relative;
 	top:-70px;
 }
-
 /*___ Top Contributors Section ___*/
 
 ul.sexy-contributors {
@@ -259,15 +255,14 @@ ul.sexy-contributors li:hover a {
 	color:#21759B;
 	font-weight:bold;
 }
-
 /* >Events Admin screens 
 ----------------------------------------------------------------------*/
 
 /*___ General Settings screen ___*/
 #post-body p.intro { /* explanatory text for meta boxes */
-	font-size: 14px ;
+	font-size: 14px;
 	font-weight: bold;
-	margin: 10px  0;
+	margin: 10px 0;
 }
 p.submit-footer {
 	background: #f9f9f9;
@@ -277,7 +272,9 @@ p.submit-footer {
 /*** Organization ***/
 
 /* time settings */
-li.time-date .run-in {padding-right: 10px;}
+li.time-date .run-in {
+	padding-right: 10px;
+}
 .current-date {
 	background: #F0F0D9;
 	border: 1px solid #bebebe;
@@ -287,7 +284,7 @@ li.time-date .run-in {padding-right: 10px;}
 .change-date-time {
 	display: block;
 	margin: 8px 0 5px;
-	}
+}
 #post-body #payment-conf-email {/*postbox*/
 	margin-bottom: 30px;
 }
@@ -336,24 +333,23 @@ li.time-date .run-in {padding-right: 10px;}
 * html .pluralink-overlay #pluralink-bg {
 	background: url(images/bg-ie.png) repeat-y left top;
 }
-
 /*___ Overview screen ___*/
 
 ul.subsubsub {
 	clear:both;
-	}
+}
 ul.subsubsub + ul.subsubsub {
 	margin-bottom: 20px;
-	}
+}
 div.tablenav {
 	clear: both;
 	line-height: 1.4;
 	margin-bottom: 30px;
 	min-height: 30px;
-	height: auto; 
-	}
+	height: auto;
+}
 /*** Add new events / Edit events ***/
-.remove-item { 
+.remove-item {
 	cursor: pointer;
 }
 #event-date-time .recurring-available {
@@ -362,7 +358,7 @@ div.tablenav {
 	left: 0;
 	position: relative;
 }
-#event-date-time  .recurring-available a:hover {
+#event-date-time .recurring-available a:hover {
 	color: #C8AE34;
 }
 #recurring_event_wrapper .ui-corner-all {
@@ -387,7 +383,7 @@ div.tablenav {
 	margin-top: 5px;
 	padding-left: 0;
 }
-#event-location fieldset  ul li {
+#event-location fieldset ul li {
 	border: 1px solid #bebebe;
 	padding: 4px;
 }
@@ -400,20 +396,13 @@ div.tablenav {
 .use-ven-manager table {
 	width:99%;
 }
-.use-ven-manager  textarea,
-.use-ven-manager  select,
-.use-ven-manager  input,
-.use-ven-manager .eebox  ul,
-.use-ven-manager fieldset#venue-manager select,
-.use-ven-manager fieldset#venue-manager .eebox ul,
-.manual-venue #url-event,
-.manual-venue input {
+.use-ven-manager textarea, .use-ven-manager select, .use-ven-manager input, .use-ven-manager .eebox ul, .use-ven-manager fieldset#venue-manager select, .use-ven-manager fieldset#venue-manager .eebox ul, .manual-venue #url-event, .manual-venue input {
 	width: 80%;
 }
 .use-ven-manager #venue-manager label {
-	margin: 5px 0 ;
+	margin: 5px 0;
 }
-.use-ven-manager .address-view p span {	
+.use-ven-manager .address-view p span {
 	display: inline-block;
 	font-weight: bold;
 	width: 6em;
@@ -425,8 +414,7 @@ div.tablenav {
 }
 /*___ Venue Manager & Staff ___*/
 
-#add-edit-venue table ul,
-#add-edit-staff table ul {
+#add-edit-venue table ul, #add-edit-staff table ul {
 	background: #f9f9f9;
 	border: 1px solid #e0e0e0;
 	padding: 1%;
@@ -445,7 +433,6 @@ div.tablenav {
 #add-new-group td.b li p {
 	margin-top: 0;
 }
-
 /*___ Categories___*/
 
 #add-edit-categories .inside p.add-cat-name {
@@ -458,19 +445,20 @@ div.tablenav {
 #categorydescriptiondivrich {
 	margin-top: 20px;
 }
-
 /*** Editor Styles (email settings panel) ***/
 
 /* toggle tabs & gen editor styles */
-.postbox .wp_themeSkin table.mceLayout { 
+.postbox .wp_themeSkin table.mceLayout {
 	border: 1px solid #dfdfdf;
 }
-.postbox .postbox {border: none;}
+.postbox .postbox {
+	border: none;
+}
 #post-body .visual-toggle {
 	clear: both;
 	margin-bottom:0;
 }
-.postarea  .visual-toggle {
+.postarea .visual-toggle {
 	margin-top: -30px;
 }
 #post-body .visual-toggle p {
@@ -482,7 +470,7 @@ div.tablenav {
 #post-body .visual-toggle p a {
 	padding-bottom: 0;
 }
-#post-body .visual-toggle p a  {
+#post-body .visual-toggle p a {
 	background: #eee;
 	-moz-border-radius: 3px 3px 0 0;
 	-webkit-border-radius: 3px 3px 0 0;
@@ -493,11 +481,11 @@ div.tablenav {
 	display: inline-block;
 	height: 18px;
 	margin-left: 3px;
-	padding: 4px 8px 2px ;
+	padding: 4px 8px 2px;
 }
 #post-body .visual-toggle p a.selected {
 	background: #e8e8e8;
-	border-bottom: 1px solid  #e8e8e8;
+	border-bottom: 1px solid #e8e8e8;
 	font-weight: bold;
 	margin-bottom: -1px;
 	position: relative;
@@ -515,31 +503,22 @@ div.tablenav {
 	-webkit-box-shadow: inset 0 0 #ddd;
 	box-shadow: inset 0 0 #ddd;
 }
-#post-body .postbox.visHTML textarea { 
+#post-body .postbox.visHTML textarea {
 	background: #fff;
 	font-family: Georgia, "Bitstream Charter", serif;
 	font-size: 16px;
 	margin-top: 5px;
 	width:99.9%;
 }
-
-textarea#event_desc, textarea#conf_mail,
-#category_desc_new {
+textarea#event_desc, textarea#conf_mail, #category_desc_new {
 	width: 100%;
 	border-color: #dfdfdf;
 }
-textarea#conf_mail,
-.postbox textarea.std-textarea {
+textarea#conf_mail, .postbox textarea.std-textarea {
 	color: #000;
 	min-height: 150px;
 }
-#email-confirmation-form, 
-#payment-confirmation-form,
-#cat-descr-add-form,
-#venue-descr-add-form,
-#staff-descr-add-form,
-#staff-descr-edit-form,
-#manage-event-email-form {
+#email-confirmation-form, #payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form, #manage-event-email-form {
 	border-width: 0 1px 1px;
 	border-style: none solid solid;
 	width: 100%;
@@ -552,38 +531,26 @@ textarea#conf_mail,
 	border-bottom-right-radius: 6px;
 	border-color: #dfdfdf;
 }
-#email-confirmation-form td, 
-#payment-confirmation-form td,
-#cat-descr-add-form td,
-#staff-descr-add-form td
-#staff-descr-edit-form td,
-#manage-event-email-form td {
+#email-confirmation-form td, #payment-confirmation-form td, #cat-descr-add-form td, #staff-descr-add-form td #staff-descr-edit-form td, #manage-event-email-form td {
 	font-size: 11px;
 }
 .autosave-info {
 	padding: 6px 2px;
 	text-align: left;
 }
-#editorcontent #email-confirmation-form, 
-#editorcontent #payment-confirmation-form,
-#editorcontent #cat-descr-add-form {
+#editorcontent #email-confirmation-form, #editorcontent #payment-confirmation-form, #editorcontent #cat-descr-add-form {
 	border: none;
 }
-#email-confirmation-form, 
-#payment-confirmation-form,
-#cat-descr-add-form,
-#venue-descr-add-form,
-#staff-descr-add-form,
-#staff-descr-edit-form,
-#manage-event-email-form {
+#email-confirmation-form, #payment-confirmation-form, #cat-descr-add-form, #venue-descr-add-form, #staff-descr-add-form, #staff-descr-edit-form, #manage-event-email-form {
 	background-color: #ededed;
 }
 .aer-word-count {
 	margin-right: 10px;
 }
-
 /*** sidebar add_new & edit_event screens ***/
-#side-sortables a.ev_reg-fancylink img {margin: 5px 0 0 3px;}
+#side-sortables a.ev_reg-fancylink img {
+	margin: 5px 0 0 3px;
+}
 .event-questions-lists .inside {
 	padding-bottom: 15px;
 }
@@ -598,19 +565,17 @@ textarea#conf_mail,
 .event-espresso_page_events #side-sortables .event-staff-list label {
 	line-height: 1.6;
 }
-.event-espresso_page_events #side-sortables p  span {
+.event-espresso_page_events #side-sortables p span {
 	float:left;
 	clear: left;
 }
-.event-espresso_page_events #side-sortables p input,
-.event-espresso_page_events #side-sortables p select {
+.event-espresso_page_events #side-sortables p input, .event-espresso_page_events #side-sortables p select {
 	float:right;
 }
 .event-espresso_page_events #side-sortables p.inputunder {
 	width: 250px;
 }
-.event-espresso_page_events #side-sortables p.inputunder select,
-.event-espresso_page_events #side-sortables p.inputunder input {
+.event-espresso_page_events #side-sortables p.inputunder select, .event-espresso_page_events #side-sortables p.inputunder input {
 	float: none;
 	width: 220px;
 }
@@ -620,217 +585,24 @@ textarea#conf_mail,
 #side-sortables #event-discounts p.promo-amnts {
 	width: auto;
 }
-#side-sortables #event-discounts p.promo-amnts label,
-#side-sortables #event-discounts p.promo-amnts input,
-#side-sortables #event-discounts p.promo-amnts select,
-#side-sortables #attendee-pre-approval-options .pre-approve select,
-#side-sortables #event-categories label.selectit,
-#side-sortables #event-discounts label.selectit,
-#side-sortables .event-staff-list label.selectit {
+#side-sortables #event-discounts p.promo-amnts label, #side-sortables #event-discounts p.promo-amnts input, #side-sortables #event-discounts p.promo-amnts select, #side-sortables #attendee-pre-approval-options .pre-approve select, #side-sortables #event-categories label.selectit, #side-sortables #event-discounts label.selectit, #side-sortables .event-staff-list label.selectit {
 	float: none;
 }
 #side-sortables #event-discounts p.promo-amnts span {
 	float: none;
 	clear: none;
 }
-#side-sortables #event-categories p,
-#side-sortables #event-discounts p.event-disc-code {
+#side-sortables #event-categories p, #side-sortables #event-discounts p.event-disc-code {
 	width: 150px;
 }
-#side-sortables #event-categories p input,
-#side-sortables #event-discounts p input {
+#side-sortables #event-categories p input, #side-sortables #event-discounts p input {
 	margin-top: 7px;
 }
 /*___ Venue Manager ___*/
 /*___ Payment Settings ___*/
 
-/*** fugue sprites ***/
 
-.fugue {
-	background: url('../images/custom-fugue-sprite.png') no-repeat;
-	height:16px;
-	padding-left:22px;
-}
-.fugue.f-info {
-	background-position:0 2px;
-	margin:2px 10px 0 0;
-}
-.fugue.f-warn {
-	background-position:0 -83px;
-	margin:2px 10px 0 0;
-}
-.fugue.f-success {
-	background-position:0 -178px;
-	margin:2px 10px 0 0;
-}
-.fugue.f-question {
-	background-position:0 -295px;
-	margin:2px 10px 0 0;
-	width:16px;
-	border:0;
-	padding:0;
-	display:inline-block;
-}
-.fugue.f-info-frame {
-	background-position:0 -411px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-error {
-	background-position:0 -525px;
-	margin:2px 10px 0 0;
-}
-.fugue.f-delete {
-	background-position:0 -640px;
-}
-.fugue.f-globe-plus {
-	background-position:0 -755px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-leaf-pencil {
-	background-position:0 -871px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-wrench {
-	background-position:0 -987px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-money {
-	background-position:0 -1102px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-medal {
-	background-position:0 -1217px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-pallette {
-	background-position:0 -1332px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-plugin {
-	background-position:0 -1447px;
-	margin:5px 0 20px 0;
-	padding-left:22px;
-	display:block;
-	clear:both;
-}
-.fugue.f-megaphone {
-	background-position:0 -1564px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-flags {
-	background-position:0 -1680px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-image {
-	background-position:0 -1794px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-footer {
-	background-position:0 -1909px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-folder {
-	background-position:0 -2020px;
-}
-.fugue.f-doc-image {
-	background-position:0 -2137px;
-}
-.fugue.f-doc-code {
-	background-position:0 -2256px;
-	height:20px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
-.fugue.f-link-small {
-	background-position:0 -2367px;
-}
-.fugue.f-globe-small {
-	background-position:0 -2475px;
-}
-.fugue.f-star-small {
-	background-position:0 -2585px;
-}
-.fugue.f-pro-version {
-	background: url('../images/events_icon_pro_16.png') no-repeat;
-	background-position:0 0px;
-	height:16px;
-	line-height:16px;
-	padding:0;
-	position:relative;
-	top:6px;
-	left:10px;
-	text-indent:25px;
-}
+
 
 /* >Tables 
 ----------------------------------------------------------------------*/
@@ -839,21 +611,20 @@ textarea#conf_mail,
 	padding: 4px;
 }
 #table_wrapper {
- font-size:11px;
+	font-size:11px;
 	overflow: hidden;
 	padding-bottom: 20px;
 }
 table#table {
- margin-top: 10px;
+	margin-top: 10px;
 	width: 100%;
-}			
-
+}
 /*___ Event management main listings ___*/
 
 table.event-list td.column-comments {
 	padding-top: 3px;
 }
-table.event-list td.check-column  {
+table.event-list td.check-column {
 	padding: 5px 8px 9px 7px;
 }
 table.event-list .re_fr {
@@ -861,9 +632,10 @@ table.event-list .re_fr {
 }
 /*** Add New Event ***/
 
-#event-date-time td.a {position: relative;}
-#event-date-time td.a,
-#event-pricing td.a {
+#event-date-time td.a {
+	position: relative;
+}
+#event-date-time td.a, #event-pricing td.a {
 	width: 50%;
 }
 #event-date-time td.b {
@@ -874,8 +646,7 @@ table.event-list .re_fr {
 
 /*___ Questions / Question Groups ___*/
 
-#add-edit-new-group td.a,
-#add-edit-new-group td.b {
+#add-edit-new-group td.a, #add-edit-new-group td.b {
 	width: 50%;
 }
 /*___  Assorted table styles (requires sorting & defining better)   ___*/
@@ -903,7 +674,6 @@ p.event-regis_sub {
 	margin:-10px;
 	font-size:12px;
 }
-
 /** Calendar ***/
 #calendar-header {
 	background-color: #6699CC;
@@ -1012,7 +782,6 @@ p.event-regis_sub {
 	background-color: #efefef;
 	padding: 2px;
 }
-
 /*** Table Sorting ***/
 
 #tableheader {
@@ -1117,7 +886,6 @@ p.event-regis_sub {
 #tablefooter {
 	height:15px;
 	margin-top:20px
-
 }
 #tablenav {
 	float:left
@@ -1149,7 +917,7 @@ p.event-regis_sub {
 div .row-actions {
 	font-size:10px !important;
 }
-#tooltip{
+#tooltip {
 	position: absolute;
 	display: none;
 	border: 1px solid #333;
@@ -1160,19 +928,22 @@ div .row-actions {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }
-
-#table tr.even {background:#F5F5F5; }
-#table_length, table_filter {
-	float:left; 
-	margin: 0 20px 10px 0; 
+#table tr.even {
+	background:#F5F5F5;
 }
-#table_info {float:left; margin:10px 20px 0 0;}
+#table_length, table_filter {
+	float:left;
+	margin: 0 20px 10px 0;
+}
+#table_info {
+	float:left;
+	margin:10px 20px 0 0;
+}
 .dataTables_paginate {
 	float: right;
 	text-align: right;
 	margin-top:5px;
 }
-
 /*** Pagination nested ***/
 
 .paginate_disabled_previous, .paginate_enabled_previous, .paginate_disabled_next, .paginate_enabled_next {
@@ -1196,15 +967,14 @@ div .row-actions {
 .example_alt_pagination div.dataTables_info {
 	width: 40%;
 }
-.paging_full_numbers span.paginate_button,
- 	.paging_full_numbers span.paginate_active {
+.paging_full_numbers span.paginate_button,  .paging_full_numbers span.paginate_active {
 	border: 1px solid #aaa;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	padding: 2px 5px;
 	margin: 0 3px;
 	cursor: pointer;
-	*cursor: hand;
+ *cursor: hand;
 }
 .paging_full_numbers span.paginate_button {
 	background-color: #ddd;
@@ -1234,11 +1004,11 @@ table.display tr.odd.row_selected td {
 	background-color: #fff;
 	border: 1px solid #d0d0d0;
 	cursor: pointer;
-	*cursor: hand;
+ *cursor: hand;
 }
-button.ColVis_Button::-moz-focus-inner { 
-	border: none !important;
-	padding: 0;
+button.ColVis_Button::-moz-focus-inner {
+ border: none !important;
+ padding: 0;
 }
 .ColVis_text_hover {
 	border: 1px solid #999;
@@ -1280,24 +1050,35 @@ span.ColVis_radio {
 	display: inline-block;
 	width: 20px;
 }
-.dataTables_paginate {margin-top:10px;}
-.sorting_asc .sorting_desc {}
+.dataTables_paginate {
+	margin-top:10px;
+}
+.sorting_asc .sorting_desc {
+}
 th.sorting_asc span.sorting-indicator {
- display:block; 
-	margin-left:3px; 
+	display:block;
+	margin-left:3px;
 	background-position: 0 0;
 }
 th.sorting_desc span.sorting-indicator {
- display:block; 
-	margin-left:3px; 
+	display:block;
+	margin-left:3px;
 	background-position: -7px 0;
 }
-#table thead tr th span {cursor:pointer; float:left;}
-#table thead tr th span:hover {color:#D54E21;}
-#table_filter input {width:250px; background:#fff;}
+#table thead tr th span {
+	cursor:pointer;
+	float:left;
+}
+#table thead tr th span:hover {
+	color:#D54E21;
+}
+#table_filter input {
+	width:250px;
+	background:#fff;
+}
 .ColVis_MasterButton {
- -moz-border-radius: 11px 11px 11px 11px;
- -moz-box-sizing: content-box;
+	-moz-border-radius: 11px 11px 11px 11px;
+	-moz-box-sizing: content-box;
 	border-style: solid;
 	height:15px;
 	border-width: 1px;
@@ -1310,12 +1091,14 @@ th.sorting_desc span.sorting-indicator {
 	text-shadow: 0 1px 0 #FFFFFF;
 }
 .ColVis_MasterButton:hover {
- border-color:#666;
+	border-color:#666;
 	color:#000;
 }
 /* added new  - is this required ? */
-.ColVis { margin-bottom:10x; height:25px;}
-
+.ColVis {
+	margin-bottom:10x;
+	height:25px;
+}
 /* >Forms - admin general styles and screens
 ----------------------------------------------------------------------/*
 
@@ -1355,12 +1138,10 @@ form.espresso_form {
 form.espresso_form legend {
 	padding-left: 0;
 }
-textarea {resize: vertical;}
-form.espresso_form legend, 
-form.espresso_form label,
-#new-question-form label,
-#edit-new-question-form label,
-#add-edit-new-event-email label {
+textarea {
+	resize: vertical;
+}
+form.espresso_form legend, form.espresso_form label, #new-question-form label, #edit-new-question-form label, #add-edit-new-event-email label {
 	display:block;
 	font-size:11px;
 	font-weight:bold;
@@ -1381,7 +1162,7 @@ form.espresso_form input {
 }
 form.espresso_form input#payment_subject {
 	width: 250px;
-	}
+}
 form.espresso_form input[type=radio] {
 	width:auto;
 }
@@ -1396,11 +1177,11 @@ form.espresso_form fieldset fieldset {
 form.espresso_form fieldset li {
 	padding: 0;
 }
-label.error { 
-	float: none; 
-	color: red; 
-	padding-left: .5em; 
-	vertical-align: top; 
+label.error {
+	float: none;
+	color: red;
+	padding-left: .5em;
+	vertical-align: top;
 }
 #descriptiondivrich label {
 	display: block;
@@ -1415,7 +1196,7 @@ label.error {
 	background: #fbfbfb;
 	overflow: hidden;
 }
-#event-date-time  label  {
+#event-date-time label {
 	display: block;
 }
 #event-date-time input {
@@ -1424,7 +1205,9 @@ label.error {
 #event-date-time td.b label {
 	width: auto;
 }
-#dynamicTimeInput li input.xtra-time {width: auto;}
+#dynamicTimeInput li input.xtra-time {
+	width: auto;
+}
 #event-date-time input#add-time {
 	margin: 6px 0 20px;
 	width: auto;
@@ -1433,17 +1216,20 @@ label.error {
 	border: 1px solid #bebebe;
 	margin-top: 10px;
 }
-#dynamicTimeInput li + li p:first-child {margin-top: 0;}
+#dynamicTimeInput li + li p:first-child {
+	margin-top: 0;
+}
 #event-location label {
 	display: block;
 }
-#event-pricing ul li p {margin-top: 0;}
-
+#event-pricing ul li p {
+	margin-top: 0;
+}
 /*___ Questions & Q groups ___*/
 #add-edit-new-group table ul li input[type=checkbox] {
 	margin-right: 10px;
 }
-#add-edit-new-group  td.a input {
+#add-edit-new-group td.a input {
 	margin-top: 3px;
 }
 #add-edit-new-group textarea {
@@ -1470,46 +1256,183 @@ label.error {
 }
 /*___ Form Icons / Buttons ___*/
 
-.view_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/magnifier.png) no-repeat; text-indent: -9000px; outline: none; }
-.view_btn:hover  { margin: 4px 3px 0 0; height: 20px; }
-
-.edit_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/calendar_edit.png) no-repeat ; text-indent: -9000px; outline: none; }
+.view_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/magnifier.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.view_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.edit_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/calendar_edit.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
 /*.edit_btn:hover { background-position: -72px -18px; }*/
-.edit_btn:hover { margin: 4px 3px 0 0; height: 20px; }
-
-.resume_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/btn_sprite.png) no-repeat -126px 0; text-indent: -9000px; outline: none; }
-.resume_btn:hover { background-position: -126px -18px; }
-
-.complete_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/group.png) no-repeat; text-indent: -9000px; outline: none; }
+.edit_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.resume_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/btn_sprite.png) no-repeat -126px 0;
+	text-indent: -9000px;
+	outline: none;
+}
+.resume_btn:hover {
+	background-position: -126px -18px;
+}
+.complete_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/group.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
 /*.complete_btn:hover { background-position: -36px -18px; }*/
-.complete_btn:hover { margin: 4px 3px 0 0; height: 20px;}
-
-.delete_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/btn_sprite.png) no-repeat -54px 0; text-indent: -9000px; outline: none; }
-.delete_btn:hover { background-position: -54px -18px; height: 18px;}
-
-.options_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/cog.png) no-repeat; text-indent: -9000px; outline: none; }
-.options_btn:hover { margin: 4px 3px 0 0; height: 20px; }
-
-.excel_exp_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/excel_icon.png) no-repeat; text-indent: -9000px; outline: none; }
-.excel_exp_btn:hover { margin: 4px 3px 0 0; height: 20px; }
-
-.csv_exp_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/csv_icon_sm.gif) no-repeat; text-indent: -9000px; outline: none; }
-.csv_exp_btn:hover { margin: 4px 3px 0 0; height: 20px; }
-
-.newsletter_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/email_go.png) no-repeat; text-indent: -9000px; outline: none; }
-.newsletter_btn:hover { margin: 4px 3px 0 0; height: 20px; }
-
-.reports_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/chart_bar.png) no-repeat; text-indent: -9000px; outline: none; }
-
-.shortcode_btn { display: block; float: left; width: 18px; height: 18px; margin: 2px 3px 0 0; background: url(../images/icons/tag.png) no-repeat; text-indent: -9000px; outline: none; }
-.shortcode_btn:hover { margin: 4px 3px 0 0; height: 20px; }
+.complete_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.delete_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/btn_sprite.png) no-repeat -54px 0;
+	text-indent: -9000px;
+	outline: none;
+}
+.delete_btn:hover {
+	background-position: -54px -18px;
+	height: 18px;
+}
+.options_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/cog.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.options_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.excel_exp_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/excel_icon.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.excel_exp_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.csv_exp_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/csv_icon_sm.gif) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.csv_exp_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.newsletter_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/email_go.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.newsletter_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
+.reports_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/chart_bar.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.shortcode_btn {
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	margin: 2px 3px 0 0;
+	background: url(../images/icons/tag.png) no-repeat;
+	text-indent: -9000px;
+	outline: none;
+}
+.shortcode_btn:hover {
+	margin: 4px 3px 0 0;
+	height: 20px;
+}
 /*fixing this -  what does this mean?*/
-.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .shortcode_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {height: 18px; margin: 2px 3px 0 0;}
-
-div#button .optionsparent { position: relative; float: left; }
-div#button .showoptions { position: absolute; top: 18px; display: none; float: left; background: #fff; border: 1px solid #ccc; padding: 4px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px; z-index: 200; white-space: nowrap; }
-div#button .optionsparent a { text-decoration: none; }
-
+.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .shortcode_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {
+	height: 18px;
+	margin: 2px 3px 0 0;
+}
+div#button .optionsparent {
+	position: relative;
+	float: left;
+}
+div#button .showoptions {
+	position: absolute;
+	top: 18px;
+	display: none;
+	float: left;
+	background: #fff;
+	border: 1px solid #ccc;
+	padding: 4px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	z-index: 200;
+	white-space: nowrap;
+}
+div#button .optionsparent a {
+	text-decoration: none;
+}
 /* >Messages / help text / info links / Alert boxes
 ----------------------------------------------------------------------*/
 div.box-right-body ul.infolinks {
@@ -1526,7 +1449,6 @@ div.box-right-body ul.infolinks li {
 div.box-right-body ul.infolinks li a {
 	text-decoration:none;
 }
-
 /* alert boxes jQuery script is currently not being loaded 
    thus rulesets are commented out for the moment */
 
@@ -1588,11 +1510,11 @@ div.box-right-body ul.infolinks li a {
 	font-size: 11px;
 	font-style: normal;
 	margin: 5px 0 15px;
-	}
+}
 .important {
 	color: #ff0000;
 	font-style: normal;
-	}
+}
 .inform {
 	background: #497EB2;
 	border: 1px solid #bebebe;
@@ -1605,17 +1527,15 @@ div.box-right-body ul.infolinks li a {
 	clear: both;
 	display: table;
 	font-size: 11px;
-	margin-top 0;
+ margin-top 0;
 	padding: 0 4px;
 }
-
 /* >Classes - general site wide
 ----------------------------------------------------------------------*/
 
-.run-in,
-.highlight {
+.run-in, .highlight {
 	font-weight: bold;
-	}
+}
 /*** Font colors - classes need renaming for what they are not style ***/
 .red_text {
 	color:#F00;
@@ -1651,7 +1571,6 @@ a.ev_reg-fancylink {
 	text-decoration: underline;
 	vertical-align: middle;
 }
-
 /*** Payment Status Classes ***/
 .payment_completed {
 	background-color: #77DD77 !important;
@@ -1663,7 +1582,6 @@ a.ev_reg-fancylink {
 	background: #D36D6D !important;
 	color: #333 !important;
 }
-
 .green_alert {
 	background-color: #A4E7A6;
 	border: #060 1px solid;
@@ -1687,8 +1605,7 @@ a.ev_reg-fancylink {
 	cursor: pointer;
 }
 /*** clearfix clearing rules ***/	
-.clearfix:before,
-.clearfix:after {
+.clearfix:before, .clearfix:after {
 	content:"";
 	display:table;
 }
@@ -1698,9 +1615,37 @@ a.ev_reg-fancylink {
 /* For IE 6/7 (trigger hasLayout) */
 .clearfix {
 	zoom:1;
-}	
+}
 /* >JS 3rd party scripts styles
 ----------------------------------------------------------------------*/
+
+/*___ JQuery jPlot ___*/
+
+/*
+ * jqPlot
+ * Pure JavaScript plotting plugin using jQuery
+ *
+ * Version: @VERSION
+ *
+ * Copyright (c) 2009-2011 Chris Leonello
+ * jqPlot is currently available for use in all personal or commercial projects 
+ * under both the MIT (http://www.opensource.org/licenses/mit-license.php) and GPL 
+ * version 2.0 (http://www.gnu.org/licenses/gpl-2.0.html) licenses. This means that you can 
+ * choose the license that best suits your project and use it accordingly. 
+ */
+ 
+.jqplot-target {
+	margin-bottom: 2em;
+}
+pre {
+	background: #D8F4DC;
+	border: 1px solid rgb(200, 200, 200);
+	padding-top: 1em;
+	padding-left: 3em;
+	padding-bottom: 1em;
+	margin-top: 1em;
+	margin-bottom: 4em;
+}
 
 /*___ JQuery DatePick ___*/
 
@@ -1915,7 +1860,6 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 	right:22px;
 	background:url(images/monthForward_over.gif) left top no-repeat;
 }
-
 .JsDatePickBox .boxMainInner .monthForwardButtonDown {
 	overflow:hidden;
 	cursor:pointer;
@@ -2133,8 +2077,6 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 	line-height:25px;
 	background:url(images/ocean_blue_dayDown.gif) left top no-repeat;
 }
-
-
 /*___ Fancybox popup help messages ___*/
 
 
@@ -2220,8 +2162,8 @@ div#fancy_content {
 div#fancy_div {
 	background: #E6E1CD;
 	-moz-box-shadow: inset 0 0 9px #bebebe;
- -webkit-box-shadow: inset 0 0 9px #bebebe;
-	box-shadow: inset 0 0 9px  #bebebe;	
+	-webkit-box-shadow: inset 0 0 9px #bebebe;
+	box-shadow: inset 0 0 9px #bebebe;
 	color: #333;
 	height: 91%;
 	width: 95%;
@@ -2342,7 +2284,7 @@ a#fancy_right:hover span {
 }
 div#fancy_bg {
 	-moz-box-shadow: 0 0 7px 1px #bebebe;
- -webkit-box-shadow: 0 0 7px 1px #bebebe;
+	-webkit-box-shadow: 0 0 7px 1px #bebebe;
 	box-shadow: 0 0 7px 1px #bebebe;
 	position: absolute;
 	top: 0;
@@ -2461,4 +2403,4 @@ td#fancy_title_right {
 	height: 32px;
 	width: 15px;
 	background: transparent url('scripts/fancybox/fancy_title_right.png') repeat-x;
-}	
+}
