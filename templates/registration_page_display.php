@@ -113,6 +113,7 @@
 		}//End time selected
 		?>
       </p>
+      <p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text ?></p>
       <?php 
 	  //Coupons
 		if (function_exists('event_espresso_coupon_registration_page')) {
@@ -123,7 +124,7 @@
 			echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
 		}//End groupons display
 	  ?>
-      <p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text ?></p>
+      
       <fieldset id="event-reg-form-groups">
         <h2 class="section-heading">
           <?php _e('Attendees Registration Details', 'event_espresso'); ?>
