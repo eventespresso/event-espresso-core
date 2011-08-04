@@ -6,6 +6,12 @@ function isEmptyArray($array) {
     return (count(array_filter($array, $my_not_empty)) == 0) ? 1 : 0;
 }
 
+//Text formatting function.
+//This should fix all of the formatting issues of text output from the database.
+function espresso_format_content($content=''){
+	return wpautop(utf8_encode(html_entity_decode(stripslashes_deep(do_shortcode($content)))));
+}
+
 //This function pulls HTML entities back into HTML format first then strips it.
 //Use it if you want to strip the HTML from the event_desc column in the daatabase.
 //I have to store HTML as special chars in the database, because the html was breaking the sql queries.
