@@ -563,6 +563,9 @@ if (!function_exists('espresso_staff_sc')) {
 		
 		//Image class
 		$image_class = $image_class != '' ? 'class="'.$image_class.'"' : 'class="staff_image"';
+		$image_wrapper_class = $image_wrapper_class != '' ? 'class="'.$image_wrapper_class.'"' : 'class="image_wrapper"';
+		$image_wrapper_start  = $image_wrapper != '' ? '<'.$image_wrapper.' '.$image_wrapper_class: '<p '.$image_wrapper_class;
+		$image_wrapper_end = $image_wrapper !='' ? '</'.$image_wrapper.'>' : '</p>';
 		
 		//Inside wrappers
 		$inside_wrapper_class = $inside_wrapper_class != '' ? 'class="'.$inside_wrapper_class.'"' : 'class="event_person"';
@@ -626,7 +629,7 @@ if (!function_exists('espresso_staff_sc')) {
 				
 				//Build the image
 				if ($show_image != false){
-					$html .= $meta['image'] != ''? '<image id="staff_image_'.$person_id.'" '.$image_class.' src="'.stripslashes_deep($meta['image']).'" />':'';
+					$html .= $meta['image'] != ''? $image_wrapper_start.'<image id="staff_image_'.$person_id.'" '.$image_class.' src="'.stripslashes_deep($meta['image']).'" />'.$image_wrapper_end:'';
 				}
 				
 				//Build the description
@@ -699,6 +702,9 @@ if (!function_exists('espresso_venue_details_sc')) {
 		
 		//Image class
 		$image_class = $image_class != '' ? 'class="'.$image_class.'"' : 'class="venue_image"';
+		$image_wrapper_class = $image_wrapper_class != '' ? 'class="'.$image_wrapper_class.'"' : 'class="image_wrapper"';
+		$image_wrapper_start  = $image_wrapper != '' ? '<'.$image_wrapper.' '.$image_wrapper_class: '<p '.$image_wrapper_class;
+		$image_wrapper_end = $image_wrapper !='' ? '</'.$image_wrapper.'>' : '</p>';
 		
 		//Venue title
 		$title_class = $title_class != '' ? 'class="'.$title_class.'"' : 'class="venue_name"';
@@ -770,12 +776,12 @@ if (!function_exists('espresso_venue_details_sc')) {
 					
 					//Build the venue image
 					if ($show_image != false){
-						$html .= $meta['image'] != ''? '<image id="venue_image_'.$venue_id.'" '.$image_class.' src="'.stripslashes_deep($meta['image']).'" />':'';
+						$html .= $meta['image'] != ''? $image_wrapper_start.'<image id="venue_image_'.$venue_id.'" '.$image_class.' src="'.stripslashes_deep($meta['image']).'" />'.$image_wrapper_end:'';
 					}
 					
 					//Build the description
 					if ($show_description != false){
-						$html .= $meta['description'] != ''? html_entity_decode(stripslashes_deep($meta['description'])):'';
+						$html .= $meta['description'] != ''? $meta['description']:'';
 					}
 					
 					//Build the address details
@@ -804,7 +810,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 				}
 			}
 			ob_start();
-			echo $wrapper_start .' id="venue_id_'.$venue_id.'">' . wpautop($html) . $wrapper_end;
+			echo $wrapper_start .' id="venue_id_'.$venue_id.'">' . $html . $wrapper_end;
 			$buffer = ob_get_contents();
 			ob_end_clean();
 			return $buffer;
