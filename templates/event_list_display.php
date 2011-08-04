@@ -67,7 +67,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 <?php
 //Show short descriptions
 if ($event_desc != '' && isset($org_options['display_short_description_in_event_list']) && $org_options['display_short_description_in_event_list'] == 'Y') {?>
-	<p><?php echo stripslashes_deep(wpautop($event_desc)); ?></p>
+	<p><?php echo espresso_format_content($event_desc); ?></p>
 <?php 
 } 
 ?>
