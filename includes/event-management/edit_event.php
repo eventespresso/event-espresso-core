@@ -126,15 +126,13 @@ function edit_event($event_id = 0) {
 								<div id="minor-publishing">
 									<div id="minor-publishing-actions" class="clearfix">
 										<div id="preview-action">
-											<a class="preview button" href="<?php echo home_url() ?>/?page_id=<?php echo $org_options['event_page_id'] ?>&regevent_action=register&event_id=<?php echo $event_id ?>&name_of_event=<?php echo $event_name ?>"
-												target="event-preview" id="event-preview" tabindex="5">
+											<a class="preview button" href="<?php echo home_url() ?>/?page_id=<?php echo $org_options['event_page_id'] ?>&regevent_action=register&event_id=<?php echo $event_id ?>&name_of_event=<?php echo $event_name ?>" target="_blank" id="event-preview" tabindex="5">
 												<?php _e('View Event', 'event_espresso'); ?>
 											</a>
 											<input type="hidden" name="event-preview" id="event-preview" value="" />
 										</div>
 										<div id="copy-action">
-											<a class="preview button" href="admin.php?page=events&amp;action=copy_event&event_id=<?php echo $event_id ?>"
-												target="event-copy" id="post-copy" tabindex="4" onclick="return confirm('<?php _e('Are you sure you want to copy ' . $event_name . '?', 'event_espresso'); ?>')">
+											<a class="preview button" href="admin.php?page=events&amp;action=copy_event&event_id=<?php echo $event_id ?>" id="post-copy" tabindex="4" onclick="return confirm('<?php _e('Are you sure you want to copy ' . $event_name . '?', 'event_espresso'); ?>')">
 												<?php _e('Duplicate Event', 'event_espresso'); ?>
 											</a>
 											<input  type="hidden" name="event-copy" id="event-copy" value="" />
