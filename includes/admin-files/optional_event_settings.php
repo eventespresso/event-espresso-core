@@ -77,6 +77,11 @@ $values=array(
             <?php _e('Display adresses in the event listings?','event_espresso'); ?>
           </label>
           <?php echo select_input('display_address_in_event_list', $values, isset($org_options['display_address_in_event_list']) ? $org_options['display_address_in_event_list'] : ''); ?> </li>
+           <li>
+          <label for="display_address_in_regform">
+            <?php _e('Display the adress in the registration form? Disable the address if you are using the venue manager shortcodes in your event description.','event_espresso'); ?>
+          </label>
+          <?php echo select_input('display_address_in_regform', $values, isset($org_options['display_address_in_regform']) ? $org_options['display_address_in_regform'] : ''); ?> </li>
         <li>
           <label for="use_custom_post_types">
             <?php _e('Use the custom post types feature?','event_espresso'); ?>
