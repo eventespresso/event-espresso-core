@@ -86,15 +86,7 @@ if (!function_exists('register_attendees')) {
                 $event_state = $event->state;
                 $event_zip = $event->zip;
                 $event_country = $event->country;
-				//Venue information
-                if ($org_options['use_venue_manager'] == 'Y') {
-                    $event_address = $event->venue_address;
-					$event_address2 = $event->venue_address2;
-                    $event_city = $event->venue_city;
-                    $event_state = $event->venue_state;
-                    $event_zip = $event->venue_zip;
-                    $event_country = $event->venue_country;
-                }
+				
 
                 $event_description = stripslashes_deep($event->event_desc);
                 $event_identifier = $event->event_identifier;
@@ -112,6 +104,25 @@ if (!function_exists('register_attendees')) {
                 $venue_url = $event->venue_url;
                 $venue_image = $event->venue_image;
                 $venue_phone = $event->venue_phone;
+				
+				//Venue information
+                if ($org_options['use_venue_manager'] == 'Y') {
+                    $event_address = $event->venue_address;
+					$event_address2 = $event->venue_address2;
+                    $event_city = $event->venue_city;
+                    $event_state = $event->venue_state;
+                    $event_zip = $event->venue_zip;
+                    $event_country = $event->venue_country;
+					
+					//Leaving these variables intact, just in case people wnat to use them
+					$venue_title = $event->venue_name;
+					$venue_address = $event->venue_address;
+					$venue_city = $event->venue_city;
+					$venue_state = $event->venue_state;
+					$venue_zip = $event->venue_zip;
+					$venue_country = $event->venue_country;
+					$venue_meta = $event->venue_meta;
+                }
 
                 $virtual_url = stripslashes_deep($event->virtual_url);
                 $virtual_phone = stripslashes_deep($event->virtual_phone);
