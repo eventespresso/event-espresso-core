@@ -1,10 +1,6 @@
 <?php
 function add_new_event_email(){
-	wp_tiny_mce( false , // true makes the editor "teeny"
-		array(
-			"editor_selector" => "theEditor"//This is the class name of your text field
-		)
-	);
+	
 	?>
 <!--Add event display-->
 <div class="metabox-holder">
@@ -21,12 +17,11 @@ function add_new_event_email(){
 
 			<div id="descriptiondivrich" class="postarea">   
 		 		<label for="email_text"><?php _e('Email Text','event_espresso'); ?></label>
-				<div class="visual-toggle">
-					<p><a class="toggleVisual"><?php _e('Visual', 'event_espresso'); ?></a> <a class="toggleHTML"><?php _e('HTML', 'event_espresso'); ?></a></p>
-				</div>			
+				
+                
 				<div class="postbox">
 				
-					<textarea class="theEditor std-textarea" id="email_text_new" name="email_text"></textarea>
+					<?php the_editor('', $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
 				
 						<table id="manage-event-email-form" cellspacing="0">
 							<tbody>
@@ -55,4 +50,6 @@ function add_new_event_email(){
  </div>
 </div>
 </div>
-<?php } 
+<?php 
+espresso_tiny_mce();
+} 

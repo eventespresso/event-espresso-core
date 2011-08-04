@@ -1,16 +1,7 @@
 <?php
 function edit_event_category(){
 	global $wpdb;
-	wp_tiny_mce( false , // true makes the editor "teeny"
-		array(
-			"editor_selector" => "theEditor"//This is the class name of your text field
-		)
-	);
-
-        if (  function_exists( 'wp_tiny_mce_preload_dialogs' )){
-             add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
-        }
-
+	
 	$id=$_REQUEST['id'];
 	$results = $wpdb->get_results("SELECT * FROM ". get_option('events_category_detail_tbl') ." WHERE id =".$id);
 	foreach ($results as $result){
@@ -52,14 +43,11 @@ function edit_event_category(){
 						
 						<p class="section-heading"><?php _e('Category Description:','event_espresso'); ?></p>
 						
-						<div class="visual-toggle">
-							<p><a class="toggleVisual"><?php _e('Visual', 'event_espresso'); ?></a> <a class="toggleHTML"><?php _e('HTML', 'event_espresso'); ?></a></p>
-						</div>												
+														
 						
 						<div class="postbox">
-   					<textarea class="theEditor std-textarea" id="category_desc_edit" name="category_desc"><?php echo wpautop(html_entity_decode(stripslashes_deep($category_desc))); ?></textarea>
  
-							
+							<?php the_editor(wpautop(utf8_encode(html_entity_decode(stripslashes_deep($category_desc)))), $id = 'category_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
 							<table id="cat-descr-add-form" cellspacing="0">
 								<tbody>
 									<tr>
@@ -83,4 +71,6 @@ function edit_event_category(){
 </div><!-- /.metabox-holder -->
 
 
-<?php }
+<?php 
+espresso_tiny_mce();
+}

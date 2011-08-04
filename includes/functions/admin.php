@@ -12,7 +12,7 @@ function event_espresso_config_page_styles() {
         switch ($_REQUEST['page']) {
             case ( 'events' ):
             case ( 'espresso_reports' ):
-            case ( 'event_categories' ):
+           // case ( 'event_categories' ):
                 wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-lightness/jquery-ui-1.7.3.custom.css');
                 break;
         }
@@ -45,12 +45,12 @@ function event_espresso_config_page_scripts() {
                 }
                 wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
 
-                break;
+               // break;
             case ( 'events' ):
             case ( 'espresso_reports' ):
-            case ( 'event_venues' ):
-            case ( 'event_staff' ):
-            case ( 'event_categories' ):
+            //case ( 'event_venues' ):
+            //case ( 'event_staff' ):
+            //case ( 'event_categories' ):
                 wp_enqueue_script('postbox');
                 wp_enqueue_script('dashboard');
                 wp_enqueue_script('thickbox');
@@ -92,6 +92,33 @@ function event_espresso_config_page_scripts() {
     wp_enqueue_script('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js'); //Events core script
     //wp_enqueue_script( 'alert_box',  EVENT_ESPRESSO_PLUGINFULLURL.'scripts/jquery.alerts.js' );//Alert box script
     //wp_enqueue_script('media-upload');
+}
+
+//Function to load the tinymce scripts
+function espresso_load_tiny_mce() {
+	wp_tiny_mce( false, array("editor_selector" => "theEditor") ); // true gives you a stripped down version of the editor
+}
+
+function espresso_tiny_mce(){
+	//This loads the the tinymce script into the header
+	global $wp_version;
+	$wp_min_version = '3.2';
+	//If the version of WordPress is lower than 3.2, then we load the fallback script.
+	if ( !version_compare( $wp_version, $wp_min_version, '>=' ) ) {
+		//echo 'true';
+		// true gives you a stripped down version of the editor
+		wp_tiny_mce( false, array("editor_selector" => "theEditor") );									
+	
+		//If this is an older version of WordPress, then we need to load this.
+		if (function_exists('wp_tiny_mce_preload_dialogs')) {
+			add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
+		}
+	}else{
+		add_action("admin_head","espresso_load_tiny_mce");
+		
+		//This is used for older versions of WordPress and is not needed when using the_editor() function.
+		//wp_preload_dialogs( array( 'plugins' => 'wpdialogs,wplink,wpfullscreen' ) );
+	}
 }
 
 //function to delete event

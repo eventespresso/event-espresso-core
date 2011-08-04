@@ -706,23 +706,7 @@ function edit_event($event_id = 0) {
     <input type="hidden" name="recurrence_id" value="<?php echo $recurrence_id; ?>">
     <input type="hidden" name="action" value="edit">
     <input type="hidden" name="event_id" value="<?php echo $event_id ?>">
-<?php
-  wp_tiny_mce(false, 
-		
-		array(
-			"editor_selector" => "theEditor"
-			)
-	);
-	/*if (function_exists('wp_tiny_mce_preload_dialogs')) {
-        add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
-    }
-	*/
-	if (function_exists('wp_tiny_mce_preload_dialogs')) {
-            add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
-        }else {
-          wp_preload_dialogs( array( 'plugins' => 'wpdialogs,wplink,wpfullscreen' ) );
-        }  
-?>
+
     <script type="text/javascript" charset="utf-8">
  		//<![CDATA[
 				jQuery(document).ready(function() {
@@ -740,4 +724,5 @@ function edit_event($event_id = 0) {
     //]]>
 			</script>
     <?php
+	espresso_tiny_mce();
 }

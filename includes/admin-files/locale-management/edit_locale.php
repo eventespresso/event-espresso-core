@@ -1,16 +1,6 @@
 <?php
 function edit_event_locale(){
 	global $wpdb;
-	wp_tiny_mce( false , // true makes the editor "teeny"
-		array(
-			"editor_selector" => "theEditor"//This is the class name of your text field
-		)
-	);
-
-        if (  function_exists( 'wp_tiny_mce_preload_dialogs' )){
-             add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
-        }
-
 	$id=$_REQUEST['id'];
 	$results = $wpdb->get_results("SELECT * FROM ". EVENTS_LOCALE_TABLE ." WHERE id =".$id);
 	foreach ($results as $result){

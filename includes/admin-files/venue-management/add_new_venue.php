@@ -1,18 +1,7 @@
 <?php
 function add_new_event_venue(){
 	global $wpdb,$current_user;
-	wp_tiny_mce( false , // true makes the editor "teeny"
-		array(
-			"editor_selector" => "theEditor"//This is the class name of your text field
-		)
-	);
-
-        if (  function_exists( 'wp_tiny_mce_preload_dialogs' )){
-             add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
-        }
-	?>
-<!--Add event display-->
-
+?>
 <div id="add-edit-venue" class="metabox-holder">
   <div class="postbox">
     <h3>
@@ -146,14 +135,11 @@ function add_new_event_venue(){
 						<label for="description" class="section-heading">
 							<?php _e('Venue Description','event_espresso'); ?>
 						</label>
-					
-						<div class="visual-toggle">
-							<p><a class="toggleVisual"><?php _e('Visual', 'event_espresso'); ?></a> <a class="toggleHTML"><?php _e('HTML', 'event_espresso'); ?></a></p>
-						</div>												
+													
 												
 						<div class="postbox">		            
 
-  					<textarea class="theEditor std-textarea" id="description" name="description"></textarea>
+  					<?php the_editor('', $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
   					<table id="venue-descr-add-form"  cellspacing="0">
   						<tbody>
   							<tr>
@@ -176,4 +162,6 @@ function add_new_event_venue(){
   </div><!-- /.postbox -->
 </div><!-- /.metabox-holder -->
 
-<?php } 
+<?php 
+espresso_tiny_mce();
+} 

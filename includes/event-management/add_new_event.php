@@ -1,11 +1,6 @@
 <?php
-
 function add_new_event() {
 	global $wpdb, $org_options, $espresso_premium;
-	
-    if (function_exists('wp_tiny_mce_preload_dialogs')) {
-        add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
-        }
 ?>
 <!--New event display-->
 
@@ -530,14 +525,6 @@ function add_new_event() {
 <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
 <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
 
-<?php
-  wp_tiny_mce(false, 
-		
-		array(
-			"editor_selector" => "theEditor"
-			)
-		);
-?>
 <script type="text/javascript" charset="utf-8">
 	//<![CDATA[
  jQuery(document).ready(function() {
@@ -559,4 +546,5 @@ function add_new_event() {
 	//]]>
 </script>
 <?php
+espresso_tiny_mce();
 }

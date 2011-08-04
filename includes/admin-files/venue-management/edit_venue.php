@@ -1,15 +1,7 @@
 <?php
 function edit_event_venue(){
 	global $wpdb;
-	wp_tiny_mce( false , // true makes the editor "teeny"
-		array(
-			"editor_selector" => "theEditor"//This is the class name of your text field
-		)
-	);
-
-        if (  function_exists( 'wp_tiny_mce_preload_dialogs' )){
-             add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
-        }
+	
 
 	$id=$_REQUEST['id'];
 	$sql = "SELECT * FROM ". EVENTS_VENUE_TABLE ." v WHERE v.id ='" . $id . "' ";
@@ -154,13 +146,8 @@ function edit_event_venue(){
 						 <label for="description" class="section-heading">
              <?php _e('Description','event_espresso'); ?>
            </label>
-						
-						<div class="visual-toggle">
-							<p><a class="toggleVisual"><?php _e('Visual', 'event_espresso'); ?></a> <a class="toggleHTML"><?php _e('HTML', 'event_espresso'); ?></a></p>
-						</div>												
-												
-						<div class="postbox">           
-            <textarea class="theEditor std-textarea" id="description" name="description"><?php echo wpautop(html_entity_decode(stripslashes_deep($meta['description']))); ?></textarea>
+           <div class="postbox">
+            <?php the_editor(wpautop(utf8_encode(html_entity_decode(stripslashes_deep($meta['description'])))), $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
   					<table id="venue-descr-add-form"  cellspacing="0">
   						<tbody>
   							<tr>
@@ -173,7 +160,7 @@ function edit_event_venue(){
   							</tr>
   						</tbody>
   					</table>
-						</div><!-- /.postbox -->        
+                    </div><!-- /.postbox -->
           <p>
             <input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Venue'); ?>" id="update_venue" />
           </p>
@@ -182,4 +169,7 @@ function edit_event_venue(){
     </div><!-- /.inside -->
   </div><!-- /.postbox -->
 </div><!-- /.metabox-holder -->
-<?php }
+
+<?php 
+espresso_tiny_mce();
+}

@@ -1,17 +1,6 @@
 <?php
 function add_new_event_staff(){
-	wp_tiny_mce( false , // true makes the editor "teeny"
-		array(
-			"editor_selector" => "theEditor"//This is the class name of your text field
-		)
-	);
-
-        if (  function_exists( 'wp_tiny_mce_preload_dialogs' )){
-             add_action( 'admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30 );
-        }
-	?>
-<!--Add event display-->
-
+?>
 <div id="add-edit-staff" class="metabox-holder">
   <div class="postbox">
     <h3>
@@ -107,16 +96,13 @@ function add_new_event_staff(){
 						
 						<div id="descriptiondivrich" class="postarea">	       
           
-						<label for="description">
+						<label for="description" class="section-heading">
             <?php _e('Description','event_espresso'); ?>
           </label>
- 					
-						<div class="visual-toggle">
-							<p><a class="toggleVisual"><?php _e('Visual', 'event_espresso'); ?></a> <a class="toggleHTML"><?php _e('HTML', 'event_espresso'); ?></a></p>
-						</div>												
+ 															
 												
-						<div class="postbox">        
-         		<textarea class="theEditor std-textarea" id="description" name="description"></textarea>
+						<div class="postbox">
+            <?php the_editor('', $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
    					<table id="staff-descr-add-form"  cellspacing="0">
   						<tbody>
   							<tr>
@@ -139,30 +125,6 @@ function add_new_event_staff(){
     </div>
   </div>
 </div>
-<script type="text/javascript" charset="utf-8">
-
-function toggleEditor(id) {
-	if (!tinyMCE.get(id))
-		tinyMCE.execCommand('mceAddControl', false, id);
-	else
-		tinyMCE.execCommand('mceRemoveControl', false, id);
-	}
-	jQuery(document).ready(function($) {
-		
-                
-
-		var id = 'staff_desc_new';
-		$('a.toggleVisual').click(
-			function() {
-				tinyMCE.execCommand('mceAddControl', false, id);
-			}
-		);
-
-		$('a.toggleHTML').click(
-			function() {
-				tinyMCE.execCommand('mceRemoveControl', false, id);
-			}
-		);
-});
-</script>
-<?php } 
+<?php 
+espresso_tiny_mce();
+} 

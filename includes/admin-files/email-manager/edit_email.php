@@ -1,11 +1,7 @@
 <?php
 function edit_event_email(){
 	global $wpdb;
-	wp_tiny_mce( false , // true makes the editor "teeny"
-		array(
-			"editor_selector" => "theEditor"//This is the class name of your text field
-		)
-	);
+	
 	$id=$_REQUEST['id'];
 	$results = $wpdb->get_results("SELECT * FROM ". EVENTS_EMAIL_TABLE ." WHERE id =".$id);
 	foreach ($results as $result){
@@ -26,12 +22,12 @@ function edit_event_email(){
    <ul>
     <li>
 				<label><?php _e('Email Name:','event_espresso'); ?></label> 
-				<input name="email_name" size="25" value="<?php echo stripslashes($email_name);?>" />
+				<input type="text" name="email_name" size="25" value="<?php echo stripslashes($email_name);?>" />
 			</li> 
 			
 			<li>
 				<label><?php _e('Email Subject Line:','event_espresso'); ?></label> 
-				<input name="email_subject" size="25" value="<?php echo stripslashes($email_subject);?>">
+				<input type="text" name="email_subject" size="25" value="<?php echo stripslashes($email_subject);?>">
 			</li>
    	
 			<li>
@@ -39,13 +35,9 @@ function edit_event_email(){
 				<div id="descriptiondivrich" class="postarea">   
 		 		
 				<label for="email_text"><?php _e('Email Text','event_espresso'); ?></label>
-				
-				<div class="visual-toggle">
-					<p><a class="toggleVisual"><?php _e('Visual', 'event_espresso'); ?></a> <a class="toggleHTML"><?php _e('HTML', 'event_espresso'); ?></a></p>
-				</div>			
-				<div class="postbox">   
-		 		<textarea class="theEditor std-textarea" id="email_text_new" name="email_text"><?php echo wpautop($email_text); ?></textarea>
 					
+				<div class="postbox">   
+					<?php the_editor(wpautop(utf8_encode(html_entity_decode(stripslashes_deep($email_text)))), $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
 				<table id="manage-event-email-form" cellspacing="0">
 					<tbody>
 						<tr>
@@ -74,5 +66,5 @@ function edit_event_email(){
 </div>
 </div>
 <?php 
-
+espresso_tiny_mce();
 }
