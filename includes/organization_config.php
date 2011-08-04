@@ -1,11 +1,6 @@
 <?php
 //Event Registration Subpage 1 - Configure Organization
 function organization_config_mnu()	{
-	wp_tiny_mce( false , // true makes the editor "teeny"
-		array(
-			"editor_selector" => "theEditor"//This is the class name of your text field
-		)
-	);
 	global $wpdb, $org_options;
 	//print_r($timezoneTable);
 
@@ -31,8 +26,8 @@ function organization_config_mnu()	{
 		$org_options['events_in_dasboard'] = $_POST['events_in_dasboard'];
 		$org_options['default_mail'] = $_POST['default_mail'];
 		$org_options['payment_subject'] = $_POST['payment_subject'];
-		$org_options['payment_message'] = $_POST['payment_message'];
-		$org_options['message'] = $_POST['success_message'];
+		$org_options['payment_message'] = esc_html($_POST['payment_message']);
+		$org_options['message'] = esc_html($_POST['success_message']);
 		$org_options['email_before_payment'] = $_POST['email_before_payment'];
 		$org_options['use_captcha'] = $_POST['use_captcha'];
 		$org_options['recaptcha_publickey'] = $_POST['recaptcha_publickey'];
@@ -402,7 +397,7 @@ $values=array(
 											</div>
 											
 											<div id="payment-conf-email" class="postbox">
-                      <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo wpautop(stripslashes_deep($org_options['payment_message']));?></textarea>
+                      <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo wpautop(utf8_encode(html_entity_decode(stripslashes_deep($org_options['payment_message']))));?></textarea>
                       <table id="payment-confirmation-form" cellspacing="0">
                         <tbody>
                           <tr>
@@ -424,7 +419,8 @@ $values=array(
 											</div>											
                     
 											<div id="reg-conf-email" class="postbox">
-                      <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo wpautop(stripslashes_deep($org_options['message']));?></textarea>
+                                            
+                      <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo wpautop(utf8_encode(html_entity_decode(stripslashes_deep($org_options['message']))));?></textarea>
                       <table id="email-confirmation-form" cellspacing="0">
                         <tbody>
                           <tr>
@@ -539,5 +535,5 @@ $values=array(
 
 <?php
 echo event_espresso_custom_email_info();
+espresso_tiny_mce();
 }
-?>
