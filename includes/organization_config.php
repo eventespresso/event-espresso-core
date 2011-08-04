@@ -43,6 +43,7 @@ function organization_config_mnu()	{
 		$org_options['display_description_on_multi_reg_page'] = $_POST['display_description_on_multi_reg_page'];
 		$org_options['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
 		$org_options['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
+		$org_options['display_address_in_regform'] = $_POST['display_address_in_regform'];
 		$org_options['event_ssl_active'] = $_POST['event_ssl_active'];
 		$org_options['enable_default_style'] = $_POST['enable_default_style'];
 		$org_options['show_pending_payment_options'] = $_POST['show_pending_payment_options'];
