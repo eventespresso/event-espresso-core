@@ -212,6 +212,22 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
         }
 
         $attendee_id = $wpdb->insert_id;
+		
+		//Add a record for the primary attendee
+		$sql = array('attendee_id' => $attendee_id,'meta_key' => 'primary_attendee','meta_value' => 1 );
+		$sql_data = array('%s','%s','%s');
+		 //Debugging output
+         /*echo 'Debug: <br />';
+          print_r($sql);
+          echo '<br />';
+          print 'Number of vars: ' . count ($sql);
+          echo '<br />';
+          print 'Number of cols: ' . count($sql_data); */
+		if (!$wpdb->insert(EVENTS_ATTENDEE_META_TABLE, $sql, $sql_data)) {
+            $error = true;
+        }
+		
+		
 	//Added by Imon	
 		/**
 		 * Adding attenddee specific cost to events_attendee cost table
