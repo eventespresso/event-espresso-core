@@ -3,13 +3,13 @@ function event_espresso_invoice_payment_settings(){
 	global $espresso_premium; if ($espresso_premium != true) return;
 	if (isset($_POST['update_invoice_payment_settings'])) {
 		//$invoice_payment_settings_settings = get_option('event_espresso_invoice_payment_settings_settings');
-			$invoice_payment_settings['invoice_title'] = $_POST['invoice_title'];
-			$invoice_payment_settings['pdf_title'] = $_POST['pdf_title'];
-			$invoice_payment_settings['pdf_instructions'] = $_POST['pdf_instructions'];
-			$invoice_payment_settings['invoice_instructions'] = $_POST['invoice_instructions'];
-			$invoice_payment_settings['payable_to'] = $_POST['payable_to'];
-			$invoice_payment_settings['payment_address'] = $_POST['payment_address'];
-			$invoice_payment_settings['image_url'] = $_POST['image_url'];
+			$invoice_payment_settings['invoice_title'] = strip_tags($_POST['invoice_title']);
+			$invoice_payment_settings['pdf_title'] = strip_tags($_POST['pdf_title']);
+			$invoice_payment_settings['pdf_instructions'] = strip_tags($_POST['pdf_instructions']);
+			$invoice_payment_settings['invoice_instructions'] = strip_tags($_POST['invoice_instructions']);
+			$invoice_payment_settings['payable_to'] = strip_tags($_POST['payable_to']);
+			$invoice_payment_settings['payment_address'] = strip_tags($_POST['payment_address']);
+			$invoice_payment_settings['image_url'] = strip_tags($_POST['image_url']);
 		update_option('event_espresso_invoice_payment_settings', $invoice_payment_settings);
 		echo '<div id="message" class="updated fade"><p><strong>'.__('Invoice Payment settings saved.','event_espresso').'</strong></p></div>';
 	}
@@ -130,7 +130,7 @@ if (empty($invoice_payment_settings['payment_address']) || trim($invoice_payment
               <?php _e('Logo URL (logo for the top left of the invoice):','event_espresso'); ?>
             </label>
             <br />
-            <input type="text" name="image_url" size="45" value="<?php echo empty($invoice_payment_settings['image_url']) ? '' : $invoice_payment_settings['image_url'];?>" />
+            <input type="text" name="image_url" size="45" value="<?php echo stripslashes_deep(empty($invoice_payment_settings['image_url']) ? '' : $invoice_payment_settings['image_url']);?>" />
           </li>
           <li>
             <label for="pdf_instructions">
