@@ -10,7 +10,7 @@ if(isset($invoice_payment_settings['invoice_title'])) {
 <p><a href="<?php echo home_url(); ?>/?invoice_type=<?php echo empty($invoice_type) ? '' : $invoice_type; ?>&amp;download_invoice=true&amp;attendee_id=<?php echo $attendee_id; ?>&amp;registration_id=<?php echo $registration_id ?>" target="_blank"><?php _e('Download PDF Invoice', 'event_espresso'); ?></a></p>
 <?php
 if(isset($invoice_payment_settings['invoice_instructions'])) {
-	echo '<p>'.stripslashes_deep($invoice_payment_settings['invoice_instructions']).'</p>';
+	echo wpautop(stripslashes_deep($invoice_payment_settings['invoice_instructions']));
 }
 if(isset($invoice_payment_settings['payment_address'])){
 	echo wpautop(stripslashes_deep($invoice_payment_settings['payment_address']));
