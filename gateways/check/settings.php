@@ -6,10 +6,10 @@ function event_espresso_check_payment_settings() {
         return;
     if (isset($_POST['update_check_payment_settings'])) {
         //$check_payment_settings_settings = get_option('event_espresso_check_payment_settings_settings');
-        $check_payment_settings['check_title'] = $_POST['check_title'];
-        $check_payment_settings['check_instructions'] = $_POST['check_instructions'];
-        $check_payment_settings['payable_to'] = $_POST['payable_to'];
-        $check_payment_settings['payment_address'] = $_POST['payment_address'];
+        $check_payment_settings['check_title'] = strip_tags($_POST['check_title']);
+        $check_payment_settings['check_instructions'] = strip_tags($_POST['check_instructions']);
+        $check_payment_settings['payable_to'] = strip_tags($_POST['payable_to']);
+        $check_payment_settings['payment_address'] = strip_tags($_POST['payment_address']);
         update_option('event_espresso_check_payment_settings', $check_payment_settings);
         echo '<div id="message" class="updated fade"><p><strong>' . __('Check/Money Order Payment settings saved.', 'event_espresso') . '</strong></p></div>';
     }
