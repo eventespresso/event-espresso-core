@@ -135,14 +135,12 @@ function add_new_event() {
 				</div>
       <!-- /event-category -->
 
-    
-				<?php
-					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/promotions_box.php')) {
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/promotions_box.php");
-					}
-				?>
-
-				<?php echo espresso_event_question_groups($question_groups) ?>
+<?php
+	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
+	}
+?>
+	<?php echo espresso_event_question_groups($question_groups); ?>
       <!-- /event-questions -->
 
 				<?php 
@@ -294,12 +292,14 @@ function add_new_event() {
 
 									</fieldset>
                                 
-            	<?php  if ((isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] = 'Y') && $espresso_premium == true) { ?>
-								<p>
-									<span class="run-in"><?php _e('Current Time', 'event_espresso'); ?>:</span> 
-              	<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <a class="change-date-time" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
-								</p>
-            <?php  } ?>
+<?php  
+	if ((isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] = 'Y') && $espresso_premium == true) { ?>
+		<p><span class="run-in"><?php _e('Current Time', 'event_espresso'); ?>:</span> 
+		<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <a class="change-date-time" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
+		</p>
+<?php
+	}
+?>
             </td>
             
             </tr>
@@ -311,14 +311,11 @@ function add_new_event() {
         /**
          * Load the recurring events form if the add-on has been installed and activated.
          */
-                if (get_option('event_espresso_re_active') == 1 && $espresso_premium == true) {
-
-            require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_view_functions.php");
-                    event_espresso_re_form($events);
+		if (get_option('event_espresso_re_active') == 1 && $espresso_premium == true) {
+			require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_view_functions.php");
+			event_espresso_re_form($events);
         }
-					?>
-
-
+	?>
       <div id="event-pricing" class="postbox">
         <div class="handlediv" title="Click to toggle"><br />
         </div>
@@ -330,12 +327,14 @@ function add_new_event() {
         <div class="inside">
           <table width="100%" border="0" cellpadding="5">
             <tr valign="top">
-								<td id="standard-pricing" class="a"><?php event_espresso_multi_price_update($event_id); //Standard pricing ?></td>
-              <?php
-								//If the members addon is installed, define member only event settings
-               if  (get_option('events_members_active') == 'true' && $espresso_premium == true) { ?>
-              <td id="member-pricing" class="b"><?php echo event_espresso_member_only_pricing(); //Show the the member only pricing options. ?></td>
-								<?php  } ?>
+			<td id="standard-pricing" class="a"><?php event_espresso_multi_price_update($event_id); //Standard pricing ?></td>
+<?php
+		//If the members addon is installed, define member only event settings
+		if  (get_option('events_members_active') == 'true' && $espresso_premium == true) { ?>
+			<td id="member-pricing" class="b"><?php echo event_espresso_member_only_pricing(); //Show the the member only pricing options. ?></td>
+<?php  
+		} 
+?>
           	</tr>
           </table>
         </div>

@@ -317,8 +317,8 @@ function edit_event($event_id = 0) {
 
 
 					<?php
-					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/promotions_box.php')) {
-        require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/promotions_box.php");
+					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
+        				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/promotions_box.php');
 					}
 					?>
 					<!-- /event-promotions -->
