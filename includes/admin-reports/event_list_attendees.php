@@ -62,14 +62,17 @@ function event_list_attendees() {
             endwhile;
         }
     }
-
+	
     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/event-management/queries.php');
-
-    if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php')) {
+	
+	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php')) {
         require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php');
     } else {
         echo '<p><strong>' . __('Advanced filters are available in the premium versions.', 'event_espresso') . '</strong> <a href="http://eventespresso.com/download/" target="_blank">' . __('Upgrade Now!', 'event_espresso') . '</a></p>';
     }
+	if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!=''){
+		echo '<h3>'.espresso_event_list_attendee_title($_REQUEST['event_id']).'</h3>'; 
+	}
     ?>
 
     <style type="text/css">

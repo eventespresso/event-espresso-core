@@ -1348,13 +1348,13 @@ if (!function_exists('espresso_event_list_attendee_title')) {
         foreach ($events as $event) {
             $title_event_name = stripslashes_deep($event->event_name);
         }
-
         
-        echo $title_event_name;
-        echo ' | ';
-		echo 'ID: '.$event_id;
-        echo ' | ';
-        echo espresso_event_time($event_id, 'start_date_time');
+		$content = $title_event_name;
+		$content .= ' | ';
+		$content .= 'ID: '.$event_id;
+		$content .= ' | ';
+        $content .= espresso_event_time($event_id, 'start_date_time');
+		return $content;
     }
 
 }
