@@ -280,10 +280,8 @@ if (!function_exists('espresso_chart_display')){
 		}
 		
 		$results = $wpdb->get_results($sql);
-		if ($wpdb->num_rows == 0) {
-			echo '<p class="red_alert">'.sprintf(__('%s results are missing for this event.', 'event_espresso'), $title).'</p>';
-			return;
-		}
+		if ($wpdb->num_rows > 0) {
+			
 		foreach ($results as $row) {
 			$retVal[] = $row;
 		}
@@ -335,9 +333,10 @@ if (!function_exists('espresso_chart_display')){
 				
 			});
 		  </script>
-		  <!-- <?php echo $title; ?> -->
+           <!-- <?php echo $title; ?> -->
 		<div id="<?php echo $type; ?>" style="margin-top:20px; margin-left:20px; width:600px; height:200px; float:left;"></div>
-	<?php 
+      	<?php
+		}
 	} 
 }
 
