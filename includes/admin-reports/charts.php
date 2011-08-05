@@ -6,12 +6,12 @@ function espresso_charts() {
 <div class="metabox-holder">
   <div class="postbox">
     <h3>
-      <?php espresso_event_list_attendee_title($_REQUEST['event_id']); ?>
+      <?php echo espresso_event_list_attendee_title($_REQUEST['event_id']); ?>
     </h3>
     <div class="inside">
 <?php 
 	if ($espresso_premium != true){
-		echo '<p><strong>' . __('Charts are now available in the premium versions.', 'event_espresso') . '</strong> <a href="http://eventespresso.com/download/" target="_blank">' . __('Upgrade Now!', 'event_espresso') . '</a></p>';
+		echo '<p><strong>' . __('Graphical reporting charts are now available in the premium versions.', 'event_espresso') . '</strong> <a href="http://eventespresso.com/download/" target="_blank">' . __('Upgrade Now!', 'event_espresso') . '</a></p>';
 	}else{
 		echo espresso_chart_display($event_id, 'total_reg');
 		echo espresso_chart_display($event_id, 'total_completed');
