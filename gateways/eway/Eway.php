@@ -20,7 +20,18 @@ class eway extends PaymentGateway {
     public function __construct() {
         parent::__construct();
         // Some default values of the class
-        $this->gatewayUrl = 'https://au.ewaygateway.com/Request/';
+        $eway_settings = get_option('event_espresso_eway_settings');
+        switch ($eway_setting['region']) {
+            case 'NZ':
+                $this->gatewayUrl = 'https://nz.ewaygateway.com/Request/';
+                break;
+            case 'AU':
+                $this->gatewayUrl = 'https://au.ewaygateway.com/Request/';
+                break;
+            case 'UK':
+                $this->gatewayUrl = 'https://payment.ewaygateway.com/Request/';
+                break;
+        }
         // Populate $fields array with a few default
     }
 

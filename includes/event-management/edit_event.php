@@ -405,7 +405,7 @@ function edit_event($event_id = 0) {
             param: int $tab_index Optional, default is 2. Tabindex for textarea element.
            */
           //the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-          the_editor($event_desc, $id = 'event_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);
+          the_editor($event_desc, $id = 'event_desc'/*, $prev_id = 'title', $media_buttons = true, $tab_index = 3*/);
           ?>
             <table id="post-status-info" cellspacing="0">
                 <tbody>

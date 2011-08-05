@@ -2,7 +2,17 @@
 
 global $wpdb;
 $eway_settings = get_option('event_espresso_eway_settings');
-$results_request = "https://au.ewaygateway.com/Result/?";
+switch ($eway_setting['region']) {
+    case 'NZ':
+        $this->gatewayUrl = 'https://nz.ewaygateway.com/Result/';
+        break;
+    case 'AU':
+        $this->gatewayUrl = 'https://au.ewaygateway.com/Result/';
+        break;
+    case 'UK':
+        $this->gatewayUrl = 'https://payment.ewaygateway.com/Result/';
+        break;
+}
 $results_request .= "CustomerID=" . $eway_settings['eway_id'];
 $results_request .= "&UserName=" . $eway_settings['eway_username'];
 $results_request .= "&AccessPaymentCode=" . $_REQUEST['AccessPaymentCode'];
