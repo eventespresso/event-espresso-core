@@ -3,8 +3,8 @@
 $firstdata_settings = get_option( 'event_espresso_firstdata_settings' );
 
 ?>
-
-<p><strong><?php _e( 'Billing Information', 'event_espresso' ) ?></strong></p>
+<div class="event-display-boxes">
+<p class="section-title"><?php _e( 'Billing Information', 'event_espresso' ) ?></p>
 <div class = "event_espresso_form_wrapper">
 <form id="firstdata_payment_form" name="firstdata_payment_form" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?>">
     <p>
@@ -35,7 +35,7 @@ $firstdata_settings = get_option( 'event_espresso_firstdata_settings' );
         <label for="zip"><?php _e( 'Zip', 'event_espresso' ); ?></label>
         <input name="zip" type="text" id="zip" class="required" value="<?php echo $zip ?>" />
     </p>
-    <p><strong><?php _e( 'Credit Card Information', 'event_espresso' ); ?></strong></p>
+    <p class="section-title"><?php _e( 'Credit Card Information', 'event_espresso' ); ?></p>
     <p>
         <label for="card_num"><?php _e( 'Card Card Type', 'event_espresso' ); ?></label>
         <select name ="creditcardtype" class="required">
@@ -123,3 +123,4 @@ $firstdata_settings = get_option( 'event_espresso_firstdata_settings' );
 
 
 </script>
+</div><!-- / close firstdata form -->

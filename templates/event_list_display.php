@@ -82,20 +82,19 @@ if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?
 }
 ?>
 
-	<p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
+					<p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
 
     <?php
     $num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
-    if ($num_attendees >= $reg_limit) {
-        ?>
+    if ($num_attendees >= $reg_limit) { ?>
         <p id="available_spaces-<?php echo $event_id ?>"><span class="section-title"><?php _e('Available Spaces:', 'event_espresso') ?> </span><?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved') ?></p>
 <?php 
 		if ($overflow_event_id != '0' && $allow_overflow == 'Y') { ?>
-            <p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>&regevent_action=register&event_id=<?php echo $overflow_event_id ?>&name_of_event=<?php echo stripslashes_deep($event_name) ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
+					<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>&regevent_action=register&event_id=<?php echo $overflow_event_id ?>&name_of_event=<?php echo stripslashes_deep($event_name) ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
 <?php
 		}
     } else {
-		if ($display_reg_form == 'Y'&&$externalURL == '') {
+		if ($display_reg_form == 'Y'&& $externalURL == '') {
 ?>			<p id="available_spaces-<?php echo $event_id ?>"><span class="section-title"><?php _e('Available Spaces:', 'event_espresso') ?></span> <?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces') ?></p>
 <?php
 		}
@@ -124,19 +123,17 @@ if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?
 
 			$cart_link= event_espresso_cart_link($params);
 		}
-		if ($display_reg_form == 'Y') {
-?>
-            <p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
-
-                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a> <?php echo isset($cart_link)&&$externalURL == ''?$cart_link:'';?></p>
-                <?php
-            } else {
-                ?>
-            <p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
-                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('View Details', 'event_espresso'); ?></a> <?php echo isset($cart_link)&&$externalURL == ''?$cart_link :'';?>
-            </p>
-            <?php
-        }
+		if ($display_reg_form == 'Y') { ?>
+				
+				<p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
+					<a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a> 
+						<?php echo isset($cart_link)&&$externalURL == ''?$cart_link:'';?>
+				</p>
+<?php  } else { ?>
+				<p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
+					<a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('View Details', 'event_espresso'); ?></a> <?php echo isset($cart_link)&&$externalURL == ''?$cart_link :'';?>
+				</p>
+<?php }
     }
     ?>
 </div>
