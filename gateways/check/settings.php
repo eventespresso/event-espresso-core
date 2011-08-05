@@ -5,7 +5,7 @@ function event_espresso_check_payment_settings() {
     if ($espresso_premium != true)
         return;
     if (isset($_POST['update_check_payment_settings'])) {
-		$allowable_tags = '<br /><br>';
+		$allowable_tags = '<br /><br><a>';
         //$check_payment_settings_settings = get_option('event_espresso_check_payment_settings_settings');
         $check_payment_settings['check_title'] = strip_tags($_POST['check_title'],$allowable_tags);
         $check_payment_settings['check_instructions'] = strip_tags($_POST['check_instructions'],$allowable_tags);

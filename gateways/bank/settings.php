@@ -5,13 +5,14 @@ function event_espresso_bank_payment_settings() {
     if ($espresso_premium != true)
         return;
     if (isset($_POST['update_bank_deposit_settings'])) {
+		$allowable_tags = '<br /><br><a>';
         //$bank_deposit_settings_settings = get_option('event_espresso_bank_deposit_settings_settings');
-        $bank_deposit_settings['account_name'] = strip_tags($_POST['account_name']);
-        $bank_deposit_settings['bank_title'] = strip_tags($_POST['bank_title']);
-        $bank_deposit_settings['bank_instructions'] = strip_tags($_POST['bank_instructions']);
-        $bank_deposit_settings['bank_name'] = strip_tags($_POST['bank_name']);
-        $bank_deposit_settings['bank_account'] = strip_tags($_POST['bank_account']);
-        $bank_deposit_settings['bank_address'] = strip_tags($_POST['bank_address']);
+        $bank_deposit_settings['account_name'] = strip_tags($_POST['account_name'],$allowable_tags);
+        $bank_deposit_settings['bank_title'] = strip_tags($_POST['bank_title'],$allowable_tags);
+        $bank_deposit_settings['bank_instructions'] = strip_tags($_POST['bank_instructions'],$allowable_tags);
+        $bank_deposit_settings['bank_name'] = strip_tags($_POST['bank_name'],$allowable_tags);
+        $bank_deposit_settings['bank_account'] = strip_tags($_POST['bank_account'],$allowable_tags);
+        $bank_deposit_settings['bank_address'] = strip_tags($_POST['bank_address'],$allowable_tags);
         update_option('event_espresso_bank_deposit_settings', $bank_deposit_settings);
         echo '<div id="message" class="updated fade"><p><strong>' . __('Electronic Funds Transfer settings saved.', 'event_espresso') . '</strong></p></div>';
     }
