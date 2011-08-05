@@ -3,20 +3,8 @@ global $espresso_premium;
 if ($espresso_premium != true)
     return;
 ?>
-
-<div class="metabox-holder">
-  <div class="postbox">
-    <h3>
-      <?php 
-	if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!='' && $_REQUEST['event_admin_reports'] != 'charts'){
-		espresso_event_list_attendee_title($_REQUEST['event_id']); 
-	}else{
-		echo __('Filters', 'event_espresso');
-	}
-	?>
-    </h3>
-    <div class="inside">
       <ul class="subsubsub">
+      	<li><h3><?php echo __('Filters', 'event_espresso');?></h3></li>
         <li><strong>
           <?php _e('Events', 'event_espresso'); ?>
           : </strong> </li>
@@ -108,7 +96,4 @@ if ($espresso_premium != true)
 </div>
 <?php
 }?>
-    </div>
-  </div>
-</div>
 
