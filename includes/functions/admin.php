@@ -1386,5 +1386,49 @@ function espresso_payment_reports($atts){
 			return $total;
 		break;
 	}
-	
+}
+
+function espresso_ticket_links($registration_id, $attendee_id){
+	global $wpdb;
+	$sql = "SELECT * FROM ". EVENTS_ATTENDEE_TABLE;
+	if (espresso_is_primary_attendee($attendee_id) != true){
+		$sql .= " WHERE id = '" . $attendee_id . "' ";
+	}else{
+		$sql .= " WHERE registration_id = '" . $registration_id . "' ";
+	}
+	//echo $sql;
+	$attendees = $wpdb->get_results($sql);
+	$ticket_link ='';
+	if ($wpdb->num_rows > 0){
+		$group = $wpdb->num_rows >1 ? '<strong>'.sprintf(__('Tickets Purchased (%s):', 'event_espresso'), $wpdb->num_rows).'</strong><br />':'';
+		$break = '<br />';
+		foreach ($attendees as $attendee){
+			$ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
+			$ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket'). ' ('.$attendee->fname.' '. $attendee->lname. ')' . '</a>'.$break;
+		}
+		return '<p>'.$group.$ticket_link.'</p>';
+	}
+}
+
+function espresso_is_primary_attendee($attendee_id){
+	global $wpdb;
+	$sql = "SELECT am.meta_value FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
+	$sql .= " WHERE am.attendee_id = '" . $attendee_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
+	//echo $sql;
+	$wpdb->get_results($sql);
+	if ($wpdb->num_rows > 0){
+		return true;
+	}
+}
+
+function espresso_get_primary_attendee_id($registration_id){
+	global $wpdb;
+	$sql = "SELECT am.attendee_id FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
+	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = am.attendee_id ";
+	$sql .= " WHERE ea.registration_id = '" . $registration_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
+	//echo $sql;
+	$wpdb->get_results($sql);
+	if ($wpdb->num_rows > 0){
+		return $wpdb->last_result[0]->attendee_id;
+	}
 }
