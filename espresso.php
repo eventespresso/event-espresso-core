@@ -166,6 +166,7 @@ if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_inc
 //Call the required function files
 require_once("includes/functions/main.php");
 require_once("includes/functions/admin.php");
+require_once("includes/functions/admin_menu.php");
 require_once("includes/functions/time_date.php");
 
 //Install/Update Tables when plugin is activated
