@@ -62,7 +62,7 @@ function event_espresso_gateways_options() {
         }
     }
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH.'includes/admin-files/gateway_developer.php')){
-		drequire_once(EVENT_ESPRESSO_PLUGINFULLPATH.'includes/admin-files/gateway_developer.php');
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'includes/admin-files/gateway_developer.php');
 	}
     echo after_gateways();
 }
