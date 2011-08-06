@@ -12,19 +12,18 @@ function event_espresso_config_page_styles() {
         switch ($_REQUEST['page']) {
             case ( 'events' ):
             case ( 'espresso_reports' ):
-           // case ( 'event_categories' ):
+                // case ( 'event_categories' ):
                 wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-lightness/jquery-ui-1.7.3.custom.css');
                 break;
         }
-		if (isset($_REQUEST['event_admin_reports'])) {
-			switch ($_REQUEST['event_admin_reports']) {
-				case 'charts':
-					wp_enqueue_style('jquery-jqplot-css', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.css');
-					break;
-			}
-		}
+        if (isset($_REQUEST['event_admin_reports'])) {
+            switch ($_REQUEST['event_admin_reports']) {
+                case 'charts':
+                    wp_enqueue_style('jquery-jqplot-css', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.css');
+                    break;
+            }
+        }
     }
-	
 }
 
 function event_espresso_config_page_scripts() {
@@ -44,13 +43,12 @@ function event_espresso_config_page_scripts() {
                     wp_enqueue_script('jquery-ui-sortable');
                 }
                 wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
-
-               // break;
+            // break;
             case ( 'events' ):
             case ( 'espresso_reports' ):
-            //case ( 'event_venues' ):
-            //case ( 'event_staff' ):
-            //case ( 'event_categories' ):
+                //case ( 'event_venues' ):
+                //case ( 'event_staff' ):
+                //case ( 'event_categories' ):
                 wp_enqueue_script('postbox');
                 wp_enqueue_script('dashboard');
                 wp_enqueue_script('thickbox');
@@ -71,19 +69,19 @@ function event_espresso_config_page_scripts() {
                     wp_register_script('jquery.validate.pack', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.pack.js"), false, '1.7');
                     wp_enqueue_script('jquery.validate.pack');
                 }
-				
-				if (isset($_REQUEST['event_admin_reports'])) {
-					switch ($_REQUEST['event_admin_reports']) {
-						case 'charts':
-							wp_enqueue_script('jquery-jqplot-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.min.js', array('jquery'));
-							wp_enqueue_script('jqplot-barRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.barRenderer.min.js', array('jquery'));
-							wp_enqueue_script('jqplot-pieRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pieRenderer.min.js', array('jquery'));
-							wp_enqueue_script('jqplot-categoryAxisRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.categoryAxisRenderer.min.js', array('jquery'));
-							wp_enqueue_script('jqplot-highlighter-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.highlighter.min.js', array('jquery'));
-							wp_enqueue_script('jqplot-pointLabels-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pointLabels.min.js', array('jquery'));
-							break;
-					}
-				}
+
+                if (isset($_REQUEST['event_admin_reports'])) {
+                    switch ($_REQUEST['event_admin_reports']) {
+                        case 'charts':
+                            wp_enqueue_script('jquery-jqplot-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.min.js', array('jquery'));
+                            wp_enqueue_script('jqplot-barRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.barRenderer.min.js', array('jquery'));
+                            wp_enqueue_script('jqplot-pieRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pieRenderer.min.js', array('jquery'));
+                            wp_enqueue_script('jqplot-categoryAxisRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.categoryAxisRenderer.min.js', array('jquery'));
+                            wp_enqueue_script('jqplot-highlighter-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.highlighter.min.js', array('jquery'));
+                            wp_enqueue_script('jqplot-pointLabels-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pointLabels.min.js', array('jquery'));
+                            break;
+                    }
+                }
                 remove_all_filters('mce_external_plugins');
                 break;
         }
@@ -94,19 +92,18 @@ function event_espresso_config_page_scripts() {
     //wp_enqueue_script('media-upload');
 }
 
-function espresso_tiny_mce(){
-	//This loads the the tinymce script into the header
-	global $wp_version;
-	$wp_min_version = '3.2';
-	wp_tiny_mce( false, array("editor_selector" => "theEditor") ); // true gives you a stripped down version of the editor
-
-	//If the version of WordPress is lower than 3.2, then we load the fallback script.
-	if ( !version_compare( $wp_version, $wp_min_version, '>=' ) ) {
-		//If this is an older version of WordPress, then we need to load this.
-		if (function_exists('wp_tiny_mce_preload_dialogs')) {
-			add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
-		}
-	}
+function espresso_tiny_mce() {
+    //This loads the the tinymce script into the header
+    global $wp_version;
+    $wp_min_version = '3.2';
+    wp_tiny_mce(false, array("editor_selector" => "theEditor")); // true gives you a stripped down version of the editor
+    //If the version of WordPress is lower than 3.2, then we load the fallback script.
+    if (!version_compare($wp_version, $wp_min_version, '>=')) {
+        //If this is an older version of WordPress, then we need to load this.
+        if (function_exists('wp_tiny_mce_preload_dialogs')) {
+            add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
+        }
+    }
 }
 
 //function to delete event
@@ -325,7 +322,7 @@ function event_espresso_create_upload_directories() {
         EVENT_ESPRESSO_UPLOAD_DIR,
         EVENT_ESPRESSO_TEMPLATE_DIR,
         EVENT_ESPRESSO_GATEWAY_DIR,
-		EVENT_ESPRESSO_UPLOAD_DIR.'/logs/',
+        EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
     );
     foreach ($folders as $folder) {
         wp_mkdir_p($folder);
@@ -337,17 +334,19 @@ function event_espresso_create_upload_directories() {
  * event_espresso_count_templates_in_uploads_directory, does exactly what the name says
  */
 function event_espresso_count_files($path, $exclude = ".|..|.svn", $recursive = false) {
-    $path = rtrim($path, "/") . "/";
-    $folder_handle = opendir($path);
-    $exclude_array = explode("|", $exclude);
     $result = array();
-    while (false !== ($filename = readdir($folder_handle))) {
-        if (!in_array(strtolower($filename), $exclude_array)) {
-            if (is_dir($path . $filename . "/")) {
-                if ($recursive)
-                    $result[] = file_array($path, $exclude, true);
-            } else {
-                $result[] = $filename;
+    $path = rtrim($path, "/") . "/";
+    if (is_dir($path)) {
+        $folder_handle = opendir($path);
+        $exclude_array = explode("|", $exclude);
+        while (false !== ($filename = readdir($folder_handle))) {
+            if (!in_array(strtolower($filename), $exclude_array)) {
+                if (is_dir($path . $filename . "/")) {
+                    if ($recursive)
+                        $result[] = file_array($path, $exclude, true);
+                } else {
+                    $result[] = $filename;
+                }
             }
         }
     }
@@ -817,7 +816,7 @@ function events_editor($content, $id = 'content', $prev_id = 'title') {
         <script type="text/javascript">edToolbar()</script>
     </div>
 
-    <?php //if(function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) $output = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($output);   ?>
+    <?php //if(function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) $output = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($output);    ?>
 
     <?php
     $the_editor = apply_filters('the_editor', "<div id='editorcontainer'><textarea rows='6' cols='90' name='$id' tabindex='4' id='$id'>%s</textarea></div>\n");
@@ -1348,75 +1347,75 @@ if (!function_exists('espresso_event_list_attendee_title')) {
         foreach ($events as $event) {
             $title_event_name = stripslashes_deep($event->event_name);
         }
-        
-		$content = $title_event_name;
-		$content .= ' | ';
-		$content .= 'ID: '.$event_id;
-		$content .= ' | ';
+
+        $content = $title_event_name;
+        $content .= ' | ';
+        $content .= 'ID: ' . $event_id;
+        $content .= ' | ';
         $content .= espresso_event_time($event_id, 'start_date_time');
-		return $content;
+        return $content;
     }
 
 }
 
-function espresso_payment_reports($atts){
-	global $wpdb;
-	extract($atts);
-	$sql = "SELECT SUM(a.amount_pd) quantity FROM " . EVENTS_ATTENDEE_TABLE . " a WHERE a.quantity >= 1 AND a.payment_status='Completed' AND a.event_id = '" . $event_id . "' ";
-	$payments = $wpdb->get_results($sql, ARRAY_A);
-	$total = 0;
-	if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-		$total =  $wpdb->last_result[0]->quantity;
-	}
-	//echo $sql;
-	switch ($type) {
-		case 'total_payments':
-			return $total;
-		break;
-	}
+function espresso_payment_reports($atts) {
+    global $wpdb;
+    extract($atts);
+    $sql = "SELECT SUM(a.amount_pd) quantity FROM " . EVENTS_ATTENDEE_TABLE . " a WHERE a.quantity >= 1 AND a.payment_status='Completed' AND a.event_id = '" . $event_id . "' ";
+    $payments = $wpdb->get_results($sql, ARRAY_A);
+    $total = 0;
+    if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+        $total = $wpdb->last_result[0]->quantity;
+    }
+    //echo $sql;
+    switch ($type) {
+        case 'total_payments':
+            return $total;
+            break;
+    }
 }
 
-function espresso_ticket_links($registration_id, $attendee_id){
-	global $wpdb;
-	$sql = "SELECT * FROM ". EVENTS_ATTENDEE_TABLE;
-	if (espresso_is_primary_attendee($attendee_id) != true){
-		$sql .= " WHERE id = '" . $attendee_id . "' ";
-	}else{
-		$sql .= " WHERE registration_id = '" . $registration_id . "' ";
-	}
-	//echo $sql;
-	$attendees = $wpdb->get_results($sql);
-	$ticket_link ='';
-	if ($wpdb->num_rows > 0){
-		$group = $wpdb->num_rows >1 ? '<strong>'.sprintf(__('Tickets Purchased (%s):', 'event_espresso'), $wpdb->num_rows).'</strong><br />':'';
-		$break = '<br />';
-		foreach ($attendees as $attendee){
-			$ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
-			$ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket'). ' ('.$attendee->fname.' '. $attendee->lname. ')' . '</a>'.$break;
-		}
-		return '<p>'.$group.$ticket_link.'</p>';
-	}
+function espresso_ticket_links($registration_id, $attendee_id) {
+    global $wpdb;
+    $sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
+    if (espresso_is_primary_attendee($attendee_id) != true) {
+        $sql .= " WHERE id = '" . $attendee_id . "' ";
+    } else {
+        $sql .= " WHERE registration_id = '" . $registration_id . "' ";
+    }
+    //echo $sql;
+    $attendees = $wpdb->get_results($sql);
+    $ticket_link = '';
+    if ($wpdb->num_rows > 0) {
+        $group = $wpdb->num_rows > 1 ? '<strong>' . sprintf(__('Tickets Purchased (%s):', 'event_espresso'), $wpdb->num_rows) . '</strong><br />' : '';
+        $break = '<br />';
+        foreach ($attendees as $attendee) {
+            $ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
+            $ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket') . ' (' . $attendee->fname . ' ' . $attendee->lname . ')' . '</a>' . $break;
+        }
+        return '<p>' . $group . $ticket_link . '</p>';
+    }
 }
 
-function espresso_is_primary_attendee($attendee_id){
-	global $wpdb;
-	$sql = "SELECT am.meta_value FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
-	$sql .= " WHERE am.attendee_id = '" . $attendee_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
-	//echo $sql;
-	$wpdb->get_results($sql);
-	if ($wpdb->num_rows > 0){
-		return true;
-	}
+function espresso_is_primary_attendee($attendee_id) {
+    global $wpdb;
+    $sql = "SELECT am.meta_value FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
+    $sql .= " WHERE am.attendee_id = '" . $attendee_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
+    //echo $sql;
+    $wpdb->get_results($sql);
+    if ($wpdb->num_rows > 0) {
+        return true;
+    }
 }
 
-function espresso_get_primary_attendee_id($registration_id){
-	global $wpdb;
-	$sql = "SELECT am.attendee_id FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
-	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = am.attendee_id ";
-	$sql .= " WHERE ea.registration_id = '" . $registration_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
-	//echo $sql;
-	$wpdb->get_results($sql);
-	if ($wpdb->num_rows > 0){
-		return $wpdb->last_result[0]->attendee_id;
-	}
+function espresso_get_primary_attendee_id($registration_id) {
+    global $wpdb;
+    $sql = "SELECT am.attendee_id FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
+    $sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = am.attendee_id ";
+    $sql .= " WHERE ea.registration_id = '" . $registration_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
+    //echo $sql;
+    $wpdb->get_results($sql);
+    if ($wpdb->num_rows > 0) {
+        return $wpdb->last_result[0]->attendee_id;
+    }
 }

@@ -20,7 +20,7 @@
                         </p>
                         <p> <span class="green_alert">
                                 <?php _e("Path:", 'event_espresso'); ?>
-                                <?php echo str_replace(ABSPATH, "", EVENT_ESPRESSO_GATEWAY_DIR); ?></span> </p>          
+                                <?php echo str_replace(ABSPATH, "", EVENT_ESPRESSO_GATEWAY_DIR); ?></span> </p>
                         <?php
                     } else {
                         if (isset($_REQUEST['event_espresso_admin_action']) && $_REQUEST['event_espresso_admin_action'] == 'copy_gateways') {
@@ -56,4 +56,4 @@
                 </div>
             </div>
         </div>
-    </li></ul>  
+    </li></ul>
