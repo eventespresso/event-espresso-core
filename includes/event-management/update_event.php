@@ -207,7 +207,7 @@ function update_event($recurrence_arr = array()) {
         $registration_endT = event_date_display($_REQUEST['registration_endT'], 'H:i');
 
         //Add timezone
-        $timezone_string = $_REQUEST['timezone_string'];
+        $timezone_string = empty($_REQUEST['timezone_string']) ? '' : $_REQUEST['timezone_string'];
 
         //Early discounts
         $early_disc = $_REQUEST['early_disc'];
@@ -249,13 +249,13 @@ function update_event($recurrence_arr = array()) {
         }
 
         $question_groups = serialize($_REQUEST['question_groups']);
-        $add_attendee_question_groups = serialize($_REQUEST['add_attendee_question_groups']);
+        $add_attendee_question_groups = serialize(empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups']);
 
         $item_groups = serialize(empty($_REQUEST['item_groups']) ? '' : $_REQUEST['item_groups']);
         $event_mata['default_payment_status'] = $_REQUEST['default_payment_status'];
         $event_mata['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
         $event_mata['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
-        $event_mata['add_attendee_question_groups'] = $_REQUEST['add_attendee_question_groups'];
+        $event_mata['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
         $event_mata['date_submitted'] = $_REQUEST['date_submitted'];
 
         if ($_REQUEST['emeta'] != '') {
