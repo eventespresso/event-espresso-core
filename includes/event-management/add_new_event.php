@@ -6,7 +6,7 @@ function add_new_event() {
 
 <div id="side-info-column" class="inner-sidebar">
   <div id="side-sortables" class="meta-box-sortables ui-sortable">
-    
+
 			<div id="submitdiv" class="postbox">
       <div class="handlediv" title="Click to toggle"><br />
       </div>
@@ -18,7 +18,7 @@ function add_new_event() {
       <div class="inside">
         <div class="submitbox" id="submitpost"><!-- /minor-publishing -->
           <div id="major-publishing-actions" class="clearfix">
-							<div id="delete-action"> 
+							<div id="delete-action">
 								<a class="submitdelete deletion" href="admin.php?page=events" onclick="return confirm('<?php _e('Are you sure you want to cancel ' . $event_name . '?', 'event_espresso'); ?>')">
 									<?php _e('Cancel', 'event_espresso'); ?></a>
 							</div>
@@ -83,7 +83,7 @@ function add_new_event() {
        }
 
 				########## END #################################
-				
+
 				if (get_option('events_members_active') == 'true' && $espresso_premium == true) {
                 ?>
 				<div id="member-options" class="postbox">
@@ -104,9 +104,9 @@ function add_new_event() {
       if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
            MailChimpView::event_list_selection();
 				} ?>
-            
+
 				<?php if (function_exists('espresso_fb_createevent') == 'true' && $espresso_premium == true) { ?>
-      
+
 				<div id="event-meta" class="postbox">
 					<div class="handlediv" title="Click to toggle"><br>
 					</div>
@@ -118,9 +118,9 @@ function add_new_event() {
 					<div class="inside">
 						<input type="checkbox" name="espresso_fb" id="espresso_fb" /> <?php _e('Post to Facebook', 'event_espresso'); ?>
 					</div>
-				</div>     
+				</div>
       <?php } ?>
-            
+
 				<div  id="event-categories" class="postbox">
 					<div class="handlediv" title="Click to toggle"><br />
 					</div>
@@ -140,13 +140,13 @@ function add_new_event() {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
 	}
 ?>
-	<?php echo espresso_event_question_groups($question_groups); ?>
+	<?php echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups); ?>
       <!-- /event-questions -->
 
-				<?php 
+				<?php
          if (function_exists('espresso_personnel_cb') && isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 				?>
-				
+
 				<div id="event-category" class="postbox">
 					<div class="handlediv" title="Click to toggle"><br>
         </div>
@@ -156,15 +156,15 @@ function add_new_event() {
           </span>
 					</h3>
         <div class="inside">
-						
+
 						<?php echo espresso_personnel_cb($event_id); ?>
-          
+
 					</div>
 				</div>
 			<?php	}
 
 			if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) { ?>
-				
+
 				<div id="groupon-options" class="postbox">
 					<div class="handlediv" title="Click to toggle"><br />
       	</div>
@@ -194,10 +194,10 @@ function add_new_event() {
         <label class="screen-reader-text" for="title"><?php _e('Event Title', 'event_espresso'); ?></label>
            <input type="text" name="event" size="30" tabindex="1" value="<?php echo isset($event_name) ? $event_name : ''; ?>" id="title" autocomplete="off" />
      </div>
-      
+
 				<!-- /titlewrap -->
       <div class="inside">
-        <div id="edit-slug-box"> 
+        <div id="edit-slug-box">
 						<strong><?php _e('Unique Event Identifier:', 'event_espresso'); ?></strong>
               <input type="text" size="30" tabindex="2" name="event_identifier" id="event_identifier" value ="<?php echo isset($event_identifier) ? $event_identifier : ''; ?>" />
               <?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;\' + jQuery(\'#event_identifier\').val() + \'&#34;]\'); return false;">' . __('Get Shortcode') . '</a>' ?>
@@ -247,36 +247,36 @@ function add_new_event() {
         <div class="inside">
 
           <table width="100%" border="0" cellpadding="5">
-            
+
             <tr valign="top">
               <td class="a">
             		<fieldset id="add-reg-dates">
-            			<legend><?php _e('Registration Dates', 'event_espresso'); ?></legend> 
+            			<legend><?php _e('Registration Dates', 'event_espresso'); ?></legend>
             				<p><label for="registration_start"><?php echo __('Registration Start:', 'event_espresso') ?> </label>  <input type="text" size="10" id="registration_start" class="datepicker" name="registration_start" value="" /></p>
                     <p><label for="registration_end"> <?php echo __('Registration End:', 'event_espresso') ?></label> <input type="text" size="10" id="registration_end" class="datepicker" name="registration_end" value="" /></p>
             		</fieldset>
-            
+
                	<fieldset id="add-event-dates">
-            			<legend><?php _e('Event Dates', 'event_espresso'); ?></legend> 
+            			<legend><?php _e('Event Dates', 'event_espresso'); ?></legend>
             				<p><label for="start_date"><?php  _e('Event Start Date:', 'event_espresso') ?></label>  <input type="text" size="10" id="start_date" class="datepicker" name="start_date" value="" /></p>
                     <p><label for="end_date"><?php  _e('Event End Date:', 'event_espresso') ?></label> <input type="text" size="10" id="end_date" class="datepicker" name="end_date" value="" /></p>
             		</fieldset>
-                                
+
             	<?php   if (isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y' && $espresso_premium == true) { ?>
                 <fieldset id="event-timezone">
             				<p><label><?php _e('Event Timezone', 'event_espresso') ?>:</label><?php echo eventespresso_ddtimezone($event_id) ?></p>
                	</fieldset>
             	<?php  } ?>
-            
+
                                 <?php /* ?> <p>
                 <br /> <?php echo __('Event Visible On:','event_espresso') . ' <input type="text" size="15" id="visible_on" class="datepicker" name="visible_on" value="" />'; ?> <br />
                                   </p><?php */ ?>
-                                
+
             			<?php echo get_option('event_espresso_re_active') == 1 ? '' : '<p class="recurring-available"><a class="inform" href="http://eventespresso.com/?p=3319" target="_blank" title="Visit eventespresso.com for full details">' . __('Recurring Event Manager Now Available!', 'event_espresso') . '</a></p>'; ?>
             	</td>
-              
+
 								<?php // ADDED TIME REGISTRATION LIMITS  ?>
-            	
+
 								<td class="b">
 									<fieldset id="add-register-times">
 										<legend><?php _e('Registration Times', 'event_espresso'); ?></legend>
@@ -284,26 +284,26 @@ function add_new_event() {
 												 <?php echo event_espresso_timereg_editor(); ?>
 
 									</fieldset>
-                                
+
 									<fieldset id="add-event-times">
 										<legend><?php _e('Event Times', 'event_espresso'); ?></legend>
-                        
+
 													<?php echo event_espresso_time_editor(); ?>
 
 									</fieldset>
-                                
-<?php  
+
+<?php
 	if ((isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] = 'Y') && $espresso_premium == true) { ?>
-		<p><span class="run-in"><?php _e('Current Time', 'event_espresso'); ?>:</span> 
+		<p><span class="run-in"><?php _e('Current Time', 'event_espresso'); ?>:</span>
 		<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <a class="change-date-time" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
 		</p>
 <?php
 	}
 ?>
             </td>
-            
+
             </tr>
-			
+
           </table>
         </div>
       </div>
@@ -332,14 +332,14 @@ function add_new_event() {
 		//If the members addon is installed, define member only event settings
 		if  (get_option('events_members_active') == 'true' && $espresso_premium == true) { ?>
 			<td id="member-pricing" class="b"><?php echo event_espresso_member_only_pricing(); //Show the the member only pricing options. ?></td>
-<?php  
-		} 
+<?php
+		}
 ?>
           	</tr>
           </table>
         </div>
       </div>
-      
+
 				<h2><?php _e('Advanced Options', 'event_espresso'); ?></h2>
       <div id="event-location" class="postbox">
         <div class="handlediv" title="Click to toggle"><br />
@@ -353,27 +353,27 @@ function add_new_event() {
           <table width="100%" border="0" cellpadding="5">
             <thead>
             </thead>
-           
+
             <tr valign="top">
-							
+
 							<?php
-									if (function_exists('espresso_venue_dd') && isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) { 
+									if (function_exists('espresso_venue_dd') && isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
 									$ven_type = 'class="use-ven-manager"';
 									?>
 									<td <?php echo $ven_type ?>>
 										<fieldset id="venue-manager">
-											<legend><?php echo __('Venue Information', 'event_espresso') ?></legend> 
-												
+											<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
+
 												<?php if( !espresso_venue_dd() ) : ?>
 													<p class="info"><b><?php _e('You have not created any venues yet.', 'event_espresso'); ?></b></p>
 													<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
 												<?php else: ?>
 													<?php echo espresso_venue_dd($venue_id) ?>
 												<?php endif; ?>
-										
+
 										</fieldset>
 									</td>
-							<?php } else { 
+							<?php } else {
 								$ven_type = 'class="manual-venue"';
 							?>
               <td <?php echo $ven_type ?>>
@@ -381,17 +381,17 @@ function add_new_event() {
 									<legend><?php _e('Physical Location', 'event_espresso'); ?></legend>
                  <p>
 										<label for="phys-addr"><?php _e('Address:', 'event_espresso'); ?></label>
-                  
+
                   <input id="phys-addr" size="20" tabindex="101"  type="text"  value="" name="address" />
                 </p>
                 <p>
                   <label for="phys-addr-2"><?php _e('Address 2:', 'event_espresso'); ?></label>
-                  
+
 										<input id="phys-addr-2" size="20" tabindex="102"  type="text"  value="" name="address2" />
                 </p>
                 <p>
 										<label for="phys-city"><?php _e('City:', 'event_espresso'); ?></label>
-                  
+
                   <input id="phys-city" size="20" tabindex="103"  type="text"  value="" name="city" />
                 </p>
                 <p>
@@ -408,11 +408,11 @@ function add_new_event() {
                 </p>
                 </fieldset>
                </td>
-									
+
 									<td <?php echo $ven_type ?>>
 										<fieldset id="venue-info">
 											<legend><?php _e('Venue Information', 'event_espresso'); ?></legend>
-               
+
                 		<p>
 												<label for="ven-title"><?php _e('Title:', 'event_espresso'); ?></label>
 												<input id="ven-title" size="20" tabindex="106"  type="text"  value="<?php echo isset($venue_title) ? $venue_title : '' ?>" name="venue_title" />
@@ -431,7 +431,7 @@ function add_new_event() {
 											</p>
 									</td>
 							<?php } ?>
-              
+
               <td <?php echo $ven_type ?>>
                <fieldset id="virt-location">
 								 	<legend><?php _e('Virtual Location', 'event_espresso'); ?></legend>
@@ -452,7 +452,7 @@ function add_new_event() {
           </table>
         </div>
       </div>
-      
+
 				<!-- /event-location-->
 				<?php if ($espresso_premium == true) { ?>
       	<div  id="event-meta" class="postbox">
@@ -463,9 +463,9 @@ function add_new_event() {
 							</span>
 						</h3>
 						<div class="inside">
-							<?php event_espresso_meta_edit($event_meta); ?>
+							<?php event_espresso_meta_edit(empty($event_meta) ? '' : $event_meta); ?>
 						</div>
-					</div> 
+					</div>
 				<?php } ?>
 				<!-- /event-meta-->
 				<div id="confirmation-email" class="postbox">
@@ -478,7 +478,7 @@ function add_new_event() {
 					</h3>
 					<div class="inside">
 						<div id="emaildescriptiondivrich" class="postarea">
-						
+
 							<div class="email-conf-opts">
 									<p><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') . ' ' . select_input('send_mail', $values, 'N'); ?> <?php echo '<a class="ev_reg-fancylink" href="#custom_email_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?></p>
 									<p><?php $email_id = isset($email_id) ? $email_id : '';
@@ -486,11 +486,11 @@ function add_new_event() {
 									<br /><em>OR</em>
 									<p class="section-heading"><?php _e('Create a custom email', 'event_espresso') ?>:</p>
 							</div>
-							
+
 							<div class="visual-toggle">
 								<p><a class="toggleVisual"><?php _e('Visual', 'event_espresso'); ?></a> <a class="toggleHTML"><?php _e('HTML', 'event_espresso'); ?></a></p>
 							</div>
-							
+
 							<div class="postbox">
 								<textarea name="conf_mail" class="theEditor" id="conf_mail"></textarea>
 									<table id="email-confirmation-form" cellspacing="0">
@@ -512,7 +512,7 @@ function add_new_event() {
 	}
 ?>
 
-     
+
 
     </div>
     <!-- /normal-sortables-->
@@ -529,7 +529,7 @@ function add_new_event() {
  jQuery(document).ready(function() {
 
 			postboxes.add_postbox_toggles('events');
-    
+
 			jQuery(".datepicker" ).datepicker({
 				changeMonth: true,
 				changeYear: true,
