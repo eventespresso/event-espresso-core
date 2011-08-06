@@ -8,7 +8,7 @@ function event_espresso_form_group_edit(){
 	$g_sql .= " qg.id = '" . $_REQUEST['group_id'] . "' ";
 	$g_sql .= " ORDER BY id ASC ";
 	//echo $g_sql;
-	
+
 	$groups = $wpdb->get_results($g_sql);
 	if ($wpdb->num_rows > 0) {
 		foreach ($groups as $group) {
@@ -17,7 +17,7 @@ function event_espresso_form_group_edit(){
 			$group_name = stripslashes($group->group_name);
 			$group_identifier = stripslashes($group->group_identifier);
 			$group_description = stripslashes($group->group_description);
-			$question = stripslashes($group->question);
+			$question = stripslashes(empty($group->question) ? '' : $group->question);
 			$show_group_name = $group->show_group_name;
 			$show_group_description = $group->show_group_description;
 			$wp_user = $group->wp_user;
@@ -36,40 +36,40 @@ function event_espresso_form_group_edit(){
 						<td class="a"  valign="top">
 							<ul>
 								<li><b><?php _e('Group Information','event_espresso'); ?></b></li>
-								
+
 								<li>
 									<label for="group_name"><?php _e('Group Name:','event_espresso'); ?></label>
 									<input name="group_name" id="group_name" size="50" value="<?php echo $group_name ?>" type="text">
 								</li>
-								
+
 								<li>
 									<label for="group_order"><?php _e('Group Order:','event_espresso'); ?></label>
 									<input name="group_order" id="group_order" size="6" value="<?php echo $group_order ?>" type="text">
 								</li>
-								
+
 								<li>
 									<label for="group_identifier"><?php _e('Group Identifier:','event_espresso'); ?></label>
 									<input disabled="disabled" name="group_identifier" id="group_identifier" size="50" value="<?php echo $group_identifier ?>" type="text">
 								</li>
-								
+
 								<li>
 									<label for="group_description"><?php _e('Description:','event_espresso'); ?></label>
 									<textarea name="group_description" cols="40" rows="5"><?php echo $group_description ?></textarea>
 								</li>
-								
+
 								<li>
 									<label for="show_group_name"><?php _e('Show group name on registration page?','event_espresso'); ?></label>
 									<input type="checkbox" name="show_group_name" id="show_group_name" value="1" <?php if($show_group_name != 0):?> checked="checked"<?php endif;?> />
 								</li>
-								
+
 								<li>
 									<label for="show_group_description"><?php _e('Show group description on registration page?','event_espresso'); ?></label>
 									<input type="checkbox" name="show_group_description" id="show_group_description" value="1" <?php if($show_group_description != 0):?> checked="checked"<?php endif;?> />
 								</li>
-        
+
 						</ul>
    			</td>
-					<td class="b"  valign="top"> 
+					<td class="b"  valign="top">
 						<ul>
 					<li><strong><?php _e('Questions','event_espresso'); ?></strong></li>
 	<?php
@@ -94,13 +94,13 @@ function event_espresso_form_group_edit(){
 	$questions = $wpdb->get_results($q_sql);
                 $questions_in_group = '';
                 if ($wpdb->num_rows > 0) {
-                
+
 		foreach ($questions as $question) {
                     $questions_in_group .= $question->id . ',';
                     $checked = (!is_null($question->rel_id))?'checked="checked"':'';
 
                     $visibility = (preg_match("/fname|lname|email/",$question->system_name) == 1 && $question->system_group == 1 )?'style="visibility:hidden"':'';
-                    
+
 			echo '<li><label><input ' . $checked . ' type="checkbox" ' . $visibility . ' name="question_id[' . $question->id . ']" value="' . $question->id . '" id="question_id_' . $question->id . '" />' . stripslashes($question->question) .'</label></li>';
 		}
               $questions_in_group = substr($questions_in_group,0,-1);
@@ -145,7 +145,7 @@ function event_espresso_form_group_edit(){
 			</td>
   </tr>
 	</table>
-    
+
 			<p class="submit-footer">
 	    	<input type="hidden" name="edit_action" value="update_group">
 				<input type="hidden" name="action" value="update_group">
@@ -156,5 +156,5 @@ function event_espresso_form_group_edit(){
     </div>
   </div>
     </div>
-<?php		
+<?php
 }
