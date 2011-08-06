@@ -89,7 +89,7 @@ function edit_event($event_id = 0) {
         $virtual_phone = stripslashes_deep($event->virtual_phone);
 
         $question_groups = unserialize($event->question_groups);
-		
+
         $item_groups = unserialize($event->item_groups);
 
         $event_meta = unserialize($event->event_meta);
@@ -318,7 +318,7 @@ function edit_event($event_id = 0) {
 
 					<?php
 					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
-        				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/promotions_box.php');
+        				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php');
 					}
 					?>
 					<!-- /event-promotions -->
