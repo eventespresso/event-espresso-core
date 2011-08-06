@@ -255,8 +255,13 @@ span.remove-cart-item {
 #event_espresso_refresh_total  {
 	line-height: 2.2;
 }
-/** end multi reg **/
+/*___ Payment options page ___*/
 
+#sandbox-panel {
+	border: 1px solid #bebebe; 
+	background: #eee;
+	padding: 10px;
+}
 /* >Forms
 ------------------------------------------------------------------------------*/
 /* override WP styles */
@@ -362,6 +367,9 @@ span.remove-cart-item {
 	width: auto;
 	height: 40px;
 }
+.payment-submit {
+	height: 30px;
+}	
 .btn_event_form_submit:hover {
 	background: #D7DCBD;
 	color: #000 !important;

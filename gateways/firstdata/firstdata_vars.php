@@ -94,12 +94,10 @@ $firstdata_settings = get_option( 'event_espresso_firstdata_settings' );
     <input name="firstdata" type="hidden" value="1" />
     <input name="id" type="hidden" value="<?php echo $attendee_id ?>" />
 
-    <input name="firstdata_submit" type="submit" value="<?php _e( 'Complete Purchase', 'event_espresso' ); ?>" />
+    <input name="firstdata_submit" class="btn_event_form_submit payment-submit" type="submit" value="<?php _e( 'Complete Purchase', 'event_espresso' ); ?>" />
     <span id="processing"></span>
-</form>
+</form><!-- / close firstdata form -->
 </div>
-<div style=" clear:both; margin-bottom:10px;"></div>
-
 
 <script>
 
@@ -123,4 +121,4 @@ $firstdata_settings = get_option( 'event_espresso_firstdata_settings' );
 
 
 </script>
-</div><!-- / close firstdata form -->
+</div>
