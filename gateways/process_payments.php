@@ -26,72 +26,102 @@ function event_espresso_txn(){
 		$email_before_payment = $org_options['email_before_payment'];
 
 		//Load the payment gateways
-		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/index.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/index.php")){
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/index.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/index.php"))
+		{
+			if ( get_option('events_paytrace_active') == true && isset($_POST['paytrace']) && !empty($_POST['paytrace']) && $_POST['paytrace'] == 'true' )
+			{
+				if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paytrace/do_transaction.php"))
+				{
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paytrace/do_transaction.php");
+				}
+			}
 			//Load iDEAL (Mollie)
-			if ((get_option('events_ideal_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && !empty($_REQUEST['ideal']) &&$_REQUEST['ideal'] == 1 && $_REQUEST['id'] != '' ){
-                                //Ideal works a little differently.
-                                //on the EE payment page, there is a dropdown with a list of banks that is pulled from Mollie.
-                                //The customer selects the bank, submits and is redirected to the payment page
-                                //Once returns, there is a transaction_id in the variable
+			elseif ((get_option('events_ideal_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && !empty($_REQUEST['ideal']) &&$_REQUEST['ideal'] == 1 && $_REQUEST['id'] != '' )
+			{
+				//Ideal works a little differently.
+				//on the EE payment page, there is a dropdown with a list of banks that is pulled from Mollie.
+				//The customer selects the bank, submits and is redirected to the payment page
+				//Once returns, there is a transaction_id in the variable
 
-                                $ideal_folder = EVENT_ESPRESSO_PLUGINFULLPATH."gateways/ideal/";
+				$ideal_folder = EVENT_ESPRESSO_PLUGINFULLPATH."gateways/ideal/";
 
-				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/ideal/ideal_vars.php")){
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/ideal/ideal_vars.php"))
+				{
 					//Moved files
 					$ideal_folder = EVENT_ESPRESSO_GATEWAY_DIR."/ideal/";
-                                }
-                                //if the transaction id is not set, then they selected a bank and clicked on the button on ee payment page
-                                if (!isset($_GET['transaction_id'])) {
+				}
+				//if the transaction id is not set, then they selected a bank and clicked on the button on ee payment page
+				if (!isset($_GET['transaction_id'])) {
 
-                                        require_once($ideal_folder . "ideal_vars.php");
-                                }
-                                else
-                                {
-                                        require_once($ideal_folder . "report.php");
-                                }
-
+						require_once($ideal_folder . "ideal_vars.php");
+				}
+				else
+				{
+						require_once($ideal_folder . "report.php");
+				}
 
 			//Load PayPal IPN
-			}elseif ((get_option('events_paypal_pro_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && $_REQUEST['paypal_pro'] == 'true' && $_REQUEST['id'] != '' ){
+			}
+			elseif ((get_option('events_paypal_pro_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && $_REQUEST['paypal_pro'] == 'true' && $_REQUEST['id'] != '' )
+			{
 
-				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php")){
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php"))
+				{
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php");
-				}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal_pro/DoDirectPayment.php")){
+				}
+				elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal_pro/DoDirectPayment.php"))
+				{
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal_pro/DoDirectPayment.php");
 				}
 
-                        }elseif (get_option('events_eway_active') == 'true' && isset($_REQUEST['AccessPaymentCode'])){
-
-				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/ewaypaymentprocess.php")){
+			}
+			elseif (get_option('events_eway_active') == 'true' && isset($_REQUEST['AccessPaymentCode']))
+			{
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/ewaypaymentprocess.php"))
+				{
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/ewaypaymentprocess.php");
-				}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/eway/ewaypaymentprocess.php")){
+				}
+				elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/eway/ewaypaymentprocess.php"))
+				{
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways//eway/ewaypaymentprocess.php");
 				}
                         //Process Firstdata
-			}elseif ((get_option('events_firstdata_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && $_REQUEST['firstdata'] == '1' && $_REQUEST['id'] != '' ){
+			}
+			elseif ((get_option('events_firstdata_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && $_REQUEST['firstdata'] == '1' && $_REQUEST['id'] != '' )
+			{
 
-				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata/Firstdata.php")){
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata/Firstdata.php"))
+				{
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata/Firstdata.php");
-				}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/firstdata/Firstdata.php")){
+				}
+				elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/firstdata/Firstdata.php"))
+				{
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/firstdata/Firstdata.php");
 				}
 			//Load Merchant Warrior IPN
-			}elseif (get_option('events_mwarrior_active') == 'true'){
-				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/mwarrior_ipn.php")){
+			}
+			elseif (get_option('events_mwarrior_active') == 'true')
+			{
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/mwarrior_ipn.php"))
+				{
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/mwarrior_ipn.php");
-				}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/mwarrior/mwarrior_ipn.php")){
+				}
+				elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/mwarrior/mwarrior_ipn.php"))
+				{
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/mwarrior/mwarrior_ipn.php");
 				}
 			//Load Authorize.net AIM IPN
-			}elseif (get_option('events_authnet_aim_active') == 'true' && ($_REQUEST['x_cust_id'] != '' && $_REQUEST['authnet_aim'] == 'true')){
+			}
+			elseif (get_option('events_authnet_aim_active') == 'true' && ($_REQUEST['x_cust_id'] != '' && $_REQUEST['authnet_aim'] == 'true'))
+			{
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/aim_ipn.php")){
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/aim_ipn.php");

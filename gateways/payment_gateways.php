@@ -26,12 +26,24 @@ function after_gateways() {
 //This is the payment gateway settings page.
 function event_espresso_gateways_options() {
     global $wpdb;
-
     echo before_gateways();
-    $gateways = array('check', 'bank', 'invoice', 'authnet', 'aim', 'firstdata', 'ideal', 'paypal', 'paypal_pro', 'eway', 'mwarrior', '2checkout');
+    $gateways = array();
+	$gateways[] = 'check';
+	$gateways[] = 'bank';
+	$gateways[] = 'invoice';
+	$gateways[] = 'authnet';
+	$gateways[] = 'aim';
+	$gateways[] = 'firstdata';
+	$gateways[] = 'ideal';
+	$gateways[] = 'paypal';
+	$gateways[] = 'paypal_pro';
+	$gateways[] = 'eway';
+	$gateways[] = 'mwarrior';
+	$gateways[] = '2checkout';
+	$gateways[] = 'paytrace'; 
     foreach ($gateways as $gateway) {
-        $func = 'event_espresso_' . $gateway . '_payment_settings';
-        $fallback_func = 'event_espresso_' . $gateway . '_settings';
+        $func 			= 'event_espresso_' . $gateway . '_payment_settings';
+        $fallback_func 	= 'event_espresso_' . $gateway . '_settings';
         $fallback_func2 = 'event_espresso_' . $gateway . '_deposit_settings';
         $fallback_func3 = 'event_espresso_authnet_' . $gateway . '_settings';
         if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/" . $gateway . "/settings.php")) {

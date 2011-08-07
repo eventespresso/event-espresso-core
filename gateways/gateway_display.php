@@ -2,7 +2,14 @@
 //This file builds the gateways that are available
 echo '<div id="onsite-payments" class="event-display-boxes">';
 echo '<h2 class="section-heading">' .  __('Please choose a payment option:', 'event_espresso') . '</h2>';
-if (get_option('events_paypal_pro_active') == 'true' || get_option('events_eway_active') == 'true' || get_option('events_authnet_aim_active') == 'true' || get_option('events_firstdata_active') == 'true' || get_option('events_ideal_active') == 'true'){
+if (get_option('events_paypal_pro_active') == 'true' 
+	|| get_option('events_eway_active') == 'true' 
+	|| get_option('events_authnet_aim_active') == 'true' 
+	|| get_option('events_firstdata_active') == 'true' 
+	|| get_option('events_ideal_active') == 'true'
+	|| get_option('events_paytrace_active') == 'true'
+	)
+{
 	echo '<div id="on_site_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="on_site_payment" class="payment_option_title section-heading">'.__('On-site Payment Processing', 'event_espresso').'</h3>';
 	
@@ -39,6 +46,14 @@ if (get_option('events_paypal_pro_active') == 'true' || get_option('events_eway_
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/ideal/ideal_vars.php");
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/ideal/ideal_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/ideal/ideal_vars.php");
+		}
+	}
+	
+	if (get_option('events_paytrace_active') == 'true'){
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paytrace/paytrace_vars.php")){
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paytrace/paytrace_vars.php");
+		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paytrace/paytrace_vars.php")){
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paytrace/paytrace_vars.php");
 		}
 	}
 	echo '</div><!-- / #onsite-payments -->';
