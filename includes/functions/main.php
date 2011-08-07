@@ -941,6 +941,9 @@ if (!function_exists('espresso_payment_type')) {
             case 'OFFLINE':
                 return __('Offline payment', 'event_espresso');
                 break;
+			default:
+				return __($type, 'event_espresso');
+				break;
         }
     }
 }
