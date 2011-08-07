@@ -18,6 +18,89 @@ if ($use_sandbox == 1) {
     // Enable test mode if needed
     $myPaypal->enableTestMode();
 }
+
+
+$attendees = array();
+$primary_registration_id = "";
+$amount_pd = 0.00;
+$multi_reg = false;
+$event_ids = array();
+$event_link = "";
+
+if ( isset($attendee_id) && is_numeric($attendee_id) && $attendee_id > 0 )
+{
+	$tmp_row = $wpdb->get_row("select registration_id from ".EVENTS_ATTENDEE_TABLE." where id = $attendee_id");
+	if ( $tmp_row !== NULL )
+	{
+		$tmp_registration_id = $tmp_row->registration_id;
+		$tmp_row = $wpdb->get_row("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '{$tmp_registration_id}' ");
+		if ( $tmp_row !== NULL )
+		{
+			$primary_registration_id = $tmp_row->primary_registration_id;		
+			$multi_reg = true;
+		}
+		else
+		{
+			$primary_registration_id = $tmp_registration_id;
+		}
+	}
+}
+
+if ( $attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_registration_id) > 0 )
+{
+	$registration_ids = array();
+	$rs = $wpdb->get_results("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where primary_registration_id = '{$primary_registration_id}' ");
+	if ( $wpdb->num_rows > 0 )
+	{
+		foreach($rs as $row )
+		{
+			$registration_ids[] = $row->registration_id;
+		}
+	}
+	else
+	{
+		$registration_ids[] = $primary_registration_id;
+	}
+	
+	$total = 0.00;
+	$amount_pd = 0.00;
+	$line_item = "";
+	foreach($registration_ids as $registration_id){
+
+		$sql = "select ea.registration_id, ea.id as attendee_id, ea.amount_pd, ed.id as event_id, ed.event_name, ed.start_date, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
+				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
+				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
+				where ea.registration_id = '".$registration_id."' order by ed.event_name ";
+		
+		$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
+
+		foreach($tmp_attendees as $tmp_attendee){
+			$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
+			$attendees[] = array(	"attendee_info"=>$tmp_attendee["event_name"]."[".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]" . " >> " . $tmp_attendee["fname"]." ".$tmp_attendee["lname"],
+									"quantity"=> $tmp_attendee["quantity"],
+									"cost"=> doubleval($tmp_attendee["cost"]),
+									"sub_total" => doubleval($sub_total) );
+			$line_item .= 	"LINEITEM~PRODUCTID=".$tmp_attendee['attendee_id']."+DESCRIPTION=".$tmp_attendee["event_name"]."[".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]" . " >> " . $tmp_attendee["fname"]." ".$tmp_attendee["lname"]."
+							QUANTITY=".$tmp_attendee['quantity']."UNITCOST=".$tmp_attendee['cost']."+AMOUNTLI=".$sub_total."+|";
+			$amount_pd += $tmp_attendee["amount_pd"];
+			$total_cost += $sub_total;
+			if ( !in_array($tmp_attendee['event_id'],$event_ids) )
+			{
+				$event_ids[] = $tmp_attendee['event_id'];
+			}
+		}
+	}
+	$discount = 0;
+	if ( $amount_pd < $total_cost )
+	{
+		$discount = $total_cost - $amount_pd;
+	}
+}
+
+
+#############################
+
+
 $quantity = isset($quantity) && $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);
 $myPaypal->addField('business', $paypal_id);
 $myPaypal->addField('return', home_url() . '/?page_id=' . $org_options['return_url'] . '&id=' . $attendee_id);
@@ -26,39 +109,45 @@ $myPaypal->addField('notify_url', home_url() . '/?page_id=' . $org_options['noti
 //$myPaypal->addField('item_name', $event_name . ' | '.__('Reg. ID:','event_espresso').' '.$attendee_id. ' | '.__('Name:','event_espresso').' '. $attendee_name .' | '.__('Total Registrants:','event_espresso').' '.$num_people);
 //echo espresso_quantity_for_registration($attendee_id);
 $event_meta = event_espresso_get_event_meta($event_id);
-if ($quantity > 1) {
+if (count($attendees) > 0) {
     $myPaypal->addField('cmd', '_cart');
     $myPaypal->addField('upload', '1');
-    if ($event_meta['additional_attendee_reg_info'] == 1 || espresso_quantity_for_registration($attendee_id) >1) {
-        $div = $event_cost / $quantity;
-        for ($i = 1; $i <= $quantity; $i++) {
-            $myPaypal->addField('item_number_' . $i, $registration_id);
-            $myPaypal->addField('item_name_' . $i, stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($fname . ' ' . $lname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $attendee_email);
-            $myPaypal->addField('amount_' . $i, number_format($div, 2, '.', ''));
-        }
-    } else {
-		$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . $registration_id . "' ORDER BY id ";
+    #if ($event_meta['additional_attendee_reg_info'] == 1 || espresso_quantity_for_registration($attendee_id) >1) {
+    #    $div = $event_cost / $quantity;
+    #    for ($i = 1; $i <= $quantity; $i++) {
+    #        $myPaypal->addField('item_number_' . $i, $registration_id);
+    #        $myPaypal->addField('item_name_' . $i, stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($fname . ' ' . $lname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $attendee_email);
+    #        $myPaypal->addField('amount_' . $i, number_format($div, 2, '.', ''));
+    #    }
+    #} else {
+		#$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . $registration_id . "' ORDER BY id ";
 		//echo $sql;
-        $data = $wpdb->get_results($sql, ARRAY_A);
-        if ($wpdb->num_rows > 0) {
+        #$data = $wpdb->get_results($sql, ARRAY_A);
+        #if ($wpdb->num_rows > 0) {
             $i = 1;
             $div = $event_cost / $quantity;
-            foreach ($data as $row) {
-                $afname = $row['fname'];
-                $alname = $row['lname'];
-                $aemail = $row['email'];
-                $myPaypal->addField('item_number_' . $i, $registration_id);
-                $myPaypal->addField('item_name_' . $i, stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
-                $myPaypal->addField('amount_' . $i, number_format($div, 2, '.', ''));
+            #foreach ($data as $row) 
+			foreach($attendees as $attendee)
+			{
+                #$afname = $row['fname'];
+                #$alname = $row['lname'];
+                #$aemail = $row['email'];
+                #$myPaypal->addField('item_number_' . $i, $registration_id);
+                $myPaypal->addField('item_name_' . $i, $attendee['attendee_info']);#stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
+                $myPaypal->addField('amount_' . $i, number_format($attendee['sub_total'],2,'.',''));#number_format($div, 2, '.', ''));
+				$myPaypal->addField('quantity_'. $i, $attendee['quantity']);
                 $i++;
             }
-        }
-    }
-} else {
-    $myPaypal->addField('item_number', $registration_id);
-    $myPaypal->addField('item_name', stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($fname . ' ' . $lname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $attendee_email);
-    $myPaypal->addField('amount', number_format($event_cost, 2, '.', ''));
+        #}
+    #}
 }
+#else 
+#{
+#    $myPaypal->addField('item_number', $registration_id);
+#    $myPaypal->addField('item_name', stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($fname . ' ' . $lname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $attendee_email);
+#    $myPaypal->addField('amount', number_format($event_cost, 2, '.', ''));
+#}
+
 $myPaypal->addField('currency_code', $paypal_cur);
 $myPaypal->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
 $myPaypal->addField('no_shipping ', $no_shipping);
@@ -71,6 +160,11 @@ $myPaypal->addField('address1', $address);
 $myPaypal->addField('city', $city);
 $myPaypal->addField('state', $state);
 $myPaypal->addField('zip', $zip);
+
+if ($amount_pd < $total_cost)
+{
+	$myPaypal->addField('discount_amount_1',number_format($total_cost-$amount_pd,2,'.',''));
+}
 
 
 //Enable this function if you want to send payment notification before the person has paid.
