@@ -41,7 +41,7 @@ function organization_config_mnu() {
         $org_options['time_reg_limit'] = $_POST['time_reg_limit'];
         $org_options['use_custom_post_types'] = $_POST['use_custom_post_types'];
         $org_options['use_attendee_pre_approval'] = $_POST['use_attendee_pre_approval'];
-        $org_options['display_description_on_multi_reg_page'] = $_POST['display_description_on_multi_reg_page'];
+        $org_options['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
         $org_options['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
         $org_options['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
         $org_options['display_address_in_regform'] = $_POST['display_address_in_regform'];
@@ -64,7 +64,7 @@ function organization_config_mnu() {
                 break;
 
             case 'CHE':
-                $org_options['currency_symbol'] = 'francs';
+                $org_options['currency_symbol'] = 'Fr.';
                 break;
 
             case 'AUS':

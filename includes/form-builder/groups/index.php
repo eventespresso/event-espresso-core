@@ -155,7 +155,7 @@ function event_espresso_question_groups_config_mnu() {
                                         ?>
                                         <tr><td><input name="row_id" type="hidden" value="<?php echo $group_id ?>" />
                                                 <?php if ($system_group == 0) : ?>
-                                                    <input style="margin:7px 0 22px 8px; vertical-align:top;" name="checkbox[<?php echo $group_id ?>]" type="checkbox"  title="Delete <?php echo $question_name ?>">
+                                                    <input style="margin:7px 0 22px 8px; vertical-align:top;" name="checkbox[<?php echo $group_id ?>]" type="checkbox"  title="Delete <?php echo empty($question_name) ? '' : $question_name ?>">
                                                 <?php else: ?>
                                                     <span><?php echo '<img style="margin:7px 0 22px 8px; vertical-align:top;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/lock.png" alt="System Group" title="System Group" />'; ?></span>
                                                 <?php endif; ?>
