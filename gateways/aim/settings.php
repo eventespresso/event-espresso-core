@@ -74,7 +74,7 @@ function event_espresso_display_authnet_aim_settings() {
         <table width="99%" border="0">
             <tr>
                 <td valign="top"><ul>
-                        <li style="width:50%"><p><strong style="color:#F00">WARNING!</strong> Use this gateway at your own risk. This version of the the SIM gateway is still under beta testing.  You are responsible for your own security and PCI compliance.</p></li>
+                        <li style="width:50%"><p><strong style="color:#F00"><?php _e('WARNING!', 'event_espresso'); ?></strong> <?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></p></li>
                         <li>
                             <label for="authnet_aim_login_id">
                                 <?php _e('Authorize.net AIM Login I.D.', 'event_espresso'); ?>
