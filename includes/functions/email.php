@@ -61,7 +61,7 @@ function replace_shortcodes($message, $data) {
         $data->event->virtual_url,
         $data->event->virtual_phone,
         //Venue information
-        $data->event->venue_title,
+        $data->event->venue_name,
         $data->event->venue_url,
         $data->event->venue_image,
         $data->event->venue_phone,
@@ -117,6 +117,7 @@ function prepare_email_data($attendee_id, $multi_reg) {
 
 	//Venue information
 			if (isset($org_options['use_venue_manager'])&&$org_options['use_venue_manager'] =='Y'){
+				$data->event->venue_name = $data->event->venue_name;
 				$data->event->address = $data->event->venue_address;
 				$data->event->address2 = $data->event->venue_address2;
 				$data->event->city = $data->event->venue_city;
