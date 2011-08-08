@@ -45,7 +45,7 @@ if (!empty($twocheckout_settings['bypass_payment_page']) && $twocheckout_setting
 }
 
 if ($use_sandbox == true) {
-    echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+    echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __(' 2checkout.com Debug Mode Is Turned On', 'event_espresso') . '</h3>';
     $my2checkout->dump_fields(); // for debugging, output a table of all the fields
 }
 

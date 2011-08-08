@@ -262,6 +262,19 @@ span.remove-cart-item {
 	background: #eee;
 	padding: 10px;
 }
+ul#espresso_payment_buttons {
+	list-style: none;
+	margin: 0;
+	text-align: center;
+}
+ul#espresso_payment_buttons li {
+	display: inline;
+	padding: 0 8px;
+	vertical-align: top;
+}
+ul#espresso_payment_buttons li form {
+	display: inline;
+}
 /* >Forms
 ------------------------------------------------------------------------------*/
 /* override WP styles */
@@ -278,7 +291,9 @@ span.remove-cart-item {
 	font-weight: bold;
 	font-size: 87.50%;
 }
-
+#content .event-display-boxes form.ee-forms select {
+	margin-bottom: 0;
+}
 /*
 * from http://vesess.com/sandbox/form_template.html#
 */
@@ -370,6 +385,10 @@ span.remove-cart-item {
 .payment-submit {
 	height: 30px;
 }	
+#ideal-mollie-form .payment-submit {
+	height: auto;
+	margin-bottom: 0;
+}
 .btn_event_form_submit:hover {
 	background: #D7DCBD;
 	color: #000 !important;
@@ -413,6 +432,9 @@ span.remove-cart-item {
 	text-align: left;	
 	width: 90%;
 }
+#content .event-display-tables td input {
+	line-height: 1;
+}
 #event_espresso_attendee_verify tr td,
 #event_espresso_attendee_verify_questions tr td,
 #event_espresso_attendee_verify tr th.header {
@@ -437,7 +459,6 @@ span.remove-cart-item {
 	border: 1px;
 	font-size: 1.1em;
 }
-
 table.price_list tr {
 	background-color: #D7DCBD;
 }

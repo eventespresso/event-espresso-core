@@ -61,60 +61,60 @@ if (get_option('events_paypal_pro_active') == 'true'
 if (get_option('events_paypal_active') == 'true' || get_option('events_authnet_active') == 'true' || get_option('events_mwarrior_active') == 'true' || get_option('events_alipay_active') == 'true' || get_option('events_plugnpay_active') == 'true' || get_option('events_2checkout_active') == 'true'){
 	echo '<div id="off_site_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="off_site_payment" class="payment_option_title section-heading">'.__('Off-site Payments', 'event_espresso').'</h3>';
-	echo '<table id="espresso_payment_buttons" id="espresso_payment_buttons" width="95%">';
-	echo '<tr>';
+	echo '<ul id="espresso_payment_buttons">';
+	//echo '<tr>';
 	
 	if (get_option('events_paypal_active') == 'true'){
-		echo '<td>';
+		echo '<li class="offsite-pay-buttons">';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_vars.php");
 		}else{
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal/paypal_vars.php");
 		}
-		echo '</td>';
+		echo '</li>';
 	}
 	if (get_option('events_authnet_active') == 'true'){
-		echo '<td>';
+		echo '<li>';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/authnet_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/authnet_vars.php");
 		}else{
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/authnet/authnet_vars.php");
 		}
-		echo '</td>';
+		echo '</li>';
 	}
 	
 	if (get_option('events_mwarrior_active') == 'true'){
-		echo '<td>';
+		echo '<li>';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/mwarrior_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/mwarrior_vars.php");
 		}else{
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/mwarrior/mwarrior_vars.php");
 		}
-		echo '</td>';
+		echo '</li>';
 	}
 	
 	if ((file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/alipay_active.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/alipay/alipay_active.php")) && get_option('events_alipay_active') == 'true'){
 			global $org_options;
 			$alipay_settings = get_option('event_espresso_alipay_settings');
-		echo '<td>';
+		echo '<li>';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/index.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/index.php");
 		}else{
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/alipay/index.php");
 		}
-		echo '</td>';
+		echo '</li>';
 	}
 	if (get_option('events_2checkout_active') == 'true'){
-		echo '<td>';
+		echo '<li>';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/2checkout_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/2checkout_vars.php");
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/2checkout/2checkout_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/2checkout/2checkout_vars.php");
 		}
-		echo '</td>';
+		echo '</li>';
 	}
-	echo '</tr>';
-	echo '</table>';
+	//echo '</tr>';
+	echo '</ul>';
 	echo '</div><!-- / #off_site_payment_container -->';
 }
 

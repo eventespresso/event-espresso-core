@@ -96,7 +96,8 @@ if (!class_exists('PaymentGateway')) {
          */
         public function submitButton($button_url, $gateway) {
             $this->prepareSubmit();
-            echo '<form method="post" name="payment_form" action="' . $this->gatewayUrl . '">';
+							global $gateway_name;
+            echo '<form  method="post" name="payment_form" action="' . $this->gatewayUrl . '">';
             foreach ($this->fields as $name => $value) {
                 echo "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
             }
@@ -117,7 +118,7 @@ if (!class_exists('PaymentGateway')) {
                     $gateway_name = '2checkout';
                     break;
             }
-            echo '<td><input class="espresso_payment_button" type="image" alt="Pay using ' . $gateway_name . '" src="' . $button_url . '" /></td>';
+            echo '<input class="espresso_payment_button' . $gateway_name . '" type="image" alt="Pay using ' . $gateway_name . '" src="' . $button_url . '" />';
             echo '</form>';
         }
 
@@ -212,24 +213,27 @@ if (!class_exists('PaymentGateway')) {
             // Used for debugging, this function will output all the field/value pairs
             // that are currently defined in the instance of the class using the
             // add_field() function.
-            echo "<h3>PaymentGateway->dump_fields() Output:</h3>";
-            echo "
-			<table width=\"95%\" border=\"1\" cellpadding=\"2\" cellspacing=\"0\">
-			  <tr>
-				<td bgcolor=\"black\"><b><font color=\"white\">" . __('Field Name', 'event_espresso') . "</font></b></td>
-				<td bgcolor=\"black\"><b><font color=\"white\">" . __('Value', 'event_espresso') . "</font></b></td>
-			  </tr>";
-
+							global $gateway_name;
+            // echo  '<h3>PaymentGateway->dump_fields() Output:</h3>';
+            echo '<table style="background: #000;" width="95%" border="1" cellpadding="2" cellspacing="0">';
+							echo '<caption style="background: #000; color: #fff; font-weight: bold;">' . $gateway_name . ' debug output</caption>';
+							echo '<thead>';
+							echo '<tr>';
+							echo '<th style="color: #fff;">' . __('Field Name', 'event_espresso') . '</th>';
+							echo '<th style="color: #fff;">' . __('Value', 'event_espresso') . '</th>';
+							echo '</tr>';
+							echo '</thead>';
+							echo '<tbody>';
             ksort($this->fields);
             foreach ($this->fields as $key => $value) {
-                echo "
-			  <tr>
-				<td>$key</td>
-				<td>" . urldecode($value) . "&nbsp;</td>
-			  </tr>
-			  ";
+							
+							echo '<tr>';
+							echo '<td style="color: #fff; border-right: 1px solid #ccc;">' . $key . '</td>';
+							echo '<td style="color: #fff;">' . urldecode($value) .'&nbsp;</td>';
+							echo '</tr>';
             }
-            echo "</table>";
+							echo '</tbody>';
+            echo '</table>';
         }
 
     }

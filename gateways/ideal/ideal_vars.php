@@ -30,12 +30,12 @@ if (!$r || $wpdb->num_rows == 0){
 $amount      = (int) ($r->amount_pd * 100);    // Het af te rekenen bedrag in centen (!!!)
 $description = stripslashes_deep( $r->event_name ); // Beschrijving die consument op zijn/haar afschrift ziet.
 
-if (!in_array('ssl', stream_get_transports()))
-{
-	echo "<h1>Foutmelding</h1>";
-	echo "<p>Uw PHP installatie heeft geen SSL ondersteuning. SSL is nodig voor de communicatie met de Mollie iDEAL API.</p>";
-	exit;	
-}
+//if (!in_array('ssl', stream_get_transports()))
+//{
+//	echo "<h1>Foutmelding</h1>";
+//	echo "<p>Uw PHP installatie heeft geen SSL ondersteuning. SSL is nodig voor de communicatie met de Mollie iDEAL API.</p>";
+//	exit;	
+//}
 
 $iDEAL = new iDEAL_Payment ($partner_id);
 
@@ -86,7 +86,8 @@ if ($bank_array == false)
 }
 
 ?>
-<form method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?>">
+<div class="event-display-boxes">
+<form id="ideal-mollie-form" class="ee-forms" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?>">
 	<select name="bank_id" class="required">
 		<option value=''>Kies uw bank</option>
 		
@@ -98,5 +99,6 @@ if ($bank_array == false)
     <input name="amount" type="hidden" value="<?php echo $amount; ?>" />
     <input name="ideal" type="hidden" value="1" />
     <input name="id" type="hidden" value="<?php echo $attendee_id; ?>" />
-	<input type="submit" name="submit" value="Betaal via iDEAL" />
+	<input type="submit" class="btn_event_form_submit payment-submit" name="submit" value="Betaal via iDEAL" />
 </form>
+</div>
