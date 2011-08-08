@@ -682,6 +682,11 @@ inside_wrapper_class
 image_class
 show_google_map_link (true|false default true)
 map_link_text
+show_map_image (true|false default true)
+map_image_wrapper
+map_image_class
+map_w (map image width default 400)
+map_h (map image height default 400)
 show_title (true|false default true)
 show_image (true|false default true)
 show_description (true|false default true)
@@ -693,7 +698,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 		
 		global $wpdb,$this_event_id;
 		
-		extract($atts);
+		empty($atts)? '': extract($atts);
 		
 		//Outside wrapper
 		$outside_wrapper_class = $outside_wrapper_class != '' ? 'class="'.$outside_wrapper_class.'"' : 'class="event_venue"';
@@ -715,10 +720,19 @@ if (!function_exists('espresso_venue_details_sc')) {
 		$inside_wrapper_class = $inside_wrapper_class != '' ? 'class="'.$inside_wrapper_class.'"' : 'class="venue_details"';
 		$inside_wrapper_before  = $inside_wrapper != '' ? '<'.$inside_wrapper.' '.$inside_wrapper_class.'>': '<p '.$inside_wrapper_class.'>';
 		$inside_wrapper_after  = $inside_wrapper != '' ? '</'.$inside_wrapper.'>': '</p>';
+		
+		//Map image class
+		$map_image_class = $map_image_class != '' ? 'class="'.$map_image_class.'"' : 'class="venue_map_image"';
+		$map_image_wrapper_class = $map_image_wrapper_class != '' ? 'class="'.$map_image_wrapper_class.'"' : 'class="map_image_wrapper"';
+		$map_image_wrapper_start  = $map_image_wrapper != '' ? '<'.$map_image_wrapper.' '.$map_image_wrapper_class: '<p '.$map_image_wrapper_class;
+		$map_image_wrapper_end = $map_image_wrapper !='' ? '</'.$map_image_wrapper.'>' : '</p>';
 			
 		//Google Map link text
 		$show_google_map_link = ($show_google_map_link != ''&&$show_google_map_link == 'false')? false:true;
 		$map_link_text = $map_link_text != ''? $map_link_text:__('Map and Directions', 'event_espresso');
+		
+		//Show Google map image?
+		$show_map_image = ($show_map_image != '' && $show_map_image == 'false')? false:true;
 		
 		//Show title?
 		$show_title = ($show_title != '' && $show_title == 'false')? false:true;
@@ -769,6 +783,11 @@ if (!function_exists('espresso_venue_details_sc')) {
 					//Google map link creation
                		$google_map_link = espresso_google_map_link(array('address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'text'));
 					
+					//Google map image creation
+					$map_w = isset($map_w) ? $map_w : 400;
+					$map_h = isset($map_h) ? $map_h : 400;
+					$google_map_image = espresso_google_map_link(array('id'=>$venue_id, 'map_image_class'=>$map_image_class, 'address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'map', 'map_h'=>$map_h, 'map_w'=>$map_w));
+					
 					//Build the venue title
 					if ($show_title != false){
 						$html .= $venue->name !=''? $title_wrapper_start.'>'.stripslashes_deep($venue->name).$title_wrapper_end:'';
@@ -795,6 +814,11 @@ if (!function_exists('espresso_venue_details_sc')) {
 						$html .= $venue->country != ''? stripslashes_deep($venue->country).'<br />':'';
 						$html .= $show_google_map_link != false? $google_map_link:'';
 						$html .= $inside_wrapper_after;
+					}
+					
+					//Build the venue image
+					if ($show_map_image != false){
+						$html .= $map_image_wrapper_start.$google_map_image.$map_image_wrapper_end;
 					}
 					
 					//Build the additional details

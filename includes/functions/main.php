@@ -985,6 +985,8 @@ if (!function_exists('espresso_google_map_link')) {
         $country = "{$country}";
         $text = isset($text) ? "{$text}" : "";
         $type = isset($type) ? "{$type}" : "";
+		$map_w = isset($map_w) ? "{$map_w}" : 400;
+		$map_h = isset($map_h) ? "{$map_h}" : 400;
 
         $gaddress = ($address != '' ? $address : '') . ($city != '' ? ',' . $city : '') . ($state != '' ? ',' . $state : '') . ($zip != '' ? ',' . $zip : '') .
                 ($country != '' ? ',' . $country : '');
@@ -992,8 +994,6 @@ if (!function_exists('espresso_google_map_link')) {
         $google_map = htmlentities2('http://maps.google.com/maps?q=' . $gaddress);
 
         switch ($type) {
-
-
             case 'text':
             default:
                 $text = $text == '' ? __('Map and Directions', 'event_espresso') : $text;
@@ -1002,9 +1002,14 @@ if (!function_exists('espresso_google_map_link')) {
             case 'url':
                 $text = $google_map;
                 break;
+				
+			 case 'map':
+			 	$google_map_link = '<a href="' . $google_map . '" target="_blank">' . '<image id="venue_map_'.$id.'" '.$map_image_class.' src="'.htmlentities2('http://maps.googleapis.com/maps/api/staticmap?center=' . $gaddress.'&amp;zoom=14&amp;size='.$map_w.'x'.$map_h.'&amp;markers=color:green|label:|'.$gaddress.'&amp;sensor=false') .'" /></a>';
+				return $google_map_link;
         }
-
-        return $google_map_link = '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
+		
+		$google_map_link = '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
+        return $google_map_link;
     }
 
 }
