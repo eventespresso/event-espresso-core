@@ -484,7 +484,7 @@ class AuthorizeNetAIM_Response extends AuthorizeNetResponse
             }
             
             if ($this->error||$this->declined||$this->held) {
-               $this->error_message = '<p><strong class="credit_card_failure">Attention: your transaction was declined for the following reason(s):</strong><br />'.$this->response_reason_text .'<br /><span class="response_code">Response Code: '.$this->response_code.'<br /></span><span class="response_subcode">Response Subcode: '.$this->response_subcode.'</span></p><p>To try again, <a href = "javascript:history.back()">please click here</a>.</p> ';
+               $this->error_message = '<p><strong class="credit_card_failure">Attention: your transaction was declined for the following reason(s):</strong><br />'.$this->response_reason_text .'<br /><span class="response_code">Response Code: '.$this->response_code.'<br /></span><span class="response_subcode">Response Subcode: '.$this->response_subcode.'</span></p><p>To try again, <a href="#payment_options">please click here</a>.</p> ';
 
 
                /* $this->error_message = "AuthorizeNet Error:
