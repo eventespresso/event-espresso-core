@@ -55,28 +55,30 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) )
                	 
 												<div>
 													<table id="cart-reg-details" class="event-display-tables">
-														<tr>
+														<thead>
+															<tr>
 															
-															<th><?php _e( 'Date', 'event_espresso' ); ?></th>
-															<th><?php _e( 'Time', 'event_espresso' ); ?></th>
+																<th><?php _e( 'Date', 'event_espresso' ); ?></th>
+																<th><?php _e( 'Time', 'event_espresso' ); ?></th>
 
-														</tr>
-														<tr>
-															<td>
-																<?php echo event_date_display( $r->start_date, get_option( 'date_format' ) ) ?> <?php _e( ' to ', 'event_espresso' ); ?> <?php echo event_date_display( $r->end_date, get_option( 'date_format' ) ) ?>
-															</td>
+															</tr>
+														</thead>
+															<tr>
+																<td>
+																	<?php echo event_date_display( $r->start_date, get_option( 'date_format' ) ) ?> <?php _e( ' to ', 'event_espresso' ); ?> <?php echo event_date_display( $r->end_date, get_option( 'date_format' ) ) ?>
+																</td>
 															
-															<td>
-																<?php event_espresso_time_dropdown( $r->id, 0, 1, $_SESSION['events_in_session'][$r->id]['start_time_id'] ); ?>
-															</td>
-														</tr>
-														<tr>
+																<td>
+																	<?php event_espresso_time_dropdown( $r->id, 0, 1, $_SESSION['events_in_session'][$r->id]['start_time_id'] ); ?>
+																</td>
+															</tr>
+															<tr>
 
-															<td colspan="2">
-																<?php event_espresso_group_price_dropdown( $r->id, 0, 1, $_SESSION['events_in_session'][$r->id]['price_id']); ?>
-															</td>
+																<td colspan="2">
+																	<?php event_espresso_group_price_dropdown( $r->id, 0, 1, $_SESSION['events_in_session'][$r->id]['price_id']); ?>
+																</td>
 
-														</tr>
+															</tr>
 													</table>
 
                         <?php

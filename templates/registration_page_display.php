@@ -66,7 +66,7 @@
 	?>
 			<p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 			<span class="address-block"> <?php echo stripslashes_deep($location); ?><br />
-			<?php echo $google_map_link; ?></span> </p>
+			<span class="google-map-link"><?php echo $google_map_link; ?></span></span> </p>
 	<?php
 		}
 		/* Displays the social media buttons */

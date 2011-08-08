@@ -532,12 +532,12 @@ if (!function_exists('event_espresso_load_checkout_page')) {
                         echo $output;
                         ?>
 
-                        <input type="submit" class="submit" name="payment_page" value="<?php _e('Confirm and go to payment page', 'event_espresso'); ?>" />
+                        <input type="submit" class="submit btn_event_form_submit" name="payment_page" value="<?php _e('Confirm and go to payment page', 'event_espresso'); ?>" />
 
-                        <?php _e(' or ', 'event_espresso');
+                        <?php _e('<span> - OR - <span>', 'event_espresso');
                     } ?>
 
-                    <a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart">  <?php _e('Edit Cart', 'event_espresso'); ?> </a>
+                    <a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart" class="btn_event_form_submit inline-link">  <?php _e('Edit Cart', 'event_espresso'); ?> </a>
 
                 </form>
             </div>

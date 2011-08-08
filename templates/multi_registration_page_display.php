@@ -5,7 +5,7 @@
 global $this_event_id;
 $this_event_id = $event_id;
 ?>
-<div id="event_espresso_registration_form">
+<div id="event_espresso_registration_form" class="event-display-boxes">
 
     <?php
 

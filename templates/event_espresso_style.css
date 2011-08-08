@@ -130,6 +130,10 @@ table.price_list {
 	padding-bottom: 3px;
 	text-decoration: none;
 }
+.inline-link:focus,
+.inline-link:hover {
+	color: #CD7950;
+}
 #content .event-display-boxes .address-block {
 	border: 1px solid #bfbfbf;
 	background: #FAF9EF;
@@ -137,7 +141,6 @@ table.price_list {
 	margin-top: 0;
 	padding: 10px;
 }
-
 #content .entry-content .register-link-footer	{
 	border-top: 1px solid #bfbfbf;
 	background: #BCBEB2;
@@ -177,7 +180,23 @@ div.event-entry-meta ul li {
 	border-left: none;
 	float: left;
 }
-
+span.google-map-link {
+	clear: left;
+	display: inline-block;
+	width: 100%;
+}
+span.google-map-link a {
+	border-bottom: 1px solid #ccc;
+	color: #868C68;
+	font-size: 87.50%;
+	font-weight: bold;
+	padding-bottom: 3px;
+	text-decoration: none;
+}
+span.google-map-link a:focus,
+span.google-map-link a:hover {
+	color: #CD7950;
+}
 /*___ page register ___*/
 
 .event_description .event_staff {
@@ -222,9 +241,9 @@ div.event-entry-meta ul li {
 
 
 #event_espresso_checkout_form {
-	border: 2px solid #e8e8e8;
+/*	border: 2px solid #e8e8e8;
 	margin: 5px 0;
-	padding: 5px;
+	padding: 5px;*/
 }
 .multi_reg_cart_block {
 	background: #fafafa;
@@ -251,7 +270,6 @@ span.remove-cart-item {
 	float: right;
 	margin-right: 3px;
 }
-
 #event_espresso_refresh_total  {
 	line-height: 2.2;
 }
@@ -382,6 +400,13 @@ ul#espresso_payment_buttons li form {
 	width: auto;
 	height: 40px;
 }
+a.btn_event_form_submit {
+	display: inline-block;
+	font-family: 'Helvetica Neue', Arial, Helvetica, 'Nimbus Sans L', sans-serif;
+	font-weight: normal;
+	height: auto;
+	padding: 7px 4px;
+}
 .payment-submit {
 	height: 30px;
 }	
@@ -430,7 +455,7 @@ ul#espresso_payment_buttons li form {
 	border: 1px solid #bebebe;
 	margin: 0 auto;
 	text-align: left;	
-	width: 90%;
+	width: 96%;
 }
 #content .event-display-tables td input {
 	line-height: 1;
@@ -454,10 +479,11 @@ ul#espresso_payment_buttons li form {
 	text-align: left;
 }
 #event_espresso_shopping_cart table.price_list {
+	border: 1px;
+	font-size: 100%;
+	font-weight: bold;
 	margin: 10px auto;
 	width: 98%;
-	border: 1px;
-	font-size: 1.1em;
 }
 table.price_list tr {
 	background-color: #D7DCBD;
