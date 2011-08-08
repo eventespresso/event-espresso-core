@@ -472,8 +472,6 @@ $primary_registration_id = NULL;
 
                 <p><?php echo $org_options['email_before_payment'] == 'Y' ? __('A confirmation email has been sent with additional details of your registration.', 'event_espresso') : ''; ?></p>
 
-                <h2><?php _e('Please choose a payment option:', 'event_espresso'); ?></h2>
-
                 <?php
                 //Show payment options
                 if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")) {
