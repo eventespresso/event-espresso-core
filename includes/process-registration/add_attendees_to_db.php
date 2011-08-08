@@ -443,7 +443,9 @@ $primary_registration_id = NULL;
                             ) AS quantity
                             FROM " . EVENTS_ATTENDEE_TABLE
                         . " WHERE event_id = " . $wpdb->escape($first_event_id)
-                        . " AND attendee_session = '" . $wpdb->escape($current_session_id) . "' ORDER BY id LIMIT 1";
+                        . " AND attendee_session = '" . $wpdb->escape($current_session_id) . "' LIMIT 1";
+						
+						//echo $sql;
 
                 $r = $wpdb->get_row($sql);
                 $event_id = $r->event_id;
