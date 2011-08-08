@@ -1,4 +1,5 @@
 <?php
+global $wpdb, $org_options;
 echo '<!--Event Espresso Authorize.net AIM Gateway Version ' . $authnet_aim_gateway_version . '-->';
 
 require_once 'AuthorizeNet.php';
@@ -35,58 +36,63 @@ $transaction->invoice_num = $_POST['invoice_num'];
 //Capture response
 $response = $transaction->authorizeAndCapture();
 
+$txn_id = $response->transaction_id;
+$attendee_id = $response->customer_id;
+$txn_type = $response->transaction_type;
+$payment_date = date("d-m-Y");
+	
+$sql = "SELECT * FROM ". EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ";
+$sql .= $id ==''?'':" AND id= '".$id."' ";
+$sql .= " ORDER BY id LIMIT 0,1";
+			
+$attendees = $wpdb->get_results($sql);
+foreach ($attendees as $attendee){
+	$attendee_id = $attendee->id;
+	$att_registration_id = $attendee->registration_id;
+	$registration_id = $att_registration_id;
+	$lname = $attendee->lname;
+	$fname = $attendee->fname;
+	$email = $attendee->email;
+	$amount_pd = $attendee->amount_pd;
+	$event_id = $attendee->event_id;
+}
+		
+$events = $wpdb->get_results( "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'" );
+foreach ( $events as $event ) {
+	$event_id = $event->id;
+	$event_name = $event->event_name;
+	$event_desc = $event->event_desc;
+	$event_description = $event->event_desc;
+	$event_identifier = $event->event_identifier;
+	$cost = $event->event_cost;
+	$event_cost = $event->event_cost;
+	$active = $event->is_active;
+}
+//Build links
+$event_url = home_url() . "/?page_id=" . $org_options['event_page_id']. "&regevent_action=register&event_id=". $event_id;
+$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
+			
 if ($response->approved) {
-	global $wpdb, $org_options;
+	$payment_status = 'Completed';
 ?>
 	<h2><?php _e('Thank You!','event_espresso'); ?></h2>
 	<p><?php _e('Your transaction has been processed.','event_espresso'); ?></p>
 	<p><?php __('Transaction ID:','event_espresso') . $response->transaction_id; ?></p>
-<?php 
-	$payment_status = 'Completed';
-	$txn_id = $response->transaction_id;
-	$attendee_id = $response->customer_id;
-	$txn_type = $response->transaction_type;
-	$payment_date = date("d-m-Y");
-	
-	$sql = "SELECT * FROM ". EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ";
-			$sql .= $id ==''?'':" AND id= '".$id."' ";
-			$sql .= " ORDER BY id LIMIT 0,1";
-			
-			$attendees = $wpdb->get_results($sql);
-			foreach ($attendees as $attendee){
-				$attendee_id = $attendee->id;
-				$att_registration_id = $attendee->registration_id;
-				$lname = $attendee->lname;
-				$fname = $attendee->fname;
-				$amount_pd = $attendee->amount_pd;
-				$event_id = $attendee->event_id;
-				
-			}
-			
-			$events = $wpdb->get_results( "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'" );
-			foreach ( $events as $event ) {
-				$event_id = $event->id;
-				$event_name = $event->event_name;
-				$event_desc = $event->event_desc;
-				$event_description = $event->event_desc;
-				$event_identifier = $event->event_identifier;
-				$cost = $event->event_cost;
-				$active = $event->is_active;
-			}
-			//Build links
-			$event_url = home_url() . "/?page_id=" . $org_options['event_page_id']. "&regevent_action=register&event_id=". $event_id;
-			$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
-	
+<?php 	
 } else {
-  print $response->error_message;
-  $payment_status = 'Payment Declined';
+	print $response->error_message;
+	$payment_status = 'Payment Declined';
+	$payment_failed = true;
 }
 
-//Add details to the DB
-global $wpdb;
-			
 $sql = "UPDATE ". EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $payment_status . "', txn_type = '" . $txn_type . "', txn_id = '" . $txn_id . "', payment_date ='" . $payment_date . "', transaction_details = '" . serialize($response) . "'  WHERE registration_id ='" . espresso_registration_id($attendee_id) . "'";
-
 $wpdb->query($sql);
 
+//Debug
 //print_r($response);
+//echo $att_registration_id;
+
+//If the payment fails, then we display the payment page
+if ($payment_failed ==true){
+	echo event_espresso_pay($att_registration_id);
+}
