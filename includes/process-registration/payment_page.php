@@ -387,6 +387,7 @@ function event_espresso_pay($att_registration_id=0) {
                 } else {
                     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/payment_overview.php");
                 }
+				echo '<a name="payment_options" id="payment_options"></a>';
                 if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "return_payment.php")) {
                     require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "return_payment.php"); //This is the path to the template file if available
                 } else {
@@ -458,7 +459,6 @@ function event_espresso_pay($att_registration_id=0) {
             $event_identifier = $event->event_identifier;
             $active = $event->is_active;
         }
-
 
         //Pull in the template
         if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "return_payment.php")) {
