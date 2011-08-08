@@ -13,7 +13,9 @@ function add_new_attendee($event_id){
 </div>
 <?php
 	}
-	
+	wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), false, '1.1.0');
+        wp_print_scripts('reCopy');
+
 	global $wpdb;
 	$sql  = "SELECT * FROM " .EVENTS_DETAIL_TABLE. " WHERE is_active='Y' AND event_status != 'D' AND id = '" . $event_id . "' LIMIT 0,1";
 	
@@ -125,6 +127,7 @@ function add_new_attendee($event_id){
           <p class="event_form_submit" id="event_form_submit-<?php echo $event_id;?>">
             <input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id;?>" type="submit" name="Submit" value="<?php _e('Submit','event_espresso');?>" />
           </p>
+          <?php echo event_espresso_additional_attendees($event_id, $additional_limit=5, $available_spaces=999, $label='Add More Attendees'); ?>
         </form>
       </div>
     </div>
