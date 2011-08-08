@@ -8,8 +8,8 @@ function isEmptyArray($array) {
 
 //Text formatting function.
 //This should fix all of the formatting issues of text output from the database.
-function espresso_format_content($content=''){
-	return wpautop(utf8_encode(html_entity_decode(stripslashes_deep(do_shortcode($content)))));
+function espresso_format_content($content='') {
+    return wpautop(utf8_encode(html_entity_decode(stripslashes_deep(do_shortcode($content)))));
 }
 
 //This function pulls HTML entities back into HTML format first then strips it.
@@ -21,24 +21,26 @@ function event_espresso_strip_html_from_entity($html_entity) {
     return $stripped_html_entity;
 }
 
-	/*	This function checks a registration id to see if their session is registered more than once, if so, it returns the session id	*/
-	function event_espresso_more_than_one($registration_id){
-		global $wpdb;
-		$sql = "SELECT a.attendee_session FROM ".EVENTS_ATTENDEE_TABLE." a JOIN ".EVENTS_ATTENDEE_TABLE." b ON b.attendee_session = a.attendee_session WHERE b.registration_id='".$registration_id."' GROUP BY a.id";
-		$res = $wpdb->get_results($sql);
-		if ( $wpdb->num_rows > 1 ){
-			$attendee_session = $wpdb->get_var( $sql . " ORDER BY a.id LIMIT 1 " );
-			return $attendee_session;
-		}
-		return null;
-	}
-function espresso_attendee_price($registration_id){
-	global $wpdb;
-	$sql = "SELECT amount_pd FROM ".EVENTS_ATTENDEE_TABLE." WHERE registration_id ='".$registration_id."' ORDER BY id LIMIT 0,1";
-	$res = $wpdb->get_results($sql);
-	if ( $wpdb->num_rows >= 1 ){
-		return $wpdb->last_result[0]->amount_pd;
-	}
+/* 	This function checks a registration id to see if their session is registered more than once, if so, it returns the session id	 */
+
+function event_espresso_more_than_one($registration_id) {
+    global $wpdb;
+    $sql = "SELECT a.attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " a JOIN " . EVENTS_ATTENDEE_TABLE . " b ON b.attendee_session = a.attendee_session WHERE b.registration_id='" . $registration_id . "' GROUP BY a.id";
+    $res = $wpdb->get_results($sql);
+    if ($wpdb->num_rows > 1) {
+        $attendee_session = $wpdb->get_var($sql . " ORDER BY a.id LIMIT 1 ");
+        return $attendee_session;
+    }
+    return null;
+}
+
+function espresso_attendee_price($registration_id) {
+    global $wpdb;
+    $sql = "SELECT amount_pd FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $registration_id . "' ORDER BY id LIMIT 0,1";
+    $res = $wpdb->get_results($sql);
+    if ($wpdb->num_rows >= 1) {
+        return $wpdb->last_result[0]->amount_pd;
+    }
 }
 
 //For testing email functions
@@ -105,7 +107,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
             $event_meta = event_espresso_get_event_meta($event_id);
 
         if ($event_meta['additional_attendee_reg_info'] == 1) {
-			$label == '' ? _e('Number of Attendees', 'event_regis') : $label;
+            $label == '' ? _e('Number of Attendees', 'event_regis') : $label;
             ?>
             <p class="espresso_additional_limit">
 
@@ -290,7 +292,7 @@ if (!function_exists('event_espresso_get_status')) {
 
             case 'ACTIVE':
             case 'ONGOING':
-			case 'SECONDARY':
+            case 'SECONDARY':
             case 'REGISTRATION_OPEN':
                 return 'ACTIVE';
                 break;
@@ -355,48 +357,51 @@ function event_espresso_array_push_associative(&$arr) {
  * 	@ $full_text - the text to display when the event is full
  */
 if (!function_exists('get_number_of_attendees_reg_limit')) {
+
     function get_number_of_attendees_reg_limit($event_id, $type = 'NULL', $full_text = 'EVENT FULL') {
         global $wpdb;
-		
-		 switch ($type) {
-			
-			case 'num_attendees' :
-			case 'number_available_spaces' :
-			case 'num_completed_slash_incomplete' :
-			case 'num_attendees_slash_reg_limit' :
-			case 'avail_spaces_slash_reg_limit' :
-				$num_attendees = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity >= 1 AND (payment_status='Completed' OR payment_status='Pending') ";
-				$wpdb->get_results($a_sql, ARRAY_A);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-					$num_attendees =  $wpdb->last_result[0]->quantity;
-				}
-			//break;
-			
-			case 'reg_limit' :
-			case 'available_spaces' :
+
+        switch ($type) {
+
+            case 'num_attendees' :
             case 'number_available_spaces' :
-			case 'avail_spaces_slash_reg_limit' :
-			case 'num_attendees_slash_reg_limit' :	
-				$number_available_spaces = 0;
-				$sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-				$reg_limit = $wpdb->get_var($sql_reg_limit);
-				if ($reg_limit > $num_attendees) {
-					$number_available_spaces = $reg_limit - $num_attendees;
-				}
-			//break;
-			
-			case 'num_incomplete' :
-			case 'num_completed_slash_incomplete' :
-				$num_incomplete = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Incomplete'";
-				$wpdb->get_results($a_sql);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-					$num_incomplete =  $wpdb->last_result[0]->quantity;
-				}
-				//break;
-		 }
-		
+            case 'num_completed_slash_incomplete' :
+            case 'num_attendees_slash_reg_limit' :
+            case 'avail_spaces_slash_reg_limit' :
+                $num_attendees = 0;
+                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity >= 1 AND (payment_status='Completed' OR payment_status='Pending') ";
+                $wpdb->get_results($a_sql, ARRAY_A);
+                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+                    $num_attendees = $wpdb->last_result[0]->quantity;
+                }
+            //break;
+
+            case 'reg_limit' :
+            case 'available_spaces' :
+            case 'number_available_spaces' :
+            case 'avail_spaces_slash_reg_limit' :
+            case 'num_attendees_slash_reg_limit' :
+                $number_available_spaces = 0;
+                $sql_reg_limit = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
+                $reg_limit = $wpdb->get_var($sql_reg_limit);
+                if (empty($num_attendees))
+                    $num_attendees = 0;
+                if ($reg_limit > $num_attendees) {
+                    $number_available_spaces = $reg_limit - $num_attendees;
+                }
+            //break;
+
+            case 'num_incomplete' :
+            case 'num_completed_slash_incomplete' :
+                $num_incomplete = 0;
+                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Incomplete'";
+                $wpdb->get_results($a_sql);
+                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+                    $num_incomplete = $wpdb->last_result[0]->quantity;
+                }
+            //break;
+        }
+
         switch ($type) {
             case 'number_available_spaces' :
                 return $number_available_spaces;
@@ -411,47 +416,47 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
                 return $num_attendees;
                 break;
             case 'all_attendees' :
-				$a_sql = "SELECT SUM(quantity) quantity  FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity >= 1 ";
+                $a_sql = "SELECT SUM(quantity) quantity  FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity >= 1 ";
                 $attendees = $wpdb->get_results($a_sql);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-					$num_attendees =  $wpdb->last_result[0]->quantity;
-				}
+                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+                    $num_attendees = $wpdb->last_result[0]->quantity;
+                }
                 return $num_attendees;
                 break;
             case 'reg_limit' :
                 return $reg_limit;
                 break;
-            case 'num_incomplete' :			
+            case 'num_incomplete' :
                 return $num_incomplete;
                 break;
             case 'num_completed' :
-				$num_completed = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Completed' ";
+                $num_completed = 0;
+                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Completed' ";
                 $wpdb->get_results($a_sql);
-                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-					$num_completed =  $wpdb->last_result[0]->quantity;
-				}
+                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+                    $num_completed = $wpdb->last_result[0]->quantity;
+                }
                 return $num_completed;
                 break;
             case 'num_pending' :
-				$num_pending = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND  payment_status='Pending'";
+                $num_pending = 0;
+                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND  payment_status='Pending'";
                 $wpdb->get_results($a_sql);
-                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-					$num_pending =  $wpdb->last_result[0]->quantity;
-				}
+                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+                    $num_pending = $wpdb->last_result[0]->quantity;
+                }
                 return $num_pending;
                 break;
-			case 'num_declined' :
-				$num_declined = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND  payment_status='Payment Declined'";
+            case 'num_declined' :
+                $num_declined = 0;
+                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND  payment_status='Payment Declined'";
                 $wpdb->get_results($a_sql);
-                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-					$num_declined =  $wpdb->last_result[0]->quantity;
-				}
+                if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+                    $num_declined = $wpdb->last_result[0]->quantity;
+                }
                 return $num_declined;
                 break;
-            case 'num_completed_slash_incomplete' :             
+            case 'num_completed_slash_incomplete' :
                 return '<font color="green">' . $num_attendees . '</font>/<font color="red">' . $num_incomplete . '</font>';
                 break;
 
@@ -464,20 +469,21 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
                 break;
         }
     }
+
 }
 
 function event_espresso_paid_status_icon($payment_status ='') {
     switch ($payment_status) {
-		case 'Checkedin':
+        case 'Checkedin':
             echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
-			 break;
-		case 'NotCheckedin':
+            break;
+        case 'NotCheckedin':
             echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
-			 break;
+            break;
         case 'Completed':
             echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Completed', 'event_espresso') . '" title="' . __('Completed', 'event_espresso') . '" />';
-			break;
-           
+            break;
+
         case 'Pending':
             echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/error.png" width="16" height="16" alt="' . __('Pending', 'event_espresso') . '" title="' . __('Pending', 'event_espresso') . '" />';
             break;
@@ -524,14 +530,14 @@ if (!function_exists('espresso_return_price')) {
 
 /*
   Returns the price of an event
-*/
+ */
 if (!function_exists('event_espresso_get_price')) {
 
     function event_espresso_get_price($event_id) {
         global $wpdb, $org_options;
         $results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type, price_type FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC LIMIT 1");
         $surcharge = '';
-		$surcharge_text = isset($org_options['surcharge_text'])? $org_options['surcharge_text']:__('Surcharge', 'event_espresso');
+        $surcharge_text = isset($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
         foreach ($results as $result) {
             if ($wpdb->num_rows == 1) {
                 if ($result->event_cost > 0.00) {
@@ -572,6 +578,7 @@ if (!function_exists('event_espresso_get_price')) {
  * @params int $event_id
  */
 if (!function_exists('event_espresso_get_final_price')) {
+
     function event_espresso_get_final_price($price_id, $event_id = 0) {
         global $wpdb, $org_options;
         $results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type FROM " . EVENTS_PRICES_TABLE . " WHERE id='" . $price_id . "' ORDER BY id ASC LIMIT 1");
@@ -599,9 +606,11 @@ if (!function_exists('event_espresso_get_final_price')) {
                 $event_cost = __('0.00', 'event_espresso');
             }
         }
-		$event_cost =  $event_cost + $surcharge;
+        if(empty($surcharge)) $surcharge = 0;
+        $event_cost = $event_cost + $surcharge;
         return empty($event_cost) ? 0 : $event_cost;
     }
+
 }
 
 
@@ -641,7 +650,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
         //Will make the name an array and put the time id as a key so we
         //know which event this belongs to
         $multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
-		$surcharge_text = isset($org_options['surcharge_text'])? $org_options['surcharge_text']:__('Surcharge', 'event_espresso');
+        $surcharge_text = isset($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
 
         $results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type, price_type FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC");
         if ($wpdb->num_rows > 1) {
@@ -660,7 +669,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
                 }
 
                 $surcharge = '';
-				
+
                 if ($result->surcharge > 0 && $result->event_cost > 0.00) {
                     $surcharge = " + {$org_options['currency_symbol']}{$result->surcharge} " . $surcharge_text;
                     if ($result->surcharge_type == 'pct') {
@@ -766,6 +775,7 @@ if (!function_exists('event_espresso_management_capability')) {
 
 //Build the form questions. This function can be overridden using the custom files addon
 if (!function_exists('event_espresso_add_question_groups')) {
+
     function event_espresso_add_question_groups($question_groups, $answer= '', $event_id = null, $multi_reg = 0, $meta = array()) {
         global $wpdb;
         $event_id = $event_id != '' ? $event_id : $_REQUEST['event_id'];
@@ -775,31 +785,30 @@ if (!function_exists('event_espresso_add_question_groups')) {
             $FILTER = '';
             if (isset($_REQUEST['regevent_action']))
                 $FILTER = " AND q.admin_only = 'N' ";
-			
-			//echo 'additional_attendee_reg_info = '.$meta['additional_attendee_reg_info'].'<br />';
-            
-			//Only personal inforamation for the additional attendees in each group
+
+            //echo 'additional_attendee_reg_info = '.$meta['additional_attendee_reg_info'].'<br />';
+            //Only personal inforamation for the additional attendees in each group
             if (isset($meta['additional_attendee_reg_info']) && $meta['additional_attendee_reg_info'] == '2' && isset($meta['attendee_number']) && $meta['attendee_number'] > 1)
                 $FILTER .= " AND qg.system_group = 1 ";
-            
-			foreach ($question_groups as $g_id){
+
+            foreach ($question_groups as $g_id) {
                 $questions_in .= $g_id . ',';
-			}
+            }
 
             $questions_in = substr($questions_in, 0, -1);
             $group_name = '';
             $counter = 0;
-			
-			$sql = "SELECT q.*, qg.group_name, qg.group_description, qg.show_group_name, qg.show_group_description, qg.group_identifier
+
+            $sql = "SELECT q.*, qg.group_name, qg.group_description, qg.show_group_name, qg.show_group_description, qg.group_identifier
 					FROM " . EVENTS_QUESTION_TABLE . " q
 					JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON q.id = qgr.question_id
 					JOIN " . EVENTS_QST_GROUP_TABLE . " qg ON qg.id = qgr.group_id
-					WHERE qgr.group_id in ( " . $questions_in . ") 
-					".$FILTER." 
+					WHERE qgr.group_id in ( " . $questions_in . ")
+					" . $FILTER . "
 					ORDER BY qg.group_order ASC, qg.id, q.sequence, q.id ASC";
-			//echo $sql;
-            
-			$questions = $wpdb->get_results($sql);
+            //echo $sql;
+
+            $questions = $wpdb->get_results($sql);
 
             $num_rows = $wpdb->num_rows;
 
@@ -827,10 +836,12 @@ if (!function_exists('event_espresso_add_question_groups')) {
             }//end questions display
         }
     }
+
 }
 
 //Social media buttons
 if (!function_exists('espresso_show_social_media')) {
+
     function espresso_show_social_media($event_id, $type = 'twitter') {
         switch ($type) {
             case 'twitter':
@@ -847,10 +858,12 @@ if (!function_exists('espresso_show_social_media')) {
                 break;
         }
     }
+
 }
 
 //This function returns an array of category data based on an event id
 if (!function_exists('espresso_event_category_data')) {
+
     function espresso_event_category_data($event_id) {
         global $wpdb;
         $sql = "SELECT c.category_identifier, c.category_name, c.category_desc, c.display_desc FROM " . EVENTS_DETAIL_TABLE . " e ";
@@ -869,9 +882,11 @@ if (!function_exists('espresso_event_category_data')) {
             return;
         }
     }
+
 }
 
 if (!function_exists('espresso_registration_id')) {
+
     function espresso_registration_id($attendee_id) {
         global $wpdb;
         $sql = $wpdb->get_results("SELECT registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='" . $wpdb->escape($attendee_id) . "'");
@@ -883,9 +898,11 @@ if (!function_exists('espresso_registration_id')) {
             return 0;
         }
     }
+
 }
 
 if (!function_exists('espresso_attendee_id')) {
+
     function espresso_attendee_id($registration_id) {
         global $wpdb;
         $sql = $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $wpdb->escape($registration_id) . "'");
@@ -897,13 +914,16 @@ if (!function_exists('espresso_attendee_id')) {
             return 0;
         }
     }
+
 }
 
 if (!function_exists('espresso_ticket_information')) {
+
     function espresso_ticket_information($atts) {
         global $wpdb;
         extract($atts);
-        if(!empty($registration_id)) $registration_id = "{$registration_id}";
+        if (!empty($registration_id))
+            $registration_id = "{$registration_id}";
         $price_option = "{$price_option}";
 
         $type = "{$type}";
@@ -918,9 +938,11 @@ if (!function_exists('espresso_ticket_information')) {
                 break;
         }
     }
+
 }
 
 if (!function_exists('espresso_payment_type')) {
+
     function espresso_payment_type($type) {
         switch ($type) {
             case 'web_accept':
@@ -941,11 +963,12 @@ if (!function_exists('espresso_payment_type')) {
             case 'OFFLINE':
                 return __('Offline payment', 'event_espresso');
                 break;
-			default:
-				return __($type, 'event_espresso');
-				break;
+            default:
+                return __($type, 'event_espresso');
+                break;
         }
     }
+
 }
 
 
@@ -1089,6 +1112,7 @@ function get_event_field($field, $table, $where) {
   show_info - shows the persons role and organization (if available) */
 
 if (!function_exists('espresso_show_personnel')) {
+
     function espresso_show_personnel($event_id=0, $atts) {
         global $espresso_premium;
         if ($espresso_premium != true)
@@ -1124,11 +1148,12 @@ if (!function_exists('espresso_show_personnel')) {
                 if ($v_show_info == true)
                     $person_info = ($person_role != '' || $person_organization != '') ? ' [' . $person_role . $add_dash . $person_organization . ']' : '';
 
-                $html .= $v_before . $person_name . $person_info . $v_after ;
+                $html .= $v_before . $person_name . $person_info . $v_after;
             }
         }
         return $v_wrapper_start . $html . $v_wrapper_end;
     }
+
 }
 
 //Function to include a template file. Checks user templates folder first, then default template.
@@ -1201,45 +1226,45 @@ if (!function_exists('event_espresso_require_file')) {
 
 //Added by Imon
 //Function to clean up left out data from multi event registration id group table
-if (!function_exists('event_espresso_cleanup_multi_event_registration_id_group_data') )
-{
-	/**
-	 * event_espresso_cleanup_multi_event_registration_id_group_data()
-	 *
-	 * Usage: event_espresso_cleanup_multi_event_registration_id_group_data()
-	 */
-	function event_espresso_cleanup_multi_event_registration_id_group_data()
-	{
-		global $wpdb;
-		$wpdb->query(" delete emerig from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." emerig left join ".EVENTS_ATTENDEE_TABLE."  ea on emerig.registration_id = ea.registration_id where ea.registration_id is null ");
-	}
+if (!function_exists('event_espresso_cleanup_multi_event_registration_id_group_data')) {
+
+    /**
+     * event_espresso_cleanup_multi_event_registration_id_group_data()
+     *
+     * Usage: event_espresso_cleanup_multi_event_registration_id_group_data()
+     */
+    function event_espresso_cleanup_multi_event_registration_id_group_data() {
+        global $wpdb;
+        $wpdb->query(" delete emerig from " . EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE . " emerig left join " . EVENTS_ATTENDEE_TABLE . "  ea on emerig.registration_id = ea.registration_id where ea.registration_id is null ");
+    }
+
 }
 
 //Function to clean up left out data from attendee cost table
-if (!function_exists('event_espresso_cleanup_attendee_cost_data') )
-{
-	/**
-	 * event_espresso_cleanup_attendee_cost_data()
-	 *
-	 * Usage: event_espresso_cleanup_attendee_cost_data()
-	 */
-	function event_espresso_cleanup_attendee_cost_data()
-	{
-		global $wpdb;
-		$wpdb->query(" delete eac from ".EVENTS_ATTENDEE_COST_TABLE." eac left join ".EVENTS_ATTENDEE_TABLE."  ea on eac.attendee_id = ea.id where ea.id is null ");
-	}
+if (!function_exists('event_espresso_cleanup_attendee_cost_data')) {
+
+    /**
+     * event_espresso_cleanup_attendee_cost_data()
+     *
+     * Usage: event_espresso_cleanup_attendee_cost_data()
+     */
+    function event_espresso_cleanup_attendee_cost_data() {
+        global $wpdb;
+        $wpdb->query(" delete eac from " . EVENTS_ATTENDEE_COST_TABLE . " eac left join " . EVENTS_ATTENDEE_TABLE . "  ea on eac.attendee_id = ea.id where ea.id is null ");
+    }
+
 }
 
-function espresso_check_scripts(){
-	if (function_exists('wp_script_is')){
-		if (!wp_script_is('jquery')){
-			echo '<div class="event_espresso_error"><p><em>'.__('Jquery is not loaded!', 'event_espresso').'</em><br />'.__('Event Espresso is unable to load Jquery do to a conflict with your theme or another plugin.', 'event_espresso').'</p></div>';
-		}
-	}
-	if (!function_exists('wp_head')){
-		echo '<div class="event_espresso_error"><p><em>'.__('Missing wp_head() Function', 'event_espresso').'</em><br />'.__('The WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso').'</p></div>';
-	}
-	if (!function_exists('wp_footer')){
-		echo '<div class="event_espresso_error"><p><em>'.__('Missing wp_footer() Function', 'event_espresso').'</em><br />'.__('The WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso').'</p></div>';
-	}
+function espresso_check_scripts() {
+    if (function_exists('wp_script_is')) {
+        if (!wp_script_is('jquery')) {
+            echo '<div class="event_espresso_error"><p><em>' . __('Jquery is not loaded!', 'event_espresso') . '</em><br />' . __('Event Espresso is unable to load Jquery do to a conflict with your theme or another plugin.', 'event_espresso') . '</p></div>';
+        }
+    }
+    if (!function_exists('wp_head')) {
+        echo '<div class="event_espresso_error"><p><em>' . __('Missing wp_head() Function', 'event_espresso') . '</em><br />' . __('The WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso') . '</p></div>';
+    }
+    if (!function_exists('wp_footer')) {
+        echo '<div class="event_espresso_error"><p><em>' . __('Missing wp_footer() Function', 'event_espresso') . '</em><br />' . __('The WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso') . '</p></div>';
+    }
 }

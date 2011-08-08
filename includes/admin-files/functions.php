@@ -14,9 +14,9 @@ if ( !function_exists( 'event_espresso_custom_questions_output' ) ){
 		$sql .= " LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id ";
 		$sql .= " WHERE ea.attendee_id = '" . $attendee_id . "' ";
 		$all_questions == TRUE ? '':$sql .= " AND system_name IS NULL ";
-		$show_admin == TRUE ? '':$sql .= " AND eq.admin_only = 'N' ";
+		!empty($show_admin) && $show_admin == TRUE ? '':$sql .= " AND eq.admin_only = 'N' ";
 		$sql .= " ORDER BY eq.sequence asc ";
-								
+
         $questions = $wpdb->get_results( $sql );
         //echo $wpdb->last_query . '<br />';
 
@@ -25,7 +25,7 @@ if ( !function_exists( 'event_espresso_custom_questions_output' ) ){
         $q_num_rows = $wpdb->num_rows;
         if ( $q_num_rows > 0 )
         {
-            
+
             foreach ( $questions as $question ) {
                 $email_questions .= $question->answer != '' ? wpautop( '<strong>' . $question->question . ':</strong><br /> ' . str_replace( ',', '<br />', $question->answer ) ) : '';
                 $q_counter++;
@@ -42,9 +42,9 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 	function espresso_venue_dd($current_value=0){
 		global $espresso_premium; if ($espresso_premium != true) return;
 		global $wpdb, $espresso_manager, $current_user;
-        
+
         $sql = "(SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
-		
+
 		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_group_admin' ) ){
 		if(	$espresso_manager['event_manager_venue'] == "Y" ){
 			//	show only venues inside their assigned locales.
@@ -72,7 +72,7 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 	}
 	$sql .= " GROUP BY ev.id ";
     $sql .= ")";
-        
+
 		//echo $sql;
 		$venues = $wpdb->get_results($sql);
 		$num_rows = $wpdb->num_rows;
@@ -82,15 +82,15 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 /*
             [id] => 3
             [name] => Home
-            [identifier] => 
+            [identifier] =>
             [address] => 101-1414 Government Street
-            [address2] => 
+            [address2] =>
             [city] => Penticton
             [state] => BC
             [zip] => V2A 4W1
             [country] => Canada
             [meta] => a:6:{s:7:"contact";s:0:"";s:5:"phone";s:0:"";s:7:"twitter";s:0:"";s:5:"image";s:0:"";s:7:"website";s:0:"";s:11:"description";s:0:"";}
-            [locale] => 
+            [locale] =>
             [wp_user] => 0
 */
 		//echo $current_value;
@@ -101,7 +101,7 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 			$div = "";
 			$i = 0;
 			foreach ($venues as $venue){
-                
+
 				$i++;
 				$selected = $venue->id == $current_value ? 'selected="selected"' : '';
                 if ($venue->locale != '') {
@@ -113,7 +113,7 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
                 } else {
                     $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . $venue->name . ' </option>\n';
                 }
-				
+
 				$hidden = "display:none;";
 				if( $selected ) $hidden = '';
 				$div .= "<fieldset id='eebox_".$i."' class='eebox' style='".$hidden."'>";
@@ -134,10 +134,10 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 			echo '<p>[ESPRESSO_VENUE]</p>';
 			echo '<p>Example with Optional Parameters:<br />
 			[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
-			
+
 			echo '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
 			echo '</div>';
-		
+
 ?>
 				<script>
 					jQuery("#venue_id").change( function(){
@@ -179,44 +179,44 @@ if ( !function_exists( 'espresso_personnel_cb' ) ){
 				$person_id = $person->id;
 				$person_name = $person->name;
 				$person_role = $person->role;
-							
+
 				$meta = unserialize($person->meta);
 				$person_organization = $meta['organization']!=''? $meta['organization'] :'';
 				//$person_title = $meta['title']!=''? $meta['title']:'';
 				$person_info = $person_role!=''?' ['. $person_role . ']':'';
-	
+
 				$in_event_personnel = $wpdb->get_results("SELECT * FROM " . EVENTS_PERSONNEL_REL_TABLE . " WHERE event_id='".$event_id."' AND person_id='".$person_id."'");
 				foreach ($in_event_personnel as $in_person){
 					$in_event_person = $in_person->person_id;
 				}
-				
+
 				$html .= '<p id="event-person-' . $person_id . '" class="event-staff-list"><label for="in-event-person-' . $person_id . '" class="selectit"><input value="' . $person_id . '" type="checkbox" name="event_person[]" id="in-event-person-' . $person_id . '"' . ($in_event_person == $person_id ? ' checked="checked"' : "" ) . '/> <a href="admin.php?page=event_staff&amp;action=edit&amp;id='.$person_id.'"  target="_blank" title="'.$person_organization.'">' . $person_name .'</a> '. $person_info.'</label></p>';
-				
+
 			}
-			
+
 			$top_div ='';
 			$bottom_div ='';
-		
+
 			if ($num_rows > 10){
 				$top_div = '<div style="height:250px;overflow:auto;">';
 				$bottom_div = '</div>';
 			}
-			
+
 			$manage = '<p><a href="admin.php?page=event_staff" target="_blank">'.__('Manage Staff Members', 'event_espresso').'</a> | <a class="ev_reg-fancylink" href="#staff_info">Shortcode</a> </p>';
-			
+
 			echo '<div id="staff_info" style="display:none">';
 			echo '<h2>'.__('Staff Shortcode', 'event_espresso').'</h2>';
 			echo '<p>'.__('Add the following shortcode into the description to show the staff for this event.', 'event_espresso').'</p>';
 			echo '<p>[ESPRESSO_STAFF]</p>';
 			echo '<p>Example with Optional Parameters:<br />
 			[ESPRESSO_STAFF outside_wrapper="div" outside_wrapper_class="event_staff" inside_wrapper="p" inside_wrapper_class="event_person"]</p>';
-			
+
 			echo '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#staff_shortcode" target="_blank">More Examples</a></strong></p>';
 			echo '</div>';
-			
+
 			$html = $top_div.$html.$bottom_div.$manage;
 			return $html;
-				
+
 		}else{
 			return '<a href="admin.php?page=event_staff&amp;action=add_new_person">'.__('Please add at least one person.', 'event_espresso').'</a>';
 		}
@@ -229,14 +229,14 @@ if ( !function_exists( 'espresso_personnel_dd' ) ){
 		global $wpdb;
 			$sql = "SELECT name, title FROM EVENTS_PERSONNEL_TABLE ";//. EVENTS_DETAIL_TABLE;
 			$sql .= " WHERE name != '' GROUP BY name ";
-			
+
 			$people = $wpdb->get_results($sql);
 			$num_rows = $wpdb->num_rows;
 			//return print_r( $events );
 			if ($num_rows > 0) {
 				$field = '<select name="event_primary_person id="event_primary_person">\n';
 				$field .= '<option value="0">'.__('Select a Person', 'event_espresso').'</option>';
-				
+
 				foreach ($people as $person){
 					$selected = $event->name == $current_value ? 'selected="selected"' : '';
 					$meta = unserialize($person->meta);
@@ -259,33 +259,33 @@ if (!function_exists('espresso_chart_display')){
 				$title = __('Total Registrations/Transactions', 'event_espresso');
 				$sql = "SELECT SUM(a.amount_pd) amount, SUM(a.quantity) quantity, DATE_FORMAT(a.date,'%b %d') date FROM ".EVENTS_ATTENDEE_TABLE." a WHERE event_id =".$event_id." GROUP BY DATE_FORMAT(a.date,'%m-%d-%Y')";
 			break;
-			
+
 			case 'total_completed':
 				//Completed Registrations/Transactions
 				$title = __('Completed Registrations/Transactions', 'event_espresso');
 				$sql = "SELECT SUM(a.amount_pd) amount, SUM(a.quantity) quantity, DATE_FORMAT(a.date,'%b %d') date FROM ".EVENTS_ATTENDEE_TABLE." a WHERE event_id =".$event_id." AND payment_status='Completed' GROUP BY DATE_FORMAT(a.date,'%m-%d-%Y')";
 			break;
-			
+
 			case 'total_pending':
 				//Pending Registrations/Transactions
 				$title = __('Pending Registrations/Transactions', 'event_espresso');
 				$sql = "SELECT SUM(a.amount_pd) amount, SUM(a.quantity) quantity, DATE_FORMAT(a.date,'%b %d') date FROM ".EVENTS_ATTENDEE_TABLE." a WHERE event_id =".$event_id." AND payment_status='Pending' GROUP BY DATE_FORMAT(a.date,'%m-%d-%Y')";
 			break;
-			
+
 			case 'total_incomplete':
 				//Incomplete Registrations/Transactions
 				$title = __('Incomplete Registrations/Transactions', 'event_espresso');
 				$sql = "SELECT SUM(a.amount_pd) amount, SUM(a.quantity) quantity, DATE_FORMAT(a.date,'%b %d') date FROM ".EVENTS_ATTENDEE_TABLE." a WHERE event_id =".$event_id." AND (payment_status='Incomplete' OR payment_status='Payment Declined') GROUP BY DATE_FORMAT(a.date,'%m-%d-%Y')";
 			break;
 		}
-		
+
 		$results = $wpdb->get_results($sql);
 		if ($wpdb->num_rows > 0) {
-			
+
 		foreach ($results as $row) {
 			$retVal[] = $row;
 		}
-	 
+
 		$attendees = '';
 		$amount ='';
 		$date = '';
@@ -301,7 +301,7 @@ if (!function_exists('espresso_chart_display')){
 				var line1 = [<?php echo $attendees ?>];//bottom column
 				var line2 = [<?php echo $amount ?>];
 				var ticks = [<?php echo $date ?>];
-				
+
 				plot1 = jQuery.jqplot('<?php echo $type; ?>', [line1, line2], {
 					//stackSeries: true,
 					title: '<?php echo $title; ?>',
@@ -326,18 +326,18 @@ if (!function_exists('espresso_chart_display')){
 						show: true,
 						location: 'ne',     // compass direction, nw, n, ne, e, se, s, sw, w.
 						placement: 'outsideGrid'
-		
+
 					},
-		
+
 				});
-				
+
 			});
 		  </script>
            <!-- <?php echo $title; ?> -->
 		<div id="<?php echo $type; ?>" style="margin-top:20px; margin-left:20px; width:600px; height:200px; float:left;"></div>
       	<?php
 		}
-	} 
+	}
 }
 
 if (!function_exists('event_espresso_meta_edit')){
@@ -349,7 +349,7 @@ if (!function_exists('event_espresso_meta_edit')){
 		$good_meta = array();
 		$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", "add_attendee_question_groups", "date_submitted", "event_host_terms", "default_payment_status");
 		$meta_counter = 1;
-		
+
 		$default_meta = $event_meta==''?array("event_hashtag"=>"","event_format"=>"","event_livestreamed"=>""):array();
 		$event_meta = $event_meta==''?array():$event_meta;
 		$event_meta = array_merge($event_meta, $default_meta);
@@ -394,9 +394,9 @@ if (!function_exists('event_espresso_meta_edit')){
 		}
 		?>
 		</ul>
-	
+
 		<p><input type="button" class="button" value="<?php _e('Add A Meta Box', 'event_espresso'); ?>" onClick="addMetaInput('dynamicMetaInput');"></p>
-	
+
 		<script type="text/javascript">
 			//Dynamic form fields
 			var meta_counter = <?php echo $meta_counter > 1 ? $meta_counter - 1 : $meta_counter++; ?>;
@@ -407,10 +407,10 @@ if (!function_exists('event_espresso_meta_edit')){
 				document.getElementById(divName).appendChild(newdiv);
 				counter++;
 			}
-	
+
 			function counter_staticm(meta_counter) {
 				if ( typeof counter_static.counter == 'undefined' ) {
-	
+
 					counter_static.counter = meta_counter;
 				}
 				return ++counter_static.counter;

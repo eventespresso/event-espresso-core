@@ -99,7 +99,7 @@ function prepare_email_data($attendee_id, $multi_reg) {
     global $wpdb, $org_options;
     $data = new stdClass;
     $data->multi_reg = $multi_reg;
-	
+
 	//Get the event record
 	$sql = "SELECT ed.* ";
 	isset($org_options['use_venue_manager'])&&$org_options['use_venue_manager'] =='Y'? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta ":'';
@@ -108,13 +108,13 @@ function prepare_email_data($attendee_id, $multi_reg) {
 	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.event_id=ed.id ";
 	$sql .= " WHERE ea.id = '" . $attendee_id . "' ";
     $data->event = $wpdb->get_row($sql, OBJECT);
-	
+
 	//Get the attendee record
     $sql = "SELECT ea.* FROM " . EVENTS_ATTENDEE_TABLE . " ea WHERE ea.id = '" . $attendee_id . "' ";
     $data->attendee = $wpdb->get_row($sql, OBJECT);
-	
+
 	$data->primary_attendee = espresso_is_primary_attendee($data->attendee->id) == true ? true:false;
-	
+
 	//Venue information
 			if (isset($org_options['use_venue_manager'])&&$org_options['use_venue_manager'] =='Y'){
 				$data->event->address = $data->event->venue_address;
@@ -123,7 +123,7 @@ function prepare_email_data($attendee_id, $multi_reg) {
 				$data->event->state = $data->event->venue_state;
 				$data->event->zip = $data->event->venue_zip;
 				$data->event->country = $data->event->venue_country;
-				
+
 			}
 
     $data->table_open = '<table width="100%" border="1" cellpadding = "5" cellspacing="5" style="border-collapse:collapse;">';
@@ -140,6 +140,7 @@ function prepare_email_data($attendee_id, $multi_reg) {
     } else {
         $data->qr_code = '';
         $data->ticket_link = '';
+        $data->admin_ticket_link = '';
     }
 
     $data->location = ($data->event->address != '' ? $data->event->address : '') . ($data->event->address2 != '' ? '<br />' . $data->event->address2 : '') . ($data->event->city != '' ? '<br />' . $data->event->city : '') . ($data->event->state != '' ? ', ' . $data->event->state : '') . ($data->event->zip != '' ? '<br />' . $data->event->zip : '') . ($data->event->country != '' ? '<br />' . $data->event->country : '');
@@ -200,7 +201,7 @@ function prepare_email($data) {
 function prepare_admin_email($data) {
     global $org_options;
     $admin_attendee_link = '<a href="' . get_admin_url() . 'admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $data->event->id . '&form_action=edit_attendee&id=' . $data->attendee->id . '">' . $data->attendee->fname . ' ' . $data->attendee->lname . '</a>';
-	
+
 	if ($data->attendee->quantity > 0 && !$data->multi_reg)
         $primary_attendee = $data->primary_attendee == true ?"<p><strong>" . __('Primary Attendee', 'event_espresso') . "</strong></p>":'';
 
