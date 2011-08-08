@@ -33,7 +33,7 @@
 		}
 	}
 
-	if ($payment_status == "Incomplete" || $payment_status == "" ){
+	if ($payment_status == "Incomplete" || $payment_status == "Payment Declined" || $payment_status == "" ){
 		//Check the number of available sapce against this registration 
 		if ( get_number_of_attendees_reg_limit($event_id, 'number_available_spaces') < $quantity){ ?>
 			<p class="espesso_event_full"> <?php _e('Sorry, there are not enough spaces available to complete your registration.','event_espresso'); ?></p>
