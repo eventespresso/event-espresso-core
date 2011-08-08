@@ -157,5 +157,5 @@ if (get_option('events_invoice_payment_active') == 'true'||get_option('events_ch
 		}
 	}
 	echo '</div><!-- / #off_line_payment_container -->';
-	echo '</div><!-- / .event-display-boxes payment opts -->';
 }
+echo '</div><!-- / .event-display-boxes payment opts -->';
