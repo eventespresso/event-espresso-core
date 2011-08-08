@@ -127,7 +127,7 @@
       
       <fieldset id="event-reg-form-groups">
         <h2 class="section-heading">
-          <?php _e('Attendees Registration Details', 'event_espresso'); ?>
+          <?php _e('Registration Details', 'event_espresso'); ?>
         </h2>
         <?php
 		//Outputs the custom form questions. This function can be overridden using the custom files addon
