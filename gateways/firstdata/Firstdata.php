@@ -83,9 +83,11 @@ $myorder["zip"] = $_POST["zip"];
 
 $result = $mylphp->curl_process($myorder);  # use curl methods
 if($myorder["debugging"]) {
-    echo "var_dump of order data: ";
+    echo "<p>var_dump of order data:</p> ";
     var_dump($myorder);
-    echo "<br>var_dump of result: ";
+			
+			echo "<br />";
+    echo "<p>var_dump of result:</p> ";
     var_dump($result);
 }
 
