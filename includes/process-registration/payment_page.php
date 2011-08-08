@@ -301,20 +301,22 @@ function espresso_confirm_registration($registration_id) {
 }
 
 //This is the alternate PayPal button used for the email
-function event_espresso_pay() {
+function event_espresso_pay($att_registration_id=0) {
     global $wpdb, $org_options;
 
     //Make sure id's are empty
     $registration_id = 0;
     $id = 0;
-    $att_registration_id = 0;
+    //$att_registration_id = 0;
 
     $registration_id = isset($_REQUEST['registration_id']) ? $_REQUEST['registration_id'] : '';
     $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
     $attendee_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
-
+	
+	if ($att_registration_id ==0)
     $att_registration_id = $registration_id != '' ? $registration_id : espresso_registration_id($id);
-
+    //echo $att_registration_id;
+	
     $attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $att_registration_id . "' ORDER BY ID LIMIT 1");
     $num_rows = $wpdb->num_rows;
 
