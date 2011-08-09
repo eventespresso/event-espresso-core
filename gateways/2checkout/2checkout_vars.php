@@ -37,9 +37,12 @@ if (!empty($twocheckout_settings['bypass_payment_page']) && $twocheckout_setting
         } else {
             $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/2checkout/logo.png";
         }
-    } else {
+    } elseif (file_exists($twocheckout_settings['button_url'])){
         $button_url = $twocheckout_settings['button_url'];
-    }
+    } else {
+		//If no other buttons exist, then use the default location
+		$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/2checkout/logo.png";
+	}
     $my2checkout->submitButton($button_url, '2checkout'); //Display payment button
     wp_deregister_script('jquery.validate.pack');
 }

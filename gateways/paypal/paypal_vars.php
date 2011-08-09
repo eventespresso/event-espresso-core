@@ -180,9 +180,12 @@ if (!empty($paypal_settings['bypass_payment_page']) && $paypal_settings['bypass_
         } else {
             $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/paypal/btn_stdCheckout2.gif";
         }
-    } else {
+    } elseif (file_exists($paypal_settings['button_url'])){
         $button_url = $paypal_settings['button_url'];
-    }
+    } else {
+		//If no other buttons exist, then use the default location
+		$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/paypal/btn_stdCheckout2.gif";
+	}
     $myPaypal->submitButton($button_url, 'paypal'); //Display payment button
 }
 
