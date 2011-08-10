@@ -59,16 +59,30 @@ function espresso_attendee_price($atts) {
 		}
 	}
 	
-	//Return the total amount paid for a session id
+	//Return the total amount paid for a session. Uses the registration id.
 	if(isset($session_total) && $session_total = true){
-		$sql ='';
-		$sql = "SELECT sum(cost) amount_pd FROM " . EVENTS_ATTENDEE_COST_TABLE ." eac ";
-		$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = eac.attendee_id ";
-		$sql .= " WHERE attendee_session = (SELECT attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $registration_id . "' LIMIT 0,1) LIMIT 0,1";
-		echo $sql;
-		$res = $wpdb->get_results($sql);
-		if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->amount_pd != NULL) {
-			$total_cost = $wpdb->last_result[0]->amount_pd;
+		$registration_ids = array();
+		$c_sql = "select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ";
+		//echo $c_sql;
+		$check = $wpdb->get_row($c_sql);
+		if ( $check !== NULL ){
+				$registration_id = $check->primary_registration_id;
+				$registration_ids = $wpdb->get_results("select registration_id from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where primary_registration_id = '$registration_id' ", ARRAY_A);
+				$multi_reg = true;
+			
+			foreach($registration_ids as $reg_id){
+				$sql = "select ea.id attendee_id, ea.registration_id, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
+						inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
+						inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
+						where ea.registration_id = '".$reg_id['registration_id']."' order by ed.event_name ";
+						
+				$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
+				//print_r($tmp_attendees);
+				foreach($tmp_attendees as $tmp_attendee){
+					$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
+					$total_cost += $sub_total;
+				}
+			}
 			return number_format($total_cost, 2, '.', '');
 		}
 	}
