@@ -292,9 +292,9 @@ function event_list_attendees() {
                 /*echo '<p>';
 				echo $payment_status.'<br />';
 				echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
-				echo 'Amount: '. espresso_attendee_price($registration_id).'<br />';
+				echo 'Amount: '. espresso_attendee_price(array('attendee_id'=>$registration_id)).'<br />';
 				echo '</p>';*/
-				$amount_pd = espresso_attendee_price($registration_id);
+				$amount_pd = espresso_attendee_price(array('registration_id'=>$registration_id, 'reg_total'=>true));
             } else {
                 $go = true;
 			}
@@ -346,7 +346,7 @@ function event_list_attendees() {
                                                         $attendees_group = "<li>$fname $lname $email $quantity</li>";
                                                         $go = false;
                                                        
-                                                        $amount_pd = $attendee->amount_pd;
+                                                        $amount_pd = espresso_attendee_price(array('registration_id'=>$temp_reg_id, 'reg_total'=>true));
                                                         $attended = $attendee->checked_in;
                                                         $ticket_scanned = $attendee->checked_in_quantity;
                                                         $payment_status = $attendee->payment_status;

@@ -67,8 +67,8 @@ function replace_shortcodes($message, $data) {
         $data->event->venue_phone,
         //Payment details
         $data->attendee->txn_id,
-        $org_options['currency_symbol'] . espresso_attendee_price($data->attendee->registration_id),
-        $org_options['currency_symbol'] . espresso_attendee_price($data->attendee->registration_id),
+        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'reg_total'=>true)),
+        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'reg_total'=>true)),
         $data->attendee->price_option,
         $data->ticket_link,
         $data->event->alt_email == '' ? $org_options['contact_email'] : $_event->alt_email,
@@ -134,7 +134,7 @@ function prepare_email_data($attendee_id, $multi_reg) {
     if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
         if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/functions.php")) {
             include_once(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/functions.php");
-            $data->qr_code = espresso_qr_code(array('attendee_id' => $attendee_id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price($data->attendee->registration_id)));
+            $data->qr_code = espresso_qr_code(array('attendee_id' => $attendee_id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'reg_total'=>true))));
         }
         $data->ticket_link = espresso_ticket_links($data->attendee->registration_id,$data->attendee->id);
         $data->admin_ticket_link = "<p>" . $data->ticket_link . "</p>";

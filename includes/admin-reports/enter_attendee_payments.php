@@ -224,7 +224,7 @@ function enter_attendee_payments() {
 
                                             <li><label><?php _e( 'Transaction ID:', 'event_espresso' ); ?></label> <input type="text" name="txn_id" size="45" value ="<?php echo $txn_id; ?>" /></li>
 
-                                            <li><label><?php _e( 'Amount:', 'event_espresso' ); ?></label> <?php echo $org_options[ 'currency_symbol' ] ?><input type="text" name="amount_pd" size="45" value ="<?php echo $amount_pd; ?>" /></li>
+                                            <li><label><?php _e( 'Amount:', 'event_espresso' ); ?></label> <?php echo $org_options[ 'currency_symbol' ] ?><input type="text" name="amount_pd" size="45" value ="<?php echo espresso_attendee_price(array('attendee_id'=>$id, 'reg_total'=>true)) ?>" /></li>
                                 <li><label><?php _e( 'Coupon Code', 'event_espresso' ); ?>:</label> <input type="text" name="coupon_code" size="45" value ="<?php echo $coupon_code; ?>" /></li>
 
                                 <li><label><?php _e( 'How Many People:', 'event_espresso' ); ?></label> <input type="text" name="quantity" size="45" value ="<?php echo espresso_count_attendees_for_registration($id); ?>" /></li>

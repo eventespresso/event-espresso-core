@@ -34,12 +34,50 @@ function event_espresso_more_than_one($registration_id) {
     return null;
 }
 
-function espresso_attendee_price($registration_id) {
-    global $wpdb;
-    $sql = "SELECT amount_pd FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $registration_id . "' ORDER BY id LIMIT 0,1";
-    $res = $wpdb->get_results($sql);
-    if ($wpdb->num_rows >= 1) {
-        return $wpdb->last_result[0]->amount_pd;
+//Returns the price paid for an event by attendee id or the registration id
+function espresso_attendee_price($atts) {
+	global $wpdb;
+	isset($atts)?extract($atts):'';
+	
+	//If the registration_id is empty, then retrieve it
+	if(!isset($registration_id)){
+		$registration_id = espresso_registration_id($attendee_id);
+	}
+	//echo $registration_id;
+	
+	//Return the total amount paid for this registration
+	if(isset($reg_total) && $reg_total = true){
+		$sql ='';
+		$sql = "SELECT sum(cost) amount_pd, eac.quantity FROM " . EVENTS_ATTENDEE_COST_TABLE ." eac ";
+		$sql .= " JOIN wp_events_attendee ea ON ea.id = eac.attendee_id ";
+		$sql .= " WHERE ea.registration_id ='" . $registration_id . "' LIMIT 0,1";
+		//echo $sql;
+		$res = $wpdb->get_results($sql);
+		if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->amount_pd != NULL) {
+			$total_cost = $wpdb->last_result[0]->amount_pd * $wpdb->last_result[0]->quantity;
+			return number_format($total_cost, 2, '.', '');
+		}
+	}
+
+	//Returnt the amount paid for an individual attendee
+	if(isset($attendee_id) && $attendee_id > 0){
+		$sql ='';
+		$sql = "SELECT cost amount_pd, quantity FROM " . EVENTS_ATTENDEE_COST_TABLE . " WHERE attendee_id ='" . $attendee_id . "' ORDER BY attendee_id  LIMIT 0,1";
+		//echo $sql;
+		$res = $wpdb->get_results($sql);
+		if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->amount_pd != NULL) {
+			$total_cost = $wpdb->last_result[0]->amount_pd * $wpdb->last_result[0]->quantity;
+			return number_format($total_cost, 2, '.', '');
+		}
+	}
+	
+	//If no results are returned above or the registration id was passed, then get the price by looking in EVENTS_ATTENDEE_TABLE
+	$sql ='';
+	$sql = "SELECT amount_pd FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $registration_id . "' ORDER BY id LIMIT 0,1";
+	//echo $sql;
+	$res = $wpdb->get_results($sql);
+	if ($wpdb->num_rows >= 1) {
+        return  number_format($wpdb->last_result[0]->amount_pd, 2, '.', '');;
     }
 }
 
@@ -363,6 +401,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 
         switch ($type) {
 
+			case 'available_spaces' :
             case 'num_attendees' :
             case 'number_available_spaces' :
             case 'num_completed_slash_incomplete' :
