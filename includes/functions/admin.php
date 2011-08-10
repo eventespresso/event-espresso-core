@@ -31,6 +31,7 @@ function event_espresso_config_page_scripts() {
     if (isset($_REQUEST['page'])) {
         switch ($_REQUEST['page']) {
             case ('discounts' ):
+			case ('groupons' ):
             case ('event_categories' ):
             case ('admin_reports' ):
             case ('form_builder' ):
