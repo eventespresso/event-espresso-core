@@ -110,6 +110,9 @@ function event_espresso_display_paypal_settings() {
                                 <option value="EUR">
     <?php _e('Euros (&#8364;)', 'event_espresso'); ?>
                                 </option>
+                                <option value="CHF">
+    <?php _e('Swiss Franc', 'event_espresso'); ?>
+                                </option>
                                 <option value="HKD">
     <?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
                                 </option>
