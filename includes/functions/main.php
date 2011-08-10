@@ -49,12 +49,26 @@ function espresso_attendee_price($atts) {
 	if(isset($reg_total) && $reg_total = true){
 		$sql ='';
 		$sql = "SELECT sum(cost) amount_pd, eac.quantity FROM " . EVENTS_ATTENDEE_COST_TABLE ." eac ";
-		$sql .= " JOIN wp_events_attendee ea ON ea.id = eac.attendee_id ";
+		$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = eac.attendee_id ";
 		$sql .= " WHERE ea.registration_id ='" . $registration_id . "' LIMIT 0,1";
 		//echo $sql;
 		$res = $wpdb->get_results($sql);
 		if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->amount_pd != NULL) {
 			$total_cost = $wpdb->last_result[0]->amount_pd * $wpdb->last_result[0]->quantity;
+			return number_format($total_cost, 2, '.', '');
+		}
+	}
+	
+	//Return the total amount paid for a session id
+	if(isset($session_total) && $session_total = true){
+		$sql ='';
+		$sql = "SELECT sum(cost) amount_pd FROM " . EVENTS_ATTENDEE_COST_TABLE ." eac ";
+		$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = eac.attendee_id ";
+		$sql .= " WHERE attendee_session = (SELECT attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $registration_id . "' LIMIT 0,1) LIMIT 0,1";
+		echo $sql;
+		$res = $wpdb->get_results($sql);
+		if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->amount_pd != NULL) {
+			$total_cost = $wpdb->last_result[0]->amount_pd;
 			return number_format($total_cost, 2, '.', '');
 		}
 	}
