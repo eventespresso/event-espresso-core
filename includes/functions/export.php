@@ -4,7 +4,7 @@ if (!function_exists('espresso_event_export')){
 	function espresso_event_export($ename){
 		global $wpdb;
 		$htables = array();
-		$htables[] = 'ID';
+		$htables[] = 'Event Id';
 		$htables[] = 'Name';
 		$htables[] = 'Venue';
 		$htables[] = 'Start Date';
