@@ -19,7 +19,7 @@ function event_espresso_config_page_styles() {
         if (isset($_REQUEST['event_admin_reports'])) {
             switch ($_REQUEST['event_admin_reports']) {
                 case 'charts':
-                    wp_enqueue_style('jquery-jqplot-css', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.css');
+                    wp_enqueue_style('jquery-jqplot-css', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.min.css');
                     break;
             }
         }
