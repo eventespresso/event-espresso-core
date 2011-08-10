@@ -67,8 +67,8 @@ function replace_shortcodes($message, $data) {
         $data->event->venue_phone,
         //Payment details
         $data->attendee->txn_id,
-        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'reg_total'=>true)),
-        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'reg_total'=>true)),
+        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'session_total'=>true)),
+        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'session_total'=>true)),
         $data->attendee->price_option,
         $data->ticket_link,
         $data->event->alt_email == '' ? $org_options['contact_email'] : $_event->alt_email,
