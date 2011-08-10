@@ -38,7 +38,7 @@ $status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? ' - ' . $statu
 $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' - <span class="espresso_closed">' . __('Regsitration is Closed', 'event_espresso') . '</span>' : '';
 ?>
 <div id="event_data-<?php echo $event_id ?>" class="event_data <?php echo $css_class; ?> <?php echo $category_identifier; ?> event-data-display event-display-boxes">
-    <h3 id="event_title-<?php echo $event_id ?>" class="event_title"><a title="<?php echo stripslashes_deep($event_name) ?>" class="a_event_title" id="a_event_title-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>"><?php echo stripslashes_deep($event_name) ?></a>
+    <h2 id="event_title-<?php echo $event_id ?>" class="event_title"><a title="<?php echo stripslashes_deep($event_name) ?>" class="a_event_title" id="a_event_title-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>"><?php echo stripslashes_deep($event_name) ?></a>
 <?php /* These are custom messages that can be displayed based on the event status. Just un-comment the one you want to use. */ ?>
         <?php //echo $status_display; //Turn this on to display the overall status of the event.  ?>
         <?php //echo $status_display_ongoing; //Turn this on to display the ongoing message. ?>
@@ -48,7 +48,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         <?php //echo $status_display_not_open; //Turn this on to display the secondary message. ?>
         <?php //echo $status_display_open; //Turn this on to display the not open message. ?>
         <?php //echo $status_display_custom_closed; //Turn this on to display the closed message. ?>
-    </h3>
+    </h2>
         <?php /* Venue details. Un-comment to display. */ ?>
     <?php //echo $venue_title != ''?'<p id="event_venue_name-'.$event_id.'" class="event_venue_name">'.stripslashes_deep($venue_title).'</p>':'' ?>
     <?php //echo $venue_address != ''?'<p id="event_venue_address-'.$event_id.'" class="event_venue_address">'.stripslashes_deep($venue_address).'</p>':''?>

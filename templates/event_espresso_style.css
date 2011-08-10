@@ -93,10 +93,10 @@ table.price_list {
 #content .section-heading {
 	background: #FAF9EF;
 	border-bottom: 1px solid #bfbfbf;
-	font-size: 1.4em;
 	margin: -10px -10px 10px;
 	padding-left: 10px;
 }
+.event_title {font-size: 1.3em;}
 #content .section-heading {
 	text-align: center;
 }
@@ -222,10 +222,12 @@ span.google-map-link a:hover {
 	margin-bottom: 10px;
 	padding: 0 0 .5em;
 }
-#event-reg-form-groups .event_questions h3 {
+#event-reg-form-groups .event_questions .reg-quest-title {
 	background: #f9f9f9;
 	border-bottom: 1px solid #ebebeb;
+	font-weight: bold;
 	margin-top: 0;
+	padding-left: 5px;
 }
 #content .event_questions  .quest-group-descript {
 	border-bottom: 1px solid #bfbfbf;
@@ -460,13 +462,12 @@ a.btn_event_form_submit {
 #content .event-display-tables td input {
 	line-height: 1;
 }
-#event_espresso_attendee_verify tr td,
-#event_espresso_attendee_verify_questions tr td,
-#event_espresso_attendee_verify tr th.header {
+#content .grid tr td,
+#content .grid tr th.header {
 	border-top: 1px solid #bebebe;
 	vertical-align: middle;
 }
-#event_espresso_attendee_verify tr th.header {
+.grid tr th.header {
 	border-right: 1px solid #dcdcdc;
 }
 #content table.event-display-tables th.header {
@@ -477,6 +478,14 @@ a.btn_event_form_submit {
 #content #event_espresso_shopping_cart table th  {
 	font-size: 100%;
 	text-align: left;
+}
+#event_espresso_attendee_verify th,
+#event_espresso_attendee_verify_questions th {
+	width: 30%;
+}
+#event_espresso_attendee_verify td,
+#event_espresso_attendee_verify_questions td {
+	width: 70%;
 }
 #event_espresso_shopping_cart table.price_list {
 	border: 1px;

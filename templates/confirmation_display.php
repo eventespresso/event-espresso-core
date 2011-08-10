@@ -8,10 +8,10 @@ $attendee_num = 1;
 ?>
 			<form id="form1" name="form1" method="post" action="<?php echo home_url()?>/?page_id=<?php echo $event_page_id?>">
 				<div class="event-conf-block event-display-boxes" >
-							<h3 class="event_title">
+							<h2 class="event_title">
               <?php _e('Please verify your registration details:','event_espresso'); ?>
-            </h3>
-            <table class="event-display-tables"  id="event_espresso_attendee_verify">
+            </h2>
+            <table class="event-display-tables grid"  id="event_espresso_attendee_verify">
 								
               <tr>
                 <th scope="row" class="header">
@@ -77,14 +77,16 @@ $attendee_num = 1;
 								
 							<?php		if ($display_questions != ''){ ?>
 							<div id="additional-conf-info" class="event-display-boxes">
-              <h3 class="event_title"><?php _e('Additional Information for:', 'event_espresso'); ?> <?php echo stripslashes_deep($attendee_name)?></h3>
+              <h2 class="event_title"><?php _e('Additional Information for:', 'event_espresso'); ?> <?php echo stripslashes_deep($attendee_name)?></h2>
               
-								<table id="event_espresso_attendee_verify_questions" class="event-display-tables">
+								<table id="event_espresso_attendee_verify_questions" class="event-display-tables grid">
+								
+									<?php foreach ($questions as $question) { ?>
 									<tr>
-										<td>
-											<?php echo $display_questions ?>
-										</td>
+										<th scope="row" class="header"><?php echo $question->question ?></th><td><?php echo $question->answer ?></td>
 									</tr>
+									<?php } ?>
+
             	</table>              
 
 

@@ -126,9 +126,9 @@
 	  ?>
       
       <fieldset id="event-reg-form-groups">
-        <h2 class="section-heading">
+        <h3 class="section-heading">
           <?php _e('Registration Details', 'event_espresso'); ?>
-        </h2>
+        </h3>
         <?php
 		//Outputs the custom form questions. This function can be overridden using the custom files addon
 		echo event_espresso_add_question_groups($question_groups); 
