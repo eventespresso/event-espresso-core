@@ -11,7 +11,7 @@ $this_event_id = $event_id;
 
     $num_attendees = ' - ' . $_SESSION['events_in_session'][$event_id]['attendee_quantitiy'] . __( ' attendees', 'event_espresso' );
     ?>
-    <h1 class="event_title" id="event_title-<?php echo $event_id; ?>">
+    <h2 class="event_title" id="event_title-<?php echo $event_id; ?>">
         <?php echo stripslashes_deep( $event_name ) ?>
         <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?>
         -
@@ -21,7 +21,7 @@ $this_event_id = $event_id;
 
         printf( _n( '%d attendee', '%d attendees', $meta['attendee_quantity'], 'event_espresso' ), $meta['attendee_quantity'] );
         ?>
-    </h1>
+    </h2>
 
 
     <div class="multi_regis_form_fields" id="multi_regis_form_fields-<?php echo $event_id . '-' . $meta['price_id']; ?>">
@@ -76,15 +76,19 @@ $this_event_id = $event_id;
                     //Outputs the custom form questions.
                     //This will be the main attendee
                     //$meta['attendee_number'] = 1;
-                    echo "<h2>" . __( 'Attendee ', 'event_espresso' ) . $attendee_number . "</h2>";
+											?>
+                    <div class="event-display-boxes">
+											<?php
+											echo '<h3 class="section-heading">' . __( 'Attendee ', 'event_espresso' ) . $attendee_number . '</h3>';
 
                     $meta['attendee_number'] = $price_group_att_counter;
-					//echo "Attendee # ".$attendee_number;
+											//echo "Attendee # ".$attendee_number;
 
                     echo event_espresso_copy_dd( $event_id, $meta );
-                    echo event_espresso_add_question_groups( $question_groups, $events_in_session, $event_id, 1, $meta );
-
-                    if ( $meta['attendee_number'] == 1 || $increase_attende_num ){
+                    echo event_espresso_add_question_groups( $question_groups, $events_in_session, $event_id, 1, $meta ); ?>
+											</div>
+                    <?php
+											if ( $meta['attendee_number'] == 1 || $increase_attende_num ){
                         $meta['attendee_number']++;
                         $attendee_number++;
                     }
@@ -128,10 +132,15 @@ $this_event_id = $event_id;
 								for ( $i = $attendee_number, $cnt = $meta['attendee_quantity'] + $attendee_number - 1; $i < $cnt; $i++ ) {
 									$price_group_att_counter++;
 									//echo 'price_group_att_counter = '.$price_group_att_counter;
-									$meta['attendee_number'] = $price_group_att_counter;
-									echo "<h2>" . __( 'Attendee ', 'event_espresso' ) . $i . "</h2>";
+									$meta['attendee_number'] = $price_group_att_counter; ?>
+									
+									<div class="event-display-boxes">
+									<?php
+									echo '<h3 class="section-heading">' . __( 'Attendee ', 'event_espresso' ) . $i . '</h3>';
 									echo event_espresso_copy_dd( $event_id, $meta );
-									event_espresso_add_question_groups($question_groups, $events_in_session, $event_id, 1, $meta );
+									event_espresso_add_question_groups($question_groups, $events_in_session, $event_id, 1, $meta );?>
+									</div>
+									<?php
 								}
 							}
 						}

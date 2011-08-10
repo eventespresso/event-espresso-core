@@ -93,17 +93,23 @@ table.price_list {
 #content .section-heading {
 	background: #FAF9EF;
 	border-bottom: 1px solid #bfbfbf;
+	font-size: 1.3em;
 	margin: -10px -10px 10px;
 	padding-left: 10px;
 }
-.event_title {font-size: 1.3em;}
+#content .reg-quest-title {
+	font-weight: bold;
+	text-align: center;
+}
 #content .section-heading {
+	font-size: 1.2em;
 	text-align: center;
 }
 #content .event-display-boxes  .event-display-boxes .section-heading {
-	font-size: 1.2em;
+	font-size: 1.1em;
 	text-align: left;
 }
+
 #content .event_title a {
 	text-decoration: none;
 }
@@ -120,6 +126,9 @@ table.price_list {
 #content .span_event_time_label,
 #content .event_price_label {
 	font-weight: bold;
+}
+#content .reg-quest-title {
+	text-align: center;
 }
 #additional_header a,
 #event_espresso_refresh_total,
@@ -342,6 +351,9 @@ ul#espresso_payment_buttons li form {
 	position: relative;
 	width: 150px;
 	text-align: right;
+}
+.copy_dropdown_wrapper label {
+	margin-right: 0;
 }
 .event_espresso_form_wrapper p.coupon_code {text-align: left;}
 .event_espresso_form_wrapper p.coupon_code label,
