@@ -400,7 +400,7 @@ else
 
 	if ($error != true){?>
 		<div id="message" class="updated fade"><p><strong><?php _e('The event','event_espresso'); ?>
-        <a href="<?php echo home_url()?>/?page_id=<?php echo $org_options['event_page_id']?>&amp;regevent_action=register&amp;event_id=<?php echo $wpdb->insert_id;?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event'])?></a>
+        <a href="<?php echo espresso_reg_url($wpdb->insert_id);?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event'])?></a>
 
          <?php _e('has been added for ','event_espresso'); ?><?php echo date("m/d/Y", strtotime($start_date)); ?> <a href="admin.php?page=events&action=edit&event_id=<?php echo $last_event_id;?>"><?php _e('Edit this event?','event_espresso'); ?></a></strong></p></div>
 <?php }else { ?>

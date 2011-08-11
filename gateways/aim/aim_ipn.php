@@ -69,7 +69,7 @@ foreach ( $events as $event ) {
 	$active = $event->is_active;
 }
 //Build links
-$event_url = home_url() . "/?page_id=" . $org_options['event_page_id']. "&regevent_action=register&event_id=". $event_id;
+$event_url = espresso_reg_url($event_id);
 $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 			
 if ($response->approved) {

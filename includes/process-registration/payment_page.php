@@ -135,7 +135,6 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
     } else
         $event_cost = $event_original_cost;
 
-
     $event_individual_cost = number_format($event_cost / $num_people, 2, '.', '');
 
     $event_discount_label = $event_original_cost > $event_cost ? ' (' . __('Discount of ', 'event_espresso') . $org_options['currency_symbol'] . number_format($event_original_cost - $event_cost, 2, ".", ",") . __(' applied', 'event_espresso') . ')' : '';
@@ -219,7 +218,7 @@ function espresso_confirm_registration($registration_id) {
     }
 
     //Build links
-    $event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $event_id;
+    $event_url = espresso_reg_url($event_id);
     $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
 
@@ -379,8 +378,8 @@ function event_espresso_pay($att_registration_id=0) {
 			foreach($tmp_attendees as $tmp_attendee){
 				$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
 				$total_cost += $sub_total;
-				$event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $tmp_attendee["event_id"];
-				$event_link .= '<a href="' . $event_url . '">' . $tmp_attendee["event_name"]." [".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]" . '</a> - '. $tmp_attendee["fname"]." ".$tmp_attendee["lname"] .' '.$tmp_attendee["quantity"]. ' x ' . $org_options[ 'currency_symbol' ].number_format($tmp_attendee["cost"], 2, '.', '').'<br />';
+				$event_url = espresso_reg_url($tmp_attendee["event_id"]);
+				$event_link .= '<a href="' . $event_url . '">' . $tmp_attendee["event_name"].'</a> ['.event_date_display($tmp_attendee['start_date'], get_option('date_format')).'] - '.espresso_edit_attendee($registration_id, $attendee_id, 'attendee', $tmp_attendee["fname"]." ".$tmp_attendee["lname"]) . ' ('.$tmp_attendee["quantity"]. ' x ' . $org_options[ 'currency_symbol' ].number_format($tmp_attendee["cost"], 2, '.', '').')<br />';
 			}
 		}
 	//print_r($attendees);

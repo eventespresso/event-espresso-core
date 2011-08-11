@@ -90,7 +90,7 @@ if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?
         <p id="available_spaces-<?php echo $event_id ?>"><span class="section-title"><?php _e('Available Spaces:', 'event_espresso') ?> </span><?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved') ?></p>
 <?php 
 		if ($overflow_event_id != '0' && $allow_overflow == 'Y') { ?>
-					<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>&regevent_action=register&event_id=<?php echo $overflow_event_id ?>&name_of_event=<?php echo stripslashes_deep($event_name) ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
+					<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo espresso_reg_url($overflow_event_id); ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
 <?php
 		}
     } else {

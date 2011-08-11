@@ -141,7 +141,7 @@ if ( !function_exists( 'event_espresso_construct_multi_invoice' ) )
                     $invoice_link = '<a href="' . home_url() . '/?download_invoice=true&amp;attendee_id=' . $att_id . '&amp;registration_id=' . $att_registration_id . '" target="_blank">' . __( 'Download PDF Invoice', 'event_espresso' ) . '</a>';
 
                     //Create link to the event
-                    $event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $_event->id;
+                    $event_url = espresso_reg_url($_event->id);
                     $event_link = '<a href="' . $event_url . '">' . stripslashes_deep( $_event->event_name ) . '</a>';
 
                     $temp_event_table .= "

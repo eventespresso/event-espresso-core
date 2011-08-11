@@ -127,7 +127,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 			$end_timestamp = espresso_event_time($event_id, 'end_timestamp');
 			
 			//This can be used in place of the registration link if you are usign the external URL feature
-			$registration_url = $externalURL != '' ? $externalURL : home_url() . '/?page_id='.$event_page_id.'&regevent_action=register&event_id='. $event_id . '&name_of_event=' . stripslashes_deep($event_name);                     
+			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);                     
 			if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
 				//Display a message if the user is not logged in.
 				 //_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';

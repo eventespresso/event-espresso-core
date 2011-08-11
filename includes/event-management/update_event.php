@@ -544,7 +544,7 @@ function update_event($recurrence_arr = array()) {
                 break;
         }
         ?>
-        <div id="message" class="updated fade"><p><strong><?php _e('Event details updated for', 'event_espresso'); ?> <a href="<?php echo get_option('siteurl') ?>/?page_id=<?php echo $org_options['event_page_id'] ?>&amp;regevent_action=register&amp;event_id=<?php echo $event_id ?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event']) ?> for <?php echo date("m/d/Y", strtotime($start_date)); ?></a>.</strong></p></div>
+        <div id="message" class="updated fade"><p><strong><?php _e('Event details updated for', 'event_espresso'); ?> <a href="<?php echo espresso_reg_url($event_id); ?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event']) ?> for <?php echo date("m/d/Y", strtotime($start_date)); ?></a>.</strong></p></div>
         <?php
     }
 

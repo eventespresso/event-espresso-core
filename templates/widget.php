@@ -73,7 +73,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 							$category_name = $event->category_name !=''?$event->category_name:'';
 							$category_desc = $event->category_desc !=''?$event->category_desc:'';
 							$externalURL = $event->externalURL;
-							$registration_url = $externalURL != '' ? $externalURL : home_url() . '/?page_id='.$event_page_id.'&regevent_action=register&event_id='. $event_id . '&name_of_event=' . stripslashes_deep($event_name);
+							$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
 							
 							//Print out the array of event status options
 							//print_r (event_espresso_get_is_active($event_id));

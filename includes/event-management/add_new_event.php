@@ -204,7 +204,7 @@ function add_new_event() {
               <?php
               $org_options['event_page_id'] = isset($org_options['event_page_id']) ? $org_options['event_page_id'] : '';
               $event_id = isset($event_id) ? $event_id : '';
-              echo '<a href="#" class="button" onclick="prompt(&#39;Event URL:&#39;, \'' . home_url() . '/?page_id=' . $org_options['event_page_id'] . '&amp;regevent_action=register&amp;event_id=' . $event_id . '\'); return false;">' . __('Get URL') . '</a>'
+              echo '<a href="#" class="button" onclick="prompt(&#39;Event URL:&#39;, \'' . espresso_reg_url($event_id).'\'); return false;">' . __('Get URL') . '</a>'
               ?>
         </div>
       </div>

@@ -52,7 +52,7 @@ global $wpdb;
 					$reg_limit=$event->reg_limit;
 					$additional_limit = $event->additional_limit;
 
-					$regurl=home_url(). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event_id . '&name_of_event=' . urlencode($event_name);
+					$regurl=espresso_reg_url($event_id);
 
 					$google_map_link = espresso_google_map_link(array( 'address'=>$event_address, 'city'=>$event_city, 'state'=>$event_state, 'zip'=>$event_zip, 'country'=>$event_country) );
 			}//End foreach ($events as $event)
