@@ -346,7 +346,7 @@ function event_espresso_pay($att_registration_id=0) {
             $event_cost = $attendee->amount_pd;
         }
 
-        $events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
+        /*$events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
         foreach ($events as $event) {
             $event_id = $event->id;
             $event_name = $event->event_name;
@@ -355,12 +355,38 @@ function event_espresso_pay($att_registration_id=0) {
             $event_identifier = $event->event_identifier;
             $cost = empty($event->event_cost) ? 0 : $event->event_cost;
             $active = $event->is_active;
-        }
-        //Build links
-        $event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $event_id;
-        $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
-
-
+        }*/
+		$event_link = '';
+		$registration_ids = array();
+		$c_sql = "select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ";
+		//echo $c_sql;
+		$check = $wpdb->get_row($c_sql);
+		if ( $check !== NULL ){
+			$registration_id = $check->primary_registration_id;
+			$registration_ids = $wpdb->get_results("select registration_id from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where primary_registration_id = '$registration_id' ", ARRAY_A);
+			$multi_reg = true;
+		}else{
+			$registration_ids[] = array("registration_id"=>$registration_id);
+		}
+		foreach($registration_ids as $reg_id){
+		$sql = "select ea.registration_id, ed.event_name, ed.id event_id, ed.start_date, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
+				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
+				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
+				where ea.registration_id = '".$reg_id['registration_id']."' order by ed.event_name ";
+				
+		$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
+		
+			foreach($tmp_attendees as $tmp_attendee){
+				$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
+				$total_cost += $sub_total;
+				$event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $tmp_attendee["event_id"];
+				$event_link .= '<a href="' . $event_url . '">' . $tmp_attendee["event_name"]." [".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]" . '</a> - '. $tmp_attendee["fname"]." ".$tmp_attendee["lname"] .' '.$tmp_attendee["quantity"]. ' x ' . $org_options[ 'currency_symbol' ].number_format($tmp_attendee["cost"], 2, '.', '').'<br />';
+			}
+		}
+	//print_r($attendees);
+	$total_cost = number_format($total_cost, 2, '.', '');
+       
+	
         if (!empty($_REQUEST['payment_type']) && $_REQUEST['payment_type'] == 'cash_check') {
 
             $payment_status = 'Pending';
@@ -395,10 +421,7 @@ function event_espresso_pay($att_registration_id=0) {
                 }
             }
         }
-    }
-
-    //if the attendee has paid using authorize.net and returns to make a payment, then display the following message
-    elseif ($registration_id == 0 && $att_registration_id == 0) {
+    }elseif ($registration_id == 0 && $att_registration_id == 0) {//if the attendee has paid using authorize.net and returns to make a payment, then display the following message
         _e('Please check your email for payment information.', 'event_espresso');
     } else {
 
