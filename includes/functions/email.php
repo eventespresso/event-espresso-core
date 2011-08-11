@@ -146,7 +146,7 @@ function prepare_email_data($attendee_id, $multi_reg) {
 
     $data->location = ($data->event->address != '' ? $data->event->address : '') . ($data->event->address2 != '' ? '<br />' . $data->event->address2 : '') . ($data->event->city != '' ? '<br />' . $data->event->city : '') . ($data->event->state != '' ? ', ' . $data->event->state : '') . ($data->event->zip != '' ? '<br />' . $data->event->zip : '') . ($data->event->country != '' ? '<br />' . $data->event->country : '');
     $data->google_map_link = espresso_google_map_link(array('address' => $data->event->address, 'city' => $data->event->city, 'state' => $data->event->state, 'zip' => $data->event->zip, 'country' => $data->event->country));
-    $data->event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $data->event->id;
+    $data->event_url = espresso_reg_url($data->event->id);
     $data->event_link = '<a href="' . $data->event_url . '">' . stripslashes_deep($data->event->event_name) . '</a>';
     if (!isset($data->event->venue_name))
         $data->event->venue_name = '';
@@ -201,7 +201,7 @@ function prepare_email($data) {
 
 function prepare_admin_email($data) {
     global $org_options;
-    $admin_attendee_link = '<a href="' . get_admin_url() . 'admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $data->event->id . '&form_action=edit_attendee&id=' . $data->attendee->id . '">' . $data->attendee->fname . ' ' . $data->attendee->lname . '</a>';
+    $admin_attendee_link = espresso_edit_attendee(0, $data->attendee->id, $data->event->id, 'admin', $data->attendee->fname . ' ' . $data->attendee->lname);
 
 	if ($data->attendee->quantity > 0 && !$data->multi_reg)
         $primary_attendee = $data->primary_attendee == true ?"<p><strong>" . __('Primary Attendee', 'event_espresso') . "</strong></p>":'';
@@ -338,7 +338,7 @@ if (!function_exists('event_espresso_send_attendee_registration_approval_pending
         }
 
         //Build links
-        $event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $event_id;
+        $event_url = espresso_reg_url($event_id);
         $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
         $sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
@@ -523,7 +523,7 @@ if (!function_exists('event_espresso_send_payment_notification')) {
         }
 
         //Build links
-        $event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $event_id;
+        $event_url = home_url() . "/?ee" . $event_id;
         $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
         //Build the payment link
@@ -769,7 +769,7 @@ if (!function_exists('event_espresso_send_invoice')) {
         }
 
         //Build links
-        $event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $event_id;
+        $event_url = espresso_reg_url($event_id);
         $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
         //Create PDF Invoice link
@@ -952,7 +952,7 @@ if (!function_exists('espresso_event_reminder')) {
             $google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country));
 
             //Build links
-            $event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $event_id;
+            $event_url = espresso_reg_url($event_id);
             $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
         }
 
