@@ -6,6 +6,29 @@ function isEmptyArray($array) {
     return (count(array_filter($array, $my_not_empty)) == 0) ? 1 : 0;
 }
 
+function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $type='', $text=''){
+	global $org_options;
+	if($text =='')
+		$text=__('Edit Attendee', 'event_espresso');
+	switch ($type){
+		case'admin':
+			return '<a href="' . get_admin_url() . 'admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id . '">' . $text . '</a>';
+		break;
+		case'attendee':
+		default:
+			return '<a  href="' . home_url() . '?page_id=' . $org_options['event_page_id'] . '&registration_id='.$registration_id.'&amp;id='.$attendee_id.'&amp;regevent_action=register&form_action=edit_attendee&single=true" target="_blank" id="espresso_edit_attendee_'.$attendee_id.'" class="espresso_edit_attendee" title="'.__('Edit Attendee Details', 'event_espresso').'">'. $text .'</a>';
+		break;
+	}
+}
+
+function espresso_reg_url($event_id=0){
+	if ($event_id > 0){
+		return home_url().'/?ee='.$event_id;
+	}else{
+		return home_url().'/?ee=#no-id';
+	}
+}
+
 //Text formatting function.
 //This should fix all of the formatting issues of text output from the database.
 function espresso_format_content($content='') {
@@ -22,7 +45,6 @@ function event_espresso_strip_html_from_entity($html_entity) {
 }
 
 /* 	This function checks a registration id to see if their session is registered more than once, if so, it returns the session id	 */
-
 function event_espresso_more_than_one($registration_id) {
     global $wpdb;
     $sql = "SELECT a.attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " a JOIN " . EVENTS_ATTENDEE_TABLE . " b ON b.attendee_session = a.attendee_session WHERE b.registration_id='" . $registration_id . "' GROUP BY a.id";
