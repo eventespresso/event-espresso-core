@@ -79,7 +79,9 @@ function attendee_edit_record() {
                     }
                 }
             }
-			return events_payment_page($_REQUEST[ 'primary' ], $_REQUEST[ 'p_id' ]);
+			//If this is not an attendee returing to edit thier details, then we need to return to the payment page
+			if (!isset($_REQUEST[ 'single' ]))
+				return events_payment_page($_REQUEST[ 'primary' ], $_REQUEST[ 'p_id' ]);
         }
 
 
