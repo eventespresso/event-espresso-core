@@ -129,6 +129,8 @@ if ( $attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_reg
 			$tmp_event_link[] = $row->event_name;
 		}
 		$event_link = implode(",",$tmp_event_link);
+		// Copying actual amount owed/due to total_cost because the variable total_cost is being used in the payment_overview template
+		$total_cost = $amount_pd;
 	}
 	else
 	{
