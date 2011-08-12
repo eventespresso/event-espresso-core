@@ -64,7 +64,6 @@ if ( $attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_reg
 	
 	$total = 0.00;
 	$amount_pd = 0.00;
-	$line_item = "";
 	foreach($registration_ids as $registration_id){
 
 		$sql = "select ea.registration_id, ea.id as attendee_id, ea.amount_pd, ed.id as event_id, ed.event_name, ed.start_date, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
@@ -75,13 +74,13 @@ if ( $attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_reg
 		$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
 
 		foreach($tmp_attendees as $tmp_attendee){
+			$sub_total = 0.00;
 			$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
 			$attendees[] = array(	"attendee_info"=>$tmp_attendee["event_name"]."[".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]" . " >> " . $tmp_attendee["fname"]." ".$tmp_attendee["lname"],
 									"quantity"=> $tmp_attendee["quantity"],
 									"cost"=> doubleval($tmp_attendee["cost"]),
-									"sub_total" => doubleval($sub_total) );
-			$line_item .= 	"LINEITEM~PRODUCTID=".$tmp_attendee['attendee_id']."+DESCRIPTION=".$tmp_attendee["event_name"]."[".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]" . " >> " . $tmp_attendee["fname"]." ".$tmp_attendee["lname"]."
-							QUANTITY=".$tmp_attendee['quantity']."UNITCOST=".$tmp_attendee['cost']."+AMOUNTLI=".$sub_total."+|";
+									"sub_total" => doubleval($sub_total),
+									"unit_price" => $tmp_attendee["cost"] );
 			$amount_pd += $tmp_attendee["amount_pd"];
 			$total_cost += $sub_total;
 			if ( !in_array($tmp_attendee['event_id'],$event_ids) )
@@ -96,7 +95,6 @@ if ( $attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_reg
 		$discount = $total_cost - $amount_pd;
 	}
 }
-
 
 #############################
 
@@ -134,13 +132,14 @@ if (count($attendees) > 0) {
                 #$aemail = $row['email'];
                 #$myPaypal->addField('item_number_' . $i, $registration_id);
                 $myPaypal->addField('item_name_' . $i, $attendee['attendee_info']);#stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
-                $myPaypal->addField('amount_' . $i, number_format($attendee['sub_total'],2,'.',''));#number_format($div, 2, '.', ''));
+                $myPaypal->addField('amount_' . $i, number_format($attendee['unit_price'],2,'.',''));#number_format($div, 2, '.', ''));
 				$myPaypal->addField('quantity_'. $i, $attendee['quantity']);
                 $i++;
             }
         #}
     #}
 }
+
 #else 
 #{
 #    $myPaypal->addField('item_number', $registration_id);
