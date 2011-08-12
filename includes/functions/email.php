@@ -541,7 +541,7 @@ if (!function_exists('event_espresso_send_payment_notification')) {
             }
             //Build the ticket link
             //$ticket_url = home_url() . "/?download_ticket=true&amp;id=" . $attendee_id . "&amp;registration_id=" . $registration_id;
-            $ticket_link = espresso_ticket_links($registration_id);
+            $ticket_link = espresso_ticket_links($registration_id,$attendee_id);
         }
 
         //Build custom questions
