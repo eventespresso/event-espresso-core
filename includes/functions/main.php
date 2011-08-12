@@ -65,8 +65,42 @@ function espresso_attendee_price($atts) {
 	if(!isset($registration_id)){
 		$registration_id = espresso_registration_id($attendee_id);
 	}
-	//echo $registration_id;
 	
+	if((isset($reg_total) && $reg_total = true) || (isset($session_total) && $session_total = true) )
+	{
+		$result = 0.00;
+		$registration_ids = array();
+		$sql = "select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ";
+		$primary_row = $wpdb->get_row($sql);
+		if ( $primary_row !== NULL )
+		{
+			$rs = $wpdb->get_results("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where primary_registration_id = '".$primary_row->primary_registration_id."' ");
+			foreach($rs as $row)
+			{
+				$registration_ids[] = $row->registration_id;
+			}
+		}
+		else
+		{
+			$registration_ids[] = $registration_id;
+		}
+		
+		foreach($registration_ids as $reg_id)
+		{
+			$tmp_row = $wpdb->get_row("select sum(amount_pd) as amount_pd_total from ".EVENTS_ATTENDEE_TABLE." where registration_id = '".$reg_id."' ");
+			if ( $tmp_row !== NULL )
+			{
+				$result += $tmp_row->amount_pd_total;
+			}
+		}
+		$result = number_format($result,2,'.','');
+		return $result;
+	}
+	
+	##
+	# Begin // August 13, 2011 - IMON
+	# This portion of code will not execute. At the moment we are keeping it just for reference purpose.
+	##
 	//Return the total amount paid for this registration
 	if(isset($reg_total) && $reg_total = true){
 		$sql ='';
@@ -80,6 +114,7 @@ function espresso_attendee_price($atts) {
 			return number_format($total_cost, 2, '.', '');
 		}
 	}
+	
 	
 	//Return the total amount paid for a session. Uses the registration id.
 	if(isset($session_total) && $session_total = true){
@@ -108,6 +143,10 @@ function espresso_attendee_price($atts) {
 			return number_format($total_cost, 2, '.', '');
 		}
 	}
+	
+	##
+	# END // August 13, 2011 - IMON
+	##
 
 	//Returnt the amount paid for an individual attendee
 	if(isset($attendee_id) && $attendee_id > 0){
