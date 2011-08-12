@@ -239,10 +239,11 @@ span.google-map-link a:hover {
 	padding-left: 5px;
 }
 #content .event_questions  .quest-group-descript {
-	border-bottom: 1px solid #bfbfbf;
+	background: #E9E9E9;
 	font-size: 81.25%;
-	margin: -20px auto 20px ;
-	width: 86%;
+	margin: -20px 0 20px ;
+	padding-left: 5px;
+	
 }
 .espresso_add_attendee a.add {
 	margin-left: 85px;
@@ -327,7 +328,10 @@ ul#espresso_payment_buttons li form {
 * from http://vesess.com/sandbox/form_template.html#
 */
 
-.event_espresso_form_wrapper form p { margin: 3px; }
+.event_espresso_form_wrapper form p { 
+	margin: 3px;
+	position: relative;
+}
 .event_espresso_form_wrapper form p.note { 
 	margin-left: 170px; 
 	font-size: 90%; 
@@ -372,7 +376,9 @@ ul#espresso_payment_buttons li form {
 }
 .event_espresso_form_wrapper label.error,
 .event_espresso_form_wrapper span.error { 
-	float:right;
+	position: absolute;
+	top: -20px;
+	left: 170px;
 	color: #C00; 
 	width: auto;
 }
@@ -386,7 +392,7 @@ ul#espresso_payment_buttons li form {
 }
 .event_espresso_form_wrapper input.error { 
 	border-color: #C00; 
-	background-color: #FEF; 
+	background-color: #FEF;
 }
 .event_espresso_form_wrapper input:focus,
 .event_espresso_form_wrapper input.error:focus,
@@ -461,6 +467,39 @@ a.btn_event_form_submit {
 }
 .recaptchatable #recaptcha_response_field {left:0 !important;}
 
+/*___ Question groups ___*/
+
+#content .event_questions fieldset {
+	border: none;
+}
+#content .event_questions fieldset legend {
+	background: none;
+	font-size: 87.50%;
+	font-weight: normal;
+	font-family: 'Helvetica Neue', Arial, Helvetica, 'Nimbus Sans L', sans-serif;
+	padding-left: 10px;
+}
+#content .event_questions fieldset ul {
+	margin: 0;
+	overflow: hidden;
+}
+#content .event_questions fieldset.single-radio li,
+#content .event_questions fieldset.multi-checkbox li {
+	float: left;
+	margin-left: 10px;
+}
+#content .event_questions fieldset.single-radio li label,
+#content .event_questions fieldset.multi-checkbox li label {
+	float: none;
+	line-height: 1;
+	width: auto;
+}
+#content .event_questions fieldset.multi-checkbox li label {
+	display: block;
+	min-width: 100px;
+	text-align: left;
+}
+	
 /* Tables
 ------------------------------------------------------------------------------*/
 
@@ -493,10 +532,12 @@ a.btn_event_form_submit {
 }
 #event_espresso_attendee_verify th,
 #event_espresso_attendee_verify_questions th {
-	width: 30%;
+	text-align: left;
+	width: 35%;
 }
 #event_espresso_attendee_verify td,
 #event_espresso_attendee_verify_questions td {
+	text-align: left;
 	width: 70%;
 }
 #event_espresso_shopping_cart table.price_list {
