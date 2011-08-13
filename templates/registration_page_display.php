@@ -8,15 +8,21 @@
   <div class="event_espresso_form_wrapper event-data-display">
     <form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
       <h2 class="event_title" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
-      <?php /* Venue details. Un-comment to display or use the provided shortcodes. */ ?>
-      <?php //echo $venue_title != ''?'<p id="event_venue_name-'.$event_id.'" class="event_venue_name">'.stripslashes_deep($venue_title).'</p>':''?>
-      <?php //echo $venue_address != ''?'<p id="event_venue_address-'.$event_id.'" class="event_venue_address">'.stripslashes_deep($venue_address).'</p>':''?>
-      <?php //echo $venue_address2 != ''?'<p id="event_venue_address2-'.$event_id.'" class="event_venue_address2">'.stripslashes_deep($venue_address2).'</p>':''?>
-      <?php //echo $venue_city != ''?'<p id="event_venue_city-'.$event_id.'" class="event_venue_city">'.stripslashes_deep($venue_city).'</p>':''?>
-      <?php //echo $venue_state != ''?'<p id="event_venue_state-'.$event_id.'" class="event_venue_state">'.stripslashes_deep($venue_state).'</p>':''?>
-      <?php //echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
-      <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
-      <?php 		if ($display_desc == "Y") {//Show the description or not ?>
+      
+				<?php /* Venue details. Un-comment first and last lines & any venue details you wish to display or use the provided shortcodes. */ ?>
+      <?php // echo '<div id="venue-details-display">'; ?>
+				<?php // echo '<p class="section-title">' . __('Venue Details', 'event_espresso') . '</p>'; ?>
+				<?php // echo $venue_title != ''?'<p id="event_venue_name-'.$event_id.'" class="event_venue_name">'.stripslashes_deep($venue_title).'</p>':''?>
+      <?php // echo $venue_address != ''?'<p id="event_venue_address-'.$event_id.'" class="event_venue_address">'.stripslashes_deep($venue_address).'</p>':''?>
+      <?php // echo $venue_address2 != ''?'<p id="event_venue_address2-'.$event_id.'" class="event_venue_address2">'.stripslashes_deep($venue_address2).'</p>':''?>
+      <?php // echo $venue_city != ''?'<p id="event_venue_city-'.$event_id.'" class="event_venue_city">'.stripslashes_deep($venue_city).'</p>':''?>
+      <?php // echo $venue_state != ''?'<p id="event_venue_state-'.$event_id.'" class="event_venue_state">'.stripslashes_deep($venue_state).'</p>':''?>
+      <?php // echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
+      <?php // echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
+      <?php // echo '</div>'; ?>
+				<?php /* end venue details block */ ?>
+				
+				<?php 		if ($display_desc == "Y") {//Show the description or not ?>
       <p class="section-title">
         <?php _e('Description:', 'event_espresso') ?>
       </p>
@@ -32,14 +38,18 @@
 		case 'REGISTRATION_CLOSED': //only show the event description.
 		// if todays date is after $reg_end_date
 		?>
-          <div class="event-registration-closed event-display-boxes">
-            <h3 class="event_title"><?php echo stripslashes_deep($event_name)?></h3>
-            <p class="event_full"><strong>
+          <div class="event-registration-closed event-messages">
+            
+            <p class="event_full">
+								<strong>
               <?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?>
-              </strong></p>
-            <p class="event_full"><strong>
+              </strong>
+							</p>
+            <p class="event_full">
+								<strong>
               <?php _e('Please <a href="contact" title="contact us">contact us</a> if you would like to know if spaces are still available.', 'event_espresso'); ?>
-              </strong></p>
+              </strong>
+							</p>
           </div>
 	<?php
 		break;
@@ -49,12 +59,16 @@
 		// if todays date is prior to $reg_start_date
 	?>
           <div class="event-registration-pending event-messages">
-            <p class="event_full"><strong>
+            <p class="event_full">
+								<strong>
               <?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?>
-              </strong></p>
-            <p class="event_full"><strong>
+              </strong>
+							</p>
+            <p class="event_full">
+								<strong>
               <?php _e('You will be able to register starting ' . event_espresso_no_format_date($reg_start_date, 'F d, Y'), 'event_espresso'); ?>
-              </strong></p>
+              </strong>
+							</p>
           </div>
 	<?php
 		break;
