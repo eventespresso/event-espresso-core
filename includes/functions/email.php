@@ -67,8 +67,8 @@ function replace_shortcodes($message, $data) {
         $data->event->venue_phone,
         //Payment details
         $data->attendee->txn_id,
-        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'session_total'=>true)),
-        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'session_total'=>true)),
+        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => true)),
+        $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => true)),
         $data->attendee->price_option,
         $data->ticket_link,
         $data->event->alt_email == '' ? $org_options['contact_email'] : $_event->alt_email,
@@ -100,32 +100,33 @@ function prepare_email_data($attendee_id, $multi_reg) {
     $data = new stdClass;
     $data->multi_reg = $multi_reg;
 
-	//Get the event record
-	$sql = "SELECT ed.* ";
-	isset($org_options['use_venue_manager'])&&$org_options['use_venue_manager'] =='Y'? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta ":'';
-	$sql .= " FROM " . EVENTS_DETAIL_TABLE . " ed ";
-	isset($org_options['use_venue_manager'])&&$org_options['use_venue_manager'] =='Y'? $sql .= " LEFT JOIN ". EVENTS_VENUE_REL_TABLE . " r ON r.event_id = ed.id LEFT JOIN ". EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id ":'';
-	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.event_id=ed.id ";
-	$sql .= " WHERE ea.id = '" . $attendee_id . "' ";
+    //Get the event record
+    $sql = "SELECT ed.* ";
+    isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+    $sql .= " FROM " . EVENTS_DETAIL_TABLE . " ed ";
+    isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = ed.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+    $sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.event_id=ed.id ";
+    $sql .= " WHERE ea.id = '" . $attendee_id . "' ";
     $data->event = $wpdb->get_row($sql, OBJECT);
 
-	//Get the attendee record
+    //Get the attendee record
     $sql = "SELECT ea.* FROM " . EVENTS_ATTENDEE_TABLE . " ea WHERE ea.id = '" . $attendee_id . "' ";
     $data->attendee = $wpdb->get_row($sql, OBJECT);
 
-	$data->primary_attendee = espresso_is_primary_attendee($data->attendee->id) == true ? true:false;
+    $data->primary_attendee = espresso_is_primary_attendee($data->attendee->id) == true ? true : false;
 
-	//Venue information
-			if (isset($org_options['use_venue_manager'])&&$org_options['use_venue_manager'] =='Y'){
-				$data->event->venue_name = $data->event->venue_name;
-				$data->event->address = $data->event->venue_address;
-				$data->event->address2 = $data->event->venue_address2;
-				$data->event->city = $data->event->venue_city;
-				$data->event->state = $data->event->venue_state;
-				$data->event->zip = $data->event->venue_zip;
-				$data->event->country = $data->event->venue_country;
-
-			}
+    //Venue information
+    if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+        $data->event->venue_name = $data->event->venue_name;
+        $data->event->address = $data->event->venue_address;
+        $data->event->address2 = $data->event->venue_address2;
+        $data->event->city = $data->event->venue_city;
+        $data->event->state = $data->event->venue_state;
+        $data->event->zip = $data->event->venue_zip;
+        $data->event->country = $data->event->venue_country;
+    } else {
+        $data->event->venue_name = $data->event->venue_title;
+    }
 
     $data->table_open = '<table width="100%" border="1" cellpadding = "5" cellspacing="5" style="border-collapse:collapse;">';
     $data->table_heading = "<tr><th>" . __('Event Name', 'event_espresso') . "</th><th>" . __('Date', 'event_espresso') . "</th><th>" . __('Time', 'event_espresso') . "</th><th>" . __('Location', 'event_espresso') . "</th></tr>";
@@ -134,9 +135,9 @@ function prepare_email_data($attendee_id, $multi_reg) {
     if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
         if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/functions.php")) {
             include_once(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/functions.php");
-            $data->qr_code = espresso_qr_code(array('attendee_id' => $attendee_id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price(array('registration_id'=>$data->attendee->registration_id, 'reg_total'=>true))));
+            $data->qr_code = espresso_qr_code(array('attendee_id' => $attendee_id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'reg_total' => true))));
         }
-        $data->ticket_link = espresso_ticket_links($data->attendee->registration_id,$data->attendee->id);
+        $data->ticket_link = espresso_ticket_links($data->attendee->registration_id, $data->attendee->id);
         $data->admin_ticket_link = "<p>" . $data->ticket_link . "</p>";
     } else {
         $data->qr_code = '';
@@ -165,9 +166,9 @@ function prepare_email_data($attendee_id, $multi_reg) {
             $data->email_questions = '<tr><td colspan = "6">' . $email_questions_r . '</td></tr>';
         $data->event_table .= $data->email_questions;
     }
-		$payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $data->attendee->registration_id . "&amp;id=" . $data->attendee->id;
-		$data->payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
-		$data->invoice_link = '<a href="' . home_url() . '/?download_invoice=true&amp;attendee_id=' . $data->attendee->id . '&amp;registration_id=' . $data->attendee->registration_id . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
+    $payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $data->attendee->registration_id . "&amp;id=" . $data->attendee->id;
+    $data->payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
+    $data->invoice_link = '<a href="' . home_url() . '/?download_invoice=true&amp;attendee_id=' . $data->attendee->id . '&amp;registration_id=' . $data->attendee->registration_id . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
     return $data;
 }
 
@@ -203,8 +204,8 @@ function prepare_admin_email($data) {
     global $org_options;
     $admin_attendee_link = espresso_edit_attendee(0, $data->attendee->id, $data->event->id, 'admin', $data->attendee->fname . ' ' . $data->attendee->lname);
 
-	if ($data->attendee->quantity > 0 && !$data->multi_reg)
-        $primary_attendee = $data->primary_attendee == true ?"<p><strong>" . __('Primary Attendee', 'event_espresso') . "</strong></p>":'';
+    if ($data->attendee->quantity > 0 && !$data->multi_reg)
+        $primary_attendee = $data->primary_attendee == true ? "<p><strong>" . __('Primary Attendee', 'event_espresso') . "</strong></p>" : '';
 
     $admin_email_body = "
                             <tr>
@@ -541,7 +542,7 @@ if (!function_exists('event_espresso_send_payment_notification')) {
             }
             //Build the ticket link
             //$ticket_url = home_url() . "/?download_ticket=true&amp;id=" . $attendee_id . "&amp;registration_id=" . $registration_id;
-            $ticket_link = espresso_ticket_links($registration_id,$attendee_id);
+            $ticket_link = espresso_ticket_links($registration_id, $attendee_id);
         }
 
         //Build custom questions
@@ -1108,7 +1109,7 @@ if (!function_exists('espresso_event_reminder')) {
         ?>
         <div id="message" class="updated fade">
             <p><strong>
-        <?php _e('Email Sent to ' . $count . ' people sucessfully.', 'event_espresso'); ?>
+                    <?php _e('Email Sent to ' . $count . ' people sucessfully.', 'event_espresso'); ?>
                 </strong></p>
         </div>
         <?php
