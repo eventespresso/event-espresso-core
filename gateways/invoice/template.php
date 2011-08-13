@@ -177,10 +177,10 @@ $pdf->Ln(10);
 		}
 	}
 	$header = array("Event & Attendee","Quantity","Per Unit","Sub total");
-	$w = array(140,15,15,15);
+	$w = array(100,25,30,30);
 	$alling = array('L','L','C','C','C');
-	$left = 140+15+15;
-	$right = 15;
+	$left = 100+25+30;
+	$right = 30;
 
 	$pdf->ImprovedTable($header, $attendees,$w,$alling);
 
