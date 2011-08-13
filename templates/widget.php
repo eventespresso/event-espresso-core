@@ -44,7 +44,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 					//$order_by = $order_by != 'NULL'? " ORDER BY ". $order_by ." ASC " : " ORDER BY date(start_date), id ASC ";
 					$order_by = " ORDER BY date(start_date), id ASC ";
 			
-					if ($type == 'category'){
+					if (isset($type) && $type == 'category'){
 						$sql = "SELECT e.*, c.category_name, c.category_name, c.category_desc FROM " . EVENTS_CATEGORY_TABLE . " c ";
 						$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 						$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
@@ -67,19 +67,19 @@ if (!class_exists('Event_Espresso_Widget')) {
 					//print_r($events);
 					//event_espresso_get_event_details($sql);
 						foreach ($events as $event){
-							$event_id = $event->id;
-							$event_name = $event->event_name;
-							$start_date = $event->start_date;
-							$category_name = $event->category_name !=''?$event->category_name:'';
-							$category_desc = $event->category_desc !=''?$event->category_desc:'';
-							$externalURL = $event->externalURL;
-							$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
+							$event->id = $event->id;
+							$event->event_name = $event->event_name;
+							$event->start_date = $event->start_date;
+							if (isset($event->category_name)) $event->category_name = $event->category_name !=''?$event->category_name:'';
+							if (isset($event->category_desc)) $event->category_desc = $event->category_desc !=''?$event->category_desc:'';
+							$event->externalURL = $event->externalURL;
+							$registration_url = $event->externalURL != '' ? $event->externalURL : espresso_reg_url($event->id);
 							
 							//Print out the array of event status options
-							//print_r (event_espresso_get_is_active($event_id));
+							//print_r (event_espresso_get_is_active($event->id));
 							
 							//Here we can create messages based on the event status
-							$status = event_espresso_get_is_active($event_id);
+							$status = event_espresso_get_is_active($event->id);
 							$status_display = ' - ' . $status['display_custom'];
 							$status_display_ongoing = $status['status'] == 'ONGOING'? ' - ' . $status['display_custom']:'';
 							$status_display_deleted = $status['status'] == 'DELETED'? ' - ' . $status['display_custom']:'';
@@ -104,7 +104,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 											
 									default:
 										?>
-											<p><a href="<?php echo $registration_url;?>"><?php echo stripslashes_deep($event_name)?> - <?php echo event_date_display($start_date)?></a> 
+											<p><a href="<?php echo $registration_url;?>"><?php echo stripslashes_deep($event->event_name)?> - <?php echo event_date_display($event->start_date)?></a> 
 												<?php /* These are custom messages that can be displayed based on the event status. Just comment the one you want to use. */?>
 												<?php //echo $status_display; //Turn this on to display the overall status of the event. ?>
                                                 <?php //echo $status_display_ongoing; //Turn this on to display the ongoing message. ?>
@@ -172,7 +172,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 <p> <label for="<?php echo $this->get_field_id( 'category_name' ); ?>">
     <?php _e('Event Category:', 'event_espresso'); ?>
   </label><br />
- <?php echo espresso_db_dropdown(id, category_name, EVENTS_CATEGORY_TABLE, id, $instance['category_name'], $strMethod="desc", $this->get_field_name( 'category_name' )) ?></p>
+ <?php echo espresso_db_dropdown('id', 'category_name', EVENTS_CATEGORY_TABLE, 'id', $instance['category_name'], $strMethod="desc", $this->get_field_name( 'category_name' )) ?></p>
  <p>
   <label for="<?php echo $this->get_field_id( 'limit' ); ?>">
     <?php _e('Limit:', 'event_espresso'); ?>
