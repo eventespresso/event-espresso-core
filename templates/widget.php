@@ -68,12 +68,12 @@ if (!class_exists('Event_Espresso_Widget')) {
 					//event_espresso_get_event_details($sql);
 						foreach ($events as $event){
 							$event->id = $event->id;
-							$event->event_name = $event->event_name;
-							$event->start_date = $event->start_date;
-							if (isset($event->category_name)) $event->category_name = $event->category_name !=''?$event->category_name:'';
-							if (isset($event->category_desc)) $event->category_desc = $event->category_desc !=''?$event->category_desc:'';
-							$event->externalURL = $event->externalURL;
-							$registration_url = $event->externalURL != '' ? $event->externalURL : espresso_reg_url($event->id);
+							$event->event_name = isset($event->event_name)?$event->event_name:'';
+							$event->start_date = isset($event->start_date)?$event->start_date:'';
+							$event->category_name = isset($event->category_name)?$event->category_name:'';
+							$event->category_desc = isset($event->category_desc)?$event->category_desc:'';
+							$event->externalURL = isset($event->externalURL)?$event->externalURL:'';
+							$registration_url = $event->externalURL!=''?$event->externalURL : espresso_reg_url($event->id);
 							
 							//Print out the array of event status options
 							//print_r (event_espresso_get_is_active($event->id));
