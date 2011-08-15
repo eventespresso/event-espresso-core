@@ -530,6 +530,7 @@ Example:
 [ESPRESSO_STAFF outside_wrapper="div" outside_wrapper_class="event_staff" inside_wrapper="p" inside_wrapper_class="event_person"]
 
 Parameters:
+id (The id of the staff member. The daefault is auto loaded of from the event.)
 outside_wrapper_class
 outside_wrapper
 inside_wrapper_class
@@ -550,56 +551,56 @@ if (!function_exists('espresso_staff_sc')) {
         if ($espresso_premium != true)
             return;
 
-		extract($atts);
+		empty($atts) ? '': extract($atts);
 
 		//Outside wrapper
-		$outside_wrapper_class = $outside_wrapper_class != '' ? 'class="'.$outside_wrapper_class.'"' : 'class="event_staff"';
-		$wrapper_start  = $outside_wrapper != '' ? '<'.$outside_wrapper.' '.$outside_wrapper_class: '<div '.$outside_wrapper_class;
-		$wrapper_end = $outside_wrapper !='' ? '</'.$outside_wrapper.'>' : '</div>';
+		$outside_wrapper_class = isset($outside_wrapper_class) ? 'class="'.$outside_wrapper_class.'"' : 'class="event_staff"';
+		$wrapper_start  = isset($outside_wrapper) ? '<'.$outside_wrapper.' '.$outside_wrapper_class: '<div '.$outside_wrapper_class;
+		$wrapper_end = isset($outside_wrapper) ? '</'.$outside_wrapper.'>' : '</div>';
 
 		//Persons title
-		$name_class = $name_class != '' ? 'class="'.$name_class.'"' : 'class="person_name"';
-		$name_wrapper_start = $name_wrapper != '' ? '<'.$name_wrapper.' '.$name_class.'>': '<strong '.$name_class.'>';
-		$name_wrapper_end = $name_wrapper !='' ? '</'.$name_wrapper.'>' : '</strong>';
+		$name_class = isset($name_class) ? 'class="'.$name_class.'"' : 'class="person_name"';
+		$name_wrapper_start = isset($name_wrapper) ? '<'.$name_wrapper.' '.$name_class.'>': '<strong '.$name_class.'>';
+		$name_wrapper_end = isset($name_wrapper) ? '</'.$name_wrapper.'>' : '</strong>';
 
 		//Image class
-		$image_class = $image_class != '' ? 'class="'.$image_class.'"' : 'class="staff_image"';
-		$image_wrapper_class = $image_wrapper_class != '' ? 'class="'.$image_wrapper_class.'"' : 'class="image_wrapper"';
-		$image_wrapper_start  = $image_wrapper != '' ? '<'.$image_wrapper.' '.$image_wrapper_class: '<p '.$image_wrapper_class;
-		$image_wrapper_end = $image_wrapper !='' ? '</'.$image_wrapper.'>' : '</p>';
+		$image_class = isset($image_class) ? 'class="'.$image_class.'"' : 'class="staff_image"';
+		$image_wrapper_class = isset($image_wrapper_class) ? 'class="'.$image_wrapper_class.'"' : 'class="image_wrapper"';
+		$image_wrapper_start  = isset($image_wrapper) ? '<'.$image_wrapper.' '.$image_wrapper_class: '<p '.$image_wrapper_class;
+		$image_wrapper_end = isset($image_wrapper) ? '</'.$image_wrapper.'>' : '</p>';
 
 		//Inside wrappers
-		$inside_wrapper_class = $inside_wrapper_class != '' ? 'class="'.$inside_wrapper_class.'"' : 'class="event_person"';
-		$inside_wrapper_before  = $inside_wrapper != '' ? '<'.$inside_wrapper.' '.$inside_wrapper_class.'>': '<p '.$inside_wrapper_class.'>';
-		$inside_wrapper_after  = $inside_wrapper != '' ? '</'.$inside_wrapper.'>': '</p>';
+		$inside_wrapper_class = isset($inside_wrapper_class) ? 'class="'.$inside_wrapper_class.'"' : 'class="event_person"';
+		$inside_wrapper_before  = isset($inside_wrapper) ? '<'.$inside_wrapper.' '.$inside_wrapper_class.'>': '<p '.$inside_wrapper_class.'>';
+		$inside_wrapper_after  = isset($inside_wrapper) ? '</'.$inside_wrapper.'>': '</p>';
 
 		//Show the persons title?
-		$show_staff_titles  = ($show_persons_title != '' && $show_persons_title == 'false') ? false: true;
+		$show_staff_titles  = (isset($show_persons_title) && $show_persons_title == 'false') ? false: true;
 
 		//Show the persons details?
-		$show_staff_details  = ($show_details != '' && $show_details == 'false') ? false: true;
+		$show_staff_details  = (isset($show_details) && $show_details == 'false') ? false: true;
 
 		//Show image?
-		$show_image = ($show_image != '' && $show_image == 'false')? false:true;
+		$show_image = (isset($show_image) && $show_image == 'false')? false:true;
 
 		//Show the description?
-		$show_description = ($show_description != '' && $show_description == 'false')? false:true;
+		$show_description = (isset($show_description) && $show_description == 'false')? false:true;
 
 		//Find the event id
-		if ($event_id != ''){
+		if (isset($event_id)){
 			$event_id = $event_id;//Check to see if the event is used in the shortcode parameter
-		}elseif ($this_event_id != ''){
+		}elseif (isset($this_event_id)){
 			$event_id = $this_event_id;//Check to see if the global event id is being used
-		}elseif ($_REQUEST['event_id'] != ''){
+		}elseif (isset($_REQUEST['event_id'])){
 			$event_id = $_REQUEST['event_id'];//If the first two are not being used, then get the event id from the url
-		}elseif ($event_id == '' && $id == ''){
+		}elseif (!isset($event_id) && !isset($id)){
 			//_e('No event or staff id supplied!', 'event_espresso') ;
             return;
 		}
-        $limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
+        $limit = (isset($limit) && $limit > 0) ? " LIMIT 0," . $limit . " " : '';
         $sql = "SELECT s.id, s.name, s.role, s.meta ";
         $sql .= " FROM " . EVENTS_PERSONNEL_TABLE . ' s ';
-        if ($id > 0) {
+        if (isset($id) && $id > 0) {
             $sql .= " WHERE s.id ='" . $id . "' ";
         } else {
             $sql .= " JOIN " . EVENTS_PERSONNEL_REL_TABLE . " r ON r.person_id = s.id ";
@@ -623,7 +624,7 @@ if (!function_exists('espresso_staff_sc')) {
 				//Build the persons name/title
 				$html .= $inside_wrapper_before;
 				if ($show_staff_titles != false){
-                    $person_title = $person_role != '' ? ' [' . stripslashes_deep($person_role) . ']' : '';
+                    $person_title = $person_role != '' ? ' - ' . stripslashes_deep($person_role) : '';
 				}
 				$html .= $name_wrapper_start.stripslashes_deep($person_name) . $name_wrapper_end . $person_title;
 				$html .= $inside_wrapper_after ;
@@ -641,14 +642,14 @@ if (!function_exists('espresso_staff_sc')) {
 				//Build the additional details
 				if ($show_staff_details != false){
 					$html .= $inside_wrapper_before;
-					$html .= $meta['organization'] != '' ? __('Company:', 'event_espresso').' '.stripslashes_deep($meta['organization']).'<br />':'';
-					$html .= $meta['title'] != ''? __('Title:', 'event_espresso').' '.stripslashes_deep($meta['title']).'<br />':'';
-					$html .= $meta['industry'] != ''? __('Industry:', 'event_espresso').' '.stripslashes_deep($meta['industry']).'<br />':'';
-					$html .= $meta['city'] != ''? __('City:', 'event_espresso').' '.stripslashes_deep($meta['city']).'<br />':'';
-					$html .= $meta['country'] != ''? __('Country:', 'event_espresso').' '.stripslashes_deep($meta['country']).'<br />':'';
-					$html .= $meta['website'] != ''? __('Website:', 'event_espresso').' <a href="'.stripslashes_deep($meta['website']).'" target="_blank">'.stripslashes_deep($meta['website']).'</a><br />':'';
-					$html .= $meta['twitter'] != ''? __('Twitter:', 'event_espresso').' <a href="http://twitter.com/#!/'.stripslashes_deep($meta['twitter']).'" target="_blank">@'.stripslashes_deep($meta['twitter']).'</a><br />':'';
-					$html .= $meta['phone'] != ''? __('Phone:', 'event_espresso').' '.stripslashes_deep($meta['phone']).'<br />':'';
+					$html .= isset($meta['organization']) ? __('Company:', 'event_espresso').' '.stripslashes_deep($meta['organization']).'<br />':'';
+					$html .= isset($meta['title']) ? __('Title:', 'event_espresso').' '.stripslashes_deep($meta['title']).'<br />':'';
+					$html .= isset($meta['industry']) ? __('Industry:', 'event_espresso').' '.stripslashes_deep($meta['industry']).'<br />':'';
+					$html .= isset($meta['city']) ? __('City:', 'event_espresso').' '.stripslashes_deep($meta['city']).'<br />':'';
+					$html .= isset($meta['country']) ? __('Country:', 'event_espresso').' '.stripslashes_deep($meta['country']).'<br />':'';
+					$html .= isset($meta['website']) ? __('Website:', 'event_espresso').' <a href="'.stripslashes_deep($meta['website']).'" target="_blank">'.stripslashes_deep($meta['website']).'</a><br />':'';
+					$html .= isset($meta['twitter']) ? __('Twitter:', 'event_espresso').' <a href="http://twitter.com/#!/'.stripslashes_deep($meta['twitter']).'" target="_blank">@'.stripslashes_deep($meta['twitter']).'</a><br />':'';
+					$html .= isset($meta['phone']) ? __('Phone:', 'event_espresso').' '.stripslashes_deep($meta['phone']).'<br />':'';
 					$html .= $inside_wrapper_after ;
 				}
 
@@ -699,63 +700,63 @@ if (!function_exists('espresso_venue_details_sc')) {
 
 		global $wpdb,$this_event_id;
 
-		empty($atts)? '': extract($atts);
+		empty($atts) ? '': extract($atts);
 
 		//Outside wrapper
-		$outside_wrapper_class = $outside_wrapper_class != '' ? 'class="'.$outside_wrapper_class.'"' : 'class="event_venue"';
-		$wrapper_start  = $outside_wrapper != '' ? '<'.$outside_wrapper.' '.$outside_wrapper_class: '<div '.$outside_wrapper_class;
-		$wrapper_end = $outside_wrapper !='' ? '</'.$outside_wrapper.'>' : '</div>';
+		$outside_wrapper_class = isset($outside_wrapper_class) ? 'class="'.$outside_wrapper_class.'"' : 'class="event_venue"';
+		$wrapper_start  = isset($outside_wrapper) ? '<'.$outside_wrapper.' '.$outside_wrapper_class: '<div '.$outside_wrapper_class;
+		$wrapper_end = isset($outside_wrapper) ? '</'.$outside_wrapper.'>' : '</div>';
 
 		//Image class
-		$image_class = $image_class != '' ? 'class="'.$image_class.'"' : 'class="venue_image"';
-		$image_wrapper_class = $image_wrapper_class != '' ? 'class="'.$image_wrapper_class.'"' : 'class="image_wrapper"';
-		$image_wrapper_start  = $image_wrapper != '' ? '<'.$image_wrapper.' '.$image_wrapper_class: '<p '.$image_wrapper_class;
-		$image_wrapper_end = $image_wrapper !='' ? '</'.$image_wrapper.'>' : '</p>';
+		$image_class = isset($image_class) ? 'class="'.$image_class.'"' : 'class="venue_image"';
+		$image_wrapper_class = isset($image_wrapper_class) ? 'class="'.$image_wrapper_class.'"' : 'class="image_wrapper"';
+		$image_wrapper_start  = isset($image_wrapper) ? '<'.$image_wrapper.' '.$image_wrapper_class: '<p '.$image_wrapper_class;
+		$image_wrapper_end = isset($image_wrapper) ? '</'.$image_wrapper.'>' : '</p>';
 
 		//Venue title
-		$title_class = $title_class != '' ? 'class="'.$title_class.'"' : 'class="venue_name"';
-		$title_wrapper_start = $title_wrapper != '' ? '<'.$title_wrapper.' '.$title_class: '<h3 '.$title_class;
-		$title_wrapper_end = $title_wrapper !='' ? '</'.$title_wrapper.'>' : '</h3>';
+		$title_class = isset($title_class) ? 'class="'.$title_class.'"' : 'class="venue_name"';
+		$title_wrapper_start = isset($title_wrapper) ? '<'.$title_wrapper.' '.$title_class: '<h3 '.$title_class;
+		$title_wrapper_end = isset($title_wrapper) ? '</'.$title_wrapper.'>' : '</h3>';
 
 		//Inside wrappers
-		$inside_wrapper_class = $inside_wrapper_class != '' ? 'class="'.$inside_wrapper_class.'"' : 'class="venue_details"';
-		$inside_wrapper_before  = $inside_wrapper != '' ? '<'.$inside_wrapper.' '.$inside_wrapper_class.'>': '<p '.$inside_wrapper_class.'>';
-		$inside_wrapper_after  = $inside_wrapper != '' ? '</'.$inside_wrapper.'>': '</p>';
+		$inside_wrapper_class = isset($inside_wrapper_class) ? 'class="'.$inside_wrapper_class.'"' : 'class="venue_details"';
+		$inside_wrapper_before  = isset($inside_wrapper) ? '<'.$inside_wrapper.' '.$inside_wrapper_class.'>': '<p '.$inside_wrapper_class.'>';
+		$inside_wrapper_after  = isset($inside_wrapper) ? '</'.$inside_wrapper.'>': '</p>';
 
 		//Map image class
-		$map_image_class = $map_image_class != '' ? 'class="'.$map_image_class.'"' : 'class="venue_map_image"';
-		$map_image_wrapper_class = $map_image_wrapper_class != '' ? 'class="'.$map_image_wrapper_class.'"' : 'class="map_image_wrapper"';
-		$map_image_wrapper_start  = $map_image_wrapper != '' ? '<'.$map_image_wrapper.' '.$map_image_wrapper_class: '<p '.$map_image_wrapper_class;
-		$map_image_wrapper_end = $map_image_wrapper !='' ? '</'.$map_image_wrapper.'>' : '</p>';
+		$map_image_class = isset($map_image_class) ? 'class="'.$map_image_class.'"' : 'class="venue_map_image"';
+		$map_image_wrapper_class = isset($map_image_wrapper_class) ? 'class="'.$map_image_wrapper_class.'"' : 'class="map_image_wrapper"';
+		$map_image_wrapper_start  = isset($map_image_wrapper) ? '<'.$map_image_wrapper.' '.$map_image_wrapper_class: '<p '.$map_image_wrapper_class;
+		$map_image_wrapper_end = isset($map_image_wrapper) ? '</'.$map_image_wrapper.'>' : '</p>';
 
 		//Google Map link text
-		$show_google_map_link = ($show_google_map_link != ''&&$show_google_map_link == 'false')? false:true;
-		$map_link_text = $map_link_text != ''? $map_link_text:__('Map and Directions', 'event_espresso');
+		$show_google_map_link = (isset($show_google_map_link) && $show_google_map_link == 'false')? false:true;
+		$map_link_text = isset($map_link_text) ? $map_link_text:__('Map and Directions', 'event_espresso');
 
 		//Show Google map image?
-		$show_map_image = ($show_map_image != '' && $show_map_image == 'false')? false:true;
+		$show_map_image = (isset($show_map_image) && $show_map_image == 'false')? false:true;
 
 		//Show title?
-		$show_title = ($show_title != '' && $show_title == 'false')? false:true;
+		$show_title = (isset($show_title) && $show_title == 'false')? false:true;
 
 		//Show image?
-		$show_image = ($show_image != '' && $show_image == 'false')? false:true;
+		$show_image = (isset($show_image) && $show_image == 'false')? false:true;
 
 		//Show the description?
-		$show_description = ($show_description != '' && $show_description == 'false')? false:true;
+		$show_description = (isset($show_description) && $show_description == 'false')? false:true;
 
 		//Show address details?
-		$show_address = ($show_address != '' && $show_address == 'false')? false:true;
+		$show_address = (isset($show_address) && $show_address == 'false')? false:true;
 
 		//Show additional details
-		$show_additional_details = ($show_additional_details != '' && $show_additional_details == 'false')? false:true;
+		$show_additional_details = (isset($show_additional_details) && $show_additional_details == 'false')? false:true;
 
 		//Find the event id
-		if ($event_id != ''){
+		if (isset($event_id)){
 			$event_id = $event_id;//Check to see if the event is used in the shortcode parameter
-		}elseif ($this_event_id != ''){
+		}elseif (isset($this_event_id)){
 			$event_id = $this_event_id;//Check to see if the global event id is being used
-		}elseif ($_REQUEST['event_id'] != ''){
+		}elseif (isset($_REQUEST['event_id'])){
 			$event_id = $_REQUEST['event_id'];//If the first two are not being used, then get the event id from the url
 		}else{
 			//_e('No event id supplied!', 'event_espresso') ;
@@ -765,7 +766,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 			FROM ".EVENTS_DETAIL_TABLE." e
 			LEFT JOIN ".EVENTS_VENUE_REL_TABLE." vr ON e.id = vr.event_id
 			LEFT JOIN ".EVENTS_VENUE_TABLE." ev ON vr.venue_id = ev.id ";
-		if ($id > 0) {
+		if (isset($id) && $id > 0) {
             $sql .= " WHERE ev.id = '". $id ."' LIMIT 0,1";
         } else {
             $sql .= " WHERE e.id ='" . $event_id . "' ";
