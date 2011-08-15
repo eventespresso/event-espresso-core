@@ -162,7 +162,6 @@ if (!function_exists('espresso_get_time_reg_limit')) {
 
 //Creates a dropdown if multiple times are associated with an event
 if (!function_exists('event_espresso_time_dropdown')) {
-
     function event_espresso_time_dropdown($event_id = 'NULL', $label = 1, $multi_reg = 0, $value = '') {
         global $wpdb, $org_options;
 
@@ -203,9 +202,9 @@ if (!function_exists('event_espresso_time_dropdown')) {
                 echo '<input type="hidden" name="start_time_id' . $multi_name_adjust . '" id="start_time_id_' . $time->id . '" value="' . $time->id . '">';
             }
         } else if ($wpdb->num_rows > 1) {//If more than one result, then display the dropdown
-            //echo espresso_get_time_reg_limit($time->id);
+			//print_r($event_times);
             echo $label == 1 ? '<label for="start_time_id">' . __('Choose an Event Time: ', 'event_espresso') . '</label>' : '';
-            echo '<select name="start_time_id' . $multi_name_adjust . '" id="start_time_id-' . $time->id . '">';
+            echo '<select name="start_time_id' . $multi_name_adjust . '" id="start_time_id-' . $event_id . '">';
             foreach ($event_times as $time) {
 
                 $selected = $value == $time->id ? ' selected="selected" ' : '';
