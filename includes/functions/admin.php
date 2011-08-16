@@ -47,6 +47,7 @@ function event_espresso_config_page_scripts() {
             // break;
             case ( 'events' ):
             case ( 'espresso_reports' ):
+							case ( 'support' ) :
                 //case ( 'event_venues' ):
                 //case ( 'event_staff' ):
                 //case ( 'event_categories' ):
@@ -866,8 +867,9 @@ function event_espresso_display_right_column() {
     <div id="side-info-column" class="inner-sidebar">
         <div id="side-sortables" class="meta-box-sortables">
 
-            <div id="submitdiv" class="postbox " >
-                <h3><?php _e('New @ Event Espresso', 'event_espresso'); ?></h3>
+            <div id="submitdiv" class="postbox">
+								<div title="Click to toggle" class="handlediv"><br /></div>
+                <h3 class="hndle"><?php _e('New @ Event Espresso', 'event_espresso'); ?></h3>
                 <div class="inside">
                     <div class="padding">
 
@@ -888,7 +890,8 @@ function event_espresso_display_right_column() {
                 </div>
             </div>
             <div id="submitdiv2" class="postbox " >
-                <h3><?php _e('Helpful Plugin Links', 'event_espresso'); ?></h3>
+								<div title="Click to toggle" class="handlediv"><br /></div>
+                <h3 class="hndle"><?php _e('Helpful Plugin Links', 'event_espresso'); ?></h3>
                 <div class="inside">
                     <div class="padding">
                         <ul class="infolinks">
