@@ -173,33 +173,33 @@ require_once("includes/functions/time_date.php");
 require_once("includes/functions/database_install.php");
 register_activation_hook(__FILE__, 'events_data_tables_install');
 
+global $wpdb;
 //Define all of the plugins database tables
-define("EVENTS_CATEGORY_TABLE", get_option('events_category_detail_tbl'));
-define("EVENTS_CATEGORY_REL_TABLE", get_option('events_category_rel_tbl'));
-define("EVENTS_DETAIL_TABLE", get_option('events_detail_tbl'));
-define("EVENTS_ORGANIZATION_TABLE", get_option('events_organization_tbl'));
-define("EVENTS_ATTENDEE_TABLE", get_option('events_attendee_tbl'));
-define("EVENTS_ATTENDEE_META_TABLE", get_option('events_attendee_meta_tbl'));
-define("EVENTS_START_END_TABLE", get_option('events_start_end_tbl'));
-define("EVENTS_QUESTION_TABLE", get_option('events_question_tbl'));
-define("EVENTS_QST_GROUP_REL_TABLE", get_option('events_qst_group_rel_tbl'));
-define("EVENTS_QST_GROUP_TABLE", get_option('events_qst_group_tbl'));
-define("EVENTS_ANSWER_TABLE", get_option('events_answer_tbl'));
-define("EVENTS_DISCOUNT_CODES_TABLE", get_option('events_discount_codes_tbl'));
-define("EVENTS_DISCOUNT_REL_TABLE", get_option('events_discount_rel_tbl'));
-define("EVENTS_PRICES_TABLE", get_option('events_prices_tbl'));
-define("EVENTS_EMAIL_TABLE", get_option('events_email_tbl'));
-define("EVENTS_SESSION_TABLE", get_option('events_sessions_tbl'));
-define("EVENTS_VENUE_TABLE", get_option('events_venue_tbl'));
-define("EVENTS_VENUE_REL_TABLE", get_option('events_venue_rel_tbl'));
-define("EVENTS_LOCALE_TABLE", get_option('events_locale_tbl'));
-define("EVENTS_LOCALE_REL_TABLE", get_option('events_locale_rel_tbl'));
-define("EVENTS_PERSONNEL_TABLE", get_option('events_personnel_tbl'));
-define("EVENTS_PERSONNEL_REL_TABLE", get_option('events_personnel_rel_tbl'));
+define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
+define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
+define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
+define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
+define("EVENTS_ATTENDEE_META_TABLE", $wpdb->prefix . "events_attendee_meta");
+define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
+define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
+define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
+define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
+define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
+define("EVENTS_DISCOUNT_CODES_TABLE", $wpdb->prefix . "events_discount_codes");
+define("EVENTS_DISCOUNT_REL_TABLE", $wpdb->prefix . "events_discount_rel");
+define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices");
+define("EVENTS_EMAIL_TABLE", $wpdb->prefix . "events_email");
+//define("EVENTS_SESSION_TABLE", $wpdb->prefix . "events_sessions");
+define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
+define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
+define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
+define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
+define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
+define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
 
 //Added by Imon
-define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", get_option('events_multi_event_registration_id_group_tbl'));
-define("EVENTS_ATTENDEE_COST_TABLE", get_option('events_attendee_cost_tbl'));
+define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
+define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
 
 
 //Wordpress function for setting the locale.
