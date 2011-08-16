@@ -251,7 +251,9 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
                 } else {
                     $sql .= " wp_user = '" . $wp_user . "' ";
                 }
-            }
+            }else{
+				$sql .= " WHERE wp_user = '0' OR wp_user = '1' ";
+			}
             $sql .= " GROUP BY qg.id ORDER BY qg.group_order $g_limit ";
             $q_groups = $wpdb->get_results($sql);
             $num_rows = $wpdb->num_rows;

@@ -259,7 +259,7 @@ function edit_attendee_record() {
             $questions_in = substr($questions_in, 0, -1);
             $group_name = '';
             $counter = 0;
-			
+			$FILTER ='';
 			if (isset($event_meta['additional_attendee_reg_info']) && $event_meta['additional_attendee_reg_info'] == '2' && isset($_REQUEST['attendee_num']) && $_REQUEST['attendee_num'] > 1){
                 $FILTER .= " AND qg.system_group = 1 ";
 			}

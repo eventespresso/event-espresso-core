@@ -42,6 +42,8 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 	function espresso_venue_dd($current_value=0){
 		global $espresso_premium; if ($espresso_premium != true) return;
 		global $wpdb, $espresso_manager, $current_user;
+		$is_user = false;
+		$group_admin = false;
 
         $sql = "(SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
 
@@ -181,11 +183,12 @@ if ( !function_exists( 'espresso_personnel_cb' ) ){
 				$person_role = $person->role;
 
 				$meta = unserialize($person->meta);
-				$person_organization = $meta['organization']!=''? $meta['organization'] :'';
+				$person_organization = (isset($meta['organization']) && $meta['organization'] !='') ? $meta['organization'] :'';
 				//$person_title = $meta['title']!=''? $meta['title']:'';
-				$person_info = $person_role!=''?' ['. $person_role . ']':'';
+				$person_info = (isset($person_role) && $person_role !='') ?' ['. $person_role . ']':'';
 
 				$in_event_personnel = $wpdb->get_results("SELECT * FROM " . EVENTS_PERSONNEL_REL_TABLE . " WHERE event_id='".$event_id."' AND person_id='".$person_id."'");
+				$in_event_person = '';
 				foreach ($in_event_personnel as $in_person){
 					$in_event_person = $in_person->person_id;
 				}

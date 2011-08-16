@@ -186,14 +186,14 @@ function update_event($recurrence_arr = array()) {
         $is_active = $_REQUEST['is_active'];
         $event_status = $_REQUEST['event_status'];
 
-        $address = esc_html($_REQUEST['address']);
-        $address2 = esc_html($_REQUEST['address2']);
-        $city = esc_html($_REQUEST['city']);
-        $state = esc_html($_REQUEST['state']);
-        $zip = esc_html($_REQUEST['zip']);
-        $country = esc_html($_REQUEST['country']);
-        $phone = esc_html($_REQUEST['phone']);
-        $externalURL = esc_html($_REQUEST['externalURL']);
+        $address = !empty($_REQUEST['address']) ? esc_html($_REQUEST['address']):'';
+        $address2 = !empty($_REQUEST['address2']) ? esc_html($_REQUEST['address2']):'';
+        $city = !empty($_REQUEST['city']) ? esc_html($_REQUEST['city']):'';
+        $state = !empty($_REQUEST['state']) ? esc_html($_REQUEST['state']):'';
+        $zip = !empty($_REQUEST['zip']) ? esc_html($_REQUEST['zip']):'';
+        $country = !empty($_REQUEST['country']) ? esc_html($_REQUEST['country']):'';
+        $phone = !empty($_REQUEST['phone']) ? esc_html($_REQUEST['phone']):'';
+        $externalURL = !empty($_REQUEST['externalURL']) ? esc_html($_REQUEST['externalURL']):'';
 
         //$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
         $event_location = ($address != '' ? $address . ' ' : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
@@ -234,18 +234,18 @@ function update_event($recurrence_arr = array()) {
         $visible_on = array_key_exists('visible_on', $recurrence_arr) ? $recurrence_arr['visible_on'] : empty($_REQUEST['visible_on']) ? '' : $_REQUEST['visible_on'];
 
         //Venue Information
-        $venue_title = $_REQUEST['venue_title'];
-        $venue_url = $_REQUEST['venue_url'];
-        $venue_phone = $_REQUEST['venue_phone'];
-        $venue_image = $_REQUEST['venue_image'];
+        $venue_title = isset($_REQUEST['venue_title']) ? $_REQUEST['venue_title']:'';
+        $venue_url = isset($_REQUEST['venue_url']) ? $_REQUEST['venue_url']:'';
+        $venue_phone = isset($_REQUEST['venue_phone']) ? $_REQUEST['venue_phone']:'';
+        $venue_image = isset($_REQUEST['venue_image']) ? $_REQUEST['venue_image']:'';
 
 
         //Virtual location
-        $virtual_url = $_REQUEST['virtual_url'];
-        $virtual_phone = $_REQUEST['virtual_phone'];
+        $virtual_url = isset($_REQUEST['virtual_url']) ? $_REQUEST['virtual_url']:'';
+        $virtual_phone = isset($_REQUEST['virtual_phone']) ? $_REQUEST['virtual_phone']:'';
 
-        if ($reg_limit == '') {
-            $reg_limit = 999;
+        if (isset($reg_limit) && $reg_limit == '') {
+            $reg_limit = 999999;
         }
 
         $question_groups = serialize($_REQUEST['question_groups']);
@@ -374,7 +374,7 @@ function update_event($recurrence_arr = array()) {
         if ($_REQUEST['start_time'] != '') {
             foreach ($_REQUEST['start_time'] as $k => $v) {
                 if ($v != '') {
-                    $time_qty = $_REQUEST['time_qty'][$k] == '' ? '0' : "'" . $_REQUEST['time_qty'][$k] . "'";
+                    $time_qty = empty($_REQUEST['time_qty'][$k]) ? '0' : "'" . $_REQUEST['time_qty'][$k] . "'";
                     $sql_times = "INSERT INTO " . EVENTS_START_END_TABLE . " (event_id, start_time, end_time, reg_limit) VALUES ('" . $event_id . "', '" . event_date_display($v, 'H:i') . "', '" . event_date_display($_REQUEST['end_time'][$k], 'H:i') . "', " . $time_qty . ")";
                     //echo "$sql_times <br>";
                     $wpdb->query($sql_times);

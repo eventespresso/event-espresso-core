@@ -51,7 +51,7 @@ function espresso_total_events_today(){
 	$days_this_month = date('t', strtotime($curdate));	
 	
 	$sql2 = "(";
-	if ( $group != '' ){
+	if ( !empty($group)){
 		$sql2 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
 		$sql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
@@ -84,7 +84,7 @@ function espresso_total_events_this_month(){
 	$days_this_month = date('t', strtotime($curdate));
 	
 	$sql3 = "(";
-	if ( $group != '' ){
+	if (!empty($group)){
 		$sql3 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
 		$sql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
@@ -141,7 +141,7 @@ function espresso_total_events_this_month(){
 		//echo $asql1;
 		$total_a = 0;
 		if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-			$total_a =  $wpdb->last_result[0]->quantity + $wpdb->last_result[1]->quantity;
+			$total_a =  $wpdb->last_result[0]->quantity + (isset($wpdb->last_result[1]->quantity) ? $wpdb->last_result[1]->quantity:0);
 		}
 		return $total_a;
 	}
@@ -225,7 +225,7 @@ function espresso_total_events_this_month(){
 		$total_a_this_month = 0;
 		$wpdb->query($asql3);
 		if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-			$total_a_this_month =  $wpdb->last_result[0]->quantity + $wpdb->last_result[1]->quantity;
+			$total_a_this_month =  $wpdb->last_result[0]->quantity + (isset($wpdb->last_result[1]->quantity) ? $wpdb->last_result[1]->quantity:0);
 		}
 		return $total_a_this_month;
 	}

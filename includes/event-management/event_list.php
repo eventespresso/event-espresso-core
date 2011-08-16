@@ -234,29 +234,29 @@ function event_espresso_edit_list() {
                         $event_id = $event->event_id;
                         $event_name = stripslashes_deep($event->event_name);
                         $event_identifier = stripslashes_deep($event->event_identifier);
-                        $reg_limit = $event->reg_limit;
-                        $registration_start = $event->registration_start;
-                        $start_date = $event->start_date;
+                        $reg_limit = isset($event->reg_limit) ? $event->reg_limit:'';
+                        $registration_start = isset($event->registration_start) ? $event->registration_start:'';
+                        $start_date = isset($event->start_date) ? $event->start_date:'';
                         $end_date = isset($event->end_date)?$event->end_date:'';
-                        $is_active = $event->is_active;
+                        $is_active = isset($event->is_active) ? $event->is_active:'';
                         $status = array();
                         $status = event_espresso_get_is_active($event_id);
-                        $recurrence_id = $event->recurrence_id;
-                        $registration_startT = $event->registration_startT;
+                        $recurrence_id = isset($event->recurrence_id) ? $event->recurrence_id:'';
+                        $registration_startT = isset($event->registration_startT) ? $event->registration_startT:'';
 
-                        $event_address = $event->address;
-                        $event_address2 = $event->address2;
-                        $event_city = $event->city;
-                        $event_state = $event->state;
-                        $event_zip = $event->zip;
-                        $event_country = $event->country;
+                        $event_address = isset($event->address) ? $event->address:'';
+                        $event_address2 = isset($event->address2) ? $event->address2:'';
+                        $event_city = isset($event->city) ? $event->city:'';
+                        $event_state = isset($event->state) ? $event->state:'';
+                        $event_zip = isset($event->zip) ? $event->zip:'';
+                        $event_country = isset($event->country) ? $event->country:'';
                         //added new
-                        $venue_title = $event->venue_title;
+                        $venue_title = isset($event->venue_title) ? $event->venue_title:'';
                         $venue_locale = isset($event->locale_name) ? $event->locale_name : '';
                         $wp_user = isset($event->wp_user) ? $event->wp_user : '';
 
 
-                        $location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
+                        $location = (!empty($event_address) ? $event_address : '') . (!empty($event_address2) ? '<br />' . $event_address2 : '') . (!empty($event_city) ? '<br />' . $event_city : '') . (!empty($event_state) ? ', ' . $event_state : '') . (!empty($event_zip) ? '<br />' . $event_zip : '') . (!empty($event_country) ? '<br />' . $event_country : '');
                         $dow = date("D", strtotime($start_date));
                         ob_start();
                         ?>

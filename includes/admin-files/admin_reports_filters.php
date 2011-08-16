@@ -8,13 +8,13 @@ if ($espresso_premium != true)
         <li><strong>
           <?php _e('Events', 'event_espresso'); ?>
           : </strong> </li>
-        <li><a <?php echo $_REQUEST['all'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&all=true">
+        <li><a <?php echo (isset($_REQUEST['all']) && $_REQUEST['all'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&all=true">
           <?php _e('All Events', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_events(); ?>)</span></a> |</li>
-        <li><a <?php echo $_REQUEST['today'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&today=true">
+        <li><a <?php echo (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&today=true">
           <?php _e('Today', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_events_today(); ?>)</span></a> |</li>
-        <li><a <?php echo $_REQUEST['this_month'] == 'true' ? ' class="current" ' : '' ?>  href="admin.php?page=events&this_month=true">
+        <li><a <?php echo (isset($_REQUEST['this_month']) && $_REQUEST['this_month'] == 'true') ? ' class="current" ' : '' ?>  href="admin.php?page=events&this_month=true">
           <?php _e('This Month', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_events_this_month(); ?>)</span></a></li>
       </ul>
@@ -22,13 +22,13 @@ if ($espresso_premium != true)
         <li><strong>
           <?php _e('Attendees', 'event_espresso'); ?>
           : </strong> </li>
-        <li><a <?php echo $_REQUEST['all_a'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&all_a=true">
+        <li><a <?php echo (isset($_REQUEST['all_a']) && $_REQUEST['all_a'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&all_a=true">
           <?php _e('All Attendees', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_all_attendees(); ?>)</span></a> | </li>
-        <li><a <?php echo $_REQUEST['today_a'] == 'true' ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&today_a=true">
+        <li><a <?php echo (isset($_REQUEST['today_a']) && $_REQUEST['today_a'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&today_a=true">
           <?php _e('Today', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_attendees_today(); ?>)</span></a> |</li>
-        <li><a <?php echo $_REQUEST['this_month_a'] == 'true' ? ' class="current" ' : '' ?>  href="admin.php?page=events&event_admin_reports=event_list_attendees&this_month_a=true">
+        <li><a <?php echo (isset($_REQUEST['this_month_a']) && $_REQUEST['this_month_a'] == 'true') ? ' class="current" ' : '' ?>  href="admin.php?page=events&event_admin_reports=event_list_attendees&this_month_a=true">
           <?php _e('This Month', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_attendees_this_month(); ?>)</span></a> </li>
         <?php if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!='' && $_REQUEST['event_admin_reports'] != 'charts'){?>
@@ -36,6 +36,7 @@ if ($espresso_premium != true)
           <?php _e('View Report', 'event_espresso'); ?>
           </a></li>
         <?php }?>
+        <li> | <a class="ev_reg-fancylink" href="#attendee_filter_info" title="<?php _e('Numbers not matching up?', 'event_espresso'); ?>"><?php echo '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" />'; ?></a></li>
       </ul>
       <div style="clear:both"></div>
       <?php if ($_REQUEST['page'] == 'events') { ?>
@@ -94,6 +95,8 @@ if ($espresso_premium != true)
     </form>
   </div>
 </div>
+<div id="attendee_filter_info" style="display:none">
+        <h2><?php _e('What Are These Numbers?', 'event_espresso'); ?></h2><p><?php _e('These numbers only represent the total number of completed or pending payments and may not reflect the total number of "registered" attendees', 'event_espresso'); ?>.</p>
+    </div>
 <?php
-}?>
-
+}

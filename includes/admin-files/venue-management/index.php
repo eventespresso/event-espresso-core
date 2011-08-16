@@ -1,23 +1,23 @@
 <?php 
 function event_espresso_venue_config_mnu(){
 	global $wpdb,$current_user,$espresso_premium;
-	?>
+	$_REQUEST[ 'action' ] = isset($_REQUEST[ 'action' ]) ? $_REQUEST[ 'action' ]:NULL;
+?>
 <div class="wrap">
   <div id="icon-options-event" class="icon32"> </div>
       <h2><?php _e('Manage Venues','event_espresso');?>
    <?php  if ($_REQUEST[ 'action' ] !='edit' && $_REQUEST[ 'action' ] !='add_new_venue'){
 				echo '<a href="admin.php?page=event_venues&amp;action=add_new_venue" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Venue', 'event_espresso') . '</a>';
 			}
-			?>
+?>
     </h2>
 
  <div id="poststuff" class="metabox-holder has-right-sidebar">
   <?php event_espresso_display_right_column ();?>
   <div id="post-body">
 <div id="post-body-content">   
-
 <?php
-	if($_POST['delete_venue'] || $_REQUEST['action']== 'delete_venue'){
+	if(isset($_POST['delete_venue']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_venue')){
 		if (is_array($_POST['checkbox'])){
 			while(list($key,$value)=each($_POST['checkbox'])):
 				$del_id=$key;
@@ -48,10 +48,10 @@ function event_espresso_venue_config_mnu(){
     </div>
 <?php }
 
-if ($_REQUEST['action'] == 'update' ){require_once("update_venue.php");update_event_venue();}
-if ($_REQUEST['action'] == 'add' ){require_once("add_venue_to_db.php");add_venue_to_db();}
-if ($_REQUEST['action'] == 'add_new_venue'){require_once("add_new_venue.php");add_new_event_venue();}
-if ($_REQUEST['action'] == 'edit'){require_once("edit_venue.php");edit_event_venue();}
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'update' ){require_once("update_venue.php");update_event_venue();}
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add' ){require_once("add_venue_to_db.php");add_venue_to_db();}
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_new_venue'){require_once("add_new_venue.php");add_new_event_venue();}
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit'){require_once("edit_venue.php");edit_event_venue();}
 	
 ?>
       <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
@@ -97,10 +97,10 @@ if ($_REQUEST['action'] == 'edit'){require_once("edit_venue.php");edit_event_ven
 	if ($wpdb->num_rows > 0) {
 		$results = $wpdb->get_results($sql." ORDER BY id ASC");
 		foreach ($results as $result){
-			$venue_id= $result->id;
-			$name=stripslashes($result->name);
-			$venue_desc=stripslashes($result->venue_desc);
-            $wp_user=$result->wp_user;
+			$venue_id = $result->id;
+			$name = isset($result->name) ? stripslashes_deep($result->name):'';
+			$venue_desc = isset($result->venue_desc) ? stripslashes_deep($result->venue_desc):'';
+            $wp_user = isset($result->wp_user) ? $result->wp_user:'';
 			?>
             <tr>
               <td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $venue_id?>]" type="checkbox"  title="Delete <?php echo stripslashes($name)?>"></td>
@@ -176,6 +176,5 @@ jQuery(document).ready(function($) {
 	
 } );
 </script>
-
 <?php 
 }

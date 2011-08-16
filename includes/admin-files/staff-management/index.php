@@ -1,10 +1,7 @@
 <?php 
-require_once("add_new_staff.php");
-require_once("edit_staff.php");
-require_once("update_staff.php");
-require_once("add_staff_to_db.php");
 function event_espresso_staff_config_mnu(){
-	global $wpdb,$current_user;
+	global $wpdb,$current_user,$espresso_premium;
+	$_REQUEST[ 'action' ] = isset($_REQUEST[ 'action' ]) ? $_REQUEST[ 'action' ]:NULL;
 	?>
 <div class="wrap">
   <div id="icon-options-event" class="icon32"> </div>
@@ -21,7 +18,7 @@ function event_espresso_staff_config_mnu(){
 <div id="post-body-content">   
 
 <?php
-	if($_POST['delete_staff'] || $_REQUEST['action']== 'delete_staff'){
+	if(isset($_POST['delete_staff']) || $_REQUEST['action']== 'delete_staff'){
 		if (is_array($_POST['checkbox'])){
 			while(list($key,$value)=each($_POST['checkbox'])):
 				$del_id=$key;
@@ -29,7 +26,7 @@ function event_espresso_staff_config_mnu(){
 				$sql = "DELETE FROM " . EVENTS_PERSONNEL_TABLE . " WHERE id='$del_id'";
 				$wpdb->query($sql);
 				
-				$sql = "DELETE FROM " . EVENTS_PERSONNEL_REL_TABLE . " WHERE staff_id='$del_id'";
+				$sql = "DELETE FROM " . EVENTS_PERSONNEL_REL_TABLE . " WHERE person_id='$del_id'";
 				$wpdb->query($sql);
 			endwhile;	
 		}
@@ -37,7 +34,7 @@ function event_espresso_staff_config_mnu(){
 			//Delete discount data
 			$sql = "DELETE FROM ".EVENTS_PERSONNEL_TABLE." WHERE id='" . $_REQUEST['id'] . "'";
 			$wpdb->query($sql);
-			$sql = "DELETE FROM ".EVENTS_PERSONNEL_REL_TABLE." WHERE staff_id='" . $_REQUEST['id'] . "'";
+			$sql = "DELETE FROM ".EVENTS_PERSONNEL_REL_TABLE." WHERE person_id='" . $_REQUEST['id'] . "'";
 			$wpdb->query($sql);
 		}
 		?>
@@ -48,10 +45,10 @@ function event_espresso_staff_config_mnu(){
     </div>
 <?php }
 
-if ($_REQUEST['action'] == 'update' ){update_event_staff();}
-if ($_REQUEST['action'] == 'add' ){add_staff_to_db();}
-if ($_REQUEST['action'] == 'add_new_staff'){add_new_event_staff();}
-if ($_REQUEST['action'] == 'edit'){edit_event_staff();}
+if ($_REQUEST['action'] == 'update' ){require_once("update_staff.php");update_event_staff();}
+if ($_REQUEST['action'] == 'add' ){require_once("add_staff_to_db.php");add_staff_to_db();}
+if ($_REQUEST['action'] == 'add_new_staff'){require_once("add_new_staff.php");add_new_event_staff();}
+if ($_REQUEST['action'] == 'edit'){require_once("edit_staff.php");edit_event_staff();}
 	
 ?>
       <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
@@ -91,10 +88,10 @@ if ($_REQUEST['action'] == 'edit'){edit_event_staff();}
 	if ($wpdb->num_rows > 0) {
 		$results = $wpdb->get_results($sql . " ORDER BY p.id ASC");
 		foreach ($results as $result){
-			$staff_id= $result->id;
-			$name=stripslashes($result->name);
-			$staff_desc=stripslashes($result->staff_desc);
-            $wp_user = $result->wp_user;
+			$staff_id = $result->id;
+			$name = isset($result->name) ? stripslashes_deep($result->name):'';
+			$staff_desc = isset($result->staff_desc) ? stripslashes_deep($result->staff_desc):'';
+            $wp_user = isset($result->wp_user) ? $result->wp_user:'';
 			?>
             <tr>
               <td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $staff_id?>]" type="checkbox"  title="Delete <?php echo stripslashes($name)?>"></td>

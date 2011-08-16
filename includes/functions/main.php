@@ -59,10 +59,12 @@ function event_espresso_more_than_one($registration_id) {
 //Returns the price paid for an event by attendee id or the registration id
 function espresso_attendee_price($atts) {
 	global $wpdb;
-	isset($atts)?extract($atts):'';
+	isset($atts)?extract($atts):''; 
 	
 	//If the registration_id is empty, then retrieve it
 	if(!isset($registration_id)){
+		if (!isset($attendee_id))
+			return;
 		$registration_id = espresso_registration_id($attendee_id);
 	}
 	
