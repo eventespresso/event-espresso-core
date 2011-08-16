@@ -818,11 +818,6 @@ if (!function_exists('espresso_venue_details_sc')) {
 						$html .= $inside_wrapper_after;
 					}
 
-					//Build the venue image
-					if ($show_map_image != false){
-						$html .= $map_image_wrapper_start.$google_map_image.$map_image_wrapper_end;
-					}
-
 					//Build the additional details
 					if ($show_additional_details != false){
 						$html .= $inside_wrapper_before;
@@ -832,7 +827,11 @@ if (!function_exists('espresso_venue_details_sc')) {
 						$html .= $meta['twitter'] != ''? __('Twitter:', 'event_espresso').' <a href="http://twitter.com/#!/'.stripslashes_deep($meta['twitter']).'" target="_blank">@'.stripslashes_deep($meta['twitter']).'</a><br />':'';
 						$html .= $inside_wrapper_after;
 					}
-
+					
+					//Build the venue image
+					if ($show_map_image != false){
+						$html .= $map_image_wrapper_start.$google_map_image.$map_image_wrapper_end;
+					}
 				}
 			}
 			ob_start();
