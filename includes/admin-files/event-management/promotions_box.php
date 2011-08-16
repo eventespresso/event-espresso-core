@@ -29,17 +29,18 @@
 				$sql .= " wp_user = '" . $wp_user ."' ";
 			}
 		}
-            $event_discounts = $wpdb->get_results($sql);
-			foreach ($event_discounts as $event_discount){
-				$discount_id = $event_discount->id;
-				$coupon_code = $event_discount->coupon_code;
-				$discount_type_price = $event_discount->use_percentage == 'Y' ? $event_discount->coupon_code_price.'%' : $org_options['currency_symbol'].$event_discount->coupon_code_price;
+        $event_discounts = $wpdb->get_results($sql);
+		foreach ($event_discounts as $event_discount){
+			$discount_id = $event_discount->id;
+			$coupon_code = $event_discount->coupon_code;
+			$discount_type_price = $event_discount->use_percentage == 'Y' ? $event_discount->coupon_code_price.'%' : $org_options['currency_symbol'].$event_discount->coupon_code_price;
 				
-					$in_event_discounts = $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='".$event_id."' AND discount_id='".$discount_id."'");
-					foreach ($in_event_discounts as $in_discount){
-						$in_event_discount = $in_discount->discount_id;
-					}
-					echo '<p class="event-disc-code" id="event-discount-' . $discount_id . '"><label for="in-event-discount-' . $discount_id . '" class="selectit"><input value="' . $discount_id . '" type="checkbox" name="event_discount[]" id="in-event-discount-' . $discount_id . '"' . ($in_event_discount == $discount_id ? ' checked="checked"' : "" ) . '/> ' . $coupon_code. "</label></p>";
+			$in_event_discounts = $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='".$event_id."' AND discount_id='".$discount_id."'");
+			$in_event_discount ='';
+			foreach ($in_event_discounts as $in_discount){
+				$in_event_discount = $in_discount->discount_id;
+			}
+			echo '<p class="event-disc-code" id="event-discount-' . $discount_id . '"><label for="in-event-discount-' . $discount_id . '" class="selectit"><input value="' . $discount_id . '" type="checkbox" name="event_discount[]" id="in-event-discount-' . $discount_id . '"' . ($in_event_discount == $discount_id ? ' checked="checked"' : "" ) . '/> ' . $coupon_code. "</label></p>";
 			}	
 			
 			echo '<p><a href="admin.php?page=discounts" target="_blank">'.__('Manage Promotional Codes ', 'event_espresso').'</a></p>';
