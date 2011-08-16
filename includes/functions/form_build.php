@@ -26,7 +26,8 @@ if (!function_exists('event_form_build')) {
 
             $answer = empty($answer[$event_id]['event_attendees'][$price_id][$attendee_number][$field_name]) ? '' : $answer[$event_id]['event_attendees'][$price_id][$attendee_number][$field_name];
         }
-
+		
+		$required_label = isset($required_label) ? $required_label:'';
 
         $label = '<label for="' . $field_name . '">' . $question->question . $required_label . '</label> ';
         //If the members addon is installed, get the users information if available
