@@ -84,7 +84,7 @@ function edit_attendee_record() {
             $question_groups = unserialize($questions->question_groups);
             $event_meta = unserialize($questions->event_meta);
 
-            if ($is_additional_attendee && isset($event_meta['add_attendee_question_groups'])) {
+            if ($is_additional_attendee && isset($event_meta['add_attendee_question_groups']) && $event_meta['add_attendee_question_groups']!=NULL) {
 
                 $question_groups = $event_meta['add_attendee_question_groups'];
             }
@@ -222,7 +222,7 @@ function edit_attendee_record() {
 		
 				$event_date = event_date_display($start_date .' '.$event_time, get_option('date_format') . ' g:i a');
 
-                if ($is_additional_attendee && isset($event_meta['add_attendee_question_groups'])) {
+                if ($is_additional_attendee && isset($event_meta['add_attendee_question_groups']) && $event_meta['add_attendee_question_groups']!=NULL) {
                     $question_groups = $event_meta['add_attendee_question_groups'];
                 }
 

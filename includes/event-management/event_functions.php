@@ -286,7 +286,7 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
             ?>
         </div>
     </div>
-                <?php if (get_option('event_espresso_multi_reg_active') == 1) { ?>
+                <?php if ($espresso_premium == true) { ?>
         <div id="event-questions-additional" class="postbox event-questions-lists">
             <div class="handlediv" title="Click to toggle"><br>
             </div>
