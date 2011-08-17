@@ -20,18 +20,17 @@ function enter_attendee_payments() {
     {
         //Add payment info
         case 'payment':
-            if ( $_REQUEST[ 'attendee_action' ] == 'post_payment' )
-            {
+            if ( isset($_REQUEST[ 'attendee_action' ]) && $_REQUEST[ 'attendee_action' ] == 'post_payment' ){
 //Added by Imon
 				$primary_row = $wpdb->get_row("select id from ".EVENTS_ATTENDEE_TABLE." where registration_id = '$registration_id' limit 0,1 ");
 				$primary_attendee_id = $primary_row->id; // GET the primary attendee id because amount paid info is kept with the primary attendee 
-                $payment_status = $_REQUEST[ 'payment_status' ];
-                $txn_type = $_REQUEST[ 'txn_type' ];
-                $txn_id = $_REQUEST[ 'txn_id' ];
-                $quantity = $_REQUEST[ 'quantity' ];
-                $amount_pd = $_REQUEST[ 'amount_pd' ];
-                $payment_date = $_REQUEST[ 'payment_date' ];
-                $coupon_code = $_REQUEST[ 'coupon_code' ];
+                $payment_status = isset($_REQUEST[ 'payment_status' ]) ? $_REQUEST[ 'payment_status' ]:'';
+                $txn_type = isset($_REQUEST[ 'txn_type' ]) ? $_REQUEST[ 'txn_type' ]:'';
+                $txn_id = isset($_REQUEST[ 'txn_id' ]) ? $_REQUEST[ 'txn_id' ]:'';
+                $quantity = isset($_REQUEST[ 'quantity' ]) ? $_REQUEST[ 'quantity' ]:'';
+                $amount_pd = isset($_REQUEST[ 'amount_pd' ]) ? $_REQUEST[ 'amount_pd' ]:'';
+                $payment_date = isset($_REQUEST[ 'payment_date' ]) ? $_REQUEST[ 'payment_date' ]:'';
+                $coupon_code = isset($_REQUEST[ 'coupon_code' ]) ? $_REQUEST[ 'coupon_code' ]:'';
 
 //Added/updated by Imon
 				//Update payment status information for primary attendee
@@ -141,6 +140,9 @@ function enter_attendee_payments() {
         $event_id = $attendee->event_id;
         $coupon_code = $attendee->coupon_code;
 		$pre_approve = $attendee->pre_approve;
+		$start_date = $attendee->start_date;
+		$event_time = $attendee->event_time;
+		
     }
 
     $events = $wpdb->get_results( "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'" );
@@ -150,58 +152,48 @@ function enter_attendee_payments() {
         $event_desc = $event->event_desc;
         $event_description = $event->event_desc;
         $event_identifier = $event->event_identifier;
-        $cost = $event->event_cost;
+        $cost = isset($event->event_cost) ? $event->event_cost:0;
         $active = $event->is_active;
+		
     }
+	$event_date = event_date_display($start_date .' '.$event_time, get_option('date_format') . ' g:i a');
+	$total_paid = espresso_attendee_price(array('registration_id'=>$_REQUEST['registration_id'], 'session_total'=>true));
 
-	if ( $_REQUEST[ 'status' ] == 'saved' ){ ?>
+	if ( isset($_REQUEST[ 'status' ]) && $_REQUEST[ 'status' ] == 'saved' ){ ?>
 
-<div id="message" class="updated fade">
-  <p><strong>
-    <?php _e( 'Payment details saved for', 'event_espresso' ); ?>
-    <?php echo $fname ?> <?php echo $lname ?>.
-    <?php if ( $_REQUEST[ 'send_payment_rec' ] == "send_message" )
-                { ?>
-    <?php _e( 'Payment notification has been sent.', 'event_espresso' ); ?>
-    <?php } ?>
-    </strong></p>
-</div>
+        <div id="message" class="updated fade">
+          <p><strong>
+            <?php _e( 'Payment details saved for', 'event_espresso' ); ?>
+            <?php echo $fname ?> <?php echo $lname ?>.
+            <?php if ( isset($_REQUEST[ 'send_payment_rec' ]) && $_REQUEST[ 'send_payment_rec' ] == "send_message" ){ ?>
+            <?php _e( 'Payment notification has been sent.', 'event_espresso' ); ?>
+            <?php } ?>
+            </strong></p>
+        </div>
 <?php
 
-            }
+	}
 ?>
 <div class="metabox-holder">
 <div class="postbox">
-  <?php
-						if ( !$multi_reg )
-						{
-					?>
+<?php
+	if ( !$multi_reg ){
+?>
+      <h3>
+        <?php _e( 'Attendee', 'event_espresso' ); ?>
+        #<?php echo $id ?> |
+        <?php _e( 'Name:', 'event_espresso' ); ?>
+        <?php echo $fname ?> <?php echo $lname ?> |
+        <?php _e( 'Registered For:', 'event_espresso' ); ?>
+         <a href="admin.php?page=events&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?></h3>
+<?php
+	}else{
+?>
   <h3>
-    <?php _e( 'Attendee', 'event_espresso' ); ?>
-    #<?php echo $id ?> |
-    <?php _e( 'Name:', 'event_espresso' ); ?>
-    <?php echo $fname ?> <?php echo $lname ?> |
-    <?php _e( 'Registered For:', 'event_espresso' ); ?>
-    <?php echo $event_name ?></h3>
-  <?php
-						}
-						else
-						{
-					?>
-  <h3>
-    <?php 
-							_e('Payment info for registration ids - ', 'event_espresso'); 
-							if ( count($registration_ids) > 0 )
-							{
-								foreach($registration_ids as $reg_id)
-								{
-									_e(' #'.$reg_id['registration_id'], 'event_espresso');
-								}
-							}
-						?>
+    <?php echo __('Multiple Registration Payment for ', 'event_espresso'); ?> <a href="admin.php?page=events&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?>
   </h3>
   <?php
-						}
+	}
 					?>
   <div class="inside">
     <table width="100%" border="0">
@@ -214,24 +206,52 @@ function enter_attendee_payments() {
           </strong></td>
       </tr>
       <tr>
-        <td valign="top"><form method="POST" action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>&status=saved" class="espresso_form">
+        <td valign="top">
+        <?php 
+		if ( count($registration_ids) > 0 ){
+			echo '<p><strong>'.__('Registration Ids:', 'event_espresso').'</strong></p>';
+			echo '<ul>';
+			foreach($registration_ids as $reg_id){
+				echo '<li># '.$reg_id['registration_id'].' - '.espresso_attendee_price(array('registration_id'=>$reg_id['registration_id'], 'reg_total'=>true)).' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $reg_id['registration_id'] . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</li>';
+				//echo '<li># '.$reg_id['registration_id'].' ['.espresso_attendee_price(array('registration_id'=>$reg_id['registration_id'], 'reg_total'=>true)).']</li>';
+			}
+		}else{
+			echo '<p><strong>'.__('Registration Id:', 'event_espresso').'</strong></p>';
+			echo '<p># ' . $registration_id . ' - '.$org_options[ 'currency_symbol' ].espresso_attendee_price(array('registration_id'=>$registration_id, 'reg_total'=>true)).' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</p>';
+		}
+		echo '</ul><hr style="width:90%; margin:20px 0;" align="left" />';
+		?>
+        <form method="POST" action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>&status=saved" class="espresso_form">
             <fieldset>
               <ul>
                 <li>
+                <label for="payment_status">
                   <?php _e( 'Payment Status:', 'event_espresso' ); ?>
-                  <?php $values=array(
-													  array('id'=>'','text'=> __('None','event_espresso')),
-													  array('id'=>'Completed','text'=> __('Completed','event_espresso')),
-													  array('id'=>'Pending','text'=> __('Pending','event_espresso')),
-													  array('id'=>'Payment Declined','text'=> __('Payment Declined','event_espresso')),
-													  array('id'=>'Incomplete','text'=> __('Incomplete','event_espresso')));
-															echo select_input('payment_status', $values, $payment_status); ?>
+                </label>
+<?php 
+				$values=array(
+					array('id'=>'','text'=> __('None','event_espresso')),
+					array('id'=>'Completed','text'=> __('Completed','event_espresso')),
+					array('id'=>'Pending','text'=> __('Pending','event_espresso')),
+					array('id'=>'Payment Declined','text'=> __('Payment Declined','event_espresso')),
+					array('id'=>'Incomplete','text'=> __('Incomplete','event_espresso')));
+				echo select_input('payment_status', $values, $payment_status); 
+?>
                 </li>
                 <li>
-                  <label>
+                  <label for="txn_type">
                     <?php _e( 'Transaction Type:', 'event_espresso' ); ?>
                   </label>
-                  <input type="text" name="txn_type" size="45" value ="<?php echo $txn_type; ?>" />
+                  <?php 
+				$txn_values=array(
+					array('id' => '', 'text' => __('N/A', 'event_espresso')),
+					array('id' => 'web_accept', 'text' => espresso_payment_type('web_accept')),
+					array('id' => 'CC', 'text' => __('Credit Card', 'event_espresso')),
+					array('id' => 'INV', 'text' => espresso_payment_type('INV')),
+					array('id' => 'OFFLINE', 'text' => espresso_payment_type('OFFLINE')),
+				);
+				echo select_input('txn_type', $txn_values, $txn_type); 
+?>
                 </li>
                 <li>
                   <label>
@@ -244,25 +264,23 @@ function enter_attendee_payments() {
                     <?php _e( 'Amount:', 'event_espresso' ); ?>
                   </label>
                   <?php echo $org_options[ 'currency_symbol' ] ?>
-                  <input type="text" name="amount_pd" size="45" value ="<?php echo espresso_attendee_price(array('attendee_id'=>$id, 'reg_total'=>true)) ?>" />
+                  <input disabled="disabled" type="text" name="amount_pd" size="45" value ="<?php echo $total_paid; ?>" />
                 </li>
                 <li>
                   <label>
-                    <?php _e( 'Coupon Code', 'event_espresso' ); ?>
-                    :</label>
+                    <?php _e( 'Coupon Code:', 'event_espresso' ); ?>
+                    </label>
                   <input type="text" name="coupon_code" size="45" value ="<?php echo $coupon_code; ?>" />
                 </li>
-                <li>
+                <?php /*?><li>
                   <label>
                     <?php _e( 'How Many People:', 'event_espresso' ); ?>
                   </label>
                   <input type="text" name="quantity" size="45" value ="<?php echo espresso_count_attendees_for_registration($id); ?>" />
-                </li>
+                </li><?php */?>
                 <li>
-                  <label>
-                    <?php _e( 'Date Paid:', 'event_espresso' ); ?>
-                  </label>
-                  <input <?php echo $payment_date != ""? 'disabled="disabled"':''?>  type="text" name="payment_date" size="45" value ="<?php echo $payment_date != ""? event_date_display($payment_date): event_date_display($today) ?>" />
+					<label><?php _e( 'Date Paid:', 'event_espresso' ); ?></label>
+					<input type="text" name="payment_date" size="45" value ="<?php echo !empty($payment_date) ? event_date_display($payment_date): event_date_display($today) ?>" />
                 </li>
                 <li>
                   <label>
@@ -294,7 +312,7 @@ function enter_attendee_payments() {
                 <?php _e('Use a ', 'event_espresso'); ?>
                 <a href="admin.php?page=event_emails" target="_blank">
                 <?php _e('pre-existing email', 'event_espresso'); ?>
-                </a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') . ' <a class="ev_reg-fancylink" href="#email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </li>
+                </a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', '', 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </li>
               <li>
                 <?php _e('OR', 'event_espresso'); ?>
               </li>
@@ -307,18 +325,24 @@ function enter_attendee_payments() {
                 <input type="text" name="invoice_subject" size="45" value="<?php _e( 'Payment Reminder for [event]', 'event_espresso' ); ?>" />
               </li>
               <li>
-                <p><?php _e( 'Message:', 'event_espresso' ); ?></p>
+                <p>
+                  <?php _e( 'Message:', 'event_espresso' ); ?>
+                </p>
                 <div class="postbox">
-                <textarea class="theEditor" id="invoice_message" name="invoice_message">
+                  <textarea class="theEditor" id="invoice_message" name="invoice_message">
 <?php _e( 'Dear [fname] [lname], <p>Our records show that we have not received your payment of [cost] for [event_link].</p> <p>Please visit [payment_url] to view your payment options.</p><p>[invoice_link]</p><p>Sincerely,<br />' . $Organization = $org_options[ 'organization' ] . '</p>', 'event_espresso' ); ?>
                                                                                    </textarea>
-                 <table id="email-confirmation-form" cellspacing="0">
-                                    <tr>
-                                        <td class="aer-word-count"></td>
-                                        <td class="autosave-info"><span><a class="ev_reg-fancylink" href="#custom_email_info"><?php _e('View Custom Email Tags', 'event_espresso'); ?></a>  | <a class="ev_reg-fancylink" href="#custom_email_example"> <?php _e('Email Example', 'event_espresso'); ?></a></span></td>
-                                    </tr>
-                                </table>
-                            </div>
+                  <table id="email-confirmation-form" cellspacing="0">
+                    <tr>
+                      <td class="aer-word-count"></td>
+                      <td class="autosave-info"><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
+                        <?php _e('View Custom Email Tags', 'event_espresso'); ?>
+                        </a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
+                        <?php _e('Email Example', 'event_espresso'); ?>
+                        </a></span></td>
+                    </tr>
+                  </table>
+                </div>
               </li>
               <?php 
 	if ( $org_options["use_attendee_pre_approval"] == "Y" ) { 
@@ -351,5 +375,5 @@ function enter_attendee_payments() {
 	espresso_tiny_mce();
 	//This show what tags can be added to a custom email.
 	event_espresso_custom_email_info();
-	event_list_attendees();
+	//event_list_attendees();
 }

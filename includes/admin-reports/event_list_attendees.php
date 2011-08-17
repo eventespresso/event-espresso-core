@@ -278,7 +278,7 @@ function event_list_attendees() {
 					echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
 					echo 'Amount: '. espresso_attendee_price(array('attendee_id'=>$registration_id)).'<br />';
 					echo '</p>';*/
-					$amount_pd = espresso_attendee_price(array('registration_id'=>$registration_id, 'reg_total'=>true));
+					$total_amount_pd = espresso_attendee_price(array('registration_id'=>$registration_id, 'reg_total'=>true));
 				} else {
 					$go = true;
 				}
@@ -302,7 +302,7 @@ function event_list_attendees() {
                     <td nowrap="nowrap"><?php echo $price_option ?></td>
                     <td class="date column-date"><a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>">
                       <?php event_espresso_paid_status_icon($payment_status) ?>
-                      </a> <a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>"><?php echo $org_options['currency_symbol'] ?><?php echo $amount_pd ?></a></td>
+                      </a> <a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>"><?php echo $org_options['currency_symbol'] ?><?php echo $total_amount_pd ?></a></td>
                     <td class="date column-date"><?php echo espresso_payment_type($txn_type); ?></td>
                     <td class="date column-date"><?php echo $coupon_code ?></td>
                     <td class="date column-date"><?php echo $txn_id ?></td>
@@ -339,7 +339,7 @@ function event_list_attendees() {
 					$attendees_group = "<li>$fname $lname $email $quantity</li>";
 					$go = false;
 																	   
-					$amount_pd = espresso_attendee_price(array('registration_id'=>$temp_reg_id, 'reg_total'=>true));
+					$total_amount_pd = espresso_attendee_price(array('registration_id'=>$temp_reg_id, 'reg_total'=>true));
 					$attended = $attendee->checked_in;
 					$ticket_scanned = $attendee->checked_in_quantity;
 					$payment_status = $attendee->payment_status;
