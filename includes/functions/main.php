@@ -22,10 +22,12 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $ty
 }
 
 function espresso_reg_url($event_id=0){
+	global $org_options;
 	if ($event_id > 0){
-		return home_url().'/?ee='.$event_id;
+		return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
 	}else{
-		return home_url().'/?ee=#no-id';
+		echo 'No event id supplied';
+		return;
 	}
 }
 
