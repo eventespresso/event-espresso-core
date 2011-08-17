@@ -62,13 +62,33 @@ function espresso_attendee_price($atts) {
 	isset($atts)?extract($atts):''; 
 	
 	//If the registration_id is empty, then retrieve it
+	$generated_registration_id =false;
 	if(!isset($registration_id)){
 		if (!isset($attendee_id))
 			return;
 		$registration_id = espresso_registration_id($attendee_id);
 	}
 	
-	if((isset($reg_total) && $reg_total = true) || (isset($session_total) && $session_total = true) )
+	
+	
+	if(isset($single_price) && $single_price = true && isset($attendee_id) && $attendee_id > 0){
+		$sql ='';
+		$sql = "SELECT cost amount_pd FROM " . EVENTS_ATTENDEE_COST_TABLE ." eac ";
+		//$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = eac.attendee_id ";
+		$sql .= " WHERE eac.attendee_id ='" . $attendee_id . "' LIMIT 0,1";
+		
+		$res = $wpdb->get_results($sql);
+		if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->amount_pd != NULL) {
+			$total_cost = $wpdb->last_result[0]->amount_pd;
+			return number_format($total_cost, 2, '.', '');
+		}
+	}
+	##
+	# Begin // August 16, 2011 - SETH
+	# Commenting out this portion of code. Doesn't seem to be returning the corect values. I fixed the other queries below to return the correct values.
+	##
+	
+	/*if((isset($reg_total) && $reg_total = true) || (isset($session_total) && $session_total = true) )
 	{
 		$result = 0.00;
 		$registration_ids = array();
@@ -97,22 +117,37 @@ function espresso_attendee_price($atts) {
 		}
 		$result = number_format($result,2,'.','');
 		return $result;
-	}
+	}*/
+	##
+	# END // August 16, 2011 - IMON
+	##
 	
 	##
 	# Begin // August 13, 2011 - IMON
 	# This portion of code will not execute. At the moment we are keeping it just for reference purpose.
 	##
+	
+	##
+	# Begin // August 16, 2011 - SETH
+	# Reactivating this portion of code. Not sure why it was deactivated as it was used for very specific purposes.
+	##
+	
 	//Return the total amount paid for this registration
 	if(isset($reg_total) && $reg_total = true){
 		$sql ='';
-		$sql = "SELECT sum(cost) amount_pd, eac.quantity FROM " . EVENTS_ATTENDEE_COST_TABLE ." eac ";
+		$sql = "SELECT attendee_id FROM " . EVENTS_ATTENDEE_COST_TABLE ." eac ";
 		$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = eac.attendee_id ";
-		$sql .= " WHERE ea.registration_id ='" . $registration_id . "' LIMIT 0,1";
+		$sql .= " WHERE ea.registration_id ='" . $registration_id . "' ";
 		//echo $sql;
-		$res = $wpdb->get_results($sql);
-		if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->amount_pd != NULL) {
-			$total_cost = $wpdb->last_result[0]->amount_pd * $wpdb->last_result[0]->quantity;
+		$registration_ids = $wpdb->get_results($sql, ARRAY_A);
+		//print_r($registration_ids);
+		$total_cost =0;
+		if ($wpdb->num_rows >= 1) {
+			foreach($registration_ids as $reg_id){
+				$wpdb->get_results("select cost, quantity from ".EVENTS_ATTENDEE_COST_TABLE." where attendee_id = '".$reg_id['attendee_id']."' ");
+				$total_cost += $wpdb->last_result[0]->cost * $wpdb->last_result[0]->quantity;
+				//echo $total_cost;
+			}
 			return number_format($total_cost, 2, '.', '');
 		}
 	}
@@ -121,35 +156,39 @@ function espresso_attendee_price($atts) {
 	//Return the total amount paid for a session. Uses the registration id.
 	if(isset($session_total) && $session_total = true){
 		$registration_ids = array();
-		$c_sql = "select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ";
-		//echo $c_sql;
-		$check = $wpdb->get_row($c_sql);
-		if ( $check !== NULL ){
-				$registration_id = $check->primary_registration_id;
-				$registration_ids = $wpdb->get_results("select registration_id from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where primary_registration_id = '$registration_id' ", ARRAY_A);
-				$multi_reg = true;
-			
+		
+		$registration_ids = $wpdb->get_results("select attendee_session from ".EVENTS_ATTENDEE_TABLE." where registration_id = '$registration_id' ", ARRAY_A);
+		if ($wpdb->num_rows >= 1) {
 			foreach($registration_ids as $reg_id){
-				$sql = "select ea.id attendee_id, ea.registration_id, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
+				$sql = "select eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
 						inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
 						inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
-						where ea.registration_id = '".$reg_id['registration_id']."' order by ed.event_name ";
-						
+						where ea.attendee_session = '".$reg_id['attendee_session']."' order by ed.event_name ";
+				//echo $sql;	
 				$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
 				//print_r($tmp_attendees);
-				foreach($tmp_attendees as $tmp_attendee){
-					$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
-					$total_cost += $sub_total;
+				$total_cost =0;
+				if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->cost != NULL) {
+					foreach($tmp_attendees as $tmp_attendee){
+						$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
+						$total_cost += $sub_total;
+					}
+					return number_format($total_cost, 2, '.', '');
 				}
+				
 			}
-			return number_format($total_cost, 2, '.', '');
 		}
 	}
 	
 	##
 	# END // August 13, 2011 - IMON
 	##
-
+	
+	##
+	# END // August 16, 2011 - IMON
+	##
+	
+	
 	//Returnt the amount paid for an individual attendee
 	if(isset($attendee_id) && $attendee_id > 0){
 		$sql ='';
@@ -166,7 +205,7 @@ function espresso_attendee_price($atts) {
 	$sql ='';
 	$sql = "SELECT amount_pd FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $registration_id . "' ORDER BY id LIMIT 0,1";
 	//echo $sql;
-	$res = $wpdb->get_results($sql);
+	$wpdb->get_results($sql);
 	if ($wpdb->num_rows >= 1) {
         return  number_format($wpdb->last_result[0]->amount_pd, 2, '.', '');;
     }
