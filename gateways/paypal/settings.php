@@ -159,21 +159,21 @@ function event_espresso_display_paypal_settings() {
     <?php _e('Thai Baht', 'event_espresso'); ?>
                                 </option>
                             </select>
-                            <a class="ev_reg-fancylink" href="#currency_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
+                            <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=currency_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
                         <li>
                             <label for="button_url">
     <?php _e('Button Image URL: ', 'event_espresso'); ?>
                             </label>
                             <br />
                             <input type="text" name="button_url" size="34" value="<?php echo (($paypal_settings['button_url'] == '') ? $button_url : $paypal_settings['button_url'] ); ?>" />
-                            <a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="ev_reg-fancylink" href="#button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
+                            <a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
                         <li>
                             <label for="image_url">
     <?php _e('Image URL (logo for payment page):', 'event_espresso'); ?>
                             </label>
                             <br />
                             <input type="text" name="image_url" size="35" value="<?php echo $paypal_settings['image_url']; ?>" />
-                            <a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="ev_reg-fancylink" href="#image_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+                            <a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=image_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
     <?php _e('(used for your business/personal logo on the PayPal page)', 'event_espresso'); ?>
                         </li>
                     </ul></td>
@@ -187,7 +187,7 @@ function event_espresso_display_paypal_settings() {
                             array('id' => 'Y', 'text' => __('Yes', 'event_espresso')));
                         echo select_input('bypass_payment_page', $values, $paypal_settings['bypass_payment_page']);
                         ?>
-                        &nbsp;<a class="ev_reg-fancylink" href="#bypass_confirmation"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></li>
+                        &nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=bypass_confirmation"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></li>
                         <li>
                             <label for="no_shipping">
                             <?php _e('Shipping address options?', 'event_espresso'); ?>
@@ -199,13 +199,13 @@ function event_espresso_display_paypal_settings() {
                                 array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso')));
                             echo select_input('no_shipping', $values, $paypal_settings['no_shipping']);
                             ?>
-                            &nbsp;<a class="ev_reg-fancylink" href="#no_shipping"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></li>
+                            &nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=no_shipping"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></li>
                         <li>
                             <label for="use_sandbox">
                             <?php _e('Use the debugging feature and the', 'event_espresso'); ?> <a href="https://developer.paypal.com/devscr?cmd=_home||https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox||https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" title="PayPal Sandbox Login||Sandbox Tutorial||Getting Started with PayPal Sandbox" target="_blank"><?php _e('PayPal Sandbox', 'event_espresso'); ?></a>?
                             </label>
                             <input name="use_sandbox" type="checkbox" value="1" <?php echo $paypal_settings['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-                            &nbsp;<a class="ev_reg-fancylink" href="#sandbox_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+                            &nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=sandbox_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
                         </li>
                         <li>
     <?php _e('Current Button Image:', 'event_espresso'); ?>

@@ -36,7 +36,7 @@ if ($espresso_premium != true)
           <?php _e('View Report', 'event_espresso'); ?>
           </a></li>
         <?php }?>
-        <li> | <a class="ev_reg-fancylink" href="#attendee_filter_info" title="<?php _e('Numbers not matching up?', 'event_espresso'); ?>"><?php echo '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" />'; ?></a></li>
+        <li> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=attendee_filter_info" title="<?php _e('Numbers not matching up?', 'event_espresso'); ?>"><?php echo '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" />'; ?></a></li>
       </ul>
       <div style="clear:both"></div>
       <?php if ($_REQUEST['page'] == 'events') { ?>

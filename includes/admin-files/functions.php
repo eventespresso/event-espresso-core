@@ -125,7 +125,7 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 				$div .= "<p><span>State:</span> ".$venue->state."</p>";
 				$div .= "<p><span>Zip:</span> ".$venue->zip."</p>";
 				$div .= "<p><span>Country:</span> ".$venue->country."</p>";
-				$div .= '<p><a href="admin.php?page=event_venues&action=edit&id='.$venue->id.'" target="_blank">'.__('Edit this venue', 'event_espresso').'</a> | <a class="ev_reg-fancylink" href="#venue_info">Shortcode</a></p></li></ul>';
+				$div .= '<p><a href="admin.php?page=event_venues&action=edit&id='.$venue->id.'" target="_blank">'.__('Edit this venue', 'event_espresso').'</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></p></li></ul>';
 				$div .= "</fieldset>";
 			}
 			$field .= "</select>";
@@ -205,7 +205,7 @@ if ( !function_exists( 'espresso_personnel_cb' ) ){
 				$bottom_div = '</div>';
 			}
 
-			$manage = '<p><a href="admin.php?page=event_staff" target="_blank">'.__('Manage Staff Members', 'event_espresso').'</a> | <a class="ev_reg-fancylink" href="#staff_info">Shortcode</a> </p>';
+			$manage = '<p><a href="admin.php?page=event_staff" target="_blank">'.__('Manage Staff Members', 'event_espresso').'</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=staff_info">Shortcode</a> </p>';
 
 			echo '<div id="staff_info" style="display:none">';
 			echo '<h2>'.__('Staff Shortcode', 'event_espresso').'</h2>';

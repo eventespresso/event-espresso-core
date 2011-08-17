@@ -302,7 +302,7 @@ function event_espresso_edit_list() {
                               <a href="admin.php?page=events&event_admin_reports=charts&event_id=<?php echo $event_id ?>" title="<?php _e('View Report', 'event_espresso'); ?>"><div class="reports_btn"></div></a>
                               
                               
-                              <a class="ev_reg-fancylink" href="#unique_id_info_<?php echo $event_id ?>" title="<?php _e('Get Short URL/Shortcode', 'event_espresso'); ?>"><div class="shortcode_btn"></div></a>
+                              <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_<?php echo $event_id ?>" title="<?php _e('Get Short URL/Shortcode', 'event_espresso'); ?>"><div class="shortcode_btn"></div></a>
                               
                               <a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $event_id . "&amp;export=report&action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><div class="excel_exp_btn"></div></a>
                               

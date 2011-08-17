@@ -45,7 +45,7 @@ if (function_exists('espresso_member_data') && espresso_member_data('role') == '
     $is_active = isset($is_active) ? $is_active : '';
     $event_status = isset($event_status) ? $event_status : '';
     $advanced_options .= '<p><label>' . __('Is this an active event? ', 'event_espresso') . '</label>' . __(select_input('is_active', $values, $is_active)) . '</p>';
-    $advanced_options .= '<p><label>' . __('Event Status: ', 'event_espresso') . '</label>' . __(select_input('event_status', $status, $event_status)) . ' <a class="ev_reg-fancylink" href="#status_types_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a></p>';
+    $advanced_options .= '<p><label>' . __('Event Status: ', 'event_espresso') . '</label>' . __(select_input('event_status', $status, $event_status)) . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=status_types_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a></p>';
 }
 $display_desc = isset($display_desc) ? $display_desc : '';
 $display_reg_form = isset($display_reg_form) ? $display_reg_form : '';
@@ -58,6 +58,6 @@ $advanced_options .= '<p><label>' . __('Display  registration form? ', 'event_es
 $advanced_options .= '<p class="inputunder"><label>' . __('Default Payment Status for Event: ', 'event_espresso') . '</label>' . select_input('default_payment_status', $default_payment_status, isset($event_meta['default_payment_status']) ? $event_meta['default_payment_status']: '') . '</p>';
 $advanced_options .= $event_status != 'S' ? espresso_secondary_events_dd($overflow_event_id, $allow_overflow) : '';
 $advanced_options .= '<p class="inputunder"><label>' . __('Use an alternate registration page?', 'event_espresso') . '</label>
-				<input name="externalURL" size="20" type="text" value="' . $externalURL . '"> <a class="ev_reg-fancylink" href="#external_URL_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a><br /></p>';
+				<input name="externalURL" size="20" type="text" value="' . $externalURL . '"> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=external_URL_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a><br /></p>';
 $advanced_options .= '<p class="inputunder"><label>' . __('Use an alternate email address?', 'event_espresso') . '</label>
-				<input name="alt_email" size="20" type="text" value="' . $alt_email . '"> <a class="ev_reg-fancylink" href="#alt_email_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a></p>';
+				<input name="alt_email" size="20" type="text" value="' . $alt_email . '"> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=alt_email_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a></p>';

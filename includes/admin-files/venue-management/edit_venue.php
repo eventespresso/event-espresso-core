@@ -102,7 +102,7 @@ function edit_event_venue(){
                                 }
                         ?>
                       </select>
-                      <a class="ev_reg-fancylink" href="#venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a>
+                      <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a>
                     </li>
                 <?php }?>
               </ul>

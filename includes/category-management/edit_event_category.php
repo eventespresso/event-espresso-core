@@ -27,7 +27,7 @@ function edit_event_category(){
   				<input type="hidden" name="action" value="update">
    
    				<p class="add-cat-name inputunder"><label for="category-name"><?php _e('Category Name:','event_espresso'); ?></label> <input type="text" id="category-name" name="category_name" size="25" value="<?php echo stripslashes($category_name);?>"></p>
-   				<p class="add-cat-id inputunder"><label for="category-id"><?php _e('Unique Category Identifier:','event_espresso'); ?></label> <input type="text" id="category-id" name="category_identifier" value="<?php echo $category_identifier;?>"> <a class="ev_reg-fancylink" href="#unique_id_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a></p>
+   				<p class="add-cat-id inputunder"><label for="category-id"><?php _e('Unique Category Identifier:','event_espresso'); ?></label> <input type="text" id="category-id" name="category_identifier" value="<?php echo $category_identifier;?>"> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a></p>
    				<p class="section-quest"><label><?php _e('Do you want to display the category description on the events page?','event_espresso'); ?></label>
 
 						<?php 

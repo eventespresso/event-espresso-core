@@ -100,7 +100,7 @@ function event_espresso_display_firstdata_settings() {
                                 <?php _e('Use the debugging feature and the', 'event_espresso'); ?><?php _e('FirstData Sandbox', 'event_espresso'); ?>?
                             </label>
                             <input name="use_sandbox" type="checkbox" value="1" <?php echo $firstdata_settings['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-                            &nbsp;<a class="ev_reg-fancylink" href="#sandbox_info_firstdata"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+                            &nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=sandbox_info_firstdata"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
                         </li>
 
 

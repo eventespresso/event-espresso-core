@@ -1,5 +1,4 @@
 <?php
-
 //Event Registration Subpage 1 - Configure Organization
 function organization_config_mnu() {
     global $wpdb, $org_options;
@@ -197,7 +196,7 @@ function organization_config_mnu() {
                                                         <span class="important">
                                                         <?php _e('Note:', 'event_espresso'); ?>
                                                         </span>
-    <?php _e('You must set the time zone for your city, or the city closest to you. UTC time will not work.', 'event_espresso'); ?>
+    <?php _e('You must set the time zone for your city, or the city closest to you. UTC time will not work.', 'event_espresso'); ?> <a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg" class="thickbox">View an example?</a>
                                                     </p>
                                                 </li>
                                                 <li>
@@ -237,7 +236,7 @@ function organization_config_mnu() {
                                                 );
                                                 echo select_input('event_ssl_active', $values, isset($org_options['event_ssl_active']) ? $org_options['event_ssl_active'] : '');
                                                 ?>
-                                                <a class="ev_reg-fancylink" href="#event_ssl_active_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+                                                <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=event_ssl_active_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
                                                 <p class="messages important">
     <?php _e('Please make sure SSL Certificate is installed before selecting this option.', 'event_espresso'); ?>
                                                 </p>
@@ -258,7 +257,7 @@ function organization_config_mnu() {
                                                         </option>
     <?php parent_dropdown($default = $org_options['event_page_id']); ?>
                                                     </select>
-                                                    <a class="ev_reg-fancylink" href="#registration_page_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+                                                    <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=registration_page_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
                                                     <span class="messages"><?php echo sprintf(__("This page should contain the %s shortcode. <br />This page can be hidden from navigation if desired, <br />but should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_EVENTS]</span>', '[ESPRESSO_EVENTS]'); ?>)</span></p>
     <?php ###### Popup help box #######  ?>
                                                 <div id="registration_page_info" class="pop-help" style="display:none">
@@ -279,7 +278,7 @@ function organization_config_mnu() {
                                                         </option>
     <?php parent_dropdown($default = $org_options['return_url']); ?>
                                                     </select>
-                                                    <a class="ev_reg-fancylink" href="#return_url_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+                                                    <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=return_url_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
                                                     <span class="messages">(<?php echo sprintf(__("This page should contain the %s shortcode.<br />This page should hidden from your navigation,<br />but still viewable to the public (not password protected.)", 'event_espresso'), '<span class="highlight">[ESPRESSO_PAYMENTS]</span>'); ?> </span></p>
     <?php ##### Popup help box #####  ?>
                                                 <div id="return_url_info" class="pop-help" style="display:none">
@@ -307,7 +306,7 @@ function organization_config_mnu() {
                                                         </option>
     <?php parent_dropdown($default = $org_options['cancel_return']); ?>
                                                     </select>
-                                                    <a class="ev_reg-fancylink" href="#cancel_return_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+                                                    <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=cancel_return_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
                                                     <span class="messages">(
                                                 <?php _e('This should be a page on your website that contains a cancelled message. <br />No short tags are needed. This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)', 'event_espresso'); ?>
                                                         )</span></p>
@@ -339,7 +338,7 @@ function organization_config_mnu() {
                                                         </option>
     <?php parent_dropdown($default = $org_options['notify_url']); ?>
                                                     </select>
-                                                    <a class="ev_reg-fancylink" href="#notify_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+                                                    <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=notify_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
                                                     <span class="messages">(<?php echo sprintf(__("This page should contain the %s shortcode.<br />This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)", 'event_espresso'), '<span class="highlight">[ESPRESSO_TXN_PAGE]</span>'); ?></span></p>
 
     <?php ##### popup help box #####  ?>
@@ -407,7 +406,7 @@ function organization_config_mnu() {
                                                     <tbody>
                                                         <tr>
                                                             <td class="aer-word-count"></td>
-                                                            <td class="autosave-info"><span><a class="ev_reg-fancylink" href="#custom_email_info">
+                                                            <td class="autosave-info"><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
     <?php _e('View Custom Email Tags', 'event_espresso'); ?>
                                                                     </a></span></td>
                                                         </tr>
@@ -430,9 +429,9 @@ function organization_config_mnu() {
                                                     <tbody>
                                                         <tr>
                                                             <td class="aer-word-count"></td>
-                                                            <td class="autosave-info"><span><a class="ev_reg-fancylink" href="#custom_email_info">
+                                                            <td class="autosave-info"><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
                                                                         <?php _e('View Custom Email Tags', 'event_espresso'); ?>
-                                                                    </a> | <a class="ev_reg-fancylink" href="#custom_email_example">
+                                                                    </a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
     <?php _e('Example', 'event_espresso'); ?>
                                                                     </a></span></td>
                                                         </tr>

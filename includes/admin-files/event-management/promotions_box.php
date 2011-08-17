@@ -16,7 +16,7 @@
           <label><?php _e('Allow discount codes?','event_espresso');?></label>
 					
 			<?php echo select_input('use_coupon_code', $values, !isset($use_coupon_code) || $use_coupon_code ==''?'N':$use_coupon_code); ?>
-          <a class="ev_reg-fancylink" href="#coupon_code_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a></p>
+          <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=coupon_code_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a></p>
         <?php
 		$sql = "SELECT * FROM ". EVENTS_DISCOUNT_CODES_TABLE;
 		if (function_exists('espresso_member_data') ) {

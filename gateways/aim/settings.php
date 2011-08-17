@@ -97,7 +97,7 @@ function event_espresso_display_authnet_aim_settings() {
     <?php _e('Use the test mode feature for Autorize.net AIM?', 'event_espresso'); ?>
                             </label>
                             <input name="use_sandbox" type="checkbox" value="1" <?php echo $authnet_aim_settings['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-                            <a class="ev_reg-fancylink" href="#authnet_aim_sandbox"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
+                            <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=authnet_aim_sandbox"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
                     </ul></td>
             </tr>
         </table>

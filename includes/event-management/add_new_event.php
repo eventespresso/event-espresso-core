@@ -480,9 +480,9 @@ function add_new_event() {
 						<div id="emaildescriptiondivrich" class="postarea">
 
 							<div class="email-conf-opts">
-									<p><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') . ' ' . select_input('send_mail', $values, 'N'); ?> <?php echo '<a class="ev_reg-fancylink" href="#custom_email_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?></p>
+									<p><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') . ' ' . select_input('send_mail', $values, 'N'); ?> <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?></p>
 									<p><?php $email_id = isset($email_id) ? $email_id : '';
-										_e('Use a', 'event_espresso'); ?> <a href="admin.php?page=event_emails" target="_blank"><?php _e('pre-existing email', 'event_espresso'); ?></a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') . ' <a class="ev_reg-fancylink" href="#email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </p>
+										_e('Use a', 'event_espresso'); ?> <a href="admin.php?page=event_emails" target="_blank"><?php _e('pre-existing email', 'event_espresso'); ?></a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </p>
 									<br /><em>OR</em>
 									<p class="section-heading"><?php _e('Create a custom email', 'event_espresso') ?>:</p>
 							</div>
@@ -497,7 +497,7 @@ function add_new_event() {
 										<tbody>
 											<tr>
 												<td class="aer-word-count"></td>
-												<td class="autosave-info"><span><a class="ev_reg-fancylink" href="#custom_email_info"><?php _e('View Custom Email Tags', 'event_espresso'); ?></a>  | <a class="ev_reg-fancylink" href="#custom_email_example"> <?php _e('Email Example', 'event_espresso'); ?> </a></span></td>
+												<td class="autosave-info"><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info"><?php _e('View Custom Email Tags', 'event_espresso'); ?></a>  | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example"> <?php _e('Email Example', 'event_espresso'); ?> </a></span></td>
 											</tr>
 										</tbody>
 									</table>
