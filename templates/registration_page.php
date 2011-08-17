@@ -219,7 +219,7 @@ if (!function_exists('register_attendees')) {
                         <?php } ?>
                     </div>
                     
-									<?php
+<?php
                 } else {
                     //If enough spaces exist then show the form
                     //Check to see if the Members plugin is installed.
@@ -228,7 +228,7 @@ if (!function_exists('register_attendees')) {
                     } else {
                         //Serve up the registration form
                         //As of version 3.0.17 the registration details have been moved to registration_form.php
-                        require_once('registration_page_display.php');
+                        require('registration_page_display.php');
                     }
                 }//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
         }//End Build the registration page
