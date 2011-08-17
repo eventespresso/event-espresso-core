@@ -800,17 +800,6 @@ if (!function_exists('event_espresso_send_invoice')) {
             $email_questions = event_espresso_custom_questions_output(array('attendee_id' => $attendee_id));
         }
 
-        $invoice_subject = str_replace($SearchValues, $ReplaceValues, $invoice_subject);
-
-        //Send pre-existing email
-        $email_id = empty($_REQUEST['email_name']) ? '' : $_REQUEST['email_name'];
-        if ($email_id > 0) {
-            $email_data = array();
-            $email_data = espresso_email_message($email_id);
-            $invoice_message = $email_data['email_text'];
-            $invoice_subject = $email_data['email_subject'];
-        }
-
         //Perform replacement
         $SearchValues = array(
             "[event_id]",
@@ -900,7 +889,17 @@ if (!function_exists('event_espresso_send_invoice')) {
             $qr_code
         );
 
+		$invoice_subject = str_replace($SearchValues, $ReplaceValues, $invoice_subject);
 
+        //Send pre-existing email
+        $email_id = empty($_REQUEST['email_name']) ? '' : $_REQUEST['email_name'];
+        if ($email_id > 0) {
+            $email_data = array();
+            $email_data = espresso_email_message($email_id);
+            $invoice_message = $email_data['email_text'];
+            $invoice_subject = $email_data['email_subject'];
+        }
+		
         $message = str_replace($SearchValues, $ReplaceValues, $invoice_message);
 
         $email_body = $message_top . $message . $message_bottom;
