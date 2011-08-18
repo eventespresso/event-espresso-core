@@ -2147,8 +2147,31 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 	background:url(images/ocean_blue_dayDown.gif) left top no-repeat;
 }
 
+/*___ thickbox popup help boxes ___*/
+
+.wp-admin .TB_overlayBG {
+	background-color: #555;
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=45)";
+	filter:alpha(opacity=45);
+	-moz-opacity: 0.45;
+	opacity: 0.45;
+}
+.wp-admin  #TB_window {
+	background: #FAF9EF;
+ -moz-box-shadow: #777 0 4px 10px;
+	-webkit-box-shadow: #777 0 4px 10px;
+	-khtml-box-shadow: #777 0 4px 10px;
+	box-shadow: #555 0 4px 10px;
+}
+.wp-admin #TB_window #TB_title {
+	background: #2E7595
+}
+.wp-admin  #TB_window #TB_ajaxContent {
+ 
+}
 /*___ Fancybox popup help messages ___*/
 
+/* remove when certain no longer required
 html, body {
 	height: 100%;
 }
@@ -2205,12 +2228,13 @@ div#fancy_outer {
 	left: 0;
 	z-index: 90;
 	padding: 28px 28px 43px 28px;
+	*/
 	/* correction for the new corners - original - 18px 18px 33px 18px */
- margin: 0;
+/* margin: 0;
 	overflow: hidden;
 	background: transparent;
 	display: none;
-	/* these attempt to overide the fixed height boxes */
+	
 	height: auto !important;
 	min-height: 300px !important;
 }
@@ -2218,10 +2242,8 @@ div#fancy_inner {
 	position: relative;
 	width: 100%;
 	height: 100%;
-	/* This attempt to overide the fixed height boxes */
 	min-height: 300px;
-	/*	border: 1px solid #BBB;*/
-  background: #fff;/* color of the frame - has to be the same color as your corner graphics*/
+	background: #fff;
 }
 div#fancy_content {
 	margin: 0;
@@ -2275,8 +2297,7 @@ img#fancy_img {
 div#fancy_close {
 	position: absolute;
 	top: -21px;
-	/* correction for the new corners - original -15px */
-    height: 30px;
+ height: 30px;
 	width: 30px;
 	background: url('../scripts/fancybox/fancy_closebox.png') top left no-repeat;
 	cursor: pointer;
@@ -2383,27 +2404,21 @@ div.fancy_bg_n {
 div.fancy_bg_ne {
 	top: -24px;
 	right: -24px;
-	/* correction for the new corners - original -13px */
  width: 24px;
-	/* correction for the new corners - original 13px */
-  height: 24px;
+ height: 24px;
 	background: transparent url('scripts/fancybox/fancy_shadow_ne.png') no-repeat;
 }
 div.fancy_bg_e {
 	right: -24px;
-	/* correction for the new corners - original -13px */
  height: 100%;
 	width: 24px;
-	/* correction for the new corners - original 13px */
  background: transparent url('scripts/fancybox/fancy_shadow_e.png') repeat-y;
 }
 div.fancy_bg_se {
 	bottom: -24px;
 	right: -24px;
-	/* correction for the new corners - original -13px */
-  width: 24px;
-	/* correction for the new corners - original 13px */
-  height: 24px;
+ width: 24px;
+ height: 24px;
 	background: transparent url('scripts/fancybox/fancy_shadow_se.png') no-repeat;
 }
 div.fancy_bg_s {
@@ -2415,33 +2430,26 @@ div.fancy_bg_s {
 div.fancy_bg_sw {
 	bottom: -24px;
 	left: -24px;
-	/* correction for the new corners - original -13px */
-  width: 24px;
-	/* correction for the new corners - original 13px */
-  height: 24px;
+ width: 24px;
+ height: 24px;
 	background: transparent url('scripts/fancybox/fancy_shadow_sw.png') no-repeat;
 }
 div.fancy_bg_w {
 	left: -24px;
-	/* correction for the new corners - original -13px */
  height: 100%;
 	width: 24px;
-	/* correction for the new corners - original 13px */
-    background: transparent url('scripts/fancybox/fancy_shadow_w.png') repeat-y;
+	background: transparent url('scripts/fancybox/fancy_shadow_w.png') repeat-y;
 }
 div.fancy_bg_nw {
 	top: -24px;
 	left: -24px;
-	/* correction for the new corners - original -13px */
-  width: 24px;
-	/* correction for the new corners - original 13px */
-  height: 24px;
+	width: 24px;
+	height: 24px;
 	background: transparent url('scripts/fancybox/fancy_shadow_nw.png') no-repeat;
 }
 div#fancy_title {
 	position: absolute;
 	bottom: -43px;
-	/* correction for the new corners - original -33px */
  left: 0;
 	width: 100%;
 	z-index: 100;
@@ -2473,3 +2481,4 @@ td#fancy_title_right {
 	width: 15px;
 	background: transparent url('scripts/fancybox/fancy_title_right.png') repeat-x;
 }
+*/
