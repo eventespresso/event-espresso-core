@@ -46,6 +46,7 @@ function event_espresso_config_page_scripts() {
                 wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
             // break;
             case ( 'events' ):
+							case ( 'event_espresso' ):
             case ( 'espresso_reports' ):
 							case ( 'support' ) :
                 //case ( 'event_venues' ):

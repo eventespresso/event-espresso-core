@@ -124,14 +124,17 @@ function organization_config_mnu() {
     <?php event_espresso_display_right_column(); ?>
             <div id="post-body">
                 <div id="post-body-content">
+									<div class="meta-box-sortables ui-sortable">
                     <form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
                         <ul id="event_espresso-sortables">
                             <li>
                                 <div class="metabox-holder">
                                     <div class="postbox">
-                                        <h3>
+																			<div title="Click to toggle" class="handlediv"><br /></div>
+                                        <h3 class="hndle">
     <?php _e('Organization Settings', 'event_espresso'); ?>
                                         </h3>
+																					<div class="inside">
                                         <div class="padding">
                                             <ul>
                                                 <li>
@@ -209,15 +212,18 @@ function organization_config_mnu() {
                                                 <input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_1" />
                                             </p>
                                         </div>
+																				</div>
                                     </div>
                                 </div>
                             </li>
                             <li>
                                 <div class="metabox-holder">
                                     <div class="postbox">
-                                        <h3>
+																			<div title="Click to toggle" class="handlediv"><br /></div>
+                                        <h3 class="hndle">
     <?php _e('Page Settings', 'event_espresso'); ?>
                                         </h3>
+																					<div class="inside">
                                         <div class="padding"> <a name="page_settings" id="page_settings"></a>
                                             <?php
                                             if (($org_options['event_page_id'] == ('0' || '') || $org_options['return_url'] == ('0' || '') || $org_options['notify_url'] == ('0' || ''))) {
@@ -361,15 +367,18 @@ function organization_config_mnu() {
                                                     <input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_2" />
                                                 </p>
                                             </div>
+																						</div>
                                         </div>
                                     </div>
                             </li>
                             <li>
                                 <div class="metabox-holder">
                                     <div class="postbox">
-                                        <h3>
+																			<div title="Click to toggle" class="handlediv"><br /></div>
+                                        <h3 class="hndle">
     <?php _e('Email Settings', 'event_espresso'); ?>
                                         </h3>
+																					<div class="inside">
                                         <div class="padding"><a name="email-settings" id="email-settings"></a>
                                             <?php
                                             $values = array(
@@ -442,6 +451,7 @@ function organization_config_mnu() {
                                                 <input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_5" />
                                             </p>
                                         </div>
+																				</div>
                                     </div>
                                 </div>
                                 <div style="clear:both;"></div>
@@ -476,9 +486,11 @@ function organization_config_mnu() {
                                 <li>
                                     <div class="metabox-holder">
                                         <div class="postbox">
-                                            <h3>
+																					<div title="Click to toggle" class="handlediv"><br /></div>
+                                            <h3 class="hndle">
         <?php _e('Optional Event Settings', 'event_espresso'); ?>
                                             </h3>
+																							<div class="inside">
                                             <div class="padding">
                                                 <p><?php echo __('Please purchase a', 'event_espresso') ?> <a href="http://eventespresso.com/download/" target="_blank"><?php echo __('support license', 'event_espresso') ?></a> <?php echo __('to gain access to these features.', 'event_espresso') ?></p>
                                                 <p>
@@ -508,21 +520,25 @@ function organization_config_mnu() {
                                                     </li>
                                                 </ol>
                                             </div>
+																						</div>
                                         </div>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="metabox-holder">
                                         <div class="postbox">
-                                            <h3>
+																					<div title="Click to toggle" class="handlediv"><br /></div>
+                                            <h3 class="hndle">
         <?php _e('reCAPTCHA Settings', 'event_espresso'); ?>
                                             </h3>
+																							<div class="inside">
                                             <div class="padding">
                                                 <p><?php echo __('Please purchase a', 'event_espresso') ?> <a href="http://eventespresso.com/download/" target="_blank"><?php echo __('support license', 'event_espresso') ?></a> <?php echo __('to gain access to this feature.', 'event_espresso') ?></p>
                                                 <p>
         <?php echo sprintf(__('reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions.', 'event_espresso'), '<a href="http://recaptcha.net/captcha.html">CAPTCHA</a>'); ?>
                                                 </p>
                                             </div>
+																						</div>
                                         </div>
                                     </div>
                                 </li>
@@ -533,10 +549,17 @@ function organization_config_mnu() {
                         <input type="hidden" name="update_org" value="update" />
                     </form>
                 </div>
+								</div>
             </div>
         </div>
     </div>
-
+			<script type="text/javascript" charset="utf-8">
+			//<![CDATA[
+				jQuery(document).ready(function() {
+					postboxes.add_postbox_toggles('event_espresso');
+				}); 
+			//]]>
+			</script>
     <?php
     echo event_espresso_custom_email_info();
     espresso_tiny_mce();

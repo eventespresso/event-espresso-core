@@ -7,9 +7,11 @@ $values=array(
 ?>
 <div class="metabox-holder">
   <div class="postbox">
-    <h3>
+		<div title="Click to toggle" class="handlediv"><br /></div>
+    <h3 class="hndle">
       <?php _e('Optional Event Settings','event_espresso'); ?>
     </h3>
+			<div class="inside">
     <div class="padding">
       <ul>
         <li>
@@ -130,5 +132,6 @@ $values=array(
         <input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
       </p>
     </div>
-  </div>
+		</div>
+ </div>
 </div>
