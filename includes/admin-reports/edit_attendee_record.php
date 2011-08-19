@@ -72,14 +72,137 @@ function edit_attendee_record() {
             $wpdb->query($sql);
 
             //print_r($_POST);
-            // Insert Extra From Post Here
+            // Insert Additional Questions From Post Here
             $reg_id = $id;
 
             $response_source = $_POST;
+			//echo '<p>'.print_r($response_source).'</p>';
 
-            //With the new
+           /* $questions = $wpdb->get_results( "SELECT t2.*, t1.* FROM " . EVENTS_ANSWER_TABLE . " t1
+                        JOIN " . EVENTS_QUESTION_TABLE . " t2
+                            ON t1.question_id=t2.id
+                            WHERE attendee_id = '" . $id . "' " );*/
+			
+			$questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id . " ");
 
-            $questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id . " ");
+            $question_groups = unserialize($questions->question_groups);
+            $event_meta = unserialize($questions->event_meta);
+
+            if ($is_additional_attendee && isset($event_meta['add_attendee_question_groups']) && $event_meta['add_attendee_question_groups']!=NULL) {
+
+                $question_groups = $event_meta['add_attendee_question_groups'];
+            }
+
+            $questions_in = '';
+
+            foreach ($question_groups as $g_id)
+                $questions_in .= $g_id . ',';
+
+            $questions_in = substr($questions_in, 0, -1);
+            $group_name = '';
+            $counter = 0;
+
+            //pull the list of questions that are relevant to this event
+			$q_sql_1 = "SELECT q.*, q.id q_id, qg.group_name FROM " . EVENTS_QUESTION_TABLE . " q
+						JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr on q.id = qgr.question_id
+						JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
+						WHERE qgr.group_id in (" . $questions_in. ") 
+						ORDER BY qg.id, q.sequence ASC";
+            $questions = $wpdb->get_results($q_sql_1);
+			/* DEBUG */
+			//echo '<p>'.print_r($questions).'</p>';
+			//echo '<p>'.$q_sql_1.'</p>';
+			/* END DEBUG */
+			
+			$a_sql ="SELECT id, question_id, answer FROM " . EVENTS_ANSWER_TABLE . " at WHERE at.attendee_id = '" . $id . "' ";
+			/* DEBUG */	
+			//echo '<p>'.$a_sql.'</p>';
+           /* END DEBUG */
+		   
+		    $answers = $wpdb->get_results($a_sql, OBJECT_K);
+			
+			foreach ( $answers as $answer ) {
+				/* DEBUG */	
+				//echo '<p>$answers[question_id] = '.$answer->question_id.'</p>';
+				$answer_a[]=$answer->question_id;
+			}
+			
+			/* DEBUG */	
+			//echo '<p> print_r($answers) = <br />'.var_dump($answers).'</p>';
+			//echo '<p> print_r($questions) = <br />'.print_r($questions).'</p>';
+            /* END DEBUG */
+			
+			if ( $questions ){
+                foreach ( $questions as $question ) {
+                    switch ( $question->question_type ){
+                       case "TEXT" :
+                        case "TEXTAREA" :
+                        case "DROPDOWN" :
+                            //$post_val = $_POST [ $question->question_type . '_' . $question->question_id ];
+							$post_val = ($question->system_name != '')?$response_source[$question->system_name]:$response_source[$question->question_type . '_' . $question->q_id];
+							if (in_array($question->q_id, $answer_a)) {
+                            	$sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$post_val' WHERE attendee_id = '$id' AND question_id ='$question->q_id'";
+							}else{
+								$sql = "INSERT INTO " . EVENTS_ANSWER_TABLE . " (registration_id, answer,attendee_id,question_id) VALUES ('$registration_id','$post_val', $id,$question->q_id)";
+							}
+                            $wpdb->query( $sql );
+                            break;
+                        case "SINGLE" :
+                           	//$post_val = $_POST [ $question->question_type . '_' . $question->question_id ];
+						    $post_val = ($question->system_name != '')?$response_source[$question->system_name]:$response_source[$question->question_type . '_' . $question->q_id];
+							if (in_array($question->q_id, $answer_a)) {
+                            	$sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$post_val' WHERE attendee_id = '$id' AND question_id ='$question->q_id'";
+							}else{
+								$sql = "INSERT INTO " . EVENTS_ANSWER_TABLE . " (registration_id, answer,attendee_id,question_id) VALUES ('$registration_id','$post_val', $id,$question->q_id)";
+							}
+                            $wpdb->query( $sql );
+                            break;
+                        case "MULTIPLE" :
+							$value_string = '';
+							for ($i=0; $i<count($response_source[$question->question_type.'_'.$question->id]); $i++){
+								$value_string .= trim($response_source[$question->question_type.'_'.$question->id][$i]).",";
+							}
+							if (in_array($question->q_id, $answer_a)) {
+                                $sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$value_string' WHERE attendee_id = '$id' AND question_id ='$question->q_id'";
+                            } else {
+                                $sql = "INSERT INTO " . EVENTS_ANSWER_TABLE . " (registration_id, answer,attendee_id,question_id) VALUES ('$registration_id','$value_string', $id, $question->q_id)";
+                            }
+							
+                            $wpdb->query( $sql );
+							
+							/* DEBUG */
+							//This was a nightmare ot debug!! The questions were not saving and I suck at programming!!!
+							
+							//echo '<p>'.$sql.'</p>';	
+                            
+							//$sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$value_string' WHERE attendee_id = '$id' AND question_id ='$question->question_id'";
+							//echo '<p>$question->q_id = '.$question->q_id.'</p>';
+							
+							/*echo '<p> in_array($question->q_id, $answers) = ';
+							echo in_array($question->q_id, $answers) ? 'true':'false';
+							echo '</p>';*/
+							
+							//echo '<p>'.print_r($answers).'</p>';
+							//echo '<p>$answers[question_id]'.$answers['question_id'].'</p>';
+							
+							//print_r($answer_a);
+							
+							//print_r($answers);
+							/*if (!array_key_exists($question->id , $answers)) {
+								echo 'test = '.$question->id.'<br />';
+							}*/
+                           /* END DEBUG */
+						   
+						   break;
+                    }
+                }
+            }
+			
+			
+			/* OLD VERSION OF SAVING QUESTIONS */
+			/* August 18, 2011 SETH: Removing this code because it is not saving the  questions on save. Created new code above */
+						
+			/*$questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id . " ");
 
             $question_groups = unserialize($questions->question_groups);
             $event_meta = unserialize($questions->event_meta);
@@ -109,10 +232,6 @@ function edit_attendee_record() {
 
             if ($questions) {
 
-                /*
-                 * find the list of answers in the answer table so we don't insert again because
-                 * when running an update query and the values don't change, the rows_affected will be 0
-                 */
 
                 $answers = $wpdb->get_results("SELECT question_id, answer FROM " . EVENTS_ANSWER_TABLE . " at WHERE at.attendee_id = '" . $id . "' ", OBJECT_K);
 
@@ -168,7 +287,9 @@ function edit_attendee_record() {
                     if ($sql != '')
                         $wpdb->query($sql);
                 }
-            }
+            }*/
+			
+			/* END OLD VERSION OF SAVING QUESTIONS */
         }
 		
         $counter = 0;
@@ -254,7 +375,7 @@ function edit_attendee_record() {
                 </h4>
               <fieldset>
                 <ul>
-                  <?php
+<li>                  <?php
         if (count($question_groups) > 0) {
             $questions_in = '';
 
@@ -269,33 +390,69 @@ function edit_attendee_record() {
                 $FILTER .= " AND qg.system_group = 1 ";
 			}
 
-            //pull the list of questions that are relevant to this event
-			$q_sql_2 = "SELECT q.*, at.answer, qg.group_name FROM " . EVENTS_QUESTION_TABLE . " q
-						LEFT JOIN " .  EVENTS_ANSWER_TABLE . " at on q.id = at.question_id
-						JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr on q.id = qgr.question_id
-						JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
-						WHERE qgr.group_id in ( ". $questions_in. ") 
-						".$FILTER." 
-						ORDER BY qg.id, q.sequence ASC";
-						
+			//pull the list of questions that are relevant to this event
+			$q_sql_2 = "SELECT q.*, q.id q_id, at.*, qg.group_name, qg.show_group_description, qg.show_group_name FROM " . EVENTS_QUESTION_TABLE . " q
+					LEFT JOIN " .  EVENTS_ANSWER_TABLE . " at on q.id = at.question_id
+					JOIN " .  EVENTS_QST_GROUP_REL_TABLE . " qgr on q.id = qgr.question_id
+					JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
+					WHERE qgr.group_id in (" .$questions_in. ") 
+					AND (at.attendee_id IS NULL OR at.attendee_id = '" . $id . "') 
+					".$FILTER." 
+					ORDER BY qg.id, q.id ASC";
+			
+			/* DEBUG */
+			//echo $q_sql_2;		
+			/* END DEBUG */
+			
             $questions = $wpdb->get_results($q_sql_2);
             $num_rows = $wpdb->num_rows;
            
             if ($num_rows > 0) {
+				
+				$q_ids = '';
+				foreach ($questions as $question_ids) {
+					$q_ids .= $question_ids->question_id.',';
+				}
+				
+				/* DEBUG */
+				//echo rtrim($q_ids, ",");
+				/* END DEBUG */
+				
+				$existing_questions = rtrim($q_ids, ",");
+				
+				$q_sql_3 = "SELECT q.* FROM " . EVENTS_QUESTION_TABLE . " q  JOIN " .  EVENTS_QST_GROUP_REL_TABLE . " qgr ON q.id = qgr.question_id JOIN " . EVENTS_QST_GROUP_TABLE . " qg ON qg.id = qgr.group_id WHERE qgr.group_id IN (" .$questions_in. ") AND q.id NOT IN (".$existing_questions.") GROUP BY q.question ORDER BY qg.id, q.id ASC";
+				
+				/* DEBUG */
+				//echo $q_sql_3;
+				/* END DEBUG */
+					
+				$questions_2 = $wpdb->get_results($q_sql_3);
+				$num_rows_2 = $wpdb->num_rows;
+				
+				//Merge the existing questions with any missing questions
+				if ($num_rows_2 > 0) {
+					$questions = array_merge($questions,$questions_2);
+				}
+				
+				//Output the questions
                 $question_displayed = array();
                 foreach ($questions as $question) {
                     if (!in_array($question->id, $question_displayed)) {
                         $question_displayed[] = $question->id;
                         //if new group, close fieldset
                         echo ($group_name != '' && $group_name != $question->group_name) ? '</fieldset>' : '';
-
+						
+						/* DEBUG */
+						//echo '<p>'.print_r($question).'</p>';
+						/* END DEBUG */
+						
                         if ($group_name != $question->group_name) {
                             echo "<fieldset><legend>$question->group_name<legend>";
                             $group_name = $question->group_name;
                         }
 
                         echo '<p>';
-                        event_form_build_edit($question, ($question->system_name != '') ? ${$question->system_name} : $question->answer);
+                        event_form_build_edit($question, ($question->system_name != '') ? ${$question->system_name} : $question->answer, $show_admin_only = true);
                         echo "</p>";
 
                         $counter++;
@@ -304,7 +461,7 @@ function edit_attendee_record() {
                 }
             }//end questions display
         }
-?>
+?></li>
                   <input type="hidden" name="id" value="<?php echo $id ?>" />
                   <input type="hidden" name="registration_id" value="<?php echo $registration_id ?>" />
                   <input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
