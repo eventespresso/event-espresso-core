@@ -237,10 +237,13 @@ function event_list_attendees() {
 	
     $total_attendees = $wpdb->num_rows;
 	$quantity =0;
+	$$attendees_group = '';
     if ($total_attendees > 0) {
         for ($i = 0; $i <= $total_attendees; $i++) {
-            if (isset($attendees[$i])){
-				$attendee = $attendees[$i];
+            #if (isset($attendees[$i])){
+				if (isset($attendees[$i])){	
+					$attendee = $attendees[$i];
+				}
 				//echo 'Reg. Id: '.$registration_id.'<br />';
 				$registration_id = $attendee->registration_id;
 				$lname = $attendee->lname;
@@ -270,9 +273,12 @@ function event_list_attendees() {
 					$price_option = $attendee->price_option;
 					$event_time = $attendee->event_time;
 					$event_name = $attendee->event_name;
+					$event_date = $attendee->start_date;
+					
 				}
-				if ($temp_reg_id == $registration_id) {
-					$attendees_group .= "<li>$fname $lname $email <span style=\"visibility:hidden\">" . $registration_id . "</span>$quantity</li>";
+				
+				if ($temp_reg_id == $registration_id && isset($attendees[$i])) {
+					$attendees_group .= "<li> $fname $lname $email <span style=\"visibility:hidden\">" . $registration_id . "</span>$quantity</li>";
 					/*echo '<p>';
 					echo $payment_status.'<br />';
 					echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
@@ -283,13 +289,14 @@ function event_list_attendees() {
 					$go = true;
 				}
 				//echo $attendee->quantity;
+				#echo "total attendees : {$total_attendees} && counter : {$counter}";
 				if ($go || $total_attendees == $counter) {
                 ?>
                   <tr>
                     <td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><input name="checkbox[<?php echo $temp_reg_id ?>]" type="checkbox"  title="Delete <?php echo $fname ?><?php echo $lname ?>"></td>
                     <td class="row-title"  nowrap="nowrap"><a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $temp_reg_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:'.$id.' [ REG#: ' . $temp_reg_id.' ]'; ?>">
                       <ul>
-                        <?php echo $attendees_group ?>
+                         <?php echo $attendees_group ?>
                       </ul>
                       </a></td>
                     <td nowrap="nowrap"><?php echo $temp_reg_id ?></td>
@@ -332,11 +339,11 @@ function event_list_attendees() {
 	?></td>
       </tr>
       <?php
-					echo '<p>';
+					#echo '<p>';
 					$id = $attendee->id;
 					$temp_reg_id = $registration_id;
 					$email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
-					$attendees_group = "<li>$fname $lname $email $quantity</li>";
+					$attendees_group = "<li> $fname $lname $email $quantity</li>";
 					$go = false;
 																	   
 					$total_amount_pd = espresso_attendee_price(array('registration_id'=>$temp_reg_id, 'reg_total'=>true));
@@ -355,7 +362,7 @@ function event_list_attendees() {
 					$event_date = $attendee->start_date;
 				}
 				$counter++;
-			}
+			#} #if (isset($attendees[$i]))
 		}
 	}
 ?>
