@@ -243,40 +243,40 @@ function event_list_attendees() {
             #if (isset($attendees[$i])){
 				if (isset($attendees[$i])){	
 					$attendee = $attendees[$i];
-				}
-				//echo 'Reg. Id: '.$registration_id.'<br />';
-				$registration_id = $attendee->registration_id;
-				$lname = $attendee->lname;
-				$fname = $attendee->fname;
-				$address = $attendee->address;
-				$city = $attendee->city;
-				$state = $attendee->state;
-				$zip = $attendee->zip;
-				$email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
-				$phone = $attendee->phone;
-				$quantity = $attendee->quantity > 1 ? '<br />(' . __('Total Attendees', 'event_espresso') . ': ' . $attendee->quantity . ')' : '';
-				if ($temp_reg_id == '') {
-					$id = $attendee->id;
-					$temp_reg_id = $registration_id;
-					//echo 'Temp Reg. Id: '.$registration_id.'<br />';
-	
-					$attended = $attendee->checked_in;
-					$ticket_scanned = $attendee->checked_in_quantity;
-					$amount_pd = $attendee->amount_pd;
-					$payment_status = $attendee->payment_status;
-					$payment_date = $attendee->payment_date;
-					$date = $attendee->date;
-					$event_id = $attendee->event_id;
-					$coupon_code = $attendee->coupon_code;
-					$txn_id = $attendee->txn_id;
-					$txn_type = $attendee->txn_type;
-					$price_option = $attendee->price_option;
-					$event_time = $attendee->event_time;
-					$event_name = $attendee->event_name;
-					$event_date = $attendee->start_date;
-					
-				}
 				
+					//echo 'Reg. Id: '.$registration_id.'<br />';
+					$registration_id = $attendee->registration_id;
+					$lname = $attendee->lname;
+					$fname = $attendee->fname;
+					$address = $attendee->address;
+					$city = $attendee->city;
+					$state = $attendee->state;
+					$zip = $attendee->zip;
+					$email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
+					$phone = $attendee->phone;
+					$quantity = $attendee->quantity > 1 ? '<br />(' . __('Total Attendees', 'event_espresso') . ': ' . $attendee->quantity . ')' : '';
+					if ($temp_reg_id == '') {
+						$id = $attendee->id;
+						$temp_reg_id = $registration_id;
+						//echo 'Temp Reg. Id: '.$registration_id.'<br />';
+		
+						$attended = $attendee->checked_in;
+						$ticket_scanned = $attendee->checked_in_quantity;
+						$amount_pd = $attendee->amount_pd;
+						$payment_status = $attendee->payment_status;
+						$payment_date = $attendee->payment_date;
+						$date = $attendee->date;
+						$event_id = $attendee->event_id;
+						$coupon_code = $attendee->coupon_code;
+						$txn_id = $attendee->txn_id;
+						$txn_type = $attendee->txn_type;
+						$price_option = $attendee->price_option;
+						$event_time = $attendee->event_time;
+						$event_name = $attendee->event_name;
+						$event_date = $attendee->start_date;
+						
+					}
+				}
 				if ($temp_reg_id == $registration_id && isset($attendees[$i])) {
 					$attendees_group .= "<li> $fname $lname $email <span style=\"visibility:hidden\">" . $registration_id . "</span>$quantity</li>";
 					/*echo '<p>';
