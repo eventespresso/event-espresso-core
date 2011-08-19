@@ -1,6 +1,6 @@
 <?php
 function add_new_attendee($event_id){
-	if ($_REQUEST['regevent_action_admin']== 'post_attendee'){
+	if (isset($_REQUEST['regevent_action_admin']) && $_REQUEST['regevent_action_admin']== 'post_attendee'){
 		$attendee_id = event_espresso_add_attendees_to_db();
 		// SEND CONFIRMATION EMAIL MESSAGES
 		event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
@@ -34,9 +34,9 @@ function add_new_attendee($event_id){
 					$event_zip = $event->zip;
 					$event_description = stripslashes($event->event_desc);
 					$event_identifier = $event->event_identifier;
-					$event_cost = $event->event_cost;
-					$member_only = $event->member_only;
-					$reg_limit = $event->reg_limit;
+					$event_cost = isset($event->event_cost) ? $event->event_cost:'';
+					$member_only = isset($event->member_only) ? $event->member_only:'';
+					$reg_limit = isset($event->reg_limit) ? $event->reg_limit:'';
 					$allow_multiple = $event->allow_multiple;
 					$start_date =  $event->start_date;
 					$end_date =  $event->end_date;
@@ -91,8 +91,9 @@ function add_new_attendee($event_id){
             <?php echo event_date_display($start_date)?></p>
           <p class="event_time">
             <?php 
+					$time_selected ='';
 					//This block of code is used to display the times of an event in either a dropdown or text format.
-					if ($time_selected == true){//If the customer is coming from a page where the time was preselected.
+					if (!empty($time_selected) && $time_selected == true){//If the customer is coming from a page where the time was preselected.
 						event_espresso_display_selected_time($time_id);//Optional parameters start, end, default
 					}else if ($time_selected == false){
 						event_espresso_time_dropdown($event_id);	

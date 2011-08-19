@@ -179,7 +179,7 @@ function espresso_total_events_this_month(){
 		$total_a_today = 0;
 		$wpdb->query($asql2);
 		if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity!=NULL) {
-			$total_a_today =  $wpdb->last_result[0]->quantity + $wpdb->last_result[1]->quantity;
+			$total_a_today =  $wpdb->last_result[0]->quantity + (isset($wpdb->last_result[1]->quantity) ? $wpdb->last_result[1]->quantity:0);
 		}
 		return $total_a_today;
 	}
