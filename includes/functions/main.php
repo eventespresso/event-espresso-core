@@ -21,14 +21,20 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $ty
     }
 }
 
-function espresso_reg_url($event_id=0) {
-    global $org_options;
-    if ($event_id > 0) {
-        return espresso_getTinyUrl(home_url() . '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event_id);
-    } else {
-        echo 'No event id supplied';
-        return;
-    }
+function espresso_reg_url($event_id=0){
+	global $org_options;
+	if ($event_id > 0){
+		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
+		$new_url = add_query_arg( 'ee', $event_id, get_permalink( $org_options['event_page_id'] ));
+		return $new_url;
+	}else{
+		echo 'No event id supplied';
+		return;
+	}
+}
+
+function espresso_getTinyUrl($url) {
+    return file_get_contents("http://tinyurl.com/api-create.php?url=" . $url);
 }
 
 //Text formatting function.
@@ -1205,23 +1211,6 @@ if (!function_exists("unkeyvaluepair")) {
 
 }
 
-function espresso_getTinyUrl($url) {
-    return file_get_contents("http://tinyurl.com/api-create.php?url=" . $url);
-}
-
-function espresso_redirect($event_id) {
-    global $org_options;
-    if ($event_id != '') {
-        if (file_exists(getcwd() . '/wp-includes/pluggable.php')) {
-            require_once( getcwd() . '/wp-includes/pluggable.php' );
-            $event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $event_id;
-            wp_redirect($event_url, '301');
-            exit;
-        } else {
-            exit;
-        }
-    }
-}
 
 function espresso_add_query_vars($aVars) {
     $aVars[] = "searchdate";    // represents the name of the date as shown in the URL
@@ -1229,7 +1218,7 @@ function espresso_add_query_vars($aVars) {
 }
 
 // hook add_query_vars function into query_vars
-add_filter('query_vars', 'espresso_add_query_vars');
+//add_filter('query_vars', 'espresso_add_query_vars');
 
 function espresso_serialize($data) {
 

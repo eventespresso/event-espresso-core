@@ -13,7 +13,7 @@ if (!function_exists('register_attendees')) {
         }
         global $wpdb, $org_options;
 
-        $event_id = $event_id_sc != '0' ? $event_id_sc : $_REQUEST['event_id'];
+        $event_id = $event_id_sc != '0' ? $event_id_sc : ($_REQUEST['event_id']||$_REQUEST['ee']);
 
         if (isset($_REQUEST['event_id_time']) && $_REQUEST['event_id_time'] != '') {
             $pieces = explode('|', $_REQUEST['event_id_time'], 3);

@@ -469,6 +469,9 @@ if (!function_exists('event_espresso_run')) {
 		
         // Get action type
         $regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
+		
+		if (isset($_REQUEST['ee']) ? $_REQUEST['ee'] : '')
+			$regevent_action = "register";
 
         switch ($regevent_action) {
             case "post_attendee":
@@ -580,11 +583,6 @@ if (isset($_REQUEST['event_espresso_admin_action'])) {
     if ($_REQUEST['event_espresso_admin_action'] == 'copy_gateways') {
         add_action('admin_init', 'event_espresso_trigger_copy_gateways');
     }
-}
-
-//Load the EE short URL
-if (isset($_REQUEST['ee'])) {
-    espresso_redirect($_REQUEST['ee']);
 }
 
 if (!function_exists('is_ssl')) {
