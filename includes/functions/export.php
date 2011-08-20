@@ -186,8 +186,8 @@ if (!function_exists('espresso_export_stuff')){
 						break;
 					case "payment";
 		
-									 $question_list = array();//will be used to associate questions with correct answers
-									 $question_filter = array();//will be used to keep track of newly added and deleted questions
+						$question_list = array();//will be used to associate questions with correct answers
+						$question_filter = array();//will be used to keep track of newly added and deleted questions
 		
 						if (count($question_groups) > 0){
 						$questions_in = '';
