@@ -1,15 +1,7 @@
 <?php
 //Template customization
 ?>
-<li>
-    <div class="metabox-holder">
-        <div class="postbox">
-					<div title="Click to toggle" class="handlediv"><br /></div>
-            <h3 class="hndle">
-                <?php _e("Template Customization", 'event_espresso'); ?>
-            </h3>
-							<div class="inside">
-            <div class="padding">
+
                 <?php
                 if (isset($_REQUEST['event_espresso_admin_action']) && $_REQUEST['event_espresso_admin_action'] == 'copy_templates') {
                     add_action('admin_init', 'event_espresso_smartCopy');
@@ -129,9 +121,4 @@
                 }
                 ?>
 
-            </div>
-						</div>
-        </div>
-    </div>
-    
-</li>
+ 

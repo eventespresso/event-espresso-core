@@ -49,6 +49,7 @@ function event_espresso_config_page_scripts() {
 							case ( 'event_espresso' ):
             case ( 'espresso_reports' ):
 							case ( 'support' ) :
+							case ( 'template_confg' ):
                 //case ( 'event_venues' ):
                 //case ( 'event_staff' ):
                 //case ( 'event_categories' ):

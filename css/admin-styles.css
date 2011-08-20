@@ -1636,9 +1636,10 @@ div.box-right-body ul.infolinks li a {
 	width: 400px;
 	height: 150px;
 }
-a.ev_reg-fancylink {
+a.thickbox  {
 	text-decoration: underline;
 	vertical-align: middle;
+	margin-left 5px;
 }
 /*** Payment Status Classes ***/
 .payment_completed {
@@ -2157,17 +2158,27 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 	opacity: 0.45;
 }
 .wp-admin  #TB_window {
-	background: #FAF9EF;
- -moz-box-shadow: #777 0 4px 10px;
-	-webkit-box-shadow: #777 0 4px 10px;
-	-khtml-box-shadow: #777 0 4px 10px;
+	background: #F6F5EB;
+ -moz-box-shadow: #555 0 4px 10px;
+	-webkit-box-shadow: #555 0 4px 10px;
+	-khtml-box-shadow: #555 0 4px 10px;
 	box-shadow: #555 0 4px 10px;
 }
 .wp-admin #TB_window #TB_title {
 	background: #2E7595
 }
 .wp-admin  #TB_window #TB_ajaxContent {
- 
+ margin: 0 auto;
+	padding-top: 10px;
+}
+.wp-admin .TB-ee-frame {
+	background: #faf9ef;
+	border: 1px solid #E6E5DC;
+ -moz-box-shadow: #777 0 0 3px;
+	-webkit-box-shadow: #777 0 0 3px;
+	-khtml-box-shadow: #777 0 0 3px;
+	box-shadow: inset #E6E5DC 0 0 14px;
+	padding: 0 10px;
 }
 /*___ Fancybox popup help messages ___*/
 

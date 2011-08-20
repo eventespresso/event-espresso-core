@@ -4,7 +4,8 @@ function organization_config_mnu() {
     global $wpdb, $org_options;
     //print_r($timezoneTable);
 
-    if (isset($_POST['update_org'])) {
+    // commnted out $org_options moved to template_confg.php - hugo.
+			if (isset($_POST['update_org'])) {
         $org_options['organization'] = stripslashes_deep($_POST['org_name']);
         $org_options['organization_street1'] = $_POST['org_street1'];
         $org_options['organization_street2'] = $_POST['org_street2'];
@@ -38,14 +39,14 @@ function organization_config_mnu() {
         $org_options['use_custom_post'] = isset($_POST['use_custom_post']) ? $_POST['use_custom_post'] : '';
         $org_options['espresso_dashboard_widget'] = $_POST['espresso_dashboard_widget'];
         $org_options['time_reg_limit'] = $_POST['time_reg_limit'];
-        $org_options['use_custom_post_types'] = $_POST['use_custom_post_types'];
+        //$org_options['use_custom_post_types'] = $_POST['use_custom_post_types'];
         $org_options['use_attendee_pre_approval'] = $_POST['use_attendee_pre_approval'];
-        $org_options['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
-        $org_options['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
-        $org_options['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
-        $org_options['display_address_in_regform'] = $_POST['display_address_in_regform'];
+        //$org_options['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
+        //$org_options['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
+        //$org_options['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
+        //$org_options['display_address_in_regform'] = $_POST['display_address_in_regform'];
         $org_options['event_ssl_active'] = $_POST['event_ssl_active'];
-        $org_options['enable_default_style'] = $_POST['enable_default_style'];
+        //$org_options['enable_default_style'] = $_POST['enable_default_style'];
         $org_options['show_pending_payment_options'] = $_POST['show_pending_payment_options'];
         $org_options['use_venue_manager'] = $_POST['use_venue_manager'];
         $org_options['use_personnel_manager'] = $_POST['use_personnel_manager'];
@@ -475,12 +476,7 @@ function organization_config_mnu() {
                                     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php');
                                     echo '</li>';
                                 }
-                                if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/template_files.php')) {
-                                    echo '<li><h2>' . __('Developers Only', 'event_espresso') . '</h2><hr /></li>';
-                                    //echo '<li>';
-                                    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/template_files.php');
-                                    //echo '</li>';
-                                }
+         
                             } else {
                                 ?>
                                 <li>

@@ -262,6 +262,9 @@ require_once("includes/organization_config.php");
 //Event Registration Subpage - Add/Delete/Edit Events
 require_once("includes/event-management/index.php");
 
+//Event styles & template layouts Subpage 
+require_once("includes/template_confg.php");
+
 //Event Registration Subpage - Add/Delete/Edit Discount Codes
 if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-management/index.php')) {
     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-management/index.php');
