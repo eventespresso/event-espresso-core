@@ -79,10 +79,15 @@ $page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
 //regevent_action is only set during the checkout process
 if (isset($_REQUEST['regevent_action']) && isset($org_options['event_ssl_active']) && $org_options['event_ssl_active'] == 'Y' && !is_ssl() && !is_admin()) {
 
-    $wp_ssl_url = str_replace('http://', 'https://', home_url());
 
-    $url = $wp_ssl_url . $_SERVER['REQUEST_URI'];
-    header("Location:$url");
+	$http_host = 'http://' . parse_url(get_option('home'), PHP_URL_HOST);
+	$request_uri = $_SERVER['REQUEST_URI'];
+	if ( strpos($request_uri,$http_host) === false )
+	{
+		$request_uri = $http_host . $request_uri;
+	}
+    $wp_ssl_url = str_replace('http://', 'https://', $request_uri);
+    header("Location:$wp_ssl_url");
     exit;
 
 //The only way that I can make the menu links non ssl
