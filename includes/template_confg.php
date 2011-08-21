@@ -123,4 +123,3 @@ function event_espresso_manage_templates() {
 <?php
 return;
 }
-?>
