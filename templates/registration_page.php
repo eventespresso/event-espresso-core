@@ -218,7 +218,7 @@ if (!function_exists('register_attendees')) {
 					'google_map_link'=>$google_map_link,
 					'price'=> event_espresso_price_dropdown($event_id, 0),
 					'registration'=>event_espresso_add_question_groups($question_groups),
-					'additional_attendees'=>$allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces):'<input type="hidden" name="num_people" id="num_people-'.$event_id.'" value="1">',
+					//'additional_attendees'=>$allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces):'<input type="hidden" name="num_people" id="num_people-'.$event_id.'" value="1">',
 				);
 			//print_r($all_meta);
             
@@ -271,5 +271,4 @@ if (!function_exists('register_attendees')) {
         //echo '<p>Database Queries: ' . get_num_queries() .'</p>';
         echo espresso_registration_footer();
     }
-
 }
