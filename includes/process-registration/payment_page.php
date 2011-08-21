@@ -313,7 +313,8 @@ function event_espresso_pay($att_registration_id=0) {
     $attendee_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
 	
 	if ($att_registration_id ==0)
-    $att_registration_id = $registration_id != '' ? $registration_id : espresso_registration_id($id);
+    	$att_registration_id = $registration_id != '' ? $registration_id : espresso_registration_id($id);
+	$registration_id = $att_registration_id;
     //echo $att_registration_id;
 	
     $attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $att_registration_id . "' ORDER BY ID LIMIT 1");
@@ -368,7 +369,7 @@ function event_espresso_pay($att_registration_id=0) {
 			$registration_ids[] = array("registration_id"=>$registration_id);
 		}
 		foreach($registration_ids as $reg_id){
-			$sql = "select ea.registration_id, ed.event_name, ed.id event_id, ed.start_date, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
+			$sql = "select ea.registration_id, ed.event_name, ed.id event_id, ed.start_date, ea.fname, ea.lname, eac.quantity, eac.cost, ea.amount_pd from ". EVENTS_ATTENDEE_TABLE ." ea
 				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
 				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
 				where ea.registration_id = '".$reg_id['registration_id']."' order by ed.event_name ";
@@ -377,7 +378,7 @@ function event_espresso_pay($att_registration_id=0) {
 			$total_cost=0;
 			foreach($tmp_attendees as $tmp_attendee){
 				$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
-				$total_cost += $sub_total;
+				$total_cost += $tmp_attendee['amount_pd'];
 				$event_url = espresso_reg_url($tmp_attendee["event_id"]);
 				$event_link .= '<a href="' . $event_url . '">' . $tmp_attendee["event_name"].'</a> ['.event_date_display($tmp_attendee['start_date'], get_option('date_format')).'] - '.espresso_edit_attendee($registration_id, $id, 'attendee', $tmp_attendee["fname"]." ".$tmp_attendee["lname"]) . ' ('.$tmp_attendee["quantity"]. ' x ' . $org_options[ 'currency_symbol' ].number_format($tmp_attendee["cost"], 2, '.', '').')<br />';
 			}
