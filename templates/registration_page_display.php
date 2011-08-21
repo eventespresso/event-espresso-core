@@ -121,9 +121,9 @@
         <?php
 		//This block of code is used to display the times of an event in either a dropdown or text format.
 		if (isset($time_selected) && $time_selected == true) {//If the customer is coming from a page where the time was preselected.
-			event_espresso_display_selected_time($time_id); //Optional parameters start, end, default
+			echo event_espresso_display_selected_time($time_id); //Optional parameters start, end, default
 		} else {
-			event_espresso_time_dropdown($event_id);
+			echo event_espresso_time_dropdown($event_id);
 		}//End time selected
 		?>
       </p>
@@ -153,7 +153,7 @@
 		if ($allow_multiple == "Y" && $number_available_spaces > 1) {
 
 			//This returns the additional attendee form fields. Can be overridden in the custom files addon.
-			event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces);
+			echo event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces);
 		} else {
 		?>
           <input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
