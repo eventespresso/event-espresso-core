@@ -12,8 +12,12 @@ if (!function_exists('register_attendees')) {
             return;
         }
         global $wpdb, $org_options;
+		
+		if (isset($_REQUEST['ee']) && $_REQUEST['ee'] !='') {
+			$_REQUEST['event_id'] = $_REQUEST['ee'];
+		}
 
-        $event_id = $event_id_sc != '0' ? $event_id_sc : ($_REQUEST['event_id']||$_REQUEST['ee']);
+        $event_id = $event_id_sc != '0' ? $event_id_sc : ($_REQUEST['event_id']);
 
         if (isset($_REQUEST['event_id_time']) && $_REQUEST['event_id_time'] != '') {
             $pieces = explode('|', $_REQUEST['event_id_time'], 3);
@@ -105,6 +109,9 @@ if (!function_exists('register_attendees')) {
                 $venue_image = $event->venue_image;
                 $venue_phone = $event->venue_phone;
 				
+				global $event_meta;
+				$event_meta = unserialize($event->event_meta);
+				
 				//Venue information
                 if ($org_options['use_venue_manager'] == 'Y') {
                     $event_address = $event->venue_address;
@@ -117,11 +124,22 @@ if (!function_exists('register_attendees')) {
 					//Leaving these variables intact, just in case people wnat to use them
 					$venue_title = $event->venue_name;
 					$venue_address = $event->venue_address;
+					$venue_address2 = $event->venue_address2;
 					$venue_city = $event->venue_city;
 					$venue_state = $event->venue_state;
 					$venue_zip = $event->venue_zip;
 					$venue_country = $event->venue_country;
-					$venue_meta = $event->venue_meta;
+					global $venue_meta;
+					$add_venue_meta = array(
+						'venue_title' => $event->venue_name, 
+						'venue_address' => $event->event_address, 
+						'venue_address2' => $event->venue_address2,
+						'venue_city' => $event->venue_city,
+						'venue_state' => $event->venue_state,
+						'venue_country' => $event->venue_country,
+					) ;
+					$venue_meta = array_merge(unserialize( $event->venue_meta), $add_venue_meta);
+					//print_r($venue_meta);
                 }
 
                 $virtual_url = stripslashes_deep($event->virtual_url);
@@ -132,6 +150,11 @@ if (!function_exists('register_attendees')) {
 
                 //Google map link creation
                 $google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
+				
+				$question_groups = unserialize($event->question_groups);
+			
+				
+				
 
                 $reg_start_date = $event->registration_start;
                 $reg_end_date = $event->registration_end;
@@ -152,20 +175,6 @@ if (!function_exists('register_attendees')) {
                 $reg_limit = $event->reg_limit;
                 $additional_limit = $event->additional_limit;
 
-                //Venue information
-                if ($org_options['use_venue_manager'] == 'Y') {
-                    $venue_title = $event->venue_name;
-                    $venue_address = $event->venue_address;
-                    $venue_city = $event->venue_city;
-                    $venue_state = $event->venue_state;
-                    $venue_zip = $event->venue_zip;
-                    $venue_country = $event->venue_country;
-                    $venue_meta = $event->venue_meta;
-                }
-
-                $question_groups = unserialize($event->question_groups);
-                $item_groups = unserialize($event->item_groups);
-
                 //This function gets the status of the event.
                 $is_active = array();
                 $is_active = event_espresso_get_is_active($event_id);
@@ -185,7 +194,35 @@ if (!function_exists('register_attendees')) {
                     $additional_limit = '5';
                 }
             }//End foreach ($events as $event)
-            if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
+			
+			
+            $num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees
+            $available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces'); //Gets a count of the available spaces
+            $number_available_spaces = get_number_of_attendees_reg_limit($event_id, 'number_available_spaces'); //Gets the number of available spaces
+            //echo $number_available_spaces;
+			
+			
+			global $all_meta;
+				$all_meta = array(
+					'event_name'=>stripslashes_deep($event_name),
+					'event_desc'=>stripslashes_deep($event_desc), 
+					'event_address'=>$address,
+					'event_address2'=>$address2,
+					'event_city'=>$city,
+					'event_state'=>$state,
+					'event_zip'=>$event->zip,
+					'event_country'=>$event->country,
+					'start_date'=>event_date_display($start_date, get_option('date_format')),
+					'end_date'=>event_date_display($end_date, get_option('date_format')),
+					'time'=>event_espresso_time_dropdown($event_id, 0),
+					'google_map_link'=>$google_map_link,
+					'price'=> event_espresso_price_dropdown($event_id, 0),
+					'registration'=>event_espresso_add_question_groups($question_groups),
+					'additional_attendees'=>$allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces):'<input type="hidden" name="num_people" id="num_people-'.$event_id.'" value="1">',
+				);
+			//print_r($all_meta);
+            
+			if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
                 ?>
                 <script type="text/javascript">
                     var RecaptchaOptions = {
@@ -196,16 +233,11 @@ if (!function_exists('register_attendees')) {
                 <?php
             }
             //This is the start of the registration form. This is where you can start editing your display.
-            $num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees
-            $available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces'); //Gets a count of the available spaces
-            $number_available_spaces = get_number_of_attendees_reg_limit($event_id, 'number_available_spaces'); //Gets the number of available spaces
-            //echo $number_available_spaces;
             //(Shows the regsitration form if enough spaces exist)
-                
-									if ($num_attendees >= $reg_limit) {
+			if ($num_attendees >= $reg_limit) {
                     ?>
                     <div class="espresso_event_full event-display-boxes" id="espresso_event_full-<?php echo $event_id; ?>">
-												<h3 class="event_title"><?php echo stripslashes_deep($event_name)?></h3>
+					<h3 class="event_title"><?php echo stripslashes_deep($event_name)?></h3>
                         <div class="event-messages">
 														<p class="event_full"><strong><?php _e('We are sorry but this event has reached the maximum number of attendees!', 'event_espresso'); ?></strong></p>
                         	<p class="event_full"><strong><?php _e('Please check back in the event someone cancels.', 'event_espresso'); ?></strong></p>
@@ -237,7 +269,7 @@ if (!function_exists('register_attendees')) {
         }
         //Check to see how many database queries were performed
         //echo '<p>Database Queries: ' . get_num_queries() .'</p>';
-        espresso_registration_footer();
+        echo espresso_registration_footer();
     }
 
 }
