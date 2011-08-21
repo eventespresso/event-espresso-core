@@ -398,17 +398,17 @@ if (!function_exists('espresso_export_stuff')){
 									 * in case the event organizer removes a question from a question group,
 									 * the orphaned answers will remian in the answers table.  This check will make sure they don't get exported.
 									 */
-									if (array_key_exists($k, $answers))
-									{
+									/*if (array_key_exists($k, $answers))
+									{*/
 										$search = array("\r", "\n", "\t");
 										$clean_answer = str_replace($search, " ", $answers[$k]->answer);
 										$clean_answer = escape_csv_val($clean_answer);
 										echo $s . $clean_answer;
-									} 
+									/*} 
 									else 
 									{
 										echo $s;
-									}
+									}*/
 								}
 								switch ($_REQUEST['type']) 
 								{
