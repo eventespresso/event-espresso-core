@@ -278,36 +278,38 @@ if (!function_exists('event_espresso_additional_attendees')) {
             $event_meta = event_espresso_get_event_meta($event_id);
 
         if ($event_meta['additional_attendee_reg_info'] == 1) {
-            $label == '' ? _e('Number of Attendees', 'event_regis') : $label;
-            ?>
-            <p class="espresso_additional_limit">
-
-                <label for="num_people"><?php echo $label; ?></label>
-                <select name="num_people" id="num_people-<?php echo $event_id; ?>" style="width:70px;margin-top:4px">
-            <?php
+            $label == '' ? __('Number of Attendees', 'event_regis') : $label;
+			$html .= '<label for="num_people">'.$label.'</label>';
+			$html .= '<select name="num_people" id="num_people-'.$event_id.'" style="width:70px;">';
             while (($i <= $additional_limit) && ($i < $available_spaces)) {
-                $i++;
-                ?>
-                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                        <?php
-                    }
-                    ?>
-                </select>
-                <br />
-                <input type="hidden" name="espresso_addtl_limit_dd" value="true">
-            </p>
-                    <?php
-                } else {
+				$i++;
+				$html .= '<option value="'.$i.'">'.$i.'</option>';
+			}
+			$html .= '</select><input type="hidden" name="espresso_addtl_limit_dd" value="true">';
+			
+		} else {
                     while (($i <= $additional_limit) && ($i < $available_spaces)) {
                         $i++;
                     }
                     $i = $i - 1;
-                    ?>
-            <p class="event_form_field additional_header" id="additional_header"><a onclick="return false;" href="#"><?php _e('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso'); ?></a> </p><div id="additional_attendees"><div class="clone espresso_add_attendee"><p><label for="x_attendee_fname"><?php _e('First Name', 'event_espresso'); ?>:</label> <input type="text" name="x_attendee_fname[]" class='input'/></p><p><label for="x_attendee_lname"><?php _e('Last Name', 'event_espresso'); ?>:</label> <input type="text" name="x_attendee_lname[]" class='input'/></p><p><label for="x_attendee_email"><?php _e('Email', 'event_espresso'); ?>:</label> <input type="text" name="x_attendee_email[]" class='input'/></p><a href="#" class="add" rel=".clone" title="<?php _e('Add an Additonal Attendee', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/icons/add.png"; ?>" alt="<?php _e('Add an Additonal Attendee', 'event_espresso'); ?>" /></a></div><hr /></div><script type="text/javascript">$jaer = jQuery.noConflict();jQuery(document).ready(function($jaer) { $jaer(function(){var removeLink = '<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/icons/remove.gif"; ?>" alt="<?php _e('Remove Attendee', 'event_espresso'); ?>" /></a>';$jaer('a.add').relCopy({limit: <?php echo $i; ?>, append: removeLink});$jaer("#additional_attendees").hide();/*toggle the componenet with class msg_body*/$jaer("#additional_header").click(function(){$jaer(this).next("#additional_attendees").slideToggle(500);});});});</script>
-            <?php
+                    
+             $html .= '<span class="event_form_field additional_header" id="additional_header"><a onclick="return false;" href="#">'.__('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso').'</a> </span>';
+             
+              $html .= '<div id="additional_attendees">';
+              $html .= '<div class="clone espresso_add_attendee">';
+              $html .= '<p><label for="x_attendee_fname">'.__('First Name', 'event_espresso').':</label> <input type="text" name="x_attendee_fname[]" class="input"/></p>';
+              $html .= '<p><label for="x_attendee_lname">'.__('Last Name', 'event_espresso').':</label> <input type="text" name="x_attendee_lname[]" class="input"/></p>';
+              $html .= '<p><label for="x_attendee_email">'.__('Email', 'event_espresso').':</label> <input type="text" name="x_attendee_email[]" class="input"/></p>';
+              $html .= '<a href="#" class="add" rel=".clone" title="'.__('Add an Additonal Attendee', 'event_espresso').'"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png" alt="'.__('Add an Additonal Attendee', 'event_espresso').'" /></a>';
+              $html .= '</div>';
+			  $html .= '<hr />';
+			  $html .= '</div>';
+			  $html .= '<script type="text/javascript">';
+			  $html .= '$jaer = jQuery.noConflict();jQuery(document).ready(function($jaer) { $jaer(function(){var removeLink = \'<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/icons/remove.gif"; ?>" alt="'.__('Remove Attendee', 'event_espresso').'" /></a>$jaer(\'a.add\').relCopy({limit:'.$i.', append: removeLink});$jaer("#additional_attendees").hide();/*toggle the componenet with class msg_body*/$jaer("#additional_header").click(function(){$jaer(this).next("#additional_attendees").slideToggle(500);});});});</script>';
+          
         }
+		return $html;
     }
-
 }
 
 
@@ -819,7 +821,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 
     function event_espresso_price_dropdown($event_id, $label = 1, $multi_reg = 0, $value = '') {
         global $wpdb, $org_options;
-
+		$html = '';
         //Will make the name an array and put the time id as a key so we
         //know which event this belongs to
         $multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
@@ -827,9 +829,10 @@ if (!function_exists('event_espresso_price_dropdown')) {
 
         $results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type, price_type FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC");
         if ($wpdb->num_rows > 1) {
-            echo $label == 1 ? '<label for="event_cost">' . __('Choose an Option: ', 'event_espresso') . '</label>' : '';
-            echo '<select name="price_option' . $multi_name_adjust . '" id="price_option-' . $event_id . '">';
-            foreach ($results as $result) {
+            $html .= $label == 1 ? '<label for="event_cost">' . __('Choose an Option: ', 'event_espresso') . '</label>' : '';
+            $html .= '<select name="price_option' . $multi_name_adjust . '" id="price_option-' . $event_id . '">';
+            
+			foreach ($results as $result) {
 
                 $selected = $value == $result->id ? ' selected="selected" ' : '';
 
@@ -849,11 +852,11 @@ if (!function_exists('event_espresso_price_dropdown')) {
                         $surcharge = " + {$result->surcharge}% " . $surcharge_text;
                     }
                 }
-
+				
                 //Using price ID
-                echo '<option' . $selected . ' value="' . $result->id . '|' . $result->price_type . '">' . $result->price_type . ' (' . $org_options['currency_symbol'] . number_format($result->event_cost, 2) . $message . ') ' . $surcharge . ' </option>';
+                $html .= '<option' . $selected . ' value="' . $result->id . '|' . $result->price_type . '">' . $result->price_type . ' (' . $org_options['currency_symbol'] . number_format($result->event_cost, 2) . $message . ') ' . $surcharge . ' </option>';
             }
-            echo '</select><input type="hidden" name="price_select" id="price_select-' . $event_id . '" value="true">';
+            $html .= '</select><input type="hidden" name="price_select" id="price_select-' . $event_id . '" value="true">';
         } else if ($wpdb->num_rows == 1) {
             foreach ($results as $result) {
 
@@ -874,15 +877,15 @@ if (!function_exists('event_espresso_price_dropdown')) {
                     }
                 }
                 $message = isset($message) ? $message : '';
-                echo '<span class="event_price_label">' . __('Price:', 'event_espresso') . '</span> <span class="event_price_value">' . $org_options['currency_symbol'] . number_format($result->event_cost, 2) . $message . $surcharge . '</span>';
-                echo '<input type="hidden" name="price_id' . $multi_name_adjust . '" id="price_id-' . $result->id . '" value="' . $result->id . '">';
+                $html .= '<span class="event_price_label">' . __('Price:', 'event_espresso') . '</span> <span class="event_price_value">' . $org_options['currency_symbol'] . number_format($result->event_cost, 2) . $message . $surcharge . '</span>';
+                $html .= '<input type="hidden" name="price_id' . $multi_name_adjust . '" id="price_id-' . $result->id . '" value="' . $result->id . '">';
             }
         } else if ($wpdb->num_rows == 0) {
-            echo '<span class="free_event">' . __('Free Event', 'event_espresso') . '</span>';
-            echo '<input type="hidden" name="payment' . $multi_name_adjust . '" id="payment-' . $event_id . '" value="' . __('free event', 'event_espresso') . '">';
+            $html .= '<span class="free_event">' . __('Free Event', 'event_espresso') . '</span>';
+            $html .= '<input type="hidden" name="payment' . $multi_name_adjust . '" id="payment-' . $event_id . '" value="' . __('free event', 'event_espresso') . '">';
         }
+		return $html;
     }
-
 }
 
 //This function gets the first price id associated with an event and displays a hidden field.
@@ -917,7 +920,7 @@ function espresso_registration_footer() {
     global $espresso_premium, $org_options;
     $url = (!isset($org_options['affiliate_id']) || $org_options['affiliate_id'] == '' || $org_options['affiliate_id'] == 0) ? 'http://eventespresso.com/' : 'https://www.e-junkie.com/ecom/gb.php?cl=113214&c=ib&aff=' . $org_options['affiliate_id'];
     if ($espresso_premium != true || (isset($org_options['show_reg_footer']) && $org_options['show_reg_footer'] == 'Y')) {
-        echo '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></p>';
+        return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></p>';
     }
 }
 
@@ -992,22 +995,23 @@ if (!function_exists('event_espresso_add_question_groups')) {
                         $questions_displayed[] = $question->id;
 
                         //if new group, close fieldset
-                        echo ($group_name != '' && $group_name != $question->group_name) ? '</div>' : '';
+                        $html .= ($group_name != '' && $group_name != $question->group_name) ? '</div>' : '';
 
                         if ($group_name != $question->group_name) {
-                            echo '<div class="event_questions" id="' . $question->group_identifier . '">';
-                            echo $question->show_group_name != 0 ? "<h4 class=\"reg-quest-title section-title\">$question->group_name</h4>" : '';
-                            echo $question->show_group_description != 0 && true == $question->group_description ? "<p class='quest-group-descript'>$question->group_description</p>" : '';
+                            $html .= '<div class="event_questions" id="' . $question->group_identifier . '">';
+                            $html .= $question->show_group_name != 0 ? "<h4 class=\"reg-quest-title section-title\">$question->group_name</h4>" : '';
+                            $html .= $question->show_group_description != 0 && true == $question->group_description ? "<p class='quest-group-descript'>$question->group_description</p>" : '';
                             $group_name = $question->group_name;
                         }
 
-                        event_form_build($question, $answer, $event_id, $multi_reg, $meta);
+                       	$html .=  event_form_build($question, $answer, $event_id, $multi_reg, $meta);
                         $counter++;
-                        echo $counter == $num_rows ? '</div>' : '';
+                        $html .= $counter == $num_rows ? '</div>' : '';
                     }
                 }
             }//end questions display
         }
+		return $html;
     }
 
 }
@@ -1032,6 +1036,18 @@ if (!function_exists('espresso_show_social_media')) {
         }
     }
 
+}
+
+//Simple function to return the meta an event, venue, staff etc.
+function ee_show_meta($meta, $name){
+	//$meta = array($meta);
+	 foreach ($meta as $key=>$value){
+		 switch($key){
+			case $name:
+				 return $value;
+			break;
+		 }
+	 }
 }
 
 //This function returns an array of category data based on an event id
