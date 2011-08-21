@@ -72,26 +72,39 @@ function attendee_edit_record() {
 						ORDER BY qg.id, q.sequence ASC";
             $questions = $wpdb->get_results($q_sql_1);
 			/* DEBUG */
-			//echo '<p>'.print_r($questions).'</p>';
-			//echo '<p>'.$q_sql_1.'</p>';
+//			echo "<pre>";
+//			echo '<p>'.print_r($questions).'</p>';
+//			echo '<p>'.$q_sql_1.'</p>';
 			/* END DEBUG */
 			
-			$a_sql ="SELECT id, question_id, answer FROM " . EVENTS_ANSWER_TABLE . " at WHERE at.attendee_id = '" . $id . "' ";
+			$a_sql ="SELECT question_id, answer FROM " . EVENTS_ANSWER_TABLE . " ans WHERE ans.attendee_id = '" . $id . "' ";
 			/* DEBUG */	
-			//echo '<p>'.$a_sql.'</p>';
-           /* END DEBUG */
+//			echo '<p>'.$a_sql.'</p>';
+           	/* END DEBUG */
 		   
-		    $answers = $wpdb->get_results($a_sql, OBJECT_K);
+		    $answers = $wpdb->get_results($a_sql);
+			/* DEBUG */
+//			echo "<pre>";
+//			echo 'print_r($answers) = <br/>';
+//			print_r($answers);
+			/* END DEBUG */
 			
+			$answer_a = array();
 			foreach ( $answers as $answer ) {
 				/* DEBUG */	
 				//echo '<p>$answers[question_id] = '.$answer->question_id.'</p>';
-				$answer_a[]=$answer->question_id;
+				array_push($answer_a,$answer->question_id);
 			}
 			
 			/* DEBUG */	
-			//echo '<p> print_r($answers) = <br />'.var_dump($answers).'</p>';
-			//echo '<p> print_r($questions) = <br />'.print_r($questions).'</p>';
+//			echo "<pre>";			
+//			echo 'print_r($answers) = <br />';
+//			print_r($answers);
+//			echo 'print_r($questions) = <br />';
+//			print_r($questions);
+//			echo 'print_r($answer_a) = <br/>';
+//			print_r($answer_a);
+//			exit();
             /* END DEBUG */
 			
 			if ( $questions ){
