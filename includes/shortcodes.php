@@ -878,3 +878,31 @@ if (!function_exists('espresso_venue_event_list_sc')) {
 	}
 }
 add_shortcode('ESPRESSO_VENUE_EVENTS', 'espresso_venue_event_list_sc');
+
+function ee_show_meta_sc($atts){
+	global $event_meta, $venue_meta, $all_meta;
+		
+	if (empty($atts))
+		return;
+		
+	extract($atts);	
+	
+	if (!isset($name))
+		return;
+	
+	switch ($type){	
+		
+		case 'venue':	
+		default:
+			return ee_show_meta($venue_meta, $name);
+		
+		case 'event':	
+			return ee_show_meta($event_meta, $name);
+		
+		case 'all':
+		default:
+			return ee_show_meta($all_meta, $name);
+	}
+		
+}
+add_shortcode('EE_META', 'ee_show_meta_Sc');
