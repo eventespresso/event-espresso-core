@@ -23,7 +23,8 @@ if (!function_exists('espresso_event_export')){
 			$month_r = $pieces[1];
 		}
 		$group = '';
-		if (function_exists('espresso_member_data')&&espresso_member_data('role')=='espresso_group_admin'){
+		if (function_exists('espresso_member_data')&&espresso_member_data('role')=='espresso_group_admin')
+		{
 			$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 			$group = unserialize($group);
 			$sql = "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
@@ -31,24 +32,29 @@ if (!function_exists('espresso_event_export')){
 			$sql .= " e.address, e.address2, e.city, e.state, e.zip, e.country, ";
 			$sql .= " e.venue_title, e.phone, e.wp_user ";
 			$sql .= " FROM ". EVENTS_DETAIL_TABLE ." e ";
-			if ($_REQUEST[ 'category_id' ] !=''){
+			if ($_REQUEST[ 'category_id' ] !='')
+			{
 				$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 				$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
 			}
-			if ($group !=''){
+			if ($group !='')
+			{
 				$sql .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 				$sql .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			}
 			$sql .= ($_POST[ 'event_status' ] !='' && $_POST[ 'event_status' ] !='IA')  ? " WHERE event_status = '" . $_POST[ 'event_status' ] ."' ":" WHERE event_status != 'D' ";
 			$sql .= $_REQUEST[ 'category_id' ] !='' ? " AND c.id = '" . $_REQUEST[ 'category_id' ] . "' " : '';
 			$sql .= $group !='' ? " AND l.locale_id IN (" . implode(",",$group) . ") " : '';
-			if ($_POST[ 'month_range' ] !=''){
+			if ($_POST[ 'month_range' ] !='')
+			{
 				$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($year_r. '-' .$month_r . '-01'))."' AND '".date('Y-m-d', strtotime($year_r . '-' .$month_r. '-31'))."' ";
 			}		
-			if ($_REQUEST[ 'today' ]=='true'){
+			if ($_REQUEST[ 'today' ]=='true')
+			{
 				$sql .= " AND start_date = '" . $curdate ."' ";
 			}			
-			if ($_REQUEST[ 'this_month' ]=='true'){
+			if ($_REQUEST[ 'this_month' ]=='true')
+			{
 				$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
 			}
 			$sql .= ") UNION ";
@@ -58,29 +64,35 @@ if (!function_exists('espresso_event_export')){
 		$sql .= " e.address, e.address2, e.city, e.state, e.zip, e.country, ";
 		$sql .= " e.venue_title, e.phone, e.wp_user ";
 		$sql .= " FROM ". EVENTS_DETAIL_TABLE ." e ";
-		if ($_REQUEST[ 'category_id' ] !=''){
+		if ($_REQUEST[ 'category_id' ] !='')
+		{
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
 		}
 		$sql .= ($_POST[ 'event_status' ] !='' && $_POST[ 'event_status' ] !='IA')  ? " WHERE event_status = '" . $_POST[ 'event_status' ] ."' ":" WHERE event_status != 'D' ";
 		$sql .= $_REQUEST[ 'category_id' ] !='' ? " AND c.id = '" . $_REQUEST[ 'category_id' ] . "' " : '';
-		if ($_POST[ 'month_range' ] !=''){
+		if ($_POST[ 'month_range' ] !='')
+		{
 			$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($year_r. '-' .$month_r . '-01'))."' AND '".date('Y-m-d', strtotime($year_r . '-' .$month_r. '-31'))."' ";
 		}		
-		if ($_REQUEST[ 'today' ]=='true'){
+		if ($_REQUEST[ 'today' ]=='true')
+		{
 			$sql .= " AND start_date = '" . $curdate ."' ";
 		}			
-		if ($_REQUEST[ 'this_month' ]=='true'){
+		if ($_REQUEST[ 'this_month' ]=='true')
+		{
 			$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
 		}
-		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
+		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') )
+		{
 			$sql .= " AND wp_user = '" . espresso_member_data('id') ."' ";
 		}
 		ob_start();
 		$sql .= ") ORDER BY start_date ASC";
 		$filename = $_REQUEST['all_events'] == "true"? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($event_name);
 		$filename = $filename . "-" . $today ;
-		switch ($_REQUEST['type']) {
+		switch ($_REQUEST['type']) 
+		{
 			case "csv" :
 				$st = "";
 				$et = ",";
@@ -103,7 +115,8 @@ if (!function_exists('espresso_event_export')){
 			break;
 		}
 		$events = $wpdb->get_results($sql);
-		foreach ($events as $event){
+		foreach ($events as $event)
+		{
 			$event_id= $event->event_id;
 			$event_name=stripslashes_deep($event->event_name);
 			$event_identifier=stripslashes_deep($event->event_identifier);
@@ -140,10 +153,10 @@ if (!function_exists('espresso_event_export')){
 					$user_co_org = $user_company !=''?$user_company:$user_organization;
 					echo $s . (espresso_user_meta($wp_user, 'user_firstname') !=''?espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname'):espresso_user_meta($wp_user, 'display_name'));
 			}
-			echo $s . 	strip_tags($status['display']) . 
-						$s . str_replace('/',' of ', get_number_of_attendees_reg_limit($event_id) );
+			echo $s . 	strip_tags($status['display']) . $s . str_replace('/',' of ', get_number_of_attendees_reg_limit($event_id) );
 
-			switch ($_REQUEST['type']) {
+			switch ($_REQUEST['type']) 
+			{
 				case "csv" : 	echo "\r\n";		break;
 				default :		echo $et . "\r\n";	break;
 			}
@@ -177,7 +190,10 @@ if (!function_exists('espresso_export_stuff')){
 				if (isset($event_meta['add_attendee_question_groups']))
 				{
 					$add_attendee_question_groups = $event_meta['add_attendee_question_groups'];
-					$question_groups = array_unique(array_merge((array) $question_groups, (array) $add_attendee_question_groups));
+					if ( !empty($add_attendee_question_groups) )
+					{
+						$question_groups = array_unique(array_merge((array) $question_groups, (array) $add_attendee_question_groups));
+					}
 				}
 				switch ($_REQUEST['action']) {
 					case "event";
@@ -192,12 +208,13 @@ if (!function_exists('espresso_export_stuff')){
 							$questions_in = '';
 							$question_sequence = array();
 		
-							foreach ($question_groups as $g_id) 
+							/*foreach ($question_groups as $g_id) 
 							{
 								$questions_in .= $g_id . ',';
-							}
+							}*/
+							$questions_in = implode(",",$question_groups);
 		
-							$questions_in = substr($questions_in,0,-1);
+							/*$questions_in = substr($questions_in,0,-1);*/
 							$group_name = '';
 							$counter = 0;
 		
@@ -375,8 +392,6 @@ if (!function_exists('espresso_export_stuff')){
 	
 	
 								$answers = $wpdb->get_results("SELECT a.question_id, a.answer FROM " . EVENTS_ANSWER_TABLE . " a WHERE question_id IN ($question_filter) AND attendee_id = '" . $participant->id . "'", OBJECT_K);
-															//echo "<pre>", print_r($answers), "</pre>";
-															//echo "<pre>", print_r($question_list), "</pre>";
 								foreach($question_list as $k=>$v) 
 								{
 									/*
