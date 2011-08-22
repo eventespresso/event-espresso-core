@@ -138,7 +138,7 @@ if (!function_exists('register_attendees')) {
 						'venue_state' => $event->venue_state,
 						'venue_country' => $event->venue_country,
 					) ;
-					$venue_meta = array_merge(unserialize( $event->venue_meta), $add_venue_meta);
+					$venue_meta = (isset($event->venue_meta) && $event->venue_meta !='')  && (isset($add_venue_meta) && $add_venue_meta !='') ? array_merge(unserialize( $event->venue_meta), $add_venue_meta):'';
 					//print_r($venue_meta);
                 }
 
@@ -203,7 +203,7 @@ if (!function_exists('register_attendees')) {
 			
 			
 			global $all_meta;
-				$all_meta = array(
+			$all_meta = array(
 					'event_name'=>stripslashes_deep($event_name),
 					'event_desc'=>stripslashes_deep($event_desc), 
 					'event_address'=>$address,
@@ -218,8 +218,8 @@ if (!function_exists('register_attendees')) {
 					'google_map_link'=>$google_map_link,
 					'price'=> event_espresso_price_dropdown($event_id, 0),
 					'registration'=>event_espresso_add_question_groups($question_groups),
-					//'additional_attendees'=>$allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces):'<input type="hidden" name="num_people" id="num_people-'.$event_id.'" value="1">',
-				);
+					'additional_attendees'=>$allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta):'<input type="hidden" name="num_people" id="num_people-'.$event_id.'" value="1">',
+			);
 			//print_r($all_meta);
             
 			if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
@@ -271,4 +271,5 @@ if (!function_exists('register_attendees')) {
         //echo '<p>Database Queries: ' . get_num_queries() .'</p>';
         echo espresso_registration_footer();
     }
+
 }
