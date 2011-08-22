@@ -20,7 +20,21 @@
     				</p>
 					</div>
     </div>
-
-
+			<?php ########## help box ########## ?>
+			<div id="alternative_styles_info" class="pop-help" >
+       <div class="TB-ee-frame">
+    		<h2><?php _e('Select Alternative stylesheets', 'event_espresso'); ?></h2>
+						<?php if($disabled) : ?>
+    			<em class="important">
+							<?php _e('You currently either have <i>Enable Built in style sheets</i> disabled or have a copy of the default espresso stylesheet copied to your uploads folder, and the alternative stylesheets selections are therefore disabled.', 'event_espresso'); ?>
+    			</em>	
+						<?php endif; ?>					
+        	<p><?php _e('These two drop down options provide a choice of stylesheets with various stylings.', 'event_espresso'); ?></p>
+    			<p><?php _e('These options are available as long as you have not copied the main stylesheet <i>event_espresso_styles.css</i> to the uploads folder to customize yourself.', 'event_espresso'); ?></p>
+    			<p><?php _e('By default the general espresso stylesheet will be loaded if you have selected <i>Yes</i> in the <i>Enable built in style sheets</i> option, You may then choose to select from one of the alternative base stylesheets along with an optional sheet to select a color scheme.', 'event_espresso'); ?></p>
+						<p><?php _e('These selections replace the deafault espresso stylesheet and offer enhanced styling for your event pages details', 'events_espreso') ?></p>
+          
+					</div>
+    </div>
 
 </div>

@@ -456,6 +456,7 @@ function events_data_tables_install () {
 				'use_personnel_manager' => 'Y',
 				'use_venue_manager' => 'Y',
 				'enable_default_style' => 'Y',
+				'selected_style' => 'event_espresso_style.css',
 				'show_pending_payment_options' => 'Y',
 				'show_reg_footer' => 'Y'
 			);

@@ -8,8 +8,10 @@ function event_espresso_manage_templates() {
         $org_options['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
         $org_options['display_address_in_regform'] = $_POST['display_address_in_regform'];
 					$org_options['use_custom_post_types'] = $_POST['use_custom_post_types'];
-					$org_options['enable_default_style'] = $_POST['enable_default_style'];	
-        
+					$org_options['enable_default_style'] = $_POST['enable_default_style'];
+					$org_options['selected_style'] = $_POST['selected_style'];					
+					$org_options['style_color'] = $_POST['style_color'];	
+					
 					update_option('events_organization_settings', $org_options);
         echo '<div id="message" class="updated fade"><p><strong>' . __('Template details saved.', 'event_espresso') . '</strong></p></div>';
     }
@@ -72,6 +74,10 @@ function event_espresso_manage_templates() {
 																	<?php echo select_input('enable_default_style', $values, isset($org_options['enable_default_style']) ? $org_options['enable_default_style'] : ''); ?> 
 																<a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=enable_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
 															</li>
+															
+															<li>
+																<?php include(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event_styles_settings.php');  ?>
+															</li>															
 														</ul>
 														<p>
 															<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
