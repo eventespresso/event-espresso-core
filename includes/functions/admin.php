@@ -150,7 +150,7 @@ function event_espresso_run_install($table_name, $table_version, $sql) {
 
     $wp_table_name = $wpdb->prefix . $table_name;
 
-    if ($wpdb->get_var("SHOW TABLES LIKE '" . $table_name . "'") != $table_name) {
+    if ($wpdb->get_var("SHOW TABLES LIKE '" . $wp_table_name . "'") != $wp_table_name) {
 
         $sql_create_table = "CREATE TABLE " . $wp_table_name . " ( " . $sql . " ) DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
 
@@ -1441,7 +1441,7 @@ add_action( 'wp_footer', 'espresso_performance', 20 );
 function espresso_admin_performance($show=0) {
 	if($show==0)
 		return;
-		
+
 	global $wpdb, $EZSQL_ERROR;
 		$out = '';
 		$total_time = 0;
@@ -1503,9 +1503,9 @@ function espresso_admin_performance($show=0) {
 		echo $out;
 }
 
-add_filter('admin_footer_text', 'espresso_admin_performance'); 
+add_filter('admin_footer_text', 'espresso_admin_performance');
 
 function espresso_admin_footer () {
 	echo 'Event Registration and Ticketing Powered by <a href="http://eventespresso.com/" title="Event Registration Powered by Event Espresso" target="_blank">'.EVENT_ESPRESSO_POWERED_BY.'</a>';
 }
-add_filter('admin_footer_text', 'espresso_admin_footer'); 
+add_filter('admin_footer_text', 'espresso_admin_footer');

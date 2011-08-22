@@ -273,7 +273,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 
     function event_espresso_additional_attendees($event_id=0, $additional_limit=2, $available_spaces=999, $label='', $show_label = true, $event_meta = '') {
         $event_id = $event_id == 0 ? $_REQUEST['event_id'] : $event_id;
-        
+
 		if ($event_meta =='' && ($event_id != '' || $event_id != 0)){
             $event_meta = event_espresso_get_event_meta($event_id);
 		}
@@ -323,7 +323,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 <?php
 			$buffer = ob_get_contents();
 			ob_end_clean();
-			
+
         }
 		return $html.$buffer;
     }
@@ -345,15 +345,15 @@ if (!function_exists('event_espresso_additional_attendees')) {
 				$html .= '<option value="'.$i.'">'.$i.'</option>';
 			}
 			$html .= '</select><input type="hidden" name="espresso_addtl_limit_dd" value="true">';
-			
+
 		} else {
                     while (($i <= $additional_limit) && ($i < $available_spaces)) {
                         $i++;
                     }
                     $i = $i - 1;
-                    
+
              $html .= '<span class="event_form_field additional_header" id="additional_header"><a onclick="return false;" href="#">'.__('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso').'</a> </span>';
-             
+
               $html .= '<div id="additional_attendees">';
               $html .= '<div class="clone espresso_add_attendee">';
               $html .= '<p><label for="x_attendee_fname">'.__('First Name', 'event_espresso').':</label> <input type="text" name="x_attendee_fname[]" class="input"/></p>';
@@ -369,7 +369,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 			  $html .= '$jaer(function(){var removeLink = \'<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ ';
 			  $html .= '$jaer(this).remove() }); return false"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL . '"images/icons/remove.gif" alt="'.__('Remove Attendee', 'event_espresso').'" /></a>$jaer(\'a.add\').relCopy({limit:'.$i.', append: removeLink});$jaer("#additional_attendees").hide();';
 			  $html .= '$jaer("#additional_header").click(function(){$jaer(this).next("#additional_attendees").slideToggle(500);});});});</script>';
-          
+
         }
 		return $html;
     }
@@ -894,7 +894,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
         if ($wpdb->num_rows > 1) {
             $html .= $label == 1 ? '<label for="event_cost">' . __('Choose an Option: ', 'event_espresso') . '</label>' : '';
             $html .= '<select name="price_option' . $multi_name_adjust . '" id="price_option-' . $event_id . '">';
-            
+
 			foreach ($results as $result) {
 
                 $selected = $value == $result->id ? ' selected="selected" ' : '';
@@ -915,7 +915,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
                         $surcharge = " + {$result->surcharge}% " . $surcharge_text;
                     }
                 }
-				
+
                 //Using price ID
                 $html .= '<option' . $selected . ' value="' . $result->id . '|' . $result->price_type . '">' . $result->price_type . ' (' . $org_options['currency_symbol'] . number_format($result->event_cost, 2) . $message . ') ' . $surcharge . ' </option>';
             }
@@ -1050,6 +1050,7 @@ if (!function_exists('event_espresso_add_question_groups')) {
             $questions = $wpdb->get_results($sql);
 
             $num_rows = $wpdb->num_rows;
+            $html = '';
 
             if ($num_rows > 0) {
                 $questions_displayed = array();
