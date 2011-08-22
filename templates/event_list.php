@@ -92,35 +92,63 @@ if (!function_exists('event_espresso_get_event_details')) {
 			$allow_overflow = $event->allow_overflow;
 			$overflow_event_id = $event->overflow_event_id;
 			$event_desc = array_shift(explode('<!--more-->', $event_desc));
+			global $event_meta;
+			$event_meta = unserialize($event->event_meta);
 			
 			//Venue information
-			if (isset($org_options['use_venue_manager'])&&$org_options['use_venue_manager'] =='Y'){
-				$event_address = $event->venue_address;
-				$event_address2 = $event->venue_address2;
-				$event_city = $event->venue_city;
-				$event_state = $event->venue_state;
-				$event_zip = $event->venue_zip;
-				$event_country = $event->venue_country;
-				
-				//Leaving these variables intact, just in case people wnat to use them
-				$venue_title = $event->venue_name;
-				$venue_address = $event->venue_address;
-				$venue_city = $event->venue_city;
-				$venue_state = $event->venue_state;
-				$venue_zip = $event->venue_zip;
-				$venue_country = $event->venue_country;
-				$venue_meta = $event->venue_meta;
+			if ($org_options['use_venue_manager'] == 'Y') {
+                    $event_address = $event->venue_address;
+					$event_address2 = $event->venue_address2;
+                    $event_city = $event->venue_city;
+                    $event_state = $event->venue_state;
+                    $event_zip = $event->venue_zip;
+                    $event_country = $event->venue_country;
+					
+					//Leaving these variables intact, just in case people want to use them
+					$venue_title = $event->venue_name;
+					$venue_address = $event->venue_address;
+					$venue_address2 = $event->venue_address2;
+					$venue_city = $event->venue_city;
+					$venue_state = $event->venue_state;
+					$venue_zip = $event->venue_zip;
+					$venue_country = $event->venue_country;
+					global $venue_meta;
+					$add_venue_meta = array(
+						'venue_title' => $event->venue_name, 
+						'venue_address' => $event->event_address, 
+						'venue_address2' => $event->venue_address2,
+						'venue_city' => $event->venue_city,
+						'venue_state' => $event->venue_state,
+						'venue_country' => $event->venue_country,
+					) ;
+					$venue_meta = (isset($event->venue_meta) && $event->venue_meta !='')  && (isset($add_venue_meta) && $add_venue_meta !='') ? array_merge(unserialize( $event->venue_meta), $add_venue_meta):'';
+					//print_r($venue_meta);
 			}
 			
-			//Enable these variables for testing or to turn them on permanently.
-			//$org_options['display_short_description_in_event_list']='Y';
-			//$org_options['display_address_in_event_list']='Y';
-	
 			//Address formatting
 			$location = ($event_address != '' ? $event_address :'') . ($event_address2 != '' ? '<br />' . $event_address2 :'') . ($event_city != '' ? '<br />' . $event_city :'') . ($event_state != '' ? ', ' . $event_state :'') . ($event_zip != '' ? '<br />' . $event_zip :'') . ($event_country != '' ? '<br />' . $event_country :'');
 			
 			//Google map link creation
 			$google_map_link = espresso_google_map_link(array( 'address'=>$event_address, 'city'=>$event_city, 'state'=>$event_state, 'zip'=>$event_zip, 'country'=>$event_country, 'text'=> 'Map and Directions', 'type'=> 'text') );
+			global $all_meta;
+			$all_meta = array(
+					'event_name'=>stripslashes_deep($event_name),
+					'event_desc'=>stripslashes_deep($event_desc), 
+					'event_address'=>$address,
+					'event_address2'=>$address2,
+					'event_city'=>$city,
+					'event_state'=>$state,
+					'event_zip'=>$event->zip,
+					'event_country'=>$event->country,
+					'start_date'=>event_date_display($start_date, get_option('date_format')),
+					'end_date'=>event_date_display($end_date, get_option('date_format')),
+					'time'=>event_espresso_time_dropdown($event_id, 0),
+					'google_map_link'=>$google_map_link,
+					'price'=> event_espresso_price_dropdown($event_id, 0),
+					'registration'=>event_espresso_add_question_groups($question_groups),
+					'additional_attendees'=>$allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta):'<input type="hidden" name="num_people" id="num_people-'.$event_id.'" value="1">',
+			);
+			//print_r($all_meta);
 			
 			//These variables can be used with other the espresso_countdown, espresso_countup, and espresso_duration functions and/or any javascript based functions.
 			$start_timestamp = espresso_event_time($event_id, 'start_timestamp');
