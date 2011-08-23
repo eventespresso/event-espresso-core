@@ -6,7 +6,7 @@
 if (!function_exists('register_attendees')) {
 
     function register_attendees($single_event_id = NULL, $event_id_sc =0) {
-        if (isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') {
+        if ( (isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true') ) {
             require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
             attendee_edit_record();
             return;
