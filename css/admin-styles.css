@@ -17,10 +17,11 @@
 * -1.7 Categories
 * -1.8 Disounts
 * -1.9 Email manager
-* -1.10 Calendar settings
-* -1.11 Payments Settings
-* -1.12 Addons
-* -1.13 Help/Support
+* -1.10 Template Settings
+* -1.11 Calendar Settings
+* -1.12 Payments Settings
+* -1.13 Addons
+* -1.14 Help/Support
 * 2. Tables - gen styles
 * -2.1	event management table
 * -2.2  Assorted styles  - requires defining better
@@ -1249,6 +1250,12 @@ label.error {
 	display: block;
 	margin: 8px 0;
 }
+select.small {width:25px;}
+select.med {width: 100px}
+select.wide {width: 175px;}
+/*___ General settings ___*/
+
+
 /*__ add_new _event form elements __*/
 
 #event-date-time fieldset {
@@ -1316,6 +1323,8 @@ label.error {
 .disp-desc {
 	margin-right: 10px;
 }
+/*___ Template Settings ___*/
+
 /*___ Form Icons / Buttons ___*/
 
 .view_btn {

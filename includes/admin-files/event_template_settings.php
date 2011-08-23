@@ -1,6 +1,6 @@
         <li>
           <label for="display_short_description_in_event_list">
-            <?php _e('Display short descriptions in the event listings? (Be sure to use the "More..." tag in your event description)','event_espresso'); ?>
+            <?php _e('Display short descriptions in the event listings? <br /><em>(Be sure to use the "More..." tag in your event description)</em>','event_espresso'); ?>
           </label>
           <?php echo select_input('display_short_description_in_event_list', $values, isset($org_options['display_short_description_in_event_list']) ? $org_options['display_short_description_in_event_list'] : ''); ?>
 					</li>
@@ -23,7 +23,7 @@
         
 					<li>
           <label for="display_address_in_regform">
-            <?php _e('Display the address in the registration form? Disable the address if you are using the venue manager shortcodes in your event description.','event_espresso'); ?>
+            <?php _e('Display the address in the registration form? Disable the address if you are <br />using the venue manager shortcodes in your event description.','event_espresso'); ?>
           </label>
           <?php echo select_input('display_address_in_regform', $values, isset($org_options['display_address_in_regform']) ? $org_options['display_address_in_regform'] : ''); ?> 
 					</li>

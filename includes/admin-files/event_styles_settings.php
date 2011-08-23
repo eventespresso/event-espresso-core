@@ -52,7 +52,7 @@ $files_color = array();
 <h4 <?php echo $styled ?>><?php _e('Select Alternative Espresso Styles ', 'event_espresso'); ?><a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a></h4>
 	<p>
 	<label for="base-style-select" <?php echo $styled ?>><?php _e('Select Base stylesheet', 'event_espresso');  ?></label>
-		<select id="base-style-select"  <?php echo $disabled ?> name="selected_style">
+		<select id="base-style-select" class="wide" <?php echo $disabled ?> name="selected_style">
 			
 			<option <?php is_selected($fname) ?> value="event_espresso_style.css">Default style - generic</option>
 				
@@ -65,7 +65,7 @@ $files_color = array();
 
 	<p>
 	<label for="style-color" <?php echo $styled ?>><?php _e('Select optional colors', 'event_espresso');  ?></label>
-		<select id="style-color"  <?php echo $disabled ?> name="style_color">
+		<select id="style-color" class="wide" <?php echo $disabled ?> name="style_color">
 			
 			<option <?php is_selected($fname_color) ?> value=""> - None - </option>
 				
