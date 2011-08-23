@@ -501,8 +501,6 @@ function events_data_tables_install() {
     //Question Group relational database install end
     //Answers database install
     $table_name = "events_answer";
-    global $wpdb;
-    $wpdb->query("ALTER TABLE " . $wpdb->prefix . $table_name . " DROP PRIMARY KEY ");
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
 			registration_id varchar(23) NOT NULL,
 			attendee_id int(11) NOT NULL default '0',
