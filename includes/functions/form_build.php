@@ -26,7 +26,7 @@ if (!function_exists('event_form_build')) {
 
             $answer = empty($answer[$event_id]['event_attendees'][$price_id][$attendee_number][$field_name]) ? '' : $answer[$event_id]['event_attendees'][$price_id][$attendee_number][$field_name];
         }
-		
+
 		$required_label = isset($required_label) ? $required_label:'';
 
         $label = '<label for="' . $field_name . '">' . $question->question . $required_label . '</label> ';
@@ -40,10 +40,10 @@ if (!function_exists('event_form_build')) {
 $html ='';
         switch ($question->question_type) {
             case "TEXT" :
-                if (get_option('events_members_active') == 'true' && $_REQUEST['event_admin_reports'] != 'add_new_attendee') {
+                if (get_option('events_members_active') == 'true' && (empty($_REQUEST['event_admin_reports']) || $_REQUEST['event_admin_reports'] != 'add_new_attendee')) {
                     switch ($question->system_name) {
                         case $question->system_name == 'fname':
-                            $answer = $um_fname;
+                            $answer = $current_user->user_firstname;
                             $disabled = $answer == '' ? '' : 'disabled="disabled"';
                             $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
                             break;
@@ -98,7 +98,7 @@ $html ='';
                 $answers = explode(",", $answer);
               	$html .= '<fieldset class="single-radio">';
 								  $html .= '<legend class="event_form_field">' . $question->question . '</legend>';
-                
+
                 $html .= '<ul class="event_form_field">';
                 foreach ($values as $key => $value) {
                     //old way $checked = in_array ( $value, $answers ) ? ' checked="checked"' : "";
@@ -157,14 +157,14 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
     if ($question->required == "Y") {
         $required = ' class="required"';
     }
-	
+
 	//echo '<p>id = '.$question->id.'</p>';
 	//echo '<p>q_id = '.$question->q_id.'</p>';
 	//Sometimes the answer id is passed as the question id, so we need to make sure that we get the right question id.
-	
+
 	$answer_id = $question->id;
 	//echo $answer_id;
-	
+
 	if (isset($question->q_id))
 		$question->id = $question->q_id;
 	if ($question->admin_only=='Y' && $show_admin_only == false){
