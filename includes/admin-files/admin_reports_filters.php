@@ -36,9 +36,10 @@ if ($espresso_premium != true)
           <?php _e('View Report', 'event_espresso'); ?>
           </a></li>
         <?php }?>
-        <li> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=attendee_filter_info" title="<?php _e('Numbers not matching up?', 'event_espresso'); ?>"><?php echo '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" />'; ?></a></li>
+        <?php /*?><li> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=attendee_filter_info" title="<?php _e('Numbers not matching up?', 'event_espresso'); ?>"><?php echo '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" />'; ?></a></li><?php */?>
       </ul>
       <div style="clear:both"></div>
+      
       <?php if ($_REQUEST['page'] == 'events') { ?>
 <div class="tablenav">
   <div class="alignleft actions">
@@ -95,8 +96,8 @@ if ($espresso_premium != true)
     </form>
   </div>
 </div>
-<div id="attendee_filter_info" style="display:none">
-        <h2><?php _e('What Are These Numbers?', 'event_espresso'); ?></h2><p><?php _e('These numbers only represent the total number of completed or pending payments and may not reflect the total number of "registered" attendees', 'event_espresso'); ?>.</p>
-    </div>
+<?php /*?><div id="attendee_filter_info" style="display:none">
+        <h2><?php _e('Ateendee Filters ', 'event_espresso'); ?></h2><p><?php _e('Use these filters to show the amount of attndee', 'event_espresso'); ?>.</p>
+    </div><?php */?>
 <?php
 }
