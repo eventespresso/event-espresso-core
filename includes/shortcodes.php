@@ -566,7 +566,7 @@ if (!function_exists('espresso_staff_sc')) {
 		//Image class
 		$image_class = isset($image_class) ? 'class="'.$image_class.'"' : 'class="staff_image"';
 		$image_wrapper_class = isset($image_wrapper_class) ? 'class="'.$image_wrapper_class.'"' : 'class="image_wrapper"';
-		$image_wrapper_start  = isset($image_wrapper) ? '<'.$image_wrapper.' '.$image_wrapper_class: '<p '.$image_wrapper_class;
+		$image_wrapper_start  = isset($image_wrapper) ? '<'.$image_wrapper.' '.$image_wrapper_class: '<p '.$image_wrapper_class . '>';
 		$image_wrapper_end = isset($image_wrapper) ? '</'.$image_wrapper.'>' : '</p>';
 
 		//Inside wrappers
