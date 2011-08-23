@@ -8,17 +8,22 @@ function isEmptyArray($array) {
 
 function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $type='', $text='') {
     global $org_options;
+	$html ='';
     if ($text == '')
         $text = __('Edit Attendee', 'event_espresso');
     switch ($type) {
         case'admin':
-            return '<a href="' . get_admin_url() . 'admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id . '">' . $text . '</a>';
+            $html .= '<a href="' . get_admin_url() .'admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id .'&registration_id=' . $registration_id .  '">' . $text . '</a>';
             break;
         case'attendee':
         default:
-            return '<a  href="' . home_url() . '?page_id=' . $org_options['event_page_id'] . '&registration_id=' . $registration_id . '&amp;id=' . $attendee_id . '&amp;regevent_action=register&form_action=edit_attendee&single=true" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
+			$array = array('r_id'=>$registration_id, 'id'=>$attendee_id, 'event_id'=>$event_id, 'edit_attendee'=>'true','single'=>'true' );
+			$url = add_query_arg($array, get_permalink($org_options['event_page_id']));
+			$html .= '<a  href="' . $url . '" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
+			//$html .= '<a  href="' . home_url() . '?page_id=' . $org_options['event_page_id'] . '&registration_id=' . $registration_id . '&amp;id=' . $attendee_id . '&amp;regevent_action=register&form_action=edit_attendee&single=true" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
             break;
     }
+	return  $html;
 }
 
 function espresso_reg_url($event_id=0) {
@@ -27,10 +32,10 @@ function espresso_reg_url($event_id=0) {
         //return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
         $new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
         return $new_url;
-    } else {
-        echo 'No event id supplied';
+    }/* else {
+        echo 'No event id supplied';*/
         return;
-    }
+    //}
 }
 
 function espresso_getTinyUrl($url) {
