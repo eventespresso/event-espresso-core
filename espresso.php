@@ -1,4 +1,5 @@
 <?php
+
 /*
   Plugin Name: Event Espresso
   Plugin URI: http://eventespresso.com/
@@ -80,12 +81,11 @@ $page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
 if (isset($_REQUEST['regevent_action']) && isset($org_options['event_ssl_active']) && $org_options['event_ssl_active'] == 'Y' && !is_ssl() && !is_admin()) {
 
 
-	$http_host = 'http://' . parse_url(get_option('home'), PHP_URL_HOST);
-	$request_uri = $_SERVER['REQUEST_URI'];
-	if ( strpos($request_uri,$http_host) === false )
-	{
-		$request_uri = $http_host . $request_uri;
-	}
+    $http_host = 'http://' . parse_url(get_option('home'), PHP_URL_HOST);
+    $request_uri = $_SERVER['REQUEST_URI'];
+    if (strpos($request_uri, $http_host) === false) {
+        $request_uri = $http_host . $request_uri;
+    }
     $wp_ssl_url = str_replace('http://', 'https://', $request_uri);
     header("Location:$wp_ssl_url");
     exit;
@@ -423,12 +423,12 @@ if (!function_exists('add_event_espresso_stylesheet')) {
         if ($org_options['enable_default_style'] != 'Y')
             return;
 
-					// for backpat we check options to see if event_espresso_style.css is set if is or no option is set we load it from original folder
-					if('' == $org_options['selected_style'] || 'event_espresso_style.css' == $org_options['selected_style']){
-						$style_path = 'templates/event_espresso_style.css';
-					}else {
-						$style_path = 'templates/css/' . $org_options['selected_style'];
-					}
+        // for backpat we check options to see if event_espresso_style.css is set if is or no option is set we load it from original folder
+        if (empty($org_options['selected_style']) || 'event_espresso_style.css' == $org_options['selected_style']) {
+            $style_path = 'templates/event_espresso_style.css';
+        } else {
+            $style_path = 'templates/css/' . $org_options['selected_style'];
+        }
 
         $event_espresso_style_sheet = EVENT_ESPRESSO_PLUGINFULLURL . $style_path;
 
@@ -439,13 +439,13 @@ if (!function_exists('add_event_espresso_stylesheet')) {
 
         wp_register_style('event_espresso_style_sheets', $event_espresso_style_sheet);
         wp_enqueue_style('event_espresso_style_sheets');
-					
-					if(!file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") && '' !== $org_options['style_color'])
-					
-					$event_espresso_style_color = EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/colors/' . $org_options['style_color'];
-					
-					wp_register_style('event_espresso_style_color', $event_espresso_style_color);
-        wp_enqueue_style('event_espresso_style_color');					
+
+        if (!file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") && !empty($org_options['style_color'])) {
+            $event_espresso_style_color = EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/colors/' . $org_options['style_color'];
+
+            wp_register_style('event_espresso_style_color', $event_espresso_style_color);
+            wp_enqueue_style('event_espresso_style_color');
+        }
     }
 
 }
@@ -486,14 +486,14 @@ if (!function_exists('event_espresso_run')) {
         $load_espresso_scripts = true; //This tells the plugin to load the required scripts
         ob_start();
 
-		//Make sure scripts are loading
-		echo espresso_check_scripts();
+        //Make sure scripts are loading
+        echo espresso_check_scripts();
 
         // Get action type
         $regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
 
-		if (isset($_REQUEST['ee']) ? $_REQUEST['ee'] : '')
-			$regevent_action = "register";
+        if (isset($_REQUEST['ee']) ? $_REQUEST['ee'] : '')
+            $regevent_action = "register";
 
         switch ($regevent_action) {
             case "post_attendee":
@@ -570,7 +570,7 @@ add_action('wp_ajax_nopriv_event_espresso_confirm_and_pay', 'event_espresso_conf
 //Export PDF invoice
 if (isset($_REQUEST['download_invoice'])) {
     if (get_option('events_invoice_payment_active') == 'true' && $_REQUEST['download_invoice'] == 'true') {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
+        require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
     }
 }
 
