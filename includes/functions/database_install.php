@@ -668,7 +668,7 @@ function events_data_tables_install() {
         $sql = "SELECT id FROM " . $wpdb->prefix . "events_attendee WHERE quantity = 0 ";
         $results = $wpdb->get_results($sql);
         if ($wpdb->num_rows > 0) {
-            $update_attendee_qty = $wpdb->query("UPDATE " . $wpdb->prefix . "events_attendee SET quantity = 1 WHERE quantity = 0");
+            $update_attendee_qty = $wpdb->query("UPDATE " . $wpdb->prefix . "events_attendee SET quantity = 1 OR quantity = '' WHERE quantity = 0");
             //Create a log file
             espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => " sqldump = " . var_export($results, true) . " ] [ rows affected = " . var_export($update_attendee_qty, true)));
         }
