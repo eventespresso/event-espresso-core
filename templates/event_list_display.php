@@ -74,7 +74,7 @@ if ($event_desc != '' && isset($org_options['display_short_description_in_event_
 
 <?php 
 if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
-	<p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Event Address:', 'event_espresso'); ?></span> <br />
+	<p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 		<span class="address-block"><?php echo stripslashes_deep($location); ?>
 		<span class="google-map-link"><?php echo $google_map_link; ?></span></span>
 	</p>
