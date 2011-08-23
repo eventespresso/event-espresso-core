@@ -607,7 +607,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
             case 'num_attendees_slash_reg_limit' :
             case 'avail_spaces_slash_reg_limit' :
                 $num_attendees = 0;
-                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND quantity >= 1 AND (payment_status='Completed' OR payment_status='Pending') ";
+                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' ";
                 $wpdb->get_results($a_sql, ARRAY_A);
                 if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
                     $num_attendees = $wpdb->last_result[0]->quantity;
