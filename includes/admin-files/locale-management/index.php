@@ -65,7 +65,7 @@ if ($_REQUEST['action'] == 'edit'){require_once("edit_locale.php");edit_event_lo
 		
 	$wpdb->query("SELECT * FROM ". EVENTS_LOCALE_TABLE);
 	if ($wpdb->num_rows > 0) {
-		$results = $wpdb->get_results("SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY id ASC");
+		$results = $wpdb->get_results("SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC");
 		foreach ($results as $result){
 			$locale_id= $result->id;
 			$name=stripslashes($result->name);
