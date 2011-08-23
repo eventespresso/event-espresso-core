@@ -55,10 +55,10 @@ table.price_list {
 	-webkit-box-shadow: 0 2px 3px #eaeaea;
 	box-shadow: 0 2px  3px #eaeaea;
 }
- {/* inset shadow */
-	-moz-box-shadow:  inset 0 0 3px #eaeaea;
-	-webkit-box-shadow: inset 0 0 3px #eaeaea;
-	box-shadow: inset 0 0  3px #ddd;
+#content #espresso_confirmation_display {/* inset shadow */
+	-moz-box-shadow:  inset 0 0 5px #ddd;
+	-webkit-box-shadow: inset 0 0 5px #ddd;
+	box-shadow: inset 0 0  5px #ddd;
 }
 .event-messages {/* rounded corners */
 	-webkit-border-radius: 4px;
@@ -85,9 +85,10 @@ table.price_list {
 #content .event_title,
 #content .section-heading {
 	background: #FAF9EF;
+	border: 1px solid #ccc;
 	border-bottom: 1px solid #bfbfbf;
 	font-size: 1.3em;
-	margin: -10px -10px 10px;
+	margin-bottom: 10px;
 	padding-left: 10px;
 }
 #content .reg-quest-title {
@@ -155,10 +156,11 @@ table.price_list {
 ------------------------------------------------------------------------------*/
 /*___ page event list ___*/
 
-.espresso_event .event_staff {
- background: #FAF9EF;
+.event-data-display .event_staff {
 	display: block;
-	width: 250px;
+	margin: 10px;
+	padding: 5px 10px;
+	width: auto;
 }
 div.event-entry-meta {
 	overflow: hidden;

@@ -1,0 +1,44 @@
+/*
+* Scheme: 'Pastel Green'
+* This file adds color schemes to EE built in stylesheets
+*/
+
+/*___ Event site wide styles ___*/
+
+#content .event_title,
+#content .section-heading,
+#content .btn_event_form_submit {
+	background: rgb(174,191,118);
+	background: -moz-linear-gradient(top, rgba(174,191,118,1) 0%, rgba(220,227,196,1) 58%, rgba(254,254,253,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(174,191,118,1)), color-stop(58%,rgba(220,227,196,1)), color-stop(100%,rgba(254,254,253,1)));
+	background: -webkit-linear-gradient(top, rgba(174,191,118,1) 0%,rgba(220,227,196,1) 58%,rgba(254,254,253,1) 100%);
+	background: -o-linear-gradient(top, rgba(174,191,118,1) 0%,rgba(220,227,196,1) 58%,rgba(254,254,253,1) 100%);
+	background: -ms-linear-gradient(top, rgba(174,191,118,1) 0%,rgba(220,227,196,1) 58%,rgba(254,254,253,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aebf76', endColorstr='#fefefd',GradientType=0 );
+	background: linear-gradient(top, rgba(174,191,118,1) 0%,rgba(220,227,196,1) 58%,rgba(254,254,253,1) 100%);
+	color: #fff;
+}
+#content .event-display-boxes .event_title a,
+#content .entry-content .register-link-footer a {
+	color: #555;
+}
+#content .entry-content .register-link-footer {
+	background: rgb(241,241,227);
+	background: -moz-linear-gradient(top, rgba(241,241,227,1) 0%, rgba(206,216,172,1) 30%, rgba(165,184,102,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(241,241,227,1)), color-stop(30%,rgba(206,216,172,1)), color-stop(100%,rgba(165,184,102,1)));
+	background: -webkit-linear-gradient(top, rgba(241,241,227,1) 0%,rgba(206,216,172,1) 30%,rgba(165,184,102,1) 100%);
+	background: -o-linear-gradient(top, rgba(241,241,227,1) 0%,rgba(206,216,172,1) 30%,rgba(165,184,102,1) 100%);
+	background: -ms-linear-gradient(top, rgba(241,241,227,1) 0%,rgba(206,216,172,1) 30%,rgba(165,184,102,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1f1e3', endColorstr='#a5b866',GradientType=0 );
+	background: linear-gradient(top, rgba(241,241,227,1) 0%,rgba(206,216,172,1) 30%,rgba(165,184,102,1) 100%);
+	color: #555 ;
+}
+#content #espresso_confirmation_display {/* inset shadow */
+	-moz-box-shadow:  inset 0 0 5px #D9E2B7;
+	-webkit-box-shadow: inset 0 0 5px #D9E2B7;
+	box-shadow: inset 0 0  5px #D9E2B7;
+}
+	
+/*___Event pages ___*/
+
+/** Registeration event **/
