@@ -132,7 +132,7 @@ if (!function_exists('register_attendees')) {
                     global $venue_meta;
                     $add_venue_meta = array(
                         'venue_title' => $event->venue_name,
-                        'venue_address' => $event->event_address,
+                        'venue_address' => $event->venue_address,
                         'venue_address2' => $event->venue_address2,
                         'venue_city' => $event->venue_city,
                         'venue_state' => $event->venue_state,
