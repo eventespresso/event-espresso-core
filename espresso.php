@@ -7,7 +7,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.0.P.6
+  Version: 3.1.0.P.7
 
   Author: Seth Shoultes
   Author URI: http://www.eventespresso.com
@@ -31,7 +31,7 @@
 
 //Define the version of the plugin
 function espresso_version() {
-    return '3.1.0.P.6';
+    return '3.1.0.P.7';
 }
 
 function ee_init_session() {
@@ -424,7 +424,7 @@ if (!function_exists('add_event_espresso_stylesheet')) {
             return;
 
         // for backpat we check options to see if event_espresso_style.css is set if is or no option is set we load it from original folder
-        if (empty($org_options['selected_style']) || 'event_espresso_style.css' == $org_options['selected_style']) {
+        if (empty($org_options['selected_style']) || $org_options['selected_style'] == 'event_espresso_style.css') {
             $style_path = 'templates/event_espresso_style.css';
         } else {
             $style_path = 'templates/css/' . $org_options['selected_style'];
@@ -611,11 +611,11 @@ if (!function_exists('is_ssl')) {
 
     function is_ssl() {
         if (isset($_SERVER['HTTPS'])) {
-            if ('on' == strtolower($_SERVER['HTTPS']))
+            if (strtolower($_SERVER['HTTPS']) == 'on')
                 return true;
-            if ('1' == $_SERVER['HTTPS'])
+            if ($_SERVER['HTTPS'] == '1')
                 return true;
-        } elseif (isset($_SERVER['SERVER_PORT']) && ( '443' == $_SERVER['SERVER_PORT'] )) {
+        } elseif (isset($_SERVER['SERVER_PORT']) && ( $_SERVER['SERVER_PORT'] == '443')) {
             return true;
         }
         return false;
