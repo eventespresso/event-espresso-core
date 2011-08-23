@@ -302,25 +302,26 @@ if (!function_exists('event_espresso_display_selected_time')) {
 
     function event_espresso_display_selected_time($time_id = 0, $format = 'NULL') {
         global $wpdb;
+		$html = '';
         $event_times = $wpdb->get_results("SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE id='" . $time_id . "'");
         foreach ($event_times as $time) {
             switch ($format) {
                 case 'start' :
-                    echo event_date_display($time->start_time, get_option('time_format'));
+                    $html .= event_date_display($time->start_time, get_option('time_format'));
                     break;
 
                 case 'end' :
-                    echo event_date_display($time->end_time, get_option('time_format'));
+                    $html .= event_date_display($time->end_time, get_option('time_format'));
                     break;
-                default :?>
-                   <span class="section-title"><?php _e('Start Time:  ', 'event_espresso'); ?></span> <?php
-                    echo event_date_display($time->start_time, get_option('time_format')); ?>
-                   <br /><span class="section-title"><?php _e('End Time: ', 'event_espresso'); ?></span><?php
-                    echo event_date_display($time->end_time, get_option('time_format'));
-                    break;
+                default :
+                   $html .= '<span class="section-title">'.__('Time:  ', 'event_espresso').'</span>'; 
+				   $html .= event_date_display($time->start_time, get_option('time_format')) . ' - '. event_date_display($time->end_time, get_option('time_format'));
+                   break;
             }
-            echo '<input type="hidden" name="start_time_id" id="start_time_id-' . $time->id . '" value="' . $time->id . '"><input type="hidden" name="event_time" id="event_time-' . $time->start_time . '" value="' . $time->start_time . '">';
+            $html .= '<input type="hidden" name="start_time_id" id="start_time_id-' . $time->id . '" value="' . $time->id . '"><input type="hidden" name="event_time" id="event_time-' . $time->start_time . '" value="' . $time->start_time . '">';
+			
         }
+		return $html;
     }
 
 }
