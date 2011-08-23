@@ -37,7 +37,7 @@ function event_espresso_manage_events() {
                             break;
                     }
                 } else {
-                    _e('Event Management', 'event_espresso');
+                    _e('Event Overview', 'event_espresso');
                     if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'add_new_event')) {
 
                     } else {
