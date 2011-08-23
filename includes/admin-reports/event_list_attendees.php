@@ -140,6 +140,7 @@ function event_list_attendees() {
     $attendees_group = ''; //will hold the names of the group members
     $counter = 0; //used for keeping track of the last row.  If counter = num_rows, print
     $go = false; //triggers the output when true.  Set when the next reg id != temp_reg_id
+	$sql_clause = " WHERE ";
     $sql_a = "(";
     if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
         $group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
@@ -188,6 +189,7 @@ function event_list_attendees() {
             $sql_clause = " AND ";
         }
         $sql_a .= $group != '' ? $sql_clause . "  l.locale_id IN (" . $group . ") " : '';
+		$sql_a .= " AND e.event_status != 'D' ";
         $sql_a .= ") UNION (";
     }
     $sql_a .= "SELECT a.*, e.id event_id, e.event_name, checked_in FROM " . EVENTS_ATTENDEE_TABLE . " a ";
@@ -230,6 +232,7 @@ function event_list_attendees() {
     if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
         $sql_a .= $sql_clause . " e.wp_user = '" . espresso_member_data('id') . "' ";
     }
+	$sql_a .= " $sql_clause e.event_status != 'D' ";
     $sql_a .= ") ORDER BY date DESC, id ASC ";
 	
     $attendees = $wpdb->get_results($sql_a);
