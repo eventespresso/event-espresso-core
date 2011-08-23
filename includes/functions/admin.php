@@ -1278,6 +1278,7 @@ function espresso_create_default_pages() {
         //$my_post['post_content'] = 'This is my '.$new_page_title.' page.';
         $my_post['post_status'] = 'publish';
         $my_post['post_type'] = 'page';
+		$my_post['comment_status']='closed';
         // Insert the post into the database
         //$result = wp_insert_post( $my_post );
 
