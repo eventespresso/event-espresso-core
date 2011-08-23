@@ -32,9 +32,6 @@ if (!function_exists('add_event_espresso_menus')) {
         //EventCategories
         add_submenu_page('event_espresso', __('Event Espresso - Manage Event Categories', 'event_espresso'), __('Categories', 'event_espresso'), 'administrator', 'event_categories', 'event_espresso_categories_config_mnu');
 
-					//Event styles & templates
-        add_submenu_page('event_espresso', __('Event Espresso - Event Templates', 'event_espresso'), __('Event Templates', 'event_espresso'), 'administrator', 'template_confg', 'event_espresso_manage_templates');
-
         //Discounts
         if (function_exists('event_espresso_discount_config_mnu') && $espresso_premium == true) {
             add_submenu_page('event_espresso', __('Event Espresso - Promotional Codes', 'event_espresso'), __('Promotional Codes', 'event_espresso'), 'administrator', 'discounts', 'event_espresso_discount_config_mnu');
@@ -49,6 +46,9 @@ if (!function_exists('add_event_espresso_menus')) {
         if (function_exists('event_espresso_email_config_mnu') && $espresso_premium == true) {
             add_submenu_page('event_espresso', __('Event Espresso - Email Manager', 'event_espresso'), __('Email Manager', 'event_espresso'), 'administrator', 'event_emails', 'event_espresso_email_config_mnu');
         }
+		
+		//Event styles & templates
+        add_submenu_page('event_espresso', __('Event Espresso - Template Settings', 'event_espresso'), __('Template Settings', 'event_espresso'), 'administrator', 'template_confg', 'event_espresso_manage_templates');
 
         //Calendar Settings
         if (is_plugin_active('espresso-calendar/espresso-calendar.php') && $espresso_premium == true) {
