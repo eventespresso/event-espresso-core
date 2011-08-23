@@ -62,7 +62,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 				<span class="section-title"><?php echo __('Price: ', 'event_espresso')?></span> <?php echo event_espresso_get_price($event_id); ?>
     </p>
 
-    <p id="event_date-<?php echo $event_id ?>"><span class="section-title"><?php _e('Start Date:', 'event_espresso'); ?></span>  <?php echo event_date_display($start_date, get_option('date_format')) ?></p><p><span class="section-title"> <?php _e('End Date:', 'event_espresso'); ?></span> <?php echo event_date_display($end_date, get_option('date_format')) ?></p>
+    <p id="event_date-<?php echo $event_id ?>"><span class="section-title"><?php _e('Date:', 'event_espresso'); ?></span>  <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
 
 <?php
 //Show short descriptions
@@ -82,7 +82,7 @@ if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?
 }
 ?>
 
-					<p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
+	<p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
 
     <?php
     $num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
