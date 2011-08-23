@@ -43,7 +43,8 @@ function replace_shortcodes($message, $data) {
         "[google_map_link]",
         "[attendee_event_list]",
         "[custom_questions]",
-        "[qr_code]"
+        "[qr_code]",
+		"[edit_attendee_link]"
     );
 
     $ReplaceValues = array(
@@ -90,7 +91,8 @@ function replace_shortcodes($message, $data) {
         $data->google_map_link,
         $data->table_open . $data->table_heading . $data->event_table . $data->table_close,
         $data->email_questions,
-        $data->qr_code
+        $data->qr_code,
+		$data->edit_attendee
     );
     return str_replace($SearchValues, $ReplaceValues, $message);
 }
@@ -152,13 +154,13 @@ function prepare_email_data($attendee_id, $multi_reg) {
     if (!isset($data->event->venue_name))
         $data->event->venue_name = '';
     $data->event_table .= "
-                            <tr>
-                                <td>" . stripslashes_deep($data->event->event_name) . " | " . $data->attendee->price_option . "</td>
-                                <td>" . event_date_display($data->attendee->start_date) . ' - ' . event_date_display($data->attendee->end_date) . "</td>
-                                <td>" . event_date_display($data->attendee->event_time, get_option('time_format')) . " - " . event_date_display($data->attendee->end_time, get_option('time_format')) . "</td>
-                                <td>" . $data->event->venue_name . "<br />$data->location <br />$data->google_map_link</td>" .
-            ($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendees', 'event_espresso') . '</td>' : '') .
-            "</tr>";
+		<tr>
+			<td>" . stripslashes_deep($data->event->event_name) . " | " . $data->attendee->price_option . "</td>
+			<td>" . event_date_display($data->attendee->start_date) . ' - ' . event_date_display($data->attendee->end_date) . "</td>
+			<td>" . event_date_display($data->attendee->event_time, get_option('time_format')) . " - " . event_date_display($data->attendee->end_time, get_option('time_format')) . "</td>
+			<td>" . $data->event->venue_name . "<br />$data->location <br />$data->google_map_link</td>" .
+			($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendees', 'event_espresso') . '</td>' : '') .
+		"</tr>";
     if (function_exists('event_espresso_custom_questions_output')) {
         //Create the question display
         $email_questions_r = event_espresso_custom_questions_output(array('attendee_id' => $data->attendee->id, 'all_questions' => TRUE));
@@ -169,7 +171,8 @@ function prepare_email_data($attendee_id, $multi_reg) {
     $payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $data->attendee->registration_id . "&amp;id=" . $data->attendee->id;
     $data->payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
     $data->invoice_link = '<a href="' . home_url() . '/?download_invoice=true&amp;attendee_id=' . $data->attendee->id . '&amp;registration_id=' . $data->attendee->registration_id . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
-    return $data;
+	$data->edit_attendee = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'attendee', 'Edit Registration Details');
+    return $data; 
 }
 
 function prepare_email($data) {
@@ -202,8 +205,9 @@ function prepare_email($data) {
 
 function prepare_admin_email($data) {
     global $org_options;
-    $admin_attendee_link = espresso_edit_attendee(0, $data->attendee->id, $data->event->id, 'admin', $data->attendee->fname . ' ' . $data->attendee->lname);
-
+    $admin_attendee_link = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'admin', $data->attendee->fname . ' ' . $data->attendee->lname);
+/*echo '<p>'.$admin_attendee_link.'</p>';
+return;*/
     if ($data->attendee->quantity > 0 && !$data->multi_reg)
         $primary_attendee = $data->primary_attendee == true ? "<p><strong>" . __('Primary Attendee', 'event_espresso') . "</strong></p>" : '';
 
