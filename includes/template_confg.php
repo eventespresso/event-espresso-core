@@ -1,7 +1,7 @@
 <?php 
 function event_espresso_manage_templates() {
 	global $wpdb, $org_options;
-	
+	//print_r($org_options);
     if (isset($_POST['update_org'])) {			
         $org_options['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
         $org_options['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
@@ -25,7 +25,7 @@ function event_espresso_manage_templates() {
     <div class="wrap">
         <div id="icon-options-event" class="icon32"> </div>
         <h2>
-    <?php _e('Event Template Options', 'event_espresso'); ?>
+    <?php _e('Event Template Settings', 'event_espresso'); ?>
         </h2>
         <div id="poststuff" class="metabox-holder has-right-sidebar">
     <?php event_espresso_display_right_column(); ?>
