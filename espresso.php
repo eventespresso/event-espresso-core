@@ -492,7 +492,9 @@ if (!function_exists('event_espresso_run')) {
         // Get action type
         $regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
 
-        if (isset($_REQUEST['ee']) ? $_REQUEST['ee'] : '')
+        if (isset($_REQUEST['ee']))
+            $regevent_action = "register";
+		if (isset($_REQUEST['edit_attendee']))
             $regevent_action = "register";
 
         switch ($regevent_action) {
