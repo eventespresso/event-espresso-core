@@ -1024,7 +1024,7 @@ if (!function_exists('event_espresso_add_question_groups')) {
 
     function event_espresso_add_question_groups($question_groups, $answer= '', $event_id = null, $multi_reg = 0, $meta = array()) {
         global $wpdb;
-        $event_id = $event_id != '' ? $event_id : $_REQUEST['event_id'];
+        $event_id = empty($_REQUEST['event_id']) ? $event_id : $_REQUEST['event_id'];
         if (count($question_groups) > 0) {
             $questions_in = '';
 
@@ -1081,7 +1081,7 @@ if (!function_exists('event_espresso_add_question_groups')) {
                     }
                 }
             }//end questions display
-        }
+        } else $html = '';
         return $html;
     }
 
