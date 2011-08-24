@@ -68,12 +68,7 @@ $values=array(
             <?php _e('Enable attendee pre-approval feature?','event_espresso'); ?>
           </label>
           <?php echo select_input('use_attendee_pre_approval', $values, isset($org_options['use_attendee_pre_approval']) ? $org_options['use_attendee_pre_approval'] : ''); ?> </li>
-        <li>
-          <label>
-            <?php _e('Enable built in style sheets?','event_espresso'); ?>
-          </label>
-          <?php echo select_input('enable_default_style', $values, isset($org_options['enable_default_style']) ? $org_options['enable_default_style'] : ''); ?> <br />
-        </li>
+        
         <li>
           <label>
             <?php _e('Show payment options for "Pending Payments" on the Payment Overview page?','event_espresso'); ?>
