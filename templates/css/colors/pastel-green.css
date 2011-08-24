@@ -19,10 +19,10 @@
 	color: #fff;
 }
 #content .event-display-boxes .event_title a,
-#content .entry-content .register-link-footer a {
+#content .event-display-boxes .register-link-footer a {
 	color: #555;
 }
-#content .entry-content .register-link-footer {
+#content .event-display-boxes .register-link-footer {
 	background: rgb(241,241,227);
 	background: -moz-linear-gradient(top, rgba(241,241,227,1) 0%, rgba(206,216,172,1) 30%, rgba(165,184,102,1) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(241,241,227,1)), color-stop(30%,rgba(206,216,172,1)), color-stop(100%,rgba(165,184,102,1)));

@@ -21,7 +21,7 @@
 #content .event-display-boxes .event_title a {
 	color: #fff;
 }
-#content .entry-content .register-link-footer {
+#content .event-display-boxes .register-link-footer {
 	background: #1a4c86;
 	background: -moz-linear-gradient(left, #1a4c86 0%, #2378bd 50%, #1c6bb0 51%, #57a5e1 100%);
 	background: -webkit-gradient(linear, left top, right top, color-stop(0%,#1a4c86), color-stop(50%,#2378bd), color-stop(51%,#1c6bb0), color-stop(100%,#57a5e1));

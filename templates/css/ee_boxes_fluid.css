@@ -139,7 +139,7 @@ table.price_list {
 	margin-top: 0;
 	padding: 10px;
 }
-#content .entry-content .register-link-footer	{
+#content .event-display-boxes .register-link-footer	{
 	border-top: 1px solid #bfbfbf;
 	background: #BCBEB2;
 	margin: 10px -10px -10px;
@@ -435,21 +435,6 @@ a.btn_event_form_submit {
 .event_espresso_form_wrapper ul li {
 	list-style: none;
 	margin-left: 40px;
-}
-.event_espresso_form_wrapper h1 {
-	font-size: 1.5em;
-	padding: 5px;
-	color:  #333;
-}
-.event_espresso_form_wrapper h2 {
-	font-size: 1.3em;
-	padding: 5px;
-	color:  #279ef1;
-}
-.event_espresso_form_wrapper h3 {
-	font-size: 1.1em;
-	padding: 5px;
-	color: #333;
 }
 .event_espresso_form_wrapper .copy_dropdown_wrapper {
 	padding: 10px;
