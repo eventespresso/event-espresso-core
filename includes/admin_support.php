@@ -149,6 +149,8 @@ function event_espresso_support() {
               <dd>Each premium WordPress theme comes expertly coded in valid XHTML and  CSS, and all are made compatible with the latest version of WordPress.</dd>
               <dt><a href="http://allurethemes.com" target="_blank">AllureThemes</a></dt>
               <dd>We create beautiful, top quality WordPress themes for you at amazing prices with exceptional support.</dd>
+			  <dt><a href="http://museumthemes.com" target="_blank">Museum Themes</a></dt>
+			  <dd>Fine art WordPress themes.</dd>
             </dl>
           </div>
         </div>
