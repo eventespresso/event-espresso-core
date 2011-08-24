@@ -99,6 +99,11 @@ function organization_config_mnu() {
                 $org_options['currency_symbol'] = 'Kr. ';
                 break;
 
+            case 'ZAF':
+                $org_options['currency_symbol'] = 'R ';
+                break;
+
+
             default:
                 $org_options['currency_symbol'] = '$';
                 break;
@@ -476,7 +481,7 @@ function organization_config_mnu() {
                                     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php');
                                     echo '</li>';
                                 }
-         
+
                             } else {
                                 ?>
                                 <li>
@@ -553,7 +558,7 @@ function organization_config_mnu() {
 			//<![CDATA[
 				jQuery(document).ready(function() {
 					postboxes.add_postbox_toggles('event_espresso');
-				}); 
+				});
 			//]]>
 			</script>
     <?php
