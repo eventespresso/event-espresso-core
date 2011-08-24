@@ -385,7 +385,7 @@ function update_event($recurrence_arr = array()) {
         $del_prices = "DELETE FROM " . EVENTS_PRICES_TABLE . " WHERE event_id = '" . $event_id . "'";
         $wpdb->query($del_prices);
 
-        if ($_REQUEST['event_cost'] != '') {
+        if (!empty($_REQUEST['event_cost'])) {
             foreach ($_REQUEST['event_cost'] as $k => $v) {
                 if ($v != '') {
                     $price_type = $_REQUEST['price_type'][$k] != '' ? $_REQUEST['price_type'][$k] : __('General Admission', 'event_espresso');
@@ -396,7 +396,7 @@ function update_event($recurrence_arr = array()) {
                     $wpdb->query($sql_prices);
                 }
             }
-        } elseif ($_REQUEST['event_cost'][0] == 0) {
+        } else {
             $sql_price = "INSERT INTO " . EVENTS_PRICES_TABLE . " (event_id, event_cost, surcharge, price_type, member_price, member_price_type) VALUES ('" . $event_id . "', '0.00', '0.00', '" . __('Free', 'event_espresso') . "', '0.00', '" . __('Free', 'event_espresso') . "')";
             if (!$wpdb->query($sql_price)) {
                 $error = true;
