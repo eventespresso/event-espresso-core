@@ -6,7 +6,7 @@
 if (!function_exists('register_attendees')) {
 
     function register_attendees($single_event_id = NULL, $event_id_sc =0) {
-        if ( (isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true') ) {
+        if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
             require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
             attendee_edit_record();
             return;
@@ -108,6 +108,12 @@ if (!function_exists('register_attendees')) {
                 $venue_url = $event->venue_url;
                 $venue_image = $event->venue_image;
                 $venue_phone = $event->venue_phone;
+                $venue_address = '';
+                $venue_address2 = '';
+                $venue_city = '';
+                $venue_state = '';
+                $venue_zip = '';
+                $venue_country = '';
 
                 global $event_meta;
                 $event_meta = unserialize($event->event_meta);
@@ -137,7 +143,7 @@ if (!function_exists('register_attendees')) {
                         'venue_city' => $event->venue_city,
                         'venue_state' => $event->venue_state,
                         'venue_country' => $event->venue_country,
-                            );
+                    );
                     $venue_meta = (isset($event->venue_meta) && $event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
                     //print_r($venue_meta);
                 }
@@ -200,22 +206,22 @@ if (!function_exists('register_attendees')) {
 
             global $all_meta;
             $all_meta = array(
-                'event_name' => '<p class="section-title">'.stripslashes_deep($event_name).'</span>',
+                'event_name' => '<p class="section-title">' . stripslashes_deep($event_name) . '</span>',
                 'event_desc' => stripslashes_deep($event_desc),
                 'event_address' => $event_address,
                 'event_address2' => $event_address2,
                 'event_city' => $event_city,
                 'event_state' => $event_state,
-                'event_zip' => $zip,
-                'event_country' => $country,
-				'venue_title' => '<span class="section-title">'.$venue_name.'</span>',
-				'venue_address' => $venue_address,
-				'venue_address2' => $venue_address2,
-				'venue_city' => $venue_city,
-				'venue_state' => $venue_state,
-				'venue_country' => $venue_country,
-                'start_date' => '<span class="section-title">'.event_espresso_no_format_date($start_date, get_option('date_format')).'</span>',
-                'end_date' => '<span class="section-title">'.event_date_display($end_date, get_option('date_format')).'</span>',
+                'event_zip' => $event_zip,
+                'event_country' => $event_country,
+                'venue_title' => '<span class="section-title">' . $venue_title . '</span>',
+                'venue_address' => $venue_address,
+                'venue_address2' => $venue_address2,
+                'venue_city' => $venue_city,
+                'venue_state' => $venue_state,
+                'venue_country' => $venue_country,
+                'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
+                'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
                 'time' => event_espresso_time_dropdown($event_id, 0),
                 'google_map_link' => $google_map_link,
                 'price' => event_espresso_price_dropdown($event_id, 0),
