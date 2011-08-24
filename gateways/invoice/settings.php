@@ -10,6 +10,7 @@ function event_espresso_invoice_payment_settings(){
 			$invoice_payment_settings['payable_to'] = strip_tags($_POST['payable_to']);
 			$invoice_payment_settings['payment_address'] = strip_tags($_POST['payment_address']);
 			$invoice_payment_settings['image_url'] = strip_tags($_POST['image_url']);
+			$invoice_payment_settings['show'] = strip_tags($_POST['show']);
 		update_option('event_espresso_invoice_payment_settings', $invoice_payment_settings);
 		echo '<div id="message" class="updated fade"><p><strong>'.__('Invoice Payment settings saved.','event_espresso').'</strong></p></div>';
 	}
@@ -143,6 +144,16 @@ if (empty($invoice_payment_settings['payment_address']) || trim($invoice_payment
     </tr>
   </table>
   <input type="hidden" name="update_invoice_payment_settings" value="update_invoice_payment_settings">
+   <p><label for="show">
+                        <?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
+                        </label>
+                        <?php
+                        $values = array(
+                            array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+							array('id' => 'N', 'text' => __('No', 'event_espresso')),
+                            );
+                        echo select_input('show', $values, $invoice_payment_settings['show']);
+                        ?></p>
   <p>
     <input class="button-primary" type="submit" name="Submit" value="<?php  _e('Update Invoice Payment Settings','event_espresso') ?>" id="save_invoice_payment_settings" />
   </p>

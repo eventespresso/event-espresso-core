@@ -570,21 +570,17 @@ add_action('wp_ajax_nopriv_event_espresso_confirm_and_pay', 'event_espresso_conf
  */
 
 //Export PDF invoice
-if (isset($_REQUEST['download_invoice'])) {
-    if (get_option('events_invoice_payment_active') == 'true' && $_REQUEST['download_invoice'] == 'true') {
+    if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
         require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
     }
-}
 
 //Export PDF Ticket
-if (isset($_REQUEST['download_ticket'])) {
-    if ($_REQUEST['download_ticket'] == 'true') {
+    if (isset($_REQUEST['download_ticket'])&&$_REQUEST['download_ticket'] == 'true') {
         if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
             require_once(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php");
             espresso_ticket($_REQUEST['id'], $_REQUEST['registration_id']);
         }
     }
-}
 
 //Check to make sure all of the main pages are setup properly, if not show an admin message.
 if (((!isset($_REQUEST['event_page_id']) || $_REQUEST['event_page_id'] == NULL) && ($org_options['event_page_id'] == ('0' || ''))) || $org_options['return_url'] == ('0' || '') || $org_options['notify_url'] == ('0' || '')) {

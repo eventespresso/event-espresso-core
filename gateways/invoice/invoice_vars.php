@@ -1,8 +1,9 @@
 <?php
 // Setup payment page
-if(isset($default_gateway_version))echo '<!--Event Espresso Default Gateway Version ' . $default_gateway_version . '-->';
 $invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
-
+if ($invoice_payment_settings['show'] == 'N')
+	return;
+if(isset($default_gateway_version))echo '<!--Event Espresso Default Gateway Version ' . $default_gateway_version . '-->';
 if(isset($invoice_payment_settings['invoice_title'])) { ?>
 	<div class="event-display-boxes">
 <?php	echo '<h4 id="invoice_title" class="payment_type_title section-heading">'.stripslashes_deep($invoice_payment_settings['invoice_title']).'</h4>';

@@ -117,8 +117,8 @@ if (get_option('events_paypal_active') == 'true' || get_option('events_authnet_a
 	echo '</ul>';
 	echo '</div><!-- / #off_site_payment_container -->';
 }
-
-if (get_option('events_invoice_payment_active') == 'true'||get_option('events_check_payment_active') == 'true' || get_option('events_bank_payment_active') == 'true'){
+$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
+if ((get_option('events_invoice_payment_active') == 'true' && $invoice_payment_settings['show'] != 'N')||get_option('events_check_payment_active') == 'true' || get_option('events_bank_payment_active') == 'true'){
 	
 	echo '<div id="off_line_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="off_line_payment" class="payment_option_title section-heading">'.__('Off-line Payments', 'event_espresso').'</h3>';
