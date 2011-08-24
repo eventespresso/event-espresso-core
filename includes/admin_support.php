@@ -613,6 +613,14 @@ function event_espresso_support() {
                             <?php _e('If you\'re using WP SMTP with Gmail, also check your spam box to make sure Gmail isn\'t filtering the confirmation emails as spam.', 'event_espresso'); ?>
                           </p>
                         </dd>
+						<dt>
+							<?php _e('My events are not importing correctly when I use the CSV upload tool.','event_espresso'); ?>
+						</dt>
+						<dd>
+							<p>
+							<?php _e('Check your CSV for any apotrophes in the title or description. Using Excel (or someother spreadsheet application) find and replace all apostrophes with <tt>\&amp;#039;</tt>.  This is the HTML entity for \' and is how the titles are entered into the database.  For more information, see <a href="http://eventespresso.com/forums/2011/08/import-csv-malfunction" target="_blank">this forum post</a>.','event_espresso'); ?>
+							</p>
+						</dd>
                         <dt>
                           <?php _e('Problems after upgrading?', 'event_espresso'); ?>
                         </dt>
