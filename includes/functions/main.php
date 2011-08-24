@@ -286,7 +286,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
         $i = 0;
         if ($event_meta['additional_attendee_reg_info'] == 1) {
             $label = $label == '' ? __('Number of Tickets', 'event_regis') : $label;
-            $html .= '<span class="espresso_additional_limit">';
+            $html = '<span class="espresso_additional_limit">';
             $html .= $show_label == true ? '<label for="num_people">' . $label . '</label>' : '';
             $html .= '<select name="num_people" id="num_people-' . $event_id . '" style="width:70px;">';
             while (($i <= $additional_limit) && ($i < $available_spaces)) {
@@ -297,6 +297,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
             //$html .= '<br />';
             $html .= '<input type="hidden" name="espresso_addtl_limit_dd" value="true">';
             $html .= '</span>';
+            $buffer = '';
         } else {
             while (($i <= $additional_limit) && ($i < $available_spaces)) {
                 $i++;
