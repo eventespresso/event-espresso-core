@@ -152,10 +152,6 @@ if (!function_exists('register_attendees')) {
                 $google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
 
                 $question_groups = unserialize($event->question_groups);
-
-
-
-
                 $reg_start_date = $event->registration_start;
                 $reg_end_date = $event->registration_end;
                 $today = date("Y-m-d");
@@ -204,16 +200,22 @@ if (!function_exists('register_attendees')) {
 
             global $all_meta;
             $all_meta = array(
-                'event_name' => stripslashes_deep($event_name),
+                'event_name' => '<p class="section-title">'.stripslashes_deep($event_name).'</span>',
                 'event_desc' => stripslashes_deep($event_desc),
                 'event_address' => $event_address,
                 'event_address2' => $event_address2,
                 'event_city' => $event_city,
                 'event_state' => $event_state,
-                'event_zip' => $event->zip,
-                'event_country' => $event->country,
-                'start_date' => event_date_display($start_date, get_option('date_format')),
-                'end_date' => event_date_display($end_date, get_option('date_format')),
+                'event_zip' => $zip,
+                'event_country' => $country,
+				'venue_title' => '<span class="section-title">'.$venue_name.'</span>',
+				'venue_address' => $venue_address,
+				'venue_address2' => $venue_address2,
+				'venue_city' => $venue_city,
+				'venue_state' => $venue_state,
+				'venue_country' => $venue_country,
+                'start_date' => '<span class="section-title">'.event_espresso_no_format_date($start_date, get_option('date_format')).'</span>',
+                'end_date' => '<span class="section-title">'.event_date_display($end_date, get_option('date_format')).'</span>',
                 'time' => event_espresso_time_dropdown($event_id, 0),
                 'google_map_link' => $google_map_link,
                 'price' => event_espresso_price_dropdown($event_id, 0),
