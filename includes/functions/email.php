@@ -172,7 +172,7 @@ function prepare_email_data($attendee_id, $multi_reg) {
     $data->payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
     $data->invoice_link = '<a href="' . home_url() . '/?download_invoice=true&amp;attendee_id=' . $data->attendee->id . '&amp;registration_id=' . $data->attendee->registration_id . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
 	$data->edit_attendee = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'attendee', 'Edit Registration Details');
-    return $data; 
+    return $data;
 }
 
 function prepare_email($data) {
@@ -680,7 +680,7 @@ if (!function_exists('event_espresso_send_cancellation_notice')) {
             $event_city = $event->city;
             $event_state = $event->state;
             $event_zip = $event->zip;
-            $location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
+            $location = (!empty($event_address) ? $event_address : '') . (!empty($event_address2) ? '<br />' . $event_address2 : '') . (!empty($event_city) ? '<br />' . $event_city : '') . (!empty($event_state) ? ', ' . $event_state : '') . (!empty($event_zip) ? '<br />' . $event_zip : '') . (!empty($event_country) ? '<br />' . $event_country : '');
             $location_phone = $event->phone;
 
             $attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id ='" . $event_id . "'");
@@ -903,7 +903,7 @@ if (!function_exists('event_espresso_send_invoice')) {
             $invoice_message = $email_data['email_text'];
             $invoice_subject = $email_data['email_subject'];
         }
-		
+
         $message = str_replace($SearchValues, $ReplaceValues, $invoice_message);
 
         $email_body = $message_top . $message . $message_bottom;
