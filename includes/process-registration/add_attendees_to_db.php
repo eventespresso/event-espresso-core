@@ -483,7 +483,7 @@ $primary_registration_id = NULL;
                 }
                 //Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
                 if ($org_options['email_before_payment'] == 'Y') {
-                    event_espresso_email_confirmations(array('espresso_session_id' => $_SESSION['espresso_session_id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
+                    event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session_id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
                 }
             } else {
                 ?>
@@ -493,7 +493,7 @@ $primary_registration_id = NULL;
                 <p><?php _e('A confirmation email has been sent with additional details of your registration.', 'event_espresso'); ?></p>
 
                 <?php
-                event_espresso_email_confirmations(array('espresso_session_id' => $_SESSION['espresso_session_id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
+                event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session_id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
 
                 event_espresso_clear_session();
             }

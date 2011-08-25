@@ -258,6 +258,7 @@ if (!function_exists('event_espresso_email_confirmations')) {
          */
         global $wpdb;
         extract($atts);
+		//print_r($atts);
         if (empty($multi_reg))
             $multi_reg = FALSE;
         if (empty($send_admin_email))
@@ -265,9 +266,9 @@ if (!function_exists('event_espresso_email_confirmations')) {
         if (empty($send_attendee_email))
             $send_attendee_email = FALSE;
 
-        if (!empty($attendee_id)) {
+        if (!empty($attendee_id) && $multi_reg == FALSE) {
             email_by_attendee_id($attendee_id, $send_attendee_email, $send_admin_email, $multi_reg);
-        } elseif (!empty($registration_id)) {
+        } elseif (!empty($registration_id) && $multi_reg == FALSE) {
             $sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id = '" . $registration_id . "'";
             $attendees = $wpdb->get_col($sql);
             foreach ($attendees as $attendee_id) {
@@ -297,6 +298,7 @@ if (!function_exists('event_espresso_send_email')) {
         $headers .= "Content-Type: text/html; charset=utf-8\r\n";
         //echo '<hr />'.$send_to.'<br />';
         //echo $email_subject .$email_body.'<hr />';
+		//echo $email_body;
         return wp_mail($send_to, stripslashes_deep(html_entity_decode($email_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($email_body), ENT_QUOTES, "UTF-8")), $headers);
     }
 
