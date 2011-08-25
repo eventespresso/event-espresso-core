@@ -304,7 +304,10 @@ if (!function_exists('event_espresso_additional_attendees')) {
             }
             $i = $i - 1;
             $html = '<p class="event_form_field additional_header" id="additional_header">';
-            $html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso') . '</a>';
+			// fixed for translation string, previous string untranslatable - http://events.codebasehq.com/projects/event-espresso/tickets/11
+            //$html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso') . '</a>';			
+            $html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ','event_espresso');
+			$html .= $i . ')</a>';
             $html .= '</p>';
             $html .= '<div id="additional_attendees">';
             $html .= '<div class="clone espresso_add_attendee">';
