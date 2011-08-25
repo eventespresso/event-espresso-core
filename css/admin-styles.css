@@ -701,23 +701,7 @@ table.event-list .re_fr {
 #event-date-time td.a, #event-date-time td.b, #event-pricing td.a {
 	width: 50%;
 }
-table.recurring_summary {
-	background: #FAF9EF;
-	border: 1px solid #ccc;
-	border-collapse: collapse;
-}
-table.recurring_summary tr {
-	border-bottom: 1px solid #ccc;
-}
-table.recurring_summary th {
-	background: #EBEAE1; 
-	text-align: left;
-}
-table.recurring_summary th,
-table.recurring_summary td {
-	border-right: 1px solid #bebebe;
-	padding: 4px;
-}
+
 /*___ Venue Manager ___*/
 
 
