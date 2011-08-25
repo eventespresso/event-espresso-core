@@ -780,7 +780,7 @@ if (!function_exists('event_espresso_send_invoice')) {
         $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
         //Create PDF Invoice link
-        $invoice_link = '<a href="' . home_url() . '/?download_invoice=true&amp;attendee_id=' . $attendee_id . '&amp;registration_id=' . $registration_id . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
+        $invoice_link = '<a href="' . home_url() . '/?download_invoice=true&amp;admin=true&amp;attendee_id=' . $attendee_id . '&amp;registration_id=' . $registration_id . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
 
         //If the custom ticket is available, load the template file
         if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
