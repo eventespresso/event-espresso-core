@@ -8,19 +8,19 @@ function event_espresso_form_builder_delete(){
 					//Delete question data
 					$sql = "DELETE FROM " . EVENTS_QUESTION_TABLE . " WHERE id='" . $del_id . "'";
 					$wpdb->query($sql);
-					
+
 					//Delete question group rel data
 					$sql = "DELETE FROM " . EVENTS_QST_GROUP_REL_TABLE . " WHERE question_id='" . $del_id . "'";
 					$wpdb->query($sql);
 				}
 			}
 	}
-	
-	if($_REQUEST['action']== 'delete_question'){
+
+	if(!empty($_REQUEST['question_id']) && $_REQUEST['action']== 'delete_question'){
 		//Delete question group data
 		$sql = "DELETE FROM " . EVENTS_QUESTION_TABLE . " WHERE id='" . $_REQUEST['question_id'] . "'";
 		$wpdb->query($sql);
-					
+
 		//Delete question group rel data
 		$sql = "DELETE FROM " . EVENTS_QST_GROUP_REL_TABLE . " WHERE question_id='" . $_REQUEST['question_id'] . "'";
 		$wpdb->query($sql);
@@ -31,5 +31,5 @@ function event_espresso_form_builder_delete(){
 		<?php _e('Questions have been successfully deleted.','event_espresso');?>
 		</strong></p>
 	</div>
-	<?php 
+	<?php
 }
