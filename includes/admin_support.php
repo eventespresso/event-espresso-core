@@ -69,10 +69,6 @@ function event_espresso_support() {
                         <li><a href="#additonal">
                           <?php _e('Additional Information', 'event_espresso'); ?>
                           </a></li>
-                       
-                        
-                        
-                        
                       </ul>
                     </div>
                   </div>
@@ -136,7 +132,7 @@ function event_espresso_support() {
           <div class="padding">
             <dl id="developers">
               <dt><a href="http://www.mojo-themes.com/" target="_blank">MOJO Themes</a></dt>
-              <dd>It’s simple really – MOJO themes is a marketplace for everyone to <strong><em>buy</em></strong> or <strong><em>sell</em></strong> themes and templates.</dd>
+              <dd>It's simple really – MOJO themes is a marketplace for everyone to <strong><em>buy</em></strong> or <strong><em>sell</em></strong> themes and templates.</dd>
               <dt><a href="http://www.appthemes.com/cp/go.php?r=12413&i=l0" target="_blank">AppThemes</a></dt>
               <dd>AppThemes are built for businesses of all sizes and run on WordPress so  you don't have to worry about the headache of setting up a complex  server environment.</dd>
               <dt><a href="http://www.woothemes.com/amember/go.php?r=28039&amp;i=b16" target="_blank">WooThemes</a></dt>
@@ -157,6 +153,74 @@ function event_espresso_support() {
       </div>
     </div>
   </li>
+  
+  <li>
+    <div class="metabox-holder">
+      <div class="postbox">
+        <div title="Click to toggle" class="handlediv"><br />
+        </div>
+        <h3 class="hndle">
+          <?php _e('Recommended Plugins', 'event_espresso'); ?>
+          <a name="plugins" id="plugins"></a></h3>
+        <div class="inside">
+          <div class="padding">
+            <dl id="plugins">
+              <dt><a href="http://wordpress.org/extend/plugins/exclude-pages/" target="_blank">Exclude Pages from Navigation</a></dt>
+              <dd> Provides a checkbox on the editing page which you can check to exclude  pages from the primary navigation. IMPORTANT NOTE: This will remove the  pages from any "consumer" side page listings, which may not be limited  to your page navigation listings.</dd>
+              <dt><a href="http://wordpress.org/extend/plugins/post-types-order/" target="_blank">Post Types Order</a></dt>
+              <dd> Order Post Types Objects using a Drag and Drop Sortable javascript capability
+                </dt>
+              
+              <dt><a href="https://www.e-junkie.com/ecom/gb.php?cl=54585&amp;c=ib&amp;aff=113214" target="_blank">Gravity Forms</a>
+                </dd>
+              <dd>
+                Build Complex, Powerful Contact Forms in Just Minutes. No Programming Knowledge Required! Yeah, It's Really That Easy.
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+  
+  <li>
+    <div class="metabox-holder">
+      <div class="postbox">
+        <div title="Click to toggle" class="handlediv"><br />
+        </div>
+        <h3 class="hndle">
+          <?php _e('Highly Recommended Themes', 'event_espresso'); ?>
+          <a name="themes" id="themes"></a></h3>
+        <div class="inside">
+          <div class="padding">
+            <dl id="themes">
+              <dt><a href="http://www.shareasale.com/r.cfm?B=258340&amp;U=471857&amp;M=27087" target="_blank">PlatformPro</a> by Pagelines</dt>
+              <dt><a href="http://www.woothemes.com/amember/go.php?r=28039&amp;i=b16" target="_blank">Diarise</a> by WooThemes</dt>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div class="metabox-holder">
+      <div class="postbox">
+        <div title="Click to toggle" class="handlediv"><br />
+        </div>
+        <h3 class="hndle">
+          <?php _e('Other Resources', 'event_espresso'); ?>
+          <a name="resources" id="resources"></a></h3>
+        <div class="inside">
+          <div class="padding">
+            <dl id="resources">
+              <dt><a href="http://wordpress.stackexchange.com/" target="_blank">WordPress Answers</a></dt>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+  
             <li>
               <div class="metabox-holder">
                 <div class="postbox"><a name="shortcodes" id="shortcodes"></a>
@@ -490,15 +554,7 @@ function event_espresso_support() {
                         </strong><br />
                         <?php _e('When requesting support. Please copy and paste the details displayed of the <a href="admin.php?page=support#details">Important Information</a> section above. This will help us determine potential problems with your server, WordPress installation, and/or the Event Espresso plugin. Please also include a list (or screenshot) of all <a href="plugins.php?plugin_status=active">active plugins</a>.', 'event_espresso'); ?>
                       </p>
-                      <p>
-                        <?php _e('If you are having any problems that are not discussed here, suggestions, comments or gripes please visit the', 'event_espresso'); ?>
-                        <a href="http://eventespresso.com/forums/">
-                        <?php _e('Event Espresso forums', 'event_espresso'); ?>
-                        </a>
-                        <?php _e('or feel free to send us an', 'event_espresso'); ?>
-                        <a href="http://eventespresso.com/contact/">
-                        <?php _e('email', 'event_espresso'); ?>
-                        </a>. </p>
+                      
                       <h4>
                         <?php _e('Premium Support Options', 'event_espresso'); ?>
                       </h4>
@@ -693,72 +749,7 @@ function event_espresso_support() {
     </div>
   </div>
   </li>
-  <li>
-    <div class="metabox-holder">
-      <div class="postbox">
-        <div title="Click to toggle" class="handlediv"><br />
-        </div>
-        <h3 class="hndle">
-          <?php _e('Recommended Plugins', 'event_espresso'); ?>
-          <a name="plugins" id="plugins"></a></h3>
-        <div class="inside">
-          <div class="padding">
-            <dl id="plugins">
-              <dt><a href="http://wordpress.org/extend/plugins/exclude-pages/" target="_blank">Exclude Pages from Navigation</a></dt>
-              <dd> Provides a checkbox on the editing page which you can check to exclude  pages from the primary navigation. IMPORTANT NOTE: This will remove the  pages from any "consumer" side page listings, which may not be limited  to your page navigation listings.</dd>
-              <dt><a href="http://wordpress.org/extend/plugins/post-types-order/" target="_blank">Post Types Order</a></dt>
-              <dd> Order Post Types Objects using a Drag and Drop Sortable javascript capability
-                </dt>
-              
-              <dt><a href="https://www.e-junkie.com/ecom/gb.php?cl=54585&amp;c=ib&amp;aff=113214" target="_blank">Gravity Forms</a>
-                </dd>
-              <dd>
-                Build Complex, Powerful Contact Forms in Just Minutes. No Programming Knowledge Required! Yeah, It's Really That Easy.
-              </dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
-  </li>
   
-  <li>
-    <div class="metabox-holder">
-      <div class="postbox">
-        <div title="Click to toggle" class="handlediv"><br />
-        </div>
-        <h3 class="hndle">
-          <?php _e('Highly Recommended Themes', 'event_espresso'); ?>
-          <a name="themes" id="themes"></a></h3>
-        <div class="inside">
-          <div class="padding">
-            <dl id="themes">
-              <dt><a href="http://www.shareasale.com/r.cfm?B=258340&amp;U=471857&amp;M=27087" target="_blank">PlatformPro</a> by Pagelines</dt>
-              <dt><a href="http://www.woothemes.com/amember/go.php?r=28039&amp;i=b16" target="_blank">Diarise</a> by WooThemes</dt>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
-  </li>
-  <li>
-    <div class="metabox-holder">
-      <div class="postbox">
-        <div title="Click to toggle" class="handlediv"><br />
-        </div>
-        <h3 class="hndle">
-          <?php _e('Other Resources', 'event_espresso'); ?>
-          <a name="resources" id="resources"></a></h3>
-        <div class="inside">
-          <div class="padding">
-            <dl id="resources">
-              <dt><a href="http://wordpress.stackexchange.com/" target="_blank">WordPress Answers</a></dt>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
-  </li>
  
   <?php /*?>
 			 
@@ -1000,6 +991,3 @@ function update_event_data() {
 <?php
     }
 }
-
-
-
