@@ -181,7 +181,8 @@ function events_data_tables_install() {
                 'country_id' => '',
                 'expire_on_registration_end' => 'Y',
                 'email_before_payment' => 'N',
-                'enable_default_style' => 'Y'
+                'enable_default_style' => 'Y',
+				'event_ssl_active' => 'N'
             );
 
             add_option('events_organization_settings', $new_org_options);
