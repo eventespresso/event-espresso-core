@@ -8,7 +8,7 @@ if(isset($_SESSION['espresso_session_id']))
 	define('FPDF_FONTPATH', EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/font/');
 	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/fpdf.php';
 
-require_once(dirname(__FILE__).'/function.pdf.php');//Added by Imon	
+	require_once(dirname(__FILE__).'/function.pdf.php');//Added by Imon	
 	
 	global $espresso_premium; if ($espresso_premium != true) return;
 	global $wpdb, $org_options;
@@ -18,6 +18,7 @@ require_once(dirname(__FILE__).'/function.pdf.php');//Added by Imon
 //Added by Imon
 	$multi_reg = false;
 	$registration_id = $_REQUEST['registration_id'];
+	$admin = isset($_REQUEST['admin'])?$_REQUEST['admin']:false;
 	$registration_ids = array();
 	$c_sql = "select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ";
 	//echo $c_sql;
@@ -62,7 +63,7 @@ require_once(dirname(__FILE__).'/function.pdf.php');//Added by Imon
 	$payment_date = date("d-m-Y");
 
 //Added by Imon
-	if ( count($registration_ids) > 0 )
+	if ( count($registration_ids) > 0 && $admin == false )
 	{
 		foreach($registration_ids as $reg_id)
 		{
@@ -94,8 +95,8 @@ require_once(dirname(__FILE__).'/function.pdf.php');//Added by Imon
 		$organization_name = $wpdb->last_result[0]->answer;//question_id = '9'*/
 
 
-//Create a payment link
-$payment_link = home_url() . "/?page_id=" . $org_options['return_url'] . "&id=" . $attendee_id;
+	//Create a payment link
+	$payment_link = home_url() . "/?page_id=" . $org_options['return_url'] . "&id=" . $attendee_id;
 
 	//Instanciation of inherited class
 	$pdf=new PDF();
@@ -156,7 +157,7 @@ $pdf->Ln(10);
 	$attendees = array();
 	$total = 0.00;
 	foreach($registration_ids as $reg_id){
-		$sql = "select ea.registration_id, ed.event_name, ed.start_date, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
+		$sql = "select ea.registration_id, ed.event_name, ed.start_date, ed.event_identifier, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
 				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
 				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
 				where ea.registration_id = '".$reg_id['registration_id']."' order by ed.event_name ";
@@ -174,6 +175,7 @@ $pdf->Ln(10);
 				) 
 			);
 			$total_cost += $sub_total;
+			$event_identifier = $tmp_attendee["event_identifier"];
 		}
 	}
 	$header = array("Event & Attendee","Quantity","Per Unit","Sub total");
