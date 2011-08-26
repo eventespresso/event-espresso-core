@@ -182,7 +182,8 @@ function events_data_tables_install() {
                 'expire_on_registration_end' => 'Y',
                 'email_before_payment' => 'N',
                 'enable_default_style' => 'Y',
-				'event_ssl_active' => 'N'
+				'event_ssl_active' => 'N',
+				'use_venue_manager' => 'Y',
             );
 
             add_option('events_organization_settings', $new_org_options);
