@@ -305,12 +305,24 @@ if (!function_exists('event_espresso_additional_attendees')) {
             $i = $i - 1;
             $html = '<p class="event_form_field additional_header" id="additional_header">';
 			// fixed for translation string, previous string untranslatable - http://events.codebasehq.com/projects/event-espresso/tickets/11
-            //$html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso') . '</a>';
+            //$html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso') . '</a>';			
             $html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ','event_espresso');
 			$html .= $i . ')</a>';
             $html .= '</p>';
             $html .= '<div id="additional_attendees">';
             $html .= '<div class="clone espresso_add_attendee">';
+			/*
+			* Added for seating chart addon
+			*/
+			if ( defined('ESPRESSO_SEATING_CHART') ){
+				if ( seating_chart::check_event_has_seating_chart($_REQUEST['event_id']) !== false ){
+					$html .= '<p>';
+					$html .= '<label>'.__('Select a Seat:', 'event_espresso').'</label>';
+					$html .= '<input type="text" name="x_seat_id[]" value="" class="ee_s_select_seat" event_id="'.$_REQUEST['event_id'].'" readonly="readonly" />';
+					$html .= '<br/>['.__('If you do not select a seat this attendee will not be added', 'event_espresso').']';
+                    $html .= '</p>';
+				}
+			}
             $html .= '<p>';
             $html .= '<label for="x_attendee_fname">' . __('First Name:', 'event_espresso') . '</label>';
             $html .= '<input type="text" name="x_attendee_fname[]" class="input"/>';

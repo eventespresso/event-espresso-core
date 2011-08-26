@@ -281,7 +281,29 @@ function event_list_attendees() {
 					}
 				}
 				if ($temp_reg_id == $registration_id && isset($attendees[$i])) {
-					$attendees_group .= "<li> $fname $lname $email <span style=\"visibility:hidden\">" . $registration_id . "</span>$quantity</li>";
+					
+					$booking_info = "";
+					/*
+					 * Added for seating chart addon
+					 */
+					$booking_info = "";
+					if ( defined('ESPRESSO_SEATING_CHART') )
+					{
+						$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
+						if ( $seating_chart_id !== false )
+						{
+							$seat = $wpdb->get_row("select scs.* , sces.id as booking_id from ".EVENTS_SEATING_CHART_SEAT_TABLE." scs inner join ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces on scs.id = sces.seat_id where sces.attendee_id = {$attendee->id}");
+							if ( $seat !== NULL )
+							{
+								$booking_info = "[Seat: ".$seat->custom_tag." <br/>#booking id: ".$seat->booking_id." ]<br/>";
+							}
+						}
+					}
+					/*
+					 *	End
+					 */
+
+					$attendees_group .= "<li> $fname $lname $email <br/>".$booking_info." <span style=\"visibility:hidden\">" . $registration_id . "</span>$quantity</li>";
 					/*echo '<p>';
 					echo $payment_status.'<br />';
 					echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
@@ -353,8 +375,28 @@ function event_list_attendees() {
 					#echo '<p>';
 					$id = $attendee->id;
 					$temp_reg_id = $registration_id;
-					$email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
-					$attendees_group = "<li> $fname $lname $email $quantity</li>";
+					$booking_info = "";
+														/*
+														 * Added for seating chart addon
+														 */
+														
+														if ( defined('ESPRESSO_SEATING_CHART') )
+														{
+															$seating_chart_id = seating_chart::check_event_has_seating_chart($attendee->event_id);
+															if ( $seating_chart_id !== false )
+															{
+																$seat = $wpdb->get_row("select scs.* , sces.id as booking_id from ".EVENTS_SEATING_CHART_SEAT_TABLE." scs inner join ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces on scs.id = sces.seat_id where sces.attendee_id = {$id}");
+																if ( $seat !== NULL )
+																{
+																	$booking_info = "[Seat: ".$seat->custom_tag." <br/>#booking id: ".$seat->booking_id." ]<br/>";
+																}
+															}
+														}
+														/*
+														 *	End
+														 */
+                                                        $email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
+                                                        $attendees_group = "<li>$fname $lname $email <br/>$booking_info $quantity</li>";
 					$go = false;
 																	   
 					$total_amount_pd = espresso_attendee_price(array('registration_id'=>$temp_reg_id, 'reg_total'=>true));

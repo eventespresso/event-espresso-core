@@ -45,6 +45,18 @@ function edit_attendee_record() {
 
             $sql = " DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='$id'";
             $wpdb->query($sql);
+			
+			/*
+			 * Added for seating chart addon
+			 */
+			if ( defined('ESPRESSO_SEATING_CHART') )
+			{
+				$wpdb->query("DELETE FROM ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." where attendee_id = $id");
+			}
+			/*
+			 *	End
+			 */
+			
             $sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantitay > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
             $wpdb->query($sql);
 //Added by Imon

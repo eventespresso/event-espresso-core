@@ -167,7 +167,7 @@ function add_event_to_db($recurrence_arr = array()) {
         $event_mata['add_attendee_question_groups'] = $add_attendee_question_groups;
         $event_mata['date_submitted'] = date("Y-m-d H:i:s");
 
-        $event_mata['default_payment_status'] = $_REQUEST['default_payment_status'];
+		$event_mata['default_payment_status'] = $_REQUEST['default_payment_status'];
 
         if ($_REQUEST['emeta'] != '') {
             foreach ($_REQUEST['emeta'] as $k => $v) {
@@ -232,6 +232,18 @@ function add_event_to_db($recurrence_arr = array()) {
         if (function_exists('espresso_fb_createevent') == 'true' && $espresso_premium == true) {
             espresso_fb_createevent($last_event_id);
         }
+		
+		/*
+		 * Added for seating chart addon
+		 */
+		if ( isset($_REQUEST['seating_chart_id']) )
+		{
+			$cls_seating_chart = new seating_chart();
+			$cls_seating_chart->associate_event_seating_chart($_REQUEST['seating_chart_id'],$last_event_id);
+		}
+		/*
+		 * End
+		 */
 
         //Add event to a category
         if (isset($_REQUEST['event_category']) && $_REQUEST['event_category'] != '') {

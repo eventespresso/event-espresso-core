@@ -19,12 +19,59 @@ $attendee_num = 1;
                 </th>
                 <td><span class="event_espresso_value"><?php echo stripslashes_deep($event_name)?></span></td>
               </tr>
+               <?php
+				/*
+				 * Added for seating chart addon
+				 */
+				$display_price = true;
+				if ( defined('ESPRESSO_SEATING_CHART') )
+				{
+					$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
+					if ( $seating_chart_id !== false )
+					{
+						$display_price = false;
+					}
+				}
+				if ( $display_price )
+				{
+				/*
+				 * End
+				 */
+			   ?>	
                <tr>
                 <th scope="row" class="header">
                   <?php echo empty($price_type) ? __('Price per attendee:','event_espresso') : __('Type/Price per attendee:','event_espresso'); ?>
                 </th>
                 <td><span class="event_espresso_value"><?php echo empty($price_type) ? $org_options['currency_symbol'] . $event_price : stripslashes_deep($price_type) . ' / ' .$org_options['currency_symbol'].$event_price;?></span></td>
               </tr>
+              <?php
+				/*
+				 * Added for seating chart addon
+				 */
+				 }
+				 else
+				 {
+					$price_range = seating_chart::get_price_range($event_id);
+					$price = "";
+					if ( $price_range['min'] != $price_range['max'] )
+					{
+						$price = $org_options['currency_symbol']. number_format($price_range['min'], 2) . ' - ' . $org_options['currency_symbol']. number_format($price_range['max'], 2);
+					}
+					else
+					{
+						$price = $org_options['currency_symbol']. number_format($price_range['min'], 2);
+					}
+				 ?>
+			  <tr>
+                <td><strong class="event_espresso_name">Price : </strong></td>
+                <td><?php echo $price; ?></td>
+              </tr>
+				 <?php
+				 }
+				 /*
+				  * End
+				  */
+			  ?>
               <tr>
                 <th scope="row" class="header">
                   <?php _e('Attendee Name:','event_espresso'); ?>

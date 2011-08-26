@@ -232,6 +232,44 @@ function edit_event($event_id = 0) {
                     $advanced_options
             );
 
+		/*
+		 * Added for seating chart addon
+		 */
+		if ( defined('ESPRESSO_SEATING_CHART') ){
+			$seating_chart_id = 0;
+			$seating_chart_event = $wpdb->get_row("select * from ".EVENTS_SEATING_CHART_EVENT_TABLE." where event_id = $event_id");
+			if ( $seating_chart_event !== NULL)
+			{
+				$seating_chart_id = $seating_chart_event->seating_chart_id;
+			}
+	?>
+            <div style="display: block;" id="seating_chart-options" class="postbox">
+                <div class="handlediv" title="Click to toggle"><br /></div>
+                <h3 class="hndle"><span><?php _e('Seating chart','event_espresso'); ?></span></h3>
+                <div class="inside">
+                    <p>
+                        <select name="seating_chart_id" id="seating_chart_id" style="float:none;">
+                            <option value="0" <?php if ( $seating_chart_id == 0 ) { echo 'selected="selected"'; } ?> >None</option>
+                            <?php
+                                $seating_charts = $wpdb->get_results("select * from ".EVENTS_SEATING_CHART_TABLE." order by name");
+                                foreach($seating_charts as $seating_chart)
+                                {
+                            ?>
+                            <option value="<?php echo $seating_chart->id; ?>" <?php if ( $seating_chart_id == $seating_chart->id ) { echo 'selected="selected"'; } ?> ><?php echo $seating_chart->name; ?></option>
+                            <?php                        
+                                }
+                            ?>
+                        </select>
+                    </p>
+                </div>
+            </div>
+    <?php
+		}
+		/*
+		 * End
+		 */
+		 
+		  
             ###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
             if ($org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
                 ?>

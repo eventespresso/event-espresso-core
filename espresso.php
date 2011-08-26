@@ -206,7 +206,16 @@ define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
 define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
 define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
 
-
+/*
+ * Added for seating chart addon
+ */
+define("EVENTS_SEATING_CHART_TABLE",get_option('events_seating_chart_tbl'));
+define("EVENTS_SEATING_CHART_SEAT_TABLE",get_option('events_seating_chart_seat_tbl'));
+define("EVENTS_SEATING_CHART_EVENT_TABLE",get_option('events_seating_chart_event_tbl'));
+define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE",get_option('events_seating_chart_event_seat_tbl'));
+/*
+ * End
+ */
 //Wordpress function for setting the locale.
 //print get_locale();
 //setlocale(LC_ALL, get_locale());
@@ -339,6 +348,16 @@ if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
     $ticketing_installed = true;
 }
 
+/*
+ * Added for seating chart addon
+ */
+if ( file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/seatingchart/seatingchart.php") )
+{
+	require_once( EVENT_ESPRESSO_UPLOAD_DIR . "/seatingchart/seatingchart.php");
+}
+/*
+ * End
+ */
 
 //Core shortcode support
 require_once("includes/shortcodes.php");

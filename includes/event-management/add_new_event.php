@@ -58,7 +58,38 @@ function add_new_event() {
                     '<p>' . __('Max Group Registrants', 'event_espresso') . ': <input type="text" name="additional_limit" value="' . $additional_limit . '" size="4">' .
                     $advanced_options
             );
-
+		/*
+		 * Added for seating chart addon
+		 */
+		if ( defined('ESPRESSO_SEATING_CHART') )
+		{
+	?>
+            <div style="display: block;" id="seating_chart-options" class="postbox">
+                <div class="handlediv" title="Click to toggle"><br /></div>
+                <h3 class="hndle"><span><?php _e('Seating chart','event_espresso'); ?></span></h3>
+                <div class="inside">
+                    <p>
+                        <select name="seating_chart_id" id="seating_chart_id" style="float:none;">
+                            <option value="0" >None</option>
+                            <?php
+                                $seating_charts = $wpdb->get_results("select * from ".EVENTS_SEATING_CHART_TABLE." order by name");
+                                foreach($seating_charts as $seating_chart)
+                                {
+                            ?>
+                            <option value="<?php echo $seating_chart->id; ?>"><?php echo $seating_chart->name; ?></option>
+                            <?php                        
+                                }
+                            ?>
+                        </select>
+                    </p>
+                </div>
+            </div>
+    <?php
+		}
+		/*
+		 * End
+		 */
+		 
       ###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
       if (isset($org_options['use_attendee_pre_approval']) && $org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
        ?>

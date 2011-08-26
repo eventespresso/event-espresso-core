@@ -117,6 +117,27 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
     $event_price = number_format($event_cost, 2, '.', '');
     $event_price_x_attendees = number_format($event_cost * $num_people, 2, '.', '');
     $event_original_cost = number_format($simpleMath->multiply($event_cost, $num_people), 2, '.', '');
+	
+	/*
+	 * Added for seating chart addon
+	 */
+	if ( defined('ESPRESSO_SEATING_CHART') )
+	{
+		if ( seating_chart::check_event_has_seating_chart($event_id) !== false )
+		{	
+			$sc_cost_row = $wpdb->get_row("select sum(sces.purchase_price) as purchase_price from ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces inner join ".EVENTS_ATTENDEE_TABLE." ea on sces.attendee_id = ea.id where ea.registration_id = '$registration_id'");
+			if ( $sc_cost_row !== NULL )
+			{
+				$event_cost = number_format($sc_cost_row->purchase_price,2,'.','');
+				$event_original_cost = $event_cost;
+				$event_price_x_attendees = $event_cost;
+			}
+		}
+	}
+	/*
+	 * End
+	 */
+	 
 
     if (function_exists('event_espresso_coupon_payment_page') && (!empty($_REQUEST['coupon_code']) || !empty($coupon_code))) {
         $event_cost = event_espresso_coupon_payment_page($use_coupon_code, $event_id, $event_original_cost, $attendee_id, $num_people);

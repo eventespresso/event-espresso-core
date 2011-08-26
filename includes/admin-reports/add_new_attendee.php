@@ -100,8 +100,40 @@ function add_new_attendee($event_id){
 					}//End time selected
 ?>
           </p>
-   
-          <?php 
+          <?php
+					/*
+					 * Added for seating chart addon
+					 */
+					if ( defined('ESPRESSO_SEATING_CHART') )
+					{
+						$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
+						if ( $seating_chart_id !== false )
+						{
+										
+					?>
+								<p class="event_form_field">
+									<label>Select a Seat:</label>
+                                    <input type="text" name="seat_id" value="" class="ee_s_select_seat required" title="Please select a seat." event_id="<?php echo $event_id; ?>" readonly="readonly"  />
+                           <?php
+									$seating_chart = $wpdb->get_row("select * from ".EVENTS_SEATING_CHART_TABLE." where id = $seating_chart_id");
+									if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR.'seatingchart/images/'.$seating_chart->image_name) )
+									{
+							?>
+                                    <br/>
+                                    <a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank">Seating chart image</a>		
+                            <?php
+									}
+							?>
+                                </p>
+          			<?php
+						}
+					}
+					/*
+					 * End
+					 */
+		  
+		  ?>
+		  <?php 
 					echo event_espresso_add_question_groups($question_groups);
 
 					//Coupons						

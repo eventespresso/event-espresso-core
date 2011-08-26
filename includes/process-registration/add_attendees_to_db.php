@@ -192,9 +192,27 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
           print 'Number of cols: ' . count($sql_data); */
 
         if ($num_rows > 0 && $loop_number == 1) {
-            if (!isset($data_source['admin']))
-
+           if (!isset($data_source['admin']))
+			{
+				/*
+				 * Added for seating chart addon
+				 */
+				$tmp_session = $_SESSION['espresso_session_id'];
+				$rem_attendee_ids = $wpdb->get_results(" select t1.id, t1.registration_id FROM " . EVENTS_ATTENDEE_TABLE . "  t1 WHERE t1.attendee_session ='" . $_SESSION['espresso_session_id'] . "'  $incomplete_filter ");
+				foreach($rem_attendee_ids as $v)
+				{
+					
+					if ( defined('ESPRESSO_SEATING_CHART') )
+					{
+						$wpdb->query("delete from ".EVENTS_SEATING_CHART_EVETN_SEAT_TABLE." where attendee_id = ".$v->id);
+					}
+				}
+				/*
+				 * End
+				 */			
                 $wpdb->query(" DELETE t1, t2 FROM " . EVENTS_ATTENDEE_TABLE . "  t1 JOIN  " . EVENTS_ANSWER_TABLE . " t2 on t1.id = t2.attendee_id WHERE t1.attendee_session ='" . $_SESSION['espresso_session_id'] . "'  $incomplete_filter ");
+			}
+			
 //Added by Imon		
 		// First delete attempt might fail if there is no data in answer table. So, second attempt without joining answer table is taken bellow -
 				$wpdb->query(" DELETE t1 FROM " . EVENTS_ATTENDEE_TABLE . "  t1 WHERE t1.attendee_session ='" . $_SESSION['espresso_session_id'] . "'  $incomplete_filter ");
@@ -212,6 +230,29 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
         }
 
         $attendee_id = $wpdb->insert_id;
+		
+		/*
+		 * Added for seating chart addon
+		 */
+		if ( defined('ESPRESSO_SEATING_CHART') )
+		{
+			if ( seating_chart::check_event_has_seating_chart($event_id) !== false )
+			{
+				if ( isset($_POST['seat_id']) )
+				{
+					$booking_id = seating_chart::parse_booking_info($_POST['seat_id']);
+					if ( $booking_id > 0 )
+					{
+						seating_chart::confirm_a_seat($booking_id,$attendee_id);
+					}
+				}
+			}
+		}
+		/*
+		 *
+		 */
+		 
+		 
 		
 		//Add a record for the primary attendee
 		$sql = array('attendee_id' => $attendee_id,'meta_key' => 'primary_attendee','meta_value' => 1 );
@@ -305,6 +346,32 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
                 $amount_pd = 0.00; //additional attendee can't hold this info
                 foreach ($att_data_source['x_attendee_fname'] as $k => $v) {
                     if (trim($v) != '' && trim($att_data_source['x_attendee_lname'][$k]) != '') {
+						
+						/*
+						 * Added for seating chart addon
+						 */
+						$seat_check = true;
+						$x_booking_id = 0;
+						if ( defined('ESPRESSO_SEATING_CHART') ){
+							if ( seating_chart::check_event_has_seating_chart($event_id) !== false ){
+								if ( !isset($att_data_source['x_seat_id'][$k]) || trim($att_data_source['x_seat_id'][$k]) == '' ){
+									$seat_check = false;
+								}else{
+									$x_booking_id = seating_chart::parse_booking_info($att_data_source['x_seat_id'][$k]);
+									if ( $x_booking_id > 0 ){
+										$seat_check = true;
+									}else{
+										$seat_check = false;//Keeps the syustem from adding an additional attndee if no seat is selected
+									}
+								}
+							}
+						}
+						if ( $seat_check ){
+						/*
+						 * End
+						 */
+						 
+						 
                         $sql_a = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session_id'], 'lname' => $att_data_source['x_attendee_lname'][$k], 'fname' => $v, 'email' => $att_data_source['x_attendee_email'][$k], 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
                         $sql_data_a = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
                             '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d');
@@ -329,6 +396,20 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 //Added by Imon
 						$ext_att_data_source = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session_id'], 'lname' => $att_data_source['x_attendee_lname'][$k], 'fname' => $v, 'email' => $att_data_source['x_attendee_email'][$k], 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
                         echo add_attendee_questions($questions, $registration_id, $ext_attendee_id, array('session_vars' => $ext_att_data_source));
+						
+						/*
+						 * Added for seating chart addon
+						 */
+						}
+
+						if ( defined('ESPRESSO_SEATING_CHART') ){
+							if ( seating_chart::check_event_has_seating_chart($event_id) !== false && $x_booking_id > 0){
+								seating_chart::confirm_a_seat($x_booking_id,$ext_attendee_id);
+							}
+						}
+						/*
+						 * End
+						 */	
                     }
                 }
             }
@@ -430,9 +511,6 @@ $primary_registration_id = NULL;
                 }
             }
 
-
-
-
             //Post the gateway page with the payment options
             if ($event_cost != '0.00') {
                 //find first registrant's name, email, count of registrants
@@ -501,4 +579,3 @@ $primary_registration_id = NULL;
     }
 
 }
-

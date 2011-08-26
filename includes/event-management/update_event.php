@@ -257,6 +257,42 @@ function update_event($recurrence_arr = array()) {
         $event_mata['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
         $event_mata['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
         $event_mata['date_submitted'] = $_REQUEST['date_submitted'];
+		
+		/*
+		 * Added for seating chart addon
+		 */
+		if ( isset($_REQUEST['seating_chart_id']) )
+		{
+			$cls_seating_chart = new seating_chart();
+			$seating_chart_result = $cls_seating_chart->associate_event_seating_chart($_REQUEST['seating_chart_id'],$event_id);
+			$tmp_seating_chart_id = $_REQUEST['seating_chart_id'];
+			if ( $tmp_seating_chart_id > 0 )
+			{
+				if ( $seating_chart_result === false )
+				{
+					$tmp_seating_chart_row = $wpdb->get_row("select seating_chart_id from ".EVENTS_SEATING_CHART_EVENT_TABLE." where event_id = $event_id");
+					if ( $tmp_seating_chart_row !== NULL )
+					{
+						$tmp_seating_chart_id = $tmp_seating_chart_row->seating_chart_id;
+					}
+					else
+					{
+						$tmp_seating_chart_id = 0;
+					}
+					
+				}
+				
+				if ( $_REQUEST['allow_multiple'] == 'Y' && isset($_REQUEST['seating_chart_id']) && $tmp_seating_chart_id > 0 )
+				{
+					
+					$event_mata['additional_attendee_reg_info'] = 3;
+				}
+			}
+		}
+		/*
+		 * End
+		 */
+		 
 
         if ($_REQUEST['emeta'] != '') {
             foreach ($_REQUEST['emeta'] as $k => $v) {
@@ -545,6 +581,22 @@ function update_event($recurrence_arr = array()) {
         }
         ?>
         <div id="message" class="updated fade"><p><strong><?php _e('Event details updated for', 'event_espresso'); ?> <a href="<?php echo espresso_reg_url($event_id); ?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event']) ?> for <?php echo date("m/d/Y", strtotime($start_date)); ?></a>.</strong></p></div>
+        
+        <?php
+			/*
+			 * Added for seating chart addon
+			 */
+			if ( isset($seating_chart_result) && $seating_chart_result === false )
+			{
+		?>
+        <p>Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)</p>
+        <?php	
+			}
+			/*
+			 * End
+			 */
+		?>   
+        
         <?php
     }
 

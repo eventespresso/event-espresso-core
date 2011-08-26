@@ -12,7 +12,18 @@ if (!function_exists('add_event_espresso_menus')) {
 
         //Event Setup
         add_submenu_page('event_espresso', __('Event Espresso - Event Overview', 'event_espresso'), __('Event Overview', 'event_espresso'), 'administrator', 'events', 'event_espresso_manage_events');
-
+		
+		/*
+		 * Added for seating chart addon
+		 */
+		//Seating chart management
+		if ( defined('ESPRESSO_SEATING_CHART') ){
+			add_submenu_page('event_espresso', __('Event Espresso - Seating Chart','event_espresso'), __('Seating chart','event_espresso'), 'administrator', 'seating_chart', 'event_espresso_manage_seating_chart');
+		}
+		/*
+		 *
+		 */
+		 
         //Venues
         if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
             add_submenu_page('event_espresso', __('Event Espresso - Venue Manager', 'event_espresso'), __('Venue Manager', 'event_espresso'), 'administrator', 'event_venues', 'event_espresso_venue_config_mnu');
