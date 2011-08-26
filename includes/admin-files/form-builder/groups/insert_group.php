@@ -39,7 +39,7 @@ function event_espresso_insert_group(){
 			}
 		}
 
-	if ($error != true){?>
+	if (empty($error)){?>
 		<div id="message" class="updated fade"><p><strong><?php _e('The group has been added.','event_espresso'); ?></strong></p></div>
 <?php
 	}else { ?>
