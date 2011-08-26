@@ -392,15 +392,20 @@ function event_list_attendees() {
     <?php _e('Export to Excel', 'event_espresso'); ?>
     </a> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px"  class="button-primary"  href="admin.php?page=events&amp;event_admin_reports=add_new_attendee&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Add Attendee', 'event_espresso') . '</a>' : ''; ?> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=edit&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Edit Event', 'event_espresso') . '</a>' : ''; ?> </div>
 </form>
-<h4>Legend</h4>
-<dl>
+ <h4 style="clear:both"><?php _e('Legend', 'event_espresso'); ?></h4>
+<dl style="float:left; margin-left:10px; width:200px">
+  <dt><?php event_espresso_paid_status_icon('Completed') ?> - <?php _e('Completed', 'event_espresso'); ?></dt>
+  <dt><?php event_espresso_paid_status_icon('Incomplete') ?> - <?php _e('Incomplete', 'event_espresso'); ?></dt>
+    <dt><?php event_espresso_paid_status_icon('Pending') ?> - <?php _e('Pending', 'event_espresso'); ?></dt>
+
   <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/money.png" width="16" height="16" alt="<?php _e('Payment Details', 'event_espresso'); ?>" /> - <?php _e('Payment Details', 'event_espresso'); ?></dt>
-  <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/user_edit.png" width="16" height="16" alt="<?php _e(' Attendee Details', 'event_espresso'); ?>" /> - <?php _e('Attendee Details', 'event_espresso'); ?></dt>
-  <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_link.png" width="16" height="16" alt="<?php _e('Resend Registration Details', 'event_espresso'); ?>" /> - <?php _e('Resend Registration Email', 'event_espresso'); ?></dt>
+
+  
+  </dl>
+  <dl style="float:left; margin-left:10px; width:200px">
+  <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_link.png" width="16" height="16" alt="<?php _e('Resend Details', 'event_espresso'); ?>" /> - <?php _e('Resend Email', 'event_espresso'); ?></dt>
   <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/page_white_acrobat.png" width="16" height="16" alt="<?php _e('Download Invoice', 'event_espresso'); ?>" /> - <?php _e('Download Invoice', 'event_espresso'); ?></dt>
-  <dt><?php event_espresso_paid_status_icon('Completed') ?> - Completed</dt>
-  <dt><?php event_espresso_paid_status_icon('Incomplete') ?> - Incomplete</dt>
-  <dt><?php event_espresso_paid_status_icon('Pending') ?> - Pending</dt>
+  <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/user_edit.png" width="16" height="16" alt="<?php _e(' Attendee Details', 'event_espresso'); ?>" /> - <?php _e('Attendee Details', 'event_espresso'); ?></dt>
 </dl>
 <script>
 		jQuery(document).ready(function($) {
