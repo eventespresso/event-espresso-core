@@ -100,6 +100,30 @@ function event_espresso_support() {
         <div title="Click to toggle" class="handlediv"><br />
         </div>
         <h3 class="hndle">
+          <?php _e('Partners', 'event_espresso'); ?>
+          <a name="partners" id="partners"></a></h3>
+        <div class="inside">
+          <div class="padding">
+          
+            <dl id="partners">
+              <dt> <a href="http://bigimprint.com/espresso/" target="_blank">Big Imprint Design</a></dt>
+              <dd>We create affordable websites for small businesses and non-profits.</dd>
+              <dt> <a href="http://eventespresso.com/contact/" target="_blank">
+                <?php _e('Become a Partner', 'event_espresso'); ?>
+                </a> </dt>
+              <dd>Have experience developing websites around Event Espresso? Become a partner!</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+            <li>
+    <div class="metabox-holder">
+      <div class="postbox">
+        <div title="Click to toggle" class="handlediv"><br />
+        </div>
+        <h3 class="hndle">
           <?php _e('Hire a Developer', 'event_espresso'); ?>
           <a name="hire_devs" id="hire_devs"></a></h3>
         <div class="inside">
