@@ -1,4 +1,9 @@
-/* Event Espresso boxes  */
+/* 
+* Event Espresso boxes suits fixed or fluid layouts 
+*
+* Event list displayed as a grid layout suitable for 
+* events lists with light detail - i.e no event description
+*/
 /**
 * Stylesheet sections
 *
@@ -67,8 +72,6 @@ table.price_list {
 }
 /*___ General site wide styles for event-data / espresso_events ___*/
 
-/*#content .event-data-display p,
-#content .espresso_event p */
 #content .event-display-boxes p {
 	margin: .8em 0 ;
 }
@@ -81,6 +84,15 @@ table.price_list {
 	border: 1px solid #bebebe;
 	margin-bottom: 1em;
 	padding: 10px;
+}
+#content .event-list-display { /* event list display - event-display-boxes */
+	display: inline-block;
+	margin-right: 15px;
+	min-height: 250px;
+	padding-bottom: 50px;
+	position: relative;	
+	width: 250px;
+	vertical-align: top;
 }
 #content .event_title,
 #content .section-heading {
@@ -139,11 +151,18 @@ table.price_list {
 	margin-top: 0;
 	padding: 10px;
 }
-#content .event-display-boxes .register-link-footer	{
+#content #event_espresso_registration_form .register-link-footer {
+	margin: 10px -10px -10px;
+}
+#content .event-list-display .register-link-footer	{
 	border-top: 1px solid #bfbfbf;
 	background: #BCBEB2;
-	margin: 10px -10px -10px;
+	margin: 10px 0 0;
 	padding-left: 10px;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: auto;
 }
 #content  .register-link-footer a,
 #content .register-link-footer a:visited {
@@ -159,7 +178,7 @@ table.price_list {
 .event-data-display .event_staff {
 	display: block;
 	margin: 10px;
-	padding: 5px 10px;
+	padding: 5px 10px ;
 	width: auto;
 }
 div.event-entry-meta {
@@ -492,7 +511,7 @@ a.btn_event_form_submit {
 #content table.event-display-tables {
 	background: #fff;
 	border: 1px solid #bebebe;
-	margin: 0 auto;
+	margin: 0 auto 10px;
 	text-align: left;	
 	width: 96%;
 }

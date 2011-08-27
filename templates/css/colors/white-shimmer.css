@@ -22,7 +22,9 @@
 #content .event-display-boxes .register-link-footer a {
 	color: #777;
 }
-#content .event-display-boxes .register-link-footer {
+#content .event-display-boxes .register-link-footer,
+select option:focus,
+select option:hover {
 	background: #f0f0f0;
 	background: -moz-linear-gradient(top, #f0f0f0 0%, #e4e4e4 50%, #dfdfdf 51%, #f0f0f0 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f0f0f0), color-stop(50%,#e4e4e4), color-stop(51%,#dfdfdf), color-stop(100%,#f0f0f0));
