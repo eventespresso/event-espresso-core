@@ -3,11 +3,11 @@
 if (!function_exists('event_form_build')) {
 
     function event_form_build($question, $answer = "", $event_id = null, $multi_reg = 0, $extra = array()) {
-        if ($question->admin_only == 'Y' && $show_admin_only == false) {
-       	 return;
-    	}
+        if ($question->admin_only == 'Y' && empty($show_admin_only)) {
+            return;
+        }
 
-		$required = '';
+        $required = '';
         $attendee_number = isset($extra['attendee_number']) ? $extra['attendee_number'] : 0;
         $price_id = isset($extra['price_id']) ? $extra['price_id'] : 0;
         $multi_name_adjust = $multi_reg == 1 ? "[$event_id][$price_id][$attendee_number]" : '';

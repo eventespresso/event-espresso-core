@@ -8,7 +8,7 @@
   <div class="event_espresso_form_wrapper event-data-display">
     <form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
       <h2 class="event_title" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
-      
+
 				<?php /* Venue details. Un-comment first and last lines & any venue details you wish to display or use the provided shortcodes. */ ?>
       <?php // echo '<div id="venue-details-display">'; ?>
 				<?php // echo '<p class="section-title">' . __('Venue Details', 'event_espresso') . '</p>'; ?>
@@ -21,7 +21,7 @@
       <?php // echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
       <?php // echo '</div>'; ?>
 				<?php /* end venue details block */ ?>
-				
+
 				<?php 		if ($display_desc == "Y") {//Show the description or not ?>
       <p class="section-title">
         <?php _e('Description:', 'event_espresso') ?>
@@ -39,7 +39,7 @@
 		// if todays date is after $reg_end_date
 		?>
           <div class="event-registration-closed event-messages">
-            
+
             <p class="event_full">
 								<strong>
               <?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?>
@@ -74,9 +74,9 @@
 		break;
 
 		default://This will display the registration form
-	
+
 		/* Display the address and google map link if available */
-		if ($location != '' && $org_options['display_address_in_regform'] !='N') {
+		if ($location != '' && (empty($org_options['display_address_in_regform']) || $org_options['display_address_in_regform'] !='N')) {
 	?>
 			<p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 			<span class="address-block"> <?php echo stripslashes_deep($location); ?><br />
@@ -85,7 +85,7 @@
 		}
 		/* Displays the social media buttons */
 		if (function_exists('espresso_show_social_media')){
-			echo '<p class="espresso_social">'.espresso_show_social_media($event_id, 'twitter').' '.espresso_show_social_media($event_id, 'facebook').'</p>'; 
+			echo '<p class="espresso_social">'.espresso_show_social_media($event_id, 'twitter').' '.espresso_show_social_media($event_id, 'facebook').'</p>';
 		}
 	?>
     <p class="start_date">
@@ -94,7 +94,7 @@
             <span class="section-title">
             <?php _e('Start Date: ','event_espresso');?>
             </span>
-            <?php		
+            <?php
 		}else{ ?>
         <span class="section-title">
         <?php _e('Date: ','event_espresso');?>
@@ -107,9 +107,9 @@
         <span class="section-title">
         <?php _e('End Date: ','event_espresso');?>
         </span> <?php echo event_date_display($end_date, get_option('date_format'));
-		} ?> 
+		} ?>
       </p>
-      
+
      <?php
 	/*
 	* * This section shows the registration form if it is an active event * *
@@ -178,7 +178,7 @@
 							$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
 							if ( $seating_chart_id !== false )
 							{
-								
+
 						?>
                         <div class="event_questions" id="event_seating_chart">
                         	<h3 style="clear:both">Seating chart</h3>
@@ -192,11 +192,11 @@
                                         {
                                 ?>
                                 <br/>
-                                <a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank">Seating chart image</a>		
+                                <a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank">Seating chart image</a>
                                 <?php
                                         }
                                 ?>
-                                
+
                             </p>
 						</div>
                         <?php
@@ -206,7 +206,7 @@
 						 * End
 						 */
 						?>
-      <?php 
+      <?php
 	  //Coupons
 		if (function_exists('event_espresso_coupon_registration_page')) {
 			echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
@@ -216,14 +216,14 @@
 			echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
 		}//End groupons display
 	  ?>
-      
+
       <fieldset id="event-reg-form-groups">
         <h3 class="section-heading">
           <?php _e('Registration Details', 'event_espresso'); ?>
         </h3>
         <?php
 		//Outputs the custom form questions. This function can be overridden using the custom files addon
-		echo event_espresso_add_question_groups($question_groups); 
+		echo event_espresso_add_question_groups($question_groups);
 		?>
       </fieldset>
       <?php
@@ -235,7 +235,7 @@
 		} else {
 		?>
           <input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
-		<?php 					
+		<?php
 		}//End allow multiple
 		?>
 		<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee">
