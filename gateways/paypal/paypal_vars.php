@@ -36,7 +36,7 @@ if ( isset($attendee_id) && is_numeric($attendee_id) && $attendee_id > 0 )
 		$tmp_row = $wpdb->get_row("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '{$tmp_registration_id}' ");
 		if ( $tmp_row !== NULL )
 		{
-			$primary_registration_id = $tmp_row->primary_registration_id;		
+			$primary_registration_id = $tmp_row->primary_registration_id;
 			$multi_reg = true;
 		}
 		else
@@ -61,8 +61,8 @@ if ( $attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_reg
 	{
 		$registration_ids[] = $primary_registration_id;
 	}
-	
-	$total = 0.00;
+
+	$total_cost = 0.00;
 	$amount_pd = 0.00;
 	foreach($registration_ids as $registration_id){
 
@@ -70,7 +70,7 @@ if ( $attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_reg
 				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
 				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
 				where ea.registration_id = '".$registration_id."' order by ed.event_name ";
-		
+
 		$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
 
 		foreach($tmp_attendees as $tmp_attendee){
@@ -124,7 +124,7 @@ if (count($attendees) > 0) {
         #if ($wpdb->num_rows > 0) {
             $i = 1;
             $div = $event_cost / $quantity;
-            #foreach ($data as $row) 
+            #foreach ($data as $row)
 			foreach($attendees as $attendee)
 			{
                 #$afname = $row['fname'];
@@ -140,7 +140,7 @@ if (count($attendees) > 0) {
     #}
 }
 
-#else 
+#else
 #{
 #    $myPaypal->addField('item_number', $registration_id);
 #    $myPaypal->addField('item_name', stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($fname . ' ' . $lname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $attendee_email);
@@ -189,8 +189,8 @@ if (!empty($paypal_settings['bypass_payment_page']) && $paypal_settings['bypass_
 }
 
 if ($use_sandbox == true) {
-			
+
     echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Paypal Debug Mode Is Turned On', 'event_espresso') . '</h3>';
     $myPaypal->dump_fields(); // for debugging, output a table of all the fields
-			
+
 }
