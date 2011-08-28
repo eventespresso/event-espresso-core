@@ -841,6 +841,7 @@ if (!function_exists('event_espresso_get_final_price')) {
     function event_espresso_get_final_price($price_id, $event_id = 0) {
         global $wpdb, $org_options;
         $results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type FROM " . EVENTS_PRICES_TABLE . " WHERE id='" . $price_id . "' ORDER BY id ASC LIMIT 1");
+        $event_cost = 0.00;
         foreach ($results as $result) {
             if ($wpdb->num_rows >= 1) {
                 if ($result->event_cost > 0.00) {
@@ -859,10 +860,10 @@ if (!function_exists('event_espresso_get_final_price')) {
                         $event_cost = $early_price_data['event_price'];
                     }
                 } else {
-                    $event_cost = __('0.00', 'event_espresso');
+                    $event_cost = 0.00;
                 }
             } else if ($wpdb->num_rows == 0) {
-                $event_cost = __('0.00', 'event_espresso');
+                $event_cost = 0.00;
             }
         }
         if (empty($surcharge))
