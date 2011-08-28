@@ -21,7 +21,7 @@ class eway extends PaymentGateway {
         parent::__construct();
         // Some default values of the class
         $eway_settings = get_option('event_espresso_eway_settings');
-        switch ($eway_setting['region']) {
+        switch ($eway_settings['region']) {
             case 'NZ':
                 $this->gatewayUrl = 'https://nz.ewaygateway.com/Request/';
                 break;
