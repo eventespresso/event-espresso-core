@@ -526,8 +526,13 @@ a.btn_event_form_submit {
 	text-align: left;
 	width: 70%;
 }
+#cart-reg-details th,
+#cart-reg-details td {
+	padding: 5px;
+}
 #event_espresso_shopping_cart table.price_list {
-	border: 1px;
+	border: 1px solid #bfbfbf;
+	border-bottom: none;
 	font-size: 100%;
 	font-weight: bold;
 	margin: 10px auto;
@@ -536,8 +541,9 @@ a.btn_event_form_submit {
 table.price_list tr {
 	background-color: #D7DCBD;
 }
-table.price_list td{
-	padding: 5px;
+table.price_list td {
+	border-bottom: 1px solid #bfbfbf;
+	border-top: none;
 }
 table.price_list td.price_type {
 	width: 150px;

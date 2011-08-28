@@ -37,7 +37,11 @@
 	-webkit-box-shadow: inset 0 0 5px #C39DA6;
 	box-shadow: inset 0 0  5px #C39DA6;
 }
-	
+select option:focus,
+select option:hover {
+	background: #d00433;
+	color: #fff;
+}
 /*___Event pages ___*/
 
 /** Registeration event **/

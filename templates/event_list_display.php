@@ -58,16 +58,19 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
     <?php //echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
     <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
 
-    <p id="p_event_price-<?php echo $event_id ?>" class="event_price">
-				<span class="section-title"><?php  echo __('Price: ', 'event_espresso'); ?></span> <?php echo event_espresso_get_price($event_id); ?>
-    </p>
+    <div class="event-meta">
+			 <p id="p_event_price-<?php echo $event_id ?>" class="event_price">
+				 <span class="section-title"><?php  echo __('Price: ', 'event_espresso'); ?></span> <?php echo event_espresso_get_price($event_id); ?>
+     </p>
 
-    <p id="event_date-<?php echo $event_id ?>"><span class="section-title"><?php _e('Date:', 'event_espresso'); ?></span>  <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
-
+     <p id="event_date-<?php echo $event_id ?>"><span class="section-title"><?php _e('Date:', 'event_espresso'); ?></span>  <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
+			</div>
 <?php
 //Show short descriptions
 if ($event_desc != '' && isset($org_options['display_short_description_in_event_list']) && $org_options['display_short_description_in_event_list'] == 'Y') {?>
+<div class="event-desc">
 	<p><?php echo espresso_format_content($event_desc); ?></p>
+</div>
 <?php 
 } 
 ?>
@@ -95,7 +98,7 @@ if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?
 		}
     } else {
 		if ($display_reg_form == 'Y'&& $externalURL == '') {
-?>			<p id="available_spaces-<?php echo $event_id ?>"><span class="section-title"><?php _e('Available Spaces:', 'event_espresso') ?></span> <?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces') ?></p>
+?>			<p id="available_spaces-<?php echo $event_id ?>" class="spaces-available"><span class="section-title"><?php _e('Available Spaces:', 'event_espresso') ?></span> <?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces') ?></p>
 <?php
 		}
 		

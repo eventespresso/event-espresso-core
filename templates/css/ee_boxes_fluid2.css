@@ -1,9 +1,4 @@
-/* 
-* Event Espresso boxes suits fixed or fluid layouts 
-*
-* Event list displayed as a grid layout suitable for 
-* events lists with light detail - i.e no event description
-*/
+/* Event Espresso boxes  */
 /**
 * Stylesheet sections
 *
@@ -42,7 +37,8 @@ div#event-meta ul,
 #content .event-display-boxes,
 #content .event-messages,
 #content table.event-display-tables,
-.event_espresso_attention {
+.event_espresso_attention,
+.event-desc {
 	-moz-box-shadow: 0 0 3px #d2d2d2;
 	-webkit-box-shadow: 0 0 3px #d2d2d2;
 	box-shadow: 0 0  3px #d2d2d2;
@@ -72,6 +68,8 @@ table.price_list {
 }
 /*___ General site wide styles for event-data / espresso_events ___*/
 
+/*#content .event-data-display p,
+#content .espresso_event p */
 #content .event-display-boxes p {
 	margin: .8em 0 ;
 }
@@ -84,15 +82,6 @@ table.price_list {
 	border: 1px solid #bebebe;
 	margin-bottom: 1em;
 	padding: 10px;
-}
-#content .event-list-display { /* event list display - event-display-boxes */
-	display: inline-block;
-	margin-right: 15px;
-	min-height: 250px;
-	padding-bottom: 50px;
-	position: relative;	
-	width: 250px;
-	vertical-align: top;
 }
 #content .event_title,
 #content .section-heading {
@@ -147,22 +136,16 @@ table.price_list {
 #content .event-display-boxes .address-block {
 	border: 1px solid #bfbfbf;
 	background: #FAF9EF;
-	display: inline-block;
+	display: block;
 	margin-top: 0;
 	padding: 10px;
 }
-#content #event_espresso_registration_form .register-link-footer {
-	margin: 10px -10px -10px;
-}
-#content .event-list-display .register-link-footer	{
+#content .event-display-boxes .register-link-footer	{
 	border-top: 1px solid #bfbfbf;
 	background: #BCBEB2;
-	margin: 10px 0 0;
+	clear: both;
+	margin: 10px -10px -10px;
 	padding-left: 10px;
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	width: auto;
 }
 #content  .register-link-footer a,
 #content .register-link-footer a:visited {
@@ -175,15 +158,35 @@ table.price_list {
 ------------------------------------------------------------------------------*/
 /*___ page event list ___*/
 
-.event-data-display .event_staff {
-	display: block;
-	margin: 10px;
-	padding: 5px 10px ;
-	width: auto;
-}
+.event-list-display,
 div.event-entry-meta {
 	overflow: hidden;
 }
+.event-list-display .event-desc {
+	background: #FAF9EF;
+	border: 1px solid #bebebe;
+	float: right;
+	margin: 0 0 20px 5px;
+	padding: 0 1%;
+	width: 60%;
+}
+div.event-meta {
+	float: left;
+}
+#content div.event-meta p.event_price {margin-top: 0;}
+#content .event-list-display .event_address {
+	clear: left;
+	overflow: hidden;
+	width: 30%;
+}
+.event-data-display .event_staff {
+	background: #f3f3f3;
+	display: block;
+	margin: 10px;
+	padding: 5px 10px;
+	width: auto;
+}
+.spaces-available { clear: left;}
 div.event-entry-meta ul {
 	border: 1px solid #dfdfdf;
 	border-bottom: none;
@@ -511,7 +514,7 @@ a.btn_event_form_submit {
 #content table.event-display-tables {
 	background: #fff;
 	border: 1px solid #bebebe;
-	margin: 0 auto 10px;
+	margin: 0 auto;
 	text-align: left;	
 	width: 96%;
 }
