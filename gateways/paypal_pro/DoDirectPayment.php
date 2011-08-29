@@ -211,13 +211,11 @@ function GetErrors( $DataArray ) {
     return $Errors;
 }
 
-function DisplayErrors($Errors)
-	{
-		foreach($Errors as $ErrorVar => $ErrorVal)
-		{
+function DisplayErrors($Errors){
+	echo '<p><strong class="credit_card_failure">Attention: your transaction was declined for the following reason(s):</strong><br />';
+		foreach($Errors as $ErrorVar => $ErrorVal){
 			$CurrentError = $Errors[$ErrorVar];
-			foreach($CurrentError as $CurrentErrorVar => $CurrentErrorVal)
-			{
+			foreach($CurrentError as $CurrentErrorVar => $CurrentErrorVal){
 				if($CurrentErrorVar == 'L_ERRORCODE')
 					$CurrentVarName = 'Error Code';
 				elseif($CurrentErrorVar == 'L_SHORTMESSAGE')
@@ -230,6 +228,7 @@ function DisplayErrors($Errors)
 				echo $CurrentVarName . ': ' . $CurrentErrorVal . '<br />';
 			}
 			echo '<br />';
+			echo event_espresso_pay($att_registration_id);
 		}
 	}
 ?>
