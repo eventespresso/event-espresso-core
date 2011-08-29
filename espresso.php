@@ -7,7 +7,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.P.7
+  Version: 3.1.P.8
 
   Author: Seth Shoultes
   Author URI: http://www.eventespresso.com
@@ -31,7 +31,7 @@
 
 //Define the version of the plugin
 function espresso_version() {
-    return '3.1.P.7';
+    return '3.1.P.8';
 }
 
 function ee_init_session() {
@@ -638,5 +638,10 @@ if (!function_exists('is_ssl')) {
         return false;
     }
 
+}
+
+//Export PDF Ticket (new)
+if (isset($_REQUEST['ticket_launch'])&&$_REQUEST['ticket_launch'] == 'true') {
+	echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['registration_id']);
 }
 
