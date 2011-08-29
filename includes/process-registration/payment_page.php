@@ -344,7 +344,8 @@ function event_espresso_pay($att_registration_id=0) {
     //If the attendee has made a payment or returns to make a payment, then we will display the payment overview page
     if ($num_rows > 0 && $att_registration_id != '') {
         foreach ($attendees as $attendee) {
-            $id = $attendee->id;
+            $attendee_id = $attendee->id;
+			$id = $attendee->id;
             $att_registration_id = $attendee->registration_id;
             $lname = $attendee->lname;
             $fname = $attendee->fname;
