@@ -104,10 +104,7 @@ for ($i = 0; $i < 10; $i++) {
 </form>
 
 </div><!-- / .event_espresso_or_wrapper -->
-
-
 <script>
-
     jQuery(function(){
 
         jQuery('#paypal_pro_payment_form').validate();
@@ -120,12 +117,6 @@ for ($i = 0; $i < 10; $i++) {
             }
 
         })
-
-
-
-
     });
-
-
 </script>
 </div>
