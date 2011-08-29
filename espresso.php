@@ -642,6 +642,6 @@ if (!function_exists('is_ssl')) {
 
 //Export PDF Ticket (new)
 if (isset($_REQUEST['ticket_launch'])&&$_REQUEST['ticket_launch'] == 'true') {
-	echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['registration_id']);
+	echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['r_id']);
 }
 
