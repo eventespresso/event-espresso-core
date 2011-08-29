@@ -100,11 +100,11 @@ function espresso_tiny_mce() {
     //This loads the the tinymce script into the header
     global $wp_version;
     $wp_min_version = '3.2';
-    wp_tiny_mce(false, array("editor_selector" => "theEditor")); // true gives you a stripped down version of the editor
     //If the version of WordPress is lower than 3.2, then we load the fallback script.
     if (!version_compare($wp_version, $wp_min_version, '>=')) {
         //If this is an older version of WordPress, then we need to load this.
         if (function_exists('wp_tiny_mce_preload_dialogs')) {
+			wp_tiny_mce(false, array("editor_selector" => "theEditor")); // true gives you a stripped down version of the editor
             add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
         }
     }
