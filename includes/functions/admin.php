@@ -46,13 +46,10 @@ function event_espresso_config_page_scripts() {
                 wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
             // break;
             case ( 'events' ):
-							case ( 'event_espresso' ):
+			case ( 'event_espresso' ):
             case ( 'espresso_reports' ):
-							case ( 'support' ) :
-							case ( 'template_confg' ):
-                //case ( 'event_venues' ):
-                //case ( 'event_staff' ):
-                //case ( 'event_categories' ):
+			case ( 'support' ) :
+			case ( 'template_confg' ):
                 wp_enqueue_script('postbox');
                 wp_enqueue_script('dashboard');
                 wp_enqueue_script('thickbox');
@@ -90,7 +87,6 @@ function event_espresso_config_page_scripts() {
                 break;
         }
     }
-    wp_enqueue_script('fancybox', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/fancybox/jquery.fancybox-1.2.5.pack.js', array('jquery')); //Events popup script
     wp_enqueue_script('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js'); //Events core script
     //wp_enqueue_script( 'alert_box',  EVENT_ESPRESSO_PLUGINFULLURL.'scripts/jquery.alerts.js' );//Alert box script
     //wp_enqueue_script('media-upload');

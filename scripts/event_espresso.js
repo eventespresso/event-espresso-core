@@ -138,27 +138,6 @@ var globalRef="gRef_"+parentElement.getAttribute("globalNumber");eval(globalRef+
 
 $jaer = jQuery.noConflict();
 jQuery(document).ready(function($jaer) {
-	//This is for the Fancybox popups
-	$jaer("a.ev_reg-fancylink").fancybox({
-		'padding':		10,
-		'imageScale':	true,
-		'zoomSpeedIn':	250, 
-		'zoomSpeedOut':	250,
-		'zoomOpacity':	true, 
-		'overlayShow':	false,
-		'frameHeight':	250,
-		'hideOnContentClick': false
-	});
-	$jaer("a.ev_reg_event_info").fancybox({
-		'padding':		10,
-		'imageScale':	true,
-		'zoomSpeedIn':	250, 
-		'zoomSpeedOut':	250,
-		'zoomOpacity':	true, 
-		'overlayShow':	false,
-		'frameHeight':	400,
-		'hideOnContentClick': false
-	});
 	//This is for the confirmation boxes
 	$jaer("#alert_button").click( function() {
 		jAlert('This is a custom alert box', 'Alert Dialog');
