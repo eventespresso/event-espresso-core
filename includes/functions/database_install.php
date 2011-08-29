@@ -319,6 +319,7 @@ function events_data_tables_install() {
 					  pre_approve INT(11) DEFAULT '1',
 					  checked_in INT(1) DEFAULT '0',
 					  checked_in_quantity INT(11) DEFAULT '0',
+					  hashSalt VARCHAR(250) DEFAULT NULL,
 					PRIMARY KEY  (id),
 					KEY `registration_id` (`registration_id`),
 					KEY `event_id` (`event_id`)";
