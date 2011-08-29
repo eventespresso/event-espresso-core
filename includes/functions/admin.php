@@ -1,95 +1,66 @@
 <?php
 
 //All of the functions that deal with admin area should go here.
-//The all of the scripts we need
+//These all of the scripts we need
 function event_espresso_config_page_styles() {
-    wp_enqueue_style('dashboard');
-    wp_enqueue_style('thickbox');
+	wp_enqueue_style('dashboard');
+	wp_enqueue_style('thickbox');
     wp_enqueue_style('global');
     wp_enqueue_style('wp-admin');
     wp_enqueue_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css'); //Events core style
     if (isset($_REQUEST['page'])) {
-        switch ($_REQUEST['page']) {
-            case ( 'events' ):
-            case ( 'espresso_reports' ):
-                // case ( 'event_categories' ):
-                wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-lightness/jquery-ui-1.7.3.custom.css');
-                break;
-        }
-        if (isset($_REQUEST['event_admin_reports'])) {
-            switch ($_REQUEST['event_admin_reports']) {
-                case 'charts':
-                    wp_enqueue_style('jquery-jqplot-css', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.min.css');
-                    break;
-            }
-        }
-    }
+		switch ($_REQUEST['page']) {
+			case ( 'events' ):
+			case ( 'espresso_reports' ):
+				wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-lightness/jquery-ui-1.7.3.custom.css');
+			break;
+		}
+		if (isset($_REQUEST['event_admin_reports'])) {
+			switch ($_REQUEST['event_admin_reports']) {
+				case 'charts':
+					wp_enqueue_style('jquery-jqplot-css', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.min.css');
+				break;
+			}
+		}
+	}
 }
 
 function event_espresso_config_page_scripts() {
     add_thickbox();
-    if (isset($_REQUEST['page'])) {
-        switch ($_REQUEST['page']) {
-            case ('discounts' ):
-			case ('groupons' ):
-            case ('event_categories' ):
-            case ('admin_reports' ):
-            case ('form_builder' ):
-            case ('form_groups' ):
-            case ('my-events' ):
-            case ('event_emails' ):
-            case ('event_venues' ):
-            case ('event_staff' ):
-                if ($_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'form_groups') {
-                    wp_enqueue_script('jquery-ui-sortable');
-                }
-                wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
-            // break;
-            case ( 'events' ):
-			case ( 'event_espresso' ):
-            case ( 'espresso_reports' ):
-			case ( 'support' ) :
-			case ( 'template_confg' ):
-                wp_enqueue_script('postbox');
-                wp_enqueue_script('dashboard');
-                wp_enqueue_script('thickbox');
-                wp_enqueue_script('jquery');
-                wp_enqueue_script('jquery-ui-core');
-                wp_enqueue_script('jquery-ui-tabs');
-                wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
-                wp_enqueue_script('tiny_mce');
-                wp_enqueue_script('editor');
-                wp_enqueue_script('editor-functions');
-                wp_enqueue_script('media-upload');
-                wp_enqueue_script('post');
-                wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
-                wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery')); //Events core table column hide/show script
+    wp_enqueue_script('postbox');
+    wp_enqueue_script('dashboard');
+    wp_enqueue_script('thickbox');
+    wp_enqueue_script('jquery');
+    wp_enqueue_script('jquery-ui-core');
+    wp_enqueue_script('jquery-ui-tabs');
+    wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
+    wp_enqueue_script('tiny_mce');
+    wp_enqueue_script('editor');
+    wp_enqueue_script('editor-functions');
+    wp_enqueue_script('media-upload');
+    wp_enqueue_script('post');
+    wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
+    wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery')); //Events core table column hide/show script
 
-                if (isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'add_new_attendee') {
-                    //Load form validation script
-                    wp_register_script('jquery.validate.pack', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.pack.js"), false, '1.7');
-                    wp_enqueue_script('jquery.validate.pack');
-                }
+    if (isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'add_new_attendee') {
+		//Load form validation script
+		wp_register_script('jquery.validate.pack', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.pack.js"), false, '1.7');
+		wp_enqueue_script('jquery.validate.pack');
+	}
 
-                if (isset($_REQUEST['event_admin_reports'])) {
-                    switch ($_REQUEST['event_admin_reports']) {
-                        case 'charts':
-                            wp_enqueue_script('jquery-jqplot-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.min.js', array('jquery'));
-                            wp_enqueue_script('jqplot-barRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.barRenderer.min.js', array('jquery'));
-                            wp_enqueue_script('jqplot-pieRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pieRenderer.min.js', array('jquery'));
-                            wp_enqueue_script('jqplot-categoryAxisRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.categoryAxisRenderer.min.js', array('jquery'));
-                            wp_enqueue_script('jqplot-highlighter-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.highlighter.min.js', array('jquery'));
-                            wp_enqueue_script('jqplot-pointLabels-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pointLabels.min.js', array('jquery'));
-                            break;
-                    }
-                }
-                remove_all_filters('mce_external_plugins');
-                break;
-        }
-    }
-    wp_enqueue_script('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/event_espresso.js'); //Events core script
-    //wp_enqueue_script( 'alert_box',  EVENT_ESPRESSO_PLUGINFULLURL.'scripts/jquery.alerts.js' );//Alert box script
-    //wp_enqueue_script('media-upload');
+    if (isset($_REQUEST['event_admin_reports'])) {
+		switch ($_REQUEST['event_admin_reports']) {
+			case 'charts':
+				wp_enqueue_script('jquery-jqplot-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/jquery.jqplot.min.js', array('jquery'));
+				wp_enqueue_script('jqplot-barRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.barRenderer.min.js', array('jquery'));
+				wp_enqueue_script('jqplot-pieRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pieRenderer.min.js', array('jquery'));
+				wp_enqueue_script('jqplot-categoryAxisRenderer-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.categoryAxisRenderer.min.js', array('jquery'));
+				wp_enqueue_script('jqplot-highlighter-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.highlighter.min.js', array('jquery'));
+				wp_enqueue_script('jqplot-pointLabels-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/plugins/jqplot.pointLabels.min.js', array('jquery'));
+			break;
+		}
+	}
+	remove_all_filters('mce_external_plugins');
 }
 
 function espresso_tiny_mce() {

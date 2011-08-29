@@ -487,14 +487,39 @@ function event_espresso_filter_plugin_actions($links, $file) {
     return $links;
 }
 
+//Settings link in the plugins overview page
 add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 
-
-
-//ADMIN MENU
+//Admin menu
 add_action('admin_menu', 'add_event_espresso_menus');
-add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
-add_action('admin_print_styles', 'event_espresso_config_page_styles');
+
+//Load scripts and styles
+if (isset($_REQUEST['page'])) {
+	$espresso_pages = array(
+		'event_espresso',
+		'discounts',
+		'groupons',
+		'event_categories',
+		'admin_reports',
+		'form_builder',
+		'form_groups','my-events',
+		'event_emails',
+		'event_venues',
+		'event_staff',
+		'events',
+		'espresso_reports',
+		'support',
+		'template_confg',
+		'payment_gateways',
+		'members',
+		'admin_addons',
+		'espresso_calendar'
+	);
+	if (in_array($_REQUEST['page'],$espresso_pages)){
+		add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
+		add_action('admin_print_styles', 'event_espresso_config_page_styles');
+	}
+}
 
 //Run the program
 if (!function_exists('event_espresso_run')) {
