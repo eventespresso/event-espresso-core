@@ -111,7 +111,7 @@ if (!function_exists('event_espresso_delete_event')) {
               event_espresso_send_cancellation_notice($event_id);
               } */
 
-Add an option in general settings for the following?
+//Add an option in general settings for the following?
             /*if (event_espresso_get_status($event_id) == 'ACTIVE') {
                 event_espresso_send_cancellation_notice($event_id);
             }*/
