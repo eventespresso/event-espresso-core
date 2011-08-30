@@ -7,7 +7,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.P.8
+  Version: 3.1.P.9.1
 
   Author: Seth Shoultes
   Author URI: http://www.eventespresso.com
@@ -31,7 +31,7 @@
 
 //Define the version of the plugin
 function espresso_version() {
-    return '3.1.P.8';
+    return '3.1.P.9.1';
 }
 
 function ee_init_session() {
@@ -209,10 +209,10 @@ define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
 /*
  * Added for seating chart addon
  */
-define("EVENTS_SEATING_CHART_TABLE",get_option('events_seating_chart_tbl'));
-define("EVENTS_SEATING_CHART_SEAT_TABLE",get_option('events_seating_chart_seat_tbl'));
-define("EVENTS_SEATING_CHART_EVENT_TABLE",get_option('events_seating_chart_event_tbl'));
-define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE",get_option('events_seating_chart_event_seat_tbl'));
+define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart_tbl");
+define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat_tbl");
+define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event_tbl");
+define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat_tbl");
 /*
  * End
  */
@@ -424,7 +424,7 @@ if (!function_exists('espresso_load_jquery')) {
     function espresso_load_jquery() {
         global $org_options;
         wp_enqueue_script('jquery');
-        if (get_option('event_espresso_multi_reg_active') == 1 || (isset($_REQUEST['page']) && ( $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'form_groups'))) {
+        if (function_exists('event_espresso_multi_reg_init') || (isset($_REQUEST['page']) && ( $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'form_groups'))) {
             wp_enqueue_script('ee_ajax_request', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_cart_functions.js', array('jquery'));
             wp_localize_script('ee_ajax_request', 'EEGlobals', array('ajaxurl' => admin_url('admin-ajax.php'), 'plugin_url' => EVENT_ESPRESSO_PLUGINFULLURL, 'event_page_id' => $org_options['event_page_id']));
         }
