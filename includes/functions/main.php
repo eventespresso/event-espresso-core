@@ -402,27 +402,41 @@ if (!function_exists('event_espresso_additional_attendees')) {
 //This function returns the condition of an event
 if (!function_exists('event_espresso_get_is_active')) {
 
-    function event_espresso_get_is_active($event_id) {
+    function event_espresso_get_is_active($event_id, $event_meta='') {
         global $wpdb, $org_options;
         //If the timezome is set in the wordpress database, then lets use it as the default timezone.
         if (get_option('timezone_string') != '') {
             date_default_timezone_set(get_option('timezone_string'));
         }
-
-        $sql = "SELECT e.id, e.start_date start_date, e.is_active is_active, e.event_status event_status, e.registration_start, e.registration_startT, e.registration_end, e.registration_endT, ese.start_time start_time ";
-        $sql .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
-        $sql .= "LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
-        $sql .= "WHERE e.id = '" . $event_id . "' LIMIT 0,1";
-
-
-        $events = $wpdb->get_results($sql);
-        $start_date = $wpdb->last_result[0]->start_date;
-        $is_active = $wpdb->last_result[0]->is_active;
-        $event_status = $wpdb->last_result[0]->event_status;
-        $start_time = $wpdb->last_result[0]->start_time;
-
-        $registration_start = $wpdb->last_result[0]->registration_start . " " . $wpdb->last_result[0]->registration_startT;
-        $registration_end = $wpdb->last_result[0]->registration_end . " " . $wpdb->last_result[0]->registration_endT;
+		
+		if (!empty($event_meta)){
+			
+			$is_active = $event_meta['is_active'];
+			$event_status = $event_meta['event_status'];
+			
+			$start_time = $event_meta['start_time'];
+			$start_date = $event_meta['start_date'];
+			
+			$registration_start = $event_meta['registration_start'];
+			$registration_startT = $event_meta['registration_startT'];
+			
+			$registration_end = $event_meta['registration_end'];
+			$registration_endT = $event_meta['registration_endT'];
+			
+		}else{
+			$sql = "SELECT e.id, e.start_date start_date, e.is_active is_active, e.event_status event_status, e.registration_start, e.registration_startT, e.registration_end, e.registration_endT, ese.start_time start_time ";
+			$sql .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
+			$sql .= "LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
+			$sql .= "WHERE e.id = '" . $event_id . "' LIMIT 0,1";
+			$events = $wpdb->get_results($sql);
+			$start_date = $wpdb->last_result[0]->start_date;
+			$is_active = $wpdb->last_result[0]->is_active;
+			$event_status = $wpdb->last_result[0]->event_status;
+			$start_time = $wpdb->last_result[0]->start_time;
+	
+			$registration_start = $wpdb->last_result[0]->registration_start . " " . $wpdb->last_result[0]->registration_startT;
+			$registration_end = $wpdb->last_result[0]->registration_end . " " . $wpdb->last_result[0]->registration_endT;
+		}
 
         //$timezone_string =  $wpdb->last_result[0]->timezone_string;
         //$t = time();
@@ -531,8 +545,8 @@ if (!function_exists('event_espresso_get_is_active')) {
 //This function returns the overall status of an event
 if (!function_exists('event_espresso_get_status')) {
 
-    function event_espresso_get_status($event_id) {
-        $event_status = event_espresso_get_is_active($event_id);
+    function event_espresso_get_status($event_id, $event_meta='') {
+        $event_status = event_espresso_get_is_active($event_id, $event_meta);
         switch ($event_status['status']) {
             case 'EXPIRED':
             case 'NOT_ACTIVE':
@@ -970,6 +984,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
             $html .= '<span class="free_event">' . __('Free Event', 'event_espresso') . '</span>';
             $html .= '<input type="hidden" name="payment' . $multi_name_adjust . '" id="payment-' . $event_id . '" value="' . __('free event', 'event_espresso') . '">';
         }
+		
         return $html;
     }
 
