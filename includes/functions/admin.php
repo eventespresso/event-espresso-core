@@ -73,14 +73,23 @@ function espresso_tiny_mce() {
        if (function_exists('wp_tiny_mce_preload_dialogs')) {
            add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
        }
-   }
-	
+  	}
+	$show = true;
 	//If thhis is a newer version of wordress and we are the events page, we don't want to load the editor function
-	if (version_compare($wp_version, $wp_min_version, '>=') && isset($_REQUEST['page']) && ($_REQUEST['page']=='events'))
-		return;
-	 
+	if (version_compare($wp_version, $wp_min_version, '>=')){
+		//If this is the event editor page, we don't want to load the tiny mce editor because it breaks the page
+		if ( isset($_REQUEST['page']) && ($_REQUEST['page']=='events') ){
+			$show = false;
+		}
+		//If this is the edit attendee payments page then we need to load the tiny mce editor.
+		//We need to do it this way because the 'event_admin_reports' is in the same URL string as 'event' above.
+		if ( isset($_REQUEST['event_admin_reports']) && ($_REQUEST['event_admin_reports']=='enter_attendee_payments') ){
+			$show = true;
+		}
+	}
 	//Load the tiny mce editor
-	wp_tiny_mce(false, array("editor_selector" => "theEditor")); // true gives you a stripped down version of the editor
+	if ($show == true)
+		wp_tiny_mce(false, array("editor_selector" => "theEditor")); // true gives you a stripped down version of the editor
 }
 
 //function to delete event
