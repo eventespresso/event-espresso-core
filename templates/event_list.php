@@ -62,7 +62,7 @@ if (!function_exists('event_espresso_get_event_details')) {
         //echo $sql;
         global $wpdb, $org_options, $events_in_session;
         $multi_reg = false;
-        if (get_option('event_espresso_multi_reg_active') == 1) {
+        if (function_exists('event_espresso_multi_reg_init')) {
             $multi_reg = true;
         }
         //echo 'This page is located in ' . get_option( 'upload_path' );
