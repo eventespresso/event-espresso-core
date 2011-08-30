@@ -711,6 +711,7 @@ table.event-list .re_fr {
 #add-edit-new-group td.a, #add-edit-new-group td.b {
 	width: 50%;
 }
+td.checkboxcol {width: 10%;}
 /*___  Assorted table styles (requires sorting & defining better)   ___*/
 
 table.event-regis-dboard-summary {

@@ -111,7 +111,7 @@ function event_espresso_question_groups_config_mnu() {
                         <table id="table" class="widefat manage-question-group">
                             <thead>
                                 <tr>
-                                    <th class="manage-column" id="cb" scope="col" ><input type="checkbox"></th>
+                                    <th class="manage-column" id="cb" scope="col" ><input type="checkbox" /></th>
                                     <th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:40%;">
                                         <?php _e('Group Name', 'event_espresso'); ?>
                                     </th>
@@ -153,11 +153,13 @@ function event_espresso_question_groups_config_mnu() {
                                         $system_group = $group->system_group;
                                         $wp_user = $group->wp_user == 0 ? 1 : $group->wp_user;
                                         ?>
-                                        <tr><td><input name="row_id" type="hidden" value="<?php echo $group_id ?>" />
+                                        <tr>
+																						<td class="checkboxcol">
+																							<input name="row_id" type="hidden" value="<?php echo $group_id ?>" />
                                                 <?php if ($system_group == 0) : ?>
-                                                    <input style="margin:7px 0 22px 8px; vertical-align:top;" name="checkbox[<?php echo $group_id ?>]" type="checkbox"  title="Delete <?php echo empty($question_name) ? '' : $question_name ?>">
+                                             <input style="margin:7px 0 22px 8px; vertical-align:top;" name="checkbox[<?php echo $group_id ?>]" type="checkbox"  title="Delete <?php echo empty($question_name) ? '' : $question_name ?>">
                                                 <?php else: ?>
-                                                    <span><?php echo '<img style="margin:7px 0 22px 8px; vertical-align:top;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/lock.png" alt="System Group" title="System Group" />'; ?></span>
+                                             <span><?php echo '<img style="margin:7px 0 22px 8px; vertical-align:top;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/lock.png" alt="System Group" title="System Group" />'; ?></span>
                                                 <?php endif; ?>
                                             </td>
 

@@ -4,7 +4,8 @@ function event_espresso_form_builder_new(){
 ?>
 <div class="metabox-holder">
   <div class="postbox">
-	<h3><?php _e('Add New Questions','event_espresso'); ?></h3>
+		<div title="Click to toggle" class="handlediv"><br /></div>
+	  <h3 class="hndle"><?php _e('Add New Questions','event_espresso'); ?></h3>
    <div class="inside">
     	<p class="intro"><?php _e('Add questions using the form below.  By default all participants will be asked for their first name, last name, and email address.','event_espresso'); ?></p>
 			<form name="newquestion" method="post" action="" id="new-question-form">

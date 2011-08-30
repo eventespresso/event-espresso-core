@@ -53,7 +53,7 @@ function event_espresso_questions_config_mnu() {
 
                 <div id="post-body-content">
 
-
+                  <div class="meta-box-sortables ui-sortables">
                     <?php
                     //Update the question
                     if (isset($_REQUEST['edit_action']) && $_REQUEST['edit_action'] == 'update') {
@@ -161,7 +161,7 @@ function event_espresso_questions_config_mnu() {
                                         $wp_user = $question->wp_user == 0 ? 1 : $question->wp_user;
                                         ?>
                                         <tr style="cursor: move" id="<?php echo $question_id ?>">
-                                            <td><input name="row_id" type="hidden" value="<?php echo $question_id ?>" />
+                                            <td class="checkboxcol"><input name="row_id" type="hidden" value="<?php echo $question_id ?>" />
                                                 <?php if ($system_name == '') : ?>
                                                     <input  style="margin:7px 0 22px 8px; vertical-align:top;" name="checkbox[<?php echo $question_id ?>]" type="checkbox"  title="Delete <?php echo $question_name ?>">
                                                 <?php else: ?>
@@ -185,7 +185,8 @@ function event_espresso_questions_config_mnu() {
                                 ?>
                             </tbody>
                         </table>
-                        <div style="clear:both">
+                        
+													<div>
                             <p><input type="checkbox" name="sAll" onclick="selectAll(this)" />
                                 <strong>
                                     <?php _e('Check All', 'event_espresso'); ?>
@@ -194,19 +195,21 @@ function event_espresso_questions_config_mnu() {
                                 <input name="delete_question" type="submit" class="button-secondary" id="delete_question" value="<?php _e('Delete Question', 'event_espresso'); ?>" style="margin-left:10px 0 0 10px;" onclick="return confirmDelete();">
                                 <a  style="margin-left:5px"class="button-primary" href="admin.php?page=form_builder&amp;action=new_question"><?php _e('Add New Question', 'event_espresso'); ?></a>
                                 <a  style="margin-left:5px"class="button-primary" href="admin.php?page=form_groups"><?php _e('Question Groups', 'event_espresso'); ?></a>
-                                <a style="color:#FFF; text-decoration:none; margin-left:5px"class="button-primary ev_reg-fancylink" href="#question_info">Help</a>
+                                <a style="color:#FFF; text-decoration:none; margin-left:5px"class="button-primary thickbox" href="#TB_inline?height=400&width=500&inlineId=question_info">Help</a>
                             </p>
                         </div>
-                    </form>
+                    
+											</form>
                 </div>
-            </div>
+             </div>
+						</div>
         </div>
     </div>
 
 
 
 
-    <script>
+    <script type="text/javascript">
         jQuery(document).ready(function($) {
 
             /* show the table data */
@@ -246,7 +249,7 @@ function event_espresso_questions_config_mnu() {
                     $.post(EEGlobals.ajaxurl, { action: "update_sequence", row_ids: row_ids, update_sequence: "true"} );
                 }
             });
-
+        postboxes.add_postbox_toggles('form_builder');
         } );
     </script>
 
