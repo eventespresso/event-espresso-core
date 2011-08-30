@@ -218,6 +218,7 @@ span.google-map-link a:focus,
 span.google-map-link a:hover {
 	color: #CD7950;
 }
+a.post-edit-link {padding-left: 10px;}
 /*___ page register ___*/
 
 .event_description .event_staff {
@@ -517,6 +518,10 @@ a.btn_event_form_submit {
 	margin: 0 auto;
 	text-align: left;	
 	width: 96%;
+}
+.event-display-tables th,
+.event-display-tables td {
+	padding-left: 5px;
 }
 #content .event-display-tables td input {
 	line-height: 1;

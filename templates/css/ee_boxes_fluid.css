@@ -233,12 +233,11 @@ span.google-map-link a:hover {
 	font-size: 81.25%;
 	margin: -20px 0 20px ;
 	padding-left: 5px;
-	
 }
 .espresso_add_attendee a.add {
 	margin-left: 85px;
 }
-
+a.post-edit-link {padding-left: 5px;}
 /*___ Multi Registration page styles ___*/
 
 
@@ -495,6 +494,10 @@ a.btn_event_form_submit {
 	margin: 0 auto;
 	text-align: left;	
 	width: 96%;
+}
+.event-display-tables th,
+.event-display-tables td {
+	padding-left: 5px;
 }
 #content .event-display-tables td input {
 	line-height: 1;
