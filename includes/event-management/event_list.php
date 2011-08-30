@@ -321,7 +321,7 @@ function event_espresso_edit_list() {
                             ob_end_clean();
                             switch ($_REQUEST['event_status']) {
                                 case 'A':
-                                    switch (event_espresso_get_status($event_id)) {
+                                    switch (event_espresso_get_status($event_id, $event_meta)) {
                                         case 'NOT_ACTIVE':
                                             //Don't show the event if any of the above are true
                                             break;
