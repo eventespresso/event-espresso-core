@@ -977,6 +977,8 @@ function event_espresso_custom_email_info() {
 
 //Function to check if registration ids are missing
 function event_espresso_verify_attendee_data() {
+	if(!is_admin())
+		return;
     global $wpdb;
     $sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' ";
     $wpdb->get_results($sql);
