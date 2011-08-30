@@ -4,7 +4,7 @@
           </label>
           <?php echo select_input('display_short_description_in_event_list', $values, isset($org_options['display_short_description_in_event_list']) ? $org_options['display_short_description_in_event_list'] : ''); ?>
 					</li>
-        <?php if (get_option('event_espresso_multi_reg_active') == 1){?>
+        <?php if (function_exists('event_espresso_multi_reg_init')){?>
         
 					<li>
           <label for="display_description_on_multi_reg_page">
