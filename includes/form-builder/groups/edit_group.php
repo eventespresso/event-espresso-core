@@ -27,10 +27,11 @@ function event_espresso_form_group_edit() {
     ?>
     <div id="add-edit-new-group" class="metabox-holder">
         <div class="postbox">
-            <h3><?php _e('Edit Group', 'event_espresso'); ?></h3>
-            <div class="inside">
+					 	<div title="Click to toggle" class="handlediv"><br /></div>
+            <h3 class="hndle"><?php _e('Edit Group', 'event_espresso'); ?></h3>
+             <div class="inside">
                 <form name="newgroup" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
-                    <table id="table" border="0">
+                    <table id="table-edit-group" class="ee-tables" border="0">
                         <tr>
                             <td class="a"  valign="top">
                                 <ul>

@@ -38,8 +38,8 @@ function event_espresso_question_groups_config_mnu() {
         <div id="poststuff" class="metabox-holder has-right-sidebar">
             <?php event_espresso_display_right_column(); ?>
             <div id="post-body">
-
-                <?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
+              <div class="meta-box-sortables ui-sortables">
+                <?php  if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
                     <div style="margin-bottom: 10px;">
                         <ul class="subsubsub" style="margin-bottom: 0;clear:both;">
                             <li><strong><?php _e('Question Groups', 'event_espresso'); ?>: </strong> </li>
@@ -48,7 +48,7 @@ function event_espresso_question_groups_config_mnu() {
                         </ul>
                         <div class="clear"></div>
                     </div>
-                <?php } ?>
+                <?php  } ?>
 
                 <div id="post-body-content">
                     <?php
@@ -182,11 +182,12 @@ function event_espresso_question_groups_config_mnu() {
                                 <input name="delete_group" type="submit" class="button-secondary" id="delete_group" value="<?php _e('Delete Question Group', 'event_espresso'); ?>"  style="margin:10 0 0 10px;" onclick="return confirmDelete();">
                                 <a  style="margin-left:5px"class="button-primary" href="admin.php?page=form_groups&amp;action=new_group"><?php _e('Add New Group', 'event_espresso'); ?></a>
                                 <a  style="margin-left:5px"class="button-primary" href="admin.php?page=form_builder"><?php _e('Questions', 'event_espresso'); ?></a>
-                                <a style="color:#FFF; text-decoration:none; margin-left:5px"class="button-primary ev_reg-fancylink" href="#group_info"><?php _e('Help', 'event_espresso'); ?></a></p>
+                                <a  style="color:#FFF; text-decoration:none; margin-left:5px"class="button-primary thickbox" href="#TB_inline?height=400&width=500&inlineId=group_info"><?php _e('Help', 'event_espresso'); ?></a></p>
                         </div>
                     </form>
                 </div>
             </div>
+						</div>
         </div>
     </div>
 
@@ -196,7 +197,7 @@ function event_espresso_question_groups_config_mnu() {
         <p><?php _e('Question Groups can be organized or re-ordered by dragging and dropping individual table rows into the desired positions.', 'event_espresso'); ?></p>
     </div>
 
-    <script>
+    <script type="text/javascript">
         jQuery(document).ready(function($) {
 
             /* show the table data */
@@ -232,7 +233,7 @@ function event_espresso_question_groups_config_mnu() {
                     $.post(EEGlobals.ajaxurl, { action: "update_qgr_sequence", row_ids: row_ids, update_sequence: "true"} );
                 }
             });
-
+					postboxes.add_postbox_toggles('form_groups');
         } );
     </script>
 

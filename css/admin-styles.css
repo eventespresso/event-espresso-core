@@ -678,7 +678,8 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	overflow: hidden;
 	padding-bottom: 20px;
 }
-table#table {
+table#table,
+table.ee-tables {
 	margin-top: 10px;
 	width: 100%;
 }
@@ -976,7 +977,7 @@ p.event-regis_sub {
 	background: #FFC
 }
 div .row-actions {
-	font-size:10px !important;
+	font-size: 10px !important;
 }
 #tooltip {
 	position: absolute;
@@ -990,15 +991,15 @@ div .row-actions {
 	-moz-border-radius: 5px;
 }
 #table tr.even {
-	background:#F5F5F5;
+	background: #F5F5F5;
 }
-#table_length, table_filter {
-	float:left;
+#table_length, #table_filter {
+	float: left;
 	margin: 0 20px 10px 0;
 }
 #table_info {
 	float:left;
-	margin:10px 20px 0 0;
+	margin: 10px 20px 0 0;
 }
 .dataTables_paginate {
 	float: right;
