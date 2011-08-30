@@ -110,9 +110,12 @@ if (!function_exists('event_espresso_delete_event')) {
             /* if ($wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array( '%d' ) ) && event_espresso_get_status($event_id) == 'ACTIVE'){
               event_espresso_send_cancellation_notice($event_id);
               } */
-            if (event_espresso_get_status($event_id) == 'ACTIVE') {
+
+Add an option in general settings for the following?
+            /*if (event_espresso_get_status($event_id) == 'ACTIVE') {
                 event_espresso_send_cancellation_notice($event_id);
-            }
+            }*/
+
             if ($wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'))/* && event_espresso_get_status($event_id) == 'ACTIVE' */) {
                 $event_post = $wpdb->get_row("SELECT post_id FROM " . EVENTS_DETAIL_TABLE . " WHERE id =" . $event_id, ARRAY_A);
                 wp_delete_post($event_post['post_id']);
@@ -317,7 +320,7 @@ function event_espresso_create_upload_directories() {
 }
 
 /**
- * event_espresso_count_templates_in_uploads_directory, does exactly what the name says
+ * event_espresso_count_files, does exactly what the name says
  */
 function event_espresso_count_files($path, $exclude = ".|..|.svn", $recursive = false) {
     $result = array();
@@ -1023,23 +1026,6 @@ function event_espresso_update_attendee_data() {
             }
         }
     }
-
-    /* if ($error != true){?>
-      <div id="message" class="updated fade">
-      <p><strong>
-      <?php _e('Attendee data has been updated!','event_espresso'); ?>
-      </strong></p>
-      </div>
-      <?php
-      }else { ?>
-      <div id="message" class="error">
-      <p><strong>
-      <?php _e('There was an error in your submission, please try again.','event_espresso'); ?>
-      <?php $wpdb->print_error(); ?>
-      .</strong></p>
-      </div>
-      <?php
-      } */
 }
 
 //Function to show an admin message if the main pages are not setup.
