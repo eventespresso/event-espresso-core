@@ -63,18 +63,24 @@ function event_espresso_config_page_scripts() {
 	remove_all_filters('mce_external_plugins');
 }
 
+//This loads the the tinymce script into the header
 function espresso_tiny_mce() {
-    //This loads the the tinymce script into the header
-    global $wp_version;
-    $wp_min_version = '3.2';
-    //If the version of WordPress is lower than 3.2, then we load the fallback script.
-    if (!version_compare($wp_version, $wp_min_version, '>=')) {
-        //If this is an older version of WordPress, then we need to load this.
-        if (function_exists('wp_tiny_mce_preload_dialogs')) {
-			wp_tiny_mce(false, array("editor_selector" => "theEditor")); // true gives you a stripped down version of the editor
-            add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
-        }
-    }
+   global $wp_version;
+   $wp_min_version = '3.2';
+   //If the version of WordPress is lower than 3.2, then we load the fallback script.
+   if (!version_compare($wp_version, $wp_min_version, '>=')) {
+       //If this is an older version of WordPress, then we need to load this.
+       if (function_exists('wp_tiny_mce_preload_dialogs')) {
+           add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
+       }
+   }
+	
+	//If thhis is a newer version of wordress and we are the events page, we don't want to load the editor function
+	if (version_compare($wp_version, $wp_min_version, '>=') && isset($_REQUEST['page']) && ($_REQUEST['page']=='events'))
+		return;
+	 
+	//Load the tiny mce editor
+	wp_tiny_mce(false, array("editor_selector" => "theEditor")); // true gives you a stripped down version of the editor
 }
 
 //function to delete event
