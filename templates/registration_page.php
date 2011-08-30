@@ -43,71 +43,86 @@ if (!function_exists('register_attendees')) {
         $paypal_id = $org_options['paypal_id'];
 
         //If a single event needs to be displayed, get its ID
-        if ($single_event_id != NULL) {//Get the ID of a single event
-            $sql = "SELECT id FROM " . EVENTS_DETAIL_TABLE;
-            $sql .= " WHERE event_identifier = '" . $single_event_id . "' ";
-            $sql .= " LIMIT 0,1";
-            //$results = $wpdb->get_row("SELECT id FROM " . EVENTS_DETAIL_TABLE . " WHERE event_identifier = '" . $single_event_id . "'", ARRAY_A );
-            /* foreach ($results as $result){
-              $event_id = $result->id;
-              } */
-            $wpdb->get_results($sql);
-            $event_id = $wpdb->last_result[0]->id;
-        }//End get the id of a single event
+       // if ($single_event_id != NULL) {//Get the ID of a single event
+//            $sql = "SELECT id FROM " . EVENTS_DETAIL_TABLE;
+//            $sql .= " WHERE event_identifier = '" . $single_event_id . "' ";
+//            $sql .= " LIMIT 0,1";
+//            //$results = $wpdb->get_row("SELECT id FROM " . EVENTS_DETAIL_TABLE . " WHERE event_identifier = '" . $single_event_id . "'", ARRAY_A );
+//            /* foreach ($results as $result){
+//              $event_id = $result->id;
+//              } */
+//            $wpdb->get_results($sql);
+//            $event_id = $wpdb->last_result[0]->id;
+//        }//End get the id of a single event
+
+
         //Build event queries
         $sql = "SELECT e.* ";
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
         $sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
-        $sql.= " WHERE e.is_active='Y' ";
-        $sql.= " AND e.event_status != 'D' ";
-        $sql.= " AND e.id = '" . $event_id . "' LIMIT 0,1";
+        //If a single event needs to be displayed, get its ID
+        if ($single_event_id != NULL) {//Get the ID of a single event
+			$sql .= " WHERE event_identifier = '" . $single_event_id . "' ";
+		}else{
+			$sql.= " WHERE e.is_active='Y' ";
+			$sql.= " AND e.event_status != 'D' ";
+        	$sql.= " AND e.id = '" . $event_id . "' LIMIT 0,1";
+		}
 
         //Support for diarise
         if (isset($_REQUEST['post_event_id']) && $_REQUEST['post_event_id'] != 0) {
-            $sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE;
+            $sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE .' e';
+			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
             $sql .= " WHERE post_id = '" . $_REQUEST['post_event_id'] . "' ";
             $sql .= " LIMIT 0,1";
         }
-
-        //Build the registration page
-        if ($wpdb->get_results($sql)) {
-            $events = $wpdb->get_results($sql);
-            //Create a log file
+		
+		$data->event = $wpdb->get_row($sql, OBJECT);
+		//print_r($data->event);
+		
+		$num_rows = $wpdb->num_rows;
+       
+	   //Build the registration page
+       if ($num_rows > 0) {            
+			//Create a log file
             //espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " $sql] [ sqldump = " . var_export($events, true) ) );
-            //These are the variables that can be used throughout the registration page
-            foreach ($events as $event) {
+            
+			//These are the variables that can be used throughout the registration page
+            //foreach ($events as $event) {
                 global $this_event_id;
-                $event_id = $event->id;
+                $event_id = $data->event->id;
                 $this_event_id = $event_id;
-                $event_name = stripslashes_deep($event->event_name);
-                $event_desc = stripslashes_deep($event->event_desc);
-                $display_desc = $event->display_desc;
-                $display_reg_form = $event->display_reg_form;
-                $event_address = $event->address;
-                $event_address2 = $event->address2;
-                $event_city = $event->city;
-                $event_state = $event->state;
-                $event_zip = $event->zip;
-                $event_country = $event->country;
+				
+                $event_name = stripslashes_deep($data->event->event_name);
+                $event_desc = stripslashes_deep($data->event->event_desc);
+                $display_desc = $data->event->display_desc;
+                $display_reg_form = $data->event->display_reg_form;
+                $event_address = $data->event->address;
+                $event_address2 = $data->event->address2;
+                $event_city = $data->event->city;
+                $event_state = $data->event->state;
+                $event_zip = $data->event->zip;
+                $event_country = $data->event->country;
 
 
-                $event_description = stripslashes_deep($event->event_desc);
-                $event_identifier = $event->event_identifier;
-                $event_cost = isset($event->event_cost) ? $event->event_cost : "0.00";
-                $member_only = $event->member_only;
-                $reg_limit = $event->reg_limit;
-                $allow_multiple = $event->allow_multiple;
-                $start_date = $event->start_date;
-                $end_date = $event->end_date;
-                $allow_overflow = $event->allow_overflow;
-                $overflow_event_id = $event->overflow_event_id;
+                $event_description = stripslashes_deep($data->event->event_desc);
+                $event_identifier = $data->event->event_identifier;
+                $event_cost = isset($data->event->event_cost) ? $data->event->event_cost : "0.00";
+                $member_only = $data->event->member_only;
+                $reg_limit = $data->event->reg_limit;
+                $allow_multiple = $data->event->allow_multiple;
+                $start_date = $data->event->start_date;
+                $end_date = $data->event->end_date;
+                $allow_overflow = $data->event->allow_overflow;
+                $overflow_event_id = $data->event->overflow_event_id;
 
                 //Venue details
-                $venue_title = $event->venue_title;
-                $venue_url = $event->venue_url;
-                $venue_image = $event->venue_image;
-                $venue_phone = $event->venue_phone;
+                $venue_title = $data->event->venue_title;
+                $venue_url = $data->event->venue_url;
+                $venue_image = $data->event->venue_image;
+                $venue_phone = $data->event->venue_phone;
                 $venue_address = '';
                 $venue_address2 = '';
                 $venue_city = '';
@@ -116,40 +131,40 @@ if (!function_exists('register_attendees')) {
                 $venue_country = '';
 
                 global $event_meta;
-                $event_meta = unserialize($event->event_meta);
+                $event_meta = unserialize($data->event->event_meta);
 
                 //Venue information
                 if ($org_options['use_venue_manager'] == 'Y') {
-                    $event_address = $event->venue_address;
-                    $event_address2 = $event->venue_address2;
-                    $event_city = $event->venue_city;
-                    $event_state = $event->venue_state;
-                    $event_zip = $event->venue_zip;
-                    $event_country = $event->venue_country;
+                    $event_address = $data->event->venue_address;
+                    $event_address2 = $data->event->venue_address2;
+                    $event_city = $data->event->venue_city;
+                    $event_state = $data->event->venue_state;
+                    $event_zip = $data->event->venue_zip;
+                    $event_country = $data->event->venue_country;
 
                     //Leaving these variables intact, just in case people wnat to use them
-                    $venue_title = $event->venue_name;
-                    $venue_address = $event->venue_address;
-                    $venue_address2 = $event->venue_address2;
-                    $venue_city = $event->venue_city;
-                    $venue_state = $event->venue_state;
-                    $venue_zip = $event->venue_zip;
-                    $venue_country = $event->venue_country;
+                    $venue_title = $data->event->venue_name;
+                    $venue_address = $data->event->venue_address;
+                    $venue_address2 = $data->event->venue_address2;
+                    $venue_city = $data->event->venue_city;
+                    $venue_state = $data->event->venue_state;
+                    $venue_zip = $data->event->venue_zip;
+                    $venue_country = $data->event->venue_country;
                     global $venue_meta;
                     $add_venue_meta = array(
-                        'venue_title' => $event->venue_name,
-                        'venue_address' => $event->venue_address,
-                        'venue_address2' => $event->venue_address2,
-                        'venue_city' => $event->venue_city,
-                        'venue_state' => $event->venue_state,
-                        'venue_country' => $event->venue_country,
+                        'venue_title' => $data->event->venue_name,
+                        'venue_address' => $data->event->venue_address,
+                        'venue_address2' => $data->event->venue_address2,
+                        'venue_city' => $data->event->venue_city,
+                        'venue_state' => $data->event->venue_state,
+                        'venue_country' => $data->event->venue_country,
                     );
-                    $venue_meta = (isset($event->venue_meta) && $event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
+                    $venue_meta = (isset($data->event->venue_meta) && $data->event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($data->event->venue_meta), $add_venue_meta) : '';
                     //print_r($venue_meta);
                 }
 
-                $virtual_url = stripslashes_deep($event->virtual_url);
-                $virtual_phone = stripslashes_deep($event->virtual_phone);
+                $virtual_url = stripslashes_deep($data->event->virtual_url);
+                $virtual_phone = stripslashes_deep($data->event->virtual_phone);
 
                 //Address formatting
                 $location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
@@ -157,12 +172,12 @@ if (!function_exists('register_attendees')) {
                 //Google map link creation
                 $google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
 
-                $question_groups = unserialize($event->question_groups);
-                $reg_start_date = $event->registration_start;
-                $reg_end_date = $event->registration_end;
+                $question_groups = unserialize($data->event->question_groups);
+                $reg_start_date = $data->event->registration_start;
+                $reg_end_date = $data->event->registration_end;
                 $today = date("Y-m-d");
-                if (isset($event->timezone_string) && $event->timezone_string != '') {
-                    $timezone_string = $event->timezone_string;
+                if (isset($data->event->timezone_string) && $data->event->timezone_string != '') {
+                    $timezone_string = $data->event->timezone_string;
                 } else {
                     $timezone_string = get_option('timezone_string');
                     if (!isset($timezone_string) || $timezone_string == '') {
@@ -174,8 +189,8 @@ if (!function_exists('register_attendees')) {
                 $today = date_at_timezone("Y-m-d H:i A", $timezone_string, $t);
                 //echo event_date_display($today, get_option('date_format'). ' ' .get_option('time_format')) . ' ' . $timezone_string;
                 //echo espresso_ddtimezone_simple();
-                $reg_limit = $event->reg_limit;
-                $additional_limit = $event->additional_limit;
+                $reg_limit = $data->event->reg_limit;
+                $additional_limit = $data->event->additional_limit;
 
                 //This function gets the status of the event.
                 $is_active = array();
@@ -183,20 +198,18 @@ if (!function_exists('register_attendees')) {
 
                 //If the coupon code system is intalled then use it
                 if (function_exists('event_espresso_coupon_registration_page')) {
-                    $use_coupon_code = $event->use_coupon_code;
+                    $use_coupon_code = $data->event->use_coupon_code;
                 }
 
                 //If the groupon code addon is installed, then use it
                 if (function_exists('event_espresso_groupon_payment_page')) {
-                    $use_groupon_code = $event->use_groupon_code;
+                    $use_groupon_code = $data->event->use_groupon_code;
                 }
 
                 //Set a default value for additional limit
                 if ($additional_limit == '') {
                     $additional_limit = '5';
                 }
-            }//End foreach ($events as $event)
-
 
             $num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees
             $available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces'); //Gets a count of the available spaces
@@ -220,7 +233,14 @@ if (!function_exists('register_attendees')) {
                 'venue_city' => $venue_city,
                 'venue_state' => $venue_state,
                 'venue_country' => $venue_country,
-                'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
+				
+				'is_active' => $data->event->is_active,
+				'event_status' => $data->event->event_status,
+				'start_time' => $data->event->start_time,
+				'event_address' => $data->event->event_address,
+				'event_address' => $data->event->event_address,
+                
+				'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
                 'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
                 'time' => event_espresso_time_dropdown($event_id, 0),
                 'google_map_link' => $google_map_link,
@@ -271,13 +291,15 @@ if (!function_exists('register_attendees')) {
                     require('registration_page_display.php');
                 }
             }//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
-        }//End Build the registration page
-        else {//If there are no results from the query, display this message
+	   }else{//If there are no results from the query, display this message
             _e('<h3>This event has expired or is no longer available.</h3>', 'event_espresso');
-        }
-        //Check to see how many database queries were performed
-        //echo '<p>Database Queries: ' . get_num_queries() .'</p>';
+	   }
+        
         echo espresso_registration_footer();
-    }
-
+		
+		//Check to see how many database queries were performed
+        //echo '<p>Database Queries: ' . get_num_queries() .'</p>';
+		
+	}
+	
 }

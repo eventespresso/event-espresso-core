@@ -13,14 +13,18 @@ if (!function_exists('display_all_events')) {
         //If set to true, the event page will display recurring events.
         $display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
-        $sql = "SELECT e.* ";
+        $sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
         $sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+		$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+		$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
         $sql .= " WHERE is_active = 'Y' ";
         $sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
-        $sql .= " ORDER BY date(start_date), id";
+		$sql .= " AND e.event_status != 'D' ";
+        $sql .= " GROUP BY e.id  ORDER BY date(start_date), id";
         event_espresso_get_event_details($sql); //This function is located below
+		
     }
 
 }
@@ -33,15 +37,18 @@ if (!function_exists('display_event_espresso_categories')) {
 
             $display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
-            $sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, c.category_identifier ";
+            $sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, c.category_identifier, ese.start_time, ese.end_time, p.event_cost  ";
             $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
             $sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
             $sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
             $sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
+			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+			$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
             $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
             $sql .= " WHERE c.category_identifier = '" . $event_category_id . "' ";
             $sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
-            $sql .= " ORDER BY date(start_date), id ASC";
+			$sql .= " AND e.event_status != 'D' ";
+            $sql .= " GROUP BY e.id  ORDER BY date(start_date), id ASC";
             event_espresso_get_event_details($sql, $css_class); //This function is located below
         }
     }
@@ -70,10 +77,13 @@ if (!function_exists('event_espresso_get_event_details')) {
 
         if ($display_desc == 'Y') {
             echo '<p id="events_category_name-' . $category_id . '" class="events_category_name">' . stripslashes_deep($category_name) . '</p>';
-            echo wpautop(stripslashes_deep($category_desc));
+            echo wpautop(utf8_encode(html_entity_decode(stripslashes_deep($category_desc))));
         }
-
-        foreach ($events as $event) {
+		
+		//Debug
+		//echo $sql;
+        
+		foreach ($events as $event) {
             $event_id = $event->id;
             $event_name = $event->event_name;
             $event_desc = stripslashes_deep($event->event_desc);
@@ -144,16 +154,32 @@ if (!function_exists('event_espresso_get_event_details')) {
                 'event_city' => $event_city,
                 'event_state' => $event_state,
                 'event_zip' => $event_zip,
+				
+				'is_active' => $event->is_active,
+				'event_status' => $event->event_status,
+				'start_time' => $event->start_time,
+	
+				'registration_startT' => $event->registration_startT,
+				'registration_start' => $registration_start,
+				
+				'registration_endT' => $event->registration_endT,
+				'registration_end' => $registration_end,
+				
+				'is_active' => $is_active,
+				
                 'event_country' => $event_country,
                 'start_date' => event_date_display($start_date, get_option('date_format')),
                 'end_date' => event_date_display($end_date, get_option('date_format')),
-                'time' => event_espresso_time_dropdown($event_id, 0),
+                'time' => $event->start_time,
                 'google_map_link' => $google_map_link,
-                'price' => event_espresso_price_dropdown($event_id, 0),
+                'price' =>  $event->event_cost,
+				'event_cost' =>  $event->event_cost,
                 'registration' => event_espresso_add_question_groups(empty($question_groups) ? array() : $question_groups),
                 'additional_attendees' => !empty($allow_multiple) && $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
             );
-            //print_r($all_meta);
+			//Debug
+			//echo '<p>'.print_r($all_meta).'</p>';
+
             //These variables can be used with other the espresso_countdown, espresso_countup, and espresso_duration functions and/or any javascript based functions.
             $start_timestamp = espresso_event_time($event_id, 'start_timestamp');
             $end_timestamp = espresso_event_time($event_id, 'end_timestamp');

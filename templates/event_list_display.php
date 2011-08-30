@@ -59,9 +59,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
     <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
 
     <div class="event-meta">
-			 <p id="p_event_price-<?php echo $event_id ?>" class="event_price">
-				 <span class="section-title"><?php  echo __('Price: ', 'event_espresso'); ?></span> <?php echo event_espresso_get_price($event_id); ?>
-     </p>
+			 <p id="p_event_price-<?php echo $event_id ?>" class="event_price"><span class="section-title"><?php  echo __('Price: ', 'event_espresso'); ?></span> <?php echo  $org_options['currency_symbol'].$event->event_cost; ?></p>
 
      <p id="event_date-<?php echo $event_id ?>"><span class="section-title"><?php _e('Date:', 'event_espresso'); ?></span>  <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
 			</div>
