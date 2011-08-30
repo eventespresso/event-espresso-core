@@ -331,7 +331,8 @@ function events_data_tables_install() {
 			  meta_key varchar(255) DEFAULT NULL,
 			  meta_value longtext,
 			  date_added datetime DEFAULT NULL,
-  			  PRIMARY KEY  (ameta_id)";
+  			  PRIMARY KEY  (ameta_id),
+			  KEY `attendee_id` (`attendee_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_detail";
@@ -419,56 +420,64 @@ function events_data_tables_install() {
 			  meta_key varchar(255) DEFAULT NULL,
 			  meta_value longtext,
 			  date_added datetime DEFAULT NULL,
-  			  PRIMARY KEY  (emeta_id)";
+  			  PRIMARY KEY  (emeta_id),
+			  KEY `event_id` (`event_id`),
+			  KEY `meta_key` (`meta_key`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_email";
     $sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
-					  email_name VARCHAR(100) DEFAULT NULL,
-					  email_subject VARCHAR(250) DEFAULT NULL,
-					  email_text TEXT,
-					  wp_user int(22) DEFAULT '1',
-					  UNIQUE KEY id (id)";
+				email_name VARCHAR(100) DEFAULT NULL,
+				email_subject VARCHAR(250) DEFAULT NULL,
+				email_text TEXT,
+				wp_user int(22) DEFAULT '1',
+				UNIQUE KEY id (id),
+				KEY `wp_user` (`wp_user`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_category_detail";
     $sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
-					  category_name VARCHAR(100) DEFAULT NULL,
-					  category_identifier VARCHAR(45) DEFAULT NULL,
-					  category_desc TEXT,
-					  display_desc VARCHAR (4) DEFAULT NULL,
-					  wp_user int(22) DEFAULT '1',
-					  UNIQUE KEY id (id),
-					  KEY `category_identifier` (`category_identifier`)";
+				category_name VARCHAR(100) DEFAULT NULL,
+				category_identifier VARCHAR(45) DEFAULT NULL,
+				category_desc TEXT,
+				display_desc VARCHAR (4) DEFAULT NULL,
+				wp_user int(22) DEFAULT '1',
+				UNIQUE KEY id (id),
+				KEY `category_identifier` (`category_identifier`),
+				KEY `wp_user` (`wp_user`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_category_rel";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						event_id int(11) DEFAULT NULL,
-						cat_id int(11) DEFAULT NULL,
-						PRIMARY KEY (id)";
+				event_id int(11) DEFAULT NULL,
+				cat_id int(11) DEFAULT NULL,
+				PRIMARY KEY (id),
+			  	KEY `event_id` (`event_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_venue";
     $sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
-					  name VARCHAR(250) DEFAULT NULL,
-					  identifier VARCHAR(26) DEFAULT '0',
-					  address VARCHAR(250) DEFAULT NULL,
-					  address2 VARCHAR(250) DEFAULT NULL,
-					  city VARCHAR(250) DEFAULT NULL,
-					  state VARCHAR(250) DEFAULT NULL,
-					  zip VARCHAR(250) DEFAULT NULL,
-					  country VARCHAR(250) DEFAULT NULL,
-					  meta TEXT,
-					  wp_user int(22) DEFAULT '1',
-					  UNIQUE KEY id (id)";
+				name VARCHAR(250) DEFAULT NULL,
+				identifier VARCHAR(26) DEFAULT '0',
+				address VARCHAR(250) DEFAULT NULL,
+				address2 VARCHAR(250) DEFAULT NULL,
+				city VARCHAR(250) DEFAULT NULL,
+				state VARCHAR(250) DEFAULT NULL,
+				zip VARCHAR(250) DEFAULT NULL,
+				country VARCHAR(250) DEFAULT NULL,
+				meta TEXT,
+				wp_user int(22) DEFAULT '1',
+				UNIQUE KEY id (id),
+			  	KEY `identifier` (`identifier`),
+				KEY `wp_user` (`wp_user`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_venue_rel";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						event_id int(11) DEFAULT NULL,
-						venue_id int(11) DEFAULT NULL,
-						PRIMARY KEY (id)";
+				event_id int(11) DEFAULT NULL,
+				venue_id int(11) DEFAULT NULL,
+				PRIMARY KEY (id),
+			  	KEY `event_id` (`event_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_locale";
@@ -476,73 +485,85 @@ function events_data_tables_install() {
 			  `name` varchar(250) DEFAULT NULL,
 			  `identifier` varchar(26) DEFAULT '0',
 			  `wp_user` int(22) DEFAULT '1',
-			  UNIQUE KEY `id` (`id`)";
+			  UNIQUE KEY `id` (`id`),
+			  KEY `identifier` (`identifier`),
+			  KEY `wp_user` (`wp_user`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_locale_rel";
     $sql = "`id` int(11) NOT NULL AUTO_INCREMENT,
 				`venue_id` int(11) DEFAULT NULL,
 				`locale_id` int(11) DEFAULT NULL,
-				PRIMARY KEY (`id`)";
+				PRIMARY KEY (`id`),
+			  	KEY `venue_id` (`venue_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_personnel";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-					  name VARCHAR(250) DEFAULT NULL,
-					  role VARCHAR(250) DEFAULT NULL,
-					  identifier VARCHAR(26) DEFAULT '0',
-					  email TEXT,
-					  meta TEXT,
-					  wp_user int(22) DEFAULT '1',
-					  UNIQUE KEY id (id)";
+				name VARCHAR(250) DEFAULT NULL,
+				role VARCHAR(250) DEFAULT NULL,
+				identifier VARCHAR(26) DEFAULT '0',
+				email TEXT,
+				meta TEXT,
+				wp_user int(22) DEFAULT '1',
+				UNIQUE KEY id (id),
+			  	KEY `identifier` (`identifier`),
+			  	KEY `wp_user` (`wp_user`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_personnel_rel";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						event_id int(11) DEFAULT NULL,
-						person_id int(11) DEFAULT NULL,
-						PRIMARY KEY (id)";
+				event_id int(11) DEFAULT NULL,
+				person_id int(11) DEFAULT NULL,
+				PRIMARY KEY (id),
+			  	KEY `event_id` (`event_id`),
+			  	KEY `person_id` (`person_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_discount_rel";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						event_id int(11) DEFAULT NULL,
-						discount_id int(11) DEFAULT NULL,
-						PRIMARY KEY (id)";
+				event_id int(11) DEFAULT NULL,
+				discount_id int(11) DEFAULT NULL,
+				PRIMARY KEY (id),
+			  	KEY `event_id` (`event_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_start_end";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						event_id int(11) DEFAULT NULL,
-						start_time varchar(10) DEFAULT NULL,
-						end_time varchar(10) DEFAULT NULL,
-						reg_limit int (15) DEFAULT '0',
-						PRIMARY KEY (id)";
+				event_id int(11) DEFAULT NULL,
+				start_time varchar(10) DEFAULT NULL,
+				end_time varchar(10) DEFAULT NULL,
+				reg_limit int (15) DEFAULT '0',
+				PRIMARY KEY (id),
+			  	KEY `event_id` (`event_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_prices";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						event_id int(11) DEFAULT NULL,
-						price_type varchar(50) DEFAULT NULL,
-						event_cost decimal(20,2) NOT NULL DEFAULT '0.00',
-                                                surcharge decimal(10,2) NOT NULL DEFAULT '0.00',
-                                                surcharge_type varchar(10) DEFAULT NULL,
-						member_price_type varchar(50) DEFAULT NULL,
-						member_price decimal(20,2) NOT NULL DEFAULT '0.00',
-						max_qty int(7) DEFAULT '0',
-						max_qty_members int(7) DEFAULT '0',
-						PRIMARY KEY (id)";
+				event_id int(11) DEFAULT NULL,
+				price_type varchar(50) DEFAULT NULL,
+				event_cost decimal(20,2) NOT NULL DEFAULT '0.00',
+				surcharge decimal(10,2) NOT NULL DEFAULT '0.00',
+				surcharge_type varchar(10) DEFAULT NULL,
+				member_price_type varchar(50) DEFAULT NULL,
+				member_price decimal(20,2) NOT NULL DEFAULT '0.00',
+				max_qty int(7) DEFAULT '0',
+				max_qty_members int(7) DEFAULT '0',
+				PRIMARY KEY (id),
+			  	KEY `event_id` (`event_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_discount_codes";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						coupon_code varchar(50) DEFAULT NULL,
-						coupon_code_price decimal(20,2) DEFAULT NULL,
-						use_percentage VARCHAR(1) DEFAULT NULL,
-						coupon_code_description TEXT,
-						each_attendee VARCHAR(1) DEFAULT NULL,
-						wp_user int(22) DEFAULT '1',
-						PRIMARY KEY (id)";
+				coupon_code varchar(50) DEFAULT NULL,
+				coupon_code_price decimal(20,2) DEFAULT NULL,
+				use_percentage VARCHAR(1) DEFAULT NULL,
+				coupon_code_description TEXT,
+				each_attendee VARCHAR(1) DEFAULT NULL,
+				wp_user int(22) DEFAULT '1',
+				PRIMARY KEY (id),
+			  	KEY `coupon_code` (`coupon_code`),
+			  	KEY `wp_user` (`wp_user`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_multi_event_registration_id_group";
@@ -553,7 +574,8 @@ function events_data_tables_install() {
     $table_name = "events_attendee_cost";
     $sql = "attendee_id int(11) DEFAULT NULL,
 			cost decimal(20,2) DEFAULT '0.00',
-			quantity int(11) DEFAULT NULL  ";
+			quantity int(11) DEFAULT NULL,
+			KEY `attendee_id` (`attendee_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
 
@@ -571,27 +593,32 @@ function events_data_tables_install() {
 			required_text text NULL,
 			admin_only ENUM( 'Y', 'N' ) NOT NULL DEFAULT 'N',
 			wp_user int(22) DEFAULT '1',
-			PRIMARY KEY  (id)";
+			PRIMARY KEY  (id),
+			KEY `event_id` (`event_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_qst_group";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						group_name VARCHAR(100) NOT NULL default 'NULL',
-						group_identifier VARCHAR(45) NOT NULL default 'NULL',
-						group_description TEXT,
-						group_order int(11) DEFAULT '0',
-						show_group_name TINYINT( 1 ) NOT NULL DEFAULT '1',
-						show_group_description TINYINT( 1 ) NOT NULL DEFAULT '1',
-						system_group TINYINT( 1 ) NOT NULL DEFAULT '0',
-						wp_user int(22) DEFAULT '1',
-						PRIMARY KEY (id)";
+				group_name VARCHAR(100) NOT NULL default 'NULL',
+				group_identifier VARCHAR(45) NOT NULL default 'NULL',
+				group_description TEXT,
+				group_order int(11) DEFAULT '0',
+				show_group_name TINYINT( 1 ) NOT NULL DEFAULT '1',
+				show_group_description TINYINT( 1 ) NOT NULL DEFAULT '1',
+				system_group TINYINT( 1 ) NOT NULL DEFAULT '0',
+				wp_user int(22) DEFAULT '1',
+				PRIMARY KEY  (id),
+			  	KEY `system_group` (`system_group`),
+			  	KEY `wp_user` (`wp_user`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_qst_group_rel";
     $sql = "id int(11) NOT NULL AUTO_INCREMENT,
-						group_id int(11)  NOT NULL,
-						question_id int(11) NOT NULL,
-						PRIMARY KEY (id)";
+				group_id int(11)  NOT NULL,
+				question_id int(11) NOT NULL,
+				PRIMARY KEY  (id),
+			  	KEY `group_id` (`group_id`),
+			  	KEY `question_id` (`question_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_answer";
@@ -600,7 +627,9 @@ function events_data_tables_install() {
 			attendee_id int(11) NOT NULL default '0',
 			question_id int(11) NOT NULL default '0',
 			answer text NOT NULL,
-			PRIMARY KEY  (id)";
+			PRIMARY KEY  (id),
+			KEY `registration_id` (`registration_id`),
+			KEY `attendee_id` (`attendee_id`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
 	/**
@@ -612,7 +641,7 @@ function events_data_tables_install() {
 			 name varchar(255) DEFAULT NULL,       
              description text,
 			 image_name varchar(255) DEFAULT NULL,                            
-			 PRIMARY KEY (id)";
+			 PRIMARY KEY  (id)";
 	event_espresso_run_install ($table_name, $table_version, $sql);
 	
 	$table_name = "events_seating_chart_seat";
@@ -626,7 +655,7 @@ function events_data_tables_install() {
 			 member_price float DEFAULT NULL,
 			 custom_tag text,
 			 description text,
-			 PRIMARY KEY (id)  ";
+			 PRIMARY KEY  (id)";
 	event_espresso_run_install ($table_name, $table_version, $sql);
 	
 	$table_name = "events_seating_chart_event";
@@ -643,7 +672,7 @@ function events_data_tables_install() {
 			 purchase_datetime datetime DEFAULT '0000-00-00 00:00:00',
 			 by_admin int(11) DEFAULT '0' COMMENT '0=No,1=marked occupied by admin',
 			 occupied int(11) DEFAULT '1' COMMENT '0=Free,1=occupied (basically entry in this table means occupied, but still keeping this option for any future functionality)',
-			 PRIMARY KEY (id)  ";
+			 PRIMARY KEY  (id)";
 	event_espresso_run_install ($table_name, $table_version, $sql);
 	
 	/**
