@@ -583,7 +583,6 @@ function events_data_tables_install() {
 
     $table_name = "events_question";
     $sql = "id int(11) unsigned NOT NULL auto_increment,
-			event_id INT(11) NOT NULL default '0',
 			sequence INT(11) NOT NULL default '0',
 			question_type enum('TEXT','TEXTAREA','MULTIPLE','SINGLE','DROPDOWN') NOT NULL default 'TEXT',
 			question text NOT NULL,
