@@ -17,11 +17,11 @@
  * [EVENT_LIST limit=5 show_recurrence=true category_identifier=your_category_identifier]
  *
  */
-
+	
 //Print out the array of event status options
 //print_r (event_espresso_get_is_active($event_id));
 //Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
-$status = event_espresso_get_is_active($event_id);
+$status = event_espresso_get_is_active(0,$event_meta);
 $status_display = ' - ' . $status['display_custom'];
 $status_display_ongoing = $status['status'] == 'ONGOING' ? ' - ' . $status['display_custom'] : '';
 $status_display_deleted = $status['status'] == 'DELETED' ? ' - ' . $status['display_custom'] : '';
@@ -56,12 +56,10 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
     <?php //echo $venue_city != ''?'<p id="event_venue_city-'.$event_id.'" class="event_venue_city">'.stripslashes_deep($venue_city).'</p>':''?>
     <?php //echo $venue_state != ''?'<p id="event_venue_state-'.$event_id.'" class="event_venue_state">'.stripslashes_deep($venue_state).'</p>':''?>
     <?php //echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
-    <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''
-    $price = empty($event->event_cost) ? '' : $event->event_cost;
-    ?>
+    <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
 
     <div class="event-meta">
-        <p id="p_event_price-<?php echo $event_id ?>" class="event_price"><span class="section-title"><?php echo __('Price: ', 'event_espresso'); ?></span> <?php echo $org_options['currency_symbol'] . $price; ?></p>
+			 <p id="p_event_price-<?php echo $event_id ?>" class="event_price"><span class="section-title"><?php  echo __('Price: ', 'event_espresso'); ?></span> <?php echo  $org_options['currency_symbol'].$event->event_cost; ?></p>
 
         <p id="event_date-<?php echo $event_id ?>"><span class="section-title"><?php _e('Date:', 'event_espresso'); ?></span>  <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
     </div>
