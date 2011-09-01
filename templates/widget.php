@@ -48,16 +48,19 @@ if (!class_exists('Event_Espresso_Widget')) {
 						$sql = "SELECT e.*, c.category_name, c.category_name, c.category_desc FROM " . EVENTS_CATEGORY_TABLE . " c ";
 						$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 						$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
+						$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
 						$sql .= " WHERE c.id = '" . $instance['category_name'] . "' ";
 						$sql .= " AND e.is_active = 'Y' ";
 					}else{
 						$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
+						$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
 						$sql .= " WHERE e.is_active = 'Y' ";
 					}
 					$sql .= $show_expired;
 					$sql .= $show_secondary;
 					$sql .= $show_deleted;
 					$sql .= $show_recurrence;
+					$sql .= " GROUP BY e.id ";
 					$sql .= $order_by;
 					$sql .= $limit;
 	
@@ -75,11 +78,29 @@ if (!class_exists('Event_Espresso_Widget')) {
 							$event->externalURL = isset($event->externalURL)?$event->externalURL:'';
 							$registration_url = $event->externalURL!=''?$event->externalURL : espresso_reg_url($event->id);
 							
+							$all_meta = array(
+								'is_active' => $data->event->is_active,
+								'event_status' => $data->event->event_status,
+								
+								'event_address' => $data->event->event_address,
+								'event_address' => $data->event->event_address,
+					
+								'registration_startT' => $data->event->registration_startT,
+								'registration_start' => $data->event->registration_start,
+								
+								'registration_endT' => $data->event->registration_endT,
+								'registration_end' => $data->event->registration_end,
+								
+								'start_date' => event_date_display($start_date, get_option('date_format')),
+                				'end_date' => event_date_display($end_date, get_option('date_format')),
+							);
+							
+							//Here we can create messages based on the event status
+							
+							$status = event_espresso_get_is_active($event->id, $all_meta);
 							//Print out the array of event status options
 							//print_r (event_espresso_get_is_active($event->id));
 							
-							//Here we can create messages based on the event status
-							$status = event_espresso_get_is_active($event->id);
 							$status_display = ' - ' . $status['display_custom'];
 							$status_display_ongoing = $status['status'] == 'ONGOING'? ' - ' . $status['display_custom']:'';
 							$status_display_deleted = $status['status'] == 'DELETED'? ' - ' . $status['display_custom']:'';
@@ -90,6 +111,8 @@ if (!class_exists('Event_Espresso_Widget')) {
 							
 							//You can also display a custom message. For example, this is a custom registration not open message:
 							$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED'? ' - <span class="espresso_closed">'.__('Regsitration is Closed','event_espresso').'</span>':'';
+							
+							//End
 							
 							if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
 								//Display a message if the user is not logged in.

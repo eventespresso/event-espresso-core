@@ -40,33 +40,22 @@ if (!function_exists('register_attendees')) {
         $currency_format = isset($org_options['currency_format']) ? $org_options['currency_format'] : '';
 
         $message = $org_options['message'];
-        $paypal_id = $org_options['paypal_id'];
 
-        //If a single event needs to be displayed, get its ID
-        // if ($single_event_id != NULL) {//Get the ID of a single event
-//            $sql = "SELECT id FROM " . EVENTS_DETAIL_TABLE;
-//            $sql .= " WHERE event_identifier = '" . $single_event_id . "' ";
-//            $sql .= " LIMIT 0,1";
-//            //$results = $wpdb->get_row("SELECT id FROM " . EVENTS_DETAIL_TABLE . " WHERE event_identifier = '" . $single_event_id . "'", ARRAY_A );
-//            /* foreach ($results as $result){
-//              $event_id = $result->id;
-//              } */
-//            $wpdb->get_results($sql);
-//            $event_id = $wpdb->last_result[0]->id;
-//        }//End get the id of a single event
         //Build event queries
-        $sql = "SELECT e.* ";
+        $sql = "SELECT e.*, ese.start_time, ese.end_time ";
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
         $sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-        $sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
+		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
+		
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
-        //If a single event needs to be displayed, get its ID
-        if ($single_event_id != NULL) {//Get the ID of a single event
-            $sql .= " WHERE event_identifier = '" . $single_event_id . "' ";
+		$sql.= " WHERE e.is_active='Y' ";
+		$sql.= " AND e.event_status != 'D' ";
+
+		if ($single_event_id != NULL) {//Get the ID of a single event
+			//If a single event needs to be displayed, get its ID
+            $sql .= " AND event_identifier = '" . $single_event_id . "' ";
         } else {
-            $sql.= " WHERE e.is_active='Y' ";
-            $sql.= " AND e.event_status != 'D' ";
-            $sql.= " AND e.id = '" . $event_id . "' LIMIT 0,1";
+			$sql.= " AND e.id = '" . $event_id . "' LIMIT 0,1";
         }
 
         //Support for diarise
@@ -189,9 +178,7 @@ if (!function_exists('register_attendees')) {
             $reg_limit = $data->event->reg_limit;
             $additional_limit = $data->event->additional_limit;
 
-            //This function gets the status of the event.
-            $is_active = array();
-            $is_active = event_espresso_get_is_active($event_id);
+                
 
             //If the coupon code system is intalled then use it
             if (function_exists('event_espresso_coupon_registration_page')) {
@@ -230,11 +217,20 @@ if (!function_exists('register_attendees')) {
                 'venue_city' => $venue_city,
                 'venue_state' => $venue_state,
                 'venue_country' => $venue_country,
-                'is_active' => $data->event->is_active,
-                'event_status' => $data->event->event_status,
-                'start_time' => empty($data->event->start_time) ? '' : $data->event->start_time,
-                'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
-                'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
+				
+				'is_active' => $data->event->is_active,
+				'event_status' => $data->event->event_status,
+				'start_time' => $data->event->start_time,
+				'start_time' => empty($data->event->start_time) ? '' : $data->event->start_time,
+	
+				'registration_startT' => $data->event->registration_startT,
+				'registration_start' => $data->event->registration_start,
+				
+				'registration_endT' => $data->event->registration_endT,
+				'registration_end' => $data->event->registration_end,
+'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
+                
+				'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
                 'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
                 'time' => event_espresso_time_dropdown($event_id, 0),
                 'google_map_link' => $google_map_link,
@@ -243,7 +239,12 @@ if (!function_exists('register_attendees')) {
                 'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
             );
             //print_r($all_meta);
-
+//This function gets the status of the event.
+                $is_active = array();
+                $is_active = event_espresso_get_is_active(0, $all_meta);
+				
+				//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
+				
             if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
                 ?>
                 <script type="text/javascript">
