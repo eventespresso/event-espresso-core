@@ -220,7 +220,7 @@ return;*/
                                 <td>" . event_date_display($data->attendee->start_date) . ' - ' . event_date_display($data->attendee->end_date) . "</td>
                                 <td>" . event_date_display($data->attendee->event_time, get_option('time_format')) . " - " . event_date_display($data->attendee->end_time, get_option('time_format')) . "</td> " .
             ($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendee(s)', 'event_espresso') . '</td>' : '') .
-            "</tr>" . $data->email_questions . $data->admin_ticket_link;
+            "</tr>" . $data->email_questions . $data->admin_ticket_link . $data->invoice_link;
     $admin_message = "<h3>" . __('Registration Summary:', 'event_espresso') . "</h3>";
     if (!empty($email_questions)) {
         $admin_message .= "<h3>" . __('Additional Information:', 'event_espresso') . "</h3>";
