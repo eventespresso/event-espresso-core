@@ -17,8 +17,8 @@ if (!function_exists('display_all_events')) {
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
         $sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
-        $sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-        $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
+        $sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+        $sql .= " LEFT JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
         $sql .= " WHERE is_active = 'Y' ";
         $sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
         $sql .= " AND e.event_status != 'D' ";
