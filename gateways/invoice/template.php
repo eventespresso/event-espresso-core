@@ -1,6 +1,6 @@
 <?php
-//Added by Imon	
-if(isset($_SESSION['espresso_session_id'])) 
+//Added by Imon
+if(isset($_SESSION['espresso_session_id']))
 	{
 		unset($_SESSION['espresso_session_id']);
 	}
@@ -8,11 +8,11 @@ if(isset($_SESSION['espresso_session_id']))
 	define('FPDF_FONTPATH', EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/font/');
 	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/fpdf.php';
 
-	require_once(dirname(__FILE__).'/function.pdf.php');//Added by Imon	
-	
+	require_once(dirname(__FILE__).'/function.pdf.php');//Added by Imon
+
 	global $espresso_premium; if ($espresso_premium != true) return;
 	global $wpdb, $org_options;
-	
+
 	$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
 
 //Added by Imon
@@ -30,8 +30,8 @@ if(isset($_SESSION['espresso_session_id']))
 	}else{
 		$registration_ids[] = array("registration_id"=>$registration_id);
 	}
-	$attendees = $wpdb->get_results("SELECT * FROM ". EVENTS_ATTENDEE_TABLE ." WHERE registration_id ='" . $registration_id . "' order by id LIMIT 0,1 ");
-	
+	$attendees = $wpdb->get_results("SELECT a.*, e.event_name FROM ". EVENTS_ATTENDEE_TABLE ." a JOIN ". EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id WHERE a.registration_id ='" . $registration_id . "' order by a.id LIMIT 0,1 ");
+
 	foreach ($attendees as $attendee){
 		$attendee_id = $attendee->id;
 		$attendee_last = $attendee->lname;
@@ -51,10 +51,11 @@ if(isset($_SESSION['espresso_session_id']))
 		$amount_pd = $attendee->amount_pd;
 		$payment_date = $attendee->payment_date;
 		$event_id = $attendee->event_id;
+                $event_name = html_entity_decode(stripslashes($attendee->event_name),ENT_QUOTES,"UTF-8");
 		//$attendee_session = $attendee->attendee_session;
 		//$registration_id=$attendee->registration_id;
 	}
-	
+
 	#$num_people = isset($num_people) && $num_people > 0 ? $num_people : espresso_count_attendees_for_registration($attendee_id);
 	#$event_meta = event_espresso_get_event_meta($event_id);
 //	$event_data['additional_attendee_reg_info']
@@ -71,7 +72,7 @@ if(isset($_SESSION['espresso_session_id']))
 			$wpdb->query($sql);
 		}
 	}
-	
+
 	//Query Database for event and get variable
 /*	$events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
 		foreach ($events as $event){
@@ -84,14 +85,14 @@ if(isset($_SESSION['espresso_session_id']))
 	}*/
 	//This is an example of how to get custom questions for an attendee
 	//Get the questions for the attendee
-		/*$q_sql = "SELECT ea.answer, eq.question 
-					FROM " . EVENTS_ANSWER_TABLE . " ea 
+		/*$q_sql = "SELECT ea.answer, eq.question
+					FROM " . EVENTS_ANSWER_TABLE . " ea
 					LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id
 					WHERE ea.registration_id = '".$registration_id."'";
 		$q_sql .= " AND ea.question_id = '9' ";
 		$q_sql .= " ORDER BY eq.sequence asc ";
 		$wpdb->get_results($q_sql);
-		
+
 		$organization_name = $wpdb->last_result[0]->answer;//question_id = '9'*/
 
 
@@ -118,14 +119,14 @@ if(isset($_SESSION['espresso_session_id']))
 	$pdf->Cell(180,0, __('Date: ','event_espresso'). date('m-d-Y'),0,1, 'R');//Set invoice date
 	$pdf->Cell(180,10,__('Primary Attendee ID: ','event_espresso'). $attendee_id,0,0, 'R');//Set Invoice number
 	$pdf->Ln(0);
-	
+
 	//Set the top left of invoice below header
 	$pdf->SetFont('Times','BI',14);
 	if(isset($invoice_payment_settings['payable_to']))
 	{
 		$pdf->MultiCell(0,10,pdftext($invoice_payment_settings['payable_to']),0,'L');//Set payable to
 	}
-	else 
+	else
 	{
 		$pdf->MultiCell(0,10,pdftext(''),0,'L');//Set payable to
 	}
@@ -134,7 +135,7 @@ if(isset($_SESSION['espresso_session_id']))
 	{
 		$pdf->MultiCell(50,5,pdftext($invoice_payment_settings['payment_address']),0, 'L');//Set address
 	}
-	else 
+	else
 	{
 		$pdf->MultiCell(50,5,pdftext(''),0, 'L');//Set address
 	}
@@ -155,24 +156,24 @@ $pdf->Ln(10);
 
 //Added by Imon
 	$attendees = array();
-	$total = 0.00;
+	$total_cost = 0.00;
 	foreach($registration_ids as $reg_id){
 		$sql = "select ea.registration_id, ed.event_name, ed.start_date, ed.event_identifier, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
 				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
 				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
 				where ea.registration_id = '".$reg_id['registration_id']."' order by ed.event_name ";
-				
+
 		$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
-		
+
 		foreach($tmp_attendees as $tmp_attendee){
 			$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
 			$attendees[] = $pdf->LoadData(array(
-				pdftext($tmp_attendee["event_name"]."[".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]") . ' >> ' 
-				. pdftext( $tmp_attendee["fname"]." ".$tmp_attendee["lname"]) . ';' 
-				. pdftext($tmp_attendee["quantity"]) .';' 
-				. doubleval($tmp_attendee["cost"]) . ';' 
-				. doubleval($sub_total) 
-				) 
+				pdftext($tmp_attendee["event_name"]."[".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]") . ' >> '
+				. pdftext( $tmp_attendee["fname"]." ".$tmp_attendee["lname"]) . ';'
+				. pdftext($tmp_attendee["quantity"]) .';'
+				. doubleval($tmp_attendee["cost"]) . ';'
+				. doubleval($sub_total)
+				)
 			);
 			$total_cost += $sub_total;
 			$event_identifier = $tmp_attendee["event_identifier"];
@@ -208,5 +209,5 @@ $pdf->Ln(10);
 	}
 	$pdf->SetFont('Arial','BU',20);
 	//$pdf->Cell(200,20,'Pay Online',0,1,'C',0,$payment_link);//Set payment link
-	
+
 	$pdf->Output('Invoice_'.$attendee_id.'_'.$event_identifier.'.pdf','D');
