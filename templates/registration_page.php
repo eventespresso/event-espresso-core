@@ -232,11 +232,11 @@ if (!function_exists('register_attendees')) {
                 
 				'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
                 'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
-                'time' => event_espresso_time_dropdown($event_id, 0),
+                //'time' => event_espresso_time_dropdown($event_id, 0),
                 'google_map_link' => $google_map_link,
-                'price' => event_espresso_price_dropdown($event_id, 0),
-                'registration' => event_espresso_add_question_groups($question_groups),
-                'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
+                //'price' => event_espresso_price_dropdown($event_id, 0),
+                //'registration' => event_espresso_add_question_groups($question_groups),
+                //'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
             );
             //print_r($all_meta);
 //This function gets the status of the event.
