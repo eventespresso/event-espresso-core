@@ -152,7 +152,7 @@ if (empty($invoice_payment_settings['payment_address']) || trim($invoice_payment
                             array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 							array('id' => 'N', 'text' => __('No', 'event_espresso')),
                             );
-                        echo select_input('show', $values, $invoice_payment_settings['show']);
+                        echo select_input('show', $values, empty($invoice_payment_settings['show']) ? '' : $invoice_payment_settings['show']);
                         ?></p>
   <p>
     <input class="button-primary" type="submit" name="Submit" value="<?php  _e('Update Invoice Payment Settings','event_espresso') ?>" id="save_invoice_payment_settings" />
