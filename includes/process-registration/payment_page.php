@@ -117,14 +117,14 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
     $event_price = number_format($event_cost, 2, '.', '');
     $event_price_x_attendees = number_format($event_cost * $num_people, 2, '.', '');
     $event_original_cost = number_format($simpleMath->multiply($event_cost, $num_people), 2, '.', '');
-	
+
 	/*
 	 * Added for seating chart addon
 	 */
 	if ( defined('ESPRESSO_SEATING_CHART') )
 	{
 		if ( seating_chart::check_event_has_seating_chart($event_id) !== false )
-		{	
+		{
 			$sc_cost_row = $wpdb->get_row("select sum(sces.purchase_price) as purchase_price from ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces inner join ".EVENTS_ATTENDEE_TABLE." ea on sces.attendee_id = ea.id where ea.registration_id = '$registration_id'");
 			if ( $sc_cost_row !== NULL )
 			{
@@ -137,7 +137,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 	/*
 	 * End
 	 */
-	 
+
 
     if (function_exists('event_espresso_coupon_payment_page') && (!empty($_REQUEST['coupon_code']) || !empty($coupon_code))) {
         $event_cost = event_espresso_coupon_payment_page($use_coupon_code, $event_id, $event_original_cost, $attendee_id, $num_people);
@@ -199,6 +199,7 @@ function espresso_confirm_registration($registration_id) {
 						LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id
 						WHERE ea.registration_id = '" . $registration_id . "' AND system_name IS NULL ORDER BY eq.sequence asc ");
     //echo $wpdb->last_query;
+    $display_questions = '';
     foreach ($questions as $question) {
         $display_questions .= '<p class="espresso_questions"><strong>' . $question->question . '</strong>:<br /> ' . str_replace(',', '<br />', $question->answer) . '</p>';
     }
@@ -332,12 +333,12 @@ function event_espresso_pay($att_registration_id=0) {
     $registration_id = isset($_REQUEST['registration_id']) ? $_REQUEST['registration_id'] : '';
     $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
     $attendee_id = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
-	
+
 	if ($att_registration_id ==0)
     	$att_registration_id = $registration_id != '' ? $registration_id : espresso_registration_id($id);
 	$registration_id = $att_registration_id;
     //echo $att_registration_id;
-	
+
     $attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $att_registration_id . "' ORDER BY ID LIMIT 1");
     $num_rows = $wpdb->num_rows;
 
@@ -395,7 +396,7 @@ function event_espresso_pay($att_registration_id=0) {
 				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
 				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
 				where ea.registration_id = '".$reg_id['registration_id']."' order by ed.event_name ";
-				
+
 			$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
 			$total_cost=0;
 			foreach($tmp_attendees as $tmp_attendee){
@@ -407,8 +408,8 @@ function event_espresso_pay($att_registration_id=0) {
 		}
 		//print_r($attendees);
 		$total_cost = number_format($total_cost, 2, '.', '');
-       
-	
+
+
         if (!empty($_REQUEST['payment_type']) && $_REQUEST['payment_type'] == 'cash_check') {
 
             $payment_status = 'Pending';
