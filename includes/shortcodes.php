@@ -257,11 +257,41 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 
 					$question_groups = unserialize($event->question_groups);
-					$item_groups = unserialize($event->item_groups);
+					
+					 global $all_meta;
+					$all_meta = array(
+						'event_name' => stripslashes_deep($event_name),
+						'event_desc' => stripslashes_deep($event_desc),
+						'event_address' => $event_address,
+						'event_address2' => $event_address2,
+						'event_city' => $event_city,
+						'event_state' => $event_state,
+						'event_zip' => $event_zip,
+						
+						'is_active' => $event->is_active,
+						'event_status' => $event->event_status,
+						'start_time' => $event->start_time,
+			
+						'registration_startT' => $event->registration_startT,
+						'registration_start' => $event->registration_start,
+						
+						'registration_endT' => $event->registration_endT,
+						'registration_end' => $event->registration_end,
+						
+						'is_active' => $is_active,
+						
+						'event_country' => $event_country,
+						'start_date' => event_date_display($start_date, get_option('date_format')),
+						'end_date' => event_date_display($end_date, get_option('date_format')),
+						'time' => $event->start_time,
+						'google_map_link' => $google_map_link,
+						'price' =>  $event->event_cost,
+						'event_cost' =>  $event->event_cost,
+					);
 
 					//This function gets the status of the event.
 					$is_active = array();
-					$is_active = event_espresso_get_is_active($event_id);
+					$is_active = event_espresso_get_is_active(0,$all_meta);
 
 					//If the coupon code system is intalled then use it
 					if (function_exists('event_espresso_coupon_registration_page')) {
@@ -752,7 +782,8 @@ if (!function_exists('espresso_venue_details_sc')) {
 		$show_additional_details = (isset($show_additional_details) && $show_additional_details == 'false')? false:true;
 
 		//Find the event id
-		if (isset($event_id)){
+		if (isset($id) && $id > 0){
+		}elseif (isset($event_id)){
 			$event_id = $event_id;//Check to see if the event is used in the shortcode parameter
 		}elseif (isset($this_event_id)){
 			$event_id = $this_event_id;//Check to see if the global event id is being used
@@ -827,7 +858,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 						$html .= $meta['twitter'] != ''? __('Twitter:', 'event_espresso').' <a href="http://twitter.com/#!/'.stripslashes_deep($meta['twitter']).'" target="_blank">@'.stripslashes_deep($meta['twitter']).'</a><br />':'';
 						$html .= $inside_wrapper_after;
 					}
-
+					
 					//Build the venue image
 					if ($show_map_image != false){
 						$html .= $map_image_wrapper_start.$google_map_image.$map_image_wrapper_end;
@@ -881,28 +912,28 @@ add_shortcode('ESPRESSO_VENUE_EVENTS', 'espresso_venue_event_list_sc');
 
 function ee_show_meta_sc($atts){
 	global $event_meta, $venue_meta, $all_meta;
-
+		
 	if (empty($atts))
 		return;
-
-	extract($atts);
-
+		
+	extract($atts);	
+	
 	if (!isset($name))
 		return;
-
-	switch ($type){
-
-		case 'venue':
+	
+	switch ($type){	
+		
+		case 'venue':	
 		default:
 			return ee_show_meta($venue_meta, $name);
-
-		case 'event':
+		
+		case 'event':	
 			return ee_show_meta($event_meta, $name);
-
+		
 		case 'all':
 		default:
 			return ee_show_meta($all_meta, $name);
 	}
-
+		
 }
 add_shortcode('EE_META', 'ee_show_meta_Sc');
