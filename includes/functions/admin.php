@@ -1183,7 +1183,9 @@ function event_espresso_list_categories($event_id = 0) {
     }
 }
 
-//Retrives the attendee count based on an attendee ids
+//These functions were movedto main.php on 08-30-2011 by Seth 
+
+/*//Retrives the attendee count based on an attendee ids
 function espresso_count_attendees_for_registration($attendee_id) {
     global $wpdb;
     $cnt = $wpdb->get_var("SELECT COUNT(1) as cnt FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
@@ -1202,7 +1204,9 @@ function espresso_quantity_for_registration($attendee_id) {
     global $wpdb;
     $cnt = $wpdb->get_var("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
     return $cnt;
-}
+}*/
+
+//End
 
 function espresso_attendees_by_month_dropdown($current_value='') {
     global $wpdb;
@@ -1287,32 +1291,6 @@ function espresso_create_default_pages() {
     //print_r($org_options);
 }
 
-function espresso_edit_this($event_id) {
-    global $espresso_premium;
-    if ($espresso_premium != true)
-        return;
-    global $current_user;
-    wp_get_current_user();
-    $curauth = wp_get_current_user();
-    $user_id = $curauth->ID;
-    $user = new WP_User($user_id);
-    foreach ($user->roles as $role) {
-        //echo $role;
-        //Build the edit event link
-        $edit_link = '<a class="post-edit-link" href="' . site_url() . '/wp-admin/admin.php?page=events&action=edit&event_id=' . $event_id . '">' . __('Edit Event') . '</a>';
-        switch ($role) {
-            case 'administrator':
-            case 'espresso_event_admin':
-            case 'espresso_event_manager':
-            case 'espresso_group_admin':
-                //If user is an event manager, then show the edit link for their events
-                if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_eventmanager' && espresso_member_data('id') != espresso_is_my_event($event_id))
-                    return;
-                return $edit_link;
-                break;
-        }
-    }
-}
 
 if (!function_exists('espresso_event_list_attendee_title')) {
 
@@ -1352,7 +1330,9 @@ function espresso_payment_reports($atts) {
     }
 }
 
-function espresso_ticket_links($registration_id, $attendee_id) {
+//These functions were movedto main.php on 08-30-2011 by Seth 
+
+/*function espresso_ticket_links($registration_id, $attendee_id) {
     global $wpdb;
     $sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
     if (espresso_is_primary_attendee($attendee_id) != true) {
@@ -1372,9 +1352,9 @@ function espresso_ticket_links($registration_id, $attendee_id) {
         }
         return '<p>' . $group . $ticket_link . '</p>';
     }
-}
+}*/
 
-function espresso_is_primary_attendee($attendee_id) {
+/*function espresso_is_primary_attendee($attendee_id) {
     global $wpdb;
     $sql = "SELECT am.meta_value FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
     $sql .= " WHERE am.attendee_id = '" . $attendee_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
@@ -1395,7 +1375,38 @@ function espresso_get_primary_attendee_id($registration_id) {
     if ($wpdb->num_rows > 0) {
         return $wpdb->last_result[0]->attendee_id;
     }
+}*/
+
+/*function espresso_edit_this($event_id) {
+    global $espresso_premium;
+    if ($espresso_premium != true)
+        return;
+    global $current_user;
+    wp_get_current_user();
+    $curauth = wp_get_current_user();
+    $user_id = $curauth->ID;
+    $user = new WP_User($user_id);
+    foreach ($user->roles as $role) {
+        //echo $role;
+        //Build the edit event link
+        $edit_link = '<a class="post-edit-link" href="' . site_url() . '/wp-admin/admin.php?page=events&action=edit&event_id=' . $event_id . '">' . __('Edit Event') . '</a>';
+        switch ($role) {
+            case 'administrator':
+            case 'espresso_event_admin':
+            case 'espresso_event_manager':
+            case 'espresso_group_admin':
+                //If user is an event manager, then show the edit link for their events
+                if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_eventmanager' && espresso_member_data('id') != espresso_is_my_event($event_id))
+                    return;
+                return $edit_link;
+                break;
+        }
+    }
 }
+*/
+
+//end
+
 
 function espresso_performance( $visible = false ) {
 
