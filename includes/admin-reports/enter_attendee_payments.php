@@ -298,7 +298,7 @@ function enter_attendee_payments() {
                 <input type="hidden" name="event_id" value="<?php echo $event_id ?>">
                 <input type="hidden" name="attendee_action" value="post_payment">
                 <li>
-                  <input type="submit" name="Submit" value="Post Payment">
+                  <input type="submit" name="Submit" value="Update Payment">
                 </li>
               </ul>
             </fieldset>
