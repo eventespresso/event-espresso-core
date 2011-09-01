@@ -593,7 +593,9 @@ function events_data_tables_install() {
 			admin_only ENUM( 'Y', 'N' ) NOT NULL DEFAULT 'N',
 			wp_user int(22) DEFAULT '1',
 			PRIMARY KEY  (id),
-			KEY `event_id` (`event_id`)";
+			KEY `wp_user` (`wp_user`),
+			KEY `system_name` (`system_name`),
+			KEY `admin_only` (`admin_only`)";
     event_espresso_run_install($table_name, $table_version, $sql);
 
     $table_name = "events_qst_group";
