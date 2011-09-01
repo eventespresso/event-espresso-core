@@ -119,7 +119,7 @@ function event_list_attendees() {
         <th class="manage-column column-title" id="event" scope="col" title="Click to Sort" style="width: 8%;"> <span>
           <?php _e('Option', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
-        <th class="manage-column column-date" id="amount" scope="col" title="Click to Sort" style="width: 10%;"> <span>
+        <th align="center" class="manage-column column-date" id="amount" style="width: 10%;" title="Click to Sort" scope="col"> <span>
           <?php _e('Payment', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
         <th class="manage-column column-date" id="payment_type" scope="col" title="Click to Sort" style="width: 10%;"> <span>
@@ -309,7 +309,8 @@ function event_list_attendees() {
 					echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
 					echo 'Amount: '. espresso_attendee_price(array('attendee_id'=>$registration_id)).'<br />';
 					echo '</p>';*/
-					$total_amount_pd = espresso_attendee_price(array('registration_id'=>$registration_id, 'reg_total'=>true));
+					//Removing the price to cut down confusion
+					//$total_amount_pd = espresso_attendee_price(array('registration_id'=>$registration_id, 'reg_total'=>true));
 				} else {
 					$go = true;
 				}
@@ -329,12 +330,12 @@ function event_list_attendees() {
                     <td nowrap="nowrap"><a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('View attendees for this event', 'event_espresso'); ?>"><?php echo stripslashes_deep($event_name) ?></a></td>
                     <td nowrap="nowrap"><?php echo event_date_display($event_time, get_option('time_format')) ?></td>
                     <?php if ($ticketing_installed == true) { ?>
-                    <td nowrap="nowrap"><?php echo ($attended == 1 || $ticket_scanned >= 1) ? event_espresso_paid_status_icon('Checkedin') : event_espresso_paid_status_icon('NotCheckedin'); ?></td>
+                    <td nowrap="nowrap"><p style="padding-left:15px"><?php echo ($attended == 1 || $ticket_scanned >= 1) ? event_espresso_paid_status_icon('Checkedin') : event_espresso_paid_status_icon('NotCheckedin'); ?></p></td>
                     <?php } ?>
                     <td nowrap="nowrap"><?php echo $price_option ?></td>
-                    <td class="date column-date"><a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>">
-                      <?php event_espresso_paid_status_icon($payment_status) ?>
-                      </a> <a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>"><?php echo $org_options['currency_symbol'] ?><?php echo $total_amount_pd ?></a></td>
+                    <td class="date column"><a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>">
+                      <p style="padding-left:17px"><?php event_espresso_paid_status_icon($payment_status) ?></p>
+                      </a> <?php /*?><a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $temp_reg_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $temp_reg_id ?>"><?php //echo $org_options['currency_symbol'] ?><?php //echo $total_amount_pd ?></a><?php */?></td>
                     <td class="date column-date"><?php echo espresso_payment_type($txn_type); ?></td>
                     <td class="date column-date"><?php echo $coupon_code ?></td>
                     <td class="date column-date"><?php echo $txn_id ?></td>
