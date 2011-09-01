@@ -168,14 +168,13 @@ if (!function_exists('event_espresso_get_event_details')) {
                 'google_map_link' => $google_map_link,
                 'price' => empty($event->event_cost) ? '' : $event->event_cost,
                 'event_cost' => empty($event->event_cost) ? '' : $event->event_cost,
-                'registration' => event_espresso_add_question_groups(empty($question_groups) ? array() : $question_groups),
-                'additional_attendees' => !empty($allow_multiple) && $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
             );
             //Debug
             //echo '<p>'.print_r($all_meta).'</p>';
             //These variables can be used with other the espresso_countdown, espresso_countup, and espresso_duration functions and/or any javascript based functions.
-            $start_timestamp = espresso_event_time($event_id, 'start_timestamp');
-            $end_timestamp = espresso_event_time($event_id, 'end_timestamp');
+			//Warning: May cause additional database queries an should only be used for sites with a small amount of events.
+			// $start_timestamp = espresso_event_time($event_id, 'start_timestamp');
+			//$end_timestamp = espresso_event_time($event_id, 'end_timestamp');
 
             //This can be used in place of the registration link if you are usign the external URL feature
             $registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
