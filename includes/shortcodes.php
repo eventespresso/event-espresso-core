@@ -481,7 +481,7 @@ if (!function_exists('display_event_list_sc')) {
 		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
 		$order_by = $order_by != 'NULL'? " ORDER BY ". $order_by ." ASC " : " ORDER BY date(start_date), id ASC ";
 
-		if ($type == 'category'){
+		if (!empty($type) && $type == 'category'){
 			$sql = "SELECT e.* FROM " . EVENTS_CATEGORY_TABLE . " c ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
@@ -827,7 +827,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 						$html .= $meta['twitter'] != ''? __('Twitter:', 'event_espresso').' <a href="http://twitter.com/#!/'.stripslashes_deep($meta['twitter']).'" target="_blank">@'.stripslashes_deep($meta['twitter']).'</a><br />':'';
 						$html .= $inside_wrapper_after;
 					}
-					
+
 					//Build the venue image
 					if ($show_map_image != false){
 						$html .= $map_image_wrapper_start.$google_map_image.$map_image_wrapper_end;
@@ -881,28 +881,28 @@ add_shortcode('ESPRESSO_VENUE_EVENTS', 'espresso_venue_event_list_sc');
 
 function ee_show_meta_sc($atts){
 	global $event_meta, $venue_meta, $all_meta;
-		
+
 	if (empty($atts))
 		return;
-		
-	extract($atts);	
-	
+
+	extract($atts);
+
 	if (!isset($name))
 		return;
-	
-	switch ($type){	
-		
-		case 'venue':	
+
+	switch ($type){
+
+		case 'venue':
 		default:
 			return ee_show_meta($venue_meta, $name);
-		
-		case 'event':	
+
+		case 'event':
 			return ee_show_meta($event_meta, $name);
-		
+
 		case 'all':
 		default:
 			return ee_show_meta($all_meta, $name);
 	}
-		
+
 }
 add_shortcode('EE_META', 'ee_show_meta_Sc');
