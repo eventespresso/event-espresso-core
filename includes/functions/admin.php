@@ -47,6 +47,9 @@ function event_espresso_config_page_scripts() {
 		wp_register_script('jquery.validate.pack', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.pack.js"), false, '1.7');
 		wp_enqueue_script('jquery.validate.pack');
 	}
+	
+	wp_register_script('event_espresso_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_espresso.js"), false);
+	wp_enqueue_script('event_espresso_js');
 
     if (isset($_REQUEST['event_admin_reports'])) {
 		switch ($_REQUEST['event_admin_reports']) {
