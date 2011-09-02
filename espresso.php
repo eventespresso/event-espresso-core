@@ -98,7 +98,7 @@ foreach ( $uri_segments as $uri_segment ) {
 	$seg_page_id=$wpdb->get_var( $wpdb->prepare( "SELECT id FROM $wpdb->posts WHERE post_name = %s ", $uri_segment ));
 	if ($wpdb->num_rows > 0) { 
 		if ( in_array( $seg_page_id, $reg_page_ids ) ){
-			$this_is_a_reg_page = TRUE;
+            $this_is_a_reg_page = TRUE;
 		}
 	}
 }
@@ -219,10 +219,10 @@ define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
 /*
  * Added for seating chart addon
  */
-define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart_tbl");
-define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat_tbl");
-define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event_tbl");
-define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat_tbl");
+define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart");
+define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat");
+define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event");
+define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat");
 /*
  * End
  */
@@ -574,13 +574,13 @@ if (!function_exists('event_espresso_run')) {
 
     function event_espresso_run() {
         global $wpdb, $org_options, $load_espresso_scripts;
-
+        
         $load_espresso_scripts = true; //This tells the plugin to load the required scripts
         ob_start();
 
         //Make sure scripts are loading
         echo espresso_check_scripts();
-
+        
         // Get action type
         $regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
 
