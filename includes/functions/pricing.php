@@ -312,10 +312,16 @@ function espresso_attendee_price($atts) {
 
     //If the registration_id is empty, then retrieve it
     $generated_registration_id = false;
-    if (!isset($registration_id)) {
+    if (!isset($registration_id)) 
+    {
         if (!isset($attendee_id))
+        {
             return;
-        $registration_id = espresso_registration_id($attendee_id);
+        }
+        else
+        {
+            $registration_id = espresso_registration_id($attendee_id);
+        }
     }
 
 
