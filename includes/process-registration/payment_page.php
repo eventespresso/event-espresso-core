@@ -2,10 +2,13 @@
 
 //Payment Page/PayPal Buttons - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
 //This is the initial PayPal button
-function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupon_code ='') {
+function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupon_code ='') 
+{
+    global $wpdb, $org_options, $simpleMath;
+    
     $today = date("m-d-Y");
     $num_people = 0;
-    global $wpdb, $org_options, $simpleMath;
+    
     $Organization = $org_options['organization'];
     $Organization_street1 = $org_options['organization_street1'];
     $Organization_street2 = $org_options['organization_street2'];
@@ -23,7 +26,8 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
     $event_page_id = $org_options['event_page_id'];
 
     $attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='" . $attendee_id . "'");
-    foreach ($attendees as $attendee) {
+    foreach ($attendees as $attendee) 
+    {
         //$attendee_id = $attendee->id;
         $attendee_last = $attendee->lname;
         $attendee_first = $attendee->fname;
@@ -61,14 +65,16 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 						WHERE ea.attendee_id = '" . $attendee_id . "' and eq.admin_only = 'N' ORDER BY eq.sequence asc ");
     //echo $wpdb->last_query;
     $display_questions = '';
-    foreach ($questions as $question) {
+    foreach ($questions as $question) 
+    {
         $display_questions .= '<p>' . $question->question . ':<br /> ' . str_replace(',', '<br />', $question->answer) . '</p>';
     }
 	$num_peoplea = $wpdb->get_results("SELECT COUNT(registration_id) FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $registration_id . "'", ARRAY_N);
 	$num_people = $num_peoplea[0][0];
 
     //If we are using the number of attendees dropdown, and
-    if ($quantity > 1) {
+    if ($quantity > 1) 
+    {
         $num_people = $quantity;
     }
 
@@ -83,10 +89,12 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
         $active = $event->is_active;
         $conf_mail = $event->conf_mail;
         //$alt_email = $event->alt_email; //This is used to get the alternate email address that a payment can be made to using PayPal
-        if (function_exists('event_espresso_coupon_payment_page')) {
+        if (function_exists('event_espresso_coupon_payment_page')) 
+        {
             $use_coupon_code = $event->use_coupon_code;
         }
-        if (function_exists('event_espresso_groupon_payment_page')) {
+        if (function_exists('event_espresso_groupon_payment_page')) 
+        {
             $use_groupon_code = $event->use_groupon_code;
         }
     }
@@ -94,17 +102,22 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
     $attendee_name = stripslashes_deep($attendee_first . ' ' . $attendee_last);
 
     //Figure out if the person has registered using a price selection
-    if (!empty($_REQUEST['price_select']) && $_REQUEST['price_select'] == true) {
+    if (!empty($_REQUEST['price_select']) && $_REQUEST['price_select'] == true) 
+    {
 
         $price_options = explode('|', $_REQUEST['price_option'], 2);
         $price_id = $price_options[0];
         $price_type = $price_options[1];
         $p_id = $price_id;
         $event_cost = event_espresso_get_final_price($price_id, $event_id);
-    } elseif ($price_id > 0) {
+    } 
+    elseif ($price_id > 0) 
+    {
         $event_cost = event_espresso_get_final_price($price_id, $event_id);
         $p_id = $price_id;
-    } else {
+    } 
+    else 
+    {
         //$event_cost = $_POST['event_cost'];
         $event_cost = event_espresso_get_final_price($_POST['price_id'], $event_id);
         $p_id = $_POST['price_id'];
@@ -121,6 +134,9 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 	/*
 	 * Added for seating chart addon
 	 */
+    /*
+     * This code block overrides the cost using seating chart add-on price
+     */
 	if ( defined('ESPRESSO_SEATING_CHART') )
 	{
 		if ( seating_chart::check_event_has_seating_chart($event_id) !== false )
@@ -135,7 +151,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 		}
 	}
 	/*
-	 * End
+	 * End seating chart addon
 	 */
 
 
@@ -210,7 +226,8 @@ function espresso_confirm_registration($registration_id) {
                         ON ed.id = ea.event_id
                         WHERE ea.registration_id='" . $registration_id . "'");
 
-    foreach ($events as $event) {
+    foreach ($events as $event) 
+    {
         $event_id = $event->id;
         $event_name = stripslashes_deep($event->event_name);
         $event_desc = stripslashes_deep($event->event_desc);
@@ -261,7 +278,8 @@ function espresso_confirm_registration($registration_id) {
     $attendees = $wpdb->get_results($sql);
     //global $attendee_id;
 
-    foreach ($attendees as $attendee) {
+    foreach ($attendees as $attendee) 
+    {
         $attendee_id = $attendee->id;
         $attendee_email = $attendee->email;
         $lname = $attendee->lname;
