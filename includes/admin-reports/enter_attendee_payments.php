@@ -21,7 +21,7 @@ function enter_attendee_payments() {
         //Add payment info
         case 'payment':
             if ( isset($_REQUEST[ 'attendee_action' ]) && $_REQUEST[ 'attendee_action' ] == 'post_payment' ){
-//Added by Imon
+                //Added by Imon
 				$primary_row = $wpdb->get_row("select id from ".EVENTS_ATTENDEE_TABLE." where registration_id = '$registration_id' limit 0,1 ");
 				$primary_attendee_id = $primary_row->id; // GET the primary attendee id because amount paid info is kept with the primary attendee 
                 $payment_status = isset($_REQUEST[ 'payment_status' ]) ? $_REQUEST[ 'payment_status' ]:'';
@@ -31,10 +31,11 @@ function enter_attendee_payments() {
                 $amount_pd = isset($_REQUEST[ 'amount_pd' ]) ? $_REQUEST[ 'amount_pd' ]:'';
                 $payment_date = isset($_REQUEST[ 'payment_date' ]) ? $_REQUEST[ 'payment_date' ]:'';
                 $coupon_code = isset($_REQUEST[ 'coupon_code' ]) ? $_REQUEST[ 'coupon_code' ]:'';
-
-//Added/updated by Imon
+                
+                //Added/updated by Imon
 				//Update payment status information for primary attendee
 				$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', amount_pd = '$amount_pd', payment_date ='$payment_date', quantity = '$quantity',  coupon_code ='$coupon_code' WHERE registration_id ='" . $registration_id . "' and id = $primary_attendee_id ";
+                
 				$wpdb->query( $sql );
 				
 				if ( count($registration_ids) > 0 )
@@ -78,7 +79,7 @@ function enter_attendee_payments() {
 
         //Send Invoice
         case 'send_invoice':
-//Added by Imon
+            //Added by Imon
 			if ( $org_options["use_attendee_pre_approval"] == "Y" ) {
 				$pre_approve = $_REQUEST['pre_approve'];
 				if ( count($registration_ids) > 0 )
@@ -264,7 +265,7 @@ function enter_attendee_payments() {
                     <?php _e( 'Amount:', 'event_espresso' ); ?>
                   </label>
                   <?php echo $org_options[ 'currency_symbol' ] ?>
-                  <input disabled="disabled" type="text" name="amount_pd" size="45" value ="<?php echo $total_paid; ?>" />
+                    <input readonly="true" type="text" name="amount_pd" size="45" value ="<?php echo $total_paid; ?>" />
                 </li>
                 <li>
                   <label>
