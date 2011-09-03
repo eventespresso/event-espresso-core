@@ -512,19 +512,26 @@ if (!function_exists('display_event_list_sc')) {
 		$order_by = $order_by != 'NULL'? " ORDER BY ". $order_by ." ASC " : " ORDER BY date(start_date), id ASC ";
 
 		if (!empty($type) && $type == 'category'){
-			$sql = "SELECT e.* FROM " . EVENTS_CATEGORY_TABLE . " c ";
+			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost  FROM " . EVENTS_CATEGORY_TABLE . " c ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
+			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+            $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
 			$sql .= " WHERE c.category_identifier = '" . $category_identifier . "' ";
 			$sql .= " AND e.is_active = 'Y' ";
 		}else{
-			$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
+			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost  FROM " . EVENTS_DETAIL_TABLE . " e ";
+			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+            $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
 			$sql .= " WHERE e.is_active = 'Y' ";
+			
 		}
+		
 		$sql .= $show_expired;
 		$sql .= $show_secondary;
 		$sql .= $show_deleted;
 		$sql .= $show_recurrence;
+		$sql .= " GROUP BY e.id ";
 		$sql .= $order_by;
 		$sql .= $limit;
 		//template located in event_list_dsiplay.php
