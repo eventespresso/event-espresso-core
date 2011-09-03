@@ -27,73 +27,61 @@ $multi_reg = false;
 $event_ids = array();
 $event_link = "";
 
-if ( isset($attendee_id) && is_numeric($attendee_id) && $attendee_id > 0 )
-{
-	$tmp_row = $wpdb->get_row("select registration_id from ".EVENTS_ATTENDEE_TABLE." where id = $attendee_id");
-	if ( $tmp_row !== NULL )
-	{
-		$tmp_registration_id = $tmp_row->registration_id;
-		$tmp_row = $wpdb->get_row("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '{$tmp_registration_id}' ");
-		if ( $tmp_row !== NULL )
-		{
-			$primary_registration_id = $tmp_row->primary_registration_id;
-			$multi_reg = true;
-		}
-		else
-		{
-			$primary_registration_id = $tmp_registration_id;
-		}
-	}
+if (isset($attendee_id) && is_numeric($attendee_id) && $attendee_id > 0) {
+    $tmp_row = $wpdb->get_row("select registration_id from " . EVENTS_ATTENDEE_TABLE . " where id = $attendee_id");
+    if ($tmp_row !== NULL) {
+        $tmp_registration_id = $tmp_row->registration_id;
+        $tmp_row = $wpdb->get_row("select * from " . EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE . " where registration_id = '{$tmp_registration_id}' ");
+        if ($tmp_row !== NULL) {
+            $primary_registration_id = $tmp_row->primary_registration_id;
+            $multi_reg = true;
+        } else {
+            $primary_registration_id = $tmp_registration_id;
+        }
+    }
 }
 
-if ( $attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_registration_id) > 0 )
-{
-	$registration_ids = array();
-	$rs = $wpdb->get_results("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where primary_registration_id = '{$primary_registration_id}' ");
-	if ( $wpdb->num_rows > 0 )
-	{
-		foreach($rs as $row )
-		{
-			$registration_ids[] = $row->registration_id;
-		}
-	}
-	else
-	{
-		$registration_ids[] = $primary_registration_id;
-	}
+if ($attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_registration_id) > 0) {
+    $registration_ids = array();
+    $rs = $wpdb->get_results("select * from " . EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE . " where primary_registration_id = '{$primary_registration_id}' ");
+    if ($wpdb->num_rows > 0) {
+        foreach ($rs as $row) {
+            $registration_ids[] = $row->registration_id;
+        }
+    } else {
+        $registration_ids[] = $primary_registration_id;
+    }
 
-	$total_cost = 0.00;
-	$amount_pd = 0.00;
-	foreach($registration_ids as $registration_id){
+    $total_cost = 0.00;
+    $amount_pd = 0.00;
+    foreach ($registration_ids as $registration_id) {
 
-		$sql = "select ea.registration_id, ea.id as attendee_id, ea.amount_pd, ed.id as event_id, ed.event_name, ed.start_date, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
-				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
+        $sql = "select ea.registration_id, ea.id as attendee_id, ea.amount_pd, ed.id as event_id, ed.event_name, ed.start_date, ea.fname, ea.lname, eac.quantity, eac.cost from " . EVENTS_ATTENDEE_TABLE . " ea
+				inner join " . EVENTS_ATTENDEE_COST_TABLE . " eac on ea.id = eac.attendee_id
 				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
-				where ea.registration_id = '".$registration_id."' order by ed.event_name ";
+				where ea.registration_id = '" . $registration_id . "' order by ed.event_name ";
 
-		$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
+        $tmp_attendees = $wpdb->get_results($sql, ARRAY_A);
 
-		foreach($tmp_attendees as $tmp_attendee){
-			$sub_total = 0.00;
-			$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
-			$attendees[] = array(	"attendee_info"=>$tmp_attendee["event_name"]."[".date('m-d-Y',strtotime($tmp_attendee['start_date']))."]" . " >> " . $tmp_attendee["fname"]." ".$tmp_attendee["lname"],
-									"quantity"=> $tmp_attendee["quantity"],
-									"cost"=> doubleval($tmp_attendee["cost"]),
-									"sub_total" => doubleval($sub_total),
-									"unit_price" => $tmp_attendee["cost"] );
-			$amount_pd += $tmp_attendee["amount_pd"];
-			$total_cost += $sub_total;
-			if ( !in_array($tmp_attendee['event_id'],$event_ids) )
-			{
-				$event_ids[] = $tmp_attendee['event_id'];
-			}
-		}
-	}
-	$discount = 0;
-	if ( $amount_pd < $total_cost )
-	{
-		$discount = $total_cost - $amount_pd;
-	}
+        foreach ($tmp_attendees as $tmp_attendee) {
+            $sub_total = 0.00;
+            $sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
+            $attendees[] = array("attendee_info" => $tmp_attendee["event_name"] . "[" . date('m-d-Y', strtotime($tmp_attendee['start_date'])) . "]" . " >> " . $tmp_attendee["fname"] . " " . $tmp_attendee["lname"],
+                "quantity" => $tmp_attendee["quantity"],
+                "cost" => doubleval($tmp_attendee["cost"]),
+                "sub_total" => doubleval($sub_total),
+                "unit_price" => $tmp_attendee["cost"]);
+            $amount_pd += $tmp_attendee["amount_pd"];
+            $total_cost += $sub_total;
+            if (!in_array($tmp_attendee['event_id'], $event_ids)) {
+                $event_ids[] = $tmp_attendee['event_id'];
+            }
+        }
+    }
+    $discount = 0;
+    if ($amount_pd < $total_cost) {
+        $discount = $total_cost - $amount_pd;
+    }
 }
 
 #############################
@@ -118,25 +106,24 @@ if (count($attendees) > 0) {
     #        $myPaypal->addField('amount_' . $i, number_format($div, 2, '.', ''));
     #    }
     #} else {
-		#$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . $registration_id . "' ORDER BY id ";
-		//echo $sql;
-        #$data = $wpdb->get_results($sql, ARRAY_A);
-        #if ($wpdb->num_rows > 0) {
-            $i = 1;
-            $div = $event_cost / $quantity;
-            #foreach ($data as $row)
-			foreach($attendees as $attendee)
-			{
-                #$afname = $row['fname'];
-                #$alname = $row['lname'];
-                #$aemail = $row['email'];
-                #$myPaypal->addField('item_number_' . $i, $registration_id);
-                $myPaypal->addField('item_name_' . $i, $attendee['attendee_info']);#stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
-                $myPaypal->addField('amount_' . $i, number_format($attendee['unit_price'],2,'.',''));#number_format($div, 2, '.', ''));
-				$myPaypal->addField('quantity_'. $i, $attendee['quantity']);
-                $i++;
-            }
-        #}
+    #$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . $registration_id . "' ORDER BY id ";
+    //echo $sql;
+    #$data = $wpdb->get_results($sql, ARRAY_A);
+    #if ($wpdb->num_rows > 0) {
+    $i = 1;
+    $div = $event_cost / $quantity;
+    #foreach ($data as $row)
+    foreach ($attendees as $attendee) {
+        #$afname = $row['fname'];
+        #$alname = $row['lname'];
+        #$aemail = $row['email'];
+        #$myPaypal->addField('item_number_' . $i, $registration_id);
+        $myPaypal->addField('item_name_' . $i, $attendee['attendee_info']); #stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
+        $myPaypal->addField('amount_' . $i, number_format($attendee['unit_price'], 2, '.', '')); #number_format($div, 2, '.', ''));
+        $myPaypal->addField('quantity_' . $i, $attendee['quantity']);
+        $i++;
+    }
+    #}
     #}
 }
 
@@ -160,9 +147,8 @@ $myPaypal->addField('city', $city);
 $myPaypal->addField('state', $state);
 $myPaypal->addField('zip', $zip);
 
-if ($amount_pd < $total_cost)
-{
-	$myPaypal->addField('discount_amount_1',number_format($total_cost-$amount_pd,2,'.',''));
+if ($amount_pd < $total_cost) {
+    $myPaypal->addField('discount_amount_1', number_format($total_cost - $amount_pd, 2, '.', ''));
 }
 
 
@@ -179,12 +165,12 @@ if (!empty($paypal_settings['bypass_payment_page']) && $paypal_settings['bypass_
         } else {
             $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/paypal/btn_stdCheckout2.gif";
         }
-    } elseif (file_exists($paypal_settings['button_url'])){
+    } elseif (file_exists($paypal_settings['button_url'])) {
         $button_url = $paypal_settings['button_url'];
     } else {
-		//If no other buttons exist, then use the default location
-		$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/paypal/btn_stdCheckout2.gif";
-	}
+        //If no other buttons exist, then use the default location
+        $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/paypal/btn_stdCheckout2.gif";
+    }
     $myPaypal->submitButton($button_url, 'paypal'); //Display payment button
 }
 
@@ -192,5 +178,4 @@ if ($use_sandbox == true) {
 
     echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Paypal Debug Mode Is Turned On', 'event_espresso') . '</h3>';
     $myPaypal->dump_fields(); // for debugging, output a table of all the fields
-
 }
