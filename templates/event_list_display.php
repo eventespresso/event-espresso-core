@@ -17,7 +17,7 @@
  * [EVENT_LIST limit=5 show_recurrence=true category_identifier=your_category_identifier]
  *
  */
-	
+
 //Print out the array of event status options
 //print_r (event_espresso_get_is_active($event_id));
 //Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
@@ -56,7 +56,9 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
     <?php //echo $venue_city != ''?'<p id="event_venue_city-'.$event_id.'" class="event_venue_city">'.stripslashes_deep($venue_city).'</p>':''?>
     <?php //echo $venue_state != ''?'<p id="event_venue_state-'.$event_id.'" class="event_venue_state">'.stripslashes_deep($venue_state).'</p>':''?>
     <?php //echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
-    <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
+    <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''
+    $event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
+    ?>
 
     <div class="event-meta">
 			 <p id="p_event_price-<?php echo $event_id ?>" class="event_price"><span class="section-title"><?php  echo __('Price: ', 'event_espresso'); ?></span> <?php echo  $org_options['currency_symbol'].$event->event_cost; ?></p>

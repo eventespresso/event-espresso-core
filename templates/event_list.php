@@ -110,7 +110,7 @@ if (!function_exists('event_espresso_get_event_details')) {
             $event_meta = unserialize($event->event_meta);
             $event_meta['is_active'] = $event->is_active;
             $event_meta['event_status'] = $event->event_status;
-            $event_meta['start_time'] = $event->start_time;
+            $event_meta['start_time'] = empty($event->start_time) ? '' : $event->start_time;
             $event_meta['start_date'] = $event->start_date;
             $event_meta['registration_start'] = $event->registration_start;
             $event_meta['registration_startT'] = $event->registration_startT;
