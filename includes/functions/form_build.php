@@ -2,11 +2,11 @@
 
 if (!function_exists('event_form_build')) {
 
-    function event_form_build($question, $answer = "", $event_id = null, $multi_reg = 0, $extra = array()) {
+    function event_form_build($question, $answer = "", $event_id = null, $multi_reg = 0, $extra = array(), $class='my_class') {
         if ($question->admin_only == 'Y' && empty($show_admin_only)) {
             return;
         }
-
+		//$class = 'class="'.$class.'"';
         $required = '';
         $attendee_number = isset($extra['attendee_number']) ? $extra['attendee_number'] : 0;
         $price_id = isset($extra['price_id']) ? $extra['price_id'] : 0;
@@ -19,7 +19,7 @@ if (!function_exists('event_form_build')) {
         $email_validate = $question->system_name == 'email' ? 'email' : '';
 
         if ($question->required == "Y") {
-            $required = ' title="' . $question->required_text . '" class="required ' . $email_validate . '"';
+            $required = ' title="' . $question->required_text . '" class="required ' . $email_validate . ' '.$class.'"';
             $required_label = "<em>*</em>";
         }
         $field_name = ($question->system_name != '') ? $question->system_name : $question->question_type . '_' . $question->id;
@@ -49,42 +49,42 @@ if (!function_exists('event_form_build')) {
                             case $question->system_name == 'fname':
                                 $answer = $current_user->first_name;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
-                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'lname':
                                 $answer = $current_user->last_name;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
-                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'email':
                                 $answer = $user_email;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
-                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'address':
                                 $answer = esc_attr(get_usermeta($userid, 'event_espresso_address'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
-                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'city':
                                 $answer = esc_attr(get_usermeta($userid, 'event_espresso_city'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
-                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'state':
                                 $answer = esc_attr(get_usermeta($userid, 'event_espresso_state'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
-                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'zip':
                                 $answer = esc_attr(get_usermeta($userid, 'event_espresso_zip'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
-                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'phone':
                                 $answer = esc_attr(get_usermeta($userid, 'event_espresso_phone'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
-                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                         }
                     }
@@ -92,11 +92,11 @@ if (!function_exists('event_form_build')) {
 
                 $html .= '<p class="event_form_field">' . $label;
                 $disabled = isset($disabled) ? $disabled : '';
-                $html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" value="' . $answer . '" ' . $disabled . ' /></p>';
+                $html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="'.$class.'" value="' . $answer . '" ' . $disabled . ' /></p>';
                 break;
             case "TEXTAREA" :
                 $html .= '<p class="event_form_field event-quest-group-textarea">' . $label;
-                $html .= '<textarea id=""' . $required . ' name="TEXTAREA_' . $question->id . $multi_name_adjust . '"  cols="30" rows="5">' . $answer . '</textarea></p>';
+                $html .= '<textarea id=""' . $required . ' name="TEXTAREA_' . $question->id . $multi_name_adjust . '"  cols="30" rows="5" class="'.$class.'">' . $answer . '</textarea></p>';
                 break;
             case "SINGLE" :
                 $values = explode(",", $question->response);
@@ -109,7 +109,7 @@ if (!function_exists('event_form_build')) {
                     //old way $checked = in_array ( $value, $answers ) ? ' checked="checked"' : "";
                     $value = trim($value);
                     $checked = ( $value == $answer ) ? ' checked="checked"' : "";
-                    $html .= '<li><label for="SINGLE_' . $question->id . '_' . $key . '"><input title="' . $question->required_text . '" id="SINGLE_' . $question->id . '_' . $key . '" ' . $required . ' name="SINGLE_' . $question->id . $multi_name_adjust . '"  type="radio" value="' . $value . '" ' . $checked . ' /> ' . $value . '</label></li>';
+                    $html .= '<li><label for="SINGLE_' . $question->id . '_' . $key . '" class="'.$class.'"><input title="' . $question->required_text . '" id="SINGLE_' . $question->id . '_' . $key . '" ' . $required . ' name="SINGLE_' . $question->id . $multi_name_adjust . '"  type="radio" value="' . $value . '" ' . $checked . ' /> ' . $value . '</label></li>';
                     //echo $label;
                 }
                 $html .= '</ul>';
@@ -127,7 +127,7 @@ if (!function_exists('event_form_build')) {
                     $checked = (is_array($answer) && in_array($value, $answer)) ? ' checked="checked"' : "";
                     //$checked = ( $value == $answer ) ? ' checked="checked"' : "";
                     /* 	$html .= "<label><input type=\"checkbox\"$required id=\"MULTIPLE_$question->id_$key\" name=\"MULTIPLE_$question->id_$key\"  value=\"$value\"$checked /> $value</label><br/>\n"; */
-                    $html .= '<li><label for="' . $value . '-' . $event_id . '"><input id="' . $value . '-' . $event_id . '" ' . $required . 'name="MULTIPLE_' . $question->id . $multi_name_adjust . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> ' . $value . '</label></li>';
+                    $html .= '<li><label for="' . $value . '-' . $event_id . '" class="'.$class.'"><input id="' . $value . '-' . $event_id . '" ' . $required . 'name="MULTIPLE_' . $question->id . $multi_name_adjust . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> ' . $value . '</label></li>';
                 }
                 $html .= '</ul>';
                 $html .= '</fieldset>';
@@ -136,8 +136,8 @@ if (!function_exists('event_form_build')) {
                 $dd_type = $question->system_name == 'state' ? 'name="state"' : 'name="DROPDOWN_' . $question->id . $multi_name_adjust . '"';
                 $values = explode(",", $question->response);
                 $answers = explode(",", $answer);
-                $html .= '<p class="event_form_field">' . $label;
-                $html .= '<select ' . $dd_type . ' ' . $required . ' id="DROPDOWN_' . $question->id . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '">';
+                $html .= '<p class="event_form_field" class="'.$class.'">' . $label;
+                $html .= '<select ' . $dd_type . ' ' . $required . ' id="DROPDOWN_' . $question->id . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '" class="'.$class.'">';
                 $html .= "<option value=''>" . __('Select One', 'event_espresso') . "</option>";
                 foreach ($values as $key => $value) {
                     $value = trim($value);
