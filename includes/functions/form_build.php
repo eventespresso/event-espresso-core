@@ -35,6 +35,7 @@ if (!function_exists('event_form_build')) {
         //If the members addon is installed, get the users information if available
         if (get_option('events_members_active') == 'true') {
             global $current_user;
+            global $user_email;
             require_once(EVENT_ESPRESSO_MEMBERS_DIR . "user_vars.php"); //Load Members functions
             $userid = $current_user->ID;
         }
@@ -46,17 +47,17 @@ if (!function_exists('event_form_build')) {
                     if (!empty($question->system_name)) {
                         switch ($question->system_name) {
                             case $question->system_name == 'fname':
-                                $answer = $current_user->user_firstname;
+                                $answer = $current_user->first_name;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
                                 break;
                             case $question->system_name == 'lname':
-                                $answer = $current_user->user_lastname;
+                                $answer = $current_user->last_name;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
                                 break;
                             case $question->system_name == 'email':
-                                $answer = $current_user->user_email;
+                                $answer = $user_email;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" />';
                                 break;

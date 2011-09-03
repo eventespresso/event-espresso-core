@@ -222,7 +222,7 @@ return;*/
             ($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendee(s)', 'event_espresso') . '</td>' : '') .
             "</tr>" . $data->email_questions . $data->admin_ticket_link . $data->invoice_link;
     $admin_message = "<h3>" . __('Registration Summary:', 'event_espresso') . "</h3>";
-    if (!empty($email_questions)) {
+    if (!empty($data->email_questions)) {
         $admin_message .= "<h3>" . __('Additional Information:', 'event_espresso') . "</h3>";
         $admin_message .= $data->email_questions;
     }
