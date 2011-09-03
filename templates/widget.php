@@ -47,14 +47,14 @@ if (!class_exists('Event_Espresso_Widget')) {
             $order_by = " ORDER BY date(start_date), id ASC ";
 
             if (isset($type) && $type == 'category') {
-                $sql = "SELECT e.*, c.category_name, c.category_name, c.category_desc FROM " . EVENTS_CATEGORY_TABLE . " c ";
+                $sql = "SELECT e.*, c.category_name, c.category_name, c.category_desc, ese.start_time FROM " . EVENTS_CATEGORY_TABLE . " c ";
                 $sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
                 $sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
                 $sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
                 $sql .= " WHERE c.id = '" . $instance['category_name'] . "' ";
                 $sql .= " AND e.is_active = 'Y' ";
             } else {
-                $sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
+                $sql = "SELECT e.*, ese.start_time FROM " . EVENTS_DETAIL_TABLE . " e ";
                 $sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
                 $sql .= " WHERE e.is_active = 'Y' ";
             }
@@ -90,6 +90,7 @@ if (!class_exists('Event_Espresso_Widget')) {
                     'registration_endT' => $event->registration_endT,
                     'registration_end' => $event->registration_end,
                     'start_date' => event_date_display($event->start_date, get_option('date_format')),
+                    'start_time' => event_date_display($event->start_time, get_option('time_format')),
                     'end_date' => event_date_display($event->end_date, get_option('date_format')),
                 );
 
@@ -112,7 +113,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 
                 //End
 
-                if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
+                if (!is_user_logged_in() && get_option('events_members_active') == 'true' && !empty($member_only) && $member_only == 'Y') {
                     //Display a message if the user is not logged in.
                     //_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
                 } else {
