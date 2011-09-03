@@ -108,6 +108,14 @@ if (!function_exists('event_espresso_get_event_details')) {
             $event_desc = array_shift(explode('<!--more-->', $event_desc));
             global $event_meta;
             $event_meta = unserialize($event->event_meta);
+            $event_meta['is_active'] = $event->is_active;
+            $event_meta['event_status'] = $event->event_status;
+            $event_meta['start_time'] = $event->start_time;
+            $event_meta['start_date'] = $event->start_date;
+            $event_meta['registration_start'] = $event->registration_start;
+            $event_meta['registration_startT'] = $event->registration_startT;
+            $event_meta['registration_end'] = $event->registration_end;
+            $event_meta['registration_endT'] = $event->registration_endT;
 
             //Venue information
             if ($org_options['use_venue_manager'] == 'Y') {
