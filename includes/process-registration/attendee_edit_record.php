@@ -209,8 +209,9 @@ function attendee_edit_record() {
 			if (!isset($_REQUEST[ 'single' ]))
 				return events_payment_page($_REQUEST[ 'primary' ], $_REQUEST[ 'p_id' ]);
 		}
-?>       
-<h3><?php _e('Registration For:', 'event_espresso' ); ?> <?php echo $event_name ?></h3>
+?> 
+<div class="event-display-boxes">      
+<h3 class="section-heading"><?php _e('Registration For:', 'event_espresso' ); ?> <?php echo $event_name ?></h3>
 	<form method="post" action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>" class="espresso_form">
 	<?php
 	if (count($question_groups) > 0) {
@@ -284,12 +285,13 @@ function attendee_edit_record() {
 						//echo '<p>'.print_r($question).'</p>';
 						/* END DEBUG */
 						
-                        echo ($group_name != '' &&  $group_name != $question->group_name) ?'</div>':'';
+                        echo ($group_name != '' &&  $group_name != $question->group_name) ?'</div>': '';
 
 						if ($group_name != $question->group_name){
-							echo '<div class="event_questions" id="' . $question->group_identifier . '">';
-							echo $question->show_group_name != 0?"<h3 style='clear:both;'>$question->group_name</h3>":'';
-							echo $question->show_group_description != 0?"<p>$question->group_description</p>":'';
+						($question->group_identifier)? $group_id = 'id="' . $question->group_identifier . '"' : '';
+							echo '<div class="event_questions" ' . $group_id . '>';
+							echo $question->show_group_name != 0 ? '<h4 class="section-title">' . $question->group_name . '</h4>' : '';
+							echo $question->show_group_description != 0? '<p>' . $question->group_description . '</p>' : '';
 							$group_name = $question->group_name;
 						}
 
@@ -312,7 +314,8 @@ function attendee_edit_record() {
 	<input type="hidden" name="attendee_action" value="update_attendee" />
 	<input type="hidden" name="regevent_action" value="register" />
 	<input type="hidden" name="primary" value="<?php echo $_REQUEST[ 'primary' ] ?>" />
-	<p class="espresso_confirm_registration"><input type="submit" name="submit" value="<?php _e( 'Update Record', 'event_espresso' ); ?>" /></p>
+	<p class="espresso_confirm_registration"><input class="btn_event_form_submit" type="submit" name="submit" value="<?php _e( 'Update Record', 'event_espresso' ); ?>" /></p>
 </form>
+</div><!-- / .event-display-boxes -->
 <?php
 }
