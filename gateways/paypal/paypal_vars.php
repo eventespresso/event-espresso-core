@@ -66,7 +66,7 @@ if ($attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_regi
         foreach ($tmp_attendees as $tmp_attendee) {
             $sub_total = 0.00;
             $sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
-            $attendees[] = array("attendee_info" => $tmp_attendee["event_name"] . "[" . date('m-d-Y', strtotime($tmp_attendee['start_date'])) . "]" . " >> " . $tmp_attendee["fname"] . " " . $tmp_attendee["lname"],
+            $attendees[] = array("attendee_info" => $tmp_attendee["event_name"] . "[" . date('m-d-Y', strtotime($tmp_attendee['start_date'])) . "]" . " -- " . $tmp_attendee["fname"] . " " . $tmp_attendee["lname"],
                 "quantity" => $tmp_attendee["quantity"],
                 "cost" => doubleval($tmp_attendee["cost"]),
                 "sub_total" => doubleval($sub_total),
