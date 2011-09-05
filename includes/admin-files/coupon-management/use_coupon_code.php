@@ -88,13 +88,13 @@ if (!function_exists('event_espresso_coupon_registration_page')) {
         if ($use_coupon_code == "Y") {
 
             $multi_reg_adjust = $multi_reg == 1 ? "[$event_id]" : '';
-            ?>
-            <p class="event_form_field coupon_code" id="coupon_code-<?php echo $event_id; ?>">
-                <label for="coupon_code"><?php _e('Enter Promotional/Discount Code', 'event_espresso'); ?>:</label>
-                <input type="text" tabIndex="9" maxLength="25" size="35" name="coupon_code<?php echo $multi_reg_adjust; ?>" id="coupon_code-<?php echo $event_id; ?>">
-            </p>
-            <?php
+
+            $output ='<p class="event_form_field coupon_code" id="coupon_code-' . $event_id . '">';
+            $output .= '<label for="coupon_code">' . __('Enter Promotional/Discount Code', 'event_espresso') . ':</label>';
+            $output .= '<input type="text" tabIndex="9" maxLength="25" size="35" name="coupon_code';
+            $output .= $multi_reg_adjust . '" id="coupon_code-' . $event_id . '"></p>';
         }
+        return $output;
     }
 
 }
