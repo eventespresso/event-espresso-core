@@ -358,6 +358,8 @@ if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-man
 } else {
     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/coupon_management.php');
 }
+require_once("includes/functions/admin.php");
+
 //Admin only files
 if (is_admin()) {
 
@@ -421,7 +423,6 @@ if (is_admin()) {
 
 
     //Admin only functions
-    require_once("includes/functions/admin.php");
     require_once("includes/functions/admin_menu.php");
 
     //Event Registration Subpage - Configure Organization
