@@ -12,7 +12,7 @@ $paypal_settings = get_option('event_espresso_paypal_settings');
 $paypal_id = empty($paypal_settings['paypal_id']) ? '' : $paypal_settings['paypal_id'];
 //$image_url = $paypal_settings['button_url'];
 $paypal_cur = empty($paypal_settings['currency_format']) ? '' : $paypal_settings['currency_format'];
-$no_shipping = empty($paypal_settings['no_shipping']) ? '' : $paypal_settings['no_shipping'];
+$no_shipping = isset($paypal_settings['no_shipping']) ? $paypal_settings['no_shipping'] : '0';
 $use_sandbox = empty($paypal_settings['use_sandbox']) ? '' : $paypal_settings['use_sandbox'];
 if ($use_sandbox == 1) {
     // Enable test mode if needed
