@@ -184,13 +184,13 @@ global $simpleMath;
 $simpleMath = new SimpleMath();
 
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/espresso_log.php';
-/*
-$message = "REQUEST variables:\n";
-foreach ($_REQUEST as $key => $value) {
-    $message .= $key . " = " . $value . "\n";
+if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+    $message = "REQUEST variables:\n";
+    foreach ($_REQUEST as $key => $value) {
+        $message .= $key . " = " . $value . "\n";
+    }
+    espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => $message));
 }
-espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => $message));
-*/
 
 //Set the default time zone
 //If the default time zone is set up in the WP Settings, then we will use that as the default.

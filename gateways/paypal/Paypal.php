@@ -62,7 +62,10 @@ class Paypal extends PaymentGateway {
      * @return boolean
      */
     public function validateIpn() {
-
+        global $org_options;
+        if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+            espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+        }
         if (function_exists('curl_init')) {
             //new paypal code//
             // parse the paypal URL

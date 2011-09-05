@@ -4,10 +4,14 @@ if (isset($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1) //need this condition 
     ob_start(); //before this condition, ob_start() was causing issues with pdf invoice.  Will not work inside the function.
 
 
+
 //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] tag
 
 function event_espresso_txn() {
     global $wpdb, $org_options;
+    if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+        espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+    }
     $attendee_id = "";
     /* foreach ($_REQUEST as $k => $v){
       print "   $k = $v\n";

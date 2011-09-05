@@ -1,5 +1,8 @@
 <?php
 
+if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+    espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+}
 // Include the paypal library
 include_once ('Paypal.php');
 echo '<!--Event Espresso PayPal Gateway Version ' . $paypal_gateway_version . '-->';

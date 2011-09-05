@@ -1,6 +1,6 @@
 <?php
 //Displays reCAPTCHA form
-$values=array(					
+$values=array(
 	array('id'=>'N','text'=> __('No','event_espresso')),
 	array('id'=>'Y','text'=> __('Yes','event_espresso'))
 );
@@ -89,6 +89,12 @@ $values=array(
               <?php _e('Use the Staff Manager?','event_espresso'); ?>
             </label>
             <?php echo select_input('use_personnel_manager', $values, isset($org_options['use_personnel_manager']) ? $org_options['use_personnel_manager'] : ''); ?> <br />
+          </li>
+          <li>
+            <label>
+              <?php _e('Use full logging?','event_espresso'); ?>
+            </label>
+            <?php echo select_input('full_logging', $values, isset($org_options['full_logging']) ? $org_options['full_logging'] : ''); ?> <br />
           </li>
           <li>
             <label>

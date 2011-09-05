@@ -52,6 +52,7 @@ function organization_config_mnu() {
         $org_options['use_venue_manager'] = $_POST['use_venue_manager'];
         $org_options['use_personnel_manager'] = $_POST['use_personnel_manager'];
         $org_options['use_event_timezones'] = $_POST['use_event_timezones'];
+        $org_options['full_logging'] = $_POST['full_logging'];
         $org_options['surcharge'] = $_POST['surcharge'];
         $org_options['surcharge_type'] = $_POST['surcharge_type'];
         $org_options['surcharge_text'] = $_POST['surcharge_text'];
