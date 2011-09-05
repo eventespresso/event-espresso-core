@@ -184,6 +184,13 @@ global $simpleMath;
 $simpleMath = new SimpleMath();
 
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/espresso_log.php';
+/*
+$message = "REQUEST variables:\n";
+foreach ($_REQUEST as $key => $value) {
+    $message .= $key . " = " . $value . "\n";
+}
+espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => $message));
+*/
 
 //Set the default time zone
 //If the default time zone is set up in the WP Settings, then we will use that as the default.
@@ -344,6 +351,13 @@ if ($this_is_a_reg_page == TRUE) {
 if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php')) {
     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php');
 }
+if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-management/index.php')) {
+    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-management/index.php');
+    //Include dicount codes
+    require_once("includes/admin-files/coupon-management/use_coupon_code.php");
+} else {
+    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/coupon_management.php');
+}
 //Admin only files
 if (is_admin()) {
 
@@ -362,14 +376,6 @@ if (is_admin()) {
     //Get the payment settings page
     event_espresso_require_gateway('payment_gateways.php');
 
-    //Event Registration Subpage - Add/Delete/Edit Discount Codes
-    if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-management/index.php')) {
-        require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-management/index.php');
-        //Include dicount codes
-        require_once("includes/admin-files/coupon-management/use_coupon_code.php");
-    } else {
-        require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/coupon_management.php');
-    }
     //Email Manager
     if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/email-manager/index.php')) {
         require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/email-manager/index.php');
