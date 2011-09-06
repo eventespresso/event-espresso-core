@@ -919,7 +919,7 @@ add_shortcode('ESPRESSO_VENUE_EVENTS', 'espresso_venue_event_list_sc');
 
 function ee_show_meta_sc($atts){
 	global $event_meta, $venue_meta, $all_meta;
-		
+		//echo '<p>event_meta = '.print_r($event_meta).'</p>';
 	if (empty($atts))
 		return;
 		
@@ -930,14 +930,17 @@ function ee_show_meta_sc($atts){
 	
 	switch ($type){	
 		
-		case 'venue':	
+		case 'venue':
+		case 'venue_meta':
 		default:
 			return ee_show_meta($venue_meta, $name);
 		
-		case 'event':	
+		case 'event':
+		case 'event_meta':	
 			return ee_show_meta($event_meta, $name);
 		
 		case 'all':
+		case 'all_meta':
 		default:
 			return ee_show_meta($all_meta, $name);
 	}
