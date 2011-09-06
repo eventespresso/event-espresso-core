@@ -20,13 +20,14 @@ if ($use_sandbox == 1) {
 $quantity = isset($quantity) && $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);
 $myeway->addField('CustomerID', $eway_id);
 $myeway->addField('UserName', $eway_username);
+$myeway->addField('CompanyName',$org_options['organization']);
 $myeway->addField('CancelURL', home_url() . '/?page_id=' . $org_options['cancel_return']);
 $myeway->addField('ReturnURL', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment');
 //$myeway->addField('item_name', $event_name . ' | '.__('Reg. ID:','event_espresso').' '.$attendee_id. ' | '.__('Name:','event_espresso').' '. $attendee_name .' | '.__('Total Registrants:','event_espresso').' '.$num_people);
 $myeway->addField('InvoiceDescription', stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($fname . ' ' . $lname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $attendee_email . ' | ' . __('Total Registrants:', 'event_espresso') . ' ' . $quantity);
 $myeway->addField('Amount', number_format($event_cost, 2, '.', ''));
 $myeway->addField('Currency', $eway_cur);
-$myeway->addField('image_url', $eway_settings['image_url']);
+$myeway->addField('CompanyLogo', $eway_settings['image_url']);
 $myeway->addField('no_shipping ', $no_shipping);
 
 //Post variables
