@@ -31,7 +31,7 @@
 
 //Define the version of the plugin
 function espresso_version() {
-    return '3.1.11.P';
+    return '3.1.12.P';
 }
 
 function ee_init_session() {
