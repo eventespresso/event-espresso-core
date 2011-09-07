@@ -22,7 +22,7 @@ function enter_attendee_payments() {
         case 'payment':
             if ( isset($_REQUEST[ 'attendee_action' ]) && $_REQUEST[ 'attendee_action' ] == 'post_payment' ){
                 //Added by Imon
-				$primary_row = $wpdb->get_row("select id from ".EVENTS_ATTENDEE_TABLE." where registration_id = '$registration_id' limit 0,1 ");
+				$primary_row = $wpdb->get_row("select id from ".EVENTS_ATTENDEE_TABLE." where registration_id = '$registration_id' order by id limit 0,1 ");
 				$primary_attendee_id = $primary_row->id; // GET the primary attendee id because amount paid info is kept with the primary attendee 
                 $payment_status = isset($_REQUEST[ 'payment_status' ]) ? $_REQUEST[ 'payment_status' ]:'';
                 $txn_type = isset($_REQUEST[ 'txn_type' ]) ? $_REQUEST[ 'txn_type' ]:'';
