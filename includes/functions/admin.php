@@ -992,7 +992,7 @@ function event_espresso_verify_attendee_data() {
 	if(!is_admin())
 		return;
     global $wpdb;
-    $sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' ";
+    $sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' OR quantity IS NULL OR quantity = '' OR quantity = '0' ";
     $wpdb->get_results($sql);
     if ($wpdb->num_rows > 0) {
         return true;
@@ -1003,43 +1003,38 @@ function event_espresso_update_attendee_data() {
     global $wpdb;
     //$wpdb->show_errors();
 
-    $sql = "SELECT id, date, fname, email, event_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' ";
+    $sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' ";
     $attendees = $wpdb->get_results($sql);
-    //echo $sql;
-    foreach ($attendees as $attendee) {
-
-        /*         * ********************************
-         * ******	Update single registrations
-         * ********************************* */
-        $registration_id = uniqid('', true);
-
-        $update_attendee = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET registration_id = '" . $registration_id . "' WHERE id = '" . $attendee->id . "'";
-
-        if (!$wpdb->query($update_attendee)) {
-            $error = true;
-            //return $wpdb->print_error();
-        }/* else{
-          echo __('Updating Inividual<br />', 'event_espresso'). 'ID: ' . $attendee->id .  ' - ' . $attendee->fname . ' ' . $attendee->email .' Registration ID - '. $registration_id .'<br />';
-          } */
-
-        /*         * ********************************
-         * ******	Update group registrations
-         * ********************************* */
-        $groups_sql = "SELECT id, date, fname, email, event_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE date = '" . $attendee->date . "' AND event_id = '" . $attendee->event_id . "'";
-        $groups = $wpdb->get_results($groups_sql);
-        $group_registration_id = uniqid('', true);
-        if ($wpdb->num_rows > 1) {
-            foreach ($groups as $group_attendee) {
-                $update_attendee_group = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET registration_id = '" . $group_registration_id . "' WHERE id = '" . $group_attendee->id . "'";
-                if (!$wpdb->query($update_attendee_group)) {
-                    $error = true;
-                    //return $wpdb->print_error();
-                }/* else{
-                  echo __('Adding to Group Registration<br />', 'event_espresso'). 'ID: ' . $group_attendee->id .  ' - ' . $group_attendee->fname . ' ' . $group_attendee->email . 'Registration ID - ' . $group_registration_id . '<br />';
-                  } */
-            }
-        }
-    }
+	
+	if ($wpdb->num_rows > 0) {
+		
+		//echo $sql;
+		foreach ($attendees as $attendee) {
+	
+			/** ********************************
+			 * ******	Update single registrations
+			 * ********************************* */
+			$registration_id = uniqid('', true);
+			$update_attendee = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET registration_id = '" . $registration_id . "' WHERE id = '" . $attendee->id . "'";
+			$wpdb->query($update_attendee);
+			
+		}
+	}
+	
+	$sql2 = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity IS NULL OR quantity = '' OR quantity = '0' ";
+    $attendees2 = $wpdb->get_results($sql2);
+    if ($wpdb->num_rows > 0) {
+		//echo $sql;
+		foreach ($attendees2 as $attendee2) {
+	
+			/** ********************************
+			 * ******	Update pricing
+			 * ********************************* */
+			$update_attendee2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '1' WHERE id = '" . $attendee2->id . "'";
+			$wpdb->query($update_attendee2);
+			
+		}
+	}
 }
 
 //Function to show an admin message if the main pages are not setup.
