@@ -515,13 +515,13 @@ if (!function_exists('display_event_list_sc')) {
 			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost  FROM " . EVENTS_CATEGORY_TABLE . " c ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
-			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
             $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
 			$sql .= " WHERE c.category_identifier = '" . $category_identifier . "' ";
 			$sql .= " AND e.is_active = 'Y' ";
 		}else{
 			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost  FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
             $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
 			$sql .= " WHERE e.is_active = 'Y' ";
 

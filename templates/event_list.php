@@ -80,7 +80,7 @@ if (!function_exists('event_espresso_get_event_details')) {
         }
 
         //Debug
-        //echo $sql;
+        //var_dump($events);
 
         foreach ($events as $event) {
             $event_id = $event->id;
