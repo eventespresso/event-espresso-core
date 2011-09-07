@@ -80,7 +80,7 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$type = 'category';
 		}
 
-		if ($type == 'event'){
+		if (!empty($type) && $type == 'event'){
 			$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . " e ";
 			$sql .= " WHERE e.is_active = 'Y' ";
 			$sql .= " AND e.event_identifier = '" . $event_identifier . "' ";
@@ -90,7 +90,7 @@ if (!function_exists('event_espresso_attendee_list')) {
 			$sql .= $show_recurrence;
 			$sql .= $limit;
 			event_espresso_show_attendess($sql,$show_gravatar,$paid_only, $sort);
-		}else if ($type == 'category'){
+		}else if (!empty($type) && $type == 'category'){
 			$sql = "SELECT e.* FROM " . EVENTS_CATEGORY_TABLE . " c ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
@@ -257,7 +257,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 
 					$question_groups = unserialize($event->question_groups);
-					
+
 					 global $all_meta;
 					$all_meta = array(
 						'event_name' => stripslashes_deep($event_name),
@@ -267,19 +267,19 @@ if (!function_exists('espresso_reg_form_sc')) {
 						'event_city' => $event_city,
 						'event_state' => $event_state,
 						'event_zip' => $event_zip,
-						
+
 						'is_active' => $event->is_active,
 						'event_status' => $event->event_status,
 						'start_time' => $event->start_time,
-			
+
 						'registration_startT' => $event->registration_startT,
 						'registration_start' => $event->registration_start,
-						
+
 						'registration_endT' => $event->registration_endT,
 						'registration_end' => $event->registration_end,
-						
+
 						'is_active' => $is_active,
-						
+
 						'event_country' => $event_country,
 						'start_date' => event_date_display($start_date, get_option('date_format')),
 						'end_date' => event_date_display($end_date, get_option('date_format')),
@@ -524,9 +524,9 @@ if (!function_exists('display_event_list_sc')) {
 			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
             $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
 			$sql .= " WHERE e.is_active = 'Y' ";
-			
+
 		}
-		
+
 		$sql .= $show_expired;
 		$sql .= $show_secondary;
 		$sql .= $show_deleted;
@@ -865,7 +865,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 						$html .= $meta['twitter'] != ''? __('Twitter:', 'event_espresso').' <a href="http://twitter.com/#!/'.stripslashes_deep($meta['twitter']).'" target="_blank">@'.stripslashes_deep($meta['twitter']).'</a><br />':'';
 						$html .= $inside_wrapper_after;
 					}
-					
+
 					//Build the venue image
 					if ($show_map_image != false){
 						$html .= $map_image_wrapper_start.$google_map_image.$map_image_wrapper_end;
@@ -922,28 +922,28 @@ function ee_show_meta_sc($atts){
 		//echo '<p>event_meta = '.print_r($event_meta).'</p>';
 	if (empty($atts))
 		return;
-		
-	extract($atts);	
-	
+
+	extract($atts);
+
 	if (!isset($name))
 		return;
-	
-	switch ($type){	
-		
+
+	switch ($type){
+
 		case 'venue':
 		case 'venue_meta':
 		default:
 			return ee_show_meta($venue_meta, $name);
-		
+
 		case 'event':
-		case 'event_meta':	
+		case 'event_meta':
 			return ee_show_meta($event_meta, $name);
-		
+
 		case 'all':
 		case 'all_meta':
 		default:
 			return ee_show_meta($all_meta, $name);
 	}
-		
+
 }
 add_shortcode('EE_META', 'ee_show_meta_Sc');
