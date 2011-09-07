@@ -31,9 +31,9 @@ function event_espresso_config_page_scripts() {
     wp_enqueue_script('dashboard');
     wp_enqueue_script('thickbox');
     wp_enqueue_script('jquery');
-    wp_enqueue_script('jquery-ui-core');
-    wp_enqueue_script('jquery-ui-tabs');
-    wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
+   // wp_enqueue_script('jquery-ui-core');
+//    wp_enqueue_script('jquery-ui-tabs');
+//    wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
     wp_enqueue_script('tiny_mce');
     wp_enqueue_script('editor');
     wp_enqueue_script('editor-functions');
@@ -41,7 +41,16 @@ function event_espresso_config_page_scripts() {
     wp_enqueue_script('post');
     wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
     wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery')); //Events core table column hide/show script
-
+	
+	if ($_REQUEST['page'] == 'events' && isset($_REQUEST['action']) && ($_REQUEST['action']=='edit'||$_REQUEST['action']=='add_new_event') ) {
+		//Load jquery UI stuff
+		wp_enqueue_script('jquery-ui-core');
+		wp_enqueue_script('jquery-ui-tabs');
+		
+		//Load datepicker script
+		wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
+	}
+	
     if (isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'add_new_attendee') {
 		//Load form validation script
 		wp_register_script('jquery.validate.pack', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.pack.js"), false, '1.7');
@@ -994,7 +1003,7 @@ function event_espresso_update_attendee_data() {
     global $wpdb;
     //$wpdb->show_errors();
 
-    $sql = "SELECT id, date, fname, email, event_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE  registration_id = '0' ";
+    $sql = "SELECT id, date, fname, email, event_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' ";
     $attendees = $wpdb->get_results($sql);
     //echo $sql;
     foreach ($attendees as $attendee) {
