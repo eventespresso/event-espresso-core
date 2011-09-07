@@ -45,8 +45,8 @@ function edit_attendee_record() {
                 $event_cost = $wpdb->get_var($wpdb->prepare("select ea.registration_id, sum(eac.cost * eac.quantity) from ".EVENTS_ATTENDEE_COST_TABLE." eac inner join ".EVENTS_ATTENDEE_TABLE." ea on eac.attendee_id = ea.id where ea.registration_id = '%s' group by ea.registration_id ",$registration_id),1,0);
             }
             #$a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET amount_pd = '".$_REQUEST['amount_pd']."', quantity = '".$_REQUEST['quantity']."' WHERE id = '".$_REQUEST['id']."' ";
-            $a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '%d' WHERE id = '%d' " ;
-			$wpdb->query( $wpdb->prepare($a_sql,$_REQUEST['quantity'],$_REQUEST['id']) );
+            //$a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '%d' WHERE id = '%d' " ;
+			//$wpdb->query( $wpdb->prepare($a_sql,$_REQUEST['quantity'],$_REQUEST['id']) );
 			/*
              * Get primary attendee id to update the amount_pd
              */
@@ -78,7 +78,7 @@ function edit_attendee_record() {
 			 *	End
 			 */
 			
-            $sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantitay > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
+            $sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
             $wpdb->query($sql);
             //Added by Imon
 			$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantitay > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
