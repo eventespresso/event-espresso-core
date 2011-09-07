@@ -555,7 +555,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
                 break;
             case 'num_completed' :
                 $num_completed = 0;
-                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND payment_status='Completed' ";
+                $a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "' AND (payment_status='Completed' OR payment_status='Pending')  ";
                 $wpdb->get_results($a_sql);
                 if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
                     $num_completed = $wpdb->last_result[0]->quantity;
