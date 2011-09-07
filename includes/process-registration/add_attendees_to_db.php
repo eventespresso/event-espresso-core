@@ -116,11 +116,14 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
         $num_rows = $wpdb->num_rows;
 
         $registration_id = empty($wpdb->last_result[0]->registration_id) ? $registration_id = uniqid('', true) : $wpdb->last_result[0]->registration_id;
-
-        if (isset($data_source['admin'])) 
+		
+		$txn_type = "";
+        
+		if (isset($data_source['admin'])) 
         {
             $payment_status = "Completed";
             $payment = "Admin";
+			$txn_type = __('Added by Admin', 'event_espresso');
             $payment_date = date("m-d-Y");
             $amount_pd = $data_source["event_cost"] == '' ? 0.00 : $data_source["event_cost"];
             $registration_id = uniqid('', true);
@@ -189,7 +192,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
         $payment_date = empty($payment_date) ? '' : $payment_date;
         $coupon_code = empty($coupon_code) ? '' : $coupon_code;
 
-        $sql = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session_id'], 'lname' => $lname, 'fname' => $fname, 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'email' => $email, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'total_cost' => $total_cost, 'coupon_code' => $coupon_code, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
+        $sql = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session_id'], 'lname' => $lname, 'fname' => $fname, 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'email' => $email, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'total_cost' => $total_cost, 'txn_type' => $txn_type, 'coupon_code' => $coupon_code, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
         $sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
             '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d');
 
