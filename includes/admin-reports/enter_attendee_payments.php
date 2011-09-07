@@ -181,10 +181,10 @@ function enter_attendee_payments() {
 	if ( !$multi_reg ){
 ?>
       <h3>
-        <?php _e( 'Attendee', 'event_espresso' ); ?>
-        #<?php echo $id ?> |
-        <?php _e( 'Name:', 'event_espresso' ); ?>
+      <?php _e( 'Name:', 'event_espresso' ); ?>
         <?php echo $fname ?> <?php echo $lname ?> |
+        <?php _e( 'ID:', 'event_espresso' ); ?> <?php echo $id ?> |
+        
         <?php _e( 'Registered For:', 'event_espresso' ); ?>
          <a href="admin.php?page=events&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?></h3>
 <?php
