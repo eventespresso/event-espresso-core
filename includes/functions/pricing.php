@@ -411,23 +411,36 @@ function espresso_attendee_price($atts) {
 
         $registration_ids = $wpdb->get_results("select attendee_session from " . EVENTS_ATTENDEE_TABLE . " where registration_id = '$registration_id' ", ARRAY_A);
         if ($wpdb->num_rows >= 1) {
-            foreach ($registration_ids as $reg_id) {
-                $sql = "select eac.quantity, eac.cost from " . EVENTS_ATTENDEE_TABLE . " ea
-						inner join " . EVENTS_ATTENDEE_COST_TABLE . " eac on ea.id = eac.attendee_id
-						inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
-						where ea.attendee_session = '" . $reg_id['attendee_session'] . "' order by ed.event_name ";
-                //echo $sql;
-                $tmp_attendees = $wpdb->get_results($sql, ARRAY_A);
-                //print_r($tmp_attendees);
-                $total_cost = 0;
-                if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->cost != NULL) {
-                    foreach ($tmp_attendees as $tmp_attendee) {
-                        $sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
-                        $total_cost += $sub_total;
+            $total_cost = 0;
+            /**
+             * If admin adds an attendee then attendee's attendee_session is empty and there will be only one attendee per registration id
+             */
+            if (is_array($registration_ids) && count($registration_ids) == 1 && trim($registration_ids[0]['attendee_session']) == '')
+            {
+                $total_cost = $wpdb->get_var($wpdb->prepare("select amount_pd from ".EVENTS_ATTENDEE_TABLE." where registration_id = '%s'",$registration_id));
+            }
+            else
+            {
+                foreach ($registration_ids as $reg_id) 
+                {
+                    $sql = "select eac.quantity, eac.cost from " . EVENTS_ATTENDEE_TABLE . " ea
+                            inner join " . EVENTS_ATTENDEE_COST_TABLE . " eac on ea.id = eac.attendee_id
+                            inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
+                            where ea.attendee_session = '" . $reg_id['attendee_session'] . "' order by ed.event_name ";
+                    //echo $sql;
+                    $tmp_attendees = $wpdb->get_results($sql, ARRAY_A);
+                    //print_r($tmp_attendees);
+                    $total_cost = 0;
+                    if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->cost != NULL) {
+                        foreach ($tmp_attendees as $tmp_attendee) {
+                            $sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
+                            $total_cost += $sub_total;
+                        }
+                        
                     }
-                    return number_format($total_cost, 2, '.', '');
                 }
             }
+            return number_format($total_cost, 2, '.', '');
         }
     }
 
