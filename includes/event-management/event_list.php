@@ -291,7 +291,7 @@ function event_espresso_edit_list() {
                                 <td class="date"><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?>
                                 <?php echo $user_co_org != '' ? '<br />[' . espresso_user_meta($wp_user, 'company').']' : ''; ?>
                                 </td>
-            <?php } ?>
+            <?php 			} ?>
 
                             <td class="author"><a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id,'num_attendees_slash_reg_limit'); ?></a></td>
                             <td class="date"><div style="width:180px;"><a href="<?php echo espresso_reg_url($event_id); ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank"><div class="view_btn"></div></a>
