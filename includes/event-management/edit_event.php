@@ -738,6 +738,7 @@ function edit_event($event_id = 0) {
             <!-- /normal-sortables-->
         </div>
         <!-- /post-body-content -->
+					<?php include_once('create_events_help.php'); ?>
     </div>
 
     <!-- /post-body -->

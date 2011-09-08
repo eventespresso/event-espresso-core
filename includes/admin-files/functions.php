@@ -321,6 +321,9 @@ if (!function_exists('event_espresso_meta_edit')){
 		$good_meta = $event_meta;
 		//print_r( $good_meta );
 		?>
+		<p>Using Event Meta boxes
+   <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=event-meta-boxes" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
+		</p>
 		<ul id="dynamicMetaInput">
 			<?php
 			if ($event_meta != '') {

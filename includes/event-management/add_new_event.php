@@ -549,6 +549,7 @@ function add_new_event() {
     <!-- /normal-sortables-->
   </div>
   <!-- /post-body-content -->
+		<?php include_once('create_events_help.php'); ?>
 </div>
 <!-- /post-body -->
 <input type="hidden" name="action" value="add" />
