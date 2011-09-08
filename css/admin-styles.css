@@ -2159,6 +2159,8 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 
 /*___ thickbox popup help boxes ___*/
 
+.wp-admin #TB_ajaxContent { width: auto!important; height: auto!important; }
+
 .wp-admin .TB_overlayBG {
 	background-color: #555;
 	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=45)";
