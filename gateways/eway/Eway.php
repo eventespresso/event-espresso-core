@@ -45,11 +45,11 @@ class eway extends PaymentGateway {
         $ewayurl .= "&Amount=" . $this->fields['Amount'];
         $ewayurl .= "&Currency=" . $this->fields['Currency'];
         $ewayurl .= "&ReturnURL=" . str_replace("&", "%26", $this->fields['ReturnURL']);
-        $ewayurl .= "&CancelURL=" . $this->fields['CancelURL'];
+        $ewayurl .= "&CancelURL=" . str_replace("&", "%26", $this->fields['CancelURL']);
         $ewayurl .= "&CompanyName=" . $this->fields['CompanyName'];
         $ewayurl .= "&CompanyLogo=" . $this->fields['CompanyLogo'];
         $spacereplace = str_replace(" ", "%20", $ewayurl);
-        $posturl = $this->gatewayUrl.$spacereplace;
+        $posturl = $this->gatewayUrl . $spacereplace;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $posturl);
@@ -73,14 +73,18 @@ class eway extends PaymentGateway {
         $responseurl = fetch_data($response, '<uri>', '</uri>');
 
         if ($responsemode == "True") {
-            $this->gatewayUrl=$responseurl;
+            $this->gatewayUrl = explode("?", $responseurl);
+            parse_str($this->gatewayUrl[1]);
+            $this->gatewayUrl[1] = $value;
         } else {
             echo "ERROR";
         }
     }
+
     public function submitButton($button_url, $gateway) {
         $this->prepareSubmit();
-        echo '<form method="post" name="payment_form" action="' . $this->gatewayUrl . '">';
+        echo '<form method="get" name="payment_form" action="' . $this->gatewayUrl[0] . '">';
+        echo '<td><input type="hidden" value="' . $this->gatewayUrl[1] . '" name="value"></td>';
         echo '<td><input class="espresso_payment_button" type="image" alt="Pay using eWay" src="' . $button_url . '" /></td>';
         echo '</form>';
     }
