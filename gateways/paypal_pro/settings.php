@@ -6,9 +6,10 @@ function event_espresso_paypal_pro_payment_settings() {
         $paypal_pro_settings['paypal_pro_email'] = $_POST['paypal_pro_email'];
         $paypal_pro_settings['paypal_api_username'] = $_POST['paypal_api_username'];
         $paypal_pro_settings['paypal_api_password'] = $_POST['paypal_api_password'];
+        $paypal_pro_settings['currency_format'] = $_POST['currency_format'];
         $paypal_pro_settings['paypal_api_signature'] = $_POST['paypal_api_signature'];
         $paypal_pro_settings['paypal_api_credit_cards'] = implode(",", empty($_POST['paypal_api_credit_cards']) ? array() : $_POST['paypal_api_credit_cards']);
-        $paypal_pro_settings['paypal_pro_use_sandbox'] = $_POST['paypal_pro_use_sandbox'];
+        $paypal_pro_settings['paypal_pro_use_sandbox'] = empty($_POST['paypal_pro_use_sandbox']) ? '' : $_POST['paypal_pro_use_sandbox'];
 
 
         update_option('event_espresso_paypal_pro_settings', $paypal_pro_settings);
@@ -20,20 +21,20 @@ function event_espresso_paypal_pro_payment_settings() {
         <div class="postbox">
 
             <h3>
-    <?php _e('PayPal Pro Settings', 'event_espresso'); ?>
+                <?php _e('PayPal Pro Settings', 'event_espresso'); ?>
             </h3>
             <div class="padding">
                 <?php
-                if (isset($_REQUEST['activate_paypal_pro'])&&$_REQUEST['activate_paypal_pro'] == 'true') {
+                if (isset($_REQUEST['activate_paypal_pro']) && $_REQUEST['activate_paypal_pro'] == 'true') {
                     add_option("events_paypal_pro_active", 'true', '', 'yes');
                     add_option("event_espresso_paypal_pro_settings", '', '', 'yes');
                     //update_option( 'event_espresso_payment_gateway', 'paypal');
                 }
-                if (isset($_REQUEST['reactivate_paypal_pro'])&&$_REQUEST['reactivate_paypal_pro'] == 'true') {
+                if (isset($_REQUEST['reactivate_paypal_pro']) && $_REQUEST['reactivate_paypal_pro'] == 'true') {
                     update_option('events_paypal_pro_active', 'true');
                     //update_option( 'event_espresso_payment_gateway', 'paypal');
                 }
-                if (isset($_REQUEST['deactivate_paypal_pro'])&&$_REQUEST['deactivate_paypal_pro'] == 'true') {
+                if (isset($_REQUEST['deactivate_paypal_pro']) && $_REQUEST['deactivate_paypal_pro'] == 'true') {
                     update_option('events_paypal_pro_active', 'false');
                     //update_option( 'event_espresso_payment_gateway', '');
                 }
@@ -57,7 +58,7 @@ function event_espresso_paypal_pro_payment_settings() {
             </div>
         </div>
     </div>
-    <?php } ?>
+<?php } ?>
 <?php
 
 //PayPal Settings Form
@@ -107,6 +108,84 @@ function event_espresso_display_paypal_pro_settings() {
                             <br />
 
                         </li>
+                        <li>
+                            <label for="currency_format">
+                                <?php _e('Select the currency for your country:', 'event_espresso'); ?>
+                            </label>
+                            <br />
+                            <select name="currency_format">
+                                <option value="<?php echo empty($paypal_pro_settings['currency_format']) ? 'USD' : $paypal_pro_settings['currency_format']; ?>"><?php echo $paypal_pro_settings['currency_format']; ?></option>
+                                <option value="USD">
+                                    <?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
+                                </option>
+                                <option value="AUD">
+                                    <?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
+                                </option>
+                                <option value="GBP">
+                                    <?php _e('Pounds Sterling (&pound;)', 'event_espresso'); ?>
+                                </option>
+                                <option value="CAD">
+                                    <?php _e('Canadian Dollars (C $)', 'event_espresso'); ?>
+                                </option>
+                                <option value="CZK">
+                                    <?php _e('Czech Koruna', 'event_espresso'); ?>
+                                </option>
+                                <option value="DKK">
+                                    <?php _e('Danish Krone', 'event_espresso'); ?>
+                                </option>
+                                <option value="EUR">
+                                    <?php _e('Euros (&#8364;)', 'event_espresso'); ?>
+                                </option>
+                                <option value="CHF">
+                                    <?php _e('Swiss Franc', 'event_espresso'); ?>
+                                </option>
+                                <option value="HKD">
+                                    <?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
+                                </option>
+                                <option value="HUF">
+                                    <?php _e('Hungarian Forint', 'event_espresso'); ?>
+                                </option>
+                                <option value="ILS">
+                                    <?php _e('Israeli Shekel', 'event_espresso'); ?>
+                                </option>
+                                <option value="JPY">
+                                    <?php _e('Yen (&yen;)', 'event_espresso'); ?>
+                                </option>
+                                <option value="MXN">
+                                    <?php _e('Mexican Peso', 'event_espresso'); ?>
+                                </option>
+                                <option value="NZD">
+                                    <?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
+                                </option>
+                                <option value="NOK">
+                                    <?php _e('Norwegian Krone', 'event_espresso'); ?>
+                                </option>
+                                <option value="PLN">
+                                    <?php _e('Polish Zloty', 'event_espresso'); ?>
+                                </option>
+                                <option value="SGD">
+                                    <?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
+                                </option>
+                                <option value="SEK">
+                                    <?php _e('Swedish Krona', 'event_espresso'); ?>
+                                </option>
+                                <option value="BRL">
+                                    <?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
+                                </option>
+                                <option value="MYR">
+                                    <?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
+                                </option>
+                                <option value="PHP">
+                                    <?php _e('Philippine Pesos', 'event_espresso'); ?>
+                                </option>
+                                <option value="TWD">
+                                    <?php _e('Taiwan New Dollars', 'event_espresso'); ?>
+                                </option>
+                                <option value="THB">
+                                    <?php _e('Thai Baht', 'event_espresso'); ?>
+                                </option>
+                            </select>
+                            <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=currency_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
                         <li>
                             <label>
                                 <?php _e('Accepted Credit Cards', 'event_espresso'); ?>
