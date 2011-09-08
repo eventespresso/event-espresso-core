@@ -2,7 +2,7 @@
 function event_espresso_edit_list() {
     global $wpdb, $org_options;
 	$wpdb->show_errors();
-	
+
 	//Dates
 	$curdate = date("Y-m-d");
 	$pieces = explode('-',$curdate, 3);
@@ -120,7 +120,7 @@ function event_espresso_edit_list() {
             $sql = '';
         $sql .= "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
         $sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT ";
-        
+
         //Get the venue information
 		if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
         	$sql .= ", v.name AS venue_title, v.address AS venue_address, v.address2 AS venue_address2, v.city AS venue_city, v.state AS venue_state, v.zip AS venue_zip, v.country AS venue_country ";
@@ -135,12 +135,12 @@ function event_espresso_edit_list() {
             $sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
             $sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = cr.cat_id ";
         }
-		
+
         if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
             $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id ";
             $sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id ";
         }
-		
+
 		if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $org_options['use_venue_manager'] == 'Y') {
 			$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = vr.venue_id ";
             $sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " lc ON lc.id = l.locale_id ";
@@ -164,7 +164,7 @@ function event_espresso_edit_list() {
 		//echo $sql;
         ?>
         <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
-            <table id="table" class="widefat event-list" width="100%"> 
+            <table id="table" class="widefat event-list" width="100%">
                 <thead>
                     <tr>
                         <th class="manage-column column-cb check-column" id="cb" scope="col" style="width:28px;"><input type="checkbox"></th>
@@ -295,19 +295,19 @@ function event_espresso_edit_list() {
 
                             <td class="author"><a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id,'num_attendees_slash_reg_limit'); ?></a></td>
                             <td class="date"><div style="width:180px;"><a href="<?php echo espresso_reg_url($event_id); ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank"><div class="view_btn"></div></a>
-                              
+
                               <a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Event', 'event_espresso'); ?>"><div class="edit_btn"></div></a>
-                              
+
                               <a href="admin.php?page=events&amp;event_id=<?php echo $event_id ?>&amp;event_admin_reports=list_attendee_payments" title="<?php _e('View Attendees', 'event_espresso'); ?>"><div class="complete_btn"></div></a>
                               <a href="admin.php?page=events&event_admin_reports=charts&event_id=<?php echo $event_id ?>" title="<?php _e('View Report', 'event_espresso'); ?>"><div class="reports_btn"></div></a>
-                              
-                              
+
+
                               <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_<?php echo $event_id ?>" title="<?php _e('Get Short URL/Shortcode', 'event_espresso'); ?>"><div class="shortcode_btn"></div></a>
-                              
+
                               <a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $event_id . "&amp;export=report&action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><div class="excel_exp_btn"></div></a>
-                              
+
                               <a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&event_id=" . $event_id . "&export=report&action=payment&type=csv"; ?>'" title="<?php _e('Export to CSV', 'event_espresso'); ?>"><div class="csv_exp_btn"></div></a>
-                              
+
                               <a href="admin.php?page=events&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Email Attendees', 'event_espresso'); ?>"><div class="newsletter_btn"></div></a></div>
 
                                 <div id="unique_id_info_<?php echo $event_id ?>" style="display:none">
@@ -321,7 +321,7 @@ function event_espresso_edit_list() {
                             ob_end_clean();
                             switch ($_REQUEST['event_status']) {
                                 case 'A':
-                                    switch (event_espresso_get_status($event_id, $event_meta)) {
+                                    switch (event_espresso_get_status($event_id, empty($event_meta) ? '' : $event_meta)) {
                                         case 'NOT_ACTIVE':
                                             //Don't show the event if any of the above are true
                                             break;
@@ -347,7 +347,7 @@ function event_espresso_edit_list() {
                                     break;
                             }
                         }
-                    }//End foreach ($events as $event){ 
+                    }//End foreach ($events as $event){
                 }
                 ?>
 
@@ -371,7 +371,7 @@ function event_espresso_edit_list() {
     </form>
     <h4 style="clear:both"><?php _e('Legend', 'event_espresso'); ?></h4>
 <dl style="float:left; margin-left:10px; width:200px">
-  <?php 
+  <?php
   echo defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE') ?
 '<dt><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/arrow_rotate_clockwise.png" alt="Recurring Event" title="Recurring Event"  /> - '.__('Recurring Event', 'event_espresso').'</dt>':''; ?>
 <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/magnifier.png" width="16" height="16" alt="<?php _e('View Event', 'event_espresso'); ?>" /> - <?php _e('View Event', 'event_espresso'); ?></dt>
@@ -380,21 +380,21 @@ function event_espresso_edit_list() {
 
   <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/group.png" width="16" height="16" alt="<?php _e('Event Attendees', 'event_espresso'); ?>" /> - <?php _e('Event Attendees', 'event_espresso'); ?></dt>
   <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/chart_bar.png" width="16" height="16" alt="<?php _e('Send Event Email', 'event_espresso'); ?>" /> - <?php _e('View Report', 'event_espresso'); ?></dt>
-  
+
 
   </dl>
-  
+
   <dl style="float:left; margin-left:10px;">
   <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/tag.png" width="16" height="16" alt="<?php _e('Short Code', 'event_espresso'); ?>" /> - <?php _e('Short Code', 'event_espresso'); ?></dt>
   <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/excel_icon.png" width="16" height="16" alt="<?php _e('Excel Spreadsheet', 'event_espresso'); ?>" /> - <?php _e('Excel Export', 'event_espresso'); ?></dt>
-  
+
   <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/csv_icon_sm.gif" width="16" height="16" alt="<?php _e('CSV Spreadsheet', 'event_espresso'); ?>" /> - <?php _e('CSV Export', 'event_espresso'); ?></dt>
-  
+
     <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_go.png" width="16" height="16" alt="<?php _e('View Report', 'event_espresso'); ?>" /> - <?php _e('Event Newsletter', 'event_espresso'); ?></dt>
 </dl>
-    
+
     <script>
-        jQuery(document).ready(function($) {						
+        jQuery(document).ready(function($) {
             /* show the table data */
             var mytable = $('#table').dataTable( {
                 "sDom": 'Clfrtip',
@@ -419,15 +419,15 @@ function event_espresso_edit_list() {
                     "aiExclude": [ 0, 1, 2 ],
                     "buttonText": "Filter: Show / Hide Columns",
                     "bRestore": true
-                },							
-                "bAutoWidth": false,	
+                },
+                "bAutoWidth": false,
                 "bStateSave": true,
                 "sPaginationType": "full_numbers",
                 "oLanguage": {	"sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong>",
                     "sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" }
-        			
+
             } );
-        	
+
         } );
     </script>
 

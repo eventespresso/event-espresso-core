@@ -46,7 +46,7 @@ class eway extends PaymentGateway {
         $ewayurl .= "&Currency=" . $this->fields['Currency'];
         $ewayurl .= "&ReturnURL=" . str_replace("&", "%26", $this->fields['ReturnURL']);
         $ewayurl .= "&CancelURL=" . str_replace("&", "%26", $this->fields['CancelURL']);
-        $ewayurl .= "&CompanyName=" . $this->fields['CompanyName'];
+        $ewayurl .= "&CompanyName=" . str_replace("&", "%26", $this->fields['CompanyName']);
         $ewayurl .= "&CompanyLogo=" . $this->fields['CompanyLogo'];
         $spacereplace = str_replace(" ", "%20", $ewayurl);
         $posturl = $this->gatewayUrl . $spacereplace;
