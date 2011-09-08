@@ -25,8 +25,8 @@ function edit_attendee_record() {
 		
 		//Update the payment amount for the attendee
 		if (!empty($_REQUEST['attendee_payment']) && $_REQUEST['attendee_payment'] == 'update_payment') {
-			//$attendee_cost_data = array("attendee_id"=>$ext_attendee_id,"quantity"=>$attendee_quantity,"cost"=>$attendee_cost);
-			//$wpdb->insert(EVENTS_ATTENDEE_COST_TABLE,$attendee_cost_data);
+			$attendee_cost_data = array("attendee_id"=>$ext_attendee_id,"quantity"=>$attendee_quantity,"cost"=>$attendee_cost);
+			$wpdb->insert(EVENTS_ATTENDEE_COST_TABLE,$attendee_cost_data);
 			$c_sql = "UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET cost = '".$_REQUEST['amount_pd']."', quantity = '".$_REQUEST['quantity']."' WHERE attendee_id = '".$_REQUEST['id']."' ";
 			$wpdb->query( $c_sql );
 			/*
@@ -45,8 +45,8 @@ function edit_attendee_record() {
                 $event_cost = $wpdb->get_var($wpdb->prepare("select ea.registration_id, sum(eac.cost * eac.quantity) from ".EVENTS_ATTENDEE_COST_TABLE." eac inner join ".EVENTS_ATTENDEE_TABLE." ea on eac.attendee_id = ea.id where ea.registration_id = '%s' group by ea.registration_id ",$registration_id),1,0);
             }
             #$a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET amount_pd = '".$_REQUEST['amount_pd']."', quantity = '".$_REQUEST['quantity']."' WHERE id = '".$_REQUEST['id']."' ";
-            //$a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '%d' WHERE id = '%d' " ;
-			//$wpdb->query( $wpdb->prepare($a_sql,$_REQUEST['quantity'],$_REQUEST['id']) );
+            $a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '%d' WHERE id = '%d' " ;
+			$wpdb->query( $wpdb->prepare($a_sql,$_REQUEST['quantity'],$_REQUEST['id']) );
 			/*
              * Get primary attendee id to update the amount_pd
              */
