@@ -27,14 +27,14 @@ function enter_attendee_payments() {
                 $payment_status = isset($_REQUEST[ 'payment_status' ]) ? $_REQUEST[ 'payment_status' ]:'';
                 $txn_type = isset($_REQUEST[ 'txn_type' ]) ? $_REQUEST[ 'txn_type' ]:'';
                 $txn_id = isset($_REQUEST[ 'txn_id' ]) ? $_REQUEST[ 'txn_id' ]:'';
-                $quantity = isset($_REQUEST[ 'quantity' ]) ? $_REQUEST[ 'quantity' ]:'';
+                //$quantity = isset($_REQUEST[ 'quantity' ]) ? $_REQUEST[ 'quantity' ]:'';
                 $amount_pd = isset($_REQUEST[ 'amount_pd' ]) ? $_REQUEST[ 'amount_pd' ]:'';
                 $payment_date = isset($_REQUEST[ 'payment_date' ]) ? $_REQUEST[ 'payment_date' ]:'';
                 $coupon_code = isset($_REQUEST[ 'coupon_code' ]) ? $_REQUEST[ 'coupon_code' ]:'';
                 
                 //Added/updated by Imon
 				//Update payment status information for primary attendee
-				$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', amount_pd = '$amount_pd', payment_date ='$payment_date', quantity = '$quantity',  coupon_code ='$coupon_code' WHERE registration_id ='" . $registration_id . "' and id = $primary_attendee_id ";
+				$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', amount_pd = '$amount_pd', payment_date ='$payment_date',  coupon_code ='$coupon_code' WHERE registration_id ='" . $registration_id . "' and id = $primary_attendee_id ";
                 
 				$wpdb->query( $sql );
 				
