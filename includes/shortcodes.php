@@ -350,9 +350,9 @@ if (!function_exists('espresso_reg_form_sc')) {
 								<?php
 								//This block of code is used to display the times of an event in either a dropdown or text format.
 								if ($time_selected == true){//If the customer is coming from a page where the time was preselected.
-									event_espresso_display_selected_time($time_id);//Optional parameters start, end, default
+									echo event_espresso_display_selected_time($time_id);//Optional parameters start, end, default
 								}else if ($time_selected == false){
-									event_espresso_time_dropdown($event_id);
+									echo event_espresso_time_dropdown($event_id);
 								}//End time selected
 								?>
 							</p>
