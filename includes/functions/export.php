@@ -261,12 +261,6 @@ if (!function_exists('espresso_export_stuff')){
 							$sql .= "SELECT ed.event_name, ed.start_date, a.id, a.registration_id, a.lname, a.fname, a.email, a.address, a.address2, a.city";
 							$sql .= ", a.state, a.zip, a.phone, a.payment, a.date, a.payment_status, a.txn_type, a.txn_id";
 							$sql .= ", a.amount_pd, a.quantity, a.coupon_code, a.checked_in, a.checked_in_quantity";
-
-							//Add groupon reference if installed
-							if (file_exists("addons/groupon_functions.php"))
-							{
-								$sql .= ", a.groupon_code";
-							}
 							$sql .= ", a.payment_date, a.event_time, a.price_option";
 							$sql .= " FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 							$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=a.event_id ";
@@ -283,19 +277,13 @@ if (!function_exists('espresso_export_stuff')){
 						$sql .= ", a.state, a.zip, a.phone, a.payment, a.date, a.payment_status, a.txn_type, a.txn_id";
 						$sql .= ", a.amount_pd, a.quantity, a.coupon_code, a.checked_in, a.checked_in_quantity";
 		
-						//Add groupon reference if installed
-						if (file_exists("addons/groupon_functions.php"))
-						{
-							$sql .= ", a.groupon_code";
-						}
-		
 						$sql .= ", a.payment_date, a.event_time, a.price_option";
 						$sql .= " FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 						$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=a.event_id ";
 						$sql .= $_REQUEST['all_events'] == "true"? '' :	" WHERE ed.id = '" . $event_id . "' ";
 						if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') )
 						{
-							$sql .= " AND wp_user = '" . espresso_member_data('id') ."' ";
+							$sql .= " AND ed.wp_user = '" . espresso_member_data('id') ."' ";
 						}
 						$sql .= ") ORDER BY id ";
 		
