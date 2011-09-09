@@ -224,7 +224,7 @@ if (!function_exists('espresso_export_stuff')){
 							$quest_sql .= " WHERE qgr.group_id in ( " . $questions_in . ") ";
 							if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') )
 							{
-								$quest_sql .= " AND qgr.wp_user = '" . espresso_member_data('id') ."' ";
+								$quest_sql .= " AND qg.wp_user = '" . espresso_member_data('id') ."' ";
 							}		
 							//Fix from Jesse in the forums (http://eventespresso.com/forums/2010/10/form-questions-appearing-in-wrong-columns-in-excel-export/)
 							//$quest_sql .= " AND q.system_name is null ORDER BY qg.id, q.id ASC ";
@@ -297,7 +297,7 @@ if (!function_exists('espresso_export_stuff')){
 						{
 							$sql .= " AND wp_user = '" . espresso_member_data('id') ."' ";
 						}
-						$sql .= ") ORDER BY a.id ";
+						$sql .= ") ORDER BY id ";
 		
 						$participants = $wpdb->get_results($sql);
 		
