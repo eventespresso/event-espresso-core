@@ -58,7 +58,7 @@ function add_event_to_db($recurrence_arr = array()) {
         $event_name = esc_html($_REQUEST['event']);
         $event_code = uniqid($current_user->ID . '-');
         $event_identifier = ($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
-        $event_desc = esc_html($_REQUEST['event_desc']);
+        $event_desc = $_REQUEST['event_desc'];
         $display_desc = $_REQUEST['display_desc'];
         $display_reg_form = $_REQUEST['display_reg_form'];
 
