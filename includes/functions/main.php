@@ -45,7 +45,7 @@ function espresso_getTinyUrl($url) {
 //Text formatting function.
 //This should fix all of the formatting issues of text output from the database.
 function espresso_format_content($content='') {
-    return wpautop(html_entity_decode(stripslashes_deep(do_shortcode($content))));
+    return wpautop(stripslashes_deep(do_shortcode($content)));
 }
 
 //This function pulls HTML entities back into HTML format first then strips it.
@@ -273,6 +273,9 @@ if (!function_exists('event_espresso_get_is_active')) {
 			
 			$registration_end = $event_meta['registration_end'];
 			$registration_endT = $event_meta['registration_endT'];
+			
+			$registration_start = $registration_start . " " . $registration_startT;
+			$registration_end = $registration_end . " " . $registration_endT;
 			
 		}else{
 			$sql = "SELECT e.id, e.start_date start_date, e.is_active is_active, e.event_status event_status, e.registration_start, e.registration_startT, e.registration_end, e.registration_endT, ese.start_time start_time ";
