@@ -168,7 +168,7 @@ function update_event($recurrence_arr = array()) {
         $event_mata = array(); //will be used to hold event meta data
 
         $event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
-        $event_name = esc_html($_REQUEST['event']);
+        $event_name = $_REQUEST['event'];
         //$event_identifier=array_key_exists('event_identifier', $recurrence_arr)?$recurrence_arr['event_identifier']:($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name.'-'.rand()) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']);
         $event_desc = $_REQUEST['event_desc'];
         $display_desc = $_REQUEST['display_desc'];
@@ -214,7 +214,7 @@ function update_event($recurrence_arr = array()) {
         $early_disc_date = $_REQUEST['early_disc_date'];
         $early_disc_percentage = $_REQUEST['early_disc_percentage'];
 
-        $conf_mail = esc_html($_REQUEST['conf_mail']);
+        $conf_mail = $_REQUEST['conf_mail'];
         $use_coupon_code = $_REQUEST['use_coupon_code'];
         $alt_email = $_REQUEST['alt_email'];
 

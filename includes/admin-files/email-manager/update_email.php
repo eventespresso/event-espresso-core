@@ -2,9 +2,9 @@
 function update_event_email(){
 	global $wpdb;
 $email_id= $_REQUEST['email_id'];
-		$email_name= esc_html($_REQUEST['email_name']);
-		$email_subject= esc_html($_REQUEST['email_subject']);
-		$email_text= esc_html($_REQUEST['email_text']);
+		$email_name= $_REQUEST['email_name'];
+		$email_subject= $_REQUEST['email_subject'];
+		$email_text= $_REQUEST['email_text'];
 	
 	$sql=array('email_name'=>$email_name, 'email_text'=>$email_text, 'email_subject'=>$email_subject); 
 		

@@ -2,9 +2,9 @@
 function add_email_to_db(){
 	global $wpdb,$current_user;
 	if ( $_REQUEST['action'] == 'add' ){
-		$email_name= esc_html($_REQUEST['email_name']);
-		$email_subject= esc_html($_REQUEST['email_subject']);
-		$email_text= esc_html($_REQUEST['email_text']); 	
+		$email_name= $_REQUEST['email_name'];
+		$email_subject= $_REQUEST['email_subject'];
+		$email_text= $_REQUEST['email_text']; 	
         
 		if (!function_exists('espresso_member_data'))
 			$current_user->ID = 1;
