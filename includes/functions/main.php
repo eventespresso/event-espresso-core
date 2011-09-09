@@ -202,54 +202,6 @@ if (!function_exists('event_espresso_additional_attendees')) {
 
 }
 
-/* if (!function_exists('event_espresso_additional_attendees')) {
-
-  function event_espresso_additional_attendees($event_id=0, $additional_limit=2, $available_spaces=999, $label='') {
-  $event_id = $event_id == 0 ? $_REQUEST['event_id'] : $event_id;
-  if ($event_id != '' || $event_id != 0)
-  $event_meta = event_espresso_get_event_meta($event_id);
-
-  if ($event_meta['additional_attendee_reg_info'] == 1) {
-  $label == '' ? __('Number of Attendees', 'event_regis') : $label;
-  $html .= '<label for="num_people">'.$label.'</label>';
-  $html .= '<select name="num_people" id="num_people-'.$event_id.'" style="width:70px;">';
-  while (($i <= $additional_limit) && ($i < $available_spaces)) {
-  $i++;
-  $html .= '<option value="'.$i.'">'.$i.'</option>';
-  }
-  $html .= '</select><input type="hidden" name="espresso_addtl_limit_dd" value="true">';
-
-  } else {
-  while (($i <= $additional_limit) && ($i < $available_spaces)) {
-  $i++;
-  }
-  $i = $i - 1;
-
-  $html .= '<span class="event_form_field additional_header" id="additional_header"><a onclick="return false;" href="#">'.__('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso').'</a> </span>';
-
-  $html .= '<div id="additional_attendees">';
-  $html .= '<div class="clone espresso_add_attendee">';
-  $html .= '<p><label for="x_attendee_fname">'.__('First Name', 'event_espresso').':</label> <input type="text" name="x_attendee_fname[]" class="input"/></p>';
-  $html .= '<p><label for="x_attendee_lname">'.__('Last Name', 'event_espresso').':</label> <input type="text" name="x_attendee_lname[]" class="input"/></p>';
-  $html .= '<p><label for="x_attendee_email">'.__('Email', 'event_espresso').':</label> <input type="text" name="x_attendee_email[]" class="input"/></p>';
-  $html .= '<a href="#" class="add" rel=".clone" title="'.__('Add an Additonal Attendee', 'event_espresso').'"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png" alt="'.__('Add an Additonal Attendee', 'event_espresso').'" /></a>';
-  $html .= '</div>';
-  $html .= '<hr />';
-  $html .= '</div>';
-  $html .= '<script type="text/javascript">';
-  $html .= '$jaer = jQuery.noConflict();';
-  $html .= 'jQuery(document).ready(function($jaer) { ';
-  $html .= '$jaer(function(){var removeLink = \'<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ ';
-  $html .= '$jaer(this).remove() }); return false"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL . '"images/icons/remove.gif" alt="'.__('Remove Attendee', 'event_espresso').'" /></a>$jaer(\'a.add\').relCopy({limit:'.$i.', append: removeLink});$jaer("#additional_attendees").hide();';
-  $html .= '$jaer("#additional_header").click(function(){$jaer(this).next("#additional_attendees").slideToggle(500);});});});</script>';
-
-  }
-  return $html;
-  }
-  }
- */
-
-
 //This function returns the condition of an event
 if (!function_exists('event_espresso_get_is_active')) {
 
