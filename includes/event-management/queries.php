@@ -122,22 +122,25 @@ function espresso_total_events_this_month(){
 			if ($group !=''){
 				$asql1 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 				$asql1 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
+				$asql1 .= " $WHERE l.locale_id IN (" . implode(",",$group) . ") " ;
+				$WHERE = " AND ";
 			}
-			$asql1 .= $group !='' ? " WHERE l.locale_id IN (" . implode(",",$group) . ") " : '';
+			//$asql1 .= $group !='' ? " WHERE l.locale_id IN (" . implode(",",$group) . ") " : '';
 			//$asql1 .= " AND quantity >= 1 ";
 			// AND (payment_status='Completed' OR payment_status='Pending') ";
-			$asql1 .= " WHERE event_status != 'D' ";
+			$asql1 .= " $WHERE event_status != 'D' ";
 			$asql1 .= ") UNION (";
 		}
+		$WHERE_2 = " WHERE ";
 		$asql1 .= "SELECT SUM(a.quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE. " a ";
 		$asql1 .= " JOIN ". EVENTS_DETAIL_TABLE ." e ON e.id=a.event_id ";
 		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
-			$asql1 .= " $WHERE wp_user = '" . espresso_member_data('id') ."'";
-			$WHERE = " AND ";
+			$asql1 .= " $WHERE_2 wp_user = '" . espresso_member_data('id') ."'";
+			$WHERE_2 = " AND ";
 		}
 		//$asql1 .= " $WHERE a.quantity >= 1 ";
 		//AND (a.payment_status='Completed' OR a.payment_status='Pending') ";
-		$asql1 .= " $WHERE e.event_status != 'D' ";
+		$asql1 .= " $WHERE_2 e.event_status != 'D' ";
 		$asql1 .= ")";
 		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
 		}
