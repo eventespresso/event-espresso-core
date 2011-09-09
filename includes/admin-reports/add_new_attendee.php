@@ -94,9 +94,9 @@ function add_new_attendee($event_id){
 					$time_selected ='';
 					//This block of code is used to display the times of an event in either a dropdown or text format.
 					if (!empty($time_selected) && $time_selected == true){//If the customer is coming from a page where the time was preselected.
-						event_espresso_display_selected_time($time_id);//Optional parameters start, end, default
+						echo event_espresso_display_selected_time($time_id);//Optional parameters start, end, default
 					}else if ($time_selected == false){
-						event_espresso_time_dropdown($event_id);	
+						echo event_espresso_time_dropdown($event_id);	
 					}//End time selected
 ?>
           </p>
@@ -165,7 +165,6 @@ function add_new_attendee($event_id){
       </div>
     </div>
   </div>
-</div>
 <?php 	
 event_list_attendees();		
 	}//End Build the registration page
