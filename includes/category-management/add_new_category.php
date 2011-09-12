@@ -13,11 +13,17 @@ function add_new_event_category() {
 					</h3>
           <div class="inside">
 								
-            <form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+            <form id="add-new-cat" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
                <input type="hidden" name="action" value="add">
                     
-                 <p class="add-cat-name inputunder"><label><?php _e('Category Name', 'event_espresso'); ?></label> <input type="text" name="category_name" size="25" /></p></li>
-                 <p class="add-cat-id inputunder"><label><?php _e('Unique ID For Category', 'event_espresso'); ?></label> <input type="text" name="category_identifier" /> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></p>
+                 <p class="add-cat-name inputunder">
+									  <label><?php _e('Category Name', 'event_espresso'); ?></label> 
+									  <input class="required" type="text" name="category_name" size="25" />
+									</p>
+                 <p class="add-cat-id inputunder">
+									  <label><?php _e('Unique ID For Category', 'event_espresso'); ?></label> 
+										 <input type="text" name="category_identifier" /> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+									 </p>
                  <p class="section-quest"><?php _e('Do you want to display the category description on the events page?', 'event_espresso'); ?></p>
                  <?php 
 										$values=array(					

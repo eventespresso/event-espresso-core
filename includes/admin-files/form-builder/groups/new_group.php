@@ -8,15 +8,17 @@ function event_espresso_form_group_new(){
 	<div title="Click to toggle" class="handlediv"><br /></div>
    <h3 class="hndle"><?php _e('Add New Group','event_espresso'); ?></h3>
     <div class="inside">
-    <form name="newgroup" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
- 		<p class="intro"><?php _e('Add new groups using the form below.','event_espresso'); ?></p>   
+    <form id="add-new-group" name="newgroup" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
+ 		<p class="intro"><?php _e('Add new group using the form below.','event_espresso'); ?></p>   
 			<table id="table-add-group" class="ee-tables" border="0">
       <tr>
        <td class="a" valign="top">
-         <ul>
+        <fieldset id="general-group-info">
+         <legend><?php _e('Group Information', 'event_espresso') ?></legend>				 
+          <ul>
            <li>
-             <label for="group_name"><?php _e('Group Name:','event_espresso'); ?></label>
-             <input name="group_name" id="group_name" size="50" value="" type="text" />
+             <label for="group_name"><?php _e('Group Name:','event_espresso'); ?><em>*</em></label>
+             <input class="required group-name" name="group_name" id="group_name" size="50" value="" type="text" />
            </li>
 				
            <li>
@@ -39,13 +41,14 @@ function event_espresso_form_group_new(){
             <input type="checkbox" name="show_group_description" id="show_group_description" value="1" checked="checked" />
           </li>
         </ul>
-  
+       </fieldset>
       </td>
   
       <td class="b"  valign="top">
-
+				 <fieldset id="questions-for-group">
+				  <legend><?php _e('Add questions', 'event_espresso') ?></legend>
         <ul id="add-quest">	
-          <li><p><b><?php _e('Add Questions:','event_espresso'); ?></b></p></li>
+          <li><p><?php _e('Select questions to add to group:','event_espresso'); ?></p></li>
   
             <?php
         	$sql = "SELECT * FROM " . EVENTS_QUESTION_TABLE;
@@ -68,6 +71,7 @@ function event_espresso_form_group_new(){
         	}
         ?>
           </ul>
+						</fieldset>
         </td>
       </tr>
     </table>

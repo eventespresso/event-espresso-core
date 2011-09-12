@@ -7,7 +7,7 @@ function add_new_event_staff(){
       <?php _e('Add a Staff Member','event_espresso'); ?>
     </h3>
     <div class="inside">
-      <form method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
+      <form id="add-staff" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
         <input type="hidden" name="action" value="add">
       <table width="100%" border="0">
           <tr>
@@ -17,7 +17,7 @@ function add_new_event_staff(){
                   <label for="name">
                     <?php _e('Name','event_espresso'); ?>
                   </label>
-                  <input type="text" id="name" name="name" size="25" />
+                  <input class="required" type="text" id="name" name="name" size="25" />
                 </li>
                 <li>
                   <label for="email">

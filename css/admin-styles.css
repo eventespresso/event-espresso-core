@@ -1261,6 +1261,7 @@ form.espresso_form fieldset li {
 label.error {
 	float: none;
 	color: red;
+	clear: left;
 	padding-left: .5em;
 	vertical-align: top;
 }
@@ -1626,11 +1627,26 @@ div.box-right-body ul.infolinks li a {
  margin-top 0;
 	padding: 0 4px;
 }
+form input.required.error {
+	border: 1px solid #E16D35;
+	-moz-box-shadow: 0 0 3px #d2d2d2;
+	-webkit-box-shadow: 0 0 3px #d2d2d2;
+	box-shadow: 0 0  3px #d2d2d2;
+}
+
 /* >Classes - general site wide
 ----------------------------------------------------------------------*/
 
 .run-in, .highlight {
 	font-weight: bold;
+}
+
+/* shadow boxes */
+
+.boxshadow {
+	-moz-box-shadow: 0 0 3px #d2d2d2;
+	-webkit-box-shadow: 0 0 3px #d2d2d2;
+	box-shadow: 0 0  3px #d2d2d2;
 }
 /*** Font colors - classes need renaming for what they are not style ***/
 .red_text {
