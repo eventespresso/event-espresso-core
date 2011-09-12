@@ -427,7 +427,8 @@ div.tablenav {
 	padding: 1%;
 }
 /*___Questions & question groups___*/
-
+#add-edit-new-group #table-edit-group td {
+	}
 #add-edit-new-group td ul {
 	background: #f9f9f9;
 	border: 1px solid #e0e0e0;
@@ -437,9 +438,26 @@ div.tablenav {
 #add-edit-new-group td.b ul {
 	float: right;
 }
-#add-new-group td.b li p {
+#add-edit-new-group td.b  ul + ul {
+	margin-top: 5px;
+	}
+#add-edit-new-group td li p {
+	font-weight: bold;
+}
+#add-edit-new-group td.b li p:first-child {
 	margin-top: 0;
 }
+#add-edit-new-group td li p span {
+	font-size: 11px;
+	font-style: italic;
+	font-weight: normal;
+ display:block;
+	}
+#add-edit-new-group .hndle span {
+	font-style: italic;
+	color: #8B9681;
+	padding: 0 5px;
+}	
 /*___ Categories___*/
 
 #add-edit-categories .inside p.add-cat-name {

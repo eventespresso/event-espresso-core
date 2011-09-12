@@ -28,28 +28,29 @@ function event_espresso_form_group_edit() {
     <div id="add-edit-new-group" class="metabox-holder">
         <div class="postbox">
 					 	<div title="Click to toggle" class="handlediv"><br /></div>
-            <h3 class="hndle"><?php _e('Edit Group', 'event_espresso'); ?></h3>
+            <h3 class="hndle"><?php _e('Edit Group - ', 'event_espresso'); ?><span><?php echo $group_name ?></span></h3>
              <div class="inside">
                 <form name="newgroup" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
                     <table id="table-edit-group" class="ee-tables" border="0">
                         <tr>
                             <td class="a"  valign="top">
-                                <ul>
-                                    <li><b><?php _e('Group Information', 'event_espresso'); ?></b></li>
+                                <fieldset id="general-group-info">
+																		<legend><?php _e('Group Information', 'event_espresso') ?></legend>
+																	<ul>
 
                                     <li>
                                         <label for="group_name"><?php _e('Group Name:', 'event_espresso'); ?></label>
-                                        <input name="group_name" id="group_name" size="50" value="<?php echo $group_name ?>" type="text">
+                                        <input name="group_name" id="group_name" size="50" value="<?php echo $group_name ?>" type="text" />
                                     </li>
 
                                     <li>
                                         <label for="group_order"><?php _e('Group Order:', 'event_espresso'); ?></label>
-                                        <input name="group_order" id="group_order" size="6" value="<?php echo $group_order ?>" type="text">
+                                        <input name="group_order" id="group_order" size="6" value="<?php echo $group_order ?>" type="text" />
                                     </li>
 
                                     <li>
                                         <label for="group_identifier"><?php _e('Group Identifier:', 'event_espresso'); ?></label>
-                                        <input disabled="disabled" name="group_identifier" id="group_identifier" size="50" value="<?php echo $group_identifier ?>" type="text">
+                                        <input disabled="disabled" name="group_identifier" id="group_identifier" size="50" value="<?php echo $group_identifier ?>" type="text" />
                                     </li>
 
                                     <li>
@@ -68,10 +69,14 @@ function event_espresso_form_group_edit() {
                                     </li>
 
                                 </ul>
+																</fieldset>
                             </td>
                             <td class="b"  valign="top">
-                                <ul>
-                                    <li><strong><?php _e('Questions', 'event_espresso'); ?></strong></li>
+                              <fieldset id="questions-for-group">
+																		<legend><?php _e('Questions', 'event_espresso') ?></legend>															
+                                
+																	<ul>
+																	 <li><p><?php _e('Selected Questions for group<span class="info"> Uncheck box to remove question from group</span>', 'event_espresso') ?></p></li>
                                     <?php
 //Questions that are already associated with this group
                                     $q_sql = "SELECT q.id, q.question, qgr.id as rel_id, q.system_name, qg.system_group ";
@@ -106,7 +111,10 @@ function event_espresso_form_group_edit() {
                                         $questions_in_group = substr($questions_in_group, 0, -1);
                                     }
                                     ?>
-                                    <hr style="width:50%;" align="left" />
+                                    
+																			</ul>
+																			<ul id="add-more-questions">
+																			<li><p><?php _e('Add further questions to group', 'event_espresso') ?></p></li>
                                     <?php
 //Questions that are NOT part of this group.
 // @todo Make this happen with one query above
@@ -135,15 +143,16 @@ function event_espresso_form_group_edit() {
                                     }
                                     ?>
                                 </ul>
+																</fieldset>
                             </td>
                         </tr>
                     </table>
 
                     <p class="submit-footer">
-                        <input type="hidden" name="edit_action" value="update_group">
-                        <input type="hidden" name="action" value="update_group">
-                        <input type="hidden" name="group_id" value="<?php echo $group_id ?>">
-                        <input name="Submit" value="Update Group" type="submit">
+                        <input type="hidden" name="edit_action" value="update_group" />
+                        <input type="hidden" name="action" value="update_group" />
+                        <input type="hidden" name="group_id" value="<?php echo $group_id ?>" />
+                        <input name="Submit" value="Update Group" type="submit" />
                     </p>
                 </form>
             </div>
