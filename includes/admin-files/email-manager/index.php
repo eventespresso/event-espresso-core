@@ -92,7 +92,9 @@ function event_espresso_email_config_mnu() {
                                         <tr>
                                             <td><input name="checkbox[<?php echo $email_id ?>]" type="checkbox"  title="Delete <?php echo stripslashes($email_name) ?>"></td>
                                             <td><?php echo $email_id ?></td>
-                                            <td><?php echo $email_name ?></td>
+                                             <td class="post-title page-title column-title"><strong><a href="admin.php?page=event_emails&action=edit&id=<?php echo $email_id ?>"><?php echo $email_name?></a></strong>
+              <div class="row-actions"><span class="edit"><a href="admin.php?page=event_emails&action=edit&id=<?php echo $email_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=event_emails&action=delete_email&id=<?php echo $email_id?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
+              </td>
                                             <?php if (function_exists('espresso_user_meta') && espresso_is_admin() == true) { ?>
                                                 <td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
                                             <?php } ?>
