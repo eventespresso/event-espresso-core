@@ -205,7 +205,14 @@ function event_espresso_questions_config_mnu() {
 						</div>
         </div>
     </div>
-
+    <div id="question_info" class="pop-help" style="display:none">
+			 <div class="TB-ee-frame">
+        <h2><?php _e('Manage Questions Overview', 'event_espresso'); ?></h2>
+        <p><?php _e('The <code>Questions</code> page shows your list of available questions to add to your registration forms for events', 'event_espresso'); ?>
+        <p><?php _e('Use the add new question button at the top of the page to create a new question to add to the list ', 'event_espresso'); ?><a href="admin.php?page=form_builder&amp;action=new_question"><?php _e('Add New Question', 'event_espresso'); ?></a></p>
+					<p><?php _e('Once you have a built a list of questions you may further organize your questions into <code>Groups.</code> These', 'event_espresso')?> <a href="admin.php?page=form_groups"><?php _e('Question Groups ', 'event_espresso'); ?></a><?php _e('allow you to easily and conveniently add a group to a registration that will have a pre populated set of questions, this is especially handy when creating many registration forms, saving time, by being able to re-use specific groups of questions repetedly.', 'event_espresso') ?></p>
+     </div>
+			</div>
 
 
 

@@ -193,11 +193,13 @@ function event_espresso_question_groups_config_mnu() {
         </div>
     </div>
 
-    <div id="group_info" style="display:none">
+    <div id="group_info" class="pop-help" style="display:none">
+			 <div class="TB-ee-frame">
         <h2><?php _e('Question Groups Overview', 'event_espresso'); ?></h2>
         <p><?php _e('Question Groups are pre-populated groups of ', 'event_espresso'); ?> <a href="admin.php?page=form_builder"><?php _e('questions', 'event_espresso'); ?></a> <?php _e('that can be added your events. These groups of questions are what make up your customized regsistration forms. The personal information group is required for all events and is shown by default on all registration forms.', 'event_espresso'); ?></p>
         <p><?php _e('Question Groups can be organized or re-ordered by dragging and dropping individual table rows into the desired positions.', 'event_espresso'); ?></p>
-    </div>
+     </div>
+			</div>
 
     <script type="text/javascript">
         jQuery(document).ready(function($) {
