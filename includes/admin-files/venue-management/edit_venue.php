@@ -82,15 +82,18 @@ function edit_event_venue(){
                   </label>
                   <input type="text" id="country" name="country" size="25" value="<?php echo $country;?>">
                 </li>
+				<?php if( function_exists('espresso_member_data')){ ?>
                     <li>
                       <label for="locale">
                         <?php _e('Locale/Region','event_espresso'); ?>
                       </label>
+				<?php  
+					$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
+					$results = $wpdb->get_results($sql);
+					if ($wpdb->num_rows > 0) { 
+				?>
                       <select name="locale" id="local">
                         <?php
-                            $wpdb->query("SELECT * FROM ". EVENTS_LOCALE_TABLE);
-                            if ($wpdb->num_rows > 0) {
-                                $results = $wpdb->get_results("SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC");
                                 foreach ($results as $result){
                                     $locale_id= $result->id;
                                     $name=stripslashes($result->name);
@@ -102,11 +105,12 @@ function edit_event_venue(){
                                 }
                         ?>
                       </select>
-                      <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a>
+                      <?php }?>
+                      <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a>
                     </li>
                 <?php }?>
               </ul>
-							</td>
+			</td>
             <td align="left" valign="top"><ul>
                 <li>
                   <label for="contact">

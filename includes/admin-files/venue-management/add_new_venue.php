@@ -56,43 +56,36 @@ function add_new_event_venue(){
                   </label>
                   <input type="text" id="country" name="country" size="25" />
                 </li>
+                <?php if( function_exists('espresso_member_data')){ ?>
                 <li>
                   <label for="locale">
                    <?php _e('Locale/Region','event_espresso'); ?> 
                   </label>
+				<?php 
+				$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
+				$results = $wpdb->get_results($sql);
+				if ($wpdb->num_rows > 0) {
+				?>
                     <select name="locale" id="local">
-                        <?php
-                            
-                            //if (espresso_member_data('role') == "administrator") {
-													$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE;
-													$results = $wpdb->get_results($sql);
-                            /*} else {
-                                $group = get_user_meta($current_user->ID, "espresso_group", true);
-                                $group = unserialize($group); // group array holds 1 or more values, ex: Array ( [2] => 2 [3] => 3 )
-                                if (is_array($group) && sizeof($group) > 0) {
-                                    $group_string = implode(",",$group);
-                                    $sql = "SELECT * FROM " . EVENTS_LOCALE_TABLE . " l WHERE l.id IN (".$group_string.") GROUP BY l.id ";
-                                } else {
-                                    // backup option, this means the user hasn't been assigned a region
-                                    $sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE . " WHERE wp_user = ".$current_user->ID;
-                                    
-                                }
-                                $wpdb->query($sql);
-                            }*/
-                            
-                         if ($wpdb->num_rows > 0) {
-                             foreach ($results as $result){
-                               $locale_id= $result->id;
-                               $name=stripslashes($result->name);
+				<?php
+					
+						foreach ($results as $result){
+							$locale_id= $result->id;
+							$name=stripslashes($result->name);
                         ?>
                           <option value="<?php echo $locale_id;?>"><?php echo $name;?></option>
                         <?php
-                         }
+						}
                         ?>
                      </select>
-                    <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a>
+				<?php 
+					}
+				?>
+                    <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a>
                  </li>
-                <?php }?>
+			<?php 
+				}
+			?>
               </ul>
 							</td>
             <td align="left" valign="top">
