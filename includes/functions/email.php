@@ -72,7 +72,7 @@ function replace_shortcodes($message, $data) {
         $org_options['currency_symbol'] . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => true)),
         $data->attendee->price_option,
         $data->ticket_link,
-        $data->event->alt_email == '' ? $org_options['contact_email'] : $_event->alt_email,
+        $data->event->alt_email == '' ? $org_options['contact_email'] : $data->event->alt_email,
         //Organization details
         $org_options['organization'],
         $org_options['organization_street1'],
@@ -141,7 +141,7 @@ function prepare_email_data($attendee_id, $multi_reg) {
             $data->qr_code = espresso_qr_code(array('attendee_id' => $data->attendee->id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'reg_total' => true))));
         }
         $data->ticket_link = espresso_ticket_links($data->attendee->registration_id, $data->attendee->id);
-        $data->admin_ticket_link = "<p>" . $data->ticket_link . "</p>";
+        $data->admin_ticket_link = $data->ticket_link;
     } else {
         $data->qr_code = '';
         $data->ticket_link = '';
@@ -207,32 +207,40 @@ function prepare_email($data) {
 function prepare_admin_email($data) {
     global $org_options;
     $admin_attendee_link = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'admin', $data->attendee->fname . ' ' . $data->attendee->lname);
-/*echo '<p>'.$admin_attendee_link.'</p>';
-return;*/
+
     if ($data->attendee->quantity > 0 && !$data->multi_reg)
         $primary_attendee = $data->primary_attendee == true ? "<p><strong>" . __('Primary Attendee', 'event_espresso') . "</strong></p>" : '';
-
-    $admin_email_body = "
-                            <tr>
-                                <td>$primary_attendee $admin_attendee_link</td>
-                                <td>" . $data->attendee->email . "</td>
-                                <td>" . stripslashes_deep($data->event->event_name) . " | " . $data->attendee->price_option . "</td>
-                                <td>" . event_date_display($data->attendee->start_date) . ' - ' . event_date_display($data->attendee->end_date) . "</td>
-                                <td>" . event_date_display($data->attendee->event_time, get_option('time_format')) . " - " . event_date_display($data->attendee->end_time, get_option('time_format')) . "</td> " .
-            ($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendee(s)', 'event_espresso') . '</td>' : '') .
-            "</tr>" . $data->email_questions . $data->admin_ticket_link . $data->invoice_link;
-    $admin_message = "<h3>" . __('Registration Summary:', 'event_espresso') . "</h3>";
-    if (!empty($data->email_questions)) {
-        $admin_message .= "<h3>" . __('Additional Information:', 'event_espresso') . "</h3>";
-        $admin_message .= $data->email_questions;
-    }
-    $headers = '';
-    return array(
-        'send_to' => $data->event->alt_email == '' ? $org_options['contact_email'] : $_event->alt_email . ',' . $org_options['contact_email'],
-        'email_subject' => !$data->multi_reg ? $data->event->event_name . __(' registration confirmation', 'event_espresso') : __('Event Registration Notification', 'event_espresso'),
-        'email_body' => $admin_message . $data->table_open . $admin_email_body . $data->table_close,
-        'headers' => $headers
-    );
+		
+	$admin_message = "<h3>" . __('Registration Summary:', 'event_espresso') . "</h3>";
+	$admin_email_body = "<tr>
+		<td>$primary_attendee $admin_attendee_link</td>
+		<td>" . $data->attendee->email . "</td>
+		<td>" . stripslashes_deep($data->event->event_name) . " | " . $data->attendee->price_option . "</td>
+		<td>" . event_date_display($data->attendee->start_date) . ' - ' . event_date_display($data->attendee->end_date) . "</td>
+		<td>" . event_date_display($data->attendee->event_time, get_option('time_format')) . " - " . event_date_display($data->attendee->end_time, get_option('time_format')) . "</td> " .
+		($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendee(s)', 'event_espresso') . '</td>' : '') . "</tr>";
+   		
+		$admin_additional_info = "<h3>" . __('Additional Information:', 'event_espresso') . "</h3>";
+		if (!empty($data->email_questions)) {
+			$admin_additional_info .= $data->email_questions;
+		}
+		if (!empty($data->admin_ticket_link)) {
+			$admin_additional_info .= '<strong>' . __('Ticket(s):', 'event_espresso') . '</strong><br />';
+			$admin_additional_info .= $data->admin_ticket_link;
+		}
+		if (!empty($data->invoice_link)) {
+			$admin_additional_info .= '<p><strong>' . __('Invoice:', 'event_espresso') . '</strong><br />';
+			$admin_additional_info .= $data->invoice_link;
+			$admin_additional_info .= '</p>';
+		}
+		
+		$headers = '';
+		return array(
+			'send_to' => $data->event->alt_email == '' ? $org_options['contact_email'] : $data->event->alt_email . ',' . $org_options['contact_email'],
+			'email_subject' => !$data->multi_reg ? $data->event->event_name . __(' registration confirmation', 'event_espresso') : __('Event Registration Notification', 'event_espresso'),
+			'email_body' => $admin_message . $data->table_open . $admin_email_body . $data->table_close . $admin_additional_info,
+			'headers' => $headers
+		);
 }
 
 function email_by_attendee_id($attendee_id, $send_attendee_email = TRUE, $send_admin_email = TRUE, $multi_reg = FALSE) {
@@ -293,14 +301,18 @@ if (!function_exists('event_espresso_send_email')) {
         global $org_options;
         extract($params);
         //Define email headers
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
+		$headers = "MIME-Version: 1.0\r\n";
+		$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
         $headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
-        $headers .= "Content-Type: text/html; charset=utf-8\r\n";
-        //echo '<hr />'.$send_to.'<br />';
-        //echo $email_subject .$email_body.'<hr />';
-		//echo $email_body;
-        return wp_mail($send_to, stripslashes_deep(html_entity_decode($email_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($email_body), ENT_QUOTES, "UTF-8")), $headers);
+		$headers .= "Content-Type: text/html; charset=utf-8\r\n";
+		//Debug
+		/*echo '<hr />';
+		echo '<p>$headers = '.$headers.'</p>';
+		echo '<p>$send_to = '.$send_to.'</p>';
+		echo '<p>$email_subject = '.$email_subject.'</p>';
+		echo '<p>$email_body = '.$email_body.'</p>';
+		echo '<hr />';*/
+		return wp_mail($send_to, stripslashes_deep(html_entity_decode($email_subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($email_body), ENT_QUOTES, "UTF-8")), $headers);
     }
 
 }
@@ -732,6 +744,7 @@ if (!function_exists('event_espresso_send_invoice')) {
         $message_top = "<html><body>";
         $message_bottom = "</html></body>";
         $start = 0;
+		
         $results = $wpdb->get_results("SELECT a.*, e.event_name, e.event_desc, e.event_code FROM " . EVENTS_ATTENDEE_TABLE . " a
 										LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = a.event_id
 										WHERE a.registration_id = '" . $registration_id . "' ORDER BY a.id LIMIT 1");
