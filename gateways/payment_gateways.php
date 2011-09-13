@@ -40,7 +40,7 @@ function event_espresso_gateways_options() {
 	$gateways[] = 'eway';
 	$gateways[] = 'mwarrior';
 	$gateways[] = '2checkout';
-	$gateways[] = 'paytrace'; 
+	$gateways[] = 'paytrace';
     foreach ($gateways as $gateway) {
         $func 			= 'event_espresso_' . $gateway . '_payment_settings';
         $fallback_func 	= 'event_espresso_' . $gateway . '_settings';
@@ -51,14 +51,14 @@ function event_espresso_gateways_options() {
             if(function_exists($func)) $func();
             elseif(function_exists($fallback_func)) $fallback_func();
             elseif(function_exists($fallback_func2)) $fallback_func2();
-            else $fallback_func3();
+            elseif(function_exists($fallback_func3)) $fallback_func3();
         } elseif
         (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/" . $gateway . "/settings.php")) {
             require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/" . $gateway . "/settings.php");
             if(function_exists($func)) $func();
             elseif(function_exists($fallback_func)) $fallback_func();
             elseif(function_exists($fallback_func2)) $fallback_func2();
-            else $fallback_func3();
+            elseif(function_exists($fallback_func3)) $fallback_func3();
         }
     }
 
