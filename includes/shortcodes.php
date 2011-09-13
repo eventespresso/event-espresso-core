@@ -495,7 +495,7 @@ add_shortcode('ATTENDEE_NUMBERS', 'espresso_attendees_data_sc');
 */
 if (!function_exists('display_event_list_sc')) {
 	function display_event_list_sc($atts){
-		global $wpdb;
+		global $wpdb,$org_options;
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true;//This tells the plugin to load the required scripts
 		extract(shortcode_atts(array('category_identifier' => 'NULL','show_expired' => 'false', 'show_secondary'=>'false','show_deleted'=>'false','show_recurrence'=>'false', 'limit' => '0', 'order_by' => 'NULL', 'css_class' => 'NULL'),$atts));
@@ -512,15 +512,21 @@ if (!function_exists('display_event_list_sc')) {
 		$order_by = $order_by != 'NULL'? " ORDER BY ". $order_by ." ASC " : " ORDER BY date(start_date), id ASC ";
 
 		if (!empty($type) && $type == 'category'){
-			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost  FROM " . EVENTS_CATEGORY_TABLE . " c ";
+			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
+			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+			$sql .= " FROM " . EVENTS_CATEGORY_TABLE . " c ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
 			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
+			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id " : '';
 			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
             $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
 			$sql .= " WHERE c.category_identifier = '" . $category_identifier . "' ";
 			$sql .= " AND e.is_active = 'Y' ";
 		}else{
-			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost  FROM " . EVENTS_DETAIL_TABLE . " e ";
+			 $sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
+			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+        	isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
             $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
 			$sql .= " WHERE e.is_active = 'Y' ";
