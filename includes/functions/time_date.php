@@ -204,7 +204,7 @@ if (!function_exists('event_espresso_time_dropdown')) {
             }
         } else if ($wpdb->num_rows > 1) {//If more than one result, then display the dropdown
 			//print_r($event_times);
-            $html .= $label == 1 ? '<label for="start_time_id">' . __('Choose an Event Time: ', 'event_espresso') . '</label>' : '';
+            $html .= $label == 1 ? '<label class="start_time_id" for="start_time_id">' . __('Choose a Time: ', 'event_espresso') . '</label>' : '';
             $html .= '<select name="start_time_id' . $multi_name_adjust . '" id="start_time_id-' . $event_id . '">';
 			//$html .= $label == 0 ?'<option  value="">' .__('Select a Time', 'event_espresso') . '</option>':'';
             foreach ($event_times as $time) {

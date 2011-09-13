@@ -369,7 +369,7 @@ ul#espresso_payment_buttons li form {
 	width: 150px;
 	text-align: right;
 }
-.event_prices label {
+.event_prices label, .event_time label {
 	display: block;
 	float: none;
 	font-size: 100%;
