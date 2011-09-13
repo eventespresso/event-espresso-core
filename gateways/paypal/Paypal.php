@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Worldpay Class
+ * Paypal Class
  *
  * Author 		Seth Shoultes
- * @package		Event Espresso Worldpay Gateway
+ * @package		Event Espresso PayPal Gateway
  * @category	Library
  */
-$worldpay_gateway_version = '1.0';
+$paypal_gateway_version = '1.0';
 
-class Worldpay extends PaymentGateway {
+class Paypal extends PaymentGateway {
 
     /**
-     * Initialize the worldpay gateway
+     * Initialize the Paypal gateway
      *
      * @param none
      * @return void
@@ -20,8 +20,11 @@ class Worldpay extends PaymentGateway {
     public function __construct() {
         parent::__construct();
         // Some default values of the class
-        $this->gatewayUrl = 'https://secure.worldpay.com/wcc/purchase';
-        $this->ipnLogFile = 'worldpay.ipn_results.log';
+        $this->gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
+        $this->ipnLogFile = 'paypal.ipn_results.log';
+        // Populate $fields array with a few default
+        $this->addField('rm', '2');           // Return method = POST
+        $this->addField('cmd', '_xclick');
     }
 
     /**
@@ -32,6 +35,7 @@ class Worldpay extends PaymentGateway {
      */
     public function enableTestMode() {
         $this->testMode = TRUE;
+        $this->gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
     }
 
     public function logErrors($errors) {
@@ -63,8 +67,8 @@ class Worldpay extends PaymentGateway {
             espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
         }
         if (function_exists('curl_init')) {
-            //new worldpay code//
-            // parse the worldpay URL
+            //new paypal code//
+            // parse the paypal URL
             $urlParsed = parse_url($this->gatewayUrl);
 
             // generate the post string from the _POST vars
@@ -83,7 +87,7 @@ class Worldpay extends PaymentGateway {
             $url = $this->gatewayUrl;
             $ch = curl_init();    // Starts the curl handler
             $error = array();
-            $error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the worldpay address for curl
+            $error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the paypal address for curl
             $error["set_fail_on_error"] = curl_setopt($ch, CURLOPT_FAILONERROR, 1);
             $error["set_return_transfer"] = curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
             $error["set_timeout"] = curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Sets a time limit for curl in seconds (do not set too low)
@@ -128,8 +132,8 @@ class Worldpay extends PaymentGateway {
             }
         } else {
 
-            //Old worldpay code
-            // parse the worldpay URL
+            //Old paypal code
+            // parse the paypal URL
             $urlParsed = parse_url($this->gatewayUrl);
             // generate the post string from the _POST vars
             $postString = '';
@@ -140,7 +144,7 @@ class Worldpay extends PaymentGateway {
                 $req .= $key . '=' . $value . '&';
             }
             $postString .="cmd=_notify-validate"; // append ipn command
-            // open the connection to worldpay
+            // open the connection to paypal
             $fp = fsockopen($urlParsed[host], "80", $errNum, $errStr, 30);
             if (!$fp) {
                 // Could not open the connection, log error if enabled
@@ -148,7 +152,7 @@ class Worldpay extends PaymentGateway {
                 $this->logResults(false);
                 return false;
             } else {
-                // Post the data back to worldpay
+                // Post the data back to paypal
                 fputs($fp, "POST $urlParsed[path] HTTP/1.1\r\n");
                 fputs($fp, "Host: $urlParsed[host]\r\n");
                 fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
