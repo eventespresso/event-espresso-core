@@ -118,8 +118,8 @@ function enter_attendee_payments() {
     }
 
     //Show the forms.
-    $id = $registration_id ;
-    $attendees = $wpdb->get_results( "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $id . "' ORDER BY ID LIMIT 1" );
+    // $id = $registration_id ;
+    $attendees = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='%s' ORDER BY ID LIMIT 1" ,$registration_id));
     foreach ( $attendees as $attendee ) {
         $id = $attendee->id;
 		//$registration_id = $attendee->registration_id;//Removed by Imon
@@ -146,7 +146,7 @@ function enter_attendee_payments() {
 		
     }
 
-    $events = $wpdb->get_results( "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'" );
+    $events = $wpdb->get_results( $wpdb->prepare("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='%d'",$event_id ));
     foreach ( $events as $event ) {
         $event_id = $event->id;
         $event_name = $event->event_name;
@@ -213,12 +213,13 @@ function enter_attendee_payments() {
 			echo '<p><strong>'.__('Registration Ids:', 'event_espresso').'</strong></p>';
 			echo '<ul>';
 			foreach($registration_ids as $reg_id){
-				echo '<li># '.$reg_id['registration_id'].' - '.espresso_attendee_price(array('registration_id'=>$reg_id['registration_id'], 'reg_total'=>true)).' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $reg_id['registration_id'] . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</li>';
-				//echo '<li># '.$reg_id['registration_id'].' ['.espresso_attendee_price(array('registration_id'=>$reg_id['registration_id'], 'reg_total'=>true)).']</li>';
+				//TODO:Display cost per registration id. At the moment it is not possible to display price per registration id because discount is calculated for total amount [IMON]
+                echo '<li># '.$reg_id['registration_id'].' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $reg_id['registration_id'] . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</li>';
 			}
 		}else{
 			echo '<p><strong>'.__('Registration Id:', 'event_espresso').'</strong></p>';
-			echo '<p># ' . $registration_id . ' - '.$org_options[ 'currency_symbol' ].espresso_attendee_price(array('registration_id'=>$registration_id, 'reg_total'=>true)).' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</p>';
+            //TODO:Display cost per registration id. At the moment it is not possible to display price per registration id because discount is calculated for total amount [IMON]
+			echo '<p># ' . $registration_id . ' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</p>';
 		}
 		echo '</ul><hr style="width:90%; margin:20px 0;" align="left" />';
 		?>
@@ -264,7 +265,10 @@ function enter_attendee_payments() {
                   <label>
                     <?php _e( 'Amount:', 'event_espresso' ); ?>
                   </label>
-                  <?php echo $org_options[ 'currency_symbol' ] ?>
+                  <?php 
+                    //TODO:Need to check this after pricing module is done [IMON]
+                    echo $org_options[ 'currency_symbol' ] 
+                  ?>
                     <input readonly="true" type="text" name="amount_pd" size="45" value ="<?php echo $total_paid; ?>" />
                 </li>
                 <li>
