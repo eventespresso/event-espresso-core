@@ -37,13 +37,13 @@ if (!function_exists('display_event_espresso_categories')) {
             $display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
             $sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, c.category_identifier, ese.start_time, ese.end_time, p.event_cost  ";
-            $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+            isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
             $sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
             $sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
             $sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
             $sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
             $sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-            $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+            isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
             $sql .= " WHERE c.category_identifier = '" . $event_category_id . "' ";
             $sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
             $sql .= " AND e.event_status != 'D' ";
