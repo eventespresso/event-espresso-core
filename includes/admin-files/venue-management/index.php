@@ -177,17 +177,7 @@ jQuery(document).ready(function($) {
 } );		
 // Add new venue form validation
 	jQuery(function(){
-
-		
 		jQuery('#venues-form').validate();
-  
-		 jQuery('#venues-form .venue-man-name').rules("add", {
-		   required: true,
-			 messages: {
-			 required:  'Please add a name for your venue.'
-			 }
-		 });	
-		
 		});
 </script>
 <?php 

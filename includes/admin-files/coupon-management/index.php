@@ -131,6 +131,10 @@ function event_espresso_discount_config_mnu() {
             } );
 
         } );
+// Add new promo code form validation
+	jQuery(function(){
+		jQuery('#new-promo-code').validate();
+		});
     </script>
     <?php
 }

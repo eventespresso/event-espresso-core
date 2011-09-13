@@ -160,14 +160,7 @@ function event_espresso_categories_config_mnu() {
 // Add new category form validation
 	jQuery(function(){
    jQuery('#add-new-cat').validate();
-  
-		 jQuery('#add-new-cat .cat-name').rules("add", {
-		   required: true,
-			 messages: {
-			 required:  'Please add a name for your new category.'
-			 }
-		 });	
-		
+  		
 		});
 </script>					
     </script>

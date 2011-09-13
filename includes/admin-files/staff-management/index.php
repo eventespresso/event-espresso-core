@@ -151,14 +151,6 @@ jQuery(document).ready(function($) {
 // Add new staff form validation
 	jQuery(function(){
   jQuery('#add-staff').validate();
-  
-		 jQuery('#add-staff .staff-name').rules("add", {
-		   required: true,
-			 messages: {
-			 required:  'Please provide a name for your staff member.'
-			 }
-		 });	
-		
 		});
 </script>
 </script>

@@ -7,14 +7,14 @@ function add_new_event_discount(){
       <?php _e('Add a New Promotional Code','event_espresso'); ?>
     </h3>
 <div class="inside">
-    <form method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
+    <form id="new-promo-code" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
       <input type="hidden" name="action" value="add">
       <ul>
         <li>
           <label>
             <?php _e('Promotional Code','event_espresso'); ?>
           </label>
-          <input type="text" name="coupon_code" size="25">
+          <input class="required" type="text" name="coupon_code" size="25">
         </li>
         <li>
           <label>
