@@ -258,7 +258,20 @@ function event_espresso_questions_config_mnu() {
             });
         postboxes.add_postbox_toggles('form_builder');
         } );
-    </script>
+
+// Add new question or question group form validation
+	jQuery(function(){
+   jQuery('#new-question-form').validate();
+  
+		 /*jQuery('#new-question-form .question-name').rules("add", {
+		   required: true,
+			 messages: {
+			 required:  'Please add a name for your group or question.',
+			 }
+		 }); */
+		
+		});				
+</script>
 
     <?php
 }

@@ -40,23 +40,6 @@ jQuery("div.visual-toggle p a.toggleHTML").click(
     }
     return false;
   }
-// Add simple validation to admin pages forms; site reg page forms are handled in validate.js
-
-	jQuery(function(){
-		// Groups/Questions add-new  form validation
-		
-		jQuery('#add-new-group, #new-question-form, #add-staff, #add-new-cat, #venues-form').validate();
-  // jq validate seems limiting explore alternatives
-	/*	 jQuery('#add-new-group .group-name, #new-question-form .question-name').rules("add", {
-		   required: true,
-			 messages: {
-			 required:  'Please add a name for your group or question.'
-			 }
-		 });	*/
-		
-		});
-
-
 	  
 //Select All
   function selectAll(x) {

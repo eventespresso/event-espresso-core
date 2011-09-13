@@ -18,7 +18,7 @@ function add_new_event_category() {
                     
                  <p class="add-cat-name inputunder">
 									  <label><?php _e('Category Name', 'event_espresso'); ?></label> 
-									  <input class="required" type="text" name="category_name" size="25" />
+									  <input class="required cat-name" type="text" name="category_name" size="25" />
 									</p>
                  <p class="add-cat-id inputunder">
 									  <label><?php _e('Unique ID For Category', 'event_espresso'); ?></label> 

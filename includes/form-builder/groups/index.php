@@ -239,7 +239,19 @@ function event_espresso_question_groups_config_mnu() {
             });
 					postboxes.add_postbox_toggles('form_groups');
         } );
-    </script>
+
+	jQuery(function(){
+   jQuery('#add-new-group').validate();
+  
+		/* jQuery('#new-question-form .group-name').rules("add", {
+		   required: true,
+			 messages: {
+			 required:  'Please add a name for your group or question.',
+			 }
+		 }); */
+		
+		});			
+</script>
 
     <?php
 }

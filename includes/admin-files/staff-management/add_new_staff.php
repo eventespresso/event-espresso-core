@@ -17,7 +17,7 @@ function add_new_event_staff(){
                   <label for="name">
                     <?php _e('Name','event_espresso'); ?>
                   </label>
-                  <input class="required" type="text" id="name" name="name" size="25" />
+                  <input class="required staff-name" type="text" id="name" name="name" size="25" />
                 </li>
                 <li>
                   <label for="email">
