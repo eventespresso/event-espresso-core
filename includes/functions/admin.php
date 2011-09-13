@@ -31,9 +31,6 @@ function event_espresso_config_page_scripts() {
     wp_enqueue_script('dashboard');
     wp_enqueue_script('thickbox');
     wp_enqueue_script('jquery');
-   // wp_enqueue_script('jquery-ui-core');
-//    wp_enqueue_script('jquery-ui-tabs');
-//    wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
     wp_enqueue_script('tiny_mce');
     wp_enqueue_script('editor');
     wp_enqueue_script('editor-functions');
