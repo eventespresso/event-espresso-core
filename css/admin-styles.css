@@ -1688,6 +1688,10 @@ a.thickbox  {
 	vertical-align: middle;
 	margin-left 5px;
 }
+a.thickbox.link  {
+	text-decoration: underline;
+	vertical-align: bottom !important;
+}
 #mailchimp-options a.thickbox {
 	display: inline-block;	
 	height: 22px;
