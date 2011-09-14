@@ -462,7 +462,12 @@ if (is_admin()) {
             'payment_gateways',
             'members',
             'admin_addons',
-            'espresso_calendar'
+            'espresso_calendar',
+							'espresso-mailchimp',
+							'espresso_permissions',
+							'roles',
+							'event_locales',
+							'event_groups'
         );
         if (in_array($_REQUEST['page'], $espresso_pages)) {
             add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
