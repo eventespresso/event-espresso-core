@@ -597,6 +597,10 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 .event-espresso_page_events #side-sortables p input, .event-espresso_page_events #side-sortables p select {
 	float:right;
 }
+#side-sortables p select#mailchimp-lists {
+	float:left;
+	width: 220px;
+}
 .event-espresso_page_events #side-sortables p.inputunder {
 	width: 250px;
 }
@@ -1683,6 +1687,13 @@ a.thickbox  {
 	text-decoration: underline;
 	vertical-align: middle;
 	margin-left 5px;
+}
+#mailchimp-options a.thickbox {
+	display: inline-block;	
+	height: 22px;
+}
+#mailchimp-options a.thickbox img {
+	margin-top: 5px;
 }
 /*** Payment Status Classes ***/
 .payment_completed {
