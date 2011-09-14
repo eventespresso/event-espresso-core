@@ -72,6 +72,7 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 				$div .= "<p><span>State:</span> ".stripslashes_deep($venue->state)."</p>";
 				$div .= "<p><span>Zip:</span> ".stripslashes_deep($venue->zip)."</p>";
 				$div .= "<p><span>Country:</span> ".stripslashes_deep($venue->country)."</p>";
+				$div .= "<p><span>Venue ID:</span> ".$venue->id."</p>";
 				$div .= '<p><a href="admin.php?page=event_venues&action=edit&id='.$venue->id.'" target="_blank">'.__('Edit this venue', 'event_espresso').'</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></p></li></ul>';
 				$div .= "</fieldset>";
 			}
@@ -80,6 +81,8 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 			$help_div .= '<h2>'.__('Venue Shortcode', 'event_espresso').'</h2>';
 			$help_div .= '<p>'.__('Add the following shortcode into the description to show the venue for this event.', 'event_espresso').'</p>';
 			$help_div .= '<p>[ESPRESSO_VENUE]</p>';
+			$help_div .= '<p>'.__('To use this venue in a page or post. Use the following shortcode.', 'event_espresso').'</p>';
+			$help_div .= '<p>[ESPRESSO_VENUE id="selected_venue_id"]</p>';
 			$help_div .= '<p>Example with Optional Parameters:<br />[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
 			$help_div .= '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
 			$help_div .= '</div>';
