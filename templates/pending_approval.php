@@ -1,4 +1,4 @@
-<div id="espresso_confirmation_display">	
+<div id="espresso_confirmation_display" class="event-display-boxes">	
 <?php //Pending Approval Page Template ?>
 	<h3><?php echo $fname ?>,</h3>
 		<p class="instruct"><?php _e('Your registration is not complete until admin approves.', 'event_espresso'); ?></p>
