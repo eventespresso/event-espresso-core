@@ -3,39 +3,24 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 	function espresso_venue_dd($current_value=0){
 		global $espresso_premium; if ($espresso_premium != true) return;
 		global $wpdb, $espresso_manager, $current_user;
-		$is_user = false;
-		$group_admin = false;
-
-        $sql = "(SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
-
+		
+		$WHERE = " WHERE ";
+		$sql = "SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev ";
+		$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id ";
+		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
+		
 		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_group_admin' ) ){
-		if(	$espresso_manager['event_manager_venue'] == "Y" ){
-			//	show only venues inside their assigned locales.
-            $group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
-            $group = unserialize($group);
-			$sql .= " WHERE lr.locale_id IN (" . implode(",", $group) . ")";
-			$sql .= ") UNION ( ";
-			$sql .= "SELECT ev.*, el.name AS locale FROM ". EVENTS_VENUE_TABLE . " ev LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " lr ON lr.venue_id = ev.id LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
+			if(	$espresso_manager['event_manager_venue'] == "Y" ){
+				//show only venues inside their assigned locales.
+				$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
+				$group = unserialize($group);
+				$sql .= " $WHERE lr.locale_id IN (" . implode(",", $group) . ")";
+				$sql .= " OR ev.wp_user = ".$current_user->ID ;
+				$WHERE = " AND ";
+			}
 		}
-	}
-	if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin' ) ){
-        $sql .= " JOIN $wpdb->users u on u.ID = ev.wp_user ";
-		$is_user = true;
-    }
-	if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_group_admin' ) ){
-		if(	$espresso_manager['event_manager_venue'] == "Y" ){
-			$sql .= " WHERE lr.locale_id IN (" . implode(",", $group) . ")";
-			$group_admin = true;
-		}
-	}
-	if ($is_user == true && $group_admin == true){
-		$sql .= " OR ev.wp_user = ".$current_user->ID ;
-	}elseif($is_user == true){
-		$sql .= " WHERE ev.wp_user = ".$current_user->ID ;
-	}
-	$sql .= " GROUP BY ev.id ";
-    $sql .= ")";
-
+		$sql .= " GROUP BY ev.id ORDER by name";
+		
 		//echo $sql;
 		$venues = $wpdb->get_results($sql);
 		$num_rows = $wpdb->num_rows;
@@ -62,44 +47,43 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 			$field .= '<select name="venue_id[]" id="venue_id">\n';
 			$field .= '<option value="0">'.__('Select a Venue', 'event_espresso').'</option>';
 			$div = "";
+			$help_div = "";
 			$i = 0;
 			foreach ($venues as $venue){
 
 				$i++;
 				$selected = $venue->id == $current_value ? 'selected="selected"' : '';
                 if ($venue->locale != '') {
-                    $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . $venue->name . ' (' . $venue->locale . ') </option>\n';
+                    $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->locale) . ') </option>\n';
                 } else if ($venue->city != '' && $venue->state != '') {
-                    $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . $venue->name . ' (' . $venue->city. ', ' . $venue->state . ') </option>\n';
+                    $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->city). ', ' . stripslashes_deep($venue->state) . ') </option>\n';
                 } else if ($venue->state != '') {
-                    $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . $venue->name . ' (' . $venue->state . ') </option>\n';
+                    $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . stripslashes_deep($venue->name) . ' (' . stripslashes_deep($venue->state) . ') </option>\n';
                 } else {
-                    $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . $venue->name . ' </option>\n';
+                    $field .= '<option rel="'.$i.'" '. $selected .' value="' . $venue->id .'">' . stripslashes_deep($venue->name) . ' </option>\n';
                 }
 
 				$hidden = "display:none;";
 				if( $selected ) $hidden = '';
 				$div .= "<fieldset id='eebox_".$i."' class='eebox' style='".$hidden."'>";
-				$div .= "<ul class='address-view'><li><p><span>Address:</span> ".$venue->address."</p>";
-				$div .= "<p><span>Address 2:</span> ".$venue->address2."</p>";
-				$div .= "<p><span>City:</span> ".$venue->city."</p>";
-				$div .= "<p><span>State:</span> ".$venue->state."</p>";
-				$div .= "<p><span>Zip:</span> ".$venue->zip."</p>";
-				$div .= "<p><span>Country:</span> ".$venue->country."</p>";
-				$div .= '<p><a href="admin.php?page=event_venues&action=edit&id='.$venue->id.'" target="_blank">'.__('Edit this venue', 'event_espresso').'</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></p></li></ul>';
+				$div .= "<ul class='address-view'><li><p><span>Address:</span> ".stripslashes_deep($venue->address)."</p>";
+				$div .= "<p><span>Address 2:</span> ".stripslashes_deep($venue->address2)."</p>";
+				$div .= "<p><span>City:</span> ".stripslashes_deep($venue->city)."</p>";
+				$div .= "<p><span>State:</span> ".stripslashes_deep($venue->state)."</p>";
+				$div .= "<p><span>Zip:</span> ".stripslashes_deep($venue->zip)."</p>";
+				$div .= "<p><span>Country:</span> ".stripslashes_deep($venue->country)."</p>";
+				$div .= '<p><a href="admin.php?page=event_venues&action=edit&id='.$venue->id.'" target="_blank">'.__('Edit this venue', 'event_espresso').'</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></p></li></ul>';
 				$div .= "</fieldset>";
 			}
 			$field .= "</select>";
+			$help_div .= '<div id="venue_info" style="display:none">';
+			$help_div .= '<h2>'.__('Venue Shortcode', 'event_espresso').'</h2>';
+			$help_div .= '<p>'.__('Add the following shortcode into the description to show the venue for this event.', 'event_espresso').'</p>';
+			$help_div .= '<p>[ESPRESSO_VENUE]</p>';
+			$help_div .= '<p>Example with Optional Parameters:<br />[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
+			$help_div .= '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
+			$help_div .= '</div>';
 			ob_start();
-			echo '<div id="venue_info" style="display:none">';
-			echo '<h2>'.__('Venue Shortcode', 'event_espresso').'</h2>';
-			echo '<p>'.__('Add the following shortcode into the description to show the venue for this event.', 'event_espresso').'</p>';
-			echo '<p>[ESPRESSO_VENUE]</p>';
-			echo '<p>Example with Optional Parameters:<br />
-			[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
-
-			echo '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
-			echo '</div>';
 
 ?>
 				<script>
@@ -111,9 +95,9 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 					});
 				</script>
 <?php
-				$js = ob_get_contents();
+			$js = ob_get_contents();
 			ob_end_clean();
-			$html = '<table><tr><td>' . $field .'</td></tr><tr><td>'.$div.'</td></tr></table>'.$js;
+			$html = '<table><tr><td>' . $field .'</td></tr><tr><td>'.$div.'</td></tr></table>'.$help_div.$js;
 			return $html;
 		}
 	}
@@ -166,7 +150,7 @@ if ( !function_exists( 'espresso_personnel_cb' ) ){
 				$bottom_div = '</div>';
 			}
 
-			$manage = '<p><a href="admin.php?page=event_staff" target="_blank">'.__('Manage Staff Members', 'event_espresso').'</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=staff_info">Shortcode</a> </p>';
+			$manage = '<p><a href="admin.php?page=event_staff" target="_blank">'.__('Manage Staff Members', 'event_espresso').'</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=staff_info">Shortcode</a> </p>';
 
 			echo '<div id="staff_info" style="display:none">';
 			echo '<h2>'.__('Staff Shortcode', 'event_espresso').'</h2>';
@@ -321,7 +305,7 @@ if (!function_exists('event_espresso_meta_edit')){
 		$good_meta = $event_meta;
 		//print_r( $good_meta );
 		?>
-		<p>Using Event Meta boxes
+		<p><?php _e('Using Event Meta boxes', 'event_espresso'); ?>
    <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=event-meta-boxes" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
 		</p>
 		<ul id="dynamicMetaInput">
