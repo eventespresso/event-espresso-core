@@ -224,13 +224,13 @@ function event_espresso_empty_event_trash($event_id) {
 function postbox($id, $title, $content) {
     ?>
 
-    <div id="<?php echo $id; ?>" class="postbox">
-        <div class="handlediv" title="Click to toggle"><br />
-        </div>
-        <h3 class="hndle"><span><?php echo $title; ?></span></h3>
-        <div class="inside"> <?php echo $content; ?> </div>
-    </div>
-    <?php
+<div id="<?php echo $id; ?>" class="postbox">
+  <div class="handlediv" title="Click to toggle"><br />
+  </div>
+  <h3 class="hndle"><span><?php echo $title; ?></span></h3>
+  <div class="inside"> <?php echo $content; ?> </div>
+</div>
+<?php
 }
 
 /* Aurelio */
@@ -809,19 +809,17 @@ function events_editor($content, $id = 'content', $prev_id = 'title') {
     $media_buttons = false;
     $richedit = user_can_richedit();
     ?>
-    <div id="quicktags">
-        <?php wp_print_scripts('quicktags'); ?>
-        <script type="text/javascript">edToolbar()</script>
-    </div>
-
-    <?php //if(function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) $output = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($output);    ?>
-
-    <?php
+<div id="quicktags">
+  <?php wp_print_scripts('quicktags'); ?>
+  <script type="text/javascript">edToolbar()</script> 
+</div>
+<?php //if(function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) $output = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($output);    ?>
+<?php
     $the_editor = apply_filters('the_editor', "<div id='editorcontainer'><textarea rows='6' cols='90' name='$id' tabindex='4' id='$id'>%s</textarea></div>\n");
     $the_editor_content = apply_filters('the_editor_content', $content);
     printf($the_editor, $content);
     ?>
-    <script type="text/javascript">
+<script type="text/javascript">
         // <![CDATA[
         edCanvas = document.getElementById('<?php echo $id; ?>');
     <?php if (user_can_richedit() && $prev_id) { ?>
@@ -844,7 +842,7 @@ function events_editor($content, $id = 'content', $prev_id = 'title') {
     <?php } ?>
         // ]]>
     </script>
-    <?php
+<?php
 }
 
 //Create a dashboard widget for Event Espresso News
@@ -860,17 +858,18 @@ add_action('wp_dashboard_setup', 'espresso_news_dashboard_widgets');
 
 function event_espresso_display_right_column() {
     ?>
-    <div id="side-info-column" class="inner-sidebar">
-        <div id="side-sortables" class="meta-box-sortables">
-
-            <div id="submitdiv" class="postbox">
-								<div title="Click to toggle" class="handlediv"><br /></div>
-                <h3 class="hndle"><?php _e('New @ Event Espresso', 'event_espresso'); ?></h3>
-                <div class="inside">
-                    <div class="padding">
-
-                        <div class="infolinks">
-                            <?php
+<div id="side-info-column" class="inner-sidebar">
+  <div id="side-sortables" class="meta-box-sortables">
+    <div id="submitdiv" class="postbox">
+      <div title="Click to toggle" class="handlediv"><br />
+      </div>
+      <h3 class="hndle">
+        <?php _e('New @ Event Espresso', 'event_espresso'); ?>
+      </h3>
+      <div class="inside">
+        <div class="padding">
+          <div class="infolinks">
+            <?php
                             echo '<h2 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h2>';
 
                             // Get RSS Feed(s)
@@ -880,47 +879,65 @@ function event_espresso_display_right_column() {
 
                             @wp_widget_rss_output('http://eventespresso.com/forums/feed/', array('show_date' => 0, 'items' => 4));
                             ?>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="submitdiv2" class="postbox " >
-								<div title="Click to toggle" class="handlediv"><br /></div>
-                <h3 class="hndle"><?php _e('Helpful Plugin Links', 'event_espresso'); ?></h3>
-                <div class="inside">
-                    <div class="padding">
-                        <ul class="infolinks">
-                            <li><a href="http://eventespresso.com/support/installation/" target="_blank"><?php _e('Installation &amp; Usage Guide', 'event_espresso'); ?></a></li>
-                            <li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank"><?php _e('Customization Forums', 'event_espresso'); ?></a></li>
-                            <li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank"><?php _e('Plugin Support Forums', 'event_espresso'); ?></a></li>
-                            <li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank"><?php _e('Feature Request Forums', 'event_espresso'); ?></a></li>
-                            <li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank"><?php _e('Bug Submission Forums', 'event_espresso'); ?></a></li>
-                            <li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank"><?php _e('Changelog', 'event_espresso'); ?></a></li>
-                            <li><a href="http://eventespresso.com/download/plugins-and-addons/"><?php _e('Plugins and Addons', 'event_espresso'); ?></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <?php
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="submitdiv2" class="postbox " >
+      <div title="Click to toggle" class="handlediv"><br />
+      </div>
+      <h3 class="hndle">
+        <?php _e('Helpful Plugin Links', 'event_espresso'); ?>
+      </h3>
+      <div class="inside">
+        <div class="padding">
+          <ul class="infolinks">
+            <li><a href="http://eventespresso.com/support/installation/" target="_blank">
+              <?php _e('Installation &amp; Usage Guide', 'event_espresso'); ?>
+              </a></li>
+            <li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">
+              <?php _e('Customization Forums', 'event_espresso'); ?>
+              </a></li>
+            <li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">
+              <?php _e('Plugin Support Forums', 'event_espresso'); ?>
+              </a></li>
+            <li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">
+              <?php _e('Feature Request Forums', 'event_espresso'); ?>
+              </a></li>
+            <li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">
+              <?php _e('Bug Submission Forums', 'event_espresso'); ?>
+              </a></li>
+            <li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">
+              <?php _e('Changelog', 'event_espresso'); ?>
+              </a></li>
+            <li><a href="http://eventespresso.com/download/plugins-and-addons/">
+              <?php _e('Plugins and Addons', 'event_espresso'); ?>
+              </a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <?php
             global $espresso_premium;
             if ($espresso_premium != true) {
                 ?>
-                <div id="submitdiv2" class="postbox " >
-                    <h3><?php _e('Sponsors', 'event_espresso'); ?></h3>
-                    <div class="inside">
-                        <div class="padding">
-                            <?php
+    <div id="submitdiv2" class="postbox " >
+      <h3>
+        <?php _e('Sponsors', 'event_espresso'); ?>
+      </h3>
+      <div class="inside">
+        <div class="padding">
+          <?php
                             $event_regis_sponsors = wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html'));
                             echo $event_regis_sponsors;
                             ?>
-                        </div>
-                    </div>
-                </div>
-            <?php } ?>
         </div>
+      </div>
     </div>
-    <?php
+    <?php } ?>
+  </div>
+</div>
+<?php
 }
 // prefered approach to a display function?
 /*
@@ -968,25 +985,37 @@ function event_espresso_get_right_column() {
 //Displays what email tags are available
 function event_espresso_custom_email_info() {
     ?>
-    <div id="custom_email_info" style="display:none">
-        <h2><?php _e('Email Confirmations', 'event_espresso'); ?></h2>
-        <p><?php _e('For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.', 'event_espresso'); ?></p>
-        <p>[registration_id], [fname], [lname], [phone], [event], [event_link], [event_url], [ticket_type], [ticket_link], [qr_code], [description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [invoice_link], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link], [venue_title], [venue_url], [venue_image], [venue_phone], [custom_questions]</p>
+<div style="display: none;">
+  <div id="custom_email_info" class="pop-help" >
+    <div class="TB-ee-frame">
+      <h2>
+        <?php _e('Email Confirmations', 'event_espresso'); ?>
+      </h2>
+      <p>
+        <?php _e('For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.', 'event_espresso'); ?>
+      </p>
+      <p>[registration_id], [fname], [lname], [phone], [event], [event_link], [event_url], [ticket_type], [ticket_link], [qr_code], [description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [invoice_link], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link], [venue_title], [venue_url], [venue_image], [venue_phone], [custom_questions]</p>
     </div>
-
-    <div id="custom_email_example" style="display:none;">
-        <h2>Sample Mail Send:</h2>
-
-        <p style="font-size:10px;">***This is an automated response - Do Not Reply***</p>
-        <p style="font-size:10px;">Thank you [fname] [lname] for registering for [event]. We hope that you will find this event both informative and enjoyable. Should have any questions, please contact [contact].</p>
-        <p style="font-size:10px;"><strong>Ticket type:</strong> [ticket_type]</p>
-        <p style="font-size:10px;"><strong>Print Tickets:</strong> [ticket_link] (A link <a href="http://eventespresso.com/?p=3754" target="_blank">Your Customized Ticket</a> if the ticketing addon is installed.)</p>
-        <p style="font-size:10px;">[qr_code] (generated by the QR Code addon, if installed)</p>
-        <p style="font-size:10px;">If you have not done so already, please submit your payment in the amount of [cost].</p>
-        <p style="font-size:10px;">Click here to review your payment information [payment_url].</p>
-        <p style="font-size:10px;">Your questions: [custom_questions].</p>
+  </div>
+</div>
+<div style="display: none;">
+  <div id="custom_email_example" class="pop-help" >
+    <div class="TB-ee-frame">
+      <h2>
+        <?php _e('Sample Mail Send:', 'event_espresso'); ?>
+      </h2>
+      <p style="font-size:10px;">***This is an automated response - Do Not Reply***</p>
+      <p style="font-size:10px;">Thank you [fname] [lname] for registering for [event]. We hope that you will find this event both informative and enjoyable. Should have any questions, please contact [contact].</p>
+      <p style="font-size:10px;"><strong>Ticket type:</strong> [ticket_type]</p>
+      <p style="font-size:10px;"><strong>Print Tickets:</strong> [ticket_link] (A link <a href="http://eventespresso.com/?p=3754" target="_blank">Your Customized Ticket</a> if the ticketing addon is installed.)</p>
+      <p style="font-size:10px;">[qr_code] (generated by the QR Code addon, if installed)</p>
+      <p style="font-size:10px;">If you have not done so already, please submit your payment in the amount of [cost].</p>
+      <p style="font-size:10px;">Click here to review your payment information [payment_url].</p>
+      <p style="font-size:10px;">Your questions: [custom_questions].</p>
     </div>
-    <?php
+  </div>
+</div>
+<?php
 }
 
 //Function to check if registration ids are missing
@@ -1500,3 +1529,4 @@ function espresso_admin_footer () {
 	echo 'Event Registration and Ticketing Powered by <a href="http://eventespresso.com/" title="Event Registration Powered by Event Espresso" target="_blank">'.EVENT_ESPRESSO_POWERED_BY.'</a>';
 }
 add_filter('admin_footer_text', 'espresso_admin_footer');
+
