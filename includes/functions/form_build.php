@@ -127,7 +127,7 @@ if (!function_exists('event_form_build')) {
                     $checked = (is_array($answer) && in_array($value, $answer)) ? ' checked="checked"' : "";
                     //$checked = ( $value == $answer ) ? ' checked="checked"' : "";
                     /* 	$html .= "<label><input type=\"checkbox\"$required id=\"MULTIPLE_$question->id_$key\" name=\"MULTIPLE_$question->id_$key\"  value=\"$value\"$checked /> $value</label><br/>\n"; */
-                    $html .= '<li><label for="' . $value . '-' . $event_id . '" class="'.$class.'"><input id="' . $value . '-' . $event_id . '" ' . $required . 'name="MULTIPLE_' . $question->id . $multi_name_adjust . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> ' . $value . '</label></li>';
+                    $html .= '<li><label for="' . str_replace(' ', '', $value) . '-' . $event_id . '" class="'.$class.'"><input id="' . str_replace(' ', '', $value) . '-' . $event_id . '" ' . $required . 'name="MULTIPLE_' . $question->id . $multi_name_adjust . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> ' . $value . '</label></li>';
                 }
                 $html .= '</ul>';
                 $html .= '</fieldset>';
