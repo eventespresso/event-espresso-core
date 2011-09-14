@@ -5,7 +5,7 @@ if (!function_exists('add_event_espresso_menus')) {
         global $org_options, $espresso_premium;
 
         //Main menu tab
-        add_menu_page(__('Event Espresso', 'event_espresso'), __('Event Espresso', 'event_espresso'), 'administrator', 'event_espresso', 'organization_config_mnu', EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
+        add_menu_page(__('Event Espresso','event_espresso'), '<span style=" font-size:12px">'.__('Event Espresso','event_espresso').'</span>', 'administrator', 'event_espresso', 'organization_config_mnu', EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
 
         //General Settings
         add_submenu_page('event_espresso', __('Event Espresso - General Settings', 'event_espresso'), __('General Settings', 'event_espresso'), 'administrator', 'event_espresso', 'organization_config_mnu');
