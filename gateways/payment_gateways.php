@@ -5,7 +5,7 @@ function before_gateways() {
     $before_gateways .= '<h2>' . __('Manage Payment Gateways', 'event_espresso') . '</h2>';
     $before_gateways .= '<div id="poststuff" class="metabox-holder has-right-sidebar">';
     $before_gateways .= event_espresso_get_right_column();
-    $before_gateways .= '<div id="post-body"><div id="post-body-content">';
+    $before_gateways .= '<div id="post-body"><div id="post-body-content"><div class="meta-box-sortables ui-sortables">';
     return $before_gateways;
 }
 
@@ -14,13 +14,20 @@ function after_gateways() {
     global $espresso_premium;
     if ($espresso_premium != true)
         $output .= '<h2>' . __('Need more payment options?', 'event_espresso') . ' <a href="http://eventespresso.com/download/" target="_blank">' . __('Upgrade Now!', 'event_espresso') . '</a></h2>';
-    $output .= '</div></div></div></div>';
+    $output .= '</div><!-- / .meta-box-sortables --></div><!-- / #post-body-content --></div><!-- / #post-body --></div><!-- / #poststuff --></div><!-- / #wrap -->';
     $output .= '<div id="button_image" style="display:none"><h2>' . __('Button Image URL', 'event_espresso') . '</h2>';
-    $output .= '<p>' . __('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso') . '</p>';
+			$output .= '<p>' . __('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso') . '</p>';
     $output .= '</div><div id="bypass_confirmation" style="display:none">';
     $output .= '<h2>' . __('By-passing the Confirmation Page', 'event_espresso') . '</h2>';
     $output .= '<p>' . __('This will allow you to send your customers directly to the payment gateway of your choice.', 'event_espresso') . '</p></div>';
-    return $output;
+    $output .= '<script type="text/javascript" charset="utf-8">
+        //<![CDATA[
+         jQuery(document).ready(function() {
+          postboxes.add_postbox_toggles("payment_gateways");
+          }); 
+        //]]>
+        </script>';    
+			return $output;
 }
 
 //This is the payment gateway settings page.

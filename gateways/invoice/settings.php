@@ -18,11 +18,13 @@ function event_espresso_invoice_payment_settings(){
 ?>
 
 <div class="metabox-holder">
-<div class="postbox">
-<h3>
-  <?php _e('Invoice Payment Settings','event_espresso'); ?>
-</h3>
-<div class="padding">
+ <div class="postbox">
+  <div title="Click to toggle" class="handlediv"><br /></div>
+   <h3 class="hndle">
+    <?php _e('Invoice Payment Settings','event_espresso'); ?>
+   </h3>
+   <div class="inside">
+   <div class="padding">
   <?php
 				if (isset($_REQUEST['activate_invoice_payment'])&&$_REQUEST['activate_invoice_payment'] == 'true'){
 					add_option("events_invoice_payment_active", 'true', '', 'yes');
@@ -53,8 +55,9 @@ function event_espresso_invoice_payment_settings(){
 				}
 				echo '</ul>';
 ?>
-</div>
-</div>
+   </div>
+  </div>
+ </div>
 </div>
 <?php
 }?>

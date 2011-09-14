@@ -19,10 +19,11 @@ function event_espresso_paypal_pro_payment_settings() {
 
     <div class="metabox-holder">
         <div class="postbox">
-
-            <h3>
+        <div title="Click to toggle" class="handlediv"><br /></div>
+            <h3 class="hndle">
                 <?php _e('PayPal Pro Settings', 'event_espresso'); ?>
             </h3>
+							<div class="inside">
             <div class="padding">
                 <?php
                 if (isset($_REQUEST['activate_paypal_pro']) && $_REQUEST['activate_paypal_pro'] == 'true') {
@@ -56,6 +57,7 @@ function event_espresso_paypal_pro_payment_settings() {
                 echo '</ul>';
                 ?>
             </div>
+						</div>
         </div>
     </div>
 <?php } ?>

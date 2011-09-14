@@ -18,9 +18,11 @@ function event_espresso_aim_payment_settings() {
     ?>
     <div class="metabox-holder">
         <div class="postbox">
-            <h3>
+					<div title="Click to toggle" class="handlediv"><br /></div>
+            <h3 class="hndle">
                 <?php _e('Authorize.net AIM Settings', 'event_espresso'); ?>
             </h3>
+							<div class="inside">
             <div class="padding">
                 <?php
                 if (isset($_REQUEST['activate_authnet_aim'])&&$_REQUEST['activate_authnet_aim'] == 'true') {
@@ -50,6 +52,7 @@ function event_espresso_aim_payment_settings() {
                 echo '</ul>';
                 ?>
             </div>
+						</div>
         </div>
     </div>
     <?php

@@ -922,10 +922,15 @@ function event_espresso_display_right_column() {
     </div>
     <?php
 }
-
+// prefered approach to a display function?
+/*
+function event_espresso_display_right_column() {
+  echo event_espresso_get_right_column();
+		}
+*/
 function event_espresso_get_right_column() {
     $output = '<div id="side-info-column" class="inner-sidebar"><div id="side-sortables" class="meta-box-sortables">';
-    $output .= '<div id="submitdiv" class="postbox " ><h3>' . __('New @ Event Espresso', 'event_espresso') . '</h3>';
+    $output .= '<div id="submitdiv" class="postbox " ><div title="Click to toggle" class="handlediv"><br /></div><h3 class="hndle">' . __('New @ Event Espresso', 'event_espresso') . '</h3>';
     $output .= '<div class="inside"><div class="padding"><div class="infolinks">';
     $output .= '<h2 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h2>';
     ob_start();
@@ -939,7 +944,7 @@ function event_espresso_get_right_column() {
     $output .= ob_get_contents();
     ob_end_clean();
     $output .= '</div></div></div></div><div id="submitdiv2" class="postbox " >';
-    $output .= '<h3>' . __('Helpful Plugin Links', 'event_espresso') . '</h3>';
+    $output .= '<div title="Click to toggle" class="handlediv"><br /></div><h3 class="hndle">' . __('Helpful Plugin Links', 'event_espresso') . '</h3>';
     $output .= '<div class="inside"><div class="padding"><ul class="infolinks">';
     $output .= '<li><a href="http://eventespresso.com/support/installation/" target="_blank">' . __('Installation &amp; Usage Guide', 'event_espresso') . '</a></li>';
     $output .= '<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">' . __('Customization Forums', 'event_espresso') . '</a></li>';

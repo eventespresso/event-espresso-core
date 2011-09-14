@@ -19,10 +19,11 @@ function event_espresso_paytrace_payment_settings() {
 
     <div class="metabox-holder">
         <div class="postbox">
-
-            <h3>
-    <?php _e('Paytrace Settings', 'event_espresso'); ?>
+        <div title="Click to toggle" class="handlediv"><br /></div>
+            <h3 class="hndle">
+             <?php _e('Paytrace Settings', 'event_espresso'); ?>
             </h3>
+							<div class="inside">
             <div class="padding">
                 <?php
                 if (isset($_REQUEST['activate_paytrace'])&&$_REQUEST['activate_paytrace'] == 'true') {
@@ -53,6 +54,7 @@ function event_espresso_paytrace_payment_settings() {
                 echo '</ul>';
                 ?>
             </div>
+						</div>
         </div>
     </div>
 <?php

@@ -17,11 +17,13 @@ $alipay_settings['button_url'] = $_POST['button_url'];
 	}
 ?>
 <div class="metabox-holder">
-<div class="postbox">
-<h3>
-  <?php _e('Alipay Settings','event_espresso'); ?>
-</h3>
-<?php
+ <div class="postbox">
+  <div title="Click to toggle" class="handlediv"><br /></div>
+   <h3 class="hndle">
+   <?php _e('Alipay Settings','event_espresso'); ?>
+   </h3>
+   <div class="inside">
+    <?php
 				if ($_REQUEST['activate_alipay'] == 'true'){
 					add_option("events_alipay_active", 'true', '', 'yes');
 					add_option("event_espresso_alipay_settings", '', '', 'yes');
@@ -48,7 +50,8 @@ $alipay_settings['button_url'] = $_POST['button_url'];
 				}
 				echo '</ul>';
 ?>
-</div>
+  </div>
+ </div>
 </div>
 <?php
 }
