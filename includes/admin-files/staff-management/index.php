@@ -100,7 +100,7 @@ if ($_REQUEST['action'] == 'edit'){require_once("edit_staff.php");edit_event_sta
               <div class="row-actions">
                 <span class="edit"><a href="admin.php?page=event_staff&action=edit&id=<?php echo $staff_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
                 <span class="delete">
-                    <a  onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=event_staff&action=delete_staff&id=<?php echo $staff_id?>"><?php _e('Delete', 'event_espresso'); ?></a>
+                    <a  onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_staff&action=delete_staff&id=<?php echo $staff_id?>"><?php _e('Delete', 'event_espresso'); ?></a>
                 </span>
               </div>
               </td>
@@ -153,9 +153,16 @@ jQuery(document).ready(function($) {
 	
 } );
 // Add new staff form validation
-jQuery(function(){
-  jQuery('#add-staff').validate();
-});
+	jQuery(function(){
+  jQuery('#add-staff').validate({
+		 rules: {
+		 name: "required"
+		 },
+		 messages: {
+		 name: "Please add a name for your new staff member"
+		 }
+		 });
+		});
 </script>
 
 <?php 

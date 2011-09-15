@@ -14,10 +14,10 @@ function add_new_event_staff(){
             <td align="left" valign="top">
 								<ul>
                 <li>
-                  <label for="name">
-                    <?php _e('Name','event_espresso'); ?>
+                  <label for="staff-name">
+                    <?php _e('Name','event_espresso'); ?><em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em>
                   </label>
-                  <input class="required staff-name" type="text" id="name" name="name" size="25" />
+                  <input class="required staff-name" type="text" id="staff-name" name="name" size="25" />
                 </li>
                 <li>
                   <label for="email">
@@ -126,5 +126,7 @@ function add_new_event_staff(){
   </div>
 </div>
 <?php 
-    espresso_tiny_mce();
+/* removed as reported to cause issues by Imon    
+espresso_tiny_mce();
+*/
 } 
