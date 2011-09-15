@@ -143,8 +143,7 @@ jQuery(document).ready(function($) {
 			"aoColumns": [
 							{ "bSortable": false },
 							 null,
-							 <?php echo function_exists('espresso_is_admin')&&espresso_is_admin()==true ? 'null,' : ''; ?>
-							 null,
+                             null,
 							 <?php echo function_exists('espresso_is_admin')&&espresso_is_admin()==true ? 'null,' : ''; ?>
 							 { "bSortable": false }
 							
