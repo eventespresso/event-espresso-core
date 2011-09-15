@@ -1,5 +1,5 @@
 <?php
-
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'); 
 function edit_attendee_record() {
     global $wpdb, $org_options;
 	//$wpdb->show_errors();
@@ -77,13 +77,12 @@ function edit_attendee_record() {
 			/**
 			 * End
 			 * */
-			
             $sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
             $wpdb->query($sql);
             /**
              * Added by Imon
              * */
-			$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantitay > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
+			$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
             $wpdb->query($sql);
 			event_espresso_cleanup_multi_event_registration_id_group_data();
 			event_espresso_cleanup_attendee_cost_data();
@@ -91,7 +90,23 @@ function edit_attendee_record() {
         }else if (!empty($_REQUEST['attendee_action']) && $_REQUEST['attendee_action'] == 'update_attendee') {
 		/*
          * Update the attendee information
-         */ 
+         */
+		 	$update_time = false;
+			if (isset($_POST['start_time_id'])){
+				$times_sql = "SELECT ese.start_time, ese.end_time ";
+				$times_sql .= "FROM " . EVENTS_START_END_TABLE . " ese ";
+				$times_sql .= " WHERE ";
+				$times_sql .= "ese.id='" . $_POST['start_time_id'] . "' ";
+				//echo $times_sql;
+				$times = $wpdb->get_results($times_sql);
+				if ($wpdb->num_rows > 0) {
+					foreach ($times as $time) {
+						$start_time = $time->start_time;
+						$end_time = $time->end_time;
+					}
+					$update_time = true;
+				}
+			}
             $fname = isset($_POST['fname']) ? $_POST['fname']:'';
             $lname = isset($_POST['lname']) ? $_POST['lname']:'';
             $address = isset($_POST['address']) ? $_POST['address']:'';
@@ -104,7 +119,11 @@ function edit_attendee_record() {
             $event_id = isset($_POST['event_id']) ? $_POST['event_id']:'';
             $txn_type = isset($_POST['txn_type']) ? $_POST['txn_type']:'';
 
-            $sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET fname='$fname', lname='$lname', address='$address',address2='$address2', city='$city', state='$state', zip='$zip', phone='$phone', email='$email', txn_type='$txn_type' WHERE id ='$id'";
+            $sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET fname='$fname', lname='$lname', address='$address',address2='$address2', city='$city', state='$state', zip='$zip', phone='$phone', email='$email', txn_type='$txn_type' ";
+			if ($update_time == true)
+				$sql .= ", event_time='$start_time', end_time='$end_time' ";
+			$sql .= " WHERE id ='$id' ";
+			//echo $sql;
             $wpdb->query($sql);
 
             //print_r($_POST);
@@ -391,30 +410,44 @@ function edit_attendee_record() {
 
         if (!empty($_REQUEST['status']) && $_REQUEST['status'] == 'saved') {
 ?>
-            <div id="message" class="updated fade">
-              <p><strong>
-                <?php _e('Attendee details saved for ' . $fname . ' ' . $lname . '.', 'event_espresso'); ?>
-                </strong></p>
-            </div>
+
+<div id="message" class="updated fade">
+  <p><strong>
+    <?php _e('Attendee details saved for ' . $fname . ' ' . $lname . '.', 'event_espresso'); ?>
+    </strong></p>
+</div>
 <?php
 		}
 ?>
 <div class="metabox-holder">
-    <div class="postbox">
-        <h3><?php _e('Registration Id <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">#' . $registration_id . '</a> | ID #' . $id . ' | Name: ' . $fname . ' ' . $lname . ' | Registered For:', 'event_espresso'); ?>
-        <a href="admin.php?page=events&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?></h3>
-        <div class="inside">
-        <table width="100%">
-            <tr>
-                <td width="50%">
-                    <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" class="espresso_form">
-                        <h4>
-                            <?php _e('Registration Information', 'event_espresso'); ?> <?php echo $is_additional_attendee == false ? '[ <span class="green_text">'.__('Primary Attendee Record', 'event_espresso').'</span> ]': '[ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">View/Edit Primary Attendee</a> ]'; ?>
-                        </h4>
-                        <fieldset>
-                        <ul>
-                            <li>                  
-                            <?php
+  <div class="postbox">
+    <h3>
+      <?php _e('Registration Id <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">#' . $registration_id . '</a> | ID #' . $id . ' | Name: ' . $fname . ' ' . $lname . ' | Registered For:', 'event_espresso'); ?>
+      <a href="admin.php?page=events&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?></h3>
+    <div class="inside">
+      <table width="100%">
+        <tr>
+          <td width="50%"><form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" class="espresso_form">
+              <h4>
+                <?php _e('Registration Information', 'event_espresso'); ?>
+                <?php echo $is_additional_attendee == false ? '[ <span class="green_text">'.__('Primary Attendee Record', 'event_espresso').'</span> ]': '[ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">View/Edit Primary Attendee</a> ]'; ?> </h4>
+              <fieldset>
+                <ul>
+                  <li>
+            <?php
+			$time_id =0;
+			$sql = "SELECT id FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' AND start_time = '".$event_time."' ";
+			//echo $sql;
+			$event_times = $wpdb->get_results($sql);
+			if ($wpdb->num_rows > 0) {
+				$time_id = $wpdb->last_result[0]->id;
+			}
+			//echo $time_id;
+			echo event_espresso_time_dropdown($event_id, $label = 1, $multi_reg = 0, $time_id);	
+?>
+                  </li>
+                  <li>
+                    <?php
         if (count($question_groups) > 0) 
         {
             $questions_in = '';
@@ -504,7 +537,8 @@ function edit_attendee_record() {
                 }
             }//end questions display
         }
-?></li>
+?>
+                  </li>
                   <input type="hidden" name="id" value="<?php echo $id ?>" />
                   <input type="hidden" name="registration_id" value="<?php echo $registration_id ?>" />
                   <input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
@@ -517,27 +551,26 @@ function edit_attendee_record() {
                   </li>
                 </ul>
               </fieldset>
-            </form>
-          </td>
-            <td  width="50%" valign="top">
-            <?php if (count($additional_attendees) > 0){ ?>
-          
-              <h4>
-                <?php _e('Additional Attendees', 'event_espresso'); ?>
-                </h4>
-              <ol>
-            <?php	
+            </form></td>
+          <td  width="50%" valign="top"><?php if (count($additional_attendees) > 0){ ?>
+            <h4>
+              <?php _e('Additional Attendees', 'event_espresso'); ?>
+            </h4>
+            <ol>
+              <?php	
                 foreach ($additional_attendees as $att => $row)
                 { 
                     $attendee_num++;
             ?>
-			<li><a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;id=<?php echo $att; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;attendee_num=<?php echo $attendee_num; ?>" title="<?php _e('Edit Attendee', 'event_espresso'); ?>"><strong><?php echo $row['full_name']; ?></strong> (<?php echo $row['email']; ?>)</a> | <a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;attendee_id=<?php echo $att; ?>&amp;form_action=edit_attendee&amp;attendee_action=delete_attendee&amp;id=<?php echo $id ?>" title="<?php _e('Delete Attendee', 'event_espresso'); ?>" onclick="return confirmDelete();"><?php _e('Delete', 'event_espresso'); ?></a></li>
-            <?php 	
+              <li><a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;id=<?php echo $att; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;attendee_num=<?php echo $attendee_num; ?>" title="<?php _e('Edit Attendee', 'event_espresso'); ?>"><strong><?php echo $row['full_name']; ?></strong> (<?php echo $row['email']; ?>)</a> | <a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;attendee_id=<?php echo $att; ?>&amp;form_action=edit_attendee&amp;attendee_action=delete_attendee&amp;id=<?php echo $id ?>" title="<?php _e('Delete Attendee', 'event_espresso'); ?>" onclick="return confirmDelete();">
+                <?php _e('Delete', 'event_espresso'); ?>
+                </a></li>
+              <?php 	
                 } 
             ?>
             </ol>
             <?php	} ?>
-        <?php
+            <?php
         
         /**
          * Begin Attendee Payment Information 
@@ -564,71 +597,89 @@ function edit_attendee_record() {
         if ( !$has_seating_chart && !$ice_age)
         {
         ?>
-        <h4><?php _e('Payment Information', 'event_espresso'); ?></h4>
-        
-                <form method="POST" action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>&status=saved" class="espresso_form">
-                    <fieldset>
-                        <ul>
-                            <li>
-                                <p><strong><?php _e( 'Payment Status:', 'event_espresso' ); ?></strong> <?php echo $payment_status; ?> <?php echo event_espresso_paid_status_icon($payment_status);?> [ <a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?>"> <?php _e('View/Edit Payment', 'event_espresso'); ?></a> ]</p>
-                            </li>
-                            <li>
-                            <p><strong><?php _e( 'Transaction ID:', 'event_espresso' ); ?></strong> <?php echo !empty($txn_id) ? $txn_id :'N/A'; ?></p>
-                            </li>
-                            <li>
-                            <p><strong><?php _e( 'Date Paid:', 'event_espresso' ); ?></strong> <?php echo !empty($payment_date) ? event_date_display($payment_date): 'N/A' ?></p>
-                            </li>
-                            <?php if ($multi_reg ==true){ ?>
-                            <li>
-                                <p><strong><?php _e('Multiple Event Total:', 'event_espresso'); ?></strong> <?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id, 'session_total'=>true)); ?></p>
-                            </li>
-                            <?php }?>
-                            <li>
-                                <p><strong><?php _e('This Registration Total:', 'event_espresso'); ?></strong> <?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id, 'reg_total'=>true)); ?></p>
-                            </li>
-                            <li>
-                                <strong><?php _e( 'This Attendee:', 'event_espresso' ); ?></strong>
-                                <table width="100%" border="0">
-                                    <tr>
-                                        <td width="25%" align="left" valign="top"><label><?php _e( 'Amount:', 'event_espresso' ); ?></label></td>
-                                        <td width="25%" align="left" valign="top"><label><?php _e( '# Tickets:', 'event_espresso' ); ?></label></td>
-                                        <td width="50%" align="left" valign="top"><label><?php _e( 'Total:', 'event_espresso' ); ?></label></td>
-                                    </tr>
-                                    <tr>
-                                        <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?><input name="amount_pd" type="text" value ="<?php echo espresso_attendee_price(array('attendee_id'=>$id, 'single_price'=>true)); ?>" /></td>
-                                        <td align="left" valign="top"> X <input name="quantity" type="text" value ="<?php echo !empty($quantity) ? $quantity:1 ; ?>"  /></td>
-                                        <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id)); ?></td>
-                                    </tr>
-                                </table>
-                            </li>
-                            <li>
-                                <input type="submit" name="Submit" value="Update Payment" />
-                            </li>
-                        </ul>
-                    </fieldset>
-                    <input type="hidden" name="id" value="<?php echo $id ?>" />
-                    <input type="hidden" name="registration_id" value="<?php echo $registration_id ?>" />
-                    <input type="hidden" name="form_action" value="edit_attendee" />
-                    <input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
-                    <input type="hidden" name="attendee_payment" value="update_payment" />            
-                </form>
-        <?php
+            <h4>
+              <?php _e('Payment Information', 'event_espresso'); ?>
+            </h4>
+            <form method="POST" action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>&status=saved" class="espresso_form">
+              <fieldset>
+                <ul>
+                  <li>
+                    <p><strong>
+                      <?php _e( 'Payment Status:', 'event_espresso' ); ?>
+                      </strong> <?php echo $payment_status; ?> <?php echo event_espresso_paid_status_icon($payment_status);?> [ <a href="admin.php?page=events&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?>">
+                      <?php _e('View/Edit Payment', 'event_espresso'); ?>
+                      </a> ]</p>
+                  </li>
+                  <li>
+                    <p><strong>
+                      <?php _e( 'Transaction ID:', 'event_espresso' ); ?>
+                      </strong> <?php echo !empty($txn_id) ? $txn_id :'N/A'; ?></p>
+                  </li>
+                  <li>
+                    <p><strong>
+                      <?php _e( 'Date Paid:', 'event_espresso' ); ?>
+                      </strong> <?php echo !empty($payment_date) ? event_date_display($payment_date): 'N/A' ?></p>
+                  </li>
+                  <?php if ($multi_reg ==true){ ?>
+                  <li>
+                    <p><strong>
+                      <?php _e('Multiple Event Total:', 'event_espresso'); ?>
+                      </strong> <?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id, 'session_total'=>true)); ?></p>
+                  </li>
+                  <?php }?>
+                  <li>
+                    <p><strong>
+                      <?php _e('This Registration Total:', 'event_espresso'); ?>
+                      </strong> <?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id, 'reg_total'=>true)); ?></p>
+                  </li>
+                  <li> <strong>
+                    <?php _e( 'This Attendee:', 'event_espresso' ); ?>
+                    </strong>
+                    <table width="100%" border="0">
+                      <tr>
+                        <td width="25%" align="left" valign="top"><label>
+                            <?php _e( 'Amount:', 'event_espresso' ); ?>
+                          </label></td>
+                        <td width="25%" align="left" valign="top"><label>
+                            <?php _e( '# Tickets:', 'event_espresso' ); ?>
+                          </label></td>
+                        <td width="50%" align="left" valign="top"><label>
+                            <?php _e( 'Total:', 'event_espresso' ); ?>
+                          </label></td>
+                      </tr>
+                      <tr>
+                        <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?>
+                          <input name="amount_pd" type="text" value ="<?php echo espresso_attendee_price(array('attendee_id'=>$id, 'single_price'=>true)); ?>" /></td>
+                        <td align="left" valign="top"> X
+                          <input name="quantity" type="text" value ="<?php echo !empty($quantity) ? $quantity:1 ; ?>"  /></td>
+                        <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id)); ?></td>
+                      </tr>
+                    </table>
+                  </li>
+                  <li>
+                    <input type="submit" name="Submit" value="Update Payment" />
+                  </li>
+                </ul>
+              </fieldset>
+              <input type="hidden" name="id" value="<?php echo $id ?>" />
+              <input type="hidden" name="registration_id" value="<?php echo $registration_id ?>" />
+              <input type="hidden" name="form_action" value="edit_attendee" />
+              <input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
+              <input type="hidden" name="attendee_payment" value="update_payment" />
+            </form>
+            <?php
         } // !$has_seating_chart
-        ?>
-            </td>
-          </tr>
-        </table>
-        <p> 
-            <strong> 
-                <a href="admin.php?page=events&event_id=<?php echo $event_id; ?>&event_admin_reports=list_attendee_payments"> &lt;&lt;
-                    <?php _e('Back to List', 'event_espresso'); ?>
-                </a> 
-            </strong> 
-        </p>
-        </div>
+        ?></td>
+        </tr>
+      </table>
+      <p> <strong> <a href="admin.php?page=events&event_id=<?php echo $event_id; ?>&event_admin_reports=list_attendee_payments"> &lt;&lt;
+        <?php _e('Back to List', 'event_espresso'); ?>
+        </a> </strong> </p>
     </div>
+  </div>
 </div>
 <?php
         //event_list_attendees();
 	}
 }
+
