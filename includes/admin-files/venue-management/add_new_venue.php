@@ -16,7 +16,7 @@ function add_new_event_venue(){
 								<ul>
                 <li>
                   <label for="name">
-                    <?php _e('Name','event_espresso'); ?><em title="This item is required"> *</em>
+                    <?php _e('Name','event_espresso'); ?><em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em>
                   </label>
                   <input class="required venue-man-name" type="text" id="name" name="name" size="25" />
                 </li>

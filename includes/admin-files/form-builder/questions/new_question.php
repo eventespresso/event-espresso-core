@@ -12,7 +12,7 @@ function event_espresso_form_builder_new(){
 
     <ul>
 				<li>
-					<label for="question"><?php _e('Question:','event_espresso'); ?><em title="This item is required"> *</em></label>
+					<label for="question"><?php _e('Question:','event_espresso'); ?><em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em></label>
 					<input class="question-name"  name="question" id="question" size="50" value="" type="text" />
 				</li>
     

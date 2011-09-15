@@ -12,7 +12,7 @@ function add_new_event_discount(){
       <ul>
         <li>
           <label for="coupon_code">
-            <?php _e('Promotional Code','event_espresso'); ?><em title="This item is required"> *</em>
+            <?php _e('Promotional Code','event_espresso'); ?><em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em>
           </label>
           <input  id="coupon_code" type="text" name="coupon_code" size="25" />
         </li>
