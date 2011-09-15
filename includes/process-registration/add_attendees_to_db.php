@@ -1,4 +1,5 @@
 <?php
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'); 
 if (!function_exists('event_espresso_add_attendees_to_db')) {
 
     //This entire function can be overridden using the "Custom Files" addon

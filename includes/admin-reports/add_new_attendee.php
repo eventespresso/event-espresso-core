@@ -1,4 +1,5 @@
 <?php
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'); 
 function add_new_attendee($event_id){
 	if (isset($_REQUEST['regevent_action_admin']) && $_REQUEST['regevent_action_admin']== 'post_attendee'){
 		$attendee_id = event_espresso_add_attendees_to_db();
