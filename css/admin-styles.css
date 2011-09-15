@@ -1631,7 +1631,7 @@ div.box-right-body ul.infolinks li a {
  margin-top 0;
 	padding: 0 4px;
 }
-form input.required.error {
+form input.error {
 	border: 1px solid #E16D35;
 	-moz-box-shadow: 0 0 3px #d2d2d2;
 	-webkit-box-shadow: 0 0 3px #d2d2d2;

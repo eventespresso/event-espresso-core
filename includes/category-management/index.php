@@ -159,11 +159,18 @@ function event_espresso_categories_config_mnu() {
         } );
 // Add new category form validation
 	jQuery(function(){
-   jQuery('#add-new-cat').validate();
-  		
+	jQuery("#add-new-cat").validate({
+	rules: {
+	category_name: "required"
+	},
+	messages: {
+	 category_name: "please add a category name"
+		}
+	
+ });		
 		});
 </script>					
-    </script>
+
 
     <?php
 }

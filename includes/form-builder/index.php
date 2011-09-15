@@ -261,14 +261,16 @@ function event_espresso_questions_config_mnu() {
 
 // Add new question or question group form validation
 	jQuery(function(){
-   jQuery('#new-question-form').validate();
-  
-		 /*jQuery('#new-question-form .question-name').rules("add", {
-		   required: true,
-			 messages: {
-			 required:  'Please add a name for your group or question.',
-			 }
-		 }); */
+   jQuery('#new-question-form').validate({
+		  rules: {
+			question: "required",
+			values: "required"
+			},
+			messages: {
+			question: "Please add a title for your question",
+			values: "Please add a list of values for your question"
+			}
+   });
 		
 		});				
 </script>

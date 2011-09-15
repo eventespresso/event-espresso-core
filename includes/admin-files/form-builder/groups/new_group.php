@@ -17,8 +17,8 @@ function event_espresso_form_group_new(){
          <legend><?php _e('Group Information', 'event_espresso') ?></legend>				 
           <ul>
            <li>
-             <label for="group_name"><?php _e('Group Name:','event_espresso'); ?><em>*</em></label>
-             <input class="required group-name" name="group_name" id="group_name" size="50" value="" type="text" />
+             <label for="group_name"><?php _e('Group Name:','event_espresso'); ?><em title="This item is required"> *</em></label>
+             <input class="group-name" name="group_name" id="group_name" size="50" value="" type="text" />
            </li>
 				
            <li>

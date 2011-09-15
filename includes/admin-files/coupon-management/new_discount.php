@@ -11,16 +11,16 @@ function add_new_event_discount(){
       <input type="hidden" name="action" value="add">
       <ul>
         <li>
-          <label>
-            <?php _e('Promotional Code','event_espresso'); ?>
+          <label for="coupon_code">
+            <?php _e('Promotional Code','event_espresso'); ?><em title="This item is required"> *</em>
           </label>
-          <input class="required" type="text" name="coupon_code" size="25">
+          <input  id="coupon_code" type="text" name="coupon_code" size="25" />
         </li>
         <li>
           <label>
             <?php _e('Price Discount','event_espresso'); ?>
           </label>
-          <input type="text" name="coupon_code_price">
+          <input type="text" name="coupon_code_price" />
         </li>
         <li>
           <?php _e('Is this a percentage discount?','event_espresso'); ?>

@@ -12,8 +12,8 @@ function event_espresso_form_builder_new(){
 
     <ul>
 				<li>
-					<label for="question"><?php _e('Question:','event_espresso'); ?></label>
-					<input class="required question-name"  name="question" id="question" size="50" value="" type="text" />
+					<label for="question"><?php _e('Question:','event_espresso'); ?><em title="This item is required"> *</em></label>
+					<input class="question-name"  name="question" id="question" size="50" value="" type="text" />
 				</li>
     
 				<li>

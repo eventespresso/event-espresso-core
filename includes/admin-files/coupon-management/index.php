@@ -108,7 +108,7 @@ function event_espresso_discount_config_mnu() {
         </div>
     </div>
 
-    <script>
+<script type="text/javascript">
         jQuery(document).ready(function($) {
 
             /* show the table data */
@@ -133,7 +133,15 @@ function event_espresso_discount_config_mnu() {
         } );
 // Add new promo code form validation
 	jQuery(function(){
-		jQuery('#new-promo-code').validate();
+		jQuery("#new-promo-code").validate( {
+		rules: {
+		coupon_code: "required"
+		},
+		messages: {
+		coupon_code: "Please add your promotional code"
+		}
+		});
+	
 		});
     </script>
     <?php
