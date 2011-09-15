@@ -97,7 +97,12 @@ if ($_REQUEST['action'] == 'edit'){require_once("edit_staff.php");edit_event_sta
               <td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $staff_id?>]" type="checkbox"  title="Delete <?php echo stripslashes($name)?>"></td>
                <td class="column-comments" style="padding-top:3px;"><?php echo $staff_id?></td>
               <td class="post-title page-title column-title"><strong><a href="admin.php?page=event_staff&action=edit&id=<?php echo $staff_id?>"><?php echo $name?></a></strong>
-              <div class="row-actions"><span class="edit"><a href="admin.php?page=event_staff&action=edit&id=<?php echo $staff_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=event_staff&action=delete_staff&id=<?php echo $staff_id?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
+              <div class="row-actions">
+                <span class="edit"><a href="admin.php?page=event_staff&action=edit&id=<?php echo $staff_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
+                <span class="delete">
+                    <a  onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_staff&action=delete_staff&id=<?php echo $staff_id?>"><?php _e('Delete', 'event_espresso'); ?></a>
+                </span>
+              </div>
               </td>
               <?php if(function_exists('espresso_is_admin')&&espresso_is_admin()==true) {  ?>
               <td><?php echo espresso_user_meta($wp_user, 'user_firstname') !=''?espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname'):espresso_user_meta($wp_user, 'display_name'); ?></td>
@@ -115,7 +120,7 @@ if ($_REQUEST['action'] == 'edit'){require_once("edit_staff.php");edit_event_sta
           <strong>
           <?php _e('Check All','event_espresso'); ?>
           </strong>
-          <input name="delete_staff" type="submit" class="button-secondary" id="delete_staff" value="<?php _e('Delete Staff Member(s)','event_espresso'); ?>" style="margin-left:10px 0 0 10px;" onclick="return confirmDelete();">
+          <input name="delete_staff" type="submit" class="button-secondary" id="delete_staff" value="<?php _e('Delete Staff Member(s)','event_espresso'); ?>" style="margin-left:10px 0 0 10px;" onclick="return confirmDelete();" />
           <a  style="margin-left:5px"class="button-primary" href="admin.php?page=event_staff&amp;action=add_new_staff"><?php _e('Add New Staff Member','event_espresso'); ?></a>
         </p>
         </div>
@@ -149,10 +154,9 @@ jQuery(document).ready(function($) {
 	
 } );
 // Add new staff form validation
-	jQuery(function(){
+jQuery(function(){
   jQuery('#add-staff').validate();
-		});
-</script>
+});
 </script>
 
 <?php 
