@@ -51,7 +51,7 @@ function edit_attendee_record() {
              * Get primary attendee id to update the amount_pd
              */
             $primary_attendee_id = $wpdb->get_var($wpdb->prepare("select id from ".EVENTS_ATTENDEE_TABLE." where registration_id = '%s' order by id limit 1 ",$registration_id));
-            $a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET amount_pd = '%d' WHERE id = '%d' " ;
+            $a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET amount_pd = '%f' WHERE id = '%d' " ;
 			$wpdb->query( $wpdb->prepare($a_sql,$event_cost,$primary_attendee_id) );
 		}
 
