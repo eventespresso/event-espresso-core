@@ -17,7 +17,7 @@ function add_new_event_category() {
                <input type="hidden" name="action" value="add">
                     
                  <p class="add-cat-name inputunder">
-									  <label for="category_name"><?php _e('Category Name', 'event_espresso'); ?></label> 
+									  <label for="category_name"><?php _e('Category Name', 'event_espresso'); ?><em title="This item is required"> *</em></label> 
 									  <input id="category_name" type="text" name="category_name" size="25" />
 									</p>
                  <p class="add-cat-id inputunder">
