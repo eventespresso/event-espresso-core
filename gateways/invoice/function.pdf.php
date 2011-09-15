@@ -90,5 +90,5 @@ class PDF extends FPDF{
 
 //Build the PDF			
 function pdftext($val){
-	return iconv("UTF-8", "ISO-8859-1",$val);
+	return iconv("UTF-8", "ISO-8859-1",stripslashes_deep($val));
 }
