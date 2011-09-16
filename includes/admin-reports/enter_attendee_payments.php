@@ -269,7 +269,7 @@ function enter_attendee_payments() {
                     //TODO:Need to check this after pricing module is done [IMON]
                     echo $org_options[ 'currency_symbol' ] 
                   ?>
-                    <input readonly="true" type="text" name="amount_pd" size="45" value ="<?php echo $total_paid; ?>" />
+                    <input style="width:100px;" readonly="true" type="text" name="amount_pd" size="20" value ="<?php echo $total_paid; ?>" /> <?php echo ' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee&show_payment=true">'.__('Edit Payment', 'event_espresso').'</a> ] ';?>
                 </li>
                 <li>
                   <label>

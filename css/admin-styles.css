@@ -1617,6 +1617,12 @@ div.box-right-body ul.infolinks li a {
 	padding: 4px;
 	text-decoration: none;
 }
+
+.yellow_inform {
+	background-color: #ffffe0;
+	border: #e6db55 1px solid;
+	padding:4px;
+}
 #wpbody #post-body .attention-block {
 	background: #E9D2B7;
 	border: 1px solid #000;

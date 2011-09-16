@@ -632,7 +632,7 @@ function edit_attendee_record() {
                       <?php _e('This Registration Total:', 'event_espresso'); ?>
                       </strong> <?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id, 'reg_total'=>true)); ?></p>
                   </li>
-                  <li> <strong>
+                  <li> <div  <?php if (isset($_REQUEST['show_payment']) && $_REQUEST['show_payment'] =='true') echo ' class="yellow_inform"'; ?>><strong>
                     <?php _e( 'This Attendee:', 'event_espresso' ); ?>
                     </strong>
                     <table width="100%" border="0">
@@ -654,7 +654,7 @@ function edit_attendee_record() {
                           <input name="quantity" type="text" value ="<?php echo !empty($quantity) ? $quantity:1 ; ?>"  /></td>
                         <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id)); ?></td>
                       </tr>
-                    </table>
+                    </table></div>
                   </li>
                   <li>
                     <input type="submit" name="Submit" value="Update Payment" />
