@@ -103,7 +103,9 @@ function event_espresso_categories_config_mnu() {
                                             <td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $category_id ?>]" type="checkbox"  title="Delete <?php echo stripslashes($category_name) ?>"></td>
                                             <td class="column-comments" style="padding-top:3px;"><?php echo $category_id ?></td>
                                             <td class="post-title page-title column-title"><strong><a href="admin.php?page=event_categories&action=edit&id=<?php echo $category_id ?>"><?php echo $category_name ?></a></strong>
-                                                <div class="row-actions"><span class="edit"><a href="admin.php?page=event_categories&action=edit&id=<?php echo $category_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=event_categories&action=delete_category&id=<?php echo $category_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
+                                               <div class="row-actions">
+																								  <span class="edit"><a href="admin.php?page=event_categories&action=edit&id=<?php echo $category_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
+																									<span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_categories&action=delete_category&id=<?php echo $category_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
                                             </td>
                                             <?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
                                                 <td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
@@ -168,7 +170,7 @@ function event_espresso_categories_config_mnu() {
 		}
 	
  });		
-		});
+	});
 </script>					
 
 

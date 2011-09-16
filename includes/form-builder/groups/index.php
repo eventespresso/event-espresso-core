@@ -164,7 +164,11 @@ function event_espresso_question_groups_config_mnu() {
                                             </td>
 
                                             <td class="post-title page-title column-title"><strong><a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=<?php echo $group_id ?>"><?php echo $group_name ?></a></strong>
-                                                <div class="row-actions"><span class="edit"><a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=<?php echo $group_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><?php if ($system_group == 0) : ?><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete"  href="admin.php?page=form_groups&amp;action=delete_group&amp;group_id=<?php echo $group_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span><?php endif; ?></div></td>
+                                              <div class="row-actions">
+																									<span class="edit"><a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=<?php echo $group_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
+																									 <?php if ($system_group == 0) : ?><span class="delete"><a onclick="return confirmDelete();" class="submitdelete"  href="admin.php?page=form_groups&amp;action=delete_group&amp;group_id=<?php echo $group_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span><?php endif; ?>
+																								</div>
+																							</td>
                                             <td class="author column-author"><?php echo $group_identifier ?></td>
                                             <?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
                                                 <td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>

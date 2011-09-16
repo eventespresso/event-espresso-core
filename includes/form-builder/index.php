@@ -170,7 +170,11 @@ function event_espresso_questions_config_mnu() {
                                             </td>
 
                                             <td class="post-title page-title column-title"><strong><a href="admin.php?page=form_builder&amp;action=edit_question&amp;question_id=<?php echo $question_id ?>"><?php echo $question_name ?></a></strong>
-                                                <div class="row-actions"><span class="edit"><a href="admin.php?page=form_builder&amp;action=edit_question&amp;question_id=<?php echo $question_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><?php if ($system_name == ''): ?><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete"  href="admin.php?page=form_builder&amp;action=delete_question&amp;question_id=<?php echo $question_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span><?php endif; ?></div></td>
+                                              <div class="row-actions">
+																									 <span class="edit"><a href="admin.php?page=form_builder&amp;action=edit_question&amp;question_id=<?php echo $question_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
+																									  <?php if ($system_name == ''): ?><span class="delete"><a onclick="return confirmDelete();" class="submitdelete"  href="admin.php?page=form_builder&amp;action=delete_question&amp;question_id=<?php echo $question_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span><?php endif; ?>
+																								</div>
+																							</td>
                                             <td class="author column-author"><?php echo $values ?></td>
                                             <?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
                                                 <td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
