@@ -1,4 +1,5 @@
 <?php
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function event_espresso_support() {
 ?>
 
@@ -297,7 +298,7 @@ function event_espresso_support() {
                         <ul>
                           <li><span class="highlight">[EVENT_LIST]</span></li>
                           <li><span class="highlight">[EVENT_LIST limit=1]</span></li>
-                          <li><span class="highlight"> [EVENT_LIST show_expired=true]</span></li>
+                          <li><span class="highlight">[EVENT_LIST show_expired=true]</span></li>
                           <li><span class="highlight">[EVENT_LIST show_deleted=true]</span></li>
                           <li><span class="highlight">[EVENT_LIST show_secondary=true]</span></li>
                           <li><span class="highlight">[EVENT_LIST show_recurrence=true]</span></li>
@@ -383,6 +384,7 @@ function event_espresso_support() {
                              <?php _e('Add the event id to the shortcode to display all the venues for an event:', 'event_espresso'); ?>
                              <br />
                             <span class="highlight">[ESPRESSO_VENUE event_id="8"]</span></dd>
+                            
                         </dl>
                         <h5>
                           <?php _e('Available parameters:', 'event_espresso'); ?>
@@ -393,16 +395,27 @@ function event_espresso_support() {
                           <li>inside_wrapper_class = class name for the outside wrapper. Eg. venue_details</li>
                           <li>inside_wrapper = inside wrapper element. Eg. p</li>
                           <li>title_class = class name for the title Eg. venue_name</li>
-                          <li> title_wrapper = title wrapper element. Eg. h3</li>
+                          <li>title_wrapper = title wrapper element. Eg. h3</li>
                           <li>show_title = show the venue name? (true|false default true)</li>
                           <li>image_class = class name for the image. Eg. venue_image</li>
                           <li>show_image = show the image? (true|false default true)</li>
-                          <li> show_description = show the description? (true|false default true)</li>
-                          <li> show_address = show the address of the venue? (true|false default true)</li>
+                          <li>show_description = show the description? (true|false default true)</li>
+                          <li>show_address = show the address of the venue? (true|false default true)</li>
                           <li>show_additional_details = show the additional details? (true|false default true)</li>
                           <li>show_google_map_link = show the Google map link? (true|false default true)</li>
-                          <li> map_link_text = text to display in the link. Eg. Map and Directions</li>
+                          <li>map_link_text = text to display in the link. Eg. Map and Directions</li>
                         </ul>
+                        
+                        <dl>
+                        <dt>
+                            <?php _e('Show All Events in a Venue:', 'event_espresso'); ?>
+                          </dt>
+                            <dd>
+                            <span class="highlight">[ESPRESSO_VENUE_EVENTS id="21"]</span></dd>
+                            <dd>
+                            <span class="highlight">[ESPRESSO_VENUE_EVENTS id="21" limit="5"]</span></dd>
+                           </dl> 
+                        
                       </div>
                       <div class="shortcode-box">
                         <h4>
@@ -437,7 +450,7 @@ function event_espresso_support() {
                             <br />
                             <span class="highlight">[ESPRESSO_STAFF event_id="8"]</span></dd>
                         </dl>
-                        <h5>Available parameters:</h5>
+                        <h5><?php _e('Available parameters:', 'event_espresso'); ?></h5>
                         <ul>
                           <li>outside_wrapper_class = class name for the outside wrapper. Eg. event_staff</li>
                           <li>outside_wrapper = outside wrapper element. Eg. div</li>
@@ -454,7 +467,7 @@ function event_espresso_support() {
                         </ul>
                       </div>
                       <div class="shortcode-box">
-                        <h4>Calandar Shortcodes</h4>
+                        <h4><?php _e('Calendar Shortcodes', 'event_espresso'); ?></h4>
                         <ul>
                           <li><span class="highlight">[ESPRESSO_CALENDAR]</span></li>
                           <li><span class="highlight"> [ESPRESSO_CALENDAR show_expired="true"]</span></li>
@@ -464,7 +477,7 @@ function event_espresso_support() {
                         </ul>
                       </div>
                       <div class="shortcode-box">
-                        <h4>Category Shortcodes</h4>
+                        <h4><?php _e('Category Shortcodes', 'event_espresso'); ?></h4>
                         <p><span class="highlight">[EVENT_ESPRESSO_CATEGORY event_category_id="your_category_indentifier"]</span></p>
                       </div>
                     </div>
@@ -488,23 +501,23 @@ function event_espresso_support() {
                   <div class="inside">
                     <div class="padding">
                       <?php 
-                										global $wpdb, $wp_version;
-                										$wp_req_version = '3.1';
-                										$php_req_version = '5.2';
-                										$mysql_req_version = '5.0';
-                										$is_php_valid = version_compare(phpversion(), $php_req_version, '>');
-                										$is_mysql_valid = version_compare($wpdb->db_version(), $mysql_req_version, '>');
+						global $wpdb, $wp_version;
+						$wp_req_version = '3.1';
+						$php_req_version = '5.2';
+						$mysql_req_version = '5.0';
+						$is_php_valid = version_compare(phpversion(), $php_req_version, '>');
+						$is_mysql_valid = version_compare($wpdb->db_version(), $mysql_req_version, '>');
                 										
-                										if ( !version_compare( $wp_version, $wp_req_version, '>=' ) ) {
-                											echo '<p class="red_alert">'.__('This version of Event Espresso requires WordPress version', 'event_espresso').' '. $wp_req_version.'+. '.__('Please upgrade to the latest version of WordPress.', 'event_espresso').'</p>';
-                										}
-                										if(!$is_php_valid){
-                											echo '<p class="red_alert">'.__('Your version of PHP is out of date, please update to the latest version of PHP. <br>Required version of PHP:', 'event_espresso'). ' ' .$php_req_version.'</p>';
-                										}
-                										if(!$is_mysql_valid){
-                											echo '<p class="red_alert">'.__('Your version of MySQL is out of date, please update to the latest version of MySQL. <br>Required version of MySQL:', 'event_espresso'). ' ' .$mysql_req_version.'</p>';
-                										}
-                										?>
+						if ( !version_compare( $wp_version, $wp_req_version, '>=' ) ) {
+							echo '<p class="red_alert">'.__('This version of Event Espresso requires WordPress version', 'event_espresso').' '. $wp_req_version.'+. '.__('Please upgrade to the latest version of WordPress.', 'event_espresso').'</p>';
+						}
+						if(!$is_php_valid){
+							echo '<p class="red_alert">'.__('Your version of PHP is out of date, please update to the latest version of PHP. <br>Required version of PHP:', 'event_espresso'). ' ' .$php_req_version.'</p>';
+						}
+						if(!$is_mysql_valid){
+							echo '<p class="red_alert">'.__('Your version of MySQL is out of date, please update to the latest version of MySQL. <br>Required version of MySQL:', 'event_espresso'). ' ' .$mysql_req_version.'</p>';
+						}
+					?>
                       <div class="localhost-information">
                         <dl>
                           <dt>
@@ -724,7 +737,7 @@ function event_espresso_support() {
                       <?php _e('If you have clicked the button above and event dates that should be expired, are showing an error or seem to be out of order. Go into the &quot;<a href="admin.php?page=events">Event Management</a>&quot; page and click the &quot;Edit this Event&quot; button then click the &quot;Update Event&quot; button on each event that is displaying the wrong date(s). This process should fix the problem. If it doesn\'t then send a support request using the help and support button above.', 'event_espresso'); ?>
                       </p>
                       <?php
-                                        if (event_espresso_verify_attendee_data() == true) {
+						if (event_espresso_verify_attendee_data() == true) {
                                             ?>
                       <a name="attendee_data" id="attendee_data"></a>
                       <p class="red_text"><strong>
@@ -740,7 +753,7 @@ function event_espresso_support() {
                         </p>
                       </form>
                       <?php
-                                        }
+						}
                                         ?>
                     </div>
                   </div>
