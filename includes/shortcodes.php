@@ -1,4 +1,5 @@
 <?php
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 //These are the core shortcodes used by the plugin.
 //If you would like to add your own shortcodes, please puchasse the custom shortcodes addon from http://eventespresso.com/download/plugins-and-addons/custom-files-addon/
 //For a list and description of available shortcodes, please refer to http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/
@@ -795,6 +796,9 @@ if (!function_exists('espresso_venue_details_sc')) {
 		$show_additional_details = (isset($show_additional_details) && $show_additional_details == 'false')? false:true;
 		
 		$FROM = " FROM ";
+		$order_by = (isset($order_by) && $order_by != '') ? " ORDER BY ". $order_by ." ASC " : " ORDER BY name ASC ";
+		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
+		
 		$using_id = false;
 		//Find the event id
 		if (isset($id) && $id > 0){
@@ -824,11 +828,16 @@ if (!function_exists('espresso_venue_details_sc')) {
 		}
 		
 		if (isset($id) && $id > 0) {
-            $sql .= " WHERE ev.id = '". $id ."' LIMIT 0,1";
+            $sql .= " WHERE ev.id = '". $id ."' ";
         } elseif (isset($event_id) && $event_id > 0) {
             $sql .= " WHERE e.id ='" . $event_id . "' ";
         }else{
 			$sql .= " GROUP BY ev.name ";
+		}
+		
+		if ($using_id == false){
+			$sql .= $order_by;
+			$sql .= $limit;
 		}
 		//echo $sql ;
 
@@ -845,9 +854,11 @@ if (!function_exists('espresso_venue_details_sc')) {
                		$google_map_link = espresso_google_map_link(array('address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'text'));
 
 					//Google map image creation
-					$map_w = isset($map_w) ? $map_w : 400;
-					$map_h = isset($map_h) ? $map_h : 400;
-					$google_map_image = espresso_google_map_link(array('id'=>$venue_id, 'map_image_class'=>$map_image_class, 'address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'map', 'map_h'=>$map_h, 'map_w'=>$map_w));
+					if ($show_map_image != false){
+						$map_w = isset($map_w) ? $map_w : 400;
+						$map_h = isset($map_h) ? $map_h : 400;
+						$google_map_image = espresso_google_map_link(array('id'=>$venue_id, 'map_image_class'=>$map_image_class, 'address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'map', 'map_h'=>$map_h, 'map_w'=>$map_w));
+					}
 
 					//Build the venue title
 					if ($show_title != false){
@@ -910,12 +921,19 @@ if (!function_exists('espresso_venue_event_list_sc')) {
 		if (empty($atts))
 			return 'No venue id supplied!';
 		extract($atts);
+		$order_by = (isset($order_by) && $order_by != '') ? " ORDER BY ". $order_by ." ASC " : " ORDER BY name, id ASC ";
+		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
+		
 		if (isset($id) && $id > 0){
 			$sql = "SELECT e.*, ev.name venue_name
 				FROM ".EVENTS_DETAIL_TABLE." e
 				LEFT JOIN ".EVENTS_VENUE_REL_TABLE." vr ON e.id = vr.event_id
-				LEFT JOIN ".EVENTS_VENUE_TABLE." ev ON vr.venue_id = ev.id WHERE ev.id = '".$id."' ";
-	
+				LEFT JOIN ".EVENTS_VENUE_TABLE." ev ON vr.venue_id = ev.id WHERE e.event_status != 'D' AND e.is_active = 'Y' AND ev.id = '".$id."' ";
+				
+			$sql .= $order_by;
+			$sql .= $limit;
+			//echo $sql;
+
 			$wpdb->get_results($sql);
 			$num_rows = $wpdb->num_rows;
 			if ($num_rows > 0) {
