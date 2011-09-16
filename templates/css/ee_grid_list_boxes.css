@@ -158,11 +158,11 @@ table.price_list {
 	border-top: 1px solid #bfbfbf;
 	background: #BCBEB2;
 	margin: 10px 0 0;
-	padding-left: 10px;
+	padding:0 10px;
 	position: absolute;
 	left: 0;
 	bottom: 0;
-	width: auto;
+	width: 250px;
 }
 #content  .register-link-footer a,
 #content .register-link-footer a:visited {

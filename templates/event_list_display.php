@@ -115,7 +115,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
                 //REQUIRED, the id of the event that needs to be added to the cart
                 'event_id' => $event_id,
                 //REQUIRED, Anchor of the link, can use text or image
-                'anchor' => __("Add to Cart and Add More Events", 'event_espresso'), //'anchor' => '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/cart_add.png" />',
+                'anchor' => __("Add to Cart", 'event_espresso'), //'anchor' => '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/cart_add.png" />',
                 //REQUIRED, if not available at this point, use the next line before this array declaration
                 // $event_name = get_event_field('event_name', EVENTS_DETAIL_TABLE, ' WHERE id = ' . $event_id);
                 'event_name' => $event_name,
@@ -129,7 +129,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
             ?>
 
             <p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
-                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a>
+                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for Event', 'event_espresso'); ?></a>
                 <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?>
             </p>
         <?php } else { ?>
