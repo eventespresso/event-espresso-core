@@ -793,28 +793,43 @@ if (!function_exists('espresso_venue_details_sc')) {
 
 		//Show additional details
 		$show_additional_details = (isset($show_additional_details) && $show_additional_details == 'false')? false:true;
-
+		
+		$FROM = " FROM ";
+		$using_id = false;
 		//Find the event id
 		if (isset($id) && $id > 0){
 		}elseif (isset($event_id)){
 			$event_id = $event_id;//Check to see if the event is used in the shortcode parameter
+			$using_id = true;
 		}elseif (isset($this_event_id)){
 			$event_id = $this_event_id;//Check to see if the global event id is being used
+			$using_id = true;
 		}elseif (isset($_REQUEST['event_id'])){
 			$event_id = $_REQUEST['event_id'];//If the first two are not being used, then get the event id from the url
-		}else{
-			//_e('No event id supplied!', 'event_espresso') ;
-			return;
+			$using_id = true;
 		}
-		$sql = "SELECT ev.*
-			FROM ".EVENTS_DETAIL_TABLE." e
-			LEFT JOIN ".EVENTS_VENUE_REL_TABLE." vr ON e.id = vr.event_id
-			LEFT JOIN ".EVENTS_VENUE_TABLE." ev ON vr.venue_id = ev.id ";
+		
+		$sql = "SELECT ev.* ";
+		
+		if ($using_id == true){
+			$sql .= " $FROM ".EVENTS_DETAIL_TABLE." e ";
+			$sql .= " LEFT JOIN ".EVENTS_VENUE_REL_TABLE." vr ON e.id = vr.event_id ";
+			$FROM = " LEFT JOIN ";
+		}
+		
+		$sql .= " $FROM ".EVENTS_VENUE_TABLE." ev ";
+		
+		if ($using_id == true){
+			$sql .= " ON vr.venue_id = ev.id ";
+		}
+		
 		if (isset($id) && $id > 0) {
             $sql .= " WHERE ev.id = '". $id ."' LIMIT 0,1";
-        } else {
+        } elseif (isset($event_id) && $event_id > 0) {
             $sql .= " WHERE e.id ='" . $event_id . "' ";
-        }
+        }else{
+			$sql .= " GROUP BY ev.name ";
+		}
 		//echo $sql ;
 
 		$venues = $wpdb->get_results( $sql );
@@ -846,7 +861,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 
 					//Build the description
 					if ($show_description != false){
-						$html .= $meta['description'] != ''? $meta['description']:'';
+						$html .= $meta['description'] != ''? espresso_format_content($meta['description']):'';
 					}
 
 					//Build the address details
@@ -878,11 +893,11 @@ if (!function_exists('espresso_venue_details_sc')) {
 					}
 				}
 			}
-			ob_start();
-			echo $wrapper_start .' id="venue_id_'.$venue_id.'">' . $html . $wrapper_end;
-			$buffer = ob_get_contents();
-			ob_end_clean();
-			return $buffer;
+			//ob_start();
+			return $wrapper_start .' id="venue_id_'.$venue_id.'">' . $html . $wrapper_end;
+			//$buffer = ob_get_contents();
+			//ob_end_clean();
+			//return $buffer;
 	}
 }
 add_shortcode('ESPRESSO_VENUE', 'espresso_venue_details_sc');
@@ -892,32 +907,35 @@ if (!function_exists('espresso_venue_event_list_sc')) {
 		global $wpdb;
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true;//This tells the plugin to load the required scripts
+		if (empty($atts))
+			return 'No venue id supplied!';
 		extract($atts);
-
-		$sql = "SELECT e.*, ev.name venue_name
-			FROM ".EVENTS_DETAIL_TABLE." e
-			LEFT JOIN ".EVENTS_VENUE_REL_TABLE." vr ON e.id = vr.event_id
-			LEFT JOIN ".EVENTS_VENUE_TABLE." ev ON vr.venue_id = ev.id WHERE ev.id = '".$id."' ";
-
-		$wpdb->get_results($sql);
-		$num_rows = $wpdb->num_rows;
-		if ($num_rows > 0) {
-
-			$name_before = isset($name_before) ? $name_before: '<p class="venue_name">';
-			$name_after = isset($name_after) ? $name_after: '</p>';
-
-			$venue_name = $wpdb->last_result[0]->venue_name;
-
-			//template located in event_list_dsiplay.php
-			ob_start();
-			//echo $sql;
-			echo $name_before.$venue_name.$name_after;
-			event_espresso_get_event_details($sql, $css_class);
-			$buffer = ob_get_contents();
-			ob_end_clean();
-			return $buffer;
-		}else{
-			return 'No events in this venue';
+		if (isset($id) && $id > 0){
+			$sql = "SELECT e.*, ev.name venue_name
+				FROM ".EVENTS_DETAIL_TABLE." e
+				LEFT JOIN ".EVENTS_VENUE_REL_TABLE." vr ON e.id = vr.event_id
+				LEFT JOIN ".EVENTS_VENUE_TABLE." ev ON vr.venue_id = ev.id WHERE ev.id = '".$id."' ";
+	
+			$wpdb->get_results($sql);
+			$num_rows = $wpdb->num_rows;
+			if ($num_rows > 0) {
+	
+				$name_before = isset($name_before) ? $name_before: '<p class="venue_name">';
+				$name_after = isset($name_after) ? $name_after: '</p>';
+	
+				$venue_name = $wpdb->last_result[0]->venue_name;
+	
+				//template located in event_list_dsiplay.php
+				ob_start();
+				//echo $sql;
+				echo $name_before.$venue_name.$name_after;
+				event_espresso_get_event_details($sql, $css_class);
+				$buffer = ob_get_contents();
+				ob_end_clean();
+				return $buffer;
+			}else{
+				return 'No events in this venue';
+			}
 		}
 	}
 }
