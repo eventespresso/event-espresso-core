@@ -1,4 +1,5 @@
 <?php
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 //Event Registration Subpage 2 - Add/Delete/Edit Events
 require_once('event_functions.php');
 require_once("event_list.php");
