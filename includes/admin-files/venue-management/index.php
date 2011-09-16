@@ -104,9 +104,12 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit'){require_once("e
 			?>
             <tr>
               <td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $venue_id?>]" type="checkbox"  title="Delete <?php echo stripslashes($name)?>"></td>
-               <td class="column-comments" style="padding-top:3px;"><?php echo $venue_id?></td>
+              <td class="column-comments" style="padding-top:3px;"><?php echo $venue_id?></td>
               <td class="post-title page-title column-title"><strong><a href="admin.php?page=event_venues&action=edit&id=<?php echo $venue_id?>"><?php echo $name?></a></strong>
-              <div class="row-actions"><span class="edit"><a href="admin.php?page=event_venues&action=edit&id=<?php echo $venue_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=event_venues&action=delete_venue&id=<?php echo $venue_id?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
+              <div class="row-actions">
+								  <span class="edit"><a href="admin.php?page=event_venues&action=edit&id=<?php echo $venue_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
+									<span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_venues&action=delete_venue&id=<?php echo $venue_id?>"><?php _e('Delete', 'event_espresso'); ?></a></span>
+								</div>
               </td>
               <?php if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true){ ?>
 				<td>
@@ -148,10 +151,17 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit'){require_once("e
      </div>
      </div>
      </div>
+			 
+<?php #### help dialogue box #### ?>
 <div id="venue_locale" style="display:none">
+<div class="TB-ee-frame">
 <h2><?php _e('Venue Locale/Region', 'event_espresso'); ?></h2>
       <p><?php _e('This can be used to group venues together by locales/regions.', 'event_espresso'); ?></p>
+				<p><?php _e('Once you have created a locale in the <a href="admin.php?page=event_locales"> Manage Locales/Regions</a> page it will be available to select on the \'Add a Venue\' page', 'event_espresso')?></p>
+</div>			
 </div>
+<?php #### end help #### ?>
+
 <script>
 jQuery(document).ready(function($) {						
 	

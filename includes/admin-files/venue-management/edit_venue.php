@@ -84,8 +84,9 @@ function edit_event_venue(){
                 </li>
 				<?php if( function_exists('espresso_member_data')){ ?>
                     <li>
+											
                       <label for="locale">
-                        <?php _e('Locale/Region','event_espresso'); ?>
+                        <?php _e('Locale/Region ','event_espresso'); ?><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a>
                       </label>
 				<?php  
 					$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
@@ -106,12 +107,16 @@ function edit_event_venue(){
                         ?>
                       </select>
                       <?php }?>
-                      <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a>
-                    </li>
-                <?php }?>
+										
+										<?php if(empty($local_id)){ ?>
+            				<p>You have not created any locales yet. To create Locales please visit <a href="admin.php?page=event_locales"> Manage Locales/Regions</a> page.</p>
+            			<?php } ?>												
+										
+               </li>
+                <?php }// end if function_exists('espresso_member_data' ?>
               </ul>
 			</td>
-            <td align="left" valign="top"><ul>
+            <td align="left" valign="top" class="b"><ul>
                 <li>
                   <label for="contact">
                     <?php _e('Contact','event_espresso'); ?>

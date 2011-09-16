@@ -12,7 +12,7 @@ function add_new_event_venue(){
         <input type="hidden" name="action" value="add">
         <table width="100%" border="0">
           <tr>
-            <td align="left">
+            <td align="left" class="a">
 								<ul>
                 <li>
                   <label for="name">
@@ -56,39 +56,44 @@ function add_new_event_venue(){
                   </label>
                   <input type="text" id="country" name="country" size="25" />
                 </li>
-                <?php if( function_exists('espresso_member_data')){ ?>
+                <?php if( function_exists('espresso_member_data')){ 
+									 ?>
                 <li>
-                  <label for="locale">
-                   <?php _e('Locale/Region','event_espresso'); ?> 
+                
+										<label for="locale">
+                   <?php _e('Locale/Region ','event_espresso'); ?><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a> 
                   </label>
-				<?php 
-				$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
-				$results = $wpdb->get_results($sql);
-				if ($wpdb->num_rows > 0) {
-				?>
-                    <select name="locale" id="local">
-				<?php
-					
-						foreach ($results as $result){
-							$locale_id= $result->id;
-							$name=stripslashes($result->name);
+								
+          				<?php 
+          				$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
+          				$results = $wpdb->get_results($sql);
+          				if ($wpdb->num_rows > 0) { ?>
+                 
+          				 <select name="locale" id="local">
+          					<?php
+          					
+          						foreach ($results as $result){
+          							$locale_id= $result->id;
+          							$name=stripslashes($result->name);
                         ?>
-                          <option value="<?php echo $locale_id;?>"><?php echo $name;?></option>
-                        <?php
-						}
-                        ?>
-                     </select>
-				<?php 
-					}
-				?>
-                    <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a>
-                 </li>
-			<?php 
-				}
-			?>
+          						<option value="<?php echo $locale_id;?>"><?php echo $name;?></option>
+                  <?php  } ?>
+                  
+										</select>	
+										<?php }  ?>	
+            			 <?php if (empty($locale_id)) { ?>
+            				<p>You have not created any locales yet. To create Locales please visit <a href="admin.php?page=event_locales"> Manage Locales/Regions</a> page.</p>
+            			<?php } ?>
+										 
+										
+										
+ 	
+										
+									</li>
+	<?php }// end if function_exists('espresso_member_data' ?>
               </ul>
 							</td>
-            <td align="left" valign="top">
+            <td align="left" valign="top" class="b">
 							<ul>
             	<li>
                   <label for="contact">
