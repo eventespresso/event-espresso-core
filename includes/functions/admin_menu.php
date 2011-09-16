@@ -80,6 +80,11 @@ if (!function_exists('add_event_espresso_menus')) {
         if (function_exists('event_espresso_mailchimp_settings') && $espresso_premium == true) {
             add_submenu_page('event_espresso', __('Event Espresso - MailChimp Integration', 'event_espresso'), __('MailChimp Integration', 'event_espresso'), 'administrator', 'espresso-mailchimp', 'event_espresso_mailchimp_settings');
         }
+		
+		//Ticketing Settings
+        if (function_exists('espresso_ticket_config_mnu') && $espresso_premium == true) {
+            add_submenu_page('event_espresso', __('Event Espresso - Ticket Settings', 'event_espresso'), __('Ticket Settings', 'event_espresso'), 'administrator', 'event_tickets', 'espresso_ticket_config_mnu');
+        }
 
         //Facebook Event Integration Settings
         if (function_exists('espresso_fb_settings') && $espresso_premium == true) {
