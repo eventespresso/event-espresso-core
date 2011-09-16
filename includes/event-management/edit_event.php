@@ -1,5 +1,5 @@
 <?php
-
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function edit_event($event_id = 0) {
     global $wpdb, $org_options, $espresso_premium;
 
@@ -390,7 +390,7 @@ function edit_event($event_id = 0) {
           <?php _e('Unique Event Identifier:', 'event_espresso'); ?>
           </strong>
           <input disabled="disabled" type="text" size="30" tabindex="2" name="event_identifier" id="event_identifier" value ="<?php echo $event_identifier; ?>" />
-          <?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;\' + jQuery(\'#event_identifier\').val() + \'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Event TinyURL:&#39;, \'' . espresso_getTinyUrl(espresso_reg_url($event_id)) . '\'); return false;">' . __('TinyURL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Full URL:&#39;, \'' . home_url() . '/?page_id=' . $org_options['event_page_id'] . '&amp;regevent_action=register&amp;event_id=' . $event_id . '\'); return false;">' . __('Full URL') . '</a>' ?> </div>
+          <?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;\' + jQuery(\'#event_identifier\').val() + \'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_reg_url($event_id) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . home_url() . '/?page_id=' . $org_options['event_page_id'] . '&amp;regevent_action=register&amp;event_id=' . $event_id . '\'); return false;">' . __('Full URL') . '</a>' ?> </div>
         <!-- /edit-slug-box --> 
       </div>
       <!-- /.inside --> 
