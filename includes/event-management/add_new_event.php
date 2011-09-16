@@ -1,4 +1,5 @@
 <?php
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function add_new_event() {
 	global $wpdb, $org_options, $espresso_premium;
 ?>
