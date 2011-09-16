@@ -375,8 +375,13 @@ function event_espresso_support() {
                             <?php _e('Page/Post Example #2:', 'event_espresso'); ?>
                           </dt>
                           <dd>
-                            <?php _e('If you want to display a the details of a venue on a page, post or event add the event id to the  <span class="highlight">[ESPRESSO_VENUE]</span> shortcode.', 'event_espresso'); ?>
+                            <?php _e('If you want to display all available venues on a page, post, or event:', 'event_espresso'); ?>
                             <br />
+                            <span class="highlight">[ESPRESSO_VENUE]</span>
+                            </dd>
+                            <dd>
+                             <?php _e('Add the event id to the shortcode to display all the venues for an event:', 'event_espresso'); ?>
+                             <br />
                             <span class="highlight">[ESPRESSO_VENUE event_id="8"]</span></dd>
                         </dl>
                         <h5>
