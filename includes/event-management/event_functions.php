@@ -249,7 +249,8 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
                 if ($wp_user == 0 || $wp_user == 1) {
                     $sql .= " (wp_user = '0' OR wp_user = '1') ";
                 } else {
-                    $sql .= " wp_user = '" . $wp_user . "' ";
+                    //$sql .= " wp_user = '" . $wp_user . "' ";
+					$sql .= " (wp_user = '" . $wp_user . "' OR wp_user = '0' OR wp_user = '1')";
                 }
             }else{
 				$sql .= " WHERE wp_user = '0' OR wp_user = '1' ";
