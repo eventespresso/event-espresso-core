@@ -45,7 +45,8 @@
 		}
 		//Uncomment to check the number of available spaces
 		//echo get_number_of_attendees_reg_limit($event_id, 'number_available_spaces');
-
+		if ($event_cost == '0.00' && $total_cost != '0.00')
+			$event_cost = $total_cost;
 		if($event_cost != '0.00'){
 			$registration_id = $registration_id != '' ? $registration_id : $att_registration_id;
 			if ($attendee_id==''||$attendee_id==0) 
