@@ -76,7 +76,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 
         if ($display_desc == 'Y') {
             echo '<p id="events_category_name-' . $category_id . '" class="events_category_name">' . stripslashes_deep($category_name) . '</p>';
-            echo wpautop(utf8_encode(html_entity_decode(stripslashes_deep($category_desc))));
+            echo espresso_format_content($category_desc);
         }
 
         //Debug
