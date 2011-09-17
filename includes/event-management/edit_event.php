@@ -410,7 +410,7 @@ function edit_event($event_id = 0) {
                   param: int $tab_index Optional, default is 2. Tabindex for textarea element.
                  */
                 //the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-                the_editor($event_desc, $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+                the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
                 ?>
       <table id="post-status-info" cellspacing="0">
         <tbody>
@@ -705,7 +705,7 @@ function edit_event($event_id = 0) {
                 </a></p>
             </div>
             <div class="postbox">
-              <textarea name="conf_mail" class="theEditor" id="conf_mail"><?php echo wpautop($conf_mail); ?></textarea>
+              <textarea name="conf_mail" class="theEditor" id="conf_mail"><?php echo espresso_admin_format_content($conf_mail); ?></textarea>
               <table id="email-confirmation-form" cellspacing="0">
                 <tr>
                   <td class="aer-word-count"></td>

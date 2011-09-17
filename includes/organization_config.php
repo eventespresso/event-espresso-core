@@ -421,7 +421,7 @@ function organization_config_mnu() {
                                                             </a></p>
                                                     </div>
                                                     <div id="payment-conf-email" class="postbox">
-                                                        <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo wpautop(utf8_encode(html_entity_decode(stripslashes_deep($org_options['payment_message'])))); ?></textarea>
+                                                        <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo espresso_admin_format_content($org_options['payment_message']); ?></textarea>
                                                         <table id="payment-confirmation-form" cellspacing="0">
                                                             <tbody>
                                                                 <tr>
@@ -444,7 +444,7 @@ function organization_config_mnu() {
                                                             </a></p>
                                                     </div>
                                                     <div id="reg-conf-email" class="postbox">
-                                                        <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo wpautop(utf8_encode(html_entity_decode(stripslashes_deep($org_options['message'])))); ?></textarea>
+                                                        <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo espresso_admin_format_content($org_options['message']); ?></textarea>
                                                         <table id="email-confirmation-form" cellspacing="0">
                                                             <tbody>
                                                                 <tr>

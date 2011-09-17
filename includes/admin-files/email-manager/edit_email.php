@@ -37,7 +37,7 @@ function edit_event_email(){
 				<label for="email_text"><?php _e('Email Text','event_espresso'); ?></label>
 					
 				<div class="postbox">   
-					<?php the_editor(stripslashes_deep($email_text), $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
+					<?php the_editor(espresso_admin_format_content($email_text), $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
 				<table id="manage-event-email-form" cellspacing="0">
 					<tbody>
 						<tr>

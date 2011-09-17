@@ -47,7 +47,7 @@ function edit_event_category(){
 						
 						<div class="postbox">
  
-							<?php the_editor(wpautop(utf8_encode(html_entity_decode(stripslashes_deep($category_desc)))), $id = 'category_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
+							<?php the_editor(espresso_admin_format_content($category_desc), $id = 'category_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
 							<table id="cat-descr-add-form" cellspacing="0">
 								<tbody>
 									<tr>
