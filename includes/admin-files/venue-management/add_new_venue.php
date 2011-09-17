@@ -161,5 +161,5 @@ function add_new_event_venue(){
 </div><!-- /.metabox-holder -->
 
 <?php 
-espresso_tiny_mce();
+//espresso_tiny_mce();
 } 

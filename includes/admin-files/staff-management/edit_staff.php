@@ -138,5 +138,5 @@ function edit_event_staff(){
   </div>
 </div>
 <?php 
-espresso_tiny_mce();
+//espresso_tiny_mce();
 }

@@ -51,5 +51,5 @@ function add_new_event_email(){
 </div>
 </div>
 <?php 
-espresso_tiny_mce();
+//espresso_tiny_mce();
 } 

@@ -66,7 +66,7 @@ function add_new_event_category() {
 <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
 
 <?php
-espresso_tiny_mce();
+//espresso_tiny_mce();
 }
 
 

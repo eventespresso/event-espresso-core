@@ -72,5 +72,5 @@ function edit_event_category(){
 
 
 <?php 
-espresso_tiny_mce();
+//espresso_tiny_mce();
 }
