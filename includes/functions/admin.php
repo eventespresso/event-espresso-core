@@ -71,7 +71,11 @@ function event_espresso_config_page_scripts() {
 	}
 	remove_all_filters('mce_external_plugins');
 }
-
+//Text formatting function for the_editor.
+//This should fix all of the formatting issues of text output from the database.
+function espresso_admin_format_content($content='') {
+    return wpautop(stripslashes_deep(html_entity_decode($content, ENT_QUOTES, "UTF-8")));
+}
 //This loads the the tinymce script into the header
 function espresso_tiny_mce() {
    global $wp_version;
