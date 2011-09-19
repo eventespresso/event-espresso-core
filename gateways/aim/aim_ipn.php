@@ -4,8 +4,6 @@ echo '<!--Event Espresso Authorize.net AIM Gateway Version ' . $authnet_aim_gate
 
 require_once 'AuthorizeNet.php';
 
-define("AUTHORIZENET_SANDBOX", false);
-
 $authnet_aim_settings = get_option('event_espresso_authnet_aim_settings');
 $authnet_aim_login_id = $authnet_aim_settings['authnet_aim_login_id'];
 $authnet_aim_transaction_key = $authnet_aim_settings['authnet_aim_transaction_key'];
@@ -16,7 +14,7 @@ $authnet_aim_transaction_key = $authnet_aim_settings['authnet_aim_transaction_ke
 if ($authnet_aim_settings['use_sandbox'] == '1'){
 	define("AUTHORIZENET_SANDBOX", true);
 	define("AUTHORIZENET_LOG_FILE", true);
-}
+} else define("AUTHORIZENET_SANDBOX", false);
 
 //start transaction
 $transaction = new AuthorizeNetAIM($authnet_aim_login_id, $authnet_aim_transaction_key);
@@ -40,11 +38,11 @@ $txn_id = $response->transaction_id;
 $attendee_id = $response->customer_id;
 $txn_type = $response->transaction_type;
 $payment_date = date("d-m-Y");
-	
+
 $sql = "SELECT * FROM ". EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ";
 $sql .= $id ==''?'':" AND id= '".$id."' ";
 $sql .= " ORDER BY id LIMIT 0,1";
-			
+
 $attendees = $wpdb->get_results($sql);
 foreach ($attendees as $attendee){
 	$attendee_id = $attendee->id;
@@ -56,7 +54,7 @@ foreach ($attendees as $attendee){
 	$amount_pd = $attendee->amount_pd;
 	$event_id = $attendee->event_id;
 }
-		
+
 $events = $wpdb->get_results( "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'" );
 foreach ( $events as $event ) {
 	$event_id = $event->id;
@@ -71,14 +69,14 @@ foreach ( $events as $event ) {
 //Build links
 $event_url = espresso_reg_url($event_id);
 $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
-			
+
 if ($response->approved) {
 	$payment_status = 'Completed';
 ?>
 	<h2><?php _e('Thank You!','event_espresso'); ?></h2>
 	<p><?php _e('Your transaction has been processed.','event_espresso'); ?></p>
 	<p><?php __('Transaction ID:','event_espresso') . $response->transaction_id; ?></p>
-<?php 	
+<?php
 } else {
 	print $response->error_message;
 	$payment_status = 'Payment Declined';
