@@ -186,7 +186,7 @@ function organization_config_mnu() {
                                                             <label for="org_country">
                                                                 <?php _e('Organization Country:', 'event_espresso'); ?>
                                                             </label>
-                                                            <?php printCountriesSelector("org_country", isset($org_options['organization_country']) ? $org_options['organization_country'] : ''); ?> </li>
+                                                            <?php printCountriesSelector("org_country", isset($org_options['organization_country']) ? $org_options['organization_country'] : ''); ?> (<?php echo $org_options[ 'currency_symbol' ]; ?>)</li>
                                                         <li>
                                                             <label for="email">
                                                                 <?php _e('Primary contact email:', 'event_espresso'); ?>
