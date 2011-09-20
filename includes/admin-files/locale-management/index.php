@@ -114,9 +114,9 @@ jQuery(document).ready(function($) {
 			"aoColumns": [
 							{ "bSortable": false },
 							 null,
-							 //null,
+							 null 
 							 
-							 { "bSortable": false }
+							// { "bSortable": false } this isn't required 
 							
 						]
 
