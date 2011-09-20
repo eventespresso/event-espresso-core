@@ -1,4 +1,10 @@
 <?php
+		// this temp stop gap for Euro decode issue
+		if(getCountryZoneId($org_options['organization_country']) == '2'){
+		$currency_sign = 'Euro: ';
+		}else{
+		$currency_sign = html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES );
+		}
 class PDF extends FPDF{
 	//Page header
 	function Header(){
@@ -11,7 +17,7 @@ class PDF extends FPDF{
 			$this->SetFont('Arial','B',15);
 			$this->Cell(10,10,pdftext($org_options['organization']),0,0,'L');//If no logo, then display the organizatin name
 		}
-			
+
 		//Arial bold 15
 		$this->SetFont('Arial','B',15);
 		//Move to the right
@@ -32,10 +38,10 @@ class PDF extends FPDF{
 			$data[]=explode(';',chop($line));
 		return $data;
 	}
-	
+			
 	//Better table
 	function ImprovedTable($header,$event_data,$w=array(100,35,40)){
-		global $org_options;
+		global $org_options, $currency_sign;
 
 		//Column widths
 		//Header
@@ -55,10 +61,10 @@ class PDF extends FPDF{
 				$this->Cell($w[1],$yH,$row[1],'LBR',0,'C');
 				$this->Cell($w[2],$yH,$row[2],'LBR',0,'C');
 				if( isset( $row[3] ) ){
-					$this->Cell($w[3],$yH,html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES ).number_format($row[3],2, '.', ''),'LBR',0,'C');
+					$this->Cell($w[3],$yH, $currency_sign.number_format($row[3],2, '.', ''),'LBR',0,'C');
 				}
 				if( isset( $row[4] ) ){
-					$this->Cell($w[4],$yH,html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES ).number_format($row[4],2, '.', ''),'LBR',0,'C');
+					$this->Cell($w[4],$yH, $currency_sign.number_format($row[4],2, '.', ''),'LBR',0,'C');
 				}
 				$this->Ln();
 			}
@@ -67,7 +73,7 @@ class PDF extends FPDF{
 	}
 	
 	function InvoiceTotals($text,$total_cost,$left_cell = 125, $right_cell = 35){
-		global $org_options;
+		global $org_options, $currency_sign;
 		$this->SetFillColor(192,192,192);
 		$this->Cell($left_cell, 10, $text, 0, 0, 'R');
 		$minus = '';
@@ -75,7 +81,7 @@ class PDF extends FPDF{
 			$minus = '-';
 			$total_cost = (-1)*$total_cost;
 		}
-		$this->Cell($right_cell, 10, $minus. html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES ).number_format($total_cost,2, '.', ''), 0, 1, 'C');
+		$this->Cell($right_cell, 10, $minus.$currency_sign.number_format($total_cost,2, '.', ''), 0, 1, 'C');
 	}
 	//Page footer
 	function Footer(){
