@@ -75,7 +75,7 @@ if ($_REQUEST['action'] == 'edit'){require_once("edit_locale.php");edit_event_lo
               <td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $locale_id?>]" type="checkbox"  title="Delete <?php echo stripslashes($name)?>"></td>
                <td class="column-comments" style="padding-top:3px;"><?php echo $locale_id?></td>
               <td class="post-title page-title column-title"><strong><a href="admin.php?page=event_locales&action=edit&id=<?php echo $locale_id?>"><?php echo $name?></a></strong>
-              <div class="row-actions"><span class="edit"><a href="admin.php?page=event_locales&action=edit&id=<?php echo $locale_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=event_locales&action=delete_locale&id=<?php echo $locale_id?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
+              <div class="row-actions"><span class="edit"><a href="admin.php?page=event_locales&action=edit&id=<?php echo $locale_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_locales&action=delete_locale&id=<?php echo $locale_id?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
               </td>
             </tr>
             <?php } 
@@ -114,7 +114,8 @@ jQuery(document).ready(function($) {
 			"aoColumns": [
 							{ "bSortable": false },
 							 null,
-							 null,
+							 //null,
+							 
 							 { "bSortable": false }
 							
 						]
