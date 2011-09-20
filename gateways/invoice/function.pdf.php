@@ -55,10 +55,10 @@ class PDF extends FPDF{
 				$this->Cell($w[1],$yH,$row[1],'LBR',0,'C');
 				$this->Cell($w[2],$yH,$row[2],'LBR',0,'C');
 				if( isset( $row[3] ) ){
-					$this->Cell($w[3],$yH,/*html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES, 'utf-8' ).*/number_format($row[3],2, '.', ''),'LBR',0,'C');
+					$this->Cell($w[3],$yH,html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES ).number_format($row[3],2, '.', ''),'LBR',0,'C');
 				}
 				if( isset( $row[4] ) ){
-					$this->Cell($w[4],$yH,/*html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES, 'utf-8' ).*/number_format($row[4],2, '.', ''),'LBR',0,'C');
+					$this->Cell($w[4],$yH,html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES ).number_format($row[4],2, '.', ''),'LBR',0,'C');
 				}
 				$this->Ln();
 			}
@@ -75,7 +75,7 @@ class PDF extends FPDF{
 			$minus = '-';
 			$total_cost = (-1)*$total_cost;
 		}
-		$this->Cell($right_cell, 10, $minus. /*html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES, 'utf-8' ).*/number_format($total_cost,2, '.', ''), 0, 1, 'C');
+		$this->Cell($right_cell, 10, $minus. html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES ).number_format($total_cost,2, '.', ''), 0, 1, 'C');
 	}
 	//Page footer
 	function Footer(){
