@@ -36,7 +36,7 @@
  * The reCAPTCHA server URL's
  */
 define("RECAPTCHA_API_SERVER", "http://api.recaptcha.net");
-define("RECAPTCHA_API_SECURE_SERVER", "https://api-secure.recaptcha.net");
+define("RECAPTCHA_API_SECURE_SERVER", "https://www.google.com/recaptcha/api");
 define("RECAPTCHA_VERIFY_SERVER", "api-verify.recaptcha.net");
 
 /**
@@ -120,7 +120,7 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false)
         if ($error) {
            $errorpart = "&amp;error=" . $error;
         }
-        return '<script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
+        return '<script  type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
 
 	<noscript>
   		<iframe src="'. $server . '/noscript?k=' . $pubkey . $errorpart . '" height="300" width="' . $org_options['recaptcha_width'] . '" frameborder="0"></iframe><br/>
