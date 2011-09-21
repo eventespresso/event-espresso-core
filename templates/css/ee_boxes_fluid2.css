@@ -262,7 +262,7 @@ a.post-edit-link {padding-left: 10px;}
 	margin-left: 85px;
 }
 
-/*___ Multi Registration page styles ___*/
+/*___ Cart & Multi Registration page styles ___*/
 
 
 #event_espresso_checkout_form {
@@ -297,6 +297,10 @@ span.remove-cart-item {
 }
 #event_espresso_refresh_total  {
 	line-height: 2.2;
+}
+.multi-reg-page .event_title span.price-type,
+.multi-reg-page .event_title span.attendee-qnt {
+	font-size: 87.50%;
 }
 /*___ Payment options page ___*/
 
@@ -473,6 +477,9 @@ a.btn_event_form_submit {
 .event_espresso_form_wrapper .copy_dropdown_wrapper {
 	padding: 10px;
 	color: #979da2;
+}
+.copy_dropdown_wrapper select {
+	width: 300px;
 }
 .recaptchatable #recaptcha_response_field {left:0 !important;}
 

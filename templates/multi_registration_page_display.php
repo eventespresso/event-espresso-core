@@ -5,7 +5,7 @@
 global $this_event_id;
 $this_event_id = $event_id;
 ?>
-<div id="event_espresso_registration_form" class="event-display-boxes">
+<div id="event_espresso_registration_form" class="event-display-boxes multi-reg-page">
 
     <?php
 
@@ -15,12 +15,13 @@ $this_event_id = $event_id;
         <?php echo stripslashes_deep( $event_name ) ?>
         <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?>
         -
-        <?php echo _e( 'Price Type:' ) . ' ' . $meta['price_type'] ?>
+       <span class="price-type"> <?php echo _e( 'Price Type:', 'event_espresso' ) ?> <span class="set-price-type"> <?php  echo $meta['price_type'] ?></span></span>
         -
-        <?php
-
+       <span class="attendee-qnt">
+					<?php
         printf( _n( '%d attendee', '%d attendees', $meta['attendee_quantity'], 'event_espresso' ), $meta['attendee_quantity'] );
         ?>
+				</span>
     </h2>
 
 
@@ -30,7 +31,7 @@ $this_event_id = $event_id;
 
         if ( $display_desc == "Y" && $org_options['display_description_on_multi_reg_page'] != 'N'){//Show the description or not
         ?>
-            <div class="event_description"><?php echo wpautop( do_shortcode($event_desc) ); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.    ?></div>
+          <div class="event_description"><?php echo wpautop( do_shortcode($event_desc) ); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.    ?></div>
         <?php
 
         }//End display description
@@ -77,7 +78,9 @@ $this_event_id = $event_id;
                     //This will be the main attendee
                     //$meta['attendee_number'] = 1;
 											?>
-                    <div class="event-display-boxes">
+                    
+											<div class="event-display-boxes">
+											 <fieldset id="event-reg-form-groups">
 											<?php
 											echo '<h3 class="section-heading">' . __( 'Attendee ', 'event_espresso' ) . $attendee_number . '</h3>';
 
@@ -86,8 +89,11 @@ $this_event_id = $event_id;
 
                     echo event_espresso_copy_dd( $event_id, $meta );
                     echo event_espresso_add_question_groups( $question_groups, $events_in_session, $event_id, 1, $meta ); ?>
+											 
+											 </fieldset>
 											</div>
-                    <?php
+                    
+											<?php
 											if ( $meta['attendee_number'] == 1 || $increase_attende_num ){
                         $meta['attendee_number']++;
                         $attendee_number++;
@@ -95,7 +101,7 @@ $this_event_id = $event_id;
 
                     //Outputs the shopping cart items
                     if ( function_exists( 'event_espresso_add_cart_item_groups' ) ){
-                        echo event_espresso_add_cart_item_groups( $item_groups );
+                        echo event_espresso_add_cart_item_groups( $item_groups ). 'dfhfh  gnbmgjgj ngjhjhj bnghty ghghgh';
                     }
 
                     //Coupons
@@ -135,10 +141,12 @@ $this_event_id = $event_id;
 									$meta['attendee_number'] = $price_group_att_counter; ?>
 									
 									<div class="event-display-boxes">
+									<fieldset id="event-reg-form-groups">
 									<?php
-									echo '<h3 class="section-heading">' . __( 'Attendee ', 'event_espresso' ) . $i . '</h3>';
-									echo event_espresso_copy_dd( $event_id, $meta );
-									echo event_espresso_add_question_groups($question_groups, $events_in_session, $event_id, 1, $meta );?>
+									echo '<h3 class="section-heading">' . __( 'Attendee ', 'event_espresso' ) . $i . '</h3>';?>
+									<span class="what on earth is this "><?php echo event_espresso_copy_dd( $event_id, $meta );?></span>
+									<?php echo event_espresso_add_question_groups($question_groups, $events_in_session, $event_id, 1, $meta );?>
+									</fieldset>
 									</div>
 									<?php
 								}
@@ -149,5 +157,5 @@ $this_event_id = $event_id;
 			break;
         }//End Switch statement to check the status of the event
         ?>
-    </div>
-</div>
+    </div><!-- / .multi_regis_form_fields -->
+</div><!-- / .multi-reg-page -->

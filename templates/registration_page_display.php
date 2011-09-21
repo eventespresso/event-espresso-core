@@ -237,7 +237,7 @@
 		<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 		<?php
 		//Recaptcha portion
-		if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
+		if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true' && !is_user_logged_in() ) {
 			if (!function_exists('recaptcha_get_html')) {
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
 			}//End require captcha library
