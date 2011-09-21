@@ -8,6 +8,7 @@ if ($use_sandbox == true) {
 ?>
 
 <p><strong><?php _e('Billing Information', 'event_espresso') ?></strong></p>
+<div class="event_espresso_form_wrapper">
 <form id="aim_payment_form" name="aim_payment_form" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?>">
     <p>
         <label for="first_name"><?php _e('First Name', 'event_espresso'); ?></label>
@@ -54,4 +55,4 @@ if ($use_sandbox == true) {
     <input name="aim_submit" type="submit" value="<?php _e('Complete Purchase', 'event_espresso'); ?>" />
 </form>
 
-<div style=" clear:both; margin-bottom:10px;"></div>
+</div><!-- / .event_espresso_form_wrapper -->
