@@ -134,19 +134,27 @@ function prepare_email_data($attendee_id, $multi_reg) {
     $data->table_open = '<table width="100%" border="1" cellpadding = "5" cellspacing="5" style="border-collapse:collapse;">';
     $data->table_heading = "<tr><th>" . __('Event Name', 'event_espresso') . "</th><th>" . __('Date', 'event_espresso') . "</th><th>" . __('Time', 'event_espresso') . "</th><th>" . __('Location', 'event_espresso') . "</th></tr>";
     $data->table_close = "</table>";
+	
+	//Clear ticket data
+	$data->qr_code = '';
+	$data->ticket_link = '';
+	$data->admin_ticket_link = '';
 
-    if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
+    //Old ticketing system
+	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
         if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/functions.php")) {
             include_once(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/functions.php");
             $data->qr_code = espresso_qr_code(array('attendee_id' => $data->attendee->id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'reg_total' => true))));
         }
         $data->ticket_link = espresso_ticket_links($data->attendee->registration_id, $data->attendee->id);
         $data->admin_ticket_link = $data->ticket_link;
-    } else {
-        $data->qr_code = '';
-        $data->ticket_link = '';
-        $data->admin_ticket_link = '';
     }
+	
+	if (function_exists('espresso_ticket_launch')) {
+		$data->qr_code = espresso_ticket_qr_code(array('attendee_id' => $data->attendee->id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'reg_total' => true))));
+		$data->ticket_link = espresso_ticket_links($data->attendee->registration_id, $data->attendee->id);
+        $data->admin_ticket_link = $data->ticket_link;
+	}
 
     $data->location = ($data->event->address != '' ? $data->event->address : '') . ($data->event->address2 != '' ? '<br />' . $data->event->address2 : '') . ($data->event->city != '' ? '<br />' . $data->event->city : '') . ($data->event->state != '' ? ', ' . $data->event->state : '') . ($data->event->zip != '' ? '<br />' . $data->event->zip : '') . ($data->event->country != '' ? '<br />' . $data->event->country : '');
     $data->google_map_link = espresso_google_map_link(array('address' => $data->event->address, 'city' => $data->event->city, 'state' => $data->event->state, 'zip' => $data->event->zip, 'country' => $data->event->country));
