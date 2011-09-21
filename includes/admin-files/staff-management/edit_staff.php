@@ -115,7 +115,7 @@ function edit_event_staff(){
           </label>
  					
 						<div class="postbox">        
-         		<?php the_editor(wpautop(utf8_encode(html_entity_decode(stripslashes_deep($meta['description'])))), $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
+         		<?php the_editor(espresso_admin_format_content($meta['description']), $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
    					<table id="staff-descr-edit-form"  cellspacing="0">
   						<tbody>
   							<tr>
