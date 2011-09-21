@@ -1151,6 +1151,9 @@ function espresso_ticket_links($registration_id, $attendee_id) {
         $break = '<br />';
         foreach ($attendees as $attendee) {
             $ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
+			if (function_exists('espresso_ticket_launch')) {
+				 $ticket_url = get_option('siteurl') . "/?ticket_launch=true&amp;id=" . $attendee->id . "&amp;r_id=" . $attendee->registration_id;
+			}
             $ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket') . ' (' . $attendee->fname . ' ' . $attendee->lname . ')' . '</a>' . $break;
         }
         return '<p>' . $group . $ticket_link . '</p>';
