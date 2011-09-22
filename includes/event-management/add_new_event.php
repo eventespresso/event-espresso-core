@@ -110,7 +110,21 @@ function add_new_event() {
     </div>
     <?php
        }
-
+	 if (function_exists('espresso_ticket_dd') && $espresso_premium == true) {
+          ?>
+                <div  id="ticket-options" class="postbox">
+                  <div class="handlediv" title="Click to toggle"><br>
+                  </div>
+                  <h3 class="hndle"> <span>
+                    <?php _e('Custom Tickets', 'event_espresso'); ?>
+                    </span> </h3>
+                  <div class="inside">
+                    <p><?php echo espresso_ticket_dd(); ?></p>
+                  </div>
+                </div>
+                <!-- /ticket-options -->
+  		  <?php
+	 }
 				########## END #################################
 
 				if (get_option('events_members_active') == 'true' && $espresso_premium == true) {

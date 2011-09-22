@@ -81,6 +81,7 @@ function add_event_to_db($recurrence_arr = array()) {
         $member_only = isset($_REQUEST['member_only']) ? $_REQUEST['member_only'] : '';
         $is_active = $_REQUEST['is_active'];
         $event_status = $_REQUEST['event_status'];
+		$ticket_id = $_REQUEST['ticket_id'];
 
         //Get the first instance of the start and end times
         $start_time = $_REQUEST['start_time'][0];
@@ -194,11 +195,12 @@ function add_event_to_db($recurrence_arr = array()) {
             'allow_multiple' => $allow_multiple, 'send_mail' => $send_mail, 'is_active' => $is_active, 'event_status' => $event_status,
             'conf_mail' => $conf_mail, 'use_coupon_code' => $use_coupon_code, 'member_only' => $member_only, 'externalURL' => $externalURL,
             'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email,
-            'question_groups' => $question_groups, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'reg_limit' => $reg_limit, 'additional_limit' => $additional_limit, 'recurrence_id' => $recurrence_id, 'email_id' => $email_id, 'wp_user' => $current_user->ID, 'event_meta' => $event_mata, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()));
+            'question_groups' => $question_groups, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'reg_limit' => $reg_limit, 'additional_limit' => $additional_limit, 'recurrence_id' => $recurrence_id, 'email_id' => $email_id, 'wp_user' => $current_user->ID, 'event_meta' => $event_mata, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()), 'ticket_id' => $ticket_id
+		);
 
         $sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
             '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s');
+            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d');
 
         /* echo 'Debug: <br />';
           print_r($sql);

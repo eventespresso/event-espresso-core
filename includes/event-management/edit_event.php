@@ -18,6 +18,7 @@ function edit_event($event_id = 0) {
         $display_reg_form = $event->display_reg_form;
         $event_description = stripslashes_deep($event->event_desc);
         $member_only = $event->member_only;
+		$ticket_id = $event->ticket_id;
 
         $phone = stripslashes_deep($event->phone);
         $externalURL = stripslashes_deep($event->externalURL);
@@ -235,14 +236,13 @@ function edit_event($event_id = 0) {
           <select name="seating_chart_id" id="seating_chart_id" style="float:none;">
             <option value="0" <?php if ( $seating_chart_id == 0 ) { echo 'selected="selected"'; } ?> >None</option>
             <?php
-                                $seating_charts = $wpdb->get_results("select * from ".EVENTS_SEATING_CHART_TABLE." order by name");
-                                foreach($seating_charts as $seating_chart)
-                                {
-                            ?>
-            <option value="<?php echo $seating_chart->id; ?>" <?php if ( $seating_chart_id == $seating_chart->id ) { echo 'selected="selected"'; } ?> ><?php echo $seating_chart->name; ?></option>
+			$seating_charts = $wpdb->get_results("select * from ".EVENTS_SEATING_CHART_TABLE." order by name");
+			foreach($seating_charts as $seating_chart){
+			?>
+            	<option value="<?php echo $seating_chart->id; ?>" <?php if ( $seating_chart_id == $seating_chart->id ) { echo 'selected="selected"'; } ?> ><?php echo $seating_chart->name; ?></option>
             <?php                        
-                                }
-                            ?>
+			}
+			?>
           </select>
         </p>
       </div>
@@ -254,49 +254,65 @@ function edit_event($event_id = 0) {
 		 */
 		 
 		  
-            ###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
-            if ($org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
-                ?>
-    <div id="attendee-pre-approval-options" class="postbox">
-      <div class="handlediv" title="Click to toggle"><br />
-      </div>
-      <h3 class="hndle"> <span>
-        <?php _e('Attendee pre-approval required?', 'event_espresso'); ?>
-        </span> </h3>
-      <div class="inside">
-        <p class="pre-approve">
-          <?php
-                            $pre_approval_values = array(array('id' => '1', 'text' => __('Yes', 'event_espresso')), array('id' => '0', 'text' => __('No', 'event_espresso')));
-                            echo select_input("require_pre_approval", $pre_approval_values, $require_pre_approval);
-                            ?>
-        </p>
-      </div>
-    </div>
+	###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
+	if ($org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
+	?>
+        <div id="attendee-pre-approval-options" class="postbox">
+          <div class="handlediv" title="Click to toggle"><br />
+          </div>
+          <h3 class="hndle"> <span>
+            <?php _e('Attendee pre-approval required?', 'event_espresso'); ?>
+            </span> </h3>
+          <div class="inside">
+            <p class="pre-approve">
+            <?php
+                $pre_approval_values = array(array('id' => '1', 'text' => __('Yes', 'event_espresso')), array('id' => '0', 'text' => __('No', 'event_espresso')));
+                echo select_input("require_pre_approval", $pre_approval_values, $require_pre_approval);
+            ?>
+            </p>
+          </div>
+        </div>
     <?php
+	}
+	########## END #################################
+			
+            if (function_exists('espresso_ticket_dd') && $espresso_premium == true) {
+          ?>
+                <div  id="ticket-options" class="postbox">
+                  <div class="handlediv" title="Click to toggle"><br>
+                  </div>
+                  <h3 class="hndle"> <span>
+                    <?php _e('Custom Tickets', 'event_espresso'); ?>
+                    </span> </h3>
+                  <div class="inside">
+                    <p><?php echo espresso_ticket_dd($ticket_id); ?></p>
+                  </div>
+                </div>
+                <!-- /ticket-options -->
+  		  <?php
             }
-            ########## END #################################
 
             if (get_option('events_members_active') == 'true' && $espresso_premium == true) {
-                ?>
-    <div  id="member-options" class="postbox">
-      <div class="handlediv" title="Click to toggle"><br>
-      </div>
-      <h3 class="hndle"> <span>
-        <?php _e('Member Options', 'event_espresso'); ?>
-        </span> </h3>
-      <div class="inside">
-        <p><?php echo event_espresso_member_only($member_only); ?></p>
-      </div>
-    </div>
-    <!-- /member-options -->
-    <?php
+          ?>
+                <div  id="member-options" class="postbox">
+                  <div class="handlediv" title="Click to toggle"><br>
+                  </div>
+                  <h3 class="hndle"> <span>
+                    <?php _e('Member Options', 'event_espresso'); ?>
+                    </span> </h3>
+                  <div class="inside">
+                    <p><?php echo event_espresso_member_only($member_only); ?></p>
+                  </div>
+                </div>
+                <!-- /member-options -->
+  		  <?php
             }
 
             if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
                 MailChimpView::event_list_selection();
             }
             ?>
-    <?php if (function_exists('espresso_fb_createevent') == 'true' && $espresso_premium == true) { ?>
+    <?php if (function_exists('espresso_fb_createevent') && $espresso_premium == true) { ?>
     <?php
                 $eventstable = $wpdb->prefix . "fbevents_events";
                 $fb_e_id = $wpdb->get_var("SELECT fb_event_id FROM $eventstable WHERE event_id='{$event_id}'");
