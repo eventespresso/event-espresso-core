@@ -184,6 +184,7 @@ function events_data_tables_install() {
                 'enable_default_style' => 'Y',
 				'event_ssl_active' => 'N',
 				'use_venue_manager' => 'Y',
+				'show_reg_footer' => 'Y',
             );
 
             add_option('events_organization_settings', $new_org_options);
