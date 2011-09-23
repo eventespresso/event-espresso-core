@@ -133,14 +133,14 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
         else 
         {
 
-            if ($org_options['use_captcha'] == 'Y' && !$multi_reg) {//Recaptcha portion
+            if ($org_options['use_captcha'] == 'Y' && !$multi_reg && !is_user_logged_in()) {//Recaptcha portion
                 //require_once('includes/recaptchalib.php');
                 if (!function_exists('recaptcha_check_answer')) {
                     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
                 }
                 $resp = recaptcha_check_answer($org_options['recaptcha_privatekey'], $_SERVER["REMOTE_ADDR"], $data_source["recaptcha_challenge_field"], $data_source["recaptcha_response_field"]);
                 if (!$resp->is_valid) {
-                    echo '<h2 style="color:#FF0000;">' . __('Sorry, you did not enter the correct anti-spam phrase. Please click your browser\'s back button and try again.', 'event_espresso') . '</h2>';
+                    echo '<div class="attention-icon"><p class="event_espresso_attention"><strong>' . __('Sorry, you did not enter the correct anti-spam phrase. Please click your browser\'s back button and try again.', 'event_espresso') . '</strong></p></div>';
                     return;
                 }
             }
