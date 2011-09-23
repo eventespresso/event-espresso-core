@@ -13,13 +13,17 @@ $eway_username = $eway_settings['eway_username'];
 $eway_cur = $eway_settings['currency_format'];
 $no_shipping = $eway_settings['no_shipping'];
 $use_sandbox = $eway_settings['use_sandbox'];
+
+$quantity = isset($quantity) && $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);
 if ($use_sandbox == 1) {
     // Enable test mode if needed
     $myeway->enableTestMode();
+    $myeway->addField('CustomerID', '87654321');
+    $myeway->addField('UserName', 'TestAccount');
+}else {
+    $myeway->addField('CustomerID', $eway_id);
+    $myeway->addField('UserName', $eway_username);
 }
-$quantity = isset($quantity) && $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);
-$myeway->addField('CustomerID', $eway_id);
-$myeway->addField('UserName', $eway_username);
 $myeway->addField('CompanyName',$org_options['organization']);
 $myeway->addField('CancelURL', home_url() . '/?page_id=' . $org_options['cancel_return']);
 $myeway->addField('ReturnURL', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment');
