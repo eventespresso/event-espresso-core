@@ -645,7 +645,10 @@ pre {
 	background-color: #FFC; 
 }
 .event_espresso_attention p { margin: 0; }
-
+.attention-icon {
+ background:  url(../../images/important.gif) no-repeat 0 50% ;
+	padding-left: 50px;
+}
 /*** clearfix clearing rules ***/	
 .clearfix:before,
 .clearfix:after {
