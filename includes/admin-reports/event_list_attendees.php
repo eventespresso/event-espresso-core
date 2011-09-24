@@ -239,7 +239,7 @@ function event_list_attendees() {
     $sql_a .= ") ORDER BY date DESC, id ASC ";
 	
     $attendees = $wpdb->get_results($sql_a);
-	echo $sql_a;
+	//echo $sql_a;
 	
     $total_attendees = $wpdb->num_rows;
 	$quantity =0;
