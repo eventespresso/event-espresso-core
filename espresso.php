@@ -246,7 +246,7 @@ load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__
 
 //Addons
 //Ticketing
-if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
+if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php") || function_exists('espresso_ticket_launch')) {
     global $ticketing_installed;
     $ticketing_installed = true;
 }
@@ -430,6 +430,7 @@ if (is_admin()) {
 
     //Event Registration Subpage - Add/Delete/Edit Events
     require_once("includes/event-management/index.php");
+	 require_once("includes/admin-reports/index.php");
 
     //Event styles & template layouts Subpage
     require_once("includes/template_confg.php");
@@ -451,11 +452,13 @@ if (is_admin()) {
             'event_categories',
             'admin_reports',
             'form_builder',
-            'form_groups', 'my-events',
+            'form_groups', 
+			'my-events',
             'event_emails',
             'event_venues',
             'event_staff',
             'events',
+			'attendees',
             'espresso_reports',
             'support',
             'template_confg',
@@ -464,11 +467,11 @@ if (is_admin()) {
             'admin_addons',
             'espresso_calendar',
 			'event_tickets',
-							'espresso-mailchimp',
-							'espresso_permissions',
-							'roles',
-							'event_locales',
-							'event_groups'
+			'espresso-mailchimp',
+			'espresso_permissions',
+			'roles',
+			'event_locales',
+			'event_groups'
         );
         if (in_array($_REQUEST['page'], $espresso_pages)) {
             add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
