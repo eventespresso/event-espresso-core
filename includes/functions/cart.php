@@ -512,9 +512,10 @@ if (!function_exists('event_espresso_load_checkout_page')) {
 
                         if ($attendee_overflow) {
 
-                            $err .= "<div class='event_espresso_error'><p><em>Attention</em>";
-                            $err .= sprintf(__("For %s, please make sure to select between 1 and %d attendees or delete it from your cart.", 'event_espresso'), stripslashes($r->event_name), $attendee_limit);
-							$err .= '<span class="remove-cart-item"><img class="ee_delete_item_from_cart" id="cart_link_'.$event_id.'" alt="Remove this item from your cart" src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/remove.gif" /></span> ';
+                            $err .= "<div class='attention-icon'><p class='event_espresso_attention'><em>Attention: </em><br />";
+                            $err .= sprintf(__("For <b>%s</b>, please make sure to select between <b>1</b> and <b>%d</b> attendees or delete it from your cart.", 'event_espresso'), stripslashes($r->event_name), $attendee_limit);
+							                // this delete link removed as it doesn't appear to function from the error response view - hugo
+							               //$err .= '<span class="remove-cart-item"><img class="ee_delete_item_from_cart" id="cart_link_'.$event_id.'" alt="Remove this item from your cart" src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/remove.gif" /></span> ';
                             $err .= "</p></div>";
                         }
 
@@ -538,11 +539,11 @@ if (!function_exists('event_espresso_load_checkout_page')) {
                         <?php _e('<span> - OR - <span>', 'event_espresso');
                     } ?>
 
-                    <a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart" class="btn_event_form_submit inline-link">  <?php _e('Edit Cart', 'event_espresso'); ?> </a>
+                    <a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart" class="btn_event_form_submit inline-link">  <?php _e('Return &amp; Edit Cart', 'event_espresso'); ?> </a>
 
                 </form>
             </div>
-            <script>
+            <script type="text/javascript">
                 jQuery(function(){
 
                     //Registration form validation
