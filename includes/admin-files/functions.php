@@ -270,7 +270,7 @@ if (!function_exists('espresso_chart_display')){
 						label: '# Attendees'
 					},
 					{
-						label: '<?php echo $org_options['currency_symbol'] ?> <?php _e('Amount', 'event_espresso'); ?>',
+						label: '<?php echo utf8_encode(html_entity_decode($org_options['currency_symbol'])); ?> <?php _e('Amount', 'event_espresso'); ?>',
 						pointLabels: { formatString:'<?php echo utf8_encode(html_entity_decode($org_options['currency_symbol'])); ?>%.2f' },
 					}],
 					legend: {
@@ -375,7 +375,7 @@ if (!function_exists('event_espresso_meta_edit')){
 }
 
 function espresso_attendee_counts(){
-	global $wpdb;
+	global $wpdb, $org_options;
 	
 	//Dates
 	$curdate = date("Y-m-d");
@@ -389,8 +389,10 @@ function espresso_attendee_counts(){
 	
 	$sql .= "SELECT SUM(ac.cost) cost, SUM(ac.quantity) total_count FROM " . EVENTS_ATTENDEE_TABLE . " a ";
     $sql .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id ";
-	$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
-	$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
+	if (!empty($_REQUEST['category_id'])){
+		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
+		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
+	}
 	$sql .= " JOIN " . EVENTS_ATTENDEE_COST_TABLE . " ac on ac.attendee_id = a.id ";
 	
 	if (!empty($_REQUEST['category_id'])){
@@ -429,9 +431,9 @@ function espresso_attendee_counts(){
 	$data->attendee->cost = $data->attendee->cost == NULL ? 0.00 : $data->attendee->cost;
 	
 	$html .= '<p class="attendee_counts">';
-	$html .= 'Total Attendees: '.$data->attendee->total_count;
+	$html .= '<strong>'.__('Total Attendees:', 'event_espresso').'</strong> ' .$data->attendee->total_count;
 	$html .= ' | ';
-	$html .= 'Total Revenue: '.$data->attendee->cost;
+	$html .= '<strong>'.__('Total Revenue:', 'event_espresso').'</strong> '.utf8_encode(html_entity_decode($org_options['currency_symbol'])).$data->attendee->cost;
 	$html .= '</p>';
 	return $html;
 }
