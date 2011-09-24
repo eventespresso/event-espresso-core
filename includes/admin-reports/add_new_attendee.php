@@ -71,11 +71,12 @@ function add_new_attendee($event_id){
 			$number_available_spaces = get_number_of_attendees_reg_limit($event_id, 'number_available_spaces');//Gets the number of available spaces
 				
 ?>
-<script>$jaer = jQuery.noConflict();
-	jQuery(document).ready(function($jaer) {
+<script type="text/javascript">
+	jQuery(document).ready(function() {
 	jQuery(function(){
 		//Registration form validation
 		jQuery('#registration_form').validate();
+		
 	});
 });
 
