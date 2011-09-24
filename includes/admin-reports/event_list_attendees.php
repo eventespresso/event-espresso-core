@@ -146,7 +146,7 @@ function event_list_attendees() {
         $group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
         $group = unserialize($group);
         $group = implode(",", $group);
-        $sql_a .= "SELECT a.*, e.id event_id, e.event_name, checked_in FROM " . EVENTS_ATTENDEE_TABLE . " a ";
+        $sql_a .= "SELECT a.*, e.id event_id, e.event_name FROM " . EVENTS_ATTENDEE_TABLE . " a ";
         $sql_a .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id ";
 
         if ($_REQUEST['category_id'] != '') {
@@ -192,16 +192,19 @@ function event_list_attendees() {
 		$sql_a .= " AND e.event_status != 'D' ";
         $sql_a .= ") UNION (";
     }
-    $sql_a .= "SELECT a.*, e.id event_id, e.event_name, checked_in FROM " . EVENTS_ATTENDEE_TABLE . " a ";
+    $sql_a .= "SELECT a.*, e.id event_id, e.event_name FROM " . EVENTS_ATTENDEE_TABLE . " a ";
     $sql_a .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id ";
     if (!empty($_REQUEST['category_id'])) {
         $sql_a .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
         $sql_a .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
     }
+	
+	$sql_clause = " WHERE ";
 
-    $sql_a .= !empty($_REQUEST['category_id']) ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
-
-    $sql_clause = " WHERE ";
+    if (!empty($_REQUEST['category_id'])){
+		$sql_a .= " $sql_clause c.id = '" . $_REQUEST['category_id'] . "' ";
+		$sql_clause = " AND ";
+	}
 
     if (!empty($_REQUEST['payment_status'])) {
         $sql_a .= " $sql_clause a.payment_status = '" . $_REQUEST['payment_status'] . "' ";
@@ -236,7 +239,7 @@ function event_list_attendees() {
     $sql_a .= ") ORDER BY date DESC, id ASC ";
 	
     $attendees = $wpdb->get_results($sql_a);
-	//echo $sql_a;
+	echo $sql_a;
 	
     $total_attendees = $wpdb->num_rows;
 	$quantity =0;
