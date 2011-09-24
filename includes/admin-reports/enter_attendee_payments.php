@@ -186,12 +186,12 @@ function enter_attendee_payments() {
         <?php _e( 'ID:', 'event_espresso' ); ?> <?php echo $id ?> |
         
         <?php _e( 'Registered For:', 'event_espresso' ); ?>
-         <a href="admin.php?page=events&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?></h3>
+         <a href="admin.php?page=attendees&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?></h3>
 <?php
 	}else{
 ?>
   <h3>
-    <?php echo __('Multiple Registration Payment for ', 'event_espresso'); ?> <a href="admin.php?page=events&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?>
+    <?php echo __('Multiple Registration Payment for ', 'event_espresso'); ?> <a href="admin.php?page=attendees&event_admin_reports=list_attendee_payments&event_id=<?php echo $event_id ?>"><?php echo stripslashes_deep($event_name) ?></a> - <?php echo $event_date; ?>
   </h3>
   <?php
 	}
@@ -214,12 +214,12 @@ function enter_attendee_payments() {
 			echo '<ul>';
 			foreach($registration_ids as $reg_id){
 				//TODO:Display cost per registration id. At the moment it is not possible to display price per registration id because discount is calculated for total amount [IMON]
-                echo '<li># '.$reg_id['registration_id'].' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $reg_id['registration_id'] . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</li>';
+                echo '<li># '.$reg_id['registration_id'].' [ <a href="admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $reg_id['registration_id'] . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</li>';
 			}
 		}else{
 			echo '<p><strong>'.__('Registration Id:', 'event_espresso').'</strong></p>';
             //TODO:Display cost per registration id. At the moment it is not possible to display price per registration id because discount is calculated for total amount [IMON]
-			echo '<p># ' . $registration_id . ' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</p>';
+			echo '<p># ' . $registration_id . ' [ <a href="admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">'.__('View/Edit Registration', 'event_espresso').'</a> ]</p>';
 		}
 		echo '</ul><hr style="width:90%; margin:20px 0;" align="left" />';
 		?>
@@ -269,7 +269,7 @@ function enter_attendee_payments() {
                     //TODO:Need to check this after pricing module is done [IMON]
                     echo $org_options[ 'currency_symbol' ] 
                   ?>
-                    <input style="width:100px;" readonly="true" type="text" name="amount_pd" size="20" value ="<?php echo $total_paid; ?>" /> <?php echo ' [ <a href="admin.php?page=events&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee&show_payment=true">'.__('Edit Payment', 'event_espresso').'</a> ] ';?>
+                    <input style="width:100px;" readonly="true" type="text" name="amount_pd" size="20" value ="<?php echo $total_paid; ?>" /> <?php echo ' [ <a href="admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee&show_payment=true">'.__('Edit Payment', 'event_espresso').'</a> ] ';?>
                 </li>
                 <li>
                   <label>
@@ -371,7 +371,7 @@ function enter_attendee_payments() {
           </form></td>
       </tr>
     </table>
-    <p> <strong> <a href="admin.php?page=events&event_id=<?php echo $event_id; ?>&event_admin_reports=list_attendee_payments"> &lt;&lt;
+    <p> <strong> <a href="admin.php?page=attendees&event_id=<?php echo $event_id; ?>&event_admin_reports=list_attendee_payments"> &lt;&lt;
       <?php _e('Back to List', 'event_espresso'); ?>
       </a> </strong> </p>
   </div>

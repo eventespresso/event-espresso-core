@@ -22,17 +22,17 @@ if ($espresso_premium != true)
         <li><strong>
           <?php _e('Attendees', 'event_espresso'); ?>
           : </strong> </li>
-        <li><a <?php echo (isset($_REQUEST['all_a']) && $_REQUEST['all_a'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&all_a=true">
+        <li><a <?php echo (isset($_REQUEST['all_a']) && $_REQUEST['all_a'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=attendees&event_admin_reports=event_list_attendees&all_a=true">
           <?php _e('All Attendees', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_all_attendees(); ?>)</span></a> | </li>
-        <li><a <?php echo (isset($_REQUEST['today_a']) && $_REQUEST['today_a'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&event_admin_reports=event_list_attendees&today_a=true">
+        <li><a <?php echo (isset($_REQUEST['today_a']) && $_REQUEST['today_a'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=attendees&event_admin_reports=event_list_attendees&today_a=true">
           <?php _e('Today', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_attendees_today(); ?>)</span></a> |</li>
-        <li><a <?php echo (isset($_REQUEST['this_month_a']) && $_REQUEST['this_month_a'] == 'true') ? ' class="current" ' : '' ?>  href="admin.php?page=events&event_admin_reports=event_list_attendees&this_month_a=true">
+        <li><a <?php echo (isset($_REQUEST['this_month_a']) && $_REQUEST['this_month_a'] == 'true') ? ' class="current" ' : '' ?>  href="admin.php?page=attendees&event_admin_reports=event_list_attendees&this_month_a=true">
           <?php _e('This Month', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_attendees_this_month(); ?>)</span></a> </li>
         <?php if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!='' && $_REQUEST['event_admin_reports'] != 'charts'){?>
-        <li> | <a href="admin.php?page=events&event_admin_reports=charts&event_id=<?php echo $_REQUEST['event_id'] ?>">
+        <li> | <a href="admin.php?page=attendees&event_admin_reports=charts&event_id=<?php echo $_REQUEST['event_id'] ?>">
           <?php _e('View Report', 'event_espresso'); ?>
           </a></li>
         <?php }?>
@@ -40,7 +40,7 @@ if ($espresso_premium != true)
       </ul>
       <div style="clear:both"></div>
       
-      <?php if ($_REQUEST['page'] == 'events') { ?>
+      <?php if ($_REQUEST['page'] == 'events' || $_REQUEST['page'] == 'attendees') { ?>
 <div class="tablenav">
   <div class="alignleft actions">
     <form id="form2" name="form2" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
@@ -66,7 +66,7 @@ if ($espresso_premium != true)
                         echo select_input('payment_status', $status, isset($_REQUEST['payment_status'])? $_REQUEST['payment_status'] : '');
                         ?>
       <input type="submit" class="button-secondary" value="Filter Status" id="post-query-payment">
-      <a class="button-secondary" href="admin.php?page=events&event_admin_reports=event_list_attendees" style=" width:40px; display:inline">
+      <a class="button-secondary" href="admin.php?page=attendees&event_admin_reports=event_list_attendees" style=" width:40px; display:inline">
       <?php _e('Reset Filters', 'event_espresso'); ?>
       </a>
       <?php

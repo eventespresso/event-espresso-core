@@ -93,11 +93,11 @@ function event_espresso_edit_list_widget(){
     ?>
             <tr>
               <td class="post-title page-title column-title"><strong><a class="row-title" href="admin.php?page=events&action=edit&event_id=<?php echo $event_id?>"><?php echo $event_name?></a></strong>
-                <div class="row-actions"><span><a href="#">View</a> | </span><span class='edit'><a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class='delete'><a onclick="return confirmDelete();" href='admin.php?page=events&amp;action=delete&amp;event_id=<?php echo $event_id?>'><?php _e('Delete', 'event_espresso'); ?></a></span> | <span><a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id?>"><?php _e('Attendees', 'event_espresso'); ?></a> | </span><span><a href="#"><?php _e('Export', 'event_espresso'); ?></a></span></div></td>
+                <div class="row-actions"><span><a href="#">View</a> | </span><span class='edit'><a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class='delete'><a onclick="return confirmDelete();" href='admin.php?page=events&amp;action=delete&amp;event_id=<?php echo $event_id?>'><?php _e('Delete', 'event_espresso'); ?></a></span> | <span><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id?>"><?php _e('Attendees', 'event_espresso'); ?></a> | </span><span><a href="#"><?php _e('Export', 'event_espresso'); ?></a></span></div></td>
                <td class="author column-author"><?php echo event_date_display($start_date,get_option('date_format'))?> <br />
 <?php echo event_espresso_get_time($event_id, 'start_time') ?></td>
               <td class="date column-date"><?php echo $status['display'] ?></td>
-              <td align="center" class="author column-attendees"><a href="admin.php?page=events&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees');?></a></td>              
+              <td align="center" class="author column-attendees"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees');?></a></td>              
               
       </tr>
     <?php } 

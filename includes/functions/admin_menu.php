@@ -13,6 +13,9 @@ if (!function_exists('add_event_espresso_menus')) {
         //Event Setup
         add_submenu_page('event_espresso', __('Event Espresso - Event Overview', 'event_espresso'), __('Event Overview', 'event_espresso'), 'administrator', 'events', 'event_espresso_manage_events');
 		
+		//Attendee Overview
+        add_submenu_page('event_espresso', __('Event Espresso - Attendee Overview', 'event_espresso'), __('Attendee Overview', 'event_espresso'), 'administrator', 'attendees', 'event_espresso_manage_attendees');
+		
 		/*
 		 * Added for seating chart addon
 		 */
