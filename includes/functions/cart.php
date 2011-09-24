@@ -808,10 +808,10 @@ if (!function_exists('event_espresso_invoke_cart_error')) {
 
 
     function event_espresso_invoke_cart_error($events_in_session) {
-        if (!is_array($events_in_session)) {
+        if (!is_array($events_in_session)) { ?>
 
-            echo __('It looks like you are attempting to refresh a page after completing your registration or your cart is empty.  Please go to the events page and try again.', 'event_espresso') . "<br />";
-            return true;
+            <div class="attention-icon"><p class="event_espresso_attention"><?php _e('It looks like you are attempting to refresh a page after completing your registration or your cart is empty.  Please go to the events page and try again.', 'event_espresso') ?> </p></div>
+        <?php    return true;
         }
         return false;
     }
