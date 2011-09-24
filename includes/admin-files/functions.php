@@ -373,3 +373,65 @@ if (!function_exists('event_espresso_meta_edit')){
 		<?php
 	}
 }
+
+function espresso_attendee_counts(){
+	global $wpdb;
+	
+	//Dates
+	$curdate = date("Y-m-d");
+	$pieces = explode('-',$curdate, 3);
+	$this_year_r = $pieces[0];
+	$this_month_r = $pieces[1];
+	$days_this_month = date('t', strtotime($curdate));
+	
+	$html = '';
+	$sql_clause = " WHERE ";
+	
+	$sql .= "SELECT SUM(ac.cost) cost, SUM(ac.quantity) total_count FROM " . EVENTS_ATTENDEE_TABLE . " a ";
+    $sql .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id ";
+	$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
+	$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
+	$sql .= " JOIN " . EVENTS_ATTENDEE_COST_TABLE . " ac on ac.attendee_id = a.id ";
+	
+	if (!empty($_REQUEST['category_id'])){
+		$sql .= " $sql_clause c.id = '" . $_REQUEST['category_id'] . "' ";
+		$sql_clause = " AND ";
+	}
+	if (!empty($_REQUEST['payment_status'])) {
+        $sql .= " $sql_clause a.payment_status = '" . $_REQUEST['payment_status'] . "' ";
+        $sql_clause = " AND ";
+    }
+	if (!empty($_REQUEST['month_range'])) {
+        $pieces = explode('-', $_REQUEST['month_range'], 3);
+        $year_r = $pieces[0];
+        $month_r = $pieces[1];
+        $sql .= " $sql_clause a.date BETWEEN '" . event_espresso_no_format_date($year_r . '-' . $month_r . '-01', $format = 'Y-m-d') . "' AND '" . event_espresso_no_format_date($year_r . '-' . $month_r . '-31', $format = 'Y-m-d') . "' ";
+        $sql_clause = " AND ";
+    }
+	if (!empty($_REQUEST['event_id'])) {
+        $sql .= " $sql_clause a.event_id = '" . $_REQUEST['event_id'] . "' ";
+        $sql_clause = " AND ";
+    }
+	 if (!empty($_REQUEST['today_a'])) {
+        //$sql_a .= " $sql_clause a.date = '" . event_espresso_no_format_date($curdate,$format = 'Y-m-d') ."' ";
+        $sql .= " $sql_clause a.date BETWEEN '" . $curdate . ' 00:00:00' . "' AND '" . $curdate . ' 23:59:59' . "' ";
+        $sql_clause = " AND ";
+    }
+	if (!empty($_REQUEST['this_month_a'])) {
+        $sql .= " $sql_clause a.date BETWEEN '" . event_espresso_no_format_date($this_year_r . '-' . $this_month_r . '-01', $format = 'Y-m-d') . "' AND '" . event_espresso_no_format_date($this_year_r . '-' . $this_month_r . '-' . $days_this_month, $format = 'Y-m-d') . "' ";
+        $sql_clause = " AND ";
+    }
+	$sql .= " $sql_clause e.event_status != 'D' ";
+	$data->attendee = $wpdb->get_row($sql, OBJECT);
+	//echo $sql;
+	
+	$data->attendee->total_count = $data->attendee->total_count == NULL ? 0 : $data->attendee->total_count;
+	$data->attendee->cost = $data->attendee->cost == NULL ? 0.00 : $data->attendee->cost;
+	
+	$html .= '<p class="attendee_counts">';
+	$html .= 'Total Attendees: '.$data->attendee->total_count;
+	$html .= ' | ';
+	$html .= 'Total Revenue: '.$data->attendee->cost;
+	$html .= '</p>';
+	return $html;
+}
