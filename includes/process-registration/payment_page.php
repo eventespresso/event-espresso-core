@@ -421,7 +421,7 @@ function event_espresso_pay($att_registration_id=0) {
 				$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
 				$total_cost += $tmp_attendee['amount_pd'];
 				$event_url = espresso_reg_url($tmp_attendee["event_id"]);
-				$event_link .= '<p><a href="' . $event_url . '">' . $tmp_attendee["event_name"].'</a><br />'.event_date_display($tmp_attendee['start_date'], get_option('date_format')).'<br />'.espresso_edit_attendee($registration_id, $id,$event_id,'attendee', $tmp_attendee["fname"]." ".$tmp_attendee["lname"]) . ' [ '.$tmp_attendee["quantity"]. ' x ' . $org_options[ 'currency_symbol' ].number_format($tmp_attendee["cost"], 2, '.', '').']</p><hr />';
+				$event_link .= '<div class="event-list-payment-overview"><dl><dt><a href="' . $event_url . '">' . $tmp_attendee["event_name"].'</a></dt><dd class="list-event-date">'.event_date_display($tmp_attendee['start_date'], get_option('date_format')).'</dd><dd class="attendee-plus-cost">'.espresso_edit_attendee($registration_id, $id,$event_id,'attendee', $tmp_attendee["fname"]." ".$tmp_attendee["lname"]) . '<span> [ '.$tmp_attendee["quantity"]. ' x ' . $org_options[ 'currency_symbol' ].number_format($tmp_attendee["cost"], 2, '.', '').']</span></dd></div>';
 			}
 		}
 		//print_r($attendees);

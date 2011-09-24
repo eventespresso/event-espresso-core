@@ -2,11 +2,15 @@
   <h3 class="section-heading">
     <?php _e('Payment Overview', 'event_espresso'); ?>
   </h3>
-  <p><strong>
+  <h4 class="section-title list-events">
     <?php _e('Class/Event:', 'event_espresso'); ?>
-    </strong><br />
-    <?php echo stripslashes_deep($event_link) ?></p>
-  <dl class="dl-inline"">
+  </h4>
+		
+		<div>
+    <?php  echo stripslashes_deep($event_link) ?>
+		</div>
+		<h4 class="section-title"><?php _e('Registration  Details', 'event_espreso'); ?></h4>
+  <dl class="dl-inline reg-gen-details">
     <dt>
       <?php _e('Primary Registrant:', 'event_espresso'); ?>
     </dt>
