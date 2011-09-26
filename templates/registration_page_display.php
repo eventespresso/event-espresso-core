@@ -141,9 +141,9 @@
 								$display_price_dropdown = false;
 							}
 						}
-						
+
 						if ( $display_price_dropdown == true  ){
-							
+
 ?>
       						<p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text ?></p>
        <?php
@@ -248,7 +248,7 @@
 		?>
           <p class="event_form_field" id="captcha-<?php echo $event_id; ?>">
             <?php _e('Anti-Spam Measure: Please enter the following phrase', 'event_espresso'); ?>
-            <?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error); ?> </p>
+            <?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false); ?> </p>
           <?php } //End use captcha ?>
           <p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
             <input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
