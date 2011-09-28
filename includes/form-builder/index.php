@@ -263,6 +263,28 @@ function event_espresso_questions_config_mnu() {
         postboxes.add_postbox_toggles('form_builder');
         } );
 
+// Remove li parent for input 'values' from page if 'text' box or 'textarea' are selected
+    // hide values field on initial page view
+			jQuery('li#add-question-values').hide();
+			// we don't want the values field trying to validate if not displayed, remove it's name
+			jQuery('li#add-question-values input').attr("name","notrequired") 
+    //var replaceSelect = jQuery('li#add-question-values').clone;
+jQuery('select#question_type').bind('blur', function() {
+  var selectValue = jQuery('select#question_type option:selected').val();
+  
+		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA') {
+		  jQuery('li#add-question-values').slideUp('800');
+			
+		  //alert(selectValue);
+		} else{
+		  //alert(selectValue);
+		  jQuery('li#add-question-values').slideDown('800');
+			// add the correct name value back in so we can run validation check.
+			jQuery('li#add-question-values input').attr("name","values")
+		}
+});
+
+
 // Add new question or question group form validation
 	jQuery(function(){
    jQuery('#new-question-form').validate({

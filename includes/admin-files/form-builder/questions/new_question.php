@@ -16,7 +16,7 @@ function event_espresso_form_builder_new(){
 					<input class="question-name"  name="question" id="question" size="50" value="" type="text" />
 				</li>
     
-				<li>
+				<li id="question-type-select">
 					<label for="question_type"><?php _e('Type:','event_espresso'); ?></label>
   				<select name="question_type" id="question_type">
   			  	<option value="TEXT">Text</option>
@@ -26,7 +26,7 @@ function event_espresso_form_builder_new(){
   			  	<option value="DROPDOWN">Drop Down</option>
   				</select>
 				</li>
-				<li>
+				<li id="add-question-values">
 					<label for="values"><?php _e('Values:','event_espresso'); ?></label>
 					<input name="values" id="values" size="50" value="" type="text" />
 					<p class="input-info"> <?php _e('A comma seperated list of values. Eg. black, blue, red', 'event_espresso'); ?></p>
