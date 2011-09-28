@@ -111,17 +111,17 @@ function event_espresso_question_groups_config_mnu() {
                         <table id="table" class="widefat manage-question-group">
                             <thead>
                                 <tr>
-                                    <th class="manage-column" id="cb" scope="col" ><input type="checkbox" /></th>
-                                    <th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:40%;">
+                                    <th class="manage-column" id="cb" scope="col" style="width: 2%;" ><input type="checkbox" /></th>
+                                    <th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:22%;">
                                         <?php _e('Group Name', 'event_espresso'); ?>
                                     </th>
-                                    <th class="manage-column column-title" id="type" scope="col" title="Click to Sort" style="width:30%;">
+                                    <th class="manage-column column-title" id="type" scope="col" title="Click to Sort" style="width:23%;">
                                         <?php _e('Indentifier', 'event_espresso'); ?>
                                     </th>
                                     <?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
-                                        <th class="manage-column column-creator" id="creator" scope="col" title="Click to Sort" style="width:20%;"><?php _e('Creator', 'event_espresso'); ?></th>
+                                        <th class="manage-column column-creator" id="creator" scope="col" title="Click to Sort" style="width:18%;"><?php _e('Creator', 'event_espresso'); ?></th>
                                     <?php } ?>
-                                    <th class="manage-column column-title" id="required" scope="col" title="Click to Sort" style="width:30%;">
+                                    <th class="manage-column column-title" id="required" scope="col" title="Click to Sort" style="width:35%;">
                                         <?php _e('Description', 'event_espresso'); ?>
                                     </th>
                                 </tr>
