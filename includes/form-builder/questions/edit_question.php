@@ -44,7 +44,7 @@ function event_espresso_form_builder_edit(){
           <input name="question" id="question" size="50" value="<?php echo $question_name; ?>" type="text">
         </li>
        
-				  <li>
+				  <li id="question-type-select">
           <label for="question_type"><?php _e('Type:','event_espresso'); ?></label>
          <?php
 						$values	=	array(					
@@ -58,11 +58,11 @@ function event_espresso_form_builder_edit(){
 							$values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));
 						}
 					
-						echo select_input('question_type', $values, $question_type); 
+						echo select_input( 'question_type', $values,  $question_type, 'id="question_type"'); 
 					?>
 					</li>
        
-					<li>
+					<li id="add-question-values">
           <label for="values"><?php _e('Values:','event_espresso'); ?></label>
           <input name="values" id="values" size="50" value="<?php echo $question_values; ?>" type="text" />
 						<p class="input-info"><?php _e('A comma seperated list of values. Eg. black, blue, red', 'event_espresso'); ?></p>
