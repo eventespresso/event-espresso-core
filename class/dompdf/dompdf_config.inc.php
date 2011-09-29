@@ -169,21 +169,7 @@ def("DOMPDF_CHROOT", realpath(DOMPDF_DIR));
  */
 def("DOMPDF_UNICODE_ENABLED", true);
 
-/**
- * The path to the tt2pt1 utility (used to convert ttf to afm)
- *
- * Not strictly necessary, but useful if you would like to install
- * additional fonts using the {@link load_font.php} utility.
- *
- * Windows users should use something like this:
- * define("TTF2AFM", "C:\\Program Files\\Ttf2Pt1\\bin\\ttf2pt1.exe");
- *
- * @link http://ttf2pt1.sourceforge.net/
- */
-if ( strpos(PHP_OS, "WIN") === false )
-  def("TTF2AFM", DOMPDF_LIB_DIR ."/ttf2ufm/ttf2ufm-src/ttf2pt1");
-else 
-  def("TTF2AFM", "C:\\Program Files\\GnuWin32\\bin\\ttf2pt1.exe");
+
 
 /**
  * The PDF rendering backend to use
