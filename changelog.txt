@@ -1,0 +1,14 @@
+1.7
+Fixed an issue with the CSS and Javascript files not loading properly when using HTTPS.
+Fixed an issue with the Javascript and CSS files loading throughout the entire website.
+1.5
+Fixed the broken URLs.
+Fixed the problem with array showing in the event titles.
+1.4
+Added output buffering so the calendar will display above the content of the page.
+1.3
+Added the external registration url override to the calendar links.
+1.2
+Added className based on the event category to the parameters of the calendar output. By adding the category_identifier as a class to the css file. The events can be styled as needed.
+Added title to the available parameters of the calendar output.
+Added a check to see if the calendar.css file is located in the /wp-content/uploads/espresso/ directory.
