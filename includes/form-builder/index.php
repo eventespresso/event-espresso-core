@@ -264,20 +264,23 @@ function event_espresso_questions_config_mnu() {
         } );
 
 // Remove li parent for input 'values' from page if 'text' box or 'textarea' are selected
-    // hide values field on initial page view
+		  var selectValue = jQuery('select#question_type option:selected').val();
+			//alert(selectValue + ' - this is initial value');
+			// hide values field on initial page view
+			if(selectValue == 'TEXT' || selectValue == 'TEXTAREA'){
 			jQuery('li#add-question-values').hide();
-			// we don't want the values field trying to validate if not displayed, remove it's name
+			}
+			// we don't want the values field trying to validate if not displayed, remove its name
 			jQuery('li#add-question-values input').attr("name","notrequired") 
-    //var replaceSelect = jQuery('li#add-question-values').clone;
+  //var replaceSelect = jQuery('li#add-question-values').clone;
 jQuery('select#question_type').bind('blur', function() {
   var selectValue = jQuery('select#question_type option:selected').val();
   
 		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA') {
 		  jQuery('li#add-question-values').slideUp('800');
-			
-		  //alert(selectValue);
+		    //alert(selectValue);
 		} else{
-		  //alert(selectValue);
+		    //alert(selectValue);
 		  jQuery('li#add-question-values').slideDown('800');
 			// add the correct name value back in so we can run validation check.
 			jQuery('li#add-question-values input').attr("name","values")
