@@ -79,10 +79,10 @@ $this_event_id = $event_id;
                     //$meta['attendee_number'] = 1;
 											?>
                     
-											<div class="event-display-boxes">
-											 <fieldset id="event-reg-form-groups">
+                   <div class="event-display-boxes">
+                    <fieldset id="event-reg-form-groups">
 											<?php
-											echo '<h3 class="section-heading">' . __( 'Attendee ', 'event_espresso' ) . $attendee_number . '</h3>';
+                    echo '<h3 class="section-heading">' . __( 'Attendee ', 'event_espresso' ) . $attendee_number . '</h3>';
 
                     $meta['attendee_number'] = $price_group_att_counter;
 											//echo "Attendee # ".$attendee_number;
@@ -90,7 +90,7 @@ $this_event_id = $event_id;
                     echo event_espresso_copy_dd( $event_id, $meta );
                     echo event_espresso_add_question_groups( $question_groups, $events_in_session, $event_id, 1, $meta ); ?>
 											 
-											 </fieldset>
+                    </fieldset>
 											</div>
                     
 											<?php
@@ -142,9 +142,9 @@ $this_event_id = $event_id;
 									
 									<div class="event-display-boxes">
 									<fieldset id="event-reg-form-groups">
-									<?php
-									echo '<h3 class="section-heading">' . __( 'Attendee ', 'event_espresso' ) . $i . '</h3>';?>
-									<span class="what on earth is this "><?php echo event_espresso_copy_dd( $event_id, $meta );?></span>
+									
+									<h3 class="section-heading"><?php echo  __( 'Attendee ', 'event_espresso' ) . $i  ?> <span class="attendee-event-title">( <?php echo stripslashes_deep( $event_name ) ?>)</span></h3>
+									<?php echo event_espresso_copy_dd( $event_id, $meta );?>
 									<?php echo event_espresso_add_question_groups($question_groups, $events_in_session, $event_id, 1, $meta );?>
 									</fieldset>
 									</div>
