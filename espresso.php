@@ -70,6 +70,17 @@ function espresso_info_header() {
     print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
 }
 
+#### N.B These need to be added correctly?! ####
+add_action('wp_enqueue_scripts', 'load_thickbox');
+function load_thickbox() {
+wp_enqueue_script('thickbox');
+}
+add_action('wp_print_styles', 'tb_styles');
+function tb_styles() {
+wp_enqueue_style('thickbox');
+}
+###### end add correctly ####
+
 add_action('wp_head', 'espresso_info_header');
 
 //Globals
@@ -501,6 +512,7 @@ if (!function_exists('espresso_load_javascript_files')) {
 
         wp_register_script('validation', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/validation.js"), false, EVENT_ESPRESSO_VERSION);
         wp_print_scripts('validation');
+								
     }
 
 }
@@ -516,6 +528,7 @@ if (!function_exists('espresso_load_jquery')) {
     }
 
 }
+
 //End Javascript files
 //Load the style sheets for the reegistration pages
 add_action('wp_print_styles', 'add_event_espresso_stylesheet');
