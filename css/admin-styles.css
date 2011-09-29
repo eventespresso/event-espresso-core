@@ -396,6 +396,7 @@ div.tablenav {
 }
 .use-ven-manager {
 	width: 50%;
+	vertical-align: top;
 }
 .manual-venue {
 	width: 33.3%;
