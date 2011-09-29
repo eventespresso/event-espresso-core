@@ -73,11 +73,13 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 				$div .= "<p><span>Zip:</span> ".stripslashes_deep($venue->zip)."</p>";
 				$div .= "<p><span>Country:</span> ".stripslashes_deep($venue->country)."</p>";
 				$div .= "<p><span>Venue ID:</span> ".$venue->id."</p>";
+				$div .= "<p>This venues shortcode [ESPRESSO_VENUE id=\"'$venue->id'\"]</p>";
 				$div .= '<p><a href="admin.php?page=event_venues&action=edit&id='.$venue->id.'" target="_blank">'.__('Edit this venue', 'event_espresso').'</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></p></li></ul>';
 				$div .= "</fieldset>";
 			}
 			$field .= "</select>";
 			$help_div .= '<div id="venue_info" style="display:none">';
+			$help_div .= '<div class="TB-ee-frame">';
 			$help_div .= '<h2>'.__('Venue Shortcode', 'event_espresso').'</h2>';
 			$help_div .= '<p>'.__('Add the following shortcode into the description to show the venue for this event.', 'event_espresso').'</p>';
 			$help_div .= '<p>[ESPRESSO_VENUE]</p>';
@@ -85,6 +87,7 @@ if ( !function_exists( 'espresso_venue_dd' ) ){
 			$help_div .= '<p>[ESPRESSO_VENUE id="selected_venue_id"]</p>';
 			$help_div .= '<p>Example with Optional Parameters:<br />[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
 			$help_div .= '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
+			$help_div .= '</div>';
 			$help_div .= '</div>';
 			ob_start();
 
@@ -156,6 +159,7 @@ if ( !function_exists( 'espresso_personnel_cb' ) ){
 			$manage = '<p><a href="admin.php?page=event_staff" target="_blank">'.__('Manage Staff Members', 'event_espresso').'</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=staff_info">Shortcode</a> </p>';
 
 			echo '<div id="staff_info" style="display:none">';
+			echo '<div class="TB-ee-frame">';
 			echo '<h2>'.__('Staff Shortcode', 'event_espresso').'</h2>';
 			echo '<p>'.__('Add the following shortcode into the description to show the staff for this event.', 'event_espresso').'</p>';
 			echo '<p>[ESPRESSO_STAFF]</p>';
@@ -163,6 +167,7 @@ if ( !function_exists( 'espresso_personnel_cb' ) ){
 			[ESPRESSO_STAFF outside_wrapper="div" outside_wrapper_class="event_staff" inside_wrapper="p" inside_wrapper_class="event_person"]</p>';
 
 			echo '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#staff_shortcode" target="_blank">More Examples</a></strong></p>';
+			echo '</div>';
 			echo '</div>';
 
 			$html = $top_div.$html.$bottom_div.$manage;
@@ -247,7 +252,7 @@ if (!function_exists('espresso_chart_display')){
 		}
 	 //echo "<pre>".print_r($retVal,true)."</pre>";
 	  ?>
-		<script>
+		<script type="text/javascript">
 		 jQuery(document).ready(function() {
 				var line1 = [<?php echo $attendees ?>];//bottom column
 				var line2 = [<?php echo $amount ?>];
