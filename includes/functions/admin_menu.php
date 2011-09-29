@@ -86,7 +86,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		
 		//Ticketing Settings
         if (function_exists('espresso_ticket_config_mnu') && $espresso_premium == true) {
-            add_submenu_page('event_espresso', __('Event Espresso - Ticket Settings', 'event_espresso'), __('Ticket Settings', 'event_espresso'), 'administrator', 'event_tickets', 'espresso_ticket_config_mnu');
+            add_submenu_page('event_espresso', __('Event Espresso - Ticket Templates', 'event_espresso'), __('Ticket Templates', 'event_espresso'), 'administrator', 'event_tickets', 'espresso_ticket_config_mnu');
         }
 
         //Facebook Event Integration Settings
