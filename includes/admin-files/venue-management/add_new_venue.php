@@ -69,7 +69,7 @@ function add_new_event_venue(){
           				$results = $wpdb->get_results($sql);
           				if ($wpdb->num_rows > 0) { ?>
                  
-          				 <select name="locale" id="local">
+          				 <select name="locale" id="locale">
           					<?php
           					
           						foreach ($results as $result){
@@ -82,7 +82,7 @@ function add_new_event_venue(){
 										</select>	
 										<?php }  ?>	
             			 <?php if (empty($locale_id)) { ?>
-            				<p>You have not created any locales yet. To create Locales please visit <a href="admin.php?page=event_locales"> Manage Locales/Regions</a> page.</p>
+            				<p><?php _e('You have not created any locales yet. To create Locales please visit', 'event_espresso'); ?> <a href="admin.php?page=event_locales"> <?php _e('Manage Locales/Regions', 'event_espresso'); ?></a> <?php _e('page', 'event_espresso'); ?>.</p>
             			<?php } ?>
 										 
 										
