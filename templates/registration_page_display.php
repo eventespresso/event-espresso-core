@@ -75,8 +75,7 @@
 		break;
 
 		default://This will display the registration form
-			
-			 if('yes' == $event_meta['display_thumb_in_regpage']){ ?>
+			 if( $event_meta['display_thumb_in_regpage'] == 'Y'){ ?>
 					<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a><p>
      <?php } 
 
