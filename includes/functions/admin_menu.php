@@ -62,7 +62,9 @@ if (!function_exists('add_event_espresso_menus')) {
         }
 		
 		//Event styles & templates
-        add_submenu_page('event_espresso', __('Event Espresso - Template Settings', 'event_espresso'), __('Template Settings', 'event_espresso'), 'administrator', 'template_confg', 'event_espresso_manage_templates');
+		 if (function_exists('event_espresso_manage_templates') && $espresso_premium == true) {
+			add_submenu_page('event_espresso', __('Event Espresso - Template Settings', 'event_espresso'), __('Template Settings', 'event_espresso'), 'administrator', 'template_confg', 'event_espresso_manage_templates');
+		 }
 
         //Calendar Settings 
         if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) {
