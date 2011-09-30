@@ -42,7 +42,7 @@ get_header(); ?>
 				?>
 
                 <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-                    <h1 class="entry-title"><a href="<?php the_permalink() ?>" rel="bookmark" title="<?php the_title(); ?>"><?php the_title(); ?></a></h1>
+                    <h1 class="entry-title event_title"><a href="<?php the_permalink() ?>" rel="bookmark" title="<?php the_title(); ?>"><?php the_title(); ?></a></h1>
 
                     <div class="entry-meta">
                         <?php twentyten_posted_on();
