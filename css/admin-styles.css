@@ -734,6 +734,7 @@ table.event-list .re_fr {
 	width: 150px;
 	height: auto;
 }
+
 /*___ Venue Manager ___*/
 
 #add-edit-venue td.b, #add-edit-venue td.b {width: 50%;}
@@ -2255,4 +2256,12 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 	-khtml-box-shadow: #777 0 0 3px;
 	box-shadow: inset #E6E5DC 0 0 14px;
 	padding: 0 10px;
+}
+
+/*___ Ticketing Templates ___*/
+
+#ticket-logo-image .old img {
+	opacity: 0.4;
+	width: 250px;
+	height: auto;
 }
