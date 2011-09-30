@@ -165,7 +165,7 @@ function update_event($recurrence_arr = array()) {
 //skip the first update
     } else {
 
-        $event_mata = array(); //will be used to hold event meta data
+        $event_meta = array(); //will be used to hold event meta data
 
         $event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
         $event_name = $_REQUEST['event'];
@@ -253,15 +253,15 @@ function update_event($recurrence_arr = array()) {
         $add_attendee_question_groups = serialize(empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups']);
 
         $item_groups = serialize(empty($_REQUEST['item_groups']) ? '' : $_REQUEST['item_groups']);
-        $event_mata['default_payment_status'] = $_REQUEST['default_payment_status'];
-        $event_mata['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
-        $event_mata['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
-        $event_mata['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
-        $event_mata['date_submitted'] = $_REQUEST['date_submitted'];
-					$event_mata['event_thumbnail_url'] = $_REQUEST['upload_image'];
-					$event_mata['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
-					$event_mata['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
-					$event_mata['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+        $event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
+        $event_meta['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
+        $event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
+        $event_meta['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
+        $event_meta['date_submitted'] = $_REQUEST['date_submitted'];
+					$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
+					$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
+					$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
+					$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
 		
 		/*
 		 * Added for seating chart addon
@@ -290,7 +290,7 @@ function update_event($recurrence_arr = array()) {
 				if ( $_REQUEST['allow_multiple'] == 'Y' && isset($_REQUEST['seating_chart_id']) && $tmp_seating_chart_id > 0 )
 				{
 					
-					$event_mata['additional_attendee_reg_info'] = 3;
+					$event_meta['additional_attendee_reg_info'] = 3;
 				}
 			}
 		}
@@ -301,10 +301,10 @@ function update_event($recurrence_arr = array()) {
 
         if ($_REQUEST['emeta'] != '') {
             foreach ($_REQUEST['emeta'] as $k => $v) {
-                $event_mata[$v] = $_REQUEST['emetad'][$k];
+                $event_meta[$v] = $_REQUEST['emetad'][$k];
             }
         }
-        $event_mata = serialize($event_mata);
+        $event_meta = serialize($event_meta);
         ############ Added by wp-developers ######################
         $require_pre_approval = 0;
         if (isset($_REQUEST['require_pre_approval'])) {
@@ -323,7 +323,7 @@ function update_event($recurrence_arr = array()) {
             'question_groups' => $question_groups, 'item_groups' => $item_groups, 'allow_overflow' => $allow_overflow,
             'overflow_event_id' => $overflow_event_id, 'additional_limit' => $additional_limit,
             'reg_limit' => $reg_limit, 'email_id' => $email_id, 'registration_startT' => $registration_startT, 
-			'registration_endT' => $registration_endT, 'event_meta' => $event_mata, 'require_pre_approval' => $require_pre_approval, 
+			'registration_endT' => $registration_endT, 'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 
 			'timezone_string' => $timezone_string, 'ticket_id' => $ticket_id
 		);
 

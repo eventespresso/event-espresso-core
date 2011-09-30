@@ -50,7 +50,7 @@ function add_event_to_db($recurrence_arr = array()) {
     if (defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE') && $_POST['recurrence'] == 'Y' && count($recurrence_arr) == 0) {
 //skip the first insert because we do not have the start dates
     } else {
-        $event_mata = array(); //will be used to hold event meta data
+        $event_meta = array(); //will be used to hold event meta data
         //If the Espresso Facebook Events is installed, add the event to Facebook
         //$fb = new FacebookEvents();
         //echo $fb->espresso_createevent();
@@ -74,10 +74,10 @@ function add_event_to_db($recurrence_arr = array()) {
         $post_type = $_REQUEST['post_type'];
         
 					// thumbnail image options
-					$event_mata['event_thumbnail_url'] = $_REQUEST['upload_image'];
-					$event_mata['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
-					$event_mata['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
-					$event_mata['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+					$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
+					$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
+					$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
+					$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
 					
         //$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
         $event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
@@ -169,22 +169,22 @@ function add_event_to_db($recurrence_arr = array()) {
         $question_groups = empty($_REQUEST['question_groups']) ? '' : serialize($_REQUEST['question_groups']);
         $add_attendee_question_groups = empty($_REQUEST['add_attendee_question_groups']) ? '' : serialize($_REQUEST['add_attendee_question_groups']);
 
-        $event_mata['venue_id'] = isset($_REQUEST['venue_id']) ? $_REQUEST['venue_id'][0] : '';
-        $event_mata['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
-        $event_mata['add_attendee_question_groups'] = $add_attendee_question_groups;
-        $event_mata['date_submitted'] = date("Y-m-d H:i:s");
+        $event_meta['venue_id'] = isset($_REQUEST['venue_id']) ? $_REQUEST['venue_id'][0] : '';
+        $event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
+        $event_meta['add_attendee_question_groups'] = $add_attendee_question_groups;
+        $event_meta['date_submitted'] = date("Y-m-d H:i:s");
 
-		$event_mata['default_payment_status'] = $_REQUEST['default_payment_status'];
+		$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
 
         if ($_REQUEST['emeta'] != '') {
             foreach ($_REQUEST['emeta'] as $k => $v) {
-                $event_mata[$v] = strlen(trim($_REQUEST['emetad'][$k])) > 0 ? $_REQUEST['emetad'][$k] : '';
+                $event_meta[$v] = strlen(trim($_REQUEST['emetad'][$k])) > 0 ? $_REQUEST['emetad'][$k] : '';
             }
         }
         //echo strlen(trim($_REQUEST['emetad'][$k]));
         //print_r($_REQUEST['emeta'] );
 
-        $event_mata = serialize($event_mata);
+        $event_meta = serialize($event_meta);
 
         ############ Added by wp-developers ######################
         $require_pre_approval = 0;
@@ -201,7 +201,7 @@ function add_event_to_db($recurrence_arr = array()) {
             'allow_multiple' => $allow_multiple, 'send_mail' => $send_mail, 'is_active' => $is_active, 'event_status' => $event_status,
             'conf_mail' => $conf_mail, 'use_coupon_code' => $use_coupon_code, 'member_only' => $member_only, 'externalURL' => $externalURL,
             'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email,
-            'question_groups' => $question_groups, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'reg_limit' => $reg_limit, 'additional_limit' => $additional_limit, 'recurrence_id' => $recurrence_id, 'email_id' => $email_id, 'wp_user' => $current_user->ID, 'event_meta' => $event_mata, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()), 'ticket_id' => $ticket_id
+            'question_groups' => $question_groups, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'reg_limit' => $reg_limit, 'additional_limit' => $additional_limit, 'recurrence_id' => $recurrence_id, 'email_id' => $email_id, 'wp_user' => $current_user->ID, 'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()), 'ticket_id' => $ticket_id
 		);
 
         $sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
