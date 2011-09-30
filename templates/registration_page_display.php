@@ -75,6 +75,10 @@
 		break;
 
 		default://This will display the registration form
+			
+			 if('yes' == $event_meta['display_thumb_in_regpage']){ ?>
+					<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a><p>
+     <?php } 
 
 		/* Display the address and google map link if available */
 		if ($location != '' && (empty($org_options['display_address_in_regform']) || $org_options['display_address_in_regform'] !='N')) {
@@ -84,6 +88,7 @@
 			<span class="google-map-link"><?php echo $google_map_link; ?></span></span> </p>
 	<?php
 		}
+//	  echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
 		/* Displays the social media buttons */
 		if (function_exists('espresso_show_social_media')){
 			echo '<p class="espresso_social">'.espresso_show_social_media($event_id, 'twitter').' '.espresso_show_social_media($event_id, 'facebook').'</p>';

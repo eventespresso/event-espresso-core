@@ -383,6 +383,52 @@ function edit_event($event_id = 0) {
     </div>
     <!-- /groupon-options -->
     <?php } ?>
+		         <!-- Add thumbnail image -->
+             <div id="set-featured-image" class="postbox">
+					      <div class="handlediv" title="Click to toggle"><br />
+      	      </div>
+					      <h3 class="hndle">
+						     <span>
+							     <?php _e('Featured Image', 'event_espresso'); ?>
+						     </span>
+					      </h3>
+					      <div class="inside">
+					      <div id="featured-image">
+								 <?php
+								 
+								 if(!empty($event_meta['event_thumbnail_url'])){ 
+								   $event_thumb = $event_meta['event_thumbnail_url'];
+								 } else {
+								   $event_thumb = '';
+								 }?>
+								 
+								 <?php // var_dump($event_meta['event_thumbnail_url']); ?>
+					        <label for="upload_image">Add Featured Image</label>
+				          <input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $event_thumb ?>" />
+	               <input id="upload_image_button" type="button" value="Upload Image" />
+									
+									<?php if($event_thumb){ ?>
+									<p class="event-featured-thumb"><img  src="<?php echo $event_thumb ?>" alt="" /></p>
+									<?php } ?>
+									
+								</div>
+   					  <p>
+						     <label>Enable image in event lists</label>
+								 <?php echo select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : ''); ?>								 
+						    </p>
+					      <p>
+						     <label>Enable image in registration</label>
+								 <?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : ''); ?>								 
+						    </p>								 	
+    					 <?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
+					      <p>
+								  <label>Add image to event calendar</label>
+								  <?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : ''); ?>
+						    </p>
+				     <?php } ?>
+									 					
+					      </div>
+				       </div>	
   </div>
   <!-- /side-sortables --> 
 </div>
@@ -766,10 +812,36 @@ function edit_event($event_id = 0) {
                 changeYear: true,
                 dateFormat: "yy-mm-dd",
                 showButtonPanel: true
-            });
-        });
-
-        //]]>
+            }); // close doc.ready
+        
+        		var header_clicked = false;
+        		jQuery('#upload_image_button').click(function() {
+	            formfield = jQuery('#upload_image').attr('name');
+	            tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
+			         header_clicked = true;
+	            return false;
+	           });
+	 
+		         window.original_send_to_editor = window.send_to_editor;
+		
+	          window.send_to_editor = function(html) {
+         		if(header_clicked) {
+	            imgurl = jQuery('img',html).attr('src');
+	            jQuery('#' + formfield).val(imgurl);
+		           header_clicked = false;
+						
+		         //jQuery('#event_thumbnail').val(imgurl);
+						
+		         //jQuery('#featured-image').append("<p><img src='"+imgurl+"' alt='' /></p>")
+							
+	           tb_remove();
+		          } else{
+		           window.original_send_to_editor(html);
+		          }
+	          }
+	
+					});				
+    //]]>
     </script>
 <?php
     espresso_tiny_mce();

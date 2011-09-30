@@ -72,7 +72,13 @@ function add_event_to_db($recurrence_arr = array()) {
         $externalURL = esc_html($_REQUEST['externalURL']);
 
         $post_type = $_REQUEST['post_type'];
-
+        
+					// thumbnail image options
+					$event_mata['event_thumbnail_url'] = $_REQUEST['upload_image'];
+					$event_mata['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
+					$event_mata['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
+					$event_mata['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+					
         //$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
         $event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
         $reg_limit = $_REQUEST['reg_limit'];

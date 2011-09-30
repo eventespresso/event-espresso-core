@@ -202,6 +202,47 @@ function add_new_event() {
     </div>
     <!-- /groupon-options -->
     <?php } ?>
+<!-- Add thumbnail image -->
+      <div id="set-featured-image" class="postbox">
+					<div class="handlediv" title="Click to toggle"><br />
+      	</div>
+					<h3 class="hndle">
+						<span>
+							<?php _e('Featured Image', 'event_espresso'); ?>
+						</span>
+					</h3>
+					<div class="inside">
+					 <div id="featured-image">
+					  <label for="upload_image">Add Featured Image</label>
+				    <input id="upload_image" type="hidden" size="36" name="upload_image" value="" />
+	         <input id="upload_image_button" type="button" value="Upload Image" />
+	        </div>						
+					  <p>
+						 <label>Enable image in event lists</label>
+						 <select name="show_thumb_in_lists">
+						  <option value="no">No</option>
+						  <option value="yes">Yes</option>
+						 </select>
+						</p>
+					  <p>
+						 <label>Enable image in registration</label>
+						 <select name="show_thumb_in_regpage">
+						  <option value="no">No</option>
+						  <option value="yes">Yes</option>
+						 </select>
+						</p>											 
+					 <?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
+					  <p>
+						 <label>Add image to event calendar</label>
+						 <select name="show_on_calendar">
+						  <option value="no">No</option>
+						  <option value="yes">Yes</option>
+						 </select>
+						</p>
+					 <?php } ?>
+					</div>
+				</div>
+
   </div>
   <!-- /side-sortables --> 
 </div>
@@ -601,6 +642,28 @@ function add_new_event() {
 			jQuery("#start_date").change(function(){
 				jQuery("#end_date").val(jQuery(this).val());
 			});
+    
+			var header_clicked = false; 
+			jQuery('#upload_image_button').click(function() {
+	     formfield = jQuery('#upload_image').attr('name');
+	     tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
+				header_clicked = true;
+	    return false;
+	   });
+    
+			window.original_send_to_editor = window.send_to_editor;
+				 
+	   window.send_to_editor = function(html) {
+			  if(header_clicked) {
+	       imgurl = jQuery('img',html).attr('src');
+	       jQuery('#' + formfield).val(imgurl);
+		      jQuery('#featured-image').append("<p><img src='"+imgurl+"' alt='' /></p>");
+				  header_clicked = false;
+	       tb_remove();
+				} else {
+				  window.original_send_to_editor(html);
+				}
+	    }
 
  });
 

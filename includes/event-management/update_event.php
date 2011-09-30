@@ -258,6 +258,10 @@ function update_event($recurrence_arr = array()) {
         $event_mata['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
         $event_mata['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
         $event_mata['date_submitted'] = $_REQUEST['date_submitted'];
+					$event_mata['event_thumbnail_url'] = $_REQUEST['upload_image'];
+					$event_mata['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
+					$event_mata['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
+					$event_mata['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
 		
 		/*
 		 * Added for seating chart addon

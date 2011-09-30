@@ -70,17 +70,6 @@ function espresso_info_header() {
     print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
 }
 
-#### N.B These need to be added correctly?! ####
-add_action('wp_enqueue_scripts', 'load_thickbox');
-function load_thickbox() {
-wp_enqueue_script('thickbox');
-}
-add_action('wp_print_styles', 'tb_styles');
-function tb_styles() {
-wp_enqueue_style('thickbox');
-}
-###### end add correctly ####
-
 add_action('wp_head', 'espresso_info_header');
 
 //Globals

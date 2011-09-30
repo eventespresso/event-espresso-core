@@ -72,7 +72,14 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         <div class="event-desc">
             <p><?php echo espresso_format_content($event_desc); ?></p>
         </div>
-        <?php
+					
+					<?php if('yes' == $event_meta['display_thumb_in_lists']){ ?>
+					<a id="ee-event-list-thumb" class="thickbox" href="#TB_inline?height=400&width=500&inlineId=event-thumb-detail<?php echo $event_id ?>">
+      <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span>
+     </a>
+     <?php } ?>
+					
+					<?php
     }
     ?>
 
@@ -140,4 +147,25 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         }
     }
     ?>
+		<div style="display: none;">
+   <div id="event-thumb-detail<?php echo $event_id ?>" class="pop-help" >
+    <div class="TB-ee-frame">
+      <h2 class="tb-ee-event-title"><?php echo stripslashes_deep($event_name) ?></h2>	
+						
+						<img class="tb-ee-event-thumb" src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" />
+						
+						<div class="tb-ee-event-desc">
+						  <?php echo espresso_format_content($event_desc); ?>
+								<p>words woersd vnbhg llosd dfgrtfy  woersd vnbhg llosd dfgrtfy bnjughh bngjtu bnjughh bngjtu </p>
+								<p>woersd vnbhg llosd dfgrtfy bnjughh woersd vnbhg llosd dfgrtfy bnjughh bngjtu woersd vnbhg llosd dfgrtfy bnjughh bngjtu bngjtu woersd vnbhg llosd dfgrtfy bnjughh bngjtu</p>
+						</div>
+						
+						<p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
+         <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a>
+          <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?>
+      </p>
+				</div>
+   </div><!-- / .pop-help -->
+  </div><!-- / hide thickbox content -->		
+
 </div>

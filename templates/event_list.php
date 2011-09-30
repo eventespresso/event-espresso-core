@@ -31,7 +31,8 @@ if (!function_exists('display_all_events')) {
 if (!function_exists('display_event_espresso_categories')) {
 
     function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
-        global $wpdb;
+        global $wpdb,  $org_options;
+					
         if ($event_category_id != "null") {
 
             $display_recurrence_event = true; //If set to true, the event page will display recurring events.
@@ -116,8 +117,11 @@ if (!function_exists('event_espresso_get_event_details')) {
             $event_meta['registration_startT'] = $event->registration_startT;
             $event_meta['registration_end'] = $event->registration_end;
             $event_meta['registration_endT'] = $event->registration_endT;
-
-            //Venue information
+            //$event_meta['event_thumbnail_url'] = $event->event_thumbnail_url;
+							//$event_meta['display_thumb_in_lists'] = $event->display_thumb_in_lists;
+            //var_dump($event_meta);
+            //var_dump($event_address);
+							//Venue information
             if ($org_options['use_venue_manager'] == 'Y') {
                 $event_address = $event->venue_address;
                 $event_address2 = $event->venue_address2;
@@ -149,7 +153,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 
             //Address formatting
             $location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
-
+            //var_dump($venue_meta);
             //Google map link creation
             $google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
             global $all_meta;
