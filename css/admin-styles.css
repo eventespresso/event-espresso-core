@@ -725,7 +725,10 @@ table.event-list .re_fr {
 #event-date-time td.a, #event-date-time td.b, #event-pricing td.a {
 	width: 50%;
 }
-
+#set-featured-image .event-featured-thumb img {
+	width: 100%;
+	height: auto;
+}
 /*___ Venue Manager ___*/
 
 #add-edit-venue td.b, #add-edit-venue td.b {width: 50%;}
