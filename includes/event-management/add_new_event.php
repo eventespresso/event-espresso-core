@@ -213,19 +213,19 @@ function add_new_event() {
 					</h3>
 					<div class="inside">
 					 <div id="featured-image">
-					  <label for="upload_image">Add Featured Image</label>
+					  <label for="upload_image"><?php _e('Add Featured Image', 'event_espresso'); ?></label>
 				    <input id="upload_image" type="hidden" size="36" name="upload_image" value="" />
 	         <input id="upload_image_button" type="button" value="Upload Image" />
 	        </div>						
 					  <p>
-						 <label>Enable image in event lists</label>
+						 <label><?php _e('Enable image in event lists', 'event_espresso'); ?></label>
 						 <select name="show_thumb_in_lists">
 						  <option value="no">No</option>
 						  <option value="yes">Yes</option>
 						 </select>
 						</p>
 					  <p>
-						 <label>Enable image in registration</label>
+						 <label><?php _e('Enable image in registration', 'event_espresso'); ?></label>
 						 <select name="show_thumb_in_regpage">
 						  <option value="no">No</option>
 						  <option value="yes">Yes</option>
@@ -233,7 +233,7 @@ function add_new_event() {
 						</p>											 
 					 <?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
 					  <p>
-						 <label>Add image to event calendar</label>
+						 <label><?php _e('Add image to event calendar', 'event_espresso'); ?></label>
 						 <select name="show_on_calendar">
 						  <option value="no">No</option>
 						  <option value="yes">Yes</option>
