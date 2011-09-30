@@ -272,7 +272,7 @@ function event_espresso_support() {
                       </div>
                       <div class="shortcode-box">
                         <h4>
-                          <?php _e('Add Events to Cart', 'event_espresso'); ?>
+                          <?php _e('Add Events to Cart (premium version only, requires Multiple Event Registration addon)', 'event_espresso'); ?>
                         </h4>
                         <p>
                           <?php _e('Displays an "Add Event to Cart" link that can be added to the event details, page, or post. Requires the <a href="http://eventespresso.com/download/plugins-and-addons/multiple-event-registration/" target="_blank">Multiple Event Registration addon</a>.', 'event_espresso'); ?>
@@ -348,7 +348,7 @@ function event_espresso_support() {
                       </div>
                       <div class="shortcode-box">
                         <h4>
-                          <?php _e('Venue Shortcodes', 'event_espresso'); ?>
+                          <?php _e('Venue Shortcodes (premium version only)', 'event_espresso'); ?>
                         </h4>
                         <h5>
                           <?php _e('As of Event Espresso version 3.1', 'event_espresso'); ?>
@@ -419,7 +419,7 @@ function event_espresso_support() {
                       </div>
                       <div class="shortcode-box">
                         <h4>
-                          <?php _e('Staff Shortcodes', 'event_espresso'); ?>
+                          <?php _e('Staff Shortcodes (premium version only)', 'event_espresso'); ?>
                         </h4>
                         <h5>
                           <?php _e('As of Event Espresso version 3.1', 'event_espresso'); ?>
@@ -467,7 +467,7 @@ function event_espresso_support() {
                         </ul>
                       </div>
                       <div class="shortcode-box">
-                        <h4><?php _e('Calendar Shortcodes', 'event_espresso'); ?></h4>
+                        <h4><?php _e('Calendar Shortcodes (premium version only)', 'event_espresso'); ?></h4>
                         <ul>
                           <li><span class="highlight">[ESPRESSO_CALENDAR]</span></li>
                           <li><span class="highlight"> [ESPRESSO_CALENDAR show_expired="true"]</span></li>
