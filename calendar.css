@@ -613,7 +613,7 @@ class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar .thumb-wrap img.medium {height: 100px;}
 #espresso_calendar .thumb-wrap img.large {height: 150px;}
 
-#espresso_calendar span.thumb-wrap:focus,
+/*#espresso_calendar span.thumb-wrap:focus,
 #espresso_calendar span.thumb-wrap:hover {
 	height: auto;
 	width: auto;
