@@ -213,55 +213,10 @@ function edit_event($event_id = 0) {
                     '<p><label for="addit-limit">' . __('Max Group Registrants', 'event_espresso') . ':</label> <input type="text" id="addit-limit" name="additional_limit" value="' . $additional_limit . '" size="4" />' . '</p>' .
                     $advanced_options
             );
-?>
-			<!-- Add thumbnail image -->
-             <div id="set-featured-image" class="postbox">
-					      <div class="handlediv" title="Click to toggle"><br />
-      	      </div>
-					      <h3 class="hndle">
-						     <span>
-							     <?php _e('Featured Image', 'event_espresso'); ?>
-						     </span>
-					      </h3>
-					      <div class="inside">
-					      <div id="featured-image">
-								 <?php
-								 
-								 if(!empty($event_meta['event_thumbnail_url'])){ 
-								   $event_thumb = $event_meta['event_thumbnail_url'];
-								 } else {
-								   $event_thumb = '';
-								 }?>
-								 
-								 <?php // var_dump($event_meta['event_thumbnail_url']); ?>
-					        <label for="upload_image"><?php _e('Add Featured Image', 'event_espresso'); ?></label>
-				          <input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $event_thumb ?>" />
-	               <input id="upload_image_button" type="button" value="Upload Image" />
-									
-									<?php if($event_thumb){ ?>
-									<p class="event-featured-thumb"><img  src="<?php echo $event_thumb ?>" alt="" /></p>
-									<?php } ?>
-									
-								</div>
-   					  <p>
-						     <label><?php _e('Enable image in event lists', 'event_espresso'); ?></label>
-								 <?php echo select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : ''); ?>								 
-						    </p>
-					      <p>
-						     <label><?php _e('Enable image in registration', 'event_espresso'); ?></label>
-								 <?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : ''); ?>								 
-						    </p>								 	
-    					 <?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
-					      <p>
-								  <label><?php _e('Add image to event calendar', 'event_espresso'); ?></label>
-								  <?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : ''); ?>
-						    </p>
-				     <?php } ?>
-									 					
-					      </div>
-				       </div>	
-                       <!-- /Add thumbnail image -->
-          <?php
+			//Featured image section
+			if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true){
+				espresso_featured_image_event_admin($event_meta);
+			}
 		/*
 		 * Added for seating chart addon
 		 */
@@ -825,25 +780,24 @@ function edit_event($event_id = 0) {
 	            return false;
 	           });
 	 
-		         window.original_send_to_editor = window.send_to_editor;
-		
-	          window.send_to_editor = function(html) {
-         		if(header_clicked) {
-	            imgurl = jQuery('img',html).attr('src');
-	            jQuery('#' + formfield).val(imgurl);
-		           header_clicked = false;
-						
-		         //jQuery('#event_thumbnail').val(imgurl);
-						
-		         //jQuery('#featured-image').append("<p><img src='"+imgurl+"' alt='' /></p>")
-							
-	           tb_remove();
-		          } else{
-		           window.original_send_to_editor(html);
-		          }
-	          }
-	
-					});				
+		<?php if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true){ ?>
+				window.original_send_to_editor = window.send_to_editor;
+							 
+				window.send_to_editor = function(html) {
+					if(header_clicked) {
+						imgurl = jQuery('img',html).attr('src');
+						jQuery('#' + formfield).val(imgurl);
+						jQuery('#featured-image').append("<p><img src='"+imgurl+"' alt='' /></p>");
+						header_clicked = false;
+						tb_remove();
+						} else {
+							window.original_send_to_editor(html);
+						}
+				}
+			<?php
+			}
+			?>	
+		});				
     //]]>
     </script>
 <?php
