@@ -729,6 +729,11 @@ table.event-list .re_fr {
 	width: 100%;
 	height: auto;
 }
+#set-featured-image .old img {
+	opacity: 0.4;
+	width: 150px;
+	height: auto;
+}
 /*___ Venue Manager ___*/
 
 #add-edit-venue td.b, #add-edit-venue td.b {width: 50%;}
