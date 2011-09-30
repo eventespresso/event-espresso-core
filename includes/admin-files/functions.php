@@ -462,7 +462,9 @@ function espresso_attendee_counts(){
 	return $html;
 }
 if (!function_exists('espresso_featured_image_event_admin')){
-	function espresso_featured_image_event_admin($event_meta){
+	function espresso_featured_image_event_admin($event_meta=''){
+		global $espresso_premium;
+		$values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
 	?>
     <!-- Add thumbnail image -->
 	<div id="set-featured-image" class="postbox">
