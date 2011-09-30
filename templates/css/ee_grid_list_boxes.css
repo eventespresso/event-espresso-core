@@ -60,6 +60,12 @@ table.price_list {
 	-webkit-box-shadow: 0 2px 3px #eaeaea;
 	box-shadow: 0 2px  3px #eaeaea;
 }
+#ee-event-list-thumb img,
+.tb-ee-event-thumb {
+	-moz-box-shadow: 2px 2px 5px #d2d2d2;
+	-webkit-box-shadow: 2px 2px 5px #d2d2d2;
+	box-shadow: 2px 2px  5px #888;
+}
 #content #espresso_confirmation_display {/* inset shadow */
 	-moz-box-shadow:  inset 0 0 5px #ddd;
 	-webkit-box-shadow: inset 0 0 5px #ddd;
@@ -214,6 +220,46 @@ span.google-map-link a {
 span.google-map-link a:focus,
 span.google-map-link a:hover {
 	color: #CD7950;
+}
+#ee-event-list-thumb {
+	display: block;
+	overflow: hidden;
+}
+#ee-event-list-thumb span {
+	border: 1px solid #bfbfbf;
+ float: left;
+	padding: 18px;
+}
+/** Thickbox event list styling **/
+#TB_overlay {
+ background-color: #777;
+ opacity: 0.55;
+}
+.tb-ee-event-thumb {
+	float: left;
+	margin: 0 20px 10px 0;
+}
+.TB-ee-frame {
+	background: #F0F0E3;
+	border: 1px solid #8f8f8f;
+	margin-top: 1em;
+	overflow: hidden;
+	padding: 1em 10px 5em;
+	position: relative;
+}
+.tb-ee-event-title {
+	margin-bottom: 20px;
+}
+.tb-ee-event-desc {
+	overflow: hidden;
+}
+.TB-ee-frame #register_link-57 {
+	position: absolute;
+	margin-bottom: 0;
+	padding-left: 10px;
+	width: 100%;
+	bottom: 0;
+	left: 0;
 }
 /*___ page register ___*/
 
