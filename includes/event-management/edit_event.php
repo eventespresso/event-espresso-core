@@ -403,7 +403,7 @@ function edit_event($event_id = 0) {
 								 }?>
 								 
 								 <?php // var_dump($event_meta['event_thumbnail_url']); ?>
-					        <label for="upload_image">Add Featured Image</label>
+					        <label for="upload_image"><?php _e('Add Featured Image', 'event_espresso'); ?></label>
 				          <input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $event_thumb ?>" />
 	               <input id="upload_image_button" type="button" value="Upload Image" />
 									
@@ -413,16 +413,16 @@ function edit_event($event_id = 0) {
 									
 								</div>
    					  <p>
-						     <label>Enable image in event lists</label>
+						     <label><?php _e('Enable image in event lists', 'event_espresso'); ?></label>
 								 <?php echo select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : ''); ?>								 
 						    </p>
 					      <p>
-						     <label>Enable image in registration</label>
+						     <label><?php _e('Enable image in registration', 'event_espresso'); ?></label>
 								 <?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : ''); ?>								 
 						    </p>								 	
     					 <?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
 					      <p>
-								  <label>Add image to event calendar</label>
+								  <label><?php _e('Add image to event calendar', 'event_espresso'); ?></label>
 								  <?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : ''); ?>
 						    </p>
 				     <?php } ?>
