@@ -316,11 +316,14 @@ function add_new_event() {
                       :</label>
                     <?php echo eventespresso_ddtimezone($event_id) ?></p>
                 </fieldset>
-                <?php  } ?>
-                <?php /* ?> <p>
-                <br /> <?php echo __('Event Visible On:','event_espresso') . ' <input type="text" size="15" id="visible_on" class="datepicker" name="visible_on" value="" />'; ?> <br />
-                                  </p><?php */ ?>
-                <?php echo get_option('event_espresso_re_active') == 1 ? '' : '<p class="recurring-available"><a class="inform" href="http://eventespresso.com/?p=3319" target="_blank" title="Visit eventespresso.com for full details">' . __('Recurring Event Manager Now Available!', 'event_espresso') . '</a></p>'; ?></td>
+                <?php  } 
+				
+				if ($espresso_premium == true){
+					echo get_option('event_espresso_re_active') == 1 ? '' : '<p class="recurring-available"><a class="inform" href="http://eventespresso.com/?p=3319" target="_blank" title="Visit eventespresso.com for full details">' . __('Recurring Event Manager Now Available!', 'event_espresso') . '</a></p>';
+				}
+				?>
+                
+                </td>
               <?php // ADDED TIME REGISTRATION LIMITS  ?>
               <td class="b"><fieldset id="add-register-times">
                   <legend>
