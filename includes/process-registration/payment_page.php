@@ -217,7 +217,7 @@ function espresso_confirm_registration($registration_id) {
     //echo $wpdb->last_query;
     $display_questions = '';
     foreach ($questions as $question) {
-        $display_questions .= '<p class="espresso_questions"><strong>' . $question->question . '</strong>:<br /> ' . str_replace(',', '<br />', $question->answer) . '</p>';
+        $display_questions .= '<p class="espresso_questions"><span class="attendee-question">' . $question->question . '</span>:<br /> ' . str_replace(',', '<br />', $question->answer) . '</p>';
     }
 
     //Get the event information
