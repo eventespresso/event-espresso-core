@@ -485,7 +485,7 @@ if (!function_exists('espresso_calendar')) {
 			$eventArray['title'] = $ee_event_title;
 
 			//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-			$eventArray['description'] = htmlspecialchars_decode( stripslashes_deep($event->event_desc ), ENT_QUOTES );
+			$eventArray['description'] = espresso_format_content($event->event_desc);
 
 			//Get the start and end times for each event
 			//important! time must be in iso8601 format 2010-05-10T08:30  !!
