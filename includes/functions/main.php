@@ -772,7 +772,11 @@ if (!function_exists('espresso_ticket_information')) {
                 $sql = $wpdb->get_results("SELECT * FROM " . EVENTS_PRICES_TABLE . " WHERE id ='" . $price_option . "'");
                 $num_rows = $wpdb->num_rows;
                 if ($num_rows > 0) {
-                    return $wpdb->last_result[0]->price_type;
+					if (function_exists('espresso_members_installed')) {
+						return $wpdb->last_result[0]->member_price_type;
+					}else{
+						return $wpdb->last_result[0]->price_type;
+					}
                 }
                 break;
         }
