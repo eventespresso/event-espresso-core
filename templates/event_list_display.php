@@ -73,7 +73,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
             <p><?php echo espresso_format_content($event_desc); ?></p>
         </div>
 					
-					<?php if('yes' == $event_meta['display_thumb_in_lists']){ ?>
+					<?php if($event_meta['display_thumb_in_lists']=='Y'){ ?>
 					<a id="ee-event-list-thumb" class="thickbox" href="#TB_inline?height=400&width=500&inlineId=event-thumb-detail<?php echo $event_id ?>">
       <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span>
      </a>
