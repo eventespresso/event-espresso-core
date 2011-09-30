@@ -55,11 +55,59 @@ function add_new_event() {
                     '<p>' . __('Max Group Registrants', 'event_espresso') . ': <input type="text" name="additional_limit" value="' . $additional_limit . '" size="4">' .
                     $advanced_options
             );
+			?>
+			<!-- Add thumbnail image -->
+             <div id="set-featured-image" class="postbox">
+					      <div class="handlediv" title="Click to toggle"><br />
+      	      </div>
+					      <h3 class="hndle">
+						     <span>
+							     <?php _e('Featured Image', 'event_espresso'); ?>
+						     </span>
+					      </h3>
+					      <div class="inside">
+					      <div id="featured-image">
+								 <?php
+								 
+								 if(!empty($event_meta['event_thumbnail_url'])){ 
+								   $event_thumb = $event_meta['event_thumbnail_url'];
+								 } else {
+								   $event_thumb = '';
+								 }?>
+								 
+								 <?php // var_dump($event_meta['event_thumbnail_url']); ?>
+					        <label for="upload_image"><?php _e('Add Featured Image', 'event_espresso'); ?></label>
+				          <input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $event_thumb ?>" />
+	               <input id="upload_image_button" type="button" value="Upload Image" />
+									
+									<?php if($event_thumb){ ?>
+									<p class="event-featured-thumb"><img  src="<?php echo $event_thumb ?>" alt="" /></p>
+									<?php } ?>
+									
+								</div>
+   					  <p>
+						     <label><?php _e('Enable image in event lists', 'event_espresso'); ?></label>
+								 <?php echo select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : ''); ?>								 
+						    </p>
+					      <p>
+						     <label><?php _e('Enable image in registration', 'event_espresso'); ?></label>
+								 <?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : ''); ?>								 
+						    </p>								 	
+    					 <?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
+					      <p>
+								  <label><?php _e('Add image to event calendar', 'event_espresso'); ?></label>
+								  <?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : ''); ?>
+						    </p>
+				     <?php } ?>
+									 					
+					      </div>
+				       </div>	
+                       <!-- /Add thumbnail image -->
+          <?php
 		/*
 		 * Added for seating chart addon
 		 */
-		if ( defined('ESPRESSO_SEATING_CHART') )
-		{
+		if ( defined('ESPRESSO_SEATING_CHART') ){
 	?>
     <div style="display: block;" id="seating_chart-options" class="postbox">
       <div class="handlediv" title="Click to toggle"><br />
@@ -202,46 +250,6 @@ function add_new_event() {
     </div>
     <!-- /groupon-options -->
     <?php } ?>
-<!-- Add thumbnail image -->
-      <div id="set-featured-image" class="postbox">
-					<div class="handlediv" title="Click to toggle"><br />
-      	</div>
-					<h3 class="hndle">
-						<span>
-							<?php _e('Featured Image', 'event_espresso'); ?>
-						</span>
-					</h3>
-					<div class="inside">
-					 <div id="featured-image">
-					  <label for="upload_image"><?php _e('Add Featured Image', 'event_espresso'); ?></label>
-				    <input id="upload_image" type="hidden" size="36" name="upload_image" value="" />
-	         <input id="upload_image_button" type="button" value="Upload Image" />
-	        </div>						
-					  <p>
-						 <label><?php _e('Enable image in event lists', 'event_espresso'); ?></label>
-						 <select name="show_thumb_in_lists">
-						  <option value="no">No</option>
-						  <option value="yes">Yes</option>
-						 </select>
-						</p>
-					  <p>
-						 <label><?php _e('Enable image in registration', 'event_espresso'); ?></label>
-						 <select name="show_thumb_in_regpage">
-						  <option value="no">No</option>
-						  <option value="yes">Yes</option>
-						 </select>
-						</p>											 
-					 <?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
-					  <p>
-						 <label><?php _e('Add image to event calendar', 'event_espresso'); ?></label>
-						 <select name="show_on_calendar">
-						  <option value="no">No</option>
-						  <option value="yes">Yes</option>
-						 </select>
-						</p>
-					 <?php } ?>
-					</div>
-				</div>
 
   </div>
   <!-- /side-sortables --> 
