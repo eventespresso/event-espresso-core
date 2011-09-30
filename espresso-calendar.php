@@ -3,7 +3,7 @@
 Plugin Name: Event Espresso - Calendar
 Plugin URI: http://www.eventespresso.com
 Description: A full calendar addon for Event Espresso. Includes month, week, and day views. Add [ESPRESSO_CALENDAR] to any page or post to display a calendar of Event Espresso events. Use [ESPRESSO_CALENDAR event_category_id="your_category_identifier"] to show events of a certain category (also creates a CSS using the category_identifier as the class name.) Use [ESPRESSO_CALENDAR show_expired="true"] to show expired events, can also be used int conjunction wit the category ID.
-Version: 1.10
+Version: 1.11
 Author: Seth Shoultes
 Author URI: http://www.eventespresso.com
 Copyright 2011  Seth Shoultes  (email : seth@eventespresso.com)
@@ -24,7 +24,7 @@ Copyright 2011  Seth Shoultes  (email : seth@eventespresso.com)
 
 //Define the version of the plugin
 function espresso_calendar_version() {
-	return '1.10';
+	return '1.11';
 }
 define("ESPRESSO_CALENDAR_VERSION", espresso_calendar_version() );
 
