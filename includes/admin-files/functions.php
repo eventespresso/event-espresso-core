@@ -490,24 +490,25 @@ if (!function_exists('espresso_featured_image_event_admin')){
 		  <input id="upload_image_button" type="button" value="Upload Image" />
 		  <?php if($event_thumb){ ?>
 		  <p class="event-featured-thumb"><img  src="<?php echo $event_thumb ?>" alt="" /></p>
+				<a id='remove-image' href='#' title='Remove this image' onclick='return false;'>Remove Image</a>
 		  <?php } ?>
 		</div>
 		<p>
 		  <label>
 			<?php _e('Enable image in event lists', 'event_espresso'); ?>
 		  </label>
-		  <?php echo select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : ''); ?> </p>
+		  <?php echo select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : '', 'id="show_thumb_in_lists"'); ?> </p>
 		<p>
 		  <label>
 			<?php _e('Enable image in registration', 'event_espresso'); ?>
 		  </label>
-		  <?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : ''); ?> </p>
+		  <?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : '', 'id="show_thumb_in_regpage"'); ?> </p>
 		<?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
 		<p>
 		  <label>
 			<?php _e('Add image to event calendar', 'event_espresso'); ?>
 		  </label>
-		  <?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : ''); ?> </p>
+		  <?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : '', 'id="show_on_calendar"'); ?> </p>
 		<?php } ?>
 	  </div>
 	</div>

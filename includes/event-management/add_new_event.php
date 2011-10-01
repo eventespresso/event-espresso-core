@@ -644,9 +644,16 @@ function add_new_event() {
 			if(header_clicked) {
 				imgurl = jQuery('img',html).attr('src');
 				jQuery('#' + formfield).val(imgurl);
-				jQuery('#featured-image').append("<p><img src='"+imgurl+"' alt='' /></p>");
+				jQuery('#featured-image').append("<p id='image-display'><img class='show-selected-img' src='"+imgurl+"' alt='' /></p>");
 				header_clicked = false;
 				tb_remove();
+				jQuery("#featured-image").append("<a id='remove-image' href='#' title='Remove this image' onclick='return false;'>Remove Image</a>");
+				jQuery('#remove-image').click(function(){
+				//alert('delete this image');
+				jQuery('#' + formfield).val('');
+				jQuery("#image-display").empty();
+				jQuery('#remove-image').remove();			
+				});
 				} else {
 					window.original_send_to_editor(html);
 				}

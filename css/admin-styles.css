@@ -725,7 +725,8 @@ table.event-list .re_fr {
 #event-date-time td.a, #event-date-time td.b, #event-pricing td.a {
 	width: 50%;
 }
-#set-featured-image .event-featured-thumb img {
+#set-featured-image .event-featured-thumb img,
+#set-featured-image .show-selected-image {
 	width: 100%;
 	height: auto;
 }
@@ -734,7 +735,10 @@ table.event-list .re_fr {
 	width: 150px;
 	height: auto;
 }
-
+#set-featured-image #remove-image {
+	background: url(../images/error.png) no-repeat 0 50%;
+	padding-left: 20px;
+}
 /*___ Venue Manager ___*/
 
 #add-edit-venue td.b, #add-edit-venue td.b {width: 50%;}
@@ -2256,12 +2260,4 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 	-khtml-box-shadow: #777 0 0 3px;
 	box-shadow: inset #E6E5DC 0 0 14px;
 	padding: 0 10px;
-}
-
-/*___ Ticketing Templates ___*/
-
-#ticket-logo-image .old img {
-	opacity: 0.4;
-	width: 250px;
-	height: auto;
 }

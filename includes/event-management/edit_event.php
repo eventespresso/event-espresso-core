@@ -769,7 +769,7 @@ function edit_event($event_id = 0) {
   <!-- /post-body-content -->
   <?php include_once('create_events_help.php'); ?>
 </div>
-
+<?php global $event_thumb; ?>
 <!-- /post-body -->
 <input type="hidden" name="edit_action" value="update">
 <input type="hidden" name="date_submitted" value="<?php echo $date_submitted; ?>">
@@ -777,6 +777,7 @@ function edit_event($event_id = 0) {
 <input type="hidden" name="action" value="edit">
 <input type="hidden" name="event_id" value="<?php echo $event_id ?>">
 <script type="text/javascript" charset="utf-8">
+
         //<![CDATA[
         jQuery(document).ready(function() {
 
@@ -805,13 +806,24 @@ function edit_event($event_id = 0) {
 					if(header_clicked) {
 						imgurl = jQuery('img',html).attr('src');
 						jQuery('#' + formfield).val(imgurl);
-						jQuery('#featured-image').append("<p><img src='"+imgurl+"' alt='' /></p>");
+						jQuery('#featured-image').append("<p id='image-display'><img class='show-selected-image' src='"+imgurl+"' alt='' /></p>");
 						header_clicked = false;
 						tb_remove();
+
 						} else {
 							window.original_send_to_editor(html);
 						}
 				}
+
+				// process the remove link in the metabox
+				jQuery('#remove-image').click(function(){
+				confirm('Do you really want to delete this image? Please remember to update your event to complete the removal');
+				jQuery("#upload_image").val('');
+				jQuery("p.event-featured-thumb").remove();
+				jQuery("p#image-display").remove();
+				jQuery('#remove-image').remove();
+				jQuery("#show_thumb_in_lists, #show_on_calendar, #show_thumb_in_regpage").val('N');
+				});
 			<?php
 			}
 			?>	
