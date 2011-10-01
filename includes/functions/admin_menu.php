@@ -90,6 +90,11 @@ if (!function_exists('add_event_espresso_menus')) {
         if (function_exists('espresso_ticket_config_mnu') && $espresso_premium == true) {
             add_submenu_page('event_espresso', __('Event Espresso - Ticket Templates', 'event_espresso'), __('Ticket Templates', 'event_espresso'), 'administrator', 'event_tickets', 'espresso_ticket_config_mnu');
         }
+		
+		//Certificate Settings
+        if (function_exists('espresso_certificate_config_mnu') && $espresso_premium == true) {
+            add_submenu_page('event_espresso', __('Event Espresso - Certificate Templates', 'event_espresso'), __('Certificate Templates', 'event_espresso'), 'administrator', 'event_certificates', 'espresso_certificate_config_mnu');
+        }
 
         //Facebook Event Integration Settings
         if (function_exists('espresso_fb_settings') && $espresso_premium == true) {
