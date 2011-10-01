@@ -295,6 +295,22 @@ function edit_event($event_id = 0) {
   		  <?php
             }
 			
+			if (function_exists('espresso_certificate_dd') && $espresso_premium == true) {
+          ?>
+                <div  id="certificate-options" class="postbox">
+                  <div class="handlediv" title="Click to toggle"><br>
+                  </div>
+                  <h3 class="hndle"> <span>
+                    <?php _e('Custom Certificates', 'event_espresso'); ?>
+                    </span> </h3>
+                  <div class="inside">
+                    <p><?php echo espresso_certificate_dd($certificate_id); ?></p>
+                  </div>
+                </div>
+                <!-- /certificate-options -->
+  		  <?php
+            }
+			
             if (get_option('events_members_active') == 'true' && $espresso_premium == true) {
           ?>
                 <div  id="member-options" class="postbox">
