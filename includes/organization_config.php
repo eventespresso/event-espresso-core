@@ -158,17 +158,18 @@ function organization_config_mnu() {
                                                         ?>
                                                           <label for="upload_image">
                                                             <?php _e('Add a Default Logo', 'event_espresso'); ?>
-                                                          </label> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=espresso_default_logo_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+                                                          <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=espresso_default_logo_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></label> 
                                                           <input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $certificate_logo ?>" />
                                                           <input id="upload_image_button" type="button" value="Upload Image" />
                                                           <?php if($org_options['default_logo_url']){ ?>
                                                           <p class="default-logo-thumb"><img src="<?php echo $org_options['default_logo_url'] ?>" alt="" /></p>
                                                           <?php } ?>
-                                                        </div> <div id="espresso_default_logo_info" style="display:none">
+                                                        </div> <div id="espresso_default_logo_info" class="pop-help" style="display:none">
                                                                 <h2>
                                                                     <?php _e('Default Logo', 'event_espresso'); ?>
                                                                 </h2>
-                                                                <?php echo __('The default logo will be used in your custom invoice, ticketing, certificates, and payment templates.', 'event_espresso'); ?></div></li>
+                                                                <p><?php echo __('The default logo will be used in your custom invoice, ticketing, certificates, and payment templates.', 'event_espresso'); ?></p>
+                                                                </div></li>
                                                         <li>
                                                             <label for="org_name">
                                                                 <?php _e('Organization Name:', 'event_espresso'); ?>
@@ -231,7 +232,7 @@ function organization_config_mnu() {
                                                                     <?php _e('Note:', 'event_espresso'); ?>
                                                                 </span>
                                                                 <?php _e('You must set the time zone for your city, or the city closest to you. UTC time will not work.', 'event_espresso'); ?>
-                                                                <a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg" class="thickbox">View an example?</a> </p>
+                                                                <a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg?TB_iframe=true&height=200&width=630" class="thickbox"><?php _e('View an example?', 'event_espresso'); ?></a> </p>
                                                         </li>
                                                         <li>
                                                             <label for="expire_on_registration_end">
@@ -276,7 +277,7 @@ function organization_config_mnu() {
                                                             );
                                                             echo select_input('event_ssl_active', $values, empty($org_options['event_ssl_active']) ? 'N' : $org_options['event_ssl_active']);
                                                             ?>
-                                                            <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=event_ssl_active_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+                                                            <a class="thickbox" href="#TB_inline?height=300&width=845&inlineId=event_ssl_active_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
                                                             <p class="messages important">
                                                                 <?php _e('Please make sure SSL Certificate is installed before selecting this option.', 'event_espresso'); ?>
                                                             </p>
