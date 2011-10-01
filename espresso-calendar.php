@@ -132,11 +132,7 @@ function espresso_calendar_config_mnu()	{
    return; 
   }	
 	?>
-    <style type="text/css">
-	#configure_calendar_form ul{
-		width:80% !important;
-	}
-	</style>
+	
 <div class="wrap">
   <div id="icon-options-event" class="icon32"> </div>
   <h2>
@@ -187,7 +183,7 @@ function espresso_calendar_config_mnu()	{
                     <?php _e('First Day of the Week:','event_espresso'); ?>
                   </label>
                  <?php _e('(Sunday=0, Monday=1, Tuesday=2, etc.)', 'event_espresso'); ?><br />
-                  <input type="text" name="espresso_calendar_firstday" size="10" maxlength="1" value="<?php echo $espresso_calendar['espresso_calendar_firstday'];?>" />
+                  <input id="espresso_calendar_firstday" type="text" name="espresso_calendar_firstday" size="10" maxlength="1" value="<?php echo $espresso_calendar['espresso_calendar_firstday'];?>" />
                 </li>
 
                 <li>
@@ -199,31 +195,31 @@ function espresso_calendar_config_mnu()	{
 							array('id'=>'true','text'=> __('Yes','event_espresso')),
 							array('id'=>'false','text'=> __('No','event_espresso'))
 						);
-							echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['espresso_calendar_weekends']);
+							echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['espresso_calendar_weekends'], 'id="espresso_calendar_weekends"');
 					?>
                 </li>
                 <li>
                   <label for="espresso_calendar_height">
                     <?php _e('Height:','event_espresso'); ?>
                   </label><?php _e('Will make the entire calendar (including header) a pixel height.', 'event_espresso'); ?><br />
-                   <input type="text" name="espresso_calendar_height" size="100" maxlength="100" value="<?php echo $espresso_calendar['espresso_calendar_height'];?>" />
+                   <input id="espresso_calendar_height" type="text" name="espresso_calendar_height" size="100" maxlength="100" value="<?php echo $espresso_calendar['espresso_calendar_height'];?>" />
                 </li>
                 <li><label for="calendar_pages">
-                    <?php _e('Page(s) displaying the calendar:','event_espresso'); ?>
-                  </label><?php _e('This tells the plugin to load the calendar CSS file on these pages. This should be a comma seperated list of page ids. The default value is "0", meaning the CSS will load on all pages of your website. The list of page ids will need to be updated if you add/delete/move your calendar page(s). If you have are uncertian on what this setting does, please do not modify the default value.', 'event_espresso'); ?><br />
-                   <input type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo $espresso_calendar['calendar_pages']==''?0:$espresso_calendar['calendar_pages'];?>" /></li>
+                    <?php _e('Page(s) displaying the calendar: ','event_espresso'); ?><a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-on-pages" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a>
+                  </label><?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma seperated list of page ids.', 'event_espresso'); ?><br />
+                   <input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo $espresso_calendar['calendar_pages']==''?0:$espresso_calendar['calendar_pages'];?>" /></li>
                 <li>
-                  <label for="espresso_page_post">
+                  <label for="calendar_page_post">
                     <?php _e('Links go to post or registration page?','event_espresso'); ?>
                   </label><?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso.', 'event_espresso'); ?><br />
-                   <?php echo select_input('espresso_page_post', array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post']);?>
+                   <?php echo select_input('espresso_page_post',  array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"');?>
                 </li>
 
                 <li>
-									<p class="section-heading">Select Calendar thumbnail size:</p>
-									 <label for="calendar-thumb-size"><input type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small"  /><?php _e(' Small (50px high)', 'event_espresso') ?></label>
-									 <label for="calendar-thumb-size"><input type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium')?> value="medium" /><?php _e(' Medium (100px high)', 'event_espresso')?></label>
-									 <label for="calendar-thumb-size"><input type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large')?> value="large" /><?php _e(' Large (150px high)', 'event_espresso')?></label>
+									<p class="section-heading">Select Calendar thumbnail size: <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=calendar-thumb-sizes" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a></p>
+									 <label for="calendar-thumb-size-sml"><input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small"  /><?php _e(' Small (50px high)', 'event_espresso') ?></label>
+									 <label for="calendar-thumb-size-med"><input id="calendar-thumb-size-med" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium')?> value="medium" /><?php _e(' Medium (100px high)', 'event_espresso')?></label>
+									 <label for="calendar-thumb-size-lrg"><input id="calendar-thumb-size-lrg" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large')?> value="large" /><?php _e(' Large (150px high)', 'event_espresso')?></label>
 									 
 									</li>
                 <li>
@@ -327,6 +323,7 @@ day:      'day'</p>
         </li>
         </ul>
  </form>
+	<?php include_once('calendar_help.php'); ?>
  </div>
         </div>
 		</div>
