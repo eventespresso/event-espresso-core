@@ -706,3 +706,7 @@ if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
     echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['r_id']);
 }
 
+//Export PDF Certificate
+if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
+    echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
+}
