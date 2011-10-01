@@ -210,7 +210,7 @@ function espresso_calendar_config_mnu()	{
                    <input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo $espresso_calendar['calendar_pages']==''?0:$espresso_calendar['calendar_pages'];?>" /></li>
                 <li>
                   <label for="calendar_page_post">
-                    <?php _e('Links go to post or registration page?','event_espresso'); ?>
+                    <?php _e('Links go to post or registration page? ','event_espresso'); ?><a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-where" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a>
                   </label><?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso.', 'event_espresso'); ?><br />
                    <?php echo select_input('espresso_page_post',  array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"');?>
                 </li>

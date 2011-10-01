@@ -16,6 +16,20 @@
 			<?php ########## help box ########## ?>
 			
     <?php ########## help box ########## ?>
+    <div id="display-where" class="pop-help" >
+     <div class="TB-ee-frame">
+    			
+							<h2><?php _e('Display calendar on which type of page?', 'event_espresso'); ?></h2>
+        <p>
+       		 <?php _e('<b>Registration Page (default)</b> -- Calendar links go to the Event Espresso registration page for the event. Use this if you are not using Custom Post Types.', 'event_espresso'); ?>
+        </p>
+    				<p><?php _e('<b>Post</b> -- Calendar links go to the Event Post for the event. Use this option <em><b>only</b></em> if you have enabled Custom Post Types.', 'event_espresso'); ?></p>
+
+					</div>
+    </div>
+			<?php ########## help box ########## ?>			
+			
+    <?php ########## help box ########## ?>
     <div id="calendar-thumb-sizes" class="pop-help" >
      <div class="TB-ee-frame">
     			
