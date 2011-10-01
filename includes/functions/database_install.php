@@ -399,6 +399,7 @@ function events_data_tables_install() {
 					likes int(22) DEFAULT NULL,
 					submitted datetime NOT NULL,
 					ticket_id int(22) DEFAULT '0',
+					certificate_id int(22) DEFAULT '0',
 				 PRIMARY KEY (`id`),
 				 KEY `event_code` (`event_code`),
 				 KEY `wp_user` (`wp_user`),
