@@ -176,6 +176,7 @@ function update_event($recurrence_arr = array()) {
         $reg_limit = $_REQUEST['reg_limit'];
         $allow_multiple = $_REQUEST['allow_multiple'];
 		$ticket_id = $_REQUEST['ticket_id'];
+		$certificate_id = $_REQUEST['certificate_id'];
 
         $overflow_event_id = (empty($_REQUEST['overflow_event_id'])) ? '0' : $_REQUEST['overflow_event_id'];
         $allow_overflow = empty($_REQUEST['allow_overflow']) ? 'N' : $_REQUEST['allow_overflow'];
@@ -324,12 +325,12 @@ function update_event($recurrence_arr = array()) {
             'overflow_event_id' => $overflow_event_id, 'additional_limit' => $additional_limit,
             'reg_limit' => $reg_limit, 'email_id' => $email_id, 'registration_startT' => $registration_startT, 
 			'registration_endT' => $registration_endT, 'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 
-			'timezone_string' => $timezone_string, 'ticket_id' => $ticket_id
+			'timezone_string' => $timezone_string, 'ticket_id' => $ticket_id, 'certificate_id' => $certificate_id
 		);
 
         $sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
             '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d');
+            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d');
 
         $update_id = array('id' => $event_id);
 

@@ -19,6 +19,7 @@ function edit_event($event_id = 0) {
         $event_description = stripslashes_deep($event->event_desc);
         $member_only = $event->member_only;
 		$ticket_id = $event->ticket_id;
+		$certificate_id = $event->certificate_id;
 
         $phone = stripslashes_deep($event->phone);
         $externalURL = stripslashes_deep($event->externalURL);
