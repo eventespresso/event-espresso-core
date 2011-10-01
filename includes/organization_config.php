@@ -58,6 +58,7 @@ function organization_config_mnu() {
         $org_options['surcharge_text'] = $_POST['surcharge_text'];
         $org_options['show_reg_footer'] = $_POST['show_reg_footer'];
         $org_options['affiliate_id'] = $_POST['affiliate_id'];
+		$org_options['default_logo_url'] = $_REQUEST['upload_image'];
         $org_options['default_payment_status'] = $_POST['default_payment_status'];
         $currency_format = getCountryFullData($org_options['organization_country']);
         switch ($currency_format['iso_code_3']) {
@@ -146,6 +147,28 @@ function organization_config_mnu() {
                                             <div class="inside">
                                                 <div class="padding">
                                                     <ul>
+                                                    	<li><div id="default-logo-image">
+														  <?php
+                                                                                     
+                                                        if(!empty($default_logo_url)){ 
+                                                            $default_logo = $org_options['default_logo_url'];
+                                                        } else {
+                                                            $default_logo = '';
+                                                        }
+                                                        ?>
+                                                          <label for="upload_image">
+                                                            <?php _e('Add a Default Logo', 'event_espresso'); ?>
+                                                          </label> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=espresso_default_logo_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+                                                          <input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $certificate_logo ?>" />
+                                                          <input id="upload_image_button" type="button" value="Upload Image" />
+                                                          <?php if($org_options['default_logo_url']){ ?>
+                                                          <p class="default-logo-thumb"><img src="<?php echo $org_options['default_logo_url'] ?>" alt="" /></p>
+                                                          <?php } ?>
+                                                        </div> <div id="espresso_default_logo_info" style="display:none">
+                                                                <h2>
+                                                                    <?php _e('Default Logo', 'event_espresso'); ?>
+                                                                </h2>
+                                                                <?php echo __('The default logo will be used in your custom invoice, ticketing, certificates, and payment templates.', 'event_espresso'); ?></div></li>
                                                         <li>
                                                             <label for="org_name">
                                                                 <?php _e('Organization Name:', 'event_espresso'); ?>
@@ -215,6 +238,7 @@ function organization_config_mnu() {
                                                                 <?php _e('Events expire on registration end date?', 'event_espresso'); ?>
                                                                 <?php echo select_input('expire_on_registration_end', $values, $org_options['expire_on_registration_end']); ?> </label>
                                                         </li>
+                                                        
                                                     </ul>
                                                     <p>
                                                         <input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_1" />
@@ -562,6 +586,30 @@ function organization_config_mnu() {
         //<![CDATA[
         jQuery(document).ready(function() {
             postboxes.add_postbox_toggles('event_espresso');
+			
+			//Logo uploader
+			var header_clicked = false; 
+			jQuery('#upload_image_button').click(function() {
+			formfield = jQuery('#upload_image').attr('name');
+			tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
+			jQuery('p.default-logo-thumb').addClass('old');
+			header_clicked = true;
+			return false;
+		   });
+			window.original_send_to_editor = window.send_to_editor;
+						 
+			window.send_to_editor = function(html) {
+				if(header_clicked) {
+					imgurl = jQuery('img',html).attr('src');
+					jQuery('#' + formfield).val(imgurl);
+					jQuery('#default-logo-image').append("<p><img src='"+imgurl+"' alt='' /></p>");
+					header_clicked = false;
+					tb_remove();
+					} else {
+						window.original_send_to_editor(html);
+					}
+			}
+		
         });
         //]]>
     </script>
