@@ -467,6 +467,7 @@ if (is_admin()) {
             'admin_addons',
             'espresso_calendar',
 			'event_tickets',
+			'event_certificates',
 			'espresso-mailchimp',
 			'espresso_permissions',
 			'roles',
