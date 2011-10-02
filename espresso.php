@@ -66,12 +66,13 @@ function ee_check_for_export() {
     }
 }
 
+//Load the Event Espresso HTML meta
 function espresso_info_header() {
     print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
 }
 
 add_action('wp_head', 'espresso_info_header');
-
+ 
 //Globals
 global $org_options, $wpdb, $this_is_a_reg_page;
 $org_options = get_option('events_organization_settings');
@@ -638,11 +639,13 @@ if (!function_exists('event_espresso_run')) {
 
 }
 
-//New way of doing it with showrtcodes
+//Page shortcodes
 add_shortcode('ESPRESSO_PAYMENTS', 'event_espresso_pay');
 add_shortcode('ESPRESSO_TXN_PAGE', 'event_espresso_txn');
 add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');
 
+//Load the admin menu styles
+wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css'); //Events core style
 
 /*
  * These actions need to be loaded a the bottom of this script to prevent errors when post/get requests are received.
