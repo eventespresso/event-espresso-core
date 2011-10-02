@@ -1,7 +1,7 @@
 <?php
 
 function replace_shortcodes($message, $data) {
-    global $org_options;
+    global $wpdb, $org_options;
     $SearchValues = array(
         "[event_id]",
         "[event_identifier]",
@@ -96,6 +96,35 @@ function replace_shortcodes($message, $data) {
         $data->qr_code,
 		$data->edit_attendee
     );
+	
+	//Get the questions and answers
+	$questions = $wpdb->get_results("select qst.question as question, ans.answer as answer from ".EVENTS_ANSWER_TABLE." ans inner join ".EVENTS_QUESTION_TABLE." qst on ans.question_id = qst.id where ans.attendee_id = ".$data->attendee->id, ARRAY_A);
+	//echo '<p>'.print_r($questions).'</p>';
+	if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->question != NULL) {
+		foreach($questions as $q){
+			$k = $q['question'];
+			$v = $q['answer'];
+			
+			//Output the question
+			array_push($SearchValues,"[".'question_'.$k."]");
+			array_push($ReplaceValues,$k);
+			
+			//Output the answer
+			array_push($SearchValues,"[".'answer_'.$k."]");
+			array_push($ReplaceValues,$v);
+		}
+	}
+	
+	//Get the event meta
+	//echo '<p>'.print_r($data->event->event_meta).'</p>';
+	if (!empty($data->event->event_meta)){
+		foreach($data->event->event_meta as $k=>$v){
+			array_push($SearchValues,"[".$k."]");
+			array_push($ReplaceValues,stripslashes_deep($v));
+		}
+	}
+	
+	//Perform the replacement
     return str_replace($SearchValues, $ReplaceValues, $message);
 }
 
@@ -127,6 +156,8 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
     //Get the primary/first attendee
 	$data->primary_attendee = espresso_is_primary_attendee($data->attendee->id) == true ? true : false;
 
+	$data->event->event_meta = unserialize($data->event->event_meta);
+	
     //Venue variables
     if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
         $data->event->venue_name = $data->event->venue_name;
@@ -165,6 +196,12 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 		$data->qr_code = espresso_ticket_qr_code(array('attendee_id' => $data->attendee->id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'reg_total' => true))));
 		$data->ticket_link = espresso_ticket_links($data->attendee->registration_id, $data->attendee->id);
         $data->admin_ticket_link = $data->ticket_link;
+	}
+	
+	//certificate system
+	if (function_exists('espresso_certificate_launch')) {
+		$data->certificate_link = espresso_certificate_links($data->attendee->registration_id, $data->attendee->id);
+        $data->admin_certificate_link = $data->ticket_link;
 	}
 
 	//Build the address
