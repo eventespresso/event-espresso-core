@@ -3,9 +3,12 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 function add_new_event() {
 	global $wpdb, $org_options, $espresso_premium;
 ?>
+
+
 <!--New event display-->
 
-<div id="side-info-column" class="inner-sidebar">
+<div id="side-info-column" class="inner-sidebar event-espresso_page_events">
+
   <div id="side-sortables" class="meta-box-sortables ui-sortable">
     <div id="submitdiv" class="postbox">
       <div class="handlediv" title="Click to toggle"><br />

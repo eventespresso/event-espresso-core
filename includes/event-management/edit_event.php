@@ -114,7 +114,7 @@ function edit_event($event_id = 0) {
     ?>
 <!--Update event display-->
 
-<div id="side-info-column" class="inner-sidebar">
+<div id="side-info-column" class="inner-sidebar event-espresso_page_events">
   <div id="side-sortables" class="meta-box-sortables ui-sortable">
     <div id="submitdiv" class="postbox">
       <div class="handlediv" title="Click to toggle"><br />
