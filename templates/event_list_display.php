@@ -77,11 +77,12 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 	<?php
     }
     ?>
-<?php if($event_meta['display_thumb_in_lists']=='Y'){ ?>
+<?php if( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] == 'Y' ){ ?>
 					<a id="ee-event-list-thumb" class="thickbox" href="#TB_inline?height=400&width=500&inlineId=event-thumb-detail<?php echo $event_id ?>">
       <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span>
      </a>
-     <?php } ?>
+     <?php 
+					}?>
     <?php if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
         <p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
             <span class="address-block"><?php echo stripslashes_deep($location); ?>
