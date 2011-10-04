@@ -475,19 +475,13 @@ if (!function_exists('event_espresso_send_payment_notification')) {
 
 		//Extract the attendee_id and registration_id
 		extract($atts);
-		$registration_id = "{$registration_id}";
-		$attendee_id = "{$attendee_id}";
-		$registration_id = $registration_id != '' ? $registration_id : espresso_registration_id($attendee_id);
+
+		if (empty($registration_id)) $registration_id = espresso_registration_id($attendee_id);
+		if (empty($registration_id)) return __('No ID Supplied', 'event_espresso');
 
 		//Get the attendee  id or registration_id and create the sql statement
 		$sql = "SELECT a.* FROM " . EVENTS_ATTENDEE_TABLE . " a ";
-		if ($registration_id != '') {
-			$sql .= " WHERE a.registration_id = '" . $registration_id . "' ";
-		} elseif ($attendee_id != '') {
-			$sql .= " WHERE a.id = '" . $attendee_id . "' ";
-		} else {
-			return __('No ID Supplied', 'event_espresso');
-		}
+		$sql .= " WHERE a.registration_id = '" . $registration_id . "' ";
 		//$sql .= "  ORDER BY id LIMIT 1 ";
 
 		$attendees = $wpdb->get_results($sql);
