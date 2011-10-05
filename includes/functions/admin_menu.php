@@ -98,6 +98,21 @@ if (!function_exists('add_event_espresso_menus')) {
             add_submenu_page('events', __('Event Espresso - Social Media Settings', 'event_espresso'), __('Social Media', 'event_espresso'), apply_filters( 'espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_social'] ), 'espresso_social', 'espresso_social_config_mnu');
         }
 		
+		//Permissions
+		if (function_exists('espresso_permissions_config_mnu') && $espresso_premium == true){
+			add_submenu_page('events', __('Event Espresso - Permissions Settings', 'event_espresso'), '<span class="ee_menu_group">'.__('Permissions', 'event_espresso').'</span>', 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu'); 
+		
+		//Permissions settings
+			add_submenu_page('events', __('Event Espresso - Event Manager Permissions','event_espresso'), __('Settings','event_espresso'), 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
+			add_submenu_page('events', __('Event Espresso - Event Manager Roles','event_espresso'), __('User Roles','event_espresso'), 'administrator', 'roles', 'espresso_permissions_roles_mnu');
+			if ($org_options['use_venue_manager'] == 'Y' ){
+				if (espresso_member_data('role') == "administrator") {
+					add_submenu_page('events', __('Event Espresso - Locales/Regions','event_espresso'), __('Locales/Regions','event_espresso'), apply_filters( 'espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_venue_manager'] ), 'event_locales', 'event_espresso_locale_config_mnu');
+				}
+				add_submenu_page('events', __('Event Espresso - Regional Managers','event_espresso'), __('Regional Managers','event_espresso'), 'administrator', 'event_groups', 'espresso_permissions_user_groups');
+			}
+		}
+		
 		//Templates
 		add_submenu_page('events', __('Event Espresso - Template Settings', 'event_espresso'), '<span class="ee_menu_group">'.__('Templates', 'event_espresso').'</span>', 'administrator', 'template_confg', 'event_espresso_manage_templates'); 
 		
@@ -119,18 +134,6 @@ if (!function_exists('add_event_espresso_menus')) {
 
         //Help/Support
         add_submenu_page('events', __('Event Espresso - Help/Support', 'event_espresso'), '<span style="color: red;">'.__('Help/Support', 'event_espresso').'</span>', apply_filters( 'espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_support'] ), 'support', 'event_espresso_support');
-		
-		//Event Manager Permissions
-		if (function_exists('espresso_permissions_config_mnu') && $espresso_premium == true){
-			add_submenu_page('events', __('Event Espresso - Event Manager Permissions','event_espresso'), __('Permissions','event_espresso'), 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
-			add_submenu_page('events', __('Event Espresso - Event Manager Roles','event_espresso'), __('User Roles','event_espresso'), 'administrator', 'roles', 'espresso_permissions_roles_mnu');
-			if ($org_options['use_venue_manager'] == 'Y' ){
-				if (espresso_member_data('role') == "administrator") {
-					add_submenu_page('events', __('Event Espresso - Locales/Regions','event_espresso'), __('Locales/Regions','event_espresso'), apply_filters( 'espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_venue_manager'] ), 'event_locales', 'event_espresso_locale_config_mnu');
-				}
-				add_submenu_page('events', __('Event Espresso - Regional Managers','event_espresso'), __('Regional Managers','event_espresso'), 'administrator', 'event_groups', 'espresso_permissions_user_groups');
-			}
-		}
-		
+				
     }//End function add_event_espresso_menus()
 }//End if (!function_exists('add_event_espresso_menus'))
