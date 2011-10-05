@@ -18,7 +18,26 @@ $delete_status = array(array('id' => 'D', 'text' => __('Deleted', 'event_espress
 $status = array_merge((array) $default_status, (array) $manager_status, (array) $delete_status);
 
 if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_event_manager' && $espresso_manager['event_manager_approval'] == 'Y') {
-    $status = array(array('id' => 'A', 'text' => __('Public', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
+    $status = array(array(
+		'id' => 'A', 
+		'text' => __('Public', 'event_espresso')), 
+		array(
+			'id' => 'S', 
+			'text' => __('Waitlist', 'event_espresso')
+		), 
+		array(
+			'id' => 'O', 
+			'text' => __('Ongoing', 'event_espresso')
+		),
+		array(
+			'id' => 'R', 
+			'text' => __('Draft', 'event_espresso')
+		),
+		array(
+			'id' => 'D', 
+			'text' => __('Deleted', 'event_espresso')
+		)
+	);
 }
 
 $additional_attendee_reg_info = array(
