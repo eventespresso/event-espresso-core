@@ -18,6 +18,7 @@
  *
  */
 
+
 //Print out the array of event status options
 //print_r (event_espresso_get_is_active($event_id));
 //Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
@@ -77,13 +78,16 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 	<?php
     }
     ?>
-<?php if( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] == 'Y' ){ ?>
+<?php if( isset($event_meta['display_thumb_in_lists']) 
+                     && $event_meta['display_thumb_in_lists'] == 'Y' 
+																					&& !empty($event_meta['event_thumbnail_url'])){ ?>
+					
 					<a id="ee-event-list-thumb" class="thickbox" href="#TB_inline?height=400&width=500&inlineId=event-thumb-detail<?php echo $event_id ?>">
       <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span>
      </a>
-     <?php 
-					}?>
-    <?php if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
+     <?php }?>
+    
+				<?php if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
         <p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
             <span class="address-block"><?php echo stripslashes_deep($location); ?>
                 <span class="google-map-link"><?php echo $google_map_link; ?></span></span>
@@ -150,18 +154,31 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 		<div style="display: none;">
    <div id="event-thumb-detail<?php echo $event_id ?>" class="pop-help" >
     <div class="TB-ee-frame">
-      <h2 class="tb-ee-event-title"><?php echo stripslashes_deep($event_name) ?></h2>	
+      <h2 class="tb-ee-event-title"><?php echo stripslashes_deep($event_name) ?> <span class="event-status"><?php echo $status_display ?></span></h2>	
 						
 						<img class="tb-ee-event-thumb" src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" />
 						
 						<div class="tb-ee-event-desc">
 						  <?php echo espresso_format_content($event_desc); ?>
-								<p>words woersd vnbhg llosd dfgrtfy  woersd vnbhg llosd dfgrtfy bnjughh bngjtu bnjughh bngjtu </p>
-								<p>woersd vnbhg llosd dfgrtfy bnjughh woersd vnbhg llosd dfgrtfy bnjughh bngjtu woersd vnbhg llosd dfgrtfy bnjughh bngjtu bngjtu woersd vnbhg llosd dfgrtfy bnjughh bngjtu</p>
+								
+						</div>
+						<div class="event-dates-times">
+						  <p><span><?php _e('Date:', 'event_espresso'); ?></span>  <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
+						</div>
+						<div class="event-address-block">
+						<?php if($venue_address) ?>
+								<p><?php echo $venue_address ?></p>
+							<?php if($venue_address2){ ?>
+								<p><?php echo $venue_address2  ?></p>
+								<?php } ?>
+							<?php if($venue_city) ?>
+								<p><?php echo $venue_city ?></p>
+								<p></p>
+								<p></p>
 						</div>
 						
 						<p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
-         <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a>
+         <a class="a_register_link thickbox" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>?height=600&width=500" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a>
           <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?>
       </p>
 				</div>

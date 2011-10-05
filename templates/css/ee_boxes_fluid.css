@@ -221,8 +221,10 @@ span.google-map-link a:hover {
  opacity: 0.55;
 }
 .tb-ee-event-thumb {
-	float: left;
-	margin: 0 20px 10px 0;
+	float: right;
+	width: 50px;
+	height: 100%;
+	margin: -8px -6px 10px 0;
 }
 .TB-ee-frame {
 	background: #F0F0E3;
@@ -233,11 +235,16 @@ span.google-map-link a:hover {
 	position: relative;
 }
 .tb-ee-event-title {
+	float: left;
+ font-size: 150%;
 	margin-bottom: 20px;
 }
+.tb-ee-event-title span.event-status { font-size: 100%;}
 .tb-ee-event-desc {
 	overflow: hidden;
+	clear: both;
 }
+.event-address-block p {margin-bottom: .5em;}
 .TB-ee-frame #register_link-57 {
 	position: absolute;
 	margin-bottom: 0;
