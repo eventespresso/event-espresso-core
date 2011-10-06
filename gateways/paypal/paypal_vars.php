@@ -126,7 +126,7 @@ if (count($attendees) > 0) {
         $myPaypal->addField('amount_' . $i, number_format($attendee['unit_price'], 2, '.', '')); #number_format($div, 2, '.', ''));
         $myPaypal->addField('quantity_' . $i, $attendee['quantity']);
         if ( $attendee['discount'] > 0 ) {
-            $myPaypal->addField('discount_amount_' . $i, $attendee['discount']);
+            $myPaypal->addField('discount_amount_' . $i, number_format($attendee['discount'], 2, '.', ''));
         }
         
         $i++;
