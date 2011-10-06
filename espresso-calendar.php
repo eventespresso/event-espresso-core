@@ -104,6 +104,7 @@ function espresso_calendar_config_mnu()	{
 		$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
 		$espresso_calendar['espresso_calendar_width'] = $_POST['espresso_calendar_width'];
 		$espresso_calendar['calendar_thumb_size'] = $_POST['calendar_thumb_size'];
+		$espresso_calendar['show_in_thickbox'] = $_POST['show_in_thickbox'];
 		$espresso_calendar['espresso_calendar_titleFormat'] = $_POST['espresso_calendar_titleFormat'];
 		$espresso_calendar['espresso_calendar_columnFormat'] = $_POST['espresso_calendar_columnFormat'];
 		$espresso_calendar['espresso_calendar_monthNames'] = $_POST['espresso_calendar_monthNames'];
@@ -221,6 +222,11 @@ function espresso_calendar_config_mnu()	{
 									 <label for="calendar-thumb-size-med"><input id="calendar-thumb-size-med" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium')?> value="medium" /><?php _e(' Medium (100px high)', 'event_espresso')?></label>
 									 <label for="calendar-thumb-size-lrg"><input id="calendar-thumb-size-lrg" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large')?> value="large" /><?php _e(' Large (150px high)', 'event_espresso')?></label>
 									 
+									</li>
+									<li>
+									<label for=""><?php _e('Show event details in popup box', 'event_espresso'); ?></label>
+									
+									<?php echo select_input('show_in_thickbox',  array(array('id'=>'Y','text'=> __('yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
 									</li>
                 <li>
                   <input class="button-primary" type="submit" name="save_calendar_settings" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings2" />
@@ -342,6 +348,7 @@ if (!function_exists('espresso_init_calendar')) {
 		wp_enqueue_script('jquery');
 		wp_register_script('fullcalendar-min-js',  ESPRESSO_CALENDAR_PLUGINFULLURL.'scripts/fullcalendar.min.js', array('jquery') );//core calendar script
 		wp_print_scripts('fullcalendar-min-js');
+		wp_print_scripts('thickbox');
 	}
 }
 add_action('wp_footer', 'espresso_init_calendar',20);
@@ -427,17 +434,19 @@ if (!function_exists('espresso_calendar')) {
 		//Print the results of the query
 		//echo $sql;
 
-		// grab the thumbnail size from calendar options settings
+		// grab the thumbnail size & thickbox from calendar options settings
 		if(empty($espresso_calendar['calendar_thumb_size'])) {
 		$ee_img_size = 'small';
 		}else{
 		$ee_img_size = $espresso_calendar['calendar_thumb_size'];
 		}
-		
+		if( isset($espresso_calendar['show_in_thickbox']) ) {
+		$in_thickbox = $espresso_calendar['show_in_thickbox'];
+		}
 		$events_data = $wpdb->get_results($sql);
 	 
 		$events = array();
-
+  
 		foreach ($events_data as $event){
 			//Get details about the category of the event
 			//print_r( espresso_event_category_data($event->id) ); //Print the category id for each event.
@@ -533,14 +542,28 @@ if (!function_exists('espresso_calendar')) {
 
 			//If set to true, events will be shown as all day events
 			$eventArray['allDay'] = FALSE;
-
+   
+			// Set sizes for image display
 			$eventArray['img_size_class'] = $ee_img_size;
 			
+			// image onclick displays in thickbox yes/no
+			if($in_thickbox == 'Y'){
+			$in_thickbox_class = 'thickbox';
+			$in_thickbox_url = '#TB_inline?height=400&width=500&inlineId=event-thumb-detail-' .  $event->id ;
+			}else {
+   $in_thickbox_class = '';
+			$in_thickbox_url = '';
+			}			
+			
+			$eventArray['in_thickbox_class'] = $in_thickbox_class;
+			$eventArray['in_thickbox_url'] = $in_thickbox_url;
+			//var_dump($eventArray['in_thickbox_url']);
+			
 			//Array of the event details
-			$events[] = $eventArray;
+			$events[] = $eventArray; 
 		}
 		//Print the results of the code above
-		 //echo json_encode($events);
+		 echo json_encode($events);
 
 	//Start the output of the calendar
 	ob_start();
@@ -631,10 +654,21 @@ if (!function_exists('espresso_calendar')) {
 
 						//This displays the title of the event when hovering
 						element.attr('title', event.title);
-
+						// if the user selects show in thickbox we add this element 
+						if(event.in_thickbox_url){
+      element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id  + '"><p class="tb-event-title">' + event.title + '</p><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
+						}
 						if(event.event_img_thumb){
 						 //alert('say something');
+							
 						 element.addClass('event-has-thumb');
+							  if(event.in_thickbox_url){
+							   element.find('a').attr('href', event.in_thickbox_url);
+							  }else{
+							    element.find('a').attr('href', event.url );
+							  }
+							//element.find('a').attr('href', event.url + event.in_thickbox_url);
+							element.find('a').addClass(event.in_thickbox_class);
 						 element.find('span.fc-event-title').before($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						 //$jaer('span.fc-event-title').before($jaer('<span>' + event.event_img_thumb + '</span>'));
 						 }
