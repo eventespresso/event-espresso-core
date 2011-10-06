@@ -99,8 +99,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
             $coupon_code = '';
             $price_type = isset($data_source['price_id']) ? espresso_ticket_information(array('type' => 'ticket', 'price_option' => $data_source['price_id'])) : '';
         }
-        //echo '<p>$amount_pd = '.$amount_pd.'</p>';
-        //echo '<p>$event_cost = '.$event_cost.'</p>';
+      
         //Display the confirmation page
         if (!empty($data_source['confirm_registration'])) {
             $registration_id = $data_source['registration_id'];
@@ -246,11 +245,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
                 }
             }
         }
-        /*
-         *
-         */
-
-
 
         //Add a record for the primary attendee
         $sql = array('attendee_id' => $attendee_id, 'meta_key' => 'primary_attendee', 'meta_value' => 1);
@@ -266,72 +260,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
             $error = true;
         }
 
-
-        //Added by Imon
-        /**
-         * Adding attenddee specific cost to events_attendee_cost table
-         */
-        //if (!isset($data_source['admin']))
-        //{
-
-        /* if ( isset($att_data_source['price_id']) )
-          {
-          $attendee_price_id = $att_data_source['price_id'];
-          $events_prices = $wpdb->get_row("select * from ".EVENTS_PRICES_TABLE."  where id = $attendee_price_id ");
-          }
-          elseif (isset($data_source['price_select']) && $data_source['price_select'] == true)
-          {
-          $price_options 	= explode('|', $data_source['price_option'], 2);
-          $attendee_price_id 		= $price_options[0];
-          $events_prices = $wpdb->get_row("select * from ".EVENTS_PRICES_TABLE."  where id = $attendee_price_id ");
-          }
-          else
-          {
-          $events_prices = $wpdb->get_row("select * from ".EVENTS_PRICES_TABLE." where event_id = $event_id");
-          $attendee_price_id = $events_prices->id;
-          } */
-        /*
-         * Added for seating chart add-on
-         * If a seat was selected then price of that seating will be used instead of event price
-         */
-        //$attendee_quantity = 1;
-        //if ( isset($data_source['seat_id']))
-        // {
-        // $attendee_cost = seating_chart::get_purchase_price($booking_id);
-        //}
-        //else
-        //{
-        //$attendee_cost = $events_prices->event_cost + (($events_prices->surcharge_type=='pct')?$events_prices->event_cost * (float)($events_prices->surcharge/100.00):$events_prices->surcharge);
-        /* echo  '<strong>Standard Pricing</strong>'.'<br />';
-          echo  '$events_prices->event_cost = '.$events_prices->event_cost.'<br />';
-          echo  '$events_prices->surcharge = '.$events_prices->surcharge.'<br />';
-          echo  '$events_prices->surcharge_type = '.$events_prices->surcharge_type.'<br />';
-          echo  '$attendee_cost = '.$attendee_cost.'<br />';
-          return; */
-
-        //if ( is_user_logged_in() )
-        //{
-        //$attendee_cost = $events_prices->member_price + (($events_prices->surcharge_type=='pct')?$events_prices->member_price * (float)($events_prices->surcharge/100.00):$events_prices->surcharge);
-        /* echo  '<strong>Member Pricing</strong>'.'<br />';
-          echo  '$events_prices->event_cost = '.$events_prices->event_cost.'<br />';
-          echo  '$events_prices->surcharge = '.$events_prices->surcharge.'<br />';
-          echo  '$events_prices->surcharge_type = '.$events_prices->surcharge_type.'<br />';
-          echo  '$attendee_cost = '.$attendee_cost.'<br />';
-          //return; */
-        //}
-        //if ( isset($data_source['num_people']) )
-        // {
-        // $attendee_quantity = $data_source['num_people'];
-        // }
-        // }
-        //}
-        // else
-        // {
-        /* echo  '$data_source[\'event_cost\'] = '.$data_source['event_cost'];
-          return; */
-        //$attendee_quantity = 1;
-        //$attendee_cost = $data_source['event_cost'];
-        //}
         /*
          * Added for seating chart add-on
          * If a seat was selected then price of that seating will be used instead of event price
@@ -386,7 +314,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
                                     if ($x_booking_id > 0) {
                                         $seat_check = true;
                                     } else {
-                                        $seat_check = false; //Keeps the syustem from adding an additional attndee if no seat is selected
+                                        $seat_check = false; //Keeps the system from adding an additional attndee if no seat is selected
                                     }
                                 }
                             }
@@ -440,7 +368,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
         }
 
 
-        //Add user data if needed
+        //Add member data if needed
         if (get_option('events_members_active') == 'true') {
             require_once(EVENT_ESPRESSO_MEMBERS_DIR . "member_functions.php"); //Load Members functions
             require_once(EVENT_ESPRESSO_MEMBERS_DIR . "user_vars.php"); //Load Members functions
@@ -448,12 +376,11 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
                 event_espresso_add_user_to_event($event_id, $userid, $attendee_id);
             }
         }
+		
         //This shows the payment page
         if (isset($data_source['admin'])) {
             return $attendee_id;
         }
-
-        //return event_espresso_payment_confirmation($attendee_id);
         if (!$multi_reg) {
             return events_payment_page($attendee_id);
         }
