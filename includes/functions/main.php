@@ -8,22 +8,22 @@ function isEmptyArray($array) {
 
 function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $type='', $text='') {
     global $org_options;
-	$html ='';
+    $html = '';
     if ($text == '')
         $text = __('Edit Attendee', 'event_espresso');
     switch ($type) {
         case'admin':
-            $html .= '<a href="' . get_admin_url() .'admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id .'&registration_id=' . $registration_id .  '">' . $text . '</a>';
+            $html .= '<a href="' . get_admin_url() . 'admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&form_action=edit_attendee&id=' . $attendee_id . '&registration_id=' . $registration_id . '">' . $text . '</a>';
             break;
         case'attendee':
         default:
-			$array = array('r_id'=>$registration_id, 'id'=>$attendee_id, 'event_id'=>$event_id, 'edit_attendee'=>'true','single'=>'true' );
-			$url = add_query_arg($array, get_permalink($org_options['event_page_id']));
-			$html .= '<a  href="' . $url . '" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
-			//$html .= '<a  href="' . home_url() . '?page_id=' . $org_options['event_page_id'] . '&registration_id=' . $registration_id . '&amp;id=' . $attendee_id . '&amp;regevent_action=register&form_action=edit_attendee&single=true" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
+            $array = array('r_id' => $registration_id, 'id' => $attendee_id, 'event_id' => $event_id, 'edit_attendee' => 'true', 'single' => 'true');
+            $url = add_query_arg($array, get_permalink($org_options['event_page_id']));
+            $html .= '<a  href="' . $url . '" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
+            //$html .= '<a  href="' . home_url() . '?page_id=' . $org_options['event_page_id'] . '&registration_id=' . $registration_id . '&amp;id=' . $attendee_id . '&amp;regevent_action=register&form_action=edit_attendee&single=true" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
             break;
     }
-	return  $html;
+    return $html;
 }
 
 function espresso_reg_url($event_id=0) {
@@ -33,8 +33,8 @@ function espresso_reg_url($event_id=0) {
         $new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
         return $new_url;
     }/* else {
-        echo 'No event id supplied';*/
-        return;
+      echo 'No event id supplied'; */
+    return;
     //}
 }
 
@@ -155,25 +155,25 @@ if (!function_exists('event_espresso_additional_attendees')) {
             }
             $i = $i - 1;
             $html = '<p class="event_form_field additional_header" id="additional_header">';
-			// fixed for translation string, previous string untranslatable - http://events.codebasehq.com/projects/event-espresso/tickets/11
+            // fixed for translation string, previous string untranslatable - http://events.codebasehq.com/projects/event-espresso/tickets/11
             //$html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso') . '</a>';			
-            $html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ','event_espresso');
-			$html .= $i . ')</a>';
+            $html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ', 'event_espresso');
+            $html .= $i . ')</a>';
             $html .= '</p>';
             $html .= '<div id="additional_attendees">';
             $html .= '<div class="clone espresso_add_attendee">';
-			/*
-			* Added for seating chart addon
-			*/
-			if ( defined('ESPRESSO_SEATING_CHART') ){
-				if ( seating_chart::check_event_has_seating_chart($_REQUEST['event_id']) !== false ){
-					$html .= '<p>';
-					$html .= '<label>'.__('Select a Seat:', 'event_espresso').'</label>';
-					$html .= '<input type="text" name="x_seat_id[]" value="" class="ee_s_select_seat" event_id="'.$_REQUEST['event_id'].'" readonly="readonly" />';
-					$html .= '<br/>['.__('If you do not select a seat this attendee will not be added', 'event_espresso').']';
+            /*
+             * Added for seating chart addon
+             */
+            if (defined('ESPRESSO_SEATING_CHART')) {
+                if (seating_chart::check_event_has_seating_chart($_REQUEST['event_id']) !== false) {
+                    $html .= '<p>';
+                    $html .= '<label>' . __('Select a Seat:', 'event_espresso') . '</label>';
+                    $html .= '<input type="text" name="x_seat_id[]" value="" class="ee_s_select_seat" event_id="' . $_REQUEST['event_id'] . '" readonly="readonly" />';
+                    $html .= '<br/>[' . __('If you do not select a seat this attendee will not be added', 'event_espresso') . ']';
                     $html .= '</p>';
-				}
-			}
+                }
+            }
             $html .= '<p>';
             $html .= '<label for="x_attendee_fname">' . __('First Name:', 'event_espresso') . '</label>';
             $html .= '<input type="text" name="x_attendee_fname[]" class="input"/>';
@@ -211,38 +211,37 @@ if (!function_exists('event_espresso_get_is_active')) {
         if (get_option('timezone_string') != '') {
             date_default_timezone_set(get_option('timezone_string'));
         }
-		
-		if (!empty($event_meta)){
-			
-			$is_active = $event_meta['is_active'];
-			$event_status = $event_meta['event_status'];
-			
-			$start_time = $event_meta['start_time'];
-			$start_date = $event_meta['start_date'];
-			
-			$registration_start = $event_meta['registration_start'];
-			$registration_startT = $event_meta['registration_startT'];
-			
-			$registration_end = $event_meta['registration_end'];
-			$registration_endT = $event_meta['registration_endT'];
-			
-			$registration_start = $registration_start . " " . $registration_startT;
-			$registration_end = $registration_end . " " . $registration_endT;
-			
-		}else{
-			$sql = "SELECT e.id, e.start_date start_date, e.is_active is_active, e.event_status event_status, e.registration_start, e.registration_startT, e.registration_end, e.registration_endT, ese.start_time start_time ";
-			$sql .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql .= "LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
-			$sql .= "WHERE e.id = '" . $event_id . "' LIMIT 0,1";
-			$events = $wpdb->get_results($sql);
-			$start_date = $wpdb->last_result[0]->start_date;
-			$is_active = $wpdb->last_result[0]->is_active;
-			$event_status = $wpdb->last_result[0]->event_status;
-			$start_time = $wpdb->last_result[0]->start_time;
-	
-			$registration_start = $wpdb->last_result[0]->registration_start . " " . $wpdb->last_result[0]->registration_startT;
-			$registration_end = $wpdb->last_result[0]->registration_end . " " . $wpdb->last_result[0]->registration_endT;
-		}
+
+        if (!empty($event_meta)) {
+
+            $is_active = $event_meta['is_active'];
+            $event_status = $event_meta['event_status'];
+
+            $start_time = $event_meta['start_time'];
+            $start_date = $event_meta['start_date'];
+
+            $registration_start = $event_meta['registration_start'];
+            $registration_startT = $event_meta['registration_startT'];
+
+            $registration_end = $event_meta['registration_end'];
+            $registration_endT = $event_meta['registration_endT'];
+
+            $registration_start = $registration_start . " " . $registration_startT;
+            $registration_end = $registration_end . " " . $registration_endT;
+        } else {
+            $sql = "SELECT e.id, e.start_date start_date, e.is_active is_active, e.event_status event_status, e.registration_start, e.registration_startT, e.registration_end, e.registration_endT, ese.start_time start_time ";
+            $sql .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
+            $sql .= "LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
+            $sql .= "WHERE e.id = '" . $event_id . "' LIMIT 0,1";
+            $events = $wpdb->get_results($sql);
+            $start_date = $wpdb->last_result[0]->start_date;
+            $is_active = $wpdb->last_result[0]->is_active;
+            $event_status = $wpdb->last_result[0]->event_status;
+            $start_time = $wpdb->last_result[0]->start_time;
+
+            $registration_start = $wpdb->last_result[0]->registration_start . " " . $wpdb->last_result[0]->registration_startT;
+            $registration_end = $wpdb->last_result[0]->registration_end . " " . $wpdb->last_result[0]->registration_endT;
+        }
 
         //$timezone_string =  $wpdb->last_result[0]->timezone_string;
         //$t = time();
@@ -385,7 +384,7 @@ if (!function_exists('event_espresso_get_status')) {
 if (!function_exists('espresso_status_detail')) {
 
     function espresso_status_detail($event_id) {
-
+        
     }
 
 }
@@ -650,7 +649,8 @@ if (!function_exists('event_espresso_add_question_groups')) {
                     }
                 }
             }//end questions display
-        } else $html = '';
+        } else
+            $html = '';
         return $html;
     }
 
@@ -772,11 +772,11 @@ if (!function_exists('espresso_ticket_information')) {
                 $sql = $wpdb->get_results("SELECT * FROM " . EVENTS_PRICES_TABLE . " WHERE id ='" . $price_option . "'");
                 $num_rows = $wpdb->num_rows;
                 if ($num_rows > 0) {
-					if (function_exists('espresso_members_installed') && is_user_logged_in()==true) {
-						return $wpdb->last_result[0]->member_price_type;
-					}else{
-						return $wpdb->last_result[0]->price_type;
-					}
+                    if (function_exists('espresso_members_installed') && is_user_logged_in() == true) {
+                        return $wpdb->last_result[0]->member_price_type;
+                    } else {
+                        return $wpdb->last_result[0]->price_type;
+                    }
                 }
                 break;
         }
@@ -1067,7 +1067,6 @@ function espresso_check_scripts() {
     }
 }
 
-
 //These functions were moved here from admin.php on 08-30-2011 by Seth
 function espresso_edit_this($event_id) {
     global $espresso_premium;
@@ -1116,6 +1115,7 @@ function espresso_quantity_for_registration($attendee_id) {
     $cnt = $wpdb->get_var("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
     return $cnt;
 }
+
 function espresso_is_primary_attendee($attendee_id) {
     global $wpdb;
     $sql = "SELECT am.meta_value FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
@@ -1155,9 +1155,9 @@ function espresso_ticket_links($registration_id, $attendee_id) {
         $break = '<br />';
         foreach ($attendees as $attendee) {
             $ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
-			if (function_exists('espresso_ticket_launch')) {
-				 $ticket_url = get_option('siteurl') . "/?ticket_launch=true&amp;id=" . $attendee->id . "&amp;r_id=" . $attendee->registration_id;
-			}
+            if (function_exists('espresso_ticket_launch')) {
+                $ticket_url = get_option('siteurl') . "/?ticket_launch=true&amp;id=" . $attendee->id . "&amp;r_id=" . $attendee->registration_id;
+            }
             $ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket') . ' (' . $attendee->fname . ' ' . $attendee->lname . ')' . '</a>' . $break;
         }
         return '<p>' . $group . $ticket_link . '</p>';
@@ -1165,29 +1165,70 @@ function espresso_ticket_links($registration_id, $attendee_id) {
 }
 
 /**
-	 * Get either a Gravatar URL or complete image tag for a specified email address.
-	 *
-	 * @param string $email The email address
-	 * @param string $s Size in pixels, defaults to 80px [ 1 - 512 ]
-	 * @param string $d Default imageset to use [ 404 | mm | identicon | monsterid | wavatar ]
-	 * @param string $r Maximum rating (inclusive) [ g | pg | r | x ]
-	 * @param boole $img True to return a complete IMG tag False for just the URL
-	 * @param array $atts Optional, additional key/value attributes to include in the IMG tag
-	 * @return String containing either just a URL or a complete image tag
-	 * @source http://gravatar.com/site/implement/images/php/
-*/
+ * Get either a Gravatar URL or complete image tag for a specified email address.
+ *
+ * @param string $email The email address
+ * @param string $s Size in pixels, defaults to 80px [ 1 - 512 ]
+ * @param string $d Default imageset to use [ 404 | mm | identicon | monsterid | wavatar ]
+ * @param string $r Maximum rating (inclusive) [ g | pg | r | x ]
+ * @param boole $img True to return a complete IMG tag False for just the URL
+ * @param array $atts Optional, additional key/value attributes to include in the IMG tag
+ * @return String containing either just a URL or a complete image tag
+ * @source http://gravatar.com/site/implement/images/php/
+ */
 if (!function_exists('espresso_get_gravatar')) {
-	
-	function espresso_get_gravatar( $email, $s = 80, $d = 'mm', $r = 'g', $img = true, $atts = array() ) {
-		$url = 'http://www.gravatar.com/avatar/';
-		$url .= md5( strtolower( trim( $email ) ) );
-		$url .= "?s=$s&d=$d&r=$r";
-		if ( $img ) {
-			$url = '<img src="' . $url . '"';
-			foreach ( $atts as $key => $val )
-				$url .= ' ' . $key . '="' . $val . '"';
-				$url .= ' />';
-		}
-		return $url;
-	}
+
+    function espresso_get_gravatar($email, $s = 80, $d = 'mm', $r = 'g', $img = true, $atts = array()) {
+        $url = 'http://www.gravatar.com/avatar/';
+        $url .= md5(strtolower(trim($email)));
+        $url .= "?s=$s&d=$d&r=$r";
+        if ($img) {
+            $url = '<img src="' . $url . '"';
+            foreach ($atts as $key => $val)
+                $url .= ' ' . $key . '="' . $val . '"';
+            $url .= ' />';
+        }
+        return $url;
+    }
+
+}
+
+/**
+ * Function espresso_get_attendee_coupon_discount
+ * Get discount amount for a given attendee id and cost
+ * 
+ * @global wpdb $wpdb
+ * @param int $attendee_id 
+ * @param double $cost
+ */
+function espresso_get_attendee_coupon_discount($attendee_id,$cost) {
+    global $wpdb;
+    $coupon_code = "";
+    
+    $row = $wpdb->get_row($wpdb->prepare("select * from " . EVENTS_ATTENDEE_TABLE . " where id = %d", $attendee_id), ARRAY_A);
+    if (!is_null($row['coupon_code']) && !empty($row['coupon_code'])) {
+        $coupon_code = $row['coupon_code'];
+        $event_id = $row['event_id'];
+        //$results = $wpdb->get_results("SELECT * FROM ". EVENTS_DISCOUNT_CODES_TABLE ." WHERE coupon_code = '".$_REQUEST['coupon_code']."'");
+        $discounts = $wpdb->get_results("SELECT d.* FROM " . EVENTS_DISCOUNT_CODES_TABLE . " d JOIN " . EVENTS_DISCOUNT_REL_TABLE . " r ON r.discount_id  = d.id WHERE d.coupon_code = '" . $coupon_code . "'  AND r.event_id = '" . $event_id . "' ");
+        if ($wpdb->num_rows > 0) {
+            $valid_discount = true;
+            foreach ($discounts as $discount) {
+                $discount_id = $discount->id;
+                $coupon_code = $discount->coupon_code;
+                $coupon_code_price = $discount->coupon_code_price;
+                $coupon_code_description = $discount->coupon_code_description;
+                $use_percentage = $discount->use_percentage;
+            }
+            $discount_type_price = $use_percentage == 'Y' ? $coupon_code_price . '%' : $org_options['currency_symbol'] . $coupon_code_price;
+
+            if ($use_percentage == 'Y') {
+                $pdisc = $coupon_code_price / 100;
+                $cost = $cost - ($cost * $pdisc);
+            } else {
+                $cost = $cost - $coupon_code_price;
+            }
+        } 
+    }
+    return $cost;
 }

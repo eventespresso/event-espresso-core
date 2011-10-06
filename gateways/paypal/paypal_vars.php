@@ -66,11 +66,15 @@ if ($attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_regi
         foreach ($tmp_attendees as $tmp_attendee) {
             $sub_total = 0.00;
             $sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
-            $attendees[] = array("attendee_info" => $tmp_attendee["event_name"] . "[" . date('m-d-Y', strtotime($tmp_attendee['start_date'])) . "]" . " -- " . $tmp_attendee["fname"] . " " . $tmp_attendee["lname"],
-                "quantity" => $tmp_attendee["quantity"],
-                "cost" => doubleval($tmp_attendee["cost"]),
-                "sub_total" => doubleval($sub_total),
-                "unit_price" => $tmp_attendee["cost"]);
+            $discount = $sub_total - espresso_get_attendee_coupon_discount($tmp_attendee['attendee_id'],$sub_total);
+            $attendees[] = array(
+                                "attendee_info" => $tmp_attendee["event_name"] . "[" . date('m-d-Y', strtotime($tmp_attendee['start_date'])) . "]" . " -- " . $tmp_attendee["fname"] . " " . $tmp_attendee["lname"],
+                                "quantity" => $tmp_attendee["quantity"],
+                                "cost" => doubleval($tmp_attendee["cost"]),
+                                "sub_total" => doubleval($sub_total),
+                                "unit_price" => $tmp_attendee["cost"],
+                                "discount" => $discount
+                                );
             $amount_pd += $tmp_attendee["amount_pd"];
             $total_cost += $sub_total;
             if (!in_array($tmp_attendee['event_id'], $event_ids)) {
@@ -78,10 +82,10 @@ if ($attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_regi
             }
         }
     }
-    $discount = 0;
-    if ($amount_pd < $total_cost) {
-        $discount = $total_cost - $amount_pd;
-    }
+//    $discount = 0;
+//    if ($amount_pd < $total_cost) {
+//        $discount = $total_cost - $amount_pd;
+//    }
 }
 
 #############################
@@ -121,6 +125,10 @@ if (count($attendees) > 0) {
         $myPaypal->addField('item_name_' . $i, $attendee['attendee_info']); #stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
         $myPaypal->addField('amount_' . $i, number_format($attendee['unit_price'], 2, '.', '')); #number_format($div, 2, '.', ''));
         $myPaypal->addField('quantity_' . $i, $attendee['quantity']);
+        if ( $attendee['discount'] > 0 ) {
+            $myPaypal->addField('discount_amount_' . $i, $attendee['discount']);
+        }
+        
         $i++;
     }
     #}
@@ -147,9 +155,9 @@ $myPaypal->addField('city', $city);
 $myPaypal->addField('state', $state);
 $myPaypal->addField('zip', $zip);
 
-if ($amount_pd < $total_cost) {
-    $myPaypal->addField('discount_amount_1', number_format($total_cost - $amount_pd, 2, '.', ''));
-}
+//if ($amount_pd < $total_cost) {
+//    $myPaypal->addField('discount_amount_1', number_format($total_cost - $amount_pd, 2, '.', ''));
+//}
 
 
 //Enable this function if you want to send payment notification before the person has paid.
