@@ -47,42 +47,42 @@ if (!function_exists('event_form_build')) {
                     if (!empty($question->system_name)) {
                         switch ($question->system_name) {
                             case $question->system_name == 'fname':
-                                $answer = $current_user->first_name;
+                                if($attendee_number==1) $answer = $current_user->first_name;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'lname':
-                                $answer = $current_user->last_name;
+                                if($attendee_number==1) $answer = $current_user->last_name;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'email':
-                                $answer = $user_email;
+                                if($attendee_number==1) $answer = $user_email;
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'address':
-                                $answer = esc_attr(get_usermeta($userid, 'event_espresso_address'));
+                                if($attendee_number==1) $answer = esc_attr(get_usermeta($userid, 'event_espresso_address'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'city':
-                                $answer = esc_attr(get_usermeta($userid, 'event_espresso_city'));
+                                if($attendee_number==1) $answer = esc_attr(get_usermeta($userid, 'event_espresso_city'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'state':
-                                $answer = esc_attr(get_usermeta($userid, 'event_espresso_state'));
+                                if($attendee_number==1) $answer = esc_attr(get_usermeta($userid, 'event_espresso_state'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'zip':
-                                $answer = esc_attr(get_usermeta($userid, 'event_espresso_zip'));
+                                if($attendee_number==1) $answer = esc_attr(get_usermeta($userid, 'event_espresso_zip'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
                             case $question->system_name == 'phone':
-                                $answer = esc_attr(get_usermeta($userid, 'event_espresso_phone'));
+                                if($attendee_number==1) $answer = esc_attr(get_usermeta($userid, 'event_espresso_phone'));
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
