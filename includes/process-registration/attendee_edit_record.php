@@ -28,7 +28,7 @@ function attendee_edit_record() {
         $results = $wpdb->get_results( "SELECT  t1.*, t2.event_name, t2.question_groups, t2.event_meta FROM " . EVENTS_ATTENDEE_TABLE  . " t1
                  JOIN " . EVENTS_DETAIL_TABLE  . " t2
                  ON t1.event_id = t2.id
-                 WHERE t1.id = " . $_REQUEST[ 'id' ] . "
+                 WHERE t1.id = '" . $id . "' AND t1.registration_id = '" . $registration_id . "'
                  ORDER BY t1.id" );
 
         foreach ( $results as $result ) {
@@ -211,7 +211,8 @@ function attendee_edit_record() {
 		}
 ?>
 <div class="event-display-boxes">
-<h3 class="section-heading"><?php _e('Registration For:', 'event_espresso' ); ?> <?php echo $event_name ?></h3>
+<h3 class="section-heading"><?php if ($_REQUEST[ 'registration_id' ]='true'){ echo __('Edit Your', 'event_espresso' ) .' '; }_e('Registration', 'event_espresso' ); ?></h3>
+<p><strong><?php _e('Event:', 'event_espresso'); ?> <?php echo $event_name; ?></strong></p>
 	<form method="post" action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>" class="espresso_form">
 	<?php
 	if (count($question_groups) > 0) {
