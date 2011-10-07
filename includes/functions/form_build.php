@@ -11,6 +11,10 @@ if (!function_exists('event_form_build')) {
         $attendee_number = isset($extra['attendee_number']) ? $extra['attendee_number'] : 0;
         $price_id = isset($extra['price_id']) ? $extra['price_id'] : 0;
         $multi_name_adjust = $multi_reg == 1 ? "[$event_id][$price_id][$attendee_number]" : '';
+				if(!empty($extra["x_attendee"])) {
+					$question->system_name = "x_attendee_" . $question->system_name . "[]";
+					$question->required = 'N';
+				}
 
         /**
          * Temporary client side email validation solution by Abel, will be replaced
