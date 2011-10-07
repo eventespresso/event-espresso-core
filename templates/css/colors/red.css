@@ -7,7 +7,8 @@
 
 #content .event_title,
 #content .section-heading,
-#content .btn_event_form_submit {
+#content .btn_event_form_submit,
+#TB_title {
 	background: #d00433;
 	background: -moz-linear-gradient(top, #d00433 0%, #bb032e 44%, #9e0025 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d00433), color-stop(44%,#bb032e), color-stop(100%,#9e0025));

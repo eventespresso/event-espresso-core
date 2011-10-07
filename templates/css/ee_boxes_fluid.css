@@ -64,10 +64,17 @@ table.price_list {
 	-webkit-box-shadow: 0 2px 3px #eaeaea;
 	box-shadow: 0 2px  3px #eaeaea;
 }
-#content #espresso_confirmation_display {/* inset shadow */
+#content #espresso_confirmation_display,
+.TB-ee-frame {/* inset shadow subtle */
 	-moz-box-shadow:  inset 0 0 5px #ddd;
 	-webkit-box-shadow: inset 0 0 5px #ddd;
 	box-shadow: inset 0 0  5px #ddd;
+}
+
+.TB-ee-frame {/* inset shadow pronounced */
+	-moz-box-shadow:  inset 0 0 9px 3px #ddd;
+	-webkit-box-shadow: inset 0 0 9px 3px #ddd;
+	box-shadow: inset 0 0  9px 3px #ddd;
 }
 .event-messages {/* rounded corners */
 	-webkit-border-radius: 4px;
@@ -220,6 +227,23 @@ span.google-map-link a:hover {
  background-color: #777;
  opacity: 0.55;
 }
+.TB-ee-frame {
+	background: #F0F0E3;
+	border: 1px solid #8f8f8f;
+	margin-top:1em;
+	padding: 1em 10px 5em;
+	position: relative;
+	}
+#TB_title {
+	background: #d5cea6;
+	background: -moz-linear-gradient(top, #d5cea6 0%, #c9c190 40%, #b7ad70 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d5cea6), color-stop(40%,#c9c190), color-stop(100%,#b7ad70));
+	background: -webkit-linear-gradient(top, #d5cea6 0%,#c9c190 40%,#b7ad70 100%);
+	background: -o-linear-gradient(top, #d5cea6 0%,#c9c190 40%,#b7ad70 100%);
+	background: -ms-linear-gradient(top, #d5cea6 0%,#c9c190 40%,#b7ad70 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', endColorstr='#b7ad70',GradientType=0 );
+	background: linear-gradient(top, #d5cea6 0%,#c9c190 40%,#b7ad70 100%);
+}
 .tb-ee-event-thumb {
 	float: right;
 	width: 50px;
@@ -239,27 +263,37 @@ span.google-map-link a:hover {
  font-size: 150%;
 	margin-bottom: 20px;
 }
-.tb-ee-event-title span.event-status { font-size: 100%;}
+.tb-ee-event-title span.event-status span.espresso_closed { color: #E16D35;}
+.TB-ee-frame .section-title {
+	font-weight: bold;
+}
 .tb-ee-event-desc {
 	overflow: hidden;
 	clear: both;
 }
 .event-address-block p {margin-bottom: .5em;}
-.TB-ee-frame #register_link-57 {
+.TB-ee-frame .social-media-buttons {
+	position:absolute;
+	margin-bottom: 0;
+	padding: 0;
+	width: 140px;
+	bottom: -3px;
+	right: -5px;
+	text-align: right;
+}
+.TB-ee-frame .social-media-buttons iframe {
+	display: inline-block;
+	width: 60px !important;
+}
+.TB-ee-frame .register-link-footer {
 	position: absolute;
 	margin-bottom: 0;
-	padding-left: 10px;
-	width: 100%;
+	width: 50%;
 	bottom: 0;
-	left: 0;
+	left: 10px;
 }
 /*___ page register ___*/
-.TB-ee-frame {
-	background: #F0F0E3;
-	border: 1px solid #8f8f8f;
-	margin-top:1em;
-	padding: 1em 10px 5em;
-	}
+
 .event_description .event_staff {
 	background: #FAF9EF;
 	border: 1px solid #bfbfbf;

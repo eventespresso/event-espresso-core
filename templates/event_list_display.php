@@ -95,9 +95,11 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         <?php
     }
     ?>
-
-    <p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
-
+    
+				<?php if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook')  ){ ?>
+     <p class="social-media-buttons"><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
+    <?php  } ?>
+				
     <?php
     $num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
     if ($num_attendees >= $reg_limit) {
@@ -151,8 +153,9 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         }
     }
     ?>
+		<?php ######### event list event popup markup ########### ?>
 		<div style="display: none;">
-   <div id="event-thumb-detail<?php echo $event_id ?>" class="pop-help" >
+   <div id="event-thumb-detail<?php echo $event_id ?>" class="pop-help ee-tb-popups events-lists-popups" >
     <div class="TB-ee-frame">
       <h2 class="tb-ee-event-title"><?php echo stripslashes_deep($event_name) ?> <span class="event-status"><?php echo $status_display ?></span></h2>	
 						
@@ -163,22 +166,36 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 								
 						</div>
 						<div class="event-dates-times">
+						<h4 class="section-title"><?php _e('Event Dates &amp; Times:', 'event_espresso'); ?></h4>
 						  <p><span><?php _e('Date:', 'event_espresso'); ?></span>  <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
 						</div>
+						
+						<?php if($venue_address) {?>
 						<div class="event-address-block">
-						<?php if($venue_address) ?>
+						<h4 class="section-title"><?php _e('Venue:', 'event_espresso'); ?></h4>
+						<?php if($venue_address) {?>
 								<p><?php echo $venue_address ?></p>
-							<?php if($venue_address2){ ?>
+						<?php } ?>
+						
+						<?php if($venue_address2){ ?>
 								<p><?php echo $venue_address2  ?></p>
-								<?php } ?>
-							<?php if($venue_city) ?>
+						<?php } ?>
+						
+						<?php if($venue_city) {?>
 								<p><?php echo $venue_city ?></p>
-								<p></p>
-								<p></p>
+						<?php } ?>
+						
+						<p class="google-map-link"><?php echo $google_map_link; ?></p>
+						
 						</div>
+						<?php } ?>
+				 
+					<?php if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') ){ ?>
+      <p class="social-media-buttons"><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
+     <?php  } ?>
 						
 						<p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
-         <a class="a_register_link thickbox" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>?height=600&width=500" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a>
+         <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for this Event', 'event_espresso'); ?></a>
           <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?>
       </p>
 				</div>

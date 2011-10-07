@@ -7,7 +7,8 @@
 
 #content .event_title,
 #content .section-heading,
-#content .btn_event_form_submit {
+#content .btn_event_form_submit,
+#TB_title {
 	background: #d1dfeb;
 	background: -moz-linear-gradient(top, #d1dfeb 0%, #6fb7e7 51%, #b2dbf8 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d1dfeb), color-stop(51%,#6fb7e7), color-stop(100%,#b2dbf8));
@@ -34,6 +35,7 @@
 /*___Event pages ___*/
 
 /** Registeration event **/
+
 
 
 	 

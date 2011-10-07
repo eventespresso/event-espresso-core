@@ -5,8 +5,6 @@
 //This file should be stored in your "/wp-content/uploads/espresso/templates/" directory.
 //Note: All of these functions can be overridden using the "Custom Files" addon. The custom files addon also contains sample code to display ongoing events
 
-if (!function_exists('display_all_events')) {
-
 // enqueue thickbox script & styles
 // this needs wrapping in a conditional to test for option setting
 //if(isset($org_options['ee_lists_thickbox']) && $org_options['ee_lists_thickbox'] == 'y') {
@@ -20,6 +18,9 @@ add_action('wp_print_styles', 'add_thickbox_styles');
   wp_enqueue_style('thickbox');
  }
 //}
+
+if (!function_exists('display_all_events')) {
+
 
     function display_all_events() {
         global $org_options;
