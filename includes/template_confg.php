@@ -7,6 +7,7 @@ function event_espresso_manage_templates() {
         $org_options['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
         $org_options['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
         $org_options['display_address_in_regform'] = $_POST['display_address_in_regform'];
+								$org_options['thunbnail_popup_lists'] = $_POST['thunbnail_popup_lists'];
 					$org_options['use_custom_post_types'] = $_POST['use_custom_post_types'];
 					$org_options['enable_default_style'] = $_POST['enable_default_style'];
 					$org_options['selected_style'] = $_POST['selected_style'];					

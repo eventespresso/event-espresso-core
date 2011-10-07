@@ -20,6 +20,13 @@
           </label>
           <?php echo select_input('display_address_in_event_list', $values, isset($org_options['display_address_in_event_list']) ? $org_options['display_address_in_event_list'] : ''); ?>
 					</li>
+					
+					<li>
+          <label for="display_thickbox_for_thumbs">
+            <?php _e('Enable thumbnail popup display for event?','event_espresso'); ?>
+          </label>
+          <?php echo select_input('thunbnail_popup_lists', $values, isset($org_options['thunbnail_popup_lists']) ? $org_options['thunbnail_popup_lists'] : '', 'id="display_thickbox_for_thumbs"'); ?>
+					</li>
         
 					<li>
           <label for="display_address_in_regform">

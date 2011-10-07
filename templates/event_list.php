@@ -7,7 +7,8 @@
 
 // enqueue thickbox script & styles
 // this needs wrapping in a conditional to test for option setting
-//if(isset($org_options['ee_lists_thickbox']) && $org_options['ee_lists_thickbox'] == 'y') {
+global $org_options;
+if(isset($org_options['thunbnail_popup_lists']) && $org_options['thunbnail_popup_lists'] == 'Y') {
 add_action('wp_footer', 'load_thickbox');
 add_action('wp_print_styles', 'add_thickbox_styles');
 	function load_thickbox() {
@@ -17,7 +18,7 @@ add_action('wp_print_styles', 'add_thickbox_styles');
  function add_thickbox_styles() {
   wp_enqueue_style('thickbox');
  }
-//}
+}
 
 if (!function_exists('display_all_events')) {
 

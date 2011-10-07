@@ -59,8 +59,15 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
     <?php //echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
     <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''
     $event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
-    ?>
-
+    global $org_options;
+    if(isset($org_options['thunbnail_popup_lists']) && $org_options['thunbnail_popup_lists'] == 'Y') {
+				  $thumb_url = '#TB_inline?height=400&width=500&inlineId=event-thumb-detail' . $event_id  ;
+						$thickbox_class = ' thickbox';
+				}else {
+						$thumb_url = $registration_url;
+						$thickbox_class = '';
+				}
+				?>
     <div class="event-meta">
 			 <p id="p_event_price-<?php echo $event_id ?>" class="event_price"><span class="section-title"><?php  echo __('Price: ', 'event_espresso'); ?></span> <?php echo  $org_options['currency_symbol'].$event->event_cost; ?></p>
 
@@ -82,7 +89,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
                      && $event_meta['display_thumb_in_lists'] == 'Y' 
 																					&& !empty($event_meta['event_thumbnail_url'])){ ?>
 					
-					<a id="ee-event-list-thumb" class="thickbox" href="#TB_inline?height=400&width=500&inlineId=event-thumb-detail<?php echo $event_id ?>">
+					<a id="ee-event-list-thumb" class="ee-thumbs<?php echo $thickbox_class ?>" href="<?php echo $thumb_url ?>">
       <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span>
      </a>
      <?php }?>
