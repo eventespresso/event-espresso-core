@@ -240,6 +240,14 @@ span.google-map-link a:hover {
  background-color: #777;
  opacity: 0.55;
 }
+.TB-ee-frame {
+	background: #F0F0E3;
+	border: 1px solid #8f8f8f;
+	margin-top: 1em;
+	overflow: hidden;
+	padding: 1em 10px 5em;
+	position: relative;
+}
 #TB_title {
 	background: #d5cea6;
 	background: -moz-linear-gradient(top, #d5cea6 0%, #c9c190 40%, #b7ad70 100%);
@@ -256,14 +264,6 @@ span.google-map-link a:hover {
 	height: 100%;
 	margin: -8px -6px 10px 0;
 }
-.TB-ee-frame {
-	background: #F0F0E3;
-	border: 1px solid #8f8f8f;
-	margin-top: 1em;
-	overflow: hidden;
-	padding: 1em 10px 5em;
-	position: relative;
-}
 .tb-ee-event-title {
 	float: left;
  font-size: 150%;
@@ -278,13 +278,25 @@ span.google-map-link a:hover {
 	clear: both;
 }
 .event-address-block p {margin-bottom: .5em;}
-.TB-ee-frame #register_link-57 {
+.TB-ee-frame .social-media-buttons {
+	position:absolute;
+	margin-bottom: 0;
+	padding: 0;
+	width: 140px;
+	bottom: -3px;
+	right: -5px;
+	text-align: right;
+}
+.TB-ee-frame .social-media-buttons iframe {
+	display: inline-block;
+	width: 60px !important;
+}
+.TB-ee-frame .register-link-footer {
 	position: absolute;
 	margin-bottom: 0;
-	padding-left: 10px;
-	width: 100%;
+	width: 50%;
 	bottom: 0;
-	left: 0;
+	left: 10px;
 }
 /*___ page register ___*/
 
