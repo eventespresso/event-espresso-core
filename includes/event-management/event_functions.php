@@ -45,7 +45,7 @@ function event_espresso_time_editor($event_id = 0) {
             ?>
             <li>
                 <p><label for="add-start-time"><?php _e('Start', 'event_espresso'); ?> :&nbsp;</label><input size="10"  type="text" id="add-start-time" name="start_time[]" /></p>
-                <p><label for="add-end-time"> <?php _e('End', 'event_espresso'); ?>:</label> <input size="10"  type="text" id="add-end-time" name="end_time[]" /> <?php echo (isset($org_options['time_reg_limit']) && $org_options['time_reg_limit'] == 'Y' ? __('Qty', 'event_espresso') . ': <input size="3"  type="text" name="time_qty[]" value="' . $time->reg_limit . '" />' : '') ?></p>
+                <p><label for="add-end-time"> <?php _e('End', 'event_espresso'); ?>:</label> <input size="10"  type="text" id="add-end-time" name="end_time[]" /> <?php echo (isset($org_options['time_reg_limit']) && $org_options['time_reg_limit'] == 'Y' ? __('Qty', 'event_espresso') . ': <input size="3"  type="text" name="time_qty[]" />' : '') ?></p>
             </li>
             <?php
         }
