@@ -101,7 +101,7 @@ $this_event_id = $event_id;
 
                     //Outputs the shopping cart items
                     if ( function_exists( 'event_espresso_add_cart_item_groups' ) ){
-                        echo event_espresso_add_cart_item_groups( $item_groups ). 'dfhfh  gnbmgjgj ngjhjhj bnghty ghghgh';
+                        echo event_espresso_add_cart_item_groups( $item_groups );
                     }
 
                     //Coupons
