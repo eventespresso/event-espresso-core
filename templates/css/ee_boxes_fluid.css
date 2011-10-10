@@ -247,7 +247,7 @@ span.google-map-link a:hover {
 .tb-ee-event-thumb {
 	float: right;
 	width: 50px;
-	height: 100%;
+	height: auto;
 	margin: -8px -6px 10px 0;
 }
 .TB-ee-frame {
