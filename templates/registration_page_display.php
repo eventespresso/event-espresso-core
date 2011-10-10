@@ -216,7 +216,7 @@
 							</h3>
 							<?php
 							//Outputs the custom form questions. This function can be overridden using the custom files addon
-							echo event_espresso_add_question_groups($question_groups);
+							echo event_espresso_add_question_groups($question_groups, '', null, 0, array('attendee_number'=>1));
 							?>
 						</fieldset>
 						<?php

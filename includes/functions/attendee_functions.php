@@ -4,7 +4,7 @@
 
 function add_attendee_questions($questions, $registration_id, $attendee_id=0, $extra=array()) {
 
-    if (array_key_exists('session_vars', $extra)) {
+	if (array_key_exists('session_vars', $extra)) {
 
         $response_source = $extra['session_vars'];
     } else
@@ -42,7 +42,7 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
                         . ") ORDER BY q.id ASC");
         //. ") AND q.system_name IS NULL ORDER BY id ASC");
 
-        $num_rows = $wpdb->num_rows;
+				$num_rows = $wpdb->num_rows;
 
         if ($num_rows > 0) {
             $question_displayed = array();

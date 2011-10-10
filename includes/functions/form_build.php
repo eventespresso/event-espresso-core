@@ -11,10 +11,12 @@ if (!function_exists('event_form_build')) {
         $attendee_number = isset($extra['attendee_number']) ? $extra['attendee_number'] : 0;
         $price_id = isset($extra['price_id']) ? $extra['price_id'] : 0;
         $multi_name_adjust = $multi_reg == 1 ? "[$event_id][$price_id][$attendee_number]" : '';
+
 				if(!empty($extra["x_attendee"])) {
+					$field_name = ($question->system_name != '') ? "x_attendee_" . $question->system_name . "[]" : "x_attendee_" . $question->question_type . '_' . $question->id . '[]';
 					$question->system_name = "x_attendee_" . $question->system_name . "[]";
 					$question->required = 'N';
-				}
+				} else $field_name = ($question->system_name != '') ? $question->system_name : $question->question_type . '_' . $question->id;
 
         /**
          * Temporary client side email validation solution by Abel, will be replaced
@@ -26,8 +28,6 @@ if (!function_exists('event_form_build')) {
             $required = ' title="' . $question->required_text . '" class="required ' . $email_validate . ' '.$class.'"';
             $required_label = "<em>*</em>";
         }
-        $field_name = ($question->system_name != '') ? $question->system_name : $question->question_type . '_' . $question->id;
-
         if (is_array($answer) && array_key_exists($event_id, $answer)) {
 
             $answer = empty($answer[$event_id]['event_attendees'][$price_id][$attendee_number][$field_name]) ? '' : $answer[$event_id]['event_attendees'][$price_id][$attendee_number][$field_name];
@@ -44,7 +44,7 @@ if (!function_exists('event_form_build')) {
             $userid = $current_user->ID;
         }
 
-        $html = '';
+				$html = '';
         switch ($question->question_type) {
             case "TEXT" :
                 if (get_option('events_members_active') == 'true' && (empty($_REQUEST['event_admin_reports']) || $_REQUEST['event_admin_reports'] != 'add_new_attendee')) {
@@ -100,7 +100,7 @@ if (!function_exists('event_form_build')) {
                 break;
             case "TEXTAREA" :
                 $html .= '<p class="event_form_field event-quest-group-textarea">' . $label;
-                $html .= '<textarea id=""' . $required . ' name="TEXTAREA_' . $question->id . $multi_name_adjust . '"  cols="30" rows="5" class="'.$class.'">' . $answer . '</textarea></p>';
+                $html .= '<textarea id=""' . $required . ' name="' . $field_name . $multi_name_adjust . '"  cols="30" rows="5" class="'.$class.'">' . $answer . '</textarea></p>';
                 break;
             case "SINGLE" :
                 $values = explode(",", $question->response);
@@ -183,7 +183,7 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
     echo '<label for="' . $field_name . '">' . $question->question . '</label><br>';
     switch ($question->question_type) {
         case "TEXT" :
-            echo '<input ' . $hidden . ' type="text" ' . $required . ' id="' . $field_name . '"  name="' . $field_name . '" size="40"  value="' . $edits . '" />';
+            echo '<input type="text" ' . $required . ' id="' . $field_name . '"  name="' . $field_name . '" size="40"  value="' . $edits . '" />';
             break;
         case "TEXTAREA" :
             echo '<textarea id="TEXTAREA_' . $question->id . '" ' . $required . ' name="TEXTAREA_' . $question->id . '"  cols="30" rows="5">' . $edits . '</textarea>';
