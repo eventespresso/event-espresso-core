@@ -24,7 +24,7 @@
         <?php _e("<code>&lt;?php echo do_shortcode('[EE_META type='event_meta' name='my_meta_key']'); ?></code>", "event_espresso") ?>
       </p>
       <p>
-        <?php _e("Further information on shortcodes is avaialable <a href='http://eventespresso.dev/wp-admin/admin.php?page=support#shortcodes'> on the Help &amp; Support page</a> or from the <a href='http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/'>forums</a>.", "event_espreso"); ?>
+        <?php echo __('Further information on shortcodes is available ', 'event_espresso') . "<a href='" . admin_url('admin.php?page=support#shortcodes') . " '>" . __('on the Help &amp; Support page', 'event_espresso') . "</a>" . __(' or from the', 'event_espreso'). " <a href='http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/'>" . __('forums', 'event_espresso') . "</a>."; ?>
       </p>
     </div>
   </div>
