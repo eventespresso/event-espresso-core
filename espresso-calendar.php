@@ -563,7 +563,7 @@ if (!function_exists('espresso_calendar')) {
 			$events[] = $eventArray; 
 		}
 		//Print the results of the code above
-		 echo json_encode($events);
+		// echo json_encode($events);
 
 	//Start the output of the calendar
 	ob_start();
@@ -659,7 +659,7 @@ if (!function_exists('espresso_calendar')) {
       element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id  + '"><p class="tb-event-title">' + event.title + '</p><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
 						}
 						if(event.event_img_thumb){
-						 //alert('say something');
+						 //alert('we have thumbs');
 							
 						 element.addClass('event-has-thumb');
 							  if(event.in_thickbox_url){
