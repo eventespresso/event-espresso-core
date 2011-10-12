@@ -208,10 +208,10 @@ function edit_event($event_id = 0) {
                         . '<p><label>' . __('Display  description? ', 'event_espresso') . '</label>' . select_input('display_desc', $values, $display_desc) . '</p>'
                         . '<p><label>' . __('Display  registration form? ', 'event_espresso') . '</label>' . select_input('display_reg_form', $values, $display_reg_form) . '</p>';
             }//Display Lite version options - End
-            postbox('event-status', 'Event Options', '<p><label for"reg-limit">' . __('Attendee Limit', 'event_espresso') . ': </label><input name="reg_limit" id="reg-limit" size="10" type="text" value="' . $reg_limit . '" /><br />' .
+            postbox('event-status', 'Event Options', '<p><label for"reg-limit">' . __('Attendee Limit: ', 'event_espresso') . ' </label><input id="reg-limit" name="reg_limit"  size="10" type="text" value="' . $reg_limit . '" /><br />' .
                     '<span>(' . __('leave blank for unlimited', 'event_espresso') . ')</span></p>' .
-                    '<p><label>' . __('Allow group registrations?', 'event_espresso') . '</label> ' . select_input('allow_multiple', $values, $allow_multiple) . '</p>' .
-                    '<p><label for="addit-limit">' . __('Max Group Registrants', 'event_espresso') . ':</label> <input type="text" id="addit-limit" name="additional_limit" value="' . $additional_limit . '" size="4" />' . '</p>' .
+                    '<p><label for="group-reg">' . __('Allow group registrations? ', 'event_espresso') . '</label> ' . select_input('allow_multiple', $values, $allow_multiple, 'id="group-reg"') . '</p>' .
+                    '<p><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input type="text" id="max-registrants" name="additional_limit" value="' . $additional_limit . '" size="4" />' . '</p>' .
                     $advanced_options
             );
 			//Featured image section

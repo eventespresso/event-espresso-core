@@ -52,10 +52,10 @@ function add_new_event() {
             $reg_limit = isset($reg_limit) ? $reg_limit : '';
             //$event_meta = isset($event_meta) ? $event_meta : array();
             $additional_limit = isset($additional_limit) ? $additional_limit : '';
-            postbox('event-status', 'Event Options', '<p>' . __('Attendee Limit', 'event_espresso') . ': <input name="reg_limit" size="10" type="text" value="' . $reg_limit . '"><br />' .
-                    '(' . __('leave blank for unlimited', 'event_espresso') . ')</p>' .
-                    '<p>' . __('Allow group registrations?', 'event_espresso') . ' ' . select_input('allow_multiple', $values, 'N') .
-                    '<p>' . __('Max Group Registrants', 'event_espresso') . ': <input type="text" name="additional_limit" value="' . $additional_limit . '" size="4">' .
+            postbox('event-status', 'Event Options', '<p><label for="reg-limit">' . __('Attendee Limit: ', 'event_espresso') . '</label> <input id="reg-limit" name="reg_limit" size="10" type="text" value="' . $reg_limit . '"><br />' .
+                    '<span>(' . __('leave blank for unlimited', 'event_espresso') . ')</span></p>' .
+                    '<p><label for="group-reg">' . __('Allow group registrations? ', 'event_espresso') . '</label> ' . select_input('allow_multiple', $values, 'N', 'id="group-reg"') .
+                    '<p><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input id="max-registrants" type="text" name="additional_limit" value="' . $additional_limit . '" size="4">' .
                     $advanced_options
             );
 			
