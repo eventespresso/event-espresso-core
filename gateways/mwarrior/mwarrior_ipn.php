@@ -24,6 +24,7 @@ if ($mwarrior->validateIpn()){
 	$txn_type = "CC";
 	$txn_id = $mwarrior->response['responseData']['transactionID'];
 	$amount_pd = $mwarrior->_getAmount();
+	$total_cost = $mwarrior->_getAmount();
 	$payment_date = date("m-d-Y");
 	
 	//Check the payment status recieved from Merchant Warrior
