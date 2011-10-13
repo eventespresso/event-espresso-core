@@ -73,6 +73,7 @@ if ($responsecode == '00') {
 		$lname = $attendee->lname;
 		$fname = $attendee->fname;
 		$amount_pd = $attendee->amount_pd;
+		$total_cost = $attendee->amount_pd;
 		$event_id = $attendee->event_id;
 	}
 
