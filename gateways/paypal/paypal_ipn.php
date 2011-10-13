@@ -40,6 +40,7 @@ if ($myPaypal->validateIpn()) {
         } else {
             $amount_pd = $_REQUEST['payment_gross'];
         }
+		$total_cost = $amount_pd;
         $mc_currency = $myPaypal->ipnData['mc_currency'];
         $address_name = $myPaypal->ipnData['address_name'];
         $address_street = nl2br($myPaypal->ipnData['address_street']);
