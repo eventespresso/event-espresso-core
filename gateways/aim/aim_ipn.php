@@ -52,6 +52,7 @@ foreach ($attendees as $attendee){
 	$fname = $attendee->fname;
 	$email = $attendee->email;
 	$amount_pd = $attendee->amount_pd;
+	$total_cost = $attendee->amount_pd;
 	$event_id = $attendee->event_id;
 }
 
