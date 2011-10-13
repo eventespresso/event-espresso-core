@@ -20,6 +20,7 @@ if ($_REQUEST['credit_card_processed']=='Y') {
         $lname = $attendee->lname;
         $fname = $attendee->fname;
         $amount_pd = $attendee->amount_pd;
+		$total_cost = $attendee->amount_pd;
         $event_id = $attendee->event_id;
     }
 
