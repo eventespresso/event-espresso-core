@@ -134,7 +134,8 @@ if (!APICallSuccessful($PayPalResult['ACK'])) {
     $payment_date = date("d-m-Y");
     $txn_type = 'PPP';
     $txn_id = $PayPalResult['TRANSACTIONID'];
-
+	$total_cost = $PayPalResult['AMT'];
+	
     $sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($_POST['id']) . "' ";
     $sql .= $id == '' ? '' : " AND id= '" . $id . "' ";
     $sql .= " ORDER BY id LIMIT 0,1";
