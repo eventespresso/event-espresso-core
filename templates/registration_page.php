@@ -40,7 +40,19 @@ if (!function_exists('register_attendees')) {
         $currency_format = isset($org_options['currency_format']) ? $org_options['currency_format'] : '';
 
         $message = $org_options['message'];
-
+        global $ee_gmaps_opts;
+					   // EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
+								$ee_gmaps_opts = array(
+								'ee_map_width' => $org_options['ee_map_width_single'],
+								'ee_map_height' => $org_options['ee_map_height_single'],
+								'ee_map_zoom' => $org_options['ee_map_zoom_single'],
+								'ee_map_nav_display' => $org_options['ee_map_nav_display_single'],
+								'ee_map_nav_size' => $org_options['ee_map_nav_size_single'],
+								'ee_map_type_control' => $org_options['ee_map_type_control_single'],
+								'ee_map_align' => $org_options['ee_map_align_single']
+								);
+					   //var_dump($ee_gmaps_opts);								
+								
         //Build event queries
         $sql = "SELECT e.*, ese.start_time, ese.end_time ";
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
@@ -153,7 +165,11 @@ if (!function_exists('register_attendees')) {
             $virtual_phone = stripslashes_deep($data->event->virtual_phone);
 
             //Address formatting
-            $location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
+												// Plain format for gmap geocoding
+												$venue_address_elements = ($event_address != '' ? $event_address . ',' : '') . ($event_address2 != '' ? $event_address2 . ',' : '') . ($event_city != '' ?  $event_city . ',' : '') . ($event_state != '' ? $event_state . ',' : '') . ($event_zip != '' ? $event_zip . ',' : '') . ($event_country != '' ? $event_country . ',' : '');
+            $ee_gmap_location =  $venue_address_elements;
+												// display formatting
+												$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
 
             //Google map link creation
             $google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));

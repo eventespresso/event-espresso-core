@@ -2,6 +2,7 @@
 //This is the registration form.
 //This is a template file for displaying a registration form for an event on a page.
 //There should be a copy of this file in your wp-content/uploads/espresso/ folder.
+
 ?>
 
 <div id="event_espresso_registration_form" class="event-display-boxes">
@@ -90,6 +91,8 @@
 								<span class="google-map-link"><?php echo $google_map_link; ?></span></span> </p>
 						<?php
 					}
+ 				
+					
 //	  echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
 					/* Displays the social media buttons */
 					if (function_exists('espresso_show_social_media')) {
@@ -118,6 +121,11 @@
 					</p>
 
 					<?php
+					
+				 if(isset($event_meta['enable_for_gmap']) && 'Y' == $event_meta['enable_for_gmap']){ 
+						 ee_gmap_display($ee_gmap_location, $event_id); 
+					}					
+					
 					/*
 					 * * This section shows the registration form if it is an active event * *
 					 */

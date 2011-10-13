@@ -73,11 +73,14 @@ function add_event_to_db($recurrence_arr = array()) {
 
         $post_type = $_REQUEST['post_type'];
         
-					// thumbnail image options
-					$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
-					$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
-					$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
-					$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+					   // thumbnail image options
+					   $event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
+					   $event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
+					   $event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
+					   $event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+					
+					   // enable event address for Gmaps
+					   $event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
 					
         //$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
         $event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');

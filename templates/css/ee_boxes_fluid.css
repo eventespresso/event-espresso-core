@@ -39,7 +39,8 @@ div#event-meta ul,
 #content table.event-display-tables,
 .event_espresso_attention,
 .event-list-payment-overview dl,
-dl.reg-gen-details {
+dl.reg-gen-details,
+.ee-gmaps {
 	-moz-box-shadow: 0 0 3px #d2d2d2;
 	-webkit-box-shadow: 0 0 3px #d2d2d2;
 	box-shadow: 0 0  3px #d2d2d2;
@@ -416,6 +417,13 @@ ul#espresso_payment_buttons li form {
 	background: #f4f4f4;
 	border: 1px solid #bbb;
 	padding: 10px;
+}
+/*___ page elements / objects ___*/
+
+/** Gmaps **/
+
+.ee-gmaps {
+	border: 1px solid #bfbfbf;
 }
 /* >Forms
 ------------------------------------------------------------------------------*/

@@ -697,6 +697,9 @@ function edit_event($event_id = 0) {
               </tr>
             
           </table>
+										<p>
+										  <label for="enable-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, 'N', 'id="enable-gmap"')?></label>
+										</p>										
         </div>
       </div>
       <!-- /event-location-->

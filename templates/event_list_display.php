@@ -37,6 +37,7 @@ $status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? ' - ' . $statu
 
 //You can also display a custom message. For example, this is a custom registration not open message:
 $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' - <span class="espresso_closed">' . __('Regsitration is Closed', 'event_espresso') . '</span>' : '';
+
 ?>
 <div id="event_data-<?php echo $event_id ?>" class="event_data <?php echo $css_class; ?> <?php echo $category_identifier; ?> event-data-display event-list-display event-display-boxes">
     <h2 id="event_title-<?php echo $event_id ?>" class="event_title"><a title="<?php echo stripslashes_deep($event_name) ?>" class="a_event_title" id="a_event_title-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>"><?php echo stripslashes_deep($event_name) ?></a>
@@ -59,8 +60,21 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
     <?php //echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
     <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''
     $event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
-    global $org_options;
-    if(isset($org_options['thunbnail_popup_lists']) && $org_options['thunbnail_popup_lists'] == 'Y') {
+    global $org_options, $ee_gmaps_opts;
+     
+					// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
+								$ee_gmaps_opts = array(
+								'ee_map_width' => $org_options['ee_map_width'],
+								'ee_map_height' => $org_options['ee_map_height'],
+								'ee_map_zoom' => $org_options['ee_map_zoom'],
+								'ee_map_nav_display' => $org_options['ee_map_nav_display'],
+								'ee_map_nav_size' => $org_options['ee_map_nav_size'],
+								'ee_map_type_control' => $org_options['ee_map_type_control'],
+								'ee_map_align' => $org_options['ee_map_align']
+								);
+					//var_dump($ee_gmaps_opts);   
+    
+				if(isset($org_options['thunbnail_popup_lists']) && $org_options['thunbnail_popup_lists'] == 'Y') {
 				  $thumb_url = '#TB_inline?height=400&width=500&inlineId=event-thumb-detail' . $event_id  ;
 						$thickbox_class = ' thickbox';
 				}else {
@@ -97,12 +111,18 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 				<?php if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
         <p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
             <span class="address-block"><?php echo stripslashes_deep($location); ?>
-                <span class="google-map-link"><?php echo $google_map_link; ?></span></span>
+                <span class="google-map-link"><?php  echo $google_map_link; ?></span></span>
         </p>
-        <?php
-    }
-    ?>
-    
+								
+    <?php } ?>
+				
+				<?php //print_r($event_meta['enable_for_gmap']); ?>
+				
+				<?php if(isset($event_meta['enable_for_gmap']) && 'Y' == $event_meta['enable_for_gmap']){ 
+						 ee_gmap_display($ee_gmap_location, $event_id); 
+					} ?>
+				
+					
 				<?php if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook')  ){ ?>
      <p class="social-media-buttons"><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
     <?php  } ?>

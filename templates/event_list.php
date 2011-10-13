@@ -24,7 +24,7 @@ if (!function_exists('display_all_events')) {
 
 
     function display_all_events() {
-        global $org_options;
+        global $org_options, $ee_gmaps_opts ;
 
         //If set to true, the event page will display recurring events.
         $display_recurrence_event = true; //If set to true, the event page will display recurring events.
@@ -47,7 +47,7 @@ if (!function_exists('display_all_events')) {
 if (!function_exists('display_event_espresso_categories')) {
 
     function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
-        global $wpdb,  $org_options;
+        global $wpdb,  $org_options, $ee_gmaps_opts;
 					
         if ($event_category_id != "null") {
 
@@ -76,7 +76,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 
     function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override=0) {
         //echo $sql;
-        global $wpdb, $org_options, $events_in_session;
+        global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts;
         $multi_reg = false;
         if (function_exists('event_espresso_multi_reg_init')) {
             $multi_reg = true;
@@ -96,9 +96,10 @@ if (!function_exists('event_espresso_get_event_details')) {
             echo espresso_format_content($category_desc);
         }
 
-        //Debug
-        //var_dump($events);
 
+        
+								//Debug
+        //var_dump($events);
         foreach ($events as $event) {
             $event_id = $event->id;
             $event_name = $event->event_name;
@@ -168,10 +169,13 @@ if (!function_exists('event_espresso_get_event_details')) {
             }
 
             //Address formatting
+												// venue address parts
+												$venue_address_elements = ($event_address != '' ? $event_address . ',' : '') . ($event_address2 != '' ? $event_address2 . ',' : '') . ($event_city != '' ?  $event_city . ',' : '') . ($event_state != '' ? $event_state . ',' : '') . ($event_zip != '' ? $event_zip . ',' : '') . ($event_country != '' ? $event_country . ',' : '');
             $location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
             //var_dump($venue_meta);
             //Google map link creation
             $google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
+												$ee_gmap_location =  $venue_address_elements; 
             global $all_meta;
             $all_meta = array(
                 'event_name' => stripslashes_deep($event_name),
@@ -216,6 +220,7 @@ if (!function_exists('event_espresso_get_event_details')) {
                 if ($allow_override == 1) {
                     //Uncomment to show active status array
                     //print_r( event_espresso_get_is_active($event_id));
+																				
                     include('event_list_display.php');
                 } else {
                     switch (event_espresso_get_status($event_id)) {
@@ -252,5 +257,5 @@ if (!function_exists('event_espresso_get_event_details')) {
         //echo '<p>Database Queries: ' . get_num_queries() .'</p>';
         espresso_registration_footer();
     }
-
+  require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
 }

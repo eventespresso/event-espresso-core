@@ -628,7 +628,40 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 #side-sortables #event-categories p input, #side-sortables #event-discounts p input {
 	margin-top: 7px;
 }
+/*___ Template Settings ___*/
+
+#template-settings-form {}
+fieldset.template-settings {
+	float: left;
+	margin-right: 1%;
+	width: 40%;
+}
+#template-settings-form fieldset.template-settings legend {
+	font-size: 120%;
+	margin-bottom: 10px;
+}
+fieldset.b {
+	float: right;
+	width: 56% ;
+}
+#template-settings-form fieldset.a {border-right: 1px solid #8f8f8f;}
+#template-settings-form fieldset.b input {
+	width: 80%;
+}
+div#gmap-reg-events,
+div#gmap-list-events {
+	float:left;
+	margin-left: 1%;
+	width: 46%;
+}
+div#gmap-reg-events {float: right; }
+div#gmap-list-events {border-right: 1px solid #ccc;}
+div#gmap-reg-events { padding-left: 3%;}
+#template-settings-form .template-gen-settings .submit-buttons {clear: left;}
+#template-settings-form .template-gen-settings p.radio-sets input {width: auto;}
+
 /*___ Venue Manager ___*/
+
 /*___ Payment Settings ___*/
 
 /*___ Help & Support ___*/

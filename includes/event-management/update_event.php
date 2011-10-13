@@ -263,7 +263,8 @@ function update_event($recurrence_arr = array()) {
 		$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
 		$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
 		$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
-
+  // enable event address for gmaps
+		$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
 		/*
 		 * Added for seating chart addon
 		 */
