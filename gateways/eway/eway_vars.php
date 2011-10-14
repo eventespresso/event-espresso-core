@@ -24,30 +24,35 @@ if ($use_sandbox == 1) {
     $myeway->addField('CustomerID', $eway_id);
     $myeway->addField('UserName', $eway_username);
 }
-$myeway->addField('CompanyName',$org_options['organization']);
-$myeway->addField('CancelURL', home_url() . '/?page_id=' . $org_options['cancel_return']);
-$myeway->addField('ReturnURL', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment');
-//$myeway->addField('item_name', $event_name . ' | '.__('Reg. ID:','event_espresso').' '.$attendee_id. ' | '.__('Name:','event_espresso').' '. $attendee_name .' | '.__('Total Registrants:','event_espresso').' '.$num_people);
-$myeway->addField('InvoiceDescription', stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($fname . ' ' . $lname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $attendee_email . ' | ' . __('Total Registrants:', 'event_espresso') . ' ' . $quantity);
 $myeway->addField('Amount', number_format($event_cost, 2, '.', ''));
 $myeway->addField('Currency', $eway_cur);
-$myeway->addField('CompanyLogo', $eway_settings['image_url']);
-$myeway->addField('no_shipping ', $no_shipping);
-
-//Post variables
+$myeway->addField('PageTitle','');
+$myeway->addField('PageDescription','');
+$myeway->addField('PageFooter','');
+$myeway->addField('Language','');
+$myeway->addField('CompanyName', $org_options['organization']);
 $myeway->addField('CustomerFirstName', $fname);
 $myeway->addField('CustomerLastName', $lname);
-$myeway->addField('CustomerEmail', $attendee_email);
 $myeway->addField('CustomerAddress', $address);
 $myeway->addField('CustomerCity', $city);
 $myeway->addField('CustomerState', $state);
 $myeway->addField('CustomerPostCode', $zip);
+$myeway->addField('CustomerCountry', '');
+$myeway->addField('CustomerEmail', $attendee_email);
+$myeway->addField('CustomerPhone', $phone);
+$myeway->addField('InvoiceDescription', stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($fname . ' ' . $lname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $attendee_email . ' | ' . __('Total Registrants:', 'event_espresso') . ' ' . $quantity);
+$myeway->addField('CancelURL', home_url() . '/?page_id=' . $org_options['cancel_return']);
+$myeway->addField('ReturnURL', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment');
+$myeway->addField('CompanyLogo', $eway_settings['image_url']);
+$myeway->addField('PageBanner','');
+$myeway->addField('MerchantReference','');
+$myeway->addField('MerchantInvoice','');
+$myeway->addField('MerchantOption1','');
+$myeway->addField('MerchantOption2','');
+$myeway->addField('MerchantOption3','');
+$myeway->addField('ModifiableCustomerDetails','false');
 
 
-//Enable this function if you want to send payment notification before the person has paid.
-//This function is copied on the payment processing page
-//event_espresso_send_payment_notification($attendee_id, $txn_id, $amount_pd);
-//Decide if you want to auto redirect to your payment website or display a payment button.
 if ($eway_settings['bypass_payment_page'] == 'Y') {
     $myeway->submitPayment(); //Enable auto redirect to payment site
 } else {
