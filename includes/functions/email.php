@@ -202,7 +202,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 	//certificate system
 	if (function_exists('espresso_certificate_launch')) {
 		$data->certificate_link = espresso_certificate_links($data->attendee->registration_id, $data->attendee->id);
-		$data->admin_certificate_link = $data->ticket_link;
+		$data->admin_certificate_link = $data->certificate_link;
 	}
 
 	//Build the address
@@ -265,7 +265,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 		$data->event->send_mail = 'Y';
 	}
 
-	//Build payment email
+	//Build reminder email
 	if ($custom_data_email_type == 'reminder') {
 		$data->email_subject = $custom_data_email_subject;
 		$data->event->conf_mail = $custom_data_email_text;
@@ -351,6 +351,12 @@ function espresso_prepare_admin_email($data) {
 		$admin_additional_info .= '<strong>' . __('Ticket(s):', 'event_espresso') . '</strong><br />';
 		$admin_additional_info .= $data->admin_ticket_link;
 	}
+	
+	//Certificate links
+	if (!empty($data->admin_certificate_link)) {
+		$admin_additional_info .= '<strong>' . __('Certificate(s):', 'event_espresso') . '</strong><br />';
+		$admin_additional_info .= $data->admin_certificate_link;
+	}
 
 	//invoice links
 	if (!empty($data->invoice_link)) {
@@ -427,6 +433,7 @@ if (!function_exists('event_espresso_email_confirmations')) {
 	}
 
 }//End event_espresso_email_confirmations()
+
 //Email sender
 if (!function_exists('event_espresso_send_email')) {
 
@@ -449,6 +456,7 @@ if (!function_exists('event_espresso_send_email')) {
 	}
 
 }//End event_espresso_send_email()
+
 //Send Invoice
 if (!function_exists('event_espresso_send_invoice')) {
 
@@ -467,6 +475,7 @@ if (!function_exists('event_espresso_send_invoice')) {
 	}
 
 }//End event_espresso_send_invoice()
+
 //Payment Confirmations
 if (!function_exists('event_espresso_send_payment_notification')) {
 
@@ -506,19 +515,29 @@ if (!function_exists('espresso_event_reminder')) {
 
 		$count = 0;
 		$attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id ='" . $event_id . "'");
-		foreach ($attendees as $attendee) {
-			$attendee_id = $attendee->id;
-			event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'false', 'send_attendee_email' => 'true', 'custom_data' => array('email_type' => 'reminder', 'email_subject' => $email_subject, 'email_text' => $email_text, 'email_id' => $email_id)));
-			$count++;
+		if ($wpdb->num_rows > 0){
+			foreach ($attendees as $attendee) {
+				$attendee_id = $attendee->id;
+				event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'false', 'send_attendee_email' => 'true', 'custom_data' => array('email_type' => 'reminder', 'email_subject' => $email_subject, 'email_text' => $email_text, 'email_id' => $email_id)));
+				$count++;
+			}
+			?>
+			<div id="message" class="updated fade">
+				<p><strong>
+			<?php _e('Email Sent to ' . $count . ' people sucessfully.', 'event_espresso'); ?>
+					</strong></p>
+			</div>
+			<?php
+			return;
+		}else{
+			?>
+			<div id="message" class="error fade">
+				<p><strong>
+			<?php _e('No attendee records available.', 'event_espresso'); ?>
+					</strong></p>
+			</div>
+			<?php
 		}
-		?>
-		<div id="message" class="updated fade">
-			<p><strong>
-		<?php _e('Email Sent to ' . $count . ' people sucessfully.', 'event_espresso'); ?>
-				</strong></p>
-		</div>
-		<?php
-		return;
 	}
 
 }
