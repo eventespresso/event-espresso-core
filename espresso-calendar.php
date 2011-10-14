@@ -226,7 +226,7 @@ function espresso_calendar_config_mnu()	{
 									<li>
 									<label for=""><?php _e('Show event details in popup box', 'event_espresso'); ?></label>
 									
-									<?php echo select_input('show_in_thickbox',  array(array('id'=>'Y','text'=> __('yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
+									<?php echo select_input('show_in_thickbox',  array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
 									</li>
                 <li>
                   <input class="button-primary" type="submit" name="save_calendar_settings" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings2" />
