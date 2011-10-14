@@ -469,7 +469,7 @@ function espresso_attendee_counts() {
 	$data->attendee->cost = $data->attendee->cost == NULL ? 0.00 : $data->attendee->cost;
 
 	$html .= '<p class="attendee_counts">';
-	$html .= '<strong>' . __('Total Attendees:', 'event_espresso') . '</strong> ' . $data->attendee->total_count;
+	$html .= '<strong>' . __('Total Registrations:', 'event_espresso') . '</strong> ' . $data->attendee->total_count;
 	$html .= ' | ';
 	$html .= '<strong>' . __('Total Revenue:', 'event_espresso') . '</strong> ' . utf8_encode(html_entity_decode($org_options['currency_symbol'])) . $data->attendee->cost;
 	$html .= '</p>';
