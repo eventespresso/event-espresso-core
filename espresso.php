@@ -233,6 +233,7 @@ define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart");
 define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat");
 define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event");
 define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat");
+define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "events_seating_chart_level_section_alignment");
 /*
  * End
  */
