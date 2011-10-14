@@ -679,6 +679,14 @@ function events_data_tables_install() {
 			 PRIMARY KEY  (id)";
 	event_espresso_run_install ($table_name, $table_version, $sql);
 	
+	$table_name = "events_seating_chart_level_section_alignment";
+	$sql = " seating_chart_id int(11) DEFAULT NULL,                        
+             level varchar(255) DEFAULT NULL,                              
+             section varchar(255) DEFAULT NULL,                            
+             alignment varchar(100) DEFAULT NULL,                          
+             sort_order varchar(100) DEFAULT NULL";
+	event_espresso_run_install ($table_name, $table_version, $sql);
+	
 	/**
 	 * End of Seating chart tables
 	 */
