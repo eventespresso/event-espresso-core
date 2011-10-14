@@ -13,8 +13,13 @@ switch ($eway_settings['region']) {
 		$results_request = 'https://payment.ewaygateway.com/Result/';
 		break;
 }
-$results_request .= "?CustomerID=" . $eway_settings['eway_id'];
-$results_request .= "&UserName=" . $eway_settings['eway_username'];
+if ($eway_settings['use_sandbox'] == 1) {
+	$results_request .= "?CustomerID=" . '87654321';
+	$results_request .= "&UserName=" . 'TestAccount';
+}else {
+	$results_request .= "?CustomerID=" . $eway_settings['eway_id'];
+	$results_request .= "&UserName=" . $eway_settings['eway_username'];
+}
 $results_request .= "&AccessPaymentCode=" . $_REQUEST['AccessPaymentCode'];
 $results_request = str_replace(" ", "%20", $results_request);
 
