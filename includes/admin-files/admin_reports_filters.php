@@ -20,10 +20,10 @@ if ($espresso_premium != true)
       </ul>
       <ul class="subsubsub">
         <li><strong>
-          <?php _e('Attendees', 'event_espresso'); ?>
+          <?php _e('Registrations', 'event_espresso'); ?>
           : </strong> </li>
         <li><a <?php echo (isset($_REQUEST['all_a']) && $_REQUEST['all_a'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=attendees&event_admin_reports=event_list_attendees&all_a=true">
-          <?php _e('All Attendees', 'event_espresso'); ?>
+          <?php _e('All Registrations', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_all_attendees(); ?>)</span></a> | </li>
         <li><a <?php echo (isset($_REQUEST['today_a']) && $_REQUEST['today_a'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=attendees&event_admin_reports=event_list_attendees&today_a=true">
           <?php _e('Today', 'event_espresso'); ?>
