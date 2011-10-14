@@ -590,7 +590,7 @@ function update_event($recurrence_arr = array()) {
 		 */
 		if (isset($seating_chart_result) && $seating_chart_result === false) {
 			?>
-			<p>Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)</p>
+			<p><?php _e('Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)', 'event_espresso'); ?></p>
 			<?php
 		}
 		/*
