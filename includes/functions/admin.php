@@ -752,58 +752,6 @@ function printCountriesSelector($name, $selected) {
     echo "</select>";
 }
 
-/* * ** Misc functions *** */
-
-/**
- * Check if URL is valid
- *
- * @param string $url
- * @return boolean
- */
-function event_espresso_is_url($url) {
-    return preg_match('~^https?://~', $url);
-}
-
-/**
- * Show plugin changes
- */
-function event_espresso_plugin_update_message($url) {
-    $data = event_espresso_url_get($url);
-
-    if ($data) {
-        $matches = null;
-        if (preg_match('~==\s*Changelog\s*==\s*=\s*[0-9.]+\s*=(.*)(=\s*[0-9.]+\s*=|$)~Uis', $data, $matches)) {
-            $changelog = (array) preg_split('~[\r\n]+~', trim($matches[1]));
-
-            echo '<div style="color: #f00;">Take a minute to update, here\'s why:</div><div style="font-weight: normal;">';
-            $ul = false;
-
-            foreach ($changelog as $index => $line) {
-                if (preg_match('~^\s*\*\s*~', $line)) {
-                    if (!$ul) {
-                        echo '<ul style="list-style: disc; margin-left: 20px;">';
-                        $ul = true;
-                    }
-                    $line = preg_replace('~^\s*\*\s*~', '', htmlspecialchars($line));
-                    echo '<li style="width: 50%; margin: 0; float: left; ' . ($index % 2 == 0 ? 'clear: left;' : '') . '">' . $line . '</li>';
-                } else {
-                    if ($ul) {
-                        echo '</ul><div style="clear: left;"></div>';
-                        $ul = false;
-                    }
-                    echo '<p style="margin: 5px 0;">' . htmlspecialchars($line) . '</p>';
-                }
-            }
-
-            if ($ul) {
-                echo '</ul><div style="clear: left;"></div>';
-            }
-
-            echo '</div>';
-        }
-    }
-}
-
 function event_espresso_admin_news($url) {
     return wp_remote_retrieve_body(wp_remote_get($url));
 }
@@ -1226,31 +1174,6 @@ function event_espresso_list_categories($event_id = 0) {
     }
 }
 
-//These functions were movedto main.php on 08-30-2011 by Seth 
-
-/*//Retrives the attendee count based on an attendee ids
-function espresso_count_attendees_for_registration($attendee_id) {
-    global $wpdb;
-    $cnt = $wpdb->get_var("SELECT COUNT(1) as cnt FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
-    if ($cnt == 1) {
-        $cnt = $wpdb->get_var("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
-        if ($cnt == 0) {
-            return 1;
-        } elseif ($cnt > 0) {
-            return $cnt;
-        }
-    }
-    return $cnt;
-}
-
-function espresso_quantity_for_registration($attendee_id) {
-    global $wpdb;
-    $cnt = $wpdb->get_var("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
-    return $cnt;
-}*/
-
-//End
-
 function espresso_attendees_by_month_dropdown($current_value='') {
     global $wpdb;
 
@@ -1372,84 +1295,6 @@ function espresso_payment_reports($atts) {
             break;
     }
 }
-
-//These functions were movedto main.php on 08-30-2011 by Seth 
-
-/*function espresso_ticket_links($registration_id, $attendee_id) {
-    global $wpdb;
-    $sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
-    if (espresso_is_primary_attendee($attendee_id) != true) {
-        $sql .= " WHERE id = '" . $attendee_id . "' ";
-    } else {
-        $sql .= " WHERE registration_id = '" . $registration_id . "' ";
-    }
-    //echo $sql;
-    $attendees = $wpdb->get_results($sql);
-    $ticket_link = '';
-    if ($wpdb->num_rows > 0) {
-        $group = $wpdb->num_rows > 1 ? '<strong>' . sprintf(__('Tickets Purchased (%s):', 'event_espresso'), $wpdb->num_rows) . '</strong><br />' : '';
-        $break = '<br />';
-        foreach ($attendees as $attendee) {
-            $ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
-            $ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket') . ' (' . $attendee->fname . ' ' . $attendee->lname . ')' . '</a>' . $break;
-        }
-        return '<p>' . $group . $ticket_link . '</p>';
-    }
-}*/
-
-/*function espresso_is_primary_attendee($attendee_id) {
-    global $wpdb;
-    $sql = "SELECT am.meta_value FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
-    $sql .= " WHERE am.attendee_id = '" . $attendee_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
-    //echo $sql;
-    $wpdb->get_results($sql);
-    if ($wpdb->num_rows > 0) {
-        return true;
-    }
-}
-
-function espresso_get_primary_attendee_id($registration_id) {
-    global $wpdb;
-    $sql = "SELECT am.attendee_id FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
-    $sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = am.attendee_id ";
-    $sql .= " WHERE ea.registration_id = '" . $registration_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
-    //echo $sql;
-    $wpdb->get_results($sql);
-    if ($wpdb->num_rows > 0) {
-        return $wpdb->last_result[0]->attendee_id;
-    }
-}*/
-
-/*function espresso_edit_this($event_id) {
-    global $espresso_premium;
-    if ($espresso_premium != true)
-        return;
-    global $current_user;
-    wp_get_current_user();
-    $curauth = wp_get_current_user();
-    $user_id = $curauth->ID;
-    $user = new WP_User($user_id);
-    foreach ($user->roles as $role) {
-        //echo $role;
-        //Build the edit event link
-        $edit_link = '<a class="post-edit-link" href="' . site_url() . '/wp-admin/admin.php?page=events&action=edit&event_id=' . $event_id . '">' . __('Edit Event') . '</a>';
-        switch ($role) {
-            case 'administrator':
-            case 'espresso_event_admin':
-            case 'espresso_event_manager':
-            case 'espresso_group_admin':
-                //If user is an event manager, then show the edit link for their events
-                if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_eventmanager' && espresso_member_data('id') != espresso_is_my_event($event_id))
-                    return;
-                return $edit_link;
-                break;
-        }
-    }
-}
-*/
-
-//end
-
 
 function espresso_performance( $visible = false ) {
 
