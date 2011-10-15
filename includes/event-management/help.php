@@ -40,10 +40,7 @@
         <p><?php _e('If an off-site registration page is entered, it will override your registration page and send attendees to the URL that is entered.', 'event_espresso'); ?></p>
     </div>
   </div>
-  
-  
-  
-  
+
   <?php ########## help box ########## ?>
   <div id="status_types_info" class="pop-help" >
     <div class="TB-ee-frame">
@@ -56,11 +53,50 @@
         </ul>
     </div>
   </div>
+
+  <?php ########## help box ########## ?>
+  <div id="reg_date_info" class="pop-help" >
+    <div class="TB-ee-frame">
+     <h2><?php _e('Registration Dates/Times', 'event_espresso'); ?></h2>
+        <p><?php _e('The event will automatically turn the registration form on and off between these dates and times.', 'event_espresso'); ?></p>
+        <p><strong><?php _e('Note:', 'event_espresso'); ?></strong> <?php _e('If the date of your event occurs before the regisration end date. Then the registation form will be displayed and also accept registrations.', 'event_espresso'); ?></p>
+        <p><?php _e('All events require registration start/end dates and start/end times in order to display properly on your pages.', 'event_espresso'); ?></p>
+        
+    </div>
+  </div>
+  
+ <?php ########## help box ########## ?>
+  <div id="event_date_info" class="pop-help" >
+    <div class="TB-ee-frame">
+     <h2><?php _e('Event Date', 'event_espresso'); ?></h2>
+        <p><?php _e('This is the date of the event.', 'event_espresso'); ?></p>
+        <p><?php _e('All events require a start and end date in order to display properly on your pages.', 'event_espresso'); ?></p>
+    </div>
+  </div>
+
+  <?php ########## help box ########## ?>
+  <div id="event_times_info" class="pop-help" >
+    <div class="TB-ee-frame">
+     <h2><?php _e('Event Times', 'event_espresso'); ?></h2>
+        <p><?php _e('Each event can have an unlimited amount of start/end times. This useful for event/class organizers to manage several different sessions in their events.', 'event_espresso'); ?></p>
+        <p><?php _e('All events require a start and end time in order to display properly on your pages.', 'event_espresso'); ?></p>
+    </div>
+  </div>
+
+  <?php ########## help box ########## ?>
+  <div id="current_time_info" class="pop-help" >
+    <div class="TB-ee-frame">
+     <h2><?php _e('Current Time', 'event_espresso'); ?></h2>
+        <p><?php _e('This is the current time of your website. The timezone and date/time formats can be changed in your <a href="options-general.php" target="_blank">WordPress settings</a>.', 'event_espresso'); ?></p>
+    </div>
+  </div>
+  
+  
   
   <?php ########## help box ########## ?>
-  <div id="external_URL_info" class="pop-help" >
+  <div id="example_example_info" class="pop-help" >
     <div class="TB-ee-frame">
-     <h2><?php _e('Off-site Registration Page', 'event_espresso'); ?></h2>
+     <h2><?php _e('Example Example', 'event_espresso'); ?></h2>
         <p><?php _e('If an off-site registration page is entered, it will override your registration page and send attendees to the URL that is entered.', 'event_espresso'); ?></p>
     </div>
   </div>

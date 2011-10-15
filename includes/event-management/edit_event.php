@@ -472,8 +472,8 @@ function edit_event($event_id = 0) {
             <tr valign="top">
               <td class="a"><fieldset id="add-reg-dates">
                   <legend>
-                  <?php _e('Registration Dates', 'event_espresso'); ?>
-                  </legend>
+                  <?php _e('Registration Dates', 'event_espresso'); ?> <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=reg_date_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
+                  </legend> 
                   <p>
                     <label for="registration_start"> <?php echo __('Registration Start:', 'event_espresso') ?></label>
                     <input type="text" class="datepicker" size="15" id="registration_start" name="registration_start"  value="<?php echo $registration_start ?>" />
@@ -485,7 +485,8 @@ function edit_event($event_id = 0) {
                 </fieldset>
                 <fieldset>
                   <legend>
-                  <?php _e('Event Dates', 'event_espresso'); ?>
+                  <?php _e('Event Dates', 'event_espresso'); ?> 
+                  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=event_date_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
                   </legend>
                   <p>
                     <label for="start_date"><?php echo __('Event Start Date', 'event_espresso') ?></label>
@@ -496,35 +497,40 @@ function edit_event($event_id = 0) {
                     <input type="text" class="datepicker" size="15" id="end_date" name="end_date" value="<?php echo $end_date ?>" />
                   </p>
                 </fieldset>
+                <?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] != 'Y') && $espresso_premium == true) { ?>
+                <p><span class="run-in">
+                  <?php _e('Current Time:', 'event_espresso'); ?>
+                  </span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> 
+                  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=current_time_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
+                  <a class="change-date-time" href="options-general.php" target="_blank">
+                  <?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
+                  </a></p>
+                <?php } ?>
                 <?php if (isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y' && $espresso_premium == true) { ?>
                 <fieldset id="event-timezone">
                   <p>
                     <label>
-                      <?php _e('Event Timezone', 'event_espresso') ?>
-                      :</label>
+                      <?php _e('Event Timezone:', 'event_espresso') ?>
+                      </label>
                     <?php echo eventespresso_ddtimezone($event_id) ?></p>
                 </fieldset>
                 <?php } ?></td>
               <?php // ADD TIME REGISTRATION  ?>
               <td class="b"><fieldset id="add-register-times">
                   <legend>
-                  <?php _e('Registration Times', 'event_espresso'); ?>
+                  <?php _e('Registration Times', 'event_espresso'); ?> 
+                  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=reg_date_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
                   </legend>
                   <?php echo event_espresso_timereg_editor($event_id); ?>
                 </fieldset>
                 <fieldset id="add-event-times">
                   <legend>
-                  <?php _e('Event Times', 'event_espresso'); ?>
+                  <?php _e('Event Times', 'event_espresso'); ?> 
+                  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=event_times_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
                   </legend>
                   <?php echo event_espresso_time_editor($event_id); ?>
                 </fieldset>
-                <?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] != 'Y') && $espresso_premium == true) { ?>
-                <p><span class="run-in">
-                  <?php _e('Current Time', 'event_espresso'); ?>
-                  :</span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <a class="change-date-time" href="options-general.php" target="_blank">
-                  <?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
-                  </a></p>
-                <?php } ?></td>
+                </td>
             </tr>
           </table>
         </div>
