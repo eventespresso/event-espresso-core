@@ -11,6 +11,7 @@ function event_espresso_config_page_styles() {
     if (isset($_REQUEST['page'])) {
 		switch ($_REQUEST['page']) {
 			case ( 'events' ):
+			case ( 'discounts' ):
 			case ( 'espresso_reports' ):
 				wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-lightness/jquery-ui-1.7.3.custom.css');
 			break;
@@ -39,12 +40,27 @@ function event_espresso_config_page_scripts() {
     wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
     wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery')); //Events core table column hide/show script
 	
+	$load_jquery_ui = false;
+	$load_datepicker = false;
+	
 	if ($_REQUEST['page'] == 'events' && isset($_REQUEST['action']) && ($_REQUEST['action']=='edit'||$_REQUEST['action']=='add_new_event') ) {
-		//Load jquery UI stuff
+		$load_jquery_ui = true;
+		$load_datepicker = true;
+	}
+	
+	if ($_REQUEST['page'] == 'discounts' && isset($_REQUEST['action']) && ($_REQUEST['action']=='edit'||$_REQUEST['action']=='new')){
+		$load_jquery_ui = true;
+		$load_datepicker = true;
+	}
+	
+	//Load jquery UI scripts
+	if ($load_jquery_ui == true){
 		wp_enqueue_script('jquery-ui-core');
 		wp_enqueue_script('jquery-ui-tabs');
-		
-		//Load datepicker script
+	}
+	
+	//Load datepicker script
+	if ($load_datepicker == true){
 		wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
 	}
 	
