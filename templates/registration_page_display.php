@@ -207,16 +207,6 @@
 						 * End
 						 */
 						?>
-						<?php
-						//Coupons
-						if (function_exists('event_espresso_coupon_registration_page')) {
-							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
-						}//End coupons display
-						//Groupons
-						if (function_exists('event_espresso_groupon_registration_page')) {
-							echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
-						}//End groupons display
-						?>
 
 						<fieldset id="event-reg-form-groups">
 							<h3 class="section-heading">
@@ -227,7 +217,17 @@
 							echo event_espresso_add_question_groups($question_groups, '', null, 0, array('attendee_number'=>1));
 							?>
 						</fieldset>
-						<?php
+					
+					<?php
+						//Coupons
+						if (function_exists('event_espresso_coupon_registration_page')) {
+							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
+						}//End coupons display
+						//Groupons
+						if (function_exists('event_espresso_groupon_registration_page')) {
+							echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
+						}//End groupons display
+
 						//Multiple Attendees
 						if ($allow_multiple == "Y" && $number_available_spaces > 1) {
 
