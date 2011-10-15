@@ -7,7 +7,6 @@
 * Author: Hugo Ashmore
 */
 
-
 function ee_gmap_display($location, $event_id){
 // A common options aray for maps, $org_options added to this array in each page to make unique set
 global $ee_gmaps_opts ; 

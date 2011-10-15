@@ -66,7 +66,9 @@
 									<li><b><?php _e('Set Map Alignment', 'event_espresso') ?></b><br />
 									<?php _e('Alignment alows you to move the map left, center, or right within whatever parent event structure you have, please note though this option is dependent on your themes layout as to whether it will work as expected. The default alignment is to the left.', 'event_espresso'); ?>
 									</li>
-							
+							 
+								 <li><b><?php _e('Use map in template files ( No Shortcodes)', 'event_espresso') ?></b><br />
+									<?php _e('Select this option to enable your event map in the template file - this option is used if you are not using venue shortcodes and want map display activated in either event list pages or registration pages.', 'event_espresso') ?>
 							</ul>
           
 					</div>

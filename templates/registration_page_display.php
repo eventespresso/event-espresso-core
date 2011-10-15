@@ -122,7 +122,7 @@
 
 					<?php
 					
-				 if(isset($event_meta['enable_for_gmap']) && 'Y' == $event_meta['enable_for_gmap']){ 
+				 if('Y' == $org_options['ee_display_map_no_shortcodes']){ 
 						 ee_gmap_display($ee_gmap_location, $event_id); 
 					}					
 					

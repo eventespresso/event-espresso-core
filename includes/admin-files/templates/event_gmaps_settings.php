@@ -2,10 +2,10 @@
 					<legend><?php _e('Google Maps Display Options', 'event_espresso') ?>
 					  <a class="thickbox"  href="#TB_inline?height=550&width=400&inlineId=gmaps_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
 					</legend>
-					
+					<li>
 					 <div id="gmap-reg-events">
 					  <p class="section-heading">Event Registration Options</p>
-					   
+					   <ul>
 								<li><p><label for="single-map-width"><?php _e('Set Map Width', 'event_espresso')  ?></label><input type="text" id="single-map-width"  name="ee_map_width_single" value="<?php echo $org_options['ee_map_width_single']==''? '500' : $org_options['ee_map_width_single'];?>" /></p></li>
 					
 					   <li><p><label for="single-map-height"><?php _e('Set Map Height', 'event_espresso')  ?></label><input type="text" id="single-map-height" size="" name="ee_map_height_single" value="<?php echo $org_options['ee_map_height_single']==''? '500' : $org_options['ee_map_height_single'];?>" /></p></li>
@@ -32,13 +32,14 @@
 									 <label for="map-align-center_single"><input id="map-align-center_single" type="radio" name="ee_map_align_single" <?php //espresso_is_selected('center')?> value="center" /><?php _e(' Align Center', 'event_espresso')?></label>
 									 <label for="map-align-right_single"><input id="map-align-right_single" type="radio" name="ee_map_align_single" <?php //espresso_is_selected('right')?> value="right" /><?php _e(' Align Right', 'event_espresso')?></label>
 					    </p>									
-									
-						
+									</li>
+					 	</ul>
 						</div>
-						
+						</li>
+						<li>
 					 <div id="gmap-list-events">
 					  <p class="section-heading">Events List Options</p>
-					   
+					   <ul>
 								<li><p><label for="map-width"><?php _e('Set Map Width', 'event_espresso')  ?></label><input id="map-width" type="text"  name="ee_map_width" value="<?php echo $org_options['ee_map_width']== ''? '200' : $org_options['ee_map_width'];?>" /></p></li>
 					
 					   <li><p><label for="map-height"><?php _e('Set Map Height', 'event_espresso')  ?></label><input id="map-height" type="text" size="" name="ee_map_height" value="<?php echo $org_options['ee_map_height']== ''? '200' : $org_options['ee_map_height'];?>" /></p></li>
@@ -66,5 +67,9 @@
 									 <label for="map-align-right"><input id="map-align-right" type="radio" name="ee_map_align" <?php //espresso_is_selected('right')?> value="right" /><?php _e(' Align Right', 'event_espresso')?></label>
 					    </p>									
 						  </li>
-						</div>						
+								</ul>
+						</div>
+						</li>
+						
+						<li class="clear"><p><label for="ee-display-map-no-shortcodes"><?php _e('Use map in template files ( No Shortcodes)<br /> Set this option to No if you are using venue shortcodes in Descriptions', 'event_espresso')  ?></label><?php echo select_input('ee_display_map_no_shortcodes', $values, isset($org_options['ee_display_map_no_shortcodes']) ? $org_options['ee_display_map_no_shortcodes'] : '', 'id="ee-display-map-no-shortcodes"'); ?></p></li>					
 					</fieldset>

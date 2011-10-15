@@ -119,7 +119,9 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 				<?php //print_r($event_meta['enable_for_gmap']); ?>
 				
 				<?php if(isset($event_meta['enable_for_gmap']) && 'Y' == $event_meta['enable_for_gmap']){ 
-						 ee_gmap_display($ee_gmap_location, $event_id); 
+						 if(function_exists('ee_gmap_display') && 'Y' == $org_options['ee_display_map_no_shortcodes']){
+							ee_gmap_display($ee_gmap_location, $event_id);
+							} 
 					} ?>
 				
 					

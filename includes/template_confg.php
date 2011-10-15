@@ -12,7 +12,9 @@ function event_espresso_manage_templates() {
 					   $org_options['enable_default_style'] = $_POST['enable_default_style'];
 					   $org_options['selected_style'] = $_POST['selected_style'];					
 					   $org_options['style_color'] = $_POST['style_color'];
-					   // org_options Gmaps reg page
+					   
+								$org_options['ee_display_map_no_shortcodes'] = $_POST['ee_display_map_no_shortcodes'];
+								// org_options Gmaps reg page
 					   $org_options['ee_map_width_single'] = $_POST['ee_map_width_single'];
 								$org_options['ee_map_height_single'] = $_POST['ee_map_height_single'];
 								$org_options['ee_map_zoom_single'] = $_POST['ee_map_zoom_single'];
