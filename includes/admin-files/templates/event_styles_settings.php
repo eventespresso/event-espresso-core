@@ -50,9 +50,10 @@ $files_color = array();
 ?>
 <?php // var_dump($org_options['selected_style']); ?>
 
-<h4 <?php echo $styled ?>>
+<p class="section-heading" <?php echo $styled ?>>
   <?php _e('Select Alternative Espresso Styles ', 'event_espresso'); ?>
-  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a></h4>
+  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
+</p>
 <p>
   <label for="base-style-select" <?php echo $styled ?>>
     <?php _e('Select Base stylesheet', 'event_espresso');  ?>

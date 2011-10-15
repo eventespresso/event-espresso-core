@@ -631,20 +631,12 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 /*___ Template Settings ___*/
 
 #template-settings-form {}
-fieldset.template-settings {
-	float: left;
-	margin-right: 1%;
-	width: 40%;
-}
+fieldset.template-settings {}
 #template-settings-form fieldset.template-settings legend {
 	font-size: 120%;
 	margin-bottom: 10px;
 }
-fieldset.b {
-	float: right;
-	width: 56% ;
-}
-#template-settings-form fieldset.a {border-right: 1px solid #8f8f8f;}
+fieldset.b {}
 #template-settings-form fieldset.b input {
 	width: 80%;
 }

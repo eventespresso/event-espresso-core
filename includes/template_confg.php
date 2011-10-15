@@ -69,7 +69,7 @@ function event_espresso_manage_templates() {
 											<div class="postbox template-gen-settings">
 											<div title="Click to toggle" class="handlediv"><br /></div>
 												<h3 class="hndle">
-													<?php _e('Template and Style options', 'event_espresso'); ?>
+													<?php _e('Template Options', 'event_espresso'); ?>
 												</h3>
 												<div class="inside">
 													<div class="padding">
@@ -89,10 +89,33 @@ function event_espresso_manage_templates() {
 										</div><!-- / .metabox-holder -->
 										
 										<div class="metabox-holder">
+											<div class="postbox template-gen-settings">
+											<div title="Click to toggle" class="handlediv"><br /></div>
+												<h3 class="hndle">
+													<?php _e('Templates Google Map Options', 'event_espresso'); ?>
+												</h3>
+												<div class="inside">
+													<div class="padding">
+														<?php
+															if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_gmaps_settings.php')) {
+																echo '<ul id="event-gmap-settings">';
+																	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_gmaps_settings.php');
+																echo '</ul>';
+															}
+														?>	
+														<p class="submit-buttons">
+															<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_1" />
+														</p>			
+													</div><!-- / .padding -->
+												</div><!-- / .inside -->
+											</div><!-- / .postbox -->
+										</div><!-- / .metabox-holder -->										
+										
+										<div class="metabox-holder">
 											<div class="postbox">
 											<div title="Click to toggle" class="handlediv"><br /></div>
 												<h3 class="hndle">
-													<?php _e('Stylesheet Options', 'event_espresso'); ?>
+													<?php _e('Template Stylesheet Options', 'event_espresso'); ?>
 												</h3>
 												<div class="inside">
 													<div class="padding">
