@@ -34,6 +34,7 @@ function espresso_version() {
     return '3.2.P';
 }
 
+//Start the session
 function ee_init_session() {
     global $org_options;
 
@@ -41,7 +42,7 @@ function ee_init_session() {
         session_start();
     }
     if ((isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url'] || $_REQUEST['page_id'] == $org_options['notify_url'])) || !isset($_SESSION['espresso_session_id']) || $_SESSION['espresso_session_id'] == '') {
-        session_regenerate_id(true);
+        //ssession_regenerate_id(true);
         $_SESSION['espresso_session_id'] = '';
         $_SESSION['events_in_session'] = '';
         $_SESSION['event_espresso_pre_discount_total'] = 0;
@@ -55,8 +56,9 @@ function ee_init_session() {
 if (!session_id() || empty($_SESSION['espresso_session_id'])) {
     add_action('init', 'ee_init_session', 1);
 }
-add_action('init', 'ee_check_for_export');
 
+//If the export command is issued, run this function
+add_action('init', 'ee_check_for_export');
 function ee_check_for_export() {
     if (isset($_REQUEST['export'])) {
         if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/export.php')) {
@@ -70,13 +72,35 @@ function ee_check_for_export() {
 function espresso_info_header() {
     print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
 }
-
 add_action('wp_head', 'espresso_info_header');
  
 //Globals
 global $org_options, $wpdb, $this_is_a_reg_page;
 $org_options = get_option('events_organization_settings');
 $page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
+
+
+//Get the plugin url and content directories. 
+//These variables are used to define the plugin and content directories in the constants below.
+$wp_plugin_url = WP_PLUGIN_URL;
+$wp_content_url = WP_CONTENT_URL;
+
+//Check if SSL is loaded
+if (is_ssl()){
+	
+	//Create the server name 
+    $server_name = str_replace('https://', '', site_url());
+	
+	//If the site is using SSL, we need to make sure our files get loaded in SSL.
+	//This will (should) make sure everything is loaded via SSL
+	//So that the "..not everything is secure.." message doesn't appear
+	//Still will be a problem if other themes and plugins do not implement ssl correctly
+	$wp_plugin_url = str_replace('http://', 'https://', WP_PLUGIN_URL);
+    $wp_content_url = str_replace('http://', 'https://', WP_CONTENT_URL);
+	
+}else{
+    $server_name = str_replace('http://', '', site_url());
+}
 
 //Registration page check
 //From Brent C. http://events.codebasehq.com/projects/event-espresso/tickets/99
@@ -87,11 +111,9 @@ $reg_page_ids = array(
     'cancel_return' => $org_options['cancel_return'],
     'notify_url' => $org_options['notify_url']
 );
-if (is_ssl())
-    $find = str_replace('https://', '', site_url()); else
-    $find = str_replace('http://', '', site_url());
-$find = str_replace($_SERVER['SERVER_NAME'], '', $find);
-$uri_string = str_replace($find, '', $_SERVER['REQUEST_URI']);
+
+$server_name = str_replace($_SERVER['SERVER_NAME'], '', $server_name);
+$uri_string = str_replace($server_name, '', $_SERVER['REQUEST_URI']);
 $uri_string = str_replace($_SERVER['QUERY_STRING'], '', $uri_string);
 $uri_string = rtrim($uri_string, '?');
 $uri_string = trim($uri_string, '/');
@@ -105,62 +127,20 @@ foreach ($uri_segments as $uri_segment) {
         }
     }
 }
-if (isset($_REQUEST['page_id']) || is_admin())
+
+if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin())
     $this_is_a_reg_page = TRUE;
-//End
-//regevent_action is only set during the checkout process
-if (isset($_REQUEST['regevent_action']) && isset($org_options['event_ssl_active']) && $org_options['event_ssl_active'] == 'Y' && !is_ssl() && !is_admin()) {
-    $http_host = 'http://' . parse_url(get_option('home'), PHP_URL_HOST);
-    $request_uri = $_SERVER['REQUEST_URI'];
-    if (strpos($request_uri, $http_host) === false) {
-        $request_uri = $http_host . $request_uri;
-    }
-    $wp_ssl_url = str_replace('http://', 'https://', $request_uri);
-    header("Location:$wp_ssl_url");
-    exit;
 
-//The only way that I can make the menu links non ssl
-//but am afraid this may break another plugin that uses ssl.
-//Will wait for feedback
-//Have a little extra specificity..
-//added page_id check for iDEAL mollie.  Hard to tell from Dutch translation but it looks like they need an SSL for the notify page.
-} elseif ((!isset($_REQUEST['regevent_action'])
-        && (!isset($_POST['firstdata'])
-        && !isset($_POST['authnet_aim'])
-        && !isset($_POST['paypal_pro'])
-        && $page_id != $org_options['notify_url']
-        && $page_id != $org_options['return_url']
-        && $page_id != $org_options['cancel_return']
-        && !isset($_GET['transaction_id'])))
-        && isset($org_options['event_ssl_active'])
-        && $org_options['event_ssl_active'] == 'Y' && is_ssl() && !is_admin()) {
 
-    $wp_ssl_url = str_replace('https://', 'http://', home_url());
-
-    $url = $wp_ssl_url . $_SERVER['REQUEST_URI'];
-    header("Location:$url");
-    exit;
-}
-
-//This will (should) make sure everything is loaded via SSL
-//So that the "..not everything is secure.." message doesn't appear
-//Still will be a problem if other themes and plugins do not implement ssl correctly
-$wp_plugin_url = WP_PLUGIN_URL;
-$wp_content_url = WP_CONTENT_URL;
-
-if (is_ssl()) {
-
-    $wp_plugin_url = str_replace('http://', 'https://', WP_PLUGIN_URL);
-    $wp_content_url = str_replace('http://', 'https://', WP_CONTENT_URL);
-}
-
+//Create a constant for the version of the plugin
 define("EVENT_ESPRESSO_VERSION", espresso_version());
 define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
+
 //Define the plugin directory and path
 define("EVENT_ESPRESSO_PLUGINPATH", "/" . plugin_basename(dirname(__FILE__)) . "/");
 define("EVENT_ESPRESSO_PLUGINFULLPATH", WP_PLUGIN_DIR . EVENT_ESPRESSO_PLUGINPATH);
 define("EVENT_ESPRESSO_PLUGINFULLURL", $wp_plugin_url . EVENT_ESPRESSO_PLUGINPATH);
-//End - Define the plugin directory and path
+
 //Define dierectory structure for uploads
 if (!defined('WP_CONTENT_DIR')) {
     define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
@@ -320,6 +300,9 @@ if ($this_is_a_reg_page == TRUE) {
 
     //Add attendees to the database
     require_once("includes/process-registration/add_attendees_to_db.php");
+	
+	//Google map include file
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
 
     //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] shortcode
     event_espresso_require_gateway('process_payments.php');
@@ -687,22 +670,6 @@ if (is_admin()) {
     if (((!isset($_REQUEST['event_page_id']) || $_REQUEST['event_page_id'] == NULL) && ($org_options['event_page_id'] == ('0' || ''))) || $org_options['return_url'] == ('0' || '') || $org_options['notify_url'] == ('0' || '')) {
         add_action('admin_notices', 'event_espresso_activation_notice');
     }
-}
-
-if (!function_exists('is_ssl')) {
-
-    function is_ssl() {
-        if (isset($_SERVER['HTTPS'])) {
-            if (strtolower($_SERVER['HTTPS']) == 'on')
-                return true;
-            if ($_SERVER['HTTPS'] == '1')
-                return true;
-        } elseif (isset($_SERVER['SERVER_PORT']) && ( $_SERVER['SERVER_PORT'] == '443')) {
-            return true;
-        }
-        return false;
-    }
-
 }
 
 //Export PDF Ticket (new)
