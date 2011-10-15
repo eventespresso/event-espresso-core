@@ -257,5 +257,4 @@ if (!function_exists('event_espresso_get_event_details')) {
         //echo '<p>Database Queries: ' . get_num_queries() .'</p>';
         espresso_registration_footer();
     }
-  require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
 }
