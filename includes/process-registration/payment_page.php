@@ -142,7 +142,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 
 
     if (function_exists('event_espresso_coupon_payment_page') && (!empty($_REQUEST['coupon_code']) || !empty($coupon_code))) {
-        $event_cost = event_espresso_coupon_payment_page($use_coupon_code, $event_id, $event_original_cost, $attendee_id, $num_people);
+        $event_cost = event_espresso_coupon_payment_page($use_coupon_code, $event_id, $event_original_cost, $attendee_id, $payment_status);
 
         /*
          * at this point , the $event_cost is correct
