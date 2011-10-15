@@ -55,12 +55,12 @@ function event_espresso_discount_config_mnu() {
                                     <th class="manage-column column-cb check-column" id="cb" scope="col" style="width:2.5%;"><input type="checkbox"></th>
                                     <th class="manage-column column-comments num" id="id" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort"><?php _e('ID', 'event_espresso'); ?></th>
                                     <th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Name', 'event_espresso'); ?></th>
-                                    <th class="manage-column column-author" id="date" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Exp Date', 'event_espresso'); ?></th>
+                                    <th class="manage-column column-author" id="date" scope="col" title="Click to Sort" style="width:15%;"><?php _e('Exp Date', 'event_espresso'); ?></th>
                                     <th class="manage-column column-author" id="date" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Qty Available', 'event_espresso'); ?></th>
                                     <?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
                                         <th class="manage-column column-creator" id="creator" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Creator', 'event_espresso'); ?></th>
                                     <?php } ?>
-                                    <th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Amount', 'event_espresso'); ?></th>
+                                    <th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:5%;"><?php _e('Amount', 'event_espresso'); ?></th>
                                     <th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Percentaage', 'event_espresso'); ?></th>
                                 </tr>
                             </thead>
@@ -92,7 +92,7 @@ function event_espresso_discount_config_mnu() {
                                             
                                             <td class="post-title page-title column-title"><strong><a href="admin.php?page=discounts&amp;action=edit&amp;discount_id=<?php echo $discount_id ?>"><?php echo $coupon_code ?></a></strong>
                                                 <div class="row-actions"><span class="edit"><a href="admin.php?page=discounts&action=edit&discount_id=<?php echo $discount_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=discounts&action=delete_discount&discount_id=<?php echo $discount_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div></td>
-                                            <td class="post-title page-title column-title"><?php echo isset($use_exp_date) && $use_exp_date == 'Y' ? event_espresso_paid_status_icon('Active'):event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($exp_date)?$exp_date:'0000-00-00'; ?></td>
+                                            <td class="post-title page-title column-title"><?php echo isset($use_exp_date) && $use_exp_date == 'Y' ? event_espresso_paid_status_icon('Active'):event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($exp_date)?event_date_display($exp_date):'0000-00-00'; ?></td>
                                             <td class="post-title page-title column-title"><?php echo isset($use_limit) && $use_limit == 'Y' ?event_espresso_paid_status_icon('Active'):event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($quantity)?$quantity:''; ?></td>
 											<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
                                                 <td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
