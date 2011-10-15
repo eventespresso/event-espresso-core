@@ -160,14 +160,6 @@ function event_espresso_txn() {
             //find the old session_id based on reg id
 
             $s = $wpdb->get_row("SELECT attendee_session, txn_id, txn_type, payment_date, amount_pd, coupon_code FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='$registration_id' ORDER BY id LIMIT 1 ");
-			
-			//This needs to be moved to the use coupon function
-			/*if (!is_null($row['coupon_code']) && !empty($row['coupon_code'])) {
-				$coupon_code = $s->coupon_code;
-			}
-			
-			$update_coupon = "UPDATE " . EVENTS_DISCOUNT_CODES_TABLE . " SET quantity = quantity - 1 WHERE coupon_code='".$coupon_code."'";
-			$wpdb->query($update_coupon);*/
 
             $old_session_id = $s->attendee_session;
 
