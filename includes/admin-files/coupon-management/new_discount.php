@@ -19,10 +19,11 @@ function add_new_event_discount(){
               <?php _e('Promotional Code','event_espresso'); ?>
               <em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em> </label>
             <input  id="coupon_code" type="text" name="coupon_code" size="25" />
+            <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=coupon_code_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
           </li>
           <li>
             <label><strong>
-              <?php _e('Limitied quantity?','event_espresso'); ?>
+              <?php _e('Limited quantity active?','event_espresso'); ?>
               </strong></label>
             <?php 
       			echo select_input('use_limit', $values, 'N'); ?>
@@ -30,10 +31,11 @@ function add_new_event_discount(){
               <?php _e('Quantity:','event_espresso'); ?>
               </strong></label>
             <input type="text" name="quantity" size="7">
+            <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=qty_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
           </li>
           <li>
             <label><strong>
-              <?php _e('Expires?','event_espresso'); ?>
+              <?php _e('Expiration active?','event_espresso'); ?>
               </strong></label>
             <?php 
       			echo select_input('use_exp_date', $values, 'N'); ?>
@@ -41,6 +43,7 @@ function add_new_event_discount(){
               <?php _e('Expiration Date:','event_espresso'); ?>
               </strong></label>
             <input type="text" class="datepicker" size="12" id="exp_date" name="exp_date" />
+            <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=exp_date_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
           </li>
           <li>
             <label><strong>
@@ -52,11 +55,13 @@ function add_new_event_discount(){
               </strong></label>
             <?php 
       			echo select_input('use_percentage', $values, 'N'); ?>
+                <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=discount_amount_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
           </li>
           <li>
             <label><strong>
               <?php _e('Promotional Code Description','event_espresso'); ?>
-              </strong></label>
+              </strong></label> 
+              <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=description_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a><br />
             <br />
             <textarea rows="5" cols="300" name="coupon_code_description" id="coupon_code_description_new"  class="my_ed"></textarea>
           </li>
@@ -85,3 +90,4 @@ function add_new_event_discount(){
 </script>
 <?php 
 }
+

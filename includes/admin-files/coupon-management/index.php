@@ -132,6 +132,8 @@ function event_espresso_discount_config_mnu() {
                 "aoColumns": [
                     { "bSortable": false },
                     null,
+					null,
+                    null,
                     null,
                     null,
     <?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true ? 'null,' : ''; ?>
@@ -155,5 +157,7 @@ function event_espresso_discount_config_mnu() {
 	
 		});
     </script>
-    <?php
+   <?php 
+   include_once('help.php');
+	
 }
