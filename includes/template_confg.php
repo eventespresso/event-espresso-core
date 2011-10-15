@@ -74,9 +74,9 @@ function event_espresso_manage_templates() {
 												<div class="inside">
 													<div class="padding">
 														<?php
-															if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event_template_settings.php')) {
+															if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_template_settings.php')) {
 																echo '<ul id="event-layout-settings">';
-																	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event_template_settings.php');
+																	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_template_settings.php');
 																echo '</ul>';
 															}
 														?>	
@@ -106,7 +106,7 @@ function event_espresso_manage_templates() {
 															</li>
 															
 															<li>
-																<?php include(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event_styles_settings.php');  ?>
+																<?php include(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_styles_settings.php');  ?>
 															</li>															
 														</ul>
 														<p>
@@ -117,7 +117,7 @@ function event_espresso_manage_templates() {
 											</div><!-- / .postbox -->
 										</div><!-- / .metabox-holder -->
 	
-								<?php	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/template_files.php')) { ?>
+								<?php	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/template_files.php')) { ?>
                     <h2><?php  _e('Developers Only', 'event_espresso') ?> </h2><hr />
                                     
                                    
@@ -129,7 +129,7 @@ function event_espresso_manage_templates() {
 												</h3>
 												<div class="inside">
 													<div class="padding">
-														<?php	 require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/template_files.php');	?>	
+														<?php	 require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/template_files.php');	?>	
 													</div><!-- / .padding -->
 												</div><!-- / .inside -->
 											</div><!-- / .postbox -->
@@ -143,7 +143,7 @@ function event_espresso_manage_templates() {
 										
 										<input type="hidden" name="update_org" value="update" />
 										</form>
-										<?php include_once('admin-files/templates_help.php'); ?>
+										<?php include_once('admin-files/templates/templates_help.php'); ?>
 									</div><!-- / #post-body-content -->
 								</div><!-- / #post-body -->
 							</div><!-- / #poststuff -->
