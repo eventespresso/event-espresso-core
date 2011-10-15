@@ -8,9 +8,21 @@ function add_discount_to_db(){
 			if (!function_exists('espresso_member_data'))
 				$current_user->ID = 1;
 			
-			$sql=array('coupon_code'=>$_REQUEST['coupon_code'], 'coupon_code_price'=>$_REQUEST['coupon_code_price'],'coupon_code_description'=>$_REQUEST['coupon_code_description'], 'use_percentage'=>$_REQUEST['use_percentage'],'wp_user'=>$current_user->ID); 
+			$sql=array(
+			'coupon_code'=>$_REQUEST['coupon_code'],
+			
+			'quantity'=>$_REQUEST['quantity'],
+			'use_limit'=>$_REQUEST['use_limit'],
+			'use_exp_date'=>$_REQUEST['use_exp_date'],
+			'exp_date'=>$_REQUEST['exp_date'],
 		
-			$sql_data = array('%s','%s','%s','%s','%d');
+			'coupon_code_price'=>$_REQUEST['coupon_code_price'],
+			'coupon_code_description'=>$_REQUEST['coupon_code_description'],
+			'use_percentage'=>$_REQUEST['use_percentage'],
+			'wp_user'=>$current_user->ID
+		); 
+		
+			$sql_data = array('%s','%s','%s','%s','%s','%s','%s','%s','%d');
 	
 			if ($wpdb->insert( EVENTS_DISCOUNT_CODES_TABLE, $sql, $sql_data )){?>
 				<div id="message" class="updated fade">

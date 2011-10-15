@@ -1,48 +1,87 @@
 <?php
 function add_new_event_discount(){
+	$values=array(					
+				array('id'=>'N','text'=> __('No','event_espresso')),
+				array('id'=>'Y','text'=> __('Yes','event_espresso')));
 	?>
+
 <div class="metabox-holder">
   <div class="postbox">
     <h3>
       <?php _e('Add a New Promotional Code','event_espresso'); ?>
     </h3>
-<div class="inside">
-    <form id="new-promo-code" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
-      <input type="hidden" name="action" value="add">
-      <ul>
-        <li>
-          <label for="coupon_code">
-            <?php _e('Promotional Code','event_espresso'); ?><em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em>
-          </label>
-          <input  id="coupon_code" type="text" name="coupon_code" size="25" />
-        </li>
-        <li>
-          <label>
-            <?php _e('Price Discount','event_espresso'); ?>
-          </label>
-          <input type="text" name="coupon_code_price" />
-        </li>
-        <li>
-          <?php _e('Is this a percentage discount?','event_espresso'); ?>
-          <input type="radio" name="use_percentage" <?php echo ($use_percentage=='Y')? 'checked' : '' ?> value="Y">
-          <?php _e('Yes','event_espresso'); ?>
-          <input type="radio" name="use_percentage" <?php echo ($use_percentage=='N')? 'checked' : '' ?> checked="checked" value="N">
-          <?php _e('No','event_espresso'); ?>
-        </li>
-        <li>
-          <?php _e('Promotional Code Description','event_espresso'); ?>
-          <br />
-          <textarea rows="5" cols="300" name="coupon_code_description" id="coupon_code_description_new"  class="my_ed"></textarea>
-        </li>
-        <li>
-          <p>
-            <input class="button-secondary" type="submit" name="add_new_discount" value="<?php _e('Submit','event_espresso'); ?>" id="add_new_discount" />
-          </p>
-        </li>
-      </ul>
-    </form>
-</div>
+    <div class="inside">
+      <form id="new-promo-code" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
+        <input type="hidden" name="action" value="add">
+        <ul>
+          <li>
+            <label for="coupon_code">
+              <?php _e('Promotional Code','event_espresso'); ?>
+              <em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em> </label>
+            <input  id="coupon_code" type="text" name="coupon_code" size="25" />
+          </li>
+          <li>
+            <label><strong>
+              <?php _e('Limitied quantity?','event_espresso'); ?>
+              </strong></label>
+            <?php 
+      			echo select_input('use_limit', $values, 'N'); ?>
+            <label><strong>
+              <?php _e('Quantity:','event_espresso'); ?>
+              </strong></label>
+            <input type="text" name="quantity" size="7">
+          </li>
+          <li>
+            <label><strong>
+              <?php _e('Expires?','event_espresso'); ?>
+              </strong></label>
+            <?php 
+      			echo select_input('use_exp_date', $values, 'N'); ?>
+            <label><strong>
+              <?php _e('Expiration Date:','event_espresso'); ?>
+              </strong></label>
+            <input type="text" class="datepicker" size="12" id="exp_date" name="exp_date" />
+          </li>
+          <li>
+            <label><strong>
+              <?php _e('Price Discount','event_espresso'); ?>
+              </strong></label>
+            <input type="text" name="coupon_code_price" size="7" value="<?php echo $coupon_code_price;?>" />
+            <label><strong>
+              <?php _e('Percentage discount?','event_espresso'); ?>
+              </strong></label>
+            <?php 
+      			echo select_input('use_percentage', $values, 'N'); ?>
+          </li>
+          <li>
+            <label><strong>
+              <?php _e('Promotional Code Description','event_espresso'); ?>
+              </strong></label>
+            <br />
+            <textarea rows="5" cols="300" name="coupon_code_description" id="coupon_code_description_new"  class="my_ed"></textarea>
+          </li>
+          <li>
+            <p>
+              <input class="button-secondary" type="submit" name="add_new_discount" value="<?php _e('Submit','event_espresso'); ?>" id="add_new_discount" />
+            </p>
+          </li>
+        </ul>
+      </form>
+    </div>
   </div>
 </div>
+<script type="text/javascript" charset="utf-8">
+	//<![CDATA[
+        jQuery(document).ready(function() {
+
+            jQuery(".datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: "yy-mm-dd",
+                showButtonPanel: true
+            });
+		});				
+    //]]>
+</script>
 <?php 
 }
