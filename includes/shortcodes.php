@@ -867,7 +867,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 
 					//Build the venue image
 					if ($show_image != false){
-						$html .= $meta['image'] != ''? $image_wrapper_start.'<image id="venue_image_'.$venue_id.'" '.$image_class.' src="'.stripslashes_deep($meta['image']).'" />'.$image_wrapper_end:'';
+						$html .= $meta['image'] != ''? $image_wrapper_start.'<img id="venue_image_'.$venue_id.'" '.$image_class.' src="'.stripslashes_deep($meta['image']).'" />'.$image_wrapper_end:'';
 					}
 
 					//Build the description
