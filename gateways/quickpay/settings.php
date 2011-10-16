@@ -6,7 +6,7 @@ function event_espresso_quickpay_payment_settings() {
         $quickpay_settings['quickpay_language'] = $_POST['quickpay_language'];
         $quickpay_settings['quickpay_autocapture'] = $_POST['quickpay_autocapture'];
         $quickpay_settings['quickpay_currency'] = $_POST['quickpay_currency'];
-				$quickpay_settings['use_sandbox'] = $_POST['use_sandbox'];
+				$quickpay_settings['use_sandbox'] = (empty($_POST['use_sandbox'])) ? '0' : $_POST['use_sandbox'];
         update_option('event_espresso_quickpay_settings', $quickpay_settings);
         echo '<div id="message" class="updated fade"><p><strong>' . __('quickpay settings saved.', 'event_espresso') . '</strong></p></div>';
     }
