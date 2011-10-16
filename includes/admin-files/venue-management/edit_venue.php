@@ -24,6 +24,23 @@ function edit_event_venue(){
 		
 		$last_locale_id = $wpdb->get_var("SELECT locale_id FROM ".EVENTS_LOCALE_REL_TABLE." WHERE venue_id='".$id."'");
 	}
+	
+		$values = array(
+				array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+				array('id' => 'N', 'text' => __('No', 'event_espresso'))
+		);
+		
+		// build some data to feed to the map display
+		$venue_address_elements = ($address != '' ? $address . ',' : '') . ($address2 != '' ? $address2 . ',' : '') . ($city != '' ?  $city . ',' : '') . ($state != '' ? $state . ',' : '') . ($zip != '' ? $zip . ',' : '') . ($country != ''? $country : '');
+  $ee_gmap_location =  $venue_address_elements;
+		// take venue_id and pass it through as event_id
+		$event_id = $event_id;	
+		// Create dummy ee_gmaps_opts to control map display
+		global $ee_gmaps_opts;
+		$ee_gmaps_opts['ee_map_width'] = '300';
+		$ee_gmaps_opts['ee_map_height'] = '300';
+		$ee_gmaps_opts['ee_map_zoom'] = '15';
+		$ee_gmaps_opts['ee_map_align'] = 'center';
 	?>
 <!--Add event display-->
 
@@ -147,7 +164,17 @@ function edit_event_venue(){
                   </label>
                   <input type="text" id="image" name="image" size="25" value="<?php echo stripslashes_deep($meta['image']);?>">
                 </li>
-              </ul></td>
+																<li>
+																  <label for="enable-ven-gmaps"><?php _e('Enable Venue for Google Maps', 'event_espresso')  ?></label>
+																   <?php echo select_input('enable_for_maps', $values, isset($meta['enable_for_maps']) ? $meta['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?>
+																</li>
+																</li>
+																<?php if( isset($meta['enable_for_maps']) && 'Y' == $meta['enable_for_maps']) { 
+																  ee_gmap_display($ee_gmap_location, $event_id);
+															 } ?>
+																</li>
+              </ul>
+												</td>
           </tr>
         </table>
 					<div id="descriptiondivrich" class="postarea">

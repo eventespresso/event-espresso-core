@@ -79,7 +79,6 @@ global $org_options, $wpdb, $this_is_a_reg_page;
 $org_options = get_option('events_organization_settings');
 $page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
 
-
 //Get the plugin url and content directories. 
 //These variables are used to define the plugin and content directories in the constants below.
 $wp_plugin_url = WP_PLUGIN_URL;
@@ -286,6 +285,12 @@ add_action('widgets_init', 'load_event_espresso_widget');
 
 /* End Core template files used by this plugin */
 
+	//Google map include file
+	##### Requires a check for event listing page ######
+if ($this_is_a_reg_page == true || 'event_venues' == $_REQUEST['page'] ){
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
+}
+	
 //Load these files if we are in an actuial registration page
 if ($this_is_a_reg_page == TRUE) {
     //Process email confirmations
@@ -301,8 +306,7 @@ if ($this_is_a_reg_page == TRUE) {
     //Add attendees to the database
     require_once("includes/process-registration/add_attendees_to_db.php");
 	
-	//Google map include file
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
+
 
     //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] shortcode
     event_espresso_require_gateway('process_payments.php');

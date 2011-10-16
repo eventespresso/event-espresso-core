@@ -10,6 +10,7 @@ function add_venue_to_db(){
 		$venue_meta['image'] = $_REQUEST['image'];
 		$venue_meta['website'] = $_REQUEST['website'];
 		$venue_meta['description'] = esc_html($_REQUEST['description']);
+		$venue_meta['enable_for_maps'] = esc_html($_REQUEST['enable_for_maps']);
 		$locale = $_REQUEST['locale'];
 		$meta = serialize($venue_meta);	
 		

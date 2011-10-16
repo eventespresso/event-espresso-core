@@ -1,6 +1,11 @@
 <?php
 function add_new_event_venue(){
 	global $wpdb,$current_user;
+			
+	$values = array(
+			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+			array('id' => 'N', 'text' => __('No', 'event_espresso'))
+	);
 ?>
 <div id="add-edit-venue" class="metabox-holder">
   <div class="postbox">
@@ -125,6 +130,9 @@ function add_new_event_venue(){
                   </label>
                   <input type="text" id="image" name="image" size="25">
               </li>
+              <li>
+														  <label for="enable-ven-gmaps"><?php _e('Enable Venue for Google Maps', 'event_espresso')  ?></label><?php echo select_input('enable_for_maps', $values, isset($org_options['enable_for_maps']) ? $org_options['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?>
+              </li>														
             </ul>
 							</td>
           </tr>
