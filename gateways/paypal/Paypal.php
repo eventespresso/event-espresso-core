@@ -137,11 +137,11 @@ class Paypal extends PaymentGateway {
             $urlParsed = parse_url($this->gatewayUrl);
             // generate the post string from the _POST vars
             $postString = '';
-            foreach ($_POST as $field => $value) {
+            foreach ($_POST as $key => $value) {
                 $this->ipnData["$key"] = $value;
                 $value = urlencode(stripslashes($value));
                 $value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
-                $req .= $key . '=' . $value . '&';
+                $postString .= $key . '=' . $value . '&';
             }
             $postString .="cmd=_notify-validate"; // append ipn command
             // open the connection to paypal

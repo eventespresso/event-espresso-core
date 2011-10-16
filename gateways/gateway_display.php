@@ -2,29 +2,22 @@
 //This file builds the gateways that are available
 echo '<div id="onsite-payments" class="event-display-boxes">';
 echo '<h2 class="section-heading">' .  __('Please choose a payment option:', 'event_espresso') . '</h2>';
-if (get_option('events_paypal_pro_active') == 'true' 
-	|| get_option('events_eway_active') == 'true' 
-	|| get_option('events_authnet_aim_active') == 'true' 
-	|| get_option('events_firstdata_active') == 'true' 
+if (get_option('events_paypal_pro_active') == 'true'
+	|| get_option('events_eway_active') == 'true'
+	|| get_option('events_authnet_aim_active') == 'true'
+	|| get_option('events_firstdata_active') == 'true'
 	|| get_option('events_ideal_active') == 'true'
 	|| get_option('events_paytrace_active') == 'true'
 	)
 {
 	echo '<div id="on_site_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="on_site_payment" class="payment_option_title section-heading">'.__('On-site Payment Processing', 'event_espresso').'</h3>';
-	
+
 	if (get_option('events_paypal_pro_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/paypal_pro_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/paypal_pro_vars.php");
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal_pro/paypal_pro_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal_pro/paypal_pro_vars.php");
-		}
-	}
-	if (get_option('events_eway_active') == 'true'){
-		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/eway_vars.php")){
-			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/eway_vars.php");
-		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/eway/eway_vars.php")){
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/eway/eway_vars.php");
 		}
 	}
 	if (get_option('events_authnet_aim_active') == 'true'){
@@ -48,7 +41,7 @@ if (get_option('events_paypal_pro_active') == 'true'
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/ideal/ideal_vars.php");
 		}
 	}
-	
+
 	if (get_option('events_paytrace_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paytrace/paytrace_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paytrace/paytrace_vars.php");
@@ -58,12 +51,19 @@ if (get_option('events_paypal_pro_active') == 'true'
 	}
 	echo '</div><!-- / #onsite-payments -->';
 }
-if (get_option('events_paypal_active') == 'true' || get_option('events_authnet_active') == 'true' || get_option('events_mwarrior_active') == 'true' || get_option('events_alipay_active') == 'true' || get_option('events_plugnpay_active') == 'true' || get_option('events_2checkout_active') == 'true'){
+if (get_option('events_paypal_active') == 'true'
+				|| get_option('events_authnet_active') == 'true'
+				|| get_option('events_mwarrior_active') == 'true'
+				|| get_option('events_alipay_active') == 'true'
+				|| get_option('events_plugnpay_active') == 'true'
+				|| get_option('events_eway_active') == 'true'
+				|| get_option('events_quickpay_active') == 'true'
+				|| get_option('events_2checkout_active') == 'true'){
 	echo '<div id="off_site_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="off_site_payment" class="payment_option_title section-heading">'.__('Off-site Payments', 'event_espresso').'</h3>';
 	echo '<ul id="espresso_payment_buttons">';
 	//echo '<tr>';
-	
+
 	if (get_option('events_paypal_active') == 'true'){
 		echo '<li class="offsite-pay-buttons">';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_vars.php")){
@@ -72,6 +72,20 @@ if (get_option('events_paypal_active') == 'true' || get_option('events_authnet_a
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal/paypal_vars.php");
 		}
 		echo '</li>';
+	}
+	if (get_option('events_eway_active') == 'true'){
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/eway_vars.php")){
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/eway_vars.php");
+		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/eway/eway_vars.php")){
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/eway/eway_vars.php");
+		}
+	}
+	if (get_option('events_quickpay_active') == 'true'){
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/quickpay/quickpay_vars.php")){
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/quickpay/quickpay_vars.php");
+		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/quickpay/quickpay_vars.php")){
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/quickpay/quickpay_vars.php");
+		}
 	}
 	if (get_option('events_authnet_active') == 'true'){
 		echo '<li>';
@@ -82,7 +96,7 @@ if (get_option('events_paypal_active') == 'true' || get_option('events_authnet_a
 		}
 		echo '</li>';
 	}
-	
+
 	if (get_option('events_mwarrior_active') == 'true'){
 		echo '<li>';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/mwarrior_vars.php")){
@@ -92,7 +106,7 @@ if (get_option('events_paypal_active') == 'true' || get_option('events_authnet_a
 		}
 		echo '</li>';
 	}
-	
+
 	if ((file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/alipay_active.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/alipay/alipay_active.php")) && get_option('events_alipay_active') == 'true'){
 			global $org_options;
 			$alipay_settings = get_option('event_espresso_alipay_settings');
@@ -118,8 +132,10 @@ if (get_option('events_paypal_active') == 'true' || get_option('events_authnet_a
 	echo '</div><!-- / #off_site_payment_container -->';
 }
 $invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
-if ((get_option('events_invoice_payment_active') == 'true' && $invoice_payment_settings['show'] != 'N')||get_option('events_check_payment_active') == 'true' || get_option('events_bank_payment_active') == 'true'){
-	
+if ((get_option('events_invoice_payment_active') == 'true' && $invoice_payment_settings['show'] != 'N')
+				||get_option('events_check_payment_active') == 'true'
+				|| get_option('events_bank_payment_active') == 'true'){
+
 	echo '<div id="off_line_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="off_line_payment" class="payment_option_title section-heading">'.__('Off-line Payments', 'event_espresso').'</h3>';
 
@@ -140,7 +156,7 @@ if ((get_option('events_invoice_payment_active') == 'true' && $invoice_payment_s
 		</div>
 	<?php
 	}
-	
+
 	if (get_option('events_check_payment_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/check/check_payment_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/check/check_payment_vars.php");
@@ -148,7 +164,7 @@ if ((get_option('events_invoice_payment_active') == 'true' && $invoice_payment_s
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/check/check_payment_vars.php");
 		}
 	}
-	
+
 	if (get_option('events_bank_payment_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/bank/bank_payment_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/bank/bank_payment_vars.php");

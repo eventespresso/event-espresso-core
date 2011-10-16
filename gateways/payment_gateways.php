@@ -24,9 +24,9 @@ function after_gateways() {
         //<![CDATA[
          jQuery(document).ready(function() {
           postboxes.add_postbox_toggles("payment_gateways");
-          }); 
+          });
         //]]>
-        </script>';    
+        </script>';
 			return $output;
 }
 
@@ -48,6 +48,7 @@ function event_espresso_gateways_options() {
 	$gateways[] = 'mwarrior';
 	$gateways[] = '2checkout';
 	$gateways[] = 'paytrace';
+	$gateways[] = 'quickpay';
     foreach ($gateways as $gateway) {
         $func 			= 'event_espresso_' . $gateway . '_payment_settings';
         $fallback_func 	= 'event_espresso_' . $gateway . '_settings';
