@@ -219,14 +219,6 @@
 						</fieldset>
 					
 					<?php
-						//Coupons
-						if (function_exists('event_espresso_coupon_registration_page')) {
-							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
-						}//End coupons display
-						//Groupons
-						if (function_exists('event_espresso_groupon_registration_page')) {
-							echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
-						}//End groupons display
 
 						//Multiple Attendees
 						if ($allow_multiple == "Y" && $number_available_spaces > 1) {
@@ -238,10 +230,21 @@
 							<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
 							<?php
 						}//End allow multiple
+						
+						//Coupons
+						if (function_exists('event_espresso_coupon_registration_page')) {
+							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
+						}//End coupons display
+						//Groupons
+						if (function_exists('event_espresso_groupon_registration_page')) {
+							echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
+						}//End groupons display
 						?>
+
 						<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee">
 						<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 						<?php
+
 						//Recaptcha portion
 						if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true' && !is_user_logged_in()) {
 							if (!function_exists('recaptcha_get_html')) {
@@ -254,8 +257,10 @@
 							?>
 							<p class="event_form_field" id="captcha-<?php echo $event_id; ?>">
 								<?php _e('Anti-Spam Measure: Please enter the following phrase', 'event_espresso'); ?>
-								<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false); ?> </p>
-						<?php } //End use captcha ?>
+								<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false); ?> 
+							</p>
+						 <?php } //End use captcha ?>
+						
 						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
 							<input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
 						</p>

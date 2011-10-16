@@ -443,7 +443,7 @@ ul#espresso_payment_buttons li form {
 #content .event_form_submit input {
 	font-size: 100%;
 	line-height: 1;
-	margin: 20px 0 0;
+	margin:  0;
 	height: auto;
 	padding: 4px 10px;
 	letter-spacing: 1px;
