@@ -2,6 +2,7 @@
 global $wpdb;
 $quickpay_settings = get_option('event_espresso_quickpay_settings');
 $sessionid = $_SESSION['espresso_session_id'];
+$ordernumber = substr(md5(uniqid() . rand()), 0, 20);var_dump($ordernumber);
 $transaction_id = uniqid(md5(rand(1,666)), true); // Set the transaction id to a unique value for reference in the system.
 $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/quickpay/qp-logo.gif";
 $md5secret = $quickpay_settings['quickpay_md5secret'];
@@ -47,10 +48,10 @@ if ($attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_regi
 		}
 	}
 }
-$ordernumber = substr($registration_ids[0], 0, 14);
+$amount = number_format($amount, 2, '', '');
 $currency = $quickpay_settings['quickpay_currency'];
 
-$transact_url = home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&attendee_action=post_payment&form_action=payment';
+$transact_url = home_url() . '/?page_id=' . $org_options['return_url'] . '&id=' . $attendee_id . '&attendee_action=post_payment&form_action=payment';
 $params = array('chronopay_callback' => 'true', 'transaction_id' => $transaction_id, 'sessionid' => $sessionid);
 $continueurl = add_query_arg($params, $transact_url);
 
@@ -58,7 +59,7 @@ $transact_url = home_url() . '/?page_id=' . $org_options['cancel_return'];
 $params = array('chronopay_callback' => 'cancel', 'transaction_id' => $transaction_id, 'sessionid' => $sessionid);
 $cancelurl = add_query_arg($params, $transact_url);
 
-$transact_url = home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&attendee_action=post_payment&form_action=payment';
+$transact_url = home_url() . '/?page_id=' . $org_options['return_url'] . '&id=' . $attendee_id . '&attendee_action=post_payment&form_action=payment';
 $params = array('chronopay_callback' => 'error', 'transaction_id' => $transaction_id, 'sessionid' => $sessionid);
 $callbackurl = add_query_arg($params, $transact_url);
 

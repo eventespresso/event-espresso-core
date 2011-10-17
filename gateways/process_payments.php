@@ -62,7 +62,9 @@ function event_espresso_txn() {
                 }
 
                 //Load PayPal IPN
-            } elseif ((get_option('events_paypal_pro_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && $_REQUEST['paypal_pro'] == 'true' && $_REQUEST['id'] != '') {
+            } elseif ((get_option('events_paypal_pro_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
+										&& !empty($_REQUEST['paypal_pro']) && $_REQUEST['paypal_pro'] == 'true'
+										&& !empty($_REQUEST['id'])) {
 
                 if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php")) {
                     //Moved files
@@ -80,7 +82,9 @@ function event_espresso_txn() {
                     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways//eway/ewaypaymentprocess.php");
                 }
                 //Process Firstdata
-            } elseif ((get_option('events_firstdata_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && $_REQUEST['firstdata'] == '1' && $_REQUEST['id'] != '') {
+            } elseif ((get_option('events_firstdata_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
+										&& !empty($_REQUEST['firstdata']) && $_REQUEST['firstdata'] == '1'
+										&& !empty($_REQUEST['id'])) {
 
                 if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata/Firstdata.php")) {
                     //Moved files
@@ -124,7 +128,8 @@ function event_espresso_txn() {
                     //Default files
                     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/2checkout/2checkoutpaymentprocess.php");
                 }
-            } elseif ((get_option('events_paypal_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && $_REQUEST['x_cust_id'] == '') {
+            } elseif ((get_option('events_paypal_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
+										&& isset($_REQUEST['x_cust_id']) && $_REQUEST['x_cust_id'] == '') {
                 if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_ipn.php")) {
                     //Moved files
                     require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_ipn.php");
@@ -204,7 +209,7 @@ function event_espresso_txn() {
             } else {
                 require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/payment_overview.php");
             }
-			
+
 			//This loads the affiliate tracking code if installed
 			if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "affiliate_tracking.php")) {
                 require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "affiliate_tracking.php");
