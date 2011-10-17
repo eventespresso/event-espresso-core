@@ -57,8 +57,8 @@
 									<li><b><?php _e('Set Map Navigation Overlay', 'event_espresso') ?></b><br />
 									<?php _e('The navigation overlay are the controls for panning and zooming the map.', 'event_espresso'); ?>
 									</li>
-									<li><b><?php _e('Force Map Navigation Small', 'event_espresso') ?></b><br />
-									<?php _e('Force map navigation tells google to only load the smaller map overlay regardless of map size - normally if you have map navigation enabled on a map Google sets various options according to the size of the map, if you want to stop this happening you set this option to yes.', 'event_espresso'); ?>
+									<li><b><?php _e('Keep Map Navigation Small', 'event_espresso') ?></b><br />
+									<?php _e('Keep map navigation small tells google to only load the smaller map overlay regardless of map size - Google changes various options according to the size of a map, if you want to stop this happening you can set this option to yes.', 'event_espresso'); ?>
 									</li>
 									<li><b><?php _e('Set Map Type Control', 'event_espresso') ?></b><br />
 									<?php _e('The map type control is the options bar google sets in the top right corner this can take the form of a dropdown or horizontal bar.', 'event_espresso'); ?>

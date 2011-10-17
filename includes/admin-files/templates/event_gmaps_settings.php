@@ -14,23 +14,24 @@
 								
 								<li><p><label for="show-overly-controls-single"><?php _e('Set Map Navigation Overlay', 'event_espresso')  ?></label><?php echo select_input('ee_map_nav_display_single', $values, isset($org_options['ee_map_nav_display_single']) ? $org_options['ee_map_nav_display_single'] : '', 'id="show-overlay-controls-single"'); ?></p></li>
 								
-								<li><p><label for="nav-size-small-single"><?php _e('Force Map Navigation Small', 'event_espresso')  ?></label><?php echo select_input('ee_map_nav_size_single', $values, isset($org_options['ee_map_nav_size_single']) ? $org_options['ee_map_nav_size_single'] : '', 'id="nav-size-small-single"'); ?></p></li>
+								<li><p><label for="nav-size-small-single"><?php _e('Keep Map Navigation Small', 'event_espresso')  ?></label><?php echo select_input('ee_map_nav_size_single', $values, isset($org_options['ee_map_nav_size_single']) ? $org_options['ee_map_nav_size_single'] : '', 'id="nav-size-small-single"'); ?></p></li>
 								
 								<li>
 								<p class="section-heading"><?php _e('Set Map Type Control', 'event_espresso')  ?></p>
 								 
 									<p class="radio-sets">
-								  <label for="map-type-default-single"><input id="map-type-default-single" type="radio" name="ee_map_type_control_single" <?php //espresso_is_selected('default')?> value="default"  /><?php _e(' Default', 'event_espresso') ?></label>
-									 <label for="map-type-horizontal-single"><input id="map-type-horizontal-single" type="radio" name="ee_map_type_control_single" <?php// espresso_is_selected('horizontal')?> value="horizontal" /><?php _e(' Horizontal', 'event_espresso')?></label>
-									 <label for="map-type-dropdown-single"><input id="map-type-dropdown-single" type="radio" name="ee_map_type_control_single" <?php// espresso_is_selected('dropdown')?> value="dropdown" /><?php _e(' Dropdown', 'event_espresso')?></label>
+								  <label for="map-type-default_single"><input id="map-type-default_single" type="radio" name="ee_map_type_control_single" <?php espresso_is_selected_reg('default')?> value="default"  /><?php _e(' Default', 'event_espresso') ?></label>
+									 <label for="map-type-horizontal_single"><input id="map-type-horizontal_single" type="radio" name="ee_map_type_control_single" <?php espresso_is_selected_reg('horizontal')?> value="horizontal" /><?php _e(' Horizontal', 'event_espresso')?></label>
+									 <label for="map-type-dropdown_single"><input id="map-type-dropdown_single" type="radio" name="ee_map_type_control_single" <?php espresso_is_selected_reg('dropdown')?> value="dropdown" /><?php _e(' Dropdown', 'event_espresso')?></label>
 					    </p>
 									
 									<p class="section-heading"><?php _e('Set Map Alignment', 'event_espresso')  ?></p>
 									
 									<p class="radio-sets">
-								  <label for="map-align-left_single"><input id="map-align-left_single" type="radio" name="ee_map_align_single" <?php //espresso_is_selected('left')?> value="left"  /><?php _e(' Align Left', 'event_espresso') ?></label>
-									 <label for="map-align-center_single"><input id="map-align-center_single" type="radio" name="ee_map_align_single" <?php //espresso_is_selected('center')?> value="center" /><?php _e(' Align Center', 'event_espresso')?></label>
-									 <label for="map-align-right_single"><input id="map-align-right_single" type="radio" name="ee_map_align_single" <?php //espresso_is_selected('right')?> value="right" /><?php _e(' Align Right', 'event_espresso')?></label>
+									 <label for="map-align-none_single"><input id="map-align-none_single" type="radio" name="ee_map_align_single" <?php espresso_is_selected_reg('none')?> value="none"  /><?php _e(' None', 'event_espresso') ?></label>
+								  <label for="map-align-left_single"><input id="map-align-left_single" type="radio" name="ee_map_align_single" <?php espresso_is_selected_reg('left')?> value="left"  /><?php _e(' Align Left', 'event_espresso') ?></label>
+									 <label for="map-align-center_single"><input id="map-align-center_single" type="radio" name="ee_map_align_single" <?php espresso_is_selected_reg('center')?> value="center" /><?php _e(' Align Center', 'event_espresso')?></label>
+									 <label for="map-align-right_single"><input id="map-align-right_single" type="radio" name="ee_map_align_single" <?php espresso_is_selected_reg('right')?> value="right" /><?php _e(' Align Right', 'event_espresso')?></label>
 					    </p>									
 									</li>
 					 	</ul>
@@ -49,22 +50,23 @@
 								
 								<li><p><label for="show-overlay-controls"><?php _e('Set Map Navigation Overlay ', 'event_espresso')  ?></label><?php echo select_input('ee_map_nav_display', $values, isset($org_options['ee_map_nav_display']) ? $org_options['ee_map_nav_display'] : '', 'id="show-overlay-controls"'); ?></li>
 								
-								<li><p><label for="nav-size-small"><?php _e('Force Map Navigation Small', 'event_espresso')  ?></label><?php echo select_input('ee_map_nav_size', $values, isset($org_options['ee_map_nav_size']) ? $org_options['ee_map_nav_size'] : '', 'id="nav-size-small"'); ?></p></li>
+								<li><p><label for="nav-size-small"><?php _e('Keep Map Navigation Small', 'event_espresso')  ?></label><?php echo select_input('ee_map_nav_size', $values, isset($org_options['ee_map_nav_size']) ? $org_options['ee_map_nav_size'] : '', 'id="nav-size-small"'); ?></p></li>
 								
 								<li>
 								<p class="section-heading"><?php _e('Set Map Type Control', 'event_espresso')  ?></p>
 								 
 									<p class="radio-sets">
-								  <label for="map-type-default"><input id="map-type-default" type="radio" name="ee_map_type_control" <?php //espresso_is_selected('default')?> value="default"  /><?php _e(' Default', 'event_espresso') ?></label>
-									 <label for="map-type-horizontal"><input id="map-type-horizontal" type="radio" name="ee_map_type_control" <?php //espresso_is_selected('horizontal')?> value="horizontal" /><?php _e(' Horizontal', 'event_espresso')?></label>
-									 <label for="map-type-dropdown"><input id="map-type-dropdown" type="radio" name="ee_map_type_control" <?php //espresso_is_selected('dropdown')?> value="dropdown" /><?php _e(' Dropdown', 'event_espresso')?></label>
+								  <label for="map-type-default"><input id="map-type-default" type="radio" name="ee_map_type_control" <?php espresso_is_selected_list('default')?> value="default"  /><?php _e(' Default', 'event_espresso') ?></label>
+									 <label for="map-type-horizontal"><input id="map-type-horizontal" type="radio" name="ee_map_type_control" <?php espresso_is_selected_list('horizontal')?> value="horizontal" /><?php _e(' Horizontal', 'event_espresso')?></label>
+									 <label for="map-type-dropdown"><input id="map-type-dropdown" type="radio" name="ee_map_type_control" <?php espresso_is_selected_list('dropdown')?> value="dropdown" /><?php _e(' Dropdown', 'event_espresso')?></label>
 					    </p>
 								<p class="section-heading"><?php _e('Set Map Alignment', 'event_espresso')  ?></p>
 								 
 									<p class="radio-sets">
-								  <label for="map-align-left"><input id="map-align-left" type="radio" name="ee_map_align" <?php //espresso_is_selected('left')?> value="left"  /><?php _e(' Align Left', 'event_espresso') ?></label>
-									 <label for="map-align-center"><input id="map-align-center" type="radio" name="ee_map_align" <?php //espresso_is_selected('center')?> value="center" /><?php _e(' Align Center', 'event_espresso')?></label>
-									 <label for="map-align-right"><input id="map-align-right" type="radio" name="ee_map_align" <?php //espresso_is_selected('right')?> value="right" /><?php _e(' Align Right', 'event_espresso')?></label>
+									 <label for="map-align-none"><input id="map-align-none" type="radio" name="ee_map_align" <?php espresso_is_selected_list('left')?> value="none"  /><?php _e(' None', 'event_espresso') ?></label>
+								  <label for="map-align-left"><input id="map-align-left" type="radio" name="ee_map_align" <?php espresso_is_selected_list('left')?> value="left"  /><?php _e(' Align Left', 'event_espresso') ?></label>
+									 <label for="map-align-center"><input id="map-align-center" type="radio" name="ee_map_align" <?php espresso_is_selected_list('center')?> value="center" /><?php _e(' Align Center', 'event_espresso')?></label>
+									 <label for="map-align-right"><input id="map-align-right" type="radio" name="ee_map_align" <?php espresso_is_selected_list('right')?> value="right" /><?php _e(' Align Right', 'event_espresso')?></label>
 					    </p>									
 						  </li>
 								</ul>

@@ -43,16 +43,28 @@ function event_espresso_manage_templates() {
 			);	
 	 //echo $org_options['ee_map_type_control'];
 		// checks value of calendar thumb size to set radio inputs
-/*		function espresso_is_selected($name) {
+		// two seperate functions to handle list opts or reg page(single) opts
+		// to prevent opt values clashing due to same values.
+		function espresso_is_selected_list($name) {
    global $org_options;
    $input_val = $name;
-   if ($org_options['ee_map_type_control'] !== $input_val || $org_options['ee_map_type_control_single'] !== $input_val)
+   $the_opt_val = array( 'ee_map_type_control' => $org_options['ee_map_type_control'], 'ee_map_align' => $org_options['ee_map_align']);
+			if ( !in_array( $input_val, $the_opt_val) )
    return false;
    else
    echo  'checked="checked"';
    return; 
-  }		  */
-	
+  }		  
+		function espresso_is_selected_reg($name) {
+   global $org_options;
+   $input_val = $name;
+			$the_opt_val = array('ee_map_align_single' => $org_options['ee_map_align_single'], 'ee_map_type_control_single' => $org_options['ee_map_type_control_single']);
+   if ( !in_array( $input_val, $the_opt_val) )
+   return false;
+   else
+   echo  'checked="checked"';
+   return; 
+  }
 	?>
     <div class="wrap">
         <div id="icon-options-event" class="icon32"> </div>
