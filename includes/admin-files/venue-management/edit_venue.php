@@ -169,7 +169,7 @@ function edit_event_venue(){
 																   <?php echo select_input('enable_for_maps', $values, isset($meta['enable_for_maps']) ? $meta['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?>
 																</li>
 																</li>
-																<?php if( isset($meta['enable_for_maps']) && 'Y' == $meta['enable_for_maps']) { 
+																<?php if( isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y') { 
 																  ee_gmap_display($ee_gmap_location, $event_id);
 															 } ?>
 																</li>

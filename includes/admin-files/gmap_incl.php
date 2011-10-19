@@ -25,12 +25,12 @@ global $ee_gmaps_opts ;
  } else{
     $ee_map_zoom = '12';
  } 
- if( isset($ee_gmaps_opts['ee_map_nav_display']) && 'Y' == $ee_gmaps_opts['ee_map_nav_display'] ){
+ if( isset($ee_gmaps_opts['ee_map_nav_display']) && $ee_gmaps_opts['ee_map_nav_display'] == 'Y' ){
 	   $ee_map_nav_display = true;
 	}else{
 	   $ee_map_nav_display = false;
 	}
- if( isset($ee_gmaps_opts['ee_map_nav_size']) && 'Y' ==  $ee_gmaps_opts['ee_map_nav_size'] ){
+ if( isset($ee_gmaps_opts['ee_map_nav_size']) && $ee_gmaps_opts['ee_map_nav_size'] == 'Y' ){
 	   $ee_map_nav_size = 'small';
 	}else {
 	   $ee_map_nav_size = 'default';

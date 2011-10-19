@@ -858,7 +858,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 					  //	$map_w = isset($map_w) ? $map_w : 400;
 					  //	$map_h = isset($map_h) ? $map_h : 400;
 					  //	$google_map_image = espresso_google_map_link(array('id'=>$venue_id, 'map_image_class'=>$map_image_class, 'address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'map', 'map_h'=>$map_h, 'map_w'=>$map_w));
-					if(isset($meta['enable_for_maps']) && 'Y' == $meta['enable_for_maps']) {
+					if(isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y') {
 					$venue_address_elements = ($venue->address != '' ? $venue->address . ',' : '') . ($venue->city != '' ? $venue->city . ',' : '') . ($venue->state != '' ?  $venue->state . ',' : '') . ($venue->zip != '' ? $venue->zip . ',' : '') . ($venue->country != '' ? $venue->country . ',' : '');
      $ee_gmap_location =  $venue_address_elements;
 					ee_gmap_display($ee_gmap_location, $event_id);
