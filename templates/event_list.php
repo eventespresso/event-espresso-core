@@ -134,6 +134,7 @@ if (!function_exists('event_espresso_get_event_details')) {
             $event_meta['registration_startT'] = $event->registration_startT;
             $event_meta['registration_end'] = $event->registration_end;
             $event_meta['registration_endT'] = $event->registration_endT;
+			$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
             //$event_meta['event_thumbnail_url'] = $event->event_thumbnail_url;
 							//$event_meta['display_thumb_in_lists'] = $event->display_thumb_in_lists;
             //var_dump($event_meta);
@@ -205,8 +206,20 @@ if (!function_exists('event_espresso_get_event_details')) {
             //echo '<p>'.print_r($all_meta).'</p>';
             //These variables can be used with other the espresso_countdown, espresso_countup, and espresso_duration functions and/or any javascript based functions.
 			//Warning: May cause additional database queries an should only be used for sites with a small amount of events.
-			// $start_timestamp = espresso_event_time($event_id, 'start_timestamp');
+			//$start_timestamp = espresso_event_time($event_id, 'start_timestamp');
 			//$end_timestamp = espresso_event_time($event_id, 'end_timestamp');
+			
+			// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
+			$ee_gmaps_opts = array(
+				'ee_map_width' => $org_options['ee_map_width'],
+				'ee_map_height' => $org_options['ee_map_height'],
+				'ee_map_zoom' => $org_options['ee_map_zoom'],
+				'ee_map_nav_display' => $org_options['ee_map_nav_display'],
+				'ee_map_nav_size' => $org_options['ee_map_nav_size'],
+				'ee_map_type_control' => $org_options['ee_map_type_control'],
+				'ee_map_align' => $org_options['ee_map_align']
+			);
+			//var_dump($ee_gmaps_opts);   
 
             //This can be used in place of the registration link if you are usign the external URL feature
             $registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
