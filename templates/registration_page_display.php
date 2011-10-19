@@ -23,13 +23,23 @@
 			<?php // echo '</div>'; ?>
 			<?php /* end venue details block */ ?>
 
-			<?php if ($display_desc == "Y") {//Show the description or not ?>
+			<?php 
+			
+			if (isset($event_meta['display_thumb_in_regpage']) && $event_meta['display_thumb_in_regpage'] == 'Y'&& !empty($event_meta['event_thumbnail_url'])) {
+			?>
+				<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a><p>
+			<?php
+			}
+			
+			if ($display_desc == "Y") {//Show the description or not ?>
 				<p class="section-title">
 					<?php _e('Description:', 'event_espresso') ?>
 				</p>
 				<div class="event_description clearfix"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.   ?></div>
 				<?php
-			}//End display description
+			}
+
+			//End display description
 
 			switch ($is_active['status']) {
 				case 'EXPIRED': //only show the event description.
@@ -75,13 +85,6 @@
 					break;
 
 				default://This will display the registration form
-					if (isset($event_meta['display_thumb_in_regpage'])
-									&& $event_meta['display_thumb_in_regpage'] == 'Y'
-									&& !empty($event_meta['event_thumbnail_url'])) {
-						?>
-						<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a><p>
-							<?php
-						}
 
 						/* Display the address and google map link if available */
 						if ($location != '' && (empty($org_options['display_address_in_regform']) || $org_options['display_address_in_regform'] != 'N')) {
@@ -90,10 +93,14 @@
 							<span class="address-block"> <?php echo stripslashes_deep($location); ?><br />
 								<span class="google-map-link"><?php echo $google_map_link; ?></span></span> </p>
 						<?php
-					}
+						}
+					if($org_options['ee_display_map_no_shortcodes']=='Y'){ 
+						 ee_gmap_display($ee_gmap_location, $event_id); 
+					}	
  				
+					//Meta example
+					//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
 					
-//	  echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
 					/* Displays the social media buttons */
 					if (function_exists('espresso_show_social_media')) {
 						echo '<p class="espresso_social">' . espresso_show_social_media($event_id, 'twitter') . ' ' . espresso_show_social_media($event_id, 'facebook') . '</p>';
@@ -121,11 +128,6 @@
 					</p>
 
 					<?php
-					
-				 if('Y' == $org_options['ee_display_map_no_shortcodes']){ 
-						 ee_gmap_display($ee_gmap_location, $event_id); 
-					}					
-					
 					/*
 					 * * This section shows the registration form if it is an active event * *
 					 */
