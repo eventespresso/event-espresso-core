@@ -285,14 +285,19 @@ add_action('widgets_init', 'load_event_espresso_widget');
 
 /* End Core template files used by this plugin */
 
-	//Google map include file
-	##### Requires a check for event listing page ######
-if ($this_is_a_reg_page == true || 'event_venues' == $_REQUEST['page'] ){
+//Google map include file
+##### Requires a check for event listing page ######
+if ($this_is_a_reg_page == true || $_REQUEST['page'] == 'event_venues'){
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
 }
 	
 //Load these files if we are in an actuial registration page
 if ($this_is_a_reg_page == TRUE) {
+	
+	//Check to see if this a reg page
+	//May cause admin and front facing pages to break if turned on
+	//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
+   
     //Process email confirmations
     require_once("includes/functions/email.php");
 
