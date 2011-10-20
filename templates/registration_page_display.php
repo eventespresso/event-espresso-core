@@ -95,7 +95,7 @@
 						<?php
 						}
 					if($org_options['ee_display_map_no_shortcodes']=='Y'){ 
-						 ee_gmap_display($ee_gmap_location, $event_id); 
+						echo ee_gmap_display($ee_gmap_location, $event_id); 
 					}	
  				
 					//Meta example
