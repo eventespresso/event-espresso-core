@@ -9,22 +9,22 @@
 // this needs wrapping in a conditional to test for option setting
 global $org_options;
 if(isset($org_options['thunbnail_popup_lists']) && $org_options['thunbnail_popup_lists'] == 'Y') {
-add_action('wp_footer', 'load_thickbox');
-add_action('wp_print_styles', 'add_thickbox_styles');
+	add_action('wp_footer', 'load_thickbox');
+	add_action('wp_print_styles', 'add_thickbox_styles');
 	function load_thickbox() {
-	wp_print_scripts('thickbox');
+		wp_print_scripts('thickbox');
 	}
-
- function add_thickbox_styles() {
-  wp_enqueue_style('thickbox');
- }
+	
+	function add_thickbox_styles() {
+		wp_enqueue_style('thickbox');
+	}
 }
 
 if (!function_exists('display_all_events')) {
 
 
     function display_all_events() {
-        global $org_options, $ee_gmaps_opts ;
+        global $org_options;
 
         //If set to true, the event page will display recurring events.
         $display_recurrence_event = true; //If set to true, the event page will display recurring events.
@@ -47,7 +47,7 @@ if (!function_exists('display_all_events')) {
 if (!function_exists('display_event_espresso_categories')) {
 
     function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
-        global $wpdb,  $org_options, $ee_gmaps_opts;
+        global $wpdb,  $org_options;
 					
         if ($event_category_id != "null") {
 
@@ -77,10 +77,13 @@ if (!function_exists('event_espresso_get_event_details')) {
     function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override=0) {
         //echo $sql;
         global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts;
-        $multi_reg = false;
+        
+		//Multi event registration
+		$multi_reg = false;
         if (function_exists('event_espresso_multi_reg_init')) {
             $multi_reg = true;
         }
+		
         //echo 'This page is located in ' . get_option( 'upload_path' );
         $event_page_id = $org_options['event_page_id'];
         $currency_symbol = isset($org_options['currency_symbol']) ? $org_options['currency_symbol'] : '';
@@ -95,10 +98,8 @@ if (!function_exists('event_espresso_get_event_details')) {
             echo '<p id="events_category_name-' . $category_id . '" class="events_category_name">' . stripslashes_deep($category_name) . '</p>';
             echo espresso_format_content($category_desc);
         }
-
-
-        
-								//Debug
+			
+		//Debug
         //var_dump($events);
         foreach ($events as $event) {
             $event_id = $event->id;
@@ -136,10 +137,11 @@ if (!function_exists('event_espresso_get_event_details')) {
             $event_meta['registration_endT'] = $event->registration_endT;
 			$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
             //$event_meta['event_thumbnail_url'] = $event->event_thumbnail_url;
-							//$event_meta['display_thumb_in_lists'] = $event->display_thumb_in_lists;
+			//$event_meta['display_thumb_in_lists'] = $event->display_thumb_in_lists;
             //var_dump($event_meta);
             //var_dump($event_address);
-							//Venue information
+			
+			//Venue information
             if ($org_options['use_venue_manager'] == 'Y') {
                 $event_address = $event->venue_address;
                 $event_address2 = $event->venue_address2;
@@ -170,14 +172,18 @@ if (!function_exists('event_espresso_get_event_details')) {
             }
 
             //Address formatting
-												// venue address parts
-												$venue_address_elements = ($event_address != '' ? $event_address . ',' : '') . ($event_address2 != '' ? $event_address2 . ',' : '') . ($event_city != '' ?  $event_city . ',' : '') . ($event_state != '' ? $event_state . ',' : '') . ($event_zip != '' ? $event_zip . ',' : '') . ($event_country != '' ? $event_country . ',' : '');
-            $location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
+			// venue address parts
+			$venue_address_elements = ($event_address != '' ? $event_address . ',' : '') . ($event_address2 != '' ? $event_address2 . ',' : '') . ($event_city != '' ?  $event_city . ',' : '') . ($event_state != '' ? $event_state . ',' : '') . ($event_zip != '' ? $event_zip . ',' : '') . ($event_country != '' ? $event_country . ',' : '');
+            
+			$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
+			
             //var_dump($venue_meta);
             //Google map link creation
             $google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
-												$ee_gmap_location =  $venue_address_elements; 
-            global $all_meta;
+			$ee_gmap_location =  $venue_address_elements; 
+           	
+			//Create all meta vars
+		    global $all_meta;
             $all_meta = array(
                 'event_name' => stripslashes_deep($event_name),
                 'event_desc' => stripslashes_deep($event_desc),
