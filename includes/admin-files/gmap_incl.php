@@ -8,65 +8,68 @@
 */
 
 function ee_gmap_display($location, $event_id){
-// A common options aray for maps, $org_options added to this array in each page to make unique set
-global $ee_gmaps_opts ; 
-	if ( isset($ee_gmaps_opts['ee_map_width']) && !empty($ee_gmaps_opts['ee_map_width']) ){
-	   $ee_map_width = $ee_gmaps_opts['ee_map_width'];
-	} else {
-	   $ee_map_width = '200';
+	// A common options aray for maps, $org_options added to this array in each page to make unique set
+	global $ee_gmaps_opts ; 
+		if ( isset($ee_gmaps_opts['ee_map_width']) && !empty($ee_gmaps_opts['ee_map_width']) ){
+		   $ee_map_width = $ee_gmaps_opts['ee_map_width'];
+		} else {
+		   $ee_map_width = '200';
+		}
+		if ( isset($ee_gmaps_opts['ee_map_height']) && !empty($ee_gmaps_opts['ee_map_height'])  ){
+		   $ee_map_height = $ee_gmaps_opts['ee_map_height'];
+		} else {
+		   $ee_map_height = '200';
+		}
+	 if ( isset($ee_gmaps_opts['ee_map_zoom']) && !empty($ee_gmaps_opts['ee_map_zoom']) ){
+		$ee_map_zoom = $ee_gmaps_opts['ee_map_zoom']; 
+	 } else{
+		$ee_map_zoom = '12';
+	 } 
+	 if( isset($ee_gmaps_opts['ee_map_nav_display']) && $ee_gmaps_opts['ee_map_nav_display'] == 'Y' ){
+		   $ee_map_nav_display = true;
+		}else{
+		   $ee_map_nav_display = false;
+		}
+	 if( isset($ee_gmaps_opts['ee_map_nav_size']) && $ee_gmaps_opts['ee_map_nav_size'] == 'Y' ){
+		   $ee_map_nav_size = 'small';
+		}else {
+		   $ee_map_nav_size = 'default';
+		}	
+	 if( isset($ee_gmaps_opts['ee_map_type_control']) && !empty( $ee_gmaps_opts['ee_map_type_control']) ){
+		   $ee_map_type_control = $ee_gmaps_opts['ee_map_type_control'];
+		}else{
+		   $ee_map_type_control = 'default';
+		}
+	 if(isset($ee_gmaps_opts['ee_map_align']) && !empty( $ee_gmaps_opts['ee_map_align']) ){
+		$ee_map_align = $ee_gmaps_opts['ee_map_align'];
+		 switch($ee_map_align){
+			 case "left":
+			 $map_align = 'float: left;';
+			 break;
+			 case "right":
+			 $map_align = 'float: right;';
+				case "center":
+			 $map_align = 'margin: 0 auto;';
+			 break;
+			 case "none":
+			 $map_align = '';
+			 default:
+			 $map_align = '';
+		 }
 	}
-	if ( isset($ee_gmaps_opts['ee_map_height']) && !empty($ee_gmaps_opts['ee_map_height'])  ){
-	   $ee_map_height = $ee_gmaps_opts['ee_map_height'];
-	} else {
-	   $ee_map_height = '200';
-	}
- if ( isset($ee_gmaps_opts['ee_map_zoom']) && !empty($ee_gmaps_opts['ee_map_zoom']) ){
-    $ee_map_zoom = $ee_gmaps_opts['ee_map_zoom']; 
- } else{
-    $ee_map_zoom = '12';
- } 
- if( isset($ee_gmaps_opts['ee_map_nav_display']) && $ee_gmaps_opts['ee_map_nav_display'] == 'Y' ){
-	   $ee_map_nav_display = true;
-	}else{
-	   $ee_map_nav_display = false;
-	}
- if( isset($ee_gmaps_opts['ee_map_nav_size']) && $ee_gmaps_opts['ee_map_nav_size'] == 'Y' ){
-	   $ee_map_nav_size = 'small';
-	}else {
-	   $ee_map_nav_size = 'default';
-	}	
- if( isset($ee_gmaps_opts['ee_map_type_control']) && !empty( $ee_gmaps_opts['ee_map_type_control']) ){
-	   $ee_map_type_control = $ee_gmaps_opts['ee_map_type_control'];
-	}else{
-	   $ee_map_type_control = 'default';
-	}
- if(isset($ee_gmaps_opts['ee_map_align']) && !empty( $ee_gmaps_opts['ee_map_align']) ){
-	$ee_map_align = $ee_gmaps_opts['ee_map_align'];
- switch($ee_map_align){
- case "left":
- $map_align = 'float: left;';
- break;
- case "right":
- $map_align = 'float: right;';
-	case "center":
- $map_align = 'margin: 0 auto;';
- break;
- case "none":
- $map_align = '';
- default:
- $map_align = '';
- }
-}
 	$event_location = $location; // 'London';
 	$event_id = $event_id;
 	//var_dump($location);
- //echo $event_id;
+ 	//echo $event_id;
 	//echo $ee_map_height;
 	//var_dump($ee_gmaps_opts);
+	
+	ob_start();
 ?>
-  <div class="event-map-parent">
-   <p class="map-title section-title"><?php _e('Event Location', 'event_espresso') ?></p>
-  <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+
+<div class="event-map-parent">
+  
+  <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script> 
   <script type="text/javascript">
       
   var geocoder;
@@ -121,7 +124,10 @@ global $ee_gmaps_opts ;
 
  
   </script>
-
   <div class="ee-gmaps" id="map_canvas<?php echo '_' . $event_id ?>" style="<?php echo $map_align; ?>width: <?php echo $ee_map_width; ?>px; height: <?php echo $ee_map_height; ?>px;"></div>
-  </div>
-		<?php } ?>
+</div>
+<?php
+	$buffer = ob_get_contents();
+	ob_end_clean();
+	return $buffer;
+}
