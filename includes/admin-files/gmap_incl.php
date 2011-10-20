@@ -63,71 +63,65 @@ function ee_gmap_display($location, $event_id){
  	//echo $event_id;
 	//echo $ee_map_height;
 	//var_dump($ee_gmaps_opts);
-	
-	ob_start();
-?>
-
-<div class="event-map-parent">
+	$html = '';
+	$html .= '<div class="event-map-parent">';
   
-  <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script> 
-  <script type="text/javascript">
+	$html .= '<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script> ';
+	$html .= '<script type="text/javascript">';
       
-  var geocoder;
-  var map<?php echo '_' . $event_id ?>;
-  function initialize<?php echo '_' . $event_id ?>() {
-    geocoder = new google.maps.Geocoder();
-       var latlng = new google.maps.LatLng(-34.397, 150.644);
-       var myOptions = {
-       zoom: <?php echo $ee_map_zoom; ?>,
-       center: latlng,
-       <?php if ( true == $ee_map_nav_display  ) {?>
-       navigationControl: true,
-       <?php   } else { ?>
-       navigationControl: false,
-       <?php  } ?>
-       <?php if ('small' == $ee_map_nav_size): ?>
-       navigationControlOptions: {
-       style: google.maps.NavigationControlStyle.SMALL
-       },
-       <?php endif; ?> 
-       <?php if ('default' !== $ee_map_type_control){ ?>
-       mapTypeControl: true,
-       mapTypeControlOptions: {
-							<?php if ('dropdown' == $ee_map_type_control): ?>
-       style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-							<?php else: ?>
-							style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR
-							<?php endif; ?>
-       },
-       <?php } ?> 
-       mapTypeId: google.maps.MapTypeId.ROADMAP,
-       }
-     map<?php echo '_' . $event_id ?> = new google.maps.Map(document.getElementById("map_canvas<?php echo '_' . $event_id ?>"), myOptions);
-  return false;
-		}      
-  function showAddress<?php echo '_' . $event_id ?>(address) {
-    geocoder.geocode( { 'address': address}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        map<?php echo '_' . $event_id ?>.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
-            map: map<?php echo '_' . $event_id ?>, 
-            position: results[0].geometry.location
-        });
-      } else {
-        alert("Geocode was not successful for the following reason: " + status);
-      }
-    });
-				return false;
-  }      
+	$html .= 'var geocoder;';
+	$html .= 'var map_' . $event_id. ';';
+	$html .= 'function initialize_' . $event_id .'() {';
+	$html .= 'geocoder = new google.maps.Geocoder();';
+		$html .= 'var latlng = new google.maps.LatLng(-34.397, 150.644);';
+		$html .= 'var myOptions = {';
+		$html .= 'zoom: '. $ee_map_zoom .',';
+		$html .= 'center: latlng,';
+		if ( true == $ee_map_nav_display  ) {
+			$html .= 'navigationControl: true,';
+       	} else {
+			$html .= 'navigationControl: false,';
+		}
+		if ('small' == $ee_map_nav_size){
+			$html .= 'navigationControlOptions: {';
+       			$html .= 'style: google.maps.NavigationControlStyle.SMALL';
+			$html .= '},';
+		}
+		if ('default' !== $ee_map_type_control){
+			$html .= 'mapTypeControl: true,';
+			$html .= 'mapTypeControlOptions: {';
+				if ('dropdown' == $ee_map_type_control){
+					$html .= 'style: google.maps.MapTypeControlStyle.DROPDOWN_MENU';
+				}else{
+					$html .= 'style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR';
+				}
+			$html .= '};,';
+		}
+		$html .= 'mapTypeId: google.maps.MapTypeId.ROADMAP,};';
+		$html .= 'map_' . $event_id . '= new google.maps.Map(document.getElementById("map_canvas_' . $event_id .'"), myOptions);';
+		$html .= 'return false;';
+	$html .= '}; ';     
+	$html .= 'function showAddress_' . $event_id .'(address) {';
+    	$html .= 'geocoder.geocode( { \'address\': address}, function(results, status) {';
+      	$html .= 'if (status == google.maps.GeocoderStatus.OK) {';
+        	$html .= 'map_' . $event_id .'.setCenter(results[0].geometry.location);';
+			$html .= 'var marker = new google.maps.Marker({';
+			$html .= ' map: map_' . $event_id .', ';
+			$html .= 'position: results[0].geometry.location';
+        $html .= '});';
+      $html .= '} else {';
+        $html .= 'alert("Geocode was not successful for the following reason: " + status);';
+      $html .= '}';
+    $html .= '});';
+				$html .= 'return false;';
+  $html .= '}';      
 
-   jQuery(document).ready( function() { initialize<?php echo '_' . $event_id ?>(); showAddress<?php echo '_' . $event_id ?>('<?php echo $event_location ?>'); } );
+   $html .= 'jQuery(document).ready( function() { initialize_' . $event_id .'(); showAddress_' . $event_id .'(\''.$event_location. '\'); } );';
 
  
-  </script>
-  <div class="ee-gmaps" id="map_canvas<?php echo '_' . $event_id ?>" style="<?php echo $map_align; ?>width: <?php echo $ee_map_width; ?>px; height: <?php echo $ee_map_height; ?>px;"></div>
-</div>
-<?php
-	$buffer = ob_get_contents();
-	ob_end_clean();
-	return $buffer;
+  $html .= '</script>';
+  $html .= '<div class="ee-gmaps" id="map_canvas_' . $event_id .'" style="'.$map_align.'width: '.$ee_map_width.'px; height: '.$ee_map_height.'px;"></div>';
+$html .= '</div>';
+
+	return $html;
 }
