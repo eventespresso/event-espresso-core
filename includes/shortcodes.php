@@ -742,7 +742,7 @@ show_additional_details (true|false default true)
 if (!function_exists('espresso_venue_details_sc')) {
 	function espresso_venue_details_sc($atts){
 
-		global $wpdb,$this_event_id;
+		global $wpdb, $this_event_id, $espresso_premium, $this_is_a_reg_page;
 
 		empty($atts) ? '': extract($atts);
 
@@ -858,12 +858,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 					  //	$map_w = isset($map_w) ? $map_w : 400;
 					  //	$map_h = isset($map_h) ? $map_h : 400;
 					  //	$google_map_image = espresso_google_map_link(array('id'=>$venue_id, 'map_image_class'=>$map_image_class, 'address' => $venue->address, 'city' => $venue->city, 'state' => $venue->state, 'zip' => $venue->zip, 'country' => $venue->country, 'text' => $map_link_text, 'type' => 'map', 'map_h'=>$map_h, 'map_w'=>$map_w));
-					if(isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y') {
-					$venue_address_elements = ($venue->address != '' ? $venue->address . ',' : '') . ($venue->city != '' ? $venue->city . ',' : '') . ($venue->state != '' ?  $venue->state . ',' : '') . ($venue->zip != '' ? $venue->zip . ',' : '') . ($venue->country != '' ? $venue->country . ',' : '');
-     $ee_gmap_location =  $venue_address_elements;
-					ee_gmap_display($ee_gmap_location, $event_id);
-					}
-
+					
 					//Build the venue title
 					if ($show_title != false){
 						$html .= $venue->name !=''? $title_wrapper_start.'>'.stripslashes_deep($venue->name).$title_wrapper_end:'';
@@ -890,6 +885,18 @@ if (!function_exists('espresso_venue_details_sc')) {
 						$html .= $venue->country != ''? stripslashes_deep($venue->country).'<br />':'';
 						$html .= $show_google_map_link != false? $google_map_link:'';
 						$html .= $inside_wrapper_after;
+					}
+					
+					//If the premium version is installed, then we can laod the map.
+					if ($espresso_premium == true){
+						if(isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y') {
+							//Adding this check to make sure we are on a registration page. Otherwise it will break regular posts/pages that are loading the [ESPRESSO_VENUE] shortcode.
+							if ($this_is_a_reg_page == true){
+								$venue_address_elements = ($venue->address != '' ? $venue->address . ',' : '') . ($venue->city != '' ? $venue->city . ',' : '') . ($venue->state != '' ?  $venue->state . ',' : '') . ($venue->zip != '' ? $venue->zip . ',' : '') . ($venue->country != '' ? $venue->country . ',' : '');
+								$ee_gmap_location =  $venue_address_elements;
+								$html .= ee_gmap_display($ee_gmap_location, $event_id);
+							}
+						}
 					}
 
 					//Build the additional details
