@@ -1,7 +1,6 @@
 <?php
-//Added by Imon
-if(isset($_SESSION['espresso_session_id']))
-	{
+	//Added by Imon
+	if(isset($_SESSION['espresso_session_id'])){
 		unset($_SESSION['espresso_session_id']);
 	}
 
@@ -18,7 +17,7 @@ if(isset($_SESSION['espresso_session_id']))
 //Added by Imon
 	$multi_reg = false;
 	$registration_id = $_REQUEST['registration_id'];
-	$admin = isset($_REQUEST['admin'])?$_REQUEST['admin']:false;
+	$admin = isset($_REQUEST['admin']) ? $_REQUEST['admin']:false;
 	$registration_ids = array();
 	$c_sql = "select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ";
 	//echo $c_sql;
@@ -51,7 +50,7 @@ if(isset($_SESSION['espresso_session_id']))
 		$amount_pd = $attendee->amount_pd;
 		$payment_date = $attendee->payment_date;
 		$event_id = $attendee->event_id;
-                $event_name = html_entity_decode(stripslashes($attendee->event_name),ENT_QUOTES,"UTF-8");
+        $event_name = html_entity_decode(stripslashes($attendee->event_name),ENT_QUOTES,"UTF-8");
 		//$attendee_session = $attendee->attendee_session;
 		//$registration_id=$attendee->registration_id;
 	}
@@ -59,15 +58,18 @@ if(isset($_SESSION['espresso_session_id']))
 	#$num_people = isset($num_people) && $num_people > 0 ? $num_people : espresso_count_attendees_for_registration($attendee_id);
 	#$event_meta = event_espresso_get_event_meta($event_id);
 //	$event_data['additional_attendee_reg_info']
-	$payment_status= 'Pending';
+	
+	if ($payment_status == "Completed"){
+		$admin = true;
+	}
+	
+	$payment_status = 'Pending';
 	$txn_type = 'INV';
 	$payment_date = date("d-m-Y");
 
 //Added by Imon
-	if ( count($registration_ids) > 0 && $admin == false )
-	{
-		foreach($registration_ids as $reg_id)
-		{
+	if ( count($registration_ids) > 0 && $admin == false ){
+		foreach($registration_ids as $reg_id){
 			$sql = "UPDATE ". EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $payment_status . "', txn_type = '" . $txn_type . "', payment_date ='" . $payment_date . "'  WHERE registration_id ='" . $reg_id['registration_id'] . "'";
 			$wpdb->query($sql);
 		}
