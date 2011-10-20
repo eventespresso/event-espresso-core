@@ -58,13 +58,41 @@ global $wpdb;
 			}//End foreach ($events as $event)
 	}
 ?>
-<p><?php echo date('l F j, Y',strtotime($start_date)) . " - " . date('l F j, Y',strtotime($end_date)); ?></p>
+
+<p class="start_date">
+<?php 
+if ($end_date !== $start_date) { ?>
+	<span class="section-title">
+	<?php _e('Start Date: ', 'event_espresso'); ?>
+	</span>
+<?php 
+} else { 
+?>
+	<span class="section-title">
+	<?php _e('Date: ', 'event_espresso'); ?>
+	</span>
+	<?php
+}
+echo event_date_display($start_date, get_option('date_format'));
+if ($end_date !== $start_date) {
+	echo '<br />';
+?>
+  	<span class="section-title">
+  	<?php _e('End Date: ', 'event_espresso'); ?>
+  	</span> <?php echo event_date_display($end_date, get_option('date_format'));
+}
+?> 
+</p>
 <p><?php echo $event_address ?></p>
-<p><img style="padding-right: 5px;" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/map.png" border="0" alt="<?php _e('View Map', 'event_espresso'); ?>" /><?php echo $google_map_link; ?> | <a class="event_espressoter_link" href="<?php echo $regurl; ?>"><?php _e('Register', 'event_espresso'); ?></a></p>
+<p><img style="padding-right: 5px;" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/map.png" border="0" alt="<?php _e('View Map', 'event_espresso'); ?>" /><?php echo $google_map_link; ?> | <a class="event_espressoter_link" href="<?php echo $regurl; ?>">
+  <?php _e('Register', 'event_espresso'); ?>
+  </a></p>
 <?php
 if ($display_desc == "Y"){ ?>
 <?php /*?><!--more--><?php */ //Uncomment this part to show the Read More link?>
 <?php _e('Description:','event_espresso'); ?>
 <?php echo wpautop($event_desc); ?>
-<p><a class="event_espressoter_link" href="<?php echo $regurl; ?>"><?php _e('Register', 'event_espresso'); ?></a></p>
+<p><a class="event_espressoter_link" href="<?php echo $regurl; ?>">
+  <?php _e('Register', 'event_espresso'); ?>
+  </a></p>
 <?php }//End display description ?>
