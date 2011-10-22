@@ -56,8 +56,8 @@ if ($myPaypal->validateIpn()) {
         $txn_type = $myPaypal->ipnData['txn_type'];
 		
 		//Change the transaction type to web_accept so it doesn't confuse people
-		if ( $txn_type == 'cart'){
-			 $txn_type = 'web_accept';
+		if ( $txn_type == 'cart' || $txn_type == 'web_accept' ){
+			 $txn_type = 'PayPal';
 		}
 		
         global $wpdb;
