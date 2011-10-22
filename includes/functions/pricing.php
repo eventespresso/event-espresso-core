@@ -291,6 +291,7 @@ if (!function_exists('espresso_payment_type')) {
     function espresso_payment_type($type) {
         switch ($type) {
             case 'web_accept':
+			case 'cart':
                 return __('PayPal', 'event_espresso');
                 break;
             case 'EW':
