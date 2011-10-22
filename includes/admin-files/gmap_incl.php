@@ -95,7 +95,7 @@ function ee_gmap_display($location, $event_id){
 				}else{
 					$html .= 'style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR';
 				}
-			$html .= '};,';
+			$html .= '},';
 		}
 		$html .= 'mapTypeId: google.maps.MapTypeId.ROADMAP,};';
 		$html .= 'map_' . $event_id . '= new google.maps.Map(document.getElementById("map_canvas_' . $event_id .'"), myOptions);';
