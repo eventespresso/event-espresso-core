@@ -54,7 +54,12 @@ if ($myPaypal->validateIpn()) {
         $pending_reason = $myPaypal->ipnData['pending_reason'];
         $reason_code = $myPaypal->ipnData['reason_code'];
         $txn_type = $myPaypal->ipnData['txn_type'];
-
+		
+		//Change the transaction type to web_accept so it doesn't confuse people
+		if ( $txn_type == 'cart'){
+			 $txn_type = 'web_accept';
+		}
+		
         global $wpdb;
         $sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', amount_pd = '$amount_pd',  payment_date ='$payment_date', transaction_details = '" . serialize($myPaypal) . "' WHERE registration_id ='" . espresso_registration_id($attendee_id) . "' ";
         $wpdb->query($sql);
