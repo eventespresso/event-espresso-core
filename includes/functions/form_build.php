@@ -113,7 +113,7 @@ if (!function_exists('event_form_build')) {
                     //old way $checked = in_array ( $value, $answers ) ? ' checked="checked"' : "";
                     $value = trim($value);
                     $checked = ( $value == $answer ) ? ' checked="checked"' : "";
-                    $html .= '<li><label for="SINGLE_' . $question->id . '_' . $key . '" class="'.$class.'"><input title="' . $question->required_text . '" id="SINGLE_' . $question->id . '_' . $key . '" ' . $required . ' name="SINGLE_' . $question->id . $multi_name_adjust . '"  type="radio" value="' . $value . '" ' . $checked . ' /> ' . $value . '</label></li>';
+                    $html .= '<li><label for="SINGLE_' . $question->id . '_' . $key . '" class="'.$class.'"><input title="' . $question->required_text . '" id="SINGLE_' . $question->id . '_' . $key . '" ' . $required . ' name="' . $field_name . $multi_name_adjust . '"  type="radio" value="' . $value . '" ' . $checked . ' /> ' . $value . '</label></li>';
                     //echo $label;
                 }
                 $html .= '</ul>';
@@ -131,13 +131,13 @@ if (!function_exists('event_form_build')) {
                     $checked = (is_array($answer) && in_array($value, $answer)) ? ' checked="checked"' : "";
                     //$checked = ( $value == $answer ) ? ' checked="checked"' : "";
                     /* 	$html .= "<label><input type=\"checkbox\"$required id=\"MULTIPLE_$question->id_$key\" name=\"MULTIPLE_$question->id_$key\"  value=\"$value\"$checked /> $value</label><br/>\n"; */
-                    $html .= '<li><label for="' . str_replace(' ', '', $value) . '-' . $event_id . '" class="'.$class.'"><input id="' . str_replace(' ', '', $value) . '-' . $event_id . '" ' . $required . 'name="MULTIPLE_' . $question->id . $multi_name_adjust . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> ' . $value . '</label></li>';
+                    $html .= '<li><label for="' . str_replace(' ', '', $value) . '-' . $event_id . '" class="'.$class.'"><input id="' . str_replace(' ', '', $value) . '-' . $event_id . '" ' . $required . 'name="' . $field_name . $multi_name_adjust . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> ' . $value . '</label></li>';
                 }
                 $html .= '</ul>';
                 $html .= '</fieldset>';
                 break;
             case "DROPDOWN" :
-                $dd_type = $question->system_name == 'state' ? 'name="state"' : 'name="DROPDOWN_' . $question->id . $multi_name_adjust . '"';
+                $dd_type = $question->system_name == 'state' ? 'name="state"' : 'name="' . $field_name . $multi_name_adjust . '"';
                 $values = explode(",", $question->response);
                 $answers = explode(",", $answer);
                 $html .= '<p class="event_form_field" class="'.$class.'">' . $label;

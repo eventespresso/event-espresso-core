@@ -23,14 +23,14 @@
 			<?php // echo '</div>'; ?>
 			<?php /* end venue details block */ ?>
 
-			<?php 
-			
+			<?php
+
 			if (isset($event_meta['display_thumb_in_regpage']) && $event_meta['display_thumb_in_regpage'] == 'Y'&& !empty($event_meta['event_thumbnail_url'])) {
 			?>
 				<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a><p>
 			<?php
 			}
-			
+
 			if ($display_desc == "Y") {//Show the description or not ?>
 				<p class="section-title">
 					<?php _e('Description:', 'event_espresso') ?>
@@ -94,13 +94,13 @@
 								<span class="google-map-link"><?php echo $google_map_link; ?></span></span> </p>
 						<?php
 						}
-					if($org_options['ee_display_map_no_shortcodes']=='Y'){ 
-						echo ee_gmap_display($ee_gmap_location, $event_id); 
-					}	
- 				
+					if(!empty($org_options['ee_display_map_no_shortcodes']) && $org_options['ee_display_map_no_shortcodes']=='Y'){
+						echo ee_gmap_display($ee_gmap_location, $event_id);
+					}
+
 					//Meta example
 					//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
-					
+
 					/* Displays the social media buttons */
 					if (function_exists('espresso_show_social_media')) {
 						echo '<p class="espresso_social">' . espresso_show_social_media($event_id, 'twitter') . ' ' . espresso_show_social_media($event_id, 'facebook') . '</p>';
@@ -219,7 +219,7 @@
 							echo event_espresso_add_question_groups($question_groups, '', null, 0, array('attendee_number'=>1));
 							?>
 						</fieldset>
-					
+
 					<?php
 
 						//Multiple Attendees
@@ -232,7 +232,7 @@
 							<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
 							<?php
 						}//End allow multiple
-						
+
 						//Coupons
 						if (function_exists('event_espresso_coupon_registration_page')) {
 							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
@@ -259,10 +259,10 @@
 							?>
 							<p class="event_form_field" id="captcha-<?php echo $event_id; ?>">
 								<?php _e('Anti-Spam Measure: Please enter the following phrase', 'event_espresso'); ?>
-								<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false); ?> 
+								<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false); ?>
 							</p>
 						 <?php } //End use captcha ?>
-						
+
 						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
 							<input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
 						</p>
