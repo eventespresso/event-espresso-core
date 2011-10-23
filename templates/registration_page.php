@@ -261,7 +261,9 @@ if (!function_exists('register_attendees')) {
 
 				//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
 
-            if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true' && !is_user_logged_in()) {
+            if ($org_options['use_captcha'] == 'Y'
+										&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
+										&& !is_user_logged_in()) {
                 ?>
                 <script type="text/javascript">
                     var RecaptchaOptions = {

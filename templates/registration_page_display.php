@@ -248,7 +248,9 @@
 						<?php
 
 						//Recaptcha portion
-						if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true' && !is_user_logged_in()) {
+						if ($org_options['use_captcha'] == 'Y'
+										&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
+										&& !is_user_logged_in()) {
 							if (!function_exists('recaptcha_get_html')) {
 								require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
 							}//End require captcha library

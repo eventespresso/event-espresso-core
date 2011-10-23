@@ -73,30 +73,30 @@ function espresso_info_header() {
     print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
 }
 add_action('wp_head', 'espresso_info_header');
- 
+
 //Globals
 global $org_options, $wpdb, $this_is_a_reg_page;
 $org_options = get_option('events_organization_settings');
 $page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
 
-//Get the plugin url and content directories. 
+//Get the plugin url and content directories.
 //These variables are used to define the plugin and content directories in the constants below.
 $wp_plugin_url = WP_PLUGIN_URL;
 $wp_content_url = WP_CONTENT_URL;
 
 //Check if SSL is loaded
 if (is_ssl()){
-	
-	//Create the server name 
+
+	//Create the server name
     $server_name = str_replace('https://', '', site_url());
-	
+
 	//If the site is using SSL, we need to make sure our files get loaded in SSL.
 	//This will (should) make sure everything is loaded via SSL
 	//So that the "..not everything is secure.." message doesn't appear
 	//Still will be a problem if other themes and plugins do not implement ssl correctly
 	$wp_plugin_url = str_replace('http://', 'https://', WP_PLUGIN_URL);
     $wp_content_url = str_replace('http://', 'https://', WP_CONTENT_URL);
-	
+
 }else{
     $server_name = str_replace('http://', '', site_url());
 }
@@ -287,17 +287,17 @@ add_action('widgets_init', 'load_event_espresso_widget');
 
 //Google map include file
 ##### Requires a check for event listing page ######
-if ($this_is_a_reg_page == true || $_REQUEST['page'] == 'event_venues'){
+if ($this_is_a_reg_page == true || (!empty($_REQUEST['page']) && $_REQUEST['page'] == 'event_venues')){
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
 }
-	
+
 //Load these files if we are in an actuial registration page
 if ($this_is_a_reg_page == TRUE) {
-	
+
 	//Check to see if this a reg page
 	//May cause admin and front facing pages to break if turned on
 	//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
-   
+
     //Process email confirmations
     require_once("includes/functions/email.php");
 
@@ -310,7 +310,7 @@ if ($this_is_a_reg_page == TRUE) {
 
     //Add attendees to the database
     require_once("includes/process-registration/add_attendees_to_db.php");
-	
+
 
 
     //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] shortcode
@@ -446,7 +446,7 @@ if (is_admin()) {
             'event_categories',
             'admin_reports',
             'form_builder',
-            'form_groups', 
+            'form_groups',
 			'my-events',
             'event_emails',
             'event_venues',
@@ -496,7 +496,7 @@ if (!function_exists('espresso_load_javascript_files')) {
 
         wp_register_script('validation', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/validation.js"), false, EVENT_ESPRESSO_VERSION);
         wp_print_scripts('validation');
-								
+
     }
 
 }
