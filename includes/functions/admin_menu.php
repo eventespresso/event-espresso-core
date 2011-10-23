@@ -110,7 +110,7 @@ if (!function_exists('add_event_espresso_menus')) {
 			//Permissions settings
 			add_submenu_page('events', __('Event Espresso - Event Manager Permissions', 'event_espresso'), __('Settings', 'event_espresso'), 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
 			add_submenu_page('events', __('Event Espresso - Event Manager Roles', 'event_espresso'), __('User Roles', 'event_espresso'), 'administrator', 'roles', 'espresso_permissions_roles_mnu');
-			if ($org_options['use_venue_manager'] == 'Y') {
+			if ($org_options['use_venue_manager'] == 'Y' && function_exists('espresso_permissions_user_groups')) {
 				if (espresso_member_data('role') == "administrator") {
 					add_submenu_page('events', __('Event Espresso - Locales/Regions', 'event_espresso'), __('Locales/Regions', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_venue_manager']), 'event_locales', 'event_espresso_locale_config_mnu');
 				}
