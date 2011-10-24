@@ -22,11 +22,21 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
     $wpdb->show_errors();
     //print_r($question_groups);
 
+    /** 
+     * Added this check because in some cases question groups are being sent as serialized
+     */ 
+    if ( !is_array($question_groups) && !empty($question_groups)) {
+        $question_groups = unserialize($question_groups);
+    }
+    
     if (count($question_groups) > 0) {
         $questions_in = '';
 
-        foreach ($question_groups as $g_id)
+        
+        foreach ($question_groups as $k=>$g_id) {
             $questions_in .= $g_id . ',';
+        }
+                   
 
         $questions_in = substr($questions_in, 0, -1);
         $group_name = '';
