@@ -94,7 +94,7 @@
 								<span class="google-map-link"><?php echo $google_map_link; ?></span></span> </p>
 						<?php
 						}
-					if($show_ee_gmap_no_shortcodes){
+					if($show_ee_gmap_no_shortcode){
 						echo ee_gmap_display($ee_gmap_location, $event_id);
 					}
 
