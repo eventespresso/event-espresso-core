@@ -78,10 +78,12 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
                             break;
                         case "MULTIPLE" :
                             $value_string = '';
-                            for ($i = 0; $i < count($response_source[$question->question_type . '_' . $question->id]); $i++) {
+                            if(!empty($response_source[$question->question_type . '_' . $question->id])) {
+															for ($i = 0; $i < count($response_source[$question->question_type . '_' . $question->id]); $i++) {
 
                                 $value_string .= trim($response_source[$question->question_type . '_' . $question->id][$i]) . ",";
-                            }
+															}
+														}
 
                             $wpdb->query("INSERT INTO " . EVENTS_ANSWER_TABLE . " (registration_id, attendee_id, question_id, answer)
 															VALUES ('" . $registration_id . "', '" . $attendee_id . "', '" . $question->id . "', '" . $value_string . "')");

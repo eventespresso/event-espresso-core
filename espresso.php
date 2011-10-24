@@ -29,37 +29,29 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-//Define the version of the plugin
 function espresso_version() {
     return '3.2.P';
 }
+define("EVENT_ESPRESSO_VERSION", espresso_version());
 
-//Start the session
-function ee_init_session() {
+function espresso_init_session() {
     global $org_options;
 
     if (!isset($_SESSION)) {
         session_start();
     }
     if ((isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url'] || $_REQUEST['page_id'] == $org_options['notify_url'])) || !isset($_SESSION['espresso_session_id']) || $_SESSION['espresso_session_id'] == '') {
-        //ssession_regenerate_id(true);
         $_SESSION['espresso_session_id'] = '';
         $_SESSION['events_in_session'] = '';
         $_SESSION['event_espresso_pre_discount_total'] = 0;
         $_SESSION['event_espresso_grand_total'] = 0;
         $_SESSION['event_espresso_coupon_code'] = '';
     }
-
     $_SESSION['espresso_session_id'] = session_id();
 }
+add_action('init', 'espresso_init_session', 1);
 
-if (!session_id() || empty($_SESSION['espresso_session_id'])) {
-    add_action('init', 'ee_init_session', 1);
-}
-
-//If the export command is issued, run this function
-add_action('init', 'ee_check_for_export');
-function ee_check_for_export() {
+function espresso_check_for_export() {
     if (isset($_REQUEST['export'])) {
         if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/export.php')) {
             require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/export.php');
@@ -67,6 +59,7 @@ function ee_check_for_export() {
         }
     }
 }
+add_action('init', 'espresso_check_for_export');
 
 //Load the Event Espresso HTML meta
 function espresso_info_header() {
@@ -131,8 +124,6 @@ if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin())
     $this_is_a_reg_page = TRUE;
 
 
-//Create a constant for the version of the plugin
-define("EVENT_ESPRESSO_VERSION", espresso_version());
 define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
 
 //Define the plugin directory and path
