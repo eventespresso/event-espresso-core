@@ -79,7 +79,15 @@ function event_espresso_txn() {
                     require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/ewaypaymentprocess.php");
                 } elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/eway/ewaypaymentprocess.php")) {
                     //Default files
-                    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways//eway/ewaypaymentprocess.php");
+                    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/eway/ewaypaymentprocess.php");
+                }
+						} elseif (get_option('events_quickpay_active') == 'true' && isset($_REQUEST['chronopay_callback'])) {
+                if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/quickpay/quickpaypaymentprocess.php")) {
+                    //Moved files
+                    require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/quickpay/quickpaypaymentprocess.php");
+                } elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/quickpay/quickpaypaymentprocess.php")) {
+                    //Default files
+                    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/quickpay/quickpaypaymentprocess.php");
                 }
                 //Process Firstdata
             } elseif ((get_option('events_firstdata_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
