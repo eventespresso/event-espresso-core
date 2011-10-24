@@ -49,6 +49,7 @@ function event_espresso_gateways_options() {
 	$gateways[] = '2checkout';
 	$gateways[] = 'paytrace';
 	$gateways[] = 'quickpay';
+	$gateways[] = 'worldpay';
     foreach ($gateways as $gateway) {
         $func 			= 'event_espresso_' . $gateway . '_payment_settings';
         $fallback_func 	= 'event_espresso_' . $gateway . '_settings';
