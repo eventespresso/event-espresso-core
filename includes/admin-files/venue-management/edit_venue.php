@@ -165,13 +165,24 @@ function edit_event_venue(){
                   <input type="text" id="image" name="image" size="25" value="<?php echo stripslashes_deep($meta['image']);?>">
                 </li>
 																<li>
-																  <label for="enable-ven-gmaps"><?php _e('Enable Venue for Google Maps', 'event_espresso')  ?></label>
+																  <p class="section-heading">Select venue address to display in an interactive map or add a static map url</p>
+																		<label for="enable-ven-gmaps"><?php _e('Enable Venue for Google Maps', 'event_espresso')  ?></label>
 																   <?php echo select_input('enable_for_maps', $values, isset($meta['enable_for_maps']) ? $meta['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?>
+																  <label for="gmap-static">Add static map url</label><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_gmap"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a>
+																  <input type="text" id="gmap-static" name="gmap_static" size="25" <?php echo (!empty($meta['gmap_static']) )? 'value="' . $meta['gmap_static'] .'"' : 'value=""'; ?> />
 																</li>
-																</li>
-																<?php if( isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y') { 
+																
+																<li>
+																<?php if( isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y' && empty($meta['gmap_static']) ) { 
 																  echo ee_gmap_display($ee_gmap_location, $event_id);
-															 } ?>
+															 }else{ ?>
+																
+	               <iframe src="<?php echo $meta['gmap_static'] ?>&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" width="300" height="300">
+																
+																</iframe>
+																<a href="href="<?php echo $meta['gmap_static'] ?>">View Large map</a>
+																
+																<?php } ?>
 																</li>
               </ul>
 												</td>

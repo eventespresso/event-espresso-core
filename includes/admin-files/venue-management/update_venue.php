@@ -10,6 +10,7 @@ function update_event_venue(){
 	$venue_meta['website'] = $_REQUEST['website'];
 	$venue_meta['description'] = esc_html($_REQUEST['description']);
 	$venue_meta['enable_for_maps'] = esc_html($_REQUEST['enable_for_maps']);
+	$venue_meta['gmap_static'] = esc_url($_REQUEST['gmap_static']);
 	$locale = $_REQUEST['locale'];
     $meta = serialize($venue_meta);
 		

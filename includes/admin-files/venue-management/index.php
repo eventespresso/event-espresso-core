@@ -152,17 +152,9 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit'){require_once("e
      </div>
      </div>
 			 
-<?php #### help dialogue box #### ?>
-<div id="venue_locale" style="display:none">
-<div class="TB-ee-frame">
-<h2><?php _e('Venue Locale/Region', 'event_espresso'); ?></h2>
-      <p><?php _e('This can be used to group venues together by locales/regions.', 'event_espresso'); ?></p>
-				<p><?php _e('Once you have created a locale in the <a href="admin.php?page=event_locales"> Manage Locales/Regions</a> page it will be available to select on the \'Add a Venue\' page', 'event_espresso')?></p>
-</div>			
-</div>
-<?php #### end help #### ?>
+<?php include('venue_help.php'); ?>
 
-<script>
+<script type="text/javascript">
 jQuery(document).ready(function($) {						
 	
 	/* show the table data */
