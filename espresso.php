@@ -619,7 +619,6 @@ add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');
 wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
 
 // These actions need to be loaded a the bottom of this script to prevent errors when post/get requests are received.
-
 // Export PDF invoice
 if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
