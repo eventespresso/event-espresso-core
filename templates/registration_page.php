@@ -52,7 +52,12 @@ if (!function_exists('register_attendees')) {
 								'ee_map_align' => empty($org_options['ee_map_align_single']) ? '' : $org_options['ee_map_align_single']
 								);
 					   //var_dump($ee_gmaps_opts);
-
+								
+								if(!empty( $org_options['ee_display_map_no_shortcodes'] ) && $org_options['ee_display_map_no_shortcodes'] == 'Y') {
+         $show_ee_gmap_no_shortcode = true;
+								}else{
+								 $show_ee_gmap_no_shortcode = false;
+								}
         //Build event queries
         $sql = "SELECT e.*, ese.start_time, ese.end_time ";
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';

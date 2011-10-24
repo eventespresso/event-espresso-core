@@ -63,7 +63,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 					
     
 	if(isset($org_options['thunbnail_popup_lists']) && $org_options['thunbnail_popup_lists'] == 'Y') {
-		$thumb_url = '#TB_inline?height=400&width=500&inlineId=event-thumb-detail' . $event_id  ;
+		$thumb_url = '#TB_inline?height=500&width=500&inlineId=event-thumb-detail' . $event_id  ;
 		$thickbox_class = ' thickbox';
 	}else {
 		$thumb_url = $registration_url;
@@ -85,20 +85,24 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
   <div class="event-desc">
     <p><?php echo espresso_format_content($event_desc); ?></p>
   </div>
-  <?php
-    }
-    ?>
-  <?php if( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] == 'Y' && !empty($event_meta['event_thumbnail_url'])){ ?>
+  <?php  } ?>
+   
+  
+		<?php if( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] == 'Y' && !empty($event_meta['event_thumbnail_url'])){ ?>
   <a id="ee-event-list-thumb" class="ee-thumbs<?php echo $thickbox_class ?>" href="<?php echo $thumb_url ?>"> <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span> </a>
   <?php }?>
-  <?php if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
-  <p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
-    <span class="address-block"><?php echo stripslashes_deep($location); ?> <span class="google-map-link">
-    <?php  echo $google_map_link; ?>
-    </span></span> </p>
+  
+		<?php if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
+  <p class="event_address" id="event_address-<?php echo $event_id ?>">
+		 <span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
+    <span class="address-block"><?php echo stripslashes_deep($location); ?> 
+				  <span class="google-map-link"><?php  echo $google_map_link; ?></span>
+			 </span> 
+		</p>
   <?php } ?>
-  <?php //print_r($event_meta['enable_for_gmap']); ?>
+  
   <?php 
+
 	if(isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == 'Y'){ 
 		if(function_exists('ee_gmap_display') && $org_options['ee_display_map_no_shortcodes'] == 'Y'){
 			echo ee_gmap_display($ee_gmap_location, $event_id);
