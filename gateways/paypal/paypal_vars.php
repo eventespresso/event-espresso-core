@@ -100,7 +100,7 @@ $myPaypal->addField('notify_url', home_url() . '/?page_id=' . $org_options['noti
 //echo espresso_quantity_for_registration($attendee_id);
 $event_meta = event_espresso_get_event_meta($event_id);
 if (count($attendees) > 0) {
-    $myPaypal->addField('cmd', '_cart');
+    #$myPaypal->addField('cmd', '_cart');
     $myPaypal->addField('upload', '1');
     #if ($event_meta['additional_attendee_reg_info'] == 1 || espresso_quantity_for_registration($attendee_id) >1) {
     #    $div = $event_cost / $quantity;
@@ -117,20 +117,35 @@ if (count($attendees) > 0) {
     $i = 1;
     $div = $event_cost / $quantity;
     #foreach ($data as $row)
-    foreach ($attendees as $attendee) {
-        #$afname = $row['fname'];
-        #$alname = $row['lname'];
-        #$aemail = $row['email'];
-        #$myPaypal->addField('item_number_' . $i, $registration_id);
-        $myPaypal->addField('item_name_' . $i, $attendee['attendee_info']); #stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
-        $myPaypal->addField('amount_' . $i, number_format($attendee['unit_price'], 2, '.', '')); #number_format($div, 2, '.', ''));
-        $myPaypal->addField('quantity_' . $i, $attendee['quantity']);
-        if ( $attendee['discount'] > 0 ) {
-            $myPaypal->addField('discount_amount_' . $i, number_format($attendee['discount'], 2, '.', ''));
+    if ( count($attendees) == 1 ) {
+        $myPaypal->addField('cmd', '_xclick');
+        foreach ($attendees as $attendee) {
+            $myPaypal->addField('item_name' , $attendee['attendee_info']); #stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
+            $myPaypal->addField('amount' , number_format($attendee['unit_price'], 2, '.', '')); #number_format($div, 2, '.', ''));
+            $myPaypal->addField('quantity' , $attendee['quantity']);
+            if ( $attendee['discount'] > 0 ) {
+                $myPaypal->addField('discount_amount', number_format($attendee['discount'], 2, '.', ''));
+            }
+            $i++;
         }
+    } else {
         
-        $i++;
-    }
+        $myPaypal->addField('cmd', '_cart');
+        foreach ($attendees as $attendee) {
+            #$afname = $row['fname'];
+            #$alname = $row['lname'];
+            #$aemail = $row['email'];
+            #$myPaypal->addField('item_number_' . $i, $registration_id);
+            $myPaypal->addField('item_name_' . $i, $attendee['attendee_info']); #stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
+            $myPaypal->addField('amount_' . $i, number_format($attendee['unit_price'], 2, '.', '')); #number_format($div, 2, '.', ''));
+            $myPaypal->addField('quantity_' . $i, $attendee['quantity']);
+            if ( $attendee['discount'] > 0 ) {
+                $myPaypal->addField('discount_amount_' . $i, number_format($attendee['discount'], 2, '.', ''));
+            }
+            
+            $i++;
+        }
+    }  
     #}
     #}
 }
