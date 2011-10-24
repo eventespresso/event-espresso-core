@@ -143,3 +143,4 @@ if (!function_exists('add_event_espresso_menus')) {
 
 //End function add_event_espresso_menus()
 }//End if (!function_exists('add_event_espresso_menus'))
+add_action('admin_menu', 'add_event_espresso_menus');

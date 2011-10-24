@@ -524,3 +524,4 @@ function event_espresso_pay($att_registration_id=0) {
         }
     }
 }
+add_shortcode('ESPRESSO_PAYMENTS', 'event_espresso_pay');

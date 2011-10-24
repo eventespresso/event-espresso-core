@@ -268,11 +268,10 @@ if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/custom_pos
 //The widget can be over-ridden with the custom files addon
 event_espresso_require_template('widget.php');
 
-function load_event_espresso_widget() {
+function espresso_widget() {
     register_widget('Event_Espresso_Widget');
 }
-
-add_action('widgets_init', 'load_event_espresso_widget');
+add_action('widgets_init', 'espresso_widget');
 
 /* End Core template files used by this plugin */
 
@@ -470,8 +469,6 @@ if (is_admin()) {
 }
 
 //Load the required Javascripts
-add_action('wp_footer', 'espresso_load_javascript_files');
-add_action('init', 'espresso_load_jquery', 10);
 if (!function_exists('espresso_load_javascript_files')) {
 
     function espresso_load_javascript_files() {
@@ -491,6 +488,8 @@ if (!function_exists('espresso_load_javascript_files')) {
     }
 
 }
+add_action('wp_footer', 'espresso_load_javascript_files');
+
 if (!function_exists('espresso_load_jquery')) {
 
     function espresso_load_jquery() {
@@ -503,11 +502,11 @@ if (!function_exists('espresso_load_jquery')) {
     }
 
 }
+add_action('init', 'espresso_load_jquery', 10);
+
 
 //End Javascript files
 //Load the style sheets for the reegistration pages
-add_action('wp_print_styles', 'add_event_espresso_stylesheet');
-
 if (!function_exists('add_event_espresso_stylesheet')) {
 
     function add_event_espresso_stylesheet() {
@@ -542,6 +541,8 @@ if (!function_exists('add_event_espresso_stylesheet')) {
     }
 
 }
+add_action('wp_print_styles', 'add_event_espresso_stylesheet');
+
 //End styles
 
 /**
@@ -561,12 +562,7 @@ function event_espresso_filter_plugin_actions($links, $file) {
     }
     return $links;
 }
-
-//Settings link in the plugins overview page
 add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
-
-//Admin menu
-add_action('admin_menu', 'add_event_espresso_menus');
 
 //Run the program
 if (!function_exists('event_espresso_run')) {
@@ -622,10 +618,6 @@ if (!function_exists('event_espresso_run')) {
     }
 
 }
-
-//Page shortcodes
-add_shortcode('ESPRESSO_PAYMENTS', 'event_espresso_pay');
-add_shortcode('ESPRESSO_TXN_PAGE', 'event_espresso_txn');
 add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');
 
 //Load the admin menu styles

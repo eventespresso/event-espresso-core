@@ -225,3 +225,4 @@ function event_espresso_txn() {
         }
     }
 }
+add_shortcode('ESPRESSO_TXN_PAGE', 'event_espresso_txn');
