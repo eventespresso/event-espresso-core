@@ -138,7 +138,7 @@ function event_espresso_txn() {
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/2checkout/2checkoutpaymentprocess.php");
 				}
 			} elseif ((get_option('events_paypal_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
-							&& isset($_REQUEST['x_cust_id']) && $_REQUEST['x_cust_id'] == '') {
+							&& empty($_REQUEST['x_cust_id'])) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_ipn.php")) {
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_ipn.php");
