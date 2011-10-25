@@ -36,7 +36,7 @@ function event_espresso_manage_templates() {
 		update_option('events_organization_settings', $org_options);
 		echo '<div id="message" class="updated fade"><p><strong>' . __('Template details saved.', 'event_espresso') . '</strong></p></div>';
 	}
-
+	$org_options = get_option('events_organization_settings');
 	$values = array(
 			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 			array('id' => 'N', 'text' => __('No', 'event_espresso'))
