@@ -1,9 +1,32 @@
 <?php
+/* 
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license				http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link						http://www.eventespresso.com
+ * @ version		 	3.2
+ *
+ * ------------------------------------------------------------------------
+ *
+ * Import Export CSV
+ *
+ * @package				Event Espresso
+ * @subpackage		includes/functions
+ * @author					Brent Christensen 
+ *
+ * ------------------------------------------------------------------------
+ */
+
 /**
  *			@Import contents of csv file and store values in an array to be manipulated by other functions
  *			@param string $path_to_file - the csv file to be imported including the path to it's location
  *			@param boolean $first_row_is_headers - whether the first row of data is headers or not - TRUE = headers, FALSE = data
- *			@return array - multi dimensional with headers as keys (if headers exist)
+ *			@return mixed - array on success - multi dimensional with headers as keys (if headers exist) OR string on fail - error message
  */	
 function espresso_import_csv_to_array( $path_to_file, $first_row_is_headers = TRUE ) {
 	
@@ -73,7 +96,7 @@ function espresso_import_csv_to_array( $path_to_file, $first_row_is_headers = TR
  *			@Save the import contents of a csv file to the db
  *			@param array $csv_data_array - the array containing the csv data
  *			@param array $columns_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
- *			@return TRUE on success, FALSE on epic fails
+ *			@return TRUE on success, FALSE on fail
  */	
 function espresso_save_csv_to_db( $csv_data_array, $columns_to_save, $table ) {
 
@@ -104,6 +127,7 @@ function espresso_save_csv_to_db( $csv_data_array, $columns_to_save, $table ) {
 					$format[] = '%s';
 				}
 				
+				// save to the multidimensional array
 				$data[$save_to_columns[$innerkey]] = $value;
 
 			}
@@ -128,16 +152,84 @@ function espresso_save_csv_to_db( $csv_data_array, $columns_to_save, $table ) {
 		
 }
 
-function espresso_get_max_upload_size ( $divisor = FALSE ) {
- 
- $max_upload = (int)(ini_get('upload_max_filesize'));
- $max_post = (int)(ini_get('post_max_size'));
- $memory_limit = (int)(ini_get('memory_limit'));
- $upload_mb = min($max_upload, $max_post, $memory_limit);
- 
- if ( $divisor ) {
-  $upload_mb = $upload_mb / $divisor;
- }
- 
- return $upload_mb;
+
+/**
+ *			@Export contents of an array to csv file
+ *			@param array $data - the array of data to be converted to csv and exported 
+ *			@param string $filename - name for newly created csv file
+ *			@param boolean $download - whether csv is sent to browser for download or saved to file system - TRUE = download, FALSE = save to file
+ *			@return TRUE on success, FALSE on fail
+ */	
+function espresso_export_array_to_csv( $data = FALSE, $filename = FALSE, $download = TRUE  ) {
+
+	// no data file?? get outta here
+	if ( ! $data or ! is_array( $data ) or empty( $data ) ) {
+		return FALSE;
+	}
+	
+	// no filename?? get outta here
+	if ( ! $filename ) {
+		return FALSE;
+	}
+	
+	// are we downloading as an attachment?
+	if ( $download ) {
+		// send response headers to the browser
+		header( 'Content-Type: text/csv' );
+		header( 'Content-Disposition: attachment;filename=' . $filename );
+		// open an output stream
+		$fp = fopen('php://output', 'w');
+	} else {
+		// not downloading, so open a file on the server to write to
+		$fp = fopen( $filename, 'w' );
+	}
+
+	// loop through data and add each row to the file/stream as csv
+	foreach ( $data as $row ) {
+			fputcsv( $fp, $row );
+	}
+	
+	// if the file closes properly, then all is good
+	if ( fclose($fp) ) {
+		return TRUE;
+	} else {	
+		return FALSE;
+	}
+
 }
+
+
+/**
+ *			@Determine the maximum upload file size based on php.ini settings
+ *			@param int $percent_of_max - desired percentage of the max upload_mb
+ *			@return int
+ */	
+function espresso_get_max_upload_size ( $percent_of_max = FALSE ) {
+
+	$max_upload = (int)(ini_get('upload_max_filesize'));
+	$max_post = (int)(ini_get('post_max_size'));
+	$memory_limit = (int)(ini_get('memory_limit'));
+	
+	// determine the smallest of the three values from above
+	$upload_mb = min($max_upload, $max_post, $memory_limit);
+	
+	//convert MB to KB
+	$upload_mb = $upload_mb * 1024;
+	
+	// don't want the full monty? then reduce the max uplaod size
+	if ( $percent_of_max ) {
+		// is percent_of_max like this -> 50 or like this -> 0.50 ?
+		if ( $percent_of_max > 1 ) {
+			// chnages 50 to 0.50
+			$percent_of_max = $percent_of_max / 100;
+		}
+		// make upload_mb a percentage of the max upload_mb
+		$upload_mb = $upload_mb * $percent_of_max;
+	}
+	
+	return $upload_mb;
+}
+
+/* End of file import_export_csv.php */
+/* Location: /includes/functions/import_export_csv.php */
+?>
