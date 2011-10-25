@@ -172,6 +172,10 @@ table.price_list {
 	font-size: 90%;
  text-decoration: none;
 }	
+p.social-media-buttons {
+ clear: both;
+ padding: 10px 0;
+}
 /* >Pages
 ------------------------------------------------------------------------------*/
 /*___ page event list ___*/
