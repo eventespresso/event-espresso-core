@@ -48,6 +48,11 @@ div#event-meta ul,
 	-webkit-box-shadow: 0 0 3px #d2d2d2;
 	box-shadow: 0 0  3px #d2d2d2;
 }
+.ee-gmap-iframewrap iframe {/*pronounced*/
+	-moz-box-shadow: 0 0 3px #555;
+	-webkit-box-shadow: 0 0 3px #555;
+	box-shadow: 0 0  3px #555;
+}
 .btn_event_form_submit,
 .event_staff,
 table.price_list {
@@ -317,6 +322,9 @@ span.google-map-link a:hover {
 	display: block;
 	margin: 8px auto;
 	width: 60%;
+}
+.event_description .ee-gmap-iframewrap {
+	padding-bottom: 20px;
 }
 #event-reg-form-groups .event_questions {
 	background: #f3f3f3;

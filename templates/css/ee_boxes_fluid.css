@@ -45,6 +45,11 @@ dl.reg-gen-details,
 	-webkit-box-shadow: 0 0 3px #d2d2d2;
 	box-shadow: 0 0  3px #d2d2d2;
 }
+.ee-gmap-iframewrap iframe {/*pronounced*/
+	-moz-box-shadow: 0 0 3px #555;
+	-webkit-box-shadow: 0 0 3px #555;
+	box-shadow: 0 0  3px #555;
+}
 .btn_event_form_submit,
 .event_staff,
 table.price_list {
@@ -84,8 +89,6 @@ table.price_list {
 }
 /*___ General site wide styles for event-data / espresso_events ___*/
 
-/*#content .event-data-display p,
-#content .espresso_event p */
 #content .event-display-boxes p {
 	margin: .8em 0 ;
 }
@@ -311,6 +314,9 @@ span.google-map-link a:hover {
 	display: block;
 	margin: 8px auto;
 	width: 60%;
+}
+.event_description .ee-gmap-iframewrap {
+	padding-bottom: 20px;
 }
 #event-reg-form-groups .event_questions {
 	background: #f3f3f3;
