@@ -1,7 +1,10 @@
 <?php
 /**
 * Provides a function to render a 
-* geolocated Gmap from event address details
+* geolocated Gmap from Venue Manager address details
+*
+* Users can set a hardcoded url obtained from a google map or allow the venue address details 
+* to be used to feed to Google's V3 api.
 *
 * Event location detail need to be passed through to the function as well org_options
 * Author: Hugo Ashmore
@@ -40,6 +43,9 @@ function ee_gmap_display($location, $event_id){
 		}else{
 		   $ee_map_type_control = 'default';
 		}
+		if( isset($ee_gmaps_opts['ee_static_url']) && !empty($ee_gmaps_opts['ee_static_url']) ) {
+		$static_url = $ee_gmaps_opts['ee_static_url'];
+		}
 	 if(isset($ee_gmaps_opts['ee_map_align']) && !empty( $ee_gmaps_opts['ee_map_align']) ){
 		$ee_map_align = $ee_gmaps_opts['ee_map_align'];
 		 switch($ee_map_align){
@@ -63,6 +69,21 @@ function ee_gmap_display($location, $event_id){
  	//echo $event_id;
 	//echo $ee_map_height;
 	//var_dump($ee_gmaps_opts);
+	
+	// Determine whether user has set a hardoded url to use and 
+	// if so display a Google static iframe map else run V3 api
+ if( isset($static_url) && !empty($static_url) ) {
+	
+	$html = '<div class="ee-gmap-iframewrap event-map-parent" style="position: relative; ' . $map_align . ' width: ' . $ee_map_width  .'px; height: ' . $ee_map_height . 'px;">';
+	$html .= '<iframe src="' . $static_url . '&output=embed" style="width: ' . $ee_map_width  .'px; height: ' . $ee_map_height . 'px;" frameborder="0" scrolling="no">';
+	$html .= '</iframe>';
+	$html .= '<a href="' . $static_url . '">View Large map</a>';
+	$html .= '</div>';
+	
+	return $html;
+
+ }else {
+	
 	$html = '';
 	$html .= '<div class="event-map-parent">';
   
@@ -124,4 +145,5 @@ function ee_gmap_display($location, $event_id){
 $html .= '</div>';
 
 	return $html;
+	}
 }

@@ -40,19 +40,7 @@ if (!function_exists('register_attendees')) {
         $currency_format = isset($org_options['currency_format']) ? $org_options['currency_format'] : '';
 
         $message = $org_options['message'];
-        global $ee_gmaps_opts;
-					   // EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
-								$ee_gmaps_opts = array(
-								'ee_map_width' => empty($org_options['ee_map_width_single']) ? '' : $org_options['ee_map_width_single'],
-								'ee_map_height' => empty($org_options['ee_map_height_single']) ? '' : $org_options['ee_map_height_single'],
-								'ee_map_zoom' => empty($org_options['ee_map_zoom_single']) ? '' : $org_options['ee_map_zoom_single'],
-								'ee_map_nav_display' => empty($org_options['ee_map_nav_display_single']) ? '' : $org_options['ee_map_nav_display_single'],
-								'ee_map_nav_size' => empty($org_options['ee_map_nav_size_single']) ? '' : $org_options['ee_map_nav_size_single'],
-								'ee_map_type_control' => empty($org_options['ee_map_type_control_single']) ? '' : $org_options['ee_map_type_control_single'],
-								'ee_map_align' => empty($org_options['ee_map_align_single']) ? '' : $org_options['ee_map_align_single']
-								);
-					   //var_dump($ee_gmaps_opts);
-								
+	
 								if(!empty( $org_options['ee_display_map_no_shortcodes'] ) && $org_options['ee_display_map_no_shortcodes'] == 'Y') {
          $show_ee_gmap_no_shortcode = true;
 								}else{
@@ -169,6 +157,20 @@ if (!function_exists('register_attendees')) {
             $virtual_url = stripslashes_deep($data->event->virtual_url);
             $virtual_phone = stripslashes_deep($data->event->virtual_phone);
 
+           global $ee_gmaps_opts;
+					      // EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
+								  $ee_gmaps_opts = array(
+								    'ee_map_width' => empty($org_options['ee_map_width_single']) ? '' : $org_options['ee_map_width_single'],
+								    'ee_map_height' => empty($org_options['ee_map_height_single']) ? '' : $org_options['ee_map_height_single'],
+								    'ee_map_zoom' => empty($org_options['ee_map_zoom_single']) ? '' : $org_options['ee_map_zoom_single'],
+								    'ee_map_nav_display' => empty($org_options['ee_map_nav_display_single']) ? '' : $org_options['ee_map_nav_display_single'],
+								    'ee_map_nav_size' => empty($org_options['ee_map_nav_size_single']) ? '' : $org_options['ee_map_nav_size_single'],
+								    'ee_map_type_control' => empty($org_options['ee_map_type_control_single']) ? '' : $org_options['ee_map_type_control_single'],
+								    'ee_map_align' => empty($org_options['ee_map_align_single']) ? '' : $org_options['ee_map_align_single'],
+								    'ee_static_url' => empty($venue_meta['gmap_static']) ? '' : $venue_meta['gmap_static']
+								   );
+					      //var_dump($ee_gmaps_opts);												
+												
             //Address formatting
 												// Plain format for gmap geocoding
 												$venue_address_elements = ($event_address != '' ? $event_address . ',' : '') . ($event_address2 != '' ? $event_address2 . ',' : '') . ($event_city != '' ?  $event_city . ',' : '') . ($event_state != '' ? $event_state . ',' : '') . ($event_zip != '' ? $event_zip . ',' : '') . ($event_country != '' ? $event_country . ',' : '');
