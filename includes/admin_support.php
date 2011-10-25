@@ -55,6 +55,9 @@ function event_espresso_support() {
                         <li><a href="#resources">
                           <?php _e('Other Resources', 'event_espresso'); ?>
                           </a></li>
+                        <li><a href="#translations">
+                          <?php _e('Translations', 'event_espresso'); ?>
+                          </a></li>
                         <li><a href="#shortcodes">
                           <?php _e('Shortcodes', 'event_espresso'); ?>
                           </a></li>
@@ -245,7 +248,39 @@ function event_espresso_support() {
       </div>
     </div>
   </li>
-  
+  <li>
+    <div class="metabox-holder">
+      <div class="postbox">
+        <div title="Click to toggle" class="handlediv"><br />
+        </div>
+        <h3 class="hndle">
+          <?php _e('Translating Event Espresso', 'event_espresso'); ?>
+          <a name="translations" id="translations"></a></h3>
+        <div class="inside">
+          <div class="padding">
+            <ol>
+              <li>Install <a href="http://www.poedit.net/download.php" target="_blank">POEDIT</a>.</li>
+              <li>Download and  Unzip all Event Espresso on your Hard drive (For this example let&rsquo;s say C:\Myfolder\)</li>
+              <li>Open POEDIT click-&gt; File -&gt; Open and select the  C:\Myfolder\event-espresso.3.1.13.P\languages\event_espresso-xx_XX.po  file (xx_XX being the language you want.)</li>
+              <li>Now you need to update all the text that is configured for  translation in the Event Espresso folders.  To do so, in POEDIT click  –&gt;Catalog –&gt; Update from sources .   This should add more that 600  new words to the original file.</li>
+              <li>To translate simply put your own description at the bottom of the screen.<br />
+                TIP: turn on the the display quotes. click –&gt;View –&gt;Display  Quotes    This should help you to add the proper spaces &ldquo;blanks&rdquo;.<br />
+                Other TIP: to know the source from which .php program comes the  text, select the line you want to translate, do Right Click and POEDIT  will give you the references of the source.</li>
+              <li>Once you have done the translation click Save</li>
+              <li>With FTP (FireFTP in Firefox) locate the EE\languages folder on your  server (It should be the same path as what you had Unzipped previously)</li>
+              <li>Transfer both the xx_XX.po and xx_XX.mo files on the server</li>
+              <li>Send your completed translation to support@eventespresso.com for inclusion in future versions</li>
+            </ol>
+            <dl>
+              <div><br />
+                Read more: <a href="http://eventespresso.com/forums/2011/09/is-there-a-how-to-translate-step-by-step-somewhere/#ixzz1bopzZJjC">Is there a &ldquo;how to translate – step by step&rdquo; somewhere?</a> <br />
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
             <li>
               <div class="metabox-holder">
                 <div class="postbox"><a name="shortcodes" id="shortcodes"></a>
