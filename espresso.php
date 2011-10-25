@@ -280,8 +280,7 @@ add_action('widgets_init', 'espresso_widget');
 /* End Core template files used by this plugin */
 
 //Google map include file
-##### Requires a check for event listing page ######
-if ($this_is_a_reg_page == true || (!empty($_REQUEST['page']) && $_REQUEST['page'] == 'event_venues')) {
+if (!is_admin()) {
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
 }
 

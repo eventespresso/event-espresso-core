@@ -1,13 +1,26 @@
 <?php
 /**
+*
+* @ package Event Espresso
+* @ author Seth Shoults
+* @ copyright (c) 2008-2011 Event Espresso  All Rights Reserved. 
+* @ licence http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+* @ link http://www.eventespresso.com 
+* @ version 3.3
+*------------------------------------
+* Espresso Gmaps API include function
+*
+* @subpackage includes/gmap_incl.php
+*
 * Provides a function to render a 
 * geolocated Gmap from Venue Manager address details
 *
 * Users can set a hardcoded url obtained from a google map or allow the venue address details 
 * to be used to feed to Google's V3 api.
 *
-* Event location detail need to be passed through to the function as well org_options
-* Author: Hugo Ashmore
+* Event location detail need to be passed through to the function as well as org_options
+*
+* @ author  Hugo Ashmore
 */
 
 function ee_gmap_display($location, $event_id){
@@ -66,7 +79,7 @@ function ee_gmap_display($location, $event_id){
 	$event_location = $location; // 'London';
 	$event_id = $event_id;
 	//var_dump($location);
- 	//echo $event_id;
+ //echo $event_id;
 	//echo $ee_map_height;
 	//var_dump($ee_gmaps_opts);
 	

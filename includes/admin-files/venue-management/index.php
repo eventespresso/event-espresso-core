@@ -2,6 +2,7 @@
 function event_espresso_venue_config_mnu(){
 	global $wpdb,$current_user,$espresso_premium;
 	$_REQUEST[ 'action' ] = isset($_REQUEST[ 'action' ]) ? $_REQUEST[ 'action' ]:NULL;
+require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php');
 ?>
 <div class="wrap">
   <div id="icon-options-event" class="icon32"> </div>
@@ -152,7 +153,9 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit'){require_once("e
      </div>
      </div>
 			 
-<?php include('venue_help.php'); ?>
+<?php 
+include('venue_help.php'); 
+?>
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {						
