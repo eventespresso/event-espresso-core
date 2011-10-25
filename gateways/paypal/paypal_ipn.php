@@ -78,10 +78,10 @@ if ($myPaypal->validateIpn()) {
             wp_mail($contact, $subject, $body);
         }
     } else {
-        $subject = 'Instant Payment Notification - Gateway Variable Dump';
-        $body = "An instant payment notification failed\n";
+        $subject = 'Instant Payment Notification Failed';
+        $body = "<p>An instant payment notification failed<br>";
         $body .= "from " . $myPaypal->ipnData['payer_email'] . " on " . date('m/d/Y');
-        $body .= " at " . date('g:i A') . "\n\nDetails:\n";
+        $body .= " at " . date('g:i A') . " in the process_payments.php file.</p><p>Details:</p>";
         foreach ($myPaypal->ipnData as $key => $value) {
             $body .= "\n$key: $value\n";
         }
