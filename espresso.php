@@ -665,3 +665,8 @@ if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
 if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
 	echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
 }
+
+// Export iCal file
+if (!empty($_REQUEST['iCal'])) {
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/ical.php");
+}
