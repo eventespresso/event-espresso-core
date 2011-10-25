@@ -55,6 +55,7 @@
 	margin-top: 20px;
 }
 
+
 .metabox-holder h4 {font-size: 1.3em;}
 .metabox-holder h5 {font-size: 1.2em;}
 .metabox-holder h6 {font-size: 1.1em;}
@@ -427,7 +428,7 @@ div.tablenav {
 	border: 1px solid #e0e0e0;
 	padding: 1%;
 }
-/*___Questions & question groups___*/
+/*___ Questions & question groups___*/
 #add-edit-new-group #table-edit-group td {
 	}
 #add-edit-new-group td ul {
@@ -705,6 +706,9 @@ div#gmap-reg-events { padding-left: 3%;}
 }	
 #quick-links li a {
 	font-size: 1.2em;
+}
+ul#quick-links ul{
+	padding-left: 20px;
 }
 .email-settings-img {
 	margin: 10px;

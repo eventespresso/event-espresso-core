@@ -55,9 +55,6 @@ function event_espresso_support() {
                         <li><a href="#resources">
                           <?php _e('Other Resources', 'event_espresso'); ?>
                           </a></li>
-                        <li><a href="#translations">
-                          <?php _e('Translations', 'event_espresso'); ?>
-                          </a></li>
                         <li><a href="#shortcodes">
                           <?php _e('Shortcodes', 'event_espresso'); ?>
                           </a></li>
@@ -69,7 +66,31 @@ function event_espresso_support() {
                           </a></li>
                         <li><a href="#faq">
                           <?php _e('Frequently Asked Questions', 'event_espresso'); ?>
+                          </a>
+                          <ul>
+                          <li><a href="#RegistrationPage">
+                          <?php _e('Registration Page Problems', 'event_espresso'); ?>
                           </a></li>
+                          <li><a href="#paypal">
+                          <?php _e('Paypal IPN Problems', 'event_espresso'); ?>
+                          </a></li>
+                          <li><a href="#email">
+                          <?php _e('Email Problems', 'event_espresso'); ?>
+                          </a></li>
+                          <li><a href="#import">
+                          <?php _e('Event Import Problems', 'event_espresso'); ?>
+                          </a></li>
+                          <li><a href="#translations">
+                          <?php _e('Translations', 'event_espresso'); ?>
+                          </a></li>
+                          <li><a href="#IncompletePayments">
+                          <?php _e('Incomplete Payments', 'event_espresso'); ?>
+                          </a></li>
+                          <li><a href="#upgrading">
+                          <?php _e('Problems After Upgrading', 'event_espresso'); ?>
+                          </a></li>
+                          </ul>
+                          </li>
                         <li><a href="#additonal">
                           <?php _e('Additional Information', 'event_espresso'); ?>
                           </a></li>
@@ -248,39 +269,7 @@ function event_espresso_support() {
       </div>
     </div>
   </li>
-  <li>
-    <div class="metabox-holder">
-      <div class="postbox">
-        <div title="Click to toggle" class="handlediv"><br />
-        </div>
-        <h3 class="hndle">
-          <?php _e('Translating Event Espresso', 'event_espresso'); ?>
-          <a name="translations" id="translations"></a></h3>
-        <div class="inside">
-          <div class="padding">
-            <ol>
-              <li>Install <a href="http://www.poedit.net/download.php" target="_blank">POEDIT</a>.</li>
-              <li>Download and  Unzip all Event Espresso on your Hard drive (For this example let&rsquo;s say C:\Myfolder\)</li>
-              <li>Open POEDIT click-&gt; File -&gt; Open and select the  C:\Myfolder\event-espresso.3.1.13.P\languages\event_espresso-xx_XX.po  file (xx_XX being the language you want.)</li>
-              <li>Now you need to update all the text that is configured for  translation in the Event Espresso folders.  To do so, in POEDIT click  –&gt;Catalog –&gt; Update from sources .   This should add more that 600  new words to the original file.</li>
-              <li>To translate simply put your own description at the bottom of the screen.<br />
-                TIP: turn on the the display quotes. click –&gt;View –&gt;Display  Quotes    This should help you to add the proper spaces &ldquo;blanks&rdquo;.<br />
-                Other TIP: to know the source from which .php program comes the  text, select the line you want to translate, do Right Click and POEDIT  will give you the references of the source.</li>
-              <li>Once you have done the translation click Save</li>
-              <li>With FTP (FireFTP in Firefox) locate the EE\languages folder on your  server (It should be the same path as what you had Unzipped previously)</li>
-              <li>Transfer both the xx_XX.po and xx_XX.mo files on the server</li>
-              <li>Send your completed translation to support@eventespresso.com for inclusion in future versions</li>
-            </ol>
-            <dl>
-              <div><br />
-                Read more: <a href="http://eventespresso.com/forums/2011/09/is-there-a-how-to-translate-step-by-step-somewhere/#ixzz1bopzZJjC">Is there a &ldquo;how to translate – step by step&rdquo; somewhere?</a> <br />
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
-  </li>
+  
             <li>
               <div class="metabox-holder">
                 <div class="postbox"><a name="shortcodes" id="shortcodes"></a>
@@ -704,15 +693,15 @@ function event_espresso_support() {
                     <div class="padding">
                       <dl id="faqs">
                         <dt>
-                          <?php _e('Registration page just refreshes?', 'event_espresso'); ?>
+                          <?php _e('Registration page just refreshes?', 'event_espresso'); ?><a name="RegistrationPage" id="RegistrationPage"></a>
                         </dt>
                         <dd>
                           <?php _e('Usually its because you need to point the &quot;Main registration page:&quot; (in the Organization Settings page) to whatever page you have the shortcode', 'event_espresso'); ?>
                           [ESPRESSO_EVENTS]
-                          <?php _e('on', 'event_espresso'); ?>
-                          . </dd>
+                          <?php _e('on.', 'event_espresso'); ?>
+                         </dd>
                         <dt>
-                          <?php _e('Paypal IPN Problem?', 'event_espresso'); ?>
+                          <?php _e('Paypal IPN Problem?', 'event_espresso'); ?><a name="paypal" id="paypal"></a>
                         </dt>
                         <dd>
                           <?php _e('Four things to check with PayPal when payments notifications are not being sent to Event Espresso.', 'event_espresso'); ?>
@@ -737,7 +726,7 @@ function event_espresso_support() {
                             <a href="http://eventespresso.com/forums/?submit.x=0&submit.y=0&s=ipn" target="_blank"> http://eventespresso.com/forums/?submit.x=0&amp;submit.y=0&amp;s=ipn</a></p>
                         </dd>
                         <dt>
-                          <?php _e('Why are mails are not being sent when somone registers?', 'event_espresso'); ?>
+                          <?php _e('Why are emails are not being sent when somone registers?', 'event_espresso'); ?><a name="email" id="email"></a>
                         </dt>
                         <dd>
                           <?php _e('Check your email settings on the', 'event_espresso'); ?>
@@ -749,15 +738,45 @@ function event_espresso_support() {
                           </p>
                         </dd>
 						<dt>
-							<?php _e('My events are not importing correctly when I use the CSV upload tool.','event_espresso'); ?>
+							<?php _e('My events are not importing correctly when I use the CSV upload tool.','event_espresso'); ?><a name="import" id="import"></a>
 						</dt>
 						<dd>
 							<p>
 							<?php _e('Check your CSV for any apotrophes in the title or description. Using Excel (or someother spreadsheet application) find and replace all apostrophes with <tt>\&amp;#039;</tt>.  This is the HTML entity for \' and is how the titles are entered into the database.  For more information, see <a href="http://eventespresso.com/forums/2011/08/import-csv-malfunction" target="_blank">this forum post</a>.','event_espresso'); ?>
 							</p>
 						</dd>
-                        <dt>
-                          <?php _e('Problems after upgrading?', 'event_espresso'); ?>
+                        
+                      <dt>
+                          <?php _e('Translating Event Espresso', 'event_espresso'); ?><a name="translations" id="translations"></a>
+                        </dt>
+                      <dd>
+                      <ol>
+              <li>Install <a href="http://www.poedit.net/download.php" target="_blank">POEDIT</a>.</li>
+              <li>Download and  Unzip all Event Espresso on your Hard drive (For this example let&rsquo;s say C:\Myfolder\)</li>
+              <li>Open POEDIT click-&gt; File -&gt; Open and select the  C:\Myfolder\event-espresso.3.1.13.P\languages\event_espresso-xx_XX.po  file (xx_XX being the language you want.)</li>
+              <li>Now you need to update all the text that is configured for  translation in the Event Espresso folders.  To do so, in POEDIT click  –&gt;Catalog –&gt; Update from sources .   This should add more that 600  new words to the original file.</li>
+              <li>To translate simply put your own description at the bottom of the screen.<br />
+                TIP: turn on the the display quotes. click –&gt;View –&gt;Display  Quotes    This should help you to add the proper spaces &ldquo;blanks&rdquo;.<br />
+                Other TIP: to know the source from which .php program comes the  text, select the line you want to translate, do Right Click and POEDIT  will give you the references of the source.</li>
+              <li>Once you have done the translation click Save</li>
+              <li>With FTP (FireFTP in Firefox) locate the EE\languages folder on your  server (It should be the same path as what you had Unzipped previously)</li>
+              <li>Transfer both the xx_XX.po and xx_XX.mo files on the server</li>
+              <li>Send your completed translation to support@eventespresso.com for inclusion in future versions.</li>
+            </ol>
+                <p>Read more: <a href="http://eventespresso.com/forums/2011/09/is-there-a-how-to-translate-step-by-step-somewhere/#ixzz1bopzZJjC">Is there a &ldquo;how to translate – step by step&rdquo; somewhere?</a></p>
+            </dd>
+            <dt><?php _e('Problems with Incomplete Payments', 'event_espresso'); ?><a name="IncompletePayments" id="IncompletePayments"></a></dt>
+            <dd>
+              <p>If you are experiencing problems with incomplete payments, most often  it has to do with problems reaching your Transactions page  ([ESPRESSO_TXN_PAGE]) from the payment gateway.  There are a variety of  issues that can cause this on both ends (the gateway and your  site/hosting) which makes it very difficult to diagnose and resolve.</p>
+              <p>However, we have found through testing and working with many users  with this issue that one thing that can resolve the problem for most  situations when this is occurring is to use a stripped-down page  template for your Transactions page.  This page template gets added to  your theme and selected as the page template for that page in the  Templates dropdown.  Because we have had a very positive success rate  with the people we have given this template to, we are providing it here  as a free download.  We are also trying to determine the best way to  include it into the core plugin as well.</p>
+              <p>You can download our Transactions page template in the link below.   Included in the zip file is a quick readme with installation  instructions.  It is recommended that you try this template after  verifying that IPN is turned on, your account is verified, you have a  standard or business account (if using PayPal) and — most importantly —  that your Transactions page is visible to the internet.  If you have  confirmed these four things and you are still having issues with  incomplete payments, try the download below.</p>
+              <p><a href="http://eventespresso.s3.amazonaws.com/2011/09/txnpage.zip">Download Event Espresso txnpage template</a></p>
+              
+                <p>Read more: <a href="http://eventespresso.com/forums/2011/09/problems-with-incomplete-payments-download/#ixzz1boxHuqI8">Problems with Incomplete Payments — Download</a></p>
+            </dd>
+            
+            <dt>
+                          <?php _e('Problems after upgrading?', 'event_espresso'); ?><a name="upgrading" id="upgrading"></a>
                         </dt>
                         <dd>
                           <?php _e('If you have just upgraded  from  the free version of this plugin, your event dates, times, and categories may be out of order, missing, showing an error, or are wrong.  Pressing the &quot;Run Upgrade Script&quot; button below should fix all of these problems.', 'event_espresso'); ?>
@@ -767,9 +786,8 @@ function event_espresso_support() {
                               <input class="button-primary" type="submit" name="update_event_dates_button" value="<?php _e('Run Upgrade Script', 'event_espresso'); ?>" id="update_event_dates"/>
                             </p>
                           </form>
-                        </dd>
-                      </dl>
-                      <?php _e('If you have clicked the button above and event dates that should be expired, are showing an error or seem to be out of order. Go into the &quot;<a href="admin.php?page=events">Event Management</a>&quot; page and click the &quot;Edit this Event&quot; button then click the &quot;Update Event&quot; button on each event that is displaying the wrong date(s). This process should fix the problem. If it doesn\'t then send a support request using the help and support button above.', 'event_espresso'); ?>
+                       
+                      <p><?php _e('If you have clicked the button above and event dates that should be expired, are showing an error or seem to be out of order. Go into the &quot;<a href="admin.php?page=events">Event Management</a>&quot; page and click the &quot;Edit this Event&quot; button then click the &quot;Update Event&quot; button on each event that is displaying the wrong date(s). This process should fix the problem. If it doesn\'t then send a support request using the help and support button above.', 'event_espresso'); ?>
                       </p>
                       <?php
 						if (event_espresso_verify_attendee_data() == true) {
@@ -789,7 +807,11 @@ function event_espresso_support() {
                       </form>
                       <?php
 						}
-                                        ?>
+						?>
+                      </dd>
+            
+        </dl>
+                      
                     </div>
                   </div>
                 </div>
