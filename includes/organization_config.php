@@ -118,9 +118,11 @@ function organization_config_mnu() {
 		echo '<div id="message" class="updated fade"><p><strong>' . __('Organization details saved.', 'event_espresso') . '</strong></p></div>';
 	}
 
+	$org_options = get_option('events_organization_settings');	
 	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso')));
+		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+		array('id' => 'N', 'text' => __('No', 'event_espresso'))
+	);
 	?>
 
 	<div class="wrap">
@@ -258,30 +260,27 @@ function organization_config_mnu() {
 													if (($org_options['event_page_id'] == ('0' || '') || $org_options['return_url'] == ('0' || '') || $org_options['notify_url'] == ('0' || ''))) {
 														espresso_create_default_pages();
 													}
+													
+													//Check to see if we are using the deprecated SSL option. If we are, recommend updating to WordPress HTTPS (SSL).
+													if ($espresso_premium == true && $org_options['event_ssl_active'] == 'Y') {
+														echo '<div id="ssl-reg" style="background-color: #ffffe0; border: #e6db55 1px solid; padding:4px;">';
+														echo '<p><strong>'.__('Attention!', 'event_espresso').'</strong><br />'.__('The Secure Payment System has been removed.', 'event_espresso').'</p>';
+														echo '<p>'.__('If your site uses SSL to handle secure transactions. Please install the <a href="plugin-install.php?tab=plugin-information&amp;plugin=wordpress-https&amp;TB_iframe=true&amp;width=600&amp;height=550" class="thickbox" title="Install Now">WordPress HTTPS (SSL)</a> plugin now.', 'event_espresso'). ' '. __('<a href="http://eventespresso.com/forums/2011/09/use-wordpress-https-for-ssl-encryption-on-your-event-espresso-site/" target="_blank">More information here</a>.', 'event_espresso').'</p>';
+														$values = array(
+															array('id' => 'N', 'text' => __('Yes', 'event_espresso')),//This turns the message off by changing the option to 'N'
+															array('id' => 'Y', 'text' => __('No', 'event_espresso'))//This leaves the message on incase they are not ready to proceed
+														);
+														 ?>
+														
+														<label for="event_ssl_active">
+														<?php _e('Turn off this message?', 'event_espresso'); ?>
+														</label>
+														<?php
+														echo select_input('event_ssl_active', $values, empty($org_options['event_ssl_active']) ? 'N' : $org_options['event_ssl_active']);
+														echo '</div>';
+													}
 													?>
-													<?php if ($espresso_premium == true) { ?>
-														<div id="ssl-reg">
-															<label for="event_ssl_active">
-																<?php _e('Use SSL for payment process?', 'event_espresso'); ?>
-															</label>
-															<?php
-															//This needs to be cleaned up
-															$values = array(
-																	array('id' => 'N', 'text' => __('No', 'event_espresso')),
-																	array('id' => 'Y', 'text' => __('Yes', 'event_espresso'))
-															);
-															echo select_input('event_ssl_active', $values, empty($org_options['event_ssl_active']) ? 'N' : $org_options['event_ssl_active']);
-															?>
-															<a class="thickbox" href="#TB_inline?height=300&width=845&inlineId=event_ssl_active_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
-															<p class="messages important">
-																<?php _e('Please make sure SSL Certificate is installed before selecting this option.', 'event_espresso'); ?>
-															</p>
-															<div id="event_ssl_active_info" style="display:none">
-																<h2>
-																	<?php _e('Secure Payment System', 'event_espresso'); ?>
-																</h2>
-																<em class="messages important"><?php echo __('If you plan on using one of the gateways that collects Credit Card info (e.g. PayPal PRO, Authorize.net AIM). you need to make sure a SSL certificate is installed on this domain and "Yes" is selected in this dropdown.', 'event_espresso'); ?></em> </div>
-														<?php } ?>
+
 														<p>
 															<?php _e('The following shortcodes and page settinngs are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view <a href="admin.php?page=support#shortcodes">this page</a> for a list of optional shortcodes.', 'event_espresso'); ?>
 														</p>
