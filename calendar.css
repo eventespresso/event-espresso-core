@@ -586,10 +586,14 @@ class name '.event-has-thumb' is added to top level parent event */
 
 	}
 #espresso_calendar .event-has-thumb .fc-event-title {
-	display: inline-block;
+	display: block;
+ clear: left;
 	margin-left: 6px;
 	width: auto;
 	}
+#espresso_calendar p.time-display-block {
+ padding: 0 6px;
+}
 #espresso_calendar  span.thumb-wrap {
 	background: #fff;
 	border: 1px solid #777;
@@ -612,6 +616,7 @@ class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar .thumb-wrap img {width: 100%;}	
 #espresso_calendar .thumb-wrap img.small {height: 50px;}
 #espresso_calendar .thumb-wrap img.medium {height: 100px;}
+#espresso_calendar .fc-view-month .thumb-wrap img.medium {height: 100%;}
 #espresso_calendar .thumb-wrap img.large {height: 150px;}
 
 /* experimental - work in possible progress

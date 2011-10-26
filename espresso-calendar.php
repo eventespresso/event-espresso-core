@@ -497,7 +497,9 @@ if (!function_exists('espresso_calendar')) {
 			//important! time must be in iso8601 format 2010-05-10T08:30  !!
 			$eventArray['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format')) ));
 			$eventArray['end'] = date("c", strtotime($event->end_date . ' ' .  event_date_display($event->end_time, get_option('time_format')) ));
-					
+			$eventArray['startTime'] = event_date_display($event->start_time, get_option('time_format'));
+   $eventArray['endTime'] = event_date_display($event->end_time, get_option('time_format'));	
+   
     // add image thumb to array
 			if( !empty($event_meta['event_thumbnail_url']) ) {
 			 $calendar_thumb  = $event_meta['event_thumbnail_url'];
@@ -653,7 +655,7 @@ if (!function_exists('espresso_calendar')) {
 					eventRender: function(event, element) {
 
 						//This displays the title of the event when hovering
-						element.attr('title', event.title);
+						element.attr('title', event.title + " - Event Times: " + event.start + event.end);
 						// if the user selects show in thickbox we add this element 
 						if(event.in_thickbox_url){
       element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id  + '"><p class="tb-event-title">' + event.title + '</p><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
@@ -670,7 +672,7 @@ if (!function_exists('espresso_calendar')) {
 							//element.find('a').attr('href', event.url + event.in_thickbox_url);
 							element.find('a').addClass(event.in_thickbox_class);
 						 element.find('span.fc-event-title').before($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
-						 //$jaer('span.fc-event-title').before($jaer('<span>' + event.event_img_thumb + '</span>'));
+						 element.find('span.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">Start: ' + event.startTime + ' - </span><span class="event-end-time"> End: ' + event.endTime + '</span></p>'));
 						 }
 						//These are examples of custom parameters that can be passed
 						/*if (event.eventType == 'meeting') {
