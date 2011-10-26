@@ -319,6 +319,9 @@ span.google-map-link a:hover {
 	margin: 8px auto;
 	width: 60%;
 }
+#content #registration_form .event-map-parent {
+ margin: 20px 0;
+}
 .event_description .ee-gmap-iframewrap {
 	padding-bottom: 20px;
 }
