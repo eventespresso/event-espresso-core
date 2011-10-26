@@ -94,12 +94,11 @@
 								<span class="google-map-link"><?php echo $google_map_link; ?></span></span> </p>
 						<?php
 						}
-					// Removed until method to test for venue shortcode use is found
-					/* 
-					if($show_ee_gmap_no_shortcode){
+
+						if($show_ee_gmap_no_shortcode && $event_meta['enable_for_gmap'] !== 'N'){
 						echo ee_gmap_display($ee_gmap_location, $event_id);
 					}
-     */
+     
 					//Meta example
 					//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
 

@@ -25,7 +25,7 @@
 
 function ee_gmap_display($location, $event_id){
 	// A common options aray for maps, $org_options added to this array in each page to make unique set
-	global $ee_gmaps_opts ; 
+	global $ee_gmaps_opts, $event_meta; 
 		if ( isset($ee_gmaps_opts['ee_map_width']) && !empty($ee_gmaps_opts['ee_map_width']) ){
 		   $ee_map_width = $ee_gmaps_opts['ee_map_width'];
 		} else {
@@ -82,8 +82,11 @@ function ee_gmap_display($location, $event_id){
  //echo $event_id;
 	//echo $ee_map_height;
 	//var_dump($ee_gmaps_opts);
+//print_r($event_meta);	
+// check whether event_meta enable indivudual event for maps is true
+if($event_meta['enable_for_gmap'] !== 'N') {
 	
-	// Determine whether user has set a hardoded url to use and 
+ // Determine whether user has set a hardoded url to use and 
 	// if so display a Google static iframe map else run V3 api
  if( isset($static_url) && !empty($static_url) ) {
 	
@@ -158,5 +161,6 @@ function ee_gmap_display($location, $event_id){
 $html .= '</div>';
 
 	return $html;
-	}
+	} // end auto map or static url map check
+ } // end check for enable_for_maps
 }
