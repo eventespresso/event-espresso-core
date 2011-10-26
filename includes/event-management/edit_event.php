@@ -195,7 +195,7 @@ function edit_event($event_id = 0) {
       <!-- /inside --> 
     </div>
     <!-- /submitdiv -->
-    
+	
     <?php
             $advanced_options = '';
             if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/advanced_settings.php')) {
@@ -703,9 +703,9 @@ function edit_event($event_id = 0) {
               </tr>
             
           </table>
-										<p>
-										  <label for="enable-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, 'N', 'id="enable-gmap"')?></label>
-										</p>										
+    						<p>
+										  <label for="enable-for-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, !empty($event_meta['enable_for_gmap']) ? $event_meta['enable_for_gmap'] : '', 'id="enable-for-gmap"')?></label>
+									 </p>									
         </div>
       </div>
       <!-- /event-location-->
