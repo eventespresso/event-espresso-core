@@ -1,5 +1,4 @@
 <?php
-
 /*
   Plugin Name: Event Espresso
   Plugin URI: http://eventespresso.com/
@@ -61,8 +60,7 @@ function espresso_check_for_export() {
 		}
 	}
 }
-
-add_action('init', 'espresso_check_for_export');
+add_action('plugins_loaded', 'espresso_check_for_export');
 
 //Load the Event Espresso HTML meta
 function espresso_info_header() {
