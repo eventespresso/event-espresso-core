@@ -78,8 +78,9 @@
   <div id="event_times_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Event Times', 'event_espresso'); ?></h2>
-        <p><?php _e('Each event can have an unlimited amount of start/end times. This useful for event/class organizers to manage several different sessions in their events.', 'event_espresso'); ?></p>
+        <p><?php _e('Each event can have an unlimited amount of start/end times. This is useful for event/class organizers to manage several different sessions in their events.', 'event_espresso'); ?></p>
         <p><?php _e('All events require a start and end time in order to display properly on your pages.', 'event_espresso'); ?></p>
+        <p><?php _e('Event times can be entered in the format of: 09:00/21:00  or 9am/9pm ', 'event_espresso') ?></p>
     </div>
   </div>
 
