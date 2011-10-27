@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');  
 /* 
  * Event Espresso
  *
@@ -9,7 +9,7 @@
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license				http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link						http://www.eventespresso.com
- * @ version		 	3.1.P.7
+ * @ version		 	3.2.P
  *
  * ------------------------------------------------------------------------
  *
@@ -22,15 +22,35 @@
  * ------------------------------------------------------------------------
  */
  class CSVIO {
+
+  // instance of the CSVIO object
+	private static $_instance = NULL;
  
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
-	 *		@access public
+	 *		@access private
 	 *		@return void
 	 */	
-  public function __construct() {
+  private function __construct() {
 	}
+
+
+
+	/**
+	 *		@ singleton method used to instantiate class object
+	 *		@ access public
+	 *		@ return class instance
+	 */	
+	public  function &instance() {
+		// check if class object is instantiated
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, 'CSVIO' )) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+	
+	
 
 	
 	/**
@@ -40,7 +60,7 @@
 	 *			@param boolean $first_row_is_headers - whether the first row of data is headers or not - TRUE = headers, FALSE = data
 	 *			@return mixed - array on success - multi dimensional with headers as keys (if headers exist) OR string on fail - error message
 	 */	
-	public function import_to_array( $table_list, $path_to_file, $table = FALSE, $first_row_is_headers = TRUE ) {
+	public function import_csv_to_array( $table_list, $path_to_file, $table = FALSE, $first_row_is_headers = TRUE ) {
 		
 		// first check to see if file exists
 		if (file_exists($path_to_file)) { 
