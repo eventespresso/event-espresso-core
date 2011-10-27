@@ -140,49 +140,63 @@ function edit_event_venue(){
                   </label>
                   <input type="text" id="contact" name="contact" size="25" value="<?php echo stripslashes_deep($meta['contact']);?>">
                 </li>
-                <li>
+                
+																<li>
                   <label for="phone">
                     <?php _e('Phone','event_espresso'); ?>
                   </label>
                   <input type="text" id="phone" name="phone" size="25" value="<?php echo stripslashes_deep($meta['phone']);?>">
                 </li>
-                <li>
+                
+																<li>
                   <label for="twitter">
                     <?php _e('Twitter','event_espresso'); ?>
                   </label>
                   <input type="text" id="twitter" name="twitter" size="25" value="<?php echo stripslashes_deep($meta['twitter']);?>">
                 </li>
-                <li>
+                
+																<li>
                   <label for="website">
                     <?php _e('Website','event_espresso'); ?>
                   </label>
                   <input type="text" id="website" name="website" size="25" value="<?php echo stripslashes_deep($meta['website']);?>">
                 </li>
-                <li>
+                
+																<li>
                   <label for="image">
                     <?php _e('Image/Logo URL','event_espresso'); ?>
                   </label>
                   <input type="text" id="image" name="image" size="25" value="<?php echo stripslashes_deep($meta['image']);?>">
                 </li>
-																<li>
-																  <p class="section-heading">Select venue address to display in an interactive map or add a static map url</p>
+																
+																<li class="ee-gmap-entry">
+																  <p class="section-heading">Display Address as an interactive map or add a static map url <a class="thickbox" href="#TB_inline?height=550&width=400&inlineId=venue_gmap"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a></p>
+																		
 																		<label for="enable-ven-gmaps"><?php _e('Enable Venue for Google Maps', 'event_espresso')  ?></label>
 																   <?php echo select_input('enable_for_maps', $values, isset($meta['enable_for_maps']) ? $meta['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?>
-																  <label for="gmap-static">Add static map url</label><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_gmap"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a>
+																  
+																		<label for="gmap-static">Add static map url</label>
 																  <input type="text" id="gmap-static" name="gmap_static" size="25" <?php echo (!empty($meta['gmap_static']) )? 'value="' . $meta['gmap_static'] .'"' : 'value=""'; ?> />
 																</li>
 																
-																<li>
-																<?php if( isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y' && empty($meta['gmap_static']) ) { 
-																  echo ee_gmap_display($ee_gmap_location, $event_id);
-															 }else{ ?>
+																<li class="ee-gmap-display">
+                 <div class="map-frame">
+													<?php if( isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y' && empty($meta['gmap_static']) ) { 
+																  
+																		if( function_exists('ee_gmap_display') ) {
+																		echo ee_gmap_display($ee_gmap_location, $event_id);
+																		} else {?>
+																		<p class="inform">Sorry the Gmap function is not available, please try the url method instead.</p>
+												<?php	}
+															 
+																}else{ ?>
 																
 	               <iframe src="<?php echo $meta['gmap_static'] ?>&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" width="300" height="300">
-																
 																</iframe>
 																<a href="href="<?php echo $meta['gmap_static'] ?>">View Large map</a>
 																
-																<?php } ?>
+												<?php } ?>
+                 </div>
 																</li>
               </ul>
 												</td>

@@ -1372,7 +1372,27 @@ select.wide {width: 175px;}
 	width: 80%;
 }
 /*___ Venue Manager ___*/
-
+#add-edit-venue li.ee-gmap-entry {
+ border-top: 1px solid #e0e0e0;
+ margin-top: 20px;
+}
+#add-edit-venue li.ee-gmap-entry #enable-ven-gmaps {
+ margin-bottom: 10px;
+}
+#add-edit-venue li.ee-gmap-display .map-frame,
+#add-edit-venue li.ee-gmap-displa  {
+ background: #fff;
+ border: 1px solid #8f8f8f;
+ padding: 10px;
+}
+#add-edit-venue li.ee-gmap-display .map-frame iframe,
+#add-edit-venue li.ee-gmap-display .map-frame #map_canvas_ {
+ -webkit-box-shadow: 0 0 1px #eee;
+ -moz-box-shadow: 0 0 1px #eee;
+ box-shadow: 0 0 4px #8f8f8f;
+ margin: 0 auto; 
+ width:100% !important;
+}
 /*___ Manage categories___*/
 #add-edit-categories p {
 	overflow: hidden;
@@ -1390,6 +1410,7 @@ select.wide {width: 175px;}
 .disp-desc {
 	margin-right: 10px;
 }
+
 /*___ Template Settings ___*/
 
 /*___ Form Icons / Buttons ___*/

@@ -130,8 +130,8 @@ function add_new_event_venue(){
                   </label>
                   <input type="text" id="image" name="image" size="25">
               </li>
-              <li>
-														<p class="section-heading">Select venue address to display in an interactive map or add a static map url</p>
+              <li class="ee-gmap-entry">
+														<p class="section-heading">Display Address as an interactive map or add a static map url <a class="thickbox" href="#TB_inline?height=400&width=500&inlineId=venue_gmap"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a></p>
 														  <label for="enable-ven-gmaps"><?php _e('Enable Venue for Google Maps', 'event_espresso')  ?></label><?php echo select_input('enable_for_maps', $values, isset($org_options['enable_for_maps']) ? $org_options['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?>
 																<label for="gmap-static">Add static map url</label>
 																<input type="text" id="gmap-static" name="gmap_static" size="25" />
