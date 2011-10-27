@@ -36,13 +36,7 @@ function event_espresso_manage_templates() {
 		update_option('events_organization_settings', $org_options);
 		echo '<div id="message" class="updated fade"><p><strong>' . __('Template details saved.', 'event_espresso') . '</strong></p></div>';
 	}
-	$org_options = get_option('events_organization_settings');
-	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso'))
-	);
 
-	//echo $org_options['ee_map_type_control'];
 	// checks value of calendar thumb size to set radio inputs
 	// two seperate functions to handle list opts or reg page(single) opts
 	// to prevent opt values clashing due to same values.
