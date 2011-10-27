@@ -343,6 +343,9 @@ if (is_admin()) {
 	// New form builder
 	require_once("includes/form-builder/index.php");
 	require_once("includes/form-builder/groups/index.php");
+	
+	if ($espresso_premium != true)
+		require_once("includes/test_drive_pro.php");
 
 	// Install/Update Tables when plugin is activated
 	require_once("includes/functions/database_install.php");
@@ -448,7 +451,8 @@ if (is_admin()) {
 				'espresso_permissions',
 				'roles',
 				'event_locales',
-				'event_groups'
+				'event_groups',
+				'test_drive'
 		);
 		if (in_array($_REQUEST['page'], $espresso_pages)) {
 			add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
