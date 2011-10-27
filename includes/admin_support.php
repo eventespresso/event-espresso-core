@@ -750,7 +750,9 @@ function event_espresso_support() {
                           <?php _e('Translating Event Espresso', 'event_espresso'); ?><a name="translations" id="translations"></a>
                         </dt>
                       <dd>
+                      
                       <ol>
+              <li>Make sure your site is <a href="http://eventespresso.com/forums/2011/09/translating-event-espresso/" target="_blank">ready for translation</a></li>
               <li>Install <a href="http://www.poedit.net/download.php" target="_blank">POEDIT</a>.</li>
               <li>Download and  Unzip all Event Espresso on your Hard drive (For this example let&rsquo;s say C:\Myfolder\)</li>
               <li>Open POEDIT click-&gt; File -&gt; Open and select the  C:\Myfolder\event-espresso.3.1.13.P\languages\event_espresso-xx_XX.po  file (xx_XX being the language you want.)</li>
