@@ -77,7 +77,7 @@ if (!function_exists('espresso_venue_dd')) {
 				$div .= "<p><span>Zip:</span> " . stripslashes_deep($venue->zip) . "</p>";
 				$div .= "<p><span>Country:</span> " . stripslashes_deep($venue->country) . "</p>";
 				$div .= "<p><span>Venue ID:</span> " . $venue->id . "</p>";
-				$div .= "<p>This venues shortcode [ESPRESSO_VENUE id=\"'$venue->id'\"]</p>";
+				$div .= "<p>This venues shortcode <b class='highlight'>[ESPRESSO_VENUE id='" . $venue->id . "']</b></p>";
 				$div .= '<p><a href="admin.php?page=event_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></p></li></ul>';
 				$div .= "</fieldset>";
 			}
