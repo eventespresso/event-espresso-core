@@ -154,12 +154,18 @@ function edit_event($event_id = 0) {
                 </a></div>
               <?php
                                 if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) {
+									
+                                    echo '<div class="misc-pub-section misc-pub-section-last" id="visibility3">';
+                                    echo '<ul>';
+									if ( function_exists('espresso_manager_list') ){
+										echo '<li>'. espresso_manager_list($wp_user) .'</li>';
+									}
+									$wp_user = $wp_user == $event_meta['originally_submitted_by'] ? $wp_user : $event_meta['originally_submitted_by'];
                                     $user_name = espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name');
                                     $user_company = espresso_user_meta($wp_user, 'company') != '' ? espresso_user_meta($wp_user, 'company') : '';
                                     $user_organization = espresso_user_meta($wp_user, 'organization') != '' ? espresso_user_meta($wp_user, 'organization') : '';
                                     $user_co_org = $user_company != '' ? $user_company : $user_organization;
-                                    echo '<div class="misc-pub-section misc-pub-section-last" id="visibility3">';
-                                    echo '<ul>';
+									
                                     echo '<li><strong>' . __('Submitted By:', 'event_espresso') . '</strong> ' . $user_name . '</li>';
                                     echo '<li><strong>' . __('Email:', 'event_espresso') . '</strong> ' . espresso_user_meta($wp_user, 'user_email') . '</li>';
                                     echo $user_co_org != '' ? '<li><strong>' . __('Organization:', 'event_espresso') . '</strong> ' . espresso_user_meta($wp_user, 'company') . '</li>' : '';
@@ -384,7 +390,7 @@ function edit_event($event_id = 0) {
       <h3 class="hndle"> <span>
         <?php _e('Event Staff / Speakers', 'event_espresso'); ?>
         </span> </h3>
-      <div class="inside"> <?php echo espresso_personnel_cb($event_id); ?> </div>
+      <div class="inside"> <?php echo espresso_personnel_cb($event_id, $event_meta['originally_submitted_by'], unserialize($event_meta['orig_event_staff'])); ?> </div>
     </div>
     <?php
             }
@@ -579,8 +585,8 @@ function edit_event($event_id = 0) {
           <table width="100%" border="0" cellpadding="5">
               <tr valign="top">
             
-            <?php
-                                if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
+<?php
+	if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
                                     $ven_type = 'class="use-ven-manager"';
                                     ?>
             <td <?php echo $ven_type ?>><fieldset id="venue-manager">
@@ -594,7 +600,7 @@ function edit_event($event_id = 0) {
                 <?php echo espresso_venue_dd($venue_id) ?>
                 <?php endif; ?>
               </fieldset></td>
-            <?php
+<?php
     } else {
         $ven_type = 'class="manual-venue"';
         ?>
@@ -785,6 +791,7 @@ function edit_event($event_id = 0) {
 <input type="hidden" name="recurrence_id" value="<?php echo $recurrence_id; ?>">
 <input type="hidden" name="action" value="edit">
 <input type="hidden" name="event_id" value="<?php echo $event_id ?>">
+<input type="hidden" name="originally_submitted_by" value="<?php echo !empty($event_meta['originally_submitted_by'])? $event_meta['originally_submitted_by']: $wp_user ?>">
 <script type="text/javascript" charset="utf-8">
 
         //<![CDATA[
@@ -826,7 +833,7 @@ function edit_event($event_id = 0) {
 
 				// process the remove link in the metabox
 				jQuery('#remove-image').click(function(){
-				confirm('Do you really want to delete this image? Please remember to update your event to complete the removal');
+				confirm('<?php _e('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'); ?>');
 				jQuery("#upload_image").val('');
 				jQuery("p.event-featured-thumb").remove();
 				jQuery("p#image-display").remove();

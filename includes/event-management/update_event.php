@@ -166,7 +166,7 @@ function update_event($recurrence_arr = array()) {
 	} else {
 
 		$event_meta = array(); //will be used to hold event meta data
-
+		$wp_user_id = empty($_REQUEST['wp_user']) ? $current_user->ID : $_REQUEST['wp_user'][0];
 		$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
 		$event_name = $_REQUEST['event'];
 		//$event_identifier=array_key_exists('event_identifier', $recurrence_arr)?$recurrence_arr['event_identifier']:($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name.'-'.rand()) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']);
@@ -251,6 +251,7 @@ function update_event($recurrence_arr = array()) {
 		}
 
 		$question_groups = serialize($_REQUEST['question_groups']);
+		
 		$add_attendee_question_groups = serialize(empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups']);
 
 		$item_groups = serialize(empty($_REQUEST['item_groups']) ? '' : $_REQUEST['item_groups']);
@@ -259,11 +260,20 @@ function update_event($recurrence_arr = array()) {
 		$event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
 		$event_meta['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
 		$event_meta['date_submitted'] = $_REQUEST['date_submitted'];
+		$event_meta['originally_submitted_by'] = $_REQUEST['originally_submitted_by'];
+		
+		if ($wp_user != $event_meta['originally_submitted_by']){
+			$event_meta['orig_event_staff'] = !empty($_REQUEST['event_person']) ? serialize($_REQUEST['event_person']) : '';
+		}
+		//print_r($event_meta['orig_event_staff']);
+		
+		//Thumbnails
 		$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
 		$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
 		$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
 		$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
-  // enable event address for gmaps
+		
+		// enable event address for gmaps
 		$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
 		/*
 		 * Added for seating chart addon
@@ -318,21 +328,21 @@ function update_event($recurrence_arr = array()) {
 				'overflow_event_id' => $overflow_event_id, 'additional_limit' => $additional_limit,
 				'reg_limit' => $reg_limit, 'email_id' => $email_id, 'registration_startT' => $registration_startT,
 				'registration_endT' => $registration_endT, 'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval,
-				'timezone_string' => $timezone_string, 'ticket_id' => $ticket_id, 'certificate_id' => $certificate_id
+				'timezone_string' => $timezone_string, 'ticket_id' => $ticket_id, 'certificate_id' => $certificate_id, 'wp_user' => $wp_user_id
 		);
 
 		$sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d');
+				'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d');
 
 		$update_id = array('id' => $event_id);
 
-		/* echo 'Debug: <br />';
-		  print_r($sql);
-		  echo '<br />';
-		  print 'Number of vars: ' . count ($sql);
-		  echo '<br />';
-		  print 'Number of cols: ' . count($sql_data); */
+		 /*echo 'Debug:<br />';
+		 print 'Number of vars: ' . count ($sql);
+		 echo '<br />';
+		 print 'Number of cols: ' . count($sql_data); 
+		 echo "<pre>".print_r( $sql,true )."</pre>";*/
+		  
 
 
 		if (function_exists('event_espresso_add_event_to_db_groupon')) {

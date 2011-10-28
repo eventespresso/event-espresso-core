@@ -22,11 +22,19 @@ function add_new_event() {
             <div id="delete-action"> <a class="submitdelete deletion" href="admin.php?page=events" onclick="return confirm('<?php _e('Are you sure you want to cancel ' . $event_name . '?', 'event_espresso'); ?>')">
               <?php _e('Cancel', 'event_espresso'); ?>
               </a> </div>
+              
             <div id="publishing-action">
               <input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit New Event', 'event_espresso'); ?>" id="add_new_event" />
+              
             </div>
+           
             <!-- /publishing-action --> 
           </div>
+           <?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) {
+				if ( function_exists('espresso_manager_list') ){
+					echo '<div style="padding:10px 0 10px 10px" class="clearfix">'.espresso_manager_list($wp_user).'</div>';
+				}
+			}?>
           <!-- /major-publishing-actions --> 
         </div>
         <!-- /submitpost --> 
@@ -49,6 +57,7 @@ function add_new_event() {
                         . '<p>' . __('Display  description? ', 'event_espresso') . select_input('display_desc', $values, $display_desc) . '</p>'
                         . '<p>' . __('Display  registration form? ', 'event_espresso') . select_input('display_reg_form', $values, $display_reg_form) . '</p>';
             }//Display Lite version options - End
+			
             $reg_limit = isset($reg_limit) ? $reg_limit : '';
             //$event_meta = isset($event_meta) ? $event_meta : array();
             $additional_limit = isset($additional_limit) ? $additional_limit : '';

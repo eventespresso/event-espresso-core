@@ -55,6 +55,7 @@ function add_event_to_db($recurrence_arr = array()) {
         //$fb = new FacebookEvents();
         //echo $fb->espresso_createevent();
         //echo $_POST['event'];
+		$wp_user_id = empty($_REQUEST['wp_user']) ? $current_user->ID : $_REQUEST['wp_user'][0];
         $event_name = $_REQUEST['event'];
         $event_code = uniqid($current_user->ID . '-');
         $event_identifier = ($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
@@ -73,14 +74,14 @@ function add_event_to_db($recurrence_arr = array()) {
 
         $post_type = $_REQUEST['post_type'];
         
-					   // thumbnail image options
-					   $event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
-					   $event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
-					   $event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
-					   $event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+		// thumbnail image options
+		$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
+		$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
+		$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
+		$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
 					
-					   // enable event address for Gmaps
-					   $event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		// enable event address for Gmaps
+		$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
 					
         //$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
         $event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
@@ -177,7 +178,7 @@ function add_event_to_db($recurrence_arr = array()) {
         $event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
         $event_meta['add_attendee_question_groups'] = $add_attendee_question_groups;
         $event_meta['date_submitted'] = date("Y-m-d H:i:s");
-
+		$event_meta['originally_submitted_by'] = $current_user->ID;
 		$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
 
         if ($_REQUEST['emeta'] != '') {
@@ -205,19 +206,18 @@ function add_event_to_db($recurrence_arr = array()) {
             'allow_multiple' => $allow_multiple, 'send_mail' => $send_mail, 'is_active' => $is_active, 'event_status' => $event_status,
             'conf_mail' => $conf_mail, 'use_coupon_code' => $use_coupon_code, 'member_only' => $member_only, 'externalURL' => $externalURL,
             'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email,
-            'question_groups' => $question_groups, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'reg_limit' => $reg_limit, 'additional_limit' => $additional_limit, 'recurrence_id' => $recurrence_id, 'email_id' => $email_id, 'wp_user' => $current_user->ID, 'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()), 'ticket_id' => $ticket_id, 'certificate_id' => $certificate_id
+            'question_groups' => $question_groups, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'reg_limit' => $reg_limit, 'additional_limit' => $additional_limit, 'recurrence_id' => $recurrence_id, 'email_id' => $email_id, 'wp_user' => $wp_user_id, 'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()), 'ticket_id' => $ticket_id, 'certificate_id' => $certificate_id
 		);
 
         $sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
             '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d');
+            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d');
 
-        /* echo 'Debug: <br />';
-          print_r($sql);
-          echo '<br />';
-          print 'Number of vars: ' . count ($sql);
-          echo '<br />';
-          print 'Number of cols: ' . count($sql_data); */
+		/*echo 'Debug:<br />';
+		print 'Number of vars: ' . count ($sql);
+		echo '<br />';
+		print 'Number of cols: ' . count($sql_data); 
+		echo "<pre>".print_r( $sql,true )."</pre>";*/
 
 
         //Add groupon reference if installed

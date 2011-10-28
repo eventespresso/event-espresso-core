@@ -82,7 +82,7 @@ function event_espresso_edit_list() {
             $group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
             $group = unserialize($group);
             $sql = "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
-            $sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT ";
+            $sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, e.event_meta ";
            //Get the venue information
 			if ($org_options['use_venue_manager'] == 'Y') {
 				$sql .= ", v.name AS venue_title, v.address AS venue_address, v.address2 AS venue_address2, v.city AS venue_city, v.state AS venue_state, v.zip AS venue_zip, v.country AS venue_country ";
@@ -120,7 +120,7 @@ function event_espresso_edit_list() {
         if (!isset($sql))
             $sql = '';
         $sql .= "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
-        $sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT ";
+        $sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, e.event_meta ";
 
         //Get the venue information
 		if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
@@ -175,7 +175,7 @@ function event_espresso_edit_list() {
                             <span class="sorting-indicator"></span>
                         </th>
 
-                        <th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:26%;">
+                        <th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:16%;">
                             <span><?php _e('Name', 'event_espresso'); ?></span>
                             <span class="sorting-indicator"></span>
                         </th>
@@ -209,12 +209,19 @@ function event_espresso_edit_list() {
                             <span><?php _e('Status', 'event_espresso'); ?></span>
                             <span class="sorting-indicator"></span>
                         </th>
-        <?php if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true) { ?>
-                            <th class="manage-column column-date" id="status" scope="col" title="Click to Sort" style="width:10%;">
-                                <span><?php _e('Creator', 'event_espresso'); ?></span>
+        				<?php if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true) { 
+								if ( function_exists('espresso_manager_pro_version') ){
+								?>
+                                    <th class="manage-column column-date" id="creator" scope="col" title="Click to Sort" style="width:10%;">
+                                        <span><?php _e('Creator', 'event_espresso'); ?></span>
+                                        <span class="sorting-indicator"></span>
+                                    </th>
+                            	<?php } ?>
+                            <th class="manage-column column-date" id="owner" scope="col" title="Click to Sort" style="width:10%;">
+                                <span><?php _e('Owner', 'event_espresso'); ?></span>
                                 <span class="sorting-indicator"></span>
                             </th>
-        <?php } ?>
+        				<?php } ?>
                         <th class="manage-column column-date" id="attendees" scope="col" title="Click to Sort" style="width:9%;">
                             <span><?php _e('Attendees', 'event_espresso'); ?></span>
                             <span class="sorting-indicator"></span>
@@ -255,7 +262,9 @@ function event_espresso_edit_list() {
                         $venue_title = isset($event->venue_title) ? $event->venue_title:'';
                         $venue_locale = isset($event->locale_name) ? $event->locale_name : '';
                         $wp_user = isset($event->wp_user) ? $event->wp_user : '';
-
+						
+						$event_meta = unserialize($event->event_meta);
+						//print_r( $event_meta );
 
                         $location = (!empty($event_address) ? $event_address : '') . (!empty($event_address2) ? '<br />' . $event_address2 : '') . (!empty($event_city) ? '<br />' . $event_city : '') . (!empty($event_state) ? ', ' . $event_state : '') . (!empty($event_zip) ? '<br />' . $event_zip : '') . (!empty($event_country) ? '<br />' . $event_country : '');
                         $dow = date("D", strtotime($start_date));
@@ -285,6 +294,17 @@ function event_espresso_edit_list() {
 
                             <?php
                             if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true) {
+								if ( function_exists('espresso_manager_pro_version') ){
+									$orig_user = $event_meta['originally_submitted_by'];
+									
+									?>
+									<td class="date"><?php echo espresso_user_meta($orig_user, 'user_firstname') != '' ? espresso_user_meta($orig_user, 'user_firstname') . ' ' . espresso_user_meta($orig_user, 'user_lastname') : espresso_user_meta($orig_user, 'display_name'); ?>
+									<?php echo $user_co_org != '' ? '<br />[' . espresso_user_meta($orig_user, 'company').']' : ''; ?>
+									</td>
+								<?php 
+									$wp_user = $wp_user != $orig_user ? $wp_user : $orig_user;
+								}
+								
                                 $user_company = espresso_user_meta($wp_user, 'company') != '' ? espresso_user_meta($wp_user, 'company') : '';
                                 $user_organization = espresso_user_meta($wp_user, 'organization') != '' ? espresso_user_meta($wp_user, 'organization') : '';
                                 $user_co_org = $user_company != '' ? $user_company : $user_organization;
@@ -409,12 +429,13 @@ function event_espresso_edit_list() {
                     null,
                     null,
                     null,
+					<?php echo function_exists('espresso_is_admin')&&espresso_is_admin()==true&&function_exists('espresso_manager_pro_version') ? 'null,' : ''; ?>
     				<?php echo function_exists('espresso_is_admin')&&espresso_is_admin()==true ? 'null,' : ''; ?>
                     null,
                     { "bSortable": false }
                 ],
                 "aoColumnDefs": [
-                    { "bVisible": false, "aTargets": [ <?php echo $org_options['use_venue_manager'] == 'Y' ? '':'3,' ?> 6, <?php //echo function_exists('espresso_is_admin')&&espresso_is_admin()==true ? '11' : '10'; ?>  ] }
+                    { "bVisible": false, "aTargets": [ <?php echo $org_options['use_venue_manager'] == 'Y' ? '':'3,' ?> 6, <?php echo function_exists('espresso_is_admin')&&espresso_is_admin()==true&&function_exists('espresso_manager_pro_version') ? '9,' : ''; ?>  ] }
                 ],
                 "oColVis": {
                     "aiExclude": [ 0, 1, 2 ],

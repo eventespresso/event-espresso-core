@@ -115,22 +115,40 @@ if (!function_exists('espresso_venue_dd')) {
 
 if (!function_exists('espresso_personnel_cb')) {
 
-	function espresso_personnel_cb($event_id = 0) {
+	function espresso_personnel_cb($event_id = 0, $orig_user = 0, $orig_event_staff = 0) {
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
 		global $wpdb;
+		if ( $orig_event_staff != 0 ){
+			//print_r( $orig_event_staff );
+			$p_id ='';
+			foreach($orig_event_staff as $k=>$v){
+				$p_id .= "'".$v."',";
+			}
+		}
+		$p_id = rtrim($p_id, ",");
 		$sql = "SELECT id, name, role, meta FROM " . EVENTS_PERSONNEL_TABLE;
 		if (function_exists('espresso_member_data')) {
 			$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
 			$wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
 			$sql .= " WHERE ";
+			$sql .= "(";
 			if ($wp_user == 0 || $wp_user == 1) {
 				$sql .= " (wp_user = '0' OR wp_user = '1') ";
 			} else {
+				
 				$sql .= " wp_user = '" . $wp_user . "' ";
+				if ( $orig_user != 0 ){
+					$sql .= " OR wp_user = '" . $orig_user . "' ";
+				}
 			}
+			if ( $orig_event_staff != 0 ){
+				$sql .= " OR id IN (" . $p_id . ") ";
+			}
+			$sql .= ")";
 		}
+		//echo $sql;
 		$event_personnel = $wpdb->get_results($sql);
 		$num_rows = $wpdb->num_rows;
 		if ($num_rows > 0) {
@@ -317,7 +335,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 		if ($espresso_premium != true)
 			return;
 		$good_meta = array();
-		$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", "add_attendee_question_groups", "date_submitted", "event_host_terms", "default_payment_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url");
+		$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", "add_attendee_question_groups", "date_submitted", "event_host_terms", "default_payment_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url", "originally_submitted_by", "enable_for_gmap", "orig_event_staff");
 		$meta_counter = 1;
 
 		$default_meta = $event_meta == '' ? array("event_hashtag" => "", "event_format" => "", "event_livestreamed" => "") : array();
