@@ -337,51 +337,76 @@ function event_list_attendees() {
   </table>
   <div style="clear:both; margin-bottom:30px;">
     <input name="delete_customer" type="submit" class="button-secondary" id="delete_customer" value="<?php _e('Delete Attendee(s)', 'event_espresso'); ?>" style="margin:10px 0 0 0;" onclick="return confirmDelete();" />
+		
     <?php if ($ticketing_installed == true) { ?>
-    <input name="attended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Mark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" />
-    <input name="unattended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Unmark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" />
+    <input name="attended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Mark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
+		
+    <input name="unattended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Unmark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
     <?php } ?>
-    <a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=csv_import">
-    <?php _e('Import CSV', 'event_espresso'); ?>
-    </a> <a class="button-primary" style="margin-left:5px" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $_REQUEST['event_id'] . "&amp;export=report&action=payment&amp;type=excel";
-	echo $_REQUEST['event_id'] == '' ? '&amp;all_events=true' : ''; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>">
-    <?php _e('Export to Excel', 'event_espresso'); ?>
-    </a> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px"  class="button-primary"  href="admin.php?page=attendees&amp;event_admin_reports=add_new_attendee&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Add Attendee', 'event_espresso') . '</a>' : ''; ?> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=edit&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Edit Event', 'event_espresso') . '</a>' : ''; ?> </div>
+				
+		<a class="button-primary" style="margin:10px 0 0 20px;" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $_REQUEST['event_id'] . "&amp;export=report&action=payment&amp;type=excel";
+	echo $_REQUEST['event_id'] == '' ? '&amp;all_events=true' : ''; ?>'" title="<?php _e('Export Payments to Excel', 'event_espresso'); ?>">
+    <?php _e('Export Payments to Excel', 'event_espresso'); ?>
+    </a> 
+
+			<a class="button-primary" style="margin:10px 0 0 20px;" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;export=report&action=attendees&amp;type=csv"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Attendee Data to CSV', 'event_espresso'); ?></a>
+		
+		<?php echo isset($_REQUEST['event_id']) ? '<a style="margin:10px 0 0 20px;"  class="button-primary"  href="admin.php?page=attendees&amp;event_admin_reports=add_new_attendee&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Add Attendee', 'event_espresso') . '</a>' : ''; ?> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=edit&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Edit Event', 'event_espresso') . '</a>' : ''; ?> 
+		
+	</div>
 </form>
+
+
 <h4 style="clear:both">
   <?php _e('Legend', 'event_espresso'); ?>
 </h4>
-<dl style="float:left; margin-left:10px; width:200px">
-  <dt>
+<dl style="float:left; margin-left:10px; width:800px; height:80px;">
+  <dt style="float:left;width:200px;">
     <?php event_espresso_paid_status_icon('Completed') ?>
     -
     <?php _e('Completed', 'event_espresso'); ?>
   </dt>
-  <dt>
+  <dt style="float:left;width:200px;">
     <?php event_espresso_paid_status_icon('Incomplete') ?>
     -
     <?php _e('Incomplete', 'event_espresso'); ?>
   </dt>
-  <dt>
+  <dt style="float:left;width:200px;">
     <?php event_espresso_paid_status_icon('Pending') ?>
     -
     <?php _e('Pending', 'event_espresso'); ?>
   </dt>
-  <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/money.png" width="16" height="16" alt="<?php _e('Payment Details', 'event_espresso'); ?>" /> -
+  <dt style="float:left;width:200px;"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/money.png" width="16" height="16" alt="<?php _e('Payment Details', 'event_espresso'); ?>" /> -
     <?php _e('Payment Details', 'event_espresso'); ?>
   </dt>
-</dl>
-<dl style="float:left; margin-left:10px; width:200px">
-  <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_link.png" width="16" height="16" alt="<?php _e('Resend Details', 'event_espresso'); ?>" /> -
+  <dt style="float:left;width:200px;"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_link.png" width="16" height="16" alt="<?php _e('Resend Details', 'event_espresso'); ?>" /> -
     <?php _e('Resend Email', 'event_espresso'); ?>
   </dt>
-  <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/page_white_acrobat.png" width="16" height="16" alt="<?php _e('Download Invoice', 'event_espresso'); ?>" /> -
+  <dt style="float:left;width:200px;"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/page_white_acrobat.png" width="16" height="16" alt="<?php _e('Download Invoice', 'event_espresso'); ?>" /> -
     <?php _e('Download Invoice', 'event_espresso'); ?>
   </dt>
-  <dt><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/user_edit.png" width="16" height="16" alt="<?php _e(' Attendee Details', 'event_espresso'); ?>" /> -
+  <dt style="float:left;width:200px;"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/user_edit.png" width="16" height="16" alt="<?php _e(' Attendee Details', 'event_espresso'); ?>" /> -
     <?php _e('Attendee Details', 'event_espresso'); ?>
   </dt>
 </dl>
+
+<?php 
+			
+/***************************** ADDED BY BRENT ************************/
+	
+		if ( $_REQUEST[ 'action' ] !='edit' ) { 
+			include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/form-builder/csv_uploader.php' );
+			$import_what = 'Attendees';
+			$import_intro = 'If you have a previously exported list of Attendee Details in a Comma Separated Value (CSV) file format, you can upload the file here: ';
+			$page = 'attendees';
+			echo csv_uploader( $import_what, $import_intro, $page, $name );
+		}
+		
+/***************************** brent done adding ************************/
+		
+?>
+
+
 <script>
 		jQuery(document).ready(function($) {
 			/* show the table data */
