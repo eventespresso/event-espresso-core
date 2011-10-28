@@ -27,7 +27,7 @@ function event_espresso_config_page_styles() {
 }
 
 function event_espresso_config_page_scripts() {
-    add_thickbox();
+    //add_thickbox();
     wp_enqueue_script('postbox');
     wp_enqueue_script('dashboard');
     wp_enqueue_script('thickbox');

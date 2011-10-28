@@ -244,7 +244,7 @@ require_once("includes/functions/time_date.php");
 require_once("includes/shortcodes.php");
 
 /* Core template files used by this plugin */
-//These may be laoded in posts and pages outside of the default EE pages
+//These may be loaded in posts and pages outside of the default EE pages
 //Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
 event_espresso_require_template('event_list.php');
 
@@ -441,6 +441,7 @@ if (is_admin()) {
 				'template_confg',
 				'payment_gateways',
 				'members',
+    'espresso_social',
 				'admin_addons',
 				'espresso_calendar',
 				'event_tickets',
