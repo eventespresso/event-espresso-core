@@ -44,7 +44,7 @@
 	 */	
 	public  function &instance() {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, 'CSVIO' )) {
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -146,8 +146,8 @@
 	 *			@param array $columns_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
 	 *			@return TRUE on success, FALSE on fail
 	 */	
-	public function save_csv_to_db( $table_list, $csv_data_array, $columns_to_save, $table = FALSE ) {
-	
+	public function save_csv_to_db( $table_list, $csv_data_array, $columns_to_save = FALSE, $table = FALSE ) {
+
 		// somebody told me i might need this ???
 		global $wpdb;
 		
@@ -159,25 +159,33 @@
 	
 		$success = FALSE;
 		$error = FALSE;
-		// flip the array so we can check against it's data
-		$save_to_columns = array_flip($columns_to_save);
-								
+		
 		// loop through each row of data
 		foreach ( $csv_data_array as $table_name => $table_data ) {		
-		
+				
 			// check for and set table name ?
-			if ( in_array( $table_name, $table_list )) {
-				// we have a table info in the array, therefore our array is three levels deep and all is good
+			if ( in_array( (string)$table_name, $table_list )) {
+				// we have a table info in the array
+				// our array is three levels deep and all is good
 				$table = $table_name;
+				// get columns for appropriate table directly from db
+				$columns_to_save = $this->list_db_table_fields($table);
 			} else if ( $table ) {
 				// first level of array is not table information but a table name was passed to the function
 				// array is only two levels deep, so let's fix that by adding a level, else the next steps will fail
 				$table_data = array( $table_data );
+				// if we haven't been passed specific table columns
+				if ( ! $columns_to_save ) {
+					$columns_to_save = $this->list_db_table_fields($table);
+				}
 			} else {
 				// no table info in the array and no table name passed to the function?? FAIL
 				return FALSE;
 			}
-		
+	
+			// flip the array so we can check against it's data
+			$save_to_columns = array_flip($columns_to_save);
+								
 			foreach ( $table_data as $outerkey => $innerdata ) {		
 		
 				// array for storing data and data types required by WP insert function
@@ -189,7 +197,7 @@
 	
 					// check if this csv column is to be saved to the database
 					if ( in_array( $innerkey, $columns_to_save ) ) {
-					
+			
 						// test it data type is an int ( %d ) or a string ( %s )
 						if (is_numeric($value)) {
 							$format[] = '%d';
@@ -200,9 +208,12 @@
 						// save to the multidimensional array
 						$data[$innerkey] = $value;
 		
+					} else {
+						$error = TRUE;
 					}
+					
 				}
-	
+
 				// if $data exists for row insert it into the database separately
 				// we'll use $wpdb->insert from now on, which automagically escapes and sanitizes data for us
 				$wpdb->insert( $table, $data, $format );
@@ -228,6 +239,64 @@
 	
 	
 	/**
+	 *			@Export contents of a database table to csv file
+	 *		  @access public
+	 *			@param array $table - the database table to be converted to csv and exported 
+	 *			@param string $filename - name for newly created csv file
+	 *			@param array $prev_export - an array from a previous table export to be merged with these results
+	 *			@return TRUE on success, FALSE on fail
+	 */	
+	public function export_table_to_array ( $table = FALSE, $prev_export = FALSE, $query = FALSE ) {
+		
+		// no table ?? sorry but's it the law
+		if ( ! $table ) {
+			return FALSE;
+		}
+		
+		// somebody told me i might need this ???
+		global $wpdb;
+		
+		// create a nicer table name by removing the table prefix
+		$prefix = $wpdb->prefix;
+		$tablename = str_replace( $prefix, '', $table );
+	
+		$data = array();		
+		// retreive list of fieldnames for the table
+		if ( ! $data[$tablename]['HEADINGS'] = self::list_db_table_fields($table) ) {
+			return FALSE;
+		}	
+		
+		// no query? then grab everything
+		if ( ! $query ) {
+			$query = "SELECT * FROM " . $table;
+		}
+		$result = $wpdb->get_results( $wpdb->prepare( $query ));
+		
+		if ($wpdb->num_rows > 0) {
+			$i = 1;
+			foreach ( $result as $row ) {
+				foreach ( $row as $column ) {
+					// create a multi dimensional array organized by table
+					$data[$tablename][$i][] = $column;
+				}
+				$i++;
+			}
+		
+		} else {
+			// no results for you!!! - we do nothing!
+		}
+		
+		// is there an array from a previous export?
+		if ( $prev_export && is_array($prev_export) ) {
+			$data = array_merge( $prev_export, $data );
+		}
+		
+		return $data;
+		
+	}
+	
+	
+	/**
 	 *			@Export contents of an array to csv file
 	 *		  @access public
 	 *			@param array $data - the array of data to be converted to csv and exported 
@@ -249,9 +318,11 @@
 		
 		// grab file extension
 		$ext = substr(strrchr($filename, '.'), 1);
-		if ( ! $ext == '.csv' ) {
-			$filename .= '.csv';
+		if ( $ext == '.csv' or  $ext == '.xls' ) {
+			str_replace( $ext, '', $filename );
 		}
+		$filename .= '.csv';
+	
 		
 		// no tables
 		if ( ! $table_list ) {
@@ -261,7 +332,7 @@
 		
 		// somebody told me i might need this ???
 		global $wpdb;
-		$prefix = $wpdb->prefix . 'events_';
+		$prefix = $wpdb->prefix;
 			
 	
 		if (ob_get_length()) {
@@ -317,60 +388,6 @@
 		fclose($fp);
 		exit(0);
 	
-	}
-	
-	
-	/**
-	 *			@Export contents of a database table to csv file
-	 *		  @access public
-	 *			@param array $table - the database table to be converted to csv and exported 
-	 *			@param string $filename - name for newly created csv file
-	 *			@param array $prev_export - an array from a previous table export to be merged with these results
-	 *			@return TRUE on success, FALSE on fail
-	 */	
-	public function export_table_to_array ( $table = FALSE, $prev_export = FALSE ) {
-		
-		// no table name?? get outta here
-		if ( ! $table ) {
-			return FALSE;
-		}
-		
-		// somebody told me i might need this ???
-		global $wpdb;
-		
-		// create a nicer table name by removing the table prefix
-		$prefix = $wpdb->prefix . 'events_';
-		$tablename = str_replace( $prefix, '', $table );
-	
-		$data = array();		
-		// retreive list of fieldnames for the table
-		if ( ! $data[$tablename][0] = self::list_db_table_fields($table) ) {
-			return FALSE;
-		}	
-		
-		$sql = "SELECT * FROM " . $table;
-		$result = $wpdb->get_results( $wpdb->prepare( $sql ));
-		if ($wpdb->num_rows > 0) {
-			$i = 1;
-			foreach ( $result as $row ) {
-				foreach ( $row as $column ) {
-					$data[$tablename][$i][] = $column;
-				}
-				$i++;
-			}
-		
-		} else {
-			// no results for you!!!
-			return FALSE;
-		}
-		
-		// is there an array from a previous export?
-		if ( $prev_export && is_array($prev_export) ) {
-			$data = array_merge( $prev_export, $data );
-		}
-		
-		return $data;
-		
 	}
 	
 	
