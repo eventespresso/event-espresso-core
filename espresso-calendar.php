@@ -59,6 +59,7 @@ function espresso_calendar_install(){
 					'espresso_calendar_width' => '2',
 					'time_format' => get_option('time_format'),
 					'show_time' => 'true',
+					'use_custom_theme' => 'false',
 					'espresso_calendar_titleFormat' => "month: 'MMMM yyyy', week: \"MMM d[ yyyy]{ '—'[ MMM] d yyyy}\", day: 'dddd, MMM d, yyyy'",
 					'espresso_calendar_columnFormat' => "month: 'ddd', week: 'ddd M/d', day: 'dddd M/d'",
 					'espresso_calendar_monthNames' => "'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'",
@@ -71,6 +72,45 @@ function espresso_calendar_install(){
 register_activation_hook(__FILE__,'espresso_calendar_install');
 
 
+//Theme selection tools
+
+//Retunrs an array of available jQuery UI Themeroller files
+function espresso_calendar_theme_files() {
+	// read our template dir and build an array of files
+	if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "calendar/themes/index.html")) {
+		$dhandle = opendir(EVENT_ESPRESSO_TEMPLATE_DIR . 'calendar/themes/');//If the template files have been moved to the uplaods folder
+	} else {
+		$dhandle = opendir(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'themes/');
+	}
+	
+	$files = array();
+	
+	if ($dhandle) { //if we managed to open the directory
+		// loop through all of the files
+		while (false !== ($fname = readdir($dhandle))) {
+			// if the file is not this file, and does not start with a '.' or '..',
+			// then store it for later display
+			if ( ($fname != '.') && ($fname != '.DS_Store') && ($fname != 'index.html') && ($fname != '..') && ($fname != '.svn') && ($fname != basename($_SERVER['PHP_SELF'])) ) {
+				// store the filename
+				$files[] = $fname;
+			}
+		}
+		// close the directory
+		closedir($dhandle);
+	}
+	
+	return $files;
+}
+
+function espresso_theme_is_selected($name, $selected='') {
+	   $input_item = $name;
+			 $option_selections = array($selected);
+	   if (!in_array( $input_item, $option_selections )  )
+	   return false;
+	   else
+	   echo  'selected="selected"';
+	   return; 
+}
 
 /**
  * Add a settings link to the Plugins page, so people can go straight from the plugin page to the
@@ -110,6 +150,8 @@ function espresso_calendar_config_mnu()	{
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
   $espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
+$espresso_calendar['custom_theme'] = $_POST['custom_theme'];
+		$espresso_calendar['use_custom_theme'] = $_POST['use_custom_theme'];
 		$espresso_calendar['espresso_calendar_titleFormat'] = $_POST['espresso_calendar_titleFormat'];
 		$espresso_calendar['espresso_calendar_columnFormat'] = $_POST['espresso_calendar_columnFormat'];
 		$espresso_calendar['espresso_calendar_monthNames'] = $_POST['espresso_calendar_monthNames'];
@@ -343,6 +385,33 @@ function espresso_calendar_config_mnu()	{
                   <div class="inside">
                   <div class="padding">
                     <ul>
+                    <li><strong><?php _e('Theme Settings', 'event_espresso'); ?></strong><br />
+					<?php _e('Enables/disables use of jQuery UI theming', 'event_espresso'); ?></li>
+                    <li>
+                        <label for="use_custom_theme">
+                          <?php _e('Enable custom themes?','event_espresso'); ?>
+                        </label>
+                        <?php
+							echo select_input('use_custom_theme', $values, $espresso_calendar['use_custom_theme'], 'id="use_custom_theme"');
+						?>
+                      </li>
+                      <li>
+                        <label for="base-theme-select" <?php echo $styled ?>>
+                          <?php _e('Select Base Theme:', 'event_espresso');  ?>
+                        </label>
+                        <select id="base-theme-select" class="wide" <?php echo $disabled ?> name="custom_theme">
+                          <option <?php espresso_theme_is_selected($fname) ?> value="smoothness">
+                          <?php _e('Default Theme - Smoothness', 'event_espresso'); ?>
+                          </option>
+                          <?php 
+						  $files = espresso_calendar_theme_files();
+						  foreach( $files as $fname ) { ?>
+                          	<option <?php espresso_theme_is_selected($fname,$espresso_calendar['custom_theme']) ?> value="<?php echo $fname ?>"><?php echo $fname; ?></option>
+                          <?php 
+						  }
+						  ?>
+                        </select>
+                      </li>
                       <li>
                         <table width="100%" border="0" cellpadding="20" cellspacing="5">
                           <tr>
@@ -567,6 +636,11 @@ if (!function_exists('espresso_init_calendar_style')) {
 			wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL.'calendar.css');//calendar core style
 		}
 		wp_enqueue_style( 'calendar');
+		
+		if ( $espresso_calendar['use_custom_theme'] == 'true' && !empty($espresso_calendar['custom_theme']) ){
+			wp_register_style('custom-calendar-style', ESPRESSO_CALENDAR_PLUGINFULLURL.'themes/'.$espresso_calendar['custom_theme'].'/style.css');//calendar core style
+			wp_enqueue_style( 'custom-calendar-style');
+		}
 	}
 }
 add_action('wp_print_styles', 'espresso_init_calendar_style',10);
@@ -795,8 +869,15 @@ if (!function_exists('espresso_calendar')) {
 					* For example, if you just downloaded a theme from the jQuery UI Themeroller, you need to put a <link> tag in your page's <head>.
 					**/
 
+					//jQuery UI Themeroller
 					//Enables/disables use of jQuery UI theming.
-					//theme: true, //Settings: http://arshaw.com/fullcalendar/docs/display/theme/
+					//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
+					<?php 
+					if ($espresso_calendar['use_custom_theme'] == 'true' && !empty($espresso_calendar['custom_theme'])){
+						echo "theme: true,";
+					}
+					
+					?>
 
 					//This option only applies to calendars that have jQuery UI theming enabled with the theme option.
 					/*buttonIcons:{ //Settings: http://arshaw.com/fullcalendar/docs/display/buttonIcons/
@@ -965,19 +1046,3 @@ if (!function_exists('espresso_calendar')) {
 	}
 }
 add_shortcode('ESPRESSO_CALENDAR', 'espresso_calendar');
-
-/*
-events: [
-      <% @schedule.events.each do |event| %>
-      {
-        // Render your events here as needed
-        // I added a custom attribute called eventDeleteLink, to be used below
-      },
-      <% end %>
-    ],
-    // Add this piece:
-    eventRender: function(event, element) {
-      element.find(".fc-event-time").append(" " + event.eventDeleteLink);
-    }
-*/
-
