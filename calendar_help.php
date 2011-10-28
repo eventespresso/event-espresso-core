@@ -43,5 +43,32 @@
 					</div>
     </div>
 			<?php ########## help box ########## ?>
-			
+   
+   <?php ########## help box ########## ?>
+    <div id="show-event-times" class="pop-help" >
+     <div class="TB-ee-frame">
+    			
+							<h2><?php _e('Display event times', 'event_espresso'); ?></h2>
+        <p>
+       		 <?php _e('This option allows you to show the event start and finish times.', 'event_espresso'); ?>
+        </p>
+    				<p><?php _e('The times are displayed below the event title.', 'event_espresso'); ?></p>
+    				<p><?php _e('You may select the format of the time display using the radio button options, or you may set your own custom format explained in the link below the input field.', 'event_espresso'); ?></p>
+
+					</div>
+    </div>   
+
+    <?php ########## help box ########## ?>
+    <div id="enable-categories" class="pop-help" >
+     <div class="TB-ee-frame">
+    			
+							<h2><?php _e('Enable CSS classes for Categories', 'event_espresso'); ?></h2>
+        <p>
+       		 <?php _e('Enabling this option will set the events category name as a CSS class on the event element', 'event_espresso'); ?>
+        </p>
+    				<p><?php _e('You may use these classes to apply individual styles based on the events category e.g a separate background color for each event category.', 'event_espresso'); ?></p>
+    				<p><?php _e('', 'event_espresso'); ?></p>
+
+					</div>
+    </div>			
 </div><!-- / div display:none; -->
