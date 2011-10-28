@@ -34,6 +34,52 @@ function espresso_version() {
 
 define("EVENT_ESPRESSO_VERSION", espresso_version());
 
+// Define all plugin database tables
+define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
+
+define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
+define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
+define("EVENTS_ATTENDEE_META_TABLE", $wpdb->prefix . "events_attendee_meta");
+
+define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
+define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
+
+define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
+
+define("EVENTS_DISCOUNT_CODES_TABLE", $wpdb->prefix . "events_discount_codes");
+define("EVENTS_DISCOUNT_REL_TABLE", $wpdb->prefix . "events_discount_rel");
+
+define("EVENTS_EMAIL_TABLE", $wpdb->prefix . "events_email");
+
+define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
+define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
+
+define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
+
+define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
+define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
+
+define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices");
+
+define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
+define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
+define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
+
+define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
+
+define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
+define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
+
+// Added for seating chart addon
+define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart");
+define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat");
+define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event");
+define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat");
+define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "events_seating_chart_level_section_alignment");
+// End table definitions
+
+
+
 function espresso_init_session() {
 	global $org_options;
 
@@ -49,18 +95,30 @@ function espresso_init_session() {
 	}
 	$_SESSION['espresso_session_id'] = session_id();
 }
+add_action('plugins_loaded', 'espresso_init_session', 1);
 
-add_action('init', 'espresso_init_session', 1);
 
 function espresso_check_for_export() {
 	if (isset($_REQUEST['export'])) {
-		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/export.php')) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/export.php');
-			espresso_export_stuff();
+		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Export.class.php')) {
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Export.class.php');
+			$EE_Export = EE_Export::instance();
+			$EE_Export->export();
 		}
 	}
 }
 add_action('plugins_loaded', 'espresso_check_for_export');
+
+function espresso_check_for_import() {
+	if (isset($_REQUEST['import'])) {
+		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Import.class.php')) {
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Import.class.php');
+			$EE_Import = EE_Import::instance();
+			$EE_Import->import();
+		}
+	}
+}
+add_action('plugins_loaded', 'espresso_check_for_import');
 
 //Load the Event Espresso HTML meta
 function espresso_info_header() {
@@ -170,44 +228,6 @@ if (get_option('timezone_string') != '') {
 	date_default_timezone_set(get_option('timezone_string'));
 }
 
-//Define all of the plugins database tables
-define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
-define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
-define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
-define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
-define("EVENTS_ATTENDEE_META_TABLE", $wpdb->prefix . "events_attendee_meta");
-define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
-define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
-define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
-define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
-define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
-define("EVENTS_DISCOUNT_CODES_TABLE", $wpdb->prefix . "events_discount_codes");
-define("EVENTS_DISCOUNT_REL_TABLE", $wpdb->prefix . "events_discount_rel");
-define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices");
-define("EVENTS_EMAIL_TABLE", $wpdb->prefix . "events_email");
-//define("EVENTS_SESSION_TABLE", $wpdb->prefix . "events_sessions");
-define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
-define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
-define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
-define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
-define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
-define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
-
-//Added by Imon
-define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
-define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
-
-/*
- * Added for seating chart addon
- */
-define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart");
-define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat");
-define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event");
-define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat");
-define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "events_seating_chart_level_section_alignment");
-/*
- * End
- */
 
 //Wordpress function for setting the locale.
 //print get_locale();
