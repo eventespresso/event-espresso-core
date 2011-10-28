@@ -313,7 +313,7 @@ function espresso_calendar_config_mnu()	{
                       
                       <li>
                         <label for="show-in-thickbox">
-                          <?php _e('Show event details in popup box', 'event_espresso'); ?>
+                          <?php _e('Show event details in popup box ', 'event_espresso'); ?><a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-thickbox" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a>
                         </label>
                         <?php echo select_input('show_in_thickbox',  array(array('id'=>'N','text'=> __('No','event_espresso')),array('id'=>'Y','text'=> __('Yes','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
                       </li>

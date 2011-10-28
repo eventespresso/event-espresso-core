@@ -67,8 +67,18 @@
        		 <?php _e('Enabling this option will set the events category name as a CSS class on the event element', 'event_espresso'); ?>
         </p>
     				<p><?php _e('You may use these classes to apply individual styles based on the events category e.g a separate background color for each event category.', 'event_espresso'); ?></p>
-    				<p><?php _e('', 'event_espresso'); ?></p>
+   
+					</div>
+    </div>
+    
+    <?php ########## help box ########## ?>
+    <div id="display-thickbox" class="pop-help">
+     <div class="TB-ee-frame">
+    			
+							<h2><?php _e('Open event in a popup box', 'event_espresso'); ?></h2>
+        
+        <p><?php _e('This option will cause the event to open in a popup box with event details displayed along with a link to the registration page instead of the event link directly moving to the registration page.', 'event_espresso'); ?></p>
 
 					</div>
-    </div>			
+    </div>    			
 </div><!-- / div display:none; -->
