@@ -119,16 +119,33 @@ function event_espresso_categories_config_mnu() {
                         </table>
                         <div style="clear:both">
                             <p>
-                                <input type="checkbox" name="sAll" onclick="selectAll(this)" />
-                                <strong>
-                                    <?php _e('Check All', 'event_espresso'); ?>
-                                </strong>
-                                <input name="delete_category" type="submit" class="button-secondary" id="delete_category" value="<?php _e('Delete Category', 'event_espresso'); ?>" style="margin-left:10px 0 0 10px;" onclick="return confirmDelete();">
-                                <a  style="margin-left:5px"class="button-primary" href="admin.php?page=event_categories&amp;action=add_new_category"><?php _e('Add New Category', 'event_espresso'); ?></a>
+                                <label><input type="checkbox" name="sAll" onclick="selectAll(this)" /> <strong><?php _e('Check All', 'event_espresso'); ?></strong></label>
+                                <input name="delete_category" type="submit" class="button-secondary" id="delete_category" value="<?php _e('Delete Category', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" onclick="return confirmDelete();">
+                                <a  style="margin:10px 0 0 20px;"class="button-primary" href="admin.php?page=event_categories&amp;action=add_new_category"><?php _e('Add New Category', 'event_espresso'); ?></a>
+ 
+																<?php /***************************** ADDED BY BRENT ************************/ ?>																
+																<a  style="margin:10px 0 0 20px;" class="button-primary" href="<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?event_espresso&amp;export=report&action=categories&amp;type=csv" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Categories to CSV', 'event_espresso'); ?></a>
+																<?php /***************************** brent done adding ************************/ ?>																
+		
                             </p>
                         </div>
                     </form>
                 </div>
+<?php 
+			
+/***************************** ADDED BY BRENT ************************/
+	
+		if ( $_REQUEST[ 'action' ] !='edit' ) { 
+			include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/form-builder/csv_uploader.php' );
+			$import_what = 'Categories';
+			$import_intro = 'If you have a previously exported list of Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ';
+			$page = 'event_categories';
+			echo csv_uploader( $import_what, $import_intro, $page, $name );
+		}
+		
+/***************************** brent done adding ************************/
+		
+?>
             </div>
         </div>
     </div>
