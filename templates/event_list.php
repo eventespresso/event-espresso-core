@@ -38,7 +38,7 @@ if (!function_exists('display_all_events')) {
         $sql .= " WHERE is_active = 'Y' ";
         $sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
         $sql .= " AND e.event_status != 'D' ";
-        $sql .= " GROUP BY e.id  ORDER BY date(start_date), id";
+        $sql .= " GROUP BY e.id  ORDER BY date(start_date), time(start_time), id";
         event_espresso_get_event_details($sql); //This function is located below
     }
 
@@ -64,7 +64,7 @@ if (!function_exists('display_event_espresso_categories')) {
             $sql .= " WHERE c.category_identifier = '" . $event_category_id . "' ";
             $sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
             $sql .= " AND e.event_status != 'D' ";
-            $sql .= " GROUP BY e.id  ORDER BY date(start_date), id ASC";
+        $sql .= " GROUP BY e.id  ORDER BY date(start_date), time(start_time), id";
             event_espresso_get_event_details($sql, $css_class); //This function is located below
         }
     }
