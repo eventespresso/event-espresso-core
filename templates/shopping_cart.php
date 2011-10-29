@@ -80,7 +80,7 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) ){
     <label class="coupon-code" for="event_espresso_coupon_code">
       <?php _e( 'Enter Coupon Code ', 'event_espresso' ); ?>
     </label>
-    <input type="text" name="event_espresso_coupon_code" id ="event_espresso_coupon_code" value="<?php echo $_SESSION['event_espresso_coupon_code']; ?>"/>
+    <input onkeydown="if(event.keyCode==13) {document.getElementById('event_espresso_refresh_total').focus(); return false;}" type="text" name="event_espresso_coupon_code" id ="event_espresso_coupon_code" value="<?php echo $_SESSION['event_espresso_coupon_code']; ?>"/>
   </div>
   <div id="event_espresso_total_wrapper" class="clearfix event-display-boxes"> <span id="event_total_price" class="event_total_price"><?php echo $_SESSION['event_espresso_grand_total']; ?></span> <a href="#" id="event_espresso_refresh_total">
     <?php _e( 'REFRESH TOTAL', 'event_espresso' ); ?>
