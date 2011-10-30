@@ -82,10 +82,10 @@
 			ini_set('auto_detect_line_endings',TRUE);
 	
 			// try to open and read file
-			if (($handle = fopen( $path_to_file, "r" )) !== FALSE) {
+			if (($fh = fopen( $path_to_file, "r" )) !== FALSE) {
 			
 				// loop through each row of the file
-				while (($data = fgetcsv($handle, 10000, ",")) !== FALSE) {
+				while (($data = fgetcsv($fh, 10000, ',', '"')) !== FALSE) {
 		
 					if ( $data[0]	== 'TABLE' ) {
 						$table = $data[1];
@@ -118,7 +118,7 @@
 					
 				}
 				// close file connection
-				fclose($handle);
+				fclose($fh);
 				
 			} else {
 				$error = "error - could not open the file : $path_to_file";
@@ -350,7 +350,7 @@
 		header("Content-Type: application/download");
 		header('Content-disposition: attachment; filename='.$filename);
 		header("Content-Type: text/csv");
-    $fp = fopen('php://output', 'w');		
+    $fh = fopen('php://output', 'w');		
 		
 		$no_table = TRUE;
 	
@@ -368,24 +368,24 @@
 				$table_name = array( 'TABLE', $table_name );
 
 				// add table name to csv output
-				echo self::fputcsv2($fp, $table_name);
+				echo self::fputcsv2($fh, $table_name);
 	
 				// now get the rest of the data
 				foreach ( $table_data as $row ) {
 					// output the row
-					echo self::fputcsv2($fp, $row);
+					echo self::fputcsv2($fh, $row);
 				}
 				
 			}
 				
 			if ( $no_table ) {
 				// no table so just put the data
-				echo self::fputcsv2($fp, $table_data);
+				echo self::fputcsv2($fh, $table_data);
 			}
 		
 		} 		//		END OF foreach ( $data )
 
-		fclose($fp);
+		fclose($fh);
 		exit(0);
 	
 	}
