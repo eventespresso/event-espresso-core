@@ -137,7 +137,7 @@ if (!function_exists('espresso_personnel_cb')) {
 			if ($wp_user == 0 || $wp_user == 1) {
 				$sql .= " (wp_user = '0' OR wp_user = '1') ";
 			} else {
-				
+
 				$sql .= " wp_user = '" . $wp_user . "' ";
 				if ( $orig_user != 0 ){
 					$sql .= " OR wp_user = '" . $orig_user . "' ";
@@ -373,7 +373,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 					    </label>
 					    <input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
 						<?php
-						echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_regis') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
+						echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
 						?>
 					  </li>
 					<?php
@@ -389,7 +389,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 			</label>
 			<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
 			<?php
-			echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_regis') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
+			echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
 		} else {
 			echo '<li for="emeta-box"><label for="emeta[]">' . __('Key: ', 'event_espresso');
 			?>
@@ -398,7 +398,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 			<?php _e('Value: ', 'event_espresso'); ?>
 			<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
 			<?php
-			echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_regis') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
+			echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
 			// $meta_counter++;
 		}
 		?>
@@ -412,7 +412,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 			function addMetaInput(divName){
 				var next_counter = counter_staticm(meta_counter);
 				var newdiv = document.createElement('li');
-				newdiv.innerHTML = "<?php _e('Key:', 'event_espresso'); ?><input size='20' type='text' value='' name='emeta[]' id='emeta[]'>&nbsp;<?php _e('Value:', 'event_espresso'); ?><input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo '<img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_regis') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
+				newdiv.innerHTML = "<?php _e('Key:', 'event_espresso'); ?><input size='20' type='text' value='' name='emeta[]' id='emeta[]'>&nbsp;<?php _e('Value:', 'event_espresso'); ?><input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo '<img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
 				document.getElementById(divName).appendChild(newdiv);
 				counter++;
 			}

@@ -136,7 +136,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 		}
 		$i = 0;
 		if ($event_meta['additional_attendee_reg_info'] == 1) {
-			$label = $label == '' ? __('Number of Tickets', 'event_regis') : $label;
+			$label = $label == '' ? __('Number of Tickets', 'event_espresso') : $label;
 			$html = '<span class="espresso_additional_limit">';
 			$html .= $show_label == true ? '<label for="num_people">' . $label . '</label>' : '';
 			$html .= '<select name="num_people" id="num_people-' . $event_id . '" style="width:70px;">';
