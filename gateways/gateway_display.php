@@ -133,6 +133,7 @@ if (get_option('events_paypal_active') == 'true'
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/2checkout/2checkout_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/2checkout/2checkout_vars.php");
 		}
+		espresso_display_2checkout($attendee_id, $event_id, $event_cost);
 		echo '</li>';
 	}
 	//echo '</tr>';

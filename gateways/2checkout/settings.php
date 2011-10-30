@@ -28,7 +28,7 @@ function event_espresso_2checkout_payment_settings() {
 						$twocheckout_settings['2checkout_id'] = '';
 						$twocheckout_settings['2checkout_username'] = '';
 						$twocheckout_settings['currency_format'] = 'USD';
-						$twocheckout_settings['use_sandbox'] = 'N';
+						$twocheckout_settings['use_sandbox'] = NULL;
 						$twocheckout_settings['bypass_payment_page'] = 'N';
 						$twocheckout_settings['button_url'] = '';
 						add_option("event_espresso_2checkout_settings", $twocheckout_settings, '', 'yes');
