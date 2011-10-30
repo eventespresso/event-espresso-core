@@ -104,9 +104,9 @@
 							$headers[$i] = $data[$i];
 						} else if ( $row === 1 && ! $first_row_is_headers ) {
 							// no column names means our final array will just use counters for keys
+							$csv_data[$table][$row][$headers[$i]] = $data[$i];
 							$headers[$i] = $i;
 							// and we need to store csv data
-							$csv_data[$table][$row][$headers[$i]] = $data[$i];
 						} else if ( $row ) {
 							// no headers just store csv data
 							$csv_data[$table][$row][$headers[$i]] = $data[$i];
