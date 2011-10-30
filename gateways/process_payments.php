@@ -137,6 +137,8 @@ function event_espresso_txn() {
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/2checkout/2checkoutpaymentprocess.php");
 				}
+				$result = espresso_2checkout_process_payment();
+				extract($result);
 			} elseif ((get_option('events_paypal_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
 							&& empty($_REQUEST['x_cust_id'])) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_ipn.php")) {
