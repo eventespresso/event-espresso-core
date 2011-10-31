@@ -120,7 +120,8 @@ function event_espresso_txn() {
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/aim/aim_ipn.php");
 				}
-				//Load Authorize.net SIM IPN
+				$result = espresso_aim_process_payment();
+				extract($result);
 			} elseif (get_option('events_authnet_active') == 'true' && $_REQUEST['x_cust_id'] != '' && $_REQUEST['authnet_aim'] != 'true') {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/authnet_ipn.php")) {
 					//Moved files

@@ -285,6 +285,7 @@ function espresso_confirm_registration($registration_id) {
 		$date = $attendee->date;
 		$pre_approve = $attendee->pre_approve;
 	}
+
 	####### Added by wp-developers ##############
 	$pre_approval_check = is_attendee_approved($event_id, $attendee_id);
 	###########################################

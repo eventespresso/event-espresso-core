@@ -5,13 +5,9 @@ function event_espresso_aim_payment_settings() {
 	if ($espresso_premium != true)
 		return;
 	if (isset($_POST['update_authnet_aim'])) {
-		//$authnet_aim_settings = get_option('event_espresso_authnet_aim_settings');
 		$authnet_aim_settings['authnet_aim_login_id'] = $_POST['authnet_aim_login_id'];
 		$authnet_aim_settings['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
-		$authnet_aim_settings['image_url'] = $_POST['image_url'];
 		$authnet_aim_settings['use_sandbox'] = $_POST['use_sandbox'];
-		$authnet_aim_settings['surcharge'] = $_POST['surcharge'];
-		$authnet_aim_settings['button_url'] = $_POST['button_url'];
 		update_option('event_espresso_authnet_aim_settings', $authnet_aim_settings);
 		echo '<div id="message" class="updated fade"><p><strong>' . __('Authorize.net AIM settings saved.', 'event_espresso') . '</strong></p></div>';
 	}
@@ -27,7 +23,10 @@ function event_espresso_aim_payment_settings() {
 					<?php
 					if (isset($_REQUEST['activate_authnet_aim']) && $_REQUEST['activate_authnet_aim'] == 'true') {
 						add_option("events_authnet_aim_active", 'true', '', 'yes');
-						add_option("event_espresso_authnet_aim_settings", '', '', 'yes');
+						$authnet_aim_settings['authnet_aim_login_id'] = '';
+						$authnet_aim_settings['authnet_aim_transaction_key'] = '';
+						$authnet_aim_settings['use_sandbox'] = NULL;
+						add_option("event_espresso_authnet_aim_settings", $authnet_aim_settings, '', 'yes');
 					}
 					if (isset($_REQUEST['reactivate_authnet_aim']) && $_REQUEST['reactivate_authnet_aim'] == 'true') {
 						update_option('events_authnet_aim_active', 'true');

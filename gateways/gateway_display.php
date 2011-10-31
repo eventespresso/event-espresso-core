@@ -1,4 +1,12 @@
 <?php
+$payor_data['fname'] = $fname;
+$payor_data['lname'] = $lname;
+$payor_data['attendee_email'] = $attendee_email;
+$payor_data['address'] = $address;
+$payor_data['city'] = $city;
+$payor_data['state'] = $state;
+$payor_data['zip'] = $zip;
+
 //This file builds the gateways that are available
 echo '<div id="onsite-payments" class="event-display-boxes">';
 echo '<h2 class="section-heading">' .  __('Please choose a payment option:', 'event_espresso') . '</h2>';
@@ -26,6 +34,7 @@ if (get_option('events_paypal_pro_active') == 'true'
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/aim/aim_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/aim/aim_vars.php");
 		}
+		espresso_display_2checkout($payor_data, $event_cost, $attendee_id);
 	}
 	if (get_option('events_firstdata_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata/firstdata_vars.php")){
