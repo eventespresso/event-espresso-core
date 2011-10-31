@@ -622,11 +622,8 @@ table.fc-border-separate {
 /* if thumbnails are set to display for an event 
 class name '.event-has-thumb' is added to top level parent event */
 
-#espresso_calendar td {
+#content #espresso_calendar td {
 	padding: 3px 0;
-	}
-#espresso_calendar .event-has-thumb {
-
 	}
 #espresso_calendar .event-has-thumb .fc-event-title {
 	display: block;
@@ -636,6 +633,8 @@ class name '.event-has-thumb' is added to top level parent event */
 	}
 #espresso_calendar p.time-display-block {
  padding: 0 6px;
+ font-size: 84.50%;
+ margin: 0;
 }
 #espresso_calendar  span.thumb-wrap {
 	background: #fff;
@@ -647,7 +646,7 @@ class name '.event-has-thumb' is added to top level parent event */
 	padding: 6px;
 	margin: 6px;
 	vertical-align: middle;
-	}
+}
 #espresso_calendar .ee-event-thumb {
 	border: 1px solid #8e8e8e;
 	-moz-box-shadow: 0 0  2px 1px #d2d2d2;
@@ -686,7 +685,6 @@ class name '.event-has-thumb' is added to top level parent event */
 /*___ adjust calendar & image dimensions based on view i.e 'day' ___*/
 
 .fc-view-agendaDay .fc-agenda-body   td div {min-height:50px;}
-.fc-view-agendaDay .thumb-wrap img {}
 #espresso_calendar .fc-view-agendaWeek  .thumb-wrap img {height: 20px;}
  
 	

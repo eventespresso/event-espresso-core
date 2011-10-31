@@ -354,11 +354,11 @@ $espresso_calendar['custom_theme'] = $_POST['custom_theme'];
                       </li>
                       
                       <li>
-                        <label for="show-in-thickbox">
-                          <?php _e('Show event details in popup box ', 'event_espresso'); ?><a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-thickbox" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a>
+                       <!-- <label for="show-in-thickbox">
+                          <?php // _e('Show event details in popup box ', 'event_espresso'); ?><a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-thickbox" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a>
                         </label>
-                        <?php echo select_input('show_in_thickbox',  array(array('id'=>'N','text'=> __('No','event_espresso')),array('id'=>'Y','text'=> __('Yes','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
-                      </li>
+                        <?php // echo select_input('show_in_thickbox',  array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
+                      </li>-->
                       
                       <li>
                         <label for="enable-cat-classes">
@@ -626,8 +626,8 @@ if (!function_exists('espresso_init_calendar_style')) {
 		}
 		//Enable the following if you would like to use jQuery UI Theme Roller styles (http://jqueryui.com/themeroller/).
 		//See "Theme Settings" section in jquery script below
-		//wp_enqueue_script('jquery-ui-custom-js',  EVENT_ESPRESSO_UPLOAD_URL.'scripts/jquery-ui-custom.js', array('jquery') );//calendar ui script
-		//wp_enqueue_style('redmond', EVENT_ESPRESSO_UPLOAD_URL.'redmond/theme.css');//calendar alternate style
+	//	wp_enqueue_script('jquery-ui-custom-js',  EVENT_ESPRESSO_UPLOAD_URL.'scripts/jquery-ui-custom.js', array('jquery') );//calendar ui script
+	//	wp_enqueue_style('redmond', EVENT_ESPRESSO_UPLOAD_URL.'redmond/theme.css');//calendar alternate style
 
 		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
 		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR."calendar.css")){
@@ -819,11 +819,12 @@ if (!function_exists('espresso_calendar')) {
    
 			// Set sizes for image display
 			$eventArray['img_size_class'] = $ee_img_size;
-			
+   
 			// image onclick displays in thickbox yes/no
-			if($in_thickbox == 'Y'){
+   /* thickbox functionlity removed until fix found */
+		/*	if($in_thickbox == 'Y'){
 			$in_thickbox_class = 'thickbox';
-			$in_thickbox_url = '#TB_inline?height=400&width=500&inlineId=event-thumb-detail-' .  $event->id ;
+			$in_thickbox_url = '#TB_inline?height=400&amp;width=500&amp;inlineId=event-thumb-detail-' ;
 			}else {
    $in_thickbox_class = '';
 			$in_thickbox_url = '';
@@ -832,7 +833,8 @@ if (!function_exists('espresso_calendar')) {
 			$eventArray['in_thickbox_class'] = $in_thickbox_class;
 			$eventArray['in_thickbox_url'] = $in_thickbox_url;
 			//var_dump($eventArray['in_thickbox_url']);
-			
+			*/
+   
 			//Array of the event details
 			$events[] = $eventArray; 
 		}
@@ -940,27 +942,32 @@ if (!function_exists('espresso_calendar')) {
       }
 						//This displays the title of the event when hovering
 						element.attr('title', event.title + " - Event Times: " + event.start + event.end);
-						// if the user selects show in thickbox we add this element 
-						if(event.in_thickbox_url){
-      element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id  + '"><p class="tb-event-title">' + event.title + '</p><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
-						}
+						 
+						// if the user selects show in thickbox we add this element
+      // thickbox functionlity removed until fix found 
+      //if(event.in_thickbox_url){
+      //element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id  + '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
+      //$jaer().attr('title', '');
+					//	}
+      //alert(event.in_thickbox_url);
 						if(event.event_img_thumb){
-						 //alert('we have thumbs');
+						// alert('we have thumbs');
 							
 						 element.addClass('event-has-thumb');
-							  if(event.in_thickbox_url){
-							   element.find('a').attr('href', event.in_thickbox_url);
-							  }else{
-							    element.find('a').attr('href', event.url );
-							  }
-							//element.find('a').attr('href', event.url + event.in_thickbox_url);
-							element.find('a').addClass(event.in_thickbox_class);
-						 	element.find('span.fc-event-title').before($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
+       // thickbox functionlity removed until fix found 
+							 <?php // if($in_thickbox == 'Y'){ ?>
+							  // $jaer('a.fc-event').attr('href', event.in_thickbox_url + event.id );
+							 <?php // }else{ ?>
+							  // $jaer('a.fc-event').attr('href', event.url );
+							 <?php // } ?>
+							
+       //$jaer('a.fc-event').addClass(event.in_thickbox_class);
+						 	element.find('.fc-event-title').before($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						 }
 						<?php 
 						if ($espresso_calendar['show_time'] == 'true'){
 						?>
-							element.find('span.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">' + event.startTime + ' - </span><span class="event-end-time">' + event.endTime + '</span></p>'));
+							element.find('.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">' + event.startTime + ' - </span><span class="event-end-time">' + event.endTime + '</span></p>'));
 						<?php 
 						}
 						?>
