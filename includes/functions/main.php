@@ -678,7 +678,10 @@ if (!function_exists('espresso_show_social_media')) {
 				case 'google':
 				if(function_exists('espresso_google_button')) {
 				 return espresso_google_button($event_id);
-				 
+				}
+				case 'stumbleupon':
+				if(function_exists('espresso_stumbleupon_button')) {
+				 return espresso_stumbleupon_button($event_id);
 				}
 			default:
 				break;
