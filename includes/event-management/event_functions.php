@@ -237,7 +237,7 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
                 <a href="admin.php?page=form_builder" target="_blank">
             <?php _e('questions', 'event_espresso'); ?>
                 </a>
-            <?php _e('to your event. The personal information group is rquired for all events.', 'event_espresso'); ?>
+            <?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
             </p>
             <?php
             $g_limit = $espresso_premium != true ? 'LIMIT 0,2' : '';
@@ -306,7 +306,7 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
                     <a href="admin.php?page=form_builder" target="_blank">
                 <?php _e('questions', 'event_espresso'); ?>
                     </a>
-                <?php _e('to your event. The personal information group is rquired for all events.', 'event_espresso'); ?>
+                <?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
                 </p>
                 <?php
                 // $add_attendee_question_groups = isset($add_attendee_question_groups) ? $add_attendee_question_groups : '';
