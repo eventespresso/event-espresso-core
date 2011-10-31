@@ -103,10 +103,10 @@
 					//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
 
 					/* Displays the social media buttons */
-					if (function_exists('espresso_show_social_media')) {
-						echo '<p class="espresso_social">' . espresso_show_social_media($event_id, 'twitter') . ' ' . espresso_show_social_media($event_id, 'facebook') . '</p>';
-					}
-					?>
+					if (function_exists('espresso_show_social_media')) {?>
+						<div class="ee-social-media-buttons"><span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> <span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span><?php echo espresso_show_social_media($event_id, 'google'); ?></div>
+				<?php	} ?>
+					
 					<p class="start_date">
 						<?php if ($end_date !== $start_date) { ?>
 							<span class="section-title">

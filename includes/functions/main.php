@@ -675,6 +675,11 @@ if (!function_exists('espresso_show_social_media')) {
 					return espresso_facebook_button($event_id);
 				}
 				break;
+				case 'google':
+				if(function_exists('espresso_google_button')) {
+				 return espresso_google_button($event_id);
+				 
+				}
 			default:
 				break;
 		}

@@ -109,8 +109,8 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 		}
 	}
 
-	if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook')  ){ ?>
-		<p class="social-media-buttons"><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
+	if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') || espresso_show_social_media($event_id, 'google') ){ ?>
+		<div class="ee-social-media-buttons"><span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> <span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span><?php echo espresso_show_social_media($event_id, 'google'); ?></div>
   <?php  
 	}
   ?>
