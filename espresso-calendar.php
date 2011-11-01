@@ -149,8 +149,11 @@ function espresso_calendar_config_mnu()	{
 		$espresso_calendar['show_in_thickbox'] = $_POST['show_in_thickbox'];
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
+		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
+		$espresso_calendar['ee_event_background'] = $_POST['ee_event_background'];
+		$espresso_calendar['ee_event_text_color'] = $_POST['ee_event_text_color'];
   $espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
-$espresso_calendar['custom_theme'] = $_POST['custom_theme'];
+		$espresso_calendar['custom_theme'] = $_POST['custom_theme'];
 		$espresso_calendar['use_custom_theme'] = $_POST['use_custom_theme'];
 		$espresso_calendar['espresso_calendar_titleFormat'] = $_POST['espresso_calendar_titleFormat'];
 		$espresso_calendar['espresso_calendar_columnFormat'] = $_POST['espresso_calendar_columnFormat'];
@@ -181,8 +184,9 @@ $espresso_calendar['custom_theme'] = $_POST['custom_theme'];
 	}
   
 	$values=array(
-		array('id'=>'true','text'=> __('Yes','event_espresso')),
-		array('id'=>'false','text'=> __('No','event_espresso'))
+		
+		array('id'=>'false','text'=> __('No','event_espresso')),
+		array('id'=>'true','text'=> __('Yes','event_espresso'))
 	);
 ################## Begin admin settings screen ###########################
 	?>
@@ -353,7 +357,22 @@ $espresso_calendar['custom_theme'] = $_POST['custom_theme'];
                         </label>
                       </li>
                       
-                      <li>
+																						<li>
+																							<label for="espresso_use_pickers">Use color pickers?</label>
+																						 <?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?>
+																						</li> 
+																						
+																						<li class="color-picker-style">
+																							<label for="event-background"><?php _e('Event Background - color picker', 'event_espresso') ?></label>
+																						 <input id="event-background"  type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> />
+																						</li>
+
+																						<li class="color-picker-style">
+																						 <label for="event-text"><?php _e('Event Text - color picker', 'event_espresso') ?></label>
+																						 <input id="event-text"  type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']))? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> />
+																						</li> 
+	
+	                     <li>
                        <!-- <label for="show-in-thickbox">
                           <?php // _e('Show event details in popup box ', 'event_espresso'); ?><a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-thickbox" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a>
                         </label>
@@ -588,7 +607,36 @@ $espresso_calendar['custom_theme'] = $_POST['custom_theme'];
 		$("input[name='time_format_custom']").focus(function(){
 			$("#time_format_custom_radio").attr("checked", "checked");
 		});
+				
+				// disable color picker inputs & fade if not use Color pickers true
+				window.scp =  $('select#espresso_use_pickers option:selected').val();
+				if(window.scp == 'false'){
+				$('input#event-background, input#event-text').attr('disabled', true);
+				$('li.color-picker-style').attr('style', "opacity: .3");
+				}
+			$('select#espresso_use_pickers').blur(function(){
+			window.scp =  $('select#espresso_use_pickers option:selected').val();
+			 //alert(window.scp);
+				if(window.scp == 'false'){
+				$('input#event-background, input#event-text').attr('disabled', true);
+				$('li.color-picker-style').attr('style', "opacity: .3");
+			}	else {	
+			 $('input#event-background, input#event-text').removeAttr('disabled', true);
+				$('li.color-picker-style').removeAttr('style');
+				}
+			})		
 		
+		// color picker initialisation
+		<?php if($espresso_calendar['espresso_use_pickers'] == true){ ?>
+		$('input#event-background, input#event-text').wheelColorPicker({ 
+		  dir: '<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>scripts/wheelcolorpicker',
+				preview: true,
+				userinput: true,
+				format: 'hex',
+				validate: true			
+				});
+	<?php } ?>
+		// WP toggle function		
   postboxes.add_postbox_toggles('espresso_calendar');
 
 	});
@@ -597,6 +645,16 @@ $espresso_calendar['custom_theme'] = $_POST['custom_theme'];
 </script>
 <?php
 }
+// configure scripts and styles for event background color picker
+if(is_admin()){
+	
+	function load_admin_scripts() {
+				wp_register_script('wheelcolorpicker',  EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/wheelcolorpicker/jquery.wheelcolorpicker.min.js', array('jquery') );
+				wp_print_scripts('wheelcolorpicker');
+	}
+	add_action('admin_init', 'load_admin_scripts');	
+}
+
 ################## finish admin screen settings ###########################
 
 //Load the scripts and css
@@ -641,10 +699,35 @@ if (!function_exists('espresso_init_calendar_style')) {
 			wp_register_style('custom-calendar-style', ESPRESSO_CALENDAR_PLUGINFULLURL.'themes/'.$espresso_calendar['custom_theme'].'/style.css');//calendar core style
 			wp_enqueue_style( 'custom-calendar-style');
 		}
+
 	}
 }
 add_action('wp_print_styles', 'espresso_init_calendar_style',10);
 
+// Add our embedded head styles for color picker selection 
+if($espresso_calendar['espresso_use_pickers'] == true) { 
+		function event_background_selection() {
+		global $espresso_calendar;
+		?>
+		<style type="text/css">
+		<?php if( isset( $espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']) ) {?>
+				.fc-event-skin {
+				  background-color: #<?php echo $espresso_calendar['ee_event_background'] ?>;
+						border: 1px solid #<?php echo $espresso_calendar['ee_event_background'] ?>;
+						}
+		<?php } ?>
+		<?php	if( isset( $espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']) ) { ?>
+				.fc-event-title,
+				.time-display-block {
+				  color: #<?php echo $espresso_calendar['ee_event_text_color'] ?>;
+						}
+		<?php } ?>
+		</style>
+		<?php
+	 return;
+		}
+add_action('wp_head', 'event_background_selection');	
+}// close if use picker is Yes
 //Build the short code
 //[ESPRESSO_CALENDAR]
 //[ESPRESSO_CALENDAR show_expired="true"]
@@ -947,7 +1030,6 @@ if (!function_exists('espresso_calendar')) {
       // thickbox functionlity removed until fix found 
       //if(event.in_thickbox_url){
       //element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id  + '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
-      //$jaer().attr('title', '');
 					//	}
       //alert(event.in_thickbox_url);
 						if(event.event_img_thumb){
