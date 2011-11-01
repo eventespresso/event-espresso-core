@@ -1,0 +1,29 @@
+1.2.2
+- Fixed brightness CSS issue on IE6.
+- Fixed input losing focus when picking color (thus closing the picker dialog) on IE.
+
+1.2.1
+- Removed unintended comma sign at line 926 to fix IE error.
+- Fixed unsupported trim() function on init method for IE.
+
+1.2.0
+- fixed input value reseting back to ffffff after wheel color picker initialization.
+- setting "userinput":false option will disable typing on text input (readonly).
+- when "preview" option is true, setting initial value attribute to input will update the input background color on initialization.
+- added "color" option on initialization to preset color.
+- added color() method as an alias to updateColor() method.
+- calling updateColor() method will automatically invoke updateValue().
+- added alpha value support for rgba format.
+- added "rgb%" and "rgba%" color format.
+- the version is released on the same day as Indonesia's independence day. Yay!
+
+1.1.3
+- fixed undefined reference to rselectedColor error when using rgba format.
+
+1.1.2
+- updateColor() now also updates value and color in text input.
+
+1.1.0
+- Color dialog selection points to a spot based on input value instead of always white.
+- Manually inputing the value on the input field moves the selection spot on the color picker dialog.
+- Added hue and sat values to selectedColor object.
