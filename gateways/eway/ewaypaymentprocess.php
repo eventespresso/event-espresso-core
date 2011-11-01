@@ -109,15 +109,14 @@ if ($responsecode == '00') {
 	$total_cost = $amount_pd;
 
 	//Debugging option
-	if ($email_transaction_dump == true) {
+	if ($eway_settings['use_sandbox']) {
+		var_dump($response);
 		// For this, we'll just email ourselves ALL the data as plain text output.
 		$subject = 'Instant Payment Notification - Gateway Variable Dump';
 		$body = "An instant payment notification was successfully recieved\n";
 		$body .= "from " . " on " . date('m/d/Y');
 		$body .= " at " . date('g:i A') . "\n\nDetails:\n";
-		foreach ($xml as $key => $value) {
-			$body .= "\n$key: $value\n";
-		}
+		$body .= $response;
 		wp_mail($contact, $subject, $body);
 	}
 } else {
@@ -125,8 +124,6 @@ if ($responsecode == '00') {
 	$body = "An instant payment notification failed\n";
 	$body .= "from " . " on " . date('m/d/Y');
 	$body .= " at " . date('g:i A') . "\n\nDetails:\n";
-	foreach ($response as $key => $value) {
-		$body .= "\n$key: $value\n";
-	}
-	//wp_mail($contact, $subject, $body);
+	$body .= $response;
+	wp_mail($contact, $subject, $body);
 }
