@@ -1,15 +1,10 @@
 <?php
-
 /*
   Notice
   The following information presented is confidential.
   Any unauthorized release of this information is prohibited and punishable by law.
   All original material is copyright 2009 Alipay.
  */
-
-
-
-
 require_once("alipay_service.php");
 require_once("alipay_config.php");
 $parameter = array(
@@ -30,10 +25,7 @@ $link = $alipay->create_url();
 
 $link_anchor = isset($alipay_settings['button_url'])?"<img src='" . $alipay_settings['button_url'] . "' alt='" . __('Pay using Alipay', 'event espresso') . "' />":__('Pay using Alipay', 'event espresso');
 
-
 print <<<EOT
 <br/>
 <a href= $link  target= "">$link_anchor</a>
 EOT;
-?>
-
