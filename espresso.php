@@ -262,7 +262,7 @@ require_once("includes/functions/main.php");
 require_once("includes/functions/pricing.php");
 require_once("includes/functions/time_date.php");
 require_once("includes/shortcodes.php");
-
+require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/ical.php");
 /* Core template files used by this plugin */
 //These may be loaded in posts and pages outside of the default EE pages
 //Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
@@ -361,7 +361,7 @@ if (is_admin()) {
 	// New form builder
 	require_once("includes/form-builder/index.php");
 	require_once("includes/form-builder/groups/index.php");
-	
+
 	if ($espresso_premium != true)
 		require_once("includes/test_drive_pro.php");
 
@@ -690,5 +690,5 @@ if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] ==
 
 // Export iCal file
 if (!empty($_REQUEST['iCal'])) {
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/ical.php");
+	espresso_ical();
 }
