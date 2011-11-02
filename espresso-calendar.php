@@ -47,7 +47,6 @@ $espresso_calendar = get_option('espresso_calendar_settings');
 
 //Install the plugin
 function espresso_calendar_install(){
-	//Install Facebook Options
 	$espresso_calendar = array(
 					'calendar_pages' => "0",
 					'espresso_page_post' => "R",
@@ -57,6 +56,12 @@ function espresso_calendar_install(){
 					'espresso_calendar_weekends' => 'true',
 					'espresso_calendar_height' => '650',
 					'espresso_calendar_width' => '2',
+					'calendar_thumb_size' => 'small',
+					'show_in_thickbox' => false,
+					'espresso_use_pickers' => false,
+					'ee_event_background' => 'ffffff',
+					'ee_event_text_color' => '555555',
+					'enable_cat_classes' => false, 
 					'time_format' => get_option('time_format'),
 					'show_time' => 'true',
 					'use_custom_theme' => 'false',
@@ -74,7 +79,7 @@ register_activation_hook(__FILE__,'espresso_calendar_install');
 
 //Theme selection tools
 
-//Retunrs an array of available jQuery UI Themeroller files
+//Returns an array of available jQuery UI Themeroller files
 function espresso_calendar_theme_files() {
 	// read our template dir and build an array of files
 	if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "calendar/themes/index.html")) {
@@ -650,7 +655,7 @@ if(is_admin()){
 	
 	function load_admin_scripts() {
 				wp_register_script('wheelcolorpicker',  EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/wheelcolorpicker/jquery.wheelcolorpicker.min.js', array('jquery') );
-				wp_print_scripts('wheelcolorpicker');
+				wp_enqueue_script('wheelcolorpicker');
 	}
 	add_action('admin_init', 'load_admin_scripts');	
 }
@@ -728,6 +733,7 @@ if($espresso_calendar['espresso_use_pickers'] == true) {
 		}
 add_action('wp_head', 'event_background_selection');	
 }// close if use picker is Yes
+
 //Build the short code
 //[ESPRESSO_CALENDAR]
 //[ESPRESSO_CALENDAR show_expired="true"]
