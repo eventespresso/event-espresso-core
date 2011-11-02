@@ -1,4 +1,5 @@
 <?php
+
 /*
   Plugin Name: Event Espresso
   Plugin URI: http://eventespresso.com/
@@ -76,6 +77,7 @@ define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_
 define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event");
 define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat");
 define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "events_seating_chart_level_section_alignment");
+
 // End table definitions
 
 
@@ -95,8 +97,8 @@ function espresso_init_session() {
 	}
 	$_SESSION['espresso_session_id'] = session_id();
 }
-add_action('plugins_loaded', 'espresso_init_session', 1);
 
+add_action('plugins_loaded', 'espresso_init_session', 1);
 
 function espresso_check_for_export() {
 	if (isset($_REQUEST['export'])) {
@@ -107,6 +109,7 @@ function espresso_check_for_export() {
 		}
 	}
 }
+
 add_action('plugins_loaded', 'espresso_check_for_export');
 
 function espresso_check_for_import() {
@@ -118,6 +121,7 @@ function espresso_check_for_import() {
 		}
 	}
 }
+
 add_action('plugins_loaded', 'espresso_check_for_import');
 
 //Load the Event Espresso HTML meta
@@ -156,33 +160,32 @@ if (is_ssl()) {
 //Registration page check
 //From Brent C. http://events.codebasehq.com/projects/event-espresso/tickets/99
 $this_is_a_reg_page = FALSE;
-$reg_page_ids = array(
-		'event_page_id' => $org_options['event_page_id'],
-		'return_url' => $org_options['return_url'],
-		'cancel_return' => $org_options['cancel_return'],
-		'notify_url' => $org_options['notify_url']
-);
+if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
+	$this_is_a_reg_page = TRUE;
+} else {
+	$reg_page_ids = array(
+			'event_page_id' => $org_options['event_page_id'],
+			'return_url' => $org_options['return_url'],
+			'cancel_return' => $org_options['cancel_return'],
+			'notify_url' => $org_options['notify_url']
+	);
 
-$server_name = str_replace($_SERVER['SERVER_NAME'], '', $server_name);
-$uri_string = str_replace($server_name, '', $_SERVER['REQUEST_URI']);
-$uri_string = str_replace($_SERVER['QUERY_STRING'], '', $uri_string);
-$uri_string = rtrim($uri_string, '?');
-$uri_string = trim($uri_string, '/');
-$this_page = basename($uri_string);
-$uri_segments = explode('/', $uri_string);
-foreach ($uri_segments as $uri_segment) {
-	$seg_page_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM $wpdb->posts WHERE post_name = %s ", $uri_segment));
-	if ($wpdb->num_rows > 0) {
-		if (in_array($seg_page_id, $reg_page_ids)) {
-			$this_is_a_reg_page = TRUE;
+	$server_name = str_replace($_SERVER['SERVER_NAME'], '', $server_name);
+	$uri_string = str_replace($server_name, '', $_SERVER['REQUEST_URI']);
+	$uri_string = str_replace($_SERVER['QUERY_STRING'], '', $uri_string);
+	$uri_string = rtrim($uri_string, '?');
+	$uri_string = trim($uri_string, '/');
+	$this_page = basename($uri_string);
+	$uri_segments = explode('/', $uri_string);
+	foreach ($uri_segments as $uri_segment) {
+		$seg_page_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM $wpdb->posts WHERE post_name = %s ", $uri_segment));
+		if ($wpdb->num_rows > 0) {
+			if (in_array($seg_page_id, $reg_page_ids)) {
+				$this_is_a_reg_page = TRUE;
+			}
 		}
 	}
 }
-
-if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin())
-	$this_is_a_reg_page = TRUE;
-
-
 define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
 
 //Define the plugin directory and path
@@ -461,7 +464,7 @@ if (is_admin()) {
 				'template_confg',
 				'payment_gateways',
 				'members',
-    'espresso_social',
+				'espresso_social',
 				'admin_addons',
 				'espresso_calendar',
 				'event_tickets',
@@ -673,7 +676,9 @@ if (is_admin()) {
 		}
 	}
 	// Check to make sure all of the main pages are setup properly, if not show an admin message.
-	if (((!isset($_REQUEST['event_page_id']) || $_REQUEST['event_page_id'] == NULL) && ($org_options['event_page_id'] == ('0' || ''))) || $org_options['return_url'] == ('0' || '') || $org_options['notify_url'] == ('0' || '')) {
+	if (empty($org_options['event_page_id'])
+			|| empty($org_options['return_url'])
+			|| empty($org_options['notify_url'])) {
 		add_action('admin_notices', 'event_espresso_activation_notice');
 	}
 }
