@@ -273,8 +273,11 @@ function update_event($recurrence_arr = array()) {
 		$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
 		$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
 		
-		// enable event address for gmaps
-		$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		if(!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])){
+		  $event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		}else{
+		  $event_meta['enable_for_gmap'] = 'N';
+		}
 		/*
 		 * Added for seating chart addon
 		 */

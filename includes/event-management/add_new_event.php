@@ -552,7 +552,7 @@ function add_new_event() {
                         
           </table>
 										<p>
-										  <label for="enable-for-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, 'Y', 'id="enable-for-gmap"')?></label>
+										  <label for="enable-for-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, 'N', 'id="enable-for-gmap"')?></label>
 										</p>
         </div>
       </div>

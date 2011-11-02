@@ -83,7 +83,11 @@ function add_event_to_db($recurrence_arr = array()) {
 		}
 
 		// enable event address for Gmaps
-		$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		if(!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])){
+		  $event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+		}else{
+		  $event_meta['enable_for_gmap'] = 'N';
+		}
 
 		//$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
 		$event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
