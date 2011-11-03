@@ -2869,7 +2869,7 @@ msgstr ""
 #: ../includes/admin-files/templates_help.php:16
 msgid ""
 "If you want to modify and customize the styles of your template pages you must move a copy of the \n"
-"    \t\t\t\t\t\t\t\t\tevent_espresso_styles.css to the /wp-content/uploads/espresso/templates folder (if /espresso/templates does \n"
+"    \t\t\t\t\t\t\t\t\tevent_espresso_style.css to the /wp-content/uploads/espresso/templates folder (if /espresso/templates does \n"
 "    \t\t\t\t\t\t\t\t\tnot exist you may need to create it manually. Keeping your modification in this folder ensures that your styles are not overwritten when upgrading EE.) "
 msgstr ""
 
@@ -2886,7 +2886,7 @@ msgid "These two drop down options provide a choice of stylesheets with various 
 msgstr ""
 
 #: ../includes/admin-files/templates_help.php:33
-msgid "These options are available as long as you have not copied the main stylesheet <i>event_espresso_styles.css</i> to the uploads folder to customize yourself."
+msgid "These options are available as long as you have not copied the main stylesheet <i>event_espresso_style.css</i> to the uploads folder to customize yourself."
 msgstr ""
 
 #: ../includes/admin-files/templates_help.php:34

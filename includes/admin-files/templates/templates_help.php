@@ -12,9 +12,9 @@
           <p>
     					<em class="important">
              <b><?php _e('ATTENTION:', 'event_espresso'); ?></b><br />
-                                                                
+
     					<?php _e('If you want to modify and customize the styles of your template pages you must move a copy of the 
-    									event_espresso_styles.css to the /wp-content/uploads/espresso/templates folder (if /espresso/templates does 
+    									event_espresso_style.css to the /wp-content/uploads/espresso/templates folder (if /espresso/templates does 
     									not exist you may need to create it manually. Keeping your modification in this folder ensures that your styles are not overwritten when upgrading EE.) ', 'event_espresso'); ?>
     					</em>
     				</p>
@@ -27,21 +27,21 @@
 						<?php if($disabled) : ?>
     			<em class="important">
 							<?php _e('You currently either have <i>Enable Built in style sheets</i> disabled or have a copy of the default espresso stylesheet copied to your uploads folder, and the alternative stylesheets selections are therefore disabled.', 'event_espresso'); ?>
-    			</em>	
-						<?php endif; ?>					
+    			</em>
+						<?php endif; ?>
         	<p><?php _e('These two drop down options provide a choice of stylesheets with various stylings.', 'event_espresso'); ?></p>
-    			<p><?php _e('These options are available as long as you have not copied the main stylesheet <i>event_espresso_styles.css</i> to the uploads folder to customize yourself.', 'event_espresso'); ?></p>
+    			<p><?php _e('These options are available as long as you have not copied the main stylesheet <i>event_espresso_style.css</i> to the uploads folder to customize yourself.', 'event_espresso'); ?></p>
     			<p><?php _e('By default the general espresso stylesheet will be loaded if you have selected <i>Yes</i> in the <i>Enable built in style sheets</i> option, You may then choose to select from one of the alternative base stylesheets along with an optional sheet to select a color scheme.', 'event_espresso'); ?></p>
 						<p><?php _e('These selections replace the deafault espresso stylesheet and offer enhanced styling for your event pages details', 'events_espreso') ?></p>
-          
+
 					</div>
     </div>
-				
+
 			<?php ########## help box ########## ?>
 			<div id="gmaps_info" class="pop-help" >
        <div class="TB-ee-frame" style="height:500px; overflow-y: scroll;">
-    		<h2><?php _e('Configuring the Google maps options', 'event_espresso'); ?></h2>			
-       
+    		<h2><?php _e('Configuring the Google maps options', 'event_espresso'); ?></h2>
+
 							<p><?php _e('The map options allow you to configure how your event map is displayed. You may configure your events lists and event registration pages independently, so, for example, on a registration page you could set a much larger overall size.', 'event_espresso'); ?></p>
     			<p><?php _e('For an event to display a Gmap you must have enabled it to on the event edit or create event pages in the venue box. This allows you to select which events you would like to display with a map.', 'event_espresso'); ?></p>
 						 <p><?php _e('Below is a brief explanation of the options available.', 'events_espreso') ?></p>
@@ -66,12 +66,12 @@
 									<li><b><?php _e('Set Map Alignment', 'event_espresso') ?></b><br />
 									<?php _e('Alignment alows you to move the map left, center, or right within whatever parent event structure you have, please note though this option is dependent on your themes layout as to whether it will work as expected. The default alignment is to the left.', 'event_espresso'); ?>
 									</li>
-							 
+
 								 <li><b><?php _e('Use map in template files ( No Shortcodes)', 'event_espresso') ?></b><br />
 									<?php _e('Select this option to enable your event map in the template file - this option is used if you are not using venue shortcodes and want map display activated in either event list pages or registration pages.', 'event_espresso') ?>
 							</ul>
-          
+
 					</div>
-    </div>				
+    </div>
 
 </div>
