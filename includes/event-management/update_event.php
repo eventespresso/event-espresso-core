@@ -594,10 +594,12 @@ function update_event($recurrence_arr = array()) {
 
 				break;
 		}
-		?>
-		<div id="message" class="updated fade"><p><strong><?php _e('Event details updated for', 'event_espresso'); ?> <a href="<?php echo espresso_reg_url($event_id); ?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event']) ?> for <?php echo date("m/d/Y", strtotime($start_date)); ?></a>.</strong></p></div>
+		
+		//Show the saved event notice
+		global $notices;
+        $notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="'. espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' for ' . date("m/d/Y", strtotime($start_date));
+        do_action( 'espresso_admin_notices' );
 
-		<?php
 		/*
 		 * Added for seating chart addon
 		 */
