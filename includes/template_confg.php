@@ -111,11 +111,11 @@ function event_espresso_manage_templates() {
 									<div class="inside">
 										<div class="padding">
 											<?php
-											if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_gmaps_settings.php')) {
-												echo '<ul id="event-gmap-settings">';
-												require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_gmaps_settings.php');
-												echo '</ul>';
-											}
+										//	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_gmaps_settings.php')) {
+											//	echo '<ul id="event-gmap-settings">';
+										//		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_gmaps_settings.php');
+										//		echo '</ul>';
+										//	}
 											?>
 											<p class="submit-buttons">
 												<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_1" />

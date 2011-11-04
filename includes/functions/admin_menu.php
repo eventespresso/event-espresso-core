@@ -124,6 +124,10 @@ if (!function_exists('add_event_espresso_menus')) {
 		//Event styles & templates
 		add_submenu_page('events', __('Event Espresso - Template Settings', 'event_espresso'), __('Settings', 'event_espresso'), 'administrator', 'template_confg', 'event_espresso_manage_templates');
 
+		//Event Maps
+		add_submenu_page('events', __('Event Espresso - Map Settings', 'event_espresso'), __('Maps', 'event_espresso'), 'administrator', 'template_map_confg', 'event_espresso_manage_maps');
+		
+		
 		//Ticketing Settings
 		if (function_exists('espresso_ticket_config_mnu') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Ticket Settings', 'event_espresso'), __('Tickets', 'event_espresso'), 'administrator', 'event_tickets', 'espresso_ticket_config_mnu');
