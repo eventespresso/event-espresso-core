@@ -436,6 +436,9 @@ if (is_admin()) {
 
 	// Event styles & template layouts Subpage
 	require_once("includes/template_confg.php");
+	
+	// Event Maps  Subpage
+	require_once("includes/admin-files/template_map_confg.php");	
 
 	// Plugin Support
 	require_once("includes/admin_support.php");
@@ -464,6 +467,7 @@ if (is_admin()) {
 				'espresso_reports',
 				'support',
 				'template_confg',
+				'template_map_confg',
 				'payment_gateways',
 				'members',
 				'espresso_social',

@@ -1,9 +1,11 @@
+<ul id="event-gmap-settings">
+ <li>
+  <fieldset id="event-gmap-opts" class="template-settings b">
+   <legend>
+    <?php _e('Google Maps Display Options', 'event_espresso') ?>
+    <a class="thickbox"  href="#TB_inline?height=550&amp;width=400&amp;inlineId=gmaps_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="" width="16" height="16" /></a> 
+	  </legend>
 
-<fieldset id="event-gmap-opts" class="template-settings b">
-  <legend>
-  <?php _e('Google Maps Display Options', 'event_espresso') ?>
-  <a class="thickbox"  href="#TB_inline?height=550&width=400&inlineId=gmaps_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a> </legend>
-  <li>
     <div id="gmap-reg-events">
       <p class="section-heading">Event Registration Options</p>
       <ul>
@@ -33,17 +35,19 @@
         </li>
         <li>
           <p>
-            <label for="show-overly-controls-single">
+            <label for="show-overlay-controls-single">
               <?php _e('Set Map Navigation Overlay', 'event_espresso')  ?>
             </label>
-            <?php echo select_input('ee_map_nav_display_single', $values, isset($org_options['ee_map_nav_display_single']) ? $org_options['ee_map_nav_display_single'] : '', 'id="show-overlay-controls-single"'); ?></p>
+            <?php echo select_input('ee_map_nav_display_single', $values, isset($org_options['ee_map_nav_display_single']) ? $org_options['ee_map_nav_display_single'] : '', 'id="show-overlay-controls-single" '); ?>
+										</p>
         </li>
         <li>
           <p>
             <label for="nav-size-small-single">
               <?php _e('Keep Map Navigation Small', 'event_espresso')  ?>
             </label>
-            <?php echo select_input('ee_map_nav_size_single', $values, isset($org_options['ee_map_nav_size_single']) ? $org_options['ee_map_nav_size_single'] : '', 'id="nav-size-small-single"'); ?></p>
+            <?php echo select_input('ee_map_nav_size_single', $values, isset($org_options['ee_map_nav_size_single']) ? $org_options['ee_map_nav_size_single'] : '', 'id="nav-size-small-single"'); ?>
+										</p>
         </li>
         <li>
           <p class="section-heading">
@@ -86,11 +90,12 @@
           </p>
         </li>
       </ul>
-    </div>
-  </li>
-  <li>
+   
+			 </div>
+  
     <div id="gmap-list-events">
-      <p class="section-heading">Events List Options</p>
+      
+						<p class="section-heading">Events List Options</p>
       <ul>
         <li>
           <p>
@@ -114,19 +119,23 @@
               <?php _e('Set Map Zoom level: Range: 1 - 19', 'event_espresso')  ?>
             </label>
             <input id="map-zoom" type="text" size="" name="ee_map_zoom" value="<?php echo $org_options['ee_map_zoom']== ''? '11' : $org_options['ee_map_zoom'];?>" />
-        <li>
+										</p>
+        </li>
+								<li>
           <p>
             <label for="show-overlay-controls">
               <?php _e('Set Map Navigation Overlay ', 'event_espresso')  ?>
             </label>
             <?php echo select_input('ee_map_nav_display', $values, isset($org_options['ee_map_nav_display']) ? $org_options['ee_map_nav_display'] : '', 'id="show-overlay-controls"'); ?>
+										</p>
         </li>
         <li>
           <p>
             <label for="nav-size-small">
               <?php _e('Keep Map Navigation Small', 'event_espresso')  ?>
             </label>
-            <?php echo select_input('ee_map_nav_size', $values, isset($org_options['ee_map_nav_size']) ? $org_options['ee_map_nav_size'] : '', 'id="nav-size-small"'); ?></p>
+            <?php echo select_input('ee_map_nav_size', $values, isset($org_options['ee_map_nav_size']) ? $org_options['ee_map_nav_size'] : '', 'id="nav-size-small"'); ?>
+										</p>
         </li>
         <li>
           <p class="section-heading">
@@ -169,13 +178,16 @@
           </p>
         </li>
       </ul>
-    </div>
-  </li>
-  <li class="clear">
-    <p>
+    
+				</div>
+    <p class="clear">
       <label for="ee-display-map-no-shortcodes">
         <?php _e('Use map in template files ( No Shortcodes)<br /> Set this option to No if you are using venue shortcodes in Descriptions', 'event_espresso')  ?>
       </label>
-      <?php echo select_input('ee_display_map_no_shortcodes', $values, isset($org_options['ee_display_map_no_shortcodes']) ? $org_options['ee_display_map_no_shortcodes'] : '', 'id="ee-display-map-no-shortcodes"'); ?></p>
-  </li>
-</fieldset>
+      <?php echo select_input('ee_display_map_no_shortcodes', $values, isset($org_options['ee_display_map_no_shortcodes']) ? $org_options['ee_display_map_no_shortcodes'] : '', 'id="ee-display-map-no-shortcodes"'); ?>
+				</p>
+ 
+	</fieldset>
+ 
+	</li>
+</ul>
