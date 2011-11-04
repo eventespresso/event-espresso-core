@@ -312,7 +312,7 @@ if (!function_exists('register_attendees')) {
                     }
                 }//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
             } else {//If there are no results from the query, display this message
-                echo '<h3>'.__('<h3>This event has expired or is no longer available.', 'event_espresso').'</h3>';
+                echo '<h3>'.__('This event has expired or is no longer available.', 'event_espresso').'</h3>';
             }
 
             echo espresso_registration_footer();
