@@ -81,6 +81,8 @@ define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "ev
 // End table definitions
 
 
+global $notices;
+$notices = array( 'updates' => array(), 'errors' => array() );
 
 function espresso_init_session() {
 	global $org_options;
