@@ -160,7 +160,7 @@ if (is_ssl()) {
 //Registration page check
 //From Brent C. http://events.codebasehq.com/projects/event-espresso/tickets/99
 $this_is_a_reg_page = FALSE;
-if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
+if (isset($_REQUEST['ee']) || is_admin()) {
 	$this_is_a_reg_page = TRUE;
 } else {
 	$reg_page_ids = array(
