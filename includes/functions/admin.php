@@ -1396,3 +1396,31 @@ function espresso_admin_footer () {
 }
 add_filter('admin_footer_text', 'espresso_admin_footer');
 
+/**
+*        @ display admin update & error messages 
+*        @access public
+*        @return void
+**/
+function display_espresso_admin_notices () {
+
+	global $notices;
+
+	// We play both kinds of music here! Country AND Western! - err... I mean, cycle through both types of notices
+	foreach( array('updates', 'errors') as $type ) {
+
+		// if particular notice type is not empty, then "You've got Mail"
+		if( ! empty( $notices[$type] )) {
+
+			// is it an update or an error ?
+			$msg_class = $type == 'updates' ? 'updated' : 'error';
+			echo '<div id="message" class="'. $msg_class .'">';
+			// display each notice, however many that may be
+			foreach($notices[$type] as $message) {
+				echo '<p>'. $message .'</p>';
+			}
+			// wrap it up
+			echo '</div>';
+		}
+	}
+}
+add_action( 'espresso_admin_notices', 'display_espresso_admin_notices' );
