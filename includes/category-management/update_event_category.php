@@ -1,6 +1,8 @@
 <?php 
 function update_event_category(){
 	global $wpdb;
+
+if( check_admin_referer('espresso_form_check', 'ee_update_cat') ) {
 $category_id= $_REQUEST['category_id'];
 		$category_name= esc_html($_REQUEST['category_name']);
 		$category_identifier = ($_REQUEST['category_identifier'] == '') ? $category_identifier = sanitize_title_with_dashes($category_name.'-'.time()) : $category_identifier = sanitize_title_with_dashes($_REQUEST['category_identifier']);
@@ -23,3 +25,4 @@ $category_id= $_REQUEST['category_id'];
 <?php
 	}
 }
+}// end nonce check

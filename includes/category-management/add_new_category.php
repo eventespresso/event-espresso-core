@@ -54,7 +54,10 @@ function add_new_event_category() {
 													</tbody>
 												</table>
 											</div>  <!-- /.postbox -->														
-										<p><input class="button-secondary" type="submit" name="Submit" value="<?php _e('Submit'); ?>" id="add_new_category" /></p>
+
+											<?php  // create our nonces and do our form submit ?>
+											<?php wp_nonce_field( 'espresso_form_check', 'ee_add_new_cat' ); ?>										
+											<p><input class="button-secondary" type="submit" name="Submit" value="<?php _e('Submit'); ?>" id="add_new_category" /></p>
 										
 									</div><!-- /.postarea -->
 								</form>

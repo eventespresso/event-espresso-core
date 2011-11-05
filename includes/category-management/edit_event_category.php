@@ -61,6 +61,8 @@ function edit_event_category(){
 								</tbody>
 							</table>
 						</div><!-- /.postbox -->
+						<?php  // create our nonces and do our form submit ?>
+						<?php wp_nonce_field( 'espresso_form_check', 'ee_update_cat' ); ?>
 						<p><input class="button-secondary" type="submit" name="Submit" value="<?php _e('Update'); ?>" id="update_category" /></p>												
 											
 					</div><!-- /.postarea -->
