@@ -1,9 +1,9 @@
 <?php
 
 function event_espresso_manage_templates() {
-	global $wpdb, $org_options;
+	global $wpdb, $org_options, $notices;
 	//print_r($org_options);
-	if (isset($_POST['update_org'])) {
+	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_template_settings_update') ) {
 		$org_options['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
 		$org_options['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
 		$org_options['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
@@ -15,8 +15,10 @@ function event_espresso_manage_templates() {
 		$org_options['style_color'] = $_POST['style_color'];
 
 		update_option('events_organization_settings', $org_options);
-		echo '<div id="message" class="updated fade"><p><strong>' . __('Template details saved.', 'event_espresso') . '</strong></p></div>';
+		
+		$notices['updates'][] = __('Template Settings Updated', 'event_espresso') ;
 	}
+	
 	$values = array(
 			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 			array('id' => 'N', 'text' => __('No', 'event_espresso'))
@@ -28,6 +30,7 @@ function event_espresso_manage_templates() {
 		<h2>
 			<?php _e('Event Template Settings', 'event_espresso'); ?>
 		</h2>
+  <?php do_action('espresso_admin_notices'); ?>
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
 	 
 		<?php event_espresso_display_right_column(); ?>
@@ -48,9 +51,9 @@ function event_espresso_manage_templates() {
 										<div class="padding">
 											<?php
 											if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_template_settings.php')) {
-												echo '<ul id="event-layout-settings">';
+												
 												require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_template_settings.php');
-												echo '</ul>';
+											
 											}
 											?>
 											<p class="submit-buttons">
@@ -76,7 +79,7 @@ function event_espresso_manage_templates() {
 	<?php _e('Enable built in style sheets?', 'event_espresso'); ?>
 													</label>
 	<?php echo select_input('enable_default_style', $values, isset($org_options['enable_default_style']) ? $org_options['enable_default_style'] : ''); ?>
-													<a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=enable_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
+													<a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=enable_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a>
 												</li>
 
 												<li>
@@ -114,7 +117,8 @@ function event_espresso_manage_templates() {
 	<?php #### finish metaboxes ####  ?>
 
 						</div><!-- / .meta-box-sortables -->
-
+							<?php  // create our nonces and do our form submit ?>
+							<?php wp_nonce_field( 'espresso_form_check', 'ee_template_settings_update' ); ?>
 						<input type="hidden" name="update_org" value="update" />
 					</form>
 	<?php include_once('admin-files/templates/templates_help.php'); ?>

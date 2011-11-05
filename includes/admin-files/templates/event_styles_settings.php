@@ -52,7 +52,7 @@ $files_color = array();
 
 <p class="section-heading" <?php echo $styled ?>>
   <?php _e('Select Alternative Espresso Styles ', 'event_espresso'); ?>
-  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
+  <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a>
 </p>
 <p>
   <label for="base-style-select" <?php echo $styled ?>>

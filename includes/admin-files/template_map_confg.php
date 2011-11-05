@@ -3,7 +3,7 @@
 function event_espresso_manage_maps()	{
 global $wpdb, $org_options, $notices;
 
-	if (isset($_POST['update_org'])) {	
+	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_maps_update')) {	
 		$org_options['ee_display_map_no_shortcodes'] = $_POST['ee_display_map_no_shortcodes'];
 		// org_options Gmaps reg page
 		$org_options['ee_map_width_single'] = $_POST['ee_map_width_single'];
@@ -24,7 +24,7 @@ global $wpdb, $org_options, $notices;
 		
 		update_option('events_organization_settings', $org_options);
 		
-		$notices['updates'][] = __('Event Map Settings Updated', 'event_espresso') ;
+		$notices['updates'][] = __('Events Map Settings Updated', 'event_espresso') ;
 	}
 	
 	$values = array(
@@ -64,17 +64,17 @@ global $wpdb, $org_options, $notices;
  <h2>
     <?php _e('Event Espresso - Event Map Settings','event_espresso'); ?>
  </h2>
-	<?php do_action('espresso_admin_notices'); ?>
-	<?php // do_action('admin_notices')?>
+	
+<?php do_action('espresso_admin_notices'); ?>
+
  <!-- include right sidebar  -->
-		
  <div id="poststuff" class="metabox-holder has-right-sidebar">
 	<?php event_espresso_display_right_column(); ?>
 		
 		<div id="post-body">
 			<div id="post-body-content">  
  		
-   <!-- begin left column metaboxes  -->
+   <!-- begin left column - metaboxes  -->
  			<div class="meta-box-sortables ui-sortables">
 					<form id="template-settings-form" class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
 					
@@ -139,8 +139,12 @@ global $wpdb, $org_options, $notices;
 					
 																			    
 	<?php  include_once('templates/templates_help.php'); ?>
+							
+							<?php  // create our nonces and do our form submit ?>
+							<?php wp_nonce_field( 'espresso_form_check', 'ee_maps_update' ); ?>
      	 <input type="hidden" name="update_org" value="update" />
 						</form>
+					
 					</div><!-- / .meta-box-sortables -->
     </div><!-- / #post-body-content -->
 			</div><!-- / #post-body -->
@@ -158,12 +162,4 @@ global $wpdb, $org_options, $notices;
 <?php
 return;
 } // close function 'event_espresso_manage_maps'
-
-
-
-
-
-
-
-
 	
