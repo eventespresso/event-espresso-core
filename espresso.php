@@ -81,8 +81,7 @@ define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "ev
 // End table definitions
 
 
-global $notices;
-$notices = array( 'updates' => array(), 'errors' => array() );
+
 
 function espresso_init_session() {
 	global $org_options;
@@ -133,10 +132,11 @@ function espresso_info_header() {
 
 add_action('wp_head', 'espresso_info_header');
 
-//Globals
-global $org_options, $wpdb, $this_is_a_reg_page;
+//Globals used throughout the site
+global $org_options, $wpdb, $this_is_a_reg_page, $notices;
 $org_options = get_option('events_organization_settings');
 $page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
+$notices = array( 'updates' => array(), 'errors' => array() );
 
 //Get the plugin url and content directories.
 //These variables are used to define the plugin and content directories in the constants below.
