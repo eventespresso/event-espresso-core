@@ -42,7 +42,7 @@
 
 			switch ($is_active['status']) {
 				case 'EXPIRED': //only show the event description.
-					_e('<h3 class="expired_event">This event has passed.</h3>', 'event_espresso');
+					echo '<h3 class="expired_event">'.__('This event has passed.</h3>', 'event_espresso').'</h3>';
 					break;
 
 				case 'REGISTRATION_CLOSED': //only show the event description.
@@ -192,16 +192,15 @@
 								?>
 								<div class="event_questions" id="event_seating_chart">
 									<h3 style="clear:both"><?php _e('Seating chart', 'event_espresso'); ?></h3>
-									<p></p>
 									<p class="event_form_field">
-										<label style="height:60px;">Select a Seat:</label>
+										<label style="height:60px;"><?php _e('Select a Seat:', 'event_espresso'); ?></label>
 										<input type="text" name="seat_id" value="" class="ee_s_select_seat required" title="<?php _e('Please select a seat.', 'event_espresso'); ?>" event_id="<?php echo $event_id; ?>" readonly="readonly"  />
 										<?php
 										$seating_chart = $wpdb->get_row("select * from " . EVENTS_SEATING_CHART_TABLE . " where id = $seating_chart_id");
 										if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'seatingchart/images/' . $seating_chart->image_name)) {
 											?>
 											<br/>
-											<a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL . 'seatingchart/images/' . $seating_chart->image_name; ?>" target="_blank">Seating chart image</a>
+											<a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL . 'seatingchart/images/' . $seating_chart->image_name; ?>" target="_blank"><?php _e('Seating chart image', 'event_espresso'); ?></a>
 											<?php
 										}
 										?>
