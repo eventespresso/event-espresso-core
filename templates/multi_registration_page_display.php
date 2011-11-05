@@ -13,7 +13,7 @@ $this_event_id = $event_id;
     ?>
     <h2 class="event_title" id="event_title-<?php echo $event_id; ?>">
         <?php echo stripslashes_deep( $event_name ) ?>
-        <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?>
+        <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">'.__('Event Expired', 'event_espresso').'</span>' : ''; ?>
         -
        <span class="price-type"> <?php echo _e( 'Price Type:', 'event_espresso' ) ?> <span class="set-price-type"> <?php  echo $meta['price_type'] ?></span></span>
         -
@@ -39,7 +39,7 @@ $this_event_id = $event_id;
 
         switch ( $is_active['status'] ){
             case 'EXPIRED': //only show the event description.
-                _e( '<h3 class="expired_event">This event has passed.</h3>', 'event_espresso' );
+                echo '<h3 class="expired_event">'.__( 'This event has passed.', 'event_espresso' ).'</h3>';
                 break;
 
             case 'REGISTRATION_CLOSED': //only show the event description.
