@@ -8,8 +8,9 @@ function add_event_to_db($recurrence_arr = array()) {
 
 	global $wpdb, $org_options, $current_user, $espresso_premium;
 
-
-	$wpdb->show_errors();
+if( check_admin_referer('espresso_form_check', 'ee_add_new_event') ) {
+	
+$wpdb->show_errors();
 
 	static $recurrence_id;
 
@@ -445,7 +446,9 @@ function add_event_to_db($recurrence_arr = array()) {
 	 * End recursion, as part of recurring events.
 	 */
 	return $last_event_id;
-}
 
+ }
+	// end nonce check 
+}
 //End add_event_funct_to_db()
 ?>

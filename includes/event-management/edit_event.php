@@ -190,6 +190,7 @@ function edit_event($event_id = 0) {
               </a> </div>
             <?php endif; ?>
             <div id="publishing-action">
+														<?php wp_nonce_field( 'espresso_form_check', 'ee_update_event' ); ?>
               <input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Event', 'event_espresso'); ?>" id="save_event_setting" />
             </div>
             <!-- /publishing-action --> 
@@ -710,7 +711,7 @@ function edit_event($event_id = 0) {
             
           </table>
     						<p>
-										  <label for="enable-for-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, !empty($event_meta['enable_for_gmap']) ? $event_meta['enable_for_gmap'] : '', 'id="enable-for-gmap"')?></label>
+										  <label for="enable_for_gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, isset($event_meta['enable_for_gmap']) ? $event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"')?></label>
 									 </p>									
         </div>
       </div>

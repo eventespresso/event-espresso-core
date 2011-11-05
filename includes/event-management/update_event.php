@@ -6,7 +6,8 @@ function update_event($recurrence_arr = array()) {
 	//print_r($_REQUEST);
 	global $wpdb, $org_options, $current_user, $espresso_premium;
 
-
+	if(  check_admin_referer( 'espresso_form_check', 'ee_update_event' ) ) {
+	
 	$wpdb->show_errors();
 	/*
 	 * Begin Recurrence handling
@@ -641,5 +642,6 @@ function update_event($recurrence_arr = array()) {
 	/*
 	 * End recursion, as part of recurring events.
 	 */
-}
+	}// end nonce check
+} // end 'update_event'
 ?>

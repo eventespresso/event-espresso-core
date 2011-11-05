@@ -24,6 +24,7 @@ function add_new_event() {
               </a> </div>
               
             <div id="publishing-action">
+												<?php wp_nonce_field( 'espresso_form_check', 'ee_add_new_event' ); ?>
               <input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit New Event', 'event_espresso'); ?>" id="add_new_event" />
               
             </div>
