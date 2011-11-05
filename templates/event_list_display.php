@@ -111,10 +111,10 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 
 	if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') || espresso_show_social_media($event_id, 'google') || espresso_show_social_media($event_id, 'stumbleupon') ){ ?>
 		<div class="ee-social-media-buttons">
-		  <span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> 
-		  <span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
-				<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
-		  <?php echo espresso_show_social_media($event_id, 'google'); ?>
+		<span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> 
+		<span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
+		<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
+		<span class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></span>
 		</div>
   <?php  
 	}
@@ -208,10 +208,17 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
           <?php } ?>
           <p class="google-map-link"><?php echo $google_map_link; ?></p>
         </div>
-        <?php } ?>
-        <?php if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') ){ ?>
-        <p class="social-media-buttons"><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
-        <?php  } ?>
+        <?php }
+        if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') || espresso_show_social_media($event_id, 'google') || espresso_show_social_media($event_id, 'stumbleupon') ){ ?>
+            <div class="ee-social-media-buttons">
+            <span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> 
+            <span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
+            <span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
+            <span class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></span>
+            </div>
+  <?php  
+		}
+	?>
         <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
           <?php _e('Register for this Event', 'event_espresso'); ?>
           </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
