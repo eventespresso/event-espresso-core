@@ -102,6 +102,11 @@ if (!function_exists('add_event_espresso_menus')) {
 		if (is_plugin_active('espresso-social/espresso-social.php') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Social Media Settings', 'event_espresso'), __('Social Media', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_social']), 'espresso_social', 'espresso_social_config_mnu');
 		}
+		
+		//SSL/HTTPS Settings
+		if (function_exists('espresso_https_mnu') && $espresso_premium == true) {
+			add_submenu_page('events', __('Event Espresso - SSL/HTTPS Settings', 'event_espresso'), __('SSL/HTTPS', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_calendar']), 'espresso_https', 'espresso_https_mnu');
+		}
 
 		//Permissions
 		if (function_exists('espresso_permissions_config_mnu') && $espresso_premium == true) {
