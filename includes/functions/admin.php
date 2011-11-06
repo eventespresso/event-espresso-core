@@ -908,12 +908,8 @@ function event_espresso_display_right_column() {
 </div>
 <?php
 }
-// prefered approach to a display function?
-/*
-function event_espresso_display_right_column() {
-  echo event_espresso_get_right_column();
-		}
-*/
+add_action('espresso_right_column', 'event_espresso_display_right_column');
+
 function event_espresso_get_right_column() {
     $output = '<div id="side-info-column" class="inner-sidebar"><div id="side-sortables" class="meta-box-sortables">';
     $output .= '<div id="submitdiv" class="postbox " ><div title="Click to toggle" class="handlediv"><br /></div><h3 class="hndle">' . __('New @ Event Espresso', 'event_espresso') . '</h3>';
