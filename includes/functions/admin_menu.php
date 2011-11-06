@@ -105,7 +105,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		
 		//SSL/HTTPS Settings
 		if (function_exists('espresso_https_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - SSL/HTTPS Settings', 'event_espresso'), __('SSL/HTTPS', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_calendar']), 'espresso_https', 'espresso_https_mnu');
+			add_submenu_page('events', __('Event Espresso - SSL/HTTPS Settings', 'event_espresso'), __('SSL/HTTPS', 'event_espresso'), 'administrator', 'espresso_https', 'espresso_https_mnu');
 		}
 
 		//Permissions
