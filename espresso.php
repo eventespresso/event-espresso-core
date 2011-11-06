@@ -285,8 +285,7 @@ event_espresso_require_template('attendee_list.php');
 require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/cart.php");
 
 //Custom post type integration
-if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/custom_post_type.php')
-				&& isset($org_options['use_custom_post_types']) && $org_options['use_custom_post_types'] == 'Y') {
+if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/custom_post_type.php') && isset($org_options['use_custom_post_types']) && $org_options['use_custom_post_types'] == 'Y') {
 	require('includes/admin-files/custom_post_type.php');
 }
 
@@ -408,37 +407,33 @@ if (is_admin()) {
 	} else {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/staff-management.php');
 	}
-
-	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/functions.php')) {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/functions.php');
-	}
+	
+	// Event editor premium functions
+	event_espresso_require_file('functions.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/", '', false, true);
 
 	// Available addons
-	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_addons.php')) {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_addons.php');
-	} else {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin_addons.php');
-	}
+	event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
+	
+	// Google Map Settings
+	event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
 
 	// Admin Widget - Display event stats in your admin dashboard
 	event_espresso_require_file('dashboard_widget.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/", '', false, true);
 
 
 	// Admin only functions
-	require_once("includes/functions/admin_menu.php");
+	event_espresso_require_file('admin_menu.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/", '', false, true);
 
 	// Event Registration Subpage - Configure Organization
-	require_once("includes/organization_config.php");
+	event_espresso_require_file('organization_config.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/", '', false, true);
 
 	// Event Registration Subpage - Add/Delete/Edit Events
-	require_once("includes/event-management/index.php");
-	require_once("includes/admin-reports/index.php");
+	event_espresso_require_file('index.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/event-management/", '', false, true);
+	event_espresso_require_file('index.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-reports/", '', false, true);
 
 	// Event styles & template layouts Subpage
-	require_once("includes/template_confg.php");
+	event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
 	
-	// Event Maps  Subpage
-	require_once("includes/admin-files/template_map_confg.php");	
 
 	// Plugin Support
 	require_once("includes/admin_support.php");
@@ -480,7 +475,8 @@ if (is_admin()) {
 				'roles',
 				'event_locales',
 				'event_groups',
-				'test_drive'
+				'test_drive',
+				'espresso-https'
 		);
 		if (in_array($_REQUEST['page'], $espresso_pages)) {
 			add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
