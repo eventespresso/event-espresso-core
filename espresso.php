@@ -476,7 +476,7 @@ if (is_admin()) {
 				'event_locales',
 				'event_groups',
 				'test_drive',
-				'espresso-https'
+				'espresso_https'
 		);
 		if (in_array($_REQUEST['page'], $espresso_pages)) {
 			add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
