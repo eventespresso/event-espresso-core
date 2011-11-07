@@ -106,11 +106,9 @@ function add_new_attendee($event_id){
 					/*
 					 * Added for seating chart addon
 					 */
-					if ( defined('ESPRESSO_SEATING_CHART') )
-					{
+					if ( defined('ESPRESSO_SEATING_CHART') ){
 						$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
-						if ( $seating_chart_id !== false )
-						{
+						if ( $seating_chart_id !== false ){
 
 					?>
 								<p class="event_form_field">
@@ -118,8 +116,7 @@ function add_new_attendee($event_id){
                                     <input type="text" name="seat_id" value="" class="ee_s_select_seat required" title="Please select a seat." event_id="<?php echo $event_id; ?>" readonly="readonly"  />
                            <?php
 									$seating_chart = $wpdb->get_row("select * from ".EVENTS_SEATING_CHART_TABLE." where id = $seating_chart_id");
-									if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR.'seatingchart/images/'.$seating_chart->image_name) )
-									{
+									if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR.'seatingchart/images/'.$seating_chart->image_name) ){
 							?>
                                     <br/>
                                     <a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank">Seating chart image</a>
@@ -162,12 +159,22 @@ function add_new_attendee($event_id){
           <p class="event_form_submit" id="event_form_submit-<?php echo $event_id;?>">
             <input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id;?>" type="submit" name="Submit" value="<?php _e('Submit','event_espresso');?>" />
           </p>
-          <?php echo event_espresso_additional_attendees($event_id, $additional_limit, $available_spaces, $label='Total Attendees'); ?>
+		<?php 
+			//Multiple Attendees
+			if ($allow_multiple == "Y" && $number_available_spaces > 1) {
+				//This returns the additional attendee form fields. Can be overridden in the custom files addon.
+				echo event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, __('Number of Tickets', 'event_espresso'), true, $event_meta);
+			} else {
+		?>
+				<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
+		<?php
+			}//End allow multiple
+		?>
         </form>
       </div>
     </div>
   </div>
 <?php
-event_list_attendees();
+		event_list_attendees();
 	}//End Build the registration page
 }
