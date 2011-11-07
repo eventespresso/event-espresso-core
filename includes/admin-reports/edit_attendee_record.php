@@ -33,15 +33,11 @@ function edit_attendee_record() {
              * Calculate total cost from attendee cost table
              */
             $event_cost = 0;
-            if ( $multi_reg)
-            {
-                foreach($registration_ids as $reg_ids )
-                {
+            if ( $multi_reg ){
+                foreach($registration_ids as $reg_ids ){
                     $event_cost += $wpdb->get_var($wpdb->prepare("select ea.registration_id, sum(eac.cost * eac.quantity) from ".EVENTS_ATTENDEE_COST_TABLE." eac inner join ".EVENTS_ATTENDEE_TABLE." ea on eac.attendee_id = ea.id where ea.registration_id = '%s' group by ea.registration_id ",$reg_ids['registration_id']),1,0);                    
                 }
-            }
-            else
-            {
+            } else {
                 $event_cost = $wpdb->get_var($wpdb->prepare("select ea.registration_id, sum(eac.cost * eac.quantity) from ".EVENTS_ATTENDEE_COST_TABLE." eac inner join ".EVENTS_ATTENDEE_TABLE." ea on eac.attendee_id = ea.id where ea.registration_id = '%s' group by ea.registration_id ",$registration_id),1,0);
             }
             #$a_sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET amount_pd = '".$_REQUEST['amount_pd']."', quantity = '".$_REQUEST['quantity']."' WHERE id = '".$_REQUEST['id']."' ";
@@ -70,8 +66,7 @@ function edit_attendee_record() {
 			/**
 			 * Added for seating chart addon
 			 * */
-			if ( defined('ESPRESSO_SEATING_CHART') )
-			{
+			if ( defined('ESPRESSO_SEATING_CHART') ){
 				$wpdb->query("DELETE FROM ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." where attendee_id = $id");
 			}
 			/**
@@ -225,9 +220,7 @@ function edit_attendee_record() {
 							
                             $wpdb->query( $sql );
 							
-							/* DEBUG */
-							//This was a nightmare ot debug!! The questions were not saving and I suck at programming!!!
-							
+							/* DEBUG */							
 							//echo '<p>'.$sql.'</p>';	
                             
 							//$sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$value_string' WHERE attendee_id = '$id' AND question_id ='$question->question_id'";
@@ -253,98 +246,6 @@ function edit_attendee_record() {
                 }
             }
 			
-			
-			/* OLD VERSION OF SAVING QUESTIONS */
-			/* August 18, 2011 SETH: Removing this code because it is not saving the  questions on save. Created new code above */
-						
-			/*$questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id . " ");
-
-            $question_groups = unserialize($questions->question_groups);
-            $event_meta = unserialize($questions->event_meta);
-
-            if ($is_additional_attendee && isset($event_meta['add_attendee_question_groups']) && $event_meta['add_attendee_question_groups']!=NULL) {
-
-                $question_groups = $event_meta['add_attendee_question_groups'];
-            }
-
-            $questions_in = '';
-
-            foreach ($question_groups as $g_id)
-                $questions_in .= $g_id . ',';
-
-            $questions_in = substr($questions_in, 0, -1);
-            $group_name = '';
-            $counter = 0;
-
-            //pull the list of questions that are relevant to this event
-			$q_sql_1 = "SELECT q.*, qg.group_name FROM " . EVENTS_QUESTION_TABLE . " q
-						JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr on q.id = qgr.question_id
-						JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
-						WHERE qgr.group_id in (" . $questions_in. ") 
-						ORDER BY qg.id, q.sequence ASC";
-            $questions = $wpdb->get_results($q_sql_1);
-
-
-            if ($questions) {
-
-
-                $answers = $wpdb->get_results("SELECT question_id, answer FROM " . EVENTS_ANSWER_TABLE . " at WHERE at.attendee_id = '" . $id . "' ", OBJECT_K);
-
-                foreach ($questions as $question) {
-                    $sql = '';
-                    switch ($question->question_type) {
-                        case "TEXT" :
-                        case "TEXTAREA" :
-                        case "DROPDOWN" :
-                            //$post_val = $_POST [ $question->question_type . '_' . $question->question_id ];
-                            $post_val = ( $question->system_name != '') ? $response_source[$question->system_name] : $response_source[$question->question_type . '_' . $question->id];
-                            //echo '<p> SOMETHING HERE ' . $post_val . '</p>';
-
-                            if (array_key_exists($question->id, $answers)) {
-                                $sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$post_val' WHERE attendee_id = '$id' AND question_id ='$question->id'";
-                            } else {
-
-                                $sql = "INSERT INTO " . EVENTS_ANSWER_TABLE . " (registration_id, answer,attendee_id,question_id) VALUES ('$registration_id','$post_val', $id,$question->id)";
-                            }
-
-                            break;
-                        case "SINGLE" :
-                            //$post_val = $_POST [ $question->question_type . '_' . $question->question_id ];
-                            $post_val = ($question->system_name != '') ? $response_source[$question->system_name] : $response_source[$question->question_type . '_' . $question->id];
-                            if (array_key_exists($question->id, $answers)) {
-                                $sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$post_val' WHERE attendee_id = '$id' AND question_id ='$question->id'";
-                            } else {
-
-                                $sql = "INSERT INTO " . EVENTS_ANSWER_TABLE . " (registration_id, answer,attendee_id,question_id) VALUES ('$registration_id','$post_val', $id,$question->id)";
-                            }
-                            break;
-                        case "MULTIPLE" :
-                            $value_string = '';
-							if($question->question_type . '_' . $question->id !=''){
-								break;
-							}
-								
-                            for ($i = 0; $i < count($response_source[$question->question_type . '_' . $question->id]); $i++) {
-
-                                $value_string .= trim($response_source[$question->question_type . '_' . $question->id][$i]) . ",";
-                            }
-
-                            if (array_key_exists($question->id, $answers)) {
-                                $sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$value_string' WHERE attendee_id = '$id' AND question_id ='$question->id'";
-                            } else {
-
-                                $sql = "INSERT INTO " . EVENTS_ANSWER_TABLE . " (registration_id, answer,attendee_id,question_id) VALUES ('$registration_id','$value_string', $id,$question->id)";
-                            }
-
-                            break;
-                    }
-
-                    if ($sql != '')
-                        $wpdb->query($sql);
-                }
-            }*/
-			
-			/* END OLD VERSION OF SAVING QUESTIONS */
         }
 		
         $counter = 0;
@@ -434,7 +335,7 @@ function edit_attendee_record() {
               <fieldset>
                 <ul>
                   <li>
-            <?php
+                    <?php
 			$time_id =0;
 			$sql = "SELECT id FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' AND start_time = '".$event_time."' ";
 			//echo $sql;
@@ -581,8 +482,7 @@ function edit_attendee_record() {
          * IF seating chart add-on is available and the event has a seating chart. Then this ticket option can not be used.
          * */
         $has_seating_chart = false;
-        if ( defined('ESPRESSO_SEATING_CHART') )
-		{
+        if ( defined('ESPRESSO_SEATING_CHART') ){
 			$has_seating_chart = seating_chart::check_event_has_seating_chart($event_id);
         }
         /**
@@ -594,8 +494,7 @@ function edit_attendee_record() {
         {
             $ice_age = false;
         }
-        if ( !$has_seating_chart && !$ice_age)
-        {
+        if ( !$ice_age ){
         ?>
             <h4>
               <?php _e('Payment Information', 'event_espresso'); ?>
@@ -632,29 +531,31 @@ function edit_attendee_record() {
                       <?php _e('This Registration Total:', 'event_espresso'); ?>
                       </strong> <?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id, 'reg_total'=>true)); ?></p>
                   </li>
-                  <li> <div  <?php if (isset($_REQUEST['show_payment']) && $_REQUEST['show_payment'] =='true') echo ' class="yellow_inform"'; ?>><strong>
-                    <?php _e( 'This Attendee:', 'event_espresso' ); ?>
-                    </strong>
-                    <table width="100%" border="0">
-                      <tr>
-                        <td width="25%" align="left" valign="top"><label>
-                            <?php _e( 'Amount:', 'event_espresso' ); ?>
-                          </label></td>
-                        <td width="25%" align="left" valign="top"><label>
-                            <?php _e( '# Tickets:', 'event_espresso' ); ?>
-                          </label></td>
-                        <td width="50%" align="left" valign="top"><label>
-                            <?php _e( 'Total:', 'event_espresso' ); ?>
-                          </label></td>
-                      </tr>
-                      <tr>
-                        <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?>
-                          <input name="amount_pd" type="text" value ="<?php echo espresso_attendee_price(array('attendee_id'=>$id, 'single_price'=>true)); ?>" /></td>
-                        <td align="left" valign="top"> X
-                          <input name="quantity" type="text" value ="<?php echo !empty($quantity) ? $quantity:1 ; ?>"  /></td>
-                        <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id)); ?></td>
-                      </tr>
-                    </table></div>
+                  <li>
+                    <div  <?php if (isset($_REQUEST['show_payment']) && $_REQUEST['show_payment'] =='true') echo ' class="yellow_inform"'; ?>><strong>
+                      <?php _e( 'This Attendee:', 'event_espresso' ); ?>
+                      </strong>
+                      <table width="100%" border="0">
+                        <tr>
+                          <td width="25%" align="left" valign="top"><label>
+                              <?php _e( 'Amount:', 'event_espresso' ); ?>
+                            </label></td>
+                          <td width="25%" align="left" valign="top"><label>
+                              <?php _e( '# Tickets:', 'event_espresso' ); ?>
+                            </label></td>
+                          <td width="50%" align="left" valign="top"><label>
+                              <?php _e( 'Total:', 'event_espresso' ); ?>
+                            </label></td>
+                        </tr>
+                        <tr>
+                          <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?>
+                            <input name="amount_pd" type="text" value ="<?php echo espresso_attendee_price(array('attendee_id'=>$id, 'single_price'=>true)); ?>" /></td>
+                          <td align="left" valign="top"> X
+                            <input name="quantity" type="text" value ="<?php echo !empty($quantity) ? $quantity:1 ; ?>"  /></td>
+                          <td align="left" valign="top"><?php echo $org_options[ 'currency_symbol' ] ?><?php echo espresso_attendee_price(array('attendee_id'=>$id)); ?></td>
+                        </tr>
+                      </table>
+                    </div>
                   </li>
                   <li>
                     <input type="submit" name="Submit" value="Update Payment" />
@@ -682,4 +583,5 @@ function edit_attendee_record() {
         //event_list_attendees();
 	}
 }
+
 
