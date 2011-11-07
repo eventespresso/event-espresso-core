@@ -59,14 +59,14 @@
 	
 
 	/**
-	 *			@Import Event Espresso data
+	 *			@Import Event Espresso data - some code "borrowed" from event espresso csv_import.php
 	 *		  @access public
 	 *			@return void
 	 */	
 	public function import() {
 	
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/CSVIO.class.php' );
-		$CSVIO = CSVIO::instance();
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_CSV.class.php' );
+		$this->EE_CSV = EE_CSV::instance();
 
 		if ( $_REQUEST['import'] ) {
 	
@@ -83,20 +83,18 @@
 	
 							if( $ext=='csv' ) {
 							
-								require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/CSVIO.class.php' );
-								$CSVIO = $CSVIO::instance();
-								$max_upload = $CSVIO->get_max_upload_size();
+								$max_upload = $this->EE_CSV->get_max_upload_size();
 								
 								if($_FILES["file"]["size"][$key]<$max_upload) { 
 								
 									if(move_uploaded_file($_FILES["file"]["tmp_name"][$key], $upload_dir.$filename)) {
 
 										// csv import export functions require a list of all event espresso tables
-										$this->table_list = $CSVIO->list_db_tables();
+										$this->table_list = $this->EE_CSV->list_db_tables();
 									// the csv file to import
 										$path_to_file = $upload_dir . $filename;
 										// convert csv to array
-										$this->csv_array = $CSVIO->import_csv_to_array( $this->table_list, $path_to_file );
+										$this->csv_array = $this->EE_CSV->import_csv_to_array( $this->table_list, $path_to_file );
 											
 										// was data successfully stored in an array?
 										if ( is_array( $this->csv_array ) ) {
@@ -129,31 +127,49 @@
 											}
 
 											// save processed codes to db
-											if ( $result = $CSVIO->save_csv_to_db( $this->table_list, $processed_data, $this->columns_to_save ) ) {
-												echo $this->import_success ( $import_what . ' have been successfully imported into the database.' );
+											if ( $result = $this->EE_CSV->save_csv_to_db( $this->table_list, $processed_data, $this->columns_to_save ) ) {
+											
+												//echo $this->import_success ( $import_what . ' have been successfully imported into the database.' );
+												$this->EE_CSV->_notices['updates'][] = $import_what . ' have been successfully imported into the database.';
+												add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+																				
 											} else { 
-												$this->import_error ( 'An error occured and the '.$import_what.' were not imported into the database.' );
+											
+												//$this->import_error ( 'An error occured and the '.$import_what.' were not imported into the database.' );
+												$this->EE_CSV->_notices['errors'][] = 'An error occured and the '.$import_what.' were not imported into the database.';
+												add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+												
 											}
 
 										} else {
-										// no array? must be an error
-											$this->import_error ( $this->csv_array );
+											// no array? must be an error
+											//$this->import_error ( $this->csv_array );
+											$this->EE_CSV->_notices['errors'][] = $this->csv_array;
+											add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 										}
 			
 									} else {
-										$this->import_error ( $filename . ' was not successfully uploaded' );
+										//$this->import_error ( $filename . ' was not successfully uploaded' );
+										$this->EE_CSV->_notices['errors'][] = $filename . ' was not successfully uploaded';
+										add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 									} 
 									
 								} else {
-									$this->import_error ( $filename . ' was too big, not uploaded' );
+									//$this->import_error ( $filename . ' was too big, not uploaded' );
+									$this->EE_CSV->_notices['errors'][] = $filename . ' was too large of a file and could not be uploaded. The max filesize is ' . $max_upload . ' KB.';
+									add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 								}
 								
 							} else {
-								$this->import_error ( $filename . ' had an invalid file extension, not uploaded' );
+								//$this->import_error ( $filename . ' had an invalid file extension, not uploaded' );
+								$this->EE_CSV->_notices['errors'][] = $filename . ' had an invalid file extension, not uploaded';
+								add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 							}
 							
 						} else {
-							$this->import_error ( $filename . ' was not successfully uploaded' );
+							//$this->import_error ( $filename . ' was not successfully uploaded' );
+							$this->EE_CSV->_notices['errors'][] = $filename . ' was not successfully uploaded';
+							add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 						}
 						
 					}
@@ -188,7 +204,9 @@
 			foreach ( $this->csv_array as $table_name => $table_data ) {
 				// check that the table name being imported is valid
 				if ( ! in_array( $table_name, $this->table_list )) {
-					$this->import_error ( 'Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database.' );
+					//$this->import_error ( 'Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database.' );
+					$this->EE_CSV->_notices['errors'][] = 'Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database.';
+					add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 					exit;
 				}
 
@@ -211,42 +229,6 @@
 			
 	}
 	
-	
-	/**
-	 *			@Import success messages
-	 *		  @access private
-	 *			@return string on success, FALSE on fail
-	 */	
-	private function import_success ( $msg = FALSE ) {
-		if ( $msg ) {
-			return '
-	<div id="message" class="updated fade">
-		<p><strong>' . __( $msg ) . '</strong></p>
-	</div>';
-		} else {
-			return FALSE;
-		}
-	}
-	
-	
-	/**
-	 *			@Import error messages that occur outside of WP
-	 *		  @access private
-	 *			@return string on success, FALSE on fail
-	 */	
-	private function import_error ( $msg = FALSE ) {
-	
-		if ( $msg ) {
-			$style = 'width:90%;height:auto;padding:25px 50px;margin:25px auto;background:#f8f8f8;border:1px solid #ccc;border-radius:5px;color:#ff9900;font:1em/1em Helvetica, Geneva, Arial, sans-serif;text-shadow:-1px -1px 0px #fff;box-shadow:0px 13px 6px -12px rgba(0,0,0,.4);';
-			echo '
-	<div id="message" class="error fade" style="'.$style.'">
-		<p><strong>' . __( $msg ) . '</strong></p>
-	</div>';
-			exit;
-		} else {
-			return FALSE;
-		}
-	}
 	
 
 }
