@@ -102,7 +102,39 @@ function add_new_attendee($event_id){
 					}//End time selected
 ?>
           </p>
+          
           <?php
+						/*
+						 * Added for seating chart addon
+						 */
+						$display_price_dropdown = true;
+						if (defined('ESPRESSO_SEATING_CHART')) {
+							$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
+							if ($seating_chart_id !== false) {
+								$display_price_dropdown = false;
+							}
+						}
+
+						if ($display_price_dropdown == true) {
+							?>
+							<p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text  ?></p>
+							<?php
+						} else {
+							$price_range = seating_chart::get_price_range($event_id);
+							$price = "";
+							if ($price_range['min'] != $price_range['max']) {
+								$price = $org_options['currency_symbol'] . number_format($price_range['min'], 2) . ' - ' . $org_options['currency_symbol'] . number_format($price_range['max'], 2);
+							} else {
+								$price = $org_options['currency_symbol'] . number_format($price_range['min'], 2);
+							}
+							?>
+							<p class="event_prices"><?php echo __('Price: ', 'event_espresso') . $price; ?></p>
+							<?php
+						}
+						/*
+						 * End
+						 */
+						
 					/*
 					 * Added for seating chart addon
 					 */
