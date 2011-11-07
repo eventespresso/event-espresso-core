@@ -72,11 +72,11 @@ define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 
 // Added for seating chart addon
-define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart");
-define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat");
-define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event");
-define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat");
-define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "events_seating_chart_level_section_alignment");
+//define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart");
+//define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat");
+//define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event");
+//define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat");
+//define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "events_seating_chart_level_section_alignment");
 
 // End table definitions
 
@@ -162,7 +162,7 @@ if (is_ssl()) {
 //Registration page check
 //From Brent C. http://events.codebasehq.com/projects/event-espresso/tickets/99
 $this_is_a_reg_page = FALSE;
-if (isset($_REQUEST['ee']) || is_admin()) {
+if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
 	$this_is_a_reg_page = TRUE;
 } else {
 	$reg_page_ids = array(
@@ -250,9 +250,9 @@ if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php") || functi
 }
 
 //Seating chart
-if ($this_is_a_reg_page == TRUE && file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/seatingchart/seatingchart.php")) {
-	require_once( EVENT_ESPRESSO_UPLOAD_DIR . "/seatingchart/seatingchart.php");
-}
+//if ($this_is_a_reg_page == TRUE && file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/seatingchart/seatingchart.php")) {
+//	require_once( EVENT_ESPRESSO_UPLOAD_DIR . "/seatingchart/seatingchart.php");
+//}
 
 //Global files
 //Premium funtions. If this is a paid version, then we need to include these files.
@@ -688,6 +688,10 @@ if (is_admin()) {
 // Export PDF Ticket (new)
 if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
 	echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['r_id']);
+}
+
+if (isset($_REQUEST['ticket_group']) && $_REQUEST['ticket_group'] == 'true') {
+	echo espresso_ticket_group($_REQUEST['id']);
 }
 
 // Export PDF Certificate
