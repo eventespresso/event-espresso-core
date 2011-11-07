@@ -277,7 +277,14 @@ function events_data_tables_install() {
 				'enable_default_style' => 'Y',
 				'selected_style' => 'event_espresso_style.css',
 				'show_pending_payment_options' => 'Y',
-				'show_reg_footer' => 'Y'
+				'show_reg_footer' => 'Y'.
+				'ee_map_width_single' => '200',
+				'ee_map_height_single' => '200',
+				'ee_map_zoom_single' => '12',
+				'ee_map_nav_display_single' => 'N',
+				'ee_map_nav_size_single' => 'default',
+				'ee_map_type_control_single' => 'default',
+				'ee_map_align_single' => '',
 			);
 
             add_option('events_organization_settings', $org_options);
