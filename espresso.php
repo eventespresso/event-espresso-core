@@ -71,17 +71,7 @@ define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
 define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 
-// Added for seating chart addon
-//define("EVENTS_SEATING_CHART_TABLE", $wpdb->prefix . "events_seating_chart");
-//define("EVENTS_SEATING_CHART_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_seat");
-//define("EVENTS_SEATING_CHART_EVENT_TABLE", $wpdb->prefix . "events_seating_chart_event");
-//define("EVENTS_SEATING_CHART_EVENT_SEAT_TABLE", $wpdb->prefix . "events_seating_chart_event_seat");
-//define("EVENTS_SEATING_CHART_LEVEL_SECTION_ALIGNMENT_TABLE", $wpdb->prefix . "events_seating_chart_level_section_alignment");
-
 // End table definitions
-
-
-
 
 function espresso_init_session() {
 	global $org_options;
@@ -248,11 +238,6 @@ if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php") || functi
 	global $ticketing_installed;
 	$ticketing_installed = true;
 }
-
-//Seating chart
-//if ($this_is_a_reg_page == TRUE && file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/seatingchart/seatingchart.php")) {
-//	require_once( EVENT_ESPRESSO_UPLOAD_DIR . "/seatingchart/seatingchart.php");
-//}
 
 //Global files
 //Premium funtions. If this is a paid version, then we need to include these files.
