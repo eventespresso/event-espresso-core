@@ -370,9 +370,9 @@ function event_espresso_edit_list() {
 
 									<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_<?php echo $event_id ?>" title="<?php _e('Get Short URL/Shortcode', 'event_espresso'); ?>"><div class="shortcode_btn"></div></a>
 
-									<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $event_id . "&amp;export=report&action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><div class="excel_exp_btn"></div></a>
+									<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;event_id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><div class="excel_exp_btn"></div></a>
 
-									<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&event_id=" . $event_id . "&export=report&action=payment&type=csv"; ?>'" title="<?php _e('Export to CSV', 'event_espresso'); ?>"><div class="csv_exp_btn"></div></a>
+									<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;event_id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=csv"; ?>'" title="<?php _e('Export to CSV', 'event_espresso'); ?>"><div class="csv_exp_btn"></div></a>
 
 									<a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Email Attendees', 'event_espresso'); ?>"><div class="newsletter_btn"></div></a>
 									
@@ -450,9 +450,9 @@ function event_espresso_edit_list() {
 		
 			<input name="delete_event" type="submit" class="button-secondary" id="delete_event" value="<?php _e('Delete Events(s)', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" onclick="return confirmDelete();" />
 
-			<a class="button-primary" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;id=" . $event_id . "&amp;export=report&action=payment&amp;type=excel&all_events=true"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Payment Data to Excel', 'event_espresso'); ?></a>
+			<a class="button-primary" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=excel&amp;all_events=true"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Payment Data to Excel', 'event_espresso'); ?></a>
 								
-			<a class="button-primary" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;id=" . $event_id . "&amp;export=report&action=all_event_data&amp;type=csv&all_events=true"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Event Data to CSV', 'event_espresso'); ?></a>
+			<a class="button-primary" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;id=" . $event_id . "&amp;export=report&amp;action=all_event_data&amp;type=csv&amp;all_events=true"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Event Data to CSV', 'event_espresso'); ?></a>
 
 			<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=add_new_event"><?php _e('Add New Event', 'event_espresso'); ?></a>
 
@@ -512,7 +512,7 @@ function event_espresso_edit_list() {
 			include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/form-builder/csv_uploader.php' );
 			$import_what = 'Event Details';
 			$import_intro = 'If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ';
-			$page = 'event_espresso';
+			$page = 'events';
 			echo csv_uploader( $import_what, $import_intro, $page, $name );
 		}
 		
