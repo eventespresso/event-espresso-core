@@ -27,8 +27,8 @@
   // instance of the EE_Export object
 	private static $_instance = NULL;
 	
-  // instance of the CSVIO object
-	static $CSVIO = NULL;
+  // instance of the EE_CSV object
+	static $EE_CSV = NULL;
 	
 	var $_basic_header = array();
 	var $_question_groups = array();
@@ -70,8 +70,8 @@
 	 */	
 	public function export() {
 	
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/CSVIO.class.php' );
-		$this->CSVIO= CSVIO::instance();
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_CSV.class.php' );
+		$this->EE_CSV= EE_CSV::instance();
 
 		$this->today = date("Y-m-d",time());
 
@@ -99,7 +99,10 @@
 					break;
 
 					default:
-						echo $this->export_error ( 'An error occured! The requested export report could not be found' );
+						// set the error message which is stored within the EE_CSV class
+						$this->EE_CSV->_notices['errors'][] = 'An error occured! The requested export report could not be found.';
+						// add the output of the csv_admin_notices function to the admin_notices hook
+						add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 					break;
 					
 				}
@@ -117,15 +120,16 @@
 	 *			@return void
 	 */	
 	function export_event() {
-echo '<h3>EE_Export->export->report->event</h3>';
+
 		if ( isset( $_REQUEST['event_id'] )) {
 			$this->event_id = $_REQUEST['event_id'];
 		}
 		$table_data = $this->espresso_event_export($this->_event_name);
 		$filename = $_REQUEST['all_events'] == "true"? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($this->_event_name);
 		$filename .= "-" . $this->today ;
-		if ( ! $this->CSVIO->export_array_to_csv( FALSE, $table_data, $filename )) {
-			echo $this->export_error ( 'An error occured and the Event details could not be exported from the database.' );
+		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 	}
 	
@@ -150,8 +154,9 @@ echo '<h3>EE_Export->export->report->event</h3>';
 		$table_data = $this->process_mult_table_export( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-events' );
 
-		if ( ! $this->CSVIO->export_array_to_csv( FALSE, $table_data, $filename )) {
-			echo $this->export_error ( 'An error occured and the Event details could not be exported from the database.' );
+		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 	}
 
@@ -171,8 +176,9 @@ echo '<h3>EE_Export->export->report->event</h3>';
 		$table_data = $this->process_mult_table_export( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-events' );
 
-		if ( ! $this->CSVIO->export_array_to_csv( FALSE, $table_data, $filename )) {
-			echo $this->export_error ( 'An error occured and the Attendee data could not be exported from the database.' );
+		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Attendee data could not be exported from the database.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 	}
 
@@ -191,8 +197,9 @@ echo '<h3>EE_Export->export->report->event</h3>';
 		$table_data = $this->process_mult_table_export( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-categories' );
 
-		if ( ! $this->CSVIO->export_array_to_csv( FALSE, $table_data, $filename )) {
-			echo $this->export_error ( 'An error occured and the Category details could not be exported from the database.' );
+		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Category details could not be exported from the database.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 	}
 
@@ -203,9 +210,10 @@ echo '<h3>EE_Export->export->report->event</h3>';
 	 *			@return void
 	 */	
 	function export_groupons() {
-		$groupon_codes = $this->CSVIO->export_table_to_array ( EVENTS_GROUPON_CODES_TABLE );
-		if ( ! $this->CSVIO->export_array_to_csv( FALSE, $groupon_codes, 'groupon_codes' ) ) {
-			echo export_error ( 'An error occured and the Groupon Code(s) could not be exported from the database.' );
+		$groupon_codes = $this->EE_CSV->export_table_to_array ( EVENTS_GROUPON_CODES_TABLE );
+		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $groupon_codes, 'groupon_codes' ) ) {
+			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Groupon Code(s) could not be exported from the database.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 	}
 
@@ -518,7 +526,8 @@ echo '<h3>EE_Export->export->report->event</h3>';
 			}
 			
 		} else {
-			echo $this->export_error( 'No participant data has been collected.' );
+			$this->EE_CSV->_notices['errors'][] = 'No participant data has been collected.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 		
 }
@@ -580,7 +589,8 @@ echo '<h3>EE_Export->export->report->event</h3>';
 			$filename = str_replace( ' ', '-', strtolower( $filename )) . '-' . $this->today;
 			return $filename;
 		}	 else {
-			return FALSE;
+			$this->EE_CSV->_notices['errors'][] = 'No filename was provided.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 	}	
 	
@@ -596,32 +606,13 @@ echo '<h3>EE_Export->export->report->event</h3>';
 		$table_data = FALSE;
 		if ( is_array( $tables_to_export ) ) {
 			foreach ( $tables_to_export as $table ) {
-				$table_data = $this->CSVIO->export_table_to_array ( $table, $table_data, FALSE );
+				$table_data = $this->EE_CSV->export_table_to_array ( $table, $table_data, FALSE );
 			}
 		}
 		return $table_data;
 	}		
 
 
-
-	/**
-	 *			@Export error messages that occur outside of WP
-	 *		  @access private
-	 *		  @param string - msg
-	 *			@return string on success, FALSE on fail
-	 */	
-	private function export_error ( $msg = FALSE ) {
-		if ( $msg ) {
-			return '
-	<div id="message" class="error" style="width:90%; height:auto; padding:25px 50px; margin:25px auto; border:1px solid #ccc; border-radius:5px; color:#ff6633;">
-		<p>' . __( $msg ) . '</p>
-	</div>';
-		} else {
-			return FALSE;
-		}
-	}
-	
-	
 
 }
 /* End of file EE_Export.class.php */
