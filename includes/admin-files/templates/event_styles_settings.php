@@ -1,5 +1,7 @@
 <?php
 // read our style dir and build an array of files
+
+// main style directory
 $dhandle = opendir(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/css/');
 $files = array();
 
@@ -15,21 +17,43 @@ if ($dhandle) { //if we managed to open the directory
 	}
 	// close the directory
 	closedir($dhandle);
-}
+}	
+	
+// Secondary style directory  - colors
 
 $dhandle = opendir(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/css/colors/');
 $files_color = array();
 
 if ($dhandle) { //if we managed to open the directory
-	// loop through all of the files
-	while (false !== ($fname_color = readdir($dhandle))) {
-		// if the file is not this file, and does not start with a '.' or '..',
-		// then store it for later display
-		if ( ($fname_color != '.') && ($fname_color != '..') && ($fname_color != '.svn') && ($fname != basename($_SERVER['PHP_SELF'])) ) {
-			// store the filename
-			$files_color[] = $fname_color;
+   // loop through all of the files
+   while (false !== ($fname_color = readdir($dhandle))) {
+      // if the file is not this file, and does not start with a '.' or '..',
+      // then store it for later display
+      if ( ($fname_color != '.') && ($fname_color != '..') && ($fname_color != '.svn') &&
+          ($fname_color != basename($_SERVER['PHP_SELF'])) ) {
+          // store the filename
+						$files_color[] = $fname_color;
+      }
+   }
+   // close the directory
+   closedir($dhandle);
+}
+
+// themeroller style directory
+$dhandle = opendir(EVENT_ESPRESSO_UPLOAD_DIR . 'templates/css/themeroller/');
+$files_themeroller = array();
+
+if ($dhandle) { //if we managed to open the directory
+		// loop through all of the files
+		while (false !== ($fname_themeroller = readdir($dhandle))) {
+			// if the file is not this file, and does not start with a '.' or '..',
+			// then store it for later display
+			if ( ($fname_themeroller != '.') && ($fname_themeroller != '..') && ($fname_themeroller != '.svn') &&
+				($fname_themeroller != basename($_SERVER['PHP_SELF'])) && ($fname_themeroller != 'index.html') ) {
+				// store the filename
+				$files_themeroller[] = $fname_themeroller;
+			}
 		}
-	}
 	// close the directory
 	closedir($dhandle);
 }
@@ -37,14 +61,15 @@ if ($dhandle) { //if we managed to open the directory
 function espresso_style_is_selected($name) {
 	global $org_options;
 	$input_item = $name;
-	$option_selections = array($org_options['selected_style'], $org_options['style_color']  );
-	if (!in_array( $input_item, $option_selections )  ){
-		return false;
+	$option_selections = array($org_options['selected_style'], $org_options['style_color'], $org_options['style_themeroller']  );
+	if(!in_array( $input_item, $option_selections )){
+	return false;
 	}else{
-		echo  'selected="selected"';
+	  echo  'selected="selected"';
 		return;
 	}
 }
+
 $disabled = ( $org_options['enable_default_style'] == 'N' || file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") ) ? 'disabled="disabled"' : '';
 $styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
 ?>
@@ -79,3 +104,18 @@ $styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
     <?php } ?>
   </select>
 </p>
+<?php if(!empty($files_themeroller)) { ?>
+<p>
+  <label for="style-themeroller" <?php echo $styled ?>>
+    <?php _e('Select your theme roller styles', 'event_espresso');  ?>
+  </label>
+  <select id="style-themeroller" class="wide" <?php echo $disabled ?> name="style_themeroller">
+    <option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> -
+    <?php _e('None', 'event_espresso'); ?>
+    - </option>
+    <?php foreach( $files_themeroller as $fname_themeroller ) { ?>
+    <option <?php espresso_style_is_selected($fname_themeroller) ?> value="<?php echo $fname_themeroller ?>"><?php echo $fname_themeroller; ?></option>
+    <?php } ?>
+  </select>
+</p>
+<?php } ?>
