@@ -205,7 +205,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 				foreach ($rem_attendee_ids as $v) {
 
 					if (defined('ESPRESSO_SEATING_CHART')) {
-						$wpdb->query("delete from " . EVENTS_SEATING_CHART_EVETN_SEAT_TABLE . " where attendee_id = " . $v->id);
+						$wpdb->query("delete from " . EVENTS_SEATING_CHART_EVENT_SEAT_TABLE . " where attendee_id = " . $v->id);
 					}
 				}
 				/*
