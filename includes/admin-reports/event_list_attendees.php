@@ -255,7 +255,24 @@ function event_list_attendees() {
 	$attendees_group = '';
     if ($total_attendees > 0) {
 		foreach ($attendees as $attendee) {
-	
+			$id = $attendee->id;
+			$booking_info = "";
+			/*
+			* Added for seating chart addon
+			*/
+														
+			if ( defined('ESPRESSO_SEATING_CHART') ){
+				$seating_chart_id = seating_chart::check_event_has_seating_chart($attendee->event_id);
+				if ( $seating_chart_id !== false ){
+					$seat = $wpdb->get_row("select scs.* , sces.id as booking_id from ".EVENTS_SEATING_CHART_SEAT_TABLE." scs inner join ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces on scs.id = sces.seat_id where sces.attendee_id = '".$id."' ");
+					if ( $seat !== NULL ){
+						$booking_info = "<br />[Seat: ".$seat->custom_tag." <br/>#booking id: ".$seat->booking_id." ]";
+					}
+				}
+			}
+			/*
+			*End
+			*/
 			$registration_id = $attendee->registration_id;
 			$lname = $attendee->lname;
 			$fname = $attendee->fname;
@@ -266,8 +283,6 @@ function event_list_attendees() {
 			$email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
 			$phone = $attendee->phone;
 			$quantity = $attendee->quantity > 1 ? '<br />(' . __('Total Attendees', 'event_espresso') . ': ' . $attendee->quantity . ')' : '';
-			$id = $attendee->id;
-		
 			$attended = $attendee->checked_in;
 			$ticket_scanned = $attendee->checked_in_quantity;
 			$amount_pd = $attendee->amount_pd;
@@ -285,7 +300,7 @@ function event_list_attendees() {
 	?>
       <tr>
         <td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><input name="checkbox[<?php echo $registration_id ?>]" type="checkbox"  title="Delete <?php echo $fname ?><?php echo $lname ?>"></td>
-        <td class="row-title"  nowrap="nowrap"><a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:'.$id.' [ REG#: ' . $registration_id.' ]'; ?>"><?php echo $fname ?> <?php echo $lname ?> <?php echo $quantity ?></a><div class="row-actions"><span class='edit'><a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:'.$id.' [ REG#: ' . $registration_id.' ]'; ?>"><?php _e('Attendee', 'event_espresso'); ?></a> | </span> <span class='edit'><a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $registration_id ?>"><?php _e('Payment', 'event_espresso'); ?></a> </span> </div></td>
+        <td class="row-title"  nowrap="nowrap"><a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:'.$id.' [ REG#: ' . $registration_id.' ]'; ?>"><?php echo $fname ?> <?php echo $lname ?> <?php echo $booking_info ?> <?php echo $quantity ?></a><div class="row-actions"><span class='edit'><a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:'.$id.' [ REG#: ' . $registration_id.' ]'; ?>"><?php _e('Attendee', 'event_espresso'); ?></a> | </span> <span class='edit'><a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $registration_id ?>"><?php _e('Payment', 'event_espresso'); ?></a> </span> </div></td>
         <td nowrap="nowrap"><?php echo $registration_id ?></td>
         <td class="date column-date"><?php echo event_date_display($date, get_option('date_format') . ' g:i a') ?></td>
         <td nowrap="nowrap"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('View attendees for this event', 'event_espresso'); ?>"><?php echo stripslashes_deep($event_name) ?></a></td>
