@@ -120,6 +120,22 @@ function edit_attendee_record() {
 			$sql .= " WHERE id ='$id' ";
 			//echo $sql;
             $wpdb->query($sql);
+			
+			/*
+			 * Added for seating chart addon
+			 */
+			$booking_id = 0;
+			if (defined('ESPRESSO_SEATING_CHART')) {
+				if (seating_chart::check_event_has_seating_chart($event_id) !== false) {
+					if (isset($_POST['seat_id'])) {
+						$booking_id = seating_chart::parse_booking_info($_POST['seat_id']);
+						if ($booking_id > 0) {
+							seating_chart::confirm_a_seat($booking_id, $id);
+						}
+					}
+				}
+			}
+
 
             //print_r($_POST);
             // Insert Additional Questions From Post Here
@@ -296,7 +312,24 @@ function edit_attendee_record() {
 				
 				$start_date = $result->start_date;
 				$event_time = $result->event_time;
-		
+				
+				/*
+				* Added for seating chart addon
+				*/
+				$booking_info = "";										
+				if ( defined('ESPRESSO_SEATING_CHART') ){
+					$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
+					if ( $seating_chart_id !== false ){
+						$seat = $wpdb->get_row("select scs.* , sces.id as booking_id from ".EVENTS_SEATING_CHART_SEAT_TABLE." scs inner join ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces on scs.id = sces.seat_id where sces.attendee_id = '".$id."' ");
+						if ( $seat !== NULL ){
+							$booking_info = $seat->custom_tag." #booking id:".$seat->booking_id;
+						}
+					}
+				}
+				/*
+				*End
+				*/
+			
 				$event_date = event_date_display($start_date .' '.$event_time, get_option('date_format') . ' g:i a');
 
                 if ($is_additional_attendee && isset($event_meta['add_attendee_question_groups']) && $event_meta['add_attendee_question_groups']!=NULL) {
@@ -334,6 +367,7 @@ function edit_attendee_record() {
                 <?php echo $is_additional_attendee == false ? '[ <span class="green_text">'.__('Primary Attendee Record', 'event_espresso').'</span> ]': '[ <a href="admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">View/Edit Primary Attendee</a> ]'; ?> </h4>
               <fieldset>
                 <ul>
+                
                   <li>
                     <?php
 			$time_id =0;
@@ -347,6 +381,67 @@ function edit_attendee_record() {
 			echo event_espresso_time_dropdown($event_id, $label = 1, $multi_reg = 0, $time_id);	
 ?>
                   </li>
+                  <li> <?php
+						/*
+						 * Added for seating chart addon
+						 */
+						$display_price_dropdown = true;
+						if (defined('ESPRESSO_SEATING_CHART')) {
+							$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
+							if ($seating_chart_id !== false) {
+								$display_price_dropdown = false;
+							}
+						}
+
+						if ($display_price_dropdown == true) {
+							?>
+							<p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text  ?></p>
+							<?php
+						} else {
+							$price_range = seating_chart::get_price_range($event_id);
+							$price = "";
+							if ($price_range['min'] != $price_range['max']) {
+								$price = $org_options['currency_symbol'] . number_format($price_range['min'], 2) . ' - ' . $org_options['currency_symbol'] . number_format($price_range['max'], 2);
+							} else {
+								$price = $org_options['currency_symbol'] . number_format($price_range['min'], 2);
+							}
+							?>
+							<p class="event_prices"><?php echo __('Price: ', 'event_espresso') . $price; ?></p>
+							<?php
+						}
+						/*
+						 * End
+						 */
+						
+					/*
+					 * Added for seating chart addon
+					 */
+					if ( defined('ESPRESSO_SEATING_CHART') ){
+						$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
+						if ( $seating_chart_id !== false ){
+
+					?>
+								<p class="event_form_field">
+									<label><?php _e('Select a Seat:', 'event_espresso'); ?></label>
+                                    <input type="text" name="seat_id" value="<?php echo $booking_info ?>" class="ee_s_select_seat required" title="Please select a seat." event_id="<?php echo $event_id; ?>" readonly="readonly"  />
+                           <?php
+									$seating_chart = $wpdb->get_row("select * from ".EVENTS_SEATING_CHART_TABLE." where id = $seating_chart_id");
+									if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR.'seatingchart/images/'.$seating_chart->image_name) ){
+							?>
+                                    	<br/>
+                                    	<a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank"><?php _e('Seating chart image', 'event_espresso'); ?></a>
+                            <?php
+									}
+							?>
+                                </p>
+          			<?php
+						}
+					}
+					/*
+					 * End
+					 */
+
+		  ?></li>
                   <li>
                     <?php
         if (count($question_groups) > 0) 
