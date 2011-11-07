@@ -144,14 +144,14 @@ function add_new_attendee($event_id){
 
 					?>
 								<p class="event_form_field">
-									<label>Select a Seat:</label>
+									<label><?php _e('Select a Seat:', 'event_espresso'); ?></label>
                                     <input type="text" name="seat_id" value="" class="ee_s_select_seat required" title="Please select a seat." event_id="<?php echo $event_id; ?>" readonly="readonly"  />
                            <?php
 									$seating_chart = $wpdb->get_row("select * from ".EVENTS_SEATING_CHART_TABLE." where id = $seating_chart_id");
 									if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR.'seatingchart/images/'.$seating_chart->image_name) ){
 							?>
                                     <br/>
-                                    <a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank">Seating chart image</a>
+                                    <a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank"><?php _e('Seating chart image', 'event_espresso'); ?></a>
                             <?php
 									}
 							?>
