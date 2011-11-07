@@ -690,10 +690,6 @@ if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
 	echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['r_id']);
 }
 
-if (isset($_REQUEST['ticket_group']) && $_REQUEST['ticket_group'] == 'true') {
-	echo espresso_ticket_group($_REQUEST['id']);
-}
-
 // Export PDF Certificate
 if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
 	echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
