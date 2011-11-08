@@ -256,23 +256,9 @@ function event_list_attendees() {
     if ($total_attendees > 0) {
 		foreach ($attendees as $attendee) {
 			$id = $attendee->id;
-			$booking_info = "";
-			/*
-			* Added for seating chart addon
-			*/
-														
-			if ( defined('ESPRESSO_SEATING_CHART') ){
-				$seating_chart_id = seating_chart::check_event_has_seating_chart($attendee->event_id);
-				if ( $seating_chart_id !== false ){
-					$seat = $wpdb->get_row("select scs.* , sces.id as booking_id from ".EVENTS_SEATING_CHART_SEAT_TABLE." scs inner join ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces on scs.id = sces.seat_id where sces.attendee_id = '".$id."' ");
-					if ( $seat !== NULL ){
-						$booking_info = "<br />[Seat: ".$seat->custom_tag." <br/>#booking id: ".$seat->booking_id." ]";
-					}
-				}
-			}
-			/*
-			*End
-			*/
+			
+			$booking_info = apply_filters( 'espresso_booking_info', $id, $attendee->event_id );
+			
 			$registration_id = $attendee->registration_id;
 			$lname = $attendee->lname;
 			$fname = $attendee->fname;
