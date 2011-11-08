@@ -293,8 +293,8 @@ if (!is_admin()) {
 }
 
 //Load these files if we are in an actuial registration page
-if ($this_is_a_reg_page == TRUE) {
-
+function espresso_load_reg_page_files() {
+  define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 	//Check to see if this a reg page
 	//May cause admin and front facing pages to break if turned on
 	//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
@@ -332,7 +332,7 @@ if ($this_is_a_reg_page == TRUE) {
 	add_action('wp_ajax_event_espresso_confirm_and_pay', 'event_espresso_confirm_and_pay');
 	add_action('wp_ajax_nopriv_event_espresso_confirm_and_pay', 'event_espresso_confirm_and_pay');
 }
-
+if ($this_is_a_reg_page == TRUE) espresso_load_reg_page_files();
 //Build the addon files
 if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php')) {
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php');
@@ -393,13 +393,13 @@ if (is_admin()) {
 	} else {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/staff-management.php');
 	}
-	
+
 	// Event editor premium functions
 	event_espresso_require_file('functions.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/", '', false, true);
 
 	// Available addons
 	event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
-	
+
 	// Google Map Settings
 	event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
 
@@ -419,7 +419,7 @@ if (is_admin()) {
 
 	// Event styles & template layouts Subpage
 	event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
-	
+
 
 	// Plugin Support
 	require_once("includes/admin_support.php");
@@ -535,7 +535,7 @@ if (!function_exists('add_event_espresso_stylesheet')) {
 		if ( file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") ) {
 			$event_espresso_style_sheet = EVENT_ESPRESSO_UPLOAD_URL . 'templates/event_espresso_style.css';
 		}
-  
+
 		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/css/themeroller/index.html") && !empty($org_options['style_themeroller'] ) ){
 			wp_register_style('event_espresso_themeroller', EVENT_ESPRESSO_UPLOAD_URL . 'templates/css/themeroller/' . $org_options['style_themeroller'] .  '/style.css');
 			wp_enqueue_style('event_espresso_themeroller');
