@@ -700,10 +700,10 @@ if (!function_exists('espresso_init_calendar_style')) {
 		}
 		wp_enqueue_style( 'calendar');
 		
-		if ( $espresso_calendar['use_custom_theme'] == 'true' && !empty($espresso_calendar['custom_theme']) ){
+		/*if ( $espresso_calendar['use_custom_theme'] == 'true' && !empty($espresso_calendar['custom_theme']) ){
 			wp_register_style('custom-calendar-style', ESPRESSO_CALENDAR_PLUGINFULLURL.'themes/'.$espresso_calendar['custom_theme'].'/style.css');//calendar core style
 			wp_enqueue_style( 'custom-calendar-style');
-		}
+		}*/
 
 	}
 }
