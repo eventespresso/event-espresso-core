@@ -276,6 +276,8 @@ function events_data_tables_install() {
 				'use_venue_manager' => 'Y',
 				'enable_default_style' => 'Y',
 				'selected_style' => 'event_espresso_style.css',
+				'style_color' => '',
+				'style_themeroller' => '',
 				'show_pending_payment_options' => 'Y',
 				'show_reg_footer' => 'Y',
 				'ee_map_width_single' => '300',
