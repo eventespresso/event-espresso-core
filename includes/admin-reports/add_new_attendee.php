@@ -15,7 +15,7 @@ function add_new_attendee($event_id){
 <?php
 	}
 	wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), false, '1.1.0');
-        wp_print_scripts('reCopy');
+	wp_print_scripts('reCopy');
 
 	global $wpdb;
 	$sql  = "SELECT * FROM " .EVENTS_DETAIL_TABLE. " WHERE is_active='Y' AND event_status != 'D' AND id = '" . $event_id . "' LIMIT 0,1";
@@ -104,65 +104,12 @@ function add_new_attendee($event_id){
           </p>
           
           <?php
-						/*
-						 * Added for seating chart addon
-						 */
-						$display_price_dropdown = true;
-						if (defined('ESPRESSO_SEATING_CHART')) {
-							$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
-							if ($seating_chart_id !== false) {
-								$display_price_dropdown = false;
-							}
-						}
-
-						if ($display_price_dropdown == true) {
-							?>
-							<p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text  ?></p>
-							<?php
-						} else {
-							$price_range = seating_chart::get_price_range($event_id);
-							$price = "";
-							if ($price_range['min'] != $price_range['max']) {
-								$price = $org_options['currency_symbol'] . number_format($price_range['min'], 2) . ' - ' . $org_options['currency_symbol'] . number_format($price_range['max'], 2);
-							} else {
-								$price = $org_options['currency_symbol'] . number_format($price_range['min'], 2);
-							}
-							?>
-							<p class="event_prices"><?php echo __('Price: ', 'event_espresso') . $price; ?></p>
-							<?php
-						}
-						/*
-						 * End
-						 */
+					//Show pricing in a dropdown or text
+					do_action('espresso_price_select', $event_id);
 						
-					/*
-					 * Added for seating chart addon
-					 */
-					if ( defined('ESPRESSO_SEATING_CHART') ){
-						$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
-						if ( $seating_chart_id !== false ){
-
-					?>
-								<p class="event_form_field">
-									<label><?php _e('Select a Seat:', 'event_espresso'); ?></label>
-                                    <input type="text" name="seat_id" value="" class="ee_s_select_seat required" title="Please select a seat." event_id="<?php echo $event_id; ?>" readonly="readonly"  />
-                           <?php
-									$seating_chart = $wpdb->get_row("select * from ".EVENTS_SEATING_CHART_TABLE." where id = $seating_chart_id");
-									if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR.'seatingchart/images/'.$seating_chart->image_name) ){
-							?>
-                                    <br/>
-                                    <a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank"><?php _e('Seating chart image', 'event_espresso'); ?></a>
-                            <?php
-									}
-							?>
-                                </p>
-          			<?php
-						}
-					}
-					/*
-					 * End
-					 */
-
+					//Added for seating chart addon.  Creates a field to select a seat from a popup.
+					do_action( 'espresso_seating_chart_select', $event_id);
+	
 		  ?>
 		  <?php
 					echo event_espresso_add_question_groups($question_groups);
@@ -183,7 +130,11 @@ function add_new_attendee($event_id){
             <label for="event_cost">
               <?php _e('Amount Paid:','event_espresso'); ?>
             </label>
-            <input tabindex="9" type="text" maxlength="10" size="15" name="event_cost" id="event_cost-<?php echo $event_id;?>" <?php echo $event_cost ? 'value="' . $event_cost . '"' : ""; ?> />
+            <input tabindex="9" type="text" maxlength="10" size="15" name="a_event_cost" id="a_event_cost-<?php echo $event_id;?>" <?php echo $event_cost ? 'value="' . $event_cost . '"' : ""; ?> />
+            <label for="admin_price_override">
+              <?php _e('Override Price Selected Above?','event_espresso'); ?>
+            </label>
+           <input name="admin_price_override" type="checkbox" value="1" />
             <input type="hidden" name="regevent_action_admin" id="regevent_action-<?php echo $event_id;?>" value="post_attendee" />
             <input type="hidden" name="event_id" id="event_id-<?php echo $event_id;?>" value="<?php echo $event_id;?>" />
             <input type="hidden" name="admin" value="true" />

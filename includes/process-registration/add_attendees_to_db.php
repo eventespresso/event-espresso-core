@@ -122,6 +122,9 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			$txn_type = __('Added by Admin', 'event_espresso');
 			$payment_date = date("m-d-Y");
 			$amount_pd = $data_source["event_cost"] == '' ? 0.00 : $data_source["event_cost"];
+			if ( isset($data_source["admin_price_override"]) && $data_source["admin_price_override"] == '1' ){
+				$amount_pd = $data_source["a_event_cost"] == '' ? 0.00 : $data_source["a_event_cost"];
+			}
 			$registration_id = uniqid('', true);
 			$_SESSION['espresso_session_id'] = '';
 		} else {

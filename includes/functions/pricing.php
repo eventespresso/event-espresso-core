@@ -251,6 +251,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
                 $message = isset($message) ? $message : '';
                 $html .= '<span class="event_price_label">' . __('Price:', 'event_espresso') . '</span> <span class="event_price_value">' . $org_options['currency_symbol'] . number_format($result->event_cost, 2) . $message . $surcharge . '</span>';
                 $html .= '<input type="hidden" name="price_id' . $multi_name_adjust . '" id="price_id-' . $result->id . '" value="' . $result->id . '">';
+				$html .= '<input type="hidden" name="event_cost' . $multi_name_adjust . '" id="event_cost-' . $result->id . '" value="' . number_format($result->event_cost, 2) . '">';
             }
         } else if ($wpdb->num_rows == 0) {
             $html .= '<span class="free_event">' . __('Free Event', 'event_espresso') . '</span>';
