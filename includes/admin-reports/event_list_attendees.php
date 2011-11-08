@@ -356,7 +356,7 @@ function event_list_attendees() {
     <?php if ($ticketing_installed == true) { ?>
     <input name="attended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Mark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
 		
-    <input name="unattended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Unmark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
+    <input name="unattended_customer" type="submit" class="button-secondary" id="unattended_customer" value="<?php _e('Unmark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
     <?php } ?>
 				
 		<a class="button-primary" style="margin:10px 0 0 20px;" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $_REQUEST['event_id'] . "&amp;export=report&action=payment&amp;type=excel";
