@@ -252,7 +252,7 @@ require_once("includes/functions/main.php");
 require_once("includes/functions/pricing.php");
 require_once("includes/functions/time_date.php");
 require_once("includes/shortcodes.php");
-require_once("includes/actions.php");
+require_once("includes/functions/actions.php");
 require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/ical.php");
 /* Core template files used by this plugin */
 //These may be loaded in posts and pages outside of the default EE pages
