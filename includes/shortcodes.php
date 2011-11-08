@@ -376,7 +376,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 
 							//Coupons
-							if (function_exists('event_espresso_coupon_registration_page')) {
+							if (function_exists('event_espresso_coupon_registration_page' && $use_coupon_code == 'Y')) {
 								echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
 							}//End coupons display
 							//Groupons
