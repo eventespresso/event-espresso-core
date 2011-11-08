@@ -1,4 +1,5 @@
-<div id="espresso_confirmation_display" class="event-display-boxes">
+<div id="espresso_confirmation_display" class="event-display-boxes ui-widget ui-corner-all ui-widget-content">
+	<div class="event-data-display"> 
   <?php
     //Confirmation Page Template
     if ($event_cost == '0.00') {
@@ -18,7 +19,7 @@
 } else {
     ?>
   <h2><?php echo $fname ?>,</h2>
-  <p class="instruct">
+  <p class="instruct ui-state-highlight">
     <?php _e('Your registration is not complete until payment is received.', 'event_espresso'); ?>
   </p>
   <p> <span class="event_espresso_name section-title">
@@ -31,4 +32,5 @@
   <?php
 }
 ?>
-</div>
+	</div><!-- / .event-data-display -->
+</div><!-- / .event-display-boxes -->

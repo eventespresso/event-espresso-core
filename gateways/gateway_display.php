@@ -8,8 +8,9 @@ $payor_data['state'] = $state;
 $payor_data['zip'] = $zip;
 
 //This file builds the gateways that are available
-echo '<div id="onsite-payments" class="event-display-boxes">';
-echo '<h2 class="section-heading">' .  __('Please choose a payment option:', 'event_espresso') . '</h2>';
+echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';
+echo '<h2 class="section-heading ui-widget-header ui-corner-top">' .  __('Please choose a payment option:', 'event_espresso') . '</h2>';
+echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
 if (get_option('events_paypal_pro_active') == 'true'
 	|| get_option('events_eway_active') == 'true'
 	|| get_option('events_authnet_aim_active') == 'true'
@@ -166,7 +167,7 @@ if ((get_option('events_invoice_payment_active') == 'true' && $invoice_payment_s
 	}
 	if (get_option('events_check_payment_active') == 'true'||get_option('events_bank_payment_active') == 'true'){
 	?>
-		<div class="event_espresso_attention">
+		<div class="event_espresso_attention ui-state-highlight">
 			<p><strong><?php _e('Attention!', 'event_espresso'); ?></strong><br />
 				<?php _e('If using one of the offline payment options, please make note of the information below, then', 'event_espresso'); ?>
 				<a href="<?php echo home_url(). '/?page_id='.$org_options['return_url'] ;?>&amp;payment_type=cash_check&amp;registration_id=<?php echo $registration_id ?>" class="inline-link" title="<?php _e('Finalize your registration', 'event_espresso'); ?>"><?php _e('click here to finalize your registration', 'event_espresso'); ?></a>
@@ -192,4 +193,5 @@ if ((get_option('events_invoice_payment_active') == 'true' && $invoice_payment_s
 	}
 	echo '</div><!-- / #off_line_payment_container -->';
 }
+echo '</div><!-- / .event-data-display -->';
 echo '</div><!-- / .event-display-boxes payment opts -->';

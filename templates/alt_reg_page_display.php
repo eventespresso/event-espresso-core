@@ -2,10 +2,11 @@
 //This tmplate can be used inconjunction with the event meta shortcodes
 ?>
 
-<div id="event_espresso_registration_form" class="event-display-boxes">
-  <div class="event_espresso_form_wrapper event-data-display">
+<div id="event_espresso_registration_form" class="event-display-boxes ui-widget">
+	<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
+  <div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
     <form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
-      <h2 class="event_title" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>	
+      	
 	<?php 
 
 	switch ($is_active['status']) {
@@ -15,14 +16,14 @@
 		case 'REGISTRATION_CLOSED': //only show the event description.
 		// if todays date is after $reg_end_date
 		?>
-          <div class="event-registration-closed event-messages">
+          <div class="event-registration-closed event-messages ui-corner-all ui-widget-content">
             
-            <p class="event_full">
+            <p class="event_full ui-state-highlight">
 								<strong>
               <?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?>
               </strong>
 							</p> 
-            <p class="event_full">
+            <p class="event_full ui-state-highlight">
 								<strong>
               <?php _e('Please <a href="contact" title="contact us">contact us</a> if you would like to know if spaces are still available.', 'event_espresso'); ?>
               </strong>
@@ -35,7 +36,7 @@
 		// if todays date is after $reg_end_date
 		// if todays date is prior to $reg_start_date
 	?>
-          <div class="event-registration-pending event-messages">
+          <div class="event-registration-pending event-messages ui-state-highlight">
             <p class="event_full">
 			<strong><?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?></strong></p>
             <p class="event_full"><strong><?php _e('You will be able to register starting ' . event_espresso_no_format_date($reg_start_date, 'F d, Y'), 'event_espresso'); ?></strong>
@@ -71,7 +72,7 @@
 				<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error); ?> </p>
 			  <?php } //End use captcha ?>
 			  <p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
-				<input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
+				<input class="btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
 			  </p>
 			  <?php
 			

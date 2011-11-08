@@ -41,9 +41,9 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) ){
                 $number_available_spaces = get_number_of_attendees_reg_limit( $r->id, 'number_available_spaces' ); //Gets the number of available spaces
                 //echo "<pre>$r->id, $num_attendees,$available_spaces,$number_available_spaces</pre>";
     ?>
-  <div class="multi_reg_cart_block event-display-boxes"  id ="multi_reg_cart_block-<?php echo $r->id ?>">
-    <h3 class="event_title"><?php echo stripslashes_deep( $r->event_name ) ?> <span class="remove-cart-item"> <img class="ee_delete_item_from_cart" id="cart_link_<?php echo $r->id ?>" alt="Remove this item from your cart" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/remove.gif" /> </span> </h3>
-    <div>
+  <div class="multi_reg_cart_block event-display-boxes ui-widget"  id ="multi_reg_cart_block-<?php echo $r->id ?>">
+    <h3 class="event_title ui-widget-header ui-corner-top"><?php echo stripslashes_deep( $r->event_name ) ?> <span class="remove-cart-item"> <img class="ee_delete_item_from_cart" id="cart_link_<?php echo $r->id ?>" alt="Remove this item from your cart" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/remove.gif" /> </span> </h3>
+    <div class="event-data-display ui-widget-content ui-corner-bottom">
       <table id="cart-reg-details" class="event-display-tables">
         <thead>
           <tr>
@@ -87,7 +87,7 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) ){
     </a><span class="event_total_price" style="">
     <?php _e( 'Total (' . $org_options['currency_symbol'] . '):', 'event_espresso' ); ?>
     </span> </div>
-  <input type="submit" class="submit btn_event_form_submit" name="Continue" id="event_espresso_continue_registration" value="<?php _e( 'Continue to registration page', 'event_espresso' ); ?>" />
+  <input type="submit" class="submit btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" name="Continue" id="event_espresso_continue_registration" value="<?php _e( 'Continue to registration page', 'event_espresso' ); ?>" />
 </form>
 <?php
 

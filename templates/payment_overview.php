@@ -1,7 +1,8 @@
-<div class="espresso_payment_overview event-display-boxes" >
-  <h3 class="section-heading">
+<div class="espresso_payment_overview event-display-boxes ui-widget" >
+  <h3 class="section-heading ui-widget-header ui-corner-top">
     <?php _e('Payment Overview', 'event_espresso'); ?>
   </h3>
+	<div class="event-data-display  ui-widget-content ui-corner-bottom">
   <h4 class="section-title list-events">
     <?php _e('Class/Event:', 'event_espresso'); ?>
   </h4>
@@ -32,4 +33,5 @@
     <dd><?php echo $att_registration_id ?></dd>
     <?php echo $txn_id == ''?'':'<dt>'.__('Transaction ID:', 'event_espresso').'</dt> <dd>'.$txn_id. '</dd>'; ?>
   </dl>
-</div>
+	</div><!-- / .event-data-display -->
+</div><!-- / .event-display-boxes -->

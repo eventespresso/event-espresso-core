@@ -7,10 +7,11 @@
 $attendee_num = 1;
 ?>
 <form id="form1" name="form1" method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>">
-	<div class="event-conf-block event-display-boxes" >
-		<h2 class="event_title">
+	<div class="event-conf-block event-display-boxes ui-widget" >
+		<h2 class="event_title ui-widget-header ui-corner-top">
 			<?php _e('Please verify your registration details:', 'event_espresso'); ?>
 		</h2>
+		<div class="event-data-display ui-widget-content ui-corner-bottom">
 		<table class="event-display-tables grid"  id="event_espresso_attendee_verify">
 
 			<tr>
@@ -115,12 +116,13 @@ $attendee_num = 1;
 		</table>
 	</div>
 
-	<p class="espresso_confirm_registration"><input class="btn_event_form_submit" type="submit" name="confirm" id="confirm" value="<?php _e('Confirm Registration', 'event_espresso'); ?>" /></p>
+	<p class="espresso_confirm_registration"><input class="btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" type="submit" name="confirm" id="confirm" value="<?php _e('Confirm Registration', 'event_espresso'); ?>" /></p>
 
 
 <?php if ($display_questions != '') { ?>
-		<div id="additional-conf-info" class="event-display-boxes">
-			<h2 class="event_title"><?php _e('Additional Information for:', 'event_espresso'); ?> <?php echo stripslashes_deep($attendee_name) ?></h2>
+	<h2 class="event_title ui-widget-header ui-corner-top"><?php _e('Additional Information for:', 'event_espresso'); ?> <?php echo stripslashes_deep($attendee_name) ?></h2>
+		<div id="additional-conf-info" class="event-data-display ui-widget-content ui-corner-bottom">
+			
 
 			<table id="event_espresso_attendee_verify_questions" class="event-display-tables grid">
 
@@ -132,9 +134,9 @@ $attendee_num = 1;
 
 			</table>
 
-
-		</div>
-		<p class="espresso_confirm_registration"><input class="btn_event_form_submit" type="submit" name="confirm2" id="confirm2" value="<?php _e('Confirm Registration', 'event_espresso'); ?>" /></p>
+			</div><!-- / .event-data-display -->
+		</div><!-- / .event-display-boxes -->
+		<p class="espresso_confirm_registration"><input class="btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" type="submit" name="confirm2" id="confirm2" value="<?php _e('Confirm Registration', 'event_espresso'); ?>" /></p>
 <?php } ?>
 
 <?php /* This form builds the confirmation buttons */ ?>

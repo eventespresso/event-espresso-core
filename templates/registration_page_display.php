@@ -4,11 +4,12 @@
 //There should be a copy of this file in your wp-content/uploads/espresso/ folder.
 ?>
 
-<div id="event_espresso_registration_form" class="event-display-boxes">
-  <div class="event_espresso_form_wrapper event-data-display">
-    <form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
-      <h2 class="event_title" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
+<div id="event_espresso_registration_form" class="event-display-boxes ui-widget"> 
+	<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
 
+  <div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
+    <form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
+     
 			<?php /* Venue details. Un-comment first and last lines & any venue details you wish to display or use the provided shortcodes. */ ?>
 			<?php // echo '<div id="venue-details-display">'; ?>
 			<?php // echo '<p class="section-title">' . __('Venue Details', 'event_espresso') . '</p>'; ?>
@@ -34,7 +35,7 @@
 				<p class="section-title">
 					<?php _e('Description:', 'event_espresso') ?>
 				</p>
-				<div class="event_description clearfix"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.    ?></div>
+				<div class="event_description clearfix ui-widget-content"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.    ?></div>
 				<?php
 			}
 
@@ -211,7 +212,7 @@
 							<?php } //End use captcha ?>
 
 						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
-							<input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
+							<input class="btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
 						</p>
 			<?php
 		}

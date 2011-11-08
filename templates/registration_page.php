@@ -167,9 +167,10 @@ if (!function_exists('register_attendees')) {
 								    'ee_map_nav_size' => empty($org_options['ee_map_nav_size_single']) ? '' : $org_options['ee_map_nav_size_single'],
 								    'ee_map_type_control' => empty($org_options['ee_map_type_control_single']) ? '' : $org_options['ee_map_type_control_single'],
 								    'ee_map_align' => empty($org_options['ee_map_align_single']) ? '' : $org_options['ee_map_align_single'],
-								    'ee_static_url' => empty($venue_meta['gmap_static']) ? '' : $venue_meta['gmap_static']
+								    'ee_static_url' => empty($venue_meta['gmap_static']) ? '' : $venue_meta['gmap_static'],
+            'ee_enable_for_gmap' => empty($event_meta['enable_for_gmap']) ? '' : $event_meta['enable_for_gmaps']
 								   );
-					      //var_dump($ee_gmaps_opts);												
+					      												
 												
             //Address formatting
 												// Plain format for gmap geocoding

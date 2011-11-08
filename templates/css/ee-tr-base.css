@@ -20,22 +20,19 @@
 /** font-families **/
 
 /* headings/titles */
-#content .event_title,
-#content .section-title,
-#content .section-heading,
-#content .span_event_time_label,
-#content .event-data-display h3,
-#content .event-data-display .event_price_label
-{font-family: Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif}
+
+/* managed by themeroller */
 
 /* body text */
-#content .event_data, #content .espresso_event
-{font-family: 'Lucida Bright', Lucidabright, 'Lucida Serif', Lucida,  'Bitstream Vera Serif', 'Liberation Serif', Georgia, serif;}
 
+/* Managed by themeroller */
 /*___ General site wide styles for event-data / espresso_events ___*/
 
 #content .event-display-boxes p {
 	margin: .8em 0 ;
+}
+#content .event-display-boxes .ui-widget-header {
+	margin-bottom: -1px;
 }
 #content .event-data-display p.section-title,
 #content .espresso_event p.section-title {
@@ -44,18 +41,20 @@
 #content .espresso_event,
 #content .event-display-boxes { /* event list boxes */
 	margin-bottom: 1em;
+}
+#content .event-data-display {
 	padding: 10px;
 }
+#content .event_title, #content h2.section-heading {padding-left: 10px;}
 #content .event_title,
-#content .section-heading {
+#content .section-heading,
+#content .section-title {
 	margin-bottom: 1em;
 }
-
 #content .section-heading {
 	font-size: 1.2em;
 }
 #content .event-display-boxes  .event-display-boxes .section-heading {
-	font-size: 1.1em;
 	text-align: left;
 }
 #content .event_title a {
@@ -273,8 +272,9 @@ a.post-edit-link {padding-left: 5px;}
 	width: 130px;
 }
 #event_total_price {width: auto;}
-#event_espresso_coupon_wrapper {
-	text-align: right;
+#event_espresso_coupon_wrapper label {
+	display: block;
+	
 }
 #event_espresso_total_wrapper {
 	overflow: hidden;
@@ -464,8 +464,6 @@ ul#espresso_payment_buttons li form {
 	clear: both;
 }
 .btn_event_form_submit {
-	background: #FAF9EF;
-	border: 1px solid #bfbfbf;
 	width: auto;
 	height: 40px;
 }
