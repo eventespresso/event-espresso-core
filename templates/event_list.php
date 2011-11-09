@@ -7,7 +7,7 @@
 // enqueue thickbox script & styles
 // this needs wrapping in a conditional to test for option setting
 global $org_options;
-if (isset($org_options['thunbnail_popup_lists']) && $org_options['thunbnail_popup_lists'] == 'Y') {
+if (isset($org_options['thumbnail_popup_lists']) && $org_options['thumbnail_popup_lists'] == 'Y') {
 	add_action('wp_footer', 'load_thickbox');
 	add_action('wp_print_styles', 'add_thickbox_styles');
 

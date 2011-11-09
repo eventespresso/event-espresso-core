@@ -63,7 +63,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
   <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''
 					
     
-	if(isset($org_options['thunbnail_popup_lists']) && $org_options['thunbnail_popup_lists'] == 'Y') {
+	if(isset($org_options['thumbnail_popup_lists']) && $org_options['thumbnail_popup_lists'] == 'Y') {
 		$thumb_url = '#TB_inline?height=500&width=500&inlineId=event-thumb-detail' . $event_id  ;
 		$thickbox_class = ' thickbox';
 	}else {
