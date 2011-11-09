@@ -511,9 +511,8 @@ if (!function_exists('espresso_load_jquery')) {
 
 }
 add_action('init', 'espresso_load_jquery', 10);
-
-
 // End Javascript files
+
 // Load the style sheets for the reegistration pages
 if (!function_exists('add_event_espresso_stylesheet')) {
 
@@ -537,8 +536,8 @@ if (!function_exists('add_event_espresso_stylesheet')) {
 			$event_espresso_style_sheet = EVENT_ESPRESSO_UPLOAD_URL . 'templates/event_espresso_style.css';
 		}
 
-		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/css/themeroller/index.html") && !empty($org_options['style_themeroller'] ) ){
-			wp_register_style('event_espresso_themeroller', EVENT_ESPRESSO_UPLOAD_URL . 'templates/css/themeroller/' . $org_options['style_themeroller'] .  '/style.css');
+		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/css/themeroller/index.html") && !empty($org_options['themeroller']['style_themeroller'] ) ){
+			wp_register_style('event_espresso_themeroller', EVENT_ESPRESSO_UPLOAD_URL . 'templates/css/themeroller/' . $org_options['themeroller']['style_themeroller'] .  '/style.css');
 			wp_enqueue_style('event_espresso_themeroller');
 		}
 

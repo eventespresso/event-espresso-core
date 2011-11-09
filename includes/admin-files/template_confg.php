@@ -13,7 +13,7 @@ function event_espresso_manage_templates() {
 		$org_options['enable_default_style'] = $_POST['enable_default_style'];
 		$org_options['selected_style'] = $_POST['selected_style'];
 		$org_options['style_color'] = $_POST['style_color'];
-		$org_options['style_themeroller'] = $_POST['style_themeroller'];
+		$org_options['themeroller']['style_themeroller'] = $_POST['style_themeroller'];
 
 		update_option('events_organization_settings', $org_options);
 		
