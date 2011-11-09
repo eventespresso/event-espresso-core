@@ -26,7 +26,7 @@
           <label for="display_thickbox_for_thumbs">
             <?php _e('Enable thumbnail popup display for event?','event_espresso'); ?>
           </label>
-          <?php echo select_input('thunbnail_popup_lists', $values, isset($org_options['thunbnail_popup_lists']) ? $org_options['thunbnail_popup_lists'] : '', 'id="display_thickbox_for_thumbs"'); ?> </li>
+          <?php echo select_input('thumbnail_popup_lists', $values, isset($org_options['thumbnail_popup_lists']) ? $org_options['thumbnail_popup_lists'] : '', 'id="display_thickbox_for_thumbs"'); ?> </li>
         <li>
           <label for="display_address_in_regform">
             <?php _e('Display the address in the registration form? <br /><i>Disable the address if you are using the venue manager shortcodes in your event description.</i>','event_espresso'); ?>
