@@ -185,11 +185,26 @@ function events_data_tables_install() {
 				'event_ssl_active' => 'N',
 				'use_venue_manager' => 'Y',
 				'show_reg_footer' => 'Y',
+				'ee_map_width_single' => '300',
+				'ee_map_height_single' => '300',
+				'ee_map_zoom_single' => '12',
+				'ee_map_nav_display_single' => 'N',
+				'ee_map_nav_size_single' => 'default',
+				'ee_map_type_control_single' => 'default',
+				'ee_map_align_single' => '',
+				'ee_map_width' => '200',
+				'ee_map_height' => '200',
+				'ee_map_zoom' => '12',
+				'ee_map_nav_display' => 'N',
+				'ee_map_nav_size' => 'default',
+				'ee_map_type_control' => 'default',
+				'ee_map_align' => ''
             );
 
             add_option('events_organization_settings', $new_org_options);
+			
+		//If an earlier version of Event Espresso is found, then we need to create the organization options.
         } else if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {
-            //If an earlier version is found
             $results = $wpdb->get_results("SELECT * FROM " . EVENTS_ORGANIZATION_TABLE . " WHERE id='1'");
             foreach ($results as $result) {
                 $org_id = $result->id;
@@ -248,6 +263,7 @@ function events_data_tables_install() {
                     break;
             }
 
+			//DO NOT Create new settings here
 			$org_options = array(
 				'organization' => $Organization,
 				'organization_street1' => $Organization_street1,
@@ -269,31 +285,7 @@ function events_data_tables_install() {
 				'payment_subject' => $payment_subject,
 				'payment_message' => $payment_message,
 				'message' => $message,
-				'country_id' => $country_id,
-				'expire_on_registration_end' => 'Y',
-				'email_before_payment' => 'N',
-				'use_personnel_manager' => 'Y',
-				'use_venue_manager' => 'Y',
-				'enable_default_style' => 'Y',
-				'selected_style' => 'event_espresso_style.css',
-				'style_color' => '',
-				'style_themeroller' => '',
-				'show_pending_payment_options' => 'Y',
-				'show_reg_footer' => 'Y',
-				'ee_map_width_single' => '300',
-				'ee_map_height_single' => '300',
-				'ee_map_zoom_single' => '12',
-				'ee_map_nav_display_single' => 'N',
-				'ee_map_nav_size_single' => 'default',
-				'ee_map_type_control_single' => 'default',
-				'ee_map_align_single' => '',
-				'ee_map_width' => '200',
-				'ee_map_height' => '200',
-				'ee_map_zoom' => '12',
-				'ee_map_nav_display' => 'N',
-				'ee_map_nav_size' => 'default',
-				'ee_map_type_control' => 'default',
-				'ee_map_align' => ''
+				//DO NOT Create new settings here
 			);
 
             add_option('events_organization_settings', $org_options);
