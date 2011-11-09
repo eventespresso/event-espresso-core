@@ -110,6 +110,9 @@
 			default:
 			break;
 		} // end of switch export
+		
+		exit;
+
 	}
 	
 
@@ -529,7 +532,7 @@
 			$this->EE_CSV->_notices['errors'][] = 'No participant data has been collected.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
-		
+				
 }
 	
 	
