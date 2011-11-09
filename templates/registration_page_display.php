@@ -35,7 +35,7 @@
 				<p class="section-title">
 					<?php _e('Description:', 'event_espresso') ?>
 				</p>
-				<div class="event_description clearfix ui-widget-content"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.    ?></div>
+				<div class="event_description clearfix ui-widget-content"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.?></div>
 				<?php
 			}
 
@@ -110,8 +110,9 @@
 							<span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span>
 							<span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
 							<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
-						<?php echo espresso_show_social_media($event_id, 'google'); ?></div>
-		<?php } ?>
+							<span class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></span>
+                        </div>
+				<?php } ?>
 
 					<p class="start_date">
 							<?php if ($end_date !== $start_date) { ?>
