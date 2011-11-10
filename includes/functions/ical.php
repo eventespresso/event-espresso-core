@@ -75,7 +75,7 @@ function espresso_ical_prepare($attendee_id) {
 	$output .= "<input style='display:none;' name='event_categories' type='text' value='" . $categories . "' >";
 	$output .= "<input style='display:none;' name='event_summary' type='text' value='" . $data->event_name . "' >";
 	$output .= "<input style='display:none;' name='event_description' type='text' value='" . $data->event_desc . "' >";
-	$output .= "<input id='view_button' type='submit' value='Add to Calendar' >";
+	$output .= "<input id='view_button' type='submit' class='btn_event_form_submit ui-priority-primary ui-state-default ui-corner-all' value='Add to Calendar' >";
 	$output .= "</form>";
 	return $output;
 }
