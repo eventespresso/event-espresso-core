@@ -13,6 +13,59 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 	}
 }
 
+//This function updates the org_options from < EE 3.2
+function espresso_fix_org_options(){
+	global $org_options;
+		
+	//Retrive the existing $org_options, update, then unset the old one
+	if ( array_key_exists('display_description_on_multi_reg_page', $org_options) ){
+		$org_options['template_settings']['display_description_on_multi_reg_page'] = empty($org_options['display_description_on_multi_reg_page']) ? '' : $org_options['display_description_on_multi_reg_page'];
+		unset($org_options['display_description_on_multi_reg_page']);
+	}
+		
+	if ( array_key_exists('display_short_description_in_event_list', $org_options) ){
+		$org_options['template_settings']['display_short_description_in_event_list'] = empty($org_options['display_short_description_in_event_list']) ? '' : $org_options['display_short_description_in_event_list'];
+		unset($org_options['display_short_description_in_event_list']);
+	}
+		
+	if ( array_key_exists('display_address_in_event_list', $org_options) ){
+		$org_options['template_settings']['display_address_in_event_list'] = empty($org_options['display_address_in_event_list']) ? '' : $org_options['display_address_in_event_list'];
+		unset($org_options['display_address_in_event_list']);
+	}
+		
+	if ( array_key_exists('display_address_in_regform', $org_options) ){
+		$org_options['template_settings']['display_address_in_regform'] = empty($org_options['display_address_in_regform']) ? '' : $org_options['display_address_in_regform'];
+		unset($org_options['display_address_in_regform']);
+	}
+		
+	if ( array_key_exists('use_custom_post_types', $org_options) ){
+		$org_options['template_settings']['use_custom_post_types'] = empty($org_options['use_custom_post_types']) ? '' : $org_options['use_custom_post_types'];
+		unset($org_options['use_custom_post_types']);
+	}
+		
+	if ( array_key_exists('enable_default_style', $org_options) ){
+		$org_options['style_settings']['enable_default_style'] = empty($org_options['enable_default_style']) ? '' : $org_options['enable_default_style'];
+		unset($org_options['enable_default_style']);
+	}
+		
+	if ( array_key_exists('selected_style', $org_options) ){
+		$org_options['style_settings']['selected_style'] = empty($org_options['selected_style']) ? '' : $org_options['selected_style'];
+		unset($org_options['selected_style']);
+	}
+		
+	if ( array_key_exists('style_color', $org_options) ){
+		$org_options['style_settings']['style_color'] = empty($org_options['style_color']) ? '' : $org_options['style_color'];
+		unset($org_options['style_color']);
+	}
+
+	update_option('events_organization_settings', $org_options);
+		
+	//Debug
+	//echo "<pre>".print_r($org_options,true)."</pre>";
+
+}
+
+//This function installs all the required database files
 function events_data_tables_install() {
 	$table_version = EVENT_ESPRESSO_VERSION;
 
@@ -165,25 +218,26 @@ function events_data_tables_install() {
 			$message = ( __('<p>***This is an automated response - Do Not Reply***</p> <p>Thank you [fname] [lname] for registering for [event].</p><p>This event starts at [start_time] on [start_date] and runs until [end_time] on [end_date].</p><p>Location:<br>[location]</p><p>Phone: [location_phone]</p><p>Google Map: [google_map_link]</p><p> We hope that you will find this event both informative and enjoyable. Should you have any questions, please contact [contact].</p><p>If you have not done so already, please submit your payment in the amount of [cost].</p><p>Click here to review your payment information [payment_url].</p><p>Thank You.</p>', 'event_espresso'));
 
 			$new_org_options = array(
-					'organization' => get_bloginfo('name'),
-					'organization_street1' => '123 West Somewhere',
-					'organization_street2' => '',
-					'organization_city' => 'Some City',
-					'organization_state' => 'AZ',
-					'organization_zip' => '84128',
-					'contact_email' => get_bloginfo('admin_email'),
-					'default_mail' => 'Y',
-					'paypal_id' => 'my_email@my_website.com',
-					'payment_subject' => $payment_subject,
-					'payment_message' => $payment_message,
-					'message' => $message,
-					'country_id' => '',
-					'expire_on_registration_end' => 'Y',
-					'email_before_payment' => 'N',
-					'enable_default_style' => 'Y',
-					'event_ssl_active' => 'N',
-					'use_venue_manager' => 'Y',
-					'show_reg_footer' => 'Y',
+				'organization' => get_bloginfo('name'),
+				'organization_street1' => '123 West Somewhere',
+				'organization_street2' => '',
+				'organization_city' => 'Some City',
+				'organization_state' => 'AZ',
+				'organization_zip' => '84128',
+				'contact_email' => get_bloginfo('admin_email'),
+				'default_mail' => 'Y',
+				'paypal_id' => 'my_email@my_website.com',
+				'payment_subject' => $payment_subject,
+				'payment_message' => $payment_message,
+				'message' => $message,
+				'country_id' => '',
+				'expire_on_registration_end' => 'Y',
+				'email_before_payment' => 'N',
+				'enable_default_style' => 'Y',
+				'event_ssl_active' => 'N',
+				'use_venue_manager' => 'Y',
+				'show_reg_footer' => 'Y',
+				'map_settings' => array(
 					'ee_map_width_single' => '300',
 					'ee_map_height_single' => '300',
 					'ee_map_zoom_single' => '12',
@@ -198,11 +252,12 @@ function events_data_tables_install() {
 					'ee_map_nav_size' => 'default',
 					'ee_map_type_control' => 'default',
 					'ee_map_align' => ''
+				),
 			);
 
 			add_option('events_organization_settings', $new_org_options);
-
-			//If an earlier version of Event Espresso is found, then we need to create the organization options.
+			
+		//If an earlier version of Event Espresso is found, then we need to create the organization options.
 		} else if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {
 			$results = $wpdb->get_results("SELECT * FROM " . EVENTS_ORGANIZATION_TABLE . " WHERE id='1'");
 			foreach ($results as $result) {
@@ -264,30 +319,34 @@ function events_data_tables_install() {
 
 			//DO NOT Create new settings here
 			$org_options = array(
-					'organization' => $Organization,
-					'organization_street1' => $Organization_street1,
-					'organization_street2' => $Organization_street2,
-					'organization_city' => $Organization_city,
-					'organization_state' => $Organization_state,
-					'organization_zip' => $Organization_zip,
-					'contact_email' => $contact,
-					'paypal_id' => $paypal_id,
-					'currency_format' => $paypal_cur,
-					'currency_symbol' => $currency_symbol,
-					'event_page_id' => $event_page_id,
-					'return_url' => $return_url,
-					'cancel_return' => $cancel_return,
-					'notify_url' => $notify_url,
-					'use_sandbox' => $use_sandbox,
-					'image_url' => $image_url,
-					'default_mail' => $default_mail,
-					'payment_subject' => $payment_subject,
-					'payment_message' => $payment_message,
-					'message' => $message,
-							//DO NOT Create new settings here
+				'organization' => $Organization,
+				'organization_street1' => $Organization_street1,
+				'organization_street2' => $Organization_street2,
+				'organization_city' => $Organization_city,
+				'organization_state' => $Organization_state,
+				'organization_zip' => $Organization_zip,
+				'contact_email' => $contact,
+				'paypal_id' => $paypal_id,
+				'currency_format' => $paypal_cur,
+				'currency_symbol' => $currency_symbol,
+				'event_page_id' => $event_page_id,
+				'return_url' => $return_url,
+				'cancel_return' => $cancel_return,
+				'notify_url' => $notify_url,
+				'use_sandbox' => $use_sandbox,
+				'image_url' => $image_url,
+				'default_mail' => $default_mail,
+				'payment_subject' => $payment_subject,
+				'payment_message' => $payment_message,
+				'message' => $message,
+				//DO NOT Create new settings here
 			);
 
 			add_option('events_organization_settings', $org_options);
+			
+			//Delete the table
+			$wpdb->query("DROP TABLE IF EXISTS $table_name");
+
 		}
 	}
 
@@ -571,9 +630,9 @@ function events_data_tables_install() {
 				coupon_code_description TEXT,
 				each_attendee VARCHAR(1) DEFAULT NULL,
 				quantity int(7) NOT NULL DEFAULT '0',
-			    use_limit varchar(1) NOT NULL DEFAULT 'N',
-			    use_exp_date varchar(1) NOT NULL DEFAULT 'N',
-			    exp_date varchar(15) DEFAULT NULL,
+				use_limit varchar(1) NOT NULL DEFAULT 'N',
+				use_exp_date varchar(1) NOT NULL DEFAULT 'N',
+				exp_date varchar(15) DEFAULT NULL,
 				wp_user int(22) DEFAULT '1',
 				PRIMARY KEY (id),
 			  	KEY coupon_code (coupon_code),
@@ -649,16 +708,16 @@ function events_data_tables_install() {
 
 	/**
 	 * by Muzammel
-	 * Tables for seating chart
+	 * Tables for seating chart 
 	 */
 	$table_name = "events_seating_chart";
-	$sql = " id int(11) NOT NULL AUTO_INCREMENT,
-			 name varchar(255) DEFAULT NULL,
-             description text,
-			 image_name varchar(255) DEFAULT NULL,
+	$sql = " id int(11) NOT NULL AUTO_INCREMENT,   
+			 name varchar(255) DEFAULT NULL,	   
+			 description text,
+			 image_name varchar(255) DEFAULT NULL,							
 			 PRIMARY KEY  (id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
+	event_espresso_run_install ($table_name, $table_version, $sql);
+	
 	$table_name = "events_seating_chart_seat";
 	$sql = " id int(11) NOT NULL AUTO_INCREMENT,
 			 seating_chart_id int(11) DEFAULT NULL,
@@ -671,13 +730,13 @@ function events_data_tables_install() {
 			 custom_tag text,
 			 description text,
 			 PRIMARY KEY  (id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
+	event_espresso_run_install ($table_name, $table_version, $sql);
+	
 	$table_name = "events_seating_chart_event";
 	$sql = " event_id int(11) DEFAULT NULL,
 			 seating_chart_id int(11) DEFAULT NULL ";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
+	event_espresso_run_install ($table_name, $table_version, $sql);
+	
 	$table_name = "events_seating_chart_event_seat";
 	$sql = " id int(11) NOT NULL AUTO_INCREMENT,
 			 seat_id int(11) DEFAULT NULL,
@@ -688,22 +747,25 @@ function events_data_tables_install() {
 			 by_admin int(11) DEFAULT '0' COMMENT '0=No,1=marked occupied by admin',
 			 occupied int(11) DEFAULT '1' COMMENT '0=Free,1=occupied (basically entry in this table means occupied, but still keeping this option for any future functionality)',
 			 PRIMARY KEY  (id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
+	event_espresso_run_install ($table_name, $table_version, $sql);
+	
 	$table_name = "events_seating_chart_level_section_alignment";
-	$sql = " seating_chart_id int(11) DEFAULT NULL,
-             level varchar(255) DEFAULT NULL,
-             section varchar(255) DEFAULT NULL,
-             alignment varchar(100) DEFAULT NULL,
-             sort_order varchar(100) DEFAULT NULL";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
+	$sql = " seating_chart_id int(11) DEFAULT NULL,						
+			 level varchar(255) DEFAULT NULL,							  
+			 section varchar(255) DEFAULT NULL,							
+			 alignment varchar(100) DEFAULT NULL,						  
+			 sort_order varchar(100) DEFAULT NULL";
+	event_espresso_run_install ($table_name, $table_version, $sql);
+	
 	/**
 	 * End of Seating chart tables
 	 */
+
+
 	event_espresso_install_system_names();
 	event_espresso_create_upload_directories();
 	event_espresso_update_shortcodes();
 	event_espresso_update_attendee_data();
 	espresso_update_attendee_qty();
+	espresso_fix_org_options();
 }
