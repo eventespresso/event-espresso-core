@@ -40,6 +40,11 @@
 	-webkit-box-shadow: 0 0 2px #d2d2d2;
 	box-shadow: 0 0 2px #d2d2d2;
 }
+#ee-event-list-thumb img {
+	-moz-box-shadow: 0 0 2px #555;
+	-webkit-box-shadow: 0 0 2px #555;
+	box-shadow: 0 0  2px  #555;
+}
 #content .event-display-boxes p {
 	margin: .8em 0 ;
 }
@@ -103,6 +108,8 @@
  clear: both;
  padding: 10px 0;
 }
+/* wrestle google button into submission */
+div.google-button {display: inline;}
 /* >Pages
 ------------------------------------------------------------------------------*/
 /*___ page event list ___*/
@@ -149,10 +156,11 @@ span.google-map-link a:hover {
 }
 #ee-event-list-thumb {
 	display: block;
+	padding: 5px 0;
 	overflow: hidden;
 }
 #ee-event-list-thumb span {
-	padding:10px 0;
+	padding: 2px;
 }
 
 /** Thickbox event list styling **/
@@ -251,18 +259,19 @@ span.google-map-link a:hover {
 	padding-bottom: 20px;
 }
 #event-reg-form-groups .event_questions {
-	margin-bottom: 10px;
-	padding: 0 0 .5em;
+	border: 1px solid #d2d2d2;
+	margin: 10px 0;
+	padding: .5em;
 }
 #event-reg-form-groups .event_questions .reg-quest-title {
 	font-weight: bold;
 	margin-top: 0;
 }
 #content .event_questions  .quest-group-descript {
-	background: #E9E9E9;
+	background: #fafafa;
 	font-size: 81.25%;
-	margin: -20px 0 20px ;
-	padding-left: 5px;
+	margin: 0 0 20px ;
+	padding: .5em;
 }
 .espresso_add_attendee a.add {
 	margin-left: 85px;

@@ -102,18 +102,7 @@
 
 					//Meta example
 					//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
-
-					/* Displays the social media buttons */
-					if (function_exists('espresso_show_social_media')) {
-						?>
-						<div class="ee-social-media-buttons">
-							<span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span>
-							<span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
-							<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
-							<span class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></span>
-                        </div>
-				<?php } ?>
-
+					?>
 					<p class="start_date">
 							<?php if ($end_date !== $start_date) { ?>
 							<span class="section-title">
@@ -158,10 +147,20 @@
 						
 						//Added for seating chart addon. Creates a field to select a seat from a popup.
 						do_action( 'espresso_seating_chart_select', $event_id);
-						?>
+						
 
-						<fieldset id="event-reg-form-groups">
-							<h3 class="section-heading">
+					/* Displays the social media buttons */
+					if (function_exists('espresso_show_social_media')) { ?>
+						<div class="ee-social-media-buttons">
+							<span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span>
+							<span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
+							<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
+							<div class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></div>
+						</div>
+				<?php } ?>
+						
+						<fieldset id="event-reg-form-groups" class="ui-widget">
+							<h3 class="section-heading ui-widget-header">
 							<?php _e('Registration Details', 'event_espresso'); ?>
 							</h3>
 							<?php
@@ -213,7 +212,7 @@
 							<?php } //End use captcha ?>
 
 						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
-							<input class="btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
+							<input class="btn_event_form_submit ui-priority-primary ui-state-default ui-widget-content ui-corner-all" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
 						</p>
 			<?php
 		}
