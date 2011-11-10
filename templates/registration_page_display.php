@@ -7,9 +7,9 @@
 <div id="event_espresso_registration_form" class="event-display-boxes ui-widget"> 
 	<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
 
-  <div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
-    <form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
-     
+		<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
+			<form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
+
 			<?php /* Venue details. Un-comment first and last lines & any venue details you wish to display or use the provided shortcodes. */ ?>
 			<?php // echo '<div id="venue-details-display">'; ?>
 			<?php // echo '<p class="section-title">' . __('Venue Details', 'event_espresso') . '</p>'; ?>
@@ -69,7 +69,7 @@
 					// if todays date is after $reg_end_date
 					// if todays date is prior to $reg_start_date
 					?>
-					<div class="event-registration-pending event-messages">
+					<div class="event-registration-pending event-messages ui-corner-all ui-state-highlight">
 						<p class="event_full">
 							<strong>
 								<?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?>
