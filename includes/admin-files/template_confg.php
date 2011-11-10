@@ -4,28 +4,30 @@ function event_espresso_manage_templates() {
 	global $wpdb, $org_options, $notices;
 	//print_r($org_options);
 	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_template_settings_update') ) {
-		$org_options['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
-		$org_options['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
-		$org_options['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
-		$org_options['display_address_in_regform'] = $_POST['display_address_in_regform'];
-		$org_options['thumbnail_popup_lists'] = $_POST['thumbnail_popup_lists'];
-		$org_options['use_custom_post_types'] = $_POST['use_custom_post_types'];
-		$org_options['enable_default_style'] = $_POST['enable_default_style'];
-		$org_options['selected_style'] = $_POST['selected_style'];
-		$org_options['style_color'] = $_POST['style_color'];
+		$org_options['template_settings']['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
+		$org_options['template_settings']['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
+		$org_options['template_settings']['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
+		$org_options['template_settings']['display_address_in_regform'] = $_POST['display_address_in_regform'];
+		$org_options['template_settings']['thumbnail_popup_lists'] = $_POST['thumbnail_popup_lists'];
+		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
+		$org_options['style_settings']['enable_default_style'] = $_POST['enable_default_style'];
+		$org_options['style_settings']['selected_style'] = $_POST['selected_style'];
+		$org_options['style_settings']['style_color'] = $_POST['style_color'];
 		$org_options['themeroller']['style_themeroller'] = $_POST['style_themeroller'];
-
 		update_option('events_organization_settings', $org_options);
-		
+	
 		$notices['updates'][] = __('Template Settings Updated', 'event_espresso') ;
 	}
+	
+	//Debug
+	//echo "<pre>".print_r($org_options,true)."</pre>";
 	
 	$values = array(
 			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 			array('id' => 'N', 'text' => __('No', 'event_espresso'))
 	);
-
-	?>
+	
+?>
 
 <div class="wrap">
   <div id="icon-options-event" class="icon32"> </div>
@@ -80,7 +82,7 @@ function event_espresso_manage_templates() {
                         <label>
                           <?php _e('Enable built in style sheets?', 'event_espresso'); ?>
                         </label>
-                        <?php echo select_input('enable_default_style', $values, isset($org_options['enable_default_style']) ? $org_options['enable_default_style'] : ''); ?> <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=enable_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a> </li>
+                        <?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=enable_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a> </li>
                       <li>
                         <?php include(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_styles_settings.php'); ?>
                       </li>

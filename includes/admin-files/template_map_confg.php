@@ -4,28 +4,31 @@ function event_espresso_manage_maps()	{
 global $wpdb, $org_options, $notices;
 
 	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_maps_update')) {	
-		$org_options['ee_display_map_no_shortcodes'] = $_POST['ee_display_map_no_shortcodes'];
+		$org_options['map_settings']['ee_display_map_no_shortcodes'] = $_POST['ee_display_map_no_shortcodes'];
 		// org_options Gmaps reg page
-		$org_options['ee_map_width_single'] = $_POST['ee_map_width_single'];
-		$org_options['ee_map_height_single'] = $_POST['ee_map_height_single'];
-		$org_options['ee_map_zoom_single'] = $_POST['ee_map_zoom_single'];
-		$org_options['ee_map_nav_display_single'] = $_POST['ee_map_nav_display_single'];
-		$org_options['ee_map_nav_size_single'] = $_POST['ee_map_nav_size_single'];
-		$org_options['ee_map_type_control_single'] = $_POST['ee_map_type_control_single'];
-		$org_options['ee_map_align_single'] = $_POST['ee_map_align_single'];
+		$org_options['map_settings']['ee_map_width_single'] = $_POST['ee_map_width_single'];
+		$org_options['map_settings']['ee_map_height_single'] = $_POST['ee_map_height_single'];
+		$org_options['map_settings']['ee_map_zoom_single'] = $_POST['ee_map_zoom_single'];
+		$org_options['map_settings']['ee_map_nav_display_single'] = $_POST['ee_map_nav_display_single'];
+		$org_options['map_settings']['ee_map_nav_size_single'] = $_POST['ee_map_nav_size_single'];
+		$org_options['map_settings']['ee_map_type_control_single'] = $_POST['ee_map_type_control_single'];
+		$org_options['map_settings']['ee_map_align_single'] = $_POST['ee_map_align_single'];
 		//org_options Gmaps list pages
-		$org_options['ee_map_width'] = $_POST['ee_map_width'];
-		$org_options['ee_map_height'] = $_POST['ee_map_height'];
-		$org_options['ee_map_zoom'] = $_POST['ee_map_zoom'];
-		$org_options['ee_map_nav_display'] = $_POST['ee_map_nav_display'];
-		$org_options['ee_map_nav_size'] = $_POST['ee_map_nav_size'];
-		$org_options['ee_map_type_control'] = $_POST['ee_map_type_control'];
-		$org_options['ee_map_align'] = $_POST['ee_map_align'];		
+		$org_options['map_settings']['ee_map_width'] = $_POST['ee_map_width'];
+		$org_options['map_settings']['ee_map_height'] = $_POST['ee_map_height'];
+		$org_options['map_settings']['ee_map_zoom'] = $_POST['ee_map_zoom'];
+		$org_options['map_settings']['ee_map_nav_display'] = $_POST['ee_map_nav_display'];
+		$org_options['map_settings']['ee_map_nav_size'] = $_POST['ee_map_nav_size'];
+		$org_options['map_settings']['ee_map_type_control'] = $_POST['ee_map_type_control'];
+		$org_options['map_settings']['ee_map_align'] = $_POST['ee_map_align'];		
 		
 		update_option('events_organization_settings', $org_options);
 		
 		$notices['updates'][] = __('Events Map Settings Updated', 'event_espresso') ;
 	}
+	
+	//Debug
+	//echo "<pre>".print_r($org_options,true)."</pre>";
 	
 	$values = array(
 			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
@@ -38,7 +41,7 @@ global $wpdb, $org_options, $notices;
 	function espresso_is_selected_list($name) {
 		global $org_options;
 		$input_val = $name;
-		$the_opt_val = array('ee_map_type_control' => $org_options['ee_map_type_control'], 'ee_map_align' => $org_options['ee_map_align']);
+		$the_opt_val = array('ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'], 'ee_map_align' => $org_options['map_settings']['ee_map_align']);
 		if (!in_array($input_val, $the_opt_val))
 			return false;
 		else
@@ -49,7 +52,7 @@ global $wpdb, $org_options, $notices;
 	function espresso_is_selected_reg($name) {
 		global $org_options;
 		$input_val = $name;
-		$the_opt_val = array('ee_map_align_single' => $org_options['ee_map_align_single'], 'ee_map_type_control_single' => $org_options['ee_map_type_control_single']);
+		$the_opt_val = array('ee_map_align_single' => $org_options['map_settings']['ee_map_align_single'], 'ee_map_type_control_single' => $org_options['map_settings']['ee_map_type_control_single']);
 		if (!in_array($input_val, $the_opt_val))
 			return false;
 		else
