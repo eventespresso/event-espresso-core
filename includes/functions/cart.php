@@ -534,12 +534,12 @@ if (!function_exists('event_espresso_load_checkout_page')) {
                         echo $output;
                         ?>
 
-                        <input type="submit" class="submit btn_event_form_submit" name="payment_page" value="<?php _e('Confirm and go to payment page', 'event_espresso'); ?>" />
+                        <input type="submit" class="submit btn_event_form_submit ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" name="payment_page" value="<?php _e('Confirm and go to payment page', 'event_espresso'); ?>" />
 
                         <?php _e('<span> - OR - <span>', 'event_espresso');
                     } ?>
 
-                    <a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart" class="btn_event_form_submit inline-link">  <?php _e('Return &amp; Edit Cart', 'event_espresso'); ?> </a>
+                    <a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart" class="btn_event_form_submit inline-link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all">  <?php _e('Return &amp; Edit Cart', 'event_espresso'); ?> </a>
 
                 </form>
             </div>
@@ -784,7 +784,7 @@ if (!function_exists('event_espresso_cart_link')) {
         } else { //show them the add to cart link
             $registration_cart_url = isset($externalURL) && $externalURL != '' ? $externalURL : get_option('siteurl') . '/?page_id=' . $event_page_id . '&regevent_action=add_event_to_cart&event_id=' . $event_id;
             $registration_cart_anchor = $anchor;
-            $registration_cart_class = 'ee_add_item_to_cart cart-link ui-priority-primary ui-state-default ui-corner-all';
+            $registration_cart_class = 'ee_add_item_to_cart cart-link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all';
         }
 
         if ( $view_cart && $direct_to_cart == 1 )

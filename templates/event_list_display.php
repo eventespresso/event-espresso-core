@@ -83,7 +83,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 //Show short descriptions
     if ($event_desc != '' && isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == 'Y') {
         ?>
-  <div class="event-desc">
+  <div class="event-desc ui-corner-all">
     <p><?php echo espresso_format_content($event_desc); ?></p>
   </div>
   <?php  } ?>
@@ -154,7 +154,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 							$params = array(
 								//REQUIRED, the id of the event that needs to be added to the cart
 								'event_id' => $event_id,
-								'anchor_class' => 'class="cart-link ui-priority-primary ui-state-default ui-corner-all"',
+								'anchor_class' => 'class="cart-link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all"',
 								//REQUIRED, Anchor of the link, can use text or image
 								'anchor' => __("Add to Cart", 'event_espresso'), //'anchor' => '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/cart_add.png" />',
 								//REQUIRED, if not available at this point, use the next line before this array declaration
@@ -168,11 +168,11 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 						}
         if ($display_reg_form == 'Y') {
             ?>
-  <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
+  <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
     <?php _e('Register for Event', 'event_espresso'); ?>
     </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
   <?php } else { ?>
-  <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
+  <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
     <?php _e('View Details', 'event_espresso'); ?>
     </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
   <?php
