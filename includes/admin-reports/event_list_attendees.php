@@ -350,7 +350,7 @@ function event_list_attendees() {
     <?php _e('Export Payments to Excel', 'event_espresso'); ?>
     </a> 
 
-			<a class="button-primary" style="margin:10px 0 0 20px;" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;export=report&action=attendees&amp;type=csv"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Attendee Data to CSV', 'event_espresso'); ?></a>
+			<a class="button-primary" style="margin:10px 0 0 20px;" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;export=report&action=attendees&amp;type=csv"; ?>'" title="<?php _e('Export All Attendee Data to CSV', 'event_espresso'); ?>"><?php _e('Export All Attendee Data to CSV', 'event_espresso'); ?></a>
 		
 		<?php echo isset($_REQUEST['event_id']) ? '<a style="margin:10px 0 0 20px;"  class="button-primary"  href="admin.php?page=attendees&amp;event_admin_reports=add_new_attendee&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Add Attendee', 'event_espresso') . '</a>' : ''; ?> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=edit&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Edit Event', 'event_espresso') . '</a>' : ''; ?> 
 		
