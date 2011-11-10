@@ -108,13 +108,14 @@ function espresso_calendar_theme_files() {
 }
 
 function espresso_theme_is_selected($name, $selected='') {
-	   $input_item = $name;
-			 $option_selections = array($selected);
-	   if (!in_array( $input_item, $option_selections )  )
-	   return false;
-	   else
-	   echo  'selected="selected"';
-	   return; 
+	$input_item = $name;
+	$option_selections = array($selected);
+	if (!in_array( $input_item, $option_selections )  ){
+		return false;
+	}else{
+		echo  'selected="selected"';
+		return;
+	}
 }
 
 /**
