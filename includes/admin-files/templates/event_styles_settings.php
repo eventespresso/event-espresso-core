@@ -61,7 +61,7 @@ if ($dhandle) { //if we managed to open the directory
 function espresso_style_is_selected($name) {
 	global $org_options;
 	$input_item = $name;
-	$option_selections = array($org_options['selected_style'], $org_options['style_color'], $org_options['style_themeroller']  );
+	$option_selections = array($org_options['selected_style'], $org_options['style_color'], $org_options['themeroller']['style_themeroller']  );
 	if(!in_array( $input_item, $option_selections )){
 	return false;
 	}else{
