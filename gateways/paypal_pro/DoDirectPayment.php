@@ -135,7 +135,7 @@ if (!APICallSuccessful($PayPalResult['ACK'])) {
     $txn_type = 'PPP';
     $txn_id = $PayPalResult['TRANSACTIONID'];
 	$total_cost = $PayPalResult['AMT'];
-	
+
     $sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($_POST['id']) . "' ";
     $sql .= $id == '' ? '' : " AND id= '" . $id . "' ";
     $sql .= " ORDER BY id LIMIT 0,1";
@@ -163,7 +163,7 @@ if (!APICallSuccessful($PayPalResult['ACK'])) {
     //Build links
     $event_url = espresso_reg_url($event_id);
     $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
-
+		$total_cost = $PayPalResult['AMT'];
 
     $sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET
         payment_status = '$payment_status',
