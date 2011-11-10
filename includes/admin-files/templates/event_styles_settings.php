@@ -61,7 +61,7 @@ if ($dhandle) { //if we managed to open the directory
 function espresso_style_is_selected($name) {
 	global $org_options;
 	$input_item = $name;
-	$option_selections = array($org_options['selected_style'], $org_options['style_color'], $org_options['themeroller']['style_themeroller']  );
+	$option_selections = array($org_options['style_settings']['selected_style'], $org_options['style_settings']['style_color'], $org_options['themeroller']['style_themeroller']  );
 	if(!in_array( $input_item, $option_selections )){
 	return false;
 	}else{
@@ -70,10 +70,10 @@ function espresso_style_is_selected($name) {
 	}
 }
 
-$disabled = ( $org_options['enable_default_style'] == 'N' || file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") ) ? 'disabled="disabled"' : '';
+$disabled = ( $org_options['style_settings']['enable_default_style'] == 'N' || file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") ) ? 'disabled="disabled"' : '';
 $styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
 ?>
-<?php // var_dump($org_options['selected_style']); ?>
+<?php // var_dump($org_options['style_settings']['selected_style']); ?>
 
 <p class="section-heading" <?php echo $styled ?>>
   <?php _e('Select Alternative Espresso Styles ', 'event_espresso'); ?>

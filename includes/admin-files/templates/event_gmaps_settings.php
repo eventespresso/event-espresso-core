@@ -14,7 +14,7 @@
             <label for="single-map-width">
               <?php _e('Set Map Width', 'event_espresso')  ?>
             </label>
-            <input type="text" id="single-map-width"  name="ee_map_width_single" value="<?php echo $org_options['ee_map_width_single']==''? '500' : $org_options['ee_map_width_single'];?>" />
+            <input type="text" id="single-map-width"  name="ee_map_width_single" value="<?php echo $org_options['map_settings']['ee_map_width_single']==''? '500' : $org_options['map_settings']['ee_map_width_single'];?>" />
           </p>
         </li>
         <li>
@@ -22,7 +22,7 @@
             <label for="single-map-height">
               <?php _e('Set Map Height', 'event_espresso')  ?>
             </label>
-            <input type="text" id="single-map-height" size="" name="ee_map_height_single" value="<?php echo $org_options['ee_map_height_single']==''? '500' : $org_options['ee_map_height_single'];?>" />
+            <input type="text" id="single-map-height" size="" name="ee_map_height_single" value="<?php echo $org_options['map_settings']['ee_map_height_single']==''? '500' : $org_options['map_settings']['ee_map_height_single'];?>" />
           </p>
         </li>
         <li>
@@ -30,7 +30,7 @@
             <label for="single-map-zoom">
               <?php _e('Set Map Zoom level: Range 1 - 19', 'event_espresso')  ?>
             </label>
-            <input id="single-map-zoom" type="text" size="" name="ee_map_zoom_single" value="<?php echo $org_options['ee_map_zoom_single']== ''? '14' : $org_options['ee_map_zoom_single'];?>" />
+            <input id="single-map-zoom" type="text" size="" name="ee_map_zoom_single" value="<?php echo $org_options['map_settings']['ee_map_zoom_single']== ''? '14' : $org_options['map_settings']['ee_map_zoom_single'];?>" />
           </p>
         </li>
         <li>
@@ -38,7 +38,7 @@
             <label for="show-overlay-controls-single">
               <?php _e('Set Map Navigation Overlay', 'event_espresso')  ?>
             </label>
-            <?php echo select_input('ee_map_nav_display_single', $values, isset($org_options['ee_map_nav_display_single']) ? $org_options['ee_map_nav_display_single'] : '', 'id="show-overlay-controls-single" '); ?>
+            <?php echo select_input('ee_map_nav_display_single', $values, isset($org_options['map_settings']['ee_map_nav_display_single']) ? $org_options['map_settings']['ee_map_nav_display_single'] : '', 'id="show-overlay-controls-single" '); ?>
 										</p>
         </li>
         <li>
@@ -46,7 +46,7 @@
             <label for="nav-size-small-single">
               <?php _e('Keep Map Navigation Small', 'event_espresso')  ?>
             </label>
-            <?php echo select_input('ee_map_nav_size_single', $values, isset($org_options['ee_map_nav_size_single']) ? $org_options['ee_map_nav_size_single'] : '', 'id="nav-size-small-single"'); ?>
+            <?php echo select_input('ee_map_nav_size_single', $values, isset($org_options['map_settings']['ee_map_nav_size_single']) ? $org_options['map_settings']['ee_map_nav_size_single'] : '', 'id="nav-size-small-single"'); ?>
 										</p>
         </li>
         <li>
@@ -102,7 +102,7 @@
             <label for="map-width">
               <?php _e('Set Map Width', 'event_espresso')  ?>
             </label>
-            <input id="map-width" type="text"  name="ee_map_width" value="<?php echo $org_options['ee_map_width']== ''? '200' : $org_options['ee_map_width'];?>" />
+            <input id="map-width" type="text"  name="ee_map_width" value="<?php echo $org_options['map_settings']['ee_map_width']== ''? '200' : $org_options['map_settings']['ee_map_width'];?>" />
           </p>
         </li>
         <li>
@@ -110,7 +110,7 @@
             <label for="map-height">
               <?php _e('Set Map Height', 'event_espresso')  ?>
             </label>
-            <input id="map-height" type="text" size="" name="ee_map_height" value="<?php echo $org_options['ee_map_height']== ''? '200' : $org_options['ee_map_height'];?>" />
+            <input id="map-height" type="text" size="" name="ee_map_height" value="<?php echo $org_options['map_settings']['ee_map_height']== ''? '200' : $org_options['map_settings']['ee_map_height'];?>" />
           </p>
         </li>
         <li>
@@ -118,7 +118,7 @@
             <label for="map-zoom">
               <?php _e('Set Map Zoom level: Range: 1 - 19', 'event_espresso')  ?>
             </label>
-            <input id="map-zoom" type="text" size="" name="ee_map_zoom" value="<?php echo $org_options['ee_map_zoom']== ''? '11' : $org_options['ee_map_zoom'];?>" />
+            <input id="map-zoom" type="text" size="" name="ee_map_zoom" value="<?php echo $org_options['map_settings']['ee_map_zoom']== ''? '11' : $org_options['map_settings']['ee_map_zoom'];?>" />
 										</p>
         </li>
 								<li>
@@ -126,7 +126,7 @@
             <label for="show-overlay-controls">
               <?php _e('Set Map Navigation Overlay ', 'event_espresso')  ?>
             </label>
-            <?php echo select_input('ee_map_nav_display', $values, isset($org_options['ee_map_nav_display']) ? $org_options['ee_map_nav_display'] : '', 'id="show-overlay-controls"'); ?>
+            <?php echo select_input('ee_map_nav_display', $values, isset($org_options['map_settings']['ee_map_nav_display']) ? $org_options['map_settings']['ee_map_nav_display'] : '', 'id="show-overlay-controls"'); ?>
 										</p>
         </li>
         <li>
@@ -134,7 +134,7 @@
             <label for="nav-size-small">
               <?php _e('Keep Map Navigation Small', 'event_espresso')  ?>
             </label>
-            <?php echo select_input('ee_map_nav_size', $values, isset($org_options['ee_map_nav_size']) ? $org_options['ee_map_nav_size'] : '', 'id="nav-size-small"'); ?>
+            <?php echo select_input('ee_map_nav_size', $values, isset($org_options['map_settings']['ee_map_nav_size']) ? $org_options['map_settings']['ee_map_nav_size'] : '', 'id="nav-size-small"'); ?>
 										</p>
         </li>
         <li>
@@ -184,7 +184,7 @@
       <label for="ee-display-map-no-shortcodes">
         <?php _e('Use map in template files ( No Shortcodes)<br /> Set this option to No if you are using venue shortcodes in Descriptions', 'event_espresso')  ?>
       </label>
-      <?php echo select_input('ee_display_map_no_shortcodes', $values, isset($org_options['ee_display_map_no_shortcodes']) ? $org_options['ee_display_map_no_shortcodes'] : '', 'id="ee-display-map-no-shortcodes"'); ?>
+      <?php echo select_input('ee_display_map_no_shortcodes', $values, isset($org_options['map_settings']['ee_display_map_no_shortcodes']) ? $org_options['map_settings']['ee_display_map_no_shortcodes'] : '', 'id="ee-display-map-no-shortcodes"'); ?>
 				</p>
  
 	</fieldset>
