@@ -382,7 +382,7 @@ function event_espresso_edit_list() {
                 <input name="perm_delete_event" type="submit" class="button-secondary" id="perm_delete_event" value="<?php _e('Permanently Delete Events(s)', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" onclick="return confirmDelete();" />
     <?php } else { ?>
                 <input name="delete_event" type="submit" class="button-secondary" id="delete_event" value="<?php _e('Delete Events(s)', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" onclick="return confirmDelete();" />
-			<a  style="margin-left:5px"class="button-primary" href="admin.php?page=events&amp;action=csv_import"><?php _e('Import CSV', 'event_espresso'); ?></a>
+			
 			<a class="button-primary" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=excel&amp;all_events=true"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Payment Data to Excel', 'event_espresso'); ?></a>
 								
 			<a class="button-primary" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;id=" . $event_id . "&amp;export=report&amp;action=all_event_data&amp;type=csv&amp;all_events=true"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Event Data to CSV', 'event_espresso'); ?></a>
@@ -452,6 +452,9 @@ function event_espresso_edit_list() {
 /***************************** brent done adding ************************/
 		
 ?>
+
+
+<p>If you have a CSV file that was exported from a previous version of Event Espresso, you can upload it by clicking here: <a  style="margin-left:5px"class="button-primary" href="admin.php?page=events&amp;action=csv_import"><?php _e('Import CSV', 'event_espresso'); ?></a></p>
 		
     <script>
         jQuery(document).ready(function($) {
