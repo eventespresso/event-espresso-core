@@ -37,7 +37,6 @@ function organization_config_mnu() {
 		$org_options['recaptcha_theme'] = $_POST['recaptcha_theme'];
 		$org_options['recaptcha_width'] = $_POST['recaptcha_width'];
 		$org_options['recaptcha_language'] = $_POST['recaptcha_language'];
-		$org_options['use_custom_post'] = isset($_POST['use_custom_post']) ? $_POST['use_custom_post'] : '';
 		$org_options['espresso_dashboard_widget'] = $_POST['espresso_dashboard_widget'];
 		$org_options['time_reg_limit'] = $_POST['time_reg_limit'];
 		$org_options['use_attendee_pre_approval'] = $_POST['use_attendee_pre_approval'];
