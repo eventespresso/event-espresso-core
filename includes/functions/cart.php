@@ -764,7 +764,7 @@ if (!function_exists('event_espresso_cart_link')) {
                         array(
                     'event_id' => $this_event_id,
                     'anchor' => __('Add to cart', 'event_espresso'),
-											'anchor_class' => 'class="cart-link ui-priority-primary ui-state-default"',
+											'anchor_class' => 'class="cart-link ui-priority-primary ui-state-default ui-corner-all"',
                     'event_name' => ' ',
                     'separator' => NULL,
                     'view_cart' => FALSE,
@@ -780,11 +780,11 @@ if (!function_exists('event_espresso_cart_link')) {
         if ($view_cart || (is_array($events_in_session) && array_key_exists($event_id, $events_in_session))) {
             $registration_cart_url = get_option('siteurl') . '/?page_id=' . $event_page_id . '&regevent_action=show_shopping_cart';
             $registration_cart_anchor = __("View Cart", 'event_espresso');
-							$registration_cart_class = 'ee-view-cart-link cart-link ui-priority-primary ui-state-default';
+							$registration_cart_class = 'ee-view-cart-link cart-link ui-priority-primary ui-state-default ui-corner-all';
         } else { //show them the add to cart link
             $registration_cart_url = isset($externalURL) && $externalURL != '' ? $externalURL : get_option('siteurl') . '/?page_id=' . $event_page_id . '&regevent_action=add_event_to_cart&event_id=' . $event_id;
             $registration_cart_anchor = $anchor;
-            $registration_cart_class = 'ee_add_item_to_cart cart-link ui-priority-primary ui-state-default';
+            $registration_cart_class = 'ee_add_item_to_cart cart-link ui-priority-primary ui-state-default ui-corner-all';
         }
 
         if ( $view_cart && $direct_to_cart == 1 )
