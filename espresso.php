@@ -272,7 +272,7 @@ event_espresso_require_template('attendee_list.php');
 require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/cart.php");
 
 //Custom post type integration
-if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/custom_post_type.php') && isset($org_options['use_custom_post_types']) && $org_options['use_custom_post_types'] == 'Y') {
+if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/custom_post_type.php') && isset($org_options['template_settings']['use_custom_post_types']) && $org_options['template_settings']['use_custom_post_types'] == 'Y') {
 	require('includes/admin-files/custom_post_type.php');
 }
 
@@ -519,14 +519,14 @@ if (!function_exists('add_event_espresso_stylesheet')) {
 	function add_event_espresso_stylesheet() {
 		global $org_options;
 
-		if ($org_options['enable_default_style'] != 'Y')
+		if ($org_options['style_settings']['enable_default_style'] != 'Y')
 			return;
 
 		// for backpat we check options to see if event_espresso_style.css is set if is or no option is set we load it from original folder
-		if (empty($org_options['selected_style']) || $org_options['selected_style'] == 'event_espresso_style.css') {
+		if (empty($org_options['style_settings']['selected_style']) || $org_options['style_settings']['selected_style'] == 'event_espresso_style.css') {
 			$style_path = 'templates/event_espresso_style.css';
 		} else {
-			$style_path = 'templates/css/' . $org_options['selected_style'];
+			$style_path = 'templates/css/' . $org_options['style_settings']['selected_style'];
 		}
 
 		$event_espresso_style_sheet = EVENT_ESPRESSO_PLUGINFULLURL . $style_path;
@@ -544,8 +544,8 @@ if (!function_exists('add_event_espresso_stylesheet')) {
 		wp_register_style('event_espresso_style_sheets', $event_espresso_style_sheet);
 		wp_enqueue_style('event_espresso_style_sheets');
 
-		if (!file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") && !empty($org_options['style_color'])) {
-			$event_espresso_style_color = EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/colors/' . $org_options['style_color'];
+		if (!file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") && !empty($org_options['style_settings']['style_color'])) {
+			$event_espresso_style_color = EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/colors/' . $org_options['style_settings']['style_color'];
 
 			wp_register_style('event_espresso_style_color', $event_espresso_style_color);
 			wp_enqueue_style('event_espresso_style_color');
