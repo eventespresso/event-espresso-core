@@ -144,7 +144,7 @@
 										} else {
 											// no array? must be an error
 											//$this->import_error ( $this->csv_array );
-											$this->EE_CSV->_notices['errors'][] = $this->csv_array;
+											//$this->EE_CSV->_notices['errors'][] = $this->csv_array;
 											add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 										}
 			

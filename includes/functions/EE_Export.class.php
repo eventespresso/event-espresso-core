@@ -177,7 +177,7 @@
 																				);
 																				
 		$table_data = $this->process_mult_table_export( $tables_to_export );
-		$filename = $this->generate_filename ( 'all-events' );
+		$filename = $this->generate_filename ( 'all-attendees' );
 
 		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Attendee data could not be exported from the database.';
