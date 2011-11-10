@@ -1092,7 +1092,7 @@ function espresso_edit_this($event_id) {
 	foreach ($user->roles as $role) {
 		//echo $role;
 		//Build the edit event link
-		$edit_link = '<a class="post-edit-link" href="' . site_url() . '/wp-admin/admin.php?page=events&action=edit&event_id=' . $event_id . '">' . __('Edit Event') . '</a>';
+		$edit_link = '<a class="post-edit-link ui-priority-secondary ui-corner-all ui-state-default ui-state-hover ui-state-focus ui-state-active " href="' . site_url() . '/wp-admin/admin.php?page=events&action=edit&event_id=' . $event_id . '">' . __('Edit Event') . '</a>';
 		switch ($role) {
 			case 'administrator':
 			case 'espresso_event_admin':
