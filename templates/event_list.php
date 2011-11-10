@@ -7,7 +7,7 @@
 // enqueue thickbox script & styles
 // this needs wrapping in a conditional to test for option setting
 global $org_options;
-if (isset($org_options['thumbnail_popup_lists']) && $org_options['thumbnail_popup_lists'] == 'Y') {
+if (isset($org_options['template_settings']['thumbnail_popup_lists']) && $org_options['template_settings']['thumbnail_popup_lists'] == 'Y') {
 	add_action('wp_footer', 'load_thickbox');
 	add_action('wp_print_styles', 'add_thickbox_styles');
 
@@ -216,13 +216,13 @@ if (!function_exists('event_espresso_get_event_details')) {
 			//$end_timestamp = espresso_event_time($event_id, 'end_timestamp');
 			// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
 			$ee_gmaps_opts = array(
-					'ee_map_width' => $org_options['ee_map_width'],
-					'ee_map_height' => $org_options['ee_map_height'],
-					'ee_map_zoom' => $org_options['ee_map_zoom'],
-					'ee_map_nav_display' => $org_options['ee_map_nav_display'],
-					'ee_map_nav_size' => $org_options['ee_map_nav_size'],
-					'ee_map_type_control' => $org_options['ee_map_type_control'],
-					'ee_map_align' => $org_options['ee_map_align']
+					'ee_map_width' => $org_options['map_settings']['ee_map_width'],
+					'ee_map_height' => $org_options['map_settings']['ee_map_height'],
+					'ee_map_zoom' => $org_options['map_settings']['ee_map_zoom'],
+					'ee_map_nav_display' => $org_options['map_settings']['ee_map_nav_display'],
+					'ee_map_nav_size' => $org_options['map_settings']['ee_map_nav_size'],
+					'ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'],
+					'ee_map_align' => $org_options['map_settings']['ee_map_align']
 			);
 			//var_dump($ee_gmaps_opts);
 			//This can be used in place of the registration link if you are usign the external URL feature

@@ -63,7 +63,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
   <?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''
 					
     
-	if(isset($org_options['thumbnail_popup_lists']) && $org_options['thumbnail_popup_lists'] == 'Y') {
+	if(isset($org_options['template_settings']['thumbnail_popup_lists']) && $org_options['template_settings']['thumbnail_popup_lists'] == 'Y') {
 		$thumb_url = '#TB_inline?height=500&width=500&inlineId=event-thumb-detail' . $event_id  ;
 		$thickbox_class = ' thickbox';
 	}else {
@@ -81,7 +81,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
   </div>
   <?php
 //Show short descriptions
-    if ($event_desc != '' && isset($org_options['display_short_description_in_event_list']) && $org_options['display_short_description_in_event_list'] == 'Y') {
+    if ($event_desc != '' && isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == 'Y') {
         ?>
   <div class="event-desc">
     <p><?php echo espresso_format_content($event_desc); ?></p>
@@ -93,7 +93,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
   <a id="ee-event-list-thumb" class="ee-thumbs<?php echo $thickbox_class ?>" href="<?php echo $thumb_url ?>"> <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span> </a>
   <?php }?>
   
-		<?php if ($location != '' && $org_options['display_address_in_event_list'] == 'Y') { ?>
+		<?php if ($location != '' && $org_options['template_settings']['display_address_in_event_list'] == 'Y') { ?>
   <p class="event_address" id="event_address-<?php echo $event_id ?>">
 		 <span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
     <span class="address-block"><?php echo stripslashes_deep($location); ?> 
@@ -105,7 +105,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
   <?php 
 
 	if(isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == 'Y'){ 
-		if(function_exists('ee_gmap_display') && $org_options['ee_display_map_no_shortcodes'] == 'Y'){
+		if(function_exists('ee_gmap_display') && $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y'){
 			echo ee_gmap_display($ee_gmap_location, $event_id);
 		}
 	}

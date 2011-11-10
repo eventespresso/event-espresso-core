@@ -29,7 +29,7 @@ $this_event_id = $event_id;
 
         <?php
 
-        if ( $display_desc == "Y" && $org_options['display_description_on_multi_reg_page'] != 'N'){//Show the description or not
+        if ( $display_desc == "Y" && $org_options['template_settings']['display_description_on_multi_reg_page'] != 'N'){//Show the description or not
         ?>
           <div class="event_description"><?php echo wpautop( do_shortcode($event_desc) ); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.    ?></div>
         <?php

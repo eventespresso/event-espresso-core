@@ -88,7 +88,7 @@
 				default://This will display the registration form
 
 					/* Display the address and google map link if available */
-					if ($location != '' && (empty($org_options['display_address_in_regform']) || $org_options['display_address_in_regform'] != 'N')) {
+					if ($location != '' && (empty($org_options['template_settings']['display_address_in_regform']) || $org_options['template_settings']['display_address_in_regform'] != 'N')) {
 						?>
 						<p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 							<span class="address-block"> <?php echo stripslashes_deep($location); ?><br />
