@@ -179,7 +179,9 @@ span.google-map-link {
 	margin-left: 85px;
 }
 a.post-edit-link {padding-left: 5px;}
+/*___ Attendee list ___*/
 
+ol.attendee_list {margin-left:30px;}
 /*___ Cart & Multi Registration page styles ___*/
 
 .multi_reg_cart_block {
