@@ -6,10 +6,15 @@
         unset($_SESSION['espresso_session_id']);
         ?>
   <h2><?php echo $fname ?>,</h2>
-  <p class="instruct">
+  <div class="event-messages ui-state-highlight">
+			<span class="ui-icon ui-icon-alert"></span>
+			<p class="instruct">
     <?php _e('Thank you! Your registration is confirmed for', 'event_espresso'); ?>
-    <b><?php echo stripslashes_deep($event_name) ?></b> </p>
-  <p> <span class="section-title">
+    	<b><?php echo stripslashes_deep($event_name) ?></b> 
+			</p>
+		</div>
+  <p> 
+			<span class="section-title">
     <?php _e('Your Registration ID: ', 'event_espresso'); ?>
     </span> <?php echo $registration_id ?> </p>
   <p class="instruct">
@@ -19,9 +24,12 @@
 } else {
     ?>
   <h2><?php echo $fname ?>,</h2>
-  <p class="instruct ui-state-highlight">
-    <?php _e('Your registration is not complete until payment is received.', 'event_espresso'); ?>
-  </p>
+  <div class="event-messages ui-state-highlight">
+			<span class="ui-icon ui-icon-alert"></span>
+			<p>
+    	<?php _e('Your registration is not complete until payment is received.', 'event_espresso'); ?>
+			</p>
+  </div>
   <p> <span class="event_espresso_name section-title">
     <?php _e('Amount due: ', 'event_espresso'); ?>
     </span> <span class="event_espresso_value"><?php echo isset($org_options['currency_symbol'])?$org_options['currency_symbol']:''; ?><?php echo $event_cost; ?></span> </p>

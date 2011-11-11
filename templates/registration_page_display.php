@@ -49,8 +49,8 @@
 				case 'REGISTRATION_CLOSED': //only show the event description.
 					// if todays date is after $reg_end_date
 					?>
-					<div class="event-registration-closed event-messages">
-
+					<div class="event-registration-closed event-messages ui-corner-all ui-state-highlight">
+						<span class="ui-icon ui-icon-alert"></span>
 						<p class="event_full">
 							<strong>
 								<?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?>
@@ -70,6 +70,7 @@
 					// if todays date is prior to $reg_start_date
 					?>
 					<div class="event-registration-pending event-messages ui-corner-all ui-state-highlight">
+						<span class="ui-icon ui-icon-alert"></span>
 						<p class="event_full">
 							<strong>
 								<?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?>

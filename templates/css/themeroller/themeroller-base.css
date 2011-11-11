@@ -46,7 +46,7 @@
 	box-shadow: 0 0  2px  #555;
 }
 #content .event-display-boxes p {
-	margin: .8em 0 ;
+	margin: .5em 0 ;
 }
 #content .event-display-boxes .ui-widget-header {
 	margin-bottom: -1px;
@@ -102,7 +102,6 @@
 }
 #content .event-display-boxes .register-link-footer	a {	
  padding: 2px 4px; 
-	text-decoration: none;
 }
 #content .ee-social-media-buttons {
  clear: both;
@@ -123,30 +122,10 @@ div.google-button {display: inline;}
 div.event-entry-meta {
 	overflow: hidden;
 }
-div.event-entry-meta ul {
-	border: 1px solid #dfdfdf;
-	border-bottom: none;
-	border-right: none;
-	float: left;
-	list-style: none;
-	overflow: hidden;
-}
-div.event-entry-meta ul li {
-	border: 1px solid #dfdfdf;
-	border-top: none;
-	border-left: none;
-	float: left;
-}
 span.google-map-link {
 	clear: left;
 	display: inline-block;
 	width: 100%;
-}
-span.google-map-link a {
-}
-span.google-map-link a:focus,
-span.google-map-link a:hover {
-	
 }
 #ee-event-list-thumb {
 	display: block;
@@ -156,81 +135,11 @@ span.google-map-link a:hover {
 #ee-event-list-thumb span {
 	padding: 2px;
 }
-
-/** Thickbox event list styling **/
-#TB_overlay {
- background-color: #777;
- opacity: 0.55;
-}
-.TB-ee-frame {
-	background: #F0F0E3;
-	border: 1px solid #8f8f8f;
-	margin-top:1em;
-	padding: 1em 10px 5em;
-	position: relative;
-	}
-#TB_title {
-	background: #d5cea6;
-	background: -moz-linear-gradient(top, #d5cea6 0%, #c9c190 40%, #b7ad70 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d5cea6), color-stop(40%,#c9c190), color-stop(100%,#b7ad70));
-	background: -webkit-linear-gradient(top, #d5cea6 0%,#c9c190 40%,#b7ad70 100%);
-	background: -o-linear-gradient(top, #d5cea6 0%,#c9c190 40%,#b7ad70 100%);
-	background: -ms-linear-gradient(top, #d5cea6 0%,#c9c190 40%,#b7ad70 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', endColorstr='#b7ad70',GradientType=0 );
-	background: linear-gradient(top, #d5cea6 0%,#c9c190 40%,#b7ad70 100%);
-}
-.tb-ee-event-thumb {
-	float: right;
-	width: 50px;
-	height: auto;
-	margin: -8px -6px 10px 0;
-}
-.TB-ee-frame {
-	background: #F0F0E3;
-	border: 1px solid #8f8f8f;
-	margin-top: 1em;
-	overflow: hidden;
-	padding: 1em 10px 5em;
-	position: relative;
-}
-.tb-ee-event-title {
-	float: left;
- font-size: 150%;
-	margin-bottom: 20px;
-}
-.tb-ee-event-title span.event-status span.espresso_closed { color: #E16D35;}
-.TB-ee-frame .section-title {
-	font-weight: bold;
-}
-.tb-ee-event-desc {
-	overflow: hidden;
-	clear: both;
-}
 .event-address-block p {margin-bottom: .5em;}
-.TB-ee-frame .social-media-buttons {
-	position:absolute;
-	margin-bottom: 0;
-	padding: 0;
-	width: 140px;
-	bottom: -3px;
-	right: -5px;
-	text-align: right;
-}
-.TB-ee-frame .social-media-buttons iframe {
-	display: inline-block;
-	width: 60px !important;
-}
-.TB-ee-frame .register-link-footer {
-	position: absolute;
-	margin-bottom: 0;
-	width: 50%;
-	bottom: 0;
-	left: 10px;
-}
+
 /*___ page register ___*/
 
 .event_description .event_staff {
-	background: #FAF9EF;
 	border: 1px solid #bfbfbf;
 	float: left;
 	margin: 20px 1%;
@@ -262,7 +171,6 @@ span.google-map-link a:hover {
 	margin-top: 0;
 }
 #content .event_questions  .quest-group-descript {
-	background: #fafafa;
 	font-size: 81.25%;
 	margin: 0 0 20px ;
 	padding: .5em;
@@ -338,7 +246,6 @@ ul#espresso_payment_buttons li form {
 	padding: 20px 0 0 ;
 }
 .event-list-payment-overview dl {
-	background: #F0F0E3;
 	border: 1px solid #bbb;
 	margin-bottom: 0;
 	padding:10px;
@@ -354,7 +261,6 @@ ul#espresso_payment_buttons li form {
 	border-top: none;
 }	 
 #content dl.reg-gen-details {
-	background: #f4f4f4;
 	border: 1px solid #bbb;
 	padding: 10px;
 }
@@ -437,13 +343,12 @@ ul#espresso_payment_buttons li form {
 .event_espresso_form_wrapper p.coupon_code input,
 .event_espresso_form_wrapper p#groupon_code- input {
 	width: 200px;
-	background: #F9F9F9;
-	border: 1px solid #ccc;
 }
 .event_espresso_form_wrapper label.error,
 .event_espresso_form_wrapper span.error { 
 	position: absolute;
-	top: -20px;
+	bottom: 33px;
+	left: 50px;
 	color: #C00; 
 	width: auto;
 }
@@ -453,15 +358,6 @@ ul#espresso_payment_buttons li form {
 	font-style: normal; 
 	color: #C00;
 	padding-left: 3px; 
-}
-.event_espresso_form_wrapper input.error { 
-	border-color: #C00; 
-	background-color: #FEF;
-}
-.event_espresso_form_wrapper input:focus,
-.event_espresso_form_wrapper input.error:focus,
-.event_espresso_form_wrapper textarea:focus {	
-
 }
 .event_espresso_form_wrapper div.controlset label,
 .event_espresso_form_wrapper div.controlset input { 
@@ -595,7 +491,6 @@ a.btn_event_form_submit {
 	border: 1px solid #bfbfbf;
 	border-bottom: none;
 	font-size: 100%;
-	font-weight: bold;
 	margin: 10px auto;
 	width: 98%;
 }
@@ -632,50 +527,11 @@ pre {
 
 /* >Classes - Messages etc
 ------------------------------------------------------------------------------*/
-.highlight { 
-	background: #FAF9EF;
-	padding: 2px 4px; 
-}
-.instruct {
-	font-weight: bold;
-}
-#content .event-messages {
-	border: 1px solid #bebebe;
-	margin: 10px 0;
-	padding: .4em;
-}
-#content .event-messages p {
-	margin: .5em 0;
-}
-.event_espresso_error { 
-	margin: 0 0 10px 0; 
-	padding: 5px 10px; 
-	border: #ff6666 1px solid; 
-	background-color:  #ffcccc; 
-	color: #000;
-}
-.event_espresso_error p { 
-	margin: 0; 
-	color: #333; 
-}
-.event_espresso_error p em,
-.event_espresso_attention p em { 
-	color: #C00; 
-	font-style: normal; 
-	font-weight: bold; 
-	display: block;
-}
-.event_espresso_attention { 
-	margin:  10px 0; 
-	padding: 5px 10px; 
-	border: #FC6 1px solid; 
-	background-color: #FFC; 
-}
-.event_espresso_attention p { margin: 0; }
-.attention-icon {
- background:  url(../../images/important.gif) no-repeat 0 50% ;
-	padding-left: 50px;
-}
+
+#content .event-messages p {margin: .5em 30px;}
+span.ui-icon {float:left;margin: .7em 0 0 .3em;}
+
+
 /*** clearfix clearing rules ***/	
 .clearfix:before,
 .clearfix:after {
