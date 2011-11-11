@@ -1,6 +1,10 @@
 <div style="display: none;">
 
-  <?php ########## help box ########## ?>
+  <?php
+  	/**
+  	 * Pre-existing Emails Help Box
+  	 */
+  ?>
   <div id="email_manager_info" class="pop-help" >
     <div class="TB-ee-frame">
       <h2><?php _e('Pre-existing Emails', 'event_espresso'); ?></h2>
@@ -8,23 +12,35 @@
 
     </div>
   </div>
-  
-  <?php ########## help box ########## ?>
+
+  <?php
+  	/**
+  	 * Coupon/Promo Code Help Box
+  	 */
+  ?>
   <div id="coupon_code_info" class="pop-help" >
     <div class="TB-ee-frame">
       <h2><?php _e('Coupon/Promo Code', 'event_espresso'); ?></h2><p><?php _e('This is used to apply discounts to events.', 'event_espresso'); ?></p><p><?php _e('A coupon or promo code could can be anything you want. For example: Say you have an event that costs', 'event_espresso'); ?> <?php echo $org_options['currency_symbol'] ?>200. <?php _e('If you supplied a promo like "PROMO50" and entered 50.00 into the "Discount w/Promo Code" field your event will be discounted', 'event_espresso'); ?>  <?php echo $org_options['currency_symbol'] ?>50.00, <?php _e('Bringing the cost of the event to', 'event_espresso'); ?> <?php echo $org_options['currency_symbol'] ?>150.</p>
 
     </div>
   </div>
-  
-  <?php ########## help box ########## ?>
+
+  <?php
+  	/**
+  	 * Event Identifier Help Box
+  	 */
+  ?>
   <div id="unique_id_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Event Identifier', 'event_espresso'); ?></h2><p><?php _e('This should be a unique identifier for the event. Example: "Event1" (without qoutes.)</p><p>The unique ID can also be used in individual pages using the', 'event_espresso'); ?> [SINGLEEVENT single_event_id="<?php _e('Unique Event ID', 'event_espresso'); ?>"] <?php _e('shortcode', 'event_espresso'); ?>.</p>
     </div>
   </div>
-  
-   <?php ########## help box ########## ?>
+
+   <?php
+   	/**
+   	 * Waitlist Events Help Box
+   	 */
+   ?>
   <div id="secondary_info" class="pop-help" >
     <div class="TB-ee-frame">
        <h2><?php _e('Waitlist Events', 'event_espresso'); ?></h2>
@@ -32,8 +48,12 @@
         <p><?php _e('If an event is set up as an "Waitlist Event," it can be set to not appear in your event listings template. You may need to customize your event_listing.php file to make this work. For more information, please', 'event_espresso'); ?> <a href="http://eventespresso.com/forums/?p=512" target="_blank"><?php _e('visit the forums', 'event_espresso'); ?></a>.
     </div>
   </div>
-  
-  <?php ########## help box ########## ?>
+
+  <?php
+  	/**
+  	 * Off-site Registration URL Help Box
+  	 */
+  ?>
   <div id="external_URL_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Off-site Registration Page', 'event_espresso'); ?></h2>
@@ -41,7 +61,11 @@
     </div>
   </div>
 
-  <?php ########## help box ########## ?>
+  <?php
+  	/**
+  	 * Event Status Type Help Box
+  	 */
+  ?>
   <div id="status_types_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Event Status Types', 'event_espresso'); ?></h2>
@@ -54,18 +78,26 @@
     </div>
   </div>
 
-  <?php ########## help box ########## ?>
+  <?php
+  	/**
+  	 * Registration Date/Time Help Box
+  	 */
+  ?>
   <div id="reg_date_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Registration Dates/Times', 'event_espresso'); ?></h2>
         <p><?php _e('The event will automatically turn the registration form on and off between these dates and times.', 'event_espresso'); ?></p>
         <p><strong><?php _e('Note:', 'event_espresso'); ?></strong> <?php _e('If the date of your event occurs before the regisration end date. Then the registation form will be displayed and also accept registrations.', 'event_espresso'); ?></p>
         <p><?php _e('All events require registration start/end dates and start/end times in order to display properly on your pages.', 'event_espresso'); ?></p>
-        
+
     </div>
   </div>
-  
- <?php ########## help box ########## ?>
+
+ <?php
+ 	/**
+ 	 * Event Date Help Box
+ 	 */
+ ?>
   <div id="event_date_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Event Date', 'event_espresso'); ?></h2>
@@ -74,7 +106,11 @@
     </div>
   </div>
 
-  <?php ########## help box ########## ?>
+  <?php
+  	/**
+  	 * Event Time Help Box
+  	 */
+  ?>
   <div id="event_times_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Event Times', 'event_espresso'); ?></h2>
@@ -84,23 +120,32 @@
     </div>
   </div>
 
-  <?php ########## help box ########## ?>
+  <?php
+  	/**
+  	 * Current Time Help Box
+  	 */
+  ?>
   <div id="current_time_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Current Time', 'event_espresso'); ?></h2>
         <p><?php _e('This is the current time of your website. The timezone and date/time formats can be changed in your <a href="options-general.php" target="_blank">WordPress settings</a>.', 'event_espresso'); ?></p>
     </div>
   </div>
-  
-  
-  
-  <?php ########## help box ########## ?>
+
+
+
+  <?php
+  	/**
+  	 * A dummy example help box
+  	 * use this to create new help boxes
+  	 */
+  ?>
   <div id="example_example_info" class="pop-help" >
     <div class="TB-ee-frame">
      <h2><?php _e('Example Example', 'event_espresso'); ?></h2>
-        <p><?php _e('If an off-site registration page is entered, it will override your registration page and send attendees to the URL that is entered.', 'event_espresso'); ?></p>
+        <p><?php _e('Hey Mickey, you\'re so fine, you\'re so fine you blow my mind, hey Mickey', 'event_espresso'); ?></p>
     </div>
   </div>
- 
-  
+
+
 </div><!--End <div style="display: none;"> -->
