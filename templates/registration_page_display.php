@@ -35,7 +35,7 @@
 				<p class="section-title">
 					<?php _e('Description:', 'event_espresso') ?>
 				</p>
-				<div class="event_description clearfix ui-widget-content"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.?></div>
+				<div class="event_description clearfix"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.?></div>
 				<?php
 			}
 
