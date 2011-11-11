@@ -8,8 +8,11 @@ class Fdggutil {
 	private $dateTime;
 	private $chargetotal;
 	private $gatewayUrl;
+	private $returnUrl;
+	private $cancelUrl;
+	private $attendee_id;
 
-	public function Fdggutil($storename, $sharedSecret, $timezone, $chargetotal, $sandbox) {
+	public function Fdggutil($storename, $sharedSecret, $timezone, $chargetotal, $sandbox, $returnUrl, $cancelUrl, $attendee_id) {
 		$this->storename = $storename;
 		$this->sharedSecret = $sharedSecret;
 		$this->timezone = $timezone;
@@ -20,6 +23,9 @@ class Fdggutil {
 		} else {
 			$this->gatewayUrl = "https://connect.firstdataglobalgateway.com/IPGConnect/gateway/processing";
 		}
+		$this->returnUrl = $returnUrl;
+		$this->cancelUrl = $cancelUrl;
+		$this->attendee_id = $attendee_id;
 	}
 
 	private function createHash() {
@@ -42,6 +48,8 @@ class Fdggutil {
 		$out .= '<input size="50" type="hidden" name="chargetotal" value="' . $this->chargetotal . '"/>';
 		$out .= '<input size="50" type="hidden" name="subtotal" value="' . $this->chargetotal . '"/>';
 		$out .= '<input size="50" type="hidden" name="trxOrigin" value="ECI"/>';
+		$out .= '<input size="50" type="hidden" name="responseSuccessURL" value="' . home_url() . '/?page_id=' . $this->returnUrl . '&id=' . $this->attendee_id . '"/>';
+		$out .= '<input size="50" type="hidden" name="responseFailURL" value="' . home_url() . '/?page_id=' . $this->cancelUrl . '"/>';
 		return $out;
 	}
 
