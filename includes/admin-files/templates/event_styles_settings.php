@@ -51,9 +51,9 @@ $values = array(
 );
 ?>
 
-<p class="section-heading" <?php echo $styled ?>>
-	<?php _e('Style Settings ', 'event_espresso'); ?>
-	<a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a> </p>
+	<label><?php _e('Style Settings ', 'event_espresso'); ?></label>
+	
+
 <select id="style-themeroller" class="wide" <?php echo $disabled ?> name="themeroller_style">
 	<option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> -
 	<?php _e('None', 'event_espresso'); ?>
@@ -61,5 +61,5 @@ $values = array(
 	<?php foreach( $files_themeroller as $fname_themeroller ) { ?>
 	<option <?php espresso_style_is_selected($fname_themeroller) ?> value="<?php echo $fname_themeroller ?>"><?php echo $fname_themeroller; ?></option>
 	<?php } ?>
-</select>
+</select> <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a>
 </p>
