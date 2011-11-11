@@ -781,9 +781,9 @@ if (!function_exists('espresso_venue_details_sc')) {
 		$image_wrapper_end = isset($image_wrapper) ? '</' . $image_wrapper . '>' : '</p>';
 
 		//Venue title
-		$title_class = isset($title_class) ? 'class="' . $title_class . '"' : 'class="venue_name"';
-		$title_wrapper_start = isset($title_wrapper) ? '<' . $title_wrapper . ' ' . $title_class : '<h3 ' . $title_class;
-		$title_wrapper_end = isset($title_wrapper) ? '</' . $title_wrapper . '>' : '</h3>';
+		$title_class = isset($title_class) ? 'class="' . $title_class . '"' : 'class="venue_name section-title"';
+		$title_wrapper_start = isset($title_wrapper) ? '<' . $title_wrapper . ' ' . $title_class : '<span ' . $title_class;
+		$title_wrapper_end = isset($title_wrapper) ? '</' . $title_wrapper . '>' : '</span>';
 
 		//Inside wrappers
 		$inside_wrapper_class = isset($inside_wrapper_class) ? 'class="' . $inside_wrapper_class . '"' : 'class="venue_details"';
