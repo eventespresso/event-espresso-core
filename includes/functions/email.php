@@ -351,7 +351,7 @@ function espresso_prepare_admin_email($data) {
 		$admin_additional_info .= '<strong>' . __('Ticket(s):', 'event_espresso') . '</strong><br />';
 		$admin_additional_info .= $data->admin_ticket_link;
 	}
-	
+
 	//Certificate links
 	if (!empty($data->admin_certificate_link)) {
 		$admin_additional_info .= '<strong>' . __('Certificate(s):', 'event_espresso') . '</strong><br />';
@@ -442,8 +442,8 @@ if (!function_exists('event_espresso_send_email')) {
 		extract($params);
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
-		$headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+		$headers .= "From: " . $org_options['contact_email'] . "\r\n";
+		$headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
 		$headers .= "Content-Type: text/html; charset=utf-8\r\n";
 		//Debug
 		/* echo '<hr />';
@@ -549,8 +549,8 @@ if (!function_exists('event_espresso_send_cancellation_notice')) {
 		global $wpdb, $org_options;
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
-		$headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+		$headers .= "From: " . $org_options['contact_email'] . "\r\n";
+		$headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
 		$headers .= "Content-Type: text/html; charset=utf-8\r\n";
 		$message_top = "<html><body>";
 		$message_bottom = "</html></body>";
