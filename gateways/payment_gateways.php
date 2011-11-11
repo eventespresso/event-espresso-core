@@ -41,6 +41,7 @@ function event_espresso_gateways_options() {
 	$gateways[] = 'authnet';
 	$gateways[] = 'aim';
 	$gateways[] = 'firstdata';
+	$gateways[] = 'firstdata_connect_2';
 	$gateways[] = 'ideal';
 	$gateways[] = 'paypal';
 	$gateways[] = 'paypal_pro';

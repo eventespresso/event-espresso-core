@@ -7,9 +7,10 @@
  * @package		Event Espresso Worldpay Gateway
  * @category	Library
  */
-$worldpay_gateway_version = '1.0';
 
 class Worldpay extends PaymentGateway {
+
+	public $worldpay_gateway_version = '1.0';
 
     /**
      * Initialize the worldpay gateway
@@ -22,6 +23,7 @@ class Worldpay extends PaymentGateway {
         // Some default values of the class
         $this->gatewayUrl = 'https://secure.worldpay.com/wcc/purchase';
         $this->ipnLogFile = 'worldpay.ipn_results.log';
+				$this->worldpay_gateway_version = '1.0';
     }
 
     /**

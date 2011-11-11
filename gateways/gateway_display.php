@@ -69,6 +69,7 @@ if (get_option('events_paypal_active') == 'true'
 				|| get_option('events_eway_active') == 'true'
 				|| get_option('events_quickpay_active') == 'true'
 				|| get_option('events_2checkout_active') == 'true'
+				|| get_option('events_firstdata_connect_2_active') == 'true'
 				|| get_option('events_worldpay_active') == 'true'){
 	echo '<div id="off_site_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="off_site_payment" class="payment_option_title section-heading">'.__('Off-site Payments', 'event_espresso').'</h3>';
@@ -91,12 +92,20 @@ if (get_option('events_paypal_active') == 'true'
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/eway/eway_vars.php");
 		}
 	}
+	if (get_option('events_firstdata_connect_2_active') == 'true'){
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata_connect_2/firstdata_connect_2_vars.php")){
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata_connect_2/firstdata_connect_2_vars.php");
+		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/firstdata_connect_2/firstdata_connect_2_vars.php")){
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/firstdata_connect_2/firstdata_connect_2_vars.php");
+		}
+	}
 	if (get_option('events_worldpay_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/worldpay/worldpay_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/worldpay/worldpay_vars.php");
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/worldpay/worldpay_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/worldpay/worldpay_vars.php");
 		}
+		espresso_display_worldpay($attendee_id, $event_id, $event_cost);
 	}
 	if (get_option('events_quickpay_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/quickpay/quickpay_vars.php")){
