@@ -519,8 +519,8 @@ if (!function_exists('add_espresso_stylesheet')) {
 	function add_espresso_stylesheet() {
 		global $org_options;
 
-		if ($org_options['style_settings']['enable_default_style'] != 'Y')
-			return;
+	/*	if ($org_options['style_settings']['enable_default_style'] != 'Y')
+			return;*/
 		
 		//Load the Themeroller styles if enabled
 		if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y' ){
