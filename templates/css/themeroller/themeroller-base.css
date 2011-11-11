@@ -143,16 +143,10 @@ span.google-map-link {
 	width: 100%;
 }
 span.google-map-link a {
-	border-bottom: 1px solid #ccc;
-	color: #868C68;
-	font-size: 87.50%;
-	font-weight: bold;
-	padding-bottom: 3px;
-	text-decoration: none;
 }
 span.google-map-link a:focus,
 span.google-map-link a:hover {
-	color: #CD7950;
+	
 }
 #ee-event-list-thumb {
 	display: block;
