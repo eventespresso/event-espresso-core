@@ -1,7 +1,7 @@
 <?php
 
 function espresso_ical() {
-	$name = "hello.ical";
+	$name = $_REQUEST['event_summary'] . ".ics";
 	$output = "BEGIN:VCALENDAR\n" .
 					"PRODID:-//xyz Corp//NONSGML PDA Calendar Version 1.0//EN\n" .
 					"VERSION:2.0\n" .
