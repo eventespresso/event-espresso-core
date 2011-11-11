@@ -74,7 +74,7 @@ function event_espresso_manage_templates() {
 								<div title="Click to toggle" class="handlediv"><br />
 								</div>
 								<h3 class="hndle">
-									<?php _e('Template Stylesheet Options', 'event_espresso'); ?>
+									<?php _e('Stylesheet Options', 'event_espresso'); ?>
 								</h3>
 								<div class="inside">
 									<div class="padding">
