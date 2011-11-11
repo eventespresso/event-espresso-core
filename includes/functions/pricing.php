@@ -187,7 +187,12 @@ if (!function_exists('early_discount_amount')) {
 //Creates dropdowns if multiple prices are associated with an event
 if (!function_exists('event_espresso_price_dropdown')) {
 
-    function event_espresso_price_dropdown($event_id, $show_label = 1, $multi_reg = 0, $current_value = '', $label = '') {
+    function event_espresso_price_dropdown($event_id, $atts = array()) {
+		
+		empty($atts) ? '' : extract($atts);
+		
+		$show_label = $show_label == '' ? 1 : $show_label;
+		$multi_reg = $multi_reg == '' ? 0 : $multi_reg;
 		
 		//Attention:
 		//If changes to this function are not appearing, you may have the members addon installed and will need to update the function there.
