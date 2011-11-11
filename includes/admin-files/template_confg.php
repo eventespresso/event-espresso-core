@@ -11,10 +11,10 @@ function event_espresso_manage_templates() {
 		$org_options['template_settings']['thumbnail_popup_lists'] = $_POST['thumbnail_popup_lists'];
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		$org_options['style_settings']['enable_default_style'] = $_POST['enable_default_style'];
-		$org_options['style_settings']['selected_style'] = $_POST['selected_style'];
-		$org_options['style_settings']['style_color'] = $_POST['style_color'];
+		$org_options['style_settings']['selected_style'] = (!empty($_POST['selected_style']))? $_POST['selected_style'] : $org_options['style_settings']['selected_style'];
+		$org_options['style_settings']['style_color'] = (!empty($_POST['style_color'])) ? $_POST['style_color'] : $org_options['style_settings']['style_color'];
 		$org_options['themeroller']['use_themeroller'] = $_POST['use_themeroller'];
-		$org_options['themeroller']['themeroller_style'] = $_POST['themeroller_style'];
+		$org_options['themeroller']['themeroller_style'] = (!empty($_POST['themeroller_style'])) ? $_POST['themeroller_style'] : $org_options['themeroller']['themeroller_style'];
 		update_option('events_organization_settings', $org_options);
 	
 		$notices['updates'][] = __('Template Settings Updated', 'event_espresso') ;
