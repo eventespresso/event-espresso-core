@@ -49,39 +49,50 @@ if (!function_exists('event_espresso_show_attendess')) {
 			$event_desc = do_shortcode(stripslashes_deep($event->event_desc));
 
 			//This variable is only available using the espresso_event_status function which is loacted in the Custom Files Addon (http://eventespresso.com/download/plugins-and-addons/custom-files-addon/)
-			$event_status = function_exists('espresso_event_status') ? espresso_event_status($event_id) : '';
+			$event_status = function_exists('espresso_event_status') ? ' - ' . espresso_event_status($event_id) : '';
 			//Example usage in the event title:
 			/*<h2><?php _e('Attendee Listing For: ','event_espresso'); ?><?php echo $event_name . ' - ' . $event_status?> </h2>*/
-	?>
-				<h2 class="espresso_al_title"><?php _e('Attendee Listing For: ','event_espresso'); ?><?php echo $event_name . ' - ' . $event_status?> </h2>
-					<?php echo wpautop($event_desc); ?>
-					<ol class="attendee_list">
-					  <?php
-							$a_sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "'";
-							$a_sql .= $paid_only == 'true'? " AND (payment_status='Completed' OR payment_status='Pending') ":'';
-                                                        $a_sql .= $sort;
-							//echo $a_sql;
-							$attendees = $wpdb->get_results($a_sql);
-							foreach ($attendees as $attendee){
-								$id = $attendee->id;
-								$lname = $attendee->lname;
-								$fname = $attendee->fname;
-								$city = $attendee->city;
-								$state = $attendee->state;
-								$country = $attendee->state;
-								$email = $attendee->email;
+?>
 
-								$gravatar = $show_gravatar == 'true'? get_avatar( $email, $size = '100', $default = 'http://www.gravatar.com/avatar/' ) : '';
+<fieldset>
+	<legend>
+	<?php _e('Attendee Listing For: ','event_espresso'); ?>
+	<?php echo $event_name . $event_status?></legend>
+	<!--<?php echo wpautop($event_desc); ?>-->
+	<ol class="attendee_list">
+<?php
+	$a_sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "'";
+	$a_sql .= $paid_only == 'true'? " AND (payment_status='Completed' OR payment_status='Pending') ":'';
+	$a_sql .= $sort;
+	//echo $a_sql;
+	$attendees = $wpdb->get_results($a_sql);
+	foreach ($attendees as $attendee){
+		$id = $attendee->id;
+		$lname = $attendee->lname;
+		$fname = $attendee->fname;
+		$city = $attendee->city;
+		$state = $attendee->state;
+		$country = $attendee->state;
+		$email = $attendee->email;
+		$gravatar = $show_gravatar == 'true'? get_avatar( $email, $size = '100', $default = 'http://www.gravatar.com/avatar/' ) : '';
+		$city_state = $city != '' || $state != '' ? '<br />' . ($city != '' ? $city :'') . ($state != '' ? ', ' . $state :' ') :'';
+		
+		//These are examplel variables to show answers to questions
+		$custom_question_1 = '<br />'.do_shortcode('[EE_ANSWER q="12" a="'.$id.'"]');
+		$custom_question_2 = '<br />'.do_shortcode('[EE_ANSWER q="13" a="'.$id.'"]');
 
-					?>
-					  <li class="attendee_details">
-						<div class="espresso_attendee"><?php echo $gravatar ?><?php echo '<p><strong>' . stripslashes_deep($fname . ' ' . $lname) . '</strong><br />' . ($city != '' ? $city :'') . ($state != '' ? ', ' . $state :' ') . '</p>'; ?> </div>
-						<div class="clear"></div>
-					  </li>
-					  <?php	} ?>
-					</ol>
-	<?php
+?>
+		<li class="attendee_details"> <span class="espresso_attendee"><?php echo $gravatar ?><?php echo stripslashes_deep($fname . ' ' . $lname) . $city_state .'</p>'; ?> </span>
+			<div class="clear"></div>
+		</li>
+<?php	
+	} 
+?>
+	</ol>
+</fieldset>
+<?php
 		}
 	}
 }
+
 
