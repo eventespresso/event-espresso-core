@@ -523,11 +523,11 @@ if (!function_exists('add_espresso_stylesheet')) {
 			return;
 		
 		//Load the Themeroller styles if enabled
-		if (!empty($org_options['themeroller']['themeroller_style']) && !empty($org_options['themeroller']['use_themeroller']) && $org_options['themeroller']['use_themeroller'] == 'Y' ){
+		if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y' ){
 			
 			//Define the path to the Themeroller files
-			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/css/themeroller/index.html") ){
-				$themeroller_style_path = EVENT_ESPRESSO_UPLOAD_URL . 'templates/css/themeroller/';
+			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/themeroller/index.php") ){
+				$themeroller_style_path = EVENT_ESPRESSO_UPLOAD_URL . '/themeroller/';
 			}else{
 				$themeroller_style_path =  EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/';
 			}
