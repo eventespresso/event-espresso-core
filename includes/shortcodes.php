@@ -66,7 +66,7 @@ add_shortcode('EVENT_ESPRESSO_CATEGORY', 'show_event_category');
  * [LISTATTENDEES show_deleted="false"]
  * [LISTATTENDEES show_secondary="false"]
  * [LISTATTENDEES show_gravatar="true"]
-  //[LISTATTENDEES paid_only="true"]
+ * [LISTATTENDEES paid_only="true"]
  * [LISTATTENDEES show_recurrence="false"]
  * [LISTATTENDEES event_identifier="your_event_identifier"]
  * [LISTATTENDEES category_identifier="your_category_identifier"]
@@ -1029,3 +1029,29 @@ function ee_show_meta_sc($atts) {
 }
 
 add_shortcode('EE_META', 'ee_show_meta_Sc');
+
+function espresso_questions_answers($atts){
+	global $wpdb;
+	if (empty($atts))
+		return;
+
+	extract($atts);
+	//echo '<p>'.print_r($atts).'</p>';
+	
+	$sql = "select qst.question as question, ans.answer as answer from ".EVENTS_ANSWER_TABLE." ans inner join ".EVENTS_QUESTION_TABLE." qst on ans.question_id = qst.id where ans.attendee_id = '". $a ."' AND qst.id= '".$q."' ";
+	//echo '<p>'.$sql.'</p>';
+	
+	//Get the questions and answers
+	$questions = $wpdb->get_results($sql, ARRAY_A);
+	//echo '<p>'.print_r($questions).'</p>';
+	
+	if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->question != NULL) {
+		foreach($questions as $q){
+			//$k = $q['question'];
+			$v = $q['answer'];
+			return rtrim($v, ',');
+		}
+	}
+	
+}
+add_shortcode('EE_ANSWER', 'espresso_questions_answers');
