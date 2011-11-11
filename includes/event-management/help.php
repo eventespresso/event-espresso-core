@@ -136,6 +136,19 @@
 
   <?php
   	/**
+  	 * Custom Ticket Help Box
+  	 */
+  ?>
+  <div id="custom_ticket_info" class="pop-help" >
+    <div class="TB-ee-frame">
+     <h2><?php _e('Custom Ticket', 'event_espresso'); ?></h2>
+        <p><?php _e('Choose a ticket template to be used for this event. If no template is selected, the default template will be used. Templates can be created on the Tickets page.', 'event_espresso'); ?></p>
+    </div>
+  </div>
+
+
+    <?php
+  	/**
   	 * A dummy example help box
   	 * use this to create new help boxes
   	 */
