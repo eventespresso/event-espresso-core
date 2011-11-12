@@ -5,7 +5,6 @@ function organization_config_mnu() {
 	global $wpdb, $org_options, $espresso_premium;
 
 	//print_r($timezoneTable);
-	// commnted out $org_options moved to template_confg.php - hugo.
 	if (isset($_POST['update_org'])) {
 		$org_options['organization'] = stripslashes_deep($_POST['org_name']);
 		$org_options['organization_street1'] = $_POST['org_street1'];
