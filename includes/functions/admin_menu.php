@@ -23,7 +23,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		//Attendee Overview
 		add_submenu_page('events', __('Event Espresso - Attendee Overview', 'event_espresso'), __('Attendees', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'attendees', 'event_espresso_manage_attendees');
 
-		//EventCategories
+		//Event Categories
 		add_submenu_page('events', __('Event Espresso - Manage Event Categories', 'event_espresso'), __('Categories', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_categories']), 'event_categories', 'event_espresso_categories_config_mnu');
 
 		//Questions Groups
@@ -44,7 +44,7 @@ if (!function_exists('add_event_espresso_menus')) {
 
 		//Seating chart management
 		if (defined('ESPRESSO_SEATING_CHART')) {
-			add_submenu_page('events', __('Event Espresso - Seating Chart', 'event_espresso'), __('Seating chart', 'event_espresso'), 'administrator', 'seating_chart', 'event_espresso_manage_seating_chart');
+			add_submenu_page('events', __('Event Espresso - Seating Chart', 'event_espresso'), __('Seating Chart', 'event_espresso'), 'administrator', 'seating_chart', 'event_espresso_manage_seating_chart');
 		}
 
 		if ((function_exists('event_espresso_email_config_mnu') || $org_options['use_personnel_manager'] == 'Y' || $org_options['use_venue_manager'] == 'Y') && $espresso_premium == true) {
