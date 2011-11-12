@@ -94,12 +94,12 @@ $firstdata_settings = get_option( 'event_espresso_firstdata_settings' );
     <input name="firstdata" type="hidden" value="1" />
     <input name="id" type="hidden" value="<?php echo $attendee_id ?>" />
 
-    <input name="firstdata_submit" class="btn_event_form_submit payment-submit" type="submit" value="<?php _e( 'Complete Purchase', 'event_espresso' ); ?>" />
+    <input name="firstdata_submit" class="btn_event_form_submit ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" type="submit" value="<?php _e( 'Complete Purchase', 'event_espresso' ); ?>" />
     <span id="processing"></span>
 </form><!-- / close firstdata form -->
 </div>
 
-<script>
+<script type="text/javascript">
 
     jQuery(function(){
 

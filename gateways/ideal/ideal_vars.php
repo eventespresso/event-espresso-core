@@ -99,6 +99,6 @@ if ($bank_array == false)
     <input name="amount" type="hidden" value="<?php echo $amount; ?>" />
     <input name="ideal" type="hidden" value="1" />
     <input name="id" type="hidden" value="<?php echo $attendee_id; ?>" />
-	<input type="submit" class="btn_event_form_submit payment-submit" name="submit" value="Betaal via iDEAL" />
+	<input type="submit" class="btn_event_form_submit payment-submit ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" name="submit" value="Betaal via iDEAL" />
 </form>
 </div>

@@ -99,7 +99,7 @@ for ($i = 0; $i < 10; $i++) {
     <input name="paypal_pro" type="hidden" value="true" />
     <input name="id" type="hidden" value="<?php echo $attendee_id ?>" />
 
-    <input name="paypal_pro_submit" class="btn_event_form_submit payment-submit" type="submit" value="<?php _e('Complete Purchase', 'event_espresso'); ?>" />
+    <input name="paypal_pro_submit" class="btn_event_form_submit payment-submit ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" type="submit" value="<?php _e('Complete Purchase', 'event_espresso'); ?>" />
     <span id="processing"></span>
 </form>
 
