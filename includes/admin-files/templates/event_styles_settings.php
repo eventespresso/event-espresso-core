@@ -51,9 +51,9 @@ $values = array(
 );
 ?>
 
-	<label><?php _e('Style Settings ', 'event_espresso'); ?></label>
-	
-
+<li><label>
+	<?php _e('Themeroller Style Settings ', 'event_espresso'); ?>
+</label>
 <select id="style-themeroller" class="wide" <?php echo $disabled ?> name="themeroller_style">
 	<option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> -
 	<?php _e('None', 'event_espresso'); ?>
@@ -61,5 +61,17 @@ $values = array(
 	<?php foreach( $files_themeroller as $fname_themeroller ) { ?>
 	<option <?php espresso_style_is_selected($fname_themeroller) ?> value="<?php echo $fname_themeroller ?>"><?php echo $fname_themeroller; ?></option>
 	<?php } ?>
-</select> <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a>
-</p>
+</select>
+<a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=alternative_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a></li>
+<?php ?>
+<?php if (!empty($org_options['style_settings']['css_name'])){
+?><li><label>
+	<?php _e('Current Custom Style Sheet', 'event_espresso'); ?>
+</label>
+<a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL . 'css/'. $org_options['style_settings']['css_name']; ?>" target="_blank"><?php echo $org_options['style_settings']['css_name']; ?></a> <input style="width:20px; margin-left:20px" name="remove_css" type="checkbox" value="true" /><?php _e('Remove style sheet?', 'event_espresso'); ?></li> 
+<?php } ?>
+<li><label>
+	<?php _e('Add a custom style sheet?', 'event_espresso'); ?>
+</label>
+<input type="file" name="css" id="css" /></li>
+

@@ -12,6 +12,17 @@ function event_espresso_manage_templates() {
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		$org_options['style_settings']['enable_default_style'] = $_POST['enable_default_style'];
 		$org_options['themeroller']['themeroller_style'] = $_POST['themeroller_style'];
+		
+		if ( isset( $_POST['remove_css']) && $_POST['remove_css'] == 'true' ){
+			$org_options['style_settings']['css_name'] ='';
+		}
+		
+		if ( isset($_FILES['css']) && is_uploaded_file($_FILES['css']['tmp_name']) ){
+			if (copy($_FILES['css']['tmp_name'],EVENT_ESPRESSO_UPLOAD_DIR.'css/' . $_FILES['css']['name'])){
+				$org_options['style_settings']['css_name'] = $_FILES['css']['name'];
+			}
+		}
+			
 		update_option('events_organization_settings', $org_options);
 	
 		$notices['updates'][] = __('Template Settings Updated', 'event_espresso') ;
@@ -19,10 +30,11 @@ function event_espresso_manage_templates() {
 	
 	//Debug
 	//echo "<pre>".print_r($org_options,true)."</pre>";
+	//echo "<pre>".print_r($_FILES,true)."</pre>";
 	
 	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso'))
+		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+		array('id' => 'N', 'text' => __('No', 'event_espresso'))
 	);
 	
 ?>
@@ -37,7 +49,7 @@ function event_espresso_manage_templates() {
 		<?php event_espresso_display_right_column(); ?>
 		<div id="post-body">
 			<div id="post-body-content">
-				<form id="template-settings-form" class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+				<form id="template-settings-form" class="espresso_form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 					<div class="meta-box-sortables ui-sortables">
 						<?php #### metaboxes ####  ?>
 						<div class="metabox-holder">
@@ -78,12 +90,12 @@ function event_espresso_manage_templates() {
 										<ul id="ee-styles">
 											<li>
 												<label>
-													<?php _e('Enable built in style sheets?', 'event_espresso'); ?>
+													<?php _e('Enable style sheets?', 'event_espresso'); ?>
 												</label>
 												<?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=enable_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a> </li>
-											<li>
+											
 												<?php include(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_styles_settings.php'); ?>
-											</li>
+											
 										</ul>
 										<p>
 											<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />

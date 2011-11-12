@@ -543,6 +543,12 @@ if (!function_exists('add_espresso_stylesheet')) {
 				$themeroller_style_path =  EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/';
 			}
 			
+			//Load custom style sheet if available
+			if (!empty($org_options['style_settings']['css_name'])){
+				wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . $org_options['style_settings']['css_name']);
+				wp_enqueue_style('espresso_custom_css');
+			}
+			
 			//Register the Themeroller styles
 			wp_register_style('espresso_themeroller_base', $themeroller_style_path .  'themeroller-base.css');
 			wp_enqueue_style('espresso_themeroller_base');
