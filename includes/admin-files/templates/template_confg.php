@@ -10,6 +10,8 @@ function event_espresso_manage_templates() {
 		$org_options['template_settings']['display_address_in_regform'] = $_POST['display_address_in_regform'];
 		$org_options['template_settings']['thumbnail_popup_lists'] = $_POST['thumbnail_popup_lists'];
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
+		$org_options['template_settings']['use_custom_templates'] = $_POST['use_custom_templates'];
+		$org_options['template_settings']['display_description_in_event_list'] = $_POST['display_description_in_event_list'];
 		$org_options['style_settings']['enable_default_style'] = $_POST['enable_default_style'];
 		$org_options['themeroller']['themeroller_style'] = $_POST['themeroller_style'];
 		
@@ -90,7 +92,7 @@ function event_espresso_manage_templates() {
 										<ul id="ee-styles">
 											<li>
 												<label>
-													<?php _e('Enable style sheets?', 'event_espresso'); ?>
+													<?php _e('Enable built style sheets?', 'event_espresso'); ?>
 												</label>
 												<?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=enable_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a> </li>
 											
@@ -119,12 +121,16 @@ function event_espresso_manage_templates() {
 								<div title="Click to toggle" class="handlediv"><br />
 								</div>
 								<h3 class="hndle">
-									<?php _e('Developer templates', 'event_espresso'); ?>
+									<?php _e('Developer Templates', 'event_espresso'); ?>
 								</h3>
 								<div class="inside">
 									<div class="padding">
 										<?php require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/template_files.php'); ?>
+										
 									</div>
+									<p class="submit-buttons">
+											<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_1" />
+										</p>
 									<!-- / .padding --> 
 								</div>
 								<!-- / .inside --> 
