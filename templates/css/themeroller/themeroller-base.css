@@ -181,7 +181,7 @@ span.google-map-link {
 a.post-edit-link {padding-left: 5px;}
 /*___ Attendee list ___*/
 
-ol.attendee_list {margin-left:30px;}
+ol.attendee_list {margin-left: 30px;}
 /*___ Cart & Multi Registration page styles ___*/
 
 .multi_reg_cart_block {
@@ -348,11 +348,7 @@ ul#espresso_payment_buttons li form {
 }
 .event_espresso_form_wrapper label.error,
 .event_espresso_form_wrapper span.error { 
-	position: absolute;
-	bottom: 33px;
-	left: 50px;
 	color: #C00; 
-	width: auto;
 }
 .event_espresso_form_wrapper label em,
 .event_espresso_form_wrapper span.label em { 
@@ -375,22 +371,14 @@ ul#espresso_payment_buttons li form {
 .event_form_field {
 	clear: both;
 }
-.btn_event_form_submit {
-	width: auto;
-	height: 40px;
-}
-a.btn_event_form_submit {
-	display: inline-block;
-	font-weight: normal;
-	height: auto;
-	padding: 7px 4px;
-}
-.payment-submit {
-	height: 30px;
-}	
 #ideal-mollie-form .payment-submit {
 	height: auto;
 	margin-bottom: 0;
+}
+.btn_event_form_submit,
+.inline-button {
+	padding: 3px ;
+	text-decoration: none;
 }
 .btn_event_form_submit:hover {
 	cursor: pointer;
@@ -529,7 +517,7 @@ pre {
 
 /* >Classes - Messages etc
 ------------------------------------------------------------------------------*/
-
+.event-messages {margin: 1em 0;}
 #content .event-messages p {margin: .5em 30px;}
 span.ui-icon {float:left;margin: .7em 0 0 .3em;}
 
