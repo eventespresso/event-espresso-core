@@ -91,6 +91,7 @@ function espresso_init_session() {
 
 add_action('plugins_loaded', 'espresso_init_session', 1);
 
+//Handles importing of csv files
 function espresso_check_for_export() {
 	if (isset($_REQUEST['export'])) {
 		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Export.class.php')) {
@@ -103,6 +104,7 @@ function espresso_check_for_export() {
 
 add_action('plugins_loaded', 'espresso_check_for_export');
 
+//Handles exporting of csv files
 function espresso_check_for_import() {
 	if (isset($_REQUEST['import'])) {
 		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Import.class.php')) {
@@ -186,6 +188,8 @@ define("EVENT_ESPRESSO_PLUGINFULLPATH", WP_PLUGIN_DIR . EVENT_ESPRESSO_PLUGINPAT
 define("EVENT_ESPRESSO_PLUGINFULLURL", $wp_plugin_url . EVENT_ESPRESSO_PLUGINPATH);
 
 //Define dierectory structure for uploads
+
+//Create the paths
 if (!defined('WP_CONTENT_DIR')) {
 	define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
 }
@@ -193,15 +197,22 @@ $upload_path = WP_CONTENT_DIR . "/uploads";
 $event_espresso_upload_dir = "{$upload_path}/espresso/";
 $event_espresso_template_dir = "{$event_espresso_upload_dir}templates/";
 
+//Define the includes directory
 $includes_directory = EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/';
 define("EVENT_ESPRESSO_INCLUDES_DIR", $includes_directory);
 
+//Define the uploads directory and url
 define("EVENT_ESPRESSO_UPLOAD_DIR", $event_espresso_upload_dir);
 define("EVENT_ESPRESSO_UPLOAD_URL", $wp_content_url . '/uploads/espresso/');
+
+//Define the templates dirrectory
 define("EVENT_ESPRESSO_TEMPLATE_DIR", $event_espresso_template_dir);
+
+//Define the gateway directory and url
 $event_espresso_gateway_dir = EVENT_ESPRESSO_UPLOAD_DIR . "gateways/";
 define("EVENT_ESPRESSO_GATEWAY_DIR", $event_espresso_gateway_dir);
 define("EVENT_ESPRESSO_GATEWAY_URL", $wp_content_url . '/uploads/espresso/gateways/');
+
 //End - Define dierectory structure for uploads
 
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/SimpleMath.php';
@@ -402,7 +413,7 @@ if (is_admin()) {
 	event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
 
 	// Google Map Settings
-	event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
+	event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
 
 	// Admin Widget - Display event stats in your admin dashboard
 	event_espresso_require_file('dashboard_widget.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/", '', false, true);
@@ -419,7 +430,7 @@ if (is_admin()) {
 	event_espresso_require_file('index.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-reports/", '', false, true);
 
 	// Event styles & template layouts Subpage
-	event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
+	event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/', true, true);
 
 
 	// Plugin Support
