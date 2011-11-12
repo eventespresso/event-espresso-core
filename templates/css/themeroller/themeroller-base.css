@@ -62,7 +62,9 @@
 #content .event-data-display {
 	padding: 10px;
 }
-#content .event_title, #content h2.section-heading {padding-left: 10px;}
+#content .event_title, 
+#content h2.section-heading,
+#content .display-box-heading {padding-left: 10px;}
 #content .event_title,
 #content .section-heading,
 #content .section-title {
@@ -70,9 +72,6 @@
 }
 #content .section-heading {
 	font-size: 1.2em;
-}
-#content .event-display-boxes  .event-display-boxes .section-heading {
-	text-align: left;
 }
 #content .event_title a {
 	text-decoration: none;
@@ -244,28 +243,23 @@ ul#espresso_payment_buttons li form {
 /*___ payment overview - thank you page ___*/
 
 .event-list-payment-overview {
-	border-bottom: 1px solid #eee;
 	padding: 20px 0 0 ;
 }
-.event-list-payment-overview dl {
-	border: 1px solid #bbb;
+.event-list-payment-overview dl,
+.reg-gen-details dl {
 	margin-bottom: 0;
 	padding:10px;
 }
 #content .event-list-payment-overview dl dt {margin-bottom: 20px;}
 #content .event-list-payment-overview dl dd {margin-bottom: 10px}
 #content .espresso_payment_overview  h4.section-title {
-	border-top: 1px solid #bebebe;
 	margin-top: 20px;
 	padding-top: 10px;
 }
 #content .espresso_payment_overview h4.list-events {
 	border-top: none;
 }	 
-#content dl.reg-gen-details {
-	border: 1px solid #bbb;
-	padding: 10px;
-}
+
 /*___ page elements / objects ___*/
 
 /** Gmaps **/
