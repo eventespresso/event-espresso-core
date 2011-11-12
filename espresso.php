@@ -533,10 +533,10 @@ if (!function_exists('add_espresso_stylesheet')) {
 	/*	if ($org_options['style_settings']['enable_default_style'] != 'Y')
 			return;*/
 		
-		//Load the Themeroller styles if enabled
+		//Load the ThemeRoller styles if enabled
 		if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y' ){
 			
-			//Define the path to the Themeroller files
+			//Define the path to the ThemeRoller files
 			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "themeroller/index.php") ){
 				$themeroller_style_path = EVENT_ESPRESSO_UPLOAD_URL . 'themeroller/';
 			}else{
@@ -549,7 +549,7 @@ if (!function_exists('add_espresso_stylesheet')) {
 				wp_enqueue_style('espresso_custom_css');
 			}
 			
-			//Register the Themeroller styles
+			//Register the ThemeRoller styles
 			wp_register_style('espresso_themeroller_base', $themeroller_style_path .  'themeroller-base.css');
 			wp_enqueue_style('espresso_themeroller_base');
 			wp_register_style('espresso_themeroller', $themeroller_style_path . $org_options['themeroller']['themeroller_style'] .  '/style.css');
