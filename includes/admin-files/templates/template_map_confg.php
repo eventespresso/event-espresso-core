@@ -113,7 +113,7 @@ global $wpdb, $org_options, $notices;
     <!-- #### end general map config settings #### -->
     
     <!-- #### Map Shortcode examples #### -->   
-								<div class="metabox-holder">
+								<?php /*?><div class="metabox-holder">
 									<div class="postbox">
 										<div title="Click to toggle" class="handlediv"><br /></div>
 										<h3 class="hndle">
@@ -141,7 +141,7 @@ global $wpdb, $org_options, $notices;
 					
 					
 																			    
-	<?php  include_once('templates/templates_help.php'); ?>
+	<?php include_once('templates_help.php'); ?><?php */?>
 							
 							<?php  // create our nonces and do our form submit ?>
 							<?php wp_nonce_field( 'espresso_form_check', 'ee_maps_update' ); ?>
