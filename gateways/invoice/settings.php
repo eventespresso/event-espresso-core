@@ -1,6 +1,9 @@
 <?php
+include('invoice_functions.php');
 function event_espresso_invoice_payment_settings(){
 	global $espresso_premium; if ($espresso_premium != true) return;
+	
+	//Update settings
 	if (isset($_POST['update_invoice_payment_settings'])) {
 		//$invoice_payment_settings_settings = get_option('event_espresso_invoice_payment_settings_settings');
 			$invoice_payment_settings['invoice_title'] = strip_tags($_POST['invoice_title']);
@@ -18,14 +21,15 @@ function event_espresso_invoice_payment_settings(){
 ?>
 
 <div class="metabox-holder">
- <div class="postbox">
-  <div title="Click to toggle" class="handlediv"><br /></div>
-   <h3 class="hndle">
-    <?php _e('Invoice Payment Settings','event_espresso'); ?>
-   </h3>
-   <div class="inside">
-   <div class="padding">
-  <?php
+  <div class="postbox">
+    <div title="Click to toggle" class="handlediv"><br />
+    </div>
+    <h3 class="hndle">
+      <?php _e('Invoice Payment Settings','event_espresso'); ?>
+    </h3>
+    <div class="inside">
+      <div class="padding">
+        <?php
 				if (isset($_REQUEST['activate_invoice_payment'])&&$_REQUEST['activate_invoice_payment'] == 'true'){
 					add_option("events_invoice_payment_active", 'true', '', 'yes');
 					add_option("event_espresso_invoice_payment_settings", '', '', 'yes');
@@ -55,12 +59,13 @@ function event_espresso_invoice_payment_settings(){
 				}
 				echo '</ul>';
 ?>
-   </div>
+      </div>
+    </div>
   </div>
- </div>
 </div>
 <?php
-}?>
+}
+?>
 <?php
 //Invoice Payments Settings Form
 function event_espresso_display_invoice_payment_settings(){
@@ -68,14 +73,55 @@ function event_espresso_display_invoice_payment_settings(){
 	global $org_options;
 
 	$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
+	$files = espresso_invoice_template_files();
 ?>
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
   <table width="90%" border="0">
     <tr>
       <td valign="top"><ul>
           <li>
+            <label for="base-invoice-select" <?php echo $styled ?>>
+              <?php _e('Select Base Template', 'event_espresso');  ?>
+            </label>
+            <select id="base-invoice-select" class="wide" <?php echo $disabled ?> name="invoice_file">
+              <option <?php espresso_invoice_is_selected($fname) ?> value="basic.html">
+              <?php _e('Default Template - Basic', 'event_espresso'); ?>
+              </option>
+              <?php foreach( $files as $fname ) { ?>
+              <option <?php espresso_invoice_is_selected($fname) ?> value="<?php echo $fname ?>"><?php echo $fname; ?></option>
+              <?php } ?>
+            </select>
+            <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=base_template_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a> </li>
+          <li id="invoice-logo-image">
+			<?php
+
+				if(!empty($invoice_logo_url)){
+					$invoice_logo = $invoice_logo_url;
+				} else {
+					$invoice_logo = '';
+				}
+				// var_dump($event_meta['event_thumbnail_url']);
+			?>
+              <label for="upload_image">
+                <?php _e('Add a Logo', 'event_espresso'); ?>
+              </label>
+              <input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $invoice_logo ?>" />
+              <input id="upload_image_button" type="button" value="Upload Image" />
+              <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=invoice_logo_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a>
+<?php 
+				if($invoice_logo){ 
+?>
+                    <p class="invoice-logo"><img src="<?php echo $invoice_logo ?>" alt="" /></p>
+                    <a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'>
+                    <?php _e('Remove Image', 'event_espresso'); ?>
+                    </a>
+<?php
+				}
+?>
+          </li>
+          <li>
             <label for="invoice_title">
-              <?php _e('Title:', 'event_espresso'); ?>
+              <?php _e('Section Title:', 'event_espresso'); ?>
             </label>
             <br />
             <input type="text" name="invoice_title" size="30" value="<?php echo empty($invoice_payment_settings['invoice_title']) ? __('Invoice Payments','event_espresso') : stripslashes_deep($invoice_payment_settings['invoice_title']) ;?>" />
@@ -101,21 +147,21 @@ function event_espresso_display_invoice_payment_settings(){
             <br />
             <textarea name="payment_address" cols="30" rows="5">
 <?php
-if (empty($invoice_payment_settings['payment_address']) || trim($invoice_payment_settings['payment_address']) == ''){
+				if (empty($invoice_payment_settings['payment_address']) || trim($invoice_payment_settings['payment_address']) == ''){
 ?>
-<?php echo $org_options['organization_street1'] ?> <?php echo $org_options['organization_street2'] ?>
-
-<?php echo $org_options['organization_city'] ?>, <?php echo $org_options['organization_state'] ?>
-
-<?php echo getCountryName($org_options['organization_country']) ?>
-
-<?php echo $org_options['organization_zip'] ?>
+				<?php echo $org_options['organization_street1'] ?> <?php echo $org_options['organization_street2'] ?>
+				
+				<?php echo $org_options['organization_city'] ?>, <?php echo $org_options['organization_state'] ?>
+				
+				<?php echo getCountryName($org_options['organization_country']) ?>
+				
+				<?php echo $org_options['organization_zip'] ?>
 <?php
-}else{
-	echo $invoice_payment_settings['payment_address'];
-}
+				}else{
+					echo $invoice_payment_settings['payment_address'];
+				}
 ?>
-</textarea>
+			</textarea>
           </li>
         </ul></td>
       <td valign="top"><ul>
@@ -147,19 +193,55 @@ if (empty($invoice_payment_settings['payment_address']) || trim($invoice_payment
     </tr>
   </table>
   <input type="hidden" name="update_invoice_payment_settings" value="update_invoice_payment_settings">
-   <p><label for="show">
-                        <?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
-                        </label>
-                        <?php
-                        $values = array(
-                            array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-							array('id' => 'N', 'text' => __('No', 'event_espresso')),
-                            );
-                        echo select_input('show', $values, empty($invoice_payment_settings['show']) ? '' : $invoice_payment_settings['show']);
-                        ?></p>
+  <p>
+    <label for="show">
+      <?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
+    </label>
+<?php
+	$values = array(
+		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+		array('id' => 'N', 'text' => __('No', 'event_espresso')),
+	);
+	echo select_input('show', $values, empty($invoice_payment_settings['show']) ? '' : $invoice_payment_settings['show']);
+?>
+  </p>
   <p>
     <input class="button-primary" type="submit" name="Submit" value="<?php  _e('Update Invoice Payment Settings','event_espresso') ?>" id="save_invoice_payment_settings" />
   </p>
 </form>
+<script type="text/javascript" charset="utf-8">
+	//<![CDATA[
+ 	jQuery(document).ready(function() {
+			var header_clicked = false;
+			jQuery('#upload_image_button').click(function() {
+	     formfield = jQuery('#upload_image').attr('name');
+	     tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
+				header_clicked = true;
+	    return false;
+	   });
+		window.original_send_to_editor = window.send_to_editor;
+
+		window.send_to_editor = function(html) {
+			if(header_clicked) {
+				imgurl = jQuery('img',html).attr('src');
+				jQuery('#' + formfield).val(imgurl);
+				jQuery('#invoice-logo-image').append("<p id='image-display'><img class='show-selected-img' src='"+imgurl+"' alt='' /></p>");
+				header_clicked = false;
+				tb_remove();
+				jQuery("#invoice-logo-image").append("<a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'><?php _e('Remove Image', 'event_espresso'); ?></a>");
+				jQuery('#remove-image').click(function(){
+				//alert('delete this image');
+				jQuery('#' + formfield).val('');
+				jQuery("#image-display").empty();
+				jQuery('#remove-image').remove();
+				});
+				} else {
+					window.original_send_to_editor(html);
+				}
+		}
+	});
+
+	//]]>
+</script>
 <?php
 }
