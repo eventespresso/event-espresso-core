@@ -1,6 +1,8 @@
 <?php
 function event_espresso_insert_group(){
-	global $wpdb,$current_user;
+	global $wpdb,$current_user, $notices;
+	
+	if( check_admin_referer('espresso_form_check', 'add_new_group') ) {
 	$wpdb->show_errors();
 	$group_name= $_REQUEST['group_name'];
 	$group_order = $_POST['group_order'];
@@ -8,7 +10,8 @@ function event_espresso_insert_group(){
 	$group_description= $_REQUEST['group_description'];
 	$show_group_name = isset($_POST['show_group_name']) && $_POST['show_group_name'] !=''?1:0;
 	$show_group_description = isset($_POST['show_group_description']) && $_POST['show_group_description'] != ''?1:0;
-
+	}
+	
 	if (!function_exists('espresso_member_data'))
 			$current_user->ID = 1;
 
@@ -39,11 +42,10 @@ function event_espresso_insert_group(){
 			}
 		}
 
-	if (empty($error)){?>
-		<div id="message" class="updated fade"><p><strong><?php _e('The group has been added.','event_espresso'); ?></strong></p></div>
-<?php
-	}else { ?>
-		<div id="message" class="error"><p><strong><?php _e('There was an error in your submission, please try again. The group was not saved!','event_espresso'); ?><?php print $wpdb->print_error(); ?>.</strong></p></div>
-<?php
-	}
+	if( $error ) {
+			$notices['errors'][] = 'There was an error in your submission, please try again. The group was not added!';
+	}else {
+			$notices['updates'][] = 'The group has been added.';
+			}
+	do_action('espresso_admin_notices');
 }

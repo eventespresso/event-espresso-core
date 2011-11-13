@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_question_groups_config_mnu() {
-    global $wpdb;
+    global $wpdb, $notices;
     //Update the questions when re-ordering
     if (!empty($_REQUEST['update_sequence'])) {
         $rows = explode(",", $_POST['row_ids']);
@@ -28,13 +28,15 @@ function event_espresso_question_groups_config_mnu() {
     ?>
     <div class="wrap">
         <div id="icon-options-event" class="icon32"> </div>
-        <h2><?php echo _e('Manage Question Groups', 'event_espresso') ?>
+        
+					<h2><?php echo _e('Manage Question Groups', 'event_espresso') ?>
             <?php
             if (!isset($_REQUEST['action']) || ($_REQUEST['action'] != 'edit_group' && $_REQUEST['action'] != 'new_group')) {
                 echo '<a href="admin.php?page=form_groups&amp;action=new_group" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Group', 'event_espresso') . '</a>';
             }
             ?>
         </h2>
+
         <div id="poststuff" class="metabox-holder has-right-sidebar">
             <?php event_espresso_display_right_column(); ?>
             <div id="post-body">

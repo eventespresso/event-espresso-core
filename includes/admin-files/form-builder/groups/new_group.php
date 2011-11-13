@@ -78,6 +78,7 @@ function event_espresso_form_group_new(){
     <p class="submit-footer">
       <input name="action" value="insert_group" type="hidden">
       <input name="Submit" value="Add Group" type="submit">
+				<?php wp_nonce_field( 'espresso_form_check', 'add_new_group' ); ?>
     </p>
    </form>
   </div>

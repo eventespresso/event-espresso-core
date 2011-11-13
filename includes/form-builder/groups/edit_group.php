@@ -153,6 +153,7 @@ function event_espresso_form_group_edit() {
                         <input type="hidden" name="action" value="update_group" />
                         <input type="hidden" name="group_id" value="<?php echo $group_id ?>" />
                         <input name="Submit" value="Update Group" type="submit" />
+													<?php wp_nonce_field( 'espresso_form_check', 'edit_group' ); ?>
                     </p>
                 </form>
             </div>

@@ -119,6 +119,7 @@ function event_espresso_form_builder_edit(){
         <input name="question_id" value="<?php echo $question_id; ?>" type="hidden">
 
 					<input  name="Submit" value="Update Question" type="submit">
+					<?php wp_nonce_field( 'espresso_form_check', 'edit_question' ) ?>
 				</p>
     </form>
     </div>

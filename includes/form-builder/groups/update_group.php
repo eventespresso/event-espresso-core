@@ -2,8 +2,9 @@
 
 //Function to update question groups in the database
 function event_espresso_form_group_update($group_id) {
-    global $wpdb;
-
+    global $wpdb, $notices;
+			
+			if( check_admin_referer('espresso_form_check', 'edit_group') ) {
     //$group_id = $_POST['group_id'];
     $group_order = $_POST['group_order'];
     $group_name = $_POST['group_name'];
@@ -12,7 +13,8 @@ function event_espresso_form_group_update($group_id) {
     $show_group_description = isset($_POST['show_group_description']) && $_POST['show_group_description'] != '' ? 1 : 0;
 
     $group_identifier = empty($_REQUEST['group_identifier']) ? $group_identifier = sanitize_title_with_dashes($group_name . '-' . time()) : $group_identifier = sanitize_title_with_dashes($_REQUEST['group_identifier']);
-
+			}
+			
     $sql = "UPDATE " . EVENTS_QST_GROUP_TABLE .
             " SET group_name = '" . $group_name . "', group_order = '" . $group_order . "', group_identifier = '" . $group_identifier . "', group_description = '" . $group_description . "',
                    show_group_name = " . $show_group_name . ",
@@ -32,4 +34,10 @@ function event_espresso_form_group_update($group_id) {
             }
         }
     }
+			if( $need_a_fail_query_please ) {
+				$notices['errors'][] = 'There was an error in your submission, please try again. The group was not updated!';
+			}else {
+				$notices['updates'][] = 'The group has been updated.';
+			}
+			do_action('espresso_admin_notices');
 }
