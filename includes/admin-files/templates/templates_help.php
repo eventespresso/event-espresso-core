@@ -85,6 +85,7 @@
 			</p>
 			<p><strong><?php _e('Adding Custom ThemeRoller Styles', 'event_espresso'); ?></strong><br />
 			<?php _e('To add your own custom ThemeRoller styles: ', 'event_espresso'); ?>
+			</p>
 			<ol>
 			<li><?php _e('Go to the <a href="http://themeroller.com/" target="_blank">jQuery UI ThemeRoller</a> site and design and download your custom style.', 'event_espresso'); ?></li> 
 			<li><?php _e('Unzip the downloaded file, then navigate to the "/css/" folder. Inside you will see a folder named "custom-theme" (or the name of the theme if you selected a pre-made style). If you like, rename the "custom-theme" folder to something memorable.', 'event_espresso'); ?></li>
@@ -93,7 +94,7 @@
 			<li><?php _e('This step is very important. Create an empty "index.php" file in the "wp-content/uploads/espresso/themeroller/" folder. This will tell Event Espresso that you want to use custom ThemeRoller CSS files.', 'event_espresso'); ?></li>
 			<li><strong><?php _e('IMPORTANT:', 'event_espresso'); ?></strong> <?php _e('Verify you have an "wp-content/uploads/espresso/themeroller/index.php" file. Verify you have uploaded your custom ThemeRoller CSS files files"wp-content/uploads/espresso/themeroller/custom-theme/style.css"', 'event_espresso'); ?> </li>
 			</ol>
-			</p>
+			
 			<p>
 				<strong><?php _e('About ThemeRoller', 'event_espresso'); ?></strong>
 				<br />
