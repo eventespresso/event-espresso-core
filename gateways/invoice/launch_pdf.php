@@ -27,7 +27,7 @@ function espresso_invoice_launch($attendee_id=0, $registration_id=0){
 	$data->attendee->registration_date = $data->attendee->date;
 
 	//Get the HTML file
-	$data->event->invoice_file = (!empty($data->event->invoice_file) && $data->event->invoice_file > '0') ? $data->event->invoice_file : 'basic.html';
+	$data->event->invoice_file = (!empty($data->event->invoice_file) && $data->event->invoice_file > '0') ? $data->event->invoice_file : 'basic.php';
 	//echo $data->event->invoice_file;
 
 	//Create the logo

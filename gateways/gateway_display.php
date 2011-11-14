@@ -160,7 +160,7 @@ if (get_option('events_paypal_active') == 'true'
 	echo '</div><!-- / #off_site_payment_container -->';
 }
 $invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
-if ((get_option('events_invoice_payment_active') == 'true' && $invoice_payment_settings['show'] != 'N')
+if ((get_option('events_invoice_payment_active') == 'true' && $payment_settings['invoice']['show'] != 'N')
 				||get_option('events_check_payment_active') == 'true'
 				|| get_option('events_bank_payment_active') == 'true'){
 

@@ -11,8 +11,8 @@ class PDF extends FPDF{
 		global $wpdb, $org_options;
 		$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
 		//Logo
-		if (isset($invoice_payment_settings['image_url'])&&trim($invoice_payment_settings['image_url']) !=''){
-			$this->Image($invoice_payment_settings['image_url'],10,8,90);//Set the logo if it is available
+		if (isset($payment_settings['invoice']['invoice_logo_url'])&&trim($payment_settings['invoice']['invoice_logo_url']) !=''){
+			$this->Image($payment_settings['invoice']['invoice_logo_url'],10,8,90);//Set the logo if it is available
 		}else{
 			$this->SetFont('Arial','B',15);
 			$this->Cell(10,10,pdftext($org_options['organization']),0,0,'L');//If no logo, then display the organizatin name
@@ -23,8 +23,8 @@ class PDF extends FPDF{
 		//Move to the right
 		$this->Cell(80);
 		//Title
-		if(isset($invoice_payment_settings['pdf_title']))
-			$this->MultiCell(100,10,pdftext($invoice_payment_settings['pdf_title']),0,'R');//Set the right header
+		if(isset($payment_settings['invoice']['pdf_title']))
+			$this->MultiCell(100,10,pdftext($payment_settings['invoice']['pdf_title']),0,'R');//Set the right header
 		else 
 			$this->MultiCell(100,10,pdftext(''),0,'R');//Set the right header
 		//Line break

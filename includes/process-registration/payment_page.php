@@ -4,7 +4,7 @@
 //This is the initial PayPal button
 function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupon_code ='') {
 	global $wpdb, $org_options, $simpleMath;
-
+	
 	$today = date("m-d-Y");
 	$num_people = 0;
 
@@ -49,7 +49,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 		$registration_id = $attendee->registration_id;
 	}
 	$event_meta = event_espresso_get_event_meta($event_id);
-
+	
 	if (function_exists("save_extra_user_profile_fields")) {
 		if (get_option('events_members_active') == 'true') {
 			//PLACE HOLDER
@@ -84,6 +84,9 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 		$send_mail = $event->send_mail;
 		$active = $event->is_active;
 		$conf_mail = $event->conf_mail;
+		$event->wp_user = function_exists('espresso_manager_pro_version') ? $event->wp_user : 1;
+		$payment_settings = get_option('payment_data_'.$event->wp_user);
+		
 		//$alt_email = $event->alt_email; //This is used to get the alternate email address that a payment can be made to using PayPal
 		if (function_exists('event_espresso_coupon_payment_page')) {
 			$use_coupon_code = $event->use_coupon_code;
@@ -194,8 +197,6 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 
 function espresso_confirm_registration($registration_id) {
 	global $wpdb, $org_options;
-
-
 	//Get the questions for the attendee
 	$questions = $wpdb->get_results("SELECT ea.answer, eq.question
                         FROM " . EVENTS_ANSWER_TABLE . " ea
@@ -240,6 +241,10 @@ function espresso_confirm_registration($registration_id) {
 		$require_pre_approval = $event->require_pre_approval;
 
 		$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country));
+		
+		$event->wp_user = function_exists('espresso_manager_pro_version') ? $event->wp_user : 1;
+		$payment_settings = get_option('payment_data_'.$event->wp_user);
+		
 	}
 
 	//Build links
@@ -328,7 +333,7 @@ function espresso_confirm_registration($registration_id) {
 //This is the alternate PayPal button used for the email
 function event_espresso_pay($att_registration_id=0) {
 	global $wpdb, $org_options;
-
+	
 	//Make sure id's are empty
 	$registration_id = 0;
 	$id = 0;
@@ -343,7 +348,7 @@ function event_espresso_pay($att_registration_id=0) {
 	$registration_id = $att_registration_id;
 	//echo $att_registration_id;
 
-	$attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $att_registration_id . "' ORDER BY ID LIMIT 1");
+	$attendees = $wpdb->get_results("SELECT ea.*, ed.wp_user wp_user FROM " . EVENTS_ATTENDEE_TABLE . " left join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id WHERE registration_id ='" . $att_registration_id . "' ORDER BY ID LIMIT 1");
 	$num_rows = $wpdb->num_rows;
 
 	//If the attendee has made a payment or returns to make a payment, then we will display the payment overview page
@@ -371,6 +376,9 @@ function event_espresso_pay($att_registration_id=0) {
 			$event_id = $attendee->event_id;
 			$coupon_code = $attendee->coupon_code;
 			$event_cost = $attendee->amount_pd;
+			
+			$event->wp_user = function_exists('espresso_manager_pro_version') ? $attendee->wp_user : 1;
+			$payment_settings = get_option('payment_data_'.$event->wp_user);
 		}
 
 		/* $events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
@@ -412,7 +420,6 @@ function event_espresso_pay($att_registration_id=0) {
 		}
 		//print_r($attendees);
 		$total_cost = number_format($total_cost, 2, '.', '');
-
 
 		if (!empty($_REQUEST['payment_type']) && $_REQUEST['payment_type'] == 'cash_check') {
 

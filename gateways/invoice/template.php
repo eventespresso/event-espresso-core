@@ -3,7 +3,7 @@
 	if(isset($_SESSION['espresso_session_id'])){
 		unset($_SESSION['espresso_session_id']);
 	}
-
+	
 	define('FPDF_FONTPATH', EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/font/');
 	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/fpdf.php';
 
@@ -29,7 +29,7 @@
 	}else{
 		$registration_ids[] = array("registration_id"=>$registration_id);
 	}
-	$attendees = $wpdb->get_results("SELECT a.*, e.event_name FROM ". EVENTS_ATTENDEE_TABLE ." a JOIN ". EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id WHERE a.registration_id ='" . $registration_id . "' order by a.id LIMIT 0,1 ");
+	$attendees = $wpdb->get_results("SELECT a.*, e.event_name, e.wp_user wp_user FROM ". EVENTS_ATTENDEE_TABLE ." a JOIN ". EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id WHERE a.registration_id ='" . $registration_id . "' order by a.id LIMIT 0,1 ");
 
 	foreach ($attendees as $attendee){
 		$attendee_id = $attendee->id;
@@ -51,6 +51,8 @@
 		$payment_date = $attendee->payment_date;
 		$event_id = $attendee->event_id;
         $event_name = html_entity_decode(stripslashes($attendee->event_name),ENT_QUOTES,"UTF-8");
+		$event->wp_user = function_exists('espresso_manager_pro_version') ? $attendee->wp_user : 1;
+		$payment_settings = get_option('payment_data_'.$event->wp_user);
 		//$attendee_session = $attendee->attendee_session;
 		//$registration_id=$attendee->registration_id;
 	}
@@ -105,9 +107,9 @@
 	$pdf=new PDF();
 	$pdf->AliasNbPages();
 	$pdf->SetAuthor( pdftext($org_options['organization']) );
-	if(isset($invoice_payment_settings['pdf_title']))
+	if(isset($payment_settings['invoice']['pdf_title']))
 	{
-		$pdf->SetTitle( pdftext($event_name . ' - ' . $invoice_payment_settings['pdf_title']) );
+		$pdf->SetTitle( pdftext($event_name . ' - ' . $payment_settings['invoice']['pdf_title']) );
 	}
 	else
 	{
@@ -124,9 +126,9 @@
 
 	//Set the top left of invoice below header
 	$pdf->SetFont('Times','BI',14);
-	if(isset($invoice_payment_settings['payable_to']))
+	if(isset($payment_settings['invoice']['payable_to']))
 	{
-		$pdf->MultiCell(0,10,pdftext($invoice_payment_settings['payable_to']),0,'L');//Set payable to
+		$pdf->MultiCell(0,10,pdftext($payment_settings['invoice']['payable_to']),0,'L');//Set payable to
 	}
 	else
 	{
@@ -204,8 +206,8 @@ $pdf->Ln(10);
 	$pdf->Ln(10);
 
 	//Build the payment link and instructions
-	if(isset($invoice_payment_settings['pdf_instructions'])){
-		$pdf->MultiCell(100,5,pdftext($invoice_payment_settings['pdf_instructions']),0,'L');//Set instructions
+	if(isset($payment_settings['invoice']['pdf_instructions'])){
+		$pdf->MultiCell(100,5,pdftext($payment_settings['invoice']['pdf_instructions']),0,'L');//Set instructions
 	}else{
 		$pdf->MultiCell(100,5,pdftext(''),0,'L');//Set instructions
 	}
