@@ -306,7 +306,7 @@ if (!is_admin()) {
 
 //Load these files if we are in an actuial registration page
 function espresso_load_reg_page_files() {
-  define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
+	define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 	//Check to see if this a reg page
 	//May cause admin and front facing pages to break if turned on
 	//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
@@ -669,9 +669,13 @@ wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu
 
 // These actions need to be loaded a the bottom of this script to prevent errors when post/get requests are received.
 // Export PDF invoice
-if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
+function espresso_export_invoice(){
+	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
+	}
 }
+
+add_action('plugins_loaded', 'espresso_export_invoice');
 
 // Export PDF Ticket
 if (isset($_REQUEST['download_ticket']) && $_REQUEST['download_ticket'] == 'true') {
