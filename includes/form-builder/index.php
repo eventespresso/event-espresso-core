@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_questions_config_mnu() {
-    global $wpdb;
+    global $wpdb, $notices;
 
     //Update the questions when re-ordering
     if (!empty($_REQUEST['update_sequence'])) {
@@ -36,6 +36,7 @@ function event_espresso_questions_config_mnu() {
             }
             ?>
         </h2>
+					
         <div id="poststuff" class="metabox-holder has-right-sidebar">
             <?php event_espresso_display_right_column(); ?>
             <div id="post-body">
@@ -101,7 +102,7 @@ function event_espresso_questions_config_mnu() {
                         }
                     }
                     ?>
-
+											<?php do_action('espresso_admin_notices'); ?>
                     <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
                         <table id="table" class="widefat manage-questions">
 

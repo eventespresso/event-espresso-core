@@ -43,9 +43,8 @@ function event_espresso_insert_group(){
 		}
 
 	if( $error ) {
-			$notices['errors'][] = 'There was an error in your submission, please try again. The group was not added!';
+			$notices['errors'][] = __('There was an error in your submission for group ', 'event_espresso') . $group_name .  __(' The group was not added!', 'event_espresso');
 	}else {
-			$notices['updates'][] = 'The group has been added.';
+			$notices['updates'][] = __('The group ', 'event_esptresso') . $group_name . __(' has been added.', 'event_espresso');
 			}
-	do_action('espresso_admin_notices');
 }

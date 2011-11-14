@@ -101,6 +101,7 @@
 }
 #content .event-display-boxes .register-link-footer	a {	
  padding: 2px 4px; 
+	text-decoration: none;
 }
 #content .ee-social-media-buttons {
  clear: both;
@@ -256,12 +257,9 @@ ul#espresso_payment_buttons li form {
 	margin-top: 20px;
 	padding-top: 10px;
 }
-#content .espresso_payment_overview h4.list-events {
-	border-top: none;
-}	 
-
+ 
 /*___ page elements / objects ___*/
-
+.TB-ee-frame .tb-ee-event-title {margin: 10px 0;;}
 /** Gmaps **/
 
 .ee-gmaps {

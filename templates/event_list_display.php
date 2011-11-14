@@ -168,8 +168,8 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 
 							$cart_link = event_espresso_cart_link($params);
 						}
-        if ($display_reg_form == 'Y') {
-            ?>
+			if ($display_reg_form == 'Y') {
+			?>
   <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
     <?php _e('Register for Event', 'event_espresso'); ?>
     </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
@@ -181,11 +181,11 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         }
     }
     ?>
-  <?php ######### event list event popup markup ########### ?>
+  <?php ######### event list event thumbnail link popup  ########### ?>
   <div style="display: none;">
     <div id="event-thumb-detail<?php echo $event_id ?>" class="pop-help ee-tb-popups events-lists-popups" >
       <div class="TB-ee-frame ui-widget">
-        <h2 class="tb-ee-event-title ui-widget-header ui-corner-top"><?php echo stripslashes_deep($event_name) ?> <span class="event-status"><?php echo $status_display ?></span></h2>
+        <h2 class="tb-ee-event-title "><?php echo stripslashes_deep($event_name) ?> <span class="event-status"><?php echo $status_display ?></span></h2>
         <!--<div class="ui-widget-content ui-corner-bottom">-->
 				<img class="tb-ee-event-thumb" src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" />
         <div class="tb-ee-event-desc"> <?php echo espresso_format_content($event_desc); ?> </div>

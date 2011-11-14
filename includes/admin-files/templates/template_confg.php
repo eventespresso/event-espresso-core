@@ -129,8 +129,8 @@ function event_espresso_manage_templates() {
 										
 									</div>
 									<p class="submit-buttons">
-											<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_1" />
-										</p>
+											<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
+									</p>
 									<!-- / .padding --> 
 								</div>
 								<!-- / .inside --> 

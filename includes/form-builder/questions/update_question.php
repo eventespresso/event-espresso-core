@@ -15,9 +15,8 @@ function event_espresso_form_builder_update(){
 	}
 		
 	if( $wpdb->query("UPDATE " . EVENTS_QUESTION_TABLE . " SET question_type = '" . $question_type . "', question = '" . $question_text . "', response = '" . $values . "', required = '" . $required . "',admin_only = '" . $admin_only . "', required_text = '" . $required_text . "', sequence = '" . $sequence . "' WHERE id = '" . $question_id . "'") ) {
-		$notices['updates'][] = 'The question ' .  htmlentities2($_REQUEST['question']) . ' has been updated.';
+		$notices['updates'][] = __('The question ', 'event_espresso') .  htmlentities2($_REQUEST['question']) . __(' has been updated.', 'event_espresso');
 	}else {
-		$notices['errors'][] = 'The question ' .  htmlentities2($_REQUEST['question']) . ' was not updated .';
+		$notices['errors'][] = __('The question ', 'event_espresso') .  htmlentities2($_REQUEST['question']) . __(' was not updated .', 'event_espresso');
 	}
-	do_action('espresso_admin_notices');
 }

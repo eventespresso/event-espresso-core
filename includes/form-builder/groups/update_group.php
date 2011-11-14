@@ -35,9 +35,8 @@ function event_espresso_form_group_update($group_id) {
         }
     }
 			if( $need_a_fail_query_please ) {
-				$notices['errors'][] = 'There was an error in your submission, please try again. The group was not updated!';
+				$notices['errors'][] = __('There was an error in your submission of group', 'event_espresso') . $group_name .  __(' The group was not updated!', 'event_espresso');
 			}else {
-				$notices['updates'][] = 'The group has been updated.';
+				$notices['updates'][] = __('The group ', 'event_espresso') . $group_name . __(' has been updated.', 'event_espresso');
 			}
-			do_action('espresso_admin_notices');
 }

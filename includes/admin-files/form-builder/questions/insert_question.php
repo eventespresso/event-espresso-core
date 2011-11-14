@@ -21,10 +21,9 @@ function event_espresso_form_builder_insert(){
 
 	if( $wpdb->query("INSERT INTO " . EVENTS_QUESTION_TABLE . " (question_type, question, response, required,admin_only, sequence,wp_user)"
 				. " VALUES ('" . $question_type . "', '" . $question . "', '" . $question_values . "', '" . $required . "', '" . $admin_only . "', " . $sequence . ",'".$current_user->ID."')")) {
-			$notices['updates'][] = 'The question ' .  htmlentities2($_REQUEST['question']) . ' has been added.';
+			$notices['updates'][] = __('The question', 'event_espresso') .  htmlentities2($_REQUEST['question']) . __(' has been added.', 'event_espresso');
 	}else {
-			$notices['errors'][] = 'The question ' .  htmlentities2($_REQUEST['question']) . ' was not saved .';
+			$notices['errors'][] = __('The question ', 'event_espresso') .  htmlentities2($_REQUEST['question']) . __(' was not saved .', 'event_espresso');
 	}
-	do_action('espresso_admin_notices');
 	
 }
