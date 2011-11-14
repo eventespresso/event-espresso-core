@@ -87,6 +87,7 @@ function edit_event_discount(){
           <li>
             <p>
               <input class="button-secondary" type="submit" name="Submit" value="<?php _e('Update','event_espresso'); ?>" id="update_discount" />
+								<?php wp_nonce_field( 'espresso_form_check', 'edit_promocode' ) ?>
             </p>
           </li>
         </ul>

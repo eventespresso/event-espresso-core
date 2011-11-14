@@ -61,13 +61,14 @@ function add_new_event_discount(){
             <label><strong>
               <?php _e('Promotional Code Description','event_espresso'); ?>
               </strong></label> 
-              <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=description_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a><br />
+              <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=description_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a><br />
             <br />
             <textarea rows="5" cols="300" name="coupon_code_description" id="coupon_code_description_new"  class="my_ed"></textarea>
           </li>
           <li>
             <p>
               <input class="button-secondary" type="submit" name="add_new_discount" value="<?php _e('Submit','event_espresso'); ?>" id="add_new_discount" />
+								<?php wp_nonce_field( 'espresso_form_check', 'add_new_promocode' ) ?>
             </p>
           </li>
         </ul>

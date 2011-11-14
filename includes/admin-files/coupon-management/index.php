@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_discount_config_mnu() {
-    global $wpdb;
+    global $wpdb, $notices;
     ?>
     <div class="wrap">
         <div id="icon-options-event" class="icon32"> </div>
@@ -12,6 +12,7 @@ function event_espresso_discount_config_mnu() {
             }
             ?>
         </h2>
+					
         <div id="poststuff" class="metabox-holder has-right-sidebar">
             <?php event_espresso_display_right_column(); ?>
             <div id="post-body">
@@ -47,7 +48,7 @@ function event_espresso_discount_config_mnu() {
                         delete_event_discount();
                     }
                     ?>
-
+											<?php do_action('espresso_admin_notices') ?>
                     <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
                         <table id="table" class="widefat manage-discounts">
                             <thead>
