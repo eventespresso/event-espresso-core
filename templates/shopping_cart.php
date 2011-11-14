@@ -79,20 +79,19 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) ){
 			<div class="mer-event-submit ui-widget-content ui-corner-all">
 				<input type="hidden" name="event_name[<?php echo $r->id; ?>]" value="<?php echo stripslashes_deep( $r->event_name ); ?>" />
 				<input type="hidden" name="regevent_action" value="load_checkout_page" />
-  
+
 			<div id="event_espresso_coupon_wrapper" class="clearfix event-data-display">
 				<label class="coupon-code" for="event_espresso_coupon_code">
 					<?php _e( 'Enter Coupon Code ', 'event_espresso' ); ?>
 				</label>
 				<input onkeydown="if(event.keyCode==13) {document.getElementById('event_espresso_refresh_total').focus(); return false;}" type="text" name="event_espresso_coupon_code" id ="event_espresso_coupon_code" value="<?php echo $_SESSION['event_espresso_coupon_code']; ?>"/>
 			</div>
-  
-			<div id="event_espresso_total_wrapper" class="clearfix event-data-display"> 
-				<span id="event_total_price" class="event_total_price"><?php echo $_SESSION['event_espresso_grand_total']; ?></span> 
+
+			<div id="event_espresso_total_wrapper" class="clearfix event-data-display">
 					<a href="#" id="event_espresso_refresh_total"><?php _e( 'Refresh Total', 'event_espresso' ); ?></a>
 				<span class="event_total_price">
-					<?php _e( 'Total (' . $org_options['currency_symbol'] . '):', 'event_espresso' ); ?>
-				</span> 
+					<?php _e( 'Total (' . $org_options['currency_symbol'] . '): ' . $_SESSION['event_espresso_grand_total'], 'event_espresso' ); ?>
+				</span>
 			</div>
 
 			<input type="submit" class="submit btn_event_form_submit ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" name="Continue" id="event_espresso_continue_registration" value="<?php _e( 'Continue to registration page', 'event_espresso' ); ?>" />
