@@ -5,7 +5,7 @@ require_once("update_event_category.php");
 require_once("add_cat_to_db.php");
 
 function event_espresso_categories_config_mnu() {
-    global $wpdb, $current_user;
+    global $wpdb, $current_user, $notices;
     ?>
     <div class="wrap">
         <div id="icon-options-event" class="icon32"> </div>
@@ -66,6 +66,7 @@ function event_espresso_categories_config_mnu() {
                         }
                     }
                     ?>
+											<?php do_action('espresso_admin_notices') ?>
                     <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 
                         <table id="table" class="widefat manage-categories">

@@ -1,6 +1,6 @@
 <?php 
 function update_event_category(){
-	global $wpdb;
+	global $wpdb, $notices;
 
 if( check_admin_referer('espresso_form_check', 'ee_update_cat') ) {
 $category_id= $_REQUEST['category_id'];
@@ -17,12 +17,11 @@ $category_id= $_REQUEST['category_id'];
 		
 		$sql_data = array('%s','%s','%s','%s');
 	
-	if ($wpdb->update( get_option('events_category_detail_tbl'), $sql, $update_id, $sql_data, array( '%d' ) )){?>
-	<div id="message" class="updated fade"><p><strong><?php _e('The category has been updated.', 'event_espresso'); ?> </strong></p></div>
-<?php }else { ?>
-	<div id="message" class="error"><p><strong><?php _e('The category was not updated.', 'event_espresso'); ?></strong></p></div>
-
-<?php
+	if ($wpdb->update( get_option('events_category_detail_tbl'), $sql, $update_id, $sql_data, array( '%d' ) )){
+	$notices['updates'][] = __('The category ', 'event_espresso') . $category_name . __(' has been updated.', 'event_espresso');
+ }else { 
+	$notices['errors'][] = __('The category ', 'event_espresso') . $category_name . __(' has not been updated', 'event_espresso');
 	}
+	
 }
 }// end nonce check

@@ -1,6 +1,6 @@
 <?php
 function add_cat_to_db(){
-	global $wpdb,$current_user;
+	global $wpdb, $current_user, $notices;
 
 	if( check_admin_referer('espresso_form_check', 'ee_add_new_cat') ){
 	if ( $_REQUEST['action'] == 'add' ){
@@ -15,12 +15,10 @@ function add_cat_to_db(){
 		
 		$sql_data = array('%s','%s','%s','%s','%d');
 	
-		if ($wpdb->insert( get_option('events_category_detail_tbl'), $sql, $sql_data )){?>
-		<div id="message" class="updated fade"><p><strong><?php _e('The category has been added.', 'event_espresso'); ?></strong></p></div>
-	<?php }else { ?>
-		<div id="message" class="error"><p><strong><?php _e('The category   was not saved.', 'event_espresso'); ?> </strong></p></div>
-
-<?php
+		if ($wpdb->insert( get_option('events_category_detail_tbl'), $sql, $sql_data )){
+				$notices['updates'][] = __('The category ', 'event_espresso') . $category_name .  __(' has been added', 'event_espresso');
+	 }else { 
+				$notices['errors'][] = __('The category', 'event_espresso') . $category_name .  __(' was not saved!', 'event_espresso');		
 		}
 	}
 }
