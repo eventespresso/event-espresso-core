@@ -22,28 +22,28 @@ function add_new_event() {
             <div id="delete-action"> <a class="submitdelete deletion" href="admin.php?page=events" onclick="return confirm('<?php _e('Are you sure you want to cancel ' . $event_name . '?', 'event_espresso'); ?>')">
               <?php _e('Cancel', 'event_espresso'); ?>
               </a> </div>
-              
+
             <div id="publishing-action">
 												<?php wp_nonce_field( 'espresso_form_check', 'ee_add_new_event' ); ?>
               <input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit New Event', 'event_espresso'); ?>" id="add_new_event" />
-              
+
             </div>
-           
-            <!-- /publishing-action --> 
+
+            <!-- /publishing-action -->
           </div>
            <?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) {
 				if ( function_exists('espresso_manager_list') ){
 					echo '<div style="padding:10px 0 10px 10px" class="clearfix">'.espresso_manager_list($wp_user).'</div>';
 				}
 			}?>
-          <!-- /major-publishing-actions --> 
+          <!-- /major-publishing-actions -->
         </div>
-        <!-- /submitpost --> 
+        <!-- /submitpost -->
       </div>
-      <!-- /inside --> 
+      <!-- /inside -->
     </div>
     <!-- /submitdiv -->
-    
+
     <?php
             $values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
 
@@ -58,7 +58,7 @@ function add_new_event() {
                         . '<p>' . __('Display  description? ', 'event_espresso') . select_input('display_desc', $values, $display_desc) . '</p>'
                         . '<p>' . __('Display  registration form? ', 'event_espresso') . select_input('display_reg_form', $values, $display_reg_form) . '</p>';
             }//Display Lite version options - End
-			
+
             $reg_limit = isset($reg_limit) ? $reg_limit : '';
             //$event_meta = isset($event_meta) ? $event_meta : array();
             $additional_limit = isset($additional_limit) ? $additional_limit : '';
@@ -68,7 +68,7 @@ function add_new_event() {
                     '<p><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input id="max-registrants" type="text" name="additional_limit" value="' . $additional_limit . '" size="4">' .
                     $advanced_options
             );
-			
+
 			//Featured image section
 			if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true){
 				espresso_featured_image_event_admin($event_meta);
@@ -95,7 +95,7 @@ function add_new_event() {
                                 {
                             ?>
             <option value="<?php echo $seating_chart->id; ?>"><?php echo $seating_chart->name; ?></option>
-            <?php                        
+            <?php
                                 }
                             ?>
           </select>
@@ -107,7 +107,7 @@ function add_new_event() {
 		/*
 		 * End
 		 */
-		 
+
       ###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
       if (isset($org_options['use_attendee_pre_approval']) && $org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
        ?>
@@ -129,8 +129,8 @@ function add_new_event() {
     <?php
        }
 	   ########## END #################################
-	   
-	   
+
+
 	 if (function_exists('espresso_ticket_dd') && $espresso_premium == true) {
           ?>
                 <div  id="ticket-options" class="postbox">
@@ -140,13 +140,13 @@ function add_new_event() {
                     <?php _e('Custom Tickets', 'event_espresso'); ?>
                     </span> </h3>
                   <div class="inside">
-                    <p><?php echo espresso_ticket_dd(); ?></p>
+                    <p><?php echo espresso_ticket_dd(); ?> <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=custom_ticket_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a></p>
                   </div>
                 </div>
                 <!-- /ticket-options -->
   		  <?php
 	 }
-	 
+
 	 if (function_exists('espresso_certificate_dd') && $espresso_premium == true) {
           ?>
                 <div  id="certificate-options" class="postbox">
@@ -162,7 +162,7 @@ function add_new_event() {
                 <!-- /certificate-options -->
   		  <?php
 	 }
-				
+
 
 				if (get_option('events_members_active') == 'true' && $espresso_premium == true) {
                 ?>
@@ -204,15 +204,15 @@ function add_new_event() {
       <div class="inside"> <?php echo event_espresso_get_categories(); ?> </div>
     </div>
     <!-- /event-category -->
-    
+
     <?php
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
 	}
 ?>
-    <?php echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups); ?> 
+    <?php echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups); ?>
     <!-- /event-questions -->
-    
+
     <?php
          if (function_exists('espresso_personnel_cb') && isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 				?>
@@ -241,9 +241,9 @@ function add_new_event() {
     <?php } ?>
 
   </div>
-  <!-- /side-sortables --> 
+  <!-- /side-sortables -->
 </div>
-<!-- /side-info-column --> 
+<!-- /side-info-column -->
 
 <!-- Left Column-->
 <div id="post-body">
@@ -257,7 +257,7 @@ function add_new_event() {
         </label>
         <input type="text" name="event" size="30" tabindex="1" value="<?php echo isset($event_name) ? $event_name : ''; ?>" id="title" autocomplete="off" />
       </div>
-      
+
       <!-- /titlewrap -->
       <div class="inside">
         <div id="edit-slug-box"> <strong>
@@ -272,7 +272,7 @@ function add_new_event() {
               ?>
         </div>
       </div>
-      <!-- /edit-slug-box --> 
+      <!-- /edit-slug-box -->
     </div>
     <!-- /titlediv -->
     <div id="descriptiondivrich" class="postarea"> <strong>
@@ -345,7 +345,7 @@ function add_new_event() {
                 <?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] != 'Y') && $espresso_premium == true) { ?>
                 <p><span class="run-in">
                   <?php _e('Current Time:', 'event_espresso'); ?>
-                  </span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> 
+                  </span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span>
                   <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=current_time_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
                   <a class="change-date-time" href="options-general.php" target="_blank">
                   <?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
@@ -359,20 +359,20 @@ function add_new_event() {
                       :</label>
                     <?php echo eventespresso_ddtimezone($event_id) ?></p>
                 </fieldset>
-                <?php  } 
-				
+                <?php  }
+
 				if ($espresso_premium == true){
 					echo get_option('event_espresso_re_active') == 1 ? '' : '<p class="recurring-available"><a class="inform" href="http://eventespresso.com/?p=3319" target="_blank" title="Visit eventespresso.com for full details">' . __('Recurring Event Manager Now Available!', 'event_espresso') . '</a></p>';
 				}
 				?>
-                
+
                 </td>
               <?php // ADDED TIME REGISTRATION LIMITS  ?>
               <td class="b"><fieldset id="add-register-times">
                   <legend>
                   <?php _e('Registration Times', 'event_espresso'); ?>
                   <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=reg_date_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
-                  
+
                   </legend>
                   <?php echo event_espresso_timereg_editor(); ?>
                 </fieldset>
@@ -429,9 +429,9 @@ function add_new_event() {
           </span> </h3>
         <div class="inside">
           <table width="100%" border="0" cellpadding="5">
-            
+
               <tr>
-            
+
             <?php
 			if (function_exists('espresso_venue_dd') && isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
 				$ven_type = 'class="use-ven-manager"';
@@ -492,9 +492,9 @@ function add_new_event() {
                 </p>
               </fieldset></td>
               <td <?php echo $ven_type; ?>>
-            
+
               <fieldset id="venue-info">
-            
+
             <legend>
             <?php _e('Venue Information', 'event_espresso'); ?>
             </legend>
@@ -523,7 +523,7 @@ function add_new_event() {
               <input id="ven-image" size="20" tabindex="110"  type="text"  value="<?php echo isset($venue_image) ? $venue_image : '' ?>" name="venue_image" />
             </p>
               </td>
-            
+
             <?php } ?>
             <td <?php echo $ven_type ?>>
             <fieldset id="virt-location">
@@ -550,14 +550,14 @@ function add_new_event() {
               </fieldset>
               </td>
               </tr>
-                        
+
           </table>
 										<p>
 										  <label for="enable-for-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, 'N', 'id="enable-for-gmap"')?></label>
 										</p>
         </div>
       </div>
-      
+
       <!-- /event-location-->
       <?php if ($espresso_premium == true) { ?>
       <div  id="event-meta" class="postbox">
@@ -626,7 +626,7 @@ function add_new_event() {
 	}
 ?>
     </div>
-    <!-- /normal-sortables--> 
+    <!-- /normal-sortables-->
   </div>
   <!-- /post-body-content -->
   <?php include_once('create_events_help.php'); ?>
@@ -650,8 +650,8 @@ function add_new_event() {
 			jQuery("#start_date").change(function(){
 				jQuery("#end_date").val(jQuery(this).val());
 			});
-    
-			var header_clicked = false; 
+
+			var header_clicked = false;
 			jQuery('#upload_image_button').click(function() {
 	     formfield = jQuery('#upload_image').attr('name');
 	     tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
@@ -660,7 +660,7 @@ function add_new_event() {
 	   });
     <?php if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true){ ?>
 		window.original_send_to_editor = window.send_to_editor;
-					 
+
 		window.send_to_editor = function(html) {
 			if(header_clicked) {
 				imgurl = jQuery('img',html).attr('src');
@@ -673,7 +673,7 @@ function add_new_event() {
 				//alert('delete this image');
 				jQuery('#' + formfield).val('');
 				jQuery("#image-display").empty();
-				jQuery('#remove-image').remove();			
+				jQuery('#remove-image').remove();
 				});
 				} else {
 					window.original_send_to_editor(html);
