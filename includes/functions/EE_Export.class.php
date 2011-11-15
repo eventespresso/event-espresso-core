@@ -223,7 +223,7 @@
 	
 	
 	/**
-	 *			@Legacy code  ; )    Export data for event
+	 *			@Legacy code  ; )	Export data for event
 	 *		  @access private 
 	 *			@return void
 	 */	

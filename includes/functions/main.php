@@ -973,9 +973,9 @@ if (!function_exists('event_espresso_require_template')) {
 	 * event_espresso_require_template()
 	 *
 	 * @param mixed $template_file_name // Name of template file.
-	 * @param bool $must_exist          // Error if neither file exist.
-	 * @param bool $as_require_once     // True for require_once(), False for require()
-	 * @return void    // No return value. File already included.
+	 * @param bool $must_exist		  // Error if neither file exist.
+	 * @param bool $as_require_once	 // True for require_once(), False for require()
+	 * @return void	// No return value. File already included.
 	 *
 	 * Usage: event_espresso_require_template('shopping_cart.php')
 	 */
@@ -992,9 +992,9 @@ if (!function_exists('event_espresso_require_gateway')) {
 	 * event_espresso_require_gateway()
 	 *
 	 * @param mixed $template_file_name // Name of template file.
-	 * @param bool $must_exist          // Error if neither file exist.
-	 * @param bool $as_require_once     // True for require_once(), False for require()
-	 * @return void    // No return value. File already included.
+	 * @param bool $must_exist		  // Error if neither file exist.
+	 * @param bool $as_require_once	 // True for require_once(), False for require()
+	 * @return void	// No return value. File already included.
 	 *
 	 * Usage: event_espresso_require_gateway('PaymentGateway.php')
 	 */
@@ -1011,11 +1011,11 @@ if (!function_exists('event_espresso_require_file')) {
 	 * event_espresso_require_file()
 	 *
 	 * @param mixed $template_file_name // Name of template file.
-	 * @param mixed $path_first         // First choice for file location.
-	 * @param mixed $path_first         // Fallback location for file.
-	 * @param bool $must_exist          // Error if neither file exist.
-	 * @param bool $as_require_once     // True for require_once(), False for require()
-	 * @return void    // No return value. File already included.
+	 * @param mixed $path_first		 // First choice for file location.
+	 * @param mixed $path_first		 // Fallback location for file.
+	 * @param bool $must_exist		  // Error if neither file exist.
+	 * @param bool $as_require_once	 // True for require_once(), False for require()
+	 * @return void	// No return value. File already included.
 	 *
 	 * Usage: event_espresso_require_file('shopping_cart.php',EVENT_ESPRESSO_TEMPLATE_DIR,EVENT_ESPRESSO_PLUGINFULLPATH.'templates/')
 	 */
