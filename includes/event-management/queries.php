@@ -25,7 +25,7 @@ function espresso_total_events(){
 		$sql1 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql1 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 		$sql1 .= " WHERE event_status != 'D'";
-		$sql1 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
+		$sql1 .= !empty($group) ? " AND l.locale_id IN (" . $group . ") " : '';
 		$sql1 .= ") UNION (";
 	}
 	$sql1 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";

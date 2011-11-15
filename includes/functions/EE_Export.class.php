@@ -391,19 +391,21 @@
 		if (function_exists('espresso_member_data')&&espresso_member_data('role')=='espresso_group_admin') {
 			$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 			$group = unserialize($group);
-			$group = implode(",",$group);
+			if (!empty($group)){
+				$group = implode(",",$group);
+			}
 			$sql .= "SELECT ed.event_name, ed.start_date, a.id, a.registration_id, a.lname, a.fname, a.email, a.address, a.address2, a.city";
 			$sql .= ", a.state, a.zip, a.phone, a.payment, a.date, a.payment_status, a.txn_type, a.txn_id";
 			$sql .= ", a.amount_pd, a.quantity, a.coupon_code, a.checked_in, a.checked_in_quantity";
 			$sql .= ", a.payment_date, a.event_time, a.price_option";
 			$sql .= " FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=a.event_id ";
-			if ($group !='') {
+			if (!empty($group)) {
 				$sql .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = ed.id ";
 				$sql .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			}
 			$sql .= $_REQUEST['all_events'] == "true"? '' :	" WHERE ed.id = '" . $this->event_id . "' ";
-			$sql .= $group !='' ? " AND  l.locale_id IN (" . $group . ") " : '';
+			$sql .= !empty($group) ? " AND  l.locale_id IN (" . $group . ") " : '';
 			$sql .= ") UNION (";
 		}
 		$sql .= "SELECT ed.event_name, ed.start_date, a.id, a.registration_id, a.lname, a.fname, a.email, a.address, a.address2, a.city";
