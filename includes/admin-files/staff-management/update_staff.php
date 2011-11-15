@@ -15,7 +15,7 @@ function update_event_staff(){
 	$staff_meta['city'] = esc_html($_REQUEST['city']);
 	$staff_meta['country'] = esc_html($_REQUEST['country']);
 	
-    $meta = serialize($staff_meta);
+	$meta = serialize($staff_meta);
 		
 	
 	$sql=array('name'=>$_REQUEST['name'],'role'=>$_REQUEST['role'],'email'=>$_REQUEST['email'], 'meta'=>$meta); 
@@ -25,13 +25,13 @@ function update_event_staff(){
 		$sql_data = array('%s','%s','%s','%s');
 		$wpdb->update( EVENTS_PERSONNEL_TABLE, $sql, $update_id, $sql_data, array( '%d' ) );
 		/*echo 'Debug: <br />';
-                    print_r($sql);
-                    print 'Number of vars: ' . count ($sql);
-                    echo '<br />';
-                    print 'Number of cols: ' . count($sql_data)*/;
+					print_r($sql);
+					print 'Number of vars: ' . count ($sql);
+					echo '<br />';
+					print 'Number of cols: ' . count($sql_data)*/;
 		?>
 		<div id="message" class="updated fade">
 			<p><strong><?php _e('The person  has been updated.','event_espresso'); ?></strong></p>
-         </div>
+		 </div>
 <?php
 }

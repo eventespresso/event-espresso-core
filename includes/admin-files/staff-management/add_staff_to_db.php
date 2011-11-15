@@ -39,7 +39,7 @@ function add_staff_to_db(){
 				  <p><strong>
 					<?php _e('The person  was not saved.','event_espresso'); ?>
 					</strong></p>
-                    <?php echo 'Debug: <br />';
+					<?php echo 'Debug: <br />';
 					  print_r($sql);
 					  print 'Number of vars: ' . count ($sql);
 					  echo '<br />';
