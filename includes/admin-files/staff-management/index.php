@@ -1,6 +1,6 @@
 <?php 
 function event_espresso_staff_config_mnu(){
-	global $wpdb, $espresso_wp_user, $espresso_premium;
+	global $wpdb, $espresso_wp_user, $espresso_premium, $notices;
 	$_REQUEST[ 'action' ] = isset($_REQUEST[ 'action' ]) ? $_REQUEST[ 'action' ]:NULL;
 	?>
 <div class="wrap">
@@ -52,7 +52,7 @@ if ($_REQUEST['action'] == 'add_new_staff'){require_once("add_new_staff.php");ad
 if ($_REQUEST['action'] == 'edit'){require_once("edit_staff.php");edit_event_staff();}
 do_action('espresso_admin_notices');
 ?>
-	  <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
+	<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
 	   
 		<table id="table" class="widefat manage-discounts"> 
 		  <thead>

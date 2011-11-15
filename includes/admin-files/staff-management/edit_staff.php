@@ -131,6 +131,7 @@ function edit_event_staff(){
 						</div><!-- /.postbox -->
 		  <p>
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Staff Member'); ?>" id="update_staff" />
+			<?php wp_nonce_field( 'espresso_form_check', 'update_staff' ) ?>
 		  </p>
 					</div><!-- /#descriptiondivrich -->
 	  </form>

@@ -2,7 +2,7 @@
 function add_staff_to_db(){
 	global $wpdb, $espresso_wp_user, $notices;
 	$wpdb->show_errors();
-	if ( $_REQUEST['action'] == 'add' ){
+	if ( $_REQUEST['action'] == 'add' && check_admin_referer('espresso_form_check', 'add_new_staff') ){
 		//print_r($_REQUEST);
 		$staff_meta['phone'] = $_REQUEST['phone'];
 		$staff_meta['twitter'] = $_REQUEST['twitter'];
@@ -32,9 +32,9 @@ function add_staff_to_db(){
 		$sql_data = array('%s', '%s', '%s','%s','%d','%s');
 			
 		if ($wpdb->insert( EVENTS_PERSONNEL_TABLE, $sql, $sql_data )){
-			$notices['updates'][] = __('The person ', 'event_espresso') . $sql['name'] .  __(' has been updated', 'event_espresso');
+			$notices['updates'][] = __('The staff member ', 'event_espresso') . $sql['name'] .  __(' has been updated', 'event_espresso');
 		}else{ 
-			$notices['errors'][] = __('The person', 'event_espresso') . $sql['name'] .  __(' was not updated!', 'event_espresso');		
+			$notices['errors'][] = __('The staff member', 'event_espresso') . $sql['name'] .  __(' was not updated!', 'event_espresso');		
 		}
 	}
 }

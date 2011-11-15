@@ -1,6 +1,7 @@
 <?php 
 function update_event_staff(){
 	global $wpdb, $notices;
+	if( check_admin_referer('espresso_form_check', 'update_staff') ) {
 	$wpdb->show_errors();
 	//print_r($_REQUEST);
 	$staff_meta['phone'] = $_REQUEST['phone'];
@@ -28,9 +29,10 @@ function update_event_staff(){
 	$update_id = array('id'=> $_REQUEST['staff_id']);
 		
 	$sql_data = array('%s','%s','%s','%s');
+	}
 	if ( $wpdb->update(EVENTS_PERSONNEL_TABLE, $sql, $update_id, $sql_data, array( '%d' )) ){
-		$notices['updates'][] = __('The locale ', 'event_espresso') . $sql['name'] .  __(' has been updated', 'event_espresso');
+		$notices['updates'][] = __('The staff member ', 'event_espresso') . $sql['name'] .  __(' has been updated', 'event_espresso');
 	}else{ 
-		$notices['errors'][] = __('The locale', 'event_espresso') . $sql['name'] .  __(' was not updated!', 'event_espresso');		
+		$notices['errors'][] = __('The staff member', 'event_espresso') . $sql['name'] .  __(' was not updated!', 'event_espresso');		
 	}
 }

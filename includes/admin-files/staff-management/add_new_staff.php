@@ -119,6 +119,7 @@ function add_new_event_staff(){
 		 
 		  <p>
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Staff Member'); ?>" id="add_new_staff" />
+			<?php wp_nonce_field( 'espresso_form_check', 'add_new_staff' ) ?>
 		  </p>
  				</div><!-- /#descriptiondivrich -->
 	  </form>
