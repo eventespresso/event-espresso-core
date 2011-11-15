@@ -309,7 +309,7 @@ if (!function_exists('espresso_chart_display')) {
 							}],
 						legend: {
 							show: true,
-							location: 'ne',     // compass direction, nw, n, ne, e, se, s, sw, w.
+							location: 'ne',	 // compass direction, nw, n, ne, e, se, s, sw, w.
 							placement: 'outsideGrid'
 
 						},
@@ -360,18 +360,18 @@ if (!function_exists('event_espresso_meta_edit')) {
 							} else {
 								?>
 					  <li>
-					    <label>
+						<label>
 							<?php _e('Key: ', 'event_espresso'); ?>
-					    </label>
-					    <select id="emeta[]" name="emeta[]">
+						</label>
+						<select id="emeta[]" name="emeta[]">
 						<?php foreach ($good_meta as $k2 => $v2) { ?>
-						      <option value="<?php echo $k2; ?>" <?php echo ($k2 == $k ? "SELECTED" : null); ?>><?php echo $k2; ?></option>
+							  <option value="<?php echo $k2; ?>" <?php echo ($k2 == $k ? "SELECTED" : null); ?>><?php echo $k2; ?></option>
 						<?php } ?>
-					    </select>
-					    <label for="meta-value">
+						</select>
+						<label for="meta-value">
 					<?php _e('Value: ', 'event_espresso'); ?>
-					    </label>
-					    <input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
+						</label>
+						<input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
 						<?php
 						echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
 						?>
