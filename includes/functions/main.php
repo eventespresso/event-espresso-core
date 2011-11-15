@@ -1244,3 +1244,26 @@ function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
 	}
 	return $cost;
 }
+
+//This function returns the user id of the current user, if the permissions pro addon is installed. 
+//IF the permissions pro addon is installed and the admin has loaded a different manager id, then the system will return that users id.
+//Otherwise it returns the id of the primary admin. 
+function espresso_get_user_id($admin_message =''){
+	global $notices, $current_user;
+	if ( function_exists('espresso_manager_pro_version') ){
+		$wp_user = $current_user->ID;
+			
+		//If an event manager is selected, then we need to load that persons info
+		$selected_user = espresso_get_selected_manager();
+		if (!empty($selected_user)){
+			$wp_user = $selected_user;
+		}
+		
+	}else{
+		$wp_user = 1;
+	}
+	
+	global $espresso_wp_user;
+	$espresso_wp_user = $wp_user;
+	return $wp_user;
+}
