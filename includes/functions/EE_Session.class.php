@@ -33,17 +33,11 @@
 	// and the session data
 	var $_session_data = array();
 	
-	// data formats for the session data
-	var $_data_format = array();
-
 	// default session expiration 2 hours
 	var $_expiration = 7200;
 	
 	// current time with GMT offset
 	var $_time;
-	
-	// db table where session data is stored
-	var $_session_table = ''; 
 	
 	// whether to encrypt session data
 	var $_use_encrytion = TRUE; 
