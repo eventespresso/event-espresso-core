@@ -72,7 +72,7 @@ function espresso_calendar_install(){
 					'espresso_calendar_dayNames' => "'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'",
 					'espresso_calendar_dayNamesShort' => "'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'"
 				);
-	add_option( 'espresso_calendar_settings', $espresso_calendar );
+	update_option( 'espresso_calendar_settings', $espresso_calendar );
 }
 register_activation_hook(__FILE__,'espresso_calendar_install');
 
@@ -114,8 +114,8 @@ function espresso_calendar_config_mnu()	{
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
 		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
-		$espresso_calendar['ee_event_background'] = $_POST['ee_event_background'];
-		$espresso_calendar['ee_event_text_color'] = $_POST['ee_event_text_color'];
+		$espresso_calendar['ee_event_background'] = (!empty($_POST['ee_event_background']) )? $_POST['ee_event_background'] : $espresso_calendar['ee_event_background'];
+		$espresso_calendar['ee_event_text_color'] = (!empty($_POST['ee_event_text_color']) )? $_POST['ee_event_text_color'] : $espresso_calendar['ee_event_text_color'];
 		$espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
 		$espresso_calendar['use_themeroller'] = $_POST['use_themeroller'];
 		$espresso_calendar['espresso_calendar_titleFormat'] = $_POST['espresso_calendar_titleFormat'];
@@ -587,7 +587,7 @@ echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['esp
 			})		
 		
 		// color picker initialisation
-		<?php if($espresso_calendar['espresso_use_pickers'] == true){ ?>
+		<?php if($espresso_calendar['espresso_use_pickers'] == 'true'){ ?>
 		$('input#event-background, input#event-text').wheelColorPicker({ 
 		dir: '<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>scripts/wheelcolorpicker',
 				preview: true,
@@ -656,7 +656,7 @@ if (!function_exists('espresso_init_calendar_style')) {
 add_action('wp_print_styles', 'espresso_init_calendar_style',30);
 
 // Add our embedded head styles for color picker selection 
-if($espresso_calendar['espresso_use_pickers'] == true) { 
+if($espresso_calendar['espresso_use_pickers'] == 'true') { 
 		function event_background_selection() {
 		global $espresso_calendar;
 		?>
@@ -664,7 +664,7 @@ if($espresso_calendar['espresso_use_pickers'] == true) {
 		<?php if( isset( $espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']) ) {?>
 				.fc-event-skin {
 				background-color: #<?php echo $espresso_calendar['ee_event_background'] ?>;
-						border: 1px solid #<?php echo $espresso_calendar['ee_event_background'] ?>;
+				border: 1px solid #<?php echo $espresso_calendar['ee_event_background'] ?>;
 						}
 		<?php } ?>
 		<?php	if( isset( $espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']) ) { ?>
