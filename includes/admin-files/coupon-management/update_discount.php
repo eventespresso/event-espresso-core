@@ -23,7 +23,6 @@ function update_event_discount() {
 		
 	if ($wpdb->update( EVENTS_DISCOUNT_CODES_TABLE, $sql, $update_id, $sql_data, array( '%d' ) )){ 
 		$notices['updates'][] = __('The discount code ', 'event_espresso') . $sql['coupon_code'] .  __(' was updated', 'event_espresso');		
-					
 	}else { 
 		$notices['errors'][] = __('The discount code ', 'event_espresso') . $sql['coupon_code'] .  __(' was not updated', 'event_espresso');
 

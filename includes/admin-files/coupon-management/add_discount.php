@@ -1,13 +1,10 @@
 <?php
 function add_discount_to_db(){
-	global $wpdb, $current_user, $notices;
+	global $wpdb, $espresso_wp_user, $notices;
 	$wpdb->show_errors();
 	if (isset($_POST['add_new_discount']) && check_admin_referer('espresso_form_check', 'add_new_promocode') ){
 		if ( $_REQUEST['action'] == 'add' ){
 	
-			if (!function_exists('espresso_member_data'))
-				$current_user->ID = 1;
-			
 			$sql=array(
 			'coupon_code'=>$_REQUEST['coupon_code'],
 			
@@ -19,7 +16,7 @@ function add_discount_to_db(){
 			'coupon_code_price'=>$_REQUEST['coupon_code_price'],
 			'coupon_code_description'=>$_REQUEST['coupon_code_description'],
 			'use_percentage'=>$_REQUEST['use_percentage'],
-			'wp_user'=>$current_user->ID
+			'wp_user'=>$espresso_wp_user
 		); 
 		
 			$sql_data = array('%s','%s','%s','%s','%s','%s','%s','%s','%d');
@@ -29,18 +26,6 @@ function add_discount_to_db(){
 	
 			}else{ 
 				$notices['errors'][] = __('The discount code ', 'event_espresso') . $sql['coupon_code'] .  __(' was not saved', 'event_espresso');
-				?>
-				<div>  
-				<b><?php print mysql_error() ?>.</b><br />
-				<?php
-					print_r($sql);
-					print 'Number of vars: ' . count ($sql);
-					echo '<br />';
-					print 'Number of cols: ' . count($sql_data);
-					echo '<br />';
-				?>
-				</div>
-		<?php
 			}
 		}
 	}
