@@ -124,7 +124,6 @@ function event_espresso_display_quickpay_settings() {
 													<input name="quickpay_currency" value="EUR" <?php if ($quickpay_settings['quickpay_currency']=='EUR') { ?>checked="checked"<?php } ?> type="RADIO">EUR<br>
 													<input name="quickpay_currency" value="DKK" <?php if ($quickpay_settings['quickpay_currency']=='DKK') { ?>checked="checked"<?php } ?> type="RADIO">DKK<br>
 													<input name="quickpay_currency" value="USD" <?php if ($quickpay_settings['quickpay_currency']=='USD') { ?>checked="checked"<?php } ?> type="RADIO">USD<br>
-													<p><small>Choose your currency. Please make sure to use the same currency as in your WP E-Commerce currency settings.</small></p>
 												</li>
                     </ul></td>
 										<td>
