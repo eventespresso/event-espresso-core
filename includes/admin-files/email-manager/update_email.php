@@ -1,6 +1,6 @@
 <?php 
 function update_event_email(){
-	global $wpdb;
+	global $wpdb, $notices;
 $email_id= $_REQUEST['email_id'];
 		$email_name= $_REQUEST['email_name'];
 		$email_subject= $_REQUEST['email_subject'];
@@ -12,11 +12,9 @@ $email_id= $_REQUEST['email_id'];
 		
 		$sql_data = array('%s','%s','%s');
 	
-	if ($wpdb->update( EVENTS_EMAIL_TABLE, $sql, $update_id, $sql_data, array( '%d' ) )){?>
-	<div id="message" class="updated fade"><p><strong><?php _e('The email', 'event_espresso'); ?> <?php echo stripslashes(htmlentities2($_REQUEST['email_name']));?> <?php _e('has been updated', 'event_espresso'); ?>.</strong></p></div>
-<?php }else { ?>
-	<div id="message" class="error"><p><strong><?php _e('The email', 'event_espresso'); ?> <?php echo stripslashes(htmlentities2($_REQUEST['email_name']));?> <?php _e('was not updated', 'event_espresso'); ?>. <?php print mysql_error() ?>.</strong></p></div>
-
-<?php
+	if ($wpdb->update( EVENTS_EMAIL_TABLE, $sql, $update_id, $sql_data, array( '%d' ) )){
+		$notices['updates'][] = __('The email ', 'event_espresso') . $sql['email_name'] .  __(' was saved', 'event_espresso');
+	}else{ 
+		$notices['errors'][] = __('The email ', 'event_espresso') . $sql['email_name'] .  __(' was not saved', 'event_espresso');
 	}
 }
