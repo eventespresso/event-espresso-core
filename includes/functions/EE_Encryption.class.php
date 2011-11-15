@@ -266,7 +266,7 @@ class EE_Encryption {
 			return FALSE;
 		}
 		
-		$key_bits = str_split ( str_pad ( '', strlen( $text_string ) , $this->_encryption_key, STR_PAD_RIGHT ));
+		$key_bits = str_split ( str_pad ( '', strlen( $text_string ), $this->get_encryption_key(), STR_PAD_RIGHT ));
 		$string_bits = str_split( $text_string );
 		
 		foreach ( $string_bits as $k =>$v ) {
@@ -298,7 +298,7 @@ class EE_Encryption {
 		
 		$encrypted_text = base64_decode ( $encrypted_text );
 
-		$key_bits = str_split ( str_pad ( '', strlen ( $encrypted_text ), $this->_encryption_key, STR_PAD_RIGHT ));
+		$key_bits = str_split ( str_pad ( '', strlen ( $encrypted_text ), $this->get_encryption_key(), STR_PAD_RIGHT ));
 		$string_bits = str_split ( $encrypted_text );
 		
 		foreach ( $string_bits as $k => $v ) {
