@@ -1,7 +1,7 @@
 <?php
 //Show pricing in a dropdown or text
 if ( !function_exists('espresso_price_select_action') ){
-	function espresso_price_select_action($event_id, $atts ){
+	function espresso_price_select_action($event_id, $atts = '' ){
 		$html = '';
 		$html .= is_admin() ? '' : '<p class="event_prices">';
 		$html .= event_espresso_price_dropdown($event_id, $atts);
