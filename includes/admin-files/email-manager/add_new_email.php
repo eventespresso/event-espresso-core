@@ -11,14 +11,14 @@ function add_new_event_email(){
   <form id="add-edit-new-event-email" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
   <input type="hidden" name="action" value="add">
    <ul>
-    <li><label for="email_name"><?php _e('Email Name','event_espresso'); ?></label> <input type="text" name="email_name" size="25" /></li>
-    <li><label for="email_subject"><?php _e('Email Subject Line','event_espresso'); ?></label> <input type="text" name="email_subject" size="25" /></li>
+	<li><label for="email_name"><?php _e('Email Name','event_espresso'); ?></label> <input type="text" name="email_name" size="25" /></li>
+	<li><label for="email_subject"><?php _e('Email Subject Line','event_espresso'); ?></label> <input type="text" name="email_subject" size="25" /></li>
 			<li>
 
 			<div id="descriptiondivrich" class="postarea">   
 		 		<label for="email_text"><?php _e('Email Text','event_espresso'); ?></label>
 				
-                
+				
 				<div class="postbox">
 				
 					<?php the_editor('', $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
@@ -41,10 +41,10 @@ function add_new_event_email(){
 				
    	</li>
    	<li>
-    	<p>
+		<p>
 					<input class="button-primary" type="submit" name="Submit" value="<?php _e('Add Email'); ?>" id="add_new_email" />
-    	</p>
-    </li>
+		</p>
+	</li>
    </ul>
 	</form>
  </div>

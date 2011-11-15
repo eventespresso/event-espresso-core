@@ -20,7 +20,7 @@ function edit_event_email(){
   <input type="hidden" name="email_id" value="<?php echo $email_id; ?>">
   <input type="hidden" name="action" value="update">
    <ul>
-    <li>
+	<li>
 				<label><?php _e('Email Name:','event_espresso'); ?></label> 
 				<input type="text" name="email_name" size="25" value="<?php echo stripslashes($email_name);?>" />
 			</li> 
@@ -58,7 +58,7 @@ function edit_event_email(){
 		 </li>
    
 		 <li>
-    <p><input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Email'); ?>" id="update_email" /></p>
+	<p><input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Email'); ?>" id="update_email" /></p>
    </li>
   </ul>
  </form>
