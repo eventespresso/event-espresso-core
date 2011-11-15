@@ -1,6 +1,6 @@
 <?php 
 function update_event_staff(){
-	global $wpdb;
+	global $wpdb, $notices;
 	$wpdb->show_errors();
 	//print_r($_REQUEST);
 	$staff_meta['phone'] = $_REQUEST['phone'];
@@ -18,20 +18,19 @@ function update_event_staff(){
 	$meta = serialize($staff_meta);
 		
 	
-	$sql=array('name'=>$_REQUEST['name'],'role'=>$_REQUEST['role'],'email'=>$_REQUEST['email'], 'meta'=>$meta); 
+	$sql=array(
+		'name'=>$_REQUEST['name'],
+		'role'=>$_REQUEST['role'],
+		'email'=>$_REQUEST['email'],
+		'meta'=>$meta
+	); 
 		
-		$update_id = array('id'=> $_REQUEST['staff_id']);
+	$update_id = array('id'=> $_REQUEST['staff_id']);
 		
-		$sql_data = array('%s','%s','%s','%s');
-		$wpdb->update( EVENTS_PERSONNEL_TABLE, $sql, $update_id, $sql_data, array( '%d' ) );
-		/*echo 'Debug: <br />';
-					print_r($sql);
-					print 'Number of vars: ' . count ($sql);
-					echo '<br />';
-					print 'Number of cols: ' . count($sql_data)*/;
-		?>
-		<div id="message" class="updated fade">
-			<p><strong><?php _e('The person  has been updated.','event_espresso'); ?></strong></p>
-		 </div>
-<?php
+	$sql_data = array('%s','%s','%s','%s');
+	if ( $wpdb->update(EVENTS_PERSONNEL_TABLE, $sql, $update_id, $sql_data, array( '%d' )) ){
+		$notices['updates'][] = __('The locale ', 'event_espresso') . $sql['name'] .  __(' has been updated', 'event_espresso');
+	}else{ 
+		$notices['errors'][] = __('The locale', 'event_espresso') . $sql['name'] .  __(' was not updated!', 'event_espresso');		
+	}
 }
