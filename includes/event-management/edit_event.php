@@ -378,8 +378,22 @@ function edit_event($event_id = 0) {
             }
             ?>
     <!-- /event-promotions --> 
+	<?php if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) {
+                ?>
+    <div id="groupon-options" class="postbox">
+      <div class="handlediv" title="Click to toggle"><br>
+      </div>
+      <h3 class="hndle"> <span>
+        <?php _e('Groupon Options', 'event_espresso'); ?>
+        </span> </h3>
+      <div class="inside">
+        <p><?php echo event_espresso_edit_event_groupon($use_groupon_code); ?></p>
+      </div>
+    </div>
+    <!-- /groupon-options -->
+    <?php }
     
-    <?php echo espresso_event_question_groups($question_groups, $event_meta['add_attendee_question_groups'], $event_id) ?> 
+    echo espresso_event_question_groups($question_groups, $event_meta['add_attendee_question_groups'], $event_id) ?> 
     <!-- /event-questions -->
     
     <?php
@@ -396,20 +410,7 @@ function edit_event($event_id = 0) {
     <?php
             }
 
-            if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) {
-                ?>
-    <div id="groupon-options" class="postbox">
-      <div class="handlediv" title="Click to toggle"><br>
-      </div>
-      <h3 class="hndle"> <span>
-        <?php _e('Groupon Options', 'event_espresso'); ?>
-        </span> </h3>
-      <div class="inside">
-        <p><?php echo event_espresso_edit_event_groupon($use_groupon_code); ?></p>
-      </div>
-    </div>
-    <!-- /groupon-options -->
-    <?php } ?>
+ ?>
 		         
   </div>
   <!-- /side-sortables --> 

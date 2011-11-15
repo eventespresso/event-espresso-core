@@ -209,8 +209,21 @@ function add_new_event() {
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
 	}
-?>
-    <?php echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups); ?>
+	
+	if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) { ?>
+    <div id="groupon-options" class="postbox">
+      <div class="handlediv" title="Click to toggle"><br />
+      </div>
+      <h3 class="hndle"> <span>
+        <?php _e('Groupon Options', 'event_espresso'); ?>
+        </span> </h3>
+      <div class="inside">
+        <p><?php echo event_espresso_add_new_event_groupon($use_groupon_code); ?></p>
+      </div>
+    </div>
+    <!-- /groupon-options -->
+    <?php }
+	echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups); ?>
     <!-- /event-questions -->
 
     <?php
@@ -226,19 +239,7 @@ function add_new_event() {
     </div>
     <?php	}
 
-			if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) { ?>
-    <div id="groupon-options" class="postbox">
-      <div class="handlediv" title="Click to toggle"><br />
-      </div>
-      <h3 class="hndle"> <span>
-        <?php _e('Groupon Options', 'event_espresso'); ?>
-        </span> </h3>
-      <div class="inside">
-        <p><?php echo event_espresso_add_new_event_groupon($use_groupon_code); ?></p>
-      </div>
-    </div>
-    <!-- /groupon-options -->
-    <?php } ?>
+	?>
 
   </div>
   <!-- /side-sortables -->
