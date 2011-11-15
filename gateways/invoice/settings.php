@@ -35,7 +35,7 @@ function event_espresso_invoice_payment_settings(){
 		//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 		
 		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
-			$notices['updates'][] = __('Template Settings Updated for User:', 'event_espresso'). ' ' .$espresso_wp_user;
+			$notices['updates'][] = __('Invoice Payment Settings Updated for User:', 'event_espresso'). ' ' .$espresso_wp_user;
 		}
 	}
 	
