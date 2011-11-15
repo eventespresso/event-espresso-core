@@ -41,12 +41,12 @@
 					<label for="display_address_in_regform">
 						<?php _e('Display the address in the registration form?','event_espresso'); ?>
 					</label>
-					<?php echo select_input('display_address_in_regform', $values, isset($org_options['template_settings']['display_address_in_regform']) ? $org_options['template_settings']['display_address_in_regform'] : '', 'id="display_address_in_regform"'); ?> </li>
+					<?php echo select_input('display_address_in_regform', $values, isset($org_options['template_settings']['display_address_in_regform']) ? $org_options['template_settings']['display_address_in_regform'] : '', 'id="display_address_in_regform"'); ?> <span class="highlight">(<?php _e('Disable the address if you are using the venue manager shortcodes in your event description.', 'event_espresso'); ?>)</span> </li>
 				<li>
 					<label for="use_custom_post_types">
 						<?php _e('Use the custom post types feature?','event_espresso'); ?>
 					</label>
-					<?php echo select_input('use_custom_post_types', $values, isset($org_options['template_settings']['use_custom_post_types']) ? $org_options['template_settings']['use_custom_post_types']: '', 'id="use_custom_post_types"'); ?>  <span class="highlight">(<?php _e('Disable the address if you are using the venue manager shortcodes in your event description.', 'event_espresso'); ?>)</span> </li>
+					<?php echo select_input('use_custom_post_types', $values, isset($org_options['template_settings']['use_custom_post_types']) ? $org_options['template_settings']['use_custom_post_types']: '', 'id="use_custom_post_types"'); ?>   </li>
 			</ul>
 		</fieldset>
 	</li>
