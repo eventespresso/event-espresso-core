@@ -14,7 +14,9 @@ function espresso_total_events(){
 	if (function_exists('espresso_member_data')&&espresso_member_data('role')=='espresso_group_admin'){
 		$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 		$group = unserialize($group);
-		$group = implode(",",$group);
+		if (!empty($group)){
+			$group = implode(",",$group);
+		}
 	}
 	
 	$sql1 = "(";
