@@ -265,10 +265,10 @@ echo trim($payment_settings['invoice']['payment_address']);
  	jQuery(document).ready(function() {
 			var header_clicked = false;
 			jQuery('#upload_image_button').click(function() {
-	     formfield = jQuery('#upload_image').attr('name');
-	     tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
+		 formfield = jQuery('#upload_image').attr('name');
+		 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
 				header_clicked = true;
-	    return false;
+		return false;
 	   });
 		window.original_send_to_editor = window.send_to_editor;
 
