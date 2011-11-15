@@ -125,7 +125,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 			$display_reg_form = $event->display_reg_form;
 			$allow_overflow = $event->allow_overflow;
 			$overflow_event_id = $event->overflow_event_id;
-			$event_desc = array_shift(explode('<!--more-->', $event_desc));
+			//$event_desc = array_shift(explode('<!--more-->', $event_desc));
 			global $event_meta;
 			$event_meta = unserialize($event->event_meta);
 			$event_meta['is_active'] = $event->is_active;

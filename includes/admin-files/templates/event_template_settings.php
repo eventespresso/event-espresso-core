@@ -13,7 +13,7 @@
 					<?php echo select_input('display_description_in_event_list', $values, isset($org_options['template_settings']['display_description_in_event_list']) ? $org_options['template_settings']['display_description_in_event_list'] : '', 'id="display_description_in_event_list"'); ?> </li>
 				<li>
 					<label for="display_short_description_in_event_list">
-						<?php _e('Display SHORT descriptions in the event listings?','event_espresso'); ?>
+						<?php _e('Use SHORT descriptions in the event listings?','event_espresso'); ?>
 						<br />
 						 </label>
 					<?php echo select_input('display_short_description_in_event_list', $values, isset($org_options['template_settings']['display_short_description_in_event_list']) ? $org_options['template_settings']['display_short_description_in_event_list'] : '', 'id="display_short_description_in_event_list"'); ?><span class="highlight">

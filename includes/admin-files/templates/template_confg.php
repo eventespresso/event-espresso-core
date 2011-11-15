@@ -5,13 +5,13 @@ function event_espresso_manage_templates() {
 	//print_r($org_options);
 	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_template_settings_update') ) {
 		$org_options['template_settings']['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
+		$org_options['template_settings']['display_description_in_event_list'] = $_POST['display_description_in_event_list'];
 		$org_options['template_settings']['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
 		$org_options['template_settings']['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
 		$org_options['template_settings']['display_address_in_regform'] = $_POST['display_address_in_regform'];
 		$org_options['template_settings']['thumbnail_popup_lists'] = $_POST['thumbnail_popup_lists'];
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		$org_options['template_settings']['use_custom_templates'] = $_POST['use_custom_templates'];
-		$org_options['template_settings']['display_description_in_event_list'] = $_POST['display_description_in_event_list'];
 		$org_options['style_settings']['enable_default_style'] = $_POST['enable_default_style'];
 		$org_options['themeroller']['themeroller_style'] = $_POST['themeroller_style'];
 		
@@ -129,8 +129,8 @@ function event_espresso_manage_templates() {
 										
 									</div>
 									<p class="submit-buttons">
-											<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
-									</p>
+											<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_1" />
+										</p>
 									<!-- / .padding --> 
 								</div>
 								<!-- / .inside --> 

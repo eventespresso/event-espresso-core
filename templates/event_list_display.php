@@ -83,13 +83,24 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 			</span> <?php echo event_date_display($start_date, get_option('date_format')) ?>
 		</p>
 	</div>
-		<?php
-//Show short descriptions
-	if ($event_desc != '' && isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == 'Y') { ?>
-	<div class="event-desc ui-corner-all">
-		<p><?php echo espresso_format_content($event_desc); ?></p>
-	</div>
-<?php  } ?>
+<?php
+	if ( !empty($event_desc) ){
+		if ( isset($org_options['template_settings']['display_description_in_event_list']) && $org_options['template_settings']['display_description_in_event_list'] == 'Y' ) {
+			//Show short descriptions
+			if ( isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == 'Y' ) {
+				$event_desc = array_shift(explode('<!--more-->', $event_desc));
+			}
+?>
+			<div class="event-desc ui-corner-all">
+				<p><?php echo espresso_format_content($event_desc); ?></p>
+			</div>
+<?php 
+		}
+		
+	}
+	
+	
+?>
 	<?php if( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] == 'Y' && !empty($event_meta['event_thumbnail_url'])){ ?>
 		<a id="ee-event-list-thumb" class="ee-thumbs<?php echo $thickbox_class ?>" href="<?php echo $thumb_url ?>"> <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span> </a>
 	<?php }?>
@@ -168,8 +179,8 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 
 							$cart_link = event_espresso_cart_link($params);
 						}
-			if ($display_reg_form == 'Y') {
-			?>
+        if ($display_reg_form == 'Y') {
+            ?>
   <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
     <?php _e('Register for Event', 'event_espresso'); ?>
     </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
@@ -181,11 +192,11 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         }
     }
     ?>
-  <?php ######### event list event thumbnail link popup  ########### ?>
+  <?php ######### event list event popup markup ########### ?>
   <div style="display: none;">
     <div id="event-thumb-detail<?php echo $event_id ?>" class="pop-help ee-tb-popups events-lists-popups" >
       <div class="TB-ee-frame ui-widget">
-        <h2 class="tb-ee-event-title "><?php echo stripslashes_deep($event_name) ?> <span class="event-status"><?php echo $status_display ?></span></h2>
+        <h2 class="tb-ee-event-title ui-widget-header ui-corner-top"><?php echo stripslashes_deep($event_name) ?> <span class="event-status"><?php echo $status_display ?></span></h2>
         <!--<div class="ui-widget-content ui-corner-bottom">-->
 				<img class="tb-ee-event-thumb" src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" />
         <div class="tb-ee-event-desc"> <?php echo espresso_format_content($event_desc); ?> </div>
