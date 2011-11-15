@@ -1,23 +1,18 @@
 <?php
 include('invoice_functions.php');
 function event_espresso_invoice_payment_settings(){
-	global $espresso_premium, $notices, $current_user; if ($espresso_premium != true) return;
-	$old_payment_settings = get_option('payment_data_'.$wp_user);
+	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
 
-	//Get the payment details based on the user
-	if ( function_exists('espresso_manager_pro_version') ){
-		$wp_user = $current_user->ID;
-			
-		//If an event manager is selected, then we need to load that persons info
-		$selected_user = espresso_get_selected_manager();
-		if (!empty($selected_user)){
-			$wp_user = $selected_user;
-			$notices['updates'][] = __('User Loaded:', 'event_espresso'). ' ' . $wp_user . ' <a href="admin.php?page=espresso_permissions#selected_user">' . __('Deactivate?', 'event_espresso') . '</a>';
-		}
-		
-	}else{
-		$wp_user = 1;
-	}
+	//Debug
+	echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
+	
+	$old_payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	//Debug
+	//echo '<pre>'.print_r($old_payment_settings, true).'</pre>';
+	
+	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	//Debug
+	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 	
 	//Update settings
 	if (isset($_POST['update_invoice_payment_settings'])) {
@@ -39,14 +34,12 @@ function event_espresso_invoice_payment_settings(){
 		//Debug
 		//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 		
-		if (update_option( 'payment_data_'.$wp_user, $payment_settings, $old_payment_settings ) == true){
-				
-			$notices['updates'][] = __('Template Settings Updated for User:', 'event_espresso'). ' ' .$wp_user;
-				
+		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
+			$notices['updates'][] = __('Template Settings Updated for User:', 'event_espresso'). ' ' .$espresso_wp_user;
 		}
 	}
 	
-	$payment_settings = get_option('payment_data_'.$wp_user);
+	//Debug
 	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 ?>
 
@@ -63,7 +56,7 @@ function event_espresso_invoice_payment_settings(){
 				if (isset($_REQUEST['activate_invoice_payment']) && $_REQUEST['activate_invoice_payment'] == 'true'){
 					$payment_settings['invoice']['active'] = true;
 					//echo 'active = '.$payment_settings['invoice']['active'];
-					if (update_option('payment_data_'.$wp_user, $payment_settings, $old_payment_settings) == true){
+					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
 						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
 					}
 					/*add_option("events_invoice_payment_active", 'true', '', 'yes');
@@ -74,7 +67,7 @@ function event_espresso_invoice_payment_settings(){
 				if (isset($_REQUEST['reactivate_invoice_payment']) && $_REQUEST['reactivate_invoice_payment'] == 'true'){
 					$payment_settings['invoice']['active'] = true;
 					//echo 'active = '.$payment_settings['invoice']['active'];
-					if (update_option('payment_data_'.$wp_user, $payment_settings, $old_payment_settings) == true){
+					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
 						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
 					}
 					//update_option( 'events_invoice_payment_active', 'true');
@@ -83,7 +76,7 @@ function event_espresso_invoice_payment_settings(){
 				
 				if (isset($_REQUEST['deactivate_invoice_payment']) && $_REQUEST['deactivate_invoice_payment'] == 'true'){
 					$payment_settings['invoice']['active'] = false;
-					if (update_option( 'payment_data_'.$wp_user, $payment_settings, $old_payment_settings) == false){
+					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == false){
 						$notices['updates'][] = __('Invoice Payments De-activated', 'event_espresso');
 					}
 					//update_option( 'events_invoice_payment_active', 'false');
@@ -92,7 +85,7 @@ function event_espresso_invoice_payment_settings(){
 				
 				//echo 'active = '.$payment_settings['invoice']['active'];
 				//$payment_settings['invoice']['active'] = true;
-				//update_user_meta( $wp_user, 'payment_data_'.$wp_user, $payment_settings );
+				//update_user_meta( $espresso_wp_user, 'payment_data_'.$espresso_wp_user, $payment_settings );
 				
 				//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 				
@@ -117,28 +110,17 @@ function event_espresso_invoice_payment_settings(){
 	</div>
 </div>
 <?php
-	do_action('espresso_admin_notices');
+	if ( did_action( 'espresso_admin_notices' ) == false )
+		do_action('espresso_admin_notices');
+	
 }
-?>
-<?php
+
 //Invoice Payments Settings Form
 function event_espresso_display_invoice_payment_settings(){
-	global $espresso_premium, $org_options, $current_user; 
+	global $espresso_premium, $org_options, $espresso_wp_user; 
 	if ($espresso_premium != true) return;
 	
-	//Get the payment details based on the user
-	if ( function_exists('espresso_manager_pro_version') ){
-		$wp_user = $current_user->ID;
-			
-		//If an event manager is selected, then we need to load that persons info
-		$selected_user = espresso_get_selected_manager();
-		if (!empty($selected_user)){
-			$wp_user = $selected_user;
-		}
-	}else{
-		$wp_user = 1;
-	}
-	$payment_settings = get_option('payment_data_'.$wp_user);
+	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	//$payment_settings = $payment_settings[0];
 	
 	//Debug
@@ -157,12 +139,12 @@ function event_espresso_display_invoice_payment_settings(){
 						</h4>
 					</li>
 					
-					<li>
+					<?php /*?><li>
 						<label for="pdf_title">
 							<?php _e('PDF Title (top right of the invoice):', 'event_espresso'); ?>
 						</label>
 						<input type="text" name="pdf_title" size="30" value="<?php echo empty($payment_settings['invoice']['pdf_title']) ? __('Invoice','event_espresso') : trim(stripslashes_deep($payment_settings['invoice']['pdf_title'])) ;?>" />
-					</li>
+					</li><?php */?>
 					
 					<li>
 						<label for="base-invoice-select" <?php echo $styled ?>>
@@ -218,6 +200,18 @@ function event_espresso_display_invoice_payment_settings(){
 						</h4>
 					</li>
 					<li>
+		<label for="show">
+			<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
+		</label>
+		<?php
+	$values = array(
+		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+		array('id' => 'N', 'text' => __('No', 'event_espresso')),
+	);
+	echo select_input('show', $values, empty($payment_settings['invoice']['show']) ? '' : $payment_settings['invoice']['show']);
+?>
+</li>
+					<li>
 						<label for="invoice_title">
 							<?php _e('Invoice Title:', 'event_espresso'); ?>
 						</label>
@@ -261,18 +255,7 @@ echo trim($payment_settings['invoice']['payment_address']);
 		</tr>
 	</table>
 	<input type="hidden" name="update_invoice_payment_settings" value="update_invoice_payment_settings">
-	<p>
-		<label for="show">
-			<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
-		</label>
-		<?php
-	$values = array(
-		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-		array('id' => 'N', 'text' => __('No', 'event_espresso')),
-	);
-	echo select_input('show', $values, empty($payment_settings['invoice']['show']) ? '' : $payment_settings['invoice']['show']);
-?>
-	</p>
+	
 	<p>
 		<input class="button-primary" type="submit" name="Submit" value="<?php  _e('Update Invoice Payment Settings','event_espresso') ?>" id="save_invoice_payment_settings" />
 	</p>
