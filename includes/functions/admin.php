@@ -341,6 +341,9 @@ function event_espresso_create_upload_directories() {
         EVENT_ESPRESSO_TEMPLATE_DIR,
         EVENT_ESPRESSO_GATEWAY_DIR,
         EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
+		EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
+		EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/',
+		EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/',
     );
     foreach ($folders as $folder) {
         wp_mkdir_p($folder);
