@@ -5,7 +5,7 @@ if (!function_exists('espresso_venue_dd')) {
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
-		global $wpdb, $espresso_manager, $current_user;
+		global $wpdb, $espresso_manager, $espresso_wp_user;
 
 		$WHERE = " WHERE ";
 		$sql = "SELECT ev.*, el.name AS locale FROM " . EVENTS_VENUE_TABLE . " ev ";
@@ -18,7 +18,7 @@ if (!function_exists('espresso_venue_dd')) {
 				$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 				$group = unserialize($group);
 				$sql .= " $WHERE lr.locale_id IN (" . implode(",", $group) . ")";
-				$sql .= " OR ev.wp_user = " . $current_user->ID;
+				$sql .= " OR ev.wp_user = " . $espresso_wp_user;
 				$WHERE = " AND ";
 			}
 		}
