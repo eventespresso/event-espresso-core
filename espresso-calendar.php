@@ -94,14 +94,14 @@ function espresso_calendar_plugin_actions( $links, $file ){
 add_filter( 'plugin_action_links', 'espresso_calendar_plugin_actions', 10, 2 );
 
 function espresso_calendar_config_mnu()	{
-	global $wpdb, $espresso_calendar, $org_options;
+	global $wpdb, $espresso_calendar, $org_options, $notices;
 
 	/*Calendar*/
 	function espresso_calendar_updated(){
-	return __('Calendar details saved.','event_espresso');
+	global $notices;
 	}
 
-	if (isset($_POST['update_calendar'])) {
+	if (isset($_POST['update_calendar'])  && check_admin_referer('espresso_form_check', 'update_calendar') ) {
 		$espresso_calendar['espresso_page_post'] = $_POST['espresso_page_post'];
 		$espresso_calendar['espresso_calendar_header'] = $_POST['espresso_calendar_header'];
 		$espresso_calendar['espresso_calendar_buttonText'] = $_POST['espresso_calendar_buttonText'];
@@ -128,10 +128,12 @@ function espresso_calendar_config_mnu()	{
 
 		update_option( 'espresso_calendar_settings', $espresso_calendar);
 		add_action( 'admin_notices', 'espresso_calendar_updated');
+		$notices['updates'][] = __('The calendar settings were saved ', 'event_espresso');
 	}
-	if ($_REQUEST['reset_calendar']=='true') {
+	if ($_REQUEST['reset_calendar']=='true' && check_admin_referer('espresso_form_check', 'reset_calendar')) {
 		delete_option("espresso_calendar_settings");
 		espresso_calendar_install();
+		$notices['updates'][] = __('The calendar settings were reset ', 'event_espresso');
 	}
 	$espresso_calendar = get_option('espresso_calendar_settings');
 
@@ -159,6 +161,7 @@ function espresso_calendar_config_mnu()	{
 	<h2>
 		<?php _e('Event Espresso - Calendar Settings','event_espresso'); ?>
 	</h2>
+	<?php do_action('espresso_admin_notices'); ?>
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
 		<?php event_espresso_display_right_column ();?>
 		<div id="post-body">
@@ -362,6 +365,7 @@ echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['esp
 												<?php echo select_input('enable_cat_classes',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"');?> </li>
 											<li>
 												<input class="button-primary" type="submit" name="save_calendar_settings" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings2" />
+												<?php wp_nonce_field( 'espresso_form_check', 'update_calendar' ) ?>
 											</li>
 										</ul>
 									</div>
@@ -529,9 +533,11 @@ echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['esp
 												<input type="hidden" name="update_calendar" value="update" />
 												<p>
 													<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings_1" />
+													<?php wp_nonce_field( 'espresso_form_check', 'update_calendar' ) ?>
 												</p>
 												<p>Reset Calendar Settings?
 													<input name="reset_calendar" type="checkbox" value="true" />
+													<?php wp_nonce_field( 'espresso_form_check', 'reset_calendar' ) ?>
 												</p>
 											</li>
 										</ul>
