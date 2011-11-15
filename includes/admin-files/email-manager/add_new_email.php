@@ -43,6 +43,7 @@ function add_new_event_email(){
    	<li>
 		<p>
 					<input class="button-primary" type="submit" name="Submit" value="<?php _e('Add Email'); ?>" id="add_new_email" />
+					<?php wp_nonce_field( 'espresso_form_check', 'add_new_email' ) ?>
 		</p>
 	</li>
    </ul>

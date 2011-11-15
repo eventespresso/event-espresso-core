@@ -1,7 +1,7 @@
 <?php
 function add_email_to_db(){
 	global $wpdb, $espresso_wp_user, $notices;
-	if ( $_REQUEST['action'] == 'add' ){
+	if ( $_REQUEST['action'] == 'add' && check_admin_referer('espresso_form_check', 'add_new_email')){
 		$email_name= $_REQUEST['email_name'];
 		$email_subject= $_REQUEST['email_subject'];
 		$email_text= $_REQUEST['email_text']; 	

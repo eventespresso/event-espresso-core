@@ -59,6 +59,7 @@ function edit_event_email(){
    
 		 <li>
 	<p><input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Email'); ?>" id="update_email" /></p>
+	<?php wp_nonce_field( 'espresso_form_check', 'update_email' ) ?>
    </li>
   </ul>
  </form>
