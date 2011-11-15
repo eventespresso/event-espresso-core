@@ -696,7 +696,7 @@ div#gmap-reg-events { padding-left: 3%;}
 	margin: 1em 10px .5em 0 ;
 	padding: 3px 0 3px 5px;
 }
-#post-body .help-support  .highlight {
+#post-body .help-support  .highlight, .postbox .highlight{
 	background: #E9F0FD;
 	font-weight: normal;
 	padding: 3px 5px;
