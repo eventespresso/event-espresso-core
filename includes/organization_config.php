@@ -158,6 +158,17 @@ function organization_config_mnu() {
 															</div>
 														</li>
 														<li>
+															<h4>
+																<?php _e('Contact Information', 'event_espresso'); ?> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=contact_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+															</h4>
+															<div id="contact_info" class="pop-help" style="display:none">
+																<h2>
+																	<?php _e('Contact Information', 'event_espresso'); ?>
+																</h2>
+																<p><?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?></p>
+															</div>
+														</li >
+														<li>
 															<label for="org_name">
 																<?php _e('Organization Name:', 'event_espresso'); ?>
 															</label>
