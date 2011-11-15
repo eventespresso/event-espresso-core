@@ -6,7 +6,7 @@ function add_event_to_db($recurrence_arr = array()) {
 	//print_r($_POST);
 	//echo "</pre>";
 
-	global $wpdb, $org_options, $current_user, $espresso_premium;
+	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
 
 if( check_admin_referer('espresso_form_check', 'ee_add_new_event') ) {
 	
@@ -56,9 +56,9 @@ $wpdb->show_errors();
 		//$fb = new FacebookEvents();
 		//echo $fb->espresso_createevent();
 		//echo $_POST['event'];
-		$wp_user_id = empty($_REQUEST['wp_user']) ? $current_user->ID : $_REQUEST['wp_user'][0];
+		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
 		$event_name = $_REQUEST['event'];
-		$event_code = uniqid($current_user->ID . '-');
+		$event_code = uniqid($espresso_wp_user . '-');
 		$event_identifier = ($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
 		$event_desc = $_REQUEST['event_desc'];
 		$display_desc = $_REQUEST['display_desc'];
@@ -185,7 +185,7 @@ $wpdb->show_errors();
 		$event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
 		$event_meta['add_attendee_question_groups'] = $add_attendee_question_groups;
 		$event_meta['date_submitted'] = date("Y-m-d H:i:s");
-		$event_meta['originally_submitted_by'] = $current_user->ID;
+		$event_meta['originally_submitted_by'] = $espresso_wp_user;
 		$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
 
 		if ($_REQUEST['emeta'] != '') {
@@ -206,19 +206,73 @@ $wpdb->show_errors();
 
 		################# END #################
 		//When adding colums to the following arrays, be sure both arrays have equal values.
-		$sql = array('event_code' => $event_code, 'event_name' => $event_name, 'event_desc' => $event_desc, 'display_desc' => $display_desc, 'display_reg_form' => $display_reg_form, 'event_identifier' => $event_identifier,
-				'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'country' => $country, 'phone' => $phone, 'virtual_url' => $virtual_url,
-				'virtual_phone' => $virtual_phone, 'venue_title' => $venue_title, 'venue_url' => $venue_url, 'venue_phone' => $venue_phone, 'venue_image' => $venue_image,
-				'registration_start' => $registration_start, 'registration_end' => $registration_end, 'start_date' => $start_date, 'end_date' => $end_date,
-				'allow_multiple' => $allow_multiple, 'send_mail' => $send_mail, 'is_active' => $is_active, 'event_status' => $event_status,
-				'conf_mail' => $conf_mail, 'use_coupon_code' => $use_coupon_code, 'member_only' => $member_only, 'externalURL' => $externalURL,
-				'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email,
-				'question_groups' => $question_groups, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'reg_limit' => $reg_limit, 'additional_limit' => $additional_limit, 'recurrence_id' => $recurrence_id, 'email_id' => $email_id, 'wp_user' => $wp_user_id, 'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()), 'ticket_id' => $ticket_id, 'certificate_id' => $certificate_id
+		$sql = array(
+			'event_code' => $event_code,
+			'event_name' => $event_name,
+			'event_desc' => $event_desc,
+			'display_desc' => $display_desc,
+			'display_reg_form' => $display_reg_form,
+			'event_identifier' => $event_identifier,
+			'address' => $address,
+			'address2' => $address2,
+			'city' => $city,
+			'state' => $state,
+			'zip' => $zip,
+			'country' => $country,
+			'phone' => $phone,
+			'virtual_url' => $virtual_url,
+			'virtual_phone' => $virtual_phone,
+			'venue_title' => $venue_title,
+			'venue_url' => $venue_url,
+			'venue_phone' => $venue_phone,
+			'venue_image' => $venue_image,
+			'registration_start' => $registration_start,
+			'registration_end' => $registration_end,
+			'start_date' => $start_date,
+			'end_date' => $end_date,
+			'allow_multiple' => $allow_multiple,
+			'send_mail' => $send_mail,
+			'is_active' => $is_active,
+			'event_status' => $event_status,
+			'conf_mail' => $conf_mail,
+			'use_coupon_code' => $use_coupon_code,
+			'member_only' => $member_only,
+			'externalURL' => $externalURL,
+			'early_disc' => $early_disc,
+			'early_disc_date' => $early_disc_date,
+			'early_disc_percentage' => $early_disc_percentage,
+			'alt_email' => $alt_email,
+			'question_groups' => $question_groups,
+			'registration_startT' => $registration_startT,
+			'registration_endT' => $registration_endT,
+			'reg_limit' => $reg_limit,
+			'additional_limit' => $additional_limit,
+			'recurrence_id' => $recurrence_id,
+			'email_id' => $email_id,
+			'wp_user' => $wp_user_id,
+			'event_meta' => $event_meta,
+			'require_pre_approval' => $require_pre_approval,
+			'timezone_string' => $timezone_string,
+			'submitted' => date('Y-m-d H:i:s', time()),
+			'ticket_id' => $ticket_id,
+			'certificate_id' => $certificate_id
 		);
 
-		$sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d');
+		$sql_data = array(
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%d','%d',
+			'%d','%d','%d','%s',
+			'%s','%s','%s','%d',
+			'%d'
+		);
 
 		/* echo 'Debug:<br />';
 		  print 'Number of vars: ' . count ($sql);
@@ -432,13 +486,13 @@ $wpdb->show_errors();
 		foreach ($recurrence_dates as $k => $v) {
 
 			add_event_to_db(
-							array(
-									'recurrence_id' => $recurrence_id,
-									'recurrence_start_date' => $v['start_date'],
-									'recurrence_event_end_date' => $v['event_end_date'],
-									'registration_start' => $v['registration_start'],
-									'registration_end' => $v['registration_end'],
-									'visible_on' => $v['visible_on']
+				array(
+					'recurrence_id' => $recurrence_id,
+					'recurrence_start_date' => $v['start_date'],
+					'recurrence_event_end_date' => $v['event_end_date'],
+					'registration_start' => $v['registration_start'],
+					'registration_end' => $v['registration_end'],
+					'visible_on' => $v['visible_on']
 			));
 		}
 	}
@@ -451,4 +505,3 @@ $wpdb->show_errors();
 	// end nonce check 
 }
 //End add_event_funct_to_db()
-?>

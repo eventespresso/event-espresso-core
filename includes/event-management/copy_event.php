@@ -1,83 +1,144 @@
 <?php
 function copy_event($recurrence_arr = array()){
-global $wpdb, $current_user;
-	$event_id = array_key_exists('event_id', $recurrence_arr)?$recurrence_arr['event_id']:$_REQUEST ['event_id'];
+	global $wpdb, $espresso_wp_user;
+	$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST ['event_id'];
 
-	 $results = $wpdb->get_results("SELECT * FROM ". EVENTS_DETAIL_TABLE ." WHERE id ='" . $event_id . "'");
+	$results = $wpdb->get_results("SELECT * FROM ". EVENTS_DETAIL_TABLE ." WHERE id ='" . $event_id . "'");
 
-		foreach ($results as $result){
-				$event_id= $result->id;
-				$display_reg_form=$result->display_reg_form;
-				$event_name=$result->event_name;
-				$event_desc=$result->event_desc;
-				$display_desc=$result->display_desc;
-				$event_identifier=$result->event_identifier.'-'.time();
-				$reg_limit = $result->reg_limit;
-				$allow_multiple = $result->allow_multiple;
-				$additional_limit = $result->additional_limit;
+	foreach ($results as $result){
+		$event_id= $result->id;
+		$display_reg_form=$result->display_reg_form;
+		$event_name=$result->event_name;
+		$event_desc=$result->event_desc;
+		$display_desc=$result->display_desc;
+		$event_identifier=$result->event_identifier.'-'.time();
+		$reg_limit = $result->reg_limit;
+		$allow_multiple = $result->allow_multiple;
+		$additional_limit = $result->additional_limit;
 
-                                $registration_start = array_key_exists('registration_start', $recurrence_arr)?$recurrence_arr['registration_start']:$result->registration_start;;
-                                $registration_end = array_key_exists('registration_end', $recurrence_arr)?$recurrence_arr['registration_end']:$result->registration_end;
-                                $start_date = array_key_exists('start_date', $recurrence_arr)?$recurrence_arr['start_date']:$result->start_date;
-                                $end_date = array_key_exists('end_date', $recurrence_arr)?$recurrence_arr['end_date']:$result->end_date;
+		$registration_start = array_key_exists('registration_start', $recurrence_arr)?$recurrence_arr['registration_start']:$result->registration_start;;
+		$registration_end = array_key_exists('registration_end', $recurrence_arr)?$recurrence_arr['registration_end']:$result->registration_end;
+		$start_date = array_key_exists('start_date', $recurrence_arr)?$recurrence_arr['start_date']:$result->start_date;
+		$end_date = array_key_exists('end_date', $recurrence_arr)?$recurrence_arr['end_date']:$result->end_date;
 
-                                $start_time = $result->start_time;
-				$end_time = $result->end_time;
+		$start_time = $result->start_time;
+		$end_time = $result->end_time;
 
-				$is_active=$result->is_active;
+		$is_active=$result->is_active;
 
-				$address=stripslashes_deep($result->address);
-				$address2=stripslashes_deep($result->address2);
-				$city=stripslashes_deep($result->city);
-				$state=stripslashes_deep($result->state);
-				$zip=stripslashes_deep($result->zip);
-				$country=stripslashes_deep($result->country);
+		$address=stripslashes_deep($result->address);
+		$address2=stripslashes_deep($result->address2);
+		$city=stripslashes_deep($result->city);
+		$state=stripslashes_deep($result->state);
+		$zip=stripslashes_deep($result->zip);
+		$country=stripslashes_deep($result->country);
 
-				$phone=$result->phone;
+		$phone=$result->phone;
 
-				$send_mail= $result->send_mail;
-				$conf_mail= $result->conf_mail;
-				$email_id = $result->email_id;
-				$use_coupon_code= $result->use_coupon_code;
+		$send_mail= $result->send_mail;
+		$conf_mail= $result->conf_mail;
+		$email_id = $result->email_id;
+		$use_coupon_code= $result->use_coupon_code;
 				
-				$question_groups = $result->question_groups;
-				$allow_overflow = $result->allow_overflow;
-				$overflow_event_id = $result->overflow_event_id;
+		$question_groups = $result->question_groups;
+		$allow_overflow = $result->allow_overflow;
+		$overflow_event_id = $result->overflow_event_id;
 	
-				$event_code=uniqid($current_user->ID.'-');
+		$event_code=uniqid($espresso_wp_user.'-');
 				
-				$registration_startT =  $result->registration_startT;
-				$registration_endT =  $result->registration_endT;
+		$registration_startT =  $result->registration_startT;
+		$registration_endT =  $result->registration_endT;
 				
-				$event_status = $result->event_status;
+		$event_status = $result->event_status;
 				
-				$virtual_url = $result->virtual_url;
-				$virtual_phone = $result->virtual_phone;
+		$virtual_url = $result->virtual_url;
+		$virtual_phone = $result->virtual_phone;
 				
-				$member_only = $result->member_only;
-				$post_id = $result->post_id;
-				$post_type = $result->post_type;
-				$post_type = $result->post_type;
-				$externalURL = $result->externalURL;
-				$early_disc = $result->early_disc;
-				$early_disc_date = $result->early_disc_date;
-				$early_disc_percentage = $result->early_disc_percentage;
+		$member_only = $result->member_only;
+		$post_id = $result->post_id;
+		$post_type = $result->post_type;
+		$post_type = $result->post_type;
+		$externalURL = $result->externalURL;
+		$early_disc = $result->early_disc;
+		$early_disc_date = $result->early_disc_date;
+		$early_disc_percentage = $result->early_disc_percentage;
 				
-				$venue_title = $result->venue_title;
-				$venue_url = $result->venue_url;
-				$venue_phone = $result->venue_phone;
-				$venue_image = $result->venue_image;
-				$event_meta = $result->event_meta;
-				$require_pre_approval = $result->require_pre_approval;
-				$timezone_string = $result->timezone_string;
+		$venue_title = $result->venue_title;
+		$venue_url = $result->venue_url;
+		$venue_phone = $result->venue_phone;
+		$venue_image = $result->venue_image;
+		$event_meta = $result->event_meta;
+		$require_pre_approval = $result->require_pre_approval;
+		$timezone_string = $result->timezone_string;
 				
 				
-		$sql=array('event_code' => $event_code, 'event_name'=>$event_name, 'event_desc'=>$event_desc, 'display_desc'=>$display_desc, 'display_reg_form'=>$display_reg_form, 'event_identifier'=>$event_identifier, 'address'=>$address, 'address2'=>$address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'country' => $country, 'phone'=>$phone, 'virtual_url'=>$virtual_url, 'virtual_phone'=>$virtual_phone, 'registration_start'=>$registration_start, 'registration_end'=>$registration_end, 'start_date'=>$start_date, 'end_date'=>$end_date, 'allow_multiple'=>$allow_multiple, 'send_mail'=>$send_mail, 'is_active'=>$is_active, 'event_status'=>$event_status, 'conf_mail'=>$conf_mail, 'use_coupon_code'=>$use_coupon_code, 'member_only'=>$member_only,'externalURL' => $externalURL, 'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email, 'question_groups' => $question_groups, 'post_type' => $post_type, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'venue_title' => $venue_title, 'venue_url' => $venue_url, 'venue_phone' => $venue_phone, 'venue_image' => $venue_image,'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'submitted' => date('Y-m-d H:i:s', time()), 'reg_limit'=>$reg_limit, 'additional_limit'=>$additional_limit, 'recurrence_id'=>$recurrence_id, 'email_id' => $email_id, 'wp_user' => $current_user->ID,'post_id' => $post_id);
+		$sql=array(
+			'event_code' => $event_code,
+			'event_name'=>$event_name, 
+			'event_desc'=>$event_desc, 
+			'display_desc'=>$display_desc, 
+			'display_reg_form'=>$display_reg_form, 
+			'event_identifier'=>$event_identifier, 
+			'address'=>$address, 
+			'address2'=>$address2, 
+			'city' => $city, 
+			'state' => $state, 
+			'zip' => $zip, 
+			'country' => $country, 
+			'phone'=>$phone, 
+			'virtual_url'=>$virtual_url, 
+			'virtual_phone'=>$virtual_phone, 
+			'registration_start'=>$registration_start, 
+			'registration_end'=>$registration_end, 
+			'start_date'=>$start_date, 
+			'end_date'=>$end_date, 
+			'allow_multiple'=>$allow_multiple, 
+			'send_mail'=>$send_mail, 
+			'is_active'=>$is_active, 
+			'event_status'=>$event_status, 
+			'conf_mail'=>$conf_mail, 
+			'use_coupon_code'=>$use_coupon_code, 
+			'member_only'=>$member_only,
+			'externalURL' => $externalURL, 
+			'early_disc' => $early_disc, 
+			'early_disc_date' => $early_disc_date, 
+			'early_disc_percentage' => $early_disc_percentage, 
+			'alt_email' => $alt_email, 
+			'question_groups' => $question_groups, 
+			'post_type' => $post_type, 
+			'registration_startT' => $registration_startT, 
+			'registration_endT' => $registration_endT, 
+			'venue_title' => $venue_title, 
+			'venue_url' => $venue_url, 
+			'venue_phone' => $venue_phone, 
+			'venue_image' => $venue_image,
+			'event_meta' => $event_meta, 
+			'require_pre_approval' => $require_pre_approval, 
+			'timezone_string' => $timezone_string, 
+			'submitted' => date('Y-m-d H:i:s', time()), 
+			'reg_limit'=>$reg_limit, 
+			'additional_limit'=>$additional_limit, 
+			'recurrence_id'=>$recurrence_id, 
+			'email_id' => $email_id, 
+			'wp_user' => $espresso_wp_user,
+			'post_id' => $post_id);
 		}
 		
-		$sql_data = array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
-						  '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
-						  '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', '%s', '%s', '%s','%d','%d','%d','%d', '%d', '%d');
+		$sql_data = array(
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%s',
+			'%s','%s','%s','%d',
+			'%d','%d','%d','%d',
+			'%d'
+		);
 		
 		/*//check the counts to make sure the data is matched up correctly
 		echo 'SQL Count ';		
@@ -89,7 +150,7 @@ global $wpdb, $current_user;
 		echo '<br />SQL Values: ';	
 		print_r($sql);*/
 	
-	//Add groupon reference if installed
+		//Add groupon reference if installed
 		if (function_exists('event_espresso_add_event_to_db_groupon')) {
 			$sql = event_espresso_add_event_to_db_groupon($sql, $_REQUEST['use_groupon_code']);
 			//print count ($sql);
@@ -200,4 +261,4 @@ static $counter = 1;
  * End recursion, as part of recurring events.
  */
         
-}?>
+}
