@@ -55,7 +55,6 @@ function event_espresso_email_config_mnu() {
 								break;
 						}
 					}
-	if ( did_action( 'espresso_admin_notices' ) == false )
 		do_action('espresso_admin_notices'); 
 					?>
 				<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
