@@ -237,6 +237,13 @@ function events_data_tables_install() {
 				'event_ssl_active' => 'N',
 				'use_venue_manager' => 'Y',
 				'show_reg_footer' => 'Y',
+				'template_settings' => array(
+					'use_custom_post_types' => 'N',
+					'display_address_in_regform' => 'N',
+					'display_short_description_in_event_list' => 'Y',
+					'display_description_on_multi_reg_page' => 'N',
+					'display_description_in_event_list' => 'N'
+				),
 				'map_settings' => array(
 					'ee_map_width_single' => '300',
 					'ee_map_height_single' => '300',
