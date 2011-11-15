@@ -32,8 +32,8 @@ function edit_event_category(){
 
 						<?php 
 						$values=array(					
-        		array('id'=>'Y','text'=> __('Yes','event_espresso')),
-        		array('id'=>'N','text'=> __('No','event_espresso'))
+				array('id'=>'Y','text'=> __('Yes','event_espresso')),
+				array('id'=>'N','text'=> __('No','event_espresso'))
 						);				
 						echo select_input('display_desc', $values, $display_category_desc);
    				?>
