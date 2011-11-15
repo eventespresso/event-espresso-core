@@ -1,6 +1,6 @@
 <?php
 
-function csv_uploader ( $import_what, $import_intro, $page  ) {
+function espresso_csv_uploader ( $import_what, $import_intro, $page  ) {
 
 	$name = str_replace( ' ', '_', strtolower( $import_what ));
 

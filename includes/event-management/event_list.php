@@ -442,11 +442,11 @@ function event_espresso_edit_list() {
 /***************************** ADDED BY BRENT ************************/
 	
 		if ( $_REQUEST[ 'action' ] !='edit' ) { 
-			include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/form-builder/csv_uploader.php' );
+			include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
 			$import_what = 'Event Details';
 			$import_intro = 'If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ';
 			$page = 'events';
-			echo csv_uploader( $import_what, $import_intro, $page, $name );
+			echo espresso_csv_uploader( $import_what, $import_intro, $page, $name );
 		}
 		
 /***************************** brent done adding ************************/
