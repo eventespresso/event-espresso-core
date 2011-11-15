@@ -164,6 +164,7 @@ function add_new_event_venue(){
 						</div><!-- /.postbox -->						
 						<p>
 							<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Venue'); ?>" id="add_new_venue" />
+							<?php wp_nonce_field( 'espresso_form_check', 'add_new_venue' ) ?>
 						</p>
 				</div><!-- /#descriptiondivrich -->
 	 </form>

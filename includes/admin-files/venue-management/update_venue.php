@@ -1,6 +1,7 @@
 <?php 
 function update_event_venue(){
 	global $wpdb, $notices;
+	if( check_admin_referer('espresso_form_check', 'update_venue' )) {
 	$wpdb->show_errors();
 	//print_r($_REQUEST);
 	$venue_meta['contact'] = $_REQUEST['contact'];
@@ -27,6 +28,7 @@ function update_event_venue(){
 		
 	$update_id = array('id'=> $_REQUEST['venue_id']);
 	$sql_data = array('%s','%s','%s','%s','%s','%s','%s','%s');
+	}
 	
 	if ($wpdb->update( EVENTS_VENUE_TABLE, $sql, $update_id, $sql_data, array( '%d' )) ){
 		/*echo 'Debug: <br />';
@@ -43,8 +45,8 @@ function update_event_venue(){
 				$notices['errors'][] = __('The locale was not saved!', 'event_espresso');
 			}
 		}
-		$notices['updates'][] = __('The venue ', 'event_espresso') . $_REQUEST['name'] .  __(' has been added', 'event_espresso');
+		$notices['updates'][] = __('The venue ', 'event_espresso') . $_REQUEST['name'] .  __(' has been updated', 'event_espresso');
 	}else{ 
-		$notices['errors'][] = __('The venue', 'event_espresso') . $_REQUEST['name'] .  __(' was not saved!', 'event_espresso');		
+		$notices['errors'][] = __('The venue', 'event_espresso') . $_REQUEST['name'] .  __(' was not updated!', 'event_espresso');		
 	}
 }

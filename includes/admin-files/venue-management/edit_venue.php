@@ -224,6 +224,7 @@ function edit_event_venue(){
 					</div><!-- /.postbox -->
 		  <p>
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Venue'); ?>" id="update_venue" />
+			<?php wp_nonce_field( 'espresso_form_check', 'update_venue' ) ?>
 		  </p>
 					</div><!-- /#descriptiondivrich -->
 	  </form>

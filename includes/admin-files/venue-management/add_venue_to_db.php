@@ -2,7 +2,7 @@
 function add_venue_to_db(){
 	global $wpdb, $espresso_wp_user, $notices;
 	$wpdb->show_errors();
-	if ( $_REQUEST['action'] == 'add' ){
+	if ( $_REQUEST['action'] == 'add' && check_admin_referer('espresso_form_check', 'add_new_venue')){
 		//print_r($_REQUEST);
 		$venue_meta['contact'] = $_REQUEST['contact'];
 		$venue_meta['phone'] = $_REQUEST['phone'];
