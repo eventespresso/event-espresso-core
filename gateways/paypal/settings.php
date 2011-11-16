@@ -52,18 +52,25 @@ function event_espresso_paypal_payment_settings() {
 						$notices['updates'][] = __('PayPal Payments Activated', 'event_espresso');
 					}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
 						$notices['updates'][] = __('PayPal Payments Activated', 'event_espresso');
+					}else{
+						$notices['errors'][] = __('Unable to Activate PayPal Payments', 'event_espresso');
 					}
 				}
 				if (isset($_REQUEST['reactivate_paypal'])&&$_REQUEST['reactivate_paypal'] == 'true') {
 					$payment_settings['paypal']['active'] = true;
 					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
 						$notices['updates'][] = __('PayPal Payments Activated', 'event_espresso');
+					}else{
+						$notices['errors'][] = __('Unable to Activate PayPal Payments', 'event_espresso');
 					}
 				}
 				if (isset($_REQUEST['deactivate_paypal'])&&$_REQUEST['deactivate_paypal'] == 'true') {
 					$payment_settings['paypal']['active'] = false;
 					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == false){
 						$notices['updates'][] = __('PayPal Payments De-activated', 'event_espresso');
+					}
+					else{
+						$notices['errors'][] = __('Unable to De-activate PayPal Payments', 'event_espresso');
 					}
 				}
 				echo '<ul>';

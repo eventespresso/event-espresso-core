@@ -42,7 +42,7 @@ function event_espresso_invoice_payment_settings(){
 	//Debug
 	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 ?>
-
+<a name="invoice" id="invoice"></a>
 <div class="metabox-holder">
 	<div class="postbox">
 		<div title="Click to toggle" class="handlediv"><br />
@@ -58,10 +58,11 @@ function event_espresso_invoice_payment_settings(){
 					//echo 'active = '.$payment_settings['invoice']['active'];
 					if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
 						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
+					}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
+					}else{
+						$notices['errors'][] = __('Unable to Activate Invoice Payments', 'event_espresso');
 					}
-					/*add_option("events_invoice_payment_active", 'true', '', 'yes');
-					add_option("event_espresso_invoice_payment_settings", '', '', 'yes');*/
-					//update_option( 'event_espresso_payment_gateway', 'invoice_payment');
 				}
 				
 				if (isset($_REQUEST['reactivate_invoice_payment']) && $_REQUEST['reactivate_invoice_payment'] == 'true'){
@@ -69,38 +70,36 @@ function event_espresso_invoice_payment_settings(){
 					//echo 'active = '.$payment_settings['invoice']['active'];
 					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
 						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
+					}else{
+						$notices['errors'][] = __('Unable to Activate Invoice Payments', 'event_espresso');
 					}
-					//update_option( 'events_invoice_payment_active', 'true');
-					//update_option( 'event_espresso_payment_gateway', 'invoice_payment');
 				}
 				
 				if (isset($_REQUEST['deactivate_invoice_payment']) && $_REQUEST['deactivate_invoice_payment'] == 'true'){
 					$payment_settings['invoice']['active'] = false;
 					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == false){
 						$notices['updates'][] = __('Invoice Payments De-activated', 'event_espresso');
+					}else{
+						$notices['errors'][] = __('Unable to De-activate Invoice Payments', 'event_espresso');
 					}
-					//update_option( 'events_invoice_payment_active', 'false');
-					//update_option( 'event_espresso_payment_gateway', '');
 				}
-				
-				//echo 'active = '.$payment_settings['invoice']['active'];
-				//$payment_settings['invoice']['active'] = true;
-				//update_user_meta( $espresso_wp_user, 'payment_data_'.$espresso_wp_user, $payment_settings );
-				
+								
 				//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 				
 				echo '<ul>';
 				if (!isset($payment_settings['invoice']['active'])){
-					echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_invoice_payment=true\';" class="yellow_alert pointer"><strong>' . __('The Invoice Payments is installed. Would you like to activate it?','event_espresso') . '</strong></li>';
+					echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_invoice_payment=true#invoice\';" class="yellow_alert pointer"><strong>' . __('The Invoice Payments is installed. Would you like to activate it?','event_espresso') . '</strong></li>';
 				}else{
 					switch ($payment_settings['invoice']['active']){
+						
 						case false:
-						echo '<li>Invoice Payments is installed.</li>';
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_invoice_payment=true\';" class="green_alert pointer"><strong>' . __('Activate Invoice Payments?','event_espresso') . '</strong></li>';
+							echo '<li>Invoice Payments is installed.</li>';
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_invoice_payment=true#invoice\';" class="green_alert pointer"><strong>' . __('Activate Invoice Payments?','event_espresso') . '</strong></li>';
 						break;
+						
 						case true:
-						echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_invoice_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Invoice Payments?','event_espresso') . '</strong></li>';
-						event_espresso_display_invoice_payment_settings();
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_invoice_payment=true#invoice\';" class="red_alert pointer"><strong>' . __('Deactivate Invoice Payments?','event_espresso') . '</strong></li>';
+							event_espresso_display_invoice_payment_settings();
 						break;
 					}
 				}
@@ -111,6 +110,7 @@ function event_espresso_invoice_payment_settings(){
 	</div>
 </div>
 <?php
+	//This line keeps the notices from displaying twice
 	if ( did_action( 'espresso_admin_notices' ) == false )
 		do_action('espresso_admin_notices');
 	
@@ -130,7 +130,7 @@ function event_espresso_display_invoice_payment_settings(){
 	//$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
 	$files = espresso_invoice_template_files();
 ?>
-<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>">
+<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>#invoice">
 	<table width="90%" border="0">
 		<tr>
 			<td valign="top"><ul>
