@@ -10,9 +10,9 @@ echo '<!--Event Espresso PayPal Gateway Version ' . $paypal_gateway_version . '-
 $myPaypal = new Paypal();
 // Log the IPN results
 $myPaypal->ipnLog = TRUE;
-$paypal_settings = get_option('event_espresso_paypal_settings');
+$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 // Enable test mode if needed
-if ($paypal_settings['use_sandbox'] == '1') {
+if ($payment_settings['paypal']['use_sandbox'] == '1') {
 	$myPaypal->enableTestMode();
 	$email_transaction_dump = true;
 }
