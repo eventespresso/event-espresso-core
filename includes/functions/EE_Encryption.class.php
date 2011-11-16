@@ -40,7 +40,9 @@ class EE_Encryption {
 	 */	
   private function __construct() {
 	
-		if ( ! function_exists( 'mcrypt_encrypt' ) ) {
+		define( 'ESPRESSO_ENCRYPT', TRUE ); 
+		
+		if ( ! function_exists( 'mcrypt_encrypt' ) ) { 
 			self::$_mcrypt = FALSE;
 		}
 		
