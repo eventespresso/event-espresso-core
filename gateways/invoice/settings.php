@@ -4,7 +4,7 @@ function event_espresso_invoice_payment_settings(){
 	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
 
 	//Debug
-	echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
+	//echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
 	
 	$old_payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	//Debug
@@ -56,7 +56,7 @@ function event_espresso_invoice_payment_settings(){
 				if (isset($_REQUEST['activate_invoice_payment']) && $_REQUEST['activate_invoice_payment'] == 'true'){
 					$payment_settings['invoice']['active'] = true;
 					//echo 'active = '.$payment_settings['invoice']['active'];
-					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
 						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
 					}
 					/*add_option("events_invoice_payment_active", 'true', '', 'yes');
@@ -90,18 +90,19 @@ function event_espresso_invoice_payment_settings(){
 				//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 				
 				echo '<ul>';
-				switch ($payment_settings['invoice']['active']){
-					case false:
-					echo '<li>Invoice Payments is installed.</li>';
-						echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_invoice_payment=true\';" class="green_alert pointer"><strong>' . __('Activate Invoice Payments?','event_espresso') . '</strong></li>';
-					break;
-					case true:
-					echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_invoice_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Invoice Payments?','event_espresso') . '</strong></li>';
-					event_espresso_display_invoice_payment_settings();
-					break;
-					default:
-						echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_invoice_payment=true\';" class="yellow_alert pointer"><strong>' . __('The Invoice Payments is installed. Would you like to activate it?','event_espresso') . '</strong></li>';
-					break;
+				if (!isset($payment_settings['invoice']['active'])){
+					echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_invoice_payment=true\';" class="yellow_alert pointer"><strong>' . __('The Invoice Payments is installed. Would you like to activate it?','event_espresso') . '</strong></li>';
+				}else{
+					switch ($payment_settings['invoice']['active']){
+						case false:
+						echo '<li>Invoice Payments is installed.</li>';
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_invoice_payment=true\';" class="green_alert pointer"><strong>' . __('Activate Invoice Payments?','event_espresso') . '</strong></li>';
+						break;
+						case true:
+						echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_invoice_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Invoice Payments?','event_espresso') . '</strong></li>';
+						event_espresso_display_invoice_payment_settings();
+						break;
+					}
 				}
 				echo '</ul>';
 ?>
