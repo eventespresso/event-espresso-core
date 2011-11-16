@@ -31,7 +31,11 @@
 	var $_sid = NULL;
 	
 	// and the session data
-	var $_session_data = array();
+	var $data = array();
+//															'REG' => array(),
+//															'MER' => array(),
+//															'CART' => array()
+	
 	
 	// default session expiration 2 hours
 	var $_expiration = 7200;
@@ -93,6 +97,8 @@
 		global $notices;
 		$this->_notices = $notices;
 		
+		global $org_options;
+
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : FALSE;
 
 		// retreive session options from db
@@ -120,12 +126,19 @@
 			$this->_create_espresso_session();
 		}
 		
+		if ( isset( $_REQUEST['page_id'] ) ) {
+			if (  $_REQUEST['page_id'] == $org_options['return_url'] or $_REQUEST['page_id'] == $org_options['notify_url'] ) {
+//				$this->reset_data( array( 'REG', 'MER', 'CART' ));
+				$this->reset_data( array() );
+			}
+		}
+		
 		// create global var to hold event espresso session data
-		global $espresso_session;
-		$espresso_session = $this->_session_data['espresso'];
+		global $EE_Session;
+		$EE_Session = $this->data['espresso'];
 
 		// once everything is all said and done, 
-		add_action( 'shutdown', array( &$this, '_update_espresso_session' ));
+		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
 
 	}
 
@@ -192,7 +205,7 @@
 		}
 		
 		// make event espresso session data available to plugin 
-		$this->_session_data = $session_data['espresso'];
+		$this->data = $session_data['espresso'];
 		
 		return TRUE;
 
@@ -226,7 +239,7 @@
 		// current access time
 		$session_data['last_access'] = $this->_time;
 		// event espresso session data
-		$session_data['espresso'] = $this->_session_data;
+		$session_data['espresso'] = $this->data;
 		
 		// creating a new session does not require saving to the db just yet
 		if ( ! $new_session ) {
@@ -346,7 +359,7 @@
 		//echo '<h3>'.__FUNCTION__.'</h3>';
 		// nothing ??? go home!
 		if ( ! $data_to_reset ) {
-			$this->_notices['errors'][] = 'No session data could be reset, because no session var name was provided.';
+			$this->_notices['errors'][] = 'An error occured. No session data could be reset, because no session var name was provided.';
 			return FALSE;
 		}
 		
@@ -359,24 +372,24 @@
 		foreach ( $data_to_reset as $reset ) {
 
 			// first check to make sure it is a valid session var
-			if ( isset( $this->_session_data[ $reset ] )) {
+			if ( isset( $this->data[ $reset ] )) {
 			
 				// then check to make sure it is not a default var
 				if ( ! in_array( $reset, $this->_default_session_vars )) {
 					// set var to NULL
-					$this->_session_data[ $reset ] = NULL;
+					$this->data[ $reset ] = NULL;
 					$this->_notices['updates'][] = 'The session variable '.$reset.' was reset.';
 					return TRUE;
 					
 				} else {
 					// yeeeeeeeeerrrrrrrrrrr OUT !!!!
-					$this->_notices['errors'][] = 'Default session data can not be reset.';
+					$this->_notices['errors'][] = 'Sorry! Default session data can not be reset.';
 					return FALSE;
 				}
 				
 			} else {
 				// opps! that session var does not exist!
-				$this->_notices['errors'][] = 'No session item provided is invalid or does not exist.';
+				$this->_notices['errors'][] = 'An error occured. The session item provided is invalid or does not exist.';
 				return FALSE;
 			}
 			
