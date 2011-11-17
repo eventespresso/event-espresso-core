@@ -19,7 +19,7 @@
 * -1.9 Email manager
 * -1.10 Template Settings
 * -1.11 Calendar Settings
-* -1.12 Payments Settings
+* -1.12 Payment Settings
 * -1.13 Addons
 * -1.14 Help/Support
 * 2. Tables - gen styles
@@ -661,6 +661,10 @@ div#gmap-reg-events { padding-left: 3%;}
 
 /*___ Payment Settings ___*/
 
+.event-espresso_page_payment_gateways .postbox ul li{
+	margin:10px 0;
+}
+
 /*___ Help & Support ___*/
 
 .localhost-information,
@@ -807,7 +811,7 @@ p.event-regis_sub {
 	margin:-10px;
 	font-size:12px;
 }
-/** Calendar ***/
+/** Calendar Settings ***/
 #calendar-header {
 	background-color: #6699CC;
 	margin: auto;
