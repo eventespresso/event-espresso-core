@@ -1427,6 +1427,7 @@ select.wide {width: 175px;}
 #add-edit-categories p {
 	overflow: hidden;
 }
+#add-edit-categories p.section-quest {overflow: visible;}
 #add-edit-categories p label {
 	display: block;
 }
