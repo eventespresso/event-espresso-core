@@ -6,6 +6,7 @@ if (isset($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1) //need this condition 
 
 
 
+
 //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] tag
 
 function event_espresso_txn() {
@@ -101,6 +102,22 @@ function event_espresso_txn() {
 				} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/firstdata/Firstdata.php")) {
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/firstdata/Firstdata.php");
+				}
+			} elseif (get_option('events_firstdata_connect_2_active') == 'true' && !empty($_REQUEST['response_hash'])) {
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata_connect_2/firstdata_connect_2_ipn.php")) {
+					//Moved files
+					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata_connect_2/firstdata_connect_2_ipn.php");
+				} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/firstdata_connect_2/firstdata_connect_2_ipn.php")) {
+					//Default files
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/firstdata_connect_2/firstdata_connect_2_ipn.php");
+				}
+			} elseif (get_option('events_worldpay_active') == 'true') {
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/worldpay/worldpay_ipn.php")) {
+					//Moved files
+					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/worldpay/worldpay_ipn.php");
+				} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/worldpay/worldpay_ipn.php")) {
+					//Default files
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/worldpay/worldpay_ipn.php");
 				}
 				//Load Merchant Warrior IPN
 			} elseif (get_option('events_mwarrior_active') == 'true') {

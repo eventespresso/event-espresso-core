@@ -12,24 +12,58 @@ class Fdggutil {
 	private $cancelUrl;
 	private $attendee_id;
 
-	public function Fdggutil($storename, $sharedSecret, $timezone, $chargetotal, $sandbox, $returnUrl, $cancelUrl, $attendee_id) {
+	public function Fdggutil($storename, $sharedSecret) {
 		$this->storename = $storename;
 		$this->sharedSecret = $sharedSecret;
-		$this->timezone = $timezone;
-		$this->dateTime = date("Y:m:d-H:i:s");
-		$this->chargetotal = $chargetotal;
+	}
+
+	public function set_timezone($timezone) {
+				$this->timezone = $timezone;
+	}
+
+	public function set_dateTime() {
+				$this->dateTime = date("Y:m:d-H:i:s");
+				global $wpdb;
+				$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_date ='" . $this->dateTime . "' ";
+				$sql .= "WHERE id='" . $this->attendee_id . "'";
+				$wpdb->query($sql);
+	}
+
+	public function set_chargetotal($chargetotal) {
+				$this->chargetotal = $chargetotal;
+	}
+
+	public function set_sandbox($sandbox) {
 		if($sandbox) {
 			$this->gatewayUrl = "https://connect.merchanttest.firstdataglobalgateway.com/IPGConnect/gateway/processing";
 		} else {
 			$this->gatewayUrl = "https://connect.firstdataglobalgateway.com/IPGConnect/gateway/processing";
 		}
-		$this->returnUrl = $returnUrl;
+	}
+
+	public function set_returnUrl($returnUrl) {
+				$this->returnUrl = $returnUrl;
+	}
+
+	public function set_cancelUrl($cancelUrl) {
 		$this->cancelUrl = $cancelUrl;
+	}
+
+	public function set_attendee_id($attendee_id) {
 		$this->attendee_id = $attendee_id;
 	}
 
 	private function createHash() {
 		$str = $this->storename . $this->dateTime . $this->chargetotal . $this->sharedSecret;
+		$hex_str = '';
+		for ($i = 0; $i < strlen($str); $i++) {
+			$hex_str.=dechex(ord($str[$i]));
+		}
+		return hash('sha256', $hex_str);
+	}
+
+	public function check_return_hash($payment_date) {
+		$str = $this->sharedSecret . $_REQUEST['approval_code'] . $_REQUEST['chargetotal'] . 840 . $payment_date . $this->storename;
 		$hex_str = '';
 		for ($i = 0; $i < strlen($str); $i++) {
 			$hex_str.=dechex(ord($str[$i]));
