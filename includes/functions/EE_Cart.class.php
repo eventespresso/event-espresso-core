@@ -31,16 +31,16 @@
 	var $cart = array(
 
 					'REG' => array( 
-																	'title' => 'Single Registrations', 
+																	'title' => 'Registrations', 
 																	'total_items' => 0, 
 																	'sub_total' => 0, 
 																	'empty_msg' => 'No Current Registrations'
 																),
 					'MER' => array( 
-																	'title' => 'Multi Registrations', 
+																	'title' => 'Additional Options', 
 																	'total_items' => 0, 
 																	'sub_total' => 0, 
-																	'empty_msg' => 'No Current Registrations' 
+																	'empty_msg' => 'No Additional Options' 
 																),
 					'CART' => array(
 																	'title' => 'Shopping Cart', 
