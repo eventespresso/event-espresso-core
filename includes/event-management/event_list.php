@@ -2,6 +2,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function event_espresso_edit_list() {
     global $wpdb, $org_options;
+	
 	$wpdb->show_errors();
 
 	//Dates
@@ -158,10 +159,17 @@ function event_espresso_edit_list() {
             $sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month)) . "' ";
         }
         //If user is an event manager, then show only their events
-        if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-            $sql .= " AND e.wp_user = '" . espresso_member_data('id') . "' ";
+		if (function_exists('espresso_manager_pro_version')){
+			if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
+				$user_id = espresso_member_data('id');
+				$sql .= " AND e.wp_user = '" . $user_id . "' ";
+			}else if ( function_exists('espresso_is_admin') && espresso_is_admin() == true && $_SESSION['espresso_use_selected_manager'] == true) {
+				global $espresso_wp_user;
+					$sql .= " AND e.wp_user = '" . $espresso_wp_user . "' ";
+			}
         }
         $sql .= ") ORDER BY start_date  ASC $records_to_show ";
+		//Debug
 		//echo $sql;
         ?>
         <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
