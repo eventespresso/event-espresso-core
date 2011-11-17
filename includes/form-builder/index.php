@@ -138,15 +138,23 @@ function event_espresso_questions_config_mnu() {
                                 <?php
                                 $sql = "SELECT * FROM " . EVENTS_QUESTION_TABLE;
 								$sql .= " WHERE ";
-                                if (function_exists('espresso_member_data') && !isset($_REQUEST['all'])) {
-                                    if (espresso_member_data('id') == 0 || espresso_member_data('id') == 1) {
-                                        $sql .= " (wp_user = '0' OR wp_user = '1') ";
+								 //If the permissions pro is installed, then we run some user checks
+                                if (function_exists('espresso_manager_pro_version') && !isset($_REQUEST['all'])) {
+									if ( function_exists('espresso_is_admin') && espresso_is_admin() == true && $_SESSION['espresso_use_selected_manager'] == true) {
+										global $espresso_wp_user;
+										$sql .= " wp_user = '" . $espresso_wp_user . "' ";
+									}elseif (espresso_member_data('id') == 0 || espresso_member_data('id') == 1) {
+                                       	//If the current user id is 0 or 1, then the user is the super admin. So we load the super admins questions
+										$sql .= " (wp_user = '0' OR wp_user = '1') ";
                                     } else {
-                                        $sql .= " wp_user = '" . espresso_member_data('id') . "' ";
+                                        //If the user is not an admin, but is an event manager or higher
+										$sql .= " wp_user = '" . espresso_member_data('id') . "' ";
                                     }
                                 }else{
+									//Default to super admin
 									$sql .= " (wp_user = '0' OR wp_user = '1') ";
 								}
+		
                                 $sql .= " ORDER BY sequence";
                                 $questions = $wpdb->get_results($sql);
                                 if ($wpdb->num_rows > 0) {
