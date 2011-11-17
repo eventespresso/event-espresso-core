@@ -62,7 +62,7 @@ function espresso_aim_process_payment() {
 		?>
 		<h2><?php _e('Thank You!', 'event_espresso'); ?></h2>
 		<p><?php _e('Your transaction has been processed.', 'event_espresso'); ?></p>
-		<p><?php __('Transaction ID:', 'event_espresso') . $response->transaction_id; ?></p>
+		<p><?php _e('Transaction ID:', 'event_espresso') . $response->transaction_id; ?></p>
 		<?php
 		$payment_failed = false;
 	} else {
