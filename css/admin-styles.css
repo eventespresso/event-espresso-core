@@ -343,10 +343,14 @@ li.time-date .run-in {
 }
 /*___ Overview screen ___*/
 
-ul.subsubsub {
+ul.ee_subsubsub {
 	clear:both;
 }
-ul.subsubsub + ul.subsubsub {
+ul.ee_subsubsub.first{
+	clear:both;
+	margin-top:0px;
+}
+ul.ee_subsubsub + ul.ee_subsubsub {
 	margin-bottom: 20px;
 }
 div.tablenav {
