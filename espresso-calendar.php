@@ -56,6 +56,7 @@ function espresso_calendar_install(){
 					'espresso_calendar_weekends' => 'true',
 					'espresso_calendar_height' => '650',
 					'espresso_calendar_width' => '2',
+					'enable_calendar_thumbs' => false,
 					'calendar_thumb_size' => 'small',
 					'show_in_thickbox' => false,
 					'espresso_use_pickers' => false,
@@ -109,7 +110,8 @@ function espresso_calendar_config_mnu()	{
 		$espresso_calendar['espresso_calendar_weekends'] = $_POST['espresso_calendar_weekends'];
 		$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
 		$espresso_calendar['espresso_calendar_width'] = $_POST['espresso_calendar_width'];
-		$espresso_calendar['calendar_thumb_size'] = $_POST['calendar_thumb_size'];
+		$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
+		$espresso_calendar['calendar_thumb_size'] = (!empty($_POST['calendar_thumb_size']))? $_POST['calendar_thumb_size']: $espresso_calendar['calendar_thumb_size'];
 		$espresso_calendar['show_in_thickbox'] = $_POST['show_in_thickbox'];
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
@@ -305,17 +307,27 @@ echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['esp
 												<br />
 												<?php echo select_input('espresso_page_post',array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"');?> </li>
 											<li>
-												<p class="section-heading">Select Calendar thumbnail size: <a class="thickbox"href="#TB_inline?height=400&amp;width=500&amp;inlineId=calendar-thumb-sizes" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a></p>
-												<label for="calendar-thumb-size-sml">
-													<input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small"/>
+												<label for="enable-calendar-thumbs">
+													<?php _e('Enable images in calendar? ', 'event_espresso'); ?>
+												</label>
+												<?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"');?> </li>
+											<li>											
+											<li>
+											<?php
+											$disabled = ($espresso_calendar['enable_calendar_thumbs'] !== 'true') ? 'disabled="disabled"' : '';
+											$styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
+											?>											
+												<p class="section-heading" <?php echo $styled ?>>Select Calendar thumbnail size: <a class="thickbox"href="#TB_inline?height=400&amp;width=500&amp;inlineId=calendar-thumb-sizes" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a></p>
+												<label for="calendar-thumb-size-sml" <?php echo $styled ?>>
+													<input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small" <?php echo $disabled ?> />
 													<?php _e(' Small (50px high)', 'event_espresso') ?>
 												</label>
-												<label for="calendar-thumb-size-med">
-													<input id="calendar-thumb-size-med" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium')?> value="medium" />
+												<label for="calendar-thumb-size-med" <?php echo $styled ?>>
+													<input id="calendar-thumb-size-med" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium')?> value="medium" <?php echo $disabled ?> />
 													<?php _e(' Medium (100px high)', 'event_espresso')?>
 												</label>
-												<label for="calendar-thumb-size-lrg">
-													<input id="calendar-thumb-size-lrg" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large')?> value="large" />
+												<label for="calendar-thumb-size-lrg" <?php echo $styled ?>>
+													<input id="calendar-thumb-size-lrg" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large')?> value="large" <?php echo $disabled ?> />
 													<?php _e(' Large (150px high)', 'event_espresso')?>
 												</label>
 											</li>
@@ -809,17 +821,19 @@ if (!function_exists('espresso_calendar')) {
 			$eventArray['startTime'] = event_date_display($event->start_time, $espresso_calendar['time_format']);
 			$eventArray['endTime'] = event_date_display($event->end_time, $espresso_calendar['time_format']);	
  
-			// add image thumb to array
-			if( !empty($event_meta['event_thumbnail_url']) ) {
-				$calendar_thumb= $event_meta['event_thumbnail_url'];
-				// echo '<a href="' . $registration_url . '"><img class="event-id-'. $event->id . '" src="'. $calendar_thumb . '" alt="" title="' . $ee_event_title . '" / ></a>';
-			}	
-			
-			//Thumbnail		
-			if( !empty($event_meta['display_thumb_in_calendar']) ) {
-			$eventArray['event_img_thumb'] = $calendar_thumb ;
+			// Fetch image thumb path
+			if($espresso_calendar['enable_calendar_thumbs'] == 'true'){
+				if( !empty($event_meta['event_thumbnail_url']) ) {
+					$calendar_thumb= $event_meta['event_thumbnail_url'];
+					// echo '<a href="' . $registration_url . '"><img class="event-id-'. $event->id . '" src="'. $calendar_thumb . '" alt="" title="' . $ee_event_title . '" / ></a>';
+				}	
 			}
-			
+			// Add thumb to eventArray
+			if($espresso_calendar['enable_calendar_thumbs'] == 'true'){		
+				if( !empty($event_meta['display_thumb_in_calendar']) ) {
+				$eventArray['event_img_thumb'] = $calendar_thumb ;
+				}
+			}
 			//Custom fields: 
 			//These can be used to perform special functions in your display.
 
