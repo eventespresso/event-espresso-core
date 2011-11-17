@@ -63,7 +63,8 @@ class Fdggutil {
 	}
 
 	public function check_return_hash($payment_date) {
-		$str = $this->sharedSecret . $_REQUEST['approval_code'] . $_REQUEST['chargetotal'] . 840 . $payment_date . $this->storename;
+		$currency = '840';
+		$str = $this->sharedSecret . $_REQUEST['approval_code'] . $_REQUEST['chargetotal'] . $currency . $payment_date . $this->storename;
 		$hex_str = '';
 		for ($i = 0; $i < strlen($str); $i++) {
 			$hex_str.=dechex(ord($str[$i]));
