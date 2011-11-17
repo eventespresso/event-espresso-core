@@ -90,7 +90,7 @@ function organization_config_mnu() {
 				break;
 
 			case 'DNK':
-				$org_options['currency_symbol'] = 'Kr. ';
+				$org_options['currency_symbol'] = 'DKK ';
 				break;
 
 			case 'ZAF':
