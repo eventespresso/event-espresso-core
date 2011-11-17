@@ -94,7 +94,8 @@ function event_espresso_manage_templates() {
 												<label>
 													<?php _e('Enable built style sheets?', 'event_espresso'); ?>
 												</label>
-												<?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> <a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=enable_styles_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a> </li>
+												<?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> 
+												<?php apply_filters( 'espresso_help', 'enable_styles_info'); ?></li>
 											
 												<?php include(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_styles_settings.php'); ?>
 											

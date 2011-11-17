@@ -62,7 +62,7 @@ $values = array(
 	<option <?php espresso_style_is_selected($fname_themeroller) ?> value="<?php echo $fname_themeroller ?>"><?php echo $fname_themeroller; ?></option>
 	<?php } ?>
 </select>
-<a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=themeroller_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a></li>
+<?php apply_filters( 'espresso_help', 'themeroller_info');?></li>
 <?php ?>
 <?php if (!empty($org_options['style_settings']['css_name'])){
 ?><li><label>
