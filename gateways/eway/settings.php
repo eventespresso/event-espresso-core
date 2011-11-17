@@ -81,7 +81,6 @@ function event_espresso_display_eway_settings() {
                             <label for="eway_id">
                                 <?php _e('eway I.D.', 'event_espresso'); ?>
                             </label>
-                            <br />
                             <input type="text" name="eway_id" size="35" value="<?php echo $eway_settings['eway_id']; ?>">
                             <br />
                             <?php _e('(Typically 87654321)', 'event_espresso'); ?>
@@ -90,17 +89,34 @@ function event_espresso_display_eway_settings() {
                             <label for="eway_username">
                                 <?php _e('eway username', 'event_espresso'); ?>
                             </label>
-                            <br />
                             <input type="text" name="eway_username" size="35" value="<?php echo $eway_settings['eway_username']; ?>">
                             <br />
                             <?php _e('(Typically TestAccount)', 'event_espresso'); ?>
                         </li>
+                        
                         <li>
+                            <label for="button_url">
+                                <?php _e('Button Image URL: ', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'eway_button_image'); ?>
+                            </label>
+                            <input type="text" name="button_url" size="34" value="<?php echo (($eway_settings['button_url'] == '') ? '' : $eway_settings['button_url'] ); ?>" />
+                            <a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
+<?php echo (($eway_settings['button_url'] == '') ? '<img src="' . $button_url . '" />' : '<img src="' . $eway_settings['button_url'] . '" />'); ?></li>
+                        <li>
+                            <label for="image_url">
+                                <?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'eway_image_url_info'); ?>
+                            </label>
+                            <br />
+                            <input type="text" name="image_url" size="35" value="<?php echo $eway_settings['image_url']; ?>" />
+                            <a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
+                            <?php _e('(used for your business/personal logo on the eway page)', 'event_espresso'); ?>
+                        </li>
+                    </ul></td>
+                <td valign="top"><ul>
+				<li>
                             <label for="currency_format">
                                 <?php _e('Select the currency for your country:', 'event_espresso'); ?>
                             </label>
-                            <br />
-                            <select name="currency_format">
+                            <select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select" style="width:200px;">
                                 <option value="<?php echo $eway_settings['currency_format']; ?>"><?php echo $eway_settings['currency_format']; ?></option>
                                 <option value="USD">
                                     <?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
@@ -169,38 +185,20 @@ function event_espresso_display_eway_settings() {
                                     <?php _e('Thai Baht', 'event_espresso'); ?>
                                 </option>
                             </select>
-                            <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=currency_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
-                        <li>
-                            <label for="button_url">
-                                <?php _e('Button Image URL: ', 'event_espresso'); ?>
-                            </label>
-                            <br />
-                            <input type="text" name="button_url" size="34" value="<?php echo (($eway_settings['button_url'] == '') ? '' : $eway_settings['button_url'] ); ?>" />
-                            <a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
-                        <li>
-                            <label for="image_url">
-                                <?php _e('Image URL (logo for payment page):', 'event_espresso'); ?>
-                            </label>
-                            <br />
-                            <input type="text" name="image_url" size="35" value="<?php echo $eway_settings['image_url']; ?>" />
-                            <a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=image_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
-                            <?php _e('(used for your business/personal logo on the eway page)', 'event_espresso'); ?>
-                        </li>
-                    </ul></td>
-                <td valign="top"><ul>
+                            <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=eway_currency_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
+				<li>
                         <label for="bypass_payment_page">
-                            <?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?>
+                            <?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'eway_bypass_confirmation'); ?>
                         </label>
                         <?php
                         $values = array(
                             array('id' => 'N', 'text' => __('No', 'event_espresso')),
                             array('id' => 'Y', 'text' => __('Yes', 'event_espresso')));
                         echo select_input('bypass_payment_page', $values, $eway_settings['bypass_payment_page']);
-                        ?>
-                        &nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=bypass_confirmation"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></li>
+                        ?></li>
                         <li>
                             <label for="no_shipping">
-                                <?php _e('Shipping address options?', 'event_espresso'); ?>
+                                <?php _e('Shipping address options?', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'eway_no_shipping'); ?>
                             </label>
                             <?php
                             $values = array(
@@ -209,13 +207,13 @@ function event_espresso_display_eway_settings() {
                                 array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso')));
                             echo select_input('no_shipping', $values, $eway_settings['no_shipping']);
                             ?>
-                            &nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=no_shipping"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></li>
+                           </li>
                         <li>
                             <label for="region">
                                 <?php _e('Select the region where you want to use eWay:', 'event_espresso'); ?>
                             </label>
                             <br />
-                            <select name="region">
+                            <select name="region" class="chzn-select" data-placeholder="Choose a region..." style="width:200px">
                                 <option value="<?php echo $eway_settings['region']; ?>"><?php echo $eway_settings['region']; ?></option>
                                 <option value="UK">
                                     <?php _e('United Kingdom', 'event_espresso'); ?>
@@ -230,15 +228,12 @@ function event_espresso_display_eway_settings() {
                         </li>
                         <li>
                             <label for="use_sandbox">
-                                <?php _e('Use the debugging feature and the', 'event_espresso'); ?> <a href="https://developer.eway.com/devscr?cmd=_home||https://cms.eway.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox||https://cms.eway.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" title="eway Sandbox Login||Sandbox Tutorial||Getting Started with eway Sandbox" target="_blank"><?php _e('eway Sandbox', 'event_espresso'); ?></a>?
+                                <?php _e('Use the debugging feature and the eway Sandbox?', 'event_espresso'); ?></a> <?php apply_filters( 'espresso_help', 'eway_sandbox_info'); ?>
                             </label>
                             <input name="use_sandbox" type="checkbox" value="1" <?php echo $eway_settings['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-                            &nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=sandbox_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+                           
                         </li>
-                        <li>
-                            <?php _e('Current Button Image:', 'event_espresso'); ?>
-                            <br />
-                            <?php echo (($eway_settings['button_url'] == '') ? '<img src="' . $button_url . '" />' : '<img src="' . $eway_settings['button_url'] . '" />'); ?></li>
+                       
                         <li><strong><?php _e('eway Notes:', 'event_espresso'); ?></strong><br /><?php _e('For eway IPN to work, you need a Business or Premier account.', 'event_espresso'); ?></li>
                     </ul></td>
             </tr>
@@ -248,13 +243,13 @@ function event_espresso_display_eway_settings() {
             <input class="button-primary" type="submit" name="Submit" value="<?php _e('Update eway Settings', 'event_espresso') ?>" id="save_eway_settings" />
         </p>
     </form>
-    <div id="sandbox_info" style="display:none">
+    <div id="eway_sandbox_info" style="display:none">
         <h2><?php _e('eway Sandbox', 'event_espresso'); ?></h2>
         <p><?php _e('In addition to using the eway Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all eway variables.', 'event_espresso'); ?></p>
         <hr />
         <p><?php _e('The eway Sandbox is a testing environment that is a duplicate of the live eway site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live eway environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?></p>
     </div>
-    <div id="image_url_info" style="display:none">
+    <div id="eway_image_url_info" style="display:none">
         <h2>
             <?php _e('eway Image URL (logo for payment page)', 'event_espresso'); ?>
         </h2>
@@ -265,14 +260,14 @@ function event_espresso_display_eway_settings() {
             <?php _e('Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account.', 'event_espresso'); ?>
         </p>
     </div>
-    <div id="currency_info" style="display:none">
+    <div id="eway_currency_info" style="display:none">
         <h2><?php _e('eway Currency', 'event_espresso'); ?></h2>
         <p><?php _e('eway uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that eway (currently) supports.', 'event_espresso'); ?> </p>
     </div>
-    <div id="surcharge" style="display:none">
+    <div id="eway_surcharge" style="display:none">
         <h2><?php _e('Payment Surcharge', 'event_espresso'); ?></h2>
         <p><?php _e('Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation.', 'event_espresso'); ?></p></div>
-    <div id="no_shipping" style="display:none">
+    <div id="eway_no_shipping" style="display:none">
         <h2><?php _e('Shipping Address', 'event_espresso'); ?></h2>
         <p><?php _e('By default, eway will display shipping address information on the eway payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event.', 'event_espresso'); ?></p>
     </div>

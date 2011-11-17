@@ -100,7 +100,7 @@ function event_espresso_display_mwarrior_settings() {
                                 <?php _e('Select the currency for your country:', 'event_espresso'); ?>
                             </label>
                             <br />
-                            <select name="currency_format">
+                            <select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select" style="width:200px;">
                                 <option value="AUD" <?php echo ($mwarrior_settings['currency_format'] == "AUD") ? "selected" : ""; ?>>
                                     <?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
                                 </option>

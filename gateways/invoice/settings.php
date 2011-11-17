@@ -35,7 +35,7 @@ function event_espresso_invoice_payment_settings(){
 		//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 		
 		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
-			$notices['updates'][] = __('Invoice Payment Settings Updated for User:', 'event_espresso'). ' ' .$espresso_wp_user;
+			$notices['updates'][] = __('Invoice Payment Settings Updated!', 'event_espresso');
 		}
 	}
 	
@@ -118,16 +118,13 @@ function event_espresso_invoice_payment_settings(){
 
 //Invoice Payments Settings Form
 function event_espresso_display_invoice_payment_settings(){
-	global $espresso_premium, $org_options, $espresso_wp_user; 
-	if ($espresso_premium != true) return;
+	global $espresso_premium, $org_options, $espresso_wp_user; if ($espresso_premium != true) return;
 	
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
-	//$payment_settings = $payment_settings[0];
 	
 	//Debug
 	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 	
-	//$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
 	$files = espresso_invoice_template_files();
 ?>
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>#invoice">

@@ -115,7 +115,7 @@ function event_espresso_display_paypal_pro_settings() {
                                 <?php _e('Select the currency for your country:', 'event_espresso'); ?>
                             </label>
                             <br />
-                            <select name="currency_format">
+                            <select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select" style="width:200px;">
                                 <option value="<?php echo empty($paypal_pro_settings['currency_format']) ? 'USD' : $paypal_pro_settings['currency_format']; ?>"><?php echo $paypal_pro_settings['currency_format']; ?></option>
                                 <option value="USD">
                                     <?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
