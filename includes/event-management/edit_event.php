@@ -2,6 +2,9 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function edit_event($event_id = 0) {
     global $wpdb, $org_options, $espresso_premium;
+	//This line keeps the notices from displaying twice
+	if ( did_action( 'espresso_admin_notices' ) == false )
+		do_action('espresso_admin_notices');
 
     $events = $wpdb->get_results($wpdb->prepare("SELECT e.*, ev.id as venue_id
 	    FROM " . EVENTS_DETAIL_TABLE . " e

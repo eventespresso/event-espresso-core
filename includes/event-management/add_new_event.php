@@ -2,6 +2,9 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function add_new_event() {
 	global $wpdb, $org_options, $espresso_premium;
+	//This line keeps the notices from displaying twice
+	if ( did_action( 'espresso_admin_notices' ) == false )
+		do_action('espresso_admin_notices');
 ?>
 
 
