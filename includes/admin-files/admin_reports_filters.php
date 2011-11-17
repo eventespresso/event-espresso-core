@@ -2,8 +2,11 @@
 global $espresso_premium;
 if ($espresso_premium != true)
     return;
+//This line keeps the notices from displaying twice
+if ( did_action( 'espresso_admin_notices' ) == false )
+	do_action('espresso_admin_notices');
 ?>
-      <ul class="subsubsub">
+      <ul class="ee_subsubsub first subsubsub">
       	<li><h3><?php echo __('Filters', 'event_espresso');?></h3></li>
         <li><strong>
           <?php _e('Events', 'event_espresso'); ?>
@@ -18,7 +21,7 @@ if ($espresso_premium != true)
           <?php _e('This Month', 'event_espresso'); ?>
           <span class="count">(<?php echo espresso_total_events_this_month(); ?>)</span></a></li>
       </ul>
-      <ul class="subsubsub">
+      <ul class="ee_subsubsub subsubsub">
         <li><strong>
           <?php _e('Registrations', 'event_espresso'); ?>
           : </strong> </li>
