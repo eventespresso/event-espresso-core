@@ -8,18 +8,16 @@
 
 <ul id="mini-cart-<?php echo $cart_type;?>-ul" class="mini-cart-ul">
 <?php if ( $cart['has_items'] ) { ?>
-	<li>
 <?php foreach ( $cart['items'] as $item ) { ?>
-
+	<li>
 		<h6><?php echo $item['name'];?></h6>
 		<ul class="mini-cart-line-item-ul">
 			<li><?php echo __('Price', 'events');?> : <?php echo $currency_symbol . $item['price'];?></li>
 			<li><?php echo __('Qty', 'events');?> : <?php echo $item['qty'];?></li>
 			<li><?php echo __('Total', 'events');?> : <?php echo $currency_symbol . $item['line_total'];?></li>
 		</ul>
-		
-<?php } ?>
 	</li>
+<?php } ?>
 	<li><?php
 	printf(  _n( '%s item for ', '%s items for ', $cart['total_items'], 'events' ), $cart['total_items'] );
 	echo $currency_symbol . $cart['sub_total'];
