@@ -1,6 +1,7 @@
 <?php 
 function event_espresso_staff_config_mnu(){
 	global $wpdb, $espresso_wp_user, $espresso_premium, $notices;
+	do_action('espresso_admin_notices');
 	$_REQUEST[ 'action' ] = isset($_REQUEST[ 'action' ]) ? $_REQUEST[ 'action' ]:NULL;
 	?>
 <div class="wrap">
@@ -50,7 +51,7 @@ if ($_REQUEST['action'] == 'update' ){require_once("update_staff.php");update_ev
 if ($_REQUEST['action'] == 'add' ){require_once("add_staff_to_db.php");add_staff_to_db();}
 if ($_REQUEST['action'] == 'add_new_staff'){require_once("add_new_staff.php");add_new_event_staff();}
 if ($_REQUEST['action'] == 'edit'){require_once("edit_staff.php");edit_event_staff();}
-do_action('espresso_admin_notices');
+
 ?>
 	<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
 	   
