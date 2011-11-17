@@ -21,10 +21,10 @@ function add_new_event_category() {
 				</p>
 				<p class="add-cat-id inputunder">
 					<label for="cat_id">
-						<?php _e('Unique ID For Category', 'event_espresso'); ?>
+						<?php _e('Unique ID For Category ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'unique_id_info'); ?>
 					</label>
 					<input id="cat_id"  type="text" name="category_identifier" />
-					<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </p>
+					 </p>
 				<p class="section-quest">
 					<?php _e('Do you want to display the category description on the events page?', 'event_espresso'); ?>
 				</p>
