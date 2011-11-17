@@ -1,28 +1,28 @@
 <?php
-global $wpdb, $org_options;
+global $wpdb;
 
-if (isset($_REQUEST['id'])) {
-	$id = $_REQUEST['id'];
-	$event_id = $_REQUEST['id'];
-} else {
-	if (isset($last_event_id)) {
-		$id = $last_event_id;
-		$event_id = $last_event_id;
+	if (isset($_REQUEST['id'])) {
+    $id=$_REQUEST['id'];
+    $event_id=$_REQUEST['id'];
+	} else {
+		if (isset($last_event_id)) {
+      $id=$last_event_id;
+      $event_id=$last_event_id;
+		}
 	}
-}
 
-//The following variables are used to get information about your organization
-$event_page_id = $org_options['event_page_id'];
-$Organization = stripslashes_deep($org_options['organization']);
-$Organization_street1 = $org_options['organization_street1'];
-$Organization_street2 = $org_options['organization_street2'];
-$Organization_city = $org_options['organization_city'];
-$Organization_state = $org_options['organization_state'];
-$Organization_zip = $org_options['organization_zip'];
-$contact = $org_options['contact_email'];
-$registrar = $org_options['contact_email'];
-$currency_format = $org_options['currency_format'];
-
+  //The following variables are used to get information about your organization
+  $org_options = get_option('events_organization_settings');
+  $event_page_id =$org_options['event_page_id'];
+  $Organization =stripslashes_deep($org_options['organization']);
+  $Organization_street1 =$org_options['organization_street1'];
+  $Organization_street2=$org_options['organization_street2'];
+  $Organization_city =$org_options['organization_city'];
+  $Organization_state=$org_options['organization_state'];
+  $Organization_zip =$org_options['organization_zip'];
+  $contact =$org_options['contact_email'];
+  $registrar = $org_options['contact_email'];
+  $currency_format =$org_options['currency_format'];
 
         /**
          * do database stuff
@@ -229,6 +229,7 @@ $currency_format = $org_options['currency_format'];
                 //'registration' => event_espresso_add_question_groups($question_groups),
                 //'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
             );
+            $registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
             //print_r($all_meta);
 //This function gets the status of the event.
                 $is_active = array();
@@ -271,39 +272,13 @@ $currency_format = $org_options['currency_format'];
 			}//End foreach ($events as $event)
 	} */
 ?>
-<p class="start_date">
-	<?php if ($end_date !== $start_date) { ?>
-		<span class="section-title">
-			<?php _e('Start Date: ', 'event_espresso'); ?>
-		</span>
-		<?php
-	} else {
-		?>
-		<span class="section-title">
-			<?php _e('Date: ', 'event_espresso'); ?>
-		</span>
-		<?php
-	}
-	echo event_date_display($start_date, get_option('date_format'));
-	if ($end_date !== $start_date) {
-		echo '<br />';
-		?>
-		<span class="section-title">
-			<?php _e('End Date: ', 'event_espresso'); ?>
-		</span> <?php
-			echo event_date_display($end_date, get_option('date_format'));
-		}
-		?>
-</p>
+<p><?php echo date('l F j, Y',strtotime($start_date)) . " - " . date('l F j, Y',strtotime($end_date)); ?></p>
 <p><?php echo $event_address ?></p>
-<p><img style="padding-right: 5px;" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/map.png" border="0" alt="<?php _e('View Map', 'event_espresso'); ?>" /><?php echo $google_map_link; ?> | <a class="event_espressoter_link" href="<?php echo $regurl; ?>">
-		<?php _e('Register', 'event_espresso'); ?>
-  </a></p>
-<?php if ($display_desc == "Y") { ?>
-	<?php /* ?><!--more--><?php */ //Uncomment this part to show the Read More link?>
-	<?php _e('Description:', 'event_espresso'); ?>
-	<?php echo wpautop($event_desc); ?>
-	<p><a class="event_espressoter_link" href="<?php echo $regurl; ?>">
-			<?php _e('Register', 'event_espresso'); ?>
-	  </a></p>
-<?php }//End display description  ?>
+<p><img style="padding-right: 5px;" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/map.png" border="0" alt="<?php _e('View Map', 'event_espresso'); ?>" /><?php echo $google_map_link; ?> | <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register', 'event_espresso'); ?></a></p>
+<?php
+if ($display_desc == "Y"){ ?>
+<?php /*?><!--more--><?php */ //Uncomment this part to show the Read More link?>
+<?php _e('Description:','event_espresso'); ?>
+<?php echo wpautop($event_desc); ?>
+<p><a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register', 'event_espresso'); ?></a></p>
+<?php }//End display description ?>
