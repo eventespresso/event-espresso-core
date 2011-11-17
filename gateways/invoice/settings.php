@@ -42,6 +42,7 @@ function event_espresso_invoice_payment_settings(){
 	//Debug
 	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 ?>
+
 <a name="invoice" id="invoice"></a>
 <div class="metabox-holder">
 	<div class="postbox">
@@ -136,14 +137,12 @@ function event_espresso_display_invoice_payment_settings(){
 							<?php _e('PDF Settings', 'event_espresso'); ?>
 						</h4>
 					</li>
-					
 					<?php /*?><li>
 						<label for="pdf_title">
 							<?php _e('PDF Title (top right of the invoice):', 'event_espresso'); ?>
 						</label>
 						<input type="text" name="pdf_title" size="30" value="<?php echo empty($payment_settings['invoice']['pdf_title']) ? __('Invoice','event_espresso') : trim(stripslashes_deep($payment_settings['invoice']['pdf_title'])) ;?>" />
 					</li><?php */?>
-					
 					<li>
 						<label for="base-invoice-select" <?php echo $styled ?>>
 							<?php _e('Select Base Template', 'event_espresso');  ?>
@@ -192,23 +191,23 @@ function event_espresso_display_invoice_payment_settings(){
 					</li>
 				</ul></td>
 			<td valign="top"><ul>
-			<li>
+					<li>
 						<h4>
 							<?php _e('On-page Settings', 'event_espresso'); ?>
 						</h4>
 					</li>
 					<li>
-		<label for="show">
-			<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
-		</label>
-		<?php
+						<label for="show">
+							<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
+						</label>
+						<?php
 	$values = array(
 		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 		array('id' => 'N', 'text' => __('No', 'event_espresso')),
 	);
 	echo select_input('show', $values, empty($payment_settings['invoice']['show']) ? '' : $payment_settings['invoice']['show']);
 ?>
-</li>
+					</li>
 					<li>
 						<label for="invoice_title">
 							<?php _e('Invoice Title:', 'event_espresso'); ?>
@@ -247,13 +246,10 @@ echo trim($payment_settings['invoice']['payment_address']);
 ?>
 </textarea>
 					</li>
-					
-					
 				</ul></td>
 		</tr>
 	</table>
 	<input type="hidden" name="update_invoice_payment_settings" value="update_invoice_payment_settings">
-	
 	<p>
 		<input class="button-primary" type="submit" name="Submit" value="<?php  _e('Update Invoice Payment Settings','event_espresso') ?>" id="save_invoice_payment_settings" />
 	</p>
@@ -294,4 +290,5 @@ echo trim($payment_settings['invoice']['payment_address']);
 </script>
 <?php
 }
+
 
