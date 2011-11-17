@@ -342,5 +342,12 @@ class EE_Encryption {
 	
 }
 
+
+// create global var
+global $EE_Encryption;
+// instantiate !!!
+$EE_Encryption = EE_Encryption::instance();
+
+
 /* End of file EE_Encryption.class.php */
 /* Location: /includes/functions/EE_Encryption.class.php */

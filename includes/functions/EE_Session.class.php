@@ -432,5 +432,12 @@
 
 }
 
+
+// create global var
+global $EE_Session;
+// instantiate !!!
+$EE_Session = EE_Session::instance();
+
+
 /* End of file EE_Session.class.php */
 /* Location: /includes/functions/EE_Session.class.php */
