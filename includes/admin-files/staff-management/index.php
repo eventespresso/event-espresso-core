@@ -69,15 +69,32 @@ if ($_REQUEST['action'] == 'edit'){require_once("edit_staff.php");edit_event_sta
 			</tr>
 		  </thead>
 		  <tbody>
-<?php 
+<?php
+	
 	$sql = "SELECT * FROM ". EVENTS_PERSONNEL_TABLE . " p";
-		
+	
 	if ( function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true){
 		$sql .= " JOIN $wpdb->users u on u.ID = p.wp_user WHERE p.wp_user = " . $espresso_wp_user;
 	}elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 		$sql .= " JOIN $wpdb->users u on u.ID = p.wp_user WHERE p.wp_user = " . espresso_member_data('id');
 	}
-							
+	
+	//I am not sure what this block of code is supposed to do. I think it was added for SMW??
+	/*$limitstaff = false;
+	global $espresso_manager;
+    if( function_exists('espresso_member_data') ){
+		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_group_admin' ) ){
+			if(	$espresso_manager['event_manager_staff'] == "Y" ){
+				$limitstaff = true;
+			}
+		}else if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager') ){
+			$limitstaff = true;
+	    }
+	}
+	if( $limitstaff ){
+		$sql .= " JOIN $wpdb->users u on u.ID = p.wp_user WHERE p.wp_user = ".$current_user->ID;
+	}*/
+					
 	$wpdb->query($sql);
 
 	if ($wpdb->num_rows > 0) {
