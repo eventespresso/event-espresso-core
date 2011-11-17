@@ -172,9 +172,9 @@ class Espresso_Minicart extends WP_Widget {
 
 			if ( $instance[$chk] == $cart_type ) {
 			
-				if ( isset( $instance[$txt] )) {
+				if ( isset( $instance[$txt] ) && $instance[$txt] != '' ) {
 					$cart_title = $instance[$txt];
-				} elseif ( isset( $cart_contents['title'] )) {
+				} elseif ( isset( $cart_contents['title'] ) && $cart_contents['title'] != '' ) {
 					$cart_title = __($cart_contents['title'], 'events');
 				} else {
 					$cart_title = '';
