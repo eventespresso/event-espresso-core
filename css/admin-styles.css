@@ -733,6 +733,17 @@ ul#quick-links ul{
 .wp-admin table.widefat table td {
 	padding: 4px;
 }
+/** override WP default styles 
+hidding form controls - permissions screen only **/
+#configure_espresso_manager_form .widefat td {
+ overflow: visible;
+	padding: 6px 2px;
+	vertical-align: middle;
+}
+#configure_espresso_manager_form table.widefat {
+	margin: 1% auto;
+	width: 98% !important; 
+}
 #table_wrapper {
 	font-size:11px;
 	overflow: hidden;
