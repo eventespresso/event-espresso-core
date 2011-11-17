@@ -8,11 +8,11 @@ function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 	include_once ('2checkout.php');
 	$my2checkout = new TwoCo();
 	echo '<!-- Event Espresso 2checkout Gateway Version ' . $my2checkout->twocheckout_gateway_version . '-->';
-	$twocheckout_settings = get_option('event_espresso_2checkout_settings');
-	$twocheckout_id = empty($twocheckout_settings['2checkout_id']) ? 0 : $twocheckout_settings['2checkout_id'];
-	$twocheckout_cur = empty($twocheckout_settings['currency_format']) ? 'USD' : $twocheckout_settings['currency_format'];
-	$use_sandbox = empty($twocheckout_settings['use_sandbox']) ? false : true;
-	$bypass_payment_page = ($twocheckout_settings['bypass_payment_page'] == 'N') ? false : true;
+	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	$twocheckout_id = empty($payment_settings['2checkout']['2checkout_id']) ? 0 : $payment_settings['2checkout']['2checkout_id'];
+	$twocheckout_cur = empty($payment_settings['2checkout']['currency_format']) ? 'USD' : $payment_settings['2checkout']['currency_format'];
+	$use_sandbox = empty($payment_settings['2checkout']['use_sandbox']) ? false : true;
+	$bypass_payment_page = ($payment_settings['2checkout']['bypass_payment_page'] == 'N') ? false : true;
 
 	if ($use_sandbox) {
 		// Enable test mode if needed
@@ -28,14 +28,14 @@ function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 	if ($bypass_payment_page) {
 		$my2checkout->submitPayment();
 	} else {
-		if (empty($twocheckout_settings['button_url'])) {
+		if (empty($payment_settings['2checkout']['button_url'])) {
 			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "2checkout/logo.png")) {
 				$button_url = EVENT_ESPRESSO_GATEWAY_URL . "2checkout/logo.png";
 			} else {
 				$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/2checkout/logo.png";
 			}
-		} elseif (file_exists($twocheckout_settings['button_url'])) {
-			$button_url = $twocheckout_settings['button_url'];
+		} elseif (file_exists($payment_settings['2checkout']['button_url'])) {
+			$button_url = $payment_settings['2checkout']['button_url'];
 		} else {
 			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/2checkout/logo.png";
 		}
