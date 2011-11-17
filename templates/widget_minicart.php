@@ -157,6 +157,9 @@ class Espresso_Minicart extends WP_Widget {
 		$template_args = array();
 		$mini_cart = array();
 		
+		global $org_options;
+		$template_args['currency_symbol'] = $org_options[ 'currency_symbol' ];
+
 		$title = apply_filters( 'widget_title', $instance['title'] );
 		
 		if ( ! empty( $title )) {
@@ -187,37 +190,29 @@ class Espresso_Minicart extends WP_Widget {
 					$mini_cart[$cart_type]['has_items'] = TRUE;
 					
 					foreach ( $cart_contents['items'] as $item ) {
-					
-						$mini_cart[$cart_type]['items'][]['item_hdr'] = __('Item', 'events');
-						$mini_cart[$cart_type]['items'][]['name'] = $item['name'];
-						$mini_cart[$cart_type]['items'][]['price_hdr'] = __('Price', 'events');
-						$mini_cart[$cart_type]['items'][]['qty_hdr'] = __('Qty', 'events');
-						$mini_cart[$cart_type]['items'][]['total_hdr'] = __('Total', 'events');
-						$mini_cart[$cart_type]['items'][]['price'] = $item['price'];
-						$mini_cart[$cart_type]['items'][]['qty'] = $item['qty'];
-						$mini_cart[$cart_type]['items'][]['line_total'] = $item['line_total'];
+
+						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['name'] = $item['name'];
+						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['price'] = $item['price'];
+						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['qty'] = $item['qty'];
+						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['line_total'] = $item['line_total'];
 					
 					}
 
-					$mini_cart[$cart_type]['total'] = __('Total', 'events');
 					$mini_cart[$cart_type]['total_items'] = $cart_contents['total_items'];
-					$mini_cart[$cart_type]['sub_total'] = __('Price: $', 'events') . ' ' . $cart_contents['sub_total'];
+					$mini_cart[$cart_type]['sub_total'] =$cart_contents['sub_total'];
 	
 				} else {
 					// empty
 					$mini_cart[$cart_type]['has_items'] = FALSE;
-					$mini_cart[$cart_type]['empty_msg'] = __($cart_contents['empty_msg'], 'events');
+					$mini_cart[$cart_type]['empty_msg'] = $cart_contents['empty_msg'];
 				}
 
-				$grand_total = $grand_total + $cart_contents['sub_total'];
+				$template_args['grand_total'] = $grand_total + $cart_contents['sub_total'];
 				
 			}
 		}
 		
 		$template_args['mini_cart'] = $mini_cart;
-		$template_args['grand_total'] = __('Grand Total: $', 'events') . $grand_total;
-		
-		
 		
 		$this->display_template( $instance['template'], $template_args );
 
