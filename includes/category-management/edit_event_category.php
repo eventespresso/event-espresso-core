@@ -31,10 +31,10 @@ function edit_event_category(){
 				</p>
 				<p class="add-cat-id inputunder">
 					<label for="category-id">
-						<?php _e('Unique Category Identifier:','event_espresso'); ?>
+						<?php _e('Unique Category Identifier: ','event_espresso'); ?><?php apply_filters('espresso_help', 'unique_id_info'); ?>
 					</label>
 					<input type="text" id="category-id" name="category_identifier" value="<?php echo $category_identifier;?>">
-					<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a></p>
+				</p>
 				<p class="section-quest">
 					<label>
 						<?php _e('Do you want to display the category description on the events page?','event_espresso'); ?>
