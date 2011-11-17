@@ -103,7 +103,7 @@ function organization_config_mnu() {
 				break;
 		}
 		if (getCountryZoneId($org_options['organization_country']) == '2') {
-			$org_options['currency_symbol'] = '&#8364;'; //Creates the symbol for the Euro
+			$org_options['currency_symbol'] = '&euro;'; //Creates the symbol for the Euro
 		}
 		update_option('events_organization_settings', $org_options);
 		echo '<div id="message" class="updated fade"><p><strong>' . __('Organization details saved.', 'event_espresso') . '</strong></p></div>';
