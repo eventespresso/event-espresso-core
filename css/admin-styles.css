@@ -54,13 +54,12 @@
 .postarea {
 	margin-top: 20px;
 }
-
-
 .metabox-holder h4 {font-size: 1.3em;}
 .metabox-holder h5 {font-size: 1.2em;}
 .metabox-holder h6 {font-size: 1.1em;}
 .metabox-holder h4, .metabox-holder h5, .metabox-holder h6 {margin: 1em 0;}
 dt {font-weight: bold; margin: 15px 0 10px ;}
+
 /*___ Structure ___*/
 
 /*** 2 columns event admin area ***/
@@ -586,11 +585,10 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	padding-bottom: 15px;
 }
 .event-espresso_page_events #side-sortables p {
-	overflow: hidden;
+	/*overflow: hidden;*/
 	width: 220px;
 }
 .event-espresso_page_events #side-sortables p label {
-	float: left;
 	line-height: 2.5;
 }
 .event-espresso_page_events #side-sortables .event-staff-list label {
@@ -600,7 +598,7 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	float:left;
 	clear: left;
 }
-.event-espresso_page_events #side-sortables p input, .event-espresso_page_events #side-sortables p select {
+.event-espresso_page_events #side-sortables p input {
 	float:right;
 }
 #side-sortables p select#mailchimp-lists {
@@ -1339,6 +1337,19 @@ label.error {
 select.small {width:25px;}
 select.med {width: 100px}
 select.wide {width: 175px;}
+
+/** adjust 'Chosen' form control script controls **/
+
+#event_overview .chzn-container-single {
+	padding: 0 4px;
+	vertical-align: bottom;
+}
+#event_overview #side-sortables .chzn-container-single {
+	padding: 0;
+}
+#event_overview #side-sortables .chzn-container {
+	display: block;
+}
 /*___ General settings ___*/
 
 
@@ -2329,4 +2340,20 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 	-khtml-box-shadow: #777 0 0 3px;
 	box-shadow: inset #E6E5DC 0 0 14px;
 	padding: 0 10px;
+}
+/** box shadows **/
+#configure_espresso_manager_form table.widefat {
+ -moz-box-shadow: #ddd 0 0 2px;
+	-webkit-box-shadow: #ddd 0 0 2px;
+	-khtml-box-shadow: #ddd 0 0 2px;
+	box-shadow: #bbb 0 0 6px 1px;
+}
+/*** Clearfix rulesets ***/
+.clearfix:before,
+.clearfix:after {
+	content: "";
+	display: table;
+}
+.clearfix:after {
+	clear: both;
 }
