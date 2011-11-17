@@ -2,8 +2,8 @@
 
 function espresso_display_2checkout($payor_data, $event_cost, $attendee_id) {
 	global $org_options;
-	$authnet_aim_settings = get_option('event_espresso_authnet_aim_settings');
-	if ($authnet_aim_settings['use_sandbox']) {
+	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	if ($payment_settings['authnet_aim']['use_sandbox']) {
 		echo '<p>Test credit card # 4007000000027</p>';
 		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
 	}
