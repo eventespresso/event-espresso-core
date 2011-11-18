@@ -80,39 +80,36 @@ function event_espresso_display_paypal_pro_settings() {
                             <label for="paypal_id">
                                 <?php _e('Paypal PRO email', 'event_espresso'); ?>
                             </label>
-                            <br />
                             <input type="text" name="paypal_pro_email" size="35" value="<?php echo empty($paypal_pro_settings['paypal_pro_email']) ? '' : $paypal_pro_settings['paypal_pro_email']; ?>">
-                            <br />
                         </li>
-                        <li>
+                        
+													<li>
                             <label for="paypal_id">
                                 <?php _e('Paypal API username', 'event_espresso'); ?>
                             </label>
-                            <br />
                             <input type="text" name="paypal_api_username" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_username']) ? '' : $paypal_pro_settings['paypal_api_username']; ?>">
-                            <br />
                         </li>
-                        <li>
+                        
+													<li>
                             <label for="paypal_id">
                                 <?php _e('Paypal API password', 'event_espresso'); ?>
                             </label>
-                            <br />
                             <input type="text" name="paypal_api_password" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_password']) ? '' : $paypal_pro_settings['paypal_api_password']; ?>">
-                            <br />
 
                         </li>
-                        <li>
+                        
+													<li>
                             <label for="paypal_id">
                                 <?php _e('Paypal API signature', 'event_espresso'); ?>
                             </label>
-                            <br />
                             <input type="text" name="paypal_api_signature" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_signature']) ? '' : $paypal_pro_settings['paypal_api_signature']; ?>">
                             <br />
 
                         </li>
-                        <li>
+                        
+													<li>
                             <label for="currency_format">
-                                <?php _e('Select the currency for your country:', 'event_espresso'); ?>
+                                <?php _e('Select the currency for your country: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'currency_info') ?>
                             </label>
                             <br />
                             <select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select" style="width:200px;">
@@ -187,8 +184,9 @@ function event_espresso_display_paypal_pro_settings() {
                                     <?php _e('Thai Baht', 'event_espresso'); ?>
                                 </option>
                             </select>
-                            <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=currency_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
-                        <li>
+                        </li>
+                        
+													<li>
                             <label>
                                 <?php _e('Accepted Credit Cards', 'event_espresso'); ?>
                             </label>
@@ -205,7 +203,8 @@ function event_espresso_display_paypal_pro_settings() {
                             <br />
 
                         </li>
-                        <li>
+                        
+													<li>
                             <label for="paypal_pro_use_sandbox">
                                 <?php _e('Use PayPal PRO in Sandbox mode', 'event_espresso'); ?>?
                             </label>
@@ -214,7 +213,8 @@ function event_espresso_display_paypal_pro_settings() {
                             <?php _e('(Make sure you enter the sandbox credentials above.)', 'event_espresso'); ?>
                         </li>
 
-                    </ul></td>
+                    </ul>
+								</td>
             </tr>
         </table>
         <p>
