@@ -167,6 +167,7 @@ class Espresso_Minicart extends WP_Widget {
 		}
 
 		$grand_total = 0;
+		$total_items = 0;
 
 		foreach ( $this->mini->cart as $cart_type => $cart_contents ) {
 		
@@ -192,14 +193,14 @@ class Espresso_Minicart extends WP_Widget {
 					foreach ( $cart_contents['items'] as $item ) {
 
 						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['name'] = $item['name'];
-						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['price'] = $item['price'];
+						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['price'] = number_format( $item['price'], 2, '.', '' );
 						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['qty'] = $item['qty'];
-						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['line_total'] = $item['line_total'];
+						$mini_cart[$cart_type]['items'][ $item['line_item'] ]['line_total'] = number_format( $item['line_total'], 2, '.', '' );
 					
 					}
 
 					$mini_cart[$cart_type]['total_items'] = $cart_contents['total_items'];
-					$mini_cart[$cart_type]['sub_total'] =$cart_contents['sub_total'];
+					$mini_cart[$cart_type]['sub_total'] = number_format( $cart_contents['sub_total'], 2, '.', '' );
 	
 				} else {
 					// empty
@@ -207,11 +208,14 @@ class Espresso_Minicart extends WP_Widget {
 					$mini_cart[$cart_type]['empty_msg'] = $cart_contents['empty_msg'];
 				}
 
-				$template_args['grand_total'] = $grand_total + $cart_contents['sub_total'];
+				$total_items = $total_items + $cart_contents['total_items'];
+				$grand_total = $grand_total + $cart_contents['sub_total'];
 				
 			}
 		}
 		
+		$template_args['total_items'] = $total_items;
+		$template_args['grand_total'] = number_format( $grand_total, 2, '.', '' );
 		$template_args['mini_cart'] = $mini_cart;
 		
 		$this->display_template( $instance['template'], $template_args );
