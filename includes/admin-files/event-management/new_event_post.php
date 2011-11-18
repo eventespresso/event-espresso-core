@@ -1,14 +1,16 @@
 <div style="display: block;" id="event-post" class="postbox">
     <div class="handlediv" title="Click to toggle"><br />
     </div>
-    <h3 class="hndle"><span>
+    <h3 class="hndle">
+				<span>
             <?php _e('Create a Post', 'event_espresso'); ?>
-        </span></h3>
+      </span></h3>
     <div class="inside">
-        <p>
-            <?php _e('Create a post for this event?', 'event_espresso'); ?>
-
-            <?php echo select_input('create_post', $values, 'N'); ?> </p>
+        <p class="inputunder">
+          <label>
+							<?php _e('Create a post for this event?', 'event_espresso'); ?>
+						</label>
+           <?php echo select_input('create_post', $values, 'N'); ?> </p>
         <input type="hidden" name="post_id" value="<?php echo isset($post_id) ? $post_id : ''; ?>" />
         <?php
         global $current_user;
@@ -37,10 +39,23 @@
         $post_types = $post_page_array;
         require_once( 'includes/meta-boxes.php');
         ?>
-        <p><?php _e('Author', 'event_espresso'); ?>: <?php wp_dropdown_users(array('who' => 'authors', 'selected' => $current_user->ID)); ?></p>
-        <p><?php _e('Post Type', 'event_espresso'); ?>: <?php echo select_input('post_type', $post_types, 'espresso_event') ?></p>
-        <p><?php _e('Tags', 'event_espresso'); ?>: <input id="post_tags" name="post_tags" size="20" type="text" value="<?php echo $tags; ?>" /></p>
-       	<p><?php _e('Post Categories:', 'event_espresso'); ?> </p>
+        <p class="inputunder">
+						<label><?php _e('Author', 'event_espresso: '); ?></label> 
+						<?php wp_dropdown_users(array('who' => 'authors', 'selected' => $current_user->ID)); ?>
+					</p>
+        
+					<p class="inputunder">
+						<label>
+						<?php _e('Post Type', 'event_espresso: '); ?> </label>
+						<?php echo select_input('post_type', $post_types, 'espresso_event') ?>						
+					</p>
+        
+					<p class="inputunder">
+						<label><?php _e('Tags', 'event_espresso: '); ?></label> 
+						<input id="post_tags" name="post_tags" size="20" type="text" value="<?php echo $tags; ?>" />
+					</p>
+       	
+					<p class="section-heading"><?php _e('Post Categories:', 'event_espresso'); ?> </p>
         <?php post_categories_meta_box($post_data, $box); ?>
         <input type="hidden" name="espresso_fb" value="true" />
         <p><?php _e('Post templates are stored in the "templates" directory of the plugin.', 'event_espresso'); ?></p>

@@ -218,10 +218,10 @@ function edit_event($event_id = 0) {
                         . '<p><label>' . __('Display  description? ', 'event_espresso') . '</label>' . select_input('display_desc', $values, $display_desc) . '</p>'
                         . '<p><label>' . __('Display  registration form? ', 'event_espresso') . '</label>' . select_input('display_reg_form', $values, $display_reg_form) . '</p>';
             }//Display Lite version options - End
-            postbox('event-status', 'Event Options', '<p><label for"reg-limit">' . __('Attendee Limit: ', 'event_espresso') . ' </label><input id="reg-limit" name="reg_limit"  size="10" type="text" value="' . $reg_limit . '" /><br />' .
+            postbox('event-status', 'Event Options', '<p class="inputundersmall"><label for"reg-limit">' . __('Attendee Limit: ', 'event_espresso') . ' </label><input id="reg-limit" name="reg_limit"  size="10" type="text" value="' . $reg_limit . '" /><br />' .
                     '<span>(' . __('leave blank for unlimited', 'event_espresso') . ')</span></p>' .
                     '<p class="clearfix" style="clear: both;"><label for="group-reg">' . __('Allow group registrations? ', 'event_espresso') . '</label> ' . select_input('allow_multiple', $values, $allow_multiple, 'id="group-reg"') . '</p>' .
-                    '<p><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input type="text" id="max-registrants" name="additional_limit" value="' . $additional_limit . '" size="4" />' . '</p>' .
+                    '<p class="inputundersmall"><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input type="text" id="max-registrants" name="additional_limit" value="' . $additional_limit . '" size="4" />' . '</p>' .
                     $advanced_options
             );
 			//Featured image section
@@ -714,9 +714,9 @@ function edit_event($event_id = 0) {
               </tr>
             
           </table>
-    						<p>
-										  <label for="enable_for_gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>  <?php echo select_input('enable_for_gmap', $values, isset($event_meta['enable_for_gmap']) ? $event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"')?></label>
-									 </p>									
+						<p>
+							<label for="enable_for_gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?></label>  <?php echo select_input('enable_for_gmap', $values, isset($event_meta['enable_for_gmap']) ? $event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"')?>
+						</p>									
         </div>
       </div>
       <!-- /event-location-->
@@ -736,23 +736,32 @@ function edit_event($event_id = 0) {
       <div id="confirmation-email" class="postbox">
         <div class="handlediv" title="Click to toggle"><br />
         </div>
-        <h3 class="hndle"> <span>
+        <h3 class="hndle"> 
+						<span>
           <?php _e('Email Confirmation:', 'event_espresso') ?>
-          </span> </h3>
+          </span> 
+					</h3>
         <div class="inside">
           <div id="emaildescriptiondivrich" class="postarea">
             <div class="email-conf-opts">
-              <p><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') . ' ' . select_input('send_mail', $values, $send_mail); ?> <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?></p>
+              <p class="inputunder"><label><?php echo __('Send custom confirmation emails for this event?', 'event_espresso')?> <?php apply_filters('espresso_help', 'custom_email_info') ?> </label> <?php echo select_input('send_mail', $values, $send_mail); ?> </p>
+              <p class="inputunder">
+                <label>
+										<?php _e('Use a ', 'event_espresso'); ?>
+                	<a href="admin.php?page=event_emails" target="_blank">
+                		<?php _e('pre-existing email? ', 'event_espresso'); ?>
+                	</a>
+										<?php apply_filters('espresso_help', 'email_manager_info') ?> 
+									</label>
+									<?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') ?>  
+								</p>
+              
+								<p>
+              	<em>OR</em>
+								</p>
               <p>
-                <?php _e('Use a ', 'event_espresso'); ?>
-                <a href="admin.php?page=event_emails" target="_blank">
-                <?php _e('pre-existing email', 'event_espresso'); ?>
-                </a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </p>
-              <br />
-              <em>OR</em>
-              <p>
-                <?php _e('Create a custom email:', 'event_espresso') ?>  <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=event_custom_emails"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?>
-                </p>
+                <?php _e('Create a custom email:', 'event_espresso') ?>  <?php apply_filters('espresso_help', 'event_custom_emails'); ?>
+								</p>
             </div>
             <div class="visual-toggle">
               <p><a class="toggleVisual">

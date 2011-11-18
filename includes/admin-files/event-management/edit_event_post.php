@@ -24,9 +24,16 @@ if (function_exists('espresso_member_data')) {
         global $current_user;
         get_currentuserinfo();
         ?>
-        <p>
-            <?php echo __('Add/Update post for this event?', 'event_espresso') . ' ' . select_input('create_post', $values, $create_post); ?> <?php if (strlen($post_id) > 1) {
-                _e('If no, delete current post?', 'event_espresso'); ?> <input name="delete_post" type="checkbox" value="Y" /><?php } ?></p>
+        <p class="inputunder">
+          <label>  
+							 <?php echo __('Add/Update post for this event?', 'event_espresso') ?>
+						</label> 
+						 <?php echo select_input('create_post', $values, $create_post);
+						  if (strlen($post_id) > 1) {
+            echo '<p>' . __('If no, delete current post?', 'event_espresso'); ?> 
+							<input name="delete_post" type="checkbox" value="Y" />
+							<?php } ?>
+					</p>
         <input type="hidden" name="post_id" value="<?php if(isset($post_id)) echo $post_id; ?>">
         <?php /* ?><p><?php _e('Category:', 'event_espresso'); ?> <?php wp_dropdown_categories(array('orderby'=> 'name','order' => 'ASC', 'selected' => $category, 'hide_empty' => 0 )); ?></p><?php */ ?>
 
@@ -54,11 +61,23 @@ if (function_exists('espresso_member_data')) {
 
         $post_types = $post_page_array;
         ?>
-        <p><?php _e('Author:', 'event_espresso'); ?> <?php wp_dropdown_users(array('who' => 'authors', 'selected' => $current_user->ID, 'show' => 'display_name')); ?></p>
-        <p><?php _e('Post Type', 'event_espresso'); ?>: <?php echo select_input('post_type', $post_types, $post_type) ?><br />
-        <?php _e('Post templates are stored in the "templates" directory of the plugin.', 'event_espresso'); ?></p>
-        <p><?php _e('Tags:', 'event_espresso'); ?> <input  type="text" id="post_tags" name="post_tags" size="20" value="<?php echo $tags ?>"></p>
-        <p><?php _e('Post Categories:', 'event_espresso'); ?> </p>
+        <p class="inputunder">
+						<label><?php _e('Author', 'event_espresso: '); ?></label> 
+						<?php wp_dropdown_users(array('who' => 'authors', 'selected' => $current_user->ID)); ?>
+					</p>
+        
+					<p class="inputunder">
+						<label>
+						<?php _e('Post Type', 'event_espresso: '); ?> </label>
+						<?php echo select_input('post_type', $post_types, 'espresso_event') ?>						
+					</p>
+        
+					<p class="inputunder">
+						<label><?php _e('Tags', 'event_espresso: '); ?></label> 
+						<input id="post_tags" name="post_tags" size="20" type="text" value="<?php echo $tags; ?>" />
+					</p>
+					
+        <p class="section-heading"><?php _e('Post Categories:', 'event_espresso'); ?> </p>
         <?php
         require_once( 'includes/meta-boxes.php');
         post_categories_meta_box($post_data, $box);
