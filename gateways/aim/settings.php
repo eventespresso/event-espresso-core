@@ -120,24 +120,25 @@ function event_espresso_display_authnet_aim_settings() {
 						<label for="authnet_aim_login_id">
 							<?php _e('Authorize.net AIM Login I.D.', 'event_espresso'); ?>
 						</label>
-						<br />
+						
 						<input type="text" name="authnet_aim_login_id" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_login_id']; ?>">
 					</li>
 					<li>
 						<label for="authnet_aim_transaction_key">
 							<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?>
 						</label>
-						<br />
+						
 						<input type="text" name="authnet_aim_transaction_key" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_transaction_key']; ?>">
 					</li>
-				</ul></td>
+				</ul>
+			</td>
 			<td valign="top"><ul>
 					<li>
 						<label for="use_sandbox">
-							<?php _e('Use the test mode feature for Autorize.net AIM?', 'event_espresso'); ?>
+							<?php _e('Use the test mode feature for Autorize.net AIM? ', 'event_espresso'); ?><?php apply_filters( 'espresso_help', 'authnet_aim_sandbox'); ?>
 						</label>
 						<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['authnet_aim']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-						<?php apply_filters( 'espresso_help', 'authnet_aim_sandbox'); ?>
+						
 					</li>
 				</ul></td>
 		</tr>
