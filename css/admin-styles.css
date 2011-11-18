@@ -1341,7 +1341,7 @@ select.wide {width: 175px;}
 /** adjust 'Chosen' form control script controls **/
 
 #event_overview .chzn-container-single {
-	padding: 0 4px;
+	padding: 1px 4px;
 	vertical-align: bottom;
 }
 #event_overview #side-sortables .chzn-container-single {
