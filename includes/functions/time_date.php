@@ -711,7 +711,7 @@ function espresso_event_months_dropdown($current_value='') {
     //print_r($data);
 
     if ($wpdb->num_rows > 0) {
-        echo '<select name="month_range">';
+        echo '<select name="month_range" class="chzn-select" style="width:160px;">';
         echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 
         /*         * * loop over the results ** */
