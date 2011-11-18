@@ -150,7 +150,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 
 		$times_sql = "SELECT ese.start_time, ese.end_time, e.start_date, e.end_date ";
 		$times_sql .= "FROM " . EVENTS_START_END_TABLE . " ese ";
-		$times_sql .= "LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON ese.id WHERE ";
+		$times_sql .= "LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON ese.event_id = e.id WHERE ";
 		if (!empty($data_source['start_time_id'])) {
 			$times_sql .= "ese.id='" . $data_source['start_time_id'] . "' AND ";
 		}
