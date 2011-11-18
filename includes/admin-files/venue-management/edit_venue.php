@@ -110,7 +110,7 @@ function edit_event_venue(){
 					$results = $wpdb->get_results($sql);
 					if ($wpdb->num_rows > 0) { 
 				?>
-					  <select name="locale" id="locale">
+					  <select name="locale" id="locale" class="chzn-select" style="width:200px;" >
 						<?php
 								foreach ($results as $result){
 									$locale_id= $result->id;
