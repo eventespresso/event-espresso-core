@@ -589,6 +589,7 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	width: 220px;
 }
 .event-espresso_page_events #side-sortables p label {
+	display: block;
 	line-height: 2.5;
 }
 .event-espresso_page_events #side-sortables .event-staff-list label {
@@ -599,10 +600,10 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	clear: left;
 }
 .event-espresso_page_events #side-sortables p input {
-	float:right;
+	
 }
 #side-sortables p select#mailchimp-lists {
-	float:left;
+	float: left;
 	width: 220px;
 }
 .event-espresso_page_events #side-sortables p.inputunder {
@@ -611,6 +612,10 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 .event-espresso_page_events #side-sortables p.inputunder select, .event-espresso_page_events #side-sortables p.inputunder input {
 	float: none;
 	width: 220px;
+}
+.event-espresso_page_events #side-sortables p.inputundersmall input {
+	float: none;
+	width: 100px;
 }
 .event-espresso_page_events #side-sortables p .ev_reg-fancylink {
 	height: 20px;
@@ -1274,7 +1279,9 @@ label {
 	display: inline;
 	float: none;
 }
-.inside table ul li label {
+.inside table ul li label,
+#confirmation-email label,
+#event-post label {
 	display: block;
 	margin-bottom: 4px;
 }
@@ -1347,7 +1354,7 @@ select.wide {width: 175px;}
 
 /** adjust 'Chosen' form control script controls **/
 .postbox .chzn-container {margin-top: 4px;}
-#event_overview .chzn-container-single {
+#event_overview .tablenav .chzn-container-single {
 	padding: 1px 4px;
 	vertical-align: bottom;
 }
@@ -1357,6 +1364,7 @@ select.wide {width: 175px;}
 #event_overview #side-sortables .chzn-container {
 	display: block;
 }
+.chzn-container .chzn-results {width: auto;}
 /*___ General settings ___*/
 
 /*__ add_new _event form elements __*/
