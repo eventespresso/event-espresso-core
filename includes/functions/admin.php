@@ -1069,7 +1069,7 @@ if (!function_exists('espresso_secondary_events_dd')) {
 		$num_rows = $wpdb->num_rows;
 		//return print_r( $events );
 		if ($num_rows > 0) {
-			$field = '<select name="overflow_event_id" id="overflow_event_id">\n';
+			$field = '<select name="overflow_event_id" id="overflow_event_id" class="chzn-select" style="width:200px;">\n';
 			$field .= '<option value="0">Select an event</option>';
 
 			foreach ($events as $event) {
@@ -1111,7 +1111,7 @@ function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrd
 	//print_r($data);
 	$strDDName = $strDDName != "" ? $strDDName : $strNameField;
 	if ($wpdb->num_rows > 0) {
-		echo '<select name="' . $strDDName . '">';
+		echo '<select name="' . $strDDName . '" class="chzn-select" style="width:200px;">';
 		echo '<option value="">' . __('Select Value', 'event_espresso') . '</option>';
 
 		/*		 * * loop over the results ** */
@@ -1150,7 +1150,7 @@ function espresso_category_dropdown($current_value='') {
 	//print_r($data);
 
 	if ($wpdb->num_rows > 0) {
-		echo '<select name="category_id">';
+		echo '<select name="category_id" class="chzn-select" style="width:160px;">';
 		echo '<option value="">' . __('Show All Categories', 'event_espresso') . '</option>';
 
 		/*		 * * loop over the results ** */
@@ -1201,7 +1201,7 @@ function espresso_attendees_by_month_dropdown($current_value='') {
 	//print_r($data);
 
 	if ($wpdb->num_rows > 0) {
-		echo '<select name="month_range">';
+		echo '<select name="month_range" class="chzn-select" style="width:200px;">';
 		echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 
 		/*		 * * loop over the results ** */
