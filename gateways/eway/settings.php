@@ -116,7 +116,7 @@ function event_espresso_display_eway_settings() {
                             <label for="currency_format">
                                 <?php _e('Select the currency for your country:', 'event_espresso'); ?>
                             </label>
-                            <select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select" style="width:200px;">
+                            <select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
                                 <option value="<?php echo $eway_settings['currency_format']; ?>"><?php echo $eway_settings['currency_format']; ?></option>
                                 <option value="USD">
                                     <?php _e('U.S. Dollars ($)', 'event_espresso'); ?>

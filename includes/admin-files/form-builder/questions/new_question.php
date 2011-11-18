@@ -18,7 +18,7 @@ function event_espresso_form_builder_new(){
     
 				<li id="question-type-select">
 					<label for="question_type"><?php _e('Type:','event_espresso'); ?></label>
-  				<select name="question_type" id="question_type" class="chzn-select" style="width:200px;">
+  				<select name="question_type" id="question_type" class="chzn-select wide">
   			  	<option value="TEXT">Text</option>
   			  	<option value="TEXTAREA">Text Area</option>
   			  	<option value="SINGLE">Radio Button</option>

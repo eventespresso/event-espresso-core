@@ -161,7 +161,7 @@ function event_espresso_display_2checkout_settings() {
 							<label for="currency_format">
 								<?php _e('Select the currency for your country:', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'currency_info');?>
 							</label>
-							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select" style="width:200px;">
+							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 								<?php if (!empty($payment_settings['2checkout']['currency_format'])) { ?>
 									<option value="<?php echo $payment_settings['2checkout']['currency_format']; ?>"><?php echo $payment_settings['2checkout']['currency_format']; ?></option><?php } ?>
 								<option value="USD">

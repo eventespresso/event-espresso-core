@@ -109,7 +109,7 @@ function event_espresso_display_worldpay_settings() {
 								<?php _e('Select the currency for your country:', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'worldpay_currency_info');?>
 							</label>
 							<br />
-							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select" style="width:200px;">
+							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 								<option value="<?php echo $worldpay_settings['currency_format']; ?>"><?php echo $worldpay_settings['currency_format']; ?></option>
 								<option value="USD">
 									<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
