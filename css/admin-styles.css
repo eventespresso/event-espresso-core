@@ -1431,6 +1431,7 @@ select.wide {width: 175px;}
 #add-edit-categories p label,
 #new-promo-code p label {
 	display: block;
+	margin-bottom: 3px;
 }
 #add-edit-categories p.inputunder input {
 	clear: left;
