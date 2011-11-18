@@ -660,9 +660,15 @@ div#gmap-reg-events { padding-left: 3%;}
 /*___ Payment Settings ___*/
 
 .event-espresso_page_payment_gateways .postbox ul li{
-	margin:10px 0;
+	margin: 10px 0 20px;
 }
-
+.event-espresso_page_payment_gateways .user-add-images {
+	clear: left;
+	display: block;
+	margin: 3px 0 0 2px ;
+	text-decoration: none;
+	vertical-align: top;
+}
 /*___ Help & Support ___*/
 
 .localhost-information,
@@ -1270,7 +1276,7 @@ label {
 }
 .inside table ul li label {
 	display: block;
-	margin-bottom
+	margin-bottom: 4px;
 }
 .inside table ul li input {
 	width: 80%;
@@ -1821,15 +1827,19 @@ a.thickbox.link  {
 	border: #060 1px solid;
 	padding:2px;
 }
+.red_alert, .yellow_alert {
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	padding: 2px 4px;
+	}
 .red_alert {
 	background-color: #FEBCBE;
 	border: #F00 1px solid;
-	padding:2px;
 }
 .yellow_alert {
 	background-color: #ffffe0;
 	border: #e6db55 1px solid;
-	padding:2px;
 }
 .yellow_alert:hover {
 	background-color: #A4E7A6;
