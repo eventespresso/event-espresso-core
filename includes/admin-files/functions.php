@@ -47,7 +47,7 @@ if (!function_exists('espresso_venue_dd')) {
 		//echo $current_value;
 		if ($num_rows > 0) {
 			$field = '<label>' . __('Select from Venue Manager list', 'event_espresso') . '</label>';
-			$field .= '<select name="venue_id[]" id="venue_id">\n';
+			$field .= '<select name="venue_id[]" id="venue_id" class="chzn-select"  >\n';
 			$field .= '<option value="0">' . __('Select a Venue', 'event_espresso') . '</option>';
 			$div = "";
 			$help_div = "";
