@@ -31,11 +31,7 @@
 	var $_sid = NULL;
 	
 	// and the session data
-	var $data = array();
-//															'REG' => array(),
-//															'MER' => array(),
-//															'CART' => array()
-	
+	var $_data = array();
 	
 	// default session expiration 2 hours
 	var $_expiration = 7200;
@@ -90,14 +86,12 @@
 	 */	
   private function __construct() {
 	
-		//echo '<h3>'.__FUNCTION__.'</h3>';
+//		echo '<h3>'.__FUNCTION__.'</h3>';
 		
 		define( 'ESPRESSO_SESSION', TRUE );
 		
-		global $notices;
+		global $EE_Session, $org_options, $notices;
 		$this->_notices = $notices;
-		
-		global $org_options;
 
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : FALSE;
 
@@ -120,11 +114,24 @@
 			$this->encryption = EE_Encryption::instance();
 		}
 		
+		// set some defaults
+		foreach ( $this->_default_session_vars as $default_var ) { 
+			$this->_data[ $default_var ] = '';
+		}
+//		echo '<h4>this->_data</h4>';
+//		echo '<pre>';
+//		echo print_r($this->_data);
+//		echo '</pre>';
+		
 		// check for existing session and retreive it from db
-		if ( ! $this->_retreive_espresso_session() ) { 
+		if ( ! $this->_espresso_session() ) { 
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
+//		echo '<h4>this->_data</h4>';
+//		echo '<pre>';
+//		echo print_r($this->_data);
+//		echo '</pre>';
 		
 		if ( isset( $_REQUEST['page_id'] ) ) {
 			if (  $_REQUEST['page_id'] == $org_options['return_url'] or $_REQUEST['page_id'] == $org_options['notify_url'] ) {
@@ -134,8 +141,7 @@
 		}
 		
 		// create global var to hold event espresso session data
-		global $EE_Session;
-		$EE_Session = $this->data['espresso'];
+		//$EE_Session = $this->_data['espresso'];
 
 		// once everything is all said and done, 
 		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
@@ -146,13 +152,50 @@
 
 
 
+	/*
+	 * @retreive session data
+	 * @access	public
+	 * @return	array
+	 */
+	public function data() {
+		return $this->_data;
+	}
+
+
+
+
+
+	/*
+	 * @set session data
+	 * @access	public
+	 * @return	TRUE on success, FALSE on fail
+	 */
+	public function set_data( $data ) {
+	
+		// nothing ??? go home!
+		if ( ! $data ) {
+			$this->_notices['errors'][] = 'An error occured. No session data was provided.';
+			return FALSE;
+		}
+		
+		foreach ( $data as $key =>$value ) {
+			$this->_data['espresso'][ $key ] = $value;
+		}
+		
+		return TRUE;
+		
+	}
+
+
+
+
+
 	/**
-	 *			@retreive session data
-	 *		  @access public
-	 *		  @param string - id
-	 *			@return string 
+	 *			@initiate session
+	 *		  @access private
+	 *			@return TRUE on success, FALSE on fail
 	 */	
-	private function _retreive_espresso_session() {
+	private function _espresso_session() {
 			
 		//echo '<h3>'.__FUNCTION__.'</h3>';
 		
@@ -165,11 +208,8 @@
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
 		if ( $session_data = get_transient( $this->_sid ) ) {
 		
-			// are we using encryption?
-			if ( $_use_encrytion ) {
-				// un-encrypt the data
-				$session_data = $this->encryption->decrypt( $session_data );
-			}
+			// un-encrypt the data
+			$session_data = $this->encryption->decrypt( $session_data );
 			
 			// unserialize
 			$session_data = unserialize( $session_data );
@@ -199,13 +239,13 @@
 		// wait a minute... how old are you?
 		// if the last access time for the session is less than the current time subtract the session expiration time...
 		// ie: is 1pm less than 4pm minus (the default) 2 hours?
-		if ( $session_data['last_access'] < ( $this->_time - $this->$_expiration ) ) {
+		if ( $session_data['last_access'] < ( $this->_time - $this->_expiration ) ) {
 			// yer too old fer me!
 			return FALSE;
 		}
 		
 		// make event espresso session data available to plugin 
-		$this->data = $session_data['espresso'];
+		$this->_data = $session_data;
 		
 		return TRUE;
 
@@ -223,6 +263,7 @@
 	public function _update_espresso_session( $new_session = FALSE ) {
 		
 		//echo '<h3>'.__FUNCTION__.'</h3>';
+		
 		// session ID
 		$session_data['id'] = $this->_sid;
 		// visitor ip address
@@ -239,17 +280,27 @@
 		// current access time
 		$session_data['last_access'] = $this->_time;
 		// event espresso session data
-		$session_data['espresso'] = $this->data;
+		$session_data['espresso'] = $this->_data['espresso'];
 		
 		// creating a new session does not require saving to the db just yet
 		if ( ! $new_session ) {
 			// current user if logged in
 			$user = wp_get_current_user();
 			$session_data['user_id'] = $user->id ? $user->id : NULL;
+			
+			$this->_data = $session_data;
+			
 			// ready? let's save
-			return $this->_save_session_to_db($session_data) ? TRUE : FALSE;
+			if ( $this->_save_session_to_db($session_data) ) {
+				return TRUE;
+			} else {
+				return FALSE;
+			}
+
+		} else {
+			$this->_data = $session_data;
 		}
-		
+
 		// meh, why not?
 		return TRUE;
 		
@@ -267,6 +318,7 @@
 	private function _create_espresso_session( ) {
 	
 		//echo '<h3>'.__FUNCTION__.'</h3>';
+		
 		// use the update function for now with $new_session arg set to TRUE
 		return  $this->_update_espresso_session( TRUE ) ? TRUE : FALSE;
 		
@@ -372,12 +424,12 @@
 		foreach ( $data_to_reset as $reset ) {
 
 			// first check to make sure it is a valid session var
-			if ( isset( $this->data[ $reset ] )) {
+			if ( isset( $this->_data[ $reset ] )) {
 			
 				// then check to make sure it is not a default var
 				if ( ! in_array( $reset, $this->_default_session_vars )) {
 					// set var to NULL
-					$this->data[ $reset ] = NULL;
+					$this->_data[ $reset ] = NULL;
 					$this->_notices['updates'][] = 'The session variable '.$reset.' was reset.';
 					return TRUE;
 					
