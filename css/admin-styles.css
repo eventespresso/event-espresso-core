@@ -1355,7 +1355,7 @@ select.wide {width: 175px;}
 /** adjust 'Chosen' form control script controls **/
 .postbox .chzn-container {margin-top: 4px;}
 #event_overview .tablenav .chzn-container-single {
-	padding: 1px 4px;
+	padding: 1px 0;
 	vertical-align: bottom;
 }
 #event_overview #side-sortables .chzn-container-single {
