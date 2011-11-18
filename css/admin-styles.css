@@ -1429,7 +1429,8 @@ select.wide {width: 175px;}
 }
 #add-edit-categories p.section-quest {overflow: visible;}
 #add-edit-categories p label,
-#new-promo-code p label {
+#new-promo-code p label,
+#edit-promo-code p label {
 	display: block;
 	margin-bottom: 3px;
 }
