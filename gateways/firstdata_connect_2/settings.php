@@ -82,24 +82,21 @@ function event_espresso_display_firstdata_connect_2_settings() {
 							<label>
 								<?php _e('First Data Storename', 'event_espresso'); ?>
 							</label>
-							<br />
 							<input type="text" name="storename" size="35" value="<?php echo $firstdata_connect_2_settings['storename']; ?>">
-							<br />
 						</li>
+						
 						<li>
 							<label>
 								<?php _e('First Data Shared Secret', 'event_espresso'); ?>
-							</label>
-							<br />
+							</label>							
 							<input type="text" name="sharedSecret" size="35" value="<?php echo $firstdata_connect_2_settings['sharedSecret']; ?>">
-							<br />
 						</li>
+						
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the debugging feature and the', 'event_espresso'); ?><?php _e('FirstData Connect 2 Sandbox', 'event_espresso'); ?>?
+								<?php _e('Use the debugging feature and the', 'event_espresso'); ?><?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'sandbox_info_firstdata_connect_2') ?>
 							</label>
-							<input name="sandbox" type="checkbox" value="1" <?php echo $firstdata_connect_2_settings['sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-							&nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=sandbox_info_firstdata_connect_2"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+							<input name="sandbox" type="checkbox" value="1" <?php echo $firstdata_connect_2_settings['sandbox'] == "1" ? 'checked="checked"' : '' ?> />							
 						</li>
 					</ul>
 				</td>
@@ -107,7 +104,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 					<ul>
 						<li>
 							<label for="bypass_payment_page">
-								<?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?>
+								<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'bypass_confirmation') ?>
 							</label>
 							<?php
 							$values = array(
@@ -115,8 +112,8 @@ function event_espresso_display_firstdata_connect_2_settings() {
 									array('id' => 'Y', 'text' => __('Yes', 'event_espresso')));
 							echo select_input('bypass_payment_page', $values, $firstdata_connect_2_settings['bypass_payment_page']);
 							?>
-							&nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=bypass_confirmation"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
 						</li>
+						
 						<li>
 							<label for="button_url">
 								<?php _e('Button Image URL: ', 'event_espresso'); ?>
@@ -125,9 +122,10 @@ function event_espresso_display_firstdata_connect_2_settings() {
 							<input type="text" name="button_url" size="34" value="<?php echo $firstdata_connect_2_settings['button_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
 						</li>
+						
 						<li>
 							<label for="timezone">
-								<?php _e('Choose a timezone for the transaction?', 'event_espresso'); ?>
+								<?php _e('Choose a timezone for the transaction? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'timezone') ?>
 							</label>
 							<?php
 							$values = array(
@@ -138,7 +136,6 @@ function event_espresso_display_firstdata_connect_2_settings() {
 									array('id' => 'PST', 'text' => __('PST', 'event_espresso')));
 							echo select_input('timezone', $values, $firstdata_connect_2_settings['timezone']);
 							?>
-							&nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=timezone"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
 						</li>
 					</ul>
 				</td>
