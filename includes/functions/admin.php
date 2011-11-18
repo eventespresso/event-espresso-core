@@ -315,13 +315,26 @@ function tep_parse_input_field_data($data, $parse) {
 
 function select_input($name, $values, $default = '', $parameters = '', $class = '') {
 	$field = '<select name="' . tep_output_string($name) . '"';
+	//Debug
+	//echo "<pre>".print_r($values,true)."</pre>";
 	if (tep_not_null($parameters))
 		$field .= ' ' . $parameters;
-	$field .= ' class="chzn-select ' . $class .'" style="min-width:100px;">';
+	$size = 'small';
+	for ($ii = 0, $ni = sizeof($values); $ii < $ni; $ii++) {
+		if ($values[$ii]['text']) {
+			if ( strlen($values[$ii]['text']) > 2)
+				$size = 'med';
+			if ( strlen($values[$ii]['text']) > 5)
+				$size = 'wide';
+		}
+	}
+
+	$field .= ' class="chzn-select ' . $class .' ' . $size .'">';
 
 	if (empty($default) && isset($GLOBALS[$name]))
 		$default = stripslashes($GLOBALS[$name]);
-
+	
+	
 	for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
 		$field .= '<option value="' . $values[$i]['id'] . '"';
 		if ($default == $values[$i]['id']) {
@@ -1069,7 +1082,7 @@ if (!function_exists('espresso_secondary_events_dd')) {
 		$num_rows = $wpdb->num_rows;
 		//return print_r( $events );
 		if ($num_rows > 0) {
-			$field = '<select name="overflow_event_id" id="overflow_event_id" class="chzn-select" style="width:200px;">\n';
+			$field = '<select name="overflow_event_id" id="overflow_event_id" class="chzn-select wide">\n';
 			$field .= '<option value="0">Select an event</option>';
 
 			foreach ($events as $event) {
@@ -1111,7 +1124,7 @@ function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrd
 	//print_r($data);
 	$strDDName = $strDDName != "" ? $strDDName : $strNameField;
 	if ($wpdb->num_rows > 0) {
-		echo '<select name="' . $strDDName . '" class="chzn-select" style="width:200px;">';
+		echo '<select name="' . $strDDName . '" class="chzn-select wide">';
 		echo '<option value="">' . __('Select Value', 'event_espresso') . '</option>';
 
 		/*		 * * loop over the results ** */
@@ -1201,7 +1214,7 @@ function espresso_attendees_by_month_dropdown($current_value='') {
 	//print_r($data);
 
 	if ($wpdb->num_rows > 0) {
-		echo '<select name="month_range" class="chzn-select" style="width:200px;">';
+		echo '<select name="month_range" class="chzn-select wide">';
 		echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 
 		/*		 * * loop over the results ** */
