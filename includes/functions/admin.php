@@ -319,14 +319,12 @@ function select_input($name, $values, $default = '', $parameters = '', $class = 
 	//echo "<pre>".print_r($values,true)."</pre>";
 	if (tep_not_null($parameters))
 		$field .= ' ' . $parameters;
-	$size = 'small';
+	$size = 'med';
 	for ($ii = 0, $ni = sizeof($values); $ii < $ni; $ii++) {
 		if ($values[$ii]['text']) {
-			if ( strlen($values[$ii]['text']) > 2)
-				$size = 'med';
 			if ( strlen($values[$ii]['text']) > 5)
 				$size = 'wide';
-		}
+		}		
 	}
 
 	$field .= ' class="chzn-select ' . $class .' ' . $size .'">';
