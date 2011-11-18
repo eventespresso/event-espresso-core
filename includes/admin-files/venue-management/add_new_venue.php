@@ -71,7 +71,7 @@ function add_new_event_venue(){
 		  				$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
 		  				$results = $wpdb->get_results($sql);
 		  				if ($wpdb->num_rows > 0) { ?>
-									<select name="locale" id="locale" class="chzn-select" style="width:200px;" >
+									<select name="locale" id="locale" class="chzn-select wide" >
 										<?php
 		  					
 		  						foreach ($results as $result){
