@@ -89,7 +89,6 @@ dt {font-weight: bold; margin: 15px 0 10px ;}
 }
 .padding {
 	padding:10px;
-	overflow:hidden;
 }
 /*** Main Structure Styles ***/
 
@@ -424,6 +423,7 @@ div.tablenav {
 	margin-bottom: -20px;
 	width: 50%;
 }
+#image-display img {width: 100%;}
 /*___ Venue Manager & Staff ___*/
 
 #add-edit-venue table ul, #add-edit-staff table ul {
@@ -1351,7 +1351,6 @@ select.wide {width: 175px;}
 	display: block;
 }
 /*___ General settings ___*/
-
 
 /*__ add_new _event form elements __*/
 

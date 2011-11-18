@@ -234,7 +234,7 @@ function organization_config_mnu() {
 																	<?php _e('View an example?', 'event_espresso'); ?>
 																</a> </p>
 														</li>
-														<li>
+														<li id="expire-on-reg-end">
 															<label for="expire_on_registration_end">
 																<?php _e('Events expire on registration end date?', 'event_espresso'); ?></label>
 																<?php echo select_input('expire_on_registration_end', $values, $org_options['expire_on_registration_end']); ?> 
