@@ -90,7 +90,7 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) ){
 			<div id="event_espresso_total_wrapper" class="clearfix event-data-display">
 					<a href="#" id="event_espresso_refresh_total"><?php _e( 'Refresh Total', 'event_espresso' ); ?></a>
 				<span class="event_total_price">
-					<?php _e( 'Total (' . $org_options['currency_symbol'] . '): ' . $_SESSION['event_espresso_grand_total'], 'event_espresso' ); ?>
+					<?php _e( 'Total (' . $org_options['currency_symbol'] . '): <span id="event_total_price">' . $_SESSION['event_espresso_grand_total'], 'event_espresso' ). '</span>'; ?>
 				</span>
 			</div>
 
