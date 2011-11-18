@@ -73,7 +73,7 @@ function event_espresso_display_firstdata_settings() {
 							<label>
 								<?php _e('First Data Store Number', 'event_espresso'); ?>
 							</label>
-							<br />
+							
 							<input type="text" name="firstdata_store_id" size="35" value="<?php echo $firstdata_settings['firstdata_store_id']; ?>">
 							<br />
 						</li>
@@ -81,7 +81,7 @@ function event_espresso_display_firstdata_settings() {
 							<label>
 								<?php _e('Accepted Credit Cards', 'event_espresso'); ?>
 							</label>
-							<br />
+							
 							<?php
 							$checked = 'checked="checked"';
 							$firstdata_credit_cards = explode(",", $firstdata_settings['firstdata_credit_cards']);
@@ -96,10 +96,10 @@ function event_espresso_display_firstdata_settings() {
 						</li>
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the debugging feature and the', 'event_espresso'); ?><?php _e('FirstData Sandbox', 'event_espresso'); ?>?
+								<?php _e('Use the debugging feature and the FirstData Sandbox? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'sandbox_info_firstdata') ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $firstdata_settings['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-							&nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=sandbox_info_firstdata"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+							
 						</li>
 
 
