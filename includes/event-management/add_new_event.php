@@ -90,8 +90,8 @@ function add_new_event() {
         </span></h3>
       <div class="inside">
         <p>
-          <select name="seating_chart_id" id="seating_chart_id" style="float:none;">
-            <option value="0" >None</option>
+          <select name="seating_chart_id" id="seating_chart_id" style="float:none; width:200px;" class="chzn-select">
+            <option value="0" ><?php _e('None', 'event_espresso'); ?></option>
             <?php
                                 $seating_charts = $wpdb->get_results("select * from ".EVENTS_SEATING_CHART_TABLE." order by name");
                                 foreach($seating_charts as $seating_chart)

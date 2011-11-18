@@ -247,7 +247,7 @@ function edit_event($event_id = 0) {
         </span></h3>
       <div class="inside">
         <p>
-          <select name="seating_chart_id" id="seating_chart_id" style="float:none;">
+          <select name="seating_chart_id" id="seating_chart_id" style="float:none; width:200px;" class="chzn-select">
             <option value="0" <?php if ( $seating_chart_id == 0 ) { echo 'selected="selected"'; } ?> >None</option>
             <?php
 			$seating_charts = $wpdb->get_results("select * from ".EVENTS_SEATING_CHART_TABLE." order by name");
