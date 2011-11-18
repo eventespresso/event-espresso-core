@@ -220,7 +220,7 @@ function edit_event($event_id = 0) {
             }//Display Lite version options - End
             postbox('event-status', 'Event Options', '<p><label for"reg-limit">' . __('Attendee Limit: ', 'event_espresso') . ' </label><input id="reg-limit" name="reg_limit"  size="10" type="text" value="' . $reg_limit . '" /><br />' .
                     '<span>(' . __('leave blank for unlimited', 'event_espresso') . ')</span></p>' .
-                    '<p><label for="group-reg">' . __('Allow group registrations? ', 'event_espresso') . '</label> ' . select_input('allow_multiple', $values, $allow_multiple, 'id="group-reg"') . '</p>' .
+                    '<p class="clearfix" style="clear: both;"><label for="group-reg">' . __('Allow group registrations? ', 'event_espresso') . '</label> ' . select_input('allow_multiple', $values, $allow_multiple, 'id="group-reg"') . '</p>' .
                     '<p><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input type="text" id="max-registrants" name="additional_limit" value="' . $additional_limit . '" size="4" />' . '</p>' .
                     $advanced_options
             );
