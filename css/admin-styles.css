@@ -1428,7 +1428,8 @@ select.wide {width: 175px;}
 	overflow: hidden;
 }
 #add-edit-categories p.section-quest {overflow: visible;}
-#add-edit-categories p label {
+#add-edit-categories p label,
+#new-promo-code p label {
 	display: block;
 }
 #add-edit-categories p.inputunder input {
