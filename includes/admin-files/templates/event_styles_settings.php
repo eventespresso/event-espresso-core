@@ -52,9 +52,9 @@ $values = array(
 ?>
 
 <li><label>
-	<?php _e('ThemeRoller Style Settings ', 'event_espresso'); ?>
+	<?php _e('ThemeRoller Style Settings ', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'themeroller_info');?>
 </label>
-<select id="style-themeroller" class="wide" <?php echo $disabled ?> name="themeroller_style">
+<select id="style-themeroller" class="chzn-select wide" <?php echo $disabled ?> name="themeroller_style">
 	<option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> -
 	<?php _e('None', 'event_espresso'); ?>
 	</option>
@@ -62,8 +62,7 @@ $values = array(
 	<option <?php espresso_style_is_selected($fname_themeroller) ?> value="<?php echo $fname_themeroller ?>"><?php echo $fname_themeroller; ?></option>
 	<?php } ?>
 </select>
-<?php apply_filters( 'espresso_help', 'themeroller_info');?></li>
-<?php ?>
+</li>
 <?php if (!empty($org_options['style_settings']['css_name'])){
 ?><li><label>
 	<?php _e('Current Custom Style Sheet', 'event_espresso'); ?>

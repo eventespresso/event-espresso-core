@@ -21,7 +21,7 @@ $values=array(
 			  <?php _e(' Default Surcharge (this value will be automatically filled in for each price type when creating an event): ','event_espresso'); ?>
 			</label>
 			<input type="text" name="surcharge" size="2" value="<?php echo (!is_numeric($org_options['surcharge']))?'0.00':$org_options['surcharge'];?>" /><br />
-			<select name="surcharge_type" data-placeholder="Choose a rate..." class="chzn-select" style="width:200px;">
+			<select name="surcharge_type" data-placeholder="Choose a rate..." class="chzn-select wide">
 			  <option value = "flat_rate" <?php selected($org_options['surcharge_type'], 'flat_rate') ?>>
 			  <?php _e('Flat Rate', 'event_espresso'); ?>
 			  </option>

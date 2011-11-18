@@ -92,10 +92,10 @@ function event_espresso_manage_templates() {
 										<ul id="ee-styles">
 											<li>
 												<label>
-													<?php _e('Enable built style sheets?', 'event_espresso'); ?>
+													<?php _e('Enable built style sheets?', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'enable_styles_info'); ?>
 												</label>
-												<?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> 
-												<?php apply_filters( 'espresso_help', 'enable_styles_info'); ?></li>
+												<?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> </li>
+												
 											
 												<?php include(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_styles_settings.php'); ?>
 											

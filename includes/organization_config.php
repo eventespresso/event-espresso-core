@@ -292,7 +292,7 @@ function organization_config_mnu() {
 														<label for="event_page_id">
 															<?php _e('Main registration page:', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'registration_page_info'); ?>
 														</label>
-														<select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select" style="width:200px;">
+														<select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
 															<option value="0">
 																<?php _e('Main page', 'event_espresso'); ?>
 															</option>
@@ -313,7 +313,7 @@ function organization_config_mnu() {
 														<label for="return_url">
 															<?php _e('Auto Return URL (Thank You and Return Payment page):', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'return_url_info'); ?>
 														</label>
-														<select name="return_url" data-placeholder="Choose a page..." class="chzn-select" style="width:200px;">
+														<select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
 															<option value="0">
 																<?php _e('Main page', 'event_espresso'); ?>
 															</option>
@@ -340,7 +340,7 @@ function organization_config_mnu() {
 														<label for="cancel_return">
 															<?php _e('Cancel Return URL (used for cancelled payments):', 'event_espresso'); ?>
 														</label>
-														<select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select" style="width:200px;"> <?php apply_filters( 'espresso_help', 'cancel_return_info'); ?>
+														<select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide"> <?php apply_filters( 'espresso_help', 'cancel_return_info'); ?>
 															<option value="0">
 																<?php _e('Main page', 'event_espresso'); ?>
 															</option>
@@ -371,7 +371,7 @@ function organization_config_mnu() {
 														<label for="notify_url">
 															<?php _e('Notify URL (used to process payments):', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'notify_url_info'); ?>
 														</label>
-														<select name="notify_url" data-placeholder="Choose a page..." class="chzn-select" style="width:200px;">
+														<select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
 															<option value="0">
 																<?php _e('Main page', 'event_espresso'); ?>
 															</option>
