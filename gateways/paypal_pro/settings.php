@@ -103,15 +103,13 @@ function event_espresso_display_paypal_pro_settings() {
                                 <?php _e('Paypal API signature', 'event_espresso'); ?>
                             </label>
                             <input type="text" name="paypal_api_signature" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_signature']) ? '' : $paypal_pro_settings['paypal_api_signature']; ?>">
-                            <br />
-
-                        </li>
+													</li>
                         
 													<li>
                             <label for="currency_format">
                                 <?php _e('Select the currency for your country: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'currency_info') ?>
                             </label>
-                            <br />
+                            
                             <select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select" style="width:200px;">
                                 <option value="<?php echo empty($paypal_pro_settings['currency_format']) ? 'USD' : $paypal_pro_settings['currency_format']; ?>"><?php echo $paypal_pro_settings['currency_format']; ?></option>
                                 <option value="USD">
@@ -190,7 +188,7 @@ function event_espresso_display_paypal_pro_settings() {
                             <label>
                                 <?php _e('Accepted Credit Cards', 'event_espresso'); ?>
                             </label>
-                            <br />
+                            
                             <?php
                             $checked = 'checked="checked"';
                             $paypal_api_credit_cards = explode(",", empty($paypal_pro_settings['paypal_api_credit_cards']) ? '' : $paypal_pro_settings['paypal_api_credit_cards']);
