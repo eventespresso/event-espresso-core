@@ -1261,6 +1261,10 @@ th.sorting_desc span.sorting-indicator {
 
 /*___ General form styles ___*/
 
+#wpwrap .tablenav #form2 .button-secondary {
+	display:inline-block !important;
+	width: auto !important;
+}
 legend {
 	font-size: 14px;
 	font-weight: bold;
