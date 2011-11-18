@@ -142,8 +142,8 @@ function organization_config_mnu() {
 														<li>
 															<div id="default-logo-image">
 																<label for="upload_image">
-																	<?php _e('Add a Default Logo', 'event_espresso'); ?>
-																	<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=espresso_default_logo_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></label>
+																	<?php _e('Add a Default Logo', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'espresso_default_logo_info'); ?>
+																	</label>
 																<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $org_options['default_logo_url'] ?>" />
 																<input id="upload_image_button" type="button" value="Upload Image" />
 																<?php if ($org_options['default_logo_url'] != '') { ?>
@@ -159,7 +159,7 @@ function organization_config_mnu() {
 														</li>
 														<li>
 															<h4>
-																<?php _e('Contact Information', 'event_espresso'); ?> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=contact_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+																<?php _e('Contact Information', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'contact_info'); ?>
 															</h4>
 															<div id="contact_info" class="pop-help" style="display:none">
 																<h2>
@@ -236,8 +236,8 @@ function organization_config_mnu() {
 														</li>
 														<li>
 															<label for="expire_on_registration_end">
-																<?php _e('Events expire on registration end date?', 'event_espresso'); ?>
-																<?php echo select_input('expire_on_registration_end', $values, $org_options['expire_on_registration_end']); ?> </label>
+																<?php _e('Events expire on registration end date?', 'event_espresso'); ?></label>
+																<?php echo select_input('expire_on_registration_end', $values, $org_options['expire_on_registration_end']); ?> 
 														</li>
 													</ul>
 													<p>
@@ -290,15 +290,15 @@ function organization_config_mnu() {
 													</p>
 													<p>
 														<label for="event_page_id">
-															<?php _e('Main registration page:', 'event_espresso'); ?>
+															<?php _e('Main registration page:', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'registration_page_info'); ?>
 														</label>
-														<select name="event_page_id">
+														<select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select" style="width:200px;">
 															<option value="0">
 																<?php _e('Main page', 'event_espresso'); ?>
 															</option>
 															<?php parent_dropdown($default = $org_options['event_page_id']); ?>
 														</select>
-														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=registration_page_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+														
 														<span class="messages"><?php echo sprintf(__("This page should contain the %s shortcode. <br />This page can be hidden from navigation if desired, <br />but should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_EVENTS]</span>', '[ESPRESSO_EVENTS]'); ?>)</span></p>
 													<?php ###### Popup help box #######  ?>
 													<div id="registration_page_info" class="pop-help" style="display:none">
@@ -311,15 +311,14 @@ function organization_config_mnu() {
 													<?php ###### close popup help box ######  ?>
 													<p>
 														<label for="return_url">
-															<?php _e('Auto Return URL (Thank You and Return Payment page):', 'event_espresso'); ?>
+															<?php _e('Auto Return URL (Thank You and Return Payment page):', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'return_url_info'); ?>
 														</label>
-														<select name="return_url">
+														<select name="return_url" data-placeholder="Choose a page..." class="chzn-select" style="width:200px;">
 															<option value="0">
 																<?php _e('Main page', 'event_espresso'); ?>
 															</option>
 															<?php parent_dropdown($default = $org_options['return_url']); ?>
 														</select>
-														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=return_url_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
 														<span class="messages">(<?php echo sprintf(__("This page should contain the %s shortcode.<br />This page should hidden from your navigation,<br />but still viewable to the public (not password protected.)", 'event_espresso'), '<span class="highlight">[ESPRESSO_PAYMENTS]</span>'); ?> </span></p>
 													<?php ##### Popup help box #####  ?>
 													<div id="return_url_info" class="pop-help" style="display:none">
@@ -341,13 +340,12 @@ function organization_config_mnu() {
 														<label for="cancel_return">
 															<?php _e('Cancel Return URL (used for cancelled payments):', 'event_espresso'); ?>
 														</label>
-														<select name="cancel_return">
+														<select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select" style="width:200px;"> <?php apply_filters( 'espresso_help', 'cancel_return_info'); ?>
 															<option value="0">
 																<?php _e('Main page', 'event_espresso'); ?>
 															</option>
 															<?php parent_dropdown($default = $org_options['cancel_return']); ?>
 														</select>
-														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=cancel_return_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
 														<span class="messages">(
 															<?php _e('This should be a page on your website that contains a cancelled message. <br />No short tags are needed. This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)', 'event_espresso'); ?>
 															)</span></p>
@@ -371,15 +369,15 @@ function organization_config_mnu() {
 													<?php ##### close popup help box #####  ?>
 													<p>
 														<label for="notify_url">
-															<?php _e('Notify URL (used to process payments):', 'event_espresso'); ?>
+															<?php _e('Notify URL (used to process payments):', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'notify_url_info'); ?>
 														</label>
-														<select name="notify_url">
+														<select name="notify_url" data-placeholder="Choose a page..." class="chzn-select" style="width:200px;">
 															<option value="0">
 																<?php _e('Main page', 'event_espresso'); ?>
 															</option>
 															<?php parent_dropdown($default = $org_options['notify_url']); ?>
 														</select>
-														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=notify_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+														
 														<span class="messages">(<?php echo sprintf(__("This page should contain the %s shortcode.<br />This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)", 'event_espresso'), '<span class="highlight">[ESPRESSO_TXN_PAGE]</span>'); ?></span></p>
 													<?php ##### popup help box #####  ?>
 													<div id="notify_url_info" class="pop-help" style="display:none">
@@ -418,18 +416,14 @@ function organization_config_mnu() {
 													$values = array(
 															array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 															array('id' => 'N', 'text' => __('No', 'event_espresso')));
-													?>
-													<p>
-														<?php _e('Send payment confirmation emails?', 'event_espresso');
-														echo select_input('default_mail', $values, $org_options['default_mail']); ?>
-													</p>
-													<p>
-														<?php _e('Send registration confirmation emails before payment is received?', 'event_espresso');
-														echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?>
-													</p>
+													?>													
 													<h4>
 														<?php _e('Payment Confirmation Email:', 'event_espresso'); ?>
 													</h4>
+													<p>
+														<label for="default_mail"><?php _e('Send payment confirmation emails?', 'event_espresso'); ?></label>
+														<?php echo select_input('default_mail', $values, $org_options['default_mail']);?>
+													</p>
 													<p>
 														<label for="payment_subject">
 															<?php _e('Email Subject:', 'event_espresso'); ?>
@@ -459,6 +453,10 @@ function organization_config_mnu() {
 													<h4>
 														<?php _e('Default Registration Confirmation Email:', 'event_espresso'); ?>
 													</h4>
+													<p>
+														<label for="email_before_payment"><?php _e('Send registration confirmation emails before payment is received?', 'event_espresso');?></label>
+														<?php echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?>
+													</p>
 													<div class="visual-toggle">
 														<p><a class="toggleVisual">
 																<?php _e('Visual', 'event_espresso'); ?>
@@ -497,7 +495,7 @@ function organization_config_mnu() {
 									<hr />
 								</li>
 								<?php
-								if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php') || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/template_files.php') || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/optional_event_settings.php')) {
+								if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php') || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/optional_event_settings.php')) {
 
 									if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/optional_event_settings.php')) {
 										echo '<li>';
