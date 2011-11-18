@@ -1270,6 +1270,7 @@ label {
 }
 .inside table ul li label {
 	display: block;
+	margin-bottom
 }
 .inside table ul li input {
 	width: 80%;
@@ -1339,7 +1340,7 @@ select.med {width: 100px}
 select.wide {width: 175px;}
 
 /** adjust 'Chosen' form control script controls **/
-
+.postbox .chzn-container {margin-top: 4px;}
 #event_overview .chzn-container-single {
 	padding: 1px 4px;
 	vertical-align: bottom;
@@ -1422,6 +1423,7 @@ select.wide {width: 175px;}
  margin: 0 auto; 
  width:100% !important;
 }
+#enable-ven-gmaps_chzn {margin-bottom: 10px;}
 /*___ Manage categories___*/
 #add-edit-categories p {
 	overflow: hidden;
@@ -2350,13 +2352,4 @@ jsDatePick is distributed under the terms of the GNU General Public License.
 	-webkit-box-shadow: #ddd 0 0 2px;
 	-khtml-box-shadow: #ddd 0 0 2px;
 	box-shadow: #bbb 0 0 6px 1px;
-}
-/*** Clearfix rulesets ***/
-.clearfix:before,
-.clearfix:after {
-	content: "";
-	display: table;
-}
-.clearfix:after {
-	clear: both;
 }
