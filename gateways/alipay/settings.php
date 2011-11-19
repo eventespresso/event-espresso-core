@@ -72,21 +72,21 @@ function event_espresso_display_alipay_settings() {
 								<?php _e('Alipay partner I.D.', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="alipay_partner_id" size="35" value="<?php echo $alipay_settings['alipay_partner_id']; ?>">
+							<input class="regular-text" type="text" name="alipay_partner_id" size="35" value="<?php echo $alipay_settings['alipay_partner_id']; ?>">
 						</li>
 						<li>
 							<label for="alipay_transaction_key">
 								<?php _e('Alipay security code', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="alipay_security_code" size="35" value="<?php echo $alipay_settings['alipay_security_code']; ?>">
+							<input class="regular-text" type="text" name="alipay_security_code" size="35" value="<?php echo $alipay_settings['alipay_security_code']; ?>">
 						</li>
 						<li>
 							<label for="button_url">
 								<?php _e('Button Image URL: ', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="button_url" size="34" value="<?php echo (($alipay_settings['button_url'] == '') ? $button_url : $alipay_settings['button_url'] ); ?>" />
+							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo (($alipay_settings['button_url'] == '') ? $button_url : $alipay_settings['button_url'] ); ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a></li>
 					</ul></td>
 			</tr>
