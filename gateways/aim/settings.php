@@ -17,11 +17,23 @@ function event_espresso_aim_payment_settings() {
 			$notices['updates'][] = __('Authorize.net AIM Payment Settings Updated!', 'event_espresso');
 		}
 	}
-	?>
+	
+	//Open or close the postbox div
+	if ($payment_settings['authnet_aim']['active'] == false || isset($_REQUEST['deactivate_authnet_aim']) && $_REQUEST['deactivate_authnet_aim'] == 'true' ){
+		$postbox_style = 'closed';
+	}
+	if (isset($_REQUEST['reactivate_authnet_aim']) && $_REQUEST['reactivate_authnet_aim'] == 'true'){
+		$postbox_style = '';
+	}
+	if (isset($_REQUEST['activate_authnet_aim']) && $_REQUEST['activate_authnet_aim'] == 'true'){
+		$postbox_style = '';
+	}
+
+?>
 
 <a name="authnet_aim" id="authnet_aim"></a>
 <div class="metabox-holder">
-	<div class="postbox">
+	<div class="postbox <?php echo $postbox_style; ?>">
 		<div title="Click to toggle" class="handlediv"><br />
 		</div>
 		<h3 class="hndle">
@@ -76,7 +88,7 @@ function event_espresso_aim_payment_settings() {
 						break;
 						
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_authnet_aim=true#authnet_aim\';" class="red_alert pointer"><strong>' . __('Deactivate Authorize.net AIM Gateway?','event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_authnet_aim=true\';" class="red_alert pointer"><strong>' . __('Deactivate Authorize.net AIM Gateway?','event_espresso') . '</strong></li>';
 							event_espresso_display_authnet_aim_settings();
 						break;
 					}
