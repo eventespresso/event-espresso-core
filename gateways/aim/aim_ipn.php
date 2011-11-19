@@ -7,11 +7,12 @@ function espresso_aim_process_payment() {
 	$authnet_aim_login_id = $payment_settings['authnet_aim']['authnet_aim_login_id'];
 	$authnet_aim_transaction_key = $payment_settings['authnet_aim']['authnet_aim_transaction_key'];
 
-	if ($payment_settings['authnet_aim']['use_sandbox']) {
+	if ($payment_settings['authnet_aim']['use_sandbox'] == 'Y') {
 		define("AUTHORIZENET_SANDBOX", true);
 		define("AUTHORIZENET_LOG_FILE", true);
-	} else
+	} else {
 		define("AUTHORIZENET_SANDBOX", false);
+	}
 
 	$transaction = new AuthorizeNetAIM($authnet_aim_login_id, $authnet_aim_transaction_key);
 	echo '<!--Event Espresso Authorize.net AIM Gateway Version ' . $transaction->authnet_aim_gateway_version . '-->';
