@@ -50,7 +50,7 @@
 		$amount_pd = $attendee->amount_pd;
 		$payment_date = $attendee->payment_date;
 		$event_id = $attendee->event_id;
-        $event_name = html_entity_decode(stripslashes($attendee->event_name),ENT_QUOTES,"UTF-8");
+		$event_name = html_entity_decode(stripslashes($attendee->event_name),ENT_QUOTES,"UTF-8");
 		$event->wp_user = function_exists('espresso_manager_pro_version') ? $attendee->wp_user : 1;
 		$payment_settings = get_option('payment_data_'.$event->wp_user);
 		//$attendee_session = $attendee->attendee_session;
