@@ -7,6 +7,7 @@ if (isset($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1) //need this condition 
 
 
 
+
 //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] tag
 
 function event_espresso_txn() {
@@ -23,6 +24,9 @@ function event_espresso_txn() {
 		$attendee_id = $_REQUEST['id']; //This is the id of the registrant
 	if (isset($_REQUEST['x_cust_id']) && $_REQUEST['x_cust_id'] != '') {
 		$attendee_id = $_REQUEST['x_cust_id'];
+	}
+	if (isset($_REQUEST['authAmountString'])) {
+		$attendee_id = $_REQUEST['cartId'];
 	}
 
 	if ($attendee_id == "") {
