@@ -664,10 +664,10 @@ div#gmap-reg-events { padding-left: 3%;}
 
 /*___ Payment Settings ___*/
 
-.event-espresso_page_payment_gateways .postbox ul li{
+/*.event-espresso_page_payment_gateways .postbox ul li{
 	margin: 10px 0 20px;
 }
-.event-espresso_page_payment_gateways .user-add-images {
+*/.event-espresso_page_payment_gateways .user-add-images {
 	clear: left;
 	display: block;
 	margin: 3px 0 0 2px ;
@@ -1271,9 +1271,9 @@ legend {
 	margin-bottom: 10px;
 }
 label {
-	color: #555;
+	/*color: #555;
 	font-weight: bold;
-	margin-right: 3px;
+	margin-right: 3px;*/
 }
 .section-heading {
 	font-size: 13px;
