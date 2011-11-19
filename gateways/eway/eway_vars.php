@@ -16,13 +16,13 @@ $use_sandbox = $eway_settings['use_sandbox'];
 
 $quantity = isset($quantity) && $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);
 if ($use_sandbox == 1) {
-    // Enable test mode if needed
-    $myeway->enableTestMode();
-    $myeway->addField('CustomerID', '87654321');
-    $myeway->addField('UserName', 'TestAccount');
+	// Enable test mode if needed
+	$myeway->enableTestMode();
+	$myeway->addField('CustomerID', '87654321');
+	$myeway->addField('UserName', 'TestAccount');
 }else {
-    $myeway->addField('CustomerID', $eway_id);
-    $myeway->addField('UserName', $eway_username);
+	$myeway->addField('CustomerID', $eway_id);
+	$myeway->addField('UserName', $eway_username);
 }
 $myeway->addField('Amount', number_format($event_cost, 2, '.', ''));
 $myeway->addField('Currency', $eway_cur);
@@ -54,23 +54,23 @@ $myeway->addField('ModifiableCustomerDetails','false');
 
 
 if ($eway_settings['bypass_payment_page'] == 'Y') {
-    $myeway->submitPayment(); //Enable auto redirect to payment site
+	$myeway->submitPayment(); //Enable auto redirect to payment site
 } else {
-    if (empty($eway_settings['button_url'])) {
-        if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "eway/eway_logo.png")) {
-            $button_url = EVENT_ESPRESSO_GATEWAY_URL . "eway/eway_logo.png";
-        } else {
-            $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/eway/eway_logo.png";
-        }
-    } else {
-        $button_url = $eway_settings['button_url'];
-    }
-    $myeway->submitButton($button_url, 'eway'); //Display payment button
-    wp_deregister_script('jquery.validate.pack');
+	if (empty($eway_settings['button_url'])) {
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "eway/eway_logo.png")) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "eway/eway_logo.png";
+		} else {
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/eway/eway_logo.png";
+		}
+	} else {
+		$button_url = $eway_settings['button_url'];
+	}
+	$myeway->submitButton($button_url, 'eway'); //Display payment button
+	wp_deregister_script('jquery.validate.pack');
 }
 
 if ($use_sandbox == true) {
-    echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
-    $myeway->dump_fields(); // for debugging, output a table of all the fields
+	echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+	$myeway->dump_fields(); // for debugging, output a table of all the fields
 }
 

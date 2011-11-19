@@ -98,12 +98,12 @@ if ($responsecode == '00') {
 	$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
 	$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET
-                payment_status = '$payment_status',
-                txn_id = '" . $txn_id . "',
-                txn_type = '$txn_type',
-                amount_pd = '" . $amount_pd . "',
-                payment_date ='" . $payment_date . "'
-                WHERE registration_id ='" . $att_registration_id . "' ";
+				payment_status = '$payment_status',
+				txn_id = '" . $txn_id . "',
+				txn_type = '$txn_type',
+				amount_pd = '" . $amount_pd . "',
+				payment_date ='" . $payment_date . "'
+				WHERE registration_id ='" . $att_registration_id . "' ";
 
 	$wpdb->query($sql);
 	$total_cost = $amount_pd;
