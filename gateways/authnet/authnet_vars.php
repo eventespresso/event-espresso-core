@@ -6,17 +6,17 @@ echo '<!--Event Espresso Authorize.net Gateway Version ' . $authnet_gateway_vers
 global $org_options;
 $myAuthorize = new Authorize(); // initiate an instance of the class
 
-$authnet_settings = get_option('event_espresso_authnet_settings');
-$authnet_login_id = empty($authnet_settings['authnet_login_id']) ? '' : $authnet_settings['authnet_login_id'];
-$authnet_transaction_key = empty($authnet_settings['authnet_transaction_key']) ? '' : $authnet_settings['authnet_transaction_key'];
-$use_sandbox = empty($authnet_settings['use_sandbox']) ? '' : $authnet_settings['use_sandbox'];
-$button_type = empty($authnet_settings['button_type']) ? '' : $authnet_settings['button_type'];
-//$button_url = $authnet_settings['button_url'];
-$image_url = empty($authnet_settings['image_url']) ? '' : $authnet_settings['image_url'];
+$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+$authnet_login_id = empty($payment_settings['authnet_sim']['authnet_login_id']) ? '' : $payment_settings['authnet_sim']['authnet_login_id'];
+$authnet_transaction_key = empty($payment_settings['authnet_sim']['authnet_transaction_key']) ? '' : $payment_settings['authnet_sim']['authnet_transaction_key'];
+$use_sandbox = empty($payment_settings['authnet_sim']['use_sandbox']) ? '' : $payment_settings['authnet_sim']['use_sandbox'];
+$button_type = empty($payment_settings['authnet_sim']['button_type']) ? '' : $payment_settings['authnet_sim']['button_type'];
+//$button_url = $payment_settings['authnet_sim']['button_url'];
+$image_url = empty($payment_settings['authnet_sim']['image_url']) ? '' : $payment_settings['authnet_sim']['image_url'];
 
 if ($use_sandbox == 1) {
-    // Enable test mode if needed
-    $myAuthorize->enableTestMode();
+	// Enable test mode if needed
+	$myAuthorize->enableTestMode();
 }
 
 $quantity = $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);
@@ -44,27 +44,27 @@ $myAuthorize->addField('x_Zip', $zip);
 //This function is copied on the payment processing page
 //event_espresso_send_payment_notification($attendee_id, $txn_id, $amount_pd);
 //Decide if you want to auto redirect to your payment website or display a payment button.
-if (!empty($authnet_settings['bypass_payment_page']) && $authnet_settings['bypass_payment_page'] == 'Y') {
-    $myAuthorize->submitPayment(); //Enable auto redirect to payment site
+if (!empty($payment_settings['authnet_sim']['bypass_payment_page']) && $payment_settings['authnet_sim']['bypass_payment_page'] == 'Y') {
+	$myAuthorize->submitPayment(); //Enable auto redirect to payment site
 } else {
-    if (empty($authnet_settings['button_url'])) {
-        //$button_url = EVENT_ESPRESSO_GATEWAY_URL . "authnet/btn_cc_vmad.gif";
-        if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/btn_cc_vmad.gif")) {
-            $button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/btn_cc_vmad.gif";
-        } else {
-            $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/authnet/btn_cc_vmad.gif";
-        }
-    }elseif (file_exists($authnet_settings['button_url'])){
-        $button_url = $authnet_settings['button_url'];
-    } else {
+	if (empty($payment_settings['authnet_sim']['button_url'])) {
+		//$button_url = EVENT_ESPRESSO_GATEWAY_URL . "authnet/btn_cc_vmad.gif";
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/btn_cc_vmad.gif")) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/btn_cc_vmad.gif";
+		} else {
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/authnet/btn_cc_vmad.gif";
+		}
+	}elseif (file_exists($payment_settings['authnet_sim']['button_url'])){
+		$button_url = $payment_settings['authnet_sim']['button_url'];
+	} else {
 		//If no other buttons exist, then use the default location
 		$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/authnet/btn_cc_vmad.gif";
 	}
-    $myAuthorize->submitButton($button_url, 'authnet'); //Display payment button
+	$myAuthorize->submitButton($button_url, 'authnet'); //Display payment button
 }
 
 if ($use_sandbox == true) {
-    echo '<p>Test credit card # 4007000000027</p>';
-    echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
-    $myAuthorize->dump_fields(); // for debugging, output a table of all the fields
+	echo '<p>Test credit card # 4007000000027</p>';
+	echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+	$myAuthorize->dump_fields(); // for debugging, output a table of all the fields
 }

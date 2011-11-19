@@ -8,14 +8,14 @@ $myAuthorize = new Authorize();
 // Log the IPN results
 $myAuthorize->ipnLog = TRUE;
 
-$authnet_settings = get_option('event_espresso_authnet_settings');
-$authnet_login_id = $authnet_settings['authnet_login_id'];
-$authnet_transaction_key = $authnet_settings['authnet_transaction_key'];
+$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+$authnet_login_id = $payment_settings['authnet_sim']['authnet_login_id'];
+$authnet_transaction_key = $payment_settings['authnet_sim']['authnet_transaction_key'];
 
 // Enable test mode if needed
 //4007000000027  <-- test successful visa
 //4222222222222  <-- test failure card number
-if ($authnet_settings['use_sandbox'] == '1'){
+if ($payment_settings['authnet_sim']['use_sandbox'] == 'Y'){
 	$myAuthorize->enableTestMode();
 	$email_transaction_dump = true;
 }
@@ -32,13 +32,13 @@ if ($myAuthorize->validateIpn()){
 	$attendee_id = $myAuthorize->ipnData['x_cust_id'];	
 	$payment_date = date("d-m-Y");
 	
-    //file_put_contents('authorize.txt', 'SUCCESS' . date("m-d-Y")); //Used for debugging purposes
+	//file_put_contents('authorize.txt', 'SUCCESS' . date("m-d-Y")); //Used for debugging purposes
 	//Be sure to echo something to the screen so authent knows that the ipn works
 	//store the results in reusable variables	
 	if ($myAuthorize->ipnData['x_response_code'] == 1){
 ?>
-        <h2><?php _e('Thank You!','event_espresso'); ?></h2>
-        <p><?php _e('Your transaction has been processed.','event_espresso'); ?></p>
+		<h2><?php _e('Thank You!','event_espresso'); ?></h2>
+		<p><?php _e('Your transaction has been processed.','event_espresso'); ?></p>
 <?php 
 		$payment_status = 'Completed';
 		$sql = "SELECT * FROM ". EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ";
@@ -72,8 +72,8 @@ if ($myAuthorize->validateIpn()){
 			$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 	}else{
 ?>
-        <h2 style="color:#F00;"><?php _e('There was an error processing your transaction!','event_espresso'); ?></h2>
-        <p><strong>Error:</strong> (<?php echo $response_reason_code;?> - <?php echo $response_reason_code;?>) - <?php echo $response_reason_text;?></p>
+		<h2 style="color:#F00;"><?php _e('There was an error processing your transaction!','event_espresso'); ?></h2>
+		<p><strong>Error:</strong> (<?php echo $response_reason_code;?> - <?php echo $response_reason_code;?>) - <?php echo $response_reason_text;?></p>
 <?php
 		$payment_status = 'Payment Declined';
 	}
@@ -83,21 +83,19 @@ if ($myAuthorize->validateIpn()){
 
 	$wpdb->query($sql);
 			
-  //Debugging option
-	$email_transaction_dump=true;
+	//Debugging option
+	//$email_transaction_dump=true;
   if ($email_transaction_dump == true) {
-     // For this, we'll just email ourselves ALL the data as plain text output.
-     $subject = 'Authorize.net Notification - Gateway Variable Dump';
-     $body =  "An authorize.net payment notification was successfully recieved\n";
-     $body .= "from ".$myAuthorize->ipnData['x_email']." on ".date('m/d/Y');
-     $body .= " at ".date('g:i A')."\n\nDetails:\n";
-     foreach ($myAuthorize->ipnData as $key => $value) { $body .= "\n$key: $value\n"; }
-     wp_mail($contact, $subject, $body);
+	 // For this, we'll just email ourselves ALL the data as plain text output.
+	 $subject = 'Authorize.net Notification - Gateway Variable Dump';
+	 $body =  "An authorize.net payment notification was successfully recieved\n";
+	 $body .= "from ".$myAuthorize->ipnData['x_email']." on ".date('m/d/Y');
+	 $body .= " at ".date('g:i A')."\n\nDetails:\n";
+	 foreach ($myAuthorize->ipnData as $key => $value) { $body .= "\n$key: $value\n"; }
+	 wp_mail($contact, $subject, $body);
   }
 			
-}
-else
-{
+}else{
   file_put_contents('authorize.txt', "FAILURE\n\n" . $myAuthorize->ipnData);
   //echo something to the screen so authent knows that the ipn works
   $subject = 'Instant Payment Notification - Gateway Variable Dump';
