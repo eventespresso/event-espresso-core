@@ -9,7 +9,7 @@ class alipay_notify {
 	var $_input_charset ;
 	var $transport;
 	function alipay_notify($partner,$security_code,$sign_type = "MD5",$_input_charset = "GBK",$transport= "http") {
-		$this->partner     =   $partner;
+		$this->partner	 =   $partner;
 		$this->security_code = $security_code;
 		$this->sign_type = $sign_type;
 		$this->mysign = "";
@@ -37,7 +37,7 @@ class alipay_notify {
 		$prestr = substr($arg,0,count($arg)-2);  //È¥µô×îºóÒ»¸ö&ºÅ
 		$this->mysign = $this->sign($prestr.$this->security_code);
 
-    //**********************************ÉÏÃæÐ´ÈÕÖ¾
+	//**********************************ÉÏÃæÐ´ÈÕÖ¾
 	log_result("sign_log=".$_POST["sign"]."&".$this->mysign."&".$this->charset_decode(implode(",",$_GET),$this->_input_charset ));
 	//**********************************ÉÏÃæÐ´ÈÕÖ¾
 

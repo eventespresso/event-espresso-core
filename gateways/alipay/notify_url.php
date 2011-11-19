@@ -2,7 +2,7 @@
 
 $r = '';
 foreach ( $_REQUEST as $k => $v ) {
-    $r .= "   $k = $v\n";
+	$r .= "   $k = $v\n";
 }
 define( 'WP_USE_THEMES', false );
 
@@ -21,9 +21,9 @@ $alipay = new alipay_notify( $partner, $security_code, $sign_type, $_input_chars
 $verify_result = $alipay->notify_verify();
 if ( $verify_result )
 {
-    // out_trade_no= $_POST["out_trade_no"]
-    // status = $_POST["trade_status"]
-    // put the database string here, to update the database
+	// out_trade_no= $_POST["out_trade_no"]
+	// status = $_POST["trade_status"]
+	// put the database string here, to update the database
 
 
 		$payment_status = 'Completed';
@@ -44,24 +44,24 @@ if ( $verify_result )
 			event_espresso_email_confirmations(array('attendee_id' => $attendee_id,'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
 		}
 
-    echo "success";
+	echo "success";
 
-    log_result("verify_success");
+	log_result("verify_success");
 }
 else
 {
-    echo "fail";
+	echo "fail";
 
-    log_result ("verify_failed");
+	log_result ("verify_failed");
 }
 
 
 function log_result( $word ) {
-    $fp = fopen( "log.txt", "a" );
-    flock( $fp, LOCK_EX );
-    fwrite( $fp, $word . "��execution date ��" . strftime( "%Y%m%d%H%I%S", time() ) . "\t\n" );
-    flock( $fp, LOCK_UN );
-    fclose( $fp );
+	$fp = fopen( "log.txt", "a" );
+	flock( $fp, LOCK_EX );
+	fwrite( $fp, $word . "��execution date ��" . strftime( "%Y%m%d%H%I%S", time() ) . "\t\n" );
+	flock( $fp, LOCK_UN );
+	fclose( $fp );
 }
 
 ?>

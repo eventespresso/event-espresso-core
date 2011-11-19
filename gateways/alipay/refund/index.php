@@ -4,7 +4,7 @@ require_once("alipay_service.php");
 require_once("alipay_config.php");
 $parameter = array(
 "service" => "forex_refund_file", //the name of service
-"partner" =>$partner,             
+"partner" =>$partner,			 
 "_input_charset" => $_input_charset,   
 //********************************************************************
 );
@@ -28,9 +28,9 @@ EOT;
 			<input type="hidden" name="partner" value="<?php echo $parameter['partner'] ?>">
 			<input type="hidden" name="service" value="forex_refund_file">
 			<input type="hidden" name="sign" value="<?php echo $alipay->signParams() ?>"> 
-			<input type="hidden" name="sign_type" value="MD5">      
-		    <input type="file" name="refund_file" >
-            <input type="submit" value="Upload File">
+			<input type="hidden" name="sign_type" value="MD5">	  
+			<input type="file" name="refund_file" >
+			<input type="submit" value="Upload File">
 		</form>
 		<table>
 		<tr>

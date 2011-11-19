@@ -38,12 +38,12 @@ function espresso_2checkout_process_payment() {
 		$result['event_link'] = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
 		$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET
-                payment_status = '" . $result['payment_status'] . "',
-                txn_id = '" . $result['txn_id'] . "',
-                txn_type = '" . $result['txn_type'] . "',
-                amount_pd = '" . $result['total_cost'] . "',
-                payment_date ='" . $result['payment_date'] . "'
-                WHERE registration_id ='" . $reg_id . "' ";
+				payment_status = '" . $result['payment_status'] . "',
+				txn_id = '" . $result['txn_id'] . "',
+				txn_type = '" . $result['txn_type'] . "',
+				amount_pd = '" . $result['total_cost'] . "',
+				payment_date ='" . $result['payment_date'] . "'
+				WHERE registration_id ='" . $reg_id . "' ";
 		$wpdb->query($sql);
 		return $result;
 	} else {

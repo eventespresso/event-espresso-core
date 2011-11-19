@@ -1,18 +1,18 @@
 <?php
 class alipay_service {
 
-	var $gateway = "https://www.alipay.com/cooperate/gateway.do?";    
-	var $parameter;       
+	var $gateway = "https://www.alipay.com/cooperate/gateway.do?";	
+	var $parameter;	   
 	var $security_code;  	
-	var $mysign;             
+	var $mysign;			 
 
 	//构造支付宝外部服务接口控制
 	function alipay_service($parameter,$security_code,$sign_type = "MD5",$transport= "https") {
-		$this->parameter      = $this->para_filter($parameter);
+		$this->parameter	  = $this->para_filter($parameter);
 		$this->security_code  = $security_code;
-		$this->sign_type      = $sign_type;
-		$this->mysign         = '';
-		$this->transport      = $transport;
+		$this->sign_type	  = $sign_type;
+		$this->mysign		 = '';
+		$this->transport	  = $transport;
 		if($parameter['_input_charset'] == "")
 		$this->parameter['_input_charset']='GBK';
 		if($this->transport == "http") {

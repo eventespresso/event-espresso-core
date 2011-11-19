@@ -8,16 +8,16 @@
  * <?php require_once 'AuthorizeNet.php'
  * $sale = new AuthorizeNetAIM;
  * $sale->setFields(
- *     array(
- *    'amount' => '4.99',
- *    'card_num' => '411111111111111',
- *    'exp_date' => '0515'
- *    )
+ *	 array(
+ *	'amount' => '4.99',
+ *	'card_num' => '411111111111111',
+ *	'exp_date' => '0515'
+ *	)
  * );
  * $response = $sale->authorizeAndCapture();
  * if ($response->approved) {
- *     echo "Sale successful!"; } else {
- *     echo $response->error_message;
+ *	 echo "Sale successful!"; } else {
+ *	 echo $response->error_message;
  * }
  * ?>
  * </code>
@@ -28,15 +28,15 @@
  * $sale = new AuthorizeNetAIM;
  * $sale->setSandbox(false);
  *
- * @package    AuthorizeNet
+ * @package	AuthorizeNet
  * @subpackage AuthorizeNetAIM
- * @link       http://www.authorize.net/support/AIM_guide.pdf AIM Guide
+ * @link	   http://www.authorize.net/support/AIM_guide.pdf AIM Guide
  */
 
 /**
  * Builds and sends an AuthorizeNet AIM Request.
  *
- * @package    AuthorizeNet
+ * @package	AuthorizeNet
  * @subpackage AuthorizeNetAIM
  */
 class AuthorizeNetAIM extends AuthorizeNetRequest {
@@ -173,7 +173,7 @@ class AuthorizeNetAIM extends AuthorizeNetRequest {
 	 * Required "x_" fields: auth_code, amount, card_num , exp_date
 	 *
 	 * @param string $auth_code The auth code
-	 * @param string $amount    The dollar amount to charge
+	 * @param string $amount	The dollar amount to charge
 	 * @param string $card_num  The last 4 of credit card number
 	 * @param string $exp_date  CC expiration date
 	 *
@@ -296,7 +296,7 @@ class AuthorizeNetAIM extends AuthorizeNetRequest {
 				$this->_x_post_fields[$name] = $value;
 			} else {
 				throw new AuthorizeNetException("Error: no field $name exists in the AIM API.
-                To set a custom field use setCustomField('field','value') instead.");
+				To set a custom field use setCustomField('field','value') instead.");
 			}
 		} else {
 			$this->_x_post_fields[$name] = $value;
@@ -367,7 +367,7 @@ class AuthorizeNetAIM extends AuthorizeNetRequest {
 /**
  * Parses an AuthorizeNet AIM Response.
  *
- * @package    AuthorizeNet
+ * @package	AuthorizeNet
  * @subpackage AuthorizeNetAIM
  */
 class AuthorizeNetAIM_Response extends AuthorizeNetResponse {
@@ -377,9 +377,9 @@ class AuthorizeNetAIM_Response extends AuthorizeNetResponse {
 	/**
 	 * Constructor. Parses the AuthorizeNet response string.
 	 *
-	 * @param string $response      The response from the AuthNet server.
-	 * @param string $delimiter     The delimiter used (default is ",")
-	 * @param string $encap_char    The encap_char used (default is "|")
+	 * @param string $response	  The response from the AuthNet server.
+	 * @param string $delimiter	 The delimiter used (default is ",")
+	 * @param string $encap_char	The encap_char used (default is "|")
 	 * @param array  $custom_fields Any custom fields set in the request.
 	 */
 

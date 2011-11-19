@@ -121,14 +121,14 @@ function event_espresso_display_authnet_aim_settings() {
 							<?php _e('Authorize.net AIM Login I.D.', 'event_espresso'); ?>
 						</label>
 						
-						<input type="text" name="authnet_aim_login_id" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_login_id']; ?>">
+						<input class="regular-text" type="text" name="authnet_aim_login_id" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_login_id']; ?>">
 					</li>
 					<li>
 						<label for="authnet_aim_transaction_key">
 							<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?>
 						</label>
 						
-						<input type="text" name="authnet_aim_transaction_key" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_transaction_key']; ?>">
+						<input class="regular-text" type="text" name="authnet_aim_transaction_key" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_transaction_key']; ?>">
 					</li>
 				</ul>
 			</td>

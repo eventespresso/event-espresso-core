@@ -11,7 +11,7 @@ require dirname(__FILE__) . '/lib/shared/AuthorizeNetResponse.php';
 require dirname(__FILE__) . '/lib/AuthorizeNetAIM.php';
 
 if (class_exists("SoapClient")) {
-    require dirname(__FILE__) . '/lib/AuthorizeNetSOAP.php';
+	require dirname(__FILE__) . '/lib/AuthorizeNetSOAP.php';
 }
 /**
  * Exception class for AuthorizeNet PHP SDK.

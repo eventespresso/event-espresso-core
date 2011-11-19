@@ -11,25 +11,25 @@
 
 class alipay_service {
 
-	var $gateway = "http://www.alipay.net/cooperate/gateway.do?";         //֧���ӿ�
-	var $parameter;       //ȫ����Ҫ���ݵĲ���
+	var $gateway = "http://www.alipay.net/cooperate/gateway.do?";		 //֧���ӿ�
+	var $parameter;	   //ȫ����Ҫ���ݵĲ���
 	var $security_code;   //��ȫУ����
-	var $mysign;          //ǩ��
+	var $mysign;		  //ǩ��
 
 	//����֧�����ⲿ����ӿڿ���
 	function alipay_service($parameter,$security_code,$sign_type = "MD5",$transport= "https") {
-		$this->parameter      = $this->para_filter($parameter);
+		$this->parameter	  = $this->para_filter($parameter);
 		$this->security_code  = $security_code;
-		$this->sign_type      = $sign_type;
-		$this->mysign         = '';
-		$this->transport      = $transport;
+		$this->sign_type	  = $sign_type;
+		$this->mysign		 = '';
+		$this->transport	  = $transport;
 		if($parameter['_input_charset'] == "")
 		$this->parameter['_input_charset']='GBK';
 		if($this->transport == "https") {
 			$this->gateway = "http://www.alipay.net/cooperate/gateway.do?";
 		} else $this->gateway = "http://www.alipay.net/cooperate/gateway.do?";
 		$sort_array  = array();
-		$arg         = "";
+		$arg		 = "";
 		$sort_array  = $this->arg_sort($this->parameter);
 		while (list ($key, $val) = each ($sort_array)) {
 			$arg.=$key."=".$val."&";
@@ -39,9 +39,9 @@ class alipay_service {
 	}
 
 	function create_url() {
-		$url         = $this->gateway;
+		$url		 = $this->gateway;
 		$sort_array  = array();
-		$arg         = "";
+		$arg		 = "";
 		$sort_array  = $this->arg_sort($this->parameter);
 		while (list ($key, $val) = each ($sort_array)) {
 			$arg.=$key."=".urlencode($val)."&";
