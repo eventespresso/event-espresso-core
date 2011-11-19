@@ -15,7 +15,7 @@ $paypal_id = empty($payment_settings['paypal']['paypal_id']) ? '' : $payment_set
 $paypal_cur = empty($payment_settings['paypal']['currency_format']) ? '' : $payment_settings['paypal']['currency_format'];
 $no_shipping = isset($payment_settings['paypal']['no_shipping']) ? $payment_settings['paypal']['no_shipping'] : '0';
 $use_sandbox = empty($payment_settings['paypal']['use_sandbox']) ? '' : $payment_settings['paypal']['use_sandbox'];
-if ($use_sandbox == 1) {
+if ($use_sandbox == 'Y') {
 	// Enable test mode if needed
 	$myPaypal->enableTestMode();
 }
