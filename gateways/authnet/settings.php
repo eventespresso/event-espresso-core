@@ -127,7 +127,7 @@ function event_espresso_display_authnet_settings() {
 				<th><label for="authnet_login_id">
 						<?php _e('Authorize.net Login I.D.', 'event_espresso'); ?>
 					</label></th>
-				<td><input class="regular-text" type="text" name="authnet_login_id" size="35" value="<?php echo $payment_settings['authnet_sim']['authnet_login_id']; ?>">
+				<td><input class="regular-text" type="text" name="authnet_login_id" id="authnet_login_id" size="35" value="<?php echo $payment_settings['authnet_sim']['authnet_login_id']; ?>">
 					<br />
 					<span class="description">
 					<?php _e('Please enter your Authorize.net Login I.D.', 'event_espresso'); ?>
@@ -137,30 +137,32 @@ function event_espresso_display_authnet_settings() {
 				<th><label for="authnet_transaction_key">
 						<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?>
 					</label></th>
-				<td><input class="regular-text" type="text" name="authnet_transaction_key" size="35" value="<?php echo $payment_settings['authnet_sim']['authnet_transaction_key']; ?>">
+				<td><input class="regular-text" type="text" name="authnet_transaction_key" id="authnet_transaction_key" size="35" value="<?php echo $payment_settings['authnet_sim']['authnet_transaction_key']; ?>">
 					<br />
 					<span class="description">
 					<?php _e('Please enter your Authorize.net Transaction Key.', 'event_espresso'); ?>
 					</span></td>
 			</tr>
 			<tr>
-				<th><label for="button_url">
+				<th><label for="sim_button_url">
 						<?php _e('Button Image URL: ', 'event_espresso'); ?>
 						<?php apply_filters('espresso_help', 'authnet_button_url_info') ?>
-					</label>
-					<?php /*?><p><?php echo (($payment_settings['authnet_sim']['button_url'] == '') ? '<img src="' . $button_url . '" />' : '<img src="' . $payment_settings['authnet_sim']['button_url'] . '" />'); ?></p><?php */?></th>
-				<td><input class="regular-text" type="text" name="button_url" value="<?php echo (($payment_settings['authnet_sim']['button_url'] == '') ? $button_url : $payment_settings['authnet_sim']['button_url'] ); ?>" />
-					<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a></td>
+					</label></th>
+				<td><input class="regular-text" type="text" name="button_url" id="sim_button_url" value="<?php echo $payment_settings['authnet_sim']['button_url'] == '' ? $button_url : $payment_settings['authnet_sim']['button_url']; ?>" />
+				<br />
+				<span class="description">
+					<?php _e('URL to the payment button.', 'event_espresso'); ?>
+					</span></td>
 			</tr>
 			<tr>
-				<th><label for="image_url">
+				<th><label for="sim_image_url">
 						<?php _e('Image URL: ', 'event_espresso'); ?>
 						<?php apply_filters('espresso_help', 'authnet_image_url_info') ?>
 					</label></th>
-				<td><input class="regular-text" type="text" name="image_url" value="<?php echo $payment_settings['authnet_sim']['image_url']; ?>" />
-					<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a><br />
+				<td><input class="regular-text" type="text" name="image_url" id="sim_image_url" value="<?php echo $payment_settings['authnet_sim']['image_url']; ?>" />
+					<br />
 					<span class="description">
-					<?php _e('(used for your business/personal logo on the Authorize.net SIM payment page)', 'event_espresso'); ?>
+					<?php _e('Used for your business/personal logo on the Authorize.net SIM payment page.', 'event_espresso'); ?>
 					</span></td>
 			</tr>
 			<tr>
@@ -168,7 +170,10 @@ function event_espresso_display_authnet_settings() {
 						<?php _e('Relay Response URL: ', 'event_espresso'); ?>
 						<?php apply_filters('espresso_help', 'relay_response') ?>
 					</label></th>
-				<td><span class="display-path" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;"><?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?></span></td>
+				<td><span class="display-path" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;"><?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?></span><br />
+			<span class="description">
+					<?php _e('URL to the transaction page.', 'event_espresso'); ?>
+					</span></td>
 			</tr>
 			<tr>
 				<th><label for="use_sandbox">
