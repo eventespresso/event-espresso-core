@@ -46,6 +46,7 @@ function event_espresso_paypal_payment_settings() {
 		$postbox_style = '';
 	}
 ?>
+
 <a name="paypal" id="paypal"></a>
 <div class="metabox-holder">
 	<div class="postbox <?php echo $postbox_style; ?>">
@@ -123,164 +124,160 @@ function event_espresso_display_paypal_settings() {
 	} else {
 		$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/paypal/btn_stdCheckout2.gif";
 	}
-	?>
+	$values = array(
+		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+		array('id' => 'N', 'text' => __('No', 'event_espresso')),
+	);
+?>
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#paypal">
-	<table width="99%" border="0" cellspacing="5" cellpadding="5">
-		<tr>
-			<td valign="top"><ul>
-					<li>
-						<label for="paypal_id">
-							<?php _e('Paypal I.D.', 'event_espresso'); ?>
-						</label>
-						<input class="regular-text" type="text" name="paypal_id" size="35" value="<?php echo $payment_settings['paypal']['paypal_id']; ?>"><br />
-						<?php _e('(Typically payment@yourdomain.com)', 'event_espresso'); ?>
-					</li>
-					<li>
-						<label for="no_shipping">
-							<?php _e('Shipping address options?', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'no_shipping'); ?>
-						</label>
-						<?php
-							$values = array(
-								array('id' => '1', 'text' => __('Do not prompt for an address', 'event_espresso')),
-								array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
-								array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso')));
-							echo select_input('no_shipping', $values, $payment_settings['paypal']['no_shipping']);
-							?>
-						</li>
-					
-					<li>
-						<label for="button_url">
-							<?php _e('Button Image URL: ', 'event_espresso'); ?>
-						</label>
-
-						<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo (($payment_settings['paypal']['button_url'] == '') ? $button_url : $payment_settings['paypal']['button_url'] ); ?>" />
-						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
-					<li>
-						<label for="image_url">
-							<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?>
-						</label>
-
-						<input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $payment_settings['paypal']['image_url']; ?>" />
-						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=image_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
-						<?php _e('(used for your business/personal logo on the PayPal page)', 'event_espresso'); ?>
-					</li>
-				</ul></td>
-			<td valign="top"><ul>
-			<li>
-						<label for="currency_format">
-							<?php _e('Select the currency for your country:', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'currency_info'); ?>
-						</label>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="paypal_id">
+						<?php _e('Paypal I.D.', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="paypal_id" size="35" id="paypal_id" value="<?php echo $payment_settings['paypal']['paypal_id']; ?>">
+					<br />
+					<span class="description">
+					<?php _e('(Typically payment@yourdomain.com)', 'event_espresso'); ?>
+					</span></td>
+			</tr>
+			<tr>
+				<th><label for="currency_format">
+						<?php _e('Country Currency', 'event_espresso'); ?>
+						<?php apply_filters( 'espresso_help', 'currency_info'); ?>
+					</label></th>
+				<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
+						<option value="<?php echo $payment_settings['paypal']['currency_format']; ?>"><?php echo $payment_settings['paypal']['currency_format']; ?></option>
+						<option value="USD">
+						<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
+						</option>
+						<option value="AUD">
+						<?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
+						</option>
+						<option value="GBP">
+						<?php _e('Pounds Sterling (&pound;)', 'event_espresso'); ?>
+						</option>
+						<option value="CAD">
+						<?php _e('Canadian Dollars (C $)', 'event_espresso'); ?>
+						</option>
+						<option value="CZK">
+						<?php _e('Czech Koruna', 'event_espresso'); ?>
+						</option>
+						<option value="DKK">
+						<?php _e('Danish Krone', 'event_espresso'); ?>
+						</option>
+						<option value="EUR">
+						<?php _e('Euros (&#8364;)', 'event_espresso'); ?>
+						</option>
+						<option value="CHF">
+						<?php _e('Swiss Franc', 'event_espresso'); ?>
+						</option>
+						<option value="HKD">
+						<?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
+						</option>
+						<option value="HUF">
+						<?php _e('Hungarian Forint', 'event_espresso'); ?>
+						</option>
+						<option value="ILS">
+						<?php _e('Israeli Shekel', 'event_espresso'); ?>
+						</option>
+						<option value="JPY">
+						<?php _e('Yen (&yen;)', 'event_espresso'); ?>
+						</option>
+						<option value="MXN">
+						<?php _e('Mexican Peso', 'event_espresso'); ?>
+						</option>
+						<option value="NZD">
+						<?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
+						</option>
+						<option value="NOK">
+						<?php _e('Norwegian Krone', 'event_espresso'); ?>
+						</option>
+						<option value="PLN">
+						<?php _e('Polish Zloty', 'event_espresso'); ?>
+						</option>
+						<option value="SGD">
+						<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
+						</option>
+						<option value="SEK">
+						<?php _e('Swedish Krona', 'event_espresso'); ?>
+						</option>
+						<option value="BRL">
+						<?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
+						</option>
+						<option value="MYR">
+						<?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
+						</option>
+						<option value="PHP">
+						<?php _e('Philippine Pesos', 'event_espresso'); ?>
+						</option>
+						<option value="TWD">
+						<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
+						</option>
+						<option value="THB">
+						<?php _e('Thai Baht', 'event_espresso'); ?>
+						</option>
+					</select></td>
+			</tr>
+			
+			<tr>
+				<th><label for="button_url">
+						<?php _e('Button Image URL', 'event_espresso'); ?>
+						<?php apply_filters( 'espresso_help', 'paypal_button_image'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="button_url" id="button_url" size="34" value="<?php echo (($payment_settings['paypal']['button_url'] == '') ? $button_url : $payment_settings['paypal']['button_url'] ); ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="image_url">
+						<?php _e('Image URL', 'event_espresso'); ?>
+						<?php apply_filters( 'espresso_help', 'paypal_image_url_info'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="image_url" id="image_url" size="35" value="<?php echo $payment_settings['paypal']['image_url']; ?>" />
+					<br />
+					<span class="description">
+					<?php _e('(used for your business/personal logo on the PayPal page)', 'event_espresso'); ?>
+					</span></td>
+			</tr>
+			<tr>
+				<th><label for="bypass_payment_page">
+						<?php _e('By-pass the payment confirmation page', 'event_espresso'); ?>
+						<?php apply_filters( 'espresso_help', 'bypass_confirmation'); ?>
+					</label></th>
+				<td><?php echo select_input('bypass_payment_page', $values, empty($payment_settings['paypal']['bypass_payment_page']) ? 'N' : $payment_settings['paypal']['bypass_payment_page']);?></td>
+			</tr>
+			<tr>
+				<th><label for="use_sandbox">
+						<?php _e('Use the debugging feature and the PayPal Sandbox', 'event_espresso'); ?>
 						
-						<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
-							<option value="<?php echo $payment_settings['paypal']['currency_format']; ?>"><?php echo $payment_settings['paypal']['currency_format']; ?></option>
-							<option value="USD">
-							<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
-							</option>
-							<option value="AUD">
-							<?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
-							</option>
-							<option value="GBP">
-							<?php _e('Pounds Sterling (&pound;)', 'event_espresso'); ?>
-							</option>
-							<option value="CAD">
-							<?php _e('Canadian Dollars (C $)', 'event_espresso'); ?>
-							</option>
-							<option value="CZK">
-							<?php _e('Czech Koruna', 'event_espresso'); ?>
-							</option>
-							<option value="DKK">
-							<?php _e('Danish Krone', 'event_espresso'); ?>
-							</option>
-							<option value="EUR">
-							<?php _e('Euros (&#8364;)', 'event_espresso'); ?>
-							</option>
-							<option value="CHF">
-							<?php _e('Swiss Franc', 'event_espresso'); ?>
-							</option>
-							<option value="HKD">
-							<?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
-							</option>
-							<option value="HUF">
-							<?php _e('Hungarian Forint', 'event_espresso'); ?>
-							</option>
-							<option value="ILS">
-							<?php _e('Israeli Shekel', 'event_espresso'); ?>
-							</option>
-							<option value="JPY">
-							<?php _e('Yen (&yen;)', 'event_espresso'); ?>
-							</option>
-							<option value="MXN">
-							<?php _e('Mexican Peso', 'event_espresso'); ?>
-							</option>
-							<option value="NZD">
-							<?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
-							</option>
-							<option value="NOK">
-							<?php _e('Norwegian Krone', 'event_espresso'); ?>
-							</option>
-							<option value="PLN">
-							<?php _e('Polish Zloty', 'event_espresso'); ?>
-							</option>
-							<option value="SGD">
-							<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
-							</option>
-							<option value="SEK">
-							<?php _e('Swedish Krona', 'event_espresso'); ?>
-							</option>
-							<option value="BRL">
-							<?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
-							</option>
-							<option value="MYR">
-							<?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
-							</option>
-							<option value="PHP">
-							<?php _e('Philippine Pesos', 'event_espresso'); ?>
-							</option>
-							<option value="TWD">
-							<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
-							</option>
-							<option value="THB">
-							<?php _e('Thai Baht', 'event_espresso'); ?>
-							</option>
-						</select>
-						</li>
-					<li><label for="bypass_payment_page">
-						<?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'bypass_confirmation'); ?>
-					</label>
-					<?php
-						$values = array(
-							array('id' => 'N', 'text' => __('No', 'event_espresso')),
-							array('id' => 'Y', 'text' => __('Yes', 'event_espresso')));
-						echo select_input('bypass_payment_page', $values, $payment_settings['paypal']['bypass_payment_page']);
-						?>
-				
-					</li>
-					
-					<li>
-						<label for="use_sandbox">
-							<?php _e('Use the debugging feature and the', 'event_espresso'); ?>
-							<a href="https://developer.paypal.com/devscr?cmd=_home||https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox||https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" title="PayPal Sandbox Login||Sandbox Tutorial||Getting Started with PayPal Sandbox" target="_blank">
-							<?php _e('PayPal Sandbox', 'event_espresso'); ?>
-							</a> <?php apply_filters( 'espresso_help', 'sandbox_info'); ?></label>
-						<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['paypal']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-						
-					</li>
-					<li>
-						<?php _e('Current Button Image:', 'event_espresso'); ?>
-						<br />
-						<?php echo (($payment_settings['paypal']['button_url'] == '') ? '<img src="' . $button_url . '" />' : '<img src="' . $payment_settings['paypal']['button_url'] . '" />'); ?></li>
-					<li><strong>
-						<?php _e('Paypal Notes:', 'event_espresso'); ?>
-						</strong><br />
-						<?php _e('For Paypal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?>
-					</li>
-				</ul></td>
-		</tr>
+						<?php apply_filters( 'espresso_help', 'sandbox_info'); ?>
+					</label></th>
+				<td><?php echo select_input('use_sandbox', $values, empty($payment_settings['paypal']['use_sandbox']) ? 'N' : $payment_settings['paypal']['use_sandbox']);?></td>
+			</tr>
+			<tr>
+				<th><label for="no_shipping">
+						<?php _e('Shipping address options?', 'event_espresso'); ?>
+						<?php apply_filters( 'espresso_help', 'no_shipping'); ?>
+					</label></th>
+				<td><?php
+					$shipping_values = array(
+						array('id' => '1', 'text' => __('Do not prompt for an address', 'event_espresso')),
+						array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
+						array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso')));
+					echo select_input('no_shipping', $shipping_values, $payment_settings['paypal']['no_shipping']);
+				?></td>
+			</tr>
+		</tbody>
 	</table>
+
 	<p>
 		<input type="hidden" name="update_paypal" value="update_paypal">
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update PayPal Settings', 'event_espresso') ?>" id="save_paypal_settings" />
 	</p>
+	<p><strong style="color:#F00">
+	<?php _e('Paypal Notes:', 'event_espresso'); ?>
+	</strong><br />
+	<?php _e('For Paypal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?></p>
 </form>
 <div id="sandbox_info" style="display:none">
 	<h2>
@@ -293,8 +290,25 @@ function event_espresso_display_paypal_settings() {
 	<p>
 		<?php _e('The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?>
 	</p>
+	<hr />
+	<p><strong>Helpful Links:</strong></p>
+	<ul>
+	<li><a href="https://developer.paypal.com/devscr?cmd=_home" target="_blank">PayPal Sandbox Login</a></li>
+	<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank">Sandbox Tutorial</a></li>
+	<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" target="_blank">Getting Started with PayPal Sandbox</a></li>
+	</ul>
 </div>
-<div id="image_url_info" style="display:none">
+<div id="paypal_button_image" style="display:none">
+	<h2>
+		<?php _e('Button Image URL', 'event_espresso'); ?>
+	</h2>
+	<p>
+		<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso'); ?>
+	</p>
+	<p><?php _e('Current Button Image:', 'event_espresso'); ?></p>
+	<p><?php echo (($payment_settings['paypal']['button_url'] == '') ? '<img src="' . $button_url . '" />' : '<img src="' . $payment_settings['paypal']['button_url'] . '" />'); ?></p>
+</div>
+<div id="paypal_image_url_info" style="display:none">
 	<h2>
 		<?php _e('PayPal Image URL (logo for payment page)', 'event_espresso'); ?>
 	</h2>
@@ -331,4 +345,3 @@ function event_espresso_display_paypal_settings() {
 </div>
 <?php
 }
-
