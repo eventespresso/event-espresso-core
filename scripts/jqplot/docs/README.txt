@@ -62,16 +62,16 @@ jqPlot includes date instance methods and printf/sprintf functions by other auth
 
 Date instance methods:
 
-    author Ken Snyder (ken d snyder at gmail dot com)
-    date 2008-09-10
-    version 2.0.2 (http://kendsnyder.com/sandbox/date/)     
-    license Creative Commons Attribution License 3.0 (http://creativecommons.org/licenses/by/3.0/)
+	author Ken Snyder (ken d snyder at gmail dot com)
+	date 2008-09-10
+	version 2.0.2 (http://kendsnyder.com/sandbox/date/)	 
+	license Creative Commons Attribution License 3.0 (http://creativecommons.org/licenses/by/3.0/)
 
 JavaScript printf/sprintf functions.
 
-    version 2007.04.27
-    author Ash Searle
-    http://hexmen.com/blog/2007/03/printf-sprintf/
-    http://hexmen.com/js/sprintf.js
-    The author (Ash Searle) has placed this code in the public domain:
-    "This code is unrestricted: you are free to use it however you like."
+	version 2007.04.27
+	author Ash Searle
+	http://hexmen.com/blog/2007/03/printf-sprintf/
+	http://hexmen.com/js/sprintf.js
+	The author (Ash Searle) has placed this code in the public domain:
+	"This code is unrestricted: you are free to use it however you like."

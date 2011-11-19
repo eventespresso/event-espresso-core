@@ -4,8 +4,8 @@
  * @version: 1.1.0, 25.02.2010
  * 
  * @author: Andres Vidal
- *          code@andresvidal.com
- *          http://www.andresvidal.com
+ *		  code@andresvidal.com
+ *		  http://www.andresvidal.com
  *
  * Instructions: Call $(selector).relCopy(options) on an element with a jQuery type selector 
  * defined in the attribute "rel" tag. This defines the DOM element to copy.

@@ -30,15 +30,15 @@
 		
 		// These properties can be read/written by accessing $.alerts.propertyName from your scripts at any time
 		
-		verticalOffset: -75,                // vertical offset of the dialog from center screen, in pixels
-		horizontalOffset: 0,                // horizontal offset of the dialog from center screen, in pixels/
-		repositionOnResize: true,           // re-centers the dialog on window resize
-		overlayOpacity: .01,                // transparency level of overlay
-		overlayColor: '#FFF',               // base color of overlay
-		draggable: true,                    // make the dialogs draggable (requires UI Draggables plugin)
-		okButton: '&nbsp;OK&nbsp;',         // text for the OK button
+		verticalOffset: -75,				// vertical offset of the dialog from center screen, in pixels
+		horizontalOffset: 0,				// horizontal offset of the dialog from center screen, in pixels/
+		repositionOnResize: true,		   // re-centers the dialog on window resize
+		overlayOpacity: .01,				// transparency level of overlay
+		overlayColor: '#FFF',			   // base color of overlay
+		draggable: true,					// make the dialogs draggable (requires UI Draggables plugin)
+		okButton: '&nbsp;OK&nbsp;',		 // text for the OK button
 		cancelButton: '&nbsp;Cancel&nbsp;', // text for the Cancel button
-		dialogClass: null,                  // if specified, this class will be applied to all dialogs
+		dialogClass: null,				  // if specified, this class will be applied to all dialogs
 		
 		// Public methods
 		
@@ -72,9 +72,9 @@
 			
 			$("BODY").append(
 			  '<div id="popup_container">' +
-			    '<h1 id="popup_title"></h1>' +
-			    '<div id="popup_content">' +
-			      '<div id="popup_message"></div>' +
+				'<h1 id="popup_title"></h1>' +
+				'<div id="popup_content">' +
+				  '<div id="popup_message"></div>' +
 				'</div>' +
 			  '</div>');
 			
