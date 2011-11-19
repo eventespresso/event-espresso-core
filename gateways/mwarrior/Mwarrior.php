@@ -9,7 +9,7 @@
 $mwarrior_gateway_version = '1.0';
 
 class Mwarrior extends PaymentGateway{
-    
+	
 	/**
 	 * Initialize the Merchant Warrior gateway
 	 *
@@ -18,41 +18,41 @@ class Mwarrior extends PaymentGateway{
 	 */
 	public function __construct()
 	{
-        parent::__construct();        
+		parent::__construct();		
 		// Some default values of the class
 		$this->gatewayUrl = 'https://secure.merchantwarrior.com';
 		$this->gatewayUrlQuery = 'https://api.merchantwarrior.com/post/';
 		$this->ipnLogFile = 'mwarrior.ipn_results.log';
 	}
 	
-    /**
-     * Enables the test mode
-     *
-     * @param none
-     * @return none
-     */
-    public function enableTestMode()
-    {
-        $this->testMode = TRUE;
-        $this->gatewayUrl = 'https://securetest.merchantwarrior.com';
+	/**
+	 * Enables the test mode
+	 *
+	 * @param none
+	 * @return none
+	 */
+	public function enableTestMode()
+	{
+		$this->testMode = TRUE;
+		$this->gatewayUrl = 'https://securetest.merchantwarrior.com';
 		$this->gatewayUrlQuery = 'https://base.merchantwarrior.com/post/';
-    }
+	}
 	
 	/**
-     * Set merchant id and passphrase
-     *
+	 * Set merchant id and passphrase
+	 *
 	 * @param string merchantID
 	 * @param string passphrase
-     * @return void
-     */
-    public function setMerchantInfo($merchantID, $apikey, $passphrase)
-    {
+	 * @return void
+	 */
+	public function setMerchantInfo($merchantID, $apikey, $passphrase)
+	{
 		$this->merchantID = $merchantID;
 		$this->apikey = $apikey;
 		$this->passphrase = $passphrase;
-    }
+	}
 	
-    /**
+	/**
 	 * Validate the IPN notification
 	 *
 	 * @param none
@@ -98,58 +98,58 @@ class Mwarrior extends PaymentGateway{
 	}
 	
 	/**
-     * Method that parses response from Merchant Warrior
-     *
+	 * Method that parses response from Merchant Warrior
+	 *
 	 * @param string $result (XML)
-     * @return array
-     */
-    public function _parseResponse($result) 
+	 * @return array
+	 */
+	public function _parseResponse($result) 
 	{
-        // Check for any result at all
-        if ($result === false) 
+		// Check for any result at all
+		if ($result === false) 
 		{
-            return array('status' => false, 'error' => "Could not successfully communicate with Payment Processor.  Check the URL.", 'result' => $result);
-        }
+			return array('status' => false, 'error' => "Could not successfully communicate with Payment Processor.  Check the URL.", 'result' => $result);
+		}
 		
-        // Parse the XML
-        $xml = simplexml_load_string($result);
-        // Convert the result from a SimpleXMLObject into an array
-        $xml = (array) $xml;
+		// Parse the XML
+		$xml = simplexml_load_string($result);
+		// Convert the result from a SimpleXMLObject into an array
+		$xml = (array) $xml;
 
-        // Check for a valid response code
-        if (!isset($xml['responseCode']) || strlen($xml['responseCode']) < 1) 
+		// Check for a valid response code
+		if (!isset($xml['responseCode']) || strlen($xml['responseCode']) < 1) 
 		{
-            return array('status' => false, 'error' => "Payment Processor did not return a valid response.", 'result' => $result, 'responseData' => $xml);
-        }
+			return array('status' => false, 'error' => "Payment Processor did not return a valid response.", 'result' => $result, 'responseData' => $xml);
+		}
 
-        // Validate the response - the only successful code is 0
-        $status = ((int) $xml['responseCode'] === 0) ? true : false;
+		// Validate the response - the only successful code is 0
+		$status = ((int) $xml['responseCode'] === 0) ? true : false;
 
-        // Set an error message if the transaction failed
-        if ($status === false) 
+		// Set an error message if the transaction failed
+		if ($status === false) 
 		{
-            return array('status' => false, 'error' => "Transaction Declined: {$xml['responseMessage']}.", 'result' => $result, 'responseData' => $xml);
-        }
+			return array('status' => false, 'error' => "Transaction Declined: {$xml['responseMessage']}.", 'result' => $result, 'responseData' => $xml);
+		}
 
-        // Make the response a little more useable - there are a few fields that may or may not be present
-        // depending on the different transaction types, so this handles them all generically.
-        $response = array ( 'status' => $status,
+		// Make the response a little more useable - there are a few fields that may or may not be present
+		// depending on the different transaction types, so this handles them all generically.
+		$response = array ( 'status' => $status,
 							'result' => $result,
 							'responseData' => $xml,
 							'transactionID' => (isset($xml['transactionID']) ? $xml['transactionID'] : null),
 							'authCode' => (isset($xml['authCode']) ? $xml['authCode'] : null));
 
-        return $response;
-    }
+		return $response;
+	}
 
 	/**
-     * Calculate verification hash for Merchant Warrior POST API
-     *
+	 * Calculate verification hash for Merchant Warrior POST API
+	 *
 	 * @param array $postData
 	 * @param string $type
-     * @return string
-     */
-    public function _calculateHash(array $postData = array(), $type = '') 
+	 * @return string
+	 */
+	public function _calculateHash(array $postData = array(), $type = '') 
 	{
 		if ($type == "redirect") // 302 Redirect
 		{
@@ -182,7 +182,7 @@ class Mwarrior extends PaymentGateway{
 			return md5(strtolower($this->passphrase . $this->merchantID . $postData['returnURL'] . $postData['notifyURL']));
 		
 		}
-    }
+	}
 	
 	/**
 	 * Helper function which returns a random alphanumeric string
@@ -285,14 +285,14 @@ class Mwarrior extends PaymentGateway{
 	}
 
 	/**
-     * Send request to Merchant Warrior via CURL
-     *
+	 * Send request to Merchant Warrior via CURL
+	 *
 	 * @param string $url
 	 * @param array $data
 	 * @param array $options
-     * @return string
-     */
-    public function _doCurl($url = null, $data = array(), array $options = array()) 
+	 * @return string
+	 */
+	public function _doCurl($url = null, $data = array(), array $options = array()) 
 	{
 		if (function_exists("curl_init") == true)
 		{
@@ -345,6 +345,6 @@ class Mwarrior extends PaymentGateway{
 
 			return $result;
 		}
-    }
+	}
 	
 }

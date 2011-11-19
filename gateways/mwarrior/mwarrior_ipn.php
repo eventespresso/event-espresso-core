@@ -29,14 +29,14 @@ if ($mwarrior->validateIpn()){
 	
 	//Check the payment status recieved from Merchant Warrior
 	//wp_mail($contact,'IPN Debug Payment Status', 'Payment Status: ' . $mwarrior->ipnData['payment_status']);
-    if ($mwarrior->response['status'] == 'approved')
+	if ($mwarrior->response['status'] == 'approved')
 	{	
 ?>
-        <h2><?php _e('Thank You!','event_espresso'); ?></h2>
-        <p><?php _e('Your transaction has been processed.','event_espresso'); ?></p>
+		<h2><?php _e('Thank You!','event_espresso'); ?></h2>
+		<p><?php _e('Your transaction has been processed.','event_espresso'); ?></p>
 <?php 
 		$payment_status = 'Completed';
-    }
+	}
 	else
 	{
 		if (!isset($mwarrior->response['result'])) // Only for Redirect 302
@@ -45,12 +45,12 @@ if ($mwarrior->validateIpn()){
 			$resp = $mwarrior->queryCard($txn_id);
 ?>		
 		<h2 style="color:#F00;"><?php _e('There was an error processing your transaction!','event_espresso'); ?></h2>
-        <p>Transaction ID: <?php echo $txn_id ;?> </p>
+		<p>Transaction ID: <?php echo $txn_id ;?> </p>
 		<p><strong>Error:</strong> (<?php echo $resp['responseCode'];?> - <?php echo $resp['responseMessage'];?>) - <?php echo urldecode($resp['authMessage']);?></p>
 <?php
 		}
 		$payment_status = 'Declined';
-    }
+	}
 
 	global $wpdb;
 	if (!isset($mwarrior->response['result'])) // Redirect 302

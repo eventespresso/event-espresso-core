@@ -14,8 +14,8 @@ $mwarrior_cur = empty($mwarrior_settings['currency_format']) ? '' : $mwarrior_se
 $logo_url = empty($mwarrior_settings['image_url']) ? '' : $mwarrior_settings['image_url'];
 $use_sandbox = empty($mwarrior_settings['use_sandbox']) ? '' : $mwarrior_settings['use_sandbox'];
 if ($use_sandbox == 1) {
-    // Enable test mode if needed
-    $mwarrior->enableTestMode();
+	// Enable test mode if needed
+	$mwarrior->enableTestMode();
 }
 $quantity = $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);
 $salt = $mwarrior->_generateHashSalt();
@@ -52,28 +52,28 @@ $mwarrior->addField('hashSalt', $salt);
 //event_espresso_send_payment_notification($attendee_id, $txn_id, $amount_pd);
 //Decide if you want to auto redirect to your payment website or display a payment button.
 if (!empty($mwarrior_settings['bypass_payment_page']) && $mwarrior_settings['bypass_payment_page'] == 'Y') {
-    $mwarrior->submitPayment(); //Enable auto redirect to payment site
+	$mwarrior->submitPayment(); //Enable auto redirect to payment site
 } else {
-    if (empty($mwarrior_settings['button_url'])) {
-        if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/btn_checkout.png")) {
-            $button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/btn_checkout.png";
-        } else {
-            $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/mwarrior/btn_checkout.png";
-        }
-    } elseif (file_exists($mwarrior_settings['button_url'])){
-        $button_url = $mwarrior_settings['button_url'];
-    } else {
+	if (empty($mwarrior_settings['button_url'])) {
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/btn_checkout.png")) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/btn_checkout.png";
+		} else {
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/mwarrior/btn_checkout.png";
+		}
+	} elseif (file_exists($mwarrior_settings['button_url'])){
+		$button_url = $mwarrior_settings['button_url'];
+	} else {
 		//If no other buttons exist, then use the default location
 		$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/mwarrior/btn_checkout.png";
 	}
-    $mwarrior->submitButton($button_url, 'mwarrior'); //Display payment button
+	$mwarrior->submitButton($button_url, 'mwarrior'); //Display payment button
 }
 
 // Store the salt temporarily in the database
 $mwarrior->_storeHashSalt($salt, espresso_registration_id($attendee_id));
 
 if ($use_sandbox == true) {
-    echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
-    $mwarrior->dump_fields(); // for debugging, output a table of all the fields
+	echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+	$mwarrior->dump_fields(); // for debugging, output a table of all the fields
 }
 ?>
