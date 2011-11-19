@@ -8,36 +8,36 @@ $paytrace_settings = get_option('event_espresso_paytrace_settings');
 		<form id="paytrace_payment_form" name="paytrace_payment_form" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?>">
 			<p>
 				<label for="first_name"><?php _e('First Name', 'event_espresso'); ?></label>
-				<input class="required" name="first_name" type="text" id="first_name" class="required" value="<?php echo $fname ?>" />
+				<input name="first_name" type="text" id="first_name" class="required" value="<?php echo $fname ?>" />
 			</p>
 			<p>
 				<label for="last_name"><?php _e('Last Name', 'event_espresso'); ?></label>
-				<input class="required" name="last_name" type="text" id="last_name" class="required" value="<?php echo $lname ?>" />
+				<input  name="last_name" type="text" id="last_name" class="required" value="<?php echo $lname ?>" />
 			</p>
 			<p>
 				<label for="email"><?php _e('Email Address', 'event_espresso'); ?></label>
-				<input class="required" name="email" type="text" id="email" class="required" value="<?php echo $attendee_email ?>" />
+				<input  name="email" type="text" id="email" class="required" value="<?php echo $attendee_email ?>" />
 			</p>
 			<p>
 				<label for="address"><?php _e('Address', 'event_espresso'); ?></label>
-				<input class="required" name="address" type="text" id="address" class="required" value="<?php echo $address ?>" />
+				<input  name="address" type="text" id="address" class="required" value="<?php echo $address ?>" />
 			</p>
 			<p>
 				<label for="city"><?php _e('City', 'event_espresso'); ?></label>
-				<input class="required" name="city" type="text" id="city" class="required" value="<?php echo $city ?>" />
+				<input  name="city" type="text" id="city" class="required" value="<?php echo $city ?>" />
 			</p>
 			<p>
 				<label for="state"><?php _e('State', 'event_espresso'); ?></label>
-				<input class="required" name="state" type="text" id="state" class="required" value="<?php echo $state ?>" />
+				<input  name="state" type="text" id="state" class="required" value="<?php echo $state ?>" />
 			</p>
 			<p>
 				<label for="zip"><?php _e('Zip', 'event_espresso'); ?></label>
-				<input class="required" name="zip" type="text" id="zip" class="required" value="<?php echo $zip ?>" />
+				<input name="zip" type="text" id="zip" class="required" value="<?php echo $zip ?>" />
 			</p>
 			<p class="section-title"><?php _e('Credit Card Information', 'event_espresso'); ?></p>
 			<p>
 				<label for="card_num"><?php _e('Card Number', 'event_espresso'); ?></label>
-				<input class="required" type="text" name="cc" class="required" id="cc" />
+				<input type="text" name="cc" class="required" id="cc" />
 			</p>
 			<p>
 				<label for="card-exp"><?php _e('Expiration Month', 'event_espresso'); ?></label>
