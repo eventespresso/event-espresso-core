@@ -34,13 +34,22 @@ function event_espresso_2checkout_payment_settings() {
 		}
 	}
 	
-	//Debug
-	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
+	//Open or close the postbox div
+	if ($payment_settings['2checkout']['active'] == false || isset($_REQUEST['deactivate_2checkout']) && $_REQUEST['deactivate_2checkout'] == 'true' ){
+		$postbox_style = 'closed';
+	}
+	if (isset($_REQUEST['reactivate_2checkout']) && $_REQUEST['reactivate_2checkout'] == 'true'){
+		$postbox_style = '';
+	}
+	if (isset($_REQUEST['activate_2checkout']) && $_REQUEST['activate_2checkout'] == 'true'){
+		$postbox_style = '';
+	}
 	
-	?>
-<a name="2checkout" id="2checkout"></a>
+?>
+
+	<a name="2checkout" id="2checkout"></a>
 	<div class="metabox-holder">
-		<div class="postbox">
+		<div class="postbox <?php echo $postbox_style; ?>">
 			<div title="Click to toggle" class="handlediv"><br /></div>
 			<h3 class="hndle">
 				<?php _e('2checkout Settings', 'event_espresso'); ?>
@@ -94,7 +103,7 @@ function event_espresso_2checkout_payment_settings() {
 						break;
 						
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_2checkout=true#2checkout\';" class="red_alert pointer"><strong>' . __('Deactivate 2checkout Payments?','event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_2checkout=true\';" class="red_alert pointer"><strong>' . __('Deactivate 2checkout Payments?','event_espresso') . '</strong></li>';
 							event_espresso_display_2checkout_settings();
 						break;
 					}
