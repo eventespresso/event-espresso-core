@@ -73,7 +73,7 @@ function event_espresso_2checkout_payment_settings() {
 				
 				if (isset($_REQUEST['deactivate_2checkout']) && $_REQUEST['deactivate_2checkout'] == 'true'){
 					$payment_settings['2checkout']['active'] = false;
-					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == false){
+					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
 						$notices['updates'][] = __('2checkout Payments De-activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to De-activate 2checkout Payments', 'event_espresso');
