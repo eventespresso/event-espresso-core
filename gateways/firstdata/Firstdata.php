@@ -27,7 +27,7 @@ $r = $wpdb->get_row($sql);
 
 if (!$r || $wpdb->num_rows == 0) {
 
-    exit("Looks like something went wrong.  Please try again or notify the website administrator.");
+	exit("Looks like something went wrong.  Please try again or notify the website administrator.");
 }
 
 
@@ -37,7 +37,7 @@ $pem_file = EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/firstdata/" . $firstdata_s
 
 if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "firstdata/" . $firstdata_settings['firstdata_store_id'] . ".pem")) {
 
-    $pem_file = EVENT_ESPRESSO_GATEWAY_DIR . "firstdata/" . $firstdata_settings['firstdata_store_id'] . ".pem";
+	$pem_file = EVENT_ESPRESSO_GATEWAY_DIR . "firstdata/" . $firstdata_settings['firstdata_store_id'] . ".pem";
 }
 
 
@@ -47,7 +47,7 @@ $myorder["debugging"] = $firstdata_settings['use_sandbox'] == 1 ? TRUE : FALSE;
 $myorder["host"] = $myorder["debugging"] ? "staging.linkpt.net" : "secure.linkpt.net";
 $myorder["port"] = "1129";
 $myorder["keyfile"] = $pem_file; # Change this to the name and location of your certificate file
-$myorder["configfile"] = $firstdata_settings['firstdata_store_id'];        # Change this to your store number
+$myorder["configfile"] = $firstdata_settings['firstdata_store_id'];		# Change this to your store number
 
 $myorder["ordertype"] = "SALE";
 $myorder["result"] = "LIVE"; # For a test, set result to GOOD, DECLINE, or DUPLICATE
@@ -76,70 +76,70 @@ $addrnum = $_POST['address'];
 $temp_address = explode(" ", $_POST['address']);
 
 if (count($temp_address > 0))
-    $addrnum = $temp_address[0];
+	$addrnum = $temp_address[0];
 
 $myorder["addrnum"] = $addrnum;
 $myorder["zip"] = $_POST["zip"];
 
 $result = $mylphp->curl_process($myorder);  # use curl methods
 if($myorder["debugging"]) {
-    echo "<p>var_dump of order data:</p> ";
-    var_dump($myorder);
+	echo "<p>var_dump of order data:</p> ";
+	var_dump($myorder);
 			
 			echo "<br />";
-    echo "<p>var_dump of result:</p> ";
-    var_dump($result);
+	echo "<p>var_dump of result:</p> ";
+	var_dump($result);
 }
 
 
 if ($result["r_approved"] != "APPROVED") { // transaction failed, print the reason
-    print "<br />Status: $result[r_approved]\n";
-    print "<br />Error: $result[r_error]\n";
+	print "<br />Status: $result[r_approved]\n";
+	print "<br />Error: $result[r_error]\n";
 } else { // success
-    $payment_status = 'Completed';
-    $payment_date = date("d-m-Y");
+	$payment_status = 'Completed';
+	$payment_date = date("d-m-Y");
 
-    $txn_type = 'FD';
-    $txn_id = $result["r_ordernum"];
+	$txn_type = 'FD';
+	$txn_id = $result["r_ordernum"];
 
-    $sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($_POST['id']) . "' ";
-    $sql .= $id == '' ? '' : " AND id= '" . $id . "' ";
-    $sql .= " ORDER BY id LIMIT 0,1";
+	$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($_POST['id']) . "' ";
+	$sql .= $id == '' ? '' : " AND id= '" . $id . "' ";
+	$sql .= " ORDER BY id LIMIT 0,1";
 
-    $attendees = $wpdb->get_results($sql);
-    foreach ($attendees as $attendee) {
-        $attendee_id = $attendee->id;
-        $att_registration_id = $attendee->registration_id;
-        $lname = $attendee->lname;
-        $fname = $attendee->fname;
-        $amount_pd = $attendee->amount_pd;
+	$attendees = $wpdb->get_results($sql);
+	foreach ($attendees as $attendee) {
+		$attendee_id = $attendee->id;
+		$att_registration_id = $attendee->registration_id;
+		$lname = $attendee->lname;
+		$fname = $attendee->fname;
+		$amount_pd = $attendee->amount_pd;
 		$total_cost = $attendee->amount_pd;
-        $event_id = $attendee->event_id;
-    }
+		$event_id = $attendee->event_id;
+	}
 
-    $events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
-    foreach ($events as $event) {
-        $event_id = $event->id;
-        $event_name = $event->event_name;
-        $event_desc = $event->event_desc;
-        $event_description = $event->event_desc;
-        $event_identifier = $event->event_identifier;
-        $cost = $event->event_cost;
-        $active = $event->is_active;
-    }
-    //Build links
-    $event_url = espresso_reg_url($event_id);
-    $event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
+	$events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
+	foreach ($events as $event) {
+		$event_id = $event->id;
+		$event_name = $event->event_name;
+		$event_desc = $event->event_desc;
+		$event_description = $event->event_desc;
+		$event_identifier = $event->event_identifier;
+		$cost = $event->event_cost;
+		$active = $event->is_active;
+	}
+	//Build links
+	$event_url = espresso_reg_url($event_id);
+	$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
-    $sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET
-                payment_status = '$payment_status',
-                txn_id = '" . $result["r_ordernum"] . "',
-                txn_type = '$txn_type',
-                amount_pd = '" . $r->amount_pd . "',
-                payment_date ='" . $result["r_tdate"] . "'
-                WHERE registration_id ='" . $registration_id . "' ";
+	$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET
+				payment_status = '$payment_status',
+				txn_id = '" . $result["r_ordernum"] . "',
+				txn_type = '$txn_type',
+				amount_pd = '" . $r->amount_pd . "',
+				payment_date ='" . $result["r_tdate"] . "'
+				WHERE registration_id ='" . $registration_id . "' ";
 
-    $wpdb->query($sql);
+	$wpdb->query($sql);
 }
 
 /**

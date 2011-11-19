@@ -93,23 +93,23 @@ class Fdggutil {
 		$out .= $this->submitForm();
 		$out .= '<input class="espresso_payment_button_firstdata_connect_2" type="image" ';
 		$out .= 'alt="Pay using firstdata_connect_2" src="' . $button_url . '" />';
-    $out .= '</form>';
+	$out .= '</form>';
 		return $out;
 	}
 
 	public function submitPayment() {
 		$out = "<html>\n";
-    $out .= "<head><title>Processing Payment...</title></head>\n";
-    $out .= "<body onLoad=\"document.forms['gateway_form'].submit();\">\n";
-    $out .= "<p style=\"text-align:center;\"><h2>Please wait, your order is being processed and you";
-    $out .= " will be redirected to the payment website.</h2></p>\n";
-    $out .= '<form method="post" name="gateway_form" action="' . $this->gatewayUrl . '">\n';
-    $out .= $this->submitForm();
+	$out .= "<head><title>Processing Payment...</title></head>\n";
+	$out .= "<body onLoad=\"document.forms['gateway_form'].submit();\">\n";
+	$out .= "<p style=\"text-align:center;\"><h2>Please wait, your order is being processed and you";
+	$out .= " will be redirected to the payment website.</h2></p>\n";
+	$out .= '<form method="post" name="gateway_form" action="' . $this->gatewayUrl . '">\n';
+	$out .= $this->submitForm();
 		$out .= "<p style=\"text-align:center;\"><br/><br/>If you are not automatically redirected to ";
-    $out .= "the payment website within 5 seconds...<br/><br/>\n";
-    $out .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
-    $out .= "</form>\n";
-    $out .= "</body></html>\n";
+	$out .= "the payment website within 5 seconds...<br/><br/>\n";
+	$out .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+	$out .= "</form>\n";
+	$out .= "</body></html>\n";
 		return $out;
 	}
 }

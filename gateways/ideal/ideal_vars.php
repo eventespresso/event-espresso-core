@@ -5,7 +5,7 @@ $ideal_mollie_settings = get_option( 'event_espresso_ideal_mollie_settings' );
 require_once('ideal.class.php');
 
 if (!isset($attendee_id))
-    $attendee_id= $_GET['id'];
+	$attendee_id= $_GET['id'];
 
 $partner_id  = $ideal_mollie_settings['ideal_mollie_partner_id']; // Uw mollie partner ID
 
@@ -23,11 +23,11 @@ $r = $wpdb->get_row($sql);
 
 if (!$r || $wpdb->num_rows == 0){
 
-    exit("Looks like something went wrong.  Please try again or notify the website administrator.");
+	exit("Looks like something went wrong.  Please try again or notify the website administrator.");
 
 }
 //amount needs to be in cents 
-$amount      = (int) ($r->amount_pd * 100);    // Het af te rekenen bedrag in centen (!!!)
+$amount	  = (int) ($r->amount_pd * 100);	// Het af te rekenen bedrag in centen (!!!)
 $description = stripslashes_deep( $r->event_name ); // Beschrijving die consument op zijn/haar afschrift ziet.
 
 //if (!in_array('ssl', stream_get_transports()))
@@ -40,7 +40,7 @@ $description = stripslashes_deep( $r->event_name ); // Beschrijving die consumen
 $iDEAL = new iDEAL_Payment ($partner_id);
 
 if ($ideal_mollie_settings['ideal_mollie_use_sandbox'] == 1)
-    $iDEAL->setTestMode();
+	$iDEAL->setTestMode();
 
 if (isset($_POST['bank_id']) and !empty($_POST['bank_id'])) 
 {
@@ -67,8 +67,8 @@ if (isset($_POST['bank_id']) and !empty($_POST['bank_id']))
 }
 elseif(isset($_POST['bank_id']) && $_POST['bank_id'] == '')
 {
-    echo "<p>" . __("Please use your browser's back button and select a bank.", 'event_espresso');
-    exit;
+	echo "<p>" . __("Please use your browser's back button and select a bank.", 'event_espresso');
+	exit;
 
 }
 
@@ -96,9 +96,9 @@ if ($bank_array == false)
 <?php } ?>
 
 	</select>
-    <input name="amount" type="hidden" value="<?php echo $amount; ?>" />
-    <input name="ideal" type="hidden" value="1" />
-    <input name="id" type="hidden" value="<?php echo $attendee_id; ?>" />
+	<input name="amount" type="hidden" value="<?php echo $amount; ?>" />
+	<input name="ideal" type="hidden" value="1" />
+	<input name="id" type="hidden" value="<?php echo $attendee_id; ?>" />
 	<input type="submit" class="btn_event_form_submit payment-submit ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" name="submit" value="Betaal via iDEAL" />
 </form>
 </div>

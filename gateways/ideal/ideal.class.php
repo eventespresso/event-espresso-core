@@ -1,43 +1,43 @@
 <?php
 /*-----------------------------------------------------------------------
-  Start              : 24 februari 2009
-  Door               : Mollie B.V. (RDF) © 2009
+  Start			  : 24 februari 2009
+  Door			   : Mollie B.V. (RDF) © 2009
 
-  Versie             : 1.12 (gebaseerd op de Mollie iDEAL class van
-                       Concepto IT Solution - http://www.concepto.nl/)
+  Versie			 : 1.12 (gebaseerd op de Mollie iDEAL class van
+					   Concepto IT Solution - http://www.concepto.nl/)
   Laatste aanpassing : 15-09-2010
   Aard v. aanpassing : cURL ondersteuning toegevoegd
-  Door               : RDF
+  Door			   : RDF
 	-----------------------------------------------------------------------*/
 
 class iDEAL_Payment
 {
 
-	const     MIN_TRANS_AMOUNT = 118;
+	const	 MIN_TRANS_AMOUNT = 118;
 
-	protected $partner_id      = null;
-	protected $profile_key     = null;
+	protected $partner_id	  = null;
+	protected $profile_key	 = null;
 		
-	protected $testmode        = false;
+	protected $testmode		= false;
 
-	protected $bank_id         = null;
-	protected $amount          = 0;
-	protected $description     = null;
-	protected $return_url      = null;
-	protected $report_url      = null;
+	protected $bank_id		 = null;
+	protected $amount		  = 0;
+	protected $description	 = null;
+	protected $return_url	  = null;
+	protected $report_url	  = null;
 
-	protected $bank_url        = null;
-	protected $payment_url     = null;
+	protected $bank_url		= null;
+	protected $payment_url	 = null;
 
 	protected $transaction_id  = null;
-	protected $paid_status     = false;
+	protected $paid_status	 = false;
 	protected $consumer_info   = array();
 
 	protected $error_message   = '';
-	protected $error_code      = 0;
+	protected $error_code	  = 0;
 
-	protected $api_host        = 'ssl://secure.mollie.nl';
-	protected $api_port        = 443;
+	protected $api_host		= 'ssl://secure.mollie.nl';
+	protected $api_port		= 443;
 
 	public function __construct ($partner_id, $api_host = 'ssl://secure.mollie.nl', $api_port = 443)
 	{
@@ -50,7 +50,7 @@ class iDEAL_Payment
 	public function getBanks()
 	{
 		$query_variables = array (
-			'a'          => 'banklist',
+			'a'		  => 'banklist',
 			'partner_id' => $this->partner_id,
 		);
 
@@ -98,10 +98,10 @@ class iDEAL_Payment
 		}
 
 		$query_variables = array (
-			'a'           => 'fetch',
+			'a'		   => 'fetch',
 			'partnerid'   => $this->getPartnerId(),
-			'bank_id'     => $this->getBankId(),
-			'amount'      => $this->getAmount(),
+			'bank_id'	 => $this->getBankId(),
+			'amount'	  => $this->getAmount(),
 			'description' => $this->getDescription(),
 			'reporturl'   => $this->getReportURL(),
 			'returnurl'   => $this->getReturnURL(),
@@ -128,7 +128,7 @@ class iDEAL_Payment
 		}
 
 		$this->transaction_id = (string) $create_object->order->transaction_id;
-		$this->bank_url       = (string) $create_object->order->URL;
+		$this->bank_url	   = (string) $create_object->order->URL;
 
 		return true;
 	}
@@ -142,8 +142,8 @@ class iDEAL_Payment
 		}
 		
 		$query_variables = array (
-			'a'              => 'check',
-			'partnerid'      => $this->partner_id,
+			'a'			  => 'check',
+			'partnerid'	  => $this->partner_id,
 			'transaction_id' => $this->getTransactionId(),
 		);
 
@@ -168,7 +168,7 @@ class iDEAL_Payment
 		}
 
 		$this->paid_status   = (bool) ($check_object->order->payed == 'true');
-		$this->amount        = (int) $check_object->order->amount;
+		$this->amount		= (int) $check_object->order->amount;
 		$this->consumer_info = (isset($check_object->order->consumer)) ? (array) $check_object->order->consumer : array();
 
 		return true;
@@ -183,9 +183,9 @@ class iDEAL_Payment
 		}
 		
 		$query_variables = array (
-			'a'           => 'create-link',
+			'a'		   => 'create-link',
 			'partnerid'   => $this->partner_id,
-			'amount'      => $this->getAmount(),
+			'amount'	  => $this->getAmount(),
 			'description' => $this->getDescription(),
 		);
 
@@ -307,7 +307,7 @@ class iDEAL_Payment
 			if ($attributes['type'] == 'error')
 			{
 				$this->error_message = (string) $xml->item->message;
-				$this->error_code    = (string) $xml->item->errorcode;
+				$this->error_code	= (string) $xml->item->errorcode;
 
 				return true;
 			}
