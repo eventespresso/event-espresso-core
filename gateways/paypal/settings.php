@@ -222,18 +222,21 @@ function event_espresso_display_paypal_settings() {
 			</tr>
 			
 			<tr>
-				<th><label for="button_url">
+				<th><label for="pp_button_url">
 						<?php _e('Button Image URL', 'event_espresso'); ?>
 						<?php apply_filters( 'espresso_help', 'paypal_button_image'); ?>
 					</label></th>
-				<td><input class="regular-text" type="text" name="button_url" id="button_url" size="34" value="<?php echo (($payment_settings['paypal']['button_url'] == '') ? $button_url : $payment_settings['paypal']['button_url'] ); ?>" /></td>
+				<td><input class="regular-text" type="text" name="button_url" id="pp_button_url" size="34" value="<?php echo (($payment_settings['paypal']['button_url'] == '') ? $button_url : $payment_settings['paypal']['button_url'] ); ?>" /><br /><span class="description">
+					<?php _e('URL to the payment button.', 'event_espresso'); ?>
+					</span>
+</td>
 			</tr>
 			<tr>
-				<th><label for="image_url">
+				<th><label for="pp_image_url">
 						<?php _e('Image URL', 'event_espresso'); ?>
 						<?php apply_filters( 'espresso_help', 'paypal_image_url_info'); ?>
 					</label></th>
-				<td><input class="regular-text" type="text" name="image_url" id="image_url" size="35" value="<?php echo $payment_settings['paypal']['image_url']; ?>" />
+				<td><input class="regular-text" type="text" name="image_url" id="pp_image_url" size="35" value="<?php echo $payment_settings['paypal']['image_url']; ?>" />
 					<br />
 					<span class="description">
 					<?php _e('(used for your business/personal logo on the PayPal page)', 'event_espresso'); ?>
