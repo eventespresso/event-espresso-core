@@ -172,37 +172,37 @@ function organization_config_mnu() {
 															<label for="org_name">
 																<?php _e('Organization Name:', 'event_espresso'); ?>
 															</label>
-															<input type="text" name="org_name" size="45" value="<?php echo stripslashes_deep($org_options['organization']); ?>" />
+															<input class="regular-text" type="text" name="org_name" size="45" value="<?php echo stripslashes_deep($org_options['organization']); ?>" />
 														</li>
 														<li>
 															<label for="org_street1">
 																<?php _e('Organization Street 1:', 'event_espresso'); ?>
 															</label>
-															<input type="text" name="org_street1" size="45" value="<?php echo $org_options['organization_street1']; ?>" />
+															<input class="regular-text" type="text" name="org_street1" size="45" value="<?php echo $org_options['organization_street1']; ?>" />
 														</li>
 														<li>
 															<label for="org_street2">
 																<?php _e('Organization Street 2:', 'event_espresso'); ?>
 															</label>
-															<input type="text" name="org_street2" size="45" value="<?php echo $org_options['organization_street2']; ?>" />
+															<input class="regular-text" type="text" name="org_street2" size="45" value="<?php echo $org_options['organization_street2']; ?>" />
 														</li>
 														<li>
 															<label for="org_city">
 																<?php _e('Organization City:', 'event_espresso'); ?>
 															</label>
-															<input type="text" name="org_city" size="45" value="<?php echo $org_options['organization_city']; ?>" />
+															<input class="regular-text" type="text" name="org_city" size="45" value="<?php echo $org_options['organization_city']; ?>" />
 														</li>
 														<li>
 															<label for="org_state">
 																<?php _e('Organization State:', 'event_espresso'); ?>
 															</label>
-															<input type="text" name="org_state" size="45" value="<?php echo $org_options['organization_state']; ?>" />
+															<input class="regular-text" type="text" name="org_state" size="45" value="<?php echo $org_options['organization_state']; ?>" />
 														</li>
 														<li>
 															<label for="org_zip">
 																<?php _e('Organization Zip/Postal Code:', 'event_espresso'); ?>
 															</label>
-															<input type="text" name="org_zip" size="10" value="<?php echo $org_options['organization_zip']; ?>" />
+															<input class="regular-text" type="text" name="org_zip" size="10" value="<?php echo $org_options['organization_zip']; ?>" />
 														</li>
 														<li>
 															<label for="org_country">
@@ -213,7 +213,7 @@ function organization_config_mnu() {
 															<label for="email">
 																<?php _e('Primary contact email:', 'event_espresso'); ?>
 															</label>
-															<input type="text" name="email" size="45" value="<?php echo $org_options['contact_email']; ?>" />
+															<input class="regular-text" type="text" name="email" size="45" value="<?php echo $org_options['contact_email']; ?>" />
 														</li>
 														<li>
 															<h4>
@@ -428,7 +428,7 @@ function organization_config_mnu() {
 														<label for="payment_subject">
 															<?php _e('Email Subject:', 'event_espresso'); ?>
 														</label>
-														<input id="payment_subject" name="payment_subject" size="50" type="text" value="<?php echo stripslashes_deep($org_options['payment_subject']); ?>" />
+														<input id="payment_subject" name="payment_subject" size="50" class="regular-text" type="text" value="<?php echo stripslashes_deep($org_options['payment_subject']); ?>" />
 													</p>
 													<div class="visual-toggle">
 														<p><a class="toggleVisual">
