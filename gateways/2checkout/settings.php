@@ -1,5 +1,4 @@
 <?php
-
 function event_espresso_2checkout_payment_settings() {
 	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
 	
@@ -143,7 +142,7 @@ function event_espresso_display_2checkout_settings() {
 							<label for="2checkout_id">
 								<?php _e('2checkout I.D.', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="2checkout_id" size="35" value="<?php echo empty($payment_settings['2checkout']['2checkout_id']) ? '' : $payment_settings['2checkout']['2checkout_id']; ?>">
+							<input class="regular-text" type="text" name="2checkout_id" size="35" value="<?php echo empty($payment_settings['2checkout']['2checkout_id']) ? '' : $payment_settings['2checkout']['2checkout_id']; ?>">
 							<br />
 							<?php _e('(Typically 87654321)', 'event_espresso'); ?>
 						</li>
@@ -151,7 +150,7 @@ function event_espresso_display_2checkout_settings() {
 							<label for="2checkout_username">
 								<?php _e('2checkout username', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="2checkout_username" size="35" value="<?php echo empty($payment_settings['2checkout']['2checkout_username']) ? '' : $payment_settings['2checkout']['2checkout_username']; ?>">
+							<input class="regular-text" type="text" name="2checkout_username" size="35" value="<?php echo empty($payment_settings['2checkout']['2checkout_username']) ? '' : $payment_settings['2checkout']['2checkout_username']; ?>">
 							<br />
 							<?php _e('(Typically TestAccount)', 'event_espresso'); ?>
 						</li>
@@ -160,7 +159,7 @@ function event_espresso_display_2checkout_settings() {
 							<label for="button_url">
 								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'button_image'); ?>
 							</label>
-							<input type="text" name="button_url" size="34" value="<?php echo (empty($payment_settings['2checkout']['button_url']) ? '' : $payment_settings['2checkout']['button_url'] ); ?>" />
+							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo (empty($payment_settings['2checkout']['button_url']) ? '' : $payment_settings['2checkout']['button_url'] ); ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> </li>
 
 							<?php echo (empty($payment_settings['2checkout']['button_url']) ? '<img src="' . $button_url . '" />' : '<img src="' . $payment_settings['2checkout']['button_url'] . '" />'); ?></li>
