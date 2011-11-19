@@ -350,7 +350,7 @@
 		header("Content-Type: application/download");
 		header('Content-disposition: attachment; filename='.$filename);
 		header("Content-Type: text/csv");
-    $fh = fopen('php://output', 'w');		
+	$fh = fopen('php://output', 'w');		
 		
 		$no_table = TRUE;
 	

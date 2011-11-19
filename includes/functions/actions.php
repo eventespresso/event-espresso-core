@@ -17,9 +17,9 @@ add_action('plugins_loaded', 'espresso_get_user_id');
 
 
 /**
-*        @ display admin update & error messages 
-*        @access public
-*        @return void
+*		@ display admin update & error messages 
+*		@access public
+*		@return void
 **/
 function display_espresso_admin_notices () {
 

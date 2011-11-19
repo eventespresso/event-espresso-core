@@ -62,6 +62,46 @@ function espresso_fix_org_options(){
 		
 	//Debug
 	//echo "<pre>".print_r($org_options,true)."</pre>";
+	
+	//Update invoice settings
+	//$invoice_payment_settings_settings = get_option('event_espresso_invoice_payment_settings_settings');
+	
+	//Get the events_invoice_payment_active setting so we can see if it was even active
+	//$payment_settings['invoice']['active'] = isset(get_option('events_invoice_payment_active')) && get_option('events_invoice_payment_active') == 'true' ? 1:0;
+	
+	//If events_invoice_payment_active was active, then we can add the defaults
+	/*if ($payment_settings['invoice']['active'] == true){
+		
+		if ( array_key_exists('invoice_title', $invoice_payment_settings) ){
+			$payment_settings['invoice']['invoice_title'] = !empty( $invoice_payment_settings['invoice_title']) ) ? $invoice_payment_settings['invoice_title'] : '';
+		}
+		
+		if ( array_key_exists('pdf_instructions', $invoice_payment_settings) ){
+			$payment_settings['invoice']['pdf_instructions'] = !empty( strip_tags($invoice_payment_settings['pdf_instructions']) ) ? $invoice_payment_settings['pdf_instructions'] : '';
+		}
+		
+		if ( array_key_exists('page_instructions', $invoice_payment_settings) ){
+			$payment_settings['invoice']['page_instructions'] = !empty( strip_tags($invoice_payment_settings['page_instructions']) ) ? $invoice_payment_settings['page_instructions'] : '';
+		}
+		
+		if ( array_key_exists('payable_to', $invoice_payment_settings) ){
+			$payment_settings['invoice']['payable_to'] = !empty( strip_tags($invoice_payment_settings['payable_to']) ) ? $invoice_payment_settings['payable_to'] : '';
+		}
+		
+		if ( array_key_exists('payment_address', $invoice_payment_settings) ){
+			$payment_settings['invoice']['payment_address'] = !empty( strip_tags($invoice_payment_settings['payment_address']) ) ? $invoice_payment_settings['payment_address'] : '';
+		}
+		
+		if ( array_key_exists('image_url', $invoice_payment_settings) ){
+			$payment_settings['invoice']['image_url'] = !empty( strip_tags($invoice_payment_settings['image_url']) ) ? $invoice_payment_settings['image_url'] : '';
+		}
+		
+		if ( array_key_exists('show', $invoice_payment_settings) ){
+			$payment_settings['invoice']['show'] = !empty( strip_tags($invoice_payment_settings['show']) ) ? $invoice_payment_settings['show'] : 'Y';
+		}
+		
+		add_option( 'payment_data_1', $payment_settings, '', 'no');
+	}*/
 
 }
 
