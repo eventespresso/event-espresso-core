@@ -1,5 +1,4 @@
 <?php
-
 function event_espresso_aim_payment_settings() {
 	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
 	
@@ -102,6 +101,10 @@ function event_espresso_aim_payment_settings() {
 	</div>
 </div>
 <?php
+
+	//This line keeps the notices from displaying twice
+	if ( did_action( 'espresso_admin_notices' ) == false )
+		do_action('espresso_admin_notices');
 }
 
 //Authorize.net Settings Form
@@ -109,6 +112,11 @@ function event_espresso_display_authnet_aim_settings() {
 	global $espresso_premium, $org_options, $espresso_wp_user; if ($espresso_premium != true) return;
 	
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	
+	$values = array(
+		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
+		array('id' => 'N', 'text' => __('No', 'event_espresso')),
+	);
 
 	//Get the current button URL
 	if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/btn_cc_vmad.gif")) {
@@ -118,42 +126,42 @@ function event_espresso_display_authnet_aim_settings() {
 	}
 	?>
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#authnet_aim">
-	<table width="99%" border="0">
-		<tr>
-			<td valign="top"><ul>
-					<li style="width:50%">
-						<p><strong style="color:#F00">
-							<?php _e('WARNING!', 'event_espresso'); ?>
-							</strong>
-							<?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?>
-						</p>
-					</li>
-					<li>
-						<label for="authnet_aim_login_id">
-							<?php _e('Authorize.net AIM Login I.D.', 'event_espresso'); ?>
-						</label>
-						
-						<input class="regular-text" type="text" name="authnet_aim_login_id" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_login_id']; ?>">
-					</li>
-					<li>
-						<label for="authnet_aim_transaction_key">
-							<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?>
-						</label>
-						
-						<input class="regular-text" type="text" name="authnet_aim_transaction_key" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_transaction_key']; ?>">
-					</li>
-				</ul>
-			</td>
-			<td valign="top"><ul>
-					<li>
-						<label for="use_sandbox">
-							<?php _e('Use the test mode feature for Autorize.net AIM? ', 'event_espresso'); ?><?php apply_filters( 'espresso_help', 'authnet_aim_sandbox'); ?>
-						</label>
-						<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['authnet_aim']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-						
-					</li>
-				</ul></td>
-		</tr>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><strong style="color:#F00">
+					<?php _e('WARNING!', 'event_espresso'); ?>
+					</strong> </th>
+				<td><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></td>
+			</tr>
+			<tr>
+				<th><label for="authnet_aim_login_id">
+						<?php _e('Authorize.net AIM Login I.D.', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="authnet_aim_login_id" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_login_id']; ?>">
+					<br />
+					<span class="description">
+					<?php _e('Please enter your Authorize.net Login I.D.', 'event_espresso'); ?>
+					</span></td>
+			</tr>
+			<tr>
+				<th><label for="authnet_aim_transaction_key">
+						<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="authnet_aim_transaction_key" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_transaction_key']; ?>">
+					<br />
+					<span class="description">
+					<?php _e('Please enter your Authorize.net Transaction Key.', 'event_espresso'); ?>
+					</span></td>
+			</tr>
+			<tr>
+				<th><label for="use_sandbox">
+						<?php _e('Use the test mode feature for Autorize.net AIM? ', 'event_espresso'); ?>
+						<?php apply_filters( 'espresso_help', 'authnet_aim_sandbox'); ?>
+					</label></th>
+				<td><?php echo select_input('use_sandbox', $values, empty($payment_settings['authnet_aim']['use_sandbox']) ? 'N' : $payment_settings['authnet_aim']['use_sandbox']);?></td>
+			</tr>
+		</tbody>
 	</table>
 	<p>
 		<input type="hidden" name="update_authnet_aim" value="update_authnet_aim">
@@ -167,6 +175,9 @@ function event_espresso_display_authnet_aim_settings() {
 	<p>
 		<?php _e('Test Mode allows you to submit test transactions to the payment gateway. Transactions that are submitted while Test Mode is ON are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers.', 'event_espresso'); ?>
 	</p>
+	<p><strong>
+		<?php _e('Example Card Numbers:', 'event_espresso'); ?>
+		</strong></p>
 	<p>370000000000002 (
 		<?php _e('American Express', 'event_espresso'); ?>
 		)<br />
@@ -182,4 +193,3 @@ function event_espresso_display_authnet_aim_settings() {
 </div>
 <?php
 }
-
