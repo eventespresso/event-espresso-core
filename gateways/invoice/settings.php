@@ -131,115 +131,46 @@ function event_espresso_display_invoice_payment_settings(){
 	global $espresso_premium, $org_options, $espresso_wp_user; if ($espresso_premium != true) return;
 	
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
-	
-	//Debug
-	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
-	
-	$files = espresso_invoice_template_files();
-?>
-<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>#invoice">
-	<table width="90%" border="0">
-		<tr>
-			<td valign="top"><ul>
-					<li>
-						<h4>
-							<?php _e('PDF Settings', 'event_espresso'); ?>
-						</h4>
-					</li>
-					<?php /*?><li>
-						<label for="pdf_title">
-							<?php _e('PDF Title (top right of the invoice):', 'event_espresso'); ?>
-						</label>
-						<input class="regular-text" type="text" name="pdf_title" size="30" value="<?php echo empty($payment_settings['invoice']['pdf_title']) ? __('Invoice','event_espresso') : trim(stripslashes_deep($payment_settings['invoice']['pdf_title'])) ;?>" />
-					</li><?php */?>
-					<li>
-						<label for="base-invoice-select" <?php echo $styled ?>>
-							<?php _e('Select Base Template', 'event_espresso');  ?>
-						</label>
-						<select id="base-invoice-select" class="wide" <?php echo $disabled ?> name="invoice_file">
-							<option <?php espresso_invoice_is_selected($fname) ?> value="basic.html">
-							<?php _e('Default Template - Basic', 'event_espresso'); ?>
-							</option>
-							<?php foreach( $files as $fname ) { ?>
-							<option <?php espresso_invoice_is_selected($fname) ?> value="<?php echo $fname ?>"><?php echo $fname; ?></option>
-							<?php } ?>
-						</select>
-						<a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=base_template_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a> </li>
-					<li id="invoice-logo-image">
-						<?php
 
-				if(!empty($payment_settings['invoice']['invoice_logo_url'])){
-					$invoice_logo = $payment_settings['invoice']['invoice_logo_url'];
-				} else {
-					$invoice_logo = '';
-				}
-				// var_dump($event_meta['event_thumbnail_url']);
-			?>
-						<label for="upload_image">
-							<?php _e('Logo Image (logo for the top left of the invoice):','event_espresso'); ?>
-						</label>
-						<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $invoice_logo ?>" />
-						<input id="upload_image_button" type="button" value="Upload Image" />
-						<a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=invoice_logo_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a>
-						<?php 
-				if($invoice_logo){ 
-?>
-						<p class="invoice-logo"><img src="<?php echo $invoice_logo ?>" alt="" /></p>
-						<a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'>
-						<?php _e('Remove Image', 'event_espresso'); ?>
-						</a>
-						<?php
-				}
-?>
-					</li>
-					<li>
-						<label for="pdf_instructions">
-							<?php _e('Instructions:', 'event_espresso'); ?>
-						</label>
-						<textarea name="pdf_instructions" cols="30" rows="5"><?php echo empty($payment_settings['invoice']['pdf_instructions']) ? __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.', 'event_espresso') : stripslashes_deep($payment_settings['invoice']['pdf_instructions']); ?></textarea>
-					</li>
-				</ul></td>
-			<td valign="top"><ul>
-					<li>
-						<h4>
-							<?php _e('On-page Settings', 'event_espresso'); ?>
-						</h4>
-					</li>
-					<li>
-						<label for="show">
-							<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
-						</label>
-						<?php
+	$files = espresso_invoice_template_files();
 	$values = array(
 		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 		array('id' => 'N', 'text' => __('No', 'event_espresso')),
 	);
-	echo select_input('show', $values, empty($payment_settings['invoice']['show']) ? '' : $payment_settings['invoice']['show']);
 ?>
-					</li>
-					<li>
-						<label for="invoice_title">
-							<?php _e('Invoice Title:', 'event_espresso'); ?>
-						</label>
-						<input class="regular-text" type="text" name="invoice_title" size="30" value="<?php echo empty($payment_settings['invoice']['invoice_title']) ? __('Invoice Payments','event_espresso') : stripslashes_deep($payment_settings['invoice']['invoice_title']);?>" />
-					</li>
-					<li>
-						<label for="page_instructions">
-							<?php _e('Invoice Instructions:', 'event_espresso'); ?>
-						</label>
-						<textarea name="page_instructions" cols="30" rows="5"><?php echo empty($payment_settings['invoice']['page_instructions']) ? __('Please send Invoice to the address below. Payment must be received within 48 hours of event date.', 'event_espresso') : trim(stripslashes_deep($payment_settings['invoice']['page_instructions'])); ?></textarea>
-					</li>
-					<li>
-						<label for="payable_to">
-							<?php _e('Payable To:', 'event_espresso'); ?>
-						</label>
-						<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo empty($payment_settings['invoice']['payable_to']) ? trim($org_options['organization']) : trim(stripslashes_deep($payment_settings['invoice']['payable_to'])) ;?>" />
-					</li>
-					<li>
-						<label for="payment_address">
-							<?php _e('Address to Send Payment:', 'event_espresso'); ?>
-						</label>
-						<textarea name="payment_address" cols="30" rows="5"><?php 
+<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>#invoice">
+	<h4><?php _e('On-page Settings', 'event_espresso'); ?></h4>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="show">
+						<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
+					</label></th>
+				<td><?php echo select_input('show', $values, empty($payment_settings['invoice']['show']) ? '' : $payment_settings['invoice']['show']); ?></td>
+			</tr>
+			<tr>
+				<th><label for="invoice_title">
+						<?php _e('Invoice Title', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="invoice_title" id="invoice_title" size="30" value="<?php echo empty($payment_settings['invoice']['invoice_title']) ? __('Invoice Payments','event_espresso') : stripslashes_deep($payment_settings['invoice']['invoice_title']);?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="page_instructions">
+							<?php _e('Invoice Instructions', 'event_espresso'); ?>
+						</label></th>
+				<td><textarea name="page_instructions" cols="30" rows="5"><?php echo empty($payment_settings['invoice']['page_instructions']) ? __('Please send Invoice to the address below. Payment must be received within 48 hours of event date.', 'event_espresso') : trim(stripslashes_deep($payment_settings['invoice']['page_instructions'])); ?></textarea></td>
+			</tr>
+			<tr>
+				<th><label for="payable_to">
+							<?php _e('Payable To', 'event_espresso'); ?>
+						</label></th>
+				<td><input class="regular-text" type="text" name="payable_to" id="payable_to" size="30" value="<?php echo empty($payment_settings['invoice']['payable_to']) ? trim($org_options['organization']) : trim(stripslashes_deep($payment_settings['invoice']['payable_to'])) ;?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="payment_address">
+							<?php _e('Address to Send Payment', 'event_espresso'); ?>
+						</label></th>
+				<td><textarea name="payment_address" cols="30" rows="5"><?php 
 if ( empty($payment_settings['invoice']['payment_address']) ){
 echo trim($org_options['organization_street1']) ?> <?php echo trim($org_options['organization_street2']); ?>
 
@@ -253,11 +184,92 @@ echo trim($org_options['organization_street1']) ?> <?php echo trim($org_options[
 echo trim($payment_settings['invoice']['payment_address']);
 }
 ?>
-</textarea>
-					</li>
-				</ul></td>
-		</tr>
+</textarea></td>
+			</tr>
+			<?php /*?><tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr><?php */?>
+		</tbody>
 	</table>
+	<h4>
+		<?php _e('PDF Settings', 'event_espresso'); ?>
+	</h4>
+	<table class="form-table">
+	<tbody>
+		<tr>
+			<th><label for="base-invoice-select" <?php echo $styled ?>>
+					<?php _e('Select Base Template', 'event_espresso');  ?>
+					<?php //apply_filters('espresso_help', 'base_template_info') ?>
+				</label></th>
+			<td><select id="base-invoice-select" class="chzn-select wide" <?php echo $disabled ?> name="invoice_file">
+					<option <?php espresso_invoice_is_selected($fname) ?> value="basic.html">
+					<?php _e('Default Template - Basic', 'event_espresso'); ?>
+					</option>
+					<?php foreach( $files as $fname ) { ?>
+					<option <?php espresso_invoice_is_selected($fname) ?> value="<?php echo $fname ?>"><?php echo $fname; ?></option>
+					<?php } ?>
+				</select></td>
+		</tr>
+		<tr>
+			<th><label for="pdf_instructions">
+					<?php _e('Instructions', 'event_espresso'); ?>
+				</label></th>
+			<td><textarea name="pdf_instructions" cols="30" rows="5"><?php echo empty($payment_settings['invoice']['pdf_instructions']) ? __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.', 'event_espresso') : stripslashes_deep($payment_settings['invoice']['pdf_instructions']); ?></textarea></td>
+		</tr>
+		<tr>
+			<th><label for="invoice_upload_image">
+					<?php _e('Logo Image','event_espresso'); ?>
+					<?php //apply_filters('espresso_help', 'invoice_logo_info') ?>
+				</label></th>
+			<td><p id="invoice-logo-image">
+					<?php
+
+				if(!empty($payment_settings['invoice']['invoice_logo_url'])){
+					$invoice_logo = $payment_settings['invoice']['invoice_logo_url'];
+				} else {
+					$invoice_logo = '';
+				}
+				// var_dump($event_meta['event_thumbnail_url']);
+			?>
+					<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $invoice_logo ?>" />
+					<input id="upload_image_button" type="button" value="Upload Image" />
+					<br />
+					<span class="description">
+					<?php _e('(logo for the top left of the invoice)', 'event_espresso'); ?>
+					</span>
+					<?php 
+				if($invoice_logo){ 
+?>
+				
+				<p class="invoice-logo"><img src="<?php echo $invoice_logo ?>" alt="" /></p>
+				<a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'>
+				<?php _e('Remove Image', 'event_espresso'); ?>
+				</a>
+				<?php
+				}
+?>
+				</p></td>
+		</tr>
+	</tbody>
+	</table>
+	
 	<input type="hidden" name="update_invoice_payment_settings" value="update_invoice_payment_settings">
 	<p>
 		<input class="button-primary" type="submit" name="Submit" value="<?php  _e('Update Invoice Payment Settings','event_espresso') ?>" id="save_invoice_payment_settings" />
@@ -299,3 +311,7 @@ echo trim($payment_settings['invoice']['payment_address']);
 </script>
 <?php
 }
+
+
+
+
