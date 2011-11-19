@@ -39,13 +39,22 @@ function event_espresso_invoice_payment_settings(){
 		}
 	}
 	
-	//Debug
-	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
+	//Open or close the postbox div
+	if ($payment_settings['invoice']['active'] == false || isset($_REQUEST['deactivate_invoice_payment']) && $_REQUEST['deactivate_invoice_payment'] == 'true' ){
+		$postbox_style = 'closed';
+	}
+	if (isset($_REQUEST['reactivate_invoice_payment']) && $_REQUEST['reactivate_invoice_payment'] == 'true'){
+		$postbox_style = '';
+	}
+	if (isset($_REQUEST['activate_invoice_payment']) && $_REQUEST['activate_invoice_payment'] == 'true'){
+		$postbox_style = '';
+	}
+
 ?>
 
 <a name="invoice" id="invoice"></a>
 <div class="metabox-holder">
-	<div class="postbox">
+	<div class="postbox <?php echo $postbox_style; ?>">
 		<div title="Click to toggle" class="handlediv"><br />
 		</div>
 		<h3 class="hndle">
