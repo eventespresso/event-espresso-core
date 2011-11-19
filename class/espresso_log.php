@@ -8,34 +8,34 @@
 
 class espresso_log {
 
-    var $file;
-    private static $inst;
+	var $file;
+	private static $inst;
 
-    //Set the file path - Change the file name is needed
-    function __construct() {
-        //echo __FILE__;
-        //echo dirname( __FILE__ );
+	//Set the file path - Change the file name is needed
+	function __construct() {
+		//echo __FILE__;
+		//echo dirname( __FILE__ );
 		$folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
 		//echo $folder;
-        $this->file = $folder.'espresso_log.txt';
-    }
+		$this->file = $folder.'espresso_log.txt';
+	}
 
-    public static function singleton() {
-        if (!isset(self::$inst)) {
-            $c = __CLASS__;
-            self::$inst = new $c;
-        }
-        return self::$inst;
-    }
+	public static function singleton() {
+		if (!isset(self::$inst)) {
+			$c = __CLASS__;
+			self::$inst = new $c;
+		}
+		return self::$inst;
+	}
 
-    public function log($message) {
-        $fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
-        fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
-        fclose($fh);
-    }
+	public function log($message) {
+		$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
+		fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
+		fclose($fh);
+	}
 
-    public function __clone() {
-        trigger_error('Clone is not allowed.', E_USER_ERROR);
-    }
+	public function __clone() {
+		trigger_error('Clone is not allowed.', E_USER_ERROR);
+	}
 
 }
