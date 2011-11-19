@@ -26,16 +26,16 @@ get_header(); ?>
 
 					<div class="entry-content">
 						<?php the_content(); ?>
-                        
-                        
-                     <?php  //Event Espresso ?>
-                        <?php $event_id = get_post_meta($post->ID, 'event_id', true);?>
-                        <p>Event ID: <?php echo $event_id;  ?></p>
-                        <p>Event time: <?php echo do_shortcode('[EVENT_TIME event_id="'.$event_id.'"]');?></p>
-                        <?php echo do_shortcode('[ESPRESSO_REG_FORM event_id="'.$event_id.'"]');?>
-                        
-                        
-                        
+						
+						
+					 <?php  //Event Espresso ?>
+						<?php $event_id = get_post_meta($post->ID, 'event_id', true);?>
+						<p>Event ID: <?php echo $event_id;  ?></p>
+						<p>Event time: <?php echo do_shortcode('[EVENT_TIME event_id="'.$event_id.'"]');?></p>
+						<?php echo do_shortcode('[ESPRESSO_REG_FORM event_id="'.$event_id.'"]');?>
+						
+						
+						
 						<?php wp_link_pages( array( 'before' => '<div class="page-link">' . __( 'Pages:', 'twentyten' ), 'after' => '</div>' ) ); ?>
 					</div><!-- .entry-content -->
 
