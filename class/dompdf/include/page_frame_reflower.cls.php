@@ -94,7 +94,7 @@ class Page_Frame_Reflower extends Frame_Reflower {
    * @return void
    */
   function add_frame_to_stacking_context(Frame $frame, $z_index) {
-    $this->_stacking_context[$z_index][] = $frame;
+	$this->_stacking_context[$z_index][] = $frame;
   }
   
   /**
@@ -103,8 +103,8 @@ class Page_Frame_Reflower extends Frame_Reflower {
    * @param $child Frame
    */
   function add_floating_frame(Frame $frame) {
-    $this->_floating_frames[] = $frame;
-    $this->_has_floating_frames = true;
+	$this->_floating_frames[] = $frame;
+	$this->_has_floating_frames = true;
   }
   
   /**
@@ -113,102 +113,102 @@ class Page_Frame_Reflower extends Frame_Reflower {
    * @return bool 
    */
   function has_floating_frames() {
-    return $this->_has_floating_frames;
+	return $this->_has_floating_frames;
   }
   
   //........................................................................
 
   function reflow(Frame_Decorator $block = null) {
-    $style = $this->_frame->get_style();
-    
-    // Paged layout:
-    // http://www.w3.org/TR/CSS21/page.html
+	$style = $this->_frame->get_style();
+	
+	// Paged layout:
+	// http://www.w3.org/TR/CSS21/page.html
 
-    // Pages are only concerned with margins
-    $cb = $this->_frame->get_containing_block();
-    $left   = $style->length_in_pt($style->margin_left,   $cb["w"]);
-    $right  = $style->length_in_pt($style->margin_right,  $cb["w"]);
-    $top    = $style->length_in_pt($style->margin_top,    $cb["h"]);
-    $bottom = $style->length_in_pt($style->margin_bottom, $cb["h"]);
-    
-    $content_x = $cb["x"] + $left;
-    $content_y = $cb["y"] + $top;
-    $content_width = $cb["w"] - $left - $right;
-    $content_height = $cb["h"] - $top - $bottom;
-    
-    $fixed_children = array();
-    
-    $prev_child = null;
-    $child = $this->_frame->get_first_child();
-    $current_page = 0;
+	// Pages are only concerned with margins
+	$cb = $this->_frame->get_containing_block();
+	$left   = $style->length_in_pt($style->margin_left,   $cb["w"]);
+	$right  = $style->length_in_pt($style->margin_right,  $cb["w"]);
+	$top	= $style->length_in_pt($style->margin_top,	$cb["h"]);
+	$bottom = $style->length_in_pt($style->margin_bottom, $cb["h"]);
+	
+	$content_x = $cb["x"] + $left;
+	$content_y = $cb["y"] + $top;
+	$content_width = $cb["w"] - $left - $right;
+	$content_height = $cb["h"] - $top - $bottom;
+	
+	$fixed_children = array();
+	
+	$prev_child = null;
+	$child = $this->_frame->get_first_child();
+	$current_page = 0;
 		
-    while ($child) {
-      // Only if it's the first page, we save the nodes with a fixed position
-      if ($current_page == 0) {
-        $children = $child->get_children();
-        foreach ($children as $onechild) {
-          if ($onechild->get_style()->position === "fixed") {
-            $fixed_children[] = $onechild->deep_copy();
-          }
-        }
-        $fixed_children = array_reverse($fixed_children);
-      }
-      
-      $child->set_containing_block($content_x, $content_y, $content_width, $content_height);
-      
-      // Check for begin reflow callback
-      $this->_check_callbacks("begin_page_reflow", $child);
-    
-      //Insert a copy of each node which have a fixed position
-      if ($current_page >= 1) {
-        foreach ($fixed_children as $fixed_child) {
-          $child->insert_child_before($fixed_child->deep_copy(), $child->get_first_child());
-        }
-      }
-      
-      $child->reflow();
-      $next_child = $child->get_next_sibling();
-      
-      // Check for begin render callback
-      $this->_check_callbacks("begin_page_render", $child);
-      
-      $renderer = $this->_frame->get_renderer();
+	while ($child) {
+	  // Only if it's the first page, we save the nodes with a fixed position
+	  if ($current_page == 0) {
+		$children = $child->get_children();
+		foreach ($children as $onechild) {
+		  if ($onechild->get_style()->position === "fixed") {
+			$fixed_children[] = $onechild->deep_copy();
+		  }
+		}
+		$fixed_children = array_reverse($fixed_children);
+	  }
+	  
+	  $child->set_containing_block($content_x, $content_y, $content_width, $content_height);
+	  
+	  // Check for begin reflow callback
+	  $this->_check_callbacks("begin_page_reflow", $child);
+	
+	  //Insert a copy of each node which have a fixed position
+	  if ($current_page >= 1) {
+		foreach ($fixed_children as $fixed_child) {
+		  $child->insert_child_before($fixed_child->deep_copy(), $child->get_first_child());
+		}
+	  }
+	  
+	  $child->reflow();
+	  $next_child = $child->get_next_sibling();
+	  
+	  // Check for begin render callback
+	  $this->_check_callbacks("begin_page_render", $child);
+	  
+	  $renderer = $this->_frame->get_renderer();
 
-      // Render the page
-      $renderer->render($child);
-      
-      // http://www.w3.org/TR/CSS21/visuren.html#z-index
-      ksort($this->_stacking_context);
-      
-      foreach( $this->_stacking_context as $_z_index => $_frames ) {
-        foreach ( $_frames as $_frame ) {
-          $renderer->render($_frame);
-        }
-      }
-      
-      $this->_stacking_context = array();
-      
-      // Check for end render callback
-      $this->_check_callbacks("end_page_render", $child);
-      
-      if ( $next_child ) {
-        $this->_frame->next_page();
-      }
+	  // Render the page
+	  $renderer->render($child);
+	  
+	  // http://www.w3.org/TR/CSS21/visuren.html#z-index
+	  ksort($this->_stacking_context);
+	  
+	  foreach( $this->_stacking_context as $_z_index => $_frames ) {
+		foreach ( $_frames as $_frame ) {
+		  $renderer->render($_frame);
+		}
+	  }
+	  
+	  $this->_stacking_context = array();
+	  
+	  // Check for end render callback
+	  $this->_check_callbacks("end_page_render", $child);
+	  
+	  if ( $next_child ) {
+		$this->_frame->next_page();
+	  }
 
-      // Wait to dispose of all frames on the previous page
-      // so callback will have access to them
-      if ( $prev_child ) {
-        $prev_child->dispose(true);
-      }
-      $prev_child = $child;
-      $child = $next_child;
-      $current_page++;
-    }
+	  // Wait to dispose of all frames on the previous page
+	  // so callback will have access to them
+	  if ( $prev_child ) {
+		$prev_child->dispose(true);
+	  }
+	  $prev_child = $child;
+	  $child = $next_child;
+	  $current_page++;
+	}
 
-    // Dispose of previous page if it still exists
-    if ( $prev_child ) {
-      $prev_child->dispose(true);
-    }
+	// Dispose of previous page if it still exists
+	if ( $prev_child ) {
+	  $prev_child->dispose(true);
+	}
   }  
   
   //........................................................................
@@ -221,25 +221,25 @@ class Page_Frame_Reflower extends Frame_Reflower {
    * @param Frame $frame the frame that event is triggered on
    */
   protected function _check_callbacks($event, $frame) {
-    if (!isset($this->_callbacks)) {
-      $dompdf = $this->_frame->get_dompdf();
-      $this->_callbacks = $dompdf->get_callbacks();
-      $this->_canvas = $dompdf->get_canvas();
-    }
-    
-    if (is_array($this->_callbacks) && isset($this->_callbacks[$event])) {
-      $info = array(0 => $this->_canvas, "canvas" => $this->_canvas,
-                    1 => $frame, "frame" => $frame);
-      $fs = $this->_callbacks[$event];
-      foreach ($fs as $f) {
-        if (is_callable($f)) {
-          if (is_array($f)) {
-            $f[0]->$f[1]($info);
-          } else {
-            $f($info);
-          }
-        }
-      }
-    }
+	if (!isset($this->_callbacks)) {
+	  $dompdf = $this->_frame->get_dompdf();
+	  $this->_callbacks = $dompdf->get_callbacks();
+	  $this->_canvas = $dompdf->get_canvas();
+	}
+	
+	if (is_array($this->_callbacks) && isset($this->_callbacks[$event])) {
+	  $info = array(0 => $this->_canvas, "canvas" => $this->_canvas,
+					1 => $frame, "frame" => $frame);
+	  $fs = $this->_callbacks[$event];
+	  foreach ($fs as $f) {
+		if (is_callable($f)) {
+		  if (is_array($f)) {
+			$f[0]->$f[1]($info);
+		  } else {
+			$f($info);
+		  }
+		}
+	  }
+	}
   }  
 }

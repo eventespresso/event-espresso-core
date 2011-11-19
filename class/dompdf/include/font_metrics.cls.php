@@ -106,10 +106,10 @@ class Font_Metrics {
    *
    */
   static function init() {
-    if (!self::$_pdf) {
-      self::load_font_families();
-      self::$_pdf = Canvas_Factory::get_instance();
-    }
+	if (!self::$_pdf) {
+	  self::load_font_families();
+	  self::$_pdf = Canvas_Factory::get_instance();
+	}
   }
 
   /**
@@ -122,7 +122,7 @@ class Font_Metrics {
    * @return float
    */
   static function get_text_width($text, $font, $size, $word_spacing = 0, $char_spacing = 0) {
-    return self::$_pdf->get_text_width($text, $font, $size, $word_spacing, $char_spacing);
+	return self::$_pdf->get_text_width($text, $font, $size, $word_spacing, $char_spacing);
   }
 
   /**
@@ -133,7 +133,7 @@ class Font_Metrics {
    * @return float
    */
   static function get_font_height($font, $size) {
-    return self::$_pdf->get_font_height($font, $size);
+	return self::$_pdf->get_font_height($font, $size);
   }
 
   /**
@@ -150,50 +150,50 @@ class Font_Metrics {
    */
   static function get_font($family, $subtype = "normal") {
 
-    /* Allow calling for various fonts in search path. Therefore not immediately
-     * return replacement on non match.
-     * Only when called with NULL try replacement.
-     * When this is also missing there is really trouble.
-     * If only the subtype fails, nevertheless return failure.
-     * Only on checking the fallback font, check various subtypes on same font.
-     */
+	/* Allow calling for various fonts in search path. Therefore not immediately
+	 * return replacement on non match.
+	 * Only when called with NULL try replacement.
+	 * When this is also missing there is really trouble.
+	 * If only the subtype fails, nevertheless return failure.
+	 * Only on checking the fallback font, check various subtypes on same font.
+	 */
 
-    if ( $family ) {
-      $family = str_replace( array("'", '"'), "", mb_strtolower($family));
-      $subtype = mb_strtolower($subtype);
+	if ( $family ) {
+	  $family = str_replace( array("'", '"'), "", mb_strtolower($family));
+	  $subtype = mb_strtolower($subtype);
 
-      if ( isset(self::$_font_lookup[$family][$subtype]) ) {
-        return self::$_font_lookup[$family][$subtype];
-      }
-      return null;
-    }
+	  if ( isset(self::$_font_lookup[$family][$subtype]) ) {
+		return self::$_font_lookup[$family][$subtype];
+	  }
+	  return null;
+	}
 
-    $family = DOMPDF_DEFAULT_FONT;
+	$family = DOMPDF_DEFAULT_FONT;
 
-    if ( isset(self::$_font_lookup[$family][$subtype]) ) {
-      return self::$_font_lookup[$family][$subtype];
-    }
+	if ( isset(self::$_font_lookup[$family][$subtype]) ) {
+	  return self::$_font_lookup[$family][$subtype];
+	}
 
-    foreach ( self::$_font_lookup[$family] as $sub => $font ) {
-      if (strpos($subtype, $sub) !== false) {
-        return $font;
-      }
-    }
+	foreach ( self::$_font_lookup[$family] as $sub => $font ) {
+	  if (strpos($subtype, $sub) !== false) {
+		return $font;
+	  }
+	}
 
-    if ($subtype !== "normal") {
-      foreach ( self::$_font_lookup[$family] as $sub => $font ) {
-        if ($sub !== "normal") {
-          return $font;
-        }
-      }
-    }
+	if ($subtype !== "normal") {
+	  foreach ( self::$_font_lookup[$family] as $sub => $font ) {
+		if ($sub !== "normal") {
+		  return $font;
+		}
+	  }
+	}
 
-    $subtype = "normal";
+	$subtype = "normal";
 
-    if ( isset(self::$_font_lookup[$family][$subtype]) ) {
-      return self::$_font_lookup[$family][$subtype];
-    }
-    return null;
+	if ( isset(self::$_font_lookup[$family][$subtype]) ) {
+	  return self::$_font_lookup[$family][$subtype];
+	}
+	return null;
   }
 
   /**
@@ -206,11 +206,11 @@ class Font_Metrics {
    * @see Font_Metrics::load_font_families()
    */
   static function save_font_families() {
-    // replace the path to the DOMPDF font directory with "DOMPDF_FONT_DIR" (allows for more portability)
-    $cache_data = var_export(self::$_font_lookup, true);
-    $cache_data = str_replace('\''.DOMPDF_FONT_DIR , 'DOMPDF_FONT_DIR . \'' , $cache_data);
-    $cache_data = "<"."?php return $cache_data ?".">";
-    file_put_contents(self::CACHE_FILE, $cache_data);
+	// replace the path to the DOMPDF font directory with "DOMPDF_FONT_DIR" (allows for more portability)
+	$cache_data = var_export(self::$_font_lookup, true);
+	$cache_data = str_replace('\''.DOMPDF_FONT_DIR , 'DOMPDF_FONT_DIR . \'' , $cache_data);
+	$cache_data = "<"."?php return $cache_data ?".">";
+	file_put_contents(self::CACHE_FILE, $cache_data);
   }
 
   /**
@@ -219,67 +219,67 @@ class Font_Metrics {
    * @see save_font_families()
    */
   static function load_font_families() {
-    if ( !is_readable(self::CACHE_FILE) )
-      return;
+	if ( !is_readable(self::CACHE_FILE) )
+	  return;
 
-    self::$_font_lookup = require_once(self::CACHE_FILE);
-    
-    // If the font family cache is still in the old format
-    if ( self::$_font_lookup === 1 ) {
-      $cache_data = file_get_contents(self::CACHE_FILE);
-      file_put_contents(self::CACHE_FILE, "<"."?php return $cache_data ?".">");
-      self::$_font_lookup = require_once(self::CACHE_FILE);
-    }
+	self::$_font_lookup = require_once(self::CACHE_FILE);
+	
+	// If the font family cache is still in the old format
+	if ( self::$_font_lookup === 1 ) {
+	  $cache_data = file_get_contents(self::CACHE_FILE);
+	  file_put_contents(self::CACHE_FILE, "<"."?php return $cache_data ?".">");
+	  self::$_font_lookup = require_once(self::CACHE_FILE);
+	}
   }
   
   static function get_system_fonts() {
-    $files = glob("/usr/share/fonts/truetype/*.ttf") +
-             glob("/usr/share/fonts/truetype/*/*.ttf") +
-             glob("/usr/share/fonts/truetype/*/*/*.ttf") +
-             glob("C:\\Windows\\fonts\\*.ttf") + 
-             glob("C:\\WinNT\\fonts\\*.ttf") + 
-             glob("/mnt/c_drive/WINDOWS/Fonts/");
-    
-    new TTF_Info;
-    
-    $names = array();
-    
-    foreach($files as $file) {
-      $info = getFontInfo($file);
-      $info["path"] = $file;
-      $type = $info[2];
-      
-      if (preg_match("/regular|normal|medium|book/i", $type)) {
-        $type = "normal";
-      }
-      elseif (preg_match("/bold/i", $type)) {
-        if (preg_match("/italic|oblique/i", $type)) {
-          $type = "bold_italic";
-        }
-        else {
-          $type = "bold";
-        }
-      }
-      elseif (preg_match("/italic|oblique/i", $type)) {
-        $type = "italic";
-      }
-      
-      $names[mb_strtolower($info[1])][$type] = $file;
-    }
-    
-    $keys = array_keys($names);
-    
-    /*$matches = array_intersect(array("times", "times new roman"), $keys);
-    $names["serif"] = $names[reset($matches)];
-          
-    $matches = array_intersect(array("helvetica", "arial", "verdana"), $keys);
-    $names["sans-serif"] = $names[reset($matches)];   
-    
-    $matches = array_intersect(array("courier", "courier new"), $keys);
-    $names["monospace"] = $names[reset($matches)];
-    $names["fixed"] = $names[reset($matches)];*/
-    
-    return $names;
+	$files = glob("/usr/share/fonts/truetype/*.ttf") +
+			 glob("/usr/share/fonts/truetype/*/*.ttf") +
+			 glob("/usr/share/fonts/truetype/*/*/*.ttf") +
+			 glob("C:\\Windows\\fonts\\*.ttf") + 
+			 glob("C:\\WinNT\\fonts\\*.ttf") + 
+			 glob("/mnt/c_drive/WINDOWS/Fonts/");
+	
+	new TTF_Info;
+	
+	$names = array();
+	
+	foreach($files as $file) {
+	  $info = getFontInfo($file);
+	  $info["path"] = $file;
+	  $type = $info[2];
+	  
+	  if (preg_match("/regular|normal|medium|book/i", $type)) {
+		$type = "normal";
+	  }
+	  elseif (preg_match("/bold/i", $type)) {
+		if (preg_match("/italic|oblique/i", $type)) {
+		  $type = "bold_italic";
+		}
+		else {
+		  $type = "bold";
+		}
+	  }
+	  elseif (preg_match("/italic|oblique/i", $type)) {
+		$type = "italic";
+	  }
+	  
+	  $names[mb_strtolower($info[1])][$type] = $file;
+	}
+	
+	$keys = array_keys($names);
+	
+	/*$matches = array_intersect(array("times", "times new roman"), $keys);
+	$names["serif"] = $names[reset($matches)];
+		  
+	$matches = array_intersect(array("helvetica", "arial", "verdana"), $keys);
+	$names["sans-serif"] = $names[reset($matches)];   
+	
+	$matches = array_intersect(array("courier", "courier new"), $keys);
+	$names["monospace"] = $names[reset($matches)];
+	$names["fixed"] = $names[reset($matches)];*/
+	
+	return $names;
   }
 
   /**
@@ -288,11 +288,11 @@ class Font_Metrics {
    * @return array
    */
   static function get_font_families() {
-    return self::$_font_lookup;
+	return self::$_font_lookup;
   }
 
   static function set_font_family($fontname, $entry) {
-    self::$_font_lookup[mb_strtolower($fontname)] = $entry;
+	self::$_font_lookup[mb_strtolower($fontname)] = $entry;
   }
 }
 

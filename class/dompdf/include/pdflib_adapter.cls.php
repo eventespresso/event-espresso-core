@@ -67,7 +67,7 @@ class PDFLib_Adapter implements Canvas {
    * @var array;
    */
   static public $PAPER_SIZES = array(); // Set to
-                                        // CPDF_Adapter::$PAPER_SIZES below.
+										// CPDF_Adapter::$PAPER_SIZES below.
 
   /**
    * Whether to create PDFs in memory or on disk
@@ -171,105 +171,105 @@ class PDFLib_Adapter implements Canvas {
    * Class constructor
    *
    * @param mixed $paper The size of paper to use either a string (see {@link CPDF_Adapter::$PAPER_SIZES}) or
-   *                     an array(xmin,ymin,xmax,ymax)
+   *					 an array(xmin,ymin,xmax,ymax)
    * @param string $orientation The orientation of the document (either 'landscape' or 'portrait')
    */
   function __construct($paper = "letter", $orientation = "portrait") {
-    if ( is_array($paper) )
-      $size = $paper;
-    else if ( isset(self::$PAPER_SIZES[mb_strtolower($paper)]) )
-      $size = self::$PAPER_SIZES[mb_strtolower($paper)];
-    else
-      $size = self::$PAPER_SIZES["letter"];
+	if ( is_array($paper) )
+	  $size = $paper;
+	else if ( isset(self::$PAPER_SIZES[mb_strtolower($paper)]) )
+	  $size = self::$PAPER_SIZES[mb_strtolower($paper)];
+	else
+	  $size = self::$PAPER_SIZES["letter"];
 
-    if ( mb_strtolower($orientation) === "landscape" ) {
-      list($size[2], $size[3]) = array($size[3], $size[2]);
-    }
-    
-    $this->_width = $size[2] - $size[0];
-    $this->_height= $size[3] - $size[1];
+	if ( mb_strtolower($orientation) === "landscape" ) {
+	  list($size[2], $size[3]) = array($size[3], $size[2]);
+	}
+	
+	$this->_width = $size[2] - $size[0];
+	$this->_height= $size[3] - $size[1];
 
-    $this->_pdf = new PDFLib();
+	$this->_pdf = new PDFLib();
 
-    if ( defined("DOMPDF_PDFLIB_LICENSE") )
-      $this->_pdf->set_parameter( "license", DOMPDF_PDFLIB_LICENSE);
+	if ( defined("DOMPDF_PDFLIB_LICENSE") )
+	  $this->_pdf->set_parameter( "license", DOMPDF_PDFLIB_LICENSE);
 
-    $this->_pdf->set_parameter("textformat", "utf8");
-    $this->_pdf->set_parameter("fontwarning", "false");
+	$this->_pdf->set_parameter("textformat", "utf8");
+	$this->_pdf->set_parameter("fontwarning", "false");
 
-    $this->_pdf->set_info("Creator", "DOMPDF");
+	$this->_pdf->set_info("Creator", "DOMPDF");
 
-    // Silence pedantic warnings about missing TZ settings
-    $tz = @date_default_timezone_get();
-    date_default_timezone_set("UTC");
-    $this->_pdf->set_info("Date", date("Y-m-d"));
-    date_default_timezone_set($tz);
+	// Silence pedantic warnings about missing TZ settings
+	$tz = @date_default_timezone_get();
+	date_default_timezone_set("UTC");
+	$this->_pdf->set_info("Date", date("Y-m-d"));
+	date_default_timezone_set($tz);
 
-    if ( self::$IN_MEMORY )
-      $this->_pdf->begin_document("","");
-    else {
-      $this->_file = tempnam(DOMPDF_TEMP_DIR, "libdompdf_pdf_").'.pdf';
-      $this->_pdf->begin_document($this->_file,"");
-    }
+	if ( self::$IN_MEMORY )
+	  $this->_pdf->begin_document("","");
+	else {
+	  $this->_file = tempnam(DOMPDF_TEMP_DIR, "libdompdf_pdf_").'.pdf';
+	  $this->_pdf->begin_document($this->_file,"");
+	}
 
-    $this->_pdf->begin_page_ext($this->_width, $this->_height, "");
+	$this->_pdf->begin_page_ext($this->_width, $this->_height, "");
 
-    $this->_page_number = $this->_page_count = 1;
-    $this->_page_text = array();
+	$this->_page_number = $this->_page_count = 1;
+	$this->_page_text = array();
 
-    $this->_imgs = array();
-    $this->_fonts = array();
-    $this->_objs = array();
+	$this->_imgs = array();
+	$this->_fonts = array();
+	$this->_objs = array();
 
-    // Set up font paths
-    $families = Font_Metrics::get_font_families();
-    foreach ($families as $family => $files) {
-      foreach ($files as $style => $file) {
-        $face = basename($file);
+	// Set up font paths
+	$families = Font_Metrics::get_font_families();
+	foreach ($families as $family => $files) {
+	  foreach ($files as $style => $file) {
+		$face = basename($file);
 
-        // Prefer ttfs to afms
-        if ( file_exists("$file.ttf") ) {
-          $outline = "$file.ttf";
-          $afm = null;
+		// Prefer ttfs to afms
+		if ( file_exists("$file.ttf") ) {
+		  $outline = "$file.ttf";
+		  $afm = null;
 
-        } else if ( file_exists("$file.TTF") ) {
-          $outline = "$file.TTF";
-          $afm = null;
+		} else if ( file_exists("$file.TTF") ) {
+		  $outline = "$file.TTF";
+		  $afm = null;
 
-        } else if ( file_exists("$file.pfb") ) {
-          $outline = "$file.pfb";
+		} else if ( file_exists("$file.pfb") ) {
+		  $outline = "$file.pfb";
 
-          if ( file_exists("$file.afm") )
-            $afm = "$file.afm";
+		  if ( file_exists("$file.afm") )
+			$afm = "$file.afm";
 
-        } else if ( file_exists("$file.PFB") ) {
-          $outline = "$file.PFB";
-          if ( file_exists("$file.AFM") )
-            $afm = "$file.AFM";
-        } else
-          continue;
+		} else if ( file_exists("$file.PFB") ) {
+		  $outline = "$file.PFB";
+		  if ( file_exists("$file.AFM") )
+			$afm = "$file.AFM";
+		} else
+		  continue;
 
-        $this->_pdf->set_parameter("FontOutline", "\{$face\}=\{$outline\}");
-        if ( !is_null($afm) )
-          $this->_pdf->set_parameter("FontAFM", "\{$face\}=\{$afm\}");
-      }
-    }
+		$this->_pdf->set_parameter("FontOutline", "\{$face\}=\{$outline\}");
+		if ( !is_null($afm) )
+		  $this->_pdf->set_parameter("FontAFM", "\{$face\}=\{$afm\}");
+	  }
+	}
   }
 
   /**
    * Close the pdf
    */
   protected function _close() {
-    $this->_place_objects();
+	$this->_place_objects();
 
-    // Close all pages
-    $this->_pdf->suspend_page("");
-    for ($p = 1; $p <= $this->_page_count; $p++) {
-      $this->_pdf->resume_page("pagenumber=$p");
-      $this->_pdf->end_page_ext("");
-    }
+	// Close all pages
+	$this->_pdf->suspend_page("");
+	for ($p = 1; $p <= $this->_page_count; $p++) {
+	  $this->_pdf->resume_page("pagenumber=$p");
+	  $this->_pdf->end_page_ext("");
+	}
 
-    $this->_pdf->end_document("");
+	$this->_pdf->end_document("");
   }
 
 
@@ -287,7 +287,7 @@ class PDFLib_Adapter implements Canvas {
    * @param string $value  the text to set
    */
   function add_info($label, $value) {
-    $this->_pdf->set_info($label, $value);
+	$this->_pdf->set_info($label, $value);
   }
   
   /**
@@ -305,11 +305,11 @@ class PDFLib_Adapter implements Canvas {
    * @return int
    */
   function open_object() {
-    $this->_pdf->suspend_page("");
-    $ret = $this->_pdf->begin_template($this->_width, $this->_height);
-    $this->_pdf->save();
-    $this->_objs[$ret] = array("start_page" => $this->_page_number);
-    return $ret;
+	$this->_pdf->suspend_page("");
+	$ret = $this->_pdf->begin_template($this->_width, $this->_height);
+	$this->_pdf->save();
+	$this->_objs[$ret] = array("start_page" => $this->_page_number);
+	return $ret;
   }
 
   /**
@@ -320,7 +320,7 @@ class PDFLib_Adapter implements Canvas {
    * @param int $object the ID of a previously opened object
    */
   function reopen_object($object) {
-    throw new DOMPDF_Exception("PDFLib does not support reopening objects.");
+	throw new DOMPDF_Exception("PDFLib does not support reopening objects.");
   }
 
   /**
@@ -329,9 +329,9 @@ class PDFLib_Adapter implements Canvas {
    * @see PDFLib_Adapter::open_object()
    */
   function close_object() {
-    $this->_pdf->restore();
-    $this->_pdf->end_template();
-    $this->_pdf->resume_page("pagenumber=".$this->_page_number);
+	$this->_pdf->restore();
+	$this->_pdf->end_template();
+	$this->_pdf->resume_page("pagenumber=".$this->_page_number);
   }
 
   /**
@@ -351,14 +351,14 @@ class PDFLib_Adapter implements Canvas {
    */
   function add_object($object, $where = 'all') {
 
-    if ( mb_strpos($where, "next") !== false ) {
-      $this->_objs[$object]["start_page"]++;
-      $where = str_replace("next", "", $where);
-      if ( $where == "" )
-        $where = "add";
-    }
+	if ( mb_strpos($where, "next") !== false ) {
+	  $this->_objs[$object]["start_page"]++;
+	  $where = str_replace("next", "", $where);
+	  if ( $where == "" )
+		$where = "add";
+	}
 
-    $this->_objs[$object]["where"] = $where;
+	$this->_objs[$object]["where"] = $where;
   }
 
   /**
@@ -371,21 +371,21 @@ class PDFLib_Adapter implements Canvas {
    */
   function stop_object($object) {
 
-    if ( !isset($this->_objs[$object]) )
-      return;
+	if ( !isset($this->_objs[$object]) )
+	  return;
 
-    $start = $this->_objs[$object]["start_page"];
-    $where = $this->_objs[$object]["where"];
+	$start = $this->_objs[$object]["start_page"];
+	$where = $this->_objs[$object]["where"];
 
-    // Place the object on this page if required
-    if ( $this->_page_number >= $start &&
-         (($this->_page_number % 2 == 0 && $where === "even") ||
-          ($this->_page_number % 2 == 1 && $where === "odd") ||
-          ($where === "all")) )
-      $this->_pdf->fit_image($object,0,0,"");
+	// Place the object on this page if required
+	if ( $this->_page_number >= $start &&
+		 (($this->_page_number % 2 == 0 && $where === "even") ||
+		  ($this->_page_number % 2 == 1 && $where === "odd") ||
+		  ($where === "all")) )
+	  $this->_pdf->fit_image($object,0,0,"");
 
-    $this->_objs[$object] = null;
-    unset($this->_objs[$object]);
+	$this->_objs[$object] = null;
+	unset($this->_objs[$object]);
   }
 
   /**
@@ -393,18 +393,18 @@ class PDFLib_Adapter implements Canvas {
    */
   protected function _place_objects() {
 
-    foreach ( $this->_objs as $obj => $props ) {
-      $start = $props["start_page"];
-      $where = $props["where"];
+	foreach ( $this->_objs as $obj => $props ) {
+	  $start = $props["start_page"];
+	  $where = $props["where"];
 
-      // Place the object on this page if required
-      if ( $this->_page_number >= $start &&
-           (($this->_page_number % 2 == 0 && $where === "even") ||
-            ($this->_page_number % 2 == 1 && $where === "odd") ||
-            ($where === "all")) ) {
-        $this->_pdf->fit_image($obj,0,0,"");
-      }
-    }
+	  // Place the object on this page if required
+	  if ( $this->_page_number >= $start &&
+		   (($this->_page_number % 2 == 0 && $where === "even") ||
+			($this->_page_number % 2 == 1 && $where === "odd") ||
+			($where === "all")) ) {
+		$this->_pdf->fit_image($obj,0,0,"");
+	  }
+	}
 
   }
 
@@ -431,49 +431,49 @@ class PDFLib_Adapter implements Canvas {
    */
   protected function _set_line_style($width, $cap, $join, $dash) {
 
-    if ( count($dash) == 1 )
-      $dash[] = $dash[0];
+	if ( count($dash) == 1 )
+	  $dash[] = $dash[0];
 
-    if ( count($dash) > 1 )
-      $this->_pdf->setdashpattern("dasharray={" . implode(" ", $dash) . "}");
-    else
-      $this->_pdf->setdash(0,0);
+	if ( count($dash) > 1 )
+	  $this->_pdf->setdashpattern("dasharray={" . implode(" ", $dash) . "}");
+	else
+	  $this->_pdf->setdash(0,0);
 
-    switch ( $join ) {
-    case "miter":
-      $this->_pdf->setlinejoin(0);
-      break;
+	switch ( $join ) {
+	case "miter":
+	  $this->_pdf->setlinejoin(0);
+	  break;
 
-    case "round":
-      $this->_pdf->setlinejoin(1);
-      break;
+	case "round":
+	  $this->_pdf->setlinejoin(1);
+	  break;
 
-    case "bevel":
-      $this->_pdf->setlinejoin(2);
-      break;
+	case "bevel":
+	  $this->_pdf->setlinejoin(2);
+	  break;
 
-    default:
-      break;
-    }
+	default:
+	  break;
+	}
 
-    switch ( $cap ) {
-    case "butt":
-      $this->_pdf->setlinecap(0);
-      break;
+	switch ( $cap ) {
+	case "butt":
+	  $this->_pdf->setlinecap(0);
+	  break;
 
-    case "round":
-      $this->_pdf->setlinecap(1);
-      break;
+	case "round":
+	  $this->_pdf->setlinecap(1);
+	  break;
 
-    case "square":
-      $this->_pdf->setlinecap(2);
-      break;
+	case "square":
+	  $this->_pdf->setlinecap(2);
+	  break;
 
-    default:
-      break;
-    }
+	default:
+	  break;
+	}
 
-    $this->_pdf->setlinewidth($width);
+	$this->_pdf->setlinewidth($width);
 
   }
 
@@ -483,25 +483,25 @@ class PDFLib_Adapter implements Canvas {
    * @param array $color array(r,g,b)
    */
   protected function _set_stroke_color($color) {
-    if($this->_last_stroke_color == $color)
-    	return;
+	if($this->_last_stroke_color == $color)
+		return;
 
-    $this->_last_stroke_color = $color;
+	$this->_last_stroke_color = $color;
 
-    if (isset($color[3])) {
-      $type = "cmyk";
-      list($c1, $c2, $c3, $c4) = array($color[0], $color[1], $color[2], $color[3]);
-    }
-    elseif (isset($color[2])) {
-      $type = "rgb";
-      list($c1, $c2, $c3, $c4) = array($color[0], $color[1], $color[2], null);
-    }
-    else {
-      $type = "gray";
-      list($c1, $c2, $c3, $c4) = array($color[0], $color[1], null, null);
-    }
-    
-    $this->_pdf->setcolor("stroke", $type, $c1, $c2, $c3, $c4);
+	if (isset($color[3])) {
+	  $type = "cmyk";
+	  list($c1, $c2, $c3, $c4) = array($color[0], $color[1], $color[2], $color[3]);
+	}
+	elseif (isset($color[2])) {
+	  $type = "rgb";
+	  list($c1, $c2, $c3, $c4) = array($color[0], $color[1], $color[2], null);
+	}
+	else {
+	  $type = "gray";
+	  list($c1, $c2, $c3, $c4) = array($color[0], $color[1], null, null);
+	}
+	
+	$this->_pdf->setcolor("stroke", $type, $c1, $c2, $c3, $c4);
   }
 
   /**
@@ -510,25 +510,25 @@ class PDFLib_Adapter implements Canvas {
    * @param array $color array(r,g,b)
    */
   protected function _set_fill_color($color) {
-    if($this->_last_fill_color == $color)
-    	return;
+	if($this->_last_fill_color == $color)
+		return;
 
-    $this->_last_fill_color = $color;
+	$this->_last_fill_color = $color;
 
-      if (isset($color[3])) {
-      $type = "cmyk";
-      list($c1, $c2, $c3, $c4) = array($color[0], $color[1], $color[2], $color[3]);
-    }
-    elseif (isset($color[2])) {
-      $type = "rgb";
-      list($c1, $c2, $c3, $c4) = array($color[0], $color[1], $color[2], null);
-    }
-    else {
-      $type = "gray";
-      list($c1, $c2, $c3, $c4) = array($color[0], $color[1], null, null);
-    }
-    
-    $this->_pdf->setcolor("fill", $type, $c1, $c2, $c3, $c4);
+	  if (isset($color[3])) {
+	  $type = "cmyk";
+	  list($c1, $c2, $c3, $c4) = array($color[0], $color[1], $color[2], $color[3]);
+	}
+	elseif (isset($color[2])) {
+	  $type = "rgb";
+	  list($c1, $c2, $c3, $c4) = array($color[0], $color[1], $color[2], null);
+	}
+	else {
+	  $type = "gray";
+	  list($c1, $c2, $c3, $c4) = array($color[0], $color[1], null, null);
+	}
+	
+	$this->_pdf->setcolor("fill", $type, $c1, $c2, $c3, $c4);
   }
   
   /**
@@ -538,10 +538,10 @@ class PDFLib_Adapter implements Canvas {
    * @param $mode
    */
   function set_opacity($opacity, $mode = "Normal") {
-    if ( $mode === "Normal" ) {
-      $gstate = $this->_pdf->create_gstate("opacityfill=$opacity opacitystroke=$opacity");
-      $this->_pdf->set_gstate($gstate);
-    }
+	if ( $mode === "Normal" ) {
+	  $gstate = $this->_pdf->create_gstate("opacityfill=$opacity opacitystroke=$opacity");
+	  $this->_pdf->set_gstate($gstate);
+	}
   }
 
   /**
@@ -552,44 +552,44 @@ class PDFLib_Adapter implements Canvas {
    */
   protected function _load_font($font, $encoding = null, $options = "") {
 
-    // Check if the font is a native PDF font
-    // Embed non-native fonts
-    $native_fonts = array("courier", "courier-bold", "courier-oblique", "courier-boldoblique",
-                          "helvetica", "helvetica-bold", "helvetica-oblique", "helvetica-boldoblique",
-                          "times-roman", "times-bold", "times-italic", "times-bolditalic",
-                          "symbol", "zapfdinbats");
+	// Check if the font is a native PDF font
+	// Embed non-native fonts
+	$native_fonts = array("courier", "courier-bold", "courier-oblique", "courier-boldoblique",
+						  "helvetica", "helvetica-bold", "helvetica-oblique", "helvetica-boldoblique",
+						  "times-roman", "times-bold", "times-italic", "times-bolditalic",
+						  "symbol", "zapfdinbats");
 
-    $test = strtolower(basename($font));
-    if ( in_array($test, $native_fonts) ) {
-      $font = basename($font);
+	$test = strtolower(basename($font));
+	if ( in_array($test, $native_fonts) ) {
+	  $font = basename($font);
 
-    } else {
-      // Embed non-native fonts
-      $options .= " embedding=true";
-    }
+	} else {
+	  // Embed non-native fonts
+	  $options .= " embedding=true";
+	}
 
-    if ( is_null($encoding) ) {
+	if ( is_null($encoding) ) {
 
-      // Unicode encoding is only available for the commerical
-      // version of PDFlib and not PDFlib-Lite
-      if ( defined("DOMPDF_PDFLIB_LICENSE") )
-        $encoding = "unicode";
-      else
-        $encoding = "auto";
+	  // Unicode encoding is only available for the commerical
+	  // version of PDFlib and not PDFlib-Lite
+	  if ( defined("DOMPDF_PDFLIB_LICENSE") )
+		$encoding = "unicode";
+	  else
+		$encoding = "auto";
 
-    }
+	}
 
-    $key = "$font:$encoding:$options";
+	$key = "$font:$encoding:$options";
 
-    if ( isset($this->_fonts[$key]) )
-      return $this->_fonts[$key];
+	if ( isset($this->_fonts[$key]) )
+	  return $this->_fonts[$key];
 
-    else {
+	else {
 
-      $this->_fonts[$key] = $this->_pdf->load_font($font, $encoding, $options);
-      return $this->_fonts[$key];
+	  $this->_fonts[$key] = $this->_pdf->load_font($font, $encoding, $options);
+	  return $this->_fonts[$key];
 
-    }
+	}
 
   }
 
@@ -604,185 +604,185 @@ class PDFLib_Adapter implements Canvas {
   //........................................................................
 
   function line($x1, $y1, $x2, $y2, $color, $width, $style = null) {
-    $this->_set_line_style($width, "butt", "", $style);
-    $this->_set_stroke_color($color);
+	$this->_set_line_style($width, "butt", "", $style);
+	$this->_set_stroke_color($color);
 
-    $y1 = $this->y($y1);
-    $y2 = $this->y($y2);
+	$y1 = $this->y($y1);
+	$y2 = $this->y($y2);
 
-    $this->_pdf->moveto($x1,$y1);
-    $this->_pdf->lineto($x2, $y2);
-    $this->_pdf->stroke();
+	$this->_pdf->moveto($x1,$y1);
+	$this->_pdf->lineto($x2, $y2);
+	$this->_pdf->stroke();
   }
 
   //........................................................................
 
   function rectangle($x1, $y1, $w, $h, $color, $width, $style = null) {
-    $this->_set_stroke_color($color);
-    $this->_set_line_style($width, "butt", "", $style);
+	$this->_set_stroke_color($color);
+	$this->_set_line_style($width, "butt", "", $style);
 
-    $y1 = $this->y($y1) - $h;
+	$y1 = $this->y($y1) - $h;
 
-    $this->_pdf->rect($x1, $y1, $w, $h);
-    $this->_pdf->stroke();
+	$this->_pdf->rect($x1, $y1, $w, $h);
+	$this->_pdf->stroke();
   }
 
   //........................................................................
 
   function filled_rectangle($x1, $y1, $w, $h, $color) {
-    $this->_set_fill_color($color);
+	$this->_set_fill_color($color);
 
-    $y1 = $this->y($y1) - $h;
+	$y1 = $this->y($y1) - $h;
 
-    $this->_pdf->rect(floatval($x1), floatval($y1), floatval($w), floatval($h));
-    $this->_pdf->fill();
+	$this->_pdf->rect(floatval($x1), floatval($y1), floatval($w), floatval($h));
+	$this->_pdf->fill();
   }
   
   function clipping_rectangle($x1, $y1, $w, $h) {
-    $this->_pdf->save();
-    
-    $y1 = $this->y($y1) - $h;
-    
-    $this->_pdf->rect(floatval($x1), floatval($y1), floatval($w), floatval($h));
-    $this->_pdf->clip();
+	$this->_pdf->save();
+	
+	$y1 = $this->y($y1) - $h;
+	
+	$this->_pdf->rect(floatval($x1), floatval($y1), floatval($w), floatval($h));
+	$this->_pdf->clip();
   }
   
   function clipping_end() {
-    $this->_pdf->restore();
+	$this->_pdf->restore();
   }
   
   function save() {
-    $this->_pdf->save();
+	$this->_pdf->save();
   }
   
   function restore() {
-    $this->_pdf->restore();
+	$this->_pdf->restore();
   }
   
   function rotate($angle, $x, $y) {
-    $pdf = $this->_pdf;
-    $pdf->translate($x, $this->_height-$y);
-    $pdf->rotate(-$angle);
-    $pdf->translate(-$x, -$this->_height+$y);
+	$pdf = $this->_pdf;
+	$pdf->translate($x, $this->_height-$y);
+	$pdf->rotate(-$angle);
+	$pdf->translate(-$x, -$this->_height+$y);
   }
   
   function skew($angle_x, $angle_y, $x, $y) {
-    $pdf = $this->_pdf;
-    $pdf->translate($x, $this->_height-$y);
-    $pdf->skew($angle_y, $angle_x); // Needs to be inverted
-    $pdf->translate(-$x, -$this->_height+$y);
+	$pdf = $this->_pdf;
+	$pdf->translate($x, $this->_height-$y);
+	$pdf->skew($angle_y, $angle_x); // Needs to be inverted
+	$pdf->translate(-$x, -$this->_height+$y);
   }
   
   function scale($s_x, $s_y, $x, $y) {
-    $pdf = $this->_pdf;
-    $pdf->translate($x, $this->_height-$y);
-    $pdf->scale($s_x, $s_y);
-    $pdf->translate(-$x, -$this->_height+$y);
+	$pdf = $this->_pdf;
+	$pdf->translate($x, $this->_height-$y);
+	$pdf->scale($s_x, $s_y);
+	$pdf->translate(-$x, -$this->_height+$y);
   }
   
   function translate($t_x, $t_y) {
-    $this->_pdf->translate($t_x, -$t_y);
+	$this->_pdf->translate($t_x, -$t_y);
   }
   
   function transform($a, $b, $c, $d, $e, $f) {
-    $this->_pdf->concat($a, $b, $c, $d, $e, $f);
+	$this->_pdf->concat($a, $b, $c, $d, $e, $f);
   }
 
   //........................................................................
 
   function polygon($points, $color, $width = null, $style = null, $fill = false) {
 
-    $this->_set_fill_color($color);
-    $this->_set_stroke_color($color);
+	$this->_set_fill_color($color);
+	$this->_set_stroke_color($color);
 
-    if ( !$fill && isset($width) )
-      $this->_set_line_style($width, "square", "miter", $style);
+	if ( !$fill && isset($width) )
+	  $this->_set_line_style($width, "square", "miter", $style);
 
-    $y = $this->y(array_pop($points));
-    $x = array_pop($points);
-    $this->_pdf->moveto($x,$y);
+	$y = $this->y(array_pop($points));
+	$x = array_pop($points);
+	$this->_pdf->moveto($x,$y);
 
-    while (count($points) > 1) {
-      $y = $this->y(array_pop($points));
-      $x = array_pop($points);
-      $this->_pdf->lineto($x,$y);
-    }
+	while (count($points) > 1) {
+	  $y = $this->y(array_pop($points));
+	  $x = array_pop($points);
+	  $this->_pdf->lineto($x,$y);
+	}
 
-    if ( $fill )
-      $this->_pdf->fill();
-    else
-      $this->_pdf->closepath_stroke();
+	if ( $fill )
+	  $this->_pdf->fill();
+	else
+	  $this->_pdf->closepath_stroke();
   }
 
   //........................................................................
 
   function circle($x, $y, $r, $color, $width = null, $style = null, $fill = false) {
 
-    $this->_set_fill_color($color);
-    $this->_set_stroke_color($color);
+	$this->_set_fill_color($color);
+	$this->_set_stroke_color($color);
 
-    if ( !$fill && isset($width) )
-      $this->_set_line_style($width, "round", "round", $style);
+	if ( !$fill && isset($width) )
+	  $this->_set_line_style($width, "round", "round", $style);
 
-    $y = $this->y($y);
+	$y = $this->y($y);
 
-    $this->_pdf->circle($x, $y, $r);
+	$this->_pdf->circle($x, $y, $r);
 
-    if ( $fill )
-      $this->_pdf->fill();
-    else
-      $this->_pdf->stroke();
+	if ( $fill )
+	  $this->_pdf->fill();
+	else
+	  $this->_pdf->stroke();
 
   }
 
   //........................................................................
 
   function image($img_url, $img_type, $x, $y, $w, $h) {
-    $w = (int)$w;
-    $h = (int)$h;
+	$w = (int)$w;
+	$h = (int)$h;
 
-    $img_type = strtolower($img_type);
+	$img_type = strtolower($img_type);
 
-    if ( $img_type === "jpg" )
-      $img_type = "jpeg";
+	if ( $img_type === "jpg" )
+	  $img_type = "jpeg";
 
-    if ( isset($this->_imgs[$img_url]) )
-      $img = $this->_imgs[$img_url];
+	if ( isset($this->_imgs[$img_url]) )
+	  $img = $this->_imgs[$img_url];
 
-    else {
+	else {
 
-      $img = $this->_imgs[$img_url] = $this->_pdf->load_image($img_type, $img_url, "");
-    }
+	  $img = $this->_imgs[$img_url] = $this->_pdf->load_image($img_type, $img_url, "");
+	}
 
-    $y = $this->y($y) - $h;
-    $this->_pdf->fit_image($img, $x, $y, 'boxsize={'. "$w $h" .'} fitmethod=entire');
+	$y = $this->y($y) - $h;
+	$this->_pdf->fit_image($img, $x, $y, 'boxsize={'. "$w $h" .'} fitmethod=entire');
 
   }
 
   //........................................................................
 
   function text($x, $y, $text, $font, $size, $color = array(0,0,0), $word_spacing = 0, $char_spacing = 0, $angle = 0) {
-    $fh = $this->_load_font($font);
+	$fh = $this->_load_font($font);
 
-    $this->_pdf->setfont($fh, $size);
-    $this->_set_fill_color($color);
+	$this->_pdf->setfont($fh, $size);
+	$this->_set_fill_color($color);
 
-    $y = $this->y($y) - Font_Metrics::get_font_height($font, $size);
+	$y = $this->y($y) - Font_Metrics::get_font_height($font, $size);
 
-    $word_spacing = (float)$word_spacing;
-    $char_spacing = (float)$char_spacing;
-    $angle        = -(float)$angle;
+	$word_spacing = (float)$word_spacing;
+	$char_spacing = (float)$char_spacing;
+	$angle		= -(float)$angle;
 
-    $this->_pdf->fit_textline($text, $x, $y, "rotate=$angle wordspacing=$word_spacing charspacing=$char_spacing ");
+	$this->_pdf->fit_textline($text, $x, $y, "rotate=$angle wordspacing=$word_spacing charspacing=$char_spacing ");
 
   }
 
   //........................................................................
   
   function javascript($code) {
-    if ( defined("DOMPDF_PDFLIB_LICENSE") ) {
-      $this->_pdf->create_action("JavaScript", $code);
-    }
+	if ( defined("DOMPDF_PDFLIB_LICENSE") ) {
+	  $this->_pdf->create_action("JavaScript", $code);
+	}
   }
 
   //........................................................................
@@ -793,7 +793,7 @@ class PDFLib_Adapter implements Canvas {
    * @param string $anchorname The name of the named destination
    */
   function add_named_dest($anchorname) {
-    $this->_pdf->add_nameddest($anchorname,"");
+	$this->_pdf->add_nameddest($anchorname,"");
   }
 
   //........................................................................
@@ -809,56 +809,56 @@ class PDFLib_Adapter implements Canvas {
    */
   function add_link($url, $x, $y, $width, $height) {
 
-    $y = $this->y($y) - $height;
-    if ( strpos($url, '#') === 0 ) {
-      // Local link
-      $name = substr($url,1);
-      if ( $name )
-        $this->_pdf->create_annotation($x, $y, $x + $width, $y + $height, 'Link', "contents={$url} destname=". substr($url,1) . " linewidth=0");
-    } else {
+	$y = $this->y($y) - $height;
+	if ( strpos($url, '#') === 0 ) {
+	  // Local link
+	  $name = substr($url,1);
+	  if ( $name )
+		$this->_pdf->create_annotation($x, $y, $x + $width, $y + $height, 'Link', "contents={$url} destname=". substr($url,1) . " linewidth=0");
+	} else {
 
-      list($proto, $host, $path, $file) = explode_url($url);
+	  list($proto, $host, $path, $file) = explode_url($url);
 
-      if ( $proto == "" || $proto === "file://" )
-        return; // Local links are not allowed
-      $url = build_url($proto, $host, $path, $file);
-      $url = '{' . rawurldecode($url) . '}';
-      
-      $action = $this->_pdf->create_action("URI", "url=" . $url);
-      $this->_pdf->create_annotation($x, $y, $x + $width, $y + $height, 'Link', "contents={$url} action={activate=$action} linewidth=0");
-    }
+	  if ( $proto == "" || $proto === "file://" )
+		return; // Local links are not allowed
+	  $url = build_url($proto, $host, $path, $file);
+	  $url = '{' . rawurldecode($url) . '}';
+	  
+	  $action = $this->_pdf->create_action("URI", "url=" . $url);
+	  $this->_pdf->create_annotation($x, $y, $x + $width, $y + $height, 'Link', "contents={$url} action={activate=$action} linewidth=0");
+	}
   }
 
   //........................................................................
 
   function get_text_width($text, $font, $size, $word_spacing = 0, $letter_spacing = 0) {
-    $fh = $this->_load_font($font);
+	$fh = $this->_load_font($font);
 
-    // Determine the additional width due to extra spacing
-    $num_spaces = mb_substr_count($text," ");
-    $delta = $word_spacing * $num_spaces;
-    
-    if ( $letter_spacing ) {
-      $num_chars = mb_strlen($text);
-      $delta += ($num_chars - $num_spaces) * $letter_spacing;
-    }
-    
-    return $this->_pdf->stringwidth($text, $fh, $size) + $delta;
+	// Determine the additional width due to extra spacing
+	$num_spaces = mb_substr_count($text," ");
+	$delta = $word_spacing * $num_spaces;
+	
+	if ( $letter_spacing ) {
+	  $num_chars = mb_strlen($text);
+	  $delta += ($num_chars - $num_spaces) * $letter_spacing;
+	}
+	
+	return $this->_pdf->stringwidth($text, $fh, $size) + $delta;
   }
 
   //........................................................................
 
   function get_font_height($font, $size) {
 
-    $fh = $this->_load_font($font);
+	$fh = $this->_load_font($font);
 
-    $this->_pdf->setfont($fh, $size);
+	$this->_pdf->setfont($fh, $size);
 
-    $asc = $this->_pdf->get_value("ascender", $fh);
-    $desc = $this->_pdf->get_value("descender", $fh);
+	$asc = $this->_pdf->get_value("ascender", $fh);
+	$desc = $this->_pdf->get_value("descender", $fh);
 
-    // $desc is usually < 0,
-    return $size * ($asc - $desc) * DOMPDF_FONT_HEIGHT_RATIO;
+	// $desc is usually < 0,
+	return $size * ($asc - $desc) * DOMPDF_FONT_HEIGHT_RATIO;
   }
 
   //........................................................................
@@ -881,9 +881,9 @@ class PDFLib_Adapter implements Canvas {
    * @param float $angle angle to write the text at, measured CW starting from the x-axis
    */
   function page_text($x, $y, $text, $font, $size, $color = array(0,0,0),
-                     $adjust = 0, $angle = 0) {
-    $_t = "text";
-    $this->_page_text[] = compact("_t", "x", "y", "text", "font", "size", "color", "adjust", "angle");
+					 $adjust = 0, $angle = 0) {
+	$_t = "text";
+	$this->_page_text[] = compact("_t", "x", "y", "text", "font", "size", "color", "adjust", "angle");
   }
 
   //........................................................................
@@ -900,20 +900,20 @@ class PDFLib_Adapter implements Canvas {
    * @param string $type the language type for script
    */
   function page_script($code, $type = "text/php") {
-    $_t = "script";
-    $this->_page_text[] = compact("_t", "code", "type");
+	$_t = "script";
+	$this->_page_text[] = compact("_t", "code", "type");
   }
 
   //........................................................................
 
   function new_page() {
 
-    // Add objects to the current page
-    $this->_place_objects();
+	// Add objects to the current page
+	$this->_place_objects();
 
-    $this->_pdf->suspend_page("");
-    $this->_pdf->begin_page_ext($this->_width, $this->_height, "");
-    $this->_page_number = ++$this->_page_count;
+	$this->_pdf->suspend_page("");
+	$this->_pdf->begin_page_ext($this->_width, $this->_height, "");
+	$this->_page_number = ++$this->_page_count;
 
   }
 
@@ -924,128 +924,128 @@ class PDFLib_Adapter implements Canvas {
    */
   protected function _add_page_text() {
 
-    if ( !count($this->_page_text) )
-      return;
+	if ( !count($this->_page_text) )
+	  return;
 
-    $this->_pdf->suspend_page("");
+	$this->_pdf->suspend_page("");
 
-    for ($p = 1; $p <= $this->_page_count; $p++) {
-      $this->_pdf->resume_page("pagenumber=$p");
+	for ($p = 1; $p <= $this->_page_count; $p++) {
+	  $this->_pdf->resume_page("pagenumber=$p");
 
-      foreach ($this->_page_text as $pt) {
-        extract($pt);
+	  foreach ($this->_page_text as $pt) {
+		extract($pt);
 
-        switch ($_t) {
+		switch ($_t) {
 
-        case "text":
-          $text = str_replace(array("{PAGE_NUM}","{PAGE_COUNT}"),
-                              array($p, $this->_page_count), $text);
-          $this->text($x, $y, $text, $font, $size, $color, $adjust, $angle);
-          break;
+		case "text":
+		  $text = str_replace(array("{PAGE_NUM}","{PAGE_COUNT}"),
+							  array($p, $this->_page_count), $text);
+		  $this->text($x, $y, $text, $font, $size, $color, $adjust, $angle);
+		  break;
 
-        case "script":
-          if (!$eval) {
-            $eval = new PHP_Evaluator($this);
-          }
-          $eval->evaluate($code, array('PAGE_NUM' => $p, 'PAGE_COUNT' => $this->_page_count));
-          break;
-        }
-      }
+		case "script":
+		  if (!$eval) {
+			$eval = new PHP_Evaluator($this);
+		  }
+		  $eval->evaluate($code, array('PAGE_NUM' => $p, 'PAGE_COUNT' => $this->_page_count));
+		  break;
+		}
+	  }
 
-      $this->_pdf->suspend_page("");
-    }
+	  $this->_pdf->suspend_page("");
+	}
 
-    $this->_pdf->resume_page("pagenumber=".$this->_page_number);
+	$this->_pdf->resume_page("pagenumber=".$this->_page_number);
   }
 
   //........................................................................
 
   function stream($filename, $options = null) {
 
-    // Add page text
-    $this->_add_page_text();
+	// Add page text
+	$this->_add_page_text();
 
-    if ( isset($options["compress"]) && $options["compress"] != 1 )
-      $this->_pdf->set_value("compress", 0);
-    else
-      $this->_pdf->set_value("compress", 6);
+	if ( isset($options["compress"]) && $options["compress"] != 1 )
+	  $this->_pdf->set_value("compress", 0);
+	else
+	  $this->_pdf->set_value("compress", 6);
 
-    $this->_close();
+	$this->_close();
 
-    if ( self::$IN_MEMORY ) {
-      $data = $this->_pdf->get_buffer();
-      $size = strlen($data);
+	if ( self::$IN_MEMORY ) {
+	  $data = $this->_pdf->get_buffer();
+	  $size = strlen($data);
 
-    } else
-      $size = filesize($this->_file);
+	} else
+	  $size = filesize($this->_file);
 
 
-    $filename = str_replace(array("\n","'"),"", $filename);
-    $attach = (isset($options["Attachment"]) && $options["Attachment"]) ? "attachment" : "inline";
+	$filename = str_replace(array("\n","'"),"", $filename);
+	$attach = (isset($options["Attachment"]) && $options["Attachment"]) ? "attachment" : "inline";
 
-    header("Cache-Control: private");
-    header("Content-type: application/pdf");
-    header("Content-Disposition: $attach; filename=\"$filename\"");
+	header("Cache-Control: private");
+	header("Content-type: application/pdf");
+	header("Content-Disposition: $attach; filename=\"$filename\"");
 
-    //header("Content-length: " . $size);
+	//header("Content-length: " . $size);
 
-    if ( self::$IN_MEMORY )
-      echo $data;
+	if ( self::$IN_MEMORY )
+	  echo $data;
 
-    else {
+	else {
 
-      // Chunked readfile()
-      $chunk = (1 << 21); // 2 MB
-      $fh = fopen($this->_file, "rb");
-      if ( !$fh )
-        throw new DOMPDF_Exception("Unable to load temporary PDF file: " . $this->_file);
+	  // Chunked readfile()
+	  $chunk = (1 << 21); // 2 MB
+	  $fh = fopen($this->_file, "rb");
+	  if ( !$fh )
+		throw new DOMPDF_Exception("Unable to load temporary PDF file: " . $this->_file);
 
-      while ( !feof($fh) )
-        echo fread($fh,$chunk);
-      fclose($fh);
+	  while ( !feof($fh) )
+		echo fread($fh,$chunk);
+	  fclose($fh);
 
-      //debugpng
-      if (DEBUGPNG) print '[pdflib stream unlink '.$this->_file.']';
-      if (!DEBUGKEEPTEMP)
+	  //debugpng
+	  if (DEBUGPNG) print '[pdflib stream unlink '.$this->_file.']';
+	  if (!DEBUGKEEPTEMP)
 
-      unlink($this->_file);
-      $this->_file = null;
-      unset($this->_file);
-    }
+	  unlink($this->_file);
+	  $this->_file = null;
+	  unset($this->_file);
+	}
 
-    flush();
+	flush();
   }
 
   //........................................................................
 
   function output($options = null) {
 
-    // Add page text
-    $this->_add_page_text();
+	// Add page text
+	$this->_add_page_text();
 
-    if ( isset($options["compress"]) && $options["compress"] != 1 )
-      $this->_pdf->set_value("compress", 0);
-    else
-      $this->_pdf->set_value("compress", 6);
+	if ( isset($options["compress"]) && $options["compress"] != 1 )
+	  $this->_pdf->set_value("compress", 0);
+	else
+	  $this->_pdf->set_value("compress", 6);
 
-    $this->_close();
+	$this->_close();
 
-    if ( self::$IN_MEMORY )
-      $data = $this->_pdf->get_buffer();
+	if ( self::$IN_MEMORY )
+	  $data = $this->_pdf->get_buffer();
 
-    else {
-      $data = file_get_contents($this->_file);
+	else {
+	  $data = file_get_contents($this->_file);
 
-      //debugpng
-      if (DEBUGPNG) print '[pdflib output unlink '.$this->_file.']';
-      if (!DEBUGKEEPTEMP)
+	  //debugpng
+	  if (DEBUGPNG) print '[pdflib output unlink '.$this->_file.']';
+	  if (!DEBUGKEEPTEMP)
 
-      unlink($this->_file);
-      $this->_file = null;
-      unset($this->_file);
-    }
+	  unlink($this->_file);
+	  $this->_file = null;
+	  unset($this->_file);
+	}
 
-    return $data;
+	return $data;
   }
 }
 

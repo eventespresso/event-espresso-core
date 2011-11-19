@@ -55,7 +55,7 @@ abstract class Positioner {
   //........................................................................
 
   function __construct(Frame_Decorator $frame) {
-    $this->_frame = $frame;
+	$this->_frame = $frame;
   }
   
   /**

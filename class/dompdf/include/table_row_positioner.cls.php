@@ -53,16 +53,16 @@ class Table_Row_Positioner extends Positioner {
 
   function position() {
 
-    $cb = $this->_frame->get_containing_block();    
-    $p = $this->_frame->get_prev_sibling();
+	$cb = $this->_frame->get_containing_block();	
+	$p = $this->_frame->get_prev_sibling();
 
-    if ( $p ) 
-      $y = $p->get_position("y") + $p->get_margin_height();
+	if ( $p ) 
+	  $y = $p->get_position("y") + $p->get_margin_height();
 
-    else
-      $y = $cb["y"];
+	else
+	  $y = $cb["y"];
 
-    $this->_frame->set_position($cb["x"], $y);
+	$this->_frame->set_position($cb["x"], $y);
 
   }
 }

@@ -179,11 +179,11 @@ interface Canvas {
    * array.  $points has the following structure:
    * <code>
    * array(0 => x1,
-   *       1 => y1,
-   *       2 => x2,
-   *       3 => y2,
-   *       ...
-   *       );
+   *	   1 => y1,
+   *	   2 => x2,
+   *	   3 => y2,
+   *	   ...
+   *	   );
    * </code>
    *
    * See {@link Style::munge_colour()} for the format of the colour array.

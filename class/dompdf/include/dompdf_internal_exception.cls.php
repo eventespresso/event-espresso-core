@@ -53,7 +53,7 @@ class DOMPDF_Internal_Exception extends Exception {
    * @param int $code Error code
    */
   function __construct($message = NULL, $code = 0) {
-    parent::__construct($message, $code);
+	parent::__construct($message, $code);
   }
 
 }

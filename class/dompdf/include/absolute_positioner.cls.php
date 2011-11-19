@@ -48,38 +48,38 @@ class Absolute_Positioner extends Positioner {
 
   function position() {
 
-    $frame = $this->_frame;
-    $style = $frame->get_style();
-    $cb = $frame->get_containing_block();
+	$frame = $this->_frame;
+	$style = $frame->get_style();
+	$cb = $frame->get_containing_block();
 
-    $top =    $style->length_in_pt($style->top,    $cb["h"]);
-    $right =  $style->length_in_pt($style->right,  $cb["w"]);
-    $bottom = $style->length_in_pt($style->bottom, $cb["h"]);
-    $left =   $style->length_in_pt($style->left,   $cb["w"]);
-    
-    $p = $frame->find_positionned_parent();
+	$top =	$style->length_in_pt($style->top,	$cb["h"]);
+	$right =  $style->length_in_pt($style->right,  $cb["w"]);
+	$bottom = $style->length_in_pt($style->bottom, $cb["h"]);
+	$left =   $style->length_in_pt($style->left,   $cb["w"]);
+	
+	$p = $frame->find_positionned_parent();
 
-    if ( $p ) {
-      // Get the parent's padding box (see http://www.w3.org/TR/CSS21/visuren.html#propdef-top)
-      list($x, $y, $w, $h) = $p->get_padding_box();
-    } else {
-      $x = $cb["x"];
-      $y = $cb["y"];
-    }
+	if ( $p ) {
+	  // Get the parent's padding box (see http://www.w3.org/TR/CSS21/visuren.html#propdef-top)
+	  list($x, $y, $w, $h) = $p->get_padding_box();
+	} else {
+	  $x = $cb["x"];
+	  $y = $cb["y"];
+	}
 
-    if ( $top !== "auto" ) {
-      $y += $top;
-    } else if ( $bottom !== "auto" ) {
-      // FIXME: need to know this frame's height before we can do this correctly
-    }
+	if ( $top !== "auto" ) {
+	  $y += $top;
+	} else if ( $bottom !== "auto" ) {
+	  // FIXME: need to know this frame's height before we can do this correctly
+	}
 
-    if ( $left !== "auto" ) {
-      $x += $left;
-    } else if ( $right !== "auto" ) {
-      // FIXME: need to know this frame's width before we can do this correctly
-    }
+	if ( $left !== "auto" ) {
+	  $x += $left;
+	} else if ( $right !== "auto" ) {
+	  // FIXME: need to know this frame's width before we can do this correctly
+	}
 
-    $frame->set_position($x, $y);
+	$frame->set_position($x, $y);
 
   }
 }

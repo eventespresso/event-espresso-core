@@ -108,49 +108,49 @@ class GD_Adapter implements Canvas {
   /**
    * Class constructor
    *
-   * @param mixed  $size         The size of image to create: array(x1,y1,x2,y2) or "letter", "legal", etc.
+   * @param mixed  $size		 The size of image to create: array(x1,y1,x2,y2) or "letter", "legal", etc.
    * @param string $orientation  The orientation of the document (either 'landscape' or 'portrait')
-   * @param float  $aa_factor    Anti-aliasing factor, 1 for no AA
-   * @param array  $bg_color     Image background color: array(r,g,b,a), 0 <= r,g,b,a <= 1
+   * @param float  $aa_factor	Anti-aliasing factor, 1 for no AA
+   * @param array  $bg_color	 Image background color: array(r,g,b,a), 0 <= r,g,b,a <= 1
    */
   function __construct($size, $orientation = "portrait", $aa_factor = 1, $bg_color = array(1,1,1,0) ) {
 
-    if ( !is_array($size) ) {
-      $size = strtolower($size);
-      
-      if ( isset(CPDF_Adapter::$PAPER_SIZES[$size]) ) 
-        $size = CPDF_Adapter::$PAPER_SIZES[$size];
-      else
-        $size = CPDF_Adapter::$PAPER_SIZES["letter"];
-    }
+	if ( !is_array($size) ) {
+	  $size = strtolower($size);
+	  
+	  if ( isset(CPDF_Adapter::$PAPER_SIZES[$size]) ) 
+		$size = CPDF_Adapter::$PAPER_SIZES[$size];
+	  else
+		$size = CPDF_Adapter::$PAPER_SIZES["letter"];
+	}
 
-    if ( strtolower($orientation) === "landscape" ) {
-      list($size[2],$size[3]) = array($size[3],$size[2]);
-    }
+	if ( strtolower($orientation) === "landscape" ) {
+	  list($size[2],$size[3]) = array($size[3],$size[2]);
+	}
 
-    if ( $aa_factor < 1 )
-      $aa_factor = 1;
+	if ( $aa_factor < 1 )
+	  $aa_factor = 1;
 
-    $this->_aa_factor = $aa_factor;
-    
-    $size[2] *= $aa_factor;
-    $size[3] *= $aa_factor;
-    
-    $this->_width = $size[2] - $size[0];
-    $this->_height = $size[3] - $size[1];
+	$this->_aa_factor = $aa_factor;
+	
+	$size[2] *= $aa_factor;
+	$size[3] *= $aa_factor;
+	
+	$this->_width = $size[2] - $size[0];
+	$this->_height = $size[3] - $size[1];
 
-    $this->_img = imagecreatetruecolor($this->_width, $this->_height);
+	$this->_img = imagecreatetruecolor($this->_width, $this->_height);
 
-    if ( is_null($bg_color) || !is_array($bg_color) ) {
-      // Pure white bg
-      $bg_color = array(1,1,1,0);
-    }
+	if ( is_null($bg_color) || !is_array($bg_color) ) {
+	  // Pure white bg
+	  $bg_color = array(1,1,1,0);
+	}
 
-    $this->_bg_color = $this->_allocate_color($bg_color);
-    imagealphablending($this->_img, true);
-    imagesavealpha($this->_img, true);
-    imagefill($this->_img, 0, 0, $this->_bg_color);
-    
+	$this->_bg_color = $this->_allocate_color($bg_color);
+	imagealphablending($this->_img, true);
+	imagesavealpha($this->_img, true);
+	imagefill($this->_img, 0, 0, $this->_bg_color);
+	
   }
 
   /**
@@ -207,7 +207,7 @@ class GD_Adapter implements Canvas {
    * @param $mode
    */
   function set_opacity($opacity, $mode = "Normal") {
-    // FIXME
+	// FIXME
   }
 
   /**
@@ -215,48 +215,48 @@ class GD_Adapter implements Canvas {
    * previously allocated colors in $this->_colors.
    *
    * @param array $color  The new current color
-   * @return int           The allocated color
+   * @return int		   The allocated color
    */
   private function _allocate_color($color) {
-    
-    if ( isset($color["c"]) ) {
-      $color = cmyk_to_rgb($color);
-    }
-    
-    // Full opacity if no alpha set
-    if ( !isset($color[3]) ) 
-      $color[3] = 0;
-    
-    list($r,$g,$b,$a) = $color;
-    
-    $r *= 255;
-    $g *= 255;
-    $b *= 255;
-    $a *= 127;
-    
-    // Clip values
-    $r = $r > 255 ? 255 : $r;
-    $g = $g > 255 ? 255 : $g;
-    $b = $b > 255 ? 255 : $b;
-    $a = $a > 127 ? 127 : $a;
-      
-    $r = $r < 0 ? 0 : $r;
-    $g = $g < 0 ? 0 : $g;
-    $b = $b < 0 ? 0 : $b;
-    $a = $a < 0 ? 0 : $a;
-      
-    $key = sprintf("#%02X%02X%02X%02X", $r, $g, $b, $a);
-      
-    if ( isset($this->_colors[$key]) )
-      return $this->_colors[$key];
+	
+	if ( isset($color["c"]) ) {
+	  $color = cmyk_to_rgb($color);
+	}
+	
+	// Full opacity if no alpha set
+	if ( !isset($color[3]) ) 
+	  $color[3] = 0;
+	
+	list($r,$g,$b,$a) = $color;
+	
+	$r *= 255;
+	$g *= 255;
+	$b *= 255;
+	$a *= 127;
+	
+	// Clip values
+	$r = $r > 255 ? 255 : $r;
+	$g = $g > 255 ? 255 : $g;
+	$b = $b > 255 ? 255 : $b;
+	$a = $a > 127 ? 127 : $a;
+	  
+	$r = $r < 0 ? 0 : $r;
+	$g = $g < 0 ? 0 : $g;
+	$b = $b < 0 ? 0 : $b;
+	$a = $a < 0 ? 0 : $a;
+	  
+	$key = sprintf("#%02X%02X%02X%02X", $r, $g, $b, $a);
+	  
+	if ( isset($this->_colors[$key]) )
+	  return $this->_colors[$key];
 
-    if ( $a != 0 ) 
-      $this->_colors[$key] = imagecolorallocatealpha($this->_img, $r, $g, $b, $a);
-    else
-      $this->_colors[$key] = imagecolorallocate($this->_img, $r, $g, $b);
-      
-    return $this->_colors[$key];
-    
+	if ( $a != 0 ) 
+	  $this->_colors[$key] = imagecolorallocatealpha($this->_img, $r, $g, $b, $a);
+	else
+	  $this->_colors[$key] = imagecolorallocate($this->_img, $r, $g, $b);
+	  
+	return $this->_colors[$key];
+	
   }
   
   /**
@@ -276,56 +276,56 @@ class GD_Adapter implements Canvas {
    */
   function line($x1, $y1, $x2, $y2, $color, $width, $style = null) {
 
-    // Scale by the AA factor
-    $x1 *= $this->_aa_factor;
-    $y1 *= $this->_aa_factor;
-    $x2 *= $this->_aa_factor;
-    $y2 *= $this->_aa_factor;
-    $width *= $this->_aa_factor;
+	// Scale by the AA factor
+	$x1 *= $this->_aa_factor;
+	$y1 *= $this->_aa_factor;
+	$x2 *= $this->_aa_factor;
+	$y2 *= $this->_aa_factor;
+	$width *= $this->_aa_factor;
 
-    $c = $this->_allocate_color($color);
+	$c = $this->_allocate_color($color);
 
-    // Convert the style array if required
-    if ( !is_null($style) ) {
-      $gd_style = array();
+	// Convert the style array if required
+	if ( !is_null($style) ) {
+	  $gd_style = array();
 
-      if ( count($style) == 1 ) {
-        for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) {
-          $gd_style[] = $c;
-        }
+	  if ( count($style) == 1 ) {
+		for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) {
+		  $gd_style[] = $c;
+		}
 
-        for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) {
-          $gd_style[] = $this->_bg_color;
-        }
+		for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) {
+		  $gd_style[] = $this->_bg_color;
+		}
 
-      } else {
+	  } else {
 
-        $i = 0;
-        foreach ($style as $length) {
+		$i = 0;
+		foreach ($style as $length) {
 
-          if ( $i % 2 == 0 ) {
-            // 'On' pattern
-            for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) 
-              $gd_style[] = $c;
-            
-          } else {
-            // Off pattern
-            for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) 
-              $gd_style[] = $this->_bg_color;
-            
-          }
-          $i++;
-        }
-      }
-      
-      imagesetstyle($this->_img, $gd_style);
-      $c = IMG_COLOR_STYLED;
-    }
-    
-    imagesetthickness($this->_img, $width);
+		  if ( $i % 2 == 0 ) {
+			// 'On' pattern
+			for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) 
+			  $gd_style[] = $c;
+			
+		  } else {
+			// Off pattern
+			for ($i = 0; $i < $style[0] * $this->_aa_factor; $i++) 
+			  $gd_style[] = $this->_bg_color;
+			
+		  }
+		  $i++;
+		}
+	  }
+	  
+	  imagesetstyle($this->_img, $gd_style);
+	  $c = IMG_COLOR_STYLED;
+	}
+	
+	imagesetthickness($this->_img, $width);
 
-    imageline($this->_img, $x1, $y1, $x2, $y2, $c);
-    
+	imageline($this->_img, $x1, $y1, $x2, $y2, $c);
+	
   }
 
   /**
@@ -345,32 +345,32 @@ class GD_Adapter implements Canvas {
    */   
   function rectangle($x1, $y1, $w, $h, $color, $width, $style = null) {
 
-    // Scale by the AA factor
-    $x1 *= $this->_aa_factor;
-    $y1 *= $this->_aa_factor;
-    $w *= $this->_aa_factor;
-    $h *= $this->_aa_factor;
+	// Scale by the AA factor
+	$x1 *= $this->_aa_factor;
+	$y1 *= $this->_aa_factor;
+	$w *= $this->_aa_factor;
+	$h *= $this->_aa_factor;
 
-    $c = $this->_allocate_color($color);
+	$c = $this->_allocate_color($color);
 
-    // Convert the style array if required
-    if ( !is_null($style) ) {
-      $gd_style = array();
+	// Convert the style array if required
+	if ( !is_null($style) ) {
+	  $gd_style = array();
 
-      foreach ($style as $length) {
-        for ($i = 0; $i < $length; $i++) {
-          $gd_style[] = $c;
-        }
-      }
+	  foreach ($style as $length) {
+		for ($i = 0; $i < $length; $i++) {
+		  $gd_style[] = $c;
+		}
+	  }
 
-      imagesetstyle($this->_img, $gd_style);
-      $c = IMG_COLOR_STYLED;
-    }
+	  imagesetstyle($this->_img, $gd_style);
+	  $c = IMG_COLOR_STYLED;
+	}
 
-    imagesetthickness($this->_img, $width);
+	imagesetthickness($this->_img, $width);
 
-    imagerectangle($this->_img, $x1, $y1, $x1 + $w, $y1 + $h, $c);
-    
+	imagerectangle($this->_img, $x1, $y1, $x1 + $w, $y1 + $h, $c);
+	
   }
 
   /**
@@ -386,15 +386,15 @@ class GD_Adapter implements Canvas {
    */   
   function filled_rectangle($x1, $y1, $w, $h, $color) {
 
-    // Scale by the AA factor
-    $x1 *= $this->_aa_factor;
-    $y1 *= $this->_aa_factor;
-    $w *= $this->_aa_factor;
-    $h *= $this->_aa_factor;
+	// Scale by the AA factor
+	$x1 *= $this->_aa_factor;
+	$y1 *= $this->_aa_factor;
+	$w *= $this->_aa_factor;
+	$h *= $this->_aa_factor;
 
-    $c = $this->_allocate_color($color);
+	$c = $this->_allocate_color($color);
 
-    imagefilledrectangle($this->_img, $x1, $y1, $x1 + $w, $y1 + $h, $c);
+	imagefilledrectangle($this->_img, $x1, $y1, $x1 + $w, $y1 + $h, $c);
 
   }
   
@@ -407,42 +407,42 @@ class GD_Adapter implements Canvas {
    * @param float $h
    */   
   function clipping_rectangle($x1, $y1, $w, $h) {
-    // @todo
+	// @todo
   }
   
   /**
    * Ends the last clipping shape
    */  
   function clipping_end() {
-    // @todo
+	// @todo
   }
   
   function save() {
-    // @todo
+	// @todo
   }
   
   function restore() {
-    // @todo
+	// @todo
   }
   
   function rotate($angle, $x, $y) {
-    // @todo
+	// @todo
   }
   
   function skew($angle_x, $angle_y, $x, $y) {
-    // @todo
+	// @todo
   }
   
   function scale($s_x, $s_y, $x, $y) {
-    // @todo
+	// @todo
   }
   
   function translate($t_x, $t_y) {
-    // @todo
+	// @todo
   }
   
   function transform($a, $b, $c, $d, $e, $f) {
-    // @todo
+	// @todo
   }
 
   /**
@@ -452,11 +452,11 @@ class GD_Adapter implements Canvas {
    * array.  $points has the following structure:
    * <code>
    * array(0 => x1,
-   *       1 => y1,
-   *       2 => x2,
-   *       3 => y2,
-   *       ...
-   *       );
+   *	   1 => y1,
+   *	   2 => x2,
+   *	   3 => y2,
+   *	   ...
+   *	   );
    * </code>
    *
    * See {@link Style::munge_color()} for the format of the color array.
@@ -471,33 +471,33 @@ class GD_Adapter implements Canvas {
    */
   function polygon($points, $color, $width = null, $style = null, $fill = false) {
 
-    // Scale each point by the AA factor
-    foreach (array_keys($points) as $i)
-      $points[$i] *= $this->_aa_factor;
+	// Scale each point by the AA factor
+	foreach (array_keys($points) as $i)
+	  $points[$i] *= $this->_aa_factor;
 
-    $c = $this->_allocate_color($color);
+	$c = $this->_allocate_color($color);
 
-    // Convert the style array if required
-    if ( !is_null($style) && !$fill ) {
-      $gd_style = array();
+	// Convert the style array if required
+	if ( !is_null($style) && !$fill ) {
+	  $gd_style = array();
 
-      foreach ($style as $length) {
-        for ($i = 0; $i < $length; $i++) {
-          $gd_style[] = $c;
-        }
-      }
+	  foreach ($style as $length) {
+		for ($i = 0; $i < $length; $i++) {
+		  $gd_style[] = $c;
+		}
+	  }
 
-      imagesetstyle($this->_img, $gd_style);
-      $c = IMG_COLOR_STYLED;
-    }
+	  imagesetstyle($this->_img, $gd_style);
+	  $c = IMG_COLOR_STYLED;
+	}
 
-    imagesetthickness($this->_img, $width);
+	imagesetthickness($this->_img, $width);
 
-    if ( $fill ) 
-      imagefilledpolygon($this->_img, $points, count($points) / 2, $c);
-    else
-      imagepolygon($this->_img, $points, count($points) / 2, $c);
-        
+	if ( $fill ) 
+	  imagefilledpolygon($this->_img, $points, count($points) / 2, $c);
+	else
+	  imagepolygon($this->_img, $points, count($points) / 2, $c);
+		
   }
 
   /**
@@ -517,34 +517,34 @@ class GD_Adapter implements Canvas {
    */   
   function circle($x, $y, $r, $color, $width = null, $style = null, $fill = false) {
 
-    // Scale by the AA factor
-    $x *= $this->_aa_factor;
-    $y *= $this->_aa_factor;
-    $r *= $this->_aa_factor;
+	// Scale by the AA factor
+	$x *= $this->_aa_factor;
+	$y *= $this->_aa_factor;
+	$r *= $this->_aa_factor;
 
-    $c = $this->_allocate_color($color);
+	$c = $this->_allocate_color($color);
 
-    // Convert the style array if required
-    if ( !is_null($style) && !$fill ) {
-      $gd_style = array();
+	// Convert the style array if required
+	if ( !is_null($style) && !$fill ) {
+	  $gd_style = array();
 
-      foreach ($style as $length) {
-        for ($i = 0; $i < $length; $i++) {
-          $gd_style[] = $c;
-        }
-      }
+	  foreach ($style as $length) {
+		for ($i = 0; $i < $length; $i++) {
+		  $gd_style[] = $c;
+		}
+	  }
 
-      imagesetstyle($this->_img, $gd_style);
-      $c = IMG_COLOR_STYLED;
-    }
+	  imagesetstyle($this->_img, $gd_style);
+	  $c = IMG_COLOR_STYLED;
+	}
 
-    imagesetthickness($this->_img, $width);
+	imagesetthickness($this->_img, $width);
 
-    if ( $fill )
-      imagefilledellipse($this->_img, $x, $y, $r, $r, $c);
-    else
-      imageellipse($this->_img, $x, $y, $r, $r, $c);
-        
+	if ( $fill )
+	  imagefilledellipse($this->_img, $x, $y, $r, $r, $c);
+	else
+	  imageellipse($this->_img, $x, $y, $r, $r, $c);
+		
   }
 
   /**
@@ -562,45 +562,45 @@ class GD_Adapter implements Canvas {
    */
   function image($img_url, $img_type, $x, $y, $w, $h) {
 
-    switch ($img_type) {
-    case "png":
-      $src = @imagecreatefrompng($img_url);
-      break;
-      
-    case "gif":
-      $src = @imagecreatefromgif($img_url);
-      break;
-      
-    case "bmp":
-      $src = @imagecreatefrombmp($img_url);
-      break;
-      
-    case "jpg":
-    case "jpeg":
-      $src = @imagecreatefromjpeg($img_url);
-      break;
+	switch ($img_type) {
+	case "png":
+	  $src = @imagecreatefrompng($img_url);
+	  break;
+	  
+	case "gif":
+	  $src = @imagecreatefromgif($img_url);
+	  break;
+	  
+	case "bmp":
+	  $src = @imagecreatefrombmp($img_url);
+	  break;
+	  
+	case "jpg":
+	case "jpeg":
+	  $src = @imagecreatefromjpeg($img_url);
+	  break;
 
-    default:
-      break;
-      
-    }
+	default:
+	  break;
+	  
+	}
 
-    if ( !$src )
-      return; // Probably should add to $_dompdf_errors or whatever here
-    
-    // Scale by the AA factor
-    $x *= $this->_aa_factor;
-    $y *= $this->_aa_factor;
+	if ( !$src )
+	  return; // Probably should add to $_dompdf_errors or whatever here
+	
+	// Scale by the AA factor
+	$x *= $this->_aa_factor;
+	$y *= $this->_aa_factor;
 
-    $w *= $this->_aa_factor;
-    $h *= $this->_aa_factor;
-    
-    $img_w = imagesx($src);
-    $img_h = imagesy($src);
+	$w *= $this->_aa_factor;
+	$h *= $this->_aa_factor;
+	
+	$img_w = imagesx($src);
+	$img_h = imagesy($src);
 
-    
-    imagecopyresampled($this->_img, $src, $x, $y, 0, 0, $w, $h, $img_w, $img_h);
-    
+	
+	imagecopyresampled($this->_img, $src, $x, $y, 0, 0, $w, $h, $img_w, $img_h);
+	
   }
 
   /**
@@ -619,26 +619,26 @@ class GD_Adapter implements Canvas {
    */
   function text($x, $y, $text, $font, $size, $color = array(0,0,0), $word_spacing = 0, $char_spacing = 0, $angle = 0) {
 
-    // Scale by the AA factor
-    $x *= $this->_aa_factor;
-    $y *= $this->_aa_factor;
-    $size *= $this->_aa_factor;
-    
-    $h = $this->get_font_height($font, $size);
-    $c = $this->_allocate_color($color);
-    
-    $text = mb_encode_numericentity($text, array(0x0080, 0xff, 0, 0xff), 'UTF-8');
+	// Scale by the AA factor
+	$x *= $this->_aa_factor;
+	$y *= $this->_aa_factor;
+	$size *= $this->_aa_factor;
+	
+	$h = $this->get_font_height($font, $size);
+	$c = $this->_allocate_color($color);
+	
+	$text = mb_encode_numericentity($text, array(0x0080, 0xff, 0, 0xff), 'UTF-8');
 
-    if ( strpos($font, '.ttf') === false )
-      $font .= ".ttf";
+	if ( strpos($font, '.ttf') === false )
+	  $font .= ".ttf";
 
-    // FIXME: word spacing
-    @imagettftext($this->_img, $size, $angle, $x, $y + $h, $c, $font, $text);
-    
+	// FIXME: word spacing
+	@imagettftext($this->_img, $size, $angle, $x, $y + $h, $c, $font, $text);
+	
   }
   
   function javascript($code) {
-    // Not implemented
+	// Not implemented
   }
 
   /**
@@ -647,7 +647,7 @@ class GD_Adapter implements Canvas {
    * @param string $anchorname The name of the named destination
    */
   function add_named_dest($anchorname) {
-    // Not implemented
+	// Not implemented
   }
 
   /**
@@ -660,7 +660,7 @@ class GD_Adapter implements Canvas {
    * @param float  $height   The height of the link
    */
   function add_link($url, $x, $y, $width, $height) {
-    // Not implemented
+	// Not implemented
   }
 
   /**
@@ -670,7 +670,7 @@ class GD_Adapter implements Canvas {
    * @param string $value  the text to set
    */
   function add_info($label, $value) {
-    // N/A
+	// N/A
   }
   
   /**
@@ -682,16 +682,16 @@ class GD_Adapter implements Canvas {
    * @param float  $spacing word spacing, if any
    * @return float
    */
-  function get_text_width($text, $font, $size, $word_spacing = 0, $char_spacing = 0) {    
+  function get_text_width($text, $font, $size, $word_spacing = 0, $char_spacing = 0) {	
 
-    if ( strpos($font, '.ttf') === false )
-      $font .= ".ttf";
-      
-    $text = mb_encode_numericentity($text, array(0x0080, 0xffff, 0, 0xffff), 'UTF-8');
+	if ( strpos($font, '.ttf') === false )
+	  $font .= ".ttf";
+	  
+	$text = mb_encode_numericentity($text, array(0x0080, 0xffff, 0, 0xffff), 'UTF-8');
 
-    // FIXME: word spacing
-    list($x1,,$x2) = @imagettfbbox($size, 0, $font, $text);
-    return $x2 - $x1;
+	// FIXME: word spacing
+	list($x1,,$x2) = @imagettfbbox($size, 0, $font, $text);
+	return $x2 - $x1;
   }
 
   /**
@@ -702,12 +702,12 @@ class GD_Adapter implements Canvas {
    * @return float
    */
   function get_font_height($font, $size) {
-    if ( strpos($font, '.ttf') === false )
-      $font .= ".ttf";
+	if ( strpos($font, '.ttf') === false )
+	  $font .= ".ttf";
 
-    // FIXME: word spacing
-    list(,$y2,,,,$y1) = imagettfbbox($size, 0, $font, "MXjpqytfhl");  // Test string with ascenders, descenders and caps
-    return ($y2 - $y1) * DOMPDF_FONT_HEIGHT_RATIO;
+	// FIXME: word spacing
+	list(,$y2,,,,$y1) = imagettfbbox($size, 0, $font, "MXjpqytfhl");  // Test string with ascenders, descenders and caps
+	return ($y2 - $y1) * DOMPDF_FONT_HEIGHT_RATIO;
   }
 
   
@@ -717,24 +717,24 @@ class GD_Adapter implements Canvas {
    * Subsequent drawing operations will appear on the new page.
    */
   function new_page() {
-    $this->_page_number++;
-    $this->_page_count++;
-  }    
+	$this->_page_number++;
+	$this->_page_count++;
+  }	
 
   function open_object(){
-    // N/A
+	// N/A
   }
 
   function close_object(){
-    // N/A
+	// N/A
   }
 
   function add_object(){
-    // N/A
+	// N/A
   }
 
   function page_text(){
-    // N/A
+	// N/A
   }
   
   /**
@@ -745,45 +745,45 @@ class GD_Adapter implements Canvas {
    */
   function stream($filename, $options = null) {
 
-    // Perform any antialiasing
-    if ( $this->_aa_factor != 1 ) {
-      $dst_w = $this->_width / $this->_aa_factor;
-      $dst_h = $this->_height / $this->_aa_factor;
-      $dst = imagecreatetruecolor($dst_w, $dst_h);
-      imagecopyresampled($dst, $this->_img, 0, 0, 0, 0,
-                         $dst_w, $dst_h,
-                         $this->_width, $this->_height);
-    } else {
-      $dst = $this->_img;
-    }
+	// Perform any antialiasing
+	if ( $this->_aa_factor != 1 ) {
+	  $dst_w = $this->_width / $this->_aa_factor;
+	  $dst_h = $this->_height / $this->_aa_factor;
+	  $dst = imagecreatetruecolor($dst_w, $dst_h);
+	  imagecopyresampled($dst, $this->_img, 0, 0, 0, 0,
+						 $dst_w, $dst_h,
+						 $this->_width, $this->_height);
+	} else {
+	  $dst = $this->_img;
+	}
 
-    if ( !isset($options["type"]) )
-      $options["type"] = "png";
+	if ( !isset($options["type"]) )
+	  $options["type"] = "png";
 
-    $type = strtolower($options["type"]);
-    
-    header("Cache-Control: private");
-    
-    switch ($type) {
+	$type = strtolower($options["type"]);
+	
+	header("Cache-Control: private");
+	
+	switch ($type) {
 
-    case "jpg":
-    case "jpeg":
-      if ( !isset($options["quality"]) )
-        $options["quality"] = 75;
-      
-      header("Content-type: image/jpeg");
-      imagejpeg($dst, '', $options["quality"]);
-      break;
+	case "jpg":
+	case "jpeg":
+	  if ( !isset($options["quality"]) )
+		$options["quality"] = 75;
+	  
+	  header("Content-type: image/jpeg");
+	  imagejpeg($dst, '', $options["quality"]);
+	  break;
 
-    case "png":
-    default:
-      header("Content-type: image/png");
-      imagepng($dst);
-      break;
-    }
+	case "png":
+	default:
+	  header("Content-type: image/png");
+	  imagepng($dst);
+	  break;
+	}
 
-    if ( $this->_aa_factor != 1 ) 
-      imagedestroy($dst);
+	if ( $this->_aa_factor != 1 ) 
+	  imagedestroy($dst);
   }
 
   /**
@@ -794,46 +794,46 @@ class GD_Adapter implements Canvas {
    */
   function output($options = null) {
 
-    if ( $this->_aa_factor != 1 ) {
-      $dst_w = $this->_width / $this->_aa_factor;
-      $dst_h = $this->_height / $this->_aa_factor;
-      $dst = imagecreatetruecolor($dst_w, $dst_h);
-      imagecopyresampled($dst, $this->_img, 0, 0, 0, 0,
-                         $dst_w, $dst_h,
-                         $this->_width, $this->_height);
-    } else {
-      $dst = $this->_img;
-    }
-    
-    if ( !isset($options["type"]) )
-      $options["type"] = "png";
+	if ( $this->_aa_factor != 1 ) {
+	  $dst_w = $this->_width / $this->_aa_factor;
+	  $dst_h = $this->_height / $this->_aa_factor;
+	  $dst = imagecreatetruecolor($dst_w, $dst_h);
+	  imagecopyresampled($dst, $this->_img, 0, 0, 0, 0,
+						 $dst_w, $dst_h,
+						 $this->_width, $this->_height);
+	} else {
+	  $dst = $this->_img;
+	}
+	
+	if ( !isset($options["type"]) )
+	  $options["type"] = "png";
 
-    $type = $options["type"];
-    
-    ob_start();
+	$type = $options["type"];
+	
+	ob_start();
 
-    switch ($type) {
+	switch ($type) {
 
-    case "jpg":
-    case "jpeg":
-      if ( !isset($options["quality"]) )
-        $options["quality"] = 75;
-      
-      imagejpeg($dst, '', $options["quality"]);
-      break;
+	case "jpg":
+	case "jpeg":
+	  if ( !isset($options["quality"]) )
+		$options["quality"] = 75;
+	  
+	  imagejpeg($dst, '', $options["quality"]);
+	  break;
 
-    case "png":
-    default:
-      imagepng($dst);
-      break;
-    }
+	case "png":
+	default:
+	  imagepng($dst);
+	  break;
+	}
 
-    $image = ob_get_clean();
+	$image = ob_get_clean();
 
-    if ( $this->_aa_factor != 1 )
-      imagedestroy($dst);
-    
-    return $image;
+	if ( $this->_aa_factor != 1 )
+	  imagedestroy($dst);
+	
+	return $image;
   }
   
   

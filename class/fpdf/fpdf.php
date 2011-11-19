@@ -1,76 +1,76 @@
 <?php
 /*******************************************************************************
-* FPDF                                                                         *
-*                                                                              *
-* Version: 1.6                                                                 *
-* Date:    2008-08-03                                                          *
-* Author:  Olivier PLATHEY                                                     *
+* FPDF																		 *
+*																			  *
+* Version: 1.6																 *
+* Date:	2008-08-03														  *
+* Author:  Olivier PLATHEY													 *
 *******************************************************************************/
 
 define('FPDF_VERSION','1.6');
 
 class FPDF
 {
-var $page;               //current page number
-var $n;                  //current object number
-var $offsets;            //array of object offsets
-var $buffer;             //buffer holding in-memory PDF
-var $pages;              //array containing pages
-var $state;              //current document state
-var $compress;           //compression flag
-var $k;                  //scale factor (number of points in user unit)
-var $DefOrientation;     //default orientation
-var $CurOrientation;     //current orientation
-var $PageFormats;        //available page formats
-var $DefPageFormat;      //default page format
-var $CurPageFormat;      //current page format
-var $PageSizes;          //array storing non-default page sizes
-var $wPt,$hPt;           //dimensions of current page in points
-var $w,$h;               //dimensions of current page in user unit
-var $lMargin;            //left margin
-var $tMargin;            //top margin
-var $rMargin;            //right margin
-var $bMargin;            //page break margin
-var $cMargin;            //cell margin
-var $x,$y;               //current position in user unit
-var $lasth;              //height of last printed cell
-var $LineWidth;          //line width in user unit
-var $CoreFonts;          //array of standard font names
-var $fonts;              //array of used fonts
-var $FontFiles;          //array of font files
-var $diffs;              //array of encoding differences
-var $FontFamily;         //current font family
-var $FontStyle;          //current font style
-var $underline;          //underlining flag
-var $CurrentFont;        //current font info
-var $FontSizePt;         //current font size in points
-var $FontSize;           //current font size in user unit
-var $DrawColor;          //commands for drawing color
-var $FillColor;          //commands for filling color
-var $TextColor;          //commands for text color
-var $ColorFlag;          //indicates whether fill and text colors are different
-var $ws;                 //word spacing
-var $images;             //array of used images
-var $PageLinks;          //array of links in pages
-var $links;              //array of internal links
-var $AutoPageBreak;      //automatic page breaking
+var $page;			   //current page number
+var $n;				  //current object number
+var $offsets;			//array of object offsets
+var $buffer;			 //buffer holding in-memory PDF
+var $pages;			  //array containing pages
+var $state;			  //current document state
+var $compress;		   //compression flag
+var $k;				  //scale factor (number of points in user unit)
+var $DefOrientation;	 //default orientation
+var $CurOrientation;	 //current orientation
+var $PageFormats;		//available page formats
+var $DefPageFormat;	  //default page format
+var $CurPageFormat;	  //current page format
+var $PageSizes;		  //array storing non-default page sizes
+var $wPt,$hPt;		   //dimensions of current page in points
+var $w,$h;			   //dimensions of current page in user unit
+var $lMargin;			//left margin
+var $tMargin;			//top margin
+var $rMargin;			//right margin
+var $bMargin;			//page break margin
+var $cMargin;			//cell margin
+var $x,$y;			   //current position in user unit
+var $lasth;			  //height of last printed cell
+var $LineWidth;		  //line width in user unit
+var $CoreFonts;		  //array of standard font names
+var $fonts;			  //array of used fonts
+var $FontFiles;		  //array of font files
+var $diffs;			  //array of encoding differences
+var $FontFamily;		 //current font family
+var $FontStyle;		  //current font style
+var $underline;		  //underlining flag
+var $CurrentFont;		//current font info
+var $FontSizePt;		 //current font size in points
+var $FontSize;		   //current font size in user unit
+var $DrawColor;		  //commands for drawing color
+var $FillColor;		  //commands for filling color
+var $TextColor;		  //commands for text color
+var $ColorFlag;		  //indicates whether fill and text colors are different
+var $ws;				 //word spacing
+var $images;			 //array of used images
+var $PageLinks;		  //array of links in pages
+var $links;			  //array of internal links
+var $AutoPageBreak;	  //automatic page breaking
 var $PageBreakTrigger;   //threshold used to trigger page breaks
-var $InHeader;           //flag set when processing header
-var $InFooter;           //flag set when processing footer
-var $ZoomMode;           //zoom display mode
-var $LayoutMode;         //layout display mode
-var $title;              //title
-var $subject;            //subject
-var $author;             //author
-var $keywords;           //keywords
-var $creator;            //creator
-var $AliasNbPages;       //alias for total number of pages
-var $PDFVersion;         //PDF version number
+var $InHeader;		   //flag set when processing header
+var $InFooter;		   //flag set when processing footer
+var $ZoomMode;		   //zoom display mode
+var $LayoutMode;		 //layout display mode
+var $title;			  //title
+var $subject;			//subject
+var $author;			 //author
+var $keywords;		   //keywords
+var $creator;			//creator
+var $AliasNbPages;	   //alias for total number of pages
+var $PDFVersion;		 //PDF version number
 
 /*******************************************************************************
-*                                                                              *
-*                               Public methods                                 *
-*                                                                              *
+*																			  *
+*							   Public methods								 *
+*																			  *
 *******************************************************************************/
 function FPDF($orientation='P', $unit='mm', $format='A4')
 {
@@ -1063,9 +1063,9 @@ function Output($name='', $dest='')
 }
 
 /*******************************************************************************
-*                                                                              *
-*                              Protected methods                               *
-*                                                                              *
+*																			  *
+*							  Protected methods							   *
+*																			  *
 *******************************************************************************/
 function _dochecks()
 {
