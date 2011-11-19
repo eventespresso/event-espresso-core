@@ -81,7 +81,7 @@ function event_espresso_display_eway_settings() {
 							<label for="eway_id">
 								<?php _e('eway I.D.', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="eway_id" size="35" value="<?php echo $eway_settings['eway_id']; ?>">
+							<input class="regular-text" type="text" name="eway_id" size="35" value="<?php echo $eway_settings['eway_id']; ?>">
 							<br />
 							<?php _e('(Typically 87654321)', 'event_espresso'); ?>
 						</li>
@@ -89,7 +89,7 @@ function event_espresso_display_eway_settings() {
 							<label for="eway_username">
 								<?php _e('eway username', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="eway_username" size="35" value="<?php echo $eway_settings['eway_username']; ?>">
+							<input class="regular-text" type="text" name="eway_username" size="35" value="<?php echo $eway_settings['eway_username']; ?>">
 							<br />
 							<?php _e('(Typically TestAccount)', 'event_espresso'); ?>
 						</li>
@@ -98,14 +98,14 @@ function event_espresso_display_eway_settings() {
 							<label for="button_url">
 								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'eway_button_image'); ?>
 							</label>
-							<input type="text" name="button_url" size="34" value="<?php echo (($eway_settings['button_url'] == '') ? '' : $eway_settings['button_url'] ); ?>" />
+							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo (($eway_settings['button_url'] == '') ? '' : $eway_settings['button_url'] ); ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
 <?php echo (($eway_settings['button_url'] == '') ? '<img src="' . $button_url . '" />' : '<img src="' . $eway_settings['button_url'] . '" />'); ?></li>
 						<li>
 							<label for="image_url">
 								<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'eway_image_url_info'); ?>
 							</label>
-							<input type="text" name="image_url" size="35" value="<?php echo $eway_settings['image_url']; ?>" />
+							<input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $eway_settings['image_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
 							<?php _e('(used for your business/personal logo on the eway page)', 'event_espresso'); ?>
 						</li>

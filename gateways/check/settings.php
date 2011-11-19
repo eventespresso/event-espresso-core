@@ -74,13 +74,13 @@ function event_espresso_display_check_payment_settings() {
 		<table width="90%" border="0">
 			<tr>
 				<td valign="top"><ul><li><label for="check_title"><?php _e('Title:', 'event_espresso'); ?></label><br />
-							<input type="text" name="check_title" size="30" value="<?php echo $check_payment_settings['check_title'] == '' ? __('Check/Money Order Payments', 'event_espresso') : stripslashes_deep($check_payment_settings['check_title']); ?>" />
+							<input class="regular-text" type="text" name="check_title" size="30" value="<?php echo $check_payment_settings['check_title'] == '' ? __('Check/Money Order Payments', 'event_espresso') : stripslashes_deep($check_payment_settings['check_title']); ?>" />
 						</li>
 						<li><label for="check_instructions"><?php _e('Payment Instructions:', 'event_espresso'); ?></label><br />
 							<textarea name="check_instructions" cols="30" rows="5"><?php echo trim($check_payment_settings['check_instructions']) == '' ? __('Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.', 'event_espresso') : stripslashes_deep($check_payment_settings['check_instructions']); ?></textarea>
 						</li></ul></td>
 				<td valign="top"><ul><li><label for="payable_to"><?php _e('Payable To:', 'event_espresso'); ?></label><br />
-							<input type="text" name="payable_to" size="30" value="<?php echo trim($check_payment_settings['payable_to']) == '' ? $org_options['organization'] : stripslashes_deep($check_payment_settings['payable_to']); ?>" />
+							<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo trim($check_payment_settings['payable_to']) == '' ? $org_options['organization'] : stripslashes_deep($check_payment_settings['payable_to']); ?>" />
 						</li>
 						<li><label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label><br />
 							<textarea name="payment_address" cols="30" rows="5"><?php

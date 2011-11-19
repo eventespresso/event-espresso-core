@@ -69,7 +69,7 @@ function event_espresso_display_ideal_settings() {
 								<?php _e('iDEAL (Mollie) partner id', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="ideal_mollie_partner_id" size="35" value="<?php echo $ideal_settings['ideal_mollie_partner_id']; ?>">
+							<input class="regular-text" type="text" name="ideal_mollie_partner_id" size="35" value="<?php echo $ideal_settings['ideal_mollie_partner_id']; ?>">
 							<br />
 						</li>
 						<li>

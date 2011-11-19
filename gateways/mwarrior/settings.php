@@ -79,21 +79,21 @@ function event_espresso_display_mwarrior_settings() {
 								<?php _e('MW Merchant UUID', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="mwarrior_id" size="35" value="<?php echo $mwarrior_settings['mwarrior_id']; ?>">
+							<input class="regular-text" type="text" name="mwarrior_id" size="35" value="<?php echo $mwarrior_settings['mwarrior_id']; ?>">
 						</li>
 						<li>
 							<label for="mwarrior_apikey">
 								<?php _e('MW API Key', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="mwarrior_apikey" size="35" value="<?php echo $mwarrior_settings['mwarrior_apikey']; ?>">
+							<input class="regular-text" type="text" name="mwarrior_apikey" size="35" value="<?php echo $mwarrior_settings['mwarrior_apikey']; ?>">
 						</li>
 						<li>
 							<label for="mwarrior_passphrase">
 								<?php _e('MW API Passphrase', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="mwarrior_passphrase" size="35" value="<?php echo $mwarrior_settings['mwarrior_passphrase']; ?>">
+							<input class="regular-text" type="text" name="mwarrior_passphrase" size="35" value="<?php echo $mwarrior_settings['mwarrior_passphrase']; ?>">
 						</li>
 						<li>
 							<label for="currency_format">
@@ -132,14 +132,14 @@ function event_espresso_display_mwarrior_settings() {
 								<?php _e('Button Image URL: ', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="button_url" size="34" value="<?php echo (($mwarrior_settings['button_url'] == '') ? $button_url : $mwarrior_settings['button_url'] ); ?>" />
+							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo (($mwarrior_settings['button_url'] == '') ? $button_url : $mwarrior_settings['button_url'] ); ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
 						<li>
 							<label for="image_url">
 								<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="image_url" size="35" value="<?php echo $mwarrior_settings['image_url']; ?>" />
+							<input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $mwarrior_settings['image_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=image_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
 							<?php _e('(used for your business/personal logo on the Merchant Warrior page)', 'event_espresso'); ?>
 						</li>

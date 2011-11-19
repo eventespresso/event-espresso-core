@@ -80,21 +80,21 @@ function event_espresso_display_paypal_pro_settings() {
 							<label for="paypal_id">
 								<?php _e('Paypal PRO email', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="paypal_pro_email" size="35" value="<?php echo empty($paypal_pro_settings['paypal_pro_email']) ? '' : $paypal_pro_settings['paypal_pro_email']; ?>">
+							<input class="regular-text" type="text" name="paypal_pro_email" size="35" value="<?php echo empty($paypal_pro_settings['paypal_pro_email']) ? '' : $paypal_pro_settings['paypal_pro_email']; ?>">
 						</li>
 						
 													<li>
 							<label for="paypal_id">
 								<?php _e('Paypal API username', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="paypal_api_username" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_username']) ? '' : $paypal_pro_settings['paypal_api_username']; ?>">
+							<input class="regular-text" type="text" name="paypal_api_username" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_username']) ? '' : $paypal_pro_settings['paypal_api_username']; ?>">
 						</li>
 						
 													<li>
 							<label for="paypal_id">
 								<?php _e('Paypal API password', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="paypal_api_password" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_password']) ? '' : $paypal_pro_settings['paypal_api_password']; ?>">
+							<input class="regular-text" type="text" name="paypal_api_password" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_password']) ? '' : $paypal_pro_settings['paypal_api_password']; ?>">
 
 						</li>
 						
@@ -102,7 +102,7 @@ function event_espresso_display_paypal_pro_settings() {
 							<label for="paypal_id">
 								<?php _e('Paypal API signature', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="paypal_api_signature" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_signature']) ? '' : $paypal_pro_settings['paypal_api_signature']; ?>">
+							<input class="regular-text" type="text" name="paypal_api_signature" size="35" value="<?php echo empty($paypal_pro_settings['paypal_api_signature']) ? '' : $paypal_pro_settings['paypal_api_signature']; ?>">
 													</li>
 						
 													<li>

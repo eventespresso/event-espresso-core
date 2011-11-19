@@ -77,14 +77,14 @@ function event_espresso_display_quickpay_settings() {
 	<?php _e('quickpay I.D.', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="quickpay_merchantid" size="35" value="<?php echo $quickpay_settings['quickpay_merchantid']; ?>">
+							<input class="regular-text" type="text" name="quickpay_merchantid" size="35" value="<?php echo $quickpay_settings['quickpay_merchantid']; ?>">
 						</li>
 						<li>
 							<label for="quickpay_md5secret">
 	<?php _e('quickpay md5 secret:', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="quickpay_md5secret" size="35" value="<?php echo $quickpay_settings['quickpay_md5secret']; ?>">
+							<input class="regular-text" type="text" name="quickpay_md5secret" size="35" value="<?php echo $quickpay_settings['quickpay_md5secret']; ?>">
 						</li>
 												<li>
 													<label for="quickpay_language">Payment Window Language</label>

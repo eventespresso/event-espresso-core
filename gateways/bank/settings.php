@@ -80,7 +80,7 @@ function event_espresso_display_bank_deposit_settings() {
 	<?php _e('Title:', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="bank_title" size="30" value="<?php echo $bank_deposit_settings['bank_title'] == '' ? __('Electronic Funds Transfers', 'event_espresso') : $bank_deposit_settings['bank_title']; ?>" />
+							<input class="regular-text" type="text" name="bank_title" size="30" value="<?php echo $bank_deposit_settings['bank_title'] == '' ? __('Electronic Funds Transfers', 'event_espresso') : $bank_deposit_settings['bank_title']; ?>" />
 						</li>
 						<li>
 							<label for="bank_instructions">
@@ -96,21 +96,21 @@ function event_espresso_display_bank_deposit_settings() {
 	<?php _e('Name on Account:', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="account_name" size="30" value="<?php echo trim($bank_deposit_settings['account_name']) ?>" />
+							<input class="regular-text" type="text" name="account_name" size="30" value="<?php echo trim($bank_deposit_settings['account_name']) ?>" />
 						</li>
 						<li>
 							<label for="bank_account">
 	<?php _e('Bank Account#:', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="bank_account" size="30" value="<?php echo trim($bank_deposit_settings['bank_account']) ?>" />
+							<input class="regular-text" type="text" name="bank_account" size="30" value="<?php echo trim($bank_deposit_settings['bank_account']) ?>" />
 						</li>
 						<li>
 							<label for="bank_name">
 	<?php _e('Bank Name:', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="bank_name" size="30" value="<?php echo trim($bank_deposit_settings['bank_name']) ?>" />
+							<input class="regular-text" type="text" name="bank_name" size="30" value="<?php echo trim($bank_deposit_settings['bank_name']) ?>" />
 						</li>
 						<li>
 							<label for="bank_address">

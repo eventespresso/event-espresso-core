@@ -108,7 +108,7 @@ function event_espresso_invoice_payment_settings(){
 						break;
 						
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_invoice_payment=true#invoice\';" class="red_alert pointer"><strong>' . __('Deactivate Invoice Payments?','event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_invoice_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Invoice Payments?','event_espresso') . '</strong></li>';
 							event_espresso_display_invoice_payment_settings();
 						break;
 					}
@@ -150,7 +150,7 @@ function event_espresso_display_invoice_payment_settings(){
 						<label for="pdf_title">
 							<?php _e('PDF Title (top right of the invoice):', 'event_espresso'); ?>
 						</label>
-						<input type="text" name="pdf_title" size="30" value="<?php echo empty($payment_settings['invoice']['pdf_title']) ? __('Invoice','event_espresso') : trim(stripslashes_deep($payment_settings['invoice']['pdf_title'])) ;?>" />
+						<input class="regular-text" type="text" name="pdf_title" size="30" value="<?php echo empty($payment_settings['invoice']['pdf_title']) ? __('Invoice','event_espresso') : trim(stripslashes_deep($payment_settings['invoice']['pdf_title'])) ;?>" />
 					</li><?php */?>
 					<li>
 						<label for="base-invoice-select" <?php echo $styled ?>>
@@ -221,7 +221,7 @@ function event_espresso_display_invoice_payment_settings(){
 						<label for="invoice_title">
 							<?php _e('Invoice Title:', 'event_espresso'); ?>
 						</label>
-						<input type="text" name="invoice_title" size="30" value="<?php echo empty($payment_settings['invoice']['invoice_title']) ? __('Invoice Payments','event_espresso') : stripslashes_deep($payment_settings['invoice']['invoice_title']);?>" />
+						<input class="regular-text" type="text" name="invoice_title" size="30" value="<?php echo empty($payment_settings['invoice']['invoice_title']) ? __('Invoice Payments','event_espresso') : stripslashes_deep($payment_settings['invoice']['invoice_title']);?>" />
 					</li>
 					<li>
 						<label for="page_instructions">
@@ -233,7 +233,7 @@ function event_espresso_display_invoice_payment_settings(){
 						<label for="payable_to">
 							<?php _e('Payable To:', 'event_espresso'); ?>
 						</label>
-						<input type="text" name="payable_to" size="30" value="<?php echo empty($payment_settings['invoice']['payable_to']) ? trim($org_options['organization']) : trim(stripslashes_deep($payment_settings['invoice']['payable_to'])) ;?>" />
+						<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo empty($payment_settings['invoice']['payable_to']) ? trim($org_options['organization']) : trim(stripslashes_deep($payment_settings['invoice']['payable_to'])) ;?>" />
 					</li>
 					<li>
 						<label for="payment_address">
@@ -299,5 +299,3 @@ echo trim($payment_settings['invoice']['payment_address']);
 </script>
 <?php
 }
-
-

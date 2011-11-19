@@ -82,14 +82,14 @@ function event_espresso_display_firstdata_connect_2_settings() {
 							<label>
 								<?php _e('First Data Storename', 'event_espresso'); ?>
 							</label>
-							<input type="text" name="storename" size="35" value="<?php echo $firstdata_connect_2_settings['storename']; ?>">
+							<input class="regular-text" type="text" name="storename" size="35" value="<?php echo $firstdata_connect_2_settings['storename']; ?>">
 						</li>
 						
 						<li>
 							<label>
 								<?php _e('First Data Shared Secret', 'event_espresso'); ?>
 							</label>							
-							<input type="text" name="sharedSecret" size="35" value="<?php echo $firstdata_connect_2_settings['sharedSecret']; ?>">
+							<input class="regular-text" type="text" name="sharedSecret" size="35" value="<?php echo $firstdata_connect_2_settings['sharedSecret']; ?>">
 						</li>
 						
 						<li>
@@ -119,7 +119,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 								<?php _e('Button Image URL: ', 'event_espresso'); ?>
 							</label>
 							<br />
-							<input type="text" name="button_url" size="34" value="<?php echo $firstdata_connect_2_settings['button_url']; ?>" />
+							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $firstdata_connect_2_settings['button_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
 						</li>
 						

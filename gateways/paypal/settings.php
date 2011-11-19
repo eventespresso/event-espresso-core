@@ -34,10 +34,21 @@ function event_espresso_paypal_payment_settings() {
 			$notices['updates'][] = __('PayPal Payment Settings Updated!', 'event_espresso'). ' ' .$espresso_wp_user;
 		}
 	}
-	?>
+	
+	//Open or close the postbox div
+	if ($payment_settings['paypal']['active'] == false || isset($_REQUEST['deactivate_paypal']) && $_REQUEST['deactivate_paypal'] == 'true' ){
+		$postbox_style = 'closed';
+	}
+	if (isset($_REQUEST['reactivate_paypal']) && $_REQUEST['reactivate_paypal'] == 'true'){
+		$postbox_style = '';
+	}
+	if (isset($_REQUEST['activate_paypal']) && $_REQUEST['activate_paypal'] == 'true'){
+		$postbox_style = '';
+	}
+?>
 <a name="paypal" id="paypal"></a>
 <div class="metabox-holder">
-	<div class="postbox">
+	<div class="postbox <?php echo $postbox_style; ?>">
 		<div title="Click to toggle" class="handlediv"><br />
 		</div>
 		<h3 class="hndle">
@@ -85,7 +96,7 @@ function event_espresso_paypal_payment_settings() {
 							break;
 						
 						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_paypal=true#paypal\';" class="red_alert pointer"><strong>' . __('Deactivate PayPal Standard?', 'event_espresso') . '</strong></li>';
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_paypal=true\';" class="red_alert pointer"><strong>' . __('Deactivate PayPal Standard?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_paypal_settings();
 	
 							break;
@@ -121,7 +132,7 @@ function event_espresso_display_paypal_settings() {
 						<label for="paypal_id">
 							<?php _e('Paypal I.D.', 'event_espresso'); ?>
 						</label>
-						<input type="text" name="paypal_id" size="35" value="<?php echo $payment_settings['paypal']['paypal_id']; ?>"><br />
+						<input class="regular-text" type="text" name="paypal_id" size="35" value="<?php echo $payment_settings['paypal']['paypal_id']; ?>"><br />
 						<?php _e('(Typically payment@yourdomain.com)', 'event_espresso'); ?>
 					</li>
 					<li>
@@ -142,14 +153,14 @@ function event_espresso_display_paypal_settings() {
 							<?php _e('Button Image URL: ', 'event_espresso'); ?>
 						</label>
 
-						<input type="text" name="button_url" size="34" value="<?php echo (($payment_settings['paypal']['button_url'] == '') ? $button_url : $payment_settings['paypal']['button_url'] ); ?>" />
+						<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo (($payment_settings['paypal']['button_url'] == '') ? $button_url : $payment_settings['paypal']['button_url'] ); ?>" />
 						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
 					<li>
 						<label for="image_url">
 							<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?>
 						</label>
 
-						<input type="text" name="image_url" size="35" value="<?php echo $payment_settings['paypal']['image_url']; ?>" />
+						<input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $payment_settings['paypal']['image_url']; ?>" />
 						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=image_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
 						<?php _e('(used for your business/personal logo on the PayPal page)', 'event_espresso'); ?>
 					</li>

@@ -70,14 +70,14 @@ function event_espresso_display_paytrace_settings() {
 							<?php _e('Paytrace User ID:', 'event_espresso'); ?>
 						</label>
 						<br />
-						<input type="text" name="paytrace_user_id" size="35" value="<?php echo $paytrace_settings['paytrace_user_id']; ?>">
+						<input class="regular-text" type="text" name="paytrace_user_id" size="35" value="<?php echo $paytrace_settings['paytrace_user_id']; ?>">
 					</li>
 					<li>
 						<label for="paytrace_user_pass">
 							<?php _e('Paytrace User Password:', 'event_espresso'); ?>
 						</label>
 						<br />
-						<input type="text" name="paytrace_user_pass" size="35" value="<?php echo $paytrace_settings['paytrace_user_pass']; ?>">
+						<input class="regular-text" type="text" name="paytrace_user_pass" size="35" value="<?php echo $paytrace_settings['paytrace_user_pass']; ?>">
 					</li>
 				</ul></td>
 		</tr>

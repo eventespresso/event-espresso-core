@@ -74,7 +74,7 @@ function event_espresso_display_firstdata_settings() {
 								<?php _e('First Data Store Number', 'event_espresso'); ?>
 							</label>
 							
-							<input type="text" name="firstdata_store_id" size="35" value="<?php echo $firstdata_settings['firstdata_store_id']; ?>">
+							<input class="regular-text" type="text" name="firstdata_store_id" size="35" value="<?php echo $firstdata_settings['firstdata_store_id']; ?>">
 							<br />
 						</li>
 						<li>
