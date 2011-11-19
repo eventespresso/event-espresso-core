@@ -1,5 +1,4 @@
 <?php
-
 function event_espresso_authnet_payment_settings() {
 	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
 	
@@ -98,6 +97,9 @@ function event_espresso_authnet_payment_settings() {
 	</div>
 </div>
 <?php
+	//This line keeps the notices from displaying twice
+	if ( did_action( 'espresso_admin_notices' ) == false )
+		do_action('espresso_admin_notices');
 }
 
 //Authorize.net SIM Settings Form
