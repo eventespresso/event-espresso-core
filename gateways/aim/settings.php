@@ -128,17 +128,12 @@ function event_espresso_display_authnet_aim_settings() {
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#authnet_aim">
 	<table class="form-table">
 		<tbody>
-			<tr>
-				<th><strong style="color:#F00">
-					<?php _e('WARNING!', 'event_espresso'); ?>
-					</strong> </th>
-				<td><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></td>
-			</tr>
+			
 			<tr>
 				<th><label for="authnet_aim_login_id">
 						<?php _e('Authorize.net AIM Login I.D.', 'event_espresso'); ?>
 					</label></th>
-				<td><input class="regular-text" type="text" name="authnet_aim_login_id" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_login_id']; ?>">
+				<td><input class="regular-text" type="text" name="authnet_aim_login_id" id="authnet_aim_login_id" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_login_id']; ?>">
 					<br />
 					<span class="description">
 					<?php _e('Please enter your Authorize.net Login I.D.', 'event_espresso'); ?>
@@ -148,7 +143,7 @@ function event_espresso_display_authnet_aim_settings() {
 				<th><label for="authnet_aim_transaction_key">
 						<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?>
 					</label></th>
-				<td><input class="regular-text" type="text" name="authnet_aim_transaction_key" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_transaction_key']; ?>">
+				<td><input class="regular-text" type="text" name="authnet_aim_transaction_key" id="authnet_aim_transaction_key" size="35" value="<?php echo $payment_settings['authnet_aim']['authnet_aim_transaction_key']; ?>">
 					<br />
 					<span class="description">
 					<?php _e('Please enter your Authorize.net Transaction Key.', 'event_espresso'); ?>
@@ -161,12 +156,16 @@ function event_espresso_display_authnet_aim_settings() {
 					</label></th>
 				<td><?php echo select_input('use_sandbox', $values, empty($payment_settings['authnet_aim']['use_sandbox']) ? 'N' : $payment_settings['authnet_aim']['use_sandbox']);?></td>
 			</tr>
+			
 		</tbody>
 	</table>
 	<p>
 		<input type="hidden" name="update_authnet_aim" value="update_authnet_aim">
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Authorize.net AIM Settings', 'event_espresso') ?>" id="save_authnet_aim_settings" />
 	</p>
+	<p><strong style="color:#F00">
+					<?php _e('WARNING!', 'event_espresso'); ?>
+					</strong><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></p>
 </form>
 <div id="authnet_aim_sandbox" style="display:none">
 	<h2>
