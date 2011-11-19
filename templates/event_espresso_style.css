@@ -5,57 +5,57 @@
 /*** Please move this file to: 'wp-content/uploads/espresso/templates directory before editing ****/
 
 /**
-    Multi registration form style
+	Multi registration form style
 */
 
 #event_espresso_checkout_form {
-    border: 2px solid #e8e8e8;
-    margin: 5px 0;
+	border: 2px solid #e8e8e8;
+	margin: 5px 0;
 
-    padding: 5px;
+	padding: 5px;
 
 }
 
 .event_total_price{
 
-    color: #333333;
-    font-size: 25px;
-    float: right;
-    text-align: right;
-    padding:5px;
-    width: 100px;
+	color: #333333;
+	font-size: 25px;
+	float: right;
+	text-align: right;
+	padding:5px;
+	width: 100px;
 
 }
 
 .multi_reg_cart_block{
-    margin:5px;
-    border: 2px solid #d1d1d1;
-    padding:5px;
+	margin:5px;
+	border: 2px solid #d1d1d1;
+	padding:5px;
 }
 
 
 #event_espresso_coupon_wrapper {
-    margin:5px;
-    border: 2px solid #d1d1d1;
-    padding:5px;
-    overflow:hidden;
-    text-align: right;
+	margin:5px;
+	border: 2px solid #d1d1d1;
+	padding:5px;
+	overflow:hidden;
+	text-align: right;
 }
 #event_espresso_total_wrapper {
-    margin:5px;
-    border: 2px solid #d1d1d1;
-    padding:5px;
-    overflow:hidden;
+	margin:5px;
+	border: 2px solid #d1d1d1;
+	padding:5px;
+	overflow:hidden;
 }
 
 #event_espresso_shopping_cart table{
-    width:70%;
-    text-align: left;
+	width:70%;
+	text-align: left;
 }
 
 #event_espresso_registration_form {
-    /*background-color:  #f4f3f2;*/
-    margin: 10px 3px;
+	/*background-color:  #f4f3f2;*/
+	margin: 10px 3px;
 }
 /**
 * End Multi registration form style
@@ -82,13 +82,13 @@
 .event_espresso_form_wrapper form fieldset div { padding: 0.25em 0; }
 .event_espresso_form_wrapper label,
 .event_espresso_form_wrapper span.label {
-    margin-right: 10px;
-    padding-right: 10px;
-    width: 150px;
-    display: block;
-    float: left;
-    text-align: right;
-    position: relative; }
+	margin-right: 10px;
+	padding-right: 10px;
+	width: 150px;
+	display: block;
+	float: left;
+	text-align: right;
+	position: relative; }
 .event_espresso_form_wrapper label.error,
 .event_espresso_form_wrapper span.error { float:right;color: #C00; width: auto;}
 .event_espresso_form_wrapper label em,
@@ -102,8 +102,8 @@
 .event_espresso_form_wrapper div.controlset div { margin-left: 170px; }
 .event_espresso_form_wrapper div.buttonrow { margin-left: 180px; }
 .submit {
-    margin:5px;
-    padding: 0.3em;
+	margin:5px;
+	padding: 0.3em;
 
 }
 .event_form_field{
@@ -128,37 +128,37 @@
 }
 
 .event_espresso_form_wrapper ul{
-    margin-left:125px;
+	margin-left:125px;
 }
 .event_espresso_form_wrapper ul li{
-    list-style: none;
+	list-style: none;
 	margin-left:40px;
 }
 
 .event_espresso_form_wrapper h1{
 
-    font-size: 1.5em;
-    padding: 5px;
-    color:  #333;
+	font-size: 1.5em;
+	padding: 5px;
+	color:  #333;
 }
 .event_espresso_form_wrapper h2{
 
-    font-size: 1.3em;
-    padding: 5px;
-    color:  #279ef1;
+	font-size: 1.3em;
+	padding: 5px;
+	color:  #279ef1;
 }
 
 .event_espresso_form_wrapper h3{
 
-    font-size: 1.1em;
-    padding: 5px;
-    color: #333;
+	font-size: 1.1em;
+	padding: 5px;
+	color: #333;
 }
 
 .event_espresso_form_wrapper .copy_dropdown_wrapper{
 
-    padding: 10px;
-    color: #979da2;
+	padding: 10px;
+	color: #979da2;
 
 }
 
@@ -167,35 +167,35 @@
 
 
 table.price_list{
-    margin: 10px auto;
-    width: 90%;
-    border: 1px;
-    font-size: 1.1em;
+	margin: 10px auto;
+	width: 90%;
+	border: 1px;
+	font-size: 1.1em;
 }
 table.price_list tr{
-    background-color: #c7e9c8;
+	background-color: #c7e9c8;
 }
 table.price_list td{
-    padding: 5px;
+	padding: 5px;
 }
 table.price_list td.price_type{
-    width:150px;
+	width:150px;
 
 }
 table.price_list td.price{
-    width:150px;
+	width:150px;
 
 }
 table.price_list td.selection{
-    width:20px;
+	width:20px;
 
 }
 
 pre
 {
-    height:200px;
-    overflow:auto;
-    border:2px solid orange;
+	height:200px;
+	overflow:auto;
+	border:2px solid orange;
 }
 
 .pending_event{

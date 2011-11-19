@@ -179,69 +179,69 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 
 							$cart_link = event_espresso_cart_link($params);
 						}
-        if ($display_reg_form == 'Y') {
-            ?>
+		if ($display_reg_form == 'Y') {
+			?>
   <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
-    <?php _e('Register for Event', 'event_espresso'); ?>
-    </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
+	<?php _e('Register for Event', 'event_espresso'); ?>
+	</a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
   <?php } else { ?>
   <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
-    <?php _e('View Details', 'event_espresso'); ?>
-    </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
+	<?php _e('View Details', 'event_espresso'); ?>
+	</a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
   <?php
-        }
-    }
-    ?>
+		}
+	}
+	?>
   <?php ######### event list event popup markup ########### ?>
   <div style="display: none;">
-    <div id="event-thumb-detail<?php echo $event_id ?>" class="pop-help ee-tb-popups events-lists-popups" >
-      <div class="TB-ee-frame ui-widget">
-        <h2 class="tb-ee-event-title ui-widget-header ui-corner-top"><?php echo stripslashes_deep($event_name) ?> <span class="event-status"><?php echo $status_display ?></span></h2>
-        <!--<div class="ui-widget-content ui-corner-bottom">-->
+	<div id="event-thumb-detail<?php echo $event_id ?>" class="pop-help ee-tb-popups events-lists-popups" >
+	  <div class="TB-ee-frame ui-widget">
+		<h2 class="tb-ee-event-title ui-widget-header ui-corner-top"><?php echo stripslashes_deep($event_name) ?> <span class="event-status"><?php echo $status_display ?></span></h2>
+		<!--<div class="ui-widget-content ui-corner-bottom">-->
 				<img class="tb-ee-event-thumb" src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" />
-        <div class="tb-ee-event-desc"> <?php echo espresso_format_content($event_desc); ?> </div>
-        <div class="event-dates-times">
-          <h4 class="section-title">
-            <?php _e('Event Dates &amp; Times:', 'event_espresso'); ?>
-          </h4>
-          <p><span>
-            <?php _e('Date:', 'event_espresso'); ?>
-            </span> <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
-        </div>
-        <?php if($venue_address) {?>
-        <div class="event-address-block">
-          <h4 class="section-title">
-            <?php _e('Venue:', 'event_espresso'); ?>
-          </h4>
-          <?php if($venue_address) {?>
-          <p><?php echo $venue_address ?></p>
-          <?php } ?>
-          <?php if($venue_address2){ ?>
-          <p><?php echo $venue_address2  ?></p>
-          <?php } ?>
-          <?php if($venue_city) {?>
-          <p><?php echo $venue_city ?></p>
-          <?php } ?>
-          <p class="google-map-link"><?php echo $google_map_link; ?></p>
-        </div>
-        <?php }
-        if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') || espresso_show_social_media($event_id, 'google') || espresso_show_social_media($event_id, 'stumbleupon') ){ ?>
-            <div class="ee-social-media-buttons">
-            <span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> 
-            <span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
-            <span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
-            <span class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></span>
-            </div>
+		<div class="tb-ee-event-desc"> <?php echo espresso_format_content($event_desc); ?> </div>
+		<div class="event-dates-times">
+		  <h4 class="section-title">
+			<?php _e('Event Dates &amp; Times:', 'event_espresso'); ?>
+		  </h4>
+		  <p><span>
+			<?php _e('Date:', 'event_espresso'); ?>
+			</span> <?php echo event_date_display($start_date, get_option('date_format')) ?></p>
+		</div>
+		<?php if($venue_address) {?>
+		<div class="event-address-block">
+		  <h4 class="section-title">
+			<?php _e('Venue:', 'event_espresso'); ?>
+		  </h4>
+		  <?php if($venue_address) {?>
+		  <p><?php echo $venue_address ?></p>
+		  <?php } ?>
+		  <?php if($venue_address2){ ?>
+		  <p><?php echo $venue_address2  ?></p>
+		  <?php } ?>
+		  <?php if($venue_city) {?>
+		  <p><?php echo $venue_city ?></p>
+		  <?php } ?>
+		  <p class="google-map-link"><?php echo $google_map_link; ?></p>
+		</div>
+		<?php }
+		if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') || espresso_show_social_media($event_id, 'google') || espresso_show_social_media($event_id, 'stumbleupon') ){ ?>
+			<div class="ee-social-media-buttons">
+			<span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> 
+			<span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
+			<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
+			<span class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></span>
+			</div>
   <?php  
 		}
 	?>
-        <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
-          <?php _e('Register for this Event', 'event_espresso'); ?>
-          </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
-      	<!--</div>-->
+		<p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
+		  <?php _e('Register for this Event', 'event_espresso'); ?>
+		  </a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
+	  	<!--</div>-->
 			</div>
-    </div>
-    <!-- / .pop-help --> 
+	</div>
+	<!-- / .pop-help --> 
   </div>
   <!-- / hide thickbox content --> 
   </div><!-- / .event-data-display -->
