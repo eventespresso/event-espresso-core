@@ -1,14 +1,14 @@
 <?php
 function espresso_charts() {
-    global $wpdb, $org_options,$espresso_premium;
+	global $wpdb, $org_options,$espresso_premium;
 	$event_id = $_REQUEST['event_id'];
 ?>
 <div class="metabox-holder">
   <div class="postbox">
-    <h3>
-      <?php echo espresso_event_list_attendee_title($_REQUEST['event_id']); ?>
-    </h3>
-    <div class="inside">
+	<h3>
+	  <?php echo espresso_event_list_attendee_title($_REQUEST['event_id']); ?>
+	</h3>
+	<div class="inside">
 <?php 
 	if ($espresso_premium != true){
 		echo '<p><strong>' . __('Graphical reporting charts are now available in the premium versions.', 'event_espresso') . '</strong> <a href="http://eventespresso.com/download/" target="_blank">' . __('Upgrade Now!', 'event_espresso') . '</a></p>';
@@ -19,8 +19,8 @@ function espresso_charts() {
 		echo espresso_chart_display($event_id, 'total_incomplete');
 	}
 ?>
-      <div style="clear:both"></div>
-    </div>
+	  <div style="clear:both"></div>
+	</div>
   </div>
 </div>
 <?php

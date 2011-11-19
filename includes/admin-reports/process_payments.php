@@ -26,9 +26,9 @@ function event_process_payments() {
 
 	<div style="float:right; margin:10px 20px;">
 	  <ul>
-	    <li><button style="margin-left:20px" class="button-primary" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&id=" . $event_id . "&export=report&action=payment&all_events=true"; ?>'" >
+		<li><button style="margin-left:20px" class="button-primary" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&id=" . $event_id . "&export=report&action=payment&all_events=true"; ?>'" >
 	<?php _e('Export All Event Attendees to Excel', 'event_espresso'); ?>
-	      </button>
+		  </button>
 			</li>
 		</ul>
 	</div>
@@ -92,7 +92,7 @@ function event_process_payments() {
 								<td><?php echo $status['display'] ?></td>
 								<td><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees_slash_reg_limit'); ?></td>
 								<td><a href="admin.php?page=attendees&amp;event_id=<?php echo $event_id ?>&amp;event_admin_reports=list_attendee_payments" title="<?php _e('View Attendees', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" /></a> | <a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Event', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/calendar_edit.png" width="16" height="16" alt="<?php _e('Edit Event', 'event_espresso'); ?>" /></a> | <a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;id=" . $event_id . "&amp;export=report&action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><img alt="<?php _e('Export to Excel', 'event_espresso'); ?>" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/excel_icon.png" width="16" height="16"  /></a> | <a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&id=" . $event_id . "&export=report&action=payment&type=csv"; ?>'" title="<?php _e('Export to CSV', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/csv_icon_sm.gif" width="15" height="16" alt="<?php _e('Export to CSV', 'event_espresso'); ?>" /></a>
-			            | <a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Email Event Attendees', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_go.png" width="16" height="16" alt="<?php _e('Email Event Attendees', 'event_espresso'); ?>" /></a></td>
+						| <a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Email Event Attendees', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_go.png" width="16" height="16" alt="<?php _e('Email Event Attendees', 'event_espresso'); ?>" /></a></td>
 							</tr>
 			<?php
 		}

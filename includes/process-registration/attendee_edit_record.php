@@ -27,10 +27,10 @@ function attendee_edit_record() {
 	$additional_attendees = NULL;
 
 	$results = $wpdb->get_results("SELECT  t1.*, t2.event_name, t2.question_groups, t2.event_meta FROM " . EVENTS_ATTENDEE_TABLE . " t1
-                 JOIN " . EVENTS_DETAIL_TABLE . " t2
-                 ON t1.event_id = t2.id
-                 WHERE t1.id = '" . $id . "' AND t1.registration_id = '" . $registration_id . "'
-                 ORDER BY t1.id");
+				 JOIN " . EVENTS_DETAIL_TABLE . " t2
+				 ON t1.event_id = t2.id
+				 WHERE t1.id = '" . $id . "' AND t1.registration_id = '" . $registration_id . "'
+				 ORDER BY t1.id");
 
 	foreach ($results as $result) {
 		if ($counter == 0) {
@@ -119,9 +119,9 @@ function attendee_edit_record() {
 		if(!empty($_POST['fname']))   $fname   = $_POST['fname'];
 		if(!empty($_POST['lname']))   $lname   = $_POST['lname'];
 		if(!empty($_POST['address'])) $address = $_POST['address'];
-		if(!empty($_POST['city']))    $city    = $_POST['city'];
+		if(!empty($_POST['city']))	$city	= $_POST['city'];
 		if(!empty($_POST['state']))   $state   = $_POST['state'];
-		if(!empty($_POST['zip']))     $zip     = $_POST['zip'];
+		if(!empty($_POST['zip']))	 $zip	 = $_POST['zip'];
 		if(!empty($_POST['phone']))   $phone   = $_POST['phone'];
 		if(!empty($_POST['email']))   $email   = $_POST['email'];
 		$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET fname='$fname', lname='$lname', address='$address', city='$city', state='$state', zip='$zip', phone='$phone', email='$email' WHERE id ='$id'";

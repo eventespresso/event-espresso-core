@@ -137,7 +137,7 @@ if($event_meta['enable_for_gmap'] !== 'N') {
 		$html .= 'mapTypeId: google.maps.MapTypeId.ROADMAP,};';
 		$html .= 'map_' . $event_id . '= new google.maps.Map(document.getElementById("map_canvas_' . $event_id .'"), myOptions);';
 		$html .= 'return false;';
-		$html .= '}; ';     
+		$html .= '}; ';	 
 		$html .= 'function showAddress_' . $event_id .'(address) {';
 		$html .= 'geocoder.geocode( { \'address\': address}, function(results, status) {';
 		$html .= 'if (status == google.maps.GeocoderStatus.OK) {';
@@ -151,7 +151,7 @@ if($event_meta['enable_for_gmap'] !== 'N') {
 		$html .= '}';
 		$html .= '});';
 		$html .= 'return false;';
-		$html .= '}';      
+		$html .= '}';	  
 
 		$html .= 'jQuery(document).ready( function() { initialize_' . $event_id .'(); showAddress_' . $event_id .'(\''.$event_location. '\'); } );';
 

@@ -82,14 +82,14 @@ if ($_REQUEST['action'] == 'edit'){require_once("edit_staff.php");edit_event_sta
 	//I am not sure what this block of code is supposed to do. I think it was added for SMW??
 	/*$limitstaff = false;
 	global $espresso_manager;
-    if( function_exists('espresso_member_data') ){
+	if( function_exists('espresso_member_data') ){
 		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_group_admin' ) ){
 			if(	$espresso_manager['event_manager_staff'] == "Y" ){
 				$limitstaff = true;
 			}
 		}else if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager') ){
 			$limitstaff = true;
-	    }
+		}
 	}
 	if( $limitstaff ){
 		$sql .= " JOIN $wpdb->users u on u.ID = p.wp_user WHERE p.wp_user = ".$current_user->ID;

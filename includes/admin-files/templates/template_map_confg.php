@@ -65,7 +65,7 @@ global $wpdb, $org_options, $notices;
   
  <div id="icon-options-event" class="icon32"> </div>
  <h2>
-    <?php _e('Event Espresso - Event Map Settings','event_espresso'); ?>
+	<?php _e('Event Espresso - Event Map Settings','event_espresso'); ?>
  </h2>
 	
 <?php do_action('espresso_admin_notices'); ?>
@@ -90,10 +90,10 @@ global $wpdb, $org_options, $notices;
 									</h3>
 									<div class="inside">
 										<div class="padding">  
-             
+			 
 
-            
-            
+			
+			
 											<?php
 											if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_gmaps_settings.php')) {
 											
@@ -105,14 +105,14 @@ global $wpdb, $org_options, $notices;
 										 <p class="submit-buttons">
 												<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_1" />
 											</p>  
-        
+		
 											 </div><!-- / .padding -->
 										 </div><!-- / .inside -->
 									 </div><!-- / .postbox -->
-								 </div><!-- / .metabox-holder -->        
-    <!-- #### end general map config settings #### -->
-    
-    <!-- #### Map Shortcode examples #### -->   
+								 </div><!-- / .metabox-holder -->		
+	<!-- #### end general map config settings #### -->
+	
+	<!-- #### Map Shortcode examples #### -->   
 								<?php /*?><div class="metabox-holder">
 									<div class="postbox">
 										<div title="Click to toggle" class="handlediv"><br /></div>
@@ -120,36 +120,36 @@ global $wpdb, $org_options, $notices;
 												<?php _e('Map Shortcodes ', 'event_espresso'); ?>
 										</h3>
 										<div class="inside">
-											<div class="padding">    
-            <p class="section-heading"><?php _e('Example map shortcodes ', 'event_espresso') ?><a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=map_shortcode_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a></p>  
-            
-            
-              <ul id="event_espresso-map-shortcodes">
+											<div class="padding">	
+			<p class="section-heading"><?php _e('Example map shortcodes ', 'event_espresso') ?><a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=map_shortcode_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" alt="" /></a></p>  
+			
+			
+			  <ul id="event_espresso-map-shortcodes">
 
 														  <li>Map shortcode examples - or display in thickbox?</li>
 
-              </ul>
+			  </ul>
 
-            
+			
 											</div><!-- / .padding -->
 										</div><!-- / .inside -->
 									</div><!-- / .postbox -->
-								</div><!-- / .metabox-holder -->    
-    <!-- #### end map shortcodes examples #### -->
+								</div><!-- / .metabox-holder -->	
+	<!-- #### end map shortcodes examples #### -->
 
 
 					
 					
-																			    
+																				
 	<?php include_once('templates_help.php'); ?><?php */?>
 							
 							<?php  // create our nonces and do our form submit ?>
 							<?php wp_nonce_field( 'espresso_form_check', 'ee_maps_update' ); ?>
-     	 <input type="hidden" name="update_org" value="update" />
+	 	 <input type="hidden" name="update_org" value="update" />
 						</form>
 					
 					</div><!-- / .meta-box-sortables -->
-    </div><!-- / #post-body-content -->
+	</div><!-- / #post-body-content -->
 			</div><!-- / #post-body -->
 		</div><!-- / #poststuff -->
 	</div><!-- / #wrap -->

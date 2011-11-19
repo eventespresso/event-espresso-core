@@ -38,30 +38,30 @@ function event_newsletter($event_id=0){
   <input type="hidden" name="action" value="send_newsletter"><p><strong><?php _e('Use a <a href="admin.php?page=event_emails">pre-existing email</a>? ', 'event_espresso');?></strong> <?php echo espresso_db_dropdown(id, email_name, EVENTS_EMAIL_TABLE, email_name, $email_id, 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </p>
   <p><strong><?php _e('OR', 'event_espresso'); ?></strong></p>
    <ul>
-    <li><label for="email_subject"><?php _e('Email Subject Line','event_espresso'); ?></label> <input type="text" name="email_subject" size="25"></li>
+	<li><label for="email_subject"><?php _e('Email Subject Line','event_espresso'); ?></label> <input type="text" name="email_subject" size="25"></li>
    <li><label for="email_text"><?php _e('Email Text','event_espresso'); ?></label><br />
    <textarea class="theEditor" id="email_text" name="email_text"></textarea>
-      <br />
+	  <br />
 <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info"><?php _e('View Custom Email Tags', 'event_espresso'); ?></a>  | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example"> <?php _e('Email Example','event_espresso'); ?></a>
    </li>
    <li>
-    <p>
-            <input class="button-primary" type="submit" name="Submit" value="<?php _e('Send Email to Attendees'); ?>" id="add_new_email" />
-            </p>
-    </li>
+	<p>
+			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Send Email to Attendees'); ?>" id="add_new_email" />
+			</p>
+	</li>
    </ul>
-     </form>
-    
-     </div>
+	 </form>
+	
+	 </div>
 	</div>
-    <p><a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>"><?php _e('<< Back to', 'event_espresso'); ?> <?php echo  $event_name; ?></a></p>
+	<p><a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>"><?php _e('<< Back to', 'event_espresso'); ?> <?php echo  $event_name; ?></a></p>
 </div>
 </div>
 </div>
 </div>
 <div id="email_manager_info" style="display:none">
 <h2><?php _e('Pre-existing Emails', 'event_espresso'); ?></h2>
-      <p><?php _e('This will override the custom email below if selected.', 'event_espresso'); ?></p>
+	  <p><?php _e('This will override the custom email below if selected.', 'event_espresso'); ?></p>
 </div>
 <?php
 echo event_espresso_custom_email_info();

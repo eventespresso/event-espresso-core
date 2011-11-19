@@ -237,28 +237,28 @@ function copy_event($recurrence_arr = array()){
  * With the recursion of this function, additional recurring events will be added
  */
 static $counter = 1;
-         if ( count( $recurrence_arr) > 0 ) {
-             
-            //$recurrence_dates = array_shift($recurrence_dates); //Remove the first item from the array since it will be added after this recursion
-            foreach ($recurrence_arr as $r_a){
+		 if ( count( $recurrence_arr) > 0 ) {
+			 
+			//$recurrence_dates = array_shift($recurrence_dates); //Remove the first item from the array since it will be added after this recursion
+			foreach ($recurrence_arr as $r_a){
 
-                echo_f($event_id, $r_a['start_date'] );
+				echo_f($event_id, $r_a['start_date'] );
 
-                copy_event(
-                        array(
-                            'event_id'     => $event_id,
-                            'recurrence_id'     => $recurrence_id,
-                            'start_date'        =>$r_a['start_date'],
-                            'registration_start'=>$r_a['registration_start'],
-                            'registration_end'  =>$r_a['registration_end']
-                        ));
+				copy_event(
+						array(
+							'event_id'	 => $event_id,
+							'recurrence_id'	 => $recurrence_id,
+							'start_date'		=>$r_a['start_date'],
+							'registration_start'=>$r_a['registration_start'],
+							'registration_end'  =>$r_a['registration_end']
+						));
 
-                $counter ++;
-                if ($counter >20) exit();
-            }
-        }
+				$counter ++;
+				if ($counter >20) exit();
+			}
+		}
 /*
  * End recursion, as part of recurring events.
  */
-        
+		
 }

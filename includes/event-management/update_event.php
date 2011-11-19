@@ -91,23 +91,23 @@ function update_event($recurrence_arr = array()) {
 						//Update all events in the series based on recurrence id
 						//$DEL_SQL = 'UPDATE ' . EVENTS_DETAIL_TABLE . " SET event_status = 'D' WHERE start_date NOT IN (" . $delete_in . ") AND recurrence_id = " . $_POST['recurrence_id'];
 						$DEL_SQL = 'DELETE EDT, EAT FROM ' . EVENTS_DETAIL_TABLE . " EDT
-                            LEFT JOIN " . EVENTS_ATTENDEE_TABLE . " EAT
-                                ON EDT.id = EAT.event_id
-                            WHERE EAT.id IS NULL
-                            AND EDT.start_date NOT IN (" . $delete_in . ")
-                            AND recurrence_id = " . $_POST['recurrence_id'];
+							LEFT JOIN " . EVENTS_ATTENDEE_TABLE . " EAT
+								ON EDT.id = EAT.event_id
+							WHERE EAT.id IS NULL
+							AND EDT.start_date NOT IN (" . $delete_in . ")
+							AND recurrence_id = " . $_POST['recurrence_id'];
 
 						$UPDATE_SQL = "SELECT id,start_date,event_identifier FROM " . EVENTS_DETAIL_TABLE . " WHERE recurrence_id = %d and NOT event_status = 'D' ORDER BY start_date";
 					} else {
 						//Update this and upcoming events based on recurrence id and start_date >=start_date
 						//$DEL_SQL = 'UPDATE ' . EVENTS_DETAIL_TABLE . " SET event_status = 'D' WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND start_date NOT IN (" . $delete_in . ") AND recurrence_id = " . $_POST['recurrence_id'];
 						$DEL_SQL = 'DELETE EDT, EAT FROM ' . EVENTS_DETAIL_TABLE . " EDT
-                            LEFT JOIN " . EVENTS_ATTENDEE_TABLE . " EAT
-                                ON EDT.id = EAT.event_id
-                            WHERE EAT.id IS NULL
-                            AND EDT.start_date >='" . $wpdb->escape($_POST['start_date']) . "'
-                            AND start_date NOT IN (" . $delete_in . ")
-                            AND recurrence_id = " . $_POST['recurrence_id'];
+							LEFT JOIN " . EVENTS_ATTENDEE_TABLE . " EAT
+								ON EDT.id = EAT.event_id
+							WHERE EAT.id IS NULL
+							AND EDT.start_date >='" . $wpdb->escape($_POST['start_date']) . "'
+							AND start_date NOT IN (" . $delete_in . ")
+							AND recurrence_id = " . $_POST['recurrence_id'];
 						$UPDATE_SQL = "SELECT id,start_date,event_identifier FROM " . EVENTS_DETAIL_TABLE . " WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND recurrence_id = %d AND NOT event_status = 'D'  ORDER BY start_date";
 					}
 
@@ -644,8 +644,8 @@ function update_event($recurrence_arr = array()) {
 		
 		//Show the saved event notice
 		global $notices;
-        $notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="'. espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' for ' . date("m/d/Y", strtotime($start_date));
-        do_action( 'espresso_admin_notices' );
+		$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="'. espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' for ' . date("m/d/Y", strtotime($start_date));
+		do_action( 'espresso_admin_notices' );
 
 		/*
 		* Added for seating chart addon

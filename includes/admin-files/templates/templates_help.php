@@ -1,9 +1,9 @@
 <div style="display: none;">
 	<?php
-    	/**
-    	 * Enable Built In Styles Help Box
-    	 */
-    ?>
+		/**
+		 * Enable Built In Styles Help Box
+		 */
+	?>
 	<div id="enable_styles_info" class="pop-help" >
 		<div class="TB-ee-frame">
 			<h2>

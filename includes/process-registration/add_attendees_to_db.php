@@ -494,11 +494,11 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 			if ($event_cost != '0.00') {
 				//find first registrant's name, email, count of registrants
 				$sql = "SELECT id, fname, lname, email, address, city, state, zip, event_id, registration_id,
-                        (SELECT count( id )
-                            FROM " . EVENTS_ATTENDEE_TABLE .
+						(SELECT count( id )
+							FROM " . EVENTS_ATTENDEE_TABLE .
 								" WHERE attendee_session = '" . $wpdb->escape($current_session_id) . "'
-                            ) AS quantity
-                            FROM " . EVENTS_ATTENDEE_TABLE
+							) AS quantity
+							FROM " . EVENTS_ATTENDEE_TABLE
 								. " WHERE event_id = " . $wpdb->escape($first_event_id)
 								. " AND attendee_session = '" . $wpdb->escape($current_session_id) . "' LIMIT 1";
 

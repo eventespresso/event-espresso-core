@@ -9,8 +9,8 @@ function add_new_attendee($event_id){
 		?>
 <div id="message" class="updated fade">
   <p><strong>
-    <?php _e('Added Attendee to Database','event_espresso'); ?>
-    </strong></p>
+	<?php _e('Added Attendee to Database','event_espresso'); ?>
+	</strong></p>
 </div>
 <?php
 	}
@@ -83,16 +83,16 @@ function add_new_attendee($event_id){
 	</script>
 <div class="metabox-holder">
   <div class="postbox">
-    <div id="event_espressotration_form">
+	<div id="event_espressotration_form">
 
-        <form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>" onsubmit="return validateForm(this)"  id="registration_form">
-          <h3 class="h3_event_title" id="h3_event_title-<?php echo $event_id;?>"><?php echo $event_name?></h3>
-           <div  class="padding">
-          <p class="start_date">
-            <?php _e('Start Date:','event_espresso'); ?>
-            <?php echo event_date_display($start_date)?></p>
-          <p class="event_time">
-            <?php
+		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']?>" onsubmit="return validateForm(this)"  id="registration_form">
+		  <h3 class="h3_event_title" id="h3_event_title-<?php echo $event_id;?>"><?php echo $event_name?></h3>
+		   <div  class="padding">
+		  <p class="start_date">
+			<?php _e('Start Date:','event_espresso'); ?>
+			<?php echo event_date_display($start_date)?></p>
+		  <p class="event_time">
+			<?php
 					$time_selected ='';
 					//This block of code is used to display the times of an event in either a dropdown or text format.
 					if (!empty($time_selected) && $time_selected == true){//If the customer is coming from a page where the time was preselected.
@@ -101,9 +101,9 @@ function add_new_attendee($event_id){
 						echo event_espresso_time_dropdown($event_id);
 					}//End time selected
 ?>
-          </p>
-          
-          <?php
+		  </p>
+		  
+		  <?php
 					//Show pricing in a dropdown or text
 					do_action('espresso_price_select', $event_id);
 						
@@ -126,22 +126,22 @@ function add_new_attendee($event_id){
 
 
 ?>
-          <p class="event_form_field">
-            <label for="event_cost">
-              <?php _e('Amount Paid:','event_espresso'); ?>
-            </label>
-            <input tabindex="9" type="text" maxlength="10" size="15" name="a_event_cost" id="a_event_cost-<?php echo $event_id;?>" <?php echo $event_cost ? 'value="' . $event_cost . '"' : ""; ?> />
-            <label for="admin_price_override">
-              <?php _e('Override Price Selected Above?','event_espresso'); ?>
-            </label>
-           <input name="admin_price_override" type="checkbox" value="1" />
-            <input type="hidden" name="regevent_action_admin" id="regevent_action-<?php echo $event_id;?>" value="post_attendee" />
-            <input type="hidden" name="event_id" id="event_id-<?php echo $event_id;?>" value="<?php echo $event_id;?>" />
-            <input type="hidden" name="admin" value="true" />
-          </p>
-          <p class="event_form_submit" id="event_form_submit-<?php echo $event_id;?>">
-            <input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id;?>" type="submit" name="Submit" value="<?php _e('Submit','event_espresso');?>" />
-          </p>
+		  <p class="event_form_field">
+			<label for="event_cost">
+			  <?php _e('Amount Paid:','event_espresso'); ?>
+			</label>
+			<input tabindex="9" type="text" maxlength="10" size="15" name="a_event_cost" id="a_event_cost-<?php echo $event_id;?>" <?php echo $event_cost ? 'value="' . $event_cost . '"' : ""; ?> />
+			<label for="admin_price_override">
+			  <?php _e('Override Price Selected Above?','event_espresso'); ?>
+			</label>
+		   <input name="admin_price_override" type="checkbox" value="1" />
+			<input type="hidden" name="regevent_action_admin" id="regevent_action-<?php echo $event_id;?>" value="post_attendee" />
+			<input type="hidden" name="event_id" id="event_id-<?php echo $event_id;?>" value="<?php echo $event_id;?>" />
+			<input type="hidden" name="admin" value="true" />
+		  </p>
+		  <p class="event_form_submit" id="event_form_submit-<?php echo $event_id;?>">
+			<input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id;?>" type="submit" name="Submit" value="<?php _e('Submit','event_espresso');?>" />
+		  </p>
 		<?php 
 			//Multiple Attendees
 			if ($allow_multiple == "Y" && $number_available_spaces > 1) {
@@ -153,9 +153,9 @@ function add_new_attendee($event_id){
 		<?php
 			}//End allow multiple
 		?>
-        </form>
-      </div>
-    </div>
+		</form>
+	  </div>
+	</div>
   </div>
 <?php
 		event_list_attendees();
