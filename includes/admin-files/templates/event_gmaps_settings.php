@@ -2,8 +2,7 @@
  <li>
   <fieldset id="event-gmap-opts" class="template-settings b">
    <legend>
-	<?php _e('Google Maps Display Options', 'event_espresso') ?>
-	<a class="thickbox"  href="#TB_inline?height=550&amp;width=400&amp;inlineId=gmaps_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="" width="16" height="16" /></a> 
+	<?php _e('Google Maps Display Options', 'event_espresso') ?> <?php apply_filters( 'espresso_help', 'gmaps_info'); ?>
 	  </legend>
 
 	<div id="gmap-reg-events">
