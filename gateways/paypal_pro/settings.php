@@ -15,7 +15,7 @@ function event_espresso_paypal_pro_payment_settings() {
 		$payment_settings['paypal_pro']['credit_cards'] = implode(",", empty($_POST['credit_cards']) ? array() : $_POST['credit_cards']);
 		$payment_settings['paypal_pro']['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
 
-		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
+		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('PayPal Pro Payment Settings Updated!', 'event_espresso');
 		}
 	}
@@ -49,7 +49,7 @@ function event_espresso_paypal_pro_payment_settings() {
 						$payment_settings['paypal_pro']['active'] = true;
 						if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
 							$notices['updates'][] = __('PayPal Pro Gateway Activated', 'event_espresso');
-						}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('PayPal Pro Gateway Activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to Activate PayPal Pro Gateway', 'event_espresso');
@@ -58,7 +58,7 @@ function event_espresso_paypal_pro_payment_settings() {
 					
 					if (isset($_REQUEST['reactivate_paypal_pro']) && $_REQUEST['reactivate_paypal_pro'] == 'true') {
 						$payment_settings['paypal_pro']['active'] = true;
-						if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						if (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('PayPal Pro Gateway Payments Activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to Activate PayPal Pro Gateway', 'event_espresso');
@@ -67,7 +67,7 @@ function event_espresso_paypal_pro_payment_settings() {
 					
 					if (isset($_REQUEST['deactivate_paypal_pro']) && $_REQUEST['deactivate_paypal_pro'] == 'true') {
 						$payment_settings['paypal_pro']['active'] = false;
-						if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('PayPal Pro Gateway Payments De-activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to De-activate PayPal Pro Gateway', 'event_espresso');

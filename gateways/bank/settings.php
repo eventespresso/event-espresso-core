@@ -15,7 +15,7 @@ function event_espresso_bank_payment_settings() {
 		$payment_settings['bank_payment']['account_number'] = strip_tags($_POST['account_number'],$allowable_tags);
 		$payment_settings['bank_payment']['bank_address'] = strip_tags($_POST['bank_address'],$allowable_tags);
 		
-		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
+		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('Electronic Funds Transfer Settings Updated!', 'event_espresso');
 		}
 	}
@@ -49,7 +49,7 @@ function event_espresso_bank_payment_settings() {
 						$payment_settings['bank_payment']['active'] = true;
 						if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
 							$notices['updates'][] = __('Electronic Funds Transfers Activated', 'event_espresso');
-						}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('Electronic Funds Transfers Activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to Activate Electronic Funds Transfers', 'event_espresso');
@@ -58,7 +58,7 @@ function event_espresso_bank_payment_settings() {
 					
 					if (isset($_REQUEST['reactivate_bank_payment']) && $_REQUEST['reactivate_bank_payment'] == 'true') {
 						$payment_settings['bank_payment']['active'] = true;
-						if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						if (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('Electronic Funds Transfers Payments Activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to Activate Electronic Funds Transfers', 'event_espresso');
@@ -67,7 +67,7 @@ function event_espresso_bank_payment_settings() {
 					
 					if (isset($_REQUEST['deactivate_bank_payment']) && $_REQUEST['deactivate_bank_payment'] == 'true') {
 						$payment_settings['bank_payment']['active'] = false;
-						if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('Electronic Funds Transfers Payments De-activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to De-activate Electronic Funds Transfers', 'event_espresso');

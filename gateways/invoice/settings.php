@@ -34,7 +34,7 @@ function event_espresso_invoice_payment_settings(){
 		//Debug
 		//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 		
-		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
+		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('Invoice Payment Settings Updated!', 'event_espresso');
 		}
 	}
@@ -68,7 +68,7 @@ function event_espresso_invoice_payment_settings(){
 					//echo 'active = '.$payment_settings['invoice']['active'];
 					if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
 						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
-					}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to Activate Invoice Payments', 'event_espresso');
@@ -78,7 +78,7 @@ function event_espresso_invoice_payment_settings(){
 				if (isset($_REQUEST['reactivate_invoice_payment']) && $_REQUEST['reactivate_invoice_payment'] == 'true'){
 					$payment_settings['invoice']['active'] = true;
 					//echo 'active = '.$payment_settings['invoice']['active'];
-					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to Activate Invoice Payments', 'event_espresso');
@@ -87,7 +87,7 @@ function event_espresso_invoice_payment_settings(){
 				
 				if (isset($_REQUEST['deactivate_invoice_payment']) && $_REQUEST['deactivate_invoice_payment'] == 'true'){
 					$payment_settings['invoice']['active'] = false;
-					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('Invoice Payments De-activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to De-activate Invoice Payments', 'event_espresso');

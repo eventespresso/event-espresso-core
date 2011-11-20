@@ -12,7 +12,7 @@ function event_espresso_aim_payment_settings() {
 		$payment_settings['authnet_aim']['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 		$payment_settings['authnet_aim']['use_sandbox'] = $_POST['use_sandbox'];
 		
-		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
+		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('Authorize.net AIM Payment Settings Updated!', 'event_espresso');
 		}
 	}
@@ -47,7 +47,7 @@ function event_espresso_aim_payment_settings() {
 					//echo 'active = '.$payment_settings['authnet_aim']['active'];
 					if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
 						$notices['updates'][] = __('Authorize.net AIM Gateway Activated', 'event_espresso');
-					}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('Authorize.net AIM Gateway Activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to Activate Authorize.net AIM Gateway', 'event_espresso');
@@ -57,7 +57,7 @@ function event_espresso_aim_payment_settings() {
 				if (isset($_REQUEST['reactivate_authnet_aim']) && $_REQUEST['reactivate_authnet_aim'] == 'true'){
 					$payment_settings['authnet_aim']['active'] = true;
 					//echo 'active = '.$payment_settings['authnet_aim']['active'];
-					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('Authorize.net AIM Gateway Payments Activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to Activate Authorize.net AIM Gateway', 'event_espresso');
@@ -66,7 +66,7 @@ function event_espresso_aim_payment_settings() {
 				
 				if (isset($_REQUEST['deactivate_authnet_aim']) && $_REQUEST['deactivate_authnet_aim'] == 'true'){
 					$payment_settings['authnet_aim']['active'] = false;
-					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('Authorize.net AIM Gateway Payments De-activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to De-activate Authorize.net AIM Gateway', 'event_espresso');

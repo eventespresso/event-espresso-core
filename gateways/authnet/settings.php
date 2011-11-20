@@ -15,7 +15,7 @@ function event_espresso_authnet_payment_settings() {
 		$payment_settings['authnet_sim']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 		$payment_settings['authnet_sim']['button_url'] = $_POST['button_url'];
 		
-		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
+		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('Authorize.net SIM Payment Settings Updated!', 'event_espresso');
 		}
 	}
@@ -48,7 +48,7 @@ function event_espresso_authnet_payment_settings() {
 						$payment_settings['authnet_sim']['active'] = true;
 						if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
 							$notices['updates'][] = __('Authorize.net SIM Gateway Activated', 'event_espresso');
-						}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('Authorize.net SIM Gateway Activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to Activate Authorize.net SIM Gateway', 'event_espresso');
@@ -57,7 +57,7 @@ function event_espresso_authnet_payment_settings() {
 					
 					if (isset($_REQUEST['reactivate_authnet_sim']) && $_REQUEST['reactivate_authnet_sim'] == 'true') {
 						$payment_settings['authnet_sim']['active'] = true;
-						if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						if (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('Authorize.net SIM Gateway Payments Activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to Activate Authorize.net SIM Gateway', 'event_espresso');
@@ -66,7 +66,7 @@ function event_espresso_authnet_payment_settings() {
 					
 					if (isset($_REQUEST['deactivate_authnet_sim']) && $_REQUEST['deactivate_authnet_sim'] == 'true') {
 						$payment_settings['authnet_sim']['active'] = false;
-						if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+						if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings) == true){
 							$notices['updates'][] = __('Authorize.net SIM Gateway Payments De-activated', 'event_espresso');
 						}else{
 							$notices['errors'][] = __('Unable to De-activate Authorize.net SIM Gateway', 'event_espresso');

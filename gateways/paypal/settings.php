@@ -30,7 +30,7 @@ function event_espresso_paypal_payment_settings() {
 	   	//Debug
 		//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 		
-		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
+		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('PayPal Payment Settings Updated!', 'event_espresso'). ' ' .$espresso_wp_user;
 		}
 	}
@@ -62,7 +62,7 @@ function event_espresso_paypal_payment_settings() {
 					$payment_settings['paypal']['active'] = true;
 					if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
 						$notices['updates'][] = __('PayPal Payments Activated', 'event_espresso');
-					}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('PayPal Payments Activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to Activate PayPal Payments', 'event_espresso');
@@ -70,7 +70,7 @@ function event_espresso_paypal_payment_settings() {
 				}
 				if (isset($_REQUEST['reactivate_paypal'])&&$_REQUEST['reactivate_paypal'] == 'true') {
 					$payment_settings['paypal']['active'] = true;
-					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					if (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('PayPal Payments Activated', 'event_espresso');
 					}else{
 						$notices['errors'][] = __('Unable to Activate PayPal Payments', 'event_espresso');
@@ -78,7 +78,7 @@ function event_espresso_paypal_payment_settings() {
 				}
 				if (isset($_REQUEST['deactivate_paypal'])&&$_REQUEST['deactivate_paypal'] == 'true') {
 					$payment_settings['paypal']['active'] = false;
-					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings) == true){
 						$notices['updates'][] = __('PayPal Payments De-activated', 'event_espresso');
 					}
 					else{
