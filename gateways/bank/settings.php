@@ -1,131 +1,181 @@
 <?php
-
 function event_espresso_bank_payment_settings() {
-	global $espresso_premium;
-	if ($espresso_premium != true)
-		return;
-	if (isset($_POST['update_bank_deposit_settings'])) {
+	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
+	
+	$old_payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	
+	if (isset($_POST['update_bank_payment_settings'])) {
 		$allowable_tags = '<br /><br><a>';
-		//$bank_deposit_settings_settings = get_option('event_espresso_bank_deposit_settings_settings');
-		$bank_deposit_settings['account_name'] = strip_tags($_POST['account_name'],$allowable_tags);
-		$bank_deposit_settings['bank_title'] = strip_tags($_POST['bank_title'],$allowable_tags);
-		$bank_deposit_settings['bank_instructions'] = strip_tags($_POST['bank_instructions'],$allowable_tags);
-		$bank_deposit_settings['bank_name'] = strip_tags($_POST['bank_name'],$allowable_tags);
-		$bank_deposit_settings['bank_account'] = strip_tags($_POST['bank_account'],$allowable_tags);
-		$bank_deposit_settings['bank_address'] = strip_tags($_POST['bank_address'],$allowable_tags);
-		update_option('event_espresso_bank_deposit_settings', $bank_deposit_settings);
-		echo '<div id="message" class="updated fade"><p><strong>' . __('Electronic Funds Transfer settings saved.', 'event_espresso') . '</strong></p></div>';
+		//$bank_payment_settings_settings = get_option('event_espresso_bank_payment_settings_settings');
+		$payment_settings['bank_payment']['account_name'] = strip_tags($_POST['account_name'],$allowable_tags);
+		$payment_settings['bank_payment']['page_title'] = strip_tags($_POST['page_title'],$allowable_tags);
+		$payment_settings['bank_payment']['bank_instructions'] = strip_tags($_POST['bank_instructions'],$allowable_tags);
+		$payment_settings['bank_payment']['bank_name'] = strip_tags($_POST['bank_name'],$allowable_tags);
+		$payment_settings['bank_payment']['account_number'] = strip_tags($_POST['account_number'],$allowable_tags);
+		$payment_settings['bank_payment']['bank_address'] = strip_tags($_POST['bank_address'],$allowable_tags);
+		
+		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings ) == true){
+			$notices['updates'][] = __('Electronic Funds Transfer Settings Updated!', 'event_espresso');
+		}
 	}
-	?>
+	
+	//Open or close the postbox div
+	if ($payment_settings['bank_payment']['active'] == false || isset($_REQUEST['deactivate_bank_payment']) && $_REQUEST['deactivate_bank_payment'] == 'true' ){
+		$postbox_style = 'closed';
+	}
+	if (isset($_REQUEST['reactivate_bank_payment']) && $_REQUEST['reactivate_bank_payment'] == 'true'){
+		$postbox_style = '';
+	}
+	if (isset($_REQUEST['activate_bank_payment']) && $_REQUEST['activate_bank_payment'] == 'true'){
+		$postbox_style = '';
+	}
 
-	<div class="metabox-holder">
-		<div class="postbox">
-					<div title="Click to toggle" class="handlediv"><br /></div>
-			<h3 class="hndle">
-				<?php _e('Electronic Funds Transfer Settings', 'event_espresso'); ?>
-			</h3>
-							<div class="inside">
+?>
+
+<a name="bank_payment" id="bank_payment"></a>
+<div class="metabox-holder">
+	<div class="postbox <?php echo $postbox_style; ?>">
+		<div title="Click to toggle" class="handlediv"><br />
+		</div>
+		<h3 class="hndle">
+			<?php _e('Electronic Funds Transfer Settings', 'event_espresso'); ?>
+		</h3>
+		<div class="inside">
 			<div class="padding">
+			<!--New -->
 				<?php
-				if (isset($_REQUEST['activate_bank_payment'])&&$_REQUEST['activate_bank_payment'] == 'true') {
-					add_option("events_bank_payment_active", 'true', '', 'yes');
-					add_option("event_espresso_bank_deposit_settings", '', '', 'yes');
-					//update_option( 'event_espresso_payment_gateway', 'bank_payment');
-				}
-				if (isset($_REQUEST['reactivate_bank_payment'])&&$_REQUEST['reactivate_bank_payment'] == 'true') {
-					update_option('events_bank_payment_active', 'true');
-					//update_option( 'event_espresso_payment_gateway', 'bank_payment');
-				}
-				if (isset($_REQUEST['deactivate_bank_payment'])&&$_REQUEST['deactivate_bank_payment'] == 'true') {
-					update_option('events_bank_payment_active', 'false');
-					//update_option( 'event_espresso_payment_gateway', '');
-				}
-				echo '<ul>';
-				switch (get_option('events_bank_payment_active')) {
-					case 'false':
-						echo '<li>Electronic Funds Transfers is installed.</li>';
-						echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_bank_payment=true\';" class="green_alert pointer"><strong>' . __('Activate Electronic Funds Transfers?', 'event_espresso') . '</strong></li>';
-						break;
-					case 'true':
-						echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_bank_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Electronic Funds Transfers?', 'event_espresso') . '</strong></li>';
-						event_espresso_display_bank_deposit_settings();
-						break;
-					default:
-						echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_bank_payment=true\';" class="yellow_alert pointer"><strong>' . __('The Electronic Funds Transfers is installed. Would you like to activate it?', 'event_espresso') . '</strong></li>';
-						break;
-				}
-				echo '</ul>';
-				?>
+					if (isset($_REQUEST['activate_bank_payment']) && $_REQUEST['activate_bank_payment'] == 'true') {
+						$payment_settings['bank_payment']['active'] = true;
+						if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
+							$notices['updates'][] = __('Electronic Funds Transfers Activated', 'event_espresso');
+						}elseif (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+							$notices['updates'][] = __('Electronic Funds Transfers Activated', 'event_espresso');
+						}else{
+							$notices['errors'][] = __('Unable to Activate Electronic Funds Transfers', 'event_espresso');
+						}
+					}
+					
+					if (isset($_REQUEST['reactivate_bank_payment']) && $_REQUEST['reactivate_bank_payment'] == 'true') {
+						$payment_settings['bank_payment']['active'] = true;
+						if (update_option('payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+							$notices['updates'][] = __('Electronic Funds Transfers Payments Activated', 'event_espresso');
+						}else{
+							$notices['errors'][] = __('Unable to Activate Electronic Funds Transfers', 'event_espresso');
+						}
+					}
+					
+					if (isset($_REQUEST['deactivate_bank_payment']) && $_REQUEST['deactivate_bank_payment'] == 'true') {
+						$payment_settings['bank_payment']['active'] = false;
+						if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings, $old_payment_settings) == true){
+							$notices['updates'][] = __('Electronic Funds Transfers Payments De-activated', 'event_espresso');
+						}else{
+							$notices['errors'][] = __('Unable to De-activate Electronic Funds Transfers', 'event_espresso');
+						}
+					}
+					
+					echo '<ul>';
+					if (!isset($payment_settings['bank_payment']['active'])){
+						echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_bank_payment=true#bank_payment\';" class="yellow_alert pointer"><strong>' . __('The Electronic Funds Transfers is installed. Would you like to activate it?','event_espresso') . '</strong></li>';
+					}else{
+						switch ($payment_settings['bank_payment']['active']){
+						
+							case false:
+								echo '<li>Electronic Funds Transfers is Installed.</li>';
+								echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_bank_payment=true#bank_payment\';" class="green_alert pointer"><strong>' . __('Activate Electronic Funds Transfers?', 'event_espresso') . '</strong></li>';
+								break;
+							
+							case true:
+								echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_bank_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Electronic Funds Transfers?', 'event_espresso') . '</strong></li>';
+								event_espresso_display_bank_payment_settings();
+								break;
+						}
+					}
+					echo '</ul>';
+					?>
+				<!--New --> 
+				
 			</div>
-						</div>
 		</div>
 	</div>
-	<?php } ?>
+</div>
 <?php
+	//This line keeps the notices from displaying twice
+	if ( did_action( 'espresso_admin_notices' ) == false )
+		do_action('espresso_admin_notices');
+
+}
 
 //Electronic Funds Transfers Settings Form
-function event_espresso_display_bank_deposit_settings() {
-	global $org_options;
-	global $espresso_premium;
-	if ($espresso_premium != true)
-		return;
-	$bank_deposit_settings = get_option('event_espresso_bank_deposit_settings');
-	?>
-	<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-		<table width="90%" border="0">
+function event_espresso_display_bank_payment_settings() {
+	global $espresso_premium, $org_options, $espresso_wp_user; if ($espresso_premium != true) return;
+	
+	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+?>
+<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#bank_payment">
+
+	<table class="form-table">
+		<tbody>
 			<tr>
-				<td valign="top"><ul>
-						<li>
-							<label for="bank_title">
-	<?php _e('Title:', 'event_espresso'); ?>
-							</label>
-							<br />
-							<input class="regular-text" type="text" name="bank_title" size="30" value="<?php echo $bank_deposit_settings['bank_title'] == '' ? __('Electronic Funds Transfers', 'event_espresso') : $bank_deposit_settings['bank_title']; ?>" />
-						</li>
-						<li>
-							<label for="bank_instructions">
-	<?php _e('Payment Instructions:', 'event_espresso'); ?>
-							</label>
-							<br />
-							<textarea name="bank_instructions" cols="30" rows="5"><?php echo trim($bank_deposit_settings['bank_instructions']) == '' ? __('Please initiate an electronic payment using the bank information below. Payment must be received within 48 hours of event date.', 'event_espresso') : $bank_deposit_settings['bank_instructions']; ?></textarea>
-						</li>
-					</ul></td>
-				<td valign="top"><ul>
-						<li>
-							<label for="account_name">
-	<?php _e('Name on Account:', 'event_espresso'); ?>
-							</label>
-							<br />
-							<input class="regular-text" type="text" name="account_name" size="30" value="<?php echo trim($bank_deposit_settings['account_name']) ?>" />
-						</li>
-						<li>
-							<label for="bank_account">
-	<?php _e('Bank Account#:', 'event_espresso'); ?>
-							</label>
-							<br />
-							<input class="regular-text" type="text" name="bank_account" size="30" value="<?php echo trim($bank_deposit_settings['bank_account']) ?>" />
-						</li>
-						<li>
-							<label for="bank_name">
-	<?php _e('Bank Name:', 'event_espresso'); ?>
-							</label>
-							<br />
-							<input class="regular-text" type="text" name="bank_name" size="30" value="<?php echo trim($bank_deposit_settings['bank_name']) ?>" />
-						</li>
-						<li>
-							<label for="bank_address">
-	<?php _e('Bank Address:', 'event_espresso'); ?>
-							</label>
-							<br />
-							<textarea name="bank_address" cols="30" rows="5"><?php echo $bank_deposit_settings['bank_address']; ?></textarea>
-						</li>
-					</ul></td>
+				<th><label for="bank_page_title">
+							<?php _e('Page Title', 'event_espresso'); ?>
+						</label></th>
+				<td><input class="regular-text" type="text" name="page_title" id="bank_page_title" size="30" value="<?php echo $payment_settings['bank_payment']['page_title'] == '' ? __('Electronic Funds Transfers', 'event_espresso') : $payment_settings['bank_payment']['page_title']; ?>" /></td>
 			</tr>
-		</table>
-		<input type="hidden" name="update_bank_deposit_settings" value="update_bank_deposit_settings">
-		<p>
-			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Electronic Funds Transfer Settings', 'event_espresso') ?>" id="save_bank_deposit_settings" />
-		</p>
-	</form>
-	<?php
+			<tr>
+				<th><label for="bank_instructions">
+							<?php _e('Payment Instructions', 'event_espresso'); ?>
+						</label></th>
+				<td><textarea name="bank_instructions" cols="30" rows="5"><?php echo trim($payment_settings['bank_payment']['bank_instructions']) == '' ? __('Please initiate an electronic payment using the bank information below. Payment must be received within 48 hours of event date.', 'event_espresso') : $payment_settings['bank_payment']['bank_instructions']; ?></textarea></td>
+			</tr>
+			<tr>
+				<th><label for="account_name">
+							<?php _e('Name on Account', 'event_espresso'); ?>
+						</label></th>
+				<td><input class="regular-text" type="text" name="account_name" id="account_name" size="30" value="<?php echo trim($payment_settings['bank_payment']['account_name']) == '' ? '' : trim($payment_settings['bank_payment']['account_name']); ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="account_number">
+							<?php _e('Bank Account #', 'event_espresso'); ?>
+						</label></th>
+				<td><input class="regular-text" type="text" name="account_number" id="account_number" size="30" value="<?php echo trim($payment_settings['bank_payment']['account_number']) == '' ? '' : trim($payment_settings['bank_payment']['account_number']); ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="bank_name">
+							<?php _e('Bank Name', 'event_espresso'); ?>
+						</label></th>
+				<td><input class="regular-text" type="text" name="bank_name" id="bank_name" size="30" value="<?php echo trim($payment_settings['bank_payment']['bank_name']) == '' ? '' : trim($payment_settings['bank_payment']['bank_name']); ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="bank_address">
+							<?php _e('Bank Address', 'event_espresso'); ?>
+						</label></th>
+				<td><textarea name="bank_address" cols="30" rows="5"><?php echo $payment_settings['bank_payment']['bank_address']; ?></textarea></td>
+			</tr>
+		</tbody>
+	</table>
+<?php /*?><!-- TABLE TEMPLATE -->
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+		</tbody>
+	</table><?php */?>
+
+	<input type="hidden" name="update_bank_payment_settings" value="update_bank_payment_settings">
+	<p>
+		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Electronic Funds Transfer Settings', 'event_espresso') ?>" id="save_bank_payment_settings" />
+	</p>
+</form>
+<?php
 }

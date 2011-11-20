@@ -159,22 +159,23 @@ if ($payment_settings['paypal']['active'] == true
 	echo '</ul>';
 	echo '</div><!-- / #off_site_payment_container -->';
 }
-$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
-if (($payment_settings['invoice']['active'] == ture && $payment_settings['invoice']['show'] != 'N')
-				||get_option('events_check_payment_active') == 'true'
-				|| get_option('events_bank_payment_active') == 'true'){
+$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+if (($payment_settings['invoice']['active'] == true && $payment_settings['invoice']['show'] != 'N')
+	|| get_option('events_check_payment_active') == 'true'
+	|| $payment_settings['bank_payment']['active'] == true)
+	{
 
 	echo '<div id="off_line_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="off_line_payment" class="payment_option_title section-heading">'.__('Off-line Payments', 'event_espresso').'</h3>';
 
-	if ($payment_settings['invoice']['active'] == ture){
+	if ($payment_settings['invoice']['active'] == true){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/invoice/invoice_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/invoice/invoice_vars.php");
 		}else{
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/invoice/invoice_vars.php");
 		}
 	}
-	if (get_option('events_check_payment_active') == 'true'||get_option('events_bank_payment_active') == 'true'){
+	if (get_option('events_check_payment_active') == 'true' || $payment_settings['bank_payment']['active'] == true){
 	?>
 		<div class="event_espresso_attention event-messages ui-state-highlight">
 		<span class="ui-icon ui-icon-alert"></span>
@@ -194,7 +195,7 @@ if (($payment_settings['invoice']['active'] == ture && $payment_settings['invoic
 		}
 	}
 
-	if (get_option('events_bank_payment_active') == 'true'){
+	if ($payment_settings['bank_payment']['active'] == true){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/bank/bank_payment_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/bank/bank_payment_vars.php");
 		}else{
