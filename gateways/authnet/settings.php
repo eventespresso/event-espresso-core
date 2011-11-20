@@ -191,6 +191,23 @@ function event_espresso_display_authnet_settings() {
 			</tr>
 		</tbody>
 	</table>
+	<?php /*?><!-- TABLE TEMPLATE -->
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+		</tbody>
+	</table><?php */?>
 	<p>
 		<input type="hidden" name="update_authnet" value="update_authnet">
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Authorize.net SIM Settings', 'event_espresso') ?>" id="save_authnet_settings" />

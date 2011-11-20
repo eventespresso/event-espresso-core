@@ -186,28 +186,25 @@ echo trim($payment_settings['invoice']['payment_address']);
 ?>
 </textarea></td>
 			</tr>
-			<?php /*?><tr>
-				<th> </th>
-				<td></td>
-			</tr>
-			<tr>
-				<th> </th>
-				<td></td>
-			</tr>
-			<tr>
-				<th> </th>
-				<td></td>
-			</tr>
-			<tr>
-				<th> </th>
-				<td></td>
-			</tr>
-			<tr>
-				<th> </th>
-				<td></td>
-			</tr><?php */?>
 		</tbody>
 	</table>
+	<?php /*?><!-- TABLE TEMPLATE -->
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+			<tr>
+				<th> </th>
+				<td></td>
+			</tr>
+		</tbody>
+	</table><?php */?>
 	<h4>
 		<?php _e('PDF Settings', 'event_espresso'); ?>
 	</h4>
