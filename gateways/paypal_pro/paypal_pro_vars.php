@@ -1,6 +1,6 @@
 <?php
-$paypal_pro_settings = get_option('event_espresso_paypal_pro_settings');
-$use_sandbox = empty($paypal_pro_settings['paypal_pro_use_sandbox']) ? false : $paypal_pro_settings['paypal_pro_use_sandbox'];
+$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+$use_sandbox = $payment_settings['paypal_pro']['use_sandbox'] == 'Y' ? true : false;
 ?>
 <div class="event-display-boxes">
 <?php
@@ -49,7 +49,7 @@ if ($use_sandbox == true) {
 		<select id="card-type" name ="creditcardtype" class="required">
 
 <?php
-foreach (explode(",", $paypal_pro_settings['paypal_api_credit_cards']) as $k => $v)
+foreach (explode(",", $payment_settings['paypal_pro']['credit_cards']) as $k => $v)
 	echo "<option value='$v'>$v</option>";
 ?>
 

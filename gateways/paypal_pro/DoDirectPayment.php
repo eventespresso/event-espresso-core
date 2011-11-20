@@ -1,14 +1,14 @@
 <?php
 
-// Included required files.
+// Include required files.
 
 require_once('includes/paypal.nvp.class.php');
 
-$paypal_pro_settings = get_option('event_espresso_paypal_pro_settings');
+$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 
-$sandbox = $paypal_pro_settings['paypal_pro_use_sandbox'] ? true : false;
+$sandbox = $payment_settings['paypal_pro']['use_sandbox'] == 'Y' ? true : false;
 // Setup PayPal object
-$PayPalConfig = array('Sandbox' => $sandbox, 'APIUsername' => $paypal_pro_settings['paypal_api_username'], 'APIPassword' => $paypal_pro_settings['paypal_api_password'], 'APISignature' => $paypal_pro_settings['paypal_api_signature']);
+$PayPalConfig = array('Sandbox' => $sandbox, 'APIUsername' => $payment_settings['paypal_pro']['username'], 'APIPassword' => $payment_settings['paypal_pro']['password'], 'APISignature' => $payment_settings['paypal_pro']['signature']);
 $PayPal = new PayPal($PayPalConfig);
 
 
@@ -80,7 +80,7 @@ $ShippingAddress = array(
 
 $PaymentDetails = array(
 	'amt' => $r->amount_pd, // Required.  Total amount of order, including shipping, handling, and tax.
-	'currencycode' => $paypal_pro_settings['currency_format'], // Required.  Three-letter currency code.  Default is USD.
+	'currencycode' => $payment_settings['paypal_pro']['currency_format'], // Required.  Three-letter currency code.  Default is USD.
 	'itemamt' => '', // Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
 	'shippingamt' => '', // Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
 	'handlingamt' => '', // Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
@@ -227,5 +227,3 @@ function DisplayErrors($Errors) {
 		echo event_espresso_pay($att_registration_id);
 	}
 }
-
-?>
