@@ -3,11 +3,6 @@
 if (isset($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1) //need this condition so that ideal correctly redirects to the selected bank
 	ob_start(); //before this condition, ob_start() was causing issues with pdf invoice.  Will not work inside the function.
 
-
-
-
-
-
 //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] tag
 
 function event_espresso_txn() {
@@ -16,15 +11,16 @@ function event_espresso_txn() {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
 	$attendee_id = "";
-	/* foreach ($_REQUEST as $k => $v){
+	/*foreach ($_REQUEST as $k => $v){
 	  print "   $k = $v\n";
 
-	  } */
+	  }*/
 	if (isset($_REQUEST['id']))
 		$attendee_id = $_REQUEST['id']; //This is the id of the registrant
 	if (isset($_REQUEST['x_cust_id']) && $_REQUEST['x_cust_id'] != '') {
 		$attendee_id = $_REQUEST['x_cust_id'];
 	}
+	
 	if (isset($_REQUEST['authAmountString'])) {
 		$attendee_id = $_REQUEST['cartId'];
 	}
@@ -47,7 +43,7 @@ function event_espresso_txn() {
 				}
 			}
 			//Load iDEAL (Mollie)
-			elseif ((get_option('events_ideal_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL) && !empty($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1 && $_REQUEST['id'] != '') {
+			elseif ((get_option('events_ideal_active') == 'true') && !empty($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1 && $_REQUEST['id'] != '') {
 				//Ideal works a little differently.
 				//on the EE payment page, there is a dropdown with a list of banks that is pulled from Mollie.
 				//The customer selects the bank, submits and is redirected to the payment page
@@ -61,14 +57,13 @@ function event_espresso_txn() {
 				}
 				//if the transaction id is not set, then they selected a bank and clicked on the button on ee payment page
 				if (!isset($_GET['transaction_id'])) {
-
 					require_once($ideal_folder . "ideal_vars.php");
 				} else {
 					require_once($ideal_folder . "report.php");
 				}
 
 				//Load PayPal IPN
-			} elseif ((get_option('events_paypal_pro_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
+			} elseif ($payment_settings['paypal_pro']['active'] == true
 							&& !empty($_REQUEST['paypal_pro']) && $_REQUEST['paypal_pro'] == 'true'
 							&& !empty($_REQUEST['id'])) {
 
@@ -96,7 +91,7 @@ function event_espresso_txn() {
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/quickpay/quickpaypaymentprocess.php");
 				}
 				//Process Firstdata
-			} elseif ((get_option('events_firstdata_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
+			} elseif ((get_option('events_firstdata_active') == 'true')
 							&& !empty($_REQUEST['firstdata']) && $_REQUEST['firstdata'] == '1'
 							&& !empty($_REQUEST['id'])) {
 
@@ -133,7 +128,7 @@ function event_espresso_txn() {
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/mwarrior/mwarrior_ipn.php");
 				}
 				//Load Authorize.net AIM IPN
-			} elseif (get_option('events_authnet_aim_active') == 'true' && ($_REQUEST['x_cust_id'] != '' && $_REQUEST['authnet_aim'] == 'true')) {
+			} elseif ($payment_settings['authnet_aim']['active'] == true && ($_REQUEST['x_cust_id'] != '' && $_REQUEST['authnet_aim'] == 'true')) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/aim_ipn.php")) {
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/aim_ipn.php");
@@ -143,7 +138,7 @@ function event_espresso_txn() {
 				}
 				$result = espresso_aim_process_payment();
 				extract($result);
-			} elseif (get_option('events_authnet_active') == 'true' && $_REQUEST['x_cust_id'] != '' && $_REQUEST['authnet_aim'] != 'true') {
+			} elseif ($payment_settings['authnet_sim']['active'] == true && $_REQUEST['x_cust_id'] != '' && $_REQUEST['authnet_aim'] != 'true') {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/authnet_ipn.php")) {
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/authnet_ipn.php");
@@ -151,7 +146,7 @@ function event_espresso_txn() {
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/authnet/authnet_ipn.php");
 				}
-			} elseif (get_option('events_2checkout_active') == 'true' && !empty($_REQUEST['x_receipt_link_url'])) {
+			} elseif ($payment_settings['2checkout']['active'] == true && !empty($_REQUEST['x_receipt_link_url'])) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/2checkoutpaymentprocess.php")) {
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/2checkoutpaymentprocess.php");
@@ -161,8 +156,7 @@ function event_espresso_txn() {
 				}
 				$result = espresso_2checkout_process_payment();
 				extract($result);
-			} elseif ((get_option('events_paypal_active') == 'true' || get_option('event_espresso_payment_gateway') == NULL)
-							&& empty($_REQUEST['x_cust_id'])) {
+			} elseif ($payment_settings['paypal']['active'] == true && empty($_REQUEST['x_cust_id'])) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_ipn.php")) {
 					//Moved files
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_ipn.php");
