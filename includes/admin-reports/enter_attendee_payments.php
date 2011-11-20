@@ -317,7 +317,7 @@ function enter_attendee_payments() {
 				<?php _e('Use a ', 'event_espresso'); ?>
 				<a href="admin.php?page=event_emails" target="_blank">
 				<?php _e('pre-existing email', 'event_espresso'); ?>
-				</a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', '', 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </li>
+				</a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', '', 'desc') . ' '.apply_filters( 'espresso_help', 'email_manager_info'); ?> </li>
 			  <li>
 				<?php _e('OR', 'event_espresso'); ?>
 			  </li>

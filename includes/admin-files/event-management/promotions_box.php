@@ -8,14 +8,13 @@
 	   
 				<p><strong><?php _e('Early Registration Discount','event_espresso'); ?></strong></p>
 				
-				<p><label><?php _e('End Date:','event_espresso'); ?></label><input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($early_disc_date)?$early_disc_date:''; ?>"/></p>
+				<p><label for="early_disc_date"><?php _e('End Date:','event_espresso'); ?></label><input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($early_disc_date)?$early_disc_date:''; ?>"/> </p>
 				
 				<p class="promo-amnts">
-					<label><?php _e('Amount:','event_espresso'); ?></label><input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($early_disc)?$early_disc:''; ?>" />
+					<label for="early_disc"><?php _e('Amount:','event_espresso'); ?></label><input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($early_disc)?$early_disc:''; ?>" /> <br /><span class="description"><?php _e('(Leave blank if not applicable)', 'event_espresso'); ?></span>
 				</p>
 				
 				<p>
-					<span><?php _e('(Leave blank if not applicable)', 'event_espresso'); ?></span>
 					<label><?php _e('Percentage:','event_espresso') ?></label>
 						 		
 			   	<?php echo select_input('early_disc_percentage', $values, !isset($early_disc_percentage) ? '' : $early_disc_percentage);?>
@@ -23,7 +22,7 @@
 				
 				
 				<p class="disc-codes">
-					<label><?php _e('Allow discount codes?','event_espresso');?></label><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=coupon_code_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a>
+					<label><?php _e('Allow discount codes?','event_espresso');?> <?php apply_filters( 'espresso_help', 'coupon_code_info'); ?></label> 
 					<?php echo select_input('use_coupon_code', $values, !isset($use_coupon_code) || $use_coupon_code ==''?'N':$use_coupon_code); ?>
 				</p>
 		

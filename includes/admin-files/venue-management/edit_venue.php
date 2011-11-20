@@ -103,7 +103,7 @@ function edit_event_venue(){
 					<li>
 											
 					  <label for="locale">
-						<?php _e('Locale/Region ','event_espresso'); ?><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a>
+						<?php _e('Locale/Region ','event_espresso'); ?> <?php apply_filters( 'espresso_help', 'venue_locale'); ?>
 					  </label>
 				<?php  
 					$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
@@ -170,12 +170,12 @@ function edit_event_venue(){
 				</li>
 																
 																<li class="ee-gmap-entry">
-																  <p class="section-heading">Display Address as an interactive map or add a static map url <a class="thickbox" href="#TB_inline?height=550&width=400&inlineId=venue_gmap"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a></p>
+																  <p class="section-heading"><?php _e('Display Address as an interactive map or add a static map url', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'venue_gmap'); ?></p>
 																		
 																		<label for="enable-ven-gmaps"><?php _e('Enable Venue for Google Maps', 'event_espresso')  ?></label>
 																   <?php echo select_input('enable_for_maps', $values, isset($meta['enable_for_maps']) ? $meta['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?>
 																  
-																		<label for="gmap-static">Add static map url</label>
+																		<label for="gmap-static"><?php _e('Add static map url', 'event_espresso'); ?></label>
 																  <input type="text" id="gmap-static" name="gmap_static" size="25" <?php echo (!empty($meta['gmap_static']) )? 'value="' . $meta['gmap_static'] .'"' : 'value=""'; ?> />
 																</li>
 																
@@ -186,7 +186,7 @@ function edit_event_venue(){
 																		if( function_exists('ee_gmap_display') ) {
 																		echo ee_gmap_display($ee_gmap_location, $event_id);
 																		} else {?>
-																		<p class="inform">Sorry the Gmap function is not available, please try the url method instead.</p>
+																		<p class="inform"><?php _e('Sorry the Gmap function is not available, please try the url method instead.', 'event_espresso'); ?></p>
 												<?php	}
 															 
 																}else{ ?>

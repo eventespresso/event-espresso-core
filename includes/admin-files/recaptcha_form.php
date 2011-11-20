@@ -13,7 +13,7 @@
 				<li>
 				  <label for="use_captcha">
 				   <strong><?php _e('Use', 'event_espresso'); ?> <a href="http://recaptcha.net/||http://recaptcha.net/learnmore.html||https://admin.recaptcha.net/accounts/login/?next=/recaptcha/sites/||http://recaptcha.net/apidocs/captcha/client.html" title="reCAPTCHA Home Page||What is reCAPTCHA||reCAPTCHA Account||reCAPTCHA Client API Documentation" target="_blank"><?php _e('reCAPTCHA', 'event_espresso'); ?></a> <?php _e('to block spam registrations', 'event_espresso'); ?></strong>:
-					<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=recaptcha_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/question-frame.png" width="16" height="16" /></a> </label>
+					<?php apply_filters( 'espresso_help', 'recaptcha_info'); ?></label>
 				  <?php
 						$values=array(					
 							array('id'=>'N','text'=> __('No','event_espresso')),

@@ -143,7 +143,7 @@ function add_new_event() {
 					<?php _e('Custom Tickets', 'event_espresso'); ?>
 					</span> </h3>
 				  <div class="inside">
-					<p><?php echo espresso_ticket_dd(); ?> <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=custom_ticket_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a></p>
+					<p><?php echo espresso_ticket_dd(); ?> <?php apply_filters( 'espresso_help', 'custom_ticket_info'); ?></p>
 				  </div>
 				</div>
 				<!-- /ticket-options -->
@@ -317,8 +317,7 @@ function add_new_event() {
 			  <td class="a"><fieldset id="add-reg-dates">
 				  <legend>
 				  <?php _e('Registration Dates', 'event_espresso'); ?>
-				  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=reg_date_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
-				  </legend>
+				  </legend> <?php apply_filters( 'espresso_help', 'reg_date_info'); ?>
 				  <p>
 					<label for="registration_start"><?php echo __('Registration Start:', 'event_espresso') ?> </label>
 					<input type="text" size="10" id="registration_start" class="datepicker" name="registration_start" value="" />
@@ -330,9 +329,8 @@ function add_new_event() {
 				</fieldset>
 				<fieldset id="add-event-dates">
 				  <legend>
-				  <?php _e('Event Dates', 'event_espresso'); ?>
-				  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=event_date_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
-				  </legend>
+				  <?php _e('Event Dates', 'event_espresso'); ?> 
+				  </legend> <?php apply_filters( 'espresso_help', 'event_date_info'); ?>
 				  <p>
 					<label for="start_date">
 					  <?php  _e('Event Start Date:', 'event_espresso') ?>
@@ -348,9 +346,8 @@ function add_new_event() {
 				</fieldset>
 				<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] != 'Y') && $espresso_premium == true) { ?>
 				<p><span class="run-in">
-				  <?php _e('Current Time:', 'event_espresso'); ?>
-				  </span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span>
-				  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=current_time_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
+				  <?php _e('Current Time:', 'event_espresso'); ?> 
+				  </span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <?php apply_filters( 'espresso_help', 'current_time_info'); ?>
 				  <a class="change-date-time" href="options-general.php" target="_blank">
 				  <?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
 				  </a></p>
@@ -375,16 +372,13 @@ function add_new_event() {
 			  <td class="b"><fieldset id="add-register-times">
 				  <legend>
 				  <?php _e('Registration Times', 'event_espresso'); ?>
-				  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=reg_date_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
-
-				  </legend>
+				  </legend> <?php apply_filters( 'espresso_help', 'reg_date_info'); ?>
 				  <?php echo event_espresso_timereg_editor(); ?>
 				</fieldset>
 				<fieldset id="add-event-times">
 				  <legend>
 				  <?php _e('Event Times', 'event_espresso'); ?>
-				  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=event_times_info" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a>
-				  </legend>
+				  </legend> <?php apply_filters( 'espresso_help', 'event_times_info'); ?>
 				  <?php echo event_espresso_time_editor(); ?>
 				</fieldset>
 				</td>

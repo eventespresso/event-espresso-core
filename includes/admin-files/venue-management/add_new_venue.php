@@ -65,8 +65,7 @@ function add_new_event_venue(){
 									 ?>
 								<li>
 									<label for="locale">
-										<?php _e('Locale/Region ','event_espresso'); ?>
-										<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=venue_locale"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a> </label>
+										<?php _e('Locale/Region ','event_espresso'); ?> <?php apply_filters( 'espresso_help', 'venue_locale'); ?> </label>
 									<?php 
 		  				$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
 		  				$results = $wpdb->get_results($sql);
@@ -125,7 +124,7 @@ function add_new_event_venue(){
 									<input type="text" id="image" name="image" size="25">
 								</li>
 								<li class="ee-gmap-entry">
-									<p class="section-heading">Display Address as an interactive map or add a static map url <a class="thickbox" href="#TB_inline?height=400&width=500&inlineId=venue_gmap"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>images/question-frame.png" width="16" height="16" /></a></p>
+									<p class="section-heading"><?php _e('Display Address as an interactive map or add a static map url', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'event-venue_gmap-boxes'); ?></p>
 									<label for="enable-ven-gmaps">
 										<?php _e('Enable Venue for Google Maps', 'event_espresso')  ?>
 									</label>

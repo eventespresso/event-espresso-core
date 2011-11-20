@@ -346,8 +346,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 		//print_r( $good_meta );
 		?>
 		<p>
-		<?php _e('Using Event Meta boxes', 'event_espresso'); ?>
-		  <a class="thickbox"  href="#TB_inline?height=400&width=500&inlineId=event-meta-boxes" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" width="16" height="16" /></a> </p>
+		<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'event-meta-boxes'); ?>
 		<ul id="dynamicMetaInput">
 		<?php
 		if ($event_meta != '') {
