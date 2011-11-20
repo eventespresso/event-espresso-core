@@ -139,7 +139,7 @@ function event_espresso_display_paypal_settings() {
 				<td><input class="regular-text" type="text" name="paypal_id" size="35" id="paypal_id" value="<?php echo $payment_settings['paypal']['paypal_id']; ?>">
 					<br />
 					<span class="description">
-					<?php _e('(Typically payment@yourdomain.com)', 'event_espresso'); ?>
+					<?php _e('Typically payment@yourdomain.com', 'event_espresso'); ?>
 					</span></td>
 			</tr>
 			<tr>
@@ -239,7 +239,7 @@ function event_espresso_display_paypal_settings() {
 				<td><input class="regular-text" type="text" name="image_url" id="pp_image_url" size="35" value="<?php echo $payment_settings['paypal']['image_url']; ?>" />
 					<br />
 					<span class="description">
-					<?php _e('(used for your business/personal logo on the PayPal page)', 'event_espresso'); ?>
+					<?php _e('Used for your business/personal logo on the PayPal page', 'event_espresso'); ?>
 					</span></td>
 			</tr>
 			<tr>
@@ -252,7 +252,6 @@ function event_espresso_display_paypal_settings() {
 			<tr>
 				<th><label for="use_sandbox">
 						<?php _e('Use the debugging feature and the PayPal Sandbox', 'event_espresso'); ?>
-						
 						<?php apply_filters( 'espresso_help', 'sandbox_info'); ?>
 					</label></th>
 				<td><?php echo select_input('use_sandbox', $values, empty($payment_settings['paypal']['use_sandbox']) ? 'N' : $payment_settings['paypal']['use_sandbox']);?></td>
@@ -272,7 +271,7 @@ function event_espresso_display_paypal_settings() {
 			</tr>
 		</tbody>
 	</table>
-
+	
 	<p>
 		<input type="hidden" name="update_paypal" value="update_paypal">
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update PayPal Settings', 'event_espresso') ?>" id="save_paypal_settings" />
