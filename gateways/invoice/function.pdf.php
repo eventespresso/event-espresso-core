@@ -6,10 +6,11 @@
 		$currency_sign = html_entity_decode( $org_options[ 'currency_symbol' ], ENT_QUOTES );
 		}
 class PDF extends FPDF{
+	
 	//Page header
 	function Header(){
-		global $wpdb, $org_options;
-		$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
+		global $wpdb, $org_options, $espresso_wp_user;
+		$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 		//Logo
 		if (isset($payment_settings['invoice']['invoice_logo_url'])&&trim($payment_settings['invoice']['invoice_logo_url']) !=''){
 			$this->Image($payment_settings['invoice']['invoice_logo_url'],10,8,90);//Set the logo if it is available

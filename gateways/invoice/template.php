@@ -1,4 +1,8 @@
 <?php
+global $espresso_premium; if ($espresso_premium != true) return;
+global $wpdb, $org_options,$espresso_wp_user;
+
+	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	//Added by Imon
 	if(isset($_SESSION['espresso_session_id'])){
 		unset($_SESSION['espresso_session_id']);
@@ -8,11 +12,6 @@
 	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/fpdf.php';
 
 	require_once(dirname(__FILE__).'/function.pdf.php');//Added by Imon
-
-	global $espresso_premium; if ($espresso_premium != true) return;
-	global $wpdb, $org_options;
-
-	$invoice_payment_settings = get_option('event_espresso_invoice_payment_settings');
 
 //Added by Imon
 	$multi_reg = false;
