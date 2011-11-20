@@ -599,6 +599,10 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	float:left;
 	clear: left;
 }
+.event-espresso_page_events #side-sortables p span.question {
+	float: none;
+	clear: none;
+}
 .event-espresso_page_events #side-sortables p input {
 	
 }
