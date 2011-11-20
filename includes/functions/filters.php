@@ -5,6 +5,6 @@ function espresso_admin_footer () {
 add_filter('admin_footer_text', 'espresso_admin_footer');
 
 function espresso_help_popup($name){
-	echo  '<a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=' . $name . '" target="_blank"><span style=" font-size:11px">[?]</span></a>';
+	echo  '<a class="thickbox"  href="#TB_inline?height=400&amp;width=500&amp;inlineId=' . $name . '" target="_blank"><span class="question">[?]</span></a>';
 }
 add_filter('espresso_help', 'espresso_help_popup');

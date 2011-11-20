@@ -1270,6 +1270,10 @@ legend {
 	font-weight: bold;
 	margin-bottom: 10px;
 }
+legend span.question, span.question {
+	font-size: 11px !important;
+	font-weight: normal !important;
+}
 label {
 	/*color: #555;
 	font-weight: bold;
