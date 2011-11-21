@@ -73,6 +73,47 @@ define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 
 // End table definitions
 
+define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
+
+//Get the plugin url and content directories.
+//These variables are used to define the plugin and content directories in the constants below.
+$wp_plugin_url = WP_PLUGIN_URL;
+$wp_content_url = WP_CONTENT_URL;
+
+//Define the plugin directory and path
+define("EVENT_ESPRESSO_PLUGINPATH", "/" . plugin_basename(dirname(__FILE__)) . "/");
+define("EVENT_ESPRESSO_PLUGINFULLPATH", WP_PLUGIN_DIR . EVENT_ESPRESSO_PLUGINPATH);
+define("EVENT_ESPRESSO_PLUGINFULLURL", $wp_plugin_url . EVENT_ESPRESSO_PLUGINPATH);
+
+//Define dierectory structure for uploads
+
+//Create the paths
+if (!defined('WP_CONTENT_DIR')) {
+	define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
+}
+$upload_path = WP_CONTENT_DIR . '/uploads';
+$event_espresso_upload_dir = $upload_path . '/espresso/';
+$event_espresso_template_dir = $event_espresso_upload_dir . 'templates/';
+
+//Define the includes directory
+$includes_directory = EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/';
+define("EVENT_ESPRESSO_INCLUDES_DIR", $includes_directory);
+
+//Define the uploads directory and url
+define("EVENT_ESPRESSO_UPLOAD_DIR", $event_espresso_upload_dir);
+define("EVENT_ESPRESSO_UPLOAD_URL", $wp_content_url . '/uploads/espresso/');
+
+//Define the templates dirrectory
+define("EVENT_ESPRESSO_TEMPLATE_DIR", $event_espresso_template_dir);
+
+//Define the gateway directory and url
+$event_espresso_gateway_dir = EVENT_ESPRESSO_UPLOAD_DIR . "gateways/";
+define("EVENT_ESPRESSO_GATEWAY_DIR", $event_espresso_gateway_dir);
+define("EVENT_ESPRESSO_GATEWAY_URL", $wp_content_url . '/uploads/espresso/gateways/');
+
+//End - Define dierectory structure for uploads
+
+
 function espresso_init_session() {
 	global $org_options;
 
@@ -130,11 +171,6 @@ $org_options = get_option('events_organization_settings');
 $page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
 $notices = array( 'updates' => array(), 'errors' => array() );
 
-//Get the plugin url and content directories.
-//These variables are used to define the plugin and content directories in the constants below.
-$wp_plugin_url = WP_PLUGIN_URL;
-$wp_content_url = WP_CONTENT_URL;
-
 //Check if SSL is loaded
 if (is_ssl()) {
 
@@ -180,40 +216,6 @@ if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
 		}
 	}
 }
-define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
-
-//Define the plugin directory and path
-define("EVENT_ESPRESSO_PLUGINPATH", "/" . plugin_basename(dirname(__FILE__)) . "/");
-define("EVENT_ESPRESSO_PLUGINFULLPATH", WP_PLUGIN_DIR . EVENT_ESPRESSO_PLUGINPATH);
-define("EVENT_ESPRESSO_PLUGINFULLURL", $wp_plugin_url . EVENT_ESPRESSO_PLUGINPATH);
-
-//Define dierectory structure for uploads
-
-//Create the paths
-if (!defined('WP_CONTENT_DIR')) {
-	define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
-}
-$upload_path = WP_CONTENT_DIR . "/uploads";
-$event_espresso_upload_dir = "{$upload_path}/espresso/";
-$event_espresso_template_dir = "{$event_espresso_upload_dir}templates/";
-
-//Define the includes directory
-$includes_directory = EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/';
-define("EVENT_ESPRESSO_INCLUDES_DIR", $includes_directory);
-
-//Define the uploads directory and url
-define("EVENT_ESPRESSO_UPLOAD_DIR", $event_espresso_upload_dir);
-define("EVENT_ESPRESSO_UPLOAD_URL", $wp_content_url . '/uploads/espresso/');
-
-//Define the templates dirrectory
-define("EVENT_ESPRESSO_TEMPLATE_DIR", $event_espresso_template_dir);
-
-//Define the gateway directory and url
-$event_espresso_gateway_dir = EVENT_ESPRESSO_UPLOAD_DIR . "gateways/";
-define("EVENT_ESPRESSO_GATEWAY_DIR", $event_espresso_gateway_dir);
-define("EVENT_ESPRESSO_GATEWAY_URL", $wp_content_url . '/uploads/espresso/gateways/');
-
-//End - Define dierectory structure for uploads
 
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/SimpleMath.php';
 global $simpleMath;
@@ -344,7 +346,10 @@ function espresso_load_reg_page_files() {
 	add_action('wp_ajax_event_espresso_confirm_and_pay', 'event_espresso_confirm_and_pay');
 	add_action('wp_ajax_nopriv_event_espresso_confirm_and_pay', 'event_espresso_confirm_and_pay');
 }
-if ($this_is_a_reg_page == TRUE) espresso_load_reg_page_files();
+if ($this_is_a_reg_page == TRUE) {
+	espresso_load_reg_page_files();
+}
+
 //Build the addon files
 if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php')) {
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php');
