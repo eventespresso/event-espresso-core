@@ -910,7 +910,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 					$html .= $inside_wrapper_after;
 				}
 				
-					$html .= $show_google_map_link != false ? $google_map_link : '';
+					$html .= $show_google_map_link != false ? '<div class="google-remote-map-link">' . $google_map_link . '</div>': '';
 					
 				//If the premium version is installed, then we can laod the map.
 				if ($espresso_premium == true) {
