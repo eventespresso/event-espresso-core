@@ -906,10 +906,12 @@ if (!function_exists('espresso_venue_details_sc')) {
 					$html .= $venue->state != '' ? stripslashes_deep($venue->state) . '<br />' : '';
 					$html .= $venue->zip != '' ? stripslashes_deep($venue->zip) . '<br />' : '';
 					$html .= $venue->country != '' ? stripslashes_deep($venue->country) . '<br />' : '';
-					$html .= $show_google_map_link != false ? $google_map_link : '';
+					
 					$html .= $inside_wrapper_after;
 				}
-
+				
+					$html .= $show_google_map_link != false ? $google_map_link : '';
+					
 				//If the premium version is installed, then we can laod the map.
 				if ($espresso_premium == true) {
 					if (isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y') {
