@@ -156,50 +156,41 @@ function organization_config_mnu() {
 										</h3>
 										<div class="inside">
 											<div class="padding">
+												<h4>
+													<?php _e('Contact Information', 'event_espresso'); ?>
+													<?php apply_filters( 'espresso_help', 'contact_info'); ?>
+												</h4>
 												<table class="form-table">
 													<tbody>
-														
-														<tr>
-															<td colspan="2"><h4>
-																	<?php _e('Contact Information', 'event_espresso'); ?>
-																	<?php apply_filters( 'espresso_help', 'contact_info'); ?>
-																</h4>
-																<div id="contact_info" class="pop-help" style="display:none">
-																	<h2>
-																		<?php _e('Contact Information', 'event_espresso'); ?>
-																	</h2>
-																	<p><?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?></p>
-																</div></td>
-														</tr>
 														<tr>
 															<th><label for="org_name">
 																	<?php _e('Organization Name:', 'event_espresso'); ?>
 																</label></th>
-															<td><input class="regular-text" type="text" name="org_name" size="45" value="<?php echo stripslashes_deep($org_options['organization']); ?>" /></td>
+															<td><input class="regular-text" type="text" name="org_name" value="<?php echo stripslashes_deep($org_options['organization']); ?>" /></td>
 														</tr>
 														<tr>
 															<th><label for="org_street1">
 																	<?php _e('Organization Street 1:', 'event_espresso'); ?>
 																</label></th>
-															<td><input class="regular-text" type="text" name="org_street1" size="45" value="<?php echo $org_options['organization_street1']; ?>" /></td>
+															<td><input class="regular-text" type="text" name="org_street1" value="<?php echo $org_options['organization_street1']; ?>" /></td>
 														</tr>
 														<tr>
 															<th><label for="org_street2">
 																	<?php _e('Organization Street 2:', 'event_espresso'); ?>
 																</label></th>
-															<td><input class="regular-text" type="text" name="org_street2" size="45" value="<?php echo $org_options['organization_street2']; ?>" /></td>
+															<td><input class="regular-text" type="text" name="org_street2" value="<?php echo $org_options['organization_street2']; ?>" /></td>
 														</tr>
 														<tr>
 															<th><label for="org_city">
 																	<?php _e('Organization City:', 'event_espresso'); ?>
 																</label></th>
-															<td><input class="regular-text" type="text" name="org_city" size="45" value="<?php echo $org_options['organization_city']; ?>" /></td>
+															<td><input class="regular-text" type="text" name="org_city" value="<?php echo $org_options['organization_city']; ?>" /></td>
 														</tr>
 														<tr>
 															<th><label for="org_state">
 																	<?php _e('Organization State:', 'event_espresso'); ?>
 																</label></th>
-															<td><input class="regular-text" type="text" name="org_state" size="45" value="<?php echo $org_options['organization_state']; ?>" /></td>
+															<td><input class="regular-text" type="text" name="org_state" value="<?php echo $org_options['organization_state']; ?>" /></td>
 														</tr>
 														<tr>
 															<th><label for="org_zip">
@@ -217,13 +208,15 @@ function organization_config_mnu() {
 															<th><label for="email">
 																	<?php _e('Primary contact email:', 'event_espresso'); ?>
 																</label></th>
-															<td><input class="regular-text" type="text" name="email" size="45" value="<?php echo $org_options['contact_email']; ?>" /></td>
+															<td><input class="regular-text" type="text" name="email" value="<?php echo $org_options['contact_email']; ?>" /></td>
 														</tr>
-														<tr>
-															<td colspan="2"><h4>
-																	<?php _e('Time and Date Settings', 'event_espresso'); ?>
-																</h4></td>
-														</tr>
+													</tbody>
+												</table>
+												<h4>
+													<?php _e('Time and Date Settings', 'event_espresso'); ?>
+												</h4>
+												<table class="form-table">
+													<tbody>
 														<tr>
 															<th><?php _e('Current Time: ', 'event_espresso'); ?></th>
 															<td><span class="current-date"> <?php echo date(get_option('date_format') . ' ' . get_option('time_format')); ?> </span><br />
@@ -244,11 +237,14 @@ function organization_config_mnu() {
 																</label></th>
 															<td><?php echo select_input('expire_on_registration_end', $values, $org_options['expire_on_registration_end']); ?></td>
 														</tr>
-														<tr>
-															<td colspan="2"><h4>
-																	<?php _e('Images', 'event_espresso'); ?>
-																</h4></td>
-														</tr>
+													</tbody>
+												</table>
+												<h4>
+												<?php _e('Images', 'event_espresso'); ?>
+												</h4>
+												
+												<table class="form-table">
+													<tbody>
 														<tr>
 															<th><label for="upload_image">
 																	<?php _e('Add a Default Logo', 'event_espresso'); ?>
@@ -429,8 +425,8 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																		</tbody>
 																	</table>
 																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-																					<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-																					</a></span></p>
+																		<?php _e('View Custom Email Tags', 'event_espresso'); ?>
+																		</a></span></p>
 																</div></td>
 														</tr>
 													</tbody>
@@ -464,9 +460,11 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																			</tr>
 																		</tbody>
 																	</table>
-																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info"><?php _e('View Custom Email Tags', 'event_espresso'); ?></a>
-																					 | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example"><?php _e('Example', 'event_espresso'); ?></a>
-																					</span></p>
+																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
+																		<?php _e('View Custom Email Tags', 'event_espresso'); ?>
+																		</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
+																		<?php _e('Example', 'event_espresso'); ?>
+																		</a> </span></p>
 																</div></td>
 														</tr>
 													</tbody>
@@ -481,10 +479,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 								<div style="clear:both;"></div>
 							</li>
 							<li>
-								<h2>
-									<?php _e('Advanced Features', 'event_espresso'); ?>
-								</h2>
-								<hr />
+								
 							</li>
 							<?php
 								if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php') || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/optional_event_settings.php')) {
@@ -494,11 +489,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 										require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/optional_event_settings.php');
 										echo '</li>';
 									}
-									if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php')) {
-										echo '<li>';
-										require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php');
-										echo '</li>';
-									}
+									
 								} else {
 									?>
 							<li>
@@ -609,3 +600,4 @@ echo event_espresso_custom_email_info();?>
 <?php
 	espresso_tiny_mce();
 }
+
