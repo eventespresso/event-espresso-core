@@ -422,7 +422,7 @@ if (is_admin()) {
 	event_espresso_require_file('admin_menu.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/", '', false, true);
 
 	// Event Registration Subpage - Configure Organization
-	event_espresso_require_file('organization_config.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/", '', false, true);
+	event_espresso_require_file('organization_config.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/settings/", '', false, true);
 
 	// Event Registration Subpage - Add/Delete/Edit Events
 	event_espresso_require_file('index.php', EVENT_ESPRESSO_PLUGINFULLPATH . "includes/event-management/", '', false, true);
