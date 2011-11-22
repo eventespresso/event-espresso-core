@@ -5,7 +5,7 @@ function event_espresso_bank_payment_settings() {
 	$old_payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	
-	if (isset($_POST['update_bank_payment_settings'])) {
+	if (isset($_POST['update_bank_payment_settings']) && check_admin_referer('espresso_form_check', 'add_bank_settings')) {
 		$allowable_tags = '<br /><br><a>';
 		//$bank_payment_settings_settings = get_option('event_espresso_bank_payment_settings_settings');
 		$payment_settings['bank_payment']['account_name'] = strip_tags($_POST['account_name'],$allowable_tags);
@@ -17,6 +17,8 @@ function event_espresso_bank_payment_settings() {
 		
 		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('Electronic Funds Transfer Settings Updated!', 'event_espresso');
+		}else{
+			$notices['errors'][] = __('Electronic Funds Transfer Settings were not saved! ', 'event_espresso');
 		}
 	}
 	
@@ -176,6 +178,7 @@ function event_espresso_display_bank_payment_settings() {
 	<p>
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Electronic Funds Transfer Settings', 'event_espresso') ?>" id="save_bank_payment_settings" />
 	</p>
+	<?php wp_nonce_field( 'espresso_form_check', 'add_bank_settings' ); ?>
 </form>
 <?php
 }
