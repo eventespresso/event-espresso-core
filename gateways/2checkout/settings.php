@@ -7,7 +7,7 @@ function event_espresso_2checkout_payment_settings() {
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	
 	//Update settings
-	if (isset($_POST['update_2checkout'])) {
+	if (isset($_POST['update_2checkout']) && check_admin_referer('espresso_form_check', 'add_2checkout_settings')) {
 		$payment_settings['2checkout']['2checkout_id'] = $_POST['2checkout_id'];
 		$payment_settings['2checkout']['2checkout_username'] = $_POST['2checkout_username'];
 		$payment_settings['2checkout']['currency_format'] = $_POST['currency_format'];
@@ -266,6 +266,7 @@ function event_espresso_display_2checkout_settings() {
 		<input type="hidden" name="update_2checkout" value="update_2checkout">
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update 2checkout Settings', 'event_espresso') ?>" id="save_2checkout_settings" />
 	</p>
+	<?php wp_nonce_field( 'espresso_form_check', 'add_2checkout_settings' ); ?>
 </form>
 <div id="2co_button_image" style="display:none">
 	<h2>

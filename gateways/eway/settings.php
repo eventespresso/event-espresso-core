@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_eway_payment_settings() {
-	if (isset($_POST['update_eway'])) {
+	if (isset($_POST['update_eway']) && check_admin_referer('espresso_form_check', 'add_eway_settings')) {
 		//$eway_settings = get_option('event_espresso_eway_settings');
 		$eway_settings['eway_id'] = $_POST['eway_id'];
 		$eway_settings['eway_username'] = $_POST['eway_username'];
@@ -239,6 +239,7 @@ function event_espresso_display_eway_settings() {
 		<p>
 			<input type="hidden" name="update_eway" value="update_eway">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update eway Settings', 'event_espresso') ?>" id="save_eway_settings" />
+			<?php wp_nonce_field( 'espresso_form_check', 'add_eway_settings' ); ?>
 		</p>
 	</form>
 	<div id="eway_sandbox_info" style="display:none">

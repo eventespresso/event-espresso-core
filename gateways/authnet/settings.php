@@ -5,7 +5,7 @@ function event_espresso_authnet_payment_settings() {
 	$old_payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	
-	if (isset($_POST['update_authnet'])) {
+	if (isset($_POST['update_authnet']) && check_admin_referer('espresso_form_check', 'add_authnetsim_settings')) {
 		//$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 		$payment_settings['authnet_sim']['authnet_login_id'] = $_POST['authnet_login_id'];
 		$payment_settings['authnet_sim']['authnet_transaction_key'] = $_POST['authnet_transaction_key'];
@@ -212,6 +212,7 @@ function event_espresso_display_authnet_settings() {
 		<input type="hidden" name="update_authnet" value="update_authnet">
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Authorize.net SIM Settings', 'event_espresso') ?>" id="save_authnet_settings" />
 	</p>
+	<?php wp_nonce_field( 'espresso_form_check', 'add_authnetsim_settings' ); ?>
 </form>
 <div id="relay_response" style="display:none">
 	<h2>

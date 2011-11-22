@@ -2,7 +2,7 @@
 
 function event_espresso_alipay_settings() {
 	global $org_options;
-	if (isset($_POST['update_alipay'])) {
+	if (isset($_POST['update_alipay'])&& check_admin_referer('espresso_form_check', 'add_alipay_settings') ) {
 		$alipay_settings['alipay_partner_id'] = $_POST['alipay_partner_id'];
 		$alipay_settings['alipay_security_code'] = $_POST['alipay_security_code'];
 		$alipay_settings['button_url'] = $_POST['button_url'];
@@ -95,6 +95,7 @@ function event_espresso_display_alipay_settings() {
 			<input type="hidden" name="update_alipay" value="update_alipay">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Alipay Settings', 'event_espresso') ?>" id="save_alipay_settings" />
 		</p>
+		<?php wp_nonce_field( 'espresso_form_check', 'add_alipay_settings' ); ?>
 	</form>
 	<?php
 }

@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_firstdata_payment_settings() {
-	if (isset($_POST['update_firstdata'])) {
+	if (isset($_POST['update_firstdata']) && check_admin_referer('espresso_form_check', 'add_firstdata_settings') ) {
 		$firstdata_settings['firstdata_store_id'] = $_POST['firstdata_store_id'];
 		$firstdata_settings['use_sandbox'] = $_POST['use_sandbox'];
 		$firstdata_settings['firstdata_credit_cards'] = implode(",", $_POST['firstdata_credit_cards']);
@@ -114,6 +114,7 @@ function event_espresso_display_firstdata_settings() {
 			<input type="hidden" name="update_firstdata" value="update_firstdata">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update First Data Settings', 'event_espresso') ?>" id="save_paypal_settings" />
 		</p>
+		<?php wp_nonce_field( 'espresso_form_check', 'add_firstdata_settings' ); ?>
 	</form>
 			  <div id="sandbox_info_firstdata" style="display:none">
 		<h2><?php _e('First Data Sandbox', 'event_espresso'); ?></h2>
