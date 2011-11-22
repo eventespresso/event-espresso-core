@@ -97,7 +97,7 @@ function event_espresso_display_mwarrior_settings() {
 						</li>
 						<li>
 							<label for="currency_format">
-								<?php _e('Select the currency for your country:', 'event_espresso'); ?>
+								<?php _e('Select the currency for your country: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'currency_info') ?>
 							</label>
 							<br />
 							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
@@ -126,28 +126,28 @@ function event_espresso_display_mwarrior_settings() {
 									<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
 								</option>
 							</select>
-							<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=currency_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
+						</li>
 						<li>
 							<label for="button_url">
-								<?php _e('Button Image URL: ', 'event_espresso'); ?>
+								<?php _e('Button Image URL: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'button_image') ?>
 							</label>
 							<br />
 							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo (($mwarrior_settings['button_url'] == '') ? $button_url : $mwarrior_settings['button_url'] ); ?>" />
-							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
+							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> </li>
 						<li>
 							<label for="image_url">
-								<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?>
+								<?php _e('Image URL (logo for payment page): ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'image_url_info') ?>
 							</label>
 							<br />
 							<input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $mwarrior_settings['image_url']; ?>" />
-							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=image_url_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a><br />
 							<?php _e('(used for your business/personal logo on the Merchant Warrior page)', 'event_espresso'); ?>
 						</li>
 					</ul></td>
 				<td valign="top"><ul>
 						<li>
 							<label for="bypass_payment_page">
-								<?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?>
+								<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'bypass_confirmation') ?>
 							</label>
 							<?php
 							$values = array(
@@ -155,13 +155,13 @@ function event_espresso_display_mwarrior_settings() {
 								array('id' => 'Y', 'text' => __('Yes', 'event_espresso')));
 							echo select_input('bypass_payment_page', $values, $mwarrior_settings['bypass_payment_page']);
 							?>
-							&nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=bypass_confirmation"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></li>
+						</li>
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the Test Mode for Merchant Warrior', 'event_espresso'); ?>
+								<?php _e('Use the Test Mode for Merchant Warrior? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'sandbox_info') ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $mwarrior_settings['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-							&nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=sandbox_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
+							
 						</li>
 						<li>
 							<?php _e('Current Button Image:', 'event_espresso'); ?>
