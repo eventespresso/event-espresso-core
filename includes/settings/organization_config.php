@@ -58,6 +58,7 @@ function organization_config_mnu() {
 		$org_options['surcharge_text'] = $_POST['surcharge_text'];
 		$org_options['show_reg_footer'] = $_POST['show_reg_footer'];
 		$org_options['affiliate_id'] = $_POST['affiliate_id'];
+		$org_options['site_license_key'] = $_POST['site_license_key'];
 		$org_options['default_logo_url'] = $_REQUEST['upload_image'];
 		$org_options['default_payment_status'] = $_POST['default_payment_status'];
 		$currency_format = getCountryFullData($org_options['organization_country']);
