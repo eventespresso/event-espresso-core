@@ -229,8 +229,8 @@ function espresso_calendar_config_mnu()	{
 										<ul>
 											<li>
 												<label for="show_time">
-													<?php _e('Show the event time in the calendar? ','event_espresso'); ?>
-													<a class="thickbox"href="#TB_inline?height=400&amp;width=500&amp;inlineId=show-event-times" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a> </label>
+													<?php _e('Show the event time in the calendar? ','event_espresso'); ?><?php apply_filters('espresso_help', 'show-event-times') ?>
+											 	</label>
 												<?php
  echo select_input('show_time', $values, $espresso_calendar['show_time'], 'id="show_time"');
 ?>
@@ -267,6 +267,7 @@ function espresso_calendar_config_mnu()	{
 ?>
 												<p><a href="http://codex.wordpress.org/Formatting_Date_and_Time">Documentation on date and time formatting</a>.</p>
 											</li>
+											
 											<li>
 												<label for="espresso_calendar_firstday">
 													<?php _e('First Day of the Week:','event_espresso'); ?>
@@ -275,14 +276,14 @@ function espresso_calendar_config_mnu()	{
 												<br />
 												<input id="espresso_calendar_firstday" type="text" name="espresso_calendar_firstday" size="10" maxlength="1" value="<?php echo $espresso_calendar['espresso_calendar_firstday'];?>" />
 											</li>
+											
 											<li>
 												<label for="espresso_calendar_weekends">
 													<?php _e('Show Weekends:','event_espresso'); ?>
 												</label>
-												<?php
-echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['espresso_calendar_weekends'], 'id="espresso_calendar_weekends"');
-?>
+												<?php echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['espresso_calendar_weekends'], 'id="espresso_calendar_weekends"'); ?>
 											</li>
+											
 											<li>
 												<label for="espresso_calendar_height">
 													<?php _e('Height:','event_espresso'); ?>
@@ -291,33 +292,38 @@ echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['esp
 												<br />
 												<input id="espresso_calendar_height" type="text" name="espresso_calendar_height" size="100" maxlength="100" value="<?php echo $espresso_calendar['espresso_calendar_height'];?>" />
 											</li>
+											
 											<li>
 												<label for="calendar_pages">
-													<?php _e('Page(s) displaying the calendar: ','event_espresso'); ?>
-													<a class="thickbox"href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-on-pages" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a> </label>
+													<?php _e('Page(s) displaying the calendar: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'display-on-pages') ; ?>
+												</label>
 												<?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma seperated list of page ids.', 'event_espresso'); ?>
 												<br />
 												<input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo $espresso_calendar['calendar_pages']==''?0:$espresso_calendar['calendar_pages'];?>" />
 											</li>
+											
 											<li>
 												<label for="calendar_page_post">
-													<?php _e('Links go to post or registration page? ','event_espresso'); ?>
-													<a class="thickbox"href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-where" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a> </label>
+													<?php _e('Links go to post or registration page? ','event_espresso'); ?><?php apply_filters('espresso_help', 'display-where') ?>
+											 </label>
 												<?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso.', 'event_espresso'); ?>
 												<br />
-												<?php echo select_input('espresso_page_post',array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"');?> </li>
+												<?php echo select_input('espresso_page_post',array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"');?> 
+											</li>
+											
 											<li>
 												<label for="enable-calendar-thumbs">
 													<?php _e('Enable images in calendar? ', 'event_espresso'); ?>
 												</label>
 												<?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"');?> </li>
-											<li>											
+											</li>											
+											
 											<li>
 											<?php
 											$disabled = ($espresso_calendar['enable_calendar_thumbs'] !== 'true') ? 'disabled="disabled"' : '';
 											$styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
 											?>											
-												<p class="section-heading" <?php echo $styled ?>>Select Calendar thumbnail size: <a class="thickbox"href="#TB_inline?height=400&amp;width=500&amp;inlineId=calendar-thumb-sizes" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a></p>
+												<p class="section-heading" <?php echo $styled ?>>Select Calendar thumbnail size: <?php apply_filters('espresso_help', 'calendar-thumb-sizes'); ?></p>
 												<label for="calendar-thumb-size-sml" <?php echo $styled ?>>
 													<input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small" <?php echo $disabled ?> />
 													<?php _e(' Small (50px high)', 'event_espresso') ?>
@@ -331,6 +337,7 @@ echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['esp
 													<?php _e(' Large (150px high)', 'event_espresso')?>
 												</label>
 											</li>
+											
 											<li><strong>
 												<?php _e('Theme Settings', 'event_espresso'); ?>
 												</strong><br />
@@ -344,36 +351,39 @@ echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['esp
 												<label for="use_themeroller">
 													<?php _e('Enable themeroller style settings?','event_espresso'); ?>
 												</label>
-												<?php
-					echo select_input('use_themeroller', $values, $espresso_calendar['use_themeroller'], 'id="use_themeroller" class"'.$styled.'" '.$disabled);
-					?>
+												<?php echo select_input('use_themeroller', $values, $espresso_calendar['use_themeroller'], 'id="use_themeroller" class"'.$styled.'" '.$disabled); ?>
 											</li>
+											
 											<li>
 												<label for="espresso_use_pickers">Use color pickers?</label>
-												<?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?> </li>
+												<?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?> 
+											</li>
+											
 											<li class="color-picker-style">
 												<label for="event-background">
 													<?php _e('Event Background - color picker', 'event_espresso') ?>
 												</label>
 												<input id="event-background"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> />
 											</li>
+											
 											<li class="color-picker-style">
 												<label for="event-text">
 													<?php _e('Event Text - color picker', 'event_espresso') ?>
 												</label>
 												<input id="event-text"type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']))? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> />
 											</li>
-											<li> 
-												<!-- <label for="show-in-thickbox">
-<?php // _e('Show event details in popup box ', 'event_espresso'); ?><a class="thickbox"href="#TB_inline?height=400&amp;width=500&amp;inlineId=display-thickbox" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a>
-</label>
-<?php // echo select_input('show_in_thickbox',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
-</li>-->
+											
+											<!--<li> 
+												<label for="show-in-thickbox">
+													<?php // _e('Show event details in popup box ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'display-thickbox') ?>
+												</label>
+												<?php // echo select_input('show_in_thickbox',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
+											</li>-->
 												
 											<li>
 												<label for="enable-cat-classes">
-													<?php _e('Enable CSS classes for categories? ', 'event_espresso'); ?>
-													<a class="thickbox"href="#TB_inline?height=400&amp;width=500&amp;inlineId=enable-categories" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/question-frame.png" alt="help text link" width="16" height="16" /></a> </label>
+													<?php _e('Enable CSS classes for categories? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'enable-categories') ?>
+												 </label>
 												<?php echo select_input('enable_cat_classes',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"');?> </li>
 											<li>
 												<input class="button-primary" type="submit" name="save_calendar_settings" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings2" />
@@ -874,15 +884,15 @@ if (!function_exists('espresso_calendar')) {
  
 			// Set sizes for image display
 			$eventArray['img_size_class'] = $ee_img_size;
- 
+ 		
+			/* thickbox removed until fix found for all events displaying
 			// image onclick displays in thickbox yes/no
- /* thickbox functionlity removed until fix found */
-		/*	if($in_thickbox == 'Y'){
-			$in_thickbox_class = 'thickbox';
-			$in_thickbox_url = '#TB_inline?height=400&amp;width=500&amp;inlineId=event-thumb-detail-' ;
+			if($in_thickbox == 'Y'){
+				$in_thickbox_class = 'thickbox';
+				$in_thickbox_url = '#TB_inline?height=400&amp;width=500&amp;inlineId=event-thumb-detail-' ;
 			}else {
- $in_thickbox_class = '';
-			$in_thickbox_url = '';
+ 			$in_thickbox_class = '';
+				$in_thickbox_url = '';
 			}			
 			
 			$eventArray['in_thickbox_class'] = $in_thickbox_class;
@@ -999,28 +1009,27 @@ if(event.className){
 element.find('a').addClass(event.className);
 }
 						//This displays the title of the event when hovering
-						element.attr('title', event.title + " - Event Times: " + event.start + event.end);
+						//element.attr('title', event.title + " - Event Times: " + event.start + event.end);
 						 
 						// if the user selects show in thickbox we add this element
-// thickbox functionlity removed until fix found 
-//if(event.in_thickbox_url){
-//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
-					//	}
-//alert(event.in_thickbox_url);
+						//if(event.in_thickbox_url){
+						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
+						//}
+						
 						if(event.event_img_thumb){
 						// alert('we have thumbs');
 							
 						 element.addClass('event-has-thumb');
- // thickbox functionlity removed until fix found 
 							 <?php // if($in_thickbox == 'Y'){ ?>
 							// $jaer('a.fc-event').attr('href', event.in_thickbox_url + event.id );
 							 <?php // }else{ ?>
-							// $jaer('a.fc-event').attr('href', event.url );
+							 //$jaer('a.fc-event').attr('href', event.url );
 							 <?php // } ?>
 							
- //$jaer('a.fc-event').addClass(event.in_thickbox_class);
+						//$jaer('a.fc-event').addClass(event.in_thickbox_class);
 						 	element.find('.fc-event-title').before($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						 }
+						
 						<?php 
 						if ($espresso_calendar['show_time'] == 'true'){
 						?>
