@@ -14,28 +14,22 @@ function edit_event_email(){
 <!--Add event display-->
 <div class="metabox-holder">
   <div class="postbox">
-<h3><?php _e('Edit Email:','event_espresso'); ?> <?php echo stripslashes($email_name) ?></h3>
+<h3><?php _e('Edit Email','event_espresso'); ?> </h3>
 <div class="inside">
   <form id="add-edit-new-event-email" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
-  <input type="hidden" name="email_id" value="<?php echo $email_id; ?>">
-  <input type="hidden" name="action" value="update">
-   <ul>
-	<li>
-				<label><?php _e('Email Name:','event_espresso'); ?></label> 
-				<input type="text" name="email_name" size="25" value="<?php echo stripslashes($email_name);?>" />
-			</li> 
+  <h4><?php echo stripslashes($email_name) ?></h4>
+  <table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="email_name"><?php _e('Email Name','event_espresso'); ?></label></th>
+				<td><input class="regular-text" type="text" name="email_name" size="25" value="<?php echo stripslashes($email_name);?>" /></td>
+			</tr>
+			<tr>
+				<th><label><?php _e('Email Subject Line','event_espresso'); ?></label></th>
+				<td><input class="regular-text" type="text" name="email_subject" size="25" value="<?php echo stripslashes($email_subject);?>"></td>
+			</tr>
 			
-			<li>
-				<label><?php _e('Email Subject Line:','event_espresso'); ?></label> 
-				<input type="text" name="email_subject" size="25" value="<?php echo stripslashes($email_subject);?>">
-			</li>
-   	
-			<li>
-				
-				<div id="descriptiondivrich" class="postarea">   
-		 		
-				<label for="email_text"><?php _e('Email Text','event_espresso'); ?></label>
-					
+				<tr><td colspan="2"><div id="descriptiondivrich" class="postarea">   
 				<div class="postbox">   
 					<?php the_editor(espresso_admin_format_content($email_text), $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
 				<table id="manage-event-email-form" cellspacing="0">
@@ -53,12 +47,14 @@ function edit_event_email(){
 				
 				</div>
 			
-			</div>	
-   
-		 </li>
-   
-		 <li>
-	<p><input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Email'); ?>" id="update_email" /></p>
+			</div></td>
+			</tr>
+		</tbody>
+	</table>
+  <input type="hidden" name="email_id" value="<?php echo $email_id; ?>">
+  <input type="hidden" name="action" value="update">
+  
+	<p><input class="button-primary" type="submit" name="Submit" value="<?php _e('Update'); ?>" id="update_email" /></p>
 	<?php wp_nonce_field( 'espresso_form_check', 'update_email' ) ?>
    </li>
   </ul>
