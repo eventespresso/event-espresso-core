@@ -176,6 +176,22 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 								<?php _e('Earn cash for promoting our plugin.', 'event_espresso'); ?>
 								</span></td>
 						</tr>
+						<tr>
+							<td colspan="2"><strong>
+								<?php _e('Your Event Espresso License Key', 'event_espresso'); ?>
+								</strong>
+							</td>
+						<tr>
+						<tr>
+							<th>
+								<?php _e('Enter your valid Event Espresso site-license key here', 'event_espresso'); ?>
+							</th>
+							<td><input name="site_license_key" size="10" style="width:200px;" type="text" value="<?php echo isset($org_options['site_license_key'])&&$org_options['site_license_key'] != ''? stripslashes_deep($org_options['site_license_key']):'0';?>" />
+								<br />
+								<span class="description">
+								<?php _e('Adding a valid Site License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons.'); ?>
+								</span></td>
+						</tr>
 					</tbody>
 				</table>
 				<p>

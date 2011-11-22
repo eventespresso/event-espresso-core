@@ -733,3 +733,19 @@ if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] ==
 if (!empty($_REQUEST['iCal'])) {
 	espresso_ical();
 }
+
+// PUE Auto Upgrades stuff
+if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php') ) {
+	//let's get the client api key for updates
+	global $org_options;
+	$api_key = $org_options['site_license_key'];
+	$host_server_url = 'http://eventespresso.com.s128453.gridserver.com/';
+	$plugin_slug = 'event-espresso';
+	$options = array(
+		'apikey' => $api_key,
+		'lang_domain' => 'event_espresso'
+	);
+	
+	require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
+	$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options);
+}
