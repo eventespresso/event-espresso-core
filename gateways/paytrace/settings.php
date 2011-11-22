@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_paytrace_payment_settings() {
-	if (isset($_POST['update_paytrace'])) {
+	if (isset($_POST['update_paytrace']) && check_admin_referer('espresso_form_check', 'add_paytrace_settings')) {
 		
 		$paytrace_settings = array();#get_option('event_espresso_paytrace_settings');
 		$paytrace_settings['paytrace_user_id'] = $_POST['paytrace_user_id'];
@@ -86,6 +86,7 @@ function event_espresso_display_paytrace_settings() {
 		<input type="hidden" name="update_paytrace" value="update_paytrace">
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Paytrace Settings', 'event_espresso') ?>" id="save_paytrace_settings" />
 	</p>
+	<?php wp_nonce_field( 'espresso_form_check', 'add_paytrace_settings' ); ?>
 </form>
 <?php
 }

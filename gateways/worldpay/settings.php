@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_worldpay_payment_settings() {
-	if (isset($_POST['update_worldpay'])) {
+	if (isset($_POST['update_worldpay']) && check_admin_referer('espresso_form_check', 'add_worldpay_settings')) {
 		//$worldpay_settings = get_option('event_espresso_worldpay_settings');
 		$worldpay_settings['worldpay_id'] = $_POST['worldpay_id'];
 		$worldpay_settings['image_url'] = $_POST['image_url'];
@@ -211,6 +211,7 @@ function event_espresso_display_worldpay_settings() {
 			<input type="hidden" name="update_worldpay" value="update_worldpay">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update worldpay Settings', 'event_espresso') ?>" id="save_worldpay_settings" />
 		</p>
+		<?php wp_nonce_field( 'espresso_form_check', 'add_worldpay_settings' ); ?>
 	</form>
 	
 	<div id="worldpay_sandbox_info" style="display:none">

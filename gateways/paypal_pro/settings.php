@@ -5,7 +5,7 @@ function event_espresso_paypal_pro_payment_settings() {
 	$old_payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	
-	if (isset($_POST['update_paypal_pro'])) {
+	if (isset($_POST['update_paypal_pro']) && check_admin_referer('espresso_form_check', 'add_paypalPro_settings')) {
 		//$paypal_pro_settings = get_option('event_espresso_paypal_settings');
 		$payment_settings['paypal_pro']['email'] = $_POST['email'];
 		$payment_settings['paypal_pro']['username'] = $_POST['username'];
@@ -273,6 +273,7 @@ function event_espresso_display_paypal_pro_settings() {
 		<input type="hidden" name="update_paypal_pro" value="update_paypal_pro">
 		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update PayPal PRO Settings', 'event_espresso') ?>" id="save_paypal_settings" />
 	</p>
+	<?php wp_nonce_field( 'espresso_form_check', 'add_paypalPro_settings' ); ?>
 </form>
 <div id="paypal_pro_sandbox_info" style="display:none">
 	<h2>

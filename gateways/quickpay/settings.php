@@ -1,6 +1,6 @@
 <?php
 function event_espresso_quickpay_payment_settings() {
-	if (isset($_POST['update_quickpay'])) {
+	if (isset($_POST['update_quickpay'])&& check_admin_referer('espresso_form_check', 'add_quickpay_settings')) {
 		$quickpay_settings['quickpay_merchantid'] = $_POST['quickpay_merchantid'];
 		$quickpay_settings['quickpay_md5secret'] = $_POST['quickpay_md5secret'];
 		$quickpay_settings['quickpay_language'] = $_POST['quickpay_language'];
@@ -140,6 +140,7 @@ function event_espresso_display_quickpay_settings() {
 			<input type="hidden" name="update_quickpay" value="update_quickpay">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update quickpay Settings', 'event_espresso') ?>" id="save_quickpay_settings" />
 		</p>
+		<?php wp_nonce_field( 'espresso_form_check', 'add_quickpay_settings' ); ?>
 	</form>
 	<?php
 }
