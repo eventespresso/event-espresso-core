@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_mwarrior_payment_settings() {
-	if (isset($_POST['update_mwarrior'])) {
+	if (isset($_POST['update_mwarrior']) && check_admin_referer('espresso_form_check', 'add_mwarrior_settings')) {
 		//$mwarrior_settings = get_option('event_espresso_mwarrior_settings');
 		$mwarrior_settings['mwarrior_id'] = $_POST['mwarrior_id'];
 		$mwarrior_settings['mwarrior_apikey'] = $_POST['mwarrior_apikey'];
@@ -174,6 +174,7 @@ function event_espresso_display_mwarrior_settings() {
 			<input type="hidden" name="update_mwarrior" value="update_mwarrior">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Merchant Warrior Settings', 'event_espresso') ?>" id="save_mwarrior_settings" />
 		</p>
+		<?php wp_nonce_field( 'espresso_form_check', 'add_mwarrior_settings' ); ?>
 	</form>
 	<div id="sandbox_info" style="display:none">
 		<h2><?php _e('Merchant Warrior Test Mode', 'event_espresso'); ?></h2>

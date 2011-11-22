@@ -1,12 +1,12 @@
 <?php
 
 function event_espresso_ideal_payment_settings() {
-	if (isset($_POST['update_ideal'])) {
+	if (isset($_POST['update_ideal']) && check_admin_referer('espresso_form_check', 'add_mollie_settings')) {
 		$ideal_settings['ideal_mollie_partner_id'] = $_POST['ideal_mollie_partner_id'];
 		$ideal_settings['ideal_mollie_use_sandbox'] = $_POST['ideal_mollie_use_sandbox'];
 
 		update_option('event_espresso_ideal_mollie_settings', $ideal_settings);
-		echo '<div id="message" class="updated fade"><p><strong>' . __('First Data settings saved.', 'event_espresso') . '</strong></p></div>';
+		echo '<div id="message" class="updated fade"><p><strong>' . __('iDeal (Mollie) settings saved.', 'event_espresso') . '</strong></p></div>';
 	}
 	?>
 
@@ -88,6 +88,7 @@ function event_espresso_display_ideal_settings() {
 			<input type="hidden" name="update_ideal" value="update_ideal">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Settings', 'event_espresso') ?>" id="save_ideal_settings" />
 		</p>
+		<?php wp_nonce_field( 'espresso_form_check', 'add_mollie_settings' ); ?>
 	</form>
 
 	<?php

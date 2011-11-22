@@ -14,8 +14,7 @@
 				<li>
 					<label for="display_short_description_in_event_list">
 						<?php _e('Use SHORT descriptions in the event listings?','event_espresso'); ?>
-						<br />
-						 </label>
+						</label>
 					<?php echo select_input('display_short_description_in_event_list', $values, isset($org_options['template_settings']['display_short_description_in_event_list']) ? $org_options['template_settings']['display_short_description_in_event_list'] : '', 'id="display_short_description_in_event_list"'); ?> <br />
 					<span class="highlight">
 						(<?php _e('Be sure to use the more... tag in your event description', 'event_espresso'); ?>)
@@ -43,7 +42,7 @@
 						<?php _e('Display the address in the registration form?','event_espresso'); ?>
 					</label>
 					<?php echo select_input('display_address_in_regform', $values, isset($org_options['template_settings']['display_address_in_regform']) ? $org_options['template_settings']['display_address_in_regform'] : '', 'id="display_address_in_regform"'); ?><br />
-<span class="highlight">(<?php _e('Disable the address if you are using the venue manager shortcodes in your event description.', 'event_espresso'); ?>)</span> </li>
+					<span class="highlight">(<?php _e('Disable the address if you are using the venue manager shortcodes in your event description.', 'event_espresso'); ?>)</span> </li>
 				<li>
 					<label for="use_custom_post_types">
 						<?php _e('Use the custom post types feature?','event_espresso'); ?>

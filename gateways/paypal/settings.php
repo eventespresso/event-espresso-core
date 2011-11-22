@@ -13,7 +13,7 @@ function event_espresso_paypal_payment_settings() {
 	//Debug
 	//echo '<pre>'.print_r($payment_settings, true).'</pre>';
 	
-	if (isset($_POST['update_paypal'])) {
+	if (isset($_POST['update_paypal']) && check_admin_referer('espresso_form_check', 'add_paypal_settings')) {
 		
 		//Debug
 		//echo '<pre>'.print_r($_POST).'</pre>';
@@ -296,6 +296,7 @@ function event_espresso_display_paypal_settings() {
 	<?php _e('Paypal Notes:', 'event_espresso'); ?>
 	</strong><br />
 	<?php _e('For Paypal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?></p>
+	<?php wp_nonce_field( 'espresso_form_check', 'add_paypal_settings' ); ?>
 </form>
 <div id="sandbox_info" style="display:none">
 	<h2>

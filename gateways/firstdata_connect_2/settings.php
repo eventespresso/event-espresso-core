@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_firstdata_connect_2_payment_settings() {
-	if (isset($_POST['update_firstdata_connect_2'])) {
+	if (isset($_POST['update_firstdata_connect_2']) && check_admin_referer('espresso_form_check', 'add_firstdata2_settings')) {
 		$firstdata_connect_2_settings['storename'] = $_POST['storename'];
 		$firstdata_connect_2_settings['sharedSecret'] = $_POST['sharedSecret'];
 		$firstdata_connect_2_settings['timezone'] = $_POST['timezone'];
@@ -145,6 +145,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 			<input type="hidden" name="update_firstdata_connect_2" value="update_firstdata_connect_2">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update First Data Connect 2 Settings', 'event_espresso') ?>" id="save_first_data_connect_2_settings" />
 		</p>
+		<?php wp_nonce_field( 'espresso_form_check', 'add_firstdata2_settings' ); ?>
 	</form>
 	<div id="sandbox_info_firstdata_connect_2"  class="pop-help" style="display:none">
 		<div class="TB-ee-frame">
