@@ -188,39 +188,39 @@ if (!function_exists('early_discount_amount')) {
 if (!function_exists('event_espresso_price_dropdown')) {
 
 	function event_espresso_price_dropdown($event_id, $atts = array()) {
-		
+
 		empty($atts) ? '' : extract($atts);
-		
+
 		$show_label = $show_label == '' ? 1 : $show_label;
 		$multi_reg = $multi_reg == '' ? 0 : $multi_reg;
-		
+
 		//Attention:
 		//If changes to this function are not appearing, you may have the members addon installed and will need to update the function there.
 
 		global $wpdb, $org_options;
-		
+
 		//Default values
 		$html = '';
 		$early_bird_message = '';
 		$surcharge = '';
 		$label = $label == '' ? __('Choose an Option: ', 'event_espresso') : $label;
-		
+
 		//Will make the name an array and put the time id as a key so we know which event this belongs to
 		$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
-		
+
 		//Gets the surcharge text
 		$surcharge_text = isset($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
 
 		//Initial price query
 		$sql = "SELECT id, event_cost, surcharge, surcharge_type, price_type FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC";
 		$prices = $wpdb->get_results($sql);
-		
+
 		//If more than one price was added to an event, we need to create a drop down to select the price.
 		if ($wpdb->num_rows > 1) {
-			
+
 			//Create the label for the drop down
 			$html .= $show_label == 1 ? '<label for="event_cost">' . $label . '</label>' : '';
-			
+
 			//Create a dropdown of prices
 			$html .= '<select name="price_option' . $multi_name_adjust . '" id="price_option-' . $event_id . '">';
 
@@ -233,7 +233,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 					$price->event_cost = $early_price_data['event_price'];
 					$early_bird_message = __(' Early Pricing', 'event_espresso');
 				}
-				
+
 				//Calculate the surcharge
 				if ($price->surcharge > 0 && $price->event_cost > 0.00) {
 					$surcharge = " + {$org_options['currency_symbol']}{$price->surcharge} " . $surcharge_text;
@@ -245,15 +245,15 @@ if (!function_exists('event_espresso_price_dropdown')) {
 				//Using price ID
 				//If the price id was passed to this function, we need need to select that price.
 				$selected = $current_value == $price->id ? 'selected="selected" ' : '';
-				
+
 				//Create the drop down options
 				$html .= '<option ' . $selected . ' value="' . $price->id . '|' . $price->price_type . '">' . $price->price_type . ' (' . $org_options['currency_symbol'] . number_format($price->event_cost, 2) . $early_bird_message . ') ' . $surcharge . ' </option>';
-				
+
 			}
-			
+
 			//Create a hidden field so that we know the price dropdown was used
 			$html .= '</select><input type="hidden" name="price_select" id="price_select-' . $event_id . '" value="true">';
-		
+
 		//If a single price was added to an event, then create the price display and hidden fields to hold the additional information.
 		} else if ($wpdb->num_rows == 1) {
 			foreach ($prices as $price) {
@@ -276,18 +276,18 @@ if (!function_exists('event_espresso_price_dropdown')) {
 
 				//Create the single price display
 				$html .= '<span class="event_price_label">' . __('Price:', 'event_espresso') . '</span> <span class="event_price_value">' . $org_options['currency_symbol'] . number_format($price->event_cost, 2, '.', '') . $early_bird_message . $surcharge . '</span>';
-				
+
 				//Create hidden fields to pass additional information to the add_attendees_to_db function
 				$html .= '<input type="hidden" name="price_id' . $multi_name_adjust . '" id="price_id-' . $price->id . '" value="' . $price->id . '">';
 				$html .= '<input type="hidden" name="event_cost' . $multi_name_adjust . '" id="event_cost-' . $price->id . '" value="' . number_format($price->event_cost, 2, '.', '') . '">';
 			}
-		
+
 		//If no prices are found, display the free event message
 		} else if ($wpdb->num_rows == 0) {
 			$html .= '<span class="free_event">' . __('Free Event', 'event_espresso') . '</span>';
 			$html .= '<input type="hidden" name="payment' . $multi_name_adjust . '" id="payment-' . $event_id . '" value="' . __('free event', 'event_espresso') . '">';
 		}
-		
+
 		return $html;
 	}
 
@@ -351,7 +351,7 @@ if (!function_exists('espresso_payment_type')) {
 
 /**
  * espresso_attendee_price()
- * 
+ *
  * @return float|null  the price paid for an event by attendee id or the registration id, if information not found then it will return null
  */
 function espresso_attendee_price($atts) {
@@ -362,7 +362,7 @@ function espresso_attendee_price($atts) {
 	 * If the registration_id is empty, then retrieve it
 	 * */
 	$generated_registration_id = false;
-	if (!isset($registration_id)) 
+	if (!isset($registration_id))
 	{
 		if (!isset($attendee_id))
 		{
@@ -378,7 +378,7 @@ function espresso_attendee_price($atts) {
 	/**
 	 * Check if the attendee is from old age i.e. before 3.1.10
 	 * */
-	$ice_age = true; 
+	$ice_age = true;
 	$ice_row = $wpdb->get_row($wpdb->prepare("select * from ".EVENTS_ATTENDEE_COST_TABLE." inner join ".EVENTS_ATTENDEE_TABLE." where registration_id = '%s'",$registration_id));
 	if ( $ice_row !== NULL )
 	{
@@ -400,7 +400,7 @@ function espresso_attendee_price($atts) {
 			return number_format($total_cost, 2, '.', '');
 		}
 	}
-	
+
 	/**
 	 * Return the total amount paid for this registration
 	 * */
@@ -474,8 +474,8 @@ function espresso_attendee_price($atts) {
 	return NULL;
 }
 
-function get_reg_total_price($registration_id) 
+function get_reg_total_price($registration_id)
 {
-	
+
 }
 

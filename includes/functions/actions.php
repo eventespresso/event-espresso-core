@@ -1,6 +1,6 @@
 <?php
 //Show pricing in a dropdown or text
-if ( !function_exists('espresso_price_select_action') ){
+if ( !function_exists('espresso_price_select_action') && !function_exists('espresso_member_price_select_action')){
 	function espresso_price_select_action($event_id, $atts = '' ){
 		$html = '';
 		$html .= is_admin() ? '' : '<p class="event_prices">';
@@ -17,7 +17,7 @@ add_action('plugins_loaded', 'espresso_get_user_id');
 
 
 /**
-*		@ display admin update & error messages 
+*		@ display admin update & error messages
 *		@access public
 *		@return void
 **/
