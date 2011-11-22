@@ -116,16 +116,16 @@ function event_espresso_display_firstdata_connect_2_settings() {
 						
 						<li>
 							<label for="button_url">
-								<?php _e('Button Image URL: ', 'event_espresso'); ?>
+								<?php _e('Button Image URL: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'button_image') ?>
 							</label>
 							<br />
 							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $firstdata_connect_2_settings['button_url']; ?>" />
-							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=button_image"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 						</li>
 						
 						<li>
 							<label for="timezone">
-								<?php _e('Choose a timezone for the transaction? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'timezone') ?>
+								<?php _e('Choose a timezone for the transaction? ', 'event_espresso'); ?><?php // apply_filters('espresso_help', 'timezone') // removed: no relevent help available, is it required? self explanatory? ?>
 							</label>
 							<?php
 							$values = array(
@@ -146,11 +146,13 @@ function event_espresso_display_firstdata_connect_2_settings() {
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update First Data Connect 2 Settings', 'event_espresso') ?>" id="save_first_data_connect_2_settings" />
 		</p>
 	</form>
-	<div id="sandbox_info_firstdata_connect_2" style="display:none">
+	<div id="sandbox_info_firstdata_connect_2"  class="pop-help" style="display:none">
+		<div class="TB-ee-frame">
 		<h2><?php _e('First Data Sandbox', 'event_espresso'); ?></h2>
 		<p><?php _e('In addition to using the First Data Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all First Data variables.', 'event_espresso'); ?></p>
 		<hr />
 		<p><?php _e('The First Data Sandbox is a testing environment that is a duplicate of the live First Data site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?></p>
+	</div>
 	</div>
 	<?php
 }
