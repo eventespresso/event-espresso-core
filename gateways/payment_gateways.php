@@ -11,7 +11,7 @@
 */
 
 function event_espresso_gateways_options() {
-	global $wpdb;
+	global $wpdb, $espresso_premium, $notices;
 ?>
 
 <div class="wrap">
@@ -20,7 +20,6 @@ function event_espresso_gateways_options() {
 		<?php _e('Manage Payment Gateways', 'event_espresso'); ?>
 	</h2>
 
-	
 <?php #### Page sidebar righthand side #### ?>
 
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
@@ -90,11 +89,12 @@ function event_espresso_gateways_options() {
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH.'includes/admin-files/gateway_developer.php')){
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'includes/admin-files/gateway_developer.php');
 	}
-	//This line keeps the notices from displaying twice
-	if ( did_action( 'espresso_admin_notices' ) == false )
-		do_action('espresso_admin_notices');
-	?>	
 
+	?>	
+	<?php  
+		if ( did_action( 'espresso_admin_notices' ) == false )
+			do_action('espresso_admin_notices'); 
+	?>
 				
 				<?php if ($espresso_premium != true) { ?>
 				<h2> <?php _e('Need more payment options?', 'event_espresso') ?> <a href="http://eventespresso.com/download/" target="_blank"><?php  _e('Upgrade Now!', 'event_espresso') ?></a></h2>
