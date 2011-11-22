@@ -1,10 +1,10 @@
 <?php
 
 function event_espresso_check_payment_settings() {
-	global $espresso_premium;
+	global $espresso_premium, $notices;
 	if ($espresso_premium != true)
 		return;
-	if (isset($_POST['update_check_payment_settings'])) {
+	if (isset($_POST['update_check_payment_settings']) && check_admin_referer('espresso_form_check', 'add_money_check_settings')) {
 		$allowable_tags = '<br /><br><a>';
 		//$check_payment_settings_settings = get_option('event_espresso_check_payment_settings_settings');
 		$check_payment_settings['check_title'] = strip_tags($_POST['check_title'],$allowable_tags);
@@ -12,7 +12,8 @@ function event_espresso_check_payment_settings() {
 		$check_payment_settings['payable_to'] = strip_tags($_POST['payable_to'],$allowable_tags);
 		$check_payment_settings['payment_address'] = strip_tags($_POST['payment_address'],$allowable_tags);
 		update_option('event_espresso_check_payment_settings', $check_payment_settings);
-		echo '<div id="message" class="updated fade"><p><strong>' . __('Check/Money Order Payment settings saved.', 'event_espresso') . '</strong></p></div>';
+		
+		$notices['updates'][] = __('Check/Money Order Payment settings have been saved', 'event_espresso');
 	}
 	?>
 	<div class="metabox-holder">
@@ -101,6 +102,7 @@ function event_espresso_display_check_payment_settings() {
 		</table>
 		<input type="hidden" name="update_check_payment_settings" value="update_check_payment_settings">
 		<p><input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Check/Money Order Payment Settings', 'event_espresso') ?>" id="save_check_payment_settings" />
+		<?php wp_nonce_field( 'espresso_form_check', 'add_money_check_settings' ); ?>
 		</p>
 	</form>
 	<?php
