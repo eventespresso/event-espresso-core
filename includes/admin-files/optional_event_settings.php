@@ -18,7 +18,7 @@ $values=array(
 		<div title="Click to toggle" class="handlediv"><br />
 		</div>
 		<h3 class="hndle">
-			<?php _e('Optional Event Settings','event_espresso'); ?>
+			<?php _e('Optional/Advanced Event Settings','event_espresso'); ?>
 		</h3>
 		<div class="inside">
 			<div class="padding">
