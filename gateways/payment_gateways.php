@@ -12,6 +12,7 @@
 
 function event_espresso_gateways_options() {
 	global $wpdb, $espresso_premium, $notices;
+
 ?>
 
 <div class="wrap">
@@ -91,10 +92,7 @@ function event_espresso_gateways_options() {
 	}
 
 	?>	
-	<?php  
-		if ( did_action( 'espresso_admin_notices' ) == false )
-			do_action('espresso_admin_notices'); 
-	?>
+
 				
 				<?php if ($espresso_premium != true) { ?>
 				<h2> <?php _e('Need more payment options?', 'event_espresso') ?> <a href="http://eventespresso.com/download/" target="_blank"><?php  _e('Upgrade Now!', 'event_espresso') ?></a></h2>
