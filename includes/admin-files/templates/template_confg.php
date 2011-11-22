@@ -89,17 +89,23 @@ function event_espresso_manage_templates() {
 								</h3>
 								<div class="inside">
 									<div class="padding">
-										<ul id="ee-styles">
-											<li>
-												<label>
-													<?php _e('Enable built style sheets?', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'enable_styles_info'); ?>
-												</label>
-												<?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> </li>
-												
+										<table class="form-table">
+											<tbody>
+												<tr>
+													<th>
+														<label>
+															<?php _e('Enable built style sheets?', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'enable_styles_info'); ?>
+														</label>
+													</th>
+													<td>
+														<?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : ''); ?> 
+													</td>
+												</tr>
+												<tr>
 											
 												<?php include(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/templates/event_styles_settings.php'); ?>
 											
-										</ul>
+									
 										<p>
 											<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
 										</p>

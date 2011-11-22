@@ -51,26 +51,44 @@ $values = array(
 );
 ?>
 
-<li><label>
-	<?php _e('ThemeRoller Style Settings ', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'themeroller_info');?>
-</label>
-<select id="style-themeroller" class="chzn-select wide" <?php echo $disabled ?> name="themeroller_style">
-	<option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> -
-	<?php _e('None', 'event_espresso'); ?>
-	</option>
-	<?php foreach( $files_themeroller as $fname_themeroller ) { ?>
-	<option <?php espresso_style_is_selected($fname_themeroller) ?> value="<?php echo $fname_themeroller ?>"><?php echo $fname_themeroller; ?></option>
-	<?php } ?>
-</select>
-</li>
-<?php if (!empty($org_options['style_settings']['css_name'])){
-?><li><label>
+				<th> 
+					<?php _e('ThemeRoller Style Settings ', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'themeroller_info');?>
+				</th>
+				<td>
+					<select id="style-themeroller" class="chzn-select wide" <?php echo $disabled ?> name="themeroller_style">
+						<option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> -
+							<?php _e('None', 'event_espresso'); ?>
+						</option>
+					<?php foreach( $files_themeroller as $fname_themeroller ) { ?>
+					<option <?php espresso_style_is_selected($fname_themeroller) ?> value="<?php echo $fname_themeroller ?>"><?php echo $fname_themeroller; ?></option>
+		<?php } ?>
+					</select>			
+				</td>
+			</tr>
+			<?php if (!empty($org_options['style_settings']['css_name'])){?>
+			<tr>
+				<th> 
+				<label>
 	<?php _e('Current Custom Style Sheet', 'event_espresso'); ?>
 </label>
-<a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL . 'css/'. $org_options['style_settings']['css_name']; ?>" target="_blank"><?php echo $org_options['style_settings']['css_name']; ?></a> <input style="width:20px; margin-left:20px" name="remove_css" type="checkbox" value="true" /><?php _e('Remove style sheet?', 'event_espresso'); ?></li> 
-<?php } ?>
-<li><label>
-	<?php _e('Add a custom style sheet?', 'event_espresso'); ?>
-</label>
-<input type="file" name="css" id="css" /></li>
+				</th>
+				<td>
+		<a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL . 'css/'. $org_options['style_settings']['css_name']; ?>" target="_blank"><?php echo $org_options['style_settings']['css_name']; ?></a> <input style="width:20px; margin-left:20px" name="remove_css" type="checkbox" value="true" /><?php _e('Remove style sheet?', 'event_espresso'); ?>		
+				</td>
+			</tr>
+			<?php } ?>
+			<tr>
+				<th>
+					<label>
+						<?php _e('Add a custom style sheet?', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input type="file" name="css" id="css" />
+				</td>
+			</tr>
+		</tbody>
+</table>
+
+
 
