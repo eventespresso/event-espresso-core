@@ -113,7 +113,7 @@ function event_espresso_display_eway_settings() {
 				<td valign="top"><ul>
 				<li>
 							<label for="currency_format">
-								<?php _e('Select the currency for your country:', 'event_espresso'); ?>
+								<?php _e('Select the currency for your country: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'eway_currency_info') ?>
 							</label>
 							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 								<option value="<?php echo $eway_settings['currency_format']; ?>"><?php echo $eway_settings['currency_format']; ?></option>
@@ -184,7 +184,7 @@ function event_espresso_display_eway_settings() {
 									<?php _e('Thai Baht', 'event_espresso'); ?>
 								</option>
 							</select>
-							<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=eway_currency_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </li>
+				</li>
 				<li>
 						<label for="bypass_payment_page">
 							<?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'eway_bypass_confirmation'); ?>
