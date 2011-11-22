@@ -240,9 +240,8 @@ function organization_config_mnu() {
 													</tbody>
 												</table>
 												<h4>
-												<?php _e('Images', 'event_espresso'); ?>
+													<?php _e('Images', 'event_espresso'); ?>
 												</h4>
-												
 												<table class="form-table">
 													<tbody>
 														<tr>
@@ -420,7 +419,9 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																		<tbody>
 																			<tr>
 																				<td class="aer-word-count"></td>
-																				<td class="autosave-info"></td>
+																				<td class="autosave-info"><span>
+																					<p></p>
+																					</span></td>
 																			</tr>
 																		</tbody>
 																	</table>
@@ -456,7 +457,9 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																		<tbody>
 																			<tr>
 																				<td class="aer-word-count"></td>
-																				<td class="autosave-info"></td>
+																				<td class="autosave-info"><span>
+																					<p></p>
+																					</span></td>
 																			</tr>
 																		</tbody>
 																	</table>
@@ -478,9 +481,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 								</div>
 								<div style="clear:both;"></div>
 							</li>
-							<li>
-								
-							</li>
+							<li> </li>
 							<?php
 								if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php') || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/optional_event_settings.php')) {
 
@@ -600,4 +601,5 @@ echo event_espresso_custom_email_info();?>
 <?php
 	espresso_tiny_mce();
 }
+
 
