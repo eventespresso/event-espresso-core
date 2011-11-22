@@ -423,7 +423,7 @@ div.tablenav {
 	margin-bottom: -20px;
 	width: 50%;
 }
-#image-display img {width: 100%;}
+#set-featured-image #image-display img {width: 100%;}
 /*___ Venue Manager & Staff ___*/
 
 #add-edit-venue table ul, #add-edit-staff table ul {
