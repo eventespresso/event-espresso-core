@@ -88,10 +88,9 @@ define("EVENT_ESPRESSO_PLUGINFULLURL", $wp_plugin_url . EVENT_ESPRESSO_PLUGINPAT
 //Define dierectory structure for uploads
 
 //Create the paths
-if (!defined('WP_CONTENT_DIR')) {
-	define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
-}
-$upload_path = WP_CONTENT_DIR . '/uploads';
+$wp_content_dir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
+
+$upload_path = $wp_content_dir . '/uploads';
 $event_espresso_upload_dir = $upload_path . '/espresso/';
 $event_espresso_template_dir = $event_espresso_upload_dir . 'templates/';
 
@@ -131,6 +130,7 @@ function espresso_init_session() {
 }
 
 add_action('plugins_loaded', 'espresso_init_session', 1);
+
 
 //Handles importing of csv files
 function espresso_check_for_export() {
