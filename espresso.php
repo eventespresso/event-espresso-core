@@ -695,7 +695,8 @@ if (isset($_REQUEST['download_ticket']) && $_REQUEST['download_ticket'] == 'true
 
 if (is_admin()) {
 	// Check to make sure there are no empty registration id fields in the database.
-	if (event_espresso_verify_attendee_data() == true && $_POST['action'] != 'event_espresso_update_attendee_data') {
+	if (event_espresso_verify_attendee_data() == true &&
+					(empty($_POST['action']) || $_POST['action'] != 'event_espresso_update_attendee_data')) {
 		add_action('admin_notices', 'event_espresso_registration_id_notice');
 	}
 
@@ -745,7 +746,7 @@ if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php') ) {
 		'apikey' => $api_key,
 		'lang_domain' => 'event_espresso'
 	);
-	
+
 	require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
 	$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options);
 }
