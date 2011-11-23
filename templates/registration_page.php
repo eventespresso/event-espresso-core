@@ -40,12 +40,12 @@ if (!function_exists('register_attendees')) {
 		$currency_format = isset($org_options['currency_format']) ? $org_options['currency_format'] : '';
 
 		$message = $org_options['message'];
-	
-								if(!empty( $org_options['map_settings']['ee_display_map_no_shortcodes'] ) && $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y') {
-		 $show_ee_gmap_no_shortcode = true;
-								}else{
-								 $show_ee_gmap_no_shortcode = false;
-								}
+
+		if (!empty($org_options['map_settings']['ee_display_map_no_shortcodes']) && $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y') {
+			$show_ee_gmap_no_shortcode = true;
+		} else {
+			$show_ee_gmap_no_shortcode = false;
+		}
 		//Build event queries
 		$sql = "SELECT e.*, ese.start_time, ese.end_time ";
 		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
@@ -143,12 +143,12 @@ if (!function_exists('register_attendees')) {
 				$venue_country = $data->event->venue_country;
 				global $venue_meta;
 				$add_venue_meta = array(
-					'venue_title' => $data->event->venue_name,
-					'venue_address' => $data->event->venue_address,
-					'venue_address2' => $data->event->venue_address2,
-					'venue_city' => $data->event->venue_city,
-					'venue_state' => $data->event->venue_state,
-					'venue_country' => $data->event->venue_country,
+						'venue_title' => $data->event->venue_name,
+						'venue_address' => $data->event->venue_address,
+						'venue_address2' => $data->event->venue_address2,
+						'venue_city' => $data->event->venue_city,
+						'venue_state' => $data->event->venue_state,
+						'venue_country' => $data->event->venue_country,
 				);
 				$venue_meta = (isset($data->event->venue_meta) && $data->event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($data->event->venue_meta), $add_venue_meta) : '';
 				//print_r($venue_meta);
@@ -157,27 +157,27 @@ if (!function_exists('register_attendees')) {
 			$virtual_url = stripslashes_deep($data->event->virtual_url);
 			$virtual_phone = stripslashes_deep($data->event->virtual_phone);
 
-		   global $ee_gmaps_opts;
-						  // EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
-								  $ee_gmaps_opts = array(
-									'ee_map_width' => empty($org_options['map_settings']['ee_map_width_single']) ? '' : $org_options['map_settings']['ee_map_width_single'],
-									'ee_map_height' => empty($org_options['map_settings']['ee_map_height_single']) ? '' : $org_options['map_settings']['ee_map_height_single'],
-									'ee_map_zoom' => empty($org_options['map_settings']['ee_map_zoom_single']) ? '' : $org_options['map_settings']['ee_map_zoom_single'],
-									'ee_map_nav_display' => empty($org_options['map_settings']['ee_map_nav_display_single']) ? '' : $org_options['map_settings']['ee_map_nav_display_single'],
-									'ee_map_nav_size' => empty($org_options['map_settings']['ee_map_nav_size_single']) ? '' : $org_options['map_settings']['ee_map_nav_size_single'],
-									'ee_map_type_control' => empty($org_options['map_settings']['ee_map_type_control_single']) ? '' : $org_options['map_settings']['ee_map_type_control_single'],
-									'ee_map_align' => empty($org_options['map_settings']['ee_map_align_single']) ? '' : $org_options['map_settings']['ee_map_align_single'],
-									'ee_static_url' => empty($venue_meta['gmap_static']) ? '' : $venue_meta['gmap_static'],
-			'ee_enable_for_gmap' => empty($event_meta['enable_for_gmap']) ? '' : $event_meta['enable_for_gmaps']
-								   );
-						  												
-												
+			global $ee_gmaps_opts;
+			// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
+			$ee_gmaps_opts = array(
+					'ee_map_width' => empty($org_options['map_settings']['ee_map_width_single']) ? '' : $org_options['map_settings']['ee_map_width_single'],
+					'ee_map_height' => empty($org_options['map_settings']['ee_map_height_single']) ? '' : $org_options['map_settings']['ee_map_height_single'],
+					'ee_map_zoom' => empty($org_options['map_settings']['ee_map_zoom_single']) ? '' : $org_options['map_settings']['ee_map_zoom_single'],
+					'ee_map_nav_display' => empty($org_options['map_settings']['ee_map_nav_display_single']) ? '' : $org_options['map_settings']['ee_map_nav_display_single'],
+					'ee_map_nav_size' => empty($org_options['map_settings']['ee_map_nav_size_single']) ? '' : $org_options['map_settings']['ee_map_nav_size_single'],
+					'ee_map_type_control' => empty($org_options['map_settings']['ee_map_type_control_single']) ? '' : $org_options['map_settings']['ee_map_type_control_single'],
+					'ee_map_align' => empty($org_options['map_settings']['ee_map_align_single']) ? '' : $org_options['map_settings']['ee_map_align_single'],
+					'ee_static_url' => empty($venue_meta['gmap_static']) ? '' : $venue_meta['gmap_static'],
+					'ee_enable_for_gmap' => empty($event_meta['enable_for_gmap']) ? '' : $event_meta['enable_for_gmap']
+			);
+
+
 			//Address formatting
-												// Plain format for gmap geocoding
-												$venue_address_elements = ($event_address != '' ? $event_address . ',' : '') . ($event_address2 != '' ? $event_address2 . ',' : '') . ($event_city != '' ?  $event_city . ',' : '') . ($event_state != '' ? $event_state . ',' : '') . ($event_zip != '' ? $event_zip . ',' : '') . ($event_country != '' ? $event_country . ',' : '');
-			$ee_gmap_location =  $venue_address_elements;
-												// display formatting
-												$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
+			// Plain format for gmap geocoding
+			$venue_address_elements = ($event_address != '' ? $event_address . ',' : '') . ($event_address2 != '' ? $event_address2 . ',' : '') . ($event_city != '' ? $event_city . ',' : '') . ($event_state != '' ? $event_state . ',' : '') . ($event_zip != '' ? $event_zip . ',' : '') . ($event_country != '' ? $event_country . ',' : '');
+			$ee_gmap_location = $venue_address_elements;
+			// display formatting
+			$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
 
 			//Google map link creation
 			$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
@@ -227,51 +227,47 @@ if (!function_exists('register_attendees')) {
 
 			global $all_meta;
 			$all_meta = array(
-				'event_name' => '<p class="section-title">' . stripslashes_deep($event_name) . '</span>',
-				'event_desc' => stripslashes_deep($event_desc),
-				'event_address' => $event_address,
-				'event_address2' => $event_address2,
-				'event_city' => $event_city,
-				'event_state' => $event_state,
-				'event_zip' => $event_zip,
-				'event_country' => $event_country,
-				'venue_title' => '<span class="section-title">' . $venue_title . '</span>',
-				'venue_address' => $venue_address,
-				'venue_address2' => $venue_address2,
-				'venue_city' => $venue_city,
-				'venue_state' => $venue_state,
-				'venue_country' => $venue_country,
-
-				'is_active' => $data->event->is_active,
-				'event_status' => $data->event->event_status,
-				'start_time' => $data->event->start_time,
-				'start_time' => empty($data->event->start_time) ? '' : $data->event->start_time,
-
-				'registration_startT' => $data->event->registration_startT,
-				'registration_start' => $data->event->registration_start,
-
-				'registration_endT' => $data->event->registration_endT,
-				'registration_end' => $data->event->registration_end,
-'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
-
-				'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
-				'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
-				//'time' => event_espresso_time_dropdown($event_id, 0),
-				'google_map_link' => $google_map_link,
-				//'price' => event_espresso_price_dropdown($event_id, 0),
-				//'registration' => event_espresso_add_question_groups($question_groups),
-				//'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
+					'event_name' => '<p class="section-title">' . stripslashes_deep($event_name) . '</span>',
+					'event_desc' => stripslashes_deep($event_desc),
+					'event_address' => $event_address,
+					'event_address2' => $event_address2,
+					'event_city' => $event_city,
+					'event_state' => $event_state,
+					'event_zip' => $event_zip,
+					'event_country' => $event_country,
+					'venue_title' => '<span class="section-title">' . $venue_title . '</span>',
+					'venue_address' => $venue_address,
+					'venue_address2' => $venue_address2,
+					'venue_city' => $venue_city,
+					'venue_state' => $venue_state,
+					'venue_country' => $venue_country,
+					'is_active' => $data->event->is_active,
+					'event_status' => $data->event->event_status,
+					'start_time' => $data->event->start_time,
+					'start_time' => empty($data->event->start_time) ? '' : $data->event->start_time,
+					'registration_startT' => $data->event->registration_startT,
+					'registration_start' => $data->event->registration_start,
+					'registration_endT' => $data->event->registration_endT,
+					'registration_end' => $data->event->registration_end,
+					'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
+					'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
+					'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
+					//'time' => event_espresso_time_dropdown($event_id, 0),
+					'google_map_link' => $google_map_link,
+							//'price' => event_espresso_price_dropdown($event_id, 0),
+							//'registration' => event_espresso_add_question_groups($question_groups),
+							//'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
 			);
 			//print_r($all_meta);
 //This function gets the status of the event.
-				$is_active = array();
-				$is_active = event_espresso_get_is_active(0, $all_meta);
+			$is_active = array();
+			$is_active = event_espresso_get_is_active(0, $all_meta);
 
-				//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
+			//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
 
 			if ($org_options['use_captcha'] == 'Y'
-										&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
-										&& !is_user_logged_in()) {
+							&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
+							&& !is_user_logged_in()) {
 				?>
 				<script type="text/javascript">
 					var RecaptchaOptions = {
@@ -313,7 +309,7 @@ if (!function_exists('register_attendees')) {
 					}
 				}//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
 			} else {//If there are no results from the query, display this message
-				echo '<h3>'.__('This event has expired or is no longer available.', 'event_espresso').'</h3>';
+				echo '<h3>' . __('This event has expired or is no longer available.', 'event_espresso') . '</h3>';
 			}
 
 			echo espresso_registration_footer();
