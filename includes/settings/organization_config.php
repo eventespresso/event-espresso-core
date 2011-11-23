@@ -60,6 +60,7 @@ function organization_config_mnu() {
 		$org_options['site_license_key'] = $_POST['site_license_key'];
 		$org_options['default_logo_url'] = $_REQUEST['upload_image'];
 		$org_options['default_payment_status'] = $_POST['default_payment_status'];
+		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		$currency_format = getCountryFullData($org_options['organization_country']);
 		switch ($currency_format['iso_code_3']) {
 			case 'USA':
