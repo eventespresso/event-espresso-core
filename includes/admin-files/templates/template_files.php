@@ -143,12 +143,8 @@ if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $files[0])
 } else {
 ?>
 <p>
-	<?php _e('If you plan on modifying the look of your event listings, registration page, or attendee list. Use the option below to move these templates to a safe place. Keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates.', 'event_espresso'); ?>
+	<?php _e('If you plan on modifying the look of your event listings, registration page, or attendee list. You can move the templates located in the templates directory to your "wp-content/uploads/espresso/templates/" directory. Please keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates.', 'event_espresso'); ?>
 </p>
-<p class="fugue f-warn">
-	<?php _e("Your template files have not been moved.", 'event_espresso'); ?>
-</p>
-<p class="updated"><?php printf(__("Click here to <a href='%s'>Move your files</a> to a safe place.", 'event_espresso'), wp_nonce_url("admin.php?event_espresso_admin_action=copy_templates", 'copy_templates')); ?> </p>
 <?php
 }
 
