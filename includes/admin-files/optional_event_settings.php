@@ -177,20 +177,22 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 								</span></td>
 						</tr>
 						<tr>
-							<td colspan="2"><strong>
+							<td colspan="2">
+							<a name="license_key" id="license_key"></a> <strong>
 								<?php _e('Your Event Espresso License Key', 'event_espresso'); ?>
 								</strong>
 							</td>
-						<tr>
-						<tr>
+						</tr>
+						<tr <?php echo isset($_REQUEST['license_key']) && $_REQUEST['license_key'] == true ? 'class="yellow_alert"' : ''?>>
 							<th>
-								<?php _e('Enter your valid Event Espresso site-license key here', 'event_espresso'); ?>
+								<label for="site_license_key"><?php _e('Support License Key', 'event_espresso'); ?></label>
 							</th>
-							<td><input name="site_license_key" size="10" style="width:200px;" type="text" value="<?php echo isset($org_options['site_license_key'])&&$org_options['site_license_key'] != ''? stripslashes_deep($org_options['site_license_key']):'0';?>" />
+							<td><input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo isset($org_options['site_license_key'])&&$org_options['site_license_key'] != ''? stripslashes_deep($org_options['site_license_key']):'0';?>" />
 								<br />
 								<span class="description">
-								<?php _e('Adding a valid Site License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons.'); ?>
-								</span></td>
+								<?php _e('Adding a valid Support License Key will enable automatic update notifications <br />
+and backend updates for Event Espresso Core and any installed addons.'); ?>
+								</span></div></td>
 						</tr>
 					</tbody>
 				</table>
