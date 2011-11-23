@@ -673,4 +673,3 @@ class PluginUpdateUtility {
 }
 	
 endif;
-?>
