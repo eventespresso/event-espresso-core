@@ -14,7 +14,7 @@ function update_event_venue(){
 	$venue_meta['gmap_static'] = esc_url($_REQUEST['gmap_static']);
 	$locale = $_REQUEST['locale'];
 	$meta = serialize($venue_meta);
-		
+	echo '<p>$locale = '.$locale.'</p>';
 	
 	$sql=array(
 		'name'=>$_REQUEST['name'],
@@ -29,24 +29,31 @@ function update_event_venue(){
 	$update_id = array('id'=> $_REQUEST['venue_id']);
 	$sql_data = array('%s','%s','%s','%s','%s','%s','%s','%s');
 	}
-	
+	$succes = false;
 	if ($wpdb->update( EVENTS_VENUE_TABLE, $sql, $update_id, $sql_data, array( '%d' )) ){
 		/*echo 'Debug: <br />';
 		print_r($sql);
 		print 'Number of vars: ' . count ($sql);
 		echo '<br />';
 		print 'Number of cols: ' . count($sql_data);*/
-		
-		if( !empty($locale) ){
-			$last_venue_id = $_REQUEST['venue_id'];
-			$wpdb->query("DELETE FROM ".EVENTS_LOCALE_REL_TABLE." WHERE venue_id='".$last_venue_id."'");
-			$sql_locale="INSERT INTO ".EVENTS_LOCALE_REL_TABLE." (venue_id, locale_id) VALUES ('".$last_venue_id."', '".$locale."')";
-			if (!$wpdb->query($sql_locale)){
-				$notices['errors'][] = __('The locale was not saved!', 'event_espresso');
-			}
-		}
-		$notices['updates'][] = __('The venue ', 'event_espresso') . $_REQUEST['name'] .  __(' has been updated', 'event_espresso');
+		$succes = true;
 	}else{ 
-		$notices['errors'][] = __('The venue', 'event_espresso') . $_REQUEST['name'] .  __(' was not updated!', 'event_espresso');		
+		$succes = false;
+	}
+		
+	if( !empty($locale) ){
+		$last_venue_id = $_REQUEST['venue_id'];
+		$wpdb->query("DELETE FROM ".EVENTS_LOCALE_REL_TABLE." WHERE venue_id='".$last_venue_id."'");
+		$sql_locale="INSERT INTO ".EVENTS_LOCALE_REL_TABLE." (venue_id, locale_id) VALUES ('".$last_venue_id."', '".$locale."')";
+		if ($wpdb->query($sql_locale)){
+			$succes = true;
+		}
+	}else{ 
+		$succes = false;
+	}
+	if ($succes == true){
+		$notices['updates'][] = __('The venue', 'event_espresso') .' '. $_REQUEST['name'] .  __(' has been updated', 'event_espresso');
+	}else{ 
+		$notices['errors'][] = __('The venue', 'event_espresso') .' '. $_REQUEST['name'] .  __(' was not updated!', 'event_espresso');		
 	}
 }
