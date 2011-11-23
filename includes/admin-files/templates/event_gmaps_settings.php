@@ -1,10 +1,15 @@
-
+<?php
+if(empty($org_options['map_settings']['ee_map_type_control'])) $org_options['map_settings']['ee_map_type_control'] = 'default';
+if(empty($org_options['map_settings']['ee_map_align'])) $org_options['map_settings']['ee_map_align'] = 'none';
+if(empty($org_options['map_settings']['ee_map_align_single'])) $org_options['map_settings']['ee_map_align_single'] = 'default';
+if(empty($org_options['map_settings']['ee_map_type_control_single'])) $org_options['map_settings']['ee_map_type_control_single'] = 'none';
+?>
  <h4>
 		<?php _e('Google Maps Display Options', 'event_espresso') ?> <?php apply_filters( 'espresso_help', 'gmaps_info'); ?>
 	</h4>
 
 	<div id="gmap-reg-events-settings">
-	  <h5 class="section-heading">Event Registration Options</h5>
+	  <h5 class="section-heading"><?php _e('Event Registration Options', 'event_espresso') ?></h5>
 			<table class="form-table">
 				<tbody>
 					<tr>
@@ -14,7 +19,7 @@
 							</label>
 						</th>
 						<td>
-							<input type="text" id="single-map-width"  name="ee_map_width_single" value="<?php echo $org_options['map_settings']['ee_map_width_single']==''? '500' : $org_options['map_settings']['ee_map_width_single'];?>" />
+							<input type="text" id="single-map-width"  name="ee_map_width_single" value="<?php echo empty($org_options['map_settings']['ee_map_width_single']) ? '500' : $org_options['map_settings']['ee_map_width_single'];?>" />
 		  			</td>
 					</tr>
 					<tr>
@@ -24,7 +29,7 @@
 							</label>
 						</th>
 						<td>
-							<input type="text" id="single-map-height" size="" name="ee_map_height_single" value="<?php echo $org_options['map_settings']['ee_map_height_single']==''? '500' : $org_options['map_settings']['ee_map_height_single'];?>" />
+							<input type="text" id="single-map-height" size="" name="ee_map_height_single" value="<?php echo empty($org_options['map_settings']['ee_map_height_single']) ? '500' : $org_options['map_settings']['ee_map_height_single'];?>" />
 		  			</td>
 					</tr>
 					<tr>
@@ -34,7 +39,7 @@
 							</label>
 						</th>
 						<td>
-							<input id="single-map-zoom" type="text" size="" name="ee_map_zoom_single" value="<?php echo $org_options['map_settings']['ee_map_zoom_single']== ''? '14' : $org_options['map_settings']['ee_map_zoom_single'];?>" />
+							<input id="single-map-zoom" type="text" size="" name="ee_map_zoom_single" value="<?php echo empty($org_options['map_settings']['ee_map_zoom_single']) ? '14' : $org_options['map_settings']['ee_map_zoom_single'];?>" />
 		  			</td>
 					</tr>
 					<tr>
@@ -59,13 +64,13 @@
 					</tr>
 				</tbody>
 			</table>
-		  
+
 			<p class="section-heading">
 			<?php _e('Set Map Type Control', 'event_espresso')  ?>
 		  </p>
 			<table class="form-table">
 				<tbody>
-					<tr>			
+					<tr>
 		  			<th>
 							<label for="map-type-default_single"><?php _e(' Default', 'event_espresso') ?></label>
 						</th>
@@ -76,7 +81,7 @@
 					<tr>
 						<th>
 							<label for="map-type-horizontal_single">
-								<?php _e(' Horizontal', 'event_espresso')?>		
+								<?php _e(' Horizontal', 'event_espresso')?>
 							</label>
 						</th>
 						<td>
@@ -84,7 +89,7 @@
 						</td>
 					</tr>
 					<tr>
-						<th>	
+						<th>
 							<label for="map-type-dropdown_single">
 								<?php _e(' Dropdown', 'event_espresso')?>
 							</label>
@@ -95,11 +100,11 @@
 		  		</tr>
 				<tbody>
 			</table>
-		  
+
 			<p class="section-heading">
 			<?php _e('Set Map Alignment', 'event_espresso')  ?>
 		  </p>
-			
+
 			<table class="form-table">
 				<tbody>
 					<tr>
@@ -125,7 +130,7 @@
 					<tr>
 						<th>
 							<label for="map-align-center_single">
-								<?php _e(' Align Center', 'event_espresso')?>		  
+								<?php _e(' Align Center', 'event_espresso')?>
 							</label>
 						</th>
 						<td>
@@ -135,7 +140,7 @@
 					<tr>
 						<th>
 							<label for="map-align-right_single">
-	  						<?php _e(' Align Right', 'event_espresso')?>			  
+	  						<?php _e(' Align Right', 'event_espresso')?>
 							</label>
 						</th>
 						<td>
@@ -145,12 +150,12 @@
 		 		</tbody>
 			</table>
 
-		</div> 
-			 
+		</div>
+
 		<div id="gmap-list-events-settings">
-	  
+
 		<h5 class="section-heading">Events List Options</h5>
-			
+
 			<table class="form-table">
 				<tbody>
 					<tr>
@@ -160,7 +165,7 @@
 							</label>
 						</th>
 						<td>
-							<input id="map-width" type="text"  name="ee_map_width" value="<?php echo $org_options['map_settings']['ee_map_width']== ''? '200' : $org_options['map_settings']['ee_map_width'];?>" />
+							<input id="map-width" type="text"  name="ee_map_width" value="<?php echo empty($org_options['map_settings']['ee_map_width']) ? '200' : $org_options['map_settings']['ee_map_width'];?>" />
 		  			</td>
 					</tr>
 					<tr>
@@ -170,7 +175,7 @@
 							</label>
 						</th>
 		  			<td>
-							<input id="map-height" type="text" size="" name="ee_map_height" value="<?php echo $org_options['map_settings']['ee_map_height']== ''? '200' : $org_options['map_settings']['ee_map_height'];?>" />
+							<input id="map-height" type="text" size="" name="ee_map_height" value="<?php echo empty($org_options['map_settings']['ee_map_height']) ? '200' : $org_options['map_settings']['ee_map_height'];?>" />
 						</td>
 					</tr>
 					<tr>
@@ -180,8 +185,8 @@
 							</label>
 						</th>
 						<td>
-							<input id="map-zoom" type="text" size="" name="ee_map_zoom" value="<?php echo $org_options['map_settings']['ee_map_zoom']== ''? '11' : $org_options['map_settings']['ee_map_zoom'];?>" />
-						</td>					
+							<input id="map-zoom" type="text" size="" name="ee_map_zoom" value="<?php echo empty($org_options['map_settings']['ee_map_zoom']) ? '11' : $org_options['map_settings']['ee_map_zoom'];?>" />
+						</td>
 					</tr>
 		  		<tr>
 						<th>
@@ -201,7 +206,7 @@
 						</th>
 						<td>
 							<?php echo select_input('ee_map_nav_size', $values, isset($org_options['map_settings']['ee_map_nav_size']) ? $org_options['map_settings']['ee_map_nav_size'] : '', 'id="nav-size-small"'); ?>
-						</td>						
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -209,7 +214,7 @@
 		  <p class="section-heading">
 			<?php _e('Set Map Type Control', 'event_espresso')  ?>
 		  </p>
-			
+
 			<table class="form-table">
 				<tbody>
 					<tr>
@@ -244,21 +249,21 @@
 					</tr>
 				</tbody>
 			</table>
-		  
+
 		  <p class="section-heading">
 			<?php _e('Set Map Alignment', 'event_espresso')  ?>
 		  </p>
-			
+
 			<table class="form-table">
 				<tbody>
-					<tr>	  
+					<tr>
 						<th>
 							<label for="map-align-none">
 			   				<?php _e(' None', 'event_espresso') ?>
 							</label>
 						</th>
 						<td>
-							<input id="map-align-none" type="radio" name="ee_map_align" <?php espresso_is_selected_list('left')?> value="none"  />
+							<input id="map-align-none" type="radio" name="ee_map_align" <?php espresso_is_selected_list('none')?> value="none"  />
 						</td>
 					</tr>
 					<tr>
@@ -293,13 +298,13 @@
 		  		</tr>
 				</tbody>
 			</table>
-	
+
 		</div>
-	
+
 		<p class="clear">
 	  <label for="ee-display-map-no-shortcodes">
 				<?php _e('Use map in template files ( No Shortcodes)<br /> Set this option to No if you are using venue shortcodes in Descriptions', 'event_espresso')  ?>
 	  </label>
 	  <?php echo select_input('ee_display_map_no_shortcodes', $values, isset($org_options['map_settings']['ee_display_map_no_shortcodes']) ? $org_options['map_settings']['ee_display_map_no_shortcodes'] : '', 'id="ee-display-map-no-shortcodes"'); ?>
 		</p>
- 
+
