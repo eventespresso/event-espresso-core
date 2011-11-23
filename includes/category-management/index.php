@@ -66,7 +66,7 @@ function event_espresso_categories_config_mnu() {
 						}
 					}
 					do_action('espresso_admin_notices');
-?>
+					?>
 					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 
 						<table id="table" class="widefat manage-categories">
@@ -85,12 +85,12 @@ function event_espresso_categories_config_mnu() {
 							<tbody>
 								<?php
 								$sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE . " c";
-								if ( function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true){
+								if (function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true) {
 									$sql .= " JOIN $wpdb->users u on u.ID = c.wp_user WHERE c.wp_user = " . $espresso_wp_user;
-								}elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
+								} elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 									$sql .= " JOIN $wpdb->users u on u.ID = c.wp_user WHERE c.wp_user = " . espresso_member_data('id');
 								}
-								
+
 								$wpdb->query($sql);
 
 								if ($wpdb->num_rows > 0) {
@@ -107,9 +107,9 @@ function event_espresso_categories_config_mnu() {
 											<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $category_id ?>]" type="checkbox"  title="Delete <?php echo stripslashes($category_name) ?>"></td>
 											<td class="column-comments" style="padding-top:3px;"><?php echo $category_id ?></td>
 											<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_categories&action=edit&id=<?php echo $category_id ?>"><?php echo $category_name ?></a></strong>
-											   <div class="row-actions">
-																								  <span class="edit"><a href="admin.php?page=event_categories&action=edit&id=<?php echo $category_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
-																									<span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_categories&action=delete_category&id=<?php echo $category_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
+												<div class="row-actions">
+													<span class="edit"><a href="admin.php?page=event_categories&action=edit&id=<?php echo $category_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
+													<span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_categories&action=delete_category&id=<?php echo $category_id ?>"><?php _e('Delete', 'event_espresso'); ?></a></span></div>
 											</td>
 											<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
 												<td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
@@ -126,30 +126,28 @@ function event_espresso_categories_config_mnu() {
 								<label><input type="checkbox" name="sAll" onclick="selectAll(this)" /> <strong><?php _e('Check All', 'event_espresso'); ?></strong></label>
 								<input name="delete_category" type="submit" class="button-secondary" id="delete_category" value="<?php _e('Delete Category', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" onclick="return confirmDelete();">
 								<a  style="margin:10px 0 0 20px;"class="button-primary" href="admin.php?page=event_categories&amp;action=add_new_category"><?php _e('Add New Category', 'event_espresso'); ?></a>
- 
-																<?php /***************************** ADDED BY BRENT ************************/ ?>																
-																<a  style="margin:10px 0 0 20px;" class="button-primary" href="<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?event_espresso&amp;export=report&action=categories&amp;type=csv" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Categories to CSV', 'event_espresso'); ?></a>
-																<?php /***************************** brent done adding ************************/ ?>																
-		
+
+								<?php /*								 * *************************** ADDED BY BRENT *********************** */ ?>
+								<a  style="margin:10px 0 0 20px;" class="button-primary" href="<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?event_espresso&amp;export=report&action=categories&amp;type=csv" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Categories to CSV', 'event_espresso'); ?></a>
+								<?php /*								 * *************************** brent done adding *********************** */ ?>
+
 							</p>
 						</div>
 					</form>
 				</div>
-<?php 
-			
-/***************************** ADDED BY BRENT ************************/
-	
-		if ( $_REQUEST[ 'action' ] !='edit' ) { 
-			include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
-			$import_what = 'Categories';
-			$import_intro = 'If you have a previously exported list of Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ';
-			$page = 'event_categories';
-			echo espresso_csv_uploader( $import_what, $import_intro, $page, $name );
-		}
-		
-/***************************** brent done adding ************************/
-		
-?>
+				<?php
+				/*				 * *************************** ADDED BY BRENT *********************** */
+
+				if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'edit') {
+					include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
+					$import_what = 'Categories';
+					$import_intro = 'If you have a previously exported list of Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ';
+					$page = 'event_categories';
+					echo espresso_csv_uploader($import_what, $import_intro, $page);
+				}
+
+				/*				 * *************************** brent done adding *********************** */
+				?>
 			</div>
 		</div>
 	</div>
@@ -180,19 +178,19 @@ function event_espresso_categories_config_mnu() {
 			} );
 
 		} );
-// Add new category form validation
-	jQuery(function(){
-	jQuery("#add-new-cat").validate({
-	rules: {
-	category_name: "required"
-	},
-	messages: {
-	 category_name: "please add a category name"
-		}
-	
- });		
-	});
-</script>					
+		// Add new category form validation
+		jQuery(function(){
+			jQuery("#add-new-cat").validate({
+				rules: {
+					category_name: "required"
+				},
+				messages: {
+					category_name: "please add a category name"
+				}
+
+			});
+		});
+	</script>
 
 
 	<?php
