@@ -96,7 +96,7 @@ jQuery("div.visual-toggle p a.toggleHTML").click(
 				}							
 			});
 		}
-	jQuery(".chzn-select").chosen(); 
-	jQuery(".chzn-select-deselect").chosen({allow_single_deselect:false});
+	/*jQuery(".chzn-select").chosen(); 
+	jQuery(".chzn-select-deselect").chosen({allow_single_deselect:false});*/
 	});			
 				

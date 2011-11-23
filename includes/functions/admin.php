@@ -7,7 +7,7 @@ function event_espresso_config_page_styles() {
 	wp_enqueue_style('thickbox');
 	wp_enqueue_style('global');
 	wp_enqueue_style('wp-admin');
-	wp_enqueue_style('chosen', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/chosen/chosen.css');
+	//wp_enqueue_style('chosen', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/chosen/chosen.css');
 	wp_enqueue_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css'); //Events core style
 	if (isset($_REQUEST['page'])) {
 		switch ($_REQUEST['page']) {
@@ -74,8 +74,8 @@ function event_espresso_config_page_scripts() {
 	wp_register_script('event_espresso_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_espresso.js"), false);
 	wp_enqueue_script('event_espresso_js');
 	
-	wp_register_script('chosen', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/chosen/chosen.jquery.min.js", array('jquery'));
-	wp_enqueue_script('chosen');
+	/*wp_register_script('chosen', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/chosen/chosen.jquery.min.js", array('jquery'));
+	wp_enqueue_script('chosen');*/
 
 	if (isset($_REQUEST['event_admin_reports'])) {
 		switch ($_REQUEST['event_admin_reports']) {
