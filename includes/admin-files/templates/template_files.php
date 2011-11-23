@@ -143,7 +143,7 @@ if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $files[0])
 } else {
 ?>
 <p>
-	<?php _e('If you plan on modifying the look of your event listings, registration page, or attendee list. You can move the templates located in the templates directory to your "wp-content/uploads/espresso/templates/" directory. Please keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates.', 'event_espresso'); ?>
+	<?php echo sprintf(__('If you plan on modifying the look of your event listings, registration page, or attendee list. You can move the templates located in the templates directory to your "wp-content/uploads/espresso/templates/" directory (%smore information here%s). Please keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates.', 'event_espresso'), '<a href="http://eventespresso.com/forums/?p=2906" target="_blank">', '</a>' ); ?>
 </p>
 <?php
 }
