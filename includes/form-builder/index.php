@@ -286,11 +286,11 @@ jQuery('select#question_type').bind('blur', function() {
   var selectValue = jQuery('select#question_type option:selected').val();
   
 		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA') {
-		  jQuery('#add-question-values').slideUp('800');
+		  jQuery('#add-question-values').fadeOut('1000');
 			//alert(selectValue);
 		} else{
 			//alert(selectValue);
-		  jQuery('#add-question-values').slideDown('800');
+		  jQuery('#add-question-values').fadeIn('1000');
 			// add the correct name value back in so we can run validation check.
 			jQuery('#add-question-values td input').attr("name","values")
 		}
