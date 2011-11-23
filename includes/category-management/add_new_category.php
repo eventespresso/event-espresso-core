@@ -1,10 +1,10 @@
 <?php
 
 function add_new_event_category() {
- $values=array(					
+ $values=array(
 	array('id'=>'Y','text'=> __('Yes','event_espresso')),
 	array('id'=>'N','text'=> __('No','event_espresso'))
-);		  
+);
 	?>
 <!--Add event display-->
 
@@ -32,7 +32,7 @@ function add_new_event_category() {
 						</tr>
 						<tr>
 							<th><?php _e('Display Category Description in Event Listing?', 'event_espresso'); ?></th>
-							<td><?php echo select_input('display_desc', $values, $display_category_desc);?></td>
+							<td><?php echo select_input('display_desc', $values);?></td>
 						</tr>
 						<tr>
 							<td colspan="2"><h4>
@@ -65,9 +65,9 @@ function add_new_event_category() {
 				</p>
 			</form>
 		</div>
-		<!-- /.inside --> 
+		<!-- /.inside -->
 	</div>
-	<!-- /.postbox --> 
+	<!-- /.postbox -->
 </div>
 <!-- metabox-holder -->
 <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
