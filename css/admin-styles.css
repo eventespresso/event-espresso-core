@@ -1435,9 +1435,8 @@ select.wide {width: 175px;}
 #add-edit-venue li.ee-gmap-entry #enable-ven-gmaps {
  margin-bottom: 10px;
 }
-#add-edit-venue li.ee-gmap-display .map-frame,
-#add-edit-venue li.ee-gmap-displa  {
- background: #fff;
+#add-edit-venue .ee-gmap-display .map-frame /*,#add-edit-venue .ee-gmap-display*/  {
+ background: #E3E3E3;
  border: 1px solid #8f8f8f;
  padding: 10px;
 }
