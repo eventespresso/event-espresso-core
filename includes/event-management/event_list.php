@@ -2,7 +2,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function event_espresso_edit_list() {
 	global $wpdb, $org_options;
-	
+
 	$wpdb->show_errors();
 
 	//Dates
@@ -217,7 +217,7 @@ function event_espresso_edit_list() {
 							<span><?php _e('Status', 'event_espresso'); ?></span>
 							<span class="sorting-indicator"></span>
 						</th>
-						<?php if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true) { 
+						<?php if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true) {
 								if ( function_exists('espresso_manager_pro_version') ){
 								?>
 									<th class="manage-column column-date" id="creator" scope="col" title="Click to Sort" style="width:10%;">
@@ -270,7 +270,7 @@ function event_espresso_edit_list() {
 						$venue_title = isset($event->venue_title) ? $event->venue_title:'';
 						$venue_locale = isset($event->locale_name) ? $event->locale_name : '';
 						$wp_user = isset($event->wp_user) ? $event->wp_user : '';
-						
+
 						$event_meta = unserialize($event->event_meta);
 						//print_r( $event_meta );
 
@@ -304,15 +304,15 @@ function event_espresso_edit_list() {
 							if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true) {
 								if ( function_exists('espresso_manager_pro_version') ){
 									$orig_user = $event_meta['originally_submitted_by'];
-									
+
 									?>
 									<td class="date"><?php echo espresso_user_meta($orig_user, 'user_firstname') != '' ? espresso_user_meta($orig_user, 'user_firstname') . ' ' . espresso_user_meta($orig_user, 'user_lastname') : espresso_user_meta($orig_user, 'display_name'); ?>
 									<?php echo $user_co_org != '' ? '<br />[' . espresso_user_meta($orig_user, 'company').']' : ''; ?>
 									</td>
-								<?php 
+								<?php
 									$wp_user = $wp_user != $orig_user ? $wp_user : $orig_user;
 								}
-								
+
 								$user_company = espresso_user_meta($wp_user, 'company') != '' ? espresso_user_meta($wp_user, 'company') : '';
 								$user_organization = espresso_user_meta($wp_user, 'organization') != '' ? espresso_user_meta($wp_user, 'organization') : '';
 								$user_co_org = $user_company != '' ? $user_company : $user_organization;
@@ -390,9 +390,9 @@ function event_espresso_edit_list() {
 				<input name="perm_delete_event" type="submit" class="button-secondary" id="perm_delete_event" value="<?php _e('Permanently Delete Events(s)', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" onclick="return confirmDelete();" />
 	<?php } else { ?>
 				<input name="delete_event" type="submit" class="button-secondary" id="delete_event" value="<?php _e('Delete Events(s)', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" onclick="return confirmDelete();" />
-			
+
 			<a class="button-primary" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=excel&amp;all_events=true"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Payment Data to Excel', 'event_espresso'); ?></a>
-								
+
 			<a class="button-primary" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;id=" . $event_id . "&amp;export=report&amp;action=all_event_data&amp;type=csv&amp;all_events=true"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Event Data to CSV', 'event_espresso'); ?></a>
 
 			<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=add_new_event"><?php _e('Add New Event', 'event_espresso'); ?></a>
@@ -400,7 +400,7 @@ function event_espresso_edit_list() {
 <?php } ?>  </div>
 
 		</form>
-		
+
 		<h4 style="clear:both"><?php _e('Actions Legend', 'event_espresso'); ?></h4>
 		<dl style="float:left; margin-left:10px; width:1000px; height:80px">
 
@@ -445,25 +445,25 @@ function event_espresso_edit_list() {
 
 		</dl>
 
-<?php 
-			
+<?php
+
 /***************************** ADDED BY BRENT ************************/
-	
-		if ( $_REQUEST[ 'action' ] !='edit' ) { 
+
+		if (empty($_REQUEST[ 'action' ]) || $_REQUEST[ 'action' ] !='edit') {
 			include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
 			$import_what = 'Event Details';
 			$import_intro = 'If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ';
 			$page = 'events';
-			echo espresso_csv_uploader( $import_what, $import_intro, $page, $name );
+			echo espresso_csv_uploader($import_what, $import_intro, $page);
 		}
-		
+
 /***************************** brent done adding ************************/
-		
+
 ?>
 
 
 <p>If you have a CSV file that was exported from a previous version of Event Espresso, you can upload it by clicking here: <a  style="margin-left:5px"class="button-primary" href="admin.php?page=events&amp;action=csv_import"><?php _e('Import CSV', 'event_espresso'); ?></a></p>
-		
+
 	<script>
 		jQuery(document).ready(function($) {
 			/* show the table data */
