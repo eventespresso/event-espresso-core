@@ -367,7 +367,7 @@ function event_espresso_edit_list() {
 											break;
 
 										default:
-											//Don' show the event if any of the above are true
+											//Don't show the event if any of the above are true
 											break;
 									}
 									break;
@@ -462,7 +462,7 @@ function event_espresso_edit_list() {
 ?>
 
 
-<p>If you have a CSV file that was exported from a previous version of Event Espresso, you can upload it by clicking here: <a  style="margin-left:5px"class="button-primary" href="admin.php?page=events&amp;action=csv_import"><?php _e('Import CSV', 'event_espresso'); ?></a></p>
+<p><?php _e('If you have a CSV file that was exported from a previous version of Event Espresso, you can upload it by clicking here:', 'event_espresso'); ?> <a  style="margin-left:5px"class="button-primary" href="admin.php?page=events&amp;action=csv_import"><?php _e('Import CSV', 'event_espresso'); ?></a></p>
 
 	<script>
 		jQuery(document).ready(function($) {
