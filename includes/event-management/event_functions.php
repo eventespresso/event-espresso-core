@@ -125,7 +125,7 @@ function event_espresso_multi_price_update($event_id) {
 							<option value = "pct" <?php selected($org_options['surcharge_type'], 'pct') ?>><?php _e('Percent', 'event_espresso'); ?></option>
 						</select>
 					</p>
-		<?php echo '<img class="remove-item" title="' . __('Remove this Price', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Price', 'event_espresso') . '" />'; ?>
+					<?php echo '<img class="remove-item" title="' . __('Remove this Price', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Price', 'event_espresso') . '" />'; ?>
 
 
 				</li>
@@ -198,7 +198,8 @@ function event_espresso_get_categories($event_id = 0) {
 			foreach ($in_event_categories as $in_category) {
 				$in_event_category = $in_category->cat_id;
 			}
-			if(empty($in_event_category)) $in_event_category = '';
+			if (empty($in_event_category))
+				$in_event_category = '';
 			$html .= '<p id="event-category-' . $category_id . '"><label for="in-event-category-' . $category_id . '" class="selectit"><input value="' . $category_id . '" type="checkbox" name="event_category[]" id="in-event-category-' . $category_id . '"' . ($in_event_category == $category_id ? ' checked="checked"' : "" ) . '/> ' . $category_name . "</label></p>";
 		}
 		$top_div = '';
@@ -223,7 +224,7 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
 		<div class="handlediv" title="Click to toggle"><br />
 		</div>
 		<h3 class="hndle"><span>
-					<?php echo sprintf(__('Event Questions for Primary Attendee', 'event_espresso'), ''); ?>
+				<?php echo sprintf(__('Event Questions for Primary Attendee', 'event_espresso'), ''); ?>
 			</span></h3>
 		<div class="inside">
 			<p><strong>
@@ -235,24 +236,23 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
 				</a>
 				<?php _e('of', 'event_espresso'); ?>
 				<a href="admin.php?page=form_builder" target="_blank">
-			<?php _e('questions', 'event_espresso'); ?>
+					<?php _e('questions', 'event_espresso'); ?>
 				</a>
-			<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
+				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
 			</p>
 			<?php
 			$g_limit = $espresso_premium != true ? 'LIMIT 0,2' : '';
 			$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
 			if (function_exists('espresso_member_data')) {
 				$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
-				$wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
+				$wp_user = !empty($wpdb->last_result[0]->wp_user) ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
 				$sql .= " WHERE ";
 				if ($wp_user == 0 || $wp_user == 1) {
 					$sql .= " (wp_user = '0' OR wp_user = '1') ";
 				} else {
-					//$sql .= " wp_user = '" . $wp_user . "' ";
 					$sql .= " (wp_user = '" . $wp_user . "' OR wp_user = '0' OR wp_user = '1')";
 				}
-			}else{
+			} else {
 				$sql .= " WHERE wp_user = '0' OR wp_user = '1' ";
 			}
 			$sql .= " GROUP BY qg.id ORDER BY qg.group_order $g_limit ";
@@ -287,12 +287,12 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
 			?>
 		</div>
 	</div>
-				<?php if ($espresso_premium == true) { ?>
+	<?php if ($espresso_premium == true) { ?>
 		<div id="event-questions-additional" class="postbox event-questions-lists">
 			<div class="handlediv" title="Click to toggle"><br>
 			</div>
 			<h3 class="hndle"><span>
-						<?php _e('Event Questions for Additional Attendees', 'event_espresso'); ?>
+					<?php _e('Event Questions for Additional Attendees', 'event_espresso'); ?>
 				</span></h3>
 			<div class="inside">
 				<p><strong>
@@ -304,9 +304,9 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
 					</a>
 					<?php _e('of', 'event_espresso'); ?>
 					<a href="admin.php?page=form_builder" target="_blank">
-				<?php _e('questions', 'event_espresso'); ?>
+						<?php _e('questions', 'event_espresso'); ?>
 					</a>
-				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
+					<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
 				</p>
 				<?php
 				// $add_attendee_question_groups = isset($add_attendee_question_groups) ? $add_attendee_question_groups : '';
