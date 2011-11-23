@@ -42,7 +42,9 @@ if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $files[0])
 		<?php _e('IMPORTANT:', 'event_espresso'); ?>
 		</strong>
 		<?php _e('Are you sure you want to enable this feature?', 'event_espresso'); ?>
-		<?php echo select_input('use_custom_templates', $values, empty($org_options['template_settings']['use_custom_templates']) ? 'Y' : $org_options['template_settings']['use_custom_templates']); ?> <?php apply_filters( 'espresso_help', 'custom_templates_info'); ?></p>
+		<?php echo select_input('use_custom_templates', $values, empty($org_options['template_settings']['use_custom_templates']) ? 'Y' : $org_options['template_settings']['use_custom_templates']); ?>
+		<?php apply_filters( 'espresso_help', 'custom_templates_info'); ?>
+	</p>
 </fieldset>
 <?php if ($org_options['template_settings']['use_custom_templates'] == 'N'){
 	echo '<p>'. __('It appears that you have moved your files to the "wp-content/uploads/espresso/templates/ directory". However, these files may be outdated and are not being used at this time. If you wish to use these files, please make sure you have updated them files to match the files located in the "'.EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/'.' directory." ', 'event_espresso').'</p>';
@@ -149,3 +151,4 @@ if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $files[0])
 <p class="updated"><?php printf(__("Click here to <a href='%s'>Move your files</a> to a safe place.", 'event_espresso'), wp_nonce_url("admin.php?event_espresso_admin_action=copy_templates", 'copy_templates')); ?> </p>
 <?php
 }
+
