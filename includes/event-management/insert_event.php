@@ -9,7 +9,7 @@ function add_event_to_db($recurrence_arr = array()) {
 	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
 
 if( check_admin_referer('espresso_form_check', 'ee_add_new_event') ) {
-	
+
 $wpdb->show_errors();
 
 	static $recurrence_id;
@@ -98,8 +98,8 @@ $wpdb->show_errors();
 		$member_only = isset($_REQUEST['member_only']) ? $_REQUEST['member_only'] : '';
 		$is_active = $_REQUEST['is_active'];
 		$event_status = $_REQUEST['event_status'];
-		$ticket_id = $_REQUEST['ticket_id'];
-		$certificate_id = $_REQUEST['certificate_id'];
+		$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
+		$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
 
 		//Get the first instance of the start and end times
 		$start_time = $_REQUEST['start_time'][0];
@@ -125,10 +125,10 @@ $wpdb->show_errors();
 		$email_id = isset($_REQUEST['email_name']) ? $_REQUEST['email_name'] : '';
 
 		//Venue Information
-		$venue_title = $_REQUEST['venue_title'];
-		$venue_url = $_REQUEST['venue_url'];
-		$venue_phone = $_REQUEST['venue_phone'];
-		$venue_image = $_REQUEST['venue_image'];
+		$venue_title = empty($_REQUEST['venue_title']) ? '' : $_REQUEST['venue_title'];
+		$venue_url = empty($_REQUEST['venue_url']) ? '' : $_REQUEST['venue_url'];
+		$venue_phone = empty($_REQUEST['venue_phone']) ? '' : $_REQUEST['venue_phone'];
+		$venue_image = empty($_REQUEST['venue_image']) ? '' : $_REQUEST['venue_image'];
 
 		//Virtual location
 		$virtual_url = $_REQUEST['virtual_url'];
@@ -137,7 +137,7 @@ $wpdb->show_errors();
 		$registration_start = array_key_exists('registration_start', $recurrence_arr) ? $recurrence_arr['registration_start'] : $_REQUEST['registration_start'];
 		$registration_end = array_key_exists('registration_end', $recurrence_arr) ? $recurrence_arr['registration_end'] : $_REQUEST['registration_end'];
 
-		//Check which start/end date to use.  Will be determined by recurrenig events addon, if installed.
+		//Check which start/end date to use.  Will be determined by recurring events addon, if installed.
 		if (array_key_exists('recurrence_start_date', $recurrence_arr)) {
 			//Recurring event
 			$start_date = $recurrence_arr['recurrence_start_date'];
@@ -161,8 +161,6 @@ $wpdb->show_errors();
 		} else {
 			$end_date = $_REQUEST['end_date'];
 		}
-		//$start_date = array_key_exists('recurrence_start_date', $recurrence_arr)?$recurrence_arr['recurrence_start_date']:($_REQUEST['start_date']==''?$_REQUEST['recurrence_start_date']:$_REQUEST['start_date']);
-		//$end_date = array_key_exists('recurrence_start_date', $recurrence_arr)?$recurrence_arr['recurrence_start_date']:($_REQUEST['end_date']==''?$_REQUEST['recurrence_start_date']:$_REQUEST['end_date']);
 
 		if (array_key_exists('visible_on', $recurrence_arr)) {
 			//Recurring event
@@ -502,6 +500,6 @@ $wpdb->show_errors();
 	return $last_event_id;
 
  }
-	// end nonce check 
+	// end nonce check
 }
 //End add_event_funct_to_db()
