@@ -33,16 +33,23 @@ function add_venue_to_db(){
 		$sql_data = array('%s','%s','%s','%s','%s','%s','%s','%s','%d','%s');
 		  
 		if ($wpdb->insert( EVENTS_VENUE_TABLE, $sql, $sql_data )){
-			if( !empty($locale) ){
+			$succes = true;
+		}else{ 
+			$succes = false;
+		}
+		if( !empty($locale) ){
 				$last_venue_id = $wpdb->insert_id;
 				$sql_locale="INSERT INTO ".EVENTS_LOCALE_REL_TABLE." (venue_id, locale_id) VALUES ('".$last_venue_id."', '".$locale."')";
-				if (!$wpdb->query($sql_locale)){
-					$notices['errors'][] = __('The locale was not saved!', 'event_espresso');
+				if ($wpdb->query($sql_locale)){
+					$succes = true;
 				}
-			}
-			$notices['updates'][] = __('The venue ', 'event_espresso') . $_REQUEST['name'] .  __(' has been added', 'event_espresso');
 		}else{ 
-			$notices['errors'][] = __('The venue', 'event_espresso') . $_REQUEST['name'] .  __(' was not saved!', 'event_espresso');		
+			$succes = false;
+		}
+		if ($succes == true){
+			$notices['updates'][] = __('The venue', 'event_espresso') .' '. $_REQUEST['name'] .  __(' has been saved', 'event_espresso');
+		}else{ 
+			$notices['errors'][] = __('The venue', 'event_espresso') .' '. $_REQUEST['name'] .  __(' was not saved!', 'event_espresso');		
 		}
 	}
 }

@@ -9,21 +9,20 @@ function edit_event_venue(){
 		 $sql .= " AND v.wp_user = '" . espresso_member_data('id') . "' ";
 	}
 	//echo $sql;
-	$results = $wpdb->get_results($sql);
-	if (!$wpdb->num_rows >0)	return;
-	foreach ($results as $result){
-		$venue_id= $result->id;
-		$name=stripslashes_deep($result->name);
-		$address=stripslashes_deep($result->address);
-		$address2=stripslashes_deep($result->address2);
-		$city=stripslashes_deep($result->city);
-		$state=stripslashes_deep($result->state);
-		$zip=stripslashes_deep($result->zip);
-		$country=stripslashes_deep($result->country);
-		$meta = unserialize($result->meta);
+	$venue = $wpdb->get_row($sql, ARRAY_A);
+	//echo "<pre>".print_r($venue ,true)."</pre>";
+	if (!$wpdb->num_rows >0) return;
+		$venue_id= $venue['id'];
+		$name=stripslashes_deep($venue['name']);
+		$address=stripslashes_deep($venue['address']);
+		$address2=stripslashes_deep($venue['address2']);
+		$city=stripslashes_deep($venue['city']);
+		$state=stripslashes_deep($venue['state']);
+		$zip=stripslashes_deep($venue['zip']);
+		$country=stripslashes_deep($venue['country']);
+		$meta = unserialize($venue['meta']);
 		
-		$last_locale_id = $wpdb->get_var("SELECT locale_id FROM ".EVENTS_LOCALE_REL_TABLE." WHERE venue_id='".$id."'");
-	}
+		$cur_locale_id = $wpdb->get_var("SELECT locale_id FROM ".EVENTS_LOCALE_REL_TABLE." WHERE venue_id='".$id."'");
 	
 		$values = array(
 				array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
@@ -32,9 +31,8 @@ function edit_event_venue(){
 		
 		// build some data to feed to the map display
 		$venue_address_elements = ($address != '' ? $address . ',' : '') . ($address2 != '' ? $address2 . ',' : '') . ($city != '' ?  $city . ',' : '') . ($state != '' ? $state . ',' : '') . ($zip != '' ? $zip . ',' : '') . ($country != ''? $country : '');
-  $ee_gmap_location =  $venue_address_elements;
-		// take venue_id and pass it through as event_id
-		$event_id = $event_id;	
+		$ee_gmap_location =  $venue_address_elements;
+		
 		// Create dummy ee_gmaps_opts to control map display
 		global $ee_gmaps_opts;
 		$ee_gmaps_opts['ee_map_width'] = '300';
@@ -45,193 +43,203 @@ function edit_event_venue(){
 <!--Add event display-->
 
 <div id="add-edit-venue" class="metabox-holder">
-  <div class="postbox">
-	<h3>
-	  <?php _e('Edit Venue:','event_espresso'); ?>
-	  <?php echo stripslashes($name) ?></h3>
-	<div class="inside">
-	  <form method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
-		<input type="hidden" name="venue_id" value="<?php echo $venue_id; ?>">
-		<input type="hidden" name="action" value="update">
-		<table width="100%" border="0">
-		  <tr>
-			<td align="left" valign="top">
-								<ul>
-				<li>
-				  <label for="name">
-					<?php _e('Name','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="name" name="name" size="25" value="<?php echo $name;?>">
-				</li>
-				<li>
-				  <label for="address">
-					<?php _e('Address','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="address" name="address" size="25" value="<?php echo $address;?>">
-				</li>
-				<li>
-				  <label for="address2">
-					<?php _e('Address 2','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="address2" name="address2" size="25" value="<?php echo $address2;?>">
-				</li>
-				<li>
-				  <label for="city">
-					<?php _e('City','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="city" name="city" size="25" value="<?php echo $city;?>">
-				</li>
-				<li>
-				  <label for="state">
-					<?php _e('State','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="state" name="state" size="25" value="<?php echo $state;?>">
-				</li>
-				<li>
-				  <label for="zip">
-					<?php _e('Zip','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="zip" name="zip" size="25" value="<?php echo $zip;?>">
-				</li>
-				<li>
-				  <label for="country">
-					<?php _e('Country','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="country" name="country" size="25" value="<?php echo $country;?>">
-				</li>
-				<?php if( function_exists('espresso_member_data')){ ?>
-					<li>
-											
-					  <label for="locale">
-						<?php _e('Locale/Region ','event_espresso'); ?> <?php apply_filters( 'espresso_help', 'venue_locale'); ?>
-					  </label>
-				<?php  
-					$sql = "SELECT * FROM ". EVENTS_LOCALE_TABLE ." ORDER BY name ASC";
-					$results = $wpdb->get_results($sql);
-					if ($wpdb->num_rows > 0) { 
-				?>
-					  <select name="locale" id="locale" class="chzn-select wide" >
-						<?php
-								foreach ($results as $result){
-									$locale_id= $result->id;
-									$name=stripslashes($result->name);
-									$sel = "";
-									if( $last_locale_id == $locale_id ) $sel = " SELECTED ";
-						?>
-									<option value="<?php echo $locale_id;?>" <?php echo $sel; ?>><?php echo $name;?></option>
-						<?php
-								}
-						?>
-					  </select>
-					  <?php }?>
-										
-					<?php if(empty($locale_id)){ ?>
-							<p><?php _e('You have not created any locales yet. To create Locales please visit', 'event_espresso'); ?> <a href="admin.php?page=event_locales"> <?php _e('Manage Locales/Regions', 'event_espresso'); ?></a> <?php _e('page', 'event_espresso'); ?>.</p>
-					<?php } ?>												
-										
-			   </li>
-				<?php }// end if function_exists('espresso_member_data' ?>
-			  </ul>
-			</td>
-			<td align="left" valign="top" class="b"><ul>
-				<li>
-				  <label for="contact">
-					<?php _e('Contact','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="contact" name="contact" size="25" value="<?php echo stripslashes_deep($meta['contact']);?>">
-				</li>
-				
-																<li>
-				  <label for="phone">
-					<?php _e('Phone','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="phone" name="phone" size="25" value="<?php echo stripslashes_deep($meta['phone']);?>">
-				</li>
-				
-																<li>
-				  <label for="twitter">
-					<?php _e('Twitter','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="twitter" name="twitter" size="25" value="<?php echo stripslashes_deep($meta['twitter']);?>">
-				</li>
-				
-																<li>
-				  <label for="website">
-					<?php _e('Website','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="website" name="website" size="25" value="<?php echo stripslashes_deep($meta['website']);?>">
-				</li>
-				
-																<li>
-				  <label for="image">
-					<?php _e('Image/Logo URL','event_espresso'); ?>
-				  </label>
-				  <input type="text" id="image" name="image" size="25" value="<?php echo stripslashes_deep($meta['image']);?>">
-				</li>
-																
-																<li class="ee-gmap-entry">
-																  <p class="section-heading"><?php _e('Display Address as an interactive map or add a static map url', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'venue_gmap'); ?></p>
-																		
-																		<label for="enable-ven-gmaps"><?php _e('Enable Venue for Google Maps', 'event_espresso')  ?></label>
-																   <?php echo select_input('enable_for_maps', $values, isset($meta['enable_for_maps']) ? $meta['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?>
-																  
-																		<label for="gmap-static"><?php _e('Add static map url', 'event_espresso'); ?></label>
-																  <input type="text" id="gmap-static" name="gmap_static" size="25" <?php echo (!empty($meta['gmap_static']) )? 'value="' . $meta['gmap_static'] .'"' : 'value=""'; ?> />
-																</li>
-																
-																<li class="ee-gmap-display">
-				 <div class="map-frame">
-													<?php if( isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y' && empty($meta['gmap_static']) ) { 
-																  
-																		if( function_exists('ee_gmap_display') ) {
-																		echo ee_gmap_display($ee_gmap_location, $event_id);
-																		} else {?>
-																		<p class="inform"><?php _e('Sorry the Gmap function is not available, please try the url method instead.', 'event_espresso'); ?></p>
-												<?php	}
-															 
-																}else{ ?>
-																
-				   <iframe src="<?php echo $meta['gmap_static'] ?>&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" width="300" height="300">
-																</iframe>
-																<a href="href="<?php echo $meta['gmap_static'] ?>">View Large map</a>
-																
-												<?php } ?>
-				 </div>
-																</li>
-			  </ul>
-												</td>
-		  </tr>
-		</table>
-					<div id="descriptiondivrich" class="postarea">
-		   
-						 <label for="description" class="section-heading">
-			 <?php _e('Description','event_espresso'); ?>
-		   </label>
-		   <div class="postbox">
-			<?php the_editor(espresso_admin_format_content($meta['description']), $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
-  					<table id="venue-descr-add-form"  cellspacing="0">
-  						<tbody>
-  							<tr>
-  								<td class="aer-word-count"></td>
-  								<td class="autosave-info">
-  									<span>
-  										<p></p>
-  									</span>
-  								</td>
-  							</tr>
-  						</tbody>
-  					</table>
-					</div><!-- /.postbox -->
-		  <p>
-			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Venue'); ?>" id="update_venue" />
-			<?php wp_nonce_field( 'espresso_form_check', 'update_venue' ) ?>
-		  </p>
-					</div><!-- /#descriptiondivrich -->
-	  </form>
-	</div><!-- /.inside -->
-  </div><!-- /.postbox -->
-</div><!-- /.metabox-holder -->
+	<div class="postbox">
+		<h3>
+			<?php _e('Edit Venue','event_espresso'); ?>
+		</h3>
+		<div class="inside">
+			<form method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
+				<h4><?php echo stripslashes($name) ?></h4>
+				<input type="hidden" name="venue_id" value="<?php echo $venue_id; ?>">
+				<input type="hidden" name="action" value="update">
+				<table width="100%" border="0">
+					<tr>
+						<td align="left" valign="top" class="a"><table class="form-table">
+								<tbody>
+									<tr>
+										<th><label for="name">
+												<?php _e('Name','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="name" name="name" value="<?php echo $name;?>"></td>
+									</tr>
+									<tr>
+										<th><label for="website">
+												<?php _e('Website','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="website" name="website" value="<?php echo stripslashes_deep($meta['website']);?>"></td>
+									</tr>
+									<tr>
+										<th><label for="image">
+												<?php _e('Image/Logo URL','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="image" name="image" value="<?php echo stripslashes_deep($meta['image']);?>"></td>
+									</tr>
+									<tr>
+										<td colspan="2"><strong>
+											<?php _e('Location', 'event_espresso'); ?>
+											</strong></td>
+									<tr>
+									<tr>
+										<th><label for="address">
+												<?php _e('Address','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="address" name="address" value="<?php echo $address;?>"></td>
+									</tr>
+									<tr>
+										<th><label for="address2">
+												<?php _e('Address 2','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="address2" name="address2" value="<?php echo $address2;?>"></td>
+									</tr>
+									<tr>
+										<th><label for="city">
+												<?php _e('City','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="city" name="city" value="<?php echo $city;?>"></td>
+									</tr>
+									<tr>
+										<th><label for="state">
+												<?php _e('State','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="state" name="state" value="<?php echo $state;?>"></td>
+									</tr>
+									<tr>
+										<th><label for="zip">
+												<?php _e('Zip','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="zip" name="zip" value="<?php echo $zip;?>"></td>
+									</tr>
+									<tr>
+										<th><label for="country">
+												<?php _e('Country','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="country" name="country" value="<?php echo $country;?>"></td>
+									</tr>
+									<?php 
+									if ( defined('ESPRESSO_MANAGER_PRO_VERSION') ){ 
+									?>
+									<tr>
+										<th><label for="locale">
+												<?php _e('Locale/Region ','event_espresso'); ?>
+												<?php apply_filters( 'espresso_help', 'venue_locale'); ?>
+											</label>
+										</th>
+										<td><?php echo espresso_locale_select($cur_locale_id); ?></td>
+									</tr>
+									<?php
+									}// end if function_exists('espresso_member_data'
+									?>
+									<tr>
+										<td colspan="2"><strong>
+											<?php _e('Contact Information', 'event_espresso'); ?>
+											</strong></td>
+									<tr>
+									<tr>
+										<th><label for="contact">
+												<?php _e('Contact Person','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="contact" name="contact" value="<?php echo stripslashes_deep($meta['contact']);?>"></td>
+									</tr>
+									<tr>
+										<th><label for="phone">
+												<?php _e('Phone','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="phone" name="phone" value="<?php echo stripslashes_deep($meta['phone']);?>"></td>
+									</tr>
+									<tr>
+										<th><label for="twitter">
+												<?php _e('Twitter Handle','event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="twitter" name="twitter" value="<?php echo stripslashes_deep($meta['twitter']);?>"></td>
+									</tr>
+								</tbody>
+							</table></td>
+						<td align="left" valign="top" class="b"><table class="form-table">
+								<tbody>
+									<tr>
+										<th><label for="enable-ven-gmaps">
+												<?php _e('Enable Venue for Google Maps', 'event_espresso')  ?>
+												<?php apply_filters( 'espresso_help', 'venue_gmap'); ?>
+											</label></th>
+										<td><?php echo select_input('enable_for_maps', $values, isset($meta['enable_for_maps']) ? $meta['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?></td>
+									</tr>
+									<tr>
+										<th><label for="gmap-static">
+												<?php _e('Static Map URL', 'event_espresso'); ?>
+											</label></th>
+										<td><input class="regular-text" type="text" id="gmap-static" name="gmap_static" <?php echo (!empty($meta['gmap_static']) )? 'value="' . $meta['gmap_static'] .'"' : 'value=""'; ?> />
+											<br />
+											<span class="description">
+											<?php _e('Will be used in place of the venue address.', 'event_espresso'); ?>
+											</span></td>
+									</tr>
+									<tr>
+										<td colspan="2" class="ee-gmap-display"><div class="map-frame">
+									<?php 
+									if (!empty($venue_address_elements)) {
+										if( isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y' && empty($meta['gmap_static']) ) { 
+											if( function_exists('ee_gmap_display') ) {
+												echo ee_gmap_display($ee_gmap_location, $event_id);
+											} else {
+													echo '<p class="inform">';
+													_e('Sorry the Gmap function is not available, please try the url method instead.', 'event_espresso');
+													echo '</p>';
+											}
+										}else{ ?>
+													<iframe src="<?php echo $meta['gmap_static'] ?>&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" width="300" height="300"> </iframe>
+													<br />
+													<a href="<?php echo $meta['gmap_static'] ?>">
+													<?php _e('View Large Map', 'event_espresso'); ?>
+													</a>
+													<?php 
+										}
+									}else{
+										echo '<p class="inform">';
+										_e('Address was not entered.', 'event_espresso');
+										echo '</p>';
+									}
+									?>
+											</div></td>
+									</tr>
+								</tbody>
+							</table></td>
+					</tr>
+				</table>
+				<div id="descriptiondivrich" class="postarea">
+					<label for="description" class="section-heading">
+						<?php _e('Description','event_espresso'); ?>
+					</label>
+					<div class="postbox">
+						<?php the_editor(espresso_admin_format_content($meta['description']), $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
+						<table id="venue-descr-add-form"  cellspacing="0">
+							<tbody>
+								<tr>
+									<td class="aer-word-count"></td>
+									<td class="autosave-info"><span>
+										<p></p>
+										</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- /.postbox -->
+					<p>
+						<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update'); ?>" id="update_venue" />
+						<?php wp_nonce_field( 'espresso_form_check', 'update_venue' ) ?>
+					</p>
+				</div>
+				<!-- /#descriptiondivrich -->
+			</form>
+		</div>
+		<!-- /.inside --> 
+	</div>
+	<!-- /.postbox --> 
+</div>
+<!-- /.metabox-holder -->
 
 <?php 
 //espresso_tiny_mce();
 }
+
+
+
