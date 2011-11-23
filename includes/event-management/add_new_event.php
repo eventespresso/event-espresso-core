@@ -63,7 +63,6 @@ function add_new_event() {
 			}//Display Lite version options - End
 
 			$reg_limit = isset($reg_limit) ? $reg_limit : '';
-			//$event_meta = isset($event_meta) ? $event_meta : array();
 			$additional_limit = isset($additional_limit) ? $additional_limit : '';
 			postbox('event-status', 'Event Options', '<p class="inputundersmall"><label for="reg-limit">' . __('Attendee Limit: ', 'event_espresso') . '</label> <input id="reg-limit" name="reg_limit" size="10" type="text" value="' . $reg_limit . '"><br />' .
 					'<span>(' . __('leave blank for unlimited', 'event_espresso') . ')</span></p>' .
@@ -74,7 +73,7 @@ function add_new_event() {
 
 			//Featured image section
 			if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true){
-				espresso_featured_image_event_admin($event_meta);
+				espresso_featured_image_event_admin();
 			}
 
 		/*
@@ -176,7 +175,7 @@ function add_new_event() {
 		<?php _e('Member Options', 'event_espresso'); ?>
 		</span> </h3>
 	  <div class="inside">
-		<p><?php echo event_espresso_member_only($member_only); ?></p>
+		<p><?php echo event_espresso_member_only(); ?></p>
 	  </div>
 	</div>
 	<!-- /event-category -->
@@ -212,7 +211,7 @@ function add_new_event() {
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
 	}
-	
+
 	if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) { ?>
 	<div id="groupon-options" class="postbox">
 	  <div class="handlediv" title="Click to toggle"><br />
@@ -329,7 +328,7 @@ function add_new_event() {
 				</fieldset>
 				<fieldset id="add-event-dates">
 				  <legend>
-				  <?php _e('Event Dates', 'event_espresso'); ?> 
+				  <?php _e('Event Dates', 'event_espresso'); ?>
 				  </legend> <?php apply_filters( 'espresso_help', 'event_date_info'); ?>
 				  <p>
 					<label for="start_date">
@@ -346,7 +345,7 @@ function add_new_event() {
 				</fieldset>
 				<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] != 'Y') && $espresso_premium == true) { ?>
 				<p><span class="run-in">
-				  <?php _e('Current Time:', 'event_espresso'); ?> 
+				  <?php _e('Current Time:', 'event_espresso'); ?>
 				  </span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <?php apply_filters( 'espresso_help', 'current_time_info'); ?>
 				  <a class="change-date-time" href="options-general.php" target="_blank">
 				  <?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
@@ -551,7 +550,7 @@ function add_new_event() {
 
 		  </table>
 						<p>
-							<label for="enable-for-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?></label>  
+							<label for="enable-for-gmap"> <?php _e('Enable event address in Google Maps? ', 'event_espresso') ?></label>
 							<?php echo select_input('enable_for_gmap', $values, 'N', 'id="enable-for-gmap"')?>
 						</p>
 		</div>
@@ -580,8 +579,8 @@ function add_new_event() {
 		<div class="inside">
 		  <div id="emaildescriptiondivrich" class="postarea">
 			<div class="email-conf-opts">
-			  <p class="inputunder"><label><?php echo __('Send custom confirmation emails for this event?', 'event_espresso')?> <?php apply_filters('espresso_help', 'custom_email_info') ?> </label> <?php echo select_input('send_mail', $values, $send_mail); ?> </p>
-			  
+			  <p class="inputunder"><label><?php echo __('Send custom confirmation emails for this event?', 'event_espresso')?> <?php apply_filters('espresso_help', 'custom_email_info') ?> </label> <?php echo select_input('send_mail', $values); ?> </p>
+
 								<p class="inputunder">
 				<?php $email_id = isset($email_id) ? $email_id : ''; ?>
 									<label>
@@ -589,11 +588,11 @@ function add_new_event() {
 					<a href="admin.php?page=event_emails" target="_blank">
 						<?php _e('pre-existing email? ', 'event_espresso'); ?>
 					</a>
-										<?php apply_filters('espresso_help', 'email_manager_info') ?> 
+										<?php apply_filters('espresso_help', 'email_manager_info') ?>
 									</label>
-				<?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') ?>  
+				<?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') ?>
 									</p>
-			  
+
 								<p>
 			  	<em>OR</em>
 								</p>
