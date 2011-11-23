@@ -170,14 +170,14 @@ function event_espresso_multi_price_update($event_id) {
 //This function grabs the event categories and outputs checkboxes.
 //@param optional $event_id = pass the event id to get the categories assigned to the event.
 function event_espresso_get_categories($event_id = 0) {
-	global $wpdb;
+	global $wpdb, $espresso_wp_user;
 	$manage = '<p><a href="admin.php?page=event_categories" target="_blank">' . __('Manage Categories', 'event_espresso') . '</a></p>';
 	$sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
-	if (function_exists('espresso_member_data')) {
+	if (defined('ESPRESSO_MANAGER_PRO_VERSION')) {
 		global $espresso_manager;
 		if (isset($espresso_manager['event_manager_share_cats']) && $espresso_manager['event_manager_share_cats'] == 'N') {
 			$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
-			$wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
+			$wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : $espresso_wp_user;
 			$sql .= " WHERE ";
 			if ($wp_user == 0 || $wp_user == 1) {
 				$sql .= " (wp_user = '0' OR wp_user = '1') ";
@@ -218,10 +218,10 @@ function event_espresso_get_categories($event_id = 0) {
 }
 
 function espresso_event_question_groups($question_groups=array(), $add_attendee_question_groups=array(), $event_id=0) {
-	global $wpdb, $org_options, $espresso_premium;
+	global $wpdb, $org_options, $espresso_premium, $espresso_wp_user;
 	?>
 	<div id="event-questions" class="postbox event-questions-lists">
-		<div class="handlediv" title="Click to toggle"><br />
+		<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
 		</div>
 		<h3 class="hndle"><span>
 				<?php echo sprintf(__('Event Questions for Primary Attendee', 'event_espresso'), ''); ?>
@@ -243,19 +243,21 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
 			<?php
 			$g_limit = $espresso_premium != true ? 'LIMIT 0,2' : '';
 			$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
-			if (function_exists('espresso_member_data')) {
+			if (defined('ESPRESSO_MANAGER_PRO_VERSION')) {
 				$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
-				$wp_user = !empty($wpdb->last_result[0]->wp_user) ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
+				$wp_user = !empty($wpdb->last_result[0]->wp_user) ? $wpdb->last_result[0]->wp_user : $espresso_wp_user;
 				$sql .= " WHERE ";
 				if ($wp_user == 0 || $wp_user == 1) {
 					$sql .= " (wp_user = '0' OR wp_user = '1') ";
 				} else {
-					$sql .= " (wp_user = '" . $wp_user . "' OR wp_user = '0' OR wp_user = '1')";
+					$sql .= " wp_user = '" . $wp_user . "' ";
 				}
 			} else {
 				$sql .= " WHERE wp_user = '0' OR wp_user = '1' ";
 			}
 			$sql .= " GROUP BY qg.id ORDER BY qg.group_order $g_limit ";
+			//Debug:
+			//echo $sql;
 			$q_groups = $wpdb->get_results($sql);
 			$num_rows = $wpdb->num_rows;
 			$html = '';
