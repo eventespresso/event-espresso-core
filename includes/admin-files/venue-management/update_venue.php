@@ -14,7 +14,6 @@ function update_event_venue(){
 	$venue_meta['gmap_static'] = esc_url($_REQUEST['gmap_static']);
 	$locale = $_REQUEST['locale'];
 	$meta = serialize($venue_meta);
-	echo '<p>$locale = '.$locale.'</p>';
 	
 	$sql=array(
 		'name'=>$_REQUEST['name'],
