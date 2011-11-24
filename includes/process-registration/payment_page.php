@@ -60,10 +60,12 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 	}
 
 	//Get the questions for the attendee
-	$questions = $wpdb->get_results("SELECT ea.answer, eq.question
+	$q_sql = "SELECT ea.answer, eq.question
 						FROM " . EVENTS_ANSWER_TABLE . " ea
 						LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id
-						WHERE ea.attendee_id = '" . $attendee_id . "' and eq.admin_only = 'N' ORDER BY eq.sequence asc ");
+						WHERE ea.attendee_id = '" . $attendee_id . "' and eq.admin_only = 'N' ORDER BY eq.sequence asc ";
+	$questions = $wpdb->get_results($q_sql);
+	//echo $q_sql;
 	//echo $wpdb->last_query;
 	$display_questions = '';
 	foreach ($questions as $question) {
@@ -204,11 +206,14 @@ function espresso_confirm_registration($registration_id) {
 	//Debug
 	//echo '<p>Function = espresso_confirm_registration()</p>';
 	
+	//Not sure this is needed or why it is here
 	//Get the questions for the attendee
-	$questions = $wpdb->get_results("SELECT ea.answer, eq.question
+	$sql = "SELECT ea.answer, eq.question
 						FROM " . EVENTS_ANSWER_TABLE . " ea
 						LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id
-						WHERE ea.registration_id = '" . $registration_id . "' AND system_name IS NULL ORDER BY eq.sequence asc ");
+						WHERE ea.registration_id = '" . $registration_id . "' AND system_name IS NULL ORDER BY eq.sequence asc ";
+	$questions = $wpdb->get_results($sql);
+	//echo $sql;
 	//echo $wpdb->last_query;
 	$display_questions = '';
 	foreach ($questions as $question) {
