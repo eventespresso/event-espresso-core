@@ -9,7 +9,7 @@ $values=array(
 	array('id' => 'Pending', 'text' => 'Pending'),
 	array('id' => 'Completed', 'text' => 'Completed')
 );
-						
+
 ?>
 
 <div class="metabox-holder">
@@ -159,7 +159,7 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 							</label></th>
 						<td><?php echo select_input('use_event_timezones', $values, isset($org_options['use_event_timezones']) ? $org_options['use_event_timezones'] : 'N'); ?><br />
 							<span class="description">
-							<?php _e('This allows you to set a custom time zone foe each event.<br />Modificatiosn to your site may be required for this to work properly.','event_espresso'); ?>
+							<?php _e('This allows you to set a custom time zone for each event.<br />Modificatiosn to your site may be required for this to work properly.','event_espresso'); ?>
 							</span></td>
 					</tr>
 					<tr>
@@ -200,11 +200,11 @@ and backend updates for Event Espresso Core and any installed addons.'); ?>
 							</span>
 					</div>
 					</td>
-				
+
 					</tr>
-				
+
 					</tbody>
-				
+
 			</table>
 			<p>
 				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
