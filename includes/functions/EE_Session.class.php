@@ -52,7 +52,7 @@
 	var $_ip_address = NULL; 
 	
 	// array for defining default session vars
-	var $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'espresso' );
+	var $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'events_in_cart', 'espresso' );
 	
 	// global error notices
 	var $_notices;
@@ -92,7 +92,7 @@
 		
 		global $EE_Session, $org_options, $notices;
 		$this->_notices = $notices;
-
+		
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : FALSE;
 
 		// retreive session options from db
@@ -135,7 +135,6 @@
 		
 		if ( isset( $_REQUEST['page_id'] ) ) {
 			if (  $_REQUEST['page_id'] == $org_options['return_url'] or $_REQUEST['page_id'] == $org_options['notify_url'] ) {
-//				$this->reset_data( array( 'REG', 'MER', 'CART' ));
 				$this->reset_data( array() );
 			}
 		}
@@ -157,8 +156,26 @@
 	 * @access	public
 	 * @return	array
 	 */
-	public function data() {
-		return $this->_data;
+	public function id() {
+		return $this->_sid;
+	}
+
+
+
+
+
+	/*
+	 * @retreive session data
+	 * @access	public
+	 * @return	array
+	 */
+	public function data( $key = FALSE ) {
+	
+		if ( $key ) {
+			return $this->_data[$key];
+		} else {
+			return $this->_data;
+		}
 	}
 
 
@@ -170,7 +187,7 @@
 	 * @access	public
 	 * @return	TRUE on success, FALSE on fail
 	 */
-	public function set_data( $data ) {
+	public function set_data( $data, $section = 'espresso' ) {
 	
 		// nothing ??? go home!
 		if ( ! $data ) {
@@ -179,7 +196,7 @@
 		}
 		
 		foreach ( $data as $key =>$value ) {
-			$this->_data['espresso'][ $key ] = $value;
+			$this->_data[ $section ][ $key ] = $value;
 		}
 		
 		return TRUE;
@@ -214,6 +231,12 @@
 			// unserialize
 			$session_data = unserialize( $session_data );
 
+//echo '<h4>session_data</h4>';
+//echo '<pre>';
+//echo print_r($session_data);
+//echo '</pre>';
+//die();
+
 			// just a check to make sure the sesion array is indeed an array
 			if ( ! is_array( $session_data ) ) {
 				// no?!?! then something's wrong 
@@ -235,7 +258,7 @@
 		if ( $session_data['user_agent'] != $this->_user_agent ) {
 			return FALSE;
 		}
-		
+
 		// wait a minute... how old are you?
 		// if the last access time for the session is less than the current time subtract the session expiration time...
 		// ie: is 1pm less than 4pm minus (the default) 2 hours?
@@ -264,29 +287,52 @@
 		
 		//echo '<h3>'.__FUNCTION__.'</h3>';
 		
-		// session ID
-		$session_data['id'] = $this->_sid;
-		// visitor ip address
-		$session_data['ip_address'] = $this->_visitor_ip();
-		// visitor user_agent
-		$session_data['user_agent'] = $this->_user_agent;
+		foreach ( $this->_data as $key => $value ) {
 		
-		// are we creating a new session?
-		if ( $new_session ) {
-			// initial access times
-			$session_data['init_access'] = $this->_time;
+			switch( $key ) {
+
+				case 'id' :
+						// session ID
+						$session_data['id'] = $this->_sid;
+				break;
+				
+				case 'ip_address' :
+						// visitor ip address
+						$session_data['ip_address'] = $this->_visitor_ip();
+				break;
+				
+				case 'user_agent' :
+						// visitor user_agent
+						$session_data['user_agent'] = $this->_user_agent;
+				break;
+				
+				case 'init_access' :
+						// are we creating a new session?
+						if ( $new_session ) {
+							// initial access times
+							$session_data['init_access'] = $this->_time;
+						}
+				break;
+				
+				case 'last_access' :
+						// current access time
+						$session_data['last_access'] = $this->_time;
+				break;
+				
+				default :
+						// carry any other data over
+						$session_data[$key] = $this->_data[$key];
+				break;
+				
+			}
+		
 		}
-		
-		// current access time
-		$session_data['last_access'] = $this->_time;
-		// event espresso session data
-		$session_data['espresso'] = $this->_data['espresso'];
 		
 		// creating a new session does not require saving to the db just yet
 		if ( ! $new_session ) {
 			// current user if logged in
 			$user = wp_get_current_user();
-			$session_data['user_id'] = $user->id ? $user->id : NULL;
+			$session_data['user_id'] = isset( $user->id ) ? $user->id : NULL;
 			
 			$this->_data = $session_data;
 			
@@ -336,6 +382,12 @@
 	private function _save_session_to_db( $session_data ) {
 	
 		//echo '<h3>'.__FUNCTION__.'</h3>';
+
+//echo '<h4>session_data</h4>';
+//echo '<pre>';
+//echo print_r($session_data);
+//echo '</pre>';
+//die();
 
 		// are we are we using encryption?
 		if ( $this->_use_encrytion ) {
@@ -396,6 +448,20 @@
 		return $ip_bits;
 
 	}		
+
+
+
+
+
+	/**
+	 *			@the current wp user id
+	 *		  @access public
+	 *			@return void
+	 */	
+	public function _wp_user_id() {
+		$user = wp_get_current_user();
+		$this->_wp_user_id = isset( $user->id ) ? $user->id : NULL;
+	}
 
 
 

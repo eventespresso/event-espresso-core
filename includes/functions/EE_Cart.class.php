@@ -37,22 +37,26 @@
 																	'title' => 'Registrations', 
 																	'total_items' => 0, 
 																	'sub_total' => 0, 
-																	'empty_msg' => 'No Current Registrations'
+																	'empty_msg' => 'No Current Registrations',
+																	'event_id_list' => array()
+
 																),
-					'MER' => array( 
+					'OPT' => array( 
 																	'title' => 'Additional Options', 
 																	'total_items' => 0, 
 																	'sub_total' => 0, 
-																	'empty_msg' => 'No Additional Options' 
+																	'empty_msg' => 'No Additional Options',
+																	'option_id_list' => array()
 																),
 					'CART' => array(
 																	'title' => 'Shopping Cart', 
 																	'total_items' => 0, 
 																	'sub_total' => 0, 
-																	'empty_msg' => 'Your Cart is Empty'
+																	'empty_msg' => 'Your Cart is Empty',
+																	'item_id_list' => array()
 																)
 				);
-	
+				
 	// EE_Session object stored by reference
 	var $session = NULL; 
 	
@@ -124,10 +128,12 @@
 		// grab any session data carried over from the previous page access
 		$session_data = $this->session->data();
 
-
-		// cycle thru default cart types
-		foreach ( array( 'REG', 'MER', 'CART' ) as $cart_type ) {
+		// allow outside functions to change default empty cart
+		apply_filters_ref_array( 'espresso_default_empty_cart', array( &$this, '_empty_cart' ) );
 		
+		// cycle thru default cart types
+		$default_cart_types = array_keys( $this->_empty_cart );
+		foreach ( $default_cart_types as $cart_type ) {
 
 			// check for existing cart data within the EE_session
 			if ( ! empty( $session_data['espresso'][ $cart_type ] )) { 
@@ -144,6 +150,55 @@
 
 
 	}
+
+
+
+
+
+	/**
+	 *			@intermediate step for adding an event to cart
+	 *		  @access public
+	 *		  @param string - which_cart
+	 *		  @param array - items
+	 *			@return TRUE on success, FALSE on fail 
+	 */	
+	public function add_event_to_cart( $event = FALSE, $qty = 1, $which_cart = 'REG' ) {
+
+		// check that an event has been passed
+		if ( ! $event or ! is_object( $event ) or empty( $event )) {
+			$this->_notices['errors'][] = 'An error occured. No event details were submitted. Could not add to cart';
+			return FALSE;
+		}
+
+		$add_to_cart_args = array( 
+																							'id' 				=> $event->id,
+																							'name' 	=> $event->event_name,
+																							'price' 		=> $event->event_cost,
+																							'qty' 			=> $qty,
+																							'details' 	=> $event													
+																						);
+
+		// add event to cart
+		if ( $this->add_to_cart( $which_cart, $add_to_cart_args ) ) {
+		
+			// retreive event id list
+			$events_in_cart = $this->session->data('events_in_cart');
+			// add this event to list
+			$events_in_cart[$event->id] = $event->id;
+			// send event id list back to session
+			$this->session->set_data( $events_in_cart, 'events_in_cart' );
+
+			// add event id to list of events in cart within individual cart
+			$this->cart[$which_cart]['event_id_list'][$event->id] = $event->id;
+
+			return TRUE;
+			
+		} else {
+			return FALSE;
+		}
+		
+	}
+
 
 
 
@@ -236,7 +291,9 @@
 				
 				default : 
 						// esc illegal characters for all other entries
-						$item[$key] = trim( esc_html( $item[$value] )); 					
+						if ( ! is_array( $value ) &&  ! is_object( $value )) {
+							$item[$key] = trim( esc_html( $item[$value] )); 		
+						}			
 				break;
 				
 			}
@@ -458,6 +515,76 @@
 
 
 	/**
+	 *			@check if item is in cart
+	 *		  @access public
+	 *		  @param string - which_cart
+	 *			@return array on success, FALSE on fail
+	 */	
+	public function is_event_in_cart( $event_id  ) {
+		
+		$session_data = $this->session->data();
+		$events_in_cart = $session_data['events_in_cart'];
+
+		// if there are actually some event_ids to look through
+		if ( is_array( $events_in_cart ) && ! empty( $events_in_cart ) ) {
+				// if the event we are looking for is in there
+			if ( in_array( $event_id, $events_in_cart  )) {
+				return TRUE;
+			} else {
+				return FALSE;
+			}
+		}
+		
+	}
+
+
+
+
+
+	/**
+	 *			@check if item is in cart
+	 *		  @access public
+	 *		  @param string - which_cart
+	 *			@return array on success, FALSE on fail
+	 */	
+	public function is_in_cart( $item_id, $which_cart = 'CART', $section = 'espresso'  ) {
+	
+		// check that the passed properties are valid
+		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
+		
+		// haven't found it yet... of course, we haven't looked yet either
+		$found_it = FALSE;
+		
+		// the list of items we will be looking through
+		$items = $this->session->data[$section][$which_cart];
+
+		// if there are actually some items to look through
+		if ( is_array( $items ) && ! empty( $items ) ) {
+			// cycle thru items
+			foreach ( $items as $item ) {
+				// if the item we are looking for is in there
+				if ( in_array( $item_id, $item )) {
+					$found_it = TRUE;
+				}		
+		
+			}
+		} 
+
+		// did we found it?
+		if ( $found_it ) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+		
+		
+	}
+
+
+
+
+
+	/**
 	 *			@returns contents of the cart
 	 *		  @access public
 	 *		  @param string - which_cart
@@ -509,26 +636,28 @@
 	private function _clean_cart() {
 		
 		foreach ( $this->cart as $which_cart => $cart ) {
-			foreach ( $cart['items'] as $items ) {
-				foreach ( $items as $line_item_id => $item ) {
-				
-					// do both instances of the line item id match ???
-					if ( $line_item_id != $item['line_item'] ) {
-						// delete
-						$this->remove_from_cart( $which_cart, $line_item_id );
-						break;
-					} elseif ( $line_item_id != md5( $which_cart . $item['id'] ) ) {
-						// does the line item id match the md5 of the values it was created from ??? - for items with NO options
-						// delete
-						$this->remove_from_cart( $which_cart, $line_item_id );
-						break;
-					} elseif ( isset( $item['options'] )) {
-						// if this item has options, then does the line item id match the md5 of the values it was created from ???
-						if ( $line_item_id != ( md5( $which_cart . $item['id'] . implode( '', $item['options'] )))) {
+		if ( isset( $cart['items'] ) && ! empty( $cart['items'] ) ) {
+				foreach ( $cart['items'] as $items ) {
+					foreach ( $items as $line_item_id => $item ) {
+					
+						// do both instances of the line item id match ???
+						if ( $line_item_id != $item['line_item'] ) {
 							// delete
 							$this->remove_from_cart( $which_cart, $line_item_id );
-						}
-					} 
+							break;
+						} elseif ( $line_item_id != md5( $which_cart . $item['id'] ) ) {
+							// does the line item id match the md5 of the values it was created from ??? - for items with NO options
+							// delete
+							$this->remove_from_cart( $which_cart, $line_item_id );
+							break;
+						} elseif ( isset( $item['options'] )) {
+							// if this item has options, then does the line item id match the md5 of the values it was created from ???
+							if ( $line_item_id != ( md5( $which_cart . $item['id'] . implode( '', $item['options'] )))) {
+								// delete
+								$this->remove_from_cart( $which_cart, $line_item_id );
+							}
+						} 
+					}
 				}
 			}
 		}
