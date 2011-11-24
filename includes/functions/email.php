@@ -393,6 +393,38 @@ function email_by_attendee_id($attendee_id, $send_attendee_email = TRUE, $send_a
 
 //End email_by_attendee_id()
 
+function email_by_session_id($session_id, $send_attendee_email = TRUE, $send_admin_email = TRUE, $multi_reg = FALSE) {
+	global $wpdb;
+	$sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session = '" . $session_id . "'";
+	$attendees = $wpdb->get_col($sql);
+	foreach ($attendees as $attendee_id) {
+		  $data = prepare_email_data($attendee_id, $multi_reg);
+			if ($send_attendee_email == 'true') {
+					$attendee_email_params[] = prepare_email($data);
+			}
+			if ($send_admin_email == 'true') {
+					$email_params = prepare_admin_email($data);
+					event_espresso_send_email($email_params);
+			}
+	}
+	$temp_email_list = array();
+	$concat_attendee_email_params = array();
+	foreach ($attendee_email_params as $attendee_email_param) {
+		if(!in_array($attendee_email_param['send_to'], $temp_email_list)) {
+			$temp_email_list[] = $attendee_email_param['send_to'];
+			$concat_attendee_email_params[$attendee_email_param['send_to']] = $attendee_email_param;
+		} else {
+			$concat_attendee_email_params[$attendee_email_param['send_to']]['email_subject'] .= " | " . $attendee_email_param['email_subject'];
+			$concat_attendee_email_params[$attendee_email_param['send_to']]['email_body'] .= $attendee_email_param['email_body'];
+		}
+	}
+	foreach ($concat_attendee_email_params as $concat_attendee_email_param) {
+		event_espresso_send_email($concat_attendee_email_param);
+	}
+}
+
+//End email_by_session_id()
+
 if (!function_exists('event_espresso_email_confirmations')) {
 
 	function event_espresso_email_confirmations($atts) {
@@ -424,11 +456,7 @@ if (!function_exists('event_espresso_email_confirmations')) {
 				email_by_attendee_id($attendee_id, $send_attendee_email, $send_admin_email, $multi_reg, $custom_data);
 			}
 		} elseif (!empty($session_id)) {
-			$sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session = '" . $session_id . "'";
-			$attendees = $wpdb->get_col($sql);
-			foreach ($attendees as $attendee_id) {
-				email_by_attendee_id($attendee_id, $send_attendee_email, $send_admin_email, $multi_reg, $custom_data);
-			}
+			email_by_session_id($session_id, $send_attendee_email, $send_admin_email, $multi_reg);
 		}
 	}
 
