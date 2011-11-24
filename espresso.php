@@ -669,12 +669,13 @@ if ( ! function_exists( 'event_espresso_run' )) {
 			
 			default:
 			
-				// allow others to hook into regevent action and redirect the progam flow
-				// if utilizing this hook, make sure to set $display_all_events to FALSE
 				$display_all_events = TRUE;
-				do_action( 'espresso_reroute_regevent_action', $regevent_action );
-				
-				if ( $display_all_events ) {
+				// allow others to hook into regevent action and reroute the progam flow
+				do_action( 'espresso_reroute_regevent_action', $regevent_action, $display_all_events );
+				// use filter to change the value of $display_all_events to FALSE
+				$display_all_events = apply_filters( 'espresso_display_all_events_or_not', $display_all_events );
+				// the above hook was not used to reroute the progam flow, then display_all_events
+				if ( $display_all_events != FALSE ) {
 					display_all_events();
 				}
 				
