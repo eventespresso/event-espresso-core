@@ -118,7 +118,7 @@ if (!function_exists('event_form_build')) {
 				$html .= '<p class="event_form_field">' . $label;
 				$disabled = isset($disabled) ? $disabled : '';
 				$html .= '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
-				$html .= '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
+				$html .= '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({yearRange: "c-100:c+10", changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
 				break;
 			case "TEXTAREA" :
 				$html .= '<p class="event_form_field event-quest-group-textarea">' . $label;
@@ -223,7 +223,7 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
 			wp_print_scripts('jquery-ui-datepicker');
 
 			echo '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $edits . '" ' . $disabled . ' />';
-			echo '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
+			echo '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({yearRange: "c-100:c+10",changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
 			break;
 		
 		case "TEXTAREA" :
