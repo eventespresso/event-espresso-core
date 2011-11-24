@@ -315,37 +315,37 @@ function add_new_event() {
 			<tr valign="top">
 			  <td class="a"><fieldset id="add-reg-dates">
 				  <legend>
-				  <?php _e('Registration Dates', 'event_espresso'); ?>
-				  </legend> <?php apply_filters( 'espresso_help', 'reg_date_info'); ?>
+				  <?php _e('Registration Dates', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'reg_date_info'); ?>
+				  </legend>
 				  <p>
-					<label for="registration_start"><?php echo __('Registration Start:', 'event_espresso') ?> </label>
+					<label for="registration_start"><?php echo __('Registration Start', 'event_espresso') ?> </label>
 					<input type="text" size="10" id="registration_start" class="datepicker" name="registration_start" value="" />
 				  </p>
 				  <p>
-					<label for="registration_end"> <?php echo __('Registration End:', 'event_espresso') ?></label>
+					<label for="registration_end"> <?php echo __('Registration End', 'event_espresso') ?></label>
 					<input type="text" size="10" id="registration_end" class="datepicker" name="registration_end" value="" />
 				  </p>
 				</fieldset>
 				<fieldset id="add-event-dates">
 				  <legend>
-				  <?php _e('Event Dates', 'event_espresso'); ?>
-				  </legend> <?php apply_filters( 'espresso_help', 'event_date_info'); ?>
+				  <?php _e('Event Dates', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'event_date_info'); ?>
+				  </legend>
 				  <p>
 					<label for="start_date">
-					  <?php  _e('Event Start Date:', 'event_espresso') ?>
+					  <?php  _e('Event Start Date', 'event_espresso') ?>
 					</label>
 					<input type="text" size="10" id="start_date" class="datepicker" name="start_date" value="" />
 				  </p>
 				  <p>
 					<label for="end_date">
-					  <?php  _e('Event End Date:', 'event_espresso') ?>
+					  <?php  _e('Event End Date', 'event_espresso') ?>
 					</label>
 					<input type="text" size="10" id="end_date" class="datepicker" name="end_date" value="" />
 				  </p>
 				</fieldset>
 				<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] != 'Y') && $espresso_premium == true) { ?>
 				<p><span class="run-in">
-				  <?php _e('Current Time:', 'event_espresso'); ?>
+				  <?php _e('Current Time', 'event_espresso'); ?>
 				  </span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <?php apply_filters( 'espresso_help', 'current_time_info'); ?>
 				  <a class="change-date-time" href="options-general.php" target="_blank">
 				  <?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
@@ -356,7 +356,7 @@ function add_new_event() {
 				  <p>
 					<label>
 					  <?php _e('Event Timezone', 'event_espresso') ?>
-					  :</label>
+					  </label>
 					<?php echo eventespresso_ddtimezone($event_id) ?></p>
 				</fieldset>
 				<?php  }
@@ -370,14 +370,14 @@ function add_new_event() {
 			  <?php // ADDED TIME REGISTRATION LIMITS  ?>
 			  <td class="b"><fieldset id="add-register-times">
 				  <legend>
-				  <?php _e('Registration Times', 'event_espresso'); ?>
-				  </legend> <?php apply_filters( 'espresso_help', 'reg_date_info'); ?>
+				  <?php _e('Registration Times', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'reg_date_info'); ?>
+				  </legend>
 				  <?php echo event_espresso_timereg_editor(); ?>
 				</fieldset>
 				<fieldset id="add-event-times">
 				  <legend>
-				  <?php _e('Event Times', 'event_espresso'); ?>
-				  </legend> <?php apply_filters( 'espresso_help', 'event_times_info'); ?>
+				  <?php _e('Event Times', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'event_times_info'); ?>
+				  </legend>
 				  <?php echo event_espresso_time_editor(); ?>
 				</fieldset>
 				</td>
