@@ -21,7 +21,8 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
 	global $wpdb, $org_options;
 	$wpdb->show_errors();
 	//print_r($question_groups);
-
+	//echo "<pre>".print_r($_POST,true)."</pre>";
+	
 	/** 
 	 * Added this check because in some cases question groups are being sent as serialized
 	 */ 
@@ -65,6 +66,7 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
 						case "TEXT" :
 						case "TEXTAREA" :
 						case "DROPDOWN" :
+						case "DATE" :
 							$post_val = ($question->system_name != '') ? $response_source[$question->system_name] : $response_source[$question->question_type . '_' . $question->id];
 							$wpdb->query("INSERT into " . EVENTS_ANSWER_TABLE . " (registration_id, attendee_id, question_id, answer)
 															values ('" . $registration_id . "', '" . $attendee_id . "', '" . $question->id . "', '" . $post_val . "')");
