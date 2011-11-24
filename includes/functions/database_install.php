@@ -704,7 +704,7 @@ function events_data_tables_install() {
 	$table_name = "events_question";
 	$sql = "id int(11) unsigned NOT NULL auto_increment,
 			sequence INT(11) NOT NULL default '0',
-			question_type enum('TEXT','TEXTAREA','MULTIPLE','SINGLE','DROPDOWN') NOT NULL default 'TEXT',
+			question_type enum('TEXT','TEXTAREA','MULTIPLE','SINGLE','DROPDOWN','DATE') NOT NULL default 'TEXT',
 			question text NOT NULL,
 			system_name varchar(15) DEFAULT NULL,
 			response text NULL,
