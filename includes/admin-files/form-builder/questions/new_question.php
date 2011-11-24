@@ -14,7 +14,7 @@ function event_espresso_form_builder_new(){
 				<tbody>
 					<tr>
 						<th>
-							<label for="question"><?php _e('Question:','event_espresso'); ?><em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em></label>
+							<label for="question"><?php _e('Question','event_espresso'); ?><em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em></label>
 						</th>
 						<td>
 							<input class="question-name"  name="question" id="question" size="50" value="" type="text" />
@@ -22,25 +22,33 @@ function event_espresso_form_builder_new(){
 					</tr>
 					<tr>
 						<th id="question-type-select">
-							<label for="question_type"><?php _e('Type:','event_espresso'); ?></label>
+							<label for="question_type"><?php _e('Type','event_espresso'); ?></label>
 						</th>
 						<td>
-  					<select name="question_type" id="question_type" class="chzn-select wide">
-  			  		<option value="TEXT">Text</option>
-  			  		<option value="TEXTAREA">Text Area</option>
-  			  		<option value="SINGLE">Radio Button</option>
-  			  		<option value="MULTIPLE">Checkbox</option>
-  			  		<option value="DROPDOWN">Drop Down</option>
-  					</select>
+  				<?php
+						$values	=	array(
+							array('id'=>'TEXT','text'=> __('Text','event_espresso')),
+							array('id'=>'TEXTAREA','text'=> __('Text Area','event_espresso')),
+							array('id'=>'SINGLE','text'=> __('Radio Button','event_espresso')),
+							array('id'=>'DROPDOWN','text'=> __('Drop Down','event_espresso')),
+							array('id'=>'MULTIPLE','text'=> __('Checkbox','event_espresso')),
+							//array('id'=>'DATE','text'=> __('Date Picker','event_espresso'))
+							);
+						if ($system_question == true){
+							$values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));
+						}
+
+						echo select_input( 'question_type', $values, '', 'id="question_type"');
+					?>
 						</td>
 					</tr>
 					<tr id="add-question-values">
 						<th>
-							<label for="values"><?php _e('Values:','event_espresso'); ?></label>
+							<label for="values"><?php _e('Values','event_espresso'); ?></label>
 						</th>
 						<td>
-							<input name="values" id="values" size="50" value="" type="text" />
-							<p class="input-info"> <?php _e('A comma seperated list of values. Eg. black, blue, red', 'event_espresso'); ?></p>
+							<input name="values" id="values" size="50" value="" type="text" /><br />
+							<span class="description"><?php _e('A comma seperated list of values. Eg. black, blue, red', 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr>
@@ -53,7 +61,7 @@ function event_espresso_form_builder_new(){
 					</tr>
 					<tr>
 						<th>				
-							<label class="inline" for="admin_only"><?php _e(' Admin view only:','event_espresso'); ?></label>
+							<label class="inline" for="admin_only"><?php _e(' Admin View Only','event_espresso'); ?></label>
 						</th>
 						<td>
 							<input name="admin_only" id="admin_only" type="checkbox" />
@@ -61,16 +69,16 @@ function event_espresso_form_builder_new(){
 					</tr>
 					<tr>
 						<th>
-							<label for="required_text"><?php _e('Required Text:','event_espresso'); ?></label>
+							<label for="required_text"><?php _e('Required Text','event_espresso'); ?></label>
 						</th>
 						<td>
 		 					<input name="required_text" id="required_text" size="50" type="text" /> 
-							<p class="input-info"><?php _e('Text to display if not completed.', 'event_espresso'); ?></p>
+							<br /><span class="description"><?php _e('Text to display if not completed.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr>
 						<th>
-							<label for="sequence"><?php   _e('Order/Sequence:','event_espresso'); ?></label>
+							<label for="sequence"><?php   _e('Order/Sequence','event_espresso'); ?></label>
 						</th>
 						<td>
 		  				<input name="sequence" id="sequence" size="50" value="<?php if(isset($sequence)) echo $sequence; ?>" type="text" />

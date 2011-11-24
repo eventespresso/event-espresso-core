@@ -60,7 +60,8 @@ function event_espresso_form_builder_edit(){
 							array('id'=>'TEXTAREA','text'=> __('Text Area','event_espresso')),
 							array('id'=>'SINGLE','text'=> __('Radio Button','event_espresso')),
 							array('id'=>'DROPDOWN','text'=> __('Drop Down','event_espresso')),
-							array('id'=>'MULTIPLE','text'=> __('Checkbox','event_espresso'))
+							array('id'=>'MULTIPLE','text'=> __('Checkbox','event_espresso')),
+							//array('id'=>'DATE','text'=> __('Date Picker','event_espresso'))
 							);
 						if ($system_question == true){
 							$values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));
@@ -75,8 +76,8 @@ function event_espresso_form_builder_edit(){
 		  			<label for="values"><?php _e('Values:','event_espresso'); ?></label>
 					</th>
 					<td>
-		  			<input name="values" id="values" size="50" value="<?php echo $question_values; ?>" type="text" />
-						<p class="input-info"><?php _e('A comma seperated list of values. Eg. black, blue, red', 'event_espresso'); ?></p>
+		  			<input name="values" id="values" size="50" value="<?php echo $question_values; ?>" type="text" /><br />
+						<span class="description"><?php _e('A comma seperated list of values. Eg. black, blue, red', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 				<tr>
@@ -93,8 +94,8 @@ function event_espresso_form_builder_edit(){
 								$values=array(array('id'=>'Y','text'=> __('Yes','event_espresso')));
 						}
 							echo select_input('required', $values, $required); 
-						?>
-						<p class="input-info"><?php _e('Mark this question as required.', 'event_espresso'); ?></p>
+						?><br />
+						<span class="description"><?php _e('Mark this question as required.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 				<tr>
@@ -113,8 +114,8 @@ function event_espresso_form_builder_edit(){
 						$values=array(array('id'=>'N','text'=> __('No','event_espresso')));
 						}
 						echo select_input('admin_only', $values, $admin_only);
-						?>
-						<p class="input-info"><?php _e('Only the administrator can see this field.', 'event_espresso'); ?></p>
+						?><br />
+						<span class="description"><?php _e('Only the administrator can see this field.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 				<tr>
@@ -124,8 +125,8 @@ function event_espresso_form_builder_edit(){
 						</label>
 					</th>
 					<td>
-						<input name="required_text" id="required_text" size="50" value="<?php echo $required_text; ?>" type="text" />
-						<p class="input-info"><?php _e('Text displayed if not completed.', 'event_espresso'); ?></p>
+						<input name="required_text" id="required_text" size="50" value="<?php echo $required_text; ?>" type="text" /><br />
+						<span class="description"><?php _e('Text displayed if not completed.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 				<tr>
