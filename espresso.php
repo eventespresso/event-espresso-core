@@ -308,10 +308,14 @@ if (!is_admin()) {
 
 //Load these files if we are in an actuial registration page
 function espresso_load_reg_page_files() {
+
 	define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
+	
 	//Check to see if this a reg page
 	//May cause admin and front facing pages to break if turned on
+	//global $this_is_a_reg_page;
 	//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
+	
 	//Process email confirmations
 	require_once("includes/functions/email.php");
 
@@ -324,13 +328,19 @@ function espresso_load_reg_page_files() {
 
 	//Add attendees to the database
 	require_once("includes/process-registration/add_attendees_to_db.php");
-
-
+	
+	if ( isset($_REQUEST['ee']) ) {
+	//Datepicker styles and scripts
+		wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
+		wp_enqueue_style( 'jquery-ui-style-datepicker' );		
+		wp_enqueue_script( 'jquery-ui-core' );
+		wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
+		wp_enqueue_script('jquery-ui-datepicker');
+	}
 
 	//Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] shortcode
 	event_espresso_require_gateway('process_payments.php');
 	event_espresso_require_gateway('PaymentGateway.php');
-
 
 	// AJAX functions
 	add_action('wp_ajax_event_espresso_add_item', 'event_espresso_add_item_to_session');

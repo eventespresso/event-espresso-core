@@ -61,7 +61,7 @@ function event_espresso_form_builder_edit(){
 							array('id'=>'SINGLE','text'=> __('Radio Button','event_espresso')),
 							array('id'=>'DROPDOWN','text'=> __('Drop Down','event_espresso')),
 							array('id'=>'MULTIPLE','text'=> __('Checkbox','event_espresso')),
-							//array('id'=>'DATE','text'=> __('Date Picker','event_espresso'))
+							array('id'=>'DATE','text'=> __('Date Picker','event_espresso'))
 							);
 						if ($system_question == true){
 							$values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));

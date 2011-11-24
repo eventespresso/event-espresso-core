@@ -108,6 +108,12 @@ if (!function_exists('event_form_build')) {
 				$disabled = isset($disabled) ? $disabled : '';
 				$html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
 				break;
+			case "DATE" :
+				$html .= '<p class="event_form_field">' . $label;
+				$disabled = isset($disabled) ? $disabled : '';
+				$html .= '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
+				$html .= '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
+				break;
 			case "TEXTAREA" :
 				$html .= '<p class="event_form_field event-quest-group-textarea">' . $label;
 				$html .= '<textarea id=""' . $required . ' name="' . $field_name . $multi_name_adjust . '"  cols="30" rows="5" class="' . $class . '">' . $answer . '</textarea></p>';
