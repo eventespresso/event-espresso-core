@@ -43,7 +43,7 @@ function event_espresso_form_builder_edit(){
 				<tbody>
 					<tr>
 						<th>
-		  				<label for="question"><?php _e('Question:','event_espresso'); ?></label>
+		  				<label for="question"><?php _e('Question','event_espresso'); ?></label>
 						</th>
 						<td>
 		  				<input name="question" id="question" size="50" value="<?php echo $question_name; ?>" type="text">
@@ -51,7 +51,7 @@ function event_espresso_form_builder_edit(){
 					</tr>
 					<tr>
 				  	<th id="question-type-select">
-		  				<label for="question_type"><?php _e('Type:','event_espresso'); ?></label>
+		  				<label for="question_type"><?php _e('Type','event_espresso'); ?></label>
 						</th>
 						<td>
 		 				<?php
@@ -71,18 +71,19 @@ function event_espresso_form_builder_edit(){
 					?>
 					</td>
 				</tr>
-				<tr>
-					<th id="add-question-values">
-		  			<label for="values"><?php _e('Values:','event_espresso'); ?></label>
+				<tr id="add-question-values">
+					<th>
+		  			<label for="values"><?php _e('Values','event_espresso'); ?></label>
 					</th>
 					<td>
-		  			<input name="values" id="values" size="50" value="<?php echo $question_values; ?>" type="text" /><br />
+		  			<input name="values" id="values" size="50" value="<?php echo $question_values; ?>" type="text" />
+					<br />
 						<span class="description"><?php _e('A comma seperated list of values. Eg. black, blue, red', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 				<tr>
 					<th>
-						<label for="required"><?php _e('Required:','event_espresso'); ?></label>
+						<label for="required"><?php _e('Required','event_espresso'); ?></label>
 					</th>
 					<td>
 		  		<?php
@@ -101,7 +102,7 @@ function event_espresso_form_builder_edit(){
 				<tr>
 					<th>
 		  			<label for="admin_only">
-							<?php _e('Admin View Only:','event_espresso'); ?>
+							<?php _e('Admin View Only','event_espresso'); ?>
 		  			</label>
 					</th>
 					<td>						
@@ -121,7 +122,7 @@ function event_espresso_form_builder_edit(){
 				<tr>
 					<th>
 						<label for="required_text">
-							<?php _e('Required Text:','event_espresso'); ?>
+							<?php _e('Required Text','event_espresso'); ?>
 						</label>
 					</th>
 					<td>
@@ -132,7 +133,7 @@ function event_espresso_form_builder_edit(){
 				<tr>
 					<th>
 		  			<label for="sequence">
-							<?php _e('Order/Sequence:','event_espresso'); ?>
+							<?php _e('Order/Sequence','event_espresso'); ?>
 						</label>
 					</th>
 					<td>
