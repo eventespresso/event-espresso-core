@@ -159,12 +159,11 @@ class Espresso_Minicart extends WP_Widget {
 		
 		global $org_options;
 		$template_args['currency_symbol'] = $org_options[ 'currency_symbol' ];
-
-		$title = apply_filters( 'widget_title', $instance['title'] );
 		
-		if ( ! empty( $title )) {
-			$title = $before_title . $title . $after_title;
-		}
+		$template_args['before_widget'] = $before_widget;
+		$template_args['after_widget'] = $after_widget;
+
+		$template_args['title'] = $before_title . apply_filters( 'widget_title', $instance['title'] ) . $after_title;
 
 		$grand_total = 0;
 		$total_items = 0;

@@ -3,7 +3,7 @@
 
 <?php foreach ( $mini_cart as $cart ) { ?>
 		
-<h3><strong><?php echo $cart['title'];?></strong></h3>
+<h4><?php echo $cart['title'];?></h4>
 		
 <table border="0" cellspacing="0" cellpadding="0" style="width:100%;">
 <?php
@@ -11,7 +11,7 @@
 		foreach ( $cart['items'] as $item ) {
 ?>
 	<tr>
-		<td colspan="3"><h5><strong><?php echo $item['name'];?></strong></h5></td>
+		<td colspan="3"><h6><?php echo $item['name'];?></h6></td>
 	</tr>
 	<tr>
 		<td><?php echo __('Price', 'events');?></td>
@@ -24,11 +24,11 @@
 	</tr>
 <?php } ?>
 	<tr>
-		<td colspan="3"><strong><?php echo __('Total', 'events');?></strong></td>
+		<td colspan="3"><?php echo __('Total', 'events');?></td>
 	</tr>
 	<tr>
 		<td colspan="3">
-	<h4><strong><?php echo __('Total', 'events') . ' ' . $cart['title'];?></strong></h4>
+	<h5><?php echo __('Total', 'events') . ' ' . $cart['title'];?></h5>
 		<?php
 	printf(  _n( '%s item,  ', '%s items, ', $cart['total_items'], 'events' ), $cart['total_items'] );
 	echo $currency_symbol . $cart['sub_total'];
@@ -45,9 +45,9 @@
 
 <?php } ?>
 
-<h3><strong><?php echo __('Grand Total: ', 'events');?></strong></h3>
-<h4><?php printf(  _n( '%s item, ', '%s items, ', $total_items, 'events' ), $total_items );
+<h5><?php echo __('Grand Total: ', 'events');?></h5>
+<h6><?php printf(  _n( '%s item, ', '%s items, ', $total_items, 'events' ), $total_items );
 echo $currency_symbol . $grand_total;
-?></h4>
+?></h6>
 
 <?php echo $after_widget;?>
