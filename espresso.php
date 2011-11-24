@@ -612,51 +612,65 @@ function event_espresso_filter_plugin_actions($links, $file) {
 
 add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 
-// Run the program
-if (!function_exists('event_espresso_run')) {
 
+// Run the program
+if ( ! function_exists( 'event_espresso_run' )) {
 	function event_espresso_run() {
+	
+		// grab some globals
 		global $wpdb, $org_options, $load_espresso_scripts;
 
-		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
+		// tell the plugin to load the required scripts
+		$load_espresso_scripts = true; 
+		
+		// begin output buffering
 		ob_start();
 
 		//Make sure scripts are loading
 		echo espresso_check_scripts();
 
 		// Get action type
-		$regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
+		$regevent_action = isset( $_REQUEST['regevent_action'] ) ? $_REQUEST['regevent_action'] : '';
 
-		if (isset($_REQUEST['ee']))
+		if ( isset( $_REQUEST['ee'] ) or isset( $_REQUEST['edit_attendee'] )) {
 			$regevent_action = "register";
-		if (isset($_REQUEST['edit_attendee']))
-			$regevent_action = "register";
+		}
 
 		switch ($regevent_action) {
+		
 			case "post_attendee":
 				event_espresso_add_attendees_to_db();
-				break;
+			break;
+			
 			case "register":
 				register_attendees();
-				break;
+			break;
+			
 			case "add_to_session":
-				break;
+			break;
+			
 			case "show_shopping_cart":
 				//This is the form page for registering the attendee
 				event_espresso_require_template('shopping_cart.php');
 				event_espresso_shopping_cart();
-				break;
+			break;
+			
 			case "load_checkout_page":
 				if ($_POST)
 					event_espresso_calculate_total('details');
 				event_espresso_load_checkout_page();
-				break;
+			break;
+			
 			case "post_multi_attendee":
 				//echo " YESssss";
 				event_espresso_update_item_in_session('attendees');
 				event_espresso_add_attendees_to_db_multi();
-				break;
+			break;
+			
 			default:
+				// allow others to hook into regevent action and redirect the progam flow
+				// if utilizing this hook, make sure to end everything with "break;" in order to break out of this switch
+				do_action( 'espresso_reroute_regevent_action', $regevent_action );
 				display_all_events();
 		}
 
@@ -664,9 +678,9 @@ if (!function_exists('event_espresso_run')) {
 		ob_end_clean();
 		return $content;
 	}
-
 }
 add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');
+
 
 if (isset($_REQUEST['authAmountString'])) {
 	add_action('posts_selection', 'event_espresso_txn');
