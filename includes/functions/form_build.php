@@ -109,6 +109,12 @@ if (!function_exists('event_form_build')) {
 				$html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
 				break;
 			case "DATE" :
+				//Load scripts and styles
+				wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
+				wp_print_styles( 'jquery-ui-style-datepicker' );
+				wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
+				wp_print_scripts('jquery-ui-datepicker');
+				
 				$html .= '<p class="event_form_field">' . $label;
 				$disabled = isset($disabled) ? $disabled : '';
 				$html .= '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
@@ -178,6 +184,7 @@ if (!function_exists('event_form_build')) {
 }
 
 function event_form_build_edit($question, $edits, $show_admin_only = false) {
+	
 	$required = '';
 	if ($question->required == "Y") {
 		$required = ' class="required"';
@@ -190,17 +197,35 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
 	$answer_id = $question->id;
 	//echo $answer_id;
 
-	if (isset($question->q_id))
+	if (isset($question->q_id)){
 		$question->id = $question->q_id;
+	}
+	
 	if ($question->admin_only == 'Y' && $show_admin_only == false) {
 		return;
 	}
+	
 	$field_name = ($question->system_name != '') ? $question->system_name : 'TEXT_' . $question->id;
 	echo '<label for="' . $field_name . '">' . $question->question . '</label><br>';
+	
+	//DEBUG:
+	//echo '<p>$question->question_type = '.$question->question_type.'</p>';
+	
 	switch ($question->question_type) {
 		case "TEXT" :
 			echo '<input type="text" ' . $required . ' id="' . $field_name . '"  name="' . $field_name . '" size="40"  value="' . $edits . '" />';
 			break;
+		case "DATE" :
+			//Load scripts and styles
+			wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
+			wp_print_styles( 'jquery-ui-style-datepicker' );
+			wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
+			wp_print_scripts('jquery-ui-datepicker');
+
+			echo '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $edits . '" ' . $disabled . ' />';
+			echo '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
+			break;
+		
 		case "TEXTAREA" :
 			echo '<textarea id="TEXTAREA_' . $question->id . '" ' . $required . ' name="TEXTAREA_' . $question->id . '"  cols="30" rows="5">' . $edits . '</textarea>';
 			break;
@@ -243,5 +268,3 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
 			break;
 	}
 }
-
-?>
