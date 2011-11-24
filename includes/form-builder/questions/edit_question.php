@@ -55,7 +55,7 @@ function event_espresso_form_builder_edit(){
 						</th>
 						<td>
 		 				<?php
-						$values	=	array(
+						$q_values	=	array(
 							array('id'=>'TEXT','text'=> __('Text','event_espresso')),
 							array('id'=>'TEXTAREA','text'=> __('Text Area','event_espresso')),
 							array('id'=>'SINGLE','text'=> __('Radio Button','event_espresso')),
@@ -64,10 +64,10 @@ function event_espresso_form_builder_edit(){
 							array('id'=>'DATE','text'=> __('Date Picker','event_espresso'))
 							);
 						if ($system_question == true){
-							$values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));
+							$q_values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));
 						}
 
-						echo select_input( 'question_type', $values,  $question_type, 'id="question_type"');
+						echo select_input( 'question_type', $q_values,  $question_type, 'id="question_type"');
 					?>
 					</td>
 				</tr>
@@ -112,7 +112,7 @@ function event_espresso_form_builder_edit(){
 							array('id'=>'N','text'=> __('No','event_espresso'))
 						);
 						if ($system_question == true && ($system_name =='fname'||$system_name =='lname'||$system_name =='email')){
-						$values=array(array('id'=>'N','text'=> __('No','event_espresso')));
+							$values=array(array('id'=>'N','text'=> __('No','event_espresso')));
 						}
 						echo select_input('admin_only', $values, $admin_only);
 						?><br />

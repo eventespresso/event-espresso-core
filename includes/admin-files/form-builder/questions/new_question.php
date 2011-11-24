@@ -1,6 +1,10 @@
 <?php
 //Function for adding new questions
 function event_espresso_form_builder_new(){
+	$values=array(
+		array('id'=>'Y','text'=> __('Yes','event_espresso')),
+		array('id'=>'N','text'=> __('No','event_espresso'))
+	);
 ?>
 <div class="metabox-holder">
   <div class="postbox">
@@ -26,7 +30,7 @@ function event_espresso_form_builder_new(){
 						</th>
 						<td>
   				<?php
-						$values	=	array(
+						$q_values	=	array(
 							array('id'=>'TEXT','text'=> __('Text','event_espresso')),
 							array('id'=>'TEXTAREA','text'=> __('Text Area','event_espresso')),
 							array('id'=>'SINGLE','text'=> __('Radio Button','event_espresso')),
@@ -35,10 +39,10 @@ function event_espresso_form_builder_new(){
 							array('id'=>'DATE','text'=> __('Date Picker','event_espresso'))
 							);
 						if ($system_question == true){
-							$values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));
+							$q_values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));
 						}
 
-						echo select_input( 'question_type', $values, '', 'id="question_type"');
+						echo select_input( 'question_type', $q_values, '', 'id="question_type"');
 					?>
 						</td>
 					</tr>
@@ -56,7 +60,10 @@ function event_espresso_form_builder_new(){
 							<label class="inline" for="required"><?php _e('Required:','event_espresso'); ?></label>
 						</th>
 						<td>
-							<input name="required" id="required" type="checkbox" />
+							<?php
+							echo select_input('required', $values, 'N'); 
+						?><br />
+						<span class="description"><?php _e('Mark this question as required.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr>
@@ -64,7 +71,7 @@ function event_espresso_form_builder_new(){
 							<label class="inline" for="admin_only"><?php _e(' Admin View Only','event_espresso'); ?></label>
 						</th>
 						<td>
-							<input name="admin_only" id="admin_only" type="checkbox" />
+							<?php echo select_input('admin_only', $values, 'N');?>
 						</td>
 					</tr>
 					<tr>
