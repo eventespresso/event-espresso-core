@@ -130,7 +130,7 @@ function espresso_init_session() {
 }
 add_action('plugins_loaded', 'espresso_init_session', 1);
 
-do_action( 'espresso_after_init_session' );
+do_action( 'hook_espresso_after_init_session' );
 
 //Handles importing of csv files
 function espresso_check_for_export() {
@@ -142,7 +142,6 @@ function espresso_check_for_export() {
 		}
 	}
 }
-
 add_action('plugins_loaded', 'espresso_check_for_export');
 
 //Handles exporting of csv files
@@ -155,15 +154,15 @@ function espresso_check_for_import() {
 		}
 	}
 }
-
 add_action('plugins_loaded', 'espresso_check_for_import');
+
 
 //Load the Event Espresso HTML meta
 function espresso_info_header() {
 	print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
 }
-
 add_action('wp_head', 'espresso_info_header');
+
 
 //Globals used throughout the site
 global $org_options, $wpdb, $this_is_a_reg_page, $notices;
@@ -186,6 +185,7 @@ if (is_ssl()) {
 } else {
 	$server_name = str_replace('http://', '', site_url());
 }
+
 
 //Registration page check
 //From Brent C. http://events.codebasehq.com/projects/event-espresso/tickets/99
@@ -217,9 +217,11 @@ if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
 	}
 }
 
+
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/SimpleMath.php';
 global $simpleMath;
 $simpleMath = new SimpleMath();
+
 
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/espresso_log.php';
 if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
@@ -229,6 +231,7 @@ if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y')
 	}
 	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => $message));
 }
+
 
 //Set the default time zone
 //If the default time zone is set up in the WP Settings, then we will use that as the default.
@@ -245,12 +248,14 @@ setlocale(LC_TIME, get_locale());
 //Get language files
 load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
+
 //Addons
 //Ticketing
 if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php") || function_exists('espresso_ticket_launch')) {
 	global $ticketing_installed;
 	$ticketing_installed = true;
 }
+
 
 //Global files
 //Premium funtions. If this is a paid version, then we need to include these files.
@@ -260,6 +265,7 @@ if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/misc_funct
 	$espresso_premium = espresso_system_check();
 }
 
+
 //Core function files
 require_once("includes/functions/main.php");
 require_once("includes/functions/pricing.php");
@@ -268,11 +274,13 @@ require_once("includes/shortcodes.php");
 require_once("includes/functions/actions.php");
 require_once("includes/functions/filters.php");
 require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/ical.php");
+
 /* Core template files used by this plugin */
 //These may be loaded in posts and pages outside of the default EE pages
 //Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
 $event_list_template = 'event_list.php';
-$event_list_template = apply_filters( 'filter_espresso_event_list_template', $event_list_template );
+// HOOK - change event list template
+$event_list_template = apply_filters( 'hook_espresso_event_list_template', $event_list_template );
 event_espresso_require_template($event_list_template);
 
 //This is the form page for registering the attendee
@@ -674,9 +682,9 @@ if ( ! function_exists( 'event_espresso_run' )) {
 			
 				$display_all_events = TRUE;
 				// allow others to hook into regevent action and reroute the progam flow
-				do_action( 'espresso_reroute_regevent_action', $regevent_action, $display_all_events );
+				do_action( 'hook_espresso_reroute_regevent_action', $regevent_action, $display_all_events );
 				// use filter to change the value of $display_all_events to FALSE
-				$display_all_events = apply_filters( 'espresso_display_all_events_or_not', $display_all_events );
+				$display_all_events = apply_filters( 'hook_espresso_display_all_events', $display_all_events );
 				// the above hook was not used to reroute the progam flow, then display_all_events
 				if ( $display_all_events != FALSE ) {
 					display_all_events();
