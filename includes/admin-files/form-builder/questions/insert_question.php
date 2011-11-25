@@ -17,7 +17,7 @@ function event_espresso_form_builder_insert(){
 	$sql=array(
 		'question_type' => $question_type,
 		'question' => $question,
-		'response' => $response,
+		'response' => $question_values,
 		'required' => $required,
 		'admin_only' => $admin_only,
 		'sequence' => $sequence,
