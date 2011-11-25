@@ -128,9 +128,9 @@ function espresso_init_session() {
 	}
 	$_SESSION['espresso_session_id'] = session_id();
 }
-
 add_action('plugins_loaded', 'espresso_init_session', 1);
 
+do_action( 'espresso_after_init_session' );
 
 //Handles importing of csv files
 function espresso_check_for_export() {
@@ -271,7 +271,7 @@ require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/ical.php");
 /* Core template files used by this plugin */
 //These may be loaded in posts and pages outside of the default EE pages
 //Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
-event_espresso_require_template('event_list.php');
+event_espresso_require_template('event_list.mer.php');
 
 //This is the form page for registering the attendee
 event_espresso_require_template('registration_page.php');
