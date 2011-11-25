@@ -271,7 +271,9 @@ require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/ical.php");
 /* Core template files used by this plugin */
 //These may be loaded in posts and pages outside of the default EE pages
 //Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
-event_espresso_require_template('event_list.mer.php');
+$event_list_template = 'event_list.php';
+$event_list_template = apply_filters( 'filter_espresso_event_list_template', $event_list_template );
+event_espresso_require_template($event_list_template);
 
 //This is the form page for registering the attendee
 event_espresso_require_template('registration_page.php');
