@@ -284,16 +284,16 @@ function event_espresso_questions_config_mnu() {
 	}
 	// we don't want the values field trying to validate if not displayed, remove its name
 	jQuery('#add-question-values td input').attr("name","notrequired") 
-	//var replaceSelect = jQuery('li#add-question-values').clone;
-	jQuery('select#question_type').bind('blur', function() {
+	
+	jQuery('select#question_type').bind('change', function() {
 		var selectValue = jQuery('select#question_type option:selected').val();
   
 		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA') {
-		  jQuery('#add-question-values').fadeOut('1000');
+		  jQuery('#add-question-values').fadeOut('slow');
 			//alert(selectValue);
 		} else{
 			//alert(selectValue);
-		  jQuery('#add-question-values').fadeIn('1000');
+			jQuery('#add-question-values').fadeIn('slow');
 			// add the correct name value back in so we can run validation check.
 			jQuery('#add-question-values td input').attr("name","values")
 		}
