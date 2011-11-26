@@ -310,7 +310,7 @@ function event_espresso_display_paypal_settings() {
 		<?php _e('The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?>
 	</p>
 	<hr />
-	<p><strong>Helpful Links:</strong></p>
+	<p><strong><?php _e('Helpful Links:', 'event_espresso'); ?></strong></p>
 	<ul>
 	<li><a href="https://developer.paypal.com/devscr?cmd=_home" target="_blank">PayPal Sandbox Login</a></li>
 	<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank">Sandbox Tutorial</a></li>
