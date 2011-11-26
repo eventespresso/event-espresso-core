@@ -423,9 +423,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 
 if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 
-
 	//This function is called from the shopping cart
-
 	function event_espresso_add_attendees_to_db_multi() {
 		global $wpdb, $org_options;
 
