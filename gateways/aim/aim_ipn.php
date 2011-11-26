@@ -1,9 +1,8 @@
 <?php
 function espresso_aim_process_payment() {
-	global $wpdb, $org_options;
+	global $wpdb, $org_options, $payment_settings;
 	require_once 'AuthorizeNet.php';
 
-	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	$authnet_aim_login_id = $payment_settings['authnet_aim']['authnet_aim_login_id'];
 	$authnet_aim_transaction_key = $payment_settings['authnet_aim']['authnet_aim_transaction_key'];
 
