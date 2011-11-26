@@ -29,9 +29,7 @@ function event_espresso_gateways_options() {
 <?php #### Primary page metaboxes - lefthand container #### ?>
 		
 		<div id="post-body">
-			<div id="post-body-content">
-				<form id="espesso-form-name" class="espresso_form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-					
+			<div id="post-body-content">					
 					<div class="meta-box-sortables ui-sortables">
 						
 <?php
@@ -135,5 +133,3 @@ function event_espresso_gateways_options() {
 	</script>
 <?php
 }
-
-
