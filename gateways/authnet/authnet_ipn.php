@@ -8,7 +8,6 @@ $myAuthorize = new Authorize();
 // Log the IPN results
 $myAuthorize->ipnLog = TRUE;
 
-$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 $authnet_login_id = $payment_settings['authnet_sim']['authnet_login_id'];
 $authnet_transaction_key = $payment_settings['authnet_sim']['authnet_transaction_key'];
 

@@ -1,10 +1,7 @@
 <?php
 
 // Include required files.
-
 require_once('includes/paypal.nvp.class.php');
-
-$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 
 $sandbox = $payment_settings['paypal_pro']['use_sandbox'] == 'Y' ? true : false;
 // Setup PayPal object
