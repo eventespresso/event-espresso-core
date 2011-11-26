@@ -6,7 +6,9 @@ if (isset($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1) //need this condition 
 //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] tag
 
 function event_espresso_txn() {
-	global $wpdb, $org_options;
+	global $wpdb, $org_options, $payment_settings;
+	
+	//Check if logging is enabled
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
@@ -28,6 +30,28 @@ function event_espresso_txn() {
 	if ($attendee_id == "") {
 		echo "ID not supplied.";
 	} else {
+
+		//Define the default user id for the payment settings
+		$espresso_wp_user = 1;
+			
+		//If the permissions pro addon is installed
+		if ( function_exists('espresso_manager_pro_version') ){
+			global $espresso_manager;
+			//If the user that created this event can accept payments 
+			if ( $espresso_manager['can_accept_payments'] =='Y' ){
+				//Get the user id
+				$a_sql = "SELECT ed.wp_user FROM " . EVENTS_DETAIL_TABLE . " ed
+						JOIN " . EVENTS_ATTENDEE_TABLE . " ea
+						ON ed.id = ea.event_id
+						WHERE ea.id='" . $attendee_id . "'";
+				$events = $wpdb->get_results($a_sql);
+				$espresso_wp_user = $event->wp_user;
+			}
+		}
+		
+		//Get the payment settings
+		$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	
 		$email_subject = $org_options['payment_subject'];
 		$email_body = $org_options['payment_message'];
 		$default_mail = $org_options['default_mail'];
