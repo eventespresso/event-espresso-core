@@ -9,12 +9,11 @@ $myAuthorize = new Authorize(); // initiate an instance of the class
 $payment_settings = get_option('payment_data_'.$espresso_wp_user);
 $authnet_login_id = empty($payment_settings['authnet_sim']['authnet_login_id']) ? '' : $payment_settings['authnet_sim']['authnet_login_id'];
 $authnet_transaction_key = empty($payment_settings['authnet_sim']['authnet_transaction_key']) ? '' : $payment_settings['authnet_sim']['authnet_transaction_key'];
-$use_sandbox = empty($payment_settings['authnet_sim']['use_sandbox']) ? '' : $payment_settings['authnet_sim']['use_sandbox'];
 $button_type = empty($payment_settings['authnet_sim']['button_type']) ? '' : $payment_settings['authnet_sim']['button_type'];
 //$button_url = $payment_settings['authnet_sim']['button_url'];
 $image_url = empty($payment_settings['authnet_sim']['image_url']) ? '' : $payment_settings['authnet_sim']['image_url'];
-
-if ($use_sandbox == 1) {
+$use_sandbox = $payment_settings['authnet_sim']['use_sandbox'] == 'Y' ? true : false;
+if ($use_sandbox == true) {
 	// Enable test mode if needed
 	$myAuthorize->enableTestMode();
 }

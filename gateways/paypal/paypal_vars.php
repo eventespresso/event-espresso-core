@@ -4,18 +4,16 @@
 //echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
 
 // Setup class
-global $wpdb;
+global $wpdb, $payment_settings, $org_options;
 include_once ('Paypal.php');
 echo '<!-- Event Espresso PayPal Gateway Version ' . $paypal_gateway_version . '-->';
 $myPaypal = new Paypal(); // initiate an instance of the class
-global $org_options;
-$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 $paypal_id = empty($payment_settings['paypal']['paypal_id']) ? '' : $payment_settings['paypal']['paypal_id'];
 //$image_url = $payment_settings['paypal']['button_url'];
 $paypal_cur = empty($payment_settings['paypal']['currency_format']) ? '' : $payment_settings['paypal']['currency_format'];
 $no_shipping = isset($payment_settings['paypal']['no_shipping']) ? $payment_settings['paypal']['no_shipping'] : '0';
-$use_sandbox = empty($payment_settings['paypal']['use_sandbox']) ? '' : $payment_settings['paypal']['use_sandbox'];
-if ($use_sandbox == 'Y') {
+$use_sandbox = $payment_settings['paypal']['use_sandbox'] == 'Y' ? true : false;
+if ($use_sandbox == true) {
 	// Enable test mode if needed
 	$myPaypal->enableTestMode();
 }
@@ -68,7 +66,7 @@ if ($attendee_id > 0 && !empty($primary_registration_id) && strlen($primary_regi
 			$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
 			$discount = $sub_total - espresso_get_attendee_coupon_discount($tmp_attendee['attendee_id'],$sub_total);
 			$attendees[] = array(
-								"attendee_info" => $tmp_attendee["event_name"] . "[" . date('m-d-Y', strtotime($tmp_attendee['start_date'])) . "]" . " -- " . $tmp_attendee["fname"] . " " . $tmp_attendee["lname"],
+								"attendee_info" => $tmp_attendee["event_name"] . " [" . date('m-d-Y', strtotime($tmp_attendee['start_date'])) . "]" . " -- " . $tmp_attendee["fname"] . " " . $tmp_attendee["lname"],
 								"quantity" => $tmp_attendee["quantity"],
 								"cost" => doubleval($tmp_attendee["cost"]),
 								"sub_total" => doubleval($sub_total),
