@@ -1,4 +1,10 @@
 <?php
+//Get the payment settings
+$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+
+//Debug:
+//echo "<pre>".print_r($payment_settings,true)."</pre>";
+
 $payor_data['fname'] = $fname;
 $payor_data['lname'] = $lname;
 $payor_data['attendee_email'] = $attendee_email;
@@ -75,7 +81,6 @@ if ($payment_settings['paypal']['active'] == true
 	echo '<h3 id="off_site_payment" class="payment_option_title section-heading">'.__('Off-site Payments', 'event_espresso').'</h3>';
 	echo '<ul id="espresso_payment_buttons">';
 	//echo '<tr>';
-
 	if ($payment_settings['paypal']['active'] == true){
 		echo '<li class="offsite-pay-buttons">';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_vars.php")){
@@ -159,7 +164,7 @@ if ($payment_settings['paypal']['active'] == true
 	echo '</ul>';
 	echo '</div><!-- / #off_site_payment_container -->';
 }
-$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+
 if (($payment_settings['invoice']['active'] == true && $payment_settings['invoice']['show'] != 'N')
 	|| get_option('events_check_payment_active') == 'true'
 	|| $payment_settings['bank_payment']['active'] == true)
