@@ -1,6 +1,6 @@
 <?php
 
-function espresso_display_2checkout($payor_data, $event_cost, $attendee_id) {
+function espresso_display_aim($payor_data, $event_cost, $attendee_id) {
 	global $org_options;
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	if ($payment_settings['authnet_aim']['use_sandbox'] == 'Y') {

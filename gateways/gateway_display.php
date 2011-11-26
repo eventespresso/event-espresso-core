@@ -35,7 +35,7 @@ if ($payment_settings['paypal_pro']['active'] == true
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/aim/aim_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/aim/aim_vars.php");
 		}
-		espresso_display_2checkout($payor_data, $event_cost, $attendee_id);
+		espresso_display_aim($payor_data, $event_cost, $attendee_id);
 	}
 	if (get_option('events_firstdata_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata/firstdata_vars.php")){
