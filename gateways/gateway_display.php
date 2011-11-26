@@ -1,5 +1,6 @@
 <?php
 //Get the payment settings
+global $payment_settings;
 $payment_settings = get_option('payment_data_'.$espresso_wp_user);
 
 //Debug:
