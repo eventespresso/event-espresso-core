@@ -16,7 +16,8 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 //This function updates the org_options from < EE 3.2
 function espresso_fix_org_options(){
 	global $org_options;
-		
+	if (empty($org_options)) return;
+	
 	//Retrive the existing $org_options, update, then unset the old one
 	if ( array_key_exists('display_description_on_multi_reg_page', $org_options) ){
 		$org_options['template_settings']['display_description_on_multi_reg_page'] = empty($org_options['display_description_on_multi_reg_page']) ? '' : $org_options['display_description_on_multi_reg_page'];
