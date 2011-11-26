@@ -417,7 +417,7 @@ function espresso_calendar_config_mnu()	{
 														<?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?> 
 													</td>
 												</tr>
-												<tr>
+												<tr class="color-picker-selections">
 													<th class="color-picker-style">
 														<label for="event-background">
 															<?php _e('Event Background - color picker', 'event_espresso') ?>
@@ -427,7 +427,7 @@ function espresso_calendar_config_mnu()	{
 													<input id="event-background"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> />
 												</td>
 											</tr>
-											<tr>
+											<tr class="color-picker-selections">
 												<th class="color-picker-style">
 													<label for="event-text">
 														<?php _e('Event Text - color picker', 'event_espresso') ?>
@@ -664,45 +664,45 @@ function espresso_calendar_config_mnu()	{
 <!-- / #wrap --> 
 <script type="text/javascript">
 //<![CDATA[
-	jQuery(document).ready(function($){
+jQuery(document).ready(function($){
 		$("input[name='time_format']").click(function(){
 			if ( "time_format_custom_radio" != $(this).attr("id") )
 				$("input[name='time_format_custom']").val( $(this).val() ).siblings('.example').text( $(this).siblings('span').text() );
 		});
 		$("input[name='time_format_custom']").focus(function(){
 			$("#time_format_custom_radio").attr("checked", "checked");
-		});
+		}); 
 				
-				// disable color picker inputs & fade if not use Color pickers true
-				window.scp =$('select#espresso_use_pickers option:selected').val();
-				if(window.scp == 'false'){
+		// disable color picker inputs & fade if not use Color pickers true
+		window.scp =$('select#espresso_use_pickers option:selected').val();
+			if(window.scp == 'false'){
 				$('input#event-background, input#event-text').attr('disabled', true);
-				$('li.color-picker-style').attr('style', "opacity: .3");
-				}
-			$('select#espresso_use_pickers').blur(function(){
+				$('.color-picker-style').attr('style', "opacity: .3");
+				$('tr.color-picker-selections th, tr.color-picker-selections td').attr('style', "opacity: .3");
+			}
+		$('select#espresso_use_pickers').change(function(){
 			window.scp =$('select#espresso_use_pickers option:selected').val();
 			 //alert(window.scp);
-				if(window.scp == 'false'){
+			if(window.scp == 'false'){
 				$('input#event-background, input#event-text').attr('disabled', true);
-				$('li.color-picker-style').attr('style', "opacity: .3");
-			}	else {	
-			 $('input#event-background, input#event-text').removeAttr('disabled', true);
-				$('li.color-picker-style').removeAttr('style');
-				}
-			})		
-		
-		// color picker initialisation
-		<?php if($espresso_calendar['espresso_use_pickers'] == 'true'){ ?>
-		$('input#event-background, input#event-text').wheelColorPicker({ 
-		dir: '<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>scripts/wheelcolorpicker',
+				$('tr.color-picker-selections th, tr.color-picker-selections td').attr('style', "opacity: .3");
+			}else {	
+			 	$('input#event-background, input#event-text').removeAttr('disabled', true);
+				$('tr.color-picker-selections th, tr.color-picker-selections td').removeAttr('style');
+			}
+			});		
+
+		// color picker initialisation 
+			$('input#event-background, input#event-text').wheelColorPicker({ 
+			dir: '<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>scripts/wheelcolorpicker',
 				preview: true,
 				userinput: true,
 				format: 'hex',
 				validate: true
-				});
-	<?php } ?>
+			});
+		
 		// WP toggle function		
-postboxes.add_postbox_toggles('espresso_calendar');
+		postboxes.add_postbox_toggles('espresso_calendar');
 
 	});
 
