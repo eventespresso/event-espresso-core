@@ -4,11 +4,11 @@
  * Gets included in /gateways/gateway_display.php
  */
 function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
-	global $org_options;
+	global $org_options, $payment_settings;
 	include_once ('2checkout.php');
 	$my2checkout = new TwoCo();
 	echo '<!-- Event Espresso 2checkout Gateway Version ' . $my2checkout->twocheckout_gateway_version . '-->';
-	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+	//$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	$twocheckout_id = empty($payment_settings['2checkout']['2checkout_id']) ? 0 : $payment_settings['2checkout']['2checkout_id'];
 	$twocheckout_cur = empty($payment_settings['2checkout']['currency_format']) ? 'USD' : $payment_settings['2checkout']['currency_format'];
 	$use_sandbox = empty($payment_settings['2checkout']['use_sandbox']) ? false : true;
