@@ -178,7 +178,7 @@ function espresso_calendar_config_mnu()	{
 								<div title="Click to toggle" class="handlediv"><br />
 								</div>
 								<h3 class="hndle">
-									<?php _e('Calendar Settings','event_espresso'); ?>
+									<?php _e('Calendar Usage','event_espresso'); ?>
 								</h3>
 								<div class="inside">
 									<div class="padding">
@@ -226,26 +226,24 @@ function espresso_calendar_config_mnu()	{
 								</h3>
 								<div class="inside">
 									<div class="padding">
+										<h4>
+											<?php _e('Time/Date Settings', 'event_espresso'); ?>
+										</h4>
 										<table class="form-table">
 											<tbody>
 												<tr>
-													<th>
-														<label for="show_time">
-															<?php _e('Show the event time in the calendar? ','event_espresso'); ?><?php apply_filters('espresso_help', 'show-event-times') ?>
-											 			</label>
+													<th> <label for="show_time">
+															<?php _e('Show Event Time in Calendar','event_espresso'); ?>
+															<?php apply_filters('espresso_help', 'show-event-times') ?>
+														</label>
 													</th>
-													<td>
-													<?php
+													<td><?php
 												 		echo select_input('show_time', $values, $espresso_calendar['show_time'], 'id="show_time"');
-													?>
-													</td>
+													?></td>
 												</tr>
 												<tr>
-													<th>
-														<p class="section-heading" >
-															<?php _e('Time Format') ?>
-														</p><br />
-														<?php
+													<th><?php _e('Time Format') ?></th>
+													<td><?php
 														$espresso_calendar['time_format'] = empty($espresso_calendar['time_format']) ? get_option('time_format') : $espresso_calendar['time_format'];
 														$time_formats = apply_filters( 'time_formats', array(
 															__('g:i a'),
@@ -254,192 +252,162 @@ function espresso_calendar_config_mnu()	{
 															'gA',
 															'H:i',
 														) );
-
+													
 														$custom = true;
-
-												foreach ( $time_formats as $format ) { ?>
-												<tr>
-													<th>
-														<label title="<?php echo esc_attr($format) ?>"><?php echo date_i18n( $format ) ?></label>
-													</th>
-													<td>
-														<input type='radio' name='time_format' value="<?php  esc_attr($format) ?>"
-												<?php if ( $espresso_calendar['time_format'] === $format ) { // checked() uses "==" rather than "==="
-														echo " checked='checked'";
-														$custom = false;
-													}?> />
-													</td>
-												</tr>
-												<?php
-												}
-												?>
- 
-												<tr>
-													<th>
-														<label><?php _e('Custom:') ?></label>
-													</th>
-													<td>
-														<input type="radio" name="time_format" id="time_format_custom_radio" value="\c\u\s\t\o\m" <?php checked( $custom )?> />
-													 <input type="text" name="time_format_custom" value="<?php echo esc_attr( $espresso_calendar['time_format'] ) ?>" class="small-tex" /> <span class="example"><?php  echo date_i18n( $espresso_calendar['time_format'] ) ?></span> <img class='ajax-loading' src="<?php esc_url( admin_url( 'images/wpspin_light.gif' ) ) ?>" alt='' />
-													 <p><a href="http://codex.wordpress.org/Formatting_Date_and_Time">Documentation on date and time formatting</a>.</p>
-													</td>
+													
+														foreach ( $time_formats as $format ) {
+															echo "\t<label title='" . esc_attr($format) . "'><input type='radio' name='time_format' value='" . esc_attr($format) . "'";
+															if ( $espresso_calendar['time_format'] === $format ) { // checked() uses "==" rather than "==="
+																echo " checked='checked'";
+																$custom = false;
+															}
+															echo ' /> <span>' . date_i18n( $format ) . "</span></label><br />\n";
+														}
+													
+														echo '	<label><input type="radio" name="time_format" id="time_format_custom_radio" value="\c\u\s\t\o\m"';
+														checked( $custom );
+														echo '/> ' . __('Custom:') . ' </label> <input type="text" name="time_format_custom" value="' . esc_attr( $espresso_calendar['time_format'] ) . '" class="small-text" /> ';
+														echo '<span class="example"> ' . date_i18n( $espresso_calendar['time_format'] ) . "</span> <img class='ajax-loading' src='" . esc_url( admin_url( 'images/wpspin_light.gif' ) ) . "' alt='' />";
+													?>
+														<br />
+														<span class="description"><a href="http://codex.wordpress.org/Formatting_Date_and_Time">
+														<?php _e('Documentation on date and time formatting', 'event_espresso'); ?>
+														</a></span></td>
 												</tr>
 												<tr>
-													<th>
-														<label for="espresso_calendar_firstday">
-															<?php _e('First Day of the Week:','event_espresso'); ?><br /><span><?php _e('(Sunday=0, Monday=1, Tuesday=2, etc.)', 'event_espresso'); ?></span>
+													<th> <label for="espresso_calendar_firstday">
+															<?php _e('First Day of the Week','event_espresso'); ?>
 														</label>
 													</th>
-													<td>
-														<input id="espresso_calendar_firstday" type="text" name="espresso_calendar_firstday" size="10" maxlength="1" value="<?php echo $espresso_calendar['espresso_calendar_firstday'];?>" />
-													</td>
+													<td><input id="espresso_calendar_firstday" type="text" name="espresso_calendar_firstday" size="10" maxlength="1" value="<?php echo $espresso_calendar['espresso_calendar_firstday'];?>" />
+														<br />
+														<span class="description">
+														<?php _e('(Sunday=0, Monday=1, Tuesday=2, etc.)', 'event_espresso'); ?>
+														</span></td>
 												</tr>
 												<tr>
-													<th>
-														<label for="espresso_calendar_weekends">
-															<?php _e('Show Weekends:','event_espresso'); ?>
+													<th> <label for="espresso_calendar_weekends">
+															<?php _e('Show Weekends','event_espresso'); ?>
 														</label>
 													</th>
-													<td>
-														<?php echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['espresso_calendar_weekends'], 'id="espresso_calendar_weekends"'); ?>
-													</td>
+													<td><?php echo select_input('espresso_calendar_weekends', $values, $espresso_calendar['espresso_calendar_weekends'], 'id="espresso_calendar_weekends"'); ?></td>
 												</tr>
-												<tr>								
-													<th>
-														<label for="espresso_calendar_height">
-															<?php _e('Height: ','event_espresso'); ?><br />
-															<span><?php _e('Will make the entire calendar (including header) a pixel height.', 'event_espresso'); ?></span>
+											</tbody>
+										</table>
+										<h4>
+											<?php _e('Page Settings', 'event_espresso'); ?>
+										</h4>
+										<table class="form-table">
+											<tbody>
+												<tr>
+													<th> <label for="espresso_calendar_height">
+															<?php _e('Height','event_espresso'); ?>
 														</label>
 													</th>
-													<td>
-														<input id="espresso_calendar_height" type="text" name="espresso_calendar_height" size="100" maxlength="100" value="<?php echo $espresso_calendar['espresso_calendar_height'];?>" />
-													</td>
+													<td><input id="espresso_calendar_height" type="text" name="espresso_calendar_height" size="100" maxlength="100" value="<?php echo $espresso_calendar['espresso_calendar_height'];?>" />
+														<br />
+														<span class="description">
+														<?php _e('Will make the entire calendar (including header) a pixel height.', 'event_espresso'); ?>
+														</span></td>
 												</tr>
 												<tr>
-													<th>
-														<label for="calendar_pages">
-															<?php _e('Page(s) displaying the calendar: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'display-on-pages') ; ?><br />
-															<span><?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma seperated list of page ids.', 'event_espresso'); ?></span>
+													<th> <label for="calendar_pages">
+															<?php _e('Page(s) Displaying the Calendar', 'event_espresso'); ?>
+															<?php apply_filters('espresso_help', 'display-on-pages') ; ?>
 														</label>
 													</th>
-													<td>
-														<input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo $espresso_calendar['calendar_pages']==''?0:$espresso_calendar['calendar_pages'];?>" />
-													</td>
+													<td><input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo $espresso_calendar['calendar_pages']==''?0:$espresso_calendar['calendar_pages'];?>" />
+														<br />
+														<span class="description">
+														<?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma seperated list of page ids.', 'event_espresso'); ?>
+														</span></td>
 												</tr>
 												<tr>
-													<th>
-														<label for="calendar_page_post">
-														<?php _e('Links go to post or registration page? ','event_espresso'); ?><?php apply_filters('espresso_help', 'display-where') ?><br />
-													<?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso.', 'event_espresso'); ?>
-													</label>
-													</th>
-													<td>							
-														<?php echo select_input('espresso_page_post',array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"');?> 
-													</td>
-												</tr>
-												<tr>
-													<th>
-														<label for="enable-calendar-thumbs">
-															<?php _e('Enable images in calendar? ', 'event_espresso'); ?>
+													<th> <label for="calendar_page_post">
+															<?php _e('Link to Post or Registration Page','event_espresso'); ?>
+															<?php apply_filters('espresso_help', 'display-where') ?>
 														</label>
-													</th>				
-													<td>
-														<?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"');?> </li>
-													</td>	
+													</th>
+													<td><?php echo select_input('espresso_page_post',array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"');?> <br />
+														<span class="description">
+														<?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso.', 'event_espresso'); ?>
+														</span></td>
 												</tr>
-												<tr>										
-												<?php
+												<tr>
+													<th> <label for="enable-calendar-thumbs">
+															<?php _e('Enable Images in Calendar', 'event_espresso'); ?>
+														</label>
+													</th>
+													<td><?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"');?>
+														</li></td>
+												</tr>
+												<tr>
+													<?php
 												$disabled = ($espresso_calendar['enable_calendar_thumbs'] !== 'true') ? 'disabled="disabled"' : '';
 												$styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
 												?>
 												<tr>
-													<th>
-														<p class="section-heading" <?php echo $styled ?>>Select Calendar thumbnail size: <?php apply_filters('espresso_help', 'calendar-thumb-sizes'); ?></p>
+													<th> <?php echo $styled ?>
+														<?php _e('Thumbnail Size', 'event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar-thumb-sizes'); ?>
 													</th>
-													<td></td>
-												</tr>
-												<tr>
-													<th>											
-														<label for="calendar-thumb-size-sml" <?php echo $styled ?>>	
-															<?php _e(' Small (50px high)', 'event_espresso') ?>
+													<td><input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small" <?php echo $disabled ?> />
+														<label for="calendar-thumb-size-sml" <?php echo $styled ?>>
+															<?php _e('Small (50px high)', 'event_espresso') ?>
 														</label>
-													</th>
-													<td>
-														<input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small" <?php echo $disabled ?> />
-													</td>
-												</tr>
-												<tr>
-													<th>
-														<label for="calendar-thumb-size-med" <?php echo $styled ?>>
-														<?php _e(' Medium (100px high)', 'event_espresso')?>
-														</label>
-													</th>
-													<td>
+														<br />
 														<input id="calendar-thumb-size-med" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium')?> value="medium" <?php echo $disabled ?> />
-													</td>
-												</tr>
-												<tr>
-													<th>
-														<label for="calendar-thumb-size-lrg" <?php echo $styled ?>>
-															<?php _e(' Large (150px high)', 'event_espresso')?>
+														<label for="calendar-thumb-size-med" <?php echo $styled ?>>
+															<?php _e('Medium (100px high)', 'event_espresso')?>
 														</label>
-													</th>
-													<td>
+														<br />
 														<input id="calendar-thumb-size-lrg" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large')?> value="large" <?php echo $disabled ?> />
-													</td>
+														<label for="calendar-thumb-size-lrg" <?php echo $styled ?>>
+															<?php _e('Large (150px high)', 'event_espresso')?>
+														</label></td>
 												</tr>
-											</tbody
+											</tbody>
 										</table>
-							
-							<h4><?php _e('Theme Settings', 'event_espresso'); ?></h4>			
-						
+										<h4>
+											<?php _e('Theme Settings', 'event_espresso'); ?>
+										</h4>
+										<?php
+										$disabled = !empty($org_options['themeroller']['use_themeroller']) && ($org_options['themeroller']['use_themeroller'] == 'N' || $org_options['themeroller']['use_themeroller'] == '') ? 'disabled="disabled"' : '';
+										$styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
+												?>
 										<table class="form-table">
 											<tbody>
 												<tr>
-												<?php
-												$disabled = !empty($org_options['themeroller']['use_themeroller']) && ($org_options['themeroller']['use_themeroller'] == 'N' || $org_options['themeroller']['use_themeroller'] == '') ? 'disabled="disabled"' : '';
-												$styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
-												?>
-													<th>
-														<label for="use_themeroller">
-															<?php _e('Enable themeroller style settings?','event_espresso'); ?>
+													<th> <label for="use_themeroller">
+															<?php _e('Enable Themeroller','event_espresso'); ?>
 														</label>
 													</th>
-													<td>
-													<?php echo select_input('use_themeroller', $values, $espresso_calendar['use_themeroller'], 'id="use_themeroller" class"'.$styled.'" '.$disabled); ?>
-													</td>
+													<td><?php echo select_input('use_themeroller', $values, $espresso_calendar['use_themeroller'], 'id="use_themeroller" class"'.$styled.'" '.$disabled); ?></td>
 												</tr>
-												<tr>		
-													<th>
-														<label for="espresso_use_pickers">Use color pickers?</label>
+												<tr>
+													<th> <label for="espresso_use_pickers">
+															<?php _e('Use Color Pickers', 'event_espresso'); ?>
+														</label>
 													</th>
-													<td>
-														<?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?> 
-													</td>
+													<td><?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?></td>
 												</tr>
 												<tr class="color-picker-selections">
-													<th class="color-picker-style">
-														<label for="event-background">
+													<th class="color-picker-style"> <label for="event-background">
 															<?php _e('Event Background - color picker', 'event_espresso') ?>
-													</label>
-												</th>
-												<td>
-													<input id="event-background"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> />
-												</td>
-											</tr>
-											<tr class="color-picker-selections">
-												<th class="color-picker-style">
-													<label for="event-text">
-														<?php _e('Event Text - color picker', 'event_espresso') ?>
-													</label>
-												</th>
-												<td>
-													<input id="event-text"type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']))? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> />
-												</td>
-											</tr>
-											<tr>
-											
-											<!--
+														</label>
+													</th>
+													<td><input id="event-background"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> /></td>
+												</tr>
+												<tr class="color-picker-selections">
+													<th class="color-picker-style"> <label for="event-text">
+															<?php _e('Event Text - color picker', 'event_espresso') ?>
+														</label>
+													</th>
+													<td><input id="event-text"type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']))? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> /></td>
+												</tr>
+												<tr> 
+													
+													<!--
 											<tr>
 												<th> 
 													<label for="show-in-thickbox">
@@ -451,30 +419,28 @@ function espresso_calendar_config_mnu()	{
 												</td>
 											</tr>
 											-->
-											<tr>
-												<th>
-												<label for="enable-cat-classes">
-													<?php _e('Enable CSS classes for categories? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'enable-categories') ?>
-												 </label>
-												</th>
-												<td>
-												<?php echo select_input('enable_cat_classes',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"');?> </li>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-									<p>
-										<input class="button-primary" type="submit" name="save_calendar_settings" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings2" />
-										<?php wp_nonce_field( 'espresso_form_check', 'update_calendar' ) ?>
-									</p>
+												<tr>
+													<th> <label for="enable-cat-classes">
+															<?php _e('Enable CSS for Categories', 'event_espresso'); ?>
+															<?php apply_filters('espresso_help', 'enable-categories') ?>
+														</label>
+													</th>
+													<td><?php echo select_input('enable_cat_classes',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"');?></td>
+												</tr>
+											</tbody>
+										</table>
+										<p>
+											<input class="button-primary" type="submit" name="save_calendar_settings" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings2" />
+											<?php wp_nonce_field( 'espresso_form_check', 'update_calendar' ) ?>
+										</p>
+									</div>
+									<!-- / .padding --> 
+								</div>
+								<!-- / .inside --> 
 							</div>
-							<!-- / .padding --> 
+							<!-- / .postbox --> 
 						</div>
-						<!-- / .inside --> 
-					</div>
-					<!-- / .postbox --> 
-				</div>
-				<!-- / .metabox-holder --> 
+						<!-- / .metabox-holder --> 
 						
 						<!-- Advanced settings metabox -->
 						<div class="metabox-holder">
@@ -484,162 +450,94 @@ function espresso_calendar_config_mnu()	{
 								</h3>
 								<div class="inside">
 									<div class="padding">
-										<ul>
-											<li>
-												<table width="100%" border="0" cellpadding="20" cellspacing="5">
-													<tr>
-														<td align="left" valign="top"><p> <strong>
-																<?php _e('Header Style:','event_espresso'); ?>
-																</strong><br />
-																<?php _e('Defines the buttons and title at the top of the calendar.', 'event_espresso'); ?>
-															</p>
-															<textarea name="espresso_calendar_header" id="espresso_calendar_header" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_header']) ?></textarea></td>
-														<td align="left"valign="top"><p><strong>
-																<?php _e('Example:', 'event_espresso'); ?>
-																</strong></p>
-															<p>left: 'prev,<br />
-																today', <br />
-																center: 'title', <br />
-																right: 'month,agendaWeek,agendaDay,next'</p>
-															<p>
-																<?php _e('More Ino:','event_espresso'); ?>
-																<br />
-																<a href="http://arshaw.com/fullcalendar/docs/display/header/" target="_blank">http://arshaw.com/fullcalendar/docs/display/header/</a></p></td>
-													</tr>
-													<tr>
-														<td align="left" valign="top"><p> <strong>
-																<?php _e('Button Text:','event_espresso'); ?>
-																</strong><br />
-																<?php _e('Text that will be displayed on buttons of the header.', 'event_espresso'); ?>
-															</p>
-															<textarea name="espresso_calendar_buttonText" id="espresso_calendar_buttonText" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_buttonText']) ?></textarea></td>
-														<td align="left"valign="top"><p><strong>
-																<?php _e('Example:', 'event_espresso'); ?>
-																</strong></p>
-															<p>prev: '&amp;nbsp;&amp;#9668;&amp;nbsp;',//<span class="red_text">(Eg. left triangle)</span><br />
-																next: '&amp;nbsp;&amp;#9658;&amp;nbsp;',//<span class="red_text"> (Eg. right triangle)</span><br />
-																prevYear: '&amp;nbsp;&amp;lt;&amp;lt;&amp;nbsp;', //<span class="red_text">(Eg. &lt;&lt; )</span><br />
-																nextYear: '&amp;nbsp;&amp;gt;&amp;gt;&amp;nbsp;', //<span class="red_text">(Eg. &gt;&gt; )</span><br />
-																today:'today',<br />
-																month:'month',<br />
-																week: 'week',<br />
-																day:'day'</p>
-															<p>
-																<?php _e('More Ino:','event_espresso'); ?>
-																<br />
-																<a href="http://arshaw.com/fullcalendar/docs/text/buttonText/" target="_blank">http://arshaw.com/fullcalendar/docs/text/buttonText/</a></p></td>
-													</tr>
-													<tr>
-														<td align="left" valign="top"><p> <strong>
-																<?php _e('Title Format:','event_espresso'); ?>
-																</strong><br />
-																<?php _e('For date formatting options.', 'event_espresso'); ?>
-															</p>
-															<textarea name="espresso_calendar_titleFormat" id="espresso_calendar_titleFormat" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_titleFormat']) ?></textarea></td>
-														<td align="left" valign="top"><p><strong>
-																<?php _e('Example:', 'event_espresso'); ?>
-																</strong></p>
-															<p>month: 'MMMM yyyy', //<span class="red_text">(Eg. September 2009)</span><br />
-																week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}", //<span class="red_text">(Eg. Sep 7 - 13 2009)</span><br />
-																day: 'dddd, MMM d, yyyy' //<span class="red_text">(Eg. Tuesday, Sep 8, 2009)</span></p>
-															<p>
-																<?php _e('For date formatting options, please refer to: ','event_espresso'); ?>
-																<br />
-																<a href="http://arshaw.com/fullcalendar/docs/utilities/formatDate/" target="_blank">http://arshaw.com/fullcalendar/docs/utilities/formatDate/</a></p></td>
-													</tr>
-													<tr>
-														<td align="left" valign="top"><p> <strong>
-																<?php _e('Column Format:','event_espresso'); ?>
-																</strong><br />
-																<?php _e('For date formatting options.', 'event_espresso'); ?>
-															</p>
-															<textarea name="espresso_calendar_columnFormat" id="espresso_calendar_columnFormat" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_columnFormat']) ?></textarea></td>
-														<td align="left" valign="top"><p><strong>
-																<?php _e('Example:', 'event_espresso'); ?>
-																</strong></p>
-															<p>month: 'ddd', //<span class="red_text">(Eg. Mon) </span><br />
-																week: 'ddd M/d', //<span class="red_text">(Eg. Mon 9/7) </span><br />
-																day: 'dddd M/d' //<span class="red_text">(Eg. Monday 9/7)</span></p>
-															<p>
-																<?php _e('More Ino:','event_espresso'); ?>
-																<br />
-																<a href="http://arshaw.com/fullcalendar/docs/text/columnFormat/" target="_blank">http://arshaw.com/fullcalendar/docs/text/columnFormat/</a></p></td>
-													</tr>
-													<tr>
-														<td align="left" valign="top"><p> <strong>
-																<?php _e('Month Names:','event_espresso'); ?>
-																</strong><br />
-																<?php _e('Full names of months.', 'event_espresso'); ?>
-															</p>
-															<textarea name="espresso_calendar_monthNames" id="espresso_calendar_monthNames" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']) ?></textarea></td>
-														<td align="left" valign="top"><p><strong>
-																<?php _e('Example:', 'event_espresso'); ?>
-																</strong></p>
-															<p>'January', 'February', 'March', <br />
-																'April', 'May', 'June', <br />
-																'July', 'August', 'September', 'October', <br />
-																'November', 'December'</p></td>
-													</tr>
-													<tr>
-														<td align="left" valign="top"><p> <strong>
-																<?php _e('Month Names Short:','event_espresso'); ?>
-																</strong><br />
-																<?php _e('Abbreviated names of months.', 'event_espresso'); ?>
-															</p>
-															<textarea name="espresso_calendar_monthNamesShort" id="espresso_calendar_monthNamesShort" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNamesShort']) ?></textarea></td>
-														<td align="left" valign="top"><p><strong>
-																<?php _e('Example:', 'event_espresso'); ?>
-																</strong></p>
-															<p>'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'</p></td>
-													</tr>
-													<tr>
-														<td align="left" valign="top"><p> <strong>
-																<?php _e('Day Names:','event_espresso'); ?>
-																</strong><br />
-																<?php _e('Full names of days-of-week.', 'event_espresso'); ?>
-															</p>
-															<textarea name="espresso_calendar_dayNames" id="espresso_calendar_dayNames" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNames']) ?></textarea></td>
-														<td align="left" valign="top"><p><strong>
-																<?php _e('Example:', 'event_espresso'); ?>
-																</strong></p>
-															<p>'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'</p></td>
-													</tr>
-													<tr>
-														<td align="left" valign="top"><p> <strong>
-																<?php _e('Day Names Short:','event_espresso'); ?>
-																</strong><br />
-																<?php _e('Abbreviated names of days-of-week.', 'event_espresso'); ?>
-															</p>
-															<textarea name="espresso_calendar_dayNamesShort" id="espresso_calendar_dayNamesShort" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']) ?></textarea></td>
-														<td align="left" valign="top"><p><strong>
-																<?php _e('Example:', 'event_espresso'); ?>
-																</strong></p>
-															<p>'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'</p></td>
-													</tr>
-												</table>
-											</li>
-											<?php
-				 //Changed 8-30-2011 by Seth
-				 /*?><li>
-<label for="espresso_calendar_width">
- <?php _e('Width:','event_espresso'); ?>
- </label>
- <input type="text" name="espresso_calendar_width" size="100" maxlength="100" value="<?php echo $espresso_calendar['espresso_calendar_width'];?>" />
- </li><?php */
-				//End Seth
-				 ?>
-											<li>
-												<input type="hidden" name="update_calendar" value="update" />
-												<p>
-													<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings_1" />
-													<?php wp_nonce_field( 'espresso_form_check', 'update_calendar' ) ?>
-												</p>
-												<p>Reset Calendar Settings?
-													<input name="reset_calendar" type="checkbox" value="true" />
-													<?php wp_nonce_field( 'espresso_form_check', 'reset_calendar' ) ?>
-												</p>
-											</li>
-										</ul>
+										<table class="form-table">
+											<tbody>
+												<tr>
+													<th><?php _e('Header Style','event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar_header_info') ?></th>
+													<td><textarea name="espresso_calendar_header" id="espresso_calendar_header" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_header']) ?></textarea>
+														<br />
+														<span class="description">
+														<?php _e('Defines the buttons and title at the top of the calendar.', 'event_espresso'); ?>
+														</span></td>
+												</tr>
+												<tr>
+													<th><?php _e('Button Text','event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar_buttonText_info') ?>
+													</th>
+													<td><textarea name="espresso_calendar_buttonText" id="espresso_calendar_buttonText" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_buttonText']) ?></textarea>
+														<br />
+														<span class="description">
+														<?php _e('Text that will be displayed on buttons of the header.', 'event_espresso'); ?>
+														</span></td>
+												</tr>
+												<tr>
+													<th><?php _e('Title Format','event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar_titleFormat_info') ?></th>
+													<td><textarea name="espresso_calendar_titleFormat" id="espresso_calendar_titleFormat" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_titleFormat']) ?></textarea>
+														<br />
+														<span class="description">
+														<?php _e('Determines the text that will be displayed in the header\'s title.', 'event_espresso'); ?>
+														</span></td>
+												</tr>
+												<tr>
+													<th><?php _e('Column Format','event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar_columnFormat_info') ?></th>
+														</th>
+													<td><textarea name="espresso_calendar_columnFormat" id="espresso_calendar_columnFormat" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_columnFormat']) ?></textarea>
+														<br />
+														<span class="description">
+														<?php _e('Determines the text that will be displayed on the calendar\'s column headings.', 'event_espresso'); ?>
+														</span></td>
+												</tr>
+												<tr>
+													<th><?php _e('Month Names','event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar_monthNames_info') ?></th>
+													<td><textarea name="espresso_calendar_monthNames" id="espresso_calendar_monthNames" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']) ?></textarea>
+														<br />
+														<span class="description">
+														<?php _e('Full names of months.', 'event_espresso'); ?>
+														</span></td>
+												</tr>
+												<tr>
+													<th><?php _e('Month Names Short','event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar_monthNamesShort_info') ?></th>
+													<td><textarea name="espresso_calendar_monthNamesShort" id="espresso_calendar_monthNamesShort" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNamesShort']) ?></textarea>
+														<br />
+														<span class="description">
+														<?php _e('Abbreviated names of months.', 'event_espresso'); ?>
+														</span></td>
+												</tr>
+												<tr>
+													<th><?php _e('Day Names','event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar_dayNames_info') ?></th>
+													<td><textarea name="espresso_calendar_dayNames" id="espresso_calendar_dayNames" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNames']) ?></textarea>
+														<br />
+														<span class="description">
+														<?php _e('Full names of days-of-week.', 'event_espresso'); ?>
+														</span></td>
+												</tr>
+												<tr>
+													<th><?php _e('Day Names Short','event_espresso'); ?>
+														<?php apply_filters('espresso_help', 'calendar_dayNamesShort_info') ?></th>
+													<td><textarea name="espresso_calendar_dayNamesShort" id="espresso_calendar_dayNamesShort" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']) ?></textarea>
+														<br />
+														<span class="description">
+														<?php _e('Abbreviated names of days-of-week.', 'event_espresso'); ?>
+														</span></td>
+												</tr>
+											</tbody>
+										</table>
+										<input type="hidden" name="update_calendar" value="update" />
+										<p>
+											<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings_1" />
+											<?php wp_nonce_field( 'espresso_form_check', 'update_calendar' ) ?>
+										</p>
+										<p>
+											<?php _e('Reset Calendar Settings?', 'event_espresso'); ?>
+											<input name="reset_calendar" type="checkbox" value="true" />
+											<?php wp_nonce_field( 'espresso_form_check', 'reset_calendar' ) ?>
+										</p>
 									</div>
 									<!-- / .padding --> 
 								</div>
@@ -1196,5 +1094,11 @@ element.find('a').addClass(event.className);
 	}
 }
 add_shortcode('ESPRESSO_CALENDAR', 'espresso_calendar');
+
+
+
+
+
+
 
 
