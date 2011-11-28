@@ -117,7 +117,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		$check_sql = $wpdb->get_results("SELECT attendee_session, id, registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session ='" . $_SESSION['espresso_session_id'] . "' AND event_id ='" . $event_id . "' $incomplete_filter");
 		$num_rows = $wpdb->num_rows;
 
-		$registration_id = empty($wpdb->last_result[0]->registration_id) ? $registration_id = uniqid('', true) : $wpdb->last_result[0]->registration_id;
+		$registration_id = empty($wpdb->last_result[0]->registration_id) ? $registration_id = uniqid($event_id.'-') : $wpdb->last_result[0]->registration_id;
 
 		$txn_type = "";
 
