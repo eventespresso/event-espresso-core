@@ -754,10 +754,16 @@ if (!function_exists('espresso_calendar')) {
 		$events = array();
 
 		foreach ($events_data as $event){
+			
+			//Debug:
+			//Print the category id for each event.
+			//print_r( espresso_event_category_data($event->id) );
+			
 			//Get details about the category of the event
-			//print_r( espresso_event_category_data($event->id) ); //Print the category id for each event.
 			$category_data = espresso_event_category_data($event->id);
 			$event_meta = unserialize($event->event_meta);
+			
+			//Debug:
 			//var_dump($event);
 
 			switch ($espresso_calendar['espresso_page_post']){
@@ -787,8 +793,10 @@ if (!function_exists('espresso_calendar')) {
 			//End Seth
 			
 			// Build calendar array from $event data
+			
 			//Gets the URL of the event and links the event to the registration form.					
 			$eventArray['url'] = $event->externalURL !=''? htmlspecialchars_decode($event->externalURL) : $registration_url ;	
+			
 			//Id of the event
 			$eventArray['id'] = $event->id;
 
@@ -806,19 +814,17 @@ if (!function_exists('espresso_calendar')) {
 			$eventArray['startTime'] = event_date_display($event->start_time, $espresso_calendar['time_format']);
 			$eventArray['endTime'] = event_date_display($event->end_time, $espresso_calendar['time_format']);	
  
-			// Fetch image thumb path
-			if($espresso_calendar['enable_calendar_thumbs'] == 'true'){
+			// Add thumb to eventArray
+			if ($espresso_calendar['enable_calendar_thumbs'] == 'true'){
 				if( !empty($event_meta['event_thumbnail_url']) ) {
 					$calendar_thumb= $event_meta['event_thumbnail_url'];
-					// echo '<a href="' . $registration_url . '"><img class="event-id-'. $event->id . '" src="'. $calendar_thumb . '" alt="" title="' . $ee_event_title . '" / ></a>';
-				}	
-			}
-			// Add thumb to eventArray
-			if($espresso_calendar['enable_calendar_thumbs'] == 'true'){		
-				if( !empty($event_meta['display_thumb_in_calendar']) ) {
-				$eventArray['event_img_thumb'] = $calendar_thumb ;
+					//echo '<a href="' . $registration_url . '"><img class="event-id-'. $event->id . '" src="'. $calendar_thumb . '" alt="" title="' . $ee_event_title . '" / ></a>';
+				}
+				if ( !empty($event_meta['display_thumb_in_calendar']) ) {
+					$eventArray['event_img_thumb'] = $calendar_thumb ;
 				}
 			}
+			
 			//Custom fields: 
 			//These can be used to perform special functions in your display.
 
@@ -826,7 +832,7 @@ if (!function_exists('espresso_calendar')) {
 			$eventArray['eventType'] = $category_data['category_name'];
 
 			//This decalares the category ID as the CSS class name
-			if( isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == 'Y' ) {
+			if ( isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == 'Y' ) {
 				$sql_categories = "SELECT * FROM ".EVENTS_CATEGORY_REL_TABLE." WHERE event_id='".$event->id."'";
 				$categories_data = $wpdb->get_results($sql_categories);
 			
@@ -912,11 +918,14 @@ if (!function_exists('espresso_calendar')) {
 					//Enables/disables use of jQuery UI theming.
 					//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
 					<?php 
-					if ($espresso_calendar['use_themeroller'] == 'true' 
-						&& !empty($org_options['style_settings']['enable_default_style'])
-						&& $org_options['style_settings']['enable_default_style'] == 'Y'
-						&& $org_options['themeroller']['themeroller_style'] !='' ){
-						echo "theme: true,";
+					if ( $espresso_calendar['use_themeroller'] == 'true' ){
+						if ( !empty($org_options['style_settings']['enable_default_style']) ){
+							if ( $org_options['style_settings']['enable_default_style'] == 'Y' ){
+								if ( $org_options['themeroller']['themeroller_style'] !='' ){
+									echo "theme: true,";
+								}
+							}
+						}
 					}
 					
 					?>
@@ -1009,7 +1018,10 @@ if (!function_exists('espresso_calendar')) {
 						<?php 
 						}
 						?>
-						
+						/*element.qtip({
+							content: event.description
+						});
+*/
 
 						//These are examples of custom parameters that can be passed
 						/*if (event.eventType == 'meeting') {
