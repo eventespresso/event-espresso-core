@@ -815,6 +815,7 @@ if (!function_exists('espresso_calendar')) {
 			$eventArray['endTime'] = event_date_display($event->end_time, $espresso_calendar['time_format']);	
  
 			// Add thumb to eventArray
+			$eventArray['event_img_thumb'] = '';
 			if ($espresso_calendar['enable_calendar_thumbs'] == 'true'){
 				if( !empty($event_meta['event_thumbnail_url']) ) {
 					$calendar_thumb = $event_meta['event_thumbnail_url'];
