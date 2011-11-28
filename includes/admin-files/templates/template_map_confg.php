@@ -141,8 +141,8 @@ function event_espresso_manage_maps() {
 
 
 
-							  <?php include_once('templates_help.php'); ?><?php */ ?>
-
+							  <?php */ ?>
+							<?php include_once('map_confg_help.php'); ?>
 							<?php // create our nonces and do our form submit   ?>
 							<?php wp_nonce_field('espresso_form_check', 'ee_maps_update'); ?>
 							<input type="hidden" name="update_org" value="update" />
