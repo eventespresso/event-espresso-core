@@ -1003,17 +1003,17 @@ if (!function_exists('espresso_calendar')) {
 						//}
 						
 						if(event.event_img_thumb){
-						// alert('we have thumbs');
+							//alert('we have thumbs');
 							
-						element.addClass('event-has-thumb');
-							 <?php // if($in_thickbox == 'Y'){ ?>
-							// $jaer('a.fc-event').attr('href', event.in_thickbox_url + event.id );
-							 <?php // }else{ ?>
-							 //$jaer('a.fc-event').attr('href', event.url );
-							 <?php // } ?>
+							element.addClass('event-has-thumb');
+							<?php // if($in_thickbox == 'Y'){ ?>
+							//$jaer('a.fc-event').attr('href', event.in_thickbox_url + event.id );
+							<?php // }else{ ?>
+							//$jaer('a.fc-event').attr('href', event.url );
+							<?php // } ?>
 							
-						//$jaer('a.fc-event').addClass(event.in_thickbox_class);
-						 	element.find('.fc-event-title').before($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
+							//$jaer('a.fc-event').addClass(event.in_thickbox_class);
+						 	element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						 }
 						
 						<?php 
