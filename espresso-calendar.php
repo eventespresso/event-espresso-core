@@ -1040,10 +1040,14 @@ if (!function_exists('espresso_calendar')) {
 									},
 									position: {
 										at: 'top right',
+										adjust: {
+         									x: 0, y: 30
+										},
 									},
+									
 									style: {//Additional informatio: http://craigsworks.com/projects/qtip2/docs/style/
 										tip: {
-											corner: 'left center'
+											corner: 'left top'
 										},
 										classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
 										/*
