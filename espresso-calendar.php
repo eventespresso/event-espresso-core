@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA02110-1301USA
 
 //Define the version of the plugin
 function espresso_calendar_version() {
-	return '1.11';
+	return '2.0';
 }
 define("ESPRESSO_CALENDAR_VERSION", espresso_calendar_version() );
 
@@ -58,7 +58,7 @@ function espresso_calendar_install(){
 					'espresso_calendar_width' => '2',
 					'enable_calendar_thumbs' => false,
 					'calendar_thumb_size' => 'small',
-					//'show_in_thickbox' => false,
+					'show_tooltips' => 'Y',
 					'espresso_use_pickers' => false,
 					'ee_event_background' => 'ffffff',
 					'ee_event_text_color' => '555555',
@@ -112,7 +112,7 @@ function espresso_calendar_config_mnu()	{
 		$espresso_calendar['espresso_calendar_width'] = $_POST['espresso_calendar_width'];
 		$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
 		$espresso_calendar['calendar_thumb_size'] = (!empty($_POST['calendar_thumb_size']))? $_POST['calendar_thumb_size']: $espresso_calendar['calendar_thumb_size'];
-		//$espresso_calendar['show_in_thickbox'] = $_POST['show_in_thickbox'];
+		$espresso_calendar['show_tooltips'] = $_POST['show_tooltips'];
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
 		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
@@ -407,18 +407,18 @@ function espresso_calendar_config_mnu()	{
 												</tr>
 												<tr> 
 													
-													<!--
+													
 											<tr>
 												<th> 
-													<label for="show-in-thickbox">
-														<?php // _e('Show event details in popup box ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'display-thickbox') ?>
+													<label for="show_tooltips">
+														<?php _e('Show Tooltips', 'event_espresso'); ?><?php apply_filters('espresso_help', 'show_tooltips_info') ?>
 													</label>
 												</th>
 												<td>
-													<?php // echo select_input('show_in_thickbox',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['show_in_thickbox'], 'id="show-in-thickbox"');?>
+													<?php echo select_input('show_tooltips',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['show_tooltips'], 'id="show_tooltips"');?>
 												</td>
 											</tr>
-											-->
+											
 												<tr>
 													<th> <label for="enable-cat-classes">
 															<?php _e('Enable CSS for Categories', 'event_espresso'); ?>
@@ -611,11 +611,11 @@ jQuery(document).ready(function($){
 // configure scripts and styles for event background color picker
 if(is_admin()){
 	
-	function load_admin_scripts() {
+	function espresso_calendar_load_admin_scripts() {
 				wp_register_script('wheelcolorpicker',EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/wheelcolorpicker/jquery.wheelcolorpicker.min.js', array('jquery') );
 				wp_enqueue_script('wheelcolorpicker');
 	}
-	add_action('admin_init', 'load_admin_scripts');	
+	add_action('admin_init', 'espresso_calendar_load_admin_scripts');	
 }
 
 ################## finish admin screen settings ###########################
@@ -623,7 +623,7 @@ if(is_admin()){
 //Load the scripts and css
 if (!function_exists('espresso_init_calendar')) {
 	function espresso_init_calendar() {
-		global $load_espresso_calendar_scripts;
+		global $espresso_calendar, $load_espresso_calendar_scripts;
 		if ( ! $load_espresso_calendar_scripts )
 			return;
 
@@ -632,10 +632,13 @@ if (!function_exists('espresso_init_calendar')) {
 		wp_register_script('fullcalendar-min-js',ESPRESSO_CALENDAR_PLUGINFULLURL.'scripts/fullcalendar.min.js', array('jquery') );//core calendar script
 		wp_print_scripts('fullcalendar-min-js');
 		
-		wp_register_script('jquery-qtip',ESPRESSO_CALENDAR_PLUGINFULLURL.'scripts/jquery.qtip.js', array('jquery') );//core calendar script
-		wp_print_scripts('jquery-qtip');
-		
-		//wp_print_scripts('thickbox');
+		//Load tooltips script
+		if (isset($espresso_calendar['show_tooltips'])){
+			if ($espresso_calendar['show_tooltips'] == 'Y'){
+				wp_register_script('jquery-qtip',ESPRESSO_CALENDAR_PLUGINFULLURL.'scripts/jquery.qtip.js', array('jquery') );//core calendar script
+				wp_print_scripts('jquery-qtip');
+			}
+		}
 	}
 }
 add_action('wp_footer', 'espresso_init_calendar',20);
@@ -659,8 +662,13 @@ if (!function_exists('espresso_init_calendar_style')) {
 		}
 		wp_enqueue_style( 'calendar');
 		
-		wp_register_style('qtip', ESPRESSO_CALENDAR_PLUGINFULLURL.'css/jquery.qtip.css');//calendar core style
-		wp_enqueue_style( 'qtip');
+		//Load tooltips styles
+		if (isset($espresso_calendar['show_tooltips'])){
+			if ($espresso_calendar['show_tooltips'] == 'Y'){
+				wp_register_style('qtip', ESPRESSO_CALENDAR_PLUGINFULLURL.'css/jquery.qtip.css');//calendar core style
+				wp_enqueue_style( 'qtip');
+			}
+		}
 
 	}
 }
@@ -760,9 +768,7 @@ if (!function_exists('espresso_calendar')) {
 		}else{
 			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
 		}
-		/*if( isset($espresso_calendar['show_in_thickbox']) ) {
-			$in_thickbox = $espresso_calendar['show_in_thickbox'];
-		}*/
+		
 		$events_data = $wpdb->get_results($sql);
 	 
 		$events = array();
@@ -820,6 +826,9 @@ if (!function_exists('espresso_calendar')) {
 
 			//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 			$eventArray['description'] = espresso_format_content($event->event_desc);
+			if ( isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == 'Y' ) {
+				$eventArray['description'] = array_shift(explode('<!--more-->', $eventArray['description']));
+			}
 
 			//Get the start and end times for each event
 			//important! time must be in iso8601 format 2010-05-10T08:30!!
@@ -833,6 +842,7 @@ if (!function_exists('espresso_calendar')) {
 			if ($espresso_calendar['enable_calendar_thumbs'] == 'true'){
 				if( !empty($event_meta['event_thumbnail_url']) ) {
 					$calendar_thumb = $event_meta['event_thumbnail_url'];
+					//Debug:
 					//echo '<a href="' . $registration_url . '"><img class="event-id-'. $event->id . '" src="'. $calendar_thumb . '" alt="" title="' . $ee_event_title . '" / ></a>';
 					if ( !empty($event_meta['display_thumb_in_calendar']) ) {
 						if ($event_meta['display_thumb_in_calendar'] == 'Y'){
@@ -881,25 +891,11 @@ if (!function_exists('espresso_calendar')) {
  
 			// Set sizes for image display
 			$eventArray['img_size_class'] = $ee_img_size;
- 		
-			/* thickbox removed until fix found for all events displaying
-			// image onclick displays in thickbox yes/no
-			if($in_thickbox == 'Y'){
-				$in_thickbox_class = 'thickbox';
-				$in_thickbox_url = '#TB_inline?height=400&amp;width=500&amp;inlineId=event-thumb-detail-' ;
-			}else {
- 			$in_thickbox_class = '';
-				$in_thickbox_url = '';
-			}			
-			
-			$eventArray['in_thickbox_class'] = $in_thickbox_class;
-			$eventArray['in_thickbox_url'] = $in_thickbox_url;
-			//var_dump($eventArray['in_thickbox_url']);
-			*/
  
 			//Array of the event details
 			$events[] = $eventArray; 
 		}
+		//Debug:
 		//Print the results of the code above
 		// echo json_encode($events);
 
@@ -1020,13 +1016,7 @@ if (!function_exists('espresso_calendar')) {
 							//alert('we have thumbs');
 							
 							element.addClass('event-has-thumb');
-							<?php // if($in_thickbox == 'Y'){ ?>
-							//$jaer('a.fc-event').attr('href', event.in_thickbox_url + event.id );
-							<?php // }else{ ?>
-							//$jaer('a.fc-event').attr('href', event.url );
-							<?php // } ?>
 							
-							//$jaer('a.fc-event').addClass(event.in_thickbox_class);
 						 	element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						 }
 						
@@ -1036,34 +1026,41 @@ if (!function_exists('espresso_calendar')) {
 							element.find('.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">' + event.startTime + ' - </span><span class="event-end-time">' + event.endTime + '</span></p>'));
 						<?php 
 						}
+						
+						if (isset($espresso_calendar['show_tooltips'])){
+							if ($espresso_calendar['show_tooltips'] == 'Y'){
 						?>
-						element.qtip({
-							content: event.description,
-							position: {
-								at: 'top right',
-								adjust: {
-									//y: 20
-								}
-
-								//target: [10, 10]
-								//target: 'mouse'
-								//my: 'left center'
-								
-
-							},
-							style: {//Additional informatio: http://craigsworks.com/projects/qtip2/docs/style/
-								classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
-								/*
-								  * The important part: style.widget property
-								  
-								  * This tells qTip to apply the ui-widget classes to
-								  * the main, titlebar and content elements of the qTip.
-								  * Otherwise they won't be applied and ThemeRoller styles
-								  * won't effect this particular tooltip.
-								*/
-								widget: true
-						  },
-						});
+								element.qtip({
+									content: {
+										text: event.description,
+										title: {
+											text: '<?php _e('Description', 'event_espresso'); ?>',
+										}
+		
+									},
+									position: {
+										at: 'top right',
+									},
+									style: {//Additional informatio: http://craigsworks.com/projects/qtip2/docs/style/
+										tip: {
+											corner: 'left center'
+										},
+										classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
+										/*
+										  * The important part: style.widget property
+										  
+										  * This tells qTip to apply the ui-widget classes to
+										  * the main, titlebar and content elements of the qTip.
+										  * Otherwise they won't be applied and ThemeRoller styles
+										  * won't effect this particular tooltip.
+										*/
+										widget: true
+									}
+								});
+						<?php
+							}
+						}
+						?>
 
 
 						//These are examples of custom parameters that can be passed
@@ -1146,11 +1143,3 @@ if (!function_exists('espresso_calendar')) {
 	}
 }
 add_shortcode('ESPRESSO_CALENDAR', 'espresso_calendar');
-
-
-
-
-
-
-
-
