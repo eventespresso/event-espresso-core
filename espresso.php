@@ -708,22 +708,6 @@ if (isset($_REQUEST['authAmountString'])) {
 wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
 
 // These actions need to be loaded a the bottom of this script to prevent errors when post/get requests are received.
-// Export PDF invoice
-function espresso_export_invoice(){
-	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
-	}
-}
-
-add_action('plugins_loaded', 'espresso_export_invoice');
-
-// Export PDF Ticket
-if (isset($_REQUEST['download_ticket']) && $_REQUEST['download_ticket'] == 'true') {
-	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
-		require_once(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php");
-		espresso_ticket($_REQUEST['id'], $_REQUEST['registration_id']);
-	}
-}
 
 if (is_admin()) {
 	// Check to make sure there are no empty registration id fields in the database.
@@ -752,15 +736,53 @@ if (is_admin()) {
 	}
 }
 
-// Export PDF Ticket (new)
-if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
-	echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['r_id']);
+// Export PDF Ticket
+function espresso_export_ticket(){
+	//Version 2.0
+	if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
+		echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['r_id']);
+	}
+	//End Version 2.0
+	
+	//Deprecated version 1.0
+	//Export PDF Ticket
+	if (isset($_REQUEST['download_ticket']) && $_REQUEST['download_ticket'] == 'true') {
+		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
+			require_once(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php");
+			espresso_ticket($_REQUEST['id'], $_REQUEST['registration_id']);
+		}
+	}
+	//End Deprecated version 1.0
+
 }
+add_action('plugins_loaded', 'espresso_export_ticket');
 
 // Export PDF Certificate
-if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
-	echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
+function espresso_export_certificate(){
+	if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
+		echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
+	}
 }
+add_action('plugins_loaded', 'espresso_export_certificate');
+
+// Export PDF Invoice
+function espresso_export_invoice(){
+	//Version 2.0
+	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/launch_pdf.php");
+		echo espresso_invoice_launch($_REQUEST['id'], $_REQUEST['r_id']);
+	}
+	//End Version 2.0
+	
+	//Deprecated version
+	//Export PDF invoice
+	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
+	}
+	//End Deprecated version
+	
+}
+add_action('plugins_loaded', 'espresso_export_invoice');
 
 // Export iCal file
 if (!empty($_REQUEST['iCal'])) {
