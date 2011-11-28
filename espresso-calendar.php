@@ -831,10 +831,9 @@ if (!function_exists('espresso_calendar')) {
 			//Custom fields: 
 			//These can be used to perform special functions in your display.
 
-			//This can be used to use the category id as the event type
-			$eventArray['eventType'] = $category_data['category_name'];
-
 			//This decalares the category ID as the CSS class name
+			$eventArray['className'] = '';
+			$eventArray['eventType'] = '';
 			if ( isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == 'Y' ) {
 				$sql_categories = "SELECT * FROM ".EVENTS_CATEGORY_REL_TABLE." WHERE event_id='".$event->id."'";
 				$categories_data = $wpdb->get_results($sql_categories);
@@ -855,8 +854,11 @@ if (!function_exists('espresso_calendar')) {
 				}
 			 	//var_dump($cssClass);
 				$eventArray['className'] = $cssClass;
+				
+				//This can be used to use the category id as the event type
+				$eventArray['eventType'] = $category_data['category_name'];
+				
 			 }//end if user enabled cat for classes
-			
 			
 			//End custom fields
 
