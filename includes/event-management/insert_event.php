@@ -57,6 +57,9 @@ $wpdb->show_errors();
 		//echo $fb->espresso_createevent();
 		//echo $_POST['event'];
 		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
+		if ($wp_user_id == 0){
+			$wp_user_id = 1;
+		}
 		$event_name = $_REQUEST['event'];
 		$event_code = uniqid($espresso_wp_user . '-');
 		$event_identifier = ($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
