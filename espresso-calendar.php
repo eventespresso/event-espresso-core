@@ -817,11 +817,13 @@ if (!function_exists('espresso_calendar')) {
 			// Add thumb to eventArray
 			if ($espresso_calendar['enable_calendar_thumbs'] == 'true'){
 				if( !empty($event_meta['event_thumbnail_url']) ) {
-					$calendar_thumb= $event_meta['event_thumbnail_url'];
+					$calendar_thumb = $event_meta['event_thumbnail_url'];
 					//echo '<a href="' . $registration_url . '"><img class="event-id-'. $event->id . '" src="'. $calendar_thumb . '" alt="" title="' . $ee_event_title . '" / ></a>';
-				}
-				if ( !empty($event_meta['display_thumb_in_calendar']) ) {
-					$eventArray['event_img_thumb'] = $calendar_thumb ;
+					if ( !empty($event_meta['display_thumb_in_calendar']) ) {
+						if ($event_meta['display_thumb_in_calendar'] == 'Y'){
+							$eventArray['event_img_thumb'] = $calendar_thumb ;
+						}
+					}
 				}
 			}
 			
@@ -1000,7 +1002,7 @@ if (!function_exists('espresso_calendar')) {
 						if(event.event_img_thumb){
 						// alert('we have thumbs');
 							
-						 element.addClass('event-has-thumb');
+						element.addClass('event-has-thumb');
 							 <?php // if($in_thickbox == 'Y'){ ?>
 							// $jaer('a.fc-event').attr('href', event.in_thickbox_url + event.id );
 							 <?php // }else{ ?>
