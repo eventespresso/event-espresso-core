@@ -628,8 +628,13 @@ if (!function_exists('espresso_init_calendar')) {
 			return;
 
 		wp_enqueue_script('jquery');
+		
 		wp_register_script('fullcalendar-min-js',ESPRESSO_CALENDAR_PLUGINFULLURL.'scripts/fullcalendar.min.js', array('jquery') );//core calendar script
 		wp_print_scripts('fullcalendar-min-js');
+		
+		wp_register_script('jquery-qtip',ESPRESSO_CALENDAR_PLUGINFULLURL.'scripts/jquery.qtip.js', array('jquery') );//core calendar script
+		wp_print_scripts('jquery-qtip');
+		
 		//wp_print_scripts('thickbox');
 	}
 }
@@ -647,12 +652,15 @@ if (!function_exists('espresso_init_calendar_style')) {
 		}
 
 		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
-		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR."calendar.css")){
-			wp_register_style('calendar', EVENT_ESPRESSO_UPLOAD_URL.'calendar.css');//This is the url to the css file if available
+		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR."css/calendar.css")){
+			wp_register_style('calendar', EVENT_ESPRESSO_UPLOAD_URL.'css/calendar.css');//This is the url to the css file if available
 		}else{
-			wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL.'calendar.css');//calendar core style
+			wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL.'css/calendar.css');//calendar core style
 		}
 		wp_enqueue_style( 'calendar');
+		
+		wp_register_style('qtip', ESPRESSO_CALENDAR_PLUGINFULLURL.'css/jquery.qtip.css');//calendar core style
+		wp_enqueue_style( 'qtip');
 
 	}
 }
@@ -660,27 +668,33 @@ add_action('wp_print_styles', 'espresso_init_calendar_style',30);
 
 // Add our embedded head styles for color picker selection 
 if($espresso_calendar['espresso_use_pickers'] == 'true') { 
-		function event_background_selection() {
+	function event_background_selection() {
 		global $espresso_calendar;
-		?>
-<style type="text/css">
-		<?php if( isset( $espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']) ) {?>
-				.fc-event-skin {
+?>
+		<style type="text/css">
+<?php 
+		if( isset( $espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']) ) {
+?>
+			.fc-event-skin {
 				background-color: #<?php echo $espresso_calendar['ee_event_background'] ?>;
 				border: 1px solid #<?php echo $espresso_calendar['ee_event_background'] ?>;
-						}
-		<?php } ?>
-		<?php	if( isset( $espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']) ) { ?>
-				.fc-event-title,
-				.time-display-block {
+			}
+<?php 
+		}
+
+		if( isset( $espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']) ) {
+?>
+			.fc-event-title, .time-display-block {
 				color: #<?php echo $espresso_calendar['ee_event_text_color'] ?>;
-						}
-		<?php } ?>
+			}
+<?php 
+		}
+?>
 		</style>
 <?php
-	 return;
-		}
-add_action('wp_head', 'event_background_selection');	
+		 return;
+	}
+	add_action('wp_head', 'event_background_selection');	
 }// close if use picker is Yes
 
 //Build the short code
@@ -1023,10 +1037,34 @@ if (!function_exists('espresso_calendar')) {
 						<?php 
 						}
 						?>
-						/*element.qtip({
-							content: event.description
+						element.qtip({
+							content: event.description,
+							position: {
+								at: 'top right',
+								adjust: {
+									//y: 20
+								}
+
+								//target: [10, 10]
+								//target: 'mouse'
+								//my: 'left center'
+								
+
+							},
+							style: {//Additional informatio: http://craigsworks.com/projects/qtip2/docs/style/
+								classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
+								/*
+								  * The important part: style.widget property
+								  
+								  * This tells qTip to apply the ui-widget classes to
+								  * the main, titlebar and content elements of the qTip.
+								  * Otherwise they won't be applied and ThemeRoller styles
+								  * won't effect this particular tooltip.
+								*/
+								widget: true
+						  },
 						});
-*/
+
 
 						//These are examples of custom parameters that can be passed
 						/*if (event.eventType == 'meeting') {
@@ -1096,8 +1134,6 @@ if (!function_exists('espresso_calendar')) {
 					}
 
 				});
-				// this line was overriding the cal_view defined inthe shortcode
-				//$jaer('#espresso_calendar').fullCalendar('changeView','month');
 			});
 
 	</script>
