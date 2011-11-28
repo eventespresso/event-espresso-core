@@ -7,7 +7,7 @@ if (isset($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1) //need this condition 
 
 function event_espresso_txn() {
 	global $wpdb, $org_options, $payment_settings;
-	
+
 	//Check if logging is enabled
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
@@ -22,7 +22,7 @@ function event_espresso_txn() {
 	if (isset($_REQUEST['x_cust_id']) && $_REQUEST['x_cust_id'] != '') {
 		$attendee_id = $_REQUEST['x_cust_id'];
 	}
-	
+
 	if (isset($_REQUEST['authAmountString'])) {
 		$attendee_id = $_REQUEST['cartId'];
 	}
@@ -33,11 +33,11 @@ function event_espresso_txn() {
 
 		//Define the default user id for the payment settings
 		$espresso_wp_user = 1;
-			
+
 		//If the permissions pro addon is installed
 		if ( function_exists('espresso_manager_pro_version') ){
 			global $espresso_manager;
-			//If the user that created this event can accept payments 
+			//If the user that created this event can accept payments
 			if ( $espresso_manager['can_accept_payments'] =='Y' ){
 				//Get the user id
 				$a_sql = "SELECT ed.wp_user FROM " . EVENTS_DETAIL_TABLE . " ed
@@ -48,10 +48,10 @@ function event_espresso_txn() {
 				$espresso_wp_user = $event->wp_user;
 			}
 		}
-		
+
 		//Get the payment settings
 		$payment_settings = get_option('payment_data_'.$espresso_wp_user);
-	
+
 		$email_subject = $org_options['payment_subject'];
 		$email_body = $org_options['payment_message'];
 		$default_mail = $org_options['default_mail'];
@@ -105,6 +105,14 @@ function event_espresso_txn() {
 				} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/eway/ewaypaymentprocess.php")) {
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/eway/ewaypaymentprocess.php");
+				}
+			} elseif (get_option('events_nab_active') == 'true' && isset($_REQUEST['refid'])) {
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/nab/nabpaymentprocess.php")) {
+					//Moved files
+					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/nab/nabpaymentprocess.php");
+				} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/nab/nabpaymentprocess.php")) {
+					//Default files
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/nab/nabpaymentprocess.php");
 				}
 			} elseif (get_option('events_quickpay_active') == 'true' && isset($_REQUEST['chronopay_callback'])) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/quickpay/quickpaypaymentprocess.php")) {

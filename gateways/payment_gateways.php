@@ -6,13 +6,13 @@
 * and contains the main WP markup structure for an admin screen, WP metaboxes
 * markup is rendered from the individual gateways folders settings.php files
 *
-* This file loops over the $gateways array and constructs a path for each 
+* This file loops over the $gateways array and constructs a path for each
 * gateway name it finds, each gateways settings.php file is then required into this file for display
 */
 
 function event_espresso_gateways_options() {
 	global $wpdb, $espresso_premium, $notices;
-	
+
 	$gateways = array();
 	$gateways[] = 'check';
 	$gateways[] = 'bank';
@@ -30,6 +30,7 @@ function event_espresso_gateways_options() {
 	$gateways[] = 'paytrace';
 	$gateways[] = 'quickpay';
 	$gateways[] = 'worldpay';
+	$gateways[] = 'nab';
 
 ?>
 
@@ -47,7 +48,7 @@ function event_espresso_gateways_options() {
 				<div class="meta-box-sortables ui-sortables">
 					<?php
 					// loop over gateways array and call each gateways settings.php file
-					foreach ($gateways as $gateway) {	
+					foreach ($gateways as $gateway) {
 						$func 			= 'event_espresso_' . $gateway . '_payment_settings';
 						$fallback_func 	= 'event_espresso_' . $gateway . '_settings';
 						$fallback_func2 = 'event_espresso_' . $gateway . '_deposit_settings';
@@ -67,7 +68,7 @@ function event_espresso_gateways_options() {
 							elseif(function_exists($fallback_func3)) $fallback_func3();
 						}
 					}
-														
+
 					//requires an empty alipay_active.php file in the gateways/alipay OR
 					//if you have moved the gateway files, place it in uploads/espresso/gateways
 					if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/alipay_active.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/alipay/alipay_active.php")) {
@@ -79,14 +80,14 @@ function event_espresso_gateways_options() {
 							event_espresso_alipay_settings();
 						}
 					}
-					
+
 					//Shows information for developers
 					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH.'includes/admin-files/gateway_developer.php')){
 						require_once(EVENT_ESPRESSO_PLUGINFULLPATH.'includes/admin-files/gateway_developer.php');
 					}
-					
+
 					//If the free version is installed, this will be displayed.
-					if ($espresso_premium != true) { 
+					if ($espresso_premium != true) {
 						echo '<h2>';
 						_e('Need more payment options?', 'event_espresso');
 						echo '<a href="http://eventespresso.com/download/" target="_blank">';
@@ -96,8 +97,8 @@ function event_espresso_gateways_options() {
 					}
 ?>
 				</div>
-				<!-- / .meta-box-sortables --> 
-				
+				<!-- / .meta-box-sortables -->
+
 				<!-- Help boxes -->
 				<div id="button_image" style="display: none;">
 					<div class="TB-ee-frame">
@@ -119,16 +120,16 @@ function event_espresso_gateways_options() {
 						</p>
 					</div>
 				</div>
-				<!-- / help boxes --> 
-				
+				<!-- / help boxes -->
+
 			</div>
-			<!-- / #post-body-content --> 
+			<!-- / #post-body-content -->
 		</div>
-		<!-- / #post-body --> 
+		<!-- / #post-body -->
 	</div>
-	<!-- / #poststuff --> 
+	<!-- / #poststuff -->
 </div>
-<!-- / #wrap --> 
+<!-- / #wrap -->
 
 <script type="text/javascript" charset="utf-8">
 	//<![CDATA[

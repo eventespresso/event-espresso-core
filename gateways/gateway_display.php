@@ -18,31 +18,40 @@ $payor_data['zip'] = $zip;
 echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';
 echo '<h2 class="section-heading ui-widget-header ui-corner-top">' .  __('Please choose a payment option:', 'event_espresso') . '</h2>';
 echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
-if ($payment_settings['paypal_pro']['active'] == true
+if (!empty($payment_settings['paypal_pro']['active'])
 	|| get_option('events_eway_active') == 'true'
-	|| $payment_settings['authnet_aim']['active'] == true
+	|| !empty($payment_settings['authnet_aim']['active'])
 	|| get_option('events_firstdata_active') == 'true'
 	|| get_option('events_ideal_active') == 'true'
 	|| get_option('events_paytrace_active') == 'true'
+	|| get_option('events_nab_active') == 'true'
 	)
 {
 	echo '<div id="on_site_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="on_site_payment" class="payment_option_title section-heading">'.__('On-site Payment Processing', 'event_espresso').'</h3>';
 
-	if ($payment_settings['paypal_pro']['active'] == true){
+	if (!empty($payment_settings['paypal_pro']['active'])){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/paypal_pro_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/paypal_pro_vars.php");
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal_pro/paypal_pro_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/paypal_pro/paypal_pro_vars.php");
 		}
 	}
-	if ($payment_settings['authnet_aim']['active'] == true){
+	if (!empty($payment_settings['authnet_aim']['active'])){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/aim_vars.php")){
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/aim_vars.php");
 		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/aim/aim_vars.php")){
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/aim/aim_vars.php");
 		}
 		espresso_display_aim($payor_data, $event_cost, $attendee_id);
+	}
+	if (get_option('events_nab_active') == 'true'){
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/nab/nab_vars.php")){
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/nab/nab_vars.php");
+		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/nab/nab_vars.php")){
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/nab/nab_vars.php");
+		}
+		espresso_display_nab($payor_data, $event_cost, $attendee_id, $event_id);
 	}
 	if (get_option('events_firstdata_active') == 'true'){
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata/firstdata_vars.php")){
@@ -68,14 +77,14 @@ if ($payment_settings['paypal_pro']['active'] == true
 	}
 	echo '</div><!-- / #onsite-payments -->';
 }
-if ($payment_settings['paypal']['active'] == true
-				|| $payment_settings['authnet_sim']['active'] == true
+if (!empty($payment_settings['paypal']['active'])
+				|| !empty($payment_settings['authnet_sim']['active'])
 				|| get_option('events_mwarrior_active') == 'true'
 				|| get_option('events_alipay_active') == 'true'
 				|| get_option('events_plugnpay_active') == 'true'
 				|| get_option('events_eway_active') == 'true'
 				|| get_option('events_quickpay_active') == 'true'
-				|| $payment_settings['2checkout']['active'] == true
+				|| !empty($payment_settings['2checkout']['active'])
 				|| get_option('events_firstdata_connect_2_active') == 'true'
 				|| get_option('events_worldpay_active') == 'true'){
 	echo '<div id="off_site_payment_container" class="payment_container event-display-boxes">';
@@ -166,9 +175,9 @@ if ($payment_settings['paypal']['active'] == true
 	echo '</div><!-- / #off_site_payment_container -->';
 }
 
-if (($payment_settings['invoice']['active'] == true && $payment_settings['invoice']['show'] != 'N')
+if ((!empty($payment_settings['invoice']['active']) && $payment_settings['invoice']['show'] != 'N')
 	|| get_option('events_check_payment_active') == 'true'
-	|| $payment_settings['bank_payment']['active'] == true)
+	|| !empty($payment_settings['bank_payment']['active']))
 	{
 
 	echo '<div id="off_line_payment_container" class="payment_container event-display-boxes">';
