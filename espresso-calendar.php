@@ -342,27 +342,23 @@ function espresso_calendar_config_mnu()	{
 														</li></td>
 												</tr>
 												<tr>
-													<?php
-												$disabled = ($espresso_calendar['enable_calendar_thumbs'] !== 'true') ? 'disabled="disabled"' : '';
-												$styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
-												?>
-												<tr>
-													<th <?php echo $styled ?>>
+												<tr id="thumbnail-sizes">
+													<th>
 														<?php _e('Thumbnail Size', 'event_espresso'); ?>
 														<?php apply_filters('espresso_help', 'calendar-thumb-sizes'); ?>
 													</th>
-													<td><input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small" <?php echo $disabled ?> />
-														<label for="calendar-thumb-size-sml" <?php echo $styled ?>>
+													<td><input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small" />
+														<label for="calendar-thumb-size-sml">
 															<?php _e('Small (50px high)', 'event_espresso') ?>
 														</label>
 														<br />
-														<input id="calendar-thumb-size-med" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium')?> value="medium" <?php echo $disabled ?> />
-														<label for="calendar-thumb-size-med" <?php echo $styled ?>>
+														<input id="calendar-thumb-size-med" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium')?> value="medium" />
+														<label for="calendar-thumb-size-med">
 															<?php _e('Medium (100px high)', 'event_espresso')?>
 														</label>
 														<br />
-														<input id="calendar-thumb-size-lrg" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large')?> value="large" <?php echo $disabled ?> />
-														<label for="calendar-thumb-size-lrg" <?php echo $styled ?>>
+														<input id="calendar-thumb-size-lrg" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large')?> value="large" />
+														<label for="calendar-thumb-size-lrg">
 															<?php _e('Large (150px high)', 'event_espresso')?>
 														</label></td>
 												</tr>
@@ -571,16 +567,31 @@ jQuery(document).ready(function($){
 			$("#time_format_custom_radio").attr("checked", "checked");
 		}); 
 				
-		// disable color picker inputs & fade if not use Color pickers true
-		window.scp =$('select#espresso_use_pickers option:selected').val();
+		// disable color picker & thumb sizes inputs & fade if not use controls true
+		window.scp = $('select#espresso_use_pickers option:selected').val();
+		window.ect = $('select#enable-calendar-thumbs option:selected').val();
+
 			if(window.scp == 'false'){
 				$('input#event-background, input#event-text').attr('disabled', true);
 				$('.color-picker-style').attr('style', "opacity: .3");
 				$('tr.color-picker-selections th, tr.color-picker-selections td').attr('style', "opacity: .3");
 			}
+			if(window.ect == 'false'){
+				$('tr#thumbnail-sizes td input').attr('disabled', true);
+				$('tr#thumbnail-sizes').attr('style', "opacity: .3");
+			}
+		$('select#enable-calendar-thumbs').change(function(){
+			window.ect = $('select#enable-calendar-thumbs option:selected').val();
+			if(window.ect == 'false'){
+				$('tr#thumbnail-sizes td input').attr('disabled', true);
+				$('tr#thumbnail-sizes').attr('style', "opacity: .3");
+			}else{
+				$('tr#thumbnail-sizes td input').removeAttr('disabled', true);
+				$('tr#thumbnail-sizes').removeAttr('style', "opacity: .3");
+			}		
+		});
 		$('select#espresso_use_pickers').change(function(){
-			window.scp =$('select#espresso_use_pickers option:selected').val();
-			 //alert(window.scp);
+			window.scp = $('select#espresso_use_pickers option:selected').val();
 			if(window.scp == 'false'){
 				$('input#event-background, input#event-text').attr('disabled', true);
 				$('tr.color-picker-selections th, tr.color-picker-selections td').attr('style', "opacity: .3");
@@ -588,7 +599,7 @@ jQuery(document).ready(function($){
 			 	$('input#event-background, input#event-text').removeAttr('disabled', true);
 				$('tr.color-picker-selections th, tr.color-picker-selections td').removeAttr('style');
 			}
-			});		
+		});		
 
 		// color picker initialisation 
 			$('input#event-background, input#event-text').wheelColorPicker({ 
