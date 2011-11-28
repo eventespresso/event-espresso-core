@@ -696,7 +696,7 @@ if (!function_exists('espresso_staff_sc')) {
 
 				//Build the image
 				if ($show_image != false) {
-					$html .= $meta['image'] != '' ? $image_wrapper_start . '<image id="staff_image_' . $person_id . '" ' . $image_class . ' src="' . stripslashes_deep($meta['image']) . '" />' . $image_wrapper_end : '';
+					$html .= $meta['image'] != '' ? $image_wrapper_start . '<img id="staff_image_' . $person_id . '" ' . $image_class . ' src="' . stripslashes_deep($meta['image']) . '" />' . $image_wrapper_end : '';
 				}
 
 				//Build the description
@@ -777,7 +777,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 		//Image class
 		$image_class = isset($image_class) ? 'class="' . $image_class . '"' : 'class="venue_image"';
 		$image_wrapper_class = isset($image_wrapper_class) ? 'class="' . $image_wrapper_class . '"' : 'class="image_wrapper"';
-		$image_wrapper_start = isset($image_wrapper) ? '<' . $image_wrapper . ' ' . $image_wrapper_class : '<p ' . $image_wrapper_class;
+		$image_wrapper_start = isset($image_wrapper) ? '<' . $image_wrapper . ' ' . $image_wrapper_class : '<p ' . $image_wrapper_class . '>';
 		$image_wrapper_end = isset($image_wrapper) ? '</' . $image_wrapper . '>' : '</p>';
 
 		//Venue title
