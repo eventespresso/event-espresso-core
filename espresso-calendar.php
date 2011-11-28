@@ -347,7 +347,7 @@ function espresso_calendar_config_mnu()	{
 												$styled = ( !empty($disabled) ) ? 'style="color: #ccc;"' : '';
 												?>
 												<tr>
-													<th> <?php echo $styled ?>
+													<th <?php echo $styled ?>>
 														<?php _e('Thumbnail Size', 'event_espresso'); ?>
 														<?php apply_filters('espresso_help', 'calendar-thumb-sizes'); ?>
 													</th>
