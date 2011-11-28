@@ -58,7 +58,7 @@ function espresso_calendar_install(){
 					'espresso_calendar_width' => '2',
 					'enable_calendar_thumbs' => false,
 					'calendar_thumb_size' => 'small',
-					'show_in_thickbox' => false,
+					//'show_in_thickbox' => false,
 					'espresso_use_pickers' => false,
 					'ee_event_background' => 'ffffff',
 					'ee_event_text_color' => '555555',
@@ -112,7 +112,7 @@ function espresso_calendar_config_mnu()	{
 		$espresso_calendar['espresso_calendar_width'] = $_POST['espresso_calendar_width'];
 		$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
 		$espresso_calendar['calendar_thumb_size'] = (!empty($_POST['calendar_thumb_size']))? $_POST['calendar_thumb_size']: $espresso_calendar['calendar_thumb_size'];
-		$espresso_calendar['show_in_thickbox'] = $_POST['show_in_thickbox'];
+		//$espresso_calendar['show_in_thickbox'] = $_POST['show_in_thickbox'];
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
 		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
@@ -630,7 +630,7 @@ if (!function_exists('espresso_init_calendar')) {
 		wp_enqueue_script('jquery');
 		wp_register_script('fullcalendar-min-js',ESPRESSO_CALENDAR_PLUGINFULLURL.'scripts/fullcalendar.min.js', array('jquery') );//core calendar script
 		wp_print_scripts('fullcalendar-min-js');
-		wp_print_scripts('thickbox');
+		//wp_print_scripts('thickbox');
 	}
 }
 add_action('wp_footer', 'espresso_init_calendar',20);
@@ -740,15 +740,15 @@ if (!function_exists('espresso_calendar')) {
 		//Print the results of the query
 		//echo $sql;
 
-		// grab the thumbnail size & thickbox from calendar options settings
+		// grab the thumbnail size from calendar options settings
 		if(empty($espresso_calendar['calendar_thumb_size'])) {
-		$ee_img_size = 'small';
+			$ee_img_size = 'small';
 		}else{
-		$ee_img_size = $espresso_calendar['calendar_thumb_size'];
+			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
 		}
-		if( isset($espresso_calendar['show_in_thickbox']) ) {
-		$in_thickbox = $espresso_calendar['show_in_thickbox'];
-		}
+		/*if( isset($espresso_calendar['show_in_thickbox']) ) {
+			$in_thickbox = $espresso_calendar['show_in_thickbox'];
+		}*/
 		$events_data = $wpdb->get_results($sql);
 	 
 		$events = array();
@@ -824,32 +824,29 @@ if (!function_exists('espresso_calendar')) {
 
 			//This can be used to use the category id as the event type
 			$eventArray['eventType'] = $category_data['category_name'];
-			
- //Changed 8-30-2011 by Seth
+
 			//This decalares the category ID as the CSS class name
- if( isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == 'Y' ) {
-			$sql_categories = 'select * from `wp_events_category_rel` where event_id='.$event->id ;
-			$categories_data = $wpdb->get_results($sql_categories);
-
-			$cssClass = $category_data['category_identifier'];
- 			foreach($categories_data as $_category){
-				if(isset($categoryCss[$_category->cat_id])){
-					$cssClass .=' '.$categoryCss[$_category->cat_id] ;
-					continue;
+			if( isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == 'Y' ) {
+				$sql_categories = "SELECT * FROM ".EVENTS_CATEGORY_REL_TABLE." WHERE event_id='".$event->id."'";
+				$categories_data = $wpdb->get_results($sql_categories);
+			
+				$cssClass = $category_data['category_identifier'];
+				foreach($categories_data as $_category){
+					if(isset($categoryCss[$_category->cat_id])){
+						$cssClass .=' '.$categoryCss[$_category->cat_id] ;
+						continue;
+					}
+					$sql_cat = "SELECT * FROM ".EVENTS_CATEGORY_TABLE." WHERE id='".$_category->cat_id."'";
+					$category = $wpdb->get_results($sql_cat);
+					foreach($category as $_cat){
+						$cssClass .=' '.$_cat->category_identifier ;
+						$categoryCss[$_category->cat_id] = $_cat->category_identifier;
+						continue;
+					}
 				}
-				$sql_cat = 'select * from `wp_events_category_detail` where id='.$_category->cat_id;
-				$category = $wpdb->get_results($sql_cat);
-				foreach($category as $_cat){
-					$cssClass .=' '.$_cat->category_identifier ;
-					$categoryCss[$_category->cat_id] = $_cat->category_identifier;
-					continue;
-				}
-
-			}
- //var_dump($cssClass);
-			$eventArray['className'] = $cssClass;
- }//end if user enabled cat for classes
-			//End Seth
+			 	//var_dump($cssClass);
+				$eventArray['className'] = $cssClass;
+			 }//end if user enabled cat for classes
 			
 			
 			//End custom fields
@@ -978,11 +975,11 @@ if (!function_exists('espresso_calendar')) {
 					//http://code.google.com/p/fullcalendar/issues/detail?id=6&can=1&q=css&colspec=ID%20Type%20Status%20Milestone%20Summary%20Stars
 					eventRender: function(event, element) {
  
-// set an event category class
-//alert(event.className);
-if(event.className){
-element.find('a').addClass(event.className);
-}
+						// set an event category class
+						//alert(event.className);
+						if(event.className){
+							element.find('a').addClass(event.className);
+						}
 						//This displays the title of the event when hovering
 						//element.attr('title', event.title + " - Event Times: " + event.start + event.end);
 						 
@@ -1012,6 +1009,8 @@ element.find('a').addClass(event.className);
 						<?php 
 						}
 						?>
+						
+
 						//These are examples of custom parameters that can be passed
 						/*if (event.eventType == 'meeting') {
 							element.addClass('meeting');
