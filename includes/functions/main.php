@@ -1264,6 +1264,13 @@ function espresso_get_user_id(){
 	}else{
 		$wp_user = 1;
 	}
+	
+	//Make sure the final user id is not 0
+	if ($wp_user_id == 0){
+			$wp_user_id = 1;
+	}
+	
+	//define it as a global
 	global $espresso_wp_user;
 	$espresso_wp_user = $wp_user;
 	
