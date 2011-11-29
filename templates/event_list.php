@@ -26,7 +26,9 @@ if (!function_exists('display_all_events')) {
 
 	function display_all_events() {
 		global $org_options;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		//If set to true, the event page will display recurring events.
 		$display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
