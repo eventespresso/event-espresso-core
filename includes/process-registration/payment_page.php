@@ -4,10 +4,9 @@
 //This is the initial PayPal button
 function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupon_code ='') {
 	global $wpdb, $org_options, $simpleMath;
-	
-	//Debug
-	//echo '<p>Function = events_payment_page()</p>';
-	
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 	$today = date("m-d-Y");
 	$num_people = 0;
 
