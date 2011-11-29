@@ -1326,3 +1326,41 @@ function espresso_payment_reports($atts) {
 	}
 }
 
+//Retunrs an array of template files on the uploads directory
+function espresso_template_files_exist($dir) {
+	// read our template dir and build an array of files
+	$dhandle = opendir($dir);
+	$files = array();
+	
+	if ($dhandle) { //if we managed to open the directory
+		// loop through all of the files
+		while (false !== ($fname = readdir($dhandle))) {
+			// if the file is not this file, and does not start with a '.' or '..',
+			// then store it for later display
+			if ($fname != '.'){
+				if ($fname != 'index.html'){
+					if ($fname != '..'){
+						if ($fname != '.svn'){
+							if ($fname != basename($_SERVER['PHP_SELF']) ){
+								if ($fname != '.DS_Store'){
+									if ($fname != 'css'){
+										// store the filename
+										$files[] = $fname;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		// close the directory
+		closedir($dhandle);
+	}
+	$html = '<p>';
+	foreach ($files as $k=>$v){
+		$html .= $v . '<br />';
+	}
+	$html .= '</p>';
+	return $html;
+}

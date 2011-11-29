@@ -494,7 +494,7 @@ function event_espresso_support() {
 						<h4><?php _e('Calendar Shortcodes (premium version only)', 'event_espresso'); ?></h4>
 						<ul>
 						  <li><span class="highlight">[ESPRESSO_CALENDAR]</span></li>
-						  <li><span class="highlight"> [ESPRESSO_CALENDAR show_expired="true"]</span></li>
+						  <li><span class="highlight">[ESPRESSO_CALENDAR show_expired="true"]</span></li>
 						  <li><span class="highlight">[ESPRESSO_CALENDAR event_category_id="your_category_identifier"]</span></li>
 						  <li><span class="highlight">[ESPRESSO_CALENDAR event_category_id="your_category_identifier" show_expired="true"]</span></li>
 						  <li><span class="highlight">[ESPRESSO_CALENDAR cal_view="month"] (Available parameters: month, basicWeek, basicDay, agendaWeek, agendaDay)</span></li>
@@ -589,11 +589,15 @@ function event_espresso_support() {
 						  <dt>
 							<?php _e('Event Espresso Template Path:', 'event_espresso'); ?>
 						  </dt>
-						  <dd><?php echo EVENT_ESPRESSO_TEMPLATE_DIR; ?></dd>
+						  <dd><?php echo EVENT_ESPRESSO_TEMPLATE_DIR; ?>
+						  <p><span class="red_text"><?php _e('If you are having problems with regsitrations, display, etc. You should backup and remove these files immediately.', 'event_espresso'); ?></span></p>
+						<?php echo espresso_template_files_exist(EVENT_ESPRESSO_TEMPLATE_DIR);?></dd>
 						  <dt>
 							<?php _e('Event Espresso Gateway Path:', 'event_espresso'); ?>
 						  </dt>
-						  <dd><?php echo EVENT_ESPRESSO_GATEWAY_DIR; ?></dd>
+						  <dd><?php echo EVENT_ESPRESSO_GATEWAY_DIR; ?>
+						  <p><span class="red_text"><?php _e('If you are having problems with payments. You should backup and remove these files immediately.', 'event_espresso'); ?></span></p>
+							<?php echo espresso_template_files_exist(EVENT_ESPRESSO_GATEWAY_DIR);?></dd>
 						</dl>
 					  </div>
 					</div>
