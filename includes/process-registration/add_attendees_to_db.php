@@ -11,8 +11,9 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 	//This entire function can be overridden using the "Custom Files" addon
 	function event_espresso_add_attendees_to_db($event_id = NULL, $session_vars = NULL) {
 		global $wpdb, $org_options, $espresso_premium;
-		//print_r($session_vars);
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$data_source = $_POST;
 		$att_data_source = $_POST;
 		$multi_reg = false;
