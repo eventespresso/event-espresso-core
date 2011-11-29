@@ -218,17 +218,17 @@ if (!function_exists('event_espresso_get_is_active')) {
 
 		if (!empty($event_meta)) {
 
-			$is_active = $event_meta['is_active'];
-			$event_status = $event_meta['event_status'];
+			$is_active = empty($event_meta['is_active']) ? '' : $event_meta['is_active'];
+			$event_status = empty($event_meta['event_status']) ? '' : $event_meta['event_status'];
 
-			$start_time = $event_meta['start_time'];
-			$start_date = $event_meta['start_date'];
+			$start_time = empty($event_meta['start_time']) ? '' : $event_meta['start_time'];
+			$start_date = empty($event_meta['start_date']) ? '' : $event_meta['start_date'];
 
-			$registration_start = $event_meta['registration_start'];
-			$registration_startT = $event_meta['registration_startT'];
+			$registration_start = empty($event_meta['registration_start']) ? '' : $event_meta['registration_start'];
+			$registration_startT = empty($event_meta['registration_startT']) ? '' : $event_meta['registration_startT'];
 
-			$registration_end = $event_meta['registration_end'];
-			$registration_endT = $event_meta['registration_endT'];
+			$registration_end = empty($event_meta['registration_end']) ? '' : $event_meta['registration_end'];
+			$registration_endT = empty($event_meta['registration_endT']) ? '' : $event_meta['registration_endT'];
 
 			$registration_start = $registration_start . " " . $registration_startT;
 			$registration_end = $registration_end . " " . $registration_endT;
@@ -247,20 +247,10 @@ if (!function_exists('event_espresso_get_is_active')) {
 			$registration_end = $wpdb->last_result[0]->registration_end . " " . $wpdb->last_result[0]->registration_endT;
 		}
 
-		//$timezone_string =  $wpdb->last_result[0]->timezone_string;
-		//$t = time();
-		//$today = date_at_timezone("Y-m-d H:i", $timezone_string, $t);
-		//Build the timestamps
 		$timestamp = strtotime($start_date . ' ' . $start_time); //Creates a timestamp from the event start date and start time
 		$registration_start_timestamp = strtotime($registration_start); //Creates a timestamp from the event registration start date
 		$registration_end_timestamp = strtotime($registration_end); //Creates a timestamp from the event registration start date
-		//echo $timestamp;
-		//echo date('Y-m-d h:i:s A', time());
-		//echo time('', $timestamp);
-		//echo date(time());
-		//echo ' event date = '.date( $timestamp);
-		//$org_options['expire_on_registration_end'] = 'Y';
-		//IF the event is ongoing, then display ongoing
+
 		if ($is_active == "Y" && $event_status == "O") {
 			$event_status = array('status' => 'ONGOING', 'display' => '<span style="color: #090; font-weight:bold;">' . __('ONGOING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_ongoing">' . __('Ongoing', 'event_espresso') . '</span>');
 			//print_r( $event_status);
@@ -1245,37 +1235,37 @@ function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
 	return $cost;
 }
 
-//This function returns the user id of the current user, if the permissions pro addon is installed. 
+//This function returns the user id of the current user, if the permissions pro addon is installed.
 //IF the permissions pro addon is installed and the admin has loaded a different manager id, then the system will return that users id.
-//Otherwise it returns the id of the primary admin. 
+//Otherwise it returns the id of the primary admin.
 function espresso_get_user_id(){
 	global $notices, $current_user;
 	if ( function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true){
 		$wp_user = $current_user->ID;
-			
+
 		//If an event manager is selected, then we need to load that persons id
 		$selected_user = espresso_get_selected_manager();
 		if (!empty($selected_user)){
 			$wp_user = $selected_user;
 		}
-		
+
 	}elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 		$wp_user = espresso_member_data('id');
 	}else{
 		$wp_user = 1;
 	}
-	
+
 	//Make sure the final user id is not 0
 	if ($wp_user_id == 0){
 			$wp_user_id = 1;
 	}
-	
+
 	//define it as a global
 	global $espresso_wp_user;
 	$espresso_wp_user = $wp_user;
-	
+
 	//Debug
 	//echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
-	
+
 	return $wp_user;
 }
