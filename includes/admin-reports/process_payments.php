@@ -2,7 +2,9 @@
 
 function event_process_payments() {
 	global $wpdb, $org_options;
-
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	if ($_POST['perm_delete_event']) {
 		if (is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):

@@ -5,9 +5,11 @@
 function update_event($recurrence_arr = array()) {
 	//print_r($_REQUEST);
 	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
-
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	if(  check_admin_referer( 'espresso_form_check', 'ee_update_event' ) ) {
-	
+
 	$wpdb->show_errors();
 	/*
 	* Begin Recurrence handling
@@ -252,7 +254,7 @@ function update_event($recurrence_arr = array()) {
 		}
 
 		$question_groups = serialize($_REQUEST['question_groups']);
-		
+
 		$add_attendee_question_groups = serialize(empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups']);
 
 		$item_groups = serialize(empty($_REQUEST['item_groups']) ? '' : $_REQUEST['item_groups']);
@@ -262,18 +264,18 @@ function update_event($recurrence_arr = array()) {
 		$event_meta['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
 		$event_meta['date_submitted'] = $_REQUEST['date_submitted'];
 		$event_meta['originally_submitted_by'] = $_REQUEST['originally_submitted_by'];
-		
+
 		if ($wp_user != $event_meta['originally_submitted_by']){
 			$event_meta['orig_event_staff'] = !empty($_REQUEST['event_person']) ? serialize($_REQUEST['event_person']) : '';
 		}
 		//print_r($event_meta['orig_event_staff']);
-		
+
 		//Thumbnails
 		$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
 		$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
 		$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
 		$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
-		
+
 		if(!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])){
 		 $event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
 		}else{
@@ -392,9 +394,9 @@ function update_event($recurrence_arr = array()) {
 		/*echo 'Debug:<br />';
 		print 'Number of vars: ' . count ($sql);
 		echo '<br />';
-		print 'Number of cols: ' . count($sql_data); 
+		print 'Number of cols: ' . count($sql_data);
 		echo "<pre>".print_r( $sql,true )."</pre>";*/
-		
+
 		if (function_exists('event_espresso_add_event_to_db_groupon')) {
 			$sql = event_espresso_add_event_to_db_groupon($sql, $_REQUEST['use_groupon_code']);
 			///print count ($sql);
@@ -641,7 +643,7 @@ function update_event($recurrence_arr = array()) {
 
 				break;
 		}
-		
+
 		//Show the saved event notice
 		global $notices;
 		$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="'. espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' for ' . date("m/d/Y", strtotime($start_date));

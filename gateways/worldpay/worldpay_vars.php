@@ -2,6 +2,9 @@
 
 function espresso_display_worldpay($attendee_id, $event_id, $event_cost) {
 	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	include_once ('Worldpay.php');
 	$myworldpay = new worldpay(); // initiate an instance of the class
 	echo '<!-- Event Espresso worldpay Gateway Version ' . $myworldpay->worldpay_gateway_version . '-->';

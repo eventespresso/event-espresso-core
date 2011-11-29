@@ -1,26 +1,30 @@
 <?php
+
 function espresso_pending_registration_approval($registration_id) {
 	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	//Get the event information
-	$events = $wpdb->get_results("SELECT ed.* FROM ". EVENTS_DETAIL_TABLE . " ed 
+	$events = $wpdb->get_results("SELECT ed.* FROM " . EVENTS_DETAIL_TABLE . " ed
 					JOIN " . EVENTS_ATTENDEE_TABLE . " ea
 					ON ed.id = ea.event_id
-					WHERE ea.registration_id='".$registration_id."'");
+					WHERE ea.registration_id='" . $registration_id . "'");
 
-	foreach ($events as $event){
-		$event_id=$event->id;
-		$event_name=stripslashes_deep($event->event_name);
-		$event_desc=stripslashes_deep($event->event_desc);
-		$display_desc=$event->display_desc;
-		$event_identifier=$event->event_identifier;
+	foreach ($events as $event) {
+		$event_id = $event->id;
+		$event_name = stripslashes_deep($event->event_name);
+		$event_desc = stripslashes_deep($event->event_desc);
+		$display_desc = $event->display_desc;
+		$event_identifier = $event->event_identifier;
 		$reg_limit = $event->reg_limit;
-		$active=$event->is_active;
-		$send_mail= $event->send_mail;
-		$conf_mail= $event->conf_mail;
-		$email_id= $event->email_id;
-		$alt_email= $event->alt_email;
-		$start_date =  event_date_display($event->start_date);
-		$end_date =  $event->end_date;
+		$active = $event->is_active;
+		$send_mail = $event->send_mail;
+		$conf_mail = $event->conf_mail;
+		$email_id = $event->email_id;
+		$alt_email = $event->alt_email;
+		$start_date = event_date_display($event->start_date);
+		$end_date = $event->end_date;
 		$virtual_url = $event->virtual_url;
 		$virtual_phone = $event->virtual_phone;
 		$event_address = $event->address;
@@ -29,11 +33,11 @@ function espresso_pending_registration_approval($registration_id) {
 		$event_state = $event->state;
 		$event_zip = $event->zip;
 		$event_country = $event->country;
-		$location = ($event_address != '' ? $event_address :'') . ($event_address2 != '' ? '<br />' . $event_address2 :'') . ($event_city != '' ? '<br />' . $event_city :'') . ($event_state != '' ? ', ' . $event_state :'') . ($event_zip != '' ? '<br />' . $event_zip :'') . ($event_country != '' ? '<br />' . $event_country :'');
+		$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
 		$location_phone = $event->phone;
 		$require_pre_approval = $event->require_pre_approval;
-		
-		$google_map_link = espresso_google_map_link(array( 'address'=>$event_address, 'city'=>$event_city, 'state'=>$event_state, 'zip'=>$event_zip, 'country'=>$event_country) );
+
+		$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country));
 	}
 
 	//Build links
@@ -43,22 +47,22 @@ function espresso_pending_registration_approval($registration_id) {
 
 	$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
 
-	if ($registration_id != ''){
-		$sql .= " WHERE registration_id = '".$registration_id."' ";
-	}elseif ($attendee_id != ''){
-		$sql .= " WHERE id = '".$attendee_id."' ";
-	}else{
+	if ($registration_id != '') {
+		$sql .= " WHERE registration_id = '" . $registration_id . "' ";
+	} elseif ($attendee_id != '') {
+		$sql .= " WHERE id = '" . $attendee_id . "' ";
+	} else {
 		_e('No ID Supplied', 'event_espresso');
 	}
 
 	$sql .= " ORDER BY id ";
-	$sql .= " LIMIT 0,1 ";//Get the first attendees details
+	$sql .= " LIMIT 0,1 "; //Get the first attendees details
 
 
-	$attendees  = $wpdb->get_results($sql);
+	$attendees = $wpdb->get_results($sql);
 	//global $attendee_id;
 
-	foreach ($attendees as $attendee){
+	foreach ($attendees as $attendee) {
 		$attendee_id = $attendee->id;
 		$attendee_email = $attendee->email;
 		$lname = $attendee->lname;
@@ -78,8 +82,7 @@ function espresso_pending_registration_approval($registration_id) {
 		$end_time = $attendee->end_time;
 		$date = $attendee->date;
 		$pre_approve = $attendee->pre_approve;
-		
 	}
 	event_espresso_send_attendee_registration_approval_pending($registration_id);
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH."templates/pending_approval.php");
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/pending_approval.php");
 }

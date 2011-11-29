@@ -7,58 +7,58 @@ function event_espresso_check_payment_settings() {
 	if (isset($_POST['update_check_payment_settings']) && check_admin_referer('espresso_form_check', 'add_money_check_settings')) {
 		$allowable_tags = '<br /><br><a>';
 		//$check_payment_settings_settings = get_option('event_espresso_check_payment_settings_settings');
-		$check_payment_settings['check_title'] = strip_tags($_POST['check_title'],$allowable_tags);
-		$check_payment_settings['check_instructions'] = strip_tags($_POST['check_instructions'],$allowable_tags);
-		$check_payment_settings['payable_to'] = strip_tags($_POST['payable_to'],$allowable_tags);
-		$check_payment_settings['payment_address'] = strip_tags($_POST['payment_address'],$allowable_tags);
+		$check_payment_settings['check_title'] = strip_tags($_POST['check_title'], $allowable_tags);
+		$check_payment_settings['check_instructions'] = strip_tags($_POST['check_instructions'], $allowable_tags);
+		$check_payment_settings['payable_to'] = strip_tags($_POST['payable_to'], $allowable_tags);
+		$check_payment_settings['payment_address'] = strip_tags($_POST['payment_address'], $allowable_tags);
 		update_option('event_espresso_check_payment_settings', $check_payment_settings);
-		
+
 		$notices['updates'][] = __('Check/Money Order Payment settings have been saved', 'event_espresso');
 	}
 	?>
 	<div class="metabox-holder">
 		<div class="postbox">
-					<div title="Click to toggle" class="handlediv"><br /></div>
+			<div title="Click to toggle" class="handlediv"><br /></div>
 			<h3 class="hndle">
 				<?php _e('Check/Money Order Payment Settings', 'event_espresso'); ?>
 			</h3>
-							<div class="inside">
-			<div class="padding">
-				<?php
-				if (isset($_REQUEST['activate_check_payment']) && $_REQUEST['activate_check_payment'] == 'true') {
-					add_option("events_check_payment_active", 'true', '', 'yes');
-					add_option("event_espresso_check_payment_settings", '', '', 'yes');
-					//update_option( 'event_espresso_payment_gateway', 'check_payment');
-				}
-				if (isset($_REQUEST['reactivate_check_payment']) && $_REQUEST['reactivate_check_payment'] == 'true') {
-					update_option('events_check_payment_active', 'true');
-					//update_option( 'event_espresso_payment_gateway', 'check_payment');
-				}
-				if (isset($_REQUEST['deactivate_check_payment']) && $_REQUEST['deactivate_check_payment'] == 'true') {
-					update_option('events_check_payment_active', 'false');
-					//update_option( 'event_espresso_payment_gateway', '');
-				}
-				echo '<ul>';
-				switch (get_option('events_check_payment_active')) {
-					case 'false':
-						echo '<li>Check/Money Order Payments is installed.</li>';
-						echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_check_payment=true\';" class="green_alert pointer"><strong>' . __('Activate Check/Money Order Payments?', 'event_espresso') . '</strong></li>';
-						break;
-					case 'true':
-						echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_check_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Check/Money Order Payments?', 'event_espresso') . '</strong></li>';
-						event_espresso_display_check_payment_settings();
-						break;
-					default:
-						echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_check_payment=true\';" class="yellow_alert pointer"><strong>' . __('The Check/Money Order Payments is installed. Would you like to activate it?', 'event_espresso') . '</strong></li>';
-						break;
-				}
-				echo '</ul>';
-				?>
+			<div class="inside">
+				<div class="padding">
+					<?php
+					if (isset($_REQUEST['activate_check_payment']) && $_REQUEST['activate_check_payment'] == 'true') {
+						add_option("events_check_payment_active", 'true', '', 'yes');
+						add_option("event_espresso_check_payment_settings", '', '', 'yes');
+						//update_option( 'event_espresso_payment_gateway', 'check_payment');
+					}
+					if (isset($_REQUEST['reactivate_check_payment']) && $_REQUEST['reactivate_check_payment'] == 'true') {
+						update_option('events_check_payment_active', 'true');
+						//update_option( 'event_espresso_payment_gateway', 'check_payment');
+					}
+					if (isset($_REQUEST['deactivate_check_payment']) && $_REQUEST['deactivate_check_payment'] == 'true') {
+						update_option('events_check_payment_active', 'false');
+						//update_option( 'event_espresso_payment_gateway', '');
+					}
+					echo '<ul>';
+					switch (get_option('events_check_payment_active')) {
+						case 'false':
+							echo '<li>Check/Money Order Payments is installed.</li>';
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_check_payment=true\';" class="green_alert pointer"><strong>' . __('Activate Check/Money Order Payments?', 'event_espresso') . '</strong></li>';
+							break;
+						case 'true':
+							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_check_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Check/Money Order Payments?', 'event_espresso') . '</strong></li>';
+							event_espresso_display_check_payment_settings();
+							break;
+						default:
+							echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_check_payment=true\';" class="yellow_alert pointer"><strong>' . __('The Check/Money Order Payments is installed. Would you like to activate it?', 'event_espresso') . '</strong></li>';
+							break;
+					}
+					echo '</ul>';
+					?>
+				</div>
 			</div>
-						</div>
 		</div>
 	</div>
-	<?php } ?>
+<?php } ?>
 <?php
 
 //Check/Money Order Payments Settings Form
@@ -67,7 +67,9 @@ function event_espresso_display_check_payment_settings() {
 	if ($espresso_premium != true)
 		return;
 	global $org_options;
-
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$check_payment_settings = get_option('event_espresso_check_payment_settings');
 	?>
 
@@ -85,24 +87,24 @@ function event_espresso_display_check_payment_settings() {
 						</li>
 						<li><label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label><br />
 							<textarea name="payment_address" cols="30" rows="5"><?php
-								if (trim($check_payment_settings['payment_address']) == '') {
-									echo $org_options['organization_street1']!=''?$org_options['organization_street1'].'<br />':'';
-									echo $org_options['organization_street2']!=''?$org_options['organization_street2'].'<br />':'';
-									echo $org_options['organization_city']!=''?$org_options['organization_city']:'';
-									echo ($org_options['organization_city']!='' && $org_options['organization_state']!='')?', ':'<br />';
-									echo $org_options['organization_state']!=''?$org_options['organization_state'].'<br />':'';
-									echo $org_options['organization_country']!=''?getCountryName($org_options['organization_country']).'<br />':'';
-									echo $org_options['organization_zip']!=''?$org_options['organization_zip']:'';
-								} else {
-									echo $check_payment_settings['payment_address'];
-								}
-								?></textarea>
+	if (trim($check_payment_settings['payment_address']) == '') {
+		echo $org_options['organization_street1'] != '' ? $org_options['organization_street1'] . '<br />' : '';
+		echo $org_options['organization_street2'] != '' ? $org_options['organization_street2'] . '<br />' : '';
+		echo $org_options['organization_city'] != '' ? $org_options['organization_city'] : '';
+		echo ($org_options['organization_city'] != '' && $org_options['organization_state'] != '') ? ', ' : '<br />';
+		echo $org_options['organization_state'] != '' ? $org_options['organization_state'] . '<br />' : '';
+		echo $org_options['organization_country'] != '' ? getCountryName($org_options['organization_country']) . '<br />' : '';
+		echo $org_options['organization_zip'] != '' ? $org_options['organization_zip'] : '';
+	} else {
+		echo $check_payment_settings['payment_address'];
+	}
+	?></textarea>
 						</li></ul></td>
 			</tr>
 		</table>
 		<input type="hidden" name="update_check_payment_settings" value="update_check_payment_settings">
 		<p><input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Check/Money Order Payment Settings', 'event_espresso') ?>" id="save_check_payment_settings" />
-		<?php wp_nonce_field( 'espresso_form_check', 'add_money_check_settings' ); ?>
+			<?php wp_nonce_field('espresso_form_check', 'add_money_check_settings'); ?>
 		</p>
 	</form>
 	<?php

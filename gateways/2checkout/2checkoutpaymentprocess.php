@@ -9,6 +9,9 @@ function espresso_2checkout_process_payment() {
 
 	if ($_REQUEST['credit_card_processed'] == 'Y') {
 		global $wpdb, $org_options, $payment_settings;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$reg_id = espresso_registration_id($_GET['id']);
 		$event_id = $_REQUEST['event_id'];
 		$result['payment_status'] = 'Completed';

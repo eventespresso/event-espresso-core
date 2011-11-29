@@ -8,6 +8,9 @@ function isEmptyArray($array) {
 
 function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $type='', $text='') {
 	global $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$html = '';
 	if ($text == '')
 		$text = __('Edit Attendee', 'event_espresso');
@@ -28,6 +31,9 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $ty
 
 function espresso_reg_url($event_id=0) {
 	global $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	if ($event_id > 0) {
 		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
 		$new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
@@ -73,7 +79,9 @@ function event_espresso_more_than_one($registration_id) {
 //For testing email functions
 function event_espresso_test_email($optional_message = 'None') {
 	global $org_options;
-
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$to = $org_options['contact_email'];
 	$subject = 'Event Espresso Test Message from' . $org_options['organization'];
 	$message = 'Event Espresso email is working properly. Optional message: ' . $optional_message;
@@ -211,6 +219,9 @@ if (!function_exists('event_espresso_get_is_active')) {
 
 	function event_espresso_get_is_active($event_id, $event_meta='') {
 		global $wpdb, $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 		if (get_option('timezone_string') != '') {
 			date_default_timezone_set(get_option('timezone_string'));
@@ -665,13 +676,13 @@ if (!function_exists('espresso_show_social_media')) {
 					return espresso_facebook_button($event_id);
 				}
 				break;
-				case 'google':
-				if(function_exists('espresso_google_button')) {
-				 return espresso_google_button($event_id);
+			case 'google':
+				if (function_exists('espresso_google_button')) {
+					return espresso_google_button($event_id);
 				}
-				case 'stumbleupon':
-				if(function_exists('espresso_stumbleupon_button')) {
-				 return espresso_stumbleupon_button($event_id);
+			case 'stumbleupon':
+				if (function_exists('espresso_stumbleupon_button')) {
+					return espresso_stumbleupon_button($event_id);
 				}
 			default:
 				break;
@@ -1238,26 +1249,25 @@ function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
 //This function returns the user id of the current user, if the permissions pro addon is installed.
 //IF the permissions pro addon is installed and the admin has loaded a different manager id, then the system will return that users id.
 //Otherwise it returns the id of the primary admin.
-function espresso_get_user_id(){
+function espresso_get_user_id() {
 	global $notices, $current_user;
-	if ( function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true){
+	if (function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true) {
 		$wp_user = $current_user->ID;
 
 		//If an event manager is selected, then we need to load that persons id
 		$selected_user = espresso_get_selected_manager();
-		if (!empty($selected_user)){
+		if (!empty($selected_user)) {
 			$wp_user = $selected_user;
 		}
-
-	}elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
+	} elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 		$wp_user = espresso_member_data('id');
-	}else{
+	} else {
 		$wp_user = 1;
 	}
 
 	//Make sure the final user id is not 0
-	if ($wp_user_id == 0){
-			$wp_user_id = 1;
+	if ($wp_user_id == 0) {
+		$wp_user_id = 1;
 	}
 
 	//define it as a global

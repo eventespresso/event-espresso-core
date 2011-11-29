@@ -1,4 +1,5 @@
 <?php
+
 //Functions that deal with pricing should be placed here
 
 function event_espresso_paid_status_icon($payment_status ='') {
@@ -9,13 +10,13 @@ function event_espresso_paid_status_icon($payment_status ='') {
 		case 'NotCheckedin':
 			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Not Checked-in', 'event_espresso') . '" title="' . __('Not Checked-in', 'event_espresso') . '" />';
 			break;
-			case 'Active':
+		case 'Active':
 			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Active', 'event_espresso') . '" title="' . __('Active', 'event_espresso') . '" />';
 			break;
 		case 'Inactive':
 			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/exclamation.png" width="16" height="16" alt="' . __('Inactive', 'event_espresso') . '" title="' . __('Inactive', 'event_espresso') . '" />';
 			break;
-			case 'Checkedin':
+		case 'Checkedin':
 			echo '<img align="absmiddle" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/accept.png" width="16" height="16" alt="' . __('Checked-in', 'event_espresso') . '" title="' . __('Checked-in', 'event_espresso') . '" />';
 			break;
 		case 'NotCheckedin':
@@ -42,6 +43,9 @@ if (!function_exists('espresso_return_price')) {
 
 	function espresso_return_single_price($event_id, $number=0) {
 		global $wpdb, $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$number = $number == 0 ? '0,1' : $number . ',' . $number;
 
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC LIMIT " . $number);
@@ -76,6 +80,9 @@ if (!function_exists('event_espresso_get_price')) {
 
 	function event_espresso_get_price($event_id) {
 		global $wpdb, $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type, price_type FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC LIMIT 1");
 		$surcharge = '';
 		$surcharge_text = isset($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
@@ -122,6 +129,9 @@ if (!function_exists('event_espresso_get_final_price')) {
 
 	function event_espresso_get_final_price($price_id, $event_id = 0) {
 		global $wpdb, $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type FROM " . EVENTS_PRICES_TABLE . " WHERE id='" . $price_id . "' ORDER BY id ASC LIMIT 1");
 		$event_cost = 0.00;
 		foreach ($results as $result) {
@@ -162,7 +172,9 @@ if (!function_exists('early_discount_amount')) {
 
 	function early_discount_amount($event_id, $event_cost, $early_bird_message='') {
 		global $wpdb, $org_options;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		//$early_bird_message = ' ' . __('Early Pricing','event_espresso');
 		$eventdata = $wpdb->get_results("SELECT early_disc, early_disc_date, early_disc_percentage FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "' LIMIT 1");
 		if ((strlen($eventdata[0]->early_disc) > 0) && (strtotime($eventdata[0]->early_disc_date) > strtotime(date("Y-m-d")))) {
@@ -198,7 +210,9 @@ if (!function_exists('event_espresso_price_dropdown')) {
 		//If changes to this function are not appearing, you may have the members addon installed and will need to update the function there.
 
 		global $wpdb, $org_options;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		//Default values
 		$html = '';
 		$early_bird_message = '';
@@ -248,13 +262,12 @@ if (!function_exists('event_espresso_price_dropdown')) {
 
 				//Create the drop down options
 				$html .= '<option ' . $selected . ' value="' . $price->id . '|' . $price->price_type . '">' . $price->price_type . ' (' . $org_options['currency_symbol'] . number_format($price->event_cost, 2) . $early_bird_message . ') ' . $surcharge . ' </option>';
-
 			}
 
 			//Create a hidden field so that we know the price dropdown was used
 			$html .= '</select><input type="hidden" name="price_select" id="price_select-' . $event_id . '" value="true">';
 
-		//If a single price was added to an event, then create the price display and hidden fields to hold the additional information.
+			//If a single price was added to an event, then create the price display and hidden fields to hold the additional information.
 		} else if ($wpdb->num_rows == 1) {
 			foreach ($prices as $price) {
 
@@ -282,7 +295,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 				$html .= '<input type="hidden" name="event_cost' . $multi_name_adjust . '" id="event_cost-' . $price->id . '" value="' . number_format($price->event_cost, 2, '.', '') . '">';
 			}
 
-		//If no prices are found, display the free event message
+			//If no prices are found, display the free event message
 		} else if ($wpdb->num_rows == 0) {
 			$html .= '<span class="free_event">' . __('Free Event', 'event_espresso') . '</span>';
 			$html .= '<input type="hidden" name="payment' . $multi_name_adjust . '" id="payment-' . $event_id . '" value="' . __('free event', 'event_espresso') . '">';
@@ -296,6 +309,9 @@ if (!function_exists('event_espresso_price_dropdown')) {
 //This function gets the first price id associated with an event and displays a hidden field.
 function espresso_hidden_price_id($event_id) {
 	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$wpdb->get_results("SELECT id FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ");
 	$num_rows = $wpdb->num_rows;
 	if ($num_rows > 0) {
@@ -308,6 +324,9 @@ function espresso_hidden_price_id($event_id) {
 //This function returns the first price id associated with an event
 function espresso_get_price_id($event_id) {
 	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$wpdb->get_results("SELECT id FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ");
 	$num_rows = $wpdb->num_rows;
 	if ($num_rows > 0) {
@@ -348,7 +367,6 @@ if (!function_exists('espresso_payment_type')) {
 
 }
 
-
 /**
  * espresso_attendee_price()
  *
@@ -362,14 +380,10 @@ function espresso_attendee_price($atts) {
 	 * If the registration_id is empty, then retrieve it
 	 * */
 	$generated_registration_id = false;
-	if (!isset($registration_id))
-	{
-		if (!isset($attendee_id))
-		{
+	if (!isset($registration_id)) {
+		if (!isset($attendee_id)) {
 			return;
-		}
-		else
-		{
+		} else {
 			$registration_id = espresso_registration_id($attendee_id);
 		}
 	}
@@ -379,9 +393,8 @@ function espresso_attendee_price($atts) {
 	 * Check if the attendee is from old age i.e. before 3.1.10
 	 * */
 	$ice_age = true;
-	$ice_row = $wpdb->get_row($wpdb->prepare("select * from ".EVENTS_ATTENDEE_COST_TABLE." inner join ".EVENTS_ATTENDEE_TABLE." where registration_id = '%s'",$registration_id));
-	if ( $ice_row !== NULL )
-	{
+	$ice_row = $wpdb->get_row($wpdb->prepare("select * from " . EVENTS_ATTENDEE_COST_TABLE . " inner join " . EVENTS_ATTENDEE_TABLE . " where registration_id = '%s'", $registration_id));
+	if ($ice_row !== NULL) {
 		$ice_age = false;
 	}
 
@@ -389,12 +402,12 @@ function espresso_attendee_price($atts) {
 	/**
 	 * Found use of single price only in payment option in attendee record edit page for admin.
 	 * */
-	if (isset($single_price) && $single_price = true && isset($attendee_id) && $attendee_id > 0 ) {
+	if (isset($single_price) && $single_price = true && isset($attendee_id) && $attendee_id > 0) {
 		$sql = '';
 		$sql = "SELECT cost amount_pd FROM " . EVENTS_ATTENDEE_COST_TABLE . " eac ";
 		$sql .= " WHERE eac.attendee_id ='%d' LIMIT 0,1";
 
-		$res = $wpdb->get_results($wpdb->prepare($sql,$attendee_id));
+		$res = $wpdb->get_results($wpdb->prepare($sql, $attendee_id));
 		if ($wpdb->num_rows >= 1 && $wpdb->last_result[0]->amount_pd != NULL) {
 			$total_cost = $wpdb->last_result[0]->amount_pd;
 			return number_format($total_cost, 2, '.', '');
@@ -406,7 +419,7 @@ function espresso_attendee_price($atts) {
 	 * */
 	if (isset($reg_total) && $reg_total = true) {
 		$sql = "select amount_pd as total from " . EVENTS_ATTENDEE_TABLE . " where registration_id = '%s' order by id limit 1";
-		$total_cost = $wpdb->get_var($wpdb->prepare($sql,$registration_id));
+		$total_cost = $wpdb->get_var($wpdb->prepare($sql, $registration_id));
 		return number_format($total_cost, 2, '.', '');
 	}
 
@@ -415,34 +428,27 @@ function espresso_attendee_price($atts) {
 	 * Return the total amount paid for a session. Uses the registration id.
 	 * */
 	if (isset($session_total) && $session_total = true) {
-		$attendee_session = $wpdb->get_var($wpdb->prepare("select attendee_session from ".EVENTS_ATTENDEE_TABLE." where registration_id = '%s' ",$registration_id));
-		if (trim($attendee_session == ''))
-		{
+		$attendee_session = $wpdb->get_var($wpdb->prepare("select attendee_session from " . EVENTS_ATTENDEE_TABLE . " where registration_id = '%s' ", $registration_id));
+		if (trim($attendee_session == '')) {
 			/**
 			 * If attendee_session is empty then return only single attendee information
 			 * */
 			$total_cost = 0;
-			$total_cost = $wpdb->get_var($wpdb->prepare("select sum(amount_pd) as amount_pd from ".EVENTS_ATTENDEE_TABLE." where registration_id = '%s'",$registration_id));
+			$total_cost = $wpdb->get_var($wpdb->prepare("select sum(amount_pd) as amount_pd from " . EVENTS_ATTENDEE_TABLE . " where registration_id = '%s'", $registration_id));
 			return number_format($total_cost, 2, '.', '');
-		}
-		else
-		{
-			if($ice_age)
-			{
-				$sql = "select amount_pd from ".EVENTS_ATTENDEE_TABLE."  where attendee_session = '%s' order by id limit 1";
-				$total_cost = $wpdb->get_var($wpdb->prepare($sql,$attendee_session));
+		} else {
+			if ($ice_age) {
+				$sql = "select amount_pd from " . EVENTS_ATTENDEE_TABLE . "  where attendee_session = '%s' order by id limit 1";
+				$total_cost = $wpdb->get_var($wpdb->prepare($sql, $attendee_session));
 				return number_format($total_cost, 2, '.', '');
-			}
-			else
-			{
+			} else {
 				$primary_registration_id = $registration_id;
-				$rs = $wpdb->get_row($wpdb->prepare("select primary_registration_id from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '%s' limit 0,1 ",$registration_id));
-				if ( $rs !== NULL )
-				{
+				$rs = $wpdb->get_row($wpdb->prepare("select primary_registration_id from " . EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE . " where registration_id = '%s' limit 0,1 ", $registration_id));
+				if ($rs !== NULL) {
 					$primary_registration_id = $rs->primary_registration_id;
 				}
 				$sql = "select sum(amount_pd) as total from " . EVENTS_ATTENDEE_TABLE . " where registration_id = '%s' ";
-				$total_cost = $wpdb->get_var($wpdb->prepare($sql,$primary_registration_id));
+				$total_cost = $wpdb->get_var($wpdb->prepare($sql, $primary_registration_id));
 				return number_format($total_cost, 2, '.', '');
 			}
 		}
@@ -474,8 +480,7 @@ function espresso_attendee_price($atts) {
 	return NULL;
 }
 
-function get_reg_total_price($registration_id)
-{
+function get_reg_total_price($registration_id) {
 
 }
 

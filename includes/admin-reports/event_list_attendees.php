@@ -2,7 +2,9 @@
 
 function event_list_attendees() {
 	global $wpdb, $org_options, $ticketing_installed;
-
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	//Dates
 	$curdate = date("Y-m-d");
 	$pieces = explode('-', $curdate, 3);

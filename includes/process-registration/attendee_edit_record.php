@@ -4,6 +4,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 function attendee_edit_record() {
 	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$id = $_REQUEST['id'];
 	$registration_id = $_REQUEST['registration_id'];
 	if (isset($_REQUEST['r_id']))
@@ -116,14 +119,22 @@ function attendee_edit_record() {
 	 * Update the attendee information
 	 */
 	if (!empty($_REQUEST['attendee_action']) && $_REQUEST['attendee_action'] == 'update_attendee') {
-		if(!empty($_POST['fname']))   $fname   = $_POST['fname'];
-		if(!empty($_POST['lname']))   $lname   = $_POST['lname'];
-		if(!empty($_POST['address'])) $address = $_POST['address'];
-		if(!empty($_POST['city']))	$city	= $_POST['city'];
-		if(!empty($_POST['state']))   $state   = $_POST['state'];
-		if(!empty($_POST['zip']))	 $zip	 = $_POST['zip'];
-		if(!empty($_POST['phone']))   $phone   = $_POST['phone'];
-		if(!empty($_POST['email']))   $email   = $_POST['email'];
+		if (!empty($_POST['fname']))
+			$fname = $_POST['fname'];
+		if (!empty($_POST['lname']))
+			$lname = $_POST['lname'];
+		if (!empty($_POST['address']))
+			$address = $_POST['address'];
+		if (!empty($_POST['city']))
+			$city = $_POST['city'];
+		if (!empty($_POST['state']))
+			$state = $_POST['state'];
+		if (!empty($_POST['zip']))
+			$zip = $_POST['zip'];
+		if (!empty($_POST['phone']))
+			$phone = $_POST['phone'];
+		if (!empty($_POST['email']))
+			$email = $_POST['email'];
 		$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET fname='$fname', lname='$lname', address='$address', city='$city', state='$state', zip='$zip', phone='$phone', email='$email' WHERE id ='$id'";
 		$wpdb->query($sql);
 		//echo $sql;
@@ -208,9 +219,11 @@ function attendee_edit_record() {
 	}
 	?>
 	<div class="event-display-boxes">
-		<h3 class="section-heading"><?php if ($_REQUEST['registration_id'] = 'true') {
-		echo __('Edit Your', 'event_espresso') . ' ';
-	}_e('Registration', 'event_espresso'); ?></h3>
+		<h3 class="section-heading"><?php
+		if ($_REQUEST['registration_id'] = 'true') {
+			echo __('Edit Your', 'event_espresso') . ' ';
+		}_e('Registration', 'event_espresso');
+	?></h3>
 		<p><strong><?php _e('Event:', 'event_espresso'); ?> <?php echo $event_name; ?></strong></p>
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" class="espresso_form">
 			<?php
@@ -289,7 +302,8 @@ function attendee_edit_record() {
 
 							if ($group_name != $question->group_name) {
 								$group_id = (!empty($question->group_identifier)) ? 'id="' . $question->group_identifier . '"' : '';
-								if(empty($question->group_description)) $question->group_description = '';
+								if (empty($question->group_description))
+									$question->group_description = '';
 								echo '<div class="event_questions" ' . $group_id . '>';
 								echo $question->show_group_name != 0 ? '<h4 class="section-title">' . $question->group_name . '</h4>' : '';
 								echo $question->show_group_description != 0 ? '<p>' . $question->group_description . '</p>' : '';

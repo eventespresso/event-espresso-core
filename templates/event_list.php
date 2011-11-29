@@ -7,6 +7,9 @@
 // enqueue thickbox script & styles
 // this needs wrapping in a conditional to test for option setting
 global $org_options;
+if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+}
 if (isset($org_options['template_settings']['thumbnail_popup_lists']) && $org_options['template_settings']['thumbnail_popup_lists'] == 'Y') {
 	add_action('wp_footer', 'load_thickbox');
 	add_action('wp_print_styles', 'add_thickbox_styles');
@@ -27,7 +30,7 @@ if (!function_exists('display_all_events')) {
 	function display_all_events() {
 		global $org_options;
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
 		//If set to true, the event page will display recurring events.
 		$display_recurrence_event = true; //If set to true, the event page will display recurring events.
@@ -51,7 +54,9 @@ if (!function_exists('display_event_espresso_categories')) {
 
 	function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
 		global $wpdb, $org_options;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		if ($event_category_id != "null") {
 
 			$display_recurrence_event = true; //If set to true, the event page will display recurring events.
@@ -80,7 +85,9 @@ if (!function_exists('event_espresso_get_event_details')) {
 	function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override=0) {
 		//echo $sql;
 		global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		//Multi event registration
 		$multi_reg = false;
 		if (function_exists('event_espresso_multi_reg_init')) {

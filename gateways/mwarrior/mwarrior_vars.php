@@ -5,7 +5,9 @@ include_once ('Mwarrior.php');
 echo '<!-- Event Espresso Merchant Warrior Gateway Version ' . $mwarrior_gateway_version . '-->';
 $mwarrior = new Mwarrior(); // initiate an instance of the class
 global $org_options;
-//global $attendee_id;
+if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+}
 $mwarrior_settings = get_option('event_espresso_mwarrior_settings');
 $mwarrior_id = empty($mwarrior_settings['mwarrior_id']) ? '' : $mwarrior_settings['mwarrior_id'];
 $mwarrior_apikey = empty($mwarrior_settings['mwarrior_apikey']) ? '' : $mwarrior_settings['mwarrior_apikey'];
@@ -60,7 +62,7 @@ if (!empty($mwarrior_settings['bypass_payment_page']) && $mwarrior_settings['byp
 		} else {
 			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/mwarrior/btn_checkout.png";
 		}
-	} elseif (file_exists($mwarrior_settings['button_url'])){
+	} elseif (file_exists($mwarrior_settings['button_url'])) {
 		$button_url = $mwarrior_settings['button_url'];
 	} else {
 		//If no other buttons exist, then use the default location

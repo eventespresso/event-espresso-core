@@ -4,9 +4,12 @@
 include_once ('Authorize.php');
 echo '<!--Event Espresso Authorize.net Gateway Version ' . $authnet_gateway_version . '-->';
 global $org_options;
+if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+}
 $myAuthorize = new Authorize(); // initiate an instance of the class
 
-$payment_settings = get_option('payment_data_'.$espresso_wp_user);
+$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 $authnet_login_id = empty($payment_settings['authnet_sim']['authnet_login_id']) ? '' : $payment_settings['authnet_sim']['authnet_login_id'];
 $authnet_transaction_key = empty($payment_settings['authnet_sim']['authnet_transaction_key']) ? '' : $payment_settings['authnet_sim']['authnet_transaction_key'];
 $button_type = empty($payment_settings['authnet_sim']['button_type']) ? '' : $payment_settings['authnet_sim']['button_type'];
@@ -53,7 +56,7 @@ if (!empty($payment_settings['authnet_sim']['bypass_payment_page']) && $payment_
 		} else {
 			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/authnet/btn_cc_vmad.gif";
 		}
-	}elseif (file_exists($payment_settings['authnet_sim']['button_url'])){
+	} elseif (file_exists($payment_settings['authnet_sim']['button_url'])) {
 		$button_url = $payment_settings['authnet_sim']['button_url'];
 	} else {
 		//If no other buttons exist, then use the default location

@@ -5,6 +5,9 @@ if (!function_exists('add_event_espresso_menus')) {
 
 	function add_event_espresso_menus() {
 		global $org_options, $espresso_premium;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$espresso_manager = '';
 
 		//If the permissions manager is installed, then load the $espresso_manager global
@@ -102,7 +105,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		if (is_plugin_active('espresso-social/espresso-social.php') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Social Media Settings', 'event_espresso'), __('Social Media', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_social']), 'espresso_social', 'espresso_social_config_mnu');
 		}
-		
+
 		//SSL/HTTPS Settings
 		if (function_exists('espresso_https_mnu') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - SSL/HTTPS Settings', 'event_espresso'), __('SSL/HTTPS', 'event_espresso'), 'administrator', 'espresso_https', 'espresso_https_mnu');
@@ -131,8 +134,8 @@ if (!function_exists('add_event_espresso_menus')) {
 
 		//Event Maps
 		add_submenu_page('events', __('Event Espresso - Map Settings', 'event_espresso'), __('Maps', 'event_espresso'), 'administrator', 'template_map_confg', 'event_espresso_manage_maps');
-		
-		
+
+
 		//Ticketing Settings
 		if (function_exists('espresso_ticket_config_mnu') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Ticket Settings', 'event_espresso'), __('Tickets', 'event_espresso'), 'administrator', 'event_tickets', 'espresso_ticket_config_mnu');
@@ -145,7 +148,7 @@ if (!function_exists('add_event_espresso_menus')) {
 
 		//Addons
 		add_submenu_page('events', __('Event Espresso - Marketplace', 'event_espresso'), __('Marketplace', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_addons']), 'admin_addons', 'event_espresso_addons_mnu');
-		
+
 		//Test Drive Pro
 		if ($espresso_premium != true)
 			add_submenu_page('events', __('Event Espresso - Test Drive Pro', 'event_espresso'), __('Test Drive Pro', 'event_espresso'), 'administrator', 'test_drive', 'event_espresso_test_drive');

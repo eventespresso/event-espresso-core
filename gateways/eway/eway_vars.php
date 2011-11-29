@@ -5,7 +5,9 @@ include_once ('Eway.php');
 echo '<!-- Event Espresso eway Gateway Version ' . $eway_gateway_version . '-->';
 $myeway = new eway(); // initiate an instance of the class
 global $org_options;
-//global $attendee_id;
+if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+}
 $eway_settings = get_option('event_espresso_eway_settings');
 $eway_id = $eway_settings['eway_id'];
 $eway_username = $eway_settings['eway_username'];
@@ -20,16 +22,16 @@ if ($use_sandbox == 1) {
 	$myeway->enableTestMode();
 	$myeway->addField('CustomerID', '87654321');
 	$myeway->addField('UserName', 'TestAccount');
-}else {
+} else {
 	$myeway->addField('CustomerID', $eway_id);
 	$myeway->addField('UserName', $eway_username);
 }
 $myeway->addField('Amount', number_format($event_cost, 2, '.', ''));
 $myeway->addField('Currency', $eway_cur);
-$myeway->addField('PageTitle','');
-$myeway->addField('PageDescription','');
-$myeway->addField('PageFooter','');
-$myeway->addField('Language','');
+$myeway->addField('PageTitle', '');
+$myeway->addField('PageDescription', '');
+$myeway->addField('PageFooter', '');
+$myeway->addField('Language', '');
 $myeway->addField('CompanyName', str_replace("&", "%26", $org_options['organization']));
 $myeway->addField('CustomerFirstName', $fname);
 $myeway->addField('CustomerLastName', $lname);
@@ -44,13 +46,13 @@ $myeway->addField('InvoiceDescription', stripslashes_deep($event_name) . ' | ' .
 $myeway->addField('CancelURL', str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['cancel_return']));
 $myeway->addField('ReturnURL', str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment'));
 $myeway->addField('CompanyLogo', $eway_settings['image_url']);
-$myeway->addField('PageBanner','');
-$myeway->addField('MerchantReference','');
-$myeway->addField('MerchantInvoice','');
-$myeway->addField('MerchantOption1','');
-$myeway->addField('MerchantOption2','');
-$myeway->addField('MerchantOption3','');
-$myeway->addField('ModifiableCustomerDetails','false');
+$myeway->addField('PageBanner', '');
+$myeway->addField('MerchantReference', '');
+$myeway->addField('MerchantInvoice', '');
+$myeway->addField('MerchantOption1', '');
+$myeway->addField('MerchantOption2', '');
+$myeway->addField('MerchantOption3', '');
+$myeway->addField('ModifiableCustomerDetails', 'false');
 
 
 if ($eway_settings['bypass_payment_page'] == 'Y') {

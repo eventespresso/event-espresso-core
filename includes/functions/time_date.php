@@ -1,5 +1,7 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'); 
+if (!defined('EVENT_ESPRESSO_VERSION'))
+	exit('No direct script access allowed');
+
 //Time and date functions
 
 /* -------------------------------------------------------------
@@ -162,10 +164,14 @@ if (!function_exists('espresso_get_time_reg_limit')) {
 
 //Creates a dropdown if multiple times are associated with an event
 if (!function_exists('event_espresso_time_dropdown')) {
+
 	function event_espresso_time_dropdown($event_id = 'NULL', $label = 1, $multi_reg = 0, $value = '') {
 		global $wpdb, $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$html = '';
-		
+
 		//Will make the name an array and put the event id as a key so we
 		//know which event this belongs to
 		$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
@@ -228,11 +234,14 @@ if (!function_exists('event_espresso_time_dropdown')) {
 		}
 		return $html;
 	}
+
 }
 
 function espresso_time_id_hidden_field($event_id, $multi_reg = 0) {
 	global $wpdb, $org_options;
-
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	//Will make the name an array and put the event id as a key so we
 	//know which event this belongs to
 	$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
@@ -314,12 +323,11 @@ if (!function_exists('event_espresso_display_selected_time')) {
 					$html .= event_date_display($time->end_time, get_option('time_format'));
 					break;
 				default :
-				   $html .= '<span class="section-title">'.__('Time:  ', 'event_espresso').'</span>'; 
-				   $html .= event_date_display($time->start_time, get_option('time_format')) . ' - '. event_date_display($time->end_time, get_option('time_format'));
-				   break;
+					$html .= '<span class="section-title">' . __('Time:  ', 'event_espresso') . '</span>';
+					$html .= event_date_display($time->start_time, get_option('time_format')) . ' - ' . event_date_display($time->end_time, get_option('time_format'));
+					break;
 			}
 			$html .= '<input type="hidden" name="start_time_id" id="start_time_id-' . $time->id . '" value="' . $time->id . '"><input type="hidden" name="event_time" id="event_time-' . $time->start_time . '" value="' . $time->start_time . '">';
-			
 		}
 		return $html;
 	}
@@ -399,11 +407,11 @@ if (!function_exists('event_espresso_event_start_date')) {
 }
 
 function event_espresso_datetime2mysqldatetime($datetime) {// "25.12.2010 12:10:00" -> "2010-12-25 12:10:00"
-	return date('Y-m-d H:i:s', strtotime($datetime));  // "25.12.2010" -> "2010-12-25 00:00:00"
+	return date('Y-m-d H:i:s', strtotime($datetime));	// "25.12.2010" -> "2010-12-25 00:00:00"
 }
 
 function event_espresso_mysqldatetime2datetime($mysql_datetime) {// "2010-12-25 12:10:00" -> "25.12.2010 12:10:00"
-	$d = split(' ', $mysql_datetime);	// "2010-12-25" -> "25.12.2010"
+	$d = split(' ', $mysql_datetime); // "2010-12-25" -> "25.12.2010"
 	if ($d && count($d) > 1) {
 		list($year, $month, $day) = split("-", $d[0]);
 		list($hour, $minute, $second) = split(":", $d[1]);
@@ -493,7 +501,7 @@ function eventespresso_ddtimezone($event_id = 0) {
 	?>
 
 	<p><select id="timezone_string" name="timezone_string">
-			<?php echo wp_timezone_choice($tzstring); ?>
+	<?php echo wp_timezone_choice($tzstring); ?>
 		</select>
 		<br />
 		<span class="description"><?php _e('Choose a city in the same timezone as the event.'); ?></span>
@@ -502,9 +510,9 @@ function eventespresso_ddtimezone($event_id = 0) {
 	<p><span><?php printf(__('<abbr title="Coordinated Universal Time">UTC</abbr> time is <code>%s</code>'), date_i18n($timezone_format, false, 'gmt')); ?></span>
 		<?php if (get_option('timezone_string') || !empty($current_offset)) : ?>
 			<br /><span><?php printf(__('Local time is <code>%1$s</code>'), date_i18n($timezone_format)); ?></span>
-		<?php endif; ?>
+	<?php endif; ?>
 
-		<?php if ($check_zone_info && $tzstring) : ?>
+			<?php if ($check_zone_info && $tzstring) : ?>
 			<br />
 			<span>
 				<?php
@@ -533,8 +541,8 @@ function eventespresso_ddtimezone($event_id = 0) {
 					if ($found) {
 						echo ' ';
 						$message = $tr['isdst'] ?
-								__('Daylight saving time begins on: <code>%s</code>.') :
-								__('Standard time begins  on: <code>%s</code>.');
+										__('Daylight saving time begins on: <code>%s</code>.') :
+										__('Standard time begins  on: <code>%s</code>.');
 						// Add the difference between the current offset and the new offset to ts to get the correct transition time from date_i18n().
 						printf($message, date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $tr['ts'] + ($tz_offset - $tr['offset'])));
 					} else {
@@ -576,7 +584,7 @@ function espresso_ddtimezone_simple($event_id = 0) {
 	?>
 
 	<p><select id="timezone_string" name="timezone_string">
-			<?php echo wp_timezone_choice($tzstring); ?>
+	<?php echo wp_timezone_choice($tzstring); ?>
 		</select></p>
 	<?php
 }
@@ -650,7 +658,7 @@ function formatOffset($offset) {
 		$sign = ' ';
 	}
 	return 'GMT' . $sign . str_pad($hour, 2, '0', STR_PAD_LEFT)
-	. ':' . str_pad($minutes, 2, '0');
+					. ':' . str_pad($minutes, 2, '0');
 }
 
 function date_at_timezone($format, $locale, $timestamp=null) {

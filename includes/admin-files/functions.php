@@ -120,11 +120,11 @@ if (!function_exists('espresso_personnel_cb')) {
 		if ($espresso_premium != true)
 			return;
 		global $wpdb;
-		if ( $orig_event_staff != 0 ){
+		if ($orig_event_staff != 0) {
 			//print_r( $orig_event_staff );
-			$p_id ='';
-			foreach($orig_event_staff as $k=>$v){
-				$p_id .= "'".$v."',";
+			$p_id = '';
+			foreach ($orig_event_staff as $k => $v) {
+				$p_id .= "'" . $v . "',";
 			}
 		}
 		$p_id = rtrim($p_id, ",");
@@ -139,11 +139,11 @@ if (!function_exists('espresso_personnel_cb')) {
 			} else {
 
 				$sql .= " wp_user = '" . $wp_user . "' ";
-				if ( $orig_user != 0 ){
+				if ($orig_user != 0) {
 					$sql .= " OR wp_user = '" . $orig_user . "' ";
 				}
 			}
-			if ( $orig_event_staff != 0 ){
+			if ($orig_event_staff != 0) {
 				$sql .= " OR id IN (" . $p_id . ") ";
 			}
 			$sql .= ")";
@@ -237,6 +237,9 @@ if (!function_exists('espresso_chart_display')) {
 
 	function espresso_chart_display($event_id, $type) {
 		global $wpdb, $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$retVAl = array();
 		switch ($type) {
 			case 'total_reg':
@@ -331,6 +334,9 @@ if (!function_exists('event_espresso_meta_edit')) {
 
 	function event_espresso_meta_edit($event_meta='') {
 		global $wpdb, $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
@@ -346,45 +352,45 @@ if (!function_exists('event_espresso_meta_edit')) {
 		//print_r( $good_meta );
 		?>
 		<p>
-		<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php apply_filters( 'espresso_help', 'event-meta-boxes'); ?>
+			<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php apply_filters('espresso_help', 'event-meta-boxes'); ?>
 		<ul id="dynamicMetaInput">
-		<?php
-		if ($event_meta != '') {
-			foreach ($event_meta as $k => $v) {
-				?>
-							<?php
-							if (in_array($k, $hiddenmeta)) {
-								//				echo "<input type='hidden' name='emeta[]' value='{$v}' />";
-								unset($good_meta[$k]);
-							} else {
-								?>
-					  <li>
-						<label>
-							<?php _e('Key: ', 'event_espresso'); ?>
-						</label>
-						<select id="emeta[]" name="emeta[]">
-						<?php foreach ($good_meta as $k2 => $v2) { ?>
-							  <option value="<?php echo $k2; ?>" <?php echo ($k2 == $k ? "SELECTED" : null); ?>><?php echo $k2; ?></option>
-						<?php } ?>
-						</select>
-						<label for="meta-value">
-					<?php _e('Value: ', 'event_espresso'); ?>
-						</label>
-						<input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
-						<?php
-						echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
-						?>
-					  </li>
+			<?php
+			if ($event_meta != '') {
+				foreach ($event_meta as $k => $v) {
+					?>
 					<?php
-					$meta_counter++;
-				}
-				?>
-			<?php }
-			echo '<li><label for="emeta-box">' . __('Key: ', 'event_espresso'); ?>
+					if (in_array($k, $hiddenmeta)) {
+						//				echo "<input type='hidden' name='emeta[]' value='{$v}' />";
+						unset($good_meta[$k]);
+					} else {
+						?>
+						<li>
+							<label>
+								<?php _e('Key: ', 'event_espresso'); ?>
+							</label>
+							<select id="emeta[]" name="emeta[]">
+								<?php foreach ($good_meta as $k2 => $v2) { ?>
+									<option value="<?php echo $k2; ?>" <?php echo ($k2 == $k ? "SELECTED" : null); ?>><?php echo $k2; ?></option>
+								<?php } ?>
+							</select>
+							<label for="meta-value">
+								<?php _e('Value: ', 'event_espresso'); ?>
+							</label>
+							<input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
+							<?php
+							echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />';
+							?>
+						</li>
+						<?php
+						$meta_counter++;
+					}
+					?>
+				<?php }
+				echo '<li><label for="emeta-box">' . __('Key: ', 'event_espresso'); ?>
 			</label>
 			<input id="emeta-box" size="20" type="text" value="" name="emeta[]" id="emeta[]">
 			<label for="emetaad[]">
-			<?php _e('Value: ', 'event_espresso'); ?>
+				<?php _e('Value: ', 'event_espresso'); ?>
 			</label>
 			<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
 			<?php
@@ -403,7 +409,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 		?>
 		</ul>
 		<p>
-		  <input type="button" class="button" value="<?php _e('Add A Meta Box', 'event_espresso'); ?>" onClick="addMetaInput('dynamicMetaInput');">
+			<input type="button" class="button" value="<?php _e('Add A Meta Box', 'event_espresso'); ?>" onClick="addMetaInput('dynamicMetaInput');">
 		</p>
 		<script type="text/javascript">
 			//Dynamic form fields
@@ -431,7 +437,9 @@ if (!function_exists('event_espresso_meta_edit')) {
 
 function espresso_attendee_counts() {
 	global $wpdb, $org_options;
-
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	//Dates
 	$curdate = date("Y-m-d");
 	$pieces = explode('-', $curdate, 3);
@@ -515,34 +523,34 @@ if (!function_exists('espresso_featured_image_event_admin')) {
 						$event_thumb = '';
 					}
 					?>
-		<?php // var_dump($event_meta['event_thumbnail_url']);  ?>
+					<?php // var_dump($event_meta['event_thumbnail_url']);  ?>
 					<label for="upload_image">
 						<?php _e('Add Featured Image', 'event_espresso'); ?>
 					</label>
 					<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $event_thumb ?>" />
 					<input id="upload_image_button" type="button" value="Upload Image" />
-		<?php if ($event_thumb) { ?>
+					<?php if ($event_thumb) { ?>
 						<p class="event-featured-thumb"><img  src="<?php echo $event_thumb ?>" alt="" /></p>
 						<a id='remove-image' href='#' title='Remove this image' onclick='return false;'>Remove Image</a>
 					<?php } ?>
 				</div>
 				<p>
 					<label>
-		<?php _e('Enable image in event lists', 'event_espresso'); ?>
+						<?php _e('Enable image in event lists', 'event_espresso'); ?>
 					</label>
-		<?php echo select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : '', 'id="show_thumb_in_lists"'); ?> </p>
+					<?php echo select_input('show_thumb_in_lists', $values, isset($event_meta['display_thumb_in_lists']) ? $event_meta['display_thumb_in_lists'] : '', 'id="show_thumb_in_lists"'); ?> </p>
 				<p>
 					<label>
-		<?php _e('Enable image in registration', 'event_espresso'); ?>
+						<?php _e('Enable image in registration', 'event_espresso'); ?>
 					</label>
-		<?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : '', 'id="show_thumb_in_regpage"'); ?> </p>
-		<?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
+					<?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : '', 'id="show_thumb_in_regpage"'); ?> </p>
+				<?php if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) { ?>
 					<p>
 						<label>
-			<?php _e('Add image to event calendar', 'event_espresso'); ?>
+							<?php _e('Add image to event calendar', 'event_espresso'); ?>
 						</label>
-			<?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : '', 'id="show_on_calendar"'); ?> </p>
-		<?php } ?>
+						<?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : '', 'id="show_on_calendar"'); ?> </p>
+				<?php } ?>
 			</div>
 		</div>
 		<!-- /Add thumbnail image -->

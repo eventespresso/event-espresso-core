@@ -1,8 +1,10 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+if (!defined('EVENT_ESPRESSO_VERSION'))
+	exit('No direct script access allowed');
 //Add/Delete/Edit Events
 require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'event-management/event_functions.php');
 require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+
 function event_espresso_manage_attendees() {
 	?>
 	<div id="event_overview" class="wrap meta-box-sortables ui-sortable">
@@ -48,58 +50,61 @@ function event_espresso_manage_attendees() {
 			</h2>
 			<?php
 			global $wpdb, $org_options;
-			
+			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+			}
 			if (isset($_REQUEST['event_admin_reports'])) {
-					switch ($_REQUEST['event_admin_reports']) {
-						case 'charts':
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/charts.php");
-							espresso_charts();
-							break;
-						case 'list_attendee_payments':
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
-							event_list_attendees();
-							break;
-						case 'event_list_attendees':
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
-							event_list_attendees();
-							break;
-						case 'edit_attendee_record':
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/edit_attendee_record.php");
-							edit_attendee_record();
-							break;
-						case 'enter_attendee_payments':
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/enter_attendee_payments.php");
-							enter_attendee_payments();
-							break;
-						case 'add_new_attendee':
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/add_new_attendee.php");
-							add_new_attendee($_REQUEST['event_id']);
-							break;
-						case 'event_newsletter':
-							if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . "admin-files/event_newsletter.php")) {
-								require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-files/event_newsletter.php");
-								event_newsletter($_REQUEST['event_id']);
-							} else {
-								require_once("event_newsletter.php");
-							}
+				switch ($_REQUEST['event_admin_reports']) {
+					case 'charts':
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/charts.php");
+						espresso_charts();
+						break;
+					case 'list_attendee_payments':
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+						event_list_attendees();
+						break;
+					case 'event_list_attendees':
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+						event_list_attendees();
+						break;
+					case 'edit_attendee_record':
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/edit_attendee_record.php");
+						edit_attendee_record();
+						break;
+					case 'enter_attendee_payments':
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/enter_attendee_payments.php");
+						enter_attendee_payments();
+						break;
+					case 'add_new_attendee':
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/add_new_attendee.php");
+						add_new_attendee($_REQUEST['event_id']);
+						break;
+					case 'event_newsletter':
+						if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . "admin-files/event_newsletter.php")) {
+							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-files/event_newsletter.php");
+							event_newsletter($_REQUEST['event_id']);
+						} else {
+							require_once("event_newsletter.php");
+						}
 
-							break;
-						case 'resend_email':
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/event_list_attendees.php");
-							echo '<div id="message" class="updated fade"><p><strong>Resending email to attendee.</strong></p></div>';
-							event_espresso_email_confirmations(array('registration_id' => $_REQUEST['registration_id'], 'send_admin_email' => 'false', 'send_attendee_email' => 'true'));
-							event_list_attendees();
-							break;
-						default:
-							event_espresso_edit_list();
-							break;
-					}
-				}else event_list_attendees();
-		?></div>
+						break;
+					case 'resend_email':
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/admin-reports/event_list_attendees.php");
+						echo '<div id="message" class="updated fade"><p><strong>Resending email to attendee.</strong></p></div>';
+						event_espresso_email_confirmations(array('registration_id' => $_REQUEST['registration_id'], 'send_admin_email' => 'false', 'send_attendee_email' => 'true'));
+						event_list_attendees();
+						break;
+					default:
+						event_espresso_edit_list();
+						break;
+				}
+			}else
+				event_list_attendees();
+			?></div>
 	</div>
-<?php 
+	<?php
 }

@@ -14,96 +14,96 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 }
 
 //This function updates the org_options from < EE 3.2
-function espresso_fix_org_options(){
+function espresso_fix_org_options() {
 	global $org_options;
-	if (empty($org_options)) return;
-	
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
+	if (empty($org_options))
+		return;
+
 	//Retrive the existing $org_options, update, then unset the old one
-	if ( array_key_exists('display_description_on_multi_reg_page', $org_options) ){
+	if (array_key_exists('display_description_on_multi_reg_page', $org_options)) {
 		$org_options['template_settings']['display_description_on_multi_reg_page'] = empty($org_options['display_description_on_multi_reg_page']) ? '' : $org_options['display_description_on_multi_reg_page'];
 		unset($org_options['display_description_on_multi_reg_page']);
 	}
-		
-	if ( array_key_exists('display_short_description_in_event_list', $org_options) ){
+
+	if (array_key_exists('display_short_description_in_event_list', $org_options)) {
 		$org_options['template_settings']['display_short_description_in_event_list'] = empty($org_options['display_short_description_in_event_list']) ? '' : $org_options['display_short_description_in_event_list'];
 		unset($org_options['display_short_description_in_event_list']);
 	}
-		
-	if ( array_key_exists('display_address_in_event_list', $org_options) ){
+
+	if (array_key_exists('display_address_in_event_list', $org_options)) {
 		$org_options['template_settings']['display_address_in_event_list'] = empty($org_options['display_address_in_event_list']) ? '' : $org_options['display_address_in_event_list'];
 		unset($org_options['display_address_in_event_list']);
 	}
-		
-	if ( array_key_exists('display_address_in_regform', $org_options) ){
+
+	if (array_key_exists('display_address_in_regform', $org_options)) {
 		$org_options['template_settings']['display_address_in_regform'] = empty($org_options['display_address_in_regform']) ? '' : $org_options['display_address_in_regform'];
 		unset($org_options['display_address_in_regform']);
 	}
-		
-	if ( array_key_exists('use_custom_post_types', $org_options) ){
+
+	if (array_key_exists('use_custom_post_types', $org_options)) {
 		$org_options['template_settings']['use_custom_post_types'] = empty($org_options['use_custom_post_types']) ? '' : $org_options['use_custom_post_types'];
 		unset($org_options['use_custom_post_types']);
 	}
-		
-	if ( array_key_exists('enable_default_style', $org_options) ){
+
+	if (array_key_exists('enable_default_style', $org_options)) {
 		$org_options['style_settings']['enable_default_style'] = empty($org_options['enable_default_style']) ? '' : $org_options['enable_default_style'];
 		unset($org_options['enable_default_style']);
 	}
-		
-	if ( array_key_exists('selected_style', $org_options) ){
+
+	if (array_key_exists('selected_style', $org_options)) {
 		$org_options['style_settings']['selected_style'] = empty($org_options['selected_style']) ? '' : $org_options['selected_style'];
 		unset($org_options['selected_style']);
 	}
-		
-	if ( array_key_exists('style_color', $org_options) ){
+
+	if (array_key_exists('style_color', $org_options)) {
 		$org_options['style_settings']['style_color'] = empty($org_options['style_color']) ? '' : $org_options['style_color'];
 		unset($org_options['style_color']);
 	}
 
 	update_option('events_organization_settings', $org_options);
-		
+
 	//Debug
 	//echo "<pre>".print_r($org_options,true)."</pre>";
-	
 	//Update invoice settings
 	//$invoice_payment_settings_settings = get_option('event_espresso_invoice_payment_settings_settings');
-	
 	//Get the events_invoice_payment_active setting so we can see if it was even active
 	//$payment_settings['invoice']['active'] = isset(get_option('events_invoice_payment_active')) && get_option('events_invoice_payment_active') == 'true' ? 1:0;
-	
 	//If events_invoice_payment_active was active, then we can add the defaults
-	/*if ($payment_settings['invoice']['active'] == true){
-		
-		if ( array_key_exists('invoice_title', $invoice_payment_settings) ){
-			$payment_settings['invoice']['invoice_title'] = !empty( $invoice_payment_settings['invoice_title']) ) ? $invoice_payment_settings['invoice_title'] : '';
-		}
-		
-		if ( array_key_exists('pdf_instructions', $invoice_payment_settings) ){
-			$payment_settings['invoice']['pdf_instructions'] = !empty( strip_tags($invoice_payment_settings['pdf_instructions']) ) ? $invoice_payment_settings['pdf_instructions'] : '';
-		}
-		
-		if ( array_key_exists('page_instructions', $invoice_payment_settings) ){
-			$payment_settings['invoice']['page_instructions'] = !empty( strip_tags($invoice_payment_settings['page_instructions']) ) ? $invoice_payment_settings['page_instructions'] : '';
-		}
-		
-		if ( array_key_exists('payable_to', $invoice_payment_settings) ){
-			$payment_settings['invoice']['payable_to'] = !empty( strip_tags($invoice_payment_settings['payable_to']) ) ? $invoice_payment_settings['payable_to'] : '';
-		}
-		
-		if ( array_key_exists('payment_address', $invoice_payment_settings) ){
-			$payment_settings['invoice']['payment_address'] = !empty( strip_tags($invoice_payment_settings['payment_address']) ) ? $invoice_payment_settings['payment_address'] : '';
-		}
-		
-		if ( array_key_exists('image_url', $invoice_payment_settings) ){
-			$payment_settings['invoice']['image_url'] = !empty( strip_tags($invoice_payment_settings['image_url']) ) ? $invoice_payment_settings['image_url'] : '';
-		}
-		
-		if ( array_key_exists('show', $invoice_payment_settings) ){
-			$payment_settings['invoice']['show'] = !empty( strip_tags($invoice_payment_settings['show']) ) ? $invoice_payment_settings['show'] : 'Y';
-		}
-		
-		add_option( 'payment_data_1', $payment_settings, '', 'no');
-	}*/
+	/* if ($payment_settings['invoice']['active'] == true){
 
+	  if ( array_key_exists('invoice_title', $invoice_payment_settings) ){
+	  $payment_settings['invoice']['invoice_title'] = !empty( $invoice_payment_settings['invoice_title']) ) ? $invoice_payment_settings['invoice_title'] : '';
+	  }
+
+	  if ( array_key_exists('pdf_instructions', $invoice_payment_settings) ){
+	  $payment_settings['invoice']['pdf_instructions'] = !empty( strip_tags($invoice_payment_settings['pdf_instructions']) ) ? $invoice_payment_settings['pdf_instructions'] : '';
+	  }
+
+	  if ( array_key_exists('page_instructions', $invoice_payment_settings) ){
+	  $payment_settings['invoice']['page_instructions'] = !empty( strip_tags($invoice_payment_settings['page_instructions']) ) ? $invoice_payment_settings['page_instructions'] : '';
+	  }
+
+	  if ( array_key_exists('payable_to', $invoice_payment_settings) ){
+	  $payment_settings['invoice']['payable_to'] = !empty( strip_tags($invoice_payment_settings['payable_to']) ) ? $invoice_payment_settings['payable_to'] : '';
+	  }
+
+	  if ( array_key_exists('payment_address', $invoice_payment_settings) ){
+	  $payment_settings['invoice']['payment_address'] = !empty( strip_tags($invoice_payment_settings['payment_address']) ) ? $invoice_payment_settings['payment_address'] : '';
+	  }
+
+	  if ( array_key_exists('image_url', $invoice_payment_settings) ){
+	  $payment_settings['invoice']['image_url'] = !empty( strip_tags($invoice_payment_settings['image_url']) ) ? $invoice_payment_settings['image_url'] : '';
+	  }
+
+	  if ( array_key_exists('show', $invoice_payment_settings) ){
+	  $payment_settings['invoice']['show'] = !empty( strip_tags($invoice_payment_settings['show']) ) ? $invoice_payment_settings['show'] : 'Y';
+	  }
+
+	  add_option( 'payment_data_1', $payment_settings, '', 'no');
+	  } */
 }
 
 //This function installs all the required database files
@@ -259,53 +259,53 @@ function events_data_tables_install() {
 			$message = ( __('<p>***This is an automated response - Do Not Reply***</p> <p>Thank you [fname] [lname] for registering for [event].</p><p>This event starts at [start_time] on [start_date] and runs until [end_time] on [end_date].</p><p>Location:<br>[location]</p><p>Phone: [location_phone]</p><p>Google Map: [google_map_link]</p><p> We hope that you will find this event both informative and enjoyable. Should you have any questions, please contact [contact].</p><p>If you have not done so already, please submit your payment in the amount of [cost].</p><p>Click here to review your payment information [payment_url].</p><p>Thank You.</p>', 'event_espresso'));
 
 			$new_org_options = array(
-				'organization' => get_bloginfo('name'),
-				'organization_street1' => '123 West Somewhere',
-				'organization_street2' => '',
-				'organization_city' => 'Some City',
-				'organization_state' => 'AZ',
-				'organization_zip' => '84128',
-				'contact_email' => get_bloginfo('admin_email'),
-				'default_mail' => 'Y',
-				'paypal_id' => 'my_email@my_website.com',
-				'payment_subject' => $payment_subject,
-				'payment_message' => $payment_message,
-				'message' => $message,
-				'country_id' => '',
-				'expire_on_registration_end' => 'Y',
-				'email_before_payment' => 'N',
-				'enable_default_style' => 'Y',
-				'event_ssl_active' => 'N',
-				'use_venue_manager' => 'Y',
-				'show_reg_footer' => 'Y',
-				'template_settings' => array(
-					'use_custom_post_types' => 'N',
-					'display_address_in_regform' => 'N',
-					'display_short_description_in_event_list' => 'Y',
-					'display_description_on_multi_reg_page' => 'N',
-					'display_description_in_event_list' => 'N'
-				),
-				'map_settings' => array(
-					'ee_map_width_single' => '300',
-					'ee_map_height_single' => '300',
-					'ee_map_zoom_single' => '12',
-					'ee_map_nav_display_single' => 'N',
-					'ee_map_nav_size_single' => 'default',
-					'ee_map_type_control_single' => 'default',
-					'ee_map_align_single' => '',
-					'ee_map_width' => '200',
-					'ee_map_height' => '200',
-					'ee_map_zoom' => '12',
-					'ee_map_nav_display' => 'N',
-					'ee_map_nav_size' => 'default',
-					'ee_map_type_control' => 'default',
-					'ee_map_align' => ''
-				),
+					'organization' => get_bloginfo('name'),
+					'organization_street1' => '123 West Somewhere',
+					'organization_street2' => '',
+					'organization_city' => 'Some City',
+					'organization_state' => 'AZ',
+					'organization_zip' => '84128',
+					'contact_email' => get_bloginfo('admin_email'),
+					'default_mail' => 'Y',
+					'paypal_id' => 'my_email@my_website.com',
+					'payment_subject' => $payment_subject,
+					'payment_message' => $payment_message,
+					'message' => $message,
+					'country_id' => '',
+					'expire_on_registration_end' => 'Y',
+					'email_before_payment' => 'N',
+					'enable_default_style' => 'Y',
+					'event_ssl_active' => 'N',
+					'use_venue_manager' => 'Y',
+					'show_reg_footer' => 'Y',
+					'template_settings' => array(
+							'use_custom_post_types' => 'N',
+							'display_address_in_regform' => 'N',
+							'display_short_description_in_event_list' => 'Y',
+							'display_description_on_multi_reg_page' => 'N',
+							'display_description_in_event_list' => 'N'
+					),
+					'map_settings' => array(
+							'ee_map_width_single' => '300',
+							'ee_map_height_single' => '300',
+							'ee_map_zoom_single' => '12',
+							'ee_map_nav_display_single' => 'N',
+							'ee_map_nav_size_single' => 'default',
+							'ee_map_type_control_single' => 'default',
+							'ee_map_align_single' => '',
+							'ee_map_width' => '200',
+							'ee_map_height' => '200',
+							'ee_map_zoom' => '12',
+							'ee_map_nav_display' => 'N',
+							'ee_map_nav_size' => 'default',
+							'ee_map_type_control' => 'default',
+							'ee_map_align' => ''
+					),
 			);
 
 			add_option('events_organization_settings', $new_org_options);
-			
-		//If an earlier version of Event Espresso is found, then we need to create the organization options.
+
+			//If an earlier version of Event Espresso is found, then we need to create the organization options.
 		} else if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {
 			$results = $wpdb->get_results("SELECT * FROM " . EVENTS_ORGANIZATION_TABLE . " WHERE id='1'");
 			foreach ($results as $result) {
@@ -367,34 +367,33 @@ function events_data_tables_install() {
 
 			//DO NOT Create new settings here
 			$org_options = array(
-				'organization' => $Organization,
-				'organization_street1' => $Organization_street1,
-				'organization_street2' => $Organization_street2,
-				'organization_city' => $Organization_city,
-				'organization_state' => $Organization_state,
-				'organization_zip' => $Organization_zip,
-				'contact_email' => $contact,
-				'paypal_id' => $paypal_id,
-				'currency_format' => $paypal_cur,
-				'currency_symbol' => $currency_symbol,
-				'event_page_id' => $event_page_id,
-				'return_url' => $return_url,
-				'cancel_return' => $cancel_return,
-				'notify_url' => $notify_url,
-				'use_sandbox' => $use_sandbox,
-				'image_url' => $image_url,
-				'default_mail' => $default_mail,
-				'payment_subject' => $payment_subject,
-				'payment_message' => $payment_message,
-				'message' => $message,
-				//DO NOT Create new settings here
+					'organization' => $Organization,
+					'organization_street1' => $Organization_street1,
+					'organization_street2' => $Organization_street2,
+					'organization_city' => $Organization_city,
+					'organization_state' => $Organization_state,
+					'organization_zip' => $Organization_zip,
+					'contact_email' => $contact,
+					'paypal_id' => $paypal_id,
+					'currency_format' => $paypal_cur,
+					'currency_symbol' => $currency_symbol,
+					'event_page_id' => $event_page_id,
+					'return_url' => $return_url,
+					'cancel_return' => $cancel_return,
+					'notify_url' => $notify_url,
+					'use_sandbox' => $use_sandbox,
+					'image_url' => $image_url,
+					'default_mail' => $default_mail,
+					'payment_subject' => $payment_subject,
+					'payment_message' => $payment_message,
+					'message' => $message,
+							//DO NOT Create new settings here
 			);
 
 			add_option('events_organization_settings', $org_options);
-			
+
 			//Delete the table
 			$wpdb->query("DROP TABLE IF EXISTS $table_name");
-
 		}
 	}
 

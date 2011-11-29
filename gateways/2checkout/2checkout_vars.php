@@ -5,6 +5,9 @@
  */
 function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 	global $org_options, $payment_settings;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 	include_once ('2checkout.php');
 	$my2checkout = new TwoCo();
 	echo '<!-- Event Espresso 2checkout Gateway Version ' . $my2checkout->twocheckout_gateway_version . '-->';

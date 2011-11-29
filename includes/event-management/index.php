@@ -1,5 +1,6 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+if (!defined('EVENT_ESPRESSO_VERSION'))
+	exit('No direct script access allowed');
 //Add/Delete/Edit Events
 require_once('event_functions.php');
 require_once("event_list.php");
@@ -11,17 +12,19 @@ function event_espresso_manage_events() {
 			<div id="icon-options-event" class="icon32"></div>
 			<h2>
 				<?php
-			 
-					_e('Event Overview', 'event_espresso');
-					if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'add_new_event')) {
+				_e('Event Overview', 'event_espresso');
+				if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'add_new_event')) {
 
-					} else {
-						echo '<a href="admin.php?page=events&amp;action=add_new_event" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Event', 'event_espresso') . '</a>';
-					}
+				} else {
+					echo '<a href="admin.php?page=events&amp;action=add_new_event" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Event', 'event_espresso') . '</a>';
+				}
 				?>
 			</h2>
 			<?php
 			global $wpdb, $org_options;
+			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+			}
 			if (isset($_REQUEST['action'])) {
 				switch ($_REQUEST['action']) {
 					case ( 'copy_event' ):
@@ -88,7 +91,7 @@ function event_espresso_manage_events() {
 //Do not remove anything below this line. These are the info box popups.
 			?></div>
 	</div>
-   
+
 	<div id="alt_email_info" style="display:none">
 		<h2><?php _e('Alternate Email Address', 'event_espresso'); ?></h2>
 		<p><?php _e('If an alternate email address is entered. Admin email notifications wil be sent to this address instead.', 'event_espresso'); ?></p>

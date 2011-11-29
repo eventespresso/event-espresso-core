@@ -2,7 +2,9 @@
 
 function event_espresso_manage_maps() {
 	global $wpdb, $org_options, $notices;
-
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_maps_update')) {
 		$org_options['map_settings']['ee_display_map_no_shortcodes'] = $_POST['ee_display_map_no_shortcodes'];
 		// org_options Gmaps reg page
@@ -40,6 +42,9 @@ function event_espresso_manage_maps() {
 	// to prevent opt values clashing due to same values.
 	function espresso_is_selected_list($input_val) {
 		global $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$the_opt_val = array('ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'],
 				'ee_map_align' => $org_options['map_settings']['ee_map_align']);
 		if (!in_array($input_val, $the_opt_val))
@@ -51,6 +56,9 @@ function event_espresso_manage_maps() {
 
 	function espresso_is_selected_reg($input_val) {
 		global $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$the_opt_val = array('ee_map_align_single' => $org_options['map_settings']['ee_map_align_single'],
 				'ee_map_type_control_single' => $org_options['map_settings']['ee_map_type_control_single']);
 		if (!in_array($input_val, $the_opt_val)) {

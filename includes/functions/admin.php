@@ -41,40 +41,40 @@ function event_espresso_config_page_scripts() {
 	wp_enqueue_script('post');
 	wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
 	wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery')); //Events core table column hide/show script
-	
+
 	$load_jquery_ui = false;
 	$load_datepicker = false;
-	
+
 	if ($_REQUEST['page'] == 'events' && isset($_REQUEST['action']) && ($_REQUEST['action']=='edit'||$_REQUEST['action']=='add_new_event') ) {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
 	}
-	
+
 	if ($_REQUEST['page'] == 'discounts' && isset($_REQUEST['action']) && ($_REQUEST['action']=='edit'||$_REQUEST['action']=='new')){
 		$load_jquery_ui = true;
 		$load_datepicker = true;
 	}
-	
+
 	//Load jquery UI scripts
 	if ($load_jquery_ui == true){
 		wp_enqueue_script('jquery-ui-core');
 		wp_enqueue_script('jquery-ui-tabs');
 	}
-	
+
 	//Load datepicker script
 	if ($load_datepicker == true){
 		wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
 	}
-	
+
 	if (isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'add_new_attendee' || $_REQUEST['page'] == 'form_groups' || $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'event_staff' || $_REQUEST['page'] == 'event_categories' || $_REQUEST['page'] == 'event_venues' || $_REQUEST['page'] == 'discounts' || $_REQUEST['page'] == 'groupons') {
 		//Load form validation script
 		wp_register_script('jquery.validate.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), false, '1.8.1');
 		wp_enqueue_script('jquery.validate.js');
 	}
-	
+
 	wp_register_script('event_espresso_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_espresso.js"), false);
 	wp_enqueue_script('event_espresso_js');
-	
+
 	wp_register_script('chosen', EVENT_ESPRESSO_PLUGINFULLURL . "scripts/chosen/chosen.jquery.min.js", array('jquery'));
 	wp_enqueue_script('chosen');
 
@@ -325,15 +325,15 @@ function select_input($name, $values, $default = '', $parameters = '', $class = 
 		if ($values[$ii]['text']) {
 			if ( strlen($values[$ii]['text']) > 5)
 				$size = 'wide';
-		}		
+		}
 	}
 
 	$field .= ' class="chzn-select ' . $class .' ' . $size .'">';
 
 	if (empty($default) && isset($GLOBALS[$name]))
 		$default = stripslashes($GLOBALS[$name]);
-	
-	
+
+
 	for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
 		$field .= '<option value="' . $values[$i]['id'] . '"';
 		if ($default == $values[$i]['id']) {
@@ -798,7 +798,7 @@ function events_editor($content, $id = 'content', $prev_id = 'title') {
 	?>
 <div id="quicktags">
   <?php wp_print_scripts('quicktags'); ?>
-  <script type="text/javascript">edToolbar()</script> 
+  <script type="text/javascript">edToolbar()</script>
 </div>
 <?php //if(function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) $output = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($output);	?>
 <?php
@@ -1019,34 +1019,34 @@ function event_espresso_update_attendee_data() {
 
 	$sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' ";
 	$attendees = $wpdb->get_results($sql);
-	
+
 	if ($wpdb->num_rows > 0) {
-		
+
 		//echo $sql;
 		foreach ($attendees as $attendee) {
-	
+
 			/** ********************************
 			 * ******	Update single registrations
 			 * ********************************* */
 			$registration_id = uniqid('', true);
 			$update_attendee = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET registration_id = '" . $registration_id . "' WHERE id = '" . $attendee->id . "'";
 			$wpdb->query($update_attendee);
-			
+
 		}
 	}
-	
+
 	$sql2 = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity IS NULL OR quantity = '' OR quantity = '0' ";
 	$attendees2 = $wpdb->get_results($sql2);
 	if ($wpdb->num_rows > 0) {
 		//echo $sql;
 		foreach ($attendees2 as $attendee2) {
-	
+
 			/** ********************************
 			 * ******	Update pricing
 			 * ********************************* */
 			$update_attendee2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '1' WHERE id = '" . $attendee2->id . "'";
 			$wpdb->query($update_attendee2);
-			
+
 		}
 	}
 }
@@ -1234,6 +1234,9 @@ function espresso_attendees_by_month_dropdown($current_value='') {
 //This function installs the required pages
 function espresso_create_default_pages() {
 	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$default_pages = array('Event Registration', 'Thank You', 'Registration Cancelled', 'Transactions');
 	$existing_pages = get_pages();
 	foreach ($existing_pages as $page) {
@@ -1331,7 +1334,7 @@ function espresso_template_files_exist($dir) {
 	// read our template dir and build an array of files
 	$dhandle = opendir($dir);
 	$files = array();
-	
+
 	if ($dhandle) { //if we managed to open the directory
 		// loop through all of the files
 		while (false !== ($fname = readdir($dhandle))) {

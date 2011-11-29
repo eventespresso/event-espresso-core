@@ -5,7 +5,10 @@ function espresso_display_nab($payor_data, $event_cost, $attendee_id, $event_id)
 	echo '<!-- Event Espresso nab Gateway Version ' . $nab_gateway_version . '-->';
 	$mynab = new nab(); // initiate an instance of the class
 	global $org_options, $wpdb;
-	$nab_result_url			= home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment&nab=true';
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
+	$nab_result_url = home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment&nab=true';
 	$nab_settings = get_option('event_espresso_nab_settings');
 	$nab_id = $nab_settings['nab_merchant_id'];
 	$nab_pass = $nab_settings['nab_merchant_password'];
@@ -50,71 +53,71 @@ function espresso_display_nab($payor_data, $event_cost, $attendee_id, $event_id)
 		<input type="hidden" name="EPS_ZIPCODE" value="<?php echo $payor_data['zip']; ?>">
 		<input type="hidden" name="EPS_TOWN" value="<?php echo $payor_data['city']; ?>">
 		<input type="hidden" name="EPS_EMAILADDRESS" value="<?php echo $payor_data['attendee_email']; ?>">
-	  <table>
-	    <tbody>
-	      <tr>
-	        <td colspan="2"><b>Enter Account Details</b></td>
-	      </tr>
-	      <tr>
-	        <td>Card Type :</td>
-	        <td><select name="EPS_CARDTYPE" class="inputbox" style="width:167px">
-	            <option value="visa">Visa</option>
-	            <option value="mastercard">MasterCard</option>
-	            <option value="amex">Amex</option>
-	          </select></td>
-	      </tr>
-	      <tr>
-	        <td>Card Number :</td>
-	        <td><input type="text" class="inputbox" name="EPS_CARDNUMBER" value="4444333322221111" size="27"/></td>
-	      </tr>
-	      <tr>
-	        <td> Card CCV :</td>
-	        <td><input type="text"   class="inputbox" name="EPS_CCV" value="234" size="27" /></td>
-	      </tr>
-	      <tr>
-	        <td>Card Expires :</td>
-	        <td><select name="EPS_EXPIRYMONTH" class="inputbox">
-	            <option value="">- Month -</option>
-	            <option value="1">01</option>
-	            <option value="2">02</option>
-	            <option value="3">03</option>
-	            <option value="4" selected>04</option>
-	            <option value="5">05</option>
-	            <option value="6">06</option>
-	            <option value="7">07</option>
-	            <option value="8">08</option>
-	            <option value="9">09</option>
-	            <option value="10">10</option>
-	            <option value="11">11</option>
-	            <option value="12">12</option>
-	          </select>
-	          &nbsp;
-	          <select name="EPS_EXPIRYYEAR" class="inputbox">
-	            <option value="">- Year -</option>
-	            <option value="2009">2009</option>
-	            <option value="2010">2010</option>
-	            <option value="2011">2011</option>
-	            <option value="2012" selected>2012</option>
-	            <option value="2013">2013</option>
-	            <option value="2014">2014</option>
-	            <option value="2015">2015</option>
-	            <option value="2016">2016</option>
-	            <option value="2017">2017</option>
-	            <option value="2018">2018</option>
-	            <option value="2019">2019</option>
-	            <option value="2020">2020</option>
-	            <option value="2021">2021</option>
-	            <option value="2022">2022</option>
-	            <option value="2023">2023</option>
-	            <option value="2024">2024</option>
-	            <option value="2025">2025</option>
-	          </select></td>
-	      </tr>
-	      <tr height=''50px''>
+		<table>
+			<tbody>
+				<tr>
+					<td colspan="2"><b>Enter Account Details</b></td>
+				</tr>
+				<tr>
+					<td>Card Type :</td>
+					<td><select name="EPS_CARDTYPE" class="inputbox" style="width:167px">
+							<option value="visa">Visa</option>
+							<option value="mastercard">MasterCard</option>
+							<option value="amex">Amex</option>
+						</select></td>
+				</tr>
+				<tr>
+					<td>Card Number :</td>
+					<td><input type="text" class="inputbox" name="EPS_CARDNUMBER" value="4444333322221111" size="27"/></td>
+				</tr>
+				<tr>
+					<td> Card CCV :</td>
+					<td><input type="text"   class="inputbox" name="EPS_CCV" value="234" size="27" /></td>
+				</tr>
+				<tr>
+					<td>Card Expires :</td>
+					<td><select name="EPS_EXPIRYMONTH" class="inputbox">
+							<option value="">- Month -</option>
+							<option value="1">01</option>
+							<option value="2">02</option>
+							<option value="3">03</option>
+							<option value="4" selected>04</option>
+							<option value="5">05</option>
+							<option value="6">06</option>
+							<option value="7">07</option>
+							<option value="8">08</option>
+							<option value="9">09</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+						</select>
+						&nbsp;
+						<select name="EPS_EXPIRYYEAR" class="inputbox">
+							<option value="">- Year -</option>
+							<option value="2009">2009</option>
+							<option value="2010">2010</option>
+							<option value="2011">2011</option>
+							<option value="2012" selected>2012</option>
+							<option value="2013">2013</option>
+							<option value="2014">2014</option>
+							<option value="2015">2015</option>
+							<option value="2016">2016</option>
+							<option value="2017">2017</option>
+							<option value="2018">2018</option>
+							<option value="2019">2019</option>
+							<option value="2020">2020</option>
+							<option value="2021">2021</option>
+							<option value="2022">2022</option>
+							<option value="2023">2023</option>
+							<option value="2024">2024</option>
+							<option value="2025">2025</option>
+						</select></td>
+				</tr>
+				<tr height=''50px''>
 						<td align="left" colspan="2"><input type="submit" value="Post Payment" class="submit_button"/></td>
-	      </tr>
-	    </tbody>
-	  </table>
+				</tr>
+			</tbody>
+		</table>
 	</form>
 	<?php
 	wp_deregister_script('jquery.validate.pack');

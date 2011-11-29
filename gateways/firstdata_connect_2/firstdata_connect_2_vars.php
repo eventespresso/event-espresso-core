@@ -1,5 +1,9 @@
 <?php
+
 global $org_options, $wpdb;
+if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+}
 $firstdata_connect_2_settings = get_option('event_espresso_firstdata_connect_2_settings');
 include("Fdggutil.php");
 $sql = "SELECT amount_pd FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '" . $attendee_id . "'";

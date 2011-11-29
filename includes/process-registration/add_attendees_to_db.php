@@ -1,18 +1,19 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION'))
+<?php
+if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
-	
-if ( ! defined('ESPRESSO_REG_PAGE_FILES_LOADED')) {
+
+if (!defined('ESPRESSO_REG_PAGE_FILES_LOADED')) {
 	espresso_load_reg_page_files();
 }
-	
-	
+
+
 if (!function_exists('event_espresso_add_attendees_to_db')) {
 
 	//This entire function can be overridden using the "Custom Files" addon
 	function event_espresso_add_attendees_to_db($event_id = NULL, $session_vars = NULL) {
 		global $wpdb, $org_options, $espresso_premium;
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
 		$data_source = $_POST;
 		$att_data_source = $_POST;
@@ -118,7 +119,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		$check_sql = $wpdb->get_results("SELECT attendee_session, id, registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session ='" . $_SESSION['espresso_session_id'] . "' AND event_id ='" . $event_id . "' $incomplete_filter");
 		$num_rows = $wpdb->num_rows;
 
-		$registration_id = empty($wpdb->last_result[0]->registration_id) ? $registration_id = uniqid($event_id.'-') : $wpdb->last_result[0]->registration_id;
+		$registration_id = empty($wpdb->last_result[0]->registration_id) ? $registration_id = uniqid($event_id . '-') : $wpdb->last_result[0]->registration_id;
 
 		$txn_type = "";
 
@@ -128,7 +129,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			$txn_type = __('Added by Admin', 'event_espresso');
 			$payment_date = date("m-d-Y");
 			$amount_pd = $data_source["event_cost"] == '' ? 0.00 : $data_source["event_cost"];
-			if ( isset($data_source["admin_price_override"]) && $data_source["admin_price_override"] == '1' ){
+			if (isset($data_source["admin_price_override"]) && $data_source["admin_price_override"] == '1') {
 				$amount_pd = $data_source["a_event_cost"] == '' ? 0.00 : $data_source["a_event_cost"];
 			}
 			$registration_id = uniqid('', true);
@@ -427,7 +428,9 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 	//This function is called from the shopping cart
 	function event_espresso_add_attendees_to_db_multi() {
 		global $wpdb, $org_options;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		//Added by Imon
 		$primary_registration_id = NULL;
 
@@ -530,7 +533,7 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 				<h3><?php _e('Your registration is not complete until payment is received.', 'event_espresso'); ?></h3>
 
 				<p><strong class="event_espresso_name">
-						<?php _e('Amount due: ', 'event_espresso'); ?>
+				<?php _e('Amount due: ', 'event_espresso'); ?>
 					</strong> <span class="event_espresso_value"><?php echo $org_options['currency_symbol'] ?><?php echo $event_cost; ?></span></p>
 
 				<p><?php echo $org_options['email_before_payment'] == 'Y' ? __('A confirmation email has been sent with additional details of your registration.', 'event_espresso') : ''; ?></p>

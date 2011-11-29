@@ -1,4 +1,5 @@
 <?php
+
 if (!function_exists('event_espresso_coupon_payment_page')) {
 
 	function event_espresso_coupon_payment_page($use_coupon_code, $event_id, $event_cost, $attendee_id, $payment_status=NULL) {
@@ -6,7 +7,9 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 		if ($espresso_premium != true)
 			return;
 		global $wpdb, $org_options;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		//For general coupons, added for multi registration
 		if (!is_null($event_id)) {
 			$event_id_filter = " AND r.event_id = '" . $event_id . "'";
@@ -16,7 +19,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 		$error_message = '<p id="event_espresso_invalid_coupon">' . __('Sorry, that promotional code is invalid or expired.', 'event_espresso') . '</p>';
 		$today = date("m-d-Y");
 
-		if (!empty($use_coupon_code) && $use_coupon_code =='Y') {
+		if (!empty($use_coupon_code) && $use_coupon_code == 'Y') {
 			if (!empty($_REQUEST['coupon_code']) || !empty($_POST['event_espresso_coupon_code'])) {
 
 				$coupon_code = $_POST['event_espresso_coupon_code'] ? $_POST['event_espresso_coupon_code'] : $_REQUEST['coupon_code'];
@@ -41,15 +44,15 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 					}
 
 					//Check coupon count
-					if ($use_limit == 'Y'){
+					if ($use_limit == 'Y') {
 						$valid_discount = false;
-						if ($quantity > 0){
+						if ($quantity > 0) {
 							$valid_discount = true;
 						}
 					}
 
 					//Check the expiration date
-					if ($use_exp_date == 'Y'){
+					if ($use_exp_date == 'Y') {
 						$valid_discount = false;
 						$todays_date = date("Y-m-d");
 						$today = strtotime($todays_date);
@@ -60,7 +63,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 					}
 
 					//If the coupn is not valid, return the original cost
-					if ($valid_discount == false){
+					if ($valid_discount == false) {
 						echo $error_message;
 						return $event_cost;
 					}
@@ -93,37 +96,35 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 						$wpdb->update(EVENTS_ATTENDEE_TABLE, $sql, $update_id, $sql_data, array('%d'));
 
 						//Get Registration ID
-						$sql_registration_ID = "SELECT registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '".$attendee_id."'";
+						$sql_registration_ID = "SELECT registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '" . $attendee_id . "'";
 						$registration_ID = $wpdb->get_var($sql_registration_ID);
 
 						//If the coupon_code has not been used, deduct 1 from the quantity
-						if ($use_limit == 'Y'){
+						if ($use_limit == 'Y') {
 							$used = 0;
-							if (isset($_SESSION['espresso_coupon_data'])){
-								if ($_SESSION['espresso_coupon_data']['registration_id'] == $registration_ID){
-									if ($_SESSION['espresso_coupon_data']['coupon_code'] == $coupon_code && $_SESSION['espresso_coupon_data']['used'] == true){
+							if (isset($_SESSION['espresso_coupon_data'])) {
+								if ($_SESSION['espresso_coupon_data']['registration_id'] == $registration_ID) {
+									if ($_SESSION['espresso_coupon_data']['coupon_code'] == $coupon_code && $_SESSION['espresso_coupon_data']['used'] == true) {
 										$used = 1;
 									}
 								}
 							}
 							if ($used == 0) {
-								$update_coupon = "UPDATE " . EVENTS_DISCOUNT_CODES_TABLE . " SET quantity = quantity - 1 WHERE coupon_code='".$coupon_code."'";
+								$update_coupon = "UPDATE " . EVENTS_DISCOUNT_CODES_TABLE . " SET quantity = quantity - 1 WHERE coupon_code='" . $coupon_code . "'";
 								$wpdb->query($update_coupon);
 							}
 						}
 
 						//Update attendees with registration ID
-						$sql_registration_ID2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '".$payment_status."', amount_pd = '".$event_cost."', payment_date= '".$today."', coupon_code='" . $_REQUEST['coupon_code'] . "' WHERE registration_id='$registration_ID' AND id!='$attendee_id'";
+						$sql_registration_ID2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $payment_status . "', amount_pd = '" . $event_cost . "', payment_date= '" . $today . "', coupon_code='" . $_REQUEST['coupon_code'] . "' WHERE registration_id='$registration_ID' AND id!='$attendee_id'";
 						$wpdb->query($sql_registration_ID2);
 
 						//Create a session to hold the coupon usage data
-						$_SESSION['espresso_coupon_data'] = array('registration_id'=>$registration_ID,'coupon_code'=>$coupon_code,'used'=>1);
-
+						$_SESSION['espresso_coupon_data'] = array('registration_id' => $registration_ID, 'coupon_code' => $coupon_code, 'used' => 1);
 					}
 
 					//Return the price of the event after the coupon has been used
 					return $event_cost;
-
 				} else {
 					if ($single_event)
 						echo $error_message;
@@ -145,11 +146,12 @@ if (!function_exists('event_espresso_coupon_registration_page')) {
 
 			$multi_reg_adjust = $multi_reg == 1 ? "[$event_id]" : '';
 
-			$output ='<p class="event_form_field coupon_code" id="coupon_code-' . $event_id . '">';
+			$output = '<p class="event_form_field coupon_code" id="coupon_code-' . $event_id . '">';
 			$output .= '<label for="coupon_code">' . __('Enter Promotional/Discount Code', 'event_espresso') . ':</label>';
-			$output .= '<input type="text" tabIndex="9" maxLength="25" size="35" name="coupon_code'.$multi_reg_adjust . '"';
-			$output .=  ' id="coupon_code-' . $event_id . '"></p>';
-		} else $output = '';
+			$output .= '<input type="text" tabIndex="9" maxLength="25" size="35" name="coupon_code' . $multi_reg_adjust . '"';
+			$output .= ' id="coupon_code-' . $event_id . '"></p>';
+		} else
+			$output = '';
 		return $output;
 	}
 

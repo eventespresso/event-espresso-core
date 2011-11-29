@@ -28,8 +28,8 @@ if (!function_exists('event_espresso_add_item_to_session')) {
 		 *
 		 */
 		$id = $_POST['id'];
-		$direct_to_cart = isset($_POST['direct_to_cart'])?$_POST['direct_to_cart']:0;
-		$moving_to_cart = isset($_POST['moving_to_cart'])?urldecode($_POST['moving_to_cart']):"Please wait redirecting to cart page";
+		$direct_to_cart = isset($_POST['direct_to_cart']) ? $_POST['direct_to_cart'] : 0;
+		$moving_to_cart = isset($_POST['moving_to_cart']) ? urldecode($_POST['moving_to_cart']) : "Please wait redirecting to cart page";
 		//One link, multiple events
 		if (strpos($id, "-")) {
 
@@ -48,7 +48,7 @@ if (!function_exists('event_espresso_add_item_to_session')) {
 			event_espresso_add_event_process($id, $_POST['name']);
 		}
 
-		$r = event_espresso_cart_link(array('event_id' => $id, 'view_cart' => TRUE, 'event_page_id' => $_POST['event_page_id'], 'direct_to_cart'=>$direct_to_cart, 'moving_to_cart'=>$moving_to_cart));
+		$r = event_espresso_cart_link(array('event_id' => $id, 'view_cart' => TRUE, 'event_page_id' => $_POST['event_page_id'], 'direct_to_cart' => $direct_to_cart, 'moving_to_cart' => $moving_to_cart));
 
 		echo event_espresso_json_response(array('html' => $r, 'code' => 1));
 		//echo '<a href="' . site_url() . '/events/?regevent_action=show_shopping_cart">' . __( 'View Cart', 'event_espresso' ) . '</a>';
@@ -75,13 +75,13 @@ if (!function_exists('event_espresso_add_event_process')) {
 		$events_in_session = $_SESSION['events_in_session'];
 
 		$events_in_session[$event_id] = array(
-			'id' => $event_id,
-			'event_name' => stripslashes_deep($event_name),
-			'attendee_quantitiy' => 1,
-			'start_time_id' => '',
-			'price_id' => array(),
-			'cost' => 0,
-			'event_attendees' => array()
+				'id' => $event_id,
+				'event_name' => stripslashes_deep($event_name),
+				'attendee_quantitiy' => 1,
+				'start_time_id' => '',
+				'price_id' => array(),
+				'cost' => 0,
+				'event_attendees' => array()
 		);
 
 
@@ -402,7 +402,9 @@ if (!function_exists('event_espresso_load_checkout_page')) {
 
 	function event_espresso_load_checkout_page() {
 		global $wpdb, $org_options;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$events_in_session = $_SESSION['events_in_session'];
 
 		if (event_espresso_invoke_cart_error($events_in_session))
@@ -514,8 +516,8 @@ if (!function_exists('event_espresso_load_checkout_page')) {
 
 							$err .= "<div class='attention-icon'><p class='event_espresso_attention'><em>Attention: </em><br />";
 							$err .= sprintf(__("For <b>%s</b>, please make sure to select between <b>1</b> and <b>%d</b> attendees or delete it from your cart.", 'event_espresso'), stripslashes($r->event_name), $attendee_limit);
-											// this delete link removed as it doesn't appear to function from the error response view - hugo
-										   //$err .= '<span class="remove-cart-item"><img class="ee_delete_item_from_cart" id="cart_link_'.$event_id.'" alt="Remove this item from your cart" src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/remove.gif" /></span> ';
+							// this delete link removed as it doesn't appear to function from the error response view - hugo
+							//$err .= '<span class="remove-cart-item"><img class="ee_delete_item_from_cart" id="cart_link_'.$event_id.'" alt="Remove this item from your cart" src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/remove.gif" /></span> ';
 							$err .= "</p></div>";
 						}
 
@@ -701,6 +703,7 @@ if (!function_exists('event_espresso_multi_qty_dd')) {
  * @return JSON object
  */
 if (!function_exists('event_espresso_multi_additional_attendees')) {
+
 //Need to verify
 //Doesn't look like this function is used anywhere in the plugin
 	function event_espresso_multi_additional_attendees($additional_limit, $available_spaces, $event_id = null) {
@@ -756,22 +759,24 @@ if (!function_exists('event_espresso_cart_link')) {
 
 	function event_espresso_cart_link($atts) {
 
-		global $org_options,$this_event_id;
-
+		global $org_options, $this_event_id;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$events_in_session = $_SESSION['events_in_session'];
 
 		extract(shortcode_atts(
-						array(
-					'event_id' => $this_event_id,
-					'anchor' => __('Add to cart', 'event_espresso'),
-											'anchor_class' => 'class="cart-link ui-priority-primary ui-state-default ui-corner-all"',
-					'event_name' => ' ',
-					'separator' => NULL,
-					'view_cart' => FALSE,
-					'event_page_id' => $org_options['event_page_id'], //instead of sending it in as a var, grab the id here.
-					'direct_to_cart' => 0,
-					'moving_to_cart' => "Please wait redirecting to cart page"
-						), $atts));
+										array(
+								'event_id' => $this_event_id,
+								'anchor' => __('Add to cart', 'event_espresso'),
+								'anchor_class' => 'class="cart-link ui-priority-primary ui-state-default ui-corner-all"',
+								'event_name' => ' ',
+								'separator' => NULL,
+								'view_cart' => FALSE,
+								'event_page_id' => $org_options['event_page_id'], //instead of sending it in as a var, grab the id here.
+								'direct_to_cart' => 0,
+								'moving_to_cart' => "Please wait redirecting to cart page"
+										), $atts));
 
 		$registration_cart_class = '';
 		ob_start();
@@ -780,23 +785,18 @@ if (!function_exists('event_espresso_cart_link')) {
 		if ($view_cart || (is_array($events_in_session) && array_key_exists($event_id, $events_in_session))) {
 			$registration_cart_url = get_option('siteurl') . '/?page_id=' . $event_page_id . '&regevent_action=show_shopping_cart';
 			$registration_cart_anchor = __("View Cart", 'event_espresso');
-							$registration_cart_class = 'ee-view-cart-link cart-link ui-priority-primary ui-state-default ui-corner-all';
+			$registration_cart_class = 'ee-view-cart-link cart-link ui-priority-primary ui-state-default ui-corner-all';
 		} else { //show them the add to cart link
 			$registration_cart_url = isset($externalURL) && $externalURL != '' ? $externalURL : get_option('siteurl') . '/?page_id=' . $event_page_id . '&regevent_action=add_event_to_cart&event_id=' . $event_id;
 			$registration_cart_anchor = $anchor;
 			$registration_cart_class = 'ee_add_item_to_cart cart-link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all';
 		}
 
-		if ( $view_cart && $direct_to_cart == 1 )
-		{
+		if ($view_cart && $direct_to_cart == 1) {
 			echo "<span id='moving_to_cart'>{$moving_to_cart}</span>";
-			echo "<script language='javascript'>window.location='".$registration_cart_url."';</script>";
-			
-		}
-		else
-		{
-			echo $separator . ' <a class="' . $registration_cart_class . '" id="cart_link_' . $event_id . '" href="' . $registration_cart_url . '" title="' . stripslashes_deep($event_name) . '" moving_to_cart="'. urlencode($moving_to_cart) .'" direct_to_cart="'.$direct_to_cart.'" >' . $registration_cart_anchor . '</a>';
-
+			echo "<script language='javascript'>window.location='" . $registration_cart_url . "';</script>";
+		} else {
+			echo $separator . ' <a class="' . $registration_cart_class . '" id="cart_link_' . $event_id . '" href="' . $registration_cart_url . '" title="' . stripslashes_deep($event_name) . '" moving_to_cart="' . urlencode($moving_to_cart) . '" direct_to_cart="' . $direct_to_cart . '" >' . $registration_cart_anchor . '</a>';
 		}
 
 		$buffer = ob_get_contents();
@@ -811,10 +811,12 @@ if (!function_exists('event_espresso_invoke_cart_error')) {
 
 
 	function event_espresso_invoke_cart_error($events_in_session) {
-		if (!is_array($events_in_session)) { ?>
+		if (!is_array($events_in_session)) {
+			?>
 
 			<div class="attention-icon"><p class="event_espresso_attention"><?php _e('It looks like you are attempting to refresh a page after completing your registration or your cart is empty.  Please go to the events page and try again.', 'event_espresso') ?> </p></div>
-		<?php	return true;
+			<?php
+			return true;
 		}
 		return false;
 	}
@@ -823,6 +825,7 @@ if (!function_exists('event_espresso_invoke_cart_error')) {
 
 
 if (!function_exists('event_espresso_clear_session')) {
+
 //Need to verify
 //This function should probably be invoked when a payment is confirmed or when the attendee confirms the registration on free events.
 //Right now it only seems to be used in th add_attendees_to_db.php when an attendee confirms a paid registration, but I am not sure it is working.
@@ -845,7 +848,9 @@ if (!function_exists('event_espresso_group_price_dropdown')) {
 
 	function event_espresso_group_price_dropdown($event_id, $label = 1, $multi_reg = 0, $value = '') {
 		global $wpdb, $org_options;
-
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		/*
 		 * find out pricing type.
 		 * - If multiple price options, for each one

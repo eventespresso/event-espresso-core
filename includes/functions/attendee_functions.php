@@ -19,25 +19,28 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
 	  echo '<br>'; */
 	$question_groups = $questions; //unserialize($questions->question_groups);
 	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$wpdb->show_errors();
 	//print_r($question_groups);
 	//echo "<pre>".print_r($_POST,true)."</pre>";
-	
-	/** 
+
+	/**
 	 * Added this check because in some cases question groups are being sent as serialized
-	 */ 
+	 */
 	if ( !is_array($question_groups) && !empty($question_groups)) {
 		$question_groups = unserialize($question_groups);
 	}
-	
+
 	if (count($question_groups) > 0) {
 		$questions_in = '';
 
-		
+
 		foreach ($question_groups as $k=>$g_id) {
 			$questions_in .= $g_id . ',';
 		}
-				   
+
 
 		$questions_in = substr($questions_in, 0, -1);
 		$group_name = '';
@@ -101,6 +104,9 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
 
 function is_attendee_approved($event_id, $attendee_id) {
 	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$result = true;
 	if (isset($org_options["use_attendee_pre_approval"])&&$org_options["use_attendee_pre_approval"] == "Y") {
 		$result = false;

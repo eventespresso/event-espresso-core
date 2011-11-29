@@ -3,7 +3,9 @@
 // WP Event Dashboard Widget Table Function
 function event_espresso_edit_list_widget(){
 	global $wpdb, $org_options;
-	
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	if ( $_POST[ 'delete_event' ] )
 	{
 		if ( is_array( $_POST[ 'checkbox' ] ) )
@@ -22,10 +24,10 @@ function event_espresso_edit_list_widget(){
 	<?php
 	}
 	?>
-	
+
 
 	<form id="form1" name="form1" method="post" action="<?php echo $_SERVER[ "REQUEST_URI" ] ?>">
-	<table id="table" class="widefat fixed" width="100%"> 
+	<table id="table" class="widefat fixed" width="100%">
 	<thead>
 		<tr>
 		  <th class="manage-column column-title" id="title" scope="col" title="Click to Sort" style="width: 30%;"><?php _e('Name','event_espresso'); ?></th>
@@ -34,29 +36,29 @@ function event_espresso_edit_list_widget(){
 		  <th class="manage-column column-date" id="attendees" scope="col" title="Click to Sort"  style="width: 15%;"><?php _e('Attendees','event_espresso'); ?></th>
 		</tr>
 	</thead>
-	 
+
 	<tbody>
-	<?php 
+	<?php
 		/* Events */
 		//Get number of total events
 		$wpdb->query("SELECT id FROM ". EVENTS_DETAIL_TABLE ." WHERE event_status != 'D'");
 		$total_events =	$wpdb->num_rows;
-		
+
 		//Get total events today
 		$wpdb->query("SELECT id FROM ". EVENTS_DETAIL_TABLE ." WHERE event_status != 'D' AND start_date = '" . $curdate . "' ");
 		$total_events_today =	$wpdb->num_rows;
-	
+
 		if ($total_events > 0) {
-		
+
 			$curdate = date("Y-m-d");
 			/*$pieces = explode('-',$curdate, 3);
 			$this_year_r = $pieces[0];
 			$this_month_r = $pieces[1];
 			//echo $this_year_r;
 			$days_this_month = date('t', strtotime($curdate));*/
-			
+
 			$days_in_dasboard = $org_options['events_in_dasboard'] == ''? '30':stripslashes_deep($org_options['events_in_dasboard']);
-		   
+
 			$sql = "SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
 			$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT FROM ". EVENTS_DETAIL_TABLE ." e ";
 			$sql .= " WHERE event_status != 'D' ";
@@ -70,13 +72,13 @@ function event_espresso_edit_list_widget(){
 				$how_many_events = __("the next $days_in_dasboard days of events", 'event_espresso');
 			}
 				//$sql .= " WHERE event_status != 'D' AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
-			
-			
+
+
 			$sql .= " ORDER BY e.start_date  ASC ";
-			
+
 			//echo $sql;
 			$results = $wpdb->get_results($sql);
-	
+
 				foreach ($results as $result){
 					$event_id= $result->event_id;
 					$event_name=stripslashes_deep($result->event_name);
@@ -97,19 +99,19 @@ function event_espresso_edit_list_widget(){
 			   <td class="author column-author"><?php echo event_date_display($start_date,get_option('date_format'))?> <br />
 <?php echo event_espresso_get_time($event_id, 'start_time') ?></td>
 			  <td class="date column-date"><?php echo $status['display'] ?></td>
-			  <td align="center" class="author column-attendees"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees');?></a></td>			  
-			  
+			  <td align="center" class="author column-attendees"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees');?></a></td>
+
 	  </tr>
-	<?php } 
+	<?php }
 		}?>
-		
+
 	  </tbody>
 </table><p>&nbsp;</p>
 <div style="clear:both"></div>
 <script>
-	
-	jQuery(document).ready(function($) {						
-	
+
+	jQuery(document).ready(function($) {
+
 		var mytable = $('#table').dataTable( {
 				"bStateSave": true,
 				"sPaginationType": "full_numbers",
@@ -121,12 +123,12 @@ function event_espresso_edit_list_widget(){
 							 null,
 							 null
 						]
-		
+
 		} );
-	
+
 	} );
 	</script>
-   
+
 	<div style="clear:both"></div>
 	<?php
 }

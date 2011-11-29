@@ -1,15 +1,17 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'); 
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function edit_attendee_record() {
 	global $wpdb, $org_options;
-	//$wpdb->show_errors();
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
 	$attendee_num = 1;
 	if ($_REQUEST['form_action'] == 'edit_attendee') {
-		
+
 		$id = isset($_REQUEST['id']) ? $_REQUEST['id']:'';
 
 		$registration_id = isset($_REQUEST['registration_id']) ? $_REQUEST['registration_id']:'';
-		
+
 		$multi_reg = false;
 		$check = $wpdb->get_row("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ");
 		if ( $check !== NULL ){
@@ -22,7 +24,7 @@ function edit_attendee_record() {
 		 * find the primary attendee so we know which form to present
 		 * since the additional attendees will have a different form
 		 */
-		
+
 		//Update the payment amount for the attendee
 		if (!empty($_REQUEST['attendee_payment']) && $_REQUEST['attendee_payment'] == 'update_payment') {
 			$attendee_cost_data = array("attendee_id"=>$ext_attendee_id,"quantity"=>$attendee_quantity,"cost"=>$attendee_cost);
@@ -35,7 +37,7 @@ function edit_attendee_record() {
 			$event_cost = 0;
 			if ( $multi_reg ){
 				foreach($registration_ids as $reg_ids ){
-					$event_cost += $wpdb->get_var($wpdb->prepare("select ea.registration_id, sum(eac.cost * eac.quantity) from ".EVENTS_ATTENDEE_COST_TABLE." eac inner join ".EVENTS_ATTENDEE_TABLE." ea on eac.attendee_id = ea.id where ea.registration_id = '%s' group by ea.registration_id ",$reg_ids['registration_id']),1,0);					
+					$event_cost += $wpdb->get_var($wpdb->prepare("select ea.registration_id, sum(eac.cost * eac.quantity) from ".EVENTS_ATTENDEE_COST_TABLE." eac inner join ".EVENTS_ATTENDEE_TABLE." ea on eac.attendee_id = ea.id where ea.registration_id = '%s' group by ea.registration_id ",$reg_ids['registration_id']),1,0);
 				}
 			} else {
 				$event_cost = $wpdb->get_var($wpdb->prepare("select ea.registration_id, sum(eac.cost * eac.quantity) from ".EVENTS_ATTENDEE_COST_TABLE." eac inner join ".EVENTS_ATTENDEE_TABLE." ea on eac.attendee_id = ea.id where ea.registration_id = '%s' group by ea.registration_id ",$registration_id),1,0);
@@ -62,7 +64,7 @@ function edit_attendee_record() {
 
 			$sql = " DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='$id'";
 			$wpdb->query($sql);
-			
+
 			/**
 			 * Added for seating chart addon
 			 * */
@@ -81,7 +83,7 @@ function edit_attendee_record() {
 			$wpdb->query($sql);
 			event_espresso_cleanup_multi_event_registration_id_group_data();
 			event_espresso_cleanup_attendee_cost_data();
-			
+
 		}else if (!empty($_REQUEST['attendee_action']) && $_REQUEST['attendee_action'] == 'update_attendee') {
 		/*
 		 * Update the attendee information
@@ -120,7 +122,7 @@ function edit_attendee_record() {
 			$sql .= " WHERE id ='$id' ";
 			//echo $sql;
 			$wpdb->query($sql);
-			
+
 			/*
 			 * Added for seating chart addon
 			 */
@@ -148,7 +150,7 @@ function edit_attendee_record() {
 						JOIN " . EVENTS_QUESTION_TABLE . " t2
 							ON t1.question_id=t2.id
 							WHERE attendee_id = '" . $id . "' " );*/
-			
+
 			$questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id . " ");
 
 			$question_groups = unserialize($questions->question_groups);
@@ -172,32 +174,32 @@ function edit_attendee_record() {
 			$q_sql_1 = "SELECT q.*, q.id q_id, qg.group_name FROM " . EVENTS_QUESTION_TABLE . " q
 						JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr on q.id = qgr.question_id
 						JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
-						WHERE qgr.group_id in (" . $questions_in. ") 
+						WHERE qgr.group_id in (" . $questions_in. ")
 						ORDER BY qg.id, q.sequence ASC";
 			$questions = $wpdb->get_results($q_sql_1);
 			/* DEBUG */
 			//echo '<p>'.print_r($questions).'</p>';
 			//echo '<p>'.$q_sql_1.'</p>';
 			/* END DEBUG */
-			
+
 			$a_sql ="SELECT id, question_id, answer FROM " . EVENTS_ANSWER_TABLE . " at WHERE at.attendee_id = '" . $id . "' ";
-			/* DEBUG */	
+			/* DEBUG */
 			//echo '<p>'.$a_sql.'</p>';
 		   /* END DEBUG */
-		   
+
 			$answers = $wpdb->get_results($a_sql, OBJECT_K);
-			
+
 			foreach ( $answers as $answer ) {
-				/* DEBUG */	
+				/* DEBUG */
 				//echo '<p>$answers[question_id] = '.$answer->question_id.'</p>';
 				$answer_a[]=$answer->question_id;
 			}
-			
-			/* DEBUG */	
+
+			/* DEBUG */
 			//echo '<p> print_r($answers) = <br />'.var_dump($answers).'</p>';
 			//echo '<p> print_r($questions) = <br />'.print_r($questions).'</p>';
 			/* END DEBUG */
-			
+
 			if ( $questions ){
 				foreach ( $questions as $question ) {
 					switch ( $question->question_type ){
@@ -233,42 +235,42 @@ function edit_attendee_record() {
 							} else {
 								$sql = "INSERT INTO " . EVENTS_ANSWER_TABLE . " (registration_id, answer,attendee_id,question_id) VALUES ('$registration_id','$value_string', $id, $question->q_id)";
 							}
-							
+
 							$wpdb->query( $sql );
-							
-							/* DEBUG */							
-							//echo '<p>'.$sql.'</p>';	
-							
+
+							/* DEBUG */
+							//echo '<p>'.$sql.'</p>';
+
 							//$sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$value_string' WHERE attendee_id = '$id' AND question_id ='$question->question_id'";
 							//echo '<p>$question->q_id = '.$question->q_id.'</p>';
-							
+
 							/*echo '<p> in_array($question->q_id, $answers) = ';
 							echo in_array($question->q_id, $answers) ? 'true':'false';
 							echo '</p>';*/
-							
+
 							//echo '<p>'.print_r($answers).'</p>';
 							//echo '<p>$answers[question_id]'.$answers['question_id'].'</p>';
-							
+
 							//print_r($answer_a);
-							
+
 							//print_r($answers);
 							/*if (!array_key_exists($question->id , $answers)) {
 								echo 'test = '.$question->id.'<br />';
 							}*/
 						   /* END DEBUG */
-						   
+
 						   break;
 					}
 				}
 			}
-			
+
 		}
-		
+
 		$counter = 0;
 		$additional_attendees = NULL;
 
 		$WHERE = (isset($_REQUEST['registration_id'])) ? "registration_id ='" . $_REQUEST['registration_id'] . "'" : "id = " . $_REQUEST['id'];
-		
+
 		if (isset($_REQUEST['attendee_num']) && $_REQUEST['attendee_num'] > 1 && isset($_REQUEST['registration_id']) && isset($_REQUEST['id'])){
 			$WHERE = " t1.registration_id ='" . $_REQUEST['registration_id'] . "' AND t1.id = " . $_REQUEST['id'];
 		}
@@ -309,14 +311,14 @@ function edit_attendee_record() {
 				$coupon_code = $result->coupon_code;
 				$quantity = $result->quantity;
 				$is_additional_attendee = ($primary_attendee != $id) ? true : false;
-				
+
 				$start_date = $result->start_date;
 				$event_time = $result->event_time;
-				
+
 				/*
 				* Added for seating chart addon
 				*/
-				$booking_info = "";										
+				$booking_info = "";
 				if ( defined('ESPRESSO_SEATING_CHART') ){
 					$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
 					if ( $seating_chart_id !== false ){
@@ -329,7 +331,7 @@ function edit_attendee_record() {
 				/*
 				*End
 				*/
-			
+
 				$event_date = event_date_display($start_date .' '.$event_time, get_option('date_format') . ' g:i a');
 
 				if ($is_additional_attendee && isset($event_meta['add_attendee_question_groups']) && $event_meta['add_attendee_question_groups']!=NULL) {
@@ -367,7 +369,7 @@ function edit_attendee_record() {
 				<?php echo $is_additional_attendee == false ? '[ <span class="green_text">'.__('Primary Attendee Record', 'event_espresso').'</span> ]': '[ <a href="admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id=' . $event_id . '&registration_id=' . $registration_id . '&form_action=edit_attendee">View/Edit Primary Attendee</a> ]'; ?> </h4>
 			  <fieldset>
 				<ul>
-				
+
 				  <li>
 					<?php
 			$time_id =0;
@@ -378,16 +380,16 @@ function edit_attendee_record() {
 				$time_id = $wpdb->last_result[0]->id;
 			}
 			//echo $time_id;
-			echo event_espresso_time_dropdown($event_id, $label = 1, $multi_reg = 0, $time_id);	
+			echo event_espresso_time_dropdown($event_id, $label = 1, $multi_reg = 0, $time_id);
 ?>
 		</li>
-		<li> 
+		<li>
 <?php
 			//Show pricing in a dropdown or text
 			do_action('espresso_price_select', $event_id);
 ?>
 		</li>
-		<li> 
+		<li>
 <?php
 			//Added for seating chart addon.  Creates a field to select a seat from a popup.
 			do_action( 'espresso_seating_chart_select', $event_id, $booking_info);
@@ -395,7 +397,7 @@ function edit_attendee_record() {
 		</li>
 		<li>
 		<?php
-		if (count($question_groups) > 0) 
+		if (count($question_groups) > 0)
 		{
 			$questions_in = '';
 
@@ -418,45 +420,45 @@ function edit_attendee_record() {
 					LEFT JOIN " .  EVENTS_ANSWER_TABLE . " at on q.id = at.question_id
 					JOIN " .  EVENTS_QST_GROUP_REL_TABLE . " qgr on q.id = qgr.question_id
 					JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
-					WHERE qgr.group_id in (" .$questions_in. ") 
-					AND (at.attendee_id IS NULL OR at.attendee_id = '" . $id . "') 
-					".$FILTER." 
+					WHERE qgr.group_id in (" .$questions_in. ")
+					AND (at.attendee_id IS NULL OR at.attendee_id = '" . $id . "')
+					".$FILTER."
 					ORDER BY qg.id, q.id ASC";
-			
+
 			/* DEBUG */
-			//echo $q_sql_2;		
+			//echo $q_sql_2;
 			/* END DEBUG */
-			
+
 			$questions = $wpdb->get_results($q_sql_2);
 			$num_rows = $wpdb->num_rows;
-		   
+
 			if ($num_rows > 0) {
-				
+
 				$q_ids = '';
 				foreach ($questions as $question_ids) {
 					$q_ids .= $question_ids->question_id.',';
 				}
-				
+
 				/* DEBUG */
 				//echo rtrim($q_ids, ",");
 				/* END DEBUG */
-				
+
 				$existing_questions = rtrim($q_ids, ",");
-				
+
 				$q_sql_3 = "SELECT q.* FROM " . EVENTS_QUESTION_TABLE . " q  JOIN " .  EVENTS_QST_GROUP_REL_TABLE . " qgr ON q.id = qgr.question_id JOIN " . EVENTS_QST_GROUP_TABLE . " qg ON qg.id = qgr.group_id WHERE qgr.group_id IN (" .$questions_in. ") AND q.id NOT IN (".$existing_questions.") GROUP BY q.question ORDER BY qg.id, q.id ASC";
-				
+
 				/* DEBUG */
 				//echo $q_sql_3;
 				/* END DEBUG */
-					
+
 				$questions_2 = $wpdb->get_results($q_sql_3);
 				$num_rows_2 = $wpdb->num_rows;
-				
+
 				//Merge the existing questions with any missing questions
 				if ($num_rows_2 > 0) {
 					$questions = array_merge($questions,$questions_2);
 				}
-				
+
 				//Output the questions
 				$question_displayed = array();
 				foreach ($questions as $question) {
@@ -464,11 +466,11 @@ function edit_attendee_record() {
 						$question_displayed[] = $question->id;
 						//if new group, close fieldset
 						echo ($group_name != '' && $group_name != $question->group_name) ? '</fieldset>' : '';
-						
+
 						/* DEBUG */
 						//echo '<p>'.print_r($question).'</p>';
 						/* END DEBUG */
-						
+
 						if ($group_name != $question->group_name) {
 							echo "<fieldset><legend>$question->group_name<legend>";
 							$group_name = $question->group_name;
@@ -504,26 +506,26 @@ function edit_attendee_record() {
 			  <?php _e('Additional Attendees', 'event_espresso'); ?>
 			</h4>
 			<ol>
-			  <?php	
+			  <?php
 				foreach ($additional_attendees as $att => $row)
-				{ 
+				{
 					$attendee_num++;
 			?>
 			  <li><a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;id=<?php echo $att; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;attendee_num=<?php echo $attendee_num; ?>" title="<?php _e('Edit Attendee', 'event_espresso'); ?>"><strong><?php echo $row['full_name']; ?></strong> (<?php echo $row['email']; ?>)</a> | <a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;attendee_id=<?php echo $att; ?>&amp;form_action=edit_attendee&amp;attendee_action=delete_attendee&amp;id=<?php echo $id ?>" title="<?php _e('Delete Attendee', 'event_espresso'); ?>" onclick="return confirmDelete();">
 				<?php _e('Delete', 'event_espresso'); ?>
 				</a></li>
-			  <?php 	
-				} 
+			  <?php
+				}
 			?>
 			</ol>
 			<?php	} ?>
 			<?php
-		
+
 		/**
-		 * Begin Attendee Payment Information 
+		 * Begin Attendee Payment Information
 		 * */
-		
-		
+
+
 		/**
 		 * IF seating chart add-on is available and the event has a seating chart. Then this ticket option can not be used.
 		 * */
@@ -534,7 +536,7 @@ function edit_attendee_record() {
 		/**
 		 * If attendee was added in old system i.e. before version 3.1.10 and attendee_cost table got introduced then this option can not be used
 		 * */
-		$ice_age = true; 
+		$ice_age = true;
 		$ice_row = $wpdb->get_row($wpdb->prepare("select * from ".EVENTS_ATTENDEE_COST_TABLE." where attendee_id = '%d'",$id));
 		if ( $ice_row !== NULL ){
 			$ice_age = false;

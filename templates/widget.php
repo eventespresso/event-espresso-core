@@ -21,6 +21,9 @@ if (!class_exists('Event_Espresso_Widget')) {
 			extract($args);
 
 			global $wpdb, $org_options;
+			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+			}
 			/* Our variables from the widget settings. */
 
 			$title = apply_filters('widget_title', $instance['title']);
@@ -81,17 +84,17 @@ if (!class_exists('Event_Espresso_Widget')) {
 				$registration_url = $event->externalURL != '' ? $event->externalURL : espresso_reg_url($event->id);
 
 				$all_meta = array(
-					'is_active' => $event->is_active,
-					'event_status' => $event->event_status,
-					'event_address' => $event->address,
-					'event_address2' => $event->address2,
-					'registration_startT' => $event->registration_startT,
-					'registration_start' => $event->registration_start,
-					'registration_endT' => $event->registration_endT,
-					'registration_end' => $event->registration_end,
-					'start_date' => event_date_display($event->start_date, get_option('date_format')),
-					'start_time' => event_date_display($event->start_time, get_option('time_format')),
-					'end_date' => event_date_display($event->end_date, get_option('date_format')),
+						'is_active' => $event->is_active,
+						'event_status' => $event->event_status,
+						'event_address' => $event->address,
+						'event_address2' => $event->address2,
+						'registration_startT' => $event->registration_startT,
+						'registration_start' => $event->registration_start,
+						'registration_endT' => $event->registration_endT,
+						'registration_end' => $event->registration_end,
+						'start_date' => event_date_display($event->start_date, get_option('date_format')),
+						'start_time' => event_date_display($event->start_time, get_option('time_format')),
+						'end_date' => event_date_display($event->end_date, get_option('date_format')),
 				);
 
 				//Here we can create messages based on the event status
@@ -127,7 +130,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 						default:
 							?>
 							<p><a href="<?php echo $registration_url; ?>"><?php echo stripslashes_deep($event->event_name) ?> - <?php echo event_date_display($event->start_date) ?></a>
-							<?php /* These are custom messages that can be displayed based on the event status. Just comment the one you want to use. */ ?>
+								<?php /* These are custom messages that can be displayed based on the event status. Just comment the one you want to use. */ ?>
 								<?php //echo $status_display; //Turn this on to display the overall status of the event.  ?>
 								<?php //echo $status_display_ongoing; //Turn this on to display the ongoing message. ?>
 								<?php //echo $status_display_deleted; //Turn this on to display the deleted message. ?>
@@ -137,66 +140,66 @@ if (!class_exists('Event_Espresso_Widget')) {
 								<?php //echo $status_display_open; //Turn this on to display the secondary message. ?>
 								<?php //echo $status_display_custom_closed; //Turn this on to display the secondary message. ?>
 							</p>
-								<?php
-								break;
-						}
+							<?php
+							break;
 					}
 				}
-				/* After widget (defined by themes). */
-				echo $after_widget;
 			}
+			/* After widget (defined by themes). */
+			echo $after_widget;
+		}
 
-			/* Update the widget settings. */
+		/* Update the widget settings. */
 
-			function update($new_instance, $old_instance) {
-				$instance = $old_instance;
+		function update($new_instance, $old_instance) {
+			$instance = $old_instance;
 
-				/* Strip tags for title and name to remove HTML (important for text inputs). */
-				$instance['title'] = strip_tags($new_instance['title']);
-				$instance['category_name'] = $new_instance['category_name'];
-				$instance['show_expired'] = $new_instance['show_expired'];
-				$instance['show_secondary'] = $new_instance['show_secondary'];
-				$instance['show_deleted'] = $new_instance['show_deleted'];
-				$instance['show_recurrence'] = $new_instance['show_recurrence'];
-				$instance['limit'] = $new_instance['limit'];
+			/* Strip tags for title and name to remove HTML (important for text inputs). */
+			$instance['title'] = strip_tags($new_instance['title']);
+			$instance['category_name'] = $new_instance['category_name'];
+			$instance['show_expired'] = $new_instance['show_expired'];
+			$instance['show_secondary'] = $new_instance['show_secondary'];
+			$instance['show_deleted'] = $new_instance['show_deleted'];
+			$instance['show_recurrence'] = $new_instance['show_recurrence'];
+			$instance['limit'] = $new_instance['limit'];
 
-				return $instance;
-			}
+			return $instance;
+		}
 
-			/**
-			 * Displays the widget settings controls on the widget panel.
-			 * Make use of the get_field_id() and get_field_name() function
-			 * when creating your form elements. This handles the confusing stuff.
-			 * */
-			function form($instance) {
+		/**
+		 * Displays the widget settings controls on the widget panel.
+		 * Make use of the get_field_id() and get_field_name() function
+		 * when creating your form elements. This handles the confusing stuff.
+		 * */
+		function form($instance) {
 
-				/* Set up some default widget settings. */
+			/* Set up some default widget settings. */
 
-				$defaults = array('title' => __('Upcoming Events', 'events'), 'category_name' => '', 'show_expired' => __('false', 'events'), 'show_secondary' => __('false', 'events'), 'show_deleted' => __('false', 'events'), 'show_recurrence' => __('false', 'events'));
+			$defaults = array('title' => __('Upcoming Events', 'events'), 'category_name' => '', 'show_expired' => __('false', 'events'), 'show_secondary' => __('false', 'events'), 'show_deleted' => __('false', 'events'), 'show_recurrence' => __('false', 'events'));
 
-				$instance = wp_parse_args((array) $instance, $defaults);
+			$instance = wp_parse_args((array) $instance, $defaults);
 
-				$values = array(
+			$values = array(
 					array('id' => 'false', 'text' => __('No', 'event_espresso')),
 					array('id' => 'true', 'text' => __('Yes', 'event_espresso')));
-				//select_input('allow_multiple', $values, $allow_multiple);
-				?>
+			//select_input('allow_multiple', $values, $allow_multiple);
+			?>
 
 			<!-- Widget Title: Text Input -->
 
 			<p>
 				<label for="<?php echo $this->get_field_id('title'); ?>">
-			<?php _e('Title:', 'Upcoming Events'); ?>
+					<?php _e('Title:', 'Upcoming Events'); ?>
 				</label>
 				<input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo $instance['title']; ?>" size="20" type="text" />
 			</p>
 			<p> <label for="<?php echo $this->get_field_id('category_name'); ?>">
-			<?php _e('Event Category:', 'event_espresso'); ?>
+					<?php _e('Event Category:', 'event_espresso'); ?>
 				</label><br />
-					<?php echo espresso_db_dropdown('id', 'category_name', EVENTS_CATEGORY_TABLE, 'id', $instance['category_name'], $strMethod = "desc", $this->get_field_name('category_name')) ?></p>
+				<?php echo espresso_db_dropdown('id', 'category_name', EVENTS_CATEGORY_TABLE, 'id', $instance['category_name'], $strMethod = "desc", $this->get_field_name('category_name')) ?></p>
 			<p>
 				<label for="<?php echo $this->get_field_id('limit'); ?>">
-				<?php _e('Limit:', 'event_espresso'); ?>
+					<?php _e('Limit:', 'event_espresso'); ?>
 				</label>
 				<input id="<?php echo $this->get_field_id('limit'); ?>" name="<?php echo $this->get_field_name('limit'); ?>" value="<?php echo $instance['limit']; ?>" size="3" type="text" />
 			</p>

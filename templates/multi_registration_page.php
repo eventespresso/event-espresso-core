@@ -5,6 +5,9 @@ if (!function_exists('multi_register_attendees')) {
 	function multi_register_attendees($single_event_id = NULL, $event_id_sc =0, $meta = array()) {
 
 		global $wpdb, $org_options;
+		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+		}
 		$events_in_session = $_SESSION['events_in_session'];
 		static $event_counter = 1;
 		static $attendee_number = 1;
@@ -150,7 +153,7 @@ if (!function_exists('multi_register_attendees')) {
 				if ($num_attendees >= $reg_limit) {
 					?>
 					<div class="espresso_event_full event-display-boxes" id="espresso_event_full-<?php echo $event_id; ?>">
-											<h3 class="event_title"><?php echo stripslashes_deep($event_name)?></h3>
+						<h3 class="event_title"><?php echo stripslashes_deep($event_name) ?></h3>
 						<p class="event_full"><strong><?php _e('We are sorry but this event has reached the maximum number of attendees!', 'event_espresso'); ?></strong></p>
 						<p class="event_full"><strong><?php _e('Please check back in the event someone cancels.', 'event_espresso'); ?></strong></p>
 						<p class="num_attendees"><?php _e('Current Number of Attendees:', 'event_espresso'); ?> <?php echo $num_attendees ?></p>
