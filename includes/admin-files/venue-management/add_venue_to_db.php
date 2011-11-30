@@ -37,15 +37,18 @@ function add_venue_to_db(){
 		}else{ 
 			$succes = false;
 		}
-		if( !empty($locale) ){
-				$last_venue_id = $wpdb->insert_id;
-				$sql_locale="INSERT INTO ".EVENTS_LOCALE_REL_TABLE." (venue_id, locale_id) VALUES ('".$last_venue_id."', '".$locale."')";
-				if ($wpdb->query($sql_locale)){
-					$succes = true;
-				}
-		}else{ 
-			$succes = false;
+		if( defined('ESPRESSO_MANAGER_PRO_VERSION' )){		
+			if( !empty($locale) ){
+					$last_venue_id = $wpdb->insert_id;
+					$sql_locale="INSERT INTO ".EVENTS_LOCALE_REL_TABLE." (venue_id, locale_id) VALUES ('".$last_venue_id."', '".$locale."')";
+					if ($wpdb->query($sql_locale)){
+						$succes = true;
+					}
+			}else{ 
+				$succes = false;
+			}
 		}
+		
 		if ($succes == true){
 			$notices['updates'][] = __('The venue', 'event_espresso') .' '. $_REQUEST['name'] .  __(' has been saved', 'event_espresso');
 		}else{ 

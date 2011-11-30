@@ -30,6 +30,7 @@ function update_event_venue(){
 	$sql_data = array('%s','%s','%s','%s','%s','%s','%s','%s');
 	}
 	$succes = false;
+	
 	if ($wpdb->update( EVENTS_VENUE_TABLE, $sql, $update_id, $sql_data, array( '%d' )) ){
 		/*echo 'Debug: <br />';
 		print_r($sql);
@@ -40,16 +41,17 @@ function update_event_venue(){
 	}else{ 
 		$succes = false;
 	}
-		
-	if( !empty($locale) ){
-		$last_venue_id = $_REQUEST['venue_id'];
-		$wpdb->query("DELETE FROM ".EVENTS_LOCALE_REL_TABLE." WHERE venue_id='".$last_venue_id."'");
-		$sql_locale="INSERT INTO ".EVENTS_LOCALE_REL_TABLE." (venue_id, locale_id) VALUES ('".$last_venue_id."', '".$locale."')";
-		if ($wpdb->query($sql_locale)){
-			$succes = true;
+	if( defined('ESPRESSO_MANAGER_PRO_VERSION' )){	
+		if( !empty($locale) ){
+			$last_venue_id = $_REQUEST['venue_id'];
+			$wpdb->query("DELETE FROM ".EVENTS_LOCALE_REL_TABLE." WHERE venue_id='".$last_venue_id."'");
+			$sql_locale="INSERT INTO ".EVENTS_LOCALE_REL_TABLE." (venue_id, locale_id) VALUES ('".$last_venue_id."', '".$locale."')";
+			if ($wpdb->query($sql_locale)){
+				$succes = true;
+			}
+		}else{ 
+			$succes = false;
 		}
-	}else{ 
-		$succes = false;
 	}
 	if ($succes == true){
 		$notices['updates'][] = __('The venue', 'event_espresso') .' '. $_REQUEST['name'] .  __(' has been updated', 'event_espresso');
