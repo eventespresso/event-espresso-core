@@ -16,5 +16,5 @@ a[href="admin.php?page=admin_addons"] {
 }
 
 .ee_menu_group {
-	display:block;background-color: #ddd; margin: -2px -5px 0px -12px; padding: 2px 0 2px 10px; font-weight: bold;letter-spacing: 1px
+	display:block;background-color: #ddd; margin: -2px -5px 0px -12px; padding: 2px 0 2px 10px; font-weight: bold;letter-spacing: 1px; cursor:default;
 }

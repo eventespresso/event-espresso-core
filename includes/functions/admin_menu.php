@@ -58,7 +58,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		
 		// Management GROUP
 		if ((function_exists('event_espresso_email_config_mnu') || $org_options['use_personnel_manager'] == 'Y' || $org_options['use_venue_manager'] == 'Y') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Management', 'event_espresso'), '<span class="ee_menu_group">' . __('Management', 'event_espresso') . '</span>', apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']), 'event_emails', 'event_espresso_email_config_mnu');
+			add_submenu_page('events', __('Event Espresso - Management', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Management', 'event_espresso') . '</span>', apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']), 'event_emails', 'event_espresso_email_config_mnu');
 
 			//Email Manager
 			if (function_exists('event_espresso_email_config_mnu') && $espresso_premium == true) {
@@ -75,14 +75,12 @@ if (!function_exists('add_event_espresso_menus')) {
 				add_submenu_page('events', __('Event Espresso - Venue Manager', 'event_espresso'), __('Venues', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_venue_manager']), 'event_venues', 'event_espresso_venue_config_mnu');
 			}
 		}
-
-
 		do_action( 'hook_espresso_add_new_submenu_to_group_management' );
 
-// ---------------------------------------
+		// ---------------------------------------
  
-				//Settings GROUP
-		add_submenu_page('events', __('Event Espresso - Settings', 'event_espresso'), '<span class="ee_menu_group">' . __('Settings', 'event_espresso') . '</span>', apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_general']), 'event_espresso', 'organization_config_mnu');
+		//Settings GROUP
+		add_submenu_page('events', __('Event Espresso - Settings', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Settings', 'event_espresso') . '</span>', apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_general']), 'event_espresso', 'organization_config_mnu');
 
 		//General Settings
 		add_submenu_page('events', __('Event Espresso - General Settings', 'event_espresso'), __('General', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_general']), 'event_espresso', 'organization_config_mnu');
@@ -117,7 +115,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		if (is_plugin_active('espresso-social/espresso-social.php') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Social Media Settings', 'event_espresso'), __('Social Media', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_social']), 'espresso_social', 'espresso_social_config_mnu');
 		}
-
+		
 		//SSL/HTTPS Settings
 		if (function_exists('espresso_https_mnu') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - SSL/HTTPS Settings', 'event_espresso'), __('SSL/HTTPS', 'event_espresso'), 'administrator', 'espresso_https', 'espresso_https_mnu');
@@ -125,7 +123,7 @@ if (!function_exists('add_event_espresso_menus')) {
 
 		//Permissions
 		if (function_exists('espresso_permissions_config_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Permissions Settings', 'event_espresso'), '<span class="ee_menu_group">' . __('Permissions', 'event_espresso') . '</span>', 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
+			add_submenu_page('events', __('Event Espresso - Permissions Settings', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Permissions', 'event_espresso') . '</span>', 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
 
 			//Permissions settings
 			add_submenu_page('events', __('Event Espresso - Event Manager Permissions', 'event_espresso'), __('Settings', 'event_espresso'), 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
@@ -137,21 +135,20 @@ if (!function_exists('add_event_espresso_menus')) {
 				add_submenu_page('events', __('Event Espresso - Regional Managers', 'event_espresso'), __('Regional Managers', 'event_espresso'), 'administrator', 'event_groups', 'espresso_permissions_user_groups');
 			}
 		}
-
 		do_action( 'hook_espresso_add_new_submenu_to_group_settings' );
 
-// ---------------------------------------
+		// ---------------------------------------
  
 		//Templates GROUP
-		add_submenu_page('events', __('Event Espresso - Template Settings', 'event_espresso'), '<span class="ee_menu_group">' . __('Templates', 'event_espresso') . '</span>', 'administrator', 'template_confg', 'event_espresso_manage_templates');
+		add_submenu_page('events', __('Event Espresso - Template Settings', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Templates', 'event_espresso') . '</span>', 'administrator', 'template_confg', 'event_espresso_manage_templates');
 
 		//Event styles & templates
 		add_submenu_page('events', __('Event Espresso - Template Settings', 'event_espresso'), __('Settings', 'event_espresso'), 'administrator', 'template_confg', 'event_espresso_manage_templates');
 
 		//Event Maps
 		add_submenu_page('events', __('Event Espresso - Map Settings', 'event_espresso'), __('Maps', 'event_espresso'), 'administrator', 'template_map_confg', 'event_espresso_manage_maps');
-
-
+		
+		
 		//Ticketing Settings
 		if (function_exists('espresso_ticket_config_mnu') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Ticket Settings', 'event_espresso'), __('Tickets', 'event_espresso'), 'administrator', 'event_tickets', 'espresso_ticket_config_mnu');
@@ -161,10 +158,17 @@ if (!function_exists('add_event_espresso_menus')) {
 		if (function_exists('espresso_certificate_config_mnu') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Certificate Templates', 'event_espresso'), __('Certificates', 'event_espresso'), 'administrator', 'event_certificates', 'espresso_certificate_config_mnu');
 		}
+		do_action( 'hook_espresso_add_new_submenu_to_group_templates' );
 
-		//Addons
+		//Extras
+		add_submenu_page('events', __('Event Espresso - Marketplace', 'event_espresso'), '<span class="ee_menu_group  onclick="return false;"" onclick="return false;">' . __('Extras', 'event_espresso') . '</span>', 'administrator', 'admin_addons', 'event_espresso_addons_mnu');
+		
+		//Adds any extra pages
+		do_action('espresso_extra_pages');
+
+		//Marketplace
 		add_submenu_page('events', __('Event Espresso - Marketplace', 'event_espresso'), __('Marketplace', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_addons']), 'admin_addons', 'event_espresso_addons_mnu');
-
+		
 		//Test Drive Pro
 		if ($espresso_premium != true)
 			add_submenu_page('events', __('Event Espresso - Test Drive Pro', 'event_espresso'), __('Test Drive Pro', 'event_espresso'), 'administrator', 'test_drive', 'event_espresso_test_drive');
@@ -173,10 +177,16 @@ if (!function_exists('add_event_espresso_menus')) {
 		add_submenu_page('events', __('Event Espresso - Help/Support', 'event_espresso'), '<span style="color: red;">' . __('Help/Support', 'event_espresso') . '</span>', apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_support']), 'support', 'event_espresso_support');
 		
 
-		do_action( 'hook_espresso_add_new_submenu_to_group_templates' );
+		
 
 	}
 
 //End function add_event_espresso_menus()
 }//End if (!function_exists('add_event_espresso_menus'))
 add_action('admin_menu', 'add_event_espresso_menus');
+
+//Example of adding an additional menu item to the "Extras" section of the menu.
+/*function espresso_custom_reports_menu() {
+	add_submenu_page('events', 'Espresso Custom Reports', 'Custom Reports', 'administrator', 'espresso_custom_reports', 'espresso_custom_reports');
+}
+add_action('espresso_extra_pages', 'espresso_custom_reports_menu');*/
