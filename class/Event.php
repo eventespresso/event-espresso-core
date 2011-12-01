@@ -94,6 +94,7 @@ class Event {
 	private $event_hashtag;
 	private $event_format;
 	private $event_livestreamed;
+	private $questions;
 
 	private function set_event_meta() {
 		if (!isset($this->event_meta))
@@ -128,8 +129,46 @@ class Event {
 		}
 	}
 
-	private function set_question_groups() {
-
+	private function set_questions() {
+		global $wpdb;
+		if (!isset($this->question_groups))
+			$this->set_event_details();
+		foreach ($this->question_groups as $group) {
+			$sql = "SELECT * FROM " . EVENTS_QST_GROUP_TABLE . " WHERE id='" . $group . "'";
+			$group_info = $wpdb->get_row($sql, ARRAY_A);
+			foreach ($group_info as $key => $value) {
+				$this->questions['primary'][$group][$key] = $value;
+			}
+			$sql = "SELECT q.* FROM " . EVENTS_QUESTION_TABLE . " q ";
+			$sql .= "JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qr ON qr.question_id=q.id ";
+			$sql .= "WHERE qr.group_id='" . $group . "' ORDER BY q.sequence";
+			$questions = $wpdb->get_results($sql, ARRAY_A);
+			foreach ($questions as $question) {
+				foreach ($question as $key => $value) {
+					$this->questions['primary'][$group]['question'][$question['id']][$key] = $value;
+				}
+			}
+		}
+		if (!isset($this->additional_attendee_reg_info))
+			$this->set_event_meta();
+		if ($this->additional_attendee_reg_info != 1) {
+			foreach ($this->add_attendee_question_groups as $group) {
+				$sql = "SELECT * FROM " . EVENTS_QST_GROUP_TABLE . " WHERE id='" . $group . "'";
+				$group_info = $wpdb->get_row($sql, ARRAY_A);
+				foreach ($group_info as $key => $value) {
+					$this->questions['additional'][$group][$key] = $value;
+				}
+				$sql = "SELECT q.* FROM " . EVENTS_QUESTION_TABLE . " q ";
+				$sql .= "JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qr ON qr.question_id=q.id ";
+				$sql .= "WHERE qr.group_id='" . $group . "' ORDER BY q.sequence";
+				$questions = $wpdb->get_results($sql, ARRAY_A);
+				foreach ($questions as $question) {
+					foreach ($question as $key => $value) {
+						$this->questions['additional'][$group]['question'][$question['id']][$key] = $value;
+					}
+				}
+			}
+		}
 	}
 
 	private function set_prices() {
@@ -212,6 +251,7 @@ class Event {
 		foreach ($vars as $key => $value) {
 			$this->$key = $value;
 		}
+		$this->question_groups = unserialize($this->question_groups);
 		if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
 			$sql = "SELECT ev.* FROM " . EVENTS_VENUE_TABLE . " ev ";
 			$sql .= "JOIN " . EVENTS_VENUE_REL_TABLE . " evr ON evr.venue_id = ev.id ";
@@ -432,9 +472,13 @@ class Event {
 	public function get_question_groups() {
 		if (!isset($this->question_groups))
 			$this->set_event_details();
-		if (!is_array($this->question_groups))
-						$this->set_question_groups();
-		return unserialize($this->question_groups);
+		return $this->question_groups;
+	}
+
+	public function get_questions() {
+		if (!isset($this->questions))
+			$this->set_questions();
+		return $this->questions;
 	}
 
 	public function get_event_meta() {
