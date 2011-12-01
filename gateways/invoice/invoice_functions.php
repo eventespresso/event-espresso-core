@@ -2,10 +2,10 @@
 //Retunrs an array of available template files
 function espresso_invoice_template_files() {
 	// read our template dir and build an array of files
-	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "invoice/index.php")) {
-		$dhandle = opendir(EVENT_ESPRESSO_UPLOAD_DIR . 'invoice/');//If the template files have been moved to the uplaods folder
+	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "invoice/css/index.php")) {
+		$dhandle = opendir(EVENT_ESPRESSO_UPLOAD_DIR . 'invoice/css/');//If the template files have been moved to the uplaods folder
 	} else {
-		$dhandle = opendir(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/invoice/templates/');
+		$dhandle = opendir(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/invoice/templates/css/');
 	}
 
 	$files = array();
@@ -15,9 +15,23 @@ function espresso_invoice_template_files() {
 		while (false !== ($fname = readdir($dhandle))) {
 			// if the file is not this file, and does not start with a '.' or '..',
 			// then store it for later display
-			if ( ($fname != '.') && ($fname != 'index.html') && ($fname != '..') && ($fname != '.svn') && ($fname != basename($_SERVER['PHP_SELF'])) && ($fname != '.DS_Store') ) {
-				// store the filename
-				$files[] = $fname;
+			if ( $fname != '.' ){
+				if ( $fname != 'index.php' ){
+					if ( $fname != '..' ){
+						if ( $fname != '.svn' ){
+							if ( $fname != basename($_SERVER['PHP_SELF']) ){
+								if ( $fname != '.DS_Store' ) {
+									if ( $fname != 'images' ) {
+										if ( $fname != 'print' ) {
+											// store the filename
+											$files[] = $fname;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 		// close the directory

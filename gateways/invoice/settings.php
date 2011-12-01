@@ -1,4 +1,5 @@
 <?php
+//Invoice verion 2.0
 include('invoice_functions.php');
 function event_espresso_invoice_payment_settings(){
 	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
@@ -28,8 +29,9 @@ function event_espresso_invoice_payment_settings(){
 		$payment_settings['invoice']['payment_address'] = trim(strip_tags( $_POST['payment_address']));
 		$payment_settings['invoice']['image_url'] = trim(strip_tags($_POST['image_url']));
 		$payment_settings['invoice']['show'] = $_POST['show'];
-		$payment_settings['invoice']['invoice_file'] = trim(strip_tags($_POST['invoice_file']));
+		$payment_settings['invoice']['invoice_css'] = trim(strip_tags($_POST['invoice_css']));
 		$payment_settings['invoice']['invoice_logo_url'] = trim(strip_tags($_POST['upload_image']));
+		$payment_settings['invoice']['html_default'] = $_POST['html_default'];
 		
 		//Debug
 		//echo '<pre>'.print_r($payment_settings, true).'</pre>';
@@ -133,6 +135,7 @@ function event_espresso_display_invoice_payment_settings(){
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 
 	$files = espresso_invoice_template_files();
+	//echo "<pre>".print_r($files,true)."</pre>";
 	$values = array(
 		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 		array('id' => 'N', 'text' => __('No', 'event_espresso')),
@@ -146,7 +149,9 @@ function event_espresso_display_invoice_payment_settings(){
 				<th><label for="show">
 						<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
 					</label></th>
-				<td><?php echo select_input('show', $values, empty($payment_settings['invoice']['show']) ? '' : $payment_settings['invoice']['show']); ?></td>
+				<td><?php echo select_input('show', $values, empty($payment_settings['invoice']['show']) ? 'Y' : $payment_settings['invoice']['show']); ?><br />
+<span class="description"><?php _e('Will display invoices as a payemnt option <br />
+on your payemnt page. (Default: Yes)', 'event_espresso'); ?></span></td>
 			</tr>
 			<tr>
 				<th><label for="invoice_title">
@@ -206,23 +211,33 @@ echo trim($payment_settings['invoice']['payment_address']);
 		</tbody>
 	</table><?php */?>
 	<h4>
-		<?php _e('PDF Settings', 'event_espresso'); ?>
+		<?php _e('Invoice Display Settings', 'event_espresso'); ?>
 	</h4>
 	<table class="form-table">
 	<tbody>
+	<?php /*?><tr>
+				<th><label for="html_default">
+						<?php _e('Link to HTML/Download Page', 'event_espresso'); ?>
+					</label></th>
+				<td><?php echo select_input('html_default', $values, empty($payment_settings['invoice']['html_default']) ? 'Y' : $payment_settings['invoice']['html_default']); ?><br />
+<span class="description"><?php _e('All download links will point to an CSS/HTML <br />
+styled page. (Default: Yes)', 'event_espresso'); ?></span></td>
+			</tr><?php */?>
 		<tr>
 			<th><label for="base-invoice-select" <?php echo $styled ?>>
-					<?php _e('Select Base Template', 'event_espresso');  ?>
+					<?php _e('Select Base CSS', 'event_espresso');  ?>
 					<?php //apply_filters('espresso_help', 'base_template_info') ?>
 				</label></th>
-			<td><select id="base-invoice-select" class="chzn-select wide" <?php echo $disabled ?> name="invoice_file">
-					<option <?php espresso_invoice_is_selected($fname) ?> value="basic.html">
-					<?php _e('Default Template - Basic', 'event_espresso'); ?>
+			<td><select id="base-invoice-select" class="chzn-select wide" <?php echo $disabled ?> name="invoice_css">
+					<option <?php espresso_invoice_is_selected($fname,$payment_settings['invoice']['invoice_css']) ?> value="simple.css">
+					<?php _e('Default CSS - Simple', 'event_espresso'); ?>
 					</option>
 					<?php foreach( $files as $fname ) { ?>
-					<option <?php espresso_invoice_is_selected($fname) ?> value="<?php echo $fname ?>"><?php echo $fname; ?></option>
+					<option <?php espresso_invoice_is_selected($fname,$payment_settings['invoice']['invoice_css']) ?> value="<?php echo $fname ?>"><?php echo $fname; ?></option>
 					<?php } ?>
-				</select></td>
+				</select><br />
+<span class="description"><?php _e('Load a custom/pre-made style sheet <br />
+to change the look of your invoices.', 'event_espresso'); ?></span></td>
 		</tr>
 		<tr>
 			<th><label for="pdf_instructions">

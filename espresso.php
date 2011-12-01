@@ -777,20 +777,19 @@ function espresso_export_certificate() {
 
 add_action('plugins_loaded', 'espresso_export_certificate');
 
-// Export PDF Invoice
+// Export Invoice
 function espresso_export_invoice() {
 	//Version 2.0
 	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/launch_pdf.php");
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/launch_invoice.php");
 		echo espresso_invoice_launch($_REQUEST['id'], $_REQUEST['r_id']);
 	}
 	//End Version 2.0
-	//Deprecated version
-	//Export PDF invoice
+	//Export pdf version
 	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
 	}
-	//End Deprecated version
+	//End pdf version
 }
 
 add_action('plugins_loaded', 'espresso_export_invoice');

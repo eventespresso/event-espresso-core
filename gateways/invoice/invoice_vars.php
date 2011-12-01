@@ -1,5 +1,4 @@
 <?php
-
 // Setup payment page
 if ($payment_settings['invoice']['show'] == 'N')
 	return;
@@ -9,8 +8,13 @@ if(isset($payment_settings['invoice']['invoice_title'])) { ?>
 <div class="event-display-boxes">
 	<?php	echo '<h4 id="invoice_title" class="payment_type_title section-heading">'.stripslashes_deep($payment_settings['invoice']['invoice_title']).'</h4>';
 }
+
+/*$pdf_url = home_url().'/?invoice_type=' . ( empty($invoice_type) ? '' : $invoice_type ) . '&amp;download_invoice=true&amp;attendee_id='.$attendee_id.'&amp;registration_id='.registration_id;
+
+$page_url = home_url().'/?invoice_type=' . ( empty($invoice_type) ? '' : $invoice_type ) . '&amp;download_invoice=true&amp;attendee_id='.$attendee_id.'&amp;registration_id='.registration_id;
+*/
 ?>
-	<p><a href="<?php echo home_url(); ?>/?invoice_type=<?php echo empty($invoice_type) ? '' : $invoice_type; ?>&amp;download_invoice=true&amp;attendee_id=<?php echo $attendee_id; ?>&amp;registration_id=<?php echo $registration_id ?>" class="inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
+	<p><a href="<?php echo espresso_invoice_url($attendee_id, $registration_id); ?>" class="inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
 		<?php _e('Download PDF Invoice', 'event_espresso'); ?>
 		</a></p>
 	<?php

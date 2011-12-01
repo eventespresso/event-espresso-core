@@ -248,8 +248,8 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 	$payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $data->attendee->registration_id . "&amp;id=" . $data->attendee->id;
 	$data->payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
 
-	//Invoice download link
-	$data->invoice_link = '<a href="' . home_url() . '/?download_invoice=true&amp;attendee_id=' . $data->attendee->id . '&amp;registration_id=' . $data->attendee->registration_id . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
+	// download link
+	$data->invoice_link = '<a href="' .espresso_invoice_url($data->attendee->id,  $data->attendee->registration_id) . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
 
 	//Edit attendee link
 	$data->edit_attendee = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'attendee', 'Edit Registration Details');
