@@ -1,0 +1,84 @@
+/*
+Horizon Invoice Template
+Created by Roan Lavery
+31/08/08 */
+
+/*=========================== TYPOGRAPHY =========================*/
+
+#invoice p, #invoice h2, #invoice h3{margin:0}
+#invoice {font-family: Verdana, Tahoma,  sans-serif; color: #888;line-height:1.5}
+#invoice h1 {margin: 0;color: #000;text-transform: uppercase;}
+#invoice h2, #invoice h3 {color:#000; text-transform: none; line-height:1.2;margin-top:10px}
+
+#invoice #invoice-info h3, #payment-due {margin:0; font-size:9pt; font-weight:normal; font-style:italic; color:#888}
+#invoice #invoice-info h3{padding-right:8px}
+#payment-due:before{content:"("}
+#payment-due:after{content:")"}
+#invoice #invoice-info h2 {margin:0 0 3px 0; color:#000; font-size:15pt; font-weight:bold }
+#invoice-info #payment-total{font-size:16pt; color:#76B618; font-weight:bold; line-height:1.3}
+#invoice h2 {font-size:12pt}
+
+#company-address, #client-details, #payment-details, #invoice-other, #invoice-amount td, th,  #invoice-info {font-size:9pt}
+#company-address{text-align:right}
+#invoice .fn, #invoice .org{color:#000}
+
+#invoice #invoice-terms h2{margin-bottom:3px}
+#invoice #invoice-terms h3{margin-top:0;margin-bottom:5px;font-weight:normal;font-style:italic; color:#666; font-size:9pt}
+
+#invoice .total{font-size:12pt;}
+#comments {font-style:italic;margin-top:15px;line-height:1.2; color:#646464; font-size:10pt;}
+
+#invoice-other{text-align:right}
+#payment-details strong, #invoice-other strong{font-weight:normal}
+
+/*=========================== LAYOUT =========================*/
+
+#invoice{padding:0 1cm 1cm 1cm;background:#fff url(../images/horizon-greenbar.gif) left top repeat-x}
+#invoice-header #company-address {float:right; width:250px;clear:right; margin-top:10px }
+#invoice-header h1{float:left; width:350px; color:#000; margin:5px 0 0 0}
+#invoice-header{padding-top:1cm; }
+#invoice-header .logo {float:right; }
+#invoice-blank-header {margin-top: 1.6cm;}
+#client-details{float:left; width:330px;  margin-top:0.6cm;margin-bottom:20px }
+#invoice-info {width:340px; padding:10px; background:#F1FAE3; border:1px solid #BECEA5; z-index:10 }
+#invoice-info th{text-align:right}
+#payment-due, #invoice-info h3 {display:inline}
+#payment-terms{display:none}
+#invoice-amount {margin: 2em 0 2em 0; clear: both;}
+
+#payment-details{width:300px; float:left; margin-bottom:5mm   }
+#invoice-other{width:330px;clear:both; float:right;margin-bottom:5mm   }
+#invoice-other h2, #payment-details h2 {margin-bottom: 1mm;}
+
+#comments{clear:both; padding:9px 0.4cm 9px 0.4cm; background:#F2F2F2; border:1px solid #ccc; vertical-align:bottom; line-height:1.2;zoom:1}
+
+/*=========================== TABLES =========================*/
+
+#invoice table { border-collapse:collapse; width:100%;clear:both;}
+#invoice table th {text-align:left;padding:3px 4px}
+#invoice #header_row th{background:#67A30F; color:#fff; border-top:1px solid #67A30F}
+#invoice-amount td.action{border-bottom:0}
+#invoice-amount tr.odd td{background:#F2F2F2} 
+
+#invoice-amount .quantity_th{border-left:1px solid #67A30F}
+#invoice-amount .subtotal_th{border-right:1px solid #67A30F}
+
+#invoice-amount #total_tr td{border-bottom:0}
+#invoice-amount #vat_tr td{border-bottom:1px solid #999}
+#invoice-amount tbody{border-right:1px solid #C9C9C9}
+#invoice-amount tbody td {white-space: nowrap;margin: 0;vertical-align: center; border-bottom:1px solid #C9C9C9;border-left:1px solid #C9C9C9}
+
+#invoice-amount td {margin: 0;padding: 5px; vertical-align: top; }
+#invoice-amount td.item_r{text-align: right;}
+#invoice-amount td.item_l{text-align: left;white-space: normal; }
+#invoice-amount td.total{text-align: right;font-weight: bold; font-size:12pt; color:#65A900  }
+
+#invoice-amount tfoot td{padding:3px 4px; color:#000}
+
+#invoice-amount .details_th{width:44%}
+#invoice-amount .details_notax_th{width:52%}
+#invoice-amount .quantity_th{width:13%}
+#invoice-amount .subtotal_th{width:18%; text-align:right}
+#invoice-amount .unitprice_th{width:17%; text-align:right}
+#invoice-amount .salestax_th{width:8%; text-align:center}
+

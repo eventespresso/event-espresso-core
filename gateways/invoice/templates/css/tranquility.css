@@ -1,0 +1,73 @@
+/*
+Tranquility Invoice Template
+Created by Roan Lavery
+18/02/08
+*/
+
+
+/*=========================== TYPOGRAPHY =========================*/
+
+#invoice {font-family: Georgia, "Times New Roman", Times, serif; color: #6C8597;line-height:1.4}
+#invoice h1 {margin: 0;color: #000;text-transform: uppercase;}
+#invoice h2, #Main #invoice h3 {font-family: Georgia, "Times New Roman", Times, serif; color:#000; text-transform: none; line-height:1.2;margin-top:9px}
+#invoice h2 {font-size:11pt}
+#company-address, #client-details, #payment-details, #invoice-other, #invoice-amount td, th,  #invoice-info {font-size:10pt}
+.org, .fn, #bank_name{text-transform:capitalize;font-variant: small-caps; font-weight:bold; letter-spacing:0.07em; color:#5F7C91}
+#payment-details strong, #invoice-other strong{font-weight:normal; color:#666}
+#payment-details h2, #invoice-other h2{font-variant: small-caps;letter-spacing:0.07em; color:#6C8597 }
+#client-details{color:#5F7C91}
+#invoice #invoice-info h2 {margin-bottom: 0px; text-transform:capitalize;font-variant: small-caps; font-size:14pt; color:#5F7C91; font-weight:normal;letter-spacing:0.1em}
+#invoice #invoice-info h3 {margin:0 !important;color:#7F99AB;font-weight:normal;font-size:10pt;}
+#invoice #payment-due{color:#999;font-weight:normal; font-size:10pt}
+#invoice #invoice-info, #invoice #invoice-info p{text-align:right}
+#invoice-info #payment-total{display:none}
+#comments {font-weight:normal; color:#888; font-size:9pt; text-align:center;}
+#bank_name{color:#666}
+/*=========================== LAYOUT =========================*/
+
+#invoice{padding:0 0.8cm 1.8cm 0.8cm; background: #fff url(../images/ripple.jpg) 0px 120px no-repeat;  }
+#invoice-header #company-address {float:right; width:250px;clear:right; text-align:right; margin-top:10px }
+#invoice-header h1{float:left; width:350px; margin:5px 0 0 0}
+#invoice-header{padding-top:0.5cm; }
+#invoice-header .logo {float:left;margin:0px 0 0 0px}
+#invoice-blank-header {margin-top: 1.6cm;}
+#client-details{padding-top:10px; float:left;margin:0px 0 20px 10px; width:330px}
+#invoice-info {width:250px;clear:both; float:right;margin:10px 0 20px 0 }
+#invoice-info th{text-align:right}
+#payment-terms{display:none}
+#payment-due{color:#666; line-height:1.3}
+#invoice-amount {margin: 1em 0; clear: both; }
+
+#payment-details{width:250px; float:left;  }
+#invoice-other{width:350px;clear:both; float:right; text-align:right;  }
+
+#comments{clear:both; padding-top:1cm}
+
+/*=========================== TABLES =========================*/
+
+#invoice table { border-collapse:collapse; width:100%;font-family:"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif}
+#invoice table th {text-align:left;padding: 2px 2px 5px 2px; }
+#invoice #header_row th {color:#5F7C91; border-bottom:1px solid #3E596C}
+#invoice table tr.odd{background:#EBECEB}
+#invoice-amount td.action{border-bottom:0}
+#invoice-amount #discount_tr{background:#F8F8F8}
+#invoice-amount #net_total_tr{background:#F8F8F8}
+#invoice-amount #vat_tr{background:#F8F8F8}
+#invoice-amount #total_tr td{border-bottom:0;background:#eee}
+#invoice-amount #vat_tr td{border-bottom:1px solid #3E596C; }
+#invoice-amount td {white-space: nowrap;margin: 0;padding: 2px; vertical-align: center; border-bottom:1px solid #ddd}
+
+#invoice-amount td {margin: 0;padding: 5px 5px 5px 5px; vertical-align: top; }
+#invoice-amount td.item_r{text-align: right;}
+#invoice-amount td.item_l{text-align: left;white-space: normal; }
+#invoice-amount td.total{text-align: right;font-weight: bold; }
+#invoice-amount td.action{background: #FFF; width:7%;padding-right:0; white-space:nowrap;text-align:center}
+#invoice-amount #total_currency{text-align:right;}
+
+#invoice-amount .details_th{width:45%}
+#invoice-amount .details_notax_th{width:52%}
+#invoice-amount .quantity_th{width:13%}
+#invoice-amount .subtotal_th{width:20%; text-align:right}
+#invoice-amount .unitprice_th{width:15%; text-align:right}
+#invoice-amount .salestax_th{width:7%; text-align:center}
+

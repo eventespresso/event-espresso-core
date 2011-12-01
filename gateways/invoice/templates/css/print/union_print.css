@@ -1,0 +1,7 @@
+@page{margin:0}
+
+body { background: transparent url(/images/gallery/red-bg.gif) top left repeat-y; }
+#invoice {background-image: none; background-color: transparent; padding-bottom:0}
+#Main {text-align: left;background-color: transparent;border-top: none;}
+
+table#invoice-amount td, table#invoice-amount th, div{border-width:0.05mm !important}

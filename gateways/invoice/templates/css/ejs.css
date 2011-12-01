@@ -1,0 +1,74 @@
+/*
+Elliot Jay Stocks Invoice Template
+Created by Elliot Jay Stocks
+23/07/08 */
+
+/*=========================== TYPOGRAPHY =========================*/
+#invoice a.add {color: #fff;}
+#invoice img { border: none; }
+
+#invoice p, #invoice h2, #invoice h3 { margin:0 }
+#invoice { font-family: "Book Antiqua", Palatino, "Palatino Linotype", Baskerville, BaskervilleBE, BaskervilleOldFace, Garamond, "Times New Roman", serif; color:#000; line-height:1.3 }
+#invoice h1 { margin:0; color:#000; text-transform:uppercase }
+#invoice h2, #invoice h3 {font-family: "Book Antiqua", Palatino, "Palatino Linotype", Baskerville, BaskervilleBE, BaskervilleOldFace, Garamond, "Times New Roman", serif; color:#777; line-height:1.2; margin-top:10px }
+#company-address, #client-details, #payment-details, #invoice-other, #invoice-amount td, th, #invoice-info { font-size:10pt }
+#invoice #comments { font-weight:bold; margin:0.4cm 0 0 0; padding:20px; line-height:1.2; background:#000; color:#fff }
+div#invoice div, div#invoice p { color:#777 }
+div#invoice #company-address div, div#invoice div#invoice-other div#comments { color:#fff }
+h1, h2, h3 { margin:0; padding:0; font-weight:bold; line-height:18pt; text-transform:uppercase }
+div#invoice-info h2 { font-size:24pt; color:#777 }
+div#invoice-info h3 { font-size:14pt; color:#777 }
+#invoice-info #payment-total{display:none}
+div#invoice-other h2, div#payment-details h2 { margin:10px 0 0 0;font-size:14pt;  }
+strong { color:#000 }
+div#company-address strong { color:#fff }
+#comments{font-size:10pt}
+
+/*=========================== LAYOUT =========================*/
+
+#invoice { padding:0 1cm 1cm 1cm }
+#invoice { *padding-bottom:0;} /* Hack for IE6 and 7 */
+#invoice-header { padding:1cm 0 }
+#invoice-header h1 { float:left; width:350px; color:#000; margin:5px 0 0 0 }
+#invoice-header .logo { float:left }
+#invoice-header #company-address { margin:-1cm 0 0 0; float:right; padding:20px; width:210px; clear:right; background:#000 }
+#invoice-header #company-address div.org { font-size:14pt; font-weight:bold }
+#invoice-blank-header { margin-top: 1.6cm }
+#client-details { padding-top:10px; float:left; width:330px; margin-top:20px; margin-bottom:20px }
+#client-details div.org { font-size:14pt; font-weight:bold }
+#invoice-info { width:250px; float:right; clear:both;margin-top:20px;margin-bottom:20px }
+#invoice-info th { text-align:right }
+#invoice-info h2 { margin-bottom: 0px; text-transform:uppercase; font-size:14pt }
+#invoice-info h3 { margin: 0px 0 0 0px }
+#invoice-amount { margin: 2em 0 2em 0; clear: both }
+
+#payment-details { width:330px; float:left }
+#invoice-other { width:250px;clear:both; float:right }
+#invoice-other h2, #payment-details h2 { margin-bottom: 1em }
+
+#comments{clear:both; float:right; width:210px}
+
+/*=========================== TABLES =========================*/
+
+#invoice table { border-collapse:collapse; width:100%; clear:both; background:#eee; border-right:1px solid #000; border-left:1px solid #000; border-top:1px solid #000 }
+
+#invoice table th { text-align:left;padding: 4px 5px 4px 5px }
+#invoice #header_row th{ color:#000; border-bottom:1px solid #000 }
+#invoice-amount td.action { border-bottom:0 }
+
+#invoice-amount #total_tr td { border-bottom:0; background:#000; color:#fff }
+#invoice-amount td {white-space: nowrap;margin: 0;vertical-align: center }
+
+#invoice-amount td {margin: 0;padding: 4px 5px 4px 5px; vertical-align: top }
+#invoice-amount td.item_r { text-align:right }
+#invoice-amount td.item_l { text-align:left; white-space:normal }
+#invoice-amount td.total { text-align:right; font-weight:bold }
+
+#invoice-amount .details_th { width:44% }
+#invoice-amount .details_notax_th { width:52% }
+#invoice-amount .quantity_th { width:13% }
+#invoice-amount .subtotal_th { width:18%; text-align:right }
+#invoice-amount .unitprice_th { width:17%; text-align:right }
+#invoice-amount .salestax_th { width:8%; text-align:center }
+
+#invoice-amount tr#discount_tr, #invoice-amount tr#net_total_tr, #invoice-amount tr#vat_tr { color: #777 }

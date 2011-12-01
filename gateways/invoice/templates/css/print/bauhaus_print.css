@@ -1,0 +1,7 @@
+@page{margin:0;}
+#invoice{padding:1cm; border:0}
+body{border-top:1mm solid #000}
+
+#invoice{padding-bottom:0}
+
+table#invoice-amount td, div{border-width:0.05mm !important}
