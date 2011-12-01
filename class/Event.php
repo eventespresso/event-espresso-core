@@ -128,6 +128,10 @@ class Event {
 		}
 	}
 
+	private function set_question_groups() {
+
+	}
+
 	private function set_prices() {
 		$sql = "SELECT * FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $this->id . "' ";
 		$sql .= "ORDER BY event_cost ASC";
@@ -135,6 +139,7 @@ class Event {
 		$prices = $wpdb->get_results($sql, ARRAY_A);
 		foreach ($prices as $price) {
 			$this->prices[] = array(
+					'id' => $price['id'],
 					'price_type' => $price['price_type'],
 					'event_cost' => $price['event_cost'],
 					'surcharge' => $price['surcharge'],
@@ -145,6 +150,35 @@ class Event {
 					'max_qty_members' => $price['max_qty_members']
 			);
 		}
+		if (!isset($this->early_disc)) {
+			$this->set_event_details();
+		}
+		if (!empty($this->early_disc)
+						&& !empty($this->early_disc_date)
+						&& strtotime($this->early_disc_date) > strtotime(date("Y-m-d"))) {
+			foreach ($this->prices as &$price) {
+				$price['early_price'] = $this->early_discount($price['event_cost']);
+				if ($price['event_cost'] != $price['member_price']) {
+					$price['early_member_price'] = $this->early_discount($price['member_price']);
+				}
+				if ($this->early_disc_percentage == 'Y') {
+					$price['early_display'] = $this->early_disc . '%';
+				} else {
+					global $org_options;
+					$price['early_display'] = $org_options['currency_symbol'] . $this->early_disc;
+				}
+			}
+		}
+	}
+
+	private function early_discount($event_cost) {
+		if ($this->early_disc_percentage == 'Y') {
+			$pdisc = $this->early_disc / 100;
+			$event_cost = $event_cost - ($event_cost * $pdisc);
+		} else {
+			$event_cost = max(0, $event_cost - $this->early_disc);
+		}
+		return $event_cost;
 	}
 
 	private function set_location() {
@@ -259,29 +293,65 @@ class Event {
 		$registration_start_timestamp = strtotime($this->registration_start);
 		$registration_end_timestamp = strtotime($this->registration_end);
 		if ($this->is_active == "Y" && $this->event_status == "O") {
-			$this->status = array('status' => 'ONGOING', 'display' => '<span style="color: #090; font-weight:bold;">' . __('ONGOING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_ongoing">' . __('Ongoing', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'ONGOING',
+					'display' => '<span style="color: #090; font-weight:bold;">' . __('ONGOING', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_ongoing">' . __('Ongoing', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && $this->event_status == "S") {
-			$this->status = array('status' => 'SECONDARY', 'display' => '<span style="color: #090; font-weight:bold;">' . __('WAITLIST', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_secondary">' . __('Waitlist', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'SECONDARY',
+					'display' => '<span style="color: #090; font-weight:bold;">' . __('WAITLIST', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_secondary">' . __('Waitlist', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && $this->event_status == "R") {
-			$this->status = array('status' => 'DRAFT', 'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('DRAFT', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_draft">' . __('Draft', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'DRAFT',
+					'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('DRAFT', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_draft">' . __('Draft', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && $this->event_status == "P") {
-			$this->status = array('status' => 'PENDING', 'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('PENDING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_pending">' . __('Pending', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'PENDING',
+					'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('PENDING', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_pending">' . __('Pending', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && $this->event_status == "X") {
-			$this->status = array('status' => 'DENIED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('DENIED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_denied">' . __('Denied', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'DENIED',
+					'display' => '<span style="color: #F00; font-weight:bold;">' . __('DENIED', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_denied">' . __('Denied', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && date($registration_end_timestamp) <= date(time()) && $this->event_status != "D") {
-			$this->status = array('status' => 'REGISTRATION_CLOSED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('CLOSED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_closed">' . __('Closed', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'REGISTRATION_CLOSED',
+					'display' => '<span style="color: #F00; font-weight:bold;">' . __('CLOSED', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_closed">' . __('Closed', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && date($registration_start_timestamp) >= date(time()) && $this->event_status != "D") {
-			$this->status = array('status' => 'REGISTRATION_NOT_OPEN', 'display' => '<span style="color: #090; font-weight:bold;">' . __('NOT_OPEN', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_not_open">' . __('Not Open', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'REGISTRATION_NOT_OPEN',
+					'display' => '<span style="color: #090; font-weight:bold;">' . __('NOT_OPEN', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_not_open">' . __('Not Open', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && date($registration_start_timestamp) <= date(time()) && $this->event_status != "D") {
-			$this->status = array('status' => 'REGISTRATION_OPEN', 'display' => '<span style="color: #090; font-weight:bold;">' . __('OPEN', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'REGISTRATION_OPEN',
+					'display' => '<span style="color: #090; font-weight:bold;">' . __('OPEN', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && date($timestamp) <= date(time()) && $this->event_status != "D") {
-			$this->status = array('status' => 'EXPIRED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('EXPIRED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_expired">' . __('Expired', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'EXPIRED',
+					'display' => '<span style="color: #F00; font-weight:bold;">' . __('EXPIRED', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_expired">' . __('Expired', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "Y" && date($timestamp) >= date(time()) && $this->event_status != "D") {
-			$this->status = array('status' => 'ACTIVE', 'display' => '<span style="color: #090; font-weight:bold;">' . __('ACTIVE', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_active">' . __('Active', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'ACTIVE',
+					'display' => '<span style="color: #090; font-weight:bold;">' . __('ACTIVE', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_active">' . __('Active', 'event_espresso') . '</span>');
 		} elseif ($this->is_active == "N" && $this->event_status != "D") {
-			$this->status = array('status' => 'NOT_ACTIVE', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('NOT_ACTIVE', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_not_active">' . __('Not Active', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'NOT_ACTIVE',
+					'display' => '<span style="color: #F00; font-weight:bold;">' . __('NOT_ACTIVE', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_not_active">' . __('Not Active', 'event_espresso') . '</span>');
 		} elseif ($this->event_status == "D") {
-			$this->status = array('status' => 'DELETED', 'display' => '<span style="color: #000; font-weight:bold;">' . __('DELETED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_deleted">' . __('Deleted', 'event_espresso') . '</span>');
+			$this->status = array(
+					'status' => 'DELETED',
+					'display' => '<span style="color: #000; font-weight:bold;">' . __('DELETED', 'event_espresso') . '</span>',
+					'display_custom' => '<span class="espresso_deleted">' . __('Deleted', 'event_espresso') . '</span>');
 		}
 	}
 
@@ -362,6 +432,8 @@ class Event {
 	public function get_question_groups() {
 		if (!isset($this->question_groups))
 			$this->set_event_details();
+		if (!is_array($this->question_groups))
+						$this->set_question_groups();
 		return unserialize($this->question_groups);
 	}
 
@@ -474,8 +546,9 @@ class Event {
 	}
 
 	public function get_number_of_available_spaces() {
-		return $this->get_reg_limit()-$this->get_number_of_attendees();
+		return $this->get_reg_limit() - $this->get_number_of_attendees();
 	}
+
 }
 
 ?>
