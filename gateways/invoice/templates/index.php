@@ -9,11 +9,11 @@ if (file_exists(EVENT_ESPRESSO_GATEWAY_URL . "invoice/templates/base.css")) {
 //echo "<pre>".print_r($org_options,true)."</pre>";
 //echo "<pre>".print_r($payment_settings,true)."</pre>";
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 <head>
 <title><?php echo stripslashes_deep($org_options['organization']) ?> <?php _e('Invoice for', 'event_espresso'); ?> <?php echo stripslashes_deep($data->attendee->fname . ' ' .$data->attendee->lname) ?> | <?php echo $data->attendee->registration_id ?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Base Stylesheet do not change or remove -->
 <link rel="stylesheet" type="text/css" href="<?php echo $base_dir; ?>base.css" media="screen" />
 
@@ -117,6 +117,7 @@ if (file_exists(EVENT_ESPRESSO_GATEWAY_URL . "invoice/templates/base.css")) {
 			</tr>
 		</tfoot>
 		<tbody>
+			<!-- Create the table rows for data -->
 			<?php echo espressoImprovedTable($attendees);?>
 		</tbody>
 	</table>
