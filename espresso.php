@@ -748,26 +748,6 @@ if (is_admin()) {
 	}
 }
 
-// Export PDF Ticket
-function espresso_export_ticket() {
-	//Version 2.0
-	if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
-		echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['r_id']);
-	}
-	//End Version 2.0
-	//Deprecated version 1.0
-	//Export PDF Ticket
-	if (isset($_REQUEST['download_ticket']) && $_REQUEST['download_ticket'] == 'true') {
-		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php")) {
-			require_once(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php");
-			espresso_ticket($_REQUEST['id'], $_REQUEST['registration_id']);
-		}
-	}
-	//End Deprecated version 1.0
-}
-
-add_action('plugins_loaded', 'espresso_export_ticket');
-
 // Export PDF Certificate
 function espresso_export_certificate() {
 	if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
