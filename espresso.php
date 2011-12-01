@@ -227,6 +227,7 @@ global $simpleMath;
 $simpleMath = new SimpleMath();
 
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Event.php';
+require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Attendee.php';
 
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/espresso_log.php';
 if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
