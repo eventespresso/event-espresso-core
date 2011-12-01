@@ -78,9 +78,59 @@ class Event {
 	private $enable_for_maps;
 	private $gmap_static;
 	private $prices;
+	private $number_of_attendees;
+	private $default_payment_status;
+	private $venue_id;
+	private $additional_attendee_reg_info;
+	private $add_attendee_question_groups;
+	private $date_submitted;
+	private $originally_submitted_by;
+	private $orig_event_staff;
+	private $event_thumbnail_url;
+	private $display_thumb_in_lists;
+	private $display_thumb_in_regpage;
+	private $display_thumb_in_calendar;
+	private $enable_for_gmap;
+	private $event_hashtag;
+	private $event_format;
+	private $event_livestreamed;
+
+	private function set_event_meta() {
+		if (!isset($this->event_meta))
+			$this->set_event_details();
+		$meta = unserialize($this->event_meta);
+		$this->default_payment_status = $meta['default_payment_status'];
+		$this->venue_id = $meta['venue_id'];
+		$this->additional_attendee_reg_info = $meta['additional_attendee_reg_info'];
+		$this->add_attendee_question_groups = $meta['add_attendee_question_groups'];
+		$this->date_submitted = $meta['date_submitted'];
+		$this->originally_submitted_by = $meta['originally_submitted_by'];
+		$this->orig_event_staff = $meta['orig_event_staff'];
+		$this->event_thumbnail_url = $meta['event_thumbnail_url'];
+		$this->display_thumb_in_lists = $meta['display_thumb_in_lists'];
+		$this->display_thumb_in_regpage = $meta['display_thumb_in_regpage'];
+		$this->display_thumb_in_calendar = $meta['display_thumb_in_calendar'];
+		$this->enable_for_gmap = $meta['enable_for_gmap'];
+		$this->event_hashtag = $meta['event_hashtag'];
+		$this->event_format = $meta['event_format'];
+		$this->event_livestreamed = $meta['event_livestreamed'];
+	}
+
+	private function set_number_of_attendees() {
+		global $wpdb;
+		$sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE;
+		$sql .= " WHERE event_id='" . $this->id . "' AND (payment_status='Completed' OR payment_status='Pending') ";
+		$quantity = $wpdb->get_var($sql);
+		if (!empty($quantity)) {
+			$this->number_of_attendees = $quantity;
+		} else {
+			$this->number_of_attendees = 0;
+		}
+	}
 
 	private function set_prices() {
-		$sql = "SELECT * FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $this->id . "'";
+		$sql = "SELECT * FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $this->id . "' ";
+		$sql .= "ORDER BY event_cost ASC";
 		global $wpdb;
 		$prices = $wpdb->get_results($sql, ARRAY_A);
 		foreach ($prices as $price) {
@@ -279,6 +329,102 @@ class Event {
 		return $this->member_only;
 	}
 
+	public function is_use_coupon_code() {
+		if (!isset($this->use_coupon_code))
+			$this->set_event_details();
+		return $this->use_coupon_code;
+	}
+
+	public function is_use_groupon_code() {
+		if (!isset($this->use_groupon_code))
+			$this->set_event_details();
+		return $this->use_groupon_code;
+	}
+
+	public function is_allow_multiple() {
+		if (!isset($this->allow_multiple))
+			$this->set_event_details();
+		return $this->allow_multiple;
+	}
+
+	public function get_start_date() {
+		if (!isset($this->start_date))
+			$this->set_event_details();
+		return $this->start_date;
+	}
+
+	public function get_end_date() {
+		if (!isset($this->end_date))
+			$this->set_event_details();
+		return $this->end_date;
+	}
+
+	public function get_question_groups() {
+		if (!isset($this->question_groups))
+			$this->set_event_details();
+		return unserialize($this->question_groups);
+	}
+
+	public function get_event_meta() {
+		if (!isset($this->event_meta))
+			$this->set_event_details();
+		return unserialize($this->event_meta);
+	}
+
+	public function is_enable_for_gmap() {
+		if (!isset($this->enable_for_gmap))
+			$this->set_event_meta();
+		return $this->enable_for_gmap;
+	}
+
+	public function is_display_thumb_in_regpage() {
+		if (!isset($this->display_thumb_in_regpage))
+			$this->set_event_meta();
+		return $this->display_thumb_in_regpage;
+	}
+
+	public function get_event_thumbnail_url() {
+		if (!isset($this->event_thumbnail_url))
+			$this->set_event_meta();
+		return $this->event_thumbnail_url;
+	}
+
+	public function get_reg_limit() {
+		if (!isset($this->reg_limit))
+			$this->set_event_details();
+		return $this->reg_limit;
+	}
+
+	public function get_externalURL() {
+		if (!isset($this->externalURL))
+			$this->set_event_details();
+		return $this->externalURL;
+	}
+
+	public function get_event_desc() {
+		if (!isset($this->event_desc))
+			$this->set_event_details();
+		return $this->event_desc;
+	}
+
+	public function get_additional_limit() {
+		if (!isset($this->additional_limit))
+			$this->set_event_details();
+		return $this->additional_limit;
+	}
+
+	public function is_display_reg_form() {
+		if (!isset($this->display_reg_form))
+			$this->set_event_details();
+		return $this->display_reg_form;
+	}
+
+	public function is_display_desc() {
+		if (!isset($this->display_desc))
+			$this->set_event_details();
+		return $this->display_desc;
+	}
+
 	public function get_status() {
 		if (!isset($this->status))
 			$this->set_status();
@@ -321,6 +467,15 @@ class Event {
 		return $this->prices;
 	}
 
+	public function get_number_of_attendees() {
+		if (!isset($this->number_of_attendees))
+			$this->set_number_of_attendees();
+		return $this->number_of_attendees;
+	}
+
+	public function get_number_of_available_spaces() {
+		return $this->get_reg_limit()-$this->get_number_of_attendees();
+	}
 }
 
 ?>
