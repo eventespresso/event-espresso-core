@@ -38,10 +38,7 @@ function event_espresso_form_builder_new(){
 							array('id'=>'MULTIPLE','text'=> __('Checkbox','event_espresso')),
 							array('id'=>'DATE','text'=> __('Date Picker','event_espresso'))
 							);
-						if ($system_question == true){
-							$q_values=array(array('id'=>'TEXT','text'=> __('Text','event_espresso')));
-						}
-
+						
 						echo select_input( 'question_type', $q_values, '', 'id="question_type"');
 					?>
 						</td>
@@ -61,13 +58,13 @@ function event_espresso_form_builder_new(){
 						</th>
 						<td>
 							<?php
-							echo select_input('required', $values, 'N'); 
+							echo select_input('required', $values, 'N');
 						?><br />
 						<span class="description"><?php _e('Mark this question as required.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr>
-						<th>				
+						<th>
 							<label class="inline" for="admin_only"><?php _e(' Admin View Only','event_espresso'); ?></label>
 						</th>
 						<td>
@@ -79,7 +76,7 @@ function event_espresso_form_builder_new(){
 							<label for="required_text"><?php _e('Required Text','event_espresso'); ?></label>
 						</th>
 						<td>
-		 					<input name="required_text" id="required_text" size="50" type="text" /> 
+		 					<input name="required_text" id="required_text" size="50" type="text" />
 							<br /><span class="description"><?php _e('Text to display if not completed.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
@@ -97,7 +94,7 @@ function event_espresso_form_builder_new(){
 			<input name="action" value="insert" type="hidden" />
 			<input class="button-primary" name="Submit" value="Add Question" type="submit" />
 			<?php wp_nonce_field( 'espresso_form_check', 'add_new_question' ); ?>
-		</p>  
+		</p>
 		</form>
 	</div>
 </div>
