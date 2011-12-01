@@ -29,9 +29,9 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $ty
 	return $html;
 }
 
-function espresso_invoice_url($attendee_id, $registration_id, $extra = ''){
-	$extra = empty($extra) ? '' : '&amp;'.$extra;
-	return home_url().'/?invoice_launch=true&amp;id='.$attendee_id.'&amp;r_id='. $registration_id.'&amp;html=true'.$extra;
+function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
+	$extra = empty($extra) ? '' : '&amp;' . $extra;
+	return home_url() . '/?invoice_launch=true&amp;id=' . $attendee_id . '&amp;r_id=' . $registration_id . '&amp;html=true' . $extra;
 }
 
 function espresso_reg_url($event_id=0) {
@@ -595,6 +595,154 @@ if (!function_exists('event_espresso_management_capability')) {
 	}
 
 	add_filter('event_espresso_management_capability', 'event_espresso_management_capability', 10, 3);
+}
+
+function espresso_display_questions($questions, $attendee) {
+	if (get_option('events_members_active') == 'true') {
+		global $current_user;
+		global $user_email;
+		require_once(EVENT_ESPRESSO_MEMBERS_DIR . "user_vars.php"); //Load Members functions
+		$userid = $current_user->ID;
+		$member_options = get_option('events_member_settings');
+	}
+	$html = '';
+	foreach ($questions[$attendee] as $group) {
+		$html .= '<div class="event_questions" id="' . $group['group_identifier'] . '">';
+		if ($group['show_group_name'] != 0) {
+			$html .= "<h4 class=\"reg-quest-title section-title\">" . $group['group_name'] . "</h4>";
+		}
+		if ($group['show_group_description'] != 0 && !empty($group['group_description'])) {
+			$html .= "<p class='quest-group-descript'>" . $group['group_description'] . "</p>";
+		}
+		foreach ($group['question'] as $question) {
+			if ($question['required'] == "Y") {
+				if (!empty($question['required_text'])) {
+					$required_text = $question['required_text'];
+				} else {
+					$required_text = '';
+				}
+				$email_validate = $question['system_name'] == 'email' ? 'email' : '';
+				$required = ' title="' . $required_text . '" class="required ' . $email_validate;
+				$required .= ' myclass';
+				$required_label = "<em>*</em>";
+			} else {
+				$required = ' class="my_class';
+				$required_label = '';
+			}
+			if ($question['question_type']=='DATE') {
+				$required .= ' datepicker" ';
+			} else {
+				$required .= '" ';
+			}
+			$field_name = 'question|' . $attendee . '|' . $question['id'];
+			if ($attendee == 'additional') {
+				$field_name .= '[]';
+			}
+			$label = '<label for="' . $field_name . '">' . $question['question'] . $required_label . '</label> ';
+			switch ($question['question_type']) {
+				case "TEXT" :
+					$disabled = '';
+					$answer = '';
+					if (get_option('events_members_active') == 'true'
+									&& !empty($question['system_name'])
+									&& $attendee == 'primary') {
+						switch ($question['system_name']) {
+							case $question['system_name'] == 'fname':
+								$answer = $current_user->first_name;
+								break;
+							case $question['system_name'] == 'lname':
+								$answer = $current_user->last_name;
+								break;
+							case $question['system_name'] == 'email':
+								$answer = $user_email;
+								break;
+							case $question['system_name'] == 'address':
+								$answer = esc_attr(get_user_meta($userid, 'event_espresso_address', true));
+								break;
+							case $question['system_name'] == 'city':
+								$answer = esc_attr(get_user_meta($userid, 'event_espresso_city', true));
+								break;
+							case $question['system_name'] == 'state':
+								$answer = esc_attr(get_user_meta($userid, 'event_espresso_state', true));
+								break;
+							case $question['system_name'] == 'zip':
+								$answer = esc_attr(get_user_meta($userid, 'event_espresso_zip', true));
+								break;
+							case $question['system_name'] == 'phone':
+								$answer = esc_attr(get_user_meta($userid, 'event_espresso_phone', true));
+								break;
+						}
+						if (!empty($answer) && $member_options['autofilled_editable'] != 'Y') {
+							$disabled = 'disabled="disabled"';
+						}
+					}
+					$html .= '<p class="event_form_field">' . $label;
+					$html .= '<input type="text" ' . $required . ' id="' . $field_name;
+					$html .= '-' . $attendee . '"  name="' . $field_name;
+					$html .= '" size="40" value="' . $answer . '" ';
+					$html .= $disabled . ' /></p>';
+					break;
+				case "DATE" :
+					//Load scripts and styles
+					wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
+					wp_print_styles('jquery-ui-style-datepicker');
+					wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
+					wp_print_scripts('jquery-ui-datepicker');
+
+					$html .= '<p class="event_form_field">' . $label;
+					$html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $attendee . '"  name="' . $field_name . '" size="40" /></p>';
+					$html .= '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({yearRange: "c-100:c+10", changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
+					break;
+				case "TEXTAREA" :
+					$html .= '<p class="event_form_field event-quest-group-textarea">' . $label;
+					$html .= '<textarea id=""' . $required . ' name="' . $field_name . '"  cols="30" rows="5"></textarea></p>';
+					break;
+				case "SINGLE" :
+					$values = explode(",", $question['response']);
+					$html .= '<fieldset class="single-radio">';
+					$html .= '<legend class="event_form_field">' . $question['question'] . '</legend>';
+					$html .= '<ul class="event_form_field">';
+					foreach ($values as $value) {
+						$value = trim($value);
+						$html .= '<li><label for="SINGLE_' . $question['id'] . '" class="my_class"><input id="SINGLE_' . $question['id'] . '" ' . $required . ' name="' . $field_name . '"  type="radio" value="' . $value . '" /> ' . $value . '</label></li>';
+						//echo $label;
+					}
+					$html .= '</ul>';
+					$html .= '</fieldset>';
+					break;
+				case "MULTIPLE" :
+					$values = explode(",", $question['response']);
+					$html .= '<fieldset class="multi-checkbox">';
+					$html .= '<legend class="event_form_field">' . $question['question'] . '</legend>';
+					//$html .= '</p>';
+					$html .= '<ul class="event_form_field">';
+					foreach ($values as $key => $value) {
+						$value = trim($value);
+						$html .= '<li><label for="' . str_replace(' ', '', $value);
+						$html .= '" class="my_class"><input id="' . str_replace(' ', '', $value);
+						$html .= '" ' . $required . ' name="' . $field_name . '[]"  type="checkbox" value="';
+						$html .= $value . '" /> ' . $value . '</label></li>';
+					}
+					$html .= '</ul>';
+					$html .= '</fieldset>';
+					break;
+				case "DROPDOWN" :
+					$values = explode(",", $question['response']);
+					$html .= '<p class="event_form_field" class="my_class">' . $label;
+					$html .= '<select name="' . $field_name . '" ' . $required . ' id="DROPDOWN_' . $question['id'] . '-' . $attendee . '">';
+					$html .= "<option value=''>" . __('Select One', 'event_espresso') . "</option>";
+					foreach ($values as $value) {
+						$value = trim($value);
+						$html .= '<option value="' . $value . '"> ' . $value . '</option>';
+					}
+					$html .= "</select>";
+					$html .= '</p>';
+					break;
+			}
+		}
+		$html .= '</div>';
+	}
+	return $html;
 }
 
 //Build the form questions. This function can be overridden using the custom files addon
@@ -1254,37 +1402,36 @@ function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
 //This function returns the user id of the current user, if the permissions pro addon is installed.
 //IF the permissions pro addon is installed and the admin has loaded a different manager id, then the system will return that users id.
 //Otherwise it returns the id of the primary admin.
-function espresso_get_user_id(){
+function espresso_get_user_id() {
 	global $notices, $current_user;
-	
+
 	$wp_user_id = 0;
-	
-	if ( function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true){
+
+	if (function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true) {
 		$wp_user_id = $current_user->ID;
-			
+
 		//If an event manager is selected, then we need to load that persons id
 		$selected_user = espresso_get_selected_manager();
-		if (!empty($selected_user)){
+		if (!empty($selected_user)) {
 			$wp_user_id = $selected_user;
 		}
-		
-	}elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
+	} elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 		$wp_user_id = espresso_member_data('id');
-	}else{
+	} else {
 		$wp_user_id = 1;
 	}
-	
+
 	//Make sure the final user id is not 0
-	if ($wp_user_id == 0){
+	if ($wp_user_id == 0) {
 		$wp_user_id = 1;
 	}
-	
+
 	//define it as a global
 	global $espresso_wp_user;
 	$espresso_wp_user = $wp_user_id;
-	
+
 	//Debug
 	//echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
-	
+
 	return $wp_user_id;
 }
