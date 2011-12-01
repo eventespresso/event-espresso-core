@@ -1159,7 +1159,7 @@ function espresso_get_primary_attendee_id($registration_id) {
 
 function espresso_ticket_links($registration_id, $attendee_id) {
 	global $wpdb;
-	$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
+	$sql = "SELECT id, registration_id, fname, lname  FROM " . EVENTS_ATTENDEE_TABLE;
 	if (espresso_is_primary_attendee($attendee_id) != true) {
 		$sql .= " WHERE id = '" . $attendee_id . "' ";
 	} else {
@@ -1174,7 +1174,7 @@ function espresso_ticket_links($registration_id, $attendee_id) {
 		foreach ($attendees as $attendee) {
 			$ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
 			if (function_exists('espresso_ticket_launch')) {
-				$ticket_url = get_option('siteurl') . "/?ticket_launch=true&amp;id=" . $attendee->id . "&amp;r_id=" . $attendee->registration_id;
+				$ticket_url = espresso_ticket_url($attendee->id, $attendee->registration_id);
 			}
 			$ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket') . ' (' . $attendee->fname . ' ' . $attendee->lname . ')' . '</a>' . $break;
 		}
