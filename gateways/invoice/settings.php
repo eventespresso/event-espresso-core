@@ -225,7 +225,7 @@ styled page. (Default: Yes)', 'event_espresso'); ?></span></td>
 			</tr><?php */?>
 		<tr>
 			<th><label for="base-invoice-select" <?php echo $styled ?>>
-					<?php _e('Select Base CSS', 'event_espresso');  ?>
+					<?php _e('Select Stylesheet', 'event_espresso');  ?>
 					<?php //apply_filters('espresso_help', 'base_template_info') ?>
 				</label></th>
 			<td><select id="base-invoice-select" class="chzn-select wide" <?php echo $disabled ?> name="invoice_css">
