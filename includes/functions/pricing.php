@@ -196,6 +196,56 @@ if (!function_exists('early_discount_amount')) {
 
 }
 
+function espresso_price_selection($event, $atts = array()) {
+	global $org_options;
+	if (!empty($atts)) {
+		extract($atts);
+	} else {
+		$show_label = 1;
+		$multi_reg = 0;
+	}
+	$prices = $event->get_prices();
+	$label = empty($label) ? __('Choose an Option: ', 'event_espresso') : $label;
+	$multi_name_adjust = !empty($multi_reg) ? "[$event_id]" : '';
+	$html = '';
+	if (count($prices) > 1) {
+		$html .=!empty($show_label) ? '<label for="event_cost">' . $label . '</label>' : '';
+		$html .= '<select name="price_id' . $multi_name_adjust . '" id="price_option-' . $event->get_id() . '">';
+	}
+	foreach ($prices as $price) {
+		if ($price['surcharge'] > 0 && $price['event_cost'] > 0.00) {
+			$surcharge_text = !empty($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
+			$surcharge = " + {$org_options['currency_symbol']}{$price['surcharge']} " . $surcharge_text;
+			if ($price['surcharge_type'] == 'pct') {
+				$surcharge = " + {$price['surcharge']}% " . $surcharge_text;
+			}
+		} else {
+			$surcharge = '';
+		}
+		if (!empty($price['early_member_price'])) {
+			$price['event_cost'] = $price['early_member_price'];
+			$early_bird_message = __(' Early Pricing', 'event_espresso');
+		} else {
+			$early_bird_message = '';
+		}
+		if (!empty($current_value)) {
+			$selected = $current_value == $price['id'] ? 'selected="selected" ' : '';
+		} else {
+			$selected = '';
+		}
+		if (count($prices) > 1) {
+			$html .= '<option ' . $selected . ' value="' . $price['id'] . '">' . $price['price_type'] . ' (' . $org_options['currency_symbol'] . number_format($price['event_cost'], 2) . $early_bird_message . ') ' . $surcharge . ' </option>';
+		} else {
+			$html .= '<span class="event_price_label">' . __('Price:', 'event_espresso') . '</span> <span class="event_price_value">' . $org_options['currency_symbol'] . number_format($price['event_cost'], 2, '.', '') . $early_bird_message . $surcharge . '</span>';
+			$html .= '<input type="hidden" name="price_id' . $multi_name_adjust . '" id="price_id-' . $price['id'] . '" value="' . $price['id'] . '">';
+		}
+	}
+	if (count($prices) > 1) {
+		$html .= '</select>';
+	}
+	return $html;
+}
+
 //Creates dropdowns if multiple prices are associated with an event
 if (!function_exists('event_espresso_price_dropdown')) {
 
