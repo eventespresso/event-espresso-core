@@ -148,7 +148,7 @@ function add_new_event() {
 		<?php _e('Custom Tickets', 'event_espresso'); ?>
 						</span> </h3>
 					<div class="inside">
-						<p><?php echo espresso_ticket_dd(); ?> <?php apply_filters('espresso_help', 'custom_ticket_info'); ?></p>
+						<p><?php echo espresso_ticket_dd(); ?></p>
 					</div>
 				</div>
 				<!-- /ticket-options -->
