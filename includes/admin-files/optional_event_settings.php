@@ -31,7 +31,7 @@ $values=array(
 				<tbody>
 					<tr>
 						<th><label for="default_payment_status">
-								<?php _e(' Default Payment Status','event_espresso'); ?>
+								<?php _e(' Default Payment Status','event_espresso'); ?> <?php apply_filters('espresso_help', 'payment_status_info') ?>
 							</label></th>
 						<td><?php echo select_input('default_payment_status', $default_payment_status, $org_options['default_payment_status'])?><br />
 							<span class="description">
@@ -41,7 +41,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					</tr>
 					<tr>
 						<th><label for="surcharge">
-								<?php _e('Default Surcharge','event_espresso'); ?>
+								<?php _e('Default Surcharge','event_espresso'); ?> 
 							</label></th>
 						<td><input type="text" name="surcharge" size="2" value="<?php echo (!is_numeric($org_options['surcharge']))?'0.00':$org_options['surcharge'];?>" />
 							<br />
@@ -213,3 +213,4 @@ and backend updates for Event Espresso Core and any installed addons.'); ?>
 	</div>
 </div>
 </div>
+<?php include_once(EVENT_ESPRESSO_INCLUDES_DIR.'help_global.php'); ?>
