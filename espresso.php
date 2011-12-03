@@ -114,20 +114,30 @@ define("EVENT_ESPRESSO_GATEWAY_URL", $wp_content_url . '/uploads/espresso/gatewa
 
 function espresso_init_session() {
 	global $org_options;
+	
+	//logging
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
+	
 	if (!isset($_SESSION)) {
 		session_start();
 	}
-	if ((isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url'] || $_REQUEST['page_id'] == $org_options['notify_url'])) || !isset($_SESSION['espresso_session_id']) || $_SESSION['espresso_session_id'] == '') {
-		$_SESSION['espresso_session_id'] = '';
-		$_SESSION['events_in_session'] = '';
-		$_SESSION['event_espresso_pre_discount_total'] = 0;
-		$_SESSION['event_espresso_grand_total'] = 0;
-		$_SESSION['event_espresso_coupon_code'] = '';
-	}
-	$_SESSION['espresso_session_id'] = session_id();
+	
+	if ( (isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url'] 
+		|| $_REQUEST['page_id'] == $org_options['notify_url'])) 
+		|| !isset($_SESSION['espresso_session']['id']) || $_SESSION['espresso_session']['id'] == array()) {
+		
+		$_SESSION['espresso_session'] = '';
+		//Debug
+		//echo "<pre>espresso_session - ".print_r($_SESSION['espresso_session'],true)."</pre>";
+		$_SESSION['espresso_session'] = array();
+		//Debug
+		//echo "<pre>espresso_session array - ".print_r($_SESSION['espresso_session'],true)."</pre>";
+		$_SESSION['espresso_session']['id'] = session_id().'-'.uniqid('',true);
+		//Debug
+		//echo "<pre>".print_r($_SESSION,true)."</pre>";		
+    }
 }
 
 add_action('plugins_loaded', 'espresso_init_session', 1);
