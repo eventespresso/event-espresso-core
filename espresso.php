@@ -111,7 +111,7 @@ define("EVENT_ESPRESSO_GATEWAY_URL", $wp_content_url . '/uploads/espresso/gatewa
 
 //End - Define dierectory structure for uploads
 
-
+//Start the session
 function espresso_init_session() {
 	global $org_options;
 	
