@@ -4,6 +4,7 @@ global $payment_settings;
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);
 
 //Debug:
+//echo '<p>$espresso_wp_user - '.$espresso_wp_user.'</p>';
 //echo "<pre>".print_r($payment_settings,true)."</pre>";
 
 $payor_data['fname'] = $fname;
