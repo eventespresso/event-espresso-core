@@ -3,11 +3,16 @@
 //Payment page - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
 //This is the initial PayPal button
 function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupon_code ='') {
+	
 	global $wpdb, $org_options, $simpleMath;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
+	
+	//Debug
 	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
+	//echo "<pre>".print_r($_SESSION,true)."</pre>";
+	
 	$today = date("m-d-Y");
 	$num_people = 0;
 
@@ -205,9 +210,12 @@ function espresso_confirm_registration($registration_id) {
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
-	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
+	
 	//Debug
+	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
+	//echo "<pre>".print_r($_SESSION,true)."</pre>";
 	//echo '<p>Function = espresso_confirm_registration()</p>';
+	
 	//Not sure this is needed or why it is here
 	//Get the questions for the attendee
 	$sql = "SELECT ea.answer, eq.question
@@ -215,8 +223,11 @@ function espresso_confirm_registration($registration_id) {
 						LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id
 						WHERE ea.registration_id = '" . $registration_id . "' AND system_name IS NULL ORDER BY eq.sequence asc ";
 	$questions = $wpdb->get_results($sql);
+
+	//Debug
 	//echo $sql;
 	//echo $wpdb->last_query;
+	
 	$display_questions = '';
 	foreach ($questions as $question) {
 		$display_questions .= '<p class="espresso_questions"><span class="attendee-question">' . $question->question . '</span>:<br /> ' . str_replace(',', '<br />', $question->answer) . '</p>';
@@ -356,9 +367,12 @@ function event_espresso_pay($att_registration_id=0) {
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
-	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
+	
 	//Debug
+	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
+	//echo "<pre>".print_r($_SESSION,true)."</pre>";
 	//echo '<p>Function = event_espresso_pay()</p>';
+	
 	//Make sure id's are empty
 	$registration_id = 0;
 	$id = 0;
