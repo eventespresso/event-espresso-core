@@ -1,7 +1,7 @@
 <?php
 global $wpdb;
 $quickpay_settings = get_option('event_espresso_quickpay_settings');
-$sessionid = $_SESSION['espresso_session_id'];
+$sessionid = $_SESSION['espresso_session']['id'];
 $ordernumber = substr(md5(uniqid() . rand()), 0, 20);
 $transaction_id = uniqid(md5(rand(1,666)), true); // Set the transaction id to a unique value for reference in the system.
 $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/quickpay/qp-logo.gif";

@@ -107,11 +107,11 @@ function event_espresso_session_start() {
 
 //This function just returns the session id.
 function event_espresso_session_id() {
-	if (!isset($_SESSION['espresso_session_id'])) {
+	if (!isset($_SESSION['espresso_session']['id'])) {
 		$sessionid = (mt_rand(100, 999) . time());
-		$_SESSION['espresso_session_id'] = $sessionid;
+		$_SESSION['espresso_session']['id'] = $sessionid;
 	}
-	return $_SESSION['espresso_session_id'];
+	return $_SESSION['espresso_session']['id'];
 }
 
 //This function just returns the session id.

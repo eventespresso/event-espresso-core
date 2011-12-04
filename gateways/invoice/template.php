@@ -9,8 +9,8 @@ if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y')
 }
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);
 //Added by Imon
-if (isset($_SESSION['espresso_session_id'])) {
-	unset($_SESSION['espresso_session_id']);
+if (isset($_SESSION['espresso_session']['id'])) {
+	unset($_SESSION['espresso_session']['id']);
 }
 
 define('FPDF_FONTPATH', EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/font/');

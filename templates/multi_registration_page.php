@@ -8,7 +8,7 @@ if (!function_exists('multi_register_attendees')) {
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
-		$events_in_session = $_SESSION['events_in_session'];
+		$events_in_session = $_SESSION['espresso_session']['events_in_session'];
 		static $event_counter = 1;
 		static $attendee_number = 1;
 

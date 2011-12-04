@@ -79,62 +79,62 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		//echo '<p>$amount_pd = '.$amount_pd.'</p>';
 		$questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
 
-		$event_meta = unserialize($questions->event_meta);
-		$questions = unserialize($questions->question_groups);
-		//echo '<p>$data_source[price_select] = '.$data_source['price_select'].'</p>';
-		//$payment = $data_source['payment'];
-		//Figure out if the person has registered using a price selection
-		if ($multi_reg) {
-			$event_cost = $_SESSION['event_espresso_grand_total'];
-			$amount_pd = $attendee_number == 1 ? $event_cost : 0.00;
-			$coupon_code = $attendee_number == 1 ? $_SESSION['event_espresso_coupon_code'] : '';
-			$price_type = (isset($data_source['price_type'])) ? $data_source['price_type'] : espresso_ticket_information(array('type' => 'ticket', 'price_option' => $data_source['price_id']));
-			$attendee_number++;
-		} elseif (isset($data_source['price_select']) && $data_source['price_select'] == true) {
-			$price_options = explode('|', $data_source['price_option'], 2);
-			$price_id = $price_options[0];
-			$price_type = $price_options[1];
-			//$event_cost = event_espresso_get_final_price($price_id, $event_id);
-			$amount_pd = event_espresso_get_final_price($price_id, $event_id); //Changed by Seth 10/5/11
-			/* echo '$event_id = '.$event_id.'<br />';
-			  echo '$price_id = '.$price_id.'<br />';
-			  echo '$event_cost = '.$event_cost;
-			  return; */
-		} else {
-			//$event_cost = isset($data_source['price_id']) ? event_espresso_get_final_price($data_source['price_id'], $event_id) : 0.00;
-			$amount_pd = isset($data_source['price_id']) ? event_espresso_get_final_price($data_source['price_id'], $event_id) : 0.00; //Changed by Seth 10/5/11
-			$coupon_code = '';
-			$price_type = isset($data_source['price_id']) ? espresso_ticket_information(array('type' => 'ticket', 'price_option' => $data_source['price_id'])) : '';
-		}
+	$event_meta = unserialize($questions->event_meta);
+	$questions = unserialize($questions->question_groups);
+	//echo '<p>$data_source[price_select] = '.$data_source['price_select'].'</p>';
+	//$payment = $data_source['payment'];
+	//Figure out if the person has registered using a price selection
+	if ($multi_reg) {
+		$event_cost = $_SESSION['espresso_session']['grand_total'];
+		$amount_pd = $attendee_number == 1 ? $event_cost : 0.00;
+		$coupon_code = $attendee_number == 1 ? $_SESSION['espresso_session']['coupon_code'] : '';
+		$price_type = (isset($data_source['price_type'])) ? $data_source['price_type'] : espresso_ticket_information(array('type' => 'ticket', 'price_option' => $data_source['price_id']));
+		$attendee_number++;
+	} elseif (isset($data_source['price_select']) && $data_source['price_select'] == true) {
+		$price_options = explode('|', $data_source['price_option'], 2);
+		$price_id = $price_options[0];
+		$price_type = $price_options[1];
+		$event_cost = event_espresso_get_final_price($price_id, $event_id);
+		$amount_pd = event_espresso_get_final_price($price_id, $event_id); //Changed by Seth 10/5/11
+			/*echo '$event_id = '.$event_id.'<br />';
+			echo '$price_id = '.$price_id.'<br />';
+			echo '$event_cost = '.$event_cost;
+		return;*/
+	} else {
+		$event_cost = isset($data_source['price_id']) ? event_espresso_get_final_price($data_source['price_id'], $event_id) : 0.00;
+		$amount_pd = isset($data_source['price_id']) ? event_espresso_get_final_price($data_source['price_id'], $event_id) : 0.00; //Changed by Seth 10/5/11
+		$coupon_code = '';
+		$price_type = isset($data_source['price_id']) ? espresso_ticket_information(array('type' => 'ticket', 'price_option' => $data_source['price_id'])) : '';
+	}
+      
+	//Display the confirmation page
+	if (!empty($data_source['confirm_registration'])) {
+		$registration_id = $data_source['registration_id'];
+		echo espresso_confirm_registration($registration_id);
+		return;
+	}
 
-		//Display the confirmation page
-		if (!empty($data_source['confirm_registration'])) {
-			$registration_id = $data_source['registration_id'];
-			echo espresso_confirm_registration($registration_id);
-			return;
-		}
-
-		//Check to see if the registration id already exists
-		$incomplete_filter = !$multi_reg ? " AND payment_status ='Incomplete'" : '';
-		$check_sql = $wpdb->get_results("SELECT attendee_session, id, registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session ='" . $_SESSION['espresso_session_id'] . "' AND event_id ='" . $event_id . "' $incomplete_filter");
-		$num_rows = $wpdb->num_rows;
+        //Check to see if the registration id already exists
+        $incomplete_filter = !$multi_reg ? " AND payment_status ='Incomplete'" : '';
+        $check_sql = $wpdb->get_results("SELECT attendee_session, id, registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session ='" . $_SESSION['espresso_session']['id'] . "' AND event_id ='" . $event_id . "' $incomplete_filter");
+        $num_rows = $wpdb->num_rows;
 
 		$registration_id = empty($wpdb->last_result[0]->registration_id) ? $registration_id = uniqid($event_id . '-') : $wpdb->last_result[0]->registration_id;
 
 		$txn_type = "";
 
-		if (isset($data_source['admin'])) {
-			$payment_status = "Completed";
-			$payment = "Admin";
-			$txn_type = __('Added by Admin', 'event_espresso');
-			$payment_date = date("m-d-Y");
-			$amount_pd = $data_source["event_cost"] == '' ? 0.00 : $data_source["event_cost"];
-			if (isset($data_source["admin_price_override"]) && $data_source["admin_price_override"] == '1') {
-				$amount_pd = $data_source["a_event_cost"] == '' ? 0.00 : $data_source["a_event_cost"];
-			}
-			$registration_id = uniqid('', true);
-			$_SESSION['espresso_session_id'] = '';
-		} else {
+	if (isset($data_source['admin'])) {
+		$payment_status = "Completed";
+		$payment = "Admin";
+		$txn_type = __('Added by Admin', 'event_espresso');
+		$payment_date = date("m-d-Y");
+		$amount_pd = $data_source["event_cost"] == '' ? 0.00 : $data_source["event_cost"];
+		if (isset($data_source["admin_price_override"]) && $data_source["admin_price_override"] == '1') {
+			$amount_pd = $data_source["a_event_cost"] == '' ? 0.00 : $data_source["a_event_cost"];
+		}
+		$registration_id = uniqid('', true);
+		$_SESSION['espresso_session']['id'] = '';
+	} else {
 
 			if ($org_options['use_captcha'] == 'Y' && !$multi_reg && !is_user_logged_in()) {//Recaptcha portion
 				//require_once('includes/recaptchalib.php');
@@ -193,7 +193,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		$payment_date = empty($payment_date) ? '' : $payment_date;
 		$coupon_code = empty($coupon_code) ? '' : $coupon_code;
 
-		$sql = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session_id'], 'lname' => $lname, 'fname' => $fname, 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'email' => $email, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'txn_type' => $txn_type, 'coupon_code' => $coupon_code, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
+		$sql = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session']['id'], 'lname' => $lname, 'fname' => $fname, 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'email' => $email, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'txn_type' => $txn_type, 'coupon_code' => $coupon_code, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
 		$sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 				'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d');
 
@@ -205,28 +205,28 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		  echo '<br />';
 		  print 'Number of cols: ' . count($sql_data); */
 
-		if ($num_rows > 0 && $loop_number == 1) {
-			if (!isset($data_source['admin'])) {
-				/*
-				 * Added for seating chart addon
-				 */
-				$tmp_session = $_SESSION['espresso_session_id'];
-				$rem_attendee_ids = $wpdb->get_results(" select t1.id, t1.registration_id FROM " . EVENTS_ATTENDEE_TABLE . "  t1 WHERE t1.attendee_session ='" . $_SESSION['espresso_session_id'] . "'  $incomplete_filter ");
-				foreach ($rem_attendee_ids as $v) {
+        if ($num_rows > 0 && $loop_number == 1) {
+            if (!isset($data_source['admin'])) {
+                /*
+                 * Added for seating chart addon
+                 */
+                $tmp_session = $_SESSION['espresso_session']['id'];
+                $rem_attendee_ids = $wpdb->get_results(" select t1.id, t1.registration_id FROM " . EVENTS_ATTENDEE_TABLE . "  t1 WHERE t1.attendee_session ='" . $_SESSION['espresso_session']['id'] . "'  $incomplete_filter ");
+                foreach ($rem_attendee_ids as $v) {
 
-					if (defined('ESPRESSO_SEATING_CHART')) {
-						$wpdb->query("delete from " . EVENTS_SEATING_CHART_EVENT_SEAT_TABLE . " where attendee_id = " . $v->id);
-					}
-				}
-				/*
-				 * End
-				 */
-				$wpdb->query(" DELETE t1, t2 FROM " . EVENTS_ATTENDEE_TABLE . "  t1 JOIN  " . EVENTS_ANSWER_TABLE . " t2 on t1.id = t2.attendee_id WHERE t1.attendee_session ='" . $_SESSION['espresso_session_id'] . "'  $incomplete_filter ");
-			}
+                    if (defined('ESPRESSO_SEATING_CHART')) {
+                        $wpdb->query("delete from " . EVENTS_SEATING_CHART_EVENT_SEAT_TABLE . " where attendee_id = " . $v->id);
+                    }
+                }
+                /*
+                 * End
+                 */
+                $wpdb->query(" DELETE t1, t2 FROM " . EVENTS_ATTENDEE_TABLE . "  t1 JOIN  " . EVENTS_ANSWER_TABLE . " t2 on t1.id = t2.attendee_id WHERE t1.attendee_session ='" . $_SESSION['espresso_session']['id'] . "'  $incomplete_filter ");
+            }
 
-			//Added by Imon
-			// First delete attempt might fail if there is no data in answer table. So, second attempt without joining answer table is taken bellow -
-			$wpdb->query(" DELETE t1 FROM " . EVENTS_ATTENDEE_TABLE . "  t1 WHERE t1.attendee_session ='" . $_SESSION['espresso_session_id'] . "'  $incomplete_filter ");
+            //Added by Imon
+            // First delete attempt might fail if there is no data in answer table. So, second attempt without joining answer table is taken bellow -
+            $wpdb->query(" DELETE t1 FROM " . EVENTS_ATTENDEE_TABLE . "  t1 WHERE t1.attendee_session ='" . $_SESSION['espresso_session']['id'] . "'  $incomplete_filter ");
 
 			// Clean up any attendee information from attendee_cost table where attendee is not available in attendee table
 			event_espresso_cleanup_multi_event_registration_id_group_data();
@@ -270,21 +270,65 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			$error = true;
 		}
 
-		/*
-		 * Added for seating chart add-on
-		 * If a seat was selected then price of that seating will be used instead of event price
+		/**
+		 * Adding attenddee specific cost to events_attendee_cost table
 		 */
-		if (isset($data_source['seat_id'])) {
-			$amount_pd = seating_chart::get_purchase_price($booking_id);
+		if (!isset($data_source['admin'])){
+            
+			if ( isset($att_data_source['price_id']) ){
+				$attendee_price_id = $att_data_source['price_id'];
+				$events_prices = $wpdb->get_row("select * from ".EVENTS_PRICES_TABLE."  where id = $attendee_price_id ");
+			}elseif (isset($data_source['price_select']) && $data_source['price_select'] == true) {
+				$price_options 	= explode('|', $data_source['price_option'], 2);
+				$attendee_price_id 		= $price_options[0];
+				$events_prices = $wpdb->get_row("select * from ".EVENTS_PRICES_TABLE."  where id = $attendee_price_id ");
+			}else{
+				$events_prices = $wpdb->get_row("select * from ".EVENTS_PRICES_TABLE." where event_id = $event_id");
+				$attendee_price_id = $events_prices->id;
+			}
+            /*
+             * Added for seating chart add-on
+             * If a seat was selected then price of that seating will be used instead of event price
+             */
+            $attendee_quantity = 1;
+            if ( isset($data_source['seat_id'])){
+                $attendee_cost = seating_chart::get_purchase_price($booking_id);
+		$amount_pd = seating_chart::get_purchase_price($booking_id);
+            }else{
+
+                $attendee_cost = $events_prices->event_cost + (($events_prices->surcharge_type=='pct')?$events_prices->event_cost * (float)($events_prices->surcharge/100.00):$events_prices->surcharge);
+                /*echo  '<strong>Standard Pricing</strong>'.'<br />';
+                echo  '$events_prices->event_cost = '.$events_prices->event_cost.'<br />';
+                echo  '$events_prices->surcharge = '.$events_prices->surcharge.'<br />';
+                echo  '$events_prices->surcharge_type = '.$events_prices->surcharge_type.'<br />';
+                echo  '$attendee_cost = '.$attendee_cost.'<br />';
+                return;*/
+
+                if ( is_user_logged_in() ){
+                    $attendee_cost = $events_prices->member_price + (($events_prices->surcharge_type=='pct')?$events_prices->member_price * (float)($events_prices->surcharge/100.00):$events_prices->surcharge);
+                    /*echo  '<strong>Member Pricing</strong>'.'<br />';
+                    echo  '$events_prices->event_cost = '.$events_prices->event_cost.'<br />';
+                    echo  '$events_prices->surcharge = '.$events_prices->surcharge.'<br />';
+                    echo  '$events_prices->surcharge_type = '.$events_prices->surcharge_type.'<br />';
+                    echo  '$attendee_cost = '.$attendee_cost.'<br />';
+                    //return;*/
+                }
+                if ( isset($data_source['num_people']) ){
+                    $attendee_quantity = $data_source['num_people'];
+                }
+            }
+			
+		}else{
+			/*echo  '$data_source[\'event_cost\'] = '.$data_source['event_cost'];
+			return;*/
+			$attendee_quantity = 1;
+			$attendee_cost = $data_source['event_cost'];
 		}
-		$attendee_cost = $amount_pd;
-		//echo '<p>$data_source[event_cost] = '.$data_source['event_cost'].'</p>';
-		//$attendee_cost_data = array("attendee_id"=>$ext_attendee_id,"quantity"=>$attendee_quantity,"cost"=>$attendee_cost);
-		$attendee_cost_data = array("attendee_id" => $attendee_id, "quantity" => $num_people, "cost" => $attendee_cost);
-		//echo '$attendee_cost_data = ';
-		//print_r($attendee_cost_data);
-		//return;
-		$wpdb->insert(EVENTS_ATTENDEE_COST_TABLE, $attendee_cost_data);
+		$attendee_cost_data = array("attendee_id"=>$attendee_id,"quantity"=>$attendee_quantity,"cost"=>$attendee_cost);
+		/*echo '$attendee_cost_data = ';
+		print_r($attendee_cost_data);
+		return;*/
+		$wpdb->insert(EVENTS_ATTENDEE_COST_TABLE,$attendee_cost_data);
 
 		/**
 		 * End
@@ -336,29 +380,30 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 							 */
 
 
-							$sql_a = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session_id'], 'lname' => $att_data_source['x_attendee_lname'][$k], 'fname' => $v, 'email' => $att_data_source['x_attendee_email'][$k], 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
-							$sql_data_a = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-									'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d');
-							$wpdb->insert(EVENTS_ATTENDEE_TABLE, $sql_a, $sql_data_a);
-							//Added by Imon
-							$ext_attendee_id = $wpdb->insert_id;
-							$mailchimp_attendee_id = $ext_attendee_id;
+                            $sql_a = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session']['id'], 'lname' => $att_data_source['x_attendee_lname'][$k], 'fname' => $v, 'email' => $att_data_source['x_attendee_email'][$k], 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
+                            $sql_data_a = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+                                '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d');
+                            $wpdb->insert(EVENTS_ATTENDEE_TABLE, $sql_a, $sql_data_a);
+                            //Added by Imon
+                            $ext_attendee_id = $wpdb->insert_id;
+                            $mailchimp_attendee_id = $ext_attendee_id;
 
-							/**
-							 * Adding attenddee specific cost to events_attendee cost table
-							 */
-							//$attendee_cost_data = array("attendee_id"=>$ext_attendee_id,"quantity"=>$attendee_quantity,"cost"=>$attendee_cost);
-							$attendee_cost_data = array("attendee_id" => $ext_attendee_id, "quantity" => $num_people, "cost" => $attendee_cost);
-							$wpdb->insert(EVENTS_ATTENDEE_COST_TABLE, $attendee_cost_data);
-							/**
-							 * End
-							 */
-							if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
-								MailChimpController::list_subscribe($event_id, $mailchimp_attendee_id, $v, $att_data_source['x_attendee_lname'][$k], $att_data_source['x_attendee_email'][$k]);
-							}
-							//Added by Imon
-							$ext_att_data_source = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session_id'], 'payment' => $payment, 'amount_pd' => $amount_pd, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
-							$questions_in = '';
+						/**
+						 * Adding attenddee specific cost to events_attendee cost table
+						 */
+
+						$attendee_cost_data = array("attendee_id"=>$ext_attendee_id,"quantity"=>$attendee_quantity,"cost"=>$attendee_cost);
+						$wpdb->insert(EVENTS_ATTENDEE_COST_TABLE,$attendee_cost_data);
+						/**
+						 * End
+						 */
+
+                        if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
+                            MailChimpController::list_subscribe($event_id, $mailchimp_attendee_id, $v, $att_data_source['x_attendee_lname'][$k], $att_data_source['x_attendee_email'][$k]);
+                        }
+                        //Added by Imon
+						$ext_att_data_source = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session']['id'], 'lname' => $att_data_source['x_attendee_lname'][$k], 'fname' => $v, 'email' => $att_data_source['x_attendee_email'][$k], 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
+			$questions_in = '';
 
 							foreach ($questions as $g_id)
 								$questions_in .= $g_id . ',';
@@ -434,20 +479,20 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 		//Added by Imon
 		$primary_registration_id = NULL;
 
-		$events_in_session = $_SESSION['events_in_session'];
-		if (event_espresso_invoke_cart_error($events_in_session))
-			return false;
+        $events_in_session = $_SESSION['espresso_session']['events_in_session'];
+        if (event_espresso_invoke_cart_error($events_in_session))
+            return false;
 
-		$count_of_events = count($events_in_session);
-		$current_session_id = $_SESSION['espresso_session_id'];
-		//echo "<pre>", print_r($_SESSION), "</pre>";
-		//echo "<pre>", print_r($events_in_session), "</pre>";
-		//echo "<pre>", print_r($org_options), "</pre>";
+        $count_of_events = count($events_in_session);
+        $current_session_id = $_SESSION['espresso_session']['id'];
+        //echo "<pre>", print_r($_SESSION), "</pre>";
+        //echo "<pre>", print_r($events_in_session), "</pre>";
+        //echo "<pre>", print_r($org_options), "</pre>";
 
 		$event_name = $count_of_events . ' ' . $org_options['organization'] . __(' events', 'event_espresso');
 
-		$event_cost = $_SESSION['event_espresso_grand_total'];
-		$multi_reg = true;
+        $event_cost = $_SESSION['espresso_session']['grand_total'];
+        $multi_reg = true;
 
 		// If there are events in the session, add them one by one to the attendee table
 		if ($count_of_events > 0) {
@@ -538,26 +583,26 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 
 				<p><?php echo $org_options['email_before_payment'] == 'Y' ? __('A confirmation email has been sent with additional details of your registration.', 'event_espresso') : ''; ?></p>
 
-				<?php
-				//Show payment options
-				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")) {
-					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php");
-				} else {
-					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/gateway_display.php");
-				}
-				//Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
-				if ($org_options['email_before_payment'] == 'Y') {
-					event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session_id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
-				}
-			} else {
-				?>
+                <?php
+                //Show payment options
+                if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")) {
+                    require_once(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php");
+                } else {
+                    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/gateway_display.php");
+                }
+                //Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
+                if ($org_options['email_before_payment'] == 'Y') {
+                    event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session']['id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
+                }
+            } else {
+                ?>
 
 				<p><?php _e('Thank you! Your registration is confirmed for', 'event_espresso'); ?> <strong><?php echo stripslashes_deep($event_name) ?></strong></p>
 
 				<p><?php _e('A confirmation email has been sent with additional details of your registration.', 'event_espresso'); ?></p>
 
-				<?php
-				event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session_id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
+                <?php
+                event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session']['id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
 
 				event_espresso_clear_session();
 			}

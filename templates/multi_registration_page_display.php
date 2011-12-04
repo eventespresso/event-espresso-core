@@ -9,7 +9,7 @@ $this_event_id = $event_id;
 
 <?php
 
-$num_attendees = ' - ' . $_SESSION['events_in_session'][$event_id]['attendee_quantitiy'] . __( ' attendees', 'event_espresso' );
+$num_attendees = ' - ' . $_SESSION['espresso_session']['events_in_session'][$event_id]['attendee_quantitiy'] . __( ' attendees', 'event_espresso' );
 ?>
 <h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>">
 <?php echo stripslashes_deep( $event_name ) ?>

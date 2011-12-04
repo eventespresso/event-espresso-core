@@ -215,7 +215,7 @@ function event_espresso_txn() {
 		//Sends users to the thank you page if they try to access this page directly
 		if (!empty($payment_status) && $payment_status == 'Completed') {
 
-			$espresso_session_id = $_SESSION['espresso_session_id'];
+			$espresso_session_id = $_SESSION['espresso_session']['id'];
 			$registration_id = espresso_registration_id($attendee_id);
 			//Adding this query for multi event
 			//Since the registration id is used for marking the event as paid in the above files,

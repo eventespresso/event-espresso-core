@@ -102,9 +102,9 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 						//If the coupon_code has not been used, deduct 1 from the quantity
 						if ($use_limit == 'Y') {
 							$used = 0;
-							if (isset($_SESSION['espresso_coupon_data'])) {
-								if ($_SESSION['espresso_coupon_data']['registration_id'] == $registration_ID) {
-									if ($_SESSION['espresso_coupon_data']['coupon_code'] == $coupon_code && $_SESSION['espresso_coupon_data']['used'] == true) {
+							if (isset($_SESSION['espresso_session']['coupon_data'])) {
+								if ($_SESSION['espresso_session']['coupon_data']['registration_id'] == $registration_ID) {
+									if ($_SESSION['espresso_session']['coupon_data']['coupon_code'] == $coupon_code && $_SESSION['espresso_session']['coupon_data']['used'] == true) {
 										$used = 1;
 									}
 								}
@@ -120,7 +120,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 						$wpdb->query($sql_registration_ID2);
 
 						//Create a session to hold the coupon usage data
-						$_SESSION['espresso_coupon_data'] = array('registration_id' => $registration_ID, 'coupon_code' => $coupon_code, 'used' => 1);
+						$_SESSION['espresso_session']['coupon_data'] = array('registration_id' => $registration_ID, 'coupon_code' => $coupon_code, 'used' => 1);
 					}
 
 					//Return the price of the event after the coupon has been used

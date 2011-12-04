@@ -8,7 +8,7 @@ if (!function_exists('event_espresso_shopping_cart')) {
 		}
 		//session_destroy();
 		//echo "<pre>", print_r( $_SESSION ), "</pre>";
-		$events_in_session = $_SESSION['events_in_session'];
+		$events_in_session = $_SESSION['espresso_session']['events_in_session'];
 		if (event_espresso_invoke_cart_error($events_in_session))
 			return false;
 
@@ -56,10 +56,10 @@ if (!function_exists('event_espresso_shopping_cart')) {
 									<tr>
 										<td><?php echo event_date_display($r->start_date, get_option('date_format')) ?>
 											<?php /* _e( ' to ', 'event_espresso' ); ?> <?php echo event_date_display( $r->end_date, get_option( 'date_format' ) ) */ ?></td>
-										<td><?php echo event_espresso_time_dropdown($r->id, 0, 1, $_SESSION['events_in_session'][$r->id]['start_time_id']); ?></td>
+										<td><?php echo event_espresso_time_dropdown($r->id, 0, 1, $_SESSION['espresso_session']['events_in_session'][$r->id]['start_time_id']); ?></td>
 									</tr>
 									<tr>
-										<td colspan="2"><?php echo event_espresso_group_price_dropdown($r->id, 0, 1, $_SESSION['events_in_session'][$r->id]['price_id']); ?></td>
+										<td colspan="2"><?php echo event_espresso_group_price_dropdown($r->id, 0, 1, $_SESSION['espresso_session']['events_in_session'][$r->id]['price_id']); ?></td>
 									</tr>
 							</table>
 							<?php
@@ -86,13 +86,13 @@ if (!function_exists('event_espresso_shopping_cart')) {
 							<label class="coupon-code" for="event_espresso_coupon_code">
 								<?php _e('Enter Coupon Code ', 'event_espresso'); ?>
 							</label>
-							<input onkeydown="if(event.keyCode==13) {document.getElementById('event_espresso_refresh_total').focus(); return false;}" type="text" name="event_espresso_coupon_code" id ="event_espresso_coupon_code" value="<?php echo $_SESSION['event_espresso_coupon_code']; ?>"/>
+							<input onkeydown="if(event.keyCode==13) {document.getElementById('event_espresso_refresh_total').focus(); return false;}" type="text" name="event_espresso_coupon_code" id ="event_espresso_coupon_code" value="<?php echo $_SESSION['espresso_session']['coupon_code']; ?>"/>
 						</div>
 
 						<div id="event_espresso_total_wrapper" class="clearfix event-data-display">
 							<a href="#" id="event_espresso_refresh_total"><?php _e('Refresh Total', 'event_espresso'); ?></a>
 							<span class="event_total_price">
-								<?php _e('Total (' . $org_options['currency_symbol'] . '): <span id="event_total_price">' . $_SESSION['event_espresso_grand_total'], 'event_espresso') . '</span>'; ?>
+								<?php _e('Total (' . $org_options['currency_symbol'] . '): <span id="event_total_price">' . $_SESSION['espresso_session']['grand_total'], 'event_espresso') . '</span>'; ?>
 							</span>
 						</div>
 

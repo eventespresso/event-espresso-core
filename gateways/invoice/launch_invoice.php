@@ -20,8 +20,8 @@ function espresso_invoice_launch($attendee_id=0, $registration_id=0){
 	}
 	
 	//Unset the session id
-	if(isset($_SESSION['espresso_session_id'])){
-		//unset($_SESSION['espresso_session_id']);
+	if(isset($_SESSION['espresso_session']['id'])){
+		//unset($_SESSION['espresso_session']['id']);
 	}
 
 	//Get the event record
