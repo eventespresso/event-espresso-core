@@ -545,14 +545,21 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 			//Post the gateway page with the payment options
 			if ($event_cost != '0.00') {
 				//find first registrant's name, email, count of registrants
-				$sql = "SELECT id, fname, lname, email, address, city, state, zip, event_id, registration_id,
-						(SELECT count( id )
-							FROM " . EVENTS_ATTENDEE_TABLE .
-								" WHERE attendee_session = '" . $wpdb->escape($current_session_id) . "'
-							) AS quantity
-							FROM " . EVENTS_ATTENDEE_TABLE
-								. " WHERE event_id = " . $wpdb->escape($first_event_id)
-								. " AND attendee_session = '" . $wpdb->escape($current_session_id) . "' LIMIT 1";
+				$sql = "SELECT ea.id, ea.fname, ea.lname, ea.email, ea.address, ea.city, ea.state, ea.zip, ea.event_id, ea.registration_id, ";
+				
+				//This is for the roles and permissions addon
+				//$sql .= " ed.wp_user, "; 
+				
+				//Do a sub select to get the number of attendees in this session
+				$sql .= " (SELECT count( ea_sub.id ) FROM " . EVENTS_ATTENDEE_TABLE . " ea_sub WHERE ea_sub.attendee_session = '" . $wpdb->escape($current_session_id) . "') AS quantity ";
+				
+				$sql .= " FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
+				
+				//This is for the roles and permissions addon
+				//$sql .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id = ea.event_id ";
+				
+				$sql .= " WHERE ea.event_id = " . $wpdb->escape($first_event_id);
+				$sql .= " AND ea.attendee_session = '" . $wpdb->escape($current_session_id) . "' LIMIT 1";
 
 				//echo $sql;
 
@@ -568,6 +575,23 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 				$attendee_email = $r->email;
 				$registration_id = $r->registration_id;
 				$quantity = espresso_count_attendees_for_registration($r->registration_id);
+				
+				//Define the default useer id for the payment settings
+				$espresso_wp_user = 1;
+				
+				//Not sure we want to use this at the moment, becasue there is no way to route the payments between multiple users
+				//If the permissions pro addon is installed
+				/*if (function_exists('espresso_manager_pro_version')) {
+					global $espresso_manager;
+					//If the user that created this event can accept payments
+					if ($espresso_manager['can_accept_payments'] == 'Y') {
+						//Get the user id
+						$espresso_wp_user = $r->wp_user;
+					}
+				}*/
+				//Debug
+				//echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
+		
 				?>
 
 				<a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart">  <?php _e('Edit Cart', 'event_espresso'); ?> </a>
