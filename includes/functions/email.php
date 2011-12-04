@@ -408,7 +408,7 @@ function email_by_session_id($session_id, $send_attendee_email = TRUE, $send_adm
 	$sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session = '" . $session_id . "'";
 	$attendees = $wpdb->get_col($sql);
 	foreach ($attendees as $attendee_id) {
-		$data = prepare_email_data($attendee_id, $multi_reg);
+		$data = espresso_prepare_email_data($attendee_id, $multi_reg);
 		if ($send_attendee_email == 'true') {
 			$attendee_email_params[] = prepare_email($data);
 		}
