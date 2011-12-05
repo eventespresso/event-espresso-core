@@ -344,7 +344,10 @@ if (!function_exists('event_espresso_meta_edit')) {
 		$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", "add_attendee_question_groups", "date_submitted", "event_host_terms", "default_payment_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url", "originally_submitted_by", "enable_for_gmap", "orig_event_staff");
 		$meta_counter = 1;
 
-		$default_meta = $event_meta == '' ? array("event_hashtag" => "", "event_format" => "", "event_livestreamed" => "") : array();
+		$default_event_meta = array("event_hashtag" => "", "event_format" => "", "event_livestreamed" => "");
+		$default_event_meta = apply_filters_ref_array( 'hook_espresso_filter_default_event_meta', $default_event_meta );
+
+		$default_meta = $event_meta == '' ? $default_event_meta : array();
 		$event_meta = $event_meta == '' ? array() : $event_meta;
 		$event_meta = array_merge($event_meta, $default_meta);
 		//print_r( $event_meta );
