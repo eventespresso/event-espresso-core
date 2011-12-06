@@ -81,21 +81,6 @@ function event_espresso_more_than_one($registration_id) {
 	return null;
 }
 
-//For testing email functions
-function event_espresso_test_email($optional_message = 'None') {
-	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
-	$to = $org_options['contact_email'];
-	$subject = 'Event Espresso Test Message from' . $org_options['organization'];
-	$message = 'Event Espresso email is working properly. Optional message: ' . $optional_message;
-	$headers = 'From: ' . $org_options['contact_email'] . "\r\n" .
-					'Reply-To: ' . $org_options['contact_email'] . "\r\n" .
-					'X-Mailer: PHP/' . phpversion();
-	wp_mail($to, $subject, $message, $headers);
-}
-
 //This function is not currently used
 function event_espresso_session_start() {
 	/* if(!isset($_SESSION['event_espresso_sessionid'])){
