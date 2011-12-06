@@ -485,58 +485,90 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 		//Added by Imon
 		$primary_registration_id = NULL;
 
-        $events_in_session = $_SESSION['espresso_session']['events_in_session'];
-        if (event_espresso_invoke_cart_error($events_in_session))
-            return false;
+		$events_in_session = $_SESSION['espresso_session']['events_in_session'];
+		if (event_espresso_invoke_cart_error($events_in_session))
+			return false;
 
-        $count_of_events = count($events_in_session);
-        $current_session_id = $_SESSION['espresso_session']['id'];
-        //echo "<pre>", print_r($_SESSION), "</pre>";
-        //echo "<pre>", print_r($events_in_session), "</pre>";
-        //echo "<pre>", print_r($org_options), "</pre>";
+		$count_of_events = count($events_in_session);
+		$current_session_id = $_SESSION['espresso_session']['id'];
+		
+		//Debug
+		//echo "<pre>", print_r($_SESSION), "</pre>";
+		//echo '<pre>'.print_r($_POST, true).'</pre>';
+		//echo "<pre>", print_r($events_in_session), "</pre>";
+		//echo "<pre>", print_r($org_options), "</pre>";
 
 		$event_name = $count_of_events . ' ' . $org_options['organization'] . __(' events', 'event_espresso');
 
-        $event_cost = $_SESSION['espresso_session']['grand_total'];
-        $multi_reg = true;
+		$event_cost = $_SESSION['espresso_session']['grand_total'];
+		$multi_reg = true;
 
 		// If there are events in the session, add them one by one to the attendee table
 		if ($count_of_events > 0) {
 			//first event key will be used to find the first attendee
 			$first_event_id = key($events_in_session);
-			/* echo '$events_in_session = ';
-			  print_r($events_in_session);
-			  echo '<br />'; */
+			
+			//Debug
+			//echo '<pre>$events_in_session - '.print_r($events_in_session, true).'</pre>';
+			
 			reset($events_in_session);
 			foreach ($events_in_session as $key => $_event_id) {
-				# print_r($_POST);
+				//Debug
+				//echo '<p>$_event_id - '. $_event_id.'</p>';
+				//echo '<pre>'.print_r($_event_id, true).'</pre>';
+				
 				$event_meta = event_espresso_get_event_meta($key);
 				$event_attendees = $_event_id['event_attendees'];
 				$session_vars['data'] = $_event_id;
+				//Debug
+				//echo '<p>$_event_id - '. $_event_id.'</p>';
+				//echo '<pre>'.print_r($session_vars['data'], true).'</pre>';
+				
 				if (is_array($event_attendees)) {
 					$counter = 1;
 					foreach ($event_attendees as $k_price_id => $v_attendees) { //foreach price type in event attendees
 						$session_vars['data'] = $_event_id;
+						//Debug
+						//echo '<pre>$session_vars[\'data\' - ]'.print_r($session_vars['data'], true).'</pre>';
+						
 						foreach ($v_attendees as $vkey => $vval) {
+							
 							//Added by Imon
 							$vval['price_id'] = $k_price_id;
 							$session_vars['event_attendees'] = $vval; //this has all the attendee information, name, questions....
 							$session_vars['data']['price_type'] = $_event_id['price_id'][$k_price_id]['price_type'];
 							if (isset($event_meta['additional_attendee_reg_info']) && $event_meta['additional_attendee_reg_info'] == 1) {
-								$session_vars['data']['num_people'] = empty($_REQUEST['num_people']) ? 1 : $_REQUEST['num_people'];
+								
+								//Getting he wrong number of attendees at this point
+								//Debug
+								//echo '<p>$_REQUEST[\'num_people\'] - '.$_REQUEST['num_people'].'</p>';
+								//echo '<p>$_event_id[\'price_id\'][$k_price_id] - '.$_event_id['price_id'][$k_price_id].'</p>';
+								//echo '<pre>$_event_id[\'price_id\'][$k_price_id] - '.print_r($_event_id['price_id'][$k_price_id]['attendee_quantity'], true).'</pre>';
+								//echo '<pre>'.print_r($_POST, true).'</pre>';
+								$num_people = $_event_id['price_id'][$k_price_id]['attendee_quantity'];
+								$session_vars['data']['num_people'] = empty($num_people) || $num_people == 0 ? 1 : $num_people;
+								
+								//Debug
+								//echo '<p>$session_vars[\'data\'][\'num_people\'] - '.$session_vars['data']['num_people'].'</p>';
 							}
-							//Added/Updated by Imon
-							/* echo $key.'<br />';
-							  echo '$session_vars = ';
-							  print_r($session_vars);
-							  echo '<br />'; */
+						   
+						   //Debug
+							/*echo $key.'<br />';
+							echo '<pre>$session_vars - '.print_r($session_vars, true).'</pre>';
+							echo '<br />';*/
+							
 							$tmp_registration_id = event_espresso_add_attendees_to_db($key, $session_vars);
+							//Debug
 							//echo 'tmp_registration_id =' . $tmp_registration_id.'<br />';
+							
 							if ($primary_registration_id === NULL) {
 								$primary_registration_id = $tmp_registration_id;
 							}
+							
 							$c2_sql = "select * from " . EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE . " where primary_registration_id = '$primary_registration_id' and registration_id = '$tmp_registration_id'";
+							//Debug
 							//echo $c2_sql.'<br />';
+							
 							$check = $wpdb->get_row($c2_sql);
 							if ($check === NULL) {
 								$tmp_data = array("primary_registration_id" => $primary_registration_id, "registration_id" => $tmp_registration_id);
@@ -613,26 +645,26 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 
 				<p><?php echo $org_options['email_before_payment'] == 'Y' ? __('A confirmation email has been sent with additional details of your registration.', 'event_espresso') : ''; ?></p>
 
-                <?php
-                //Show payment options
-                if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")) {
-                    require_once(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php");
-                } else {
-                    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/gateway_display.php");
-                }
-                //Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
-                if ($org_options['email_before_payment'] == 'Y') {
-                    event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session']['id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
-                }
-            } else {
-                ?>
+				<?php
+				//Show payment options
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")) {
+					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php");
+				} else {
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/gateway_display.php");
+				}
+				//Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
+				if ($org_options['email_before_payment'] == 'Y') {
+					event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session']['id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
+				}
+			} else {
+				?>
 
 				<p><?php _e('Thank you! Your registration is confirmed for', 'event_espresso'); ?> <strong><?php echo stripslashes_deep($event_name) ?></strong></p>
 
 				<p><?php _e('A confirmation email has been sent with additional details of your registration.', 'event_espresso'); ?></p>
 
-                <?php
-                event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session']['id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
+				<?php
+				event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session']['id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
 
 				event_espresso_clear_session();
 			}
@@ -640,3 +672,4 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 	}
 
 }
+
