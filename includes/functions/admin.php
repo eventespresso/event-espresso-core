@@ -790,48 +790,6 @@ function event_espresso_admin_news($url) {
 	return wp_remote_retrieve_body(wp_remote_get($url));
 }
 
-//Not sure if this works or not. Need to test at some point.
-//This function should build the event editor description field.
-function events_editor($content, $id = 'content', $prev_id = 'title') {
-	$media_buttons = false;
-	$richedit = user_can_richedit();
-	?>
-<div id="quicktags">
-  <?php wp_print_scripts('quicktags'); ?>
-  <script type="text/javascript">edToolbar()</script>
-</div>
-<?php //if(function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) $output = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($output);	?>
-<?php
-	$the_editor = apply_filters('the_editor', "<div id='editorcontainer'><textarea rows='6' cols='90' name='$id' tabindex='4' id='$id'>%s</textarea></div>\n");
-	$the_editor_content = apply_filters('the_editor_content', $content);
-	printf($the_editor, $content);
-	?>
-<script type="text/javascript">
-		// <![CDATA[
-		edCanvas = document.getElementById('<?php echo $id; ?>');
-	<?php if (user_can_richedit() && $prev_id) { ?>
-			var dotabkey = true;
-			// If tinyMCE is defined.
-			if ( typeof tinyMCE != 'undefined' ) {
-				// This code is meant to allow tabbing from Title to Post (TinyMCE).
-				jQuery('#<?php echo $prev_id; ?>')[jQuery.browser.opera ? 'keypress' : 'keydown'](function (e) {
-					if (e.which == 9 && !e.shiftKey && !e.controlKey && !e.altKey) {
-						if ( (jQuery("#post_ID").val() < 1) && (jQuery("#title").val().length > 0) ) { autosave(); }
-						if ( tinyMCE.activeEditor && ! tinyMCE.activeEditor.isHidden() && dotabkey ) {
-							e.preventDefault();
-							dotabkey = false;
-							tinyMCE.activeEditor.focus();
-							return false;
-						}
-					}
-				});
-			}
-	<?php } ?>
-		// ]]>
-	</script>
-<?php
-}
-
 //Create a dashboard widget for Event Espresso News
 function espresso_news_dashboard_widget_function() {
 	wp_widget_rss_output('http://eventespresso.com/feed/', array('items' => 5, 'show_author' => 1, 'show_date' => 1, 'show_summary' => 0));
