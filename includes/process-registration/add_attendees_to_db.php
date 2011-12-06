@@ -452,6 +452,12 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			require_once(EVENT_ESPRESSO_MEMBERS_DIR . "user_vars.php"); //Load Members functions
 			if ($userid != 0) {
 				event_espresso_add_user_to_event($event_id, $userid, $attendee_id);
+				
+				//We can use this to save the user profile fields if they are empty. Maybe create an action for this???
+				if (function_exists("save_extra_user_profile_fields")) {
+					//PLACE HOLDER
+				}
+				
 			}
 		}
 

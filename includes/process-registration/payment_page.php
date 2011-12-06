@@ -57,7 +57,8 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 		$registration_id = $attendee->registration_id;
 	}
 	$event_meta = event_espresso_get_event_meta($event_id);
-
+	
+	//We can use this to save the user profile fields if they are empty. Maybe create an action for this???
 	if (function_exists("save_extra_user_profile_fields")) {
 		if (get_option('events_members_active') == 'true') {
 			//PLACE HOLDER
