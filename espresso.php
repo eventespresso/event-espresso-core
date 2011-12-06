@@ -797,6 +797,9 @@ if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php')) {
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
+	if ( empty($org_options['site_license_key']) ){
+		$org_options['site_license_key'] = 0;
+	}
 	$api_key = $org_options['site_license_key'];
 	$host_server_url = 'http://eventespresso.com.s128453.gridserver.com/';
 	$plugin_slug = 'event-espresso';
