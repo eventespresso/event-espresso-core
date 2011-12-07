@@ -14,6 +14,7 @@ function event_espresso_config_page_styles() {
 			case ( 'events' ):
 			case ( 'discounts' ):
 			case ( 'espresso_reports' ):
+			case ( 'attendees' ):
 				wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
 				wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
 			break;
