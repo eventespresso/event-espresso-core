@@ -450,17 +450,38 @@ function event_espresso_pay($att_registration_id=0) {
 				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
 				where ea.registration_id = '" . $reg_id['registration_id'] . "' order by ed.event_name ";
 
-			$tmp_attendees = $wpdb->get_results($sql, ARRAY_A);
-			$total_cost = 0;
-			foreach ($tmp_attendees as $tmp_attendee) {
-				$sub_total = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
-				$total_cost += $tmp_attendee['amount_pd'];
+			$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
+			$total_cost=0;
+			
+			//Debug
+			//echo "<pre>".print_r($tmp_attendees,true)."</pre>";
+			//$sub_total =array();
+			$final_total = 0;
+			foreach($tmp_attendees as $tmp_attendee){
+				//Debug
+				//echo "<pre>".print_r($tmp_attendee,true)."</pre>";
+				
+				$sub_total[] = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
+				
+				$total_cost = $tmp_attendee['amount_pd'];
+				//Debug
+				//echo "<pre>total_cost - ".print_r($sub_total,true)."</pre>";
+				
 				$event_url = espresso_reg_url($tmp_attendee["event_id"]);
 				$event_link .= '<div class="event-list-payment-overview"><dl><dt><a href="' . $event_url . '">' . $tmp_attendee["event_name"] . '</a></dt><dd class="list-event-date">' . event_date_display($tmp_attendee['start_date'], get_option('date_format')) . '</dd><dd class="attendee-plus-cost">' . espresso_edit_attendee($registration_id, $id, $event_id, 'attendee', $tmp_attendee["fname"] . " " . $tmp_attendee["lname"]) . '<span> [ ' . $tmp_attendee["quantity"] . ' x ' . $org_options['currency_symbol'] . number_format($tmp_attendee["cost"], 2, '.', '') . ']</span></dd></div>';
-			}
+$final_total = array_sum($sub_total);
+				
+				//Debug
+				//echo '<p>SUM - '.array_sum($sub_total).'</p>';			
+}
 		}
-
-		$total_cost = number_format($total_cost, 2, '.', '');
+		
+		//Debug
+		//echo '<p>$final_total - '.$final_total.'</p>';
+		//print_r($attendees);
+		
+		//$total_cost = number_format($total_cost, 2, '.', '');
+		$total_cost = number_format($final_total, 2, '.', '');
 
 		if (!empty($_REQUEST['payment_type']) && $_REQUEST['payment_type'] == 'cash_check') {
 
