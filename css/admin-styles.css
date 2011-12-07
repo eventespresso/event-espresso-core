@@ -781,8 +781,15 @@ table.event-list .re_fr {
 #event-date-time td.a {
 	position: relative;
 }
-#event-date-time td.a, #event-date-time td.b, #event-pricing td.a {
+#event-date-time td.a, #event-date-time td.b {
 	width: 50%;
+}
+#event-pricing td.a ul#dynamicPriceInput {
+	width: 50%;
+}
+#event-pricing .members-active td.a {width: 50%;}
+#event-pricing .members-active td.a ul#dynamicPriceInput {
+	width: auto;
 }
 #set-featured-image .event-featured-thumb img,
 #set-featured-image .show-selected-image {
@@ -1285,7 +1292,6 @@ body p label {line-height: 1.2;}
 	display: inline;
 	float: none;
 }
-.inside table ul li label,
 #confirmation-email label,
 #event-post label {
 	display: block;
@@ -1332,8 +1338,7 @@ form.espresso_form input#payment_subject {
 form.espresso_form input[type=radio] {
 	width:auto;
 }
-form.espresso_form .inline_input {
-}
+
 form.espresso_form fieldset {
 	border: none;
 }
@@ -1382,7 +1387,8 @@ select.wide {width: 175px;}
 	background: #fbfbfb;
 	overflow: hidden;
 }
-#event-date-time label {
+#event-date-time label,
+#event-pricing label {
 	display: block;
 }
 #event-date-time input {
@@ -1408,8 +1414,8 @@ select.wide {width: 175px;}
 #event-location label {
 	display: block;
 }
-#event-pricing ul li p {
-	margin-top: 0;
+#event-pricing ul li input {
+	margin: 0 0 8px;
 }
 /*___ Questions & Q groups ___*/
 #add-edit-new-group table ul li input[type=checkbox] {

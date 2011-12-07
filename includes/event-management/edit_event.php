@@ -561,13 +561,14 @@ function edit_event($event_id = 0) {
 				}
 				?>
 				<div id="event-pricing" class="postbox">
+				<?php (get_option('events_members_active') == 'true')? $members_active = 'class="members-active"' : $members_active = ''; ?>
 					<div class="handlediv" title="Click to toggle"><br>
 					</div>
 					<h3 class="hndle"> <span>
 	<?php _e('Event Pricing', 'event_espresso'); ?>
 						</span> </h3>
 					<div class="inside">
-						<table width="100%" border="0" cellpadding="5">
+						<table <?php echo $members_active ?> width="100%" border="0" cellpadding="5">
 							<tr valign="top">
 								<td id="standard-pricing" class="a"><?php event_espresso_multi_price_update($event_id); //Standard pricing ?></td>
 								<?php
