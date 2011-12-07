@@ -590,13 +590,12 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 }
 .event-espresso_page_events #side-sortables p label {
 	display: block;
-	line-height: 2.5;
+	margin-bottom: 3px;
 }
 .event-espresso_page_events #side-sortables .event-staff-list label {
 	line-height: 1.6;
 }
-.event-espresso_page_events #side-sortables p span {
-	float:left;
+.event-espresso_page_events #side-sortables p span {	
 	clear: left;
 }
 .event-espresso_page_events #side-sortables p span.question {
@@ -607,7 +606,6 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	
 }
 #side-sortables p select#mailchimp-lists {
-	float: left;
 	width: 220px;
 }
 .event-espresso_page_events #side-sortables p.inputunder {
@@ -1278,11 +1276,7 @@ legend span.question, span.question {
 	font-size: 11px !important;
 	font-weight: normal !important;
 }
-label {
-	/*color: #555;
-	font-weight: bold;
-	margin-right: 3px;*/
-}
+body p label {line-height: 1.2;}
 .section-heading {
 	font-size: 13px;
 	font-weight: bold;
@@ -1816,16 +1810,13 @@ form input.error {
 }
 a.thickbox  {
 	text-decoration: underline;
-	vertical-align: middle;
-	margin-left 5px;
+	padding: 2px 0 2px 3px;
+}
+a.thickbox span {
+	vertical-align: top;
 }
 a.thickbox.link  {
 	text-decoration: underline;
-	vertical-align: bottom !important;
-}
-#mailchimp-options a.thickbox {
-	display: inline-block;	
-	height: 22px;
 }
 #mailchimp-options a.thickbox img {
 	margin-top: 5px;
