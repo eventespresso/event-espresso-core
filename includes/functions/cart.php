@@ -845,9 +845,11 @@ if (!function_exists('event_espresso_clear_session')) {
 //Creates dropdowns if multiple prices are associated with an event
 if (!function_exists('event_espresso_group_price_dropdown')) {
 
-
 	function event_espresso_group_price_dropdown($event_id, $label = 1, $multi_reg = 0, $value = '') {
 		global $wpdb, $org_options;
+		
+		$surcharge_text = isset($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
+		
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
@@ -894,9 +896,9 @@ if (!function_exists('event_espresso_group_price_dropdown')) {
 					$surcharge = '';
 
 					if ($result->surcharge > 0 && $result->event_cost > 0.00) {
-						$surcharge = " + {$org_options['currency_symbol']}{$result->surcharge} " . __('Surcharge', 'event_espresso');
+						$surcharge = " + {$org_options['currency_symbol']}{$result->surcharge} " . $surcharge_text;
 						if ($result->surcharge_type == 'pct') {
-							$surcharge = " + {$result->surcharge}% " . __('Surcharge', 'event_espresso');
+							$surcharge = " + {$result->surcharge}% " . $surcharge_text;
 						}
 					}
 
