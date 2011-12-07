@@ -1,7 +1,7 @@
 <?php
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function edit_attendee_record() {
-	global $wpdb, $org_options;
+	global $wpdb, $org_options, $espresso_premium;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
@@ -115,12 +115,25 @@ function edit_attendee_record() {
 			$email = isset($_POST['email']) ? $_POST['email']:'';
 			$event_id = isset($_POST['event_id']) ? $_POST['event_id']:'';
 			$txn_type = isset($_POST['txn_type']) ? $_POST['txn_type']:'';
+			
+			$_POST['price_option'] = !empty($_POST['member_price_option']) ? $_POST['member_price_option'] : $_POST['price_option'];
+			
+			$price_options = explode('|', $_POST['price_option'], 2);
+			//$price_id = $price_options[0];
+			$price_type = $price_options[1];
 
 			$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET fname='$fname', lname='$lname', address='$address',address2='$address2', city='$city', state='$state', zip='$zip', phone='$phone', email='$email', txn_type='$txn_type' ";
+			
+			if ( isset($price_type) && !empty($price_type) )
+				$sql .= ", price_option='$price_type' ";
+			
 			if ($update_time == true)
 				$sql .= ", event_time='$start_time', end_time='$end_time' ";
 			$sql .= " WHERE id ='$id' ";
-			//echo $sql;
+			
+			//Debug
+			//echo '<p> $sql - '. $sql.'</p>';
+			
 			$wpdb->query($sql);
 
 			/*
@@ -138,8 +151,9 @@ function edit_attendee_record() {
 				}
 			}
 
-
+ 			//Debug
 			//print_r($_POST);
+			
 			// Insert Additional Questions From Post Here
 			$reg_id = $id;
 
@@ -308,6 +322,7 @@ function edit_attendee_record() {
 				$question_groups = unserialize($result->question_groups);
 				$question_groups = unserialize($result->question_groups);
 				$event_meta = unserialize($result->event_meta);
+				$price_type = $result->price_option;
 				$coupon_code = $result->coupon_code;
 				$quantity = $result->quantity;
 				$is_additional_attendee = ($primary_attendee != $id) ? true : false;
@@ -371,6 +386,7 @@ function edit_attendee_record() {
 				<ul>
 
 				  <li>
+				  <h5><strong><?php _e('Time', 'event_espresso'); ?></strong></h5>
 					<?php
 			$time_id =0;
 			$sql = "SELECT id FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' AND start_time = '".$event_time."' ";
@@ -383,10 +399,19 @@ function edit_attendee_record() {
 			echo event_espresso_time_dropdown($event_id, $label = 1, $multi_reg = 0, $time_id);
 ?>
 		</li>
-		<li>
+		<li><h5><strong><?php _e('Price Option', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'price_info'); ?></strong></h5>
 <?php
 			//Show pricing in a dropdown or text
-			do_action('espresso_price_select', $event_id);
+			
+			echo '<p>';
+			do_action('espresso_price_select', $event_id, array('selected_price_type'=>$price_type, 'label'=>__('Standard Price Option', 'event_espresso').' '. apply_filters('espresso_help', 'standard_price_info')));
+			echo '</p>';
+			
+			if ( function_exists('espresso_member_price_select_action') ){
+				echo '<p>';
+				do_action('espresso_member_price_select_action', $event_id, array( 'option_name'=>'member_price_option','selected_price_type'=>$price_type, 'label'=>__('Member Price Option', 'event_espresso').' '. apply_filters('espresso_help', 'member_price_info') ) );
+				echo '</p>';
+			}
 ?>
 		</li>
 		<li>
@@ -397,12 +422,10 @@ function edit_attendee_record() {
 		</li>
 		<li>
 		<?php
-		if (count($question_groups) > 0)
-		{
+		if (count($question_groups) > 0){
 			$questions_in = '';
 
-			foreach ($question_groups as $g_id)
-			{
+			foreach ($question_groups as $g_id){
 				$questions_in .= $g_id . ',';
 			}
 
@@ -410,8 +433,7 @@ function edit_attendee_record() {
 			$group_name = '';
 			$counter = 0;
 			$FILTER ='';
-			if (isset($event_meta['additional_attendee_reg_info']) && $event_meta['additional_attendee_reg_info'] == '2' && isset($_REQUEST['attendee_num']) && $_REQUEST['attendee_num'] > 1)
-			{
+			if (isset($event_meta['additional_attendee_reg_info']) && $event_meta['additional_attendee_reg_info'] == '2' && isset($_REQUEST['attendee_num']) && $_REQUEST['attendee_num'] > 1){
 				$FILTER .= " AND qg.system_group = 1 ";
 			}
 
@@ -551,10 +573,18 @@ function edit_attendee_record() {
 				<ul>
 				  <li>
 					<p><strong>
-					  <?php _e( 'Payment Status:', 'event_espresso' ); ?>
-					  </strong> <?php echo $payment_status; ?> <?php echo event_espresso_paid_status_icon($payment_status);?> [ <a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?>">
-					  <?php _e('View/Edit Payment', 'event_espresso'); ?>
-					  </a> ]</p>
+					  <?php 
+						$payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $registration_id . "&amp;id=" . $att;
+						$payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
+
+					  _e( 'Payment Status:', 'event_espresso' ); ?>
+					  </strong> <?php echo $payment_status; ?> <?php echo event_espresso_paid_status_icon($payment_status);?> [ 
+					  
+					  <a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?>"><?php _e('Payment Details', 'event_espresso'); ?></a> | 
+					  
+					  <a href="<?php echo get_option('siteurl') ?>/?page_id=<?php echo $org_options['return_url'] ?>&amp;registration_id=<?php echo $registration_id ?>&amp;id=<?php echo $att ?>" title="<?php _e('Payment Overview', 'event_espresso'); ?>" target="_blank"><?php _e('Payment Overview', 'event_espresso'); ?></a> 
+					  
+					  ]</p>
 				  </li>
 				  <li>
 					<p><strong>
@@ -627,6 +657,7 @@ function edit_attendee_record() {
   </div>
 </div>
 <?php
+require_once('help.php');
 		//event_list_attendees();
 	}
 }

@@ -262,6 +262,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 
 		$show_label = $show_label == '' ? 1 : $show_label;
 		$multi_reg = $multi_reg == '' ? 0 : $multi_reg;
+		$option_name = $option_name == '' ? 'price_option' : $option_name;
 
 //Attention:
 //If changes to this function are not appearing, you may have the members addon installed and will need to update the function there.
@@ -290,10 +291,13 @@ if (!function_exists('event_espresso_price_dropdown')) {
 		if ($wpdb->num_rows > 1) {
 
 //Create the label for the drop down
-			$html .= $show_label == 1 ? '<label for="event_cost">' . $label . '</label>' : '';
+			$html .= $show_label == 1 ? '<label for="price_option">' . $label . '</label>' : '';
 
 //Create a dropdown of prices
-			$html .= '<select name="price_option' . $multi_name_adjust . '" id="price_option-' . $event_id . '">';
+			$html .= '<select name="'.$option_name . $multi_name_adjust . '" id="price_option-' . $event_id . '">';
+			
+			if ( is_admin() )
+				$html .= '<option value="">None</option>';
 
 			foreach ($prices as $price) {
 
@@ -316,6 +320,11 @@ if (!function_exists('event_espresso_price_dropdown')) {
 //Using price ID
 //If the price id was passed to this function, we need need to select that price.
 				$selected = $current_value == $price->id ? 'selected="selected" ' : '';
+				if ( !empty($selected_price_type) ){
+					if ( $price->price_type == $selected_price_type) {
+						$selected  = 'selected="selected" ';
+					}
+				}
 
 //Create the drop down options
 				$html .= '<option ' . $selected . ' value="' . $price->id . '|' . $price->price_type . '">' . $price->price_type . ' (' . $org_options['currency_symbol'] . number_format($price->event_cost, 2) . $early_bird_message . ') ' . $surcharge . ' </option>';
@@ -326,6 +335,11 @@ if (!function_exists('event_espresso_price_dropdown')) {
 
 //If a single price was added to an event, then create the price display and hidden fields to hold the additional information.
 		} else if ($wpdb->num_rows == 1) {
+			/*if ( is_admin() ){
+				if ( isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'edit_attendee_record' ){
+					return;
+				}
+			}*/
 			foreach ($prices as $price) {
 
 //Check for Early Registration discount
