@@ -234,7 +234,7 @@ function espresso_calendar_config_mnu()	{
 												<tr>
 													<th> <label for="show_time">
 															<?php _e('Show Event Time in Calendar','event_espresso'); ?>
-															<?php apply_filters('espresso_help', 'show-event-times') ?>
+															<?php echo apply_filters('espresso_help', 'show-event-times') ?>
 														</label>
 													</th>
 													<td><?php
@@ -313,7 +313,7 @@ function espresso_calendar_config_mnu()	{
 												<tr>
 													<th> <label for="calendar_pages">
 															<?php _e('Page(s) Displaying the Calendar', 'event_espresso'); ?>
-															<?php apply_filters('espresso_help', 'display-on-pages') ; ?>
+															<?php echo apply_filters('espresso_help', 'display-on-pages') ; ?>
 														</label>
 													</th>
 													<td><input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo $espresso_calendar['calendar_pages']==''?0:$espresso_calendar['calendar_pages'];?>" />
@@ -325,7 +325,7 @@ function espresso_calendar_config_mnu()	{
 												<tr>
 													<th> <label for="calendar_page_post">
 															<?php _e('Link to Post or Registration Page','event_espresso'); ?>
-															<?php apply_filters('espresso_help', 'display-where') ?>
+															<?php echo apply_filters('espresso_help', 'display-where') ?>
 														</label>
 													</th>
 													<td><?php echo select_input('espresso_page_post',array(array('id'=>'R','text'=> __('Registration Page','event_espresso')),array('id'=>'P','text'=> __('Post','event_espresso'))), $espresso_calendar['espresso_page_post'], 'id="calendar_page_post"');?> <br />
@@ -345,7 +345,7 @@ function espresso_calendar_config_mnu()	{
 												<tr id="thumbnail-sizes">
 													<th>
 														<?php _e('Thumbnail Size', 'event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar-thumb-sizes'); ?>
+														<?php echo apply_filters('espresso_help', 'calendar-thumb-sizes'); ?>
 													</th>
 													<td><input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small')?> value="small" />
 														<label for="calendar-thumb-size-sml">
@@ -407,7 +407,7 @@ function espresso_calendar_config_mnu()	{
 											<tr>
 												<th> 
 													<label for="show_tooltips">
-														<?php _e('Show Tooltips', 'event_espresso'); ?><?php apply_filters('espresso_help', 'show_tooltips_info') ?>
+														<?php _e('Show Tooltips', 'event_espresso'); ?><?php echo apply_filters('espresso_help', 'show_tooltips_info') ?>
 													</label>
 												</th>
 												<td>
@@ -418,7 +418,7 @@ function espresso_calendar_config_mnu()	{
 												<tr>
 													<th> <label for="enable-cat-classes">
 															<?php _e('Enable CSS for Categories', 'event_espresso'); ?>
-															<?php apply_filters('espresso_help', 'enable-categories') ?>
+															<?php echo apply_filters('espresso_help', 'enable-categories') ?>
 														</label>
 													</th>
 													<td><?php echo select_input('enable_cat_classes',array(array('id'=>'Y','text'=> __('Yes','event_espresso')),array('id'=>'N','text'=> __('No','event_espresso'))), $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"');?></td>
@@ -450,7 +450,7 @@ function espresso_calendar_config_mnu()	{
 											<tbody>
 												<tr>
 													<th><?php _e('Header Style','event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar_header_info') ?></th>
+														<?php echo apply_filters('espresso_help', 'calendar_header_info') ?></th>
 													<td><textarea name="espresso_calendar_header" id="espresso_calendar_header" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_header']) ?></textarea>
 														<br />
 														<span class="description">
@@ -459,7 +459,7 @@ function espresso_calendar_config_mnu()	{
 												</tr>
 												<tr>
 													<th><?php _e('Button Text','event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar_buttonText_info') ?>
+														<?php echo apply_filters('espresso_help', 'calendar_buttonText_info') ?>
 													</th>
 													<td><textarea name="espresso_calendar_buttonText" id="espresso_calendar_buttonText" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_buttonText']) ?></textarea>
 														<br />
@@ -469,7 +469,7 @@ function espresso_calendar_config_mnu()	{
 												</tr>
 												<tr>
 													<th><?php _e('Title Format','event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar_titleFormat_info') ?></th>
+														<?php echo apply_filters('espresso_help', 'calendar_titleFormat_info') ?></th>
 													<td><textarea name="espresso_calendar_titleFormat" id="espresso_calendar_titleFormat" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_titleFormat']) ?></textarea>
 														<br />
 														<span class="description">
@@ -478,7 +478,7 @@ function espresso_calendar_config_mnu()	{
 												</tr>
 												<tr>
 													<th><?php _e('Column Format','event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar_columnFormat_info') ?></th>
+														<?php echo apply_filters('espresso_help', 'calendar_columnFormat_info') ?></th>
 														</th>
 													<td><textarea name="espresso_calendar_columnFormat" id="espresso_calendar_columnFormat" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_columnFormat']) ?></textarea>
 														<br />
@@ -488,7 +488,7 @@ function espresso_calendar_config_mnu()	{
 												</tr>
 												<tr>
 													<th><?php _e('Month Names','event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar_monthNames_info') ?></th>
+														<?php echo apply_filters('espresso_help', 'calendar_monthNames_info') ?></th>
 													<td><textarea name="espresso_calendar_monthNames" id="espresso_calendar_monthNames" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']) ?></textarea>
 														<br />
 														<span class="description">
@@ -497,7 +497,7 @@ function espresso_calendar_config_mnu()	{
 												</tr>
 												<tr>
 													<th><?php _e('Month Names Short','event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar_monthNamesShort_info') ?></th>
+														<?php echo apply_filters('espresso_help', 'calendar_monthNamesShort_info') ?></th>
 													<td><textarea name="espresso_calendar_monthNamesShort" id="espresso_calendar_monthNamesShort" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNamesShort']) ?></textarea>
 														<br />
 														<span class="description">
@@ -506,7 +506,7 @@ function espresso_calendar_config_mnu()	{
 												</tr>
 												<tr>
 													<th><?php _e('Day Names','event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar_dayNames_info') ?></th>
+														<?php echo apply_filters('espresso_help', 'calendar_dayNames_info') ?></th>
 													<td><textarea name="espresso_calendar_dayNames" id="espresso_calendar_dayNames" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNames']) ?></textarea>
 														<br />
 														<span class="description">
@@ -515,7 +515,7 @@ function espresso_calendar_config_mnu()	{
 												</tr>
 												<tr>
 													<th><?php _e('Day Names Short','event_espresso'); ?>
-														<?php apply_filters('espresso_help', 'calendar_dayNamesShort_info') ?></th>
+														<?php echo apply_filters('espresso_help', 'calendar_dayNamesShort_info') ?></th>
 													<td><textarea name="espresso_calendar_dayNamesShort" id="espresso_calendar_dayNamesShort" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']) ?></textarea>
 														<br />
 														<span class="description">
