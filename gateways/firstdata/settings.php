@@ -74,7 +74,7 @@ function event_espresso_display_firstdata_settings() {
 								<?php _e('First Data Store Number', 'event_espresso'); ?>
 							</label>
 							
-							<input class="regular-text" type="text" name="firstdata_store_id" size="35" value="<?php echo $firstdata_settings['firstdata_store_id']; ?>">
+							<input class="regular-text" type="text" name="firstdata_store_id" size="35" value="<?php echo $firstdata_settings['firstdata_store_id']; ?>" />
 							<br />
 						</li>
 						<li>
@@ -96,7 +96,7 @@ function event_espresso_display_firstdata_settings() {
 						</li>
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the debugging feature and the FirstData Sandbox? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'sandbox_info_firstdata') ?>
+								<?php _e('Use the debugging feature and the FirstData Sandbox? ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'sandbox_info_firstdata') ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $firstdata_settings['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 							
@@ -111,7 +111,7 @@ function event_espresso_display_firstdata_settings() {
 			</tr>
 		</table>
 		<p>
-			<input type="hidden" name="update_firstdata" value="update_firstdata">
+			<input type="hidden" name="update_firstdata" value="update_firstdata" />
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update First Data Settings', 'event_espresso') ?>" id="save_paypal_settings" />
 		</p>
 		<?php wp_nonce_field( 'espresso_form_check', 'add_firstdata_settings' ); ?>

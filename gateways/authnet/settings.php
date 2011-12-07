@@ -146,7 +146,7 @@ function event_espresso_display_authnet_settings() {
 			<tr>
 				<th><label for="sim_button_url">
 						<?php _e('Button Image URL: ', 'event_espresso'); ?>
-						<?php apply_filters('espresso_help', 'authnet_button_url_info') ?>
+						<?php echo apply_filters('espresso_help', 'authnet_button_url_info') ?>
 					</label></th>
 				<td><input class="regular-text" type="text" name="button_url" id="sim_button_url" value="<?php echo $payment_settings['authnet_sim']['button_url'] == '' ? $button_url : $payment_settings['authnet_sim']['button_url']; ?>" />
 				<br />
@@ -157,7 +157,7 @@ function event_espresso_display_authnet_settings() {
 			<tr>
 				<th><label for="sim_image_url">
 						<?php _e('Image URL: ', 'event_espresso'); ?>
-						<?php apply_filters('espresso_help', 'authnet_image_url_info') ?>
+						<?php echo apply_filters('espresso_help', 'authnet_image_url_info') ?>
 					</label></th>
 				<td><input class="regular-text" type="text" name="image_url" id="sim_image_url" value="<?php echo $payment_settings['authnet_sim']['image_url']; ?>" />
 					<br />
@@ -168,7 +168,7 @@ function event_espresso_display_authnet_settings() {
 			<tr>
 				<th><label>
 						<?php _e('Relay Response URL: ', 'event_espresso'); ?>
-						<?php apply_filters('espresso_help', 'relay_response') ?>
+						<?php echo apply_filters('espresso_help', 'relay_response') ?>
 					</label></th>
 				<td><span class="display-path" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;"><?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?></span><br />
 			<span class="description">
@@ -178,14 +178,14 @@ function event_espresso_display_authnet_settings() {
 			<tr>
 				<th><label for="use_sandbox">
 						<?php _e('Use the test mode feature for Autorize.net SIM? ', 'event_espresso'); ?>
-						<?php apply_filters('espresso_help', 'authnet_sandbox') ?>
+						<?php echo apply_filters('espresso_help', 'authnet_sandbox') ?>
 					</label></th>
 				<td><?php echo select_input('use_sandbox', $values, empty($payment_settings['authnet_sim']['use_sandbox']) ? 'N' : $payment_settings['authnet_sim']['use_sandbox']);?></td>
 			</tr>
 			<tr>
 				<th><label for="bypass_payment_page">
 						<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?>
-						<?php apply_filters('espresso_help', 'bypass_confirmation') ?>
+						<?php echo apply_filters('espresso_help', 'bypass_confirmation') ?>
 					</label></th>
 				<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['authnet_sim']['bypass_payment_page']); ?></td>
 			</tr>

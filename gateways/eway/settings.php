@@ -113,7 +113,7 @@ function event_espresso_display_eway_settings() {
 				<td valign="top"><ul>
 				<li>
 							<label for="currency_format">
-								<?php _e('Select the currency for your country: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'eway_currency_info') ?>
+								<?php _e('Select the currency for your country: ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'eway_currency_info') ?>
 							</label>
 							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 								<option value="<?php echo $eway_settings['currency_format']; ?>"><?php echo $eway_settings['currency_format']; ?></option>

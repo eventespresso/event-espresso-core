@@ -22,7 +22,7 @@
 
 
 		<p class="disc-codes">
-			<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php apply_filters('espresso_help', 'coupon_code_info'); ?></label>
+			<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'coupon_code_info'); ?></label>
 			<?php echo select_input('use_coupon_code', $values, !isset($use_coupon_code) || $use_coupon_code == '' ? 'N' : $use_coupon_code); ?>
 		</p>
 

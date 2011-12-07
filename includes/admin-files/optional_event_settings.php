@@ -31,7 +31,7 @@ $values=array(
 				<tbody>
 					<tr>
 						<th><label for="default_payment_status">
-								<?php _e(' Default Payment Status','event_espresso'); ?> <?php apply_filters('espresso_help', 'payment_status_info') ?>
+								<?php _e(' Default Payment Status','event_espresso'); ?> <?php echo apply_filters('espresso_help', 'payment_status_info') ?>
 							</label></th>
 						<td><?php echo select_input('default_payment_status', $default_payment_status, $org_options['default_payment_status'])?><br />
 							<span class="description">

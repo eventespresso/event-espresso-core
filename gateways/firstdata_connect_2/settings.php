@@ -94,7 +94,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 						
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the debugging feature and the', 'event_espresso'); ?><?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'sandbox_info_firstdata_connect_2') ?>
+								<?php _e('Use the debugging feature and the', 'event_espresso'); ?> <?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php echo apply_filters('espresso_help', 'sandbox_info_firstdata_connect_2') ?>
 							</label>
 							<input name="sandbox" type="checkbox" value="1" <?php echo $firstdata_connect_2_settings['sandbox'] == "1" ? 'checked="checked"' : '' ?> />							
 						</li>
@@ -104,7 +104,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 					<ul>
 						<li>
 							<label for="bypass_payment_page">
-								<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'bypass_confirmation') ?>
+								<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'bypass_confirmation') ?>
 							</label>
 							<?php
 							$values = array(
@@ -116,7 +116,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 						
 						<li>
 							<label for="button_url">
-								<?php _e('Button Image URL: ', 'event_espresso'); ?><?php apply_filters('espresso_help', 'button_image') ?>
+								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'button_image') ?>
 							</label>
 							<br />
 							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $firstdata_connect_2_settings['button_url']; ?>" />

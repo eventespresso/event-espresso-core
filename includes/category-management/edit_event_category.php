@@ -36,7 +36,7 @@ function edit_event_category(){
 						<tr>
 							<th><label for="cat_id">
 									<?php _e('Unique ID', 'event_espresso'); ?>
-									<?php apply_filters('espresso_help', 'unique_id_info'); ?>
+									<?php echo apply_filters('espresso_help', 'unique_id_info'); ?>
 								</label></th>
 							<td><input id="cat_id"  type="text" name="category_identifier" value="<?php echo $category_identifier;?>" /></td>
 						</tr>

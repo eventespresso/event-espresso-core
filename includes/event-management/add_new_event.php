@@ -322,7 +322,7 @@ function add_new_event() {
 							<tr valign="top">
 								<td class="a"><fieldset id="add-reg-dates">
 										<legend>
-	<?php _e('Registration Dates', 'event_espresso'); ?> <?php apply_filters('espresso_help', 'reg_date_info'); ?>
+	<?php _e('Registration Dates', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'reg_date_info'); ?>
 										</legend>
 										<p>
 											<label for="registration_start"><?php echo __('Registration Start', 'event_espresso') ?> </label>
@@ -335,7 +335,7 @@ function add_new_event() {
 									</fieldset>
 									<fieldset id="add-event-dates">
 										<legend>
-												<?php _e('Event Dates', 'event_espresso'); ?> <?php apply_filters('espresso_help', 'event_date_info'); ?>
+												<?php _e('Event Dates', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'event_date_info'); ?>
 										</legend>
 										<p>
 											<label for="start_date">
@@ -353,7 +353,7 @@ function add_new_event() {
 											<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] != 'Y') && $espresso_premium == true) { ?>
 										<p><span class="run-in">
 										<?php _e('Current Time', 'event_espresso'); ?>
-											</span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <?php apply_filters('espresso_help', 'current_time_info'); ?>
+											</span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <?php echo apply_filters('espresso_help', 'current_time_info'); ?>
 											<a class="change-date-time" href="options-general.php" target="_blank">
 		<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
 											</a></p>
@@ -378,13 +378,13 @@ function add_new_event() {
 										<?php // ADDED TIME REGISTRATION LIMITS  ?>
 								<td class="b"><fieldset id="add-register-times">
 										<legend>
-											<?php _e('Registration Times', 'event_espresso'); ?> <?php apply_filters('espresso_help', 'reg_date_info'); ?>
+											<?php _e('Registration Times', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'reg_date_info'); ?>
 										</legend>
 										<?php echo event_espresso_timereg_editor(); ?>
 									</fieldset>
 									<fieldset id="add-event-times">
 										<legend>
-	<?php _e('Event Times', 'event_espresso'); ?> <?php apply_filters('espresso_help', 'event_times_info'); ?>
+	<?php _e('Event Times', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'event_times_info'); ?>
 										</legend>
 	<?php echo event_espresso_time_editor(); ?>
 									</fieldset>
@@ -589,7 +589,7 @@ function add_new_event() {
 					<div class="inside">
 						<div id="emaildescriptiondivrich" class="postarea">
 							<div class="email-conf-opts">
-								<p class="inputunder"><label><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') ?> <?php apply_filters('espresso_help', 'custom_email_info') ?> </label> <?php echo select_input('send_mail', $values); ?> </p>
+								<p class="inputunder"><label><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') ?> <?php echo apply_filters('espresso_help', 'custom_email_info') ?> </label> <?php echo select_input('send_mail', $values); ?> </p>
 
 								<p class="inputunder">
 									<?php $email_id = isset($email_id) ? $email_id : ''; ?>
@@ -598,7 +598,7 @@ function add_new_event() {
 										<a href="admin.php?page=event_emails" target="_blank">
 	<?php _e('pre-existing email? ', 'event_espresso'); ?>
 										</a>
-	<?php apply_filters('espresso_help', 'email_manager_info') ?>
+	<?php echo apply_filters('espresso_help', 'email_manager_info') ?>
 									</label>
 									<?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') ?>
 								</p>
@@ -607,7 +607,7 @@ function add_new_event() {
 									<em>OR</em>
 								</p>
 								<p class="section-heading">
-										<?php _e('Create a custom email:', 'event_espresso') ?> <?php apply_filters('espresso_help', 'event_custom_emails'); ?>
+										<?php _e('Create a custom email:', 'event_espresso') ?> <?php echo apply_filters('espresso_help', 'event_custom_emails'); ?>
 								</p>
 							</div>
 							<div class="visual-toggle">
