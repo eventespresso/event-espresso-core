@@ -1428,8 +1428,13 @@ select.wide {width: 175px;}
 #add-edit-new-group td.a input {
 	margin-top: 3px;
 }
+#general-group-info label {display: block;}
+#general-group-info .checkbox-group-name label,
+#general-group-info .checkbox-group-desc label {
+	display: inline;
+}
 #add-edit-new-group textarea {
-	width: 80%;
+	width: 80%;clear: both;
 }
 /*___ Venue Manager ___*/
 #add-edit-venue .ee-gmap-entry {

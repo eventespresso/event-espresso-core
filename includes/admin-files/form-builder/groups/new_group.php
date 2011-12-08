@@ -31,14 +31,18 @@ function event_espresso_form_group_new(){
 			 <textarea name="group_description" cols="40" rows="5"></textarea>
 		   </li>
 				
-		   <li>
-			 <label for="show_group_name"><?php _e('Show group name on registration page?','event_espresso'); ?></label>
-			 <input type="checkbox" name="show_group_name" id="show_group_name" value="1" checked="checked" />
+		   <li class="checkbox-group-name">
+			 <label for="show_group_name">
+			 	<input type="checkbox" name="show_group_name" id="show_group_name" value="1" checked="checked" />
+				<?php _e('Show group name on registration page?','event_espresso'); ?>
+			 </label>
 		   </li>
 				
-		  <li>
-			<label for="show_group_description"><?php _e('Show group description on registration page?','event_espresso'); ?></label>
-			<input type="checkbox" name="show_group_description" id="show_group_description" value="1" checked="checked" />
+		  <li class="checkbox-group-desc">
+			<label for="show_group_description">
+				<input type="checkbox" name="show_group_description" id="show_group_description" value="1" checked="checked" />
+				<?php _e('Show group description on registration page?','event_espresso'); ?>
+			</label>
 		  </li>
 		</ul>
 	   </fieldset>
