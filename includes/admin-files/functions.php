@@ -420,7 +420,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 			function addMetaInput(divName){
 				var next_counter = counter_staticm(meta_counter);
 				var newdiv = document.createElement('li');
-				newdiv.innerHTML = "<?php _e('Key:', 'event_espresso'); ?><input size='20' type='text' value='' name='emeta[]' id='emeta[]'>&nbsp;<?php _e('Value:', 'event_espresso'); ?><input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo '<img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
+				newdiv.innerHTML = "<label><?php _e('Key: ', 'event_espresso'); ?></label><input size='20' type='text' value='' name='emeta[]' id='emeta[]'><label><?php _e(' Value: ', 'event_espresso'); ?></label><input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo ' <img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
 				document.getElementById(divName).appendChild(newdiv);
 				counter++;
 			}

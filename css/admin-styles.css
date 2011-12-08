@@ -361,6 +361,7 @@ div.tablenav {
 /*** Add new events / Edit events ***/
 .remove-item {
 	cursor: pointer;
+	vertical-align: middle;
 }
 #event-date-time .recurring-available {
 	bottom: -10px;
@@ -1416,6 +1417,9 @@ select.wide {width: 175px;}
 }
 #event-pricing ul li input {
 	margin: 0 0 8px;
+}
+#dynamicMetaInput li select, #dynamicMetaInput li input {
+	width: 150px;
 }
 /*___ Questions & Q groups ___*/
 #add-edit-new-group table ul li input[type=checkbox] {
