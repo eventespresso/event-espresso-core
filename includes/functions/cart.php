@@ -945,7 +945,7 @@ if (!function_exists('event_espresso_group_price_dropdown')) {
 				}
 				?>
 				<tr>
-					<td colspan="3" class="reg-allowed-limit"><?php printf(__("You can register a maximum of %d attendees for this event.", 'event_espresso'), $attendee_limit); ?></td>
+					<td colspan="3" class="reg-allowed-limit"><?php echo sprintf(__("You can register a maximum of %d attendees for this event.", 'event_espresso'), $attendee_limit); ?></td>
 
 				</tr>
 			</table>
