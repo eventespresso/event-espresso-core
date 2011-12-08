@@ -126,8 +126,7 @@ function event_espresso_get_event_meta($event_id) {
 
 if (!function_exists('event_espresso_additional_attendees')) {
 
-	function
-	event_espresso_additional_attendees($event_id=0, $additional_limit=2, $available_spaces=999, $label='', $show_label = true, $event_meta = '') {
+	function event_espresso_additional_attendees($event_id=0, $additional_limit=2, $available_spaces=999, $label='', $show_label = true, $event_meta = '') {
 		$event_id = $event_id == 0 ? $_REQUEST['event_id'] : $event_id;
 
 		if ($event_meta == '' && ($event_id != '' || $event_id != 0)) {
