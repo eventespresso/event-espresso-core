@@ -11,14 +11,14 @@
 							<?php _e('Create a post for this event?', 'event_espresso'); ?>
 						</label>
 		   <?php echo select_input('create_post', $values, 'N'); ?> </p>
-		<input type="hidden" name="post_id" value="<?php echo isset($post_id) ? $post_id : ''; ?>" />
+		<input type="hidden" name="post_id" value="<?php echo isset($event->post_id) ? $event->post_id : ''; ?>" />
 		<?php
 		global $current_user;
 		get_currentuserinfo();
 
-		if (isset($post_id)) {
-			$post_data = get_post($post_id);
-			$tags = get_the_tags($post_id);
+		if (isset($event->post_id)) {
+			$post_data = get_post($event->post_id);
+			$tags = get_the_tags($event->post_id);
 			if ($tags) {
 				foreach ($tags as $k => $v) {
 					$tag[$k] = $v->name;

@@ -8,22 +8,22 @@
 
 		<p><strong><?php _e('Early Registration Discount', 'event_espresso'); ?></strong></p>
 
-		<p><label for="early_disc_date"><?php _e('End Date:', 'event_espresso'); ?></label><input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($early_disc_date) ? $early_disc_date : ''; ?>"/> </p>
+		<p><label for="early_disc_date"><?php _e('End Date:', 'event_espresso'); ?></label><input type="text" class="datepicker" size="12" id="early_disc_date" name="early_disc_date" value="<?php echo isset($event->early_disc_date) ? $event->early_disc_date : ''; ?>"/> </p>
 
 		<p class="promo-amnts">
-			<label for="early_disc"><?php _e('Amount:', 'event_espresso'); ?></label><input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($early_disc) ? $early_disc : ''; ?>" /> <br /><span class="description"><?php _e('(Leave blank if not applicable)', 'event_espresso'); ?></span>
+			<label for="early_disc"><?php _e('Amount:', 'event_espresso'); ?></label><input type="text" size="3" id="early_disc" name="early_disc" value="<?php echo isset($event->early_disc) ? $event->early_disc : ''; ?>" /> <br /><span class="description"><?php _e('(Leave blank if not applicable)', 'event_espresso'); ?></span>
 		</p>
 
 		<p>
 			<label><?php _e('Percentage:', 'event_espresso') ?></label>
 
-			<?php echo select_input('early_disc_percentage', $values, !isset($early_disc_percentage) ? '' : $early_disc_percentage); ?>
+			<?php echo select_input('early_disc_percentage', $values, !isset($event->early_disc_percentage) ? '' : $event->early_disc_percentage); ?>
 		</p>
 
 
 		<p class="disc-codes">
 			<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'coupon_code_info'); ?></label>
-			<?php echo select_input('use_coupon_code', $values, !isset($use_coupon_code) || $use_coupon_code == '' ? 'N' : $use_coupon_code); ?>
+			<?php echo select_input('use_coupon_code', $values, !isset($event->use_coupon_code) || $event->use_coupon_code == '' ? 'N' : $event->use_coupon_code); ?>
 		</p>
 
 		<?php
@@ -31,12 +31,12 @@
 			$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
 			if (function_exists('espresso_member_data')) {
 				$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
-				$wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
+				$event->wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
 				$sql .= " WHERE ";
-				if ($wp_user == 0 || $wp_user == 1) {
+				if ($event->wp_user == 0 || $event->wp_user == 1) {
 					$sql .= " (wp_user = '0' OR wp_user = '1') ";
 				} else {
-					$sql .= " wp_user = '" . $wp_user . "' ";
+					$sql .= " wp_user = '" . $event->wp_user . "' ";
 				}
 			}
 			$event_discounts = $wpdb->get_results($sql);

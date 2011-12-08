@@ -16,7 +16,7 @@ if (function_exists('espresso_member_data')) {
 		</span></h3>
 	<div class="inside">
 		<?php
-		if (strlen($post_id) > 1) {
+		if (strlen($event->post_id) > 1) {
 			$create_post = 'Y'; //If a post was created previously, default to yes on the update post.
 		} else {
 			$create_post = 'N'; //If a post was NOT created previously, default to no so we do not create a post on accident.
@@ -29,18 +29,18 @@ if (function_exists('espresso_member_data')) {
 							 <?php echo __('Add/Update post for this event?', 'event_espresso') ?>
 						</label> 
 						 <?php echo select_input('create_post', $values, $create_post);
-						  if (strlen($post_id) > 1) {
+						  if (strlen($event->post_id) > 1) {
 			echo '<p>' . __('If no, delete current post?', 'event_espresso'); ?> 
 							<input name="delete_post" type="checkbox" value="Y" />
 							<?php } ?>
 					</p>
-		<input type="hidden" name="post_id" value="<?php if(isset($post_id)) echo $post_id; ?>">
+		<input type="hidden" name="post_id" value="<?php if(isset($event->post_id)) echo $event->post_id; ?>">
 		<?php /* ?><p><?php _e('Category:', 'event_espresso'); ?> <?php wp_dropdown_categories(array('orderby'=> 'name','order' => 'ASC', 'selected' => $category, 'hide_empty' => 0 )); ?></p><?php */ ?>
 
 		<?php
-		if (isset($post_id)) {
-			$post_data = get_post($post_id);
-			$tags = get_the_tags($post_id);
+		if (isset($event->post_id)) {
+			$post_data = get_post($event->post_id);
+			$tags = get_the_tags($event->post_id);
 			if ($tags) {
 				foreach ($tags as $k => $v) {
 					$tag[$k] = $v->name;
