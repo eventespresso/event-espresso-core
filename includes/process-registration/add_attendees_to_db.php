@@ -339,7 +339,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 
 		//Since main attendee and additional attendees may have different questions,
 		//$attendee_number check for 2 because is it statically set at 1 first and is incremented for the primary attendee above, hence 2
-		$questions = ($attendee_number > 2 && isset($event_meta['add_attendee_question_groups'])) ? $event_meta['add_attendee_question_groups'] : $questions;
+		$questions = ($attendee_number > 1 && isset($event_meta['add_attendee_question_groups'])) ? $event_meta['add_attendee_question_groups'] : $questions;
 
 		add_attendee_questions($questions, $registration_id, $attendee_id, array('session_vars' => $att_data_source));
 
