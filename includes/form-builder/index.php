@@ -288,7 +288,7 @@ function event_espresso_questions_config_mnu() {
 	jQuery('select#question_type').bind('change', function() {
 		var selectValue = jQuery('select#question_type option:selected').val();
   
-		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA') {
+		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA'  || selectValue == 'DATE') {
 		  jQuery('#add-question-values').fadeOut('slow');
 			//alert(selectValue);
 		} else{
