@@ -499,7 +499,7 @@ function edit_attendee_record() {
 						}
 
 						echo '<p>';
-						echo event_form_build_edit($question, ($question->system_name != '') ? ${$question->system_name} : $question->answer, $show_admin_only = true);
+						echo event_form_build_edit($question, $question->answer, $show_admin_only = true);
 						echo "</p>";
 
 						$counter++;
