@@ -27,10 +27,13 @@ function edit_event_discount(){
 
 <div class="metabox-holder">
 	<div class="postbox">
-		<h3>
+		<div title="Click to toggle" class="handlediv"><br />
+		</div>
+		<h3 class="hndle">
 			<?php _e('Edit Code','event_espresso'); ?>
-			</h3>
+		</h3>
 		<div class="inside">
+			<div class="padding">
 			<form id="edit-promo-code" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
 			<h4><?php echo $coupon_code ?></h4>
 				<table class="form-table">
@@ -102,6 +105,7 @@ function edit_event_discount(){
 			</form>
 		</div>
 	</div>
+</div>
 </div>
 <script type="text/javascript" charset="utf-8">
 	//<![CDATA[

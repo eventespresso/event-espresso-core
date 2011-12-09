@@ -5,13 +5,16 @@ function add_new_event_discount() {
 			array('id' => 'N', 'text' => __('No', 'event_espresso')),
 			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')));
 	?>
-
+	<div class="meta-box-sortables ui-sortables">
 	<div class="metabox-holder">
 		<div class="postbox">
-			<h3>
+		<div title="Click to toggle" class="handlediv"><br />
+		</div>
+			<h3 class="hndle">
 	<?php _e('Add a New Promotional Code', 'event_espresso'); ?>
 			</h3>
 			<div class="inside">
+				<div class="padding">
 				<form id="new-promo-code" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 					<table class="form-table">
 						<tbody>
@@ -78,6 +81,8 @@ function add_new_event_discount() {
 				</form>
 			</div>
 		</div>
+		</div>
+	</div>
 	</div>
 	<script type="text/javascript" charset="utf-8">
 		//<![CDATA[
@@ -89,6 +94,7 @@ function add_new_event_discount() {
 				dateFormat: "yy-mm-dd",
 				showButtonPanel: true
 			});
+
 		});
 		//]]>
 	</script>

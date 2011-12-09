@@ -17,6 +17,7 @@ function event_espresso_discount_config_mnu() {
 		<?php event_espresso_display_right_column(); ?>
 		<div id="post-body">
 			<div id="post-body-content">
+				<div class="meta-box-sortables ui-sortables">
 				<?php
 					if (isset($_REQUEST['action'])) {
 						switch ($_REQUEST['action']) {
@@ -130,6 +131,7 @@ function event_espresso_discount_config_mnu() {
 		</div>
 	</div>
 </div>
+</div>
 <script type="text/javascript">
 		jQuery(document).ready(function($) {
 
@@ -165,8 +167,8 @@ function event_espresso_discount_config_mnu() {
 		coupon_code: "Please add your promotional code"
 		}
 		});
-	
-		});
+		postboxes.add_postbox_toggles('discount');	
+});
 	</script>
 <?php 
    include_once('help.php');
