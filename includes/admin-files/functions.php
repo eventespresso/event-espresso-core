@@ -344,10 +344,10 @@ if (!function_exists('event_espresso_meta_edit')) {
 		$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", "add_attendee_question_groups", "date_submitted", "event_host_terms", "default_payment_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url", "originally_submitted_by", "enable_for_gmap", "orig_event_staff");
 		$meta_counter = 1;
 
-		$default_event_meta = array("event_hashtag" => "", "event_format" => "", "event_livestreamed" => "");
+		$default_event_meta =  array();
 		$default_event_meta = apply_filters( 'hook_espresso_filter_default_event_meta', $default_event_meta );
-		$default_meta = $event_meta == '' ? $default_event_meta : array();
-		
+
+		$default_meta = $event_meta == '' ? $default_event_meta :array() ;
 		$event_meta = $event_meta == '' ? array() : $event_meta;
 		$event_meta = array_merge($event_meta, $default_meta);
 		//print_r( $event_meta );
@@ -363,13 +363,13 @@ if (!function_exists('event_espresso_meta_edit')) {
 					?>
 					<?php
 					if (in_array($k, $hiddenmeta)) {
-						//				echo "<input type='hidden' name='emeta[]' value='{$v}' />";
+						//echo "<input type='hidden' name='emeta[]' value='{$v}' />";
 						unset($good_meta[$k]);
 					} else {
 						?>
 						<li>
 							<label>
-								<?php _e('Key: ', 'event_espresso'); ?>
+								<?php _e('Key', 'event_espresso'); ?>
 							</label>
 							<select id="emeta[]" name="emeta[]">
 								<?php foreach ($good_meta as $k2 => $v2) { ?>
@@ -377,7 +377,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 								<?php } ?>
 							</select>
 							<label for="meta-value">
-								<?php _e('Value: ', 'event_espresso'); ?>
+								<?php _e('Value', 'event_espresso'); ?>
 							</label>
 							<input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
 							<?php
@@ -389,21 +389,21 @@ if (!function_exists('event_espresso_meta_edit')) {
 					}
 					?>
 				<?php }
-				echo '<li><label for="emeta-box">' . __('Key: ', 'event_espresso'); ?>
+				echo '<li><label for="emeta-box">' . __('Key', 'event_espresso'); ?>
 			</label>
-			<input id="emeta-box" size="20" type="text" value="" name="emeta[]" id="emeta[]">
+			<input id="emeta-box" size="20" type="text" value="" name="emeta[]" >
 			<label for="emetaad[]">
-				<?php _e('Value: ', 'event_espresso'); ?>
+				<?php _e('Value', 'event_espresso'); ?>
 			</label>
 			<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
 			<?php
 			echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
 		} else {
-			echo '<li for="emeta-box"><label for="emeta[]">' . __('Key: ', 'event_espresso');
+			echo '<li><label for="emeta[]">' . __('Key', 'event_espresso');
 			?>
 			</label>
 			<input size="20" type="text" value="" name="emeta[]" id="emeta[]">
-			<?php _e('Value: ', 'event_espresso'); ?>
+			<?php _e('Value', 'event_espresso'); ?>
 			<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
 			<?php
 			echo '<img class="remove-item" title="' . __('Remove this meta box', 'event_espresso') . '" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Meta', 'event_espresso') . '" />' . '</li>';
@@ -420,7 +420,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 			function addMetaInput(divName){
 				var next_counter = counter_staticm(meta_counter);
 				var newdiv = document.createElement('li');
-				newdiv.innerHTML = "<label><?php _e('Key: ', 'event_espresso'); ?></label><input size='20' type='text' value='' name='emeta[]' id='emeta[]'><label><?php _e(' Value: ', 'event_espresso'); ?></label><input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo ' <img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
+				newdiv.innerHTML = "<label><?php _e('Key', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emeta[]' id='emeta[]'> <label><?php _e('Value', 'event_espresso'); ?></label> <input size='20' type='text' value='' name='emetad[]' id='emetad[]'><?php echo ' <img class=\"remove-item\" title=\"' . __('Remove this meta box', 'event_espresso') . '\" onclick=\"this.parentNode.parentNode.removeChild(this.parentNode);\" src=\"' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif\" alt=\"' . __('Remove Meta', 'event_espresso') . '\" />'; ?>";
 				document.getElementById(divName).appendChild(newdiv);
 				counter++;
 			}
