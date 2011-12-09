@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-/* 
+/** 
  * Event Espresso
  *
  * Event Registration and Management Plugin for WordPress
@@ -41,20 +41,20 @@
 																	'event_id_list' => array()
 
 																),
-					'OPT' => array( 
-																	'title' => 'Additional Options', 
-																	'total_items' => 0, 
-																	'sub_total' => 0, 
-																	'empty_msg' => 'No Additional Options',
-																	'option_id_list' => array()
-																),
-					'CART' => array(
-																	'title' => 'Shopping Cart', 
-																	'total_items' => 0, 
-																	'sub_total' => 0, 
-																	'empty_msg' => 'Your Cart is Empty',
-																	'item_id_list' => array()
-																)
+//					'OPT' => array( 
+//																	'title' => 'Additional Options', 
+//																	'total_items' => 0, 
+//																	'sub_total' => 0, 
+//																	'empty_msg' => 'No Additional Options',
+//																	'option_id_list' => array()
+//																),
+//					'CART' => array(
+//																	'title' => 'Shopping Cart', 
+//																	'total_items' => 0, 
+//																	'sub_total' => 0, 
+//																	'empty_msg' => 'Your Cart is Empty',
+//																	'item_id_list' => array()
+//																)
 				);
 				
 	// EE_Session object stored by reference
@@ -165,18 +165,18 @@
 	public function add_event_to_cart( $event = FALSE, $qty = 1, $which_cart = 'REG' ) {
 
 		// check that an event has been passed
-		if ( ! $event or ! is_object( $event ) or empty( $event )) {
+		if ( ! $event or ! is_array( $event ) or empty( $event )) {
 			$this->_notices['errors'][] = 'An error occured. No event details were submitted. Could not add to cart';
 			return FALSE;
 		}
 
 		$add_to_cart_args = array( 
-																							'id' 				=> $event->id,
-																							'name' 	=> $event->event_name,
-																							'price' 		=> $event->event_cost,
-																							'qty' 			=> $qty,
-																							'details' 	=> $event													
-																						);
+														'id' 			=> $event->id,
+														'name' 	=> $event->event_name,
+														'price' 		=> $event->event_cost,
+														'qty' 		=> $qty,
+														'details' 	=> $event													
+													);
 
 		// add event to cart
 		if ( $this->add_to_cart( $which_cart, $add_to_cart_args ) ) {
@@ -524,7 +524,9 @@
 		
 		$session_data = $this->session->data();
 		$events_in_cart = $session_data['events_in_cart'];
-
+		
+		//echo $this->session->pre_r($events_in_cart, TRUE);
+		
 		// if there are actually some event_ids to look through
 		if ( is_array( $events_in_cart ) && ! empty( $events_in_cart ) ) {
 				// if the event we are looking for is in there
