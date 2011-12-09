@@ -352,6 +352,13 @@ function espresso_prepare_admin_email($data) {
 
 	//Additional information/questions
 	$admin_additional_info = "<h3>" . __('Additional Information:', 'event_espresso') . "</h3>";
+
+	//Registration ID
+	if (!empty($data->attendee->registration_id)) {
+		$admin_additional_info .= '<strong>' . __('Registration ID: ', 'event_espresso') . '</strong><br />';
+		$admin_additional_info .= $data->attendee->registration_id;
+	}
+
 	if (!empty($data->email_questions)) {
 		$admin_additional_info .= $data->email_questions;
 	}
