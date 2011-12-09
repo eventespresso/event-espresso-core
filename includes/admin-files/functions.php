@@ -345,9 +345,9 @@ if (!function_exists('event_espresso_meta_edit')) {
 		$meta_counter = 1;
 
 		$default_event_meta = array("event_hashtag" => "", "event_format" => "", "event_livestreamed" => "");
-		$default_event_meta = apply_filters_ref_array( 'hook_espresso_filter_default_event_meta', $default_event_meta );
-
+		$default_event_meta = apply_filters( 'hook_espresso_filter_default_event_meta', $default_event_meta );
 		$default_meta = $event_meta == '' ? $default_event_meta : array();
+		
 		$event_meta = $event_meta == '' ? array() : $event_meta;
 		$event_meta = array_merge($event_meta, $default_meta);
 		//print_r( $event_meta );
