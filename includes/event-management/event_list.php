@@ -6,7 +6,10 @@ function event_espresso_edit_list() {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
 	$wpdb->show_errors();
-
+	
+	//Clear the evnet id
+	$event_id = 0;
+	
 	//Dates
 	$curdate = date("Y-m-d");
 	$pieces = explode('-',$curdate, 3);
