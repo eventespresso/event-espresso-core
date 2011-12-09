@@ -80,8 +80,8 @@ function event_espresso_edit_list() {
 
 		if (isset($_REQUEST['month_range'])) {
 			$pieces = explode('-', $_REQUEST['month_range'], 3);
-			$year_r = $pieces[0];
-			$month_r = $pieces[1];
+			$year_r = !empty($pieces[0]) ? $pieces[0] : '';
+			$month_r = !empty($pieces[1]) ? $pieces[1] : '';
 		}
 		$group = '';
 		if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {

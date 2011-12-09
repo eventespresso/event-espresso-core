@@ -585,10 +585,13 @@ if (!function_exists('add_espresso_stylesheet')) {
 			}
 
 			//Register the ThemeRoller styles
-			wp_register_style('espresso_themeroller_base', $themeroller_style_path . 'themeroller-base.css');
-			wp_enqueue_style('espresso_themeroller_base');
-			wp_register_style('espresso_themeroller', $themeroller_style_path . $org_options['themeroller']['themeroller_style'] . '/style.css');
-			wp_enqueue_style('espresso_themeroller');
+			if ( !empty( $org_options['themeroller']) && !is_admin()){
+				wp_register_style('espresso_themeroller_base', $themeroller_style_path . 'themeroller-base.css');
+				wp_enqueue_style('espresso_themeroller_base');
+				$org_options['themeroller']['themeroller_style'] = isset($org_options['themeroller']['themeroller_style']) && !empty($org_options['themeroller']['themeroller_style']) ? $org_options['themeroller']['themeroller_style'] : 'smoothness';
+				wp_register_style('espresso_themeroller', $themeroller_style_path . $org_options['themeroller']['themeroller_style'] . '/style.css');
+				wp_enqueue_style('espresso_themeroller');
+			}
 		} else {
 			//For backwards compatibilty we check options to see if event_espresso_style.css is set. If it is set, or no option is set, we load it from original folder.
 			if (empty($org_options['style_settings']['selected_style']) || $org_options['style_settings']['selected_style'] == 'event_espresso_style.css') {

@@ -224,15 +224,17 @@ if (!function_exists('event_espresso_get_event_details')) {
 			//$start_timestamp = espresso_event_time($event_id, 'start_timestamp');
 			//$end_timestamp = espresso_event_time($event_id, 'end_timestamp');
 			// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
-			$ee_gmaps_opts = array(
-					'ee_map_width' => $org_options['map_settings']['ee_map_width'],
-					'ee_map_height' => $org_options['map_settings']['ee_map_height'],
-					'ee_map_zoom' => $org_options['map_settings']['ee_map_zoom'],
-					'ee_map_nav_display' => $org_options['map_settings']['ee_map_nav_display'],
-					'ee_map_nav_size' => $org_options['map_settings']['ee_map_nav_size'],
-					'ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'],
-					'ee_map_align' => $org_options['map_settings']['ee_map_align']
-			);
+			if ( isset($org_options['map_settings']) && !empty($org_options['map_settings']) ){
+				$ee_gmaps_opts = array(
+						'ee_map_width' => $org_options['map_settings']['ee_map_width'],
+						'ee_map_height' => $org_options['map_settings']['ee_map_height'],
+						'ee_map_zoom' => $org_options['map_settings']['ee_map_zoom'],
+						'ee_map_nav_display' => $org_options['map_settings']['ee_map_nav_display'],
+						'ee_map_nav_size' => $org_options['map_settings']['ee_map_nav_size'],
+						'ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'],
+						'ee_map_align' => $org_options['map_settings']['ee_map_align']
+				);
+			}
 			//var_dump($ee_gmaps_opts);
 			//This can be used in place of the registration link if you are usign the external URL feature
 			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);

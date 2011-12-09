@@ -265,22 +265,23 @@ function update_event($recurrence_arr = array()) {
 		$event_meta['date_submitted'] = $_REQUEST['date_submitted'];
 		$event_meta['originally_submitted_by'] = $_REQUEST['originally_submitted_by'];
 
-		if ($wp_user != $event_meta['originally_submitted_by']){
+		if (isset($wp_user) && $wp_user != $event_meta['originally_submitted_by']){
 			$event_meta['orig_event_staff'] = !empty($_REQUEST['event_person']) ? serialize($_REQUEST['event_person']) : '';
 		}
 		//print_r($event_meta['orig_event_staff']);
 
 		//Thumbnails
-		$event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
-		$event_meta['display_thumb_in_lists'] = $_REQUEST['show_thumb_in_lists'];
-		$event_meta['display_thumb_in_regpage'] = $_REQUEST['show_thumb_in_regpage'];
-		$event_meta['display_thumb_in_calendar'] = $_REQUEST['show_on_calendar'];
+		$event_meta['event_thumbnail_url'] = !empty($_REQUEST['upload_image']) ? $_REQUEST['upload_image'] : '';
+		$event_meta['display_thumb_in_lists'] = !empty($_REQUEST['show_thumb_in_lists']) ? $_REQUEST['show_thumb_in_lists'] : '';
+		$event_meta['display_thumb_in_regpage'] = !empty($_REQUEST['show_thumb_in_regpage']) ? $_REQUEST['show_thumb_in_regpage'] : '';
+		$event_meta['display_thumb_in_calendar'] = !empty($_REQUEST['show_on_calendar']) ? $_REQUEST['show_on_calendar'] : '';
 
 		if(!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])){
-		 $event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
+			$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
 		}else{
-		 $event_meta['enable_for_gmap'] = 'N';
+			$event_meta['enable_for_gmap'] = 'N';
 		}
+		
 		/*
 		* Added for seating chart addon
 		*/

@@ -25,7 +25,7 @@ function add_new_event() {
 			<div class="inside">
 				<div class="submitbox" id="submitpost"><!-- /minor-publishing -->
 					<div id="major-publishing-actions" class="clearfix">
-						<div id="delete-action"> <a class="submitdelete deletion" href="admin.php?page=events" onclick="return confirm('<?php _e('Are you sure you want to cancel ' . $event_name . '?', 'event_espresso'); ?>')">
+						<div id="delete-action"> <a class="submitdelete deletion" href="admin.php?page=events" onclick="return confirm('<?php _e('Are you sure you want to cancel ?', 'event_espresso'); ?>')">
 							<?php _e('Cancel', 'event_espresso'); ?>
 							</a> </div>
 						<div id="publishing-action">

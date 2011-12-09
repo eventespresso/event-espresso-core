@@ -27,6 +27,9 @@ function edit_attendee_record() {
 
 		//Update the payment amount for the attendee
 		if (!empty($_REQUEST['attendee_payment']) && $_REQUEST['attendee_payment'] == 'update_payment') {
+			$ext_attendee_id = isset($ext_attendee_id) && !empty($ext_attendee_id) ? $ext_attendee_id :NULL;
+			$attendee_quantity = isset($attendee_quantity) && !empty($attendee_quantity) ? $attendee_quantity :NULL;
+			$attendee_cost = isset($attendee_cost) && !empty($attendee_cost) ? $attendee_cost :NULL;
 			$attendee_cost_data = array("attendee_id"=>$ext_attendee_id,"quantity"=>$attendee_quantity,"cost"=>$attendee_cost);
 			$wpdb->insert(EVENTS_ATTENDEE_COST_TABLE,$attendee_cost_data);
 			$c_sql = "UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET cost = '".$_REQUEST['amount_pd']."', quantity = '".$_REQUEST['quantity']."' WHERE attendee_id = '".$_REQUEST['id']."' ";
@@ -514,7 +517,7 @@ function edit_attendee_record() {
 				  <input type="hidden" name="registration_id" value="<?php echo $registration_id ?>" />
 				  <input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
 				  <input type="hidden" name="display_action" value="view_list" />
-				  <input type="hidden" name="view_event" value="<?php echo $view_event ?>" />
+				  <input type="hidden" name="view_event" value="<?php echo isset($view_event) && !empty($view_event) ? $view_event : '' ?>" />
 				  <input type="hidden" name="form_action" value="edit_attendee" />
 				  <input type="hidden" name="attendee_action" value="update_attendee" />
 				  <li>
@@ -574,7 +577,7 @@ function edit_attendee_record() {
 				  <li>
 					<p><strong>
 					  <?php 
-						$payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $registration_id . "&amp;id=" . $att;
+						$payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $registration_id . "&amp;id=" . isset($att) && !empty($att) ? $att : '';
 						$payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
 
 					  _e( 'Payment Status:', 'event_espresso' ); ?>
@@ -582,7 +585,7 @@ function edit_attendee_record() {
 					  
 					  <a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?>"><?php _e('Payment Details', 'event_espresso'); ?></a> | 
 					  
-					  <a href="<?php echo get_option('siteurl') ?>/?page_id=<?php echo $org_options['return_url'] ?>&amp;registration_id=<?php echo $registration_id ?>&amp;id=<?php echo $att ?>" title="<?php _e('Payment Overview', 'event_espresso'); ?>" target="_blank"><?php _e('Payment Overview', 'event_espresso'); ?></a> 
+					  <a href="<?php echo get_option('siteurl') ?>/?page_id=<?php echo $org_options['return_url'] ?>&amp;registration_id=<?php echo $registration_id ?>&amp;id=<?php echo isset($att) && !empty($att) ? $att : '' ?>" title="<?php _e('Payment Overview', 'event_espresso'); ?>" target="_blank"><?php _e('Payment Overview', 'event_espresso'); ?></a> 
 					  
 					  ]</p>
 				  </li>

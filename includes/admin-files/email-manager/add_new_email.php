@@ -11,7 +11,6 @@ function add_new_event_email(){
 		</h3>
 		<div class="inside">
 			<form id="add-edit-new-event-email" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
-				<h4><?php echo stripslashes($email_name) ?></h4>
 				<table class="form-table">
 					<tbody>
 						<tr>

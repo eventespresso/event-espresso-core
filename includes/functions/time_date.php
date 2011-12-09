@@ -361,7 +361,7 @@ if (!function_exists('event_espresso_no_format_date')) {
 	function event_espresso_no_format_date($date, $format = '') {
 		$format = $format == '' ? get_option('date_format') : $format;
 		if (empty($date)) {
-			echo NULL;
+			return NULL;
 		} else {
 			$event_date_display = date_i18n($format, strtotime($date)); //Fixed for international use
 		}
@@ -710,9 +710,9 @@ if (!function_exists('time_to_24hr')) {
 
 }
 
-function espresso_event_months_dropdown($current_value='') {
+function espresso_event_months_dropdown($current_value = 0) {
 	global $wpdb;
-
+	$current_value = empty($current_value) ? 0 : $current_value;
 	$strQuery = "select id, start_date from " . EVENTS_DETAIL_TABLE . " WHERE event_status != 'D' group by YEAR(start_date), MONTH(start_date) ";
 	//$rsrcResult = mysql_query($strQuery);
 	$data = $wpdb->get_results($strQuery, ARRAY_A);
@@ -720,13 +720,14 @@ function espresso_event_months_dropdown($current_value='') {
 
 	if ($wpdb->num_rows > 0) {
 		echo '<select name="month_range" class="chzn-select" style="width:160px;">';
-		echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
+		echo '<option value="0">' . __('Select a Month/Year', 'event_espresso') . '</option>';
 
 		/*		 * * loop over the results ** */
 		foreach ($data as $row) {
+			
 			/*			 * * create the options ** */
 			echo '<option value="' . event_espresso_no_format_date($row["start_date"], $format = 'Y-m-d') . '"';
-			if ($row["start_date"] == $current_value) {
+			if ($row["start_date"] === $current_value) {
 				echo ' selected';
 			}
 			echo '>' . event_espresso_no_format_date($row["start_date"], $format = 'F  Y') . '</option>' . "\n";

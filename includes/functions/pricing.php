@@ -260,9 +260,9 @@ if (!function_exists('event_espresso_price_dropdown')) {
 
 		empty($atts) ? '' : extract($atts);
 
-		$show_label = $show_label == '' ? 1 : $show_label;
-		$multi_reg = $multi_reg == '' ? 0 : $multi_reg;
-		$option_name = $option_name == '' ? 'price_option' : $option_name;
+		$show_label = isset($show_label) && !empty($show_label) ? $show_label : 1;
+		$multi_reg = isset($multi_reg) && !empty($multi_reg) ? $multi_reg : 0;
+		$option_name = isset($option_name) && !empty($option_name) ? $option_name : 'price_option';
 
 //Attention:
 //If changes to this function are not appearing, you may have the members addon installed and will need to update the function there.
@@ -275,7 +275,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 		$html = '';
 		$early_bird_message = '';
 		$surcharge = '';
-		$label = $label == '' ? __('Choose an Option: ', 'event_espresso') : $label;
+		$label = isset($label) && !empty($label) ? $label : __('Choose an Option: ', 'event_espresso');
 
 //Will make the name an array and put the time id as a key so we know which event this belongs to
 		$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';

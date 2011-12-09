@@ -146,7 +146,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			if (array_key_exists('recurrence_start_date', $recurrence_arr)) {
 				//Recurring event
 				$start_date = $recurrence_arr['recurrence_start_date'];
-			} elseif ($_REQUEST['start_date'] == '' && $_REQUEST['recurrence_start_date'] != '') {
+			} elseif ( !empty($_REQUEST['start_date']) && !empty($_REQUEST['recurrence_start_date']) ) {
 				//If they leave the Event Start Date empty, the First Event Date in the recurrence module is selected
 				$start_date = $_REQUEST['recurrence_start_date'];
 			} elseif (isset($_POST['recurrence']) && $_POST['recurrence'] == 'Y' && $_REQUEST['start_date'] == '') {
@@ -158,7 +158,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			if (array_key_exists('recurrence_event_end_date', $recurrence_arr)) {
 				//Recurring event
 				$end_date = $recurrence_arr['recurrence_event_end_date'];
-			} elseif ($_REQUEST['end_date'] == '' && $_REQUEST['recurrence_event_end_date'] != '') {
+			} elseif ( !empty($_REQUEST['end_date']) && !empty($_REQUEST['recurrence_event_end_date'])) {
 				//If they leave the Event Start Date empty, the First Event Date in the recurrence module is selected
 				$end_date = $_REQUEST['recurrence_event_end_date'];
 			} elseif (isset($_POST['recurrence']) && $_POST['recurrence'] == 'Y' && $_REQUEST['end_date'] == '') {

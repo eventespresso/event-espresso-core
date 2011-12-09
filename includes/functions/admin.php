@@ -1165,7 +1165,7 @@ function event_espresso_list_categories($event_id = 0) {
 	}
 }
 
-function espresso_attendees_by_month_dropdown($current_value='') {
+function espresso_attendees_by_month_dropdown($current_value = '') {
 	global $wpdb;
 
 	$strQuery = "select id, date from " . EVENTS_ATTENDEE_TABLE . " group by YEAR(date), MONTH(date) ";

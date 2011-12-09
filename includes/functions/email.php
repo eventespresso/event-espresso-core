@@ -507,7 +507,7 @@ if (!function_exists('event_espresso_send_invoice')) {
 		$results = $wpdb->get_results("SELECT a.id FROM " . EVENTS_ATTENDEE_TABLE . " a	WHERE a.registration_id = '" . $registration_id . "' LIMIT 0,1");
 
 		foreach ($results as $result) {
-			$registration_id = $result->registration_id;
+			$registration_id = isset($result->registration_id) && !empty($result->registration_id) ? $result->registration_id : '';
 			$attendee_id = $result->id;
 		}
 

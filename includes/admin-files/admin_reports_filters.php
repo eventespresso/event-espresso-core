@@ -34,7 +34,7 @@ if ( did_action( 'espresso_admin_notices' ) == false )
 		<li><a <?php echo (isset($_REQUEST['this_month_a']) && $_REQUEST['this_month_a'] == 'true') ? ' class="current" ' : '' ?>  href="admin.php?page=attendees&event_admin_reports=event_list_attendees&this_month_a=true">
 		  <?php _e('This Month', 'event_espresso'); ?>
 		  <span class="count">(<?php echo espresso_total_attendees_this_month(); ?>)</span></a> </li>
-		<?php if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!='' && $_REQUEST['event_admin_reports'] != 'charts'){?>
+		<?php if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']!='' && isset($_REQUEST['event_admin_reports']) &&  $_REQUEST['event_admin_reports'] != 'charts'){?>
 		<li> | <a href="admin.php?page=attendees&event_admin_reports=charts&event_id=<?php echo $_REQUEST['event_id'] ?>">
 		  <?php _e('View Report', 'event_espresso'); ?>
 		  </a></li>

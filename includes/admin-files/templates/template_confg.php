@@ -78,7 +78,7 @@ function event_espresso_manage_templates() {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
 		$input_item = $name;
-		$option_selections = array($org_options['themeroller']['themeroller_style']);
+		$option_selections = isset($org_options['themeroller']) && !empty($org_options['themeroller']) ? array($org_options['themeroller']['themeroller_style']) : array();
 		if (!in_array($input_item, $option_selections)) {
 			return false;
 		} else {
@@ -193,14 +193,16 @@ shortcodes in your event description.', 'event_espresso'); ?>
 														<th> <?php _e('ThemeRoller Style ', 'event_espresso'); ?>
 															<?php echo apply_filters('espresso_help', 'themeroller_info'); ?>
 														</th>
-														<td><select id="style-themeroller" class="chzn-select wide" <?php echo $disabled ?> name="themeroller_style">
-																<option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> -
-																	<?php _e('None', 'event_espresso'); ?>
+														<td><select id="style-themeroller" class="chzn-select wide" name="themeroller_style">
+																<option <?php espresso_style_is_selected($fname_themeroller) ?> value=""> - <?php _e('Default', 'event_espresso'); ?>
 																</option>
 																<?php foreach ($files_themeroller as $fname_themeroller) { ?>
 																	<option <?php espresso_style_is_selected($fname_themeroller) ?> value="<?php echo $fname_themeroller ?>"><?php echo $fname_themeroller; ?></option>
 																<?php } ?>
-															</select></td>
+															</select><br />
+															<span class="description">
+																	<?php _e('Default style sheet is Smoothness.', 'event_espresso'); ?>
+																</span></td>
 													</tr>
 													<?php if (!empty($org_options['style_settings']['css_name'])) { ?>
 														<tr>
