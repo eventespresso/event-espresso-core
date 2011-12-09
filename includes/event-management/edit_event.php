@@ -400,16 +400,22 @@ function edit_event($event_id = 0) {
 				<?php _e('Event Description', 'event_espresso'); ?>
 				</strong>
 				<?php
-				/*
-				  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
-				  param: string $content Textarea content.
-				  param: string $id Optional, default is 'content'. HTML ID attribute value.
-				  param: string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
-				  param: bool $media_buttons Optional, default is true. Whether to display media buttons.
-				  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
-				 */
-				//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-				the_editor(espresso_admin_format_content($event->event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+				if (function_exists('wp_editor')){
+					$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
+					wp_editor(espresso_admin_format_content($event->event_desc), "event_desc", $args);
+				}else{
+					/*
+					  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
+					  param: string $content Textarea content.
+					  param: string $id Optional, default is 'content'. HTML ID attribute value.
+					  param: string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
+					  param: bool $media_buttons Optional, default is true. Whether to display media buttons.
+					  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
+					 */
+					//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
+					//the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+					the_editor(espresso_admin_format_content($event->event_desc), $id = 'event_desc'/*, $prev_id = 'title', $media_buttons = true, $tab_index = 3*/);
+				}
 				?>
 				<table id="post-status-info" cellspacing="0">
 					<tbody>
@@ -676,7 +682,11 @@ function edit_event($event_id = 0) {
 		<?php _e('Event Meta', 'event_espresso'); ?>
 							</span> </h3>
 						<div class="inside">
-		<?php event_espresso_meta_edit($event->event_meta); ?>
+		<?php 
+			//Debug
+			//echo "<pre>".print_r($event->event_meta,true)."</pre>";
+			event_espresso_meta_edit($event->event_meta); 
+		?>
 						</div>
 					</div>
 	<?php } ?>
@@ -690,49 +700,59 @@ function edit_event($event_id = 0) {
 						</span>
 					</h3>
 					<div class="inside">
-						<div id="emaildescriptiondivrich" class="postarea">
-							<div class="email-conf-opts">
-								<p class="inputunder"><label><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') ?> <?php echo apply_filters('espresso_help', 'custom_email_info') ?> </label> <?php echo select_input('send_mail', $values, $event->send_mail); ?> </p>
-								<p class="inputunder">
+					<table class="form-table">
+						<tbody>
+							<tr>
+								<th><label><?php echo __('Custom Confirmation Email', 'event_espresso') ?> <?php echo apply_filters('espresso_help', 'custom_email_info') ?> </label>
+								</th>
+								<td><?php echo select_input('send_mail', $values, $event->send_mail); ?></td>
+							</tr>
+							<tr>
+								<th><?php $email_id = isset($email_id) ? $email_id : ''; ?>
 									<label>
 										<?php _e('Use a ', 'event_espresso'); ?>
 										<a href="admin.php?page=event_emails" target="_blank">
-									<?php _e('pre-existing email? ', 'event_espresso'); ?>
-										</a>
-	<?php echo apply_filters('espresso_help', 'email_manager_info') ?>
-									</label>
-	<?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $event->email_id, 'desc') ?>
-								</p>
-
-								<p>
-									<em>OR</em>
-								</p>
-								<p>
-										<?php _e('Create a custom email:', 'event_espresso') ?>  <?php echo apply_filters('espresso_help', 'event_custom_emails'); ?>
-								</p>
-							</div>
-							<div class="visual-toggle">
-								<p><a class="toggleVisual">
-	<?php _e('Visual', 'event_espresso'); ?>
-									</a> <a class="toggleHTML">
-	<?php _e('HTML', 'event_espresso'); ?>
-									</a></p>
-							</div>
-							<div class="postbox">
-								<textarea name="conf_mail" class="theEditor" id="conf_mail"><?php echo espresso_admin_format_content($event->conf_mail); ?></textarea>
-								<table id="email-confirmation-form" cellspacing="0">
-									<tr>
-										<td class="aer-word-count"></td>
-										<td class="autosave-info"><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-	<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-												</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
-	<?php _e('Email Example', 'event_espresso'); ?>
-												</a></span></td>
-									</tr>
-								</table>
-							</div>
-						</div>
-					</div>
+										<?php _e('pre-existing email', 'event_espresso'); ?></a> <?php echo apply_filters('espresso_help', 'email_manager_info') ?></label></th>
+								<td><?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $event->email_id, 'desc') ?></td>
+							</tr>
+							
+							<tr>
+								<td colspan="2"><p><strong><?php _e('Custom Email', 'event_espresso') ?></strong>
+									<?php echo apply_filters('espresso_help', 'event_custom_emails'); ?></p><div id="emaildescriptiondivrich" class="postarea">
+									<div class="visual-toggle" <?php echo function_exists('wp_editor') ? 'style="display:none"' :'' ?> >
+										<p><a class="toggleVisual">
+											<?php _e('Visual', 'event_espresso'); ?>
+											</a> <a class="toggleHTML">
+											<?php _e('HTML', 'event_espresso'); ?>
+											</a></p>
+									</div>
+									<div class="postbox">
+									 <?php
+										if (function_exists('wp_editor')){
+											$args = array("textarea_rows" => 5, "textarea_name" => "conf_mail", "editor_class" => "my_editor_custom");
+											wp_editor(espresso_admin_format_content($event->conf_mail), "conf_mail", $args);
+										}else{
+											echo  '<textarea name="conf_mail" class="theEditor" id="conf_mail">'.espresso_admin_format_content($event->conf_mail).'</textarea>';
+											espresso_tiny_mce();
+										}
+									?>
+										<table id="email-confirmation-form" cellspacing="0">
+											<tbody>
+												<tr>
+													<td class="aer-word-count"></td>
+													<td class="autosave-info"><span>&nbsp;</span></td>
+												</tr>
+											</tbody>
+										</table>
+										<p><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
+														<?php _e('View Custom Email Tags', 'event_espresso'); ?></a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
+														<?php _e('Email Example', 'event_espresso'); ?></a></p>
+									</div>
+									</div></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 				</div>
 				<!-- /confirmation-email-->
 				<?php
@@ -744,7 +764,6 @@ function edit_event($event_id = 0) {
 			<!-- /normal-sortables-->
 	  </div>
 	  <!-- /post-body-content -->
-	<?php include_once('create_events_help.php'); ?>
 	</div>
 	<?php global $event_thumb; ?>
 	<!-- /post-body -->
@@ -809,6 +828,5 @@ function edit_event($event_id = 0) {
 					//]]>
 	</script>
 	<?php
-	espresso_tiny_mce();
 }
 
