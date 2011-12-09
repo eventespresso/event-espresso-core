@@ -90,6 +90,9 @@
 		
 		define( 'ESPRESSO_SESSION', TRUE );
 		
+		// remove the default espresso session init
+		add_action( 'hook_espresso_after_init_session', array( &$this, 'remove_action_espresso_init_session'));
+		
 		global $EE_Session, $org_options, $notices;
 		$this->_notices = $notices;
 		
@@ -169,12 +172,12 @@
 	 * @access	public
 	 * @return	array
 	 */
-	public function data( $key = FALSE ) {
+	public function data( $key = FALSE, $section = 'espresso' ) {
 	
 		if ( $key ) {
-			return $this->_data[$key];
+			return $this->_data[ $section ][$key];
 		} else {
-			return $this->_data;
+			return $this->_data[ $section ];
 		}
 	}
 
@@ -279,9 +282,9 @@
 
 
 	/**
-	 *			@save session data to the db
-	 *		  @access public
-	 *			@return TRUE on success, FALSE on fail
+	 *		@save session data to the db
+	 *		@access public
+	 *		@return TRUE on success, FALSE on fail
 	 */	
 	public function _update_espresso_session( $new_session = FALSE ) {
 		
@@ -330,9 +333,12 @@
 		
 		// creating a new session does not require saving to the db just yet
 		if ( ! $new_session ) {
+		
 			// current user if logged in
-			$user = wp_get_current_user();
-			$session_data['user_id'] = isset( $user->id ) ? $user->id : NULL;
+//			$user = wp_get_current_user();
+//			$session_data['user_id'] = isset( $user->id ) ? $user->id : NULL;
+			$session_data['user_id'] = $this->_wp_user_id();
+			
 			
 			$this->_data = $session_data;
 			
@@ -407,9 +413,9 @@
 
 
 	/**
-	 *			@attempt to get IP address of current visitor from server
-	 *		  @access public
-	 *			@return string
+	 *		@attempt to get IP address of current visitor from server
+	 *		@access public
+	 *		@return string
 	 */	
 	private function _visitor_ip() {
 		
@@ -459,8 +465,10 @@
 	 *			@return void
 	 */	
 	public function _wp_user_id() {
+		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
 		$this->_wp_user_id = isset( $user->id ) ? $user->id : NULL;
+		return $this->_wp_user_id;
 	}
 
 
@@ -520,9 +528,9 @@
 
 
 	/*
-	 * Get the real "now" time
-	 * @access	private
-	 * @return	string
+	 *   get the real "now" time
+	 *   @access private
+	 *   @return	 string
 	 */
 	private function _session_time() {
 		
@@ -545,6 +553,51 @@
 		return $time;
 	}
 
+
+
+
+
+	/**
+	 *   remove the action that loads the default espresso session init
+	 *   @access public
+	 *   @return void
+	 */
+	public function remove_action_espresso_init_session() {
+		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
+	}
+	
+	
+	
+
+
+	/**
+	 * print_r wrapper for html/cli output
+	 *
+	 * Wraps print_r() output in < pre > tags if the current sapi is not
+	 * 'cli'.  Returns the output string instead of displaying it if $return is
+	 * true.
+	 *
+	 * @param mixed $mixed variable or expression to display
+	 * @param bool $return
+	 *
+	 */
+	function pre_r($mixed, $return = false) {
+	  if ($return)
+		return "<pre>" . print_r($mixed, true) . "</pre>";
+	
+	  if ( php_sapi_name() !== "cli")
+		echo ("<pre>");
+	  print_r($mixed);
+	
+	  if ( php_sapi_name() !== "cli")
+		echo("</pre>");
+	  else
+		echo ("\n");
+	  flush();
+	
+	}
+	
+	
 
 
 
