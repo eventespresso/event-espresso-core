@@ -726,9 +726,6 @@ if (isset($_REQUEST['authAmountString'])) {
 	add_action('posts_selection', 'event_espresso_txn');
 }
 
-// Load the admin menu styles
-wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
-
 // These actions need to be loaded a the bottom of this script to prevent errors when post/get requests are received.
 
 if (is_admin()) {
