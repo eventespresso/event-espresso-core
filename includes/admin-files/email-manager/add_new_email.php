@@ -34,15 +34,13 @@ function add_new_event_email(){
 											<tbody>
 												<tr>
 													<td class="aer-word-count"></td>
-													<td class="autosave-info"><span> </span></td>
+													<td class="autosave-info"><span>&nbsp;</span></td>
 												</tr>
 											</tbody>
 										</table>
 										<p><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-											<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-											</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
-											<?php _e('Email Example','event_espresso'); ?>
-											</a></p>
+											<?php _e('View Custom Email Tags', 'event_espresso'); ?></a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
+											<?php _e('Email Example','event_espresso'); ?></a></p>
 									</div>
 								</div></td>
 						</tr>
