@@ -281,6 +281,11 @@ if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/misc_funct
 	$espresso_premium = espresso_system_check();
 }
 
+//Build the addon files
+//These files need to be above the core function files
+if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php')) {
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php');
+}
 
 //Core function files
 require_once("includes/functions/main.php");
@@ -295,6 +300,7 @@ require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/functions/ical.php");
 //These may be loaded in posts and pages outside of the default EE pages
 //Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
 $event_list_template = 'event_list.php';
+
 // HOOK - change event list template
 $event_list_template = apply_filters('hook_espresso_event_list_template', $event_list_template);
 event_espresso_require_template($event_list_template);
@@ -377,10 +383,6 @@ if ($this_is_a_reg_page == TRUE) {
 	espresso_load_reg_page_files();
 }
 
-//Build the addon files
-if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php')) {
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php');
-}
 if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-management/index.php')) {
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/coupon-management/index.php');
 	//Include dicount codes
