@@ -636,9 +636,12 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 #side-sortables #event-categories p, #side-sortables #event-discounts p.event-disc-code {
 	width: 150px;
 }
-#side-sortables #event-categories p input, #side-sortables #event-discounts p input {
-	margin-top: 7px;
+#side-sortables #event-categories p input, #side-sortables #event-discounts p input,
+#side-sortables #event-questions input {
+	margin: 0 5px 0 0;
+	verticle-align: top;
 }
+
 /*___ Template Settings ___*/
 
 #template-settings-form {}
