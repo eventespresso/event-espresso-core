@@ -43,7 +43,7 @@ class Espresso_Minicart extends WP_Widget {
 
 		// if cart ( and sessions ) is not instantiated
 		if ( ! defined( ESPRESSO_CART )) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Cart.class.php');
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Cart.class.php');
 			$EE_Cart = EE_Cart::instance();
 		}
 		$this->mini = $EE_Cart;
