@@ -108,9 +108,9 @@ function event_espresso_form_group_edit() {
 											$questions_in_group .= $question->id . ',';
 											$checked = (!is_null($question->rel_id)) ? 'checked="checked"' : '';
 
-											$visibility = (preg_match("/fname|lname|email/", $question->system_name) == 1 && $question->system_group == 1 ) ? 'style="visibility:hidden"' : '';
+											$disabled_system_required = (preg_match("/fname|lname|email/", $question->system_name) == 1 && $question->system_group == 1 ) ? 'disabled="disabled"' : '';
 
-											echo '<li><label><input ' . $checked . ' type="checkbox" ' . $visibility . ' name="question_id[' . $question->id . ']" value="' . $question->id . '" id="question_id_' . $question->id . '" />' . stripslashes($question->question) . '</label></li>';
+											echo '<li><label><input ' . $checked . ' type="checkbox" ' . $disabled_system_required . ' name="question_id[' . $question->id . ']" value="' . $question->id . '" id="question_id_' . $question->id . '" />' . stripslashes($question->question) . '</label></li>';
 										}
 										$questions_in_group = substr($questions_in_group, 0, -1);
 									}
@@ -153,6 +153,9 @@ function event_espresso_form_group_edit() {
 					</table>
 
 					<p class="submit-footer">
+						<input type="hidden" name="question_id[1]" value="1" />
+						<input type="hidden" name="question_id[2]" value="2" />
+						<input type="hidden" name="question_id[3]" value="3" />
 						<input type="hidden" name="edit_action" value="update_group" />
 						<input type="hidden" name="action" value="update_group" />
 						<input type="hidden" name="group_id" value="<?php echo $group_id ?>" />
