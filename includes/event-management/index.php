@@ -25,40 +25,37 @@ function event_espresso_manage_events() {
 			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 			}
-			if (isset($_REQUEST['action'])) {
-				switch ($_REQUEST['action']) {
-					case ( 'copy_event' ):
-						require_once("copy_event.php");
-						copy_event();
-						break;
-					case ( 'delete' ):
-						//This function is called from the "/functions/admin.php" file.
-						event_espresso_delete_event();
-						break;
-					case ( 'delete_recurrence_series' ):
+			
+			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'copy_event' ) {
+				require_once("copy_event.php");
+				copy_event();
+			}
+			
+			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete' ) {
+				event_espresso_delete_event();
+			}
+			
+			//Delete recurrence series of events
+			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_recurrence_series' ) {
+				$r = $wpdb->get_results("SELECT id FROM " . EVENTS_DETAIL_TABLE . " ed WHERE recurrence_id = " . $_REQUEST['recurrence_id']);
 
-						$r = $wpdb->get_results("SELECT id FROM " . EVENTS_DETAIL_TABLE . " ed
-									WHERE recurrence_id = " . $_REQUEST['recurrence_id']);
-
-						if ($wpdb->num_rows > 0) {
-
-							foreach ($r as $row) {
-
-								event_espresso_delete_event($row->id);
-							}
-						}
-						break;
-					case ( 'csv_import' ):
-						require_once ('csv_import.php');
-						csv_import();
-						break;
-					case ( 'add' ):
-						require_once("insert_event.php");
-						add_event_to_db();
-						break;
+				if ($wpdb->num_rows > 0) {
+					foreach ($r as $row) {
+						event_espresso_delete_event($row->id);
+					}
 				}
 			}
-
+			
+			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'csv_import' ) {
+				require_once ('csv_import.php');
+				csv_import();
+			}
+			
+			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'add' ) {
+				require_once("insert_event.php");
+				add_event_to_db();
+			}
+			
 			//Update the event
 			if (isset($_REQUEST['edit_action']) && $_REQUEST['edit_action'] == 'update') {
 				require_once("update_event.php");
