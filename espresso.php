@@ -559,6 +559,7 @@ if (!function_exists('espresso_load_jquery')) {
 }
 add_action('init', 'espresso_load_jquery', 10);
 // End Javascript files
+
 // Load the style sheets for the reegistration pages
 if (!function_exists('add_espresso_stylesheet')) {
 
@@ -567,8 +568,6 @@ if (!function_exists('add_espresso_stylesheet')) {
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
-		/* 	if ($org_options['style_settings']['enable_default_style'] != 'Y')
-		  return; */
 
 		//Load the ThemeRoller styles if enabled
 		if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') {
@@ -588,12 +587,24 @@ if (!function_exists('add_espresso_stylesheet')) {
 
 			//Register the ThemeRoller styles
 			if ( !empty( $org_options['themeroller']) && !is_admin()){
-				wp_register_style('espresso_themeroller_base', $themeroller_style_path . 'themeroller-base.css');
+				
+				//Load the themeroller base style sheet
+				//If the themeroller-base.css is in the uploads folder, then we will use it instead of the one in the core
+				if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . $themeroller_style_path . 'themeroller-base.css')) {
+					wp_register_style('espresso_themeroller_base', $themeroller_style_path . 'themeroller-base.css');
+				} else {
+					wp_register_style('espresso_themeroller_base',EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/themeroller-base.css');
+				}
 				wp_enqueue_style('espresso_themeroller_base');
+				
+				//Load the smoothness style by default
 				$org_options['themeroller']['themeroller_style'] = isset($org_options['themeroller']['themeroller_style']) && !empty($org_options['themeroller']['themeroller_style']) ? $org_options['themeroller']['themeroller_style'] : 'smoothness';
+				
+				//Load the selected themeroller style
 				wp_register_style('espresso_themeroller', $themeroller_style_path . $org_options['themeroller']['themeroller_style'] . '/style.css');
 				wp_enqueue_style('espresso_themeroller');
 			}
+			
 		} else {
 			//For backwards compatibilty we check options to see if event_espresso_style.css is set. If it is set, or no option is set, we load it from original folder.
 			if (empty($org_options['style_settings']['selected_style']) || $org_options['style_settings']['selected_style'] == 'event_espresso_style.css') {
