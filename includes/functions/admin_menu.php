@@ -1,5 +1,9 @@
 <?php
-
+function espresso_load_menu_css () {
+	wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
+}
+add_action( 'admin_init', 'espresso_load_menu_css' );
+ 
 //Build the admin menu
 if (!function_exists('add_event_espresso_menus')) {
 

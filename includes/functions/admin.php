@@ -9,8 +9,6 @@ function event_espresso_config_page_styles() {
 	wp_enqueue_style('wp-admin');
 	wp_enqueue_style('chosen', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/chosen/chosen.css');
 	wp_enqueue_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css'); //Events core style
-	// Load the admin menu styles
-	wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
 	if (isset($_REQUEST['page'])) {
 		switch ($_REQUEST['page']) {
 			case ( 'events' ):
