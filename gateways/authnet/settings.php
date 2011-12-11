@@ -16,9 +16,9 @@ function event_espresso_authnet_payment_settings() {
 		$payment_settings['authnet_sim']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 		$payment_settings['authnet_sim']['button_url'] = $_POST['button_url'];
 
-		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
+		//if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('Authorize.net SIM Payment Settings Updated!', 'event_espresso');
-		}
+		//}
 	}
 
 	//Open or close the postbox div
@@ -45,6 +45,9 @@ function event_espresso_authnet_payment_settings() {
 		<div class="inside">
 			<div class="padding">
 				<?php
+					//This line keeps the notices from displaying twice
+					//if ( did_action( 'espresso_admin_notices' ) == false )
+						do_action('espresso_admin_notices');
 					if (isset($_REQUEST['activate_authnet_sim']) && $_REQUEST['activate_authnet_sim'] == 'true') {
 						$payment_settings['authnet_sim']['active'] = true;
 						if (add_option( 'payment_data_'.$espresso_wp_user, $payment_settings, '', 'no' ) == true){
@@ -98,9 +101,7 @@ function event_espresso_authnet_payment_settings() {
 	</div>
 </div>
 <?php
-	//This line keeps the notices from displaying twice
-	if ( did_action( 'espresso_admin_notices' ) == false )
-		do_action('espresso_admin_notices');
+
 }
 
 //Authorize.net SIM Settings Form
