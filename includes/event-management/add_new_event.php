@@ -588,18 +588,20 @@ function add_new_event() {
 					<table class="form-table">
 						<tbody>
 							<tr>
-								<th><label><?php echo __('Custom Confirmation Email', 'event_espresso') ?> <?php echo apply_filters('espresso_help', 'custom_email_info') ?> </label>
+								<th class="middle"><label><?php echo __('Custom Confirmation Email', 'event_espresso') ?> <?php echo apply_filters('espresso_help', 'custom_email_info') ?> </label>
 								</th>
-								<td><?php echo select_input('send_mail', $values); ?></td>
+								<td class="med"><?php echo select_input('send_mail', $values); ?></td>
 							</tr>
 							<tr>
-								<th><?php $email_id = isset($email_id) ? $email_id : ''; ?>
+								<th class="middle"><?php $email_id = isset($email_id) ? $email_id : ''; ?>
 									<label>
 										<?php _e('Use a ', 'event_espresso'); ?>
 										<a href="admin.php?page=event_emails" target="_blank">
 										<?php _e('pre-existing email', 'event_espresso'); ?>
-										</a> <?php echo apply_filters('espresso_help', 'email_manager_info') ?></label></th>
-								<td><?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') ?></td>
+										</a> <?php echo apply_filters('espresso_help', 'email_manager_info') ?>
+									</label>
+								</th>
+								<td class="med"><?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') ?></td>
 							</tr>
 							<tr>
 								<td colspan="2"><p><strong>

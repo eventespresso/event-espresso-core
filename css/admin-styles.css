@@ -748,6 +748,7 @@ ul#quick-links ul{
 .wp-admin table.widefat table td {
 	padding: 4px;
 }
+.form-table th.middle {vertical-align: middle;}
 /** override WP default styles 
 hidding form controls - permissions screen only **/
 #configure_espresso_manager_form .widefat td {
@@ -1363,9 +1364,9 @@ label.error {
 	display: block;
 	margin: 8px 0;
 }
-select.small {width:25px;}
-select.med {width: 100px}
-select.wide {width: 175px;}
+select.small, td.small select, td.small input {width:25px;}
+select.med, td.med select, td.med input {width: 100px}
+select.wide, td.wide select, td.wide input {width: 175px;}
 
 /** adjust 'Chosen' form control script controls **/
 .postbox .chzn-container {margin-top: 4px;}
