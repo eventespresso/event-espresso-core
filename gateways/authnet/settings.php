@@ -1,25 +1,26 @@
 <?php
 function event_espresso_authnet_payment_settings() {
 	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
-	
+
 	$old_payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
-	
+
 	if (isset($_POST['update_authnet']) && check_admin_referer('espresso_form_check', 'add_authnetsim_settings')) {
 		//$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 		$payment_settings['authnet_sim']['authnet_login_id'] = $_POST['authnet_login_id'];
 		$payment_settings['authnet_sim']['authnet_transaction_key'] = $_POST['authnet_transaction_key'];
 		$payment_settings['authnet_sim']['image_url'] = $_POST['image_url'];
 		$payment_settings['authnet_sim']['use_sandbox'] = $_POST['use_sandbox'];
+		$payment_settings['authnet_sim']['test_transactions'] = $_POST['test_transactions'];
 		$payment_settings['authnet_sim']['surcharge'] = $_POST['surcharge'];
 		$payment_settings['authnet_sim']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 		$payment_settings['authnet_sim']['button_url'] = $_POST['button_url'];
-		
+
 		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('Authorize.net SIM Payment Settings Updated!', 'event_espresso');
 		}
 	}
-	
+
 	//Open or close the postbox div
 	if ($payment_settings['authnet_sim']['active'] == false || isset($_REQUEST['deactivate_authnet_sim']) && $_REQUEST['deactivate_authnet_sim'] == 'true' ){
 		$postbox_style = 'closed';
@@ -30,7 +31,7 @@ function event_espresso_authnet_payment_settings() {
 	if (isset($_REQUEST['activate_authnet_sim']) && $_REQUEST['activate_authnet_sim'] == 'true'){
 		$postbox_style = '';
 	}
-	
+
 ?>
 
 <a name="authnet_aim" id="authnet_sim"></a>
@@ -54,7 +55,7 @@ function event_espresso_authnet_payment_settings() {
 							$notices['errors'][] = __('Unable to Activate Authorize.net SIM Gateway', 'event_espresso');
 						}
 					}
-					
+
 					if (isset($_REQUEST['reactivate_authnet_sim']) && $_REQUEST['reactivate_authnet_sim'] == 'true') {
 						$payment_settings['authnet_sim']['active'] = true;
 						if (update_option('payment_data_'.$espresso_wp_user, $payment_settings) == true){
@@ -63,7 +64,7 @@ function event_espresso_authnet_payment_settings() {
 							$notices['errors'][] = __('Unable to Activate Authorize.net SIM Gateway', 'event_espresso');
 						}
 					}
-					
+
 					if (isset($_REQUEST['deactivate_authnet_sim']) && $_REQUEST['deactivate_authnet_sim'] == 'true') {
 						$payment_settings['authnet_sim']['active'] = false;
 						if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings) == true){
@@ -72,18 +73,18 @@ function event_espresso_authnet_payment_settings() {
 							$notices['errors'][] = __('Unable to De-activate Authorize.net SIM Gateway', 'event_espresso');
 						}
 					}
-					
+
 					echo '<ul>';
 					if (!isset($payment_settings['authnet_sim']['active'])){
 						echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_authnet_sim=true#authnet_sim\';" class="yellow_alert pointer"><strong>' . __('The Authorize.net SIM Gateway is installed. Would you like to activate it?','event_espresso') . '</strong></li>';
 					}else{
 						switch ($payment_settings['authnet_sim']['active']){
-						
+
 							case false:
 								echo '<li>Authorize.net SIM Gateway is Installed.</li>';
 								echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_authnet_sim=true#authnet_sim\';" class="green_alert pointer"><strong>' . __('Activate Authorize.net SIM Gateway?', 'event_espresso') . '</strong></li>';
 								break;
-							
+
 							case true:
 								echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_authnet_sim=true\';" class="red_alert pointer"><strong>' . __('Deactivate Authorize.net SIM Gateway?', 'event_espresso') . '</strong></li>';
 								event_espresso_display_authnet_settings();
@@ -105,9 +106,9 @@ function event_espresso_authnet_payment_settings() {
 //Authorize.net SIM Settings Form
 function event_espresso_display_authnet_settings() {
 	global $espresso_premium, $org_options, $espresso_wp_user; if ($espresso_premium != true) return;
-	
+
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
-	
+
 	$values = array(
 		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 		array('id' => 'N', 'text' => __('No', 'event_espresso')),
@@ -177,10 +178,17 @@ function event_espresso_display_authnet_settings() {
 			</tr>
 			<tr>
 				<th><label for="use_sandbox">
-						<?php _e('Use the test mode feature for Autorize.net SIM? ', 'event_espresso'); ?>
-						<?php echo apply_filters('espresso_help', 'authnet_sandbox') ?>
+						<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
+						<?php echo apply_filters('espresso_help', 'authnet_sandbox'); ?>
 					</label></th>
 				<td><?php echo select_input('use_sandbox', $values, empty($payment_settings['authnet_sim']['use_sandbox']) ? 'N' : $payment_settings['authnet_sim']['use_sandbox']);?></td>
+			</tr>
+			<tr>
+				<th><label for="test_transactions">
+						<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
+						<?php echo apply_filters('espresso_help', 'authnet_test_transactions') ?>
+					</label></th>
+				<td><?php echo select_input('test_transactions', $values, empty($payment_settings['authnet_sim']['test_transactions']) ? 'N' : $payment_settings['authnet_sim']['test_transactions']);?></td>
 			</tr>
 			<tr>
 				<th><label for="bypass_payment_page">
@@ -261,10 +269,35 @@ function event_espresso_display_authnet_settings() {
 </div>
 <div id="authnet_sandbox" style="display:none">
 	<h2>
-		<?php _e('Authorize.net Test Mode', 'event_espresso'); ?>
+		<?php _e('Authorize.net Development Server', 'event_espresso'); ?>
 	</h2>
 	<p>
-		<?php _e('Test Mode allows you to submit test transactions to the payment gateway. Transactions that are submitted while Test Mode is ON are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers.', 'event_espresso'); ?>
+		<?php _e('Authorize.net maintains a development environment for testing your gateway. You may use this to test your setup without having a live account. You will need to sign up for a free account on the development server here: '); ?>
+		<a href="https://developer.authorize.net/testaccount/">https://developer.authorize.net/testaccount/</a>
+		<?php _e('Transactions that are submitted to the development server are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers.', 'event_espresso'); ?>
+	</p>
+	<p><strong>
+		<?php _e('Example Card Numbers:', 'event_espresso'); ?>
+		</strong></p>
+	<p>370000000000002 (
+		<?php _e('American Express', 'event_espresso'); ?>
+		)<br />
+		6011000000000012 (
+		<?php _e('Discover', 'event_espresso'); ?>
+		)<br />
+		5424000000000015 (
+		<?php _e('Master Card', 'event_espresso'); ?>
+		)<br />
+		4007000000027 (
+		<?php _e('Visa', 'event_espresso'); ?>
+		)</p>
+</div>
+<div id="authnet_test_transactions" style="display:none">
+	<h2>
+		<?php _e('Authorize.net Test Transactions', 'event_espresso'); ?>
+	</h2>
+	<p>
+		<?php _e('Transactions that are submitted as test transactions are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers.', 'event_espresso'); ?>
 	</p>
 	<p><strong>
 		<?php _e('Example Card Numbers:', 'event_espresso'); ?>

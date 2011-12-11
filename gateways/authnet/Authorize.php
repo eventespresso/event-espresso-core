@@ -42,6 +42,11 @@ class Authorize extends PaymentGateway {
 		$this->addField('x_Relay_Response', 'TRUE');
 	}
 
+	public function useTestServer() {
+		$this->testMode = TRUE;
+		$this->gatewayUrl = 'https://test.authorize.net/gateway/transact.dll';
+	}
+
 	/**
 	 * Enables the test mode
 	 *
@@ -51,8 +56,6 @@ class Authorize extends PaymentGateway {
 	public function enableTestMode() {
 		$this->testMode = TRUE;
 		$this->addField('x_Test_Request', 'TRUE');
-		//$this->gatewayUrl = 'https://test.authorize.net/gateway/transact.dll';  //Used for dev testing
-		$this->gatewayUrl = 'https://secure.authorize.net/gateway/transact.dll'; //Used for non-dev testing
 	}
 
 	/**

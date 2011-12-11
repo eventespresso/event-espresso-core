@@ -1,22 +1,22 @@
 <?php
 function event_espresso_aim_payment_settings() {
 	global $espresso_premium, $notices, $espresso_wp_user; if ($espresso_premium != true) return;
-	
+
 	$old_payment_settings = get_option('payment_data_'.$espresso_wp_user);
-	
+
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
-	
+
 	//Update settings
 	if (isset($_POST['update_authnet_aim'])) {
 		$payment_settings['authnet_aim']['authnet_aim_login_id'] = $_POST['authnet_aim_login_id'];
 		$payment_settings['authnet_aim']['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 		$payment_settings['authnet_aim']['use_sandbox'] = $_POST['use_sandbox'];
-		
+
 		if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings ) == true){
 			$notices['updates'][] = __('Authorize.net AIM Payment Settings Updated!', 'event_espresso');
 		}
 	}
-	
+
 	//Open or close the postbox div
 	if ($payment_settings['authnet_aim']['active'] == false || isset($_REQUEST['deactivate_authnet_aim']) && $_REQUEST['deactivate_authnet_aim'] == 'true' ){
 		$postbox_style = 'closed';
@@ -39,7 +39,7 @@ function event_espresso_aim_payment_settings() {
 			<?php _e('Authorize.net AIM Settings', 'event_espresso'); ?>
 		</h3>
 		<div class="inside">
-			<div class="padding"> 
+			<div class="padding">
 				<!--New -->
 				<?php
 				if (isset($_REQUEST['activate_authnet_aim']) && $_REQUEST['activate_authnet_aim'] == 'true'){
@@ -53,7 +53,7 @@ function event_espresso_aim_payment_settings() {
 						$notices['errors'][] = __('Unable to Activate Authorize.net AIM Gateway', 'event_espresso');
 					}
 				}
-				
+
 				if (isset($_REQUEST['reactivate_authnet_aim']) && $_REQUEST['reactivate_authnet_aim'] == 'true'){
 					$payment_settings['authnet_aim']['active'] = true;
 					//echo 'active = '.$payment_settings['authnet_aim']['active'];
@@ -63,7 +63,7 @@ function event_espresso_aim_payment_settings() {
 						$notices['errors'][] = __('Unable to Activate Authorize.net AIM Gateway', 'event_espresso');
 					}
 				}
-				
+
 				if (isset($_REQUEST['deactivate_authnet_aim']) && $_REQUEST['deactivate_authnet_aim'] == 'true'){
 					$payment_settings['authnet_aim']['active'] = false;
 					if (update_option( 'payment_data_'.$espresso_wp_user, $payment_settings) == true){
@@ -72,20 +72,20 @@ function event_espresso_aim_payment_settings() {
 						$notices['errors'][] = __('Unable to De-activate Authorize.net AIM Gateway', 'event_espresso');
 					}
 				}
-								
+
 				//echo '<pre>'.print_r($payment_settings, true).'</pre>';
-				
+
 				echo '<ul>';
 				if (!isset($payment_settings['authnet_aim']['active'])){
 					echo '<li style="width:50%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_authnet_aim=true#authnet_aim\';" class="yellow_alert pointer"><strong>' . __('The Authorize.net AIM Gateway is installed. Would you like to activate it?','event_espresso') . '</strong></li>';
 				}else{
 					switch ($payment_settings['authnet_aim']['active']){
-						
+
 						case false:
 							echo '<li>Authorize.net AIM Gateway is installed.</li>';
 							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&reactivate_authnet_aim=true#authnet_aim\';" class="green_alert pointer"><strong>' . __('Activate Authorize.net AIM Gateway?','event_espresso') . '</strong></li>';
 						break;
-						
+
 						case true:
 							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_authnet_aim=true\';" class="red_alert pointer"><strong>' . __('Deactivate Authorize.net AIM Gateway?','event_espresso') . '</strong></li>';
 							event_espresso_display_authnet_aim_settings();
@@ -94,8 +94,8 @@ function event_espresso_aim_payment_settings() {
 				}
 				echo '</ul>';
 ?>
-				<!--New --> 
-				
+				<!--New -->
+
 			</div>
 		</div>
 	</div>
@@ -110,9 +110,9 @@ function event_espresso_aim_payment_settings() {
 //Authorize.net Settings Form
 function event_espresso_display_authnet_aim_settings() {
 	global $espresso_premium, $org_options, $espresso_wp_user; if ($espresso_premium != true) return;
-	
+
 	$payment_settings = get_option('payment_data_'.$espresso_wp_user);
-	
+
 	$values = array(
 		array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 		array('id' => 'N', 'text' => __('No', 'event_espresso')),
@@ -128,7 +128,7 @@ function event_espresso_display_authnet_aim_settings() {
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#authnet_aim">
 	<table class="form-table">
 		<tbody>
-			
+
 			<tr>
 				<th><label for="authnet_aim_login_id">
 						<?php _e('Authorize.net AIM Login I.D.', 'event_espresso'); ?>
@@ -151,12 +151,19 @@ function event_espresso_display_authnet_aim_settings() {
 			</tr>
 			<tr>
 				<th><label for="use_sandbox">
-						<?php _e('Use the test mode feature for Autorize.net AIM? ', 'event_espresso'); ?>
-						<?php apply_filters( 'espresso_help', 'authnet_aim_sandbox'); ?>
+						<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
+						<?php echo apply_filters( 'espresso_help', 'authnet_aim_sandbox'); ?>
 					</label></th>
 				<td><?php echo select_input('use_sandbox', $values, empty($payment_settings['authnet_aim']['use_sandbox']) ? 'N' : $payment_settings['authnet_aim']['use_sandbox']);?></td>
 			</tr>
-			
+			<tr>
+				<th><label for="test_transactions">
+						<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
+						<?php echo apply_filters('espresso_help', 'authnet_test_transactions') ?>
+					</label></th>
+				<td><?php echo select_input('test_transactions', $values, empty($payment_settings['authnet_aim']['test_transactions']) ? 'N' : $payment_settings['authnet_sim']['test_transactions']);?></td>
+			</tr>
+
 		</tbody>
 	</table>
 	<?php /*?><!-- TABLE TEMPLATE -->

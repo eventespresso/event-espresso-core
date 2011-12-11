@@ -31,6 +31,9 @@ function espresso_aim_process_payment() {
 	$transaction->zip = $_POST['zip'];
 	$transaction->cust_id = $_POST['x_cust_id'];
 	$transaction->invoice_num = $_POST['invoice_num'];
+	if ($payment_settings['authnet_aim']['test_transactions'] == 'Y') {
+		$transaction->test_request = "true";
+	}
 
 //Capture response
 	$response = $transaction->authorizeAndCapture();

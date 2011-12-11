@@ -16,9 +16,14 @@ $button_type = empty($payment_settings['authnet_sim']['button_type']) ? '' : $pa
 //$button_url = $payment_settings['authnet_sim']['button_url'];
 $image_url = empty($payment_settings['authnet_sim']['image_url']) ? '' : $payment_settings['authnet_sim']['image_url'];
 $use_sandbox = $payment_settings['authnet_sim']['use_sandbox'] == 'Y' ? true : false;
-if ($use_sandbox == true) {
+$use_testmode = $payment_settings['authnet_sim']['test_transactions'] == 'Y' ? true : false;
+if ($use_testmode == true) {
 	// Enable test mode if needed
 	$myAuthorize->enableTestMode();
+}
+if ($use_sandbox == true) {
+	// Enable test mode if needed
+	$myAuthorize->useTestServer();
 }
 
 $quantity = $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);
@@ -65,7 +70,7 @@ if (!empty($payment_settings['authnet_sim']['bypass_payment_page']) && $payment_
 	$myAuthorize->submitButton($button_url, 'authnet'); //Display payment button
 }
 
-if ($use_sandbox == true) {
+if ($use_sandbox == true || $use_testmode == true) {
 	echo '<p>Test credit card # 4007000000027</p>';
 	echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
 	$myAuthorize->dump_fields(); // for debugging, output a table of all the fields
