@@ -147,15 +147,8 @@
 
 
 						/* Displays the social media buttons */
-						if (function_exists('espresso_show_social_media')) {
-							?>
-							<div class="ee-social-media-buttons">
-								<span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span>
-								<span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
-								<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
-								<div class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></div>
-							</div>
-						<?php } ?>
+						do_action('espresso_social_display_buttons', $event_id);
+						?>
 
 						<fieldset id="event-reg-form-groups" class="ui-widget">
 							<!--<h3 class="section-heading ui-widget-header">

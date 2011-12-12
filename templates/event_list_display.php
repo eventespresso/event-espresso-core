@@ -119,16 +119,9 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 			echo ee_gmap_display($ee_gmap_location, $event_id);
 		}
 	}
-
-	if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') || espresso_show_social_media($event_id, 'google') || espresso_show_social_media($event_id, 'stumbleupon') ){ ?>
-		<div class="ee-social-media-buttons">
-		<span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> 
-		<span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
-		<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
-		<div class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></div>
-		</div>
-<?php  
-	}
+	
+	/* Displays the social media buttons */
+	do_action('espresso_social_display_buttons', $event_id);
 
 	$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
 		if ($num_attendees >= $reg_limit) { ?>
@@ -182,7 +175,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 		if ($display_reg_form == 'Y') {
 			?>
   <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
-	<?php _e('Register for Event', 'event_espresso'); ?>
+	<?php _e('Register', 'event_espresso'); ?>
 	</a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
   <?php } else { ?>
   <p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
@@ -225,15 +218,8 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 		  <p class="google-map-link"><?php echo $google_map_link; ?></p>
 		</div>
 		<?php }
-		if( espresso_show_social_media($event_id, 'twitter') || espresso_show_social_media($event_id, 'facebook') || espresso_show_social_media($event_id, 'google') || espresso_show_social_media($event_id, 'stumbleupon') ){ ?>
-			<div class="ee-social-media-buttons">
-			<span class="twitter-button"><?php echo espresso_show_social_media($event_id, 'twitter'); ?></span> 
-			<span class="facebook-button"><?php echo espresso_show_social_media($event_id, 'facebook'); ?></span>
-			<span class="stumbleupon-button"><?php echo espresso_show_social_media($event_id, 'stumbleupon'); ?></span>
-			<span class="google-button"><?php echo espresso_show_social_media($event_id, 'google'); ?></span>
-			</div>
-  <?php  
-		}
+		/* Displays the social media buttons */
+		do_action('espresso_social_display_buttons', $event_id);
 	?>
 		<p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
 		  <?php _e('Register for this Event', 'event_espresso'); ?>
