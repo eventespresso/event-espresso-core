@@ -96,9 +96,9 @@ class Event {
 	private $event_livestreamed;
 	private $questions;
 
-	private function set_event_meta() {
+	private function _retrieve_event_meta() {
 		if (!isset($this->event_meta))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		$meta = unserialize($this->event_meta);
 		$this->default_payment_status = $meta['default_payment_status'];
 		$this->venue_id = $meta['venue_id'];
@@ -117,7 +117,7 @@ class Event {
 		$this->event_livestreamed = $meta['event_livestreamed'];
 	}
 
-	private function set_number_of_attendees() {
+	private function _retrieve_number_of_attendees() {
 		global $wpdb;
 		$sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE;
 		$sql .= " WHERE event_id='" . $this->id . "' AND (payment_status='Completed' OR payment_status='Pending') ";
@@ -129,10 +129,10 @@ class Event {
 		}
 	}
 
-	private function set_questions() {
+	private function _retrieve_questions() {
 		global $wpdb;
 		if (!isset($this->question_groups))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		foreach ($this->question_groups as $group) {
 			$sql = "SELECT * FROM " . EVENTS_QST_GROUP_TABLE . " WHERE id='" . $group . "'";
 			$group_info = $wpdb->get_row($sql, ARRAY_A);
@@ -150,7 +150,7 @@ class Event {
 			}
 		}
 		if (!isset($this->additional_attendee_reg_info))
-			$this->set_event_meta();
+			$this->_retrieve_event_meta();
 		if ($this->additional_attendee_reg_info != 1) {
 			foreach ($this->add_attendee_question_groups as $group) {
 				$sql = "SELECT * FROM " . EVENTS_QST_GROUP_TABLE . " WHERE id='" . $group . "'";
@@ -171,7 +171,7 @@ class Event {
 		}
 	}
 
-	private function set_prices() {
+	private function _retrieve_prices() {
 		$sql = "SELECT * FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $this->id . "' ";
 		$sql .= "ORDER BY event_cost ASC";
 		global $wpdb;
@@ -190,15 +190,15 @@ class Event {
 			);
 		}
 		if (!isset($this->early_disc)) {
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		}
 		if (!empty($this->early_disc)
 						&& !empty($this->early_disc_date)
 						&& strtotime($this->early_disc_date) > strtotime(date("Y-m-d"))) {
 			foreach ($this->prices as &$price) {
-				$price['early_price'] = $this->early_discount($price['event_cost']);
+				$price['early_price'] = $this->_compute_early_discount($price['event_cost']);
 				if ($price['event_cost'] != $price['member_price']) {
-					$price['early_member_price'] = $this->early_discount($price['member_price']);
+					$price['early_member_price'] = $this->_compute_early_discount($price['member_price']);
 				}
 				if ($this->early_disc_percentage == 'Y') {
 					$price['early_display'] = $this->early_disc . '%';
@@ -210,7 +210,7 @@ class Event {
 		}
 	}
 
-	private function early_discount($event_cost) {
+	private function _compute_early_discount($event_cost) {
 		if ($this->early_disc_percentage == 'Y') {
 			$pdisc = $this->early_disc / 100;
 			$event_cost = $event_cost - ($event_cost * $pdisc);
@@ -220,9 +220,9 @@ class Event {
 		return $event_cost;
 	}
 
-	private function set_location() {
+	private function _retrieve_location() {
 		if (!isset($this->address))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		$location = $this->address != '' ? $this->address : '';
 		$location .= $this->address2 != '' ? '<br />' . $this->address2 : '';
 		$location .= $this->city != '' ? '<br />' . $this->city : '';
@@ -232,9 +232,9 @@ class Event {
 		$this->location = $location;
 	}
 
-	private function set_registration_url() {
+	private function _retrieve_registration_url() {
 		if (!isset($this->externalURL)) {
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		}
 		if ($this->externalURL != '') {
 			$this->registration_url = $this->externalURL;
@@ -244,7 +244,7 @@ class Event {
 		}
 	}
 
-	protected function set_event_details() {
+	protected function _retrieve_event_details() {
 		$sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $this->id . "'";
 		global $wpdb, $org_options;
 		$vars = $wpdb->get_row($sql, ARRAY_A);
@@ -277,7 +277,7 @@ class Event {
 		}
 	}
 
-	protected function set_categories() {
+	protected function _retrieve_categories() {
 		$sql = "SELECT ec.* FROM " . EVENTS_CATEGORY_TABLE . " ec ";
 		$sql .= "JOIN " . EVENTS_CATEGORY_REL_TABLE . " ecr ON ecr.cat_id=ec.id ";
 		$sql .= "WHERE ecr.event_id = '" . $this->id . "'";
@@ -304,7 +304,7 @@ class Event {
 		}
 	}
 
-	protected function set_timeslots() {
+	protected function _retrieve_timeslots() {
 		$sql = "SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $this->id . "'";
 		global $wpdb;
 		$vars = $wpdb->get_results($sql, ARRAY_A);
@@ -324,11 +324,11 @@ class Event {
 		}
 	}
 
-	protected function set_status() {
+	protected function _retrieve_status() {
 		if (!isset($this->start_date))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		if (!isset($this->timeslots))
-			$this->set_timeslots();
+			$this->_retrieve_timeslots();
 		$timestamp = strtotime($this->start_date . ' ' . $this->timeslots[0]['start_time']);
 		$registration_start_timestamp = strtotime($this->registration_start);
 		$registration_end_timestamp = strtotime($this->registration_end);
@@ -395,9 +395,9 @@ class Event {
 		}
 	}
 
-	protected function set_active_state() {
+	protected function _compute_active_state() {
 		if (!isset($this->status))
-			$this->set_status();
+			$this->_retrieve_status();
 		switch ($this->status['status']) {
 			case 'EXPIRED':
 			case 'NOT_ACTIVE':
@@ -435,157 +435,157 @@ class Event {
 
 	public function is_member_only() {
 		if (!isset($this->member_only))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->member_only;
 	}
 
 	public function is_use_coupon_code() {
 		if (!isset($this->use_coupon_code))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->use_coupon_code;
 	}
 
 	public function is_use_groupon_code() {
 		if (!isset($this->use_groupon_code))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->use_groupon_code;
 	}
 
 	public function is_allow_multiple() {
 		if (!isset($this->allow_multiple))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->allow_multiple;
 	}
 
 	public function get_start_date() {
 		if (!isset($this->start_date))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->start_date;
 	}
 
 	public function get_end_date() {
 		if (!isset($this->end_date))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->end_date;
 	}
 
 	public function get_question_groups() {
 		if (!isset($this->question_groups))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->question_groups;
 	}
 
 	public function get_questions() {
 		if (!isset($this->questions))
-			$this->set_questions();
+			$this->_retrieve_questions();
 		return $this->questions;
 	}
 
 	public function get_event_meta() {
 		if (!isset($this->event_meta))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return unserialize($this->event_meta);
 	}
 
 	public function is_enable_for_gmap() {
 		if (!isset($this->enable_for_gmap))
-			$this->set_event_meta();
+			$this->_retrieve_event_meta();
 		return $this->enable_for_gmap;
 	}
 
 	public function is_display_thumb_in_regpage() {
 		if (!isset($this->display_thumb_in_regpage))
-			$this->set_event_meta();
+			$this->_retrieve_event_meta();
 		return $this->display_thumb_in_regpage;
 	}
 
 	public function get_event_thumbnail_url() {
 		if (!isset($this->event_thumbnail_url))
-			$this->set_event_meta();
+			$this->_retrieve_event_meta();
 		return $this->event_thumbnail_url;
 	}
 
 	public function get_reg_limit() {
 		if (!isset($this->reg_limit))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->reg_limit;
 	}
 
 	public function get_externalURL() {
 		if (!isset($this->externalURL))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->externalURL;
 	}
 
 	public function get_event_desc() {
 		if (!isset($this->event_desc))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->event_desc;
 	}
 
 	public function get_additional_limit() {
 		if (!isset($this->additional_limit))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->additional_limit;
 	}
 
 	public function is_display_reg_form() {
 		if (!isset($this->display_reg_form))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->display_reg_form;
 	}
 
 	public function is_display_desc() {
 		if (!isset($this->display_desc))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->display_desc;
 	}
 
 	public function get_status() {
 		if (!isset($this->status))
-			$this->set_status();
+			$this->_retrieve_status();
 		return $this->status;
 	}
 
 	public function get_active_state() {
 		if (!isset($this->active_state))
-			$this->set_active_state();
+			$this->_compute_active_state();
 		return $this->active_state;
 	}
 
 	public function get_categories() {
 		if (!isset($this->categories))
-			$this->set_categories();
+			$this->_retrieve_categories();
 		return $this->categories;
 	}
 
 	public function get_event_name() {
 		if (!isset($this->event_name))
-			$this->set_event_details();
+			$this->_retrieve_event_details();
 		return $this->event_name;
 	}
 
 	public function get_registration_url() {
 		if (!isset($this->registration_url))
-			$this->set_registration_url();
+			$this->_retrieve_registration_url();
 		return $this->registration_url;
 	}
 
 	public function get_location() {
 		if (!isset($this->location))
-			$this->set_location();
+			$this->_retrieve_location();
 		return $this->location;
 	}
 
 	public function get_prices() {
 		if (!isset($this->prices))
-			$this->set_prices();
+			$this->_retrieve_prices();
 		return $this->prices;
 	}
 
 	public function get_number_of_attendees() {
 		if (!isset($this->number_of_attendees))
-			$this->set_number_of_attendees();
+			$this->_retrieve_number_of_attendees();
 		return $this->number_of_attendees;
 	}
 
