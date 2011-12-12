@@ -1,10 +1,10 @@
 <?php
 
 if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-    espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 }
 echo "<WPDISPLAY ITEM=banner>";
-if($_REQUEST['transStatus']=='Y') {
+if ($_REQUEST['transStatus'] == 'Y') {
 	$payment_status = 'Completed';
 	$sql = "SELECT ea.event_id, ed.event_name, ea.fname, ea.lname, ";
 	$sql .= "ea.payment_date, ea.amount_pd total_cost, ";

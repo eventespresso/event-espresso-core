@@ -1,6 +1,7 @@
 <?php
-$paytrace_settings = get_option('event_espresso_paytrace_settings');
-
+global $espresso_wp_user;
+$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+$paytrace_settings = $payment_settings['paytrace'];
 ?>
 <div class="event-display-boxes">
 	<p class="section-title"><?php _e('Billing Information', 'event_espresso') ?></p>
@@ -42,22 +43,22 @@ $paytrace_settings = get_option('event_espresso_paytrace_settings');
 			<p>
 				<label for="card-exp"><?php _e('Expiration Month', 'event_espresso'); ?></label>
 				<select id="card-exp" name ="exp_month" class="required">
-				<?php
-				for ($i = 1; $i < 13; $i++)
-					echo "<option value='$i'>$i</option>";
-				?>
+					<?php
+					for ($i = 1; $i < 13; $i++)
+						echo "<option value='$i'>$i</option>";
+					?>
 				</select>
 			</p>
 			<p>
 				<label for="exp-year"><?php _e('Expiration Year', 'event_espresso'); ?></label>
 				<select id="exp_year" name ="exp_year" class="required">
-				<?php
-				$curr_year = date("y");
-				for ($i = 0; $i < 10; $i++) {
-					$disp_year = $curr_year + $i;
-					echo "<option value='$disp_year'>$disp_year</option>";
-				}
-				?>
+					<?php
+					$curr_year = date("y");
+					for ($i = 0; $i < 10; $i++) {
+						$disp_year = $curr_year + $i;
+						echo "<option value='$disp_year'>$disp_year</option>";
+					}
+					?>
 				</select>
 			</p>
 			<p>
@@ -71,16 +72,16 @@ $paytrace_settings = get_option('event_espresso_paytrace_settings');
 		</form>
 	</div>
 </div>
-	<script type="text/javascript">
+<script type="text/javascript">
 
 	jQuery(function(){
 
 		jQuery('#paytrace_payment_form').validate();
 
- 	jQuery('#paytrace_payment_form').submit(function(){
+		jQuery('#paytrace_payment_form').submit(function(){
 
 			if (jQuery('#paytrace_payment_form').valid()){
-					jQuery('#processing').html('<img src="' + EEGlobals.plugin_url + 'images/ajax-loader.gif">');
+				jQuery('#processing').html('<img src="' + EEGlobals.plugin_url + 'images/ajax-loader.gif">');
 			}
 		})
 	});

@@ -7,7 +7,6 @@
  * @package		Event Espresso Worldpay Gateway
  * @category	Library
  */
-
 class Worldpay extends PaymentGateway {
 
 	public $worldpay_gateway_version = '1.0';
@@ -23,7 +22,7 @@ class Worldpay extends PaymentGateway {
 		// Some default values of the class
 		$this->gatewayUrl = 'https://secure.worldpay.com/wcc/purchase';
 		$this->ipnLogFile = 'worldpay.ipn_results.log';
-				$this->worldpay_gateway_version = '1.0';
+		$this->worldpay_gateway_version = '1.0';
 	}
 
 	/**
@@ -83,7 +82,7 @@ class Worldpay extends PaymentGateway {
 			}
 			$req .= 'cmd=_notify-validate';
 			$url = $this->gatewayUrl;
-			$ch = curl_init();	// Starts the curl handler
+			$ch = curl_init(); // Starts the curl handler
 			$error = array();
 			$error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the worldpay address for curl
 			$error["set_fail_on_error"] = curl_setopt($ch, CURLOPT_FAILONERROR, 1);

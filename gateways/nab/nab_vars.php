@@ -4,12 +4,13 @@ function espresso_display_nab($payor_data, $event_cost, $attendee_id, $event_id)
 	include_once ('Nab.php');
 	echo '<!-- Event Espresso nab Gateway Version ' . $nab_gateway_version . '-->';
 	$mynab = new nab(); // initiate an instance of the class
-	global $org_options, $wpdb;
+	global $org_options, $wpdb, $espresso_wp_user;
+	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
 	$nab_result_url = home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment&nab=true';
-	$nab_settings = get_option('event_espresso_nab_settings');
+	$nab_settings = $payment_settings['nab'];
 	$nab_id = $nab_settings['nab_merchant_id'];
 	$nab_pass = $nab_settings['nab_merchant_password'];
 	$use_sandbox = $nab_settings['nab_use_sandbox'];

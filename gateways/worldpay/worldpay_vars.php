@@ -1,14 +1,15 @@
 <?php
 
 function espresso_display_worldpay($attendee_id, $event_id, $event_cost) {
-	global $wpdb, $org_options;
+	global $wpdb, $org_options, $espresso_wp_user;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
 	include_once ('Worldpay.php');
 	$myworldpay = new worldpay(); // initiate an instance of the class
 	echo '<!-- Event Espresso worldpay Gateway Version ' . $myworldpay->worldpay_gateway_version . '-->';
-	$worldpay_settings = get_option('event_espresso_worldpay_settings');
+	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$worldpay_settings = $payment_settings['worldpay'];
 	$use_sandbox = $worldpay_settings['use_sandbox'];
 	if ($use_sandbox == 1) {
 		$myworldpay->enableTestMode();

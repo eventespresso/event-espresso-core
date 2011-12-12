@@ -1,7 +1,6 @@
 <?php
 
 global $wpdb;
-$eway_settings = get_option('event_espresso_eway_settings');
 
 if ($_REQUEST['rescode'] == '00' || $_REQUEST['rescode'] =='08') {
 

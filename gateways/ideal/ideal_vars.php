@@ -1,10 +1,10 @@
 <?php
-global $org_options, $wpdb;
+global $org_options, $wpdb, $espresso_wp_user;
 if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 }
-$ideal_mollie_settings = get_option('event_espresso_ideal_mollie_settings');
-
+$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+$ideal_mollie_settings = $payment_settings['ideal'];
 require_once('ideal.class.php');
 
 if (!isset($attendee_id))
@@ -82,9 +82,9 @@ if ($bank_array == false) {
 		<select name="bank_id" class="required">
 			<option value=''>Kies uw bank</option>
 
-<?php foreach ($bank_array as $bank_id => $bank_name) { ?>
+			<?php foreach ($bank_array as $bank_id => $bank_name) { ?>
 				<option value="<?php echo $bank_id ?>"><?php echo $bank_name ?></option>
-<?php } ?>
+			<?php } ?>
 
 		</select>
 		<input name="amount" type="hidden" value="<?php echo $amount; ?>" />

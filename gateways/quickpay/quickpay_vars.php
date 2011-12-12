@@ -1,9 +1,11 @@
 <?php
 global $wpdb;
-$quickpay_settings = get_option('event_espresso_quickpay_settings');
+global $espresso_wp_user;
+$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+$quickpay_settings = $payment_settings['quickpay'];
 $sessionid = $_SESSION['espresso_session']['id'];
 $ordernumber = substr(md5(uniqid() . rand()), 0, 20);
-$transaction_id = uniqid(md5(rand(1,666)), true); // Set the transaction id to a unique value for reference in the system.
+$transaction_id = uniqid(md5(rand(1, 666)), true); // Set the transaction id to a unique value for reference in the system.
 $button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/quickpay/qp-logo.gif";
 $md5secret = $quickpay_settings['quickpay_md5secret'];
 $payurl = "https://secure.quickpay.dk/form/";
@@ -85,7 +87,7 @@ $md5check = md5($protocol . $msgtype . $merchant . $language . $ordernumber . $a
 	<input type="hidden" name="callbackurl" value="<?php echo $callbackurl; ?>" />
 	<input type="hidden" name="autocapture" value="<?php echo $autocapture; ?>" />
 	<input type="hidden" name="cardtypelock" value="<?php echo $cardtypelock; ?>" />
-	<?php if($quickpay_settings['use_sandbox'])  { ?><input type="hidden" name="testmode" value="1" /><?php } ?>
+	<?php if ($quickpay_settings['use_sandbox']) { ?><input type="hidden" name="testmode" value="1" /><?php } ?>
 	<input type="hidden" name="md5check" value="<?php echo $md5check; ?>" />
 	<input class="espresso_payment_button_quickpay" value="Payvalue" type="image" alt="Pay using quickpay" src="<?php echo $button_url; ?>" />
 </form>

@@ -1,19 +1,6 @@
 <?php
-
-/**
- *  * ********************************************************************\
-
-  SALE_MININFO.php -  Minimum Required Fields for a Credit Card SALE
-
-
-  Copyright 2003 LinkPoint International, Inc. All Rights Reserved.
-
-  This software is the proprietary information of LinkPoint International, Inc.
-  Use is subject to license terms.
-
-  \********************************************************************* */
-
-//Find the correct amount so that unsavory characters don't change it in the previous form
+global $espresso_wp_user;
+$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 
 $registration_id = espresso_registration_id($_POST['id']);
 
@@ -31,7 +18,7 @@ if (!$r || $wpdb->num_rows == 0) {
 }
 
 
-$firstdata_settings = get_option('event_espresso_firstdata_settings');
+$firstdata_settings = $payment_settings['firstdata'];
 
 $pem_file = EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/firstdata/" . $firstdata_settings['firstdata_store_id'] . ".pem";
 
@@ -85,7 +72,7 @@ $result = $mylphp->curl_process($myorder);  # use curl methods
 if($myorder["debugging"]) {
 	echo "<p>var_dump of order data:</p> ";
 	var_dump($myorder);
-			
+
 			echo "<br />";
 	echo "<p>var_dump of result:</p> ";
 	var_dump($result);

@@ -8,12 +8,12 @@ global $org_options;
 if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 }
-$eway_settings = get_option('event_espresso_eway_settings');
+$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+$eway_settings = $payment_settings['eway'];
 $eway_id = $eway_settings['eway_id'];
 $eway_username = $eway_settings['eway_username'];
 //$image_url = $eway_settings['button_url'];
 $eway_cur = $eway_settings['currency_format'];
-$no_shipping = $eway_settings['no_shipping'];
 $use_sandbox = $eway_settings['use_sandbox'];
 
 $quantity = isset($quantity) && $quantity > 0 ? $quantity : espresso_count_attendees_for_registration($attendee_id);

@@ -1,7 +1,7 @@
 <?php
-
 global $wpdb;
-$eway_settings = get_option('event_espresso_eway_settings');
+$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+$eway_settings = $payment_settings['eway'];
 switch ($eway_settings['region']) {
 	case 'NZ':
 		$results_request = 'https://nz.ewaygateway.com/Result/';

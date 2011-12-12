@@ -6,7 +6,7 @@ if (isset($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1) //need this condition 
 //Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] tag
 
 function event_espresso_txn() {
-	global $wpdb, $org_options, $payment_settings;
+	global $wpdb, $org_options;
 
 	//Check if logging is enabled
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
