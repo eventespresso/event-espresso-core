@@ -31,6 +31,7 @@ function event_espresso_gateways_options() {
 	$gateways[] = 'quickpay';
 	$gateways[] = 'worldpay';
 	$gateways[] = 'nab';
+	$gateways[] = 'realauth';
 	?>
 
 	<div class="wrap">
