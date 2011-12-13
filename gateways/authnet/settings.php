@@ -132,6 +132,7 @@ function event_espresso_display_authnet_settings() {
 				<tr>
 					<th><label for="authnet_transaction_key">
 							<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?>
+							<?php echo apply_filters('espresso_help', 'transaction_key_info') ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="authnet_transaction_key" id="authnet_transaction_key" size="35" value="<?php echo $payment_settings['authnet_sim']['authnet_transaction_key']; ?>">
 						<br />
@@ -222,99 +223,7 @@ function event_espresso_display_authnet_settings() {
 		</p>
 		<?php wp_nonce_field('espresso_form_check', 'add_authnetsim_settings'); ?>
 	</form>
-	<div id="relay_response" style="display:none">
-		<h2>
-			<?php _e('Relay Response', 'event_espresso'); ?>
-		</h2>
-		<p>
-			<?php _e('This shows the specific the URL to which the gateway should return the relay response for a transaction. This the page should be set in your Authorize.net account. Login to Authorize.net, goto Account > Response/Receipt URLs > Add URL and enter the following URL.', 'event_espresso'); ?>
-		</p>
-		<p><strong>
-				<?php _e('Relay Response URL:', 'event_espresso'); ?>
-			</strong> <?php echo home_url() . '/?page_id=' . $org_options['notify_url'] ?><br />
-			<span style="color:red;">
-				<?php _e('Note:', 'event_espresso'); ?>
-			</span>
-			<?php _e('This URL can be changed in the "Organization Settings" page.', 'event_espresso'); ?>
-		</p>
-		<p>
-			<?php _e('For complete information on configuring relay response, please refer to', 'event_espresso'); ?>
-			<a href="https://account.authorize.net/help/Merchant_Interface_RoboHelp_Project.htm#Miscellaneous/Reference.htm%3E%3Epan=2">
-				<?php _e('Reference &amp; User Guides', 'event_espresso'); ?>
-			</a>.</p>
-	</div>
-	<div id="authnet_button_url_info" style="display:none">
-		<h2>
-			<?php _e('Button Image URL', 'event_espresso'); ?>
-		</h2>
-		<p>
-			<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso'); ?>
-		</p>
-		<p><strong>
-				<?php _e('Current button image:', 'event_espresso'); ?>
-			</strong></p>
-		<p><?php echo '<img src="' . $payment_settings['authnet_sim']['button_url'] . '" />'; ?></p>
-	</div>
-	<div id="authnet_image_url_info" style="display:none">
-		<h2>
-			<?php _e('Authorize.net SIM Image URL (logo for payment page)', 'event_espresso'); ?>
-		</h2>
-		<p>
-			<?php _e('The URL of the image displayed as your logo in the header of the Authorize.net checkout pages.', 'event_espresso'); ?>
-		</p>
-		<p><strong>
-				<?php _e('Current logo image:', 'event_espresso'); ?>
-			</strong></p>
-		<p><?php echo '<img src="' . $payment_settings['authnet_sim']['image_url'] . '" />'; ?></p>
-	</div>
-	<div id="authnet_sandbox" style="display:none">
-		<h2>
-			<?php _e('Authorize.net Development Server', 'event_espresso'); ?>
-		</h2>
-		<p>
-			<?php _e('Authorize.net maintains a development environment for testing your gateway. You may use this to test your setup without having a live account. You will need to sign up for a free account on the development server here: '); ?>
-			<a href="https://developer.authorize.net/testaccount/">https://developer.authorize.net/testaccount/</a>
-			<?php _e('Transactions that are submitted to the development server are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers.', 'event_espresso'); ?>
-		</p>
-		<p><strong>
-				<?php _e('Example Card Numbers:', 'event_espresso'); ?>
-			</strong></p>
-		<p>370000000000002 (
-			<?php _e('American Express', 'event_espresso'); ?>
-			)<br />
-			6011000000000012 (
-			<?php _e('Discover', 'event_espresso'); ?>
-			)<br />
-			5424000000000015 (
-			<?php _e('Master Card', 'event_espresso'); ?>
-			)<br />
-			4007000000027 (
-			<?php _e('Visa', 'event_espresso'); ?>
-			)</p>
-	</div>
-	<div id="authnet_test_transactions" style="display:none">
-		<h2>
-			<?php _e('Authorize.net Test Transactions', 'event_espresso'); ?>
-		</h2>
-		<p>
-			<?php _e('Transactions that are submitted as test transactions are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers.', 'event_espresso'); ?>
-		</p>
-		<p><strong>
-				<?php _e('Example Card Numbers:', 'event_espresso'); ?>
-			</strong></p>
-		<p>370000000000002 (
-			<?php _e('American Express', 'event_espresso'); ?>
-			)<br />
-			6011000000000012 (
-			<?php _e('Discover', 'event_espresso'); ?>
-			)<br />
-			5424000000000015 (
-			<?php _e('Master Card', 'event_espresso'); ?>
-			)<br />
-			4007000000027 (
-			<?php _e('Visa', 'event_espresso'); ?>
-			)</p>
-	</div>
 	<?php
+	include_once('authnet_help.php');
 }
 
