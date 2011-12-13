@@ -110,34 +110,37 @@ define("EVENT_ESPRESSO_GATEWAY_DIR", $event_espresso_gateway_dir);
 define("EVENT_ESPRESSO_GATEWAY_URL", $wp_content_url . '/uploads/espresso/gateways/');
 
 //End - Define dierectory structure for uploads
-
 //Start the session
 function espresso_init_session() {
 	global $org_options;
-	
+
 	//logging
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
-	
+
 	if (!isset($_SESSION)) {
 		session_start();
 	}
-	
-	if ( (isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url'] 
-		|| $_REQUEST['page_id'] == $org_options['notify_url'])) 
-		|| !isset($_SESSION['espresso_session']['id']) || $_SESSION['espresso_session']['id'] == array()) {
-		
+
+	if ((isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url']
+					|| $_REQUEST['page_id'] == $org_options['notify_url']))
+					|| !isset($_SESSION['espresso_session']['id']) || $_SESSION['espresso_session']['id'] == array()) {
+
 		$_SESSION['espresso_session'] = '';
 		//Debug
 		//echo "<pre>espresso_session - ".print_r($_SESSION['espresso_session'],true)."</pre>";
 		$_SESSION['espresso_session'] = array();
 		//Debug
 		//echo "<pre>espresso_session array - ".print_r($_SESSION['espresso_session'],true)."</pre>";
-		$_SESSION['espresso_session']['id'] = session_id().'-'.uniqid('',true);
+		$_SESSION['espresso_session']['id'] = session_id() . '-' . uniqid('', true);
 		//Debug
-		//echo "<pre>".print_r($_SESSION,true)."</pre>";		
-    }
+		//echo "<pre>".print_r($_SESSION,true)."</pre>";
+
+		$_SESSION['espresso_session']['events_in_session'] = '';
+		$_SESSION['espresso_session']['coupon_code'] = '';
+		$_SESSION['espresso_session']['grand_total'] = '';
+	}
 }
 
 add_action('plugins_loaded', 'espresso_init_session', 1);
@@ -559,7 +562,6 @@ if (!function_exists('espresso_load_jquery')) {
 }
 add_action('init', 'espresso_load_jquery', 10);
 // End Javascript files
-
 // Load the style sheets for the reegistration pages
 if (!function_exists('add_espresso_stylesheet')) {
 
@@ -573,15 +575,15 @@ if (!function_exists('add_espresso_stylesheet')) {
 		if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') {
 
 			//Load custom style sheet if available
-			if ( !empty($org_options['style_settings']['use_grid_layout']) && $org_options['style_settings']['use_grid_layout'] == 'Y' ) {
+			if (!empty($org_options['style_settings']['use_grid_layout']) && $org_options['style_settings']['use_grid_layout'] == 'Y') {
 				if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'css/grid_layout.css')) {
 					wp_register_style('espresso_grid_layout', EVENT_ESPRESSO_UPLOAD_URL . 'css/grid_layout.css');
 				} else {
-					wp_register_style('espresso_grid_layout',EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/grid_layout.css');
+					wp_register_style('espresso_grid_layout', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/grid_layout.css');
 				}
 				wp_enqueue_style('espresso_grid_layout');
 			}
-			
+
 			//Define the path to the ThemeRoller files
 			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "themeroller/index.php")) {
 				$themeroller_style_path = EVENT_ESPRESSO_UPLOAD_URL . 'themeroller/';
@@ -596,20 +598,20 @@ if (!function_exists('add_espresso_stylesheet')) {
 			}
 
 			//Register the ThemeRoller styles
-			if ( !empty( $org_options['themeroller']) && !is_admin()){
-				
+			if (!empty($org_options['themeroller']) && !is_admin()) {
+
 				//Load the themeroller base style sheet
 				//If the themeroller-base.css is in the uploads folder, then we will use it instead of the one in the core
 				if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . $themeroller_style_path . 'themeroller-base.css')) {
 					wp_register_style('espresso_themeroller_base', $themeroller_style_path . 'themeroller-base.css');
 				} else {
-					wp_register_style('espresso_themeroller_base',EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/themeroller-base.css');
+					wp_register_style('espresso_themeroller_base', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/themeroller-base.css');
 				}
 				wp_enqueue_style('espresso_themeroller_base');
-				
+
 				//Load the smoothness style by default
 				$org_options['themeroller']['themeroller_style'] = isset($org_options['themeroller']['themeroller_style']) && !empty($org_options['themeroller']['themeroller_style']) ? $org_options['themeroller']['themeroller_style'] : 'smoothness';
-				
+
 				//Load the selected themeroller style
 				wp_register_style('espresso_themeroller', $themeroller_style_path . $org_options['themeroller']['themeroller_style'] . '/style.css');
 				wp_enqueue_style('espresso_themeroller');
@@ -794,7 +796,7 @@ if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php')) {
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
-	if ( empty($org_options['site_license_key']) ){
+	if (empty($org_options['site_license_key'])) {
 		$org_options['site_license_key'] = 0;
 	}
 	$api_key = $org_options['site_license_key'];
