@@ -572,6 +572,16 @@ if (!function_exists('add_espresso_stylesheet')) {
 		//Load the ThemeRoller styles if enabled
 		if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') {
 
+			//Load custom style sheet if available
+			if ( !empty($org_options['style_settings']['use_grid_layout']) && $org_options['style_settings']['use_grid_layout'] == 'Y' ) {
+				if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'css/grid_layout.css')) {
+					wp_register_style('espresso_grid_layout', EVENT_ESPRESSO_UPLOAD_URL . 'css/grid_layout.css');
+				} else {
+					wp_register_style('espresso_grid_layout',EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/grid_layout.css');
+				}
+				wp_enqueue_style('espresso_grid_layout');
+			}
+			
 			//Define the path to the ThemeRoller files
 			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "themeroller/index.php")) {
 				$themeroller_style_path = EVENT_ESPRESSO_UPLOAD_URL . 'themeroller/';
@@ -603,32 +613,6 @@ if (!function_exists('add_espresso_stylesheet')) {
 				//Load the selected themeroller style
 				wp_register_style('espresso_themeroller', $themeroller_style_path . $org_options['themeroller']['themeroller_style'] . '/style.css');
 				wp_enqueue_style('espresso_themeroller');
-			}
-			
-		} else {
-			//For backwards compatibilty we check options to see if event_espresso_style.css is set. If it is set, or no option is set, we load it from original folder.
-			if (empty($org_options['style_settings']['selected_style']) || $org_options['style_settings']['selected_style'] == 'event_espresso_style.css') {
-				$style_path = 'templates/event_espresso_style.css';
-			} else {
-				$style_path = 'templates/css/' . $org_options['style_settings']['selected_style'];
-			}
-
-			$event_espresso_style_sheet = EVENT_ESPRESSO_PLUGINFULLURL . $style_path;
-
-
-			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css")) {
-				$event_espresso_style_sheet = EVENT_ESPRESSO_UPLOAD_URL . 'templates/event_espresso_style.css';
-			}
-
-			wp_register_style('event_espresso_style_sheets', $event_espresso_style_sheet);
-			wp_enqueue_style('event_espresso_style_sheets');
-
-			if (!file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "templates/event_espresso_style.css") && !empty($org_options['style_settings']['style_color'])) {
-
-				$event_espresso_style_color = EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/colors/' . $org_options['style_settings']['style_color'];
-
-				wp_register_style('_espresso_style_color', $event_espresso_style_color);
-				wp_enqueue_style('espresso_style_color');
 			}
 		}
 	}

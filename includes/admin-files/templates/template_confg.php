@@ -12,8 +12,8 @@ function event_espresso_manage_templates() {
 		$org_options['template_settings']['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
 		$org_options['template_settings']['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
 		$org_options['template_settings']['display_address_in_regform'] = $_POST['display_address_in_regform'];
-		$org_options['template_settings']['use_custom_templates'] = empty($_POST['use_custom_templates']) ? '' : $_POST['use_custom_templates'];
 		$org_options['style_settings']['enable_default_style'] = $_POST['enable_default_style'];
+		$org_options['style_settings']['use_grid_layout'] = $_POST['use_grid_layout'];
 		$org_options['themeroller']['themeroller_style'] = empty($_POST['themeroller_style']) ? '' : $_POST['themeroller_style'];
 
 		if (isset($_POST['remove_css']) && $_POST['remove_css'] == 'true') {
@@ -180,8 +180,24 @@ shortcodes in your event description.', 'event_espresso'); ?>
 																<?php echo apply_filters('espresso_help', 'enable_styles_info'); ?>
 															</label>
 														</th>
-														<td><?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : 'Y'); ?></td>
+														<td><?php echo select_input('enable_default_style', $values, isset($org_options['style_settings']['enable_default_style']) ? $org_options['style_settings']['enable_default_style'] : 'Y'); ?><br />
+<span class="description">
+																	<?php _e('This option enables the style settings below.', 'event_espresso'); ?>
+																</span></td>
 													</tr>
+													<tr>
+														<th> <label>
+																<?php _e('Use Grid Layout', 'event_espresso'); ?>
+																<?php echo apply_filters('espresso_help', 'use_grid_info'); ?>
+															</label>
+														</th>
+														<td><?php echo select_input('use_grid_layout', $values, isset($org_options['style_settings']['use_grid_layout']) ? $org_options['style_settings']['use_grid_layout'] : 'N'); ?><br />
+														<span class="description">
+																	<?php _e('Displays event list in a grid layout.', 'event_espresso'); ?>
+																</span>
+														</td>
+													</tr>
+
 													<tr>
 														<th> <?php _e('ThemeRoller Style ', 'event_espresso'); ?>
 															<?php echo apply_filters('espresso_help', 'themeroller_info'); ?>
