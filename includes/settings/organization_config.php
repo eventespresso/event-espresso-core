@@ -406,7 +406,14 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																<td><input id="payment_subject" name="payment_subject" size="50" class="regular-text" type="text" value="<?php echo stripslashes_deep($org_options['payment_subject']); ?>" /></td>
 															</tr>
 															<tr>
-																<td colspan="2"><div class="visual-toggle">
+																<td colspan="2">																
+																<?php
+																	$content = espresso_admin_format_content($org_options['payment_message']);
+																	$editor_id = 'payment_message';
+																	$settings = array( 'textarea_name' => 'payment_message' );
+																	wp_editor( $content, $editor_id, $settings );  
+																?> 
+															<?php /*		<div class="visual-toggle">
 																		<p><a class="toggleVisual">
 																				<?php _e('Visual', 'event_espresso'); ?>
 																			</a> <a class="toggleHTML">
@@ -424,11 +431,11 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																						</span></td>
 																				</tr>
 																			</tbody>
-																		</table>
+																		</table>  */ ?>
 																		<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
 																					<?php _e('View Custom Email Tags', 'event_espresso'); ?>
 																				</a></span></p>
-																	</div></td>
+															<?php //	</div>  ?></td>
 															</tr>
 														</tbody>
 													</table>
@@ -444,7 +451,14 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																<td><?php echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?></td>
 															</tr>
 															<tr>
-																<td colspan="2"><div class="visual-toggle">
+																<td colspan="2">
+																<?php
+																	$content = espresso_admin_format_content($org_options['message']);
+																	$editor_id = 'reg-conf-email-mce';
+																	$settings = array( 'textarea_name' => 'success_message' );
+																	wp_editor( $content, $editor_id, $settings ); 
+																?> 
+															<?php /*	<div class="visual-toggle">
 																		<p><a class="toggleVisual">
 																				<?php _e('Visual', 'event_espresso'); ?>
 																			</a> <a  class="toggleHTML">
@@ -462,13 +476,13 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																						</span></td>
 																				</tr>
 																			</tbody>
-																		</table>
+																		</table>  */ ?>
 																		<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
 																					<?php _e('View Custom Email Tags', 'event_espresso'); ?>
 																				</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
 																					<?php _e('Example', 'event_espresso'); ?>
 																				</a> </span></p>
-																	</div></td>
+																	<?php //</div></td>  */ ?>
 															</tr>
 														</tbody>
 													</table>
