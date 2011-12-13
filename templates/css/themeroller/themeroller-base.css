@@ -66,9 +66,6 @@
 #content .event_title, #content .section-heading, #content .section-title {
 	margin-bottom: 1em;
 }
-#content .section-heading {
-	font-size: 1.2em;
-}
 #content .event_title a {
 	text-decoration: none;
 }
@@ -166,7 +163,6 @@ span.google-map-link {
 	margin-top: 0;
 }
 #content .event_questions .quest-group-descript {
-	font-size: 81.25%;
 	margin: 0 0 20px;
 	padding: .5em;
 }
@@ -215,12 +211,6 @@ span.remove-cart-item {
 }
 #event_espresso_refresh_total {
 	line-height: 2.2;
-}
-.multi-reg-page .event_title span.price-type, .multi-reg-page .event_title span.attendee-qnt {
-	font-size: 87.50%;
-}
-#event_espresso_total_wrapper {
-	font-size: 1.1em;
 }
 /*___ Payment options page ___*/
 
@@ -281,10 +271,6 @@ ul#espresso_payment_buttons li form {
 	-webkit-box-shadow:inset 0 0 4px #ccc;
 	box-shadow: 0 0 4px #ccc;
 }
-#event_espresso_shopping_cart label {
-	font-weight: bold;
-	font-size: 87.50%;
-}
 #content .event-display-boxes form.ee-forms select {
 	margin-bottom: 0;
 }
@@ -298,7 +284,6 @@ ul#espresso_payment_buttons li form {
 }
 .event_espresso_form_wrapper form p.note {
 	margin-left: 170px;
-	font-size: 90%;
 	color: #333;
 }
 .event_espresso_form_wrapper form fieldset {
@@ -321,8 +306,6 @@ ul#espresso_payment_buttons li form {
 .event_prices label, .event_time label {
 	display: block;
 	float: none;
-	font-size: 100%;
-	font-weight: bold;
 	color: #333;
 	text-align: left;
 }
@@ -337,7 +320,6 @@ ul#espresso_payment_buttons li form {
 }
 .event_espresso_form_wrapper p.coupon_code label, .event_espresso_form_wrapper p#groupon_code- label {
 	display: block;
-	font-size: 84.60%;
 	float: none;
 	width: auto;
 	text-align: left;
@@ -347,7 +329,6 @@ ul#espresso_payment_buttons li form {
 }
 .event_espresso_form_wrapper label.error, .event_espresso_form_wrapper span.error {
 	color: #C00;
-	font-size:12px;
 }
 .event_espresso_form_wrapper label em, .event_espresso_form_wrapper span.label em {
 	font-style: normal;
@@ -400,8 +381,6 @@ ul#espresso_payment_buttons li form {
 }
 
 .event_espresso_form_wrapper label.error, .event_espresso_form_wrapper span.error {
-	
-	font-size:12px;
 	color: #C00;
 	width: auto;
 }
@@ -471,12 +450,7 @@ ul#espresso_payment_buttons li form {
 .grid tr th.header {
 	border-right: 1px solid #dcdcdc;
 }
-#content table.event-display-tables th.header {
-	font-weight: bold;
-	font-size: 90%;
-}
 #content #event_espresso_shopping_cart table th {
-	font-size: 100%;
 	text-align: left;
 }
 #event_espresso_attendee_verify th, #event_espresso_attendee_verify_questions th {
@@ -496,7 +470,6 @@ ul#espresso_payment_buttons li form {
 #event_espresso_shopping_cart table.price_list {
 	border: 1px solid #bfbfbf;
 	border-bottom: none;
-	font-size: 100%;
 	margin: 10px auto;
 	width: 98%;
 }
@@ -519,7 +492,6 @@ table.price_list td.selection select {
 	margin-bottom: 0;
 }
 table.price_list td.reg-allowed-limit {
-	font-size: 84.60%;
 	text-align: center;
 }
 pre {
