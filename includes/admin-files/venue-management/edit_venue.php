@@ -179,6 +179,7 @@ function edit_event_venue(){
 									if (!empty($venue_address_elements)) {
 										if( isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y' && empty($meta['gmap_static']) ) { 
 											if( function_exists('ee_gmap_display') ) {
+											$event_id = $venue_id;
 												echo ee_gmap_display($ee_gmap_location, $event_id);
 											} else {
 													echo '<p class="inform">';
