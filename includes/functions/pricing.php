@@ -257,6 +257,13 @@ function espresso_price_selection($event, $attendee) {
 if (!function_exists('event_espresso_price_dropdown')) {
 
 	function event_espresso_price_dropdown($event_id, $atts = array()) {
+		
+		if ( !is_admin() && function_exists('espresso_member_price_select_action') ){
+			return;
+		}
+		
+		//Debug
+		//echo "<pre>atts -".print_r($atts,true)."</pre>";
 
 		empty($atts) ? '' : extract($atts);
 
