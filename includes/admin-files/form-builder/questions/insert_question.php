@@ -11,8 +11,8 @@ function event_espresso_form_builder_insert() {
 		$question = $_POST['question'];
 		$question_type = $_POST['question_type'];
 		$question_values = empty($_POST['values']) ? '' : $_POST['values'];
-		$required = !empty($_POST['required']) ? 'Y' : 'N';
-		$admin_only = !empty($_POST['admin_only']) ? 'Y' : 'N';
+		$required = !empty($_POST['required']) ? $_POST['required'] : 'N';
+		$admin_only = !empty($_POST['admin_only']) ? $_POST['admin_only'] : 'N';
 		$sequence = $_POST['sequence'] ? $_POST['sequence'] : '0';
 	}
 
