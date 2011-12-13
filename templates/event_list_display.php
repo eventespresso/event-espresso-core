@@ -41,32 +41,14 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 ?>
 
 <div id="event_data-<?php echo $event_id ?>" class="event_data <?php echo $css_class; ?> <?php echo $category_identifier; ?> event-list-display event-display-boxes ui-widget">
-	<h2 id="event_title-<?php echo $event_id ?>" class="event_title ui-widget-header ui-corner-top"><a title="<?php echo stripslashes_deep($event_name) ?>" class="a_event_title" id="a_event_title-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>"><?php echo stripslashes_deep($event_name) ?></a>
-		<?php /* These are custom messages that can be displayed based on the event status. Just un-comment the one you want to use. */ ?>
-		<?php //echo $status_display; //Turn this on to display the overall status of the event.  ?>
-		<?php //echo $status_display_ongoing; //Turn this on to display the ongoing message. ?>
-		<?php //echo $status_display_deleted; //Turn this on to display the deleted message. ?>
-		<?php //echo $status_display_secondary; //Turn this on to display the waitlist message. ?>
-		<?php //echo $status_display_reg_closed; //Turn this on to display the registration closed message. ?>
-		<?php //echo $status_display_not_open; //Turn this on to display the secondary message. ?>
-		<?php //echo $status_display_open; //Turn this on to display the not open message. ?>
-		<?php //echo $status_display_custom_closed; //Turn this on to display the closed message. ?>
-	</h2>
+	<h2 id="event_title-<?php echo $event_id ?>" class="event_title ui-widget-header ui-corner-top"><a title="<?php echo stripslashes_deep($event_name) ?>" class="a_event_title" id="a_event_title-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>"><?php echo stripslashes_deep($event_name) ?></a> </h2>
 	<div class="event-data-display ui-widget-content ui-corner-bottom">
-		<?php /* Venue details. Un-comment to display. */ ?>
-		<?php //echo $venue_title != ''?'<p id="event_venue_name-'.$event_id.'" class="event_venue_name">'.stripslashes_deep($venue_title).'</p>':'' ?>
-		<?php //echo $venue_address != ''?'<p id="event_venue_address-'.$event_id.'" class="event_venue_address">'.stripslashes_deep($venue_address).'</p>':''?>
-		<?php //echo $venue_address2 != ''?'<p id="event_venue_address2-'.$event_id.'" class="event_venue_address2">'.stripslashes_deep($venue_address2).'</p>':''?>
-		<?php //echo $venue_city != ''?'<p id="event_venue_city-'.$event_id.'" class="event_venue_city">'.stripslashes_deep($venue_city).'</p>':''?>
-		<?php //echo $venue_state != ''?'<p id="event_venue_state-'.$event_id.'" class="event_venue_state">'.stripslashes_deep($venue_state).'</p>':''?>
-		<?php //echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
-		<?php //echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''
-					
-		$thumb_url = $registration_url;
-		//Thumbnail
+		<?php 				
+	$thumb_url = $registration_url;
+	//Thumbnail
 	if( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] == 'Y' && !empty($event_meta['event_thumbnail_url'])){ ?>
-			<a id="ee-event-list-thumb" class="ee-thumbs" href="<?php echo $thumb_url ?>"> <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span> </a>
-<?php 
+		<a id="ee-event-list-thumb" class="ee-thumbs" href="<?php echo $thumb_url ?>"> <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span> </a>
+		<?php 
 	}
 		
 ?>
@@ -78,9 +60,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 				<?php _e('Date:', 'event_espresso'); ?>
 				</span> <?php echo event_date_display($start_date, get_option('date_format')) ?> </p>
 		</div>
-<?php
-	
-	
+		<?php
 	//Available spaces
 	if ($display_reg_form == 'Y' && $externalURL == '') { ?>
 		<p id="available_spaces-<?php echo $event_id ?>"> <span class="section-title">
@@ -100,7 +80,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 		<div class="event-desc ui-corner-all">
 			<p><?php echo espresso_format_content($event_desc); ?></p>
 		</div>
-<?php 
+		<?php 
 		}
 		
 	}
@@ -108,10 +88,10 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 	//Address
 	if ($location != '' && $org_options['template_settings']['display_address_in_event_list'] == 'Y') { ?>
 		<p class="event_address" id="event_address-<?php echo $event_id ?>"> <span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
-		<span class="address-block"><?php echo stripslashes_deep($location); ?> <span class="google-map-link">
-		<?php  echo $google_map_link; ?>
-		</span> </span> </p>
-<?php 
+			<span class="address-block"><?php echo stripslashes_deep($location); ?> <span class="google-map-link">
+			<?php  echo $google_map_link; ?>
+			</span> </span> </p>
+		<?php 
 	}
 	
 	//Google map
