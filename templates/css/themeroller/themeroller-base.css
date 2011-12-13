@@ -30,7 +30,7 @@
 
 /* Add some shadow where ui has no hooks */
 
-.event-display-boxes  .submit {
+.event-display-boxes .submit {
 	-moz-box-shadow: 0 0 4px #ccc;
 	-webkit-box-shadow: 0 0 4px #ccc;
 	box-shadow: 0 0 4px #ccc;
@@ -43,31 +43,27 @@
 #ee-event-list-thumb img {
 	-moz-box-shadow: 0 0 2px #555;
 	-webkit-box-shadow: 0 0 2px #555;
-	box-shadow: 0 0  2px  #555;
+	box-shadow: 0 0 2px #555;
 }
 #content .event-display-boxes p {
-	margin: .5em 0 ;
+	margin: .5em 0;
 }
 #content .event-display-boxes .ui-widget-header {
 	margin-bottom: -1px;
 }
-#content .event-data-display p.section-title,
-#content .espresso_event p.section-title {
+#content .event-data-display p.section-title, #content .espresso_event p.section-title {
 	margin-bottom: 8px;
 }
-#content .espresso_event,
-#content .event-display-boxes { /* event list boxes */
+#content .espresso_event, #content .event-display-boxes { /* event list boxes */
 	margin-bottom: 1em;
 }
 #content .event-data-display {
 	padding: 10px;
 }
-#content .event_title, 
-#content h2.section-heading,
-#content .display-box-heading {padding-left: 10px;}
-#content .event_title,
-#content .section-heading,
-#content .section-title {
+#content .event_title, #content h2.section-heading, #content .display-box-heading {
+	padding-left: 10px;
+}
+#content .event_title, #content .section-heading, #content .section-title {
 	margin-bottom: 1em;
 }
 #content .section-heading {
@@ -79,14 +75,10 @@
 #content .event_description {
 	padding: 0 .4em 20px;
 }
-#content  .section-title,
-#content .span_event_time_label,
-#content .event_price_label {
+#content .section-title, #content .span_event_time_label, #content .event_price_label {
 	font-weight: bold;
 }
-#additional_header a,
-#event_espresso_refresh_total,
-.inline-link  { /* floating links */
+#additional_header a, #event_espresso_refresh_total, .inline-link { /* floating links */
 	font-weight: bold;
 	padding-bottom: 3px;
 	text-decoration: none;
@@ -99,16 +91,18 @@
 #content .event-display-boxes .register-link-footer {
 	margin: .8em 0 .1em;
 }
-#content .event-display-boxes .register-link-footer	a {	
- padding: 2px 4px; 
+#content .event-display-boxes .register-link-footer a {
+	padding: 2px 4px;
 	text-decoration: none;
 }
 #content .ee-social-media-buttons {
- clear: both;
- padding: 10px 0;
+	clear: both;
+	padding: 10px 0;
 }
 /* wrestle google button into submission */
-div.google-button {display: inline;}
+div.google-button {
+	display: inline;
+}
 /* >Pages
 ------------------------------------------------------------------------------*/
 /*___ page event list ___*/
@@ -135,8 +129,9 @@ span.google-map-link {
 #ee-event-list-thumb span {
 	padding: 2px;
 }
-.event-address-block p {margin-bottom: .5em;}
-
+.event-address-block p {
+	margin-bottom: .5em;
+}
 /*___ page register ___*/
 
 .event_description .event_staff {
@@ -146,7 +141,7 @@ span.google-map-link {
 	padding: 0 1% 10px;
 	width: 45%;
 }
-#content .event_staff  p.event_person:first-child {
+#content .event_staff p.event_person:first-child {
 	margin-top: 5px;
 	text-align: center
 }
@@ -156,7 +151,7 @@ span.google-map-link {
 	width: 60%;
 }
 #content #registration_form .event-map-parent {
- margin: 20px 0;
+	margin: 20px 0;
 }
 .event_description .ee-gmap-iframewrap {
 	padding-bottom: 20px;
@@ -170,18 +165,22 @@ span.google-map-link {
 	font-weight: bold;
 	margin-top: 0;
 }
-#content .event_questions  .quest-group-descript {
+#content .event_questions .quest-group-descript {
 	font-size: 81.25%;
-	margin: 0 0 20px ;
+	margin: 0 0 20px;
 	padding: .5em;
 }
 .espresso_add_attendee a.add {
 	margin-left: 85px;
 }
-a.post-edit-link {padding-left: 5px;}
+a.post-edit-link {
+	padding-left: 5px;
+}
 /*___ Attendee list ___*/
 
-ol.attendee_list {margin-left: 30px;}
+ol.attendee_list {
+	margin-left: 30px;
+}
 /*___ Cart & Multi Registration page styles ___*/
 
 .multi_reg_cart_block {
@@ -198,8 +197,9 @@ ol.attendee_list {margin-left: 30px;}
 	padding: 5px;
 	width: 130px;
 }
-
-#event_total_price {width: auto;}
+#event_total_price {
+	width: auto;
+}
 #event_espresso_coupon_wrapper label {
 	display: block;
 }
@@ -213,18 +213,19 @@ span.remove-cart-item {
 	float: right;
 	margin-right: 3px;
 }
-#event_espresso_refresh_total  {
+#event_espresso_refresh_total {
 	line-height: 2.2;
 }
-.multi-reg-page .event_title span.price-type,
-.multi-reg-page .event_title span.attendee-qnt {
+.multi-reg-page .event_title span.price-type, .multi-reg-page .event_title span.attendee-qnt {
 	font-size: 87.50%;
 }
-#event_espresso_total_wrapper {font-size: 1.1em; }
+#event_espresso_total_wrapper {
+	font-size: 1.1em;
+}
 /*___ Payment options page ___*/
 
 #sandbox-panel {
-	border: 1px solid #bebebe; 
+	border: 1px solid #bebebe;
 	background: #eee;
 	padding: 10px;
 }
@@ -233,33 +234,37 @@ ul#espresso_payment_buttons {
 	text-align: center;
 }
 ul#espresso_payment_buttons li {
-	display: inline;	
+	display: inline;
 	list-style: none;
 	padding: 0 8px;
 	vertical-align: top;
 }
 ul#espresso_payment_buttons li form {
-
 }
 /*___ payment overview - thank you page ___*/
 
 .event-list-payment-overview {
-	padding: 20px 0 0 ;
+	padding: 20px 0 0;
 }
-.event-list-payment-overview dl,
-.reg-gen-details dl {
+.event-list-payment-overview dl, .reg-gen-details dl {
 	margin-bottom: 0;
 	padding:10px;
 }
-#content .event-list-payment-overview dl dt {margin-bottom: 20px;}
-#content .event-list-payment-overview dl dd {margin-bottom: 10px}
-#content .espresso_payment_overview  h4.section-title {
+#content .event-list-payment-overview dl dt {
+	margin-bottom: 20px;
+}
+#content .event-list-payment-overview dl dd {
+	margin-bottom: 10px
+}
+#content .espresso_payment_overview h4.section-title {
 	margin-top: 20px;
 	padding-top: 10px;
 }
- 
 /*___ page elements / objects ___*/
-.TB-ee-frame .tb-ee-event-title {margin: 10px 0;;}
+.TB-ee-frame .tb-ee-event-title {
+	margin: 10px 0;
+	;
+}
 /** Gmaps **/
 
 .ee-gmaps {
@@ -268,8 +273,10 @@ ul#espresso_payment_buttons li form {
 /* >Forms
 ------------------------------------------------------------------------------*/
 /* override WP styles */
-.entry-content input { margin: 0 0 .5em;}
-.event-display-boxes  .submit {
+.entry-content input {
+	margin: 0 0 .5em;
+}
+.event-display-boxes .submit {
 	-moz-box-shadow:inset 0 0 4px #ccc;
 	-webkit-box-shadow:inset 0 0 4px #ccc;
 	box-shadow: 0 0 4px #ccc;
@@ -285,30 +292,30 @@ ul#espresso_payment_buttons li form {
 * from http://vesess.com/sandbox/form_template.html#
 */
 
-.event_espresso_form_wrapper form p { 
+.event_espresso_form_wrapper form p {
 	margin: 3px;
 	position: relative;
 }
-.event_espresso_form_wrapper form p.note { 
-	margin-left: 170px; 
-	font-size: 90%; 
-	color: #333; 
+.event_espresso_form_wrapper form p.note {
+	margin-left: 170px;
+	font-size: 90%;
+	color: #333;
 }
 .event_espresso_form_wrapper form fieldset {
-	border: none; 
-	margin: 10px 0; 
-	padding: 10px 0; 
+	border: none;
+	margin: 10px 0;
+	padding: 10px 0;
 }
-.event_espresso_form_wrapper form legend { 
-	font-weight: bold;  
+.event_espresso_form_wrapper form legend {
+	font-weight: bold;
 }
-.event_espresso_form_wrapper form fieldset div { padding: 0.25em 0; }
-
-.event_espresso_form_wrapper label,
-.event_espresso_form_wrapper span.label {
+.event_espresso_form_wrapper form fieldset div {
+	padding: 0.25em 0;
+}
+.event_espresso_form_wrapper label, .event_espresso_form_wrapper span.label {
 	display: block;
 	margin-right: 10px;
-	padding-right: 10px; 
+	padding-right: 10px;
 	position: relative;
 }
 .event_prices label, .event_time label {
@@ -325,37 +332,38 @@ ul#espresso_payment_buttons li form {
 .copy_dropdown_wrapper label {
 	margin-right: 0;
 }
-.event_espresso_form_wrapper p.coupon_code {text-align: left;}
-.event_espresso_form_wrapper p.coupon_code label,
-.event_espresso_form_wrapper p#groupon_code- label {
+.event_espresso_form_wrapper p.coupon_code {
+	text-align: left;
+}
+.event_espresso_form_wrapper p.coupon_code label, .event_espresso_form_wrapper p#groupon_code- label {
 	display: block;
 	font-size: 84.60%;
 	float: none;
- width: auto;
+	width: auto;
 	text-align: left;
 }
-.event_espresso_form_wrapper p.coupon_code input,
-.event_espresso_form_wrapper p#groupon_code- input {
+.event_espresso_form_wrapper p.coupon_code input, .event_espresso_form_wrapper p#groupon_code- input {
 	width: 200px;
 }
-.event_espresso_form_wrapper label.error,
-.event_espresso_form_wrapper span.error { 
-	color: #C00; 
-}
-.event_espresso_form_wrapper label em,
-.event_espresso_form_wrapper span.label em { 
-	font-size: 120%; 
-	font-style: normal; 
+.event_espresso_form_wrapper label.error, .event_espresso_form_wrapper span.error {
 	color: #C00;
-	padding-left: 3px; 
+	font-size:12px;
 }
-.event_espresso_form_wrapper div.controlset label,
-.event_espresso_form_wrapper div.controlset input { 
-	display: inline; 
-	float: none; 
+.event_espresso_form_wrapper label em, .event_espresso_form_wrapper span.label em {
+	font-style: normal;
+	color: #C00;
+	padding-left: 3px;
 }
-.event_espresso_form_wrapper div.controlset div { margin-left: 170px; }
-.event_espresso_form_wrapper div.buttonrow { margin-left: 180px; }
+.event_espresso_form_wrapper div.controlset label, .event_espresso_form_wrapper div.controlset input {
+	display: inline;
+	float: none;
+}
+.event_espresso_form_wrapper div.controlset div {
+	margin-left: 170px;
+}
+.event_espresso_form_wrapper div.buttonrow {
+	margin-left: 180px;
+}
 .submit {
 	margin:5px;
 	padding: 0.3em;
@@ -367,9 +375,8 @@ ul#espresso_payment_buttons li form {
 	height: auto;
 	margin-bottom: 0;
 }
-.btn_event_form_submit,
-.inline-button {
-	padding: 3px ;
+.btn_event_form_submit, .inline-button {
+	padding: 3px;
 	text-decoration: none;
 }
 .btn_event_form_submit:hover {
@@ -388,8 +395,31 @@ ul#espresso_payment_buttons li form {
 .copy_dropdown_wrapper select {
 	width: 300px;
 }
-.recaptchatable #recaptcha_response_field {left:0 !important;}
+.recaptchatable #recaptcha_response_field {
+	left:0 !important;
+}
 
+.event_espresso_form_wrapper label.error, .event_espresso_form_wrapper span.error {
+	
+	font-size:12px;
+	color: #C00;
+	width: auto;
+}
+.event_espresso_form_wrapper label em, .event_espresso_form_wrapper span.label em {
+	color: #C00;
+}
+.event_espresso_form_wrapper input.error {
+	border-color: #C00;
+	background-color: #FEF;
+}
+.event_espresso_form_wrapper input:focus, .event_espresso_form_wrapper input.error:focus, .event_espresso_form_wrapper textarea:focus {
+	background-color: #FFC;
+	border-color: #FC6;
+}
+.event_espresso_form_wrapper div.controlset label, .event_espresso_form_wrapper div.controlset input {
+	display: inline;
+	float: none;
+}
 /*___ Question groups ___*/
 
 #content .event_questions fieldset {
@@ -404,13 +434,11 @@ ul#espresso_payment_buttons li form {
 	margin: 0;
 	overflow: hidden;
 }
-#content .event_questions fieldset.single-radio li,
-#content .event_questions fieldset.multi-checkbox li {
+#content .event_questions fieldset.single-radio li, #content .event_questions fieldset.multi-checkbox li {
 	float: left;
 	margin-left: 10px;
 }
-#content .event_questions fieldset.single-radio li label,
-#content .event_questions fieldset.multi-checkbox li label {
+#content .event_questions fieldset.single-radio li label, #content .event_questions fieldset.multi-checkbox li label {
 	float: none;
 	line-height: 1;
 	width: auto;
@@ -420,7 +448,6 @@ ul#espresso_payment_buttons li form {
 	min-width: 100px;
 	text-align: left;
 }
-	
 /* Tables
 ------------------------------------------------------------------------------*/
 
@@ -428,18 +455,16 @@ ul#espresso_payment_buttons li form {
 	background: #fff;
 	border: 1px solid #bebebe;
 	margin: 0 auto;
-	text-align: left;	
+	text-align: left;
 	width: 96%;
 }
-.event-display-tables th,
-.event-display-tables td {
+.event-display-tables th, .event-display-tables td {
 	padding-left: 5px;
 }
 #content .event-display-tables td input {
 	line-height: 1;
 }
-#content .grid tr td,
-#content .grid tr th.header {
+#content .grid tr td, #content .grid tr th.header {
 	border-top: 1px solid #bebebe;
 	vertical-align: middle;
 }
@@ -450,25 +475,24 @@ ul#espresso_payment_buttons li form {
 	font-weight: bold;
 	font-size: 90%;
 }
-#content #event_espresso_shopping_cart table th  {
+#content #event_espresso_shopping_cart table th {
 	font-size: 100%;
 	text-align: left;
 }
-#event_espresso_attendee_verify th,
-#event_espresso_attendee_verify_questions th {
+#event_espresso_attendee_verify th, #event_espresso_attendee_verify_questions th {
 	text-align: left;
 	width: 35%;
 }
-#event_espresso_attendee_verify td,
-#event_espresso_attendee_verify_questions td {
+#event_espresso_attendee_verify td, #event_espresso_attendee_verify_questions td {
 	text-align: left;
 	width: 70%;
 }
-#cart-reg-details th,
-#cart-reg-details td {
+#cart-reg-details th, #cart-reg-details td {
 	padding: 5px;
 }
-#cart-reg-details tr + tr td  {padding: 6px 18px;} 
+#cart-reg-details tr + tr td {
+	padding: 6px 18px;
+}
 #event_espresso_shopping_cart table.price_list {
 	border: 1px solid #bfbfbf;
 	border-bottom: none;
@@ -488,10 +512,12 @@ table.price_list td.price_type {
 table.price_list td.price {
 	width: 45%;
 }
-table.price_list td.selection {	
+table.price_list td.selection {
 	width: 10%;
 }
-table.price_list td.selection select { margin-bottom: 0;}
+table.price_list td.selection select {
+	margin-bottom: 0;
+}
 table.price_list td.reg-allowed-limit {
 	font-size: 84.60%;
 	text-align: center;
@@ -500,27 +526,32 @@ pre {
 	height: 200px;
 	overflow: auto;
 }
-.pending_event{
+.pending_event {
 	padding: 5px;
 }
-.expired_event{
+.expired_event {
 	color: #F00;
 }
-
 /* >Classes - Messages etc
 ------------------------------------------------------------------------------*/
-.event-messages {margin: 1em 0;}
-#content .event-messages p {margin: .5em 30px;}
-span.ui-icon {float:left;margin: .7em 0 0 .3em;}
-
-
+.event-messages {
+	margin: 1em 0;
+}
+#content .event-messages p {
+	margin: .5em 30px;
+}
+span.ui-icon {
+	float:left;
+	margin: .7em 0 0 .3em;
+}
 /*** clearfix clearing rules ***/	
-.clearfix:before,
-.clearfix:after {
+.clearfix:before, .clearfix:after {
 	content: "";
 	display: table;
 }
 .clearfix:after {
 	clear: both;
 }
-.clearfix {zoom:1;} /* for IE - should be in a wrapped in a CC */
+.clearfix {
+	zoom:1;
+} /* for IE - should be in a wrapped in a CC */
