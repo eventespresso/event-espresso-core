@@ -4,24 +4,10 @@
 //This is an group of functions for querying all of the events in your databse.
 //This file should be stored in your "/wp-content/uploads/espresso/templates/" directory.
 //Note: All of these functions can be overridden using the "Custom Files" addon. The custom files addon also contains sample code to display ongoing events
-// enqueue thickbox script & styles
-// this needs wrapping in a conditional to test for option setting
+
 global $org_options;
 if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-}
-if (isset($org_options['template_settings']['thumbnail_popup_lists']) && $org_options['template_settings']['thumbnail_popup_lists'] == 'Y') {
-	add_action('wp_footer', 'load_thickbox');
-	add_action('wp_print_styles', 'add_thickbox_styles');
-
-	function load_thickbox() {
-		wp_print_scripts('thickbox');
-	}
-
-	function add_thickbox_styles() {
-		wp_enqueue_style('thickbox');
-	}
-
 }
 
 if (!function_exists('display_all_events')) {

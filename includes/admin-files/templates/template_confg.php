@@ -12,7 +12,6 @@ function event_espresso_manage_templates() {
 		$org_options['template_settings']['display_short_description_in_event_list'] = $_POST['display_short_description_in_event_list'];
 		$org_options['template_settings']['display_address_in_event_list'] = $_POST['display_address_in_event_list'];
 		$org_options['template_settings']['display_address_in_regform'] = $_POST['display_address_in_regform'];
-		$org_options['template_settings']['thumbnail_popup_lists'] = $_POST['thumbnail_popup_lists'];
 		$org_options['template_settings']['use_custom_templates'] = empty($_POST['use_custom_templates']) ? '' : $_POST['use_custom_templates'];
 		$org_options['style_settings']['enable_default_style'] = $_POST['enable_default_style'];
 		$org_options['themeroller']['themeroller_style'] = empty($_POST['themeroller_style']) ? '' : $_POST['themeroller_style'];
@@ -141,13 +140,7 @@ function event_espresso_manage_templates() {
 														</th>
 														<td><?php echo select_input('display_address_in_event_list', $values, isset($org_options['template_settings']['display_address_in_event_list']) ? $org_options['template_settings']['display_address_in_event_list'] : 'N', 'id="display_address_in_event_list"'); ?></td>
 													</tr>
-													<tr>
-														<th> <label for="display_thickbox_for_thumbs">
-																<?php _e('Enable Thumbnail Pop-ups', 'event_espresso'); ?>
-															</label>
-														</th>
-														<td><?php echo select_input('thumbnail_popup_lists', $values, isset($org_options['template_settings']['thumbnail_popup_lists']) ? $org_options['template_settings']['thumbnail_popup_lists'] : 'N', 'id="display_thickbox_for_thumbs"'); ?></td>
-													</tr>
+													
 													<tr>
 														<td colspan="2"><strong>
 																<?php _e('Registration Pages', 'event_espresso'); ?>
@@ -286,4 +279,3 @@ shortcodes in your event description.', 'event_espresso'); ?>
 	</script>
 	<?php
 }
-
