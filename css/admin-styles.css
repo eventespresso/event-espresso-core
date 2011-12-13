@@ -1425,6 +1425,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
 #dynamicMetaInput li select, #dynamicMetaInput li input {
 	width: 150px;
 }
+#mailchimp-options select {width: 220px;}
 /*___ Questions & Q groups ___*/
 #add-edit-new-group table ul li input[type=checkbox] {
 	margin-right: 10px;
