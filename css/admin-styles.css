@@ -1337,6 +1337,7 @@ form.espresso_form label.inline {
 form.espresso_form input {
 	width:175px;
 }
+form.espresso_form .quicktags-toolbar input {width: auto;}
 form.espresso_form input#payment_subject {
 	width: 250px;
 }
