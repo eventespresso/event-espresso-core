@@ -1030,7 +1030,8 @@ if (!function_exists('espresso_calendar')) {
 							
 						 	element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						 }
-						
+						//Shows spaces available
+						//element.find('.fc-event-title').after($jaer('<p class="your-class-name">Spaces: ' + <?php echo $event->reg_limit ?> + '</p>'));
 						<?php 
 						if ($espresso_calendar['show_time'] == 'true'){
 						?>
