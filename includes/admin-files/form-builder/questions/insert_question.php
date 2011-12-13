@@ -26,7 +26,7 @@ function event_espresso_form_builder_insert() {
 			'wp_user' => $espresso_wp_user
 	);
 
-	$sql_data = array('%s', '%s', '%s', '%d', '%d', '%d', '%d');
+	$sql_data = array('%s', '%s', '%s', '%s', '%s', '%d', '%d');
 	if ($wpdb->insert(EVENTS_QUESTION_TABLE, $sql, $sql_data)) {
 		$notices['updates'][] = __('The question ', 'event_espresso') . $question . __(' has been added', 'event_espresso');
 	} else {
