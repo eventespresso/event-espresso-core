@@ -417,7 +417,7 @@ function email_by_session_id($session_id, $send_attendee_email = TRUE, $send_adm
 	foreach ($attendees as $attendee_id) {
 		$data = espresso_prepare_email_data($attendee_id, $multi_reg);
 		if ($send_attendee_email == 'true') {
-			$attendee_email_params[] = espresso_prepare_admin_email($data);
+			$attendee_email_params[] = espresso_prepare_email($data);
 		}
 		if ($send_admin_email == 'true') {
 			$email_params = espresso_prepare_admin_email($data);
