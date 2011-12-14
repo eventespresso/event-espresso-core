@@ -127,8 +127,8 @@ function event_espresso_display_realauth_settings() {
 				</tr>
 				<tr>
 					<th><label for="currency_format">
-							<?php _e('Country Currency', 'event_espresso'); ?>
-							<?php apply_filters('espresso_help', 'realauth_currency_info'); ?>
+							<?php _e('Country Currency', 'event_espresso');
+							apply_filters('espresso_help', 'realauth_currency_info'); ?>
 						</label></th>
 					<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 							<option value="<?php echo $payment_settings['realauth']['currency_format']; ?>"><?php echo $payment_settings['realauth']['currency_format']; ?></option>

@@ -199,7 +199,8 @@ function event_espresso_display_mwarrior_settings() {
 						</li>
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the Test Mode for Merchant Warrior? ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'sandbox_info') ?>
+								<?php _e('Use the Test Mode for Merchant Warrior? ', 'event_espresso');
+								echo apply_filters('espresso_help', 'sandbox_info') ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['mwarrior']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 
