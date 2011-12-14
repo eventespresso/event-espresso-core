@@ -405,6 +405,13 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 						$ext_att_data_source = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session']['id'], 'lname' => $att_data_source['x_attendee_lname'][$k], 'fname' => $v, 'email' => $att_data_source['x_attendee_email'][$k], 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
 			$questions_in = '';
 
+							//Debug
+							//echo "<pre questions - >".print_r($questions,true)."</pre>";
+							
+							if ( !is_array($questions) && !empty($questions)) {
+								$questions = unserialize($questions);
+							}
+							
 							foreach ($questions as $g_id)
 								$questions_in .= $g_id . ',';
 
