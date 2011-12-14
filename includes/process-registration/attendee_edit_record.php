@@ -67,7 +67,10 @@ function attendee_edit_record() {
 
 	$response_source = $_POST;
 	$questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id . " ");
-	$question_groups = unserialize($questions->question_groups);
+	//$question_groups = unserialize($questions->question_groups);
+	if ( !is_array($questions) && !empty($questions)) {
+		$question_groups = unserialize($questions->question_groups);
+	}
 	$event_meta = unserialize($questions->event_meta);
 
 	if (isset($event_meta['add_attendee_question_groups']) && $event_meta['add_attendee_question_groups'] != NULL) {
