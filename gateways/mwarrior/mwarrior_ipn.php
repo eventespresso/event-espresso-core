@@ -20,6 +20,10 @@ if ($mwarrior_settings['use_sandbox'] == '1') {
 
 // Check validity and write down it
 if ($mwarrior->validateIpn()) {
+	global $wpdb;
+	$sql = "SELECT fname, lname FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '" . $attendee_id . "'";
+	$result = $wpdb->get_row($sql, ARRAY_A);
+	extract($result);
 
 	//store the results in reusable variables
 	$txn_type = "CC";
