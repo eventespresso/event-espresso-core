@@ -124,6 +124,11 @@ function event_espresso_get_event_meta($event_id) {
 	return $event_meta;
 }
 
+function espresso_display_additional_attendees() {
+	$html = '<p class="event_form_field additional_header" id="additional_header">';
+	$html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ', 'event_espresso');
+}
+
 if (!function_exists('event_espresso_additional_attendees')) {
 
 	function event_espresso_additional_attendees($event_id=0, $additional_limit=2, $available_spaces=999, $label='', $show_label = true, $event_meta = '') {

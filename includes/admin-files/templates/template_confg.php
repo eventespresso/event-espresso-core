@@ -140,7 +140,7 @@ function event_espresso_manage_templates() {
 														</th>
 														<td><?php echo select_input('display_address_in_event_list', $values, isset($org_options['template_settings']['display_address_in_event_list']) ? $org_options['template_settings']['display_address_in_event_list'] : 'N', 'id="display_address_in_event_list"'); ?></td>
 													</tr>
-													
+
 													<tr>
 														<td colspan="2"><strong>
 																<?php _e('Registration Pages', 'event_espresso'); ?>

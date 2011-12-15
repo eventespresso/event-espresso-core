@@ -41,7 +41,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					</tr>
 					<tr>
 						<th><label for="surcharge">
-								<?php _e('Default Surcharge','event_espresso'); ?> 
+								<?php _e('Default Surcharge','event_espresso'); ?>
 							</label></th>
 						<td><input type="text" name="surcharge" size="2" value="<?php echo (!is_numeric($org_options['surcharge']))?'0.00':$org_options['surcharge'];?>" />
 							<br />
@@ -137,7 +137,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					</tr>
 					<tr>
 						<th><?php _e('How many days into the future?', 'event_espresso'); ?></th>
-						<td><input name="events_in_dasboard" size="5" style="width:50px;" type="text" value="<?php echo isset($org_options['events_in_dasboard']) || $org_options['events_in_dasboard'] == ''? '30':stripslashes_deep($org_options['events_in_dasboard']);?>" /></td>
+						<td><input name="events_in_dasboard" size="5" style="width:50px;" type="text" value="<?php echo stripslashes_deep($org_options['events_in_dasboard']);?>" /></td>
 					</tr>
 					<tr>
 						<td colspan="2"><strong>

@@ -431,7 +431,7 @@ function email_by_session_id($session_id, $send_attendee_email = TRUE, $send_adm
 			$temp_email_list[] = $attendee_email_param['send_to'];
 			$concat_attendee_email_params[$attendee_email_param['send_to']] = $attendee_email_param;
 		} else {
-			$concat_attendee_email_params[$attendee_email_param['send_to']]['email_subject'] .= " | " . $attendee_email_param['email_subject'];
+			$concat_attendee_email_params[$attendee_email_param['send_to']]['email_subject'] = $attendee_email_param['email_subject'];
 			$concat_attendee_email_params[$attendee_email_param['send_to']]['email_body'] .= $attendee_email_param['email_body'];
 		}
 	}
@@ -489,8 +489,13 @@ if (!function_exists('event_espresso_send_email')) {
 		extract($params);
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		$headers .= "From: " . $org_options['contact_email'] . "\r\n";
-		$headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
+		if ($org_options['email_fancy_headers']=='Y') {
+			$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
+			$headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+		} else {
+			$headers .= "From: " . $org_options['contact_email'] . "\r\n";
+			$headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
+		}
 		$headers .= "Content-Type: text/html; charset=utf-8\r\n";
 		//Debug
 		/* echo '<hr />';
@@ -606,8 +611,13 @@ if (!function_exists('event_espresso_send_cancellation_notice')) {
 		}
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		$headers .= "From: " . $org_options['contact_email'] . "\r\n";
-		$headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
+		if ($org_options['email_fancy_headers']=='Y') {
+			$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
+			$headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+		} else {
+			$headers .= "From: " . $org_options['contact_email'] . "\r\n";
+			$headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
+		}
 		$headers .= "Content-Type: text/html; charset=utf-8\r\n";
 		$message_top = "<html><body>";
 		$message_bottom = "</html></body>";

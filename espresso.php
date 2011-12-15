@@ -123,9 +123,11 @@ function espresso_init_session() {
 		session_start();
 	}
 
-	if ((isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url']
+	if ((isset($_REQUEST['page_id'])
+					&& ($_REQUEST['page_id'] == $org_options['return_url']
 					|| $_REQUEST['page_id'] == $org_options['notify_url']))
-					|| !isset($_SESSION['espresso_session']['id']) || $_SESSION['espresso_session']['id'] == array()) {
+					|| !isset($_SESSION['espresso_session']['id'])
+					|| $_SESSION['espresso_session']['id'] == array()) {
 
 		$_SESSION['espresso_session'] = '';
 		//Debug
@@ -721,8 +723,15 @@ if (!function_exists('event_espresso_run')) {
 	}
 
 }
-add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');
 
+function espresso_cancelled() {
+	global $org_options;
+	$_REQUEST['page_id'] = $org_options['return_url'];
+	espresso_init_session();
+}
+
+add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');
+add_shortcode('ESPRESSO_CANCELLED', 'espresso_cancelled');
 
 if (isset($_REQUEST['authAmountString'])) {
 	add_action('posts_selection', 'event_espresso_txn');
@@ -789,7 +798,7 @@ if (!empty($_REQUEST['iCal'])) {
 }
 
 // PUE Auto Upgrades stuff
-if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php')) {
+if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php') && !empty($org_options)) {
 	//let's get the client api key for updates
 	global $org_options;
 

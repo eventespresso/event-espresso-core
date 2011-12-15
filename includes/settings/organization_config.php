@@ -21,23 +21,19 @@ function organization_config_mnu() {
 		$org_options['organization_state'] = $_POST['org_state'];
 		$org_options['organization_zip'] = $_POST['org_zip'];
 		$org_options['organization_country'] = $_POST['org_country'];
-		$org_options['organization_timezone'] = isset($_POST['organization_timezone']) ? $_POST['organization_timezone'] : 'America/New_York';
 		$org_options['contact_email'] = $_POST['email'];
-		$org_options['currency_format'] = isset($_POST['currency_format']) ? $_POST['currency_format'] : 'USD';
-		$org_options['currency_symbol'] = isset($_POST['currency_format']) ? $_POST['currency_format'] : 'USD';
-		$org_options['events_listing_type'] = isset($_POST['events_listing_type']) ? $_POST['events_listing_type'] : '';
 		$org_options['expire_on_registration_end'] = $_POST['expire_on_registration_end'];
 		$org_options['event_page_id'] = $_POST['event_page_id'];
 		$org_options['return_url'] = $_POST['return_url'];
 		$org_options['cancel_return'] = $_POST['cancel_return'];
 		$org_options['notify_url'] = $_POST['notify_url'];
-		$org_options['use_sandbox'] = isset($_POST['use_sandbox']) ? $_POST['use_sandbox'] : '';
 		$org_options['events_in_dasboard'] = $_POST['events_in_dasboard'];
 		$org_options['default_mail'] = $_POST['default_mail'];
 		$org_options['payment_subject'] = $_POST['payment_subject'];
 		$org_options['payment_message'] = esc_html($_POST['payment_message']);
 		$org_options['message'] = esc_html($_POST['success_message']);
 		$org_options['email_before_payment'] = $_POST['email_before_payment'];
+		$org_options['email_fancy_headers'] = $_POST['email_fancy_headers'];
 		$org_options['use_captcha'] = $_POST['use_captcha'];
 		$org_options['recaptcha_publickey'] = $_POST['recaptcha_publickey'];
 		$org_options['recaptcha_privatekey'] = $_POST['recaptcha_privatekey'];
@@ -364,7 +360,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																</select>
 																<br />
 																<span class="description">
-																	<?php _e('This should be a page on your website that contains a payment cancelled message. <br />No short tags are needed and should hidden from your navigation, <br />but still viewable to the public (not password protected.)', 'event_espresso'); ?>
+																	<?php echo sprintf(__("This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)", 'event_espresso'), '<br />', '<span class="highlight">[ESPRESSO_CANCELLED]</span>', '<br />'); ?>
 																</span></td>
 														</tr>
 														</tbody>
@@ -388,6 +384,19 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 											</h3>
 											<div class="inside">
 												<div class="padding"><a name="email-settings" id="email-settings"></a>
+													<p>
+														<?php _e('Use fancy email headers?', 'event_espresso');
+														echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?>
+														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=fancyemailheaders"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+													</p>
+													<?php ###### Popup help box #######    ?>
+													<div id="fancyemailheaders" class="pop-help" style="display:none">
+														<h2>
+															<?php _e('Fancy Email Headers', 'event_espresso'); ?>
+														</h2>
+														<p><?php echo sprintf(__("This option enables the use of the email header format %s From: name %s %s Reply-to: name %s %s.", 'event_espresso'), '<br />', '&lt;email@address.com&gt;', '<br />', '&lt;email@address.com&gt;', '<br />'); ?></p>
+														<p><?php _e("You should only use this if you know it will not cause email delivery problems. Some servers will not send emails that use this format.", 'event_espresso'); ?></p>
+													</div>
 													<h4>
 														<?php _e('Payment Confirmation Email:', 'event_espresso'); ?>
 													</h4>
@@ -406,13 +415,13 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																<td><input id="payment_subject" name="payment_subject" size="50" class="regular-text" type="text" value="<?php echo stripslashes_deep($org_options['payment_subject']); ?>" /></td>
 															</tr>
 															<tr>
-																<td colspan="2">																
+																<td colspan="2">
 																<?php
 																	$content = espresso_admin_format_content($org_options['payment_message']);
 																	$editor_id = 'payment_message';
 																	$settings = array( 'textarea_name' => 'payment_message' );
-																	wp_editor( $content, $editor_id, $settings );  
-																?> 
+																	wp_editor( $content, $editor_id, $settings );
+																?>
 															<?php /*		<div class="visual-toggle">
 																		<p><a class="toggleVisual">
 																				<?php _e('Visual', 'event_espresso'); ?>
@@ -456,8 +465,8 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	$content = espresso_admin_format_content($org_options['message']);
 																	$editor_id = 'reg-conf-email-mce';
 																	$settings = array( 'textarea_name' => 'success_message' );
-																	wp_editor( $content, $editor_id, $settings ); 
-																?> 
+																	wp_editor( $content, $editor_id, $settings );
+																?>
 															<?php /*	<div class="visual-toggle">
 																		<p><a class="toggleVisual">
 																				<?php _e('Visual', 'event_espresso'); ?>
@@ -613,6 +622,8 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 		//]]>
 	</script>
 	<?php
-	espresso_tiny_mce();
+	if (!function_exists('wp_editor')) {
+		espresso_tiny_mce();
+	}
 }
 
