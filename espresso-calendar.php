@@ -739,7 +739,7 @@ if (!function_exists('espresso_calendar')) {
 		if ($event_category_id != "" ){
 			$sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, ese.start_time, ese.end_time FROM ". EVENTS_DETAIL_TABLE . " e ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
-			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ONc.id = r.cat_id ";
+			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
 			$sql .= " WHERE e.is_active = 'Y' ";
 			$sql .= " AND e.event_status != 'D' ";
@@ -770,8 +770,9 @@ if (!function_exists('espresso_calendar')) {
 		}
 		$sql .= " GROUP BY e.id ORDER BY date(start_date), id ASC";
 
-		//Print the results of the query
-		//echo $sql;
+		//Debug
+		//echo '<p>$sql - '.$sql.'</p>';
+		
 
 		// grab the thumbnail size from calendar options settings
 		if(empty($espresso_calendar['calendar_thumb_size'])) {
@@ -1031,7 +1032,7 @@ if (!function_exists('espresso_calendar')) {
 						 	element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						 }
 						//Shows spaces available
-						//element.find('.fc-event-title').after($jaer('<p class="your-class-name">Spaces: ' + <?php echo $event->reg_limit ?> + '</p>'));
+						//element.find('.fc-event-title').after($jaer('<p class="time-display-block event-start-time">Spaces: <?php echo get_number_of_attendees_reg_limit($event->id, 'num_attendees_slash_reg_limit', 'All Seats Reserved'); ?> </p>'));
 						<?php 
 						if ($espresso_calendar['show_time'] == 'true'){
 						?>
