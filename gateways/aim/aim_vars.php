@@ -73,6 +73,10 @@ function espresso_display_aim($payor_data, $event_cost, $attendee_id) {
 			</label>
 			<input class="required" type="text" name="exp_date" id="exp_date" />
 		</p>
+		<p>
+        <label for="ccv_code"><?php _e('CCV Code', 'event_espresso'); ?></label>
+        <input type="text" name="ccv_code" id="ccv_code" />
+    </p>
 		<input name="amount" type="hidden" value="<?php echo number_format($event_cost, 2) ?>" />
 		<input name="invoice_num" type="hidden" value="<?php echo 'au-' . event_espresso_session_id() ?>" />
 		<input name="authnet_aim" type="hidden" value="true" />

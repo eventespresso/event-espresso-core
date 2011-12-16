@@ -22,6 +22,7 @@ function espresso_aim_process_payment() {
 	$transaction->amount = $_POST['amount'];
 	$transaction->card_num = $_POST['card_num'];
 	$transaction->exp_date = $_POST['exp_date'];
+	$transaction->card_code = $_POST['ccv_code'];
 	$transaction->first_name = $_POST['first_name'];
 	$transaction->last_name = $_POST['last_name'];
 	$transaction->email = $_POST['email'];
