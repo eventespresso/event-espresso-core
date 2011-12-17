@@ -569,6 +569,10 @@ if (!function_exists('add_espresso_stylesheet')) {
 
 	function add_espresso_stylesheet() {
 		global $org_options;
+		
+		//Debug
+		//echo '<pre>'.print_r($org_options, true).'</pre>';
+		
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
@@ -611,8 +615,10 @@ if (!function_exists('add_espresso_stylesheet')) {
 				}
 				wp_enqueue_style('espresso_themeroller_base');
 
-				//Load the smoothness style by default
-				$org_options['themeroller']['themeroller_style'] = isset($org_options['themeroller']['themeroller_style']) && !empty($org_options['themeroller']['themeroller_style']) ? $org_options['themeroller']['themeroller_style'] : 'smoothness';
+				//Load the smoothness style by default<br />
+				if ( !isset($org_options['themeroller']['themeroller_style']) || empty($org_options['themeroller']['themeroller_style']) ){
+					$org_options['themeroller']['themeroller_style'] = 'smoothness';
+				}
 
 				//Load the selected themeroller style
 				wp_register_style('espresso_themeroller', $themeroller_style_path . $org_options['themeroller']['themeroller_style'] . '/style.css');
