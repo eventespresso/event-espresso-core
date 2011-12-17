@@ -220,6 +220,9 @@ function event_espresso_display_2checkout_settings() {
 							<option value="THB">
 								<?php _e('Thai Baht', 'event_espresso'); ?>
 							</option>
+							<option value="INR">
+								<?php _e('Indian Rupee (Rs.)', 'event_espresso'); ?>
+							</option>
 						</select></td>
 				</tr>
 				<tr>

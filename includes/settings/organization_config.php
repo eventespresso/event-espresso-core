@@ -59,53 +59,33 @@ function organization_config_mnu() {
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		$currency_format = getCountryFullData($org_options['organization_country']);
 		switch ($currency_format['iso_code_3']) {
-			case 'USA':
-				$org_options['currency_symbol'] = '$';
+			case 'USA': $org_options['currency_symbol'] = '$';
 				break;
-
-			case 'CHE':
-				$org_options['currency_symbol'] = 'Fr.';
+			case 'CHE': $org_options['currency_symbol'] = 'Fr.';
 				break;
-
-			case 'AUS':
-				$org_options['currency_symbol'] = 'A $';
+			case 'AUS': $org_options['currency_symbol'] = 'A $';
 				break;
-
-			case 'GBR':
-				$org_options['currency_symbol'] = '&pound;';
+			case 'GBR': $org_options['currency_symbol'] = '&pound;';
 				break;
-
-			case 'NOR':
-				$org_options['currency_symbol'] = 'NOK ';
+			case 'NOR': $org_options['currency_symbol'] = 'NOK ';
 				break;
-
-			case 'BRA':
-				$org_options['currency_symbol'] = 'R$';
+			case 'BRA': $org_options['currency_symbol'] = 'R$';
 				break;
-
-			case 'CAN':
-				$org_options['currency_symbol'] = 'C $';
+			case 'CAN': $org_options['currency_symbol'] = 'C $';
 				break;
-
-			case 'JPN':
-				$org_options['currency_symbol'] = '&yen;';
+			case 'JPN': $org_options['currency_symbol'] = '&yen;';
 				break;
-
-			case 'SWE':
-				$org_options['currency_symbol'] = 'Kr. ';
+			case 'SWE': $org_options['currency_symbol'] = 'Kr. ';
 				break;
-
-			case 'DNK':
-				$org_options['currency_symbol'] = 'DKK ';
+			case 'DNK': $org_options['currency_symbol'] = 'DKK ';
 				break;
-
-			case 'ZAF':
-				$org_options['currency_symbol'] = 'R ';
+			case 'ZAF': $org_options['currency_symbol'] = 'R ';
 				break;
-
-
-			default:
-				$org_options['currency_symbol'] = '$';
+			case 'IND': $org_options['currency_symbol'] = 'Rs';
+				break;
+			case 'TUR' : $org_options['currency_symbol'] = '&#8356;';
+				break;
+			default: $org_options['currency_symbol'] = '$';
 				break;
 		}
 		if (getCountryZoneId($org_options['organization_country']) == '2') {
@@ -416,35 +396,35 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 															</tr>
 															<tr>
 																<td colspan="2">
-																<?php
+																	<?php
 																	$content = espresso_admin_format_content($org_options['payment_message']);
 																	$editor_id = 'payment_message';
-																	$settings = array( 'textarea_name' => 'payment_message' );
-																	wp_editor( $content, $editor_id, $settings );
-																?>
-															<?php /*		<div class="visual-toggle">
-																		<p><a class="toggleVisual">
-																				<?php _e('Visual', 'event_espresso'); ?>
-																			</a> <a class="toggleHTML">
-																				<?php _e('HTML', 'event_espresso'); ?>
-																			</a></p>
-																	</div>
-																	<div id="payment-conf-email" class="postbox">
-																		<textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo espresso_admin_format_content($org_options['payment_message']); ?></textarea>
-																		<table id="payment-confirmation-form" cellspacing="0">
-																			<tbody>
-																				<tr>
-																					<td class="aer-word-count"></td>
-																					<td class="autosave-info"><span>
-																							<p></p>
-																						</span></td>
-																				</tr>
-																			</tbody>
-																		</table>  */ ?>
-																		<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-																					<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-																				</a></span></p>
-															<?php //	</div>  ?></td>
+																	$settings = array('textarea_name' => 'payment_message');
+																	wp_editor($content, $editor_id, $settings);
+																	?>
+																	<?php /* 		<div class="visual-toggle">
+																	  <p><a class="toggleVisual">
+																	  <?php _e('Visual', 'event_espresso'); ?>
+																	  </a> <a class="toggleHTML">
+																	  <?php _e('HTML', 'event_espresso'); ?>
+																	  </a></p>
+																	  </div>
+																	  <div id="payment-conf-email" class="postbox">
+																	  <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo espresso_admin_format_content($org_options['payment_message']); ?></textarea>
+																	  <table id="payment-confirmation-form" cellspacing="0">
+																	  <tbody>
+																	  <tr>
+																	  <td class="aer-word-count"></td>
+																	  <td class="autosave-info"><span>
+																	  <p></p>
+																	  </span></td>
+																	  </tr>
+																	  </tbody>
+																	  </table> */ ?>
+																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
+																				<?php _e('View Custom Email Tags', 'event_espresso'); ?>
+																			</a></span></p>
+																	<?php //	</div>  ?></td>
 															</tr>
 														</tbody>
 													</table>
@@ -461,36 +441,36 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 															</tr>
 															<tr>
 																<td colspan="2">
-																<?php
+																	<?php
 																	$content = espresso_admin_format_content($org_options['message']);
 																	$editor_id = 'reg-conf-email-mce';
-																	$settings = array( 'textarea_name' => 'success_message' );
-																	wp_editor( $content, $editor_id, $settings );
-																?>
-															<?php /*	<div class="visual-toggle">
-																		<p><a class="toggleVisual">
-																				<?php _e('Visual', 'event_espresso'); ?>
-																			</a> <a  class="toggleHTML">
-																				<?php _e('HTML', 'event_espresso'); ?>
-																			</a></p>
-																	</div>
-																	<div id="reg-conf-email" class="postbox">
-																		<textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo espresso_admin_format_content($org_options['message']); ?></textarea>
-																		<table id="email-confirmation-form" cellspacing="0">
-																			<tbody>
-																				<tr>
-																					<td class="aer-word-count"></td>
-																					<td class="autosave-info"><span>
-																							<p></p>
-																						</span></td>
-																				</tr>
-																			</tbody>
-																		</table>  */ ?>
-																		<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-																					<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-																				</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
-																					<?php _e('Example', 'event_espresso'); ?>
-																				</a> </span></p>
+																	$settings = array('textarea_name' => 'success_message');
+																	wp_editor($content, $editor_id, $settings);
+																	?>
+																	<?php /* 	<div class="visual-toggle">
+																	  <p><a class="toggleVisual">
+																	  <?php _e('Visual', 'event_espresso'); ?>
+																	  </a> <a  class="toggleHTML">
+																	  <?php _e('HTML', 'event_espresso'); ?>
+																	  </a></p>
+																	  </div>
+																	  <div id="reg-conf-email" class="postbox">
+																	  <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo espresso_admin_format_content($org_options['message']); ?></textarea>
+																	  <table id="email-confirmation-form" cellspacing="0">
+																	  <tbody>
+																	  <tr>
+																	  <td class="aer-word-count"></td>
+																	  <td class="autosave-info"><span>
+																	  <p></p>
+																	  </span></td>
+																	  </tr>
+																	  </tbody>
+																	  </table> */ ?>
+																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
+																				<?php _e('View Custom Email Tags', 'event_espresso'); ?>
+																			</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
+																				<?php _e('Example', 'event_espresso'); ?>
+																			</a> </span></p>
 																	<?php //</div></td>  */ ?>
 															</tr>
 														</tbody>
