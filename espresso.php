@@ -1,5 +1,4 @@
 <?php
-
 /*
   Plugin Name: Event Espresso
   Plugin URI: http://eventespresso.com/
@@ -110,6 +109,8 @@ define("EVENT_ESPRESSO_GATEWAY_DIR", $event_espresso_gateway_dir);
 define("EVENT_ESPRESSO_GATEWAY_URL", $wp_content_url . '/uploads/espresso/gateways/');
 
 //End - Define dierectory structure for uploads
+
+
 //Start the session
 function espresso_init_session() {
 	global $org_options;
@@ -144,36 +145,36 @@ function espresso_init_session() {
 		$_SESSION['espresso_session']['grand_total'] = '';
 	}
 }
-
 add_action('plugins_loaded', 'espresso_init_session', 1);
 
 do_action('hook_espresso_after_init_session');
 
+
 //Handles importing of csv files
 function espresso_check_for_export() {
 	if (isset($_REQUEST['export'])) {
-		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Export.class.php')) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Export.class.php');
+		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Export.class.php')) {
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Export.class.php');
 			$EE_Export = EE_Export::instance();
 			$EE_Export->export();
 		}
 	}
 }
-
 add_action('plugins_loaded', 'espresso_check_for_export');
+
 
 //Handles exporting of csv files
 function espresso_check_for_import() {
 	if (isset($_REQUEST['import'])) {
-		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Import.class.php')) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/EE_Import.class.php');
+		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Import.class.php')) {
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Import.class.php');
 			$EE_Import = EE_Import::instance();
 			$EE_Import->import();
 		}
 	}
 }
-
 add_action('plugins_loaded', 'espresso_check_for_import');
+
 
 //Load the Event Espresso HTML meta
 function espresso_info_header() {
@@ -237,9 +238,6 @@ if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
 }
 
 
-require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/SimpleMath.php';
-global $simpleMath;
-$simpleMath = new SimpleMath();
 
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Event.php';
 require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Attendee.php';
