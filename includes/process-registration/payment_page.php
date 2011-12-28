@@ -4,7 +4,7 @@
 //This is the initial PayPal button
 function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupon_code ='') {
 
-	global $wpdb, $org_options, $simpleMath;
+	global $wpdb, $org_options;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
@@ -124,8 +124,8 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 	//print_r(early_discount_amount($event_id, $event_cost));
 
 	$event_price = number_format($event_cost, 2, '.', '');
-	$event_price_x_attendees = number_format($event_cost * $num_people, 2, '.', '');
-	$event_original_cost = number_format($simpleMath->multiply($event_cost, $num_people), 2, '.', '');
+	$event_price_x_attendees = number_format( $event_cost * $num_people, 2, '.', '' );
+	$event_original_cost = number_format( $event_cost * $num_people, 2, '.', '' );
 
 	/*
 	 * Added for seating chart addon
