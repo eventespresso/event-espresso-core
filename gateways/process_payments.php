@@ -85,19 +85,6 @@ function event_espresso_txn() {
 				} else {
 					require_once($ideal_folder . "report.php");
 				}
-
-				//Load PayPal IPN
-			} elseif ($payment_settings['paypal_pro']['active'] == true
-							&& !empty($_REQUEST['paypal_pro']) && $_REQUEST['paypal_pro'] == 'true'
-							&& !empty($_REQUEST['id'])) {
-
-				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php")) {
-					//Moved files
-					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php");
-				} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal_pro/DoDirectPayment.php")) {
-					//Default files
-					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal_pro/DoDirectPayment.php");
-				}
 			} elseif (get_option('events_eway_active') == 'true' && isset($_REQUEST['AccessPaymentCode'])) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/ewaypaymentprocess.php")) {
 					//Moved files

@@ -16,7 +16,7 @@ function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 	$twocheckout_cur = empty($payment_settings['2checkout']['currency_format']) ? 'USD' : $payment_settings['2checkout']['currency_format'];
 	$bypass_payment_page = ($payment_settings['2checkout']['bypass_payment_page'] == 'N') ? false : true;
 	$use_sandbox = $payment_settings['2checkout']['use_sandbox'] == 'Y' ? true : false;
-	if ($use_sandbox == true) {
+	if ($use_sandbox) {
 		// Enable test mode if needed
 		$my2checkout->enableTestMode();
 	}
@@ -45,7 +45,7 @@ function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 		wp_deregister_script('jquery.validate.pack');
 	}
 
-	if ($use_sandbox == true) {
+	if ($use_sandbox) {
 		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __(' 2checkout.com Debug Mode Is Turned On', 'event_espresso') . '</h3>';
 		$my2checkout->dump_fields();
 	}
