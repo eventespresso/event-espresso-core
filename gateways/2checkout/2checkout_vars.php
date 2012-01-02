@@ -4,14 +4,13 @@
  * Gets included in /gateways/gateway_display.php
  */
 function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
-	global $org_options, $payment_settings;
+	global $org_options, $payment_settings, $wpdb;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
 	include_once ('2checkout.php');
 	$my2checkout = new TwoCo();
 	echo '<!-- Event Espresso 2checkout Gateway Version ' . $my2checkout->twocheckout_gateway_version . '-->';
-	//$payment_settings = get_option('payment_data_'.$espresso_wp_user);
 	$twocheckout_id = empty($payment_settings['2checkout']['2checkout_id']) ? 0 : $payment_settings['2checkout']['2checkout_id'];
 	$twocheckout_cur = empty($payment_settings['2checkout']['currency_format']) ? 'USD' : $payment_settings['2checkout']['currency_format'];
 	$bypass_payment_page = ($payment_settings['2checkout']['bypass_payment_page'] == 'N') ? false : true;
@@ -19,6 +18,20 @@ function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 	if ($use_sandbox) {
 		// Enable test mode if needed
 		$my2checkout->enableTestMode();
+	}
+	$session_id = $wpdb->get_var("SELECT attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id='" . $attendee_id . "'");
+	$sql = "SELECT ed.id, ed.event_name, ed.event_desc, ac.cost, ac.quantity FROM " . EVENTS_DETAIL_TABLE . " ed ";
+	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " a ON ed.id=a.event_id ";
+	$sql .= " JOIN " . EVENTS_ATTENDEE_COST_TABLE . " ac ON a.id=ac.attendee_id ";
+	$sql .= " WHERE a.attendee_session='" . $session_id . "'";
+	$tickets = $wpdb->get_results($sql, ARRAY_A);
+	$item_num = 1;
+	foreach($tickets as $ticket) {
+		$my2checkout->addField('c_prod_' . $item_num, $ticket['id'] . ',' . $ticket['quantity']);
+		$my2checkout->addField('c_name_' . $item_num, $ticket['event_name']);
+		$my2checkout->addField('c_description_' . $item_num, $ticket['event_desc']);
+		$my2checkout->addField('c_price_' . $item_num, $ticket['cost']);
+		$item_num++;
 	}
 
 	$my2checkout->addField('sid', $twocheckout_id);

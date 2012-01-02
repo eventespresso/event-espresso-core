@@ -24,7 +24,8 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 	$Organization_zip = $org_options['organization_zip'];
 	$contact = $org_options['contact_email'];
 	$registrar = $org_options['contact_email'];
-	$currency_format = $org_options['currency_format'];
+	$currency_format = getCountryFullData($org_options['organization_country']);
+	$currency_format = $currency_format['iso_code_3'];
 
 	$message = $org_options['message'];
 	$return_url = $org_options['return_url'];
@@ -124,8 +125,8 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 	//print_r(early_discount_amount($event_id, $event_cost));
 
 	$event_price = number_format($event_cost, 2, '.', '');
-	$event_price_x_attendees = number_format( $event_cost * $num_people, 2, '.', '' );
-	$event_original_cost = number_format( $event_cost * $num_people, 2, '.', '' );
+	$event_price_x_attendees = number_format($event_cost * $num_people, 2, '.', '');
+	$event_original_cost = number_format($event_cost * $num_people, 2, '.', '');
 
 	/*
 	 * Added for seating chart addon
@@ -209,7 +210,6 @@ function espresso_confirm_registration($registration_id) {
 	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
 	//echo "<pre>".print_r($_SESSION,true)."</pre>";
 	//echo '<p>Function = espresso_confirm_registration()</p>';
-
 	//Not sure this is needed or why it is here
 	//Get the questions for the attendee
 	$sql = "SELECT ea.answer, eq.question
@@ -366,7 +366,6 @@ function event_espresso_pay($att_registration_id=0) {
 	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
 	//echo "<pre>".print_r($_SESSION,true)."</pre>";
 	//echo '<p>Function = event_espresso_pay()</p>';
-
 	//Make sure id's are empty
 	$registration_id = 0;
 	$id = 0;
@@ -381,6 +380,18 @@ function event_espresso_pay($att_registration_id=0) {
 	$registration_id = $att_registration_id;
 	//Debug
 	//echo $att_registration_id;
+	if ($payment_settings['paypal_pro']['active'] == true
+					&& !empty($_REQUEST['paypal_pro']) && $_REQUEST['paypal_pro'] == 'true'
+					&& !empty($_REQUEST['id'])) {
+
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php")) {
+			//Moved files
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php");
+		} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal_pro/DoDirectPayment.php")) {
+			//Default files
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal_pro/DoDirectPayment.php");
+		}
+	}
 
 	$attendees = $wpdb->get_results("SELECT ea.*, ed.wp_user wp_user FROM " . EVENTS_ATTENDEE_TABLE . " ea left join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id WHERE registration_id ='" . $att_registration_id . "' ORDER BY ID LIMIT 1");
 	$num_rows = $wpdb->num_rows;
@@ -450,14 +461,14 @@ function event_espresso_pay($att_registration_id=0) {
 				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
 				where ea.registration_id = '" . $reg_id['registration_id'] . "' order by ed.event_name ";
 
-			$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
-			$total_cost=0;
+			$tmp_attendees = $wpdb->get_results($sql, ARRAY_A);
+			$total_cost = 0;
 
 			//Debug
 			//echo "<pre>".print_r($tmp_attendees,true)."</pre>";
 			//$sub_total =array();
 			$final_total = 0;
-			foreach($tmp_attendees as $tmp_attendee){
+			foreach ($tmp_attendees as $tmp_attendee) {
 				//Debug
 				//echo "<pre>".print_r($tmp_attendee,true)."</pre>";
 
@@ -469,17 +480,16 @@ function event_espresso_pay($att_registration_id=0) {
 
 				$event_url = espresso_reg_url($tmp_attendee["event_id"]);
 				$event_link .= '<div class="event-list-payment-overview"><dl><dt><a href="' . $event_url . '">' . $tmp_attendee["event_name"] . '</a></dt><dd class="list-event-date">' . event_date_display($tmp_attendee['start_date'], get_option('date_format')) . '</dd><dd class="attendee-plus-cost">' . espresso_edit_attendee($registration_id, $id, $event_id, 'attendee', $tmp_attendee["fname"] . " " . $tmp_attendee["lname"]) . '<span> [ ' . $tmp_attendee["quantity"] . ' x ' . $org_options['currency_symbol'] . number_format($tmp_attendee["cost"], 2, '.', '') . ']</span></dd></div>';
-$final_total = array_sum($sub_total);
+				$final_total = array_sum($sub_total);
 
 				//Debug
 				//echo '<p>SUM - '.array_sum($sub_total).'</p>';
-}
+			}
 		}
 
 		//Debug
 		//echo '<p>$final_total - '.$final_total.'</p>';
 		//print_r($attendees);
-
 		//$total_cost = number_format($total_cost, 2, '.', '');
 		$total_cost = number_format($final_total, 2, '.', '');
 
