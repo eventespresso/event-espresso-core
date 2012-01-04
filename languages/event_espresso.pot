@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Event Espresso 3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-20 11:29-0700\n"
+"POT-Creation-Date: 2012-01-04 15:08-0700\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Chris Reynolds <chris@arcanepalette.com>\n"
 "Language-Team: Event Espresso <support@eventespresso>\n"
@@ -40,12 +40,13 @@ msgstr ""
 "X-Poedit-SearchPath-23: ../../../uploads/espresso/ticketing\n"
 "X-Poedit-SearchPath-24: ../../espresso-ticketing\n"
 "X-Poedit-SearchPath-25: ../../../../espresso-services\n"
+"X-Poedit-SearchPath-26: ../../event-espresso-3.1\n"
 
-#: ../espresso.php:646
+#: ../espresso.php:650
 msgid "Settings"
 msgstr ""
 
-#: ../espresso.php:647
+#: ../espresso.php:651
 msgid "Events"
 msgstr ""
 
@@ -328,20 +329,20 @@ msgstr ""
 msgid "This will allow you to send your customers directly to the payment gateway of your choice."
 msgstr ""
 
-#: ../gateways/process_payments.php:202
+#: ../gateways/process_payments.php:189
 msgid "Problem With Your Website Payment IPN"
 msgstr ""
 
-#: ../gateways/process_payments.php:203
-#: ../gateways/process_payments.php:209
+#: ../gateways/process_payments.php:190
+#: ../gateways/process_payments.php:196
 msgid "The IPN for "
 msgstr ""
 
-#: ../gateways/process_payments.php:208
+#: ../gateways/process_payments.php:195
 msgid "Website Payment IPN Not Setup"
 msgstr ""
 
-#: ../gateways/2checkout/2checkout_vars.php:49
+#: ../gateways/2checkout/2checkout_vars.php:62
 msgid " 2checkout.com Debug Mode Is Turned On"
 msgstr ""
 
@@ -2695,7 +2696,6 @@ msgid "Default Payment Status Options"
 msgstr ""
 
 #: ../includes/help_global.php:15
-#: ../includes/admin-files/admin_reports_filters.php:67
 msgid "Incomplete"
 msgstr ""
 
@@ -2888,6 +2888,7 @@ msgid "Add New Event"
 msgstr ""
 
 #: ../includes/admin-files/custom_post_type.php:10
+#: ../includes/admin-files/dashboard_widget.php:98
 msgid "Edit"
 msgstr ""
 
@@ -2932,7 +2933,6 @@ msgid "Event(s) have been permanently deleted."
 msgstr ""
 
 #: ../includes/admin-files/dashboard_widget.php:33
-#: ../includes/admin-files/coupon-management/index.php:61
 msgid "Name"
 msgstr ""
 
@@ -2954,7 +2954,6 @@ msgid "todays' events"
 msgstr ""
 
 #: ../includes/admin-files/dashboard_widget.php:98
-#: ../includes/admin-files/coupon-management/index.php:104
 msgid "Delete"
 msgstr ""
 
@@ -2963,12 +2962,10 @@ msgid "Export"
 msgstr ""
 
 #: ../includes/admin-files/dashboard_widget.php:118
-#: ../includes/admin-files/coupon-management/index.php:143
 msgid "Live Search Filter"
 msgstr ""
 
 #: ../includes/admin-files/dashboard_widget.php:119
-#: ../includes/admin-files/coupon-management/index.php:144
 msgid "No Records Found!"
 msgstr ""
 
@@ -3085,7 +3082,6 @@ msgid "Incomplete Registrations/Transactions"
 msgstr ""
 
 #: ../includes/admin-files/functions.php:310
-#: ../includes/admin-files/coupon-management/index.php:67
 msgid "Amount"
 msgstr ""
 
@@ -3468,37 +3464,30 @@ msgid "Edit Code"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:43
-#: ../includes/admin-files/coupon-management/new_discount.php:23
 msgid "Promotional Code "
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:50
-#: ../includes/admin-files/coupon-management/new_discount.php:30
 msgid "Limited Quantity"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:63
-#: ../includes/admin-files/coupon-management/new_discount.php:43
 msgid "Expiration Active"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:70
-#: ../includes/admin-files/coupon-management/new_discount.php:50
 msgid "Expiration Date"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:77
-#: ../includes/admin-files/coupon-management/new_discount.php:56
 msgid "Price Discount"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:83
-#: ../includes/admin-files/coupon-management/new_discount.php:62
 msgid "Percentage Discount"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:90
-#: ../includes/admin-files/coupon-management/new_discount.php:69
 msgid "Short Description"
 msgstr ""
 
@@ -3559,6 +3548,7 @@ msgid "Add New Code"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/index.php:60
+#: ../includes/admin-files/email-manager/index.php:65
 msgid "ID"
 msgstr ""
 
@@ -3571,6 +3561,7 @@ msgid "Qty Available"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/index.php:65
+#: ../includes/admin-files/email-manager/index.php:68
 msgid "Creator"
 msgstr ""
 
@@ -3579,6 +3570,7 @@ msgid "Percentaage"
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/index.php:122
+#: ../includes/admin-files/email-manager/index.php:115
 msgid "Check All"
 msgstr ""
 
@@ -4010,13 +4002,11 @@ msgstr ""
 
 #: ../includes/admin-files/locale-management/update_locale.php:11
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:35
-#: ../includes/admin-files/staff-management/update_staff.php:34
 msgid " has been updated"
 msgstr ""
 
 #: ../includes/admin-files/locale-management/update_locale.php:13
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:37
-#: ../includes/admin-files/staff-management/update_staff.php:36
 msgid " was not updated!"
 msgstr ""
 
@@ -4074,12 +4064,10 @@ msgid "Save Staff Member"
 msgstr ""
 
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:35
-#: ../includes/admin-files/staff-management/update_staff.php:34
 msgid "The staff member "
 msgstr ""
 
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:37
-#: ../includes/admin-files/staff-management/update_staff.php:36
 msgid "The staff member"
 msgstr ""
 
@@ -4101,6 +4089,7 @@ msgid "Staff member(s) have been successfully deleted from the event."
 msgstr ""
 
 #: ../includes/admin-files/staff-management/index.php:68
+#: ../includes/admin-files/venue-management/index.php:72
 msgid "Shortcode"
 msgstr ""
 
@@ -4118,11 +4107,13 @@ msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:18
 #: ../includes/admin-files/templates/event_gmaps_settings.php:112
+#: ../includes/admin-files/templates/map_confg_help.php:23
 msgid "Set Map Width"
 msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:28
 #: ../includes/admin-files/templates/event_gmaps_settings.php:122
+#: ../includes/admin-files/templates/map_confg_help.php:28
 msgid "Set Map Height"
 msgstr ""
 
@@ -4131,16 +4122,19 @@ msgid "Set Map Zoom level: Range 1 - 19"
 msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:48
+#: ../includes/admin-files/templates/map_confg_help.php:38
 msgid "Set Map Navigation Overlay"
 msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:58
 #: ../includes/admin-files/templates/event_gmaps_settings.php:152
+#: ../includes/admin-files/templates/map_confg_help.php:43
 msgid "Keep Map Navigation Small"
 msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:67
 #: ../includes/admin-files/templates/event_gmaps_settings.php:161
+#: ../includes/admin-files/templates/map_confg_help.php:48
 msgid "Set Map Type Control"
 msgstr ""
 
@@ -4161,6 +4155,7 @@ msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:82
 #: ../includes/admin-files/templates/event_gmaps_settings.php:177
+#: ../includes/admin-files/templates/map_confg_help.php:53
 msgid "Set Map Alignment"
 msgstr ""
 
@@ -4185,6 +4180,7 @@ msgid " Align Right"
 msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:132
+#: ../includes/admin-files/templates/map_confg_help.php:33
 msgid "Set Map Zoom level: Range: 1 - 19"
 msgstr ""
 
@@ -4193,6 +4189,7 @@ msgid "Set Map Navigation Overlay "
 msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:196
+#: ../includes/admin-files/templates/map_confg_help.php:58
 msgid "Use map in template files ( No Shortcodes)"
 msgstr ""
 
@@ -4724,14 +4721,17 @@ msgid "Time"
 msgstr ""
 
 #: ../includes/admin-reports/edit_attendee_record.php:405
+#: ../includes/admin-reports/help.php:10
 msgid "Price Option"
 msgstr ""
 
 #: ../includes/admin-reports/edit_attendee_record.php:410
+#: ../includes/admin-reports/help.php:23
 msgid "Standard Price Option"
 msgstr ""
 
 #: ../includes/admin-reports/edit_attendee_record.php:415
+#: ../includes/admin-reports/help.php:36
 msgid "Member Price Option"
 msgstr ""
 
@@ -4744,6 +4744,7 @@ msgid "Additional Attendees"
 msgstr ""
 
 #: ../includes/admin-reports/edit_attendee_record.php:539
+#: ../includes/admin-reports/event_list_attendees.php:308
 msgid "Edit Attendee"
 msgstr ""
 
@@ -4766,6 +4767,10 @@ msgstr ""
 
 #: ../includes/admin-reports/edit_attendee_record.php:586
 #: ../includes/admin-reports/enter_attendee_payments.php:253
+#: ../includes/admin-reports/event_list_attendees.php:291
+#: ../includes/admin-reports/event_list_attendees.php:300
+#: ../includes/admin-reports/event_list_attendees.php:308
+#: ../includes/admin-reports/event_list_attendees.php:315
 msgid "Edit Payment"
 msgstr ""
 
@@ -4925,7 +4930,6 @@ msgid "Attendee Name"
 msgstr ""
 
 #: ../includes/admin-reports/event_list_attendees.php:102
-#: ../includes/classes/EE_Export.class.php:586
 msgid "Reg ID"
 msgstr ""
 
@@ -4938,7 +4942,6 @@ msgid "Event Title"
 msgstr ""
 
 #: ../includes/admin-reports/event_list_attendees.php:111
-#: ../includes/classes/EE_Export.class.php:586
 msgid "Event Time"
 msgstr ""
 
@@ -4952,7 +4955,6 @@ msgstr ""
 
 #: ../includes/admin-reports/event_list_attendees.php:127
 #: ../includes/admin-reports/event_list_attendees.php:291
-#: ../includes/classes/EE_Export.class.php:586
 msgid "Payment"
 msgstr ""
 
@@ -4961,7 +4963,6 @@ msgid "Coupon"
 msgstr ""
 
 #: ../includes/admin-reports/event_list_attendees.php:136
-#: ../includes/classes/EE_Export.class.php:586
 msgid "Transaction ID"
 msgstr ""
 
@@ -5219,6 +5220,7 @@ msgid "Event Name"
 msgstr ""
 
 #: ../includes/classes/EE_Export.class.php:586
+#: ../includes/event-management/help.php:166
 msgid "Event Date"
 msgstr ""
 
@@ -5714,7 +5716,6 @@ msgstr ""
 
 #: ../includes/event-management/event_functions.php:239
 #: ../includes/event-management/event_functions.php:309
-#: ../includes/form-builder/index.php:207
 msgid "Question Groups"
 msgstr ""
 
@@ -6076,22 +6077,18 @@ msgid "If an alternate email address is entered. Admin email notifications wil b
 msgstr ""
 
 #: ../includes/event-management/insert_event.php:384
-#: ../includes/event-management/update_event.php:492
 msgid "General Admission"
 msgstr ""
 
 #: ../includes/event-management/insert_event.php:385
-#: ../includes/event-management/update_event.php:493
 msgid "Members Admission"
 msgstr ""
 
 #: ../includes/event-management/insert_event.php:396
-#: ../includes/event-management/update_event.php:501
 msgid "Free"
 msgstr ""
 
 #: ../includes/event-management/insert_event.php:417
-#: ../includes/event-management/update_event.php:545
 msgid "There was error finding a post template. Please verify your post templates are available."
 msgstr ""
 
@@ -6122,6 +6119,9 @@ msgid "Add New Question"
 msgstr ""
 
 #: ../includes/form-builder/index.php:47
+#: ../includes/form-builder/groups/edit_group.php:80
+#: ../includes/form-builder/groups/index.php:193
+#: ../includes/functions/admin_menu.php:42
 msgid "Questions"
 msgstr ""
 
@@ -6134,10 +6134,13 @@ msgid "All Questions"
 msgstr ""
 
 #: ../includes/form-builder/index.php:99
+#: ../includes/form-builder/groups/index.php:89
+#: ../includes/form-builder/groups/index.php:105
 msgid "This function is not available in the free version of Event Espresso."
 msgstr ""
 
 #: ../includes/form-builder/index.php:124
+#: ../includes/form-builder/questions/edit_question.php:86
 msgid "Required"
 msgstr ""
 
@@ -6783,7 +6786,7 @@ msgstr ""
 msgid "For more information, please email "
 msgstr ""
 
-#: ../includes/functions/form_build.php:167
+#: ../includes/functions/form_build.php:173
 #: ../includes/functions/main.php:723
 msgid "Select One"
 msgstr ""
@@ -7081,15 +7084,15 @@ msgstr ""
 msgid "Event:"
 msgstr ""
 
-#: ../includes/process-registration/payment_page.php:171
+#: ../includes/process-registration/payment_page.php:172
 msgid "Discount of "
 msgstr ""
 
-#: ../includes/process-registration/payment_page.php:171
+#: ../includes/process-registration/payment_page.php:172
 msgid " applied"
 msgstr ""
 
-#: ../includes/process-registration/payment_page.php:528
+#: ../includes/process-registration/payment_page.php:538
 msgid "Please check your email for payment information."
 msgstr ""
 
@@ -7794,7 +7797,6 @@ msgid "By default, eway will display shipping address information on the eway pa
 msgstr ""
 
 #: ../../event-espresso.3.1.15.P/gateways/firstdata/settings.php:12
-#: ../../event-espresso.3.1.15.P/gateways/ideal/settings.php:10
 msgid "First Data settings saved."
 msgstr ""
 
@@ -8324,12 +8326,10 @@ msgid "Promotional Code:"
 msgstr ""
 
 #: ../../event-espresso.3.1.15.P/includes/admin-files/coupon-management/edit_discount.php:75
-#: ../../event-espresso.3.1.15.P/includes/admin-files/coupon-management/new_discount.php:26
 msgid "Is this a percentage discount?"
 msgstr ""
 
 #: ../../event-espresso.3.1.15.P/includes/admin-files/coupon-management/edit_discount.php:95
-#: ../../event-espresso.3.1.15.P/includes/admin-files/coupon-management/new_discount.php:33
 msgid "Promotional Code Description"
 msgstr ""
 
@@ -8550,14 +8550,17 @@ msgid "Are you sure you want to cancel "
 msgstr ""
 
 #: ../../event-espresso.3.1.15.P/includes/event-management/add_new_event.php:56
+#: ../../event-espresso.3.1.15.P/includes/event-management/edit_event.php:209
 msgid "Attendee Limit"
 msgstr ""
 
 #: ../../event-espresso.3.1.15.P/includes/event-management/add_new_event.php:58
+#: ../../event-espresso.3.1.15.P/includes/event-management/edit_event.php:211
 msgid "Allow group registrations?"
 msgstr ""
 
 #: ../../event-espresso.3.1.15.P/includes/event-management/add_new_event.php:59
+#: ../../event-espresso.3.1.15.P/includes/event-management/edit_event.php:212
 msgid "Max Group Registrants"
 msgstr ""
 
@@ -8578,6 +8581,7 @@ msgid "All events <strong>require</strong> a start and end date in order to disp
 msgstr ""
 
 #: ../../event-espresso.3.1.15.P/includes/event-management/add_new_event.php:534
+#: ../../event-espresso.3.1.15.P/includes/event-management/edit_event.php:696
 msgid "Send custom confirmation emails for this event?"
 msgstr ""
 
@@ -8805,6 +8809,9 @@ msgstr ""
 #: ../../espresso-calendar/calendar_help.php:106
 #: ../../espresso-calendar/calendar_help.php:129
 #: ../../espresso-calendar/calendar_help.php:165
+#: ../../espresso-calendar.1.11/espresso-calendar.php:228
+#: ../../espresso-calendar.1.11/espresso-calendar.php:244
+#: ../../espresso-calendar.1.11/espresso-calendar.php:259
 msgid "More Ino:"
 msgstr ""
 
@@ -8819,6 +8826,7 @@ msgid "Title Format"
 msgstr ""
 
 #: ../../espresso-calendar/calendar_help.php:147
+#: ../../espresso-calendar.1.11/espresso-calendar.php:251
 msgid "For date formatting options, please refer to: "
 msgstr ""
 
@@ -8860,6 +8868,7 @@ msgid "Calendar Usage"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:187
+#: ../../espresso-calendar.1.11/espresso-calendar.php:150
 msgid "Directions:"
 msgstr ""
 
@@ -8868,26 +8877,32 @@ msgid " Add [ESPRESSO_CALENDAR] to any page or post to display a calendar of Eve
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:192
+#: ../../espresso-calendar.1.11/espresso-calendar.php:152
 msgid "Examples Shortcodes:"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:200
+#: ../../espresso-calendar.1.11/espresso-calendar.php:159
 msgid "Styles/Colors:"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:202
+#: ../../espresso-calendar.1.11/espresso-calendar.php:160
 msgid "To edit the calendar styles, copy the CSS file located in the plugin folder to your \"wp-content/uploads/espresso/\" directory. Then edit as needed. Refer to <a href=\"http://arshaw.com/fullcalendar/docs/event_rendering/Colors/\" target=\"_blank\">this page</a> for an example of styling the calendar and colors."
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:205
+#: ../../espresso-calendar.1.11/espresso-calendar.php:163
 msgid "Category Colors:"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:207
+#: ../../espresso-calendar.1.11/espresso-calendar.php:164
 msgid "Event Categories can have their own colors on the calendar. To use this feature, simply create a class in theme CSS file with the names of your event categories. For more inforamtion <a href=\"http://eventespresso.com/forums/?p=650\" target=\"_blank\">please visit the tutorial</a> for this topic."
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:225
+#: ../../espresso-calendar.1.11/espresso-calendar.php:171
 msgid "Basic Settings"
 msgstr ""
 
@@ -8920,6 +8935,7 @@ msgid "First Day of the Week"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:285
+#: ../../espresso-calendar.1.11/espresso-calendar.php:178
 msgid "(Sunday=0, Monday=1, Tuesday=2, etc.)"
 msgstr ""
 
@@ -8932,6 +8948,7 @@ msgid "Height"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:310
+#: ../../espresso-calendar.1.11/espresso-calendar.php:197
 msgid "Will make the entire calendar (including header) a pixel height."
 msgstr ""
 
@@ -8948,10 +8965,12 @@ msgid "Link to Post or Registration Page"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:331
+#: ../../espresso-calendar.1.11/espresso-calendar.php:208
 msgid "Registration Page"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:333
+#: ../../espresso-calendar.1.11/espresso-calendar.php:207
 msgid "If you are using the \"Create a Post\" feature. Use this option to link to the posts that are created by Event Espresso."
 msgstr ""
 
@@ -9005,18 +9024,23 @@ msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:429
 #: ../../espresso-calendar/espresso-calendar.php:529
+#: ../../espresso-calendar.1.11/espresso-calendar.php:212
+#: ../../espresso-calendar.1.11/espresso-calendar.php:300
 msgid "Save Calendar Options"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:445
+#: ../../espresso-calendar.1.11/espresso-calendar.php:217
 msgid "Advanced Settings"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:457
+#: ../../espresso-calendar.1.11/espresso-calendar.php:225
 msgid "Defines the buttons and title at the top of the calendar."
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:467
+#: ../../espresso-calendar.1.11/espresso-calendar.php:234
 msgid "Text that will be displayed on buttons of the header."
 msgstr ""
 
@@ -9029,18 +9053,22 @@ msgid "Determines the text that will be displayed on the calendar's column headi
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:495
+#: ../../espresso-calendar.1.11/espresso-calendar.php:265
 msgid "Full names of months."
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:504
+#: ../../espresso-calendar.1.11/espresso-calendar.php:271
 msgid "Abbreviated names of months."
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:513
+#: ../../espresso-calendar.1.11/espresso-calendar.php:277
 msgid "Full names of days-of-week."
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:522
+#: ../../espresso-calendar.1.11/espresso-calendar.php:283
 msgid "Abbreviated names of days-of-week."
 msgstr ""
 
@@ -9377,116 +9405,93 @@ msgid "Register for"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:16
-#: ../../espresso-members.1.9.1/member_functions.php:15
 msgid "Events Profile Information"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:22
-#: ../../espresso-members.1.9.1/member_functions.php:20
 msgid "Address/Street/Number"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:27
-#: ../../espresso-members.1.9.1/member_functions.php:24
 msgid "Please enter your Address/Street/Number."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:42
-#: ../../espresso-members.1.9.1/member_functions.php:36
 msgid "City/Town/Village"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:47
-#: ../../espresso-members.1.9.1/member_functions.php:40
 msgid "Please enter your City/Town/Village."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:52
-#: ../../espresso-members.1.9.1/member_functions.php:44
 msgid "State/County/Province"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:57
-#: ../../espresso-members.1.9.1/member_functions.php:48
 msgid "Please enter your State/County/Province."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:62
-#: ../../espresso-members.1.9.1/member_functions.php:52
 msgid "Zip/Postal Code"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:67
-#: ../../espresso-members.1.9.1/member_functions.php:56
 msgid "Please enter your Zip/Postal Code."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:77
-#: ../../espresso-members.1.9.1/member_functions.php:64
 msgid "Please enter your Country."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:82
-#: ../../espresso-members.1.9.1/member_functions.php:68
 msgid "Phone Number"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:87
-#: ../../espresso-members.1.9.1/member_functions.php:72
 msgid "Please enter your Phone Number."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:130
 #: ../../espresso-members.1.9.1/bp_functions.php:124
-#: ../../espresso-members.1.9.1/member_functions.php:116
 msgid "My Events"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:152
-#: ../../espresso-members.1.9.1/member_functions.php:138
 msgid "You are not logged in."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:153
-#: ../../espresso-members.1.9.1/member_functions.php:139
 msgid "Before you can reserve a spot, you must register."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:154
 #: ../../espresso-members/member_functions.php:189
-#: ../../espresso-members.1.9.1/member_functions.php:140
-#: ../../espresso-members.1.9.1/member_functions.php:173
 msgid "Login"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:156
-#: ../../espresso-members.1.9.1/member_functions.php:142
 msgid "New users please"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:158
-#: ../../espresso-members.1.9.1/member_functions.php:144
 msgid "Member registration is closed for this site. Please contact the site owner."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:169
-#: ../../espresso-members.1.9.1/member_functions.php:154
 msgid "Member only event? "
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:214
-#: ../../espresso-members.1.9.1/member_functions.php:198
 #, php-format
 msgid "%1$s registered for %2$s"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:273
-#: ../../espresso-members.1.9.1/member_functions.php:256
 msgid "Member Pricing"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:283
-#: ../../espresso-members.1.9.1/member_functions.php:264
 msgid "Add A Member Price"
 msgstr ""
 
@@ -9494,35 +9499,26 @@ msgstr ""
 #: ../../espresso-members/member_functions.php:323
 #: ../../espresso-members/member_functions.php:349
 #: ../../espresso-members/member_functions.php:363
-#: ../../espresso-members.1.9.1/member_functions.php:285
-#: ../../espresso-members.1.9.1/member_functions.php:303
-#: ../../espresso-members.1.9.1/member_functions.php:325
-#: ../../espresso-members.1.9.1/member_functions.php:338
 msgid "Remove this Attendee"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:312
-#: ../../espresso-members.1.9.1/member_functions.php:292
 msgid "(enter 0.00 for free events, enter 2 place decimal i.e. "
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:315
-#: ../../espresso-members.1.9.1/member_functions.php:294
 msgid "<span class=\"important\">Note:</span> A non-member price MUST be entered for each row, even if this is a member only event."
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:342
-#: ../../espresso-members.1.9.1/member_functions.php:321
 msgid "Name "
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:352
-#: ../../espresso-members.1.9.1/member_functions.php:329
 msgid "(enter 0.00 for free events, enter 2 place decimal i.e. 7.00)"
 msgstr ""
 
 #: ../../espresso-members/member_functions.php:355
-#: ../../espresso-members.1.9.1/member_functions.php:331
 msgid "<span class=\"important\">Note:</span> A non-member price MUST be entered, even if this is a member only event."
 msgstr ""
 
@@ -9532,67 +9528,55 @@ msgstr ""
 
 #: ../../espresso-members/member_functions.php:572
 #: ../../espresso-members/member_functions.php:575
-#: ../../espresso-members.1.9.1/member_functions.php:516
-#: ../../espresso-members.1.9.1/member_functions.php:519
 msgid "0.00"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:13
 #: ../../espresso-members.1.9.1/bp_functions.php:144
 #: ../../espresso-members.1.9.1/bp_functions.php:462
-#: ../../espresso-members.1.9.1/my_events_page.php:12
 msgid "My Events Management"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:31
 #: ../../espresso-members.1.9.1/bp_functions.php:478
-#: ../../espresso-members.1.9.1/my_events_page.php:28
 msgid "Your event(s) have been successfully removed from your account."
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:55
 #: ../../espresso-members.1.9.1/bp_functions.php:491
-#: ../../espresso-members.1.9.1/my_events_page.php:45
 msgid "Payment Status"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:58
 #: ../../espresso-members.1.9.1/bp_functions.php:492
-#: ../../espresso-members.1.9.1/my_events_page.php:46
 msgid "Cost"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:60
-#: ../../espresso-members.1.9.1/my_events_page.php:47
 msgid "Ticket"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:111
-#: ../../espresso-members.1.9.1/my_events_page.php:94
 msgid "Download Ticket Now!"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:131
 #: ../../espresso-members.1.9.1/bp_functions.php:535
-#: ../../espresso-members.1.9.1/my_events_page.php:114
 msgid "<h2>Event Information</h2>"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:141
 #: ../../espresso-members.1.9.1/bp_functions.php:539
-#: ../../espresso-members.1.9.1/my_events_page.php:118
 msgid "Start Time:"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:165
 #: ../../espresso-members.1.9.1/bp_functions.php:553
-#: ../../espresso-members.1.9.1/my_events_page.php:133
 msgid "Cancel Registration"
 msgstr ""
 
 #: ../../espresso-members/my_events_page.php:167
 #: ../../espresso-members.1.9.1/bp_functions.php:554
-#: ../../espresso-members.1.9.1/my_events_page.php:134
 msgid "Your Profile"
 msgstr ""
 
@@ -9601,37 +9585,30 @@ msgid "Member settings saved"
 msgstr ""
 
 #: ../../espresso-members/user_settings_page.php:25
-#: ../../espresso-members.1.9.1/user_settings_page.php:21
 msgid "Manage Member Settings"
 msgstr ""
 
 #: ../../espresso-members/user_settings_page.php:50
-#: ../../espresso-members.1.9.1/user_settings_page.php:29
 msgid "Login page (if different from default Wordpress login page): "
 msgstr ""
 
 #: ../../espresso-members/user_settings_page.php:59
-#: ../../espresso-members.1.9.1/user_settings_page.php:33
 msgid "New user registration is currently closed. If you would like to set a custom user regsistration page, you must enable \"Anyone can register\" in your Wordpress \"<a href=\"options-general.php\">General Settings</a>\" page."
 msgstr ""
 
 #: ../../espresso-members/user_settings_page.php:66
-#: ../../espresso-members.1.9.1/user_settings_page.php:35
 msgid "Member registration page (if different from default Wordpress register page): "
 msgstr ""
 
 #: ../../espresso-members/user_settings_page.php:75
-#: ../../espresso-members.1.9.1/user_settings_page.php:38
 msgid "Require login for all events? "
 msgstr ""
 
 #: ../../espresso-members/user_settings_page.php:87
-#: ../../espresso-members.1.9.1/user_settings_page.php:47
 msgid "Make autofilled fields editable? "
 msgstr ""
 
 #: ../../espresso-members/user_settings_page.php:101
-#: ../../espresso-members.1.9.1/user_settings_page.php:58
 msgid "Save Settings"
 msgstr ""
 
@@ -9828,57 +9805,46 @@ msgid "Please select a day of the week above."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:37
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:37
 msgid "Recurring Event Manager"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:50
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:50
 msgid "IF THIS IS A RECURRING EVENT, A RECORD WILL BE CREATED FOR EACH INSTANCE. "
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:59
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:59
 msgid "Would you like to apply any of the changes that you have made to this event to:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:63
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:63
 msgid "Only this instance."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:65
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:65
 msgid "All events in the series"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:67
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:67
 msgid "This and all upcoming events."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:72
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:72
 msgid "Is this a recurring event?"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:85
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:85
 msgid "Create dates automatically or select manually?"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:89
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:89
 msgid "Automatic"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:92
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:92
 msgid "Manual"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:102
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:102
 msgid ""
 "If you plan on using different registration dates for each event,\n"
 "                                            please enter the First Event's Registration Start/End Dates below.\n"
@@ -9886,194 +9852,155 @@ msgid ""
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:107
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:107
 msgid "Registration Starts On:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:112
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:112
 msgid "Registration Ends On:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:121
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:121
 msgid "Are all events available between the registration dates above?"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:127
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:127
 msgid "No (each event's registration start and end dates will be incremented according to a formula)."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:131
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:131
 msgid "Yes (all created events are available for registration between the above registration dates)."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:138
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:138
 msgid "Each Event's Visibility: "
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:142
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:142
 msgid "Blank"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:142
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:142
 msgid " Visible Immediately"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:143
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:143
 msgid "Visible on Registration Start Date"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:144
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:144
 msgid " Visible X Days Before Registration Start Date"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:155
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:155
 msgid "First Event Date:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:159
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:159
 msgid "First Event End Date:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:166
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:166
 msgid "Last Event Date:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:184
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:184
 msgid "Event Repeats:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:187
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:187
 msgid "Daily"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:188
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:188
 msgid "Weekly"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:189
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:189
 msgid "Monthly"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:193
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:193
 msgid "Every:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:212
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:212
 msgid "Repeats On:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:231
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:231
 msgid "Sun"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:234
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:234
 msgid "Mon"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:238
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:238
 msgid "Tue"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:242
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:242
 msgid "Wed"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:245
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:245
 msgid "Thu"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:249
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:249
 msgid "Fri"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:252
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:252
 msgid "Sat"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:257
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:257
 msgid "Repeat By:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:260
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:260
 msgid "Day of Month"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:262
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:262
 msgid "Day of Week"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:277
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:277
 msgid "You can add as many days as you would like.  Start with the very first event date."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:292
 #: ../../espresso-recurring-events/functions/re_view_functions.php:703
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:292
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:699
 msgid "Event Date:"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:328
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:327
 msgid "Other events in this series."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:339
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:337
 msgid "Immediate Response Window"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:427
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:425
 msgid "If you are making changes to the recurrence formula, please select \"All events in the series\" or \"All upcoming events\" for the changes to take effect."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:577
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:575
 msgid "weeks"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:582
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:580
 msgid "months"
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:713
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:709
 msgid " attendees.  Can't be deleted until attendees are deleted."
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:728
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:724
 msgid ""
 "<h2>Registration Date Usage</h2>\n"
 "      <p>\n"
@@ -10089,7 +10016,6 @@ msgid ""
 msgstr ""
 
 #: ../../espresso-recurring-events/functions/re_view_functions.php:742
-#: ../../espresso-recurring-events.1.1.4/functions/re_view_functions.php:738
 msgid ""
 "<h2>Recurrence Type</h2>\n"
 "      <p>\n"
@@ -10106,17 +10032,14 @@ msgid ""
 msgstr ""
 
 #: ../../espresso-recurring-events/recurring-event-templates/event_list_display.php:39
-#: ../../espresso-recurring-events.1.1.4/recurring-event-templates/event_list_display.php:39
 msgid "Please Select a Date"
 msgstr ""
 
 #: ../../espresso-recurring-events/recurring-event-templates/event_list_display.php:56
-#: ../../espresso-recurring-events.1.1.4/recurring-event-templates/event_list_display.php:56
 msgid "(Join Waiting List)"
 msgstr ""
 
 #: ../../espresso-recurring-events/recurring-event-templates/event_list_display.php:85
-#: ../../espresso-recurring-events.1.1.4/recurring-event-templates/event_list_display.php:85
 msgid "Register Now"
 msgstr ""
 
@@ -10398,13 +10321,11 @@ msgstr ""
 
 #: ../../espresso-permissions/includes/default-roles.php:70
 #: ../../espresso-permissions/includes/default-roles.php:79
-#: ../../espresso-permissions/includes/edit-roles.php:35
 msgid "Capabilities"
 msgstr ""
 
 #: ../../espresso-permissions/includes/default-roles.php:93
 #: ../../espresso-permissions/includes/default-roles.php:95
-#: ../../espresso-permissions/includes/edit-roles.php:23
 #, php-format
 msgid "Edit the %1$s role"
 msgstr ""
@@ -10460,115 +10381,143 @@ msgid "This role has no capabilities"
 msgstr ""
 
 #: ../../espresso-permissions/includes/edit-roles.php:24
+#: ../../espresso-permissions.1.4/includes/edit-roles.php:24
 msgid "Role updated."
 msgstr ""
 
 #: ../../espresso-permissions/includes/edit-roles.php:30
+#: ../../espresso-permissions.1.4/includes/edit-roles.php:30
 #, php-format
 msgid "<strong>Role:</strong> %1$s"
 msgstr ""
 
 #: ../../espresso-permissions/includes/edit-roles.php:38
+#: ../../espresso-permissions.1.4/includes/edit-roles.php:38
 msgid "Select which capabilities this role should have. Make sure you understand what the capability does before giving it to just any role. This is a powerful feature, but it can cause you some grief if you give regular ol' Joe more capabilities than yourself."
 msgstr ""
 
 #: ../../espresso-permissions/includes/edit-roles.php:54
+#: ../../espresso-permissions.1.4/includes/edit-roles.php:54
 msgid "New Capabilities"
 msgstr ""
 
 #: ../../espresso-permissions/includes/edit-roles.php:57
+#: ../../espresso-permissions.1.4/includes/edit-roles.php:57
 msgid "Add up to six new capabilities with this form for this role (more can be added later). Please only use letters, numbers, and underscores."
 msgstr ""
 
 #: ../../espresso-permissions/includes/edit-roles.php:83
+#: ../../espresso-permissions.1.4/includes/edit-roles.php:83
 msgid "Update Role"
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:123
+#: ../../espresso-permissions.1.4/includes/functions.php:123
 #, php-format
 msgid "Welcome, %1$s!"
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:133
+#: ../../espresso-permissions.1.4/includes/functions.php:133
+#: ../../espresso-permissions-pro/espresso-permissions-pro.php:330
 msgid "Username:"
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:138
+#: ../../espresso-permissions.1.4/includes/functions.php:138
 msgid "Password:"
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:143
+#: ../../espresso-permissions.1.4/includes/functions.php:143
 msgid "Log In"
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:144
+#: ../../espresso-permissions.1.4/includes/functions.php:144
 msgid "Remember me"
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:200
+#: ../../espresso-permissions.1.4/includes/functions.php:200
 #, php-format
 msgid "Posts by %s"
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:208
+#: ../../espresso-permissions.1.4/includes/functions.php:208
 msgid "Role deleted."
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:212
+#: ../../espresso-permissions.1.4/includes/functions.php:212
 msgid "Selected roles deleted."
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:217
+#: ../../espresso-permissions.1.4/includes/functions.php:217
 msgid "No role currently has the <code>edit_roles</code> capability.  Please add this to each role that should be able to manage/edit roles. If you do not change this, any user that has the <code>edit_users</code> capability will be able to edit roles."
 msgstr ""
 
 #: ../../espresso-permissions/includes/functions.php:235
+#: ../../espresso-permissions.1.4/includes/functions.php:235
 msgid "To create new roles, you must give the <code>create_roles</code> capability to at least one role."
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:17
+#: ../../espresso-permissions.1.4/includes/new-role.php:17
 msgid "Add a new user role"
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:18
+#: ../../espresso-permissions.1.4/includes/new-role.php:18
 #, php-format
 msgid "The %1$s role has been created."
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:24
+#: ../../espresso-permissions.1.4/includes/new-role.php:24
 msgid "Create a new user role"
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:29
+#: ../../espresso-permissions.1.4/includes/new-role.php:29
 #, php-format
 msgid "Here you can create as many new roles as you'd like.  Roles are a way of grouping your users.  You can give individual users a role from the <a href=\"%1$s\" title=\"Manage Users\">user management</a> screen.  This will allow you to do specific things for users with a specific role.  Once you've created a new role, you can manage it with the <em>Edit Roles</em> component."
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:34
+#: ../../espresso-permissions.1.4/includes/new-role.php:34
 msgid "Role:"
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:37
+#: ../../espresso-permissions.1.4/includes/new-role.php:37
 msgid "<strong>Required:</strong> Enter the name of your role.  This is a unique key that should only contain numbers, letters, and underscores.  Please don't add spaces or other odd characters."
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:45
+#: ../../espresso-permissions.1.4/includes/new-role.php:45
 msgid "Role Label:"
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:48
+#: ../../espresso-permissions.1.4/includes/new-role.php:48
 msgid "<strong>Required:</strong> Enter a label your role.  This will be the title that is displayed in most cases."
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:56
+#: ../../espresso-permissions.1.4/includes/new-role.php:56
 msgid "Capabilities:"
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:59
+#: ../../espresso-permissions.1.4/includes/new-role.php:59
 msgid "<strong>Optional:</strong> Select which capabilities your new role should have.  These may be changed later using the <em>Edit Roles</em> component."
 msgstr ""
 
 #: ../../espresso-permissions/includes/new-role.php:73
+#: ../../espresso-permissions.1.4/includes/new-role.php:73
 msgid "Create Role"
 msgstr ""
 
@@ -10752,26 +10701,33 @@ msgstr ""
 
 #: ../../espresso-mailchimp/mailchimp.view.class.php:58
 #: ../../espresso-mailchimp/mailchimp.view.class.php:68
+#: ../../espresso-mailchimp.1.0.1/mailchimp.view.class.php:58
+#: ../../espresso-mailchimp.1.0.1/mailchimp.view.class.php:65
 msgid "MailChimp List Integration"
 msgstr ""
 
 #: ../../espresso-mailchimp/mailchimp.view.class.php:69
+#: ../../espresso-mailchimp.1.0.1/mailchimp.view.class.php:66
 msgid "The following information will be sent to the selected MailChimp list for future communications <ul><li>Registrant's First Name</li><li>Registrant's Last Name</li><li>Registrant's Email Address</li></ul>"
 msgstr ""
 
 #: ../../espresso-mailchimp/mailchimp.view.class.php:82
+#: ../../espresso-mailchimp.1.0.1/mailchimp.view.class.php:79
 msgid "Manage MailChimp Integration Settings"
 msgstr ""
 
 #: ../../espresso-mailchimp/mailchimp.view.class.php:85
+#: ../../espresso-mailchimp.1.0.1/mailchimp.view.class.php:82
 msgid "Mail Chimp Integration Settings"
 msgstr ""
 
 #: ../../espresso-mailchimp/mailchimp.view.class.php:100
+#: ../../espresso-mailchimp.1.0.1/mailchimp.view.class.php:97
 msgid "MailChimp API Key"
 msgstr ""
 
 #: ../../espresso-mailchimp/mailchimp.view.class.php:101
+#: ../../espresso-mailchimp.1.0.1/mailchimp.view.class.php:98
 msgid "If you do not have a MailChimp API key, please <a href='http://kb.mailchimp.com/article/where-can-i-find-my-api-key/' target='_blank'>click here</a> to learn how to create one. </p><p>An API key is required for this plugin."
 msgstr ""
 
@@ -10968,5 +10924,132 @@ msgstr ""
 
 #: ../../espresso-ticketing/templates/index.php:13
 msgid "Ticket for"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/aim/settings.php:100
+msgid "Is this an account on the Authorize.net development server?"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/authnet/settings.php:124
+msgid "Is this an account on Authorize.net's development server?"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:24
+msgid "E-xact Settings"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:46
+msgid "Activate E-xact Gateway?"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:49
+msgid "Deactivate E-xact Gateway?"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:53
+msgid "The E-xact Gateway is installed. Would you like to activate it?"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:86
+msgid "E-xact Login I.D."
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:93
+msgid "E-xact Transaction Key"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:114
+msgid "(used for your business/personal logo on the E-xact payment page)"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:124
+msgid "Is this an account on E-xact.com's development server?"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:154
+msgid "Update E-xact Settings"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:159
+msgid "This shows the specific the URL to which the gateway should return the relay response for a transaction. This the page should be set in your E-xact account. Login to E-xact, goto Account > Response/Receipt URLs > Add URL and enter the following URL."
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:166
+msgid "E-xact Image URL (logo for payment page)"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/exact/settings.php:173
+msgid "E-xact Test Mode"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/realauth/settings.php:21
+#: ../../event-espresso-3.1/gateways/realauth/settings.php:69
+msgid "realauth settings saved."
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/realauth/settings.php:76
+msgid "realauth deactivated."
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/realauth/settings.php:138
+msgid "Euro"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/realauth/settings.php:141
+msgid "Pound Sterling"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/realauth/settings.php:144
+msgid "U.S. Dollar"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/realauth/settings.php:153
+msgid "Hong Kong Dollar"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/realauth/settings.php:156
+msgid "Japanese Yen"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/stripe/settings.php:112
+msgid "Stripe Currency Symbol"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/stripe/settings.php:115
+msgid "Stripe uses 3-character ISO-4217 codes for specifying currencies in fields and variables.  If you are taking purchases in US Dollars, enter <code>usd</code> here.  Stripe currently only takes payment in USD, but can accept payments from any currency which will be converted to USD at checkout."
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/stripe/settings.php:120
+msgid "Stripe Secret Key"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/stripe/settings.php:123
+msgid "Enter your <a href=\"https://manage.stripe.com/#account/apikeys\" target=\"_blank\">Secret Key</a> here.  If you are testing the Stripe gateway, use your Test Secret Key, otherwise use your Live Secret Key."
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/stripe/settings.php:126
+#: ../../event-espresso-3.1/gateways/stripe/settings.php:137
+msgid "<a href=\"https://stripe.com/docs/api#authentication\" target=\"_blank\">Learn more about API authentication.</a>"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/stripe/settings.php:131
+msgid "Stripe Publishable Key"
+msgstr ""
+
+#: ../../event-espresso-3.1/gateways/stripe/settings.php:134
+msgid "Enter your <a href=\"https://manage.stripe.com/#account/apikeys\" target=\"_blank\">Publishable Key</a> here.  If you are testing the Stripe gateway, use your Test Publishable Key, otherwise use your Live Publishable Key."
+msgstr ""
+
+#: ../../event-espresso-3.1/includes/organization_config.php:311
+#, php-format
+msgid "This should be a page on your website that contains a cancelled message and the %s shortcode."
+msgstr ""
+
+#: ../../event-espresso-3.1/includes/admin-files/admin_reports_filters.php:110
+msgid "You have more than 500 records."
+msgstr ""
+
+#: ../../event-espresso-3.1/templates/shopping_cart.php:97
+msgid "Finish Registration"
 msgstr ""
 
