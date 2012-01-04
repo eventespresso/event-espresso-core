@@ -288,7 +288,7 @@ function add_new_event() {
 			<?php
 				if (function_exists('wp_editor')){
 					$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
-					wp_editor("My event content", "event_desc", $args);
+					wp_editor("", "event_desc", $args);
 				}else{
 					/*
 					  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
@@ -590,7 +590,7 @@ function add_new_event() {
 							<tr>
 								<th class="middle"><label><?php echo __('Custom Confirmation Email', 'event_espresso') ?> <?php echo apply_filters('espresso_help', 'custom_email_info') ?> </label>
 								</th>
-								<td class="med"><?php echo select_input('send_mail', $values); ?></td>
+								<td class="med"><?php echo select_input('send_mail', $values, 'N'); ?></td>
 							</tr>
 							<tr>
 								<th class="middle"><?php $email_id = isset($email_id) ? $email_id : ''; ?>
@@ -619,7 +619,7 @@ function add_new_event() {
 											<?php
 										if (function_exists('wp_editor')){
 											$args = array("textarea_rows" => 5, "textarea_name" => "conf_mail", "editor_class" => "my_editor_custom");
-											wp_editor("My email content", "conf_mail", $args);
+											wp_editor("", "conf_mail", $args);
 										}else{
 											echo  '<textarea name="conf_mail" class="theEditor" id="conf_mail"></textarea>';
 											espresso_tiny_mce();
