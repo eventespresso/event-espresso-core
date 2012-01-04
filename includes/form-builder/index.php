@@ -279,17 +279,20 @@ function event_espresso_questions_config_mnu() {
 	var selectValue = jQuery('select#question_type option:selected').val();
 	//alert(selectValue + ' - this is initial value');
 	// hide values field on initial page view
-	if(selectValue == 'TEXT' || selectValue == 'TEXTAREA'){
+	if(selectValue == 'TEXT' || selectValue == 'TEXTAREA' || selectValue == 'DATE'){
 		jQuery('#add-question-values').hide();
+		// we don't want the values field trying to validate if not displayed, remove its name
+		jQuery('#add-question-values td input').attr("name","notrequired") 
 	}
-	// we don't want the values field trying to validate if not displayed, remove its name
-	jQuery('#add-question-values td input').attr("name","notrequired") 
+	
 	
 	jQuery('select#question_type').bind('change', function() {
 		var selectValue = jQuery('select#question_type option:selected').val();
   
-		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA'  || selectValue == 'DATE') {
-		  jQuery('#add-question-values').fadeOut('slow');
+		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA' || selectValue == 'DATE') {
+			jQuery('#add-question-values').fadeOut('slow');
+		 	// we don't want the values field trying to validate if not displayed, remove its name
+			jQuery('#add-question-values td input').attr("name","notrequired") 
 			//alert(selectValue);
 		} else{
 			//alert(selectValue);
