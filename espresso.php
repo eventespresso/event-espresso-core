@@ -292,7 +292,13 @@ if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_inc
 
 //Core function files
 require_once("includes/functions/main.php");
-require_once("includes/functions/pricing.php");
+
+// let's load pricing functions via an action so that overriding functions can be loaded first
+function espresso_load_pricing_functions() {
+	require_once("includes/functions/pricing.php");
+}
+add_action( 'plugins_loaded', 'espresso_load_pricing_functions', 2 );
+
 require_once("includes/functions/time_date.php");
 require_once("includes/shortcodes.php");
 require_once("includes/functions/actions.php");
