@@ -24,7 +24,7 @@ class ClsPaytrace {
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param_list);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 45);
 
 		// grab URL and pass it to the browser
 		$response = curl_exec($ch);

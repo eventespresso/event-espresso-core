@@ -80,7 +80,7 @@ class nab extends PaymentGateway {
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
-			curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Sets a time limit for curl in seconds (do not set too low)
+			curl_setopt($ch, CURLOPT_TIMEOUT, 45); // Sets a time limit for curl in seconds (do not set too low)
 			curl_setopt($ch, CURLOPT_POST, 1); // Set curl to send data using post
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $req); // Add the request parameters to the post
 			$result = curl_exec($ch); // run the curl process (and return the result to $result
