@@ -100,6 +100,12 @@ if (!function_exists('event_form_build')) {
 								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
 								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
 								break;
+							case $question->system_name == 'country':
+								if ($attendee_number == 1)
+									$answer = esc_attr(get_user_meta($userid, 'event_espresso_country', true));
+								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
+								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
+								break;
 						}
 					}
 				}
