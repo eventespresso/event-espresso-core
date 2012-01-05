@@ -13,7 +13,7 @@ class ClsStripe
         $publishableKey = $stripe_settings['stripe_publishable_key'];
         $secretKey = $stripe_settings['stripe_secret_key'];
         $currencySymbol = $stripe_settings['stripe_currency_symbol'];
-        $transactionPrefix = $stripe_settings['stripe_transaction_prefix'];
+        //$transactionPrefix = $stripe_settings['stripe_transaction_prefix'];
 		
 		Stripe::setApiKey($secretKey);
 		
