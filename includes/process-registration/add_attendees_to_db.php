@@ -456,7 +456,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		//Add member data if needed
 		if (get_option('events_members_active') == 'true') {
 			require_once(EVENT_ESPRESSO_MEMBERS_DIR . "member_functions.php"); //Load Members functions
-			require_once(EVENT_ESPRESSO_MEMBERS_DIR . "user_vars.php"); //Load Members functions
+			require(EVENT_ESPRESSO_MEMBERS_DIR . "user_vars.php"); //Load Members functions
 			if ($userid != 0) {
 				event_espresso_add_user_to_event($event_id, $userid, $attendee_id);
 				
