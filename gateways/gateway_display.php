@@ -26,6 +26,7 @@ if (!empty($payment_settings['paypal_pro']['active'])
 				|| get_option('events_ideal_active') == 'true'
 				|| get_option('events_paytrace_active') == 'true'
 				|| get_option('events_nab_active') == 'true'
+				|| get_option('events_stripe_active') == 'true'
 ) {
 	echo '<div id="on_site_payment_container" class="payment_container event-display-boxes">';
 	echo '<h3 id="on_site_payment" class="payment_option_title section-heading">' . __('On-site Payment Processing', 'event_espresso') . '</h3>';
@@ -52,6 +53,13 @@ if (!empty($payment_settings['paypal_pro']['active'])
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/nab/nab_vars.php");
 		}
 		espresso_display_nab($payor_data, $event_cost, $attendee_id, $event_id);
+	}
+	if (get_option('events_stripe_active') == 'true'){
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/stripe/stripe_vars.php")){
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/stripe/stripe_vars.php");
+		}elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/stripe/stripe_vars.php")){
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."gateways/stripe/stripe_vars.php");
+		}
 	}
 	if (get_option('events_firstdata_active') == 'true') {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata/firstdata_vars.php")) {

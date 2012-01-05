@@ -66,6 +66,12 @@ function event_espresso_txn() {
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paytrace/do_transaction.php");
 				}
 			}
+            // Stripe
+            elseif (get_option('events_stripe_active') == true && isset($_POST['stripe']) && !empty($_POST['stripe']) && $_POST['stripe'] == 'true') {
+                if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/stripe/do_transaction.php")) {
+                    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/stripe/do_transaction.php");
+                }
+            }
 			//Load iDEAL (Mollie)
 			elseif ((get_option('events_ideal_active') == 'true') && !empty($_REQUEST['ideal']) && $_REQUEST['ideal'] == 1 && $_REQUEST['id'] != '') {
 				//Ideal works a little differently.
