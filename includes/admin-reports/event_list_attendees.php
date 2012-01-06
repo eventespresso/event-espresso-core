@@ -16,7 +16,7 @@ function event_list_attendees() {
 		if (is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):
 				$del_id = $key;
-				$sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id = '$del_id'";
+				$sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '$del_id'";
 				$wpdb->query($sql);
 			endwhile;
 		}
@@ -40,7 +40,7 @@ function event_list_attendees() {
 				} else {
 					$checker = 0;
 				}
-				$wpdb->get_results("SELECT checked_in_quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id = '$del_id' LIMIT 0,1 ");
+				$wpdb->get_results("SELECT checked_in_quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '$del_id' LIMIT 0,1 ");
 				$ticket_scanned = $wpdb->last_result[0]->checked_in_quantity;
 				if ($ticket_scanned >= 1) {
 					?>
@@ -51,7 +51,7 @@ function event_list_attendees() {
 					</div>
 					<?php
 				} else {
-					$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET checked_in = $checker WHERE registration_id = '$del_id'";
+					$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET checked_in = $checker WHERE id = '$del_id'";
 					$wpdb->query($sql);
 					//echo $sql;
 					?>
@@ -69,6 +69,7 @@ function event_list_attendees() {
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/event-management/queries.php');
 
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php')) {
+		$total_events = espresso_total_events();
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php');
 	} else {
 		echo '<p><strong>' . __('Advanced filters are available in the premium versions.', 'event_espresso') . '</strong> <a href="http://eventespresso.com/download/" target="_blank">' . __('Upgrade Now!', 'event_espresso') . '</a></p>';
@@ -287,7 +288,7 @@ function event_list_attendees() {
 						$event_date = $attendee->start_date;
 						?>
 						<tr>
-							<td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><input name="checkbox[<?php echo $registration_id ?>]" type="checkbox"  title="Delete <?php echo $fname ?><?php echo $lname ?>"></td>
+							<td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><input name="checkbox[<?php echo $id ?>]" type="checkbox"  title="Delete <?php echo $fname ?><?php echo $lname ?>"></td>
 							<td class="row-title"  nowrap="nowrap"><a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:' . $id . ' [ REG#: ' . $registration_id . ' ] ' . $seating_info; ?>"><?php echo $fname ?> <?php echo $lname ?> <?php echo $seating_info ?> <?php echo $quantity ?></a><div class="row-actions"><span class='edit'><a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:' . $id . ' [ REG#: ' . $registration_id . ' ]' . $seating_info; ?>"><?php _e('Attendee', 'event_espresso'); ?></a> | </span> <span class='edit'><a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $registration_id ?>"><?php _e('Payment', 'event_espresso'); ?></a> </span> </div></td>
 							<td nowrap="nowrap"><?php echo $registration_id ?></td>
 							<td class="date column-date"><?php echo event_date_display($date, get_option('date_format') . ' g:i a') ?></td>
