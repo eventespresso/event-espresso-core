@@ -17,7 +17,7 @@ $payor_data['zip'] = $zip;
 
 //This file builds the gateways that are available
 echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';
-echo '<h2 class="section-heading ui-widget-header ui-corner-top">' . __('Please choose a payment option:', 'event_espresso') . '</h2>';
+echo '<h2 class="section-heading ui-widget-header ui-corner-top">' . __('Please click on payment option below:', 'event_espresso') . '</h2>';
 echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
 if (!empty($payment_settings['paypal_pro']['active'])
 				|| get_option('events_eway_active') == 'true'
