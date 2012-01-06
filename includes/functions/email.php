@@ -198,7 +198,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 		$data->admin_ticket_link = $data->ticket_link;
 	}
 
-	//New ticketing system
+	//New ticketing system version 2.0
 	if (function_exists('espresso_ticket_launch')) {
 		$data->qr_code = espresso_ticket_qr_code(array('attendee_id' => $data->attendee->id, 'event_name' => stripslashes_deep($data->event->event_name), 'attendee_first' => $data->attendee->fname, 'attendee_last' => $data->attendee->lname, 'registration_id' => $data->attendee->registration_id, 'event_code' => $data->event->event_code, 'ticket_type' => $data->attendee->price_option, 'event_time' => $data->attendee->event_time, 'amount_pd' => espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'reg_total' => true))));
 		$data->ticket_link = espresso_ticket_links($data->attendee->registration_id, $data->attendee->id);
