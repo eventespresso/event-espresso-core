@@ -23,6 +23,7 @@ function replace_shortcodes($message, $data) {
 			"[venue_url]",
 			"[venue_image]",
 			"[venue_phone]",
+			"[venue_address]", //shows the venue address
 			"[txn_id]",
 			"[cost]",
 			"[event_price]",
@@ -70,6 +71,7 @@ function replace_shortcodes($message, $data) {
 			$data->event->venue_url,
 			$data->event->venue_image,
 			$data->event->venue_phone,
+			$data->location, //For the "[venue_address]" shortcode shows the venue address
 			//Payment details
 			$data->attendee->txn_id,
 			$org_options['currency_symbol'] . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => true)),
@@ -167,6 +169,15 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 
 	//Venue variables
 	if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+		$data->event->venue_meta = unserialize($data->event->venue_meta);
+		
+		//Debug
+		echo "<pre>".print_r($data->event->venue_meta,true)."</pre>";
+		
+		$data->event->venue_url = $data->event->venue_meta['website'];
+		$data->event->venue_phone = $data->event->venue_meta['phone'];
+		$data->event->venue_image = '<img src="'.$data->event->venue_meta['image'].'" />';
+		
 		$data->event->venue_name = $data->event->venue_name;
 		$data->event->address = $data->event->venue_address;
 		$data->event->address2 = $data->event->venue_address2;
