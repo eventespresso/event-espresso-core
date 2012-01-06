@@ -172,7 +172,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 		$data->event->venue_meta = unserialize($data->event->venue_meta);
 		
 		//Debug
-		echo "<pre>".print_r($data->event->venue_meta,true)."</pre>";
+		//echo "<pre>".print_r($data->event->venue_meta,true)."</pre>";
 		
 		$data->event->venue_url = $data->event->venue_meta['website'];
 		$data->event->venue_phone = $data->event->venue_meta['phone'];
