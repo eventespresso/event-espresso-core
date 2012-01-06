@@ -782,6 +782,7 @@ if (!function_exists('event_espresso_add_question_groups')) {
 			if ($num_rows > 0) {
 				$questions_displayed = array();
 				foreach ($questions as $question) {
+					$counter++;
 					if (!in_array($question->id, $questions_displayed)) {
 						$questions_displayed[] = $question->id;
 
@@ -796,13 +797,13 @@ if (!function_exists('event_espresso_add_question_groups')) {
 						}
 
 						$html .= event_form_build($question, $answer, $event_id, $multi_reg, $meta);
-						$counter++;
 						$html .= $counter == $num_rows ? '</div>' : '';
 					}
 				}
 			}//end questions display
-		} else
+		} else {
 			$html = '';
+		}
 		return $html;
 	}
 
