@@ -194,7 +194,6 @@ function attendee_edit_record() {
 						$wpdb->query($sql);
 
 						/* DEBUG */
-						//This was a nightmare ot debug!! The questions were not saving and I suck at programming!!!
 						//echo '<p>'.$sql.'</p>';
 						//$sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$value_string' WHERE attendee_id = '$id' AND question_id ='$question->question_id'";
 						//echo '<p>$question->q_id = '.$question->q_id.'</p>';
