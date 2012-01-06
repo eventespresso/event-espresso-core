@@ -110,8 +110,7 @@
 	 clear: both;
 }
 .btn_event_form_submit {
-	width:150px;
-	height:40px;
+	width:auto;
 }
 .btn_event_form_submit:hover {
 	background: #58B366;
