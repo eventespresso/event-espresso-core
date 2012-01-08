@@ -8,7 +8,7 @@ if (function_exists('espresso_member_data')) {
 }
 ?>
 
-<div style="display: block;" id="event-post" class="postbox">
+<div style="display: block;" id="event-post" class="postbox closed">
 	<div class="handlediv" title="Click to toggle"><br>
 	</div>
 	<h3 class="hndle"><span>

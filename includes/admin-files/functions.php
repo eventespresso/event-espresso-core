@@ -511,7 +511,7 @@ if (!function_exists('espresso_featured_image_event_admin')) {
 		$values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
 		?>
 		<!-- Add thumbnail image -->
-		<div id="set-featured-image" class="postbox">
+		<div id="set-featured-image" class="postbox closed">
 			<div class="handlediv" title="Click to toggle"><br />
 			</div>
 			<h3 class="hndle"> <span>

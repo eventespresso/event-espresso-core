@@ -1,4 +1,4 @@
-<div id="event-discounts" class="postbox">
+<div id="event-discounts" class="postbox closed">
 	<div class="handlediv" title="Click to toggle"><br>
 	</div>
 	<h3 class="hndle"><span>
