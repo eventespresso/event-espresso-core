@@ -232,7 +232,7 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
 		<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
 		</div>
 		<h3 class="hndle"><span>
-				<?php echo sprintf(__('Event Questions for Primary Attendee', 'event_espresso'), ''); ?>
+				<?php echo sprintf(__('Questions for Primary Attendee', 'event_espresso'), ''); ?>
 			</span></h3>
 		<div class="inside">
 			<p><strong>
@@ -302,7 +302,7 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
 			<div class="handlediv" title="Click to toggle"><br>
 			</div>
 			<h3 class="hndle"><span>
-					<?php _e('Event Questions for Additional Attendees', 'event_espresso'); ?>
+					<?php _e('Questions for Additional Attendees', 'event_espresso'); ?>
 				</span></h3>
 			<div class="inside">
 				<p><strong>
