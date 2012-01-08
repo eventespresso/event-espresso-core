@@ -275,10 +275,10 @@ function espresso_event_question_groups($question_groups=array(), $add_attendee_
 					$question_group_description = $question_group->group_description;
 					$group_name = $question_group->group_name;
 					//$checked = $question_group->system_group == 1 ? ' checked="checked" ' : '';
-					$checked = (is_array($question_groups) && array_key_exists($question_group_id, $question_groups)) || ($question_group->system_group == 1) ? ' checked="checked" disabled="disabled" name="display-only"' : '';
-					//$visibility = $question_group->system_group == 1 ? 'style="visibility:hidden"' : '';
+					$checked = (is_array($question_groups) && array_key_exists($question_group_id, $question_groups)) || $question_group->system_group == 1 ? ' checked="checked" ' : '';
+					$visibility = $question_group->system_group == 1 ? 'style="visibility:hidden"' : '';
 					$group_id = isset($group_id) ? $group_id : '';
-					$html .= '<p id="event-question-group-' . $question_group_id . '"><input value="' . $question_group_id . '" type="checkbox" ' . $checked . $visibility . ' name="question_groups[' . $question_group_id . ']" ' . $checked . ' /> <a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . '</a><input type="hidden" name="question_groups[1]" value="1" /></p>';
+					$html .= '<p id="event-question-group-' . $question_group_id . '"><input value="' . $question_group_id . '" type="checkbox" ' . $checked . $visibility . ' name="question_groups[' . $question_group_id . ']" ' . $checked . ' /> <a href="admin.php?page=form_groups&amp;action=edit_group&amp;group_id=' . $question_group_id . '" title="edit" target="_blank">' . $group_name . '</a></p>';
 				}
 				if ($num_rows > 10) {
 					$top_div = '<div style="height:250px;overflow:auto;">';
