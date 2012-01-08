@@ -174,8 +174,41 @@ function edit_event($event_id = 0) {
 							$advanced_options
 			);
 			
+			//Question groups
 			echo espresso_event_question_groups($event->question_groups, $event->event_meta['add_attendee_question_groups'], $event->id);
 			echo '<!-- /event-questions -->';
+			
+			?>
+			<div  id="event-categories" class="postbox closed">
+				<div class="handlediv" title="Click to toggle"><br>
+				</div>
+				<h3 class="hndle"> <span>
+			<?php _e('Event Category', 'event_espresso'); ?>
+					</span> </h3>
+				<div class="inside"> <?php echo event_espresso_get_categories($event->id); ?> </div>
+			</div>
+			<!-- /event-category -->
+
+			<?php
+			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
+				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php');
+			}
+			?>
+			<!-- /event-promotions -->
+			<?php if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) {
+							?>
+				<div id="groupon-options" class="postbox closed">
+					<div class="handlediv" title="Click to toggle"><br>
+					</div>
+					<h3 class="hndle"> <span>
+		<?php _e('Groupon Options', 'event_espresso'); ?>
+						</span> </h3>
+					<div class="inside">
+						<p><?php echo event_espresso_edit_event_groupon($use_groupon_code); ?></p>
+					</div>
+				</div>
+				<!-- /groupon-options -->
+			<?php }
 			
 			//Featured image section
 			if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true) {
@@ -317,40 +350,10 @@ function edit_event($event_id = 0) {
 								 target="_blank">
 					<?php _e('Event Page On Facebook', 'event_espresso'); ?>
 							</a>
-		<?php } ?>
-					</div>
-				</div>
 						<?php } ?>
-			<div  id="event-categories" class="postbox closed">
-				<div class="handlediv" title="Click to toggle"><br>
-				</div>
-				<h3 class="hndle"> <span>
-			<?php _e('Event Category', 'event_espresso'); ?>
-					</span> </h3>
-				<div class="inside"> <?php echo event_espresso_get_categories($event->id); ?> </div>
-			</div>
-			<!-- /event-category -->
-
-			<?php
-			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php');
-			}
-			?>
-			<!-- /event-promotions -->
-						<?php if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) {
-							?>
-				<div id="groupon-options" class="postbox closed">
-					<div class="handlediv" title="Click to toggle"><br>
-					</div>
-					<h3 class="hndle"> <span>
-		<?php _e('Groupon Options', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<p><?php echo event_espresso_edit_event_groupon($use_groupon_code); ?></p>
 					</div>
 				</div>
-				<!-- /groupon-options -->
-			<?php }
+	<?php }
 
 	if (function_exists('espresso_personnel_cb') && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 		?>

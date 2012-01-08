@@ -20,7 +20,7 @@
 			<?php echo select_input('early_disc_percentage', $values, !isset($event->early_disc_percentage) ? '' : $event->early_disc_percentage); ?>
 		</p>
 
-
+		<p><strong><?php _e('Promotion Codes', 'event_espresso'); ?></strong></p>
 		<p class="disc-codes">
 			<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'coupon_code_info'); ?></label>
 			<?php echo select_input('use_coupon_code', $values, !isset($event->use_coupon_code) || $event->use_coupon_code == '' ? 'N' : $event->use_coupon_code); ?>

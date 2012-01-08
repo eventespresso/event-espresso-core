@@ -76,6 +76,37 @@ function add_new_event() {
 			
 			echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups);
 			echo '<!-- /event-questions -->';
+			
+			 ?>
+		<div  id="event-categories" class="postbox closed">
+			<div class="handlediv" title="Click to toggle"><br />
+			</div>
+			<h3 class="hndle"> <span>
+				<?php _e('Event Category', 'event_espresso'); ?>
+				</span> </h3>
+			<div class="inside"> <?php echo event_espresso_get_categories(); ?> </div>
+		</div>
+		<!-- /event-category -->
+		
+		<?php
+			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
+				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
+			}
+
+			if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) {
+				?>
+		<div id="groupon-options" class="postbox closed">
+			<div class="handlediv" title="Click to toggle"><br />
+			</div>
+			<h3 class="hndle"> <span>
+				<?php _e('Groupon Options', 'event_espresso'); ?>
+				</span> </h3>
+			<div class="inside">
+				<p><?php echo event_espresso_add_new_event_groupon($use_groupon_code); ?></p>
+			</div>
+		</div>
+		<!-- /groupon-options -->
+		<?php }
 
 			//Featured image section
 			if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true) {
@@ -205,35 +236,6 @@ function add_new_event() {
 				<?php _e('Post to Facebook', 'event_espresso'); ?>
 			</div>
 		</div>
-		<?php } ?>
-		<div  id="event-categories" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br />
-			</div>
-			<h3 class="hndle"> <span>
-				<?php _e('Event Category', 'event_espresso'); ?>
-				</span> </h3>
-			<div class="inside"> <?php echo event_espresso_get_categories(); ?> </div>
-		</div>
-		<!-- /event-category -->
-		
-		<?php
-			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
-			}
-
-			if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) {
-				?>
-		<div id="groupon-options" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br />
-			</div>
-			<h3 class="hndle"> <span>
-				<?php _e('Groupon Options', 'event_espresso'); ?>
-				</span> </h3>
-			<div class="inside">
-				<p><?php echo event_espresso_add_new_event_groupon($use_groupon_code); ?></p>
-			</div>
-		</div>
-		<!-- /groupon-options -->
 		<?php }
 			
 		if (function_exists('espresso_personnel_cb') && isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
