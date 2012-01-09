@@ -63,10 +63,10 @@ function ee_gmap_display($location, $event_id){
 		$ee_map_align = $ee_gmaps_opts['ee_map_align'];
 		 switch($ee_map_align){
 			 case "left":
-			 $map_align = 'float: left;';
+			 $map_align = 'float: left; margin-right:1em;';
 			 break;
 			 case "right":
-			 $map_align = 'float: right;';
+			 $map_align = 'float: right; margin-left:1em;';
 				case "center":
 			 $map_align = 'margin: 0 auto;';
 			 break;
