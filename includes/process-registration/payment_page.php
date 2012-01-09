@@ -380,18 +380,6 @@ function event_espresso_pay($att_registration_id=0) {
 	$registration_id = $att_registration_id;
 	//Debug
 	//echo $att_registration_id;
-	if ($payment_settings['paypal_pro']['active'] == true
-					&& !empty($_REQUEST['paypal_pro']) && $_REQUEST['paypal_pro'] == 'true'
-					&& !empty($_REQUEST['id'])) {
-
-		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php")) {
-			//Moved files
-			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php");
-		} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal_pro/DoDirectPayment.php")) {
-			//Default files
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal_pro/DoDirectPayment.php");
-		}
-	}
 
 	$attendees = $wpdb->get_results("SELECT ea.*, ed.wp_user wp_user FROM " . EVENTS_ATTENDEE_TABLE . " ea left join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id WHERE registration_id ='" . $att_registration_id . "' ORDER BY ID LIMIT 1");
 	$num_rows = $wpdb->num_rows;

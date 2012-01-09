@@ -91,6 +91,18 @@ function event_espresso_txn() {
 				} else {
 					require_once($ideal_folder . "report.php");
 				}
+			//Load PayPal Pro IPN
+			} elseif ($payment_settings['paypal_pro']['active'] == true
+							&& !empty($_REQUEST['paypal_pro']) && $_REQUEST['paypal_pro'] == 'true'
+							&& !empty($_REQUEST['id'])) {
+
+				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php")) {
+					//Moved files
+					require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal_pro/DoDirectPayment.php");
+				} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal_pro/DoDirectPayment.php")) {
+					//Default files
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal_pro/DoDirectPayment.php");
+				}
 			} elseif (get_option('events_eway_active') == 'true' && isset($_REQUEST['AccessPaymentCode'])) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/ewaypaymentprocess.php")) {
 					//Moved files
@@ -181,6 +193,7 @@ function event_espresso_txn() {
 				}
 				$result = espresso_2checkout_process_payment();
 				extract($result);
+			//Load PayPal Standard IPN
 			} elseif ($payment_settings['paypal']['active'] == true && empty($_REQUEST['x_cust_id'])) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/paypal_ipn.php")) {
 					//Moved files
@@ -188,8 +201,7 @@ function event_espresso_txn() {
 				} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal/paypal_ipn.php")) {
 					//Default files
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/paypal/paypal_ipn.php");
-				}
-				//Process PayPal PRO
+				}				
 			} else {
 				//Send an email if payment gateways are not found.
 				$subject = __('Problem With Your Website Payment IPN', 'event_espresso');

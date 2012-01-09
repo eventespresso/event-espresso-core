@@ -14,7 +14,7 @@ if ($use_sandbox == true) {
 
 <p class="section-title"><?php _e('Billing Information', 'event_espresso') ?></p>
 <div class = "event_espresso_form_wrapper">
-	<form id="paypal_pro_payment_form" name="paypal_pro_payment_form" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['return_url']; ?>">
+	<form id="paypal_pro_payment_form" name="paypal_pro_payment_form" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?>">
 	<p>
 		<label for="first_name"><?php _e('First Name', 'event_espresso'); ?></label>
 		<input name="first_name" type="text" id="first_name" class="required" value="<?php echo $fname ?>" />
