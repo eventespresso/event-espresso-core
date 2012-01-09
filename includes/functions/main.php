@@ -619,7 +619,7 @@ function espresso_display_questions($questions, $attendee) {
 				$required = ' class="my_class';
 				$required_label = '';
 			}
-			if ($question['question_type']=='DATE') {
+			if ($question['question_type'] == 'DATE') {
 				$required .= ' datepicker" ';
 			} else {
 				$required .= '" ';
@@ -752,11 +752,11 @@ if (!function_exists('event_espresso_add_question_groups')) {
 			//Only personal inforamation for the additional attendees in each group
 			if (isset($meta['additional_attendee_reg_info']) && $meta['additional_attendee_reg_info'] == '2' && isset($meta['attendee_number']) && $meta['attendee_number'] > 1)
 				$FILTER .= " AND qg.system_group = 1 ";
-			
-			if ( !is_array($question_groups) && !empty($question_groups)) {
+
+			if (!is_array($question_groups) && !empty($question_groups)) {
 				$question_groups = unserialize($question_groups);
 			}
-			
+
 			foreach ($question_groups as $g_id) {
 				$questions_in .= $g_id . ',';
 			}
@@ -797,8 +797,8 @@ if (!function_exists('event_espresso_add_question_groups')) {
 						}
 
 						$html .= event_form_build($question, $answer, $event_id, $multi_reg, $meta);
-						$html .= $counter == $num_rows ? '</div>' : '';
 					}
+					$html .= $counter == $num_rows ? '</div>' : '';
 				}
 			}//end questions display
 		} else {
@@ -808,7 +808,6 @@ if (!function_exists('event_espresso_add_question_groups')) {
 	}
 
 }
-
 
 //Simple function to return the meta an event, venue, staff etc.
 function ee_show_meta($meta, $name) {
