@@ -126,13 +126,12 @@ if (!function_exists('event_espresso_list_attendees')) {
 
 	function event_espresso_list_attendees($atts) {
 		//echo $atts;
-		extract(shortcode_atts(array('event_identifier' => 'NULL', 'single_event_id' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'show_recurrence' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
+		extract(shortcode_atts(array('event_identifier' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'show_recurrence' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		//get the event identifiers
 		$event_identifier = "{$event_identifier}";
-		$single_event_id = "{$single_event_id}";
-		$event_identifier = ($single_event_id != 'NULL') ? $single_event_id : $event_identifier;
+		
 		$show_gravatar = "{$show_gravatar}";
 
 		//get the category identifiers
