@@ -316,19 +316,28 @@ function enter_attendee_payments() {
 									<?php _e('Message:', 'event_espresso'); ?>
 								</p>
 								<div class="postbox">
-									<?php the_editor(__('Dear [fname] [lname], <p>Our records show that we have not received your payment of [cost] for [event_link].</p> <p>Please visit [payment_url] to view your payment options.</p><p>[invoice_link]</p><p>Sincerely,<br />' . $Organization = $org_options['organization'] . '</p>', 'event_espresso'), $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
-									<table id="email-confirmation-form" cellspacing="0">
-										<tr>
-											<td class="aer-word-count"></td>
-											<td class="autosave-info"><span>&nbsp;</span></td>
-										</tr>
-									</table>
-									<p><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-										<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-										</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
-										<?php _e('Email Example', 'event_espresso'); ?>
-										</a></p>
-								</div>
+									 <?php
+										$email_content = __( 'Dear [fname] [lname], <p>Our records show that we have not received your payment of [cost] for [event_link].</p> <p>Please visit [payment_url] to view your payment options.</p><p>[invoice_link]</p><p>Sincerely,<br />' . $Organization = $org_options[ 'organization' ] . '</p>', 'event_espresso' );
+										if (function_exists('wp_editor')){
+											$args = array("textarea_rows" => 5, "textarea_name" => "invoice_message", "editor_class" => "my_editor_custom");
+											wp_editor(espresso_admin_format_content($email_content), "invoice_message", $args);
+										}else{
+											echo  '<textarea name="invoice_message" class="theEditor" id="invoice_message">'.espresso_admin_format_content($email_content).'</textarea>';
+											espresso_tiny_mce();
+										}
+									?>
+										<table id="email-confirmation-form" cellspacing="0">
+											<tbody>
+												<tr>
+													<td class="aer-word-count"></td>
+													<td class="autosave-info"><span>&nbsp;</span></td>
+												</tr>
+											</tbody>
+										</table>
+										<p><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
+														<?php _e('View Custom Email Tags', 'event_espresso'); ?></a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
+														<?php _e('Email Example', 'event_espresso'); ?></a></p>
+									</div>
 							</li>
 							<?php
 	if ($org_options["use_attendee_pre_approval"] == "Y") {
