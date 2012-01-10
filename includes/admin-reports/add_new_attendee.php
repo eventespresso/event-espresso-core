@@ -105,7 +105,7 @@ function add_new_attendee($event_id){
 		  
 		  <?php
 					//Show pricing in a dropdown or text
-					do_action('espresso_price_select', $event_id);
+					do_action('hook_espresso_price_select', $event_id);
 						
 					//Added for seating chart addon.  Creates a field to select a seat from a popup.
 					do_action( 'espresso_seating_chart_select', $event_id);
