@@ -410,7 +410,7 @@ function edit_attendee_record() {
 			//Show pricing in a dropdown or text
 			
 			echo '<p>';
-			do_action('espresso_price_select', $event_id, array('selected_price_type'=>$price_type, 'label'=>__('Standard Price Option', 'event_espresso').' '. apply_filters('espresso_help', 'standard_price_info')));
+			do_action('hook_espresso_price_select', $event_id, array('selected_price_type'=>$price_type, 'label'=>__('Standard Price Option', 'event_espresso').' '. apply_filters('espresso_help', 'standard_price_info')));
 			echo '</p>';
 			
 			if ( function_exists('espresso_member_price_select_action') ){
