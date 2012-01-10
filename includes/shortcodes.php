@@ -737,6 +737,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 	  image_class
 	  show_image (true|false default true)
 	  show_staff_titles (true|false default true)
+	  show_staff_roles (true|false default true)
 	  show_staff_details (true|false default true)
 	  show_image (true|false default true)
 	  show_description (true|false default true)
