@@ -452,7 +452,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 								<?php
 								//Show pricing in a dropdown or text depending on the number of prices added.
-								do_action('espresso_price_select', $event_id, array('show_label' => true, 'label' => ''));
+								do_action('hook_espresso_price_select', $event_id, array('show_label' => true, 'label' => ''));
 
 								//Added for seating chart addon. Creates a field to select a seat from a popup.
 								do_action('espresso_seating_chart_select', $event_id);
