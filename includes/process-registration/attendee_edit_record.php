@@ -221,14 +221,15 @@ function attendee_edit_record() {
 			return events_payment_page($_REQUEST['primary'], $_REQUEST['p_id']);
 	}
 	?>
-	<div class="event-display-boxes">
+	<div id="event_espresso_registration_form" class="event-display-boxes">
+ 	 <div class="event_espresso_form_wrapper event-data-display">
 		<h3 class="section-heading"><?php
 		if ($_REQUEST['registration_id'] = 'true') {
 			echo __('Edit Your', 'event_espresso') . ' ';
 		}_e('Registration', 'event_espresso');
 	?></h3>
 		<p><strong><?php _e('Event:', 'event_espresso'); ?> <?php echo $event_name; ?></strong></p>
-		<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" class="espresso_form">
+		<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" class="espresso_form" id="registration_form">
 			<?php
 			if (count($question_groups) > 0) {
 				$questions_in = '';
@@ -333,5 +334,6 @@ function attendee_edit_record() {
 			<p class="espresso_confirm_registration"><input class="btn_event_form_submit" type="submit" name="submit" value="<?php _e('Update Record', 'event_espresso'); ?>" /></p>
 		</form>
 	</div><!-- / .event-display-boxes -->
+	</div><!-- / .event_espresso_form_wrapper .event-data-display -->
 	<?php
 }
