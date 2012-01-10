@@ -181,7 +181,38 @@ function copy_event($recurrence_arr = array()){
 						}
 					}
 				}
+	
+	$event_venues = $wpdb->get_results("SELECT * FROM ". EVENTS_VENUE_REL_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
+		foreach ($event_venues as $venue){
+					if ($venue->event_id != ''){
 
+						foreach (array($venue->event_id) as $k=>$v){
+							if($v != '') {
+								$insert_venue = "INSERT INTO ".EVENTS_VENUE_REL_TABLE." (event_id, venue_id) VALUES ('".$new_id."', '".$venue->venue_id."')";
+								if (!$wpdb->query($insert_venue)){
+									$error = true;
+								}
+							}
+						}
+					}
+				}
+				
+	$event_persons = $wpdb->get_results("SELECT * FROM ". EVENTS_PERSONNEL_REL_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
+		foreach ($event_persons as $person){
+					if ($person->event_id != ''){
+
+						foreach (array($person->event_id) as $k=>$v){
+							if($v != '') {
+								$insert_person = "INSERT INTO ".EVENTS_PERSONNEL_REL_TABLE." (event_id, person_id) VALUES ('".$new_id."', '".$person->person_id."')";
+								if (!$wpdb->query($insert_person)){
+									$error = true;
+								}
+							}
+						}
+					}
+				}		
+
+		
 	$event_discounts = $wpdb->get_results("SELECT * FROM ". EVENTS_DISCOUNT_REL_TABLE ." WHERE event_id = '".$event_id."' ORDER BY id");
 		foreach ($event_discounts as $discount){
 					if ($discount->event_id != ''){
