@@ -46,7 +46,9 @@ if (!function_exists('event_espresso_show_attendess')) {
 		foreach ($events as $event){
 			$event_id = $event->id;
 			$event_name = stripslashes_deep($event->event_name);
-			$event_desc = do_shortcode(stripslashes_deep($event->event_desc));
+			if ($this_is_a_reg_page != TRUE){
+				$event_desc = do_shortcode(stripslashes_deep($event->event_desc));
+			}
 
 			//This variable is only available using the espresso_event_status function which is loacted in the Custom Files Addon (http://eventespresso.com/download/plugins-and-addons/custom-files-addon/)
 			$event_status = function_exists('espresso_event_status') ? ' - ' . espresso_event_status($event_id) : '';
@@ -82,8 +84,8 @@ if (!function_exists('event_espresso_show_attendess')) {
 		$city_state = $city != '' || $state != '' ? '<br />' . ($city != '' ? $city :'') . ($state != '' ? ', ' . $state :' ') :'';
 		
 		//These are examplel variables to show answers to questions
-		$custom_question_1 = '<br />'.do_shortcode('[EE_ANSWER q="12" a="'.$id.'"]');
-		$custom_question_2 = '<br />'.do_shortcode('[EE_ANSWER q="13" a="'.$id.'"]');
+		//$custom_question_1 = '<br />'.do_shortcode('[EE_ANSWER q="12" a="'.$id.'"]');
+		//$custom_question_2 = '<br />'.do_shortcode('[EE_ANSWER q="13" a="'.$id.'"]');
 
 ?>
 				<li class="attendee_details"> <span class="espresso_attendee"><?php echo $gravatar ?><?php echo stripslashes_deep($fname . ' ' . $lname) . $city_state .'</p>'; ?> </span>
