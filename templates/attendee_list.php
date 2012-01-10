@@ -41,7 +41,7 @@ li.attendee_details{
 if (!function_exists('event_espresso_show_attendess')) {
 	function event_espresso_show_attendess($sql,$show_gravatar,$paid_only, $sort=''){
 		//echo $sql;
-		global $wpdb;
+		global $wpdb,$this_is_a_reg_page;
 		$events = $wpdb->get_results($sql);
 		foreach ($events as $event){
 			$event_id = $event->id;
