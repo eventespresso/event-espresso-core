@@ -773,10 +773,13 @@ if (!function_exists('espresso_reg_form_sc')) {
 			$inside_wrapper_after = isset($inside_wrapper) ? '</' . $inside_wrapper . '>' : '</p>';
 
 			//Show the persons title?
-			$show_staff_titles = (isset($show_persons_title) && $show_persons_title == 'false') ? false : true;
+			$show_staff_titles = isset($show_staff_titles) && $show_staff_titles == 'false' ? false : true;
+		
+			//Show the persons role?
+			$show_staff_roles = isset($show_staff_roles) && $show_staff_roles == 'false' ? false : true;
 
 			//Show the persons details?
-			$show_staff_details = (isset($show_details) && $show_details == 'false') ? false : true;
+			$show_staff_details = isset($show_staff_details) && $show_staff_details == 'false' ? false : true;
 
 			//Show image?
 			$show_image = (isset($show_image) && $show_image == 'false') ? false : true;
@@ -821,7 +824,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 					//Build the persons name/title
 					$html .= $inside_wrapper_before;
-					if ($show_staff_titles != false) {
+					if ($show_staff_roles != false) {
 						$person_title = $person_role != '' ? ' - ' . stripslashes_deep($person_role) : '';
 					}
 					$html .= $name_wrapper_start . stripslashes_deep($person_name) . $name_wrapper_end . $person_title;
@@ -841,7 +844,9 @@ if (!function_exists('espresso_reg_form_sc')) {
 					if ($show_staff_details != false) {
 						$html .= $inside_wrapper_before;
 						$html .= isset($meta['organization']) ? __('Company:', 'event_espresso') . ' ' . stripslashes_deep($meta['organization']) . '<br />' : '';
-						$html .= isset($meta['title']) ? __('Title:', 'event_espresso') . ' ' . stripslashes_deep($meta['title']) . '<br />' : '';
+						if ($show_staff_titles != false) {
+							$html .= isset($meta['title']) ? __('Title:', 'event_espresso') . ' ' . stripslashes_deep($meta['title']) . '<br />' : '';
+						}
 						$html .= isset($meta['industry']) ? __('Industry:', 'event_espresso') . ' ' . stripslashes_deep($meta['industry']) . '<br />' : '';
 						$html .= isset($meta['city']) ? __('City:', 'event_espresso') . ' ' . stripslashes_deep($meta['city']) . '<br />' : '';
 						$html .= isset($meta['country']) ? __('Country:', 'event_espresso') . ' ' . stripslashes_deep($meta['country']) . '<br />' : '';
