@@ -295,24 +295,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
                 $attendee_cost = seating_chart::get_purchase_price($booking_id);
 		$amount_pd = seating_chart::get_purchase_price($booking_id);
             }else{
-
-                $attendee_cost = $events_prices->event_cost + (($events_prices->surcharge_type=='pct')?$events_prices->event_cost * (float)($events_prices->surcharge/100.00):$events_prices->surcharge);
-                /*echo  '<strong>Standard Pricing</strong>'.'<br />';
-                echo  '$events_prices->event_cost = '.$events_prices->event_cost.'<br />';
-                echo  '$events_prices->surcharge = '.$events_prices->surcharge.'<br />';
-                echo  '$events_prices->surcharge_type = '.$events_prices->surcharge_type.'<br />';
-                echo  '$attendee_cost = '.$attendee_cost.'<br />';
-                return;*/
-
-                if ( is_user_logged_in() ){
-                    $attendee_cost = $events_prices->member_price + (($events_prices->surcharge_type=='pct')?$events_prices->member_price * (float)($events_prices->surcharge/100.00):$events_prices->surcharge);
-                    /*echo  '<strong>Member Pricing</strong>'.'<br />';
-                    echo  '$events_prices->event_cost = '.$events_prices->event_cost.'<br />';
-                    echo  '$events_prices->surcharge = '.$events_prices->surcharge.'<br />';
-                    echo  '$events_prices->surcharge_type = '.$events_prices->surcharge_type.'<br />';
-                    echo  '$attendee_cost = '.$attendee_cost.'<br />';
-                    //return;*/
-                }
+				$attendee_cost = event_espresso_get_final_price($attendee_price_id, $event_id);
                 if ( isset($data_source['num_people']) ){
                     $attendee_quantity = $data_source['num_people'];
                 }
