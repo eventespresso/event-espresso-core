@@ -257,7 +257,6 @@ function update_event($recurrence_arr = array()) {
 
 		$add_attendee_question_groups = serialize(empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups']);
 
-		$item_groups = serialize(empty($_REQUEST['item_groups']) ? '' : $_REQUEST['item_groups']);
 		$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
 		$event_meta['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
 		$event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
