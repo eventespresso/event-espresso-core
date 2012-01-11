@@ -67,16 +67,23 @@ if (!function_exists('display_event_espresso_categories')) {
 if (!function_exists('event_espresso_get_event_details')) {
 
 	function event_espresso_get_event_details($events, $css_class=NULL, $allow_override=0) {
+	
 		global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts;
+		
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
+		
 		$multi_reg = false;
+		
 		if (function_exists('event_espresso_multi_reg_init')) {
 			$multi_reg = true;
 		}
+		
 		$event_page_id = $org_options['event_page_id'];
+		
 		foreach ($events as $event) {
+		
 			$status = $event->get_status();
 			$event_id = $event->get_id();
 			$categories = $event->get_categories();
@@ -103,28 +110,38 @@ if (!function_exists('event_espresso_get_event_details')) {
 			$status_display_not_open = $status['status'] == 'REGISTRATION_NOT_OPEN' ? ' - ' . $status['display_custom'] : '';
 			$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? ' - ' . $status['display_custom'] : '';
 			$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' - <span class="espresso_closed">' . __('Regsitration is Closed', 'event_espresso') . '</span>' : '';
-			if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $event->is_member_only() == 'Y') {
+			
+			if (! is_user_logged_in() && get_option('events_members_active') == 'true' && $event->is_member_only() == 'Y') {
 				//Display a message if the user is not logged in.
 				//_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
+				
 			} else {
+			
 				if ($allow_override == 1) {
+				
 					include('event_list_display.php');
+					
 				} else {
+				
 					switch ($event->get_active_state()) {
+					
 						case 'NOT_ACTIVE':
 							//Uncomment the following line to show events that are not active and the active status array
 							//include('event_list_display.php');
-							break;
+						break;
+							
 						case 'PENDING':
 							if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
 								echo '<div class="pending_event">';
 								include('event_list_display.php');
 								echo '</div>';
 							}
-							break;
+						break;
+						
 						default:
 							include('event_list_display.php');
-							break;
+						break;
+						
 					}
 				}
 			}
