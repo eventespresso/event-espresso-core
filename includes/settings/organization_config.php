@@ -100,8 +100,8 @@ function organization_config_mnu() {
 
 	//Options updated message
 	//This line keeps the notices from displaying twice
-	if (did_action('espresso_admin_notices') == false)
-		do_action('espresso_admin_notices');
+	if (did_action( 'action_hook_espresso_admin_notices') == false)
+		do_action( 'action_hook_espresso_admin_notices');
 
 	$org_options = get_option('events_organization_settings');
 	$values = array(
@@ -134,7 +134,7 @@ function organization_config_mnu() {
 												<div class="padding">
 													<h4>
 														<?php _e('Contact Information', 'event_espresso'); ?>
-														<?php echo apply_filters('espresso_help', 'contact_info'); ?>
+														<?php echo apply_filters( 'filter_hook_espresso_help', 'contact_info'); ?>
 													</h4>
 													<table class="form-table">
 														<tbody>
@@ -223,7 +223,7 @@ function organization_config_mnu() {
 															<tr>
 																<th><label for="upload_image">
 																		<?php _e('Add a Default Logo', 'event_espresso'); ?>
-																		<?php echo apply_filters('espresso_help', 'espresso_default_logo_info'); ?>
+																		<?php echo apply_filters( 'filter_hook_espresso_help', 'espresso_default_logo_info'); ?>
 																	</label></th>
 																<td><div id="default-logo-image">
 																		<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $org_options['default_logo_url'] ?>" />
@@ -287,7 +287,7 @@ function organization_config_mnu() {
 														<tr>
 															<th><label for="event_page_id">
 																	<?php _e('Main registration page', 'event_espresso'); ?>
-																	<?php echo apply_filters('espresso_help', 'registration_page_info'); ?>
+																	<?php echo apply_filters( 'filter_hook_espresso_help', 'registration_page_info'); ?>
 																</label></th>
 															<td><select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
 																	<option value="0">
@@ -301,7 +301,7 @@ function organization_config_mnu() {
 														<tr>
 															<th><label for="return_url">
 																	<?php _e('Auto Return URL', 'event_espresso'); ?>
-																	<?php echo apply_filters('espresso_help', 'return_url_info'); ?>
+																	<?php echo apply_filters( 'filter_hook_espresso_help', 'return_url_info'); ?>
 																</label></th>
 															<td><select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
 																	<option value="0">
@@ -316,7 +316,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 														<tr>
 															<th><label for="notify_url">
 																	<?php _e('Payment Notification URL', 'event_espresso'); ?>
-																	<?php echo apply_filters('espresso_help', 'notify_url_info'); ?>
+																	<?php echo apply_filters( 'filter_hook_espresso_help', 'notify_url_info'); ?>
 																</label></th>
 															<td><select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
 																	<option value="0">
@@ -332,7 +332,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	<?php _e('Cancel Return URL', 'event_espresso'); ?>
 																</label></th>
 															<td><select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide">
-																	<?php echo apply_filters('espresso_help', 'cancel_return_info'); ?>
+																	<?php echo apply_filters( 'filter_hook_espresso_help', 'cancel_return_info'); ?>
 																	<option value="0">
 																		<?php _e('Main page', 'event_espresso'); ?>
 																	</option>
