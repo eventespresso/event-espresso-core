@@ -82,6 +82,13 @@ License: 			GPLv2
 //																)
 				);
 				
+	// array of event IDs
+	var $_events_in_cart = array();
+	
+	// totals
+	var $_cart_grand_total_qty = 0;
+	var $_cart_grand_total_amount = 0;	
+				
 	// EE_Session object stored by reference
 	var $session = NULL; 
 	
@@ -128,14 +135,14 @@ License: 			GPLv2
 		$this->_notices = $notices;
 
 		// if sessions is not instantiated
-		if ( ! defined( ESPRESSO_SESSION )) {
+		if ( ! defined( 'ESPRESSO_SESSION' )) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Session.class.php');
 		}
 		// instantiate the class object making all properties and methods accessible via $this->session ex: $this->session->data();
 		$this->session = EE_Session::instance();
 		
 		// are we using encryption?
-		if ( ! defined( ESPRESSO_ENCRYPT )) {
+		if ( ! defined( 'ESPRESSO_ENCRYPT' )) {
 			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Encryption.class.php' );
 		}
 		// instantiate the class object making all properties and methods accessible via $this->encryption ex: $this->encryption->encrypt();
@@ -149,10 +156,12 @@ License: 			GPLv2
 				$this->_{$var_name} = $cart_setting;
 			}
 		}
-		
-		// grab any session data carried over from the previous page access
-		$session_data = $this->session->data();
 
+		// grab any session data carried over from the previous page access
+		$session_data = $this->session->data( FALSE, FALSE );
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'->$session_data</h3>';
+//		echo $this->session->pre_r($session_data, TRUE);
+		
 		// allow outside functions to change default empty cart
 		apply_filters_ref_array( 'espresso_default_empty_cart', array( &$this, '_empty_cart' ) );
 		
@@ -160,15 +169,33 @@ License: 			GPLv2
 		$default_cart_types = array_keys( $this->_empty_cart );
 		foreach ( $default_cart_types as $cart_type ) {
 
-			// check for existing cart data within the EE_session
-			if ( ! empty( $session_data['espresso'][ $cart_type ] )) { 
-				//add existing data to cart 
-				$this->cart[ $cart_type ] = $session_data['espresso'][ $cart_type ];
+			// check if cart has been initialized
+			if ( isset( $session_data['espresso'][ $cart_type ] )) { 
+			
+				// now check for any cart data within the current EE_session
+				if ( ! empty( $session_data['espresso'][ $cart_type ] )) { 
+					//add existing data to cart 
+					$this->cart[ $cart_type ] = $session_data['espresso'][ $cart_type ];
+				}
+			
 			} else {
 				// or add default data for empty cart
 				$this->cart[ $cart_type ] = $this->_empty_cart[ $cart_type ];
 			}
+				
 		}
+
+		// check for existing event id list, which is a list of any events that are currently in the cart
+		if ( isset( $session_data['REG']['event_id_list'] )) {
+			$this->_events_in_cart = $this->cart['REG']['event_id_list'];
+		} /*else {
+			$this->_events_in_cart = array();
+		}*/
+		
+		
+
+		
+
 
 		// once everything is all said and done, save the cart to the EE_Session
 		add_action( 'shutdown', array( &$this, '_save_cart' ), 90);
@@ -194,27 +221,29 @@ License: 			GPLv2
 			$this->_notices['errors'][] = 'An error occured. No event details were submitted. Could not add to cart';
 			return FALSE;
 		}
+		
+		$event['desc'] = isset( $event['desc'] ) ? $event['desc'] : '';
 
 		$add_to_cart_args = array( 
-														'id' 			=> $event->id,
-														'name' 	=> $event->event_name,
-														'price' 		=> $event->event_cost,
-														'qty' 		=> $qty,
-														'details' 	=> $event													
+														'id' 			=> $event['id'],
+														'name' 	=> $event['name'],
+														'price' 		=> $event['price'],
+														'qty' 		=> $event['qty'],
+														'details' 	=> $event['desc']											
 													);
 
 		// add event to cart
 		if ( $this->add_to_cart( $which_cart, $add_to_cart_args ) ) {
 		
 			// retreive event id list
-			$events_in_cart = $this->session->data('events_in_cart');
+			//$events_in_cart = $this->session->data('events_in_cart');
 			// add this event to list
-			$events_in_cart[$event->id] = $event->id;
+			$this->_events_in_cart[ $event['id'] ] = absint( $event['id'] ); 
 			// send event id list back to session
-			$this->session->set_data( $events_in_cart, 'events_in_cart' );
+			$this->session->set_data( $this->_events_in_cart, 'events_in_cart' );
 
 			// add event id to list of events in cart within individual cart
-			$this->cart[$which_cart]['event_id_list'][$event->id] = $event->id;
+			$this->cart[$which_cart]['event_id_list'][ $event['id'] ] = absint( $event['id'] );
 
 			return TRUE;
 			
@@ -290,6 +319,8 @@ License: 			GPLv2
 			
 		foreach ( $item as $key => $value ) {
 		
+		//echo  '$key : ' . $key . '   $value : ' . $value . '<br />';
+		
 			// process data based on type
 			switch ( $key ) {
 				
@@ -306,7 +337,7 @@ License: 			GPLv2
 				case 'price' : 
 						// filter price as numbers and decimals only 
 						$item['price'] = trim( preg_replace('/[^0-9.+$]/', '', $item['price']) ); 			
-						$item['price'] = number_format( (int)$item['price'], 2, '.', '' );		
+						$item['price'] = number_format( (float)$item['price'], 2, '.', '' );								
 				break;
 				
 				case 'name' : 
@@ -317,7 +348,7 @@ License: 			GPLv2
 				default : 
 						// esc illegal characters for all other entries
 						if ( ! is_array( $value ) &&  ! is_object( $value )) {
-							$item[$key] = trim( esc_html( $item[$value] )); 		
+							$item[$key] = trim( esc_attr( $value )); 		
 						}			
 				break;
 				
@@ -327,9 +358,9 @@ License: 			GPLv2
 		// each line item in the cart requires a unique identifier
 		if ( isset( $item['options'] ) && ! empty( $item['options'] ) ) { 
 			// add item options to accomodate adding multiples of same item to cart that have different options
-			$line_item_id = md5( $which_cart . $item['id'] . implode( '', $item['options'] ) );
+			$line_item_id = md5( $which_cart . $item['id'] . $item['price'] . implode( '', $item['options'] ) );
 		} else {
-			$line_item_id = md5( $which_cart . $item['id'] );
+			$line_item_id = md5( $which_cart . $item['id'] . $item['price'] );
 		}
 		
 		//$item['line_item_id'] = $line_item_id;
@@ -375,20 +406,24 @@ License: 			GPLv2
 		if ( isset( $this->cart[ $which_cart ]['items'] )) {
 			// cycle thru each item
 			foreach ( $this->cart[ $which_cart ]['items'] as $item ) {
+				
 				// check validity of item to ensure it has required properties
-				//if ( $this->_verify_item( $item )) { 
 				if ( $this->_verify_cart_properties ( array( 'item' => $item ))) {
+				
 					// add qty of this item to total
 					$total_items = $total_items + $item['qty'];
 					// calculate price of item multiplied by qty 
 					$this->cart[ $which_cart ]['items'][ $item['line_item'] ]['line_total'] = $item['qty'] * $item['price'];
 					// and add that to subtotal
 					$sub_total = $sub_total + $this->cart[ $which_cart ]['items'][ $item['line_item'] ]['line_total'];
+					
 				} else {
 					// garbage item ! get rid of it !
-					$this->_clean_cart( $item );
-					return FALSE;
+					$this->_clean_cart(  );
+					// run it again
+					$this->calculate_cart_totals( $which_cart );
 				}
+				
 			}			
 		} else {
 			// cart has no items, but we'll let this run so that the totals get zero'd out
@@ -397,10 +432,58 @@ License: 			GPLv2
 		$this->cart[ $which_cart ][ 'total_items' ] = $total_items;
 		$this->cart[ $which_cart ][ 'sub_total' ] = $sub_total;
 		
+		$this->calculate_cart_grand_total();
+		
 		return TRUE;
 		
 	}
+
+
+
+
+
+	/**
+	 *			@ recalculate cart grand totals
+	 *		  	@access public
+	 *		  	@param string - which_cart
+	 *			@return void
+	 */	
+	public function calculate_cart_grand_total( ) {
 	
+		$this->_cart_grand_total_qty = 0;
+		$this->_cart_grand_total_amount = 0;
+		
+		// cycle thru each cart
+		foreach ( $this->cart as $which_cart => $cart ) {
+		
+			if ( isset ( $cart[ 'total_items' ] )) {
+				$this->_cart_grand_total_qty = $this->_cart_grand_total_qty + $cart[ 'total_items' ];
+			}		
+			
+			if ( isset ( $cart[ 'sub_total' ] )) {
+				$this->_cart_grand_total_amount = $this->_cart_grand_total_amount + $cart[ 'sub_total' ];
+			}
+					
+		}
+	}
+
+
+
+
+
+	/**
+	 *			@ recalculate cart grand totals
+	 *		  	@access public
+	 *		  	@param string - which_cart
+	 *			@return void
+	 */	
+	public function get_cart_grand_totals() {
+	
+		$cart_grand_totals = array();
+		$cart_grand_totals['grand_total_qty'] = $this->_cart_grand_total_qty;
+		$cart_grand_totals['grand_total_amount'] = $this->_cart_grand_total_amount;
+		return $cart_grand_totals;
+	}	
 
 
 
@@ -418,7 +501,7 @@ License: 			GPLv2
 		$updates = 0;
 
 		// check for a valid cart properties
-		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_ids' => $line_item_ids, 'new_qty' => $new_qty )); 
+		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_ids' => $line_item_id, 'new_qty' => $new_qty )); 
 
 		// check if only a single line_item_id was passed
 		if ( ! is_array( $line_item_id )) {
@@ -495,14 +578,71 @@ License: 			GPLv2
 		}
 		
 		if ( $removals > 0 ) {
+			$this->calculate_cart_totals( $which_cart );
 			return $removals;
 		} else {
 			return FALSE;
 		}
 				
 	}		
+	
 
 
+
+
+	/**
+	 *			@remove events from cart
+	 *		  	@access public
+	 *		  	@param string - which_cart
+	 *		  	@param mixed - string or array - line_item_ids
+	 *			@return int on success, FALSE on fail
+	 */	
+	public function remove_event_from_cart( $which_cart = FALSE, $line_item_ids = FALSE ) {
+	
+		// check that the passed properties are valid
+		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_ids' => $line_item_ids )); 	
+	
+		// check if only a single line_item_id was passed
+		if ( ! is_array( $line_item_ids )) {
+			// place single line_item_id in an array to appear as multiple line_item_ids
+			$line_item_ids = array ( $line_item_ids );			
+		}
+		
+		$removals = 0;
+		// cycle thru line_item_ids
+		foreach ( $line_item_ids as $line_item_id ) {
+			// check if line_item_id exists in cart
+			if ( isset( $line_item_id )) {
+				
+				// now check for an event id
+				if ( isset( $this->cart[ $which_cart ]['items'][ $line_item_id ]['id'] )) {
+					// grab event id
+					$event_id = $this->cart[ $which_cart ]['items'][ $line_item_id ]['id'];
+					// first remove item from cart
+					if ( $this->remove_from_cart( $which_cart, $line_item_id )) {
+					
+						// remove event id from event id lists
+						unset( $this->cart[ $which_cart ]['event_id_list'][ $event_id ] );
+						unset( $this->_events_in_cart[ $event_id ] );
+						unset( $this->session->_data[ 'events_in_cart' ][ $event_id ] );
+						$removals++;
+					}
+				}
+
+			}
+		}
+		
+		if ( $removals > 0 ) {
+			return $removals;
+		} else {
+			return FALSE;
+		}
+						
+
+	}
+
+
+	
 
 
 
@@ -545,17 +685,18 @@ License: 			GPLv2
 	 *		  @param string - which_cart
 	 *			@return array on success, FALSE on fail
 	 */	
-	public function is_event_in_cart( $event_id  ) {
+	public function is_event_in_cart( $event_id, $which_cart = 'REG', $section = 'espresso' ) {
 		
-		$session_data = $this->session->data();
-		$events_in_cart = $session_data['events_in_cart'];
+//		$session_data =  $this->session->data($which_cart);
+//		$events_in_cart = $session_data['event_id_list'];
 		
-		//echo $this->session->pre_r($events_in_cart, TRUE);
+//		echo '<h3>'.__FUNCTION__.'</h3>';
+//		echo $this->session->pre_r($events_in_cart, TRUE);
 		
 		// if there are actually some event_ids to look through
-		if ( is_array( $events_in_cart ) && ! empty( $events_in_cart ) ) {
+		if ( is_array( $this->_events_in_cart ) && ! empty( $this->_events_in_cart ) ) {
 				// if the event we are looking for is in there
-			if ( in_array( $event_id, $events_in_cart  )) {
+			if ( in_array( $event_id, $this->_events_in_cart  )) {
 				return TRUE;
 			} else {
 				return FALSE;
@@ -617,14 +758,18 @@ License: 			GPLv2
 	 *		  @param string - which_cart
 	 *			@return array on success, FALSE on fail
 	 */	
-	public function whats_in_the_cart( $which_cart = 'CART' ) {
+	public function whats_in_the_cart( $which_cart = 'CART', $line_item_id = FALSE ) {
 		
 		//echo '<h3>'.__FUNCTION__.'</h3>';
 
 		// check that the passed properties are valid
-		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
+		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_id' => $line_item_id )); 
 
-		return $this->cart[ $which_cart ];
+		if ( $line_item_id ) {
+			return $this->cart[ $which_cart ][ $line_item_id ];					
+		} else {
+			return $this->cart[ $which_cart ];		
+		}
 
 	}		
 
@@ -695,11 +840,11 @@ License: 			GPLv2
 	
 	
 	/**
- *			@clean junk items from cart
-	 *		  @access private
-	 *		  @param array - properties
-	 *			@return TRUE on success, FALSE on fail
-	 */	
+ 	*		@clean junk items from cart
+	*		@access private
+	*		@param array - properties
+	*		@return TRUE on success, FALSE on fail
+	*/	
 	private function _verify_cart_properties ( $properties = array() ) {
 		
 		// WHAT?!?!! check the validity of properties before you validate them ?!?!? geez... my head hurts
@@ -726,6 +871,14 @@ License: 			GPLv2
 							return FALSE;
 						}
 				break;
+				
+//				case 'line_item_id' :
+//						check for a line item id(s)
+//						if ( ! $property or ! isset( $this->cart[ $properties['which_cart'] ]['items'][ $property ] )) {
+//							$this->_notices['errors'][] = 'An error occured. No item was specified.';
+//							return FALSE;
+//						}
+//				break;
 				
 				case 'new_qty' :
 						//check for a new_qty
@@ -769,14 +922,13 @@ License: 			GPLv2
 
 
 
-
 }
 
 
 // create global var
-global $EE_Cart;
+//global $EE_Cart;
 // instantiate !!!
-$EE_Cart = EE_Cart::instance();
+//$EE_Cart = EE_Cart::instance();
 
 
 /* End of file EE_Cart.class.php */

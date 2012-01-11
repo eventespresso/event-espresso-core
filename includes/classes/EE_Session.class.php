@@ -77,7 +77,7 @@ License: 			GPLv2
 	var $_ip_address = NULL; 
 	
 	// array for defining default session vars
-	var $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'events_in_cart', 'espresso' );
+	var $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'last_page', 'espresso' );
 	
 	// global error notices
 	var $_notices;
@@ -110,18 +110,17 @@ License: 			GPLv2
 	 *		@return void
 	 */	
   private function __construct() {
-	
-//		echo '<h3>'.__FUNCTION__.'</h3>';
-		
+
 		define( 'ESPRESSO_SESSION', TRUE );
 		
 		// remove the default espresso session init
-		add_action( 'hook_espresso_after_init_session', array( &$this, 'remove_action_espresso_init_session'));
+		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
+		//add_action( 'action_hook_espresso_after_init_session', array( &$this, 'remove_action_espresso_init_session'));
 		
 		global $EE_Session, $org_options, $notices;
 		$this->_notices = $notices;
 		
-		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : FALSE;
+		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 
 		// retreive session options from db
 		if ( $session_settings = get_option( 'espresso_session_settings' ) !== FALSE ) {
@@ -146,7 +145,8 @@ License: 			GPLv2
 		foreach ( $this->_default_session_vars as $default_var ) { 
 			$this->_data[ $default_var ] = '';
 		}
-//		echo '<h4>this->_data</h4>';
+		
+//		echo '<h4>'. __CLASS__ .'->'.__FUNCTION__.'->_data</h4>';
 //		echo '<pre>';
 //		echo print_r($this->_data);
 //		echo '</pre>';
@@ -166,12 +166,10 @@ License: 			GPLv2
 				$this->reset_data( array() );
 			}
 		}
-		
-		// create global var to hold event espresso session data
-		//$EE_Session = $this->_data['espresso'];
 
 		// once everything is all said and done, 
 		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
+
 
 	}
 
@@ -197,12 +195,22 @@ License: 			GPLv2
 	 * @access	public
 	 * @return	array
 	 */
-	public function data( $key = FALSE, $section = 'espresso' ) {
+	public function data( $key = FALSE, $section = FALSE /*$section = 'espresso'*/ ) {
 	
-		if ( $key ) {
+//		echo '<h4>'. __CLASS__ .'->'.__FUNCTION__.'->_data</h4>';
+//		echo  'key : ' . $key . '<br />section : ' . $section . '<br />';
+		
+		if ( $key != FALSE ) {
+//			echo  'key : ' . $key . '<br />section : ' . $section . '<br />';
+//			echo $this->pre_r($this->_data[ $section ][$key], TRUE);
 			return $this->_data[ $section ][$key];
-		} else {
+		} elseif ( $section != FALSE )  {
+//			echo  'section : ' . $section . '<br />';
+//			echo $this->pre_r($this->_data[ $section ], TRUE);
 			return $this->_data[ $section ];
+		}  else  {
+//			echo $this->pre_r($this->_data, TRUE);
+			return $this->_data;
 		}
 	}
 
@@ -245,9 +253,13 @@ License: 			GPLv2
 		//echo '<h3>'.__FUNCTION__.'</h3>';
 		
 		// starts a new session if one doesn't already exist, or reinitiates an existing one
-		session_start();
+		if ( ! session_id() ) {
+			session_start();
+		}
 		// grab the session ID
 		$this->_sid = session_id();
+//		echo '<h4>'. __CLASS__ .'->'.__FUNCTION__.'->_sid</h4>';		
+//		echo $this->_sid . '<br />';
 		
 		// now let's retreive what's in the db
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
@@ -259,7 +271,7 @@ License: 			GPLv2
 			// unserialize
 			$session_data = unserialize( $session_data );
 
-//echo '<h4>session_data</h4>';
+//echo '<h4>'. __CLASS__ .'->'.__FUNCTION__.'->session_data</h4>';
 //echo '<pre>';
 //echo print_r($session_data);
 //echo '</pre>';
@@ -297,7 +309,8 @@ License: 			GPLv2
 		
 		// make event espresso session data available to plugin 
 		$this->_data = $session_data;
-		
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'->$session_data</h3>';
+//		echo $this->pre_r($session_data, TRUE);		
 		return TRUE;
 
 	}		
@@ -314,7 +327,8 @@ License: 			GPLv2
 	public function _update_espresso_session( $new_session = FALSE ) {
 		
 		//echo '<h3>'.__FUNCTION__.'</h3>';
-		
+
+
 		foreach ( $this->_data as $key => $value ) {
 		
 			switch( $key ) {
@@ -339,6 +353,8 @@ License: 			GPLv2
 						if ( $new_session ) {
 							// initial access times
 							$session_data['init_access'] = $this->_time;
+						} else {
+							$session_data['init_access'] = absint( $value );
 						}
 				break;
 				
@@ -346,6 +362,10 @@ License: 			GPLv2
 						// current access time
 						$session_data['last_access'] = $this->_time;
 				break;
+				
+//				case 'last_page' :
+//						$session_data['last_page'] = $value;
+//				break;
 				
 				default :
 						// carry any other data over
@@ -368,7 +388,7 @@ License: 			GPLv2
 			$this->_data = $session_data;
 			
 			// ready? let's save
-			if ( $this->_save_session_to_db($session_data) ) {
+			if ( $this->_save_session_to_db() ) {
 				return TRUE;
 			} else {
 				return FALSE;
@@ -410,13 +430,14 @@ License: 			GPLv2
 	 *		  @access public
 	 *			@return string
 	 */	
-	private function _save_session_to_db( $session_data ) {
-	
-		//echo '<h3>'.__FUNCTION__.'</h3>';
+	private function _save_session_to_db() {
 
-//echo '<h4>session_data</h4>';
+		$this->_set_last_page();
+		$session_data = $this->_data;
+	
+//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ . '</h1>'; 
 //echo '<pre>';
-//echo print_r($session_data);
+//echo print_r($this->_data);
 //echo '</pre>';
 //die();
 
@@ -447,9 +468,9 @@ License: 			GPLv2
 		//echo '<h3>'.__FUNCTION__.'</h3>';
 
 		if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
-			$visitor_ip = $_SERVER['HTTP_CLIENT_IP'];
+			$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
 		} elseif ( isset( $_SERVER['REMOTE_ADDR'] )) {
-			$visitor_ip = $_SERVER['REMOTE_ADDR'];
+			$visitor_ip = esc_attr( $_SERVER['REMOTE_ADDR'] );
 		} 
 		
 		// break it up!!!
@@ -485,6 +506,95 @@ License: 			GPLv2
 
 
 	/**
+	 *			@the last page the visitor accessed
+	 *		  	@access public
+	 *			@return void
+	 */	
+	public function _set_last_page() {
+
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'->$_SERVER</h3>';
+//		echo $this->pre_r($_SERVER, TRUE);
+
+		//$prev_page = $this->get_last_page();
+		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_data['last_page'] . '</h1>'; 
+		// check for request url
+		if ( isset( $_SERVER['REQUEST_URI'] )) {
+			$request_uri = esc_url( $_SERVER['REQUEST_URI'] );	
+					
+			$ru_bits = explode( '?', $request_uri );
+			$request_uri = $ru_bits[0];
+			//echo '<h1>$request_uri   ' . $request_uri . '</h1>';
+
+			// check for and grab host as well
+			if ( isset( $_SERVER['HTTP_HOST'] )) {
+				$http_host = esc_url( $_SERVER['HTTP_HOST'] );
+			} else {
+				$http_host = '';
+			}			
+			//echo '<h1>$http_host   ' . $http_host . '</h1>';
+			
+			// check for page_id in SERVER REQUEST
+			if ( isset( $_REQUEST['page_id'] )) {	
+				// rebuild $regevent_action without any of the extra paramaters
+				$page_id = '?page_id=' . esc_attr( $_REQUEST['page_id'] ) . '&amp;';
+			} else {
+				$page_id = '?';
+			}		
+			//echo '<h1>$page_id   ' . $page_id . '</h1>';
+			
+			// check for $regevent_action in SERVER REQUEST
+			if ( isset( $_REQUEST['regevent_action'] )) {	
+				// rebuild $regevent_action without any of the extra paramaters
+				$regevent_action = 'regevent_action=' . esc_attr( $_REQUEST['regevent_action'] );
+			} else {
+				$regevent_action = '';
+			}		
+			//echo '<h1>$regevent_action   ' . $regevent_action . '</h1>';
+			
+					
+			$last_page = rtrim( $http_host . $request_uri . $page_id . $regevent_action, '?' );
+			//$last_page = $http_host . $request_uri;
+			//echo '<h1>$last_page   ' . $last_page . '</h1>';			
+			// if the page hasn't really changed (because of a refresh or something),
+			// then we will keep the last page that was different than the current page
+//			if ( $last_page != $prev_page ) {
+				$this->_data[ 'last_page' ] = $last_page;
+//			}
+			
+		} 
+		
+		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_data['last_page'] . '</h1>'; 
+	
+	}
+
+
+
+
+
+	/**
+	 *			@the last page the visitor accessed
+	 *		  	@access public
+	 *			@return void
+	 */	
+	public function get_last_page() {
+	
+//		if ( isset( $this->_data[ 'last_page' ] )) {
+//			$last_page = $this->_data[ 'last_page' ];
+//		} else {
+//			if ( isset( $_SERVER['HTTP_REFERER'] )) {
+//				$last_page = esc_url( $_SERVER['HTTP_REFERER'] );
+//			}
+//		}
+		echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_data['last_page'] . '</h1>'; 
+		//return $last_page;
+		return $this->_data[ 'last_page' ];
+		
+	}
+
+
+
+
+	/**
 	 *			@the current wp user id
 	 *		  @access public
 	 *			@return void
@@ -492,7 +602,7 @@ License: 			GPLv2
 	public function _wp_user_id() {
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
-		$this->_wp_user_id = isset( $user->id ) ? $user->id : NULL;
+		$this->_wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
 		return $this->_wp_user_id;
 	}
 
@@ -582,14 +692,14 @@ License: 			GPLv2
 
 
 
-	/**
-	 *   remove the action that loads the default espresso session init
-	 *   @access public
-	 *   @return void
-	 */
-	public function remove_action_espresso_init_session() {
-		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
-	}
+//	/**
+//	 *   remove the action that loads the default espresso session init
+//	 *   @access public
+//	 *   @return void
+//	 */
+//	public function remove_action_espresso_init_session() {
+//		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
+//	}
 	
 	
 	
@@ -607,18 +717,19 @@ License: 			GPLv2
 	 *
 	 */
 	function pre_r($mixed, $return = false) {
-	  if ($return)
-		return "<pre>" . print_r($mixed, true) . "</pre>";
 	
-	  if ( php_sapi_name() !== "cli")
-		echo ("<pre>");
+	  if ($return)
+		return '<pre style="height:auto;">' . print_r($mixed, true) . '</pre>';
+	
+	  if ( php_sapi_name() !== 'cli')
+		echo ('<pre style="height:auto;">');
 	  print_r($mixed);
 	
-	  if ( php_sapi_name() !== "cli")
-		echo("</pre>");
+	  if ( php_sapi_name() !== 'cli')
+		echo('</pre>');
 	  else
-		echo ("\n");
-	  flush();
+		echo ('\n');
+	  flush(); 
 	
 	}
 	
@@ -632,7 +743,8 @@ License: 			GPLv2
 // create global var
 global $EE_Session;
 // instantiate !!!
-$EE_Session = EE_Session::instance();
+add_action( 'plugins_loaded', 'EE_Session::instance', 1 );
+//$EE_Session = EE_Session::instance();
 
 
 /* End of file EE_Session.class.php */

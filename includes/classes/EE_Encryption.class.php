@@ -98,23 +98,23 @@ class EE_Encryption {
 	public  function get_encryption_key() { 
 	
 		// if encryption key has not been set
-		if ( $this->_encryption_key == NULL ) {
+		if ( self::$_encryption_key == NULL ) {
 
 			// retreive encryption_key from db
-			$this->_encryption_key = get_option( 'espresso_encryption_key' );
+			self::$_encryption_key = get_option( 'espresso_encryption_key' );
 			
 			// WHAT?? No encryption_key in the db ??
-			if ( $this->_encryption_key == FALSE ) {
+			if ( self::$_encryption_key == FALSE ) {
 				// let's make one. And md5 it to make it just the right size for a key
 				$new_key =  md5( self::generate_random_string() );
 				// now save it to the db for later
 				add_option( 'espresso_encryption_key', $new_key );
 				// here's the key - FINALLY !
-				$this->_encryption_key = $new_key;
+				self::$_encryption_key = $new_key;
 			}
 		}
 	
-		return $this->_encryption_key;
+		return self::$_encryption_key;
 	}
 
 
@@ -132,7 +132,7 @@ class EE_Encryption {
 			return FALSE;
 		}
 		
-		if ( $this->_use_mcrypt ) {
+		if ( self::$_use_mcrypt ) {
 			$encrypted_text = $this->m_encrypt( $text_string );
 		} else {
 			$encrypted_text = $this->acme_encrypt( $text_string );
@@ -158,7 +158,7 @@ class EE_Encryption {
 		}
 		
 		// if PHP's mcrypt fuctions are installed then we'll use them
-		if ( $this->_use_mcrypt ) {
+		if ( self::$_use_mcrypt ) {
 			$decrypted_text = $this->m_decrypt( $encrypted_text );
 		} else {
 			$decrypted_text = $this->acme_decrypt( $encrypted_text );
@@ -239,7 +239,7 @@ class EE_Encryption {
 		$iv = mcrypt_create_iv ( $iv_size, MCRYPT_RAND );
 		
 		// encrypt it
-		$encrypted_text = mcrypt_encrypt ( MCRYPT_RIJNDAEL_256, $this->_encryption_key, $text_string, MCRYPT_MODE_ECB, $iv );
+		$encrypted_text = mcrypt_encrypt ( MCRYPT_RIJNDAEL_256, self::$_encryption_key, $text_string, MCRYPT_MODE_ECB, $iv );
 		// trim and encode
 		$encrypted_text = trim ( base64_encode( $encrypted_text ) ); 
 		
@@ -270,7 +270,7 @@ class EE_Encryption {
 		$iv = mcrypt_create_iv ( $iv_size, MCRYPT_RAND );
 		
 		// decrypt it
-		$decrypted_text = mcrypt_decrypt ( MCRYPT_RIJNDAEL_256, $this->_encryption_key, $encrypted_text, MCRYPT_MODE_ECB, $iv );
+		$decrypted_text = mcrypt_decrypt ( MCRYPT_RIJNDAEL_256, self::$_encryption_key, $encrypted_text, MCRYPT_MODE_ECB, $iv );
 		$decrypted_text = trim ( $decrypted_text );
 		
 		return $decrypted_text;
