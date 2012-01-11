@@ -77,7 +77,7 @@ function event_espresso_manage_maps() {
 			<?php _e('Event Espresso - Event Map Settings', 'event_espresso'); ?>
 		</h2>
 
-		<?php do_action('espresso_admin_notices'); ?>
+		<?php do_action( 'action_hook_espresso_admin_notices'); ?>
 
 		<!-- include right sidebar  -->
 		<div id="poststuff" class="metabox-holder has-right-sidebar">

@@ -5,7 +5,7 @@ if(empty($org_options['map_settings']['ee_map_align_single'])) $org_options['map
 if(empty($org_options['map_settings']['ee_map_type_control_single'])) $org_options['map_settings']['ee_map_type_control_single'] = 'none';
 ?>
  <h4>
-		<?php _e('Google Maps Display Options', 'event_espresso') ?> <?php apply_filters( 'espresso_help', 'gmaps_info'); ?>
+		<?php _e('Google Maps Display Options', 'event_espresso') ?> <?php apply_filters( 'filter_hook_espresso_help', 'gmaps_info'); ?>
 	</h4>
 
 	<div id="gmap-reg-events-settings">

@@ -43,7 +43,7 @@ if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $files[0])
 		</strong>
 		<?php _e('Are you sure you want to enable this feature?', 'event_espresso'); ?>
 		<?php echo select_input('use_custom_templates', $values, empty($org_options['template_settings']['use_custom_templates']) ? 'Y' : $org_options['template_settings']['use_custom_templates']); ?>
-		<?php apply_filters( 'espresso_help', 'custom_templates_info'); ?>
+		<?php apply_filters( 'filter_hook_espresso_help', 'custom_templates_info'); ?>
 	</p>
 </fieldset>
 <?php if ($org_options['template_settings']['use_custom_templates'] == 'N'){
