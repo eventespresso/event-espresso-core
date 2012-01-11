@@ -102,7 +102,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 	}
 	
 	//Social media buttons
-	do_action('espresso_social_display_buttons', $event_id);
+	do_action( 'action_hook_espresso_social_display_buttons', $event_id);
 	
 	//Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
 	$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); 

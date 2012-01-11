@@ -5,22 +5,26 @@
 //Note: This entire function can be overridden using the "Custom Files" addon
 if (!function_exists('register_attendees')) {
 
-	function register_attendees($single_event_id = NULL, $event_id_sc =0) {
+	function register_attendees( $single_event_id = NULL, $event_id_sc =0 ) {
+		
 		if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
 			attendee_edit_record();
 			return;
 		}
+		
 		global $wpdb, $org_options;
+		
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
+		
 		if (isset($_REQUEST['ee']) && $_REQUEST['ee'] != '') {
 			$_REQUEST['event_id'] = $_REQUEST['ee'];
 		}
 
 		$event_id = $event_id_sc != '0' ? $event_id_sc : ($_REQUEST['event_id']);
-
+		
 		if (!empty($_REQUEST['event_id_time'])) {
 			$pieces = explode('|', $_REQUEST['event_id_time'], 3);
 			$event_id = $pieces[0];
@@ -72,7 +76,7 @@ if (!function_exists('register_attendees')) {
 			$sql .= " WHERE post_id = '" . $_REQUEST['post_event_id'] . "' ";
 			$sql .= " LIMIT 0,1";
 		}
-
+		
 		$data->event = $wpdb->get_row($sql, OBJECT);
 		//print_r($data->event);
 
@@ -310,6 +314,7 @@ if (!function_exists('register_attendees')) {
 						require('registration_page_display.php');
 					}
 				}//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
+				
 			} else {//If there are no results from the query, display this message
 				echo '<h3>' . __('This event has expired or is no longer available.', 'event_espresso') . '</h3>';
 			}
