@@ -46,7 +46,7 @@ License: 			GPLv2
  *
  * ------------------------------------------------------------------------
  */
-class EE_Event extends EE_Event_Object {
+class EE_Event  {  //extends EE_Event_Object
 
 	private $id;
 	private $members_only;
@@ -118,6 +118,8 @@ class EE_Event extends EE_Event_Object {
 	private $categories;
 	private $registration_url;
 	private $location;
+	private $location_array;
+	private $gmap_location;
 	private $contact;
 	private $twitter;
 	private $venue_desc;
@@ -177,21 +179,21 @@ class EE_Event extends EE_Event_Object {
 		}
 
 		$meta = unserialize($this->event_meta);
-		$this->default_payment_status = $meta['default_payment_status'];
-		$this->venue_id = $meta['venue_id'];
-		$this->additional_attendee_reg_info = $meta['additional_attendee_reg_info'];
-		$this->add_attendee_question_groups = $meta['add_attendee_question_groups'];
-		$this->date_submitted = $meta['date_submitted'];
-		$this->originally_submitted_by = $meta['originally_submitted_by'];
-		$this->orig_event_staff = $meta['orig_event_staff'];
-		$this->event_thumbnail_url = $meta['event_thumbnail_url'];
-		$this->display_thumb_in_lists = $meta['display_thumb_in_lists'];
-		$this->display_thumb_in_regpage = $meta['display_thumb_in_regpage'];
-		$this->display_thumb_in_calendar = $meta['display_thumb_in_calendar'];
-		$this->enable_for_gmap = $meta['enable_for_gmap'];
-		$this->event_hashtag = $meta['event_hashtag'];
-		$this->event_format = $meta['event_format'];
-		$this->event_livestreamed = $meta['event_livestreamed'];
+		$this->default_payment_status = isset( $meta['default_payment_status'] ) ? $meta['default_payment_status'] : '';
+		$this->venue_id = isset( $meta['venue_id'] ) ? $meta['venue_id'] : '';
+		$this->additional_attendee_reg_info = isset( $meta['additional_attendee_reg_info'] ) ? $meta['additional_attendee_reg_info'] : '';
+		$this->add_attendee_question_groups = isset( $meta['add_attendee_question_groups'] ) ? $meta['add_attendee_question_groups'] : '';
+		$this->date_submitted = isset( $meta['date_submitted'] ) ? $meta['date_submitted'] : '';
+		$this->originally_submitted_by = isset( $meta['originally_submitted_by'] ) ? $meta['originally_submitted_by'] : '';
+		$this->orig_event_staff = isset( $meta['orig_event_staff'] ) ? $meta['orig_event_staff'] : '';
+		$this->event_thumbnail_url = isset( $meta['event_thumbnail_url'] ) ? $meta['event_thumbnail_url'] : '';
+		$this->display_thumb_in_lists = isset( $meta['display_thumb_in_lists'] ) ? $meta['display_thumb_in_lists'] : '';
+		$this->display_thumb_in_regpage = isset( $meta['display_thumb_in_regpage'] ) ? $meta['display_thumb_in_regpage'] : '';
+		$this->display_thumb_in_calendar = isset( $meta['display_thumb_in_calendar'] ) ? $meta['display_thumb_in_calendar'] : '';
+		$this->enable_for_gmap = isset( $meta['enable_for_gmap'] ) ? $meta['enable_for_gmap'] : '';
+		$this->event_hashtag = isset( $meta['event_hashtag'] ) ? $meta['event_hashtag'] : '';
+		$this->event_format = isset( $meta['event_format'] ) ? $meta['event_format'] : '';
+		$this->event_livestreamed = isset( $meta['event_livestreamed'] ) ? $meta['event_livestreamed'] : '';
 	}
 
 
@@ -363,17 +365,61 @@ class EE_Event extends EE_Event_Object {
 	 * @return 		void			var type
 	 */
 	private function set_location() {
-		if (!isset($this->address))
+	
+		if (!isset($this->address)) {
 			$this->set_event_details();
+		}
+
 		$location = $this->address != '' ? $this->address : '';
 		$location .= $this->address2 != '' ? '<br />' . $this->address2 : '';
 		$location .= $this->city != '' ? '<br />' . $this->city : '';
 		$location .= $this->state != '' ? ', ' . $this->state : '';
 		$location .= $this->zip != '' ? '<br />' . $this->zip : '';
 		$location .= $this->country != '' ? '<br />' . $this->country : '';
+
+		// location array
+		$location_array = array();
+		$location_array['address'] = $this->address != '' ? $this->address : '';
+		$location_array['address2'] = $this->address2 != '' ? $this->address2 : '';
+		$location_array['city'] = $this->city != '' ? $this->city : '';
+		$location_array['state'] = $this->state != '' ? $this->state : '';
+		$location_array['zip'] = $this->zip != '' ? $this->zip : '';
+		$location_array['country'] = $this->country != '' ? $this->country : '';			
+		
 		$this->location = $location;
+		$this->location_array = $location_array;
+		
 	}
 
+
+
+
+
+	/**
+	 * method short descriptiom (req)
+	 *
+	 * method long descriptiom
+	 *
+	 * @access 		private		private protected public
+	 * @param 		int 			$var_name 		int float string array object mixed
+	 * @return 		void			var type
+	 */
+	private function set_gmap_location() {
+	
+		if (!isset($this->address)) {
+			$this->set_event_details();
+		}
+
+		$gmap_location = $this->address != '' ? $this->address . ',' : '';
+		$gmap_location .= $this->address2 != '' ? $this->address2 . ',' : '';
+		$gmap_location .= $this->city != '' ? $this->city . ',' : '';
+		$gmap_location .= $this->state != '' ? $this->state . ',' : '';
+		$gmap_location .= $this->zip != '' ? $this->zip . ',' : '';
+		$gmap_location .= $this->country != '' ? $this->country : '';
+	
+		$this->gmap_location = $gmap_location;
+		
+	}
 
 
 
@@ -1121,6 +1167,42 @@ class EE_Event extends EE_Event_Object {
 
 
 
+	/**
+	 * method short descriptiom (req)
+	 *
+	 * method long descriptiom
+	 *
+	 * @access 		public		private protected public
+	 * @param 		int 			$var_name 		int float string array object mixed
+	 * @return 		void			var type
+	 */
+	public function get_location_array() {
+		if (!isset($this->location_array))
+			$this->set_location_array();
+		return $this->location_array;
+	}
+
+
+
+
+
+	/**
+	 * method short descriptiom (req)
+	 *
+	 * method long descriptiom
+	 *
+	 * @access 		public		private protected public
+	 * @param 		int 			$var_name 		int float string array object mixed
+	 * @return 		void			var type
+	 */
+	public function get_gmap_location() {
+		if (!isset($this->gmap_location))
+			$this->set_gmap_location();
+		return $this->gmap_location;
+	}
+
+
+
 
 	/**
 	 * method short descriptiom (req)
@@ -1172,6 +1254,9 @@ class EE_Event extends EE_Event_Object {
 	public function get_number_of_available_spaces() {
 		return $this->get_reg_limit() - $this->get_number_of_attendees();
 	}
+	
+	
+	
 
 }
 
