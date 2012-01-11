@@ -14,7 +14,7 @@ $values=array(
 		<tr>
 			<td colspan="2"><strong>
 				<?php _e('reCAPTCHA Settings', 'event_espresso'); ?>
-				<?php apply_filters( 'espresso_help', 'recaptcha_info'); ?>
+				<?php apply_filters( 'filter_hook_espresso_help', 'recaptcha_info'); ?>
 				</strong></td>
 		</tr>
 		<tr>

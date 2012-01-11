@@ -31,7 +31,7 @@ $values=array(
 				<tbody>
 					<tr>
 						<th><label for="default_payment_status">
-								<?php _e(' Default Payment Status','event_espresso'); ?> <?php echo apply_filters('espresso_help', 'payment_status_info') ?>
+								<?php _e(' Default Payment Status','event_espresso'); ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'payment_status_info') ?>
 							</label></th>
 						<td><?php echo select_input('default_payment_status', $default_payment_status, $org_options['default_payment_status'])?><br />
 							<span class="description">
@@ -170,7 +170,7 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 					<tr>
 						<th><label>
 								<?php _e('Link to Event Espresso in your Registration Page','event_espresso'); ?>
-								<?php apply_filters( 'espresso_help', 'affiliate_info'); ?>
+								<?php apply_filters( 'filter_hook_espresso_help', 'affiliate_info'); ?>
 							</label></th>
 						<td><?php echo select_input('show_reg_footer', $values, isset($org_options['show_reg_footer'])?$org_options['show_reg_footer']:'Y'); ?></td>
 					</tr>

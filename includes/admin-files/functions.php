@@ -345,7 +345,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 		$meta_counter = 1;
 
 		$default_event_meta =  array();
-		$default_event_meta = apply_filters( 'hook_espresso_filter_default_event_meta', $default_event_meta );
+		$default_event_meta = apply_filters( 'filter_hook_espresso_filter_default_event_meta', $default_event_meta );
 
 		$default_meta = $event_meta == '' ? $default_event_meta :array() ;
 		$event_meta = $event_meta == '' ? array() : $event_meta;
@@ -355,7 +355,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 		//print_r( $good_meta );
 		?>
 		<p>
-			<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'event-meta-boxes'); ?>
+			<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'event-meta-boxes'); ?>
 		<ul id="dynamicMetaInput">
 			<?php
 			if ($event_meta != '') {

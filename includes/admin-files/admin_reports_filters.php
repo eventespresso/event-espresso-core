@@ -3,8 +3,8 @@ global $espresso_premium;
 if ($espresso_premium != true)
 	return;
 //This line keeps the notices from displaying twice
-if ( did_action( 'espresso_admin_notices' ) == false )
-	do_action('espresso_admin_notices');
+if ( did_action( 'action_hook_espresso_admin_notices' ) == false )
+	do_action( 'action_hook_espresso_admin_notices');
 ?>
 	  <ul class="ee_subsubsub first subsubsub">
 	  	<li><h3><?php echo __('Filters', 'event_espresso');?></h3></li>

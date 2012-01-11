@@ -38,7 +38,7 @@ function event_newsletter($event_id=0) {
 						<h3><?php _e('Send an Email to the Attendees of', 'event_espresso'); ?> <a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>"><?php echo '"' . $event_name . '"'; ?></a></h3>
 						<div class="inside">
 							<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
-								<input type="hidden" name="action" value="send_newsletter"><p><strong><?php _e('Use a <a href="admin.php?page=event_emails">pre-existing email</a>? ', 'event_espresso'); ?></strong> <?php echo espresso_db_dropdown(id, email_name, EVENTS_EMAIL_TABLE, email_name, $email_id, 'desc') . ' ' . apply_filters('espresso_help', 'email_manager_info'); ?> </p>
+								<input type="hidden" name="action" value="send_newsletter"><p><strong><?php _e('Use a <a href="admin.php?page=event_emails">pre-existing email</a>? ', 'event_espresso'); ?></strong> <?php echo espresso_db_dropdown(id, email_name, EVENTS_EMAIL_TABLE, email_name, $email_id, 'desc') . ' ' . apply_filters( 'filter_hook_espresso_help', 'email_manager_info'); ?> </p>
 								<p><strong><?php _e('OR', 'event_espresso'); ?></strong></p>
 								<ul>
 									<li><label for="email_subject"><?php _e('Email Subject Line', 'event_espresso'); ?></label> <input type="text" name="email_subject" size="25"></li>
