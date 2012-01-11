@@ -54,7 +54,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'update' ){require_once
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add' ){require_once("add_venue_to_db.php");add_venue_to_db();}
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_new_venue'){require_once("add_new_venue.php");add_new_event_venue();}
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit'){require_once("edit_venue.php");edit_event_venue();}
-do_action('espresso_admin_notices');
+do_action( 'action_hook_espresso_admin_notices');
 ?>
 				<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
 					<table id="table" class="widefat manage-discounts">

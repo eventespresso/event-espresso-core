@@ -121,7 +121,7 @@ function edit_event_venue(){
 									<tr>
 										<th><label for="locale">
 												<?php _e('Locale/Region ','event_espresso'); ?>
-												<?php apply_filters( 'espresso_help', 'venue_locale'); ?>
+												<?php apply_filters( 'filter_hook_espresso_help', 'venue_locale'); ?>
 											</label>
 										</th>
 										<td><?php echo espresso_locale_select($cur_locale_id); ?></td>

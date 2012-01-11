@@ -84,7 +84,7 @@ function add_new_event_venue(){
 									<tr>
 										<th><label for="locale">
 												<?php _e('Locale/Region ','event_espresso'); ?>
-												<?php apply_filters( 'espresso_help', 'venue_locale'); ?>
+												<?php apply_filters( 'filter_hook_espresso_help', 'venue_locale'); ?>
 											</label>
 										</th>
 										<td><?php echo espresso_locale_select($cur_locale_id); ?></td>
@@ -122,7 +122,7 @@ function add_new_event_venue(){
 									<tr>
 										<th><label for="enable-ven-gmaps">
 												<?php _e('Enable Venue for Google Maps', 'event_espresso')  ?>
-												<?php apply_filters( 'espresso_help', 'venue_gmap'); ?>
+												<?php apply_filters( 'filter_hook_espresso_help', 'venue_gmap'); ?>
 											</label></th>
 										<td><?php echo select_input('enable_for_maps', $values, isset($meta['enable_for_maps']) ? $meta['enable_for_maps'] : '', 'id="enable-ven-gmaps"'); ?></td>
 									</tr>
