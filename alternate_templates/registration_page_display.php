@@ -143,11 +143,11 @@
 						</p>
 						<?php
 						//Added for seating chart addon. Creates a field to select a seat from a popup.
-						do_action('espresso_seating_chart_select', $event_id);
+						do_action( 'action_hook_espresso_seating_chart_select', $event_id);
 
 
 						/* Displays the social media buttons */
-						do_action('espresso_social_display_buttons', $event_id);
+						do_action( 'action_hook_espresso_social_display_buttons', $event_id);
 						?>
 
 						<fieldset id="event-reg-form-groups" class="ui-widget">
