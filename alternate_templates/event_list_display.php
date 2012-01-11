@@ -128,7 +128,7 @@ if (isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == '
 }
 
 	/* Displays the social media buttons */
-	do_action('espresso_social_display_buttons', $event_id); 
+	do_action( 'action_hook_espresso_social_display_buttons', $event_id); 
 		$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
 		if ($num_attendees >= $event->get_reg_limit()) {
 			?>
