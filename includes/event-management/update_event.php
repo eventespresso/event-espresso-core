@@ -647,7 +647,7 @@ function update_event($recurrence_arr = array()) {
 		//Show the saved event notice
 		global $notices;
 		$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="'. espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' for ' . date("m/d/Y", strtotime($start_date));
-		do_action( 'espresso_admin_notices' );
+		do_action( 'action_hook_espresso_admin_notices' );
 
 		/*
 		* Added for seating chart addon

@@ -254,7 +254,7 @@ function my_event_meta(){
 		"livestreamed" => "N");
 	return $array;
 }
-add_filter('hook_espresso_filter_default_event_meta', 'my_event_meta');
+add_filter( 'filter_hook_espresso_filter_default_event_meta', 'my_event_meta' );
 			</pre>
 			
 			<p> <?php echo __('Further information on shortcodes is available ', 'event_espresso') . "<a href='" . admin_url('admin.php?page=support#shortcodes') . " '>" . __('on the Help &amp; Support page', 'event_espresso') . "</a>" . __(' or from the', 'event_espreso'). " <a href='http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/'>" . __('forums', 'event_espresso') . "</a>."; ?> </p>
