@@ -45,6 +45,8 @@ if (!function_exists('event_form_build')) {
 			$userid = $current_user->ID;
 			$member_options = get_option('events_member_settings');
 		}
+		
+		//print_r( $member_options );
 
 		$html = '';
 		switch ($question->question_type) {

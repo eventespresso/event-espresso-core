@@ -14,7 +14,7 @@ if ( !function_exists('espresso_price_select_action') ){
 		return;
 	}
 	
-	add_action('hook_espresso_price_select', 'espresso_price_select_action', 10, 2);
+	add_action( 'action_hook_espresso_price_select', 'espresso_price_select_action', 10, 2);
 }
 
 //Loads the $espresso_wp_user global var
@@ -48,4 +48,4 @@ function display_espresso_admin_notices () {
 		}
 	}
 }
-add_action( 'espresso_admin_notices', 'display_espresso_admin_notices' );
+add_action( 'action_hook_espresso_admin_notices', 'display_espresso_admin_notices' );

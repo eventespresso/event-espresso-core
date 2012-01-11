@@ -888,7 +888,7 @@ function event_espresso_display_right_column() {
 	<?php
 }
 
-add_action('espresso_right_column', 'event_espresso_display_right_column');
+add_action( 'action_hook_espresso_right_column', 'event_espresso_display_right_column');
 
 function event_espresso_get_right_column() {
 	$output = '<div id="side-info-column" class="inner-sidebar"><div id="side-sortables" class="meta-box-sortables">';
@@ -1050,7 +1050,7 @@ if (!function_exists('espresso_secondary_events_dd')) {
 			}
 			$field .= "</select>";
 			$values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
-			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . apply_filters('espresso_help', 'secondary_info') . '</p>' .
+			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . apply_filters( 'filter_hook_espresso_help', 'secondary_info') . '</p>' .
 							'<p class="inputunder"><label>' . __('Overflow Event', 'event_espresso') . ': </label><br />' . $field . '</p>';
 
 			return $html;
