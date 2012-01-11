@@ -260,7 +260,7 @@ function event_list_attendees() {
 					foreach ($attendees as $attendee) {
 						$id = $attendee->id;
 
-						$seating_info = has_filter('espresso_seating_info') ? apply_filters('espresso_seating_info', $id, $attendee->event_id) : '';
+						$seating_info = has_filter( 'filter_hook_espresso_seating_info') ? apply_filters( 'filter_hook_espresso_seating_info', $id, $attendee->event_id) : '';
 
 						$registration_id = $attendee->registration_id;
 						$lname = $attendee->lname;
