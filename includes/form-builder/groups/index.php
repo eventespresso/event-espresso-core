@@ -109,7 +109,7 @@ function event_espresso_question_groups_config_mnu() {
 						}
 					}
 					?>
-											<?php do_action('espresso_admin_notices'); ?>
+											<?php do_action( 'action_hook_espresso_admin_notices'); ?>
 					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 						<table id="table" class="widefat manage-question-group">
 							<thead>
