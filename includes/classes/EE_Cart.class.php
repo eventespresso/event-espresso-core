@@ -194,7 +194,8 @@ License: 			GPLv2
 		
 		
 
-		
+		// use widgets_init action hook to execute register function
+		add_action( 'widgets_init', array( &$this, 'register_ee_minicart_widget' ));			
 
 
 		// once everything is all said and done, save the cart to the EE_Session
@@ -914,6 +915,23 @@ License: 			GPLv2
 		// if you made it this far... you must be good kid
 		return TRUE;	
 
+	}
+
+
+
+
+
+	/**
+ 	*		register Minicart Widget
+	*		@access public
+	*		@return void
+	*/	
+	public function register_ee_minicart_widget() {
+	
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Minicart_widget.class.php');
+		//register widget
+		register_widget( 'EE_Minicart' );
+		
 	}
 
 
