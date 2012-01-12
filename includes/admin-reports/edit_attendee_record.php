@@ -490,25 +490,26 @@ function edit_attendee_record() {
 				//Output the questions
 				$question_displayed = array();
 				foreach ($questions as $question) {
+					$counter++;
 					if (!in_array($question->id, $question_displayed)) {
 						$question_displayed[] = $question->id;
 						//if new group, close fieldset
-						echo ($group_name != '' && $group_name != $question->group_name) ? '</fieldset>' : '';
+						//echo ($group_name != '' && $group_name != $question->group_name) ? '</fieldset>' : '';
 
 						/* DEBUG */
 						//echo '<p>'.print_r($question).'</p>';
 						/* END DEBUG */
 
-						if ($group_name != $question->group_name) {
+						/*if ($group_name != $question->group_name) {
 							echo "<fieldset><legend>$question->group_name<legend>";
 							$group_name = $question->group_name;
-						}
+						}*/
 
 						echo '<p>';
 						echo event_form_build_edit($question, $question->answer, $show_admin_only = true);
 						echo "</p>";
 
-						$counter++;
+						
 						echo $counter == $num_rows ? '</fieldset>' : '';
 					}
 				}
