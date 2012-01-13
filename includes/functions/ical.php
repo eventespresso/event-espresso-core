@@ -82,3 +82,5 @@ function espresso_ical_prepare($attendee_id) {
 	$output .= "</form>";
 	return $output;
 }
+
+add_action('action_hook_espresso_display_add_to_calendar', 'espresso_ical_prepare');
