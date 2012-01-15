@@ -2,7 +2,7 @@
 
 if (!function_exists('event_espresso_coupon_payment_page')) {
 
-	function event_espresso_coupon_payment_page($use_coupon_code, $event_id, $event_cost, $attendee_id, $payment_status=NULL) {
+	function event_espresso_coupon_payment_page($use_coupon_code, $event_id, $price_id, $attendee_id, $payment_status=NULL) {
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
@@ -10,6 +10,10 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
+		
+		$event_cost = event_espresso_get_final_price($price_id, $event_id);
+		
+		
 		//For general coupons, added for multi registration
 		if (!is_null($event_id)) {
 			$event_id_filter = " AND r.event_id = '" . $event_id . "'";

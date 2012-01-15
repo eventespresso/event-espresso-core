@@ -150,7 +150,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 
 
 	if (function_exists('event_espresso_coupon_payment_page') && (!empty($_REQUEST['coupon_code']) || !empty($coupon_code))) {
-		$event_cost = event_espresso_coupon_payment_page($use_coupon_code, $event_id, $event_original_cost, $attendee_id, $payment_status);
+		$event_cost = event_espresso_coupon_payment_page($use_coupon_code, $event_id, $p_id, $attendee_id, $payment_status);
 
 		/*
 		 * at this point , the $event_cost is correct
@@ -163,8 +163,9 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 	} else if (function_exists('event_espresso_groupon_payment_page') && ($_REQUEST['groupon_code'] != '' || $coupon_code != '')) {
 		$event_cost = event_espresso_groupon_payment_page($use_groupon_code, $event_id, $event_original_cost, $attendee_id);
 		$groupon_code = $_REQUEST['groupon_code'];
-	} else
+	} else {
 		$event_cost = $event_original_cost;
+	}
 
 	if ($num_people != 0)
 		$event_individual_cost = number_format($event_cost / $num_people, 2, '.', '');
