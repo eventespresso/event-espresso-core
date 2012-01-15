@@ -974,7 +974,7 @@ function espresso_init() {
 			$org_options['site_license_key'] = 0;
 		}
 		$api_key = $org_options['site_license_key'];
-		$host_server_url = 'http://eventespresso.com.s128453.gridserver.com/';
+		$host_server_url = 'http://beta.eventespresso.com/';
 		$plugin_slug = 'event-espresso';
 		$options = array(
 				'apikey' => $api_key,
