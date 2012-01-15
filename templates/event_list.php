@@ -46,7 +46,7 @@ if (!function_exists('display_event_espresso_categories')) {
 
 			$display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
-			$sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, c.category_identifier, ese.start_time, ese.end_time, p.event_cost  ";
+			$sql = "SELECT e.*, c.id category_id, c.category_name, c.category_desc, c.display_desc, c.category_identifier, ese.start_time, ese.end_time, p.event_cost  ";
 			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
@@ -83,14 +83,14 @@ if (!function_exists('event_espresso_get_event_details')) {
 		$event_page_id = $org_options['event_page_id'];
 		$currency_symbol = isset($org_options['currency_symbol']) ? $org_options['currency_symbol'] : '';
 		$events = $wpdb->get_results($sql);
-		$category_id = isset($wpdb->last_result[0]->id) ? $wpdb->last_result[0]->id : '';
+		$category_id = isset($wpdb->last_result[0]->category_id) ? $wpdb->last_result[0]->category_id : '';
 		$category_name = isset($wpdb->last_result[0]->category_name) ? $wpdb->last_result[0]->category_name : '';
 		$category_identifier = isset($wpdb->last_result[0]->category_identifier) ? $wpdb->last_result[0]->category_identifier : '';
 		$category_desc = isset($wpdb->last_result[0]->category_desc) ? html_entity_decode(wpautop($wpdb->last_result[0]->category_desc)) : '';
 		$display_desc = isset($wpdb->last_result[0]->display_desc) ? $wpdb->last_result[0]->display_desc : '';
 
 		if ($display_desc == 'Y') {
-			echo '<p id="events_category_name-' . $category_id . '" class="events_category_name">' . stripslashes_deep($category_name) . '</p>';
+			echo '<h2 id="events_category_name-' . $category_id . '" class="events_category_name">' . stripslashes_deep($category_name) . '</h2>';
 			echo espresso_format_content($category_desc);
 		}
 

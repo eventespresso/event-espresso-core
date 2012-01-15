@@ -665,7 +665,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 			$order_by = $order_by != 'NULL' ? " ORDER BY " . $order_by . " ASC " : " ORDER BY date(start_date), id ASC ";
 
 			if (!empty($type) && $type == 'category') {
-				$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
+				$sql = "SELECT e.*, c.id category_id, c.category_name, c.category_desc, c.display_desc, c.category_identifier, ese.start_time, ese.end_time, p.event_cost ";
 				isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 				$sql .= " FROM " . EVENTS_CATEGORY_TABLE . " c ";
 				$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
