@@ -53,8 +53,9 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		$Organization_zip = $org_options['organization_zip'];
 		$contact = $org_options['contact_email'];
 		$contact_email = $org_options['contact_email'];
-		$paypal_id = isset( $org_options['paypal_id'] ) ? $org_options['paypal_id'] : '';
-		$paypal_cur = isset($org_options['currency_format']) ? $org_options['currency_format'] : '';
+// Ticket #629		
+//		$paypal_id = isset( $org_options['paypal_id'] ) ? $org_options['paypal_id'] : '';
+//		$paypal_cur = isset($org_options['currency_format']) ? $org_options['currency_format'] : '';
 		$return_url = $org_options['return_url'];
 		$cancel_return = $org_options['cancel_return'];
 		$notify_url = $org_options['notify_url'];
