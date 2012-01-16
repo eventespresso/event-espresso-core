@@ -1,6 +1,8 @@
 <?php
+
 //Get the payment settings
-global $payment_settings;
+global $payment_settings, $espresso_wp_user;
+
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);
 
 //Debug:
@@ -85,6 +87,8 @@ if (!empty($payment_settings['paypal_pro']['active'])
 	}
 	echo '</div><!-- / #onsite-payments -->';
 }
+
+
 if (!empty($payment_settings['paypal']['active'])
 				|| !empty($payment_settings['authnet_sim']['active'])
 				|| get_option('events_mwarrior_active') == 'true'
@@ -186,6 +190,8 @@ if (!empty($payment_settings['paypal']['active'])
 	echo '</div><!-- / #off_site_payment_container -->';
 }
 
+
+
 if ((!empty($payment_settings['invoice']['active']) && $payment_settings['invoice']['show'] != 'N')
 				|| get_option('events_check_payment_active') == 'true'
 				|| !empty($payment_settings['bank_payment']['active'])) {
@@ -212,6 +218,9 @@ if ((!empty($payment_settings['invoice']['active']) && $payment_settings['invoic
 		<?php
 	}
 
+
+
+
 	if (get_option('events_check_payment_active') == 'true') {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/check/check_payment_vars.php")) {
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/check/check_payment_vars.php");
@@ -220,6 +229,9 @@ if ((!empty($payment_settings['invoice']['active']) && $payment_settings['invoic
 		}
 	}
 
+
+
+
 	if ($payment_settings['bank_payment']['active'] == true) {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/bank/bank_payment_vars.php")) {
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/bank/bank_payment_vars.php");
@@ -227,6 +239,9 @@ if ((!empty($payment_settings['invoice']['active']) && $payment_settings['invoic
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/bank/bank_payment_vars.php");
 		}
 	}
+	
+	
+	
 	echo '</div><!-- / #off_line_payment_container -->';
 }
 echo '</div><!-- / .event-data-display -->';
