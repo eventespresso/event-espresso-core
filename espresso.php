@@ -33,6 +33,9 @@ function espresso_version() {
 	return '3.2.P';
 }
 
+// functions requiring global visibility
+require_once("includes/functions/main.php");
+
 
 // The following is a rough list of WordPress hooks in the order that they are executed along with the corresopnding Event Espresso actions that are called at those times
 // functions called by the following hooks appear after the list
@@ -43,8 +46,6 @@ add_action( 'plugins_loaded', 'espresso_load_error_log', 2);
 add_action( 'plugins_loaded', 'espresso_init_session', 3);
 add_action( 'plugins_loaded', 'espresso_check_for_export');
 add_action( 'plugins_loaded', 'espresso_check_for_import');
-add_action( 'plugins_loaded', 'espresso_export_certificate');
-add_action( 'plugins_loaded', 'espresso_export_invoice');
 
 // a few espresso specific hooks
 
@@ -70,10 +71,14 @@ add_filter( 'plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2
 //init  
 add_action( 'init', 'espresso_load_jquery', 10 );
 add_action( 'init', 'espresso_init', 20 );
+add_action( 'init', 'espresso_export_certificate', 30);
+add_action( 'init', 'espresso_export_invoice', 30);
 					
 
 //widgets_init
-//add_action( 'widgets_init', 'espresso_widget');
+add_action( 'widgets_init', 'espresso_widget');
+
+
 //register_sidebar
 //wp_register_sidebar_widget
 //wp_loaded
@@ -328,47 +333,6 @@ function espresso_check_for_import() {
 
 
 
-/**
-*		Export PDF Certificate
-*		
-*		@access public
-*		@return void
-*/
-function espresso_export_certificate() {
-	if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
-		echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
-	}
-}
-
-
-
-
-
-
-/**
-*		Export Invoice
-*		
-*		@access public
-*		@return void
-*/
-function espresso_export_invoice() {
-	//Version 2.0
-	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/launch_invoice.php");
-		echo espresso_invoice_launch($_REQUEST['id'], $_REQUEST['r_id']);
-	}
-	//End Version 2.0
-	//Export pdf version
-	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
-	}
-	//End pdf version
-}
-
-
-
-
-
 
 /**********************************************************************************************
  **********************************    PLUGIN_ACTION_LINKS     ***********************************
@@ -546,16 +510,10 @@ function espresso_init() {
 	//require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Event.php';
 	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Attendee.php';
 	
-	
-	require_once("includes/functions/main.php");
-	
-	// let's load pricing functions via an action so that overriding functions can be loaded first
-//	function espresso_load_pricing_functions() {
-		require_once("includes/functions/pricing.php");
-//	}
-//	add_action( 'plugins_loaded', 'espresso_load_pricing_functions', 2 );
-	
-	
+	// this was moved out of function to give it greater visibility
+	//require_once("includes/functions/main.php");	
+
+	require_once("includes/functions/pricing.php");
 	require_once("includes/functions/time_date.php");
 	require_once("includes/shortcodes.php");
 	require_once("includes/functions/actions.php");
@@ -587,15 +545,8 @@ function espresso_init() {
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/custom_post_type.php') && isset($org_options['template_settings']['use_custom_post_types']) && $org_options['template_settings']['use_custom_post_types'] == 'Y') {
 		require('includes/admin-files/custom_post_type.php');
 	}
-		
-	//Widget - Display the list of events in your sidebar
-	//The widget can be over-ridden with the custom files addon
-	event_espresso_require_template('widget.php');
+
 	
-	function espresso_widget() {
-		register_widget('Event_Espresso_Widget');
-	}
-	add_action( 'widgets_init', 'espresso_widget');
 
 	
 	/* End Core template files used by this plugin */
@@ -987,11 +938,51 @@ function espresso_init() {
 
 
 
-
 	
 
 }
 
+
+
+
+
+
+/**
+*		Export PDF Certificate
+*		
+*		@access public
+*		@return void
+*/
+function espresso_export_certificate() {
+	if (isset($_REQUEST['certificate_launch']) && $_REQUEST['certificate_launch'] == 'true') {
+		echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
+	}
+}
+
+
+
+
+
+
+/**
+*		Export Invoice
+*		
+*		@access public
+*		@return void
+*/
+function espresso_export_invoice() {
+	//Version 2.0
+	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/launch_invoice.php");
+		echo espresso_invoice_launch($_REQUEST['id'], $_REQUEST['r_id']);
+	}
+	//End Version 2.0
+	//Export pdf version
+	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
+	}
+	//End pdf version
+}
 
 
 
@@ -1009,9 +1000,15 @@ function espresso_init() {
 *		@access public
 *		@return void
 */	
-//function espresso_widget() {
-//	register_widget('Event_Espresso_Widget');
-//}
+
+function espresso_widget() {
+
+	event_espresso_require_template('widget.php');
+	//The widget can be over-ridden with the custom files addon	
+	register_widget('Event_Espresso_Widget');
+	
+}
+
 
 
 
