@@ -190,7 +190,7 @@ on your payemnt page. (Default: Yes)', 'event_espresso'); ?></span></td>
 							<?php //apply_filters('espresso_help', 'base_template_info')  ?>
 						</label></th>
 					<td><select id="base-invoice-select" class="chzn-select wide" name="invoice_css">
-							<option <?php espresso_invoice_is_selected($fname, $payment_settings['invoice']['invoice_css']) ?> value="simple.css">
+							<option <?php espresso_invoice_is_selected('', $payment_settings['invoice']['invoice_css']) ?> value="simple.css">
 								<?php _e('Default CSS - Simple', 'event_espresso'); ?>
 							</option>
 							<?php foreach ($files as $fname) { ?>
