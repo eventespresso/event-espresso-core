@@ -42,15 +42,16 @@ require_once("includes/functions/main.php");
 
 /**
 *		run event espresso installation scripts
+* 		Install/Update Tables when plugin is activated
 *		
 *		@access public
 *		@return void
 */
 function espresso_plugin_activation() {
-	// Install/Update Tables when plugin is activated
-	$path_to_functions = WP_PLUGIN_DIR . '/' . plugin_basename(dirname(__FILE__)) . '/includes/functions/';	
-	require_once( $path_to_functions . 'admin.php');
-	require_once( $path_to_functions . 'database_install.php');
+	// define tables and pathing
+	espresso_define_tables_and_paths();
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/admin.php');
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/database_install.php');
 	events_data_tables_install();
 }
 register_activation_hook(__FILE__, 'espresso_plugin_activation');
