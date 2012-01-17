@@ -18,7 +18,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		if (function_exists('espresso_permissions_config_mnu') && $espresso_premium == true) {
 			global $espresso_manager;
 		} else {
-			$espresso_manager = array('espresso_manager_events' => '', 'espresso_manager_categories' => '', 'espresso_manager_form_groups' => '', 'espresso_manager_form_builder' => '', 'espresso_manager_discounts' => '', 'espresso_manager_event_emails' => '', 'espresso_manager_personnel_manager' => '', 'espresso_manager_general' => '', 'espresso_manager_calendar' => '', 'espresso_manager_members' => '', 'espresso_manager_payment_gateways' => '', 'espresso_manager_addons' => '', 'espresso_manager_support' => '', 'espresso_manager_venue_manager' => '');
+			$espresso_manager = array('espresso_manager_events' => '', 'espresso_manager_categories' => '', 'espresso_manager_form_groups' => '', 'espresso_manager_form_builder' => '', 'espresso_manager_groupons' => '', 'espresso_manager_discounts' => '', 'espresso_manager_event_emails' => '', 'espresso_manager_personnel_manager' => '', 'espresso_manager_general' => '', 'espresso_manager_calendar' => '', 'espresso_manager_members' => '', 'espresso_manager_payment_gateways' => '', 'espresso_manager_social' => '', 'espresso_manager_addons' => '', 'espresso_manager_support' => '', 'espresso_manager_venue_manager' => '');
 		}
 
 // ---------------------------------------
@@ -116,7 +116,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		}
 
 		//Social Media Settings
-		if (is_plugin_active('espresso-social/espresso-social.php') && $espresso_premium == true) {
+		if (function_exists('espresso_social_config_mnu') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Social Media Settings', 'event_espresso'), __('Social Media', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_social']), 'espresso_social', 'espresso_social_config_mnu');
 		}
 		
