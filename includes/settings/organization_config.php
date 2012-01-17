@@ -264,25 +264,27 @@ function organization_config_mnu() {
 													</p>
 													<table class="form-table">
 														<tbody>
-															<?php
+														<?php
 															//Check to see if we are using the deprecated SSL option. If we are, recommend updating to WordPress HTTPS (SSL).
-															if ($espresso_premium == true && $org_options['event_ssl_active'] == 'Y') {
-																echo '<tr><td colspan="2"><div id="ssl-reg" style="background-color: #ffffe0; border: #e6db55 1px solid; padding:4px;">';
-																echo '<p><strong>' . __('Attention!', 'event_espresso') . '</strong><br />' . __('The Secure Payment System has been removed.', 'event_espresso') . '</p>';
-																echo '<p>' . __('If your site uses SSL to handle secure transactions. Please install the <a href="http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip" title="Install Now">Event Espresso SSL/HTTPS</a> plugin now.', 'event_espresso') . ' ' . __('<a href="http://eventespresso.com/forums/2011/09/use-wordpress-https-for-ssl-encryption-on-your-event-espresso-site/" target="_blank">More information here</a>.', 'event_espresso') . '</p>';
-																$ssl_values = array(
-																		array('id' => 'N', 'text' => __('Yes', 'event_espresso')), //This turns the message off by changing the option to 'N'
-																		array('id' => 'Y', 'text' => __('No', 'event_espresso'))//This leaves the message on incase they are not ready to proceed
-																);
+															if ($espresso_premium == true && isset($org_options['event_ssl_active']) ){
+																if ( $org_options['event_ssl_active'] == 'Y' ) {
+																	echo '<tr><td colspan="2"><div id="ssl-reg" style="background-color: #ffffe0; border: #e6db55 1px solid; padding:4px;">';
+																	echo '<p><strong>' . __('Attention!', 'event_espresso') . '</strong><br />' . __('The Secure Payment System has been removed.', 'event_espresso') . '</p>';
+																	echo '<p>' . __('If your site uses SSL to handle secure transactions. Please install the <a href="http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip" title="Install Now">Event Espresso SSL/HTTPS</a> plugin now.', 'event_espresso') . ' ' . __('<a href="http://eventespresso.com/forums/2011/09/use-wordpress-https-for-ssl-encryption-on-your-event-espresso-site/" target="_blank">More information here</a>.', 'event_espresso') . '</p>';
+																	$ssl_values = array(
+																			array('id' => 'N', 'text' => __('Yes', 'event_espresso')), //This turns the message off by changing the option to 'N'
+																			array('id' => 'Y', 'text' => __('No', 'event_espresso'))//This leaves the message on incase they are not ready to proceed
+																	);
 																?>
-															<label for="event_ssl_active">
-																<?php _e('Turn off this message?', 'event_espresso'); ?>
-															</label>
-															<br />
-															<?php
-															echo select_input('event_ssl_active', $ssl_values, empty($org_options['event_ssl_active']) ? 'N' : $org_options['event_ssl_active']);
-															echo '</div></td></tr>';
-														}
+																	<label for="event_ssl_active">
+																		<?php _e('Turn off this message?', 'event_espresso'); ?>
+																	</label>
+																	<br />
+																	<?php
+																	echo select_input('event_ssl_active', $ssl_values, empty($org_options['event_ssl_active']) ? 'N' : $org_options['event_ssl_active']);
+																	echo '</div></td></tr>';
+																}
+															}
 														?>
 														<tr>
 															<th><label for="event_page_id">
