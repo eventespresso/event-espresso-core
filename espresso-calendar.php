@@ -623,8 +623,10 @@ jQuery(document).ready(function($){
 if(is_admin()){
 	
 	function espresso_calendar_load_admin_scripts() {
+		if ( defined( 'EVENT_ESPRESSO_PLUGINFULLURL' )) {
 				wp_register_script('wheelcolorpicker',EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/wheelcolorpicker/jquery.wheelcolorpicker.min.js', array('jquery') );
 				wp_enqueue_script('wheelcolorpicker');
+		}
 	}
 	add_action('admin_init', 'espresso_calendar_load_admin_scripts');	
 }
