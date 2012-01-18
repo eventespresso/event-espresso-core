@@ -175,7 +175,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 
 			/* Set up some default widget settings. */
 
-			$defaults = array('title' => __('Upcoming Events', 'events'), 'category_name' => '', 'show_expired' => __('false', 'events'), 'show_secondary' => __('false', 'events'), 'show_deleted' => __('false', 'events'), 'show_recurrence' => __('false', 'events'));
+			$defaults = array('title' => __('Upcoming Events', 'events'), 'category_name' => '', 'limit' => 5, 'show_expired' => __('false', 'events'), 'show_secondary' => __('false', 'events'), 'show_deleted' => __('false', 'events'), 'show_recurrence' => __('false', 'events')); // ticket 640
 
 			$instance = wp_parse_args((array) $instance, $defaults);
 
