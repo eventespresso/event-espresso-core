@@ -158,7 +158,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 		 * I renamed it to another variable
 		 */
 
-		$event_price_x_attendees = number_format($event_cost, 2, '.', '');
+		$event_price_x_attendees = number_format($event_cost * $num_people, 2, '.', '');
 		$coupon_code = $_REQUEST['coupon_code'];
 	} else if (function_exists('event_espresso_groupon_payment_page') && ($_REQUEST['groupon_code'] != '' || $coupon_code != '')) {
 		$event_cost = event_espresso_groupon_payment_page($use_groupon_code, $event_id, $event_original_cost, $attendee_id);
@@ -169,8 +169,8 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 
 	if ($num_people != 0)
 		$event_individual_cost = number_format($event_cost / $num_people, 2, '.', '');
-
-	$event_discount_label = $event_original_cost > $event_cost ? ' (' . __('Discount of ', 'event_espresso') . $org_options['currency_symbol'] . number_format($event_original_cost - $event_cost, 2, ".", ",") . __(' applied', 'event_espresso') . ')' : '';
+		
+	$event_discount_label = $event_original_cost > $event_cost ? ' (' . __('Discount of ', 'event_espresso') . $org_options['currency_symbol'] . number_format($event_original_cost - $event_price_x_attendees, 2, ".", ",") . __(' applied', 'event_espresso') . ')' : '';
 
 	if ($event_cost == '0.00') {
 		$event_cost = '0.00';
@@ -319,7 +319,10 @@ function espresso_confirm_registration($registration_id) {
 			$espresso_wp_user = $event->wp_user;
 		}
 	}
-
+	
+	$num_people = espresso_count_attendees_for_registration($attendee_id);
+	$event_cost = number_format($event_cost * $num_people, 2, '.', '');
+	
 	//Run pre-approval check if activated
 	$pre_approval_check = is_attendee_approved($event_id, $attendee_id);
 	if ($pre_approval_check) {
@@ -461,14 +464,14 @@ function event_espresso_pay($att_registration_id=0) {
 				//Debug
 				//echo "<pre>".print_r($tmp_attendee,true)."</pre>";
 
-				$sub_total[] = $tmp_attendee["cost"] * $tmp_attendee["quantity"];
+				$sub_total[] = $tmp_attendee["amount_pd"] * $tmp_attendee["quantity"];
 
 				$total_cost = $tmp_attendee['amount_pd'];
 				//Debug
 				//echo "<pre>total_cost - ".print_r($sub_total,true)."</pre>";
 
 				$event_url = espresso_reg_url($tmp_attendee["event_id"]);
-				$event_link .= '<div class="event-list-payment-overview"><dl><dt><a href="' . $event_url . '">' . $tmp_attendee["event_name"] . '</a></dt><dd class="list-event-date">' . event_date_display($tmp_attendee['start_date'], get_option('date_format')) . '</dd><dd class="attendee-plus-cost">' . espresso_edit_attendee($registration_id, $id, $event_id, 'attendee', $tmp_attendee["fname"] . " " . $tmp_attendee["lname"]) . '<span> [ ' . $tmp_attendee["quantity"] . ' x ' . $org_options['currency_symbol'] . number_format($tmp_attendee["cost"], 2, '.', '') . ']</span></dd></div>';
+				$event_link .= '<div class="event-list-payment-overview"><dl><dt><a href="' . $event_url . '">' . $tmp_attendee["event_name"] . '</a></dt><dd class="list-event-date">' . event_date_display($tmp_attendee['start_date'], get_option('date_format')) . '</dd><dd class="attendee-plus-cost">' . espresso_edit_attendee($registration_id, $id, $event_id, 'attendee', $tmp_attendee["fname"] . " " . $tmp_attendee["lname"]) . '<span> [ ' . $tmp_attendee["quantity"] . ' x ' . $org_options['currency_symbol'] . number_format($tmp_attendee["amount_pd"], 2, '.', '') . ']</span></dd></div>';
 				$final_total = array_sum($sub_total);
 
 				//Debug
