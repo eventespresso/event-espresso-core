@@ -45,34 +45,34 @@
 	-webkit-box-shadow: 0 0 2px #555;
 	box-shadow: 0 0 2px #555;
 }
-#content .event-display-boxes p {
+.event-display-boxes p {
 	margin: .5em 0;
 }
-#content .event-display-boxes .ui-widget-header {
+.event-display-boxes .ui-widget-header {
 	margin-bottom: -1px;
 }
-#content .event-data-display p.section-title, #content .espresso_event p.section-title {
+.event-data-display p.section-title, .espresso_event p.section-title {
 	margin-bottom: 8px;
 }
-#content .espresso_event, #content .event-display-boxes { /* event list boxes */
+.espresso_event, .event-display-boxes { /* event list boxes */
 	margin-bottom: 1em;
 }
-#content .event-data-display {
+.event-data-display {
 	padding: 10px;
 }
-#content .event_title, #content h2.section-heading, #content .display-box-heading {
+.event_title, h2.section-heading, .display-box-heading {
 	padding-left: 10px;
 }
-#content .event_title, #content .section-heading, #content .section-title {
+.event_title, .section-heading, .section-title {
 	margin-bottom: 1em;
 }
-#content .event_title a {
+.event_title a {
 	text-decoration: none;
 }
-#content .event_description {
+.event_description {
 	padding: 0 .4em 20px;
 }
-#content .section-title, #content .span_event_time_label, #content .event_price_label {
+.section-title, .span_event_time_label, .event_price_label {
 	font-weight: bold;
 }
 #additional_header a, #event_espresso_refresh_total, .inline-link { /* floating links */
@@ -80,19 +80,19 @@
 	padding-bottom: 3px;
 	text-decoration: none;
 }
-#content .event-display-boxes .address-block {
+.event-display-boxes .address-block {
 	display: inline-block;
 	margin-top: 0;
 	padding: 10px 0;
 }
-#content .event-display-boxes .register-link-footer {
+.event-display-boxes .register-link-footer {
 	margin: .8em 0 .1em;
 }
-#content .event-display-boxes .register-link-footer a {
+.event-display-boxes .register-link-footer a {
 	padding: 2px 4px;
 	text-decoration: none;
 }
-#content .ee-social-media-buttons {
+.ee-social-media-buttons {
 	clear: both;
 	padding: 10px 0;
 }
@@ -138,16 +138,16 @@ span.google-map-link {
 	padding: 0 1% 10px;
 	width: 45%;
 }
-#content .event_staff p.event_person:first-child {
+.event_staff p.event_person:first-child {
 	margin-top: 5px;
 	text-align: center
 }
-#content .event_description .event_staff img {
+.event_description .event_staff img {
 	display: block;
 	margin: 8px auto;
 	width: 60%;
 }
-#content #registration_form .event-map-parent {
+#registration_form .event-map-parent {
 	margin: 20px 0;
 }
 .event_description .ee-gmap-iframewrap {
@@ -162,7 +162,7 @@ span.google-map-link {
 	font-weight: bold;
 	margin-top: 0;
 }
-#content .event_questions .quest-group-descript {
+.event_questions .quest-group-descript {
 	margin: 0 0 20px;
 	padding: .5em;
 }
@@ -240,13 +240,13 @@ ul#espresso_payment_buttons li form {
 	margin-bottom: 0;
 	padding:10px;
 }
-#content .event-list-payment-overview dl dt {
+.event-list-payment-overview dl dt {
 	margin-bottom: 20px;
 }
-#content .event-list-payment-overview dl dd {
+.event-list-payment-overview dl dd {
 	margin-bottom: 10px
 }
-#content .espresso_payment_overview h4.section-title {
+.espresso_payment_overview h4.section-title {
 	margin-top: 20px;
 	padding-top: 10px;
 }
@@ -271,7 +271,7 @@ ul#espresso_payment_buttons li form {
 	-webkit-box-shadow:inset 0 0 4px #ccc;
 	box-shadow: 0 0 4px #ccc;
 }
-#content .event-display-boxes form.ee-forms select {
+.event-display-boxes form.ee-forms select {
 	margin-bottom: 0;
 }
 /*
@@ -401,28 +401,28 @@ ul#espresso_payment_buttons li form {
 }
 /*___ Question groups ___*/
 
-#content .event_questions fieldset {
+.event_questions fieldset {
 	border: none;
 }
-#content .event_questions fieldset legend {
+.event_questions fieldset legend {
 	background: none;
 	font-weight: normal;
 	padding-left: 10px;
 }
-#content .event_questions fieldset ul {
+.event_questions fieldset ul {
 	margin: 0;
 	overflow: hidden;
 }
-#content .event_questions fieldset.single-radio li, #content .event_questions fieldset.multi-checkbox li {
+.event_questions fieldset.single-radio li, .event_questions fieldset.multi-checkbox li {
 	float: left;
 	margin-left: 10px;
 }
-#content .event_questions fieldset.single-radio li label, #content .event_questions fieldset.multi-checkbox li label {
+.event_questions fieldset.single-radio li label, .event_questions fieldset.multi-checkbox li label {
 	float: none;
 	line-height: 1;
 	width: auto;
 }
-#content .event_questions fieldset.multi-checkbox li label {
+.event_questions fieldset.multi-checkbox li label {
 	display: block;
 	min-width: 100px;
 	text-align: left;
@@ -430,7 +430,7 @@ ul#espresso_payment_buttons li form {
 /* Tables
 ------------------------------------------------------------------------------*/
 
-#content table.event-display-tables {
+table.event-display-tables {
 	background: #fff;
 	border: 1px solid #bebebe;
 	margin: 0 auto;
@@ -440,17 +440,17 @@ ul#espresso_payment_buttons li form {
 .event-display-tables th, .event-display-tables td {
 	padding-left: 5px;
 }
-#content .event-display-tables td input {
+.event-display-tables td input {
 	line-height: 1;
 }
-#content .grid tr td, #content .grid tr th.header {
+.grid tr td, .grid tr th.header {
 	border-top: 1px solid #bebebe;
 	vertical-align: middle;
 }
 .grid tr th.header {
 	border-right: 1px solid #dcdcdc;
 }
-#content #event_espresso_shopping_cart table th {
+#event_espresso_shopping_cart table th {
 	text-align: left;
 }
 #event_espresso_attendee_verify th, #event_espresso_attendee_verify_questions th {
@@ -509,14 +509,14 @@ pre {
 .event-messages {
 	margin: 1em 0;
 }
-#content .event-messages p {
+.event-messages p {
 	margin: .5em 30px;
 }
 span.ui-icon {
 	float:left;
 	margin: .7em 0 0 .3em;
 }
-/*** clearfix clearing rules ***/	
+/*** clearfix clearing rules ***/
 .clearfix:before, .clearfix:after {
 	content: "";
 	display: table;
@@ -527,3 +527,8 @@ span.ui-icon {
 .clearfix {
 	zoom:1;
 } /* for IE - should be in a wrapped in a CC */
+
+/* Social Media Buttons */
+.ee-social-media-button { float: left; }
+div.google-button { width: 80px; padding-top: 3px; }
+p.register-link-footer { clear: left; padding-top: 10px; }
