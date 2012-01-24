@@ -529,6 +529,10 @@ span.ui-icon {
 } /* for IE - should be in a wrapped in a CC */
 
 /* Social Media Buttons */
-.ee-social-media-button { float: left; }
-div.google-button { width: 80px; padding-top: 3px; }
+.ee-social-media-button { float: left; } /* display all the social media buttons in a neat little row */
+
+/* vertical, box-style social media buttons */
+span.twitter-button.ee-social-media-button.vertical { margin-right: 10px; }
+div.google-button.ee-social-media-button.tall { margin-right: 10px; }
+/*div.google-button { width: 80px; padding-top: 3px; }*/
 p.register-link-footer { clear: left; padding-top: 10px; }
