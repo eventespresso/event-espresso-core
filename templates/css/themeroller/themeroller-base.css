@@ -527,6 +527,14 @@ span.ui-icon {
 .clearfix {
 	zoom:1;
 } /* for IE - should be in a wrapped in a CC */
+.clear-float {
+	clear:both;
+}
+/* needed for MER 2.0 */
+.event-display-boxes {
+	border: none!important; border-radius:0!important;
+}
+
 
 /* Social Media Buttons */
 .ee-social-media-button { float: left; } /* display all the social media buttons in a neat little row */
