@@ -19,4 +19,3 @@ if($_REQUEST['status']=='APPROVED') {
 	$hash = $fdggutil->check_return_hash($payment_date);
 	$txn_id = $_REQUEST['refnumber'];
 }
-?>
