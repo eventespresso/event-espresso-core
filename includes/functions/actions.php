@@ -1,19 +1,19 @@
 <?php
 //Show pricing in a dropdown or text
 if ( !function_exists('espresso_price_select_action') ){
-	
+
 	function espresso_price_select_action($event_id, $atts = '' ){
-		
+
 		$html = '';
 		$html .= is_admin() ? '' : '<p class="event_prices">';
 		$html .= event_espresso_price_dropdown($event_id, $atts);
 		$html .= is_admin() ? '' : '</p>';
-		
+
 		echo $html;
-		
+
 		return;
 	}
-	
+
 	add_action( 'action_hook_espresso_price_select', 'espresso_price_select_action', 10, 2);
 }
 
@@ -49,3 +49,11 @@ function display_espresso_admin_notices () {
 	}
 }
 add_action( 'action_hook_espresso_admin_notices', 'display_espresso_admin_notices' );
+
+function espresso_log ($file,$function,$message) {
+	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message));
+}
+
+if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+	add_action('action_hook_espresso_log', 'espresso_log', 10, 3);
+}
