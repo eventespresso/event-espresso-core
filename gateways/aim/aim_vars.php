@@ -1,7 +1,7 @@
 <?php
 
 function espresso_display_aim($payor_data, $event_cost, $attendee_id) {
-	global $org_options, $payment_settings;
+	global $org_options, $payment_settings, $wpdb;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
@@ -9,6 +9,10 @@ function espresso_display_aim($payor_data, $event_cost, $attendee_id) {
 		echo '<p>Test credit card # 4007000000027</p>';
 		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
 	}
+	$sql = "SELECT event_name FROM " . EVENTS_ATTENDEE_TABLE . " ea";
+	$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=ea.event_id";
+	$sql .= " WHERE ea.id='" . $attendee_id . "'";
+	$event_name = $wpdb->get_var($sql);
 	?>
 
 <p><strong>
@@ -78,6 +82,7 @@ function espresso_display_aim($payor_data, $event_cost, $attendee_id) {
         <input type="text" name="ccv_code" id="ccv_code" />
     </p>
 		<input name="amount" type="hidden" value="<?php echo number_format($event_cost, 2) ?>" />
+		<input name="class_desc" type="hidden" value="<?php echo $event_name; ?>" />
 		<input name="invoice_num" type="hidden" value="<?php echo 'au-' . event_espresso_session_id() ?>" />
 		<input name="authnet_aim" type="hidden" value="true" />
 		<input name="x_cust_id" type="hidden" value="<?php echo $attendee_id ?>" />

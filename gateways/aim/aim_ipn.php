@@ -35,6 +35,7 @@ function espresso_aim_process_payment() {
 	if ($payment_settings['authnet_aim']['test_transactions'] == 'Y') {
 		$transaction->test_request = "true";
 	}
+	$transaction->description = $_POST['class_desc'];
 
 //Capture response
 	$response = $transaction->authorizeAndCapture();
