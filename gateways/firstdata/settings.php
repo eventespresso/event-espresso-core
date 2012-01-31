@@ -23,7 +23,6 @@ function event_espresso_firstdata_payment_settings() {
 		$payment_settings['firstdata']['firstdata_store_id'] = '';
 		$payment_settings['firstdata']['use_sandbox'] = '';
 		$payment_settings['firstdata']['firstdata_credit_cards'] = '';
-		$payment_settings['firstdata']['payment_address'] = '';
 		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
 			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
 		}
