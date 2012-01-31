@@ -169,7 +169,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 
 	if ($num_people != 0)
 		$event_individual_cost = number_format($event_cost / $num_people, 2, '.', '');
-		
+
 	$event_discount_label = $event_original_cost > $event_cost ? ' (' . __('Discount of ', 'event_espresso') . $org_options['currency_symbol'] . number_format($event_original_cost - $event_price_x_attendees, 2, ".", ",") . __(' applied', 'event_espresso') . ')' : '';
 
 	if ($event_cost == '0.00') {
@@ -319,10 +319,10 @@ function espresso_confirm_registration($registration_id) {
 			$espresso_wp_user = $event->wp_user;
 		}
 	}
-	
+
 	$num_people = espresso_count_attendees_for_registration($attendee_id);
 	$event_cost = number_format($event_cost * $num_people, 2, '.', '');
-	
+
 	//Run pre-approval check if activated
 	$pre_approval_check = is_attendee_approved($event_id, $attendee_id);
 	if ($pre_approval_check) {
@@ -384,6 +384,22 @@ function event_espresso_pay($att_registration_id=0) {
 	$registration_id = $att_registration_id;
 	//Debug
 	//echo $att_registration_id;
+
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/PaymentData.php');
+	$payment_data = new PaymentData;
+	$payment_data->registration_id = $registration_id;
+	$payment_data->registration_id = $att_registration_id;
+	$payment_data->attendee_id = $attendee_id;
+	$payment_data->id = $id;
+	$active_gateways = get_option('event_espresso_active_gateways', array());
+	foreach ($active_gateways as $gateway => $path) {
+		require_once($path . "/init.php");
+	}
+	$payment_data = apply_filters('filter_hook_espresso_prepare_payment_data_thankyou_page', $payment_data);
+	$payment_data = apply_filters('filter_hook_espresso_process_payment_thankyou_page', $payment_data);
+	$payment_data = apply_filters('filter_hook_espresso_add_event_link_thankyou_page', $payment_data);
+	$payment_data = apply_filters('filter_hook_espresso_add_total_cost_thankyou_page', $payment_data);
+	$payment_data = apply_filters('filter_hook_espresso_update_db_w_payment_data_thankyou_page', $payment_data);
 
 	$attendees = $wpdb->get_results("SELECT ea.*, ed.wp_user wp_user FROM " . EVENTS_ATTENDEE_TABLE . " ea left join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id WHERE registration_id ='" . $att_registration_id . "' ORDER BY ID LIMIT 1");
 	$num_rows = $wpdb->num_rows;
