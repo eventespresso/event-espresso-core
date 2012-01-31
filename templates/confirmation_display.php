@@ -150,6 +150,3 @@ $attendee_num = 1;
 	<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee">
 	<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 </form>
-<?php
-echo espresso_ical_prepare($attendee_id);
-?>
