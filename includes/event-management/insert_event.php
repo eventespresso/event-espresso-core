@@ -62,9 +62,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			if ($wp_user_id == 0) {
 				$wp_user_id = 1;
 			}
-			$event_name = $_REQUEST['event'];
-			$event_code = uniqid($espresso_wp_user . '-');
-			$event_identifier = ($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
+			
 			$event_desc = $_REQUEST['event_desc'];
 			$display_desc = $_REQUEST['display_desc'];
 			$display_reg_form = $_REQUEST['display_reg_form'];
@@ -166,7 +164,9 @@ function add_event_to_db($recurrence_arr = array()) {
 			} else {
 				$end_date = $_REQUEST['end_date'];
 			}
-
+			
+			//I think Abel added this so we could have recurring events appear on a selected date. 
+			//But it ended up not working so well. I think we may be able to remove this, but we need to make sure it doesn't break the system.
 			if (array_key_exists('visible_on', $recurrence_arr)) {
 				//Recurring event
 				$visible_on = $recurrence_arr['visible_on'];
@@ -174,8 +174,9 @@ function add_event_to_db($recurrence_arr = array()) {
 				$visible_on = $_REQUEST['visible_on'];
 			} elseif (isset($_REQUEST['visible_on']) && $_REQUEST['visible_on'] == '' && count($recurrence_dates) > 0) {
 				$visible_on = $recurrence_dates[$start_date]['visible_on'];
-			} else
+			} else {
 				$visible_on = date("Y-m-d");
+			}
 
 			if ($reg_limit == '') {
 				$reg_limit = 999;
@@ -206,8 +207,17 @@ function add_event_to_db($recurrence_arr = array()) {
 			if (isset($_REQUEST['require_pre_approval'])) {
 				$require_pre_approval = $_REQUEST['require_pre_approval'];
 			}
-
 			################# END #################
+			
+			//Event name
+			$event_name = empty($_REQUEST['event']) ? $start_date : $_REQUEST['event'];
+			
+			//Create the event code and prefix it with the user id
+			$event_code = uniqid($espresso_wp_user . '-');
+			
+			//Create the event identifier with the event code appended to the end
+			$event_identifier = ($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
+			
 			//When adding colums to the following arrays, be sure both arrays have equal values.
 			$sql = array(
 					'event_code' => $event_code,
