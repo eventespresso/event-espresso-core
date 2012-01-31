@@ -19,36 +19,40 @@ function event_espresso_txn() {
 	}
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/PaymentData.php');
 	$payment_data = new PaymentData;
-	$payment_data = apply_filters('filter_hook_espresso_prepare_payment_data_transactions_page', $payment_data);
-	$payment_data = apply_filters('filter_hook_espresso_process_payment_transactions_page', $payment_data);
-	$payment_data = apply_filters('filter_hook_espresso_add_event_link_transactions_page', $payment_data);
-	$payment_data = apply_filters('filter_hook_espresso_add_total_cost_transactions_page', $payment_data);
-	$payment_data = apply_filters('filter_hook_espresso_update_db_w_payment_data_transactions_page', $payment_data);
-	extract((array)$payment_data);
-	//Sends users to the thank you page if they try to access this page directly
-	if (!empty($payment_status) && $payment_status == 'Completed') {
+	$payment_data = apply_filters('filter_hook_espresso_transactions_get_attendee_id', $payment_data);
+	if ($payment_data->attendee_id == "") {
+		echo "ID not supplied.";
+	} else {
+		$payment_data = apply_filters('filter_hook_espresso_prepare_payment_data_transactions_page', $payment_data);
+		$payment_data = apply_filters('filter_hook_espresso_process_payment_transactions_page', $payment_data);
+		$payment_data = apply_filters('filter_hook_espresso_add_event_link_transactions_page', $payment_data);
+		$payment_data = apply_filters('filter_hook_espresso_add_total_cost_transactions_page', $payment_data);
+		$payment_data = apply_filters('filter_hook_espresso_update_db_w_payment_data_transactions_page', $payment_data);
+		extract((array) $payment_data);
+		//Sends users to the thank you page if they try to access this page directly
+		if (!empty($payment_status) && $payment_status == 'Completed') {
 
-		//Send payment confirmation emails
-		event_espresso_send_payment_notification(array('attendee_id' => $attendee_id));
+			//Send payment confirmation emails
+			event_espresso_send_payment_notification(array('attendee_id' => $attendee_id));
 
-		//Send the email confirmation
-		//@params $attendee_id, $send_admin_email, $send_attendee_email
-		if ($email_before_payment == 'N') {
-			event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
-		}
+			//Send the email confirmation
+			//@params $attendee_id, $send_admin_email, $send_attendee_email
+			if ($email_before_payment == 'N') {
+				event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
+			}
 
-		if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php")) {
-			require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php"); //This is the path to the template file if available
-		} else {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/payment_overview.php");
-		}
+			if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php")) {
+				require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php");
+			} else {
+				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/payment_overview.php");
+			}
 
-//This loads the affiliate tracking code if installed
-		if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "affiliate_tracking.php")) {
-			require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "affiliate_tracking.php");
+			//This loads the affiliate tracking code if installed
+			if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "affiliate_tracking.php")) {
+				require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "affiliate_tracking.php");
+			}
 		}
 	}
-
 	$_REQUEST['page_id'] = $org_options['return_url'];
 	espresso_init_session();
 }
