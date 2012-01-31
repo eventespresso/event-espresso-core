@@ -25,7 +25,7 @@ function event_espresso_authnet_payment_settings() {
 
 	if (empty($payment_settings['authnet_sim'])) {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/btn_cc_vmad.gif")) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/authnet/btn_cc_vmad.gif";
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/authnet/btn_cc_vmad.gif";
 		} else {
 			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/authnet/btn_cc_vmad.gif";
 		}

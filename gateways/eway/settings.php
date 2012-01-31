@@ -25,7 +25,7 @@ function event_espresso_eway_payment_settings() {
 	}
 	if (empty($payment_settings['eway'])) {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/eway/eway_logo.png")) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/eway/eway_logo.png";
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/eway/eway_logo.png";
 		} else {
 			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/eway/eway_logo.png";
 		}
