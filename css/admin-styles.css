@@ -686,11 +686,12 @@ div#gmap-reg-events { padding-left: 3%;}
 .support-tokens,
 .install-options,
 .shortcode-box {
-	background: #FAF9EF;
-	border: 1px solid #bebebe;
 	margin: 10px 0;
-	padding-left: 10px;
-	width: 500px;
+}
+.support-tokens,
+.install-options{
+	background: #F7F7F7;
+	padding:10px;
 }
 .shortcode-box {
 	width: 86%;
@@ -700,7 +701,7 @@ div#gmap-reg-events { padding-left: 3%;}
 	width: 600px;
 }
 .localhost-information dd {
-	background: #F4F3E9;
+	
 	padding: 5px 0 5px 5px;
 }
 .support-tokens span.price,
@@ -714,7 +715,7 @@ div#gmap-reg-events { padding-left: 3%;}
 .support-prices span {line-height: 23px;}
 .support-prices img {float:right;}
 #post-body .help-support li ul li {
-	background: #F4F3E9;
+	background: #F7F7F7;	
 	line-height: 1.4;
 	margin: 1em 10px .5em 0 ;
 	padding: 3px 0 3px 5px;
