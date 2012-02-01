@@ -972,13 +972,9 @@ if (!function_exists("unkeyvaluepair")) {
 
 }
 
-function espresso_add_query_vars($aVars) {
-	$aVars[] = "searchdate"; // represents the name of the date as shown in the URL
-	return $aVars;
-}
 
-// hook add_query_vars function into query_vars
-//add_filter('query_vars', 'espresso_add_query_vars');
+
+
 
 function espresso_serialize($data) {
 
