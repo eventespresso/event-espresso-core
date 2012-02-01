@@ -682,11 +682,11 @@ function event_espresso_support() {
 												<p class="support-prices"><span class="price">Price: $135.00 </span><a class="ec_ejc_thkbx" onclick="javascript:return EJEJC_lc(this);" href="https://www.e-junkie.com/ecom/gb.php?c=cart&amp;i=1HRCONSULT&amp;cl=113214&amp;ejc=2" target="ej_ejc"><img src="http://www.e-junkie.com/ej/ej_add_to_cart.gif" alt="Add to Cart" border="0"></a></p>
 											</div>
 											<h5>* Requirements for installation service:</h5>
-											<ul>
-												<li> The server must be accessible over the internet.</li>
-												<li> The server must meet the server requirements (for Advanced Events Registration).</li>
-												<li> You must be able to provide a FTP/SFTP username and password. A MySQL database name, username and password is needed for a Basic Install. A WordPress admin user name, password, and login URL.</li>
-											</ul>
+											<dl>
+												<dt> The server must be accessible over the internet.</dt>
+												<dt> The server must meet the server requirements (for Advanced Events Registration).</dt>
+												<dt> You must be able to provide a FTP/SFTP username and password. A MySQL database name, username and password is needed for a Basic Install. A WordPress admin user name, password, and login URL.</dt>
+											</dl>
 											<p><a class="ec_ejc_thkbx" onclick="javascript:return EJEJC_lc(this);" href="https://www.e-junkie.com/ecom/gb.php?c=cart&amp;cl=113214&amp;ejc=2" target="ej_ejc"><img src="http://www.e-junkie.com/ej/ej_view_cart.gif" alt="View Cart" border="0"></a><br>
 												<script type="text/javascript">//
 							function EJEJC_lc(th) { return false; }
