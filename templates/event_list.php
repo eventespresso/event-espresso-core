@@ -222,7 +222,8 @@ if (!function_exists('event_espresso_get_event_details')) {
 			}
 			//var_dump($ee_gmaps_opts);
 			//This can be used in place of the registration link if you are usign the external URL feature
-			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
+			//$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
+			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event->slug);
 			if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
 				//Display a message if the user is not logged in.
 				//_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
