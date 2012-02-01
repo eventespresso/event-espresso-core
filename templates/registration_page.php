@@ -19,19 +19,31 @@ if (!function_exists('register_attendees')) {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
 		
-		if (isset($_REQUEST['ee']) && $_REQUEST['ee'] != '') {
-			$_REQUEST['event_id'] = $_REQUEST['ee'];
+		
+		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
+			
+	
+		if ( $event_id_sc != 0 ) {
+			$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE.' WHERE id = %d';
+			$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id_sc ));		
 		}
-
-		$event_id = $event_id_sc != '0' ? $event_id_sc : ($_REQUEST['event_id']);
+	
 		
 		if (!empty($_REQUEST['event_id_time'])) {
 			$pieces = explode('|', $_REQUEST['event_id_time'], 3);
-			$event_id = $pieces[0];
+			//$event_id = $pieces[0];
 			$start_time = $pieces[1];
 			$time_id = $pieces[2];
 			$time_selected = true;
+			
+			if ( isset( $pieces[0] ) && $pieces[0] != '' ) {
+				$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE.' WHERE id = %d';
+				$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id_sc ));		
+			}			
 		}
+
+
+	
 
 		//The following variables are used to get information about your organization
 		$event_page_id = $org_options['event_page_id'];
@@ -62,12 +74,17 @@ if (!function_exists('register_attendees')) {
 		$sql.= " WHERE e.is_active='Y' ";
 		$sql.= " AND e.event_status != 'D' ";
 
-		if ($single_event_id != NULL) {//Get the ID of a single event
+		if ($single_event_id != NULL) {
+			//Get the ID of a single event
 			//If a single event needs to be displayed, get its ID
 			$sql .= " AND event_identifier = '" . $single_event_id . "' ";
 		} else {
-			$sql.= " AND e.id = '" . $event_id . "' LIMIT 0,1";
+			$sql.= " AND e.slug = '" . $event_slug . "' LIMIT 0,1";
 		}
+
+
+		
+
 
 		//Support for diarise
 		if (!empty($_REQUEST['post_event_id'])) {
@@ -76,6 +93,9 @@ if (!function_exists('register_attendees')) {
 			$sql .= " WHERE post_id = '" . $_REQUEST['post_event_id'] . "' ";
 			$sql .= " LIMIT 0,1";
 		}
+		
+		
+
 		
 		$data->event = $wpdb->get_row($sql, OBJECT);
 		//print_r($data->event);
