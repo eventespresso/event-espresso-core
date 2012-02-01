@@ -98,12 +98,13 @@ add_filter( 'plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2
 //set_current_user
 
 //init  
+add_action( 'init', 'espresso_add_rewrite_rules', 10 );
 add_action( 'init', 'espresso_load_jquery', 10 );
 add_action( 'init', 'espresso_init', 20 );
 add_action( 'init', 'espresso_export_certificate', 30);
 add_action( 'init', 'espresso_export_invoice', 30);
 add_action( 'init', 'espresso_export_ticket', 30);
-					
+add_action( 'init', 'espresso_flush_rewrite_rules', 41 );					
 
 //widgets_init
 add_action( 'widgets_init', 'espresso_widget');
@@ -503,7 +504,8 @@ function espresso_init() {
 	
 	
 	$this_is_a_reg_page = FALSE;
-	if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
+	//if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
+	if (isset($_REQUEST['event_slug']) || isset($_REQUEST['page_id']) || is_admin()) {
 		$this_is_a_reg_page = TRUE;
 	} else {
 		$reg_page_ids = array(
@@ -834,7 +836,10 @@ function espresso_init() {
 			// Get action type
 			$regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
 	
-			if (isset($_REQUEST['ee']) or isset($_REQUEST['edit_attendee'])) {
+			//if (isset($_REQUEST['ee']) or isset($_REQUEST['edit_attendee'])) {
+			$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
+			
+			if ( $event_slug or isset( $_REQUEST['edit_attendee'] )) {
 				$regevent_action = "register";
 			}
 	
@@ -870,9 +875,12 @@ function espresso_init() {
 				
 	
 				case "load_checkout_page":
-					if ($_POST)
+
+					if ($_POST) {
 						event_espresso_calculate_total('details');
+					}						
 					event_espresso_load_checkout_page();
+					
 				break;
 	
 				case "post_multi_attendee":
@@ -885,7 +893,7 @@ function espresso_init() {
 	
 	
 				default:
-
+				
 					// now other plugins/functions/classes can completely change the regevent default action process by removing the previous hook and adding their own
 					do_action( 'action_hook_espresso_regevent_default_action', $regevent_action );
 					
@@ -1049,6 +1057,139 @@ function espresso_export_invoice() {
 
 
 
+
+
+
+
+/**
+*		creates pretty permalinks
+*		
+*		@access public
+*		@return void
+*/
+function espresso_add_rewrite_rules() {
+
+	global $wpdb;
+	$org_options = get_option('events_organization_settings');		
+	$reg_page_id = $org_options['event_page_id'];	
+
+	$SQL = 'SELECT post_name  FROM '.$wpdb->prefix .'posts WHERE ID = %d';
+	$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $reg_page_id ));
+//	$reg_page_url_slug = espresso_get_reg_page_url_slug();	
+	
+	add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?/$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' );
+	add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' ); 
+														
+}														 
+
+
+
+
+
+
+
+/**
+*		creates url slugs - don't use this'
+*		
+*		@access public
+*		@return void
+*/
+function espresso_create_url_slug( $select = FALSE, $table = FALSE ) {
+
+/*	global $wpdb;
+	
+	if ( ! $table ) {
+		$table = EVENTS_DETAIL_TABLE;
+	}
+	
+	if ( ! $select or ! is_array( $select ) ) {
+		$select = array( 'id, event_name' );
+		$table = EVENTS_DETAIL_TABLE;
+	}	
+
+	$SQL = 'SELECT ';
+	
+	foreach ( $select as $k => $v ) {
+		$SQL .= $v . ', ';			
+	}
+	$SQL = rtrim( $SQL , ', ' );
+	
+	$SQL .= ' FROM ' . $table;		
+	
+	if ( isset( $select['id'] )) {
+		$SQL .= ' WHERE id = %s';
+		$results = $wpdb->get_results( $wpdb->prepare( $SQL, $select['id'] ));		
+	} else {
+		$results = $wpdb->get_results( $wpdb->prepare( $SQL ));
+	}
+
+	$save_to_db = array();
+	$where = array();
+	if ( $results ) {
+		foreach ( $results as $result ) {
+
+			$data['slug'] = espresso_string_to_url( $result->event_name );
+			$where['id'] = $result->id;
+
+			$wpdb->update( 
+										$table, 
+										$data, 
+										$where, 
+										array( '%s' ), 
+										array( '%d' ) 
+									);	
+
+		}
+	}	*/
+
+//echo printr($data);
+//echo printr($where);
+
+
+}														 
+//add_action( 'plugins_loaded', 'espresso_create_url_slug', 2);
+	
+	
+	
+	
+	
+	/**
+	 *		converts a string to url friendly string by:
+	 * 	changing spaces to dashes, changing & (or &amp;) to "and", stripping tags, and converting to lowercase
+	 *  
+	 *		@access 	public
+	 *		@param 	string	$string
+	 *		@return 	string
+	 */	
+	function espresso_string_to_url( $string ) {
+		
+		$expressions = array(
+												'&\#\d+?;'			=> '',
+												'&\S+?;'				=> '',
+												'\s+'						=> '-',
+												'[^a-z0-9\-\._]'	=> '',
+												'-+'						=> '-',
+												'-$'						=> '-',
+												'^-'						=> '-',
+												'\.+$'					=> ''
+											);
+
+		$string = str_replace( '&amp;', 'and', $string );		
+		$string = str_replace( '&', 'and', $string );
+		$string = wp_strip_all_tags($string);
+
+		foreach ( $expressions as $key => $exp ) {
+			$string = preg_replace("#".$key."#i", $exp, $string);
+		}	
+		
+		$string = strtolower( $string );
+
+		return $string;
+		
+	}		
+
+
+
 /**********************************************************************************************
  **************************************    WIDGETS_INIT     **************************************
 **********************************************************************************************/
@@ -1075,6 +1216,22 @@ function espresso_widget() {
 
 
 
+/**
+ *		@ reset htaccess rewrite rules
+ *		@ access public
+ *		@ return void
+ */	
+function espresso_flush_rewrite_rules() {		
+	//$pagenow = $_SERVER['SCRIPT_NAME']; // && $pagenow == "/wp-admin/admin.php" 
+	if ( is_admin()  && isset($_REQUEST['page']) && $_REQUEST['page'] == 'event_espresso' ) {
+		//echo '<h1>'. __FILE__ . ' - ' . __CLASS__ . ' - ' . __FUNCTION__ . ' ( line no: ' . __LINE__ . ' )</h1>';
+	    flush_rewrite_rules();
+	}
+}
+
+
+
+
 /*********************************************************************************************
  ****************************************    WP_HEAD     ****************************************
 **********************************************************************************************/
@@ -1089,9 +1246,9 @@ function espresso_widget() {
 *		@access public
 *		@return void
 */	
-function espresso_add_query_vars( $vars ) {
-	$vars[] = 'event-slug';
-	return $vars;
+function espresso_add_query_vars( $query_vars ) {
+	$query_vars[] = 'event_slug';
+	return $query_vars;
 }
 
 
