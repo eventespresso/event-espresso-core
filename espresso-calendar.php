@@ -803,11 +803,12 @@ if (!function_exists('espresso_calendar')) {
 			switch ($espresso_calendar['espresso_page_post']){
 
 				case 'P':
-					$registration_url = get_option('siteurl'). '/?p=' . $event->post_id;
+					$registration_url = get_permalink($event->post_id);
 				break;
 				case 'R':
 				default:
-					$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
+					//$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
+					$registration_url = espresso_get_reg_page_url() . $event->slug;
 				break;
 
 			}
