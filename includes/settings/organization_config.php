@@ -59,38 +59,65 @@ function organization_config_mnu() {
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		$currency_format = getCountryFullData($org_options['organization_country']);
 		switch ($currency_format['iso_code_3']) {
-			case 'USA': $org_options['currency_symbol'] = '$';
+			case 'USA': $org_options['currency_symbol'] = '$'; // US Dollar
 				break;
-			case 'CHE': $org_options['currency_symbol'] = 'Fr.';
+			case 'CHE': $org_options['currency_symbol'] = 'Fr.'; // Swiss Franc
 				break;
-			case 'AUS': $org_options['currency_symbol'] = 'A $';
+			case 'AUS': $org_options['currency_symbol'] = 'A$'; // Australian Dollar
 				break;
-			case 'GBR': $org_options['currency_symbol'] = '&pound;';
+			case 'GBR': $org_options['currency_symbol'] = '&pound;'; // British Pound
 				break;
-			case 'NOR': $org_options['currency_symbol'] = 'NOK ';
+			case 'NOR': $org_options['currency_symbol'] = 'kr'; // Norwegian Krone
 				break;
-			case 'BRA': $org_options['currency_symbol'] = 'R$';
+			case 'BRA': $org_options['currency_symbol'] = 'R$'; // Brazillian Real
 				break;
-			case 'CAN': $org_options['currency_symbol'] = 'C $';
+			case 'CAN': $org_options['currency_symbol'] = 'C$'; // Canadian Dollar
 				break;
-			case 'JPN': $org_options['currency_symbol'] = '&yen;';
+			case 'JPN': $org_options['currency_symbol'] = '&yen;'; // Japanese Yen
 				break;
-			case 'SWE': $org_options['currency_symbol'] = 'Kr. ';
+			case 'SWE': $org_options['currency_symbol'] = 'kr'; // Swedish Krona
 				break;
-			case 'DNK': $org_options['currency_symbol'] = 'DKK ';
+			case 'DNK': $org_options['currency_symbol'] = 'kr'; // Danish Krone
 				break;
-			case 'ZAF': $org_options['currency_symbol'] = 'R ';
+			case 'ZAF': $org_options['currency_symbol'] = 'R'; // South African Rand
 				break;
-			case 'IND': $org_options['currency_symbol'] = 'Rs';
+			case 'IND': $org_options['currency_symbol'] = '&#x20b9;'; // Indian Rupee
 				break;
-			case 'TUR' : $org_options['currency_symbol'] = '&#8356;';
+			case 'TUR' : $org_options['currency_symbol'] = 'TL'; // Turkish Lira
+				break;
+			case 'NZL' : $org_options['currency_symbol'] = 'NZ$'; // New Zealand Dollar
+				break;
+			case 'HKG' : $org_options['currency_symbol'] = 'HK$'; // Hong Kong Dollar
+				break;
+			case 'SGP' : $org_options['currency_symbol'] = 'S$'; // Singapore Dollar
+				break;
+			case 'POL' : $org_options['currency_symbol'] = 'z&#x0142;'; // Polish Zloty
+				break;
+			case 'HUN' : $org_options['currency_symbol'] = 'Ft'; // Hungarian Forint
+				break;
+			case 'CZE' : $org_options['currency_symbol'] = 'K&#x10D;'; // Czech Koruna
+				break;
+			case 'ISR' : $org_options['currency_symbol'] = '&#8362;'; // Israeli Shekel
+				break;
+			case 'MEX' : $org_options['currency_symbol'] = 'Mex$'; // Mexican Peso
+				break;
+			case 'MYS' : $org_options['currency_symbol'] = 'RM'; // Malaysian Ringgit
+				break;
+			case 'PHL' : $org_options['currency_symbol'] = '&#x20b1;'; // Phillipine Peso
+				break;
+			case 'TWN' : $org_options['currency_symbol'] = 'NT$'; // New Taiwan Dollar
+				break;
+			case 'THA' : $org_options['currency_symbol'] = '&#xe3f;'; // Thai Baht
+				break;
+			case 'AUT' || 'BEL' || 'CYP' || 'EST' || 'FIN' || 'FRA' || 'DEU' || 'GRC' || 'IRL' || 'ITA' || 'LUX' || 'MLT' || 'NLD' || 'PRT' || 'SVK' || 'SVN' || 'ESP' || 'AND' || 'MCO' || 'SMR' || 'VAT' | 'MYT' || 'MNE' || 'XKV' || 'SPM' : $org_options['currency_symbol'] = '&euro;'; // use the Euro for all eurozone countries
 				break;
 			default: $org_options['currency_symbol'] = '$';
 				break;
 		}
-		if (getCountryZoneId($org_options['organization_country']) == '2') {
+		// this was added by Hugo and I think it's redundant -- currency symbol is being set above ~c
+		/*if (getCountryZoneId($org_options['organization_country']) == '2') {
 			$org_options['currency_symbol'] = '&euro;'; //Creates the symbol for the Euro
-		}
+		}*/
 		if (update_option('events_organization_settings', $org_options) == true) {
 			$notices['updates'][] = __('Organization details saved', 'event_espresso');
 		} else {
