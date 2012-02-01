@@ -6,7 +6,7 @@
 //Payment confirmation block
 $attendee_num = 1;
 ?>
-<form id="form1" name="form1" method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>">
+<form id="form1" name="form1" method="post" action="<?php echo espresso_get_reg_page_url(); ?>">
 	<div class="event-conf-block event-display-boxes ui-widget" >
 		<h2 class="event_title ui-widget-header ui-corner-top">
 			<?php _e('Please verify your registration details:', 'event_espresso'); ?>
