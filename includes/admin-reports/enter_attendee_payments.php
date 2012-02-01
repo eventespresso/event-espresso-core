@@ -128,6 +128,13 @@ function enter_attendee_payments() {
 		$pre_approve = $attendee->pre_approve;
 		$start_date = $attendee->start_date;
 		$event_time = $attendee->event_time;
+		
+		if ( !empty($attendee->transaction_details) ){
+			$transaction_details = unserialize($attendee->transaction_details);
+			//Debug
+			//echo "<pre>".print_r($transaction_details,true)."</pre>";
+		}
+
 	}
 
 	$events = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='%d'", $event_id));
@@ -218,22 +225,22 @@ function enter_attendee_payments() {
 											array('id' => 'Payment Declined', 'text' => __('Payment Declined', 'event_espresso')),
 											array('id' => 'Incomplete', 'text' => __('Incomplete', 'event_espresso')));
 									echo select_input('payment_status', $values, $payment_status);
-									?>
+									?> [<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=transaction_data"><?php _e('Transaction Details', 'event_espresso'); ?></a> ]
 								</li>
 								<li>
 									<label for="txn_type">
 										<?php _e('Transaction Type:', 'event_espresso'); ?>
 									</label>
 									<?php
-	$txn_values = array(
-			array('id' => '', 'text' => __('N/A', 'event_espresso')),
-			array('id' => 'web_accept', 'text' => espresso_payment_type('web_accept')),
-			array('id' => 'CC', 'text' => __('Credit Card', 'event_espresso')),
-			array('id' => 'INV', 'text' => espresso_payment_type('INV')),
-			array('id' => 'OFFLINE', 'text' => espresso_payment_type('OFFLINE')),
-	);
-	echo select_input('txn_type', $txn_values, $txn_type);
-	?>
+									$txn_values = array(
+											array('id' => '', 'text' => __('N/A', 'event_espresso')),
+											array('id' => 'web_accept', 'text' => espresso_payment_type('web_accept')),
+											array('id' => 'CC', 'text' => __('Credit Card', 'event_espresso')),
+											array('id' => 'INV', 'text' => espresso_payment_type('INV')),
+											array('id' => 'OFFLINE', 'text' => espresso_payment_type('OFFLINE')),
+									);
+									echo select_input('txn_type', $txn_values, $txn_type);
+									?>
 								</li>
 								<li>
 									<label>
@@ -316,7 +323,7 @@ function enter_attendee_payments() {
 									<?php _e('Message:', 'event_espresso'); ?>
 								</p>
 								<div class="postbox">
-									 <?php
+									<?php
 										$email_content = __( 'Dear [fname] [lname], <p>Our records show that we have not received your payment of [cost] for [event_link].</p> <p>Please visit [payment_url] to view your payment options.</p><p>[invoice_link]</p><p>Sincerely,<br />' . $Organization = $org_options[ 'organization' ] . '</p>', 'event_espresso' );
 										if (function_exists('wp_editor')){
 											$args = array("textarea_rows" => 5, "textarea_name" => "invoice_message", "editor_class" => "my_editor_custom");
@@ -326,18 +333,20 @@ function enter_attendee_payments() {
 											espresso_tiny_mce();
 										}
 									?>
-										<table id="email-confirmation-form" cellspacing="0">
-											<tbody>
-												<tr>
-													<td class="aer-word-count"></td>
-													<td class="autosave-info"><span>&nbsp;</span></td>
-												</tr>
-											</tbody>
-										</table>
-										<p><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-														<?php _e('View Custom Email Tags', 'event_espresso'); ?></a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
-														<?php _e('Email Example', 'event_espresso'); ?></a></p>
-									</div>
+									<table id="email-confirmation-form" cellspacing="0">
+										<tbody>
+											<tr>
+												<td class="aer-word-count"></td>
+												<td class="autosave-info"><span>&nbsp;</span></td>
+											</tr>
+										</tbody>
+									</table>
+									<p><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
+										<?php _e('View Custom Email Tags', 'event_espresso'); ?>
+										</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
+										<?php _e('Email Example', 'event_espresso'); ?>
+										</a></p>
+								</div>
 							</li>
 							<?php
 	if ($org_options["use_attendee_pre_approval"] == "Y") {
@@ -347,9 +356,9 @@ function enter_attendee_payments() {
 								<?php _e("Attendee approved?", "event_espresso"); ?>
 								:
 								<?php
-													$pre_approval_values = array(array('id' => '0', 'text' => __('Yes', 'event_espresso')), array('id' => '1', 'text' => __('No', 'event_espresso')));
-													echo select_input("pre_approve", $pre_approval_values, $pre_approve);
-													?>
+									$pre_approval_values = array(array('id' => '0', 'text' => __('Yes', 'event_espresso')), array('id' => '1', 'text' => __('No', 'event_espresso')));
+									echo select_input("pre_approve", $pre_approval_values, $pre_approve);
+								?>
 								<br />
 								<?php _e("(If not approved then invoice will not be sent.)", "event_espresso"); ?>
 							</li>
@@ -366,10 +375,32 @@ function enter_attendee_payments() {
 			</a> </strong> </p>
 	</div>
 </div>
+<div id="email_manager_info" style="display:none">
+	<h2>
+		<?php _e('Pre-existing Emails', 'event_espresso'); ?>
+	</h2>
+	<p>
+		<?php _e('This will override the custom email below if selected.', 'event_espresso'); ?>
+	</p>
+</div>
+<div id="transaction_data" class="pop-help" style="display:none">
+	<div class="TB-ee-frame">
+	<h2><?php _e('Transaction Details', 'event_espresso'); ?></h2>
+	<?php
+	if ( !empty($transaction_details) && ( is_array($transaction_details) || is_object($transaction_details) ) ){
+		echo '<ul>';
+		foreach ($transaction_details as $k=>$v){
+			echo '<li><strong>' . $k . '</strong> = '. $v . '</li>';
+		}
+		echo '</ul>';
+	}else{
+		_e('No transaction detials available at this time.', 'event_espresso');
+	}
+		
+	?>
+	</div>
+</div>
 <?php
-	//espresso_tiny_mce();
 	//This show what tags can be added to a custom email.
-	event_espresso_custom_email_info();
-	//event_list_attendees();
+	echo event_espresso_custom_email_info();
 }
-
