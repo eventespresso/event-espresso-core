@@ -112,6 +112,9 @@ add_action( 'widgets_init', 'espresso_widget');
 //register_sidebar
 //wp_register_sidebar_widget
 //wp_loaded
+
+add_filter( 'query_vars', 'espresso_add_query_vars' );
+
 //parse_request*
 //send_headers*
 //parse_query*
@@ -1060,7 +1063,6 @@ function espresso_export_invoice() {
 *		@access public
 *		@return void
 */	
-
 function espresso_widget() {
 
 	event_espresso_require_template('widget.php');
@@ -1069,6 +1071,28 @@ function espresso_widget() {
 	
 }
 
+
+
+
+
+/*********************************************************************************************
+ ****************************************    WP_HEAD     ****************************************
+**********************************************************************************************/
+
+
+
+
+
+/**
+*		adds query vars for creating pretty permalinks
+*		
+*		@access public
+*		@return void
+*/	
+function espresso_add_query_vars( $vars ) {
+	$vars[] = 'event-slug';
+	return $vars;
+}
 
 
 
