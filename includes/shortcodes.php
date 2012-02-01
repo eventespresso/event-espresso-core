@@ -341,7 +341,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 		<div id="event_espresso_registration_form" class="event-display-boxes ui-widget">
 			<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
 			<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
-				<form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
+				<form method="post" action="<?php echo espresso_get_reg_page_url(); ?>" id="registration_form">
 					<?php
 					//print_r( event_espresso_get_is_active($event_id));
 
