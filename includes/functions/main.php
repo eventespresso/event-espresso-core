@@ -34,20 +34,35 @@ function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
 	return home_url() . '/?invoice_launch=true&amp;id=' . $attendee_id . '&amp;r_id=' . $registration_id . '&amp;html=true' . $extra;
 }
 
-function espresso_reg_url($event_id=0) {
+function espresso_reg_url($event_slug=0) {
 	global $org_options;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
-	if ($event_id > 0) {
+	if ( $event_slug!= '' ) {
 		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
 		//$new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
-		$new_url = add_query_arg('event-slug', $event_slug, get_permalink($org_options['event_page_id']));		
+		//$new_url = add_query_arg( 'event_slug', $event_slug, get_permalink($org_options['event_page_id']) );		
+		$new_url = get_permalink($org_options['event_page_id']) . $event_slug;		
 		return $new_url;
 	}/* else {
 	  echo 'No event id supplied'; */
 	return;
 	//}
+}
+
+function espresso_get_reg_page_url_slug() {
+	global $wpdb, $org_options;		
+	$reg_page_id = $org_options['event_page_id'];
+	$SQL = 'SELECT post_name  FROM '.$wpdb->prefix .'posts WHERE ID = %d';
+	$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $reg_page_id ));
+	return $reg_page_url_slug;
+}
+
+function espresso_get_reg_page_url() {
+	global $org_options;
+	$reg_page_url = get_permalink($org_options['event_page_id']);
+	return $reg_page_url;
 }
 
 function espresso_getTinyUrl($url) {
@@ -1688,4 +1703,19 @@ function printCountriesSelector($name, $selected) {
 		echo "value='" . $countries[$t][0] . "'>" . $countries[$t][1] . "</option>";
 	}
 	echo "</select>";
+}
+
+
+/**
+ *		@ print_r an array
+ *		@ access public
+ *		@ return void
+ */	
+ function printr( $var, $var_name = 'ARRAY' ) {
+
+	echo '<pre style="display:block; width:100%; height:50%; overflow:scroll; border:2px solid light-blue;">';
+	echo '<h3>'.$var_name.'</h3>';
+	echo print_r($var);
+	echo '</pre>';
+		
 }
