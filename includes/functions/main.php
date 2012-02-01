@@ -1420,7 +1420,7 @@ function getCountriesArray($lang="en") {
 				array(198, 'Switzerland', 'CH', 'CHE', 1),
 				array(87, 'The Netherlands', 'NL', 'NLD', 2),
 				array(197, 'Sweden', 'SE', 'SWE', 1),
-				array(230, 'Akrotiri and Dhekelia', 'CY', 'CYP', 1),
+				array(230, 'Akrotiri and Dhekelia', 'CY', 'CYP', 2),
 				array(4, 'Andorra', 'AD', 'AND', 2),
 				array(5, 'Angola', 'AO', 'AGO', 1),
 				array(6, 'Anguilla', 'AI', 'AIA', 1),
