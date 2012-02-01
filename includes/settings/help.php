@@ -76,7 +76,7 @@
 		<?php _e('Banners and More Info >>', 'event_espresso'); ?>
 		</a> </p>
 </div>
-<div id="recaptcha_info" style="display:none">
+<div id="recaptcha_info" class="pop-help" style="display:none">
 	<h2>
 		<?php _e('reCAPTCHA Information', 'event_espresso'); ?>
 	</h2>
