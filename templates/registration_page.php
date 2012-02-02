@@ -42,6 +42,11 @@ if (!function_exists('register_attendees')) {
 			}			
 		}
 
+		if ( isset( $_REQUEST['ee'] ) && $_REQUEST['ee'] != '' ) {
+			$ee_event_id = $_REQUEST['ee'];
+		} else {
+			$ee_event_id = FALSE;
+		}	
 
 	
 
@@ -78,6 +83,8 @@ if (!function_exists('register_attendees')) {
 			//Get the ID of a single event
 			//If a single event needs to be displayed, get its ID
 			$sql .= " AND event_identifier = '" . $single_event_id . "' ";
+		} elseif ( $ee_event_id ) {
+			$sql.= " AND e.id = '" . $ee_event_id . "' LIMIT 0,1";
 		} else {
 			$sql.= " AND e.slug = '" . $event_slug . "' LIMIT 0,1";
 		}
