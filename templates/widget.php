@@ -81,7 +81,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 				$event->category_name = isset($event->category_name) ? $event->category_name : '';
 				$event->category_desc = isset($event->category_desc) ? $event->category_desc : '';
 				$event->externalURL = isset($event->externalURL) ? $event->externalURL : '';
-				$registration_url = $event->externalURL != '' ? $event->externalURL : espresso_reg_url($event->id);
+				$registration_url = $event->externalURL != '' ? $event->externalURL : espresso_reg_url( $event->id, $event->slug );
 
 				$all_meta = array(
 						'is_active' => $event->is_active,
