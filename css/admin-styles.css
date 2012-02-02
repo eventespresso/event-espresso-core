@@ -1343,7 +1343,9 @@ form.espresso_form .quicktags-toolbar input {width: auto;}
 form.espresso_form input#payment_subject {
 	width: 250px;
 }
-form.espresso_form input[type=radio] {
+form.espresso_form input[type=radio],
+form.espresso_form input[type=checkbox]
+ {
 	width:auto;
 }
 
