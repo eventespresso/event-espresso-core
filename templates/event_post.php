@@ -229,7 +229,7 @@ global $wpdb;
 				//'registration' => event_espresso_add_question_groups($question_groups),
 				//'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
 			);
-			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
+			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url( $data->event->id, $data->event->slug );
 			//print_r($all_meta);
 //This function gets the status of the event.
 				$is_active = array();
@@ -266,7 +266,7 @@ global $wpdb;
 					$reg_limit=$event->reg_limit;
 					$additional_limit = $event->additional_limit;
 
-					$regurl=espresso_reg_url($event_id);
+					$regurl=espresso_reg_url( $event->id, $event->slug );
 
 					$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
 			}//End foreach ($events as $event)
