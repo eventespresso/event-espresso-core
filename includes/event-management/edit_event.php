@@ -78,7 +78,7 @@ function edit_event($event_id = 0) {
 					<div class="submitbox" id="submitpost">
 						<div id="minor-publishing">
 							<div id="minor-publishing-actions" class="clearfix">
-								<div id="preview-action"> <a class="preview button" href="<?php echo espresso_reg_url($event->id); ?>" target="_blank" id="event-preview" tabindex="5">
+								<div id="preview-action"> <a class="preview button" href="<?php echo espresso_reg_url( $event->id, $event->slug ); ?>" target="_blank" id="event-preview" tabindex="5">
 	<?php _e('View Event', 'event_espresso'); ?>
 									</a>
 									<input type="hidden" name="event-preview" id="event-preview" value="" />
@@ -392,7 +392,7 @@ function edit_event($event_id = 0) {
 	<?php _e('Unique Event Identifier:', 'event_espresso'); ?>
 						</strong>
 						<input disabled="disabled" type="text" size="30" tabindex="2" name="event_identifier" id="event_identifier" value ="<?php echo $event->event_identifier; ?>" />
-	<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;\' + jQuery(\'#event_identifier\').val() + \'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_reg_url($event->id) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . home_url() . '/?page_id=' . $org_options['event_page_id'] . '&amp;regevent_action=register&amp;event_id=' . $event->id . '\'); return false;">' . __('Full URL') . '</a>' ?> </div>
+	<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;\' + jQuery(\'#event_identifier\').val() + \'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_reg_url( $event->id, $event->slug ) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . home_url() . '/?page_id=' . $org_options['event_page_id'] . '&amp;regevent_action=register&amp;event_id=' . $event->id . '\'); return false;">' . __('Full URL') . '</a>' ?> </div>
 					<!-- /edit-slug-box -->
 				</div>
 				<!-- /.inside -->
