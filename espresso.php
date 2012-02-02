@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.2.P
+  Version: 3.2.1.P
 
   Author: Seth Shoultes
   Author URI: http://www.eventespresso.com
@@ -30,14 +30,14 @@
 	
 	
 function espresso_version() {
-	return '3.2.1P';
+	return '3.2.1.P';
+}
+function espresso_template_version() {
+	return '1.0';
 }
 
 // functions requiring global visibility
 require_once("includes/functions/main.php");
-
-
-
 
 
 /**
@@ -572,6 +572,9 @@ function espresso_init() {
 	
 
 	/* Core template files used by this plugin */
+	
+	event_espresso_require_template('init.php');
+	
 	//These may be loaded in posts and pages outside of the default EE pages
 	//Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
 	$event_list_template = 'event_list.php';
@@ -579,16 +582,16 @@ function espresso_init() {
 	// HOOK - change event list template
 	$event_list_template = apply_filters( 'filter_hook_espresso_event_list_template', $event_list_template);
 	
-	event_espresso_require_template($event_list_template);
+	require_once(espresso_get_event_list_template());
 	
 	//This is the form page for registering the attendee
-	event_espresso_require_template('registration_page.php');
+	require_once(espresso_get_registration_page_template());
 	
 	//Registration forms
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 	
 	//List Attendees - Used with the [LISTATTENDEES] shortcode
-	event_espresso_require_template('attendee_list.php');
+	require_once(espresso_get_attendee_list_template());
 	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/cart.php');
 	
@@ -598,12 +601,7 @@ function espresso_init() {
 	}
 
 	
-
-	
 	/* End Core template files used by this plugin */
-	
-	
-	
 	
 	
 	
@@ -806,12 +804,6 @@ function espresso_init() {
 	
 	
 	
-	
-	
-	
-	
-	
-	
 	// Run the program
 	if (!function_exists('event_espresso_run')) {
 		function event_espresso_run() {
@@ -868,7 +860,7 @@ function espresso_init() {
 				case "show_shopping_cart":
 				
 					//This is the form page for registering the attendee
-					event_espresso_require_template('shopping_cart.php');
+					require_once(espresso_get_shopping_cart_template());
 					event_espresso_shopping_cart();
 					
 				break;
@@ -1092,7 +1084,11 @@ function espresso_add_rewrite_rules() {
 	}	
 		
 														
-}														 
+}	
+
+
+
+
 
 
 
@@ -1111,8 +1107,8 @@ function espresso_add_rewrite_rules() {
 *		@return void
 */	
 function espresso_widget() {
-
-	event_espresso_require_template('widget.php');
+	event_espresso_require_template('init.php');
+	require(espresso_get_widget_template());
 	//The widget can be over-ridden with the custom files addon	
 	register_widget('Event_Espresso_Widget');
 	
@@ -1296,11 +1292,6 @@ if (!function_exists('espresso_load_javascript_files')) {
 	}
 
 }
-
-
-
-
-
 
 
 
