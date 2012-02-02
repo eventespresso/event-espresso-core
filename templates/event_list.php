@@ -235,7 +235,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 					//Uncomment to show active status array
 					//print_r( event_espresso_get_is_active($event_id));
 
-					include('event_list_display.php');
+					include(espresso_get_event_list_display_template());
 				} else {
 					switch (event_espresso_get_status($event_id)) {
 						case 'NOT_ACTIVE':
@@ -251,7 +251,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 								//print_r( event_espresso_get_is_active($event_id));
 
 								echo '<div class="pending_event">';
-								include('event_list_display.php');
+								include(espresso_get_event_list_display_template());
 								echo '</div>';
 							}
 							break;
@@ -261,7 +261,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 							//Uncomment to show active status array
 							//print_r( event_espresso_get_is_active($event_id));
 
-							include('event_list_display.php');
+							include(espresso_get_event_list_display_template());
 							break;
 					}
 				}

@@ -108,6 +108,22 @@ function espresso_get_event_list_template() {
 }
 
 /**
+ * Retrieve path of event_list_display template in current or parent template.
+ *
+ * @since 3.2
+ *
+ * @return string
+ */
+function espresso_get_event_list_display_template() {
+	
+	$templates = array();
+
+	$templates[] = 'event_list_display.php';
+
+	return espresso_get_query_template( 'event_list_display', $templates );
+}
+
+/**
  * Retrieve path of attendee list template in current or parent template.
  *
  * @since 3.2
