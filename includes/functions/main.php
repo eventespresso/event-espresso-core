@@ -76,6 +76,11 @@ function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
 	$registration_url = FALSE;
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();
 	
+	if ( is_int( $event_slug )) {
+		$event_id = $event_slug;
+		$event_slug = FALSE;
+	}
+	
 	// if an event slug was supplied
 	if ( $event_slug && $event_slug != '' ) {
 		
@@ -97,6 +102,9 @@ function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
 			if ( $event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id ))) {
 				// create pretty permalink
 				$registration_url = get_permalink($org_options['event_page_id']) . $event_slug;					
+			} else {
+				// couldn't find a slug, so use really fugly oldsckool link
+				$registration_url = add_query_arg( 'ee', $event_id, get_permalink($org_options['event_page_id']) );					
 			}
 
 		} else {
