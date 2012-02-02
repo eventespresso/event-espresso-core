@@ -138,7 +138,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 			//Venue information
 			if ($org_options['use_venue_manager'] == 'Y') {
 				$event_address = $event->venue_address;
-				$event_address2 = $event->venue_address2;
+				$event_address2 = isset( $event->venue_address2 ) ? $event->venue_address2 : '';
 				$event_city = $event->venue_city;
 				$event_state = $event->venue_state;
 				$event_zip = $event->venue_zip;
@@ -147,7 +147,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 				//Leaving these variables intact, just in case people want to use them
 				$venue_title = $event->venue_name;
 				$venue_address = $event->venue_address;
-				$venue_address2 = $event->venue_address2;
+				$venue_address2 = $event_address2;
 				$venue_city = $event->venue_city;
 				$venue_state = $event->venue_state;
 				$venue_zip = $event->venue_zip;
@@ -156,7 +156,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 				$add_venue_meta = array(
 						'venue_title' => $event->venue_name,
 						'venue_address' => $event->venue_address,
-						'venue_address2' => $event->venue_address2,
+						'venue_address2' => $event_address2,
 						'venue_city' => $event->venue_city,
 						'venue_state' => $event->venue_state,
 						'venue_country' => $event->venue_country,
@@ -222,8 +222,8 @@ if (!function_exists('event_espresso_get_event_details')) {
 			}
 			//var_dump($ee_gmaps_opts);
 			//This can be used in place of the registration link if you are usign the external URL feature
-			//$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event_id);
-			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url($event->slug);
+			//$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url( $event->id, $event->slug );
+			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url( $event->id, $event->slug );
 			if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
 				//Display a message if the user is not logged in.
 				//_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
