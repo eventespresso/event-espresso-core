@@ -1,8 +1,112 @@
 <?php
+/**
+*		creates url slugs from event_name
+*		
+*		@access public
+*		@return void
+*/
+function espresso_create_url_slugs() {
+	//echo '<h1>'. __FILE__ . ' - ' . __FUNCTION__ . ' ( line no: ' . __LINE__ . ' )</h1>';
 
+	global $wpdb;
+
+	$SQL = 'SELECT id, event_name FROM ' . EVENTS_DETAIL_TABLE;
+
+	if ( $events = $wpdb->get_results( $wpdb->prepare( $SQL ))) {
+		$data = array();
+		$where = array();
+		if ( $events ) {
+			foreach ( $events as $event ) {
+	
+				$data['slug'] = espresso_string_to_url( $event->event_name );
+				$where['id'] = $event->id;
+	
+				$wpdb->update( 
+											EVENTS_DETAIL_TABLE, 
+											$data, 
+											$where, 
+											array( '%s' ), 
+											array( '%d' ) 
+										);	
+	
+			}
+		}			
+	}
+
+//echo printr($data);
+//echo printr($where);
+
+}	
+	
+	
+	
+
+/**
+ *		converts a string to url friendly string by:
+ * 	changing spaces to dashes, changing & (or &amp;) to "and", stripping tags, and converting to lowercase
+ *  
+ *		@access 	public
+ *		@param 	string	$string
+ *		@return 	string
+ */	
+function espresso_string_to_url( $string ) {
+	
+	$expressions = array(
+											'&\#\d+?;'			=> '',
+											'&\S+?;'				=> '',
+											'\s+'						=> '-',
+											'[^a-z0-9\-\._]'	=> '',
+											'-+'						=> '-',
+											'-$'						=> '-',
+											'^-'						=> '-',
+											'\.+$'					=> ''
+										);
+
+	$string = str_replace( '&amp;', 'and', $string );		
+	$string = str_replace( '&', 'and', $string );
+	$string = wp_strip_all_tags($string);
+
+	foreach ( $expressions as $key => $exp ) {
+		$string = preg_replace("#".$key."#i", $exp, $string);
+	}	
+	
+	$string = strtolower( $string );
+
+	return $string;
+	
+}	
+	
+	
+	
+	
+	
 //Event Registration Subpage 1 - Configure Organization
 function organization_config_mnu() {
 	global $wpdb, $notices, $org_options, $espresso_premium;
+
+
+	// if espresso_url_rewrite_activated is in the post data, but it doesn't yet exist in the org options, then this is the first time this will run
+	if ( isset( $_POST['espresso_url_rewrite_activated'] ) && ! isset( $org_options['espresso_url_rewrite_activated'] )){
+
+		// check for slug column
+		$SQL = 'SHOW COLUMNS FROM '.EVENTS_DETAIL_TABLE.' LIKE "slug"';
+		$results = $wpdb->get_results( $wpdb->prepare( $SQL ));
+		//echo printr( $results, '$results' );	
+		
+		// if column does not exist		
+		if ( empty( $results )) {		
+			
+			$SQL = 'ALTER TABLE '.EVENTS_DETAIL_TABLE.' ADD slug VARCHAR(100) AFTER event_name';
+			$results = $wpdb->query( $wpdb->prepare( $SQL ));
+			//echo printr( $results, '$results' );	
+			// column creation was sucessful
+			if ( ! empty( $results )) {
+				// create url slugs from event_name
+				espresso_create_url_slugs();
+			}
+			
+		} 
+	}
 
 	//Create the default pages
 	if (empty($org_options['event_page_id'])
@@ -27,6 +131,7 @@ function organization_config_mnu() {
 		$org_options['return_url'] = $_POST['return_url'];
 		$org_options['cancel_return'] = $_POST['cancel_return'];
 		$org_options['notify_url'] = $_POST['notify_url'];
+		$org_options['espresso_url_rewrite_activated'] = $_POST['espresso_url_rewrite_activated'];
 		$org_options['events_in_dasboard'] = $_POST['events_in_dasboard'];
 		$org_options['default_mail'] = $_POST['default_mail'];
 		$org_options['payment_subject'] = $_POST['payment_subject'];
@@ -131,6 +236,8 @@ function organization_config_mnu() {
 		do_action( 'action_hook_espresso_admin_notices');
 
 	$org_options = get_option('events_organization_settings');
+	//echo printr($org_options, '$org_options');
+
 	$values = array(
 			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
 			array('id' => 'N', 'text' => __('No', 'event_espresso'))
@@ -372,9 +479,34 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	<?php echo sprintf(__("This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)", 'event_espresso'), '<br />', '<span class="highlight">[ESPRESSO_CANCELLED]</span>', '<br />'); ?>
 																</span></td>
 														</tr>
-														</tbody>
+														<tr valign="top">
+															<th scope="row">Pretty Permalinks</th>
+															<td>
+																<fieldset>
+																	<legend class="screen-reader-text"><span>Pretty Permalinks</span></legend>
+																	<label for="users_can_register">																	
+																	<?php 
+																		if ( isset( $org_options['espresso_url_rewrite_activated'] )) {
+																			$checked = $org_options['espresso_url_rewrite_activated'] == 'Y' ? 'checked="checked"' : ''; 
+																		} else {
+																			$checked = ''; 
+																		}																	
+																	?>
+																		<input type="checkbox"  value="Y" id="espresso_url_rewrite_activated" name="espresso_url_rewrite_activated" <?php echo $checked;?>/>
+																		Activate "Pretty" Permalinks
+																		<br />
+																		<span class="description">
+																			makes URLs look like: "<b><?php echo espresso_get_reg_page_url();?>your-event-name</b>"<br/>
+																			instead of: "<b><?php echo espresso_get_reg_page_url();?>?ee=12</b>"<br/>
+																			<span class="important">Must have <a style="color:#d54e21;" href="<?php echo home_url('/');?>wp-admin/options-permalink.php">WordPress Permalinks</a> turned on, and mod_rewrite (or similar) active on server</span>
+																		</span>
+																	</label>
+																</fieldset>
+															</td>
+														</tr>
+													</tbody>
 
-													</table>
+												</table>
 													<p>
 														<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_2" />
 													</p>
@@ -636,3 +768,11 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 	}
 }
 
+
+
+
+
+
+
+
+	
