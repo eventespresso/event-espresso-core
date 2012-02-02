@@ -229,7 +229,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 	$data->google_map_link = espresso_google_map_link(array('address' => $data->event->address, 'city' => $data->event->city, 'state' => $data->event->state, 'zip' => $data->event->zip, 'country' => $data->event->country));
 
 	//Registration URL
-	$data->event_url = espresso_reg_url($data->event->id);
+	$data->event_url = espresso_reg_url( $data->event->id, $data->event->slug );
 	$data->event_link = '<a href="' . $data->event_url . '">' . stripslashes_deep($data->event->event_name) . '</a>';
 
 	//Venue name
@@ -728,7 +728,7 @@ if (!function_exists('event_espresso_send_attendee_registration_approval_pending
 		}
 
 		//Build links
-		$event_url = espresso_reg_url($event_id);
+		$event_url = espresso_reg_url( $event->id, $event->slug );
 		$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
 		$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
