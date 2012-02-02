@@ -8,9 +8,7 @@
 	<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
 
 	<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
-		<?php /*<form method="post" action="<?php echo espresso_get_reg_page_url(); ?>" id="registration_form">*/ ?>
-		<form method="post" action="<?php echo espresso_get_reg_page_url(); ?>" id="registration_form">
-		<?php /*<form method="post" action="<?php echo home_url() ?>/<?php echo $reg_page_url ?>" id="registration_form">*/ ?>
+		<form method="post" action="<?php echo espresso_get_reg_page_full_url(); ?>" id="registration_form">
 
 			<?php /* Venue details. Un-comment first and last lines & any venue details you wish to display or use the provided shortcodes. */ ?>
 			<?php // echo '<div id="venue-details-display">'; ?>
