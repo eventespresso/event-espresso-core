@@ -839,7 +839,7 @@ function espresso_init() {
 			//if (isset($_REQUEST['ee']) or isset($_REQUEST['edit_attendee'])) {
 			$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
 			
-			if ( $event_slug or isset( $_REQUEST['edit_attendee'] )) {
+			if ( $event_slug or isset( $_REQUEST['edit_attendee'] ) or isset( $_REQUEST['ee'] )) {
 				$regevent_action = "register";
 			}
 	
