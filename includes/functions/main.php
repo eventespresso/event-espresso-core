@@ -42,8 +42,16 @@ function espresso_reg_url($event_slug=0) {
 	if ( $event_slug!= '' ) {
 		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
 		//$new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
-		//$new_url = add_query_arg( 'event_slug', $event_slug, get_permalink($org_options['event_page_id']) );		
-		$new_url = get_permalink($org_options['event_page_id']) . $event_slug;		
+		
+		// check if permalinks are being used
+		if ( get_option('permalink_structure') != '' ) {
+			// create pretty permalink
+			$new_url = get_permalink($org_options['event_page_id']) . $event_slug;	
+		} else {
+			// use fugly oldsckool link
+			$new_url = add_query_arg( 'event_slug', $event_slug, get_permalink($org_options['event_page_id']) );	
+		}
+			
 		return $new_url;
 	}/* else {
 	  echo 'No event id supplied'; */
@@ -64,6 +72,8 @@ function espresso_get_reg_page_url() {
 	$reg_page_url = get_permalink($org_options['event_page_id']);
 	return $reg_page_url;
 }
+
+
 
 function espresso_getTinyUrl($url) {
 	return file_get_contents("http://tinyurl.com/api-create.php?url=" . $url);
