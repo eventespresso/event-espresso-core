@@ -261,7 +261,7 @@ function espresso_confirm_registration($registration_id) {
 	}
 
 	//Build links
-	$event_url = espresso_reg_url($event_id);
+	$event_url = espresso_reg_url( $event->id, $event->slug );
 	$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
 
