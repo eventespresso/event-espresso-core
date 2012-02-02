@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.2.1.P
+  Version: 3.2.P
 
   Author: Seth Shoultes
   Author URI: http://www.eventespresso.com
@@ -30,14 +30,14 @@
 	
 	
 function espresso_version() {
-	return '3.2.1.P';
-}
-function espresso_template_version() {
-	return '1.0';
+	return '3.2.1P';
 }
 
 // functions requiring global visibility
 require_once("includes/functions/main.php");
+
+
+
 
 
 /**
@@ -572,9 +572,6 @@ function espresso_init() {
 	
 
 	/* Core template files used by this plugin */
-	
-	event_espresso_require_template('init.php');
-	
 	//These may be loaded in posts and pages outside of the default EE pages
 	//Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
 	$event_list_template = 'event_list.php';
@@ -582,16 +579,16 @@ function espresso_init() {
 	// HOOK - change event list template
 	$event_list_template = apply_filters( 'filter_hook_espresso_event_list_template', $event_list_template);
 	
-	require_once(espresso_get_event_list_template());
+	event_espresso_require_template($event_list_template);
 	
 	//This is the form page for registering the attendee
-	require_once(espresso_get_registration_page_template());
+	event_espresso_require_template('registration_page.php');
 	
 	//Registration forms
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 	
 	//List Attendees - Used with the [LISTATTENDEES] shortcode
-	require_once(espresso_get_attendee_list_template());
+	event_espresso_require_template('attendee_list.php');
 	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/cart.php');
 	
@@ -601,7 +598,12 @@ function espresso_init() {
 	}
 
 	
+
+	
 	/* End Core template files used by this plugin */
+	
+	
+	
 	
 	
 	
@@ -804,6 +806,12 @@ function espresso_init() {
 	
 	
 	
+	
+	
+	
+	
+	
+	
 	// Run the program
 	if (!function_exists('event_espresso_run')) {
 		function event_espresso_run() {
@@ -860,7 +868,7 @@ function espresso_init() {
 				case "show_shopping_cart":
 				
 					//This is the form page for registering the attendee
-					require_once(espresso_get_shopping_cart_template());
+					event_espresso_require_template('shopping_cart.php');
 					event_espresso_shopping_cart();
 					
 				break;
@@ -1058,127 +1066,33 @@ function espresso_export_invoice() {
 *		
 *		@access public
 *		@return void
-*/
+*/													 
 function espresso_add_rewrite_rules() {
 
 	global $wpdb;
-	$org_options = get_option('events_organization_settings');		
+
+	$org_options = get_option('events_organization_settings');	
+	if ( isset( $org_options['espresso_url_rewrite_activated'] )) {
+		$url_rewrite = $org_options['espresso_url_rewrite_activated'];
+	} else {
+		$url_rewrite = FALSE;
+	}
+	
 	$reg_page_id = $org_options['event_page_id'];	
 
-	$SQL = 'SELECT post_name  FROM '.$wpdb->prefix .'posts WHERE ID = %d';
-	$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $reg_page_id ));
-//	$reg_page_url_slug = espresso_get_reg_page_url_slug();	
-	
-	add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?/$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' );
-	add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' ); 
+	if ( $url_rewrite == 'Y' && get_option('permalink_structure') != '' ) {
+		// create pretty permalinks
+		$SQL = 'SELECT post_name  FROM '.$wpdb->prefix .'posts WHERE ID = %d';
+		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $reg_page_id ));
+		//	$reg_page_url_slug = espresso_get_reg_page_url_slug();	
+		
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?/$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' );
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' ); 
+		
+	}	
+		
 														
 }														 
-
-
-
-
-
-
-
-/**
-*		creates url slugs - don't use this'
-*		
-*		@access public
-*		@return void
-*/
-function espresso_create_url_slug( $select = FALSE, $table = FALSE ) {
-
-/*	global $wpdb;
-	
-	if ( ! $table ) {
-		$table = EVENTS_DETAIL_TABLE;
-	}
-	
-	if ( ! $select or ! is_array( $select ) ) {
-		$select = array( 'id, event_name' );
-		$table = EVENTS_DETAIL_TABLE;
-	}	
-
-	$SQL = 'SELECT ';
-	
-	foreach ( $select as $k => $v ) {
-		$SQL .= $v . ', ';			
-	}
-	$SQL = rtrim( $SQL , ', ' );
-	
-	$SQL .= ' FROM ' . $table;		
-	
-	if ( isset( $select['id'] )) {
-		$SQL .= ' WHERE id = %s';
-		$results = $wpdb->get_results( $wpdb->prepare( $SQL, $select['id'] ));		
-	} else {
-		$results = $wpdb->get_results( $wpdb->prepare( $SQL ));
-	}
-
-	$save_to_db = array();
-	$where = array();
-	if ( $results ) {
-		foreach ( $results as $result ) {
-
-			$data['slug'] = espresso_string_to_url( $result->event_name );
-			$where['id'] = $result->id;
-
-			$wpdb->update( 
-										$table, 
-										$data, 
-										$where, 
-										array( '%s' ), 
-										array( '%d' ) 
-									);	
-
-		}
-	}	*/
-
-//echo printr($data);
-//echo printr($where);
-
-
-}														 
-//add_action( 'plugins_loaded', 'espresso_create_url_slug', 2);
-	
-	
-	
-	
-	
-	/**
-	 *		converts a string to url friendly string by:
-	 * 	changing spaces to dashes, changing & (or &amp;) to "and", stripping tags, and converting to lowercase
-	 *  
-	 *		@access 	public
-	 *		@param 	string	$string
-	 *		@return 	string
-	 */	
-	function espresso_string_to_url( $string ) {
-		
-		$expressions = array(
-												'&\#\d+?;'			=> '',
-												'&\S+?;'				=> '',
-												'\s+'						=> '-',
-												'[^a-z0-9\-\._]'	=> '',
-												'-+'						=> '-',
-												'-$'						=> '-',
-												'^-'						=> '-',
-												'\.+$'					=> ''
-											);
-
-		$string = str_replace( '&amp;', 'and', $string );		
-		$string = str_replace( '&', 'and', $string );
-		$string = wp_strip_all_tags($string);
-
-		foreach ( $expressions as $key => $exp ) {
-			$string = preg_replace("#".$key."#i", $exp, $string);
-		}	
-		
-		$string = strtolower( $string );
-
-		return $string;
-		
-	}		
 
 
 
@@ -1197,8 +1111,8 @@ function espresso_create_url_slug( $select = FALSE, $table = FALSE ) {
 *		@return void
 */	
 function espresso_widget() {
-	event_espresso_require_template('init.php');
-	require(espresso_get_widget_template());
+
+	event_espresso_require_template('widget.php');
 	//The widget can be over-ridden with the custom files addon	
 	register_widget('Event_Espresso_Widget');
 	
@@ -1382,6 +1296,11 @@ if (!function_exists('espresso_load_javascript_files')) {
 	}
 
 }
+
+
+
+
+
 
 
 
