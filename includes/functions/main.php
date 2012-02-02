@@ -34,30 +34,7 @@ function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
 	return home_url() . '/?invoice_launch=true&amp;id=' . $attendee_id . '&amp;r_id=' . $registration_id . '&amp;html=true' . $extra;
 }
 
-function espresso_reg_url($event_slug=0) {
-	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
-	if ( $event_slug!= '' ) {
-		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
-		//$new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
-		
-		// check if permalinks are being used
-		if ( get_option('permalink_structure') != '' ) {
-			// create pretty permalink
-			$new_url = get_permalink($org_options['event_page_id']) . $event_slug;	
-		} else {
-			// use fugly oldsckool link
-			$new_url = add_query_arg( 'event_slug', $event_slug, get_permalink($org_options['event_page_id']) );	
-		}
-			
-		return $new_url;
-	}/* else {
-	  echo 'No event id supplied'; */
-	return;
-	//}
-}
+
 
 function espresso_get_reg_page_url_slug() {
 	global $wpdb, $org_options;		
@@ -67,11 +44,72 @@ function espresso_get_reg_page_url_slug() {
 	return $reg_page_url_slug;
 }
 
-function espresso_get_reg_page_url() {
+function espresso_get_reg_page_full_url() {
 	global $org_options;
 	$reg_page_url = get_permalink($org_options['event_page_id']);
 	return $reg_page_url;
 }
+
+function espresso_use_pretty_permalinks() {
+	global $org_options;
+	// check if option exists
+	if ( isset( $org_options['espresso_url_rewrite_activated'] )) {
+		$url_rewrite = $org_options['espresso_url_rewrite_activated'];
+	} else {
+		$url_rewrite = FALSE;
+	}
+	// check if permalinks are turned on and both in WP and EE
+	if ( $url_rewrite == 'Y' && get_option('permalink_structure') != '' ) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}		
+}
+
+function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
+
+	global $wpdb, $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
+	
+	$registration_url = FALSE;
+	$use_pretty_permalinks = espresso_use_pretty_permalinks();
+	
+	// if an event slug was supplied
+	if ( $event_slug && $event_slug != '' ) {
+		
+		// check if permalinks are being used
+		if ( $use_pretty_permalinks ) {
+			// create pretty permalink
+			$registration_url = get_permalink($org_options['event_page_id']) . $event_slug;	
+		} else {
+			// use fugly oldsckool link
+			$registration_url = add_query_arg( 'event_slug', $event_slug, get_permalink($org_options['event_page_id']) );	
+		}
+			
+	} elseif ( $event_id && absint( $event_id ) && $event_id != '' && $event_id > 0 ) {   // no event slug, so use  event_id
+		
+		// check if permalinks are being used
+		if ( $use_pretty_permalinks ) {
+			// check if slug exists for that event
+			$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE .' WHERE id = %d';
+			if ( $event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id ))) {
+				// create pretty permalink
+				$registration_url = get_permalink($org_options['event_page_id']) . $event_slug;					
+			}
+
+		} else {
+			// use really fugly oldsckool link
+			$registration_url = add_query_arg( 'ee', $event_id, get_permalink($org_options['event_page_id']) );	
+		}
+		
+	}
+	
+	return $registration_url;
+	
+}
+
 
 
 
