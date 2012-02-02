@@ -337,8 +337,7 @@ if (!function_exists('register_attendees')) {
 						event_espresso_user_login();
 					} else {
 						//Serve up the registration form
-						//As of version 3.0.17 the registration details have been moved to registration_form.php
-						require('registration_page_display.php');
+						require(espresso_get_registration_display_template());
 					}
 				}//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
 				

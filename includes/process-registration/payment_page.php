@@ -194,11 +194,8 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 	$display_cost = ( $event_cost != "0.00" ) ? $org_options['currency_symbol'] . $event_individual_cost : __('Free', 'event_espresso');
 
 	//Pull in the template
-	if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "confirmation_display.php")) {
-		require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "confirmation_display.php"); //This is the path to the template file if available
-	} else {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/confirmation_display.php");
-	}
+	require_once(espresso_get_confirmation_display_template());
+	
 }
 
 function espresso_confirm_registration($registration_id) {
@@ -329,11 +326,8 @@ function espresso_confirm_registration($registration_id) {
 		//Approved!
 		//If the attendee is approved, then show payment options etc.
 		//Pull in the "Thank You" page template
-		if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_page.php")) {
-			require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_page.php"); //This is the path to the template file if available
-		} else {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/payment_page.php");
-		}
+		require_once(espresso_get_payment_page_template());
+		
 		if ($amount_pd != '0.00') {
 			//Show payment options
 			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")) {
@@ -518,28 +512,16 @@ function event_espresso_pay($att_registration_id=0) {
 				event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
 			}
 			if ($num_rows > 0) {
-				if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php")) {
-					require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php"); //This is the path to the template file if available
-				} else {
-					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/payment_overview.php");
-				}
+				require_once(espresso_get_payment_overview_template());
 			}
 		}
 
 		if (!isset($_GET['payment_type'])) {
 			//echo '<p>'. __('Please check your email for payment information.','event_espresso'). '</p>';
 			if ($num_rows > 0) {
-				if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php")) {
-					require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php"); //This is the path to the template file if available
-				} else {
-					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/payment_overview.php");
-				}
+				require_once(espresso_get_payment_overview_template());
 				echo '<a name="payment_options" id="payment_options"></a>';
-				if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "return_payment.php")) {
-					require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "return_payment.php"); //This is the path to the template file if available
-				} else {
-					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/return_payment.php");
-				}
+				require_once(espresso_get_return_payment_template());
 			}
 		}
 	} elseif ($registration_id == 0 && $att_registration_id == 0) {//if the attendee has paid using authorize.net and returns to make a payment, then display the following message
@@ -619,11 +601,7 @@ function event_espresso_pay($att_registration_id=0) {
 		//Debug
 		//echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
 		//Pull in the template
-		if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "return_payment.php")) {
-			require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "return_payment.php"); //This is the path to the template file if available
-		} else {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/return_payment.php");
-		}
+		require_once(espresso_get_return_payment_template());
 	}
 	$_REQUEST['page_id'] = $org_options['return_url'];
 	espresso_init_session();
