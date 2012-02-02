@@ -75,12 +75,64 @@ function espresso_string_to_url( $string ) {
 	return $string;
 	
 }	
+
+
+
+
+
+/**
+ *		reset htaccess rewrite rules
+ * 
+ *		@ access public
+ *		@ return void
+ */	
+function espresso_flush_rewrite_rules() {
+	if ( is_admin()  && isset($_REQUEST['page']) && $_REQUEST['page'] == 'event_espresso' ) {
+	    flush_rewrite_rules();
+	}
+}	
+
+
+
+
+
+
+
+/**
+*		creates pretty permalinks
+*		
+*		@access public
+*		@return void
+*/													 
+function espresso_add_rewrite_rules() {
+
+	global $wpdb, $org_options;
+	
+	$reg_page_id = $org_options['event_page_id'];	
+	$use_pretty_permalinks = espresso_use_pretty_permalinks();
+
+	if ( $use_pretty_permalinks ) {
+		// create pretty permalinks
+		$SQL = 'SELECT post_name  FROM '.$wpdb->prefix .'posts WHERE ID = %d';
+		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $reg_page_id ));
+
+		// rules for event slug pretty links
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?/$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' );
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' ); 
+		
+	}			
+														
+}		
 	
 	
 	
-	
-	
-//Event Registration Subpage 1 - Configure Organization
+
+/**
+ *		Event Registration Subpage 1 - Configure Organization
+ * 
+ *		@ access public
+ *		@ return void
+ */
 function organization_config_mnu() {
 	global $wpdb, $notices, $org_options, $espresso_premium;
 
@@ -130,8 +182,7 @@ function organization_config_mnu() {
 		$org_options['event_page_id'] = $_POST['event_page_id'];
 		$org_options['return_url'] = $_POST['return_url'];
 		$org_options['cancel_return'] = $_POST['cancel_return'];
-		$org_options['notify_url'] = $_POST['notify_url'];
-		$org_options['espresso_url_rewrite_activated'] = $_POST['espresso_url_rewrite_activated'];
+		$org_options['notify_url'] = $_POST['notify_url'];		
 		$org_options['events_in_dasboard'] = $_POST['events_in_dasboard'];
 		$org_options['default_mail'] = $_POST['default_mail'];
 		$org_options['payment_subject'] = $_POST['payment_subject'];
@@ -219,12 +270,21 @@ function organization_config_mnu() {
 			default: $org_options['currency_symbol'] = '$';
 				break;
 		}
+		
+		if ( isset( $_POST['espresso_url_rewrite_activated'] )) {
+			$org_options['espresso_url_rewrite_activated'] = $_POST['espresso_url_rewrite_activated'];
+		} else {
+			$org_options['espresso_url_rewrite_activated'] = 'N';
+		}
 		// this was added by Hugo and I think it's redundant -- currency symbol is being set above ~c
 		/*if (getCountryZoneId($org_options['organization_country']) == '2') {
 			$org_options['currency_symbol'] = '&euro;'; //Creates the symbol for the Euro
 		}*/
 		if (update_option('events_organization_settings', $org_options) == true) {
 			$notices['updates'][] = __('Organization details saved', 'event_espresso');
+			// reset rewrite rules
+			espresso_add_rewrite_rules();
+			flush_rewrite_rules();
 		} else {
 			$notices['errors'][] = __('Unable to save Organization details.', 'event_espresso');
 		}
@@ -232,8 +292,10 @@ function organization_config_mnu() {
 
 	//Options updated message
 	//This line keeps the notices from displaying twice
-	if (did_action( 'action_hook_espresso_admin_notices') == false)
+	if (did_action( 'action_hook_espresso_admin_notices') == false) {
 		do_action( 'action_hook_espresso_admin_notices');
+	}
+		
 
 	$org_options = get_option('events_organization_settings');
 	//echo printr($org_options, '$org_options');
@@ -484,7 +546,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 															<td>
 																<fieldset>
 																	<legend class="screen-reader-text"><span>Pretty Permalinks</span></legend>
-																	<label for="users_can_register">																	
+																	<label>																	
 																	<?php 
 																		if ( isset( $org_options['espresso_url_rewrite_activated'] )) {
 																			$checked = $org_options['espresso_url_rewrite_activated'] == 'Y' ? 'checked="checked"' : ''; 
@@ -496,8 +558,8 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																		Activate "Pretty" Permalinks
 																		<br />
 																		<span class="description">
-																			makes URLs look like: "<b><?php echo espresso_get_reg_page_url();?>your-event-name</b>"<br/>
-																			instead of: "<b><?php echo espresso_get_reg_page_url();?>?ee=12</b>"<br/>
+																			makes URLs look like: "<b><?php echo espresso_get_reg_page_full_url();?>your-event-name</b>"<br/>
+																			instead of: "<b><?php echo espresso_get_reg_page_full_url();?>?ee=12</b>"<br/>
 																			<span class="important">Must have <a style="color:#d54e21;" href="<?php echo home_url('/');?>wp-admin/options-permalink.php">WordPress Permalinks</a> turned on, and mod_rewrite (or similar) active on server</span>
 																		</span>
 																	</label>
