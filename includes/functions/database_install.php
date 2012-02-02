@@ -1,6 +1,23 @@
 <?php
 
 //Install/update data tables in the Wordpress database
+
+//Attention!! The WP dbDelta function cannot modify unique keys
+//Please note that when updating the plugin and WordPress is in debug mode, you may see the following warning/notice:
+//The plugin generated 15089 characters of unexpected output during activation. If you notice "headers already sent" messages, 
+//problems with syndication feeds or other issues, try deactivating or removing this plugin.
+
+//This fix for this problem:
+//The short and simple solution is to simply check the table exists and then drop the index manually before calling the dbDelta function.
+
+/*if ($wpdb->get_var("SHOW TABLES LIKE $table") == $table) {
+	$wpdb->query("ALTER TABLE $table DROP INDEX date");
+}*/
+
+//Credit: http://flav36rs.com/2010/04/02/wp-dbdelta-function-cannot-modify-unique-keys/
+
+
+
 //This fixes some tables that may have been named wrong in an earlier version of the plugin
 function event_espresso_rename_tables($old_table_name, $new_table_name) {
 	global $wpdb;
@@ -67,7 +84,7 @@ function espresso_fix_org_options() {
 	
 }
 
-//This function installs all the required database files
+//This function installs all the required database tables
 function events_data_tables_install() {
 	$table_version = EVENT_ESPRESSO_VERSION;
 
