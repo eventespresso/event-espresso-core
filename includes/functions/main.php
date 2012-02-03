@@ -119,7 +119,20 @@ function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
 }
 
 
-
+function espresso_short_reg_url($event_id=0) {
+	global $org_options;
+	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+	}
+	if ($event_id > 0) {
+		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
+		$new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
+		return $new_url;
+	}/* else {
+	  echo 'No event id supplied'; */
+	return;
+	//}
+}
 
 function espresso_getTinyUrl($url) {
 	return file_get_contents("http://tinyurl.com/api-create.php?url=" . $url);
