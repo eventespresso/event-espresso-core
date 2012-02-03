@@ -809,6 +809,7 @@ if (!function_exists('espresso_calendar')) {
 				default:
 					//$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
 					$registration_url = espresso_reg_url( $event->id, $event->slug );
+					
 				break;
 
 			}
