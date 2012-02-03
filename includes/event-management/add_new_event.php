@@ -270,15 +270,8 @@ function add_new_event() {
 			<!-- /titlewrap -->
 			<div class="inside">
 				<div id="edit-slug-box"> <strong>
-					<?php _e('Unique Event Identifier:', 'event_espresso'); ?>
-					</strong>
-					<input type="text" size="30" tabindex="2" name="event_identifier" id="event_identifier" value ="<?php echo isset($event_identifier) ? $event_identifier : ''; ?>" />
-					<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;\' + jQuery(\'#event_identifier\').val() + \'&#34;]\'); return false;">' . __('Get Shortcode') . '</a>' ?>
-					<?php
-						$org_options['event_page_id'] = isset($org_options['event_page_id']) ? $org_options['event_page_id'] : '';
-						$event_id = isset($event_id) ? $event_id : '';
-						echo '<a href="#" class="button" onclick="prompt(&#39;Event URL:&#39;, \'' . espresso_reg_url($event_id) . '\'); return false;">' . __('Get URL') . '</a>'
-						?>
+				<strong><?php _e('Permalink:', 'event_espresso'); ?></strong> <?php echo get_permalink($org_options['event_page_id']) ?><input type="text" size="20" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" />
+					
 				</div>
 			</div>
 			<!-- /edit-slug-box --> 

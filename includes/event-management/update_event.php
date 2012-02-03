@@ -60,14 +60,14 @@ function update_event($recurrence_arr = array()) {
 					//$DEL_SQL = 'UPDATE ' . EVENTS_DETAIL_TABLE . " SET event_status = 'D' WHERE start_date NOT IN (" . $delete_in . ") AND recurrence_id = " . $wpdb->escape($_POST['recurrence_id']);
 
 
-					$UPDATE_SQL = "SELECT id,start_date,event_identifier FROM " . EVENTS_DETAIL_TABLE . " WHERE recurrence_id = %d AND NOT event_status = 'D'";
+					$UPDATE_SQL = "SELECT id,start_date,event_identifier,slug FROM " . EVENTS_DETAIL_TABLE . " WHERE recurrence_id = %d AND NOT event_status = 'D'";
 				} else {
 					//Update this and upcoming events based on recurrence id and start_date >=start_date
 					$re_params['start_date'] = $_POST['start_date'];
 					$recurrence_dates = find_recurrence_dates($re_params);
 
 					//$DEL_SQL = 'UPDATE ' . EVENTS_DETAIL_TABLE . " SET event_status = 'D' WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND start_date NOT IN (" . $delete_in . ") AND recurrence_id = " . $_POST['recurrence_id'];
-					$UPDATE_SQL = "SELECT id,start_date,event_identifier FROM " . EVENTS_DETAIL_TABLE . " WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND recurrence_id = %d and NOT event_status = 'D' ";
+					$UPDATE_SQL = "SELECT id,start_date,event_identifier,slug FROM " . EVENTS_DETAIL_TABLE . " WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND recurrence_id = %d and NOT event_status = 'D' ";
 				}
 
 				//Recurrence Form modified and changes need to apply to all
@@ -99,7 +99,7 @@ function update_event($recurrence_arr = array()) {
 							AND EDT.start_date NOT IN (" . $delete_in . ")
 							AND recurrence_id = " . $_POST['recurrence_id'];
 
-						$UPDATE_SQL = "SELECT id,start_date,event_identifier FROM " . EVENTS_DETAIL_TABLE . " WHERE recurrence_id = %d and NOT event_status = 'D' ORDER BY start_date";
+						$UPDATE_SQL = "SELECT id,start_date,event_identifier,slug FROM " . EVENTS_DETAIL_TABLE . " WHERE recurrence_id = %d and NOT event_status = 'D' ORDER BY start_date";
 					} else {
 						//Update this and upcoming events based on recurrence id and start_date >=start_date
 						//$DEL_SQL = 'UPDATE ' . EVENTS_DETAIL_TABLE . " SET event_status = 'D' WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND start_date NOT IN (" . $delete_in . ") AND recurrence_id = " . $_POST['recurrence_id'];
@@ -110,7 +110,7 @@ function update_event($recurrence_arr = array()) {
 							AND EDT.start_date >='" . $wpdb->escape($_POST['start_date']) . "'
 							AND start_date NOT IN (" . $delete_in . ")
 							AND recurrence_id = " . $_POST['recurrence_id'];
-						$UPDATE_SQL = "SELECT id,start_date,event_identifier FROM " . EVENTS_DETAIL_TABLE . " WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND recurrence_id = %d AND NOT event_status = 'D'  ORDER BY start_date";
+						$UPDATE_SQL = "SELECT id,start_date,event_identifier,slug FROM " . EVENTS_DETAIL_TABLE . " WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND recurrence_id = %d AND NOT event_status = 'D'  ORDER BY start_date";
 					}
 
 					if ($delete_in != '')
@@ -153,6 +153,7 @@ function update_event($recurrence_arr = array()) {
 					if ($row->start_date != '') {
 						$recurrence_dates[$row->start_date]['event_id'] = $row->id;
 						$recurrence_dates[$row->start_date]['event_identifier'] = $row->event_identifier;
+						$recurrence_dates[$row->start_date]['slug'] = $row->slug;
 					}
 				}
 			}
@@ -172,7 +173,7 @@ function update_event($recurrence_arr = array()) {
 		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
 		$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
 		$event_name = $_REQUEST['event'];
-		//$event_identifier=array_key_exists('event_identifier', $recurrence_arr)?$recurrence_arr['event_identifier']:($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name.'-'.rand()) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']);
+		$event_slug = array_key_exists('slug', $recurrence_arr)?$recurrence_arr['slug']:($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name.'-'.$event_id) :  sanitize_title_with_dashes($_REQUEST['slug']);
 		$event_desc = $_REQUEST['event_desc'];
 		$display_desc = $_REQUEST['display_desc'];
 		$display_reg_form = $_REQUEST['display_reg_form'];
@@ -328,6 +329,7 @@ function update_event($recurrence_arr = array()) {
 			'event_desc' => $event_desc,
 			'display_desc' => $display_desc,
 			'display_reg_form' => $display_reg_form,
+			'slug' => $event_slug,
 			'address' => $address,
 			'address2' => $address2,
 			'city' => $city,
@@ -376,7 +378,7 @@ function update_event($recurrence_arr = array()) {
 
 		$sql_data = array(
 			'%s','%s','%s','%s',
-			'%s','%s','%s','%s',
+			'%s','%s','%s','%s','%s',
 			'%s','%s','%s','%s',
 			'%s','%s','%s','%s',
 			'%s','%s','%s','%s',
@@ -579,6 +581,7 @@ function update_event($recurrence_arr = array()) {
 					$post_id = wp_update_post($my_post);
 					update_post_meta($post_id, 'event_id', $event_id);
 					update_post_meta($post_id, 'event_identifier', $event_identifier);
+					update_post_meta($post_id, 'slug', $event_slug);
 					update_post_meta($post_id, 'event_start_date', $start_date);
 					update_post_meta($post_id, 'event_end_date', $end_date);
 					update_post_meta($post_id, 'event_location', $event_location);

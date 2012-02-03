@@ -218,6 +218,9 @@ function add_event_to_db($recurrence_arr = array()) {
 			//Create the event identifier with the event code appended to the end
 			$event_identifier = ($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
 			
+			//Create the event slug
+			$event_slug = ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name) : sanitize_title_with_dashes($_REQUEST['slug']);
+			
 			//When adding colums to the following arrays, be sure both arrays have equal values.
 			$sql = array(
 					'event_code' => $event_code,
@@ -226,6 +229,7 @@ function add_event_to_db($recurrence_arr = array()) {
 					'display_desc' => $display_desc,
 					'display_reg_form' => $display_reg_form,
 					'event_identifier' => $event_identifier,
+					'slug' => $event_slug,
 					'address' => $address,
 					'address2' => $address2,
 					'city' => $city,
@@ -273,7 +277,7 @@ function add_event_to_db($recurrence_arr = array()) {
 
 			$sql_data = array(
 					'%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s',
@@ -449,6 +453,7 @@ function add_event_to_db($recurrence_arr = array()) {
 
 				add_post_meta($post_id, 'event_id', $last_event_id);
 				add_post_meta($post_id, 'event_identifier', $event_identifier);
+				add_post_meta($post_id, 'slug', $event_slug);
 				add_post_meta($post_id, 'event_start_date', $_REQUEST['start_date']);
 				add_post_meta($post_id, 'event_end_date', $_REQUEST['end_date']);
 				add_post_meta($post_id, 'event_location', $event_location);

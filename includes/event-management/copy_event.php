@@ -11,6 +11,7 @@ function copy_event($recurrence_arr = array()){
 		$event_name=$result->event_name;
 		$event_desc=$result->event_desc;
 		$display_desc=$result->display_desc;
+		$event_slug=$result->slug;
 		$event_identifier=$result->event_identifier.'-'.time();
 		$reg_limit = $result->reg_limit;
 		$allow_multiple = $result->allow_multiple;
@@ -78,7 +79,8 @@ function copy_event($recurrence_arr = array()){
 			'event_desc'=>$event_desc, 
 			'display_desc'=>$display_desc, 
 			'display_reg_form'=>$display_reg_form, 
-			'event_identifier'=>$event_identifier, 
+			'event_identifier'=>$event_identifier,
+			'slug'=>$event_slug,
 			'address'=>$address, 
 			'address2'=>$address2, 
 			'city' => $city, 
@@ -126,7 +128,7 @@ function copy_event($recurrence_arr = array()){
 		
 		$sql_data = array(
 			'%s','%s','%s','%s',
-			'%s','%s','%s','%s',
+			'%s','%s','%s','%s','%s',
 			'%s','%s','%s','%s',
 			'%s','%s','%s','%s',
 			'%s','%s','%s','%s',
