@@ -477,7 +477,9 @@ div.tablenav {
 	margin-top: 20px;
 }
 /*** Editor Styles (email settings panel) ***/
-
+#edit-slug-box {
+	height: 2em;
+}
 /* toggle tabs & gen editor styles */
 .postbox .wp_themeSkin table.mceLayout {
 	border: 1px solid #dfdfdf;
