@@ -73,7 +73,7 @@ function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
 	
-	$registration_url = FALSE;
+	$registration_url = rtrim( get_permalink($org_options['event_page_id']), '/' ) . '/';
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();
 	
 	if ( is_int( $event_slug )) {
@@ -87,10 +87,10 @@ function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
 		// check if permalinks are being used
 		if ( $use_pretty_permalinks ) {
 			// create pretty permalink
-			$registration_url = get_permalink($org_options['event_page_id']) . $event_slug;	
+			 $registration_url = $registration_url . $event_slug;	
 		} else {
 			// use fugly oldsckool link
-			$registration_url = add_query_arg( 'event_slug', $event_slug, get_permalink($org_options['event_page_id']) );	
+			$registration_url = add_query_arg( 'event_slug', $event_slug, $registration_url );	
 		}
 			
 	} elseif ( $event_id && absint( $event_id ) && $event_id != '' && $event_id > 0 ) {   // no event slug, so use  event_id
@@ -101,15 +101,15 @@ function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
 			$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE .' WHERE id = %d';
 			if ( $event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id ))) {
 				// create pretty permalink
-				$registration_url = get_permalink($org_options['event_page_id']) . $event_slug;					
+				$registration_url = $registration_url = $registration_url . $event_slug;			
 			} else {
 				// couldn't find a slug, so use really fugly oldsckool link
-				$registration_url = add_query_arg( 'ee', $event_id, get_permalink($org_options['event_page_id']) );					
+				$registration_url = add_query_arg( 'ee', $event_id, $registration_url );					
 			}
 
 		} else {
 			// use really fugly oldsckool link
-			$registration_url = add_query_arg( 'ee', $event_id, get_permalink($org_options['event_page_id']) );	
+			$registration_url = add_query_arg( 'ee', $event_id, $registration_url );	
 		}
 		
 	}
