@@ -97,12 +97,15 @@ add_filter( 'plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2
 //auth_cookie_malformed
 //set_current_user
 
-//init  
+//init 
 add_action( 'init', 'espresso_load_jquery', 10 );
 add_action( 'init', 'espresso_init', 20 );
 add_action( 'init', 'espresso_export_certificate', 30);
 add_action( 'init', 'espresso_export_invoice', 30);
 add_action( 'init', 'espresso_export_ticket', 30);
+add_action( 'init', 'espresso_add_rewrite_rules', 40 );
+add_action( 'init', 'espresso_flush_rewrite_rules', 41 );
+
 
 //widgets_init
 add_action( 'widgets_init', 'espresso_widget');
@@ -1046,6 +1049,51 @@ function espresso_export_invoice() {
 }
 
 
+
+
+
+
+/**
+*		creates pretty permalinks
+*		
+*		@access public
+*		@return void
+*/													 
+function espresso_add_rewrite_rules() {
+
+	global $wpdb, $org_options;
+	
+	$reg_page_id = $org_options['event_page_id'];	
+	$use_pretty_permalinks = espresso_use_pretty_permalinks();
+
+	if ( $use_pretty_permalinks ) {
+		// create pretty permalinks
+		$SQL = 'SELECT post_name  FROM '.$wpdb->prefix .'posts WHERE ID = %d';
+		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $reg_page_id ));
+
+		// rules for event slug pretty links
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?/$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' );
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' ); 
+		
+	}			
+														
+}
+
+
+
+
+
+/**
+ *		reset htaccess rewrite rules
+ * 
+ *		@ access public
+ *		@ return void
+ */	
+function espresso_flush_rewrite_rules() {
+	if ( is_admin()  && isset($_REQUEST['page']) && $_REQUEST['page'] == 'event_espresso' ) {
+	    flush_rewrite_rules();
+	}
+}	
 
 
 
