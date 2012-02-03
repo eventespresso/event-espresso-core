@@ -1,154 +1,162 @@
 <?php
 
-/**
- * Payment Gateways main WP admin settings page
- *
- * This file renders the WP admin screen for user Payment configuration,
- * and contains the main WP markup structure for an admin screen, WP metaboxes
- * markup is rendered from the individual gateways folders settings.php files
- *
- * This file loops over the $gateways array and constructs a path for each
- * gateway name it finds, each gateways settings.php file is then required into this file for display
- */
-function event_espresso_gateways_options() {
+function before_gateways() {
+	$before_gateways = '<div id="event_reg_theme" class="wrap"><div id="icon-options-event" class="icon32"></div>';
+	$before_gateways .= '<h2>' . __('Manage Payment Gateways', 'event_espresso') . '</h2>';
+	$before_gateways .= '<div id="poststuff" class="metabox-holder has-right-sidebar">';
+	$before_gateways .= event_espresso_get_right_column();
+	$before_gateways .= '<div id="post-body"><div id="post-body-content"><div class="meta-box-sortables ui-sortables">';
+	return $before_gateways;
+}
+
+function after_gateways() {
+	$output = '';
 	global $espresso_premium;
+	if ($espresso_premium != true)
+		$output .= '<h2>' . __('Need more payment options?', 'event_espresso') . ' <a href="http://eventespresso.com/download/" target="_blank">' . __('Upgrade Now!', 'event_espresso') . '</a></h2>';
+	$output .= '</div><!-- / .meta-box-sortables --></div><!-- / #post-body-content --></div><!-- / #post-body --></div><!-- / #poststuff --></div><!-- / #wrap -->';
+	$output .= '<div id="button_image" style="display:none"><h2>' . __('Button Image URL', 'event_espresso') . '</h2>';
+	$output .= '<p>' . __('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso') . '</p>';
+	$output .= '</div><div id="bypass_confirmation" style="display:none">';
+	$output .= '<h2>' . __('By-passing the Confirmation Page', 'event_espresso') . '</h2>';
+	$output .= '<p>' . __('This will allow you to send your customers directly to the payment gateway of your choice.', 'event_espresso') . '</p></div>';
+	$output .= '<script type="text/javascript" charset="utf-8">
+        //<![CDATA[
+         jQuery(document).ready(function() {
+          postboxes.add_postbox_toggles("payment_gateways");
+          });
+        //]]>
+        </script>';
+	return $output;
+}
 
-	$gateways = array();
-	$gateways[] = 'check';
-	$gateways[] = 'bank';
-	$gateways[] = 'invoice';
-	$gateways[] = 'authnet';
-	$gateways[] = 'aim';
-	$gateways[] = 'firstdata';
-	$gateways[] = 'firstdata_connect_2';
-	$gateways[] = 'ideal';
-	$gateways[] = 'paypal';
-	$gateways[] = 'paypal_pro';
-	$gateways[] = 'eway';
-	$gateways[] = 'mwarrior';
-	$gateways[] = '2checkout';
-	$gateways[] = 'paytrace';
-	$gateways[] = 'quickpay';
-	$gateways[] = 'worldpay';
-	$gateways[] = 'nab';
-	$gateways[] = 'realauth';
-	$gateways[] = 'stripe';
-	?>
+//This is the payment gateway settings page.
+function event_espresso_gateways_options() {
+	global $wpdb, $active_gateways;
+	$active_gateways = get_option('event_espresso_active_gateways', array());
+	echo before_gateways();
 
-	<div class="wrap">
-		<div id="icon-options-event" class="icon32"> </div>
-		<h2>
-			<?php _e('Manage Payment Gateways', 'event_espresso'); ?>
-		</h2>
-		<?php #### Page sidebar righthand side ####	?>
-		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<?php event_espresso_display_right_column(); ?>
-			<?php #### Primary page metaboxes - lefthand container #### ?>
-			<div id="post-body">
-				<div id="post-body-content">
-					<div class="meta-box-sortables ui-sortables">
-						<?php
-						// loop over gateways array and call each gateways settings.php file
-						foreach ($gateways as $gateway) {
-							$func = 'event_espresso_' . $gateway . '_payment_settings';
-							$fallback_func = 'event_espresso_' . $gateway . '_settings';
-							$fallback_func2 = 'event_espresso_' . $gateway . '_deposit_settings';
-							$fallback_func3 = 'event_espresso_authnet_' . $gateway . '_settings';
-							if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/" . $gateway . "/settings.php")) {
-								require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/" . $gateway . "/settings.php");
-								if (function_exists($func))
-									$func();
-								elseif (function_exists($fallback_func))
-									$fallback_func();
-								elseif (function_exists($fallback_func2))
-									$fallback_func2();
-								elseif (function_exists($fallback_func3))
-									$fallback_func3();
-							} elseif
-							(file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/" . $gateway . "/settings.php")) {
-								require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/" . $gateway . "/settings.php");
-								if (function_exists($func))
-									$func();
-								elseif (function_exists($fallback_func))
-									$fallback_func();
-								elseif (function_exists($fallback_func2))
-									$fallback_func2();
-								elseif (function_exists($fallback_func3))
-									$fallback_func3();
-							}
-						}
+	$gateways_glob = glob(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/*/settings.php");
+	$upload_gateways_glob = glob(EVENT_ESPRESSO_GATEWAY_DIR . '*/settings.php');
+	if(!is_array($upload_gateways_glob)) $upload_gateways_glob = array();
+	foreach ($upload_gateways_glob as $upload_gateway) {
+		$pos = strpos($upload_gateway, 'gateways');
+		$sub = substr($upload_gateway, $pos);
+		foreach ($gateways_glob as &$gateway) {
+			$pos2 = strpos($gateway, 'gateways');
+			$sub2 = substr($gateway, $pos2);
+			if ($sub == $sub2) {
+				$gateway = $upload_gateway;
+			}
+		}
+		unset($gateway);
+	}
+	$gateways = array_merge($upload_gateways_glob, $gateways_glob);
+	$gateways = array_unique($gateways);
 
-						//requires an empty alipay_active.php file in the gateways/alipay OR
-						//if you have moved the gateway files, place it in uploads/espresso/gateways
-						if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/alipay_active.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/alipay/alipay_active.php")) {
-							if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/settings.php")) {
-								require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/settings.php");
-								event_espresso_alipay_settings();
-							} elseif (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/alipay/settings.php")) {
-								require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/alipay/settings.php");
-								event_espresso_alipay_settings();
-							}
-						}
+	foreach ($gateways as $gateway) {
+		require_once($gateway);
+	}
 
-						//Shows information for developers
-						if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gateway_developer.php')) {
-							require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gateway_developer.php');
-						}
+	do_action('action_hook_espresso_display_gateway_settings');
 
-						//If the free version is installed, this will be displayed.
-						if ($espresso_premium != true) {
-							echo '<h2>';
-							_e('Need more payment options?', 'event_espresso');
-							echo '<a href="http://eventespresso.com/download/" target="_blank">';
-							_e('Upgrade Now!', 'event_espresso');
-							echo '</a>';
-							echo '</h2>';
-						}
-						?>
-					</div>
-					<!-- / .meta-box-sortables -->
-
-					<!-- Help boxes -->
-					<div id="button_image" style="display: none;">
-						<div class="TB-ee-frame">
-							<h2>
-								<?php _e('Button Image URL', 'event_espresso') ?>
-							</h2>
-							<p>
-								<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso') ?>
-							</p>
-						</div>
-					</div>
-					<div id="bypass_confirmation" style="display: none;">
-						<div class="TB-ee-frame">
-							<h2>
-								<?php _e('By-passing the Confirmation Page', 'event_espresso') ?>
-							</h2>
-							<p>
-								<?php _e('This will allow you to send your customers directly to the payment gateway of your choice.', 'event_espresso') ?>
-							</p>
-						</div>
-					</div>
-					<!-- / help boxes -->
-
-				</div>
-				<!-- / #post-body-content -->
-			</div>
-			<!-- / #post-body -->
-		</div>
-		<!-- / #poststuff -->
-	</div>
-	<!-- / #wrap -->
-
-	<script type="text/javascript" charset="utf-8">
-		//<![CDATA[
-		jQuery(document).ready(function() {
-			postboxes.add_postbox_toggles('payment_gateways');
-		});
-		//]]>
-	</script>
-	<?php
+	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gateway_developer.php')) {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gateway_developer.php');
+	}
+	echo after_gateways();
 	if (did_action('espresso_admin_notices') == false)
 		do_action('espresso_admin_notices');
 }
 
+function espresso_update_active_gateways() {
+  //upgrade script for those updating from versions prior to 3.1.16.P
+	//hooked to plugin activation
+	$active_gateways = get_option('event_espresso_active_gateways', array());
+	$dir = dirname(__FILE__);
+	if(get_option('events_2checkout_active')==true
+					&& !array_key_exists('2checkout', $active_gateways)) {
+		$active_gateways['2checkout'] = $dir . "/2checkout";
+	}
+	if(get_option('events_authnet_aim_active')==true
+					&& !array_key_exists('aim', $active_gateways)) {
+		$active_gateways['aim'] = $dir . "/aim";
+	}
+	if(get_option('events_alipay_active')==true
+					&& !array_key_exists('alipay', $active_gateways)) {
+		$active_gateways['alipay'] = $dir . "/alipay";
+	}
+	if(get_option('events_authnet_active')==true
+					&& !array_key_exists('authnet', $active_gateways)) {
+		$active_gateways['authnet'] = $dir . "/authnet";
+	}
+	if(get_option('events_bank_payment_active')==true
+					&& !array_key_exists('bank', $active_gateways)) {
+		$active_gateways['bank'] = $dir . "/bank";
+	}
+	if(get_option('events_check_payment_active')==true
+					&& !array_key_exists('check', $active_gateways)) {
+		$active_gateways['check'] = $dir . "/check";
+	}
+	if(get_option('events_eway_active')==true
+					&& !array_key_exists('eway', $active_gateways)) {
+		$active_gateways['eway'] = $dir . "/eway";
+	}
+	if(get_option('events_exact_active')==true
+					&& !array_key_exists('exact', $active_gateways)) {
+		$active_gateways['exact'] = $dir . "/exact";
+	}
+	if(get_option('events_firstdata_active')==true
+					&& !array_key_exists('firstdata', $active_gateways)) {
+		$active_gateways['firstdata'] = $dir . "/firstdata";
+	}
+	if(get_option('events_firstdata_connect_2_active')==true
+					&& !array_key_exists('firstdata_connect_2', $active_gateways)) {
+		$active_gateways['firstdata_connect_2'] = $dir . "/firstdata_connect_2";
+	}
+	if(get_option('events_ideal_active')==true
+					&& !array_key_exists('ideal', $active_gateways)) {
+		$active_gateways['ideal'] = $dir . "/ideal";
+	}
+	if(get_option('events_invoice_payment_active')==true
+					&& !array_key_exists('invoice', $active_gateways)) {
+		$active_gateways['invoice'] = $dir . "/invoice";
+	}
+	if(get_option('events_mwarrior_active')==true
+					&& !array_key_exists('mwarrior', $active_gateways)) {
+		$active_gateways['mwarrior'] = $dir . "/mwarrior";
+	}
+	if(get_option('events_nab_active')==true
+					&& !array_key_exists('nab', $active_gateways)) {
+		$active_gateways['nab'] = $dir . "/nab";
+	}
+	if(get_option('events_paypal_active')==true
+					&& !array_key_exists('paypal', $active_gateways)) {
+		$active_gateways['paypal'] = $dir . "/paypal";
+	}
+	if(get_option('events_paypal_pro_active')==true
+					&& !array_key_exists('paypal_pro', $active_gateways)) {
+		$active_gateways['paypal_pro'] = $dir . "/paypal_pro";
+	}
+	if(get_option('events_paytrace_active')==true
+					&& !array_key_exists('paytrace', $active_gateways)) {
+		$active_gateways['paytrace'] = $dir . "/paytrace";
+	}
+	if(get_option('events_quickpay_active')==true
+					&& !array_key_exists('quickpay', $active_gateways)) {
+		$active_gateways['quickpay'] = $dir . "/quickpay";
+	}
+	$payment_settings = get_option('event_espresso_realauth_settings');
+	if(!empty($payment_settings['active'])
+					&& !array_key_exists('realauth', $active_gateways)) {
+		$active_gateways['realauth'] = $dir . "/realauth";
+	}
+	if(get_option('events_stripe_active')==true
+					&& !array_key_exists('stripe', $active_gateways)) {
+		$active_gateways['stripe'] = $dir . "/stripe";
+	}
+	if(get_option('events_worldpay_active')==true
+					&& !array_key_exists('worldpay', $active_gateways)) {
+		$active_gateways['worldpay'] = $dir . "/worldpay";
+	}
+	update_option('event_espresso_active_gateways', $active_gateways);
+}

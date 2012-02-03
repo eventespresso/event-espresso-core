@@ -27,8 +27,8 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-	
-	
+
+
 function espresso_version() {
 	return '3.2.P';
 }
@@ -43,7 +43,7 @@ require_once("includes/functions/main.php");
 /**
 *		run event espresso installation scripts
 * 		Install/Update Tables when plugin is activated
-*		
+*
 *		@access public
 *		@return void
 */
@@ -53,6 +53,8 @@ function espresso_plugin_activation() {
 	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/admin.php');
 	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/database_install.php');
 	events_data_tables_install();
+	require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/payment_gateways.php');
+	espresso_update_active_gateways();
 }
 register_activation_hook(__FILE__, 'espresso_plugin_activation');
 
@@ -80,11 +82,11 @@ add_action('plugins_loaded', 'espresso_get_user_id');
 // a few espresso specific hooks
 
 // add the function display_all_events() as the default action to be performed for the regevent_default_action hook
-add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1 );				
+add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1 );
 // add the function event_espresso_add_attendees_to_db() as the default action to be performed for the regevent_post_attendee hook
-add_action ( 'action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db' );				
+add_action ( 'action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db' );
 // add the function register_attendees() as the default action to be performed for the regevent_register_attendees hook
-add_action ( 'action_hook_espresso_regevent_register_attendees', 'register_attendees' );				
+add_action ( 'action_hook_espresso_regevent_register_attendees', 'register_attendees' );
 
 
 
@@ -152,7 +154,7 @@ add_action( 'wp_print_styles', 'add_espresso_stylesheet', 20);
 add_action( 'wp_footer', 'espresso_load_javascript_files');
 
 //wp_print_footer_scripts
-//shutdown 
+//shutdown
 
 
 
@@ -168,85 +170,85 @@ add_action( 'wp_footer', 'espresso_load_javascript_files');
 
 /**
 *		define all event espresso db table names plus directory and url paths
-*		
+*
 *		@access public
 *		@return void
-*/	
+*/
 function espresso_define_tables_and_paths() {
 
 	global $wpdb;
-	
+
 	define("EVENT_ESPRESSO_VERSION", espresso_version());
-	
+
 	// Define all plugin database tables
 	define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
-	
+
 	define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
 	define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
 	define("EVENTS_ATTENDEE_META_TABLE", $wpdb->prefix . "events_attendee_meta");
-	
+
 	define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
 	define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
-	
+
 	define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
-	
+
 	define("EVENTS_DISCOUNT_CODES_TABLE", $wpdb->prefix . "events_discount_codes");
 	define("EVENTS_DISCOUNT_REL_TABLE", $wpdb->prefix . "events_discount_rel");
-	
+
 	define("EVENTS_EMAIL_TABLE", $wpdb->prefix . "events_email");
-	
+
 	define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
 	define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
-	
+
 	define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
-	
+
 	define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
 	define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
-	
+
 	define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices");
-	
+
 	define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
 	define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
 	define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
-	
+
 	define("EVENTS_START_END_TABLE", $wpdb->prefix . "events_start_end");
-	
+
 	define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 	define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
-	
+
 	// End table definitions
-	
+
 	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
-	
+
 	//Get the plugin url and content directories.
 	//These variables are used to define the plugin and content directories in the constants below.
 	$wp_plugin_url = WP_PLUGIN_URL;
 	$wp_content_url = WP_CONTENT_URL;
-	
+
 	//Define the plugin directory and path
 	define("EVENT_ESPRESSO_PLUGINPATH", "/" . plugin_basename(dirname(__FILE__)) . "/");
 	define("EVENT_ESPRESSO_PLUGINFULLPATH", WP_PLUGIN_DIR . EVENT_ESPRESSO_PLUGINPATH);
 	define("EVENT_ESPRESSO_PLUGINFULLURL", $wp_plugin_url . EVENT_ESPRESSO_PLUGINPATH);
-	
+
 	//Define dierectory structure for uploads
 	//Create the paths
 	$wp_content_dir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
-	
+
 	$upload_path = $wp_content_dir . '/uploads';
 	$event_espresso_upload_dir = $upload_path . '/espresso/';
 	$event_espresso_template_dir = $event_espresso_upload_dir . 'templates/';
-	
+
 	//Define the includes directory
 	$includes_directory = EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/';
 	define("EVENT_ESPRESSO_INCLUDES_DIR", $includes_directory);
-	
+
 	//Define the uploads directory and url
 	define("EVENT_ESPRESSO_UPLOAD_DIR", $event_espresso_upload_dir);
 	define("EVENT_ESPRESSO_UPLOAD_URL", $wp_content_url . '/uploads/espresso/');
-	
+
 	//Define the templates dirrectory
 	define("EVENT_ESPRESSO_TEMPLATE_DIR", $event_espresso_template_dir);
-	
+
 	//Define the gateway directory and url
 	$event_espresso_gateway_dir = EVENT_ESPRESSO_UPLOAD_DIR . "gateways/";
 	define("EVENT_ESPRESSO_GATEWAY_DIR", $event_espresso_gateway_dir);
@@ -260,13 +262,13 @@ function espresso_define_tables_and_paths() {
 
 /**
 *		load and instantiate EE_Session class
-*		
+*
 *		@access public
 *		@return void
 */
 function espresso_EE_Session() {
 	global $EE_Session;
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');	
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
 }
@@ -276,7 +278,7 @@ function espresso_EE_Session() {
 
 /**
 *		load and instantiate the event espresso error logging class
-*		
+*
 *		@access public
 *		@return void
 */
@@ -297,7 +299,7 @@ function espresso_load_error_log() {
 
 /**
 *		initialize the espresso session
-*		
+*
 *		@access public
 *		@return void
 */
@@ -332,11 +334,11 @@ function espresso_init_session() {
 		$_SESSION['espresso_session']['events_in_session'] = '';
 		$_SESSION['espresso_session']['coupon_code'] = '';
 		$_SESSION['espresso_session']['grand_total'] = '';
-		
+
 	}
-	
+
 	do_action('action_hook_espresso_after_init_session');
-	
+
 }
 
 
@@ -346,7 +348,7 @@ function espresso_init_session() {
 
 /**
 *		Handles importing of csv files
-*		
+*
 *		@access public
 *		@return void
 */
@@ -367,7 +369,7 @@ function espresso_check_for_export() {
 
 /**
 *		Handles exporting of csv files
-*		
+*
 *		@access public
 *		@return void
 */
@@ -429,21 +431,21 @@ function event_espresso_filter_plugin_actions($links, $file) {
 
 /**
 *		load jQuery
-*		
+*
 *		@access public
 *		@return void
-*/	
+*/
 if (!function_exists('espresso_load_jquery')) {
 
 	function espresso_load_jquery() {
-	
+
 		global $org_options;
-		
+
 		// logging
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
-		
+
 		wp_enqueue_script('jquery');
 		if (function_exists('event_espresso_multi_reg_init') || (isset($_REQUEST['page']) && ( $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'form_groups'))) {
 			wp_enqueue_script('ee_ajax_request', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_cart_functions.js', array('jquery'));
@@ -459,25 +461,25 @@ if (!function_exists('espresso_load_jquery')) {
 
 /**
 *		load and run event espress
-*		
+*
 *		@access public
 *		@return void
-*/	
+*/
 function espresso_init() {
 
 	//Globals used throughout the site
 	global $org_options, $wpdb, $this_is_a_reg_page, $notices;
-	
-	$org_options = get_option('events_organization_settings');	
+
+	$org_options = get_option('events_organization_settings');
 	$page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
 	$notices = array('updates' => array(), 'errors' => array());
-	
+
 	//Check if SSL is loaded
 	if (is_ssl()) {
-	
+
 		//Create the server name
 		$server_name = str_replace('https://', '', site_url());
-	
+
 		//If the site is using SSL, we need to make sure our files get loaded in SSL.
 		//This will (should) make sure everything is loaded via SSL
 		//So that the "..not everything is secure.." message doesn't appear
@@ -487,24 +489,24 @@ function espresso_init() {
 	} else {
 		$server_name = str_replace('http://', '', site_url());
 	}
-	
+
 	//Set the default time zone
 	//If the default time zone is set up in the WP Settings, then we will use that as the default.
 	if (get_option('timezone_string') != '') {
 		date_default_timezone_set(get_option('timezone_string'));
 	}
-	
-	
+
+
 	//Wordpress function for setting the locale.
 	//print get_locale();
 	//setlocale(LC_ALL, get_locale());
 	setlocale(LC_TIME, get_locale());
-	
+
 	//Get language files
 	load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-	
-	
-	
+
+
+
 	$this_is_a_reg_page = FALSE;
 	//if (isset($_REQUEST['ee']) || isset($_REQUEST['page_id']) || is_admin()) {
 	if (isset($_REQUEST['event_slug']) || isset($_REQUEST['page_id']) || is_admin()) {
@@ -516,7 +518,7 @@ function espresso_init() {
 				'cancel_return' => $org_options['cancel_return'],
 				'notify_url' => $org_options['notify_url']
 		);
-	
+
 		$server_name = str_replace($_SERVER['SERVER_NAME'], '', $server_name);
 		$uri_string = str_replace($server_name, '', $_SERVER['REQUEST_URI']);
 		$uri_string = str_replace($_SERVER['QUERY_STRING'], '', $uri_string);
@@ -535,35 +537,35 @@ function espresso_init() {
 	}
 
 
-	
+
 	//Ticketing
 	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php") || function_exists('espresso_ticket_launch')) {
 		global $ticketing_installed;
 		$ticketing_installed = true;
 	}
-	
-	
+
+
 	//Premium funtions. If this is a paid version, then we need to include these files.
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php')) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php');
 		global $espresso_premium;
 		$espresso_premium = espresso_system_check();
 	}
-	
+
 	//These files need to be above the core function files
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/addons_includes.php')) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/addons_includes.php');
 	}
-	
-		
-	
+
+
+
 	//Core function files
-	
+
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
 	//require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Event.php';
 	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Attendee.php';
-	
+
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
@@ -571,7 +573,7 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
-	
+
 
 	/* Core template files used by this plugin */
 	
@@ -580,29 +582,28 @@ function espresso_init() {
 	//These may be loaded in posts and pages outside of the default EE pages
 	//Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
 	$event_list_template = 'event_list.php';
-	
+
 	// HOOK - change event list template
 	$event_list_template = apply_filters( 'filter_hook_espresso_event_list_template', $event_list_template);
-	
+
 	require_once(espresso_get_event_list_template());
-	
+
 	//This is the form page for registering the attendee
 	require_once(espresso_get_registration_page_template());
-	
+
 	//Registration forms
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
-	
+
 	//List Attendees - Used with the [LISTATTENDEES] shortcode
 	require_once(espresso_get_attendee_list_template());
-	
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/cart.php');
-	
+
 	//Custom post type integration
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && isset($org_options['template_settings']['use_custom_post_types']) && $org_options['template_settings']['use_custom_post_types'] == 'Y') {
 		require('includes/admin-files/custom_post_type.php');
 	}
 
-	
 	/* End Core template files used by this plugin */
 	
 	
@@ -611,33 +612,33 @@ function espresso_init() {
 	if (!is_admin()) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
 	}
-	
+
 	//Load these files if we are in an actuial registration page
 	function espresso_load_reg_page_files() {
-	
+
 		define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
-	
+
 		//Check to see if this a reg page
 		//May cause admin and front facing pages to break if turned on
 		//global $this_is_a_reg_page;
 		//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
 		//Process email confirmations
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
-	
+
 		//Various attendee functions
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/attendee_functions.php');
-	
-	
+
+
 		//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/payment_page.php');
-	
+
 		//Add attendees to the database
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/add_attendees_to_db.php');
-	
+
 		//Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] shortcode
 		event_espresso_require_gateway('process_payments.php');
 		event_espresso_require_gateway('PaymentGateway.php');
-	
+
 		// AJAX functions
 		add_action( 'wp_ajax_event_espresso_add_item', 'event_espresso_add_item_to_session');
 		add_action( 'wp_ajax_nopriv_event_espresso_add_item', 'event_espresso_add_item_to_session');
@@ -652,11 +653,11 @@ function espresso_init() {
 		add_action( 'wp_ajax_event_espresso_confirm_and_pay', 'event_espresso_confirm_and_pay');
 		add_action( 'wp_ajax_nopriv_event_espresso_confirm_and_pay', 'event_espresso_confirm_and_pay');
 	}
-	
+
 	if ($this_is_a_reg_page == TRUE) {
 		espresso_load_reg_page_files();
 	}
-	
+
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/index.php')) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/index.php');
 		//Include dicount codes
@@ -665,96 +666,96 @@ function espresso_init() {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/coupon_management.php');
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
 	//Admin only files
 	if ( is_admin() ) {
-	
+
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/admin.php');
-	
+
 		// New form builder
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'form-builder/index.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'form-builder/groups/index.php');
-	
+
 		if ($espresso_premium != true)
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/test_drive_pro.php');
-	
+
 		// Premium upgrade options if the paid plugin is not installed
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/premium_upgrade.php');
-	
+
 		// Get the payment settings page
 		event_espresso_require_gateway('payment_gateways.php');
-	
+
 		// Email Manager
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/email-manager/index.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/email-manager/index.php');
 		} else {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/email-manager.php');
 		}
-	
+
 		// Event Registration Subpage - Add/Delete/Edit Venues
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php');
 		} else {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/venue_management.php');
 		}
-	
+
 		// Add/Delete/Edit Locales
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/locale-management/index.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/locale-management/index.php');
 		} else {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/locale_management.php');
 		}
-	
+
 		// Add/Delete/Edit Staff
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/staff-management/index.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/staff-management/index.php');
 		} else {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/staff-management.php');
 		}
-	
+
 		// Event editor premium functions
 		event_espresso_require_file('functions.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/', '', false, true);
-	
+
 		// Available addons
 		event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-	
+
 		// Google Map Settings
 		event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/templates/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-	
+
 		// Admin Widget - Display event stats in your admin dashboard
 		event_espresso_require_file('dashboard_widget.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/', '', false, true);
-	
-	
+
+
 		// Admin only functions
 		event_espresso_require_file('admin_menu.php', EVENT_ESPRESSO_INCLUDES_DIR . 'functions/', '', false, true);
-	
+
 		// Event Registration Subpage - Configure Organization
 		event_espresso_require_file('organization_config.php', EVENT_ESPRESSO_INCLUDES_DIR . 'settings/', '', false, true);
-	
+
 		// Event Registration Subpage - Add/Delete/Edit Events
 		event_espresso_require_file('index.php', EVENT_ESPRESSO_INCLUDES_DIR . 'event-management/', '', false, true);
 		event_espresso_require_file('index.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-reports/', '', false, true);
-	
+
 		// Event styles & template layouts Subpage
 		event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/templates/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-	
-	
+
+
 		// Plugin Support
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_support.php');
-	
+
 		// Admin Reporting
 		// require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-reports/index.php');
 		// Event Registration Subpage - Category Manager
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'category-management/index.php');
-	
+
 		// Load scripts and styles for the admin
 		if (isset($_REQUEST['page'])) {
 			$espresso_pages = array(
@@ -795,12 +796,12 @@ function espresso_init() {
 				add_action( 'admin_print_styles', 'event_espresso_config_page_styles');
 			}
 		}
-	
+
 		// Update the question sequences
 		add_action( 'wp_ajax_update_sequence', 'event_espresso_questions_config_mnu');
 		// Update the question group sequences
 		add_action( 'wp_ajax_update_qgr_sequence', 'event_espresso_question_groups_config_mnu');
-		
+
 	}
 	
 	
@@ -809,65 +810,65 @@ function espresso_init() {
 	// Run the program
 	if (!function_exists('event_espresso_run')) {
 		function event_espresso_run() {
-	
+
 			// grab some globals
 			global $wpdb, $org_options, $load_espresso_scripts;
-			
+
 			// logging
 			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 			}
-			
+
 			// tell the plugin to load the required scripts
 			$load_espresso_scripts = true;
-	
+
 			// begin output buffering
 			ob_start();
-	
+
 			//Make sure scripts are loading
 			echo espresso_check_scripts();
-	
+
 			// Get action type
 			$regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
-	
+
 			//if (isset($_REQUEST['ee']) or isset($_REQUEST['edit_attendee'])) {
 			$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
 			
 			if ( $event_slug or isset( $_REQUEST['edit_attendee'] ) or isset( $_REQUEST['ee'] )) {
 				$regevent_action = "register";
 			}
-	
+
 			switch ($regevent_action) {
-					
+
 				case "post_attendee":
-				
+
 					// now other plugins/functions/classes can completely change the post attendee process by removing the previous hook and adding their own
-					do_action( 'action_hook_espresso_regevent_post_attendee' );		
-					
+					do_action( 'action_hook_espresso_regevent_post_attendee' );
+
 				break;
-				
-	
-				case "register":			
-				
+
+
+				case "register":
+
 					// now other plugins/functions/classes can completely change the register attendee process by removing the previous hook and adding their own
-					do_action( 'action_hook_espresso_regevent_register_attendees' );		
-					
+					do_action( 'action_hook_espresso_regevent_register_attendees' );
+
 				break;
-				
-	
+
+
 				case "add_to_session":
 				break;
-				
-	
+
+
 				case "show_shopping_cart":
-				
+
 					//This is the form page for registering the attendee
 					require_once(espresso_get_shopping_cart_template());
 					event_espresso_shopping_cart();
-					
+
 				break;
-				
-	
+
+
 				case "load_checkout_page":
 
 					if ($_POST) {
@@ -876,58 +877,58 @@ function espresso_init() {
 					event_espresso_load_checkout_page();
 					
 				break;
-	
+
 				case "post_multi_attendee":
-				
+
 					//echo " YESssss";
 					event_espresso_update_item_in_session('attendees');
 					event_espresso_add_attendees_to_db_multi();
-					
+
 				break;
-	
-	
+
+
 				default:
 				
 					// now other plugins/functions/classes can completely change the regevent default action process by removing the previous hook and adding their own
 					do_action( 'action_hook_espresso_regevent_default_action', $regevent_action );
-					
+
 			}
-	
+
 			$content = ob_get_contents();
 			ob_end_clean();
 			return $content;
-			
+
 		}
 	}
 	add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');
-	
-	
-	
-	
+
+
+
+
 	function espresso_cancelled() {
 		global $org_options;
 		$_REQUEST['page_id'] = $org_options['return_url'];
 		espresso_init_session();
 	}
 	add_shortcode('ESPRESSO_CANCELLED', 'espresso_cancelled');
-	
-	
-	
-	
-	
+
+
+
+
+
 	if (isset($_REQUEST['authAmountString'])) {
 		add_action( 'posts_selection', 'event_espresso_txn');
 	}
-	
+
 	// These actions need to be loaded at the bottom of this script to prevent errors when post/get requests are received.
-	
+
 	if (is_admin()) {
 		// Check to make sure there are no empty registration id fields in the database.
 		if (event_espresso_verify_attendee_data() == true &&
 						(empty($_POST['action']) || $_POST['action'] != 'event_espresso_update_attendee_data')) {
 			add_action( 'admin_notices', 'event_espresso_registration_id_notice');
 		}
-	
+
 		// copy themes to template directory
 		if (isset($_REQUEST['event_espresso_admin_action'])) {
 			if ($_REQUEST['event_espresso_admin_action'] == 'copy_templates') {
@@ -947,26 +948,26 @@ function espresso_init() {
 			add_action( 'admin_notices', 'event_espresso_activation_notice');
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 	// Export iCal file
 	if (!empty($_REQUEST['iCal'])) {
 		espresso_ical();
 	}
-	
-	
-	
+
+
+
 	// PUE Auto Upgrades stuff
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php') && !empty($org_options)) {
 		//let's get the client api key for updates
 		global $org_options;
-	
+
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
@@ -980,14 +981,14 @@ function espresso_init() {
 				'apikey' => $api_key,
 				'lang_domain' => 'event_espresso'
 		);
-	
+
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
 		//$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options);
 	}
 
 
 
-	
+
 
 }
 
@@ -998,7 +999,7 @@ function espresso_init() {
 
 /**
 *		Export PDF Certificate
-*		
+*
 *		@access public
 *		@return void
 */
@@ -1031,7 +1032,7 @@ function espresso_export_ticket() {
 
 /**
 *		Export Invoice
-*		
+*
 *		@access public
 *		@return void
 */
@@ -1111,16 +1112,16 @@ function espresso_flush_rewrite_rules() {
 
 /**
 *		a widget for displaying the list of events in your sidebar
-*		
+*
 *		@access public
 *		@return void
-*/	
+*/
 function espresso_widget() {
 	event_espresso_require_template('init.php');
 	require(espresso_get_widget_template());
-	//The widget can be over-ridden with the custom files addon	
+	//The widget can be over-ridden with the custom files addon
 	register_widget('Event_Espresso_Widget');
-	
+
 }
 
 
@@ -1161,7 +1162,7 @@ function espresso_add_query_vars( $query_vars ) {
 
 /**
 *		Load the Event Espresso HTML meta
-*		
+*
 *		@access public
 *		@return void
 */
@@ -1186,18 +1187,18 @@ function espresso_info_header() {
 
 /**
 *		Load the style sheets for the reegistration pages
-*		
+*
 *		@access public
 *		@return void
-*/	
+*/
 if (!function_exists('add_espresso_stylesheet')) {
 
 	function add_espresso_stylesheet() {
 		global $org_options;
-		
+
 		//Debug
 		//echo '<pre>'.print_r($org_options, true).'</pre>';
-		
+
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
