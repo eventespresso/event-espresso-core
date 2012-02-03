@@ -478,7 +478,7 @@ div.tablenav {
 }
 /*** Editor Styles (email settings panel) ***/
 #edit-slug-box {
-	height: 2em;
+	height: 2.5em;
 }
 /* toggle tabs & gen editor styles */
 .postbox .wp_themeSkin table.mceLayout {
