@@ -587,19 +587,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 											</h3>
 											<div class="inside">
 												<div class="padding"><a name="email-settings" id="email-settings"></a>
-													<p>
-														<?php _e('Use fancy email headers?', 'event_espresso');
-														echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?>
-														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=fancyemailheaders"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
-													</p>
-													<?php ###### Popup help box #######    ?>
-													<div id="fancyemailheaders" class="pop-help" style="display:none">
-														<h2>
-															<?php _e('Fancy Email Headers', 'event_espresso'); ?>
-														</h2>
-														<p><?php echo sprintf(__("This option enables the use of the email header format %s From: name %s %s Reply-to: name %s %s.", 'event_espresso'), '<br />', '&lt;email@address.com&gt;', '<br />', '&lt;email@address.com&gt;', '<br />'); ?></p>
-														<p><?php _e("You should only use this if you know it will not cause email delivery problems. Some servers will not send emails that use this format.", 'event_espresso'); ?></p>
-													</div>
+													
 													<h4>
 														<?php _e('Payment Confirmation Email:', 'event_espresso'); ?>
 													</h4>
@@ -625,29 +613,11 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	$settings = array('textarea_name' => 'payment_message');
 																	wp_editor($content, $editor_id, $settings);
 																	?>
-																	<?php /* 		<div class="visual-toggle">
-																	  <p><a class="toggleVisual">
-																	  <?php _e('Visual', 'event_espresso'); ?>
-																	  </a> <a class="toggleHTML">
-																	  <?php _e('HTML', 'event_espresso'); ?>
-																	  </a></p>
-																	  </div>
-																	  <div id="payment-conf-email" class="postbox">
-																	  <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo espresso_admin_format_content($org_options['payment_message']); ?></textarea>
-																	  <table id="payment-confirmation-form" cellspacing="0">
-																	  <tbody>
-																	  <tr>
-																	  <td class="aer-word-count"></td>
-																	  <td class="autosave-info"><span>
-																	  <p></p>
-																	  </span></td>
-																	  </tr>
-																	  </tbody>
-																	  </table> */ ?>
+																	
 																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
 																				<?php _e('View Custom Email Tags', 'event_espresso'); ?>
 																			</a></span></p>
-																	<?php //	</div>  ?></td>
+																	</td>
 															</tr>
 														</tbody>
 													</table>
@@ -670,31 +640,12 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	$settings = array('textarea_name' => 'success_message');
 																	wp_editor($content, $editor_id, $settings);
 																	?>
-																	<?php /* 	<div class="visual-toggle">
-																	  <p><a class="toggleVisual">
-																	  <?php _e('Visual', 'event_espresso'); ?>
-																	  </a> <a  class="toggleHTML">
-																	  <?php _e('HTML', 'event_espresso'); ?>
-																	  </a></p>
-																	  </div>
-																	  <div id="reg-conf-email" class="postbox">
-																	  <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo espresso_admin_format_content($org_options['message']); ?></textarea>
-																	  <table id="email-confirmation-form" cellspacing="0">
-																	  <tbody>
-																	  <tr>
-																	  <td class="aer-word-count"></td>
-																	  <td class="autosave-info"><span>
-																	  <p></p>
-																	  </span></td>
-																	  </tr>
-																	  </tbody>
-																	  </table> */ ?>
+																	
 																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
 																				<?php _e('View Custom Email Tags', 'event_espresso'); ?>
 																			</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
 																				<?php _e('Example', 'event_espresso'); ?>
 																			</a> </span></p>
-																	<?php //</div></td>  */ ?>
 															</tr>
 														</tbody>
 													</table>

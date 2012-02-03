@@ -92,3 +92,12 @@
 		<li><a href="http://recaptcha.net/apidocs/captcha/client.html" target="_blank">reCAPTCHA Client API Documentation</a></li>
 	</ul>
 </div>
+<div id="fancyemailheaders" class="pop-help" style="display:none">
+	<h2>
+		<?php _e('Fancy Email Headers', 'event_espresso'); ?>
+	</h2>
+	<p><?php echo sprintf(__("This option enables the use of the email header format: %s From: name %s %s Reply-to: name %s", 'event_espresso'), '<br />', '&lt;email@address.com&gt;', '<br />', '&lt;email@address.com&gt;'); ?></p>
+	<p>
+		<?php _e("You should only use this if you know it will not cause email delivery problems. Some servers will not send emails that use this format.", 'event_espresso'); ?>
+	</p>
+</div>

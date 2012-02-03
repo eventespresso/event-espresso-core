@@ -31,8 +31,8 @@ $values=array(
 				<tbody>
 					<tr>
 						<th><label for="default_payment_status">
-								<?php _e(' Default Payment Status','event_espresso'); ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'payment_status_info') ?>
-							</label></th>
+								<?php _e(' Default Payment Status','event_espresso'); ?>
+								<?php echo apply_filters( 'filter_hook_espresso_help', 'payment_status_info') ?> </label></th>
 						<td><?php echo select_input('default_payment_status', $default_payment_status, $org_options['default_payment_status'])?><br />
 							<span class="description">
 							<?php _e('This value will be automatically filled in for each person\'s payment status,<br />
@@ -125,6 +125,12 @@ until payment is made, for each event.', 'event_espresso'); ?>
 			<table class="form-table">
 				<tbody>
 					<tr>
+						<th><label for="default_mail">
+								<?php _e('Use fancy email headers?', 'event_espresso'); ?>
+							</label></th>
+						<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'fancyemailheaders'); ?></td>
+					</tr>
+					<tr>
 						<td colspan="2"><strong>
 							<?php _e('WordPress Dashboard', 'event_espresso'); ?>
 							</strong></td>
@@ -199,12 +205,13 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 and backend updates for Event Espresso Core and any installed addons.'); ?>
 							</span>
 					</div>
+				
 					</td>
-
+				
 					</tr>
-
+				
 					</tbody>
-
+				
 			</table>
 			<p>
 				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
