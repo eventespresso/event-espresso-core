@@ -74,7 +74,8 @@ add_action( 'plugins_loaded', 'espresso_load_error_log', 3);
 add_action( 'plugins_loaded', 'espresso_init_session', 5);
 add_action( 'plugins_loaded', 'espresso_check_for_export');
 add_action( 'plugins_loaded', 'espresso_check_for_import');
-
+//Loads the $espresso_wp_user global var
+add_action('plugins_loaded', 'espresso_get_user_id');
 
 // a few espresso specific hooks
 

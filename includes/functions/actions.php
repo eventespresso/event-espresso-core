@@ -17,9 +17,6 @@ if ( !function_exists('espresso_price_select_action') ){
 	add_action( 'action_hook_espresso_price_select', 'espresso_price_select_action', 10, 2);
 }
 
-//Loads the $espresso_wp_user global var
-add_action('plugins_loaded', 'espresso_get_user_id');
-
 
 /**
 *		@ display admin update & error messages
