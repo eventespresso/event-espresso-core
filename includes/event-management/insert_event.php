@@ -5,7 +5,10 @@ function add_event_to_db($recurrence_arr = array()) {
 	// echo "<pre>";
 	//print_r($_POST);
 	//echo "</pre>";
-
+	
+	//Delete the transients that may be set
+	espresso_reset_cache();
+	
 	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));

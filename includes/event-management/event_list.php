@@ -18,6 +18,8 @@ function event_espresso_edit_list() {
 	$days_this_month = date('t', strtotime($curdate));
 
 	if (isset($_POST['delete_event'])) {
+		//Clear the events cache
+		espresso_reset_cache();
 		if (is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):
 				$del_id = $key;
@@ -33,6 +35,8 @@ function event_espresso_edit_list() {
 		<?php
 	}
 	if (isset($_POST['perm_delete_event'])) {
+		//Clear the events cache
+		espresso_reset_cache();
 		if (is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):
 				$del_id = $key;

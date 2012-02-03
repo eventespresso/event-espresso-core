@@ -1038,3 +1038,11 @@ function espresso_template_files_exist($dir) {
 	$html .= '</p>';
 	return $html;
 }
+
+//Function
+if (!function_exists('espresso_reset_cache')) {
+	function espresso_reset_cache(){
+		delete_transient( 'all_espresso_events' );
+		delete_transient( 'all_espresso_calendar_events' );
+	}
+}

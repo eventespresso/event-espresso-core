@@ -391,8 +391,7 @@ function edit_event($event_id = 0) {
 				<div id="edit-slug-box"> <strong>
 					<?php _e('Permalink:', 'event_espresso'); ?>
 					</strong> <?php echo get_permalink($org_options['event_page_id']) ?>
-					
-					<input type="text" size="20" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" />
+					<input type="text" size="20" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" /><br />
 					<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;'.$event->event_identifier.'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_short_reg_url( $event->id ) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . espresso_reg_url( $event->id, $event->slug ) . '\'); return false;">' . __('Full URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Unique Event Identifier:&#39;, \'' . $event->event_identifier . '\'); return false;">' . __('Identifier') . '</a>' ?> </div>
 				<!-- /edit-slug-box --> 
 			</div>
