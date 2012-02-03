@@ -734,11 +734,19 @@ if (!function_exists('espresso_calendar')) {
 		$event_category_id= "{$event_category_id}";
 		$show_expired= "{$show_expired}";
 		$cal_view= "{$cal_view}";
+		
+		// grab the thumbnail size from calendar options settings
+		if(empty($espresso_calendar['calendar_thumb_size'])) {
+			$ee_img_size = 'small';
+		}else{
+			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
+		}
 
 		//Build the SQL to run
 
 		//Get the categories
 		if ($event_category_id != "" ){
+			$type = 'cat';
 			$sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, ese.start_time, ese.end_time FROM ". EVENTS_DETAIL_TABLE . " e ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
@@ -756,6 +764,8 @@ if (!function_exists('espresso_calendar')) {
 				$sql .= " AND e.registration_end >= '".date ( 'Y-m-d' )."' ";
 			}
 		}else{
+			//Get all events
+			$type = 'all';
 			$sql = "SELECT e.*, ese.start_time, ese.end_time FROM ". EVENTS_DETAIL_TABLE . " e ";
 			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
 			$sql .= " WHERE is_active = 'Y' ";
@@ -774,18 +784,29 @@ if (!function_exists('espresso_calendar')) {
 
 		//Debug
 		//echo '<p>$sql - '.$sql.'</p>';
-		
-
-		// grab the thumbnail size from calendar options settings
-		if(empty($espresso_calendar['calendar_thumb_size'])) {
-			$ee_img_size = 'small';
-		}else{
-			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
-		}
-		
-		$events_data = $wpdb->get_results($sql);
-	 
+			 
 		$events = array();
+		
+		switch ($type){
+			case 'all':
+				$events_data = get_transient( 'all_espresso_calendar_events' );
+				if ( false === $events_data ) {
+					// if transient not set, do this!
+				
+					// create the data that needs to be saved.
+					$events_data = $wpdb->get_results($sql);
+				
+					// save the newly created transient value
+					// 60 seconds * 60 minutes * 24 hours = 1 day
+					set_transient('all_espresso_calendar_events', $events_data, 60*60*24);
+				}
+			break;
+			case 'cat':
+			default:
+				$events_data = $wpdb->get_results($sql);
+			break;
+		}		
+		
 
 		foreach ($events_data as $event){
 			
@@ -875,25 +896,11 @@ if (!function_exists('espresso_calendar')) {
 			$eventArray['className'] = '';
 			$eventArray['eventType'] = '';
 			if ( isset($espresso_calendar['enable_cat_classes']) && $espresso_calendar['enable_cat_classes'] == 'Y' ) {
-				$sql_categories = "SELECT * FROM ".EVENTS_CATEGORY_REL_TABLE." WHERE event_id='".$event->id."'";
-				$categories_data = $wpdb->get_results($sql_categories);
-			
-				$cssClass = $category_data['category_identifier'];
-				foreach($categories_data as $_category){
-					if(isset($categoryCss[$_category->cat_id])){
-						$cssClass .=' '.$categoryCss[$_category->cat_id] ;
-						continue;
-					}
-					$sql_cat = "SELECT * FROM ".EVENTS_CATEGORY_TABLE." WHERE id='".$_category->cat_id."'";
-					$category = $wpdb->get_results($sql_cat);
-					foreach($category as $_cat){
-						$cssClass .=' '.$_cat->category_identifier ;
-						$categoryCss[$_category->cat_id] = $_cat->category_identifier;
-						continue;
-					}
-				}
-			 	//var_dump($cssClass);
-				$eventArray['className'] = $cssClass;
+			 	//Debug
+				//var_dump($category_data);
+				
+				//This is the class
+				$eventArray['className'] = $category_data['category_identifier'];
 				
 				//This can be used to use the category id as the event type
 				$eventArray['eventType'] = $category_data['category_name'];
