@@ -28,10 +28,12 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
+//Returns the plugin version
 function espresso_version() {
 	return '3.2.P';
 }
+
+//Returns the template version
 function espresso_template_version() {
 	return '1.0';
 }
