@@ -15,12 +15,12 @@ function event_espresso_manage_attendees() {
 				if ($_REQUEST['page'] == 'attendees' && (isset($_REQUEST['event_admin_reports']))) {
 					switch ($_REQUEST['event_admin_reports']) {
 						case 'charts':
-							_e('Attendee Reports', 'event_espresso');
+							_e('Registration Overview', 'event_espresso');
 							break;
 						case 'event_list_attendees':
 						case 'resend_email':
 						case 'list_attendee_payments':
-							_e('Attendee Reports', 'event_espresso');
+							_e('Registration Overview', 'event_espresso');
 							if (!empty($_REQUEST['event_id']) && $_REQUEST['event_admin_reports'] != 'add_new_attendee') {
 								echo '<a href="admin.php?page=attendees&amp;event_admin_reports=add_new_attendee&amp;event_id=' . $_REQUEST['event_id'] . '" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Attendee', 'event_espresso') . '</a>';
 							}
@@ -39,7 +39,7 @@ function event_espresso_manage_attendees() {
 							break;
 					}
 				} else {
-					_e('Attendee Overview', 'event_espresso');
+					_e('Registration Overview', 'event_espresso');
 					if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'add_new_event')) {
 
 					} else {

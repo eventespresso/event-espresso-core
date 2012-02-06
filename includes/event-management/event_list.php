@@ -116,7 +116,7 @@ function event_espresso_edit_list() {
 			$sql .= ( $_POST['event_status'] != '' && $_POST['event_status'] != 'IA') ? " WHERE e.event_status = '" . $_POST['event_status'] . "' " : " WHERE e.event_status != 'D' ";
 			$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
 			$sql .= $group != '' && $org_options['use_venue_manager'] == 'Y' ? " AND l.locale_id IN (" . implode(",", $group) . ") " : '';
-			if ($_POST['month_range'] != '') {
+			if ( $_POST['month_range'] != '' && $_POST['month_range'] > 0 ) {
 				$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
 			}
 			if ($_REQUEST['today'] == 'true') {
@@ -158,7 +158,7 @@ function event_espresso_edit_list() {
 		}
 		$sql .= ( isset($_POST['event_status']) && ($_POST['event_status'] != '' && $_POST['event_status'] != 'IA')) ? " WHERE e.event_status = '" . $_POST['event_status'] . "' " : " WHERE e.event_status != 'D' ";
 		$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
-		if ($_POST['month_range'] != '') {
+		if ( $_POST['month_range'] != '' && $_POST['month_range'] > 0 ) {
 			$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
 		}
 		if (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {

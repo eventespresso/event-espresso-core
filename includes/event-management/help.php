@@ -102,7 +102,7 @@
 			</h2>
 			<ul>
 				<li><strong>
-					<?php _e('Primary', 'event_espresso'); ?>
+					<?php _e('Public', 'event_espresso'); ?>
 					</strong><br />
 					<?php _e('This type if event should always appear in the event lsiting. It is a live event (not deleted, ongoing or secondary.)', 'event_espresso'); ?>
 				</li>
@@ -124,9 +124,7 @@
 					<?php _e('Deleted', 'event_espresso'); ?>
 					</strong><br />
 					<?php _e('This is event type will not appear in the event listings and will not dispaly a registrations page. Deleted events can still be accessed in the', 'event_espresso'); ?>
-					<a href="admin.php?page=events">
-					<?php _e('Attendee Reports', 'event_espresso'); ?>
-					</a>
+					<a href="admin.php?page=events"><?php _e('Registration Overview', 'event_espresso'); ?></a>
 					<?php _e('page', 'event_espresso'); ?>
 					.</li>
 			</ul>

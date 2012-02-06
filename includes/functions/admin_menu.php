@@ -29,8 +29,8 @@ if (!function_exists('add_event_espresso_menus')) {
 		//Event Setup
 		add_submenu_page('events', __('Event Espresso - Event Overview', 'event_espresso'), __('Events', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'events', 'event_espresso_manage_events');
 
-		//Attendee Overview
-		add_submenu_page('events', __('Event Espresso - Attendee Overview', 'event_espresso'), __('Attendees', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'attendees', 'event_espresso_manage_attendees');
+		//Registration Overview
+		add_submenu_page('events', __('Event Espresso - Registration Overview', 'event_espresso'), __('Registrations', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'attendees', 'event_espresso_manage_attendees');
 
 		//Event Categories
 		add_submenu_page('events', __('Event Espresso - Manage Event Categories', 'event_espresso'), __('Categories', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_categories']), 'event_categories', 'event_espresso_categories_config_mnu');
