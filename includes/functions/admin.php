@@ -1005,27 +1005,16 @@ function espresso_template_files_exist($dir) {
 	// read our template dir and build an array of files
 	$dhandle = opendir($dir);
 	$files = array();
+	$exclude = array( '.', '..', 'index.htm', 'index.html', 'index.php', '.svn', '.DS_Store' );
 
-	if ($dhandle) { //if we managed to open the directory
+	//if we manage to open the directory
+	if ($dhandle) { 
 		// loop through all of the files
-		while (false !== ($fname = readdir($dhandle))) {
-			// if the file is not this file, and does not start with a '.' or '..',
-			// then store it for later display
-			if ($fname != '.') {
-				if ($fname != 'index.html') {
-					if ($fname != '..') {
-						if ($fname != '.svn') {
-							if ($fname != basename($_SERVER['PHP_SELF'])) {
-								if ($fname != '.DS_Store') {
-									if ($fname != 'css') {
-										// store the filename
-										$files[] = $fname;
-									}
-								}
-							}
-						}
-					}
-				}
+		while (( $fname = readdir( $dhandle )) !== FALSE ) {			
+			// if the file is not in the array of things to exclude
+			if ( ! in_array( $fname, $exclude && ! is_dir( $fname ))) {
+				// then store the filename
+				$files[] = $fname;
 			}
 		}
 		// close the directory
@@ -1038,6 +1027,88 @@ function espresso_template_files_exist($dir) {
 	$html .= '</p>';
 	return $html;
 }
+
+
+
+
+
+/**
+*		creates url slugs from event_name
+*		
+*		@access public
+*		@return void
+*/
+function espresso_create_url_slugs() {
+	//echo '<h1>'. __FILE__ . ' - ' . __FUNCTION__ . ' ( line no: ' . __LINE__ . ' )</h1>';
+
+	global $wpdb;
+
+	$SQL = 'SELECT id, event_name FROM ' . EVENTS_DETAIL_TABLE;
+
+	if ( $events = $wpdb->get_results( $wpdb->prepare( $SQL ))) {
+		$data = array();
+		$where = array();
+		if ( $events ) {
+			foreach ( $events as $event ) {
+	
+				$data['slug'] = espresso_string_to_url( $event->event_name );
+				$where['id'] = $event->id;
+	
+				$wpdb->update( 
+											EVENTS_DETAIL_TABLE, 
+											$data, 
+											$where, 
+											array( '%s' ), 
+											array( '%d' ) 
+										);	
+	
+			}
+		}			
+	}
+
+//echo printr($data);
+//echo printr($where);
+
+}	
+	
+	
+	
+
+/**
+ *		converts a string to url friendly string by:
+ * 	changing spaces to dashes, changing & (or &amp;) to "and", stripping tags, and converting to lowercase
+ *  
+ *		@access 	public
+ *		@param 	string	$string
+ *		@return 	string
+ */	
+function espresso_string_to_url( $string ) {
+	
+	$expressions = array(
+											'&\#\d+?;'			=> '',
+											'&\S+?;'				=> '',
+											'\s+'						=> '-',
+											'[^a-z0-9\-\._]'	=> '',
+											'-+'						=> '-',
+											'-$'						=> '-',
+											'^-'						=> '-',
+											'\.+$'					=> ''
+										);
+
+	$string = str_replace( '&amp;', 'and', $string );		
+	$string = str_replace( '&', 'and', $string );
+	$string = wp_strip_all_tags($string);
+
+	foreach ( $expressions as $key => $exp ) {
+		$string = preg_replace("#".$key."#i", $exp, $string);
+	}	
+	
+	$string = strtolower( $string );
+
+	return $string;
+	
+}	
+
 
 //Function
 if (!function_exists('espresso_reset_cache')) {
