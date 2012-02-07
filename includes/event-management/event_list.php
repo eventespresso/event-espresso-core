@@ -91,7 +91,7 @@ function event_espresso_edit_list() {
 		if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
 			$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 			$group = unserialize($group);
-			$sql = "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
+			$sql = "(SELECT e.id event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, e.registration_start, ";
 			$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, e.event_meta ";
 		   //Get the venue information
 			if ($org_options['use_venue_manager'] == 'Y') {
@@ -129,7 +129,7 @@ function event_espresso_edit_list() {
 		}
 		if (!isset($sql))
 			$sql = '';
-		$sql .= "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
+		$sql .= "(SELECT e.id event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, e.registration_start, ";
 		$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, e.event_meta ";
 
 		//Get the venue information
@@ -257,7 +257,7 @@ function event_espresso_edit_list() {
 					foreach ($events as $event) {
 						//print_r ($event);
 						$event_id = $event->event_id;
-						$event_slug = $event_slug;
+						$event_slug = $event->slug;
 						$event_name = stripslashes_deep($event->event_name);
 						$event_identifier = stripslashes_deep($event->event_identifier);
 						$reg_limit = isset($event->reg_limit) ? $event->reg_limit:'';
