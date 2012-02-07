@@ -269,8 +269,8 @@ function add_new_event() {
 			
 			<!-- /titlewrap -->
 			<div class="inside">
-				<div id="edit-slug-box"> <strong>
-				<strong><?php _e('Permalink:', 'event_espresso'); ?></strong> <?php echo get_permalink($org_options['event_page_id']) ?><input type="text" size="20" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" />
+				<div id="edit-slug"> <strong>
+				<strong><?php _e('Permalink:', 'event_espresso'); ?></strong> <?php echo get_permalink($org_options['event_page_id']) ?><input type="text" size="100" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" />
 					
 				</div>
 			</div>
