@@ -42,8 +42,8 @@ class EE_Minicart extends WP_Widget {
 		if ( ! defined( 'ESPRESSO_CART' )) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Cart.class.php');			
 		}
-		$EE_Cart = EE_Cart::instance();
-		$this->mini = $EE_Cart;
+		$this->mini = EE_Cart::instance();
+		//$this->mini = new EE_Cart();
 
 		$widget_options = array(
 													'classname' => 'espresso-mini-cart  ui-widget',
@@ -79,11 +79,22 @@ class EE_Minicart extends WP_Widget {
 
 	<ul>';
 
-		foreach ( $this->mini->cart as $cart_type => $cart_contents ) {
+	$cart_types = $this->mini->get_cart_types();
+	
+	foreach ( $cart_types as $cart_type ) {
+	
+		$cart_contents = $this->mini->whats_in_the_cart( $cart_type );
+		//foreach ( $this->mini->cart as $cart_type => $cart_contents ) {
 
 			$label = isset( $cart_contents['title'] ) ? $cart_contents['title'] : $cart_type ;
 			$chk = 'display-'.$cart_type.'-chk';
 			$txt = 'cart-name-'.$cart_type.'-txt';
+			if ( ! isset( $instance[$chk] )) {
+				$instance[$chk] = FALSE;
+			}
+			if ( ! isset( $instance[$txt] )) {
+				$instance[$txt] = '';
+			}
 
 		echo '
 		<li>
@@ -149,7 +160,12 @@ class EE_Minicart extends WP_Widget {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags( $new_instance['title'] );
 
-		foreach ( $this->mini->cart as $cart_type => $cart_contents ) {
+		$cart_types = $this->mini->get_cart_types();
+		
+		foreach ( $cart_types as $cart_type ) {
+		
+			$cart_contents = $this->mini->whats_in_the_cart( $cart_type );	
+		//	foreach ( $this->mini->cart as $cart_type => $cart_contents ) {
 
 			$chk = 'display-'.$cart_type.'-chk';
 			$instance[$chk] = strip_tags( $new_instance[$chk] );
@@ -181,8 +197,10 @@ class EE_Minicart extends WP_Widget {
 		} else {
 			$regevent = FALSE;			
 		}
+		
+		$no_minicart_pages = array( 'event_queue', 'register' );
 
-		if ( $regevent != 'event_queue' ) {
+		if ( ! in_array( $regevent, $no_minicart_pages )) {
 				
 			extract($args);
 	
@@ -205,7 +223,11 @@ class EE_Minicart extends WP_Widget {
 			$grand_total = 0;
 			$total_items = 0;
 	
-			foreach ( $this->mini->cart as $cart_type => $cart_contents ) {
+			$cart_types = $this->mini->get_cart_types();
+			
+			foreach ( $cart_types as $cart_type ) {
+			
+				$cart_contents = $this->mini->whats_in_the_cart( $cart_type );
 	
 				$chk = 'display-'.$cart_type.'-chk';
 				$txt = 'cart-name-'.$cart_type.'-txt';
@@ -241,13 +263,15 @@ class EE_Minicart extends WP_Widget {
 					} else {
 						// empty
 						$mini_cart[$cart_type]['has_items'] = FALSE;
-						$mini_cart[$cart_type]['empty_msg'] = $cart_contents['empty_msg'];
 					}
 	
 					$total_items = $total_items + $cart_contents['total_items'];
 					$grand_total = $grand_total + $cart_contents['sub_total'];
 	
 				}
+
+				$mini_cart[$cart_type]['empty_msg'] = $cart_contents['empty_msg'];
+
 			}
 	
 			$template_args['total_items'] = $total_items;
@@ -257,8 +281,8 @@ class EE_Minicart extends WP_Widget {
 			
 			$event_page_id = $org_options['event_page_id'];
 			$permalink = get_permalink( $event_page_id );
-			$template_args['view_event_queue_url'] = $permalink . '?regevent_action=event_queue';
-			$template_args['view_event_queue_text'] = 'View Event Queue';
+			$template_args['view_event_queue_url'] = $permalink . '?regevent_action=event_queue';					
+			$template_args['empty_event_queue_url'] = $permalink . '?regevent_action=eq_empty_event_queue';
 	
 			$this->display_template( $instance['template'], $template_args );
 		
