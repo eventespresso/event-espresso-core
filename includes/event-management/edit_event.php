@@ -377,9 +377,8 @@ function edit_event($event_id = 0) {
 <!-- Left Column -->
 <div id="post-body">
 	<div id="post-body-content">
-		<div id="titlediv"> <strong>
-			<?php _e('Event Title', 'event_espresso'); ?>
-			</strong>
+		<div id="titlediv" class="clearfix">
+			<strong><?php _e('Event Title', 'event_espresso'); ?></strong>
 			<div id="titlewrap">
 				<label class="screen-reader-text" for="title">
 					<?php _e('Event Title', 'event_espresso'); ?>
@@ -388,11 +387,13 @@ function edit_event($event_id = 0) {
 			</div>
 			<!-- /titlewrap -->
 			<div class="inside">
-				<div id="edit-slug-box"> <strong>
-					<?php _e('Permalink:', 'event_espresso'); ?>
-					</strong> <?php echo get_permalink($org_options['event_page_id']) ?>
-					<input type="text" size="20" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" /><br />
-					<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;'.$event->event_identifier.'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_short_reg_url( $event->id ) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . espresso_reg_url( $event->id, $event->slug ) . '\'); return false;">' . __('Full URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Unique Event Identifier:&#39;, \'' . $event->event_identifier . '\'); return false;">' . __('Identifier') . '</a>' ?> </div>
+				<div id="edit-slug">
+					<p>
+						<strong> <?php _e('Permalink:', 'event_espresso'); ?> </strong> <?php echo get_permalink($org_options['event_page_id']) ?>
+						<input type="text" style="min-width:357px; width:50%;" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" />
+						<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;'.$event->event_identifier.'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_short_reg_url( $event->id ) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . espresso_reg_url( $event->id, $event->slug ) . '\'); return false;">' . __('Full URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Unique Event Identifier:&#39;, \'' . $event->event_identifier . '\'); return false;">' . __('Identifier') . '</a>' ?>
+					</p> 
+				</div>
 				<!-- /edit-slug-box --> 
 			</div>
 			<!-- /.inside --> 
