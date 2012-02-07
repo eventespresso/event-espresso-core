@@ -53,34 +53,34 @@ License: 			GPLv2
 	private static $_instance = NULL;
 	
 	// the session id
-	var $_sid = NULL;
+	private $_sid = NULL;
 	
 	// and the session data
-	var $_data = array();
+	private $_session_data = array();
 	
 	// default session expiration 2 hours
-	var $_expiration = 7200;
+	private $_expiration = 7200;
 	
 	// current time with GMT offset
-	var $_time;
+	private $_time;
 	
 	// whether to encrypt session data
-	var $_use_encrytion = TRUE; 
+	private $_use_encrytion = TRUE; 
 	
 	// EE_Encryption object stored by reference
-	var $encryption = NULL; 
+	public $encryption = NULL; 
 	
 	// well... according to the server...
-	var $_user_agent = NULL; 
+	private $_user_agent = NULL; 
 	
 	// well... according to the server...
-	var $_ip_address = NULL; 
+	private $_ip_address = NULL; 
 	
 	// array for defining default session vars
-	var $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'last_page', 'espresso' );
+	private $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'last_page' );
 	
 	// global error notices
-	var $_notices;
+	private $_notices;
 
 
 
@@ -95,6 +95,7 @@ License: 			GPLv2
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
 			self::$_instance = new self();
+			//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';	
 		}
 		return self::$_instance;
 	}
@@ -115,7 +116,6 @@ License: 			GPLv2
 		
 		// remove the default espresso session init
 		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
-		//add_action( 'action_hook_espresso_after_init_session', array( &$this, 'remove_action_espresso_init_session'));
 		
 		global $EE_Session, $org_options, $notices;
 		$this->_notices = $notices;
@@ -141,26 +141,25 @@ License: 			GPLv2
 			$this->encryption = EE_Encryption::instance();
 		}
 		
+		$extra_default_session_vars = array();
+		// filter hook allows outside functions/classes/plugins to change default empty cart
+		$extra_default_session_vars = apply_filters( 'filter_hook_espresso_default_session_vars', $extra_default_session_vars );		
+		array_merge( $this->_default_session_vars, $extra_default_session_vars );
+		
 		// set some defaults
 		foreach ( $this->_default_session_vars as $default_var ) { 
-			$this->_data[ $default_var ] = '';
+			$this->_session_data[ $default_var ] = '';
 		}
 		
-//		echo '<h4>'. __CLASS__ .'->'.__FUNCTION__.'->_data</h4>';
-//		echo '<pre>';
-//		echo print_r($this->_data);
-//		echo '</pre>';
+////		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';//		echo $this->pre_r($this->_session_data, TRUE);
 		
 		// check for existing session and retreive it from db
 		if ( ! $this->_espresso_session() ) { 
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
-//		echo '<h4>this->_data</h4>';
-//		echo '<pre>';
-//		echo print_r($this->_data);
-//		echo '</pre>';
-		
+
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 		if ( isset( $_REQUEST['page_id'] ) ) {
 			if (  $_REQUEST['page_id'] == $org_options['return_url'] or $_REQUEST['page_id'] == $org_options['notify_url'] ) {
 				$this->reset_data( array() );
@@ -170,6 +169,7 @@ License: 			GPLv2
 		// once everything is all said and done, 
 		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
 
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';	
 
 	}
 
@@ -177,12 +177,13 @@ License: 			GPLv2
 
 
 
-	/*
+	/**
 	 * @retreive session data
 	 * @access	public
 	 * @return	array
 	 */
 	public function id() {
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 		return $this->_sid;
 	}
 
@@ -190,50 +191,60 @@ License: 			GPLv2
 
 
 
-	/*
+	/**
 	 * @retreive session data
 	 * @access	public
 	 * @return	array
 	 */
-	public function data( $key = FALSE, $section = FALSE /*$section = 'espresso'*/ ) {
+	public function get_session_data( $key = FALSE, $section = FALSE ) {
 	
-//		echo '<h4>'. __CLASS__ .'->'.__FUNCTION__.'->_data</h4>';
-//		echo  'key : ' . $key . '<br />section : ' . $section . '<br />';
-		
-		if ( $key != FALSE ) {
-//			echo  'key : ' . $key . '<br />section : ' . $section . '<br />';
-//			echo $this->pre_r($this->_data[ $section ][$key], TRUE);
-			return $this->_data[ $section ][$key];
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
+
+		if ( $section != FALSE && $key != FALSE ) {
+			//echo  '1 key : ' . $key . '<br />section : ' . $section . '<br />';
+			return $this->_session_data[ $section ][$key];
 		} elseif ( $section != FALSE )  {
-//			echo  'section : ' . $section . '<br />';
-//			echo $this->pre_r($this->_data[ $section ], TRUE);
-			return $this->_data[ $section ];
+			//echo  '2 key : ' . $key . '<br />section : ' . $section . '<br />';
+			return $this->_session_data[ $section ];
 		}  else  {
-//			echo $this->pre_r($this->_data, TRUE);
-			return $this->_data;
+			//echo  '3 key : ' . $key . '<br />section : ' . $section . '<br />';
+			return $this->_session_data;
 		}
+
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
+		
 	}
 
 
 
 
 
-	/*
+	/**
 	 * @set session data
 	 * @access	public
 	 * @return	TRUE on success, FALSE on fail
 	 */
-	public function set_data( $data, $section = 'espresso' ) {
+	public function set_session_data( $data, $section = 'cart' ) {
 	
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
+
 		// nothing ??? go home!
 		if ( ! $data ) {
 			$this->_notices['errors'][] = 'An error occured. No session data was provided.';
 			return FALSE;
 		}
-		
-		foreach ( $data as $key =>$value ) {
-			$this->_data[ $section ][ $key ] = $value;
+
+		if ( $section == 'session_data' ) {
+			foreach ( $data as $key =>$value ) {
+				$this->_session_data[ $key ] = $value;
+			}
+		} else {
+			foreach ( $data as $key =>$value ) {
+				$this->_session_data[ $section ][ $key ] = $value;
+			}
 		}
+
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 		
 		return TRUE;
 		
@@ -250,17 +261,15 @@ License: 			GPLv2
 	 */	
 	private function _espresso_session() {
 			
-		//echo '<h3>'.__FUNCTION__.'</h3>';
-		
 		// starts a new session if one doesn't already exist, or reinitiates an existing one
 		if ( ! session_id() ) {
 			session_start();
 		}
 		// grab the session ID
 		$this->_sid = session_id();
-//		echo '<h4>'. __CLASS__ .'->'.__FUNCTION__.'->_sid</h4>';		
-//		echo $this->_sid . '<br />';
-		
+
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
+
 		// now let's retreive what's in the db
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
 		if ( $session_data = get_transient( $this->_sid ) ) {
@@ -269,13 +278,9 @@ License: 			GPLv2
 			$session_data = $this->encryption->decrypt( $session_data );
 			
 			// unserialize
-			$session_data = unserialize( $session_data );
+			$this->_session_data = unserialize( $session_data );
 
-//echo '<h4>'. __CLASS__ .'->'.__FUNCTION__.'->session_data</h4>';
-//echo '<pre>';
-//echo print_r($session_data);
-//echo '</pre>';
-//die();
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 			// just a check to make sure the sesion array is indeed an array
 			if ( ! is_array( $session_data ) ) {
@@ -308,9 +313,10 @@ License: 			GPLv2
 		}
 		
 		// make event espresso session data available to plugin 
-		$this->_data = $session_data;
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'->$session_data</h3>';
-//		echo $this->pre_r($session_data, TRUE);		
+		$this->_session_data = $session_data;
+
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
+
 		return TRUE;
 
 	}		
@@ -326,10 +332,9 @@ License: 			GPLv2
 	 */	
 	public function _update_espresso_session( $new_session = FALSE ) {
 		
-		//echo '<h3>'.__FUNCTION__.'</h3>';
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 
-
-		foreach ( $this->_data as $key => $value ) {
+		foreach ( $this->_session_data as $key => $value ) {
 		
 			switch( $key ) {
 
@@ -369,7 +374,7 @@ License: 			GPLv2
 				
 				default :
 						// carry any other data over
-						$session_data[$key] = $this->_data[$key];
+						$session_data[$key] = $this->_session_data[$key];
 				break;
 				
 			}
@@ -380,13 +385,13 @@ License: 			GPLv2
 		if ( ! $new_session ) {
 		
 			// current user if logged in
-//			$user = wp_get_current_user();
-//			$session_data['user_id'] = isset( $user->id ) ? $user->id : NULL;
 			$session_data['user_id'] = $this->_wp_user_id();
 			
 			
-			$this->_data = $session_data;
+			$this->_session_data = $session_data;
 			
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';			
+		
 			// ready? let's save
 			if ( $this->_save_session_to_db() ) {
 				return TRUE;
@@ -395,7 +400,7 @@ License: 			GPLv2
 			}
 
 		} else {
-			$this->_data = $session_data;
+			$this->_session_data = $session_data;
 		}
 
 		// meh, why not?
@@ -414,8 +419,8 @@ License: 			GPLv2
 	 */	
 	private function _create_espresso_session( ) {
 	
-		//echo '<h3>'.__FUNCTION__.'</h3>';
-		
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';			
+	
 		// use the update function for now with $new_session arg set to TRUE
 		return  $this->_update_espresso_session( TRUE ) ? TRUE : FALSE;
 		
@@ -433,18 +438,14 @@ License: 			GPLv2
 	private function _save_session_to_db() {
 
 		$this->_set_last_page();
-		$session_data = $this->_data;
 	
-//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ . '</h1>'; 
-//echo '<pre>';
-//echo print_r($this->_data);
-//echo '</pre>';
-//die();
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
+//		echo $this->pre_r( $this->_session_data );
 
 		// are we are we using encryption?
 		if ( $this->_use_encrytion ) {
 			// first serialize all of our session data
-			$session_data = serialize( $session_data );
+			$session_data = serialize( $this->_session_data );
 			// now we'll encrypt it
 			$session_data = $this->encryption->encrypt( $session_data );
 		}
@@ -465,7 +466,7 @@ License: 			GPLv2
 	 */	
 	private function _visitor_ip() {
 		
-		//echo '<h3>'.__FUNCTION__.'</h3>';
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
 			$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
@@ -512,11 +513,10 @@ License: 			GPLv2
 	 */	
 	public function _set_last_page() {
 
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'->$_SERVER</h3>';
-//		echo $this->pre_r($_SERVER, TRUE);
-
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 		//$prev_page = $this->get_last_page();
-		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_data['last_page'] . '</h1>'; 
+		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_session_data['last_page'] . '</h1>'; 
+		
 		// check for request url
 		if ( isset( $_SERVER['REQUEST_URI'] )) {
 			$request_uri = esc_url( $_SERVER['REQUEST_URI'] );	
@@ -558,12 +558,12 @@ License: 			GPLv2
 			// if the page hasn't really changed (because of a refresh or something),
 			// then we will keep the last page that was different than the current page
 //			if ( $last_page != $prev_page ) {
-				$this->_data[ 'last_page' ] = $last_page;
+				$this->_session_data[ 'last_page' ] = $last_page;
 //			}
 			
 		} 
 		
-		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_data['last_page'] . '</h1>'; 
+		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_session_data['last_page'] . '</h1>'; 
 	
 	}
 
@@ -578,16 +578,16 @@ License: 			GPLv2
 	 */	
 	public function get_last_page() {
 	
-//		if ( isset( $this->_data[ 'last_page' ] )) {
-//			$last_page = $this->_data[ 'last_page' ];
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';//		if ( isset( $this->_session_data[ 'last_page' ] )) {
+//			$last_page = $this->_session_data[ 'last_page' ];
 //		} else {
 //			if ( isset( $_SERVER['HTTP_REFERER'] )) {
 //				$last_page = esc_url( $_SERVER['HTTP_REFERER'] );
 //			}
 //		}
-		echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_data['last_page'] . '</h1>'; 
+		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_session_data['last_page'] . '</h1>'; 
 		//return $last_page;
-		return $this->_data[ 'last_page' ];
+		return $this->_session_data[ 'last_page' ];
 		
 	}
 
@@ -600,6 +600,8 @@ License: 			GPLv2
 	 *			@return void
 	 */	
 	public function _wp_user_id() {
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
+
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
 		$this->_wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
@@ -617,7 +619,8 @@ License: 			GPLv2
 	 */	
 	public function reset_data( $data_to_reset = FALSE ) {
 		
-		//echo '<h3>'.__FUNCTION__.'</h3>';
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
+
 		// nothing ??? go home!
 		if ( ! $data_to_reset ) {
 			$this->_notices['errors'][] = 'An error occured. No session data could be reset, because no session var name was provided.';
@@ -633,12 +636,12 @@ License: 			GPLv2
 		foreach ( $data_to_reset as $reset ) {
 
 			// first check to make sure it is a valid session var
-			if ( isset( $this->_data[ $reset ] )) {
+			if ( isset( $this->_session_data[ $reset ] )) {
 			
 				// then check to make sure it is not a default var
 				if ( ! in_array( $reset, $this->_default_session_vars )) {
 					// set var to NULL
-					$this->_data[ $reset ] = NULL;
+					$this->_session_data[ $reset ] = NULL;
 					$this->_notices['updates'][] = 'The session variable '.$reset.' was reset.';
 					return TRUE;
 					
@@ -662,15 +665,15 @@ License: 			GPLv2
 
 
 
-	/*
+	/**
 	 *   get the real "now" time
 	 *   @access private
 	 *   @return	 string
 	 */
 	private function _session_time() {
 		
-		//echo '<h3>'.__FUNCTION__.'</h3>';
-		
+////		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
+
 		// what time is it Mr Wolf?
 		$now = time();
 		
@@ -680,6 +683,11 @@ License: 			GPLv2
 
 		$offset = get_option('gmt_offset');
 		$timezone_string = get_option('timezone_string');
+		// if timezone string is empty
+		if ( ! $timezone_string ) {
+			// set it to MST 
+			$timezone_string = 'America/Boise';
+		}
 		date_default_timezone_set($timezone_string); 
 		
 		// generate the user time, taking the gmt offset into consideration
@@ -704,7 +712,7 @@ License: 			GPLv2
 	
 	
 
-
+	
 	/**
 	 * print_r wrapper for html/cli output
 	 *
@@ -732,6 +740,7 @@ License: 			GPLv2
 	  flush(); 
 	
 	}
+
 	
 	
 
@@ -741,9 +750,9 @@ License: 			GPLv2
 
 
 // create global var
-global $EE_Session;
+//global $EE_Session;
 // instantiate !!!
-add_action( 'plugins_loaded', 'EE_Session::instance', 1 );
+//add_action( 'plugins_loaded', 'EE_Session::instance', 1 );
 //$EE_Session = EE_Session::instance();
 
 
