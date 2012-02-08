@@ -366,7 +366,6 @@ function update_event($recurrence_arr = array()) {
 			'early_disc_percentage' => $early_disc_percentage,
 			'alt_email' => $alt_email,
 			'question_groups' => $question_groups,
-			'item_groups' => $item_groups,
 			'allow_overflow' => $allow_overflow,
 			'overflow_event_id' => $overflow_event_id,
 			'additional_limit' => $additional_limit,
