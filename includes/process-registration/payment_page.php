@@ -321,7 +321,8 @@ function espresso_confirm_registration($registration_id) {
 	$event_cost = number_format($event_cost * $num_people, 2, '.', '');
 
 	//Run pre-approval check if activated
-	$pre_approval_check = is_attendee_approved($event_id, $attendee_id);
+	//$pre_approval_check = is_attendee_approved($event_id, $attendee_id);
+	$pre_approval_check = is_attendee_approved( $require_pre_approval, $attendee_id );
 	if ($pre_approval_check) {
 		//Approved!
 		//If the attendee is approved, then show payment options etc.
@@ -352,6 +353,21 @@ function espresso_confirm_registration($registration_id) {
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //This is the alternate PayPal button used for the email
 function event_espresso_pay($att_registration_id=0) {
