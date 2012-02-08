@@ -154,11 +154,13 @@ function event_list_attendees() {
 				$go = false; //triggers the output when true.  Set when the next reg id != temp_reg_id
 				$sql_clause = " WHERE ";
 				$sql_a = "(";
+				
 				if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
+				
 					$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 					$group = unserialize($group);
 					$group = implode(",", $group);
-					$sql_a .= "SELECT a.*, e.id event_id, e.event_name FROM " . EVENTS_ATTENDEE_TABLE . " a ";
+					$sql_a .= "SELECT a.*, e.id event_id, e.event_name, e.require_pre_approval FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 					$sql_a .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id ";
 
 					if ($_REQUEST['category_id'] != '') {
@@ -203,8 +205,10 @@ function event_list_attendees() {
 					$sql_a .= $group != '' ? $sql_clause . "  l.locale_id IN (" . $group . ") " : '';
 					$sql_a .= " AND e.event_status != 'D' ";
 					$sql_a .= ") UNION (";
-				}
-				$sql_a .= "SELECT a.*, e.id event_id, e.event_name FROM " . EVENTS_ATTENDEE_TABLE . " a ";
+					
+				}  // end if (function_exists('espresso_member_data')
+				
+				$sql_a .= "SELECT a.*, e.id event_id, e.event_name, e.require_pre_approval FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 				$sql_a .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id ";
 				if (!empty($_REQUEST['category_id'])) {
 					$sql_a .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
@@ -315,7 +319,8 @@ function event_list_attendees() {
 									<br/>
 									<a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $registration_id ?>">
 										<?php
-										if (is_attendee_approved($event_id, $id)) {
+										//if ( is_attendee_approved( $event_id, $id )) {
+										if ( is_attendee_approved( $attendee->require_pre_approval, $id )) {
 											?>
 											<strong>
 												<?php _e('Approved', 'event_espresso'); ?>
