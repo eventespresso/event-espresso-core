@@ -240,8 +240,8 @@ function update_event($recurrence_arr = array()) {
 		$registration_start = array_key_exists('registration_start', $recurrence_arr) ? $recurrence_arr['registration_start'] : $_REQUEST['registration_start'];
 		$registration_end = array_key_exists('registration_end', $recurrence_arr) ? $recurrence_arr['registration_end'] : $_REQUEST['registration_end'];
 
-		$start_date = array_key_exists('recurrence_start_date', $recurrence_arr) ? $recurrence_arr['recurrence_start_date'] : ($_REQUEST['start_date'] == '' ? $_REQUEST['recurrence_start_date'] : $_REQUEST['start_date']);
-		$end_date = array_key_exists('recurrence_event_end_date', $recurrence_arr) ? $recurrence_arr['recurrence_event_end_date'] : ($_REQUEST['end_date'] == '' ? $_REQUEST['recurrence_start_date'] : $_REQUEST['end_date']);
+		$start_date = array_key_exists('recurrence_start_date', $recurrence_arr) ? $recurrence_arr['recurrence_start_date'] : ($_REQUEST['start_date'] == '' && isset($_REQUEST['recurrence_start_date']) ? $_REQUEST['recurrence_start_date'] : $_REQUEST['start_date']);
+		$end_date = array_key_exists('recurrence_event_end_date', $recurrence_arr) ? $recurrence_arr['recurrence_event_end_date'] : ($_REQUEST['end_date'] == '' && isset($_REQUEST['recurrence_event_end_date']) ? $_REQUEST['recurrence_event_end_date'] : $_REQUEST['end_date']);
 
 		$visible_on = array_key_exists('visible_on', $recurrence_arr) ? $recurrence_arr['visible_on'] : empty($_REQUEST['visible_on']) ? '' : $_REQUEST['visible_on'];
 
