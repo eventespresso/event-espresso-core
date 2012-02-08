@@ -102,29 +102,71 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
 	}
 }
 
-function is_attendee_approved($event_id, $attendee_id) {
+
+
+
+
+
+//function is_attendee_approved($event_id, $attendee_id) {
+//
+//	global $wpdb, $org_options;
+//	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+//		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
+//	}
+//	$result = true;
+//	if (isset($org_options["use_attendee_pre_approval"])&&$org_options["use_attendee_pre_approval"] == "Y") {
+//		$result = false;
+//		$require_pre_approval = 0;
+//		$tmp_events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id);
+//		foreach ($tmp_events as $tmp_event) {
+//			$require_pre_approval = $tmp_event->require_pre_approval;
+//		}
+//		if ($require_pre_approval == 1) {
+//			$tmp_attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = " . $attendee_id);
+//			foreach ($tmp_attendees as $tmp_attendee) {
+//				$pre_approve = $tmp_attendee->pre_approve;
+//			}
+//			if ($pre_approve == 0) {
+//				$result = true;
+//			}
+//		} else {
+//			$result = true;
+//		}
+//	}
+//	return $result;
+//}
+//
+//
+
+
+
+// rewrite by brent
+// every function that called this function was already performing a query on the events details table,
+// often returning the require_pre_approval field as part of the results,
+// and yet this function performs another query on the events details table just to retreive the require_pre_approval field !!!?!?!?!?!
+// i'm now passing the require_pre_approval value into this function and no longer performing a new query 
+// which allows me to use this for MER 2.0   : )
+function is_attendee_approved( $require_pre_approval = FALSE, $attendee_id ) {
+
 	global $wpdb, $org_options;
+	
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 	}
-	$result = true;
-	if (isset($org_options["use_attendee_pre_approval"])&&$org_options["use_attendee_pre_approval"] == "Y") {
-		$result = false;
-		$require_pre_approval = 0;
-		$tmp_events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id);
-		foreach ($tmp_events as $tmp_event) {
-			$require_pre_approval = $tmp_event->require_pre_approval;
-		}
-		if ($require_pre_approval == 1) {
-			$tmp_attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = " . $attendee_id);
-			foreach ($tmp_attendees as $tmp_attendee) {
-				$pre_approve = $tmp_attendee->pre_approve;
-			}
-			if ($pre_approve == 0) {
-				$result = true;
-			}
+	
+	$result = TRUE;	
+	// does the global option requesting attendee pre-approval ?
+	if ( isset( $org_options["use_attendee_pre_approval"] ) && $org_options["use_attendee_pre_approval"] == "Y" ) {
+	
+		$result = FALSE;
+		if ( $require_pre_approval ) {		
+			$SQL = 'SELECT pre_approve FROM ' . EVENTS_ATTENDEE_TABLE . ' WHERE id = %d'; 
+			$pre_approve = $wpdb->get_var( $wpdb->prepare( $SQL, $attendee_id ));
+			if ( $pre_approve == 0 ) {
+				$result = TRUE;
+			}			
 		} else {
-			$result = true;
+			$result = TRUE;
 		}
 	}
 	return $result;
