@@ -86,7 +86,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 	}
 	
 	//Address
-	if ($location != '' && $org_options['template_settings']['display_address_in_event_list'] == 'Y') { ?>
+	if ($location != '' && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list'] == 'Y') { ?>
 		<p class="event_address" id="event_address-<?php echo $event_id ?>"> <span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 			<span class="address-block"><?php echo stripslashes_deep($location); ?> <span class="google-map-link">
 			<?php  echo $google_map_link; ?>
@@ -96,7 +96,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 	
 	//Google map
 	if(isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == 'Y'){ 
-		if(function_exists('ee_gmap_display') && $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y'){
+		if( function_exists('ee_gmap_display') && isset( $org_options['map_settings']['ee_display_map_no_shortcodes'] ) && ( $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y' )){
 			echo ee_gmap_display($ee_gmap_location, $event_id);
 		}
 	}
