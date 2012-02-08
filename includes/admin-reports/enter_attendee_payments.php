@@ -146,6 +146,7 @@ function enter_attendee_payments() {
 		$event_identifier = $event->event_identifier;
 		$cost = isset($event->event_cost) ? $event->event_cost : 0;
 		$active = $event->is_active;
+		$require_pre_approval = $event->require_pre_approval;
 	}
 	$event_date = event_date_display($start_date . ' ' . $event_time, get_option('date_format') . ' g:i a');
 	$total_paid = espresso_attendee_price(array('registration_id' => $_REQUEST['registration_id'], 'session_total' => true));
@@ -350,7 +351,8 @@ function enter_attendee_payments() {
 							</li>
 							<?php
 	if ($org_options["use_attendee_pre_approval"] == "Y") {
-		$pre_approve = is_attendee_approved($event_id, $id) == true ? 1 : 0;
+		//$pre_approve = is_attendee_approved($event_id, $id) == true ? 1 : 0;
+		$pre_approve = is_attendee_approved( $require_pre_approval, $id ) == true ? 1 : 0;
 		?>
 							<li>
 								<?php _e("Attendee approved?", "event_espresso"); ?>
