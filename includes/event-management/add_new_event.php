@@ -269,8 +269,8 @@ function add_new_event() {
 			
 			<!-- /titlewrap -->
 			<div class="inside">
-				<div id="edit-slug"> <strong>
-				<strong><?php _e('Permalink:', 'event_espresso'); ?></strong> <?php echo get_permalink($org_options['event_page_id']) ?><input type="text" size="100" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" />
+				<div id="edit-slug">
+				<p><strong><?php _e('Permalink:', 'event_espresso'); ?></strong> <?php echo get_permalink($org_options['event_page_id']) ?><input size="30" type="text" tabindex="2" name="slug" id="slug" /></p>
 					
 				</div>
 			</div>
@@ -406,7 +406,7 @@ function add_new_event() {
 				<div class="inside">
 					<table <?php echo $members_active; ?> width="100%" border="0" cellpadding="5">
 						<tr valign="top">
-							<td id="standard-pricing" class="a"><?php event_espresso_multi_price_update($event_id); //Standard pricing ?></td>
+							<td id="standard-pricing" class="a"><?php event_espresso_multi_price_update(0); //Standard pricing ?></td>
 							<?php
 								//If the members addon is installed, define member only event settings
 								if (get_option('events_members_active') == 'true' && $espresso_premium == true) {
