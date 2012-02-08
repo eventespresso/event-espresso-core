@@ -236,15 +236,16 @@ function edit_event($event_id = 0) {
 					<select name="seating_chart_id" id="seating_chart_id" style="float:none; width:200px;" class="chzn-select">
 						<option value="0" <?php if ($seating_chart_id == 0) {
 			echo 'selected="selected"';
-		} ?> >None</option>
-						<?php
-								$seating_charts = $wpdb->get_results("select * from " . EVENTS_SEATING_CHART_TABLE . " order by name");
-								foreach ($seating_charts as $seating_chart) {
-									?>
-						<option value="<?php echo $seating_chart->id; ?>" <?php if ($seating_chart_id == $seating_chart->id) {
-							echo 'selected="selected"';
-						} ?> ><?php echo $seating_chart->name; ?></option>
-						<?php
+		} ?> ><?php _e('None', 'event_espresso'); ?></option>
+		<?php
+		$seating_charts = $wpdb->get_results("select * from " . EVENTS_SEATING_CHART_TABLE . " order by name");
+		foreach ($seating_charts as $seating_chart) {
+		?>
+			<option value="<?php echo $seating_chart->id; ?>" <?php if ($seating_chart_id == $seating_chart->id) {
+			echo 'selected="selected"';
+		}
+		?> ><?php echo $seating_chart->name; ?></option>
+		<?php
 		}
 		?>
 					</select>
@@ -699,7 +700,7 @@ function edit_event($event_id = 0) {
 				<div class="handlediv" title="Click to toggle"><br />
 				</div>
 				<h3 class="hndle"> <span>
-					<?php _e('Email Confirmation:', 'event_espresso') ?>
+					<?php _e('Email Confirmation', 'event_espresso') ?>
 					</span> </h3>
 				<div class="inside">
 					<table class="form-table">
