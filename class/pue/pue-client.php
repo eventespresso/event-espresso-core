@@ -46,6 +46,7 @@ class PluginUpdateEngineChecker {
 	public $slug = '';        //Plugin slug. (with .php extension)
 	public $checkPeriod = 12; //How often to check for updates (in hours).
 	public $optionName = '';  //Where to store the update info.
+	public $plugin_path = ''; //if included this gives the path for the main plugin file so that the generated one using the given SLUG is not used.
 	public $json_error = ''; //for storing any json_error data that get's returned so we can display an admin notice.
 	public $api_secret_key = ''; //used to hold the user API.  If not set then nothing will work!
 	public $install_key = '';  //used to hold the install_key if set (included here for addons that will extend PUE to use install key checks)
@@ -82,16 +83,22 @@ class PluginUpdateEngineChecker {
 			'optionName' => 'external_updates-' . $this->slug,
 			'apikey' => '',
 			'lang_domain' => '',
-			'checkPeriod' => 12
+			'checkPeriod' => 12,
+			'plugin_path' => ''
 		);
 		
 		$options = wp_parse_args( $options, $defaults );
 		extract( $options, EXTR_SKIP );
-		
 		$this->optionName = $optionName;
 		$this->checkPeriod = (int) $checkPeriod;
 		$this->api_secret_key = $apikey;
 		$this->lang_domain = $lang_domain;
+		$this->plugin_path = $plugin_path;
+		
+		if ( !empty($this->plugin_path) ) {
+			$this->pluginFile = $this->plugin_path;
+		}
+		
 		
 		$this->set_api();
 		$this->installHooks();		
@@ -194,7 +201,6 @@ class PluginUpdateEngineChecker {
 	 */
 	function requestInfo($queryArgs = array()){
 		//Query args to append to the URL. Plugins can add their own by using a filter callback (see addQueryArgFilter()).
-		$queryArgs['installed_version'] = $this->getInstalledVersion(); 
 		$queryArgs['pu_request_plugin'] = $this->slug;  
 		
 		if ( !empty($this->api_secret_key) )
