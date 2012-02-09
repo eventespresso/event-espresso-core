@@ -13,8 +13,8 @@ if (isset($_SESSION['espresso_session']['id'])) {
 	unset($_SESSION['espresso_session']['id']);
 }
 
-define('FPDF_FONTPATH', EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/font/');
-require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/fpdf/fpdf.php';
+define('FPDF_FONTPATH', EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/fpdf/font/');
+require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/fpdf/fpdf.php';
 
 require_once(dirname(__FILE__) . '/function.pdf.php'); //Added by Imon
 //Added by Imon
