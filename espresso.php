@@ -285,7 +285,7 @@ function espresso_EE_Session() {
 *		@return void
 */
 function espresso_load_error_log() {
-	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/espresso_log.php';
+	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/espresso_log.php';
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		$message = "REQUEST variables:\n";
 		foreach ($_REQUEST as $key => $value) {
@@ -565,8 +565,8 @@ function espresso_init() {
 
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
-	//require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Event.php';
-	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'class/Attendee.php';
+	//require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/Event.php';
+	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/Attendee.php';
 
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
@@ -966,31 +966,23 @@ function espresso_init() {
 
 
 	// PUE Auto Upgrades stuff
-	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php') && !empty($org_options)) {
+	if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/pue/pue-client.php') && !empty($org_options) ) {
 		//let's get the client api key for updates
 		global $org_options;
-
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
-		if (empty($org_options['site_license_key'])) {
-			$org_options['site_license_key'] = 0;
-		}
-		$api_key = $org_options['site_license_key'];
-		$host_server_url = 'http://beta.eventespresso.com/';
-		$plugin_slug = 'event-espresso';
+		$api_key = $org_options['site_license_key']; //note this is a special field that we added to the core plugin options page for clients to add their site-license key.
+		$host_server_url = 'http://beta.eventespresso.com/'; //note you'll have to change this to eventespresso.com once the domain is swtiched to the new server
+		$plugin_slug = 'event-espresso'; //change this to the slug of the uploaded plugin (as you set in the plugin slug field via the Add Plugin form in the PUE Plugin Library))
+		
+		$plugin_path = plugin_basename(__FILE__);
 		$options = array(
-				'apikey' => $api_key,
-				'lang_domain' => 'event_espresso'
+		'apikey' => $api_key,
+		'lang_domain' => 'event_espresso', //this will ensure that all text in the pue-client.php file get's included in the localization files created.
+		'plugin_path' => $plugin_path, //by default, the plugin_path is generated using the $plugin_slug but that only works if the format of the plugin_path uses the slug.  For example, if the slug is event-espresso then the generated path would be event-espresso/event-espresso.php.  We can instead include a plugin_path in the $options array (in this example I've used plugin_basename() to get the path.
 		);
-
-		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
-		//$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options);
+		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/pue/pue-client.php' ); //requires the pue-client file that contains the class.
+		//$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //let's make sure this addon is in the updater routine!
+	
 	}
-
-
-
-
 
 }
 
