@@ -122,7 +122,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 		//echo event_espresso_get_status($event_id);
 		//print_r( event_espresso_get_is_active($event_id));
 	
-		if ($multi_reg && event_espresso_get_status($event_id) == 'ACTIVE') {
+		if ($multi_reg && event_espresso_get_status(0,$event_meta) == 'ACTIVE') {
 	
 			$params = array(
 				//REQUIRED, the id of the event that needs to be added to the cart

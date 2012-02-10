@@ -268,7 +268,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 
 					include(espresso_get_event_list_display_template());
 				} else {
-					switch (event_espresso_get_status($event_id)) {
+					switch (event_espresso_get_status(0,$event_meta)) {
 						case 'NOT_ACTIVE':
 							//Don't show the event
 							//Uncomment the following two lines to show events that are not active and the active status array
