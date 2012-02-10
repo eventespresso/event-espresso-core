@@ -179,11 +179,16 @@ if (!function_exists('event_espresso_time_dropdown')) {
 		$time_reg_limit = $org_options['time_reg_limit'];
 		//$time_reg_limit = 'Y';
 		//echo $num_attendees;
-		$sql = "SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' ";
-		$events = $wpdb->get_results($sql);
-		foreach ($events as $event) {
-			$timezone_string = empty($event->timezone_string) ? '' : $event->timezone_string;
-		}
+		
+		//Not sure if this is needed. Removed by Seth 2-10-11
+		/*if ( isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y') {
+			$sql = "SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "' ";
+			$events = $wpdb->get_results($sql);
+		
+			foreach ($events as $event) {
+				$timezone_string = empty($event->timezone_string) ? '' : $event->timezone_string;
+			}
+		}*/
 
 		//This is the initial check to see if we time slot are controlled by registration limits.
 		if ($time_reg_limit == 'Y') {
