@@ -171,7 +171,8 @@ if (!function_exists('event_espresso_time_dropdown')) {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
 		$html = '';
-
+		$cache = true;
+		
 		//Will make the name an array and put the event id as a key so we
 		//know which event this belongs to
 		$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
@@ -205,40 +206,64 @@ if (!function_exists('event_espresso_time_dropdown')) {
 								and es.end_time = ea.end_time
 								where es.event_id= $event_id
 								group by es.id";
+			$cache = false;
 		}
-		$event_times = $wpdb->get_results($sql);
-		if ($wpdb->num_rows == 1) {//If one result, then display the times.
-			$html .= $label == 1 ? '<span class="span_event_time_label">' . __('Start Time:</span> ', 'event_espresso') . '</span>' : '';
-			foreach ($event_times as $time) {
-				$html .= '<span class="span_event_time_value">' . event_date_display($time->start_time, get_option('time_format')) . '</span>';
-				$html .= $label == 1 ? '<br /><span class="span_event_time_label">' . __('End Time: ', 'event_espresso') . '</span>' : __(' to ', 'event_espresso');
-				$html .= '<span class="span_event_time_value">' . event_date_display($time->end_time, get_option('time_format')) . '</span>';
-				$html .= '<input type="hidden" name="start_time_id' . $multi_name_adjust . '" id="start_time_id_' . $time->id . '" value="' . $time->id . '">';
-			}
-		} else if ($wpdb->num_rows > 1) {//If more than one result, then display the dropdown
-			//print_r($event_times);
-			$html .= $label == 1 ? '<label class="start_time_id" for="start_time_id">' . __('Choose a Time: ', 'event_espresso') . '</label>' : '';
-			$html .= '<select name="start_time_id' . $multi_name_adjust . '" id="start_time_id-' . $event_id . '">';
-			//$html .= $label == 0 ?'<option  value="">' .__('Select a Time', 'event_espresso') . '</option>':'';
-			foreach ($event_times as $time) {
-				$selected = $value == $time->id ? ' selected="selected" ' : '';
-				switch ($time_reg_limit) {//This checks to see if the time slots are controlled by registration limits.
-					case 'Y':
-						//If the time slot is controlled by a registration limit.
-						//Then we need to check if there are enough spaces available.
-						//if (($time->reg_limit == 0)||($time->reg_limit > 0 && $time->reg_limit >=$num_attendees))
-						//If enough spaces are available, then show this time slot
-						if ($time->available_spaces > 0)
-							$html .= '<option' . $selected . ' value="' . $time->id . '">' . event_date_display($time->start_time, get_option('time_format')) . ' - ' . event_date_display($time->end_time, get_option('time_format')) . " ($time->available_spaces " . __('available spaces', 'event_espresso') . ")" . '</option>';
-						break;
-					case 'N'://If time slots are not controlled by registration limits, then we show the default dropdown list of times.
-					default:
-						$html .= '<option ' . $selected . ' value="' . $time->id . '">' . event_date_display($time->start_time, get_option('time_format')) . ' - ' . event_date_display($time->end_time, get_option('time_format')) . '</option>';
-						break;
+		
+		if ($cache == true) {
+			$html = get_transient( 'espresso_time_dropdown_'.$event_id );
+		}else{
+			$html = false;
+		}
+		
+		if ( false === $html ) {
+			// if transient not set, do this!
+			
+			// create the data that needs to be saved.
+			$event_times = $wpdb->get_results($sql);
+			if ($wpdb->num_rows == 1) {//If one result, then display the times.
+				$html .= $label == 1 ? '<span class="span_event_time_label">' . __('Start Time:</span> ', 'event_espresso') . '</span>' : '';
+				foreach ($event_times as $time) {
+					$html .= '<span class="span_event_time_value">' . event_date_display($time->start_time, get_option('time_format')) . '</span>';
+					$html .= $label == 1 ? '<br /><span class="span_event_time_label">' . __('End Time: ', 'event_espresso') . '</span>' : __(' to ', 'event_espresso');
+					$html .= '<span class="span_event_time_value">' . event_date_display($time->end_time, get_option('time_format')) . '</span>';
+					$html .= '<input type="hidden" name="start_time_id' . $multi_name_adjust . '" id="start_time_id_' . $time->id . '" value="' . $time->id . '">';
 				}
+			} else if ($wpdb->num_rows > 1) {//If more than one result, then display the dropdown
+				//print_r($event_times);
+				$html .= $label == 1 ? '<label class="start_time_id" for="start_time_id">' . __('Choose a Time: ', 'event_espresso') . '</label>' : '';
+				$html .= '<select name="start_time_id' . $multi_name_adjust . '" id="start_time_id-' . $event_id . '">';
+				//$html .= $label == 0 ?'<option  value="">' .__('Select a Time', 'event_espresso') . '</option>':'';
+				foreach ($event_times as $time) {
+					$selected = $value == $time->id ? ' selected="selected" ' : '';
+					switch ($time_reg_limit) {//This checks to see if the time slots are controlled by registration limits.
+						case 'Y':
+							//If the time slot is controlled by a registration limit.
+							//Then we need to check if there are enough spaces available.
+							//if (($time->reg_limit == 0)||($time->reg_limit > 0 && $time->reg_limit >=$num_attendees))
+							//If enough spaces are available, then show this time slot
+							if ($time->available_spaces > 0)
+								$html .= '<option' . $selected . ' value="' . $time->id . '">' . event_date_display($time->start_time, get_option('time_format')) . ' - ' . event_date_display($time->end_time, get_option('time_format')) . " ($time->available_spaces " . __('available spaces', 'event_espresso') . ")" . '</option>';
+							break;
+						case 'N'://If time slots are not controlled by registration limits, then we show the default dropdown list of times.
+						default:
+							$html .= '<option ' . $selected . ' value="' . $time->id . '">' . event_date_display($time->start_time, get_option('time_format')) . ' - ' . event_date_display($time->end_time, get_option('time_format')) . '</option>';
+							break;
+					}
+				}
+				$html .= '</select>';
 			}
-			$html .= '</select>';
+			
+			if ($cache == true) {
+				// save the newly created transient value
+				// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
+				set_transient('espresso_time_dropdown_'.$event_id, $html, 60*60*24*365);
+					
+				//Debug:
+				//Check if using the cache
+				//echo 'Not using cache';
+			}
 		}
+			
 		return $html;
 	}
 

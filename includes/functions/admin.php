@@ -1125,6 +1125,7 @@ if (!function_exists('espresso_reset_cache')) {
 		//Flushes the cache that may be set for an event slug
 		if ($event_id > 0){
 			delete_transient( 'espresso_event_slug_'.$event_id );
+			delete_transient( 'espresso_time_dropdown_'.$event_id );
 		}
 	}
 }
