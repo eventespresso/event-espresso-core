@@ -69,7 +69,7 @@ function edit_event($event_id = 0) {
 <div id="side-info-column" class="inner-sidebar event-espresso_page_events">
 	<div id="side-sortables" class="meta-box-sortables ui-sortable">
 		<div id="submitdiv" class="postbox">
-			<div class="handlediv" title="Click to toggle"><br />
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
 			</div>
 			<h3 class='hndle'> <span>
 				<?php _e('Quick Overview', 'event_espresso'); ?>
@@ -181,7 +181,7 @@ function edit_event($event_id = 0) {
 			
 			?>
 		<div  id="event-categories" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br>
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 			</div>
 			<h3 class="hndle"> <span>
 				<?php _e('Event Category', 'event_espresso'); ?>
@@ -199,7 +199,7 @@ function edit_event($event_id = 0) {
 		<?php if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) {
 							?>
 		<div id="groupon-options" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br>
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 			</div>
 			<h3 class="hndle"> <span>
 				<?php _e('Groupon Options', 'event_espresso'); ?>
@@ -226,7 +226,7 @@ function edit_event($event_id = 0) {
 				}
 				?>
 		<div style="display: block;" id="seating_chart-options" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br />
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
 			</div>
 			<h3 class="hndle"><span>
 				<?php _e('Seating chart', 'event_espresso'); ?>
@@ -263,7 +263,7 @@ function edit_event($event_id = 0) {
 			if ($org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
 				?>
 		<div id="attendee-pre-approval-options" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br />
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
 			</div>
 			<h3 class="hndle"> <span>
 				<?php _e('Attendee pre-approval required?', 'event_espresso'); ?>
@@ -284,7 +284,7 @@ function edit_event($event_id = 0) {
 			if (function_exists('espresso_ticket_dd') && $espresso_premium == true) {
 				?>
 		<div  id="ticket-options" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br>
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 			</div>
 			<h3 class="hndle"> <span>
 				<?php _e('Custom Tickets', 'event_espresso'); ?>
@@ -300,7 +300,7 @@ function edit_event($event_id = 0) {
 	if (function_exists('espresso_certificate_dd') && $espresso_premium == true) {
 		?>
 		<div  id="certificate-options" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br>
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 			</div>
 			<h3 class="hndle"> <span>
 				<?php _e('Custom Certificates', 'event_espresso'); ?>
@@ -316,7 +316,7 @@ function edit_event($event_id = 0) {
 	if (get_option('events_members_active') == 'true' && $espresso_premium == true) {
 		?>
 		<div  id="member-options" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br>
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 			</div>
 			<h3 class="hndle"> <span>
 				<?php _e('Member Options', 'event_espresso'); ?>
@@ -339,7 +339,7 @@ function edit_event($event_id = 0) {
 		$fb_e_id = $wpdb->get_var("SELECT fb_event_id FROM $eventstable WHERE event_id='{$event->id}'");
 		?>
 		<div  id="event-meta" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br>
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 			</div>
 			<h3 class="hndle"> <span>
 				<?php _e('Post to Facebook', 'event_espresso'); ?>
@@ -360,7 +360,7 @@ function edit_event($event_id = 0) {
 	if (function_exists('espresso_personnel_cb') && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 		?>
 		<div id="event-staff" class="postbox closed">
-			<div class="handlediv" title="Click to toggle"><br>
+			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 			</div>
 			<h3 class="hndle"> <span>
 				<?php _e('Event Staff / Speakers', 'event_espresso'); ?>
@@ -434,7 +434,7 @@ function edit_event($event_id = 0) {
 		
 		<div id="normal-sortables" class="meta-box-sortables ui-sortable">
 			<div style="display: block;" id="event-date-time" class="postbox">
-				<div class="handlediv" title="Click to toggle"><br>
+				<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 				</div>
 				<h3 class="hndle"> <span>
 					<?php _e('Event Date/Times', 'event_espresso'); ?>
@@ -514,7 +514,7 @@ function edit_event($event_id = 0) {
 				?>
 			<div id="event-pricing" class="postbox">
 				<?php (get_option('events_members_active') == 'true')? $members_active = 'class="members-active"' : $members_active = ''; ?>
-				<div class="handlediv" title="Click to toggle"><br>
+				<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 				</div>
 				<h3 class="hndle"> <span>
 					<?php _e('Event Pricing', 'event_espresso'); ?>
@@ -537,7 +537,7 @@ function edit_event($event_id = 0) {
 				<?php _e('Advanced Options', 'event_espresso'); ?>
 			</h2>
 			<div id="event-location" class="postbox closed">
-				<div class="handlediv" title="Click to toggle"><br />
+				<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
 				</div>
 				<h3 class="hndle"> <span>
 					<?php _e('Venue Details', 'event_espresso'); ?>
@@ -680,7 +680,7 @@ function edit_event($event_id = 0) {
 			<!-- /event-location-->
 			<?php if ($espresso_premium == true) { ?>
 			<div id="event-meta" class="postbox closed">
-				<div class="handlediv" title="Click to toggle"><br>
+				<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
 				</div>
 				<h3 class="hndle"> <span>
 					<?php _e('Event Meta', 'event_espresso'); ?>
@@ -696,7 +696,7 @@ function edit_event($event_id = 0) {
 			<?php } ?>
 			<!-- /event-meta-->
 			<div id="confirmation-email" class="postbox closed">
-				<div class="handlediv" title="Click to toggle"><br />
+				<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
 				</div>
 				<h3 class="hndle"> <span>
 					<?php _e('Email Confirmation', 'event_espresso') ?>
