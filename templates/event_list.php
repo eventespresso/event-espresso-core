@@ -90,8 +90,8 @@ if (!function_exists('event_espresso_get_event_details')) {
 					$events = $wpdb->get_results($sql);
 				
 					// save the newly created transient value
-					// 60 seconds * 60 minutes * 24 hours = 1 day
-					set_transient('all_espresso_events', $events, 60*60*24);
+					// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
+					set_transient('all_espresso_events', $events, 60*60*24*365);
 					
 					//Check if using the cache
 					//echo 'Not using cache';
