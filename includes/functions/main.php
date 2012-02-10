@@ -97,9 +97,28 @@ function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
 		
 		// check if permalinks are being used
 		if ( $use_pretty_permalinks ) {
+			
+			
+			$event_slug = get_transient( 'espresso_event_slug_'.$event_id );
+			if ( false === $event_slug ) {
+				// if transient not set, do this!
+			
+				// create the data that needs to be saved.
+				$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE .' WHERE id = %d';
+				$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id ));
+			
+				// save the newly created transient value
+				// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
+				set_transient('espresso_event_slug_'.$event_id, $event_slug, 60*60*24*365);
+				
+				//Debug:
+				//Check if using the cache
+				//echo 'Not using cache';
+			}
+				
+				
 			// check if slug exists for that event
-			$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE .' WHERE id = %d';
-			if ( $event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id ))) {
+			if ( !empty($event_slug) ) {
 				// create pretty permalink
 				$registration_url = $registration_url = $registration_url . $event_slug;			
 			} else {

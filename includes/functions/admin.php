@@ -1110,10 +1110,21 @@ function espresso_string_to_url( $string ) {
 }	
 
 
-//Function
+/**
+*		flushes the event cache
+*		
+*		@access public
+*		@param 	in	$event_id
+*		@return void
+*/
 if (!function_exists('espresso_reset_cache')) {
-	function espresso_reset_cache(){
+	function espresso_reset_cache($event_id = 0){
 		delete_transient( 'all_espresso_events' );
 		delete_transient( 'all_espresso_calendar_events' );
+		
+		//Flushes the cache that may be set for an event slug
+		if ($event_id > 0){
+			delete_transient( 'espresso_event_slug_'.$event_id );
+		}
 	}
 }
