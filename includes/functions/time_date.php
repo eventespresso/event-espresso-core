@@ -180,6 +180,8 @@ if (!function_exists('event_espresso_time_dropdown')) {
 		//$time_reg_limit = 'Y';
 		//echo $num_attendees;
 		
+		$sql = "SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' ";
+		
 		//Not sure if this is needed. Removed by Seth 2-10-11
 		/*if ( isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y') {
 			$sql = "SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "' ";
