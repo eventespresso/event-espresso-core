@@ -89,6 +89,8 @@ add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events
 add_action ( 'action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db' );
 // add the function register_attendees() as the default action to be performed for the regevent_register_attendees hook
 add_action ( 'action_hook_espresso_regevent_register_attendees', 'register_attendees' );
+// add Espresso toolbar
+add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 
 
 

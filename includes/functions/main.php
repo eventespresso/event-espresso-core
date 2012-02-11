@@ -1807,3 +1807,220 @@ function printCountriesSelector($name, $selected) {
 	echo '</pre>';
 		
 }
+
+//Creates an admin toolbar
+function espresso_toolbar_items($admin_bar){
+	
+	$events_page = get_admin_url() . 'admin.php?page=events';
+	$registrations_page = get_admin_url() . 'admin.php?page=attendees';
+	$menu_class = 'espresso_menu_item_class';
+	
+	//Top Level
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar',
+		'title' => '<span class="ab-icon-espresso"></span><span class="ab-label">' . _x( 'Event Espresso', 'admin bar menu group label' ) . '</span>',
+		'href'  => $events_page,
+		'meta'  => array(
+			'title' => __('Event Espresso'),
+			'class' => $menu_class.'first'
+		),
+	));
+	
+	//Events
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-events',
+		'parent' => 'espresso-toolbar',
+		'title' => 'Events',
+		'href'  => $events_page,
+		'meta'  => array(
+			'title' => __('Events'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Events Add New
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-events-new',
+		'parent' => 'espresso-toolbar-events',
+		'title' => 'Add New',
+		'href'  => $events_page.'&action=add_new_event',
+		'meta'  => array(
+			'title' => __('Add New'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Events View
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-events-view',
+		'parent' => 'espresso-toolbar-events',
+		'title' => 'View',
+		'href'  => $events_page,
+		'meta'  => array(
+			'title' => __('View'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Events View All
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-events-all',
+		'parent' => 'espresso-toolbar-events-view',
+		'title' => 'All',
+		'href'  => $events_page,
+		'meta'  => array(
+			'title' => __('All'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Events View Today
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-events-today',
+		'parent' => 'espresso-toolbar-events-view',
+		'title' => 'Today',
+		'href'  => $events_page.'&today=true',
+		'meta'  => array(
+			'title' => __('Today'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Events View This Month
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-events-month',
+		'parent' => 'espresso-toolbar-events-view',
+		'title' => 'This Month',
+		'href'  => $events_page.'&this_month=true',
+		'meta'  => array(
+			'title' => __('This Month'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations',
+		'parent' => 'espresso-toolbar',
+		'title' => 'Registrations',
+		'href'  => $registrations_page,
+		'meta'  => array(
+			'title' => __('Registrations'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview Today
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations-today',
+		'parent' => 'espresso-toolbar-registrations',
+		'title' => 'Today',
+		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&today_a=true',
+		'meta'  => array(
+			'title' => __('Today'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview Today Completed
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations-today-completed',
+		'parent' => 'espresso-toolbar-registrations-today',
+		'title' => 'Completed',
+		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&today_a=true&payment_status=Completed',
+		'meta'  => array(
+			'title' => __('Completed'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview Today Incomplete
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations-today-incomplete',
+		'parent' => 'espresso-toolbar-registrations-today',
+		'title' => 'Incomplete',
+		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&today_a=true&payment_status=Incomplete',
+		'meta'  => array(
+			'title' => __('Incomplete'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview Today Pending
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations-today-pending',
+		'parent' => 'espresso-toolbar-registrations-today',
+		'title' => 'Pending',
+		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&today_a=true&payment_status=Pending',
+		'meta'  => array(
+			'title' => __('Pending'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview This Month
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations-month',
+		'parent' => 'espresso-toolbar-registrations',
+		'title' => 'This Month',
+		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&this_month_a=true',
+		'meta'  => array(
+			'title' => __('This Month'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview This Month Completed
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations-month-completed',
+		'parent' => 'espresso-toolbar-registrations-month',
+		'title' => 'Completed',
+		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Completed',
+		'meta'  => array(
+			'title' => __('Completed'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview This Month Incomplete
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations-month-incomplete',
+		'parent' => 'espresso-toolbar-registrations-month',
+		'title' => 'Incomplete',
+		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Incomplete',
+		'meta'  => array(
+			'title' => __('Incomplete'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Registration Overview This Month Pending
+	$admin_bar->add_menu( array(
+		'id'    => 'espresso-toolbar-registrations-month-pending',
+		'parent' => 'espresso-toolbar-registrations-month',
+		'title' => 'Pending',
+		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Pending',
+		'meta'  => array(
+			'title' => __('Pending'),
+			'target' => '',
+			'class' => $menu_class
+		),
+	));
+	
+	//Event Listings
+	//Maybe add a 
+}
