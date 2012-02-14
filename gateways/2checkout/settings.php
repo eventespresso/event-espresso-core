@@ -1,6 +1,6 @@
 <?php
 
-function event_espresso_2checkout_payment_settings() {
+function event_espresso_2co_settings() {
 	global $espresso_premium, $notices, $espresso_wp_user;
 	if ($espresso_premium != true) {
 		return;
@@ -298,3 +298,5 @@ function event_espresso_display_2checkout_settings() {
 	</div>
 	<?php
 }
+
+add_action('action_hook_espresso_display_gateway_settings','event_espresso_2co_settings');
