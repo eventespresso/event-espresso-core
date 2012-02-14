@@ -45,7 +45,7 @@ if (!function_exists('event_form_build')) {
 			$userid = $current_user->ID;
 			$member_options = get_option('events_member_settings');
 		}
-		
+
 		//print_r( $member_options );
 
 		$html = '';
@@ -122,7 +122,7 @@ if (!function_exists('event_form_build')) {
 				wp_print_styles( 'jquery-ui-style-datepicker' );
 				wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
 				wp_print_scripts('jquery-ui-datepicker');
-				
+
 				$html .= '<p class="event_form_field">' . $label;
 				$disabled = isset($disabled) ? $disabled : '';
 				$html .= '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
@@ -192,12 +192,12 @@ if (!function_exists('event_form_build')) {
 }
 
 function event_form_build_edit($question, $edits, $show_admin_only = false) {
-	
+
 	$required = '';
 	/* if ($question->required == "Y") {
         $required = ' class="required"';
     }*/
-	
+
 	 /**
          * Temporary client side email validation solution by Abel, will be replaced
          * in the next version with a full validation suite.
@@ -205,10 +205,10 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
         $email_validate = $question->system_name == 'email' ? 'email' : '';
 
         if ($question->required == "Y") {
-            $required = ' title="' . $question->required_text . '" class="required ' . $email_validate . ' '.$class.'"';
+            $required = ' title="' . $question->required_text . '" class="required ' . $email_validate . '"';
             $required_label = "<em>*</em>";
         } else {
-			$required = 'class="' . $class . '"';
+			$required = '';
 		}
 	$required_label = isset($required_label) ? $required_label : '';
 
@@ -222,17 +222,17 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
 	if (isset($question->q_id)){
 		$question->id = $question->q_id;
 	}
-	
+
 	if ($question->admin_only == 'Y' && $show_admin_only == false) {
 		return;
 	}
-	
+
 	$field_name = ($question->system_name != '') ? $question->system_name : 'TEXT_' . $question->id;
 	echo '<label for="' . $field_name . '">' . $question->question . $required_label .'</label><br>';
-	
+
 	//DEBUG:
 	//echo '<p>$question->question_type = '.$question->question_type.'</p>';
-	
+
 	switch ($question->question_type) {
 		case "TEXT" :
 			echo '<input type="text" ' . $required . ' id="' . $field_name . '"  name="' . $field_name . '" size="40"  value="' . $edits . '" />';
@@ -247,7 +247,7 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
 			echo '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $edits . '" ' . $disabled . ' />';
 			echo '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({yearRange: "c-100:c+10",changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
 			break;
-		
+
 		case "TEXTAREA" :
 			echo '<textarea id="TEXTAREA_' . $question->id . '" ' . $required . ' name="TEXTAREA_' . $question->id . '"  cols="30" rows="5">' . $edits . '</textarea>';
 			break;

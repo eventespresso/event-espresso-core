@@ -5,10 +5,10 @@ function add_event_to_db($recurrence_arr = array()) {
 	// echo "<pre>";
 	//print_r($_POST);
 	//echo "</pre>";
-	
+
 	//Delete the transients that may be set
 	espresso_reset_cache();
-	
+
 	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
@@ -65,7 +65,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			if ($wp_user_id == 0) {
 				$wp_user_id = 1;
 			}
-			
+
 			$event_desc = $_REQUEST['event_desc'];
 			$display_desc = $_REQUEST['display_desc'];
 			$display_reg_form = $_REQUEST['display_reg_form'];
@@ -167,8 +167,8 @@ function add_event_to_db($recurrence_arr = array()) {
 			} else {
 				$end_date = $_REQUEST['end_date'];
 			}
-			
-			//I think Abel added this so we could have recurring events appear on a selected date. 
+
+			//I think Abel added this so we could have recurring events appear on a selected date.
 			//But it ended up not working so well. I think we may be able to remove this, but we need to make sure it doesn't break the system.
 			if (array_key_exists('visible_on', $recurrence_arr)) {
 				//Recurring event
@@ -211,19 +211,19 @@ function add_event_to_db($recurrence_arr = array()) {
 				$require_pre_approval = $_REQUEST['require_pre_approval'];
 			}
 			################# END #################
-			
+
 			//Event name
 			$event_name = empty($_REQUEST['event']) ? $start_date : $_REQUEST['event'];
-			
+
 			//Create the event code and prefix it with the user id
 			$event_code = uniqid($espresso_wp_user . '-');
-			
+
 			//Create the event identifier with the event code appended to the end
-			$event_identifier = ($_REQUEST['event_identifier'] == '') ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
-			
+			$event_identifier = (empty($_REQUEST['event_identifier'])) ? $event_identifier = sanitize_title_with_dashes($event_name . '-' . $event_code) : $event_identifier = sanitize_title_with_dashes($_REQUEST['event_identifier']) . $event_code;
+
 			//Create the event slug
 			$event_slug = ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name) : sanitize_title_with_dashes($_REQUEST['slug']);
-			
+
 			//When adding colums to the following arrays, be sure both arrays have equal values.
 			$sql = array(
 					'event_code' => $event_code,

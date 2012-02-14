@@ -104,7 +104,7 @@ add_filter( 'plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2
 //auth_cookie_malformed
 //set_current_user
 
-//init 
+//init
 add_action( 'init', 'espresso_load_jquery', 10 );
 add_action( 'init', 'espresso_init', 20 );
 add_action( 'init', 'espresso_export_certificate', 30);
@@ -580,9 +580,9 @@ function espresso_init() {
 
 
 	/* Core template files used by this plugin */
-	
+
 	event_espresso_require_template('init.php');
-	
+
 	//These may be loaded in posts and pages outside of the default EE pages
 	//Events Listing - Shows the events on your page. Used with the [ESPRESSO_EVENTS] shortcode
 	$event_list_template = 'event_list.php';
@@ -609,9 +609,9 @@ function espresso_init() {
 	}
 
 	/* End Core template files used by this plugin */
-	
-	
-	
+
+
+
 	//Google map include file
 	if (!is_admin()) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
@@ -807,10 +807,10 @@ function espresso_init() {
 		add_action( 'wp_ajax_update_qgr_sequence', 'event_espresso_question_groups_config_mnu');
 
 	}
-	
-	
-	
-	
+
+
+
+
 	// Run the program
 	if (!function_exists('event_espresso_run')) {
 		function event_espresso_run() {
@@ -837,7 +837,7 @@ function espresso_init() {
 
 			//if (isset($_REQUEST['ee']) or isset($_REQUEST['edit_attendee'])) {
 			$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
-			
+
 			if ( $event_slug or isset( $_REQUEST['edit_attendee'] ) or isset( $_REQUEST['ee'] )) {
 				$regevent_action = "register";
 			}
@@ -877,9 +877,9 @@ function espresso_init() {
 
 					if ($_POST) {
 						event_espresso_calculate_total('details');
-					}						
+					}
 					event_espresso_load_checkout_page();
-					
+
 				break;
 
 				case "post_multi_attendee":
@@ -892,7 +892,7 @@ function espresso_init() {
 
 
 				default:
-				
+
 					// now other plugins/functions/classes can completely change the regevent default action process by removing the previous hook and adding their own
 					do_action( 'action_hook_espresso_regevent_default_action', $regevent_action );
 
@@ -968,13 +968,13 @@ function espresso_init() {
 
 
 	// PUE Auto Upgrades stuff
-	if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/pue/pue-client.php') && !empty($org_options) ) {
+	if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/pue/pue-client.php') && !empty($org_options['site_license_key']) ) {
 		//let's get the client api key for updates
 		global $org_options;
 		$api_key = $org_options['site_license_key']; //note this is a special field that we added to the core plugin options page for clients to add their site-license key.
 		$host_server_url = 'http://beta.eventespresso.com/'; //note you'll have to change this to eventespresso.com once the domain is swtiched to the new server
 		$plugin_slug = 'event-espresso'; //change this to the slug of the uploaded plugin (as you set in the plugin slug field via the Add Plugin form in the PUE Plugin Library))
-		
+
 		$plugin_path = plugin_basename(__FILE__);
 		$options = array(
 		'apikey' => $api_key,
@@ -983,7 +983,7 @@ function espresso_init() {
 		);
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/pue/pue-client.php' ); //requires the pue-client file that contains the class.
 		//$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //let's make sure this addon is in the updater routine!
-	
+
 	}
 
 }
@@ -1053,15 +1053,15 @@ function espresso_export_invoice() {
 
 /**
 *		creates pretty permalinks
-*		
+*
 *		@access public
 *		@return void
-*/													 
+*/
 function espresso_add_rewrite_rules() {
 
 	global $wpdb, $org_options;
-	
-	$reg_page_id = $org_options['event_page_id'];	
+
+	$reg_page_id = $org_options['event_page_id'];
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();
 
 	if ( $use_pretty_permalinks ) {
@@ -1071,10 +1071,10 @@ function espresso_add_rewrite_rules() {
 
 		// rules for event slug pretty links
 		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?/$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' );
-		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' ); 
-		
-	}			
-														
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top' );
+
+	}
+
 }
 
 
@@ -1083,15 +1083,15 @@ function espresso_add_rewrite_rules() {
 
 /**
  *		reset htaccess rewrite rules
- * 
+ *
  *		@ access public
  *		@ return void
- */	
+ */
 function espresso_flush_rewrite_rules() {
 	if ( is_admin()  && isset($_REQUEST['page']) && $_REQUEST['page'] == 'event_espresso' ) {
 	    flush_rewrite_rules();
 	}
-}	
+}
 
 
 
@@ -1134,10 +1134,10 @@ function espresso_widget() {
 
 /**
 *		adds query vars for creating pretty permalinks
-*		
+*
 *		@access public
 *		@return void
-*/	
+*/
 function espresso_add_query_vars( $query_vars ) {
 	$query_vars[] = 'event_slug';
 	$query_vars[] = 'ee';
