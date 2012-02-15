@@ -91,8 +91,6 @@ License: 			GPLv2
 				
 	// EE_Session object stored by reference
 	private $_session_data = array();
-	
-
 
 
 

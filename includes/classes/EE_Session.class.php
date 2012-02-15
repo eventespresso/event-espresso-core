@@ -685,8 +685,8 @@ License: 			GPLv2
 		$timezone_string = get_option('timezone_string');
 		// if timezone string is empty
 		if ( ! $timezone_string ) {
-			// set it to MST 
-			$timezone_string = 'America/Boise';
+			// set it to EST 
+			$timezone_string = 'America/New_York';
 		}
 		date_default_timezone_set($timezone_string); 
 		

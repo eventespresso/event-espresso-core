@@ -162,42 +162,100 @@ License: 			GPLv2
 	
 			// now try to open and read the corrected file
 			if (($file_handle = fopen( $path_to_file, "r" )) !== FALSE) {
+				
+				// in PHP 5.3 fgetcsv accepts a 5th parameter, but the pre 5.3 versions of fgetcsv choke if passed more than 4 - is that crazy or what?
+				if ( version_compare( PHP_VERSION, '5.3.0' ) < 0 ) {
 
-				// loop through each row of the file
-				while (($data = fgetcsv($file_handle, 10000, ',', '"', '\\' )) !== FALSE) {
-		
-					// if first cell is TABLE, then second cell is the table name
-					if ( $data[0]	== 'TABLE' ) {
-						$table = $data[1];
-						$row = 0;
-					}
+					//  PHP 5.2- version
+
+					// loop through each row of the file
+					while (($data = fgetcsv($file_handle, 0, ',', '"' )) !== FALSE) {
+			
+						// add fail safe to prevent infinite looping in case something goes crazy
+						if ( $row > 1000 ) {
+							break;
+						}
 					
-					// how many columns are there?
-					$columns = count($data);
-					
-					// loop through each column
-					for ( $i=0; $i < $columns; $i++ ) {
-						//replace csv_enclosures with backslashed quotes 
-						$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
-						// do we need to grab the column names?
-						if ( $row === 1 && $first_row_is_headers ) {
-							// store the column names to use for keys
-							$headers[$i] = $data[$i];
-						} else if ( $row === 1 && ! $first_row_is_headers ) {
-							// no column names means our final array will just use counters for keys
-							$csv_data[$table][$row][$headers[$i]] = $data[$i];
-							$headers[$i] = $i;
-							// and we need to store csv data
-						} else if ( $row ) {
-							// no headers just store csv data
-							$csv_data[$table][$row][$headers[$i]] = $data[$i];
+						// if first cell is TABLE, then second cell is the table name
+						if ( $data[0]	== 'TABLE' ) {
+							$table = $data[1];
+							$row = 0;
 						}
 						
+						// how many columns are there?
+						$columns = count($data);
+						
+						// loop through each column
+						for ( $i=0; $i < $columns; $i++ ) {
+							//replace csv_enclosures with backslashed quotes 
+							$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
+							// do we need to grab the column names?
+							if ( $row === 1 && $first_row_is_headers ) {
+								// store the column names to use for keys
+								$headers[$i] = $data[$i];
+							} else if ( $row === 1 && ! $first_row_is_headers ) {
+								// no column names means our final array will just use counters for keys
+								$csv_data[$table][$row][$headers[$i]] = $data[$i];
+								$headers[$i] = $i;
+								// and we need to store csv data
+							} else if ( $row ) {
+								// no headers just store csv data
+								$csv_data[$table][$row][$headers[$i]] = $data[$i];
+							}
+							
+						}
+						// advance to next row
+						$row++;
+						
 					}
-					// advance to next row
-					$row++;
+					
+				} else {
+				
+					// PHP 5.3+ version
+
+					// loop through each row of the file
+					while (($data = fgetcsv($file_handle, 0, ',', '"', '\\' )) !== FALSE) {
+			
+						// add fail dafe to prevent infinite looping in case of errors
+						if ( $row > 1000 ) {
+							break;
+						}
+					
+						// if first cell is TABLE, then second cell is the table name
+						if ( $data[0]	== 'TABLE' ) {
+							$table = $data[1];
+							$row = 0;
+						}
+						
+						// how many columns are there?
+						$columns = count($data);
+						
+						// loop through each column
+						for ( $i=0; $i < $columns; $i++ ) {
+							//replace csv_enclosures with backslashed quotes 
+							$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
+							// do we need to grab the column names?
+							if ( $row === 1 && $first_row_is_headers ) {
+								// store the column names to use for keys
+								$headers[$i] = $data[$i];
+							} else if ( $row === 1 && ! $first_row_is_headers ) {
+								// no column names means our final array will just use counters for keys
+								$csv_data[$table][$row][$headers[$i]] = $data[$i];
+								$headers[$i] = $i;
+								// and we need to store csv data
+							} else if ( $row ) {
+								// no headers just store csv data
+								$csv_data[$table][$row][$headers[$i]] = $data[$i];
+							}
+							
+						}
+						// advance to next row
+						$row++;
+						
+					}
 					
 				}
+
 				// close file connection
 				fclose($file_handle);
 
@@ -248,6 +306,9 @@ License: 			GPLv2
 		$total_updates = 0;
 		$total_insert_errors = 0;
 		$total_update_errors = 0;
+
+		$success = FALSE;
+		$error = FALSE;
 		
 		// loop through each row of data
 		foreach ( $csv_data_array as $table_name => $table_data ) {		

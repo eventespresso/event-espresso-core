@@ -112,6 +112,8 @@ License: 			GPLv2
 								
 								if($_FILES["file"]["size"][$key]<$max_upload) { 
 								
+									$upload_dir = wp_upload_dir();
+								
 									if(move_uploaded_file($_FILES["file"]["tmp_name"][$key], $upload_dir.$filename)) {
 
 										// csv import export functions require a list of all event espresso tables
