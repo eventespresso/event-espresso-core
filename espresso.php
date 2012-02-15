@@ -189,7 +189,6 @@ function espresso_define_tables_and_paths() {
 
 	define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
 	define("EVENTS_ATTENDEE_COST_TABLE", $wpdb->prefix . "events_attendee_cost");
-	define("EVENTS_ATTENDEE_META_TABLE", $wpdb->prefix . "events_attendee_meta");
 
 	define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
 	define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");

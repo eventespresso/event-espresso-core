@@ -60,7 +60,7 @@ License: 			GPLv2
 																						EVENTS_ANSWER_TABLE	=> array( 'id' ),
 																						EVENTS_ATTENDEE_TABLE	=> array( 'id' ),
 																						EVENTS_ATTENDEE_COST_TABLE	=> array( 'attendee_id' ),
-																						EVENTS_ATTENDEE_META_TABLE	=> array( 'ameta_id' ),
+																						//EVENTS_ATTENDEE_META_TABLE	=> array( 'ameta_id' ),
 																						EVENTS_CATEGORY_TABLE	=> array( 'id' ),
 																						EVENTS_CATEGORY_REL_TABLE	=> array( 'id' ),
 																						'wp_events_certificate_templates' =>  array( 'emeta_id' ),

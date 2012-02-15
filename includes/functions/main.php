@@ -1349,8 +1349,8 @@ function espresso_quantity_for_registration($attendee_id) {
 
 function espresso_is_primary_attendee($attendee_id) {
 	global $wpdb;
-	$sql = "SELECT am.meta_value FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
-	$sql .= " WHERE am.attendee_id = '" . $attendee_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
+	$sql = "SELECT ea FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
+	$sql .= " WHERE ea.id = '" . $attendee_id . "' AND ea.is_primary='1' ";
 	//echo $sql;
 	$wpdb->get_results($sql);
 	if ($wpdb->num_rows > 0) {
@@ -1360,13 +1360,12 @@ function espresso_is_primary_attendee($attendee_id) {
 
 function espresso_get_primary_attendee_id($registration_id) {
 	global $wpdb;
-	$sql = "SELECT am.attendee_id FROM " . EVENTS_ATTENDEE_META_TABLE . " am ";
-	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.id = am.attendee_id ";
-	$sql .= " WHERE ea.registration_id = '" . $registration_id . "' AND am.meta_key='primary_attendee' AND am.meta_value='1' ";
+	$sql = "SELECT ea.id FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
+	$sql .= " WHERE ea.registration_id = '" . $registration_id . "' AND ea.is_primary='1' ";
 	//echo $sql;
 	$wpdb->get_results($sql);
 	if ($wpdb->num_rows > 0) {
-		return $wpdb->last_result[0]->attendee_id;
+		return $wpdb->last_result[0]->id;
 	}
 }
 

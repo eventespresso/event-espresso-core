@@ -198,7 +198,7 @@ License: 			GPLv2
 		$tables_to_export = array( 
 																						EVENTS_ATTENDEE_TABLE,
 																						EVENTS_ATTENDEE_COST_TABLE,
-																						EVENTS_ATTENDEE_META_TABLE
+																						//EVENTS_ATTENDEE_META_TABLE
 																				);
 																				
 		$table_data = $this->process_mult_table_export( $tables_to_export );

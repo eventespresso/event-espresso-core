@@ -386,6 +386,7 @@ function events_data_tables_install() {
 	$table_name = "events_attendee";
 	$sql = " id int(11) unsigned NOT NULL AUTO_INCREMENT,
 					  registration_id VARCHAR(23) DEFAULT '0',
+					  is_primary INT(1) DEFAULT '0',
 					  lname VARCHAR(45) DEFAULT NULL,
 					  fname VARCHAR(45) DEFAULT NULL,
 					  address VARCHAR(45) DEFAULT NULL,
@@ -423,16 +424,6 @@ function events_data_tables_install() {
 					PRIMARY KEY  (id),
 					KEY registration_id (registration_id),
 					KEY event_id (event_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-	$table_name = "events_attendee_meta";
-	$sql = "ameta_id bigint(20) NOT NULL AUTO_INCREMENT,
-			  attendee_id int(11) DEFAULT NULL,
-			  meta_key varchar(255) DEFAULT NULL,
-			  meta_value longtext,
-			  date_added datetime DEFAULT NULL,
-  			  PRIMARY KEY  (ameta_id),
-			  KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 	$table_name = "events_detail";

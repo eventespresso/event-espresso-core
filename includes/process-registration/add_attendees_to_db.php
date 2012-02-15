@@ -194,9 +194,9 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		$payment_date = empty($payment_date) ? '' : $payment_date;
 		$coupon_code = empty($coupon_code) ? '' : $coupon_code;
 
-		$sql = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session']['id'], 'lname' => $lname, 'fname' => $fname, 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'email' => $email, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'txn_type' => $txn_type, 'coupon_code' => $coupon_code, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people);
+		$sql = array('registration_id' => $registration_id, 'attendee_session' => $_SESSION['espresso_session']['id'], 'lname' => $lname, 'fname' => $fname, 'address' => $address, 'address2' => $address2, 'city' => $city, 'state' => $state, 'zip' => $zip, 'email' => $email, 'phone' => $phone, 'payment' => $payment, 'amount_pd' => $amount_pd, 'txn_type' => $txn_type, 'coupon_code' => $coupon_code, 'event_time' => $start_time, 'end_time' => $end_time, 'start_date' => $start_date, 'end_date' => $end_date, 'price_option' => $price_type, 'organization_name' => $organization_name, 'country_id' => $country_id, 'payment_status' => $payment_status, 'payment_date' => $payment_date, 'event_id' => $event_id, 'quantity' => $num_people,'is_primary' => 1);
 		$sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-				'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d');
+				'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d');
 
 		//Debugging output
 		/* echo 'Debug: <br />';
@@ -255,20 +255,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 					}
 				}
 			}
-		}
-
-		//Add a record for the primary attendee
-		$sql = array('attendee_id' => $attendee_id, 'meta_key' => 'primary_attendee', 'meta_value' => 1);
-		$sql_data = array('%s', '%s', '%s');
-		//Debugging output
-		/* echo 'Debug: <br />';
-		  print_r($sql);
-		  echo '<br />';
-		  print 'Number of vars: ' . count ($sql);
-		  echo '<br />';
-		  print 'Number of cols: ' . count($sql_data); */
-		if (!$wpdb->insert(EVENTS_ATTENDEE_META_TABLE, $sql, $sql_data)) {
-			$error = true;
 		}
 
 		/**
