@@ -1,12 +1,11 @@
 <?php
 
 function event_espresso_2co_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user;
+	global $espresso_premium, $notices, $espresso_wp_user, $active_gateways;
 	if ($espresso_premium != true) {
 		return;
 	}
-var_dump($espresso_wp_user);
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
 
 	//Update settings
 	if (isset($_POST['update_2checkout'])
@@ -26,36 +25,33 @@ var_dump($espresso_wp_user);
 	}
 
 	if (empty($payment_settings['2checkout'])) {
-		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/logo.png")) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/logo.png";
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/lib/logo.png")) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/2checkout/lib/logo.png";
 		} else {
-			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/2checkout/logo.png";
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/2checkout/lib/logo.png";
 		}
-		$payment_settings['2checkout']['active'] = false;
 		$payment_settings['2checkout']['2checkout_id'] = '';
 		$payment_settings['2checkout']['2checkout_username'] = '';
 		$payment_settings['2checkout']['currency_format'] = 'USD';
 		$payment_settings['2checkout']['use_sandbox'] = 'N';
 		$payment_settings['2checkout']['bypass_payment_page'] = 'N';
 		$payment_settings['2checkout']['button_url'] = $button_url;
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
-		}
+		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
 
 	//Open or close the postbox div
-	if (empty($payment_settings['2checkout']['active'])
-					|| !empty($_REQUEST['deactivate_2checkout'])) {
-		$postbox_style = 'closed';
-	}
-	if (!empty($_REQUEST['activate_2checkout'])) {
+	if (empty($_REQUEST['deactivate_2checkout'])
+					&& (!empty($_REQUEST['activate_2checkout'])
+					|| array_key_exists('2checkout', $active_gateways))) {
 		$postbox_style = '';
+	} else {
+		$postbox_style = 'closed';
 	}
 	?>
 
 	<a name="2checkout" id="2checkout"></a>
 	<div class="metabox-holder">
-		<div class="postbox <?php echo $postbox_style; ?>">
+		<div id="2copostbox" class="postbox <?php echo $postbox_style; ?>">
 			<div title="Click to toggle" class="handlediv"><br />
 			</div>
 			<h3 class="hndle">
@@ -65,8 +61,8 @@ var_dump($espresso_wp_user);
 				<div class="padding">
 					<?php
 					if (!empty($_REQUEST['activate_2checkout'])) {
-						$payment_settings['2checkout']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						$active_gateways['2checkout'] = dirname(__FILE__);
+						if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 							$notices['updates'][] = __('2checkout Payments Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate 2checkout Payments', 'event_espresso');
@@ -74,8 +70,8 @@ var_dump($espresso_wp_user);
 					}
 
 					if (!empty($_REQUEST['deactivate_2checkout'])) {
-						$payment_settings['2checkout']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						unset($active_gateways['2checkout']);
+						if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 							$notices['updates'][] = __('2checkout Payments De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate 2checkout Payments', 'event_espresso');
@@ -83,32 +79,24 @@ var_dump($espresso_wp_user);
 					}
 
 					echo '<ul>';
-					switch ($payment_settings['2checkout']['active']) {
-
-						case false:
-							echo '<li id="activate_2co" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_2checkout=true#2checkout\';" class="green_alert pointer"><strong>' . __('Activate 2checkout Payments?', 'event_espresso') . '</strong></li>';
-							break;
-
-						case true:
-							echo '<li id="deactivate_2co" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_2checkout=true\';" class="red_alert pointer"><strong>' . __('Deactivate 2checkout Payments?', 'event_espresso') . '</strong></li>';
-							event_espresso_display_2checkout_settings();
-							break;
+					if (!array_key_exists('2checkout', $active_gateways)) {
+						echo '<li id="activate_2co" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_2checkout=true#2checkout\';" class="green_alert pointer"><strong>' . __('Activate 2checkout Payments?', 'event_espresso') . '</strong></li>';
+					} else {
+						echo '<li id="deactivate_2co" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_2checkout=true\';" class="red_alert pointer"><strong>' . __('Deactivate 2checkout Payments?', 'event_espresso') . '</strong></li>';
+						event_espresso_display_2checkout_settings($payment_settings);
 					}
-
 					echo '</ul>';
 					?>
-				</div>
-			</div>
-		</div>
-	</div>
+				</div> <!-- Class=padding -->
+			</div> <!-- Class=inside -->
+		</div> <!-- id=2copostbox -->
+	</div> <!-- class=metabox-holder -->
 	<?php
 }
 
 //2checkout Settings Form
-function event_espresso_display_2checkout_settings() {
+function event_espresso_display_2checkout_settings($payment_settings) {
 	global $org_options, $espresso_wp_user;
-
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 
 	$values = array(
 			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
@@ -241,23 +229,6 @@ function event_espresso_display_2checkout_settings() {
 				</tr>
 			</tbody>
 		</table>
-		<?php /* ?><!-- TABLE TEMPLATE -->
-		  <table class="form-table">
-		  <tbody>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  </tbody>
-		  </table><?php */ ?>
 		<p>
 			<input type="hidden" name="update_2checkout" value="update_2checkout">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update 2checkout Settings', 'event_espresso') ?>" id="save_2checkout_settings" />
@@ -299,4 +270,4 @@ function event_espresso_display_2checkout_settings() {
 	<?php
 }
 
-add_action('action_hook_espresso_display_gateway_settings','event_espresso_2co_settings');
+add_action('action_hook_espresso_display_gateway_settings', 'event_espresso_2co_settings');

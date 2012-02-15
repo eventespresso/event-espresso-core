@@ -32,8 +32,8 @@ function after_gateways() {
 
 //This is the payment gateway settings page.
 function event_espresso_gateways_options() {
-	global $active_gateways;
-	$active_gateways = get_option('event_espresso_active_gateways', array());
+	global $active_gateways, $espresso_wp_user;
+	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
 	echo before_gateways();
 
 	$gateways_glob = glob(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/*/settings.php");
