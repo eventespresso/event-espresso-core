@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-02-13 10:50-0700\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Chris Reynolds <chris@arcanepalette.com>\n"
+"Last-Translator: Chris Reynolds <chris@jazzsequence.com>\n"
 "Language-Team: Event Espresso <ray@popoola.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -158,7 +158,6 @@ msgid "Submit"
 msgstr "Senden"
 
 #: ../gateways/gateway_display.php:22
-#, fuzzy
 msgid "Please click on payment option below:"
 msgstr "Zahlungsart:"
 
@@ -233,19 +232,17 @@ msgstr "Website Zahlungs IPN ist nicht aufgesetzt"
 #: ../gateways/process_payments.php:14
 #, php-format
 msgid "The IPN for %s at %s has not been properly setup and is not working. Date/time %s"
-msgstr ""
+msgstr "Die IPN für %s bei %s ist nicht richtig eingerichtet worden und funtkioniert daher nicht: Datum/Zeit %s"
 
 #: ../gateways/2checkout/2checkout_vars.php:62
 msgid " 2checkout.com Debug Mode Is Turned On"
 msgstr " 2checkout.com Debug Modus ist eingeschaltet"
 
 #: ../gateways/2checkout/settings.php:22
-#, fuzzy
 msgid "2checkout Payment Settings Updated!"
 msgstr "2checkout Einstellungen gespeichert."
 
 #: ../gateways/2checkout/settings.php:24
-#, fuzzy
 msgid "2checkout Payment Settings were not saved! "
 msgstr "2checkout Einstellungen gespeichert."
 
@@ -254,32 +251,26 @@ msgid "2checkout Settings"
 msgstr "2checkout Einstellungen"
 
 #: ../gateways/2checkout/settings.php:70
-#, fuzzy
 msgid "2checkout Payments Activated"
 msgstr "2checkout Einstellungen gespeichert."
 
 #: ../gateways/2checkout/settings.php:72
-#, fuzzy
 msgid "Unable to Activate 2checkout Payments"
 msgstr "2checkout IPN aktivieren?"
 
 #: ../gateways/2checkout/settings.php:79
-#, fuzzy
 msgid "2checkout Payments De-activated"
 msgstr "2checkout Einstellungen gespeichert."
 
 #: ../gateways/2checkout/settings.php:81
-#, fuzzy
 msgid "Unable to De-activate 2checkout Payments"
 msgstr "2checkout IPN deaktivieren?"
 
 #: ../gateways/2checkout/settings.php:89
-#, fuzzy
 msgid "Activate 2checkout Payments?"
 msgstr "2checkout IPN aktivieren?"
 
 #: ../gateways/2checkout/settings.php:93
-#, fuzzy
 msgid "Deactivate 2checkout Payments?"
 msgstr "2checkout IPN deaktivieren?"
 
@@ -302,7 +293,6 @@ msgid "(Typically 87654321)"
 msgstr "(Typisch 87654321)"
 
 #: ../gateways/2checkout/settings.php:135
-#, fuzzy
 msgid "2checkout Username"
 msgstr "2checkout Benutzername"
 
@@ -311,7 +301,6 @@ msgid "(Typically TestAccount)"
 msgstr "(Typisch TestAccount)"
 
 #: ../gateways/2checkout/settings.php:152
-#, fuzzy
 msgid "Country Currency"
 msgstr "worldpay Währung"
 
@@ -405,14 +394,13 @@ msgstr "Thai Baht"
 
 #: ../gateways/2checkout/settings.php:224
 msgid "Indian Rupee (Rs.)"
-msgstr ""
+msgstr "Indischer Rumpee (Rs.)"
 
 #: ../gateways/2checkout/settings.php:230
 msgid "By-pass the payment confirmation page?"
 msgstr "Die Zahlungsbestätigungsseite überspringen?"
 
 #: ../gateways/2checkout/settings.php:237
-#, fuzzy
 msgid "Use the debugging feature and the 2checkout Sandbox"
 msgstr "Debugging und Sandbox verwenden"
 
@@ -505,7 +493,6 @@ msgid "Exp. Date"
 msgstr "Ablaufdatum"
 
 #: ../gateways/aim/aim_vars.php:81
-#, fuzzy
 msgid "CCV Code"
 msgstr "CVV Code"
 
@@ -514,12 +501,10 @@ msgid "Complete Purchase"
 msgstr "Kauf abschliessen"
 
 #: ../gateways/aim/settings.php:18
-#, fuzzy
 msgid "Authorize.net AIM Payment Settings Updated!"
 msgstr "Authorize.net AIM Einstellungen gespeichert."
 
 #: ../gateways/aim/settings.php:20
-#, fuzzy
 msgid "Authorize.net AIM Payment Settings were not saved! "
 msgstr "Authorize.net AIM Einstellungen gespeichert."
 
@@ -528,22 +513,18 @@ msgid "Authorize.net AIM Settings"
 msgstr "Authorize.net AIM Einstellungen"
 
 #: ../gateways/aim/settings.php:60
-#, fuzzy
 msgid "Authorize.net AIM Gateway Activated"
 msgstr "Authorize.net AIM Gateway ist installiert."
 
 #: ../gateways/aim/settings.php:62
-#, fuzzy
 msgid "Unable to Activate Authorize.net AIM Gateway"
 msgstr "Authorize.net AIM Gateway aktivieren?"
 
 #: ../gateways/aim/settings.php:69
-#, fuzzy
 msgid "Authorize.net AIM Gateway Payments De-activated"
 msgstr "Authorize.net AIM Gateway ist installiert."
 
 #: ../gateways/aim/settings.php:71
-#, fuzzy
 msgid "Unable to De-activate Authorize.net AIM Gateway"
 msgstr "Authorize.net AIM Gateway deaktivieren?"
 
@@ -560,7 +541,6 @@ msgid "Authorize.net AIM Login I.D."
 msgstr "Authorize.net AIM Login I.D."
 
 #: ../gateways/aim/settings.php:122
-#, fuzzy
 msgid "Please enter your Authorize.net Login I.D."
 msgstr "Authorize.net Login I.D."
 
@@ -569,16 +549,14 @@ msgid "Authorize.net AIM Transaction Key"
 msgstr "Authorize.net AIM Transaktionsschlüssel"
 
 #: ../gateways/aim/settings.php:132
-#, fuzzy
 msgid "Please enter your Authorize.net Transaction Key."
 msgstr "Authorize.net Transaction Key"
 
 #: ../gateways/aim/settings.php:137
 msgid "Is this an account on the Authorize.net development server? "
-msgstr ""
+msgstr "Ist dies ein Konto auf dem Authorize.net Entwicklungsserver?"
 
 #: ../gateways/aim/settings.php:144
-#, fuzzy
 msgid "Do you want to submit a test transaction? "
 msgstr "Zeitzone für die Transaktion wählen?"
 
@@ -603,7 +581,6 @@ msgid "Test Mode allows you to submit test transactions to the payment gateway. 
 msgstr "Der Testmodus erlaubt Ihnen Testtransaktionen zum Zahlungsgateway zu schicken. Transaktionen die im Testmodus geschickt werden, werden NICHT durchgeführt. Das Resultat einer Transaktion hängt von der Kartennummer und dem Rechnungsbetrag ab. Wenn eine Transaktion angenommen werden soll, verwenden Sie ein der folgenden Kartennummern."
 
 #: ../gateways/aim/settings.php:185
-#, fuzzy
 msgid "Example Card Numbers:"
 msgstr "Kartennummer"
 
@@ -674,35 +651,35 @@ msgstr "Authorize.net Transaction Key"
 
 #: ../gateways/authnet/authnet_help.php:12
 msgid "The Transaction Key is  a 16-character alphanumeric value that is randomly generated in the  Merchant Interface and is used for authentication when submitting  transaction requests from your Web site."
-msgstr ""
+msgstr "Der Transaktionsschlüssel ist ein 16-stelliger alphanumerischer Wert, welcher vom Merchant Interface zufallsgeneriert wird und welcher für die Authenfizierung benötigt wird, wenn Transaktionen von ihrer Website übermittelt werden."
 
 #: ../gateways/authnet/authnet_help.php:13
 msgid "To generate a Transaction Key for your account:"
-msgstr ""
+msgstr "Um einen Transaktionensschlüssel für ihr Konto zu generieren:"
 
 #: ../gateways/authnet/authnet_help.php:15
 msgid "Log into the Merchant Interface at"
-msgstr ""
+msgstr "Melden sie sich im Merchant Interface an"
 
 #: ../gateways/authnet/authnet_help.php:16
 msgid "Click Account from the main toolbar."
-msgstr ""
+msgstr "klicken sie auf Konto in der Hauptwerkzeugleiste"
 
 #: ../gateways/authnet/authnet_help.php:17
 msgid "Click Settings in the main menu on the left."
-msgstr ""
+msgstr "klicken sie auf Einstellungen im Menü auf der linken Seite"
 
 #: ../gateways/authnet/authnet_help.php:18
 msgid "Click API Login ID and Transaction Key in the Security Settings section."
-msgstr ""
+msgstr "klicken sie auf API Login ID und Transaktionsschlüssel in den Sicherheitseinstellungen."
 
 #: ../gateways/authnet/authnet_help.php:19
 msgid "If an API login ID has already been generated, it is visible on this  page. If an API Login ID needs to be generated, you can enter the answer  to your Secret Question in order to generate an API Login ID and  Transaction Key."
-msgstr ""
+msgstr "Falls schon eine API Login ID generiert wurde, wird sie auf dieser Seite angezeigt. Falls eine API Login ID generiert werden muss, können sie die Antwort auf ihre geheime Frage eingeben um eine API Login ID sowie einen Transaktionsschlüssel zu erzeugen."
 
 #: ../gateways/authnet/authnet_help.php:21
 msgid "IMPORTANT: The Transaction Key will not be visible at any other time in  the Merchant Interface. You must record it temporarily or copy and paste  it to a secure file location immediately. Like the API Login ID, the  Transaction Key is sensitive account information and should only be  shared on a need-to-know basis, for example with your Web developer for  the purposes of integration with the payment gateway. Upon activating a new Transaction Key, all other keys will be disabled after 24 hours."
-msgstr ""
+msgstr "WICHTIG: Der Transkationsschlüssel wird zu keinem anderen Zeitpunkt im Merchant Interface angezeigt. Bitte notieren sie sich diesen oder fügen sie ihn via (kopieren / einfügen) in eine Datei auf einem sicheren Datenträger ein. Wie die API Login ID, ist auch der Transaktionsschlüssel eine vertrauliche Information und sollte daher nur Personen mitgeteilt werden, welche ihr Vertrauen genießen. Wenn ein neuer Transaktionsschlüssel aktiviert wird, werden alle anderen Schlüssel nach 24h deaktiviert."
 
 #: ../gateways/authnet/authnet_help.php:33
 msgid "Relay Response"
@@ -733,7 +710,6 @@ msgid "Reference &amp; User Guides"
 msgstr "Referenz &amp; Benutzeranleitungen"
 
 #: ../gateways/authnet/authnet_help.php:67
-#, fuzzy
 msgid "Current button image:"
 msgstr "Aktuelles BUtton Image:"
 
@@ -746,31 +722,26 @@ msgid "The URL of the image displayed as your logo in the header of the Authoriz
 msgstr "Die URL des Logos, dass im Kopf der Authorize.net Checkout-Seiten dargestellt wird."
 
 #: ../gateways/authnet/authnet_help.php:86
-#, fuzzy
 msgid "Current logo image:"
 msgstr "Aktuelles BUtton Image:"
 
 #: ../gateways/authnet/authnet_help.php:100
-#, fuzzy
 msgid "Authorize.net Development Server"
 msgstr "Authorize.net Test Modus"
 
 #: ../gateways/authnet/authnet_help.php:103
 msgid "Authorize.net maintains a development environment for testing your gateway. You may use this to test your setup without having a live account. You will need to sign up for a free account on the development server here: "
-msgstr ""
+msgstr "Authorize.net verfügt über eine Entwicklungsumgebung um ihre Schnittstelle zu testen. Sie können diese nutzen, um ihre Einstellungen zu testen, ohne über ein aktives Konto zu verfügen. Sie müssen sich jedoch hier für ein freies Konto auf dem Entwicklungsserver anmelden:"
 
 #: ../gateways/authnet/authnet_help.php:105
-#, fuzzy
 msgid "Transactions that are submitted to the development server are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers."
 msgstr "Der Testmodus erlaubt Ihnen Testtransaktionen zum Zahlungsgateway zu schicken. Transaktionen die im Testmodus geschickt werden, werden NICHT durchgeführt. Das Resultat einer Transaktion hängt von der Kartennummer und dem Rechnungsbetrag ab. Wenn eine Transaktion angenommen werden soll, verwenden Sie ein der folgenden Kartennummern."
 
 #: ../gateways/authnet/authnet_help.php:133
-#, fuzzy
 msgid "Authorize.net Test Transactions"
 msgstr "Authorize.net Transaction Key"
 
 #: ../gateways/authnet/authnet_help.php:136
-#, fuzzy
 msgid "Transactions that are submitted as test transactions are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers."
 msgstr "Der Testmodus erlaubt Ihnen Testtransaktionen zum Zahlungsgateway zu schicken. Transaktionen die im Testmodus geschickt werden, werden NICHT durchgeführt. Das Resultat einer Transaktion hängt von der Kartennummer und dem Rechnungsbetrag ab. Wenn eine Transaktion angenommen werden soll, verwenden Sie ein der folgenden Kartennummern."
 
@@ -791,12 +762,10 @@ msgid "Total Registrants:"
 msgstr "Total Registrierte:"
 
 #: ../gateways/authnet/settings.php:20
-#, fuzzy
 msgid "Authorize.net SIM Settings Updated!"
 msgstr "Authorize.net SIM Einstellungen"
 
 #: ../gateways/authnet/settings.php:22
-#, fuzzy
 msgid "Authorize.net SIM Settings were not saved! "
 msgstr "Authorize.net AIM Einstellungen gespeichert."
 
@@ -805,22 +774,18 @@ msgid "Authorize.net SIM Settings"
 msgstr "Authorize.net SIM Einstellungen"
 
 #: ../gateways/authnet/settings.php:69
-#, fuzzy
 msgid "Authorize.net SIM Gateway Activated"
 msgstr "Authorize.net AIM Gateway ist installiert."
 
 #: ../gateways/authnet/settings.php:71
-#, fuzzy
 msgid "Unable to Activate Authorize.net SIM Gateway"
 msgstr "Authorize.net SIM Gateway aktivieren?"
 
 #: ../gateways/authnet/settings.php:78
-#, fuzzy
 msgid "Authorize.net SIM Gateway Payments De-activated"
 msgstr "Authorize.net AIM Gateway ist installiert."
 
 #: ../gateways/authnet/settings.php:80
-#, fuzzy
 msgid "Unable to De-activate Authorize.net SIM Gateway"
 msgstr "Authorize.net SIM Gateway deaktivieren?"
 
@@ -838,26 +803,23 @@ msgstr "Authorize.net Login I.D."
 
 #: ../gateways/authnet/settings.php:152
 msgid "URL to the payment button."
-msgstr ""
+msgstr "URL zum Bezahlen-Knopf"
 
 #: ../gateways/authnet/settings.php:157
-#, fuzzy
 msgid "Image URL: "
 msgstr "Image URL:"
 
 #: ../gateways/authnet/settings.php:164
-#, fuzzy
 msgid "Used for your business/personal logo on the Authorize.net SIM payment page."
 msgstr "(benötigt für Ihr Geschäfts- oder persönliches Logo auf der Authorize.net SIM Zahlungsseite)"
 
 #: ../gateways/authnet/settings.php:172
-#, fuzzy
 msgid "Relay Response URL: "
 msgstr "Relay Response URL:"
 
 #: ../gateways/authnet/settings.php:177
 msgid "URL to the transaction page."
-msgstr ""
+msgstr "URL zur Transaktionsseite"
 
 #: ../gateways/authnet/settings.php:196
 msgid "By-pass the payment confirmation page? "
@@ -880,12 +842,10 @@ msgid "Financial Institution:"
 msgstr "Finanzinstitung:"
 
 #: ../gateways/bank/settings.php:21
-#, fuzzy
 msgid "Electronic Funds Transfer Settings Updated!"
 msgstr "Einstellungen für elektronische Geldmittel Transfer"
 
 #: ../gateways/bank/settings.php:23
-#, fuzzy
 msgid "Electronic Funds Transfer Settings were not saved! "
 msgstr "Einstellungen für elektronische Geldmittel Transfer gespeichert."
 
@@ -902,22 +862,18 @@ msgid "Electronic Funds Transfer Settings"
 msgstr "Einstellungen für elektronische Geldmittel Transfer"
 
 #: ../gateways/bank/settings.php:63
-#, fuzzy
 msgid "Electronic Funds Transfers Activated"
 msgstr "Elektronische Geldmittel Transfer"
 
 #: ../gateways/bank/settings.php:65
-#, fuzzy
 msgid "Unable to Activate Electronic Funds Transfers"
 msgstr "Elektronische Geldmittel Transfer aktivieren?"
 
 #: ../gateways/bank/settings.php:71
-#, fuzzy
 msgid "Electronic Funds Transfers Payments De-activated"
 msgstr "Einstellungen für elektronische Geldmittel Transfer gespeichert."
 
 #: ../gateways/bank/settings.php:73
-#, fuzzy
 msgid "Unable to De-activate Electronic Funds Transfers"
 msgstr "Elektronische Geldmittel Transfer deaktivieren?"
 
@@ -930,32 +886,26 @@ msgid "Deactivate Electronic Funds Transfers?"
 msgstr "Elektronische Geldmittel Transfer deaktivieren?"
 
 #: ../gateways/bank/settings.php:112
-#, fuzzy
 msgid "Page Title"
 msgstr "Titel"
 
 #: ../gateways/bank/settings.php:118
-#, fuzzy
 msgid "Payment Instructions"
 msgstr "Zahlungsanweisungen:"
 
 #: ../gateways/bank/settings.php:124
-#, fuzzy
 msgid "Name on Account"
 msgstr "Name für Konto:"
 
 #: ../gateways/bank/settings.php:130
-#, fuzzy
 msgid "Bank Account #"
 msgstr "Bankkonto #:"
 
 #: ../gateways/bank/settings.php:136
-#, fuzzy
 msgid "Bank Name"
 msgstr "Bankname:"
 
 #: ../gateways/bank/settings.php:142
-#, fuzzy
 msgid "Bank Address"
 msgstr "Bankadresse:"
 
@@ -972,12 +922,10 @@ msgid "Payment Address: "
 msgstr "Zahlungsadresse:"
 
 #: ../gateways/check/settings.php:18
-#, fuzzy
 msgid "Check Payment Settings Updated!"
 msgstr "2checkout Einstellungen gespeichert."
 
 #: ../gateways/check/settings.php:20
-#, fuzzy
 msgid "Check Payment Settings were not saved! "
 msgstr "eway Einstellungen gesichert."
 
@@ -994,22 +942,18 @@ msgid "Check/Money Order Payment Settings"
 msgstr "Check/Barzahlung-Bestellungen Einstellungen"
 
 #: ../gateways/check/settings.php:64
-#, fuzzy
 msgid "Check Payments Activated"
 msgstr "2checkout Einstellungen gespeichert."
 
 #: ../gateways/check/settings.php:66
-#, fuzzy
 msgid "Unable to Activate Check Payments"
 msgstr "2checkout IPN aktivieren?"
 
 #: ../gateways/check/settings.php:73
-#, fuzzy
 msgid "Check Payments De-activated"
 msgstr "2checkout Einstellungen gespeichert."
 
 #: ../gateways/check/settings.php:75
-#, fuzzy
 msgid "Unable to De-activate Check Payments"
 msgstr "2checkout IPN deaktivieren?"
 
@@ -1046,37 +990,30 @@ msgid "Registrant Email:"
 msgstr "Email des Registrierten:"
 
 #: ../gateways/eway/settings.php:21
-#, fuzzy
 msgid "Eway Settings Updated!"
 msgstr " Event Details aktualisiert für"
 
 #: ../gateways/eway/settings.php:23
-#, fuzzy
 msgid "Eway Settings were not saved! "
 msgstr "Einstellungen für elektronische Geldmittel Transfer gespeichert."
 
 #: ../gateways/eway/settings.php:60
-#, fuzzy
 msgid "Eway Settings"
 msgstr "eway Einstellungen"
 
 #: ../gateways/eway/settings.php:68
-#, fuzzy
 msgid "Eway Activated"
 msgstr "PayPal Pro Einstellungen gespeichert."
 
 #: ../gateways/eway/settings.php:70
-#, fuzzy
 msgid "Unable to Activate Eway"
 msgstr "Paypal IPN aktivieren?"
 
 #: ../gateways/eway/settings.php:77
-#, fuzzy
 msgid "Eway Payments De-activated"
 msgstr "Zahlung abgelehnt"
 
 #: ../gateways/eway/settings.php:79
-#, fuzzy
 msgid "Unable to De-activate Eway"
 msgstr "Paypal IPN deaktivieren?"
 
@@ -1105,7 +1042,6 @@ msgid "(used for your business/personal logo on the eway page)"
 msgstr "(wird für Ihr Geschäfts- oder persönliches Logo auf der eway Seite verwendet)"
 
 #: ../gateways/eway/settings.php:153
-#, fuzzy
 msgid "Select the currency for your country: "
 msgstr "Wählen Sie die Währung für Ihr Land:"
 
@@ -1126,7 +1062,6 @@ msgid "New Zealand"
 msgstr "Neuseeland"
 
 #: ../gateways/eway/settings.php:198
-#, fuzzy
 msgid "Use the debugging feature and the eway Sandbox?"
 msgstr "Debugging und worldpay Sandbox verwenden?"
 
@@ -1163,7 +1098,6 @@ msgid "eway Currency"
 msgstr "eway Währung"
 
 #: ../gateways/eway/settings.php:231
-#, fuzzy
 msgid "eway uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is British Pounds (GBP). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that eway (currently) supports."
 msgstr "eway verwendet 3-Zeichen ISO-4217 Codes um Währungen in Feldern und Variabeln zu definieren. </p><p> Der Standardwährungscode ist der US Dollar (USD). Wenn Sie Zahlungen in anderen Währungen akzeptieren möchten, wählen Sie sie bitte hier aus. Das Auswahl zeigt Ihnen alle von eway unterstützten Währungen an."
 
@@ -1184,12 +1118,10 @@ msgid "CVV Code"
 msgstr "CVV Code"
 
 #: ../gateways/firstdata/settings.php:16
-#, fuzzy
 msgid "Firstdata Settings Updated!"
 msgstr "First Data Einstellungen gespeichert."
 
 #: ../gateways/firstdata/settings.php:18
-#, fuzzy
 msgid "Firstdata Settings were not saved! "
 msgstr "First Data Einstellungen gespeichert."
 
@@ -1198,22 +1130,18 @@ msgid "First Data Settings"
 msgstr "First Data Einstellungen"
 
 #: ../gateways/firstdata/settings.php:52
-#, fuzzy
 msgid "First Data Activated"
 msgstr "First Data Storename"
 
 #: ../gateways/firstdata/settings.php:54
-#, fuzzy
 msgid "Unable to Activate First Data"
 msgstr "First Data aktivieren?"
 
 #: ../gateways/firstdata/settings.php:61
-#, fuzzy
 msgid "First Data De-activated"
 msgstr "First Data Einstellungen gespeichert."
 
 #: ../gateways/firstdata/settings.php:63
-#, fuzzy
 msgid "Unable to De-activate First Data"
 msgstr "First Data deaktivieren?"
 
@@ -1234,7 +1162,6 @@ msgid "Accepted Credit Cards"
 msgstr "Akzeptierte Kreditkarten"
 
 #: ../gateways/firstdata/settings.php:125
-#, fuzzy
 msgid "Use the debugging feature and the FirstData Sandbox? "
 msgstr "Debugging und Sandbox verwenden"
 
@@ -1262,12 +1189,10 @@ msgid "The First Data Sandbox is a testing environment that is a duplicate of th
 msgstr "Die First Data Sandbox ist eine Testumgebung, ein Duplikat der Live First Data Seite ohne echtes Geld. Die Sandbox erlaubt Ihnen die komplette Integration zu testen, bevor Sie Transaktionen zur Live First Data-Umgebung schicken. Testkonten erstellen und verwalten, Emails und API Daten der Testkonten lesen."
 
 #: ../gateways/firstdata_connect_2/settings.php:19
-#, fuzzy
 msgid "Firstdata Connect 2.0 Settings Updated!"
 msgstr "First Data Connect 2 Einstellungen"
 
 #: ../gateways/firstdata_connect_2/settings.php:21
-#, fuzzy
 msgid "Firstdata Connect 2.0 Settings were not saved! "
 msgstr "First Data connect 2 Einstellungen gespeichert."
 
@@ -1276,22 +1201,18 @@ msgid "First Data Connect 2 Settings"
 msgstr "First Data Connect 2 Einstellungen"
 
 #: ../gateways/firstdata_connect_2/settings.php:66
-#, fuzzy
 msgid "First Data Connect 2 Activated"
 msgstr "First Data Connect 2 Einstellungen"
 
 #: ../gateways/firstdata_connect_2/settings.php:68
-#, fuzzy
 msgid "Unable to Activate First Data Connect 2"
 msgstr "First Data Connect 2 aktivieren?"
 
 #: ../gateways/firstdata_connect_2/settings.php:75
-#, fuzzy
 msgid "First Data Connect 2 De-activated"
 msgstr "First Data Connect 2 Einstellungen"
 
 #: ../gateways/firstdata_connect_2/settings.php:77
-#, fuzzy
 msgid "Unable to De-activate First Data Connect 2"
 msgstr "First Data Connect 2 deaktivieren?"
 
@@ -1352,12 +1273,10 @@ msgid "Please use your browser's back button and select a bank."
 msgstr "Bitte verwenden Sie die Browser-Zurück Taste und wählen Sie eine Bank."
 
 #: ../gateways/ideal/settings.php:15
-#, fuzzy
 msgid "Ideal Mollie Settings Updated!"
 msgstr "eway Einstellungen gesichert."
 
 #: ../gateways/ideal/settings.php:17
-#, fuzzy
 msgid "Ideal Mollie Settings were not saved! "
 msgstr "eway Einstellungen gesichert."
 
@@ -1366,22 +1285,18 @@ msgid "iDEAL (Mollie) Settings"
 msgstr "iDEAL (Mollie) Einstellungen"
 
 #: ../gateways/ideal/settings.php:51
-#, fuzzy
 msgid "Ideal Mollie Activated"
 msgstr "eway Einstellungen gesichert."
 
 #: ../gateways/ideal/settings.php:53
-#, fuzzy
 msgid "Unable to Activate Ideal Mollie"
 msgstr "Paypal IPN aktivieren?"
 
 #: ../gateways/ideal/settings.php:60
-#, fuzzy
 msgid "Ideal Mollie Payments De-activated"
 msgstr "Rechnungseinstellungen gesichert."
 
 #: ../gateways/ideal/settings.php:62
-#, fuzzy
 msgid "Unable to De-activate Ideal Mollie"
 msgstr "Paypal IPN deaktivieren?"
 
@@ -1418,12 +1333,10 @@ msgid "Download PDF Invoice"
 msgstr "PDF Rechnung herunterladen"
 
 #: ../gateways/invoice/settings.php:23
-#, fuzzy
 msgid "Invoice Payment Settings Updated!"
 msgstr "Rechnungseinstellungen gesichert."
 
 #: ../gateways/invoice/settings.php:25
-#, fuzzy
 msgid "Invoice Payment Settings were not saved! "
 msgstr "Rechnungseinstellungen gesichert."
 
@@ -1444,22 +1357,18 @@ msgid "Invoice Payment Settings"
 msgstr "Rechnungseinstellungen"
 
 #: ../gateways/invoice/settings.php:76
-#, fuzzy
 msgid "Invoice Payments Activated"
 msgstr "Rechnungen"
 
 #: ../gateways/invoice/settings.php:78
-#, fuzzy
 msgid "Unable to Activate Invoice Payments"
 msgstr "Rechnungen aktivieren?"
 
 #: ../gateways/invoice/settings.php:85
-#, fuzzy
 msgid "Invoice Payments De-activated"
 msgstr "Rechnungseinstellungen gesichert."
 
 #: ../gateways/invoice/settings.php:87
-#, fuzzy
 msgid "Unable to De-activate Invoice Payments"
 msgstr "Rechnungen deaktivieren?"
 
@@ -1472,7 +1381,6 @@ msgid "Deactivate Invoice Payments?"
 msgstr "Rechnungen deaktivieren?"
 
 #: ../gateways/invoice/settings.php:127
-#, fuzzy
 msgid "On-page Settings"
 msgstr "Seiteneinstellungen"
 
@@ -1484,72 +1392,61 @@ msgstr "Als Option auf der  Zahlunsseite zeigen?"
 msgid ""
 "Will display invoices as a payemnt option <br />\n"
 "on your payemnt page. (Default: Yes)"
-msgstr ""
+msgstr "Rechnung als Bezahloption auf Bezahlseite anzeigen. (Standard: Ja)"
 
 #: ../gateways/invoice/settings.php:140
-#, fuzzy
 msgid "Invoice Title"
 msgstr " Rechnung geschickt"
 
 #: ../gateways/invoice/settings.php:146
-#, fuzzy
 msgid "Invoice Instructions"
 msgstr "Rechnungsanweisungen:"
 
 #: ../gateways/invoice/settings.php:152
-#, fuzzy
 msgid "Payable To"
 msgstr "Zahlbar an:"
 
 #: ../gateways/invoice/settings.php:158
-#, fuzzy
 msgid "Address to Send Payment"
 msgstr "Zahlungsempfangsadresse:"
 
 #: ../gateways/invoice/settings.php:183
-#, fuzzy
 msgid "Invoice Display Settings"
 msgstr "Rechnungseinstellungen"
 
 #: ../gateways/invoice/settings.php:189
-#, fuzzy
 msgid "Select Stylesheet"
 msgstr "Basis-Stylesheet auswählen"
 
 #: ../gateways/invoice/settings.php:194
 msgid "Default CSS - Simple"
-msgstr ""
+msgstr "Standard CSS - Einfach"
 
 #: ../gateways/invoice/settings.php:200
 msgid ""
 "Load a custom/pre-made style sheet <br />\n"
 "to change the look of your invoices."
-msgstr ""
+msgstr "Einen individuellen / vorgefertigten style sheet lagen um das Aussehen der Rechnung zu verändern."
 
 #: ../gateways/invoice/settings.php:205
-#, fuzzy
 msgid "Instructions"
 msgstr "Zahlungsanweisungen:"
 
 #: ../gateways/invoice/settings.php:211
-#, fuzzy
 msgid "Logo Image"
 msgstr " Bild:"
 
 #: ../gateways/invoice/settings.php:219
-#, fuzzy
 msgid "(logo for the top left of the invoice)"
 msgstr "Logo URL (logo oben links auf der Rechnung):"
 
 #: ../gateways/invoice/settings.php:222
 #: ../gateways/invoice/settings.php:254
-#, fuzzy
 msgid "Remove this image"
-msgstr " diesen Preis entfernen"
+msgstr " dieses Bild entfernen"
 
 #: ../gateways/invoice/settings.php:223
 #: ../gateways/invoice/settings.php:254
-#, fuzzy
 msgid "Remove Image"
 msgstr "Meta entfernen"
 
@@ -1566,35 +1463,30 @@ msgid "Bill To: "
 msgstr "Rechnung geht an:"
 
 #: ../gateways/invoice/templates/index.php:15
-#, fuzzy
 msgid "Invoice for"
 msgstr "Rechnung"
 
 #: ../gateways/invoice/templates/index.php:85
 msgid "Quantity"
-msgstr ""
+msgstr "Menge"
 
 #: ../gateways/invoice/templates/index.php:86
-#, fuzzy
 msgid "Event & Attendee"
 msgstr "Teilnehmer Event"
 
 #: ../gateways/invoice/templates/index.php:87
-#, fuzzy
 msgid "Unit Price"
 msgstr " Preis"
 
 #: ../gateways/invoice/templates/index.php:88
 msgid "Net Subtotal"
-msgstr ""
+msgstr "Gesamt"
 
 #: ../gateways/invoice/templates/index.php:105
-#, fuzzy
 msgid "Net Total"
 msgstr "Total:"
 
 #: ../gateways/invoice/templates/index.php:126
-#, fuzzy
 msgid "Other Information"
 msgstr "Gruppeninformationen"
 
@@ -1603,17 +1495,14 @@ msgid "Payment Details"
 msgstr "Zahlungsinformationen"
 
 #: ../gateways/invoice/templates/index.php:138
-#, fuzzy
 msgid "Payment Reference:"
 msgstr "Zahlung abgelehnt"
 
 #: ../gateways/mwarrior/settings.php:20
-#, fuzzy
 msgid "Merchant Warrior Settings Updated!"
 msgstr "Merchant Warrior Einstellungen"
 
 #: ../gateways/mwarrior/settings.php:22
-#, fuzzy
 msgid "Merchant Warrior Settings were not saved! "
 msgstr "Merchant Warrior Einstellungen"
 
@@ -1622,22 +1511,18 @@ msgid "Merchant Warrior Settings"
 msgstr "Merchant Warrior Einstellungen"
 
 #: ../gateways/mwarrior/settings.php:74
-#, fuzzy
 msgid "Merchant Warrior Activated"
 msgstr "Merchant Warrior Einstellungen"
 
 #: ../gateways/mwarrior/settings.php:76
-#, fuzzy
 msgid "Unable to Activate Merchant Warrior"
 msgstr "Merchant Warrior IPN aktivieren?"
 
 #: ../gateways/mwarrior/settings.php:83
-#, fuzzy
 msgid "Merchant Warrior Payments De-activated"
 msgstr "Zahlung abgelehnt"
 
 #: ../gateways/mwarrior/settings.php:85
-#, fuzzy
 msgid "Unable to De-activate Merchant Warrior"
 msgstr "Merchant Warrior IPN de§aktivieren?"
 
@@ -1662,7 +1547,6 @@ msgid "MW API Passphrase"
 msgstr "MW API Passphrase"
 
 #: ../gateways/mwarrior/settings.php:180
-#, fuzzy
 msgid "Image URL (logo for payment page): "
 msgstr "Image URL (Logo für Zahlungsseite):"
 
@@ -1671,7 +1555,6 @@ msgid "(used for your business/personal logo on the Merchant Warrior page)"
 msgstr "(wird für Ihr Business- persönliches Logo auf der Merchant Warrior Seite verwendet)"
 
 #: ../gateways/mwarrior/settings.php:202
-#, fuzzy
 msgid "Use the Test Mode for Merchant Warrior? "
 msgstr "Verwendet den Merchant Warrior Testmodus"
 
@@ -1704,12 +1587,10 @@ msgid "Merchant Warrior uses 3-character ISO-4217 codes for specifying currencie
 msgstr "Merchant Warrior verwendet 3-Zeichen ISO-4217 Codes um Währungen in Feldern und Variabeln zu definieren. </p><p> Der Standardwährungscode ist der Australische Dollar (AUD). Wenn Sie Zahlungen in anderen Währungen akzeptieren möchten, wählen Sie sie bitte hier aus. Das Auswahl zeigt Ihnen alle von Merchant Warrior unterstützten Währungen an."
 
 #: ../gateways/nab/settings.php:16
-#, fuzzy
 msgid "NAB Transact Direct Post Settings Updated!"
 msgstr "NAB Transact Direct Post Einstellungen"
 
 #: ../gateways/nab/settings.php:18
-#, fuzzy
 msgid "NAB Transact Direct Post Settings were not saved! "
 msgstr "Merchant WarriorEinstellungen gespeichert."
 
@@ -1718,22 +1599,18 @@ msgid "NAB Transact Direct Post Settings"
 msgstr "NAB Transact Direct Post Einstellungen"
 
 #: ../gateways/nab/settings.php:53
-#, fuzzy
 msgid "NAB Transact Direct Post Activated"
 msgstr "Merchant WarriorEinstellungen gespeichert."
 
 #: ../gateways/nab/settings.php:55
-#, fuzzy
 msgid "Unable to Activate NAB Transact Direct Post"
 msgstr "NAB Transact Direct Post aktivieren?"
 
 #: ../gateways/nab/settings.php:62
-#, fuzzy
 msgid "NAB Transact Direct Post De-activated"
 msgstr "Merchant WarriorEinstellungen gespeichert."
 
 #: ../gateways/nab/settings.php:64
-#, fuzzy
 msgid "Unable to De-activate NAB Transact Direct Post"
 msgstr "NAB Transact Direct Post deaktivieren?"
 
@@ -1770,46 +1647,38 @@ msgid "Paypal Debug Mode Is Turned On"
 msgstr "Paypal Debug Modus ist eingeschaltet"
 
 #: ../gateways/paypal/settings.php:21
-#, fuzzy
 msgid "PayPal Payment Settings Updated!"
 msgstr "PayPal Pro Einstellungen gespeichert."
 
 #: ../gateways/paypal/settings.php:23
-#, fuzzy
 msgid "PayPal Payment Settings were not saved! "
 msgstr "PayPal Pro Einstellungen gespeichert."
 
 #: ../gateways/paypal/settings.php:62
-#, fuzzy
 msgid "PayPal Standard Settings"
 msgstr "PayPal Pro Einstellungen"
 
 #: ../gateways/paypal/settings.php:70
 msgid "PayPal Payments Activated"
-msgstr ""
+msgstr "PayPal Bezahlungen aktiviert"
 
 #: ../gateways/paypal/settings.php:72
-#, fuzzy
 msgid "Unable to Activate PayPal Payments"
 msgstr "Paypal IPN aktivieren?"
 
 #: ../gateways/paypal/settings.php:78
-#, fuzzy
 msgid "PayPal Payments De-activated"
 msgstr "Zahlung abgelehnt"
 
 #: ../gateways/paypal/settings.php:80
-#, fuzzy
 msgid "Unable to De-activate PayPal Payments"
 msgstr "Paypal IPN deaktivieren?"
 
 #: ../gateways/paypal/settings.php:88
-#, fuzzy
 msgid "Activate PayPal Standard?"
 msgstr "Paypal IPN aktivieren?"
 
 #: ../gateways/paypal/settings.php:92
-#, fuzzy
 msgid "Deactivate PayPal Standard?"
 msgstr "Paypal IPN deaktivieren?"
 
@@ -1818,7 +1687,6 @@ msgid "Paypal I.D."
 msgstr "Paypal I.D."
 
 #: ../gateways/paypal/settings.php:131
-#, fuzzy
 msgid "Typically payment@yourdomain.com"
 msgstr "(In der Regel payment@yourdomain.com)"
 
@@ -1827,22 +1695,18 @@ msgid "Swiss Franc"
 msgstr "Schweizer Franken"
 
 #: ../gateways/paypal/settings.php:225
-#, fuzzy
 msgid "Image URL"
 msgstr "Image URL:"
 
 #: ../gateways/paypal/settings.php:231
-#, fuzzy
 msgid "Used for your business/personal logo on the PayPal page"
 msgstr "(Wird für das Business oder persönliche Logo auf der PayPal Seite verwendet)"
 
 #: ../gateways/paypal/settings.php:236
-#, fuzzy
 msgid "By-pass the payment confirmation page"
 msgstr "Die Zahlungsbestätigungsseite überspringen?"
 
 #: ../gateways/paypal/settings.php:243
-#, fuzzy
 msgid "Use the debugging feature and the PayPal Sandbox"
 msgstr "Debugging und Sandbox verwenden"
 
@@ -1887,7 +1751,6 @@ msgid "The PayPal Sandbox is a testing environment that is a duplicate of the li
 msgstr "Die PayPal Sandbox ist eine Testumgebung, ein Duplikat der live PayPal Seite, ausser das keine echten Geldbeträge eingesetzt werden. Die Sandbox erlaubt das ganze System und die Integration zu testen bevor Transaktionen and die Liveumgebung von PayPal geschickt werden. Testkontos erstellen und verwalten, sowie Emails und API Werte für diese Kontos einsehen."
 
 #: ../gateways/paypal/settings.php:302
-#, fuzzy
 msgid "Helpful Links:"
 msgstr " nützliche Plugin links"
 
@@ -1928,12 +1791,10 @@ msgid "PayPal Sandbox Mode"
 msgstr "PayPal Sandox Modus"
 
 #: ../gateways/paypal_pro/settings.php:21
-#, fuzzy
 msgid "PayPal Pro Payment Settings Updated!"
 msgstr "PayPal Pro Einstellungen gespeichert."
 
 #: ../gateways/paypal_pro/settings.php:23
-#, fuzzy
 msgid "PayPal Pro Payment Settings were not saved! "
 msgstr "PayPal Pro Einstellungen gespeichert."
 
@@ -1942,56 +1803,46 @@ msgid "PayPal Pro Settings"
 msgstr "PayPal Pro Einstellungen"
 
 #: ../gateways/paypal_pro/settings.php:66
-#, fuzzy
 msgid "PayPal Pro Gateway Activated"
 msgstr "PayPal Pro Einstellungen gespeichert."
 
 #: ../gateways/paypal_pro/settings.php:68
-#, fuzzy
 msgid "Unable to Activate PayPal Pro Gateway"
 msgstr "Alipay Gateway aktivieren?"
 
 #: ../gateways/paypal_pro/settings.php:75
 msgid "PayPal Pro Gateway Payments De-activated"
-msgstr ""
+msgstr "PayPal Pro Schnittstelle Bezahlungen deaktivert"
 
 #: ../gateways/paypal_pro/settings.php:77
-#, fuzzy
 msgid "Unable to De-activate PayPal Pro Gateway"
 msgstr "Alipay Gateway deaktivieren?"
 
 #: ../gateways/paypal_pro/settings.php:86
-#, fuzzy
 msgid "Activate PayPal Pro Gateway?"
 msgstr "Alipay Gateway aktivieren?"
 
 #: ../gateways/paypal_pro/settings.php:90
-#, fuzzy
 msgid "Deactivate PayPal Pro Gateway?"
 msgstr "Alipay Gateway deaktivieren?"
 
 #: ../gateways/paypal_pro/settings.php:122
-#, fuzzy
 msgid "Paypal PRO Email"
 msgstr "Paypal PRO email"
 
 #: ../gateways/paypal_pro/settings.php:128
-#, fuzzy
 msgid "Paypal API Username"
 msgstr "PayPal API Benutzernamen"
 
 #: ../gateways/paypal_pro/settings.php:134
-#, fuzzy
 msgid "Paypal API Password"
 msgstr "PayPal API Passwort"
 
 #: ../gateways/paypal_pro/settings.php:140
-#, fuzzy
 msgid "Paypal API Signature"
 msgstr "PayPal API Signature"
 
 #: ../gateways/paypal_pro/settings.php:247
-#, fuzzy
 msgid "Make sure you enter the sandbox credentials above."
 msgstr "(Stellen Sie sicher das Sie oben die Sandbox Werte eingegeben haben.)"
 
@@ -2004,22 +1855,18 @@ msgid "Paytrace Settings"
 msgstr "Paytrace Einstellungen"
 
 #: ../gateways/paytrace/settings.php:52
-#, fuzzy
 msgid "Paytrace Activated"
 msgstr "PayPal Pro Einstellungen gespeichert."
 
 #: ../gateways/paytrace/settings.php:54
-#, fuzzy
 msgid "Unable to Activate Paytrace"
 msgstr "Paypal IPN aktivieren?"
 
 #: ../gateways/paytrace/settings.php:61
-#, fuzzy
 msgid "Paytrace De-activated"
 msgstr "Zahlung abgelehnt"
 
 #: ../gateways/paytrace/settings.php:63
-#, fuzzy
 msgid "Unable to De-activate Paytrace"
 msgstr "Paypal IPN deaktivieren?"
 
@@ -2044,37 +1891,30 @@ msgid "Update Paytrace Settings"
 msgstr "Paytrace Einstellungen aktualisieren"
 
 #: ../gateways/quickpay/settings.php:18
-#, fuzzy
 msgid "Quickpay Settings Updated!"
 msgstr "quickpay Einstellungen gespeichert."
 
 #: ../gateways/quickpay/settings.php:20
-#, fuzzy
 msgid "Quickpay Settings were not saved! "
 msgstr "quickpay Einstellungen gespeichert."
 
 #: ../gateways/quickpay/settings.php:50
-#, fuzzy
 msgid "Quickpay Settings"
 msgstr "quickpay Einstellungen"
 
 #: ../gateways/quickpay/settings.php:58
-#, fuzzy
 msgid "Quickpay Activated"
-msgstr "Rechnungen"
+msgstr "Quickpay aktiviert"
 
 #: ../gateways/quickpay/settings.php:60
-#, fuzzy
 msgid "Unable to Activate Quickpay"
-msgstr "Rechnungen aktivieren?"
+msgstr "Quickpay aktivieren nicht möglich"
 
 #: ../gateways/quickpay/settings.php:67
-#, fuzzy
 msgid "Quickpay De-activated"
 msgstr "Rechnungseinstellungen gesichert."
 
 #: ../gateways/quickpay/settings.php:69
-#, fuzzy
 msgid "Unable to De-activate Quickpay"
 msgstr "Rechnungen deaktivieren?"
 
@@ -2103,86 +1943,71 @@ msgid "Update quickpay Settings"
 msgstr "quickpay Einstellungen aktualisieren"
 
 #: ../gateways/realauth/settings.php:21
-#, fuzzy
 msgid "realauth Payment Settings Updated!"
 msgstr "PayPal Pro Einstellungen gespeichert."
 
 #: ../gateways/realauth/settings.php:23
-#, fuzzy
 msgid "realauth Payment Settings were not saved! "
 msgstr "Einstellungen für elektronische Geldmittel Transfer gespeichert."
 
 #: ../gateways/realauth/settings.php:55
-#, fuzzy
 msgid "realauth Settings"
 msgstr "Templateeinstellungen"
 
 #: ../gateways/realauth/settings.php:63
-#, fuzzy
 msgid "Realauth Payments Activated"
 msgstr "2checkout Einstellungen gespeichert."
 
 #: ../gateways/realauth/settings.php:65
-#, fuzzy
 msgid "Unable to Activate Realauth Payments"
 msgstr "Paypal IPN aktivieren?"
 
 #: ../gateways/realauth/settings.php:72
-#, fuzzy
 msgid "Realauth Payments De-activated"
 msgstr "Zahlung abgelehnt"
 
 #: ../gateways/realauth/settings.php:74
-#, fuzzy
 msgid "Unable to De-activate Realauth Payments"
 msgstr "Paypal IPN deaktivieren?"
 
 #: ../gateways/realauth/settings.php:82
-#, fuzzy
 msgid "Activate realauth Payments?"
 msgstr "2checkout IPN aktivieren?"
 
 #: ../gateways/realauth/settings.php:86
-#, fuzzy
 msgid "Deactivate realauth Payments?"
 msgstr "2checkout IPN deaktivieren?"
 
 #: ../gateways/realauth/settings.php:118
-#, fuzzy
 msgid "Merchant I.D."
 msgstr "NAB Merchant ID"
 
 #: ../gateways/realauth/settings.php:124
-#, fuzzy
 msgid "Shared Secret"
 msgstr "First Data Shared Secret"
 
 #: ../gateways/realauth/settings.php:212
-#, fuzzy
 msgid "Auto settle transactions"
 msgstr "Authorize.net Transaction Key"
 
 #: ../gateways/realauth/settings.php:238
-#, fuzzy
 msgid "Update realauth Settings"
 msgstr "eway Einstellungen aktualisieren"
 
 #: ../gateways/realauth/settings.php:244
 msgid "Realauth auto settle"
-msgstr ""
+msgstr "Realauth auto settle"
 
 #: ../gateways/realauth/settings.php:247
 #, php-format
 msgid "Used to signify whether or not you wish the transaction to be captured in the next batch or not. If set to “Y” and assuming the transaction is authorised then it will automatically be settled in the next batch. If set to “N” then the merchant must use the realcontrol application to manually settle the transaction. This option can be used if a merchant wishes to delay the payment until after the goods have been shipped. Transactions can be settled for up to 115% of the original amount."
-msgstr ""
+msgstr "Wird benötigt um zu kennzeichnen ob sie die Transaktion im nächsten Stapel abfangen möchten. Wenn auf \"Ja\" gestellt und gesetzt dem Fall die Transaktion ist authorisiert, wird diese automatisch mit dem nächsten Stapel verarbeitet. Wenn auf \"Nein\" gesetzt, dann muss der Händler die Realcontrol-Anwendung benutzen um die Transaktion von Hand zu verarbeiten. Diese Option kann dazu verwendet werden, wenn ein Händler die Bezahlung verzögern will, bis die Waren versendet wurden. Transaktion können bis zu 115% des Ursprungspreises betragen."
 
 #: ../gateways/realauth/settings.php:252
-#, fuzzy
 msgid "Realauth Currency"
 msgstr "eway Währung"
 
 #: ../gateways/realauth/settings.php:255
-#, fuzzy
 msgid "Realauth uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that Realauth (currently) supports."
 msgstr "eway verwendet 3-Zeichen ISO-4217 Codes um Währungen in Feldern und Variabeln zu definieren. </p><p> Der Standardwährungscode ist der US Dollar (USD). Wenn Sie Zahlungen in anderen Währungen akzeptieren möchten, wählen Sie sie bitte hier aus. Das Auswahl zeigt Ihnen alle von eway unterstützten Währungen an."
 
@@ -2191,7 +2016,6 @@ msgid "Stripe settings saved."
 msgstr "Stripe Einstellungen gespeichert."
 
 #: ../gateways/stripe/settings.php:22
-#, fuzzy
 msgid "Stripe Settings"
 msgstr "Stripe Einstellungen aktualisieren"
 
@@ -2224,74 +2048,63 @@ msgid "Update Stripe Settings"
 msgstr "Stripe Einstellungen aktualisieren"
 
 #: ../gateways/stripe/settings.php:112
-#, fuzzy
 msgid "Stripe Currency Symbol"
 msgstr "Stripe Währungssymbol (USD):"
 
 #: ../gateways/stripe/settings.php:115
-#, fuzzy
 msgid "Stripe uses 3-character ISO-4217 codes for specifying currencies in fields and variables.  If you are taking purchases in US Dollars, enter <code>usd</code> here.  Stripe currently only takes payment in USD, but can accept payments from any currency which will be converted to USD at checkout."
 msgstr "2checkout verwendet 3-Zeichen ISO-4217 Code um Währung in Felder und Variabeln zu definieren. </p><p>Der Standard-Währungscode ist US Dollars (USD). Wen Sie Zahlungen in anderen Währungen benötigen oder akzeptieren müssen, dann wählen Sie diese aus. Das Dropdown listet alle (aktuell) von 2checkout unterstützten Währungen auf."
 
 #: ../gateways/stripe/settings.php:120
-#, fuzzy
 msgid "Stripe Secret Key"
 msgstr "Stripe Secret Key:"
 
 #: ../gateways/stripe/settings.php:123
 msgid "Enter your <a href=\"https://manage.stripe.com/#account/apikeys\" target=\"_blank\">Secret Key</a> here.  If you are testing the Stripe gateway, use your Test Secret Key, otherwise use your Live Secret Key."
-msgstr ""
+msgstr "Tragen sie ihren<a href=\"https://manage.stripe.com/#account/apikeys\" target=\"_blank\">Geheimschlüssel</a> hier ein.  Falls sie die Stripe Schnittstelle testen, benutzen sie ihre geheimen Test-Schlüssel, andernfalls verwenden sie ihren normalen Geheimschlüssel"
 
 #: ../gateways/stripe/settings.php:126
 #: ../gateways/stripe/settings.php:137
 msgid "<a href=\"https://stripe.com/docs/api#authentication\" target=\"_blank\">Learn more about API authentication.</a>"
-msgstr ""
+msgstr "<a href=\"https://stripe.com/docs/api#authentication\" target=\"_blank\">Mehr über die API-Authentifizierung erfahren</a>"
 
 #: ../gateways/stripe/settings.php:131
-#, fuzzy
 msgid "Stripe Publishable Key"
 msgstr "Stripe Publishable Key:"
 
 #: ../gateways/stripe/settings.php:134
 msgid "Enter your <a href=\"https://manage.stripe.com/#account/apikeys\" target=\"_blank\">Publishable Key</a> here.  If you are testing the Stripe gateway, use your Test Publishable Key, otherwise use your Live Publishable Key."
-msgstr ""
+msgstr "Tragen sie ihren<a href=\"https://manage.stripe.com/#account/apikeys\" target=\"_blank\">öffentlichen Schlüssel</a> hier ein.  Falls sie die Stripe Schnittstelle testen, benutzen sie ihre öffentlichen Test-Schlüssel, andernfalls verwenden sie ihren normalen öffentlichen Schlüssel."
 
 #: ../gateways/stripe/stripe_vars.php:72
 msgid "CVC Code"
 msgstr "CVC Code"
 
 #: ../gateways/worldpay/settings.php:20
-#, fuzzy
 msgid "Worldpay Settings Updated!"
 msgstr "worldpay Einstellungen gespeichert."
 
 #: ../gateways/worldpay/settings.php:22
-#, fuzzy
 msgid "Worldpay Settings were not saved! "
 msgstr "worldpay Einstellungen gespeichert."
 
 #: ../gateways/worldpay/settings.php:57
-#, fuzzy
 msgid "Worldpay Settings"
 msgstr "worldpay Einstellungen"
 
 #: ../gateways/worldpay/settings.php:65
-#, fuzzy
 msgid "Worldpay Activated"
 msgstr "worldpay Einstellungen gespeichert."
 
 #: ../gateways/worldpay/settings.php:67
-#, fuzzy
 msgid "Unable to Activate Worldpay"
 msgstr "Paypal IPN aktivieren?"
 
 #: ../gateways/worldpay/settings.php:74
-#, fuzzy
 msgid "Worldpay De-activated"
 msgstr "Zahlung abgelehnt"
 
 #: ../gateways/worldpay/settings.php:76
-#, fuzzy
 msgid "Unable to De-activate Worldpay"
 msgstr "Paypal IPN deaktivieren?"
 
@@ -2426,36 +2239,30 @@ msgid "Frequently Asked Questions"
 msgstr "FAQ"
 
 #: ../includes/admin_support.php:90
-#, fuzzy
 msgid "Registration Page Problems"
 msgstr " Registration- Datum"
 
 #: ../includes/admin_support.php:93
-#, fuzzy
 msgid "Paypal IPN Problems"
 msgstr "PayPal IPN Probleme?"
 
 #: ../includes/admin_support.php:96
-#, fuzzy
 msgid "Email Problems"
 msgstr "Emailadresse"
 
 #: ../includes/admin_support.php:99
 msgid "Event Import Problems"
-msgstr ""
+msgstr "Veranstaltungs Importprobleme"
 
 #: ../includes/admin_support.php:102
-#, fuzzy
 msgid "Translations"
 msgstr "Transaction ID"
 
 #: ../includes/admin_support.php:105
-#, fuzzy
 msgid "Incomplete Payments"
 msgstr "Rechnungen"
 
 #: ../includes/admin_support.php:108
-#, fuzzy
 msgid "Problems After Upgrading"
 msgstr "Probleme nach dem Upgraden?"
 
@@ -2498,7 +2305,7 @@ msgstr "Zeigt einen einzelnen Event auf einer Seite oder einem Post an"
 
 #: ../includes/admin_support.php:309
 msgid "Add Events to Cart (premium version only, requires Multiple Event Registration addon)"
-msgstr ""
+msgstr "Veranstaltungen zum Einkaufswagen hinzufügen (nur mit der Premiumversion nutzbar, benötigt das  Multiple Event Registration addon)"
 
 #: ../includes/admin_support.php:312
 msgid "Displays an \"Add Event to Cart\" link that can be added to the event details, page, or post. Requires the <a href=\"http://eventespresso.com/download/plugins-and-addons/multiple-event-registration/\" target=\"_blank\">Multiple Event Registration addon</a>."
@@ -2551,7 +2358,7 @@ msgstr "Für mehr Informationen über Teilnehmerlisten-Shortcodes und Anpassunge
 
 #: ../includes/admin_support.php:385
 msgid "Venue Shortcodes (premium version only)"
-msgstr ""
+msgstr "Veranstaltungsort Shortcodes (nur in der Premiumversion verfügbar)"
 
 #: ../includes/admin_support.php:388
 #: ../includes/admin_support.php:453
@@ -2605,7 +2412,7 @@ msgstr "Alle Anlässe eines Veranstaltungsortes anzeigen:"
 
 #: ../includes/admin_support.php:450
 msgid "Staff Shortcodes (premium version only)"
-msgstr ""
+msgstr "Belegschafts Shortcodes (nur in der Premiumversion verfügbar)"
 
 #: ../includes/admin_support.php:461
 msgid "If you want to display a list of staff members within an event, the staff id is not needed. Just add <span class=\"highlight\">[ESPRESSO_STAFF]</span> to your event description."
@@ -2620,7 +2427,6 @@ msgid "If you want to display a list of staff members assigned to an event, to a
 msgstr "Wenn Sie alle einem Event zugeordneten Angestellten in einer Seite, einem Post oder Event auflisten möchten, ergänzen Sie den Shortcode mit <span class=\"highlight\">[ESPRESSO_STAFF]</span>."
 
 #: ../includes/admin_support.php:501
-#, fuzzy
 msgid "Calendar Shortcodes (premium version only)"
 msgstr "Kalender Shortcodes"
 
@@ -2690,7 +2496,7 @@ msgstr "Event Espresso Template Pfad:"
 
 #: ../includes/admin_support.php:603
 msgid "If you are having problems with regsitrations, display, etc. You should backup and remove these files immediately."
-msgstr ""
+msgstr "Falls sie Probleme mit den Anmeldungen, der Anzeige etc. haben, sichern und entfernen sie sofort diese Dateien."
 
 #: ../includes/admin_support.php:607
 msgid "Event Espresso Gateway Path:"
@@ -2698,7 +2504,7 @@ msgstr "Event Espresso Gateway Pfad:"
 
 #: ../includes/admin_support.php:611
 msgid "If you are having problems with payments. You should backup and remove these files immediately."
-msgstr ""
+msgstr "Falls sie Probleme mit der ben Bezahlungen haben, sollten sie diese Dateien sofern sichern und entfernen."
 
 #: ../includes/admin_support.php:638
 msgid "When requesting support. Please copy and paste the details displayed of the <a href=\"admin.php?page=support#details\">Important Information</a> section above. This will help us determine potential problems with your server, WordPress installation, and/or the Event Espresso plugin. Please also include a list (or screenshot) of all <a href=\"plugins.php?plugin_status=active\">active plugins</a>."
@@ -2737,7 +2543,6 @@ msgid "Usually its because you need to point the &quot;Main registration page:&q
 msgstr "In der Regel müssen Sie die Haupt-Registrationsseite (auf der Organisations-Einstellungsseite) auf die Seite weiterleiten, wo der Shortcode ist"
 
 #: ../includes/admin_support.php:718
-#, fuzzy
 msgid "on."
 msgstr "An"
 
@@ -2770,7 +2575,6 @@ msgid "More information can be found here:"
 msgstr "Weitere Informationen können hier gefunden werden:"
 
 #: ../includes/admin_support.php:746
-#, fuzzy
 msgid "Why are emails are not being sent when somone registers?"
 msgstr "Wieso werden Emails nicht versendet wenn sich jemand registriert?"
 
@@ -2783,23 +2587,19 @@ msgid "If you're using WP SMTP with Gmail, also check your spam box to make sure
 msgstr "Wenn Sie mit Gmail WP SMTP Einstellungen verwenden, kontrollieren Sie Ihren Spamordner und stellen Sie sicher das die Bestätigungsemails nicht als Spam markiert werden."
 
 #: ../includes/admin_support.php:756
-#, fuzzy
 msgid "Send a Test Email"
 msgstr "Event-Teilnehmer emailen"
 
 #: ../includes/admin_support.php:767
 #: ../includes/admin_support.php:777
-#, fuzzy
 msgid "Optional"
 msgstr "Option"
 
 #: ../includes/admin_support.php:772
-#, fuzzy
 msgid "Message"
 msgstr " Nachricht:"
 
 #: ../includes/admin_support.php:783
-#, fuzzy
 msgid "Send Test"
 msgstr " Eventzeiten"
 
@@ -2812,12 +2612,10 @@ msgid "Check your CSV for any apotrophes in the title or description. Using Exce
 msgstr "Kontrollieren Sie Ihre CSV Datei auf Anführungsstriche im Titel oder der Beschreibung. In Excel verwenden Sie die Suchen und Ersetzen-Funktion und ersetzen alle Anführungsstriche mit <tt>\\&amp;#039;</tt>. Dies ist der HTML Code für ' wie sie ind er Datenbank gespeichert werden. Für weitere Informationen besuchen  <a href=\"http://eventespresso.com/forums/2011/08/import-csv-malfunction\" target=\"_blank\">Sie diesen Post</a>."
 
 #: ../includes/admin_support.php:796
-#, fuzzy
 msgid "Translating Event Espresso"
 msgstr "Event Espresso"
 
 #: ../includes/admin_support.php:816
-#, fuzzy
 msgid "Problems with Incomplete Payments"
 msgstr "Problem mit Ihrer Website Zahlungs-IPN"
 
@@ -2858,7 +2656,6 @@ msgid "There was an error in your submission, please try again."
 msgstr "Es ist bei der Sendung ein Fehler aufgetreten, bitte versuchen Sie es nochmals."
 
 #: ../includes/help_global.php:14
-#, fuzzy
 msgid "Default Payment Status Options"
 msgstr "Standard Zahlungsstatus für den Event:"
 
@@ -2868,7 +2665,7 @@ msgstr "Nicht abgeschlossen"
 
 #: ../includes/help_global.php:16
 msgid "This is the default payment status.  While Incomplete is set as the default, all attendee information is recorded when they register, but those registrations do not count against the total number of available spaces.  That changes when an IPN message is sent from the payment gateway or the payment status for that attendee is updated manually.  If you have no credit card processing gateway active and are using the Invoice gateway, the status will change to Pending when the user downloads the invoice."
-msgstr ""
+msgstr "Dies ist der standard Bezahlungsstatus. Die Voreinstellung ist \"Unvollständig\", dennoch werden alle Teilnehmerinformaitonen gespeichert, wenn sich diese registieren, allerdings werden solche Anmeldungen nicht als Anmeldungen im Sinne der verfügbaren Plätze gewertet. Dies ändert sich, sobald eine IPN-Nachricht von der Bezahlungsschnittstelle aus gesendet wurde oder der Bezahlungsstatus der Teilnehmer manuell geändert wird. Falls sie keine Kreditkatenzahlung aktiviert haben und die Bezahloption \"Rechnung\" verwenden, ändert sich dieser Status sobald der Benutzer die Rechnung herunterlädt."
 
 #: ../includes/help_global.php:18
 msgid "Pending"
@@ -2879,7 +2676,6 @@ msgid "This means the attendee has not paid, but they do have a space reserved f
 msgstr ""
 
 #: ../includes/help_global.php:21
-#, fuzzy
 msgid "Complete"
 msgstr "Abgeschlossen"
 
@@ -2888,13 +2684,12 @@ msgid "This means a payment notification has been received from the payment gate
 msgstr ""
 
 #: ../includes/help_global.php:35
-#, fuzzy
 msgid "Example Example"
 msgstr "Emailbeispiel"
 
 #: ../includes/help_global.php:36
 msgid "Hey Mickey, you're so fine, you're so fine you blow my mind, hey Mickey"
-msgstr ""
+msgstr "Hey Mickey, you're so fine, you're so fine you blow my mind, hey Mickey"
 
 #: ../includes/shortcodes.php:18
 msgid "No ID Supplied"
@@ -3008,12 +2803,10 @@ msgid "This Month"
 msgstr "Diesen Monat"
 
 #: ../includes/admin-files/admin_reports_filters.php:26
-#, fuzzy
 msgid "Registrations"
 msgstr " Registration"
 
 #: ../includes/admin-files/admin_reports_filters.php:29
-#, fuzzy
 msgid "All Registrations"
 msgstr " Registration"
 
@@ -3292,7 +3085,6 @@ msgstr "Event Metaboxen verwenden"
 #: ../includes/admin-files/functions.php:392
 #: ../includes/admin-files/functions.php:402
 #: ../includes/admin-files/functions.php:423
-#, fuzzy
 msgid "Key"
 msgstr "Schlüssel:"
 
@@ -3315,37 +3107,32 @@ msgid "Add A Meta Box"
 msgstr "Metabox hinzufügen"
 
 #: ../includes/admin-files/functions.php:500
-#, fuzzy
 msgid "Total Registrations:"
 msgstr "Total Registrierte:"
 
 #: ../includes/admin-files/functions.php:502
-#, fuzzy
 msgid "Total Revenue:"
 msgstr "Total Registrierte:"
 
 #: ../includes/admin-files/functions.php:518
 msgid "Featured Image"
-msgstr ""
+msgstr "Featured Image"
 
 #: ../includes/admin-files/functions.php:531
-#, fuzzy
 msgid "Add Featured Image"
 msgstr "Fortgeschrittene Funktionen"
 
 #: ../includes/admin-files/functions.php:542
-#, fuzzy
 msgid "Enable image in event lists"
 msgstr "Eingebaute Stylesheets einschalten?"
 
 #: ../includes/admin-files/functions.php:547
-#, fuzzy
 msgid "Enable image in registration"
 msgstr "Schliessen Sie Ihre Registration ab"
 
 #: ../includes/admin-files/functions.php:553
 msgid "Add image to event calendar"
-msgstr ""
+msgstr "Ein Bild zum Veranstaltungskalendar hinzufügen"
 
 #: ../includes/admin-files/gateway_developer.php:7
 msgid "Developers Section"
@@ -3406,7 +3193,6 @@ msgid "Click here to <a href='%s'>Move your files</a> to a safe place."
 msgstr "Klicken Sie hier um <a href='%s'>die Dateien an einen sicheren Ort zu verschieben.</a>"
 
 #: ../includes/admin-files/optional_event_settings.php:20
-#, fuzzy
 msgid "Optional/Advanced Event Settings"
 msgstr "Optionale Eventeinstellungen"
 
@@ -3415,24 +3201,20 @@ msgid "Payment Settings"
 msgstr " Zahlungs Einstellungen"
 
 #: ../includes/admin-files/optional_event_settings.php:34
-#, fuzzy
 msgid " Default Payment Status"
 msgstr "Standard Zahlungsstatus für den Event:"
 
 #: ../includes/admin-files/optional_event_settings.php:38
-#, fuzzy
 msgid ""
 "This value will be automatically filled in for each person's payment status,<br />\n"
 "until payment is made, for each event."
 msgstr "Standard-Zahlungsstatus (dieser Wert wird bei jedem Zahlungsstatus eingefügt, bis die Zahlung erfolgt ist - für jeden Event):"
 
 #: ../includes/admin-files/optional_event_settings.php:44
-#, fuzzy
 msgid "Default Surcharge"
 msgstr "Zahlungszuschlag"
 
 #: ../includes/admin-files/optional_event_settings.php:49
-#, fuzzy
 msgid "This value will be automatically filled in for each price type when creating an event."
 msgstr "Standard-Zuschlag (der Wert wird automatisch für jeden Event-Preis eingefügt, wenn Sie einen Event erstellen):"
 
@@ -3449,7 +3231,6 @@ msgid "Percent"
 msgstr "Prozent"
 
 #: ../includes/admin-files/optional_event_settings.php:65
-#, fuzzy
 msgid "Surcharge Display Text"
 msgstr " Zuschlagstyp"
 
@@ -3458,22 +3239,18 @@ msgid "Surcharge"
 msgstr "Zuschlag"
 
 #: ../includes/admin-files/optional_event_settings.php:70
-#, fuzzy
 msgid "eg. Surcharge or Service Fee"
 msgstr "Text anzeigen (zB. Zuschlag oder Servicekosten:"
 
 #: ../includes/admin-files/optional_event_settings.php:75
-#, fuzzy
 msgid "Show Additional Payment Options for Pending Payments"
 msgstr "Zahlungsoptionen für \"Pendente Zahlungen\" auf der Zahlungsübersichtsseite zeigen?"
 
 #: ../includes/admin-files/optional_event_settings.php:79
-#, fuzzy
 msgid "Shows alternate payment options for \"Pending Payments\" on the Payment Overview page."
 msgstr "Zahlungsoptionen für \"Pendente Zahlungen\" auf der Zahlungsübersichtsseite zeigen?"
 
 #: ../includes/admin-files/optional_event_settings.php:85
-#, fuzzy
 msgid "Administration Options"
 msgstr "Fortgeschrittene Optionen"
 
@@ -3486,12 +3263,10 @@ msgid "Use the Staff Manager?"
 msgstr "Mitarbeiter-Manager verwenden?"
 
 #: ../includes/admin-files/optional_event_settings.php:103
-#, fuzzy
 msgid "Enable Full Logging?"
 msgstr "Vollständige Aufzeichnung verwenden?"
 
 #: ../includes/admin-files/optional_event_settings.php:109
-#, fuzzy
 msgid "Enable Attendee Pre-approval"
 msgstr "Teilnehmer Vor-Bewilligungsfeature einschalten?"
 
@@ -3501,15 +3276,13 @@ msgstr "Das angepasste Post Type Feature verwenden?"
 
 #: ../includes/admin-files/optional_event_settings.php:123
 msgid "Extras"
-msgstr ""
+msgstr "Extras"
 
 #: ../includes/admin-files/optional_event_settings.php:129
-#, fuzzy
 msgid "Use fancy email headers?"
 msgstr "Alternative Emailadresse verwenden?"
 
 #: ../includes/admin-files/optional_event_settings.php:135
-#, fuzzy
 msgid "WordPress Dashboard"
 msgstr "WordPress Version:"
 
@@ -3518,22 +3291,18 @@ msgid "Show the Upcoming Events widget in the dashboard?"
 msgstr "Kommende Anlässe  Widget im Dashboard anzeigen?"
 
 #: ../includes/admin-files/optional_event_settings.php:145
-#, fuzzy
 msgid "How many days into the future?"
 msgstr "um Zugang zu diesen Funktionen zu erhalten."
 
 #: ../includes/admin-files/optional_event_settings.php:150
-#, fuzzy
 msgid "Advanced Time Settings"
 msgstr "Fortgeschrittene Optionen"
 
 #: ../includes/admin-files/optional_event_settings.php:154
-#, fuzzy
 msgid "Registration Limits on Time Slots"
 msgstr "Registration auf Zeiten beschränkt"
 
 #: ../includes/admin-files/optional_event_settings.php:158
-#, fuzzy
 msgid ""
 "This function is experimental and may not function as expected.<br />\n"
 "You will need adjust your attendee limit accordingly."
@@ -3542,7 +3311,6 @@ msgstr ""
 "\t\t\t\t\t\t\t<em class=\"important\">(Diese Funktion ist im Beta und funktioniert u.U. nicht korrekt. Sie sollten das Teilnehmerlimit entsprechend korrigieren.)</em>"
 
 #: ../includes/admin-files/optional_event_settings.php:164
-#, fuzzy
 msgid "Custom Time Zone for Each Event"
 msgstr "Eine angepasste Zeitzone für jeden Event verwenden?"
 
@@ -3551,31 +3319,26 @@ msgid "This allows you to set a custom time zone for each event.<br />Modificati
 msgstr ""
 
 #: ../includes/admin-files/optional_event_settings.php:173
-#, fuzzy
 msgid "Promote Event Espresso"
 msgstr "Event Espresso"
 
 #: ../includes/admin-files/optional_event_settings.php:178
-#, fuzzy
 msgid "Link to Event Espresso in your Registration Page"
 msgstr "Einen Link auf Event Espresso auf der Event-Seite anzeigen?"
 
 #: ../includes/admin-files/optional_event_settings.php:184
-#, fuzzy
 msgid "Event Espresso Affiliate ID"
 msgstr "Event Espresso Template Pfad:"
 
 #: ../includes/admin-files/optional_event_settings.php:188
 msgid "Earn cash for promoting our plugin."
-msgstr ""
+msgstr "Verdienen sie Geld, indem sie unser Plugin weiterempfehlen."
 
 #: ../includes/admin-files/optional_event_settings.php:193
-#, fuzzy
 msgid "Your Event Espresso License Key"
 msgstr "Event Espresso - Veranstaltungsort-Manager"
 
 #: ../includes/admin-files/optional_event_settings.php:198
-#, fuzzy
 msgid "Support License Key"
 msgstr "Supportlizenz"
 
@@ -3590,7 +3353,6 @@ msgid "Save Options"
 msgstr "Optionen speichern"
 
 #: ../includes/admin-files/recaptcha_form.php:10
-#, fuzzy
 msgid "Anti-spam Settings"
 msgstr "Alipay Einstellungen"
 
@@ -3599,36 +3361,30 @@ msgid "reCAPTCHA Settings"
 msgstr "reCAPTCHA Settings"
 
 #: ../includes/admin-files/recaptcha_form.php:22
-#, fuzzy
 msgid "Use reCAPTCHA"
 msgstr "reCAPTCHA"
 
 #: ../includes/admin-files/recaptcha_form.php:26
-#, fuzzy
 msgid "Used to block spam registrations."
 msgstr "um SpamAnmeldungen zu blockieren"
 
 #: ../includes/admin-files/recaptcha_form.php:31
-#, fuzzy
 msgid "Public Key"
 msgstr "Public Key:"
 
 #: ../includes/admin-files/recaptcha_form.php:37
-#, fuzzy
 msgid "Private Key"
 msgstr "Private Key:"
 
 #: ../includes/admin-files/recaptcha_form.php:43
 msgid "reCAPTCHA Look &amp; Feel"
-msgstr ""
+msgstr "reCAPTCHA Look &amp; Feel"
 
 #: ../includes/admin-files/recaptcha_form.php:48
-#, fuzzy
 msgid "Width"
 msgstr "Breite:"
 
 #: ../includes/admin-files/recaptcha_form.php:54
-#, fuzzy
 msgid "Theme"
 msgstr "Theme:"
 
@@ -3649,7 +3405,6 @@ msgid "Clean"
 msgstr "Sauber"
 
 #: ../includes/admin-files/recaptcha_form.php:68
-#, fuzzy
 msgid "Language"
 msgstr "Sprache:"
 
@@ -3687,17 +3442,14 @@ msgstr "Türkisch"
 
 #: ../includes/admin-files/coupon-management/add_discount.php:25
 #: ../includes/admin-files/coupon-management/add_discount.php:28
-#, fuzzy
 msgid "The discount code "
 msgstr "Discountcode erlauben?"
 
 #: ../includes/admin-files/coupon-management/add_discount.php:25
-#, fuzzy
 msgid " was saved"
-msgstr "eway Einstellungen gesichert."
+msgstr "wurde gespeichert"
 
 #: ../includes/admin-files/coupon-management/add_discount.php:28
-#, fuzzy
 msgid " was not saved"
 msgstr "wurde nicht aktualisiert"
 
@@ -3706,26 +3458,22 @@ msgid "Promotional Codes have been successfully deleted from the database."
 msgstr "Der Promocode wurde aus der Datenbank gespeichert."
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:33
-#, fuzzy
 msgid "Edit Code"
 msgstr "Code editieren:"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:43
-#, fuzzy
 msgid "Promotional Code "
 msgstr "Promocode"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:50
 msgid "Limited Quantity"
-msgstr ""
+msgstr "Begrenzte Menge"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:63
-#, fuzzy
 msgid "Expiration Active"
 msgstr "Ablauf Jahr"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:70
-#, fuzzy
 msgid "Expiration Date"
 msgstr "Ablauf Jahr"
 
@@ -3734,12 +3482,10 @@ msgid "Price Discount"
 msgstr "Discount-Preis"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:83
-#, fuzzy
 msgid "Percentage Discount"
 msgstr "Discount-Preis"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:90
-#, fuzzy
 msgid "Short Description"
 msgstr "Beschreibung"
 
@@ -3748,16 +3494,14 @@ msgid "Update"
 msgstr "Aktualisieren"
 
 #: ../includes/admin-files/coupon-management/help.php:7
-#, fuzzy
 msgid "Enable Expiration Dates"
 msgstr " Registration- Datum"
 
 #: ../includes/admin-files/coupon-management/help.php:10
 msgid "Adds an expiration date to this code."
-msgstr ""
+msgstr "Ein Ablaufdatum zu diesem Code hinzufügen"
 
 #: ../includes/admin-files/coupon-management/help.php:20
-#, fuzzy
 msgid "Enable Limited Uses"
 msgstr "Eingebaute Stylesheets einschalten?"
 
@@ -3790,7 +3534,6 @@ msgid "This is the actual code that will be used."
 msgstr ""
 
 #: ../includes/admin-files/coupon-management/help.php:65
-#, fuzzy
 msgid "Example:"
 msgstr "Beispiel:"
 
@@ -3808,12 +3551,10 @@ msgid "ID"
 msgstr "ID"
 
 #: ../includes/admin-files/coupon-management/index.php:62
-#, fuzzy
 msgid "Exp Date"
 msgstr "Ablaufdatum"
 
 #: ../includes/admin-files/coupon-management/index.php:63
-#, fuzzy
 msgid "Qty Available"
 msgstr " Verfügbar erklärt sie:"
 
@@ -3844,12 +3585,10 @@ msgid "Add a New Promotional Code"
 msgstr "Einen neuen Promocode hinzufügen"
 
 #: ../includes/admin-files/coupon-management/update_discount.php:25
-#, fuzzy
 msgid " was updated"
 msgstr "wurde nicht aktualisiert"
 
 #: ../includes/admin-files/coupon-management/update_discount.php:27
-#, fuzzy
 msgid " was not updated"
 msgstr "wurde nicht aktualisiert"
 
@@ -3873,7 +3612,6 @@ msgstr "Promo / Discountcode eingeben"
 #: ../includes/admin-files/email-manager/add_email_to_db.php:21
 #: ../includes/admin-files/email-manager/update_email.php:17
 #: ../includes/admin-files/email-manager/update_email.php:19
-#, fuzzy
 msgid "The email "
 msgstr "Das Email"
 
@@ -3943,7 +3681,6 @@ msgstr "Fortgeschrittene Optionen:"
 
 #: ../includes/admin-files/event-management/advanced_settings.php:60
 #: ../includes/admin-files/event-management/advanced_settings.php:67
-#, fuzzy
 msgid "Event Status"
 msgstr "Event-Status:"
 
@@ -3952,27 +3689,22 @@ msgid "PENDING"
 msgstr "PENDENT"
 
 #: ../includes/admin-files/event-management/advanced_settings.php:66
-#, fuzzy
 msgid "Event is Active"
 msgstr "Eventliste"
 
 #: ../includes/admin-files/event-management/advanced_settings.php:75
-#, fuzzy
 msgid "Display  Description"
 msgstr "Beschreibung anzeigen?"
 
 #: ../includes/admin-files/event-management/advanced_settings.php:76
-#, fuzzy
 msgid "Display  Registration Form"
 msgstr "Registrationsformular anzeigen?"
 
 #: ../includes/admin-files/event-management/advanced_settings.php:77
-#, fuzzy
 msgid "Default Payment Status"
 msgstr "Standard Zahlungsstatus für den Event:"
 
 #: ../includes/admin-files/event-management/advanced_settings.php:79
-#, fuzzy
 msgid "Alternate Registration Page"
 msgstr "Alternative Registrationsseite verwenden?"
 
@@ -4056,7 +3788,6 @@ msgid "Percentage:"
 msgstr "Prozentsatz:"
 
 #: ../includes/admin-files/event-management/promotions_box.php:23
-#, fuzzy
 msgid "Promotion Codes"
 msgstr " Promocodes"
 
@@ -4073,22 +3804,18 @@ msgid "Question Groups have been successfully deleted."
 msgstr "Fragegruppen wurden gelöscht."
 
 #: ../includes/admin-files/form-builder/groups/insert_group.php:45
-#, fuzzy
 msgid "There was an error in your submission for group "
 msgstr "Es ist bei der Sendung ein Fehler aufgetreten, bitte versuchen Sie es nochmals."
 
 #: ../includes/admin-files/form-builder/groups/insert_group.php:45
-#, fuzzy
 msgid " The group was not added!"
 msgstr "Die Gruppe wurde hinzugefügt."
 
 #: ../includes/admin-files/form-builder/groups/insert_group.php:47
-#, fuzzy
 msgid "The group "
 msgstr " Gruppe"
 
 #: ../includes/admin-files/form-builder/groups/insert_group.php:47
-#, fuzzy
 msgid " has been added."
 msgstr " wurde hinzugefügt"
 
@@ -4139,24 +3866,20 @@ msgid "Questions have been successfully deleted."
 msgstr "Fragen wurde gelöscht."
 
 #: ../includes/admin-files/form-builder/questions/insert_question.php:31
-#, fuzzy
 msgid "The question "
 msgstr " fragen"
 
 #: ../includes/admin-files/form-builder/questions/insert_question.php:31
 #: ../includes/admin-files/locale-management/add_locale_to_db.php:18
-#, fuzzy
 msgid " has been added"
 msgstr " wurde hinzugefügt"
 
 #: ../includes/admin-files/form-builder/questions/insert_question.php:33
-#, fuzzy
 msgid "The question"
 msgstr " fragen"
 
 #: ../includes/admin-files/form-builder/questions/insert_question.php:33
 #: ../includes/admin-files/locale-management/add_locale_to_db.php:20
-#, fuzzy
 msgid " was not saved!"
 msgstr "wurde nicht aktualisiert"
 
@@ -4165,7 +3888,6 @@ msgid "Add New Questions"
 msgstr "Neue Frage hinzufügen"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:14
-#, fuzzy
 msgid "Add questions using the form below.  By default all participants will be asked for their first name, last name, and email address."
 msgstr "Fragen mit Formular unten hinzufügen. Per Standard werden von Teilnehmer Vor-, Nachname und Emailadresse verlangt."
 
@@ -4198,7 +3920,6 @@ msgid "Checkbox"
 msgstr "Checkbox"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:39
-#, fuzzy
 msgid "Date Picker"
 msgstr "Datumswahl"
 
@@ -4236,13 +3957,11 @@ msgstr "Reihenfolge"
 
 #: ../includes/admin-files/locale-management/add_locale_to_db.php:18
 #: ../includes/admin-files/locale-management/update_locale.php:11
-#, fuzzy
 msgid "The locale "
 msgstr "Gebietsschema speichern"
 
 #: ../includes/admin-files/locale-management/add_locale_to_db.php:20
 #: ../includes/admin-files/locale-management/update_locale.php:13
-#, fuzzy
 msgid "The locale"
 msgstr "Gebietsschema speichern"
 
@@ -4289,13 +4008,11 @@ msgstr "Dies kann verwendet werden um Gebietsschemen in Ihren Queries oder Short
 
 #: ../includes/admin-files/locale-management/update_locale.php:11
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:35
-#, fuzzy
 msgid " has been updated"
 msgstr "wurde aktualisiert"
 
 #: ../includes/admin-files/locale-management/update_locale.php:13
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:37
-#, fuzzy
 msgid " was not updated!"
 msgstr "wurde nicht aktualisiert"
 
@@ -4353,12 +4070,10 @@ msgid "Save Staff Member"
 msgstr "Mitarbeiter speichern"
 
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:35
-#, fuzzy
 msgid "The staff member "
 msgstr "Mitarbeiter speichern"
 
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:37
-#, fuzzy
 msgid "The staff member"
 msgstr "Mitarbeiter speichern"
 
@@ -4389,10 +4104,9 @@ msgstr "Mitarbeiter löschen"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:8
 msgid "Google Maps Display Options"
-msgstr ""
+msgstr "Google Maps Anzeige Einstellungen"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:12
-#, fuzzy
 msgid "Event Registration Options"
 msgstr " Event Registration Benachrichtigung"
 
@@ -4400,17 +4114,17 @@ msgstr " Event Registration Benachrichtigung"
 #: ../includes/admin-files/templates/event_gmaps_settings.php:112
 #: ../includes/admin-files/templates/map_confg_help.php:23
 msgid "Set Map Width"
-msgstr ""
+msgstr "Kartenbreite einstellen"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:28
 #: ../includes/admin-files/templates/event_gmaps_settings.php:122
 #: ../includes/admin-files/templates/map_confg_help.php:28
 msgid "Set Map Height"
-msgstr ""
+msgstr "Kartenhöhe einstellen"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:38
 msgid "Set Map Zoom level: Range 1 - 19"
-msgstr ""
+msgstr "Kartenzoomstufe einstellen: 1 - 19"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:48
 #: ../includes/admin-files/templates/map_confg_help.php:38
@@ -4432,16 +4146,15 @@ msgstr ""
 #: ../includes/admin-files/templates/event_gmaps_settings.php:71
 #: ../includes/admin-files/templates/event_gmaps_settings.php:165
 msgid " Default"
-msgstr ""
+msgstr "Standard"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:74
 #: ../includes/admin-files/templates/event_gmaps_settings.php:168
 msgid " Horizontal"
-msgstr ""
+msgstr " Horizontal"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:77
 #: ../includes/admin-files/templates/event_gmaps_settings.php:171
-#, fuzzy
 msgid " Dropdown"
 msgstr "Dropdown"
 
@@ -4453,24 +4166,23 @@ msgstr ""
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:86
 #: ../includes/admin-files/templates/event_gmaps_settings.php:181
-#, fuzzy
 msgid " None"
 msgstr "Keine"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:89
 #: ../includes/admin-files/templates/event_gmaps_settings.php:184
 msgid " Align Left"
-msgstr ""
+msgstr "Linksbünding"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:92
 #: ../includes/admin-files/templates/event_gmaps_settings.php:187
 msgid " Align Center"
-msgstr ""
+msgstr "Zentriert"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:95
 #: ../includes/admin-files/templates/event_gmaps_settings.php:190
 msgid " Align Right"
-msgstr ""
+msgstr "Rechtsbündig"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:132
 #: ../includes/admin-files/templates/map_confg_help.php:33
@@ -4555,7 +4267,6 @@ msgid "ATTENTION:"
 msgstr "ACHTUNG:"
 
 #: ../includes/admin-files/templates/templates_help.php:24
-#, fuzzy
 msgid "If you want to modify and customize the styles of your template pages you must move a copy of the event_espresso_style.css to the /wp-content/uploads/espresso/templates folder (if /espresso/templates does not exist you may need to create it manually. Keeping your modification in this folder ensures that your styles are not overwritten when upgrading EE.) "
 msgstr ""
 "Wenn Sie die Styles Ihrer Templateseiten anpassen wollen, müssen Sie eine Kopie vom \n"
@@ -4563,7 +4274,6 @@ msgstr ""
 "    \t\t\t\t\t\t\t\t\tnicht existiert, müssen Sie es manuell erstellen. Behalten Sie Ihre Anpassungen in diesem Ordner, um bei einem Upgrade Ihre Arbeiten nicht zu verlieren.) "
 
 #: ../includes/admin-files/templates/templates_help.php:36
-#, fuzzy
 msgid "Default Event Espresso Style Settings"
 msgstr " Event Espresso – Zahlungs Einstellungen"
 
@@ -4589,7 +4299,6 @@ msgstr "Diese Selektion ersetzt das Default Event Espresso Stylesheet und bietet
 
 #: ../includes/admin-files/templates/templates_help.php:65
 #: ../includes/admin-files/templates/template_files.php:39
-#, fuzzy
 msgid "Custom Templates"
 msgstr "Custom Files"
 
@@ -4598,7 +4307,6 @@ msgid "Sometimes these files will cause problems when Event Espresso has been up
 msgstr ""
 
 #: ../includes/admin-files/templates/templates_help.php:81
-#, fuzzy
 msgid "ThemeRoller Style Settings "
 msgstr "Templateeinstellungen"
 
@@ -4652,7 +4360,6 @@ msgid "ThemeRoller is a web app that offers a fun and intuitive interface for de
 msgstr ""
 
 #: ../includes/admin-files/templates/template_confg.php:31
-#, fuzzy
 msgid "Template Settings Updated"
 msgstr "Templateeinstellungen"
 
@@ -4662,60 +4369,49 @@ msgid "Template Settings"
 msgstr "Templateeinstellungen"
 
 #: ../includes/admin-files/templates/template_confg.php:116
-#, fuzzy
 msgid "Event Listings"
 msgstr "Eventliste"
 
 #: ../includes/admin-files/templates/template_confg.php:121
-#, fuzzy
 msgid "Display Descriptions"
 msgstr "Beschreibung anzeigen?"
 
 #: ../includes/admin-files/templates/template_confg.php:128
-#, fuzzy
 msgid "Use SHORT Descriptions"
 msgstr "Beschreibung"
 
 #: ../includes/admin-files/templates/template_confg.php:133
-#, fuzzy
 msgid "Be sure to use the more... tag in your event description"
 msgstr "Die Kurzbeschreibung des Eventlistings anzeigen? <br /><em>(Stellen sie sicher, dass Sie den \"More...\" Tag in Ihrer Eventbeschreibung verwenden)</em>"
 
 #: ../includes/admin-files/templates/template_confg.php:138
 #: ../includes/admin-files/templates/template_confg.php:151
-#, fuzzy
 msgid "Display Addresses"
 msgstr "Emailadresse"
 
 #: ../includes/admin-files/templates/template_confg.php:146
-#, fuzzy
 msgid "Registration Pages"
 msgstr " Registration- Datum"
 
 #: ../includes/admin-files/templates/template_confg.php:156
-#, fuzzy
 msgid ""
 "Do not use this if you are using the venue<br />\n"
 "shortcodes in your event description."
 msgstr "Adressen im Registrationsformular anzeigen? Mit dem Veranstaltungsort-Manager Shortcode schalten Sie die Adresse in der Eventbeschreibung aus."
 
 #: ../includes/admin-files/templates/template_confg.php:163
-#, fuzzy
 msgid "Multiple Event Descriptions"
 msgstr " Eventbeschreibung"
 
 #: ../includes/admin-files/templates/template_confg.php:168
-#, fuzzy
 msgid "Displays the event description in the <br />Multiple Event Registration pages."
 msgstr "Eventbeschreibungen in der Multiple-Events-Anmeldeseite zeigen?"
 
 #: ../includes/admin-files/templates/template_confg.php:174
-#, fuzzy
 msgid "Stylesheets"
 msgstr "Stylesheet Optionen"
 
 #: ../includes/admin-files/templates/template_confg.php:179
-#, fuzzy
 msgid "Use Built-in Style Sheets"
 msgstr "Eingebaute Stylesheets einschalten?"
 
@@ -4728,7 +4424,6 @@ msgid "Use Grid Layout"
 msgstr ""
 
 #: ../includes/admin-files/templates/template_confg.php:196
-#, fuzzy
 msgid "Displays event list in a grid layout."
 msgstr "Zeigt einen einzelnen Event auf einer Seite oder einem Post an"
 
@@ -4737,9 +4432,8 @@ msgid "ThemeRoller Style "
 msgstr ""
 
 #: ../includes/admin-files/templates/template_confg.php:206
-#, fuzzy
 msgid "Default"
-msgstr "Löschen"
+msgstr "Standardeinstellung"
 
 #: ../includes/admin-files/templates/template_confg.php:213
 msgid "Default style sheet is Smoothness."
@@ -4750,17 +4444,14 @@ msgid "Current Custom Style Sheet"
 msgstr ""
 
 #: ../includes/admin-files/templates/template_confg.php:224
-#, fuzzy
 msgid "Remove style sheet?"
 msgstr " Teilnehmer entfernen"
 
 #: ../includes/admin-files/templates/template_confg.php:229
-#, fuzzy
 msgid "Add a custom style sheet?"
 msgstr "Eingebaute Stylesheets einschalten?"
 
 #: ../includes/admin-files/templates/template_confg.php:257
-#, fuzzy
 msgid "Customization Instructions"
 msgstr "Customization Forums"
 
@@ -4769,7 +4460,6 @@ msgid "Your templates have been copied."
 msgstr "Ihre Templates wurden kopiert."
 
 #: ../includes/admin-files/templates/template_files.php:44
-#, fuzzy
 msgid "Are you sure you want to enable this feature?"
 msgstr " sind Sie sicher das sie löschen wollen"
 
@@ -4778,17 +4468,14 @@ msgid "It appears that you have moved your files to the \"wp-content/uploads/esp
 msgstr ""
 
 #: ../includes/admin-files/templates/template_files.php:56
-#, fuzzy
 msgid "Instructions:"
 msgstr "Zahlungsanweisungen:"
 
 #: ../includes/admin-files/templates/template_files.php:58
-#, fuzzy
 msgid "To modify your event listings and registration pages. You need to edit the appropriate files in the following location."
 msgstr "Sie müssen nur die richtigen Dateien an den folgenden Orten editieren:"
 
 #: ../includes/admin-files/templates/template_files.php:65
-#, fuzzy
 msgid "Current Template Files:"
 msgstr "Aktuelle Templatedatei"
 
@@ -4845,22 +4532,18 @@ msgid "Remember, if updates are made or features are added to these templates in
 msgstr "Wichtig! Wenn in Zukunft Features oder Aktualisieren an diesen Templates gemacht werden, müssen Sie die Updates an Ihren angepassten Templates machen."
 
 #: ../includes/admin-files/templates/template_files.php:146
-#, fuzzy, php-format
 msgid "If you plan on modifying the look of your event listings, registration page, or attendee list. You can move the templates located in the templates directory to your \"wp-content/uploads/espresso/templates/\" directory (%smore information here%s). Please keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates."
 msgstr "Wenn Sie das Aussehen Ihrer Anmeldeseite, Ihrer Veranstaltungsliste oder Teilnehmerliste verändern möchten, verwenden Sie folgende Option um diese Templates an einen sicheren Ort zu verschieben.Beachten Sie, wenn diese Templates in Zukunft aktualisiert oder neue Funktionen bekommen, dass sie diese auch bei ihren angepassten  Templates durchführen müssen."
 
 #: ../includes/admin-files/templates/template_map_confg.php:29
-#, fuzzy
 msgid "Events Map Settings Updated"
 msgstr " Event Details aktualisiert für"
 
 #: ../includes/admin-files/templates/template_map_confg.php:77
-#, fuzzy
 msgid "Event Espresso - Event Map Settings"
 msgstr "Event Espresso -  Haupteinstellungen"
 
 #: ../includes/admin-files/templates/template_map_confg.php:98
-#, fuzzy
 msgid "Events Maps Settings "
 msgstr "Template-Einstellungen des Eventes"
 
@@ -4885,13 +4568,11 @@ msgstr "Gebietsschema/Region"
 
 #: ../includes/admin-files/venue-management/add_new_venue.php:97
 #: ../includes/admin-files/venue-management/edit_venue.php:134
-#, fuzzy
 msgid "Contact Information"
 msgstr "Wichtige Informationen"
 
 #: ../includes/admin-files/venue-management/add_new_venue.php:102
 #: ../includes/admin-files/venue-management/edit_venue.php:139
-#, fuzzy
 msgid "Contact Person"
 msgstr "Kontakt"
 
@@ -4918,22 +4599,18 @@ msgstr "Speichern"
 #: ../includes/admin-files/venue-management/add_venue_to_db.php:55
 #: ../includes/admin-files/venue-management/update_venue.php:57
 #: ../includes/admin-files/venue-management/update_venue.php:59
-#, fuzzy
 msgid "The venue"
 msgstr "Dieser Event"
 
 #: ../includes/admin-files/venue-management/add_venue_to_db.php:53
-#, fuzzy
 msgid " has been saved"
 msgstr " wurde hinzugefügt"
 
 #: ../includes/admin-files/venue-management/edit_venue.php:48
-#, fuzzy
 msgid "Edit Venue"
 msgstr "Veranstaltungsort editieren:"
 
 #: ../includes/admin-files/venue-management/edit_venue.php:151
-#, fuzzy
 msgid "Twitter Handle"
 msgstr "Twitter"
 
@@ -4942,7 +4619,6 @@ msgid "Sorry the Gmap function is not available, please try the url method inste
 msgstr ""
 
 #: ../includes/admin-files/venue-management/edit_venue.php:193
-#, fuzzy
 msgid "View Large Map"
 msgstr " Karte ansehen"
 
@@ -4984,7 +4660,6 @@ msgid "Once you have created a locale in the <a href=\"admin.php?page=event_loca
 msgstr " Wenn Sie auf der  <a href=\"admin.php?page=event_locales\">  Gebiet/Region verwalten</a>.Seite eine Region erstellt haben,  ist  es  auf der 'Veranstaltungsort hinzufügen'  verfügbar."
 
 #: ../includes/admin-files/venue-management/venue_help.php:15
-#, fuzzy
 msgid "Venue Manager Google Maps"
 msgstr "Veranstaltungsort-Manager die"
 
@@ -5037,7 +4712,6 @@ msgid "Attendee details saved for "
 msgstr " Teilnehmerdetails gespeichert für"
 
 #: ../includes/admin-reports/edit_attendee_record.php:382
-#, fuzzy
 msgid "Registration Id <a href=\"admin.php?page=attendees&event_admin_reports=edit_attendee_record&event_id="
 msgstr " Registrations ID <a href=\"admin.php?page=events&event_admin_reports=edit_attendee_record&event_id="
 
@@ -5060,13 +4734,11 @@ msgstr " Preisoptionen"
 
 #: ../includes/admin-reports/edit_attendee_record.php:413
 #: ../includes/admin-reports/help.php:23
-#, fuzzy
 msgid "Standard Price Option"
 msgstr " Standard Preis"
 
 #: ../includes/admin-reports/edit_attendee_record.php:418
 #: ../includes/admin-reports/help.php:36
-#, fuzzy
 msgid "Member Price Option"
 msgstr " Memberoptionen"
 
@@ -5190,7 +4862,6 @@ msgstr "Keine"
 
 #: ../includes/admin-reports/enter_attendee_payments.php:229
 #: ../includes/admin-reports/enter_attendee_payments.php:390
-#, fuzzy
 msgid "Transaction Details"
 msgstr "Transaction ID"
 
@@ -5316,7 +4987,6 @@ msgid "Total Attendees"
 msgstr " Anzahl Teilnehmer"
 
 #: ../includes/admin-reports/event_list_attendees.php:296
-#, fuzzy
 msgid "Attendee"
 msgstr "Teilnehmer"
 
@@ -5335,7 +5005,6 @@ msgid "Download Invoice"
 msgstr " Rechnung runterladen"
 
 #: ../includes/admin-reports/event_list_attendees.php:315
-#, fuzzy
 msgid "Download Ticket"
 msgstr " Ticket herunterladen/drucken"
 
@@ -5361,12 +5030,10 @@ msgstr " teilgenommen-Markierung entfernen"
 
 #: ../includes/admin-reports/event_list_attendees.php:362
 #: ../includes/admin-reports/event_list_attendees.php:363
-#, fuzzy
 msgid "Export Payments to Excel"
 msgstr "Export to Excel"
 
 #: ../includes/admin-reports/event_list_attendees.php:366
-#, fuzzy
 msgid "Export All Attendee Data to CSV"
 msgstr " alle Teilnehmerdaten Exportieren"
 
@@ -5410,7 +5077,6 @@ msgstr ""
 #: ../includes/admin-reports/index.php:18
 #: ../includes/admin-reports/index.php:23
 #: ../includes/admin-reports/index.php:42
-#, fuzzy
 msgid "Registration Overview"
 msgstr " Registrations-Zeiten"
 
@@ -5434,12 +5100,10 @@ msgstr " Teilnehmer eine E-Mail senden"
 #: ../includes/category-management/add_cat_to_db.php:23
 #: ../includes/category-management/update_event_category.php:24
 #: ../includes/category-management/update_event_category.php:26
-#, fuzzy
 msgid "The category "
 msgstr " Eventkategorie"
 
 #: ../includes/category-management/add_cat_to_db.php:25
-#, fuzzy
 msgid "The category"
 msgstr " Eventkategorie"
 
@@ -5454,13 +5118,11 @@ msgstr " Kategoriename"
 
 #: ../includes/category-management/add_new_category.php:28
 #: ../includes/category-management/edit_event_category.php:38
-#, fuzzy
 msgid "Unique ID"
 msgstr " eindeutige Event ID"
 
 #: ../includes/category-management/add_new_category.php:34
 #: ../includes/category-management/edit_event_category.php:44
-#, fuzzy
 msgid "Display Category Description in Event Listing?"
 msgstr "Möglichkeit um Kurzbeschreibungen in Eventlisten darzustellen"
 
@@ -5470,7 +5132,6 @@ msgid "Category Description"
 msgstr " Kategoriebeschreibung"
 
 #: ../includes/category-management/edit_event_category.php:23
-#, fuzzy
 msgid "Edit Category"
 msgstr " Kategorie editieren:"
 
@@ -5496,7 +5157,6 @@ msgid "Export to Excel"
 msgstr "Export to Excel"
 
 #: ../includes/category-management/index.php:131
-#, fuzzy
 msgid "Export All Categories to CSV"
 msgstr " alle Kategorien anzeigen"
 
@@ -5517,17 +5177,14 @@ msgid "shortcode"
 msgstr "shortcode"
 
 #: ../includes/category-management/update_event_category.php:24
-#, fuzzy
 msgid " has been updated."
 msgstr "wurde aktualisiert"
 
 #: ../includes/category-management/update_event_category.php:26
-#, fuzzy
 msgid " has not been updated"
 msgstr "wurde aktualisiert"
 
 #: ../includes/classes/EE_Cart.class.php:687
-#, fuzzy
 msgid "All events have been successfully removed from the Event Queue."
 msgstr " Die Veranstaltungsorte wurden aus dem Event gelöscht."
 
@@ -5604,7 +5261,6 @@ msgid "all-events"
 msgstr " alle Anlässe"
 
 #: ../includes/classes/EE_Export.class.php:453
-#, fuzzy
 msgid "attendee-payments"
 msgstr " Teilnehmer Name"
 
@@ -5712,7 +5368,6 @@ msgid "Click to toggle"
 msgstr ""
 
 #: ../includes/event-management/add_new_event.php:28
-#, fuzzy
 msgid "Are you sure you want to cancel ?"
 msgstr " sind Sie sicher das sie abbrechen möchten"
 
@@ -5741,7 +5396,6 @@ msgstr "Registrationsformular anzeigen?"
 
 #: ../includes/event-management/add_new_event.php:70
 #: ../includes/event-management/edit_event.php:171
-#, fuzzy
 msgid "Attendee Limit: "
 msgstr " Teilnehmerlimit"
 
@@ -5752,13 +5406,11 @@ msgstr " für uns limitiert freilassen"
 
 #: ../includes/event-management/add_new_event.php:72
 #: ../includes/event-management/edit_event.php:173
-#, fuzzy
 msgid "Allow group registrations? "
 msgstr " Gruppen Registration erlauben?"
 
 #: ../includes/event-management/add_new_event.php:73
 #: ../includes/event-management/edit_event.php:174
-#, fuzzy
 msgid "Max Group Registrants: "
 msgstr " Maximale Gruppen- Teilnehmer"
 
@@ -5784,15 +5436,13 @@ msgstr " müssen Teilnehmer vorher bewilligt werden?"
 
 #: ../includes/event-management/add_new_event.php:180
 #: ../includes/event-management/edit_event.php:290
-#, fuzzy
 msgid "Custom Tickets"
-msgstr "Custom Files"
+msgstr "Individuelle Tickets"
 
 #: ../includes/event-management/add_new_event.php:196
 #: ../includes/event-management/edit_event.php:306
-#, fuzzy
 msgid "Custom Certificates"
-msgstr "Custom Files"
+msgstr "Individuelle Zertifikate"
 
 #: ../includes/event-management/add_new_event.php:213
 #: ../includes/event-management/edit_event.php:322
@@ -5813,7 +5463,6 @@ msgstr " Event Teilnehmer/Sprecher"
 
 #: ../includes/event-management/add_new_event.php:273
 #: ../includes/event-management/edit_event.php:393
-#, fuzzy
 msgid "Permalink:"
 msgstr "Deutsch"
 
@@ -5833,12 +5482,10 @@ msgid "Registration Dates"
 msgstr " Registration- Datum"
 
 #: ../includes/event-management/add_new_event.php:326
-#, fuzzy
 msgid "Registration Start"
 msgstr " Registration Start"
 
 #: ../includes/event-management/add_new_event.php:330
-#, fuzzy
 msgid "Registration End"
 msgstr " Registration Ende"
 
@@ -5898,7 +5545,6 @@ msgstr " fortgeschrittene Optionen"
 
 #: ../includes/event-management/add_new_event.php:429
 #: ../includes/event-management/edit_event.php:543
-#, fuzzy
 msgid "Venue Details"
 msgstr "Details anschauen"
 
@@ -5975,21 +5621,18 @@ msgstr " E-Mail-Bestätigung:"
 
 #: ../includes/event-management/add_new_event.php:586
 #: ../includes/event-management/edit_event.php:708
-#, fuzzy
 msgid "Custom Confirmation Email"
-msgstr "Zahlungsbestätigungs-Email:"
+msgstr "Individuelle Zahlungsbestätigungs-Email:"
 
 #: ../includes/event-management/add_new_event.php:603
 #: ../includes/event-management/edit_event.php:724
-#, fuzzy
 msgid "Custom Email"
-msgstr "Custom Files"
+msgstr "Individuelle Email"
 
 #: ../includes/event-management/add_new_event.php:608
 #: ../includes/event-management/edit_event.php:729
-#, fuzzy
 msgid "Visual"
-msgstr "Visa"
+msgstr "Visuel"
 
 #: ../includes/event-management/add_new_event.php:610
 #: ../includes/event-management/edit_event.php:731
@@ -6093,7 +5736,6 @@ msgid "Full URL"
 msgstr " volle URL"
 
 #: ../includes/event-management/edit_event.php:394
-#, fuzzy
 msgid "Identifier"
 msgstr " ID"
 
@@ -6106,12 +5748,10 @@ msgid "Registration End:"
 msgstr " Registration Ende"
 
 #: ../includes/event-management/edit_event.php:473
-#, fuzzy
 msgid "Current Time:"
 msgstr "Aktuelle Zeit:"
 
 #: ../includes/event-management/edit_event.php:482
-#, fuzzy
 msgid "Event Timezone:"
 msgstr " Event Zeitzone"
 
@@ -6120,7 +5760,6 @@ msgid "Google Map Link (for email):"
 msgstr " Google Maps Link (für E-Mail):"
 
 #: ../includes/event-management/edit_event.php:702
-#, fuzzy
 msgid "Email Confirmation"
 msgstr " E-Mail-Bestätigung:"
 
@@ -6160,7 +5799,6 @@ msgid "Add Additional Time"
 msgstr " zusätzliche Zeit hinzufügen"
 
 #: ../includes/event-management/event_functions.php:67
-#, fuzzy
 msgid "Qty "
 msgstr " Menge:"
 
@@ -6203,7 +5841,6 @@ msgid "No Categories"
 msgstr " keine Kategorien"
 
 #: ../includes/event-management/event_functions.php:235
-#, fuzzy
 msgid "Questions for Primary Attendee"
 msgstr " Eventfragen für primären Teilnehmer"
 
@@ -6248,7 +5885,6 @@ msgid "Need more questions?"
 msgstr " Benötigen Sie mehr Fragen?"
 
 #: ../includes/event-management/event_functions.php:305
-#, fuzzy
 msgid "Questions for Additional Attendees"
 msgstr " Eventfragen für zusätzliche Teilnehmer"
 
@@ -6313,17 +5949,14 @@ msgid "Delete Events(s)"
 msgstr " Anlässe löschen"
 
 #: ../includes/event-management/event_list.php:404
-#, fuzzy
 msgid "Export All Payment Data to Excel"
 msgstr " alle Teilnehmer des Event nach Excel exportieren"
 
 #: ../includes/event-management/event_list.php:406
-#, fuzzy
 msgid "Export All Event Data to CSV"
 msgstr "alle Eventdaten exportieren exportieren"
 
 #: ../includes/event-management/event_list.php:414
-#, fuzzy
 msgid "Actions Legend"
 msgstr "Actions"
 
@@ -6466,7 +6099,6 @@ msgid "page"
 msgstr " Seite"
 
 #: ../includes/event-management/help.php:141
-#, fuzzy
 msgid "Registration Dates/Times"
 msgstr " Registration- Datum"
 
@@ -6479,17 +6111,14 @@ msgid "If the date of your event occurs before the regisration end date. Then th
 msgstr ""
 
 #: ../includes/event-management/help.php:152
-#, fuzzy
 msgid "All events require registration start/end dates and start/end times in order to display properly on your pages."
 msgstr " alle Anlässe benötigen ein Start und Enddatum um auf ihren Seiten richtig dargestellt zu werden."
 
 #: ../includes/event-management/help.php:167
-#, fuzzy
 msgid "This is the date of the event."
 msgstr " Die Kosten eines Events auf folgenden Betrag bringen"
 
 #: ../includes/event-management/help.php:170
-#, fuzzy
 msgid "All events require a start and end date in order to display properly on your pages."
 msgstr " alle Anlässe benötigen ein Start und Enddatum um auf ihren Seiten richtig dargestellt zu werden."
 
@@ -6498,7 +6127,6 @@ msgid "Each event can have an unlimited amount of start/end times. This is usefu
 msgstr ""
 
 #: ../includes/event-management/help.php:188
-#, fuzzy
 msgid "All events require a start and end time in order to display properly on your pages."
 msgstr " alle Anlässe benötigen ein Start und Enddatum um auf ihren Seiten richtig dargestellt zu werden."
 
@@ -6511,7 +6139,6 @@ msgid "This is the current time of your website. The timezone and date/time form
 msgstr ""
 
 #: ../includes/event-management/help.php:218
-#, fuzzy
 msgid "Custom Ticket"
 msgstr "Custom Files"
 
@@ -6524,12 +6151,10 @@ msgid "Using the Event Meta boxes"
 msgstr " Die Event Meta Boxen verwenden"
 
 #: ../includes/event-management/help.php:232
-#, fuzzy
 msgid "Event meta boxes allow you to add extra information to your event that you can display in your templates or use in your custom pages. The name parameter is the the first box labeled 'Key' and allows the shortcode to identify which meta box is to be displayed; the 'Value' is the actual content you wish to be shown."
 msgstr "Der Namen-Parameter ist in der 1. Box mit 'Key? beschriftet und erlaubt dem Shortcode die Metabox zu identifizieren die angezeigt werden soll; 'Value' ist der effektive Content den sie anzeigen wollen."
 
 #: ../includes/event-management/help.php:236
-#, fuzzy
 msgid "This extra information can be displayed in your event listings or registration pages via shortcodes added to the event description. The Shortcodes take the form of:"
 msgstr " Diese Extrainformationen können in der Eventliste oder der Registration Seite mit Shortcodes  angezeigt werden."
 
@@ -6547,20 +6172,19 @@ msgstr ""
 
 #: ../includes/event-management/help.php:258
 msgid "Further information on shortcodes is available "
-msgstr ""
+msgstr "Weitere informationen über Shortcodes finden sie"
 
 #: ../includes/event-management/help.php:258
-#, fuzzy
 msgid "on the Help &amp; Support page"
 msgstr "Hilfe und Support"
 
 #: ../includes/event-management/help.php:258
 msgid " or from the"
-msgstr ""
+msgstr "im"
 
 #: ../includes/event-management/help.php:258
 msgid "forums"
-msgstr ""
+msgstr "Forum"
 
 #: ../includes/event-management/help.php:266
 msgid "Using Custom Emails Editor"
@@ -6743,12 +6367,10 @@ msgid "Question Groups can be organized or re-ordered by dragging and dropping i
 msgstr " Fragebogen können per Drag & Drop der Tabellenzeilen an den gewünschten Ort organisiert oder in eine neue Reihenfolge gebracht werden."
 
 #: ../includes/form-builder/groups/update_group.php:38
-#, fuzzy
 msgid "There was an error in your submission of group"
 msgstr "Es ist bei der Sendung ein Fehler aufgetreten, bitte versuchen Sie es nochmals."
 
 #: ../includes/form-builder/groups/update_group.php:38
-#, fuzzy
 msgid " The group was not updated!"
 msgstr " Die Kategorie wurde nicht aktualisiert"
 
@@ -6781,7 +6403,6 @@ msgid "Nothing found!"
 msgstr " nichts gefunden!"
 
 #: ../includes/form-builder/questions/update_question.php:20
-#, fuzzy
 msgid " was not updated ."
 msgstr "wurde nicht aktualisiert"
 
@@ -6925,7 +6546,6 @@ msgid "Event Espresso - Event Overview"
 msgstr "Event Espresso -  Eventübersicht"
 
 #: ../includes/functions/admin_menu.php:33
-#, fuzzy
 msgid "Event Espresso - Registration Overview"
 msgstr "Event Espresso -  Eventübersicht"
 
@@ -6966,7 +6586,6 @@ msgid "Event Espresso - Seating Chart"
 msgstr "Event Espresso -   Bestuhlungs-Karte"
 
 #: ../includes/functions/admin_menu.php:56
-#, fuzzy
 msgid "Seating Chart"
 msgstr " Sitzplatz Karte"
 
@@ -6975,7 +6594,6 @@ msgid "Event Espresso - Management"
 msgstr "Event Espresso - Management"
 
 #: ../includes/functions/admin_menu.php:65
-#, fuzzy
 msgid "Management"
 msgstr "Veranstaltungsorte verwalten"
 
@@ -6984,7 +6602,6 @@ msgid "Event Espresso - Email Manager"
 msgstr "Event Espresso - Email Manager"
 
 #: ../includes/functions/admin_menu.php:69
-#, fuzzy
 msgid "Emails"
 msgstr "Email"
 
@@ -6993,7 +6610,6 @@ msgid "Event Espresso - Staff Manager"
 msgstr " Event Espresso – Mitarbeiterverwaltung"
 
 #: ../includes/functions/admin_menu.php:74
-#, fuzzy
 msgid "Staff"
 msgstr "Mitarbeiter"
 
@@ -7002,12 +6618,10 @@ msgid "Event Espresso - Venue Manager"
 msgstr "Event Espresso - Veranstaltungsort-Manager"
 
 #: ../includes/functions/admin_menu.php:79
-#, fuzzy
 msgid "Venues"
 msgstr " Veranstaltungsort"
 
 #: ../includes/functions/admin_menu.php:87
-#, fuzzy
 msgid "Event Espresso - Settings"
 msgstr " Event Espresso – Mitgliedereinstellungen"
 
@@ -7016,16 +6630,14 @@ msgid "Event Espresso - General Settings"
 msgstr "Event Espresso -  Haupteinstellungen"
 
 #: ../includes/functions/admin_menu.php:90
-#, fuzzy
 msgid "General"
-msgstr "Deutsch"
+msgstr "Allgemein"
 
 #: ../includes/functions/admin_menu.php:95
 msgid "Event Espresso - Calendar Settings"
 msgstr " Event Espresso – Kalendereinstellungen"
 
 #: ../includes/functions/admin_menu.php:95
-#, fuzzy
 msgid "Calendar"
 msgstr " Kalendereinstellungen"
 
@@ -7034,7 +6646,6 @@ msgid "Event Espresso - Facebook Settings"
 msgstr " Event Espresso – Facebook Einstellungen"
 
 #: ../includes/functions/admin_menu.php:100
-#, fuzzy
 msgid "Facebook"
 msgstr "Post to Facebook"
 
@@ -7043,7 +6654,6 @@ msgid "Event Espresso - MailChimp Integration"
 msgstr " Event Espresso –MailChimp Integration"
 
 #: ../includes/functions/admin_menu.php:105
-#, fuzzy
 msgid "MailChimp"
 msgstr "MailChimp Integration"
 
@@ -7052,7 +6662,6 @@ msgid "Event Espresso - Member Settings"
 msgstr " Event Espresso – Mitgliedereinstellungen"
 
 #: ../includes/functions/admin_menu.php:110
-#, fuzzy
 msgid "Members"
 msgstr " Memberoptionen"
 
@@ -7061,7 +6670,6 @@ msgid "Event Espresso - Payment Settings"
 msgstr " Event Espresso – Zahlungs Einstellungen"
 
 #: ../includes/functions/admin_menu.php:115
-#, fuzzy
 msgid "Payments"
 msgstr " Zahlung"
 
@@ -7074,7 +6682,6 @@ msgid "Social Media"
 msgstr "Social Media"
 
 #: ../includes/functions/admin_menu.php:125
-#, fuzzy
 msgid "Event Espresso - SSL/HTTPS Settings"
 msgstr " Event Espresso – Ticketeinstellungen"
 
@@ -7083,41 +6690,34 @@ msgid "SSL/HTTPS"
 msgstr ""
 
 #: ../includes/functions/admin_menu.php:130
-#, fuzzy
 msgid "Event Espresso - Permissions Settings"
 msgstr " Event Espresso – Zahlungs Einstellungen"
 
 #: ../includes/functions/admin_menu.php:130
-#, fuzzy
 msgid "Permissions"
 msgstr " Genereller Zutritt"
 
 #: ../includes/functions/admin_menu.php:133
-#, fuzzy
 msgid "Event Espresso - Event Manager Permissions"
 msgstr "Event Espresso - Veranstaltungsort-Manager"
 
 #: ../includes/functions/admin_menu.php:134
-#, fuzzy
 msgid "Event Espresso - Event Manager Roles"
 msgstr "Event Espresso - Veranstaltungsort-Manager"
 
 #: ../includes/functions/admin_menu.php:134
 msgid "User Roles"
-msgstr ""
+msgstr "Benutzerrollen"
 
 #: ../includes/functions/admin_menu.php:137
-#, fuzzy
 msgid "Event Espresso - Locales/Regions"
 msgstr " Event Espresso – Fragen"
 
 #: ../includes/functions/admin_menu.php:137
-#, fuzzy
 msgid "Locales/Regions"
 msgstr "Gebietsschema/Region"
 
 #: ../includes/functions/admin_menu.php:139
-#, fuzzy
 msgid "Event Espresso - Regional Managers"
 msgstr "Event Espresso - Veranstaltungsort-Manager"
 
@@ -7131,46 +6731,41 @@ msgid "Event Espresso - Template Settings"
 msgstr " Event Espresso –Templateeinstellungen"
 
 #: ../includes/functions/admin_menu.php:147
-#, fuzzy
 msgid "Templates"
 msgstr "Templateeinstellungen"
 
 #: ../includes/functions/admin_menu.php:153
-#, fuzzy
 msgid "Event Espresso - Map Settings"
 msgstr " Event Espresso – Mitgliedereinstellungen"
 
 #: ../includes/functions/admin_menu.php:153
 msgid "Maps"
-msgstr ""
+msgstr "Karten"
 
 #: ../includes/functions/admin_menu.php:158
 msgid "Event Espresso - Ticket Settings"
 msgstr " Event Espresso – Ticketeinstellungen"
 
 #: ../includes/functions/admin_menu.php:158
-#, fuzzy
 msgid "Tickets"
 msgstr "# Tickets:"
 
 #: ../includes/functions/admin_menu.php:163
-#, fuzzy
 msgid "Event Espresso - Certificate Templates"
 msgstr " Event Espresso –Templateeinstellungen"
 
 #: ../includes/functions/admin_menu.php:163
 msgid "Certificates"
-msgstr ""
+msgstr "Zertifikate"
 
 #: ../includes/functions/admin_menu.php:168
 #: ../includes/functions/admin_menu.php:174
-#, fuzzy
 msgid "Event Espresso - Marketplace"
 msgstr "Event Espresso - Management"
 
 #: ../includes/functions/admin_menu.php:174
 msgid "Marketplace"
-msgstr ""
+msgstr "Marktplatz"
 
 #: ../includes/functions/admin_menu.php:178
 msgid "Event Espresso - Test Drive Pro"
@@ -7193,7 +6788,7 @@ msgid "Form Questions:"
 msgstr " Formular Fragen:"
 
 #: ../includes/functions/cart.php:518
-#, fuzzy, php-format
+#, php-format
 msgid "For <b>%s</b>, please make sure to select between <b>1</b> and <b>%d</b> attendees or delete it from your cart."
 msgstr " für %s, stellen Sie bitte sicher zwischen 1 und %d Teilnehmer auszuwählen oder löschen Sie es von ihrer Einkaufsliste."
 
@@ -7276,7 +6871,6 @@ msgid "Additional Information:"
 msgstr " zusätzliche Informationen:"
 
 #: ../includes/functions/email.php:369
-#, fuzzy
 msgid "Registration ID: "
 msgstr "Registrations ID:"
 
@@ -7339,12 +6933,10 @@ msgid "If you do not select a seat this attendee will not be added"
 msgstr "Wenn Sie keinen Sitz auswählen wird der Teilnehmer nicht hinzugefügt."
 
 #: ../includes/functions/main.php:286
-#, fuzzy
 msgid "First Name:"
 msgstr "Vorname"
 
 #: ../includes/functions/main.php:290
-#, fuzzy
 msgid "Last Name:"
 msgstr "Nachname"
 
@@ -7397,7 +6989,7 @@ msgstr " kein Land ausgewählt"
 
 #: ../includes/functions/main.php:1875
 msgid "All"
-msgstr ""
+msgstr "Alles"
 
 #: ../includes/functions/pricing.php:8
 #: ../includes/functions/pricing.php:20
@@ -7426,7 +7018,6 @@ msgid "Price:"
 msgstr " Preis:"
 
 #: ../includes/functions/pricing.php:242
-#, fuzzy
 msgid "Choose number of tickets for "
 msgstr "Anzahl Tickets"
 
@@ -7619,7 +7210,6 @@ msgid "Edit Your"
 msgstr "Editieren"
 
 #: ../includes/process-registration/attendee_edit_record.php:229
-#, fuzzy
 msgid "Registration"
 msgstr " Registration"
 
@@ -7716,12 +7306,10 @@ msgid "reCAPTCHA Information"
 msgstr "reCAPTCHA Information"
 
 #: ../includes/settings/help.php:83
-#, fuzzy, php-format
 msgid "%s helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions."
-msgstr "reCAPTCHA hilft bei der Verhinderung automatisiertem Missbrauch Ihrer Website (Spam oder Anmeldungen) indem Sie %s verwenden, damit nur Menschen gewisse Schritte vollziehen können."
+msgstr "%s hilft bei der Verhinderung automatisiertem Missbrauch Ihrer Website (Spam oder Anmeldungen) indem Sie %s verwenden, damit nur Menschen gewisse Schritte vollziehen können."
 
 #: ../includes/settings/help.php:84
-#, fuzzy, php-format
 msgid "You must sign up for a free %s account to use it with this plugin. If you already have a reCAPTCHA account enter your \"Public\" and \"Private\" keys on this page."
 msgstr "Konto anmelden um diese Plugin zu verwenden. Wenn Sie bereits ein reCAPTCHA Konto haben dann geben Sie Ihren \"Public\" and \"Private\" Schlüssel auf dieser Seite ein."
 
@@ -7731,7 +7319,6 @@ msgid "Fancy Email Headers"
 msgstr ""
 
 #: ../includes/settings/help.php:99
-#, php-format
 msgid "This option enables the use of the email header format: %s From: name %s %s Reply-to: name %s"
 msgstr ""
 
@@ -7741,12 +7328,10 @@ msgid "You should only use this if you know it will not cause email delivery pro
 msgstr ""
 
 #: ../includes/settings/organization_config.php:156
-#, fuzzy
 msgid "Organization details saved"
 msgstr "Organisationsdetails gespeichert."
 
 #: ../includes/settings/organization_config.php:161
-#, fuzzy
 msgid "Unable to save Organization details."
 msgstr "Organisationsdetails gespeichert."
 
@@ -7775,7 +7360,6 @@ msgid "Organization City:"
 msgstr "Stadt:"
 
 #: ../includes/settings/organization_config.php:235
-#, fuzzy
 msgid "Organization State:"
 msgstr "Provinz:"
 
@@ -7812,12 +7396,10 @@ msgid "Events expire on registration end date?"
 msgstr "Anlässe laufen am Anmelde-Enddatum ab?"
 
 #: ../includes/settings/organization_config.php:287
-#, fuzzy
 msgid "Images"
 msgstr " Bild:"
 
 #: ../includes/settings/organization_config.php:293
-#, fuzzy
 msgid "Add a Default Logo"
 msgstr " Kategorie hinzufügen"
 
@@ -7834,7 +7416,6 @@ msgid "Page Settings"
 msgstr "Seiteneinstellungen"
 
 #: ../includes/settings/organization_config.php:331
-#, fuzzy
 msgid "The following shortcodes and page settings are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view <a href=\"admin.php?page=support#shortcodes\">this page</a> for a list of optional shortcodes."
 msgstr "Der folgende Shortcode und die Seiteneinstellungen werden von Event Espresso benötigt. Diese Shortcodes sollten nicht von anderen Shortcodes ersetzt werden. Lesen Sie hier für <a href=\"admin.php?page=support#shortcodes\">optionale Shortcodes</a>. "
 
@@ -7843,7 +7424,6 @@ msgid "The Secure Payment System has been removed."
 msgstr "Das sichere Zahlungssystem wurde entfernt."
 
 #: ../includes/settings/organization_config.php:341
-#, fuzzy
 msgid "If your site uses SSL to handle secure transactions. Please install the <a href=\"http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip\" title=\"Install Now\">Event Espresso SSL/HTTPS</a> plugin now."
 msgstr "Falls Ihre Site SSL für sichere Transaktionen verwendet, installieren Sie folgendes Plugin: <a href=\"http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip\" title=\"Download Now\">Event Espresso SSL/HTTPS</a>."
 
@@ -7856,7 +7436,6 @@ msgid "Turn off this message?"
 msgstr "Diese Nachricht ausschalten?"
 
 #: ../includes/settings/organization_config.php:359
-#, fuzzy
 msgid "Main registration page"
 msgstr "Hauptregistrationsseite:"
 
@@ -7868,38 +7447,34 @@ msgid "Main page"
 msgstr "Hauptseite"
 
 #: ../includes/settings/organization_config.php:369
-#, fuzzy, php-format
+#, php-format
 msgid "This page can be hidden from navigation if desired, <br />but should always contain the %s shortcode."
-msgstr "Diese Seite enthält den  %s Shortcode. <br />Diese Seite kann auf Wunsch von der Navigation versteckt werden, <br />sollte aber immer den %s Shortcode enthalten."
+msgstr "Diese Seite kann auf Wunsch von der Navigation versteckt werden, <br />sollte aber immer den %s Shortcode enthalten."
 
 #: ../includes/settings/organization_config.php:383
-#, fuzzy, php-format
 msgid ""
 "This page should hidden from your navigation,<br />but still viewable to the public (not password protected),<br />\n"
-"and should always contain the %s shortcode."
+" and should always contain the %s shortcode."
 msgstr "Diese Seite enthält den  %s Shortcode. <br />Diese Seite kann auf Wunsch von der Navigation versteckt werden, <br />aber immer noch sichtbar für die Öffentlichkeit (nicht Passwort-geschützt.)"
 
 #: ../includes/settings/organization_config.php:388
-#, fuzzy
 msgid "Payment Notification URL"
 msgstr " Zahlungsanweisung wurde gesendet."
 
 #: ../includes/settings/organization_config.php:398
-#, fuzzy, php-format
 msgid "This page should hidden from your navigation, <br />but still viewable to the public (not password protected),<br /> and should always contain the %s shortcode."
 msgstr "Diese Seite enthält den  %s Shortcode. <br />Diese Seite sollte von der Navigation versteckt werden, <br />aber immer noch sichtbar für die Öffentlichkeit (nicht Passwort-geschützt.)"
 
 #: ../includes/settings/organization_config.php:413
-#, fuzzy, php-format
+#, php-format
 msgid "This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)"
-msgstr "Dies sollte die Seite mit der Abbruchnachricht enhalten.<br />Es sind keine Short Tags notwendig. Die Seite sollte von der Navigation versteckt werden, <br />aber dennoch sichtbar für die Öffentlichkeit sein (nicht passwortgeschützt.)"
+msgstr ""
 
 #: ../includes/settings/organization_config.php:458
 msgid "Email Settings"
 msgstr "Email Einstellungen"
 
 #: ../includes/settings/organization_config.php:472
-#, php-format
 msgid "This option enables the use of the email header format %s From: name %s %s Reply-to: name %s %s."
 msgstr ""
 
@@ -7977,12 +7552,11 @@ msgid "Graphical Reports"
 msgstr "Grafische Reports"
 
 #: ../includes/settings/organization_config.php:645
-#, fuzzy, php-format
+#, php-format
 msgid "Please purchase a %s to gain access to this feature."
-msgstr "um Zugriff auf dieses Feature zu erhalten."
+msgstr "Kaufen Sie bitte ein %s um Zugriff auf dieses Feature zu erhalten."
 
 #: ../includes/settings/organization_config.php:646
-#, php-format
 msgid "reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions."
 msgstr "reCAPTCHA hilft bei der Verhinderung automatisiertem Missbrauch Ihrer Website (Spam oder Anmeldungen) indem Sie %s verwenden, damit nur Menschen gewisse Schritte vollziehen können."
 
@@ -7998,7 +7572,6 @@ msgstr " alle Posts  von  %s ansehen <span class=\"meta-nav\">&rarr;</span>"
 
 #: ../templates/alt_reg_page_display.php:14
 #: ../templates/multi_registration_page_display.php:42
-#, fuzzy
 msgid "This event has passed."
 msgstr "Dieser Event ist bereits vorüber.</h3>"
 
@@ -8050,7 +7623,6 @@ msgid "View Map"
 msgstr " Karte ansehen"
 
 #: ../templates/init.php:5
-#, fuzzy
 msgid "Your Event Espresso templates are outdated. Please update your templates ASAP!"
 msgstr " Teilnehmerdaten müssen in Event Espresso aktualisiert werden. Bitte besuchen Sie"
 
@@ -8059,7 +7631,6 @@ msgid "<h3>This event has expired or is no longer available.</h3>"
 msgstr "<h3> dieser Event ist abgelaufen oder nicht mehr verfügbar.</h3>"
 
 #: ../templates/multi_registration_page_display.php:16
-#, fuzzy
 msgid "Event Expired"
 msgstr "Event Espresso"
 
@@ -8077,7 +7648,6 @@ msgid "Class/Event:"
 msgstr "Veranstaltung/Event:"
 
 #: ../templates/payment_overview.php:14
-#, fuzzy
 msgid "Registration  Details:"
 msgstr "Anmeldeinformationen"
 
@@ -8190,18 +7760,15 @@ msgstr " Wiederholende Anlässe anzeigen?"
 #: ../templates/widget_minicart_list.template.php:25
 #: ../templates/widget_minicart_table.template.php:21
 #: ../templates/widget_minicart_table.template.php:32
-#, fuzzy
 msgid "Total"
 msgstr "Total:"
 
 #: ../templates/widget_minicart_list.template.php:41
 #: ../templates/widget_minicart_table.template.php:51
-#, fuzzy
 msgid "Grand Total: "
 msgstr "Total:"
 
 #: ../tpc/pue/pue-client.php:318
-#, fuzzy
 msgid "Dismiss"
 msgstr "Entfernen"
 
@@ -8563,7 +8130,6 @@ msgid "Organization details saved."
 msgstr "Organisationsdetails gespeichert."
 
 #: ../../event-espresso.3.1.15.P/includes/organization_config.php:219
-#, fuzzy
 msgid "If your site uses SSL to handle secure transactions. Please install the <a href=\"http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip\" title=\"Download Now\">Event Espresso SSL/HTTPS</a> plugin now."
 msgstr "Falls Ihre Site SSL für sichere Transaktionen verwendet, installieren Sie folgendes Plugin: <a href=\"http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip\" title=\"Download Now\">Event Espresso SSL/HTTPS</a>."
 
@@ -8808,7 +8374,6 @@ msgid "account to use it with this plugin. If you already have a reCAPTCHA accou
 msgstr "Konto anmelden um diese Plugin zu verwenden. Wenn Sie bereits ein reCAPTCHA Konto haben dann geben Sie Ihren \"Public\" and \"Private\" Schlüssel auf dieser Seite ein."
 
 #: ../../event-espresso.3.1.15.P/includes/admin-files/templates_help.php:16
-#, fuzzy
 msgid ""
 "If you want to modify and customize the styles of your template pages you must move a copy of the \n"
 "    \t\t\t\t\t\t\t\t\tevent_espresso_style.css to the /wp-content/uploads/espresso/templates folder (if /espresso/templates does \n"
@@ -9112,7 +8677,6 @@ msgid "Get URL"
 msgstr "Get URL"
 
 #: ../../event-espresso.3.1.15.P/includes/event-management/add_new_event.php:283
-#, fuzzy
 msgid "All events <strong>require</strong> registration start/end dates and start/end times in order to display properly on your pages."
 msgstr " alle Anlässe benötigen ein Start und Enddatum um auf ihren Seiten richtig dargestellt zu werden."
 
@@ -9125,7 +8689,6 @@ msgid "Event End Date:"
 msgstr "Veranstaltung-Enddatum:"
 
 #: ../../event-espresso.3.1.15.P/includes/event-management/add_new_event.php:301
-#, fuzzy
 msgid "All events <strong>require</strong> a start and end date in order to display properly on your pages."
 msgstr " alle Anlässe benötigen ein Start und Enddatum um auf ihren Seiten richtig dargestellt zu werden."
 
@@ -9318,7 +8881,6 @@ msgid "<b>Post</b> -- Calendar links go to the Event Post for the event. Use thi
 msgstr ""
 
 #: ../../espresso-calendar/calendar_help.php:37
-#, fuzzy
 msgid "Calendar thumbnail sizing"
 msgstr " Kalendereinstellungen"
 
@@ -9335,7 +8897,6 @@ msgid "<em>N.B. On certain displays, such as a Day view these thumbnail sizes mi
 msgstr ""
 
 #: ../../espresso-calendar/calendar_help.php:54
-#, fuzzy
 msgid "Display event times"
 msgstr " Eventzeiten"
 
@@ -9374,7 +8935,7 @@ msgstr ""
 #: ../../espresso-calendar/calendar_help.php:96
 #: ../../espresso-calendar/espresso-calendar.php:452
 msgid "Header Style"
-msgstr ""
+msgstr "Header Style"
 
 #: ../../espresso-calendar/calendar_help.php:106
 #: ../../espresso-calendar/calendar_help.php:129
@@ -9383,69 +8944,62 @@ msgstr ""
 #: ../../espresso-calendar.1.11/espresso-calendar.php:244
 #: ../../espresso-calendar.1.11/espresso-calendar.php:259
 msgid "More Ino:"
-msgstr ""
+msgstr "Mehr Ino:"
 
 #: ../../espresso-calendar/calendar_help.php:115
 #: ../../espresso-calendar/espresso-calendar.php:461
 msgid "Button Text"
-msgstr ""
+msgstr "Knopfbeschriftung"
 
 #: ../../espresso-calendar/calendar_help.php:138
 #: ../../espresso-calendar/espresso-calendar.php:471
 msgid "Title Format"
-msgstr ""
+msgstr "Titelformat"
 
 #: ../../espresso-calendar/calendar_help.php:147
 #: ../../espresso-calendar.1.11/espresso-calendar.php:251
-#, fuzzy
 msgid "For date formatting options, please refer to: "
 msgstr "Für die vollständige Information um die Relay Response zu konfigurieren, bitte hier nachlesen"
 
 #: ../../espresso-calendar/calendar_help.php:156
 #: ../../espresso-calendar/espresso-calendar.php:480
 msgid "Column Format"
-msgstr ""
+msgstr "Spaltenformat"
 
 #: ../../espresso-calendar/calendar_help.php:174
 #: ../../espresso-calendar/espresso-calendar.php:490
-#, fuzzy
 msgid "Month Names"
 msgstr " Eventname"
 
 #: ../../espresso-calendar/calendar_help.php:189
 #: ../../espresso-calendar/espresso-calendar.php:499
 msgid "Month Names Short"
-msgstr ""
+msgstr "Monatsnamen kurz"
 
 #: ../../espresso-calendar/calendar_help.php:201
 #: ../../espresso-calendar/espresso-calendar.php:508
-#, fuzzy
 msgid "Day Names"
-msgstr "Nachname"
+msgstr "Tagesnamen"
 
 #: ../../espresso-calendar/calendar_help.php:213
 #: ../../espresso-calendar/espresso-calendar.php:517
 msgid "Day Names Short"
-msgstr ""
+msgstr "Tagesnamen kurz"
 
 #: ../../espresso-calendar/espresso-calendar.php:133
-#, fuzzy
 msgid "The calendar settings were saved "
-msgstr "eway Einstellungen gesichert."
+msgstr "Kalendareinstellungen wurden gespeichert"
 
 #: ../../espresso-calendar/espresso-calendar.php:138
-#, fuzzy
 msgid "The calendar settings were reset "
-msgstr " Kalendereinstellungen"
+msgstr " Kalendereinstellungen wurden zurückgesetzt"
 
 #: ../../espresso-calendar/espresso-calendar.php:181
-#, fuzzy
 msgid "Calendar Usage"
-msgstr " Kalendereinstellungen"
+msgstr "Kalendarbenutzung"
 
 #: ../../espresso-calendar/espresso-calendar.php:187
 #: ../../espresso-calendar.1.11/espresso-calendar.php:150
-#, fuzzy
 msgid "Directions:"
 msgstr "Beschreibung:"
 
@@ -9455,9 +9009,8 @@ msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:192
 #: ../../espresso-calendar.1.11/espresso-calendar.php:152
-#, fuzzy
 msgid "Examples Shortcodes:"
-msgstr "Kalender Shortcodes"
+msgstr "Beispiel Shortcodes"
 
 #: ../../espresso-calendar/espresso-calendar.php:200
 #: ../../espresso-calendar.1.11/espresso-calendar.php:159
@@ -9471,9 +9024,8 @@ msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:205
 #: ../../espresso-calendar.1.11/espresso-calendar.php:163
-#, fuzzy
 msgid "Category Colors:"
-msgstr "Kategorie Shortcodes"
+msgstr "Kategorie Farben"
 
 #: ../../espresso-calendar/espresso-calendar.php:207
 #: ../../espresso-calendar.1.11/espresso-calendar.php:164
@@ -9482,17 +9034,14 @@ msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:225
 #: ../../espresso-calendar.1.11/espresso-calendar.php:171
-#, fuzzy
 msgid "Basic Settings"
-msgstr "Email Einstellungen"
+msgstr "Grund-Einstellungen"
 
 #: ../../espresso-calendar/espresso-calendar.php:230
-#, fuzzy
 msgid "Time/Date Settings"
 msgstr "Zeit und Datumseinstellungen"
 
 #: ../../espresso-calendar/espresso-calendar.php:236
-#, fuzzy
 msgid "Show Event Time in Calendar"
 msgstr "Alle Anlässe eines Veranstaltungsortes anzeigen:"
 
@@ -9502,10 +9051,9 @@ msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:249
 msgid "g:i a"
-msgstr ""
+msgstr "g:i a"
 
 #: ../../espresso-calendar/espresso-calendar.php:269
-#, fuzzy
 msgid "Custom:"
 msgstr "Custom Files"
 
@@ -9514,9 +9062,8 @@ msgid "Documentation on date and time formatting"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:279
-#, fuzzy
 msgid "First Day of the Week"
-msgstr "First Data Shared Secret"
+msgstr "Woche beginnt mit"
 
 #: ../../espresso-calendar/espresso-calendar.php:285
 #: ../../espresso-calendar.1.11/espresso-calendar.php:178
@@ -9545,13 +9092,11 @@ msgid "This tells the plugin to load the calendar CSS file on specific pages. Th
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:327
-#, fuzzy
 msgid "Link to Post or Registration Page"
 msgstr " weiter zu Registration Seite"
 
 #: ../../espresso-calendar/espresso-calendar.php:331
 #: ../../espresso-calendar.1.11/espresso-calendar.php:208
-#, fuzzy
 msgid "Registration Page"
 msgstr " Registration- Datum"
 
@@ -9565,7 +9110,6 @@ msgid "Enable Images in Calendar"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:347
-#, fuzzy
 msgid "Thumbnail Size"
 msgstr "Event Thumbnail"
 
@@ -9582,7 +9126,6 @@ msgid "Large (150px high)"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:368
-#, fuzzy
 msgid "Theme Settings"
 msgstr "Templateeinstellungen"
 
@@ -9607,7 +9150,6 @@ msgid "Show Tooltips"
 msgstr ""
 
 #: ../../espresso-calendar/espresso-calendar.php:420
-#, fuzzy
 msgid "Enable CSS for Categories"
 msgstr " Kategorien verwalten"
 
@@ -9615,13 +9157,11 @@ msgstr " Kategorien verwalten"
 #: ../../espresso-calendar/espresso-calendar.php:529
 #: ../../espresso-calendar.1.11/espresso-calendar.php:212
 #: ../../espresso-calendar.1.11/espresso-calendar.php:300
-#, fuzzy
 msgid "Save Calendar Options"
 msgstr "Optionen speichern"
 
 #: ../../espresso-calendar/espresso-calendar.php:445
 #: ../../espresso-calendar.1.11/espresso-calendar.php:217
-#, fuzzy
 msgid "Advanced Settings"
 msgstr " fortgeschrittene Optionen"
 
@@ -9651,25 +9191,23 @@ msgstr ""
 #: ../../espresso-calendar/espresso-calendar.php:504
 #: ../../espresso-calendar.1.11/espresso-calendar.php:271
 msgid "Abbreviated names of months."
-msgstr ""
+msgstr "Abgekürzte Namen der Monate"
 
 #: ../../espresso-calendar/espresso-calendar.php:513
 #: ../../espresso-calendar.1.11/espresso-calendar.php:277
 msgid "Full names of days-of-week."
-msgstr ""
+msgstr "Ausgeschriebene Namen der Wochentage"
 
 #: ../../espresso-calendar/espresso-calendar.php:522
 #: ../../espresso-calendar.1.11/espresso-calendar.php:283
 msgid "Abbreviated names of days-of-week."
-msgstr ""
+msgstr "Abgekürzte Namen der Wochentage"
 
 #: ../../espresso-calendar/espresso-calendar.php:533
-#, fuzzy
 msgid "Reset Calendar Settings?"
 msgstr " Kalendereinstellungen"
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:95
-#, fuzzy
 msgid "Calendar details saved."
 msgstr "Templatedetails gespeichert."
 
@@ -9678,7 +9216,6 @@ msgid " Add [ESPRESSO_CALENDAR] to any page or post to display a calendar of Eve
 msgstr ""
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:176
-#, fuzzy
 msgid "First Day of the Week:"
 msgstr "First Data Shared Secret"
 
@@ -9699,7 +9236,6 @@ msgid "This tells the plugin to load the calendar CSS file on these pages. This 
 msgstr ""
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:206
-#, fuzzy
 msgid "Links go to post or registration page?"
 msgstr " weiter zu Registration Seite"
 
@@ -9708,14 +9244,12 @@ msgid "Header Style:"
 msgstr ""
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:234
-#, fuzzy
 msgid "Button Text:"
-msgstr "Button Image URL: "
+msgstr "Knopf Text:"
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:248
-#, fuzzy
 msgid "Title Format:"
-msgstr "Titel:"
+msgstr "Titel Format:"
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:249
 #: ../../espresso-calendar.1.11/espresso-calendar.php:257
@@ -9727,18 +9261,16 @@ msgid "Column Format:"
 msgstr ""
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:264
-#, fuzzy
 msgid "Month Names:"
-msgstr " Eventname:"
+msgstr "Montasnamen:"
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:270
 msgid "Month Names Short:"
 msgstr ""
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:276
-#, fuzzy
 msgid "Day Names:"
-msgstr "Bankname:"
+msgstr "Tagesnamen:"
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:282
 msgid "Day Names Short:"
@@ -9746,25 +9278,21 @@ msgstr ""
 
 #: ../../espresso-social/espresso-social.php:100
 #: ../../espresso-social.1.1/espresso-social.php:100
-#, fuzzy
 msgid "Facebook details saved."
-msgstr "Templatedetails gespeichert."
+msgstr "Facebookdetails gespeichert."
 
 #: ../../espresso-social/espresso-social.php:119
 #: ../../espresso-social.1.1/espresso-social.php:119
-#, fuzzy
 msgid "Twitter details saved."
-msgstr "Templatedetails gespeichert."
+msgstr "Twitterdetails gespeichert."
 
 #: ../../espresso-social/espresso-social.php:136
 #: ../../espresso-social.1.1/espresso-social.php:136
-#, fuzzy
 msgid "Google details saved."
-msgstr "Templatedetails gespeichert."
+msgstr "Googledetails gespeichert."
 
 #: ../../espresso-social/espresso-social.php:190
 #: ../../espresso-social.1.1/espresso-social.php:190
-#, fuzzy
 msgid "Facebook Settings "
 msgstr " Facebook Einstellungen"
 
@@ -9775,15 +9303,13 @@ msgstr ""
 
 #: ../../espresso-social/espresso-social.php:206
 #: ../../espresso-social.1.1/espresso-social.php:206
-#, fuzzy
 msgid "Horizontal Button Count"
-msgstr "(Optional)"
+msgstr "Horizontale Knopfanzahl"
 
 #: ../../espresso-social/espresso-social.php:207
 #: ../../espresso-social.1.1/espresso-social.php:207
-#, fuzzy
 msgid "Horizontal Standard"
-msgstr "(Optional)"
+msgstr "Horizontal Standard"
 
 #: ../../espresso-social/espresso-social.php:208
 #: ../../espresso-social/espresso-social.php:313
@@ -9801,41 +9327,38 @@ msgstr ""
 
 #: ../../espresso-social/espresso-social.php:233
 #: ../../espresso-social.1.1/espresso-social.php:233
-#, fuzzy
 msgid "Font:"
-msgstr "Betrag:"
+msgstr "Schriftart:"
 
 #: ../../espresso-social/espresso-social.php:239
 #: ../../espresso-social.1.1/espresso-social.php:239
-#, fuzzy
 msgid "arial"
-msgstr "Email"
+msgstr "arial"
 
 #: ../../espresso-social/espresso-social.php:240
 #: ../../espresso-social.1.1/espresso-social.php:240
 msgid "lucida grande"
-msgstr ""
+msgstr "lucida grande"
 
 #: ../../espresso-social/espresso-social.php:241
 #: ../../espresso-social.1.1/espresso-social.php:241
 msgid "segoe ui"
-msgstr ""
+msgstr "segoe ui"
 
 #: ../../espresso-social/espresso-social.php:242
 #: ../../espresso-social.1.1/espresso-social.php:242
 msgid "tahoma"
-msgstr ""
+msgstr "tahoma"
 
 #: ../../espresso-social/espresso-social.php:243
 #: ../../espresso-social.1.1/espresso-social.php:243
 msgid "trebuchet ms"
-msgstr ""
+msgstr "trebuchet ms"
 
 #: ../../espresso-social/espresso-social.php:244
 #: ../../espresso-social.1.1/espresso-social.php:244
-#, fuzzy
 msgid "verdana"
-msgstr "Deutsch"
+msgstr "verdana"
 
 #: ../../espresso-social/espresso-social.php:253
 #: ../../espresso-social.1.1/espresso-social.php:253
@@ -9854,21 +9377,18 @@ msgstr ""
 
 #: ../../espresso-social/espresso-social.php:270
 #: ../../espresso-social.1.1/espresso-social.php:270
-#, fuzzy
 msgid "Save Facebook Options"
-msgstr "Optionen speichern"
+msgstr "Facebookeinstellungen speichern"
 
 #: ../../espresso-social/espresso-social.php:285
 #: ../../espresso-social.1.1/espresso-social.php:285
-#, fuzzy
 msgid "Twitter Settings "
-msgstr " Ticketeinstellungen"
+msgstr "Twitter Einstellungen"
 
 #: ../../espresso-social/espresso-social.php:295
 #: ../../espresso-social.1.1/espresso-social.php:295
-#, fuzzy
 msgid "Twitter Username:"
-msgstr "Twitter:"
+msgstr "Twitter Benutzername:"
 
 #: ../../espresso-social/espresso-social.php:305
 #: ../../espresso-social.1.1/espresso-social.php:305
@@ -9879,9 +9399,8 @@ msgstr ""
 #: ../../espresso-social/espresso-social.php:374
 #: ../../espresso-social.1.1/espresso-social.php:312
 #: ../../espresso-social.1.1/espresso-social.php:374
-#, fuzzy
 msgid "Horizontal"
-msgstr "(Optional)"
+msgstr "Horizontal"
 
 #: ../../espresso-social/espresso-social.php:322
 #: ../../espresso-social.1.1/espresso-social.php:322
@@ -9890,21 +9409,18 @@ msgstr ""
 
 #: ../../espresso-social/espresso-social.php:329
 #: ../../espresso-social.1.1/espresso-social.php:329
-#, fuzzy
 msgid "Danish"
-msgstr "Spanisch"
+msgstr "Dänisch"
 
 #: ../../espresso-social/espresso-social.php:343
 #: ../../espresso-social.1.1/espresso-social.php:343
-#, fuzzy
 msgid "Save Twitter Options"
-msgstr "Optionen speichern"
+msgstr "Twitteroptionen speichern"
 
 #: ../../espresso-social/espresso-social.php:358
 #: ../../espresso-social.1.1/espresso-social.php:358
-#, fuzzy
 msgid "Google+1  Settings "
-msgstr "Seiteneinstellungen"
+msgstr "Google+1 Einstellungen"
 
 #: ../../espresso-social/espresso-social.php:368
 #: ../../espresso-social.1.1/espresso-social.php:368
@@ -9918,15 +9434,13 @@ msgstr ""
 
 #: ../../espresso-social/espresso-social.php:390
 #: ../../espresso-social.1.1/espresso-social.php:390
-#, fuzzy
 msgid "No Text"
-msgstr "Text"
+msgstr "Kein Text"
 
 #: ../../espresso-social/espresso-social.php:391
 #: ../../espresso-social.1.1/espresso-social.php:391
-#, fuzzy
 msgid "Inline Text"
-msgstr " Rechnung geschickt"
+msgstr "Inline Text"
 
 #: ../../espresso-social/espresso-social.php:392
 #: ../../espresso-social.1.1/espresso-social.php:392
@@ -9935,9 +9449,8 @@ msgstr ""
 
 #: ../../espresso-social/espresso-social.php:402
 #: ../../espresso-social.1.1/espresso-social.php:402
-#, fuzzy
 msgid "Save Google Options"
-msgstr "Optionen speichern"
+msgstr "Googleeinstellungen speichern"
 
 #: ../../espresso-members/member_functions.php:16
 #, fuzzy
@@ -11681,11 +11194,11 @@ msgstr "Mexikanische Peso"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:119
 msgid "Brazilian Real"
-msgstr ""
+msgstr "Brasilianischer Real"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:122
 msgid "British Pound"
-msgstr ""
+msgstr "Britisches Pfund"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:125
 #, fuzzy
@@ -11699,11 +11212,11 @@ msgstr "Israelische Shekel"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:146
 msgid "Lithuanian Litas"
-msgstr ""
+msgstr "Lithaunische Litas"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:149
 msgid "Malaysian Ringgit"
-msgstr ""
+msgstr "Malaysischer Ringgit"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:155
 #, fuzzy
@@ -11717,7 +11230,7 @@ msgstr "Philippinische Pesos"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:164
 msgid "Romanian New Leu"
-msgstr ""
+msgstr "Romänischer Neu Leu"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:167
 #, fuzzy
@@ -11731,7 +11244,7 @@ msgstr "Singapore Dollar ($)"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:173
 msgid "South African Rand"
-msgstr ""
+msgstr "Südafrikanischer Rand"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:182
 #, fuzzy
@@ -11745,7 +11258,7 @@ msgstr "U.S. Dollars ($)"
 
 #: ../../event-espresso-3.1/gateways/2checkout/settings.php:188
 msgid "United Arab Emirates Dirham "
-msgstr ""
+msgstr "Dirham der vereinigten arabischen Emirate"
 
 #: ../../event-espresso-3.1/gateways/aim/aim_ipn.php:80
 msgid "There was no response from Authorize.net."
@@ -11854,7 +11367,7 @@ msgstr "Templateeinstellungen"
 
 #: ../../event-espresso-3.1/gateways/realauth/settings.php:117
 msgid "Euro"
-msgstr ""
+msgstr "Euro"
 
 #: ../../event-espresso-3.1/gateways/realauth/settings.php:120
 #, fuzzy
@@ -11868,7 +11381,7 @@ msgstr "Hong Kong Dollar ($)"
 
 #: ../../event-espresso-3.1/gateways/realauth/settings.php:135
 msgid "Japanese Yen"
-msgstr ""
+msgstr "Japanischer Yen"
 
 #: ../../event-espresso-3.1/gateways/realauth/settings.php:168
 #, fuzzy
@@ -11980,7 +11493,7 @@ msgstr " Weitere Informationen zu Shortcodes finden Sie hier <a href='http://eve
 
 #: ../../event-espresso-3.1/includes/event-management/event_list.php:70
 msgid "You have more than 500 records."
-msgstr ""
+msgstr "Sie haben mehr als 500 Einträge"
 
 #: ../../event-espresso-3.1/includes/functions/cart.php:719
 #, fuzzy
