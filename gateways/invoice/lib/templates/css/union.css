@@ -1,0 +1,66 @@
+/*
+Union Template
+Created by Olly Headey
+
+*/
+/*=========================== TYPOGRAPHY =========================*/
+
+#invoice{font-family: "Century Gothic", Helvetica, Arial, Verdana, sans-serif !important } 
+#Main  #invoice h1 {margin: 0;color: #555;font-size: 24px;text-transform: uppercase;}
+#Main #invoice h2, #Main #invoice h3 {color:#000; text-transform: none;}
+#invoice h2 {margin: 10px 0;font-size: 14pt;}
+#invoice-amount td, th {font-size: 10pt;}
+#invoice-header #company-address {text-align: right; font-size: 11pt; line-height: 14pt;}
+#invoice #client-details, #invoice-info p {font-size: 10pt; line-height: 14pt;}
+#invoice #invoice-other, #invoice #payment-details {font-size: 10pt; line-height: 14pt;}
+#invoice-info h2, #invoice-info h3 {margin: 0; font-weight: normal;}
+#invoice #invoice-info h2{text-transform:uppercase; font-size: 18pt;}
+#invoice #invoice-info h3 {font-size:12pt;}
+#invoice #invoice-info p {text-align:right;margin-top:0}
+#invoice-info #payment-total{display:none}
+#comments {font-weight:bold;margin-top:0; font-size:10pt}
+#invoice #invoice-info h2, #invoice #company-address div.email, #invoice #invoice-other h2, #invoice #payment-details h2 {color: #a10000;}
+#invoice #invoice-other h2, #invoice #payment-details h2 {font-weight: normal; text-transform: uppercase;}
+
+/*=========================== LAYOUT =========================*/
+
+#invoice {padding:0 1cm 1cm 2.5cm; background: #fff url(../images/red-bg.gif) top left repeat-y; width: 600px; }
+#invoice-header .logo {float:left;}
+#invoice-header{margin-top:1.5cm; border-bottom:1px solid #a10000;padding-bottom:10px; overflow:hidden}
+* html #invoice-header {height:1%}
+#invoice-blank-header {margin-top: 1.6cm;}
+#invoice-info{margin: 0.7cm 0 20px 0; width:55%; float:right; text-align:right;}
+#invoice-info #payment-terms {display:none;}
+#invoice-info #payment-due {font-style: italic;}
+#company-address {margin: 0; padding: 0; width:300px; float:right}
+#client-details {margin:0.7cm 0 20px 0cm;float:left;width:35%}   /* Positioned to appear in a standard envelope window when printed */
+#invoice-other {text-align: right;clear:both; float: right;width:50%;margin-top:0}
+#invoice #payment-details{float:left; width:45%;margin-top:0 }
+#payment-details .sort-code, #payment-details .account-number, #payment-details .payment-reference {clear: left;}
+#payment-details strong {font-weight: normal; float: left; width: 12em;}
+#invoice-other strong {font-weight: normal; float: left; width: 16em; }
+#invoice-other #comments {clear: both; margin-top: 0em; font-weight: normal; color: #a10000;}
+#invoice-other #contract-number{margin-bottom:3em}
+
+#comments{clear:both; padding-top:0.3cm}
+
+/*=========================== TABLES =========================*/
+
+#invoice table#invoice-amount { border-collapse:collapse; width:100%;clear:both;margin:1cm 0 0.4cm 0; }
+#invoice-amount th {text-align: left;white-space: nowrap;padding: 3px 5px 3px 5px; font-weight: normal;background: #F2F2F2; }
+#invoice-amount td {margin: 0;padding: 4px 5px 4px 5px; vertical-align: top;}
+#invoice-amount td.item_r{text-align: right;}
+#invoice-amount td.item_l{text-align: left;white-space: normal;}
+#invoice-amount td.total{text-align: right;font-weight: bold; /*color: #a10000;*/}
+#invoice-amount td.action{background: #FFF; width:7%;padding-right:0; white-space:nowrap;text-align:center}
+#invoice-amount tr#total_tr {background: #F2F2F2;}
+#invoice-amount td {border-top: 1px solid #F2F2F2;}
+#invoice-amount tr#discount_tr, #invoice-amount tr#net_total_tr, #invoice-amount tr#vat_tr {color: #777;}
+
+#invoice-amount .details_th{width:46%}
+#invoice-amount .details_notax_th{width:54%}
+#invoice-amount .quantity_th{width:13%}
+#invoice-amount .subtotal_th{width:18%; text-align:right}
+#invoice-amount .unitprice_th{width:15%; text-align:right}
+#invoice-amount .salestax_th{width:8%; text-align:center}
+
