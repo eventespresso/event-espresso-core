@@ -10,10 +10,10 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
-		
+
 		$event_cost = event_espresso_get_final_price($price_id, $event_id);
-		
-		
+
+
 		//For general coupons, added for multi registration
 		if (!is_null($event_id)) {
 			$event_id_filter = " AND r.event_id = '" . $event_id . "'";
@@ -26,7 +26,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 		if (!empty($use_coupon_code) && $use_coupon_code == 'Y') {
 			if (!empty($_REQUEST['coupon_code']) || !empty($_POST['event_espresso_coupon_code'])) {
 
-				$coupon_code = $_POST['event_espresso_coupon_code'] ? $_POST['event_espresso_coupon_code'] : $_REQUEST['coupon_code'];
+				$coupon_code = !empty($_POST['event_espresso_coupon_code']) ? $_POST['event_espresso_coupon_code'] : $_REQUEST['coupon_code'];
 
 				//$results = $wpdb->get_results("SELECT * FROM ". EVENTS_DISCOUNT_CODES_TABLE ." WHERE coupon_code = '".$_REQUEST['coupon_code']."'");
 				$sql = "SELECT d.* FROM " . EVENTS_DISCOUNT_CODES_TABLE . " d

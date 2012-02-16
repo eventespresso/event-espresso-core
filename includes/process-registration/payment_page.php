@@ -195,7 +195,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 
 	//Pull in the template
 	require_once(espresso_get_confirmation_display_template());
-	
+
 }
 
 function espresso_confirm_registration($registration_id) {
@@ -328,14 +328,10 @@ function espresso_confirm_registration($registration_id) {
 		//If the attendee is approved, then show payment options etc.
 		//Pull in the "Thank You" page template
 		require_once(espresso_get_payment_page_template());
-		
+
 		if ($amount_pd != '0.00') {
 			//Show payment options
-			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")) {
-				require_once(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php");
-			} else {
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/gateway_display.php");
-			}
+			do_action('action_hook_espresso_display_payment_gateways');
 			//Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
 			if ($org_options['email_before_payment'] == 'Y') {
 				event_espresso_email_confirmations(array('registration_id' => $registration_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));

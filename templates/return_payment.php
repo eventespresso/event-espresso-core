@@ -1,4 +1,4 @@
-<?php 
+<?php
 /* WARNING MODIFY THIS AT YOUR OWN RISK  */
 /* Return to Payments template page. Currently this just shows the return to paayment information data block.*/
 
@@ -10,7 +10,7 @@
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH."templates/payment_overview.php");
 		}
 	}
-			
+
 	if ($payment_status == "Pending"){
 		if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR."payment_overview.php")){
 			require_once(EVENT_ESPRESSO_TEMPLATE_DIR."payment_overview.php");//This is the path to the template file if available
@@ -22,20 +22,16 @@
 			//We need create the variables for the payment options
 			$registration_id = $registration_id != '' ? $registration_id : $att_registration_id;
 			//echo '$registration_id = '.$registration_id;
-			if ($attendee_id==''||$attendee_id==0) 
+			if ($attendee_id==''||$attendee_id==0)
 				$attendee_id = espresso_attendee_id($registration_id);
-				
+
 			//Show payment options
-			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")){
-				require_once(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php");
-			}else{
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH. "gateways/gateway_display.php");
-			}
+			do_action('action_hook_espresso_display_payment_gateways');
 		}
 	}
 
 	if ($payment_status == "Incomplete" || $payment_status == "Payment Declined" || $payment_status == "" ){
-		//Check the number of available sapce against this registration 
+		//Check the number of available sapce against this registration
 		if ( get_number_of_attendees_reg_limit($event_id, 'number_available_spaces') < $quantity){ ?>
 			<p class="espesso_event_full"> <?php _e('Sorry, there are not enough spaces available to complete your registration.','event_espresso'); ?></p>
 			<p class="espesso_event_full"> <?php _e('Quantity in your Party:', 'event_espresso'); ?> <?php echo $quantity ?></p>
@@ -49,13 +45,9 @@
 			$event_cost = $total_cost;
 		if($event_cost != '0.00'){
 			$registration_id = $registration_id != '' ? $registration_id : $att_registration_id;
-			if ($attendee_id==''||$attendee_id==0) 
+			if ($attendee_id==''||$attendee_id==0)
 				$attendee_id = espresso_attendee_id($registration_id);
 			//Show payment options
-			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")){
-				require_once(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php");
-			}else{
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH. "gateways/gateway_display.php");
-			}
-		}			
+			do_action('action_hook_espresso_display_payment_gateways');
+		}
 	}//End if ($payment_status == ("Incomplete") )

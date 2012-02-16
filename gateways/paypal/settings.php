@@ -354,4 +354,4 @@ function event_espresso_display_paypal_settings() {
 	<?php
 }
 
-add_action('action_hook_espresso_display_gateway_settings','event_espresso_paypal_payment_settings');
+//add_action('action_hook_espresso_display_gateway_settings','event_espresso_paypal_payment_settings');
