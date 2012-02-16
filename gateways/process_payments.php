@@ -89,7 +89,7 @@ add_filter('filter_hook_espresso_get_total_cost', 'espresso_get_total_cost');
  */
 function espresso_update_attendee_payment_status_in_db($payment_data) {
 	global $wpdb;
-	$payment_data['payment_date'] = date(get_option('date_format'));
+	$payment_data['payment_date'] = date_i18n(get_option('date_format'), time());
 	$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET amount_pd = '" . $payment_data['total_cost'] . "' WHERE id ='" . $payment_data['attendee_id'] . "' ";
 	$wpdb->query($sql);
 
