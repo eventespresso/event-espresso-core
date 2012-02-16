@@ -2,15 +2,19 @@
 
 if (!function_exists('event_form_build')) {
 
-	function event_form_build($question, $answer = "", $event_id = null, $multi_reg = 0, $extra = array(), $class='my_class') {
+	function event_form_build( $question, $answer = "", $event_id = null, $multi_reg = 0, $extra = array(), $class='my_class') {
 		if ($question->admin_only == 'Y' && empty($show_admin_only)) {
 			return;
 		}
-		//$class = 'class="'.$class.'"';
+		
 		$required = '';
 		$attendee_number = isset($extra['attendee_number']) ? $extra['attendee_number'] : 0;
+		$tckt_date = isset($extra['date']) ? $extra['date'] : 0;
+		$tckt_time = isset($extra['time']) ? $extra['time'] : 0;
 		$price_id = isset($extra['price_id']) ? $extra['price_id'] : 0;
-		$multi_name_adjust = $multi_reg == 1 ? "[$event_id][$price_id][$attendee_number]" : '';
+		 
+		//$multi_name_adjust = $multi_reg == 1 ? "[$event_id][$price_id][$attendee_number]" : '';
+		$multi_name = $multi_reg == 1 ? "[$event_id][$attendee_number][$tckt_date][$tckt_time][$price_id]" : '';
 
 		if (!empty($extra["x_attendee"])) {
 			$field_name = ($question->system_name != '') ? "x_attendee_" . $question->system_name . "[]" : "x_attendee_" . $question->question_type . '_' . $question->id . '[]';
@@ -48,74 +52,52 @@ if (!function_exists('event_form_build')) {
 
 		//print_r( $member_options );
 
+		
+
 		$html = '';
 		switch ($question->question_type) {
+		
 			case "TEXT" :
-				if (get_option('events_members_active') == 'true' && (empty($_REQUEST['event_admin_reports']) || $_REQUEST['event_admin_reports'] != 'add_new_attendee')) {
-					if (!empty($question->system_name)) {
-						switch ($question->system_name) {
-							case $question->system_name == 'fname':
-								if ($attendee_number == 1)
-									$answer = $current_user->first_name;
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
-							case $question->system_name == 'lname':
-								if ($attendee_number == 1)
-									$answer = $current_user->last_name;
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
-							case $question->system_name == 'email':
-								if ($attendee_number == 1)
-									$answer = $user_email;
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
-							case $question->system_name == 'address':
-								if ($attendee_number == 1)
-									$answer = esc_attr(get_user_meta($userid, 'event_espresso_address', true));
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
-							case $question->system_name == 'city':
-								if ($attendee_number == 1)
-									$answer = esc_attr(get_user_meta($userid, 'event_espresso_city', true));
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
-							case $question->system_name == 'state':
-								if ($attendee_number == 1)
-									$answer = esc_attr(get_user_meta($userid, 'event_espresso_state', true));
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
-							case $question->system_name == 'zip':
-								if ($attendee_number == 1)
-									$answer = esc_attr(get_user_meta($userid, 'event_espresso_zip', true));
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
-							case $question->system_name == 'phone':
-								if ($attendee_number == 1)
-									$answer = esc_attr(get_user_meta($userid, 'event_espresso_phone', true));
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
-							case $question->system_name == 'country':
-								if ($attendee_number == 1)
-									$answer = esc_attr(get_user_meta($userid, 'event_espresso_country', true));
-								$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-								$html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="' . $class . '" />';
-								break;
+			
+				$disabled = isset($disabled) ? $disabled : '';			
+				if (get_option('events_members_active') == 'true' && (empty($_REQUEST['event_admin_reports']) || $_REQUEST['event_admin_reports'] != 'add_new_attendee')) {				
+					if (!empty($question->system_name)) {					
+						if ( $attendee_number == 1 ) {						
+							switch ($question->system_name) {													
+								case 'fname':				
+								case 'lname':
+									$member_answer = $current_user->{$question->system_name};
+									break;								
+								case 'email':
+									$member_answer = $user_email;
+									break;								
+								case 'address':
+								case 'city':
+								case 'state':
+								case 'zip':
+								case 'phone':
+								case 'country':
+									$member_answer = esc_attr(get_user_meta( $userid, 'event_espresso_' . $question->system_name, TRUE ));
+								break;	
+							}							
+							$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
+							$answer = ( $member_answer == '' ) ? $answer : $member_answer;										
 						}
-					}
-				}
+					} 
+				} 
+				
+				$input_id = isset($extra['input_id']) ? $extra['input_id'].'-'.$field_name : 'qstn' . $multi_name.'-'.$field_name;
 
 				$html .= '<p class="event_form_field">' . $label;
-				$disabled = isset($disabled) ? $disabled : '';
-				$html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
-				break;
+				$html .= '<input type="text" ' . $required . ' id="' .$input_id. '"  name="qstn' . $multi_name.'['.$field_name.']'. '" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
+				$html .= '</p>';	
+							
+				break;				
+				
+				
+				
+				
+				
 			case "DATE" :
 				//Load scripts and styles
 				wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
