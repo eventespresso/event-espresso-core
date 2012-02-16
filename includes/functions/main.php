@@ -780,7 +780,6 @@ function espresso_display_questions($questions, $attendee) {
 					//Load scripts and styles
 					wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
 					wp_print_styles('jquery-ui-style-datepicker');
-					wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
 					wp_print_scripts('jquery-ui-datepicker');
 
 					$html .= '<p class="event_form_field">' . $label;

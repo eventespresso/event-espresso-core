@@ -120,7 +120,6 @@ if (!function_exists('event_form_build')) {
 				//Load scripts and styles
 				wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
 				wp_print_styles( 'jquery-ui-style-datepicker' );
-				wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
 				wp_print_scripts('jquery-ui-datepicker');
 
 				$html .= '<p class="event_form_field">' . $label;
@@ -241,7 +240,6 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
 			//Load scripts and styles
 			wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
 			wp_print_styles( 'jquery-ui-style-datepicker' );
-			wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
 			wp_print_scripts('jquery-ui-datepicker');
 
 			echo '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $edits . '" ' . $disabled . ' />';
