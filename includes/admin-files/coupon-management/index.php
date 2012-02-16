@@ -2,23 +2,23 @@
 function event_espresso_discount_config_mnu() {
 	global $wpdb, $espresso_wp_user, $notices;
 	
-	?>
+?>
 
 <div class="wrap">
 	<div id="icon-options-event" class="icon32"> </div>
 	<h2><?php echo _e('Manage Event Promotional Codes', 'event_espresso') ?>
 		<?php
-			if (!isset($_REQUEST['action']) || ($_REQUEST['action'] != 'edit' && $_REQUEST['action'] != 'new')) {
-				echo '<a href="admin.php?page=discounts&amp;action=new" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Code', 'event_espresso') . '</a>';
-			}
-			?>
+	if (!isset($_REQUEST['action']) || ($_REQUEST['action'] != 'edit' && $_REQUEST['action'] != 'new')) {
+		echo '<a href="admin.php?page=discounts&amp;action=new" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Code', 'event_espresso') . '</a>';
+	}
+?>
 	</h2>
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
 		<?php event_espresso_display_right_column(); ?>
 		<div id="post-body">
 			<div id="post-body-content">
 				<div class="meta-box-sortables ui-sortables">
-				<?php
+					<?php
 					if (isset($_REQUEST['action'])) {
 						switch ($_REQUEST['action']) {
 							case 'add':
@@ -37,39 +37,61 @@ function event_espresso_discount_config_mnu() {
 								require_once("update_discount.php");
 								update_event_discount(); //Update discount in DB
 								break;
-							case 'delete_discount':
-								require_once("delete_discount.php");
-								delete_event_discount(); //Delete discount in DB
-								break;
 						}
 					}
-					if (!empty($_REQUEST['delete_discount'])) {//This is for the delete checkboxes
-						require_once("delete_discount.php");
-						delete_event_discount();
-					}
-					?>
-				<?php 
+					
 	if ( did_action( 'action_hook_espresso_admin_notices' ) == false )
 		do_action( 'action_hook_espresso_admin_notices'); 
+	
+	if(isset($_POST['delete_discount']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_discount') ){
+		if($_REQUEST['delete_discount']){
+			if (is_array($_POST['checkbox'])){
+				while(list($key,$value)=each($_POST['checkbox'])):
+					$del_id=$key;
+					//Delete discount data
+					$sql = "DELETE FROM ".EVENTS_DISCOUNT_CODES_TABLE." WHERE id='" . $del_id . "'";
+					$wpdb->query($sql);
+						
+					$sql = "DELETE FROM ".EVENTS_DISCOUNT_REL_TABLE." WHERE discount_id='" . $del_id . "'";
+					$wpdb->query($sql);
+				endwhile;	
+			}
+		}
+		if($_REQUEST['action']== 'delete_discount'){
+			//Delete discount data
+			$sql = "DELETE FROM ".EVENTS_DISCOUNT_CODES_TABLE." WHERE id='" . $_REQUEST['discount_id'] . "'";
+			$wpdb->query($sql);
+						
+			$sql = "DELETE FROM ".EVENTS_DISCOUNT_REL_TABLE." WHERE discount_id='" . $_REQUEST['discount_id'] . "'";
+			$wpdb->query($sql);
+		}
+		?>
+					<div id="message" class="updated fade">
+						<p><strong>
+							<?php _e('Promotional Codes have been successfully deleted from the database.','event_espresso'); ?>
+							</strong></p>
+					</div>
+					<?php
+	}
 ?>
-				<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
-					<table id="table" class="widefat manage-discounts">
-						<thead>
-							<tr>
-								<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:2.5%;"><input type="checkbox"></th>
-								<th class="manage-column column-comments num" id="id" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort"><?php _e('ID', 'event_espresso'); ?></th>
-								<th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Name', 'event_espresso'); ?></th>
-								<th class="manage-column column-author" id="date" scope="col" title="Click to Sort" style="width:15%;"><?php _e('Exp Date', 'event_espresso'); ?></th>
-								<th class="manage-column column-author" id="date" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Qty Available', 'event_espresso'); ?></th>
-								<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
-								<th class="manage-column column-creator" id="creator" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Creator', 'event_espresso'); ?></th>
-								<?php } ?>
-								<th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:5%;"><?php _e('Amount', 'event_espresso'); ?></th>
-								<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Percentaage', 'event_espresso'); ?></th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
+					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
+						<table id="table" class="widefat manage-discounts">
+							<thead>
+								<tr>
+									<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:2.5%;"><input type="checkbox"></th>
+									<th class="manage-column column-comments num" id="id" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort"><?php _e('ID', 'event_espresso'); ?></th>
+									<th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Name', 'event_espresso'); ?></th>
+									<th class="manage-column column-author" id="date" scope="col" title="Click to Sort" style="width:15%;"><?php _e('Exp Date', 'event_espresso'); ?></th>
+									<th class="manage-column column-author" id="date" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Qty Available', 'event_espresso'); ?></th>
+									<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
+									<th class="manage-column column-creator" id="creator" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Creator', 'event_espresso'); ?></th>
+									<?php } ?>
+									<th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:5%;"><?php _e('Amount', 'event_espresso'); ?></th>
+									<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Percentaage', 'event_espresso'); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
 								$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
 								
 								if ( function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true){
@@ -94,43 +116,43 @@ function event_espresso_discount_config_mnu() {
 										$exp_date = $event_discount->exp_date;
 										
 										?>
-							<tr>
-								<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $discount_id ?>]" type="checkbox"  title="Delete <?php echo $coupon_code ?>"></td>
-								<td class="column-comments" style="padding-top:3px;"><?php echo $discount_id ?></td>
-								<td class="post-title page-title column-title"><strong><a href="admin.php?page=discounts&amp;action=edit&amp;discount_id=<?php echo $discount_id ?>"><?php echo $coupon_code ?></a></strong>
-									<div class="row-actions"><span class="edit"><a href="admin.php?page=discounts&action=edit&discount_id=<?php echo $discount_id ?>">
-										<?php _e('Edit', 'event_espresso'); ?>
-										</a> | </span><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=discounts&action=delete_discount&discount_id=<?php echo $discount_id ?>">
-										<?php _e('Delete', 'event_espresso'); ?>
-										</a></span></div></td>
-								<td class="post-title page-title column-title"><?php echo isset($use_exp_date) && $use_exp_date == 'Y' ? event_espresso_paid_status_icon('Active'):event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($exp_date)?event_date_display($exp_date):'0000-00-00'; ?></td>
-								<td class="post-title page-title column-title"><?php echo isset($use_limit) && $use_limit == 'Y' ?event_espresso_paid_status_icon('Active'):event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($quantity)?$quantity:''; ?></td>
-								<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
-								<td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
-								<?php } ?>
-								<td class="author column-author"><?php echo $coupon_code_price ?></td>
-								<td class="author column-author"><?php echo $use_percentage ?></td>
-							</tr>
-							<?php }
+								<tr>
+									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $discount_id ?>]" type="checkbox"  title="Delete <?php echo $coupon_code ?>"></td>
+									<td class="column-comments" style="padding-top:3px;"><?php echo $discount_id ?></td>
+									<td class="post-title page-title column-title"><strong><a href="admin.php?page=discounts&amp;action=edit&amp;discount_id=<?php echo $discount_id ?>"><?php echo $coupon_code ?></a></strong>
+										<div class="row-actions"><span class="edit"><a href="admin.php?page=discounts&action=edit&discount_id=<?php echo $discount_id ?>">
+											<?php _e('Edit', 'event_espresso'); ?>
+											</a> | </span><span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=discounts&action=delete_discount&discount_id=<?php echo $discount_id ?>">
+											<?php _e('Delete', 'event_espresso'); ?>
+											</a></span></div></td>
+									<td class="post-title page-title column-title"><?php echo isset($use_exp_date) && $use_exp_date == 'Y' ? event_espresso_paid_status_icon('Active'):event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($exp_date)?event_date_display($exp_date):'0000-00-00'; ?></td>
+									<td class="post-title page-title column-title"><?php echo isset($use_limit) && $use_limit == 'Y' ?event_espresso_paid_status_icon('Active'):event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($quantity)?$quantity:''; ?></td>
+									<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
+									<td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
+									<?php } ?>
+									<td class="author column-author"><?php echo $coupon_code_price ?></td>
+									<td class="author column-author"><?php echo $use_percentage ?></td>
+								</tr>
+								<?php }
 								} ?>
-						</tbody>
-					</table>
-					<div style="clear:both">
-						<p>
-							<input type="checkbox" name="sAll" onclick="selectAll(this)" />
-							<strong>
-							<?php _e('Check All', 'event_espresso'); ?>
-							</strong>
-							<input name="delete_discount" type="submit" class="button-secondary" id="delete_discount" value="<?php _e('Delete Promotional Code', 'event_espresso'); ?>" style="margin:10 0 0 10px;" onclick="return confirmDelete();">
-							<a  style="margin-left:5px"class="button-primary" href="admin.php?page=discounts&amp;action=new">
-							<?php _e('Add New Promotional Code', 'event_espresso'); ?>
-							</a></p>
-					</div>
-				</form>
+							</tbody>
+						</table>
+						<div style="clear:both">
+							<p>
+								<input type="checkbox" name="sAll" onclick="selectAll(this)" />
+								<strong>
+								<?php _e('Check All', 'event_espresso'); ?>
+								</strong>
+								<input name="delete_discount" type="submit" class="button-secondary" id="delete_discount" value="<?php _e('Delete Promotional Code', 'event_espresso'); ?>" style="margin:10 0 0 10px;" onclick="return confirmDelete();">
+								<a  style="margin-left:5px"class="button-primary" href="admin.php?page=discounts&amp;action=new">
+								<?php _e('Add New Promotional Code', 'event_espresso'); ?>
+								</a></p>
+						</div>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </div>
 <script type="text/javascript">
 		jQuery(document).ready(function($) {
@@ -174,5 +196,8 @@ function event_espresso_discount_config_mnu() {
    include_once('help.php');
 	
 }
+
+
+
 
 

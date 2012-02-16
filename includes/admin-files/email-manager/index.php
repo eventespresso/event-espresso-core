@@ -22,39 +22,48 @@ function event_espresso_email_config_mnu() {
 		<div id="post-body">
 			<div id="post-body-content">
 				<?php
-					if (!empty($_POST['delete_email'])) {
+				
+				if(isset($_REQUEST['delete_email']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_email') ){
+					if ($_REQUEST['delete_email']) {
+						//Checkboxes
 						if (is_array($_POST['checkbox'])) {
 							while (list($key, $value) = each($_POST['checkbox'])):
 								$del_id = $key;
-								//Delete email data
 								$sql = "DELETE FROM " . EVENTS_EMAIL_TABLE . " WHERE id='$del_id'";
 								$wpdb->query($sql);
 							endwhile;
 						}
-						?>
+					}
+						
+					//Delete link
+					if($_REQUEST['action']== 'delete_email'){
+						$sql = "DELETE FROM " . EVENTS_EMAIL_TABLE . " WHERE id='" . $_REQUEST['id'] . "'";
+						$wpdb->query($sql);
+					}
+?>
 				<div id="message" class="updated fade">
 					<p><strong>
-						<?php _e('Emails have been successfully deleted.', 'event_espresso'); ?>
+						<?php _e('Email(s) have been successfully deleted.', 'event_espresso'); ?>
 						</strong></p>
 				</div>
-				<?php } ?>
-				<?php
-					if (isset($_REQUEST['action'])) {
-						switch ($_REQUEST['action']) {
-							case 'update':
-								update_event_email();
-								break;
-							case 'add':
-								add_email_to_db();
-								break;
-							case 'add_new_email':
-								add_new_event_email();
-								break;
-							case 'edit':
-								edit_event_email();
-								break;
-						}
+				<?php 
+				}
+				if (isset($_REQUEST['action'])) {
+					switch ($_REQUEST['action']) {
+						case 'update':
+							update_event_email();
+							break;
+						case 'add':
+							add_email_to_db();
+							break;
+						case 'add_new_email':
+							add_new_event_email();
+							break;
+						case 'edit':
+							edit_event_email();
+							break;
 					}
+				}
 		do_action( 'action_hook_espresso_admin_notices'); 
 					?>
 				<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
@@ -95,7 +104,7 @@ function event_espresso_email_config_mnu() {
 								<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_emails&action=edit&id=<?php echo $email_id ?>"><?php echo $email_name?></a></strong>
 									<div class="row-actions"><span class="edit"><a href="admin.php?page=event_emails&action=edit&id=<?php echo $email_id ?>">
 										<?php _e('Edit', 'event_espresso'); ?>
-										</a> | </span><span class="delete"><a onclick="return confirmDelete();" class="delete submitdelete" href="admin.php?page=event_emails&action=delete_email&id=<?php echo $email_id?>">
+										</a> | </span><span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_emails&action=delete_email&id=<?php echo $email_id?>">
 										<?php _e('Delete', 'event_espresso'); ?>
 										</a></span></div></td>
 								<?php if (function_exists('espresso_user_meta') && espresso_is_admin() == true) { ?>

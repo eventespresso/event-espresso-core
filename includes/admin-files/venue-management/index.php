@@ -20,6 +20,7 @@ require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php
 			<div id="post-body-content">
 				<?php
 	if(isset($_POST['delete_venue']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_venue')){
+		//Checkboxes
 		if (is_array($_POST['checkbox'])){
 			while(list($key,$value)=each($_POST['checkbox'])):
 				$del_id=$key;
@@ -33,6 +34,8 @@ require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php
 				$wpdb->query($sql);		
 			endwhile;	
 		}
+		
+		//Delete link
 		if($_REQUEST['action']== 'delete_venue'){
 			//Delete discount data
 			$sql = "DELETE FROM ".EVENTS_VENUE_TABLE." WHERE id='" . $_REQUEST['id'] . "'";
@@ -42,19 +45,20 @@ require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gmap_incl.php
 			$sql = "DELETE FROM " . EVENTS_LOCALE_REL_TABLE . " WHERE venue_id='$del_id'";
 			$wpdb->query($sql);		
 		}
-		?>
+?>
 				<div id="message" class="updated fade">
 					<p><strong>
 						<?php _e('Venues have been successfully deleted from the event.','event_espresso');?>
 						</strong></p>
 				</div>
-				<?php }
+				<?php 
+	}
 
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'update' ){require_once("update_venue.php");update_event_venue();}
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add' ){require_once("add_venue_to_db.php");add_venue_to_db();}
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_new_venue'){require_once("add_new_venue.php");add_new_event_venue();}
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit'){require_once("edit_venue.php");edit_event_venue();}
-do_action( 'action_hook_espresso_admin_notices');
+	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'update' ){require_once("update_venue.php");update_event_venue();}
+	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add' ){require_once("add_venue_to_db.php");add_venue_to_db();}
+	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_new_venue'){require_once("add_new_venue.php");add_new_event_venue();}
+	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit'){require_once("edit_venue.php");edit_event_venue();}
+	do_action( 'action_hook_espresso_admin_notices');
 ?>
 				<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
 					<table id="table" class="widefat manage-discounts">
@@ -114,7 +118,8 @@ do_action( 'action_hook_espresso_admin_notices');
 										</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_venues&action=delete_venue&id=<?php echo $venue_id?>">
 										<?php _e('Delete', 'event_espresso'); ?>
 										</a></span> </div></td>
-								<?php if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true){ ?>
+								<?php 
+			if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true){ ?>
 								<td><?php
 					$last_locale_id = $wpdb->get_var("SELECT locale_id FROM ".EVENTS_LOCALE_REL_TABLE." WHERE venue_id='".$venue_id."'");
 					$results = $wpdb->get_results("SELECT * FROM " . EVENTS_LOCALE_TABLE . " WHERE id = '".$last_locale_id."'");
@@ -126,7 +131,9 @@ do_action( 'action_hook_espresso_admin_notices');
 						}
 					}
 				?></td>
-								<?php	}	?>
+<?php	
+			}
+?>
 								<?php if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true){ ?>
 								<td><?php echo espresso_user_meta($wp_user, 'user_firstname') !=''?espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname'):espresso_user_meta($wp_user, 'display_name'); ?></td>
 								<?php } ?>
@@ -193,3 +200,4 @@ jQuery(document).ready(function($) {
 </script>
 <?php 
 }
+
