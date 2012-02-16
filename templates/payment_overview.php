@@ -6,11 +6,11 @@
 		<h4 class="section-title list-events">
 			<?php _e('Class/Event:', 'event_espresso'); ?>
 		</h4>
-		
+
 		<div>
 			<?php  echo stripslashes_deep($event_link) ?>
 		</div>
-		
+
 		<h4 class="section-title"><?php _e('Registration  Details:', 'event_espreso'); ?></h4>
 		<div class="reg-gen-details">
 			<dl class="dl-inline">
@@ -32,7 +32,7 @@
 				<dt>
 					<?php _e('Registration ID:', 'event_espresso'); ?>
 				</dt>
-				<dd><?php echo $att_registration_id ?></dd>
+				<dd><?php echo $registration_id ?></dd>
 				<?php echo $txn_id == ''?'':'<dt>'.__('Transaction ID:', 'event_espresso').'</dt> <dd>'.$txn_id. '</dd>'; ?>
 			</dl>
 		</div><!-- / .reg-gen-details -->

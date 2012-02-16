@@ -152,8 +152,9 @@ function event_espresso_txn() {
 		}
 	}
 	$_REQUEST['page_id'] = $org_options['return_url'];
-	ee_init_session();
+	espresso_init_session();
 }
+add_shortcode('ESPRESSO_TXN_PAGE', 'event_espresso_txn');
 
 function deal_with_ideal() {
 	if (!empty($_POST['bank_id'])) {

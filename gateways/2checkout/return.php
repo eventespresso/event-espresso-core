@@ -1,53 +1,76 @@
 <?php
 
-/*
- * included in process_payments.php
+/**
+ * function espresso_transactions_2checkout_get_attendee_id
  *
+ * $_REQUEST from 2checkout needs:
+ *    id
+ * @param type int $attendee_id
+ * @return type int $attendee_id
  */
-
-function espresso_2checkout_process_payment() {
-
-	if ($_REQUEST['credit_card_processed'] == 'Y') {
-		global $wpdb, $org_options, $payment_settings;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$reg_id = espresso_registration_id($_GET['id']);
-		$event_id = $_REQUEST['event_id'];
-		$result['payment_status'] = 'Completed';
-		$result['payment_date'] = date("d-m-Y");
-		$result['total_cost'] = $_REQUEST['total'];
-		$result['txn_type'] = '2CO';
-		$result['txn_id'] = $_REQUEST['invoice_id'];
-
-
-		$sql = "SELECT registration_id, lname, fname FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . $reg_id . "' ";
-		$sql .= " ORDER BY id LIMIT 0,1";
-		$attendees = $wpdb->get_results($sql);
-
-		foreach ($attendees as $attendee) {
-			$result['att_registration_id'] = $attendee->registration_id;
-			$result['lname'] = $attendee->lname;
-			$result['fname'] = $attendee->fname;
-		}
-
-		$events = $wpdb->get_results("SELECT event_name FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
-
-		foreach ($events as $event) {
-			$event_name = $event->event_name;
-		}
-
-		$event_url = home_url() . "/?page_id=" . $org_options['event_page_id'] . "&regevent_action=register&event_id=" . $event_id;
-		$result['event_link'] = '<a href="' . $event_url . '">' . $event_name . '</a>';
-
-		$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET
-				payment_status = '" . $result['payment_status'] . "',
-				txn_id = '" . $result['txn_id'] . "',
-				txn_type = '" . $result['txn_type'] . "',
-				amount_pd = '" . $result['total_cost'] . "',
-				payment_date ='" . $result['payment_date'] . "'
-				WHERE registration_id ='" . $reg_id . "' ";
-		$wpdb->query($sql);
-		return $result;
-	} else {
-		return "Failure";
-	}
+function espresso_transactions_2checkout_get_attendee_id($attendee_id) {
+	if (isset($_REQUEST['id']))
+		$attendee_id = $_REQUEST['id'];
+	return $attendee_id;
 }
+
+add_filter('filter_hook_espresso_transactions_get_attendee_id', 'espresso_transactions_2checkout_get_attendee_id');
+
+/**
+ * function espresso_process_2checkout
+ * @global type $wpdb
+ * @param type array $payment_data
+ * $_REQUEST from 2checkout needs:
+ * 		credit_card_processed
+ * 		total
+ * 		invoice_id
+ *
+ * @return type array $payment_data
+ *    $payment_data returns
+ * 				event_link
+ * 				payment_status
+ * 				txn_type
+ * 				total_cost
+ * 				txn_id
+ */
+function espresso_process_2checkout($payment_data) {
+	global $wpdb;
+	$email_transaction_dump = false;
+	$payment_data['payment_status'] = 'Incomplete';
+	$payment_data['txn_type'] = '2CO';
+	$payment_data['txn_id'] = $_REQUEST['invoice_id'];
+	$payment_data['txn_details'] = serialize($_REQUEST);
+	if ($_REQUEST['credit_card_processed'] == 'Y') {
+
+		$payment_data['payment_status'] = 'Completed';
+		$payment_data['total_cost'] = $_REQUEST['total'];
+		$payment_data = apply_filters('filter_hook_espresso_get_total_cost', $payment_data);
+		$payment_data = apply_filters('filter_hook_espresso_prepare_event_link', $payment_data);
+		$payment_data = apply_filters('filter_hook_espresso_update_attendee_payment_data_in_db', $payment_data);
+		//Debugging option
+		if ($email_transaction_dump == true) {
+			// For this, we'll just email ourselves ALL the data as plain text output.
+			$subject = 'Instant Payment Notification - Gateway Variable Dump';
+			$body = "An instant payment notification was successfully recieved\n";
+			$body .= "from " . " on " . date('m/d/Y');
+			$body .= " at " . date('g:i A') . "\n\nDetails:\n";
+			foreach ($xml as $key => $value) {
+				$body .= "\n$key: $value\n";
+			}
+			wp_mail($payment_data['contact'], $subject, $body);
+		}
+	} else {
+		$subject = 'Instant Payment Notification - Gateway Variable Dump';
+		$body = "An instant payment notification failed\n";
+		$body .= "from " . " on " . date('m/d/Y');
+		$body .= " at " . date('g:i A') . "\n\nDetails:\n";
+		foreach ($xml as $key => $value) {
+			$body .= "\n$key: $value\n";
+		}
+		//wp_mail($payment_data['contact'], $subject, $body);
+	}
+	do_action('action_hook_espresso_email_after_payment', $payment_data);
+	return $payment_data;
+}
+
+add_filter('filter_hook_espresso_transactions_get_payment_data', 'espresso_process_2checkout');

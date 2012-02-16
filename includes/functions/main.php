@@ -1340,7 +1340,7 @@ function espresso_quantity_for_registration($attendee_id) {
 
 function espresso_is_primary_attendee($attendee_id) {
 	global $wpdb;
-	$sql = "SELECT ea FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
+	$sql = "SELECT ea.id FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
 	$sql .= " WHERE ea.id = '" . $attendee_id . "' AND ea.is_primary='1' ";
 	//echo $sql;
 	$wpdb->get_results($sql);
