@@ -43,9 +43,7 @@ if (!function_exists('espresso_return_price')) {
 
 	function espresso_return_single_price($event_id, $number=0) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$number = $number == 0 ? '0,1' : $number . ',' . $number;
 
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC LIMIT " . $number);
@@ -80,9 +78,7 @@ if (!function_exists('event_espresso_get_price')) {
 
 	function event_espresso_get_price($event_id) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type, price_type FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' ORDER BY id ASC LIMIT 1");
 		$surcharge = '';
 		$surcharge_text = isset($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
@@ -129,9 +125,7 @@ if (!function_exists('event_espresso_get_final_price')) {
 
 	function event_espresso_get_final_price($price_id, $event_id = 0) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$results = $wpdb->get_results("SELECT id, event_cost, surcharge, surcharge_type FROM " . EVENTS_PRICES_TABLE . " WHERE id='" . $price_id . "' ORDER BY id ASC LIMIT 1");
 		$event_cost = 0.00;
 		foreach ($results as $result) {
@@ -172,9 +166,7 @@ if (!function_exists('early_discount_amount')) {
 
 	function early_discount_amount($event_id, $event_cost, $early_bird_message='') {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //$early_bird_message = ' ' . __('Early Pricing','event_espresso');
 		$eventdata = $wpdb->get_results("SELECT early_disc, early_disc_date, early_disc_percentage FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "' LIMIT 1");
 		if ((strlen($eventdata[0]->early_disc) > 0) && (strtotime($eventdata[0]->early_disc_date) > strtotime(date("Y-m-d")))) {
@@ -257,11 +249,11 @@ function espresso_price_selection($event, $attendee) {
 if (!function_exists('event_espresso_price_dropdown')) {
 
 	function event_espresso_price_dropdown($event_id, $atts = array()) {
-		
+
 		if ( !is_admin() && function_exists('espresso_member_price_select_action') ){
 			return;
 		}
-		
+
 		//Debug
 		//echo "<pre>atts -".print_r($atts,true)."</pre>";
 
@@ -275,9 +267,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 //If changes to this function are not appearing, you may have the members addon installed and will need to update the function there.
 
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //Default values
 		$html = '';
 		$early_bird_message = '';
@@ -302,7 +292,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 
 //Create a dropdown of prices
 			$html .= '<select name="'.$option_name . $multi_name_adjust . '" id="price_option-' . $event_id . '">';
-			
+
 			if ( is_admin() )
 				$html .= '<option value="">None</option>';
 
@@ -327,7 +317,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 //Using price ID
 //If the price id was passed to this function, we need need to select that price.
 				$selected = isset($current_value) && $current_value == $price->id ? 'selected="selected" ' : '';
-				
+
 				if ( !empty($selected_price_type) ){
 					if ( $price->price_type == $selected_price_type) {
 						$selected  = 'selected="selected" ';
@@ -388,9 +378,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
 //This function gets the first price id associated with an event and displays a hidden field.
 function espresso_hidden_price_id($event_id) {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$wpdb->get_results("SELECT id FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ");
 	$num_rows = $wpdb->num_rows;
 	if ($num_rows > 0) {
@@ -403,9 +391,7 @@ function espresso_hidden_price_id($event_id) {
 //This function returns the first price id associated with an event
 function espresso_get_price_id($event_id) {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$wpdb->get_results("SELECT id FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ");
 	$num_rows = $wpdb->num_rows;
 	if ($num_rows > 0) {

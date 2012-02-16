@@ -12,9 +12,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 	//This entire function can be overridden using the "Custom Files" addon
 	function event_espresso_add_attendees_to_db($event_id = NULL, $session_vars = NULL) {
 		global $wpdb, $org_options, $espresso_premium;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$data_source = $_POST;
 		$att_data_source = $_POST;
 		$multi_reg = false;
@@ -535,9 +533,7 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 	//This function is called from the shopping cart
 	function event_espresso_add_attendees_to_db_multi() {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//Added by Imon
 		$primary_registration_id = NULL;
 

@@ -3,9 +3,7 @@
 function enter_attendee_payments() {
 
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$event_id = $_REQUEST['event_id'];
 	$today = date("d-m-Y");
 
@@ -128,7 +126,7 @@ function enter_attendee_payments() {
 		$pre_approve = $attendee->pre_approve;
 		$start_date = $attendee->start_date;
 		$event_time = $attendee->event_time;
-		
+
 		if ( !empty($attendee->transaction_details) ){
 			$transaction_details = unserialize($attendee->transaction_details);
 			//Debug
@@ -398,7 +396,7 @@ function enter_attendee_payments() {
 	}else{
 		_e('No transaction detials available at this time.', 'event_espresso');
 	}
-		
+
 	?>
 	</div>
 </div>

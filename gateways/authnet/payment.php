@@ -4,9 +4,7 @@
 include_once ('Authorize.php');
 echo '<!--Event Espresso Authorize.net Gateway Version ' . $authnet_gateway_version . '-->';
 global $org_options;
-if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-}
+do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 $myAuthorize = new Authorize(); // initiate an instance of the class
 
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);

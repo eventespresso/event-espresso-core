@@ -2,9 +2,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function edit_attendee_record() {
 	global $wpdb, $org_options, $espresso_premium;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$attendee_num = 1;
 	if ($_REQUEST['form_action'] == 'edit_attendee') {
 
@@ -121,25 +119,25 @@ function edit_attendee_record() {
 			$email = isset($_POST['email']) ? $_POST['email']:'';
 			$event_id = isset($_POST['event_id']) ? $_POST['event_id']:'';
 			$txn_type = isset($_POST['txn_type']) ? $_POST['txn_type']:'';
-			
+
 			$_POST['price_option'] = !empty($_POST['member_price_option']) ? $_POST['member_price_option'] : $_POST['price_option'];
-			
+
 			$price_options = explode('|', $_POST['price_option'], 2);
 			//$price_id = $price_options[0];
 			$price_type = $price_options[1];
 
 			$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET fname='$fname', lname='$lname', address='$address',address2='$address2', city='$city', state='$state', zip='$zip', phone='$phone', email='$email', txn_type='$txn_type' ";
-			
+
 			if ( isset($price_type) && !empty($price_type) )
 				$sql .= ", price_option='$price_type' ";
-			
+
 			if ($update_time == true)
 				$sql .= ", event_time='$start_time', end_time='$end_time' ";
 			$sql .= " WHERE id ='$id' ";
-			
+
 			//Debug
 			//echo '<p> $sql - '. $sql.'</p>';
-			
+
 			$wpdb->query($sql);
 
 			/*
@@ -159,7 +157,7 @@ function edit_attendee_record() {
 
  			//Debug
 			//print_r($_POST);
-			
+
 			// Insert Additional Questions From Post Here
 			$reg_id = $id;
 
@@ -408,11 +406,11 @@ function edit_attendee_record() {
 		<li><h5><strong><?php _e('Price Option', 'event_espresso'); ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'price_info'); ?></strong></h5>
 <?php
 			//Show pricing in a dropdown or text
-			
+
 			echo '<p>';
 			echo event_espresso_price_dropdown( $event_id, array('selected_price_type'=>$price_type, 'label'=>__('Standard Price Option', 'event_espresso').' '. apply_filters( 'filter_hook_espresso_help', 'standard_price_info').'<br />'));
 			echo '</p>';
-			
+
 			if ( function_exists('espresso_member_price_select_action') ){
 				echo '<p>';
 				echo espresso_member_price_select_action( $event_id, array( 'option_name'=>'member_price_option','selected_price_type'=>$price_type, 'label'=>__('Member Price Option', 'event_espresso').' '. apply_filters( 'filter_hook_espresso_help', 'member_price_info').'<br />' ) );
@@ -509,7 +507,7 @@ function edit_attendee_record() {
 						echo event_form_build_edit($question, $question->answer, $show_admin_only = true);
 						echo "</p>";
 
-						
+
 						echo $counter == $num_rows ? '</fieldset>' : '';
 					}
 				}
@@ -580,17 +578,17 @@ function edit_attendee_record() {
 				<ul>
 				  <li>
 					<p><strong>
-					  <?php 
+					  <?php
 						$payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $registration_id . "&amp;id=" . isset($att) && !empty($att) ? $att : '';
 						$payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
 
 					  _e( 'Payment Status:', 'event_espresso' ); ?>
-					  </strong> <?php echo $payment_status; ?> <?php echo event_espresso_paid_status_icon($payment_status);?> [ 
-					  
-					  <a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?>"><?php _e('Payment Details', 'event_espresso'); ?></a> | 
-					  
-					  <a href="<?php echo get_option('siteurl') ?>/?page_id=<?php echo $org_options['return_url'] ?>&amp;registration_id=<?php echo $registration_id ?>&amp;id=<?php echo isset($att) && !empty($att) ? $att : '' ?>" title="<?php _e('Payment Overview', 'event_espresso'); ?>" target="_blank"><?php _e('Payment Overview', 'event_espresso'); ?></a> 
-					  
+					  </strong> <?php echo $payment_status; ?> <?php echo event_espresso_paid_status_icon($payment_status);?> [
+
+					  <a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?>"><?php _e('Payment Details', 'event_espresso'); ?></a> |
+
+					  <a href="<?php echo get_option('siteurl') ?>/?page_id=<?php echo $org_options['return_url'] ?>&amp;registration_id=<?php echo $registration_id ?>&amp;id=<?php echo isset($att) && !empty($att) ? $att : '' ?>" title="<?php _e('Payment Overview', 'event_espresso'); ?>" target="_blank"><?php _e('Payment Overview', 'event_espresso'); ?></a>
+
 					  ]</p>
 				  </li>
 				  <li>

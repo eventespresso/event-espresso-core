@@ -2,9 +2,7 @@
 
 function espresso_display_aim($payor_data, $event_cost, $attendee_id) {
 	global $org_options, $payment_settings, $wpdb;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if ($payment_settings['authnet_aim']['use_sandbox'] == 'Y') {
 		echo '<p>Test credit card # 4007000000027</p>';
 		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';

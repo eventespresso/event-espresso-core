@@ -12,9 +12,7 @@ class PDF extends FPDF {
 	//Page header
 	function Header() {
 		global $wpdb, $org_options, $espresso_wp_user;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 		//Logo
 		if (isset($payment_settings['invoice']['invoice_logo_url']) && trim($payment_settings['invoice']['invoice_logo_url']) != '') {
@@ -50,9 +48,7 @@ class PDF extends FPDF {
 	//Better table
 	function ImprovedTable($header, $event_data, $w=array(100, 35, 40)) {
 		global $org_options, $currency_sign;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//Column widths
 		//Header
 		for ($i = 0; $i < count($header); $i++)
@@ -84,9 +80,7 @@ class PDF extends FPDF {
 
 	function InvoiceTotals($text, $total_cost, $left_cell = 125, $right_cell = 35) {
 		global $org_options, $currency_sign;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->SetFillColor(192, 192, 192);
 		$this->Cell($left_cell, 10, $text, 0, 0, 'R');
 		$minus = '';

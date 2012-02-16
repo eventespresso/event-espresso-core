@@ -4,26 +4,24 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 function edit_event($event_id = 0) {
 	global $wpdb, $org_options, $espresso_premium;
-	
+
 	$event = new stdClass;
-	
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//This line keeps the notices from displaying twice
 	if (did_action( 'action_hook_espresso_admin_notices') == false)
 		do_action( 'action_hook_espresso_admin_notices');
-	
+
 	$sql = "SELECT e.*, ev.id as venue_id
 		FROM " . EVENTS_DETAIL_TABLE . " e
 		LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON e.id = vr.event_id
 		LEFT JOIN " . EVENTS_VENUE_TABLE . " ev ON vr.venue_id = ev.id
 		WHERE e.id = %d";
 	$event = $wpdb->get_row($wpdb->prepare($sql, $event_id), OBJECT);
-	
+
 	//Debug
 	//echo "<pre>".print_r($event,true)."</pre>";
-	
+
 	$event->event_name = stripslashes_deep($event->event_name);
 	$event->event_desc = stripslashes_deep($event->event_desc);
 	$event->phone = stripslashes_deep($event->phone);
@@ -38,11 +36,11 @@ function edit_event($event_id = 0) {
 	$status = event_espresso_get_is_active($event->id);
 	$event->conf_mail = stripslashes_deep($event->conf_mail);
 	$event->send_mail = stripslashes_deep($event->send_mail);
-	
+
 	if (function_exists('event_espresso_edit_event_groupon')) {
 		$use_groupon_code = $event->use_groupon_code;
 	}
-	
+
 	$event->address = stripslashes_deep($event->address);
 	$event->address2 = stripslashes_deep($event->address2);
 	$event->city = stripslashes_deep($event->city);
@@ -90,7 +88,7 @@ function edit_event($event_id = 0) {
 							</div>
 						</div>
 						<!-- /minor-publishing-actions -->
-						
+
 						<div id="misc-publishing-actions">
 							<div class="misc-pub-section curtime" id="visibility"> <span id="timestamp">
 								<?php _e('Start Date', 'event_espresso'); ?>
@@ -100,7 +98,7 @@ function edit_event($event_id = 0) {
 									<?php _e('Current Status:', 'event_espresso'); ?>
 								</label>
 								<span id="post-status-display"> <?php echo $status['display']; ?></span></div>
-							
+
 							<div class="misc-pub-section" id="visibility"> <img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" /> <?php echo!empty($number_attendees) ? __('Attendees', 'event_espresso') : '<a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=' . $event->id . '">' . __('Attendees', 'event_espresso') . '</a>'; ?>: <?php echo get_number_of_attendees_reg_limit($event->id, 'num_attendees_slash_reg_limit'); ?> </div>
 							<div class="misc-pub-section <?php echo (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) ? '' : 'misc-pub-section-last'; ?>" id="visibility2"> <a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $event->id ?>" title="<?php _e('Email Event Attendees', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_go.png" width="16" height="16" alt="<?php _e('Newsletter', 'event_espresso'); ?>" /></a> <a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $event->id ?>" title="<?php _e('Email Event Attendees', 'event_espresso'); ?>">
 								<?php _e('Email Event Attendees', 'event_espresso'); ?>
@@ -128,10 +126,10 @@ function edit_event($event_id = 0) {
 								}
 								?>
 						</div>
-						<!-- /misc-publishing-actions --> 
+						<!-- /misc-publishing-actions -->
 					</div>
 					<!-- /minor-publishing -->
-					
+
 					<div id="major-publishing-actions" class="clearfix">
 						<?php if ($event->recurrence_id > 0) : ?>
 						<div id="delete-action"> &nbsp; <a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $event->recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
@@ -146,16 +144,16 @@ function edit_event($event_id = 0) {
 							<?php wp_nonce_field('espresso_form_check', 'ee_update_event'); ?>
 							<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Event', 'event_espresso'); ?>" id="save_event_setting" />
 						</div>
-						<!-- /publishing-action --> 
+						<!-- /publishing-action -->
 					</div>
-					<!-- /major-publishing-actions --> 
+					<!-- /major-publishing-actions -->
 				</div>
-				<!-- /submitpost --> 
+				<!-- /submitpost -->
 			</div>
-			<!-- /inside --> 
+			<!-- /inside -->
 		</div>
 		<!-- /submitdiv -->
-		
+
 		<?php
 			$advanced_options = '';
 			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/advanced_settings.php')) {
@@ -174,11 +172,11 @@ function edit_event($event_id = 0) {
 							'<p class="inputundersmall"><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input type="text" id="max-registrants" name="additional_limit" value="' . $event->additional_limit . '" size="4" />' . '</p>' .
 							$advanced_options
 			);
-			
+
 			//Question groups
 			echo espresso_event_question_groups($event->question_groups, $event->event_meta['add_attendee_question_groups'], $event->id);
 			echo '<!-- /event-questions -->';
-			
+
 			?>
 		<div  id="event-categories" class="postbox closed">
 			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
@@ -189,7 +187,7 @@ function edit_event($event_id = 0) {
 			<div class="inside"> <?php echo event_espresso_get_categories($event->id); ?> </div>
 		</div>
 		<!-- /event-category -->
-		
+
 		<?php
 			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php');
@@ -210,7 +208,7 @@ function edit_event($event_id = 0) {
 		</div>
 		<!-- /groupon-options -->
 		<?php }
-			
+
 			//Featured image section
 			if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true) {
 				espresso_featured_image_event_admin($event->event_meta);
@@ -371,9 +369,9 @@ function edit_event($event_id = 0) {
 	}
 	?>
 	</div>
-	<!-- /side-sortables --> 
+	<!-- /side-sortables -->
 </div>
-<!-- /side-info-column --> 
+<!-- /side-info-column -->
 
 <!-- Left Column -->
 <div id="post-body">
@@ -392,14 +390,14 @@ function edit_event($event_id = 0) {
 					<p>
 						<strong> <?php _e('Permalink:', 'event_espresso'); ?> </strong> <?php echo get_permalink($org_options['event_page_id']) ?><input size="30" type="text" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" /><br />
 						<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;'.$event->event_identifier.'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_short_reg_url( $event->id ) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . espresso_reg_url( $event->id, $event->slug ) . '\'); return false;">' . __('Full URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Unique Event Identifier:&#39;, \'' . $event->event_identifier . '\'); return false;">' . __('Identifier') . '</a>' ?>
-					</p> 
+					</p>
 				</div>
-				<!-- /edit-slug-box --> 
+				<!-- /edit-slug-box -->
 			</div>
-			<!-- /.inside --> 
+			<!-- /.inside -->
 		</div>
 		<!-- /titlediv -->
-		
+
 		<div id="descriptiondivrich" class="postarea"> <strong>
 			<?php _e('Event Description', 'event_espresso'); ?>
 			</strong>
@@ -431,7 +429,7 @@ function edit_event($event_id = 0) {
 			</table>
 		</div>
 		<!-- /postdivrich -->
-		
+
 		<div id="normal-sortables" class="meta-box-sortables ui-sortable">
 			<div style="display: block;" id="event-date-time" class="postbox">
 				<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
@@ -545,7 +543,7 @@ function edit_event($event_id = 0) {
 				<div class="inside">
 					<table width="100%" border="0" cellpadding="5">
 							<tr valign="top">
-						
+
 						<?php
 	if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
 		$ven_type = 'class="use-ven-manager"';
@@ -611,9 +609,9 @@ function edit_event($event_id = 0) {
 									<?php echo $google_map_link; ?> </p>
 							</fieldset></td>
 							<td <?php echo $ven_type; ?>>
-						
+
 							<fieldset>
-						
+
 						<legend>
 						<?php _e('Venue Information', 'event_espresso'); ?>
 						</legend>
@@ -643,7 +641,7 @@ function edit_event($event_id = 0) {
 						</p>
 						<?php } ?>
 							</td>
-						
+
 						<td <?php echo $ven_type ?>><fieldset id="virt-location">
 								<legend>
 								<?php _e('Virtual Location', 'event_espresso'); ?>
@@ -668,7 +666,7 @@ function edit_event($event_id = 0) {
 								</p>
 							</fieldset></td>
 							</tr>
-						
+
 					</table>
 					<p>
 						<label for="enable_for_gmap">
@@ -686,10 +684,10 @@ function edit_event($event_id = 0) {
 					<?php _e('Event Meta', 'event_espresso'); ?>
 					</span> </h3>
 				<div class="inside">
-					<?php 
+					<?php
 			//Debug
 			//echo "<pre>".print_r($event->event_meta,true)."</pre>";
-			event_espresso_meta_edit($event->event_meta); 
+			event_espresso_meta_edit($event->event_meta);
 		?>
 				</div>
 			</div>
@@ -768,9 +766,9 @@ function edit_event($event_id = 0) {
 				}
 				?>
 		</div>
-		<!-- /normal-sortables--> 
+		<!-- /normal-sortables-->
 	</div>
-	<!-- /post-body-content --> 
+	<!-- /post-body-content -->
 </div>
 <?php global $event_thumb; ?>
 <!-- /post-body -->

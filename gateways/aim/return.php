@@ -2,9 +2,7 @@
 
 function espresso_aim_process_payment() {
 	global $wpdb, $org_options, $payment_settings;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	require_once 'AuthorizeNet.php';
 
 	$authnet_aim_login_id = $payment_settings['authnet_aim']['authnet_aim_login_id'];

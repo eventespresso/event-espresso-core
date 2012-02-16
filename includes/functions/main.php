@@ -8,9 +8,7 @@ function isEmptyArray($array) {
 
 function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $type='', $text='') {
 	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$html = '';
 	if ($text == '')
 		$text = __('Edit Attendee', 'event_espresso');
@@ -37,7 +35,7 @@ function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
 
 
 function espresso_get_reg_page_url_slug() {
-	global $wpdb, $org_options;		
+	global $wpdb, $org_options;
 	$reg_page_id = $org_options['event_page_id'];
 	$SQL = 'SELECT post_name  FROM '.$wpdb->prefix .'posts WHERE ID = %d';
 	$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $reg_page_id ));
@@ -63,86 +61,82 @@ function espresso_use_pretty_permalinks() {
 		return TRUE;
 	} else {
 		return FALSE;
-	}		
+	}
 }
 
 function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
 
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
-	
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 	$registration_url = rtrim( get_permalink($org_options['event_page_id']), '/' ) . '/';
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();
-	
+
 	if ( is_int( $event_slug )) {
 		$event_id = $event_slug;
 		$event_slug = FALSE;
 	}
-	
+
 	// if an event slug was supplied
 	if ( $event_slug && $event_slug != '' ) {
-		
+
 		// check if permalinks are being used
 		if ( $use_pretty_permalinks ) {
 			// create pretty permalink
-			 $registration_url = $registration_url . $event_slug;	
+			 $registration_url = $registration_url . $event_slug;
 		} else {
 			// use fugly oldsckool link
-			$registration_url = add_query_arg( 'event_slug', $event_slug, $registration_url );	
+			$registration_url = add_query_arg( 'event_slug', $event_slug, $registration_url );
 		}
-			
+
 	} elseif ( $event_id && absint( $event_id ) && $event_id != '' && $event_id > 0 ) {   // no event slug, so use  event_id
-		
+
 		// check if permalinks are being used
 		if ( $use_pretty_permalinks ) {
-			
-			
+
+
 			$event_slug = get_transient( 'espresso_event_slug_'.$event_id );
 			if ( false === $event_slug ) {
 				// if transient not set, do this!
-			
+
 				// create the data that needs to be saved.
 				$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE .' WHERE id = %d';
 				$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id ));
-			
+
 				// save the newly created transient value
 				// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
 				set_transient('espresso_event_slug_'.$event_id, $event_slug, 60*60*24*365);
-				
+
 				//Debug:
 				//Check if using the cache
 				//echo 'Not using cache';
 			}
-				
-				
+
+
 			// check if slug exists for that event
 			if ( !empty($event_slug) ) {
 				// create pretty permalink
-				$registration_url = $registration_url = $registration_url . $event_slug;			
+				$registration_url = $registration_url = $registration_url . $event_slug;
 			} else {
 				// couldn't find a slug, so use really fugly oldsckool link
-				$registration_url = add_query_arg( 'ee', $event_id, $registration_url );					
+				$registration_url = add_query_arg( 'ee', $event_id, $registration_url );
 			}
 
 		} else {
 			// use really fugly oldsckool link
-			$registration_url = add_query_arg( 'ee', $event_id, $registration_url );	
+			$registration_url = add_query_arg( 'ee', $event_id, $registration_url );
 		}
-		
+
 	}
-	
+
 	return $registration_url;
-	
+
 }
 
 
 function espresso_short_reg_url($event_id=0) {
 	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if ($event_id > 0) {
 		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
 		$new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
@@ -318,9 +312,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 
 	function event_espresso_get_is_active($event_id, $event_meta='') {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 		if (get_option('timezone_string') != '') {
 			date_default_timezone_set(get_option('timezone_string'));
@@ -1796,23 +1788,23 @@ function printCountriesSelector($name, $selected) {
  *		@ print_r an array
  *		@ access public
  *		@ return void
- */	
+ */
  function printr( $var, $var_name = 'ARRAY' ) {
 
 	echo '<pre style="display:block; width:100%; height:50%; overflow:scroll; border:2px solid light-blue;">';
 	echo '<h3>'.$var_name.'</h3>';
 	echo print_r($var);
 	echo '</pre>';
-		
+
 }
 
 //Creates an admin toolbar
 function espresso_toolbar_items($admin_bar){
-	
+
 	$events_page = get_admin_url() . 'admin.php?page=events';
 	$registrations_page = get_admin_url() . 'admin.php?page=attendees';
 	$menu_class = 'espresso_menu_item_class';
-	
+
 	//Top Level
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar',
@@ -1823,7 +1815,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class.'first'
 		),
 	));
-	
+
 	//Events
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-events',
@@ -1836,7 +1828,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Events Add New
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-events-new',
@@ -1849,7 +1841,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Events View
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-events-view',
@@ -1862,7 +1854,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Events View All
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-events-all',
@@ -1875,7 +1867,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Events View Today
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-events-today',
@@ -1888,7 +1880,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Events View This Month
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-events-month',
@@ -1901,7 +1893,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations',
@@ -1914,7 +1906,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview Today
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations-today',
@@ -1927,7 +1919,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview Today Completed
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations-today-completed',
@@ -1940,7 +1932,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview Today Incomplete
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations-today-incomplete',
@@ -1953,7 +1945,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview Today Pending
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations-today-pending',
@@ -1966,7 +1958,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview This Month
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations-month',
@@ -1979,7 +1971,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview This Month Completed
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations-month-completed',
@@ -1992,7 +1984,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview This Month Incomplete
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations-month-incomplete',
@@ -2005,7 +1997,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Registration Overview This Month Pending
 	$admin_bar->add_menu( array(
 		'id'    => 'espresso-toolbar-registrations-month-pending',
@@ -2018,7 +2010,7 @@ function espresso_toolbar_items($admin_bar){
 			'class' => $menu_class
 		),
 	));
-	
+
 	//Event Listings
-	//Maybe add a 
+	//Maybe add a
 }

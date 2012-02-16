@@ -2,9 +2,7 @@
 
 function replace_shortcodes($message, $data) {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$SearchValues = array(
 			"[event_id]",
 			"[event_identifier]",
@@ -136,9 +134,7 @@ function replace_shortcodes($message, $data) {
 //Build the email
 function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$data = new stdClass;
 	$data->multi_reg = $multi_reg;
 
@@ -170,14 +166,14 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 	//Venue variables
 	if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
 		$data->event->venue_meta = unserialize($data->event->venue_meta);
-		
+
 		//Debug
 		//echo "<pre>".print_r($data->event->venue_meta,true)."</pre>";
-		
+
 		$data->event->venue_url = $data->event->venue_meta['website'];
 		$data->event->venue_phone = $data->event->venue_meta['phone'];
 		$data->event->venue_image = '<img src="'.$data->event->venue_meta['image'].'" />';
-		
+
 		$data->event->venue_name = $data->event->venue_name;
 		$data->event->address = $data->event->venue_address;
 		$data->event->address2 = $data->event->venue_address2;
@@ -297,9 +293,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 //Get the email ready to send
 function espresso_prepare_email($data) {
 	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//Build the subject line
 	$email_subject = $data->email_subject;
 
@@ -339,9 +333,7 @@ function espresso_prepare_email($data) {
 //Build the admin email
 function espresso_prepare_admin_email($data) {
 	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//Edit attendee link
 	$admin_attendee_link = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'admin', $data->attendee->fname . ' ' . $data->attendee->lname);
 
@@ -494,9 +486,7 @@ if (!function_exists('event_espresso_send_email')) {
 
 	function event_espresso_send_email($params) {
 		global $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		extract($params);
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
@@ -524,9 +514,7 @@ if (!function_exists('event_espresso_send_invoice')) {
 
 	function event_espresso_send_invoice($registration_id, $invoice_subject, $invoice_message) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$results = $wpdb->get_results("SELECT a.id FROM " . EVENTS_ATTENDEE_TABLE . " a	WHERE a.registration_id = '" . $registration_id . "' LIMIT 0,1");
 
 		foreach ($results as $result) {
@@ -545,9 +533,7 @@ if (!function_exists('event_espresso_send_payment_notification')) {
 
 	function event_espresso_send_payment_notification($atts) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//Extract the attendee_id and registration_id
 		extract($atts);
 
@@ -580,9 +566,7 @@ if (!function_exists('espresso_event_reminder')) {
 
 	function espresso_event_reminder($event_id, $email_subject='', $email_text='', $email_id=0) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$count = 0;
 		$attendees = $wpdb->get_results("SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id ='" . $event_id . "'");
 		if ($wpdb->num_rows > 0) {
@@ -617,9 +601,7 @@ if (!function_exists('event_espresso_send_cancellation_notice')) {
 
 	function event_espresso_send_cancellation_notice($event_id) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
 		if ($org_options['email_fancy_headers']=='Y') {
@@ -689,9 +671,7 @@ if (!function_exists('event_espresso_send_attendee_registration_approval_pending
 
 	function event_espresso_send_attendee_registration_approval_pending($registration_id) {
 		global $org_options, $wpdb;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//Get the event information
 		$events = $wpdb->get_results("SELECT ed.* FROM " . EVENTS_DETAIL_TABLE . " ed
 						JOIN " . EVENTS_ATTENDEE_TABLE . " ea

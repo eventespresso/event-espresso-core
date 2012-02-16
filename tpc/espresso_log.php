@@ -1,8 +1,9 @@
 <?php
+
 /**
-** Singleton logging class. Can be called from anywhere in the plugin to log data to a log file.
-** Defaults to wp-content/uploads/espresso/logs/espresso_log.txt
-**/
+ * * Singleton logging class. Can be called from anywhere in the plugin to log data to a log file.
+ * * Defaults to wp-content/uploads/espresso/logs/espresso_log.txt
+ * */
 //Usage
 //espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => '[INSERT MESSAGE]' ) );
 
@@ -17,7 +18,7 @@ class espresso_log {
 		//echo dirname( __FILE__ );
 		$folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
 		//echo $folder;
-		$this->file = $folder.'espresso_log.txt';
+		$this->file = $folder . 'espresso_log.txt';
 	}
 
 	public static function singleton() {

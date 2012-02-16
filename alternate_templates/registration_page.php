@@ -12,9 +12,7 @@ if (!function_exists('register_attendees')) {
 			return;
 		}
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (isset($_REQUEST['ee']) && $_REQUEST['ee'] != '') {
 			$_REQUEST['event_id'] = $_REQUEST['ee'];
 		}

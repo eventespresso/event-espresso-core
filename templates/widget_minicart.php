@@ -158,9 +158,7 @@ class Espresso_Minicart extends WP_Widget {
 		$mini_cart = array();
 
 		global $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$template_args['currency_symbol'] = $org_options[ 'currency_symbol' ];
 
 		$template_args['before_widget'] = $before_widget;

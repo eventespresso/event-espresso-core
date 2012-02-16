@@ -2,9 +2,7 @@
 
 function event_list_attendees() {
 	global $wpdb, $org_options, $ticketing_installed;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//Dates
 	$curdate = date("Y-m-d");
 	$pieces = explode('-', $curdate, 3);
@@ -154,9 +152,9 @@ function event_list_attendees() {
 				$go = false; //triggers the output when true.  Set when the next reg id != temp_reg_id
 				$sql_clause = " WHERE ";
 				$sql_a = "(";
-				
+
 				if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
-				
+
 					$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 					$group = unserialize($group);
 					$group = implode(",", $group);
@@ -205,9 +203,9 @@ function event_list_attendees() {
 					$sql_a .= $group != '' ? $sql_clause . "  l.locale_id IN (" . $group . ") " : '';
 					$sql_a .= " AND e.event_status != 'D' ";
 					$sql_a .= ") UNION (";
-					
+
 				}  // end if (function_exists('espresso_member_data')
-				
+
 				$sql_a .= "SELECT a.*, e.id event_id, e.event_name, e.require_pre_approval FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 				$sql_a .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id ";
 				if (!empty($_REQUEST['category_id'])) {
@@ -310,8 +308,8 @@ function event_list_attendees() {
 							<td class="date column-date"><?php echo espresso_payment_type($txn_type); ?></td>
 							<td class="date column-date"><?php echo $coupon_code ?></td>
 							<td class="date column-date"><?php echo $txn_id ?></td>
-							<td class="date column-date" ><a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $registration_id ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/money.png" width="16" height="16" alt="<?php _e('Edit Payment', 'event_espresso'); ?>" /></a> <a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;registration_id=<?php echo $registration_id ?>&amp;event_id=<?php echo $event_id ?>&amp;form_action=edit_attendee" title="<?php _e('Edit Attendee', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/user_edit.png" width="16" height="16" alt="<?php _e('Edit Attendee', 'event_espresso'); ?>" /></a> <a href="admin.php?page=attendees&amp;event_admin_reports=resend_email&amp;registration_id=<?php echo $registration_id ?>&amp;event_id=<?php echo $event_id ?>&amp;form_action=resend_email" title="<?php _e('Resend Registration Details', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_link.png" width="16" height="16" alt="<?php _e('Resend Registration Details', 'event_espresso'); ?>" /></a> 
-							<?php echo function_exists('espresso_invoice_url') ? '<a href="'.espresso_invoice_url(isset($attendee_id) && !empty($attendee_id) ? $attendee_id: '', $registration_id, 'admin=true').'" target="_blank"  title="'.__('Download Invoice', 'event_espresso').'"><img src="'. EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/page_white_acrobat.png" width="16" height="16" alt="'.__('Download Invoice', 'event_espresso').'" /></a>' : ''; ?> 
+							<td class="date column-date" ><a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $registration_id ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/money.png" width="16" height="16" alt="<?php _e('Edit Payment', 'event_espresso'); ?>" /></a> <a href="admin.php?page=attendees&amp;event_admin_reports=edit_attendee_record&amp;registration_id=<?php echo $registration_id ?>&amp;event_id=<?php echo $event_id ?>&amp;form_action=edit_attendee" title="<?php _e('Edit Attendee', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/user_edit.png" width="16" height="16" alt="<?php _e('Edit Attendee', 'event_espresso'); ?>" /></a> <a href="admin.php?page=attendees&amp;event_admin_reports=resend_email&amp;registration_id=<?php echo $registration_id ?>&amp;event_id=<?php echo $event_id ?>&amp;form_action=resend_email" title="<?php _e('Resend Registration Details', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_link.png" width="16" height="16" alt="<?php _e('Resend Registration Details', 'event_espresso'); ?>" /></a>
+							<?php echo function_exists('espresso_invoice_url') ? '<a href="'.espresso_invoice_url(isset($attendee_id) && !empty($attendee_id) ? $attendee_id: '', $registration_id, 'admin=true').'" target="_blank"  title="'.__('Download Invoice', 'event_espresso').'"><img src="'. EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/page_white_acrobat.png" width="16" height="16" alt="'.__('Download Invoice', 'event_espresso').'" /></a>' : ''; ?>
 							<?php echo defined('ESPRESSO_TICKETING_VERSION') ? '<a href="'.espresso_ticket_url($id, $registration_id).'" target="_blank"  title="'. __('Download Ticket', 'event_espresso').'"><img src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/ticket-arrow-icon.png" width="16" height="16" alt="'. __('Download Ticket', 'event_espresso').'" /></a>' : ''; ?>
 								<?php
 								if ($org_options["use_attendee_pre_approval"] == "Y") {
@@ -352,10 +350,10 @@ function event_list_attendees() {
 				<input name="attended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Mark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
 
 				<input name="unattended_customer" type="submit" class="button-secondary" id="unattended_customer" value="<?php _e('Unmark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
-			<?php } 
-			
+			<?php }
+
 			$_REQUEST['event_id'] = isset($_REQUEST['event_id']) && !empty($_REQUEST['event_id']) ? $_REQUEST['event_id'] : NULL;
-			
+
 			?>
 
 			<a class="button-primary" style="margin:10px 0 0 20px;" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $_REQUEST['event_id'] . "&amp;export=report&action=payment&amp;type=excel";
@@ -445,14 +443,14 @@ function event_list_attendees() {
 										{ "bSortable": false }
 									],
 									"aoColumnDefs": [
-										{ "bVisible": false, "aTargets": [  
-									<?php 
-										if (isset($_REQUEST['event_id'])) { 
+										{ "bVisible": false, "aTargets": [
+									<?php
+										if (isset($_REQUEST['event_id'])) {
 											echo '4,';
 										} else {
 											echo '2,';
 										}
-										echo $ticketing_installed == true ? '10,11' : '9,10'; 
+										echo $ticketing_installed == true ? '10,11' : '9,10';
 									?> ] }
 									],
 									"oColVis": {

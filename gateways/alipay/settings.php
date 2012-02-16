@@ -2,9 +2,7 @@
 
 function event_espresso_alipay_settings() {
 	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if (isset($_POST['update_alipay']) && check_admin_referer('espresso_form_check', 'add_alipay_settings')) {
 		$alipay_settings['alipay_partner_id'] = $_POST['alipay_partner_id'];
 		$alipay_settings['alipay_security_code'] = $_POST['alipay_security_code'];
@@ -59,9 +57,7 @@ function event_espresso_alipay_settings() {
 //Authorize.net Settings Form
 function event_espresso_display_alipay_settings() {
 	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$alipay_settings = get_option('event_espresso_alipay_settings');
 	if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/new_logo.jpg")) {
 		$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/alipay/new_logo.jpg";

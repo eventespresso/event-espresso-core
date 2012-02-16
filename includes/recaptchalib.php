@@ -102,9 +102,7 @@ function _recaptcha_http_post($host, $path, $data, $port = 80) {
  */
 function recaptcha_get_html($pubkey, $error = null, $use_ssl = false) {
 	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if ($pubkey == null || $pubkey == '') {
 		die("To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>");
 	}

@@ -5,9 +5,7 @@ include_once ('Eway.php');
 echo '<!-- Event Espresso eway Gateway Version ' . $eway_gateway_version . '-->';
 $myeway = new eway(); // initiate an instance of the class
 global $org_options;
-if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-}
+do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);
 $eway_settings = $payment_settings['eway'];
 $eway_id = $eway_settings['eway_id'];

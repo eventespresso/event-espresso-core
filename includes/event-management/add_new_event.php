@@ -4,9 +4,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 function add_new_event() {
 	global $wpdb, $org_options, $espresso_premium;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//This line keeps the notices from displaying twice
 	if (did_action( 'action_hook_espresso_admin_notices') == false)
 		do_action( 'action_hook_espresso_admin_notices');
@@ -32,8 +30,8 @@ function add_new_event() {
 							<?php wp_nonce_field('espresso_form_check', 'ee_add_new_event'); ?>
 							<input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit New Event', 'event_espresso'); ?>" id="add_new_event" />
 						</div>
-						
-						<!-- /publishing-action --> 
+
+						<!-- /publishing-action -->
 					</div>
 					<?php
 						if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) {
@@ -42,14 +40,14 @@ function add_new_event() {
 							}
 						}
 						?>
-					<!-- /major-publishing-actions --> 
+					<!-- /major-publishing-actions -->
 				</div>
-				<!-- /submitpost --> 
+				<!-- /submitpost -->
 			</div>
-			<!-- /inside --> 
+			<!-- /inside -->
 		</div>
 		<!-- /submitdiv -->
-		
+
 		<?php
 			$values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
 
@@ -73,10 +71,10 @@ function add_new_event() {
 							'<p class="inputundersmall"><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input id="max-registrants" type="text" name="additional_limit" value="' . $additional_limit . '" size="4">' .
 							$advanced_options
 			);
-			
+
 			echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups);
 			echo '<!-- /event-questions -->';
-			
+
 			 ?>
 		<div  id="event-categories" class="postbox closed">
 			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
@@ -87,7 +85,7 @@ function add_new_event() {
 			<div class="inside"> <?php echo event_espresso_get_categories(); ?> </div>
 		</div>
 		<!-- /event-category -->
-		
+
 		<?php
 			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
@@ -237,7 +235,7 @@ function add_new_event() {
 			</div>
 		</div>
 		<?php }
-			
+
 		if (function_exists('espresso_personnel_cb') && isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 							?>
 		<div id="event-speakers" class="postbox closed">
@@ -250,9 +248,9 @@ function add_new_event() {
 		</div>
 		<?php } ?>
 	</div>
-	<!-- /side-sortables --> 
+	<!-- /side-sortables -->
 </div>
-<!-- /side-info-column --> 
+<!-- /side-info-column -->
 
 <!-- Left Column-->
 <div id="post-body">
@@ -266,15 +264,15 @@ function add_new_event() {
 				</label>
 				<input type="text" name="event" size="30" tabindex="1" value="<?php echo isset($event_name) ? $event_name : ''; ?>" id="title" autocomplete="off" />
 			</div>
-			
+
 			<!-- /titlewrap -->
 			<div class="inside">
 				<div id="edit-slug">
 				<p><strong><?php _e('Permalink:', 'event_espresso'); ?></strong> <?php echo get_permalink($org_options['event_page_id']) ?><input size="30" type="text" tabindex="2" name="slug" id="slug" /></p>
-					
+
 				</div>
 			</div>
-			<!-- /edit-slug-box --> 
+			<!-- /edit-slug-box -->
 		</div>
 		<!-- /titlediv -->
 		<div id="descriptiondivrich" class="postarea"> <strong>
@@ -431,7 +429,7 @@ function add_new_event() {
 				<div class="inside">
 					<table width="100%" border="0" cellpadding="5">
 							<tr>
-						
+
 						<?php
 										if (function_exists('espresso_venue_dd') && isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
 											$ven_type = 'class="use-ven-manager"';
@@ -493,9 +491,9 @@ function add_new_event() {
 								</p>
 							</fieldset></td>
 							<td <?php echo $ven_type; ?>>
-						
+
 							<fieldset id="venue-info">
-						
+
 						<legend>
 						<?php _e('Venue Information', 'event_espresso'); ?>
 						</legend>
@@ -524,7 +522,7 @@ function add_new_event() {
 							<input id="ven-image" size="20" tabindex="110"  type="text"  value="<?php echo isset($venue_image) ? $venue_image : '' ?>" name="venue_image" />
 						</p>
 							</td>
-						
+
 						<?php } ?>
 						<td <?php echo $ven_type ?>><fieldset id="virt-location">
 								<legend>
@@ -549,7 +547,7 @@ function add_new_event() {
 									<input id="call-in-num" size="20" tabindex="109"  type="text"  value="" name="virtual_phone" />
 							</fieldset></td>
 							</tr>
-						
+
 					</table>
 					<p>
 						<label for="enable-for-gmap">
@@ -558,7 +556,7 @@ function add_new_event() {
 						<?php echo select_input('enable_for_gmap', $values, 'N', 'id="enable-for-gmap"') ?> </p>
 				</div>
 			</div>
-			
+
 			<!-- /event-location-->
 			<?php if ($espresso_premium == true) { ?>
 			<div  id="event-meta" class="postbox closed">
@@ -647,9 +645,9 @@ function add_new_event() {
 	}
 	?>
 		</div>
-		<!-- /normal-sortables--> 
+		<!-- /normal-sortables-->
 	</div>
-	<!-- /post-body-content --> 
+	<!-- /post-body-content -->
 </div>
 <!-- /post-body -->
 <input type="hidden" name="action" value="add" />

@@ -237,9 +237,7 @@ if (!function_exists('espresso_chart_display')) {
 
 	function espresso_chart_display($event_id, $type) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$retVAl = array();
 		switch ($type) {
 			case 'total_reg':
@@ -334,9 +332,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 
 	function event_espresso_meta_edit($event_meta='') {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
@@ -440,9 +436,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 
 function espresso_attendee_counts() {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//Dates
 	$curdate = date("Y-m-d");
 	$pieces = explode('-', $curdate, 3);

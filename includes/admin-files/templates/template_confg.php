@@ -2,9 +2,7 @@
 
 function event_espresso_manage_templates() {
 	global $wpdb, $org_options, $notices;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//print_r($org_options);
 	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_template_settings_update')) {
 		$org_options['template_settings']['display_description_on_multi_reg_page'] = empty($_POST['display_description_on_multi_reg_page']) ? '' : $_POST['display_description_on_multi_reg_page'];
@@ -73,9 +71,7 @@ function event_espresso_manage_templates() {
 
 	function espresso_style_is_selected($name) {
 		global $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$input_item = $name;
 		$option_selections = isset($org_options['themeroller']) && !empty($org_options['themeroller']) ? array($org_options['themeroller']['themeroller_style']) : array();
 		if (!in_array($input_item, $option_selections)) {

@@ -6,9 +6,7 @@ function espresso_display_nab($payor_data, $event_cost, $attendee_id, $event_id)
 	$mynab = new nab(); // initiate an instance of the class
 	global $org_options, $wpdb, $espresso_wp_user;
 	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$nab_result_url = home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment&nab=true';
 	$nab_settings = $payment_settings['nab'];
 	$nab_id = $nab_settings['nab_merchant_id'];

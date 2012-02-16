@@ -106,9 +106,7 @@ function event_espresso_paypal_payment_settings() {
 //PayPal Settings Form
 function event_espresso_display_paypal_settings() {
 	global $org_options, $espresso_wp_user;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 
 	$values = array(

@@ -6,49 +6,46 @@
 if (!function_exists('register_attendees')) {
 
 	function register_attendees( $single_event_id = NULL, $event_id_sc =0 ) {
-		
+
 		if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
 			attendee_edit_record();
 			return;
 		}
-		
+
 		global $wpdb, $org_options;
-		
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
-		
-		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+
 		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
-			
-	
+
+
 		if ( $event_id_sc != 0 ) {
 			$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE.' WHERE id = %d';
-			$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id_sc ));		
+			$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id_sc ));
 		}
-	
-		
+
+
 		if (!empty($_REQUEST['event_id_time'])) {
 			$pieces = explode('|', $_REQUEST['event_id_time'], 3);
 			//$event_id = $pieces[0];
 			$start_time = $pieces[1];
 			$time_id = $pieces[2];
 			$time_selected = true;
-			
+
 			if ( isset( $pieces[0] ) && $pieces[0] != '' ) {
 				$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE.' WHERE id = %d';
-				$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id_sc ));		
-			}			
+				$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id_sc ));
+			}
 		}
 
 		if ( isset( $_REQUEST['ee'] ) && $_REQUEST['ee'] != '' ) {
 			$ee_event_id = $_REQUEST['ee'];
 		} else {
 			$ee_event_id = FALSE;
-		}	
+		}
 
-	
+
 
 		//The following variables are used to get information about your organization
 		$event_page_id = $org_options['event_page_id'];
@@ -90,7 +87,7 @@ if (!function_exists('register_attendees')) {
 		}
 
 
-		
+
 
 
 		//Support for diarise
@@ -100,10 +97,10 @@ if (!function_exists('register_attendees')) {
 			$sql .= " WHERE post_id = '" . $_REQUEST['post_event_id'] . "' ";
 			$sql .= " LIMIT 0,1";
 		}
-		
-		
 
-		
+
+
+
 		$data->event = $wpdb->get_row($sql, OBJECT);
 		//print_r($data->event);
 
@@ -340,7 +337,7 @@ if (!function_exists('register_attendees')) {
 						require(espresso_get_registration_display_template());
 					}
 				}//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
-				
+
 			} else {//If there are no results from the query, display this message
 				echo '<h3>' . __('This event has expired or is no longer available.', 'event_espresso') . '</h3>';
 			}

@@ -5,9 +5,7 @@
  */
 function espresso_display_2checkout($payment_data) {
 	global $org_options, $payment_settings, $wpdb;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	include_once ('lib/2checkout.php');
 	$my2checkout = new TwoCo();
 	echo '<!-- Event Espresso 2checkout Gateway Version ' . $my2checkout->twocheckout_gateway_version . '-->';

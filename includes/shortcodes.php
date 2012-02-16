@@ -131,7 +131,7 @@ if (!function_exists('event_espresso_list_attendees')) {
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		//get the event identifiers
 		$event_identifier = "{$event_identifier}";
-		
+
 		$show_gravatar = "{$show_gravatar}";
 
 		//get the category identifiers
@@ -186,9 +186,7 @@ if (!function_exists('espresso_reg_page_sc')) {
 
 	function espresso_reg_page_sc($atts) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
@@ -203,9 +201,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 	function espresso_reg_form_sc($atts) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
@@ -552,9 +548,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 		function espresso_category_name_sc($atts) {
 			global $wpdb, $org_options;
-			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-			}
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			extract(shortcode_atts(array('event_id' => '0'), $atts));
 			$event_id = "{$event_id}";
 			$category_name = espresso_event_category_data($event_id);
@@ -574,9 +568,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 		function espresso_price_dd_sc($atts) {
 			global $wpdb, $org_options;
-			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-			}
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			extract(shortcode_atts(array('event_id' => '0'), $atts));
 			$event_id = "{$event_id}";
 			$data = event_espresso_price_dropdown($event_id);
@@ -615,9 +607,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 		function espresso_attendees_data_sc($atts) {
 			global $wpdb, $org_options;
-			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-			}
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			extract(shortcode_atts(array('event_id' => '0', 'type' => ''), $atts));
 			$event_id = "{$event_id}";
 			$type = "{$type}";
@@ -646,9 +636,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 		function display_event_list_sc($atts) {
 			global $wpdb, $org_options;
-			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-			}
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			global $load_espresso_scripts;
 			$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 			extract(shortcode_atts(array('category_identifier' => 'NULL', 'show_expired' => 'false', 'show_secondary' => 'false', 'show_deleted' => 'false', 'show_recurrence' => 'false', 'limit' => '0', 'order_by' => 'NULL', 'css_class' => 'NULL'), $atts));
@@ -775,7 +763,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 
 			//Show the persons title?
 			$show_staff_titles = isset($show_staff_titles) && $show_staff_titles == 'false' ? false : true;
-		
+
 			//Show the persons role?
 			$show_staff_roles = isset($show_staff_roles) && $show_staff_roles == 'false' ? false : true;
 

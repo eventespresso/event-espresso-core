@@ -292,7 +292,7 @@ function espresso_load_error_log() {
 		foreach ($_REQUEST as $key => $value) {
 			$message .= $key . " = " . $value . "\n";
 		}
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => $message));
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $message);
 	}
 }
 
@@ -309,11 +309,7 @@ function espresso_load_error_log() {
 function espresso_init_session() {
 
 	global $org_options;
-
-	//logging
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	if (!isset($_SESSION)) {
 		session_start();
@@ -443,11 +439,7 @@ if (!function_exists('espresso_load_jquery')) {
 	function espresso_load_jquery() {
 
 		global $org_options;
-
-		// logging
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		wp_enqueue_script('jquery');
 		if (function_exists('event_espresso_multi_reg_init') || (isset($_REQUEST['page']) && ( $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'form_groups'))) {
@@ -818,10 +810,7 @@ function espresso_init() {
 			// grab some globals
 			global $wpdb, $org_options, $load_espresso_scripts;
 
-			// logging
-			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-			}
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 			// tell the plugin to load the required scripts
 			$load_espresso_scripts = true;
@@ -1192,12 +1181,7 @@ if (!function_exists('add_espresso_stylesheet')) {
 	function add_espresso_stylesheet() {
 		global $org_options;
 
-		//Debug
-		//echo '<pre>'.print_r($org_options, true).'</pre>';
-
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		//Load the ThemeRoller styles if enabled
 		if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') {

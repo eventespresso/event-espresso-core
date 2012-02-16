@@ -1,9 +1,7 @@
 <?php
 function espresso_charts() {
 	global $wpdb, $org_options,$espresso_premium;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$event_id = $_REQUEST['event_id'];
 ?>
 <div class="metabox-holder">

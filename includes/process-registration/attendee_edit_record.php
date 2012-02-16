@@ -4,9 +4,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 function attendee_edit_record() {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$id = $_REQUEST['id'];
 	$registration_id = $_REQUEST['registration_id'];
 	if (isset($_REQUEST['r_id']))

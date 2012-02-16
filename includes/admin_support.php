@@ -12,9 +12,7 @@ function event_espresso_support() {
 	//For testing email functions
 	function event_espresso_test_email($optional_email = '', $optional_message = 'None') {
 		global $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$to = !empty($optional_email) ? $optional_email : $org_options['contact_email'];
 		$subject = 'Event Espresso Test Message from' . $org_options['organization'];
 		$message = 'Event Espresso email is working properly. Optional message: ' . $optional_message;
@@ -23,7 +21,7 @@ function event_espresso_support() {
 						'X-Mailer: PHP/' . phpversion();
 		wp_mail($to, $subject, $message, $headers);
 	}
-	
+
 	if(isset($_REQUEST['action'])) {
 		switch ($_REQUEST['action']) {
 			case "update_event_dates":
@@ -515,13 +513,13 @@ function event_espresso_support() {
 												<p><span class="highlight">[EVENT_ESPRESSO_CATEGORY event_category_id="your_category_indentifier"]</span></p>
 											</div>
 										</div>
-										<!-- / .padding --> 
+										<!-- / .padding -->
 									</div>
-									<!-- / .inside --> 
+									<!-- / .inside -->
 								</div>
-								<!-- / .postbox --> 
+								<!-- / .postbox -->
 							</div>
-							<!-- / .metabox-holder --> 
+							<!-- / .metabox-holder -->
 						</li>
 						<li><a name="details" id="details"></a>
 							<div class="metabox-holder">
@@ -533,14 +531,14 @@ function event_espresso_support() {
 									</h3>
 									<div class="inside">
 										<div class="padding">
-											<?php 
+											<?php
 						global $wpdb, $wp_version;
 						$wp_req_version = '3.1';
 						$php_req_version = '5.2';
 						$mysql_req_version = '5.0';
 						$is_php_valid = version_compare(phpversion(), $php_req_version, '>');
 						$is_mysql_valid = version_compare($wpdb->db_version(), $mysql_req_version, '>');
-														
+
 						if ( !version_compare( $wp_version, $wp_req_version, '>=' ) ) {
 							echo '<p class="red_alert">'.__('This version of Event Espresso requires WordPress version', 'event_espresso').' '. $wp_req_version.'+. '.__('Please upgrade to the latest version of WordPress.', 'event_espresso').'</p>';
 						}
@@ -895,7 +893,7 @@ function event_espresso_support() {
 							</div>
 						</li>
 						<?php /*?>
-			 
+
 			 <li>
 			  <div class="metabox-holder">
 				<div class="postbox">
@@ -921,26 +919,26 @@ function event_espresso_support() {
 				</div>
 			  </div>
 			</li>
-			
+
 		   <?php */?>
 					</ul>
 				</div>
-				<!-- / .meta-box-sortables --> 
+				<!-- / .meta-box-sortables -->
 			</div>
-			<!-- / .post-body-content : left sidebar main content --> 
+			<!-- / .post-body-content : left sidebar main content -->
 		</div>
-		<!-- / .post-body --> 
-		
+		<!-- / .post-body -->
+
 	</div>
-	<!-- / #poststuff --> 
+	<!-- / #poststuff -->
 </div>
-<!-- / #wrap --> 
+<!-- / #wrap -->
 <script type="text/javascript" charset="utf-8">
 							//<![CDATA[
 							jQuery(document).ready(function() {
 								postboxes.add_postbox_toggles('support');
 
-							}); 
+							});
 							//]]>
 							</script>
 <?php

@@ -6,9 +6,7 @@ echo '<!-- Event Espresso Merchant Warrior Gateway Version ' . $mwarrior_gateway
 $mwarrior = new Mwarrior(); // initiate an instance of the class
 global $org_options, $espresso_wp_user;
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);
-if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-}
+do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 $mwarrior_settings = $payment_settings['mwarrior'];
 $mwarrior_id = empty($mwarrior_settings['mwarrior_id']) ? '' : $mwarrior_settings['mwarrior_id'];
 $mwarrior_apikey = empty($mwarrior_settings['mwarrior_apikey']) ? '' : $mwarrior_settings['mwarrior_apikey'];

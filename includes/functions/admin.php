@@ -902,9 +902,7 @@ function espresso_attendees_by_month_dropdown($current_value = '') {
 //This function installs the required pages
 function espresso_create_default_pages() {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$default_pages = array('Event Registration', 'Thank You', 'Registration Cancelled', 'Transactions');
 	$existing_pages = get_pages();
 	foreach ($existing_pages as $page) {
@@ -1004,9 +1002,9 @@ function espresso_template_files_exist($dir) {
 	$exclude = array( '.', '..', 'index.htm', 'index.html', 'index.php', '.svn', '.DS_Store' );
 
 	//if we manage to open the directory
-	if ($dhandle) { 
+	if ($dhandle) {
 		// loop through all of the files
-		while (( $fname = readdir( $dhandle )) !== FALSE ) {			
+		while (( $fname = readdir( $dhandle )) !== FALSE ) {
 			// if the file is not in the array of things to exclude
 			if ( ! in_array( $fname, $exclude && ! is_dir( $fname ))) {
 				// then store the filename
@@ -1030,7 +1028,7 @@ function espresso_template_files_exist($dir) {
 
 /**
 *		creates url slugs from event_name
-*		
+*
 *		@access public
 *		@return void
 */
@@ -1046,40 +1044,40 @@ function espresso_create_url_slugs() {
 		$where = array();
 		if ( $events ) {
 			foreach ( $events as $event ) {
-	
+
 				$data['slug'] = espresso_string_to_url( $event->event_name );
 				$where['id'] = $event->id;
-	
-				$wpdb->update( 
-											EVENTS_DETAIL_TABLE, 
-											$data, 
-											$where, 
-											array( '%s' ), 
-											array( '%d' ) 
-										);	
-	
+
+				$wpdb->update(
+											EVENTS_DETAIL_TABLE,
+											$data,
+											$where,
+											array( '%s' ),
+											array( '%d' )
+										);
+
 			}
-		}			
+		}
 	}
 
 //echo printr($data);
 //echo printr($where);
 
-}	
-	
-	
-	
+}
+
+
+
 
 /**
  *		converts a string to url friendly string by:
  * 	changing spaces to dashes, changing & (or &amp;) to "and", stripping tags, and converting to lowercase
- *  
+ *
  *		@access 	public
  *		@param 	string	$string
  *		@return 	string
- */	
+ */
 function espresso_string_to_url( $string ) {
-	
+
 	$expressions = array(
 											'&\#\d+?;'			=> '',
 											'&\S+?;'				=> '',
@@ -1091,24 +1089,24 @@ function espresso_string_to_url( $string ) {
 											'\.+$'					=> ''
 										);
 
-	$string = str_replace( '&amp;', 'and', $string );		
+	$string = str_replace( '&amp;', 'and', $string );
 	$string = str_replace( '&', 'and', $string );
 	$string = wp_strip_all_tags($string);
 
 	foreach ( $expressions as $key => $exp ) {
 		$string = preg_replace("#".$key."#i", $exp, $string);
-	}	
-	
+	}
+
 	$string = strtolower( $string );
 
 	return $string;
-	
-}	
+
+}
 
 
 /**
 *		flushes the event cache
-*		
+*
 *		@access public
 *		@param 	in	$event_id
 *		@return void
@@ -1117,7 +1115,7 @@ if (!function_exists('espresso_reset_cache')) {
 	function espresso_reset_cache($event_id = 0){
 		delete_transient( 'all_espresso_events' );
 		delete_transient( 'all_espresso_calendar_events' );
-		
+
 		//Flushes the cache that may be set for an event slug
 		if ($event_id > 0){
 			delete_transient( 'espresso_event_slug_'.$event_id );

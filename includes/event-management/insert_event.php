@@ -10,9 +10,7 @@ function add_event_to_db($recurrence_arr = array()) {
 	espresso_reset_cache();
 
 	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if (check_admin_referer('espresso_form_check', 'ee_add_new_event')) {
 
 		$wpdb->show_errors();

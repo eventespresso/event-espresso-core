@@ -4,7 +4,7 @@
 
 //Attention!! The WP dbDelta function cannot modify unique keys
 //Please note that when updating the plugin and WordPress is in debug mode, you may see the following warning/notice:
-//The plugin generated 15089 characters of unexpected output during activation. If you notice "headers already sent" messages, 
+//The plugin generated 15089 characters of unexpected output during activation. If you notice "headers already sent" messages,
 //problems with syndication feeds or other issues, try deactivating or removing this plugin.
 
 //This fix for this problem:
@@ -33,9 +33,7 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 //This function updates the org_options from < EE 3.2
 function espresso_fix_org_options() {
 	global $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if (empty($org_options))
 		return;
 
@@ -81,7 +79,7 @@ function espresso_fix_org_options() {
 	}
 
 	update_option('events_organization_settings', $org_options);
-	
+
 }
 
 //This function installs all the required database tables
@@ -220,7 +218,7 @@ function events_data_tables_install() {
 		$results = $wpdb->get_results($sql);
 		if ($wpdb->num_rows > 0) {
 			$update_attendee_qty = $wpdb->query("UPDATE " . $wpdb->prefix . "events_attendee SET quantity = 1 OR quantity = '' WHERE quantity = 0");
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => " sqldump = " . var_export($results, true) . " ] [ rows affected = " . var_export($update_attendee_qty, true)));
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, " sqldump = " . var_export($results, true) . " ] [ rows affected = " . var_export($update_attendee_qty, true));
 		}
 	}
 

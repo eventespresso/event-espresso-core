@@ -6,19 +6,15 @@
 //Note: All of these functions can be overridden using the "Custom Files" addon. The custom files addon also contains sample code to display ongoing events
 
 global $org_options;
-if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-}
+do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 if (!function_exists('display_all_events')) {
 
 	function display_all_events() {
-		
+
 		global $org_options;
-		
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
-		
+
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 		//If set to true, the event page will display recurring events.
 		$display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
@@ -33,7 +29,7 @@ if (!function_exists('display_all_events')) {
 		$sql .= " AND e.event_status != 'D' ";
 		$sql .= " GROUP BY e.id  ORDER BY date(start_date), time(start_time), id";
 		event_espresso_get_event_details($sql, false, false, 'all'); //This function is located below
-		
+
 	}
 
 }
@@ -42,9 +38,7 @@ if (!function_exists('display_event_espresso_categories')) {
 
 	function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ($event_category_id != "null") {
 
 			$display_recurrence_event = true; //If set to true, the event page will display recurring events.
@@ -70,29 +64,27 @@ if (!function_exists('display_event_espresso_categories')) {
 if (!function_exists('event_espresso_get_event_details')) {
 
 	function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override=0, $type = 'all') {
-		
+
 		//Debug
 		//echo $sql;
-		
+
 		global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts;
-		
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
-		
+
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 		switch ($type){
 			case 'all':
 				$events = get_transient( 'all_espresso_events' );
 				if ( false === $events ) {
 					// if transient not set, do this!
-				
+
 					// create the data that needs to be saved.
 					$events = $wpdb->get_results($sql);
-				
+
 					// save the newly created transient value
 					// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
 					set_transient('all_espresso_events', $events, 60*60*24*365);
-					
+
 					//Check if using the cache
 					//echo 'Not using cache';
 				}
@@ -101,8 +93,8 @@ if (!function_exists('event_espresso_get_event_details')) {
 			default:
 				$events = $wpdb->get_results($sql);
 			break;
-		}		
-		
+		}
+
 		//Multi event registration
 		$multi_reg = false;
 		if (function_exists('event_espresso_multi_reg_init')) {
@@ -112,7 +104,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 		//echo 'This page is located in ' . get_option( 'upload_path' );
 		$event_page_id = $org_options['event_page_id'];
 		$currency_symbol = isset($org_options['currency_symbol']) ? $org_options['currency_symbol'] : '';
-		
+
 		//Category data
 		$category_id = isset($wpdb->last_result[0]->category_id) ? $wpdb->last_result[0]->category_id : '';
 		$category_name = isset($wpdb->last_result[0]->category_name) ? $wpdb->last_result[0]->category_name : '';

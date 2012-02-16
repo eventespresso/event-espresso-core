@@ -7,9 +7,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 		if ($espresso_premium != true)
 			return;
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$event_cost = event_espresso_get_final_price($price_id, $event_id);
 

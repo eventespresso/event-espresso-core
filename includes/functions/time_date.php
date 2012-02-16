@@ -167,12 +167,10 @@ if (!function_exists('event_espresso_time_dropdown')) {
 
 	function event_espresso_time_dropdown($event_id = 'NULL', $label = 1, $multi_reg = 0, $value = '') {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$html = '';
 		$cache = true;
-		
+
 		//Will make the name an array and put the event id as a key so we
 		//know which event this belongs to
 		$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
@@ -180,14 +178,14 @@ if (!function_exists('event_espresso_time_dropdown')) {
 		$time_reg_limit = $org_options['time_reg_limit'];
 		//$time_reg_limit = 'Y';
 		//echo $num_attendees;
-		
+
 		$sql = "SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' ";
-		
+
 		//Not sure if this is needed. Removed by Seth 2-10-11
 		/*if ( isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y') {
 			$sql = "SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "' ";
 			$events = $wpdb->get_results($sql);
-		
+
 			foreach ($events as $event) {
 				$timezone_string = empty($event->timezone_string) ? '' : $event->timezone_string;
 			}
@@ -208,16 +206,16 @@ if (!function_exists('event_espresso_time_dropdown')) {
 								group by es.id";
 			$cache = false;
 		}
-		
+
 		if ($cache == true) {
 			$html = get_transient( 'espresso_time_dropdown_'.$event_id );
 		}else{
 			$html = false;
 		}
-		
+
 		if ( false === $html ) {
 			// if transient not set, do this!
-			
+
 			// create the data that needs to be saved.
 			$event_times = $wpdb->get_results($sql);
 			if ($wpdb->num_rows == 1) {//If one result, then display the times.
@@ -252,18 +250,18 @@ if (!function_exists('event_espresso_time_dropdown')) {
 				}
 				$html .= '</select>';
 			}
-			
+
 			if ($cache == true) {
 				// save the newly created transient value
 				// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
 				set_transient('espresso_time_dropdown_'.$event_id, $html, 60*60*24*365);
-					
+
 				//Debug:
 				//Check if using the cache
 				//echo 'Not using cache';
 			}
 		}
-			
+
 		return $html;
 	}
 
@@ -271,9 +269,7 @@ if (!function_exists('event_espresso_time_dropdown')) {
 
 function espresso_time_id_hidden_field($event_id, $multi_reg = 0) {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//Will make the name an array and put the event id as a key so we
 	//know which event this belongs to
 	$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
@@ -756,7 +752,7 @@ function espresso_event_months_dropdown($current_value = 0) {
 
 		/*		 * * loop over the results ** */
 		foreach ($data as $row) {
-			
+
 			/*			 * * create the options ** */
 			echo '<option value="' . event_espresso_no_format_date($row["start_date"], $format = 'Y-m-d') . '"';
 			if ($row["start_date"] === $current_value) {

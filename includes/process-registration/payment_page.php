@@ -5,9 +5,7 @@
 function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupon_code ='') {
 
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	//Debug
 	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
@@ -200,9 +198,7 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 
 function espresso_confirm_registration($registration_id) {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	//Debug
 	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
@@ -371,9 +367,7 @@ function espresso_confirm_registration($registration_id) {
 //This is the alternate PayPal button used for the email
 function event_espresso_pay($att_registration_id=0) {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	//Debug
 	//echo "<pre>".print_r($_REQUEST,true)."</pre>";

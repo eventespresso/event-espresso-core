@@ -28,9 +28,7 @@ function event_espresso_timereg_editor($event_id = 0) {
 
 function event_espresso_time_editor($event_id = 0) {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$time_counter = 1;
 	//echo get_option('time_format');
 	?>
@@ -74,9 +72,7 @@ function event_espresso_time_editor($event_id = 0) {
 
 function event_espresso_multi_price_update($event_id) {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$price_counter = 1;
 	?>
 	<fieldset>
@@ -224,9 +220,7 @@ function event_espresso_get_categories($event_id = 0) {
 
 function espresso_event_question_groups($question_groups=array(), $add_attendee_question_groups=array(), $event_id=0) {
 	global $wpdb, $org_options, $espresso_premium, $espresso_wp_user;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	?>
 	<div id="event-questions" class="postbox event-questions-lists">
 		<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />

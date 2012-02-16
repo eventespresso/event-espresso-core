@@ -7,9 +7,7 @@ function event_newsletter($event_id=0) {
 	}
 	//echo $event_id;
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	wp_tiny_mce(false, // true makes the editor "teeny"
 					array(
 			"editor_selector" => "theEditor"//This is the class name of your text field

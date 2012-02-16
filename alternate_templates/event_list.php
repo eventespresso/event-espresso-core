@@ -6,18 +6,14 @@
 //Note: All of these functions can be overridden using the "Custom Files" addon. The custom files addon also contains sample code to display ongoing events
 
 global $org_options;
-if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-}
+do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 if (!function_exists('display_all_events')) {
 
 
 	function display_all_events($display_recurrence_event = true) {
 		global $org_options, $wpdb;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$use_venue_manager = isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y';
 		$sql = "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id=e.id ";
@@ -38,9 +34,7 @@ if (!function_exists('display_event_espresso_categories')) {
 
 	function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
 		global $wpdb, $org_options;
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ($event_category_id != "null") {
 
 			$display_recurrence_event = true; //If set to true, the event page will display recurring events.
@@ -67,23 +61,21 @@ if (!function_exists('display_event_espresso_categories')) {
 if (!function_exists('event_espresso_get_event_details')) {
 
 	function event_espresso_get_event_details($events, $css_class=NULL, $allow_override=0) {
-	
+
 		global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts;
-		
-		if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-		}
-		
+
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 		$multi_reg = false;
-		
+
 		if (function_exists('event_espresso_multi_reg_init')) {
 			$multi_reg = true;
 		}
-		
+
 		$event_page_id = $org_options['event_page_id'];
-		
+
 		foreach ($events as $event) {
-		
+
 			$status = $event->get_status();
 			$event_id = $event->get_id();
 			$categories = $event->get_categories();
@@ -110,26 +102,26 @@ if (!function_exists('event_espresso_get_event_details')) {
 			$status_display_not_open = $status['status'] == 'REGISTRATION_NOT_OPEN' ? ' - ' . $status['display_custom'] : '';
 			$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? ' - ' . $status['display_custom'] : '';
 			$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' - <span class="espresso_closed">' . __('Regsitration is Closed', 'event_espresso') . '</span>' : '';
-			
+
 			if (! is_user_logged_in() && get_option('events_members_active') == 'true' && $event->is_member_only() == 'Y') {
 				//Display a message if the user is not logged in.
 				//_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
-				
+
 			} else {
-			
+
 				if ($allow_override == 1) {
-				
+
 					include('event_list_display.php');
-					
+
 				} else {
-				
+
 					switch ($event->get_active_state()) {
-					
+
 						case 'NOT_ACTIVE':
 							//Uncomment the following line to show events that are not active and the active status array
 							//include('event_list_display.php');
 						break;
-							
+
 						case 'PENDING':
 							if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
 								echo '<div class="pending_event">';
@@ -137,11 +129,11 @@ if (!function_exists('event_espresso_get_event_details')) {
 								echo '</div>';
 							}
 						break;
-						
+
 						default:
 							include('event_list_display.php');
 						break;
-						
+
 					}
 				}
 			}

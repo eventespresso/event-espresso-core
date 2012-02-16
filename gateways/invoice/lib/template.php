@@ -4,9 +4,7 @@ global $espresso_premium;
 if ($espresso_premium != true)
 	return;
 global $wpdb, $org_options, $espresso_wp_user;
-if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-	espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-}
+do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);
 //Added by Imon
 if (isset($_SESSION['espresso_session']['id'])) {

@@ -22,19 +22,17 @@ function event_espresso_manage_events() {
 			</h2>
 			<?php
 			global $wpdb, $org_options;
-			if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-			}
-			
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'copy_event' ) {
 				require_once("copy_event.php");
 				copy_event();
 			}
-			
+
 			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete' ) {
 				event_espresso_delete_event();
 			}
-			
+
 			//Delete recurrence series of events
 			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_recurrence_series' ) {
 				$r = $wpdb->get_results("SELECT id FROM " . EVENTS_DETAIL_TABLE . " ed WHERE recurrence_id = " . $_REQUEST['recurrence_id']);
@@ -45,17 +43,17 @@ function event_espresso_manage_events() {
 					}
 				}
 			}
-			
+
 			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'csv_import' ) {
 				require_once ('csv_import.php');
 				csv_import();
 			}
-			
+
 			if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'add' ) {
 				require_once("insert_event.php");
 				add_event_to_db();
 			}
-			
+
 			//Update the event
 			if (isset($_REQUEST['edit_action']) && $_REQUEST['edit_action'] == 'update') {
 				require_once("update_event.php");
