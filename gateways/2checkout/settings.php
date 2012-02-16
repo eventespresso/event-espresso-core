@@ -17,7 +17,7 @@ function event_espresso_2co_settings() {
 		$payment_settings['2checkout']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 		$payment_settings['2checkout']['button_url'] = $_POST['button_url'];
 
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings)) {
 			$notices['updates'][] = __('2checkout Payment Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('2checkout Payment Settings were not saved! ', 'event_espresso');
