@@ -320,9 +320,6 @@ function add_event_to_db($recurrence_arr = array()) {
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpController::add_event_list_rel($last_event_id);
 			}
-			if (function_exists('espresso_fb_createevent') == 'true' && $espresso_premium == true) {
-				espresso_fb_createevent($last_event_id);
-			}
 
 			/*
 			 * Added for seating chart addon

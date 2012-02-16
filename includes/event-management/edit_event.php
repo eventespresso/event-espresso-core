@@ -330,31 +330,7 @@ function edit_event($event_id = 0) {
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpView::event_list_selection();
 			}
-			?>
-		<?php if (function_exists('espresso_fb_createevent') && $espresso_premium == true) { ?>
-		<?php
-		$eventstable = $wpdb->prefix . "fbevents_events";
-		$fb_e_id = $wpdb->get_var("SELECT fb_event_id FROM $eventstable WHERE event_id='{$event->id}'");
-		?>
-		<div  id="event-meta" class="postbox closed">
-			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
-			</div>
-			<h3 class="hndle"> <span>
-				<?php _e('Post to Facebook', 'event_espresso'); ?>
-				</span> </h3>
-			<div class="inside">
-				<input type="checkbox" name="espresso_fb" id="espresso_fb" <?php echo ($fb_e_id ? "CHECKED=TRUE" : null); ?>/>
-				<?php _e('Post to Facebook', 'event_espresso'); ?>
-				<?php if (!empty($fb_e_id)) { ?>
-				<a href="http://www.facebook.com/event.php?eid=<?php echo $fb_e_id; ?>"
-								 target="_blank">
-				<?php _e('Event Page On Facebook', 'event_espresso'); ?>
-				</a>
-				<?php } ?>
-			</div>
-		</div>
-		<?php }
-
+			
 	if (function_exists('espresso_personnel_cb') && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 		?>
 		<div id="event-staff" class="postbox closed">

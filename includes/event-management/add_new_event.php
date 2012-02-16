@@ -221,21 +221,7 @@ function add_new_event() {
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpView::event_list_selection();
 			}
-			?>
-		<?php if (function_exists('espresso_fb_createevent') == 'true' && $espresso_premium == true) { ?>
-		<div id="event-meta" class="postbox closed">
-			<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
-			</div>
-			<h3 class="hndle"> <span>
-				<?php _e('Post to Facebook', 'event_espresso'); ?>
-				</span> </h3>
-			<div class="inside">
-				<input type="checkbox" name="espresso_fb" id="espresso_fb" />
-				<?php _e('Post to Facebook', 'event_espresso'); ?>
-			</div>
-		</div>
-		<?php }
-
+			
 		if (function_exists('espresso_personnel_cb') && isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 							?>
 		<div id="event-speakers" class="postbox closed">

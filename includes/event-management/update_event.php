@@ -508,9 +508,6 @@ function update_event($recurrence_arr = array()) {
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpController::update_event_list_rel($event_id);
 			}
-			if (function_exists('espresso_fb_createevent') == 'true' && $espresso_premium == true) {
-				espresso_fb_updateevent($event_id);
-			}
 
 			/// Create Event Post Code Here
 			switch ($_REQUEST['create_post']) {
