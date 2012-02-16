@@ -273,7 +273,7 @@ function enter_attendee_payments() {
 									<label>
 										<?php _e('Date Paid:', 'event_espresso'); ?>
 									</label>
-									<input type="text" name="payment_date" size="45" value ="<?php echo!empty($payment_date) ? event_date_display($payment_date) : event_date_display($today) ?>" />
+									<input type="text" class="datepicker" name="payment_date" size="45" value ="<?php echo!empty($payment_date) ? event_date_display($payment_date) : event_date_display($today) ?>" />
 								</li>
 								<li>
 									<label>
@@ -400,6 +400,22 @@ function enter_attendee_payments() {
 	?>
 	</div>
 </div>
+<script type="text/javascript" charset="utf-8">
+		//<![CDATA[
+		jQuery(document).ready(function() {
+
+			jQuery(".datepicker" ).datepicker({
+				changeMonth: true,
+				changeYear: true,
+				dateFormat: "yy-mm-dd",
+				showButtonPanel: true
+			});
+
+		});
+
+			//]]>
+	</script>
+
 <?php
 	//This show what tags can be added to a custom email.
 	echo event_espresso_custom_email_info();

@@ -54,6 +54,11 @@ function event_espresso_config_page_scripts() {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
 	}
+	
+	if ($_REQUEST['page'] == 'attendees' && isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'enter_attendee_payments' ) {
+		$load_jquery_ui = true;
+		$load_datepicker = true;
+	}
 
 	//Load jquery UI scripts
 	if ($load_jquery_ui == true) {
