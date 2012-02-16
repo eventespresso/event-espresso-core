@@ -1011,7 +1011,7 @@ function espresso_template_files_exist($dir) {
 		// loop through all of the files
 		while (( $fname = readdir( $dhandle )) !== FALSE ) {
 			// if the file is not in the array of things to exclude
-			if ( ! in_array( $fname, $exclude && ! is_dir( $fname ))) {
+			if ( !in_array( $fname, $exclude) && !is_dir( $fname )) {
 				// then store the filename
 				$files[] = $fname;
 			}
