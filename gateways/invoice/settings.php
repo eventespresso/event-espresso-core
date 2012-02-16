@@ -1,6 +1,6 @@
 <?php
 //Invoice verion 2.0
-include('invoice_functions.php');
+include('lib/invoice_functions.php');
 
 function event_espresso_invoice_payment_settings() {
 	global $espresso_premium, $notices, $espresso_wp_user, $org_options;
