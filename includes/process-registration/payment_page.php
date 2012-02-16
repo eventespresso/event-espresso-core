@@ -331,7 +331,10 @@ function espresso_confirm_registration($registration_id) {
 
 		if ($amount_pd != '0.00') {
 			//Show payment options
-			do_action('action_hook_espresso_display_payment_gateways');
+			$payment_data['attendee_id'] = $attendee_id;
+			$payment_data['event_id'] = $event_id;
+			$payment_data['event_cost'] = $event_cost;
+			do_action('action_hook_espresso_display_payment_gateways', $payment_data);
 			//Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
 			if ($org_options['email_before_payment'] == 'Y') {
 				event_espresso_email_confirmations(array('registration_id' => $registration_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));

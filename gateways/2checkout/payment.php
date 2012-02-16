@@ -3,12 +3,12 @@
 /**
  * Gets included in /gateways/gateway_display.php
  */
-function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
+function espresso_display_2checkout($payment_data) {
 	global $org_options, $payment_settings, $wpdb;
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 				espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
 		}
-	include_once ('2checkout.php');
+	include_once ('lib/2checkout.php');
 	$my2checkout = new TwoCo();
 	echo '<!-- Event Espresso 2checkout Gateway Version ' . $my2checkout->twocheckout_gateway_version . '-->';
 	$twocheckout_id = empty($payment_settings['2checkout']['2checkout_id']) ? 0 : $payment_settings['2checkout']['2checkout_id'];
@@ -19,7 +19,7 @@ function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 		// Enable test mode if needed
 		$my2checkout->enableTestMode();
 	}
-	$session_id = $wpdb->get_var("SELECT attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id='" . $attendee_id . "'");
+	$session_id = $wpdb->get_var("SELECT attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id='" . $payment_data['attendee_id'] . "'");
 	$sql = "SELECT ed.id, ed.event_name, ed.event_desc, ac.cost, ac.quantity FROM " . EVENTS_DETAIL_TABLE . " ed ";
 	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " a ON ed.id=a.event_id ";
 	$sql .= " JOIN " . EVENTS_ATTENDEE_COST_TABLE . " ac ON a.id=ac.attendee_id ";
@@ -36,24 +36,14 @@ function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 
 	$my2checkout->addField('sid', $twocheckout_id);
 	$my2checkout->addField('cart_order_id', rand(1, 100));
-	$my2checkout->addField('x_Receipt_Link_URL', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment');
-	$my2checkout->addField('total', number_format($event_cost, 2, '.', ''));
+	$my2checkout->addField('x_Receipt_Link_URL', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $payment_data['attendee_id'] . '&event_id=' . $payment_data['event_id'] . '&attendee_action=post_payment&form_action=payment');
+	$my2checkout->addField('total', number_format($payment_data['event_cost'], 2, '.', ''));
 	$my2checkout->addField('tco_currency', $twocheckout_cur);
 
 	if ($bypass_payment_page) {
 		$my2checkout->submitPayment();
 	} else {
-		if (empty($payment_settings['2checkout']['button_url'])) {
-			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "2checkout/logo.png")) {
-				$button_url = EVENT_ESPRESSO_GATEWAY_URL . "2checkout/logo.png";
-			} else {
-				$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/2checkout/logo.png";
-			}
-		} elseif (file_exists($payment_settings['2checkout']['button_url'])) {
-			$button_url = $payment_settings['2checkout']['button_url'];
-		} else {
-			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/2checkout/logo.png";
-		}
+		$button_url = $payment_settings['2checkout']['button_url'];
 		$my2checkout->submitButton($button_url, '2checkout');
 		wp_deregister_script('jquery.validate.pack');
 	}
@@ -63,3 +53,5 @@ function espresso_display_2checkout($attendee_id, $event_id, $event_cost) {
 		$my2checkout->dump_fields();
 	}
 }
+
+add_action('action_hook_espresso_display_offsite_payment_gateway', 'espresso_display_2checkout');

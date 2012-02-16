@@ -641,6 +641,7 @@ function espresso_init() {
 		//Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] shortcode
 		event_espresso_require_gateway('process_payments.php');
 		event_espresso_require_gateway('PaymentGateway.php');
+		event_espresso_require_gateway('gateway_display.php');
 
 		// AJAX functions
 		add_action( 'wp_ajax_event_espresso_add_item', 'event_espresso_add_item_to_session');
