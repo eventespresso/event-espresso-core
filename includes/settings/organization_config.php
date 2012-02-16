@@ -87,8 +87,6 @@ function organization_config_mnu() {
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
 		$currency_format = getCountryFullData($org_options['organization_country']);
 		switch ($currency_format['iso_code_3']) {
-			case 'USA': $org_options['currency_symbol'] = '$'; // US Dollar
-				break;
 			case 'CHE': $org_options['currency_symbol'] = 'Fr.'; // Swiss Franc
 				break;
 			case 'AUS': $org_options['currency_symbol'] = 'A$'; // Australian Dollar
@@ -139,7 +137,9 @@ function organization_config_mnu() {
 				break;
 			case 'AUT' || 'BEL' || 'CYP' || 'EST' || 'FIN' || 'FRA' || 'DEU' || 'GRC' || 'IRL' || 'ITA' || 'LUX' || 'MLT' || 'NLD' || 'PRT' || 'SVK' || 'SVN' || 'ESP' || 'AND' || 'MCO' || 'SMR' || 'VAT' | 'MYT' || 'MNE' || 'XKV' || 'SPM' : $org_options['currency_symbol'] = '&euro;'; // use the Euro for all eurozone countries
 				break;
-			default: $org_options['currency_symbol'] = '$';
+			case 'USA':
+			default: 
+				$org_options['currency_symbol'] = '$'; // US Dollar
 				break;
 		}
 		
@@ -148,10 +148,7 @@ function organization_config_mnu() {
 		} else {
 			$org_options['espresso_url_rewrite_activated'] = 'N';
 		}
-		// this was added by Hugo and I think it's redundant -- currency symbol is being set above ~c
-		/*if (getCountryZoneId($org_options['organization_country']) == '2') {
-			$org_options['currency_symbol'] = '&euro;'; //Creates the symbol for the Euro
-		}*/
+		
 		if (update_option('events_organization_settings', $org_options) == true) {
 			$notices['updates'][] = __('Organization details saved', 'event_espresso');
 			// reset rewrite rules
