@@ -41,9 +41,10 @@ global $wpdb;
 		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 		$sql.= " WHERE e.is_active='Y' ";
 		$sql.= " AND e.event_status != 'D' ";
-
-		if ($single_event_id != NULL) {//Get the ID of a single event
-			//If a single event needs to be displayed, get its ID
+		
+		// Get the ID of a single event      
+		if ( isset( $single_event_id ) && $single_event_id != NULL ) {
+			// If a single event needs to be displayed, get its ID
 			$sql .= " AND event_identifier = '" . $single_event_id . "' ";
 		} else {
 			$sql.= " AND e.id = '" . $event_id . "' LIMIT 0,1";
