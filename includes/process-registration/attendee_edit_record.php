@@ -23,7 +23,7 @@ function attendee_edit_record() {
 			event_espresso_cleanup_multi_event_registration_id_group_data();
 			event_espresso_cleanup_attendee_cost_data();
 		}
-		return events_payment_page($_REQUEST['primary'], $_REQUEST['p_id']);
+		return espresso_confirmation_page($_REQUEST['primary'], $_REQUEST['p_id']);
 	}
 	$counter = 0;
 	$additional_attendees = NULL;
@@ -216,7 +216,7 @@ function attendee_edit_record() {
 
 		//If this is not an attendee returing to edit thier details, then we need to return to the payment page
 		if (!isset($_REQUEST['single']))
-			return events_payment_page($_REQUEST['primary'], $_REQUEST['p_id']);
+			return espresso_confirmation_page($_REQUEST['primary'], $_REQUEST['p_id']);
 	}
 	?>
 	<div id="event_espresso_registration_form" class="event-display-boxes">

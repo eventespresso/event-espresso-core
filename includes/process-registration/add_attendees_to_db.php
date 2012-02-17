@@ -71,11 +71,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		$zip = isset($att_data_source['qstn']['zip']) ? $att_data_source['qstn']['zip'] : '';
 		$phone = isset($att_data_source['qstn']['phone']) ? $att_data_source['qstn']['phone'] : '';
 		$email = isset($att_data_source['qstn']['email']) ? $att_data_source['qstn']['email'] : '';
-		//$num_people = $data_source ['num_people'];
-		$amount_pd = isset($data_source["event_cost"]) && $data_source["event_cost"] != '' ? $data_source["event_cost"] : 0.00;
-		//echo $amount_pd;
-		//return;
-		//echo '<p>$amount_pd = '.$amount_pd.'</p>';
 		$questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
 
 		$event_meta = unserialize($questions->event_meta);
@@ -85,7 +80,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		//Figure out if the person has registered using a price selection
 		if ($multi_reg) {
 			$event_cost = $_SESSION['espresso_session']['grand_total'];
-			$amount_pd = $attendee_number == 1 ? $event_cost : 0.00;
 			$coupon_code = $attendee_number == 1 ? $_SESSION['espresso_session']['coupon_code'] : '';
 			$price_type = (isset($data_source['price_type'])) ? $data_source['price_type'] : espresso_ticket_information(array('type' => 'ticket', 'price_option' => $data_source['price_id']));
 			$attendee_number++;
@@ -94,14 +88,8 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			$price_id = $price_options[0];
 			$price_type = $price_options[1];
 			$event_cost = event_espresso_get_final_price($price_id, $event_id);
-			$amount_pd = event_espresso_get_final_price($price_id, $event_id); //Changed by Seth 10/5/11
-			/* echo '$event_id = '.$event_id.'<br />';
-			  echo '$price_id = '.$price_id.'<br />';
-			  echo '$event_cost = '.$event_cost;
-			  return; */
 		} else {
 			$event_cost = isset($data_source['price_id']) ? event_espresso_get_final_price($data_source['price_id'], $event_id) : 0.00;
-			$amount_pd = isset($data_source['price_id']) ? event_espresso_get_final_price($data_source['price_id'], $event_id) : 0.00; //Changed by Seth 10/5/11
 			$coupon_code = '';
 			$price_type = isset($data_source['price_id']) ? espresso_ticket_information(array('type' => 'ticket', 'price_option' => $data_source['price_id'])) : '';
 		}
@@ -127,10 +115,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			$payment = "Admin";
 			$txn_type = __('Added by Admin', 'event_espresso');
 			$payment_date = date("m-d-Y");
-			$amount_pd = $data_source["event_cost"] == '' ? 0.00 : $data_source["event_cost"];
-			if (isset($data_source["admin_price_override"]) && $data_source["admin_price_override"] == '1') {
-				$amount_pd = $data_source["a_event_cost"] == '' ? 0.00 : $data_source["a_event_cost"];
-			}
 			$registration_id = uniqid('', true);
 			$_SESSION['espresso_session']['id'] = '';
 		} else {
@@ -204,7 +188,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 				'email' => $email,
 				'phone' => $phone,
 				'payment' => $payment,
-				'amount_pd' => $amount_pd,
 				'txn_type' => $txn_type,
 				'coupon_code' => $coupon_code,
 				'event_time' => $start_time,
@@ -304,7 +287,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			$attendee_quantity = 1;
 			if (isset($data_source['seat_id'])) {
 				$attendee_cost = seating_chart::get_purchase_price($booking_id);
-				$amount_pd = seating_chart::get_purchase_price($booking_id);
 			} else {
 				$attendee_cost = event_espresso_get_final_price($attendee_price_id, $event_id);
 				if (isset($data_source['num_people'])) {
@@ -344,7 +326,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		} else {
 			$questions = $event_meta['add_attendee_question_groups'];
 			if (isset($att_data_source['qstn']['x_attendee_fname'])) {
-				$amount_pd = 0.00; //additional attendee can't hold this info
 				foreach ($att_data_source['qstn']['x_attendee_fname'] as $k => $v) {
 					if (trim($v) != '' && trim($att_data_source['qstn']['x_attendee_lname'][$k]) != '') {
 
@@ -390,7 +371,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 									'zip' => $zip,
 									'phone' => $phone,
 									'payment' => $payment,
-									'amount_pd' => $amount_pd,
 									'event_time' => $start_time,
 									'end_time' => $end_time,
 									'start_date' => $start_date,
@@ -439,7 +419,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 									'zip' => $zip,
 									'phone' => $phone,
 									'payment' => $payment,
-									'amount_pd' => $amount_pd,
 									'event_time' => $start_time,
 									'end_time' => $end_time,
 									'start_date' => $start_date,
@@ -520,7 +499,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			return $attendee_id;
 		}
 		if (!$multi_reg) {
-			return events_payment_page($attendee_id);
+			return espresso_confirmation_page($attendee_id);
 		}
 
 		return $registration_id;

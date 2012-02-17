@@ -626,6 +626,7 @@ function espresso_init() {
 
 		//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/payment_page.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/confirmation_page.php');
 
 		//Add attendees to the database
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/add_attendees_to_db.php');
