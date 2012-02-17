@@ -33,8 +33,8 @@ function event_espresso_2co_settings() {
 		$payment_settings['2checkout']['2checkout_id'] = '';
 		$payment_settings['2checkout']['2checkout_username'] = '';
 		$payment_settings['2checkout']['currency_format'] = 'USD';
-		$payment_settings['2checkout']['use_sandbox'] = 'N';
-		$payment_settings['2checkout']['bypass_payment_page'] = 'N';
+		$payment_settings['2checkout']['use_sandbox'] = false;
+		$payment_settings['2checkout']['bypass_payment_page'] = false;
 		$payment_settings['2checkout']['button_url'] = $button_url;
 		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
@@ -99,8 +99,8 @@ function event_espresso_display_2checkout_settings($payment_settings) {
 	global $org_options, $espresso_wp_user;
 
 	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso')),
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso')),
 	);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_2checkout=true'));

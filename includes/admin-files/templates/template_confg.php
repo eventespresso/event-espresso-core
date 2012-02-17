@@ -24,7 +24,7 @@ function event_espresso_manage_templates() {
 			}
 		}
 
-		update_option('events_organization_settings', $org_options);
+		update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 
 		$notices['updates'][] = __('Template Settings Updated', 'event_espresso');
 	}

@@ -6,22 +6,25 @@ if (!function_exists('event_form_build')) {
 		if ($question->admin_only == 'Y' && empty($show_admin_only)) {
 			return;
 		}
-		
+
 		$required = '';
 		$attendee_number = isset($extra['attendee_number']) ? $extra['attendee_number'] : 0;
 		$tckt_date = isset($extra['date']) ? $extra['date'] : 0;
 		$tckt_time = isset($extra['time']) ? $extra['time'] : 0;
 		$price_id = isset($extra['price_id']) ? $extra['price_id'] : 0;
-		 
+
 		//$multi_name_adjust = $multi_reg == 1 ? "[$event_id][$price_id][$attendee_number]" : '';
 		$multi_name = $multi_reg == 1 ? "[$event_id][$attendee_number][$tckt_date][$tckt_time][$price_id]" : '';
 
 		if (!empty($extra["x_attendee"])) {
-			$field_name = ($question->system_name != '') ? "x_attendee_" . $question->system_name . "[]" : "x_attendee_" . $question->question_type . '_' . $question->id . '[]';
-			$question->system_name = "x_attendee_" . $question->system_name . "[]";
+			$field_name = ($question->system_name != '') ? "x_attendee_" . $question->system_name : "x_attendee_" . $question->question_type . '_' . $question->id . '[]';
+			$question->system_name = "x_attendee_" . $question->system_name ;
 			$question->required = 'N';
-		} else
+			$arrayed_field = '[]';
+		} else {
 			$field_name = ($question->system_name != '') ? $question->system_name : $question->question_type . '_' . $question->id;
+			$arrayed_field = '';
+		}
 
 		/**
 		 * Temporary client side email validation solution by Abel, will be replaced
@@ -52,25 +55,25 @@ if (!function_exists('event_form_build')) {
 
 		//print_r( $member_options );
 
-		
+
 
 		$html = '';
 		switch ($question->question_type) {
-		
+
 			case "TEXT" :
-			
-				$disabled = isset($disabled) ? $disabled : '';			
-				if (get_option('events_members_active') == 'true' && (empty($_REQUEST['event_admin_reports']) || $_REQUEST['event_admin_reports'] != 'add_new_attendee')) {				
-					if (!empty($question->system_name)) {					
-						if ( $attendee_number == 1 ) {						
-							switch ($question->system_name) {													
-								case 'fname':				
+
+				$disabled = isset($disabled) ? $disabled : '';
+				if (get_option('events_members_active') == 'true' && (empty($_REQUEST['event_admin_reports']) || $_REQUEST['event_admin_reports'] != 'add_new_attendee')) {
+					if (!empty($question->system_name)) {
+						if ( $attendee_number == 1 ) {
+							switch ($question->system_name) {
+								case 'fname':
 								case 'lname':
 									$member_answer = $current_user->{$question->system_name};
-									break;								
+									break;
 								case 'email':
 									$member_answer = $user_email;
-									break;								
+									break;
 								case 'address':
 								case 'city':
 								case 'state':
@@ -78,26 +81,26 @@ if (!function_exists('event_form_build')) {
 								case 'phone':
 								case 'country':
 									$member_answer = esc_attr(get_user_meta( $userid, 'event_espresso_' . $question->system_name, TRUE ));
-								break;	
-							}							
+								break;
+							}
 							$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
-							$answer = ( $member_answer == '' ) ? $answer : $member_answer;										
+							$answer = ( $member_answer == '' ) ? $answer : $member_answer;
 						}
-					} 
-				} 
-				
+					}
+				}
+
 				$input_id = isset($extra['input_id']) ? $extra['input_id'].'-'.$field_name : 'qstn' . $multi_name.'-'.$field_name;
 
 				$html .= '<p class="event_form_field">' . $label;
-				$html .= '<input type="text" ' . $required . ' id="' .$input_id. '"  name="qstn' . $multi_name.'['.$field_name.']'. '" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
-				$html .= '</p>';	
-							
-				break;				
-				
-				
-				
-				
-				
+				$html .= '<input type="text" ' . $required . ' id="' .$input_id. '"  name="qstn' . $multi_name.'['.$field_name.']'. $arrayed_field . '" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
+				$html .= '</p>';
+
+				break;
+
+
+
+
+
 			case "DATE" :
 				//Load scripts and styles
 				wp_register_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
@@ -106,12 +109,12 @@ if (!function_exists('event_form_build')) {
 
 				$html .= '<p class="event_form_field">' . $label;
 				$disabled = isset($disabled) ? $disabled : '';
-				$html .= '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
+				$html .= '<input class="datepicker" type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="qstn' . $multi_name.'['.$field_name.']'. $arrayed_field . '" size="40" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
 				$html .= '<script type="text/javascript" charset="utf-8">jQuery(".datepicker" ).datepicker({yearRange: "c-100:c+10", changeMonth: true,changeYear: true,dateFormat: "yy-mm-dd",showButtonPanel: true});</script>';
 				break;
 			case "TEXTAREA" :
 				$html .= '<p class="event_form_field event-quest-group-textarea">' . $label;
-				$html .= '<textarea id=""' . $required . ' name="' . $field_name . $multi_name_adjust . '"  cols="30" rows="5" class="' . $class . '">' . $answer . '</textarea></p>';
+				$html .= '<textarea id=""' . $required . ' name="qstn' . $multi_name.'['.$field_name.']'. $arrayed_field . '"  cols="30" rows="5" class="' . $class . '">' . $answer . '</textarea></p>';
 				break;
 			case "SINGLE" :
 				$values = explode(",", $question->response);
@@ -124,7 +127,7 @@ if (!function_exists('event_form_build')) {
 					//old way $checked = in_array ( $value, $answers ) ? ' checked="checked"' : "";
 					$value = trim($value);
 					$checked = ( $value == $answer ) ? ' checked="checked"' : "";
-					$html .= '<li><label for="SINGLE_' . $question->id . '_' . $key . '" class="' . $class . '"><input title="' . $question->required_text . '" id="SINGLE_' . $question->id . '_' . $key . '" ' . $required . ' name="' . $field_name . $multi_name_adjust . '"  type="radio" value="' . $value . '" ' . $checked . ' /> ' . $value . '</label></li>';
+					$html .= '<li><label for="SINGLE_' . $question->id . '_' . $key . '" class="' . $class . '"><input title="' . $question->required_text . '" id="SINGLE_' . $question->id . '_' . $key . '" ' . $required . ' name="qstn' . $multi_name.'['.$field_name.']'. $arrayed_field . '"  type="radio" value="' . $value . '" ' . $checked . ' /> ' . $value . '</label></li>';
 					//echo $label;
 				}
 				$html .= '</ul>';
@@ -142,13 +145,13 @@ if (!function_exists('event_form_build')) {
 					$checked = (is_array($answer) && in_array($value, $answer)) ? ' checked="checked"' : "";
 					//$checked = ( $value == $answer ) ? ' checked="checked"' : "";
 					/* 	$html .= "<label><input type=\"checkbox\"$required id=\"MULTIPLE_$question->id_$key\" name=\"MULTIPLE_$question->id_$key\"  value=\"$value\"$checked /> $value</label><br/>\n"; */
-					$html .= '<li><label for="' . str_replace(' ', '', $value) . '-' . $event_id . '" class="' . $class . '"><input id="' . str_replace(' ', '', $value) . '-' . $event_id . '" ' . $required . 'name="' . $field_name . $multi_name_adjust . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> ' . $value . '</label></li>';
+					$html .= '<li><label for="' . str_replace(' ', '', $value) . '-' . $event_id . '" class="' . $class . '"><input id="' . str_replace(' ', '', $value) . '-' . $event_id . '" ' . $required . 'name="qstn' . $multi_name.'['.$field_name.']'. $arrayed_field . '[]"  type="checkbox" value="' . $value . '" ' . $checked . '/> ' . $value . '</label></li>';
 				}
 				$html .= '</ul>';
 				$html .= '</fieldset>';
 				break;
 			case "DROPDOWN" :
-				$dd_type = $question->system_name == 'state' ? 'name="state"' : 'name="' . $field_name . $multi_name_adjust . '"';
+				$dd_type = $question->system_name == 'state' ? 'name="state"' : 'name="qstn' . $multi_name.'['.$field_name.']'. $arrayed_field . '"';
 				$values = explode(",", $question->response);
 				$answers = explode(",", $answer);
 				$html .= '<p class="event_form_field" class="' . $class . '">' . $label;

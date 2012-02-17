@@ -2,7 +2,7 @@
 
 //Payment page - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
 //This is the initial PayPal button
-function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupon_code ='') {
+function events_payment_page($attendee_id, $price_id = 0, $coupon_code = '', $groupon_code = '') {
 
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -193,7 +193,6 @@ function events_payment_page($attendee_id, $price_id=0, $coupon_code='', $groupo
 
 	//Pull in the template
 	require_once(espresso_get_confirmation_display_template());
-
 }
 
 function espresso_confirm_registration($registration_id) {
@@ -257,7 +256,7 @@ function espresso_confirm_registration($registration_id) {
 	}
 
 	//Build links
-	$event_url = espresso_reg_url( $event->id, $event->slug );
+	$event_url = espresso_reg_url($event->id, $event->slug);
 	$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
 
@@ -318,7 +317,7 @@ function espresso_confirm_registration($registration_id) {
 
 	//Run pre-approval check if activated
 	//$pre_approval_check = is_attendee_approved($event_id, $attendee_id);
-	$pre_approval_check = is_attendee_approved( $require_pre_approval, $attendee_id );
+	$pre_approval_check = is_attendee_approved($require_pre_approval, $attendee_id);
 	if ($pre_approval_check) {
 		//Approved!
 		//If the attendee is approved, then show payment options etc.
@@ -330,6 +329,21 @@ function espresso_confirm_registration($registration_id) {
 			$payment_data['attendee_id'] = $attendee_id;
 			$payment_data['event_id'] = $event_id;
 			$payment_data['event_cost'] = $event_cost;
+			$session_id = $wpdb->get_var("SELECT attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id='" . $payment_data['attendee_id'] . "'");
+			$sql = "SELECT ed.id, ed.event_name, ed.event_desc, ac.cost, ac.quantity FROM " . EVENTS_DETAIL_TABLE . " ed ";
+			$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " a ON ed.id=a.event_id ";
+			$sql .= " JOIN " . EVENTS_ATTENDEE_COST_TABLE . " ac ON a.id=ac.attendee_id ";
+			$sql .= " WHERE a.attendee_session='" . $session_id . "'";
+			$tickets = $wpdb->get_results($sql, ARRAY_A);
+			$count = 0;
+			foreach($tickets as $ticket) {
+				$payment_data['registrations'][$count]['id'] = $ticket['id'];
+				$payment_data['registrations'][$count]['quantity'] = $ticket['quantity'];
+				$payment_data['registrations'][$count]['event_name'] = $ticket['event_name'];
+				$payment_data['registrations'][$count]['event_desc'] = $ticket['event_desc'];
+				$payment_data['registrations'][$count]['cost'] = $ticket['cost'];
+				$count++;
+			}
 			do_action('action_hook_espresso_display_payment_gateways', $payment_data);
 			//Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
 			if ($org_options['email_before_payment'] == 'Y') {
@@ -349,23 +363,8 @@ function espresso_confirm_registration($registration_id) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //This is the alternate PayPal button used for the email
-function event_espresso_pay($att_registration_id=0) {
+function event_espresso_pay($att_registration_id = 0) {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 

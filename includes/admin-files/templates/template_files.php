@@ -8,7 +8,7 @@ if (isset($_REQUEST['event_espresso_admin_action']) && $_REQUEST['event_espresso
 
 if (isset($_SESSION['event_espresso_themes_copied']) && $_SESSION['event_espresso_themes_copied'] == true) {
 	$org_options['template_settings']['use_custom_templates'] = 'Y';
-	update_option('events_organization_settings', $org_options);
+	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 ?>
 
 <div class="updated fade below-h2" id="message" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;">

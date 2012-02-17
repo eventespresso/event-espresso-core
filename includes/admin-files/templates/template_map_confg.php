@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_manage_maps() {
-	global $wpdb, $org_options, $notices;
+	global $wpdb, $org_options, $notices, $espresso_wp_user;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_maps_update')) {
 		$org_options['map_settings']['ee_display_map_no_shortcodes'] = $_POST['ee_display_map_no_shortcodes'];
@@ -22,7 +22,7 @@ function event_espresso_manage_maps() {
 		$org_options['map_settings']['ee_map_type_control'] = $_POST['ee_map_type_control'];
 		$org_options['map_settings']['ee_map_align'] = $_POST['ee_map_align'];
 
-		update_option('events_organization_settings', $org_options);
+		update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 
 		$notices['updates'][] = __('Events Map Settings Updated', 'event_espresso');
 	}

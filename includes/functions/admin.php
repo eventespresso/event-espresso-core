@@ -906,7 +906,7 @@ function espresso_attendees_by_month_dropdown($current_value = '') {
 
 //This function installs the required pages
 function espresso_create_default_pages() {
-	global $wpdb, $org_options;
+	global $wpdb, $org_options, $espresso_wp_user;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$default_pages = array('Event Registration', 'Thank You', 'Registration Cancelled', 'Transactions');
 	$existing_pages = get_pages();
@@ -957,7 +957,7 @@ function espresso_create_default_pages() {
 				break;
 		}
 	}
-	update_option('events_organization_settings', $org_options);
+	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 	//print_r($org_options);
 }
 

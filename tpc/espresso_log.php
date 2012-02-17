@@ -30,9 +30,14 @@ class espresso_log {
 	}
 
 	public function log($message) {
+		if(is_writable($this->file)) {
 		$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
 		fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
 		fclose($fh);
+		} else {
+			global $notices;
+			$notices['errors'][] = sprintf(__('Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso'), $this->file);
+		}
 	}
 
 	public function __clone() {

@@ -74,6 +74,14 @@ function espresso_update_active_gateways() {
 	// Have to get a list of users already using the 3.2 system
 
 	global $wpdb;
+	$sql = "SELECT id FROM " . $wpdb->usermeta . " WHERE meta_key='events_organization_settings'";
+	$users = $wpdb->get_col($sql);
+	if(empty($users)) {
+		$org_options = get_option('events_organization_settings');
+		if(!empty($org_options)) {
+			update_user_meta(1, 'events_organization_settings', $org_options);
+		}
+	}
 	$sql = "SELECT id FROM " . $wpdb->usermeta . " WHERE meta_key='payment_settings'";
 	$users = $wpdb->get_col($sql);
 

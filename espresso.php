@@ -463,9 +463,9 @@ if (!function_exists('espresso_load_jquery')) {
 function espresso_init() {
 
 	//Globals used throughout the site
-	global $org_options, $wpdb, $this_is_a_reg_page, $notices;
+	global $org_options, $wpdb, $this_is_a_reg_page, $notices, $espresso_wp_user;
 
-	$org_options = get_option('events_organization_settings');
+	$org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
 	$page_id = isset($_REQUEST['page_id']) ? $_REQUEST['page_id'] : '';
 	$notices = array('updates' => array(), 'errors' => array());
 

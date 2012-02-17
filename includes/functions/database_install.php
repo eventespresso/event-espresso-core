@@ -32,7 +32,7 @@ function event_espresso_rename_tables($old_table_name, $new_table_name) {
 
 //This function updates the org_options from < EE 3.2
 function espresso_fix_org_options() {
-	global $org_options;
+	global $org_options, $espresso_wp_user;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if (empty($org_options))
 		return;
@@ -78,7 +78,7 @@ function espresso_fix_org_options() {
 		unset($org_options['style_color']);
 	}
 
-	update_option('events_organization_settings', $org_options);
+	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 
 }
 
@@ -287,7 +287,7 @@ function events_data_tables_install() {
 					),
 			);
 
-			add_option('events_organization_settings', $new_org_options);
+			update_user_meta($espresso_wp_user, 'events_organization_settings', $new_org_options);
 
 			//If an earlier version of Event Espresso is found, then we need to create the organization options.
 		} else if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {
@@ -374,7 +374,7 @@ function events_data_tables_install() {
 							//DO NOT Create new settings here
 			);
 
-			add_option('events_organization_settings', $org_options);
+			update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 
 			//Delete the table
 			$wpdb->query("DROP TABLE IF EXISTS $table_name");

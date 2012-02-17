@@ -34,43 +34,21 @@ add_filter('filter_hook_espresso_transactions_get_attendee_id', 'espresso_transa
  * 				txn_id
  */
 function espresso_process_2checkout($payment_data) {
-	global $wpdb;
-	$email_transaction_dump = false;
+	global $wpdb, $payment_settings;
 	$payment_data['payment_status'] = 'Incomplete';
 	$payment_data['txn_type'] = '2CO';
 	$payment_data['txn_id'] = $_REQUEST['invoice_id'];
 	$payment_data['txn_details'] = serialize($_REQUEST);
 	if ($_REQUEST['credit_card_processed'] == 'Y') {
-
 		$payment_data['payment_status'] = 'Completed';
 		$payment_data['total_cost'] = $_REQUEST['total'];
-		$payment_data = apply_filters('filter_hook_espresso_get_total_cost', $payment_data);
-		$payment_data = apply_filters('filter_hook_espresso_prepare_event_link', $payment_data);
-		$payment_data = apply_filters('filter_hook_espresso_update_attendee_payment_data_in_db', $payment_data);
-		//Debugging option
-		if ($email_transaction_dump == true) {
-			// For this, we'll just email ourselves ALL the data as plain text output.
-			$subject = 'Instant Payment Notification - Gateway Variable Dump';
-			$body = "An instant payment notification was successfully recieved\n";
-			$body .= "from " . " on " . date('m/d/Y');
-			$body .= " at " . date('g:i A') . "\n\nDetails:\n";
-			foreach ($xml as $key => $value) {
-				$body .= "\n$key: $value\n";
-			}
-			wp_mail($payment_data['contact'], $subject, $body);
+		if ($payment_settings['2checkout']['use_sandbox']) {
+			do_action('action_hook_espresso_mail_successful_transaction_debugging_output', $payment_data);
 		}
 	} else {
-		$subject = 'Instant Payment Notification - Gateway Variable Dump';
-		$body = "An instant payment notification failed\n";
-		$body .= "from " . " on " . date('m/d/Y');
-		$body .= " at " . date('g:i A') . "\n\nDetails:\n";
-		foreach ($xml as $key => $value) {
-			$body .= "\n$key: $value\n";
-		}
-		//wp_mail($payment_data['contact'], $subject, $body);
+		do_action('action_hook_espresso_mail_failed_transaction_debugging_output', $payment_data);
 	}
-	do_action('action_hook_espresso_email_after_payment', $payment_data);
 	return $payment_data;
 }
 
-add_filter('filter_hook_espresso_transactions_get_payment_data', 'espresso_process_2checkout');
+add_filter('filter_hook_espresso_process_transaction', 'espresso_process_2checkout');

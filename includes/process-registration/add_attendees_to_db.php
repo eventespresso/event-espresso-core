@@ -62,15 +62,15 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		$conf_message = $org_options['message'];
 		$email_before_payment = $org_options['email_before_payment'];
 
-		$fname = isset($att_data_source['fname']) ? $att_data_source['fname'] : '';
-		$lname = isset($att_data_source['lname']) ? $att_data_source['lname'] : '';
-		$address = isset($att_data_source['address']) ? $att_data_source['address'] : '';
-		$address2 = isset($att_data_source['address2']) ? $att_data_source['address2'] : '';
-		$city = isset($att_data_source['city']) ? $att_data_source['city'] : '';
-		$state = isset($att_data_source['state']) ? $att_data_source['state'] : '';
-		$zip = isset($att_data_source['zip']) ? $att_data_source['zip'] : '';
-		$phone = isset($att_data_source['phone']) ? $att_data_source['phone'] : '';
-		$email = isset($att_data_source['email']) ? $att_data_source['email'] : '';
+		$fname = isset($att_data_source['qstn']['fname']) ? $att_data_source['qstn']['fname'] : '';
+		$lname = isset($att_data_source['qstn']['lname']) ? $att_data_source['qstn']['lname'] : '';
+		$address = isset($att_data_source['qstn']['address']) ? $att_data_source['qstn']['address'] : '';
+		$address2 = isset($att_data_source['qstn']['address2']) ? $att_data_source['qstn']['address2'] : '';
+		$city = isset($att_data_source['qstn']['city']) ? $att_data_source['qstn']['city'] : '';
+		$state = isset($att_data_source['qstn']['state']) ? $att_data_source['qstn']['state'] : '';
+		$zip = isset($att_data_source['qstn']['zip']) ? $att_data_source['qstn']['zip'] : '';
+		$phone = isset($att_data_source['qstn']['phone']) ? $att_data_source['qstn']['phone'] : '';
+		$email = isset($att_data_source['qstn']['email']) ? $att_data_source['qstn']['email'] : '';
 		//$num_people = $data_source ['num_people'];
 		$amount_pd = isset($data_source["event_cost"]) && $data_source["event_cost"] != '' ? $data_source["event_cost"] : 0.00;
 		//echo $amount_pd;
@@ -334,7 +334,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 		//$attendee_number check for 2 because is it statically set at 1 first and is incremented for the primary attendee above, hence 2
 		$questions = ($attendee_number > 1 && isset($event_meta['add_attendee_question_groups'])) ? $event_meta['add_attendee_question_groups'] : $questions;
 
-		add_attendee_questions($questions, $registration_id, $attendee_id, array('session_vars' => $att_data_source));
+		add_attendee_questions($questions, $registration_id, $attendee_id, array('session_vars' => $att_data_source['qstn']));
 
 		//Add additional attendees to the database
 		if ($event_meta['additional_attendee_reg_info'] == 1) {
@@ -343,10 +343,10 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			}
 		} else {
 			$questions = $event_meta['add_attendee_question_groups'];
-			if (isset($att_data_source['x_attendee_fname'])) {
+			if (isset($att_data_source['qstn']['x_attendee_fname'])) {
 				$amount_pd = 0.00; //additional attendee can't hold this info
-				foreach ($att_data_source['x_attendee_fname'] as $k => $v) {
-					if (trim($v) != '' && trim($att_data_source['x_attendee_lname'][$k]) != '') {
+				foreach ($att_data_source['qstn']['x_attendee_fname'] as $k => $v) {
+					if (trim($v) != '' && trim($att_data_source['qstn']['x_attendee_lname'][$k]) != '') {
 
 						/*
 						 * Added for seating chart addon
@@ -355,10 +355,10 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 						$x_booking_id = 0;
 						if (defined('ESPRESSO_SEATING_CHART')) {
 							if (seating_chart::check_event_has_seating_chart($event_id) !== false) {
-								if (!isset($att_data_source['x_seat_id'][$k]) || trim($att_data_source['x_seat_id'][$k]) == '') {
+								if (!isset($att_data_source['qstn']['x_seat_id'][$k]) || trim($att_data_source['qstn']['x_seat_id'][$k]) == '') {
 									$seat_check = false;
 								} else {
-									$x_booking_id = seating_chart::parse_booking_info($att_data_source['x_seat_id'][$k]);
+									$x_booking_id = seating_chart::parse_booking_info($att_data_source['qstn']['x_seat_id'][$k]);
 									if ($x_booking_id > 0) {
 										$seat_check = true;
 									} else {
@@ -371,18 +371,18 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 							/*
 							 * End
 							 */
-							$address = empty($att_data_source['x_attendee_address'][$k]) ? '' : $att_data_source['x_attendee_address'][$k];
-							$address2 = empty($att_data_source['x_attendee_address2'][$k]) ? '' : $att_data_source['x_attendee_address2'][$k];
-							$city = empty($att_data_source['x_attendee_city'][$k]) ? '' : $att_data_source['x_attendee_city'][$k];
-							$state = empty($att_data_source['x_attendee_state'][$k]) ? '' : $att_data_source['x_attendee_state'][$k];
-							$zip = empty($att_data_source['x_attendee_zip'][$k]) ? '' : $att_data_source['x_attendee_zip'][$k];
-							$phone = empty($att_data_source['x_attendee_phone'][$k]) ? '' : $att_data_source['x_attendee_phone'][$k];
+							$address = empty($att_data_source['qstn']['x_attendee_address'][$k]) ? '' : $att_data_source['qstn']['x_attendee_address'][$k];
+							$address2 = empty($att_data_source['qstn']['x_attendee_address2'][$k]) ? '' : $att_data_source['qstn']['x_attendee_address2'][$k];
+							$city = empty($att_data_source['qstn']['x_attendee_city'][$k]) ? '' : $att_data_source['qstn']['x_attendee_city'][$k];
+							$state = empty($att_data_source['qstn']['x_attendee_state'][$k]) ? '' : $att_data_source['qstn']['x_attendee_state'][$k];
+							$zip = empty($att_data_source['qstn']['x_attendee_zip'][$k]) ? '' : $att_data_source['qstn']['x_attendee_zip'][$k];
+							$phone = empty($att_data_source['qstn']['x_attendee_phone'][$k]) ? '' : $att_data_source['qstn']['x_attendee_phone'][$k];
 
 							$sql_a = array('registration_id' => $registration_id,
 									'attendee_session' => $_SESSION['espresso_session']['id'],
-									'lname' => $att_data_source['x_attendee_lname'][$k],
+									'lname' => $att_data_source['qstn']['x_attendee_lname'][$k],
 									'fname' => $v,
-									'email' => $att_data_source['x_attendee_email'][$k],
+									'email' => $att_data_source['qstn']['x_attendee_email'][$k],
 									'address' => $address,
 									'address2' => $address2,
 									'city' => $city,
@@ -418,20 +418,20 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 							 * End
 							 */
 							if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
-								MailChimpController::list_subscribe($event_id, $mailchimp_attendee_id, $v, $att_data_source['x_attendee_lname'][$k], $att_data_source['x_attendee_email'][$k]);
+								MailChimpController::list_subscribe($event_id, $mailchimp_attendee_id, $v, $att_data_source['qstn']['x_attendee_lname'][$k], $att_data_source['qstn']['x_attendee_email'][$k]);
 							}
 							//Added by Imon
-							$address = empty($att_data_source['x_attendee_address'][$k]) ? '' : $att_data_source['x_attendee_address'][$k];
-							$address2 = empty($att_data_source['x_attendee_address2'][$k]) ? '' : $att_data_source['x_attendee_address2'][$k];
-							$city = empty($att_data_source['x_attendee_city'][$k]) ? '' : $att_data_source['x_attendee_city'][$k];
-							$state = empty($att_data_source['x_attendee_state'][$k]) ? '' : $att_data_source['x_attendee_state'][$k];
-							$zip = empty($att_data_source['x_attendee_zip'][$k]) ? '' : $att_data_source['x_attendee_zip'][$k];
-							$phone = empty($att_data_source['x_attendee_phone'][$k]) ? '' : $att_data_source['x_attendee_phone'][$k];
+							$address = empty($att_data_source['qstn']['x_attendee_address'][$k]) ? '' : $att_data_source['qstn']['x_attendee_address'][$k];
+							$address2 = empty($att_data_source['qstn']['x_attendee_address2'][$k]) ? '' : $att_data_source['qstn']['x_attendee_address2'][$k];
+							$city = empty($att_data_source['qstn']['x_attendee_city'][$k]) ? '' : $att_data_source['qstn']['x_attendee_city'][$k];
+							$state = empty($att_data_source['qstn']['x_attendee_state'][$k]) ? '' : $att_data_source['qstn']['x_attendee_state'][$k];
+							$zip = empty($att_data_source['qstn']['x_attendee_zip'][$k]) ? '' : $att_data_source['qstn']['x_attendee_zip'][$k];
+							$phone = empty($att_data_source['qstn']['x_attendee_phone'][$k]) ? '' : $att_data_source['qstn']['x_attendee_phone'][$k];
 							$ext_att_data_source = array('registration_id' => $registration_id,
 									'attendee_session' => $_SESSION['espresso_session']['id'],
-									'lname' => $att_data_source['x_attendee_lname'][$k],
+									'lname' => $att_data_source['qstn']['x_attendee_lname'][$k],
 									'fname' => $v,
-									'email' => $att_data_source['x_attendee_email'][$k],
+									'email' => $att_data_source['qstn']['x_attendee_email'][$k],
 									'address' => $address,
 									'address2' => $address2,
 									'city' => $city,
@@ -475,9 +475,9 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 											. ") ORDER BY q.id ASC");
 							foreach ($questions_list as $question_list) {
 								if ($question_list->system_name != '') {
-									$ext_att_data_source[$question_list->system_name] = $att_data_source['x_attendee_' . $question_list->system_name][$k];
+									$ext_att_data_source[$question_list->system_name] = $att_data_source['qstn']['x_attendee_' . $question_list->system_name][$k];
 								} else {
-									$ext_att_data_source[$question_list->question_type . '_' . $question_list->id] = $att_data_source['x_attendee_' . $question_list->question_type . '_' . $question_list->id][$k];
+									$ext_att_data_source[$question_list->question_type . '_' . $question_list->id] = $att_data_source['qstn']['x_attendee_' . $question_list->question_type . '_' . $question_list->id][$k];
 								}
 							}
 							echo add_attendee_questions($questions, $registration_id, $ext_attendee_id, array('session_vars' => $ext_att_data_source));

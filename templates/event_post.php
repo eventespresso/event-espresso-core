@@ -12,7 +12,7 @@ global $wpdb;
 	}
 
   //The following variables are used to get information about your organization
-  $org_options = get_option('events_organization_settings');
+  $org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
   $event_page_id =$org_options['event_page_id'];
   $Organization =stripslashes_deep($org_options['organization']);
   $Organization_street1 =$org_options['organization_street1'];
