@@ -25,7 +25,7 @@ function espresso_display_2checkout($payment_data) {
 	$my2checkout->addField('sid', $payment_settings['2checkout']['2checkout_id']);
 	$my2checkout->addField('cart_order_id', rand(1, 100));
 	$my2checkout->addField('x_Receipt_Link_URL', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $payment_data['attendee_id'] . '&event_id=' . $payment_data['event_id'] . '&attendee_action=post_payment&form_action=payment');
-	$my2checkout->addField('total', number_format($payment_data['event_cost'], 2, '.', ''));
+	$my2checkout->addField('total', number_format($payment_data['total_cost'], 2, '.', ''));
 	$my2checkout->addField('tco_currency', $payment_settings['2checkout']['currency_format']);
 
 	if ($payment_settings['2checkout']['bypass_payment_page']) {

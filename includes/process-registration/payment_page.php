@@ -4,21 +4,11 @@ function espresso_confirm_registration($registration_id) {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-	//Debug
-	//echo "<pre>".print_r($_REQUEST,true)."</pre>";
-	//echo "<pre>".print_r($_SESSION,true)."</pre>";
-	//echo '<p>Function = espresso_confirm_registration()</p>';
-	//Not sure this is needed or why it is here
-	//Get the questions for the attendee
 	$sql = "SELECT ea.answer, eq.question
 						FROM " . EVENTS_ANSWER_TABLE . " ea
 						LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id
 						WHERE ea.registration_id = '" . $registration_id . "' AND system_name IS NULL ORDER BY eq.sequence asc ";
 	$questions = $wpdb->get_results($sql);
-
-	//Debug
-	//echo $sql;
-	//echo $wpdb->last_query;
 
 	$display_questions = '';
 	foreach ($questions as $question) {
@@ -102,6 +92,7 @@ function espresso_confirm_registration($registration_id) {
 		$end_time = $attendee->end_time;
 		$date = $attendee->date;
 		$pre_approve = $attendee->pre_approve;
+		$payment_data['attendee_session'] = $attendee->attendee_session;
 	}
 
 	//Define the default useer id for the payment settings
@@ -128,12 +119,12 @@ function espresso_confirm_registration($registration_id) {
 		//If the attendee is approved, then show payment options etc.
 		//Pull in the "Thank You" page template
 		require_once(espresso_get_payment_page_template());
-
-		if ($amount_pd != '0.00') {
+		$payment_data['attendee_id'] = $attendee_id;
+		add_filter('filter_hook_espresso_get_total_cost', 'espresso_get_total_cost');
+		$payment_data = apply_filters('filter_hook_espresso_get_total_cost', $payment_data);
+		if ($payment_data['total_cost'] != '0.00') {
 			//Show payment options
-			$payment_data['attendee_id'] = $attendee_id;
 			$payment_data['event_id'] = $event_id;
-			$payment_data['event_cost'] = $event_cost;
 			$session_id = $wpdb->get_var("SELECT attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id='" . $payment_data['attendee_id'] . "'");
 			$sql = "SELECT ed.id, ed.event_name, ed.event_desc, ac.cost, ac.quantity FROM " . EVENTS_DETAIL_TABLE . " ed ";
 			$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " a ON ed.id=a.event_id ";
