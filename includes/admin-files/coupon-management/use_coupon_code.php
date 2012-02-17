@@ -92,8 +92,8 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 					if (!is_null($attendee_id)) {
 
 						//Add the coupon code to the attendee
-						$sql = array('coupon_code' => $_REQUEST['coupon_code'], 'amount_pd' => $event_cost, 'payment_status' => $payment_status, 'payment_date' => $today);
-						$sql_data = array('%s', '%s', '%s', '%s');
+						$sql = array('coupon_code' => $_REQUEST['coupon_code'], 'payment_status' => $payment_status, 'payment_date' => $today);
+						$sql_data = array('%s', '%s', '%s');
 						$update_id = array('id' => $attendee_id);
 						$wpdb->update(EVENTS_ATTENDEE_TABLE, $sql, $update_id, $sql_data, array('%d'));
 
@@ -118,7 +118,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 						}
 
 						//Update attendees with registration ID
-						$sql_registration_ID2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $payment_status . "', amount_pd = '" . $event_cost . "', payment_date= '" . $today . "', coupon_code='" . $_REQUEST['coupon_code'] . "' WHERE registration_id='$registration_ID' AND id!='$attendee_id'";
+						$sql_registration_ID2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $payment_status . "', payment_date= '" . $today . "', coupon_code='" . $_REQUEST['coupon_code'] . "' WHERE registration_id='$registration_ID' AND id!='$attendee_id'";
 						$wpdb->query($sql_registration_ID2);
 
 						//Create a session to hold the coupon usage data

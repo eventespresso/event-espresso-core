@@ -100,8 +100,10 @@ function espresso_prepare_payment_data_for_gateways($payment_data) {
  * @param array $payment_data
  * attendee_session
  * @return array $payment_data
+ * pre_discount_cost
  * total_cost
  * quantity
+ * discount_applied
  */
 function espresso_get_total_cost($payment_data) {
 	global $wpdb;
@@ -126,6 +128,9 @@ function espresso_get_total_cost($payment_data) {
 		$payment_data['total_cost'] = $total_cost;
 	}
 	$payment_data['quantity'] = $total_quantity;
+	$payment_data['discount_applied'] = $total_cost - $payment_data['total_cost'];
+	$payment_data['pre_discount_cost'] = $total_cost;
+	$payment_data['tickets'] = $tickets;
 	return $payment_data;
 }
 

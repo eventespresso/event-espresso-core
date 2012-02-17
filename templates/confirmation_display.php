@@ -6,6 +6,8 @@
 //Payment confirmation block
 function espresso_display_confirmation_page($conf_page_data) {
 	global $org_options, $wpdb;
+	add_filter('filter_hook_espresso_get_total_cost', 'espresso_get_total_cost');
+	$conf_page_data = apply_filters('filter_hook_espresso_get_total_cost', $conf_page_data);
 	$attendee_num = 1;
 	?>
 	<form id="form1" name="form1" method="post" action="<?php echo espresso_get_reg_page_full_url(); ?>">
@@ -22,51 +24,12 @@ function espresso_display_confirmation_page($conf_page_data) {
 						</th>
 						<td><span class="event_espresso_value"><?php echo stripslashes_deep($conf_page_data['event_name']) ?></span></td>
 					</tr>
-					<?php
-					/*
-					 * Added for seating chart addon
-					 */
-					$display_price = true;
-					if (defined('ESPRESSO_SEATING_CHART')) {
-						$seating_chart_id = seating_chart::check_event_has_seating_chart($conf_page_data['event_id']);
-						if ($seating_chart_id !== false) {
-							$display_price = false;
-						}
-					}
-					if ($display_price) {
-						/*
-						 * End
-						 */
-						?>
 						<tr>
 							<th scope="row" class="header">
-								<?php echo empty($price_type) ? __('Price per attendee:', 'event_espresso') : __('Type/Price per attendee:', 'event_espresso'); ?>
+								<?php _e('Price per attendee:', 'event_espresso'); ?>
 							</th>
-							<td><span class="event_espresso_value"><?php echo empty($price_type) ? $org_options['currency_symbol'] . $conf_page_data['event_price'] : stripslashes_deep($price_type) . ' / ' . $org_options['currency_symbol'] . $conf_page_data['event_price']; ?></span></td>
+							<td><span class="event_espresso_value"><?php echo $org_options['currency_symbol'] . $conf_page_data['tickets'][0]['cost']; ?></span></td>
 						</tr>
-						<?php
-						/*
-						 * Added for seating chart addon
-						 */
-					} else {
-						$price_range = seating_chart::get_price_range($conf_page_data['event_id']);
-						$price = "";
-						if ($price_range['min'] != $price_range['max']) {
-							$price = $org_options['currency_symbol'] . number_format($price_range['min'], 2) . ' - ' . $org_options['currency_symbol'] . number_format($price_range['max'], 2);
-						} else {
-							$price = $org_options['currency_symbol'] . number_format($price_range['min'], 2);
-						}
-						?>
-						<tr>
-							<td><strong class="event_espresso_name">Price : </strong></td>
-							<td><?php echo $price; ?></td>
-						</tr>
-						<?php
-					}
-					/*
-					 * End
-					 */
-					?>
 					<tr>
 						<th scope="row" class="header">
 							<?php _e('Attendee Name:', 'event_espresso'); ?>
@@ -99,20 +62,22 @@ function espresso_display_confirmation_page($conf_page_data) {
 							</span>
 						</td>
 					</tr>
-					<?php if ($conf_page_data['num_people'] > 1) { ?>
+					<?php if ($conf_page_data['quantity'] > 1) { ?>
 						<tr>
 							<th scope="row" class="header">
 								<?php _e('Total Registrants:', 'event_espresso'); ?>
 							</th>
-							<td><span class="event_espresso_value"><?php echo $conf_page_data['num_people']; ?></span></td>
+							<td><span class="event_espresso_value"><?php echo $conf_page_data['quantity']; ?></span></td>
 						</tr>
 					<?php } ?>
 					<tr valign="top">
 						<th scope="row" class="header">
 							<?php _e('Total Price:', 'event_espresso'); ?>
 							</td>
-						<td><span class="event_espresso_value"><?php echo $org_options['currency_symbol'] ?><?php echo $conf_page_data['event_price_x_attendees'];
-						echo $conf_page_data['event_discount_label'];
+						<td><span class="event_espresso_value"><?php echo $org_options['currency_symbol'] ?><?php echo $conf_page_data['total_cost'];
+						if (!empty($conf_page_data['discount_applied'])) {
+							echo ' (' . __('Discount of ', 'event_espresso') . $org_options['currency_symbol'] . number_format($conf_page_data['discount_applied'], 2, ".", ",") . __(' applied', 'event_espresso') . ')';
+						}
 							?></span></td>
 					</tr>
 
