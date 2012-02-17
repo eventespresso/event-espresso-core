@@ -98,7 +98,7 @@ class EE_Encryption {
 	public  function get_encryption_key() { 
 	
 		// if encryption key has not been set
-		if ( self::$_encryption_key == NULL ) {
+		if ( empty( self::$_encryption_key )) {
 
 			// retreive encryption_key from db
 			self::$_encryption_key = get_option( 'espresso_encryption_key' );
@@ -122,7 +122,7 @@ class EE_Encryption {
 	/**
 	 *		@encrypts data 
 	 *		@access public
-	 *	  @param string - the text to be encrypted
+	 *	  	@param string - the text to be encrypted
 	 *		@return string
 	 */	
 	public function encrypt ( $text_string = FALSE ) { 
@@ -147,7 +147,7 @@ class EE_Encryption {
 	/**
 	 *		@decrypts data 
 	 *		@access public
-	 *	  @param string - the text to be decrypted
+	 *	  	@param string - the text to be decrypted
 	 *		@return string
 	 */	
 	public function decrypt  ( $encrypted_text = FALSE )  {
@@ -174,7 +174,7 @@ class EE_Encryption {
 	 *		@encodes url string with PHP's base64 encoding
 	 *		@source  http://php.net/manual/en/function.base64-encode.php
 	 *		@access public
-	 *	  @param string - the text to be encoded
+	 *	  	@param string - the text to be encoded
 	 *		@return string
 	 */	
 	public function base64_url_encode ( $text_string = FALSE ) {
@@ -199,7 +199,7 @@ class EE_Encryption {
 	 *		@decodes url string that has been encoded with PHP's base64 encoding
 	 *		@source  http://php.net/manual/en/function.base64-encode.php
 	 *		@access public
-	 *	  @param string - the text to be decoded
+	 *	  	@param string - the text to be decoded
 	 *		@return string
 	 */	
 	public function base64_url_decode ( $encoded_string = FALSE ) {
@@ -209,7 +209,7 @@ class EE_Encryption {
 			return FALSE;
 		}
 		
-		// relace previously removed characters 
+		// replace previously removed characters 
 		$encoded_string = strtr ( $encoded_string, '-_,', '+/=' );
 		// decode
 		$decoded_string = base64_decode ( $encoded_string );
@@ -223,7 +223,7 @@ class EE_Encryption {
 	/**
 	 *		@encrypts data using PHP's mcrypt functions
 	 *		@access private
-	 *	  @param string - the text to be encrypted
+	 *	  	@param string - the text to be encrypted
 	 *		@return string
 	 */	
 	private function m_encrypt  ( $text_string = FALSE ) { 
@@ -252,7 +252,7 @@ class EE_Encryption {
 	/**
 	 *		@decrypts data that has been encrypted with PHP's mcrypt functions
 	 *		@access private
-	 *	  @param string - the text to be decrypted
+	 *	  	@param string - the text to be decrypted
 	 *		@return string
 	 */	
 	private function m_decrypt  ( $encrypted_text = FALSE )  {
@@ -283,7 +283,7 @@ class EE_Encryption {
 	 *		@encrypts data for acme servers that didn't bother to install PHP mcrypt 
 	 *		@source: http://stackoverflow.com/questions/800922/how-to-encrypt-string-without-mcrypt-library-in-php
 	 *		@access private
-	 *	  @param string - the text to be decrypted
+	 *	  	@param string - the text to be decrypted
 	 *		@return string
 	 */	
 	private function acme_encrypt ( $text_string = FALSE ) {
@@ -313,7 +313,7 @@ class EE_Encryption {
 	 *		@decrypts data for acme servers that didn't bother to install PHP mcrypt 
 	 *		@source: http://stackoverflow.com/questions/800922/how-to-encrypt-string-without-mcrypt-library-in-php
 	 *		@access private
-	 *	  @param string - the text to be decrypted
+	 *	  	@param string - the text to be decrypted
 	 *		@return string
 	 */	
 	private function acme_decrypt ( $encrypted_text = FALSE ) {
@@ -345,7 +345,7 @@ class EE_Encryption {
 	 *		@generate random string
 	 *		@source: http://stackoverflow.com/questions/637278/what-is-the-best-way-to-generate-a-random-key-within-php
 	 *		@access public
-	 *	  @param string - number of characters for random string
+	 *	  	@param string - number of characters for random string
 	 *		@return string
 	 */	
 	public function generate_random_string ( $length = 40 ) {
