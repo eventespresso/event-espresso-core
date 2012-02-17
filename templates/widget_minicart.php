@@ -205,14 +205,20 @@ class Espresso_Minicart extends WP_Widget {
 				} else {
 					// empty
 					$mini_cart[$cart_type]['has_items'] = FALSE;
-					$mini_cart[$cart_type]['empty_msg'] = $cart_contents['empty_msg'];
 				}
+
 
 				$total_items = $total_items + $cart_contents['total_items'];
 				$grand_total = $grand_total + $cart_contents['sub_total'];
 
 			}
+
+			$mini_cart[$cart_type]['empty_msg'] = $cart_contents['empty_msg'];
+
 		}
+		
+		$mini_cart['empty_msg'] = 'No Current Registrations';
+
 
 		$template_args['total_items'] = $total_items;
 		$template_args['grand_total'] = number_format( $grand_total, 2, '.', '' );
