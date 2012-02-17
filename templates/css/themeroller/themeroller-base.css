@@ -30,6 +30,8 @@
 
 /* Add some shadow where ui has no hooks */
 
+
+
 .event-display-boxes .submit {
 	-moz-box-shadow: 0 0 4px #ccc;
 	-webkit-box-shadow: 0 0 4px #ccc;
@@ -49,7 +51,10 @@
 	margin: .5em 0;
 }
 .event-display-boxes .ui-widget-header {
-	margin-bottom: -1px;
+	padding-left:1em; margin:0;
+}
+.event-list-display-dv .big-event-title-hdr {
+	font-size:2em; line-height:1.1em; margin:1em 0 0;
 }
 .event-data-display p.section-title, .espresso_event p.section-title {
 	margin-bottom: 8px;
@@ -57,8 +62,9 @@
 .espresso_event, .event-display-boxes { /* event list boxes */
 	margin-bottom: 1em;
 }
-.event-data-display {
-	padding: 10px;
+.event-data-display,
+.event_data .event-data-display-dv {
+	padding:1em; line-height:1.5em; margin:0;
 }
 .event_title, h2.section-heading, .display-box-heading {
 	padding-left: 10px;
