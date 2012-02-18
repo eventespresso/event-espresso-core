@@ -298,7 +298,7 @@ class EE_Encryption {
 		
 		foreach ( $string_bits as $k =>$v ) {
 			$temp = ord( $v ) + ord ( $key_bits[$k] );
-			$string_bits[$k] = chr ( $tmp > 255 ? ( $temp - 256 ) : $temp );
+			$string_bits[$k] = chr ( $temp > 255 ? ( $temp - 256 ) : $temp );
 		}
 		
 		$encrypted = base64_encode( join( '', $string_bits ) );
@@ -330,7 +330,7 @@ class EE_Encryption {
 		
 		foreach ( $string_bits as $k => $v ) {
 			$temp = ord ( $v ) - ord ( $key_bits[$k] );
-			$string_bits[$k] = chr ( $tmp < 0 ? ( $temp + 256 ) : $temp );
+			$string_bits[$k] = chr ( $temp < 0 ? ( $temp + 256 ) : $temp );
 		}
 		
 		$decrypted = join( '', $string_bits );
