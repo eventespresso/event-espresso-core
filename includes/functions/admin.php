@@ -54,7 +54,7 @@ function event_espresso_config_page_scripts() {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
 	}
-	
+
 	if ($_REQUEST['page'] == 'attendees' && isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'enter_attendee_payments' ) {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
@@ -910,6 +910,7 @@ function espresso_create_default_pages() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$default_pages = array('Event Registration', 'Thank You', 'Registration Cancelled', 'Transactions');
 	$existing_pages = get_pages();
+	$temp = array();
 	foreach ($existing_pages as $page) {
 		$temp[] = $page->post_title;
 	}

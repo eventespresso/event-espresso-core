@@ -52,6 +52,8 @@ require_once("includes/functions/main.php");
 function espresso_plugin_activation() {
 	// define tables and pathing
 	espresso_define_tables_and_paths();
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php');
+	espresso_get_user_id();
 	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/admin.php');
 	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/database_install.php');
 	events_data_tables_install();
@@ -595,7 +597,7 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/cart.php');
 
 	//Custom post type integration
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && isset($org_options['template_settings']['use_custom_post_types']) && $org_options['template_settings']['use_custom_post_types'] == 'Y') {
+	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && !empty($org_options['template_settings']['use_custom_post_types'])) {
 		require('includes/admin-files/custom_post_type.php');
 	}
 
@@ -1051,6 +1053,7 @@ function espresso_add_rewrite_rules() {
 
 	global $wpdb, $org_options;
 
+	if (empty($org_options['event_page_id'])) return;
 	$reg_page_id = $org_options['event_page_id'];
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();
 

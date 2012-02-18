@@ -15,7 +15,7 @@
 							</label>
 						</th>
 						<td class="med">
-							<?php echo select_input('create_post', $values, 'N'); ?> 
+							<?php echo select_input('create_post', $values, 'N'); ?>
 							<input type="hidden" name="post_id" value="<?php echo isset($event->post_id) ? $event->post_id : ''; ?>" />
 						</td>
 						<?php
@@ -40,10 +40,10 @@
 
 							$custom_post_array = array(array('id' => 'espresso_event', 'text' => __('Espresso Event', 'event_espresso')));
 							$post_page_array = array(array('id' => 'post', 'text' => __('Post', 'event_espresso')), array('id' => 'page', 'text' => __('Page', 'event_espresso')));
-							$post_page_array = isset($org_options['template_settings']['use_custom_post_types']) && $org_options['template_settings']['use_custom_post_types'] == 'Y' ? array_merge($custom_post_array, $post_page_array) : $post_page_array;
+							$post_page_array = !empty($org_options['template_settings']['use_custom_post_types']) ? array_merge($custom_post_array, $post_page_array) : $post_page_array;
 
 							$post_types = $post_page_array;
-							
+
 							?>
 						</td>
 					</tr>
@@ -58,13 +58,13 @@
 						</td>
 					</tr>
 					<tr>
-						<th class="middle">	
+						<th class="middle">
 							<label>
-								<?php _e('Post Type', 'event_espresso: '); ?> 
+								<?php _e('Post Type', 'event_espresso: '); ?>
 							</label>
 						</th>
 						<td class="med">
-							<?php echo select_input('post_type', $post_types, 'espresso_event') ?>						
+							<?php echo select_input('post_type', $post_types, 'espresso_event') ?>
 						</td>
 					</tr>
 					<tr>
@@ -79,7 +79,7 @@
 					</tr>
 				</tbody>
 			</table>
-	   	
+
 					<p class="section-heading"><?php _e('Post Categories:', 'event_espresso'); ?> </p>
 			<?php	require_once( 'includes/meta-boxes.php');
 		 			post_categories_meta_box($post_data, $box); ?>

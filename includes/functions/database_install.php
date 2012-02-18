@@ -59,7 +59,7 @@ function espresso_fix_org_options() {
 	}
 
 	if (array_key_exists('use_custom_post_types', $org_options)) {
-		$org_options['template_settings']['use_custom_post_types'] = empty($org_options['use_custom_post_types']) ? '' : $org_options['use_custom_post_types'];
+		$org_options['template_settings']['use_custom_post_types'] = empty($org_options['use_custom_post_types']) ? false : true;
 		unset($org_options['use_custom_post_types']);
 	}
 
@@ -223,7 +223,7 @@ function events_data_tables_install() {
 	}
 
 	function events_organization_tbl_install() {
-		global $wpdb;
+		global $wpdb, $espresso_wp_user;
 
 		$table_name = $wpdb->prefix . "events_organization";
 		//Check to see if upgrading from an earlier version.

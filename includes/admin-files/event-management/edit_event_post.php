@@ -3,7 +3,7 @@ if (function_exists('espresso_member_data')) {
 	global $espresso_manager;
 	$is_admin = (espresso_member_data('role') == "administrator" || espresso_member_data('role') =='espresso_event_admin')? true:false;
 	if ($espresso_manager['event_manager_create_post'] == 'N' && $is_admin == false){
-		return;	
+		return;
 	}
 }
 ?>
@@ -28,14 +28,14 @@ if (function_exists('espresso_member_data')) {
 				<tbody>
 					<tr>
 						<th class="middle">
-						  <label>  
+						  <label>
 							 <?php echo __('Add/Update post for this event?', 'event_espresso') ?>
-							</label> 
+							</label>
 						</th>
 						<td class="med">
 						 	<?php echo select_input('create_post', $values, $create_post);
 						  if (strlen($event->post_id) > 1) {
-							echo '<p>' . __('If no, delete current post?', 'event_espresso'); ?> 
+							echo '<p>' . __('If no, delete current post?', 'event_espresso'); ?>
 							<input name="delete_post" type="checkbox" value="Y" />
 							<?php } ?>
 							</p>
@@ -61,11 +61,11 @@ if (function_exists('espresso_member_data')) {
 							$post_data->ID = 0;
 							$tags = '';
 						}
-						$box = array();	
+						$box = array();
 
 						$custom_post_array = array(array('id' => 'espresso_event', 'text' => __('Espresso Event', 'event_espresso')));
 						$post_page_array = array(array('id' => 'post', 'text' => __('Post', 'event_espresso')), array('id' => 'page', 'text' => __('Page', 'event_espresso')));
-						$post_page_array = isset($org_options['template_settings']['use_custom_post_types']) && $org_options['template_settings']['use_custom_post_types'] == 'Y' ? array_merge($custom_post_array, $post_page_array) : $post_page_array;
+						$post_page_array = !empty($org_options['template_settings']['use_custom_post_types']) ? array_merge($custom_post_array, $post_page_array) : $post_page_array;
 						//print_r($post_page_array);
 
 					$post_types = $post_page_array;
@@ -73,37 +73,37 @@ if (function_exists('espresso_member_data')) {
 
 			<label>
 				<?php _e('Author', 'event_espresso: '); ?>
-			</label> 
+			</label>
 			</th>
 			<td class="med">
 				<?php wp_dropdown_users(array('who' => 'authors', 'selected' => $current_user->ID)); ?>
 			</td>
 		</tr>
 		<tr>
-			<th class="middle">						
+			<th class="middle">
 				<label>
-					<?php _e('Post Type', 'event_espresso: '); ?> 
+					<?php _e('Post Type', 'event_espresso: '); ?>
 				</label>
 			</th>
 			<td class="med">
-					<?php echo select_input('post_type', $post_types, 'espresso_event') ?>						
+					<?php echo select_input('post_type', $post_types, 'espresso_event') ?>
 			</td>
 		</tr>
 		<tr>
 			<th class="middle">
 				<label>
 					<?php _e('Tags', 'event_espresso: '); ?>
-				</label> 
+				</label>
 			</th>
 			<td class="med">
-				<input id="post_tags" name="post_tags" size="20" type="text" value="<?php echo $tags; ?>" />	
+				<input id="post_tags" name="post_tags" size="20" type="text" value="<?php echo $tags; ?>" />
 			</td>
 		</tr>
 	</tbody>
-</table>			
-						
-					
-					
+</table>
+
+
+
 		<p class="section-heading"><?php _e('Post Categories:', 'event_espresso'); ?> </p>
 		<?php
 		require_once( 'includes/meta-boxes.php');
