@@ -563,6 +563,7 @@ function espresso_init() {
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
