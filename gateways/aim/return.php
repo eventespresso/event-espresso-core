@@ -1,22 +1,38 @@
 <?php
 
-function espresso_aim_process_payment() {
+function espresso_transactions_aim_get_attendee_id($attendee_id) {
+	if (!empty($_REQUEST['x_cust_id'])) {
+		$attendee_id = $_REQUEST['x_cust_id'];
+	}
+	return $attendee_id;
+}
+
+add_filter('filter_hook_espresso_transactions_get_attendee_id', 'espresso_transactions_aim_get_attendee_id');
+
+function espresso_process_aim($payment_data) {
 	global $wpdb, $org_options, $payment_settings;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	require_once 'AuthorizeNet.php';
 
-	$authnet_aim_login_id = $payment_settings['authnet_aim']['authnet_aim_login_id'];
-	$authnet_aim_transaction_key = $payment_settings['authnet_aim']['authnet_aim_transaction_key'];
+	require_once 'lib/AuthorizeNet.php';
 
-	if ($payment_settings['authnet_aim']['use_sandbox'] == 'Y') {
+
+
+	$authnet_aim_settings = $payment_settings['aim'];
+	$authnet_aim_login_id = $authnet_aim_settings['authnet_aim_login_id'];
+	$authnet_aim_transaction_key = $authnet_aim_settings['authnet_aim_transaction_key'];
+
+// Enable test mode if needed
+//4007000000027  <-- test successful visa
+//4222222222222  <-- test failure card number
+	if ($authnet_aim_settings['use_sandbox']) {
 		define("AUTHORIZENET_SANDBOX", true);
 		define("AUTHORIZENET_LOG_FILE", true);
 	} else {
 		define("AUTHORIZENET_SANDBOX", false);
 	}
 
+//start transaction
 	$transaction = new AuthorizeNetAIM($authnet_aim_login_id, $authnet_aim_transaction_key);
-	echo '<!--Event Espresso Authorize.net AIM Gateway Version ' . $transaction->authnet_aim_gateway_version . '-->';
+	echo '<!--Event Espresso Authorize.net AIM Gateway Version ' . $transaction->gateway_version . '-->';
 	$transaction->amount = $_POST['amount'];
 	$transaction->card_num = $_POST['card_num'];
 	$transaction->exp_date = $_POST['exp_date'];
@@ -30,59 +46,45 @@ function espresso_aim_process_payment() {
 	$transaction->zip = $_POST['zip'];
 	$transaction->cust_id = $_POST['x_cust_id'];
 	$transaction->invoice_num = $_POST['invoice_num'];
-	if ($payment_settings['authnet_aim']['test_transactions'] == 'Y') {
+	if ($authnet_aim_settings['test_transactions']) {
 		$transaction->test_request = "true";
 	}
-	$transaction->description = $_POST['class_desc'];
 
+	$payment_data->txn_type = 'authorize.net AIM';
+	$payment_data->payment_status = 'Incomplete';
+	$payment_data->txn_id = 0;
+	$payment_data->txn_details = 'No response from authorize.net';
+	$payment_data = apply_filters('filter_hook_espresso_prepare_event_link', $payment_data);
+	$payment_data = apply_filters('filter_hook_espresso_get_total_cost', $payment_data);
 //Capture response
 	$response = $transaction->authorizeAndCapture();
-	$attendee_id = $response->customer_id;
 
-	$result['att_registration_id'] = espresso_registration_id($attendee_id);
-	$result['txn_id'] = $response->transaction_id;
-	$result['txn_type'] = $response->transaction_type;
-	$result['payment_date'] = date("d-m-Y");
 
-	$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . $result['att_registration_id'] . "' ";
-	$sql .= $attendee_id == '' ? '' : " AND id= '" . $attendee_id . "' ";
-	$sql .= " ORDER BY id LIMIT 0,1";
-	$attendees = $wpdb->get_results($sql);
-
-	foreach ($attendees as $attendee) {
-		$result['lname'] = $attendee->lname;
-		$result['fname'] = $attendee->fname;
-		$result['total_cost'] = $attendee->amount_pd;
-		$event_id = $attendee->event_id;
-	}
-
-	$events = $wpdb->get_results("SELECT event_name FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
-	foreach ($events as $event) {
-		$event_name = $event->event_name;
-	}
-//Build links
-	$event_url = espresso_reg_url($event_id);
-	$result['event_link'] = '<a href="' . $event_url . '">' . $event_name . '</a>';
-
-	if ($response->approved) {
-		$result['payment_status'] = 'Completed';
-		?>
-		<h2><?php _e('Thank You!', 'event_espresso'); ?></h2>
-		<p><?php _e('Your transaction has been processed.', 'event_espresso'); ?></p>
-		<p><?php _e('Transaction ID:', 'event_espresso') . $response->transaction_id; ?></p>
-		<?php
-		$payment_failed = false;
+	if (!empty($response)) {
+		if ($authnet_aim_settings['use_sandbox']) {
+			$payment_data->txn_id = $response->invoice_number;
+		} else {
+			$payment_data->txn_id = $response->transaction_id;
+		}
+		$payment_data->txn_details = serialize($response);
+		if ($response->approved) {
+			$payment_data->payment_status = 'Completed';
+			?>
+			<h2><?php _e('Thank You!', 'event_espresso'); ?></h2>
+			<p><?php _e('Your transaction has been processed.', 'event_espresso'); ?></p>
+			<p><?php __('Transaction ID:', 'event_espresso') . $response->transaction_id; ?></p>
+			<?php
+		} else {
+			print $response->error_message;
+			$payment_data->payment_status = 'Payment Declined';
+		}
 	} else {
-		print $response->error_message;
-		$result['payment_status'] = 'Payment Declined';
-		$payment_failed = true;
+		?>
+		<p><?php _e('There was no response from Authorize.net.', 'event_espresso'); ?></p>
+		<?php
 	}
-
-	$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $result['payment_status'] . "', txn_type = '" . $result['txn_type'] . "', txn_id = '" . $result['txn_id'] . "', payment_date ='" . $result['payment_date'] . "', transaction_details = '" . serialize($response) . "'  WHERE registration_id ='" . $result['att_registration_id'] . "'";
-	$wpdb->query($sql);
-
-	if ($payment_failed == true) {
-		echo event_espresso_pay($result['att_registration_id']);
-	}
-	return $result;
+	add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');
+	return $payment_data;
 }
+
+add_filter('filter_hook_espresso_thank_you_get_payment_data', 'espresso_process_aim');

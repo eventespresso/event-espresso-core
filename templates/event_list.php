@@ -5,8 +5,6 @@
 //This file should be stored in your "/wp-content/uploads/espresso/templates/" directory.
 //Note: All of these functions can be overridden using the "Custom Files" addon. The custom files addon also contains sample code to display ongoing events
 
-global $org_options;
-do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 if (!function_exists('display_all_events')) {
 
 	function display_all_events() {

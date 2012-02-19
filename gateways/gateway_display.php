@@ -1,6 +1,6 @@
 <?php
 
-function espresso_display_payment_gateways($payment_data=array()) {
+function espresso_display_payment_gateways($payment_data) {
 //Get the payment settings
 	global $active_gateways, $payment_settings, $espresso_wp_user;
 	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);

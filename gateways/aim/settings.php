@@ -23,8 +23,8 @@ function event_espresso_aim_payment_settings() {
 	if (empty($payment_settings['aim'])) {
 		$payment_settings['aim']['authnet_aim_login_id'] = '';
 		$payment_settings['aim']['authnet_aim_transaction_key'] = '';
-		$payment_settings['aim']['use_sandbox'] = 'N';
-		$payment_settings['aim']['test_transactions'] = 'N';
+		$payment_settings['aim']['use_sandbox'] = false;
+		$payment_settings['aim']['test_transactions'] = false;
 		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
 
@@ -91,8 +91,8 @@ function event_espresso_display_authnet_aim_settings($payment_settings) {
 	global $org_options, $espresso_wp_user;
 
 	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso')),
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso')),
 	);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_authnet_aim=true'));

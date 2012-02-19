@@ -40,7 +40,7 @@
  * @subpackage AuthorizeNetAIM
  */
 class AuthorizeNetAIM extends AuthorizeNetRequest {
-	public $authnet_aim_gateway_version = '1';
+	public $gateway_version = '1';
 
 	const LIVE_URL = 'https://secure.authorize.net/gateway/transact.dll'; //Authnet URL
 	//Uncomment the following line to use Plug N Pay

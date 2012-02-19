@@ -94,13 +94,6 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			$price_type = isset($data_source['price_id']) ? espresso_ticket_information(array('type' => 'ticket', 'price_option' => $data_source['price_id'])) : '';
 		}
 
-		//Display the confirmation page
-		if (!empty($data_source['confirm_registration'])) {
-			$registration_id = $data_source['registration_id'];
-			echo espresso_confirm_registration($registration_id);
-			return;
-		}
-
 		//Check to see if the registration id already exists
 		$incomplete_filter = !$multi_reg ? " AND payment_status ='Incomplete'" : '';
 		$check_sql = $wpdb->get_results("SELECT attendee_session, id, registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session ='" . $_SESSION['espresso_session']['id'] . "' AND event_id ='" . $event_id . "' $incomplete_filter");

@@ -76,12 +76,9 @@ register_activation_hook(__FILE__, 'espresso_plugin_activation');
 // plugins_loaded
 add_action( 'plugins_loaded', 'espresso_define_tables_and_paths', 1);
 add_action( 'plugins_loaded', 'espresso_EE_Session', 2);
-add_action( 'plugins_loaded', 'espresso_load_error_log', 3);
 add_action( 'plugins_loaded', 'espresso_init_session', 5);
 add_action( 'plugins_loaded', 'espresso_check_for_export');
 add_action( 'plugins_loaded', 'espresso_check_for_import');
-//Loads the $espresso_wp_user global var
-add_action('plugins_loaded', 'espresso_get_user_id');
 
 // a few espresso specific hooks
 
@@ -90,6 +87,7 @@ add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events
 // add the function event_espresso_add_attendees_to_db() as the default action to be performed for the regevent_post_attendee hook
 add_action ( 'action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db' );
 // add the function register_attendees() as the default action to be performed for the regevent_register_attendees hook
+add_action ('action_hook_espresso_display_payment_page', 'espresso_payment_page');
 add_action ( 'action_hook_espresso_regevent_register_attendees', 'register_attendees' );
 // add Espresso toolbar
 add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
@@ -108,7 +106,10 @@ add_filter( 'plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2
 
 //init
 add_action( 'init', 'espresso_load_jquery', 10 );
+//Loads the $espresso_wp_user global var
+add_action( 'init', 'espresso_get_user_id', 15);
 add_action( 'init', 'espresso_init', 20 );
+add_action( 'init', 'espresso_load_error_log', 25);
 add_action( 'init', 'espresso_export_certificate', 30);
 add_action( 'init', 'espresso_export_invoice', 30);
 add_action( 'init', 'espresso_export_ticket', 30);
@@ -288,6 +289,7 @@ function espresso_EE_Session() {
 *		@return void
 */
 function espresso_load_error_log() {
+	global $org_options;
 	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/espresso_log.php';
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		$message = "REQUEST variables:\n";
@@ -627,9 +629,14 @@ function espresso_init() {
 
 
 		//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment_Data.class.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/payment_page.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/confirmation_page.php');
-
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/pending_approval_page.php');
+		require_once(espresso_get_payment_page_template());
+		require_once(espresso_get_payment_overview_template());
+		require_once(espresso_get_return_payment_template());
 		//Add attendees to the database
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/add_attendees_to_db.php');
 
@@ -834,7 +841,14 @@ function espresso_init() {
 				$regevent_action = "register";
 			}
 
+			if(!empty($_REQUEST['confirm_registration'])) $regevent_action = 'payment_page';
+
 			switch ($regevent_action) {
+
+				case "payment_page":
+					do_action('action_hook_espresso_display_payment_page');
+
+					break;
 
 				case "post_attendee":
 
