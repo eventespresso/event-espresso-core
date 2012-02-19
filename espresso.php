@@ -290,7 +290,7 @@ function espresso_EE_Session() {
 */
 function espresso_load_error_log() {
 	global $org_options;
-	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/espresso_log.php';
+	require_once (EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
 	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 		$message = "REQUEST variables:\n";
 		foreach ($_REQUEST as $key => $value) {
@@ -563,8 +563,8 @@ function espresso_init() {
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
 	//require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/Event.php';
-	require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/Attendee.php';
-
+	//require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/Attendee.php';
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
