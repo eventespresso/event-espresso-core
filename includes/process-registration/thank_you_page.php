@@ -13,16 +13,17 @@ function espresso_thank_you_page() {
 	if (!empty($_REQUEST['registration_id']) && empty($attendee_id)) {
 		$sql = "SELECT id FROM `" . EVENTS_ATTENDEE_TABLE . "` WHERE registration_id='" . $_REQUEST['registration_id'] . "' ORDER BY id LIMIT 1";
 		$attendee_id = $wpdb->get_var($sql);
-		$payment_data = new PaymentData($attendee_id);
+		$payment_data = new EE_Payment_Data($attendee_id);
 		$payment_data->populate_data_from_db();
 		$payment_data->calculate_costs();
 	} elseif (!empty($attendee_id)) {
-		$payment_data = new PaymentData($attendee_id);
+		$payment_data = new EE_Payment_Data($attendee_id);
 		$payment_data->populate_data_from_db();
-		if (empty($_GET['registration_id']) || $payment_data->registration_id != $_GET['registration_id'])
+		if (empty($_GET['registration_id']) || $payment_data->attendees[0]->registration_id != $_GET['registration_id'])
 			die("Cheaters never win!");
 		$payment_data->calculate_costs();
 		$payment_data = apply_filters('filter_hook_espresso_thank_you_get_payment_data', $payment_data);
+		$payment_data->set_payment_date();
 		$payment_data->write_payment_data_to_db();
 		do_action('action_hook_espresso_email_after_payment', $payment_data);
 	}

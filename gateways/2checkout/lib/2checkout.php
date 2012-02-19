@@ -23,6 +23,7 @@ class TwoCo extends PaymentGateway {
 	 * @return void
 	 */
 	public function __construct() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		parent::__construct();
 
 		// Some default values of the class
@@ -38,6 +39,7 @@ class TwoCo extends PaymentGateway {
 	 * @return none
 	 */
 	public function enableTestMode() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->testMode = TRUE;
 		$this->addField('demo', 'Y');
 	}
@@ -49,6 +51,7 @@ class TwoCo extends PaymentGateway {
 	 * @return void
 	 */
 	public function setSecret($word) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!empty($word)) {
 			$this->secret = $word;
 		}
@@ -61,6 +64,7 @@ class TwoCo extends PaymentGateway {
 	 * @return boolean
 	 */
 	public function validateIpn() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		foreach ($_POST as $field => $value) {
 			$this->ipnData["$field"] = $value;
 		}

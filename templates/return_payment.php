@@ -10,8 +10,8 @@ function espresso_display_return_payment_template($data) {
 	}
 
 	if ($data->payment_status == "Incomplete" || $data->payment_status == "Payment Declined" || $data->payment_status == "") {
-		//Check the number of available sapce against this registration
-		if (get_number_of_attendees_reg_limit($data->event_id, 'number_available_spaces') < $data->quantity) {
+		//Check the number of available spaces against this registration
+		if (get_number_of_attendees_reg_limit($data->events[0]->id, 'number_available_spaces') < $data->quantity) {
 			?>
 			<p class="espesso_event_full"> <?php _e('Sorry, there are not enough spaces available to complete your registration.', 'event_espresso'); ?></p>
 			<p class="espesso_event_full"> <?php _e('Quantity in your Party:', 'event_espresso'); ?> <?php echo $data->quantity ?></p>
@@ -22,7 +22,7 @@ function espresso_display_return_payment_template($data) {
 		//Uncomment to check the number of available spaces
 		//echo get_number_of_attendees_reg_limit($data->event_id, 'number_available_spaces');
 		if ($data->total_cost != '0.00') {
-			do_action('action_hook_espresso_display_payment_gateways');
+			do_action('action_hook_espresso_display_payment_gateways', $data);
 		}
 	}//End if ($data->payment_status == ("Incomplete") )
 }

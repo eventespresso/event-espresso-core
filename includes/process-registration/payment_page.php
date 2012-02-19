@@ -3,10 +3,10 @@
 function espresso_payment_page() {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$payment_data = new PaymentData($_REQUEST['attendee_id']);
+	$payment_data = new EE_Payment_Data($_REQUEST['attendee_id']);
 	$payment_data->populate_data_from_db();
 	$payment_data->calculate_costs();
-	if (is_attendee_approved($payment_data->require_pre_approval[0], $payment_data->attendee_id)) {
+	if (is_attendee_approved($payment_data->events[0]->require_pre_approval, $payment_data->attendee_id)) {
 		do_action('action_hook_espresso_display_payment_page_template', $payment_data);
 		if ($payment_data->total_cost != '0.00') {
 			do_action('action_hook_espresso_display_payment_gateways', $payment_data);

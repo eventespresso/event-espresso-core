@@ -57,7 +57,7 @@ function espresso_email_after_payment($payment_data) {
 	if ($payment_data->payment_status == 'Completed') {
 		event_espresso_send_payment_notification(array('attendee_id' => $payment_data->attendee_id));
 		if ($org_options['email_before_payment'] == 'N') {
-			event_espresso_email_confirmations(array('session_id' => $payment_data->attendee_session, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
+			event_espresso_email_confirmations(array('session_id' => $payment_data->attendees[0]->attendee_session, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
 		}
 	}
 }

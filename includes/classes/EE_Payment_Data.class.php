@@ -1,86 +1,58 @@
 <?php
 
-class PaymentData {
-
+class EE_Payment_Data {
+	public $id;
 	// Set in constructor. The primary attendee's id.
-	public $attendee_id;
-	// attendee specific info
-	public $email;
-	public $registration_id;
-	public $attendee_session;
-	public $lname;
-	public $fname;
-	public $contact;
-	public $address;
-	public $city;
-	public $zip;
-	public $state;
-	public $phone;
-	// event specfic info
-	public $start_date;
-	public $event_name;
-	public $event_id;
-	public $require_pre_approval;
-	public $event_link;
+	// arrays of classes
+	public $attendees;
+	public $events;
+	public $registrations;
+	public $payments;
+	public $coupons;
+	public $venues;
+	public $countries;
+	public $answers;
+	public $emails;
+	public $statuses;
+	public $regions;
 	//cost related info
-	public $total_cost;
-	public $quantity;
-	public $discount_applied;
-	public $pre_discount_cost;
-	public $tickets;
-// This one is also set using filter_hook_espresso_prepare_payment_data_for_gateways
-	// because they are used to store information neccessary to secure confirmation of payment
-	// It is reset after the individual gateways by espresso_update_attendee_payment_status_in_db
-	public $payment_date;
-	// These are the ones that every individual gateway MUST set
-	// txn_id is also used by some gateways to store information neccessary to secure confirmation
-	// of payment, and is thus pulled by filter_hook_espresso_prepare_payment_data_for_gateways
-	public $txn_id;
-	public $payment_status;
-	public $txn_details;
-	public $txn_type;
+	public $attendee_id;  // primary attendee id
+	public $timestamp;
+	public $type;
+	public $total;
+	public $status;
+	public $tax_amount;
+	public $tax_percent;  // boolean
 
-	public function __construct($attendee_id) {
+	public function __construct($attendee_id = NULL) {
 		$this->attendee_id = $attendee_id;
+		$this->timestamp = time();
 	}
 
 	public function populate_data_from_db() {
 		global $wpdb, $org_options;
-		$sql = "SELECT ea.email, ea.registration_id, ea.txn_type,";
-		$sql .= " ea.attendee_session, ea.lname, ea.fname, ea.total_cost,";
-		$sql .= "	ea.payment_status, ea.payment_date, ea.address, ea.city, ea.txn_id,";
-		$sql .= " ea.zip, ea.state, ea.phone FROM " . EVENTS_ATTENDEE_TABLE . " ea";
-		$sql .= " WHERE ea.id='" . $this->attendee_id . "'";
-		$result = $wpdb->get_row($sql, ARRAY_A);
+		$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id='" . $this->attendee_id . "'";
+		$result[0] = $wpdb->get_row($sql, ARRAY_A);
 		if (empty($result)) do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $sql);
-		extract($result);
-		$this->contact = $org_options['contact_email'];
-		$this->email = $email;
-		$this->registration_id = $registration_id;
-		$this->txn_type = $txn_type;
-		$this->attendee_session = $attendee_session;
-		$this->lname = $lname;
-		$this->fname = $fname;
-		$this->total_cost = $total_cost;
-		$this->payment_status = $payment_status;
-		$this->payment_date = $payment_date;
-		$this->address = $address;
-		$this->city = $city;
-		$this->txn_id = $txn_id;
-		$this->zip = $zip;
-		$this->state = $state;
-		$this->phone = $phone;
-		$sql = "SELECT  ed.id, ed.event_name, ed.start_date, ed.require_pre_approval FROM " . EVENTS_ATTENDEE_TABLE . " ea";
+		$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id!='" . $this->attendee_id . "'";
+		$sql .= " AND attendee_session='" . $result[0]['attendee_session'] . "'";
+		$additional_attendees = $wpdb->get_results($sql, ARRAY_A);
+		if (empty($additional_attendees)) do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $sql);
+		$attendees = array_merge($result, $additional_attendees);
+		foreach ($attendees as $attendee) {
+			$attendee_object = new EE_Attendee($attendee['id']);
+			$venue_object = new EE_Venue();
+			$attendee_object->poplulate_attendee_details_from_array($attendee);
+			$this->attendees[] = $attendee_object;
+		}
+		$sql = "SELECT  ed.id FROM " . EVENTS_ATTENDEE_TABLE . " ea";
 		$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=ea.event_id";
-		$sql .= " WHERE ea.attendee_session='" . $this->attendee_session . "'";
-		$events = $wpdb->get_results($sql, OBJECT_K);
-		foreach ($events as $event) {
-			$this->event_id[] = $event->id;
-			$this->event_name[] = $event->event_name;
-			$this->start_date[] = $event->start_date;
-			$this->require_pre_approval[] = $event->require_pre_approval;
-			$event_url = espresso_reg_url($event->id);
-			$this->event_link[] .= '<a href="' . $event_url . '">' . $event->event_name . '</a>';
+		$sql .= " WHERE ea.attendee_session='" . $this->attendees[0]->attendee_session . "'";
+		$event_ids = array_unique($wpdb->get_col($sql));
+		foreach ($event_ids as $event_id) {
+			$event = new EE_Event($event_id);
+			$event->poplulate_event_details_from_db();
+			$this->events[] = $event;
 		}
 	}
 
@@ -89,7 +61,7 @@ class PaymentData {
 		$sql = "SELECT ac.cost, ac.quantity, dc.coupon_code_price, dc.use_percentage  FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 		$sql .= " JOIN " . EVENTS_ATTENDEE_COST_TABLE . " ac ON a.id=ac.attendee_id ";
 		$sql .= " LEFT JOIN " . EVENTS_DISCOUNT_CODES_TABLE . " dc ON a.coupon_code=dc.coupon_code ";
-		$sql .= " WHERE a.attendee_session='" . $this->attendee_session . "'";
+		$sql .= " WHERE a.attendee_session='" . $this->attendees[0]->attendee_session . "'";
 		$tickets = $wpdb->get_results($sql, ARRAY_A);
 		$total_cost = 0;
 		$total_quantity = 0;
@@ -112,12 +84,16 @@ class PaymentData {
 		$this->tickets = $tickets;
 	}
 
+	public function set_payment_date() {
+		$this->payment_date = time();
+	}
+
 	public function write_payment_data_to_db() {
 		global $wpdb;
 		$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET amount_pd = '" . $this->total_cost . "' WHERE id ='" . $this->attendee_id . "' ";
 		$wpdb->query($sql);
 
-		$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $this->payment_status . "', txn_type = '" . $this->txn_type . "', txn_id = '" . $this->txn_id . "', payment_date ='" . $this->payment_date . "', transaction_details = '" . $this->txn_details . "' WHERE attendee_session ='" . $this->attendee_session . "' ";
+		$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $this->payment_status . "', txn_type = '" . $this->txn_type . "', txn_id = '" . $this->txn_id . "', payment_date ='" . $this->payment_date . "', transaction_details = '" . $this->txn_details . "' WHERE attendee_session ='" . $this->attendees[0]->attendee_session . "' ";
 		$wpdb->query($sql);
 	}
 

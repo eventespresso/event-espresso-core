@@ -562,8 +562,6 @@ function espresso_init() {
 
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
-	//require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/Event.php';
-	//require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/Attendee.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
