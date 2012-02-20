@@ -21,7 +21,7 @@ $default_payment_status = array(
 		<div title="Click to toggle" class="handlediv"><br />
 		</div>
 		<h3 class="hndle">
-			<?php _e('Optional/Advanced Event Settings', 'event_espresso'); ?>
+			<?php _e('Optional Settings', 'event_espresso'); ?>
 		</h3>
 		<div class="inside">
 			<div class="padding">
@@ -184,13 +184,19 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 							<th><label>
 <?php _e('Enable Remote Logging?', 'event_espresso'); ?>
 								</label></th>
-							<td><?php echo select_input('remote_logging', $values, isset($org_options['remote_logging']) ? $org_options['remote_logging'] : 'N'); ?> </td>
+							<td><?php echo select_input('remote_logging', $values, isset($org_options['remote_logging']) ? $org_options['remote_logging'] : 'N'); ?><br />
+								<span class="description">
+									<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
+								</span></td>
 						</tr>
 						<tr>
 							<th><label>
 <?php _e('Remote Logging URL', 'event_espresso'); ?>
 								</label></th>
-							<td><input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo isset($org_options['remote_logging_url']) && $org_options['remote_logging_url'] != '' ? stripslashes_deep($org_options['remote_logging_url']) : ''; ?>" /></td>
+							<td><input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo isset($org_options['remote_logging_url']) && $org_options['remote_logging_url'] != '' ? stripslashes_deep($org_options['remote_logging_url']) : ''; ?>" /><br />
+								<span class="description">
+									<?php _e('Example: http://www.postbin.org/MY_UNIQUE_ID', 'event_espresso'); ?>
+								</span></td>
 						</tr>
 						<tr>
 							<td colspan="2"><strong>
