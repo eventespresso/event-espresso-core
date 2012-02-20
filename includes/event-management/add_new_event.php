@@ -221,7 +221,7 @@ function add_new_event() {
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpView::event_list_selection();
 			}
-			
+
 		if (function_exists('espresso_personnel_cb') && isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 							?>
 		<div id="event-speakers" class="postbox closed">
@@ -567,58 +567,16 @@ function add_new_event() {
 					<table class="form-table">
 						<tbody>
 							<tr>
-								<th class="middle"><label><?php echo __('Custom Confirmation Email', 'event_espresso') ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'custom_email_info') ?> </label>
-								</th>
-								<td class="med"><?php echo select_input('send_mail', $values, 'N'); ?></td>
-							</tr>
-							<tr>
-								<th class="middle"><?php $email_id = isset($email_id) ? $email_id : ''; ?>
-									<label>
-										<?php _e('Use a ', 'event_espresso'); ?>
-										<a href="admin.php?page=event_emails" target="_blank">
-										<?php _e('pre-existing email', 'event_espresso'); ?>
-										</a> <?php echo apply_filters( 'filter_hook_espresso_help', 'email_manager_info') ?>
-									</label>
-								</th>
-								<td class="med"><?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') ?></td>
-							</tr>
-							<tr>
-								<td colspan="2"><p><strong>
-										<?php _e('Custom Email', 'event_espresso') ?>
-										</strong> <?php echo apply_filters( 'filter_hook_espresso_help', 'event_custom_emails'); ?></p>
-									<div id="emaildescriptiondivrich" class="postarea">
-										<div class="visual-toggle" <?php echo function_exists('wp_editor') ? 'style="display:none"' :'' ?> >
-											<p><a class="toggleVisual">
-												<?php _e('Visual', 'event_espresso'); ?>
-												</a> <a class="toggleHTML">
-												<?php _e('HTML', 'event_espresso'); ?>
-												</a></p>
-										</div>
-										<div class="postbox">
-											<?php
-										if (function_exists('wp_editor')){
-											$args = array("textarea_rows" => 5, "textarea_name" => "conf_mail", "editor_class" => "my_editor_custom");
-											wp_editor("", "conf_mail", $args);
-										}else{
-											echo  '<textarea name="conf_mail" class="theEditor" id="conf_mail"></textarea>';
-											espresso_tiny_mce();
-										}
-									?>
-											<table id="email-confirmation-form" cellspacing="0">
-												<tbody>
-													<tr>
-														<td class="aer-word-count"></td>
-														<td class="autosave-info"><span>&nbsp;</span></td>
-													</tr>
-												</tbody>
-											</table>
-											<p><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-												<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-												</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
-												<?php _e('Email Example', 'event_espresso'); ?>
-												</a></p>
-										</div>
-									</div></td>
+							<td class="custom_emails"><fieldset id="email-manager">
+								<legend><?php echo __('Email Information', 'event_espresso') ?></legend>
+								<p class="info">Choose a payment confirmation email:</p>
+								<?php echo espresso_email_dd('payment'); ?>
+								<p class="info">Choose a registration confirmation email:</p>
+								<?php echo espresso_email_dd('confirmation'); ?>
+							</fieldset></td>
+							<td>
+								<p><a href="admin.php?page=event_emails"><?php echo __('Add emails to the Email Manager', 'event_espresso') ?></a></p>
+							</td>
 							</tr>
 						</tbody>
 					</table>

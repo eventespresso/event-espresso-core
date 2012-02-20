@@ -1,23 +1,18 @@
 <?php
 
 //Install/update data tables in the Wordpress database
-
 //Attention!! The WP dbDelta function cannot modify unique keys
 //Please note that when updating the plugin and WordPress is in debug mode, you may see the following warning/notice:
 //The plugin generated 15089 characters of unexpected output during activation. If you notice "headers already sent" messages,
 //problems with syndication feeds or other issues, try deactivating or removing this plugin.
-
 //This fix for this problem:
 //The short and simple solution is to simply check the table exists and then drop the index manually before calling the dbDelta function.
 
-/*if ($wpdb->get_var("SHOW TABLES LIKE $table") == $table) {
-	$wpdb->query("ALTER TABLE $table DROP INDEX date");
-}*/
+/* if ($wpdb->get_var("SHOW TABLES LIKE $table") == $table) {
+  $wpdb->query("ALTER TABLE $table DROP INDEX date");
+  } */
 
 //Credit: http://flav36rs.com/2010/04/02/wp-dbdelta-function-cannot-modify-unique-keys/
-
-
-
 //This fixes some tables that may have been named wrong in an earlier version of the plugin
 function event_espresso_rename_tables($old_table_name, $new_table_name) {
 	global $wpdb;
@@ -79,160 +74,176 @@ function espresso_fix_org_options() {
 	}
 
 	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
-
 }
 
-//This function installs all the required database tables
-function events_data_tables_install() {
-	$table_version = EVENT_ESPRESSO_VERSION;
+function espresso_initialize_system_questions() {
+	global $wpdb;
 
-	function event_espresso_install_system_names() {
-		global $wpdb;
+	$system_name_data = "SELECT system_name FROM " . $wpdb->prefix . "events_question";
 
-		$system_name_data = "SELECT system_name FROM " . $wpdb->prefix . "events_question";
+	$system_names = $wpdb->get_results($system_name_data);
 
+	foreach ($system_names as $system_name) {
+		switch ($system_name->system_name) {
+			case 'fname':
+				$fname = true;
+				break;
+			case 'lname':
+				$lname = true;
+				break;
+			case 'email':
+				$email = true;
+				break;
+			case 'address':
+				$adress = true;
+				break;
+			case 'address2':
+				$adress2 = true;
+				break;
+			case 'city':
+				$city = true;
+				break;
+			case 'state':
+				$state = true;
+				break;
+			case 'zip':
+				$zip = true;
+				break;
+			case 'phone':
+				$phone = true;
+				break;
+		}
+	}
+
+	if ($fname == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'First Name', 'question_type' => 'TEXT', 'system_name' => 'fname', 'required' => 'Y', 'sequence' => '0'), array('%s', '%s', '%s', '%s', '%s'));
+
+	if ($lname == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Last Name', 'question_type' => 'TEXT', 'system_name' => 'lname', 'required' => 'Y', 'sequence' => '1'), array('%s', '%s', '%s', '%s', '%s'));
+
+	if ($email == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Email', 'question_type' => 'TEXT', 'system_name' => 'email', 'required' => 'Y', 'sequence' => '2'), array('%s', '%s', '%s', '%s', '%s'));
+
+	if ($adress == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address', 'system_name' => 'address', 'sequence' => '3'), array('%s', '%s', '%s'));
+
+	if ($adress2 == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address 2', 'system_name' => 'address2', 'sequence' => '3'), array('%s', '%s', '%s'));
+
+	if ($city == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'City', 'system_name' => 'city', 'sequence' => '4'), array('%s', '%s', '%s'));
+
+	if ($state == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'State', 'system_name' => 'state', 'sequence' => '5'), array('%s', '%s', '%s'));
+
+	if ($zip == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Zip', 'system_name' => 'zip', 'sequence' => '6'), array('%s', '%s', '%s'));
+
+	if ($zip == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Country', 'system_name' => 'country', 'sequence' => '6'), array('%s', '%s', '%s'));
+
+	if ($phone == false)
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Phone', 'system_name' => 'phone', 'sequence' => '7'), array('%s', '%s', '%s'));
+
+	$system_group = $wpdb->get_row("SELECT system_group FROM " . $wpdb->prefix . "events_qst_group" . " WHERE system_group = 1");
+
+	if ($wpdb->num_rows == 0) {
+
+		$wpdb->insert($wpdb->prefix . "events_qst_group", array('group_name' => 'Personal Information', 'group_identifier' => sanitize_title_with_dashes('personal_information-' . time()), 'system_group' => 1), array('%s', '%s', '%d'));
+
+		$personal_group_id = $wpdb->insert_id;
+
+		$wpdb->insert($wpdb->prefix . "events_qst_group", array('group_name' => 'Address Information', 'group_identifier' => sanitize_title_with_dashes('address_information-' . time()), 'system_group' => 0), array('%s', '%s', '%d'));
+
+		$address_group_id = $wpdb->insert_id;
+
+		$system_name_data = "SELECT id, system_name FROM " . $wpdb->prefix . "events_question" . " where system_name IN ('fname', 'lname', 'email')";
 		$system_names = $wpdb->get_results($system_name_data);
 
 		foreach ($system_names as $system_name) {
-			switch ($system_name->system_name) {
-				case 'fname':
-					$fname = true;
-					break;
-				case 'lname':
-					$lname = true;
-					break;
-				case 'email':
-					$email = true;
-					break;
-				case 'address':
-					$adress = true;
-					break;
-				case 'address2':
-					$adress2 = true;
-					break;
-				case 'city':
-					$city = true;
-					break;
-				case 'state':
-					$state = true;
-					break;
-				case 'zip':
-					$zip = true;
-					break;
-				case 'phone':
-					$phone = true;
-					break;
-			}
+
+			$wpdb->insert($wpdb->prefix . "events_qst_group_rel", array('group_id' => $personal_group_id, 'question_id' => $system_name->id), array('%d', '%d'));
 		}
 
-		if ($fname == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'First Name', 'question_type' => 'TEXT', 'system_name' => 'fname', 'required' => 'Y', 'sequence' => '0'), array('%s', '%s', '%s', '%s', '%s'));
+		$system_name_data = "SELECT id, system_name FROM " . $wpdb->prefix . "events_question" . " where system_name IN ('address', 'city', 'state', 'zip' )";
+		$system_names = $wpdb->get_results($system_name_data);
 
-		if ($lname == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Last Name', 'question_type' => 'TEXT', 'system_name' => 'lname', 'required' => 'Y', 'sequence' => '1'), array('%s', '%s', '%s', '%s', '%s'));
+		foreach ($system_names as $system_name) {
 
-		if ($email == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Email', 'question_type' => 'TEXT', 'system_name' => 'email', 'required' => 'Y', 'sequence' => '2'), array('%s', '%s', '%s', '%s', '%s'));
-
-		if ($adress == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address', 'system_name' => 'address', 'sequence' => '3'), array('%s', '%s', '%s'));
-
-		if ($adress2 == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address 2', 'system_name' => 'address2', 'sequence' => '3'), array('%s', '%s', '%s'));
-
-		if ($city == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'City', 'system_name' => 'city', 'sequence' => '4'), array('%s', '%s', '%s'));
-
-		if ($state == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'State', 'system_name' => 'state', 'sequence' => '5'), array('%s', '%s', '%s'));
-
-		if ($zip == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Zip', 'system_name' => 'zip', 'sequence' => '6'), array('%s', '%s', '%s'));
-
-		if ($zip == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Country', 'system_name' => 'country', 'sequence' => '6'), array('%s', '%s', '%s'));
-
-		if ($phone == false)
-			$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Phone', 'system_name' => 'phone', 'sequence' => '7'), array('%s', '%s', '%s'));
-
-		$system_group = $wpdb->get_row("SELECT system_group FROM " . $wpdb->prefix . "events_qst_group" . " WHERE system_group = 1");
-
-		if ($wpdb->num_rows == 0) {
-
-			$wpdb->insert($wpdb->prefix . "events_qst_group", array('group_name' => 'Personal Information', 'group_identifier' => sanitize_title_with_dashes('personal_information-' . time()), 'system_group' => 1), array('%s', '%s', '%d'));
-
-			$personal_group_id = $wpdb->insert_id;
-
-			$wpdb->insert($wpdb->prefix . "events_qst_group", array('group_name' => 'Address Information', 'group_identifier' => sanitize_title_with_dashes('address_information-' . time()), 'system_group' => 0), array('%s', '%s', '%d'));
-
-			$address_group_id = $wpdb->insert_id;
-
-			$system_name_data = "SELECT id, system_name FROM " . $wpdb->prefix . "events_question" . " where system_name IN ('fname', 'lname', 'email')";
-			$system_names = $wpdb->get_results($system_name_data);
-
-			foreach ($system_names as $system_name) {
-
-				$wpdb->insert($wpdb->prefix . "events_qst_group_rel", array('group_id' => $personal_group_id, 'question_id' => $system_name->id), array('%d', '%d'));
-			}
-
-			$system_name_data = "SELECT id, system_name FROM " . $wpdb->prefix . "events_question" . " where system_name IN ('address', 'city', 'state', 'zip' )";
-			$system_names = $wpdb->get_results($system_name_data);
-
-			foreach ($system_names as $system_name) {
-
-				$wpdb->insert($wpdb->prefix . "events_qst_group_rel", array('group_id' => $address_group_id, 'question_id' => $system_name->id), array('%d', '%d'));
-			}
+			$wpdb->insert($wpdb->prefix . "events_qst_group_rel", array('group_id' => $address_group_id, 'question_id' => $system_name->id), array('%d', '%d'));
 		}
 	}
+}
 
-	function espresso_update_event_ids() {
-		global $wpdb;
-		$event_data = "SELECT id FROM " . $wpdb->prefix . "events_detail WHERE event_code='0' ";
-		if ($wpdb->num_rows == 0) {
-			$wpdb->update($wpdb->prefix . "events_detail", array('group_name' => 'Personal Information', 'group_identifier' => sanitize_title_with_dashes('personal_information-' . time()), 'system_group' => 1), array('%s', '%s', '%d'));
-		}
+function espresso_initialize_email() {
+	global $wpdb;
+	$test = $wpdb->get_row("SELECT * FROM " . $wpdb->prefix . "events_email WHERE id=1");
+	if (empty($test)) {
+		$text = "***This Is An Automated Response***\nThank You [fname] [lname]\n";
+		$text .= "We have just received a payment in the amount of [event_price] for your registration to [event_name].\n";
+		$text .= "Transaction ID: [txn_id]";
+		$wpdb->insert($wpdb->prefix . "events_email", array('email_type' => 'payment', 'email_name' => 'default payment email', 'email_subject' => 'Payment Received for [event_name]', 'email_text' => $text, 'wp_user' => 1), array('%s', '%s', '%s', '%s', '%d'));
+
+		$text = "***This is an automated response - Do Not Reply***\n";
+		$text .= "Thank you [fname] [lname] for registering for [event].\n";
+		$text .= "This event starts at [start_time] on [start_date] and runs until [end_time] on [end_date].\n";
+		$text .= "Location:\n";
+		$text .= "[location]\n";
+		$text .= "Phone: [location_phone]\n";
+		$text .= "Google Map: [google_map_link]\n";
+		$text .= "We hope that you will find this event both informative and enjoyable. Should you have any questions, please contact [contact].\n";
+		$text .= "If you have not done so already, please submit your payment in the amount of [cost].\n";
+		$text .= "Click here to review your payment information [payment_url].\n";
+		$text .= "Thank You.\n";
+		$wpdb->insert($wpdb->prefix . "events_email", array('email_type' => 'confirmation', 'email_name' => 'default confirmation email', 'email_subject' => 'Registration confirmation for [event_name]', 'email_text' => $text, 'wp_user' => 1), array('%s', '%s', '%s', '%s', '%d'));
+	}
+}
+
+function espresso_update_event_ids() {
+	global $wpdb;
+	$event_data = "SELECT id FROM " . $wpdb->prefix . "events_detail WHERE event_code='0' ";
+	if ($wpdb->num_rows == 0) {
+		$wpdb->update($wpdb->prefix . "events_detail", array('group_name' => 'Personal Information', 'group_identifier' => sanitize_title_with_dashes('personal_information-' . time()), 'system_group' => 1), array('%s', '%s', '%d'));
+	}
+}
+
+function event_espresso_update_shortcodes() {
+	global $wpdb;
+	$wpdb->query("SELECT id FROM " . $wpdb->prefix . "posts " . " WHERE (post_content LIKE '%{ESPRESSO_EVENTS}%' AND post_type = 'page') OR (post_content LIKE '%{ESPRESSO_PAYMENTS}%'  AND post_type = 'page') OR (post_content LIKE '%{ESPRESSO_TXN_PAGE}%'  AND post_type = 'page') ");
+
+	if ($wpdb->num_rows > 0) {
+		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_EVENTS}','[ESPRESSO_EVENTS]')");
+		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_PAYMENTS}','[ESPRESSO_PAYMENTS]')");
+		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_TXN_PAGE}','[ESPRESSO_TXN_PAGE]')");
 	}
 
-	function event_espresso_update_shortcodes() {
-		global $wpdb;
-		$wpdb->query("SELECT id FROM " . $wpdb->prefix . "posts " . " WHERE (post_content LIKE '%{ESPRESSO_EVENTS}%' AND post_type = 'page') OR (post_content LIKE '%{ESPRESSO_PAYMENTS}%'  AND post_type = 'page') OR (post_content LIKE '%{ESPRESSO_TXN_PAGE}%'  AND post_type = 'page') ");
+	$wpdb->query("SELECT id FROM " . $wpdb->prefix . "posts " . " WHERE (post_content LIKE '%{EVENTREGIS}%' AND post_type = 'page') OR (post_content LIKE '%{EVENTREGPAY}%' AND post_type = 'page') OR (post_content LIKE '%{EVENTPAYPALTXN}%' AND post_type = 'page') ");
 
-		if ($wpdb->num_rows > 0) {
-			$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_EVENTS}','[ESPRESSO_EVENTS]')");
-			$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_PAYMENTS}','[ESPRESSO_PAYMENTS]')");
-			$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{ESPRESSO_TXN_PAGE}','[ESPRESSO_TXN_PAGE]')");
-		}
-
-		$wpdb->query("SELECT id FROM " . $wpdb->prefix . "posts " . " WHERE (post_content LIKE '%{EVENTREGIS}%' AND post_type = 'page') OR (post_content LIKE '%{EVENTREGPAY}%' AND post_type = 'page') OR (post_content LIKE '%{EVENTPAYPALTXN}%' AND post_type = 'page') ");
-
-		if ($wpdb->num_rows > 0) {
-			$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTREGIS}','[ESPRESSO_EVENTS]')");
-			$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTREGPAY}','[ESPRESSO_PAYMENTS]')");
-			$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTPAYPALTXN}','[ESPRESSO_TXN_PAGE]')");
-		}
+	if ($wpdb->num_rows > 0) {
+		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTREGIS}','[ESPRESSO_EVENTS]')");
+		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTREGPAY}','[ESPRESSO_PAYMENTS]')");
+		$wpdb->query("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content,'{EVENTPAYPALTXN}','[ESPRESSO_TXN_PAGE]')");
 	}
+}
 
-	function espresso_update_attendee_qty() {
-		global $wpdb;
-		$sql = "SELECT id FROM " . $wpdb->prefix . "events_attendee WHERE quantity = 0 ";
-		$results = $wpdb->get_results($sql);
-		if ($wpdb->num_rows > 0) {
-			$update_attendee_qty = $wpdb->query("UPDATE " . $wpdb->prefix . "events_attendee SET quantity = 1 OR quantity = '' WHERE quantity = 0");
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, " sqldump = " . var_export($results, true) . " ] [ rows affected = " . var_export($update_attendee_qty, true));
-		}
+function espresso_update_attendee_qty() {
+	global $wpdb;
+	$sql = "SELECT id FROM " . $wpdb->prefix . "events_attendee WHERE quantity = 0 ";
+	$results = $wpdb->get_results($sql);
+	if ($wpdb->num_rows > 0) {
+		$update_attendee_qty = $wpdb->query("UPDATE " . $wpdb->prefix . "events_attendee SET quantity = 1 OR quantity = '' WHERE quantity = 0");
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, " sqldump = " . var_export($results, true) . " ] [ rows affected = " . var_export($update_attendee_qty, true));
 	}
+}
 
-	function events_organization_tbl_install() {
-		global $wpdb, $espresso_wp_user;
+function espresso_org_option_initialization() {
+	global $wpdb, $espresso_wp_user;
 
-		$table_name = $wpdb->prefix . "events_organization";
-		//Check to see if upgrading from an earlier version.
+	$table_name = $wpdb->prefix . "events_organization";
+	//Check to see if upgrading from an earlier version.
+	$test = get_user_meta($espresso_wp_user, 'events_organization_settings');
+	if (empty($test)) {
 		if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
-
-			$payment_subject = (__('Payment Received for [event_name]', 'event_espresso'));
-			$payment_message = (__('<p>***This Is An Automated Response*** </p><p>Thank You [fname] [lname]</p>  <p>We have just  received a payment in the amount of [event_price] for your registration to [event_name].</p> <p>Transaction ID: [txn_id]</p>', 'event_espresso'));
-
-			$message = ( __('<p>***This is an automated response - Do Not Reply***</p> <p>Thank you [fname] [lname] for registering for [event].</p><p>This event starts at [start_time] on [start_date] and runs until [end_time] on [end_date].</p><p>Location:<br>[location]</p><p>Phone: [location_phone]</p><p>Google Map: [google_map_link]</p><p> We hope that you will find this event both informative and enjoyable. Should you have any questions, please contact [contact].</p><p>If you have not done so already, please submit your payment in the amount of [cost].</p><p>Click here to review your payment information [payment_url].</p><p>Thank You.</p>', 'event_espresso'));
 
 			$new_org_options = array(
 					'organization' => get_bloginfo('name'),
@@ -243,10 +254,6 @@ function events_data_tables_install() {
 					'organization_zip' => '84128',
 					'contact_email' => get_bloginfo('admin_email'),
 					'default_mail' => 'Y',
-					'paypal_id' => 'my_email@my_website.com',
-					'payment_subject' => $payment_subject,
-					'payment_message' => $payment_message,
-					'message' => $message,
 					'country_id' => '',
 					'organization_country' => '64',
 					'currency_symbol' => '$',
@@ -380,6 +387,11 @@ function events_data_tables_install() {
 			$wpdb->query("DROP TABLE IF EXISTS $table_name");
 		}
 	}
+}
+
+//This function installs all the required database tables
+function events_data_tables_install() {
+	$table_version = EVENT_ESPRESSO_VERSION;
 
 	$table_name = "events_attendee";
 	$sql = " id int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -425,6 +437,14 @@ function events_data_tables_install() {
 					KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+	$table_name = "events_status";
+	$sql = "id int(3) unsigned NOT NULL AUTO_INCREMENT,
+					  code VARCHAR(45) DEFAULT NULL,
+					  type INT(11) DEFAULT '0',
+					  can_edit BOOLEAN DEFAULT '0',
+					PRIMARY KEY  (id)";
+	event_espresso_run_install($table_name, $table_version, $sql);
+
 	$table_name = "events_detail";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
 				  event_code VARCHAR(26) DEFAULT '0',
@@ -456,10 +476,8 @@ function events_data_tables_install() {
 				  reg_limit VARCHAR (25) DEFAULT '999999',
 				  allow_multiple VARCHAR (15) DEFAULT 'N',
 				  additional_limit INT(10) DEFAULT '5',
-				  send_mail VARCHAR(2) DEFAULT 'Y',
 				  is_active VARCHAR(1) DEFAULT 'Y',
 				  event_status VARCHAR(1) DEFAULT 'A',
-				  conf_mail TEXT,
 				  use_coupon_code VARCHAR(1) DEFAULT 'N',
 				  use_groupon_code VARCHAR(1) DEFAULT 'N',
 				  category_id TEXT,
@@ -480,7 +498,6 @@ function events_data_tables_install() {
 					allow_overflow VARCHAR (1) DEFAULT 'N',
 					overflow_event_id INT(10) DEFAULT '0',
 					recurrence_id int(11) DEFAULT '0',
-					email_id int(11) DEFAULT '0',
 					alt_email TEXT,
 					event_meta LONGTEXT DEFAULT NULL,
 					wp_user int(22) DEFAULT '1',
@@ -490,6 +507,8 @@ function events_data_tables_install() {
 					submitted datetime NOT NULL,
 					ticket_id int(22) DEFAULT '0',
 					certificate_id int(22) DEFAULT '0',
+					confirmation_email_id int(22) DEFAULT '0',
+					payment_email_id int(22) DEFAULT '0',
 				 PRIMARY KEY  (id),
 				 KEY slug (slug),
 				 KEY event_code (event_code),
@@ -521,6 +540,7 @@ function events_data_tables_install() {
 
 	$table_name = "events_email";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
+				email_type VARCHAR(25) DEFAULT NULL,
 				email_name VARCHAR(100) DEFAULT NULL,
 				email_subject VARCHAR(250) DEFAULT NULL,
 				email_text TEXT,
@@ -677,9 +697,6 @@ function events_data_tables_install() {
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-
-	events_organization_tbl_install();
-
 	$table_name = "events_question";
 	$sql = "id int(11) unsigned NOT NULL auto_increment,
 			sequence INT(11) NOT NULL default '0',
@@ -732,10 +749,5 @@ function events_data_tables_install() {
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-	event_espresso_install_system_names();
-	event_espresso_create_upload_directories();
-	event_espresso_update_shortcodes();
-	event_espresso_update_attendee_data();
-	espresso_update_attendee_qty();
-	espresso_fix_org_options();
+
 }

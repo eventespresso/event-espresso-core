@@ -8,22 +8,22 @@ function update_event($recurrence_arr = array()) {
 	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-	if( check_admin_referer( 'espresso_form_check', 'ee_update_event' ) ) {
+	if (check_admin_referer('espresso_form_check', 'ee_update_event')) {
 
 		$wpdb->show_errors();
 		/*
-		* Begin Recurrence handling
-		*
-		* Will clean up in V 1.2.0
-		*
-		*/
+		 * Begin Recurrence handling
+		 *
+		 * Will clean up in V 1.2.0
+		 *
+		 */
 		if (get_option('event_espresso_re_active') == 1) {
 			require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_functions.php");
 
 			if ($_POST['recurrence_id'] > 0) {
 				/*
-				* If the array is empty, then find the recurring dates
-				*/
+				 * If the array is empty, then find the recurring dates
+				 */
 				if (count($recurrence_arr) == 0) {
 
 					// Prepare the parameters array for use with various RE functions
@@ -77,8 +77,8 @@ function update_event($recurrence_arr = array()) {
 						update_recurrence_master_record();
 
 						/*
-						* Delete the records that don't belong in the formula
-						*/
+						 * Delete the records that don't belong in the formula
+						 */
 
 						if (count($recurrence_dates) > 0) {
 							$delete_in = '';
@@ -117,9 +117,9 @@ function update_event($recurrence_arr = array()) {
 							$wpdb->query($DEL_SQL);
 
 						/*
-						* Add the new records based on the new formula
-						* The $recurrence_dates array will contain the new dates
-						*/
+						 * Add the new records based on the new formula
+						 * The $recurrence_dates array will contain the new dates
+						 */
 						if (!function_exists('add_event_to_db')) {
 							require_once ('insert_event.php');
 						}
@@ -141,10 +141,10 @@ function update_event($recurrence_arr = array()) {
 						}
 
 						/*
-						* Find all the event ids in the series and feed into the $recurrence_dates array
-						* This array will be used at the end of this document to invoke the recursion of update_event function so all the events in the series
-						* can be updated with the information.
-						*/
+						 * Find all the event ids in the series and feed into the $recurrence_dates array
+						 * This array will be used at the end of this document to invoke the recursion of update_event function so all the events in the series
+						 * can be updated with the information.
+						 */
 					}
 
 					$result = $wpdb->get_results($wpdb->prepare($UPDATE_SQL, array($_POST['recurrence_id'])));
@@ -166,14 +166,14 @@ function update_event($recurrence_arr = array()) {
 		if (defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE') &&
 						!empty($_POST['recurrence']) && $_POST['recurrence'] == 'Y' &&
 						count($recurrence_arr) == 0 && $_POST['recurrence_apply_changes_to'] > 1) {
-	//skip the first update
+			//skip the first update
 		} else {
 
 			$event_meta = array(); //will be used to hold event meta data
 			$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
 			$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
 			$event_name = $_REQUEST['event'];
-			$event_slug = array_key_exists('slug', $recurrence_arr)?$recurrence_arr['slug']:($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name.'-'.$event_id) :  sanitize_title_with_dashes($_REQUEST['slug']);
+			$event_slug = array_key_exists('slug', $recurrence_arr) ? $recurrence_arr['slug'] : ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name . '-' . $event_id) : sanitize_title_with_dashes($_REQUEST['slug']);
 			$event_desc = $_REQUEST['event_desc'];
 			$display_desc = $_REQUEST['display_desc'];
 			$display_reg_form = $_REQUEST['display_reg_form'];
@@ -220,12 +220,11 @@ function update_event($recurrence_arr = array()) {
 			$early_disc_date = $_REQUEST['early_disc_date'];
 			$early_disc_percentage = $_REQUEST['early_disc_percentage'];
 
-			$conf_mail = $_REQUEST['conf_mail'];
 			$use_coupon_code = $_REQUEST['use_coupon_code'];
 			$alt_email = $_REQUEST['alt_email'];
 
-			$send_mail = $_REQUEST['send_mail'];
-			$email_id = empty($_REQUEST['email_name']) ? '' : $_REQUEST['email_name'];
+			$confirmation_email_id = $_REQUEST['confirmation_email_id'];
+			$payment_email_id = $_REQUEST['payment_email_id'];
 
 
 			$event_category = serialize(empty($_REQUEST['event_category']) ? '' : $_REQUEST['event_category']);
@@ -265,26 +264,25 @@ function update_event($recurrence_arr = array()) {
 			$event_meta['date_submitted'] = $_REQUEST['date_submitted'];
 			$event_meta['originally_submitted_by'] = $_REQUEST['originally_submitted_by'];
 
-			if (isset($wp_user) && $wp_user != $event_meta['originally_submitted_by']){
+			if (isset($wp_user) && $wp_user != $event_meta['originally_submitted_by']) {
 				$event_meta['orig_event_staff'] = !empty($_REQUEST['event_person']) ? serialize($_REQUEST['event_person']) : '';
 			}
 			//print_r($event_meta['orig_event_staff']);
-
 			//Thumbnails
 			$event_meta['event_thumbnail_url'] = !empty($_REQUEST['upload_image']) ? $_REQUEST['upload_image'] : '';
 			$event_meta['display_thumb_in_lists'] = !empty($_REQUEST['show_thumb_in_lists']) ? $_REQUEST['show_thumb_in_lists'] : '';
 			$event_meta['display_thumb_in_regpage'] = !empty($_REQUEST['show_thumb_in_regpage']) ? $_REQUEST['show_thumb_in_regpage'] : '';
 			$event_meta['display_thumb_in_calendar'] = !empty($_REQUEST['show_on_calendar']) ? $_REQUEST['show_on_calendar'] : '';
 
-			if(!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])){
+			if (!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])) {
 				$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
-			}else{
+			} else {
 				$event_meta['enable_for_gmap'] = 'N';
 			}
 
 			/*
-			* Added for seating chart addon
-			*/
+			 * Added for seating chart addon
+			 */
 			if (isset($_REQUEST['seating_chart_id'])) {
 				$cls_seating_chart = new seating_chart();
 				$seating_chart_result = $cls_seating_chart->associate_event_seating_chart($_REQUEST['seating_chart_id'], $event_id);
@@ -306,8 +304,8 @@ function update_event($recurrence_arr = array()) {
 				}
 			}
 			/*
-			* End
-			*/
+			 * End
+			 */
 
 
 			if ($_REQUEST['emeta'] != '') {
@@ -325,78 +323,80 @@ function update_event($recurrence_arr = array()) {
 			################# END #################
 			//When adding colums to the following arrays, be sure both arrays have equal values.
 			$sql = array(
-				'event_name' => $event_name,
-				'event_desc' => $event_desc,
-				'display_desc' => $display_desc,
-				'display_reg_form' => $display_reg_form,
-				'slug' => $event_slug,
-				'address' => $address,
-				'address2' => $address2,
-				'city' => $city,
-				'state' => $state,
-				'zip' => $zip,
-				'country' => $country,
-				'phone' => $phone,
-				'virtual_url' => $virtual_url,
-				'virtual_phone' => $virtual_phone,
-				'venue_title' => $venue_title,
-				'venue_url' => $venue_url,
-				'venue_phone' => $venue_phone,
-				'venue_image' => $venue_image,
-				'registration_start' => $registration_start,
-				'registration_end' => $registration_end,
-				'start_date' => $start_date,
-				'end_date' => $end_date,
-				'allow_multiple' => $allow_multiple,
-				'send_mail' => $send_mail,
-				'is_active' => $is_active,
-				'event_status' => $event_status,
-				'conf_mail' => $conf_mail,
-				'use_coupon_code' => $use_coupon_code,
-				'member_only' => $member_only,
-				'externalURL' => $externalURL,
-				'early_disc' => $early_disc,
-				'early_disc_date' => $early_disc_date,
-				'early_disc_percentage' => $early_disc_percentage,
-				'alt_email' => $alt_email,
-				'question_groups' => $question_groups,
-				'allow_overflow' => $allow_overflow,
-				'overflow_event_id' => $overflow_event_id,
-				'additional_limit' => $additional_limit,
-				'reg_limit' => $reg_limit,
-				'email_id' => $email_id,
-				'registration_startT' => $registration_startT,
-				'registration_endT' => $registration_endT,
-				'event_meta' => $event_meta,
-				'require_pre_approval' => $require_pre_approval,
-				'timezone_string' => $timezone_string,
-				'ticket_id' => $ticket_id,
-				'certificate_id' => $certificate_id,
-				'wp_user' => $wp_user_id
+					'event_name' => $event_name,
+					'event_desc' => $event_desc,
+					'display_desc' => $display_desc,
+					'display_reg_form' => $display_reg_form,
+					'slug' => $event_slug,
+					'address' => $address,
+					'address2' => $address2,
+					'city' => $city,
+					'state' => $state,
+					'zip' => $zip,
+					'country' => $country,
+					'phone' => $phone,
+					'virtual_url' => $virtual_url,
+					'virtual_phone' => $virtual_phone,
+					'venue_title' => $venue_title,
+					'venue_url' => $venue_url,
+					'venue_phone' => $venue_phone,
+					'venue_image' => $venue_image,
+					'registration_start' => $registration_start,
+					'registration_end' => $registration_end,
+					'start_date' => $start_date,
+					'end_date' => $end_date,
+					'allow_multiple' => $allow_multiple,
+					'is_active' => $is_active,
+					'event_status' => $event_status,
+					'use_coupon_code' => $use_coupon_code,
+					'member_only' => $member_only,
+					'externalURL' => $externalURL,
+					'early_disc' => $early_disc,
+					'early_disc_date' => $early_disc_date,
+					'early_disc_percentage' => $early_disc_percentage,
+					'alt_email' => $alt_email,
+					'question_groups' => $question_groups,
+					'allow_overflow' => $allow_overflow,
+					'registration_startT' => $registration_startT,
+					'registration_endT' => $registration_endT,
+					'event_meta' => $event_meta,
+					'require_pre_approval' => $require_pre_approval,
+					'timezone_string' => $timezone_string,
+					'overflow_event_id' => $overflow_event_id,
+					'registration_startT' => $registration_startT,
+					'registration_endT' => $registration_endT,
+					'event_meta' => $event_meta,
+					'require_pre_approval' => $require_pre_approval,
+					'timezone_string' => $timezone_string,
+					'reg_limit' => $reg_limit,
+					'additional_limit' => $additional_limit,
+					'wp_user' => $wp_user_id,
+					'ticket_id' => $ticket_id,
+					'certificate_id' => $certificate_id,
+					'confirmation_email_id' => $confirmation_email_id,
+					'payment_email_id' => $payment_email_id
 			);
 
 			$sql_data = array(
-				'%s','%s','%s','%s',
-				'%s','%s','%s','%s','%s',
-				'%s','%s','%s','%s',
-				'%s','%s','%s','%s',
-				'%s','%s','%s','%s',
-				'%s','%s','%s','%s',
-				'%s','%s','%s','%s',
-				'%s','%s','%s','%s',
-				'%s','%s','%s','%s',
-				'%d','%d','%d','%d',
-				'%s','%s','%s','%s',
-				'%s','%d','%d','%d'
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%d', '%d', '%d', '%d',
+					'%d', '%d', '%d'
 			);
 
 			$update_id = array('id' => $event_id);
 
-			/*echo 'Debug:<br />';
-			print 'Number of vars: ' . count ($sql);
-			echo '<br />';
-			print 'Number of cols: ' . count($sql_data);
-			echo "<pre>".print_r( $sql,true )."</pre>";*/
+			/* echo 'Debug:<br />';
+			  print 'Number of vars: ' . count ($sql);
+			  echo '<br />';
+			  print 'Number of cols: ' . count($sql_data);
+			  echo "<pre>".print_r( $sql,true )."</pre>"; */
 
 			if (function_exists('event_espresso_add_event_to_db_groupon')) {
 				$sql = event_espresso_add_event_to_db_groupon($sql, $_REQUEST['use_groupon_code']);
@@ -405,15 +405,15 @@ function update_event($recurrence_arr = array()) {
 				//print count($sql_data);
 				$wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
 				/* echo 'Debug: <br />';
-				print 'Number of vars: ' . count ($sql);
-				echo '<br />';
-				print 'Number of cols: ' . count($sql_data); */
+				  print 'Number of vars: ' . count ($sql);
+				  echo '<br />';
+				  print 'Number of cols: ' . count($sql_data); */
 			} else {
 				$wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
 				/* echo 'Debug: <br />';
-				print 'Number of vars: ' . count ($sql);
-				echo '<br />';
-				 print 'Number of cols: ' . count($sql_data); */
+				  print 'Number of vars: ' . count ($sql);
+				  echo '<br />';
+				  print 'Number of cols: ' . count($sql_data); */
 			}
 			//print $wpdb->print_error();
 
@@ -645,51 +645,51 @@ function update_event($recurrence_arr = array()) {
 
 			//Show the saved event notice
 			global $notices;
-			$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="'. espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' for ' . date("m/d/Y", strtotime($start_date));
-			do_action( 'action_hook_espresso_admin_notices' );
+			$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="' . espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' for ' . date("m/d/Y", strtotime($start_date));
+			do_action('action_hook_espresso_admin_notices');
 
 			/*
-			* Added for seating chart addon
-			*/
+			 * Added for seating chart addon
+			 */
 			if (isset($seating_chart_result) && $seating_chart_result === false) {
 				?>
 				<p><?php _e('Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)', 'event_espresso'); ?></p>
 				<?php
 			}
 			/*
-			* End
-			*/
-
+			 * End
+			 */
 		}
 
 		/*
-		* With the recursion of this function, additional recurring events will be updated
-		*/
+		 * With the recursion of this function, additional recurring events will be updated
+		 */
 		if (isset($recurrence_dates) && count($recurrence_dates) > 0 && $_POST['recurrence_apply_changes_to'] > 1) {
 			//$recurrence_dates = array_shift($recurrence_dates); //Remove the first item from the array since it will be added after this recursion
 			foreach ($recurrence_dates as $r_d) {
 
 				if ($r_d['event_id'] != '' && count($r_d) > 2) {
 					update_event(
-						array(
-						'event_id' => $r_d['event_id'],
-						'event_identifier' => $r_d['event_identifier'],
-						'recurrence_id' => $r_d['recurrence_id'],
-						'recurrence_start_date' => $r_d['start_date'],
-						'recurrence_event_end_date' => $r_d['event_end_date'],
-						'registration_start' => $r_d['registration_start'],
-						'registration_end' => $r_d['registration_end'],
-						'visible_on' => $r_d['visible_on']
+									array(
+											'event_id' => $r_d['event_id'],
+											'event_identifier' => $r_d['event_identifier'],
+											'recurrence_id' => $r_d['recurrence_id'],
+											'recurrence_start_date' => $r_d['start_date'],
+											'recurrence_event_end_date' => $r_d['event_end_date'],
+											'registration_start' => $r_d['registration_start'],
+											'registration_end' => $r_d['registration_end'],
+											'visible_on' => $r_d['visible_on']
 					));
 				}
 			}
 		}
 		/*
-		* End recursion, as part of recurring events.
-		*/
+		 * End recursion, as part of recurring events.
+		 */
 
 		//Empty the event cache
 		espresso_reset_cache($event_id);
-
 	}// end nonce check
-} // end 'update_event'
+}
+
+// end 'update_event'

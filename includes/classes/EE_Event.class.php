@@ -50,107 +50,44 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EE_Event {	//extends EE_Event_Object
+class EE_Event { //extends EE_Event_Object
 
 	public $id;
-	public $type_id;
-	public $status_id;
-	public $code;
-	public $identifier;
 	public $name;
 	public $slug;
-	public $desc;
+	public $description;
+	public $registration_start_timestamp;
+	public $registration_end_timestamp;
+	public $start_timestamp;
+	public $end_timestamp;
+	public $venue_id;
+	public $virtual_phone;
+	public $virtual_url;
+	public $virtual_call_in_number;
+	public $confirmation_email_id;
+	public $payment_email_id;
+	public $attendee_limit;
+	public $allow_group_registrations;
+	public $additional_attendee_limit;
+	public $additional_attendee_reg_info;
+	public $is_active;
+	public $status_id;
 	public $is_display_desc;
 	public $is_display_reg_form;
-	public $venue_id;
+	public $default_payment_status;
+	public $alternate_registration_url;
+	public $alternate_email_address;
 	public $eb_timestamp;
 	public $eb_amount;
 	public $is_eb_percentage;
-	public $members_only;
-	public $start_date;
-	public $end_date;
-	public $registration_start;
-	public $registration_end;
-	public $registration_startT;
-	public $registration_endT;
-	public $visible_on;
-	public $address;
-	public $address2;
-	public $city;
-	public $state;
-	public $zip;
-	public $phone;
-	public $venue_title;
-	public $venue_url;
-	public $venue_image;
-	public $venue_phone;
-	public $venue_meta;
-	public $virtual_url;
-	public $virtual_phone;
-	public $reg_limit;
-	public $allow_multiple;
-	public $additional_limit;
-	public $send_mail;
-	public $is_active;
-	public $event_status;
-	public $conf_mail;
-	public $use_coupon_code;
-	public $use_groupon_code;
-	public $category_id;
-	public $coupon_id;
-	public $tax_percentage;
-	public $tax_mode;
-	public $member_only;
-	public $post_id;
-	public $post_type;
-	public $country;
-	public $externalURL;
-	public $question_groups;
-	public $item_groups;
-	public $event_type;
-	public $allow_overflow;
-	public $overflow_event_id;
-	public $recurrence_id;
-	public $email_id;
-	public $alt_email;
-	public $event_meta;
-	public $wp_user;
-	public $require_pre_approval;
-	public $timezone_string;
-	public $likes;
-	public $submitted;
-	public $ticket_id;
-	public $certificate_id;
-	public $status;
-	public $timeslots;
-	public $active_state;
-	public $categories;
-	public $registration_url;
-	public $location;
-	public $location_array;
-	public $gmap_location;
-	public $contact;
-	public $twitter;
-	public $venue_desc;
-	public $enable_for_maps;
-	public $gmap_static;
-	public $prices;
-	public $number_of_attendees;
-	public $default_payment_status;
-	public $additional_attendee_reg_info;
-	public $add_attendee_question_groups;
-	public $date_submitted;
-	public $originally_submitted_by;
-	public $orig_event_staff;
-	public $event_thumbnail_url;
-	public $display_thumb_in_lists;
-	public $display_thumb_in_regpage;
-	public $display_thumb_in_calendar;
-	public $enable_for_gmap;
-	public $event_hashtag;
-	public $event_format;
-	public $event_livestreamed;
-	public $questions;
+	public $is_allow_coupons;
+	public $featured_image_url;
+	public $is_use_image_in_event_lists;
+	public $is_use_image_in_registration;
+	public $type_id;
+	public $code;
+	public $parent;
+	public $event_link;
 
 	/**
 	 * Event constructor
@@ -164,36 +101,48 @@ class EE_Event {	//extends EE_Event_Object
 	}
 
 	public function poplulate_event_details_from_db() {
-		$sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $this->id . "'";
+		$sql = "SELECT ed.*, t.start_time, t.end_time, vr.venue_id FROM " . EVENTS_DETAIL_TABLE . " ed";
+		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " t ON t.event_id=ed.id ";
+		$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id=ed.id ";
+		$sql .= " WHERE id = '" . $this->id . "' LIMIT 1";
 		global $wpdb, $org_options;
 		$vars = $wpdb->get_row($sql, ARRAY_A);
-		foreach ($vars as $key => $value) {
-			$this->$key = $value;
-		}
-		$this->question_groups = unserialize($this->question_groups);
-		if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
-			$sql = "SELECT ev.* FROM " . EVENTS_VENUE_TABLE . " ev ";
-			$sql .= "JOIN " . EVENTS_VENUE_REL_TABLE . " evr ON evr.venue_id = ev.id ";
-			$sql .= "WHERE evr.event_id = '" . $this->id . "'";
-			$vars = $wpdb->get_row($sql, ARRAY_A);
-			$this->venue_title = $vars['name'];
-			$this->address = $vars['address'];
-			$this->address2 = $vars['address2'];
-			$this->city = $vars['city'];
-			$this->state = $vars['state'];
-			$this->zip = $vars['zip'];
-			$this->country = $vars['country'];
-			$this->venue_meta = unserialize($vars['meta']);
-			$this->contact = $this->venue_meta['contact'];
-			$this->phone = $this->venue_meta['phone'];
-			$this->venue_phone = $this->venue_meta['phone'];
-			$this->twitter = $this->venue_meta['twitter'];
-			$this->venue_image = $this->venue_meta['image'];
-			$this->venue_url = $this->venue_meta['website'];
-			$this->venue_desc = $this->venue_meta['description'];
-			$this->enable_for_maps = $this->venue_meta['enable_for_maps'];
-			$this->gmap_static = $this->venue_meta['gmap_static'];
-		}
+		$meta = unserialize($vars['event_meta']);
+		$this->id = $vars['id'];
+		$this->name = $vars['event_name'];
+		$this->slug = $vars['slug'];
+		$this->description = $vars['event_desc'];
+		$this->registration_start_timestamp = $vars['registration_start'] . ' ' . $vars['registration_startT'];
+		$this->registration_end_timestamp = $vars['registration_end'] . ' ' . $vars['registration_endT'];
+		$this->start_timestamp = $vars['start_date'] . ' ' . $vars['start_time'];
+		$this->end_timestamp = $vars['end_date'] . ' ' . $vars['end_time'];
+		$this->venue_id = $vars['venue_id'];
+		$this->virtual_phone = $vars['phone'];
+		$this->virtual_url = $vars['virtual_url'];
+		$this->virtual_call_in_number = $vars['virtual_phone'];
+		$this->confirmation_email_id = $vars['email_id'];
+		$this->payment_email_id = $vars['email_id'];
+		$this->attendee_limit = $vars['reg_limit'];
+		$this->allow_group_registrations = $vars['allow_multiple'];
+		$this->additional_attendee_limit = $vars['additional_limit'];
+		$this->additional_attendee_reg_info = $meta['additional_attendee_reg_info'];
+		$this->is_active = $vars['is_active'];
+		$this->status_id = $vars[''];
+		$this->is_display_desc = $vars[''];
+		$this->is_display_reg_form = $vars[''];
+		$this->default_payment_status = $vars[''];
+		$this->alternate_registration_url = $vars[''];
+		$this->alternate_email_address = $vars[''];
+		$this->eb_timestamp = $vars[''];
+		$this->eb_amount = $vars[''];
+		$this->is_eb_percentage = $vars[''];
+		$this->is_allow_coupons = $vars[''];
+		$this->featured_image_url = $vars[''];
+		$this->is_use_image_in_event_lists = $vars[''];
+		$this->is_use_image_in_registration = $vars[''];
+		$this->type_id = $vars[''];
+		$this->code = $vars[''];
+		$this->parent = $vars[''];
 		$this->create_event_link();
 	}
 
@@ -221,7 +170,7 @@ class EE_Event {	//extends EE_Event_Object
 				// use fugly oldsckool link
 				$registration_url = add_query_arg('event_slug', $this->slug, $registration_url);
 			}
-		} elseif ($this->id && absint($this->id) && $this->id != '' && $this->id > 0) {	 // no event slug, so use  event_id
+		} elseif ($this->id && absint($this->id) && $this->id != '' && $this->id > 0) { // no event slug, so use  event_id
 			// check if permalinks are being used
 			if ($use_pretty_permalinks) {
 

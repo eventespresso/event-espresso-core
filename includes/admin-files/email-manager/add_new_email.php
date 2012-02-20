@@ -1,6 +1,6 @@
 <?php
 function add_new_event_email(){
-	
+
 	?>
 <!--Add event display-->
 
@@ -18,6 +18,13 @@ function add_new_event_email(){
 									<?php _e('Email Name','event_espresso'); ?>
 								</label></th>
 							<td><input class="regular-text" type="text" name="email_name" /></td>
+						</tr>
+						<tr>
+							<th><label for="email_type">
+									<?php _e('Email Type','event_espresso'); ?>
+								</label></th>
+							<td><input class="regular-text" type="text" name="email_type" /></td>
+							<td>Typically, either 'confirmation' or 'payment'.</td>
 						</tr>
 						<tr>
 							<th><label>
@@ -54,6 +61,6 @@ function add_new_event_email(){
 		</div>
 	</div>
 </div>
-<?php 
+<?php
 //espresso_tiny_mce();
-} 
+}

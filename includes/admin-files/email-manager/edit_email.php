@@ -1,12 +1,13 @@
 <?php
 function edit_event_email(){
 	global $wpdb;
-	
+
 	$id=$_REQUEST['id'];
 	$results = $wpdb->get_results("SELECT * FROM ". EVENTS_EMAIL_TABLE ." WHERE id =".$id);
 	foreach ($results as $result){
 		$email_id= $result->id;
 		$email_name=stripslashes_deep($result->email_name);
+		$email_type=stripslashes_deep($result->email_type);
 		$email_subject=stripslashes_deep($result->email_subject);
 		$email_text=stripslashes_deep($result->email_text);
 	}
@@ -28,6 +29,13 @@ function edit_event_email(){
 									<?php _e('Email Name','event_espresso'); ?>
 								</label></th>
 							<td><input class="regular-text" type="text" name="email_name" size="25" value="<?php echo stripslashes($email_name);?>" /></td>
+						</tr>
+						<tr>
+							<th><label for="email_type">
+									<?php _e('Email Type','event_espresso'); ?>
+								</label></th>
+							<td><input class="regular-text" type="text" name="email_type" size="25" value="<?php echo stripslashes($email_type);?>"/></td>
+							<td>Typically, either 'confirmation' or 'payment'.</td>
 						</tr>
 						<tr>
 							<th><label>
@@ -69,6 +77,6 @@ function edit_event_email(){
 		</div>
 	</div>
 </div>
-<?php 
+<?php
 //espresso_tiny_mce();
 }

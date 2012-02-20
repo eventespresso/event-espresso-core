@@ -482,25 +482,6 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	</label></th>
 																<td><?php echo select_input('default_mail', $values, $org_options['default_mail']); ?></td>
 															</tr>
-															<tr>
-																<th><label for="payment_subject">
-																		<?php _e('Email Subject:', 'event_espresso'); ?>
-																	</label></th>
-																<td><input id="payment_subject" name="payment_subject" size="50" class="regular-text" type="text" value="<?php echo stripslashes_deep($org_options['payment_subject']); ?>" /></td>
-															</tr>
-															<tr>
-																<td colspan="2">
-																	<?php
-																	$content = espresso_admin_format_content($org_options['payment_message']);
-																	$editor_id = 'payment_message';
-																	$settings = array('textarea_name' => 'payment_message');
-																	wp_editor($content, $editor_id, $settings);
-																	?>
-																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-																				<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-																			</a></span></p>
-																	<?php //	</div>  ?></td>
-															</tr>
 														</tbody>
 													</table>
 													<h4>
@@ -513,21 +494,6 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																		<?php _e('Send registration confirmation emails before payment is received?', 'event_espresso'); ?>
 																	</label></th>
 																<td><?php echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?></td>
-															</tr>
-															<tr>
-																<td colspan="2">
-																	<?php
-																	$content = espresso_admin_format_content($org_options['message']);
-																	$editor_id = 'reg-conf-email-mce';
-																	$settings = array('textarea_name' => 'success_message');
-																	wp_editor($content, $editor_id, $settings);
-																	?>
-																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
-																				<?php _e('View Custom Email Tags', 'event_espresso'); ?>
-																			</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
-																				<?php _e('Example', 'event_espresso'); ?>
-																			</a> </span></p>
-																	<?php //</div></td>  */ ?>
 															</tr>
 														</tbody>
 													</table>

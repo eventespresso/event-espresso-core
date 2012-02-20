@@ -1,7 +1,7 @@
 <?php
 if (!function_exists('espresso_venue_dd')) {
 
-	function espresso_venue_dd($current_value=0) {
+	function espresso_venue_dd($current_value = 0) {
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
@@ -24,27 +24,9 @@ if (!function_exists('espresso_venue_dd')) {
 		}
 		$sql .= " GROUP BY ev.id ORDER by name";
 
-		//echo $sql;
 		$venues = $wpdb->get_results($sql);
 		$num_rows = $wpdb->num_rows;
 
-
-#		return "<pre>".print_r( $venues,true )."</pre>";
-		/*
-		  [id] => 3
-		  [name] => Home
-		  [identifier] =>
-		  [address] => 101-1414 Government Street
-		  [address2] =>
-		  [city] => Penticton
-		  [state] => BC
-		  [zip] => V2A 4W1
-		  [country] => Canada
-		  [meta] => a:6:{s:7:"contact";s:0:"";s:5:"phone";s:0:"";s:7:"twitter";s:0:"";s:5:"image";s:0:"";s:7:"website";s:0:"";s:11:"description";s:0:"";}
-		  [locale] =>
-		  [wp_user] => 0
-		 */
-		//echo $current_value;
 		if ($num_rows > 0) {
 			$field = '<label>' . __('Select from Venue Manager list', 'event_espresso') . '</label>';
 			$field .= '<select name="venue_id[]" id="venue_id" class="chzn-select"  >\n';
@@ -111,6 +93,32 @@ if (!function_exists('espresso_venue_dd')) {
 		}
 	}
 
+}
+
+function espresso_email_dd($type = 'all', $id = NULL) {
+	global $wpdb;
+	switch ($type) {
+		case 'confirmation':
+		case 'payment':
+			$emails = $wpdb->get_results("SELECT * FROM " . EVENTS_EMAIL_TABLE . " WHERE email_type='" . $type . "' ORDER BY id", OBJECT_K);
+			break;
+		case 'all':
+			$emails = $wpdb->get_results("SELECT * FROM " . EVENTS_EMAIL_TABLE . " ORDER BY id", OBJECT_K);
+			break;
+	}
+	$num_rows = $wpdb->num_rows;
+	$field = '';
+	if ($num_rows > 0) {
+		if (empty($id)) $id = $emails[key($emails)]->id;
+		$field = '<label>' . __('Select from Email Manager list', 'event_espresso') . '</label>';
+		$field .= '<select name="' . $type . '_email_id" id="email_id" class="chzn-select"  >\n';
+		foreach ($emails as $key=>$email) {
+			$selected = ($id == $email->id) ? 'selected="selected"' : '';
+			$field .= '<option rel="' . $key . '" ' . $selected . ' value="' . $email->id . '">' . stripslashes_deep($email->email_name) . ' </option>\n';
+		}
+		$field .= "</select>";
+	}
+	return $field;
 }
 
 if (!function_exists('espresso_personnel_cb')) {
@@ -330,7 +338,7 @@ if (!function_exists('espresso_chart_display')) {
 
 if (!function_exists('event_espresso_meta_edit')) {
 
-	function event_espresso_meta_edit($event_meta='') {
+	function event_espresso_meta_edit($event_meta = '') {
 		global $wpdb, $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_premium;
@@ -340,10 +348,10 @@ if (!function_exists('event_espresso_meta_edit')) {
 		$hiddenmeta = array("", "venue_id", "additional_attendee_reg_info", "add_attendee_question_groups", "date_submitted", "event_host_terms", "default_payment_status", "display_thumb_in_lists", "display_thumb_in_regpage", "display_thumb_in_calendar", "event_thumbnail_url", "originally_submitted_by", "enable_for_gmap", "orig_event_staff");
 		$meta_counter = 1;
 
-		$default_event_meta =  array();
-		$default_event_meta = apply_filters( 'filter_hook_espresso_filter_default_event_meta', $default_event_meta );
+		$default_event_meta = array();
+		$default_event_meta = apply_filters('filter_hook_espresso_filter_default_event_meta', $default_event_meta);
 
-		$default_meta = $event_meta == '' ? $default_event_meta :array() ;
+		$default_meta = $event_meta == '' ? $default_event_meta : array();
 		$event_meta = $event_meta == '' ? array() : $event_meta;
 		$event_meta = array_merge($event_meta, $default_meta);
 		//print_r( $event_meta );
@@ -351,7 +359,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 		//print_r( $good_meta );
 		?>
 		<p>
-			<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'event-meta-boxes'); ?>
+			<?php _e('Using Event Meta boxes', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'event-meta-boxes'); ?>
 		<ul id="dynamicMetaInput">
 			<?php
 			if ($event_meta != '') {
@@ -384,8 +392,10 @@ if (!function_exists('event_espresso_meta_edit')) {
 						$meta_counter++;
 					}
 					?>
-				<?php }
-				echo '<li><label for="emeta-box">' . __('Key', 'event_espresso'); ?>
+					<?php
+				}
+				echo '<li><label for="emeta-box">' . __('Key', 'event_espresso');
+				?>
 			</label>
 			<input id="emeta-box" size="20" type="text" value="" name="emeta[]" >
 			<label for="emetaad[]">
@@ -500,7 +510,7 @@ function espresso_attendee_counts() {
 
 if (!function_exists('espresso_featured_image_event_admin')) {
 
-	function espresso_featured_image_event_admin($event_meta='') {
+	function espresso_featured_image_event_admin($event_meta = '') {
 		global $espresso_premium;
 		$values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
 		?>
@@ -520,7 +530,7 @@ if (!function_exists('espresso_featured_image_event_admin')) {
 						$event_thumb = '';
 					}
 					?>
-					<?php // var_dump($event_meta['event_thumbnail_url']);  ?>
+					<?php // var_dump($event_meta['event_thumbnail_url']);   ?>
 					<label for="upload_image">
 						<?php _e('Add Featured Image', 'event_espresso'); ?>
 					</label>

@@ -127,7 +127,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 								</label></th>
 							<td><?php echo select_input('use_personnel_manager', $values, isset($org_options['use_personnel_manager']) ? $org_options['use_personnel_manager'] : 'N'); ?></td>
 						</tr>
-						
+
 						<tr>
 							<th><label for="use_attendee_pre_approval">
 <?php _e('Enable Attendee Pre-approval', 'event_espresso'); ?>
@@ -148,12 +148,6 @@ until payment is made, for each event.', 'event_espresso'); ?>
 				</h4>
 				<table class="form-table">
 					<tbody>
-						<tr>
-							<th><label for="default_mail">
-<?php _e('Use Fancy Email Headers', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'fancyemailheaders'); ?>
-								</label></th>
-							<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?></td>
-						</tr>
 						<tr>
 							<td colspan="2"><strong>
 <?php _e('WordPress Dashboard', 'event_espresso'); ?>

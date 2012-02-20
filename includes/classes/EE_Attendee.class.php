@@ -38,11 +38,21 @@ License: 			GPLv2
 class EE_Attendee {
 
 	public $id;
+	public $is_primary;
 	public $fname;
 	public $lname;
 	public $email;
-	public $venue_id;
+	public $address;
+	public $address2;
+	public $city;
+	public $state;
+	public $zip;
+	public $country_id;
+	public $phone;
 	public $social_networks;
+	public $status_id;
+	public $comments;
+	public $notes;
 
 
 

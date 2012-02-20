@@ -121,13 +121,11 @@ function add_event_to_db($recurrence_arr = array()) {
 			$early_disc_date = $_REQUEST['early_disc_date'];
 			$early_disc_percentage = $_REQUEST['early_disc_percentage'];
 
-			$conf_mail = $_REQUEST['conf_mail'];
-
 			$use_coupon_code = $_REQUEST['use_coupon_code'];
 			$alt_email = $_REQUEST['alt_email'];
-			$send_mail = $_REQUEST['send_mail'];
-			$email_id = isset($_REQUEST['email_name']) ? $_REQUEST['email_name'] : '';
 
+			$confirmation_email_id = $_REQUEST['confirmation_email_id'];
+			$payment_email_id = $_REQUEST['payment_email_id'];
 			//Venue Information
 			$venue_title = empty($_REQUEST['venue_title']) ? '' : $_REQUEST['venue_title'];
 			$venue_url = empty($_REQUEST['venue_url']) ? '' : $_REQUEST['venue_url'];
@@ -229,75 +227,74 @@ function add_event_to_db($recurrence_arr = array()) {
 					'event_desc' => $event_desc,
 					'display_desc' => $display_desc,
 					'display_reg_form' => $display_reg_form,
+
 					'event_identifier' => $event_identifier,
 					'slug' => $event_slug,
 					'address' => $address,
 					'address2' => $address2,
 					'city' => $city,
+
 					'state' => $state,
 					'zip' => $zip,
 					'country' => $country,
 					'phone' => $phone,
 					'virtual_url' => $virtual_url,
+
 					'virtual_phone' => $virtual_phone,
 					'venue_title' => $venue_title,
 					'venue_url' => $venue_url,
 					'venue_phone' => $venue_phone,
 					'venue_image' => $venue_image,
+
 					'registration_start' => $registration_start,
 					'registration_end' => $registration_end,
 					'start_date' => $start_date,
 					'end_date' => $end_date,
 					'allow_multiple' => $allow_multiple,
-					'send_mail' => $send_mail,
+
 					'is_active' => $is_active,
 					'event_status' => $event_status,
-					'conf_mail' => $conf_mail,
 					'use_coupon_code' => $use_coupon_code,
 					'member_only' => $member_only,
 					'externalURL' => $externalURL,
+
 					'early_disc' => $early_disc,
 					'early_disc_date' => $early_disc_date,
 					'early_disc_percentage' => $early_disc_percentage,
 					'alt_email' => $alt_email,
 					'question_groups' => $question_groups,
+
 					'registration_startT' => $registration_startT,
 					'registration_endT' => $registration_endT,
-					'reg_limit' => $reg_limit,
-					'additional_limit' => $additional_limit,
-					'recurrence_id' => $recurrence_id,
-					'email_id' => $email_id,
-					'wp_user' => $wp_user_id,
 					'event_meta' => $event_meta,
 					'require_pre_approval' => $require_pre_approval,
 					'timezone_string' => $timezone_string,
+
 					'submitted' => date('Y-m-d H:i:s', time()),
+
+					'reg_limit' => $reg_limit,
+					'additional_limit' => $additional_limit,
+					'wp_user' => $wp_user_id,
+
 					'ticket_id' => $ticket_id,
-					'certificate_id' => $certificate_id
+
+					'certificate_id' => $certificate_id,
+					'confirmation_email_id' => $confirmation_email_id,
+					'payment_email_id' => $payment_email_id
 			);
 
 			$sql_data = array(
-					'%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s',
-					'%s', '%s', '%d', '%d',
-					'%d', '%d', '%d', '%s',
-					'%s', '%s', '%s', '%d',
-					'%d'
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%d', '%d', '%d', '%d',
+					'%d', '%d', '%d'
 			);
-
-			/* echo 'Debug:<br />';
-			  print 'Number of vars: ' . count ($sql);
-			  echo '<br />';
-			  print 'Number of cols: ' . count($sql_data);
-			  echo "<pre>".print_r( $sql,true )."</pre>"; */
-
 
 			//Add groupon reference if installed
 			if (function_exists('event_espresso_add_event_to_db_groupon')) {
