@@ -199,7 +199,7 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 						<tr>
 						<tr>
 							<th><label>
-<?php _e('Enable Full Logging', 'event_espresso'); ?>
+<?php _e('Enable Full Logging', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'full_logging_info'); ?>
 								</label></th>
 							<td><?php echo select_input('full_logging', $values, isset($org_options['full_logging']) ? $org_options['full_logging'] : 'N'); ?></td>
 						</tr>
