@@ -70,6 +70,14 @@ class espresso_log {
 				.'&remote_log='.$remote_log
 				.'&request_array='.$request_array //<-- Do we want to leave this turned on?
 				.'&action=save';
+		
+		if ( defined('EELOGGING_PASS') ){
+			$data .= '&pass='.EELOGGING_PASS;
+		}
+		
+		if ( defined('EELOGGING_KEY') ){
+			$data .= '&key='.EELOGGING_KEY;
+		}
 
 		
 		$c = curl_init ($url);
