@@ -47,10 +47,39 @@ function display_espresso_admin_notices () {
 }
 add_action( 'action_hook_espresso_admin_notices', 'display_espresso_admin_notices' );
 
+//Create logging function and action
 function espresso_log ($file,$function,$message) {
 	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message));
 }
 
 if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
 	add_action('action_hook_espresso_log', 'espresso_log', 10, 3);
+}
+
+//Remote logging stuff
+function espresso_remote_log($file,$function,$message) {
+	espresso_log::singleton()->remote_log(array('file' => $file, 'function' => $function, 'status' => $message));
+}
+
+function espresso_send_log() {
+	global $org_options;
+	
+	//Test url
+	$url = 'http://www.postbin.org/xi5x58';
+		
+	if ( !empty($org_options['remote_logging_url']) ) {
+		$url = $org_options['remote_logging_url'];
+	}
+	
+	espresso_log::singleton()->send_log($url);
+}
+
+//Testing
+//$org_options['remote_logging'] = 'Y';
+
+if (!empty($org_options['remote_logging']) && $org_options['remote_logging'] == 'Y') {
+	global $notices;
+	$notices['errors'][] = sprintf(__('Remote logging is turned in Event Espresso. All Event Espresso system data is being sent and stored to a remote location.', 'event_espresso'));
+	add_action('action_hook_espresso_log', 'espresso_remote_log', 10, 3);
+	add_action('wp_footer', 'espresso_send_log');
 }
