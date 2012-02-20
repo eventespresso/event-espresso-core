@@ -104,12 +104,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 								</label></th>
 							<td><?php echo select_input('use_personnel_manager', $values, isset($org_options['use_personnel_manager']) ? $org_options['use_personnel_manager'] : 'N'); ?></td>
 						</tr>
-						<tr>
-							<th><label>
-<?php _e('Enable Full Logging?', 'event_espresso'); ?>
-								</label></th>
-							<td><?php echo select_input('full_logging', $values, isset($org_options['full_logging']) ? $org_options['full_logging'] : 'N'); ?></td>
-						</tr>
+						
 						<tr>
 							<th><label for="use_attendee_pre_approval">
 <?php _e('Enable Attendee Pre-approval', 'event_espresso'); ?>
@@ -173,6 +168,29 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 								<span class="description">
 <?php _e('This allows you to set a custom time zone for each event.<br />Modificatiosn to your site may be required for this to work properly.', 'event_espresso'); ?>
 								</span></td>
+						</tr>
+						<tr>
+							<td colspan="2"><strong>
+<?php _e('Debug/Logging Options', 'event_espresso'); ?>
+								</strong></td>
+						<tr>
+						<tr>
+							<th><label>
+<?php _e('Enable Full Logging?', 'event_espresso'); ?>
+								</label></th>
+							<td><?php echo select_input('full_logging', $values, isset($org_options['full_logging']) ? $org_options['full_logging'] : 'N'); ?></td>
+						</tr>
+						<tr>
+							<th><label>
+<?php _e('Enable Remote Logging?', 'event_espresso'); ?>
+								</label></th>
+							<td><?php echo select_input('remote_logging', $values, isset($org_options['remote_logging']) ? $org_options['remote_logging'] : 'N'); ?> </td>
+						</tr>
+						<tr>
+							<th><label>
+<?php _e('Remote Logging URL', 'event_espresso'); ?>
+								</label></th>
+							<td><input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo isset($org_options['remote_logging_url']) && $org_options['remote_logging_url'] != '' ? stripslashes_deep($org_options['remote_logging_url']) : ''; ?>" /></td>
 						</tr>
 						<tr>
 							<td colspan="2"><strong>

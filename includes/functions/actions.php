@@ -64,18 +64,12 @@ function espresso_remote_log($file,$function,$message) {
 function espresso_send_log() {
 	global $org_options;
 	
-	//Test url
-	$url = 'http://www.postbin.org/xi5x58';
-		
-	if ( !empty($org_options['remote_logging_url']) ) {
-		$url = $org_options['remote_logging_url'];
+	if ( empty($org_options['remote_logging_url']) ) {
+		return;	
 	}
-	
+	$url = $org_options['remote_logging_url'];
 	espresso_log::singleton()->send_log($url);
 }
-
-//Testing
-//$org_options['remote_logging'] = 'Y';
 
 if (isset($org_options['remote_logging']) && $org_options['remote_logging'] == 'Y') {
 	//echo "<pre>".print_r($org_options,true)."</pre>";
