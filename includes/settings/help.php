@@ -101,3 +101,33 @@
 		<?php _e("You should only use this if you know it will not cause email delivery problems. Some servers will not send emails that use this format.", 'event_espresso'); ?>
 	</p>
 </div>
+
+<div id="remote_logging_info" class="pop-help" style="display:none">
+	<h2>
+		<?php _e('Remote Logging', 'event_espresso'); ?>
+	</h2>
+	<p><?php _e("Every time a page is accessed on your site. This option will send all Event Espresso registration form data, your server details, and debugging information to a remote server. Please use caution when using this feature.", 'event_espresso'); ?></p>
+	
+	<p><strong><?php _e('Sending login information:', 'event_espresso'); ?></strong><br />
+<?php _e('Using constants defined in the wp-config.php. You can a way to send "key" and "pass" parameters in the remote logging action.', 'event_espresso'); ?></p>
+
+	<p><?php _e('Add this to your wp-config, above the line that says "That\'s all, stop editing! Happy blogging."', 'event_espresso'); ?></p>
+<pre>define( 'EELOGGING_PASS', 'YOUR PASSWORD' );
+define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
+
+
+</div>
+
+<div id="remote_logging_url_info" class="pop-help" style="display:none">
+	<h2>
+		<?php _e('Remote Logging URL', 'event_espresso'); ?>
+	</h2>
+	<p><?php _e("This option sends all Event Espresso debugging data and get/post variables to the specified URL.", 'event_espresso'); ?></p>
+	<p>
+		<?php _e('To see for yourself, "Make a PostBin" at <a href="http://www.postbin.org/" target="_blank">PostBin</a>. Then enter the PostBin URL into the "Remote Logging URL" field.', 'event_espresso'); ?>
+	</p>
+	
+	<p>
+		<?php //_e('<a href="admin.php?page=event_espresso&create_postbin=Y&Submit_4=true#remote_logging_stuff" target="_self">Create a new PostBin Now</a>', 'event_espresso'); ?>
+	</p>
+</div>

@@ -87,6 +87,7 @@ function organization_config_mnu() {
 		$org_options['default_logo_url'] = $_REQUEST['upload_image'];
 		$org_options['default_payment_status'] = $_POST['default_payment_status'];
 		$org_options['template_settings']['use_custom_post_types'] = $_POST['use_custom_post_types'];
+		//echo getCountryFullData($org_options['organization_country']);
 		$currency_format = getCountryFullData($org_options['organization_country']);
 		switch ($currency_format['iso_code_3']) {
 			case 'CHE': $org_options['currency_symbol'] = 'Fr.'; // Swiss Franc
@@ -190,7 +191,7 @@ function organization_config_mnu() {
 							<ul id="event_espresso-sortables">
 								<li>
 									<div class="metabox-holder">
-										<div class="postbox">
+										<div class="postbox <?php echo !isset($_REQUEST['Submit_2']) && !isset($_REQUEST['Submit_3']) && !isset($_REQUEST['Submit_4']) ? '' : 'closed'; ?>">
 											<div title="Click to toggle" class="handlediv"><br />
 											</div>
 											<h3 class="hndle">
@@ -317,7 +318,7 @@ function organization_config_mnu() {
 								</li>
 								<li>
 									<div class="metabox-holder">
-										<div class="postbox closed">
+										<div class="postbox <?php echo isset($_REQUEST['Submit_2']) ? '' : 'closed'; ?>">
 											<div title="Click to toggle" class="handlediv"><br />
 											</div>
 											<h3 class="hndle">
@@ -440,7 +441,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 
 												</table>
 													<p>
-														<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_2" />
+														<input class="button-primary" type="submit" name="Submit_2" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
 													</p>
 												</div>
 											</div>
@@ -495,25 +496,6 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	$settings = array('textarea_name' => 'payment_message');
 																	wp_editor($content, $editor_id, $settings);
 																	?>
-																	<?php /* 		<div class="visual-toggle">
-																	  <p><a class="toggleVisual">
-																	  <?php _e('Visual', 'event_espresso'); ?>
-																	  </a> <a class="toggleHTML">
-																	  <?php _e('HTML', 'event_espresso'); ?>
-																	  </a></p>
-																	  </div>
-																	  <div id="payment-conf-email" class="postbox">
-																	  <textarea class="theEditor std-textarea" id="payment_message" name="payment_message"><?php echo espresso_admin_format_content($org_options['payment_message']); ?></textarea>
-																	  <table id="payment-confirmation-form" cellspacing="0">
-																	  <tbody>
-																	  <tr>
-																	  <td class="aer-word-count"></td>
-																	  <td class="autosave-info"><span>
-																	  <p></p>
-																	  </span></td>
-																	  </tr>
-																	  </tbody>
-																	  </table> */ ?>
 																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
 																				<?php _e('View Custom Email Tags', 'event_espresso'); ?>
 																			</a></span></p>
@@ -540,25 +522,6 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	$settings = array('textarea_name' => 'success_message');
 																	wp_editor($content, $editor_id, $settings);
 																	?>
-																	<?php /* 	<div class="visual-toggle">
-																	  <p><a class="toggleVisual">
-																	  <?php _e('Visual', 'event_espresso'); ?>
-																	  </a> <a  class="toggleHTML">
-																	  <?php _e('HTML', 'event_espresso'); ?>
-																	  </a></p>
-																	  </div>
-																	  <div id="reg-conf-email" class="postbox">
-																	  <textarea class="theEditor std-textarea"  id="reg-conf-email-mce" name="success_message"><?php echo espresso_admin_format_content($org_options['message']); ?></textarea>
-																	  <table id="email-confirmation-form" cellspacing="0">
-																	  <tbody>
-																	  <tr>
-																	  <td class="aer-word-count"></td>
-																	  <td class="autosave-info"><span>
-																	  <p></p>
-																	  </span></td>
-																	  </tr>
-																	  </tbody>
-																	  </table> */ ?>
 																	<p><span><a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info">
 																				<?php _e('View Custom Email Tags', 'event_espresso'); ?>
 																			</a> | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example">
@@ -569,7 +532,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 														</tbody>
 													</table>
 													<p>
-														<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_5" />
+														<input class="button-primary" type="submit" name="Submit_3" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
 													</p>
 												</div>
 											</div>

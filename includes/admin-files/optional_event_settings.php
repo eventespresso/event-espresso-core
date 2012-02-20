@@ -14,10 +14,33 @@ $default_payment_status = array(
 		array('id' => 'Pending', 'text' => 'Pending'),
 		array('id' => 'Completed', 'text' => 'Completed')
 );
+
+$remote_logging_url = '';
+if ( isset($org_options['remote_logging_url']) && $org_options['remote_logging_url'] != ''){
+	 $remote_logging_url = stripslashes_deep($org_options['remote_logging_url']);
+}
+
+/*$bin_name = '';
+if (isset($_REQUEST['create_postbin']) && $_REQUEST['create_postbin'] =='Y'){
+		$c = curl_init ('http://requestb.in/api/v1/bins');
+		curl_setopt ($c, CURLOPT_POST, true);
+		curl_setopt ($c, CURLOPT_POSTFIELDS, $data);
+		curl_setopt ($c, CURLOPT_RETURNTRANSFER, true);
+		$bin = curl_exec ($c);
+		curl_close ($c);
+		
+		//Debug
+		//echo "<pre>".print_r(json_decode($bin),true)."</pre>";
+		
+		$bin_name = json_decode($bin);
+		$remote_logging_url = 'http://requestb.in/'.$bin_name->name;
+}*/
+
+
 ?>
 
-<div class="metabox-holder">
-	<div class="postbox closed">
+<div id="espresso_optional_settings" class="metabox-holder">
+	<div class="postbox <?php echo isset($_REQUEST['Submit_4']) ? '' : 'closed'; ?>">
 		<div title="Click to toggle" class="handlediv"><br />
 		</div>
 		<h3 class="hndle">
@@ -113,7 +136,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 						</tr>
 						<tr>
 							<th> <label for="use_custom_post_types">
-<?php _e('Use the custom post types feature?', 'event_espresso'); ?>
+<?php _e('Use the custom post types feature', 'event_espresso'); ?>
 								</label>
 							</th>
 							<td><?php echo select_input('use_custom_post_types', $boolean_values, $org_options['template_settings']['use_custom_post_types'], 'id="use_custom_post_types"'); ?></td>
@@ -127,9 +150,9 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					<tbody>
 						<tr>
 							<th><label for="default_mail">
-<?php _e('Use fancy email headers?', 'event_espresso'); ?>
+<?php _e('Use Fancy Email Headers', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'fancyemailheaders'); ?>
 								</label></th>
-							<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?> <?php echo apply_filters('filter_hook_espresso_help', 'fancyemailheaders'); ?></td>
+							<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?></td>
 						</tr>
 						<tr>
 							<td colspan="2"><strong>
@@ -170,32 +193,33 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 								</span></td>
 						</tr>
 						<tr>
-							<td colspan="2"><strong>
+							<td colspan="2"><a name="remote_logging_stuff" id="remote_logging_stuff"></a><strong>
 <?php _e('Debug/Logging Options', 'event_espresso'); ?>
 								</strong></td>
 						<tr>
 						<tr>
 							<th><label>
-<?php _e('Enable Full Logging?', 'event_espresso'); ?>
+<?php _e('Enable Full Logging', 'event_espresso'); ?>
 								</label></th>
 							<td><?php echo select_input('full_logging', $values, isset($org_options['full_logging']) ? $org_options['full_logging'] : 'N'); ?></td>
 						</tr>
 						<tr>
 							<th><label>
-<?php _e('Enable Remote Logging?', 'event_espresso'); ?>
-								</label></th>
+<?php _e('Enable Remote Logging', 'event_espresso'); ?>
+								<?php echo apply_filters( 'filter_hook_espresso_help', 'remote_logging_info'); ?></label></th>
 							<td><?php echo select_input('remote_logging', $values, isset($org_options['remote_logging']) ? $org_options['remote_logging'] : 'N'); ?><br />
 								<span class="description">
 									<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
 								</span></td>
 						</tr>
-						<tr>
-							<th><label>
+						<tr <?php //if (isset($_REQUEST['create_postbin']) && $_REQUEST['create_postbin'] =='Y') echo ' class="yellow_inform"'; ?>>
+							<th>								<label>
 <?php _e('Remote Logging URL', 'event_espresso'); ?>
-								</label></th>
-							<td><input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo isset($org_options['remote_logging_url']) && $org_options['remote_logging_url'] != '' ? stripslashes_deep($org_options['remote_logging_url']) : ''; ?>" /><br />
+						    <?php echo apply_filters( 'filter_hook_espresso_help', 'remote_logging_url_info'); ?><?php //if (isset($_REQUEST['create_postbin']) && $_REQUEST['create_postbin'] =='Y') echo '<br /><span class="red_text">'.__('Don\'t forget to save!', 'event_espresso').'</span>'; ?></label></th>
+							<td><input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo $remote_logging_url ?>" /><br />
 								<span class="description">
 									<?php _e('Example: http://www.postbin.org/MY_UNIQUE_ID', 'event_espresso'); ?>
+									
 								</span></td>
 						</tr>
 						<tr>
@@ -244,7 +268,7 @@ and backend updates for Event Espresso Core and any installed addons.'); ?>
 
 				</table>
 				<p>
-					<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
+					<input class="button-primary" type="submit" name="Submit_4" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_4" />
 				</p>
 			</div>
 		</div>
