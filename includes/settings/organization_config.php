@@ -317,7 +317,7 @@ function organization_config_mnu() {
 								</li>
 								<li>
 									<div class="metabox-holder">
-										<div class="postbox">
+										<div class="postbox closed">
 											<div title="Click to toggle" class="handlediv"><br />
 											</div>
 											<h3 class="hndle">
@@ -449,7 +449,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 								</li>
 								<li>
 									<div class="metabox-holder">
-										<div class="postbox">
+										<div class="postbox closed">
 											<div title="Click to toggle" class="handlediv"><br />
 											</div>
 											<h3 class="hndle">
@@ -590,7 +590,24 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 									?>
 									<li>
 										<div class="metabox-holder">
-											<div class="postbox">
+											<div class="postbox closed">
+												<div title="Click to toggle" class="handlediv"><br />
+												</div>
+												<h3 class="hndle">
+													<?php _e('reCAPTCHA Settings', 'event_espresso'); ?>
+												</h3>
+												<div class="inside">
+													<div class="padding">
+														<p><?php echo sprintf(__('Please purchase a %s to gain access to this feature.', 'event_espresso'), '<a href="http://eventespresso.com/download/" target="_blank">' . __('support license', 'event_espresso') . '</a>'); ?> </p>
+														<p> <?php echo sprintf(__('reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions.', 'event_espresso'), '<a href="http://recaptcha.net/captcha.html">CAPTCHA</a>'); ?> </p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li>
+										<div class="metabox-holder">
+											<div class="postbox closed">
 												<div title="Click to toggle" class="handlediv"><br />
 												</div>
 												<h3 class="hndle">
@@ -630,23 +647,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 											</div>
 										</div>
 									</li>
-									<li>
-										<div class="metabox-holder">
-											<div class="postbox">
-												<div title="Click to toggle" class="handlediv"><br />
-												</div>
-												<h3 class="hndle">
-													<?php _e('reCAPTCHA Settings', 'event_espresso'); ?>
-												</h3>
-												<div class="inside">
-													<div class="padding">
-														<p><?php echo sprintf(__('Please purchase a %s to gain access to this feature.', 'event_espresso'), '<a href="http://eventespresso.com/download/" target="_blank">' . __('support license', 'event_espresso') . '</a>'); ?> </p>
-														<p> <?php echo sprintf(__('reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions.', 'event_espresso'), '<a href="http://recaptcha.net/captcha.html">CAPTCHA</a>'); ?> </p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</li>
+									
 									<?php
 								}
 								?>

@@ -17,7 +17,7 @@ $default_payment_status = array(
 ?>
 
 <div class="metabox-holder">
-	<div class="postbox">
+	<div class="postbox closed">
 		<div title="Click to toggle" class="handlediv"><br />
 		</div>
 		<h3 class="hndle">
