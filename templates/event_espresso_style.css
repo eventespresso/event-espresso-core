@@ -63,9 +63,6 @@
 .event_espresso_form_wrapper label em,
 .event_espresso_form_wrapper span.label em { font-style: normal; color: #C00; padding-left: 3px;}
 .event_espresso_form_wrapper input.error { border-color: #C00; background-color: #FEF; }
-.event_espresso_form_wrapper input:focus,
-.event_espresso_form_wrapper input.error:focus,
-.event_espresso_form_wrapper textarea:focus {   background-color: #FFC; border-color: #FC6; }
 /**
     End errors and notices
 */
@@ -156,6 +153,9 @@ table.price_list td{
 table.price_list tr{ background-color: #c7e9c8; }
 .pending_event{ border:2px solid yellow; padding:5px; }
 .expired_event{ color:#F00; }
+.event_espresso_form_wrapper input:focus,
+.event_espresso_form_wrapper input.error:focus,
+.event_espresso_form_wrapper textarea:focus {   background-color: #FFC; border-color: #FC6; }
 */
 
 
