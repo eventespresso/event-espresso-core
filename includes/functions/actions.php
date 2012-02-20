@@ -77,9 +77,8 @@ function espresso_send_log() {
 //Testing
 //$org_options['remote_logging'] = 'Y';
 
-if (!empty($org_options['remote_logging']) && $org_options['remote_logging'] == 'Y') {
-	global $notices;
-	$notices['errors'][] = sprintf(__('Remote logging is turned in Event Espresso. All Event Espresso system data is being sent and stored to a remote location.', 'event_espresso'));
+if (isset($org_options['remote_logging']) && $org_options['remote_logging'] == 'Y') {
+	//echo "<pre>".print_r($org_options,true)."</pre>";
 	add_action('action_hook_espresso_log', 'espresso_remote_log', 10, 3);
 	add_action('wp_footer', 'espresso_send_log');
 }
