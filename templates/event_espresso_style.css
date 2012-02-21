@@ -70,7 +70,6 @@
 /**
     Form styles
 */
-.event_espresso_form_wrapper form fieldset { margin: 10px 0; padding: 10px; border: #DDD 1px solid; }
 .event_espresso_form_wrapper form legend { font-weight: bold; background: #ffffff; padding: 0 5px; }
 .event_espresso_form_wrapper form fieldset div { padding: 0.25em 0; }
 .event_espresso_form_wrapper label,
@@ -128,6 +127,13 @@
 
 .recaptchatable #recaptcha_response_field {left:0 !important;}
 
+/**
+    Confirmation page display
+*/
+table#event_espresso_attendee_verify th,
+table#event_espresso_attendee_verify_questions th { text-align: right; width: 40%; }
+table#event_espresso_attendee_verify tr,
+table#event_espresso_attendee_verify_questions tr { text-align: left; width: 60%; }
 
 
 table.price_list{
