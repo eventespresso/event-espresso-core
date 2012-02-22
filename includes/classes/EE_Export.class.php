@@ -66,6 +66,9 @@
 			case 'report':
 				switch ($_REQUEST['action']) {
 				
+					case 'everything':
+						$this->export_freakin_everything();
+					break;
 					case "event";
 						$this->export_event();
 					break;
@@ -105,6 +108,50 @@
 
 
 	/**
+	 *		Export data for FREAKIN EVERYTHING !!!
+	 *		 
+	 *		usage: http://your-domain.tld/wp-admin/admin.php?event_espresso&export=report&action=everything&type=csv
+	 *		 
+	 *		@access public
+	 *		@return void
+	 */	
+	function export_freakin_everything() {
+	
+		$tables_to_export = array( 
+			EVENTS_ANSWER_TABLE,
+			EVENTS_ATTENDEE_TABLE,
+			EVENTS_ATTENDEE_COST_TABLE,
+			EVENTS_CATEGORY_TABLE,
+			EVENTS_CATEGORY_REL_TABLE,
+			EVENTS_DETAIL_TABLE,
+			EVENTS_DISCOUNT_CODES_TABLE,
+			EVENTS_DISCOUNT_REL_TABLE,
+			EVENTS_EMAIL_TABLE,
+			EVENTS_LOCALE_TABLE,
+			EVENTS_LOCALE_REL_TABLE,
+			EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE,
+			EVENTS_PERSONNEL_TABLE,
+			EVENTS_PERSONNEL_REL_TABLE,
+			EVENTS_PRICES_TABLE,
+			EVENTS_QST_GROUP_TABLE,
+			EVENTS_QST_GROUP_REL_TABLE,
+			EVENTS_QUESTION_TABLE,
+			EVENTS_START_END_TABLE,
+			EVENTS_VENUE_TABLE,
+			EVENTS_VENUE_REL_TABLE
+		);
+																				
+		$table_data = $this->process_mult_table_export( $tables_to_export );
+		$filename = $this->generate_filename ( 'all-events' );
+
+		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
+			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+		}
+	}	
+
+
+	/**
 	 *			@Export data for one event ? dunno
 	 *		  @access public
 	 *			@return void
@@ -122,7 +169,7 @@
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
 	}
-	
+
 
 
 	/**
