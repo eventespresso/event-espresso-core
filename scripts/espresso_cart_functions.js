@@ -1,6 +1,7 @@
-
-
 jQuery(document).ready(function() {
+
+	// clear firefox and safari cache
+	jQuery(window).unload( function() {}); 
 
 	jQuery.ajaxSetup({
 		cache: false,
