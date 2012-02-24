@@ -156,6 +156,14 @@ function espresso_calendar_config_mnu()	{
 		array('id'=>'true','text'=> __('Yes','event_espresso'))
 	);
 ################## Begin admin settings screen ###########################
+
+function espresso_load_the_freaking_jquery_stuff() {
+	if (is_admin()) {
+	wp_enqueue_style('thickbox'); //load the freaking thickbox style
+	wp_enqueue_script('thickbox'); // load the freaking thickbox script
+	}
+}
+add_action('init','espresso_load_the_freaking_jquery_stuff');
 	?>
 
 <div id="ee-calendar-settings" class="wrap meta-box-sortables ui-sortable">
@@ -1171,3 +1179,98 @@ if (!function_exists('espresso_calendar')) {
 	}
 }
 add_shortcode('ESPRESSO_CALENDAR', 'espresso_calendar');
+
+/**
+ * Calendar Widget
+ * Displays a month-based espresso_calendar in the sidebar
+ * @author Chris Reynolds
+ * @since 2.0
+ */
+
+add_action( 'widgets_init', 'espresso_calendar_widget_init' );
+
+function espresso_calendar_widget_init() {
+	register_widget( 'Espresso_Calendar_Widget' ); // registers our widget
+}
+
+class Espresso_Calendar_Widget extends WP_Widget {
+	function espresso_calendar_widget() {
+		/* Widget settings. */
+		$widget_options = array( 'classname' => 'espresso_calendar_widget', 'description' => 'Displays the Espresso Calendar in a widget.' );
+
+		/* Widget control settings. */
+		$control_options = array( 'width' => 300, 'height' => 350, 'id_base' => 'espresso-calendar-widget' );
+
+		/* Create the widget. */
+		$this->WP_Widget( 'espresso-calendar-widget', 'Event Espresso Calendar Widget', $widget_options, $control_options );
+	}
+
+	function widget( $args, $instance ) {
+		extract( $args );
+
+		/* User-selected settings. */
+		$title = apply_filters('widget_title', $instance['title'] );
+		$show_expired = $instance['show_expired'];
+		$category_id = $instance['category_id'];
+		$calendar_page = $instance['calendar_page'];
+
+		if (!is_page( $calendar_page )) { // if we aren't on the calendar page, we can output the calendar in the sidebar safely 
+			/* Before widget (defined by themes). */
+			echo $before_widget;
+			/* Title of widget (before and after defined by themes). */
+			if ( $title )
+				echo $before_title . $title . $after_title;
+
+				if ( $category_id != '' ) { // if there's a category, do this
+					echo do_shortcode("[ESPRESSO_CALENDAR show_expired=$show_expired category_id=$category_id]");
+				} else {
+					echo 'show expired is ' . $show_expired;
+					echo do_shortcode("[ESPRESSO_CALENDAR show_expired=$show_expired]"); // this is a cheap hack but if someone has a better idea, let me know. ~c
+				}
+
+			/* After widget (defined by themes). */
+			echo $after_widget;
+		}
+	}
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+
+		/* Strip tags (if needed) and update the widget settings. */
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['show_expired'] = strip_tags( $new_instance['show_expired'] );
+		$instance['category_id'] = strip_tags( $new_instance['category_id'] );
+		$instance['calendar_page'] = strip_tags( $new_instance['calendar_page'] );
+
+		return $instance;
+	}
+	function form( $instance ) {
+
+		/* Set up some default widget settings. */
+		$defaults = array( 'title' => 'Calendar', 'show_expired' => 'false', 'category_id' => '', 'calendar_page' => '' );
+		$instance = wp_parse_args( (array) $instance, $defaults );
+
+		$values = array(
+			array('id' => 'false', 'text' => __('No', 'event_espresso')),
+			array('id' => 'true', 'text' => __('Yes', 'event_espresso')));
+		?>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e('Title:','event_espresso'); ?></label>
+			<input type="text" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" width="20" value="<?php echo $instance['title']; ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'show_expired' ); ?>"><?php _e( 'Display Expired Events?', 'event_espresso' ); ?></label>
+			<?php echo select_input($this->get_field_name('show_expired'), $values, $instance['show_expired']); ?>
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'category_id' ); ?>"><?php _e( 'Display Single Category?', 'event_espresso' ); ?></label>
+			<input type="text" id="<?php echo $this->get_field_id( 'category_id' ); ?>" name="<?php echo $this->get_field_name( 'category_id' ); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
+			<?php echo apply_filters( 'filter_hook_espresso_help', 'display_single_category') ; ?>
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'calendar_page' ); ?>"><?php _e( 'Calendar Page', 'event_espresso' ); ?></label>
+			<input type="text" id="<?php echo $this->get_field_id( 'calendar_page'); ?>" name="<?php echo $this->get_field_name( 'calendar_page' ); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
+			<?php echo apply_filters( 'filter_hook_espresso_help', 'calendar_page' ); ?>
+		</p>
+		<?php
+	}
+}

@@ -1,5 +1,9 @@
 <div style="display: none;">
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Display Calendar styles on specific pages
+		 */
+	?>
 	<div id="display-on-pages" class="pop-help" >
 		<div class="TB-ee-frame">
 			<h2>
@@ -16,7 +20,11 @@
 			</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Display calendar on which type of page?
+		 */
+	?>
 	<div id="display-where" class="pop-help" >
 		<div class="TB-ee-frame">
 			<h2>
@@ -30,7 +38,11 @@
 			</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Calendar thumbnail sizing
+		 */
+	?>
 	<div id="calendar-thumb-sizes" class="pop-help" >
 		<div class="TB-ee-frame">
 			<h2>
@@ -47,7 +59,11 @@
 			</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Display event times
+		 */
+	?>
 	<div id="show-event-times" class="pop-help" >
 		<div class="TB-ee-frame">
 			<h2>
@@ -64,7 +80,11 @@
 			</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Enable CSS classes for categories
+		 */
+	?>
 	<div id="enable-categories" class="pop-help" >
 		<div class="TB-ee-frame">
 			<h2>
@@ -78,7 +98,11 @@
 			</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Open event in a popup box
+		 */
+	?>
 	<div id="display-thickbox" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -89,7 +113,11 @@
 			</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Header Style
+		 */
+	?>
 	<div id="calendar_header_info" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -103,12 +131,16 @@
 				center: 'title', <br />
 				right: 'month,agendaWeek,agendaDay,next'</p>
 			<p>
-				<?php _e('More Ino:','event_espresso'); ?>
+				<?php _e('More Info:','event_espresso'); ?>
 				<br />
 				<a href="http://arshaw.com/fullcalendar/docs/display/header/" target="_blank">http://arshaw.com/fullcalendar/docs/display/header/</a></p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Button Text
+		 */
+	?>
 	<div id="calendar_buttonText_info" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -131,7 +163,11 @@
 				<a href="http://arshaw.com/fullcalendar/docs/text/buttonText/" target="_blank">http://arshaw.com/fullcalendar/docs/text/buttonText/</a></p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Title Format
+		 */
+	?>
 	<div id="calendar_titleFormat_info" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -149,7 +185,11 @@
 				<a href="http://arshaw.com/fullcalendar/docs/utilities/formatDate/" target="_blank">http://arshaw.com/fullcalendar/docs/utilities/formatDate/</a></p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Column format
+		 */
+	?>
 	<div id="calendar_columnFormat_info" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -167,7 +207,11 @@
 				<a href="http://arshaw.com/fullcalendar/docs/text/columnFormat/" target="_blank">http://arshaw.com/fullcalendar/docs/text/columnFormat/</a></p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Month Names
+		 */
+	?>
 	<div id="calendar_monthNames_info" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -182,7 +226,11 @@
 				'November', 'December'</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Month Names Short
+		 */
+	?>
 	<div id="calendar_monthNamesShort_info" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -194,7 +242,11 @@
 			<p>'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Day Names
+		 */
+	?>
 	<div id="calendar_dayNames_info" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -206,7 +258,11 @@
 			<p>'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'</p>
 		</div>
 	</div>
-	<?php ########## help box ########## ?>
+	<?php
+		/**
+		 * Day Names Short
+		 */
+	?>
 	<div id="calendar_dayNamesShort_info" class="pop-help">
 		<div class="TB-ee-frame">
 			<h2>
@@ -218,5 +274,35 @@
 			<p>'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'</p>
 		</div>
 	</div>
-	<!-- / div display:none; --> 
+	<?php
+		/**
+		 * Display a Single Category
+		 */
+	?>
+	<div id="display_single_category" class="pop-help">
+		<div class="TB-ee-frame">
+			<h2>
+				<?php _e('Display a Single Category', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e( 'Enter the Event Category ID from the ', 'event_espresso' ); ?><a href="admin.php?page=event_categories"><?php _e( 'Categories page.','event_espresso' ); ?></a>.
+			</p>
+		</div>
+	</div>
+	<?php
+		/**
+		 * Calendar page
+		 */
+	?>
+	<div id="calendar_page" class="pop-help">
+		<div class="TB-ee-frame">
+			<h2>
+				<?php _e( 'Calendar Page', 'event_espresso' ); ?>
+			</h2>
+			<p>
+				<?php _e( 'If you have a dedicated calendar page on your site, enter the slug or page ID here.  <strong>This is required!</strong>  Your calendar page may not display correctly if you do not list it here!', 'event_espresso' ); ?>
+			</p>
+		</div>
+	</div>
+	<!-- / div display:none; -->
 </div>
