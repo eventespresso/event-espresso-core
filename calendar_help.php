@@ -285,7 +285,7 @@
 				<?php _e('Display a Single Category', 'event_espresso'); ?>
 			</h2>
 			<p>
-				<?php _e( 'Enter the Event Category ID from the ', 'event_espresso' ); ?><a href="admin.php?page=event_categories"><?php _e( 'Categories page.','event_espresso' ); ?></a>.
+				<?php _e( 'Enter the Event Category ID from the ', 'event_espresso' ); ?><a href="admin.php?page=event_categories"><?php _e( 'Categories page','event_espresso' ); ?></a>.
 			</p>
 		</div>
 	</div>
