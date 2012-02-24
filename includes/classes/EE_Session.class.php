@@ -27,7 +27,7 @@
 	private $_time;
 	
 	// whether to encrypt session data
-	private $_use_encrytion = TRUE; 
+	private $_use_encryption = TRUE; 
 	
 	// EE_Encryption object stored by reference
 	public $encryption = NULL; 
@@ -97,7 +97,7 @@
 		$this->_time = $this->_session_time();
 		
 		// are we using encryption?
-		if ( $this->_use_encrytion ) {
+		if ( $this->_use_encryption ) {
 			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Encryption.class.php' );
 			// instantiate the class object making all properties and methods accessible via $this->encryption ex: $this->encryption->encrypt();
 			$this->encryption = EE_Encryption::instance();
@@ -405,7 +405,7 @@
 //		echo $this->pre_r( $this->_session_data );
 
 		// are we are we using encryption?
-		if ( $this->_use_encrytion ) {
+		if ( $this->_use_encryption ) {
 			// first serialize all of our session data
 			$session_data = serialize( $this->_session_data );
 			// now we'll encrypt it
