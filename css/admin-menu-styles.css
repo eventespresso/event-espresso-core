@@ -42,3 +42,4 @@ a[href="admin.php?page=admin_addons"] {
 #wpadminbar.nojs #wp-admin-bar-new-content:hover > .ab-item .ab-icon, #wpadminbar #wp-admin-bar-new-content.hover > .ab-item .ab-icon-espresso {
 	background-position: -2px -203px;
 }
+div.TB-ee-frame a { border-bottom: none; padding: 0; margin: 0; }
