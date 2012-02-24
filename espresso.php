@@ -810,6 +810,13 @@ function espresso_init() {
 			}
 		}
 
+		// Load thickbox on the widgets page
+		function espresso_hook_action_load_freaking_thickbox() {
+			wp_enqueue_style('thickbox'); //load the freaking thickbox style
+			wp_enqueue_script('thickbox'); // load the freaking thickbox script
+		}
+		add_action('load-widgets.php','espresso_hook_action_load_freaking_thickbox');
+
 		// Update the question sequences
 		add_action( 'wp_ajax_update_sequence', 'event_espresso_questions_config_mnu');
 		// Update the question group sequences
