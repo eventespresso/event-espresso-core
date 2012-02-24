@@ -68,21 +68,20 @@ if (!class_exists('Event_Espresso_Widget')) {
 					//event_espresso_get_event_details($sql);
 						foreach ($events as $event)
 						{
-
-							$display_event = true;
-							if ( $event->recurrence_id )
-							{
-//echo 'r->recurrence_start_date : ' . $r->recurrence_start_date . '<br />';
-//echo 'event->start_date : ' . $event->start_date . '<br />';
+							// set display to TRUE
+							$display_event = TRUE;
+							// check if this is a recurring event
+							if ( $event->recurrence_id ) {
+								// get the recurrence id for the event
 								$r = get_recurrence( $event->recurrence_id );	
-				
-								if ( $r->recurrence_start_date != $event->start_date )
-									$display_event = false;
-									
-						}
-
-							if ( $display_event ) 			
-							{
+								// if the recurrence start date is not the same as the event start date, then this is not the first event
+								if ( $r->recurrence_start_date != $event->start_date ) {
+									$display_event = FALSE;
+								}				
+							}
+					
+							if ( $display_event ) {
+							
 								$event_id = $event->id;
 								$event_name = $event->event_name;
 								$start_date = $event->start_date;
