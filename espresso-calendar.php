@@ -156,14 +156,6 @@ function espresso_calendar_config_mnu()	{
 		array('id'=>'true','text'=> __('Yes','event_espresso'))
 	);
 ################## Begin admin settings screen ###########################
-
-function espresso_load_the_freaking_jquery_stuff() {
-	if (is_admin()) {
-	wp_enqueue_style('thickbox'); //load the freaking thickbox style
-	wp_enqueue_script('thickbox'); // load the freaking thickbox script
-	}
-}
-add_action('init','espresso_load_the_freaking_jquery_stuff');
 	?>
 
 <div id="ee-calendar-settings" class="wrap meta-box-sortables ui-sortable">
