@@ -2014,3 +2014,301 @@ function espresso_toolbar_items($admin_bar){
 	//Event Listings
 	//Maybe add a
 }
+
+/**
+ * Retrieve event meta data for an event. (note works similar to get_post_meta() core WordPress function)
+ * @param int $event_id Event ID
+ * @param string $key The meta key to retrieve
+ * @param bool $single Whether to return a single value.
+ * @param mixed Will be an array if $single is false. Will be value of meta data field if $single is true.
+*/
+function ee_get_event_meta($event_id, $key, $single = false) {
+	if ( !$event_id = absint($event_id) )
+		return false;
+
+	$ee_meta_cache = wp_cache_get($event_id, 'ee_meta');
+
+	if ( !$ee_meta_cache ) {
+		$ee_meta_cache = update_ee_meta_cache( array($event_id) );
+		$ee_meta_cache = $ee_meta_cache[$event_id];
+	}
+
+	if ( !$key )
+		return $meta_cache;
+
+	if ( isset($ee_meta_cache[$key]) ) {
+		if ( $single )
+			return maybe_unserialize( $ee_meta_cache[$key][0] );
+		else
+			return array_map('maybe_unserialize', $meta_cache[$key]);
+	}
+
+	if ( $single )
+		return '';
+	else
+		return array();
+}
+
+/**
+ * Add event meta data
+ * (based of WordPress core add_metadata function)
+ * @param int $event_id ID of the event metadata is for.
+ * @param string $key event meta key
+ * @param string $value event meta value
+ * @param bool $unique OPtional, default is false. Whether the specified key shoudl be unique for the event. If true, and the event already has a value for the specified key, no change will be made.
+ * @return bool. The event meta ID on successful update, false on failure.
+ */
+function ee_add_event_meta( $event_id, $key, $value, $unique = false ) {
+
+	if ( !$event_id = absint($event_id) )
+		return false;
+
+	global $wpdb;
+	
+	$table = $wpdb->prefix.'events_meta';
+	$column = 'event_id';
+
+	// expected_slashed ($meta_key)
+	$meta_key = stripslashes($key);
+	$meta_value = stripslashes_deep($value);
+
+
+	if ( $unique && $wpdb->get_var( $wpdb->prepare(
+		"SELECT COUNT(*) FROM $table WHERE meta_key = %s AND $column = %d",
+		$meta_key, $event_id ) ) )
+		return false;
+
+	$_meta_value = $meta_value;
+	$meta_value = maybe_serialize( $meta_value );
+	$date = current_time('mysql');
+
+	$result = $wpdb->insert( $table, array(
+		$column => $object_id,
+		'meta_key' => $meta_key,
+		'meta_value' => $meta_value,
+		'date_added' => $date
+	) );
+
+	if ( ! $result )
+		return false;
+
+	$mid = (int) $wpdb->insert_id;
+
+	wp_cache_delete($event_id, 'ee_meta');
+
+	return $mid;
+}
+
+/**
+ * Update event meta data. If no value already exists for the specified event_id and event meta_key, the event meta will added.
+ * (based of WordPress core update_metadata() function)
+ *
+ * @param int $event_id ID of the event the meta is for.
+ * @param string $key event meta key
+ * @param string $value event meta value
+ * @param string $prev_value Optional. If specified, only update existing meta entries with the specified value. Otherwise, update all entries.
+ * @return bool True on successful update, false on failure
+ */
+function ee_update_event_meta($event_id, $key, $value, $prev_value = '') {
+	if ( !$key )
+		return false;
+
+	if ( !$event_id = absint($object_id) )
+		return false;
+
+	global $wpdb;
+
+	$table = $wpdb->prefix.'events_meta';
+	$column = 'event_id';
+	$id_column = 'emeta_id';
+
+	// expected_slashed ($key)
+	$meta_key = stripslashes($key);
+	$passed_value = $value;
+	$meta_value = stripslashes_deep($value);
+
+	if ( ! $meta_id = $wpdb->get_var( $wpdb->prepare( "SELECT $id_column FROM $table WHERE meta_key = %s AND $column = %d", $meta_key, $event_id ) ) )
+		return ee_add_event_meta($event_id, $meta_key, $passed_value);
+
+	// Compare existing value to new value if no prev value given and the key exists only once.
+	if ( empty($prev_value) ) {
+		$old_value = ee_get_event_meta($event_id, $meta_key);
+		if ( count($old_value) == 1 ) {
+			if ( $old_value[0] === $meta_value )
+				return false;
+		}
+	}
+
+	$_meta_value = $meta_value;
+	$meta_value = maybe_serialize( $meta_value );
+
+	$data  = compact( 'meta_value' );
+	$where = array( $column => $event_id, 'meta_key' => $meta_key );
+
+	if ( !empty( $prev_value ) ) {
+		$prev_value = maybe_serialize($prev_value);
+		$where['meta_value'] = $prev_value;
+	}
+
+	$wpdb->update( $table, $data, $where );
+
+	wp_cache_delete($event_id, 'ee_meta');
+
+	return true;
+}
+
+/**
+ * Delete event metadata for the specified event.
+ * (based off of the core WordPress delete_metadata() function)
+ * 
+ * @param int $event_id ID of the event the metadata is for
+ * @param string $key event meta key
+ * @param string $value Optional. event meta value. If specified, only delete metadata entries with this value. Otherwise, delete all entries with the specified key.
+ * @param bool $delete_all Optional, default is false. If true, delete matching metadata entries for all events, ignoring the specified event_id. Otherwise, only delete matching metadata entries for the specified event_id.
+ * @return bool True on successful delete, false on failure
+ */
+function ee_delete_event_meta($event_id, $key, $value='', $delete_all = false ) {
+	if ( !$meta_key )
+		return false;
+
+	if ( (!$event_id = absint($event_id)) && !$delete_all )
+		return false;
+
+	global $wpdb;
+	$table = $wpdb->prefix.'events_meta';
+	$type_column = 'event_id';
+	$id_column =  'emeta_id';
+	
+	// expected_slashed ($key)
+	$meta_key = stripslashes($key);
+	$meta_value = stripslashes_deep($value);
+
+	$_meta_value = $meta_value;
+	$meta_value = maybe_serialize( $meta_value );
+
+	$query = $wpdb->prepare( "SELECT $id_column FROM $table WHERE meta_key = %s", $meta_key );
+
+	if ( !$delete_all )
+		$query .= $wpdb->prepare(" AND $type_column = %d", $event_id );
+
+	if ( $meta_value )
+		$query .= $wpdb->prepare(" AND meta_value = %s", $meta_value );
+
+	$meta_ids = $wpdb->get_col( $query );
+	if ( !count( $meta_ids ) )
+		return false;
+
+	if ( $delete_all )
+		$object_ids = $wpdb->get_col( $wpdb->prepare( "SELECT $type_column FROM $table WHERE meta_key = %s", $meta_key ) );
+
+	$query = "DELETE FROM $table WHERE $id_column IN( " . implode( ',', $meta_ids ) . " )";
+
+	$count = $wpdb->query($query);
+
+	if ( !$count )
+		return false;
+
+	if ( $delete_all ) {
+		foreach ( (array) $object_ids as $o_id ) {
+			wp_cache_delete($o_id, 'ee_meta');
+		}
+	} else {
+		wp_cache_delete($event_id, 'ee_meta');
+	}
+
+	return true;
+}
+
+/**
+ * Determine if a meta key is set for the given event
+ * (based off the core WordPress metadata_exists() function)
+ * @param int $event_id ID of the event the metadata is for
+ * @param string $key meta_key for this metadata
+ * @return bool true if the key is set, false if not.
+ */
+function ee_event_meta_exists( $event_id, $key ) {
+
+	if ( ! $event_id = absint( $event_id ) )
+		return false;
+
+
+	$meta_cache = wp_cache_get( $event_id, 'ee_meta' );
+
+	if ( !$meta_cache ) {
+		$meta_cache = update_ee_meta_cache( array( $event_id ) );
+		$meta_cache = $meta_cache[$event_id];
+	}
+
+	if ( isset( $meta_cache[ $meta_key ] ) )
+		return true;
+
+	return false;
+}
+
+
+
+/**
+ * Update the event metadata cache for event meta data
+ * @param int|array $ee_meta_ids array or comma delimited list of event IDs to update cache for
+ * @return mixed event meta cache data for the specified event(s), or false on failure
+*/
+function update_ee_meta_cache( $ee_meta_ids ){
+	if ( empty( $ee_meta_ids ) )
+		return false;
+
+	$column = 'event_id';
+	$table = $wpdb->prefix . 'events_meta';
+
+	global $wpdb;
+
+	if ( !is_array($ee_meta_ids) ) {
+		$ee_meta_ids = preg_replace('|[^0-9,]|', '', $ee_meta_ids);
+		$ee_meta_ids = explode(',', $ee_meta_ids);
+	}
+
+	$ee_meta_ids = array_map('intval', $ee_meta_ids);
+
+	$cache_key = 'ee_meta';
+	$ids = array();
+	$cache = array();
+	foreach ( $ee_meta_ids as $id ) {
+		$cached_object = wp_cache_get( $id, $cache_key );
+		if ( false === $cached_object )
+			$ids[] = $id;
+		else
+			$cache[$id] = $cached_object;
+	}
+
+	if ( empty( $ids ) )
+		return $cache;
+
+	// Get meta info
+	$id_list = join(',', $ids);
+	$meta_list = $wpdb->get_results( $wpdb->prepare("SELECT $column, meta_key, meta_value, date_added FROM $table WHERE $column IN ($id_list)"), ARRAY_A );
+
+	if ( !empty($meta_list) ) {
+		foreach ( $meta_list as $metarow) {
+			$mpid = intval($metarow[$column]);
+			$mkey = $metarow['meta_key'];
+			$mval = $metarow['meta_value'];
+
+			// Force subkeys to be array type:
+			if ( !isset($cache[$mpid]) || !is_array($cache[$mpid]) )
+				$cache[$mpid] = array();
+			if ( !isset($cache[$mpid][$mkey]) || !is_array($cache[$mpid][$mkey]) )
+				$cache[$mpid][$mkey] = array();
+
+			// Add a value to the current pid/key:
+			$cache[$mpid][$mkey][] = $mval;
+		}
+	}
+
+	foreach ( $ids as $id ) {
+		if ( ! isset($cache[$id]) )
+			$cache[$id] = array();
+		wp_cache_add( $id, $cache[$id], $cache_key );
+	}
+
+	return $cache;
+
+}
