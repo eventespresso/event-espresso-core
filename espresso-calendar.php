@@ -684,8 +684,8 @@ if($espresso_calendar['espresso_use_pickers'] == 'true') {
 		if( isset( $espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']) ) {
 ?>
 			.fc-event-skin {
-				background-color: #<?php echo $espresso_calendar['ee_event_background'] ?>;
-				border: 1px solid #<?php echo $espresso_calendar['ee_event_background'] ?>;
+				background-color: <?php echo $espresso_calendar['ee_event_background'] ?>;
+				border: 1px solid <?php echo $espresso_calendar['ee_event_background'] ?>;
 			}
 <?php 
 		}
@@ -693,7 +693,7 @@ if($espresso_calendar['espresso_use_pickers'] == 'true') {
 		if( isset( $espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']) ) {
 ?>
 			.fc-event-title, .time-display-block {
-				color: #<?php echo $espresso_calendar['ee_event_text_color'] ?>;
+				color: <?php echo $espresso_calendar['ee_event_text_color'] ?>;
 			}
 <?php 
 		}
