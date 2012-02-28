@@ -392,14 +392,14 @@ function espresso_calendar_config_mnu()	{
 															<?php _e('Event Background - color picker', 'event_espresso') ?>
 														</label>
 													</th>
-													<td><input id="color"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> /><div id="colorpicker"></div></td>
+													<td><input id="background-color"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> /><div id="colorpicker-1"></div></td>
 												</tr>
 												<tr class="color-picker-selections">
 													<th class="color-picker-style"> <label for="event-text">
 															<?php _e('Event Text - color picker', 'event_espresso') ?>
 														</label>
 													</th>
-													<td><input id="color" type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']))? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> /><div id="colorpicker"></div></td>
+													<td><input id="text-color" type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']))? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> /><div id="colorpicker-2"></div></td>
 												</tr>
 												<tr> 
 													
@@ -601,12 +601,15 @@ jQuery(document).ready(function($){
 			}
 		});		
 
-		// color picker initialisation 
-	    $('#colorpicker').hide();
-    	$('#colorpicker').farbtastic("#color");
-    	$("#color").click(function(){jQuery('#colorpicker').slideToggle()});
+		// color picker initialization
+	    $('#colorpicker-1').hide();
+	    $('#colorpicker-2').hide();
+    	$('#colorpicker-1').farbtastic("#background-color");
+    	$('#colorpicker-2').farbtastic("#text-color");
+    	$("#background-color").click(function(){$('#colorpicker-1').slideToggle()});
+    	$("#text-color").click(function(){$('#colorpicker-2').slideToggle()});
 
-		// WP toggle function		
+		// WP toggle function
 		postboxes.add_postbox_toggles('espresso_calendar');
 
 	});
