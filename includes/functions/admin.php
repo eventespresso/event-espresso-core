@@ -44,6 +44,11 @@ function event_espresso_config_page_scripts() {
 
 	$load_jquery_ui = false;
 	$load_datepicker = false;
+	$load_farbtastic = false;
+
+	if ($_REQUEST['page'] == 'espresso_calendar') {
+		$load_farbtastic = true;
+	}
 
 	if ($_REQUEST['page'] == 'events' && isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'add_new_event')) {
 		$load_jquery_ui = true;
@@ -58,6 +63,12 @@ function event_espresso_config_page_scripts() {
 	if ($_REQUEST['page'] == 'attendees' && isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'enter_attendee_payments' ) {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
+	}
+
+	//Load farbtastic
+	if ( $load_farbtastic == true ) {
+		wp_enqueue_script('farbtastic');
+		wp_enqueue_style('farbtastic');
 	}
 
 	//Load jquery UI scripts
