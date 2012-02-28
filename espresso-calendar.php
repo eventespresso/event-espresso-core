@@ -167,7 +167,7 @@ function espresso_calendar_config_mnu()	{
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
 		<?php event_espresso_display_right_column ();?>
 		<div id="post-body">
-			<div id="post-body-content"> 
+			<div id="post-body-content"> <?php echo 'debug: '; echo $_REQUEST['page']; ?>
 				
 				<!-- begin left column metaboxes-->
 				
@@ -392,14 +392,14 @@ function espresso_calendar_config_mnu()	{
 															<?php _e('Event Background - color picker', 'event_espresso') ?>
 														</label>
 													</th>
-													<td><input id="event-background"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> /></td>
+													<td><input id="color"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background']))? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> /><div id="colorpicker"></div></td>
 												</tr>
 												<tr class="color-picker-selections">
 													<th class="color-picker-style"> <label for="event-text">
 															<?php _e('Event Text - color picker', 'event_espresso') ?>
 														</label>
 													</th>
-													<td><input id="event-text"type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']))? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> /></td>
+													<td><input id="color" type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color']))? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> /><div id="colorpicker"></div></td>
 												</tr>
 												<tr> 
 													
@@ -602,14 +602,10 @@ jQuery(document).ready(function($){
 		});		
 
 		// color picker initialisation 
-			$('input#event-background, input#event-text').wheelColorPicker({ 
-			dir: '<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>scripts/wheelcolorpicker',
-				preview: true,
-				userinput: true,
-				format: 'hex',
-				validate: true
-			});
-		
+	    $('#colorpicker').hide();
+    	$('#colorpicker').farbtastic("#color");
+    	$("#color").click(function(){jQuery('#colorpicker').slideToggle()});
+
 		// WP toggle function		
 		postboxes.add_postbox_toggles('espresso_calendar');
 
@@ -619,18 +615,6 @@ jQuery(document).ready(function($){
 </script>
 <?php
 }
-// configure scripts and styles for event background color picker
-if(is_admin()){
-	
-	function espresso_calendar_load_admin_scripts() {
-		if ( defined( 'EVENT_ESPRESSO_PLUGINFULLURL' )) {
-				wp_register_script('wheelcolorpicker',EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/wheelcolorpicker/jquery.wheelcolorpicker.min.js', array('jquery') );
-				wp_enqueue_script('wheelcolorpicker');
-		}
-	}
-	add_action('admin_init', 'espresso_calendar_load_admin_scripts');	
-}
-
 ################## finish admin screen settings ###########################
 
 //Load the scripts and css
