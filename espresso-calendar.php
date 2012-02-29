@@ -705,30 +705,8 @@ if($espresso_calendar['espresso_use_pickers'] == 'true') {
 	add_action('wp_head', 'event_background_selection');	
 }// close if use picker is Yes
 
-//Build the short code
-//[ESPRESSO_CALENDAR]
-//[ESPRESSO_CALENDAR show_expired="true"]
-//[ESPRESSO_CALENDAR event_category_id="your_category_identifier"]
-if (!function_exists('espresso_calendar')) {
-	function espresso_calendar ($atts){
-		global $wpdb, $org_options, $espresso_calendar, $load_espresso_calendar_scripts;
-		
-		//print_r($espresso_calendar);
-		
-		$load_espresso_calendar_scripts = true;//This tells the plugin to load the required scripts
-
-		extract(shortcode_atts(array('event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month'), $atts));
-		$event_category_id= "{$event_category_id}";
-		$show_expired= "{$show_expired}";
-		$cal_view= "{$cal_view}";
-		
-		// grab the thumbnail size from calendar options settings
-		if(empty($espresso_calendar['calendar_thumb_size'])) {
-			$ee_img_size = 'small';
-		}else{
-			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
-		}
-
+function espresso_hook_action_calendar_do_stuff() {
+	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
 		//Build the SQL to run
 
 		//Get the categories
@@ -908,6 +886,34 @@ if (!function_exists('espresso_calendar')) {
 		//Debug:
 		//Print the results of the code above
 		// echo json_encode($events);
+}
+add_action( 'espresso_hook_action_calendar_do_stuff', 'espresso_hook_action_calendar_do_stuff' );
+
+//Build the short code
+//[ESPRESSO_CALENDAR]
+//[ESPRESSO_CALENDAR show_expired="true"]
+//[ESPRESSO_CALENDAR event_category_id="your_category_identifier"]
+if (!function_exists('espresso_calendar')) {
+	function espresso_calendar ($atts){
+		global $wpdb, $org_options, $espresso_calendar, $load_espresso_calendar_scripts, $event_category_id, $events;
+		
+		//print_r($espresso_calendar);
+		
+		$load_espresso_calendar_scripts = true;//This tells the plugin to load the required scripts
+
+		extract(shortcode_atts(array('event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month'), $atts));
+		$event_category_id= "{$event_category_id}";
+		$show_expired= "{$show_expired}";
+		$cal_view= "{$cal_view}";
+		
+		// grab the thumbnail size from calendar options settings
+		if(empty($espresso_calendar['calendar_thumb_size'])) {
+			$ee_img_size = 'small';
+		}else{
+			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
+		}
+		var_dump($eventsArray);
+		do_action( 'espresso_hook_action_calendar_do_stuff' );
 
 	//Start the output of the calendar
 	ob_start();
@@ -1185,7 +1191,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
-		global $wpdb, $org_options, $espresso_calendar, $load_espresso_calendar_scripts;
+		global $wpdb, $org_options, $espresso_calendar, $load_espresso_calendar_scripts, $event_category_id, $events;
 		extract( $args );
 
 		/* User-selected settings. */
@@ -1211,6 +1217,11 @@ class Espresso_Calendar_Widget extends WP_Widget {
 					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
 					espresso_init_calendar();
 					espresso_init_calendar_style();
+					if ( function_exists( 'espresso_hook_action_calendar_do_stuff' )) {
+						do_action( 'espresso_hook_action_calendar_do_stuff' );
+					} else {
+						echo 'sorry, I couldn\'t figure out the action you wanted me to run';
+					}
 					echo $espresso_calendar_widget;
 				}
 
