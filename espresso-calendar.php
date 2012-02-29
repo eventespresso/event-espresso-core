@@ -1185,36 +1185,43 @@ class Espresso_Calendar_Widget extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
+		global $wpdb, $org_options, $espresso_calendar, $load_espresso_calendar_scripts;
 		extract( $args );
 
 		/* User-selected settings. */
-		$title = apply_filters('widget_title', $instance['title'] );
+		$title = apply_filters( 'widget_title', $instance['title'] );
 		$show_expired = $instance['show_expired'];
 		$category_id = $instance['category_id'];
 		$calendar_page = $instance['calendar_page'];
+		$load_espresso_calendar_scripts = true;
 
-		if (!is_page( $calendar_page )) { // if we aren't on the calendar page, we can output the calendar in the sidebar safely 
-			/* Before widget (defined by themes). */
+
+		if (!is_page( $calendar_page )) { // if we aren't on the calendar page, we can output the calendar in the sidebar safely
+			// Before widget (defined by themes).
 			echo $before_widget;
-			/* Title of widget (before and after defined by themes). */
+			// Title of widget (before and after defined by themes).
 			if ( $title )
 				echo $before_title . $title . $after_title;
 
-				if ( $category_id != '' ) { // if there's a category, do this
-					echo do_shortcode("[ESPRESSO_CALENDAR show_expired=$show_expired category_id=$category_id]");
+				//Start the output of the calendar
+
+				if (!file_exists(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php')) {
+					echo 'Woah. I don\'t know what you did there, but I couldn\'t find espresso-calendar-widget.php.';
 				} else {
-					echo 'show expired is ' . $show_expired;
-					echo do_shortcode("[ESPRESSO_CALENDAR show_expired=$show_expired]"); // this is a cheap hack but if someone has a better idea, let me know. ~c
+					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
+					espresso_init_calendar();
+					espresso_init_calendar_style();
+					echo $espresso_calendar_widget;
 				}
 
-			/* After widget (defined by themes). */
+			// After widget (defined by themes).
 			echo $after_widget;
 		}
 	}
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 
-		/* Strip tags (if needed) and update the widget settings. */
+		// Strip tags (if needed) and update the widget settings.
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['show_expired'] = strip_tags( $new_instance['show_expired'] );
 		$instance['category_id'] = strip_tags( $new_instance['category_id'] );
@@ -1224,7 +1231,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 	}
 	function form( $instance ) {
 
-		/* Set up some default widget settings. */
+		// Set up some default widget settings.
 		$defaults = array( 'title' => 'Calendar', 'show_expired' => 'false', 'category_id' => '', 'calendar_page' => '' );
 		$instance = wp_parse_args( (array) $instance, $defaults );
 
