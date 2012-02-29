@@ -300,7 +300,7 @@
 				<?php _e( 'Calendar Page', 'event_espresso' ); ?>
 			</h2>
 			<p>
-				<?php _e( 'If you have a dedicated calendar page on your site, enter the slug or page ID here.  <strong>This is required!</strong>  Your calendar page may not display correctly if you do not list it here!', 'event_espresso' ); ?>
+				<?php _e( 'If you have a dedicated calendar page on your site, enter the slug or page ID here.  <strong>This is required!</strong>  If left blank, your calendar page may not display correctly and the calendar will not display on pages.', 'event_espresso' ); ?>
 			</p>
 		</div>
 	</div>
