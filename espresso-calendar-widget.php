@@ -143,16 +143,16 @@
 	$espresso_calendar_widget .= '},';
 
 					//For date formatting options, please refer to: http://arshaw.com/fullcalendar/docs/utilities/formatDate/
-	$espresso_calendar_widget .= 'titleFormat:{ },';
+	$espresso_calendar_widget .= 'titleFormat:{ month: \'MMM\' },';
 
 					//Text that will be displayed on buttons of the header.
 	$espresso_calendar_widget .= 'buttonText: { },';
 
 					//Full names of months.
-	$espresso_calendar_widget .= 'monthNames: [],';
+	$espresso_calendar_widget .= 'monthNames: [' . stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']) . '],';
 
 					//Abbreviated names of months.
-	$espresso_calendar_widget .= 'monthNamesShort: [],';
+	$espresso_calendar_widget .= 'monthNamesShort: [' . stripslashes_deep($espresso_calendar['espresso_calendar_monthNamesShort']) . '],';
 
 					//Full names of days-of-week.
 	$espresso_calendar_widget .= 'dayNames: [' . stripslashes_deep($espresso_calendar['espresso_calendar_dayNames']) /*'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'*/ . '],';
