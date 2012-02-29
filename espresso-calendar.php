@@ -705,7 +705,7 @@ if($espresso_calendar['espresso_use_pickers'] == 'true') {
 	add_action('wp_head', 'event_background_selection');	
 }// close if use picker is Yes
 
-function espresso_hook_action_calendar_do_stuff() {
+function espresso_calendar_do_stuff() {
 	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
 		//Build the SQL to run
 
@@ -887,7 +887,17 @@ function espresso_hook_action_calendar_do_stuff() {
 		//Print the results of the code above
 		// echo json_encode($events);
 }
-add_action( 'espresso_hook_action_calendar_do_stuff', 'espresso_hook_action_calendar_do_stuff' );
+add_action( 'action_hook_espresso_calendar_do_stuff', 'espresso_calendar_do_stuff' );
+
+function espresso_calendar_thumb_size(){
+	// grab the thumbnail size from calendar options settings
+	if(empty($espresso_calendar['calendar_thumb_size'])) {
+		$ee_img_size = 'small';
+	}else{
+		$ee_img_size = $espresso_calendar['calendar_thumb_size'];
+	}
+}
+add_action( 'action_hook_espresso_calendar_thumb_size', 'espresso_calendar_thumb_size' );
 
 //Build the short code
 //[ESPRESSO_CALENDAR]
@@ -905,15 +915,9 @@ if (!function_exists('espresso_calendar')) {
 		$event_category_id= "{$event_category_id}";
 		$show_expired= "{$show_expired}";
 		$cal_view= "{$cal_view}";
-		
-		// grab the thumbnail size from calendar options settings
-		if(empty($espresso_calendar['calendar_thumb_size'])) {
-			$ee_img_size = 'small';
-		}else{
-			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
-		}
-		var_dump($eventsArray);
-		do_action( 'espresso_hook_action_calendar_do_stuff' );
+
+		do_action( 'action_hook_espresso_calendar_thumb_size' );
+		do_action( 'action_hook_espresso_calendar_do_stuff' );
 
 	//Start the output of the calendar
 	ob_start();
@@ -1210,19 +1214,17 @@ class Espresso_Calendar_Widget extends WP_Widget {
 				echo $before_title . $title . $after_title;
 
 				//Start the output of the calendar
-
 				if (!file_exists(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php')) {
 					echo 'Woah. I don\'t know what you did there, but I couldn\'t find espresso-calendar-widget.php.';
 				} else {
-					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
-					espresso_init_calendar();
-					espresso_init_calendar_style();
-					if ( function_exists( 'espresso_hook_action_calendar_do_stuff' )) {
-						do_action( 'espresso_hook_action_calendar_do_stuff' );
+					if ( function_exists( 'espresso_calendar_do_stuff' )) {
+						do_action( 'action_hook_espresso_calendar_do_stuff' );
+						include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
+						//var_dump($events);
+						echo $espresso_calendar_widget;
 					} else {
 						echo 'sorry, I couldn\'t figure out the action you wanted me to run';
 					}
-					echo $espresso_calendar_widget;
 				}
 
 			// After widget (defined by themes).
