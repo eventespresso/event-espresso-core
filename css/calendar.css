@@ -693,22 +693,21 @@ class name '.event-has-thumb' is added to top level parent event */
 
 .espresso_calendar_widget span.fc-event-title,
 .espresso_calendar_widget p.time-display-block {
-	display: none;
+	display: none; /* hide the titles because they make things ugly */
 }
 .espresso_calendar_widget .fc-event-skin {
-	background-color: transparent;
+	background-color: transparent; /* get rid of the background color and border */
 	border: none;
 	height: 16px;
 }
 .espresso_calendar_widget a.fc-event-skin div {
-	background: url('images/tick-circle-frame.png') no-repeat 6px -24px;
+	background: url('images/tick-circle-frame.png') no-repeat 6px -24px; /* add an image instead */
 }
 .espresso_calendar_widget a.fc-event-skin div:hover { background-position:6px 0px!important; }
-
-
-        #menu-posts-POSTTYPE .wp-menu-image {
-            background: url(<?php bloginfo('template_url') ?>/images/YOURIMAGE.png) no-repeat 6px -17px !important;
-        }
-	#menu-posts-POSTTYPE:hover .wp-menu-image, #menu-posts-POSTTYPE.wp-has-current-submenu .wp-menu-image {
-            background-position:6px 7px!important;
-        }
+/* fugue icon pack can be downloaded here: http://randyjensenonline.com/thoughts/wordpress-custom-post-type-fugue-icons/ */
+/* using this pack is good if you want to have the same hover effects, otherwise, you can use any icon or icon pack.  I also like http://famfamfam.com */
+.espresso_calendar_widget .fc-header h2 { font-size: 1.2em; font-weight: normal; } /* resets the height of the month name */
+.espresso_calendar_widget .fc-button-content { line-height: 1.2em; padding: 0 5px; height: 1.2em; font-size: 0.8em; } /* resets the button styles */
+.espresso_calendar_widget table.fc-header { margin-bottom: 0; } /* removes any padding under the header table (might be built into the theme's style.css) */
+.espresso_calendar_widget table.fc-border-separate tbody { font-size: 0.8em; } /* resets the font size of the dates */
+.espresso_calendar_widget table.fc-border-separate thead { font-size: 0.9em; } /* resets the font size of the day names */
