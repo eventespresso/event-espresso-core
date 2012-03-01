@@ -695,3 +695,20 @@ class name '.event-has-thumb' is added to top level parent event */
 .espresso_calendar_widget p.time-display-block {
 	display: none;
 }
+.espresso_calendar_widget .fc-event-skin {
+	background-color: transparent;
+	border: none;
+	height: 16px;
+}
+.espresso_calendar_widget a.fc-event-skin div {
+	background: url('images/tick-circle-frame.png') no-repeat 6px -24px;
+}
+.espresso_calendar_widget a.fc-event-skin div:hover { background-position:6px 0px!important; }
+
+
+        #menu-posts-POSTTYPE .wp-menu-image {
+            background: url(<?php bloginfo('template_url') ?>/images/YOURIMAGE.png) no-repeat 6px -17px !important;
+        }
+	#menu-posts-POSTTYPE:hover .wp-menu-image, #menu-posts-POSTTYPE.wp-has-current-submenu .wp-menu-image {
+            background-position:6px 7px!important;
+        }
