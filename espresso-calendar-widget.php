@@ -143,7 +143,7 @@
 	$espresso_calendar_widget .= '},';
 
 					//For date formatting options, please refer to: http://arshaw.com/fullcalendar/docs/utilities/formatDate/
-	$espresso_calendar_widget .= 'titleFormat:{ month: \'MMM\' },';
+	$espresso_calendar_widget .= 'titleFormat:{ month: \'MMMM\' },';
 
 					//Text that will be displayed on buttons of the header.
 	$espresso_calendar_widget .= 'buttonText: { },';
