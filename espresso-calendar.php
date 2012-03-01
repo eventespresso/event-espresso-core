@@ -167,7 +167,7 @@ function espresso_calendar_config_mnu()	{
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
 		<?php event_espresso_display_right_column ();?>
 		<div id="post-body">
-			<div id="post-body-content"> <?php echo 'debug: '; echo $_REQUEST['page']; ?>
+			<div id="post-body-content">
 				
 				<!-- begin left column metaboxes-->
 				
