@@ -827,15 +827,11 @@ function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrd
 
 function espresso_email_message($id) {
 	global $wpdb;
-	$results = $wpdb->get_results("SELECT * FROM " . EVENTS_EMAIL_TABLE . " WHERE id =" . $id);
-	foreach ($results as $result) {
-		$email_id = $result->id;
-		$email_name = stripslashes_deep($result->email_name);
-		$email_subject = stripslashes_deep($result->email_subject);
-		$email_text = stripslashes_deep($result->email_text);
-	}
-	$email_data = array('id' => $id, 'email_name' => $email_name, 'email_subject' => $email_subject, 'email_text' => $email_text);
-	return $email_data;
+	$result = $wpdb->get_row("SELECT * FROM " . EVENTS_EMAIL_TABLE . " WHERE id =" . $id, ARRAY_A);
+		$result['email_name'] = stripslashes_deep($result['email_name']);
+		$result['email_subject'] = stripslashes_deep($result['email_subject']);
+		$result['email_text'] = stripslashes_deep($result['email_text']);
+	return $result;
 }
 
 function espresso_category_dropdown($current_value='') {
