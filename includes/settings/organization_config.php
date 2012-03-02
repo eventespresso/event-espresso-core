@@ -1,34 +1,33 @@
 <?php
+
 /**
- *		Event Registration Subpage 1 - Configure Organization
+ * 		Event Registration Subpage 1 - Configure Organization
  *
- *		@ access public
- *		@ return void
+ * 		@ access public
+ * 		@ return void
  */
 function organization_config_mnu() {
 	global $wpdb, $notices, $org_options, $espresso_premium, $espresso_wp_user;
 
 
 	// if espresso_url_rewrite_activated is in the post data, but it doesn't yet exist in the org options, then this is the first time this will run
-	if ( isset( $_POST['espresso_url_rewrite_activated'] ) && ! isset( $org_options['espresso_url_rewrite_activated'] )){
+	if (isset($_POST['espresso_url_rewrite_activated']) && !isset($org_options['espresso_url_rewrite_activated'])) {
 
 		// check for slug column
-		$SQL = 'SHOW COLUMNS FROM '.EVENTS_DETAIL_TABLE.' LIKE "slug"';
-		$results = $wpdb->get_results( $wpdb->prepare( $SQL ));
+		$SQL = 'SHOW COLUMNS FROM ' . EVENTS_DETAIL_TABLE . ' LIKE "slug"';
+		$results = $wpdb->get_results($wpdb->prepare($SQL));
 		//echo printr( $results, '$results' );
-
 		// if column does not exist
-		if ( empty( $results )) {
+		if (empty($results)) {
 
-			$SQL = 'ALTER TABLE '.EVENTS_DETAIL_TABLE.' ADD slug VARCHAR(100) AFTER event_name';
-			$results = $wpdb->query( $wpdb->prepare( $SQL ));
+			$SQL = 'ALTER TABLE ' . EVENTS_DETAIL_TABLE . ' ADD slug VARCHAR(100) AFTER event_name';
+			$results = $wpdb->query($wpdb->prepare($SQL));
 			//echo printr( $results, '$results' );
 			// column creation was sucessful
-			if ( ! empty( $results )) {
+			if (!empty($results)) {
 				// create url slugs from event_name
 				espresso_create_url_slugs();
 			}
-
 		}
 	}
 
@@ -143,7 +142,7 @@ function organization_config_mnu() {
 				break;
 		}
 
-		if ( isset( $_POST['espresso_url_rewrite_activated'] )) {
+		if (isset($_POST['espresso_url_rewrite_activated'])) {
 			$org_options['espresso_url_rewrite_activated'] = $_POST['espresso_url_rewrite_activated'];
 		} else {
 			$org_options['espresso_url_rewrite_activated'] = 'N';
@@ -161,8 +160,8 @@ function organization_config_mnu() {
 
 	//Options updated message
 	//This line keeps the notices from displaying twice
-	if (did_action( 'action_hook_espresso_admin_notices') == false) {
-		do_action( 'action_hook_espresso_admin_notices');
+	if (did_action('action_hook_espresso_admin_notices') == false) {
+		do_action('action_hook_espresso_admin_notices');
 	}
 
 
@@ -188,7 +187,7 @@ function organization_config_mnu() {
 							<ul id="event_espresso-sortables">
 								<li>
 									<div class="metabox-holder">
-										<div class="postbox <?php echo !isset($_REQUEST['Submit_2']) && !isset($_REQUEST['Submit_3']) && !isset($_REQUEST['Submit_4']) ? '' : 'closed'; ?>">
+										<div class="postbox <?php echo!isset($_REQUEST['Submit_2']) && !isset($_REQUEST['Submit_3']) && !isset($_REQUEST['Submit_4']) ? '' : 'closed'; ?>">
 											<div title="Click to toggle" class="handlediv"><br />
 											</div>
 											<h3 class="hndle">
@@ -198,7 +197,7 @@ function organization_config_mnu() {
 												<div class="padding">
 													<h4>
 														<?php _e('Contact Information', 'event_espresso'); ?>
-														<?php echo apply_filters( 'filter_hook_espresso_help', 'contact_info'); ?>
+														<?php echo apply_filters('filter_hook_espresso_help', 'contact_info'); ?>
 													</h4>
 													<table class="form-table">
 														<tbody>
@@ -287,7 +286,7 @@ function organization_config_mnu() {
 															<tr>
 																<th><label for="upload_image">
 																		<?php _e('Add a Default Logo', 'event_espresso'); ?>
-																		<?php echo apply_filters( 'filter_hook_espresso_help', 'espresso_default_logo_info'); ?>
+																		<?php echo apply_filters('filter_hook_espresso_help', 'espresso_default_logo_info'); ?>
 																	</label></th>
 																<td><div id="default-logo-image">
 																		<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $org_options['default_logo_url'] ?>" />
@@ -328,10 +327,10 @@ function organization_config_mnu() {
 													</p>
 													<table class="form-table">
 														<tbody>
-														<?php
+															<?php
 															//Check to see if we are using the deprecated SSL option. If we are, recommend updating to WordPress HTTPS (SSL).
-															if ($espresso_premium == true && isset($org_options['event_ssl_active']) ){
-																if ( $org_options['event_ssl_active'] == 'Y' ) {
+															if ($espresso_premium == true && isset($org_options['event_ssl_active'])) {
+																if ($org_options['event_ssl_active'] == 'Y') {
 																	echo '<tr><td colspan="2"><div id="ssl-reg" style="background-color: #ffffe0; border: #e6db55 1px solid; padding:4px;">';
 																	echo '<p><strong>' . __('Attention!', 'event_espresso') . '</strong><br />' . __('The Secure Payment System has been removed.', 'event_espresso') . '</p>';
 																	echo '<p>' . __('If your site uses SSL to handle secure transactions. Please install the <a href="http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip" title="Install Now">Event Espresso SSL/HTTPS</a> plugin now.', 'event_espresso') . ' ' . __('<a href="http://eventespresso.com/forums/2011/09/use-wordpress-https-for-ssl-encryption-on-your-event-espresso-site/" target="_blank">More information here</a>.', 'event_espresso') . '</p>';
@@ -339,21 +338,21 @@ function organization_config_mnu() {
 																			array('id' => 'N', 'text' => __('Yes', 'event_espresso')), //This turns the message off by changing the option to 'N'
 																			array('id' => 'Y', 'text' => __('No', 'event_espresso'))//This leaves the message on incase they are not ready to proceed
 																	);
-																?>
-																	<label for="event_ssl_active">
-																		<?php _e('Turn off this message?', 'event_espresso'); ?>
-																	</label>
-																	<br />
-																	<?php
-																	echo select_input('event_ssl_active', $ssl_values, empty($org_options['event_ssl_active']) ? 'N' : $org_options['event_ssl_active']);
-																	echo '</div></td></tr>';
-																}
+																	?>
+																<label for="event_ssl_active">
+																	<?php _e('Turn off this message?', 'event_espresso'); ?>
+																</label>
+																<br />
+																<?php
+																echo select_input('event_ssl_active', $ssl_values, empty($org_options['event_ssl_active']) ? 'N' : $org_options['event_ssl_active']);
+																echo '</div></td></tr>';
 															}
+														}
 														?>
 														<tr>
 															<th><label for="event_page_id">
 																	<?php _e('Main registration page', 'event_espresso'); ?>
-																	<?php echo apply_filters( 'filter_hook_espresso_help', 'registration_page_info'); ?>
+																	<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?>
 																</label></th>
 															<td><select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
 																	<option value="0">
@@ -367,7 +366,7 @@ function organization_config_mnu() {
 														<tr>
 															<th><label for="return_url">
 																	<?php _e('Auto Return URL', 'event_espresso'); ?>
-																	<?php echo apply_filters( 'filter_hook_espresso_help', 'return_url_info'); ?>
+																	<?php echo apply_filters('filter_hook_espresso_help', 'return_url_info'); ?>
 																</label></th>
 															<td><select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
 																	<option value="0">
@@ -382,7 +381,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 														<tr>
 															<th><label for="notify_url">
 																	<?php _e('Payment Notification URL', 'event_espresso'); ?>
-																	<?php echo apply_filters( 'filter_hook_espresso_help', 'notify_url_info'); ?>
+																	<?php echo apply_filters('filter_hook_espresso_help', 'notify_url_info'); ?>
 																</label></th>
 															<td><select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
 																	<option value="0">
@@ -398,7 +397,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																	<?php _e('Cancel Return URL', 'event_espresso'); ?>
 																</label></th>
 															<td><select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide">
-																	<?php echo apply_filters( 'filter_hook_espresso_help', 'cancel_return_info'); ?>
+																	<?php echo apply_filters('filter_hook_espresso_help', 'cancel_return_info'); ?>
 																	<option value="0">
 																		<?php _e('Main page', 'event_espresso'); ?>
 																	</option>
@@ -415,28 +414,28 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 																<fieldset>
 																	<legend class="screen-reader-text"><span>Pretty Permalinks</span></legend>
 																	<label>
-																	<?php
-																		if ( isset( $org_options['espresso_url_rewrite_activated'] )) {
+																		<?php
+																		if (isset($org_options['espresso_url_rewrite_activated'])) {
 																			$checked = $org_options['espresso_url_rewrite_activated'] == 'Y' ? 'checked="checked"' : '';
 																		} else {
 																			$checked = '';
 																		}
-																	?>
-																		<input type="checkbox"  value="Y" id="espresso_url_rewrite_activated" name="espresso_url_rewrite_activated" <?php echo $checked;?>/>
+																		?>
+																		<input type="checkbox"  value="Y" id="espresso_url_rewrite_activated" name="espresso_url_rewrite_activated" <?php echo $checked; ?>/>
 																		Activate "Pretty" Permalinks
 																		<br />
 																		<span class="description">
-																			makes URLs look like: "<b><?php echo espresso_get_reg_page_full_url();?>your-event-name</b>"<br/>
-																			instead of: "<b><?php echo espresso_get_reg_page_full_url();?>?ee=12</b>"<br/>
-																			<span class="important">Must have <a style="color:#d54e21;" href="<?php echo home_url('/');?>wp-admin/options-permalink.php">WordPress Permalinks</a> turned on, and mod_rewrite (or similar) active on server</span>
+																			makes URLs look like: "<b><?php echo espresso_get_reg_page_full_url(); ?>your-event-name</b>"<br/>
+																			instead of: "<b><?php echo espresso_get_reg_page_full_url(); ?>?ee=12</b>"<br/>
+																			<span class="important">Must have <a style="color:#d54e21;" href="<?php echo home_url('/'); ?>wp-admin/options-permalink.php">WordPress Permalinks</a> turned on, and mod_rewrite (or similar) active on server</span>
 																		</span>
 																	</label>
 																</fieldset>
 															</td>
 														</tr>
-													</tbody>
+														</tbody>
 
-												</table>
+													</table>
 													<p>
 														<input class="button-primary" type="submit" name="Submit_2" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
 													</p>
@@ -455,22 +454,19 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 											</h3>
 											<div class="inside">
 												<div class="padding"><a name="email-settings" id="email-settings"></a>
-													<p>
-														<?php _e('Use fancy email headers?', 'event_espresso');
-														echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?>
-														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=fancyemailheaders"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
-													</p>
-													<?php ###### Popup help box #######    ?>
-													<div id="fancyemailheaders" class="pop-help" style="display:none">
-														<h2>
-															<?php _e('Fancy Email Headers', 'event_espresso'); ?>
-														</h2>
-														<p><?php echo sprintf(__("This option enables the use of the email header format %s From: name %s %s Reply-to: name %s %s.", 'event_espresso'), '<br />', '&lt;email@address.com&gt;', '<br />', '&lt;email@address.com&gt;', '<br />'); ?></p>
-														<p><?php _e("You should only use this if you know it will not cause email delivery problems. Some servers will not send emails that use this format.", 'event_espresso'); ?></p>
-													</div>
-													<h4>
-														<?php _e('Payment Confirmation Email:', 'event_espresso'); ?>
-													</h4>
+													<h4><?php _e('Email Server Options:', 'event_espresso'); ?></h4>
+													<table class="form-table">
+														<tbody>
+															<tr>
+																<th><label for="email_fancy_headers">
+																		<?php _e('Use personalized email headers?', 'event_espresso'); ?>
+																	</label></th>
+																<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?>
+																	<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=fancyemailheaders"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></td>
+															</tr>
+														</tbody>
+													</table>
+													<h4><?php _e('Payment Confirmation Email:', 'event_espresso'); ?></h4>
 													<table class="form-table">
 														<tbody>
 															<tr>
@@ -481,22 +477,20 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 															</tr>
 														</tbody>
 													</table>
-													<h4>
-														<?php _e('Default Registration Confirmation Email:', 'event_espresso'); ?>
-													</h4>
-													<table class="form-table">
-														<tbody>
-															<tr>
-																<th><label for="email_before_payment">
-																		<?php _e('Send registration confirmation emails before payment is received?', 'event_espresso'); ?>
-																	</label></th>
-																<td><?php echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?></td>
-															</tr>
-														</tbody>
-													</table>
-													<p>
-														<input class="button-primary" type="submit" name="Submit_3" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
-													</p>
+													<h4><?php _e('Default Registration Confirmation Email:', 'event_espresso'); ?></h4>
+														<table class="form-table">
+															<tbody>
+																<tr>
+																	<th><label for="email_before_payment">
+																			<?php _e('Send registration confirmation emails before payment is received?', 'event_espresso'); ?>
+																		</label></th>
+																	<td><?php echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?></td>
+																</tr>
+															</tbody>
+														</table>
+														<p>
+															<input class="button-primary" type="submit" name="Submit_3" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
+														</p>
 												</div>
 											</div>
 										</div>
@@ -586,6 +580,14 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 		</div>
 	</div>
 	<!-- Help Pop-up Boxes -->
+	<?php ###### Popup help box #######     ?>
+	<div id="fancyemailheaders" class="pop-help" style="display:none">
+		<h2>
+			<?php _e('Full Email Headers', 'event_espresso'); ?>
+		</h2>
+		<p><?php echo sprintf(__("This option enables the use of the email header format %s From: name %s %s Reply-to: name %s %s.", 'event_espresso'), '<br />', '&lt;email@address.com&gt;', '<br />', '&lt;email@address.com&gt;', '<br />'); ?></p>
+		<p><?php _e("You should only use this if you know it will not cause email delivery problems. Some servers will not send emails that use this format.", 'event_espresso'); ?></p>
+	</div>
 	<?php
 	include('help.php');
 	echo event_espresso_custom_email_info();
@@ -626,12 +628,4 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 		espresso_tiny_mce();
 	}
 }
-
-
-
-
-
-
-
-
 
