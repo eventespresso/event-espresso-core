@@ -4,46 +4,55 @@ function replace_shortcodes($message, $data) {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$SearchValues = array(
+			// 1-5
 			"[event_id]",
 			"[event_identifier]",
 			"[registration_id]",
 			"[fname]",
 			"[lname]",
+			// 6-10
 			"[phone]",
 			"[event]",
 			"[event_name]",
 			"[description]",
 			"[event_link]",
+			// 11-15
 			"[event_url]",
 			"[virtual_url]",
 			"[virtual_phone]",
 			"[venue_title]",
 			"[venue_url]",
+			// 16-20
 			"[venue_image]",
 			"[venue_phone]",
 			"[venue_address]", //shows the venue address
 			"[txn_id]",
 			"[cost]",
+			// 21-25
 			"[event_price]",
 			"[ticket_type]",
 			"[ticket_link]",
 			"[certificate_link]",
 			"[contact]",
+			// 26-30
 			"[company]",
 			"[co_add1]",
 			"[co_add2]",
 			"[co_city]",
 			"[co_state]",
+			// 31-35
 			"[co_zip]",
 			"[payment_url]",
 			"[invoice_link]",
 			"[start_date]",
 			"[start_time]",
+			// 36-40
 			"[end_date]",
 			"[end_time]",
 			"[location]",
 			"[location_phone]",
 			"[google_map_link]",
+			// 41-44
 			"[attendee_event_list]", //Creates a table of the attendee and event information
 			"[custom_questions]",
 			"[qr_code]",
@@ -51,49 +60,58 @@ function replace_shortcodes($message, $data) {
 	);
 
 	$ReplaceValues = array(
+			// 1-5
 			$data->attendee->event_id,
 			$data->event->event_identifier,
 			$data->attendee->registration_id,
 			$data->attendee->fname,
 			$data->attendee->lname,
+			// 6-10
 			$data->event->venue_phone,
 			$data->event->event_name,
 			$data->event->event_name,
 			$data->event->event_desc,
 			$data->event_link,
+			// 11-15
 			$data->event_url,
 			$data->event->virtual_url,
 			$data->event->virtual_phone,
 			//Venue information
 			$data->event->venue_name,
 			$data->event->venue_url,
+			// 16-20
 			$data->event->venue_image,
 			$data->event->venue_phone,
 			$data->location, //For the "[venue_address]" shortcode shows the venue address
 			//Payment details
 			$data->attendee->txn_id,
 			$org_options['currency_symbol'] . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => true)),
+			// 21-25
 			$org_options['currency_symbol'] . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => true)),
 			$data->attendee->price_option,
 			$data->ticket_link,
 			empty($data->certificate_link) ? '' : $data->certificate_link,
 			$data->event->alt_email == '' ? $org_options['contact_email'] : $data->event->alt_email,
+			// 26-30
 			//Organization details
 			$org_options['organization'],
 			$org_options['organization_street1'],
 			$org_options['organization_street2'],
 			$org_options['organization_city'],
 			$org_options['organization_state'],
+			// 31-35
 			$org_options['organization_zip'],
 			$data->payment_link,
 			$data->invoice_link,
 			event_date_display($data->attendee->start_date),
 			event_date_display($data->attendee->event_time, get_option('time_format')),
+			// 36-40
 			event_date_display($data->attendee->end_date),
 			event_date_display($data->attendee->end_time, get_option('time_format')),
 			$data->location,
 			$data->event->venue_phone,
 			$data->google_map_link,
+			// 41-44
 			$data->table_open . $data->table_heading . $data->event_table . $data->table_close,
 			$data->email_questions,
 			$data->qr_code,
@@ -132,7 +150,7 @@ function replace_shortcodes($message, $data) {
 }
 
 //Build the email
-function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') {
+function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = '') {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$data = new stdClass;
@@ -172,7 +190,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 
 		$data->event->venue_url = $data->event->venue_meta['website'];
 		$data->event->venue_phone = $data->event->venue_meta['phone'];
-		$data->event->venue_image = '<img src="'.$data->event->venue_meta['image'].'" />';
+		$data->event->venue_image = '<img src="' . $data->event->venue_meta['image'] . '" />';
 
 		$data->event->venue_name = $data->event->venue_name;
 		$data->event->address = $data->event->venue_address;
@@ -225,7 +243,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 	$data->google_map_link = espresso_google_map_link(array('address' => $data->event->address, 'city' => $data->event->city, 'state' => $data->event->state, 'zip' => $data->event->zip, 'country' => $data->event->country));
 
 	//Registration URL
-	$data->event_url = espresso_reg_url( $data->event->id, $data->event->slug );
+	$data->event_url = espresso_reg_url($data->event->id, $data->event->slug);
 	$data->event_link = '<a href="' . $data->event_url . '">' . stripslashes_deep($data->event->event_name) . '</a>';
 
 	//Venue name
@@ -256,7 +274,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data='') 
 	$data->payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
 
 	// download link
-	$data->invoice_link = '<a href="' .espresso_invoice_url($data->attendee->id,  $data->attendee->registration_id) . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
+	$data->invoice_link = '<a href="' . espresso_invoice_url($data->attendee->id, $data->attendee->registration_id) . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
 
 	//Edit attendee link
 	$data->edit_attendee = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'attendee', 'Edit Registration Details');
@@ -397,7 +415,7 @@ function espresso_prepare_admin_email($data) {
 
 //End espresso_prepare_admin_email()
 
-function email_by_attendee_id($attendee_id, $send_attendee_email = TRUE, $send_admin_email = TRUE, $multi_reg = FALSE, $custom_data='') {
+function email_by_attendee_id($attendee_id, $send_attendee_email = TRUE, $send_admin_email = TRUE, $multi_reg = FALSE, $custom_data = '') {
 
 	$data = espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data);
 	//print_r($custom_data);
@@ -490,7 +508,7 @@ if (!function_exists('event_espresso_send_email')) {
 		extract($params);
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		if ($org_options['email_fancy_headers']=='Y') {
+		if ($org_options['email_fancy_headers'] == 'Y') {
 			$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
 			$headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
 		} else {
@@ -564,7 +582,7 @@ if (!function_exists('event_espresso_send_payment_notification')) {
 //Reminder Notices
 if (!function_exists('espresso_event_reminder')) {
 
-	function espresso_event_reminder($event_id, $email_subject='', $email_text='', $email_id=0) {
+	function espresso_event_reminder($event_id, $email_subject = '', $email_text = '', $email_id = 0) {
 		global $wpdb, $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$count = 0;
@@ -604,7 +622,7 @@ if (!function_exists('event_espresso_send_cancellation_notice')) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		if ($org_options['email_fancy_headers']=='Y') {
+		if ($org_options['email_fancy_headers'] == 'Y') {
 			$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
 			$headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
 		} else {
@@ -708,7 +726,7 @@ if (!function_exists('event_espresso_send_attendee_registration_approval_pending
 		}
 
 		//Build links
-		$event_url = espresso_reg_url( $event->id, $event->slug );
+		$event_url = espresso_reg_url($event->id, $event->slug);
 		$event_link = '<a href="' . $event_url . '">' . $event_name . '</a>';
 
 		$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
