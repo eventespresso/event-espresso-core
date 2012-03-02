@@ -311,7 +311,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = ''
 //Get the email ready to send
 function espresso_prepare_email($data) {
 	global $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize($data));
 	//Build the subject line
 	$email_subject = $data->email_subject;
 

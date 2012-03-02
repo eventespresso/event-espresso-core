@@ -31,6 +31,9 @@ class espresso_log {
 	}
 
 	public function log($message) {
+		if(!file_exists($this->file)) {
+			touch($this->file);
+		}
 		if(is_writable($this->file)) {
 		$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
 		fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
@@ -40,29 +43,29 @@ class espresso_log {
 			$notices['errors'][] = sprintf(__('Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso'), $this->file);
 		}
 	}
-	
+
 	public function remote_log($message) {
 		global $remote_log;
 		if(empty($remote_log)) $remote_log = '';
 		$remote_log .= '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n";
 	}
-	
+
 	public function send_log($url) {
 		global $remote_log;
 		// send the $remote_log var to the server
-		
+
 		$file_name = $_SERVER['SCRIPT_FILENAME'];
 		$domain = $_SERVER['HTTP_HOST'];
 		$ip = $_SERVER['SERVER_ADDR'];
 		$server_type = $_SERVER['SERVER_SOFTWARE'];
 		$request_array = json_encode($_REQUEST);
-		
+
 		//Encrypt the $remote_log?
 		//$remote_log = base64_encode($remote_log);
-		
+
 		//Encrypt the $request_array?
 		//$request_array = base64_encode($request_array);
-		
+
 		$data = 'domain='.$domain
 				.'&ip='.$ip
 				.'&server_type='.$server_type
@@ -70,16 +73,16 @@ class espresso_log {
 				.'&remote_log='.$remote_log
 				.'&request_array='.$request_array //<-- Do we want to leave this turned on?
 				.'&action=save';
-		
+
 		if ( defined('EELOGGING_PASS') ){
 			$data .= '&pass='.EELOGGING_PASS;
 		}
-		
+
 		if ( defined('EELOGGING_KEY') ){
 			$data .= '&key='.EELOGGING_KEY;
 		}
 
-		
+
 		$c = curl_init ($url);
 		curl_setopt ($c, CURLOPT_POST, true);
 		curl_setopt ($c, CURLOPT_POSTFIELDS, $data);
