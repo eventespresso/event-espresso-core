@@ -57,9 +57,6 @@ function organization_config_mnu() {
 		$org_options['notify_url'] = $_POST['notify_url'];
 		$org_options['events_in_dasboard'] = $_POST['events_in_dasboard'];
 		$org_options['default_mail'] = $_POST['default_mail'];
-		$org_options['payment_subject'] = $_POST['payment_subject'];
-		$org_options['payment_message'] = esc_html($_POST['payment_message']);
-		$org_options['message'] = esc_html($_POST['success_message']);
 		$org_options['email_before_payment'] = $_POST['email_before_payment'];
 		$org_options['email_fancy_headers'] = $_POST['email_fancy_headers'];
 		$org_options['use_captcha'] = $_POST['use_captcha'];
@@ -576,7 +573,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 											</div>
 										</div>
 									</li>
-									
+
 									<?php
 								}
 								?>
