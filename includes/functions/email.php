@@ -281,29 +281,34 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = ''
 
 	$data->email_subject = !$data->multi_reg ? $data->event->event_name : $org_options['organization'] . __(' registration confirmation', 'event_espresso');
 
+	switch($custom_data_email_type) {
 	//Build invoice email
-	if ($custom_data_email_type == 'invoice') {
+	case 'invoice':
 		$data->email_subject = $custom_data_invoice_subject;
 		$data->event->conf_mail = $custom_data_invoice_message;
 		$data->event->send_mail = 'Y';
 		$data->event->email_id = empty($_REQUEST['email_name']) ? '' : $_REQUEST['email_name'];
-	}
+		break;
 
 	//Build payment email
-	if ($custom_data_email_type == 'payment') {
+	case 'payment':
 		$data->email_subject = $custom_data_payment_subject;
 		$data->event->conf_mail = $custom_data_payment_message;
 		$data->event->send_mail = 'Y';
-	}
+		break;
 
 	//Build reminder email
-	if ($custom_data_email_type == 'reminder') {
+	case 'reminder':
 		$data->email_subject = $custom_data_email_subject;
 		$data->event->conf_mail = $custom_data_email_text;
 		$data->event->send_mail = 'Y';
 		$data->event->email_id = $custom_data_email_id > 0 ? $custom_data_email_id : '';
+		break;
+	default:
+		$email_data = espresso_email_message($data->event->confirmation_email_id);
+		$data->event->conf_mail = $email_data['email_text'];
+		$data->event->email_subject = $email_data['email_subject'];
 	}
-
 	return $data;
 }
 
@@ -312,38 +317,22 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = ''
 function espresso_prepare_email($data) {
 	global $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize($data));
-	//Build the subject line
-	$email_subject = $data->email_subject;
-
-	//Merge all the data
-	if ($data->event->email_id > 0 && $data->event->send_mail == 'Y') {//Get the email template if it exists
-		$email_data = array();
-		$email_data = espresso_email_message($data->event->email_id);
-		$conf_mail = $email_data['email_text'];
-		$email_subject = $email_data['email_subject'];
-	} elseif ($data->event->conf_mail != '' && $data->event->send_mail == 'Y') {//Else get the custom event email
-		$conf_mail = $data->event->conf_mail;
-	} else {//Else get the default email from the general settings
-		$conf_mail = $org_options['message'];
-	}
 
 	//Get the email subject
-	$email_subject = replace_shortcodes($email_subject, $data);
+	$email_subject = replace_shortcodes($data->event->email_subject, $data);
 
 	//Replace email shortcodes
-	$_replaced = replace_shortcodes($conf_mail, $data);
+	$_replaced = replace_shortcodes($data->event->conf_mail, $data);
 
 	//Build the HTML
 	$message_top = "<html><body>";
 	$message_bottom = "</body></html>";
 	$email_body = $message_top . $_replaced . $message_bottom;
-	if (!isset($headers))
-		$headers = '';
 	return array(
 			'send_to' => $data->attendee->email,
 			'email_subject' => $email_subject,
 			'email_body' => $email_body,
-			'headers' => $headers
+			'headers' => ''
 	);
 }
 
