@@ -141,7 +141,7 @@ function add_new_attendee($event_id) {
 		//Multiple Attendees
 		if ($allow_multiple == "Y" && $number_available_spaces > 1) {
 			//This returns the additional attendee form fields. Can be overridden in the custom files addon.
-			echo event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, __('Number of Tickets', 'event_espresso'), true, $event_meta);
+			echo event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, __('Number of Tickets', 'event_espresso'), true);
 		} else {
 			?>
 								<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
