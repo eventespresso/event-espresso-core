@@ -21,10 +21,10 @@ if (espresso_template_version() != $espresso_template_version){
  * @return string Full path to file.
  */
 function espresso_get_query_template( $type, $templates = array() ) {
-	
+
 	if ( empty( $templates ) )
 		$templates = array("{$type}.php");
-	
+
 	return apply_filters( "{$type}_template", espresso_locate_template( $templates ) );
 }
 
@@ -42,12 +42,13 @@ function espresso_get_query_template( $type, $templates = array() ) {
  * @return string The template filename if one is located.
  */
 function espresso_locate_template( $template_names ) {
+	global $org_options;
 	$located = '';
-	
+
 	foreach ( (array) $template_names as $template_name ) {
 		if ( !$template_name )
 			continue;
-		if ( file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $template_name) && file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . 'init.php') ) {
+		if ( file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $template_name) && $org_options['template_settings']['use_custom_templates']) {
 			$located = EVENT_ESPRESSO_TEMPLATE_DIR . $template_name;
 			break;
 		} else if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/' . $template_name) ) {
@@ -67,7 +68,7 @@ function espresso_locate_template( $template_names ) {
  * @return string
  */
 function espresso_get_registration_page_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'registration_page.php';
@@ -83,7 +84,7 @@ function espresso_get_registration_page_template() {
  * @return string
  */
 function espresso_get_registration_display_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'registration_page_display.php';
@@ -99,7 +100,7 @@ function espresso_get_registration_display_template() {
  * @return string
  */
 function espresso_get_event_list_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'event_list.php';
@@ -115,7 +116,7 @@ function espresso_get_event_list_template() {
  * @return string
  */
 function espresso_get_event_list_display_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'event_list_display.php';
@@ -131,7 +132,7 @@ function espresso_get_event_list_display_template() {
  * @return string
  */
 function espresso_get_attendee_list_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'attendee_list.php';
@@ -147,7 +148,7 @@ function espresso_get_attendee_list_template() {
  * @return string
  */
 function espresso_get_shopping_cart_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'shopping_cart.php';
@@ -163,7 +164,7 @@ function espresso_get_shopping_cart_template() {
  * @return string
  */
 function espresso_get_widget_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'widget.php';
@@ -179,7 +180,7 @@ function espresso_get_widget_template() {
  * @return string
  */
 function espresso_get_confirmation_display_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'confirmation_display.php';
@@ -195,7 +196,7 @@ function espresso_get_confirmation_display_template() {
  * @return string
  */
 function espresso_get_payment_page_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'payment_page.php';
@@ -211,7 +212,7 @@ function espresso_get_payment_page_template() {
  * @return string
  */
 function espresso_get_payment_overview_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'payment_overview.php';
@@ -227,7 +228,7 @@ function espresso_get_payment_overview_template() {
  * @return string
  */
 function espresso_get_return_payment_template() {
-	
+
 	$templates = array();
 
 	$templates[] = 'return_payment.php';
