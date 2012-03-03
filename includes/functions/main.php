@@ -1462,7 +1462,7 @@ function espresso_get_user_id() {
 
 	$wp_user_id = 0;
 
-	if (function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true) {
+	if (function_exists('espresso_manager_pro_version') && !empty($_SESSION['espresso_use_selected_manager'])) {
 		$wp_user_id = $current_user->ID;
 
 		//If an event manager is selected, then we need to load that persons id
@@ -2064,7 +2064,7 @@ function ee_add_event_meta( $event_id, $key, $value, $unique = false ) {
 		return false;
 
 	global $wpdb;
-	
+
 	$table = $wpdb->prefix.'events_meta';
 	$column = 'event_id';
 
@@ -2160,7 +2160,7 @@ function ee_update_event_meta($event_id, $key, $value, $prev_value = '') {
 /**
  * Delete event metadata for the specified event.
  * (based off of the core WordPress delete_metadata() function)
- * 
+ *
  * @param int $event_id ID of the event the metadata is for
  * @param string $key event meta key
  * @param string $value Optional. event meta value. If specified, only delete metadata entries with this value. Otherwise, delete all entries with the specified key.
@@ -2178,7 +2178,7 @@ function ee_delete_event_meta($event_id, $key, $value='', $delete_all = false ) 
 	$table = $wpdb->prefix.'events_meta';
 	$type_column = 'event_id';
 	$id_column =  'emeta_id';
-	
+
 	// expected_slashed ($key)
 	$meta_key = stripslashes($key);
 	$meta_value = stripslashes_deep($value);
