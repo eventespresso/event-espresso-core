@@ -43,14 +43,14 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 <div id="event_data-<?php echo $event_id ?>" class="event_data <?php echo $css_class; ?> <?php echo $category_identifier; ?> event-list-display event-display-boxes ui-widget">
 	<h2 id="event_title-<?php echo $event_id ?>" class="event_title ui-widget-header ui-corner-top"><a title="<?php echo stripslashes_deep($event_name) ?>" class="a_event_title" id="a_event_title-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>"><?php echo stripslashes_deep($event_name) ?></a> </h2>
 	<div class="event-data-display ui-widget-content ui-corner-bottom">
-		<?php 				
+		<?php
 	$thumb_url = $registration_url;
 	//Thumbnail
 	if( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] == 'Y' && !empty($event_meta['event_thumbnail_url'])){ ?>
 		<a id="ee-event-list-thumb" class="ee-thumbs" href="<?php echo $thumb_url ?>"> <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span> </a>
-		<?php 
+		<?php
 	}
-		
+
 ?>
 		<div class="event-meta">
 			<p id="p_event_price-<?php echo $event_id ?>" class="event_price"> <span class="section-title">
@@ -68,7 +68,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 			</span><?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved') ?> </p>
 		<?php
 	}
-	
+
 	//Event description
 	if ( !empty($event_desc) ){
 		if ( isset($org_options['template_settings']['display_description_in_event_list']) && $org_options['template_settings']['display_description_in_event_list'] == 'Y' ) {
@@ -80,34 +80,34 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 		<div class="event-desc ui-corner-all">
 			<p><?php echo espresso_format_content($event_desc); ?></p>
 		</div>
-		<?php 
+		<?php
 		}
-		
+
 	}
-	
+
 	//Address
 	if ($location != '' && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list'] == 'Y') { ?>
 		<p class="event_address" id="event_address-<?php echo $event_id ?>"> <span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 			<span class="address-block"><?php echo stripslashes_deep($location); ?> <span class="google-map-link">
 			<?php  echo $google_map_link; ?>
 			</span> </span> </p>
-		<?php 
+		<?php
 	}
-	
+
 	//Google map
-	if(isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == 'Y'){ 
+	if(isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == 'Y'){
 		if( function_exists('ee_gmap_display') && isset( $org_options['map_settings']['ee_display_map_no_shortcodes'] ) && ( $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y' )){
 			echo ee_gmap_display($ee_gmap_location, $event_id);
 		}
 	}
-	
+
 	//Social media buttons
 	do_action( 'action_hook_espresso_social_display_buttons', $event_id);
-	
+
 	//Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
-	$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); 
-	
-	if ($num_attendees >= $reg_limit) { 
+	$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
+
+	if ($num_attendees >= $reg_limit) {
 		if ($overflow_event_id != '0' && $allow_overflow == 'Y') { ?>
 		<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-secondary ui-state-default" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo espresso_reg_url($overflow_event_id); ?>" title="<?php echo stripslashes_deep($event_name) ?>">
 			<?php _e('Join Waiting List', 'event_espresso'); ?>
@@ -116,14 +116,15 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 		}
 	} else {
 		//Multiple event registration
-		
+
 		// Load the multi event link.
 		//Un-comment these next lines to check if the event is active
-		//echo event_espresso_get_status($event_id);
-		//print_r( event_espresso_get_is_active($event_id));
-	
+		print_r($multi_reg);
+		print_r(event_espresso_get_status($event_id));
+		print_r( event_espresso_get_is_active($event_id));
+
 		if ($multi_reg && event_espresso_get_status(0,$event_meta) == 'ACTIVE') {
-	
+
 			$params = array(
 				//REQUIRED, the id of the event that needs to be added to the cart
 				'event_id' => $event_id,
@@ -136,10 +137,10 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 				//OPTIONAL, will place this term before the link
 				'separator' => __(" &nbsp; Or &nbsp;", 'event_espresso')
 			);
-		
+
 			$cart_link = event_espresso_cart_link($params);
 		}
-		
+
 		if ($display_reg_form == 'Y') {
 			?>
 		<p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
@@ -154,6 +155,6 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 	}
 	?>
 	</div>
-	<!-- / .event-data-display --> 
+	<!-- / .event-data-display -->
 </div>
-<!-- / .event-display-boxes --> 
+<!-- / .event-display-boxes -->
