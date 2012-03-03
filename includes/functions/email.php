@@ -286,29 +286,25 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = ''
 	case 'invoice':
 		$data->email_subject = $custom_data_invoice_subject;
 		$data->event->conf_mail = $custom_data_invoice_message;
-		$data->event->send_mail = 'Y';
 		$data->event->email_id = empty($_REQUEST['email_name']) ? '' : $_REQUEST['email_name'];
 		break;
 
 	//Build payment email
 	case 'payment':
-		$data->email_subject = $custom_data_payment_subject;
-		$data->event->conf_mail = $custom_data_payment_message;
-		$data->event->send_mail = 'Y';
+		$email_id = $data->event->payment_email_id;
 		break;
 
 	//Build reminder email
 	case 'reminder':
-		$data->email_subject = $custom_data_email_subject;
-		$data->event->conf_mail = $custom_data_email_text;
-		$data->event->send_mail = 'Y';
-		$data->event->email_id = $custom_data_email_id > 0 ? $custom_data_email_id : '';
+		$email_id = $custom_data_email_id;
 		break;
+
 	default:
-		$email_data = espresso_email_message($data->event->confirmation_email_id);
+		$email_id = $data->event->confirmation_email_id;
+	}
+	$email_data = espresso_email_message($data->email_id);
 		$data->event->conf_mail = $email_data['email_text'];
 		$data->event->email_subject = $email_data['email_subject'];
-	}
 	return $data;
 }
 
