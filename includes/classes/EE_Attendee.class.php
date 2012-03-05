@@ -49,6 +49,7 @@ class EE_Attendee {
 	public $zip;
 	public $country_id;
 	public $phone;
+	public $attendee_session;
 	public $social_networks;
 	public $status_id;
 	public $comments;

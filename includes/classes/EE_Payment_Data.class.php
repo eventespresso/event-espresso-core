@@ -41,7 +41,7 @@ class EE_Payment_Data {
 		$attendees = array_merge($result, $additional_attendees);
 		foreach ($attendees as $attendee) {
 			$attendee_object = new EE_Attendee($attendee['id']);
-			$data=array('is_primary'=>$attendee['is_primary'],	'fname'=>$attendee['fname'], 'lname'=>$attendee['lname'], 'email'=>$attendee['email'], 'address'=>$attendee['address'], 'address2'=>$attendee['address2'], 'city'=>$attendee['city'], 'state'=>$attendee['state'], 'zip'=>$attendee['zip'], 'country_id'=>$attendee['country_id'], 'phone'=>$attendee['phone']);
+			$data=array('is_primary'=>$attendee['is_primary'],	'fname'=>$attendee['fname'], 'lname'=>$attendee['lname'], 'email'=>$attendee['email'], 'address'=>$attendee['address'], 'address2'=>$attendee['address2'], 'city'=>$attendee['city'], 'state'=>$attendee['state'], 'zip'=>$attendee['zip'], 'country_id'=>$attendee['country_id'], 'phone'=>$attendee['phone'], 'attendee_session'=>$attendee['attendee_session']);
 			$attendee_object->poplulate_attendee_details_from_array($data);
 			$this->attendees[] = $attendee_object;
 		}

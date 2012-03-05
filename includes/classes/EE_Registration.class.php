@@ -1,13 +1,11 @@
 <?php
 
 class EE_Registration {
-	public $id;
-	public $session_id;
-	public $status;
-	public $registration_code;
-	public $timestamp;
-	public $price_option;
-	public $event_id;
 	public $attendee_id;
+	public $event_id;
+	public $price_option;
 	public $is_early_bird;  // boolean, was EB applied?
+	public $promo_code;
+	public $is_groupon;    // boolean, was promo code a groupon code
+	public $timestamp;
 }
