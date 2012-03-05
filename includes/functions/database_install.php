@@ -259,7 +259,7 @@ function espresso_org_option_initialization() {
 
 	$table_name = $wpdb->prefix . "events_organization";
 	//Check to see if upgrading from an earlier version.
-	$test = get_user_meta($espresso_wp_user, 'events_organization_settings');
+	$test = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
 	if (empty($test)) {
 		if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
 
@@ -286,7 +286,10 @@ function espresso_org_option_initialization() {
 					'enable_default_style' => true,
 					'event_ssl_active' => false,
 					'use_venue_manager' => true,
+					'use_personnel_manager' => false,
 					'show_reg_footer' => true,
+					'use_attendee_pre_approval' => false,
+					'time_reg_limit' => false,
 					'template_settings' => array(
 							'use_custom_post_types' => false,
 							'display_address_in_regform' => false,
