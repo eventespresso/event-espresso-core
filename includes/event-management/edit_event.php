@@ -258,7 +258,7 @@ function edit_event($event_id = 0) {
 
 
 			###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
-			if ($org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
+			if ($org_options['use_attendee_pre_approval'] && $espresso_premium == true) {
 				?>
 				<div id="attendee-pre-approval-options" class="postbox closed">
 					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
@@ -331,7 +331,7 @@ function edit_event($event_id = 0) {
 				MailChimpView::event_list_selection();
 			}
 
-			if (function_exists('espresso_personnel_cb') && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
+			if (function_exists('espresso_personnel_cb') && $org_options['use_personnel_manager'] && $espresso_premium) {
 				?>
 				<div id="event-staff" class="postbox closed">
 					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
