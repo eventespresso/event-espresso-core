@@ -53,7 +53,7 @@ function espresso_log ($file,$function,$message) {
 	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message));
 }
 
-if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
+if (!empty($org_options['full_logging'])) {
 	add_action('action_hook_espresso_log', 'espresso_log', 10, 3);
 }
 
@@ -72,7 +72,7 @@ function espresso_send_log() {
 	espresso_log::singleton()->send_log($url);
 }
 
-if (isset($org_options['remote_logging']) && $org_options['remote_logging'] == 'Y') {
+if (!empty($org_options['remote_logging'])) {
 	//echo "<pre>".print_r($org_options,true)."</pre>";
 	add_action('action_hook_espresso_log', 'espresso_remote_log', 10, 3);
 	add_action('wp_footer', 'espresso_send_log');
