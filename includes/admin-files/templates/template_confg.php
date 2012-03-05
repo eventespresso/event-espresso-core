@@ -107,13 +107,13 @@ function espresso_template_settings() {
 	}
 
 	$files_themeroller = array();
-	
+
 	$exclude = array( '.', '..', 'index.htm', 'index.html', 'index.php', '.svn', 'themeroller-.css', '.DS_Store', basename($_SERVER['PHP_SELF']) );
 
 	if ($dhandle) { //if we managed to open the directory
 		// loop through all of the files
 		while (false !== ($fname_themeroller = readdir($dhandle))) {
-		
+
 		if ( !in_array( $fname_themeroller, $exclude) && !is_dir( $fname_themeroller )) {
 			// store the filename
 				$files_themeroller[] = $fname_themeroller;
