@@ -119,11 +119,7 @@ function organization_config_mnu() {
 		}
 	}
 
-//Options updated message
-//This line keeps the notices from displaying twice
-	if (did_action('action_hook_espresso_admin_notices') == false) {
-		do_action('action_hook_espresso_admin_notices');
-	}
+	do_action('action_hook_espresso_admin_notices');
 
 	espresso_org_confg_output();
 }

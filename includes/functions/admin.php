@@ -737,11 +737,7 @@ function event_espresso_update_attendee_data() {
 
 //Function to show an admin message if the main pages are not setup.
 function event_espresso_activation_notice() {
-	if (function_exists('admin_url')) {
 		echo '<div class="error fade"><p><strong>' . __('Event Espresso must be configured. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso#page_settings') . '">' . __('the Organization Settings page', 'event_espresso') . '</a>  ' . __('to configure the plugin "Page Settings."', 'event_espresso') . '</strong></p></div>';
-	} else {
-		echo '<div class="error fade" ><p><strong>' . __('Event Espresso must be configured. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso#page_settings') . '">' . __('the Organization Settings page', 'event_espresso') . '</a> ' . __('to configure the plugin "Page Settings."', 'event_espresso') . '</strong></p></div>';
-	}
 }
 
 //Function to show an admin message if registration id's are missing.
