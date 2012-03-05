@@ -34,22 +34,22 @@ function espresso_fix_org_options() {
 
 	//Retrive the existing $org_options, update, then unset the old one
 	if (array_key_exists('display_description_on_multi_reg_page', $org_options)) {
-		$org_options['template_settings']['display_description_on_multi_reg_page'] = empty($org_options['display_description_on_multi_reg_page']) ? '' : $org_options['display_description_on_multi_reg_page'];
+		$org_options['template_settings']['display_description_on_multi_reg_page'] = empty($org_options['display_description_on_multi_reg_page']) ? false : $org_options['display_description_on_multi_reg_page'];
 		unset($org_options['display_description_on_multi_reg_page']);
 	}
 
 	if (array_key_exists('display_short_description_in_event_list', $org_options)) {
-		$org_options['template_settings']['display_short_description_in_event_list'] = empty($org_options['display_short_description_in_event_list']) ? '' : $org_options['display_short_description_in_event_list'];
+		$org_options['template_settings']['display_short_description_in_event_list'] = empty($org_options['display_short_description_in_event_list']) ? false : $org_options['display_short_description_in_event_list'];
 		unset($org_options['display_short_description_in_event_list']);
 	}
 
 	if (array_key_exists('display_address_in_event_list', $org_options)) {
-		$org_options['template_settings']['display_address_in_event_list'] = empty($org_options['display_address_in_event_list']) ? '' : $org_options['display_address_in_event_list'];
+		$org_options['template_settings']['display_address_in_event_list'] = empty($org_options['display_address_in_event_list']) ? false : $org_options['display_address_in_event_list'];
 		unset($org_options['display_address_in_event_list']);
 	}
 
 	if (array_key_exists('display_address_in_regform', $org_options)) {
-		$org_options['template_settings']['display_address_in_regform'] = empty($org_options['display_address_in_regform']) ? '' : $org_options['display_address_in_regform'];
+		$org_options['template_settings']['display_address_in_regform'] = empty($org_options['display_address_in_regform']) ? false : $org_options['display_address_in_regform'];
 		unset($org_options['display_address_in_regform']);
 	}
 
@@ -59,7 +59,7 @@ function espresso_fix_org_options() {
 	}
 
 	if (array_key_exists('enable_default_style', $org_options)) {
-		$org_options['style_settings']['enable_default_style'] = empty($org_options['enable_default_style']) ? '' : $org_options['enable_default_style'];
+		$org_options['style_settings']['enable_default_style'] = empty($org_options['enable_default_style']) ? false : $org_options['enable_default_style'];
 		unset($org_options['enable_default_style']);
 	}
 
@@ -72,6 +72,24 @@ function espresso_fix_org_options() {
 		$org_options['style_settings']['style_color'] = empty($org_options['style_color']) ? '' : $org_options['style_color'];
 		unset($org_options['style_color']);
 	}
+
+	$org_options['default_mail'] = $org_options['default_mail'] || $org_options['default_mail'] == 'Y' ? true : false;
+	$org_options['expire_on_registration_end'] = $org_options['expire_on_registration_end'] || $org_options['expire_on_registration_end'] == 'Y' ? true : false;
+	$org_options['email_before_payment'] = $org_options['email_before_payment'] || $org_options['email_before_payment'] == 'Y' ? true : false;
+	$org_options['email_fancy_headers'] = $org_options['email_fancy_headers'] || $org_options['email_fancy_headers'] == 'Y' ? true : false;
+	$org_options['enable_default_style'] = $org_options['enable_default_style'] || $org_options['enable_default_style'] == 'Y' ? true : false;
+	$org_options['event_ssl_active'] = $org_options['event_ssl_active'] || $org_options['event_ssl_active'] == 'Y' ? true : false;
+	$org_options['use_venue_manager'] = $org_options['use_venue_manager'] || $org_options['use_venue_manager'] == 'Y' ? true : false;
+	$org_options['show_reg_footer'] = $org_options['show_reg_footer'] || $org_options['show_reg_footer'] == 'Y' ? true : false;
+	$org_options['template_settings']['use_custom_post_types'] = $org_options['template_settings']['use_custom_post_types'] || $org_options['template_settings']['use_custom_post_types'] == 'Y' ? true : false;
+	$org_options['template_settings']['display_address_in_regform'] = $org_options['template_settings']['display_address_in_regform'] || $org_options['template_settings']['display_address_in_regform'] == 'Y' ? true : false;
+	$org_options['template_settings']['display_short_description_in_event_list'] = $org_options['template_settings']['display_short_description_in_event_list'] || $org_options['template_settings']['display_short_description_in_event_list'] == 'Y' ? true : false;
+	$org_options['template_settings']['display_address_in_event_list'] = $org_options['template_settings']['display_address_in_event_list'] || $org_options['template_settings']['display_address_in_event_list'] == 'Y' ? true : false;
+	$org_options['template_settings']['display_description_on_multi_reg_page'] = $org_options['template_settings']['display_description_on_multi_reg_page'] || $org_options['template_settings']['display_description_on_multi_reg_page'] == 'Y' ? true : false;
+	$org_options['template_settings']['display_description_in_event_list'] = $org_options['template_settings']['display_description_in_event_list'] || $org_options['template_settings']['display_description_in_event_list'] == 'Y' ? true : false;
+	$org_options['template_settings']['use_custom_templates'] = $org_options['template_settings']['use_custom_templates'] || $org_options['template_settings']['use_custom_templates'] == 'Y' ? true : false;
+	$org_options['map_settings']['ee_map_nav_display_single'] = $org_options['map_settings']['ee_map_nav_display_single'] || $org_options['map_settings']['ee_map_nav_display_single'] == 'Y' ? true : false;
+	$org_options['map_settings']['ee_map_nav_display'] = $org_options['map_settings']['ee_map_nav_display'] || $org_options['map_settings']['ee_map_nav_display'] == 'Y' ? true : false;
 
 	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 }
@@ -116,13 +134,13 @@ function espresso_initialize_system_questions() {
 	}
 
 	if ($fname == false)
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'First Name', 'question_type' => 'TEXT', 'system_name' => 'fname', 'required' => 'Y', 'sequence' => '0'), array('%s', '%s', '%s', '%s', '%s'));
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'First Name', 'question_type' => 'TEXT', 'system_name' => 'fname', 'required' => true, 'sequence' => '0'), array('%s', '%s', '%s', '%s', '%s'));
 
 	if ($lname == false)
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Last Name', 'question_type' => 'TEXT', 'system_name' => 'lname', 'required' => 'Y', 'sequence' => '1'), array('%s', '%s', '%s', '%s', '%s'));
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Last Name', 'question_type' => 'TEXT', 'system_name' => 'lname', 'required' => true, 'sequence' => '1'), array('%s', '%s', '%s', '%s', '%s'));
 
 	if ($email == false)
-		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Email', 'question_type' => 'TEXT', 'system_name' => 'email', 'required' => 'Y', 'sequence' => '2'), array('%s', '%s', '%s', '%s', '%s'));
+		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Email', 'question_type' => 'TEXT', 'system_name' => 'email', 'required' => true, 'sequence' => '2'), array('%s', '%s', '%s', '%s', '%s'));
 
 	if ($adress == false)
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address', 'system_name' => 'address', 'sequence' => '3'), array('%s', '%s', '%s'));
@@ -253,7 +271,7 @@ function espresso_org_option_initialization() {
 					'organization_state' => 'AZ',
 					'organization_zip' => '84128',
 					'contact_email' => get_bloginfo('admin_email'),
-					'default_mail' => 'Y',
+					'default_mail' => true,
 					'country_id' => '',
 					'organization_country' => '64',
 					'currency_symbol' => '$',
@@ -262,32 +280,34 @@ function espresso_org_option_initialization() {
 					'surcharge' => '0.00',
 					'surcharge_type' => 'flat_rate',
 					'events_in_dasboard' => '30',
-					'expire_on_registration_end' => 'Y',
-					'email_before_payment' => 'N',
-					'email_fancy_headers' => 'N',
-					'enable_default_style' => 'Y',
-					'event_ssl_active' => 'N',
-					'use_venue_manager' => 'Y',
-					'show_reg_footer' => 'Y',
+					'expire_on_registration_end' => true,
+					'email_before_payment' => false,
+					'email_fancy_headers' => false,
+					'enable_default_style' => true,
+					'event_ssl_active' => false,
+					'use_venue_manager' => true,
+					'show_reg_footer' => true,
 					'template_settings' => array(
-							'use_custom_post_types' => 'N',
-							'display_address_in_regform' => 'N',
-							'display_short_description_in_event_list' => 'Y',
-							'display_description_on_multi_reg_page' => 'N',
-							'display_description_in_event_list' => 'N'
+							'use_custom_post_types' => false,
+							'display_address_in_regform' => false,
+							'display_short_description_in_event_list' => true,
+							'display_address_in_event_list' => false,
+							'display_description_on_multi_reg_page' => false,
+							'display_description_in_event_list' => false,
+							'use_custom_templates' => false
 					),
 					'map_settings' => array(
 							'ee_map_width_single' => '300',
 							'ee_map_height_single' => '300',
 							'ee_map_zoom_single' => '12',
-							'ee_map_nav_display_single' => 'N',
+							'ee_map_nav_display_single' => false,
 							'ee_map_nav_size_single' => 'default',
 							'ee_map_type_control_single' => 'default',
 							'ee_map_align_single' => '',
 							'ee_map_width' => '200',
 							'ee_map_height' => '200',
 							'ee_map_zoom' => '12',
-							'ee_map_nav_display' => 'N',
+							'ee_map_nav_display' => false,
 							'ee_map_nav_size' => 'default',
 							'ee_map_type_control' => 'default',
 							'ee_map_align' => ''
@@ -396,7 +416,7 @@ function events_data_tables_install() {
 	$table_name = "events_attendee";
 	$sql = " id int(11) unsigned NOT NULL AUTO_INCREMENT,
 					  registration_id VARCHAR(23) DEFAULT '0',
-					  is_primary INT(1) DEFAULT '0',
+					  is_primary TINYINT(1) NOT NULL DEFAULT '0',
 					  lname VARCHAR(45) DEFAULT NULL,
 					  fname VARCHAR(45) DEFAULT NULL,
 					  address VARCHAR(45) DEFAULT NULL,
@@ -428,8 +448,8 @@ function events_data_tables_install() {
 					  end_date VARCHAR(45) DEFAULT NULL,
 					  attendee_session VARCHAR(250) DEFAULT NULL,
 					  transaction_details TEXT,
-					  pre_approve INT(11) DEFAULT '1',
-					  checked_in INT(1) DEFAULT '0',
+					  pre_approve TINYINT(1) NOT NULL DEFAULT '1',
+					  checked_in TINYINT(1) NOT NULL DEFAULT '0',
 					  checked_in_quantity INT(11) DEFAULT '0',
 					  hashSalt VARCHAR(250) DEFAULT NULL,
 					PRIMARY KEY  (id),
@@ -451,15 +471,15 @@ function events_data_tables_install() {
 				  event_name VARCHAR(100) DEFAULT NULL,
 				  slug VARCHAR(100) DEFAULT NULL,
 				  event_desc TEXT,
-				  display_desc VARCHAR (1) DEFAULT 'Y',
-				  display_reg_form VARCHAR (1) DEFAULT 'Y',
+				  display_desc TINYINT (1) DEFAULT 1,
+				  display_reg_form TINYINT (1) DEFAULT 1,
 				  event_identifier VARCHAR(75) DEFAULT NULL,
 				  start_date VARCHAR (15) DEFAULT NULL,
 				  end_date VARCHAR (15) DEFAULT NULL,
 				  registration_start VARCHAR (15) DEFAULT NULL,
 				  registration_end VARCHAR (15) DEFAULT NULL,
 				  registration_startT VARCHAR (15) DEFAULT NULL,
-  				  registration_endT VARCHAR (15) DEFAULT NULL,
+					registration_endT VARCHAR (15) DEFAULT NULL,
 				  visible_on VARCHAR(15) DEFAULT NULL,
 				  address TEXT,
 				  address2 TEXT,
@@ -474,34 +494,34 @@ function events_data_tables_install() {
 				  virtual_url VARCHAR(250) DEFAULT NULL,
 				  virtual_phone VARCHAR(15) DEFAULT NULL,
 				  reg_limit VARCHAR (25) DEFAULT '999999',
-				  allow_multiple VARCHAR (15) DEFAULT 'N',
+				  allow_multiple TINYINT(1) NOT NULL DEFAULT '0',
 				  additional_limit INT(10) DEFAULT '5',
-				  is_active VARCHAR(1) DEFAULT 'Y',
+				  is_active TINYINT(1) NOT NULL DEFAULT '1',
 				  event_status VARCHAR(1) DEFAULT 'A',
-				  use_coupon_code VARCHAR(1) DEFAULT 'N',
-				  use_groupon_code VARCHAR(1) DEFAULT 'N',
+				  use_coupon_code TINYINT(1) NOT NULL DEFAULT '0',
+				  use_groupon_code TINYINT(1) NOT NULL DEFAULT '0',
 				  category_id TEXT,
 				  coupon_id TEXT,
 				  tax_percentage FLOAT,
 				  tax_mode INT(11),
-				  member_only VARCHAR(1),
+				  member_only TINYINT(1) NOT NULL DEFAULT '0',
 					post_id INT(11) DEFAULT NULL,
 					post_type VARCHAR(50) DEFAULT NULL,
 					country VARCHAR(200) DEFAULT NULL,
 					externalURL VARCHAR(255) DEFAULT NULL,
 					early_disc VARCHAR(10) DEFAULT NULL,
 					early_disc_date VARCHAR(15) DEFAULT NULL,
-					early_disc_percentage VARCHAR(1) DEFAULT 'N',
+					early_disc_percentage VARCHAR(1) DEFAULT false,
 					question_groups LONGTEXT NULL DEFAULT NULL,
 					item_groups LONGTEXT NULL DEFAULT NULL,
 					event_type VARCHAR(250) DEFAULT NULL,
-					allow_overflow VARCHAR (1) DEFAULT 'N',
+					allow_overflow TINYINT(1) NOT NULL DEFAULT '0',
 					overflow_event_id INT(10) DEFAULT '0',
 					recurrence_id int(11) DEFAULT '0',
 					alt_email TEXT,
 					event_meta LONGTEXT DEFAULT NULL,
 					wp_user int(22) DEFAULT '1',
-					require_pre_approval int(11) DEFAULT '0',
+					require_pre_approval TINYINT(1) NOT NULL DEFAULT '0',
 					timezone_string VARCHAR(250) DEFAULT NULL,
 					likes int(22) DEFAULT NULL,
 					submitted datetime NOT NULL,
@@ -509,22 +529,22 @@ function events_data_tables_install() {
 					certificate_id int(22) DEFAULT '0',
 					confirmation_email_id int(22) DEFAULT '0',
 					payment_email_id int(22) DEFAULT '0',
-				 PRIMARY KEY  (id),
-				 KEY slug (slug),
-				 KEY event_code (event_code),
-				 KEY wp_user (wp_user),
-				 KEY event_name (event_name),
-				 KEY city (city),
-				 KEY state (state),
-				 KEY start_date (start_date),
-				 KEY end_date (end_date),
-				 KEY registration_start (registration_start),
-				 KEY registration_end (registration_end),
-				 KEY reg_limit (reg_limit),
-				 KEY event_status (event_status),
-				 KEY recurrence_id (recurrence_id),
-				 KEY submitted (submitted),
-  				 KEY likes (likes)";
+				PRIMARY KEY  (id),
+				KEY slug (slug),
+				KEY event_code (event_code),
+				KEY wp_user (wp_user),
+				KEY event_name (event_name),
+				KEY city (city),
+				KEY state (state),
+				KEY start_date (start_date),
+				KEY end_date (end_date),
+				KEY registration_start (registration_start),
+				KEY registration_end (registration_end),
+				KEY reg_limit (reg_limit),
+				KEY event_status (event_status),
+				KEY recurrence_id (recurrence_id),
+				KEY submitted (submitted),
+				KEY likes (likes)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 	$table_name = "events_meta";
@@ -672,12 +692,12 @@ function events_data_tables_install() {
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
 				coupon_code varchar(50) DEFAULT NULL,
 				coupon_code_price decimal(20,2) DEFAULT NULL,
-				use_percentage VARCHAR(1) DEFAULT NULL,
+				use_percentage TINYINT(1) NOT NULL DEFAULT '0',
 				coupon_code_description TEXT,
-				each_attendee VARCHAR(1) DEFAULT NULL,
+				each_attendee TINYINT(1) NOT NULL DEFAULT '0',
 				quantity int(7) NOT NULL DEFAULT '0',
-				use_limit varchar(1) NOT NULL DEFAULT 'N',
-				use_exp_date varchar(1) NOT NULL DEFAULT 'N',
+				use_limit TINYINT(1) NOT NULL DEFAULT '0',
+				use_exp_date TINYINT(1) NOT NULL DEFAULT '0',
 				exp_date varchar(15) DEFAULT NULL,
 				wp_user int(22) DEFAULT '1',
 				PRIMARY KEY  (id),
@@ -704,9 +724,9 @@ function events_data_tables_install() {
 			question text NOT NULL,
 			system_name varchar(15) DEFAULT NULL,
 			response text NULL,
-			required ENUM( 'Y', 'N' ) NOT NULL DEFAULT 'N',
+			required TINYINT(1) NOT NULL DEFAULT '0',
 			required_text text NULL,
-			admin_only ENUM( 'Y', 'N' ) NOT NULL DEFAULT 'N',
+			admin_only TINYINT(1) NOT NULL DEFAULT '0',
 			wp_user int(22) DEFAULT '1',
 			PRIMARY KEY  (id),
 			KEY wp_user (wp_user),
@@ -748,6 +768,4 @@ function events_data_tables_install() {
 			KEY registration_id (registration_id),
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
-
-
 }
