@@ -71,9 +71,9 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 
 	//Event description
 	if ( !empty($event_desc) ){
-		if ( isset($org_options['template_settings']['display_description_in_event_list']) && $org_options['template_settings']['display_description_in_event_list'] == 'Y' ) {
+		if (!empty($org_options['template_settings']['display_description_in_event_list'])) {
 			//Show short descriptions
-			if ( isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == 'Y' ) {
+			if (!empty($org_options['template_settings']['display_short_description_in_event_list'])) {
 				$event_desc = array_shift(explode('<!--more-->', $event_desc));
 			}
 ?>
@@ -86,7 +86,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 	}
 
 	//Address
-	if ($location != '' && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list'] == 'Y') { ?>
+	if ($location != '' && !empty($org_options['template_settings']['display_address_in_event_list'])) { ?>
 		<p class="event_address" id="event_address-<?php echo $event_id ?>"> <span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 			<span class="address-block"><?php echo stripslashes_deep($location); ?> <span class="google-map-link">
 			<?php  echo $google_map_link; ?>
@@ -119,9 +119,9 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 
 		// Load the multi event link.
 		//Un-comment these next lines to check if the event is active
-		print_r($multi_reg);
-		print_r(event_espresso_get_status($event_id));
-		print_r( event_espresso_get_is_active($event_id));
+		//print_r($multi_reg);
+		//print_r(event_espresso_get_status($event_id));
+		//print_r( event_espresso_get_is_active($event_id));
 
 		if ($multi_reg && event_espresso_get_status(0,$event_meta) == 'ACTIVE') {
 
