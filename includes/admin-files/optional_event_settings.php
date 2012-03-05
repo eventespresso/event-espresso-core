@@ -98,6 +98,8 @@ until payment is made, for each event.', 'event_espresso'); ?>
 				</tr>
 			</tbody>
 		</table>
+		
+		
 		<h4>
 			<?php _e('Administration Options', 'event_espresso'); ?>
 		</h4>
@@ -131,6 +133,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 				</tr>
 			</tbody>
 		</table>
+		
 		<h4>
 			<?php _e('Extras', 'event_espresso'); ?>
 		</h4>
@@ -240,7 +243,6 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 							<?php _e('Adding a valid Support License Key will enable automatic update notifications <br />
 and backend updates for Event Espresso Core and any installed addons.'); ?>
 						</span>
-						</div>
 
 					</td>
 
