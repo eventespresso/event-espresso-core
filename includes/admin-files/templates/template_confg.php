@@ -83,12 +83,13 @@ function espresso_template_confg_output() {
 	<script type="text/javascript" charset="utf-8">
 		//<![CDATA[
 		jQuery(document).ready(function() {
-			postboxes.add_postbox_toggles('template_conf');
-
+			postboxes.add_postbox_toggles('template_confg');
 		});
 		//]]>
 	</script>
 	<?php
+	wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
+	wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
 }
 
 function espresso_template_settings() {
