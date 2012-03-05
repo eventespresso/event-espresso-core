@@ -94,7 +94,7 @@
 </div>
 <div id="fancyemailheaders" class="pop-help" style="display:none">
 	<h2>
-		<?php _e('Fancy Email Headers', 'event_espresso'); ?>
+		<?php _e('Personalized Email Headers', 'event_espresso'); ?>
 	</h2>
 	<p><?php echo sprintf(__("This option enables the use of the email header format: %s From: name %s %s Reply-to: name %s", 'event_espresso'), '<br />', '&lt;email@address.com&gt;', '<br />', '&lt;email@address.com&gt;'); ?></p>
 	<p>

@@ -146,16 +146,8 @@ function espresso_org_confg_output() {
 			</div>
 		</div>
 	</div>
-	<!-- Help Pop-up Boxes -->
-	<?php ###### Popup help box #######     ?>
-	<div id="fancyemailheaders" class="pop-help" style="display:none">
-		<h2>
-			<?php _e('Full Email Headers', 'event_espresso'); ?>
-		</h2>
-		<p><?php echo sprintf(__("This option enables the use of the email header format %s From: name %s %s Reply-to: name %s %s.", 'event_espresso'), '<br />', '&lt;email@address.com&gt;', '<br />', '&lt;email@address.com&gt;', '<br />'); ?></p>
-		<p><?php _e("You should only use this if you know it will not cause email delivery problems. Some servers will not send emails that use this format.", 'event_espresso'); ?></p>
-	</div>
 	<?php
+	// Help Pop-up Boxes
 	include('help.php');
 	echo event_espresso_custom_email_info();
 	?>
@@ -456,10 +448,10 @@ function espresso_email_settings_meta_box() {
 			<tbody>
 				<tr>
 					<th><label for="email_fancy_headers">
-							<?php _e('Use personalized email headers?', 'event_espresso'); ?>
+							<?php _e('Use Personalized Email Headers', 'event_espresso'); ?> <?php echo apply_filters( 'filter_hook_espresso_help', 'fancyemailheaders'); ?>
 						</label></th>
 					<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?>
-						<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=fancyemailheaders"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a></td>
+						</td>
 				</tr>
 			</tbody>
 		</table>
