@@ -107,24 +107,21 @@ function espresso_template_settings() {
 	}
 
 	$files_themeroller = array();
+	
+	$exclude = array( '.', '..', 'index.htm', 'index.html', 'index.php', '.svn', 'themeroller-.css', '.DS_Store', basename($_SERVER['PHP_SELF']) );
 
 	if ($dhandle) { //if we managed to open the directory
 		// loop through all of the files
 		while (false !== ($fname_themeroller = readdir($dhandle))) {
-			// if the file is not this file, and does not start with a '.', '..', etc., then store it for later display.
-			if ($fname_themeroller != '.'
-							&& $fname_themeroller != '..'
-							&& $fname_themeroller != '.svn'
-							&& $fname_themeroller != basename($_SERVER['PHP_SELF'])
-							&& $fname_themeroller != 'index.php'
-							&& $fname_themeroller != '.DS_Store'
-							&& $fname_themeroller != 'themeroller-base.css') {
-				// store the filename
+		
+		if ( !in_array( $fname_themeroller, $exclude) && !is_dir( $fname_themeroller )) {
+			// store the filename
 				$files_themeroller[] = $fname_themeroller;
 			}
 		}
 		// close the directory
 		closedir($dhandle);
+
 	}
 	global $org_options;
 	?>
