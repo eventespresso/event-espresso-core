@@ -112,7 +112,7 @@ if (!function_exists('event_espresso_add_attendees_to_db')) {
 			$_SESSION['espresso_session']['id'] = '';
 		} else {
 
-			if ($org_options['use_captcha'] == 'Y' && !$multi_reg && !is_user_logged_in()) {//Recaptcha portion
+			if ($org_options['use_captcha'] && !$multi_reg && !is_user_logged_in()) {//Recaptcha portion
 				//require_once('includes/recaptchalib.php');
 				if (!function_exists('recaptcha_check_answer')) {
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
@@ -639,19 +639,6 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 
 				//Define the default useer id for the payment settings
 				$espresso_wp_user = 1;
-
-				//Not sure we want to use this at the moment, becasue there is no way to route the payments between multiple users
-				//If the permissions pro addon is installed
-				/* if (function_exists('espresso_manager_pro_version')) {
-				  global $espresso_manager;
-				  //If the user that created this event can accept payments
-				  if ($espresso_manager['can_accept_payments'] == 'Y') {
-				  //Get the user id
-				  $espresso_wp_user = $r->wp_user;
-				  }
-				  } */
-				//Debug
-				//echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
 				?>
 
 				<a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart">  <?php _e('Edit Cart', 'event_espresso'); ?> </a>
@@ -665,13 +652,13 @@ if (!function_exists('event_espresso_add_attendees_to_db_multi')) {
 						<?php _e('Amount due: ', 'event_espresso'); ?>
 					</strong> <span class="event_espresso_value"><?php echo $org_options['currency_symbol'] ?><?php echo $event_cost; ?></span></p>
 
-				<p><?php echo $org_options['email_before_payment'] == 'Y' ? __('A confirmation email has been sent with additional details of your registration.', 'event_espresso') : ''; ?></p>
+				<p><?php echo $org_options['email_before_payment'] ? __('A confirmation email has been sent with additional details of your registration.', 'event_espresso') : ''; ?></p>
 
 				<?php
 				//Show payment options
 				do_action('action_hook_espresso_display_payment_gateways');
 				//Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
-				if ($org_options['email_before_payment'] == 'Y') {
+				if ($org_options['email_before_payment']) {
 					event_espresso_email_confirmations(array('session_id' => $_SESSION['espresso_session']['id'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true', 'multi_reg' => true));
 				}
 			} else {
