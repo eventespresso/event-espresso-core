@@ -94,9 +94,9 @@
 		</div>
 		<?php
 		if (!empty($event_desc)) {
-			if (isset($org_options['template_settings']['display_description_in_event_list']) && $org_options['template_settings']['display_description_in_event_list'] == 'Y') {
+			if ($org_options['template_settings']['display_description_in_event_list']) {
 				//Show short descriptions
-				if (isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == 'Y') {
+				if ($org_options['template_settings']['display_short_description_in_event_list']) {
 					$event_desc = array_shift(explode('<!--more-->', $event_desc));
 				}
 				?>
@@ -107,11 +107,11 @@
 			}
 		}
 		?>
-		<?php if (isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] == 'Y' && !empty($event_meta['event_thumbnail_url'])) { ?>
+		<?php if ($event_meta['display_thumb_in_lists'] && !empty($event_meta['event_thumbnail_url'])) { ?>
 			<a id="ee-event-list-thumb" class="ee-thumbs" href="<?php echo $thumb_url ?>"> <span><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt="" /></span> </a>
 		<?php } ?>
 
-		<?php if ($location != '' && $org_options['template_settings']['display_address_in_event_list'] == 'Y') { ?>
+		<?php if (!empty($location) && $org_options['template_settings']['display_address_in_event_list']) { ?>
 			<p class="event_address" id="event_address-<?php echo $event_id ?>">
 				<span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
 				<span class="address-block"><?php echo stripslashes_deep($location); ?>
@@ -121,14 +121,14 @@
 <?php
 }
 
-if (isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == 'Y') {
-	if (function_exists('ee_gmap_display') && $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y') {
+if (!empty($event_meta['enable_for_gmap'])) {
+	if (function_exists('ee_gmap_display') && !empty($org_options['map_settings']['ee_display_map_no_shortcodes'])) {
 		echo ee_gmap_display($ee_gmap_location, $event_id);
 	}
 }
 
 	/* Displays the social media buttons */
-	do_action( 'action_hook_espresso_social_display_buttons', $event_id); 
+	do_action( 'action_hook_espresso_social_display_buttons', $event_id);
 		$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
 		if ($num_attendees >= $event->get_reg_limit()) {
 			?>
@@ -137,7 +137,7 @@ if (isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == '
 					<?php _e('Available Spaces:', 'event_espresso') ?>
 				</span><?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved') ?>
 			</p>
-			<?php if ($overflow_event_id != '0' && $allow_overflow == 'Y') { ?>
+			<?php if (!empty($overflow_event_id) && $allow_overflow) { ?>
 				<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer">
 					<a class="a_register_link ui-priority-secondary ui-state-default" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo espresso_reg_url($overflow_event_id); ?>" title="<?php echo stripslashes_deep($event_name) ?>">
 						<?php _e('Join Waiting List', 'event_espresso'); ?>
@@ -146,7 +146,7 @@ if (isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == '
 				<?php
 			}
 		} else {
-			if ($display_reg_form == 'Y' && $externalURL == '') {
+			if ($display_reg_form && empty($externalURL)) {
 				?>
 				<p id="available_spaces-<?php echo $event_id ?>" class="spaces-available">
 					<span class="section-title">
@@ -180,15 +180,15 @@ if (isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap'] == '
 
 				$cart_link = event_espresso_cart_link($params);
 			}
-			if ($display_reg_form == 'Y') {
+			if ($display_reg_form) {
 				?>
 				<p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
 				<?php _e('Register for Event', 'event_espresso'); ?>
-					</a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
+					</a> <?php echo isset($cart_link) && empty($externalURL) ? $cart_link : ''; ?> </p>
 					<?php } else { ?>
 				<p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
 				<?php _e('View Details', 'event_espresso'); ?>
-					</a> <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?> </p>
+					</a> <?php echo isset($cart_link) && empty($externalURL) ? $cart_link : ''; ?> </p>
 				<?php
 			}
 		}
