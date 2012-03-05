@@ -423,29 +423,30 @@ function espresso_init() {
 
 	$this_is_a_reg_page = FALSE;
 
-	$reg_page_ids = array(
-			'event_page_id' => $org_options['event_page_id'],
-			'return_url' => $org_options['return_url'],
-			'cancel_return' => $org_options['cancel_return'],
-			'notify_url' => $org_options['notify_url']
-	);
+	if (isset($org_options['event_page_id'])) {
+		$reg_page_ids = array(
+				'event_page_id' => $org_options['event_page_id'],
+				'return_url' => $org_options['return_url'],
+				'cancel_return' => $org_options['cancel_return'],
+				'notify_url' => $org_options['notify_url']
+		);
 
-	if (empty($_GET['page_id'])) {
-		foreach ($reg_page_ids as $reg_page_id) {
-			$link = get_permalink($reg_page_id);
-			$offset = strlen($_SERVER['SERVER_NAME']) + strpos($link, $_SERVER['SERVER_NAME']);
-			$stripped_link = substr($link, $offset);
-			if (strpos($_SERVER['REQUEST_URI'], $stripped_link) !== false) {
+		if (empty($_GET['page_id'])) {
+			foreach ($reg_page_ids as $reg_page_id) {
+				$link = get_permalink($reg_page_id);
+				$offset = strlen($_SERVER['SERVER_NAME']) + strpos($link, $_SERVER['SERVER_NAME']);
+				$stripped_link = substr($link, $offset);
+				if (strpos($_SERVER['REQUEST_URI'], $stripped_link) !== false) {
+					$this_is_a_reg_page = TRUE;
+					break;
+				}
+			}
+		} else {
+			if (in_array($_GET['page_id'], $reg_page_ids)) {
 				$this_is_a_reg_page = TRUE;
-				break;
 			}
 		}
-	} else {
-		if (in_array($_GET['page_id'], $reg_page_ids)) {
-			$this_is_a_reg_page = TRUE;
-		}
 	}
-
 
 
 	//Ticketing
