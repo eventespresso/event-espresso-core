@@ -78,7 +78,7 @@ function espresso_ical_prepare($attendee_id) {
 	$output .= "<input style='display:none;' name='event_description' type='text' value='" . $data->event_desc . "' >";
 	$output .= "<input id='view_button' type='submit' class='btn_event_form_submit ui-priority-primary ui-state-default ui-corner-all' value='Add to Calendar' >";
 	$output .= "</form>";
-	return $output;
+	echo $output;
 }
 
 add_action('action_hook_espresso_display_add_to_calendar', 'espresso_ical_prepare');
