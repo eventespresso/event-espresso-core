@@ -235,6 +235,11 @@ if (!function_exists('event_espresso_additional_attendees')) {
 		if ($event_meta == '' && ($event_id != '' || $event_id != 0)) {
 			$event_meta = event_espresso_get_event_meta($event_id);
 		}
+		
+		//If the additional attednee questions are empty, then default to the first question group
+		if (empty($event_meta['add_attendee_question_groups']))
+			$event_meta['add_attendee_question_groups'] = array(1 => 1);
+			
 		$i = 0;
 		if ($event_meta['additional_attendee_reg_info'] == 1) {
 			$label = $label == '' ? __('Number of Tickets', 'event_espresso') : $label;
