@@ -1763,7 +1763,7 @@ function getCountryFullData($id, $lang="en") {
 					'title' => $countries[$t][1],
 					'iso_code_2' => $countries[$t][2],
 					'iso_code_3' => $countries[$t][3],
-					'currency_symbol' => $countries[$t][4]);
+					'currency_symbol' => $countries[$t][5]);
 
 	return array('id' => '0',
 			'title' => __('No country selected', 'event_espresso'),
