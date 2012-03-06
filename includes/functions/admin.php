@@ -736,8 +736,12 @@ function event_espresso_update_attendee_data() {
 }
 
 //Function to show an admin message if the main pages are not setup.
-function event_espresso_activation_notice() {
-		echo '<div class="error fade"><p><strong>' . __('Event Espresso must be configured. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso#page_settings') . '">' . __('the Organization Settings page', 'event_espresso') . '</a>  ' . __('to configure the plugin "Page Settings."', 'event_espresso') . '</strong></p></div>';
+function espresso_updated_pages() {
+		echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view the updated pages."', 'event_espresso') . '</strong></p></div>';
+}
+
+function espresso_page_problems() {
+	echo '<div class="error fade"><p><strong>' . __('A problem has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages."', 'event_espresso') . '</strong></p></div>';
 }
 
 //Function to show an admin message if registration id's are missing.
@@ -918,6 +922,8 @@ function espresso_create_default_pages() {
 		$temp[] = $page->post_title;
 	}
 	$pages_to_create = array_diff($default_pages, $temp);
+	$updated_flag = false;
+	$page_ids = get_all_page_ids();
 	foreach ($pages_to_create as $new_page_title) {
 
 		// Create post object
@@ -932,37 +938,45 @@ function espresso_create_default_pages() {
 
 		switch ($new_page_title) {
 			case 'Event Registration':
-				if (empty($org_options['event_page_id'])) {
+				if (empty($org_options['event_page_id'])
+								|| !in_array($org_options['event_page_id'], $page_ids)) {
 					$my_post['post_content'] = '[ESPRESSO_EVENTS]';
 					$event_page_id = wp_insert_post($my_post);
 					$org_options['event_page_id'] = $event_page_id;
+					$updated_flag = true;
 				}
 				break;
 			case 'Thank You':
-				if (empty($org_options['return_url'])) {
+				if (empty($org_options['return_url'])
+								|| !in_array($org_options['return_url'], $page_ids)) {
 					$my_post['post_content'] = '[ESPRESSO_PAYMENTS]';
 					$return_url = wp_insert_post($my_post);
 					$org_options['return_url'] = $return_url;
+					$updated_flag = true;
 				}
 				break;
 			case 'Registration Cancelled':
-				if (empty($org_options['cancel_return'])) {
+				if (empty($org_options['cancel_return'])
+								|| !in_array($org_options['cancel_return'], $page_ids)) {
 					$my_post['post_content'] = 'You have cancelled your registration.<br />[ESPRESSO_CANCELLED]';
 					$cancel_return = wp_insert_post($my_post);
 					$org_options['cancel_return'] = $cancel_return;
+					$updated_flag = true;
 				}
 				break;
 			case 'Transactions':
-				if (empty($org_options['notify_url'])) {
+				if (empty($org_options['notify_url'])
+								|| !in_array($org_options['notify_url'], $page_ids)) {
 					$my_post['post_content'] = '[ESPRESSO_TXN_PAGE]';
 					$notify_url = wp_insert_post($my_post);
 					$org_options['notify_url'] = $notify_url;
+					$updated_flag = true;
 				}
 				break;
 		}
 	}
 	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
-	//print_r($org_options);
+	if($updated_flag) add_action('admin_notices', 'espresso_updated_pages');
 }
 
 if (!function_exists('espresso_event_list_attendee_title')) {

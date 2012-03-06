@@ -59,16 +59,14 @@ if (!function_exists('register_attendees')) {
 		$registrar = $org_options['contact_email'];
 		$currency_format = isset($org_options['currency_format']) ? $org_options['currency_format'] : '';
 
-		$message = $org_options['message'];
-
-		if (!empty($org_options['map_settings']['ee_display_map_no_shortcodes']) && $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y') {
+		if ($org_options['map_settings']['ee_display_map_no_shortcodes']) {
 			$show_ee_gmap_no_shortcode = true;
 		} else {
 			$show_ee_gmap_no_shortcode = false;
 		}
 		//Build event queries
 		$sql = "SELECT e.*, ese.start_time, ese.end_time ";
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+		$org_options['use_venue_manager'] ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
 

@@ -875,20 +875,29 @@ function espresso_init() {
 				add_action('admin_init', 'event_espresso_trigger_copy_gateways');
 			}
 		}
-		// Check to make sure all of the main pages are setup properly, if not show an admin message.
+		// Check to make sure all of the main pages are setup properly,
+		// if not create the default pages and display an admin notice
+		$page_ids = get_all_page_ids();
 		if (empty($org_options['event_page_id'])
+						|| !in_array($org_options['event_page_id'], $page_ids)
 						|| empty($org_options['return_url'])
-						|| empty($org_options['notify_url'])) {
-			add_action('admin_notices', 'event_espresso_activation_notice');
+						|| !in_array($org_options['return_url'], $page_ids)
+						|| empty($org_options['notify_url'])
+						|| !in_array($org_options['notify_url'], $page_ids)
+						|| empty($org_options['cancel_return'])
+						|| !in_array($org_options['cancel_return'], $page_ids)) {
+			espresso_create_default_pages();
+		}
+		$ee_pages = array($org_options['event_page_id'] => array(get_page($org_options['event_page_id']), '[ESPRESSO_EVENTS]'),
+				$org_options['return_url'] => array(get_page($org_options['return_url']), '[ESPRESSO_PAYMENTS]'),
+				$org_options['notify_url'] => array(get_page($org_options['notify_url']), '[ESPRESSO_TXN_PAGE]'),
+				$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED'));
+		foreach ($ee_pages as $ee_page) {
+			if ($ee_page[0]->post_status != 'publish' or strpos($ee_page[0]->post_content, $ee_page[1]) === false) {
+				add_action('admin_notices', 'espresso_page_problems');
+			}
 		}
 	}
-
-
-
-
-
-
-
 
 	// Export iCal file
 	if (!empty($_REQUEST['iCal'])) {

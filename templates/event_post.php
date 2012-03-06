@@ -1,5 +1,5 @@
 <?php
-global $wpdb;
+global $wpdb, $org_options;
 
 	if (isset($_REQUEST['id'])) {
 	$id=$_REQUEST['id'];
@@ -11,8 +11,6 @@ global $wpdb;
 		}
 	}
 
-  //The following variables are used to get information about your organization
-  $org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
   $event_page_id =$org_options['event_page_id'];
   $Organization =stripslashes_deep($org_options['organization']);
   $Organization_street1 =$org_options['organization_street1'];
@@ -41,8 +39,8 @@ global $wpdb;
 		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 		$sql.= " WHERE e.is_active='Y' ";
 		$sql.= " AND e.event_status != 'D' ";
-		
-		// Get the ID of a single event      
+
+		// Get the ID of a single event
 		if ( isset( $single_event_id ) && $single_event_id != NULL ) {
 			// If a single event needs to be displayed, get its ID
 			$sql .= " AND event_identifier = '" . $single_event_id . "' ";
