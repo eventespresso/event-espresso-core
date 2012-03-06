@@ -126,31 +126,31 @@ function organization_config_mnu() {
 function espresso_org_confg_output() {
 	?>
 
-	<div class="wrap">
-		<div id="icon-options-event" class="icon32"> </div>
-		<h2>
-			<?php _e('General Settings', 'event_espresso'); ?>
-		</h2>
-		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<?php event_espresso_display_right_column(); ?>
-			<div id="post-body">
-				<div id="post-body-content">
-					<div class="meta-box-sortables ui-sortable">
-						<form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-							<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
-							<input type="hidden" name="update_org" value="update" />
-						</form>
-					</div>
+<div class="wrap">
+	<div id="icon-options-event" class="icon32"> </div>
+	<h2>
+		<?php _e('General Settings', 'event_espresso'); ?>
+	</h2>
+	<div id="poststuff" class="metabox-holder has-right-sidebar">
+		<?php event_espresso_display_right_column(); ?>
+		<div id="post-body">
+			<div id="post-body-content">
+				<div class="meta-box-sortables ui-sortable">
+					<form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+						<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
+						<input type="hidden" name="update_org" value="update" />
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-	<?php
+</div>
+<?php
 	// Help Pop-up Boxes
 	include('help.php');
 	echo event_espresso_custom_email_info();
 	?>
-	<script type="text/javascript" charset="utf-8">
+<script type="text/javascript" charset="utf-8">
 		//<![CDATA[
 		jQuery(document).ready(function() {
 			postboxes.add_postbox_toggles('event-espresso_page_event_espresso');
@@ -181,7 +181,7 @@ function espresso_org_confg_output() {
 		});
 		//]]>
 	</script>
-	<?php
+<?php
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
 	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
 	if (!function_exists('wp_editor')) {
@@ -196,121 +196,119 @@ function espresso_org_settings_meta_box() {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 	);
 	?>
-	<div class="padding">
-		<h4>
-			<?php _e('Contact Information', 'event_espresso'); ?>
-			<?php echo apply_filters('filter_hook_espresso_help', 'contact_info'); ?>
-		</h4>
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th><label for="org_name">
-							<?php _e('Organization Name:', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="org_name" value="<?php echo stripslashes_deep($org_options['organization']); ?>" /></td>
-				</tr>
-				<tr>
-					<th><label for="org_street1">
-							<?php _e('Organization Street 1:', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="org_street1" value="<?php echo $org_options['organization_street1']; ?>" /></td>
-				</tr>
-				<tr>
-					<th><label for="org_street2">
-							<?php _e('Organization Street 2:', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="org_street2" value="<?php echo $org_options['organization_street2']; ?>" /></td>
-				</tr>
-				<tr>
-					<th><label for="org_city">
-							<?php _e('Organization City:', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="org_city" value="<?php echo $org_options['organization_city']; ?>" /></td>
-				</tr>
-				<tr>
-					<th><label for="org_state">
-							<?php _e('Organization State:', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="org_state" value="<?php echo $org_options['organization_state']; ?>" /></td>
-				</tr>
-				<tr>
-					<th><label for="org_zip">
-							<?php _e('Organization Zip/Postal Code:', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="org_zip" size="10" value="<?php echo $org_options['organization_zip']; ?>" /></td>
-				</tr>
-				<tr>
-					<th><label for="org_country">
-							<?php _e('Organization Country:', 'event_espresso'); ?>
-						</label></th>
-					<td><?php printCountriesSelector("org_country", isset($org_options['organization_country']) ? $org_options['organization_country'] : ''); ?> (<?php echo $org_options['currency_symbol']; ?>)</td>
-				</tr>
-				<tr>
-					<th><label for="email">
-							<?php _e('Primary contact email:', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="email" value="<?php echo $org_options['contact_email']; ?>" /></td>
-				</tr>
-			</tbody>
-		</table>
-		<h4>
-			<?php _e('Time and Date Settings', 'event_espresso'); ?>
-		</h4>
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th><?php _e('Current Time: ', 'event_espresso'); ?></th>
-					<td><span class="current-date"> <?php echo date(get_option('date_format') . ' ' . get_option('time_format')); ?> </span><br />
-						<span class="description"><a class="change-date-time" href="options-general.php" target="_blank">
-								<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
-							</a><br />
-							<span class="important">
-								<?php _e('Note:', 'event_espresso'); ?>
-							</span>
-							<?php _e('You must set the time zone for your city, or the city closest to you. UTC time will not work.', 'event_espresso'); ?>
-							<a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg?TB_iframe=true&height=200&width=630" class="thickbox">
-								<?php _e('View an example?', 'event_espresso'); ?>
-							</a></span></td>
-				</tr>
-				<tr>
-					<th><label for="expire_on_registration_end">
-							<?php _e('Events expire on registration end date?', 'event_espresso'); ?>
-						</label></th>
-					<td><?php echo select_input('expire_on_registration_end', $values, $org_options['expire_on_registration_end']); ?></td>
-				</tr>
-			</tbody>
-		</table>
-		<h4>
-			<?php _e('Images', 'event_espresso'); ?>
-		</h4>
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th><label for="upload_image">
-							<?php _e('Add a Default Logo', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'espresso_default_logo_info'); ?>
-						</label></th>
-					<td><div id="default-logo-image">
-							<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $org_options['default_logo_url'] ?>" />
-							<input id="upload_image_button" type="button" value="Upload Image" />
-							<?php if ($org_options['default_logo_url'] != '') { ?>
-								<p class="default-logo-thumb"><img src="<?php echo $org_options['default_logo_url'] ?>" alt="" /></p>
-							<?php } ?>
-						</div>
-						<div id="espresso_default_logo_info" class="pop-help" style="display:none">
-							<h2>
-								<?php _e('Default Logo', 'event_espresso'); ?>
-							</h2>
-							<p><?php echo __('The default logo will be used in your custom invoice, ticketing, certificates, and payment templates.', 'event_espresso'); ?></p>
-						</div></td>
-				</tr>
-			</tbody>
-		</table>
-		<p>
-			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_1" />
-		</p>
-	</div>
-	<?php
+<div class="padding">
+	<h4>
+		<?php _e('Contact Information', 'event_espresso'); ?>
+		<?php echo apply_filters('filter_hook_espresso_help', 'contact_info'); ?> </h4>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="org_name">
+						<?php _e('Organization Name:', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="org_name" value="<?php echo stripslashes_deep($org_options['organization']); ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="org_street1">
+						<?php _e('Organization Street 1:', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="org_street1" value="<?php echo $org_options['organization_street1']; ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="org_street2">
+						<?php _e('Organization Street 2:', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="org_street2" value="<?php echo $org_options['organization_street2']; ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="org_city">
+						<?php _e('Organization City:', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="org_city" value="<?php echo $org_options['organization_city']; ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="org_state">
+						<?php _e('Organization State:', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="org_state" value="<?php echo $org_options['organization_state']; ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="org_zip">
+						<?php _e('Organization Zip/Postal Code:', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="org_zip" size="10" value="<?php echo $org_options['organization_zip']; ?>" /></td>
+			</tr>
+			<tr>
+				<th><label for="org_country">
+						<?php _e('Organization Country:', 'event_espresso'); ?>
+					</label></th>
+				<td><?php printCountriesSelector("org_country", isset($org_options['organization_country']) ? $org_options['organization_country'] : ''); ?> (<?php echo $org_options['currency_symbol']; ?>)</td>
+			</tr>
+			<tr>
+				<th><label for="email">
+						<?php _e('Primary contact email:', 'event_espresso'); ?>
+					</label></th>
+				<td><input class="regular-text" type="text" name="email" value="<?php echo $org_options['contact_email']; ?>" /></td>
+			</tr>
+		</tbody>
+	</table>
+	<h4>
+		<?php _e('Time and Date Settings', 'event_espresso'); ?>
+	</h4>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><?php _e('Current Time: ', 'event_espresso'); ?></th>
+				<td><span class="current-date"> <?php echo date(get_option('date_format') . ' ' . get_option('time_format')); ?> </span><br />
+					<span class="description"><a class="change-date-time" href="options-general.php" target="_blank">
+					<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
+					</a><br />
+					<span class="important">
+					<?php _e('Note:', 'event_espresso'); ?>
+					</span>
+					<?php _e('You must set the time zone for your city, or the city closest to you. UTC time will not work.', 'event_espresso'); ?>
+					<a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg?TB_iframe=true&height=200&width=630" class="thickbox">
+					<?php _e('View an example?', 'event_espresso'); ?>
+					</a></span></td>
+			</tr>
+			<tr>
+				<th><label for="expire_on_registration_end">
+						<?php _e('Events expire on registration end date?', 'event_espresso'); ?>
+					</label></th>
+				<td><?php echo select_input('expire_on_registration_end', $values, $org_options['expire_on_registration_end']); ?></td>
+			</tr>
+		</tbody>
+	</table>
+	<h4>
+		<?php _e('Images', 'event_espresso'); ?>
+	</h4>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="upload_image">
+						<?php _e('Add a Default Logo', 'event_espresso'); ?>
+						<?php echo apply_filters('filter_hook_espresso_help', 'espresso_default_logo_info'); ?> </label></th>
+				<td><div id="default-logo-image">
+						<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $org_options['default_logo_url'] ?>" />
+						<input id="upload_image_button" type="button" value="Upload Image" />
+						<?php if ($org_options['default_logo_url'] != '') { ?>
+						<p class="default-logo-thumb"><img src="<?php echo $org_options['default_logo_url'] ?>" alt="" /></p>
+						<?php } ?>
+					</div>
+					<div id="espresso_default_logo_info" class="pop-help" style="display:none">
+						<h2>
+							<?php _e('Default Logo', 'event_espresso'); ?>
+						</h2>
+						<p><?php echo __('The default logo will be used in your custom invoice, ticketing, certificates, and payment templates.', 'event_espresso'); ?></p>
+					</div></td>
+			</tr>
+		</tbody>
+	</table>
+	<p>
+		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_1" />
+	</p>
+</div>
+<?php
 }
 
 function espresso_page_settings_meta_box() {
@@ -320,13 +318,13 @@ function espresso_page_settings_meta_box() {
 			$org_options['notify_url'] => array(get_page($org_options['notify_url']), '[ESPRESSO_TXN_PAGE]'),
 			$org_options['cancel_return'] => array(get_page($org_options['cancel_return']), 'ESPRESSO_CANCELLED'));
 	?>
-	<div class="padding"> <a name="page_settings" id="page_settings"></a>
-		<p>
-			<?php _e('The following shortcodes and page settings are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view <a href="admin.php?page=support#shortcodes">this page</a> for a list of optional shortcodes.', 'event_espresso'); ?>
-		</p>
-		<table class="form-table">
-			<tbody>
-				<?php
+<div class="padding"> <a name="page_settings" id="page_settings"></a>
+	<p>
+		<?php _e('The following shortcodes and page settings are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view <a href="admin.php?page=support#shortcodes">this page</a> for a list of optional shortcodes.', 'event_espresso'); ?>
+	</p>
+	<table class="form-table">
+		<tbody>
+			<?php
 				//Check to see if we are using the deprecated SSL option. If we are, recommend updating to WordPress HTTPS (SSL).
 				if (isset($org_options['event_ssl_active'])) {
 					if ($org_options['event_ssl_active']) {
@@ -334,168 +332,216 @@ function espresso_page_settings_meta_box() {
 						echo '<p><strong>' . __('Attention!', 'event_espresso') . '</strong><br />' . __('The Secure Payment System has been removed.', 'event_espresso') . '</p>';
 						echo '<p>' . __('If your site uses SSL to handle secure transactions. Please install the <a href="http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip" title="Install Now">Event Espresso SSL/HTTPS</a> plugin now.', 'event_espresso') . ' ' . __('<a href="http://eventespresso.com/forums/2011/09/use-wordpress-https-for-ssl-encryption-on-your-event-espresso-site/" target="_blank">More information here</a>.', 'event_espresso') . '</p>';
 						?>
-					<label for="event_ssl_active">
-						<?php _e('Turn off this message?', 'event_espresso'); ?>
-					</label>
-					<br />
-					<?php
+		<label for="event_ssl_active">
+			<?php _e('Turn off this message?', 'event_espresso'); ?>
+		</label>
+		<br />
+		<?php
 					echo select_input('event_ssl_active', $values, empty($org_options['event_ssl_active']) ? false : $org_options['event_ssl_active']);
 					echo '</div></td></tr>';
 				}
 			}
 			?>
-			<tr>
-				<th><label for="event_page_id">
-						<?php _e('Main registration page', 'event_espresso'); ?>
-						<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?><br />
-						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['event_page_id']; ?>&action=edit" >Edit</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['event_page_id']; ?>" >View</a>
-					</label></th>
-				<td><select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
-						<option value="0">
-							<?php _e('Main page', 'event_espresso'); ?>
-						</option>
-						<?php parent_dropdown($default = $org_options['event_page_id']); ?>
-					</select>
-					<br />
-					<span class="description"><?php echo sprintf(__("This page can be hidden from navigation if desired, <br />but should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_EVENTS]</span>'); ?></span></td>
-				<td>
+		<tr>
+			<th><label for="event_page_id">
+					<?php _e('Main registration page', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'registration_page_info'); ?><br />
+					<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['event_page_id']; ?>&action=edit" >
+					<?php _e('Edit', 'event_espresso'); ?>
+					</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['event_page_id']; ?>" >
+					<?php _e('View', 'event_espresso'); ?>
+					</a> </label>
+				<p>
 					<?php if ($ee_pages[$org_options['event_page_id']][0]->post_status != 'publish') { ?>
-						<span style="color:red">Not Published</span>
+					<span style="color:red">
+					<?php _e('Not Published', 'event_espresso'); ?>
+					</span>
 					<?php } else { ?>
-						<span style="color:green">Published</span>
+					<span style="color:green">
+					<?php _e('Published', 'event_espresso'); ?>
+					</span>
 					<?php } ?>
-				</td>
-				<td>
+					</p>
+				<p>
 					<?php if (strpos($ee_pages[$org_options['event_page_id']][0]->post_content, $ee_pages[$org_options['event_page_id']][1]) === false) { ?>
-						<span style="color:red">Shortcode Problem</span>
+					<span style="color:red">
+					<?php _e('Shortcode Problem', 'event_espresso'); ?>
+					</span>
 					<?php } else { ?>
-						<span style="color:green">Shortcode OK</span>
+					<span style="color:green">
+					<?php _e('Shortcode OK', 'event_espresso'); ?>
+					</span>
 					<?php } ?>
-				</td>
-			</tr>
-			<tr>
-				<th><label for="return_url">
-						<?php _e('Auto Return URL', 'event_espresso'); ?>
-						<?php echo apply_filters('filter_hook_espresso_help', 'return_url_info'); ?><br />
-						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['return_url']; ?>&action=edit" >Edit</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['return_url']; ?>" >View</a>
-					</label></th>
-				<td><select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
-						<option value="0">
-							<?php _e('Main page', 'event_espresso'); ?>
-						</option>
-						<?php parent_dropdown($default = $org_options['return_url']); ?>
-					</select>
-					<br />
-					<span class="description"><?php echo sprintf(__("This page should hidden from your navigation,<br />but still viewable to the public (not password protected),<br />
-and should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_PAYMENTS]</span>'); ?> </span></td>
-				<td>
+				</p>
+			</th>
+			<td><select name="event_page_id" data-placeholder="Choose a page..." class="chzn-select wide">
+					<option value="0">
+					<?php _e('Main page', 'event_espresso'); ?>
+					</option>
+					<?php parent_dropdown($default = $org_options['event_page_id']); ?>
+				</select>
+				<br />
+				<span class="description"><?php echo sprintf(__("This page can be hidden from navigation if desired, <br />but should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_EVENTS]</span>'); ?></span></td>
+		</tr>
+		<tr>
+			<th><label for="return_url">
+					<?php _e('Auto Return URL', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'return_url_info'); ?><br />
+					<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['return_url']; ?>&action=edit" >
+					<?php _e('Edit', 'event_espresso'); ?>
+					</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['return_url']; ?>" >
+					<?php _e('View', 'event_espresso'); ?>
+					</a> </label>
+				<p>
 					<?php if ($ee_pages[$org_options['return_url']][0]->post_status != 'publish') { ?>
-						<span style="color:red">Not Published</span>
+					<span style="color:red">
+					<?php _e('Not Published', 'event_espresso'); ?>
+					</span>
 					<?php } else { ?>
-						<span style="color:green">Published</span>
+					<span style="color:green">
+					<?php _e('Published', 'event_espresso'); ?>
+					</span>
 					<?php } ?>
-				</td>
-				<td>
+					</p>
+				<p>
 					<?php if (strpos($ee_pages[$org_options['return_url']][0]->post_content, $ee_pages[$org_options['return_url']][1]) === false) { ?>
-						<span style="color:red">Shortcode Problem</span>
+					<span style="color:red">
+					<?php _e('Shortcode Problem', 'event_espresso'); ?>
+					</span>
 					<?php } else { ?>
-						<span style="color:green">Shortcode OK</span>
+					<span style="color:green">
+					<?php _e('Shortcode OK', 'event_espresso'); ?>
+					</span>
 					<?php } ?>
-				</td>
-			</tr>
-			<tr>
-				<th><label for="notify_url">
-						<?php _e('Payment Notification URL', 'event_espresso'); ?>
-						<?php echo apply_filters('filter_hook_espresso_help', 'notify_url_info'); ?><br />
-						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['notify_url']; ?>&action=edit" >Edit</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['notify_url']; ?>" >View</a>
-					</label></th>
-				<td><select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
-						<option value="0">
-							<?php _e('Main page', 'event_espresso'); ?>
-						</option>
-						<?php parent_dropdown($default = $org_options['notify_url']); ?>
-					</select>
-					<br />
-					<span class="description"><?php echo sprintf(__("This page should hidden from your navigation, <br />but still viewable to the public (not password protected),<br /> and should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_TXN_PAGE]</span>'); ?></span></td>
-				<td>
+				</p></th>
+			<td><select name="return_url" data-placeholder="Choose a page..." class="chzn-select wide">
+					<option value="0">
+					<?php _e('Main page', 'event_espresso'); ?>
+					</option>
+					<?php parent_dropdown($default = $org_options['return_url']); ?>
+				</select>
+				<br />
+				<span class="description"><?php echo sprintf(__("This page should hidden from your navigation,<br />but still viewable to the public (not password protected),<br />
+and should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_PAYMENTS]</span>'); ?> </span></td>
+		</tr>
+		<tr>
+			<th><label for="notify_url">
+					<?php _e('Payment Notification URL', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'notify_url_info'); ?><br />
+					<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['notify_url']; ?>&action=edit" >
+					<?php _e('Edit', 'event_espresso'); ?>
+					</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['notify_url']; ?>" >
+					<?php _e('View', 'event_espresso'); ?>
+					</a> </label>
+				<p>
 					<?php if ($ee_pages[$org_options['notify_url']][0]->post_status != 'publish') { ?>
-						<span style="color:red">Not Published</span>
+					<span style="color:red">
+					<?php _e('Not Published', 'event_espresso'); ?>
+					</span>
 					<?php } else { ?>
-						<span style="color:green">Published</span>
+					<span style="color:green">
+					<?php _e('Published', 'event_espresso'); ?>
+					</span>
 					<?php } ?>
-				</td>
-				<td>
+					</p>
+				<p>
 					<?php if (strpos($ee_pages[$org_options['notify_url']][0]->post_content, $ee_pages[$org_options['notify_url']][1]) === false) { ?>
-						<span style="color:red">Shortcode Problem</span>
+					<span style="color:red">
+					<?php _e('Shortcode Problem', 'event_espresso'); ?>
+					</span>
 					<?php } else { ?>
-						<span style="color:green">Shortcode OK</span>
+					<span style="color:green">
+					<?php _e('Shortcode OK', 'event_espresso'); ?>
+					</span>
 					<?php } ?>
-				</td>
-			</tr>
-			<tr>
-				<th><label for="cancel_return">
-						<?php _e('Cancel Return URL', 'event_espresso'); ?>
-						<?php echo apply_filters('filter_hook_espresso_help', 'cancel_return_info'); ?><br />
-						<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['cancel_return']; ?>&action=edit" >Edit</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['cancel_return']; ?>" >View</a>
-					</label></th>
-				<td><select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide">
-						<option value="0">
-							<?php _e('Main page', 'event_espresso'); ?>
-						</option>
-						<?php parent_dropdown($default = $org_options['cancel_return']); ?>
-					</select>
-					<br />
-					<span class="description">
-						<?php echo sprintf(__("This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)", 'event_espresso'), '<br />', '<span class="highlight">[ESPRESSO_CANCELLED]</span>', '<br />'); ?>
-					</span></td>
-					<td>
+				</p></th>
+			<td><select name="notify_url" data-placeholder="Choose a page..." class="chzn-select wide">
+					<option value="0">
+					<?php _e('Main page', 'event_espresso'); ?>
+					</option>
+					<?php parent_dropdown($default = $org_options['notify_url']); ?>
+				</select>
+				<br />
+				<span class="description"><?php echo sprintf(__("This page should hidden from your navigation, <br />but still viewable to the public (not password protected),<br /> and should always contain the %s shortcode.", 'event_espresso'), '<span class="highlight">[ESPRESSO_TXN_PAGE]</span>'); ?></span></td>
+		</tr>
+		<tr>
+			<th><label for="cancel_return">
+					<?php _e('Cancel Return URL', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'cancel_return_info'); ?><br />
+					<a href="<?php echo home_url(); ?>/wp-admin/post.php?post=<?php echo $org_options['cancel_return']; ?>&action=edit" >
+					<?php _e('Edit', 'event_espresso'); ?>
+					</a> | <a href="<?php echo home_url(); ?>/?page_id=<?php echo $org_options['cancel_return']; ?>" >
+					<?php _e('View', 'event_espresso'); ?>
+					</a> </label>
+				<p>
 					<?php if ($ee_pages[$org_options['cancel_return']][0]->post_status != 'publish') { ?>
-						<span style="color:red">Not Published</span>
+					<span style="color:red">
+					<?php _e('Not Published', 'event_espresso'); ?>
+					</span>
 					<?php } else { ?>
-						<span style="color:green">Published</span>
+					<span style="color:green">
+					<?php _e('Published', 'event_espresso'); ?>
+					</span>
 					<?php } ?>
-				</td>
-				<td>
+				</p>
+				<p>
 					<?php if (strpos($ee_pages[$org_options['cancel_return']][0]->post_content, $ee_pages[$org_options['cancel_return']][1]) === false) { ?>
-						<span style="color:red">Shortcode Problem</span>
+					<span style="color:red">
+					<?php _e('Shortcode Problem', 'event_espresso'); ?>
+					</span>
 					<?php } else { ?>
-						<span style="color:green">Shortcode OK</span>
+					<span style="color:green">
+					<?php _e('Shortcode OK', 'event_espresso'); ?>
+					</span>
 					<?php } ?>
-				</td>
-			</tr>
-			<tr valign="top">
-				<th scope="row">Pretty Permalinks</th>
-				<td>
-					<fieldset>
-						<legend class="screen-reader-text"><span>Pretty Permalinks</span></legend>
-						<label>
-							<?php
+				</p></th>
+			<td><select name="cancel_return" data-placeholder="Choose a page..." class="chzn-select wide">
+					<option value="0">
+					<?php _e('Main page', 'event_espresso'); ?>
+					</option>
+					<?php parent_dropdown($default = $org_options['cancel_return']); ?>
+				</select>
+				<br />
+				<span class="description"> <?php echo sprintf(__("This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)", 'event_espresso'), '<br />', '<span class="highlight">[ESPRESSO_CANCELLED]</span>', '<br />'); ?> </span></td>
+		</tr>
+		<tr valign="top">
+			<th scope="row"><?php _e('Pretty Permalinks', 'event_espresso'); ?></th>
+			<td><fieldset>
+					<legend class="screen-reader-text"><span>
+					<?php _e('Pretty Permalinks', 'event_espresso'); ?>
+					</span></legend>
+					<label>
+						<?php
 							if (isset($org_options['espresso_url_rewrite_activated'])) {
 								$checked = $org_options['espresso_url_rewrite_activated'] ? 'checked="checked"' : '';
 							} else {
 								$checked = '';
 							}
 							?>
-							<input type="checkbox"  value="Y" id="espresso_url_rewrite_activated" name="espresso_url_rewrite_activated" <?php echo $checked; ?>/>
-							Activate "Pretty" Permalinks
-							<br />
-							<span class="description">
-								makes URLs look like: "<b><?php echo espresso_get_reg_page_full_url(); ?>your-event-name</b>"<br/>
-								instead of: "<b><?php echo espresso_get_reg_page_full_url(); ?>?ee=12</b>"<br/>
-								<span class="important">Must have <a style="color:#d54e21;" href="<?php echo home_url('/'); ?>wp-admin/options-permalink.php">WordPress Permalinks</a> turned on, and mod_rewrite (or similar) active on server</span>
-							</span>
-						</label>
-					</fieldset>
-				</td>
-			</tr>
+						<input type="checkbox"  value="Y" id="espresso_url_rewrite_activated" name="espresso_url_rewrite_activated" <?php echo $checked; ?>/>
+						<?php _e('Activate "Pretty" Permalinks', 'event_espresso'); ?>
+						<br />
+						<span class="description">
+						<?php _e('makes URLs look like:', 'event_espresso'); ?>
+						"<b><?php echo espresso_get_reg_page_full_url(); ?>your-event-name</b>"<br/>
+						instead of: "<b><?php echo espresso_get_reg_page_full_url(); ?>?ee=12</b>"<br/>
+						<span class="important">
+						<?php _e('Must have', 'event_espresso'); ?>
+						<a style="color:#d54e21;" href="<?php echo home_url('/'); ?>wp-admin/options-permalink.php">
+						<?php _e('WordPress Permalinks', 'event_espresso'); ?>
+						</a>
+						<?php _e('turned on, and mod_rewrite (or similar) active on server', 'event_espresso'); ?>
+						</span> </span> </label>
+				</fieldset></td>
+		</tr>
 			</tbody>
-
-		</table>
-		<p>
-			<input class="button-primary" type="submit" name="Submit_2" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
-		</p>
-	</div>
-	<?php
+		
+	</table>
+	<p>
+		<input class="button-primary" type="submit" name="Submit_2" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_2" />
+	</p>
+</div>
+<?php
 }
 
 function espresso_email_settings_meta_box() {
@@ -505,87 +551,93 @@ function espresso_email_settings_meta_box() {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 	);
 	?>
-	<div class="padding"><a name="email-settings" id="email-settings"></a>
-		<h4><?php _e('Email Server Options:', 'event_espresso'); ?></h4>
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th><label for="email_fancy_headers">
-							<?php _e('Use Personalized Email Headers', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'fancyemailheaders'); ?>
-						</label></th>
-					<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<h4><?php _e('Payment Confirmation Email:', 'event_espresso'); ?></h4>
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th><label for="default_mail">
-							<?php _e('Send payment confirmation emails?', 'event_espresso'); ?>
-						</label></th>
-					<td><?php echo select_input('default_mail', $values, $org_options['default_mail']); ?></td>
-				</tr>
-			</tbody>
-		</table>
-		<h4><?php _e('Default Registration Confirmation Email:', 'event_espresso'); ?></h4>
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th><label for="email_before_payment">
-							<?php _e('Send registration confirmation emails before payment is received?', 'event_espresso'); ?>
-						</label></th>
-					<td><?php echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?></td>
-				</tr>
-			</tbody>
-		</table>
-		<p>
-			<input class="button-primary" type="submit" name="Submit_3" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
-		</p>
-	</div>
-	<?php
+<div class="padding"><a name="email-settings" id="email-settings"></a>
+	<h4>
+		<?php _e('Email Server Options:', 'event_espresso'); ?>
+	</h4>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="email_fancy_headers">
+						<?php _e('Use Personalized Email Headers', 'event_espresso'); ?>
+						<?php echo apply_filters('filter_hook_espresso_help', 'fancyemailheaders'); ?> </label></th>
+				<td><?php echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?></td>
+			</tr>
+		</tbody>
+	</table>
+	<h4>
+		<?php _e('Payment Confirmation Email:', 'event_espresso'); ?>
+	</h4>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="default_mail">
+						<?php _e('Send payment confirmation emails?', 'event_espresso'); ?>
+					</label></th>
+				<td><?php echo select_input('default_mail', $values, $org_options['default_mail']); ?></td>
+			</tr>
+		</tbody>
+	</table>
+	<h4>
+		<?php _e('Default Registration Confirmation Email:', 'event_espresso'); ?>
+	</h4>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th><label for="email_before_payment">
+						<?php _e('Send registration confirmation emails before payment is received?', 'event_espresso'); ?>
+					</label></th>
+				<td><?php echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?></td>
+			</tr>
+		</tbody>
+	</table>
+	<p>
+		<input class="button-primary" type="submit" name="Submit_3" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_3" />
+	</p>
+</div>
+<?php
 }
 
 function espresso_free_recaptcha_settings_meta_box() {
 	?>
-	<div class="padding">
-		<p><?php echo sprintf(__('Please purchase a %s to gain access to this feature.', 'event_espresso'), '<a href="http://eventespresso.com/download/" target="_blank">' . __('support license', 'event_espresso') . '</a>'); ?> </p>
-		<p> <?php echo sprintf(__('reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions.', 'event_espresso'), '<a href="http://recaptcha.net/captcha.html">CAPTCHA</a>'); ?> </p>
-	</div>
-	<?php
+<div class="padding">
+	<p><?php echo sprintf(__('Please purchase a %s to gain access to this feature.', 'event_espresso'), '<a href="http://eventespresso.com/download/" target="_blank">' . __('support license', 'event_espresso') . '</a>'); ?> </p>
+	<p> <?php echo sprintf(__('reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions.', 'event_espresso'), '<a href="http://recaptcha.net/captcha.html">CAPTCHA</a>'); ?> </p>
+</div>
+<?php
 }
 
 function espresso_free_optional_settings_meta_box() {
 	?>
-	<div class="padding">
-		<p><?php echo __('Please purchase a', 'event_espresso') ?> <a href="http://eventespresso.com/download/" target="_blank"><?php echo __('support license', 'event_espresso') ?></a> <?php echo __('to gain access to these features.', 'event_espresso') ?></p>
-		<p>
-			<?php _e('Additional features include:', 'event_espresso'); ?>
-		</p>
-		<ol>
-			<li>
-				<?php _e('Upcoming events widget in the admin dashboard', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Registration limits on time slots', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Ability to display short descriptions in the event listings', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Custom post types for events', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Attendee pre-approval feature', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Event Venue/Staff Manager', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Graphical Reports', 'event_espresso'); ?>
-			</li>
-		</ol>
-	</div>
-	<?php
+<div class="padding">
+	<p><?php echo __('Please purchase a', 'event_espresso') ?> <a href="http://eventespresso.com/download/" target="_blank"><?php echo __('support license', 'event_espresso') ?></a> <?php echo __('to gain access to these features.', 'event_espresso') ?></p>
+	<p>
+		<?php _e('Additional features include:', 'event_espresso'); ?>
+	</p>
+	<ol>
+		<li>
+			<?php _e('Upcoming events widget in the admin dashboard', 'event_espresso'); ?>
+		</li>
+		<li>
+			<?php _e('Registration limits on time slots', 'event_espresso'); ?>
+		</li>
+		<li>
+			<?php _e('Ability to display short descriptions in the event listings', 'event_espresso'); ?>
+		</li>
+		<li>
+			<?php _e('Custom post types for events', 'event_espresso'); ?>
+		</li>
+		<li>
+			<?php _e('Attendee pre-approval feature', 'event_espresso'); ?>
+		</li>
+		<li>
+			<?php _e('Event Venue/Staff Manager', 'event_espresso'); ?>
+		</li>
+		<li>
+			<?php _e('Graphical Reports', 'event_espresso'); ?>
+		</li>
+	</ol>
+</div>
+<?php
 }
+
