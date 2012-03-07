@@ -1197,7 +1197,7 @@ if (!function_exists('event_espresso_require_gateway')) {
 	 * Usage: event_espresso_require_gateway('PaymentGateway.php')
 	 */
 	function event_espresso_require_gateway($template_file_name, $must_exist = true, $as_require_once = true) {
-		event_espresso_require_file($template_file_name, EVENT_ESPRESSO_GATEWAY_DIR . '/', EVENT_ESPRESSO_PLUGINFULLPATH . '/gateways/', $must_exist, $as_require_once);
+		event_espresso_require_file($template_file_name, EVENT_ESPRESSO_GATEWAY_DIR . '/', EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/', $must_exist, $as_require_once);
 	}
 
 }
