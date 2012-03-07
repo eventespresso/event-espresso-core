@@ -115,14 +115,8 @@ function event_list_attendees() {
 					<?php _e('Event Time', 'event_espresso'); ?>
 						</span> <span class="sorting-indicator"></span> </th>
 					<?php
-					if ($ticketing_installed == true) {
-						?>
-						<th class="manage-column column-title" id="attended" scope="col" title="Click to Sort" style="width: 8%;"> <span>
-						<?php _e('Attended', 'event_espresso'); ?>
-							</span> <span class="sorting-indicator"></span> </th>
-						<?php
-						$t_cols += 1;
-					}
+					do_action('action_hook_espresso_event_attendee_table_header');
+
 					?>
 					<th class="manage-column column-title" id="event" scope="col" title="Click to Sort" style="width: 8%;"> <span>
 							<?php _e('Option', 'event_espresso'); ?>
@@ -351,11 +345,8 @@ function event_list_attendees() {
 	  <div style="clear:both; margin-bottom:30px;">
 			<input name="delete_customer" type="submit" class="button-secondary" id="delete_customer" value="<?php _e('Delete Attendee(s)', 'event_espresso'); ?>" style="margin:10px 0 0 0;" onclick="return confirmDelete();" />
 
-			<?php if ($ticketing_installed == true) { ?>
-				<input name="attended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Mark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
-
-				<input name="unattended_customer" type="submit" class="button-secondary" id="unattended_customer" value="<?php _e('Unmark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 20px;" />
-			<?php }
+			<?php
+			do_action('action_hook_espresso_attendee_table_secondary_button');
 
 			$_REQUEST['event_id'] = isset($_REQUEST['event_id']) && !empty($_REQUEST['event_id']) ? $_REQUEST['event_id'] : NULL;
 
