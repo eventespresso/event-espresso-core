@@ -5,9 +5,7 @@
 //This file should be stored in your "/wp-content/uploads/espresso/templates/" directory.
 //Note: All of these functions can be overridden using the "Custom Files" addon. The custom files addon also contains sample code to display ongoing events
 
-if (!function_exists('display_all_events')) {
-
-	function display_all_events() {
+function display_all_events() {
 
 		global $org_options;
 
@@ -30,11 +28,9 @@ if (!function_exists('display_all_events')) {
 
 	}
 
-}
+add_action('action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1);
 
-if (!function_exists('display_event_espresso_categories')) {
-
-	function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
+function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
 		global $wpdb, $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ($event_category_id != "null") {
@@ -56,12 +52,9 @@ if (!function_exists('display_event_espresso_categories')) {
 			event_espresso_get_event_details($sql, $css_class, false, 'cat'); //This function is located below
 		}
 	}
-}
 
 //Events Listing - Shows the events on your page.
-if (!function_exists('event_espresso_get_event_details')) {
-
-	function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override=0, $type = 'all') {
+function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override=0, $type = 'all') {
 
 		//Debug
 		//echo $sql;
@@ -293,4 +286,3 @@ if (!function_exists('event_espresso_get_event_details')) {
 		espresso_registration_footer();
 	}
 
-}
