@@ -31,7 +31,7 @@ function event_espresso_filter_plugin_actions($links, $file) {
 	// Static so we don't call plugin_basename on every plugin row.
 	static $this_plugin;
 	if (!$this_plugin)
-		$this_plugin = plugin_basename(dirname(dirname(__FILE__) . "/../../espresso.php"));
+		$this_plugin = plugin_basename(espresso_main_file());
 
 	if ($file == $this_plugin) {
 		$org_settings_link = '<a href="admin.php?page=event_espresso">' . __('Settings') . '</a>';
