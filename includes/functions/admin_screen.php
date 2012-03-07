@@ -61,8 +61,8 @@ function espresso_sponsors_post_box() {
 }
 
 function espresso_add_meta_boxes() {
-	add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', 'event-espresso_right_column', 'side');
-	add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', 'event-espresso_right_column', 'side');
-	add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', 'event-espresso_right_column', 'side');
+	add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', 'event-espresso_page_event_espresso', 'side');
+	add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', 'event-espresso_page_event_espresso', 'side');
+	add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', 'event-espresso_page_event_espresso', 'side');
 }
 
