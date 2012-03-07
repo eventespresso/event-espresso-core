@@ -235,11 +235,11 @@ if (!function_exists('event_espresso_additional_attendees')) {
 		if ($event_meta == '' && ($event_id != '' || $event_id != 0)) {
 			$event_meta = event_espresso_get_event_meta($event_id);
 		}
-		
+
 		//If the additional attednee questions are empty, then default to the first question group
 		if (empty($event_meta['add_attendee_question_groups']))
 			$event_meta['add_attendee_question_groups'] = array(1 => 1);
-			
+
 		$i = 0;
 		if ($event_meta['additional_attendee_reg_info'] == 1) {
 			$label = $label == '' ? __('Number of Tickets', 'event_espresso') : $label;
@@ -1181,24 +1181,7 @@ if (!function_exists('espresso_show_personnel')) {
 
 }
 
-//Function to include a template file. Checks user templates folder first, then default template.
-if (!function_exists('event_espresso_require_template')) {
 
-	/**
-	 * event_espresso_require_template()
-	 *
-	 * @param mixed $template_file_name // Name of template file.
-	 * @param bool $must_exist		  // Error if neither file exist.
-	 * @param bool $as_require_once	 // True for require_once(), False for require()
-	 * @return void	// No return value. File already included.
-	 *
-	 * Usage: event_espresso_require_template('shopping_cart.php')
-	 */
-	function event_espresso_require_template($template_file_name, $must_exist = true, $as_require_once = true) {
-		event_espresso_require_file($template_file_name, EVENT_ESPRESSO_TEMPLATE_DIR, EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/', $must_exist, $as_require_once);
-	}
-
-}
 
 //Function to include a gateway file. Checks user gateway folder first, then default template.
 if (!function_exists('event_espresso_require_gateway')) {
@@ -1227,7 +1210,7 @@ if (!function_exists('event_espresso_require_file')) {
 	 *
 	 * @param mixed $template_file_name // Name of template file.
 	 * @param mixed $path_first		 // First choice for file location.
-	 * @param mixed $path_first		 // Fallback location for file.
+	 * @param mixed $path_else		 // Fallback location for file.
 	 * @param bool $must_exist		  // Error if neither file exist.
 	 * @param bool $as_require_once	 // True for require_once(), False for require()
 	 * @return void	// No return value. File already included.
@@ -1462,39 +1445,7 @@ function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
 //This function returns the user id of the current user, if the permissions pro addon is installed.
 //IF the permissions pro addon is installed and the admin has loaded a different manager id, then the system will return that users id.
 //Otherwise it returns the id of the primary admin.
-function espresso_get_user_id() {
-	global $notices, $current_user;
 
-	$wp_user_id = 0;
-
-	if (function_exists('espresso_manager_pro_version') && !empty($_SESSION['espresso_use_selected_manager'])) {
-		$wp_user_id = $current_user->ID;
-
-		//If an event manager is selected, then we need to load that persons id
-		$selected_user = espresso_get_selected_manager();
-		if (!empty($selected_user)) {
-			$wp_user_id = $selected_user;
-		}
-	} elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-		$wp_user_id = espresso_member_data('id');
-	} else {
-		$wp_user_id = 1;
-	}
-
-	//Make sure the final user id is not 0
-	if ($wp_user_id == 0) {
-		$wp_user_id = 1;
-	}
-
-	//define it as a global
-	global $espresso_wp_user;
-	$espresso_wp_user = $wp_user_id;
-
-	//Debug
-	//echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
-
-	return $wp_user_id;
-}
 
 function getCountriesArray($lang="en") {
 	//first code, country_id
@@ -1806,221 +1757,7 @@ function printCountriesSelector($name, $selected) {
 }
 
 //Creates an admin toolbar
-function espresso_toolbar_items($admin_bar){
 
-	$events_page = get_admin_url() . 'admin.php?page=events';
-	$registrations_page = get_admin_url() . 'admin.php?page=attendees';
-	$menu_class = 'espresso_menu_item_class';
-
-	//Top Level
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar',
-		'title' => '<span class="ab-icon-espresso"></span><span class="ab-label">' . _x( 'Event Espresso', 'admin bar menu group label' ) . '</span>',
-		'href'  => $events_page,
-		'meta'  => array(
-			'title' => __('Event Espresso'),
-			'class' => $menu_class.'first'
-		),
-	));
-
-	//Events
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-events',
-		'parent' => 'espresso-toolbar',
-		'title' => 'Events',
-		'href'  => $events_page,
-		'meta'  => array(
-			'title' => __('Events'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Events Add New
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-events-new',
-		'parent' => 'espresso-toolbar-events',
-		'title' => 'Add New',
-		'href'  => $events_page.'&action=add_new_event',
-		'meta'  => array(
-			'title' => __('Add New'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Events View
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-events-view',
-		'parent' => 'espresso-toolbar-events',
-		'title' => 'View',
-		'href'  => $events_page,
-		'meta'  => array(
-			'title' => __('View'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Events View All
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-events-all',
-		'parent' => 'espresso-toolbar-events-view',
-		'title' => 'All',
-		'href'  => $events_page,
-		'meta'  => array(
-			'title' => __('All'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Events View Today
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-events-today',
-		'parent' => 'espresso-toolbar-events-view',
-		'title' => 'Today',
-		'href'  => $events_page.'&today=true',
-		'meta'  => array(
-			'title' => __('Today'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Events View This Month
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-events-month',
-		'parent' => 'espresso-toolbar-events-view',
-		'title' => 'This Month',
-		'href'  => $events_page.'&this_month=true',
-		'meta'  => array(
-			'title' => __('This Month'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations',
-		'parent' => 'espresso-toolbar',
-		'title' => 'Registrations',
-		'href'  => $registrations_page,
-		'meta'  => array(
-			'title' => __('Registrations'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview Today
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations-today',
-		'parent' => 'espresso-toolbar-registrations',
-		'title' => 'Today',
-		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&today_a=true',
-		'meta'  => array(
-			'title' => __('Today'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview Today Completed
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations-today-completed',
-		'parent' => 'espresso-toolbar-registrations-today',
-		'title' => 'Completed',
-		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&today_a=true&payment_status=Completed',
-		'meta'  => array(
-			'title' => __('Completed'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview Today Incomplete
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations-today-incomplete',
-		'parent' => 'espresso-toolbar-registrations-today',
-		'title' => 'Incomplete',
-		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&today_a=true&payment_status=Incomplete',
-		'meta'  => array(
-			'title' => __('Incomplete'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview Today Pending
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations-today-pending',
-		'parent' => 'espresso-toolbar-registrations-today',
-		'title' => 'Pending',
-		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&today_a=true&payment_status=Pending',
-		'meta'  => array(
-			'title' => __('Pending'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview This Month
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations-month',
-		'parent' => 'espresso-toolbar-registrations',
-		'title' => 'This Month',
-		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&this_month_a=true',
-		'meta'  => array(
-			'title' => __('This Month'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview This Month Completed
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations-month-completed',
-		'parent' => 'espresso-toolbar-registrations-month',
-		'title' => 'Completed',
-		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Completed',
-		'meta'  => array(
-			'title' => __('Completed'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview This Month Incomplete
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations-month-incomplete',
-		'parent' => 'espresso-toolbar-registrations-month',
-		'title' => 'Incomplete',
-		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Incomplete',
-		'meta'  => array(
-			'title' => __('Incomplete'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Registration Overview This Month Pending
-	$admin_bar->add_menu( array(
-		'id'    => 'espresso-toolbar-registrations-month-pending',
-		'parent' => 'espresso-toolbar-registrations-month',
-		'title' => 'Pending',
-		'href'  => $registrations_page.'&event_admin_reports=event_list_attendees&this_month_a=true&payment_status=Pending',
-		'meta'  => array(
-			'title' => __('Pending'),
-			'target' => '',
-			'class' => $menu_class
-		),
-	));
-
-	//Event Listings
-	//Maybe add a
-}
 
 /**
  * Retrieve event meta data for an event. (note works similar to get_post_meta() core WordPress function)
