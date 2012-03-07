@@ -24,3 +24,5 @@ function espresso_payment_page() {
 		return;
 	}
 }
+
+add_action('action_hook_espresso_display_payment_page', 'espresso_payment_page');
