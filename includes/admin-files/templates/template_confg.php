@@ -60,7 +60,7 @@ function espresso_template_confg_output() {
 		</h2>
 		<?php do_action('action_hook_espresso_admin_notices'); ?>
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<?php event_espresso_display_right_column(); ?>
+			<?php do_meta_boxes('template_confg', 'side', null); ?>
 			<div id="post-body">
 				<div id="post-body-content">
 					<form id="template-settings-form" class="espresso_form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
