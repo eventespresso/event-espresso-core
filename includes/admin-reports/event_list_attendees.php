@@ -1,7 +1,12 @@
 <?php
 
 function event_list_attendees() {
-	global $wpdb, $org_options, $ticketing_installed;
+	global $wpdb, $org_options;
+	//Ticketing
+	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php") || function_exists('espresso_ticket_launch')) {
+		global $ticketing_installed;
+		$ticketing_installed = true;
+	}
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//Dates
 	$curdate = date("Y-m-d");
