@@ -138,7 +138,7 @@ function espresso_org_confg_output() {
 		</h2>
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
 			<div id="side-info-column" class="inner-sidebar">
-				<?php do_meta_boxes('event-espresso_right_column', 'side', null); ?>
+				<?php do_meta_boxes('event-espresso_page_event_espresso', 'side', null); ?>
 			</div>
 			<div id="post-body">
 				<div id="post-body-content">
