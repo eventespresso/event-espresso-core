@@ -60,13 +60,13 @@ function event_espresso_config_page_scripts() {
 		$load_datepicker = true;
 	}
 
-	if ($_REQUEST['page'] == 'attendees' && isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'enter_attendee_payments' ) {
+	if ($_REQUEST['page'] == 'attendees' && isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'enter_attendee_payments') {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
 	}
 
 	//Load farbtastic
-	if ( $load_farbtastic == true ) {
+	if ($load_farbtastic == true) {
 		wp_enqueue_script('farbtastic');
 		wp_enqueue_style('farbtastic');
 	}
@@ -108,7 +108,7 @@ function event_espresso_config_page_scripts() {
 
 //Text formatting function for the_editor.
 //This should fix all of the formatting issues of text output from the database.
-function espresso_admin_format_content($content='') {
+function espresso_admin_format_content($content = '') {
 	return wpautop(stripslashes_deep(html_entity_decode($content, ENT_QUOTES, "UTF-8")));
 }
 
@@ -265,10 +265,10 @@ function postbox($id, $title, $content) {
 	?>
 
 	<div id="<?php echo $id; ?>" class="postbox">
-	  <div class="handlediv" title="Click to toggle"><br />
-	  </div>
-	  <h3 class="hndle"><span><?php echo $title; ?></span></h3>
-	  <div class="inside"> <?php echo $content; ?> </div>
+		<div class="handlediv" title="Click to toggle"><br />
+		</div>
+		<h3 class="hndle"><span><?php echo $title; ?></span></h3>
+		<div class="inside"> <?php echo $content; ?> </div>
 	</div>
 	<?php
 }
@@ -433,7 +433,7 @@ function event_espresso_trigger_copy_gateways() {
 }
 
 //Functions for copying and moving files and themes
-function event_espresso_smartCopy($source, $dest, $folderPermission=0755, $filePermission=0644) {
+function event_espresso_smartCopy($source, $dest, $folderPermission = 0755, $filePermission = 0644) {
 # source=file & dest=dir => copy file from source-dir to dest-dir
 # source=file & dest=file / not there yet => copy file from source-dir to dest and overwrite a file there, if present
 # source=dir & dest=dir => copy all content from source to dir
@@ -498,21 +498,6 @@ function espresso_getFileList($dir) {
 	return $retval;
 }
 
-/*
-  // espresso_getFileList() Usage
-  $dirlist = espresso_getFileList(EVENT_ESPRESSO_TEMPLATE_DIR);
-  echo "<table>\n";
-  echo "<tr><th>Name</th><th>Type</th><th>Size</th><th>Last Mod.</th></tr>\n";
-  foreach($dirlist as $file) { echo "<tr>\n";
-  echo "<td>{$file['name']}</td>\n";
-  echo "<td>{$file['type']}</td>\n";
-  echo "<td>{$file['size']}</td>\n";
-  echo "<td>" . date("r", $file['lastmod']) . "</td>\n";
-  echo "</tr>\n"; }
-  echo "</table>\n\n"; */
-
-/* * ** These functions deal with country data *** */
-
 function event_espresso_admin_news($url) {
 	return wp_remote_retrieve_body(wp_remote_get($url));
 }
@@ -528,150 +513,29 @@ function espresso_news_dashboard_widgets() {
 
 add_action('wp_dashboard_setup', 'espresso_news_dashboard_widgets');
 
-function event_espresso_display_right_column() {
-	?>
-	<div id="side-info-column" class="inner-sidebar">
-	  <div id="side-sortables" class="meta-box-sortables">
-			<div id="submitdiv" class="postbox">
-				<div title="Click to toggle" class="handlediv"><br />
-				</div>
-				<h3 class="hndle">
-	<?php _e('New @ Event Espresso', 'event_espresso'); ?>
-				</h3>
-				<div class="inside">
-					<div class="padding">
-						<div class="infolinks">
-							<?php
-							echo '<h2 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h2>';
-
-							// Get RSS Feed(s)
-							@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 6));
-
-							echo '<h2 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h2>';
-
-							@wp_widget_rss_output('http://eventespresso.com/forums/feed/', array('show_date' => 0, 'items' => 4));
-							?>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div id="submitdiv2" class="postbox " >
-				<div title="Click to toggle" class="handlediv"><br />
-				</div>
-				<h3 class="hndle">
-	<?php _e('Helpful Plugin Links', 'event_espresso'); ?>
-				</h3>
-				<div class="inside">
-					<div class="padding">
-						<ul class="infolinks">
-							<li><a href="http://eventespresso.com/support/installation/" target="_blank">
-									<?php _e('Installation &amp; Usage Guide', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">
-									<?php _e('Customization Forums', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">
-									<?php _e('Plugin Support Forums', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">
-									<?php _e('Feature Request Forums', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">
-									<?php _e('Bug Submission Forums', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">
-									<?php _e('Changelog', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/download/plugins-and-addons/">
-	<?php _e('Plugins and Addons', 'event_espresso'); ?>
-								</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<?php
-			global $espresso_premium;
-			if ($espresso_premium != true) {
-				?>
-				<div id="submitdiv2" class="postbox " >
-					<h3>
-		<?php _e('Sponsors', 'event_espresso'); ?>
-					</h3>
-					<div class="inside">
-						<div class="padding">
-							<?php
-							$event_regis_sponsors = wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html'));
-							echo $event_regis_sponsors;
-							?>
-						</div>
-					</div>
-				</div>
-	<?php } ?>
-	  </div>
-	</div>
-	<?php
-}
-
-add_action( 'action_hook_espresso_right_column', 'event_espresso_display_right_column');
-
-function event_espresso_get_right_column() {
-	$output = '<div id="side-info-column" class="inner-sidebar"><div id="side-sortables" class="meta-box-sortables">';
-	$output .= '<div id="submitdiv" class="postbox " ><div title="Click to toggle" class="handlediv"><br /></div><h3 class="hndle">' . __('New @ Event Espresso', 'event_espresso') . '</h3>';
-	$output .= '<div class="inside"><div class="padding"><div class="infolinks">';
-	$output .= '<h2 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h2>';
-	ob_start();
-	// Get RSS Feed(s)
-	@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 6));
-	$output .= ob_get_contents();
-	ob_end_clean();
-	$output .= '<h2 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h2>';
-	ob_start();
-	@wp_widget_rss_output('http://eventespresso.com/forums/feed/', array('show_date' => 0, 'items' => 4));
-	$output .= ob_get_contents();
-	ob_end_clean();
-	$output .= '</div></div></div></div><div id="submitdiv2" class="postbox " >';
-	$output .= '<div title="Click to toggle" class="handlediv"><br /></div><h3 class="hndle">' . __('Helpful Plugin Links', 'event_espresso') . '</h3>';
-	$output .= '<div class="inside"><div class="padding"><ul class="infolinks">';
-	$output .= '<li><a href="http://eventespresso.com/support/installation/" target="_blank">' . __('Installation &amp; Usage Guide', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">' . __('Customization Forums', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">' . __('Plugin Support Forums', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">' . __('Feature Request Forums', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">' . __('Bug Submission Forums', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">' . __('Changelog', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/download/plugins-and-addons/">' . __('Plugins and Addons', 'event_espresso') . '</a></li>';
-	$output .= '</ul></div></div></div>';
-	global $espresso_premium;
-	if ($espresso_premium != true) {
-		$output .= '<div id="submitdiv2" class="postbox " ><h3>' . __('Sponsors', 'event_espresso') . '</h3>';
-		$output .= '<div class="inside"><div class="padding">';
-		$output .= wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html'));
-		$output .= '</div></div></div>';
-	}
-	$output .= '</div></div>';
-	return $output;
-}
+//add_action('action_hook_espresso_right_column', 'event_espresso_display_right_column');
 
 //Displays what email tags are available
 function event_espresso_custom_email_info() {
 	?>
 	<div style="display: none;">
-	  <div id="custom_email_info" class="pop-help" >
+		<div id="custom_email_info" class="pop-help" >
 			<div class="TB-ee-frame">
 				<h2>
 					<?php _e('Email Confirmations', 'event_espresso'); ?>
 				</h2>
 				<p>
-	<?php _e('For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.', 'event_espresso'); ?>
+					<?php _e('For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.', 'event_espresso'); ?>
 				</p>
 				<p>[registration_id], [fname], [lname], [phone], [event], [event_link], [event_url], [ticket_type], [ticket_link], [qr_code], [description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [invoice_link], [txn_id], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link], [venue_title], [venue_address], [venue_url], [venue_image], [venue_phone], [custom_questions]</p>
 			</div>
-	  </div>
+		</div>
 	</div>
 	<div style="display: none;">
-	  <div id="custom_email_example" class="pop-help" >
+		<div id="custom_email_example" class="pop-help" >
 			<div class="TB-ee-frame">
 				<h2>
-	<?php _e('Sample Mail Send:', 'event_espresso'); ?>
+					<?php _e('Sample Mail Send:', 'event_espresso'); ?>
 				</h2>
 				<p style="font-size:10px;">***This is an automated response - Do Not Reply***</p>
 				<p style="font-size:10px;">Thank you [fname] [lname] for registering for [event]. We hope that you will find this event both informative and enjoyable. Should have any questions, please contact [contact].</p>
@@ -682,7 +546,7 @@ function event_espresso_custom_email_info() {
 				<p style="font-size:10px;">Click here to review your payment information [payment_url].</p>
 				<p style="font-size:10px;">Your questions: [custom_questions].</p>
 			</div>
-	  </div>
+		</div>
 	</div>
 	<?php
 }
@@ -732,182 +596,6 @@ function event_espresso_update_attendee_data() {
 			$update_attendee2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '1' WHERE id = '" . $attendee2->id . "'";
 			$wpdb->query($update_attendee2);
 		}
-	}
-}
-
-//Function to show an admin message if the main pages are not setup.
-function espresso_updated_pages() {
-		echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view the updated pages.', 'event_espresso') . '</strong></p></div>';
-}
-
-function espresso_page_problems() {
-	echo '<div class="error fade"><p><strong>' . __('A problem has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
-}
-
-//Function to show an admin message if registration id's are missing.
-function event_espresso_registration_id_notice() {
-	if (function_exists('admin_url')) {
-		echo '<div class="error fade"><p><strong>' . __('Event Espresso attendee data needs to be updated. Please visit the ', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=support#attendee_data') . '">' . __('Support page', 'event_espresso') . '</a>  ' . __('to configure update the attendee information.', 'event_espresso') . '</strong></p></div>';
-	} else {
-		echo '<div class="error fade"><p><strong>' . __('Event Espresso attendee data needs to be updated. Please visit the ', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=support#attendee_data') . '">' . __('Support page', 'event_espresso') . '</a>  ' . __('to configure update the attendee information.', 'event_espresso') . '</strong></p></div>';
-	}
-}
-
-//This function returns a dropdown of secondary events
-if (!function_exists('espresso_secondary_events_dd')) {
-
-	function espresso_secondary_events_dd($current_value = '0', $allow_overflow = 'N') {
-		global $wpdb;
-		$sql = "SELECT id, event_name FROM " . EVENTS_DETAIL_TABLE;
-		$sql .= " WHERE event_status = 'S' ";
-
-		$events = $wpdb->get_results($sql);
-		$num_rows = $wpdb->num_rows;
-		//return print_r( $events );
-		if ($num_rows > 0) {
-			$field = '<select name="overflow_event_id" id="overflow_event_id" class="chzn-select wide">\n';
-			$field .= '<option value="0">Select an event</option>';
-
-			foreach ($events as $event) {
-				$selected = $event->id == $current_value ? 'selected="selected"' : '';
-				$field .= '<option ' . $selected . ' value="' . $event->id . '">' . $event->event_name . '</option>\n';
-			}
-			$field .= "</select>";
-			$values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
-			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . apply_filters( 'filter_hook_espresso_help', 'secondary_info') . '</p>' .
-							'<p class="inputunder"><label>' . __('Overflow Event', 'event_espresso') . ': </label><br />' . $field . '</p>';
-
-			return $html;
-		}
-	}
-
-}
-
-// Function espresso_db_dropdown creates a drop-down box
-// by dynamically querying ID-Name pair from a lookup table
-//
-// Parameters:
-// intIdField = Integer "ID" field of table, usually the primary key
-// strNameField = Name field that user picks as a value
-// strTableName = Name of MySQL table containing intIDField and strNameField
-// strOrderField = Which field you want results sorted by
-// strMethod = Sort as asc=ascending (default) or desc for descending
-// $current_value = The current select value
-// $strDDName = The name of the field
-//
-//
-// Returns:
-// HTML Drop-Down Box Mark-up Code
-function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrderField, $current_value, $strMethod="desc", $strDDName="") {
-	global $wpdb;
-
-	$strQuery = "select $intIdField, $strNameField from $strTableName order by $strOrderField $strMethod";
-	//$rsrcResult = mysql_query($strQuery);
-	$data = $wpdb->get_results($strQuery, ARRAY_A);
-	//print_r($data);
-	$strDDName = $strDDName != "" ? $strDDName : $strNameField;
-	if ($wpdb->num_rows > 0) {
-		echo '<select name="' . $strDDName . '" class="chzn-select wide">';
-		echo '<option value="">' . __('Select Value', 'event_espresso') . '</option>';
-
-		/*		 * * loop over the results ** */
-		foreach ($data as $row) {
-			/*			 * * create the options ** */
-			echo '<option value="' . $row["$intIdField"] . '"';
-			if ($row["$intIdField"] == $current_value) {
-				echo ' selected';
-			}
-			echo '>' . stripslashes_deep($row["$strNameField"]) . '</option>' . "\n";
-		}
-		echo "</select>";
-	} else {
-		_e('No Results', 'event_espresso');
-	}
-}
-
-function espresso_email_message($id) {
-	global $wpdb;
-	$result = $wpdb->get_row("SELECT * FROM " . EVENTS_EMAIL_TABLE . " WHERE id =" . $id, ARRAY_A);
-		$result['email_name'] = stripslashes_deep($result['email_name']);
-		$result['email_subject'] = stripslashes_deep($result['email_subject']);
-		$result['email_text'] = stripslashes_deep($result['email_text']);
-	return $result;
-}
-
-function espresso_category_dropdown($current_value='') {
-	global $wpdb;
-
-	$strQuery = "select id, category_name from " . EVENTS_CATEGORY_TABLE;
-	$data = $wpdb->get_results($strQuery, ARRAY_A);
-	//print_r($data);
-
-	if ($wpdb->num_rows > 0) {
-		echo '<select name="category_id" class="chzn-select" style="width:160px;">';
-		echo '<option value="">' . __('Show All Categories', 'event_espresso') . '</option>';
-
-		/*		 * * loop over the results ** */
-		foreach ($data as $row) {
-			/*			 * * create the options ** */
-			echo '<option value="' . $row["id"] . '"';
-			if ($row["id"] == $current_value) {
-				echo ' selected';
-			}
-			echo '>' . stripslashes_deep($row["category_name"]) . '</option>' . "\n";
-		}
-		echo "</select>";
-	} else {
-		return;
-	}
-}
-
-//This function grabs the event categories.
-//@param optional $event_id = pass the event id to get the categories assigned to the event.
-function event_espresso_list_categories($event_id = 0) {
-	global $wpdb;
-	$event_categories = $wpdb->get_results("SELECT * FROM " . EVENTS_CATEGORY_TABLE);
-
-	foreach ($event_categories as $category) {
-		$category_id = $category->id;
-		$category_name = $category->category_name;
-
-		$in_event_categories = $wpdb->get_results("SELECT * FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE event_id='" . $event_id . "' AND cat_id='" . $category_id . "'");
-		if ($wpdb->num_rows > 0) {
-			echo '<ul>';
-			foreach ($in_event_categories as $in_category) {
-				$in_event_category = $in_category->cat_id;
-			}
-			echo $in_event_category != 0 ? '<li>' . $category_name . '</li>' : '';
-			echo '</ul>';
-		} else {
-			return 0;
-		}
-	}
-}
-
-function espresso_attendees_by_month_dropdown($current_value = '') {
-	global $wpdb;
-
-	$strQuery = "select id, date from " . EVENTS_ATTENDEE_TABLE . " group by YEAR(date), MONTH(date) ";
-	//$rsrcResult = mysql_query($strQuery);
-	$data = $wpdb->get_results($strQuery, ARRAY_A);
-	//print_r($data);
-
-	if ($wpdb->num_rows > 0) {
-		echo '<select name="month_range" class="chzn-select wide">';
-		echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
-
-		/*		 * * loop over the results ** */
-		foreach ($data as $row) {
-			/*			 * * create the options ** */
-			echo '<option value="' . event_espresso_no_format_date($row["date"], $format = 'Y-m-d') . '"';
-			if (event_espresso_no_format_date($row["date"], $format = 'Y-m-d') == $current_value) {
-				echo ' selected';
-			}
-			echo '>' . event_espresso_no_format_date($row["date"], $format = 'F  Y') . '</option>' . "\n";
-		}
-		echo "</select>";
-	} else {
-		_e('No Results', 'event_espresso');
 	}
 }
 
@@ -976,7 +664,186 @@ function espresso_create_default_pages() {
 		}
 	}
 	update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
-	if($updated_flag) add_action('admin_notices', 'espresso_updated_pages');
+	if ($updated_flag)
+		add_action('admin_notices', 'espresso_updated_pages');
+}
+
+//Function to show an admin message if the main pages are not setup.
+function espresso_updated_pages() {
+	echo '<div class="error fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view the updated pages.', 'event_espresso') . '</strong></p></div>';
+}
+
+function espresso_page_problems() {
+	echo '<div class="error fade"><p><strong>' . __('A problem has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=event_espresso&anchor=page_settings#page_settings') . '">' . __('Event Espresso Page Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
+}
+
+//Function to show an admin message if registration id's are missing.
+function event_espresso_registration_id_notice() {
+	if (function_exists('admin_url')) {
+		echo '<div class="error fade"><p><strong>' . __('Event Espresso attendee data needs to be updated. Please visit the ', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=support#attendee_data') . '">' . __('Support page', 'event_espresso') . '</a>  ' . __('to configure update the attendee information.', 'event_espresso') . '</strong></p></div>';
+	} else {
+		echo '<div class="error fade"><p><strong>' . __('Event Espresso attendee data needs to be updated. Please visit the ', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=support#attendee_data') . '">' . __('Support page', 'event_espresso') . '</a>  ' . __('to configure update the attendee information.', 'event_espresso') . '</strong></p></div>';
+	}
+}
+
+//This function returns a dropdown of secondary events
+if (!function_exists('espresso_secondary_events_dd')) {
+
+	function espresso_secondary_events_dd($current_value = '0', $allow_overflow = 'N') {
+		global $wpdb;
+		$sql = "SELECT id, event_name FROM " . EVENTS_DETAIL_TABLE;
+		$sql .= " WHERE event_status = 'S' ";
+
+		$events = $wpdb->get_results($sql);
+		$num_rows = $wpdb->num_rows;
+		//return print_r( $events );
+		if ($num_rows > 0) {
+			$field = '<select name="overflow_event_id" id="overflow_event_id" class="chzn-select wide">\n';
+			$field .= '<option value="0">Select an event</option>';
+
+			foreach ($events as $event) {
+				$selected = $event->id == $current_value ? 'selected="selected"' : '';
+				$field .= '<option ' . $selected . ' value="' . $event->id . '">' . $event->event_name . '</option>\n';
+			}
+			$field .= "</select>";
+			$values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
+			$html = '<p><label>' . __('Assign a Waitlist Event? ', 'event_espresso') . '</label> ' . select_input('allow_overflow', $values, $allow_overflow) . ' ' . apply_filters('filter_hook_espresso_help', 'secondary_info') . '</p>' .
+							'<p class="inputunder"><label>' . __('Overflow Event', 'event_espresso') . ': </label><br />' . $field . '</p>';
+
+			return $html;
+		}
+	}
+
+}
+/**
+ * Function espresso_db_dropdown creates a drop-down box
+ * by dynamically querying ID-Name pair from a lookup table
+ * Parameters:
+ * intIdField = Integer "ID" field of table, usually the primary key
+ * strNameField = Name field that user picks as a value
+ * strTableName = Name of MySQL table containing intIDField and strNameField
+ * strOrderField = Which field you want results sorted by
+ * strMethod = Sort as asc=ascending (default) or desc for descending
+ * $current_value = The current select value
+ * $strDDName = The name of the field
+ *
+ * Returns:
+ * HTML Drop-Down Box Mark-up Code
+ */
+
+function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrderField, $current_value, $strMethod = "desc", $strDDName = "") {
+	global $wpdb;
+
+	$strQuery = "select $intIdField, $strNameField from $strTableName order by $strOrderField $strMethod";
+	//$rsrcResult = mysql_query($strQuery);
+	$data = $wpdb->get_results($strQuery, ARRAY_A);
+	//print_r($data);
+	$strDDName = $strDDName != "" ? $strDDName : $strNameField;
+	if ($wpdb->num_rows > 0) {
+		echo '<select name="' . $strDDName . '" class="chzn-select wide">';
+		echo '<option value="">' . __('Select Value', 'event_espresso') . '</option>';
+
+		/*		 * * loop over the results ** */
+		foreach ($data as $row) {
+			/*			 * * create the options ** */
+			echo '<option value="' . $row["$intIdField"] . '"';
+			if ($row["$intIdField"] == $current_value) {
+				echo ' selected';
+			}
+			echo '>' . stripslashes_deep($row["$strNameField"]) . '</option>' . "\n";
+		}
+		echo "</select>";
+	} else {
+		_e('No Results', 'event_espresso');
+	}
+}
+
+function espresso_email_message($id) {
+	global $wpdb;
+	$result = $wpdb->get_row("SELECT * FROM " . EVENTS_EMAIL_TABLE . " WHERE id =" . $id, ARRAY_A);
+	$result['email_name'] = stripslashes_deep($result['email_name']);
+	$result['email_subject'] = stripslashes_deep($result['email_subject']);
+	$result['email_text'] = stripslashes_deep($result['email_text']);
+	return $result;
+}
+
+function espresso_category_dropdown($current_value = '') {
+	global $wpdb;
+
+	$strQuery = "select id, category_name from " . EVENTS_CATEGORY_TABLE;
+	$data = $wpdb->get_results($strQuery, ARRAY_A);
+	//print_r($data);
+
+	if ($wpdb->num_rows > 0) {
+		echo '<select name="category_id" class="chzn-select" style="width:160px;">';
+		echo '<option value="">' . __('Show All Categories', 'event_espresso') . '</option>';
+
+		/*		 * * loop over the results ** */
+		foreach ($data as $row) {
+			/*			 * * create the options ** */
+			echo '<option value="' . $row["id"] . '"';
+			if ($row["id"] == $current_value) {
+				echo ' selected';
+			}
+			echo '>' . stripslashes_deep($row["category_name"]) . '</option>' . "\n";
+		}
+		echo "</select>";
+	} else {
+		return;
+	}
+}
+
+/**
+ * This function grabs the event categories.
+ * @param optional $event_id = pass the event id to get the categories assigned to the event.
+ */
+function event_espresso_list_categories($event_id = 0) {
+	global $wpdb;
+	$event_categories = $wpdb->get_results("SELECT * FROM " . EVENTS_CATEGORY_TABLE);
+
+	foreach ($event_categories as $category) {
+		$category_id = $category->id;
+		$category_name = $category->category_name;
+
+		$in_event_categories = $wpdb->get_results("SELECT * FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE event_id='" . $event_id . "' AND cat_id='" . $category_id . "'");
+		if ($wpdb->num_rows > 0) {
+			echo '<ul>';
+			foreach ($in_event_categories as $in_category) {
+				$in_event_category = $in_category->cat_id;
+			}
+			echo $in_event_category != 0 ? '<li>' . $category_name . '</li>' : '';
+			echo '</ul>';
+		} else {
+			return 0;
+		}
+	}
+}
+
+function espresso_attendees_by_month_dropdown($current_value = '') {
+	global $wpdb;
+
+	$strQuery = "select id, date from " . EVENTS_ATTENDEE_TABLE . " group by YEAR(date), MONTH(date) ";
+	//$rsrcResult = mysql_query($strQuery);
+	$data = $wpdb->get_results($strQuery, ARRAY_A);
+	//print_r($data);
+
+	if ($wpdb->num_rows > 0) {
+		echo '<select name="month_range" class="chzn-select wide">';
+		echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
+
+		/*		 * * loop over the results ** */
+		foreach ($data as $row) {
+			/*			 * * create the options ** */
+			echo '<option value="' . event_espresso_no_format_date($row["date"], $format = 'Y-m-d') . '"';
+			if (event_espresso_no_format_date($row["date"], $format = 'Y-m-d') == $current_value) {
+				echo ' selected';
+			}
+			echo '>' . event_espresso_no_format_date($row["date"], $format = 'F  Y') . '</option>' . "\n";
+		}
+		echo "</select>";
+	} else {
+		_e('No Results', 'event_espresso');
+	}
 }
 
 if (!function_exists('espresso_event_list_attendee_title')) {
@@ -1022,14 +889,14 @@ function espresso_template_files_exist($dir) {
 	// read our template dir and build an array of files
 	$dhandle = opendir($dir);
 	$files = array();
-	$exclude = array( '.', '..', 'index.htm', 'index.html', 'index.php', '.svn', '.DS_Store' );
+	$exclude = array('.', '..', 'index.htm', 'index.html', 'index.php', '.svn', '.DS_Store');
 
 	//if we manage to open the directory
 	if ($dhandle) {
 		// loop through all of the files
-		while (( $fname = readdir( $dhandle )) !== FALSE ) {
+		while (( $fname = readdir($dhandle)) !== FALSE) {
 			// if the file is not in the array of things to exclude
-			if ( !in_array( $fname, $exclude) && !is_dir( $fname )) {
+			if (!in_array($fname, $exclude) && !is_dir($fname)) {
 				// then store the filename
 				$files[] = $fname;
 			}
@@ -1045,16 +912,12 @@ function espresso_template_files_exist($dir) {
 	return $html;
 }
 
-
-
-
-
 /**
-*		creates url slugs from event_name
-*
-*		@access public
-*		@return void
-*/
+ * 		creates url slugs from event_name
+ *
+ * 		@access public
+ * 		@return void
+ */
 function espresso_create_url_slugs() {
 	//echo '<h1>'. __FILE__ . ' - ' . __FUNCTION__ . ' ( line no: ' . __LINE__ . ' )</h1>';
 
@@ -1062,87 +925,78 @@ function espresso_create_url_slugs() {
 
 	$SQL = 'SELECT id, event_name FROM ' . EVENTS_DETAIL_TABLE;
 
-	if ( $events = $wpdb->get_results( $wpdb->prepare( $SQL ))) {
+	if ($events = $wpdb->get_results($wpdb->prepare($SQL))) {
 		$data = array();
 		$where = array();
-		if ( $events ) {
-			foreach ( $events as $event ) {
+		if ($events) {
+			foreach ($events as $event) {
 
-				$data['slug'] = espresso_string_to_url( $event->event_name );
+				$data['slug'] = espresso_string_to_url($event->event_name);
 				$where['id'] = $event->id;
 
 				$wpdb->update(
-											EVENTS_DETAIL_TABLE,
-											$data,
-											$where,
-											array( '%s' ),
-											array( '%d' )
-										);
-
+								EVENTS_DETAIL_TABLE, $data, $where, array('%s'), array('%d')
+				);
 			}
 		}
 	}
 
 //echo printr($data);
 //echo printr($where);
-
 }
 
-
-
-
 /**
- *		converts a string to url friendly string by:
+ * 		converts a string to url friendly string by:
  * 	changing spaces to dashes, changing & (or &amp;) to "and", stripping tags, and converting to lowercase
  *
- *		@access 	public
- *		@param 	string	$string
- *		@return 	string
+ * 		@access 	public
+ * 		@param 	string	$string
+ * 		@return 	string
  */
-function espresso_string_to_url( $string ) {
+function espresso_string_to_url($string) {
 
 	$expressions = array(
-											'&\#\d+?;'			=> '',
-											'&\S+?;'				=> '',
-											'\s+'						=> '-',
-											'[^a-z0-9\-\._]'	=> '',
-											'-+'						=> '-',
-											'-$'						=> '-',
-											'^-'						=> '-',
-											'\.+$'					=> ''
-										);
+			'&\#\d+?;' => '',
+			'&\S+?;' => '',
+			'\s+' => '-',
+			'[^a-z0-9\-\._]' => '',
+			'-+' => '-',
+			'-$' => '-',
+			'^-' => '-',
+			'\.+$' => ''
+	);
 
-	$string = str_replace( '&amp;', 'and', $string );
-	$string = str_replace( '&', 'and', $string );
+	$string = str_replace('&amp;', 'and', $string);
+	$string = str_replace('&', 'and', $string);
 	$string = wp_strip_all_tags($string);
 
-	foreach ( $expressions as $key => $exp ) {
-		$string = preg_replace("#".$key."#i", $exp, $string);
+	foreach ($expressions as $key => $exp) {
+		$string = preg_replace("#" . $key . "#i", $exp, $string);
 	}
 
-	$string = strtolower( $string );
+	$string = strtolower($string);
 
 	return $string;
-
 }
 
-
 /**
-*		flushes the event cache
-*
-*		@access public
-*		@param 	in	$event_id
-*		@return void
-*/
+ * 		flushes the event cache
+ *
+ * 		@access public
+ * 		@param 	in	$event_id
+ * 		@return void
+ */
 if (!function_exists('espresso_reset_cache')) {
-	function espresso_reset_cache($event_id = 0){
-		delete_transient( 'all_espresso_events' );
-		delete_transient( 'all_espresso_calendar_events' );
+
+	function espresso_reset_cache($event_id = 0) {
+		delete_transient('all_espresso_events');
+		delete_transient('all_espresso_calendar_events');
 
 		//Flushes the cache that may be set for an event slug
-		if ($event_id > 0){
-			delete_transient( 'espresso_event_slug_'.$event_id );
-			delete_transient( 'espresso_time_dropdown_'.$event_id );
+		if ($event_id > 0) {
+			delete_transient('espresso_event_slug_' . $event_id);
+			delete_transient('espresso_time_dropdown_' . $event_id);
 		}
 	}
+
 }
