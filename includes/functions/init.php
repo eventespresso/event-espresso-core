@@ -16,15 +16,18 @@ function espresso_admin_init() {
 	if (!is_user_logged_in())
 		return;
 	global $espresso_premium;
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/admin.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/admin_screen.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'form-builder/index.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'form-builder/groups/index.php');
 	if (!$espresso_premium) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/test_drive_pro.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/premium_upgrade.php');
+	} else {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/optional_event_settings.php');
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/gateway_developer.php');
 	}
-	event_espresso_require_gateway('payment_gateways.php');
 	do_action('action_hook_espresso_require_admin_files');
 	if (isset($_REQUEST['page'])) {
 		$espresso_pages = array('event_espresso', 'discounts', 'groupons',
@@ -42,6 +45,9 @@ function espresso_admin_init() {
 			add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
 			add_action('admin_print_styles', 'event_espresso_config_page_styles');
 			add_action('admin_head', 'espresso_add_meta_boxes');
+		}
+		if ($_REQUEST['page'] == 'payment_gateways') {
+			add_action('admin_init', 'espresso_require_gateway_files');
 		}
 	}
 
