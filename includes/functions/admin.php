@@ -513,7 +513,6 @@ function espresso_news_dashboard_widgets() {
 
 add_action('wp_dashboard_setup', 'espresso_news_dashboard_widgets');
 
-//add_action('action_hook_espresso_right_column', 'event_espresso_display_right_column');
 
 //Displays what email tags are available
 function event_espresso_custom_email_info() {
