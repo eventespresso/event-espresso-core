@@ -39,50 +39,39 @@ function event_espresso_aim_payment_settings() {
 	?>
 
 	<a name="authnet_aim" id="authnet_aim"></a>
-	<div class="metabox-holder">
-		<div id="aimpostbox"class="postbox <?php echo $postbox_style; ?>">
-			<div title="Click to toggle" class="handlediv"><br />
-			</div>
-			<h3 class="hndle">
-				<?php _e('Authorize.net AIM Settings', 'event_espresso'); ?>
-			</h3>
-			<div class="inside">
-				<div class="padding">
-					<!--New -->
-					<?php
-					if (!empty($_REQUEST['activate_authnet_aim'])) {
-						$active_gateways['aim'] = dirname(__FILE__);
-						if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
-							$notices['updates'][] = __('Authorize.net AIM Gateway Activated', 'event_espresso');
-						} else {
-							$notices['errors'][] = __('Unable to Activate Authorize.net AIM Gateway', 'event_espresso');
-						}
-					}
+	<div class="padding">
+		<!--New -->
+		<?php
+		if (!empty($_REQUEST['activate_authnet_aim'])) {
+			$active_gateways['aim'] = dirname(__FILE__);
+			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
+				$notices['updates'][] = __('Authorize.net AIM Gateway Activated', 'event_espresso');
+			} else {
+				$notices['errors'][] = __('Unable to Activate Authorize.net AIM Gateway', 'event_espresso');
+			}
+		}
 
-					if (!empty($_REQUEST['deactivate_authnet_aim'])) {
-						unset($active_gateways['aim']);
-						if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
-							$notices['updates'][] = __('Authorize.net AIM Gateway Payments De-activated', 'event_espresso');
-						} else {
-							$notices['errors'][] = __('Unable to De-activate Authorize.net AIM Gateway', 'event_espresso');
-						}
-					}
+		if (!empty($_REQUEST['deactivate_authnet_aim'])) {
+			unset($active_gateways['aim']);
+			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
+				$notices['updates'][] = __('Authorize.net AIM Gateway Payments De-activated', 'event_espresso');
+			} else {
+				$notices['errors'][] = __('Unable to De-activate Authorize.net AIM Gateway', 'event_espresso');
+			}
+		}
 
-					echo '<ul>';
+		echo '<ul>';
 
-					if (!array_key_exists('aim', $active_gateways)) {
-							echo '<li id="activate_aim" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_authnet_aim=true#authnet_aim\';" class="green_alert pointer"><strong>' . __('Activate Authorize.net AIM Gateway?', 'event_espresso') . '</strong></li>';
-							} else {
-							echo '<li id="deactivate_aim" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_authnet_aim=true\';" class="red_alert pointer"><strong>' . __('Deactivate Authorize.net AIM Gateway?', 'event_espresso') . '</strong></li>';
-							event_espresso_display_authnet_aim_settings($payment_settings);
-					}
+		if (!array_key_exists('aim', $active_gateways)) {
+			echo '<li id="activate_aim" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_authnet_aim=true#authnet_aim\';" class="green_alert pointer"><strong>' . __('Activate Authorize.net AIM Gateway?', 'event_espresso') . '</strong></li>';
+		} else {
+			echo '<li id="deactivate_aim" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_authnet_aim=true\';" class="red_alert pointer"><strong>' . __('Deactivate Authorize.net AIM Gateway?', 'event_espresso') . '</strong></li>';
+			event_espresso_display_authnet_aim_settings($payment_settings);
+		}
 
-					echo '</ul>';
-					?>
-				</div> <!-- Class=padding -->
-			</div> <!-- Class=inside -->
-		</div> <!-- id=2copostbox -->
-	</div> <!-- class=metabox-holder -->
+		echo '</ul>';
+		?>
+	</div> <!-- Class=padding -->
 	<?php
 }
 
@@ -170,4 +159,4 @@ function event_espresso_display_authnet_aim_settings($payment_settings) {
 	<?php
 }
 
-add_action('action_hook_espresso_display_gateway_settings', 'event_espresso_aim_payment_settings');
+add_meta_box('espresso_aim_gateway_settings', __('Authorize.net AIM Settings', 'event_espresso'), 'event_espresso_aim_payment_settings', 'event-espresso_page_payment_gateways');
