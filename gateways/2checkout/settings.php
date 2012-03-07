@@ -270,4 +270,3 @@ function event_espresso_display_2checkout_settings($payment_settings) {
 	<?php
 }
 
-add_action('action_hook_espresso_display_gateway_settings', 'event_espresso_2co_settings');
