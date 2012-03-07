@@ -37,9 +37,10 @@ function espresso_define_tables_and_paths() {
 	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
 
 	//Define the plugin directory and path
-	define("EVENT_ESPRESSO_PLUGINPATH", "/" . plugin_basename(dirname(dirname(__FILE__) . "/../../espresso.php")) . "/");
-	define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path(dirname(__FILE__) . "/../../espresso.php"));
-	define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url(dirname(__FILE__) . "/../../espresso.php"));
+	$main_file = espresso_main_file();
+	define("EVENT_ESPRESSO_PLUGINPATH", "/" . plugin_basename($main_file) . "/");
+	define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path($main_file));
+	define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url($main_file));
 
 	//Define the includes directory
 	define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/');
