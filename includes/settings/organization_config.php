@@ -1,20 +1,19 @@
 <?php
-
 /**
  * 		Event Registration Subpage 1 - Configure Organization
  *
  * 		@ access public
  * 		@ return void
  */
-
 add_action('in_admin_header', 'espresso_general_settings_add_screen_meta');
+
 function espresso_general_settings_add_screen_meta() {
 	$screen = get_current_screen();
-	$screen->add_help_tab( array(
-	'id'      => 'help-content',
-	'title'   => __('Content'),
-	'content' => 'help me!',
-) );
+	$screen->add_help_tab(array(
+			'id' => 'help-content',
+			'title' => __('Content'),
+			'content' => 'help me!',
+	));
 	$screen->add_option('layout_columns', array('max' => 2, 'default' => 2));
 	add_meta_box('espresso_organization_settings', __('Organization Settings', 'event_espresso'), 'espresso_org_settings_meta_box', 'event-espresso_page_event_espresso');
 	add_meta_box('espresso_page_settings', __('Page Settings', 'event_espresso'), 'espresso_page_settings_meta_box', 'event-espresso_page_event_espresso');
@@ -27,6 +26,7 @@ function espresso_general_settings_add_screen_meta() {
 		add_meta_box('espresso_free_optional_settings', __('Optional Event Settings', 'event_espresso'), 'espresso_free_optional_settings_meta_box', 'event-espresso_page_event_espresso');
 	}
 }
+
 function organization_config_mnu() {
 	global $wpdb, $notices, $org_options, $espresso_premium, $espresso_wp_user;
 	if (!empty($_GET['anchor']) and $_GET['anchor'] == 'page_settings') {
@@ -137,12 +137,14 @@ function espresso_org_confg_output() {
 			<?php _e('General Settings', 'event_espresso'); ?>
 		</h2>
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<?php event_espresso_display_right_column(); ?>
+			<div id="side-info-column" class="inner-sidebar">
+				<?php do_meta_boxes('event-espresso_right_column', 'side', null); ?>
+			</div>
 			<div id="post-body">
 				<div id="post-body-content">
 					<form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-							<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
-							<input type="hidden" name="update_org" value="update" />
+						<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
+						<input type="hidden" name="update_org" value="update" />
 					</form>
 				</div>
 			</div>
