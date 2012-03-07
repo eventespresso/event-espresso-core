@@ -61,8 +61,28 @@ function espresso_sponsors_post_box() {
 }
 
 function espresso_add_meta_boxes() {
-	add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', 'event-espresso_page_event_espresso', 'side');
-	add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', 'event-espresso_page_event_espresso', 'side');
-	add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', 'event-espresso_page_event_espresso', 'side');
+	global $espresso_premium;
+	$screen = get_current_screen();
+	switch ($screen->id) {
+		case 'event-espresso_page_admin_addons':
+		case 'event-espresso_page_event_espresso':
+			add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $screen->id, 'side');
+			add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $screen->id, 'side');
+			if (!$espresso_premium)
+				add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $screen->id, 'side');
+			break;
+	}
+
+	$espresso_pages = array('event_espresso', 'discounts', 'groupons',
+			'event_categories', 'admin_reports', 'form_builder',
+			'form_groups', 'my-events', 'event_emails', 'event_venues',
+			'event_staff', 'attendees', 'espresso_reports',
+			'support', 'template_confg', 'template_map_confg',
+			'payment_gateways', 'members', 'espresso_social',
+			'admin_addons', 'espresso_calendar', 'event_tickets',
+			'event_certificates', 'espresso-mailchimp',
+			'espresso_permissions', 'roles', 'event_locales',
+			'event_groups', 'test_drive', 'espresso_https'
+	);
 }
 
