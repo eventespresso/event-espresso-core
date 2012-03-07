@@ -39,6 +39,14 @@ function espresso_template_version() {
 	return '1.0';
 }
 
+function espresso_main_file() {
+	static $main_file;
+	if(!$main_file) {
+		$main_file = __FILE__;
+	}
+	return $main_file;
+}
+
 /**
  * The following are the WordPress actions for a typical request
  * in the order that they are executed along with the corresopnding
