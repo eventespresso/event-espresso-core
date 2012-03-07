@@ -41,12 +41,12 @@ li.attendee_details{
 if (!function_exists('event_espresso_show_attendess')) {
 	function event_espresso_show_attendess($sql,$show_gravatar,$paid_only, $sort=''){
 		//echo $sql;
-		global $wpdb,$this_is_a_reg_page;
+		global $wpdb,$espresso_reg_page;
 		$events = $wpdb->get_results($sql);
 		foreach ($events as $event){
 			$event_id = $event->id;
 			$event_name = stripslashes_deep($event->event_name);
-			if ($this_is_a_reg_page != TRUE){
+			if (!$espresso_reg_page){
 				$event_desc = do_shortcode(stripslashes_deep($event->event_desc));
 			}
 
@@ -57,11 +57,11 @@ if (!function_exists('event_espresso_show_attendess')) {
 ?>
 
 <div class="event-display-boxes ui-widget">
- 
+
 		<h2 class="event_title ui-widget-header ui-corner-top">
 	<?php _e('Attendee Listing For: ','event_espresso'); ?>
 	<?php echo $event_name . $event_status?></h2>
-	
+
 		<div class="event-data-display ui-widget-content ui-corner-bottom">
 
 	<!--<?php echo wpautop($event_desc); ?>-->
@@ -82,7 +82,7 @@ if (!function_exists('event_espresso_show_attendess')) {
 		$email = $attendee->email;
 		$gravatar = $show_gravatar == 'true'? get_avatar( $email, $size = '100', $default = 'http://www.gravatar.com/avatar/' ) : '';
 		$city_state = $city != '' || $state != '' ? '<br />' . ($city != '' ? $city :'') . ($state != '' ? ', ' . $state :' ') :'';
-		
+
 		//These are example variables to show answers to questions
 		//$custom_question_1 = '<br />'.do_shortcode('[EE_ANSWER q="12" a="'.$id.'"]');
 		//$custom_question_2 = '<br />'.do_shortcode('[EE_ANSWER q="13" a="'.$id.'"]');
@@ -91,8 +91,8 @@ if (!function_exists('event_espresso_show_attendess')) {
 				<li class="attendee_details"> <span class="espresso_attendee"><?php echo $gravatar ?><?php echo stripslashes_deep($fname . ' ' . $lname) . $city_state .'</p>'; ?> </span>
 					<div class="clear"></div>
 				</li>
-<?php	
-	} 
+<?php
+	}
 ?>
 			</ol>
 	</div>
