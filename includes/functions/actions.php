@@ -112,90 +112,16 @@ function espresso_load_reg_page_files() {
 
 add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_files');
 
-function espresso_coupon_codes() {
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/index.php')) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/index.php');
-		//Include dicount codes
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/use_coupon_code.php');
-	} else {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/coupon_management.php');
-	}
-}
-
-add_action('action_hook_espresso_coupon_codes', 'espresso_coupon_codes');
-
-function espresso_require_email_manager() {
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/email-manager/index.php')) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/email-manager/index.php');
-	} else {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/email-manager.php');
-	}
-}
-
-add_action('action_hook_espresso_require_admin_files', 'espresso_require_email_manager');
-
-function espresso_require_venue_manager() {
-	// Event Registration Subpage - Add/Delete/Edit Venues
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php')) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php');
-	} else {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/venue_management.php');
-	}
-}
-
-add_action('action_hook_espresso_require_admin_files', 'espresso_require_venue_manager');
-
-function espresso_require_locale_manager() {
-	// Add/Delete/Edit Locales
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/locale-management/index.php')) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/locale-management/index.php');
-	} else {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/locale_management.php');
-	}
-}
-
-add_action('action_hook_espresso_require_admin_files', 'espresso_require_locale_manager');
-
-function espresso_require_staff_manager() {
-// Add/Delete/Edit Staff
-	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/staff-management/index.php')) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/staff-management/index.php');
-	} else {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/staff-management.php');
-	}
-}
-
-add_action('action_hook_espresso_require_admin_files', 'espresso_require_staff_manager');
-
 function espresso_require_admin_files() {
-	// Event editor premium functions
-	event_espresso_require_file('functions.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/', '', false, true);
-
 	// Available addons
 	event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
 
 	// Google Map Settings
-	event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/templates/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-
-	// Admin Widget - Display event stats in your admin dashboard
-	event_espresso_require_file('dashboard_widget.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/', '', false, true);
-
-	// Admin only functions
-	event_espresso_require_file('admin_menu.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/', '', false, true);
-
-	// Event Registration Subpage - Configure Organization
-	event_espresso_require_file('organization_config.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/', '', false, true);
-
-	// Event Registration Subpage - Add/Delete/Edit Events
-	event_espresso_require_file('index.php', EVENT_ESPRESSO_INCLUDES_DIR . 'event-management/', '', false, true);
-	event_espresso_require_file('index.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-reports/', '', false, true);
+	event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
 
 	// Event styles & template layouts Subpage
-	event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/templates/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
+	event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
 
-	// Plugin Support
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_support.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'category-management/index.php');
 }
 
 add_action('action_hook_espresso_require_admin_files', 'espresso_require_admin_files');
