@@ -63,44 +63,74 @@ function espresso_sponsors_post_box() {
 function espresso_add_meta_boxes() {
 	global $espresso_premium;
 	$screen = get_current_screen();
+	$screen_id = $screen->id;
 	/* $screen->add_help_tab(array(
 	  'id' => 'help-content',
 	  'title' => __('Content'),
 	  'content' => 'help me!',
 	  ));
 	  $screen->add_option('layout_columns', array('max' => 2, 'default' => 2)); */
-	switch ($screen->id) {
+	switch ($screen_id) {
 		case 'event-espresso_page_admin_addons':
 		case 'event-espresso_page_event_espresso':
 		case 'event-espresso_page_payment_gateways':
-			add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $screen->id, 'side');
-			add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $screen->id, 'side');
+		case 'event-espresso_page_template_confg':
+		case 'event-espresso_page_template_map_confg':
+		case 'event-espresso_page_event_emails':
+		case 'event-espresso_page_support':
+			add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $screen_id, 'side');
+			add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $screen_id, 'side');
 			if (!$espresso_premium)
-				add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $screen->id, 'side');
+				add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $screen_id, 'side');
 			break;
 	}
-	switch ($screen->id) {
+	switch ($screen_id) {
 		case 'event-espresso_page_event_espresso':
-			add_meta_box('espresso_organization_settings', __('Organization Settings', 'event_espresso'), 'espresso_org_settings_meta_box', $screen->id);
-			add_meta_box('espresso_page_settings', __('Page Settings', 'event_espresso'), 'espresso_page_settings_meta_box', $screen->id);
-			add_meta_box('espresso_email_settings', __('Email Settings', 'event_espresso'), 'espresso_email_settings_meta_box', $screen->id);
+			add_meta_box('espresso_organization_settings', __('Organization Settings', 'event_espresso'), 'espresso_org_settings_meta_box', $screen_id);
+			add_meta_box('espresso_page_settings', __('Page Settings', 'event_espresso'), 'espresso_page_settings_meta_box', $screen_id);
+			add_meta_box('espresso_email_settings', __('Email Settings', 'event_espresso'), 'espresso_email_settings_meta_box', $screen_id);
 			if ($espresso_premium) {
-				add_meta_box('espresso_optional_settings', __('Optional Event Settings', 'event_espresso'), 'espresso_optional_settings_meta_box', $screen->id);
+				add_meta_box('espresso_optional_settings', __('Optional Event Settings', 'event_espresso'), 'espresso_optional_settings_meta_box', $screen_id);
 			} else {
-				add_meta_box('espresso_free_recaptcha_settings', __('reCAPTCHA Settings', 'event_espresso'), 'espresso_free_recaptcha_settings_meta_box', $screen->id);
-				add_meta_box('espresso_free_optional_settings', __('Optional Event Settings', 'event_espresso'), 'espresso_free_optional_settings_meta_box', $screen->id);
+				add_meta_box('espresso_free_recaptcha_settings', __('reCAPTCHA Settings', 'event_espresso'), 'espresso_free_recaptcha_settings_meta_box', $screen_id);
+				add_meta_box('espresso_free_optional_settings', __('Optional Event Settings', 'event_espresso'), 'espresso_free_optional_settings_meta_box', $screen_id);
 			}
 			break;
 		case 'event-espresso_page_payment_gateways':
 			if ($espresso_premium) {
-				add_meta_box('espresso_optional_settings', __("Developers Section", 'event_espresso'), 'espresso_gateway_developer_meta_box', $screen->id);
+				add_meta_box('espresso_optional_settings', __("Developers Section", 'event_espresso'), 'espresso_gateway_developer_meta_box', $screen_id);
 			}
+			break;
+		case 'event-espresso_page_template_confg':
+			add_meta_box('template_settings', __('Template Settings', 'event_espresso'), 'espresso_template_settings', $screen_id);
+			add_meta_box('customization_instructions', __('Customization Instructions', 'event_espresso'), 'espresso_template_customization_instructions', $screen_id);
+			break;
+		case 'event-espresso_page_template_map_confg':
+			add_meta_box('customization_instructions', __('Google Maps Display Options', 'event_espresso'), 'espresso_template_map_confg_meta_box', $screen_id);
+			break;
+		case 'event-espresso_page_support':
+			add_meta_box('support_links', __('Quick Links', 'event_espresso'), 'espresso_admin_help_links_meta_box', $screen_id);
+			add_meta_box('support_installation', __('Installation', 'event_espresso'), 'espresso_admin_help_installation_meta_box', $screen_id);
+			add_meta_box('support_partners', __('Partners', 'event_espresso'), 'espresso_admin_help_partners_meta_box', $screen_id);
+			add_meta_box('support_devs', __('Hire a Developer', 'event_espresso'), 'espresso_admin_help_hire_devs_meta_box', $screen_id);
+			add_meta_box('support_theme_devs', __('Favorite Theme Developers', 'event_espresso'), 'espresso_admin_help_theme_devs_meta_box', $screen_id);
+			add_meta_box('support_plugins', __('Recommended Plugins', 'event_espresso'), 'espresso_admin_help_plugins_meta_box', $screen_id);
+			add_meta_box('support_themes', __('Highly Recommended Themes', 'event_espresso'), 'espresso_admin_help_themes_meta_box', $screen_id);
+			add_meta_box('support_resources', __('Other Resources', 'event_espresso'), 'espresso_admin_help_resources_meta_box', $screen_id);
+			add_meta_box('support_shortcodes', __('Shortcodes', 'event_espresso'), 'espresso_admin_help_shortcodes_meta_box', $screen_id);
+			add_meta_box('support_info', __('Important Information', 'event_espresso'), 'espresso_admin_help_information_meta_box', $screen_id);
+			add_meta_box('support_contact', __('Contact Support', 'event_espresso'), 'espresso_admin_help_support_meta_box', $screen_id);
+			add_meta_box('support_faq', __('Frequently Asked Questions', 'event_espresso'), 'espresso_admin_help_faq_meta_box', $screen_id);
+			add_meta_box('support_add_info', __('Additional Information', 'event_espresso'), 'espresso_admin_help_additional_info_meta_box', $screen_id);
 			break;
 	}
 
-	switch ($screen->id) {
+	switch ($screen_id) {
 		case 'event-espresso_page_event_espresso':
+		case 'event-espresso_page_template_confg':
 		case 'event-espresso_page_payment_gateways':
+		case 'event-espresso_page_template_map_confg':
+		case 'event-espresso_page_support':
 			add_action('admin_footer', 'espresso_admin_page_footer');
 			break;
 	}
