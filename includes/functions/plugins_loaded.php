@@ -1,4 +1,14 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+/**
+ * 		Automagically load non-singleton class files - no need to include or require
+ * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
+ *
+ * 		@access public
+ * 		@return void
+ */
+function __autoload( $class_name ) {  
+    include_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/' . $class_name . '.class.php';  
+} 
 
 /**
  * 		define all event espresso db table names plus directory and url paths
@@ -8,7 +18,6 @@
  */
 function espresso_define_tables_and_paths() {
 	global $wpdb;
-	define("EVENT_ESPRESSO_VERSION", espresso_version());
 
 	// Define all plugin database tables
 	define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
@@ -113,6 +122,7 @@ function espresso_EE_Session() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
+
 }
 
 /**
