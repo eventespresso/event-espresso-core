@@ -52,6 +52,7 @@
 	private $_cart_grand_total_amount = 0;	
 				
 	// EE_Session object stored by reference
+	private $session;
 	private $_session_data = array();
 
 
@@ -85,20 +86,21 @@
  
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 
-		if ( ! defined( 'ESPRESSO_CART' )) {
+		if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 			define( 'ESPRESSO_CART', TRUE );	
 		}
 		
 //		global $notices;
 //		$this->_notices = $notices;
 
-//		// if sessions is not instantiated
+		// if sessions is not instantiated
 //		if ( ! defined( 'ESPRESSO_SESSION' )) {
 //			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Session.class.php');
+//			$EE_Session = EE_Session::instance();
 //		}
-//		// instantiate the class object making all properties and methods accessible via $this->session ex: $this->get_session_data();
-	global $EE_Session;
-	$this->session = $EE_Session;
+		global $EE_Session;
+		$this->session = $EE_Session;
+
 //		
 //		// are we using encryption?
 //		if ( ! defined( 'ESPRESSO_ENCRYPT' )) {
