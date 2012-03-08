@@ -70,6 +70,8 @@ function espresso_add_meta_boxes() {
 	  'content' => 'help me!',
 	  ));
 	  $screen->add_option('layout_columns', array('max' => 2, 'default' => 2)); */
+
+	// adds side meta boxes
 	switch ($screen_id) {
 		case 'event-espresso_page_admin_addons':
 		case 'event-espresso_page_event_espresso':
@@ -84,6 +86,8 @@ function espresso_add_meta_boxes() {
 				add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), 'espresso_sponsors_post_box', $screen_id, 'side');
 			break;
 	}
+
+	//adds main meta boxes
 	switch ($screen_id) {
 		case 'event-espresso_page_event_espresso':
 			add_meta_box('espresso_organization_settings', __('Organization Settings', 'event_espresso'), 'espresso_org_settings_meta_box', $screen_id);
@@ -123,9 +127,17 @@ function espresso_add_meta_boxes() {
 			add_meta_box('support_faq', __('Frequently Asked Questions', 'event_espresso'), 'espresso_admin_help_faq_meta_box', $screen_id);
 			add_meta_box('support_add_info', __('Additional Information', 'event_espresso'), 'espresso_admin_help_additional_info_meta_box', $screen_id);
 			break;
+		case 'event-espresso_page_admin_addons':
+			add_meta_box('addons_rem', __('Recurring Events Manager', 'event_espresso'), 'espresso_admin_addons_rem_meta_box', $screen_id);
+			add_meta_box('addons_groupon', __('Groupon Integration Module', 'event_espresso'), 'espresso_admin_addons_groupon_meta_box', $screen_id);
+			add_meta_box('addons_members', __('Members Integration Module', 'event_espresso'), 'espresso_admin_addons_members_meta_box', $screen_id);
+			add_meta_box('addons_custom_files', __('Custom Files', 'event_espresso'), 'espresso_admin_addons_custom_files_meta_box', $screen_id);
+			break;
 	}
 
+
 	switch ($screen_id) {
+		case 'event-espresso_page_admin_addons':
 		case 'event-espresso_page_event_espresso':
 		case 'event-espresso_page_template_confg':
 		case 'event-espresso_page_payment_gateways':
