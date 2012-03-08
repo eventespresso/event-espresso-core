@@ -1,7 +1,7 @@
 <?php
 
 //All of the functions that deal with admin area should go here.
-//These all of the scripts we need
+//These are all of the scripts we need
 function event_espresso_config_page_styles() {
 	wp_enqueue_style('dashboard');
 	wp_enqueue_style('thickbox');
