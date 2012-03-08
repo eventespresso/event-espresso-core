@@ -38,7 +38,7 @@ function espresso_admin_init() {
 	} else {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/optional_event_settings.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/index.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/coupon_management.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/use_coupon_code.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/email_manager.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php');
