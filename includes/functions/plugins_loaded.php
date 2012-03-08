@@ -6,9 +6,9 @@
  * 		@access public
  * 		@return void
  */
-function __autoload( $class_name ) {  
-    include_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/' . $class_name . '.class.php';  
-} 
+function __autoload( $class_name ) {
+    file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/' . $class_name . '.class.php') and include_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/' . $class_name . '.class.php';
+}
 
 /**
  * 		define all event espresso db table names plus directory and url paths
