@@ -20,7 +20,7 @@ function event_espresso_email_config_mnu() {
 			?>
 		</h2>
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
-	<div id="side-info-column" class="inner-sidebar">
+			<div id="side-info-column" class="inner-sidebar">
 				<?php do_meta_boxes('event-espresso_page_event_emails', 'side', null); ?>
 			</div>
 			<div id="post-body">
@@ -50,7 +50,7 @@ function event_espresso_email_config_mnu() {
 							?>
 							<div id="message" class="updated fade">
 								<p><strong>
-			<?php _e('Email(s) have been successfully deleted.', 'event_espresso'); ?>
+										<?php _e('Email(s) have been successfully deleted.', 'event_espresso'); ?>
 									</strong></p>
 							</div>
 							<?php
@@ -92,7 +92,7 @@ function event_espresso_email_config_mnu() {
 									<th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:60%;"><?php _e('Name', 'event_espresso'); ?></th>
 									<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
 										<th class="manage-column column-creator" id="creator" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Creator', 'event_espresso'); ?></th>
-	<?php } ?>
+									<?php } ?>
 									<th class="manage-column column-title" id="action" scope="col" title="Click to Sort" style="width:30%;"><?php _e('Action', 'event_espresso'); ?></th>
 								</tr>
 							</thead>
@@ -122,13 +122,13 @@ function event_espresso_email_config_mnu() {
 												<div class="row-actions"><span class="edit"><a href="admin.php?page=event_emails&action=edit&id=<?php echo $email_id ?>">
 															<?php _e('Edit', 'event_espresso'); ?>
 														</a> | </span><span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_emails&action=delete_email&id=<?php echo $email_id ?>">
-											<?php _e('Delete', 'event_espresso'); ?>
+															<?php _e('Delete', 'event_espresso'); ?>
 														</a></span></div></td>
 											<?php if (function_exists('espresso_user_meta') && espresso_is_admin() == true) { ?>
 												<td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
-													<?php } ?>
+											<?php } ?>
 											<td><a href="admin.php?page=event_emails&action=edit&id=<?php echo $email_id ?>">
-			<?php _e('Edit Email', 'event_espresso'); ?>
+													<?php _e('Edit Email', 'event_espresso'); ?>
 												</a></td>
 										</tr>
 										<?php
@@ -140,10 +140,10 @@ function event_espresso_email_config_mnu() {
 						<p>
 							<input type="checkbox" name="sAll" onclick="selectAll(this)" />
 							<strong>
-	<?php _e('Check All', 'event_espresso'); ?>
+								<?php _e('Check All', 'event_espresso'); ?>
 							</strong>
 							<input name="delete_email" type="submit" class="button-secondary" id="delete_email" value="<?php _e('Delete Email', 'event_espresso'); ?>" style="margin-left:100px;" onclick="return confirmDelete();">
-	<?php echo '<a href="admin.php?page=event_emails&amp;action=add_new_email" style="margin-left:5px"class="button-primary">' . __('Add New Email', 'event_espresso') . '</a>'; ?> </p>
+							<?php echo '<a href="admin.php?page=event_emails&amp;action=add_new_email" style="margin-left:5px"class="button-primary">' . __('Add New Email', 'event_espresso') . '</a>'; ?> </p>
 					</form>
 				</div>
 			</div>
