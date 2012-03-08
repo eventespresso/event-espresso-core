@@ -1,16 +1,16 @@
 <?php
-
 /*
-  Plugin Name: Event Espresso
-  Plugin URI: http://eventespresso.com/
-  Description: Out-of-the-box Events Registration integrated with PayPal IPN for your WordPress blog/website. <a href="admin.php?page=support" >Support</a>
+  Plugin Name: 	Event Espresso
+  Plugin URI: 		http://eventespresso.com/
+  Description: 		Out-of-the-box Events Registration integrated with PayPal IPN for your WordPress blog/website. <a href="admin.php?page=support" >Support</a>
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.2.P
+  Version: 			3.2.P
 
-  Author: Seth Shoultes
-  Author URI: http://www.eventespresso.com
+  Author: 				Seth Shoultes
+  Author URI: 		http://www.eventespresso.com
+ License: 				GPLv2
 
   Copyright (c) 2008-2011 Event Espresso  All Rights Reserved.
 
@@ -33,6 +33,8 @@
 function espresso_version() {
 	return '3.2.P';
 }
+define("EVENT_ESPRESSO_VERSION", espresso_version());
+
 
 //Returns the template version
 function espresso_template_version() {
