@@ -19,11 +19,14 @@ function espresso_admin_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_menu.php');
+
+	if (!empty($_REQUEST['page']) and $_REQUEST['page']=='events')
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'event-management/index.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/organization_config.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_support.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/categories.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'event-management/index.php');
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-reports/index.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/form_builder.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/question_groups.php');
@@ -173,7 +176,7 @@ function espresso_frontend_init() {
 
 	//Custom post type integration
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && !empty($org_options['template_settings']['use_custom_post_types'])) {
-		require('includes/admin-files/custom_post_type.php');
+		require(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php');
 	}
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
