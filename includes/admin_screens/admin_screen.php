@@ -1,16 +1,5 @@
 <?php
 
-function espresso_sponsors_post_box() {
-	?>
-	<div class="padding">
-		<?php
-		$event_regis_sponsors = wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html'));
-		echo $event_regis_sponsors;
-		?>
-	</div>
-	<?php
-}
-
 function espresso_add_meta_boxes() {
 	global $espresso_premium;
 	$screen = get_current_screen();
@@ -24,6 +13,9 @@ function espresso_add_meta_boxes() {
 
 	// adds side meta boxes
 	switch ($screen_id) {
+		case 'event-espresso_page_event_categories':
+		case 'event-espresso_page_form_groups':
+		case 'event-espresso_page_form_builder':
 		case 'event-espresso_page_discounts':
 		case 'event-espresso_page_admin_addons':
 		case 'event-espresso_page_event_espresso':
@@ -89,6 +81,9 @@ function espresso_add_meta_boxes() {
 
 
 	switch ($screen_id) {
+		case 'event-espresso_page_event_categories':
+		case 'event-espresso_page_form_groups':
+		case 'event-espresso_page_form_builder':
 		case 'event-espresso_page_discounts':
 		case 'event-espresso_page_admin_addons':
 		case 'event-espresso_page_event_espresso':
@@ -158,6 +153,17 @@ function espresso_links_post_box() {
 					<?php _e('Plugins and Addons', 'event_espresso'); ?>
 				</a></li>
 		</ul>
+	</div>
+	<?php
+}
+
+function espresso_sponsors_post_box() {
+	?>
+	<div class="padding">
+		<?php
+		$event_regis_sponsors = wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html'));
+		echo $event_regis_sponsors;
+		?>
 	</div>
 	<?php
 }
