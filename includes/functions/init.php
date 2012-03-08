@@ -22,11 +22,11 @@ function espresso_admin_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/organization_config.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_support.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'category-management/index.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/categories.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'event-management/index.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-reports/index.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'form-builder/index.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'form-builder/groups/index.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/form_builder.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/question_groups.php');
 	if (!$espresso_premium) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/test_drive_pro.php');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/premium_upgrade.php');
