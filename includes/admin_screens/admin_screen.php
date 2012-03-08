@@ -1,54 +1,5 @@
 <?php
 
-function espresso_news_post_box() {
-	?>
-	<div class="padding">
-		<div class="infolinks">
-			<?php
-			echo '<h2 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h2>';
-
-			// Get RSS Feed(s)
-			@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 6));
-
-			echo '<h2 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h2>';
-
-			@wp_widget_rss_output('http://eventespresso.com/forums/feed/', array('show_date' => 0, 'items' => 4));
-			?>
-		</div>
-	</div>
-	<?php
-}
-
-function espresso_links_post_box() {
-	?>
-	<div class="padding">
-		<ul class="infolinks">
-			<li><a href="http://eventespresso.com/support/installation/" target="_blank">
-					<?php _e('Installation &amp; Usage Guide', 'event_espresso'); ?>
-				</a></li>
-			<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">
-					<?php _e('Customization Forums', 'event_espresso'); ?>
-				</a></li>
-			<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">
-					<?php _e('Plugin Support Forums', 'event_espresso'); ?>
-				</a></li>
-			<li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">
-					<?php _e('Feature Request Forums', 'event_espresso'); ?>
-				</a></li>
-			<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">
-					<?php _e('Bug Submission Forums', 'event_espresso'); ?>
-				</a></li>
-			<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">
-					<?php _e('Changelog', 'event_espresso'); ?>
-				</a></li>
-			<li><a href="http://eventespresso.com/download/plugins-and-addons/">
-					<?php _e('Plugins and Addons', 'event_espresso'); ?>
-				</a></li>
-		</ul>
-	</div>
-	<?php
-}
-
 function espresso_sponsors_post_box() {
 	?>
 	<div class="padding">
@@ -73,6 +24,7 @@ function espresso_add_meta_boxes() {
 
 	// adds side meta boxes
 	switch ($screen_id) {
+		case 'event-espresso_page_discounts':
 		case 'event-espresso_page_admin_addons':
 		case 'event-espresso_page_event_espresso':
 		case 'event-espresso_page_payment_gateways':
@@ -137,6 +89,7 @@ function espresso_add_meta_boxes() {
 
 
 	switch ($screen_id) {
+		case 'event-espresso_page_discounts':
 		case 'event-espresso_page_admin_addons':
 		case 'event-espresso_page_event_espresso':
 		case 'event-espresso_page_template_confg':
@@ -160,3 +113,51 @@ function espresso_add_meta_boxes() {
 	);
 }
 
+function espresso_news_post_box() {
+	?>
+	<div class="padding">
+		<div class="infolinks">
+			<?php
+			echo '<h2 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h2>';
+
+			// Get RSS Feed(s)
+			@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 6));
+
+			echo '<h2 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h2>';
+
+			@wp_widget_rss_output('http://eventespresso.com/forums/feed/', array('show_date' => 0, 'items' => 4));
+			?>
+		</div>
+	</div>
+	<?php
+}
+
+function espresso_links_post_box() {
+	?>
+	<div class="padding">
+		<ul class="infolinks">
+			<li><a href="http://eventespresso.com/support/installation/" target="_blank">
+					<?php _e('Installation &amp; Usage Guide', 'event_espresso'); ?>
+				</a></li>
+			<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">
+					<?php _e('Customization Forums', 'event_espresso'); ?>
+				</a></li>
+			<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">
+					<?php _e('Plugin Support Forums', 'event_espresso'); ?>
+				</a></li>
+			<li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">
+					<?php _e('Feature Request Forums', 'event_espresso'); ?>
+				</a></li>
+			<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">
+					<?php _e('Bug Submission Forums', 'event_espresso'); ?>
+				</a></li>
+			<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">
+					<?php _e('Changelog', 'event_espresso'); ?>
+				</a></li>
+			<li><a href="http://eventespresso.com/download/plugins-and-addons/">
+					<?php _e('Plugins and Addons', 'event_espresso'); ?>
+				</a></li>
+		</ul>
+	</div>
+	<?php
+}
