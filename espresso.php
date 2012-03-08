@@ -64,6 +64,7 @@ require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
 add_action('plugins_loaded', 'espresso_get_user_id', 2);
 add_action('plugins_loaded', 'espresso_load_org_options', 3);
+add_action('plugins_loaded', 'espresso_EE_Session', 4);
 add_action('plugins_loaded', 'espresso_init', 25);
 add_action('init', 'espresso_export_certificate', 30);
 add_action('init', 'espresso_export_invoice', 30);
@@ -78,7 +79,6 @@ if (is_admin()) {
 	add_action('init', 'espresso_admin_init', 25);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 } else {
-	add_action('plugins_loaded', 'espresso_EE_Session', 4);
 	add_action('plugins_loaded', 'espresso_init_session', 5);
 	add_action('init', 'espresso_load_jquery', 10);
 	add_action('init', 'espresso_frontend_init', 25);
