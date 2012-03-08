@@ -141,7 +141,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
 			$cart_link = event_espresso_cart_link($params);
 		}
 
-		if ($display_reg_form == 'Y') {
+		if ($display_reg_form) {
 			?>
 		<p id="register_link-<?php echo $event_id ?>" class="register-link-footer"> <a class="a_register_link ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>">
 			<?php _e('Register', 'event_espresso'); ?>
