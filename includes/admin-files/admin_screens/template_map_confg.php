@@ -29,9 +29,9 @@ function event_espresso_manage_maps() {
 		if (empty($org_options['map_settings']['ee_map_align']))
 			$org_options['map_settings']['ee_map_align'] = 'none';
 		if (empty($org_options['map_settings']['ee_map_align_single']))
-			$org_options['map_settings']['ee_map_align_single'] = 'default';
+			$org_options['map_settings']['ee_map_align_single'] = 'none';
 		if (empty($org_options['map_settings']['ee_map_type_control_single']))
-			$org_options['map_settings']['ee_map_type_control_single'] = 'none';
+			$org_options['map_settings']['ee_map_type_control_single'] = 'default';
 		update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options);
 
 		$notices['updates'][] = __('Events Map Settings Updated', 'event_espresso');
