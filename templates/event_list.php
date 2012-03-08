@@ -15,12 +15,12 @@ function display_all_events() {
 		$display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
 		$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 1 ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 1 ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
 		$sql .= " LEFT JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-		$sql .= " WHERE is_active = 'Y' ";
+		$sql .= " WHERE is_active = 1 ";
 		$sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
 		$sql .= " AND e.event_status != 'D' ";
 		$sql .= " GROUP BY e.id  ORDER BY date(start_date), time(start_time), id";
@@ -38,13 +38,13 @@ function display_event_espresso_categories($event_category_id="null", $css_class
 			$display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
 			$sql = "SELECT e.*, c.id category_id, c.category_name, c.category_desc, c.display_desc, c.category_identifier, ese.start_time, ese.end_time, p.event_cost  ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 1 ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
 			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
 			$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 1 ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 			$sql .= " WHERE c.category_identifier = '" . $event_category_id . "' ";
 			$sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
 			$sql .= " AND e.event_status != 'D' ";
@@ -103,7 +103,7 @@ function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override
 		$category_desc = isset($wpdb->last_result[0]->category_desc) ? html_entity_decode(wpautop($wpdb->last_result[0]->category_desc)) : '';
 		$display_desc = isset($wpdb->last_result[0]->display_desc) ? $wpdb->last_result[0]->display_desc : '';
 
-		if ($display_desc == 'Y') {
+		if ($display_desc ) {
 			echo '<h2 id="events_category_name-' . $category_id . '" class="events_category_name">' . stripslashes_deep($category_name) . '</h2>';
 			echo espresso_format_content($category_desc);
 		}
@@ -150,7 +150,7 @@ function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override
 			//var_dump($event_meta);
 			//var_dump($event_address);
 			//Venue information
-			if ($org_options['use_venue_manager'] == 'Y') {
+			if ($org_options['use_venue_manager'] ) {
 				$event_address = $event->venue_address;
 				$event_address2 = isset( $event->venue_address2 ) ? $event->venue_address2 : '';
 				$event_city = $event->venue_city;
@@ -238,7 +238,7 @@ function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override
 			//This can be used in place of the registration link if you are usign the external URL feature
 			//$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url( $event->id, $event->slug );
 			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url( $event->id, $event->slug );
-			if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
+			if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only ) {
 				//Display a message if the user is not logged in.
 				//_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
 			} else {
