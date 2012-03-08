@@ -52,7 +52,7 @@
 	private $_cart_grand_total_amount = 0;	
 				
 	// EE_Session object stored by reference
-	private $session;
+	public $session;
 	private $_session_data = array();
 
 
