@@ -358,35 +358,35 @@ if (!function_exists('event_espresso_get_is_active')) {
 		$registration_start_timestamp = strtotime($registration_start); //Creates a timestamp from the event registration start date
 		$registration_end_timestamp = strtotime($registration_end); //Creates a timestamp from the event registration start date
 
-		if ($is_active == "Y" && $event_status == "O") {
+		if ($is_active && $event_status == "O") {
 			$event_status = array('status' => 'ONGOING', 'display' => '<span style="color: #090; font-weight:bold;">' . __('ONGOING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_ongoing">' . __('Ongoing', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//IF the event is a secondary event, show as waitlist
-		elseif ($is_active == "Y" && $event_status == "S") {
+		elseif ($is_active && $event_status == "S") {
 			$event_status = array('status' => 'SECONDARY', 'display' => '<span style="color: #090; font-weight:bold;">' . __('WAITLIST', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_secondary">' . __('Waitlist', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//IF the event is a waitlist/secondary event, show as waitlist
-		elseif ($is_active == "Y" && $event_status == "R") {
+		elseif ($is_active  && $event_status == "R") {
 			$event_status = array('status' => 'DRAFT', 'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('DRAFT', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_draft">' . __('Draft', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//IF the event is a pending event, show as pending
-		elseif ($is_active == "Y" && $event_status == "P") {
+		elseif ($is_active  && $event_status == "P") {
 			$event_status = array('status' => 'PENDING', 'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('PENDING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_pending">' . __('Pending', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//IF the event is a denied event, show as denied
-		elseif ($is_active == "Y" && $event_status == "X") {
+		elseif ($is_active  && $event_status == "X") {
 			$event_status = array('status' => 'DENIED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('DENIED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_denied">' . __('Denied', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
@@ -395,21 +395,21 @@ if (!function_exists('event_espresso_get_is_active')) {
 		/*		 * * Check registration dates ** */
 
 		//If the registration end date is greater than the current date
-		elseif ($is_active == "Y" && date($registration_end_timestamp) <= date(time()) && $event_status != "D") {
+		elseif ($is_active && date($registration_end_timestamp) <= date(time()) && $event_status != "D") {
 			$event_status = array('status' => 'REGISTRATION_CLOSED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('CLOSED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_closed">' . __('Closed', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//If the registration start date is less than the current date
-		elseif ($is_active == "Y" && date($registration_start_timestamp) >= date(time()) && $event_status != "D") {
+		elseif ($is_active && date($registration_start_timestamp) >= date(time()) && $event_status != "D") {
 			$event_status = array('status' => 'REGISTRATION_NOT_OPEN', 'display' => '<span style="color: #090; font-weight:bold;">' . __('NOT_OPEN', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_not_open">' . __('Not Open', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//If the registration start date is less than the current date
-		elseif ($is_active == "Y" && date($registration_start_timestamp) <= date(time()) && $event_status != "D") {
+		elseif ($is_active && date($registration_start_timestamp) <= date(time()) && $event_status != "D") {
 			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => '<span style="color: #090; font-weight:bold;">' . __('OPEN', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
@@ -418,21 +418,21 @@ if (!function_exists('event_espresso_get_is_active')) {
 		/*		 * * End Check registration dates ** */
 
 		//If the start date and time has passed, show as expired.
-		elseif ($is_active == "Y" && date($timestamp) <= date(time()) && $event_status != "D") {
+		elseif ($is_active && date($timestamp) <= date(time()) && $event_status != "D") {
 			$event_status = array('status' => 'EXPIRED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('EXPIRED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_expired">' . __('Expired', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//If the start date and time has not passed, show as active.
-		elseif ($is_active == "Y" && date($timestamp) >= date(time()) && $event_status != "D") {
+		elseif ($is_active && date($timestamp) >= date(time()) && $event_status != "D") {
 			$event_status = array('status' => 'ACTIVE', 'display' => '<span style="color: #090; font-weight:bold;">' . __('ACTIVE', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_active">' . __('Active', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//IF the event is not active, show as Not Active
-		elseif ($is_active == "N" && $event_status != "D") {
+		elseif (!$is_active && $event_status != "D") {
 			$event_status = array('status' => 'NOT_ACTIVE', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('NOT_ACTIVE', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_not_active">' . __('Not Active', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
