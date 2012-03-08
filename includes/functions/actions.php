@@ -114,7 +114,7 @@ add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_f
 
 function espresso_require_admin_files() {
 	// Available addons
-	event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
+	event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
 
 	// Google Map Settings
 	event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
