@@ -2,10 +2,6 @@
 
 function event_espresso_manage_templates() {
 	global $wpdb, $org_options, $notices, $espresso_wp_user;
-	add_meta_box(
-					'template_settings', __('Template Settings', 'event_espresso'), 'espresso_template_settings', 'template_confg');
-	add_meta_box(
-					'customization_instructions', __('Customization Instructions', 'event_espresso'), 'espresso_template_customization_instructions', 'template_confg');
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//print_r($org_options);
 	if (isset($_POST['update_org']) && check_admin_referer('espresso_form_check', 'ee_template_settings_update')) {
@@ -34,7 +30,6 @@ function event_espresso_manage_templates() {
 		$notices['updates'][] = __('Template Settings Updated', 'event_espresso');
 	}
 
-
 	function espresso_style_is_selected($name) {
 		global $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -53,25 +48,22 @@ function event_espresso_manage_templates() {
 
 function espresso_template_confg_output() {
 	?>
-	<div class="wrap">
+	<div class="wrap columns-2">
 		<div id="icon-options-event" class="icon32"> </div>
 		<h2>
 			<?php _e('Template Settings', 'event_espresso'); ?>
 		</h2>
-		<?php do_action('action_hook_espresso_admin_notices'); ?>
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<?php do_meta_boxes('template_confg', 'side', null); ?>
+			<div id="side-info-column" class="inner-sidebar">
+				<?php do_meta_boxes('event-espresso_page_template_confg', 'side', null); ?>
+			</div>
 			<div id="post-body">
 				<div id="post-body-content">
 					<form id="template-settings-form" class="espresso_form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-						<div class="meta-box-sortables ui-sortables">
-							<?php do_meta_boxes('template_confg', 'advanced', null); ?>
-						</div>
-						<!-- / .meta-box-sortables -->
-
+						<?php do_meta_boxes('event-espresso_page_template_confg', 'advanced', null); ?>
 						<input type="hidden" name="update_org" value="update" />
 					</form>
-					<?php include_once('templates_help.php'); ?>
+					<?php include_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/templates/templates_help.php'); ?>
 				</div>
 				<!-- / #post-body-content -->
 			</div>
@@ -80,16 +72,7 @@ function espresso_template_confg_output() {
 		<!-- / #poststuff -->
 	</div>
 	<!-- / #wrap -->
-	<script type="text/javascript" charset="utf-8">
-		//<![CDATA[
-		jQuery(document).ready(function() {
-			postboxes.add_postbox_toggles('template_confg');
-		});
-		//]]>
-	</script>
 	<?php
-	wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
-	wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
 }
 
 function espresso_template_settings() {
@@ -108,20 +91,19 @@ function espresso_template_settings() {
 
 	$files_themeroller = array();
 
-	$exclude = array( '.', '..', 'index.htm', 'index.html', 'index.php', '.svn', 'themeroller-.css', '.DS_Store', basename($_SERVER['PHP_SELF']) );
+	$exclude = array('.', '..', 'index.htm', 'index.html', 'index.php', '.svn', 'themeroller-.css', '.DS_Store', basename($_SERVER['PHP_SELF']));
 
 	if ($dhandle) { //if we managed to open the directory
 		// loop through all of the files
 		while (false !== ($fname_themeroller = readdir($dhandle))) {
 
-		if ( !in_array( $fname_themeroller, $exclude) && !is_dir( $fname_themeroller )) {
-			// store the filename
+			if (!in_array($fname_themeroller, $exclude) && !is_dir($fname_themeroller)) {
+				// store the filename
 				$files_themeroller[] = $fname_themeroller;
 			}
 		}
 		// close the directory
 		closedir($dhandle);
-
 	}
 	global $org_options;
 	?>
@@ -239,7 +221,7 @@ shortcodes in your event description.', 'event_espresso'); ?>
 				<?php echo apply_filters('filter_hook_espresso_template_config_template_settings_form_table', ''); ?>
 			</tbody>
 		</table>
-		<?php // create our nonces and do our form submit   ?>
+		<?php // create our nonces and do our form submit    ?>
 		<?php wp_nonce_field('espresso_form_check', 'ee_template_settings_update'); ?>
 		<p class="submit-buttons">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_1" />
