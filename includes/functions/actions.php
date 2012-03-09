@@ -27,20 +27,20 @@ function display_espresso_admin_notices() {
 
 	global $notices;
 
-	// We play both kinds of music here! Country AND Western! - err... I mean, cycle through both types of notices
+// We play both kinds of music here! Country AND Western! - err... I mean, cycle through both types of notices
 	foreach (array('updates', 'errors') as $type) {
 
-		// if particular notice type is not empty, then "You've got Mail"
+// if particular notice type is not empty, then "You've got Mail"
 		if (!empty($notices[$type])) {
 
-			// is it an update or an error ?
+// is it an update or an error ?
 			$msg_class = $type == 'updates' ? 'updated' : 'error';
 			echo '<div id="message" class="' . $msg_class . '">';
-			// display each notice, however many that may be
+// display each notice, however many that may be
 			foreach ($notices[$type] as $message) {
 				echo '<p>' . $message . '</p>';
 			}
-			// wrap it up
+// wrap it up
 			echo '</div>';
 		}
 	}
@@ -69,18 +69,18 @@ function espresso_load_reg_page_files() {
 
 	define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 
-	//Check to see if this a reg page
-	//May cause admin and front facing pages to break if turned on
-	//global $this_is_a_reg_page;
-	//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
-	//Process email confirmations
+//Check to see if this a reg page
+//May cause admin and front facing pages to break if turned on
+//global $this_is_a_reg_page;
+//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
+//Process email confirmations
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
 
-	//Various attendee functions
+//Various attendee functions
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/attendee_functions.php');
 
 
-	//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
+//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment_Data.class.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/payment_page.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
@@ -89,14 +89,14 @@ function espresso_load_reg_page_files() {
 	require_once(espresso_get_payment_page_template());
 	require_once(espresso_get_payment_overview_template());
 	require_once(espresso_get_return_payment_template());
-	//Add attendees to the database
+//Add attendees to the database
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/add_attendees_to_db.php');
 
 	event_espresso_require_gateway('process_payments.php');
 	event_espresso_require_gateway('PaymentGateway.php');
 	event_espresso_require_gateway('gateway_display.php');
 
-	// AJAX functions
+// AJAX functions
 	add_action('wp_ajax_event_espresso_add_item', 'event_espresso_add_item_to_session');
 	add_action('wp_ajax_nopriv_event_espresso_add_item', 'event_espresso_add_item_to_session');
 	add_action('wp_ajax_event_espresso_delete_item', 'event_espresso_delete_item_from_session');
@@ -114,24 +114,23 @@ function espresso_load_reg_page_files() {
 add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_files');
 
 function espresso_require_admin_files() {
-	// Available addons
-	//event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-	// Google Map Settings
-	//event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-	// Event styles & template layouts Subpage
-	if ( isset( $_REQUEST['page'] ) &&  $_REQUEST['page'] == 'template_confg') {
-		event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
+	if (!empty($_REQUEST['page'])) {
+//event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
+// Google Map Settings
+//event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
+// Event styles & template layouts Subpage
+		if ($_REQUEST['page'] == 'template_confg')
+			event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
 	}
-		
 }
 
 add_action('action_hook_espresso_require_admin_files', 'espresso_require_admin_files');
 
 function espresso_site_license() {
 	global $org_options;
-	// PUE Auto Upgrades stuff
+// PUE Auto Upgrades stuff
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/pue/pue-client.php') && !empty($org_options['site_license_key'])) {
-		//let's get the client api key for updates
+//let's get the client api key for updates
 		global $org_options;
 		$api_key = $org_options['site_license_key']; //note this is a special field that we added to the core plugin options page for clients to add their site-license key.
 		$host_server_url = 'http://beta.eventespresso.com/'; //note you'll have to change this to eventespresso.com once the domain is swtiched to the new server
@@ -144,7 +143,7 @@ function espresso_site_license() {
 				'plugin_path' => $plugin_path, //by default, the plugin_path is generated using the $plugin_slug but that only works if the format of the plugin_path uses the slug.  For example, if the slug is event-espresso then the generated path would be event-espresso/event-espresso.php.  We can instead include a plugin_path in the $options array (in this example I've used plugin_basename() to get the path.
 		);
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/pue/pue-client.php' ); //requires the pue-client file that contains the class.
-		//$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //let's make sure this addon is in the updater routine!
+//$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //let's make sure this addon is in the updater routine!
 	}
 }
 

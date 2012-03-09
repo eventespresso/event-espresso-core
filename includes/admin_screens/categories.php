@@ -67,7 +67,7 @@ function event_espresso_categories_config_mnu() {
 								break;
 						}
 					}
-					do_action( 'action_hook_espresso_admin_notices');
+					do_action('action_hook_espresso_admin_notices');
 					?>
 					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 
@@ -87,12 +87,7 @@ function event_espresso_categories_config_mnu() {
 							<tbody>
 								<?php
 								$sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE . " c";
-								if (function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true) {
-									$sql .= " JOIN $wpdb->users u on u.ID = c.wp_user WHERE c.wp_user = " . $espresso_wp_user;
-								} elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-									$sql .= " JOIN $wpdb->users u on u.ID = c.wp_user WHERE c.wp_user = " . espresso_member_data('id');
-								}
-
+								$sql = apply_filters('filter_hook_espresso_category_list_sql', $sql);
 								$wpdb->query($sql);
 
 								if ($wpdb->num_rows > 0) {
@@ -120,7 +115,8 @@ function event_espresso_categories_config_mnu() {
 
 										</tr>
 									<?php }
-								} ?>
+								}
+								?>
 							</tbody>
 						</table>
 						<div style="clear:both">
@@ -131,7 +127,7 @@ function event_espresso_categories_config_mnu() {
 
 								<?php /*								 * *************************** ADDED BY BRENT *********************** */ ?>
 								<a  style="margin:10px 0 0 20px;" class="button-primary" href="<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?event_espresso&amp;export=report&action=categories&amp;type=csv" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Categories to CSV', 'event_espresso'); ?></a>
-								<?php /*								 * *************************** brent done adding *********************** */ ?>
+	<?php /*	 * *************************** brent done adding *********************** */ ?>
 
 							</p>
 						</div>

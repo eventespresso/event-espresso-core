@@ -34,6 +34,24 @@ function espresso_admin_init() {
 			}
 		}
 
+		if ($_REQUEST['page'] == 'attendees')
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/attendees.php');
+
+		if ($_REQUEST['page'] == 'event_categories')
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/categories.php');
+
+		if ($_REQUEST['page'] == 'form_groups')
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/question_groups.php');
+
+		if ($_REQUEST['page'] == 'form_builder')
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/questions.php');
+
+		if ($_REQUEST['page'] == 'event_espresso') {
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/organization_config.php');
+			if ($espresso_premium)
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/optional_event_settings.php');
+		}
+
 		$espresso_pages = array('event_espresso', 'discounts', 'groupons',
 				'event_categories', 'admin_reports', 'form_builder',
 				'form_groups', 'my-events', 'event_emails', 'event_venues',
@@ -53,14 +71,13 @@ function espresso_admin_init() {
 		if ($_REQUEST['page'] == 'payment_gateways') {
 			add_action('admin_init', 'espresso_require_gateway_files');
 		}
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/organization_config.php');
+
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_support.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/categories.php');
-		if ($_REQUEST['page'] == 'attendees')
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/attendees.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/form_builder.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/question_groups.php');
+
+
+
+
 	}
 	if (!$espresso_premium) {
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/test_drive_pro.php');
@@ -71,7 +88,6 @@ function espresso_admin_init() {
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/locale_management.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/staff-management.php');
 	} else {
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/optional_event_settings.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/coupon_management.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/use_coupon_code.php');

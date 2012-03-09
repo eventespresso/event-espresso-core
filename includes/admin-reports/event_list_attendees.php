@@ -115,7 +115,7 @@ function event_list_attendees() {
 					<?php _e('Event Time', 'event_espresso'); ?>
 						</span> <span class="sorting-indicator"></span> </th>
 					<?php
-					do_action('action_hook_espresso_event_attendee_table_header');
+					$t_cols = apply_filters('filter_hook_espresso_event_attendee_table_header', $t_cols);
 
 					?>
 					<th class="manage-column column-title" id="event" scope="col" title="Click to Sort" style="width: 8%;"> <span>
