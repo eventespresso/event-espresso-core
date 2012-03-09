@@ -2,13 +2,13 @@
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 //Add/Delete/Edit Events
-require_once('event_functions.php');
-require_once("event_list.php");
-require_once("copy_event.php");
-require_once("insert_event.php");
-require_once ('csv_import.php');
-require_once("edit_event.php");
-require_once("add_new_event.php");
+//require_once('event_functions.php');
+//require_once("event_list.php");
+//require_once("copy_event.php");
+//require_once("insert_event.php");
+//require_once ('csv_import.php');
+//require_once("edit_event.php");
+//require_once("add_new_event.php");
 
 function event_espresso_manage_events() {
 	global $wpdb, $org_options;
@@ -58,6 +58,7 @@ function event_espresso_manage_events() {
 			return;
 		}
 	}
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_list.php");
 	?>
 	<div id="event_reg_theme" class="wrap">
 		<div id="icon-options-event" class="icon32"></div>

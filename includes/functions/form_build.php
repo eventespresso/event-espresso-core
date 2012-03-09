@@ -45,7 +45,7 @@ if (!function_exists('event_form_build')) {
 
 		$label = '<label for="' . $field_name . '">' . $question->question . $required_label . '</label> ';
 		//If the members addon is installed, get the users information if available
-		if (get_option('events_members_active') == 'true') {
+		if( defined( 'EVENT_ESPRESSO_MEMBERS_DIR' )) {
 			global $current_user;
 			global $user_email;
 			require_once(EVENT_ESPRESSO_MEMBERS_DIR . "user_vars.php"); //Load Members functions

@@ -329,19 +329,21 @@ function tep_parse_input_field_data($data, $parse) {
 
 /* Turns an array into a select field */
 
-function select_input($name, $values, $default = '', $parameters = '', $class = '') {
+function select_input($name, $values, $default = '', $parameters = '', $class = '', $autosize = true) {
 	$field = '<select name="' . tep_output_string($name) . '"';
 	//Debug
 	//echo "<pre>".print_r($values,true)."</pre>";
 	if (tep_not_null($parameters))
 		$field .= ' ' . $parameters;
-	$size = 'med';
-	for ($ii = 0, $ni = sizeof($values); $ii < $ni; $ii++) {
-		if ($values[$ii]['text']) {
-			if (strlen($values[$ii]['text']) > 5)
-				$size = 'wide';
+	if ($autosize) {
+		$size = 'med';
+		for ($ii = 0, $ni = sizeof($values); $ii < $ni; $ii++) {
+			if ($values[$ii]['text']) {
+				if (strlen($values[$ii]['text']) > 5)
+					$size = 'wide';
+			}
 		}
-	}
+	} else $size = '';
 
 	$field .= ' class="chzn-select ' . $class . ' ' . $size . '">';
 
@@ -512,7 +514,6 @@ function espresso_news_dashboard_widgets() {
 }
 
 add_action('wp_dashboard_setup', 'espresso_news_dashboard_widgets');
-
 
 //Displays what email tags are available
 function event_espresso_custom_email_info() {
@@ -714,6 +715,7 @@ if (!function_exists('espresso_secondary_events_dd')) {
 	}
 
 }
+
 /**
  * Function espresso_db_dropdown creates a drop-down box
  * by dynamically querying ID-Name pair from a lookup table
@@ -729,7 +731,6 @@ if (!function_exists('espresso_secondary_events_dd')) {
  * Returns:
  * HTML Drop-Down Box Mark-up Code
  */
-
 function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrderField, $current_value, $strMethod = "desc", $strDDName = "") {
 	global $wpdb;
 
