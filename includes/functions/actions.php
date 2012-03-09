@@ -1,4 +1,5 @@
 <?php
+
 //Show pricing in a dropdown or text
 if (!function_exists('espresso_price_select_action')) {
 
@@ -115,13 +116,11 @@ add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_f
 function espresso_require_admin_files() {
 	// Available addons
 	//event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-
 	// Google Map Settings
 	//event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-
 	// Event styles & template layouts Subpage
-	//event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-
+	if ($_REQUEST['page'] == 'template_confg')
+		event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
 }
 
 add_action('action_hook_espresso_require_admin_files', 'espresso_require_admin_files');
@@ -178,7 +177,7 @@ function espresso_require_gateway_files() {
 
 function espresso_admin_page_footer() {
 	?>
-<script type="text/javascript" charset="utf-8">
+	<script type="text/javascript" charset="utf-8">
 		//<![CDATA[
 		jQuery(document).ready(function() {
 			postboxes.add_postbox_toggles("payment_gateways");
@@ -186,6 +185,7 @@ function espresso_admin_page_footer() {
 		//]]>
 	</script>
 	<?php
+
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
 	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
-	}
+}

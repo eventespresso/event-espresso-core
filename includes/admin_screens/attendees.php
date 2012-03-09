@@ -2,7 +2,7 @@
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 //Add/Delete/Edit Events
-require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'event-management/event_functions.php');
+require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'event_management/event_functions.php');
 require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
 
 function event_espresso_manage_attendees() {

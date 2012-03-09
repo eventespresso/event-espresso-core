@@ -1,6 +1,6 @@
 <?php
 
-function espresso_display_payment_gateways($payment_data) {
+function espresso_display_payment_gateways() {
 //Get the payment settings
 	global $active_gateways, $payment_settings, $espresso_wp_user;
 	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
@@ -14,17 +14,17 @@ function espresso_display_payment_gateways($payment_data) {
 	echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
 
 	do_action('action_hook_espresso_display_onsite_payment_header');
-	do_action('action_hook_espresso_display_onsite_payment_gateway', $payment_data);
+	do_action('action_hook_espresso_display_onsite_payment_gateway');
 	do_action('action_hook_espresso_display_onsite_payment_footer');
 
 	do_action('action_hook_espresso_display_offsite_payment_header');
-	do_action('action_hook_espresso_display_offsite_payment_gateway', $payment_data);
+	do_action('action_hook_espresso_display_offsite_payment_gateway');
 	do_action('action_hook_espresso_display_offsite_payment_footer');
 
 	do_action('action_hook_espresso_display_offline_payment_header');
-	do_action('action_hook_espresso_display_offline_payment_gateway', $payment_data);
-	do_action('action_hook_espresso_display_finalize_payment_header', $payment_data);
-	do_action('action_hook_espresso_display_offline_payment_gateway_2', $payment_data);
+	do_action('action_hook_espresso_display_offline_payment_gateway');
+	do_action('action_hook_espresso_display_finalize_payment_header');
+	do_action('action_hook_espresso_display_offline_payment_gateway_2');
 	do_action('action_hook_espresso_display_offline_payment_footer');
 
 

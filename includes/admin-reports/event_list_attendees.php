@@ -69,7 +69,7 @@ function event_list_attendees() {
 		}
 	}
 
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/event-management/queries.php');
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/event_management/queries.php');
 
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php')) {
 		$total_events = espresso_total_events();

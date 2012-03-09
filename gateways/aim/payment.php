@@ -1,6 +1,6 @@
 <?php
 
-function espresso_display_aim($payment_data) {
+function espresso_display_aim() {
 	global $org_options, $payment_settings;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	?>

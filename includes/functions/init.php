@@ -57,7 +57,8 @@ function espresso_admin_init() {
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_support.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/categories.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-reports/index.php');
+		if ($_REQUEST['page'] == 'attendees')
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/attendees.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/form_builder.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/question_groups.php');
 	}
