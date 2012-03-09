@@ -119,8 +119,10 @@ function espresso_require_admin_files() {
 	// Google Map Settings
 	//event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
 	// Event styles & template layouts Subpage
-	if ($_REQUEST['page'] == 'template_confg')
+	if ( isset( $_REQUEST['page'] ) &&  $_REQUEST['page'] == 'template_confg') {
 		event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
+	}
+		
 }
 
 add_action('action_hook_espresso_require_admin_files', 'espresso_require_admin_files');
