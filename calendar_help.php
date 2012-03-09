@@ -158,7 +158,7 @@
 				week: 'week',<br />
 				day:'day'</p>
 			<p>
-				<?php _e('More Ino:','event_espresso'); ?>
+				<?php _e('More Info:','event_espresso'); ?>
 				<br />
 				<a href="http://arshaw.com/fullcalendar/docs/text/buttonText/" target="_blank">http://arshaw.com/fullcalendar/docs/text/buttonText/</a></p>
 		</div>
