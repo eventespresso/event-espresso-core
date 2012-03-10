@@ -86,7 +86,7 @@ function event_espresso_manage_attendees() {
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-files/event_newsletter.php");
 							event_newsletter($_REQUEST['event_id']);
 						} else {
-							require_once("event_newsletter.php");
+							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_newsletter.php");
 						}
 
 						break;

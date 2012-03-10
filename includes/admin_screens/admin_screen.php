@@ -13,6 +13,14 @@ function espresso_add_meta_boxes() {
 
 	// adds side meta boxes
 	switch ($screen_id) {
+		case 'event-espresso_page_event_staff':
+		case 'event-espresso_page_event_venues':
+		case 'event-espresso_page_members':
+		case 'event-espresso_page_espresso_social':
+		case 'event-espresso_page_espresso_calendar':
+		case 'event-espresso_page_espresso_permissions':
+		case 'event-espresso_page_event_tickets':
+		case 'event-espresso_page_event_certificates':
 		case 'event-espresso_page_event_categories':
 		case 'event-espresso_page_form_groups':
 		case 'event-espresso_page_form_builder':

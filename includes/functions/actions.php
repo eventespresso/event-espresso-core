@@ -113,19 +113,6 @@ function espresso_load_reg_page_files() {
 
 add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_files');
 
-function espresso_require_admin_files() {
-	if (!empty($_REQUEST['page'])) {
-//event_espresso_require_file('admin_addons.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-// Google Map Settings
-//event_espresso_require_file('template_map_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-// Event styles & template layouts Subpage
-		if ($_REQUEST['page'] == 'template_confg')
-			event_espresso_require_file('template_confg.php', EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/', EVENT_ESPRESSO_PLUGINFULLPATH . '/includes/lite-files/', true, true);
-	}
-}
-
-add_action('action_hook_espresso_require_admin_files', 'espresso_require_admin_files');
-
 function espresso_site_license() {
 	global $org_options;
 // PUE Auto Upgrades stuff

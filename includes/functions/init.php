@@ -41,15 +41,91 @@ function espresso_admin_init() {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/categories.php');
 
 		if ($_REQUEST['page'] == 'form_groups')
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/question_groups.php');
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/question_groups.php');
 
 		if ($_REQUEST['page'] == 'form_builder')
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/questions.php');
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/questions.php');
+
+		if ($_REQUEST['page'] == 'discounts') {
+			if ($espresso_premium) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/coupon_management.php');
+			} else {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/coupon_management.php');
+			}
+		}
+
+		if ($_REQUEST['page'] == 'event_emails') {
+			if ($espresso_premium) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/email_manager.php');
+			} else {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/email-manager.php');
+			}
+		}
+
+		if ($_REQUEST['page'] == 'event_staff') {
+			if ($espresso_premium) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/staff-management/index.php');
+			} else {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/staff-management.php');
+			}
+		}
+
+		if ($_REQUEST['page'] == 'event_venues') {
+			if ($espresso_premium) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php');
+			} else {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/venue_management.php');
+			}
+		}
+
 
 		if ($_REQUEST['page'] == 'event_espresso') {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/organization_config.php');
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/organization_config.php');
 			if ($espresso_premium)
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/optional_event_settings.php');
+		}
+
+
+		if ($_REQUEST['page'] == 'payment_gateways') {
+			add_action('admin_init', 'espresso_require_gateway_files');
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
+			if ($espresso_premium) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');
+			}
+		}
+
+
+
+		if ($_REQUEST['page'] == 'template_confg') {
+			if ($espresso_premium) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/template_confg.php');
+			} else {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/template_confg.php');
+			}
+		}
+
+		if ($_REQUEST['page'] == 'template_map_confg') {
+			if ($espresso_premium) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/template_map_confg.php');
+			} else {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/template_map_confg.php');
+			}
+		}
+
+		if ($_REQUEST['page'] == 'admin_addons') {
+			if ($espresso_premium) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/admin_addons.php');
+			} else {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/admin_addons.php');
+			}
+		}
+
+		if ($_REQUEST['page'] == 'test_drive') {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/test_drive_pro.php');
+		}
+
+		if ($_REQUEST['page'] == 'support') {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_support.php');
 		}
 
 		$espresso_pages = array('event_espresso', 'discounts', 'groupons',
@@ -68,19 +144,8 @@ function espresso_admin_init() {
 			add_action('admin_print_styles', 'event_espresso_config_page_styles');
 			add_action('admin_head', 'espresso_add_meta_boxes');
 		}
-		if ($_REQUEST['page'] == 'payment_gateways') {
-			add_action('admin_init', 'espresso_require_gateway_files');
-		}
-
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_support.php');
-
-
-
-
 	}
 	if (!$espresso_premium) {
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/test_drive_pro.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/premium_upgrade.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/coupon_management.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/email-manager.php');
@@ -88,7 +153,6 @@ function espresso_admin_init() {
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/locale_management.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/staff-management.php');
 	} else {
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/coupon_management.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/use_coupon_code.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/email_manager.php');

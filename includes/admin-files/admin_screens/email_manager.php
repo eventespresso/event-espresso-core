@@ -100,7 +100,7 @@ function event_espresso_email_config_mnu() {
 								<?php
 								$sql = "SELECT * FROM " . EVENTS_EMAIL_TABLE . " e";
 
-								if (function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true) {
+								if (function_exists('espresso_manager_pro_version') && !empty($_SESSION['espresso_use_selected_manager'])) {
 									$sql .= " JOIN $wpdb->users u on u.ID = e.wp_user WHERE e.wp_user = " . $espresso_wp_user;
 								} elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 									$sql .= " JOIN $wpdb->users u on u.ID = e.wp_user WHERE e.wp_user = " . espresso_member_data('id');

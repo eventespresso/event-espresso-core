@@ -1,12 +1,171 @@
 <?php
-function espresso_load_menu_css () {
+
+function espresso_load_menu_css() {
 	wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
 }
-add_action( 'admin_init', 'espresso_load_menu_css' );
+
+add_action('admin_init', 'espresso_load_menu_css');
 
 //Build the admin menu
 if (!function_exists('add_event_espresso_menus')) {
 
+	/**
+	 * Event Espresso    ->event_espresso_manage_events
+	 * 	menu function is in file: includes/admin_screens/event_management.php
+	 *  add to menu function is in: this file
+	 *
+	 * Events            ->event_espresso_manage_events
+	 * 	menu function is in file: includes/admin_screens/event_management.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Registrations     ->event_espresso_manage_attendees
+	 * 	menu function is in file: includes/admin_screens/attendees.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Categories        ->event_espresso_categories_config_mnu
+	 *  menu function is in file: includes/admin_screens/categories.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Question Groups   ->event_espresso_question_groups_config_mnu
+	 *   menu function is in file: includes/admin_screens/question_groups.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Questions         ->event_espresso_questions_config_mnu
+	 *   menu function is in file: includes/admin_screens/questions.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Groupon Codes     ->event_espresso_groupon_config_mnu
+	 *   menu function is in file: plugins/espresso-groupon/groupons_admin_page.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Promotional Codes ->event_espresso_discount_config_mnu
+	 *   menu function is in file: includes/lite-files/coupon_management.php  OR
+	 *   menu function is in file: includes/admin-files/admin_screens/coupon_management.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Seating Chart     ->event_espresso_manage_seating_chart
+	 *   menu function is in file: plugins/espresso-seating/controller.php
+	 *  add to menu function is in file: plugins/espresso-seating/functions/admin.php
+	 *
+	 * Management        ->event_espresso_email_config_mnu
+	 *   menu function is in file: includes/lite-files/email-manager.php OR
+	 *   menu function is in file: includes/admin-files/admin_screens/email_manager.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Emails            ->event_espresso_email_config_mnu
+	 *   menu function is in file: includes/lite-files/email-manager.php OR
+	 *   menu function is in file: includes/admin-files/admin_screens/email_manager.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Staff             ->event_espresso_staff_config_mnu
+	 *   menu function is in file: includes/lite-files/staff-management.php OR
+	 *   menu function is in file: includes/admin-files/staff-management/index.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Venues            ->event_espresso_venue_config_mnu
+	 *   menu function is in file: includes/lite-files/venue-management.php OR
+	 *   menu function is in file: includes/admin-files/venue-management/index.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Settings          ->organization_config_mnu
+	 *   menu function is in file: includes/admin_screens/organization_config.php
+	 *  add to menu function is in file: this file
+	 *
+	 * General           ->organization_config_mnu
+	 *   menu function is in file: includes/admin_screens/organization_config.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Calendar          ->espresso_calendar_config_mnu
+	 *   menu function is in file: plugins/espresso-calendar/espresso-calendar.php
+	 *  add to menu function is in file: plugins/espresso-calendar/calendar_admin.php
+	 *
+	 * Facebook          ->espresso_fb_settings
+	 *   menu function is in file: plugins/espresso-facebook/espresso-fb.php
+	 *  add to menu function is in file: plugins/espresso-facebook/fb_admin.php
+	 *
+	 * MailChimp         ->event_espresso_mailchimp_settings
+	 *   menu function is in file: plugins/espresso-mailchimp/mailchimp.model.class.php
+	 *  add to menu function is in file: plugins/espresso-mailchimp/mailchimp_admin.php
+	 *
+	 * Members         ->event_espresso_member_config_mnu
+	 *   menu function is in file: plugins/espresso-members/user_settings_page.php
+	 *  add to menu function is in file: plugins/espresso-members/members_admin.php
+	 *
+	 * Payments         ->event_espresso_gateways_options
+	 *   menu function is in file: includes/admin_screens/payment_gateways.php
+	 *  add to menu function is in file: includes/admin_screens/payment_gateways.php
+	 *
+	 * Social Media         ->espresso_social_config_mnu
+	 *   menu function is in file: plugins/espresso-socialmedia/espresso-social.php
+	 *  add to menu function is in file: plugins/espresso-socialmedia/social_admin.php
+	 *
+	 * SSL/HTTPS         ->espresso_https_mnu
+	 *   menu function is in file: plugins/espresso-https/espresso-https.php
+	 *  add to menu function is in file: plugins/espresso-https/https_admin.php
+	 *
+	 * Permissions         ->espresso_permissions_config_mnu
+	 *   menu function is in file: plugins/espresso-permissions/espresso-permissions.php
+	 *  add to menu function is in file: plugins/espresso-permissions/espresso-permissions.php
+	 *
+	 * Settings         ->espresso_permissions_config_mnu
+	 *   menu function is in file: plugins/espresso-permissions/espresso-permissions.php
+	 *  add to menu function is in file: plugins/espresso-permissions/espresso-permissions.php
+	 *
+	 * User Roles         ->espresso_permissions_roles_mnu
+	 *   menu function is in file: plugins/espresso-permissions/espresso-permissions.php
+	 *  add to menu function is in file: plugins/espresso-permissions/espresso-permissions.php
+	 *
+	 * Locales/Regions         ->event_espresso_locale_config_mnu
+	 *   menu function is in file: includes/lite-files/locale_management.php OR
+	 *   menu function is in file: includes/admin-files/locale-management/index.php
+	 *  add to menu function is in file: plugins/espresso-permissions/espresso-permissions.php
+	 *
+	 * Regional Managers         ->espresso_permissions_user_groups
+	 *   menu function is in file: plugins/espresso-permissions-pro/espresso-permissions-pro.php
+	 *  add to menu function is in file: plugins/espresso-permissions/espresso-permissions.php
+	 *
+	 * Templates         ->event_espresso_manage_templates
+	 *   menu function is in file: includes/lite-files/template_confg.php OR
+	 *   menu function is in file: includes/admin-files/admin_screens/template_confg.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Settings         ->event_espresso_manage_templates
+	 *   menu function is in file: includes/lite-files/template_confg.php OR
+	 *   menu function is in file: includes/admin-files/admin_screens/template_confg.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Maps         ->event_espresso_manage_maps
+	 *   menu function is in file: includes/lite-files/template_map_confg.php OR
+	 *   menu function is in file: includes/admin-files/admin_screens/template_map_confg.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Tickets         ->espresso_ticket_config_mnu
+	 *   menu function is in file: plugins/espresso-ticketing/manager/index.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Certificates         ->espresso_certificate_config_mnu
+	 *   menu function is in file: plugins/espresso-certificates/manager/index.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Extras         ->event_espresso_addons_mnu
+	 *   menu function is in file: includes/lite-files/admin_addons.php OR
+	 *   menu function is in file: includes/admin-files/admin_screens/admin_addons.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Marketplace         ->event_espresso_addons_mnu
+	 *   menu function is in file: includes/lite-files/admin_addons.php OR
+	 *   menu function is in file: includes/admin-files/admin_screens/admin_addons.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Test Drive Pro         ->event_espresso_test_drive
+	 *   menu function is in file: includes/lite-files/test_drive_pro.php
+	 *  add to menu function is in file: this file
+	 *
+	 * Help/Support         ->event_espresso_support
+	 *   menu function is in file: includes/admin_screens/admin_support.php
+	 *  add to menu function is in file: this file
+	 *
+	 */
 	function add_event_espresso_menus() {
 		global $org_options, $espresso_premium;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -20,127 +179,67 @@ if (!function_exists('add_event_espresso_menus')) {
 		}
 
 // ---------------------------------------
-
-				//Main menu tab
-		add_menu_page(__('Event Espresso', 'event_espresso'), '<span style=" font-size:12px">' . __('Event Espresso', 'event_espresso') . '</span>', apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'events', 'event_espresso_manage_events', EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
+		//Main menu tab
+		add_menu_page(__('Event Espresso', 'event_espresso'), '<span style=" font-size:12px">' . __('Event Espresso', 'event_espresso') . '</span>', apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'events', 'event_espresso_manage_events', EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
 
 		//Event Setup
-		add_submenu_page('events', __('Event Espresso - Event Overview', 'event_espresso'), __('Events', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'events', 'event_espresso_manage_events');
+		add_submenu_page('events', __('Event Espresso - Event Overview', 'event_espresso'), __('Events', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'events', 'event_espresso_manage_events');
 
 		//Registration Overview
-		add_submenu_page('events', __('Event Espresso - Registration Overview', 'event_espresso'), __('Registrations', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'attendees', 'event_espresso_manage_attendees');
+		add_submenu_page('events', __('Event Espresso - Registration Overview', 'event_espresso'), __('Registrations', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), 'attendees', 'event_espresso_manage_attendees');
 
 		//Event Categories
-		add_submenu_page('events', __('Event Espresso - Manage Event Categories', 'event_espresso'), __('Categories', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_categories']), 'event_categories', 'event_espresso_categories_config_mnu');
+		add_submenu_page('events', __('Event Espresso - Manage Event Categories', 'event_espresso'), __('Categories', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_categories']), 'event_categories', 'event_espresso_categories_config_mnu');
 
 		//Questions Groups
-		add_submenu_page('events', __('Event Espresso - Question Groups', 'event_espresso'), __('Question Groups', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_form_groups']), 'form_groups', 'event_espresso_question_groups_config_mnu');
+		add_submenu_page('events', __('Event Espresso - Question Groups', 'event_espresso'), __('Question Groups', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_form_groups']), 'form_groups', 'event_espresso_question_groups_config_mnu');
 
 		//Form Questions
-		add_submenu_page('events', __('Event Espresso - Questions', 'event_espresso'), __('Questions', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_form_builder']), 'form_builder', 'event_espresso_questions_config_mnu');
+		add_submenu_page('events', __('Event Espresso - Questions', 'event_espresso'), __('Questions', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_form_builder']), 'form_builder', 'event_espresso_questions_config_mnu');
 
 		//Groupons
 		if (function_exists('event_espresso_groupon_config_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Groupons', 'event_espresso'), __('Groupon Codes', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_groupons']), 'groupons', 'event_espresso_groupon_config_mnu');
+			add_submenu_page('events', __('Groupons', 'event_espresso'), __('Groupon Codes', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_groupons']), 'groupons', 'event_espresso_groupon_config_mnu');
 		}
 
 		//Discounts
-		if (function_exists('event_espresso_discount_config_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Promotional Codes', 'event_espresso'), __('Promotional Codes', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_discounts']), 'discounts', 'event_espresso_discount_config_mnu');
-		}
+			add_submenu_page('events', __('Event Espresso - Promotional Codes', 'event_espresso'), __('Promotional Codes', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_discounts']), 'discounts', 'event_espresso_discount_config_mnu');
 
-		//Seating chart management
-		if (defined('ESPRESSO_SEATING_CHART')) {
-			add_submenu_page('events', __('Event Espresso - Seating Chart', 'event_espresso'), __('Seating Chart', 'event_espresso'), 'administrator', 'seating_chart', 'event_espresso_manage_seating_chart');
-		}
-
-		do_action( 'action_hook_espresso_add_new_submenu_to_group_main' );
+		do_action('action_hook_espresso_add_new_submenu_to_group_main', $espresso_manager);
 
 // ---------------------------------------
-
 		// Management GROUP
 		if ((function_exists('event_espresso_email_config_mnu') || $org_options['use_personnel_manager'] == 'Y' || $org_options['use_venue_manager'] == 'Y') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Management', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Management', 'event_espresso') . '</span>', apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']), 'event_emails', 'event_espresso_email_config_mnu');
+			add_submenu_page('events', __('Event Espresso - Management', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Management', 'event_espresso') . '</span>', apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']), 'event_emails', 'event_espresso_email_config_mnu');
 
 			//Email Manager
-			if (function_exists('event_espresso_email_config_mnu') && $espresso_premium == true) {
-				add_submenu_page('events', __('Event Espresso - Email Manager', 'event_espresso'), __('Emails', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']), 'event_emails', 'event_espresso_email_config_mnu');
-			}
+				add_submenu_page('events', __('Event Espresso - Email Manager', 'event_espresso'), __('Emails', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']), 'event_emails', 'event_espresso_email_config_mnu');
 
 			//Personnel
-			if (isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
-				add_submenu_page('events', __('Event Espresso - Staff Manager', 'event_espresso'), __('Staff', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_personnel_manager']), 'event_staff', 'event_espresso_staff_config_mnu');
+			if ($org_options['use_personnel_manager'] && $espresso_premium == true) {
+				add_submenu_page('events', __('Event Espresso - Staff Manager', 'event_espresso'), __('Staff', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_personnel_manager']), 'event_staff', 'event_espresso_staff_config_mnu');
 			}
 
 			//Venues
-			if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
-				add_submenu_page('events', __('Event Espresso - Venue Manager', 'event_espresso'), __('Venues', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_venue_manager']), 'event_venues', 'event_espresso_venue_config_mnu');
+			if ($org_options['use_venue_manager'] && $espresso_premium == true) {
+				add_submenu_page('events', __('Event Espresso - Venue Manager', 'event_espresso'), __('Venues', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_venue_manager']), 'event_venues', 'event_espresso_venue_config_mnu');
 			}
 		}
-		do_action( 'action_hook_espresso_add_new_submenu_to_group_management' );
+		do_action('action_hook_espresso_add_new_submenu_to_group_management', $espresso_manager);
 
 		// ---------------------------------------
-
 		//Settings GROUP
-		add_submenu_page('events', __('Event Espresso - Settings', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Settings', 'event_espresso') . '</span>', apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_general']), 'event_espresso', 'organization_config_mnu');
+		add_submenu_page('events', __('Event Espresso - Settings', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Settings', 'event_espresso') . '</span>', apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_general']), 'event_espresso', 'organization_config_mnu');
 
 		//General Settings
-		add_submenu_page('events', __('Event Espresso - General Settings', 'event_espresso'), __('General', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_general']), 'event_espresso', 'organization_config_mnu');
+		add_submenu_page('events', __('Event Espresso - General Settings', 'event_espresso'), __('General', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_general']), 'event_espresso', 'organization_config_mnu');
+
+		add_submenu_page('events', __('Event Espresso - Payment Settings', 'event_espresso'), __('Payments', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_payment_gateways']), 'payment_gateways', 'event_espresso_gateways_options');
 
 
-		//Calendar Settings
-		if (function_exists('espresso_calendar_config_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Calendar Settings', 'event_espresso'), __('Calendar', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_calendar']), 'espresso_calendar', 'espresso_calendar_config_mnu');
-		}
-
-		//Facebook Event Integration Settings
-		if (function_exists('espresso_fb_settings') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Facebook Settings', 'event_espresso'), __('Facebook', 'event_espresso'), 'administrator', 'espresso_facebook', 'espresso_fb_settings');
-		}
-
-		//MailChimp Integration Settings
-		if (function_exists('event_espresso_mailchimp_settings') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - MailChimp Integration', 'event_espresso'), __('MailChimp', 'event_espresso'), 'administrator', 'espresso-mailchimp', 'event_espresso_mailchimp_settings');
-		}
-
-		//Member Settings
-		if (function_exists('event_espresso_member_config_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Member Settings', 'event_espresso'), __('Members', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_members']), 'members', 'event_espresso_member_config_mnu');
-		}
-
-		//Payment Settings
-		if (function_exists('event_espresso_gateways_options')) {
-			add_submenu_page('events', __('Event Espresso - Payment Settings', 'event_espresso'), __('Payments', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_payment_gateways']), 'payment_gateways', 'event_espresso_gateways_options');
-		}
-
-		//Social Media Settings
-		if (function_exists('espresso_social_config_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Social Media Settings', 'event_espresso'), __('Social Media', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_social']), 'espresso_social', 'espresso_social_config_mnu');
-		}
-
-		//SSL/HTTPS Settings
-		if (function_exists('espresso_https_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - SSL/HTTPS Settings', 'event_espresso'), __('SSL/HTTPS', 'event_espresso'), 'administrator', 'espresso_https', 'espresso_https_mnu');
-		}
-
-		//Permissions
-		if (function_exists('espresso_permissions_config_mnu') && $espresso_premium == true) {
-			add_submenu_page('events', __('Event Espresso - Permissions Settings', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Permissions', 'event_espresso') . '</span>', 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
-
-			//Permissions settings
-			add_submenu_page('events', __('Event Espresso - Event Manager Permissions', 'event_espresso'), __('Settings', 'event_espresso'), 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
-			add_submenu_page('events', __('Event Espresso - Event Manager Roles', 'event_espresso'), __('User Roles', 'event_espresso'), 'administrator', 'roles', 'espresso_permissions_roles_mnu');
-			if ($org_options['use_venue_manager'] == 'Y' && function_exists('espresso_permissions_user_groups')) {
-				if (espresso_member_data('role') == "administrator") {
-					add_submenu_page('events', __('Event Espresso - Locales/Regions', 'event_espresso'), __('Locales/Regions', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_venue_manager']), 'event_locales', 'event_espresso_locale_config_mnu');
-				}
-				add_submenu_page('events', __('Event Espresso - Regional Managers', 'event_espresso'), __('Regional Managers', 'event_espresso'), 'administrator', 'event_groups', 'espresso_permissions_user_groups');
-			}
-		}
-		do_action( 'action_hook_espresso_add_new_submenu_to_group_settings' );
+		do_action('action_hook_espresso_add_new_submenu_to_group_settings', $espresso_manager);
 
 		// ---------------------------------------
-
 		//Templates GROUP
 		add_submenu_page('events', __('Event Espresso - Template Settings', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Templates', 'event_espresso') . '</span>', 'administrator', 'template_confg', 'event_espresso_manage_templates');
 
@@ -160,27 +259,23 @@ if (!function_exists('add_event_espresso_menus')) {
 		if (function_exists('espresso_certificate_config_mnu') && $espresso_premium == true) {
 			add_submenu_page('events', __('Event Espresso - Certificate Templates', 'event_espresso'), __('Certificates', 'event_espresso'), 'administrator', 'event_certificates', 'espresso_certificate_config_mnu');
 		}
-		do_action( 'action_hook_espresso_add_new_submenu_to_group_templates' );
+		do_action('action_hook_espresso_add_new_submenu_to_group_templates', $espresso_manager);
 
 		//Extras
 		add_submenu_page('events', __('Event Espresso - Marketplace', 'event_espresso'), '<span class="ee_menu_group  onclick="return false;"" onclick="return false;">' . __('Extras', 'event_espresso') . '</span>', 'administrator', 'admin_addons', 'event_espresso_addons_mnu');
 
 		//Adds any extra pages
-		do_action( 'action_hook_espresso_extra_pages');
+		do_action('action_hook_espresso_extra_pages', $espresso_manager);
 
 		//Marketplace
-		add_submenu_page('events', __('Event Espresso - Marketplace', 'event_espresso'), __('Marketplace', 'event_espresso'), apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_addons']), 'admin_addons', 'event_espresso_addons_mnu');
+		add_submenu_page('events', __('Event Espresso - Marketplace', 'event_espresso'), __('Marketplace', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_addons']), 'admin_addons', 'event_espresso_addons_mnu');
 
 		//Test Drive Pro
 		if ($espresso_premium != true)
 			add_submenu_page('events', __('Event Espresso - Test Drive Pro', 'event_espresso'), __('Test Drive Pro', 'event_espresso'), 'administrator', 'test_drive', 'event_espresso_test_drive');
 
 		//Help/Support
-		add_submenu_page('events', __('Event Espresso - Help/Support', 'event_espresso'), '<span style="color: red;">' . __('Help/Support', 'event_espresso') . '</span>', apply_filters( 'filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_support']), 'support', 'event_espresso_support');
-
-
-
-
+		add_submenu_page('events', __('Event Espresso - Help/Support', 'event_espresso'), '<span style="color: red;">' . __('Help/Support', 'event_espresso') . '</span>', apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_support']), 'support', 'event_espresso_support');
 	}
 
 //End function add_event_espresso_menus()

@@ -93,7 +93,7 @@ function event_espresso_discount_config_mnu() {
 									<?php
 									$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
 
-									if (function_exists('espresso_manager_pro_version') && $_SESSION['espresso_use_selected_manager'] == true) {
+									if (function_exists('espresso_manager_pro_version') && !empty($_SESSION['espresso_use_selected_manager'])) {
 										$sql .= " WHERE wp_user = '" . $espresso_wp_user . "' ";
 									} elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 										$sql .= " WHERE wp_user = '" . espresso_member_data('id') . "' ";

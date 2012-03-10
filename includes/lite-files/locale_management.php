@@ -1,7 +1,5 @@
-<?php 
+<?php
 //This is a premium feature, please upgrade
 function event_espresso_locale_config_mnu(){
-	echo espresso_premium_feature(); 
+	echo espresso_premium_feature('event_locales');
 }
-//The files for this feature are stored in the "includes/admin-files/email-manager" directory
-?>
