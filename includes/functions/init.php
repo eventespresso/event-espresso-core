@@ -72,7 +72,7 @@ function espresso_admin_init() {
 			add_action('admin_init', 'espresso_require_gateway_files');
 		}
 
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_support.php');
 
 
