@@ -136,7 +136,7 @@ function espresso_calendar_config_mnu() {
 		add_action('admin_notices', 'espresso_calendar_updated');
 		$notices['updates'][] = __('The calendar settings were saved ', 'event_espresso');
 	}
-	if ($_REQUEST['reset_calendar'] == 'true' && check_admin_referer('espresso_form_check', 'reset_calendar')) {
+	if (!empty($_REQUEST['reset_calendar']) && check_admin_referer('espresso_form_check', 'reset_calendar')) {
 		delete_option("espresso_calendar_settings");
 		espresso_calendar_install();
 		$notices['updates'][] = __('The calendar settings were reset ', 'event_espresso');
@@ -166,9 +166,10 @@ function espresso_calendar_config_mnu() {
 		<h2>
 			<?php _e('Event Espresso - Calendar Settings', 'event_espresso'); ?>
 		</h2>
-		<?php do_action('action_hook_espresso_admin_notices'); ?>
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<?php event_espresso_display_right_column(); ?>
+			<div id="side-info-column" class="inner-sidebar">
+				<?php do_meta_boxes('event-espresso_page_espresso_calendar', 'side', null); ?>
+			</div>
 			<div id="post-body">
 				<div id="post-body-content">
 
@@ -1285,18 +1286,6 @@ function espresso_load_calendar_help_thickbox() {
 
 //add_action('action_hook_espresso_require_admin_files', 'espresso_load_calendar_help_thickbox');
 
-function espresso_calendar_add_to_featured_image_meta_box($event_meta) {
-	$values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso')));
-	?>
-	<p>
-		<label>
-			<?php _e('Add image to event calendar', 'event_espresso'); ?>
-		</label>
-		<?php echo select_input('show_on_calendar', $values, isset($event_meta['display_thumb_in_calendar']) ? $event_meta['display_thumb_in_calendar'] : '', 'id="show_on_calendar"'); ?>
-	</p>
-	<?php
+if (is_admin()) {
+	require_once('calendar_admin.php');
 }
-
-add_action('action_hook_espresso_featured_image_add_to_meta_box', 'espresso_calendar_add_to_featured_image_meta_box');
