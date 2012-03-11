@@ -11,6 +11,25 @@ function espresso_load_jquery() {
 	}
 }
 
+function espresso_load_admin_ajax_callbacks() {
+	add_action('wp_ajax_event_list_save_state', 'event_list_save_state_callback');
+
+	function event_list_save_state_callback() {
+		check_ajax_referer('event_list_state', 'nonce');
+		update_user_meta($_POST['user'], 'event_list_state', $_POST['data']);
+		die(); // this is required to return a proper result
+	}
+
+	add_action('wp_ajax_event_list_load_state', 'event_list_load_state_callback');
+
+	function event_list_load_state_callback() {
+		check_ajax_referer('event_list_state', 'nonce');
+		echo json_encode(get_user_meta($_POST['user'], 'event_list_state', true));
+		die(); // this is required to return a proper result
+	}
+
+}
+
 function espresso_admin_init() {
 	global $org_options;
 	if (!is_user_logged_in())

@@ -619,22 +619,6 @@ function espresso_event_list_help_section() {
 	<?php
 }
 
-add_action('wp_ajax_event_list_save_state', 'event_list_save_state_callback');
-
-function event_list_save_state_callback() {
-	check_ajax_referer('event_list_state', $_POST['nonce']);
-	echo get_user_meta($_POST['user'], 'event_list_state', true);
-	die(); // this is required to return a proper result
-}
-
-add_action('wp_ajax_event_list_load_state', 'event_list_load_state_callback');
-
-function event_list_load_state_callback() {
-	check_ajax_referer('event_list_state', $_POST['nonce']);
-	update_user_meta($_POST['user'], 'event_list_state', $_POST['data']);
-	die(); // this is required to return a proper result
-}
-
 add_action('admin_head', 'event_list_state_javascript');
 
 function event_list_state_javascript() {
@@ -684,7 +668,7 @@ function event_list_state_javascript() {
 							nonce: '<?php echo $nonce; ?>'
 						},
 						"dataType": "json",
-						"method": "POST",
+						"type": "POST",
 						"success": function () {}
 					} );
 				},
@@ -702,7 +686,7 @@ function event_list_state_javascript() {
 							nonce: '<?php echo $nonce; ?>'
 						},
 						"dataType": "json",
-						"method": "POST",
+						"type": "POST",
 						"success": function (json) {
 							o = json;
 						}

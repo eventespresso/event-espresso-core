@@ -77,6 +77,7 @@ if (is_admin()) {
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
 	add_action('init', 'espresso_admin_init', 25);
+	add_action('init', 'espresso_load_admin_ajax_callbacks', 25);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 } else {
 	add_action('plugins_loaded', 'espresso_init_session', 5);
