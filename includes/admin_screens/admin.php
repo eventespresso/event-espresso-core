@@ -40,7 +40,8 @@ function event_espresso_config_page_scripts() {
 	wp_enqueue_script('media-upload');
 	wp_enqueue_script('post');
 	wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
-	wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery')); //Events core table column hide/show script
+	wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery', 'dataTables')); //Events core table column hide/show script
+	//wp_enqueue_script('dataTablesColFilter', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.columnFilter.js', array('jquery', 'dataTables')); //Events core table column filtering
 
 	$load_jquery_ui = false;
 	$load_datepicker = false;
@@ -50,7 +51,7 @@ function event_espresso_config_page_scripts() {
 		$load_farbtastic = true;
 	}
 
-	if ($_REQUEST['page'] == 'events' && isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'add_new_event')) {
+	if ($_REQUEST['page'] == 'events') {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
 	}

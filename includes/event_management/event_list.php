@@ -67,20 +67,17 @@ function event_espresso_edit_list() {
 	}
 
 	if (espresso_total_events() > 0) {
-
-		if (isset($_REQUEST['month_range'])) {
-			$pieces = explode('-', $_REQUEST['month_range'], 3);
-			$year_r = !empty($pieces[0]) ? $pieces[0] : '';
-			$month_r = !empty($pieces[1]) ? $pieces[1] : '';
-		}
-
 		$sql = apply_filters('filter_hook_espresso_event_list_sql', '');
 //Debug
 //echo $sql;
 		?>
 		<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 			<table id="table" class="widefat event-list" width="100%">
-				<?php do_action('action_hook_espresso_event_list_header'); ?>
+				<thead>
+					<tr>
+						<?php do_action('action_hook_espresso_event_list_header'); ?>
+					</tr>
+				</thead>
 				<tbody>
 					<?php
 					$events = $wpdb->get_results($sql);
@@ -159,6 +156,11 @@ function espresso_event_list_sql_with_members($sql) {
 }
 
 function espresso_event_list_sql($sql) {
+	if (isset($_REQUEST['month_range'])) {
+		$pieces = explode('-', $_REQUEST['month_range'], 3);
+		$year_r = !empty($pieces[0]) ? $pieces[0] : '';
+		$month_r = !empty($pieces[1]) ? $pieces[1] : '';
+	}
 	if (espresso_total_events() > 500) {
 		$max_rows = $_POST['max_rows'] == "" ? 500 : $_POST['max_rows'];
 		$start_rec = $_POST['start_rec'] == "" ? 0 : $_POST['start_rec'];
@@ -230,73 +232,68 @@ function espresso_event_list_sql($sql) {
 function espresso_event_list_header() {
 	global $espresso_premium;
 	?>
-	<thead>
-		<tr>
-			<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:28px;"><input type="checkbox"></th>
+	<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:28px;"><input type="checkbox"></th>
 
-			<th class="manage-column column-comments num" id="id" style="padding-top:7px; width:3%;" scope="col" title="Click to Sort">
-				<span><?php _e('ID', 'event_espresso'); ?></span>
+	<th class="manage-column column-comments num" id="id" style="padding-top:7px; width:3%;" scope="col" title="Click to Sort">
+		<span><?php _e('ID', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+
+	<th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:16%;">
+		<span><?php _e('Name', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+
+	<th class="manage-column column-title" id="venue" scope="col" title="Click to Sort" style="width:12%;">
+		<span><?php _e('Venue', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+
+	<th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:12%;">
+		<span><?php _e('Start Date', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+
+	<th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:10%;">
+		<span><?php _e('Start Time', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+
+	<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;">
+		<span><?php _e('DoW', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+
+	<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:12%;">
+		<span><?php _e('Reg Begins', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+
+	<th class="manage-column column-date" id="status" scope="col" title="Click to Sort" style="width:10%;">
+		<span><?php _e('Status', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+	<?php
+	if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) {
+		if (function_exists('espresso_manager_pro_version')) {
+			?>
+			<th class="manage-column column-date" id="creator" scope="col" title="Click to Sort" style="width:10%;">
+				<span><?php _e('Creator', 'event_espresso'); ?></span>
 				<span class="sorting-indicator"></span>
 			</th>
-
-			<th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:16%;">
-				<span><?php _e('Name', 'event_espresso'); ?></span>
-				<span class="sorting-indicator"></span>
-			</th>
-
-			<th class="manage-column column-title" id="venue" scope="col" title="Click to Sort" style="width:12%;">
-				<span><?php _e('Venue', 'event_espresso'); ?></span>
-				<span class="sorting-indicator"></span>
-			</th>
-
-			<th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:12%;">
-				<span><?php _e('Start Date', 'event_espresso'); ?></span>
-				<span class="sorting-indicator"></span>
-			</th>
-
-			<th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:10%;">
-				<span><?php _e('Start Time', 'event_espresso'); ?></span>
-				<span class="sorting-indicator"></span>
-			</th>
-
-			<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;";>
-					<span><?php _e('DoW', 'event_espresso'); ?></span>
-				<span class="sorting-indicator"></span>
-			</th>
-
-			<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:12%;">
-				<span><?php _e('Reg Begins', 'event_espresso'); ?></span>
-				<span class="sorting-indicator"></span>
-			</th>
-
-			<th class="manage-column column-date" id="status" scope="col" title="Click to Sort" style="width:10%;">
-				<span><?php _e('Status', 'event_espresso'); ?></span>
-				<span class="sorting-indicator"></span>
-			</th>
-			<?php
-			if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) {
-				if (function_exists('espresso_manager_pro_version')) {
-					?>
-					<th class="manage-column column-date" id="creator" scope="col" title="Click to Sort" style="width:10%;">
-						<span><?php _e('Creator', 'event_espresso'); ?></span>
-						<span class="sorting-indicator"></span>
-					</th>
-				<?php } ?>
-				<th class="manage-column column-date" id="owner" scope="col" title="Click to Sort" style="width:10%;">
-					<span><?php _e('Owner', 'event_espresso'); ?></span>
-					<span class="sorting-indicator"></span>
-				</th>
-			<?php } ?>
-			<th class="manage-column column-date" id="attendees" scope="col" title="Click to Sort" style="width:9%;">
-				<span><?php _e('Attendees', 'event_espresso'); ?></span>
-				<span class="sorting-indicator"></span>
-			</th>
-			<th class="manage-column column-author" id="actions" scope="col" style="width:25%;">
-				<?php _e('Actions', 'event_espresso'); ?>
-			</th>
-
-		</tr>
-	</thead>
+		<?php } ?>
+		<th class="manage-column column-date" id="owner" scope="col" title="Click to Sort" style="width:10%;">
+			<span><?php _e('Owner', 'event_espresso'); ?></span>
+			<span class="sorting-indicator"></span>
+		</th>
+	<?php } ?>
+	<th class="manage-column column-date" id="attendees" scope="col" title="Click to Sort" style="width:9%;">
+		<span><?php _e('Attendees', 'event_espresso'); ?></span>
+		<span class="sorting-indicator"></span>
+	</th>
+	<th class="manage-column column-author" id="actions" scope="col" style="width:25%;">
+		<?php _e('Actions', 'event_espresso'); ?>
+	</th>
 	<?php
 }
 
@@ -530,83 +527,6 @@ function espresso_event_list_csv_importer_section() {
 	<?php
 }
 
-function espresso_event_list_scripts() {
-	global $org_options;
-	?>
-	<script> <?php if (false) { ?>
-			jQuery(document).ready(function($) {
-				/* show the table data */
-				var mytable = $('#table').dataTable( {
-					"sDom": 'Clfrtip',
-					"aoColumns": [
-						{ "bSortable": false },
-						null,
-						null,
-						null,
-						null,
-						null,
-						null,
-						null,
-						null,	<?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true && function_exists('espresso_manager_pro_version') ? 'null,' : ''; ?><?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true ? 'null,' : ''; ?>	null,
-						{ "bSortable": false }
-					],
-					"aoColumnDefs": [
-						{ "bVisible": false,
-							"aTargets": [ <?php echo $org_options['use_venue_manager'] ? '' : '3,' ?> 6, <?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true && function_exists('espresso_manager_pro_version') ? '9,' : ''; ?>]
-						}
-					],
-					"oColVis": {
-						"aiExclude": [ 0, 1, 2 ],
-						"buttonText": "Filter: Show / Hide Columns",
-						"bRestore": true
-					},
-					"bAutoWidth": false,
-					"bStateSave": true,
-					"sPaginationType": "full_numbers",
-					"oLanguage": {	"sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong>",
-						"sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" }
-
-				} );
-
-			} );
-	<?php } else { ?>
-			jQuery(document).ready(function($) {
-				/* show the table data */
-				var mytable = $('#table').dataTable({
-					"sDom": 'Clfrtip',
-					"aoColumns": [
-						{ "bSortable": false },
-						null,
-						null,
-						null,
-						null,
-						null,
-						null,
-						null,
-						null,	<?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true && function_exists('espresso_manager_pro_version') ? 'null,' : ''; ?><?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true ? 'null,' : ''; ?>	null,
-						{ "bSortable": false }
-					],
-					"aoColumnDefs": [
-						{ "bVisible": false,
-							"aTargets": [ <?php echo $org_options['use_venue_manager'] ? '' : '3,' ?> 6, <?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true && function_exists('espresso_manager_pro_version') ? '9,' : ''; ?>]
-						}
-					],
-					"oColVis": {
-						"aiExclude": [ 0, 1, 2 ],
-						"buttonText": "Filter: Show / Hide Columns",
-						"bRestore": true
-					},
-					"bAutoWidth": false,
-					"sPaginationType": "full_numbers",
-					"oLanguage": {	"sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong>",
-						"sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" }
-				});
-			});
-	<?php } ?>
-	</script>
-	<?php
-}
-
 function espresso_event_list_help_section() {
 	global $org_options;
 	?>
@@ -625,28 +545,32 @@ function event_list_state_javascript() {
 	global $espresso_wp_user, $org_options;
 	$nonce = wp_create_nonce('event_list_state');
 	?>
+	<style type="text/css">
+		.text_filter, .number_range_filter, .date_range_filter { width: 100%;}
+	</style>
 	<script type="text/javascript" >
 		jQuery(document).ready(function($) {
+			function convertStringToBool(obj) {
+				if (typeof obj == 'object') {
+					$.each(obj, function(i) {
+						if (typeof obj[i] === "string") {
+							if (obj[i] == "true") {
+								obj[i] = true;
+							}
+							else if (obj[i] === "false") {
+								obj[i] = false;
+							}
+						}else	if (typeof this == 'object') {
+							convertStringToBool(this);
+						}
+					});
+				}
+			}
+
+			//$('#table').dataTable().columnFilter();
 			/* show the table data */
 			var mytable = $('#table').dataTable({
-				"sDom": 'Clfrtip',
-				"aoColumns": [
-					{ "bSortable": false },
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,	<?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true && function_exists('espresso_manager_pro_version') ? 'null,' : ''; ?><?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true ? 'null,' : ''; ?>	null,
-					{ "bSortable": false }
-				],
-				"aoColumnDefs": [
-					{ "bVisible": false,
-						"aTargets": [ <?php echo $org_options['use_venue_manager'] ? '' : '3,' ?> 6, <?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true && function_exists('espresso_manager_pro_version') ? '9,' : ''; ?>]
-					}
-				],
+				"sDom": 'ClfrtFip',
 				"oColVis": {
 					"aiExclude": [ 0, 1, 2 ],
 					"buttonText": "Filter: Show / Hide Columns",
@@ -691,11 +615,38 @@ function event_list_state_javascript() {
 							o = json;
 						}
 					} );
-
+					if (typeof o == 'object') {
+						convertStringToBool(o);
+					} else o = null;
 					return o;
 				}
 			});
 		});
 	</script>
+	<?php
+}
+
+function espresso_columnFilter_script_cols() {
+	global $espresso_premium;
+	?>
+	null,
+	{type: "number-range" },
+	null,
+	{ type: "select" },
+	{ type: "date-range" },
+	{ type: "date-range" },
+	{ type: "select" },
+	{ type: "date-range" },
+	{ type: "select" },
+	<?php
+	if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) {
+		if (function_exists('espresso_manager_pro_version')) {
+			?>
+			{ type: "select" },
+		<?php } ?>
+		{ type: "select" },
+	<?php } ?>
+	null,
+	null
 	<?php
 }

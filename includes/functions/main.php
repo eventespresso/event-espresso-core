@@ -359,7 +359,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 		$registration_end_timestamp = strtotime($registration_end); //Creates a timestamp from the event registration start date
 
 		if ($is_active && $event_status == "O") {
-			$event_status = array('status' => 'ONGOING', 'display' => '<span style="color: #090; font-weight:bold;">' . __('ONGOING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_ongoing">' . __('Ongoing', 'event_espresso') . '</span>');
+			$event_status = array('status' => 'ONGOING', 'display' => "<span style='color: #090; font-weight:bold;'>" . __('ONGOING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_ongoing">' . __('Ongoing', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
@@ -410,7 +410,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 
 		//If the registration start date is less than the current date
 		elseif ($is_active && date($registration_start_timestamp) <= date(time()) && $event_status != "D") {
-			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => '<span style="color: #090; font-weight:bold;">' . __('OPEN', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
+			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => __('OPEN', 'event_espresso'), 'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
