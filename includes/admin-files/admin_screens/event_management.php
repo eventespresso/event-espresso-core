@@ -7,7 +7,10 @@ function espresso_register_premium_event_editor_meta_boxes() {
 	add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), 'espresso_event_editor_promotions_meta_box', 'toplevel_page_events', 'side', 'default');
 	add_meta_box('espresso_event_editor_featured_image_box', __('Featured Image', 'event_espresso'), 'espresso_featured_image_meta_box', 'toplevel_page_events', 'side', 'default');
 	if ($org_options['use_attendee_pre_approval']) {
-		add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), 'espresso_featured_image_meta_box', 'toplevel_page_events', 'side', 'default');
+		add_meta_box('espresso_event_editor_preapproval_box', __('Attendee Pre-Approval', 'event_espresso'), 'espresso_event_editor_preapproval_metabox', 'toplevel_page_events', 'side', 'default');
+	}
+	if ($org_options['use_personnel_manager']) {
+		add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), 'espresso_event_editor_personnel_metabox', 'toplevel_page_events', 'side', 'default');
 	}
 }
 
@@ -269,12 +272,23 @@ function espresso_event_editor_preapproval_metabox($event) {
 	<div class="inside">
 		<p class="pre-approve">
 			<label>
-				<?php _e('Enable image in registration', 'event_espresso'); ?>
+				<?php _e('Attendee pre-approval required?', 'event_espresso'); ?>
 			</label>
 			<?php
 			echo select_input("require_pre_approval", $pre_approval_values, $event->require_pre_approval);
 			?>
 		</p>
+	</div>
+	<?php
+}
+
+function espresso_event_editor_personnel_metabox($event) {
+	$event_id = !empty($event->id) ? $event->id : 0;
+	$originally_submitted_by = !empty($event->event_meta['originally_submitted_by']) ? $event->event_meta['originally_submitted_by'] : 0;
+	$orig_event_staff = !empty($event->event_meta['orig_event_staff']) ? $event->event_meta['orig_event_staff'] : 0;
+	?>
+	<div class="inside">
+		<?php echo espresso_personnel_cb($event_id, $originally_submitted_by, $orig_event_staff); ?>
 	</div>
 	<?php
 }

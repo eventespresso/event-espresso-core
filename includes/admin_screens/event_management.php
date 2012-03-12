@@ -2,10 +2,6 @@
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
-//Add/Delete/Edit Events
-//require_once('event_functions.php');
-//require_once("add_new_event.php");
-
 function event_espresso_manage_events() {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');

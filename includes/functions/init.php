@@ -48,8 +48,10 @@ function espresso_admin_init() {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/event_management.php');
 			}
 			if (isset($_REQUEST['action'])) {
-				if ($_REQUEST['action'] == 'edit')
+				if ($_REQUEST['action'] == 'edit') {
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
+				}
 			}
 		}
 
@@ -178,7 +180,6 @@ function espresso_admin_init() {
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/locale-management/index.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/staff-management/index.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/dashboard_widget.php');
 	}
 	do_action('action_hook_espresso_require_admin_files');

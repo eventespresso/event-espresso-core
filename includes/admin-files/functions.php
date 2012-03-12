@@ -109,10 +109,11 @@ function espresso_email_dd($type = 'all', $id = NULL) {
 	$num_rows = $wpdb->num_rows;
 	$field = '';
 	if ($num_rows > 0) {
-		if (empty($id)) $id = $emails[key($emails)]->id;
+		if (empty($id))
+			$id = $emails[key($emails)]->id;
 		$field = '<label>' . __('Select from Email Manager list', 'event_espresso') . '</label>';
 		$field .= '<select name="' . $type . '_email_id" id="email_id" class="chzn-select"  >\n';
-		foreach ($emails as $key=>$email) {
+		foreach ($emails as $key => $email) {
 			$selected = ($id == $email->id) ? 'selected="selected"' : '';
 			$field .= '<option rel="' . $key . '" ' . $selected . ' value="' . $email->id . '">' . stripslashes_deep($email->email_name) . ' </option>\n';
 		}
@@ -124,9 +125,6 @@ function espresso_email_dd($type = 'all', $id = NULL) {
 if (!function_exists('espresso_personnel_cb')) {
 
 	function espresso_personnel_cb($event_id = 0, $orig_user = 0, $orig_event_staff = 0) {
-		global $espresso_premium;
-		if ($espresso_premium != true)
-			return;
 		global $wpdb;
 		if ($orig_event_staff != 0) {
 			//print_r( $orig_event_staff );
@@ -134,8 +132,8 @@ if (!function_exists('espresso_personnel_cb')) {
 			foreach ($orig_event_staff as $k => $v) {
 				$p_id .= "'" . $v . "',";
 			}
+			$p_id = rtrim($p_id, ",");
 		}
-		$p_id = rtrim($p_id, ",");
 		$sql = "SELECT id, name, role, meta FROM " . EVENTS_PERSONNEL_TABLE;
 		if (function_exists('espresso_member_data')) {
 			$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
@@ -373,15 +371,15 @@ if (!function_exists('event_espresso_meta_edit')) {
 						?>
 						<li>
 							<label>
-								<?php _e('Key', 'event_espresso'); ?>
+					<?php _e('Key', 'event_espresso'); ?>
 							</label>
 							<select id="emeta[]" name="emeta[]">
 								<?php foreach ($good_meta as $k2 => $v2) { ?>
 									<option value="<?php echo $k2; ?>" <?php echo ($k2 == $k ? "SELECTED" : null); ?>><?php echo $k2; ?></option>
-								<?php } ?>
+					<?php } ?>
 							</select>
 							<label for="meta-value">
-								<?php _e('Value', 'event_espresso'); ?>
+					<?php _e('Value', 'event_espresso'); ?>
 							</label>
 							<input  size="20" type="text" value="<?php echo $v; ?>" name="emetad[]" id="emetad[]" />
 							<?php
@@ -399,7 +397,7 @@ if (!function_exists('event_espresso_meta_edit')) {
 			</label>
 			<input id="emeta-box" size="20" type="text" value="" name="emeta[]" >
 			<label for="emetaad[]">
-				<?php _e('Value', 'event_espresso'); ?>
+			<?php _e('Value', 'event_espresso'); ?>
 			</label>
 			<input size="20" type="text" value="" name="emetad[]" id="emetad[]">
 			<?php
@@ -512,7 +510,6 @@ if (!function_exists('espresso_featured_image_event_admin')) {
 
 	function espresso_featured_image_event_admin($event_meta = '') {
 		global $espresso_premium;
-
 		?>
 		<!-- Add thumbnail image -->
 		<div id="set-featured-image" class="postbox closed">

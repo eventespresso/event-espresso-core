@@ -268,17 +268,17 @@ function espresso_event_editor_categories_meta_box($event) {
 	<?php
 }
 
-function espresso_event_editor_featured_image_meta_box() {
-	?>
 
-	<?php
-}
 
 function espresso_register_event_editor_meta_boxes() {
 	global $espresso_premium;
+
 	add_meta_box('espresso_event_editor_quick_overview', __('Quick Overview', 'event_espresso'), 'espresso_event_editor_quick_overview_meta_box', 'toplevel_page_events', 'side', 'high');
+
 	add_meta_box('espresso_event_editor_primary_questions', __('Questions for Primary Attendee', 'event_espresso'), 'espresso_event_editor_primary_questions_group_meta_box', 'toplevel_page_events', 'side', 'core');
+
 	add_meta_box('espresso_event_editor_categories', __('Event Category', 'event_espresso'), 'espresso_event_editor_categories_meta_box', 'toplevel_page_events', 'side', 'default');
+
 	add_action('admin_footer', 'espresso_admin_page_footer');
 }
 

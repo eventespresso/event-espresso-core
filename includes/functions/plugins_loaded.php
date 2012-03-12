@@ -72,37 +72,13 @@ function espresso_define_tables_and_paths() {
 }
 
 function espresso_get_user_id() {
-	global $current_user;
+	global $current_user, $espresso_wp_user;
 
-	$wp_user_id = 0;
+	$espresso_wp_user = 1;
 
-	if (function_exists('espresso_manager_pro_version') && !empty($_SESSION['espresso_use_selected_manager'])) {
-		$wp_user_id = $current_user->ID;
+	$espresso_wp_user = apply_filters('filter_hook_espresso_get_user_id', $espresso_wp_user);
 
-		//If an event manager is selected, then we need to load that persons id
-		$selected_user = espresso_get_selected_manager();
-		if (!empty($selected_user)) {
-			$wp_user_id = $selected_user;
-		}
-	} elseif (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-		$wp_user_id = espresso_member_data('id');
-	} else {
-		$wp_user_id = 1;
-	}
-
-	//Make sure the final user id is not 0
-	if ($wp_user_id == 0) {
-		$wp_user_id = 1;
-	}
-
-	//define it as a global
-	global $espresso_wp_user;
-	$espresso_wp_user = $wp_user_id;
-
-	//Debug
-	//echo '<p>$espresso_wp_user = '.$espresso_wp_user.'</p>';
-
-	return $wp_user_id;
+	return $espresso_wp_user;
 }
 
 function espresso_load_org_options() {
