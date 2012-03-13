@@ -51,6 +51,7 @@ function espresso_admin_init() {
 				if ($_REQUEST['action'] == 'edit') {
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_functions.php");
 				}
 			}
 		}
