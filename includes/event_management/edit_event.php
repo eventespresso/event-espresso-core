@@ -69,7 +69,8 @@ function espresso_display_edit_event($event) {
 				</div>
 				<div id="post-body">
 					<div id="post-body-content">
-						<?php do_meta_boxes('toplevel_page_events', 'advanced', null); ?>
+						<?php do_meta_boxes('toplevel_page_events', 'normal', $event); ?>
+						<?php do_meta_boxes('toplevel_page_events', 'advanced', $event); ?>
 						<input type="hidden" name="edit_action" value="update">
 						<input type="hidden" name="date_submitted" value="<?php echo $event->submitted; ?>">
 						<input type="hidden" name="recurrence_id" value="<?php echo $event->recurrence_id; ?>">
@@ -268,10 +269,32 @@ function espresso_event_editor_categories_meta_box($event) {
 	<?php
 }
 
-
+function espresso_event_editor_title_metabox($event) {
+	global $org_options;
+	?>
+	<div id="titlewrap">
+					<label class="screen-reader-text" for="title">
+						<?php _e('Event Title', 'event_espresso'); ?>
+					</label>
+					<input type="text" name="event" size="30" tabindex="1" value="<?php echo $event->event_name; ?>" id="title" autocomplete="off" />
+				</div>
+				<!-- /titlewrap -->
+				<div class="inside">
+					<div id="edit-slug">
+						<p>
+							<strong> <?php _e('Permalink:', 'event_espresso'); ?> </strong> <?php echo get_permalink($org_options['event_page_id']) ?><input size="30" type="text" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" /><br />
+							<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;' . $event->event_identifier . '&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_short_reg_url($event->id) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . espresso_reg_url($event->id, $event->slug) . '\'); return false;">' . __('Full URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Unique Event Identifier:&#39;, \'' . $event->event_identifier . '\'); return false;">' . __('Identifier') . '</a>' ?>
+						</p>
+					</div>
+					<!-- /edit-slug-box -->
+				</div>
+				<?php
+}
 
 function espresso_register_event_editor_meta_boxes() {
 	global $espresso_premium;
+
+	add_meta_box('espresso_event_editor_title', __('Event Title', 'event_espresso'), 'espresso_event_editor_title_metabox', 'toplevel_page_events', 'normal', 'default');
 
 	add_meta_box('espresso_event_editor_quick_overview', __('Quick Overview', 'event_espresso'), 'espresso_event_editor_quick_overview_meta_box', 'toplevel_page_events', 'side', 'high');
 
