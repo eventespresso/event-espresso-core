@@ -1219,6 +1219,9 @@ class Espresso_Calendar_Widget extends WP_Widget {
 				echo 'Woah. I don\'t know what you did there, but I couldn\'t find espresso-calendar-widget.php.';
 			} else {
 				if (function_exists('espresso_calendar_do_stuff')) {
+					if ( isset($category_id) ) {
+						$event_category_id = $category_id;
+					}
 					do_action('action_hook_espresso_calendar_do_stuff');
 					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
 					//var_dump($events);
