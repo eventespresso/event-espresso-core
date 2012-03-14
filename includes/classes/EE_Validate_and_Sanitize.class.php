@@ -185,7 +185,13 @@
 								$input_data['value'] = intval ( $value );
 								break;										
 						case 'big int' :													
-								$input_data['value'] = trim(preg_replace('/^[0-9]+$/', '', $value));
+								$input_data['value'] = trim( preg_replace( '/^[0-9]+$/', '', $value ));
+								break;										
+						case 'ccard' :													
+								$input_data['value'] = trim( preg_match( '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/', $value ));
+								break;										
+						case 'ccv' :													
+								$input_data['value'] = trim( preg_match( '/^\d{4}$/', $value ));
 								break;										
 					}							
 				break;
@@ -217,8 +223,17 @@
 								$input_data['value'] = esc_url_raw( $value );
 								break;										
 						case 'email' :					
-									$input_data['value'] = sanitize_email( $value );
-								break;										
+								$input_data['value'] = sanitize_email( $value );
+								break;		
+						case 'mm-dd-yyyy' :
+								if ( preg_match( '@/([0-9]{2}-[0-9]{2}-[0-9]{4})/@', $value, $matches )) {
+									$input_data['value'] = $matches[1];
+								}
+						case 'yyyy-mm-dd' :
+								if ( preg_match( '@/([0-9]{4}-[0-9]{2}-[0-9]{2})/@', $value, $matches )) {
+									$input_data['value'] = $matches[1];
+								}
+								
 					}						
 				break;
 			
@@ -263,7 +278,7 @@
 					$required_fields_filled_in = FALSE;
 					// is this the first missing field ?
 					if ( $missing_fields == 0 ) {
-						$this->_notices['errors'][] = 'The following fields are required and need to be filled out in order to continue:';
+						$this->_notices['errors'][] = 'The following fields are either blank or contain invalid data:';
 					} 
 					$label = $post_input['label'] != FALSE ? $post_input['label'] : $input_name;
 					// now add the name of the missing fields
@@ -276,6 +291,7 @@
 		if ( $required_fields_filled_in ) {
 			return $post_inputs;
 		} else {
+			$this->_notices['errors'][] = 'Please answer them correctly in order to continue.';
 			return FALSE;
 		}
 	
