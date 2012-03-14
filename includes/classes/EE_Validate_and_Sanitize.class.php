@@ -284,7 +284,7 @@
 
 
 
-	function get_notices(){
+	function return_notices(){
 		return $this->_notices;
 	}
 

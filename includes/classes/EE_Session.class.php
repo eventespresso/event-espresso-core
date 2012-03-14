@@ -53,7 +53,7 @@
 	private $_ip_address = NULL;
 
 	// array for defining default session vars
-	private $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'last_page', 'billing_info' );
+	private $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'last_page' );
 
 	// global error notices
 	private $_notices;
@@ -205,7 +205,7 @@
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// nothing ??? go home!
-		if ( ! $data ) {
+		if ( empty( $data )) {
 			$this->_notices['errors'][] = 'An error occured. No session data was provided.';
 			return FALSE;
 		}
