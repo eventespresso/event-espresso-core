@@ -5,13 +5,18 @@ function espresso_display_payment_gateways() {
 	global $active_gateways, $payment_settings, $espresso_wp_user;
 	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
 	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
+		
+//	echo var_dump($espresso_wp_user);
+//	echo var_dump($active_gateways);
+//	echo var_dump($payment_settings);
+	
 	foreach ($active_gateways as $gateway => $path) {
-		require_once($path . "/init.php");
+		require_once($path . "/init.php");  
 	}
 
 	echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';
-	echo '<h2 class="section-heading ui-widget-header ui-corner-top">' . __('Please choose a payment option:', 'event_espresso') . '</h2>';
-	echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
+	echo '<h3 class="section-heading ui-widget-header ui-corner-top">' . __('Please select your method of payment:', 'event_espresso') . '</h3>';
+//	echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
 
 	do_action('action_hook_espresso_display_onsite_payment_header');
 	do_action('action_hook_espresso_display_onsite_payment_gateway');
@@ -28,7 +33,7 @@ function espresso_display_payment_gateways() {
 	do_action('action_hook_espresso_display_offline_payment_footer');
 
 
-	echo '</div><!-- / .event-data-display -->';
+//	echo '</div><!-- / .event-data-display -->';
 	echo '</div><!-- / .event-display-boxes payment opts -->';
 }
 
@@ -36,7 +41,7 @@ add_action('action_hook_espresso_display_payment_gateways', 'espresso_display_pa
 
 function espresso_display_onsite_payment_header() {
 	echo '<div id="on_site_payment_container" class="payment_container event-display-boxes">';
-	echo '<h3 id="on_site_payment" class="payment_option_title section-heading">' . __('On-site Payment Processing', 'event_espresso') . '</h3>';
+	echo '<h4 id="on_site_payment" class="payment_option_title section-heading">' . __('On-site Payment Processing', 'event_espresso') . '</h4>';
 }
 
 function espresso_display_onsite_payment_footer() {
@@ -45,7 +50,7 @@ function espresso_display_onsite_payment_footer() {
 
 function espresso_display_offsite_payment_header() {
 	echo '<div id="off_site_payment_container" class="payment_container event-display-boxes">';
-	echo '<h3 id="off_site_payment" class="payment_option_title section-heading">' . __('Off-site Payments', 'event_espresso') . '</h3>';
+	echo '<h4 id="off_site_payment" class="payment_option_title section-heading">' . __('Off-site Payments', 'event_espresso') . '</h4>';
 	echo '<ul id="espresso_payment_buttons">';
 }
 
@@ -56,7 +61,7 @@ function espresso_display_offsite_payment_footer() {
 
 function espresso_display_offline_payment_header() {
 	echo '<div id="off_line_payment_container" class="payment_container event-display-boxes">';
-	echo '<h3 id="off_line_payment" class="payment_option_title section-heading">' . __('Off-line Payments', 'event_espresso') . '</h3>';
+	echo '<h4 id="off_line_payment" class="payment_option_title section-heading">' . __('Off-line Payments', 'event_espresso') . '</h4>';
 }
 
 function espresso_display_offline_payment_footer() {
