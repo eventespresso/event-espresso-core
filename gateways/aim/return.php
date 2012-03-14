@@ -25,9 +25,11 @@ function espresso_process_aim( $EE_Session ) {
 		define("AUTHORIZENET_SANDBOX", false);
 	}
 
-	$billing_info = $EE_Session->get_session_data( FALSE, 'billing_info' );
-	$reg_info = $EE_Session->get_session_data( 'REG', 'cart' );
-	$primary_attendee = $EE_Session->get_session_data( FALSE, 'primary_attendee' );
+
+	$session_data = $EE_Session->get_session_data();
+	$billing_info = $session_data['billing_info'];
+	$reg_info = $session_data['cart']['REG'];
+	$primary_attendee = $session_data['primary_attendee'];
 	
 //start transaction
 	$transaction = new AuthorizeNetAIM($authnet_aim_login_id, $authnet_aim_transaction_key);
