@@ -1,90 +1,202 @@
 <?php
-
 function espresso_display_aim() {
-	global $org_options, $payment_settings;
+
+	global $org_options, $payment_settings, $css_class;
+	
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	?>
-	<div class="event-display-boxes">
-		<?php
-		$authnet_aim_settings = $payment_settings['aim'];
-		$use_sandbox = $authnet_aim_settings['use_sandbox'] || $authnet_aim_settings['test_transactions'];
-		if ($use_sandbox) {
-			echo '<p>Test credit card # 4007000000027</p>';
-			echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
-		}
-		?>
+	
+	// this filter allows whatever function is processing the registration page to know what inputs to expect
+	add_filter( 'filter_hook_espresso_reg_page_billing_inputs', 'espresso_reg_page_billing_inputs_aim' );
 
-		<p class="section-title"><?php _e('Billing Information', 'event_espresso') ?></p>
-		<form id="aim_payment_form" name="aim_payment_form" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['return_url'] . '&registration_id=' . $payment_data->attendees[0]->registration_id; ?>">
-			<div class = "event_espresso_form_wrapper">
-				<p>
-	        <label for="first_name"><?php _e('First Name', 'event_espresso'); ?></label>
-	        <input name="first_name" type="text" id="first_name" value="<?php echo $payment_data->attendees[0]->fname ?>" />
-				</p>
-				<p>
-	        <label for="last_name"><?php _e('Last Name', 'event_espresso'); ?></label>
-	        <input name="last_name" type="text" id="last_name" value="<?php echo $payment_data->attendees[0]->lname ?>" />
-				</p>
-				<p>
-	        <label for="email"><?php _e('Email Address', 'event_espresso'); ?></label>
-	        <input name="email" type="text" id="email" value="<?php echo $payment_data->attendees[0]->email ?>" />
-				</p>
-				<p>
-	        <label for="address"><?php _e('Address', 'event_espresso'); ?></label>
-	        <input name="address" type="text" id="address" value="<?php echo $payment_data->attendees[0]->address ?>" />
-				</p>
-				<p>
-	        <label for="city"><?php _e('City', 'event_espresso'); ?></label>
-	        <input name="city" type="text" id="city" value="<?php echo $payment_data->attendees[0]->city ?>" />
-				</p>
-				<p>
-	        <label for="state"><?php _e('State', 'event_espresso'); ?></label>
-	        <input name="state" type="text" id="state" value="<?php echo $payment_data->attendees[0]->state ?>" />
-				</p>
-				<p>
-	        <label for="zip"><?php _e('Zip', 'event_espresso'); ?></label>
-	        <input name="zip" type="text" id="zip" value="<?php echo $payment_data->attendees[0]->zip ?>" />
-				</p>
-				<p><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></p>
-				<p>
-	        <label for="card_num"><?php _e('Card Number', 'event_espresso'); ?></label>
-	        <input type="text" name="card_num" id="card_num" />
-				</p>
-				<p>
-	        <label for="exp_date"><?php _e('Exp. Date', 'event_espresso'); ?></label>
-	        <input type="text" name="exp_date" id="exp_date" />
-				</p>
-				<p>
-	        <label for="ccv_code"><?php _e('CCV Code', 'event_espresso'); ?></label>
-	        <input type="text" name="ccv_code" id="ccv_code" />
-				</p>
-				<input name="amount" type="hidden" value="<?php echo number_format($payment_data->total_cost, 2) ?>" />
-				<input name="invoice_num" type="hidden" value="<?php echo 'au-' . event_espresso_session_id() ?>" />
-				<input name="authnet_aim" type="hidden" value="true" />
-				<input name="x_cust_id" type="hidden" value="<?php echo $payment_data->attendee_id ?>" />
+	$authnet_aim_settings = $payment_settings['aim'];
+	$use_sandbox = $authnet_aim_settings['use_sandbox'] || $authnet_aim_settings['test_transactions'];
+	if ($use_sandbox) {
+		echo '<p>Test credit card # 4007000000027</p>';
+		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+	}
+?>
+			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
+			
+			<p class="event_form_field">
+				<label for="reg-page-billing-fname"><?php _e('First Name', 'espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-fname" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-fname" title="">
+			</p>
 
-				<input name="aim_submit" type="submit" value="<?php _e('Complete Purchase', 'event_espresso'); ?>" />
-			</div>
-		</form>
+			<p class="event_form_field">
+				<label for="reg-page-billing-lname"><?php _e('Last Name', 'espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-lname" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-lname" title="">
+			</p>
+			
+			<p class="event_form_field">
+				<label for="reg-page-billing-email"><?php _e('Email', 'espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-email" class="required email <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-email" title="">
+			</p>
 
-	</div>
-	<!-- / .event_espresso_form_wrapper -->
-	<script type="text/javascript">
+			<p class="event_form_field">
+				<label for="reg-page-billing-address"><?php _e('Address', 'espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-address" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-address">
+			</p>
 
-		jQuery(function(){
+			<p class="event_form_field">
+				<label for="reg-page-billing-city"><?php _e('City', 'espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-city" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-city">
+			</p>
 
-			jQuery('#aim_payment_form').validate();
+			<p class="event_form_field">
+				<label for="reg-page-billing-state"><?php _e('State', 'espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-state" class="required medium-txt <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-state">
+			</p>
 
-			jQuery('#aim_payment_form').submit(function(){
+			<p class="event_form_field">
+				<label for="reg-page-billing-zip"><?php _e('Zip', 'espresso'); ?> <em>*</em></label>
+				<input id="reg-page-billing-zip" class="required small-txt <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-zip">
+			</p>
+			
+			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
+			
+			<p class="event_form_field">
+				<label for="reg-page-billing-card-nmbr"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
+	        	<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class;?>" type="text" name="reg-page-billing-card-nmbr"/>
+			</p>
+			<p class="event_form_field">
+				<label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
+	        	<input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
+			</p>
+			<p class="event_form_field">
+				<label for="reg-page-billing-card-ccv-code"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
+	        	<input id="reg-page-billing-card-ccv-code"  class="required small-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-ccv-code"/>
+			</p>
 
-				if (jQuery('#aim_payment_form').valid()){
-					jQuery('#processing').html('<img src="' + EEGlobals.plugin_url + 'images/ajax-loader.gif">');
-				}
-			})
-		});
-
-	</script>
-	<?php
+<?php
 }
-
 add_action('action_hook_espresso_display_onsite_payment_gateway', 'espresso_display_aim');
+
+
+function espresso_reg_page_billing_inputs_aim() {
+
+		$reg_page_billing_inputs = array (
+		
+						'reg-page-billing-fname' => array(
+								'db-col' =>'fname',
+								'label' => __( 'First Name', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'no_html',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-lname' => array(
+								'db-col' =>'lname',
+								'label' => __( 'Last Name', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'no_html',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-email' => array(
+								'db-col' =>'email',
+								'label' => __( 'Email Address', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'email',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-address' => array(
+								'db-col' =>'address',
+								'label' => __( 'Address', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'no_html',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-city' => array(
+								'db-col' =>'city',
+								'label' => __( 'City', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'no_html',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-state' => array(
+								'db-col' =>'state',
+								'label' => __( 'State', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'no_html',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-zip' => array(
+								'db-col' =>'zip',
+								'label' => __( 'Zip Code', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'no_html',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-card-nmbr' => array(
+								'db-col' =>'card-nmbr',
+								'label' => __( 'Credit Card Number', 'espresso' ),
+								'input' =>'text',
+								'type' =>'int',
+								'sanitize' => 'absint',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%d' 
+						),
+						
+						'reg-page-billing-card-exp-date' => array(
+								'db-col' =>'exp-date',
+								'label' => __( 'Expiry Date', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'no_html',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-card-ccv-code' => array(
+								'db-col' =>'ccv-code',
+								'label' => __( 'CCV Code', 'espresso' ),
+								'input' =>'text',
+								'type' =>'string',
+								'sanitize' => 'no_html',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%d' 
+						),
+				
+				);
+					
+		return $reg_page_billing_inputs;
+}
