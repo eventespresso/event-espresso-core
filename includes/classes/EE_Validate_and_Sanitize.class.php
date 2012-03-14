@@ -255,7 +255,6 @@
 					
 		// cycle through post inputs						
 		foreach ( $post_inputs as $input_name => $post_input ) {
-			
 			// was a post input actually submitted ?
 			if ( empty( $post_input['value'] )) {
 				// check if this field was required
