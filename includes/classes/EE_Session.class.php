@@ -1,9 +1,23 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
+ *
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	3.2.P
+ *
+ * ------------------------------------------------------------------------
+ * 
  * EE_Session class
  *
  * @package				Event Espresso
- * @subpackage			includes/functions
+ * @subpackage			includes/classes
  * @author					Brent Christensen
  *
  * ------------------------------------------------------------------------
@@ -39,7 +53,7 @@
 	private $_ip_address = NULL;
 
 	// array for defining default session vars
-	private $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'last_page' );
+	private $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'last_page', 'billing_info' );
 
 	// global error notices
 	private $_notices;
@@ -53,7 +67,7 @@
 	 *		@access public
 	 *		@return class instance
 	 */
-	public  function &instance ( ) {
+	public static function instance ( ) {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
 			self::$_instance = new self();

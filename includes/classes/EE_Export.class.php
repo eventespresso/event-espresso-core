@@ -41,7 +41,7 @@
 	 *		@ access public
 	 *		@ return class instance
 	 */	
-	public  function &instance() {
+	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
 			self::$_instance = new self();
