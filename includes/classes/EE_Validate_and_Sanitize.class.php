@@ -191,7 +191,7 @@
 								$input_data['value'] = trim( preg_match( '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/', $value ));
 								break;										
 						case 'ccv' :													
-								$input_data['value'] = trim( preg_match( '/^\d{3,4}$/', $value ));
+								$input_data['value'] = trim( preg_match( '/^[0-9]{3,4}$/', $value ));
 								break;										
 					}							
 				break;
@@ -225,21 +225,33 @@
 						case 'email' :					
 								$input_data['value'] = sanitize_email( $value );
 								break;		
-						case 'mm-dd-yyyy' :
-								if ( preg_match( '@/([0-9]{2}-[0-9]{2}-[0-9]{4})/@', $value, $matches )) {
-									$input_data['value'] = $matches[1];
+						case 'mm-dd-yyyy' :						
+								if ( preg_match( '/([0-9]{2})[- \/.]([0-9]{2})[- \/.]([0-9]{4})/', $value, $matches )) {
+									if ( checkdate($matches[2], $matches[1], $matches[3])) {
+										$input_data['value'] = $matches[1].'-'.$matches[2].'-'.$matches[3];
+									}
+								}						
+								if ( preg_match( '(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)[0-9]{2}', $value, $matches )) {
+									if ( checkdate($matches[1])) {
+										$input_data['value'] = $matches[1];
+									}
 								}
+								break;
 						case 'mm/yy' :
-								if ( preg_match( '@/([0-9]{2}\/[0-9]{2})/@', $value, $matches )) {
-									$input_data['value'] = $matches[1];
+								if ( preg_match( '/([0-9]{2}[- \/.][0-9]{2})/', $value, $matches )) {
+								//if ( preg_match( '(0[1-9]|1[012])[- /.]([0-9]{2})', $value, $matches )) {
+										$input_data['value'] = $matches[1];
 								}
+								break;
 						case 'yyyy-mm-dd' :
-								if ( preg_match( '@/([0-9]{4}-[0-9]{2}-[0-9]{2})/@', $value, $matches )) {
-									$input_data['value'] = $matches[1];
+								if ( preg_match( '(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])', $value, $matches )) {
+									if ( checkdate($matches[3], $matches[2], $matches[1])) {
+										$input_data['value'] = $matches[1].'-'.$matches[2].'-'.$matches[3];
+									}
 								}
 								
 					}						
-				break;
+				break; 
 			
 		}
 		
