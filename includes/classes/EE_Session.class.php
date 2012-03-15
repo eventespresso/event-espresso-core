@@ -60,7 +60,7 @@
 																		'user_agent' => NULL,
 																		'init_access' => NULL,
 																		'last_access' => NULL,
-																		'pages_visited' => array()															
+																		'pages_visited' => array()
 																	);
 
 	// global error notices
