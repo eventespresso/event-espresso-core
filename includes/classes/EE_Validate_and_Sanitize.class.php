@@ -177,54 +177,73 @@
 			
 			case 'int' :
 			
-					switch ( $input_data['sanitize']  ) {					
+					switch ( $input_data['sanitize']  ) {	
+									
 						case 'absint' :					
 								$input_data['value'] = absint ( $value );
-								break;										
+								break;					
+													
 						case 'intval' :					
 								$input_data['value'] = intval ( $value );
-								break;										
+								break;			
+															
 						case 'big int' :													
 								$input_data['value'] = trim( preg_replace( '/^[0-9]+$/', '', $value ));
-								break;										
+								break;			
+															
 						case 'ccard' :													
-								$input_data['value'] = trim( preg_match( '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/', $value ));
-								break;										
+								if ( preg_match( '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/', $value )) {
+									$input_data['value'] = $value;
+								}
+								break;			
+															
 						case 'ccv' :													
-								$input_data['value'] = trim( preg_match( '/^[0-9]{3,4}$/', $value ));
+								if ( preg_match( '/^[0-9]{3,4}$/', $value )) {
+									$input_data['value'] = $value;
+								}
 								break;										
-					}							
-				break;
+					}						
+						
+					break;
 			
 			case 'float' :
 			
-					switch ( $input_data['sanitize']  ) {					
+					switch ( $input_data['sanitize']  ) {	
+									
 						case 'money' :	
 								// allow only numbers and decimals			
 								$valid_var = trim(preg_replace('/^[0-9]+$/', '', $value));
 								$input_data['value'] = number_format( (float) $valid_var, 2, '.', '' );
-								break;										
-					}							
-				break;
+								break;		
+																
+					}						
+						
+					break;
 			
 			case 'string' :
 			
-					switch ( $input_data['sanitize']  ) {					
+					switch ( $input_data['sanitize']  ) {	
+									
 						case 'no_html' :
 								$input_data['value'] = wp_strip_all_tags( $value, $no_html );
-								break;										
+								break;							
+											
 						case 'links_ok' :					
 								$input_data['value'] = wp_kses( $value, $links_ok );
-								break;										
+								break;						
+												
 						case 'some_html' :					
 								$input_data['value'] = wp_kses_data( $value );
-								break;										
+								break;					
+													
 						case 'url' :					
 								$input_data['value'] = esc_url_raw( $value );
-								break;										
+								break;					
+													
 						case 'email' :					
 								$input_data['value'] = sanitize_email( $value );
 								break;		
+								
 						case 'mm-dd-yyyy' :						
 //								if ( preg_match( '/([0-9]{2})[- \/.]([0-9]{2})[- \/.]([0-9]{4})/', $value, $matches )) {
 //									if ( checkdate($matches[2], $matches[1], $matches[3])) {
@@ -237,6 +256,7 @@
 									}
 								}
 								break;
+								
 						case 'mm/yy' :
 								if ( preg_match( '/([0-9]{2}[- \/.][0-9]{2})/', $value, $matches )) {
 								//if ( preg_match( '(0[1-9]|1[012])[- /.]([0-9]{2})', $value, $matches )) {
@@ -246,14 +266,17 @@
 									}
 								}
 								break;
+								
 						case 'yyyy-mm-dd' :
 								if ( preg_match( '(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])', $value, $matches )) {
 									if ( checkdate($matches[3], $matches[2], $matches[1])) {
 										$input_data['value'] = $matches[1].'-'.$matches[2].'-'.$matches[3];
 									}
 								}
+								break;
 								
 					}						
+					
 				break; 
 			
 		}
