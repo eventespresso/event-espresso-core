@@ -767,8 +767,8 @@ function espresso_staff_sc($atts) {
 	//echo $sql;
 	$event_personnel = $wpdb->get_results($sql);
 	$num_rows = $wpdb->num_rows;
+	$html = '';
 	if ($num_rows > 0) {
-		$html = '';
 		foreach ($event_personnel as $person) {
 			$person_id = $person->id;
 			$person_name = $person->name;
