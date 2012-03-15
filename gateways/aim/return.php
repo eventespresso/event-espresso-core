@@ -35,18 +35,18 @@ function espresso_process_aim( $EE_Session ) {
 	$transaction = new AuthorizeNetAIM($authnet_aim_login_id, $authnet_aim_transaction_key);
 	echo '<!--Event Espresso Authorize.net AIM Gateway Version ' . $transaction->gateway_version . '-->';
 	 
-	$transaction->amount = $reg_info['sub_total'];
-	$transaction->card_num = $billing_info['card_num'];
-	$transaction->exp_date = $billing_info['exp_date'];
-	$transaction->card_code = $billing_info['ccv_code'];
-	$transaction->first_name = $billing_info['first_name'];
-	$transaction->last_name = $billing_info['last_name'];
-	$transaction->email = $billing_info['email'];
-	$transaction->address = $billing_info['address'];
-	$transaction->city = $billing_info['city'];
-	$transaction->state = $billing_info['state'];
-	$transaction->zip = $billing_info['zip'];
-	$transaction->cust_id = $primary_attendee['registration_id'];
+	$transaction->amount = $session_data['_cart_grand_total_amount'];
+	$transaction->card_num = $billing_info['reg-page-billing-card-nmbr']['value'];
+	$transaction->exp_date = $billing_info['reg-page-billing-card-exp-date']['value'];
+	$transaction->card_code = $billing_info['reg-page-billing-card-ccv-code']['value'];
+	$transaction->first_name = $billing_info['reg-page-billing-fname']['value'];
+	$transaction->last_name = $billing_info['reg-page-billing-lname']['value'];
+	$transaction->email = $billing_info['reg-page-billing-email']['value'];
+	$transaction->address = $billing_info['reg-page-billing-address']['value'];
+	$transaction->city = $billing_info['reg-page-billing-city']['value'];
+	$transaction->state = $billing_info['reg-page-billing-state']['value'];
+	$transaction->zip = $billing_info['reg-page-billing-zip']['value'];
+	$transaction->cust_id = $primary_attendee['registration_id']['value'];
 	$transaction->invoice_num = $EE_Session->id(); // <<<<<<<<<<<<<<<<<<<<<<< This actually should NOT be generated YET !!! right?? or is it ? and if so from where ?
 	
 	if ($authnet_aim_settings['test_transactions']) {
