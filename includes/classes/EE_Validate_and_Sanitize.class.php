@@ -191,7 +191,7 @@
 								$input_data['value'] = trim( preg_match( '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/', $value ));
 								break;										
 						case 'ccv' :													
-								$input_data['value'] = trim( preg_match( '/^\d{4}$/', $value ));
+								$input_data['value'] = trim( preg_match( '/^\d{3,4}$/', $value ));
 								break;										
 					}							
 				break;
@@ -227,6 +227,10 @@
 								break;		
 						case 'mm-dd-yyyy' :
 								if ( preg_match( '@/([0-9]{2}-[0-9]{2}-[0-9]{4})/@', $value, $matches )) {
+									$input_data['value'] = $matches[1];
+								}
+						case 'mm/yy' :
+								if ( preg_match( '@/([0-9]{2}\/[0-9]{2})/@', $value, $matches )) {
 									$input_data['value'] = $matches[1];
 								}
 						case 'yyyy-mm-dd' :
