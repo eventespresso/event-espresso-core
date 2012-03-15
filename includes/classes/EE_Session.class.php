@@ -240,6 +240,7 @@
 		// starts a new session if one doesn't already exist, or reinitiates an existing one
 		if ( ! session_id() ) {
 			session_start();
+			$this->_session_data['init_access'] = $this->_time;
 		}
 		// grab the session ID
 		$this->_sid = session_id();
@@ -330,13 +331,7 @@
 				break;
 
 				case 'init_access' :
-						// are we creating a new session?
-						if ( $new_session ) {
-							// initial access times
-							$session_data['init_access'] = $this->_time;
-						} else {
 							$session_data['init_access'] = absint( $value );
-						}
 				break;
 
 				case 'last_access' :
@@ -416,7 +411,7 @@
 		$this->_set_last_page();
 
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-//		echo $this->pre_r( $this->_session_data );
+		echo printr( $this->_session_data, 'session_data' );
 
 		// are we are we using encryption?
 		if ( $this->_use_encryption ) {
