@@ -60,8 +60,7 @@
 																		'user_agent' => NULL,
 																		'init_access' => NULL,
 																		'last_access' => NULL,
-																		'pages_visited' => array(),
-																		'last_page' => NULL																		
+																		'pages_visited' => array()															
 																	);
 
 	// global error notices
@@ -105,8 +104,6 @@
 		global $EE_Session, $org_options, $notices;
 		$this->_notices = $notices;
 
-		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
-
 		// retreive session options from db
 		if ( $session_settings = get_option( 'espresso_session_settings' ) !== FALSE ) {
 			// cycle though existing session options
@@ -141,25 +138,22 @@
 			
 		}
 
-////		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';//		echo $this->pre_r($this->_session_data, TRUE);
-
 		// check for existing session and retreive it from db
 		if ( ! $this->_espresso_session() ) {
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
 
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-		if ( isset( $_REQUEST['page_id'] ) ) {
-			if (  $_REQUEST['page_id'] == $org_options['return_url'] or $_REQUEST['page_id'] == $org_options['notify_url'] ) {
-				$this->reset_data( array() );
-			}
-		}
+
+//		if ( isset( $_REQUEST['page_id'] ) ) {
+//			if (  $_REQUEST['page_id'] == $org_options['return_url'] or $_REQUEST['page_id'] == $org_options['notify_url'] ) {
+//				$this->reset_data( array() );
+//			}
+//		}
 
 		// once everything is all said and done,
 		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
 
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 	}
 
@@ -201,8 +195,6 @@
 			return $this->_session_data;
 		}
 
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
 	}
 
 
@@ -234,8 +226,6 @@
 			}
 		}
 
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
 		return TRUE;
 
 	}
@@ -265,9 +255,9 @@
 		}
 		// grab the session ID
 		$this->_sid = session_id();
-
-
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
+		// set the "user agent"
+		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
+		
 
 		// now let's retreive what's in the db
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
@@ -278,8 +268,6 @@
 
 			// unserialize
 			$this->_session_data = unserialize( $session_data );
-
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 			// just a check to make sure the sesion array is indeed an array
 			if ( ! is_array( $session_data ) ) {
@@ -313,8 +301,6 @@
 
 		// make event espresso session data available to plugin
 		$this->_session_data = $session_data;
-
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		return TRUE;
 
@@ -363,8 +349,9 @@
 
 				case 'pages_visited' :
 						// set pages visited where the first will be the http referrer
-						$this->_session_data[ 'pages_visited' ][ $session_data['last_access'] ] = $this->_get_page_visit();
-						$session_data[ 'pages_visited' ] = $this->_session_data[ 'pages_visited' ];
+						if ( $this->_session_data[ 'pages_visited' ][ $session_data['last_access'] ] = $this->_get_page_visit() ) {
+							$session_data[ 'pages_visited' ] = $this->_session_data[ 'pages_visited' ];
+						}						
 				break;
 
 				default :
@@ -554,33 +541,14 @@
 //			}
 
 		}
-
-		return $page_visit;
+		if ( $page_visit != site_url('/') . 'wp-admin/admin-ajax.php' ) {
+			return $page_visit;
+		} else {
+			return FALSE;
+		}
+		
 	}
 
-
-
-
-
-	/**
-	 *			@the last page the visitor accessed
-	 *		  	@access public
-	 *			@return void
-	 */
-/*	public function get_last_page() {
-
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';//		if ( isset( $this->_session_data[ 'last_page' ] )) {
-//			$last_page = $this->_session_data[ 'last_page' ];
-//		} else {
-//			if ( isset( $_SERVER['HTTP_REFERER'] )) {
-//				$last_page = esc_url( $_SERVER['HTTP_REFERER'] );
-//			}
-//		}
-		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_session_data['last_page'] . '</h1>';
-		//return $last_page;
-		return $this->_session_data[ 'last_page' ];
-
-	}*/
 
 
 
