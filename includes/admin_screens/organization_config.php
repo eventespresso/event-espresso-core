@@ -85,12 +85,8 @@ function organization_config_mnu() {
 		//echo getCountryFullData($org_options['organization_country']);
 		$country_data = getCountryFullData($org_options['organization_country']);
 		$org_options['currency_symbol'] = $country_data['currency_symbol'];
+		$org_options['espresso_url_rewrite_activated'] = isset($_POST['espresso_url_rewrite_activated']) ? $_POST['espresso_url_rewrite_activated'] : FALSE;
 
-		if (isset($_POST['espresso_url_rewrite_activated'])) {
-			$org_options['espresso_url_rewrite_activated'] = $_POST['espresso_url_rewrite_activated'];
-		} else {
-			$org_options['espresso_url_rewrite_activated'] = false;
-		}
 
 		if (update_user_meta($espresso_wp_user, 'events_organization_settings', $org_options)) {
 			$notices['updates'][] = __('Organization details saved', 'event_espresso');
