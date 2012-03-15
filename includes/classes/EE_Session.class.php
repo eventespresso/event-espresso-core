@@ -53,7 +53,16 @@
 	private $_ip_address = NULL;
 
 	// array for defining default session vars
-	private $_default_session_vars = array ( 'id', 'user_id', 'ip_address', 'user_agent', 'init_access', 'last_access', 'last_page' );
+	private $_default_session_vars = array ( 
+																		'id' => NULL,
+																		'user_id' => NULL,
+																		'ip_address' => NULL,
+																		'user_agent' => NULL,
+																		'init_access' => NULL,
+																		'last_access' => NULL,
+																		'pages_visited' => array(),
+																		'last_page' => NULL																		
+																	);
 
 	// global error notices
 	private $_notices;
@@ -123,8 +132,13 @@
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
 
 		// set some defaults
-		foreach ( $this->_default_session_vars as $default_var ) {
-			$this->_session_data[ $default_var ] = '';
+		foreach ( $this->_default_session_vars as $key => $default_var ) {
+			if ( is_array( $default_var )) {
+				$this->_session_data[ $key ] = array();
+			} else {
+				$this->_session_data[ $key ] = '';
+			}
+			
 		}
 
 ////		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';//		echo $this->pre_r($this->_session_data, TRUE);
@@ -240,10 +254,18 @@
 		// starts a new session if one doesn't already exist, or reinitiates an existing one
 		if ( ! session_id() ) {
 			session_start();
-			$this->_session_data['init_access'] = $this->_time;
+			// set initial site access time
+			$this->_session_data['init_access'] = $this->_time;		
+			// set referer	
+			if ( isset( $_SERVER['HTTP_REFERER'] )) {
+				$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = esc_attr( $_SERVER['HTTP_REFERER'] );
+			} else {
+				$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = '';
+			}
 		}
 		// grab the session ID
 		$this->_sid = session_id();
+
 
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
@@ -303,7 +325,7 @@
 
 
 	/**
-	 *		@save session data to the db
+	 *		@update session data  prior to saving to the db
 	 *		@access public
 	 *		@return TRUE on success, FALSE on fail
 	 */
@@ -339,9 +361,11 @@
 						$session_data['last_access'] = $this->_time;
 				break;
 
-//				case 'last_page' :
-//						$session_data['last_page'] = $value;
-//				break;
+				case 'pages_visited' :
+						// set pages visited where the first will be the http referrer
+						$this->_session_data[ 'pages_visited' ][ $session_data['last_access'] ] = $this->_get_page_visit();
+						$session_data[ 'pages_visited' ] = $this->_session_data[ 'pages_visited' ];
+				break;
 
 				default :
 						// carry any other data over
@@ -358,10 +382,7 @@
 			// current user if logged in
 			$session_data['user_id'] = $this->_wp_user_id();
 
-
 			$this->_session_data = $session_data;
-
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 			// ready? let's save
 			if ( $this->_save_session_to_db() ) {
@@ -408,10 +429,8 @@
 	 */
 	private function _save_session_to_db() {
 
-		$this->_set_last_page();
-
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-		echo printr( $this->_session_data, 'session_data' );
+//		echo printr( $this->_session_data, 'session_data' );
 
 		// are we are we using encryption?
 		if ( $this->_use_encryption ) {
@@ -440,9 +459,13 @@
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
-			$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
+			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['HTTP_CLIENT_IP'] )) {
+				$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
+			}
 		} elseif ( isset( $_SERVER['REMOTE_ADDR'] )) {
-			$visitor_ip = esc_attr( $_SERVER['REMOTE_ADDR'] );
+			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['REMOTE_ADDR'] )) {
+				$visitor_ip = esc_attr( $_SERVER['REMOTE_ADDR'] );
+			}			
 		}
 
 		// break it up!!!
@@ -478,15 +501,13 @@
 
 
 	/**
-	 *			@the last page the visitor accessed
+	 *			@get the full page request the visitor is accessing
 	 *		  	@access public
 	 *			@return void
 	 */
-	public function _set_last_page() {
+	public function _get_page_visit() {
 
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-		//$prev_page = $this->get_last_page();
-		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_session_data['last_page'] . '</h1>';
 
 		// check for request url
 		if ( isset( $_SERVER['REQUEST_URI'] )) {
@@ -523,19 +544,18 @@
 			//echo '<h1>$regevent_action   ' . $regevent_action . '</h1>';
 
 
-			$last_page = rtrim( $http_host . $request_uri . $page_id . $regevent_action, '?' );
-			//$last_page = $http_host . $request_uri;
-			//echo '<h1>$last_page   ' . $last_page . '</h1>';
+			$page_visit = rtrim( $http_host . $request_uri . $page_id . $regevent_action, '?' );
+			//echo '<h1>$last_page   ' . $page_visit . '</h1>';
+			
 			// if the page hasn't really changed (because of a refresh or something),
 			// then we will keep the last page that was different than the current page
 //			if ( $last_page != $prev_page ) {
-				$this->_session_data[ 'last_page' ] = $last_page;
+//				$this->_session_data[ 'last_page' ] = $last_page;
 //			}
 
 		}
 
-		//echo '<h1>'.__LINE__ . ' - '.__FUNCTION__ .' - ' . $this->_session_data['last_page'] . '</h1>';
-
+		return $page_visit;
 	}
 
 
@@ -547,7 +567,7 @@
 	 *		  	@access public
 	 *			@return void
 	 */
-	public function get_last_page() {
+/*	public function get_last_page() {
 
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';//		if ( isset( $this->_session_data[ 'last_page' ] )) {
 //			$last_page = $this->_session_data[ 'last_page' ];
@@ -560,7 +580,7 @@
 		//return $last_page;
 		return $this->_session_data[ 'last_page' ];
 
-	}
+	}*/
 
 
 
@@ -667,50 +687,6 @@
 		return $time;
 	}
 
-
-
-
-
-//	/**
-//	 *   remove the action that loads the default espresso session init
-//	 *   @access public
-//	 *   @return void
-//	 */
-//	public function remove_action_espresso_init_session() {
-//		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
-//	}
-
-
-
-
-
-	/**
-	 * print_r wrapper for html/cli output
-	 *
-	 * Wraps print_r() output in < pre > tags if the current sapi is not
-	 * 'cli'.  Returns the output string instead of displaying it if $return is
-	 * true.
-	 *
-	 * @param mixed $mixed variable or expression to display
-	 * @param bool $return
-	 *
-	 */
-	function pre_r($mixed, $return = false) {
-
-	  if ($return)
-		return '<pre style="height:auto;">' . print_r($mixed, true) . '</pre>';
-
-	  if ( php_sapi_name() !== 'cli')
-		echo ('<pre style="height:auto;">');
-	  print_r($mixed);
-
-	  if ( php_sapi_name() !== 'cli')
-		echo('</pre>');
-	  else
-		echo ('\n');
-	  flush();
-
-	}
 
 
 
