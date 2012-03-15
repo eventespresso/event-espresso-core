@@ -188,7 +188,7 @@ function espresso_reg_page_billing_inputs_aim() {
 								'db-col' =>'ccv-code',
 								'label' => __( 'CCV Code', 'espresso' ),
 								'input' =>'text',
-								'type' =>'string',
+								'type' =>'int',
 								'sanitize' => 'ccv',
 								'required' => TRUE,
 								'validation' => TRUE,
