@@ -177,7 +177,7 @@ function espresso_reg_page_billing_inputs_aim() {
 								'label' => __( 'Expiry Date', 'espresso' ),
 								'input' =>'text',
 								'type' =>'string',
-								'sanitize' => 'yyyy-mm-dd',
+								'sanitize' => 'mm/yy',
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
