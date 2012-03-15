@@ -226,13 +226,13 @@
 								$input_data['value'] = sanitize_email( $value );
 								break;		
 						case 'mm-dd-yyyy' :						
-								if ( preg_match( '/([0-9]{2})[- \/.]([0-9]{2})[- \/.]([0-9]{4})/', $value, $matches )) {
-									if ( checkdate($matches[2], $matches[1], $matches[3])) {
-										$input_data['value'] = $matches[1].'-'.$matches[2].'-'.$matches[3];
-									}
-								}						
+//								if ( preg_match( '/([0-9]{2})[- \/.]([0-9]{2})[- \/.]([0-9]{4})/', $value, $matches )) {
+//									if ( checkdate($matches[2], $matches[1], $matches[3])) {
+//										$input_data['value'] = $matches[1].'-'.$matches[2].'-'.$matches[3];
+//									}
+//								}						
 								if ( preg_match( '(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)[0-9]{2}', $value, $matches )) {
-									if ( checkdate($matches[1])) {
+									if ( checkdate($matches[2], $matches[1], $matches[3])) {
 										$input_data['value'] = $matches[1];
 									}
 								}
@@ -240,7 +240,10 @@
 						case 'mm/yy' :
 								if ( preg_match( '/([0-9]{2}[- \/.][0-9]{2})/', $value, $matches )) {
 								//if ( preg_match( '(0[1-9]|1[012])[- /.]([0-9]{2})', $value, $matches )) {
+									$mmyy = explode( '/', $matches[1] );
+									if ( checkdate( $mmyy[0], 1, $mmyy[1] )) {										
 										$input_data['value'] = $matches[1];
+									}
 								}
 								break;
 						case 'yyyy-mm-dd' :
