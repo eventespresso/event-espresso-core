@@ -70,8 +70,8 @@ if (!function_exists('register_attendees')) {
 		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
 
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
-		$sql.= " WHERE e.is_active='Y' ";
+		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+		$sql.= " WHERE e.is_active=1 ";
 		$sql.= " AND e.event_status != 'D' ";
 
 		if ($single_event_id != NULL) {
@@ -95,7 +95,6 @@ if (!function_exists('register_attendees')) {
 			$sql .= " WHERE post_id = '" . $_REQUEST['post_event_id'] . "' ";
 			$sql .= " LIMIT 0,1";
 		}
-
 
 
 
@@ -153,7 +152,7 @@ if (!function_exists('register_attendees')) {
 			$event_meta = unserialize($data->event->event_meta);
 
 			//Venue information
-			if ($org_options['use_venue_manager'] == 'Y') {
+			if ($org_options['use_venue_manager']) {
 				$event_address = $data->event->venue_address;
 				$event_address2 = $data->event->venue_address2;
 				$event_city = $data->event->venue_city;
@@ -293,7 +292,7 @@ if (!function_exists('register_attendees')) {
 
 			//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
 
-			if ($org_options['use_captcha'] == 'Y'
+			if ($org_options['use_captcha']
 							&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
 							&& !is_user_logged_in()) {
 				?>
@@ -318,7 +317,7 @@ if (!function_exists('register_attendees')) {
 					</div>
 				<?php
 				$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
-				if (($num_attendees >= $reg_limit) && ($allow_overflow == 'Y' && $overflow_event_id != 0)) {
+				if (($num_attendees >= $reg_limit) && ($allow_overflow && $overflow_event_id != 0)) {
 					?>
 						<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo espresso_reg_url($overflow_event_id); ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
 					<?php } ?>
@@ -328,7 +327,7 @@ if (!function_exists('register_attendees')) {
 				} else {
 					//If enough spaces exist then show the form
 					//Check to see if the Members plugin is installed.
-					if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
+					if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only) {
 						event_espresso_user_login();
 					} else {
 						//Serve up the registration form
