@@ -67,33 +67,29 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-	$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/') . '/';
+	$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/');
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();
 
 	if (is_int($event_slug)) {
 		$event_id = $event_slug;
 		$event_slug = FALSE;
 	}
-
 	// if an event slug was supplied
 	if ($event_slug && $event_slug != '') {
-
 		// check if permalinks are being used
 		if ($use_pretty_permalinks) {
 			// create pretty permalink
-			$registration_url = $registration_url . $event_slug;
+			$registration_url .= '/' . $event_slug;
 		} else {
 			// use fugly oldsckool link
-			$registration_url = add_query_arg('event_slug', $event_slug, $registration_url);
+			$registration_url = add_query_arg( array( 'event_slug'=>$event_slug ), $registration_url ); 		
 		}
-	} elseif ($event_id && absint($event_id) && $event_id != '' && $event_id > 0) {	 // no event slug, so use  event_id
+	} elseif ($event_id && absint($event_id) && $event_id != '' && $event_id > 0) {	 
+		// no event slug, so use  event_id
 		// check if permalinks are being used
 		if ($use_pretty_permalinks) {
-
-
-			$event_slug = get_transient('espresso_event_slug_' . $event_id);
-			if (false === $event_slug) {
-				// if transient not set, do this!
+			// check for cached event slug
+			if ( ! $event_slug = get_transient( 'espresso_event_slug_' . $event_id )) {
 				// create the data that needs to be saved.
 				$SQL = 'SELECT slug  FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id = %d';
 				$event_slug = $wpdb->get_var($wpdb->prepare($SQL, $event_id));
@@ -105,14 +101,14 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 			// check if slug exists for that event
 			if (!empty($event_slug)) {
 				// create pretty permalink
-				$registration_url = $registration_url = $registration_url . $event_slug;
+				$registration_url .= '/' . $event_slug;
 			} else {
 				// couldn't find a slug, so use really fugly oldsckool link
-				$registration_url = add_query_arg('ee', $event_id, $registration_url);
+				$registration_url = add_query_arg( array( 'ee' => $event_id ), $registration_url );
 			}
 		} else {
 			// use really fugly oldsckool link
-			$registration_url = add_query_arg('ee', $event_id, $registration_url);
+			$registration_url = add_query_arg( array( 'ee' => $event_id ), $registration_url );
 		}
 	} else
 		$registration_url = '';
@@ -125,7 +121,8 @@ function espresso_short_reg_url($event_id = 0) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if ($event_id > 0) {
 		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
-		$new_url = add_query_arg('ee', $event_id, get_permalink($org_options['event_page_id']));
+		$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/');
+		$new_url = add_query_arg( array( 'ee' => $event_id ), $registration_url );
 		return $new_url;
 	}/* else {
 	  echo 'No event id supplied'; */
