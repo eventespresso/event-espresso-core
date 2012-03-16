@@ -5,13 +5,13 @@ function espresso_display_payment_gateways() {
 	global $active_gateways, $payment_settings, $espresso_wp_user;
 	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
 	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
-		
+
 //	echo var_dump($espresso_wp_user);
 //	echo var_dump($active_gateways);
 //	echo var_dump($payment_settings);
-	
+
 	foreach ($active_gateways as $gateway => $path) {
-		require_once($path . "/init.php");  
+		require_once($path . "/init.php");
 	}
 
 	echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';

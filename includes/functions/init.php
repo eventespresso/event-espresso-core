@@ -166,22 +166,7 @@ function espresso_admin_init() {
 			add_action('admin_head', 'espresso_add_meta_boxes');
 		}
 	}
-	if (!$espresso_premium) {
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/premium_upgrade.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/coupon_management.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/email-manager.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/venue_management.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/locale_management.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/staff-management.php');
-	} else {
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/coupon_management.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/coupon-management/use_coupon_code.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/email_manager.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/locale-management/index.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/staff-management/index.php');
-		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/dashboard_widget.php');
-	}
+
 	do_action('action_hook_espresso_require_admin_files');
 
 	// Update the question sequences
@@ -295,6 +280,12 @@ function espresso_frontend_init() {
 	if ($espresso_reg_page) {
 		do_action('action_hook_espresso_load_reg_page_files');
 	}
+
+	add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1 );
+
+	add_action ( 'action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db' );
+
+	add_action ( 'action_hook_espresso_regevent_register_attendees', 'register_attendees' );
 
 	// Export iCal file
 	if (!empty($_REQUEST['iCal'])) {

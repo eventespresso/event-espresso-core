@@ -415,7 +415,7 @@ function espresso_event_editor_date_time_metabox($event) {
 						</p>
 						<p>
 							<label for="registration_end"><?php echo __('Registration End:', 'event_espresso') ?></label>
-							<input type="text" class="datepicker" size="15" id="registration_end" name="registration_end"  value="<?php echo $event->registration_start ?>" />
+							<input type="text" class="datepicker" size="15" id="registration_end" name="registration_end"  value="<?php echo $event->registration_end ?>" />
 						</p>
 					</fieldset>
 					<fieldset>
