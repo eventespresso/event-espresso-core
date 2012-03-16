@@ -258,10 +258,11 @@
 								break;
 								
 						case 'mm/yy' :
-								if ( preg_match( '/([0-9]{2}[- \/.][0-9]{2})/', $value, $matches )) {
-								//if ( preg_match( '(0[1-9]|1[012])[- /.]([0-9]{2})', $value, $matches )) {
+								if ( preg_match( '/([0-9]{2}[- \/.]?[0-9]{2})/', $value, $matches )) {
 									$mmyy = explode( '/', $matches[1] );
 									if ( checkdate( $mmyy[0], 1, $mmyy[1] )) {										
+										$input_data['value'] = $matches[1];
+									} elseif ( checkdate( $mmyy[1], 1, $mmyy[0] )) {										
 										$input_data['value'] = $matches[1];
 									}
 								}
