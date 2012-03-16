@@ -92,7 +92,7 @@ function espresso_load_reg_page_files() {
 //Add attendees to the database
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/add_attendees_to_db.php');
 
-	event_espresso_require_gateway('process_payments.php');
+
 	event_espresso_require_gateway('PaymentGateway.php');
 	event_espresso_require_gateway('gateway_display.php');
 

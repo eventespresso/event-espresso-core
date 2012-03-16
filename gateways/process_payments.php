@@ -62,7 +62,6 @@ function espresso_email_after_payment($payment_data) {
 	}
 }
 
-
 function espresso_mail_successful_transaction_debugging_output($payment_data) {
 	$subject = 'Instant Payment Notification - Gateway Variable Dump';
 	$body = "An instant payment notification was successfully recieved\n";
@@ -84,3 +83,15 @@ function espresso_mail_failed_transaction_debugging_output($payment_data) {
 }
 
 add_action('action_hook_espresso_mail_failed_transaction_debugging_output', 'espresso_mail_failed_transaction_debugging_output');
+
+function espresso_process_payments($EE_Session) {
+	global $espresso_wp_user;
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, "Hello World!");
+	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
+	foreach ($active_gateways as $gateway => $path) {
+		require_once($path . "/init.php");
+	}
+	do_action('action_hook_espresso_process_transaction');
+}
+
+add_action('action_hook_espresso_process_payments', 'espresso_process_payments');

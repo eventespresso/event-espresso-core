@@ -328,6 +328,8 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
+	event_espresso_require_gateway('process_payments.php');
+	
 	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
 
 	do_action('action_hook_espresso_coupon_codes');
