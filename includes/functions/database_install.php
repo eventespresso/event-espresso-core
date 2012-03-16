@@ -676,17 +676,20 @@ function events_data_tables_install() {
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+	$table_name = "events_price_rel";
+	$sql = "event_id int(11) DEFAULT NULL,
+				price_id int(11) DEFAULT NULL,
+				PRIMARY KEY  (event_id, price_id)";
+	event_espresso_run_install($table_name, $table_version, $sql);
+
 	$table_name = "events_prices";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				event_id int(11) DEFAULT NULL,
 				price_type varchar(50) DEFAULT NULL,
 				event_cost decimal(20,2) NOT NULL DEFAULT '0.00',
 				surcharge decimal(10,2) NOT NULL DEFAULT '0.00',
 				surcharge_type varchar(10) DEFAULT NULL,
-				member_price_type varchar(50) DEFAULT NULL,
-				member_price decimal(20,2) NOT NULL DEFAULT '0.00',
 				max_qty int(7) DEFAULT '0',
-				max_qty_members int(7) DEFAULT '0',
+				is_member_price TINYINT(1) NOT NULL DEFAULT '0'
 				PRIMARY KEY  (id),
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);

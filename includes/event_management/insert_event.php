@@ -17,6 +17,7 @@ function add_event_to_db($recurrence_arr = array()) {
 
 		static $recurrence_id;
 
+
 		if (get_option('event_espresso_re_active') == 1) {
 			require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_functions.php");
 			$recurrence_id = array_key_exists('recurrence_id', $recurrence_arr) ? $recurrence_arr['recurrence_id'] : Null;
@@ -313,6 +314,7 @@ function add_event_to_db($recurrence_arr = array()) {
 
 			$last_event_id = $wpdb->insert_id;
 
+			do_action('action_hook_espresso_insert_event_add_ons');
 			############# MailChimp Integration ##############
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpController::add_event_list_rel($last_event_id);

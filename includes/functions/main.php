@@ -6,7 +6,7 @@ function isEmptyArray($array) {
 	return (count(array_filter($array, $my_not_empty)) == 0) ? 1 : 0;
 }
 
-function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $type='', $text='') {
+function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $type = '', $text = '') {
 	global $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$html = '';
@@ -32,13 +32,11 @@ function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
 	return home_url() . '/?invoice_launch=true&amp;id=' . $attendee_id . '&amp;r_id=' . $registration_id . '&amp;html=true' . $extra;
 }
 
-
-
 function espresso_get_reg_page_url_slug() {
 	global $wpdb, $org_options;
 	$reg_page_id = $org_options['event_page_id'];
-	$SQL = 'SELECT post_name  FROM '.$wpdb->prefix .'posts WHERE ID = %d';
-	$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $reg_page_id ));
+	$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
+	$reg_page_url_slug = $wpdb->get_var($wpdb->prepare($SQL, $reg_page_id));
 	return $reg_page_url_slug;
 }
 
@@ -51,90 +49,78 @@ function espresso_get_reg_page_full_url() {
 function espresso_use_pretty_permalinks() {
 	global $org_options;
 	// check if option exists
-	if ( isset( $org_options['espresso_url_rewrite_activated'] )) {
+	if (isset($org_options['espresso_url_rewrite_activated'])) {
 		$url_rewrite = $org_options['espresso_url_rewrite_activated'];
 	} else {
 		$url_rewrite = FALSE;
 	}
 	// check if permalinks are turned on and both in WP and EE
-	if ( $url_rewrite == 'Y' && get_option('permalink_structure') != '' ) {
+	if ($url_rewrite == 'Y' && get_option('permalink_structure') != '') {
 		return TRUE;
 	} else {
 		return FALSE;
 	}
 }
 
-function espresso_reg_url( $event_id = FALSE, $event_slug = FALSE) {
+function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-	$registration_url = rtrim( get_permalink($org_options['event_page_id']), '/' ) . '/';
+	$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/') . '/';
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();
 
-	if ( is_int( $event_slug )) {
+	if (is_int($event_slug)) {
 		$event_id = $event_slug;
 		$event_slug = FALSE;
 	}
 
 	// if an event slug was supplied
-	if ( $event_slug && $event_slug != '' ) {
+	if ($event_slug && $event_slug != '') {
 
 		// check if permalinks are being used
-		if ( $use_pretty_permalinks ) {
+		if ($use_pretty_permalinks) {
 			// create pretty permalink
-			 $registration_url = $registration_url . $event_slug;
+			$registration_url = $registration_url . $event_slug;
 		} else {
 			// use fugly oldsckool link
-			$registration_url = add_query_arg( 'event_slug', $event_slug, $registration_url );
+			$registration_url = add_query_arg('event_slug', $event_slug, $registration_url);
 		}
-
-	} elseif ( $event_id && absint( $event_id ) && $event_id != '' && $event_id > 0 ) {   // no event slug, so use  event_id
-
+	} elseif ($event_id && absint($event_id) && $event_id != '' && $event_id > 0) {	 // no event slug, so use  event_id
 		// check if permalinks are being used
-		if ( $use_pretty_permalinks ) {
+		if ($use_pretty_permalinks) {
 
 
-			$event_slug = get_transient( 'espresso_event_slug_'.$event_id );
-			if ( false === $event_slug ) {
+			$event_slug = get_transient('espresso_event_slug_' . $event_id);
+			if (false === $event_slug) {
 				// if transient not set, do this!
-
 				// create the data that needs to be saved.
-				$SQL = 'SELECT slug  FROM '.EVENTS_DETAIL_TABLE .' WHERE id = %d';
-				$event_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $event_id ));
+				$SQL = 'SELECT slug  FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id = %d';
+				$event_slug = $wpdb->get_var($wpdb->prepare($SQL, $event_id));
 
 				// save the newly created transient value
 				// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
-				set_transient('espresso_event_slug_'.$event_id, $event_slug, 60*60*24*365);
-
-				//Debug:
-				//Check if using the cache
-				//echo 'Not using cache';
+				set_transient('espresso_event_slug_' . $event_id, $event_slug, 60 * 60 * 24 * 365);
 			}
-
-
 			// check if slug exists for that event
-			if ( !empty($event_slug) ) {
+			if (!empty($event_slug)) {
 				// create pretty permalink
 				$registration_url = $registration_url = $registration_url . $event_slug;
 			} else {
 				// couldn't find a slug, so use really fugly oldsckool link
-				$registration_url = add_query_arg( 'ee', $event_id, $registration_url );
+				$registration_url = add_query_arg('ee', $event_id, $registration_url);
 			}
-
 		} else {
 			// use really fugly oldsckool link
-			$registration_url = add_query_arg( 'ee', $event_id, $registration_url );
+			$registration_url = add_query_arg('ee', $event_id, $registration_url);
 		}
-
-	}
+	} else
+		$registration_url = '';
 
 	return $registration_url;
-
 }
 
-
-function espresso_short_reg_url($event_id=0) {
+function espresso_short_reg_url($event_id = 0) {
 	global $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if ($event_id > 0) {
@@ -153,7 +139,7 @@ function espresso_getTinyUrl($url) {
 
 //Text formatting function.
 //This should fix all of the formatting issues of text output from the database.
-function espresso_format_content($content='') {
+function espresso_format_content($content = '') {
 	return wpautop(stripslashes_deep(html_entity_decode(do_shortcode($content), ENT_QUOTES, "UTF-8")));
 }
 
@@ -229,7 +215,7 @@ function espresso_display_additional_attendees() {
 
 if (!function_exists('event_espresso_additional_attendees')) {
 
-	function event_espresso_additional_attendees($event_id=0, $additional_limit=2, $available_spaces=999, $label='', $show_label = true, $event_meta = '') {
+	function event_espresso_additional_attendees($event_id = 0, $additional_limit = 2, $available_spaces = 999, $label = '', $show_label = true, $event_meta = '') {
 		$event_id = $event_id == 0 ? $_REQUEST['event_id'] : $event_id;
 
 		if ($event_meta == '' && ($event_id != '' || $event_id != 0)) {
@@ -315,7 +301,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 //This function returns the condition of an event
 if (!function_exists('event_espresso_get_is_active')) {
 
-	function event_espresso_get_is_active($event_id, $event_meta='') {
+	function event_espresso_get_is_active($event_id, $event_meta = '') {
 		global $wpdb, $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//If the timezome is set in the wordpress database, then lets use it as the default timezone.
@@ -372,21 +358,21 @@ if (!function_exists('event_espresso_get_is_active')) {
 		}
 
 		//IF the event is a waitlist/secondary event, show as waitlist
-		elseif ($is_active  && $event_status == "R") {
+		elseif ($is_active && $event_status == "R") {
 			$event_status = array('status' => 'DRAFT', 'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('DRAFT', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_draft">' . __('Draft', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//IF the event is a pending event, show as pending
-		elseif ($is_active  && $event_status == "P") {
+		elseif ($is_active && $event_status == "P") {
 			$event_status = array('status' => 'PENDING', 'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('PENDING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_pending">' . __('Pending', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//IF the event is a denied event, show as denied
-		elseif ($is_active  && $event_status == "X") {
+		elseif ($is_active && $event_status == "X") {
 			$event_status = array('status' => 'DENIED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('DENIED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_denied">' . __('Denied', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
@@ -451,7 +437,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 //This function returns the overall status of an event
 if (!function_exists('event_espresso_get_status')) {
 
-	function event_espresso_get_status($event_id, $event_meta='') {
+	function event_espresso_get_status($event_id, $event_meta = '') {
 		$event_status = event_espresso_get_is_active($event_id, $event_meta);
 		switch ($event_status['status']) {
 			case 'EXPIRED':
@@ -651,7 +637,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 
 }
 
-function event_espresso_update_alert($url='') {
+function event_espresso_update_alert($url = '') {
 	return wp_remote_retrieve_body(wp_remote_get($url));
 }
 
@@ -838,7 +824,7 @@ function espresso_display_questions($questions, $attendee) {
 //Build the form questions. This function can be overridden using the custom files addon
 if (!function_exists('event_espresso_add_question_groups')) {
 
-	function event_espresso_add_question_groups($question_groups, $answer= '', $event_id = null, $multi_reg = 0, $meta = array()) {
+	function event_espresso_add_question_groups($question_groups, $answer = '', $event_id = null, $multi_reg = 0, $meta = array()) {
 		global $wpdb;
 		$event_id = empty($_REQUEST['event_id']) ? $event_id : $_REQUEST['event_id'];
 		if (count($question_groups) > 0) {
@@ -925,7 +911,7 @@ function ee_show_meta($meta, $name) {
 //This function returns an array of category data based on an event id
 if (!function_exists('espresso_event_category_data')) {
 
-	function espresso_event_category_data($event_id, $all_cats=FALSE) {
+	function espresso_event_category_data($event_id, $all_cats = FALSE) {
 		global $wpdb;
 		$sql = "SELECT c.category_identifier, c.category_name, c.category_desc, c.display_desc FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
@@ -1071,10 +1057,6 @@ if (!function_exists("unkeyvaluepair")) {
 
 }
 
-
-
-
-
 function espresso_serialize($data) {
 
 
@@ -1138,7 +1120,7 @@ function get_event_field($field, $table, $where) {
 
 if (!function_exists('espresso_show_personnel')) {
 
-	function espresso_show_personnel($event_id=0, $atts) {
+	function espresso_show_personnel($event_id = 0, $atts) {
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
@@ -1447,7 +1429,7 @@ function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
 //Otherwise it returns the id of the primary admin.
 
 
-function getCountriesArray($lang="en") {
+function getCountriesArray($lang = "en") {
 	//first code, country_id
 	//seconde code, country name
 	//third code, ISO country id with two chars
@@ -1456,230 +1438,230 @@ function getCountriesArray($lang="en") {
 	//sixth code is for currency symbol
 	switch ($lang) {
 		default: return array(
-				array(0, __('No country selected', 'event_espresso'), '', '', 0),
-				array(64, 'United States', 'US', 'USA', 1, '$'),
-				array(15, 'Australia', 'AU', 'AUS', 1, 'A$'),
-				array(39, 'Canada', 'CA', 'CAN', 1, 'C$'),
-				array(171, 'United Kingdom', 'GB', 'GBR', 1, '&pound;'),
-				array(70, 'France', 'FR', 'FRA', 2, '&euro;'),
-				array(111, 'Italy', 'IT', 'ITA', 2, '&euro;'),
-				array(63, 'Spain', 'ES', 'ESP', 2, '&euro;'),
-				array(1, 'Afghanistan', 'AF', 'AFG', 1, '$'),
-				array(2, 'Albania', 'AL', 'ALB', 1, '$'),
-				array(3, 'Germany', 'DE', 'DEU', 2, '&euro;'),
-				array(198, 'Switzerland', 'CH', 'CHE', 1, 'Fr.'),
-				array(87, 'The Netherlands', 'NL', 'NLD', 2, '&euro;'),
-				array(197, 'Sweden', 'SE', 'SWE', 1, 'kr'),
-				array(230, 'Akrotiri and Dhekelia', 'CY', 'CYP', 2, '$'),
-				array(4, 'Andorra', 'AD', 'AND', 2, '&euro;'),
-				array(5, 'Angola', 'AO', 'AGO', 1, '$'),
-				array(6, 'Anguilla', 'AI', 'AIA', 1, '$'),
-				array(7, 'Antarctica', 'AQ', 'ATA', 1, '$'),
-				array(8, 'Antigua and Barbuda', 'AG', 'ATG', 1, '$'),
-				array(10, 'Saudi Arabia', 'SA', 'SAU', 1, '$'),
-				array(11, 'Argelia', 'DZ', 'DZA', 1, '$'),
-				array(12, 'Argentina', 'AR', 'ARG', 1, '$'),
-				array(13, 'Armenia', 'AM', 'ARM', 1, '$'),
-				array(14, 'Aruba', 'AW', 'ABW', 1, '$'),
-				array(16, 'Austria', 'AT', 'AUT', 2, '&euro;'),
-				array(17, 'Azerbaijan', 'AZ', 'AZE', 1, '$'),
-				array(18, 'Bahamas', 'BS', 'BHS', 1, '$'),
-				array(19, 'Bahrein', 'BH', 'BHR', 1, '$'),
-				array(20, 'Bangladesh', 'BD', 'BGD', 1, '$'),
-				array(21, 'Barbados', 'BB', 'BRB', 1, '$'),
-				array(22, 'Belgium ', 'BE', 'BEL', 2, '&euro;'),
-				array(23, 'Belize', 'BZ', 'BLZ', 1, '$'),
-				array(24, 'Benin', 'BJ', 'BEN', 1, '$'),
-				array(25, 'Bermudas', 'BM', 'BMU', 1, '$'),
-				array(26, 'Belarus', 'BY', 'BLR', 1, '$'),
-				array(27, 'Bolivia', 'BO', 'BOL', 1, '$'),
-				array(28, 'Bosnia and Herzegovina', 'BA', 'BIH', 1, '$'),
-				array(29, 'Botswana', 'BW', 'BWA', 1, '$'),
-				array(96, 'Bouvet Island', 'BV', 'BVT', 1, '$'),
-				array(30, 'Brazil', 'BR', 'BRA', 1, 'R$'),
-				array(31, 'Brunei', 'BN', 'BRN', 1, '$'),
-				array(32, 'Bulgaria', 'BG', 'BGR', 1, '$'),
-				array(33, 'Burkina Faso', 'BF', 'BFA', 1, '$'),
-				array(34, 'Burundi', 'BI', 'BDI', 1, '$'),
-				array(35, 'Bhutan', 'BT', 'BTN', 1, '$'),
-				array(36, 'Cape Verde', 'CV', 'CPV', 1, '$'),
-				array(37, 'Cambodia', 'KH', 'KHM', 1, '$'),
-				array(38, 'Cameroon', 'CM', 'CMR', 1, '$'),
-				array(98, 'Cayman Islands', 'KY', 'CYM', 1, '$'),
-				array(172, 'Central African Republic', 'CF', 'CAF', 1, '$'),
-				array(40, 'Chad', 'TD', 'TCD', 1, '$'),
-				array(41, 'Chile', 'CL', 'CHL', 1, '$'),
-				array(42, 'China', 'CN', 'CHN', 1, '$'),
-				array(105, 'Christmas Island', 'CX', 'CXR', 1, '$'),
-				array(43, 'Cyprus', 'CY', 'CYP', 2, '&euro;'),
-				array(99, 'Cocos Island', 'CC', 'CCK', 1, '$'),
-				array(100, 'Cook Islands', 'CK', 'COK', 1, '$'),
-				array(44, 'Colombia', 'CO', 'COL', 1, '$'),
-				array(45, 'Comoros', 'KM', 'COM', 1, '$'),
-				array(46, 'Congo', 'CG', 'COG', 1, '$'),
-				array(47, 'Corea del Norte', 'KP', 'PRK', 1, '$'),
-				array(50, 'Costa Rica', 'CR', 'CRI', 1, '$'),
-				array(51, 'Croatia', 'HR', 'HRV', 1, '$'),
-				array(52, 'Cuba', 'CU', 'CUB', 1, '$'),
-				array(173, 'Czech Republic', 'CZ', 'CZE', 1, 'K&#x10D;'),
-				array(53, 'Danmark', 'DK', 'DNK', 1, 'kr'),
-				array(54, 'Djibouti', 'DJ', 'DJI', 1, '$'),
-				array(55, 'Dominica', 'DM', 'DMA', 1, '$'),
-				array(174, 'Dominican Republic', 'DO', 'DOM', 1, '$'),
-				array(56, 'Ecuador', 'EC', 'ECU', 1, '$'),
-				array(57, 'Egypt', 'EG', 'EGY', 1, '$'),
-				array(58, 'El Salvador', 'SV', 'SLV', 1, '$'),
-				array(60, 'Eritrea', 'ER', 'ERI', 1, '$'),
-				array(61, 'Eslovakia', 'SK', 'SVK', 2, '&euro;'),
-				array(62, 'Eslovenia', 'SI', 'SVN', 2, '&euro;'),
-				array(65, 'Estonia', 'EE', 'EST', 2, '&euro;'),
-				array(66, 'Ethiopia', 'ET', 'ETH', 1, '$'),
-				array(102, 'Faroe islands', 'FO', 'FRO', 1, '$'),
-				array(103, 'Falkland Islands', 'FK', 'FLK', 1, '$'),
-				array(67, 'Fiji', 'FJ', 'FJI', 1, '$'),
-				array(69, 'Finland', 'FI', 'FIN', 2, '&euro;'),
-				array(71, 'Gabon', 'GA', 'GAB', 1, '$'),
-				array(72, 'Gambia', 'GM', 'GMB', 1, '$'),
-				array(73, 'Georgia', 'GE', 'GEO', 1, '$'),
-				array(74, 'Ghana', 'GH', 'GHA', 1, '$'),
-				array(75, 'Gibraltar', 'GI', 'GIB', 1, '$'),
-				array(76, 'Greece', 'GR', 'GRC', 2, '&euro;'),
-				array(77, 'Grenada', 'GD', 'GRD', 1, '$'),
-				array(78, 'Greenland', 'GL', 'GRL', 1, '$'),
-				array(79, 'Guadeloupe', 'GP', 'GLP', 1, '$'),
-				array(80, 'Guam', 'GU', 'GUM', 1, '$'),
-				array(81, 'Guatemala', 'GT', 'GTM', 1, '$'),
-				array(82, 'Guinea', 'GN', 'GIN', 1, '$'),
-				array(83, 'Equatorial Guinea', 'GQ', 'GNQ', 1, '$'),
-				array(84, 'Guinea-Bissau', 'GW', 'GNB', 1, '$'),
-				array(85, 'Guyana', 'GY', 'GUY', 1, '$'),
-				array(86, 'Haiti', 'HT', 'HTI', 1, '$'),
-				array(88, 'Honduras', 'HN', 'HND', 1, '$'),
-				array(89, 'Hong Kong', 'HK', 'HKG', 1, 'HK$'),
-				array(90, 'Hungary', 'HU', 'HUN', 1, 'Ft'),
-				array(91, 'India', 'IN', 'IND', 1, '&#x20b9;'),
-				array(205, 'British Indian Ocean Territory', 'IO', 'IOT', 1, '$'),
-				array(92, 'Indonesia', 'ID', 'IDN', 1, '$'),
-				array(93, 'Iraq', 'IQ', 'IRQ', 1, '$'),
-				array(94, 'Iran', 'IR', 'IRN', 1, '$'),
-				array(95, 'Ireland', 'IE', 'IRL', 2, '&euro;'),
-				array(97, 'Iceland', 'IS', 'ISL', 1, '$'),
-				array(110, 'Israel', 'IL', 'ISR', 1, '&#8362;'),
-				array(49, 'Ivory Coast ', 'CI', 'CIV', 1, '$'),
-				array(112, 'Jamaica', 'JM', 'JAM', 1, '$'),
-				array(113, 'Japan', 'JP', 'JPN', 1, '&yen;'),
-				array(114, 'Jordan', 'JO', 'JOR', 1, '$'),
-				array(115, 'Kazakhstan', 'KZ', 'KAZ', 1, '$'),
-				array(116, 'Kenya', 'KE', 'KEN', 1, '$'),
-				array(117, 'Kirguistan', 'KG', 'KGZ', 1, '$'),
-				array(118, 'Kiribati', 'KI', 'KIR', 1, '$'),
-				array(48, 'South Korea', 'KR', 'KOR', 1, '$'),
-				array(228, 'Kosovo', 'XK', 'XKV', 2, '&euro;'), // there is no official ISO code for Kosovo yet (http://geonames.wordpress.com/2010/03/08/xk-country-code-for-kosovo/) so using a temporary country code and a modified 3 character code for ISO code -- this should be updated if/when Kosovo gets its own ISO code
-				array(119, 'Kuwait', 'KW', 'KWT', 1, '$'),
-				array(120, 'Laos', 'LA', 'LAO', 1, '$'),
-				array(121, 'Latvia', 'LV', 'LVA', 2, '$'),
-				array(122, 'Lesotho', 'LS', 'LSO', 1, '$'),
-				array(123, 'Lebanon', 'LB', 'LBN', 1, '$'),
-				array(124, 'Liberia', 'LR', 'LBR', 1, '$'),
-				array(125, 'Libya', 'LY', 'LBY', 1, '$'),
-				array(126, 'Liechtenstein', 'LI', 'LIE', 1, '$'),
-				array(127, 'Lithuania', 'LT', 'LTU', 2, '$'),
-				array(128, 'Luxemburg', 'LU', 'LUX', 2, '&euro;'),
-				array(129, 'Macao', 'MO', 'MAC', 1, '$'),
-				array(130, 'Macedonia', 'MK', 'MKD', 1, '$'),
-				array(131, 'Madagascar', 'MG', 'MDG', 1, '$'),
-				array(132, 'Malaysia', 'MY', 'MYS', 1, 'RM'),
-				array(133, 'Malawi', 'MW', 'MWI', 1, '$'),
-				array(134, 'Maldivas', 'MV', 'MDV', 1, '$'),
-				array(135, 'Mali', 'ML', 'MLI', 1, '$'),
-				array(136, 'Malta', 'MT', 'MLT', 2, '&euro;'),
-				array(101, 'Northern Marianas', 'MP', 'MNP', 1, '$'),
-				array(137, 'Marruecos', 'MA', 'MAR', 1, '$'),
-				array(104, 'Marshall islands', 'MH', 'MHL', 1, '$'),
-				array(138, 'Martinica', 'MQ', 'MTQ', 1, '$'),
-				array(139, 'Mauricio', 'MU', 'MUS', 1, '$'),
-				array(140, 'Mauritania', 'MR', 'MRT', 1, '$'),
-				array(141, 'Mayote', 'YT', 'MYT', 2, '&euro;'),
-				array(142, 'Mexico', 'MX', 'MEX', 1, 'Mex$'),
-				array(143, 'Micronesia', 'FM', 'FSM', 1, '$'),
-				array(144, 'Moldova', 'MD', 'MDA', 1, '$'),
-				array(145, 'Monaco', 'MC', 'MCO', 2, '&euro;'),
-				array(146, 'Mongolia', 'MN', 'MNG', 1, '$'),
-				array(147, 'Montserrat', 'MS', 'MSR', 1, '$'),
-				array(227, 'Montenegro', 'ME', 'MNE', 2, '&euro;'),
-				array(148, 'Mozambique', 'MZ', 'MOZ', 1, '$'),
-				array(149, 'Myanmar', 'MM', 'MMR', 1, '$'),
-				array(150, 'Namibia', 'NA', 'NAM', 1, '$'),
-				array(151, 'Nauru', 'NR', 'NRU', 1, '$'),
-				array(152, 'Nepal', 'NP', 'NPL', 1, '$'),
-				array(9, 'Netherlands Antilles', 'AN', 'ANT', 1, '$'),
-				array(153, 'Nicaragua', 'NI', 'NIC', 1, '$'),
-				array(154, 'Niger', 'NE', 'NER', 1, '$'),
-				array(155, 'Nigeria', 'NG', 'NGA', 1, '$'),
-				array(156, 'Niue', 'NU', 'NIU', 1, '$'),
-				array(157, 'Norway', 'NO', 'NOR', 1, 'kr'),
-				array(158, 'New Caledonia', 'NC', 'NCL', 1, '$'),
-				array(159, 'New Zealand', 'NZ', 'NZL', 1, 'NZ$'),
-				array(160, 'Oman', 'OM', 'OMN', 1, '$'),
-				array(161, 'Pakistan', 'PK', 'PAK', 1, '$'),
-				array(162, 'Palau', 'PW', 'PLW', 1, '$'),
-				array(163, 'Panama', 'PA', 'PAN', 1, '$'),
-				array(164, 'Papua New Guinea', 'PG', 'PNG', 1, '$'),
-				array(165, 'Paraguay', 'PY', 'PRY', 1, '$'),
-				array(166, 'Peru', 'PE', 'PER', 1, '$'),
-				array(68, 'Philippines', 'PH', 'PHL', 1, '&#x20b1;'),
-				array(167, 'Poland', 'PL', 'POL', 1, 'z&#x0142;'),
-				array(168, 'Portugal', 'PT', 'PRT', 2, '&euro;'),
-				array(169, 'Puerto Rico', 'PR', 'PRI', 1, '$'),
-				array(170, 'Qatar', 'QA', 'QAT', 1, '$'),
-				array(176, 'Rowanda', 'RW', 'RWA', 1, '$'),
-				array(177, 'Romania', 'RO', 'ROM', 2, '$'),
-				array(178, 'Russia', 'RU', 'RUS', 1, '$'),
-				array(229, 'Saint Pierre and Miquelon', 'PM', 'SPM', 2, '&euro;'),
-				array(180, 'Samoa', 'WS', 'WSM', 1, '$'),
-				array(181, 'American Samoa', 'AS', 'ASM', 1, '$'),
-				array(183, 'San Marino', 'SM', 'SMR', 2, '&euro;'),
-				array(184, 'San Vincente y las Granadinas', 'VC', 'VCT', 1, '$'),
-				array(185, 'Santa Helena', 'SH', 'SHN', 1, '$'),
-				array(186, 'Santa Lucia', 'LC', 'LCA', 1, '$'),
-				array(188, 'Senegal', 'SN', 'SEN', 1, '$'),
-				array(189, 'Seychelles', 'SC', 'SYC', 1, '$'),
-				array(190, 'Sierra Leona', 'SL', 'SLE', 1, '$'),
-				array(191, 'Singapore', 'SG', 'SGP', 1, 'S$'),
-				array(192, 'Syria', 'SY', 'SYR', 1, '$'),
-				array(193, 'Somalia', 'SO', 'SOM', 1, '$'),
-				array(194, 'Sri Lanka', 'LK', 'LKA', 1, '$'),
-				array(195, 'South Africa', 'ZA', 'ZAF', 1, 'R'),
-				array(196, 'Sudan', 'SD', 'SDN', 1, '$'),
-				array(199, 'Suriname', 'SR', 'SUR', 1, '$'),
-				array(200, 'Swaziland', 'SZ', 'SWZ', 1, '$'),
-				array(201, 'Thailand', 'TH', 'THA', 1, '&#xe3f;'),
-				array(202, 'Taiwan', 'TW', 'TWN', 1, 'NT$'),
-				array(203, 'Tanzania', 'TZ', 'TZA', 1, '$'),
-				array(204, 'Tajikistan', 'TJ', 'TJK', 1, '$'),
-				array(206, 'Timor Oriental', 'TP', 'TMP', 1, '$'),
-				array(207, 'Togo', 'TG', 'TGO', 1, '$'),
-				array(208, 'Tokelau', 'TK', 'TKL', 1, '$'),
-				array(209, 'Tonga', 'TO', 'TON', 1, '$'),
-				array(210, 'Trinidad and Tobago', 'TT', 'TTO', 1, '$'),
-				array(211, 'Tunisia', 'TN', 'TUN', 1, '$'),
-				array(212, 'Turkmenistan', 'TM', 'TKM', 1, '$'),
-				array(213, 'Turkey', 'TR', 'TUR', 1, 'TL'),
-				array(214, 'Tuvalu', 'TV', 'TUV', 1, '$'),
-				array(215, 'Ukraine', 'UA', 'UKR', 1, '$'),
-				array(216, 'Uganda', 'UG', 'UGA', 1, '$'),
-				array(59, 'United Arab Emirates', 'AE', 'ARE', 1, '$'),
-				array(217, 'Uruguay', 'UY', 'URY', 1, '$'),
-				array(218, 'Uzbekistan', 'UZ', 'UZB', 1, '$'),
-				array(219, 'Vanuatu', 'VU', 'VUT', 1, '$'),
-				array(220, 'Vatican City', 'VA', 'VAT', 2, '&euro;'),
-				array(221, 'Venezuela', 'VE', 'VEN', 1, '$'),
-				array(222, 'Vietnam', 'VN', 'VNM', 1, '$'),
-				array(108, 'Virgin Islands', 'VI', 'VIR', 1, '$'),
-				array(223, 'Yemen', 'YE', 'YEM', 1, '$'),
-				array(224, 'Yugoslavia', 'YU', 'YUG', 1, '$'),
-				array(225, 'Zambia', 'ZM', 'ZMB', 1, '$'),
-				array(226, 'Zimbabwe', 'ZW', 'ZWE', 1, '$'));
+					array(0, __('No country selected', 'event_espresso'), '', '', 0),
+					array(64, 'United States', 'US', 'USA', 1, '$'),
+					array(15, 'Australia', 'AU', 'AUS', 1, 'A$'),
+					array(39, 'Canada', 'CA', 'CAN', 1, 'C$'),
+					array(171, 'United Kingdom', 'GB', 'GBR', 1, '&pound;'),
+					array(70, 'France', 'FR', 'FRA', 2, '&euro;'),
+					array(111, 'Italy', 'IT', 'ITA', 2, '&euro;'),
+					array(63, 'Spain', 'ES', 'ESP', 2, '&euro;'),
+					array(1, 'Afghanistan', 'AF', 'AFG', 1, '$'),
+					array(2, 'Albania', 'AL', 'ALB', 1, '$'),
+					array(3, 'Germany', 'DE', 'DEU', 2, '&euro;'),
+					array(198, 'Switzerland', 'CH', 'CHE', 1, 'Fr.'),
+					array(87, 'The Netherlands', 'NL', 'NLD', 2, '&euro;'),
+					array(197, 'Sweden', 'SE', 'SWE', 1, 'kr'),
+					array(230, 'Akrotiri and Dhekelia', 'CY', 'CYP', 2, '$'),
+					array(4, 'Andorra', 'AD', 'AND', 2, '&euro;'),
+					array(5, 'Angola', 'AO', 'AGO', 1, '$'),
+					array(6, 'Anguilla', 'AI', 'AIA', 1, '$'),
+					array(7, 'Antarctica', 'AQ', 'ATA', 1, '$'),
+					array(8, 'Antigua and Barbuda', 'AG', 'ATG', 1, '$'),
+					array(10, 'Saudi Arabia', 'SA', 'SAU', 1, '$'),
+					array(11, 'Argelia', 'DZ', 'DZA', 1, '$'),
+					array(12, 'Argentina', 'AR', 'ARG', 1, '$'),
+					array(13, 'Armenia', 'AM', 'ARM', 1, '$'),
+					array(14, 'Aruba', 'AW', 'ABW', 1, '$'),
+					array(16, 'Austria', 'AT', 'AUT', 2, '&euro;'),
+					array(17, 'Azerbaijan', 'AZ', 'AZE', 1, '$'),
+					array(18, 'Bahamas', 'BS', 'BHS', 1, '$'),
+					array(19, 'Bahrein', 'BH', 'BHR', 1, '$'),
+					array(20, 'Bangladesh', 'BD', 'BGD', 1, '$'),
+					array(21, 'Barbados', 'BB', 'BRB', 1, '$'),
+					array(22, 'Belgium ', 'BE', 'BEL', 2, '&euro;'),
+					array(23, 'Belize', 'BZ', 'BLZ', 1, '$'),
+					array(24, 'Benin', 'BJ', 'BEN', 1, '$'),
+					array(25, 'Bermudas', 'BM', 'BMU', 1, '$'),
+					array(26, 'Belarus', 'BY', 'BLR', 1, '$'),
+					array(27, 'Bolivia', 'BO', 'BOL', 1, '$'),
+					array(28, 'Bosnia and Herzegovina', 'BA', 'BIH', 1, '$'),
+					array(29, 'Botswana', 'BW', 'BWA', 1, '$'),
+					array(96, 'Bouvet Island', 'BV', 'BVT', 1, '$'),
+					array(30, 'Brazil', 'BR', 'BRA', 1, 'R$'),
+					array(31, 'Brunei', 'BN', 'BRN', 1, '$'),
+					array(32, 'Bulgaria', 'BG', 'BGR', 1, '$'),
+					array(33, 'Burkina Faso', 'BF', 'BFA', 1, '$'),
+					array(34, 'Burundi', 'BI', 'BDI', 1, '$'),
+					array(35, 'Bhutan', 'BT', 'BTN', 1, '$'),
+					array(36, 'Cape Verde', 'CV', 'CPV', 1, '$'),
+					array(37, 'Cambodia', 'KH', 'KHM', 1, '$'),
+					array(38, 'Cameroon', 'CM', 'CMR', 1, '$'),
+					array(98, 'Cayman Islands', 'KY', 'CYM', 1, '$'),
+					array(172, 'Central African Republic', 'CF', 'CAF', 1, '$'),
+					array(40, 'Chad', 'TD', 'TCD', 1, '$'),
+					array(41, 'Chile', 'CL', 'CHL', 1, '$'),
+					array(42, 'China', 'CN', 'CHN', 1, '$'),
+					array(105, 'Christmas Island', 'CX', 'CXR', 1, '$'),
+					array(43, 'Cyprus', 'CY', 'CYP', 2, '&euro;'),
+					array(99, 'Cocos Island', 'CC', 'CCK', 1, '$'),
+					array(100, 'Cook Islands', 'CK', 'COK', 1, '$'),
+					array(44, 'Colombia', 'CO', 'COL', 1, '$'),
+					array(45, 'Comoros', 'KM', 'COM', 1, '$'),
+					array(46, 'Congo', 'CG', 'COG', 1, '$'),
+					array(47, 'Corea del Norte', 'KP', 'PRK', 1, '$'),
+					array(50, 'Costa Rica', 'CR', 'CRI', 1, '$'),
+					array(51, 'Croatia', 'HR', 'HRV', 1, '$'),
+					array(52, 'Cuba', 'CU', 'CUB', 1, '$'),
+					array(173, 'Czech Republic', 'CZ', 'CZE', 1, 'K&#x10D;'),
+					array(53, 'Danmark', 'DK', 'DNK', 1, 'kr'),
+					array(54, 'Djibouti', 'DJ', 'DJI', 1, '$'),
+					array(55, 'Dominica', 'DM', 'DMA', 1, '$'),
+					array(174, 'Dominican Republic', 'DO', 'DOM', 1, '$'),
+					array(56, 'Ecuador', 'EC', 'ECU', 1, '$'),
+					array(57, 'Egypt', 'EG', 'EGY', 1, '$'),
+					array(58, 'El Salvador', 'SV', 'SLV', 1, '$'),
+					array(60, 'Eritrea', 'ER', 'ERI', 1, '$'),
+					array(61, 'Eslovakia', 'SK', 'SVK', 2, '&euro;'),
+					array(62, 'Eslovenia', 'SI', 'SVN', 2, '&euro;'),
+					array(65, 'Estonia', 'EE', 'EST', 2, '&euro;'),
+					array(66, 'Ethiopia', 'ET', 'ETH', 1, '$'),
+					array(102, 'Faroe islands', 'FO', 'FRO', 1, '$'),
+					array(103, 'Falkland Islands', 'FK', 'FLK', 1, '$'),
+					array(67, 'Fiji', 'FJ', 'FJI', 1, '$'),
+					array(69, 'Finland', 'FI', 'FIN', 2, '&euro;'),
+					array(71, 'Gabon', 'GA', 'GAB', 1, '$'),
+					array(72, 'Gambia', 'GM', 'GMB', 1, '$'),
+					array(73, 'Georgia', 'GE', 'GEO', 1, '$'),
+					array(74, 'Ghana', 'GH', 'GHA', 1, '$'),
+					array(75, 'Gibraltar', 'GI', 'GIB', 1, '$'),
+					array(76, 'Greece', 'GR', 'GRC', 2, '&euro;'),
+					array(77, 'Grenada', 'GD', 'GRD', 1, '$'),
+					array(78, 'Greenland', 'GL', 'GRL', 1, '$'),
+					array(79, 'Guadeloupe', 'GP', 'GLP', 1, '$'),
+					array(80, 'Guam', 'GU', 'GUM', 1, '$'),
+					array(81, 'Guatemala', 'GT', 'GTM', 1, '$'),
+					array(82, 'Guinea', 'GN', 'GIN', 1, '$'),
+					array(83, 'Equatorial Guinea', 'GQ', 'GNQ', 1, '$'),
+					array(84, 'Guinea-Bissau', 'GW', 'GNB', 1, '$'),
+					array(85, 'Guyana', 'GY', 'GUY', 1, '$'),
+					array(86, 'Haiti', 'HT', 'HTI', 1, '$'),
+					array(88, 'Honduras', 'HN', 'HND', 1, '$'),
+					array(89, 'Hong Kong', 'HK', 'HKG', 1, 'HK$'),
+					array(90, 'Hungary', 'HU', 'HUN', 1, 'Ft'),
+					array(91, 'India', 'IN', 'IND', 1, '&#x20b9;'),
+					array(205, 'British Indian Ocean Territory', 'IO', 'IOT', 1, '$'),
+					array(92, 'Indonesia', 'ID', 'IDN', 1, '$'),
+					array(93, 'Iraq', 'IQ', 'IRQ', 1, '$'),
+					array(94, 'Iran', 'IR', 'IRN', 1, '$'),
+					array(95, 'Ireland', 'IE', 'IRL', 2, '&euro;'),
+					array(97, 'Iceland', 'IS', 'ISL', 1, '$'),
+					array(110, 'Israel', 'IL', 'ISR', 1, '&#8362;'),
+					array(49, 'Ivory Coast ', 'CI', 'CIV', 1, '$'),
+					array(112, 'Jamaica', 'JM', 'JAM', 1, '$'),
+					array(113, 'Japan', 'JP', 'JPN', 1, '&yen;'),
+					array(114, 'Jordan', 'JO', 'JOR', 1, '$'),
+					array(115, 'Kazakhstan', 'KZ', 'KAZ', 1, '$'),
+					array(116, 'Kenya', 'KE', 'KEN', 1, '$'),
+					array(117, 'Kirguistan', 'KG', 'KGZ', 1, '$'),
+					array(118, 'Kiribati', 'KI', 'KIR', 1, '$'),
+					array(48, 'South Korea', 'KR', 'KOR', 1, '$'),
+					array(228, 'Kosovo', 'XK', 'XKV', 2, '&euro;'), // there is no official ISO code for Kosovo yet (http://geonames.wordpress.com/2010/03/08/xk-country-code-for-kosovo/) so using a temporary country code and a modified 3 character code for ISO code -- this should be updated if/when Kosovo gets its own ISO code
+					array(119, 'Kuwait', 'KW', 'KWT', 1, '$'),
+					array(120, 'Laos', 'LA', 'LAO', 1, '$'),
+					array(121, 'Latvia', 'LV', 'LVA', 2, '$'),
+					array(122, 'Lesotho', 'LS', 'LSO', 1, '$'),
+					array(123, 'Lebanon', 'LB', 'LBN', 1, '$'),
+					array(124, 'Liberia', 'LR', 'LBR', 1, '$'),
+					array(125, 'Libya', 'LY', 'LBY', 1, '$'),
+					array(126, 'Liechtenstein', 'LI', 'LIE', 1, '$'),
+					array(127, 'Lithuania', 'LT', 'LTU', 2, '$'),
+					array(128, 'Luxemburg', 'LU', 'LUX', 2, '&euro;'),
+					array(129, 'Macao', 'MO', 'MAC', 1, '$'),
+					array(130, 'Macedonia', 'MK', 'MKD', 1, '$'),
+					array(131, 'Madagascar', 'MG', 'MDG', 1, '$'),
+					array(132, 'Malaysia', 'MY', 'MYS', 1, 'RM'),
+					array(133, 'Malawi', 'MW', 'MWI', 1, '$'),
+					array(134, 'Maldivas', 'MV', 'MDV', 1, '$'),
+					array(135, 'Mali', 'ML', 'MLI', 1, '$'),
+					array(136, 'Malta', 'MT', 'MLT', 2, '&euro;'),
+					array(101, 'Northern Marianas', 'MP', 'MNP', 1, '$'),
+					array(137, 'Marruecos', 'MA', 'MAR', 1, '$'),
+					array(104, 'Marshall islands', 'MH', 'MHL', 1, '$'),
+					array(138, 'Martinica', 'MQ', 'MTQ', 1, '$'),
+					array(139, 'Mauricio', 'MU', 'MUS', 1, '$'),
+					array(140, 'Mauritania', 'MR', 'MRT', 1, '$'),
+					array(141, 'Mayote', 'YT', 'MYT', 2, '&euro;'),
+					array(142, 'Mexico', 'MX', 'MEX', 1, 'Mex$'),
+					array(143, 'Micronesia', 'FM', 'FSM', 1, '$'),
+					array(144, 'Moldova', 'MD', 'MDA', 1, '$'),
+					array(145, 'Monaco', 'MC', 'MCO', 2, '&euro;'),
+					array(146, 'Mongolia', 'MN', 'MNG', 1, '$'),
+					array(147, 'Montserrat', 'MS', 'MSR', 1, '$'),
+					array(227, 'Montenegro', 'ME', 'MNE', 2, '&euro;'),
+					array(148, 'Mozambique', 'MZ', 'MOZ', 1, '$'),
+					array(149, 'Myanmar', 'MM', 'MMR', 1, '$'),
+					array(150, 'Namibia', 'NA', 'NAM', 1, '$'),
+					array(151, 'Nauru', 'NR', 'NRU', 1, '$'),
+					array(152, 'Nepal', 'NP', 'NPL', 1, '$'),
+					array(9, 'Netherlands Antilles', 'AN', 'ANT', 1, '$'),
+					array(153, 'Nicaragua', 'NI', 'NIC', 1, '$'),
+					array(154, 'Niger', 'NE', 'NER', 1, '$'),
+					array(155, 'Nigeria', 'NG', 'NGA', 1, '$'),
+					array(156, 'Niue', 'NU', 'NIU', 1, '$'),
+					array(157, 'Norway', 'NO', 'NOR', 1, 'kr'),
+					array(158, 'New Caledonia', 'NC', 'NCL', 1, '$'),
+					array(159, 'New Zealand', 'NZ', 'NZL', 1, 'NZ$'),
+					array(160, 'Oman', 'OM', 'OMN', 1, '$'),
+					array(161, 'Pakistan', 'PK', 'PAK', 1, '$'),
+					array(162, 'Palau', 'PW', 'PLW', 1, '$'),
+					array(163, 'Panama', 'PA', 'PAN', 1, '$'),
+					array(164, 'Papua New Guinea', 'PG', 'PNG', 1, '$'),
+					array(165, 'Paraguay', 'PY', 'PRY', 1, '$'),
+					array(166, 'Peru', 'PE', 'PER', 1, '$'),
+					array(68, 'Philippines', 'PH', 'PHL', 1, '&#x20b1;'),
+					array(167, 'Poland', 'PL', 'POL', 1, 'z&#x0142;'),
+					array(168, 'Portugal', 'PT', 'PRT', 2, '&euro;'),
+					array(169, 'Puerto Rico', 'PR', 'PRI', 1, '$'),
+					array(170, 'Qatar', 'QA', 'QAT', 1, '$'),
+					array(176, 'Rowanda', 'RW', 'RWA', 1, '$'),
+					array(177, 'Romania', 'RO', 'ROM', 2, '$'),
+					array(178, 'Russia', 'RU', 'RUS', 1, '$'),
+					array(229, 'Saint Pierre and Miquelon', 'PM', 'SPM', 2, '&euro;'),
+					array(180, 'Samoa', 'WS', 'WSM', 1, '$'),
+					array(181, 'American Samoa', 'AS', 'ASM', 1, '$'),
+					array(183, 'San Marino', 'SM', 'SMR', 2, '&euro;'),
+					array(184, 'San Vincente y las Granadinas', 'VC', 'VCT', 1, '$'),
+					array(185, 'Santa Helena', 'SH', 'SHN', 1, '$'),
+					array(186, 'Santa Lucia', 'LC', 'LCA', 1, '$'),
+					array(188, 'Senegal', 'SN', 'SEN', 1, '$'),
+					array(189, 'Seychelles', 'SC', 'SYC', 1, '$'),
+					array(190, 'Sierra Leona', 'SL', 'SLE', 1, '$'),
+					array(191, 'Singapore', 'SG', 'SGP', 1, 'S$'),
+					array(192, 'Syria', 'SY', 'SYR', 1, '$'),
+					array(193, 'Somalia', 'SO', 'SOM', 1, '$'),
+					array(194, 'Sri Lanka', 'LK', 'LKA', 1, '$'),
+					array(195, 'South Africa', 'ZA', 'ZAF', 1, 'R'),
+					array(196, 'Sudan', 'SD', 'SDN', 1, '$'),
+					array(199, 'Suriname', 'SR', 'SUR', 1, '$'),
+					array(200, 'Swaziland', 'SZ', 'SWZ', 1, '$'),
+					array(201, 'Thailand', 'TH', 'THA', 1, '&#xe3f;'),
+					array(202, 'Taiwan', 'TW', 'TWN', 1, 'NT$'),
+					array(203, 'Tanzania', 'TZ', 'TZA', 1, '$'),
+					array(204, 'Tajikistan', 'TJ', 'TJK', 1, '$'),
+					array(206, 'Timor Oriental', 'TP', 'TMP', 1, '$'),
+					array(207, 'Togo', 'TG', 'TGO', 1, '$'),
+					array(208, 'Tokelau', 'TK', 'TKL', 1, '$'),
+					array(209, 'Tonga', 'TO', 'TON', 1, '$'),
+					array(210, 'Trinidad and Tobago', 'TT', 'TTO', 1, '$'),
+					array(211, 'Tunisia', 'TN', 'TUN', 1, '$'),
+					array(212, 'Turkmenistan', 'TM', 'TKM', 1, '$'),
+					array(213, 'Turkey', 'TR', 'TUR', 1, 'TL'),
+					array(214, 'Tuvalu', 'TV', 'TUV', 1, '$'),
+					array(215, 'Ukraine', 'UA', 'UKR', 1, '$'),
+					array(216, 'Uganda', 'UG', 'UGA', 1, '$'),
+					array(59, 'United Arab Emirates', 'AE', 'ARE', 1, '$'),
+					array(217, 'Uruguay', 'UY', 'URY', 1, '$'),
+					array(218, 'Uzbekistan', 'UZ', 'UZB', 1, '$'),
+					array(219, 'Vanuatu', 'VU', 'VUT', 1, '$'),
+					array(220, 'Vatican City', 'VA', 'VAT', 2, '&euro;'),
+					array(221, 'Venezuela', 'VE', 'VEN', 1, '$'),
+					array(222, 'Vietnam', 'VN', 'VNM', 1, '$'),
+					array(108, 'Virgin Islands', 'VI', 'VIR', 1, '$'),
+					array(223, 'Yemen', 'YE', 'YEM', 1, '$'),
+					array(224, 'Yugoslavia', 'YU', 'YUG', 1, '$'),
+					array(225, 'Zambia', 'ZM', 'ZMB', 1, '$'),
+					array(226, 'Zimbabwe', 'ZW', 'ZWE', 1, '$'));
 	}
 }
 
@@ -1693,7 +1675,7 @@ function getCountryZoneId($country_id) {
 	return 0;
 }
 
-function getCountryBelongsZone($country_id, $zone_id=1 /* USA by default */) {
+function getCountryBelongsZone($country_id, $zone_id = 1 /* USA by default */) {
 	//2 is for european union
 	$countries = getCountriesArray();
 	for ($t = 0; $t < sizeof($countries); $t++)
@@ -1703,7 +1685,7 @@ function getCountryBelongsZone($country_id, $zone_id=1 /* USA by default */) {
 	return false;
 }
 
-function getCountryName($id, $lang="en") {
+function getCountryName($id, $lang = "en") {
 	$countries = getCountriesArray($lang);
 	for ($t = 0; $t < sizeof($countries); $t++)
 		if ($id == $countries[$t][0])
@@ -1711,7 +1693,7 @@ function getCountryName($id, $lang="en") {
 	return __('No country selected', 'event_espresso');
 }
 
-function getCountryFullData($id, $lang="en") {
+function getCountryFullData($id, $lang = "en") {
 	$countries = getCountriesArray($lang);
 	for ($t = 0; $t < sizeof($countries); $t++)
 		if ($id == $countries[$t][0])
@@ -1741,23 +1723,20 @@ function printCountriesSelector($name, $selected) {
 	echo "</select>";
 }
 
-
 /**
- *		@ print_r an array
- *		@ access public
- *		@ return void
+ * 		@ print_r an array
+ * 		@ access public
+ * 		@ return void
  */
- function printr( $var, $var_name = 'ARRAY' ) {
+function printr($var, $var_name = 'ARRAY') {
 
 	echo '<pre style="display:block; width:100%; height:50%; overflow:scroll; border:2px solid light-blue;">';
-	echo '<h3>'.$var_name.'</h3>';
+	echo '<h3>' . $var_name . '</h3>';
 	echo print_r($var);
 	echo '</pre>';
-
 }
 
 //Creates an admin toolbar
-
 
 /**
  * Retrieve event meta data for an event. (note works similar to get_post_meta() core WordPress function)
@@ -1765,29 +1744,29 @@ function printCountriesSelector($name, $selected) {
  * @param string $key The meta key to retrieve
  * @param bool $single Whether to return a single value.
  * @param mixed Will be an array if $single is false. Will be value of meta data field if $single is true.
-*/
+ */
 function ee_get_event_meta($event_id, $key, $single = false) {
-	if ( !$event_id = absint($event_id) )
+	if (!$event_id = absint($event_id))
 		return false;
 
 	$ee_meta_cache = wp_cache_get($event_id, 'ee_meta');
 
-	if ( !$ee_meta_cache ) {
-		$ee_meta_cache = update_ee_meta_cache( array($event_id) );
+	if (!$ee_meta_cache) {
+		$ee_meta_cache = update_ee_meta_cache(array($event_id));
 		$ee_meta_cache = $ee_meta_cache[$event_id];
 	}
 
-	if ( !$key )
+	if (!$key)
 		return $meta_cache;
 
-	if ( isset($ee_meta_cache[$key]) ) {
-		if ( $single )
-			return maybe_unserialize( $ee_meta_cache[$key][0] );
+	if (isset($ee_meta_cache[$key])) {
+		if ($single)
+			return maybe_unserialize($ee_meta_cache[$key][0]);
 		else
 			return array_map('maybe_unserialize', $meta_cache[$key]);
 	}
 
-	if ( $single )
+	if ($single)
 		return '';
 	else
 		return array();
@@ -1802,14 +1781,14 @@ function ee_get_event_meta($event_id, $key, $single = false) {
  * @param bool $unique OPtional, default is false. Whether the specified key shoudl be unique for the event. If true, and the event already has a value for the specified key, no change will be made.
  * @return bool. The event meta ID on successful update, false on failure.
  */
-function ee_add_event_meta( $event_id, $key, $value, $unique = false ) {
+function ee_add_event_meta($event_id, $key, $value, $unique = false) {
 
-	if ( !$event_id = absint($event_id) )
+	if (!$event_id = absint($event_id))
 		return false;
 
 	global $wpdb;
 
-	$table = $wpdb->prefix.'events_meta';
+	$table = $wpdb->prefix . 'events_meta';
 	$column = 'event_id';
 
 	// expected_slashed ($meta_key)
@@ -1817,23 +1796,22 @@ function ee_add_event_meta( $event_id, $key, $value, $unique = false ) {
 	$meta_value = stripslashes_deep($value);
 
 
-	if ( $unique && $wpdb->get_var( $wpdb->prepare(
-		"SELECT COUNT(*) FROM $table WHERE meta_key = %s AND $column = %d",
-		$meta_key, $event_id ) ) )
+	if ($unique && $wpdb->get_var($wpdb->prepare(
+													"SELECT COUNT(*) FROM $table WHERE meta_key = %s AND $column = %d", $meta_key, $event_id)))
 		return false;
 
 	$_meta_value = $meta_value;
-	$meta_value = maybe_serialize( $meta_value );
+	$meta_value = maybe_serialize($meta_value);
 	$date = current_time('mysql');
 
-	$result = $wpdb->insert( $table, array(
-		$column => $object_id,
-		'meta_key' => $meta_key,
-		'meta_value' => $meta_value,
-		'date_added' => $date
-	) );
+	$result = $wpdb->insert($table, array(
+			$column => $object_id,
+			'meta_key' => $meta_key,
+			'meta_value' => $meta_value,
+			'date_added' => $date
+					));
 
-	if ( ! $result )
+	if (!$result)
 		return false;
 
 	$mid = (int) $wpdb->insert_id;
@@ -1854,15 +1832,15 @@ function ee_add_event_meta( $event_id, $key, $value, $unique = false ) {
  * @return bool True on successful update, false on failure
  */
 function ee_update_event_meta($event_id, $key, $value, $prev_value = '') {
-	if ( !$key )
+	if (!$key)
 		return false;
 
-	if ( !$event_id = absint($object_id) )
+	if (!$event_id = absint($object_id))
 		return false;
 
 	global $wpdb;
 
-	$table = $wpdb->prefix.'events_meta';
+	$table = $wpdb->prefix . 'events_meta';
 	$column = 'event_id';
 	$id_column = 'emeta_id';
 
@@ -1871,30 +1849,30 @@ function ee_update_event_meta($event_id, $key, $value, $prev_value = '') {
 	$passed_value = $value;
 	$meta_value = stripslashes_deep($value);
 
-	if ( ! $meta_id = $wpdb->get_var( $wpdb->prepare( "SELECT $id_column FROM $table WHERE meta_key = %s AND $column = %d", $meta_key, $event_id ) ) )
+	if (!$meta_id = $wpdb->get_var($wpdb->prepare("SELECT $id_column FROM $table WHERE meta_key = %s AND $column = %d", $meta_key, $event_id)))
 		return ee_add_event_meta($event_id, $meta_key, $passed_value);
 
 	// Compare existing value to new value if no prev value given and the key exists only once.
-	if ( empty($prev_value) ) {
+	if (empty($prev_value)) {
 		$old_value = ee_get_event_meta($event_id, $meta_key);
-		if ( count($old_value) == 1 ) {
-			if ( $old_value[0] === $meta_value )
+		if (count($old_value) == 1) {
+			if ($old_value[0] === $meta_value)
 				return false;
 		}
 	}
 
 	$_meta_value = $meta_value;
-	$meta_value = maybe_serialize( $meta_value );
+	$meta_value = maybe_serialize($meta_value);
 
-	$data  = compact( 'meta_value' );
-	$where = array( $column => $event_id, 'meta_key' => $meta_key );
+	$data = compact('meta_value');
+	$where = array($column => $event_id, 'meta_key' => $meta_key);
 
-	if ( !empty( $prev_value ) ) {
+	if (!empty($prev_value)) {
 		$prev_value = maybe_serialize($prev_value);
 		$where['meta_value'] = $prev_value;
 	}
 
-	$wpdb->update( $table, $data, $where );
+	$wpdb->update($table, $data, $where);
 
 	wp_cache_delete($event_id, 'ee_meta');
 
@@ -1911,49 +1889,49 @@ function ee_update_event_meta($event_id, $key, $value, $prev_value = '') {
  * @param bool $delete_all Optional, default is false. If true, delete matching metadata entries for all events, ignoring the specified event_id. Otherwise, only delete matching metadata entries for the specified event_id.
  * @return bool True on successful delete, false on failure
  */
-function ee_delete_event_meta($event_id, $key, $value='', $delete_all = false ) {
-	if ( !$meta_key )
+function ee_delete_event_meta($event_id, $key, $value = '', $delete_all = false) {
+	if (!$meta_key)
 		return false;
 
-	if ( (!$event_id = absint($event_id)) && !$delete_all )
+	if ((!$event_id = absint($event_id)) && !$delete_all)
 		return false;
 
 	global $wpdb;
-	$table = $wpdb->prefix.'events_meta';
+	$table = $wpdb->prefix . 'events_meta';
 	$type_column = 'event_id';
-	$id_column =  'emeta_id';
+	$id_column = 'emeta_id';
 
 	// expected_slashed ($key)
 	$meta_key = stripslashes($key);
 	$meta_value = stripslashes_deep($value);
 
 	$_meta_value = $meta_value;
-	$meta_value = maybe_serialize( $meta_value );
+	$meta_value = maybe_serialize($meta_value);
 
-	$query = $wpdb->prepare( "SELECT $id_column FROM $table WHERE meta_key = %s", $meta_key );
+	$query = $wpdb->prepare("SELECT $id_column FROM $table WHERE meta_key = %s", $meta_key);
 
-	if ( !$delete_all )
-		$query .= $wpdb->prepare(" AND $type_column = %d", $event_id );
+	if (!$delete_all)
+		$query .= $wpdb->prepare(" AND $type_column = %d", $event_id);
 
-	if ( $meta_value )
-		$query .= $wpdb->prepare(" AND meta_value = %s", $meta_value );
+	if ($meta_value)
+		$query .= $wpdb->prepare(" AND meta_value = %s", $meta_value);
 
-	$meta_ids = $wpdb->get_col( $query );
-	if ( !count( $meta_ids ) )
+	$meta_ids = $wpdb->get_col($query);
+	if (!count($meta_ids))
 		return false;
 
-	if ( $delete_all )
-		$object_ids = $wpdb->get_col( $wpdb->prepare( "SELECT $type_column FROM $table WHERE meta_key = %s", $meta_key ) );
+	if ($delete_all)
+		$object_ids = $wpdb->get_col($wpdb->prepare("SELECT $type_column FROM $table WHERE meta_key = %s", $meta_key));
 
-	$query = "DELETE FROM $table WHERE $id_column IN( " . implode( ',', $meta_ids ) . " )";
+	$query = "DELETE FROM $table WHERE $id_column IN( " . implode(',', $meta_ids) . " )";
 
 	$count = $wpdb->query($query);
 
-	if ( !$count )
+	if (!$count)
 		return false;
 
-	if ( $delete_all ) {
-		foreach ( (array) $object_ids as $o_id ) {
+	if ($delete_all) {
+		foreach ((array) $object_ids as $o_id) {
 			wp_cache_delete($o_id, 'ee_meta');
 		}
 	} else {
@@ -1970,34 +1948,32 @@ function ee_delete_event_meta($event_id, $key, $value='', $delete_all = false ) 
  * @param string $key meta_key for this metadata
  * @return bool true if the key is set, false if not.
  */
-function ee_event_meta_exists( $event_id, $key ) {
+function ee_event_meta_exists($event_id, $key) {
 
-	if ( ! $event_id = absint( $event_id ) )
+	if (!$event_id = absint($event_id))
 		return false;
 
 
-	$meta_cache = wp_cache_get( $event_id, 'ee_meta' );
+	$meta_cache = wp_cache_get($event_id, 'ee_meta');
 
-	if ( !$meta_cache ) {
-		$meta_cache = update_ee_meta_cache( array( $event_id ) );
+	if (!$meta_cache) {
+		$meta_cache = update_ee_meta_cache(array($event_id));
 		$meta_cache = $meta_cache[$event_id];
 	}
 
-	if ( isset( $meta_cache[ $meta_key ] ) )
+	if (isset($meta_cache[$meta_key]))
 		return true;
 
 	return false;
 }
 
-
-
 /**
  * Update the event metadata cache for event meta data
  * @param int|array $ee_meta_ids array or comma delimited list of event IDs to update cache for
  * @return mixed event meta cache data for the specified event(s), or false on failure
-*/
-function update_ee_meta_cache( $ee_meta_ids ){
-	if ( empty( $ee_meta_ids ) )
+ */
+function update_ee_meta_cache($ee_meta_ids) {
+	if (empty($ee_meta_ids))
 		return false;
 
 	$column = 'event_id';
@@ -2005,7 +1981,7 @@ function update_ee_meta_cache( $ee_meta_ids ){
 
 	global $wpdb;
 
-	if ( !is_array($ee_meta_ids) ) {
+	if (!is_array($ee_meta_ids)) {
 		$ee_meta_ids = preg_replace('|[^0-9,]|', '', $ee_meta_ids);
 		$ee_meta_ids = explode(',', $ee_meta_ids);
 	}
@@ -2015,31 +1991,31 @@ function update_ee_meta_cache( $ee_meta_ids ){
 	$cache_key = 'ee_meta';
 	$ids = array();
 	$cache = array();
-	foreach ( $ee_meta_ids as $id ) {
-		$cached_object = wp_cache_get( $id, $cache_key );
-		if ( false === $cached_object )
+	foreach ($ee_meta_ids as $id) {
+		$cached_object = wp_cache_get($id, $cache_key);
+		if (false === $cached_object)
 			$ids[] = $id;
 		else
 			$cache[$id] = $cached_object;
 	}
 
-	if ( empty( $ids ) )
+	if (empty($ids))
 		return $cache;
 
 	// Get meta info
 	$id_list = join(',', $ids);
-	$meta_list = $wpdb->get_results( $wpdb->prepare("SELECT $column, meta_key, meta_value, date_added FROM $table WHERE $column IN ($id_list)"), ARRAY_A );
+	$meta_list = $wpdb->get_results($wpdb->prepare("SELECT $column, meta_key, meta_value, date_added FROM $table WHERE $column IN ($id_list)"), ARRAY_A);
 
-	if ( !empty($meta_list) ) {
-		foreach ( $meta_list as $metarow) {
+	if (!empty($meta_list)) {
+		foreach ($meta_list as $metarow) {
 			$mpid = intval($metarow[$column]);
 			$mkey = $metarow['meta_key'];
 			$mval = $metarow['meta_value'];
 
 			// Force subkeys to be array type:
-			if ( !isset($cache[$mpid]) || !is_array($cache[$mpid]) )
+			if (!isset($cache[$mpid]) || !is_array($cache[$mpid]))
 				$cache[$mpid] = array();
-			if ( !isset($cache[$mpid][$mkey]) || !is_array($cache[$mpid][$mkey]) )
+			if (!isset($cache[$mpid][$mkey]) || !is_array($cache[$mpid][$mkey]))
 				$cache[$mpid][$mkey] = array();
 
 			// Add a value to the current pid/key:
@@ -2047,12 +2023,11 @@ function update_ee_meta_cache( $ee_meta_ids ){
 		}
 	}
 
-	foreach ( $ids as $id ) {
-		if ( ! isset($cache[$id]) )
+	foreach ($ids as $id) {
+		if (!isset($cache[$id]))
 			$cache[$id] = array();
-		wp_cache_add( $id, $cache[$id], $cache_key );
+		wp_cache_add($id, $cache[$id], $cache_key);
 	}
 
 	return $cache;
-
 }

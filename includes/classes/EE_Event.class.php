@@ -53,13 +53,18 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Event { //extends EE_Event_Object
 
 	public $id;
+	public $code;
 	public $name;
 	public $slug;
 	public $description;
-	public $registration_start_timestamp;
-	public $registration_end_timestamp;
+	public $is_display_desc;
+	public $is_display_reg_form;
+	public $identifier;
 	public $start_timestamp;
 	public $end_timestamp;
+	public $registration_start_timestamp;
+	public $registration_end_timestamp;
+	public $visible_on;
 	public $venue_id;
 	public $virtual_phone;
 	public $virtual_url;
@@ -72,8 +77,6 @@ class EE_Event { //extends EE_Event_Object
 	public $additional_attendee_reg_info;
 	public $is_active;
 	public $status_id;
-	public $is_display_desc;
-	public $is_display_reg_form;
 	public $default_payment_status;
 	public $alternate_registration_url;
 	public $alternate_email_address;
@@ -85,7 +88,6 @@ class EE_Event { //extends EE_Event_Object
 	public $is_use_image_in_event_lists;
 	public $is_use_image_in_registration;
 	public $type_id;
-	public $code;
 	public $parent;
 	public $event_link;
 

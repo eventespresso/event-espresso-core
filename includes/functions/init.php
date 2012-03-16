@@ -48,8 +48,7 @@ function espresso_admin_init() {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/event_management.php');
 			}
 			if (isset($_REQUEST['action'])) {
-				if ($_REQUEST['action'] == 'edit') {
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
+				if ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'add_new_event') {
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_functions.php");
 				}

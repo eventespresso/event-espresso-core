@@ -46,6 +46,7 @@ function add_file_loads_for_event_management_screen() {
 		update_event();
 	}
 
+	$load_event_list = true;
 	if (isset($_REQUEST['action'])) {
 		switch ($_REQUEST['action']) {
 			case 'copy_event':
@@ -70,15 +71,19 @@ function add_file_loads_for_event_management_screen() {
 				break;
 			case 'csv_import':
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/csv_import.php");
+				$load_event_list = false;
 				break;
 			case 'edit':
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
+				$load_event_list = false;
 				break;
 			case 'add_new_event':
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/add_new_event.php");
+				$load_event_list = false;
 				break;
 		}
-	} else {
+	}
+	if ($load_event_list == true){
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_list.php");
 	}
 }

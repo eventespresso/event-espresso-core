@@ -69,7 +69,6 @@ function event_espresso_edit_list() {
 	if (espresso_total_events() > 0) {
 		$sql = apply_filters('filter_hook_espresso_event_list_sql', '');
 //Debug
-//echo $sql;
 		?>
 		<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 			<table id="table" class="widefat event-list" width="100%">
@@ -81,7 +80,6 @@ function event_espresso_edit_list() {
 				<tbody>
 					<?php
 					$events = $wpdb->get_results($sql);
-
 					foreach ($events as $event) {
 						do_action('action_hook_espresso_event_list_entry', $event);
 					}
@@ -178,7 +176,7 @@ function espresso_event_list_sql($sql) {
 		$records_to_show = '';
 	global $org_options;
 	$sql .= "(SELECT e.id event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, e.registration_start, ";
-	$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, e.event_meta ";
+	$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, e.event_meta, e.event_status, e.registration_end, e.registration_endT ";
 
 //Get the venue information
 	if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager']) {
@@ -325,6 +323,12 @@ function espresso_event_list_entry($event) {
 	$wp_user = isset($event->wp_user) ? $event->wp_user : '';
 
 	$event_meta = unserialize($event->event_meta);
+	$event_meta['is_active'] = $event->is_active;
+	$event_meta['event_status'] = $event->event_status;
+	$event_meta['registration_start'] =$event->registration_start;
+	$event_meta['registration_startT'] =$event->registration_startT;
+	$event_meta['registration_end'] =$event->registration_end;
+	$event_meta['registration_endT'] =$event->registration_endT;
 //print_r( $event_meta );
 
 	$location = (!empty($event_address) ? $event_address : '') . (!empty($event_address2) ? '<br />' . $event_address2 : '') . (!empty($event_city) ? '<br />' . $event_city : '') . (!empty($event_state) ? ', ' . $event_state : '') . (!empty($event_zip) ? '<br />' . $event_zip : '') . (!empty($event_country) ? '<br />' . $event_country : '');

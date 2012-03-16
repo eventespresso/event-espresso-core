@@ -123,7 +123,6 @@ function espresso_event_editor_event_options_meta_box($event) {
 
 function espresso_event_editor_additional_attendees_question_groups_meta_box($event) {
 	$add_attendee_question_groups = $event->event_meta['add_attendee_question_groups'];
-	$event_id = $event->id;
 	?>
 	<div class="inside">
 		<p><strong>
@@ -350,7 +349,7 @@ function espresso_event_editor_event_post_metabox($event) {
 					<th class="middle">
 
 						<?php
-						if (isset($event->post_id)) {
+						if (!empty($event->post_id)) {
 							$post_data = get_post($event->post_id);
 							$tags = get_the_tags($event->post_id);
 							if ($tags) {

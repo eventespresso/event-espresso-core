@@ -3,651 +3,107 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
 function add_new_event() {
-	global $wpdb, $org_options, $espresso_premium;
+	global $wpdb, $org_options, $espresso_premium, $current_user;
+	get_currentuserinfo();
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	do_action('action_hook_espresso_admin_notices');
+	$event = new stdClass();
+	$event->id = 0;
+	$event->event_name = '';
+	$event->event_desc = '';
+	$event->phone = '';
+	$event->externalURL = '';
+	$event->early_disc = '';
+	$event->early_disc_date = '';
+	$event->early_disc_percentage = '';
+	$event->event_identifier = '';
+	$event->start_date = '';
+	$event->end_date = '';
+	$event->start_time = '';
+	$event->end_time = '';
+	$event->registration_start = '';
+	$event->registration_start = '';
+	$event->status = array('display' => 'OPEN');
+	$event->address = '';
+	$event->address2 = '';
+	$event->city = '';
+	$event->state = '';
+	$event->zip = '';
+	$event->country = '';
+	$event->virtual_url = '';
+	$event->virtual_phone = '';
+	$event->payment_email_id = 0;
+	$event->confirmation_email_id = 1;
+	$event->submitted = '';
+	$event->google_map_link = espresso_google_map_link(array('address' => $event->address, 'city' => $event->city, 'state' => $event->state, 'zip' => $event->zip, 'country' => $event->country));
+	$event->question_groups = array();
+	$event->event_meta = array('additional_attendee_reg_info' => 1, 'default_payment_status' => '', 'add_attendee_question_groups' => array('1'), 'originally_submitted_by' => $current_user->ID);
+	$event->wp_user = $current_user->ID;
+		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
+	$sql2 = apply_filters('filter_hook_espresso_event_editor_question_groups_sql', " WHERE wp_user = '0' OR wp_user = '1' ", $event->id);
+	$sql .= $sql2 . " GROUP BY qg.id ORDER BY qg.group_order";
+	$sql = apply_filters('filter_hook_espresso_question_group_sql', $sql);
+	//Debug:
+	//echo $sql;
+	$event->q_groups = $wpdb->get_results($sql);
+	$event->num_rows = $wpdb->num_rows;
+	$event->reg_limit = 999;
+	$event->allow_multiple = false;
+	$event->additional_limit = 0;
+	$event->is_active = true;
+	$event->event_status = 'A';
+	$event->display_desc = true;
+	$event->display_reg_form = true;
+	$event->alt_email = '';
+	$event->require_pre_approval = false;
+	$event->member_only = false;
+	$event->ticket_id = 0;
+	$event->certificate_id = 0;
+	$event->post_id = '';
+	$event->slug = '';
+	$event->recurrence_id = 0;
+	$event = apply_filters('filter_hook_espresso_new_event_template', $event);
+
+	espresso_display_add_event($event);
+	do_action('action_hook_espresso_event_editor_footer');
+}
+
+function espresso_display_add_event($event) {
+	$uri = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '&action=add_new_event'));
 	?>
 
 	<!--New event display-->
-
-	<div id="side-info-column" class="inner-sidebar event-espresso_page_events">
-		<div id="side-sortables" class="meta-box-sortables ui-sortable">
-			<div id="submitdiv" class="postbox">
-				<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
+	<div class="wrap columns-2">
+		<div id="icon-options-event" class="icon32"> </div>
+		<h2>
+			<?php _e('New Event', 'event_espresso'); ?>
+		</h2>
+		<form name="form" method="post" action="<?php echo $uri; ?>">
+			<div id="poststuff" class="metabox-holder has-right-sidebar">
+				<div id="side-info-column" class="inner-sidebar">
+					<?php do_meta_boxes('toplevel_page_events', 'side', $event); ?>
 				</div>
-				<h3 class="hndle"> <span>
-						<?php _e('New Event', 'event_espresso'); ?>
-					</span> </h3>
-				<div class="inside">
-
-					<div class="submitbox" id="submitpost"><!-- /minor-publishing -->
-						<?php
-						ob_start();
-						?>
-						<div id="major-publishing-actions" class="clearfix">
-							<div id="delete-action"> <a class="submitdelete deletion" href="admin.php?page=events" onclick="return confirm('<?php _e('Are you sure you want to cancel ?', 'event_espresso'); ?>')">
-									<?php _e('Cancel', 'event_espresso'); ?>
-								</a> </div>
-							<div id="publishing-action">
-								<?php wp_nonce_field('espresso_form_check', 'ee_add_new_event'); ?>
-								<input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit New Event', 'event_espresso'); ?>" id="add_new_event" />
-							</div>
-							<!-- /publishing-action -->
-						</div>
-						<?php
-						$buffer = ob_get_contents();
-						ob_end_clean();
-						echo apply_filters('filter_hook_espresso_add_new_event_submit_box', $buffer);
-						?>
-						<!-- /major-publishing-actions -->
+				<div id="post-body">
+					<div id="post-body-content">
+						<?php do_meta_boxes('toplevel_page_events', 'normal', $event); ?>
+						<?php do_meta_boxes('toplevel_page_events', 'advanced', $event); ?>
+						<input type="hidden" name="action" value="add" />
+						<input type="hidden" name="event_status" value="A" />
 					</div>
-					<!-- /submitpost -->
 				</div>
-				<!-- /inside -->
 			</div>
-			<!-- /submitdiv -->
-
-			<?php
-			$values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
-
-			$advanced_options = '';
-			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/advanced_settings.php')) {
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/advanced_settings.php");
-			} else {
-				//Display Lite version options
-				$status = array(array('id' => 'A', 'text' => __('Active', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
-				$advanced_options = '<p><strong>' . __('Advanced Options:', 'event_espresso') . '</strong></p>'
-								. '<p>' . __('Is this an active event? ', 'event_espresso') . __(select_input('is_active', $values, $is_active)) . '</p>'
-								. '<p>' . __('Display  description? ', 'event_espresso') . select_input('display_desc', $values, $display_desc) . '</p>'
-								. '<p>' . __('Display  registration form? ', 'event_espresso') . select_input('display_reg_form', $values, $display_reg_form) . '</p>';
-			}//Display Lite version options - End
-
-			$reg_limit = isset($reg_limit) ? $reg_limit : '';
-			$additional_limit = isset($additional_limit) ? $additional_limit : '';
-			postbox('event-status', 'Event Options', '<p class="inputundersmall"><label for="reg-limit">' . __('Attendee Limit: ', 'event_espresso') . '</label> <input id="reg-limit" name="reg_limit" size="10" type="text" value="' . $reg_limit . '"><br />' .
-							'<span>(' . __('leave blank for unlimited', 'event_espresso') . ')</span></p>' .
-							'<p class="clearfix" style="clear: both;"><label for="group-reg">' . __('Allow group registrations? ', 'event_espresso') . '</label> ' . select_input('allow_multiple', $values, 'N', 'id="group-reg"') .
-							'<p class="inputundersmall"><label for="max-registrants">' . __('Max Group Registrants: ', 'event_espresso') . '</label> <input id="max-registrants" type="text" name="additional_limit" value="' . $additional_limit . '" size="4">' .
-							$advanced_options
-			);
-
-			echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups);
-			echo '<!-- /event-questions -->';
-			?>
-			<div  id="event-categories" class="postbox closed">
-				<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-				</div>
-				<h3 class="hndle"> <span>
-						<?php _e('Event Category', 'event_espresso'); ?>
-					</span> </h3>
-				<div class="inside"> <?php echo event_espresso_get_categories(); ?> </div>
-			</div>
-			<!-- /event-category -->
-
-			<?php
-			if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
-			}
-
-			if (get_option('events_groupons_active') == 'true' && $espresso_premium == true) {
-				?>
-				<div id="groupon-options" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Groupon Options', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<p><?php echo event_espresso_add_new_event_groupon($use_groupon_code); ?></p>
-					</div>
-				</div>
-				<!-- /groupon-options -->
-			<?php
-			}
-
-			//Featured image section
-			if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true) {
-				espresso_featured_image_event_admin();
-			}
-
-			/*
-			 * Added for seating chart addon
-			 */
-			if (defined('ESPRESSO_SEATING_CHART')) {
-				?>
-				<div style="display: block;" id="seating_chart-options" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-					</div>
-					<h3 class="hndle"><span>
-							<?php _e('Seating chart', 'event_espresso'); ?>
-						</span></h3>
-					<div class="inside">
-						<p>
-							<select name="seating_chart_id" id="seating_chart_id" style="float:none; width:200px;" class="chzn-select">
-								<option value="0" >
-									<?php _e('None', 'event_espresso'); ?>
-								</option>
-								<?php
-								$seating_charts = $wpdb->get_results("select * from " . EVENTS_SEATING_CHART_TABLE . " order by name");
-								foreach ($seating_charts as $seating_chart) {
-									?>
-									<option value="<?php echo $seating_chart->id; ?>"><?php echo $seating_chart->name; ?></option>
-									<?php
-								}
-								?>
-							</select>
-						</p>
-					</div>
-				</div>
-				<?php
-			}
-			/*
-			 * End
-			 */
-
-			###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
-			if (isset($org_options['use_attendee_pre_approval']) && $org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
-				?>
-				<div id="attendee-pre-approval-options" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Attendee pre-approval required?', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<p class="pre-approve">
-							<?php
-							$pre_approval_values = array(array('id' => '1', 'text' => __('Yes', 'event_espresso')), array('id' => '0', 'text' => __('No', 'event_espresso')));
-							echo select_input("require_pre_approval", $pre_approval_values, "0");
-							?>
-						</p>
-					</div>
-				</div>
-				<?php
-			}
-			########## END #################################
-
-
-			if (function_exists('espresso_ticket_dd') && $espresso_premium == true) {
-				?>
-				<div  id="ticket-options" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Custom Tickets', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<p><?php echo espresso_ticket_dd(); ?></p>
-					</div>
-				</div>
-				<!-- /ticket-options -->
-				<?php
-			}
-
-			if (function_exists('espresso_certificate_dd') && $espresso_premium == true) {
-				?>
-				<div  id="certificate-options" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Custom Certificates', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<p><?php echo espresso_certificate_dd(); ?></p>
-					</div>
-				</div>
-				<!-- /certificate-options -->
-				<?php
-			}
-
-
-			if (get_option('events_members_active') == 'true' && $espresso_premium == true) {
-				?>
-				<div id="member-options" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Member Options', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<p><?php echo event_espresso_member_only(); ?></p>
-					</div>
-				</div>
-				<!-- /event-category -->
-				<?php
-			}
-
-			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
-				MailChimpView::event_list_selection();
-			}
-
-			if (function_exists('espresso_personnel_cb') && isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
-				?>
-				<div id="event-speakers" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Event Staff / Speakers', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside"> <?php echo espresso_personnel_cb($event_id); ?> </div>
-				</div>
-			<?php } ?>
-		</div>
-		<!-- /side-sortables -->
+		</form>
 	</div>
-	<!-- /side-info-column -->
 
-	<!-- Left Column-->
-	<div id="post-body">
-		<div id="post-body-content">
-			<div id="titlediv"> <strong>
-					<?php _e('Event Title', 'event_espresso'); ?>
-				</strong>
-				<div id="titlewrap">
-					<label class="screen-reader-text" for="title">
-						<?php _e('Event Title', 'event_espresso'); ?>
-					</label>
-					<input type="text" name="event" size="30" tabindex="1" value="<?php echo isset($event_name) ? $event_name : ''; ?>" id="title" autocomplete="off" />
-				</div>
-
-				<!-- /titlewrap -->
-				<div class="inside">
-					<div id="edit-slug">
-						<p><strong><?php _e('Permalink:', 'event_espresso'); ?></strong> <?php echo get_permalink($org_options['event_page_id']) ?><input size="30" type="text" tabindex="2" name="slug" id="slug" /></p>
-
-					</div>
-				</div>
-				<!-- /edit-slug-box -->
-			</div>
-			<!-- /titlediv -->
-			<div id="descriptiondivrich" class="postarea"> <strong>
-					<?php _e('Event Description', 'event_espresso'); ?>
-				</strong>
-				<?php
-				if (function_exists('wp_editor')) {
-					$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
-					wp_editor("", "event_desc", $args);
-				} else {
-					/*
-					  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
-					  param: string $content Textarea content.
-					  param: string $id Optional, default is 'content'. HTML ID attribute value.
-					  param: string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
-					  param: bool $media_buttons Optional, default is true. Whether to display media buttons.
-					  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
-					 */
-					//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-					//the_editor('', $id = 'event_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);
-					the_editor('', $id = 'event_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);
-				}
-				?>
-				<table id="post-status-info" cellspacing="0">
-					<tbody>
-						<tr>
-							<td id="wp-word-count"></td>
-							<td class="autosave-info"><span id="autosave">&nbsp;</span></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<!-- /postdivrich -->
-			<div id="normal-sortables" class="meta-box-sortables ui-sortable">
-				<div  id="event-date-time" class="postbox">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Event Date/Times', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<table width="100%" border="0" cellpadding="5">
-							<tr valign="top">
-								<td class="a"><fieldset id="add-reg-dates">
-										<legend>
-											<?php _e('Registration Dates', 'event_espresso'); ?>
-											<?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?> </legend>
-										<p>
-											<label for="registration_start"><?php echo __('Registration Start', 'event_espresso') ?> </label>
-											<input type="text" size="10" id="registration_start" class="datepicker" name="registration_start" value="" />
-										</p>
-										<p>
-											<label for="registration_end"> <?php echo __('Registration End', 'event_espresso') ?></label>
-											<input type="text" size="10" id="registration_end" class="datepicker" name="registration_end" value="" />
-										</p>
-									</fieldset>
-									<fieldset id="add-event-dates">
-										<legend>
-											<?php _e('Event Dates', 'event_espresso'); ?>
-											<?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?> </legend>
-										<p>
-											<label for="start_date">
-												<?php _e('Event Start Date', 'event_espresso') ?>
-											</label>
-											<input type="text" size="10" id="start_date" class="datepicker" name="start_date" value="" />
-										</p>
-										<p>
-											<label for="end_date">
-												<?php _e('Event End Date', 'event_espresso') ?>
-											</label>
-											<input type="text" size="10" id="end_date" class="datepicker" name="end_date" value="" />
-										</p>
-									</fieldset>
-									<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] != 'Y') && $espresso_premium == true) { ?>
-										<p><span class="run-in">
-												<?php _e('Current Time', 'event_espresso'); ?>
-											</span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <?php echo apply_filters('filter_hook_espresso_help', 'current_time_info'); ?> <a class="change-date-time" href="options-general.php" target="_blank">
-												<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
-											</a></p>
-									<?php } ?>
-									<?php if (isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y' && $espresso_premium == true) { ?>
-										<fieldset id="event-timezone">
-											<p>
-												<label>
-													<?php _e('Event Timezone', 'event_espresso') ?>
-												</label>
-												<?php echo eventespresso_ddtimezone($event_id) ?></p>
-										</fieldset>
-										<?php
-									}
-
-									if ($espresso_premium == true) {
-										echo get_option('event_espresso_re_active') == 1 ? '' : '<p class="recurring-available"><a class="inform" href="http://eventespresso.com/?p=3319" target="_blank" title="Visit eventespresso.com for full details">' . __('Recurring Event Manager Now Available!', 'event_espresso') . '</a></p>';
-									}
-									?></td>
-								<?php // ADDED TIME REGISTRATION LIMITS  ?>
-								<td class="b"><fieldset id="add-register-times">
-										<legend>
-											<?php _e('Registration Times', 'event_espresso'); ?>
-											<?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?> </legend>
-										<?php echo event_espresso_timereg_editor(); ?>
-									</fieldset>
-									<fieldset id="add-event-times">
-										<legend>
-											<?php _e('Event Times', 'event_espresso'); ?>
-											<?php echo apply_filters('filter_hook_espresso_help', 'event_times_info'); ?> </legend>
-										<?php echo event_espresso_time_editor(); ?>
-									</fieldset></td>
-							</tr>
-						</table>
-					</div>
-				</div>
-				<?php
-				/**
-				 * Load the recurring events form if the add-on has been installed and activated.
-				 */
-				if (get_option('event_espresso_re_active') == 1 && $espresso_premium == true) {
-					require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_view_functions.php");
-					event_espresso_re_form($events);
-				}
-				?>
-				<div id="event-pricing" class="postbox">
-					<?php (get_option('events_members_active') == 'true') ? $members_active = 'class="members-active"' : $members_active = ''; ?>
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Event Pricing', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<table <?php echo $members_active; ?> width="100%" border="0" cellpadding="5">
-							<tr valign="top">
-								<td id="standard-pricing" class="a"><?php event_espresso_multi_price_update(0); //Standard pricing  ?></td>
-								<?php
-								//If the members addon is installed, define member only event settings
-								if (get_option('events_members_active') == 'true' && $espresso_premium == true) {
-									?>
-									<td id="member-pricing" class="b"><?php echo event_espresso_member_only_pricing(); //Show the the member only pricing options.   ?></td>
-									<?php
-								}
-								?>
-							</tr>
-						</table>
-					</div>
-				</div>
-				<h2>
-					<?php _e('Advanced Options', 'event_espresso'); ?>
-				</h2>
-				<div id="event-location" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Venue Details', 'event_espresso'); ?>
-						</span> </h3>
-					<div class="inside">
-						<table width="100%" border="0" cellpadding="5">
-							<tr>
-
-								<?php
-								if (function_exists('espresso_venue_dd') && isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
-									$ven_type = 'class="use-ven-manager"';
-									?>
-									<td <?php echo $ven_type ?>><fieldset id="venue-manager">
-											<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
-											<?php if (!espresso_venue_dd()) : ?>
-												<p class="info"><b>
-														<?php _e('You have not created any venues yet.', 'event_espresso'); ?>
-													</b></p>
-												<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
-											<?php else: ?>
-												<?php echo espresso_venue_dd($venue_id) ?>
-											<?php endif; ?>
-										</fieldset></td>
-									<?php
-								} else {
-									$ven_type = 'class="manual-venue"';
-									?>
-									<td <?php echo $ven_type ?>><fieldset id="phys-location">
-											<legend>
-												<?php _e('Physical Location', 'event_espresso'); ?>
-											</legend>
-											<p>
-												<label for="phys-addr">
-													<?php _e('Address:', 'event_espresso'); ?>
-												</label>
-												<input id="phys-addr" size="20" tabindex="101"  type="text"  value="" name="address" />
-											</p>
-											<p>
-												<label for="phys-addr-2">
-													<?php _e('Address 2:', 'event_espresso'); ?>
-												</label>
-												<input id="phys-addr-2" size="20" tabindex="102"  type="text"  value="" name="address2" />
-											</p>
-											<p>
-												<label for="phys-city">
-													<?php _e('City:', 'event_espresso'); ?>
-												</label>
-												<input id="phys-city" size="20" tabindex="103"  type="text"  value="" name="city" />
-											</p>
-											<p>
-												<label for="phys-state">
-													<?php _e('State:', 'event_espresso'); ?>
-												</label>
-												<input id="phys-state" size="20" tabindex="104"  type="text"  value="" name="state" />
-											</p>
-											<p>
-												<label for="zip-postal">
-													<?php _e('Zip/Postal Code:', 'event_espresso'); ?>
-												</label>
-												<input size="20" id="zip-postal" tabindex="105"  type="text"  value="" name="zip" />
-											</p>
-											<p>
-												<label for="phys-country">
-													<?php _e('Country:', 'event_espresso'); ?>
-												</label>
-												<input id="phys-country" size="20" tabindex="106"  type="text"  value="" name="country" />
-											</p>
-										</fieldset></td>
-									<td <?php echo $ven_type; ?>>
-
-										<fieldset id="venue-info">
-
-											<legend>
-												<?php _e('Venue Information', 'event_espresso'); ?>
-											</legend>
-											<p>
-												<label for="ven-title">
-													<?php _e('Title:', 'event_espresso'); ?>
-												</label>
-												<input id="ven-title" size="20" tabindex="106"  type="text"  value="<?php echo isset($venue_title) ? $venue_title : '' ?>" name="venue_title" />
-											</p>
-											<p>
-												<label for="ven-website">
-													<?php _e('Website:', 'event_espresso'); ?>
-												</label>
-												<input id="ven-website" size="20" tabindex="107"  type="text"  value="<?php echo isset($venue_url) ? $venue_url : '' ?>" name="venue_url" />
-											</p>
-											<p>
-												<label for="ven-phone">
-													<?php _e('Phone:', 'event_espresso'); ?>
-												</label>
-												<input id="ven-phone"  size="20" tabindex="108"  type="text"  value="<?php echo isset($venue_phone) ? $venue_phone : '' ?>" name="venue_phone" />
-											</p>
-											<p>
-												<label for="ven-image">
-													<?php _e('Image:', 'event_espresso'); ?>
-												</label>
-												<input id="ven-image" size="20" tabindex="110"  type="text"  value="<?php echo isset($venue_image) ? $venue_image : '' ?>" name="venue_image" />
-											</p>
-									</td>
-
-								<?php } ?>
-								<td <?php echo $ven_type ?>><fieldset id="virt-location">
-										<legend>
-											<?php _e('Virtual Location', 'event_espresso'); ?>
-										</legend>
-										<p>
-											<label for="virt-phone">
-												<?php _e('Phone:', 'event_espresso'); ?>
-											</label>
-											<input id="virt-phone" size="20"  type="text" tabindex="107" value="" name="phone" />
-										</p>
-										<p>
-											<label for="url-event">
-												<?php _e('URL of Event:', 'event_espresso'); ?>
-											</label>
-											<textarea id="url-event" cols="30" rows="4" tabindex="108"  name="virtual_url"></textarea>
-										</p>
-										<p>
-											<label for="call-in-num">
-												<?php _e('Call in Number:', 'event_espresso'); ?>
-											</label>
-											<input id="call-in-num" size="20" tabindex="109"  type="text"  value="" name="virtual_phone" />
-									</fieldset></td>
-							</tr>
-
-						</table>
-						<p>
-							<label for="enable-for-gmap">
-								<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
-							</label>
-							<?php echo select_input('enable_for_gmap', $values, 'N', 'id="enable-for-gmap"') ?> </p>
-					</div>
-				</div>
-
-				<!-- /event-location-->
-				<?php if ($espresso_premium == true) { ?>
-					<div  id="event-meta" class="postbox closed">
-						<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br>
-						</div>
-						<h3 class="hndle"> <span>
-								<?php _e('Event Meta', 'event_espresso'); ?>
-							</span> </h3>
-						<div class="inside">
-							<?php event_espresso_meta_edit(); ?>
-						</div>
-					</div>
-				<?php } ?>
-				<!-- /event-meta-->
-				<div id="confirmation-email" class="postbox closed">
-					<div class="handlediv" title="<?php _e('Click to toggle', 'event_espresso'); ?>"><br />
-					</div>
-					<h3 class="hndle"> <span>
-							<?php _e('Email Confirmation:', 'event_espresso') ?>
-						</span> </h3>
-					<div class="inside">
-						<table class="form-table">
-							<tbody>
-								<tr>
-									<td class="custom_emails"><fieldset id="email-manager">
-											<legend><?php echo __('Email Information', 'event_espresso') ?></legend>
-											<p class="info">Choose a payment confirmation email:</p>
-											<?php echo espresso_email_dd('payment'); ?>
-											<p class="info">Choose a registration confirmation email:</p>
-											<?php echo espresso_email_dd('confirmation'); ?>
-										</fieldset></td>
-									<td>
-										<p><a href="admin.php?page=event_emails"><?php echo __('Add emails to the Email Manager', 'event_espresso') ?></a></p>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<!-- /confirmation-email-->
-				<?php
-				if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/new_event_post.php')) {
-					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/new_event_post.php");
-				}
-				?>
-			</div>
-			<!-- /normal-sortables-->
-		</div>
-		<!-- /post-body-content -->
-	</div>
-	<!-- /post-body -->
-	<input type="hidden" name="action" value="add" />
-	<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false); ?>
-	<?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false); ?>
-	<script type="text/javascript" charset="utf-8">
-		//<![CDATA[
-		jQuery(document).ready(function() {
-
-			postboxes.add_postbox_toggles('events');
-
-			jQuery(".datepicker" ).datepicker({
-				changeMonth: true,
-				changeYear: true,
-				dateFormat: "yy-mm-dd",
-				showButtonPanel: true
-			});
-			jQuery("#start_date").change(function(){
-				jQuery("#end_date").val(jQuery(this).val());
-			});
-
-			var header_clicked = false;
-			jQuery('#upload_image_button').click(function() {
-				formfield = jQuery('#upload_image').attr('name');
-				tb_show('', 'media-upload.php?type=image&amp;TB_iframe=1');
-				header_clicked = true;
-				return false;
-			});
-	<?php if (function_exists('espresso_featured_image_event_admin') && $espresso_premium == true) { ?>
-					window.original_send_to_editor = window.send_to_editor;
-
-					window.send_to_editor = function(html) {
-						if(header_clicked) {
-							imgurl = jQuery('img',html).attr('src');
-							jQuery('#' + formfield).val(imgurl);
-							jQuery('#featured-image').append("<p id='image-display'><img class='show-selected-img' src='"+imgurl+"' alt='' /></p>");
-							header_clicked = false;
-							tb_remove();
-							jQuery("#featured-image").append("<a id='remove-image' href='#' title='Remove this image' onclick='return false;'>Remove Image</a>");
-							jQuery('#remove-image').click(function(){
-								//alert('delete this image');
-								jQuery('#' + formfield).val('');
-								jQuery("#image-display").empty();
-								jQuery('#remove-image').remove();
-							});
-						} else {
-							window.original_send_to_editor(html);
-						}
-					}
-		<?php
-	}
-	?>
-
-			});
-
-			//]]>
-	</script>
 	<?php
 }
 
+function espresso_new_event_publishing_action() {
+	?>
+	<div id="publishing-action">
+		<?php wp_nonce_field('espresso_form_check', 'ee_add_new_event'); ?>
+		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit New Event', 'event_espresso'); ?>" id="add_new_event" />
+	</div>
+	<?php
+}
+
+add_action('action_hook_espresso_event_editor_publishing_action', 'espresso_new_event_publishing_action');
