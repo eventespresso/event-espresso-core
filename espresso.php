@@ -74,7 +74,7 @@ add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 add_filter('query_vars', 'espresso_add_query_vars');
 
 if (is_admin()) {
-	register_activation_hook(dirname(__FILE__) . '/includes/functions/wp_hooks.php', 'espresso_plugin_activation');
+	register_activation_hook(__FILE__, 'espresso_plugin_activation');
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
 	add_action('init', 'espresso_admin_init', 25);

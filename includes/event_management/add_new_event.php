@@ -21,7 +21,7 @@ function add_new_event() {
 	$event->start_time = '';
 	$event->end_time = '';
 	$event->registration_start = '';
-	$event->registration_start = '';
+	$event->registration_end = '';
 	$event->status = array('display' => 'OPEN');
 	$event->address = '';
 	$event->address2 = '';
@@ -34,11 +34,20 @@ function add_new_event() {
 	$event->payment_email_id = 0;
 	$event->confirmation_email_id = 1;
 	$event->submitted = '';
-	$event->google_map_link = espresso_google_map_link(array('address' => $event->address, 'city' => $event->city, 'state' => $event->state, 'zip' => $event->zip, 'country' => $event->country));
+	$event->google_map_link = espresso_google_map_link(array(
+			'address' => $event->address,
+			'city' => $event->city,
+			'state' => $event->state,
+			'zip' => $event->zip,
+			'country' => $event->country));
 	$event->question_groups = array();
-	$event->event_meta = array('additional_attendee_reg_info' => 1, 'default_payment_status' => '', 'add_attendee_question_groups' => array('1'), 'originally_submitted_by' => $current_user->ID);
+	$event->event_meta = array(
+			'additional_attendee_reg_info' => 1,
+			'default_payment_status' => '',
+			'add_attendee_question_groups' => array('1'),
+			'originally_submitted_by' => $current_user->ID);
 	$event->wp_user = $current_user->ID;
-		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
+	$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " qg JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON qg.id = qgr.group_id ";
 	$sql2 = apply_filters('filter_hook_espresso_event_editor_question_groups_sql', " WHERE wp_user = '0' OR wp_user = '1' ", $event->id);
 	$sql .= $sql2 . " GROUP BY qg.id ORDER BY qg.group_order";
 	$sql = apply_filters('filter_hook_espresso_question_group_sql', $sql);
@@ -61,6 +70,10 @@ function add_new_event() {
 	$event->post_id = '';
 	$event->slug = '';
 	$event->recurrence_id = 0;
+	$event->venue_title = '';
+	$event->venue_url = '';
+	$event->venue_phone = '';
+	$event->venue_image = '';
 	$event = apply_filters('filter_hook_espresso_new_event_template', $event);
 
 	espresso_display_add_event($event);

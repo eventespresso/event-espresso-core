@@ -209,7 +209,7 @@ if (!function_exists('add_event_espresso_menus')) {
 
 // ---------------------------------------
 		// Management GROUP
-		if ((function_exists('event_espresso_email_config_mnu') || $org_options['use_personnel_manager'] == 'Y' || $org_options['use_venue_manager'] == 'Y') && $espresso_premium == true) {
+		if ((function_exists('event_espresso_email_config_mnu') || $org_options['use_personnel_manager'] || $org_options['use_venue_manager']) && $espresso_premium) {
 			add_submenu_page('events', __('Event Espresso - Management', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Management', 'event_espresso') . '</span>', apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']), 'event_emails', 'event_espresso_email_config_mnu');
 
 			//Email Manager

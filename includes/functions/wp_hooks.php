@@ -3,12 +3,10 @@
 function espresso_plugin_activation() {
 	// define tables and pathing
 	espresso_define_tables_and_paths();
-	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php');
 	espresso_get_user_id();
-	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/admin.php');
-	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/database_install.php');
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
 	events_data_tables_install();
-	require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/payment_gateways.php');
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 	espresso_initialize_system_questions();
 	espresso_initialize_email();
 	event_espresso_create_upload_directories();
