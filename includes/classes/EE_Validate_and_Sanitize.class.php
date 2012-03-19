@@ -197,6 +197,18 @@
 								}
 								break;			
 															
+						case 'ccmm' :				
+								if ( preg_match( '/([0-9]{2})/', $value, $matches )) {
+									$input_data['value'] = $matches[1];
+								}
+								break;
+								
+						case 'ccyy' :				
+								if ( preg_match( '/([0-9]{2})/', $value, $matches )) {
+									$input_data['value'] = $matches[1];
+								}
+								break;
+								
 						case 'ccv' :													
 								if ( preg_match( '/^[0-9]{3,4}$/', $value )) {
 									$input_data['value'] = $value;
@@ -238,19 +250,20 @@
 													
 						case 'url' :					
 								$input_data['value'] = esc_url_raw( $value );
-								break;					
+								break;
 													
 						case 'email' :					
 								$input_data['value'] = sanitize_email( $value );
 								break;		
 								
-						case 'mm-dd-yyyy' :						
-//								if ( preg_match( '/([0-9]{2})[- \/.]([0-9]{2})[- \/.]([0-9]{4})/', $value, $matches )) {
-//									if ( checkdate($matches[2], $matches[1], $matches[3])) {
-//										$input_data['value'] = $matches[1].'-'.$matches[2].'-'.$matches[3];
-//									}
-//								}						
-								if ( preg_match( '(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)[0-9]{2}', $value, $matches )) {
+						case 'phone_nmbr' :		
+								if ( preg_match( '/^(?:\(\d{3}\) ?|\d{3}[-. ]?)\d{3}[-. ]?\d{4}$/', $value, $matches )) {
+									$input_data['value'] = $matches[1];
+								}
+								break;		
+								
+							case 'mm-dd-yyyy' :												
+								if ( preg_match( '/(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)[0-9]{2}/', $value, $matches )) {
 									if ( checkdate($matches[2], $matches[1], $matches[3])) {
 										$input_data['value'] = $matches[1];
 									}
@@ -258,12 +271,22 @@
 								break;
 								
 						case 'mm/yy' :
-								if ( preg_match( '/([0-9]{2}[- \/.]?[0-9]{2})/', $value, $matches )) {
-									$mmyy = explode( '/', $matches[1] );
-									if ( checkdate( $mmyy[0], 1, $mmyy[1] )) {										
-										$input_data['value'] = $matches[1];
-									} elseif ( checkdate( $mmyy[1], 1, $mmyy[0] )) {										
-										$input_data['value'] = $matches[1];
+								//if ( preg_match( '/(0[1-9]|1[012])[- \/.]?([0-9]{2})/', $value, $matches )) {
+								if ( preg_match( '/(0[1-9]|1[012][- \/.]?[0-9]{2})/', $value, $matches )) {
+									if ( strpos( $matches[1], '/' )) {
+										$mmyy = explode( '/', $matches[1] );
+										if ( checkdate( $mmyy[0], 1, $mmyy[1] )) {										
+											$input_data['value'] = $matches[1];
+										} elseif ( checkdate( $mmyy[1], 1, $mmyy[0] )) {										
+											$input_data['value'] = $matches[1];
+										}
+									} else {
+										// split date in two and run checks
+										$mm = substr( $matches[1], 0, 2 );
+										$yy = substr( $matches[1], -2, 2 );
+										if ( checkdate( $mm, 1, $yy )) {										
+											$input_data['value'] = $matches[1];
+										}
 									}
 								}
 								break;
