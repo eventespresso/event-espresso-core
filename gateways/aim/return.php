@@ -36,7 +36,7 @@ function espresso_process_aim( $EE_Session ) {
 
 	$transaction->amount = $session_data['_cart_grand_total_amount'];
 	$transaction->card_num = $billing_info['reg-page-billing-card-nmbr']['value'];
-	$transaction->exp_date = $billing_info['reg-page-billing-card-exp-date']['value'];
+	$transaction->exp_date = $billing_info['reg-page-billing-card-exp-date-mnth']['value'].$billing_info['reg-page-billing-card-exp-date-year']['value'];
 	$transaction->card_code = $billing_info['reg-page-billing-card-ccv-code']['value'];
 	$transaction->first_name = $billing_info['reg-page-billing-fname']['value'];
 	$transaction->last_name = $billing_info['reg-page-billing-lname']['value'];

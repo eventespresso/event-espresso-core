@@ -58,10 +58,36 @@ function espresso_display_aim() {
 				<label for="reg-page-billing-card-nmbr"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
 	        	<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class;?>" type="text" name="reg-page-billing-card-nmbr"/>
 			</p>
+
+<?php /*
 			<p class="event_form_field">
 				<label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
 	        	<input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
 			</p>
+*/?>
+			<p class="event_form_field">
+				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
+				<select id="reg-page-billing-card-exp-date-mnth" class="required small-txt <?php echo $css_class;?>" name="reg-page-billing-card-exp-date-mnth">
+<?php	for ( $x = 1; $x <= 12; $x++ ) { 
+				$value = $x < 10 ? '0'.$x : $x;
+				echo '
+					<option value="'.$value.'">'.$value.'</option>';
+			} ?>				
+				</select>
+				&nbsp;/&nbsp;
+				<select id="reg-page-billing-card-exp-date-year" class="required small-txt <?php echo $css_class;?>" name="reg-page-billing-card-exp-date-year">
+<?php
+			$current_year = date( 'y' );
+			$next_decade = $current_year + 10;
+			for ( $x = $current_year; $x <= $next_decade; $x++ ) { 
+				$value = $x < 10 ? '0'.$x : $x;
+				echo '
+					<option value="'.$value.'">'.$value.'</option>';
+			} ?>				
+				</select>
+				<span class="small-text lt-grey-text"><?php _e('(mm/yy)', 'event_espresso'); ?></span>
+			</p>
+			
 			<p class="event_form_field">
 				<label for="reg-page-billing-card-ccv-code"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
 	        	<input id="reg-page-billing-card-ccv-code"  class="required small-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-ccv-code"/>
@@ -172,12 +198,36 @@ function espresso_reg_page_billing_inputs_aim() {
 								'format' => '%d' 
 						),
 						
-						'reg-page-billing-card-exp-date' => array(
+/*						'reg-page-billing-card-exp-date' => array(
 								'db-col' =>'exp-date',
 								'label' => __( 'Expiry Date', 'espresso' ),
 								'input' =>'text',
 								'type' =>'string',
 								'sanitize' => 'mm/yy',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),*/
+						
+						'reg-page-billing-card-exp-date-mnth' => array(
+								'db-col' =>'exp-date-mnth',
+								'label' => __( 'Expiry Date Month', 'espresso' ),
+								'input' =>'select',
+								'type' =>'int',
+								'sanitize' => 'ccmm',
+								'required' => TRUE,
+								'validation' => TRUE,
+								'value' => NULL,
+								'format' => '%s' 
+						),
+						
+						'reg-page-billing-card-exp-date-year' => array(
+								'db-col' =>'exp-date-year',
+								'label' => __( 'Expiry Date Year', 'espresso' ),
+								'input' =>'select',
+								'type' =>'int',
+								'sanitize' => 'ccyy',
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
