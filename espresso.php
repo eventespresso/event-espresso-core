@@ -66,6 +66,7 @@ add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
 add_action('plugins_loaded', 'espresso_get_user_id', 2);
 add_action('plugins_loaded', 'espresso_load_org_options', 3);
 add_action('plugins_loaded', 'espresso_EE_Session', 4);
+add_action('plugins_loaded', 'espresso_setup_notices', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
 add_action('init', 'espresso_export_certificate', 30);
 add_action('init', 'espresso_export_invoice', 30);

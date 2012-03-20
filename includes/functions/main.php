@@ -1054,25 +1054,6 @@ if (!function_exists("unkeyvaluepair")) {
 
 }
 
-function espresso_serialize($data) {
-
-
-	if (!is_serialized($data)) {
-		return maybe_serialize($data);
-	}
-
-	return $data;
-}
-
-function espresso_unserialize($data, $return_format = '') {
-
-
-	if (is_serialized($data)) {
-		return maybe_unserialize($data);
-	}
-
-	return $data;
-}
 
 //Checks to see if the array is multidimensional
 function is_multi($array) {
@@ -2028,3 +2009,144 @@ function update_ee_meta_cache($ee_meta_ids) {
 
 	return $cache;
 }
+
+
+
+
+
+
+	/**
+	*		compile all error or success messages into one string
+	* 
+	* 		@param		boolean		$format		whether or not to format the messages for display in the WP admin
+	*		@return 		array
+	*/	
+	function espresso_get_notices( $format = TRUE ) {
+	
+		global $espresso_notices;
+	
+		$success_messages = '';
+		$error_messages = '';
+		
+		//echo printr($espresso_notices, '$espresso_notices' );
+		
+		// check for success messages
+		//if ( isset( $espresso_notices['success'] ) && is_array( $espresso_notices['success'] ) && ! empty( $espresso_notices['success'] )) {
+		if ( $espresso_notices['success'] ) {
+			// cycle through all of them
+			foreach ( $espresso_notices['success'] as $success ) {
+				// compile them into one string of paragraphs
+				$success_messages .= $success . '<br />';
+			}
+			// remove last linebreak
+			$success_messages = substr( $success_messages, 0, ( count( $success_messages ) - 7 ));
+		}
+
+		// check for error messages
+		//if ( isset( $espresso_notices['errors'] ) && is_array( $espresso_notices['errors'] ) && ! empty( $espresso_notices['errors'] )) {
+		if ( $espresso_notices['errors'] ) {
+			// cycle through all of them
+			foreach ( $espresso_notices['errors'] as $error ) {
+				// compile them into one string of paragraphs
+				$error_messages .= $error . '<br />';
+			}
+			// remove last linebreak
+			$error_messages = substr( $error_messages, 0, ( count( $error_messages ) - 7 ));		
+		}
+		
+		if ( $format ) {
+		
+			$notices = '';
+	
+			if ( $success_messages != '' ) {
+				//showMessage( $success_messages );
+				$notices = '<div id="message" class="updated fade"><p>' . $success_messages . '</p></div>';
+			}
+			
+			if  ( $error_messages != '' ) {
+				//showMessage( $error_messages, TRUE );
+				$notices .= '<div id="message" class="error"><p>' . $error_messages . '</p></div>';
+			} 
+			
+		} else {
+			
+			$notices = array(
+											'success' => $success_messages,
+											'errors' => $error_messages
+										);
+
+		}
+
+									
+		return $notices;
+	
+	}
+
+
+
+
+
+	/**
+	*		load and display a template
+	* 
+	*		@param 		string			$path_to_file		server path to the file to be loaded, including the file name and extension
+	*		@param 		array			$template_args	an array of arguments to be extracted for use in the template
+	*		@param 		boolean		$return_string	whether to send ouput immediately to screen, or capture and return as a string
+	*		@return 		void
+	*/	
+	function espresso_display_template( $path_to_file = FALSE, $template_args, $return_string = FALSE ) {
+	
+		// you gimme nuttin - YOU GET NUTTIN !!
+		if ( ! $path_to_file ) {
+			return FALSE;
+		}
+		// if $template_args are not in an array, then make it so 
+		if ( ! is_array( $template_args )) {
+			$template_args = array( $template_args );
+		}
+		
+		extract( $template_args );
+
+		if ( $return_string ) {	
+			// becuz we want to return a string, we are going to capture the output		
+			ob_start();
+			include( $path_to_file );
+			$output = ob_get_clean();
+			return $output;
+		} else {
+			include( $path_to_file );
+		}
+
+	}	
+	
+	
+
+
+
+
+	/**
+	*		render and display a template
+	*
+	*		@access public
+	*		@return void
+	*/
+	function espresso_eval_display_template( $path_to_file = FALSE, $template_args ) {
+
+		if ( ! $path_to_file ) {
+			return FALSE;
+		}
+
+		extract($template_args);
+		$view_template = file_get_contents( $path_to_file );
+
+		// check if short tags is on cuz eval chokes if not presented the correct tag type
+		$php_short_tags_on = (bool) ini_get('short_open_tag');
+
+		if ( $php_short_tags_on ) {
+			eval( "?> $view_template <? " );
+		} else {
+			// don't forget the space after php
+			eval( "?> $view_template <?php " );
+		}
+
+	}

@@ -102,6 +102,18 @@ function espresso_EE_Session() {
 }
 
 /**
+ * 		initialize and globalize espresso messages array
+ *
+ * 		@access public
+ * 		@return void
+ */
+function espresso_setup_notices() {
+	// global error notices
+	global $espresso_notices;
+	$espresso_notices	= array( 'success' => FALSE, 'errors' => FALSE );
+}
+
+/**
  * 		initialize the espresso session
  *
  * 		@access public
