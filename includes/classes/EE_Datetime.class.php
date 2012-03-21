@@ -104,7 +104,7 @@ class EE_Datetime {
 	*	@access	private
     *	@var string	
     */
-	private $dt_frmt = 'Y-m-d';	
+	private $dt_frmt = 'F j, Y';	
 	
 	
 	
@@ -116,7 +116,7 @@ class EE_Datetime {
 	*	@access	private
     *	@var string	
     */
-	private $tm_frmt = 'H:i:s';		
+	private $tm_frmt = 'g:i a';		
 	
 	
     /**
@@ -179,23 +179,6 @@ class EE_Datetime {
 
 
 
-	/**
-	*		get the $EVT_ID for the event that this datetime belongs to
-	* 
-	* 		@access		public		
-	*		@return 	boolean	int on success, FALSE on fail
-	*/	
-	public function event_ID() {
-		if (isset($this->EVT_ID)) {
-			return $this->EVT_ID;
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
 
 	/**
 	*		Get event start date
@@ -208,7 +191,7 @@ class EE_Datetime {
 	private function _start_date() {
 		// check for existing event date AND verify that it NOT an end date
 		if ( isset( $this->DTT_timestamp ) && ( $this->DTT_start_or_end != 'E' )) {
-			return date( $dt_frmt, $this->DTT_timestamp );
+			return date( $this->dt_frmt, $this->DTT_timestamp );
 		} else {
 			return FALSE;
 		}
@@ -229,7 +212,7 @@ class EE_Datetime {
 	private function _start_time() {
 		// check for existing event time
 		if ( isset( $this->DTT_timestamp ) && ( $this->DTT_start_or_end != 'E' )) {
-			return date( $tm_frmt, $this->DTT_timestamp );
+			return date( $this->tm_frmt, $this->DTT_timestamp );
 		} else {
 			return FALSE;
 		}
@@ -252,9 +235,9 @@ class EE_Datetime {
 	
 		// if no date is set then use today
 		if ( ! $date ){
-			$event_date = date( $dt_frmt, time());
+			$event_date = date( $this->dt_frmt, time());
 		} else {
-			$event_date = date( $dt_frmt, $date );
+			$event_date = date( $this->dt_frmt, $date );
 		}
 		
 		// get existing event time
@@ -285,15 +268,15 @@ class EE_Datetime {
 	
 		// if no time is set, then use RIGHT NOW!!!!
 		if ( ! $time ){
-			$event_time = date( $tm_frmt, time());
+			$event_time = date( $this->tm_frmt, time());
 		} else {
-			$event_time = date( $tm_frmt, $time );
+			$event_time = date( $this->tm_frmt, $time );
 		}
 		
 		// get existing event date
 		if ( ! $event_date = $this->start_date() ) {
 			// or if no date is set, then use RIGHT NOW!!!!
-			$event_date = date( $dt_frmt, time());
+			$event_date = date( $this->dt_frmt, time());
 		}
 		
 		$this->DTT_timestamp = strtotime( $event_date . ' ' . $event_time );
@@ -369,10 +352,10 @@ class EE_Datetime {
 
 
 	/**
-	*		get ID
+	*		get Datetime ID
 	* 
 	* 		@access		public		
-	*		@return 	mixed		int on success, FALSE on fail
+	*		@return 		mixed		int on success, FALSE on fail
 	*/	
 	public function ID() {
 		if (isset($this->DTT_ID)) {
@@ -386,6 +369,112 @@ class EE_Datetime {
 
 
 
+	/**
+	*		get the $EVT_ID for the event that this datetime belongs to
+	* 
+	* 		@access		public		
+	*		@return 		mixed		int on success, FALSE on fail
+	*/	
+	public function event_ID() {
+		if (isset($this->EVT_ID)) {
+			return $this->EVT_ID;
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+
+	/**
+	*		show date and/or time
+	* 
+	* 		@access		private	
+	* 		@param		string		$date_or_time - whether to display a date or time or both
+	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	private function _show_datetime( $date_or_time = 'D', $dt_frmt = FALSE, $tm_format = FALSE ) {
+		
+		if ( ! isset( $this->DTT_timestamp )) {
+			return FALSE;
+		}
+		
+		if ( ! $dt_frmt ){
+			$dt_frmt = $this->dt_frmt;
+		}
+		
+		if ( ! $tm_format ){
+			$tm_format = $this->tm_frmt;
+		}
+		
+		switch ( $date_or_time ) {
+			
+			case 'D' :
+				return date( $dt_frmt, $this->DTT_timestamp );
+				break;
+			
+			case 'T' :
+				return date( $tm_format, $this->DTT_timestamp );
+				break;
+			
+			default :
+				return date( $dt_frmt . ' ' . $tm_format, $this->DTT_timestamp );
+				
+		}
+
+	}
+
+
+
+
+	/**
+	*		show date
+	* 
+	* 		@access		public	
+	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	public function show_date( $dt_frmt = FALSE ) {		
+		return $this->_show_datetime( 'D', $dt_frmt );
+	}
+
+
+
+
+
+	/**
+	*		show time
+	* 
+	* 		@access		public	
+	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	public function show_time( $tm_format = FALSE ) {
+		return $this->_show_datetime( 'T', FALSE, $tm_format );
+	}
+
+
+
+
+
+	/**
+	*		show date and time
+	* 
+	* 		@access		public	
+	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	public function show_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+		return $this->_show_datetime( '', $dt_frmt, $tm_format );
+	}
+
+
+
+		
 
 	/**
 	 *		@ override magic methods
