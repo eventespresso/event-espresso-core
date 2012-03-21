@@ -145,7 +145,6 @@ class Espresso_base {
 		global $wpdb;
 		$wpdb->show_errors();
 		$results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), $output );
-		echo $wpdb->last_query;
 		
 		return $results;
 	}

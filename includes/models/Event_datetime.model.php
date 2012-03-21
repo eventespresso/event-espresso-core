@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class Event_datetime extends Espresso_model {
+class Event_datetime extends Espresso_base {
 
   	// private instance of the Event_datetime object
 	private static $_instance = NULL;
