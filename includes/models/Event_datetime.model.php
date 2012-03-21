@@ -128,15 +128,15 @@ class Event_datetime extends Espresso_model {
 			//echo printr( $datetimes, '$datetimes' );			
 			foreach ( $datetimes as $datetime ) {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
-					$datetime->DTT_ID, 
-					$datetime->EVT_ID, 
-					$datetime->DTT_timestamp, 
-					$datetime->DTT_event_or_reg, 
-					$datetime->DTT_start_or_end, 
-					$datetime->DTT_reg_limit 
-			 	);
+							$datetime->DTT_ID, 
+							$datetime->EVT_ID, 
+							$datetime->DTT_timestamp, 
+							$datetime->DTT_event_or_reg, 
+							$datetime->DTT_start_or_end, 
+							$datetime->DTT_reg_limit 
+					 	);
 			}	
-			return $results;	
+			return $array_of_objects;	
 
 		} else {
 			return FALSE;
