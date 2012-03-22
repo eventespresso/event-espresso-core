@@ -101,18 +101,17 @@ class EEM_Transaction extends EEM_Base {
 		if ( ! $transactions ) {
 			return FALSE;
 		} 		
-		echo printr( $transactions, '$transactions' ) . __LINE__;
 
 		foreach ( $transactions as $transaction ) {
 				$array_of_objects[ $transaction->TXN_ID ] = new EE_Transaction(
-						$transaction->TXN_ID, 
-						$transaction->TXN_timestamp, 
 						$transaction->TXN_total, 
 						$transaction->STS_ID, 
 						$transaction->TXN_details, 
 						maybe_unserialize( $transaction->TXN_session_data ), 
 						$transaction->TXN_hash_salt,
-						$transaction->TXN_tax_data 
+						$transaction->TXN_tax_data,
+						$transaction->TXN_timestamp, 
+						$transaction->TXN_ID
 				 	);
 		}	
 		return $array_of_objects;	
