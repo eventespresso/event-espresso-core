@@ -138,20 +138,20 @@ class EE_Datetime {
 	* Event Datetime constructor
 	*
 	* @access 		public
-	* @param 		int 					$DTT_ID 						Event Datetime ID
 	* @param 		int 					$EVT_ID 						Event ID
 	* @param 		timestamp 		$DTT_timestamp 		Unix timestamp
 	* @param 		string 				$DTT_event_or_reg  	Whether timestamp is for the actual Event, or for the Registration, denoted by "E" or "R"
 	* @param 		string 				$DTT_start_or_end  	Whether timestamp is for the start or end of an event, denoted by "S" or "E"
 	* @param 		mixed				$DTT_reg_limit 			Registration Limit for this time period - int for starts, NULL for ends
+	* @param 		int 					$DTT_ID 						Event Datetime ID
 	*/
-	public function __construct( $DTT_ID = NULL, $EVT_ID = NULL, $DTT_timestamp = NULL, $DTT_event_or_reg = 0, $DTT_start_or_end = 0, $DTT_reg_limit = NULL ) {
-		$this->DTT_ID = $DTT_ID;
+	public function __construct( $EVT_ID = NULL, $DTT_timestamp = NULL, $DTT_event_or_reg = 0, $DTT_start_or_end = 0, $DTT_reg_limit = NULL, $DTT_ID = NULL ) {
 		$this->EVT_ID = $EVT_ID;
 		$this->DTT_timestamp = $DTT_timestamp;
 		$this->DTT_event_or_reg = $DTT_event_or_reg;
 		$this->DTT_start_or_end = $DTT_start_or_end;
 		$this->DTT_reg_limit = $DTT_reg_limit;
+		$this->DTT_ID = $DTT_ID;
 	}
 
 

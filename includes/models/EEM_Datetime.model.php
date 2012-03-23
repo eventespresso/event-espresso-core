@@ -126,12 +126,12 @@ class EEM_Datetime extends EEM_Base {
 		if ( $datetimes = $this->select_all_where ( $where, $orderby )) {
 			foreach ( $datetimes as $datetime ) {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
-							$datetime->DTT_ID, 
 							$datetime->EVT_ID, 
 							$datetime->DTT_timestamp, 
 							$datetime->DTT_event_or_reg, 
 							$datetime->DTT_start_or_end, 
-							$datetime->DTT_reg_limit 
+							$datetime->DTT_reg_limit,
+							$datetime->DTT_ID
 					 	);
 			}	
 			return $array_of_objects;	
@@ -605,102 +605,6 @@ class EEM_Datetime extends EEM_Base {
 		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $where, $operator );
 		return $results;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 *		@ create error code from filepath, function name, 
-	 *		@ and line number where exception was thrown
-	 *		@ param string $file
-	 *		@ param string $func
-	 *		@ param string $line
-	 *		@ return string
-	 */	
-	public function check_results_for_errors ( $results, $file, $func, $line ) {
-
-		if ( is_array( $results )) {
-			$results['line_no'] = $this->EEDB->_get_error_code (  $file, $func, $line );
-			return $results;
-		} else {
-			return FALSE;
-		}
-		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/** 
-	 *		create error code from filepath, function name and line number where exception was thrown
-	 *  
-	 * 		MOVE TO SOME HELPER FILE SOMEWHERE >> SHOULD NOT BE IN A MODEL ( only here for development purposes )
-	 *		@ param string $file
-	 *		@ param string $func
-	 *		@ param string $line
-	 *		@ return string
-	 */	
-	public function generate_result_messages ($action_results) {
-
-		// empty string to write parsed templates to
-		$error_update_messages = '';
-		
-		if ( $action_results !== FALSE ) {
-		
-			// empty array to hold message variables in 
-			$msg_vars = array();
-			
-			// HTML template file for error and update messages 
-			$template_path = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/error_update_message.template.php';
-			if ( ! file_exists($template_path)) {
-				return '';
-			}
-			
-			ob_start();
-
-			foreach ( $action_results as $action_result ) {
-			
-				$type = $action_result['type'];
-				$msg = __($action_result['msg'], 'event_espresso');
-				
-				if ( $action_result['line_no'] ) { 
-					$line_no =  __( 'code: ', 'event_espresso') . ' ' . $action_result['line_no'];
-				} else {
-					$line_no =  FALSE;
-				}
-				
-				if ( $action_result['rows'] ) { 
-					$rows =  __( 'rows affected: ', 'event_espresso') . ' ' . $action_result['rows'];
-				} else {
-					$rows =  FALSE;
-				}
-			
-				include($template_path);
-		
-			}
-		}
-		
-		$buffer = ob_get_contents();
-		@ob_end_clean();
-		return $buffer;
-		
-	}
-	
-
-
-
-
 
 
 
@@ -749,24 +653,6 @@ class EEM_Datetime extends EEM_Base {
 			die();
 		}
 
-
-
-
-
-	private function display_vars( $method, $vars_array ) {
-	
-		echo '<h1>Class: '.get_class($this).'</h1>';
-		echo '<h2>Method: '.$method.'</h2>';
-		echo '<h3>TABLE : ' . $this->table_name . '</h3>';
-		
-		foreach ( $vars_array as $var => $var_array ) {
-			echo '<h4> ' . $this->table_name . ' '.$var.'</h4>';
-			echo '<pre>';
-			echo print_r($var_array);
-			echo '</pre>';
-		}
-		//die();
-	}
 
 
 }
