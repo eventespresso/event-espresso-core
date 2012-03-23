@@ -154,7 +154,6 @@ class EEM_Registration extends EEM_Base {
 		} else {
 			return FALSE;
 		}		
-		
 	}
 
 
@@ -167,19 +166,13 @@ class EEM_Registration extends EEM_Base {
 	* 		@param		$REG_ID		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_registration( $REG_ID = FALSE ) {
-
-		if ( ! $REG_ID ) {
-			return FALSE;
-		}
+	public function get_registration( $where_cols_n_values = array() ) {
 		// retreive a particular registration
-		$where_cols_n_values = array( 'REG_ID' => $REG_ID );
 		if ( $registration = $this->select_row_where ( $where_cols_n_values )) {
 			return $this->_create_objects( array( $registration ));
 		} else {
 			return FALSE;
 		}
-
 	}
 
 
