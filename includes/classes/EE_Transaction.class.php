@@ -125,14 +125,14 @@ class EE_Transaction {
 	*  Transaction constructor
 	*
 	* @access 		public
-	* @param 		int 					$TXN_ID 						Transaction ID
-	* @param 		timestamp 		$TXN_timestamp 		Unix timestamp
 	* @param 		float 				$TXN_total 					Transaction Total
 	* @param 		string				$STS_ID  						Transaction Status - foreign key from status type table
 	* @param 		string 				$TXN_details  			notes regarding the transaction
 	* @param 		string				$TXN_session_data 	dump off the entire session object 
 	* @param 		string				$TXN_hash_salt 			required for some payment gateways
 	* @param 		string				$TXN_tax_data		 	information regarding taxes
+	* @param 		timestamp 		$TXN_timestamp 		Unix timestamp
+	* @param 		int 					$TXN_ID 						Transaction ID
 	*/
 	public function __construct( $TXN_total=0, $STS_ID=NULL, $TXN_details=NULL, $TXN_session_data=NULL, $TXN_hash_salt=NULL, $TXN_tax_data=NULL,$TXN_timestamp=FALSE,$TXN_ID=FALSE ) {
 		$this->_TXN_ID 						= $TXN_ID;
@@ -289,7 +289,7 @@ class EE_Transaction {
 	*/	
 	private function _save_to_db( $where_cols_n_values = FALSE ) {
 		
-		 $TXN_MDL = EEM_Transaction::instance();
+		 $MODEL = EEM_Transaction::instance();
 		
 		$set_column_values = array(		
 				'TXN_timestamp' 		=> $this->_TXN_timestamp,
@@ -302,9 +302,9 @@ class EE_Transaction {
 		);
 
 		if ( $where_cols_n_values ){
-			$results = $TXN_MDL->update ( $set_column_values, $where_cols_n_values );
+			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
 		} else {
-			$results = $TXN_MDL->insert ( $set_column_values );
+			$results = $MODEL->insert ( $set_column_values );
 		}
 		
 		return $results;
@@ -358,22 +358,25 @@ class EE_Transaction {
 /*
 	EXAMPLE USAGE
 
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/Espresso_base.model.php' );
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/Event_datetime.model.php' );
-	$EVT_TXN = Event_datetime::instance();
-//	$EVT_TXN->convert_existing_event_datetimes();	
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+	$TXN = EEM_Transaction::instance();	
 
-	$start_dates = $EVT_TXN->get_event_start_dates( 8 );
-	$end_dates = $EVT_TXN->get_event_end_dates( 8 );
-	$reg_start_dates = $EVT_TXN->get_reg_start_dates( 8 );
-	$reg_end_dates = $EVT_TXN->get_reg_end_dates( 8 );
+	$txn_1 = new EE_Transaction( '80.00', 'TPN', 'some txn details', array('session-data'), md5('some hash salt'),'some tax details' );
+	$results = $txn_1->insert();
 	
-	foreach( $start_dates as $start_date ) {
-		echo $start_date->show_date() . '<br />';
-		echo $start_date->show_time() . '<br />';
-		echo $start_date->show_date_and_time() . '<br />';
-		echo $start_date->show_date_and_time( 'l \t\h\e jS \of F, Y,', '\a\t h:i:s A' ) . '<br />';
-	}
+	$txn_2 = new EE_Transaction( '400.00', 'TPN', 'some more txn details', array('different session data'), md5('some other hash salt'),'some other tax details' );
+	$results = $txn_2->insert();
+	
+	$transactions = $TXN->get_all_transactions();
+	echo printr( $transactions, 'get_all_transactions' );
+
+	$transaction = $TXN->get_transaction( 1 );
+	echo printr( $transaction, 'get_transaction( 1 )' );
+
+	$transaction = $TXN->get_transaction( 2 );
+	echo printr( $transaction, 'get_transaction( 2 )' );
+	
 */
 
 

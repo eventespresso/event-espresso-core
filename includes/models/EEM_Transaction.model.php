@@ -23,7 +23,7 @@
  */
 class EEM_Transaction extends EEM_Base {
 
-  	// private instance of the Transactione object
+  	// private instance of the Transaction object
 	private static $_instance = NULL;
 		
 	protected $table_name = '';
@@ -155,36 +155,14 @@ class EEM_Transaction extends EEM_Base {
 			return FALSE;
 		}
 		// retreive a particular transaction
-		$where = array( 'TXN_ID' => $TXN_ID );
-		if ( $transaction = $this->select_row_where ( $where )) {
+		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
+		if ( $transaction = $this->select_row_where ( $where_cols_n_values )) {
 			return $this->_create_objects( array( $transaction ));
 		} else {
 			return FALSE;
 		}
 
 	}
-
-
-
-
-
-	/**
-	*		get event start date from db
-	* 
-	* 		@access		public		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_event_start_dates( $EVT_ID = FALSE ) {
-	
-		if ( ! $EVT_ID ) {
-			return FALSE;
-		}		
-		return $this->_get_event_datetimes( $EVT_ID, 'E', 'S' );			
-	}
-
-
-
-
 
 
 
@@ -221,8 +199,8 @@ class EEM_Transaction extends EEM_Base {
 	 *		@param string								$output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
 	 *		@return mixed (object, array)
 	 */	
-	public function select_all_where ( $where=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
-		$results = $this->EEDB->_select_all_where ( $this->table_name, $this->table_data_types, $where, $orderby, $sort, $operator, $output );
+	public function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
+		$results = $this->EEDB->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $output );
 		return $results;
 	}
 
@@ -240,8 +218,8 @@ class EEM_Transaction extends EEM_Base {
 	 *		@param string 								$output - WP output types - OBJECT,  ARRAY_A, ARRAY_N 
 	 *		@return mixed (object, array)
 	 */	
-	public function select_row_where ( $where=FALSE, $operator = '=', $output = 'OBJECT' ) {
-		$results = $this->EEDB->_select_row_where ( $this->table_name, $this->table_data_types, $where, $operator, $output );
+	public function select_row_where ( $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT' ) {
+		$results = $this->EEDB->_select_row_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $operator, $output );
 		return $results;
 	}
 
@@ -259,8 +237,8 @@ class EEM_Transaction extends EEM_Base {
 	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = < 
 	 *		@return mixed (object, array)
 	 */	
-	public function select_value_where ( $select=FALSE, $where=FALSE, $operator = '=' ) {
-		$results = $this->EEDB->_select_value_where ( $this->table_name, $this->table_data_types, $select, $where, $operator );
+	public function select_value_where ( $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
+		$results = $this->EEDB->_select_value_where ( $this->table_name, $this->table_data_types, $select, $where_cols_n_values, $operator );
 		return $results;
 	}
 
@@ -301,8 +279,8 @@ class EEM_Transaction extends EEM_Base {
 	 *		@param mixed (string, array) 		$operator -  operator to be used for WHERE clause  > = < 
 	 *		@return array - key => value 
 	 */	
-	public function get_key_value_array_where( $key=FALSE, $value=FALSE, $where=FALSE, $orderby=FALSE, $sort='ASC', $operator='=' ) {
-		$results = $this->EEDB->_get_key_value_array_where ( $this->table_name, $this->table_data_types, $key, $value, $where, $orderby, $sort, $operator );
+	public function get_key_value_array_where( $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby=FALSE, $sort='ASC', $operator='=' ) {
+		$results = $this->EEDB->_get_key_value_array_where ( $this->table_name, $this->table_data_types, $key, $value, $where_cols_n_values, $orderby, $sort, $operator );
 		return $results;
 	}
 
@@ -361,17 +339,17 @@ class EEM_Transaction extends EEM_Base {
 	 *		
 	 *		@access public
 	 *		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 *		@param array $where - column names and values for the SQL WHERE clause
+	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
 	 *		@return array
 	 */	
-	public function update ($set_column_values, $where) {
+	public function update ($set_column_values, $where_cols_n_values) {
 	
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
+		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where_cols_n_values ) );
 			
 		global $espresso_notices;
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $set_column_values, $where );
+		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {
@@ -403,113 +381,15 @@ class EEM_Transaction extends EEM_Base {
 	 *		@access protected
 	 *		@param string - $table_name - 
 	 *		@param array - $em_table_data_types
-	 *		@param mixed (string, array) - $where - cloumn names to be used for WHERE clause 
-	 *		@param mixed (string, array) - $where_value - values to be used for WHERE clause  
+	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
 	 *		@return mixed (object, array)
 	 */	
-	protected function eedb_delete ( $where=FALSE, $operator = '=' ) {
+	protected function eedb_delete ( $where_cols_n_values=FALSE, $operator = '=' ) {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $where, $operator );
+		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $where_cols_n_values, $operator );
 		return $results;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 *		@ create error code from filepath, function name, 
-	 *		@ and line number where exception was thrown
-	 *		@ param string $file
-	 *		@ param string $func
-	 *		@ param string $line
-	 *		@ return string
-	 */	
-	public function check_results_for_errors ( $results, $file, $func, $line ) {
-
-		if ( is_array( $results )) {
-			$results['line_no'] = $this->EEDB->_get_error_code (  $file, $func, $line );
-			return $results;
-		} else {
-			return FALSE;
-		}
-		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/** 
-	 *		create error code from filepath, function name and line number where exception was thrown
-	 *  
-	 * 		MOVE TO SOME HELPER FILE SOMEWHERE >> SHOULD NOT BE IN A MODEL ( only here for development purposes )
-	 *		@ param string $file
-	 *		@ param string $func
-	 *		@ param string $line
-	 *		@ return string
-	 */	
-	public function generate_result_messages ($action_results) {
-
-		// empty string to write parsed templates to
-		$error_update_messages = '';
-		
-		if ( $action_results !== FALSE ) {
-		
-			// empty array to hold message variables in 
-			$msg_vars = array();
-			
-			// HTML template file for error and update messages 
-			$template_path = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/error_update_message.template.php';
-			if ( ! file_exists($template_path)) {
-				return '';
-			}
-			
-			ob_start();
-
-			foreach ( $action_results as $action_result ) {
-			
-				$type = $action_result['type'];
-				$msg = __($action_result['msg'], 'event_espresso');
-				
-				if ( $action_result['line_no'] ) { 
-					$line_no =  __( 'code: ', 'event_espresso') . ' ' . $action_result['line_no'];
-				} else {
-					$line_no =  FALSE;
-				}
-				
-				if ( $action_result['rows'] ) { 
-					$rows =  __( 'rows affected: ', 'event_espresso') . ' ' . $action_result['rows'];
-				} else {
-					$rows =  FALSE;
-				}
-			
-				include($template_path);
-		
-			}
-		}
-		
-		$buffer = ob_get_contents();
-		@ob_end_clean();
-		return $buffer;
-		
-	}
-	
-
-
-
-
-
 
 
 
@@ -557,24 +437,6 @@ class EEM_Transaction extends EEM_Base {
 			die();
 		}
 
-
-
-
-
-	private function display_vars( $method, $vars_array ) {
-	
-		echo '<h1>Class: '.get_class($this).'</h1>';
-		echo '<h2>Method: '.$method.'</h2>';
-		echo '<h3>TABLE : ' . $this->table_name . '</h3>';
-		
-		foreach ( $vars_array as $var => $var_array ) {
-			echo '<h4> ' . $this->table_name . ' '.$var.'</h4>';
-			echo '<pre>';
-			echo print_r($var_array);
-			echo '</pre>';
-		}
-		//die();
-	}
 
 
 }
