@@ -485,7 +485,33 @@ class EE_Registration {
 /*
 	EXAMPLE USAGE
 
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+	$REG = EEM_Registration::instance();	
 
+	// we'll need the PHP Session ID  so let's add the EE Session
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php' );
+	$SSN = EE_Session::instance();	
+	
+	//$EVT_ID, $ATT_ID, $TXN_ID, $REG_session, $REG_code, $REG_is_primary, $REG_is_group_reg, $STS_ID, $REG_date, $PRC_ID, $REG_att_is_going, $REG_att_checked_in
+	$reg_1 = new EE_Registration( 1, 45, 32, $SSN->id(), '4e7962a15f3b72.67409710', 1, 1, 'RPN', time(), 77, 0, 0 );
+	$results = $reg_1->insert();
+	
+	$reg_2 = new EE_Registration( 1, 46, 32, $SSN->id(), '4e79639b777514.18231129', 0, 1, 'RPN', time(), 77, 0, 0 );
+	$results = $reg_2->insert();
+	
+	$transactions = $REG->get_all_registrations();
+	echo printr( $transactions, 'get all registrations' );
+
+	$where_cols_n_values = array( 'REG_is_primary' => 1 );
+	$transactions = $REG->get_all_registrations( $where_cols_n_values );
+	echo printr( $transactions, 'get primary attendee registrations' );
+
+	$registrations = $REG->get_registration( 1 );
+	echo printr( $registrations, 'get_registration( 1 )' );
+
+	$registrations = $REG->get_registration( 2 );
+	echo printr( $registrations, 'get_registration( 2 )' );
 
 
 */
