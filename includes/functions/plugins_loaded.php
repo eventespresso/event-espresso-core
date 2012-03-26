@@ -34,7 +34,9 @@ function espresso_define_tables_and_paths() {
 	define("EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE", $wpdb->prefix . "events_multi_event_registration_id_group");
 	define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
 	define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
-	define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices");
+	define("ESP_EVENT_PRICE_TABLE", $wpdb->prefix . "esp_event_price");
+	define("ESP_PRICE_TABLE", $wpdb->prefix . "esp_price");
+	define("ESP_PRICE_TYPE", $wpdb->prefix . "esp_price_type");
 	define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
 	define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
 	define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");

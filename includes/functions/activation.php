@@ -676,23 +676,35 @@ function events_data_tables_install() {
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-	$table_name = "events_price_rel";
-	$sql = "event_id int(11) DEFAULT NULL,
-				price_id int(11) DEFAULT NULL,
-				PRIMARY KEY  (event_id, price_id)";
+	$table_name = "esp_event_price";
+	$sql = "EVT_id int(11) DEFAULT NULL,
+				PRC_id int(11) DEFAULT NULL,
+				is_active TINYINT(1) NOT NULL DEFAULT '0',
+				PRIMARY KEY  (EVT_id, PRC_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-	$table_name = "events_prices";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				event_id int(11) DEFAULT NULL,
-				price_type varchar(50) DEFAULT NULL,
-				event_cost decimal(20,2) NOT NULL DEFAULT '0.00',
-				surcharge decimal(10,2) NOT NULL DEFAULT '0.00',
-				surcharge_type varchar(10) DEFAULT NULL,
-				max_qty int(7) DEFAULT '0',
-				is_member_price TINYINT(1) NOT NULL DEFAULT '0',
-				PRIMARY KEY  (id),
-			  	KEY event_id (event_id)";
+	$table_name = "esp_price";
+	$sql = "PRC_id int(11) NOT NULL AUTO_INCREMENT,
+				PRT_id int(7) DEFAULT NULL,
+				PRC_amount decimal(20,2) NOT NULL DEFAULT '0.00',
+				PRC_name varchar(45) DEFAULT NULL,
+				PRC_desc text,
+				PRC_is_active TINYINT(1) NOT NULL DEFAULT '0',
+				PRIMARY KEY  (PRC_id),
+			  	KEY PRT_id (PRT_id),
+					KEY PRC_amount (PRC_amount),
+					KEY PRC_name (PRC_name)";
+	event_espresso_run_install($table_name, $table_version, $sql);
+
+	$table_name = "esp_price_type";
+	$sql = "PRT_id int(7) NOT NULL AUTO_INCREMENT,
+				PRT_name varchar(45) DEFAULT NULL,
+				PRT_is_tax TINYINT(1) NOT NULL DEFAULT '0',
+				PRT_is_percent TINYINT(1) NOT NULL DEFAULT '0',
+				PRT_is_global TINYINT(1) NOT NULL DEFAULT '0',
+				PRT_order int(7) DEFAULT '0',
+				PRIMARY KEY  (PRT_id),
+			  	KEY PRT_name (PRT_name)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 	$table_name = "events_discount_codes";
