@@ -146,7 +146,7 @@
 	$espresso_calendar_widget .= 'titleFormat:{ month: \'MMMM\' },';
 
 					//Text that will be displayed on buttons of the header.
-	$espresso_calendar_widget .= 'buttonText: { },';
+	$espresso_calendar_widget .= 'buttonText: { prev: \'&larr;\', next: \'&rarr;\' },';
 
 					//Full names of months.
 	$espresso_calendar_widget .= 'monthNames: [' . stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']) . '],';
