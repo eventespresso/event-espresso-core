@@ -714,8 +714,16 @@ if ($espresso_calendar['espresso_use_pickers'] == 'true') {
 	add_action('wp_head', 'event_background_selection');
 }// close if use picker is Yes
 
-function espresso_calendar_do_stuff() {
+function espresso_calendar_do_stuff($show_expired) {
 	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
+
+		// grab the thumbnail size from calendar options settings
+		if (empty($espresso_calendar['calendar_thumb_size'])) {
+			$ee_img_size = 'small';
+		} else {
+			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
+		}
+
 	//Build the SQL to run
 	//Get the categories
 	if ($event_category_id != "") {
@@ -888,17 +896,6 @@ function espresso_calendar_do_stuff() {
 
 add_action('action_hook_espresso_calendar_do_stuff', 'espresso_calendar_do_stuff');
 
-function espresso_calendar_thumb_size() {
-	// grab the thumbnail size from calendar options settings
-	if (empty($espresso_calendar['calendar_thumb_size'])) {
-		$ee_img_size = 'small';
-	} else {
-		$ee_img_size = $espresso_calendar['calendar_thumb_size'];
-	}
-}
-
-add_action('action_hook_espresso_calendar_thumb_size', 'espresso_calendar_thumb_size');
-
 //Build the short code
 //[ESPRESSO_CALENDAR]
 //[ESPRESSO_CALENDAR show_expired="true"]
@@ -916,9 +913,9 @@ if (!function_exists('espresso_calendar')) {
 		$event_category_id = "{$event_category_id}";
 		$show_expired = "{$show_expired}";
 		$cal_view = "{$cal_view}";
+		//$ee_img_size = '';
 
-		do_action('action_hook_espresso_calendar_thumb_size');
-		do_action('action_hook_espresso_calendar_do_stuff');
+		do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
 
 		//Start the output of the calendar
 		ob_start();
@@ -1038,10 +1035,10 @@ if (!function_exists('espresso_calendar')) {
 							element.addClass('event-has-thumb');
 
 							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb ' + event.img_size_class + '" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
-						}
+						}<?php /*
 						//Shows spaces available
 						//element.find('.fc-event-title').after($jaer('<p class="time-display-block event-start-time">Spaces: <?php echo get_number_of_attendees_reg_limit($event->id, 'num_attendees_slash_reg_limit', 'All Seats Reserved'); ?> </p>'));
-		<?php
+						*/
 		if ($espresso_calendar['show_time'] == 'true') {
 			?>
 								element.find('.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">' + event.startTime + ' - </span><span class="event-end-time">' + event.endTime + '</span></p>'));
