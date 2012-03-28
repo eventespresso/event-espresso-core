@@ -379,7 +379,7 @@ function espresso_calendar_config_mnu() {
 													<tr>
 														<th><?php _e('Header Style', 'event_espresso'); ?>
 															<?php echo apply_filters('filter_hook_espresso_help', 'calendar_header_info') ?></th>
-														<td><textarea name="espresso_calendar_header" id="espresso_calendar_header" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_header']) ?></textarea>
+														<td><textarea name="espresso_calendar_header" id="espresso_calendar_header" cols="30" rows="5"><?php echo htmlentities(stripslashes_deep($espresso_calendar['espresso_calendar_header'])) ?></textarea>
 															<br />
 															<span class="description">
 																<?php _e('Defines the buttons and title at the top of the calendar.', 'event_espresso'); ?>
@@ -389,7 +389,7 @@ function espresso_calendar_config_mnu() {
 														<th><?php _e('Button Text', 'event_espresso'); ?>
 															<?php echo apply_filters('filter_hook_espresso_help', 'calendar_buttonText_info') ?>
 														</th>
-														<td><textarea name="espresso_calendar_buttonText" id="espresso_calendar_buttonText" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_buttonText']) ?></textarea>
+														<td><textarea name="espresso_calendar_buttonText" id="espresso_calendar_buttonText" cols="30" rows="5"><?php echo htmlentities(stripslashes_deep($espresso_calendar['espresso_calendar_buttonText'])) ?></textarea>
 															<br />
 															<span class="description">
 																<?php _e('Text that will be displayed on buttons of the header.', 'event_espresso'); ?>
@@ -398,7 +398,7 @@ function espresso_calendar_config_mnu() {
 													<tr>
 														<th><?php _e('Title Format', 'event_espresso'); ?>
 															<?php echo apply_filters('filter_hook_espresso_help', 'calendar_titleFormat_info') ?></th>
-														<td><textarea name="espresso_calendar_titleFormat" id="espresso_calendar_titleFormat" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_titleFormat']) ?></textarea>
+														<td><textarea name="espresso_calendar_titleFormat" id="espresso_calendar_titleFormat" cols="30" rows="5"><?php echo htmlentities(stripslashes_deep($espresso_calendar['espresso_calendar_titleFormat'])) ?></textarea>
 															<br />
 															<span class="description">
 																<?php _e('Determines the text that will be displayed in the header\'s title.', 'event_espresso'); ?>
@@ -408,7 +408,7 @@ function espresso_calendar_config_mnu() {
 														<th><?php _e('Column Format', 'event_espresso'); ?>
 															<?php echo apply_filters('filter_hook_espresso_help', 'calendar_columnFormat_info') ?></th>
 														</th>
-														<td><textarea name="espresso_calendar_columnFormat" id="espresso_calendar_columnFormat" cols="30" rows="5"><?php echo stripslashes_deep($espresso_calendar['espresso_calendar_columnFormat']) ?></textarea>
+														<td><textarea name="espresso_calendar_columnFormat" id="espresso_calendar_columnFormat" cols="30" rows="5"><?php echo htmlentities(stripslashes_deep($espresso_calendar['espresso_calendar_columnFormat'])) ?></textarea>
 															<br />
 															<span class="description">
 																<?php _e('Determines the text that will be displayed on the calendar\'s column headings.', 'event_espresso'); ?>
