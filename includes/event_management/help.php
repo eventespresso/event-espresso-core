@@ -110,7 +110,7 @@
 				<li><strong>
 						<?php _e('Public', 'event_espresso'); ?>
 					</strong><br />
-					<?php _e('This type if event should always appear in the event lsiting. It is a live event (not deleted, ongoing or secondary.)', 'event_espresso'); ?>
+					<?php _e('This type if event will appear in the event listings. It is a live event (not deleted, ongoing or secondary.)', 'event_espresso'); ?>
 				</li>
 				<li><strong>
 						<?php _e('Waitlist', 'event_espresso'); ?>
