@@ -31,58 +31,60 @@ function espresso_ticket_selector($event) {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		$template_args = array();
+	add_action( 'wp_footer', 'espresso_load_tckt_slctr_js' );
 
-		if (!isset($event->additional_limit) or $event->additional_limit == '') {
-			$event->additional_limit = $event->reg_limit;
-		}
+	$template_args = array();
 
-		// make it at least 1
-		$event->additional_limit = ( $event->additional_limit == 0 ) ? 1 : $event->additional_limit;
+	if (!isset($event->additional_limit) or $event->additional_limit == '') {
+		$event->additional_limit = $event->reg_limit;
+	}
 
-		// let's make the max amount of attendees somebody can select a little more reasonable
-		if ($event->additional_limit > 16) {
-			$max_atndz = 16;
-		} else {
-			$max_atndz = $event->additional_limit;
-		}
-		
+	// make it at least 1
+	$event->additional_limit = ( $event->additional_limit == 0 ) ? 1 : $event->additional_limit;
 
-		//$template_args['reg_href'] = isset( $event->reg_btn['href_url'] ) ? $event->reg_btn['href_url'] : '';
+	// let's make the max amount of attendees somebody can select a little more reasonable
+	if ($event->additional_limit > 16) {
+		$max_atndz = 16;
+	} else {
+		$max_atndz = $event->additional_limit;
+	}
+	
 
-		$template_args['event_id'] = $event->id;
-		$template_args['event_name'] = $event->event_name;
+	//$template_args['reg_href'] = isset( $event->reg_btn['href_url'] ) ? $event->reg_btn['href_url'] : '';
+
+	$template_args['event_id'] = $event->id;
+	$template_args['event_name'] = $event->event_name;
 //		$template_args['event_cost'] = $event->event_cost;
-		$template_args['require_pre_approval'] = $event->require_pre_approval;
+	$template_args['require_pre_approval'] = $event->require_pre_approval;
 
-		//$template_args['atndee_slctr_wdth'] = $atndee_slctr_wdth;
-		$template_args['max_atndz'] = $max_atndz;
+	//$template_args['atndee_slctr_wdth'] = $atndee_slctr_wdth;
+	$template_args['max_atndz'] = $max_atndz;
 //		$template_args['sbmt_btn_text'] = $event->reg_btn['text'];
 
-		//$template_args['multiple_date_options'] = count($event->prices) > 1 ? ? TRUE : FALSE;
-		$template_args['dates'] = is_array($event->recurring_events) ? $event->recurring_events : array($event->start_date);
-		$template_args['dates'] = format_date($template_args['dates']);
+	//$template_args['multiple_date_options'] = count($event->prices) > 1 ? ? TRUE : FALSE;
+	$template_args['dates'] = is_array($event->recurring_events) ? $event->recurring_events : array($event->start_date);
+	$template_args['dates'] = format_date($template_args['dates']);
 
-		$template_args['times'] = process_event_times($event->times);
-		$template_args['multiple_time_options'] = count($template_args['times']) > 1 ? TRUE : FALSE;
-		//echo printr($template_args['times']);
+	$template_args['times'] = process_event_times($event->times);
+	$template_args['multiple_time_options'] = count($template_args['times']) > 1 ? TRUE : FALSE;
+	//echo printr($template_args['times']);
 
-		$template_args['prices'] = process_event_prices($event->prices, $event->currency_symbol, 'included');
-		$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
-		//echo printr($event->prices);
-		// had problems with event desc not playing nice with serialize so....
-		//$all_meta = array_map('wp_strip_all_tags', $event->reg_btn['all_meta']);
+	$template_args['prices'] = process_event_prices($event->prices, $event->currency_symbol, 'included');
+	$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
+	//echo printr($event->prices);
+	// had problems with event desc not playing nice with serialize so....
+	//$all_meta = array_map('wp_strip_all_tags', $event->reg_btn['all_meta']);
 
-		//$template_args['meta'] = serialize( $all_meta );
-		//$template_args['meta'] = base64_encode(serialize($all_meta));
+	//$template_args['meta'] = serialize( $all_meta );
+	//$template_args['meta'] = base64_encode(serialize($all_meta));
 
 
 
-		$template_args['currency_symbol'] = $event->currency_symbol;
-		
-		$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php';
+	$template_args['currency_symbol'] = $event->currency_symbol;
+	
+	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php';
 
-		espresso_display_template($templates['ticket_selector'], $template_args);
+	espresso_display_template($templates['ticket_selector'], $template_args);
 
 }
 
@@ -247,8 +249,9 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	 * 		@access 		public
 	 * 		@return		array  or FALSE
 	 */	
-	function process_ticket_selections() {
+	function process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//echo printr($_POST);
 		// do we have an event id?
 		if (isset($_POST['tkt-slctr-event-id'])) {
@@ -298,24 +301,30 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 						//echo printr($event_to_add);
 						// then add event
 						if ( add_event_to_cart( $event_to_add )) {
-							$registration_url = add_query_arg( array( 'regevent_action'=>'register', 'step' => 1 ), espresso_get_reg_page_full_url() );					
-							wp_redirect($registration_url);
+							if ( $return ) {
+								return TRUE;
+							} else {
+								if ( ! $registration_url ) {
+									$registration_url = add_query_arg( array( 'regevent_action'=>'register', 'step' => 1 ), espresso_get_reg_page_full_url() );
+								}
+								wp_redirect($registration_url);
+							}
 						}
 					} 
 				}
 				
 				if ( ! $tckts_slctd ) {
 					echo '
-	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all">
-		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'You need to select a ticket quantity before you can proceed. Please click the back button on your browser and try again.', 'espresso' ).'</span>
+	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
+		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'espresso' ).'</span>
 	</div>
 <br/><br/>';					
 				}
 			}
 		} else {
 					echo '
-	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all">
-		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'An error occured. An event id was not provided or was not received. Please refresh the page and try again.', 'espresso' ).'</span>
+	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
+		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'espresso' ).'</span>
 	</div>
 <br/><br/>';
 		}	
@@ -578,25 +587,6 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 
 
 
-
-	/**
-	 * 		load css
-	 *
-	 * 		@access 		public
-	 * 		@return 		void
-	 */
-	function espresso_load_tckt_slctr_css() {
-		if (isset($_REQUEST['regevent_action']) && ( $_REQUEST['regevent_action'] == 'register' && ! is_admin() )) {
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-			wp_register_style('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'css/single_page_checkout.css');
-			wp_enqueue_style('single_page_checkout');
-		}
-	}
-	add_action( 'init', 'espresso_load_tckt_slctr_css' );
-
-
-
-
 	/**
 	 * 		load js
 	 *
@@ -604,21 +594,10 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	 * 		@return 		void
 	 */
 	function espresso_load_tckt_slctr_js() {
-		if (isset($_REQUEST['regevent_action']) && ( $_REQUEST['regevent_action'] == 'register' && ! is_admin() )) {
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-			wp_register_script('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/single_page_checkout.js', array('jquery'), '', TRUE);
-			wp_enqueue_script('single_page_checkout');
-			$params = array();
-			// Get current page protocol
-			$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
-			// Output admin-ajax.php URL with same protocol as current page
-			$params['ajax_url'] = admin_url('admin-ajax.php', $protocol);
-			wp_localize_script('single_page_checkout', 'espresso', $params);
-		}
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		wp_register_script('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ticket_selector.js', array('jquery'), '', TRUE);
+		wp_enqueue_script('ticket_selector');
 	}
-	add_action( 'init', 'espresso_load_tckt_slctr_js' );
-
-
 
 
 

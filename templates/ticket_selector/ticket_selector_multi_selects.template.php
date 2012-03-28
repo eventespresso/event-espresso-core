@@ -161,7 +161,7 @@
 					/>
 			</noscript>
 																					
-			<a class="event-list-reg-link-btn alt-mer-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx" style="display:none;">
+			<a class="event-list-reg-link-btn show-if-js ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx" style="display:none;">
 				<span class="ui-icon ui-icon-cart"></span>&nbsp;<?php _e( $sbmt_btn_text, 'event_espresso' ); ?>
 			</a>
 
