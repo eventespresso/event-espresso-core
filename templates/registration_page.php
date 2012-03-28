@@ -3,19 +3,18 @@
 //This is a logic file for displaying a registration form for an event on a page. This file will do all of the backend data retrieval functions.
 //There should be a copy of this file in your wp-content/uploads/espresso/ folder.
 //Note: This entire function can be overridden using the "Custom Files" addon
-if (!function_exists('register_attendees')) {
+if (!function_exists('event_registration')) {
 
-	function register_attendees( $single_event_id = NULL, $event_id_sc =0 ) {
+	function event_details_page( $single_event_id = NULL, $event_id_sc =0 ) {
 
-		if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
+/*		if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
 			attendee_edit_record();
 			return;
-		}
+		}*/
 
 		global $wpdb, $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
 
 		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
 
@@ -99,7 +98,8 @@ if (!function_exists('register_attendees')) {
 
 
 		$data->event = $wpdb->get_row($sql, OBJECT);
-		//print_r($data->event);
+//		printr($data->event, 'event' );
+//		die();
 
 		$num_rows = $wpdb->num_rows;
 
@@ -229,7 +229,7 @@ if (!function_exists('register_attendees')) {
 			$reg_limit = $data->event->reg_limit;
 			$additional_limit = $data->event->additional_limit;
 
-
+			$data->event->recurring_events = FALSE;
 
 			//If the coupon code system is intalled then use it
 			if (function_exists('event_espresso_coupon_registration_page')) {
@@ -292,18 +292,7 @@ if (!function_exists('register_attendees')) {
 
 			//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
 
-			if ($org_options['use_captcha']
-							&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
-							&& !is_user_logged_in()) {
-				?>
-				<script type="text/javascript">
-					var RecaptchaOptions = {
-						theme : '<?php echo $org_options['recaptcha_theme'] == '' ? 'red' : $org_options['recaptcha_theme']; ?>',
-						lang : '<?php echo $org_options['recaptcha_language'] == '' ? 'en' : $org_options['recaptcha_language']; ?>'
-					};
-				</script>
-				<?php
-			}
+
 			//This is the start of the registration form. This is where you can start editing your display.
 			//(Shows the regsitration form if enough spaces exist)
 			if ($num_attendees >= $reg_limit) {
@@ -330,6 +319,28 @@ if (!function_exists('register_attendees')) {
 					if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only) {
 						event_espresso_user_login();
 					} else {
+					
+						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/event_details_helper.php');
+			
+						$data->event->times = array();
+						$data->event->times = espresso_event_list_get_event_times($event_id);
+			
+						$data->event->prices = array();
+						if ($data->event_prices = espresso_event_list_get_event_prices($event_id, $data->event->early_disc, $data->event->early_disc_date, $data->event->early_disc_percentage)) {
+							$data->event->prices = espresso_event_list_process_event_prices($data->event_prices);
+						}
+			
+						$data->event->currency_symbol = $org_options['currency_symbol'];
+			
+						$data->display_available_spaces = ( $data->event->display_reg_form && $data->event->externalURL == '' ) ? TRUE : FALSE;
+						$data->available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved');
+
+						// ticket selector
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
+						add_action('action_hook_espresso_ticket_selector', 'espresso_ticket_selector', 10, 1);		
+
+						$registration_url = add_query_arg( array( 'regevent_action'=>'process_ticket_selections' ), espresso_get_reg_page_full_url() );   
+						
 						//Serve up the registration form
 						require(espresso_get_registration_display_template());
 					}

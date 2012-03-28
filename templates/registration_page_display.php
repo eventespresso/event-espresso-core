@@ -8,7 +8,7 @@
 	<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
 
 	<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
-		<form method="post" action="<?php echo espresso_get_reg_page_full_url(); ?>" id="registration_form">
+		<form method="post" action="<?php echo $registration_url; ?>" id="registration_form">
 
 			<?php /* Venue details. Un-comment first and last lines & any venue details you wish to display or use the provided shortcodes. */ ?>
 			<?php // echo '<div id="venue-details-display">'; ?>
@@ -24,23 +24,6 @@
 			<?php /* end venue details block */ ?>
 
 			<?php
-			if (isset($event_meta['display_thumb_in_regpage']) && $event_meta['display_thumb_in_regpage'] == 'Y' && !empty($event_meta['event_thumbnail_url'])) {
-				?>
-				<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a></p>
-					<?php
-				}
-
-				if ($display_desc == "Y") {//Show the description or not
-					?>
-				<p class="section-title">
-					<?php _e('Description:', 'event_espresso') ?>
-				</p>
-				<div class="event_description clearfix"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description. ?></div>
-				<?php
-			}
-
-			//End display description
-
 			switch ($is_active['status']) {
 				case 'EXPIRED': //only show the event description.
 					echo '<h3 class="expired_event">' . __('This event has passed.</h3>', 'event_espresso') . '</h3>';
@@ -88,6 +71,70 @@
 
 				default://This will display the registration form
 
+					/*
+					 * * This section shows the registration form if it is an active event * *
+					 */
+
+					if ( $display_reg_form ) {
+					
+
+						do_action( 'action_hook_espresso_ticket_selector', $data->event );
+
+						//Added for seating chart addon. Creates a field to select a seat from a popup.
+						do_action( 'action_hook_espresso_seating_chart_select', $event_id);
+
+						/* Displays the social media buttons */
+						do_action( 'action_hook_espresso_social_display_buttons', $event_id); 
+						
+/*						
+						?>
+
+						<fieldset id="event-reg-form-groups" class="ui-widget">
+							<!--<h3 class="section-heading ui-widget-header">
+							<?php _e('Registration Details', 'event_espresso'); ?>
+							</h3>-->
+							<?php
+							$css_class = 'ui-widget-content ui-corner-all';
+							//Outputs the custom form questions. This function can be overridden using the custom files addon
+							echo event_espresso_add_question_groups($question_groups, '', null, 0, array('attendee_number' => 1), $css_class);
+							?>
+						</fieldset>
+
+						<?php
+*/						
+						
+/*						//Multiple Attendees
+						if ($allow_multiple == "Y" && $number_available_spaces > 1) {
+
+							//This returns the additional attendee form fields. Can be overridden in the custom files addon.
+							echo event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, __('Number of Tickets', 'event_espresso'), true, $event_meta);
+						} else {
+							?>
+							<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
+							<?php
+						}//End allow multiple*/
+						//Coupons
+						if (function_exists('event_espresso_coupon_registration_page') && $use_coupon_code == 'Y') {
+							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
+						}//End coupons display
+						//Groupons
+						if (function_exists('event_espresso_groupon_registration_page')) {
+							echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
+						}//End groupons display
+						?>
+
+						<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
+
+						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
+							<input class="event-form-submit ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all float-right" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit Registration', 'event_espresso'); ?>">
+							<div class="clear"></div>
+						</p>
+						<?php
+					}
+					break;
+			}//End Switch statement to check the status of the event
+
+
 					/* Display the address and google map link if available */
 					if ($location != '' && (empty($org_options['template_settings']['display_address_in_regform']) || $org_options['template_settings']['display_address_in_regform'] != 'N')) {
 						?>
@@ -125,94 +172,27 @@
 				} ?>
 					</p>
 
+					<?php			
+			
+			if (isset($event_meta['display_thumb_in_regpage']) && $event_meta['display_thumb_in_regpage'] == 'Y' && !empty($event_meta['event_thumbnail_url'])) {
+				?>
+				<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a></p>
 					<?php
-					/*
-					 * * This section shows the registration form if it is an active event * *
-					 */
+				}
 
-					if ($display_reg_form == 'Y') {
-						?>
-						<p class="event_time">
-							<?php
-							//This block of code is used to display the times of an event in either a dropdown or text format.
-							if (isset($time_selected) && $time_selected == true) {//If the customer is coming from a page where the time was preselected.
-								echo event_espresso_display_selected_time($time_id); //Optional parameters start, end, default
-							} else {
-								echo event_espresso_time_dropdown($event_id);
-							}//End time selected
-							?>
-						</p>
-						<?php
-						//Show pricing in a dropdown or text depending on the number of prices added.
-						do_action('action_hook_espresso_price_select', $event_id, array('show_label' => true, 'label' => ''));
+				if ( $display_desc ) {//Show the description or not
+					?>
+				<p class="section-title">
+					<?php _e('Description:', 'event_espresso') ?>
+				</p>
+				<div class="event_description clearfix"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description. ?></div>
+				<?php
+			}
 
-						//Added for seating chart addon. Creates a field to select a seat from a popup.
-						do_action( 'action_hook_espresso_seating_chart_select', $event_id);
-
-						/* Displays the social media buttons */
-						do_action( 'action_hook_espresso_social_display_buttons', $event_id); 
-						?>
-
-						<fieldset id="event-reg-form-groups" class="ui-widget">
-							<!--<h3 class="section-heading ui-widget-header">
-							<?php _e('Registration Details', 'event_espresso'); ?>
-							</h3>-->
-							<?php
-							$css_class = 'ui-widget-content ui-corner-all';
-							//Outputs the custom form questions. This function can be overridden using the custom files addon
-							echo event_espresso_add_question_groups($question_groups, '', null, 0, array('attendee_number' => 1), $css_class);
-							?>
-						</fieldset>
-
-						<?php
-						//Multiple Attendees
-						if ($allow_multiple == "Y" && $number_available_spaces > 1) {
-
-							//This returns the additional attendee form fields. Can be overridden in the custom files addon.
-							echo event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, __('Number of Tickets', 'event_espresso'), true, $event_meta);
-						} else {
-							?>
-							<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
-							<?php
-						}//End allow multiple
-						//Coupons
-						if (function_exists('event_espresso_coupon_registration_page') && $use_coupon_code == 'Y') {
-							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
-						}//End coupons display
-						//Groupons
-						if (function_exists('event_espresso_groupon_registration_page')) {
-							echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
-						}//End groupons display
-						?>
-
-						<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee">
-						<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
-						<?php
-						//Recaptcha portion
-						if ($org_options['use_captcha'] == 'Y'
-										&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
-										&& !is_user_logged_in()) {
-							if (!function_exists('recaptcha_get_html')) {
-								require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
-							}//End require captcha library
-							# the response from reCAPTCHA
-							$resp = null;
-							# the error code from reCAPTCHA, if any
-							$error = null;
-							?>
-							<p class="event_form_field" id="captcha-<?php echo $event_id; ?>">
-								<?php _e('Anti-Spam Measure: Please enter the following phrase', 'event_espresso'); ?>
-							<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false); ?>
-							</p>
-			<?php } //End use captcha  ?>
-
-						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
-							<input class="btn_event_form_submit ui-priority-primary ui-state-default ui-widget-content ui-corner-all" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
-						</p>
-						<?php
-					}
-					break;
-			}//End Switch statement to check the status of the event
+			//End display description	
+			
+			
+			
 			?>
 		</form>
 		<?php if (isset($ee_style['event_espresso_form_wrapper_close']))
