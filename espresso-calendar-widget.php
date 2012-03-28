@@ -12,7 +12,7 @@
 	$espresso_calendar_widget .= 'defaultView: \'month\',';
 
 					//Defines the buttons and title at the top of the calendar.
-	$espresso_calendar_widget .= 'header: { },'; // setting this to a blank value so no title/buttons appear
+	$espresso_calendar_widget .= 'header: { left: \'prev\', center: \'title\', right: \'next\' },'; // setting this to a blank value so no title/buttons appear
 
 					/**
 					* Theme Settings
@@ -145,8 +145,8 @@
 					//For date formatting options, please refer to: http://arshaw.com/fullcalendar/docs/utilities/formatDate/
 	$espresso_calendar_widget .= 'titleFormat:{ month: \'MMMM\' },';
 
-					//Text that will be displayed on buttons of the header.
-	$espresso_calendar_widget .= 'buttonText: { prev: \'&larr;\', next: \'&rarr;\' },';
+					//Text that will be displayed on buttons of the header.  Uncomment this if you want to change it from the default.
+	//$espresso_calendar_widget .= 'buttonText: { },';
 
 					//Full names of months.
 	$espresso_calendar_widget .= 'monthNames: [' . stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']) . '],';
