@@ -3,7 +3,7 @@
 //This is a logic file for displaying a registration form for an event on a page. This file will do all of the backend data retrieval functions.
 //There should be a copy of this file in your wp-content/uploads/espresso/ folder.
 //Note: This entire function can be overridden using the "Custom Files" addon
-function register_attendees($single_event_id = NULL, $event_id_sc =0) {
+function event_registration($single_event_id = NULL, $event_id_sc =0) {
 		if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
 			require_once (EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
 			attendee_edit_record();
@@ -131,4 +131,4 @@ function register_attendees($single_event_id = NULL, $event_id_sc =0) {
 		//echo '<p>Database Queries: ' . get_num_queries() .'</p>';
 	}
 
-add_action('action_hook_espresso_regevent_register_attendees', 'register_attendees');
+add_action('action_hook_espresso_event_registration', 'event_registration');

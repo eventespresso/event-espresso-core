@@ -44,6 +44,8 @@ function espresso_define_tables_and_paths() {
 	define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 	define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 	// End table definitions
+	
+	define("EVENTS_PRICES_TABLE", $wpdb->prefix . "events_prices"); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<  ADDED BACK IN UNTIL PRICE TABLE CHANGES ARE COMPLETE
 
 	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
 
@@ -100,7 +102,6 @@ function espresso_EE_Session() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
-
 }
 
 /**
@@ -115,44 +116,50 @@ function espresso_setup_notices() {
 	$espresso_notices	= array( 'success' => FALSE, 'errors' => FALSE );
 }
 
-/**
- * 		initialize the espresso session
- *
- * 		@access public
- * 		@return void
- */
-function espresso_init_session() {
 
-	global $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+function espresso_init() {
 
-	if (!isset($_SESSION)) {
-		session_start();
+	//Globals used throughout the site
+	global $org_options, $wpdb, $espresso_wp_user, $espresso_premium;
+
+	//Set the default time zone
+	//If the default time zone is set up in the WP Settings, then we will use that as the default.
+	if (get_option('timezone_string') != '') {
+		date_default_timezone_set(get_option('timezone_string'));
 	}
 
-	if (( isset($_REQUEST['page_id'])
-					&& ( $_REQUEST['page_id'] == $org_options['return_url']
-									|| $_REQUEST['page_id'] == $org_options['notify_url']))
-					|| !isset($_SESSION['espresso_session']['id'])
-					|| $_SESSION['espresso_session']['id'] == array()) {
+	//Wordpress function for setting the locale.
+	//print get_locale();
+	//setlocale(LC_ALL, get_locale());
+	setlocale(LC_TIME, get_locale());
 
-		$_SESSION['espresso_session'] = '';
-		//Debug
-		//echo "<pre>espresso_session - ".print_r($_SESSION['espresso_session'],true)."</pre>";
-		$_SESSION['espresso_session'] = array();
-		//Debug
-		//echo "<pre>espresso_session array - ".print_r($_SESSION['espresso_session'],true)."</pre>";
-		$_SESSION['espresso_session']['id'] = session_id() . '-' . uniqid('', true);
-		//Debug
-		//echo "<pre>".print_r($_SESSION,true)."</pre>";
+	//Get language files
+	load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
-		$_SESSION['espresso_session']['events_in_session'] = '';
-		$_SESSION['espresso_session']['coupon_code'] = '';
-		$_SESSION['espresso_session']['grand_total'] = '';
-	}
+	//Core function files			
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
+	
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 
-	do_action('action_hook_espresso_after_init_session');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
+
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
+	global $Single_Page_Checkout;
+	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+	
+	event_espresso_require_gateway('process_payments.php');
+	
+	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
+
+	do_action('action_hook_espresso_coupon_codes');
 }
+
 
 /**
  * 		Handles exporting of csv files

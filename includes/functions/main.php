@@ -1706,9 +1706,9 @@ function printCountriesSelector($name, $selected) {
  * 		@ access public
  * 		@ return void
  */
-function printr($var, $var_name = 'ARRAY') {
+function printr($var, $var_name = 'ARRAY', $height = 'auto' ) {
 
-	echo '<pre style="display:block; width:100%; height:50%; overflow:scroll; border:2px solid light-blue;">';
+	echo '<pre style="display:block; width:100%; height:'.$height.'; overflow:scroll; border:2px solid light-blue;">';
 	echo '<h3>' . $var_name . '</h3>';
 	echo print_r($var);
 	echo '</pre>';

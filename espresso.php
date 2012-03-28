@@ -89,7 +89,7 @@ if (is_admin()) {
 	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
 	add_action('wp_print_styles', 'add_espresso_stylesheet', 20);
-	add_action('wp_footer', 'espresso_load_javascript_files');
+//	add_action('wp_footer', 'espresso_load_javascript_files');
 }
 
 /** edit as neccessary

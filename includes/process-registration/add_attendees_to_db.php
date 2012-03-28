@@ -494,8 +494,7 @@ function event_espresso_add_attendees_to_db($event_id = NULL, $session_vars = NU
 
 	return $registration_id;
 }
-
-add_action('action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db');
+//add_action('action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db');
 
 //This function is called from the shopping cart
 function event_espresso_add_attendees_to_db_multi() {

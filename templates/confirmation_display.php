@@ -115,7 +115,7 @@ function espresso_display_confirmation_page($conf_page_data) {
 		<input name="confirm_registration" id="confirm_registration" type="hidden" value="true" />
 		<input type="hidden" name="attendee_id" id="attendee_id" value="<?php echo $conf_page_data['attendee_id'] ?>" />
 		<input type="hidden" name="registration_id" id="registration_id" value="<?php echo $conf_page_data['registration_id'] ?>" />
-		<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $conf_page_data['event_id']; ?>" value="post_attendee">
+		<!--<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $conf_page_data['event_id']; ?>" value="post_attendee">-->
 		<input type="hidden" name="event_id" id="event_id-<?php echo $conf_page_data['event_id']; ?>" value="<?php echo $conf_page_data['event_id']; ?>">
 	</form>
 	<?php

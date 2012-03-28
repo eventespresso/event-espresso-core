@@ -1,0 +1,178 @@
+ span.ui-icon { float:none !important; }
+.icon-right span.ui-icon { margin: 0.7em 0.3em 0 0; }
+
+.ui-state-highlight { padding:.5em 1em; }
+.ui-button.icon-right { padding: 0.95em 1em 0.95em !important; }
+a .ui-icon { display:inline-block!important; float:none!important; position:relative; top:3px; margin:0px 5px 0 0!important;  }
+
+.ui-button {
+		display: inline-block; position: relative; padding: 0.4em .75em .45em;
+		border:1px solid #ccc;
+		font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
+		text-align: center; font-weight: bold; line-height: 1; cursor: pointer;
+		-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;
+}
+.ui-button:hover { text-decoration:none; }
+
+.ui-button-big { padding: 0.95em 1em .95em; margin:1em 0; }
+
+.mini-btn {
+	display: inline-block; position: relative; padding: 0.4em .75em .45em;
+	border:1px solid #ccc;
+	font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
+	text-align: center; font-weight: bold; line-height: 1; cursor: pointer; vertical-align:middle;
+	-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;
+}
+
+#mer-ajax-loading { display:none; position:absolute; top:18px; left:50%; margin-left:-15px; padding:0; z-index:1000; }
+#mer-ajax-loading span { display:none; }
+
+.event-queue-msg {
+	display:block; position:absolute; top:3.5em; left:0; width:86%; height:auto; padding:.75em 2.5% .75em 7%; margin:0m 2%;	z-index:999; 
+	background:#fff; border-radius:5px; border-width:2px; border-style:solid; 
+	font-size:.95em; color:#444 !important; line-height:1.4em; text-align:center;
+	-webkit-box-shadow: 4px 10px 15px -3px rgba(0,0,0,.3), 1px 2px 4px -1px rgba(0,0,0,.6), -2px -1px 5px rgba(0,0,0,.1); 
+	-moz-box-shadow:4px 10px 15px -3px rgba(0,0,0,.3), 1px 2px 4px -1px rgba(0,0,0,.6), -2px -1px 5px rgba(0,0,0,.1); 
+	box-shadow:4px 10px 15px -3px rgba(0,0,0,.3), 1px 2px 4px -1px rgba(0,0,0,.6), -2px -1px 5px rgba(0,0,0,.1);
+}
+#mer-success-msg { border-color:#B9D147; }
+#mer-error-msg, .mer-reg-page-copy-error-msg { border-color:#EB574D; }
+
+
+#mer-success-msg .ui-icon, #mer-error-msg .ui-icon,
+.mer-reg-page-copy-error-msg .ui-icon { position:absolute; left:3.5%; top:50%; margin:-8px 0 0 -8px; }
+
+
+.event-queue-update-btns { position:relative; min-width:165px; }
+.event-queue-update-btns .ui-icon { position:relative;top:0px; }
+.button-blokka { display:block; position:absolute; top:1px; left:66px; width:94px; height:30px; /*background:red;*/ }
+
+.float-right { float:right; }
+.left { float:left; }
+.clear, .clear-float { clear:both; }
+.hidden { display:none!important; }
+.hide-if-no-js { display:none; }
+
+
+
+.striked { text-decoration:line-through; }
+
+
+.mer-whats-next-buttons { clear:both; padding:2em 0 1em; margin:0; text-align:right; }
+.mer-whats-next-buttons .event-queue-register-btn,
+.mer-whats-next-buttons .mer-register-btn { margin-left: 1em!important; }
+
+
+.small-text { font-size:.85em; letter-spacing:.5px; line-height:1.5em; }
+.smaller-text { font-size:.7em; letter-spacing:1px; line-height:1.25em; }
+.lt-grey-text { color:#999; }
+.drk-grey-text { color:#666; }
+.important-notice { font-weight:bold; color:#f59200; }
+.tiny-link { display:block; text-align:right; font-size:.6em; cursor:pointer; }
+.underline-hdr { padding:0 0 .05em; margin:2em 0 1em; border-bottom: 2px solid #eee; }
+.overline-hdr { padding:.5em 0 0; margin:2em 0 1em; border-top: 2px solid #eee; }
+
+/*
+ * REG PAGE
+*/
+
+ 
+
+
+#mer-reg-page-steps-big-hdr { font-size:1.4em; margin:0!important; line-height:1.5em; color:#ccc; }
+.mer-reg-page-steps-big-hdr {	}
+
+#mer-reg-page-steps-display-dv { width:99%; height:80px; padding:0 .5%; margin:0 0 1em; border-top:1px solid #eee; border-bottom:1px solid #eee; }
+.mer-reg-page-step-display-dv { float:left; display:inline-block; width:29%; margin:0; text-align:center;}
+
+#multi-event-registration .mer-reg-page-steps-display-hdr { 
+	display:inline-block; margin:2px 0 0!important; vertical-align:middle;
+	font-size:15px!important; line-height:16px; color:#e8e8e8; text-align:left;
+}
+#multi-event-registration .mer-reg-page-step-big-nmbr {
+	display:inline-block; padding:20px 0!important; margin:0!important; vertical-align:middle;
+	font-size:40px; font-weight:bold; line-height:1em;
+}
+#multi-event-registration .mer-reg-page-step-big-nmbr:hover { text-decoration:none; }
+#multi-event-registration .mer-reg-page-step-arrow-dv {
+	float:left; display:inline-block; width:6%; padding:20px 0!important; margin:-4px 0 0!important; vertical-align:middle;
+	text-align:center; font-size:40px; line-height:1em; color:#e8e8e8;
+}
+#multi-event-registration .active-step .mer-reg-page-steps-display-hdr { color:inherit!important; }
+#multi-event-registration .inactive-step .mer-reg-page-step-big-nmbr { color:#e8e8e8; }
+
+#mer-reg-page-step-1-dv {	}
+#mer-reg-page-step-1-hdr {	}
+
+#mer-reg-page-step-2-dv {	}
+#mer-reg-page-step-2-hdr {	}
+
+#mer-reg-page-step-3-dv {	}
+#mer-reg-page-step-3-hdr {	}
+
+
+.mer-reg-page-edit-step-lnk { float:right; font-weight:normal; font-size:.6em; line-height:3.5em; letter-spacing:1px; cursor:pointer; }
+.mer-reg-page-step-title-hdr { margin:3em 0 1em !important;  border-bottom: 2px solid #eee;   }	
+.mer-reg-page-step-dv { padding:0; margin:0 0 2em; border:none;  }
+
+.mer-reg-page-attendee-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius:5px; }
+
+.event-list-display-dv .big-event-title-hdr,
+#multi-event-registration .big-event-title-hdr {
+	font-size:24px; line-height:1.1em; margin:1em 0 0;
+}
+.mer-reg-page-steps-pg { margin:0 0 2em; /*font-size:.8em; line-height:1.4em; *//*color:#666; */}
+
+.mer-reg-page-attendee-panel-dv { width:100%!important; }
+.mer-reg-page-event-title-hdr .ui-icon { position:relative; top:-2px; margin-right:1em; }
+
+.mer-reg-page-attendee-wrap-fs, .reg-page-confirmation-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius:5px; }
+
+.mer-reg-page-attendee-lgnd { padding:0 1em; /*font-size:.8em; color:#999;*/ letter-spacing:1px; }
+.event_questions + .mer-reg-page-attendee-lgnd { margin-top:2em; }
+
+.event_form_field { margin:0; }
+.mer-reg-page-copy-attendee-chk-pg { display:inline-block; float:left; clear:none!important; width:32%; }
+.mer-reg-page-copy-attendee-hr {
+	clear:both; margin:1em 0 0; background:none;
+	border:none; border-top:1px solid rgba( 0,0,0,.05); border-bottom:1px solid rgba( 255,255,255,.9);
+}
+.event_form_field label,
+.reg-page-confirmation-billing-info-spn,
+#mer-reg-page-copy-attendee-dv label { display:inline-block; width:24.5%; min-width:150px; padding-right:.5%; margin:0; font-size:.9em; text-align:right; }
+
+#mer-reg-page-copy-attendee-dv .wide { width:auto !important; }
+
+#more-attendee-copy-options-dv { position:relative; display:none; padding:2em 0 0; margin:1em 0 0; }
+
+.display-the-hidden { margin:1em 0 0; cursor:pointer; }
+.hide-the-displayed { position:absolute; top:-.25em; right:0; cursor:pointer; }
+
+
+.event_form_field input[type="text"] { display:inline-block; width:68%; margin:0 0 .5em; }
+.event_form_field select { display:inline-block; margin:0 0 .5em; }
+.event_form_field input.medium-txt { width:35%; }
+.event_form_field input.small-txt { width:20%; }
+
+/*.mer-reg-page-attendee-panel-dv input[type="text"] { display:inline-block; width:68.5%; }*/
+.asterisk, label em { font-weight:bold; color:red !important; }
+.requires-value { border-color:red !important; border-width:2px !important; }
+
+#mer-reg-page-copy-attendee-dv { position:relative; padding:1.5em; margin:1em 0; background:#f8f8f8; border-radius:5px; line-height:1.1em; }
+.mer-reg-page-copy-attendee-pg { margin:0; font-size:.8em; letter-spacing:.4px; }
+.mer-reg-page-copy-all-attendee-pg { margin:0 0 .75em;}
+.mer-reg-page-copy-attendee-pg span { margin:0 0 1em; font-size:.9em; letter-spacing:1px; color:#777; line-height:.9em; }
+.mer-reg-page-copy-attendee-event-hdr { clear:both; margin:1.5em 0 .5em; font-size:.8em; font-weight:bold; color:#444; } 
+.mer-reg-page-copy-attendee-chk, #mer-reg-page-copy-all-attendee-chk { position:relative; top:2px; left:5px; margin:0 5px; }
+
+
+#events-requiring-pre-approval-pg { margin:.5em 0 0; }
+
+/*#mer-reg-page-totals-hdr { margin:0em 0 2em; }*/
+#mer-reg-page-totals-spn { float:right; }
+
+#mer-reg-page-apply-coupon-btn { position:relative; top:-1px; font-size:.8em; }
+#mer-reg-page-coupon-codes-pg { padding:0 0 2em 155px; }
+
+
+
