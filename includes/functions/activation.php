@@ -1210,3 +1210,11 @@ function espresso_update_active_gateways() {
 		update_user_meta($user, 'active_gateways', $active_gateways);
 	}
 }
+
+function espresso_default_prices() {
+	global $wpdb;
+	$sql = "INSERT INTO `" . ESP_PRICE_TYPE . "` (`PRT_id`, `PRT_name`, `PRT_is_tax`, `PRT_is_percent`, `PRT_is_global`, `PRT_order`) VALUES (NULL, 'Base Ticket Price', '0', '0', '0', '0');";
+	$wpdb->query($sql);
+	$sql = "INSERT INTO `" . ESP_PRICE_TABLE . "` (`PRC_id`, `PRT_id`, `PRC_amount`, `PRC_name`, `PRC_desc`, `PRC_is_active`) VALUES (NULL, '1', '20.00', 'General Admission', NULL, '0');";
+	$wpdb->query($sql);
+}

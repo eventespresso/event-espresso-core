@@ -16,6 +16,7 @@ function espresso_plugin_activation() {
 	espresso_org_option_initialization();
 	espresso_fix_org_options();
 	espresso_update_active_gateways();
+	espresso_default_prices();
 }
 
 function espresso_widget() {
