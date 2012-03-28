@@ -331,9 +331,6 @@ function espresso_reg_form_sc($atts) {
 			<form method="post" action="<?php echo espresso_get_reg_page_full_url(); ?>" id="registration_form">
 				<?php
 				//print_r( event_espresso_get_is_active($event_id));
-				
-				echo '<h1>'. __FILE__ . ' - ' . __CLASS__ . ' - ' . __FUNCTION__ . ' <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( line no: ' . __LINE__ . ' )</span></h1>';
-
 
 				switch ($is_active['status']) {
 					case 'EXPIRED': //only show the event description.
@@ -1241,7 +1238,7 @@ function event_espresso_run() {
 				//This is the form page for registering the attendee
 				require_once(espresso_get_registration_page_template());
 			} else {
-				do_action ( 'action_hook_espresso_regevent_default_action' );
+				do_action ( 'action_hook_espresso_regevent_default_action', $regevent_action );
 				//These may be loaded in posts and pages outside of the default EE pages
 				require_once(espresso_get_event_list_template());
 			}

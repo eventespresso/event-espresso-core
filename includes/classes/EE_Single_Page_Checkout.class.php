@@ -232,8 +232,9 @@ class EE_Single_Page_Checkout {
 
 				default :
 					// empty cart or else items build up indefinately
-					$cart_total = $this->cart->get_cart_grand_totals();
-					if ( $cart_total['grand_total_qty'] != 0 ){
+//					$cart_total = $this->cart->get_cart_grand_totals();
+//					if ( $cart_total['grand_total_qty'] != 0 && ! MER_ACTIVE ){
+					if ( ! defined( MER_ACTIVE )){
 						$this->cart->empty_cart('AJAX');
 					}			
 			}
@@ -1124,7 +1125,7 @@ class EE_Single_Page_Checkout {
 			$response = recaptcha_check_answer($org_options['recaptcha_privatekey'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
 			if ( ! $response->is_valid ) {
 				$continue_reg = FALSE;
-				$error_msg = __('Sorry, you did not enter the correct anti-spam phrase. Please try again.', 'event_espresso');
+				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of it\'s three), and try again.', 'event_espresso');
 			}
 		}
 

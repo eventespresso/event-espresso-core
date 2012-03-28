@@ -278,6 +278,9 @@ function espresso_frontend_init() {
 //	add_action ( 'action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db' );
 //	add_action ( 'action_hook_espresso_event_registration', 'event_details_page' );
 
+	wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
+	wp_enqueue_style('ticket_selector');
+
 	do_action('action_hook_espresso_require_template', 'init.php');
 	//These may be loaded in posts and pages outside of the default EE pages
 	require_once(espresso_get_event_list_template());

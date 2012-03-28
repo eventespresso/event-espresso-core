@@ -78,7 +78,7 @@
 					if ( $display_reg_form ) {
 					
 
-						do_action( 'action_hook_espresso_ticket_selector', $data->event );
+						do_action( 'action_hook_espresso_ticket_selector', $event );
 
 						//Added for seating chart addon. Creates a field to select a seat from a popup.
 						do_action( 'action_hook_espresso_seating_chart_select', $event_id);
@@ -126,7 +126,23 @@
 						<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 
 						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
-							<input class="event-form-submit ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all float-right" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit Registration', 'event_espresso'); ?>">
+						
+							<a 	id="event_form_field-<?php echo $event_id; ?>" 
+									class="event-list-reg-link-btn show-if-js ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right" 
+									style="display:none;"
+								>							
+								<span class="ui-icon ui-icon-cart"></span>&nbsp;<?php _e('Submit Registration', 'event_espresso'); ?>
+							</a>
+							
+							<noscript>
+								<input type="submit" 
+											 id="event_form_field-<?php echo $event_id; ?>"
+						 					name="event-list-reg-link-sbmt-btn" 
+											class="event-list-reg-link-sbmt-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right" 
+											value="<?php _e('Submit Registration', 'event_espresso'); ?>"
+											role="button"
+									/>
+							</noscript>
 							<div class="clear"></div>
 						</p>
 						<?php
