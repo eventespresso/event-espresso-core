@@ -1,17 +1,17 @@
 /**
-* Event Espresso dashboard administration styles 
+* Event Espresso dashboard administration styles
 *
 * Sections:
 * 0. General styles - Events
 * -0.1 Admin Site wide general
 * -0.2 Structure
 * -0.3 Donations
-* -0.4 Contributors  
+* -0.4 Contributors
 * 1. Events Admin screens
 * -1.1 General Settings screen
 * -1.2 Overview screen
 * -1.3 Manage events
-* -1.4 Staff Manager 
+* -1.4 Staff Manager
 * -1.5 Questions
 * -1.6 Question Groups
 * -1.7 Categories
@@ -261,7 +261,7 @@ ul.sexy-contributors li:hover a {
 	color:#21759B;
 	font-weight:bold;
 }
-/* >Events Admin screens 
+/* >Events Admin screens
 ----------------------------------------------------------------------*/
 
 /*___ General Settings screen ___*/
@@ -463,7 +463,7 @@ div.tablenav {
 	font-style: italic;
 	color: #8B9681;
 	padding: 0 5px;
-}	
+}
 /*___ Categories___*/
 
 #add-edit-categories .inside p.add-cat-name {
@@ -598,7 +598,7 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 .event-espresso_page_events #side-sortables .event-staff-list label {
 	line-height: 1.6;
 }
-.event-espresso_page_events #side-sortables p span {	
+.event-espresso_page_events #side-sortables p span {
 	clear: left;
 }
 .event-espresso_page_events #side-sortables p span.question {
@@ -606,7 +606,7 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 	clear: none;
 }
 .event-espresso_page_events #side-sortables p input {
-	
+
 }
 #side-sortables p select#mailchimp-lists {
 	width: 220px;
@@ -703,7 +703,7 @@ div#gmap-reg-events { padding-left: 3%;}
 	width: 600px;
 }
 .localhost-information dd {
-	
+
 	padding: 5px 0 5px 5px;
 }
 .support-tokens span.price,
@@ -717,7 +717,7 @@ div#gmap-reg-events { padding-left: 3%;}
 .support-prices span {line-height: 23px;}
 .support-prices img {float:right;}
 #post-body .help-support li ul li {
-	background: #F7F7F7;	
+	background: #F7F7F7;
 	line-height: 1.4;
 	margin: 1em 10px .5em 0 ;
 	padding: 3px 0 3px 5px;
@@ -730,7 +730,7 @@ div#gmap-reg-events { padding-left: 3%;}
 }
 #post-body #quick-links li {
 	background: none;
-}	
+}
 #quick-links li a {
 	font-size: 1.2em;
 }
@@ -746,14 +746,14 @@ ul#quick-links ul{
 #faqs dd {
 	border-bottom: 1px solid #bebebe;
 }
-/* >Tables 
+/* >Tables
 ----------------------------------------------------------------------*/
 /*** Generic site wide ***/
 .wp-admin table.widefat table td {
 	padding: 4px;
 }
 .form-table th.middle {vertical-align: middle;}
-/** override WP default styles 
+/** override WP default styles
 hidding form controls - permissions screen only **/
 #configure_espresso_manager_form .widefat td {
  overflow: visible;
@@ -762,7 +762,7 @@ hidding form controls - permissions screen only **/
 }
 #configure_espresso_manager_form table.widefat {
 	margin: 1% auto;
-	width: 98% !important; 
+	width: 98% !important;
 }
 #table_wrapper {
 	font-size:11px;
@@ -1142,7 +1142,7 @@ div .row-actions {
 .example_alt_pagination div.dataTables_info {
 	width: 40%;
 }
-.paging_full_numbers span.paginate_button,  .paging_full_numbers span.paginate_active {
+.paging_full_numbers .paginate_button,  .paging_full_numbers .paginate_active {
 	border: 1px solid #aaa;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -1151,13 +1151,13 @@ div .row-actions {
 	cursor: pointer;
  *cursor: hand;
 }
-.paging_full_numbers span.paginate_button {
+.paging_full_numbers .paginate_button {
 	background-color: #ddd;
 }
-.paging_full_numbers span.paginate_button:hover {
+.paging_full_numbers .paginate_button:hover {
 	background-color: #ccc;
 }
-.paging_full_numbers span.paginate_active {
+.paging_full_numbers .paginate_active {
 	background-color: #99B3FF;
 }
 table.display tr.even.row_selected td {
@@ -1463,7 +1463,7 @@ select.wide, td.wide select, td.wide input {width: 175px;}
  -webkit-box-shadow: 0 0 1px #eee;
  -moz-box-shadow: 0 0 1px #eee;
  box-shadow: 0 0 4px #8f8f8f;
- margin: 0 auto; 
+ margin: 0 auto;
  width:100% !important;
 }
 #enable-ven-gmaps_chzn {margin-bottom: 10px;}
@@ -1686,15 +1686,15 @@ div.box-right-body ul.infolinks li {
 div.box-right-body ul.infolinks li a {
 	text-decoration:none;
 }
-/* alert boxes jQuery script is currently not being loaded 
+/* alert boxes jQuery script is currently not being loaded
    thus rulesets are commented out for the moment */
 
 /*** Alert Boxes ***/
 /*#popup_container {
 	font-family: Arial, sans-serif;
 	font-size: 12px;
-	min-width: 300px; 
-	max-width: 600px; 
+	min-width: 300px;
+	max-width: 600px;
 	background: #FFF;
 	border: solid 5px #999;
 	color: #000;
@@ -1882,7 +1882,7 @@ a.thickbox.link  {
 .pointer {
 	cursor: pointer;
 }
-/*** clearfix clearing rules ***/	
+/*** clearfix clearing rules ***/
 .clearfix:before, .clearfix:after {
 	content:"";
 	display:table;
@@ -1906,12 +1906,12 @@ a.thickbox.link  {
  * Version: @VERSION
  *
  * Copyright (c) 2009-2011 Chris Leonello
- * jqPlot is currently available for use in all personal or commercial projects 
- * under both the MIT (http://www.opensource.org/licenses/mit-license.php) and GPL 
- * version 2.0 (http://www.gnu.org/licenses/gpl-2.0.html) licenses. This means that you can 
- * choose the license that best suits your project and use it accordingly. 
+ * jqPlot is currently available for use in all personal or commercial projects
+ * under both the MIT (http://www.opensource.org/licenses/mit-license.php) and GPL
+ * version 2.0 (http://www.gnu.org/licenses/gpl-2.0.html) licenses. This means that you can
+ * choose the license that best suits your project and use it accordingly.
  */
- 
+
 .jqplot-target {
 	margin-bottom: 2em;
 }
