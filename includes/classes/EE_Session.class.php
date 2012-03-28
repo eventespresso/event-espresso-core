@@ -445,6 +445,8 @@
 
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
+		$visitor_ip = '0:0:0:0';
+
 		if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
 			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['HTTP_CLIENT_IP'] )) {
 				$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
