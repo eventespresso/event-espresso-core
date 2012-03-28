@@ -189,7 +189,6 @@ if ($espresso_calendar['espresso_use_pickers'] == 'true') {
 
 function espresso_calendar_do_stuff($show_expired) {
 	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
-
 		// grab the thumbnail size from calendar options settings
 		if (empty($espresso_calendar['calendar_thumb_size'])) {
 			$ee_img_size = 'small';
@@ -205,7 +204,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		$sql .= " WHERE e.is_active = 'Y' ";
+		$sql .= " WHERE e.is_active != false ";
 		$sql .= " AND e.event_status != 'D' ";
 		$sql .= " AND e.event_status != 'S' ";
 		$sql .= " AND e.event_status != 'P' ";
@@ -222,7 +221,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		$type = 'all';
 		$sql = "SELECT e.*, ese.start_time, ese.end_time FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		$sql .= " WHERE is_active = 'Y' ";
+		$sql .= " WHERE is_active != false ";
 		$sql .= " AND e.event_status != 'D' ";
 		$sql .= " AND e.event_status != 'S' ";
 		$sql .= " AND e.event_status != 'P' ";
@@ -235,7 +234,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		}
 	}
 	$sql .= " GROUP BY e.id ORDER BY date(start_date), id ASC";
-
+echo $sql;
 	//Debug
 	//echo '<p>$sql - '.$sql.'</p>';
 
