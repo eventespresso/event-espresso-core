@@ -687,7 +687,7 @@ class name '.event-has-thumb' is added to top level parent event */
 .fc-view-agendaDay .fc-agenda-body   td div {min-height:50px;}
 #espresso_calendar .fc-view-agendaWeek  .thumb-wrap img {height: 20px;}
 
-.fc-button-prev, .fc-button-next { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif!important; }
+.fc-button-prev, .fc-button-next { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
 /* Calendar Widget CSS */
 /* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
