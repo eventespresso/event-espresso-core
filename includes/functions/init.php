@@ -12,7 +12,7 @@ function espresso_load_jquery() {
 }
 
 function espresso_load_admin_ajax_callbacks() {
-	
+
 	function event_list_save_state_callback() {
 		check_ajax_referer('event_list_state', 'nonce');
 		update_user_meta($_POST['user'], 'event_list_state', $_POST['data']);
@@ -161,7 +161,7 @@ function espresso_admin_init() {
 				'admin_addons', 'espresso_calendar', 'event_tickets',
 				'event_certificates', 'espresso-mailchimp',
 				'espresso_permissions', 'roles', 'event_locales',
-				'event_groups', 'test_drive', 'espresso_https'
+				'event_groups', 'test_drive', 'espresso_https', 'event_prices'
 		);
 		if (in_array($_REQUEST['page'], $espresso_pages)) {
 			add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
@@ -256,7 +256,7 @@ function espresso_frontend_init() {
 
 	global $espresso_reg_page;
 	$espresso_reg_page = espresso_test_for_reg_page();
-	
+
 	if ($espresso_reg_page) {
 		do_action('action_hook_espresso_load_reg_page_files');
 	}
@@ -265,14 +265,14 @@ function espresso_frontend_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
 	//Registration forms
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php'); 
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 //	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/cart.php');
 	//Custom post type integration
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && !empty($org_options['template_settings']['use_custom_post_types'])) {
 		require(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php');
 	}
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
-	
+
 	add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1 );
 	add_action ( 'action_hook_espresso_event_registration', 'event_details_page', 10, 2 );
 //	add_action ( 'action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db' );
@@ -339,7 +339,7 @@ function espresso_add_rewrite_rules() {
 	global $wpdb, $org_options;
 
 	if (empty($org_options['event_page_id'])) {
-		return;		
+		return;
 	}
 	$reg_page_id = $org_options['event_page_id'];
 	$use_pretty_permalinks = espresso_use_pretty_permalinks();

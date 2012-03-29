@@ -24,7 +24,8 @@ function espresso_price_manager_menu() {
 			</div>
 			<div id="post-body">
 				<div id="post-body-content">
-					<?php espresso_prices_admin_helper(); ?>
+					<?php espresso_prices_admin_helper();
+					do_meta_boxes('event-espresso_page_event_prices', 'normal', null); ?>
 					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 						<table id="table" class="widefat manage-discounts">
 							<thead>
@@ -47,8 +48,8 @@ function espresso_price_manager_menu() {
 								<tr>
 									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $result->PRC_id ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($result->PRC_name) ?>"></td>
 									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRC_id ?></td>
-									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit&id=<?php echo $result->PRC_id ?>"><?php echo stripslashes_deep($result->PRC_name) ?></a></strong>
-										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit&id=<?php echo $result->PRC_id ?>">
+									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $result->PRC_id ?>"><?php echo stripslashes_deep($result->PRC_name) ?></a></strong>
+										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $result->PRC_id ?>">
 													<?php _e('Edit', 'event_espresso'); ?>
 												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price&id=<?php echo $result->PRC_id ?>">
 													<?php _e('Delete', 'event_espresso'); ?>
@@ -96,12 +97,12 @@ function espresso_price_manager_menu() {
 							<?php
 							$sql = "SELECT * FROM " . ESP_PRICE_TYPE;
 							$sql .= " ORDER BY PRT_id ASC";
-							$results = $wpdb->get_results($sql);
-							foreach ($results as $result) {
+							$price_types = $wpdb->get_results($sql);
+							foreach ($price_types as $result) {
 								?>
 								<tr>
 									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $result->PRT_id ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($result->PRT_name) ?>"></td>
-									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRC_id ?></td>
+									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRT_id ?></td>
 									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $result->PRT_id ?>"><?php echo stripslashes_deep($result->PRT_name) ?></a></strong>
 										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $result->PRT_id ?>">
 													<?php _e('Edit', 'event_espresso'); ?>
@@ -110,10 +111,10 @@ function espresso_price_manager_menu() {
 												</a></span> </div>
 									</td>
 									<td>
-										<?php echo $result->PRC_is_tax; ?>
+										<?php echo $result->PRT_is_tax; ?>
 									</td>
 									<td>
-										<?php echo $result->PRC_is_percent; ?>
+										<?php echo $result->PRT_is_percent; ?>
 									</td>
 									<td>
 										<?php echo $result->PRT_is_global; ?>

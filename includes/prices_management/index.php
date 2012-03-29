@@ -1,30 +1,35 @@
 <?php
 
 function espresso_prices_admin_helper() {
+	global $wpdb;
 	if (isset($_POST['delete_price_type']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_price_type')) {
 		//Checkboxes
-		if (is_array($_POST['checkbox'])) {
+		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):
 				$del_id = $key;
 				$sql = "SELECT PRC_id FROM " . ESP_PRICE_TABLE . " WHERE PRT_id='$del_id'";
 				$row = $wpdb->get_row($sql, ARRAY_N);
-				foreach ($row as $entry) {
-					$new_checkbox_list[$entry] = true;
+				if (!empty($row)) {
+					foreach ($row as $entry) {
+						$new_checkbox_list[$entry] = true;
+					}
 				}
 				// If a price type is deleted, delete the price
-				$sql = "DELETE FROM " . ESP_PRICE_TYPE . " WHERE id='$del_id'";
+				$sql = "DELETE FROM " . ESP_PRICE_TYPE . " WHERE PRT_id='$del_id'";
 				$wpdb->query($sql);
 			endwhile;
 		}
 
 		//Delete link
-		if ($_REQUEST['action'] == 'delete_price') {
+		if ($_REQUEST['action'] == 'delete_price_type') {
 			$sql = "SELECT PRC_id FROM " . ESP_PRICE_TABLE . " WHERE PRT_id='" . $_REQUEST['id'] . "'";
 			$row = $wpdb->get_row($sql, ARRAY_N);
-			foreach ($row as $entry) {
-				$new_checkbox_list[$entry] = true;
+			if (!empty($row)) {
+				foreach ($row as $entry) {
+					$new_checkbox_list[$entry] = true;
+				}
 			}
-			$sql = "DELETE FROM " . ESP_PRICE_TYPE . " WHERE id='" . $_REQUEST['id'] . "'";
+			$sql = "DELETE FROM " . ESP_PRICE_TYPE . " WHERE PRT_id='" . $_REQUEST['id'] . "'";
 			$wpdb->query($sql);
 		}
 		?>
@@ -70,37 +75,106 @@ function espresso_prices_admin_helper() {
 		</div>
 		<?php
 	}
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'update_price') {
-		require_once("update_price.php");
-		update_event_price();
+	if (isset($_REQUEST['action'])) {
+		if ($_REQUEST['action'] == 'update_event_price') {
+			update_event_price();
+		}
+		if ($_REQUEST['action'] == 'add_price_to_db') {
+			add_price_to_db();
+		}
+		if ($_REQUEST['action'] == 'update_event_price_type') {
+			update_event_price_type();
+		}
+		if ($_REQUEST['action'] == 'add_price_type_to_db') {
+			add_price_type_to_db();
+		}
+		do_action('action_hook_espresso_admin_notices');
 	}
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_price') {
-		require_once("add_price_to_db.php");
-		add_price_to_db();
-	}
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_new_price') {
-		require_once("add_new_price.php");
-		add_new_event_price();
-	}
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit_price') {
-		require_once("edit_price.php");
-		edit_event_price();
-	}
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'update_type') {
-		require_once("update_price_type.php");
-		update_event_price_type();
-	}
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_type') {
-		require_once("add_price_type_to_db.php");
-		add_price_type_to_db();
-	}
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_new_price_type') {
-		require_once("add_new_price_type.php");
-		add_new_event_price_type();
-	}
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit_type') {
-		require_once("edit_price_type.php");
-		edit_event_price_type();
-	}
-	do_action('action_hook_espresso_admin_notices');
 }
+
+function update_event_price() {
+	global $wpdb, $notices;
+	if (check_admin_referer('espresso_form_check', 'update_event_price')) {
+		$wpdb->show_errors();
+		$sql = array(
+				'PRC_amount' => $_REQUEST['PRC_amount'],
+				'PRC_name' => $_REQUEST['PRC_name'],
+				'PRC_desc' => $_REQUEST['PRC_desc'],
+				'PRT_id' => $_REQUEST['PRT_id'],
+				'PRC_is_active' => $_REQUEST['PRC_is_active']);
+
+		$update_id = array('PRC_id' => $_REQUEST['PRC_id']);
+		$sql_data = array('%d', '%s', '%s', '%d', '%d');
+	}
+
+	if ($wpdb->update(ESP_PRICE_TABLE, $sql, $update_id, $sql_data, array('%d'))) {
+		$notices['updates'][] = __('The price', 'event_espresso') . ' ' . $_REQUEST['PRC_name'] . __(' has been updated', 'event_espresso');
+	} else {
+		$notices['errors'][] = __('The price', 'event_espresso') . ' ' . $_REQUEST['PRC_name'] . __(' was not updated!', 'event_espresso');
+	}
+}
+
+function add_price_to_db() {
+	global $wpdb, $notices;
+	if (check_admin_referer('espresso_form_check', 'add_price_to_db')) {
+		$wpdb->show_errors();
+		$sql = array(
+				'PRC_amount' => $_REQUEST['PRC_amount'],
+				'PRC_name' => $_REQUEST['PRC_name'],
+				'PRC_desc' => $_REQUEST['PRC_desc'],
+				'PRT_id' => $_REQUEST['PRT_id'],
+				'PRC_is_active' => $_REQUEST['PRC_is_active']);
+
+		$sql_data = array('%d', '%s', '%s', '%d', '%d');
+	}
+
+	if ($wpdb->insert(ESP_PRICE_TABLE, $sql, $sql_data)) {
+		$notices['updates'][] = __('The price', 'event_espresso') . ' ' . $_REQUEST['PRC_name'] . __(' has been saved', 'event_espresso');
+	} else {
+		$notices['errors'][] = __('The price', 'event_espresso') . ' ' . $_REQUEST['PRC_name'] . __(' was not saved!', 'event_espresso');
+	}
+}
+
+function update_event_price_type() {
+	global $wpdb, $notices;
+	if (check_admin_referer('espresso_form_check', 'update_event_price_type')) {
+		$wpdb->show_errors();
+		$sql = array(
+				'PRT_name' => $_REQUEST['PRT_name'],
+				'PRT_is_tax' => $_REQUEST['PRT_is_tax'],
+				'PRT_is_percent' => $_REQUEST['PRT_is_percent'],
+				'PRT_order' => $_REQUEST['PRT_order'],
+				'PRT_is_global' => $_REQUEST['PRT_is_global']);
+
+		$update_id = array('PRT_id' => $_REQUEST['PRT_id']);
+		$sql_data = array('%s', '%d', '%d', '%d', '%d');
+	}
+
+	if ($wpdb->update(ESP_PRICE_TYPE, $sql, $update_id, $sql_data, array('%d'))) {
+		$notices['updates'][] = __('The price type', 'event_espresso') . ' ' . $_REQUEST['PRC_name'] . __(' has been updated', 'event_espresso');
+	} else {
+		$notices['errors'][] = __('The price type', 'event_espresso') . ' ' . $_REQUEST['PRC_name'] . __(' was not updated!', 'event_espresso');
+	}
+}
+
+function add_price_type_to_db() {
+	global $wpdb, $notices;
+	if (check_admin_referer('espresso_form_check', 'add_price_type_to_db')) {
+		$wpdb->show_errors();
+		$sql = array(
+				'PRT_name' => $_REQUEST['PRT_name'],
+				'PRT_is_tax' => $_REQUEST['PRT_is_tax'],
+				'PRT_is_percent' => $_REQUEST['PRT_is_percent'],
+				'PRT_order' => $_REQUEST['PRT_order'],
+				'PRT_is_global' => $_REQUEST['PRT_is_global']);
+
+		$sql_data = array('%s', '%d', '%d', '%d', '%d');
+	}
+
+	if ($wpdb->insert(ESP_PRICE_TYPE, $sql, $sql_data)) {
+		$notices['updates'][] = __('The price type', 'event_espresso') . ' ' . $_REQUEST['PRT_name'] . __(' has been saved', 'event_espresso');
+	} else {
+		$notices['errors'][] = __('The price type', 'event_espresso') . ' ' . $_REQUEST['PRT_name'] . __(' was not saved!', 'event_espresso');
+	}
+}
+
