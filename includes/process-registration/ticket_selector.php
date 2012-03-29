@@ -265,11 +265,11 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 				// ordering too many tickets !!!
 				$singular = 'You have attempted to purchase %s ticket.';
 				$plural = 'You have attempted to purchase %s tickets.';
-				$limit_error_1 = sprintf(_n($singular, $plural, $valid['total_tickets'], 'espresso'), $valid['total_tickets'], $valid['total_tickets']);
+				$limit_error_1 = sprintf(_n($singular, $plural, $valid['total_tickets'], 'event_espresso'), $valid['total_tickets'], $valid['total_tickets']);
 		
 				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
-				$limit_error_2 = sprintf(_n($singular, $plural, $valid['atndz'], 'espresso'), $valid['atndz'], $valid['atndz']);
+				$limit_error_2 = sprintf(_n($singular, $plural, $valid['atndz'], 'event_espresso'), $valid['atndz'], $valid['atndz']);
 				$espresso_notices['errors'][] = $limit_error_1 . '<br/>' . $limit_error_2;
 				
 			} else {
@@ -316,7 +316,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 				if ( ! $tckts_slctd ) {
 					echo '
 	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
-		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'espresso' ).'</span>
+		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' ).'</span>
 	</div>
 <br/><br/>';					
 				}
@@ -324,7 +324,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 		} else {
 					echo '
 	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
-		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'espresso' ).'</span>
+		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' ).'</span>
 	</div>
 <br/><br/>';
 		}	
@@ -534,11 +534,11 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 			if ($available_spaces > 0) {
 				// add error messaging - we're using the _n function that will generate the appropriate singular or plural message based on the number of $available_spaces
 				$espresso_notices['errors'][] = sprintf(_n(
-												'We\'re sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets.', 'We\'re sorry, but there are only %s available spaces left for this event. Please go back and select a different number of tickets.', $available_spaces, 'espresso'
+												'We\'re sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets.', 'We\'re sorry, but there are only %s available spaces left for this event. Please go back and select a different number of tickets.', $available_spaces, 'event_espresso'
 								), $available_spaces
 				);
 			} else {
-				$espresso_notices['errors'][] = __('We\'re sorry, but there are no available spaces left for this event', 'espresso');
+				$espresso_notices['errors'][] = __('We\'re sorry, but there are no available spaces left for this event', 'event_espresso');
 			}
 			return FALSE;
 		}

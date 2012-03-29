@@ -1,4 +1,4 @@
-	<h4 class="event-list-reg-link-title"><span class="section-title">Ticket Options</span></h4>
+	<h4 class="event-list-reg-link-title"><span class="section-title"><?php _e( 'Ticket Options', 'event_espresso' ); ?></span></h4>
 
 		<input type="hidden"
 					name="tkt-slctr-event-id"

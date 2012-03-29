@@ -326,7 +326,7 @@
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 				
 		if ( empty( $post_inputs )) {
-			$this->_notices['errors'][] = __( 'An error occured! No post data was passed to the validator. Please click your browser\'s back button and try again. If the problem persists, contact customer support.', 'espresso' );
+			$this->_notices['errors'][] = __( 'An error occured! No post data was passed to the validator. Please click your browser\'s back button and try again. If the problem persists, contact customer support.', 'event_espresso' );
 			return FALSE;
 		}
 			

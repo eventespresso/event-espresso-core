@@ -664,14 +664,14 @@
 			
 			//echo '<h1 style="font-size:24px;">Return URL : ' . $return_url .'</h1>';	
 			if ( $return_url == 'AJAX' ) {
-				return __('All events have been successfully removed from the Event Queue.', 'espresso');
+				return __('All events have been successfully removed from the Event Queue.', 'event_espresso');
 			} else {
 				wp_redirect( $return_url );
 				exit();
 			}
 							
 		} else {
-			return __('An error occured! No Events could be removd from the Queue!', 'espresso');
+			return __('An error occured! No Events could be removd from the Queue!', 'event_espresso');
 		}
 		
 	}		

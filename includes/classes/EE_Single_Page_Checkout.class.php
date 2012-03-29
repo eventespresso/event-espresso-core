@@ -168,7 +168,7 @@ class EE_Single_Page_Checkout {
 			$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
 			// Output admin-ajax.php URL with same protocol as current page
 			$params['ajax_url'] = admin_url('admin-ajax.php', $protocol);
-			wp_localize_script('single_page_checkout', 'espresso', $params);
+			wp_localize_script('single_page_checkout', 'event_espresso', $params);
 		}
 	}
 
@@ -717,7 +717,7 @@ class EE_Single_Page_Checkout {
 		}
 		
 		if ( $billing_info == 'no payment required' ) {
-			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'espresso') . '</h3>'; 
+			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>'; 
 		} else {
 			$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
 			$template_args['billing']['last name'] = $billing_info['reg-page-billing-lname']['value'];
@@ -830,11 +830,11 @@ class EE_Single_Page_Checkout {
 				}
 			}
 
-			$success_msg .= __('Attendee information submitted successfully.', 'espresso');
+			$success_msg .= __('Attendee information submitted successfully.', 'event_espresso');
 			$error_msg = FALSE;
 		} else {
 			$success_msg = FALSE;
-			$error_msg = __('An error occured! No valid question responses were received.', 'espresso');
+			$error_msg = __('An error occured! No valid question responses were received.', 'event_espresso');
 		}
 
 		
@@ -878,9 +878,9 @@ class EE_Single_Page_Checkout {
 
 		if ( isset( $_POST['reg-page-no-payment-required'] ) && absint( $_POST['reg-page-no-payment-required'] ) == 1 ) {
 			if ( $EE_Session->set_session_data(  array( 'billing_info' => 'no payment required' ), $section = 'session_data' )) {
-				$success_msg = __( 'Registration Step 2 completed', 'espresso' );
+				$success_msg = __( 'Registration Step 2 completed', 'event_espresso' );
 			} else {
-				//$error_msg = __( 'An error occured! The billing information could not be submitted. Please refresh your browser and try agin.', 'espresso' );
+				//$error_msg = __( 'An error occured! The billing information could not be submitted. Please refresh your browser and try agin.', 'event_espresso' );
 				$espresso_notices = $EE_VnS->return_notices();
 				$notices = espresso_get_notices( FALSE );
 				$error_msg = $notices['errors'];
@@ -891,7 +891,7 @@ class EE_Single_Page_Checkout {
 			
 							'reg-page-billing-fname' => array(
 									'db-col' =>'fname',
-									'label' => __( 'First Name', 'espresso' ),
+									'label' => __( 'First Name', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'string',
 									'sanitize' => 'no_html',
@@ -903,7 +903,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-lname' => array(
 									'db-col' =>'lname',
-									'label' => __( 'Last Name', 'espresso' ),
+									'label' => __( 'Last Name', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'string',
 									'sanitize' => 'no_html',
@@ -915,7 +915,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-email' => array(
 									'db-col' =>'email',
-									'label' => __( 'Email Address', 'espresso' ),
+									'label' => __( 'Email Address', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'string',
 									'sanitize' => 'email',
@@ -927,7 +927,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-address' => array(
 									'db-col' =>'address',
-									'label' => __( 'Address', 'espresso' ),
+									'label' => __( 'Address', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'string',
 									'sanitize' => 'no_html',
@@ -939,7 +939,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-city' => array(
 									'db-col' =>'city',
-									'label' => __( 'City', 'espresso' ),
+									'label' => __( 'City', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'string',
 									'sanitize' => 'no_html',
@@ -951,7 +951,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-state' => array(
 									'db-col' =>'state',
-									'label' => __( 'State', 'espresso' ),
+									'label' => __( 'State', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'string',
 									'sanitize' => 'no_html',
@@ -963,7 +963,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-zip' => array(
 									'db-col' =>'zip',
-									'label' => __( 'Zip Code', 'espresso' ),
+									'label' => __( 'Zip Code', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'string',
 									'sanitize' => 'no_html',
@@ -975,7 +975,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-card-nmbr' => array(
 									'db-col' =>'card-nmbr',
-									'label' => __( 'Credit Card Number', 'espresso' ),
+									'label' => __( 'Credit Card Number', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'int',
 									'sanitize' => 'ccard',
@@ -987,7 +987,7 @@ class EE_Single_Page_Checkout {
 							
 	/*						'reg-page-billing-card-exp-date' => array(
 									'db-col' =>'exp-date',
-									'label' => __( 'Expiry Date', 'espresso' ),
+									'label' => __( 'Expiry Date', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'string',
 									'sanitize' => 'mm/yy',
@@ -999,7 +999,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-card-exp-date-mnth' => array(
 									'db-col' =>'exp-date-mnth',
-									'label' => __( 'Expiry Date Month', 'espresso' ),
+									'label' => __( 'Expiry Date Month', 'event_espresso' ),
 									'input' =>'select',
 									'type' =>'int',
 									'sanitize' => 'ccmm',
@@ -1011,7 +1011,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-card-exp-date-year' => array(
 									'db-col' =>'exp-date-year',
-									'label' => __( 'Expiry Date Year', 'espresso' ),
+									'label' => __( 'Expiry Date Year', 'event_espresso' ),
 									'input' =>'select',
 									'type' =>'int',
 									'sanitize' => 'ccyy',
@@ -1023,7 +1023,7 @@ class EE_Single_Page_Checkout {
 							
 							'reg-page-billing-card-ccv-code' => array(
 									'db-col' =>'ccv-code',
-									'label' => __( 'CCV Code', 'espresso' ),
+									'label' => __( 'CCV Code', 'event_espresso' ),
 									'input' =>'text',
 									'type' =>'int',
 									'sanitize' => 'ccv',
@@ -1042,9 +1042,9 @@ class EE_Single_Page_Checkout {
 			if ( $reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs( $reg_page_billing_inputs ) ) {
 				// add billing info to the session
 				if ( $EE_Session->set_session_data(  array( 'billing_info' => $reg_page_billing_inputs ), $section = 'session_data' )) {
-					$success_msg = __( 'Billing information submitted successfully', 'espresso' );
+					$success_msg = __( 'Billing information submitted successfully', 'event_espresso' );
 				} else {
-					//$error_msg = __( 'An error occured! The billing information could not be submitted. Please refresh your browser and try agin.', 'espresso' );
+					//$error_msg = __( 'An error occured! The billing information could not be submitted. Please refresh your browser and try agin.', 'event_espresso' );
 					$espresso_notices = $EE_VnS->return_notices();
 					$notices = espresso_get_notices( FALSE );
 					$error_msg = $notices['errors'];

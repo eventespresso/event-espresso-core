@@ -1,8 +1,8 @@
 <!--**********************************  STEP 3 	**********************************-->			
 	
 	<h2 id="mer-reg-page-step-title-3-hdr" class="mer-reg-page-step-title-hdr">
-		<?php _e('Step 3 - Registration Confirmation', 'espresso'); ?>
-		<a id="mer-reg-page-edit-step-3-lnk" class="mer-reg-page-go-to-step-3 mer-reg-page-edit-step-lnk <?php echo $step_3_edit_lnk_class; ?>" ><?php _e('edit', 'espresso'); ?></a>
+		<?php _e('Step 3 - Registration Confirmation', 'event_espresso'); ?>
+		<a id="mer-reg-page-edit-step-3-lnk" class="mer-reg-page-go-to-step-3 mer-reg-page-edit-step-lnk <?php echo $step_3_edit_lnk_class; ?>" ><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 	
 	<div id="mer-reg-page-step-3-dv" class="mer-reg-page-step-dv <?php echo $step_3_dv_class; ?>	">
@@ -22,7 +22,7 @@
 			<div id="mer-reg-page-whats-next-buttons" class="mer-whats-next-buttons">
 			
 				<a id="mer-reg-page-confirm-reg-btn" class="ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >
-					<strong><?php _e('YES!&nbsp;Confirm&nbsp;Registration&nbsp;', 'espresso'); ?></strong><span class="ui-icon ui-icon-circle-check"></span>
+					<strong><?php _e('YES!&nbsp;Confirm&nbsp;Registration&nbsp;', 'event_espresso'); ?></strong><span class="ui-icon ui-icon-circle-check"></span>
 				</a>
 
 				<noscript>
@@ -30,7 +30,7 @@
 								id="mer-reg-page-confirm-sbmt-btn" 
 								class="mer-register-btn no-js-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx"
 								name="mer-reg-page-confirm-sbmt-btn" 
-								value="&nbsp;<?php  _e('YES!&nbsp;Confirm&nbsp;Registration&nbsp;', 'events'); ?>&nbsp;&raquo;" 
+								value="&nbsp;<?php  _e('YES!&nbsp;Confirm&nbsp;Registration&nbsp;', 'event_espresso'); ?>&nbsp;&raquo;" 
 						/>				
 				</noscript>	
 

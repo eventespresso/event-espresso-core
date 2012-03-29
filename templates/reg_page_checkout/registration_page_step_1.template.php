@@ -1,14 +1,14 @@
 <!--**********************************  STEP 1 	**********************************-->		
 		
 	<h2 id="mer-reg-page-step-title-1-hdr" class="mer-reg-page-step-title-hdr">
-		<?php _e('Step 1 -  Attendee Information', 'espresso'); ?>
-		<a id="mer-reg-page-edit-step-1-lnk" class="mer-reg-page-go-to-step-1 mer-reg-page-edit-step-lnk <?php echo $step_1_edit_lnk_class; ?>"  href="<?php echo $reg_page_step_1_url; ?>"><?php _e('edit', 'espresso'); ?></a>
+		<?php _e('Step 1 -  Attendee Information', 'event_espresso'); ?>
+		<a id="mer-reg-page-edit-step-1-lnk" class="mer-reg-page-go-to-step-1 mer-reg-page-edit-step-lnk <?php echo $step_1_edit_lnk_class; ?>"  href="<?php echo $reg_page_step_1_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 	
 	<div id="mer-reg-page-step-1-dv" class="mer-reg-page-step-dv <?php echo $step_1_dv_class; ?>">
 		
 		<p id="mer-reg-page-step-1-pg" class="mer-reg-page-steps-pg small-text drk-grey-text"><?php _e(' In order to process your registration, we ask you to provide the following information.<br/>
-		Please note that all fields marked with an asterisk (<span class="asterisk">*</span>) are required.', 'espresso'); ?></p>
+		Please note that all fields marked with an asterisk (<span class="asterisk">*</span>) are required.', 'event_espresso'); ?></p>
 
 		<form id="mer-registration-frm-1" action="<?php echo $reg_page_goto_step_2_url;?>" method="post">
 	
@@ -48,18 +48,18 @@ foreach ( $event_queue as $cart_type => $cart ) {
 						<div id="mer-reg-page-copy-attendee-dv" class="hide-if-no-js">
 						
 							<p class="mer-reg-page-copy-all-attendee-pg">
-								<label class="wide"><?php  _e('Use Attendee #1\'s information for ALL attendees', 'espresso');?>
+								<label class="wide"><?php  _e('Use Attendee #1\'s information for ALL attendees', 'event_espresso');?>
 									<input id="mer-reg-page-copy-all-attendee-chk" class="mer-reg-page-copy-all-attendee-chk ui-widget-content ui-corner-all" type="checkbox" value="copy-all">
 								</label>
 							</p>					
 	
-							<p class="mer-reg-page-copy-attendee-pg"><?php _e('This option allows you to use the above information for all additional attendee question fields. <span>( Please note that some events may have additional questions that you may still be required to answer in order to complete your registration. )</span>', 'espresso'); ?></p>
+							<p class="mer-reg-page-copy-attendee-pg"><?php _e('This option allows you to use the above information for all additional attendee question fields. <span>( Please note that some events may have additional questions that you may still be required to answer in order to complete your registration. )</span>', 'event_espresso'); ?></p>
 							
-							<a id="display-more-attendee-copy-options" class="display-the-hidden smaller-text float-right" rel="more-attendee-copy-options" ><?php  _e('more options', 'espresso');?></a>
+							<a id="display-more-attendee-copy-options" class="display-the-hidden smaller-text float-right" rel="more-attendee-copy-options" ><?php  _e('more options', 'event_espresso');?></a>
 	
 							<div id="more-attendee-copy-options-dv" class="">
-								<a id="hide-more-attendee-copy-options" class="hide-the-displayed smaller-text float-right" rel="more-attendee-copy-options" ><?php  _e('less options', 'espresso');?></a>
-								<p class="mer-reg-page-copy-attendee-pg"><?php _e('The following checkboxes allow you to use the above information for only the selected additional event attendees.', 'espresso'); ?></p>
+								<a id="hide-more-attendee-copy-options" class="hide-the-displayed smaller-text float-right" rel="more-attendee-copy-options" ><?php  _e('less options', 'event_espresso');?></a>
+								<p class="mer-reg-page-copy-attendee-pg"><?php _e('The following checkboxes allow you to use the above information for only the selected additional event attendees.', 'event_espresso'); ?></p>
 	
 				<?php 						
 							foreach ( $additional_attendees as $attendee ) {
@@ -70,7 +70,7 @@ foreach ( $event_queue as $cart_type => $cart ) {
 						<?php	} ?>										
 	
 								<p class="event_form_field mer-reg-page-copy-attendee-chk-pg">
-									<label><?php echo __('Attendee #', 'espresso') . $att['att_nmbr'];?>
+									<label><?php echo __('Attendee #', 'event_espresso') . $att['att_nmbr'];?>
 										<input 	type="checkbox" 
 														id="mer-reg-page-copy-attendee-chk-<?php echo $item['id'].'-'.$att['att_nmbr'].'-'.$line_item;?>" 
 														class="mer-reg-page-copy-attendee-chk <?php echo $css_class;?>" 
@@ -97,7 +97,7 @@ foreach ( $event_queue as $cart_type => $cart ) {
 				} else { 
 					 if ( $att_nmbr == 1 && $print_copy_info ) { ?>
 					<br />
-					<h3><?php _e('No information is required to attend this event. Please proceed to Step 2', 'espresso'); ?></h3>
+					<h3><?php _e('No information is required to attend this event. Please proceed to Step 2', 'event_espresso'); ?></h3>
 					<input
 							type="hidden"
 							id="no-questions"
@@ -118,7 +118,7 @@ foreach ( $event_queue as $cart_type => $cart ) {
 			<div id="mer-reg-page-whats-next-buttons" class="mer-whats-next-buttons">
 			
 				<a id="mer-reg-page-go-to-step-2-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >
-					<?php _e('Registration&nbsp;Step&nbsp;2&nbsp;', 'espresso'); ?><span class="ui-icon ui-icon-carat-1-e"></span>
+					<?php _e('Registration&nbsp;Step&nbsp;2&nbsp;', 'event_espresso'); ?><span class="ui-icon ui-icon-carat-1-e"></span>
 				</a>
 	
 				<noscript>
@@ -126,7 +126,7 @@ foreach ( $event_queue as $cart_type => $cart ) {
 								id="mer-reg-page-go-to-step-2-sbmt-btn" 
 								class="mer-register-btn no-js-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx"
 								name="mer-reg-page-go-to-step-2-sbmt-btn" 
-								value="&nbsp;<?php  _e('Registration&nbsp;Step&nbsp;2', 'events'); ?>&nbsp;&raquo;" 
+								value="&nbsp;<?php  _e('Registration&nbsp;Step&nbsp;2', 'event_espresso'); ?>&nbsp;&raquo;" 
 						/>				
 				</noscript>	
 				
