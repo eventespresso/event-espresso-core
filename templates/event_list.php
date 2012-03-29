@@ -66,7 +66,7 @@ function event_espresso_get_event_details($attributes) {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	
-	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/event_details_helper.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
 	
 	//echo 'This page is located in ' . get_option( 'upload_path' );
 	$event_page_id = $org_options['event_page_id'];
@@ -275,7 +275,7 @@ function event_espresso_get_event_details($attributes) {
 		// let's start with an empty array'
 		$event->times = array();
 		$event->times = espresso_event_list_get_event_times($event_id); 
-		// function found in includes/functions/event_details_helper.php 
+		// function found in includes/functions/event_details.helper.php 
 		//echo pre_arr($event->times);
 
 

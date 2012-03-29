@@ -58,7 +58,7 @@ if (!function_exists('event_registration')) {
 		$registrar = $org_options['contact_email'];
 		$currency_format = isset($org_options['currency_format']) ? $org_options['currency_format'] : '';
 
-		if ($org_options['map_settings']['ee_display_map_no_shortcodes']) {
+		if ( isset($org_options['map_settings']['ee_display_map_no_shortcodes']) && $org_options['map_settings']['ee_display_map_no_shortcodes'] ) {
 			$show_ee_gmap_no_shortcode = true;
 		} else {
 			$show_ee_gmap_no_shortcode = false;
@@ -322,7 +322,7 @@ if (!function_exists('event_registration')) {
 						event_espresso_user_login();
 					} else {
 					
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/event_details_helper.php');
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
 			
 						$event->times = array();
 						$event->times = espresso_event_list_get_event_times($event_id);
