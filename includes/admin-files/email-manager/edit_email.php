@@ -11,6 +11,11 @@ function edit_event_email(){
 		$email_subject=stripslashes_deep($result->email_subject);
 		$email_text=stripslashes_deep($result->email_text);
 	}
+	
+	$email_type_values = array(
+		array('id' => 'confirmation', 'text' => __('Confirmation', 'event_espresso')),
+		array('id' => 'payment', 'text' => __('Payment', 'event_espresso'))
+	);
 	?>
 <!--Add event display-->
 
@@ -34,8 +39,7 @@ function edit_event_email(){
 							<th><label for="email_type">
 									<?php _e('Email Type','event_espresso'); ?>
 								</label></th>
-							<td><input class="regular-text" type="text" name="email_type" size="25" value="<?php echo stripslashes($email_type);?>"/></td>
-							<td>Typically, either 'confirmation' or 'payment'.</td>
+							<td><?php echo select_input('email_type', $email_type_values, isset($email_type) ? $email_type : 'confirmation') ?></td>
 						</tr>
 						<tr>
 							<th><label>
