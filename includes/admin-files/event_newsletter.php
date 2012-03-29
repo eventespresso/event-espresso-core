@@ -41,7 +41,8 @@ function event_newsletter($event_id=0) {
 								<ul>
 									<li><label for="email_subject"><?php _e('Email Subject Line', 'event_espresso'); ?></label> <input type="text" name="email_subject" size="25"></li>
 									<li><label for="email_text"><?php _e('Email Text', 'event_espresso'); ?></label><br />
-										<textarea class="theEditor" id="email_text" name="email_text"></textarea>
+										<!-- <textarea class="theEditor" id="email_text" name="email_text"></textarea> -->
+                                        <?php wp_editor('','email_text'); ?>
 										<br />
 										<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info"><?php _e('View Custom Email Tags', 'event_espresso'); ?></a>  | <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_example"> <?php _e('Email Example', 'event_espresso'); ?></a>
 									</li>
