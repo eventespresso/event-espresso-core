@@ -234,7 +234,7 @@ class EE_Single_Page_Checkout {
 					// empty cart or else items build up indefinately
 //					$cart_total = $this->cart->get_cart_grand_totals();
 //					if ( $cart_total['grand_total_qty'] != 0 && ! MER_ACTIVE ){
-					if ( ! defined( MER_ACTIVE )){
+					if ( ! defined( 'MER_ACTIVE' )){
 						$this->cart->empty_cart('AJAX');
 					}			
 			}
