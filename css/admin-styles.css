@@ -587,48 +587,48 @@ textarea#conf_mail, .postbox textarea.std-textarea {
 .event-questions-lists .inside {
 	padding-bottom: 15px;
 }
-.event-espresso_page_events #side-sortables p {
-	/*overflow: hidden;*/
+.toplevel_page_events #side-sortables p {
+	overflow: hidden;
 	width: 220px;
 }
-.event-espresso_page_events #side-sortables p label {
-	display: block;
-	margin-bottom: 3px;
+.toplevel_page_events #side-sortables p label {
+	float: left;
+	line-height: 2.5;
 }
-.event-espresso_page_events #side-sortables .event-staff-list label {
+.toplevel_page_events #side-sortables .event-staff-list label {
 	line-height: 1.6;
 }
-.event-espresso_page_events #side-sortables p span {
+.toplevel_page_events #side-sortables p span {
 	clear: left;
+	float: left;
 }
-.event-espresso_page_events #side-sortables p span.question {
+.toplevel_page_events #side-sortables p input, .toplevel_page_events #side-sortables p select {
+    float: right;
+}
+.toplevel_page_events #side-sortables p span.question {
 	float: none;
 	clear: none;
 }
-.event-espresso_page_events #side-sortables p input {
-
+.toplevel_page_events #side-sortables p input {
+	float: right;
 }
 #side-sortables p select#mailchimp-lists {
 	width: 220px;
 }
-.event-espresso_page_events #side-sortables p.inputunder {
+.toplevel_page_events #side-sortables p.inputunder {
 	width: 250px;
 }
-.event-espresso_page_events #side-sortables p.inputunder select, .event-espresso_page_events #side-sortables p.inputunder input {
+.toplevel_page_events #side-sortables p.inputunder select, .toplevel_page_events #side-sortables p.inputunder input {
 	float: none;
 	width: 220px;
 }
-.event-espresso_page_events #side-sortables p.inputundersmall input {
-	float: none;
-	width: 100px;
-}
-.event-espresso_page_events #side-sortables p .ev_reg-fancylink {
+.toplevel_page_events #side-sortables p .ev_reg-fancylink {
 	height: 20px;
 }
 #side-sortables #event-discounts p.promo-amnts {
 	width: auto;
 }
-#side-sortables #event-discounts p.promo-amnts label, #side-sortables #event-discounts p.promo-amnts input, #side-sortables #event-discounts p.promo-amnts select, #side-sortables #attendee-pre-approval-options .pre-approve select, #side-sortables #event-categories label.selectit, #side-sortables #event-discounts label.selectit, #side-sortables .event-staff-list label.selectit {
+#side-sortables #event-discounts p.promo-amnts label, #side-sortables #event-discounts p.promo-amnts input, #side-sortables #event-discounts p.promo-amnts select, #side-sortables #attendee-pre-approval-options .pre-approve select.toplevel_page_events #side-sortables p, #side-sortables #event-categories label.selectit, #side-sortables #event-discounts label.selectit, #side-sortables .event-staff-list label.selectit {
 	float: none;
 }
 #side-sortables #event-discounts p.promo-amnts span {
@@ -1292,7 +1292,11 @@ legend span.question, span.question {
 	font-size: 11px !important;
 	font-weight: normal !important;
 }
-body p label {line-height: 1.2;}
+body p label {
+	color: #555;
+	font-weight: bold;
+	margin-right: 3px;
+}
 .section-heading {
 	font-size: 13px;
 	font-weight: bold;
