@@ -424,7 +424,7 @@ class PayPal
 									);
 								   
 		$this -> CurrencyCodes = array(
-										'AUD' => 'Austrailian Dollar', 
+										'AUD' => 'Australian Dollar', 
 										'BRL' => 'Brazilian Real', 
 										'CAD' => 'Canadian Dollar', 
 										'CZK' => 'Czeck Koruna', 

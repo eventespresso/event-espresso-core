@@ -422,7 +422,7 @@ class PayPalAdaptivePayments
 									);
 								   
 		$this -> CurrencyCodes = array(
-										'AUD' => 'Austrailian Dollar', 
+										'AUD' => 'Australian Dollar', 
 										'CAD' => 'Canadian Dollar', 
 										'CHF' => 'Swiss Franc', 
 										'CZK' => 'Czech Koruna', 
