@@ -239,7 +239,7 @@ class Events_attendee extends espresso_model {
 
 
 
-/*
+/**
  *		This function returns multiple rows from a table
  * 		SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
  *		
@@ -499,9 +499,10 @@ class Events_attendee extends espresso_model {
 	
 	
 	
-/** MOVE TO SOME HELPER FILE SOMEWHERE >> SHOULD NOT BE IN A MODEL ( only here for development purposes )
- *		@ create error code from filepath, function name, 
- *		@ and line number where exception was thrown
+/** 
+ *		create error code from filepath, function name and line number where exception was thrown
+ *  
+ * 		MOVE TO SOME HELPER FILE SOMEWHERE >> SHOULD NOT BE IN A MODEL ( only here for development purposes )
  *		@ param string $file
  *		@ param string $func
  *		@ param string $line
