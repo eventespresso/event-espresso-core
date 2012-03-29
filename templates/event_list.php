@@ -4,285 +4,553 @@
 //This is an group of functions for querying all of the events in your databse.
 //This file should be stored in your "/wp-content/uploads/espresso/templates/" directory.
 //Note: All of these functions can be overridden using the "Custom Files" addon. The custom files addon also contains sample code to display ongoing events
+/**
+ * method short descriptiom (req)
+ *
+ * method long descriptiom
+ *
+ * @access 		private		private protected public
+ * @param 		int 			$var_name 		int float string array object mixed
+ * @return 		void			var type
+ */
+function display_all_events($show_recurrence = TRUE) {
 
-function display_all_events() {
+	global $wpdb, $org_options;
+	// error logging
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	$attributes = array( 'show_recurrence' => $show_recurrence );
+	event_espresso_get_event_details($attributes); //This function is located below
+}
 
-		global $org_options;
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		//If set to true, the event page will display recurring events.
-		$display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
-		$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 1 ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
-		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 1 ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
-		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		$sql .= " LEFT JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-		$sql .= " WHERE is_active = 1 ";
-		$sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
-		$sql .= " AND e.event_status != 'D' ";
-		$sql .= " GROUP BY e.id  ORDER BY date(start_date), time(start_time), id";
-		event_espresso_get_event_details($sql, false, false, 'all'); //This function is located below
 
-	}
+/**
+ * method short descriptiom (req)
+ *
+ * method long descriptiom
+ *
+ * @access 		private		private protected public
+ * @param 		int 			$var_name 		int float string array object mixed
+ * @return 		void			var type
+ */
+function display_event_espresso_categories($category_identifier = 'null', $css_class = NULL) {
 
-add_action('action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1);
+	global $wpdb, $org_options;
+	// error logging
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-function display_event_espresso_categories($event_category_id="null", $css_class=NULL) {
-		global $wpdb, $org_options;
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		if ($event_category_id != "null") {
+	$attributes = array(
+			'category_identifier' => $category_identifier,
+			'css_class' => $css_class
+	);
+	event_espresso_get_event_details($attributes);
+}
 
-			$display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
-			$sql = "SELECT e.*, c.id category_id, c.category_name, c.category_desc, c.display_desc, c.category_identifier, ese.start_time, ese.end_time, p.event_cost  ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 1 ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
-			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
-			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
-			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-			$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 1 ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
-			$sql .= " WHERE c.category_identifier = '" . $event_category_id . "' ";
-			$sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
-			$sql .= " AND e.event_status != 'D' ";
-			$sql .= " GROUP BY e.id  ORDER BY date(start_date), time(start_time), id";
-			event_espresso_get_event_details($sql, $css_class, false, 'cat'); //This function is located below
+
+
+
+/**
+ * displays a list of events and their details
+ *
+ * @param 		string 			$sql 					int float string array object mixed
+ * @param 		string 			$css_class 			int float string array object mixed
+ * @param 		boolean 		$allow_override 		int float string array object mixed
+ * @return 		void
+ */
+function event_espresso_get_event_details($attributes) {
+
+	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;
+
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/event_details_helper.php');
+	
+	//echo 'This page is located in ' . get_option( 'upload_path' );
+	$event_page_id = $org_options['event_page_id'];
+	$currency_symbol = isset($org_options['currency_symbol']) ? $org_options['currency_symbol'] : '';
+
+	$default_attributes = array(
+			'category_identifier' => 'NULL',
+			'show_expired' => 'false',
+			'show_secondary' => 'false',
+			'show_deleted' => 'false',
+			'show_recurrence' => 'false',
+			'limit' => '0',
+			'order_by' => 'NULL',
+			'css_class' => 'NULL',
+			'allow_override' => 1,
+			'use_venues' => FALSE,
+			'venue_id' => FALSE
+	);
+
+	// loop thru default atts
+	foreach ($default_attributes as $key => $default_attribute) {
+		// check if att exists
+		if (!isset($attributes[$key])) {
+			$attributes[$key] = $default_attribute;
 		}
 	}
 
-//Events Listing - Shows the events on your page.
-function event_espresso_get_event_details($sql, $css_class=NULL, $allow_override=0, $type = 'all') {
 
-		//Debug
-		//echo $sql;
+	// now extract shortcode attributes
+	extract($attributes);
 
-		global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts;
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	// get category
+	$category = $category_identifier != 'NULL' ? espresso_event_list_get_category($category_identifier) : FALSE;
 
-		switch ($type){
-			case 'all':
-				$events = get_transient( 'all_espresso_events' );
-				if ( false === $events ) {
-					// if transient not set, do this!
+	// if $use_venues was not set in the attributes, then check $org_options
+	if (!$use_venues) {
+		$use_venues = ( isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] ) ? TRUE : FALSE;
+	}
 
-					// create the data that needs to be saved.
-					$events = $wpdb->get_results($sql);
+	if ($use_venues) {
+		$all_venues = espresso_event_list_get_venues();
+	}
 
-					// save the newly created transient value
-					// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
-					set_transient('all_espresso_events', $events, 60*60*24*365);
 
-					//Check if using the cache
-					//echo 'Not using cache';
-				}
-			break;
-			case 'cat':
-			default:
-				$events = $wpdb->get_results($sql);
-			break;
+	// generate SQL statement
+	// this looks like a good place to start
+	$SQL = 'SELECT ';
+	// maybe get category info
+	$SQL .= $category ? 'eventCat.cat_id, ' : '';
+	// maybe get venue id
+	$SQL .= ( $use_venues or $venue_id ) ? 'eventVenue.venue_id, ' : '';
+	// we might even need some event details  ; )
+	$SQL .= 'eventDetails.*';
+
+	// maybe get category info
+	if ($category) {
+		// start with the category rel table since that's what's important here'
+		$SQL .= ' FROM ' . EVENTS_CATEGORY_REL_TABLE . ' eventCat LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' eventDetails ON eventCat.event_id = eventDetails.id ';
+	} elseif ($venue_id) {
+		// start with the venue rel table since that's what's important here'
+		$SQL .= ' FROM ' . EVENTS_VENUE_REL_TABLE . ' eventVenue LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' eventDetails ON eventVenue.event_id = eventDetails.id ';
+	} else {
+		// just a regular ol' events list'
+		$SQL .= ' FROM ' . EVENTS_DETAIL_TABLE . ' eventDetails ';
+	}
+
+	// display venue info but not for a specific venue
+	if ($use_venues && !$venue_id) {
+		// maybe get venue info
+		$SQL .= $use_venues ? ' LEFT JOIN ' . EVENTS_VENUE_REL_TABLE . ' eventVenue ON eventVenue.event_id = eventDetails.id ' : '';
+	}
+
+	$SQL .= ' WHERE ';
+	// maybe get category info
+	$SQL .= $category ? 'eventCat.cat_id = %d AND ' : '';
+	// maybe get venue info
+	$SQL .= $venue_id ? 'eventVenue.venue_id = %d AND ' : '';
+
+	$SQL .= " eventDetails.is_active = 1 ";
+
+	$SQL .= $show_expired == 'false' ? ' AND (eventDetails.start_date >= "' . date('Y-m-d') . '" OR eventDetails.event_status = "O" OR eventDetails.registration_end >= "' . date('Y-m-d') . '")' : '';
+	$SQL .= $show_secondary == 'false' ? " AND eventDetails.event_status != 'S'" : '';
+	$SQL .= $show_deleted == 'false' ? " AND eventDetails.event_status != 'D'" : '';
+	$SQL .= $show_recurrence == 'false' ? " AND eventDetails.recurrence_id = '0'" : ' GROUP BY eventDetails.id';
+	$SQL .= $order_by != NULL ? ' ORDER BY ' . $order_by . ' ASC' : ' ORDER BY date(eventDetails.start_date), eventDetails.id ASC';
+	$SQL .= $limit > 0 ? ' LIMIT 0,' . $limit . ' ' : '';
+	
+	
+	// check for cached events list
+	// we'll md5 the final SQL statement to create a string of consistent length
+	// this also allows us to cache all of the different queries that can be produced via the SQL options
+	$transient_key = md5( $SQL );
+	
+	// check if transient exists
+	if ( ! $events = get_transient( 'ee_events_' . $transient_key )) {
+		// no transient, so let's run the query
+		if ($category) {
+			// use the category id from the attributes
+			$events = $wpdb->get_results($wpdb->prepare($SQL, $category->id));
+		} elseif ($venue_id) {
+			// use the venue id  from the attributes
+			$events = $wpdb->get_results($wpdb->prepare($SQL, $venue_id));
+		} else {
+			$events = $wpdb->get_results($wpdb->prepare($SQL));
+		}
+		
+		// save the newly created transient value
+		// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
+		set_transient( 'ee_events_' . $transient_key, $events, 60*60*24*365 );	
+			
+	}
+
+	
+//		echo $wpdb->last_query;
+//		echo printr($events, '$events' );
+	
+
+	echo '
+<div id="mer-ajax-loading" style="display:none;">
+	<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-grey.gif" /><span>loading...</span>
+</div>
+
+<div id="mer-success-msg" class="event-queue-msg ui-widget-content ui-state-highlight ui-corner-all ui-helper-hidden" style="display:none;">
+	<span class="ui-icon ui-icon-circle-check"></span>&nbsp;<span class="msg"></span>
+</div>
+
+<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all ui-helper-hidden" style="display:none;">
+	<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg"></span>
+</div>
+
+<input id="event-queue-poll-server" type="hidden" value="1" name="event-queue-poll-server">
+
+';
+
+	if ($category) {
+		if ($category->display_desc && $category->category_name != '') {
+			echo '<h3 id="events_category_name-' . $category->id . '" class="events_category_name">' . stripslashes_deep($category->category_name) . '</h3>';
+			echo espresso_format_content($category->category_desc);
+		}
+	}
+
+	if ($venue_id) {
+		$venue_hdr = isset($name_before) ? $name_before : '<h3 class="venue_name">';
+		$venue_hdr .= stripslashes_deep($all_venues[$venue_id]->name);
+		$venue_hdr .= isset($name_after) ? $name_after : '</h3>';
+		echo $venue_hdr;
+	}
+
+
+	foreach ($events as $event) {
+
+		$event_id = $event->id;
+		$event_name = stripslashes_deep($event->event_name);
+		$event_desc = stripslashes_deep($event->event_desc);
+		$event_desc = str_replace('<p></p>', '', $event_desc);
+		$overflow_event_id = $event->overflow_event_id;
+
+
+		$event->recurring_events = FALSE;
+		// check for a valid recurrence id and that the recurring events table is set
+		if ($show_recurrence && $event->recurrence_id && defined('EVENT_ESPRESSO_RECURRENCE_TABLE')) {
+			//$event->recurring_events = espresso_event_list_get_recurring_events( $event->recurrence_id );
+			//echo pre_arr($event->recurring_events);
 		}
 
-		//Multi event registration
-		$multi_reg = false;
-		if (function_exists('event_espresso_multi_reg_init')) {
-			$multi_reg = true;
+
+		global $event_meta;
+		$event_meta = unserialize($event->event_meta);
+		$event_meta['is_active'] = $event->is_active;
+		$event_meta['event_status'] = $event->event_status;
+		$event_meta['start_time'] = empty($event->start_time) ? '' : $event->start_time;
+		$event_meta['start_date'] = $event->start_date;
+		$event_meta['registration_start'] = $event->registration_start;
+		$event_meta['registration_startT'] = $event->registration_startT;
+		$event_meta['registration_end'] = $event->registration_end;
+		$event_meta['registration_endT'] = $event->registration_endT;
+
+		//$display_event_date = event_date_display( $event->start_date, get_option('date_format'));
+		//$display_event_date = date_i18n( 'l F jS, Y', strtotime( $event->start_date ));
+		//$event->single_date = date_i18n( 'D M jS', strtotime( $event->start_date ));
+		//$event->single_date = date_i18n( 'l F jS, Y', strtotime( $event->start_date ));
+		$display_event_date = $event->single_date = $event->start_date;
+
+
+		//Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
+		$status = event_espresso_get_is_active(0, $event_meta);
+
+		$status_display = $status['display_custom'];
+		$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? $status['display_custom'] : $status['status'];
+		$status_display_ongoing = $status['status'] == 'ONGOING' ? $status['display_custom'] : $status['status'];
+		$status_display_secondary = $status['status'] == 'SECONDARY' ? $status['display_custom'] : $status['status']; //Waitlist event
+		$status_display_pending = $status['status'] == 'PENDING' ? $status['display_custom'] : $status['status'];
+		$status_display_deleted = $status['status'] == 'DELETED' ? $status['display_custom'] : $status['status'];
+		$status_display_draft = $status['status'] == 'DRAFT' ? $status['display_custom'] : $status['status'];
+		$status_display_denied = $status['status'] == 'DENIED' ? $status['display_custom'] : $status['status'];
+		$status_display_expired = $status['status'] == 'EXPIRED' ? $status['display_custom'] : $status['status'];
+		$status_display_reg_closed = $status['status'] == 'REGISTRATION_CLOSED' ? $status['display_custom'] : $status['status'];
+		$status_display_not_open = $status['status'] == 'REGISTRATION_NOT_OPEN' ? $status['display_custom'] : $status['status'];
+		//You can also display a custom message. For example, this is a custom registration not open message:
+		$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' - <span class="espresso_closed">' . __('Regsitration is Closed', 'event_espresso') . '</span>' : $status['status'];
+		$status['status'] = str_replace('_', ' ', $status['status']);
+
+
+// EVENT TIMES
+		// let's start with an empty array'
+		$event->times = array();
+		$event->times = espresso_event_list_get_event_times($event_id); 
+		// function found in includes/functions/event_details_helper.php 
+		//echo pre_arr($event->times);
+
+
+		$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
+
+// EVENT PRICING
+		// let's start with an empty array'
+		$event->prices = array();
+
+		if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
+			$event->prices = espresso_event_list_process_event_prices($event_prices);
 		}
+		//echo pre_arr($event->prices);
+		//echo $display_event_prices;
+		
+		$event->currency_symbol = $org_options['currency_symbol'];
 
-		//echo 'This page is located in ' . get_option( 'upload_path' );
-		$event_page_id = $org_options['event_page_id'];
-		$currency_symbol = isset($org_options['currency_symbol']) ? $org_options['currency_symbol'] : '';
+		$display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
+		$available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved');
 
-		//Category data
-		$category_id = isset($wpdb->last_result[0]->category_id) ? $wpdb->last_result[0]->category_id : '';
-		$category_name = isset($wpdb->last_result[0]->category_name) ? $wpdb->last_result[0]->category_name : '';
-		$category_identifier = isset($wpdb->last_result[0]->category_identifier) ? $wpdb->last_result[0]->category_identifier : '';
-		$category_desc = isset($wpdb->last_result[0]->category_desc) ? html_entity_decode(wpautop($wpdb->last_result[0]->category_desc)) : '';
-		$display_desc = isset($wpdb->last_result[0]->display_desc) ? $wpdb->last_result[0]->display_desc : '';
+		//Venue information
+		if ($use_venues) {
+			if (isset($all_venues[$event->venue_id])) {
 
-		if ($display_desc ) {
-			echo '<h2 id="events_category_name-' . $category_id . '" class="events_category_name">' . stripslashes_deep($category_name) . '</h2>';
-			echo espresso_format_content($category_desc);
-		}
-
-		//Debug
-		//var_dump($events);
-		foreach ($events as $event) {
-			$event_id = $event->id;
-			$event_name = $event->event_name;
-			$event_desc = stripslashes_deep($event->event_desc);
-			$event_identifier = $event->event_identifier;
-			$active = $event->is_active;
-			$registration_start = $event->registration_start;
-			$registration_end = $event->registration_end;
-			$start_date = $event->start_date;
-			$end_date = $event->end_date;
-			$reg_limit = $event->reg_limit;
-			$event_address = $event->address;
-			$event_address2 = $event->address2;
-			$event_city = $event->city;
-			$event_state = $event->state;
-			$event_zip = $event->zip;
-			$event_country = $event->country;
-			$member_only = $event->member_only;
-			$externalURL = $event->externalURL;
-			$recurrence_id = $event->recurrence_id;
-			$display_reg_form = $event->display_reg_form;
-			$allow_overflow = $event->allow_overflow;
-			$overflow_event_id = $event->overflow_event_id;
-			//$event_desc = array_shift(explode('<!--more-->', $event_desc));
-			global $event_meta;
-			$event_meta = unserialize($event->event_meta);
-			$event_meta['is_active'] = $event->is_active;
-			$event_meta['event_status'] = $event->event_status;
-			$event_meta['start_time'] = empty($event->start_time) ? '' : $event->start_time;
-			$event_meta['start_date'] = $event->start_date;
-			$event_meta['registration_start'] = $event->registration_start;
-			$event_meta['registration_startT'] = $event->registration_startT;
-			$event_meta['registration_end'] = $event->registration_end;
-			$event_meta['registration_endT'] = $event->registration_endT;
-			$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
-			//$event_meta['event_thumbnail_url'] = $event->event_thumbnail_url;
-			//$event_meta['display_thumb_in_lists'] = $event->display_thumb_in_lists;
-			//var_dump($event_meta);
-			//var_dump($event_address);
-			//Venue information
-			if ($org_options['use_venue_manager'] ) {
-				$event_address = $event->venue_address;
-				$event_address2 = isset( $event->venue_address2 ) ? $event->venue_address2 : '';
-				$event_city = $event->venue_city;
-				$event_state = $event->venue_state;
-				$event_zip = $event->venue_zip;
-				$event_country = $event->venue_country;
+				$event_address = $all_venues[$event->venue_id]->address;
+				$event_address2 = $all_venues[$event->venue_id]->address2;
+				$event_city = $all_venues[$event->venue_id]->city;
+				$event_state = $all_venues[$event->venue_id]->state;
+				$event_zip = $all_venues[$event->venue_id]->zip;
+				$event_country = $all_venues[$event->venue_id]->country;
 
 				//Leaving these variables intact, just in case people want to use them
-				$venue_title = $event->venue_name;
-				$venue_address = $event->venue_address;
-				$venue_address2 = $event_address2;
-				$venue_city = $event->venue_city;
-				$venue_state = $event->venue_state;
-				$venue_zip = $event->venue_zip;
-				$venue_country = $event->venue_country;
+				$venue_title = $all_venues[$event->venue_id]->name;
+				$venue_address = $all_venues[$event->venue_id]->address;
+				$venue_address2 = $all_venues[$event->venue_id]->address2;
+				$venue_city = $all_venues[$event->venue_id]->city;
+				$venue_state = $all_venues[$event->venue_id]->state;
+				$venue_zip = $all_venues[$event->venue_id]->zip;
+				$venue_country = $all_venues[$event->venue_id]->country;
+
 				global $venue_meta;
+
 				$add_venue_meta = array(
-						'venue_title' => $event->venue_name,
-						'venue_address' => $event->venue_address,
-						'venue_address2' => $event_address2,
-						'venue_city' => $event->venue_city,
-						'venue_state' => $event->venue_state,
-						'venue_country' => $event->venue_country,
+						'venue_title' => $all_venues[$event->venue_id]->name,
+						'venue_address' => $all_venues[$event->venue_id]->address,
+						'venue_address2' => $all_venues[$event->venue_id]->address2,
+						'venue_city' => $all_venues[$event->venue_id]->city,
+						'venue_state' => $all_venues[$event->venue_id]->state,
+						'venue_country' => $all_venues[$event->venue_id]->country,
 				);
-				$venue_meta = (isset($event->venue_meta) && $event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
-				//print_r($venue_meta);
+
+				$event_venue_meta = unserialize($all_venues[$event->venue_id]->meta);
+				$venue_meta = empty($event_venue_meta) ? '' : array_merge($event_venue_meta, $add_venue_meta);
 			}
+		}
 
-			//Address formatting
-			// venue address parts
-			$venue_address_elements = ($event_address != '' ? $event_address . ',' : '') . ($event_address2 != '' ? $event_address2 . ',' : '') . ($event_city != '' ? $event_city . ',' : '') . ($event_state != '' ? $event_state . ',' : '') . ($event_zip != '' ? $event_zip . ',' : '') . ($event_country != '' ? $event_country . ',' : '');
+		$event_address = empty($event_address) ? '' : $event_address;
+		$event_address2 = empty($event_address2) ? '' : $event_address2;
+		$event_city = empty($event_city) ? '' : $event_city;
+		$event_state = empty($event_state) ? '' : $event_state;
+		$event_zip = empty($event_zip) ? '' : $event_zip;
+		$event_country = empty($event_country) ? '' : $event_country;
+		//Address formatting
+		$venue_address_elements = $event_address . ',';
+		$venue_address_elements .= $event_address2 . ',';
+		$venue_address_elements .= $event_city . ',';
+		$venue_address_elements .= $event_state . ',';
+		$venue_address_elements .= $event_zip . ',';
+		$venue_address_elements .= $event_country . ',';
 
-			$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
+		$location = $event_address;
+		$location .= '<br />' . $event_address2;
+		$location .= '<br />' . $event_city;
+		$location .= ', ' . $event_state;
+		$location .= '<br />' . $event_zip;
+		$location .= '<br />' . $event_country;
 
-			//var_dump($venue_meta);
-			//Google map link creation
-			$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
-			$ee_gmap_location = $venue_address_elements;
 
-			//Create all meta vars
-			global $all_meta;
-			$all_meta = array(
-					'event_name' => stripslashes_deep($event_name),
-					'event_desc' => stripslashes_deep($event_desc),
-					'event_address' => $event_address,
-					'event_address2' => $event_address2,
-					'event_city' => $event_city,
-					'event_state' => $event_state,
-					'event_zip' => $event_zip,
-					'is_active' => $event->is_active,
-					'event_status' => $event->event_status,
-					'start_time' => empty($event->start_time) ? '' : $event->start_time,
-					'registration_startT' => $event->registration_startT,
-					'registration_start' => $registration_start,
-					'registration_endT' => $event->registration_endT,
-					'registration_end' => $registration_end,
-					'is_active' => empty($is_active) ? '' : $is_active,
-					'event_country' => $event_country,
-					'start_date' => event_date_display($start_date, get_option('date_format')),
-					'end_date' => event_date_display($end_date, get_option('date_format')),
-					'time' => empty($event->start_time) ? '' : $event->start_time,
-					'google_map_link' => $google_map_link,
-					'price' => empty($event->event_cost) ? '' : $event->event_cost,
-					'event_cost' => empty($event->event_cost) ? '' : $event->event_cost,
+		//Google map link creation
+		$google_map_link = espresso_google_map_link(array(
+				'address' => $event_address,
+				'city' => $event_city,
+				'state' => $event_state,
+				'zip' => $event_zip,
+				'country' => $event_country,
+				'text' => 'Map and Directions',
+				'type' => 'text',
+				'css_id' => 'google-map-link-btn-' . $event_id,
+				'css_class' => 'google-map-link-btn ui-button ui-state-default ui-corner-all add-hover-fx',
+				'icon' => '<span class="ui-icon ui-icon-extlink"></span>'
+						));
+		$ee_gmap_location = $venue_address_elements;
+
+		//Create all meta vars
+		global $all_meta;
+		$all_meta = array(
+				'event_name' => $event_name,
+				'event_desc' => $event_desc,
+				'event_address' => $event_address,
+				'event_address2' => $event_address2,
+				'event_city' => $event_city,
+				'event_state' => $event_state,
+				'event_zip' => $event_zip,
+				'event_status' => $event->event_status,
+				'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				'registration_startT' => $event->registration_startT,
+				'registration_start' => $event->registration_start,
+				'registration_endT' => $event->registration_endT,
+				'registration_end' => $event->registration_end,
+				'is_active' => empty($event->is_active) ? '' : $event->is_active,
+				'event_country' => $event->country,
+				'start_date' => event_date_display($event->start_date, get_option('date_format')),
+				'end_date' => event_date_display($event->end_date, get_option('date_format')),
+				'time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				'google_map_link' => $google_map_link,
+				'price' => empty($event->event_cost) ? '' : $event->event_cost,
+				'event_cost' => empty($event->event_cost) ? '' : $event->event_cost,
+		);
+
+
+		// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
+		if (isset($org_options['map_settings']) && !empty($org_options['map_settings'])) {
+			$ee_gmaps_opts = array(
+					'ee_map_width' => $org_options['map_settings']['ee_map_width'],
+					'ee_map_height' => $org_options['map_settings']['ee_map_height'],
+					'ee_map_zoom' => $org_options['map_settings']['ee_map_zoom'],
+					'ee_map_nav_display' => $org_options['map_settings']['ee_map_nav_display'],
+					'ee_map_nav_size' => $org_options['map_settings']['ee_map_nav_size'],
+					'ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'],
+					'ee_map_align' => $org_options['map_settings']['ee_map_align']
 			);
-			//Debug
-			//echo '<p>'.print_r($all_meta).'</p>';
-			//These variables can be used with other the espresso_countdown, espresso_countup, and espresso_duration functions and/or any javascript based functions.
-			//Warning: May cause additional database queries an should only be used for sites with a small amount of events.
-			//$start_timestamp = espresso_event_time($event_id, 'start_timestamp');
-			//$end_timestamp = espresso_event_time($event_id, 'end_timestamp');
-			// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
-			if ( isset($org_options['map_settings']) && !empty($org_options['map_settings']) ){
-				$ee_gmaps_opts = array(
-						'ee_map_width' => $org_options['map_settings']['ee_map_width'],
-						'ee_map_height' => $org_options['map_settings']['ee_map_height'],
-						'ee_map_zoom' => $org_options['map_settings']['ee_map_zoom'],
-						'ee_map_nav_display' => $org_options['map_settings']['ee_map_nav_display'],
-						'ee_map_nav_size' => $org_options['map_settings']['ee_map_nav_size'],
-						'ee_map_type_control' => $org_options['map_settings']['ee_map_type_control'],
-						'ee_map_align' => $org_options['map_settings']['ee_map_align']
-				);
+		}
+
+		//Google map
+		$google_map = '';
+		if (isset($event_meta['enable_for_gmap']) && $event_meta['enable_for_gmap']) {
+			if (function_exists('ee_gmap_display') && isset( $org_options['map_settings']['ee_display_map_no_shortcodes'] ) && $org_options['map_settings']['ee_display_map_no_shortcodes']) {
+				$google_map = ee_gmap_display($ee_gmap_location, $event_id);
 			}
-			//var_dump($ee_gmaps_opts);
-			//This can be used in place of the registration link if you are usign the external URL feature
-			//$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url( $event->id, $event->slug );
-			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url( $event->id, $event->slug );
-			if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only ) {
-				//Display a message if the user is not logged in.
-				//_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
+		}
+
+
+		//This can be used in place of the registration link if you are usign the external URL feature
+		$registration_url = $event->reg_url = $event->externalURL != '' ? $event->externalURL : espresso_reg_url($event_id);
+
+		$display_thumb_in_list = ( isset($event_meta['display_thumb_in_lists']) && $event_meta['display_thumb_in_lists'] && !empty($event_meta['event_thumbnail_url']) ) ? TRUE : FALSE;
+
+
+		$display_address = ( $location != '' && isset( $org_options['template_settings']['display_address_in_event_list'] ) && $org_options['template_settings']['display_address_in_event_list']) ? TRUE : FALSE;
+
+
+		//Event description
+		if (!empty($event_desc)) {
+			if (isset($org_options['template_settings']['display_description_in_event_list']) && $org_options['template_settings']['display_description_in_event_list']) {
+				//Show short descriptions
+				if (isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list']) {
+					$event_desc = explode('<!--more-->', $event_desc);
+					$event_desc = array_shift($event_desc);
+				}
+				$event_desc = espresso_format_content($event_desc);
+			}
+		}
+
+		if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $event->member_only == 'Y' ) {
+			//Display a message if the user is not logged in.
+			_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
+		} else {
+			//Serve up the event list
+			//As of version 3.0.17 the event list details have been moved to event_list_display.php
+
+
+			$event_status = event_espresso_get_status( 0, $event_meta );
+
+
+			$open_event_status_list = array('ACTIVE', 'REGISTRATION_OPEN', 'ONGOING', 'SECONDARY', 'PENDING');
+
+			if (in_array($event_status, $open_event_status_list)) {
+
+				$can_register_for_event = TRUE;
+
+
+				//Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
+				$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
+				$event_is_sold_out = ( $num_attendees >= $event->reg_limit ) ? TRUE : FALSE;
+				$overflow_event = ($event->overflow_event_id != '0' && $event->allow_overflow) ? TRUE : FALSE;
+
+				if ($overflow_event) {
+					$overflow_reg_url = espresso_reg_url($event->overflow_event_id);
+				}
+
+
+
+				$event->reg_btn = array();
+				$event->reg_btn['event_status'] = $status['status'];
+				$event->reg_btn['event_id'] = $event_id;
+				$event->reg_btn['reg_url'] = $event->reg_url;
+				$event->reg_btn['external_url'] = $event->externalURL;
+				$event->reg_btn['css_id'] = 'a_register_link-';
+				$event->reg_btn['default_css_class'] = 'a_register_link ';
+				$event->reg_btn['event_name'] = $event->event_name;
+				$event->reg_btn['text'] = $event->display_reg_form ? 'Register for Event' : 'View Details';
+				$event->reg_btn['extra_attributes'] = '';
+				$event->reg_btn['reg_limit'] = $event->reg_limit;
+				$event->reg_btn['additional_limit'] = $event->additional_limit;
+				//$event->reg_btn['event_cost'] = $event->event_cost;
+				$event->reg_btn['prices'] = $event->prices;
+				$event->reg_btn['require_pre_approval'] = $event->require_pre_approval;
+				//$event->reg_btn['all_meta'] = $all_meta;
+
+
+
+				//$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
+
+				$event_reg_link = '
+			<p id="register_link-' . $event_id . '" class="register-link-footer">
+				<a	id="a_register_link-' . $event_id . '"
+						class="a_register_link ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all float-right"
+						href="' . $event->reg_url . '"
+						title="' . $event->event_name . '"
+					>
+					' . __('Register Now', 'event_espresso') . '
+				</a>
+			</p>';
+
+				$event_reg_link = apply_filters( 'filter_hook_espresso_event_reg_link', $event_reg_link, $event->reg_btn );
+
+				// END OF if ( in_array( $event_status, $open_event_status_list ))
 			} else {
-				//Serve up the event list
-				//As of version 3.0.17 the event list details have been moved to event_list_display.php
 
-				if ($allow_override == 1) {
-					//Uncomment to show active status array
-					//print_r( event_espresso_get_is_active($event_id));
+				$can_register_for_event = FALSE;
+				$registration_closed_msg = __('This Event is no longer open for registration.', 'event_espresso');
+			}
 
-					include(espresso_get_event_list_display_template());
-				} else {
-					switch (event_espresso_get_status(0,$event_meta)) {
-						case 'NOT_ACTIVE':
-							//Don't show the event
-							//Uncomment the following two lines to show events that are not active and the active status array
-							//print_r( event_espresso_get_is_active($event_id));
-							//include('event_list_display.php');
-							break;
+			if ($allow_override == 1) {
+				//Uncomment to show active status array
+				//print_r( event_espresso_get_is_active($event_id));
+				include('event_list_display.php');
+			} else {
 
-						case 'PENDING':
-							if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
-								//Uncomment to show active status array
-								//print_r( event_espresso_get_is_active($event_id));
+				switch ($event_status) {
 
-								echo '<div class="pending_event">';
-								include(espresso_get_event_list_display_template());
-								echo '</div>';
-							}
-							break;
+					case 'NOT_ACTIVE':
+						//Don't show the event
+						//Uncomment the following two lines to show events that are not active and the active status array
+						//print_r( event_espresso_get_is_active($event_id));
+						//include('event_list_display.php');
+						break;
 
-						default:
+					case 'PENDING':
 
+						if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
 							//Uncomment to show active status array
 							//print_r( event_espresso_get_is_active($event_id));
-
+							echo '<div class="pending_event">';
+							//include('event_list_display.php');
 							include(espresso_get_event_list_display_template());
-							break;
-					}
+							echo '</div>';
+						}
+
+						break;
+
+					case 'ACTIVE':
+					default:
+
+						//Uncomment to show active status array
+						//print_r( event_espresso_get_is_active($event_id));
+//							include('event_list_display.php');
+						include(espresso_get_event_list_display_template());
+
+						break;
 				}
 			}
 		}
-		//Check to see how many database queries were performed
-		//echo '<p>Database Queries: ' . get_num_queries() .'</p>';
-		espresso_registration_footer();
-	}
-
+	} // end foreach event
+	//Check to see how many database queries were performed
+	//echo '<p>Database Queries: ' . get_num_queries() .'</p>';
+	espresso_registration_footer();
+}
