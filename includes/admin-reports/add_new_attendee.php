@@ -3,7 +3,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
 function add_new_attendee($event_id) {
-	if (isset($_REQUEST['regevent_action_admin']) && $_REQUEST['regevent_action_admin'] == 'post_attendee') {
+	if (isset($_REQUEST['e_reg_admin']) && $_REQUEST['e_reg_admin'] == 'post_attendee') {
 		$attendee_id = event_espresso_add_attendees_to_db();
 		// SEND CONFIRMATION EMAIL MESSAGES
 		event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
@@ -130,7 +130,7 @@ function add_new_attendee($event_id) {
 									<?php _e('Override Price Selected Above?', 'event_espresso'); ?>
 								</label>
 								<input name="admin_price_override" type="checkbox" value="1" />
-								<input type="hidden" name="regevent_action_admin" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee" />
+								<input type="hidden" name="e_reg_admin" id="e_reg-<?php echo $event_id; ?>" value="post_attendee" />
 								<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>" />
 								<input type="hidden" name="admin" value="true" />
 							</p>

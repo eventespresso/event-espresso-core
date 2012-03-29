@@ -516,24 +516,24 @@
 
 			// check for page_id in SERVER REQUEST
 			if ( isset( $_REQUEST['page_id'] )) {
-				// rebuild $regevent_action without any of the extra paramaters
+				// rebuild $e_reg without any of the extra paramaters
 				$page_id = '?page_id=' . esc_attr( $_REQUEST['page_id'] ) . '&amp;';
 			} else {
 				$page_id = '?';
 			}
 			//echo '<h1>$page_id   ' . $page_id . '</h1>';
 
-			// check for $regevent_action in SERVER REQUEST
-			if ( isset( $_REQUEST['regevent_action'] )) {
-				// rebuild $regevent_action without any of the extra paramaters
-				$regevent_action = 'regevent_action=' . esc_attr( $_REQUEST['regevent_action'] );
+			// check for $e_reg in SERVER REQUEST
+			if ( isset( $_REQUEST['e_reg'] )) {
+				// rebuild $e_reg without any of the extra paramaters
+				$e_reg = 'e_reg=' . esc_attr( $_REQUEST['e_reg'] );
 			} else {
-				$regevent_action = '';
+				$e_reg = '';
 			}
-			//echo '<h1>$regevent_action   ' . $regevent_action . '</h1>';
+			//echo '<h1>$e_reg   ' . $e_reg . '</h1>';
 
 
-			$page_visit = rtrim( $http_host . $request_uri . $page_id . $regevent_action, '?' );
+			$page_visit = rtrim( $http_host . $request_uri . $page_id . $e_reg, '?' );
 			//echo '<h1>$last_page   ' . $page_visit . '</h1>';
 			
 			// if the page hasn't really changed (because of a refresh or something),

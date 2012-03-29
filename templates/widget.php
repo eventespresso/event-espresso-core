@@ -83,12 +83,13 @@ if (!class_exists('Event_Espresso_Widget')) {
 							if ( $display_event ) {
 							
 								$event_id = $event->id;
-								$event_name = $event->event_name;
+								$event_name = stripslashes_deep( $event->event_name );
 								$start_date = $event->start_date;
 								$category_name = $event->category_name !=''?$event->category_name:'';
 								$category_desc = $event->category_desc !=''?$event->category_desc:'';
 								$externalURL = $event->externalURL;
-								$registration_url = $externalURL != '' ? $externalURL : home_url() . '/?page_id='.$event_page_id.'&regevent_action=register&event_id='. $event_id . '&name_of_event=' . stripslashes_deep($event_name);
+								$ext_url = add_query_arg( array( 'page_id'=>$event_page_id, 'e_reg'=>'register', 'event_id'=>$event_id, 'name_of_event'=>$event_name ), home_url() );
+								$registration_url = $externalURL != '' ? $externalURL :  $ext_url;
 								
 								if ( isset( $event->venue_city ) && $event->venue_city != '' )
 									$event_city = $event->venue_city . ', ';
@@ -134,7 +135,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 										default:
 											?>
 								<li class="upcmng-evnt-wdgt-li-item">
-									<h6 class="upcmng-evnt-wdgt-hdr-link"><a href="<?php echo $registration_url;?>"><?php echo stripslashes_deep($event_name)?></a></h6> 
+									<h6 class="upcmng-evnt-wdgt-hdr-link"><a href="<?php echo $registration_url;?>"><?php echo $event_name?></a></h6> 
 									<span class="upcmng-evnt-wdgt-date"><?php echo $event_city . $event_state; ?><em><?php echo event_date_display($start_date)?></em></span>
 									<?php /* These are custom messages that can be displayed based on the event status. Just comment the one you want to use. */?>
 									<?php //echo $status_display; //Turn this on to display the overall status of the event. ?>

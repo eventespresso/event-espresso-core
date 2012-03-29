@@ -21,7 +21,7 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $
 			$array = array('r_id' => $registration_id, 'id' => $attendee_id, 'event_id' => $event_id, 'edit_attendee' => 'true', 'single' => 'true');
 			$url = add_query_arg($array, get_permalink($org_options['event_page_id']));
 			$html .= '<a  href="' . $url . '" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
-			//$html .= '<a  href="' . home_url() . '?page_id=' . $org_options['event_page_id'] . '&registration_id=' . $registration_id . '&amp;id=' . $attendee_id . '&amp;regevent_action=register&form_action=edit_attendee&single=true" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
+			//$html .= '<a  href="' . home_url() . '?page_id=' . $org_options['event_page_id'] . '&registration_id=' . $registration_id . '&amp;id=' . $attendee_id . '&amp;e_reg=register&form_action=edit_attendee&single=true" target="_blank" id="espresso_edit_attendee_' . $attendee_id . '" class="espresso_edit_attendee" title="' . __('Edit Attendee Details', 'event_espresso') . '">' . $text . '</a>';
 			break;
 	}
 	return $html;
@@ -120,7 +120,7 @@ function espresso_short_reg_url($event_id = 0) {
 	global $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if ($event_id > 0) {
-		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
+		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&e_reg=register&event_id='.$event_id);
 		$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/');
 		$new_url = add_query_arg( array( 'ee' => $event_id ), $registration_url );
 		return $new_url;
@@ -828,7 +828,7 @@ if (!function_exists('event_espresso_add_question_groups')) {
 			$questions_in = '';
 
 			$FILTER = '';
-			if (isset($_REQUEST['regevent_action']))
+			if (isset($_REQUEST['e_reg']))
 				$FILTER = " AND q.admin_only = 'N' ";
 
 			//echo 'additional_attendee_reg_info = '.$meta['additional_attendee_reg_info'].'<br />';

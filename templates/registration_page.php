@@ -341,7 +341,7 @@ if (!function_exists('event_registration')) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
 						add_action('action_hook_espresso_ticket_selector', 'espresso_ticket_selector', 10, 1);		
 
-						$registration_url = add_query_arg( array( 'regevent_action'=>'process_ticket_selections' ), espresso_get_reg_page_full_url() );   
+						$registration_url = add_query_arg( array( 'e_reg'=>'process_ticket_selections' ), espresso_get_reg_page_full_url() );   
 						
 						//Serve up the registration form
 						require(espresso_get_registration_display_template());

@@ -659,7 +659,7 @@
 				$event_page_id = $org_options['event_page_id'];
 				$permalink = get_permalink( $event_page_id );
 				// and send them to the event queue
-				$return_url = $permalink . '?regevent_action=event_queue';					
+				$return_url = $permalink . '?e_reg=event_queue';					
 			}		
 			
 			//echo '<h1 style="font-size:24px;">Return URL : ' . $return_url .'</h1>';	

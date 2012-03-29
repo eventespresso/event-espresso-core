@@ -327,8 +327,8 @@ function attendee_edit_record() {
 			<input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
 			<!--<input type="hidden" name="form_action" value="edit_attendee" />-->
 			<input type="hidden" name="attendee_action" value="update_attendee" />
-			<!--<input type="hidden" name="regevent_action" value="register" />-->
-			<input type="hidden" name="regevent_action" value="edit_attendee" />
+			<!--<input type="hidden" name="e_reg" value="register" />-->
+			<input type="hidden" name="e_reg" value="edit_attendee" />
 			<input type="hidden" name="primary" value="<?php echo $_REQUEST['primary'] ?>" />
 			<p class="espresso_confirm_registration"><input class="btn_event_form_submit" type="submit" name="submit" value="<?php _e('Update Record', 'event_espresso'); ?>" /></p>
 		</form>

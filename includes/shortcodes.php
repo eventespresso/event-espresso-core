@@ -504,7 +504,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 								<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
 	
 	
-								<!--<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee">-->
+								<!--<input type="hidden" name="e_reg" id="e_reg-<?php echo $event_id; ?>" value="post_attendee">-->
 								<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 	
 								<?php
@@ -1179,9 +1179,9 @@ function event_espresso_run() {
 	echo espresso_check_scripts();
 
 	// Get action type
-	$regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
+	$e_reg = isset($_REQUEST['e_reg']) ? $_REQUEST['e_reg'] : '';
 
-	switch ($regevent_action) {
+	switch ($e_reg) {
 	
 		case 'process_ticket_selections' :
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
@@ -1211,7 +1211,7 @@ function event_espresso_run() {
 				//This is the form page for registering the attendee
 				require_once(espresso_get_registration_page_template());
 			} else {
-				do_action ( 'action_hook_espresso_regevent_default_action', $regevent_action );
+				do_action ( 'action_hook_espresso_regevent_default_action', $e_reg );
 				//These may be loaded in posts and pages outside of the default EE pages
 				require_once(espresso_get_event_list_template());
 			}

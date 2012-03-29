@@ -35,7 +35,7 @@ function espresso_display_confirmation_page($conf_page_data) {
 							<?php _e('Attendee Name:', 'event_espresso'); ?>
 						</th>
 						<td  valign="top">
-							<span class="event_espresso_value"><?php echo stripslashes_deep($conf_page_data['attendee_name']) ?> (<?php echo $conf_page_data['attendee_email'] ?>) <?php echo '<a href="' . home_url() . '/?page_id=' . $conf_page_data['event_page_id'] . '&amp;registration_id=' . $conf_page_data['registration_id'] . '&amp;id=' . $conf_page_data['attendee_id'] . '&amp;regevent_action=register&amp;form_action=edit_attendee&amp;primary=' . $conf_page_data['attendee_id'] . '&amp;p_id=' . $conf_page_data['p_id'] . '&amp;event_id=' . $conf_page_data['event_id'] . '&amp;coupon_code=' . $conf_page_data['coupon_code'] . '&amp;groupon_code=' . $conf_page_data['groupon_code'] . '&amp;attendee_num=' . $attendee_num . '">' . __('Edit', 'event_espresso') . '</a>'; ?>
+							<span class="event_espresso_value"><?php echo stripslashes_deep($conf_page_data['attendee_name']) ?> (<?php echo $conf_page_data['attendee_email'] ?>) <?php echo '<a href="' . home_url() . '/?page_id=' . $conf_page_data['event_page_id'] . '&amp;registration_id=' . $conf_page_data['registration_id'] . '&amp;id=' . $conf_page_data['attendee_id'] . '&amp;e_reg=register&amp;form_action=edit_attendee&amp;primary=' . $conf_page_data['attendee_id'] . '&amp;p_id=' . $conf_page_data['p_id'] . '&amp;event_id=' . $conf_page_data['event_id'] . '&amp;coupon_code=' . $conf_page_data['coupon_code'] . '&amp;groupon_code=' . $conf_page_data['groupon_code'] . '&amp;attendee_num=' . $attendee_num . '">' . __('Edit', 'event_espresso') . '</a>'; ?>
 								<?php
 								//Create additional attendees
 								$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
@@ -53,9 +53,9 @@ function espresso_display_confirmation_page($conf_page_data) {
 										}
 
 										//Create edit link
-										echo '<a href="' . home_url() . '/?page_id=' . $conf_page_data['event_page_id'] . '&amp;registration_id=' . $conf_page_data['registration_id'] . '&amp;id=' . $x_attendee['id'] . '&amp;regevent_action=register&amp;form_action=edit_attendee&amp;primary=' . $conf_page_data['attendee_id'] . '&amp;p_id=' . $conf_page_data['p_id'] . '&amp;coupon_code=' . $conf_page_data['coupon_code'] . '&amp;groupon_code=' . $conf_page_data['groupon_code'] . '&amp;attendee_num=' . $attendee_num . '">' . __('Edit', 'event_espresso') . '</a>';
+										echo '<a href="' . home_url() . '/?page_id=' . $conf_page_data['event_page_id'] . '&amp;registration_id=' . $conf_page_data['registration_id'] . '&amp;id=' . $x_attendee['id'] . '&amp;e_reg=register&amp;form_action=edit_attendee&amp;primary=' . $conf_page_data['attendee_id'] . '&amp;p_id=' . $conf_page_data['p_id'] . '&amp;coupon_code=' . $conf_page_data['coupon_code'] . '&amp;groupon_code=' . $conf_page_data['groupon_code'] . '&amp;attendee_num=' . $attendee_num . '">' . __('Edit', 'event_espresso') . '</a>';
 										//Create delete link
-										echo ' | <a href="' . home_url() . '/?page_id=' . $conf_page_data['event_page_id'] . '&amp;registration_id=' . $conf_page_data['registration_id'] . '&amp;id=' . $x_attendee['id'] . '&amp;regevent_action=register&amp;form_action=edit_attendee&amp;primary=' . $conf_page_data['attendee_id'] . '&amp;delete_attendee=true&amp;p_id=' . $conf_page_data['p_id'] . '&amp;coupon_code=' . $conf_page_data['coupon_code'] . '&amp;groupon_code=' . $conf_page_data['groupon_code'] . '">' . __('Delete', 'event_espresso') . '</a>';
+										echo ' | <a href="' . home_url() . '/?page_id=' . $conf_page_data['event_page_id'] . '&amp;registration_id=' . $conf_page_data['registration_id'] . '&amp;id=' . $x_attendee['id'] . '&amp;e_reg=register&amp;form_action=edit_attendee&amp;primary=' . $conf_page_data['attendee_id'] . '&amp;delete_attendee=true&amp;p_id=' . $conf_page_data['p_id'] . '&amp;coupon_code=' . $conf_page_data['coupon_code'] . '&amp;groupon_code=' . $conf_page_data['groupon_code'] . '">' . __('Delete', 'event_espresso') . '</a>';
 									}
 								}
 								?>
@@ -115,7 +115,7 @@ function espresso_display_confirmation_page($conf_page_data) {
 		<input name="confirm_registration" id="confirm_registration" type="hidden" value="true" />
 		<input type="hidden" name="attendee_id" id="attendee_id" value="<?php echo $conf_page_data['attendee_id'] ?>" />
 		<input type="hidden" name="registration_id" id="registration_id" value="<?php echo $conf_page_data['registration_id'] ?>" />
-		<!--<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $conf_page_data['event_id']; ?>" value="post_attendee">-->
+		<!--<input type="hidden" name="e_reg" id="e_reg-<?php echo $conf_page_data['event_id']; ?>" value="post_attendee">-->
 		<input type="hidden" name="event_id" id="event_id-<?php echo $conf_page_data['event_id']; ?>" value="<?php echo $conf_page_data['event_id']; ?>">
 	</form>
 	<?php

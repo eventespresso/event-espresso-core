@@ -54,7 +54,7 @@
 			}
 			?>
 	  
-			<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee">
+			<input type="hidden" name="e_reg" id="e_reg-<?php echo $event_id; ?>" value="post_attendee">
 			<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 			<?php
 			//Recaptcha portion

@@ -635,9 +635,9 @@ function event_espresso_add_attendees_to_db_multi() {
 			$espresso_wp_user = 1;
 			?>
 
-			<a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=show_shopping_cart">  <?php _e('Edit Cart', 'event_espresso'); ?> </a>
+			<a href="?page_id=<?php echo $org_options['event_page_id']; ?>&e_reg=show_shopping_cart">  <?php _e('Edit Cart', 'event_espresso'); ?> </a>
 			<?php _e(' or ', 'event_espresso'); ?>
-			<a href="?page_id=<?php echo $org_options['event_page_id']; ?>&regevent_action=load_checkout_page"> <?php _e('Edit Registrant Information', 'event_espresso'); ?></a>
+			<a href="?page_id=<?php echo $org_options['event_page_id']; ?>&e_reg=load_checkout_page"> <?php _e('Edit Registrant Information', 'event_espresso'); ?></a>
 
 
 			<h3><?php _e('Your registration is not complete until payment is received.', 'event_espresso'); ?></h3>

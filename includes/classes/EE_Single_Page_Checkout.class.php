@@ -145,7 +145,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function load_css() {
-		if (isset($_REQUEST['regevent_action']) && ( $_REQUEST['regevent_action'] == 'register' && ! is_admin() )) {
+		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && ! is_admin() )) {
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			wp_register_style('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/reg_page_checkout/registration_page_checkout.css');
 			wp_enqueue_style('single_page_checkout');
@@ -159,7 +159,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function load_js() {
-		if (isset($_REQUEST['regevent_action']) && ( $_REQUEST['regevent_action'] == 'register' && ! is_admin() )) {
+		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && ! is_admin() )) {
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			wp_register_script('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/registration_page_checkout.js', array('jquery'), '', TRUE);
 			wp_enqueue_script('single_page_checkout');
@@ -195,9 +195,9 @@ class EE_Single_Page_Checkout {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $event_page_id.'|'.$this->_reg_page_base_url);		
 		
 		// set pathing based on regevent request
-		if (isset($_REQUEST['regevent_action']) && ( $_REQUEST['regevent_action'] != '' )) {
+		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] != '' )) {
 
-			switch ($_REQUEST['regevent_action']) {
+			switch ($_REQUEST['e_reg']) {
 
 				case 'register' :
 					add_action('action_hook_espresso_event_reg_checkout', array(&$this, '_event_reg_single_page_checkout'), 10, 2);
@@ -576,7 +576,7 @@ class EE_Single_Page_Checkout {
 		}
 
 
-		$template_args['mer_reg_page_ajax_coupons_url'] = add_query_arg( array( 'regevent_action'=>'apply_coupon' ), $this->_reg_page_base_url );  
+		$template_args['mer_reg_page_ajax_coupons_url'] = add_query_arg( array( 'e_reg'=>'apply_coupon' ), $this->_reg_page_base_url );  
 		$template_args['step_1_line_items'] = $step_1_line_items;
 
 		$template_args['target_inputs'] = rtrim($target_inputs, '&&');
@@ -591,14 +591,14 @@ class EE_Single_Page_Checkout {
 		$template_args['nmbr_of_carts'] = count($event_queue);
 		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
 		
-		$template_args['return_url'] = add_query_arg( array( 'regevent_action'=>'event_queue' ), $this->_reg_page_base_url );  
-		$template_args['update_url'] = add_query_arg( array( 'regevent_action'=>'update_event_queue' ), $this->_reg_page_base_url ); 
-		$template_args['event_queue_url'] = add_query_arg( array( 'regevent_action'=>'event_queue' ), $this->_reg_page_base_url ); 
-		$template_args['register_url'] = add_query_arg( array( 'regevent_action'=>'register' ), $this->_reg_page_base_url ); 
-		$template_args['reg_page_step_1_url'] = add_query_arg( array( 'regevent_action'=>'register', 'step' => 1 ), $this->_reg_page_base_url ); 
-		$template_args['reg_page_goto_step_2_url'] = add_query_arg( array( 'regevent_action'=>'process_reg_step_1' ), $this->_reg_page_base_url ); 
-		$template_args['reg_page_goto_step_3_url'] = add_query_arg( array( 'regevent_action'=>'process_reg_step_2' ), $this->_reg_page_base_url ); 
-		$template_args['reg_page_complete_reg_url'] = add_query_arg( array( 'regevent_action'=>'process_reg_step_3' ), $this->_reg_page_base_url ); 
+		$template_args['return_url'] = add_query_arg( array( 'e_reg'=>'event_queue' ), $this->_reg_page_base_url );  
+		$template_args['update_url'] = add_query_arg( array( 'e_reg'=>'update_event_queue' ), $this->_reg_page_base_url ); 
+		$template_args['event_queue_url'] = add_query_arg( array( 'e_reg'=>'event_queue' ), $this->_reg_page_base_url ); 
+		$template_args['register_url'] = add_query_arg( array( 'e_reg'=>'register' ), $this->_reg_page_base_url ); 
+		$template_args['reg_page_step_1_url'] = add_query_arg( array( 'e_reg'=>'register', 'step' => 1 ), $this->_reg_page_base_url ); 
+		$template_args['reg_page_goto_step_2_url'] = add_query_arg( array( 'e_reg'=>'process_reg_step_1' ), $this->_reg_page_base_url ); 
+		$template_args['reg_page_goto_step_3_url'] = add_query_arg( array( 'e_reg'=>'process_reg_step_2' ), $this->_reg_page_base_url ); 
+		$template_args['reg_page_complete_reg_url'] = add_query_arg( array( 'e_reg'=>'process_reg_step_3' ), $this->_reg_page_base_url ); 
 				
 		$template_args['recaptcha'] = '';
 
@@ -839,7 +839,7 @@ class EE_Single_Page_Checkout {
 
 		
 		if ( ! $this->send_ajax_response($success_msg, $error_msg ) ) {
-			$reg_page_step_2_url = add_query_arg( array( 'regevent_action'=>'register', 'step'=>'2' ), $this->_reg_page_base_url ); 
+			$reg_page_step_2_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'2' ), $this->_reg_page_base_url ); 
 			wp_safe_redirect( $reg_page_step_2_url );
 			exit();
 		}
@@ -1059,11 +1059,11 @@ class EE_Single_Page_Checkout {
 		}
 
 		if ( $this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_2_ajax_response' )) {
-			$reg_page_step_3_url = add_query_arg( array( 'regevent_action'=>'register', 'step'=>'3' ), $this->_reg_page_base_url ); 
+			$reg_page_step_3_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'3' ), $this->_reg_page_base_url ); 
 			wp_safe_redirect( $reg_page_step_3_url );
 			exit();
 		} else {
-			$reg_page_step_2_url = add_query_arg( array( 'regevent_action'=>'register', 'step'=>'2' ), $this->_reg_page_base_url ); 
+			$reg_page_step_2_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'2' ), $this->_reg_page_base_url ); 
 			wp_safe_redirect( $reg_page_step_2_url );
 			exit();
 		}
@@ -1146,7 +1146,7 @@ class EE_Single_Page_Checkout {
 			wp_safe_redirect( $return_page_url );
 			exit();
 		} else {
-			$reg_page_step_3_url = add_query_arg( array( 'regevent_action'=>'register', 'step'=>'3' ), $this->_reg_page_base_url ); 
+			$reg_page_step_3_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'3' ), $this->_reg_page_base_url ); 
 			wp_safe_redirect( $reg_page_step_3_url );
 			exit();
 		}
