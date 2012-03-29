@@ -108,7 +108,7 @@ function update_event($recurrence_arr = array()) {
 									ON EDT.id = EAT.event_id
 								WHERE EAT.id IS NULL
 								AND EDT.start_date >='" . $wpdb->escape($_POST['start_date']) . "'
-								AND start_date NOT IN (" . $delete_in . ")
+								AND EDT.start_date NOT IN (" . $delete_in . ")
 								AND recurrence_id = " . $_POST['recurrence_id'];
 							$UPDATE_SQL = "SELECT id,start_date,event_identifier,slug FROM " . EVENTS_DETAIL_TABLE . " WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND recurrence_id = %d AND NOT event_status = 'D'  ORDER BY start_date";
 						}
