@@ -234,7 +234,6 @@ function espresso_calendar_do_stuff($show_expired) {
 		}
 	}
 	$sql .= " GROUP BY e.id ORDER BY date(start_date), id ASC";
-echo $sql;
 	//Debug
 	//echo '<p>$sql - '.$sql.'</p>';
 
