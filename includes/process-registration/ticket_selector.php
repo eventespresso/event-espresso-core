@@ -308,6 +308,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 									$registration_url = add_query_arg( array( 'regevent_action'=>'register', 'step' => 1 ), espresso_get_reg_page_full_url() );
 								}
 								wp_redirect($registration_url);
+								exit();
 							}
 						}
 					} 
