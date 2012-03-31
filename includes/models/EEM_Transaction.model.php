@@ -25,30 +25,11 @@ class EEM_Transaction extends EEM_Base {
 
   	// private instance of the Transaction object
 	private static $_instance = NULL;
-		
-	protected $table_name = '';
-	
-	// holder for the parent class espresso_model
-	private $EEDB = NULL;
-	
-
-	
-	// array representation of the transaction table and the data types for each field 
-	protected $table_data_types = array (	
-			'TXN_ID' 						=> '%d', 	
-			'TXN_timestamp' 		=> '%d', 	
-			'TXN_total' 					=> '%d', 	
-			'STS_ID'						=> '%s', 	 	
-			'TXN_details'				=> '%s', 	 	
-			'TXN_session_data'		=> '%s',
-			'TXN_hash_salt'			=> '%s',
-			'TXN_tax_data'			=> '%s'	
-		);
-
-						
 
 
-						
+
+
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -57,12 +38,19 @@ class EEM_Transaction extends EEM_Base {
 	 */	
 	private function __construct() {	
 		global $wpdb;
-	 	// load base model for direct access
-	 	$this->EEDB = &parent::instance();
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_transaction';
-		// load Transaction object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php');
+		// array representation of the transaction table and the data types for each field 
+		$this->table_data_types = array (	
+			'TXN_ID' 						=> '%d', 	
+			'TXN_timestamp' 		=> '%d', 	
+			'TXN_total' 					=> '%d', 	
+			'STS_ID'						=> '%s', 	 	
+			'TXN_details'				=> '%s', 	 	
+			'TXN_session_data'		=> '%s',
+			'TXN_hash_salt'			=> '%s',
+			'TXN_tax_data'			=> '%s'	
+		);		
 	
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -73,7 +61,7 @@ class EEM_Transaction extends EEM_Base {
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object
 	 *
 	 *		@access public
-	 *		@return Espresso_model instance
+	 *		@return EEM_Transaction instance
 	 */	
 	public static function instance(){
 	
@@ -101,6 +89,13 @@ class EEM_Transaction extends EEM_Base {
 		if ( ! $transactions ) {
 			return FALSE;
 		} 		
+		
+		if ( is_object( $transactions )){
+			$transactions = array( $transactions );
+		}
+
+		// load Transaction object class file
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php');
 
 		foreach ( $transactions as $transaction ) {
 				$array_of_objects[ $transaction->TXN_ID ] = new EE_Transaction(
@@ -118,26 +113,6 @@ class EEM_Transaction extends EEM_Base {
 
 	}
 
-
-
-
-	/**
-	*		retreive  ALL transactions from db
-	* 
-	* 		@access		public
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_all_transactions() {
-	
-		$orderby = 'TXN_timestamp';
-		// retreive all transactions	
-		if ( $transactions = $this->select_all ( $orderby )) {
-			return $this->_create_objects( $transactions );
-		} else {
-			return FALSE;
-		}
-		
-	}
 
 
 
@@ -169,18 +144,21 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	 *		This function returns multiple rows from a table
-	 * 		SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
-	 *		
-	 *		@access public
-	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting 
-	 *		@param mixed (string, array) - $sort - ASC or DESC
-	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
-	 *		@return mixed (object, array)
-	 */
-	public function select_all ( $orderby=FALSE, $sort=FALSE, $output='OBJECT_K' ) {
-		$results = $this->EEDB->_select_all ( $this->table_name, $orderby, $sort, $output );
-		return $results;
+	*		retreive  ALL transactions from db
+	* 
+	* 		@access		public
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_all_transactions() {
+	
+		$orderby = 'TXN_timestamp';
+		// retreive all transactions	
+		if ( $transactions = $this->select_all ( $orderby )) {
+			return $this->_create_objects( $transactions );
+		} else {
+			return FALSE;
+		}
+		
 	}
 
 
@@ -188,20 +166,34 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	 *		This function returns multiple rows from a table
-	 * 		SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
-	 *		
-	 *		@access public
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting 
-	 *		@param string								$sort - ASC or DESC
-	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = < 
-	 *		@param string								$output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
-	 *		@return mixed (object, array)
-	 */	
-	public function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
-		$results = $this->EEDB->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $output );
-		return $results;
+	*		retreive transactions from db via foreign key from Registration table
+	* 
+	* 		@access		private
+	* 		@param		$REG_ID		Registration ID
+	* 		@param		$EVT_ID		Event ID
+	* 		@param		$ATT_ID		Attendee ID
+	*		@return 		mixed			array on success, FALSE on fail
+	*/	
+	private function _get_transactions_via_reg_table_foreign_key( $REG_ID = FALSE, $EVT_ID = FALSE, $ATT_ID = FALSE ) {
+		
+		// you gimme nothing??? you get nothing!!!
+		if ( ! $REG_ID &&  ! $EVT_ID &&  ! $ATT_ID ) {
+			return FALSE;
+		}
+		
+		// determine what we will be searching for via trickle down conditionals - it's just like PLINKO only better!
+		$what = $REG_ID ? 'REG_ID' : ( $EVT_ID ? 'EVT_ID' : 'ATT_ID' );
+		$ID = $REG_ID ? $REG_ID : ( $EVT_ID ? $EVT_ID : $ATT_ID );
+		
+		global $wpdb;
+		// retreive transaction
+		$SQL = 'SELECT reg.TXN_ID, txn.* FROM ' . $wpdb->prefix . 'esp_registration reg LEFT JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID WHERE reg.'. $what .' = %d';	
+		if ( $transactions = $wpdb->get_results( $wpdb->prepare( $SQL, $ID ))) {
+			return $this->_create_objects( $transactions );
+		} else {
+			return FALSE;
+		}
+		
 	}
 
 
@@ -209,18 +201,14 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	 *		This function returns one row from from a table
-	 * 		SELECT * FROM table_name WHERE column_name operator value
-	 *		
-	 *		@access public
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array) 		$operator -  operator to be used for WHERE clause  > = < 
-	 *		@param string 								$output - WP output types - OBJECT,  ARRAY_A, ARRAY_N 
-	 *		@return mixed (object, array)
-	 */	
-	public function select_row_where ( $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT' ) {
-		$results = $this->EEDB->_select_row_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $operator, $output );
-		return $results;
+	*		retreive  transaction from db for a specific registration
+	* 
+	* 		@access		public
+	* 		@param		$REG_ID		Registration ID
+	*		@return 		mixed			array on success, FALSE on fail
+	*/	
+	public function get_transaction_for_registration( $REG_ID = FALSE ) {	
+		return $this->_get_transactions_via_reg_table_foreign_key( $REG_ID );		
 	}
 
 
@@ -228,66 +216,29 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	 *		This function returns one value from from a table
-	 * 		SELECT column_name(s) FROM table_name WHERE column_name = value
-	 *		
-	 *		@access public
-	 *		@param string - $select - column name to be used for SELECT clause 
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = < 
-	 *		@return mixed (object, array)
-	 */	
-	public function select_value_where ( $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
-		$results = $this->EEDB->_select_value_where ( $this->table_name, $this->table_data_types, $select, $where_cols_n_values, $operator );
-		return $results;
+	*		retreive  ALL transactions from db for a specific event
+	* 
+	* 		@access		public
+	* 		@param		$REG_ID		Registration ID
+	*		@return 		mixed			array on success, FALSE on fail
+	*/	
+	public function get_all_transactions_for_event( $EVT_ID = FALSE ) {	
+		return $this->_get_transactions_via_reg_table_foreign_key( FALSE, $EVT_ID );
 	}
-
 
 
 
 
 	/**
-	 *		This function returns an array of key => value pairs from from a table
-	 * 		SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
-	 *		
-	 *		@access public
-	 *		@param string - $key - column name to be used as the key for the returned array 
-	 *		@param string - $value - column name to be used as the value for the returned array 
-	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting 
-	 *		@param string - $sort - ASC or DESC
-	 *		@return array - key => value 
-	 */	
-	public function get_key_value_array ( $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'ARRAY_A' ) {
-		$results = $this->EEDB->_get_key_value_array ( $this->table_name, $this->table_data_types, $key, $value, $orderby, $sort, $output );
-		return $results;
+	*		retreive  ALL transactions from db for a specific attendee
+	* 
+	* 		@access		public
+	* 		@param		$ATT_ID		Registration ID
+	*		@return 		mixed			array on success, FALSE on fail
+	*/	
+	public function get_all_transactions_for_attendee( $ATT_ID = FALSE ) {	
+		return $this->_get_transactions_via_reg_table_foreign_key( FALSE, FALSE, $ATT_ID );
 	}
-
-
-
-
-
-	/**
-	 *		This function returns an array of key => value pairs from from a table
-	 * 		SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
-	 *		
-	 *		@access public
-	 *		@param string 								$key - column name to be used as the key for the returned array 
-	 *		@param string 								$value - column name to be used as the value for the returned array 
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array) 		$orderby - cloumn names to be used for sorting 
-	 *		@param string								$sort - ASC or DESC
-	 *		@param mixed (string, array) 		$operator -  operator to be used for WHERE clause  > = < 
-	 *		@return array - key => value 
-	 */	
-	public function get_key_value_array_where( $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby=FALSE, $sort='ASC', $operator='=' ) {
-		$results = $this->EEDB->_get_key_value_array_where ( $this->table_name, $this->table_data_types, $key, $value, $where_cols_n_values, $orderby, $sort, $operator );
-		return $results;
-	}
-
-
-
-
-
 
 
 
@@ -307,7 +258,7 @@ class EEM_Transaction extends EEM_Base {
 		global $espresso_notices;
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->EEDB->_insert( $this->table_name, $this->table_data_types, $set_column_values );
+		$results = $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
 	
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {
@@ -318,7 +269,7 @@ class EEM_Transaction extends EEM_Base {
 			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully saved to the database.';
 		} else {
 			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the datetime has not been saved to the database. ' . $this->EEDB->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = 'An error occured and the datetime has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
 		return $results['rows'];
@@ -349,7 +300,7 @@ class EEM_Transaction extends EEM_Base {
 		global $espresso_notices;
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
+		$results = $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {
@@ -360,82 +311,15 @@ class EEM_Transaction extends EEM_Base {
 			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully updated.';
 		} else {
 			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the datetime has not been updated. ' . $this->EEDB->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = 'An error occured and the datetime has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
 		return $results['rows'];
 	
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 *		This function will delete a row from a table 
-	 *		
-	 *		@access protected
-	 *		@param string - $table_name - 
-	 *		@param array - $em_table_data_types
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
-	 *		@return mixed (object, array)
-	 */	
-	protected function eedb_delete ( $where_cols_n_values=FALSE, $operator = '=' ) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $where_cols_n_values, $operator );
-		return $results;
-	}
 
 
 
-
-
-
-		public function how_to_use_insert() {
-			echo '
-<h2>Cut and paste the following into your code:</h2>
-<pre>
-	// array of column names and values for the SQL INSERT... VALUES clause
-	$set_column_values = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// model function to perform error checking and then run update
-	$results = $attendee_model->insert ($set_column_values);
-</pre>
-';
-			die();
-		}
-
-
-
-
-
-		public function how_to_use_update() {
-			echo '
-<h2>Cut and paste the following into your code:</h2>
-<pre>
-	// array of column names and values for the SQL SET clause
-	$set_column_values = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// array of column names and values for the SQL WHERE clause
-	$where = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// model function to perform error checking and then run update
-	$results = $attendee_model->update ($set_column_values, $where);
-</pre>
-';
-			die();
-		}
 
 
 

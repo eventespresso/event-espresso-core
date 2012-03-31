@@ -338,7 +338,7 @@ class EE_Transaction {
 		return $this->_save_to_db();
 	}
 
-		
+
 
 	/**
 	 *		@ override magic methods
