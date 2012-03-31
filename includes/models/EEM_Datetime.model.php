@@ -25,11 +25,6 @@ class EEM_Datetime extends EEM_Base {
 
   	// private instance of the Event_datetime object
 	private static $_instance = NULL;
-		
-	protected $table_name = '';
-	
-	// holder for the parent class espresso_model
-	private $EEDB = NULL;
 	
 	// all event datetimes
 	private $_event_DT = array();
@@ -40,15 +35,7 @@ class EEM_Datetime extends EEM_Base {
 	// all event end datetimes
 	private $_end_DT = array();
 	
-	// array representation of the datetime table and the data types for each field 
-	protected $table_data_types = array (	
-			'DTT_ID' 					=> '%d', 	
-			'EVT_ID' 					=> '%d', 	
-			'DTT_timestamp' 	=> '%d', 	
-			'DTT_event_or_reg'	=> '%s', 	 	
-			'DTT_start_or_end'	=> '%s', 	 	
-			'DTT_reg_limit' 		=> '%d'
-		);
+
 
 						
 
@@ -62,12 +49,17 @@ class EEM_Datetime extends EEM_Base {
 	 */	
 	private function __construct() {	
 		global $wpdb;
-	 	// load base model for direct access
-	 	$this->EEDB = &parent::instance();
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_datetime';
-		// load Datetime object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
+		// array representation of the datetime table and the data types for each field 
+		$this->table_data_types = array (	
+			'DTT_ID' 					=> '%d', 	
+			'EVT_ID' 					=> '%d', 	
+			'DTT_timestamp' 	=> '%d', 	
+			'DTT_event_or_reg'	=> '%s', 	 	
+			'DTT_start_or_end'	=> '%s', 	 	
+			'DTT_reg_limit' 		=> '%d'
+		);		
 	
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -82,7 +74,7 @@ class EEM_Datetime extends EEM_Base {
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object
 	 *
 	 *		@access public
-	 *		@return Espresso_model instance
+	 *		@return EEM_Datetime instance
 	 */	
 	public static function instance(){
 	
@@ -108,6 +100,8 @@ class EEM_Datetime extends EEM_Base {
 	private function _get_event_datetimes( $EVT_ID = FALSE, $DTT_event_or_reg = FALSE, $start_or_end = FALSE ) {
 	
 		if ( ! $EVT_ID ) {
+			global $espresso_notices;
+			$espresso_notices['errors'][] = 'No Event datetimes could be retreived because no event ID was received. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}		
 
@@ -124,6 +118,10 @@ class EEM_Datetime extends EEM_Base {
 		$orderby = 'DTT_timestamp';
 		
 		if ( $datetimes = $this->select_all_where ( $where, $orderby )) {
+
+			// load Datetime object class file
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
+
 			foreach ( $datetimes as $datetime ) {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
 							$datetime->EVT_ID, 
@@ -142,6 +140,19 @@ class EEM_Datetime extends EEM_Base {
 		
 	}
 
+
+
+
+
+	/**
+	*		get all event datetimes from db
+	* 
+	* 		@access		public		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_all_datetimes_for_event( $EVT_ID = FALSE ) {
+		return $this->_get_event_datetimes( $EVT_ID );			
+	}
 
 
 
@@ -382,130 +393,6 @@ class EEM_Datetime extends EEM_Base {
 
 
 
-	/**
-	 *		This function returns multiple rows from a table
-	 * 		SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
-	 *		
-	 *		@access public
-	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting 
-	 *		@param mixed (string, array) - $sort - ASC or DESC
-	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
-	 *		@return mixed (object, array)
-	 */
-	public function select_all ( $orderby=FALSE, $sort=FALSE, $output='OBJECT_K' ) {
-		$results = $this->EEDB->_select_all ( $this->table_name, $orderby, $sort, $output );
-		return $results;
-	}
-
-
-
-
-
-	/**
-	 *		This function returns multiple rows from a table
-	 * 		SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
-	 *		
-	 *		@access public
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting 
-	 *		@param string								$sort - ASC or DESC
-	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = < 
-	 *		@param string								$output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
-	 *		@return mixed (object, array)
-	 */	
-	public function select_all_where ( $where=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
-		$results = $this->EEDB->_select_all_where ( $this->table_name, $this->table_data_types, $where, $orderby, $sort, $operator, $output );
-		return $results;
-	}
-
-
-
-
-
-	/**
-	 *		This function returns one row from from a table
-	 * 		SELECT * FROM table_name WHERE column_name operator value
-	 *		
-	 *		@access public
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array) 		$operator -  operator to be used for WHERE clause  > = < 
-	 *		@param string 								$output - WP output types - OBJECT, ARRAY_A, ARRAY_N 
-	 *		@return mixed (object, array)
-	 */	
-	public function select_row_where ( $where=FALSE, $operator = '=', $output = 'OBJECT' ) {
-		$results = $this->EEDB->_select_row_where ( $this->table_name, $this->table_data_types, $where, $operator, $output );
-		return $results;
-	}
-
-
-
-
-
-	/**
-	 *		This function returns one value from from a table
-	 * 		SELECT column_name(s) FROM table_name WHERE column_name = value
-	 *		
-	 *		@access public
-	 *		@param string - $select - column name to be used for SELECT clause 
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = < 
-	 *		@return mixed (object, array)
-	 */	
-	public function select_value_where ( $select=FALSE, $where=FALSE, $operator = '=' ) {
-		$results = $this->EEDB->_select_value_where ( $this->table_name, $this->table_data_types, $select, $where, $operator );
-		return $results;
-	}
-
-
-
-
-
-	/**
-	 *		This function returns an array of key => value pairs from from a table
-	 * 		SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
-	 *		
-	 *		@access public
-	 *		@param string - $key - column name to be used as the key for the returned array 
-	 *		@param string - $value - column name to be used as the value for the returned array 
-	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting 
-	 *		@param string - $sort - ASC or DESC
-	 *		@return array - key => value 
-	 */	
-	public function get_key_value_array ( $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'ARRAY_A' ) {
-		$results = $this->EEDB->_get_key_value_array ( $this->table_name, $this->table_data_types, $key, $value, $orderby, $sort, $output );
-		return $results;
-	}
-
-
-
-
-
-	/**
-	 *		This function returns an array of key => value pairs from from a table
-	 * 		SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
-	 *		
-	 *		@access public
-	 *		@param string 								$key - column name to be used as the key for the returned array 
-	 *		@param string 								$value - column name to be used as the value for the returned array 
-	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
-	 *		@param mixed (string, array) 		$orderby - cloumn names to be used for sorting 
-	 *		@param string								$sort - ASC or DESC
-	 *		@param mixed (string, array) 		$operator -  operator to be used for WHERE clause  > = < 
-	 *		@return array - key => value 
-	 */	
-	public function get_key_value_array_where( $key=FALSE, $value=FALSE, $where=FALSE, $orderby=FALSE, $sort='ASC', $operator='=' ) {
-		$results = $this->EEDB->_get_key_value_array_where ( $this->table_name, $this->table_data_types, $key, $value, $where, $orderby, $sort, $operator );
-		return $results;
-	}
-
-
-
-
-
-
-
-
-
 
 	/**
 	 *		This function inserts table data
@@ -521,7 +408,7 @@ class EEM_Datetime extends EEM_Base {
 		global $espresso_notices;
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->EEDB->_insert( $this->table_name, $this->table_data_types, $set_column_values );
+		$results = $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
 	
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {
@@ -532,7 +419,7 @@ class EEM_Datetime extends EEM_Base {
 			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully saved to the database.';
 		} else {
 			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the datetime has not been saved to the database. ' . $this->EEDB->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = 'An error occured and the datetime has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
 		return $results['rows'];
@@ -563,7 +450,7 @@ class EEM_Datetime extends EEM_Base {
 		global $espresso_notices;
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $set_column_values, $where );
+		$results = $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where );
 	
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {
@@ -574,84 +461,13 @@ class EEM_Datetime extends EEM_Base {
 			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully updated.';
 		} else {
 			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the datetime has not been updated. ' . $this->EEDB->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = 'An error occured and the datetime has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
 		return $results['rows'];
 	
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 *		This function will delete a row from a table 
-	 *		
-	 *		@access protected
-	 *		@param string - $table_name - 
-	 *		@param array - $em_table_data_types
-	 *		@param mixed (string, array) - $where - cloumn names to be used for WHERE clause 
-	 *		@param mixed (string, array) - $where_value - values to be used for WHERE clause  
-	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
-	 *		@return mixed (object, array)
-	 */	
-	protected function eedb_delete ( $where=FALSE, $operator = '=' ) {
-		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->EEDB->_update( $this->table_name, $this->table_data_types, $where, $operator );
-		return $results;
-	}
 
-
-
-
-
-
-
-		public function how_to_use_insert() {
-			echo '
-<h2>Cut and paste the following into your code:</h2>
-<pre>
-	// array of column names and values for the SQL INSERT... VALUES clause
-	$set_column_values = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// model function to perform error checking and then run update
-	$results = $attendee_model->insert ($set_column_values);
-</pre>
-';
-			die();
-		}
-
-
-
-
-
-		public function how_to_use_update() {
-			echo '
-<h2>Cut and paste the following into your code:</h2>
-<pre>
-	// array of column names and values for the SQL SET clause
-	$set_column_values = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// array of column names and values for the SQL WHERE clause
-	$where = array(
-					\'key\' => \'value\',
-					\'key\' => $value,
-				);
-	// model function to perform error checking and then run update
-	$results = $attendee_model->update ($set_column_values, $where);
-</pre>
-';
-			die();
-		}
 
 
 

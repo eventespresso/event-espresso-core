@@ -21,12 +21,14 @@
  *
  * ------------------------------------------------------------------------
  */
-class EEM_Base {
+abstract class EEM_Base {
 				
   	// private instance of the Espresso_model object
 	private static $_instance = NULL;
 
-
+	protected $table_name = FALSE;
+	// array representation of a table and the data types for each field 
+	protected $table_data_types = array();
 
 
 
@@ -46,7 +48,7 @@ class EEM_Base {
 	 *		@access protected
 	 *		@return Espresso_model instance
 	 */	
-	protected static function instance(){
+/*	protected static function instance(){
 	
 		// check if instance of Espresso_model already exists
 		if ( self::$_instance === NULL ) {
@@ -55,8 +57,155 @@ class EEM_Base {
 		}
 		// Espresso_model object
 		return self::$_instance;
+	}*/
+
+
+
+
+
+
+
+	/**
+	 *		This function returns multiple rows from a table
+	 * 		SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
+	 *		
+	 *		@access protected
+	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting 
+	 *		@param mixed (string, array) - $sort - ASC or DESC
+	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
+	 *		@return mixed (object, array)
+	 */
+	protected function select_all ( $orderby=FALSE, $sort=FALSE, $output='OBJECT_K' ) {
+		$results = $this->_select_all ( $this->table_name, $orderby, $sort, $output );
+		return $results;
+	}
+
+
+
+
+
+	/**
+	 *		This function returns multiple rows from a table
+	 * 		SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
+	 *		
+	 *		@access protected
+	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
+	 *		@param mixed (string, array)		$orderby - cloumn names to be used for sorting 
+	 *		@param string								$sort - ASC or DESC
+	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = < 
+	 *		@param string								$output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
+	 *		@return mixed (object, array)
+	 */	
+	protected function select_all_where ( $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
+		$results = $this->_select_all_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $orderby, $sort, $operator, $output );
+		return $results;
+	}
+
+
+
+
+
+	/**
+	 *		This function returns one row from from a table
+	 * 		SELECT * FROM table_name WHERE column_name operator value
+	 *		
+	 *		@access protected
+	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
+	 *		@param mixed (string, array) 		$operator -  operator to be used for WHERE clause  > = < 
+	 *		@param string 								$output - WP output types - OBJECT,  ARRAY_A, ARRAY_N 
+	 *		@return mixed (object, array)
+	 */	
+	protected function select_row_where ( $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT' ) {
+		$results = $this->_select_row_where ( $this->table_name, $this->table_data_types, $where_cols_n_values, $operator, $output );
+		return $results;
+	}
+
+
+
+
+
+	/**
+	 *		This function returns one value from from a table
+	 * 		SELECT column_name(s) FROM table_name WHERE column_name = value
+	 *		
+	 *		@access protected
+	 *		@param string - $select - column name to be used for SELECT clause 
+	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
+	 *		@param mixed (string, array)		$operator -  operator to be used for WHERE clause  > = < 
+	 *		@return mixed (object, array)
+	 */	
+	protected function select_value_where ( $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
+		$results = $this->_select_value_where ( $this->table_name, $this->table_data_types, $select, $where_cols_n_values, $operator );
+		return $results;
+	}
+
+
+
+
+
+	/**
+	 *		This function returns an array of key => value pairs from from a table
+	 * 		SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
+	 *		
+	 *		@access protected
+	 *		@param string - $key - column name to be used as the key for the returned array 
+	 *		@param string - $value - column name to be used as the value for the returned array 
+	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting 
+	 *		@param string - $sort - ASC or DESC
+	 *		@return array - key => value 
+	 */	
+	protected function get_key_value_array ( $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'ARRAY_A' ) {
+		$results = $this->_get_key_value_array ( $this->table_name, $this->table_data_types, $key, $value, $orderby, $sort, $output );
+		return $results;
+	}
+
+
+
+
+
+	/**
+	 *		This function returns an array of key => value pairs from from a table
+	 * 		SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
+	 *		
+	 *		@access protected
+	 *		@param string 								$key - column name to be used as the key for the returned array 
+	 *		@param string 								$value - column name to be used as the value for the returned array 
+	 *		@param mixed (string, array) 		$where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
+	 *		@param mixed (string, array) 		$orderby - cloumn names to be used for sorting 
+	 *		@param string								$sort - ASC or DESC
+	 *		@param mixed (string, array) 		$operator -  operator to be used for WHERE clause  > = < 
+	 *		@return array - key => value 
+	 */	
+	protected function get_key_value_array_where( $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby=FALSE, $sort='ASC', $operator='=' ) {
+		$results = $this->_get_key_value_array_where ( $this->table_name, $this->table_data_types, $key, $value, $where_cols_n_values, $orderby, $sort, $operator );
+		return $results;
 	}
 	
+	
+	
+	
+	abstract function insert ($set_column_values);
+	abstract function update ($set_column_values, $where_cols_n_values);
+	
+	
+	
+	
+	/**
+	 *		This function will delete a row from a table 
+	 *		
+	 *		@access protected
+	 *		@param string - $table_name - 
+	 *		@param array - $em_table_data_types
+	 *		@param mixed (string, array) - $where_cols_n_values - cloumn names to be used for WHERE clause 
+	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
+	 *		@return mixed (object, array)
+	 */	
+	protected function delete ( $where_cols_n_values=FALSE, $operator = '=' ) {
+		// grab data types from above and pass everything to _delete to perform the update
+		$results = $this->_delete ( $this->table_name, $this->table_data_types, $where_cols_n_values, $operator );
+		return $results;
+	}
+
 	
 	
 	
@@ -68,14 +217,14 @@ class EEM_Base {
 	 *		This function returns multiple rows from a table
 	 * 		ie: SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string - $em_table_name - 
 	 *		@param mixed (string, array) - $orderby - cloumn names to be used for sorting 
 	 *		@param string - $sort - ASC or DESC
 	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
 	 *		@return mixed (object, array)
 	 */	
-	protected function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' )	{
+	private function _select_all (  $em_table_name=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' )	{
 	
 		global $espresso_notices;
 		
@@ -109,7 +258,7 @@ class EEM_Base {
 	 *		This function returns multiple rows from a table
 	 * 		ie: SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string - $em_table_name - 
 	 *		@param array - $em_table_data_types
 	 *		@param mixed (string, array) - $where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
@@ -119,7 +268,7 @@ class EEM_Base {
 	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
 	 *		@return mixed (object, array)
 	 */	
-	protected function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
+	private function _select_all_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
 	
 		global $espresso_notices;
 
@@ -161,7 +310,7 @@ class EEM_Base {
 	 *		This function returns one row from from a table
 	 * 		ie: SELECT * FROM table_name WHERE column_name operator value
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string - $em_table_name - 
 	 *		@param array - $em_table_data_types
 	 *		@param mixed (string, array) - $where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
@@ -169,7 +318,7 @@ class EEM_Base {
 	 *		@param string - $output - WP output types - OBJECT, OBJECT_K, ARRAY_A, ARRAY_N 
 	 *		@return mixed (object, array)
 	 */	
-	protected function _select_row_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT_K' ) {
+	private function _select_row_where ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=', $output = 'OBJECT_K' ) {
 	
 		global $espresso_notices;
 
@@ -205,7 +354,7 @@ class EEM_Base {
 	 *		This function returns one value from from a table
 	 * 		ie: SELECT column_name(s) FROM table_name WHERE column_name = value
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string - $em_table_name - 
 	 *		@param array - $em_table_data_types
 	 *		@param mixed (string, array) - $select - column name to be used for SELECT clause 
@@ -213,7 +362,7 @@ class EEM_Base {
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
 	 *		@return mixed (object, array)
 	 */	
-	protected function _select_value_where ( $em_table_name=FALSE, $em_table_data_types=array(), $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
+	private function _select_value_where ( $em_table_name=FALSE, $em_table_data_types=array(), $select=FALSE, $where_cols_n_values=FALSE, $operator = '=' ) {
 	
 		global $espresso_notices;
 
@@ -270,7 +419,7 @@ class EEM_Base {
 	 *		This function returns an array of key => value pairs from from a table
 	 * 		ie: SELECT * FROM table_name ORDER BY column_name(s) ASC|DESC
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string - $em_table_name - 
 	 *		@param array - $em_table_data_types
 	 *		@param string - $key - column name to be used as the key for the returned array 
@@ -278,7 +427,7 @@ class EEM_Base {
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
 	 *		@return array - key => value 
 	 */	
-	protected function _get_key_value_array ( $em_table_name=FALSE, $em_table_data_types=array(), $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' ) {
+	private function _get_key_value_array ( $em_table_name=FALSE, $em_table_data_types=array(), $key=FALSE, $value=FALSE, $orderby = FALSE, $sort = 'ASC', $output = 'OBJECT_K' ) {
 	
 		global $espresso_notices;
 
@@ -332,7 +481,7 @@ class EEM_Base {
 	 *		This function returns an array of key => value pairs from from a table
 	 * 		ie: SELECT * FROM table_name WHERE column_name operator value ORDER BY column_name(s) ASC|DESC
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string - $em_table_name - 
 	 *		@param array - $em_table_data_types
 	 *		@param string - $key - column name to be used as the key for the returned array 
@@ -341,7 +490,7 @@ class EEM_Base {
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
 	 *		@return array - key => value 
 	 */	
-	protected function _get_key_value_array_where( $em_table_name=FALSE, $em_table_data_types=array(), $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
+	private function _get_key_value_array_where( $em_table_name=FALSE, $em_table_data_types=array(), $key=FALSE, $value=FALSE, $where_cols_n_values=FALSE, $orderby = FALSE, $sort = 'ASC', $operator = '=', $output = 'OBJECT_K' ) {
 	
 		global $espresso_notices;
 
@@ -400,7 +549,7 @@ class EEM_Base {
 	/**
 	 *		This function inserts data into tables using $wpdb->insert
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string $em_table_name
 	 *		@param array $set_cols_n_values - array of column names and values for the SQL INSERT
 	 *		@param array $em_table_data_types - ALL of the columns in the table and their corresponding data types 
@@ -474,7 +623,7 @@ class EEM_Base {
 	/**
 	 *		This function updates tables using $wpdb->update
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string $em_table_name
 	 *		@param array $set_cols_n_values - array of column names and values for the SQL SET clause
 	 *		@param array $em_table_data_types - ALL of the columns in the table and their corresponding data types 
@@ -569,14 +718,14 @@ class EEM_Base {
 	/**
 	 *		This function will delete a row from a table 
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param string - $em_table_name - 
 	 *		@param array - $em_table_data_types
 	 *		@param mixed (string, array) - $where_cols_n_values - array of key => value pairings with the db cloumn name as the key, to be used for WHERE clause 
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
 	 *		@return mixed (object, array)
 	 */	
-	protected function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
+	private function _delete ( $em_table_name=FALSE, $em_table_data_types=array(), $where_cols_n_values=FALSE, $operator = '=' ) {
 	
 		global $espresso_notices;
 
@@ -616,14 +765,14 @@ class EEM_Base {
 	/**
 	 *		This function generates SQL WHERE clauses
 	 *		
-	 *		@access private
+	 *		@access protected
 	 *		@param mixed (string, array) - $where_cols_n_values 
 	 *		@param mixed (string, array) - $value
 	 *		@param array - $em_table_data_types
 	 *		@param mixed (string, array) - $operator
 	 *		@return array
 	 */	
-	private function _prepare_where ( $where_cols_n_values=FALSE, $em_table_data_types=FALSE, $operator = '=' ) {
+	protected function _prepare_where ( $where_cols_n_values=FALSE, $em_table_data_types=FALSE, $operator = '=' ) {
 	
 		global $espresso_notices;
 //		echo printr( $where_cols_n_values, '$where_cols_n_values' );
@@ -688,12 +837,12 @@ class EEM_Base {
 	/**
 	 *		This function generates SQL ORDER BY and SORT clauses
 	 *		
-	 *		@access private
+	 *		@access protected
 	 *		@param mixed (string, array) - $orderby - 
 	 *		@param mixed (string, array) - $sort
 	 *		@return string
 	 */	
-	private function _orderby_n_sort ($orderby=FALSE, $sort=FALSE) {
+	protected function _orderby_n_sort ($orderby=FALSE, $sort=FALSE) {
 		if ( $orderby ) {
 			$OBS = ' ORDER BY ';
 			if ( is_array($orderby) ) {
@@ -726,11 +875,11 @@ class EEM_Base {
 	/**
 	 *		This function generates a CSV list from an array 
 	 *		
-	 *		@access protected
+	 *		@access private
 	 *		@param array - $array 
 	 *		@return string
 	 */	
-	protected function _array_to_csv ($array=array()) {
+	private function _array_to_csv ($array=array()) {
 	
 		global $espresso_notices;
 
@@ -849,6 +998,53 @@ class EEM_Base {
 		}
 		return '<sup>' . $error_code . '</sup>';
 	}
+
+
+
+
+
+
+		public function how_to_use_insert() {
+			echo '
+<h2>Cut and paste the following into your code:</h2>
+<pre>
+	// array of column names and values for the SQL INSERT... VALUES clause
+	$set_column_values = array(
+					\'key\' => \'value\',
+					\'key\' => $value,
+				);
+	// model function to perform error checking and then run update
+	$results = $attendee_model->insert ($set_column_values);
+</pre>
+';
+			die();
+		}
+
+
+
+
+
+		public function how_to_use_update() {
+			echo '
+<h2>Cut and paste the following into your code:</h2>
+<pre>
+	// array of column names and values for the SQL SET clause
+	$set_column_values = array(
+					\'key\' => \'value\',
+					\'key\' => $value,
+				);
+	// array of column names and values for the SQL WHERE clause
+	$where = array(
+					\'key\' => \'value\',
+					\'key\' => $value,
+				);
+	// model function to perform error checking and then run update
+	$results = $attendee_model->update ($set_column_values, $where);
+</pre>
+';
+			die();
+		}
+
 
 	
 
