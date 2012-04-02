@@ -329,11 +329,16 @@ class EE_Registration {
 	*		Set Registration Date
 	* 
 	* 		@access		public		
-	*		@param		int		$REG_date 		Registration Date - Unix timestamp
+	*		@param		mixed ( int or string )		$REG_date 		Registration Date - Unix timestamp or string representation of Date
 	*/	
 	public function set_reg_date( $REG_date = FALSE ) {		
 		if ( ! $this->_check_for( $REG_date, 'Registration Date' )) { return FALSE; }
-		$this->_REG_date = absint( $REG_date );
+		// check if supplied date is a timestamp
+		if( is_numeric( $REG_date )) {
+			$this->_REG_date = absint( $REG_date );
+		} else {
+			$this->_REG_date = strtotime( $REG_date );
+		}
 		return TRUE;
 	}
 
@@ -463,7 +468,144 @@ class EE_Registration {
 		}
 	}
 
-		
+
+
+
+
+
+
+
+
+
+	/**
+	*		get Registration ID
+	* 		@access		public
+	*/	
+	public function ID() {
+		return $this->_REG_ID;
+	}
+
+
+
+	/**
+	*		get Event ID
+	* 		@access		public
+	*/	
+	public function event_ID() {
+		return $this->_EVT_ID;
+	}
+
+
+
+	/**
+	*		get Attendee ID
+	* 		@access		public
+	*/	
+	public function attendee_ID() {
+		return $this->_ATT_ID;
+	}
+
+
+
+	/**
+	*		get Transaction ID
+	* 		@access		public
+	*/	
+	public function transaction_ID() {
+		return $this->_TXN_ID;
+	}
+
+
+
+	/**
+	*		get PHP Session ID
+	* 		@access		public
+	*/	
+	public function session_ID() {
+		return $this->_REG_session;
+	}
+
+
+
+	/**
+	*		get Registration Code
+	* 		@access		public
+	*/	
+	public function reg_code() {
+		return $this->_REG_code;
+	}
+
+
+
+	/**
+	*		get Is Primary Attendee
+	* 		@access		public
+	*/	
+	public function is_primary() {
+		return $this->_REG_is_primary;
+	}
+
+
+
+	/**
+	*		get Is Group Registration
+	* 		@access		public
+	*/	
+	public function is_group_reg() {
+		return $this->_REG_is_group_reg;
+	}
+
+
+
+	/**
+	*		get Status ID
+	* 		@access		public
+	*/	
+	public function status_ID() {
+		return $this->_STS_ID;
+	}
+
+
+
+	/**
+	*		get Registration Date
+	* 		@access		public
+	*/	
+	public function date() {
+		return $this->_REG_date;
+	}
+
+
+
+	/**
+	*		get Price ID
+	* 		@access		public
+	*/	
+	public function price_ID() {
+		return $this->_PRC_ID;
+	}
+
+
+
+	/**
+	*		get Attendee Is Going
+	* 		@access		public
+	*/	
+	public function att_is_going() {
+		return $this->_REG_att_is_going;
+	}
+
+
+
+	/**
+	*		get Attendee Checked In
+	* 		@access		public
+	*/	
+	public function att_checked_in() {
+		return $this->_REG_att_checked_in;
+	}
+
+
 
 
 
