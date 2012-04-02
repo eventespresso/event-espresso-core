@@ -3,7 +3,7 @@
 function add_new_event_discount() {
 	$values = array(
 			array('id' => 'N', 'text' => __('No', 'event_espresso')),
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')));
+			array('id' => true, 'text' => __('Yes', 'event_espresso')));
 	?>
 	<div class="meta-box-sortables ui-sortables">
 	<div class="metabox-holder">
