@@ -431,13 +431,13 @@ class EE_Datetime {
 
 
 	/**
-	*		show date
+	*		get date
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function show_date( $dt_frmt = FALSE ) {		
+	public function get_date( $dt_frmt = FALSE ) {		
 		return $this->_show_datetime( 'D', $dt_frmt );
 	}
 
@@ -446,13 +446,13 @@ class EE_Datetime {
 
 
 	/**
-	*		show time
+	*		get time
 	* 
 	* 		@access		public	
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function show_time( $tm_format = FALSE ) {
+	public function get_time( $tm_format = FALSE ) {
 		return $this->_show_datetime( 'T', FALSE, $tm_format );
 	}
 
@@ -461,15 +461,41 @@ class EE_Datetime {
 
 
 	/**
-	*		show date and time
+	*		get date and time
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function show_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+	public function get_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
 		return $this->_show_datetime( '', $dt_frmt, $tm_format );
+	}
+
+
+
+
+	/**
+	*		get timestamp
+	* 
+	* 		@access		public	
+	*		@return 		int
+	*/	
+	public function timestamp() {
+		return $this->DTT_timestamp;
+	}
+
+
+
+
+	/**
+	*		get reg limit
+	* 
+	* 		@access		public	
+	*		@return 		int
+	*/	
+	public function reg_limit() {
+		return $this->DTT_reg_limit;
 	}
 
 
