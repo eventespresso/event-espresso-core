@@ -2,8 +2,8 @@
 //Function for adding new questions
 function event_espresso_form_builder_new(){
 	$values=array(
-		array('id'=>'Y','text'=> __('Yes','event_espresso')),
-		array('id'=>'N','text'=> __('No','event_espresso'))
+		array('id'=>true,'text'=> __('Yes','event_espresso')),
+		array('id'=>false,'text'=> __('No','event_espresso'))
 	);
 ?>
 <div class="metabox-holder">
@@ -38,7 +38,7 @@ function event_espresso_form_builder_new(){
 							array('id'=>'MULTIPLE','text'=> __('Checkbox','event_espresso')),
 							array('id'=>'DATE','text'=> __('Date Picker','event_espresso'))
 							);
-						
+
 						echo select_input( 'question_type', $q_values, '', 'id="question_type"');
 					?>
 						</td>
@@ -58,7 +58,7 @@ function event_espresso_form_builder_new(){
 						</th>
 						<td>
 							<?php
-							echo select_input('required', $values, 'N');
+							echo select_input('required', $values, false);
 						?><br />
 						<span class="description"><?php _e('Mark this question as required.', 'event_espresso'); ?></span>
 						</td>
@@ -68,7 +68,7 @@ function event_espresso_form_builder_new(){
 							<label class="inline" for="admin_only"><?php _e(' Admin View Only','event_espresso'); ?></label>
 						</th>
 						<td>
-							<?php echo select_input('admin_only', $values, 'N');?>
+							<?php echo select_input('admin_only', $values, false);?>
 						</td>
 					</tr>
 					<tr>
