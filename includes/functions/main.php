@@ -55,7 +55,7 @@ function espresso_use_pretty_permalinks() {
 		$url_rewrite = FALSE;
 	}
 	// check if permalinks are turned on and both in WP and EE
-	if ($url_rewrite == 'Y' && get_option('permalink_structure') != '') {
+	if ($url_rewrite && get_option('permalink_structure') != '') {
 		return TRUE;
 	} else {
 		return FALSE;
@@ -82,9 +82,9 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 			$registration_url .= '/' . $event_slug;
 		} else {
 			// use fugly oldsckool link
-			$registration_url = add_query_arg( array( 'event_slug'=>$event_slug ), $registration_url ); 		
+			$registration_url = add_query_arg( array( 'event_slug'=>$event_slug ), $registration_url );
 		}
-	} elseif ($event_id && absint($event_id) && $event_id != '' && $event_id > 0) {	 
+	} elseif ($event_id && absint($event_id) && $event_id != '' && $event_id > 0) {
 		// no event slug, so use  event_id
 		// check if permalinks are being used
 		if ($use_pretty_permalinks) {
@@ -641,7 +641,7 @@ function event_espresso_update_alert($url = '') {
 function espresso_registration_footer() {
 	global $espresso_premium, $org_options;
 	$url = (!isset($org_options['affiliate_id']) || $org_options['affiliate_id'] == '' || $org_options['affiliate_id'] == 0) ? 'http://eventespresso.com/' : 'https://www.e-junkie.com/ecom/gb.php?cl=113214&c=ib&aff=' . $org_options['affiliate_id'];
-	if ($espresso_premium != true || (isset($org_options['show_reg_footer']) && $org_options['show_reg_footer'] == 'Y')) {
+	if (!$espresso_premium || !empty($org_options['show_reg_footer'])) {
 		return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></p>';
 	}
 }
@@ -746,7 +746,7 @@ function espresso_display_questions($questions, $attendee) {
 								$answer = esc_attr(get_user_meta($userid, 'event_espresso_phone', true));
 								break;
 						}
-						if (!empty($answer) && $member_options['autofilled_editable'] != 'Y') {
+						if (!empty($answer) && !$member_options['autofilled_editable']) {
 							$disabled = 'disabled="disabled"';
 						}
 					}
@@ -1389,9 +1389,9 @@ function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
 				$coupon_code_description = $discount->coupon_code_description;
 				$use_percentage = $discount->use_percentage;
 			}
-			$discount_type_price = $use_percentage == 'Y' ? $coupon_code_price . '%' : $org_options['currency_symbol'] . $coupon_code_price;
+			$discount_type_price = $use_percentage ? $coupon_code_price . '%' : $org_options['currency_symbol'] . $coupon_code_price;
 
-			if ($use_percentage == 'Y') {
+			if ($use_percentage) {
 				$pdisc = $coupon_code_price / 100;
 				$cost = $cost - ($cost * $pdisc);
 			} else {
@@ -2017,19 +2017,19 @@ function update_ee_meta_cache($ee_meta_ids) {
 
 	/**
 	*		compile all error or success messages into one string
-	* 
+	*
 	* 		@param		boolean		$format		whether or not to format the messages for display in the WP admin
 	*		@return 		array
-	*/	
+	*/
 	function espresso_get_notices( $format = TRUE ) {
-	
+
 		global $espresso_notices;
-	
+
 		$success_messages = '';
 		$error_messages = '';
-		
+
 		//echo printr($espresso_notices, '$espresso_notices' );
-		
+
 		// check for success messages
 		//if ( isset( $espresso_notices['success'] ) && is_array( $espresso_notices['success'] ) && ! empty( $espresso_notices['success'] )) {
 		if ( $espresso_notices['success'] ) {
@@ -2051,25 +2051,25 @@ function update_ee_meta_cache($ee_meta_ids) {
 				$error_messages .= $error . '<br />';
 			}
 			// remove last linebreak
-			$error_messages = substr( $error_messages, 0, ( count( $error_messages ) - 7 ));		
+			$error_messages = substr( $error_messages, 0, ( count( $error_messages ) - 7 ));
 		}
-		
+
 		if ( $format ) {
-		
+
 			$notices = '';
-	
+
 			if ( $success_messages != '' ) {
 				//showMessage( $success_messages );
 				$notices = '<div id="message" class="updated fade"><p>' . $success_messages . '</p></div>';
 			}
-			
+
 			if  ( $error_messages != '' ) {
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="message" class="error"><p>' . $error_messages . '</p></div>';
-			} 
-			
+			}
+
 		} else {
-			
+
 			$notices = array(
 											'success' => $success_messages,
 											'errors' => $error_messages
@@ -2077,9 +2077,9 @@ function update_ee_meta_cache($ee_meta_ids) {
 
 		}
 
-									
+
 		return $notices;
-	
+
 	}
 
 
@@ -2088,27 +2088,27 @@ function update_ee_meta_cache($ee_meta_ids) {
 
 	/**
 	*		load and display a template
-	* 
+	*
 	*		@param 		string			$path_to_file		server path to the file to be loaded, including the file name and extension
 	*		@param 		array			$template_args	an array of arguments to be extracted for use in the template
 	*		@param 		boolean		$return_string	whether to send ouput immediately to screen, or capture and return as a string
 	*		@return 		void
-	*/	
+	*/
 	function espresso_display_template( $path_to_file = FALSE, $template_args, $return_string = FALSE ) {
-	
+
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $path_to_file ) {
 			return FALSE;
 		}
-		// if $template_args are not in an array, then make it so 
+		// if $template_args are not in an array, then make it so
 		if ( ! is_array( $template_args )) {
 			$template_args = array( $template_args );
 		}
-		
+
 		extract( $template_args );
 
-		if ( $return_string ) {	
-			// becuz we want to return a string, we are going to capture the output		
+		if ( $return_string ) {
+			// becuz we want to return a string, we are going to capture the output
 			ob_start();
 			include( $path_to_file );
 			$output = ob_get_clean();
@@ -2117,9 +2117,9 @@ function update_ee_meta_cache($ee_meta_ids) {
 			include( $path_to_file );
 		}
 
-	}	
-	
-	
+	}
+
+
 
 
 
