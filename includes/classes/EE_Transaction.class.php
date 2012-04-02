@@ -104,8 +104,9 @@ class EE_Transaction {
     *	@var string	
     */
 	private $_TXN_hash_salt = NULL;		
-	
-	
+
+
+
     /**
     *	Tax Data
 	* 
@@ -115,6 +116,18 @@ class EE_Transaction {
     *	@var array	
     */
 	private $_TXN_tax_data = NULL;	
+
+
+
+    /**
+    *	datetime format
+	* 
+    *	pattern or format for displaying dates and times
+	* 
+	*	@access	private
+    *	@var string	
+    */
+	private $dt_frmt = 'F j, Y g:i a';	
 
 
 
@@ -338,6 +351,111 @@ class EE_Transaction {
 		return $this->_save_to_db();
 	}
 
+
+
+
+
+
+
+
+
+	/**
+	*		get Transaction ID
+	* 		@access		public
+	*/	
+	public function ID() {
+		return $this->_TXN_ID;
+	}
+
+
+
+
+
+	/**
+	*		get Transaction Total
+	* 		@access		public
+	*/	
+	public function total() {
+		return $this->_TXN_total;
+	}
+
+
+
+
+	/**
+	*		get Transaction Status 
+	* 		@access		public
+	*/	
+	public function status() {
+		return $this->_STS_ID;
+	}
+
+
+
+
+	/**
+	*		get Transaction Details
+	* 		@access		public
+	*/	
+	public function details() {
+		return $this->_TXN_details;
+	}
+
+
+
+
+	/**
+	*		get Transaction session data
+	* 		@access		public
+	*/	
+	public function session_data() {
+		return $this->_TXN_session_data;
+	}
+
+
+
+
+	/**
+	*		get Transaction hash salt
+	* 		@access		public
+	*/	
+	public function hash_salt_() {
+		return $this->_TXN_hash_salt;
+	}
+
+
+
+
+	/**
+	*		get Transaction tax data
+	* 		@access		public
+	*/	
+	public function tax() {
+		return $this->_TXN_tax_data;
+	}
+
+
+
+
+	/**
+	*		get Transaction datetime
+	* 		@param 		boolean		$format - whether to format date  - defaults to FALSE (return timestamp)
+	* 		@param 		string			$dt_frmt - defaults to 'F j, Y g:i a'
+	* 		@access		public
+	*/	
+	public function datetime( $format = FALSE, $dt_frmt = FALSE ) {
+		if ( $format ) {
+			// set datetime format
+			$dt_frmt = $dt_frmt ? $dt_frmt : $this->dt_frmt;		
+			return date( $dt_frmt, $this->_TXN_timestamp );
+		} else {
+			return $this->_TXN_timestamp;
+		}
+
+	}	
+	
+	
+	
 
 
 	/**
