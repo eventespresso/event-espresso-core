@@ -606,7 +606,7 @@ class EE_Attendee {
 	*		get Attendee State ID
 	* 		@access		public
 	*/	
-	public function state() {
+	public function state_ID() {
 		return $this->_STA_ID;
 	}
 
@@ -616,7 +616,7 @@ class EE_Attendee {
 	*		get Attendee Country ISO Code
 	* 		@access		public
 	*/	
-	public function country() {
+	public function country_ISO() {
 		return $this->_CNT_ISO;
 	}
 
