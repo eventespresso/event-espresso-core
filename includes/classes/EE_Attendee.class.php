@@ -542,6 +542,149 @@ class EE_Attendee {
 
 
 
+	/**
+	*		get Attendee ID
+	* 		@access		public
+	*/	
+	public function ID() {
+		return $this->_ATT_ID;
+	}
+
+
+
+	/**
+	*		get Attendee First Name
+	* 		@access		public
+	*/	
+	public function fname() {
+		return $this->_ATT_fname;
+	}
+
+
+
+	/**
+	*		get Attendee Last Name
+	* 		@access		public
+	*/	
+	public function lname() {
+		return $this->_ATT_lname;
+	}
+
+
+
+	/**
+	*		get Attendee Address
+	* 		@access		public
+	*/	
+	public function address() {
+		return $this->_ATT_address;
+	}
+
+
+
+	/**
+	*		get Attendee Address2
+	* 		@access		public
+	*/	
+	public function address2() {
+		return $this->_ATT_address2;
+	}
+
+
+
+	/**
+	*		get Attendee City
+	* 		@access		public
+	*/	
+	public function city() {
+		return $this->_ATT_city;
+	}
+
+
+
+	/**
+	*		get Attendee State ID
+	* 		@access		public
+	*/	
+	public function state() {
+		return $this->_STA_ID;
+	}
+
+
+
+	/**
+	*		get Attendee Country ISO Code
+	* 		@access		public
+	*/	
+	public function country() {
+		return $this->_CNT_ISO;
+	}
+
+
+
+	/**
+	*		get Attendee Zip/Postal Code
+	* 		@access		public
+	*/	
+	public function zip() {
+		return $this->_ATT_zip;
+	}
+
+
+
+	/**
+	*		get Attendee Email Address
+	* 		@access		public
+	*/	
+	public function email() {
+		return $this->_ATT_email;
+	}
+
+
+
+	/**
+	*		get Attendee Phone #
+	* 		@access		public
+	*/	
+	public function phone() {
+		return $this->_ATT_phone;
+	}
+
+
+
+	/**
+	*		get Attendee Social Networking details
+	* 		@access		public
+	*/	
+	public function social() {
+		return $this->_ATT_social;
+	}
+
+
+
+	/**
+	*		get Attendee Attendee Comments (by the attendee)
+	* 		@access		public
+	*/	
+	public function comments() {
+		return $this->_ATT_comments;
+	}
+
+
+
+	/**
+	*		get Attendee Attendee Notes (about the attendee)
+	* 		@access		public
+	*/	
+	public function notes() {
+		return $this->_ATT_notes;
+	}
+
+
+
+
+
+
 
 
 
