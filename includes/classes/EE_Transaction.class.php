@@ -386,7 +386,7 @@ class EE_Transaction {
 	*		get Transaction Status 
 	* 		@access		public
 	*/	
-	public function status() {
+	public function status_ID() {
 		return $this->_STS_ID;
 	}
 
