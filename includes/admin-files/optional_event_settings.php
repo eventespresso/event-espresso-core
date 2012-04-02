@@ -115,14 +115,14 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					<th><label>
 							<?php _e('Use the Staff Manager?', 'event_espresso'); ?>
 						</label></th>
-					<td><?php echo select_input('use_personnel_manager', $values, isset($org_options['use_personnel_manager']) ? $org_options['use_personnel_manager'] : 'N'); ?></td>
+					<td><?php echo select_input('use_personnel_manager', $values, isset($org_options['use_personnel_manager']) ? $org_options['use_personnel_manager'] : false); ?></td>
 				</tr>
 
 				<tr>
 					<th><label for="use_attendee_pre_approval">
 							<?php _e('Enable Attendee Pre-approval', 'event_espresso'); ?>
 						</label></th>
-					<td><?php echo select_input('use_attendee_pre_approval', $values, isset($org_options['use_attendee_pre_approval']) ? $org_options['use_attendee_pre_approval'] : 'N'); ?></td>
+					<td><?php echo select_input('use_attendee_pre_approval', $values, isset($org_options['use_attendee_pre_approval']) ? $org_options['use_attendee_pre_approval'] : false); ?></td>
 				</tr>
 				<tr>
 					<th> <label for="use_custom_post_types">
@@ -162,7 +162,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					<th><label for="time_reg_limit">
 							<?php _e('Registration Limits on Time Slots', 'event_espresso'); ?>
 						</label></th>
-					<td><?php echo select_input('time_reg_limit', $values, isset($org_options['time_reg_limit']) ? $org_options['time_reg_limit'] : 'N'); ?><br />
+					<td><?php echo select_input('time_reg_limit', $values, isset($org_options['time_reg_limit']) ? $org_options['time_reg_limit'] : false); ?><br />
 						<span class="important description">
 							<?php _e('This function is experimental and may not function as expected.<br />
 You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
@@ -172,7 +172,7 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 					<th><label>
 							<?php _e('Custom Time Zone for Each Event', 'event_espresso'); ?>
 						</label></th>
-					<td><?php echo select_input('use_event_timezones', $values, isset($org_options['use_event_timezones']) ? $org_options['use_event_timezones'] : 'N'); ?><br />
+					<td><?php echo select_input('use_event_timezones', $values, isset($org_options['use_event_timezones']) ? $org_options['use_event_timezones'] : false); ?><br />
 						<span class="description">
 							<?php _e('This allows you to set a custom time zone for each event.<br />Modificatiosn to your site may be required for this to work properly.', 'event_espresso'); ?>
 						</span></td>
@@ -186,13 +186,13 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 					<th><label>
 							<?php _e('Enable Full Logging', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'full_logging_info'); ?>
 						</label></th>
-					<td><?php echo select_input('full_logging', $values, isset($org_options['full_logging']) ? $org_options['full_logging'] : 'N'); ?></td>
+					<td><?php echo select_input('full_logging', $values, isset($org_options['full_logging']) ? $org_options['full_logging'] : false); ?></td>
 				</tr>
 				<tr>
 					<th><label>
 							<?php _e('Enable Remote Logging', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'remote_logging_info'); ?></label></th>
-					<td><?php echo select_input('remote_logging', $values, isset($org_options['remote_logging']) ? $org_options['remote_logging'] : 'N'); ?><br />
+					<td><?php echo select_input('remote_logging', $values, isset($org_options['remote_logging']) ? $org_options['remote_logging'] : false); ?><br />
 						<span class="description">
 							<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
 						</span></td>
