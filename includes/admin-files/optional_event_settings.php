@@ -19,7 +19,7 @@ function espresso_optional_settings_meta_box() {
 	}
 
 	/* $bin_name = '';
-	  if (isset($_REQUEST['create_postbin']) && $_REQUEST['create_postbin'] =='Y'){
+	  if (!empty($_REQUEST['create_postbin'])){
 	  $c = curl_init ('http://requestb.in/api/v1/bins');
 	  curl_setopt ($c, CURLOPT_POST, true);
 	  curl_setopt ($c, CURLOPT_POSTFIELDS, $data);
@@ -91,15 +91,15 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					<th><label>
 							<?php _e('Show Additional Payment Options for Pending Payments', 'event_espresso'); ?>
 						</label></th>
-					<td><?php echo select_input('show_pending_payment_options', $values, isset($org_options['show_pending_payment_options']) ? $org_options['show_pending_payment_options'] : 'Y'); ?><br />
+					<td><?php echo select_input('show_pending_payment_options', $values, isset($org_options['show_pending_payment_options']) ? $org_options['show_pending_payment_options'] : true); ?><br />
 						<span class="description">
 							<?php _e('Shows alternate payment options for "Pending Payments" on the Payment Overview page.', 'event_espresso'); ?>
 						</span></td>
 				</tr>
 			</tbody>
 		</table>
-		
-		
+
+
 		<h4>
 			<?php _e('Administration Options', 'event_espresso'); ?>
 		</h4>
@@ -109,7 +109,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					<th><label>
 							<?php _e('Use the Venue Manager?', 'event_espresso'); ?>
 						</label></th>
-					<td><?php echo select_input('use_venue_manager', $values, isset($org_options['use_venue_manager']) ? $org_options['use_venue_manager'] : 'Y'); ?></td>
+					<td><?php echo select_input('use_venue_manager', $values, isset($org_options['use_venue_manager']) ? $org_options['use_venue_manager'] : true); ?></td>
 				</tr>
 				<tr>
 					<th><label>
@@ -133,7 +133,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 				</tr>
 			</tbody>
 		</table>
-		
+
 		<h4>
 			<?php _e('Extras', 'event_espresso'); ?>
 		</h4>
@@ -148,7 +148,7 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					<th><label for="espresso_dashboard_widget">
 							<?php _e('Show the Upcoming Events widget in the dashboard?', 'event_espresso'); ?>
 						</label></th>
-					<td><?php echo select_input('espresso_dashboard_widget', $values, isset($org_options['espresso_dashboard_widget']) ? $org_options['espresso_dashboard_widget'] : 'Y'); ?></td>
+					<td><?php echo select_input('espresso_dashboard_widget', $values, isset($org_options['espresso_dashboard_widget']) ? $org_options['espresso_dashboard_widget'] : true); ?></td>
 				</tr>
 				<tr>
 					<th><?php _e('How many days into the future?', 'event_espresso'); ?></th>
@@ -197,10 +197,10 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 							<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
 						</span></td>
 				</tr>
-				<tr <?php //if (isset($_REQUEST['create_postbin']) && $_REQUEST['create_postbin'] =='Y') echo ' class="yellow_inform"';  ?>>
+				<tr <?php //if (!empty($_REQUEST['create_postbin'])) echo ' class="yellow_inform"';  ?>>
 					<th>								<label>
 							<?php _e('Remote Logging URL', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'remote_logging_url_info'); ?><?php //if (isset($_REQUEST['create_postbin']) && $_REQUEST['create_postbin'] =='Y') echo '<br /><span class="red_text">'.__('Don\'t forget to save!', 'event_espresso').'</span>'; ?></label></th>
+							<?php echo apply_filters('filter_hook_espresso_help', 'remote_logging_url_info'); ?><?php //if (!empty($_REQUEST['create_postbin'])) echo '<br /><span class="red_text">'.__('Don\'t forget to save!', 'event_espresso').'</span>'; ?></label></th>
 					<td><input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo $remote_logging_url ?>" /><br />
 						<span class="description">
 							<?php _e('Example: http://www.postbin.org/MY_UNIQUE_ID', 'event_espresso'); ?>
@@ -217,7 +217,7 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 							<?php _e('Link to Event Espresso in your Registration Page', 'event_espresso'); ?>
 							<?php apply_filters('filter_hook_espresso_help', 'affiliate_info'); ?>
 						</label></th>
-					<td><?php echo select_input('show_reg_footer', $values, isset($org_options['show_reg_footer']) ? $org_options['show_reg_footer'] : 'Y'); ?></td>
+					<td><?php echo select_input('show_reg_footer', $values, isset($org_options['show_reg_footer']) ? $org_options['show_reg_footer'] : true); ?></td>
 				</tr>
 				<tr>
 					<th><?php _e('Event Espresso Affiliate ID', 'event_espresso'); ?></th>
