@@ -871,10 +871,12 @@
 	*		@return TRUE on success, FALSE on fail
 	*/	
 	private function _verify_cart_properties ( $properties = array() ) {
+
+		global $espresso_notices;
 		
 		// WHAT?!?!! check the validity of properties before you validate them ?!?!? geez... my head hurts
 		if ( ! isset( $properties ) or ! is_array( $properties ) or empty( $properties )) {
-			$this->_notices['errors'][] = 'An error occured. No cart properties were submitted for verification .';
+			$espresso_notices = $this->_notices['errors'][] = 'An error occured. No cart properties were submitted for verification .';
 			return FALSE;
 		}
 		
@@ -884,7 +886,7 @@
 				case 'which_cart' :
 						// check for a valid cart
 						if ( ! $property or ! isset( $this->cart[ $property ] )) {
-							$this->_notices['errors'][] = 'An error occured. No cart or an invalid cart was specified.';
+							$espresso_notices = $this->_notices['errors'][] = 'An error occured. No cart or an invalid cart was specified.';
 							return FALSE;
 						}
 				break;
@@ -892,7 +894,7 @@
 				case 'line_item_ids' :
 						//check for a line item id(s)
 						if ( ! $property ) {
-							$this->_notices['errors'][] = 'An error occured. No item was specified.';
+							$espresso_notices = $this->_notices['errors'][] = 'An error occured. No item was specified.';
 							return FALSE;
 						}
 				break;
@@ -900,7 +902,7 @@
 				case 'line_item_id' :
 						// check for a line item id(s)
 						if ( ! $property or ! isset( $this->cart[ $properties['which_cart'] ]['items'][ $property ] )) {
-							$this->_notices['errors'][] = 'An error occured. No item was specified.';
+							$espresso_notices = $this->_notices['errors'][] = 'An error occured. No item was specified.';
 							return FALSE;
 						}						
 				break;
@@ -908,7 +910,7 @@
 				case 'new_qty' :
 						//check for a new_qty
 						if ( ! $property or ! is_int( $property )) {
-							$this->_notices['errors'][] = 'An error occured. Either no item quantity, or an invalid item quantity was specified.';
+							$espresso_notices = $this->_notices['errors'][] = 'An error occured. Either no item quantity, or an invalid item quantity was specified.';
 							return FALSE;
 						}
 				break;
@@ -920,7 +922,7 @@
 						foreach ( $required_keys as $required_key ) {
 							// check that item has required property
 							if ( ! isset ( $property[ $required_key ] )) { 
-								$this->_notices['errors'][] = 'An error occured. Items passed to the cart must possess a valid ' . $required_key . '.';
+								$espresso_notices = $this->_notices['errors'][] = 'An error occured. Items passed to the cart must possess a valid ' . $required_key . '.';
 								return FALSE;
 							}
 						}
@@ -928,7 +930,7 @@
 				
 				case 'items' :
 						if ( ! is_array( $property ) or empty( $property ) ) {
-							$this->_notices['errors'][] = 'An error occured. The data passed to the cart was invalid. No items could be added to the cart.';
+							$espresso_notices = $this->_notices['errors'][] = 'An error occured. The data passed to the cart was invalid. No items could be added to the cart.';
 							return FALSE;
 						}
 				break;
@@ -936,7 +938,7 @@
 				case 'event_id' :
 						// check $event_id 
 						if ( ! $property or ! is_int( $property )) {
-							$this->_notices['errors'][] = 'An error occured. An invalid or missing event id was submitted and therefore could not be added to the events in cart list.';
+							$espresso_notices = $this->_notices['errors'][] = 'An error occured. An invalid or missing event id was submitted and therefore could not be added to the events in cart list.';
 							return FALSE;
 						}						
 				break;
@@ -1146,27 +1148,25 @@
 	*/	
 	public function set_line_item_details( $extra_details = FALSE, $line_item_id = FALSE, $which_cart = 'REG'  ) {
 
-		// check $extra_details 
+		global $espresso_notices;		
+
+		// check $extra_details
 		if ( ! $extra_details or ! is_array( $extra_details ) or empty( $extra_details )) {
-			$this->_notices['errors'][] = 'An error occured. An invalid or missing set of details was submitted and therefore could not be added to the cart item.';
+			$espresso_notices = $this->_notices['errors'][] = 'An error occured. An invalid or missing set of details was submitted and therefore could not be added to the cart item.';
 			return FALSE;
 		}
-		
-		if ( ! $this->_verify_cart_properties ( array( 'line_item_id' => $line_item_id , 'which_cart' => 'REG' ))) {
+
+		if ( ! $this->_verify_cart_properties ( array( 'line_item_id' => $line_item_id , 'which_cart' => $which_cart ))) {
 			return FALSE;
 		}
-				
+
 		foreach ( $extra_details as $key => $extra_detail ) {
 			$this->cart[$which_cart]['items'][ $line_item_id ][ $key ] = $extra_detail;
 		}
-			
-			
+
+		return TRUE;
+
 	}
-	
-
-
-
-
 
 }
 
