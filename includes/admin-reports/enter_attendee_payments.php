@@ -291,12 +291,12 @@ function enter_attendee_payments() {
 								<input type="hidden" name="event_id" value="<?php echo $event_id ?>">
 								<input type="hidden" name="attendee_action" value="post_payment">
 								<li>
-									<input type="submit" name="Submit" value="Update Payment">
+									<input type="submit" name="Submit" class="action button-primary" value="Update Payment">
 								</li>
 							</ul>
 						</fieldset>
 					</form></td>
-				<td valign="top"><form method='post' action="<?php echo $_SERVER['REQUEST_URI'] ?>&status=invoiced">
+				<td valign="top"><form method='post' class="espresso_form" action="<?php echo $_SERVER['REQUEST_URI'] ?>&status=invoiced">
 						<input type="hidden" name="id" value="<?php echo $id ?>">
 						<input type="hidden" name="form_action" value="send_invoice">
 						<input type="hidden" name="event_id" value="<?php echo $event_id ?>">
@@ -364,7 +364,7 @@ function enter_attendee_payments() {
 							</li>
 							<?php } ?>
 							<li>
-								<input type="submit" name="Submit" value="Send Invoice">
+								<input type="submit" class="button-primary action" name="Submit" value="Send Invoice">
 							</li>
 						</ul>
 					</form></td>

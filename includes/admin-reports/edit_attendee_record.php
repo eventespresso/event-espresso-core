@@ -508,25 +508,26 @@ function edit_attendee_record() {
 						echo "</p>";
 
 
-						echo $counter == $num_rows ? '</fieldset>' : '';
+						#echo $counter == $num_rows ? '</fieldset>' : '';
 					}
 				}
 			}//end questions display
 		}
 ?>
 				  </li>
-				  <input type="hidden" name="id" value="<?php echo $id ?>" />
+				  
+				  <li>
+					<input type="submit" name="Submit" class="button-primary action" value="<?php _e('Update Record', 'event_espresso'); ?>" />
+				  </li>
+				</ul>
+			  </fieldset>
+                  <input type="hidden" name="id" value="<?php echo $id ?>" />
 				  <input type="hidden" name="registration_id" value="<?php echo $registration_id ?>" />
 				  <input type="hidden" name="event_id" value="<?php echo $event_id ?>" />
 				  <input type="hidden" name="display_action" value="view_list" />
 				  <input type="hidden" name="view_event" value="<?php echo isset($view_event) && !empty($view_event) ? $view_event : '' ?>" />
 				  <input type="hidden" name="form_action" value="edit_attendee" />
 				  <input type="hidden" name="attendee_action" value="update_attendee" />
-				  <li>
-					<input type="submit" name="Submit" value="<?php _e('Update Record', 'event_espresso'); ?>" />
-				  </li>
-				</ul>
-			  </fieldset>
 			</form></td>
 		  <td  width="50%" valign="top"><?php if (count($additional_attendees) > 0){ ?>
 			<h4>
@@ -640,7 +641,7 @@ function edit_attendee_record() {
 					</div>
 				  </li>
 				  <li>
-					<input type="submit" name="Submit" value="Update Payment" />
+					<input type="submit" name="Submit" class="button-primary action" value="Update Payment" />
 				  </li>
 				</ul>
 			  </fieldset>
