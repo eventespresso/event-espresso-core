@@ -49,19 +49,12 @@ function espresso_ticket_selector($event) {
 		$max_atndz = $event->additional_limit;
 	}
 	
-
-	//$template_args['reg_href'] = isset( $event->reg_btn['href_url'] ) ? $event->reg_btn['href_url'] : '';
-
 	$template_args['event_id'] = $event->id;
 	$template_args['event_name'] = $event->event_name;
-//		$template_args['event_cost'] = $event->event_cost;
 	$template_args['require_pre_approval'] = $event->require_pre_approval;
 
-	//$template_args['atndee_slctr_wdth'] = $atndee_slctr_wdth;
 	$template_args['max_atndz'] = $max_atndz;
-//		$template_args['sbmt_btn_text'] = $event->reg_btn['text'];
 
-	//$template_args['multiple_date_options'] = count($event->prices) > 1 ? ? TRUE : FALSE;
 	$template_args['dates'] = is_array($event->recurring_events) ? $event->recurring_events : array($event->start_date);
 	$template_args['dates'] = format_date($template_args['dates']);
 
@@ -72,13 +65,11 @@ function espresso_ticket_selector($event) {
 	$template_args['prices'] = process_event_prices($event->prices, $event->currency_symbol, 'included');
 	$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
 	//echo printr($event->prices);
+	
 	// had problems with event desc not playing nice with serialize so....
 	//$all_meta = array_map('wp_strip_all_tags', $event->reg_btn['all_meta']);
-
 	//$template_args['meta'] = serialize( $all_meta );
 	//$template_args['meta'] = base64_encode(serialize($all_meta));
-
-
 
 	$template_args['currency_symbol'] = $event->currency_symbol;
 	
@@ -87,6 +78,10 @@ function espresso_ticket_selector($event) {
 	espresso_display_template($templates['ticket_selector'], $template_args);
 
 }
+
+
+
+
 
 /**
  * 		format date for display
@@ -99,9 +94,12 @@ function format_date($dates) {
 	foreach ($dates as $key => $date) {
 		$dates[$key] = date_i18n('D M jS', strtotime($date));
 	}
-
 	return $dates;
 }
+
+
+
+
 
 /**
  * 		format time for display
@@ -124,6 +122,10 @@ function format_time($time, $format = 'g:ia') {
 
 	return $event_time;
 }
+
+
+
+
 
 /**
  * 		process event times
@@ -153,6 +155,11 @@ function process_event_times($times) {
 
 	return $time_options;
 }
+
+
+
+
+
 
 /**
  * 		format price for display
@@ -191,6 +198,10 @@ function format_price($currency_symbol = '$', $price, $surcharge, $surcharge_typ
 
 	return $formatted_price;
 }
+
+
+
+
 
 /**
  * 		process event prices for display
@@ -275,6 +286,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 			} else {
 				
 				$tckts_slctd = FALSE;
+				$success = FALSE;
 				// all data appears to be valid
 				// cycle thru the number of data rows sent from the event listsing
 				for ($x = 0; $x < $valid['rows']; $x++) {
@@ -301,29 +313,44 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 						//echo printr($event_to_add);
 						// then add event
 						if ( add_event_to_cart( $event_to_add )) {
-							if ( $return ) {
-								return TRUE;
-							} else {
-								if ( ! $registration_url ) {
-									$registration_url = add_query_arg( array( 'e_reg'=>'register', 'step' => 1 ), espresso_get_reg_page_full_url() );
-								}
-								wp_redirect($registration_url);
-								exit();
-							}
+							$success = TRUE;
 						}
 					} 
 				}
-				
-				if ( ! $tckts_slctd ) {
+
+				if ( $tckts_slctd ) {				
+					if ( $success ) {
+						if ( $return ) {
+							return TRUE;
+						} else {
+							if ( ! $registration_url ) {
+								$registration_url = add_query_arg( array( 'e_reg'=>'register', 'step' => 1 ), espresso_get_reg_page_full_url() );
+							}
+							wp_redirect($registration_url);
+							exit();
+						}
+					} else {
+						// nothing added to cart
+						echo '
+	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
+		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'An error occured. No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' ).'</span>
+	</div>
+<br/><br/>';	
+					}
+
+				} else {
+					// no ticket quantities were selected
 					echo '
 	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
 		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' ).'</span>
 	</div>
 <br/><br/>';					
-				}
+				}				
 			}
+
 		} else {
-					echo '
+			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
+			echo '
 	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
 		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' ).'</span>
 	</div>
