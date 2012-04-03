@@ -19,7 +19,7 @@ function update_event($recurrence_arr = array()) {
 		 */
 		if (get_option('event_espresso_re_active') == 1) {
 			require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_functions.php");
-
+            
 			if ($_POST['recurrence_id'] > 0) {
 				/*
 				 * If the array is empty, then find the recurring dates
@@ -167,6 +167,7 @@ function update_event($recurrence_arr = array()) {
 						!empty($_POST['recurrence']) && $_POST['recurrence'] == 'Y' &&
 						count($recurrence_arr) == 0 && $_POST['recurrence_apply_changes_to'] > 1) {
 			//skip the first update
+            $event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
 		} else {
 
 			$event_meta = array(); //will be used to hold event meta data

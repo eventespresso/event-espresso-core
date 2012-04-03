@@ -5,7 +5,7 @@ function add_event_to_db($recurrence_arr = array()) {
 	// echo "<pre>";
 	//print_r($_POST);
 	//echo "</pre>";
-
+    $last_event_id = 0; // it is being returned but not initialized if recurrence isn't active or if the event is the first one of the recurrence event - Imon
 	//Delete the transients that may be set
 	espresso_reset_cache();
 
@@ -35,12 +35,12 @@ function add_event_to_db($recurrence_arr = array()) {
 						'frequency' => $_POST['recurrence_frequency'],
 						'interval' => $_POST['recurrence_interval'],
 						'type' => $_POST['recurrence_type'],
-						'weekdays' => $_POST['recurrence_weekday'],
+						'weekdays' => isset($_POST['recurrence_weekday'])?$_POST['recurrence_weekday']:'',
 						'repeat_by' => $_POST['recurrence_repeat_by'],
 						'recurrence_regis_date_increment' => $_POST['recurrence_regis_date_increment'],
 						'recurrence_manual_dates' => $_POST['recurrence_manual_dates'],
 						'recurrence_manual_end_dates' => $_POST['recurrence_manual_end_dates'],
-						'recurrence_visibility' => $_POST['recurrence_visibility'],
+						'recurrence_visibility' => isset($_POST['recurrence_visibility'])?$_POST['recurrence_visibility']:'',
 						'recurrence_id' => $recurrence_id,
 						'adding_to_db' => 'Y'
 				);
