@@ -387,7 +387,7 @@
 
 			$.ajax({
 						type: "POST",
-						url:  espresso.ajax_url,
+						url:  event_espresso.ajax_url,
 						data: form_data,
 						dataType: "json",
 						beforeSend: function() {
