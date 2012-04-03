@@ -3,7 +3,7 @@
 // Include required files.
 require_once('includes/paypal.nvp.class.php');
 
-$sandbox = $payment_settings['paypal_pro']['use_sandbox'] == 'Y' ? true : false;
+$sandbox = $payment_settings['paypal_pro']['use_sandbox'] ? true : false;
 // Setup PayPal object
 $PayPalConfig = array('Sandbox' => $sandbox, 'APIUsername' => $payment_settings['paypal_pro']['username'], 'APIPassword' => $payment_settings['paypal_pro']['password'], 'APISignature' => $payment_settings['paypal_pro']['signature']);
 $PayPal = new PayPal($PayPalConfig);

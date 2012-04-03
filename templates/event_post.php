@@ -32,12 +32,12 @@ global $wpdb, $org_options;
 		 */
 		//Build event queries
 		$sql = "SELECT e.*, ese.start_time, ese.end_time ";
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+		!empty($org_options['use_venue_manager']) ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
 
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
-		$sql.= " WHERE e.is_active='Y' ";
+		!empty($org_options['use_venue_manager']) ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+		$sql.= " WHERE e.is_active=true ";
 		$sql.= " AND e.event_status != 'D' ";
 
 		// Get the ID of a single event
@@ -110,7 +110,7 @@ global $wpdb, $org_options;
 			$event_meta = unserialize($data->event->event_meta);
 
 			//Venue information
-			if ($org_options['use_venue_manager'] == 'Y') {
+			if ($org_options['use_venue_manager']) {
 				$event_address = $data->event->venue_address;
 				$event_address2 = $data->event->venue_address2;
 				$event_city = $data->event->venue_city;

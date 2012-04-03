@@ -165,9 +165,9 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = ''
 	if (empty($custom_data_email_type))
 		$custom_data_email_type = '';
 	$sql = "SELECT ed.* ";
-	isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+	!empty($org_options['use_venue_manager']) ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 	$sql .= " FROM " . EVENTS_DETAIL_TABLE . " ed ";
-	isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = ed.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+	!empty($org_options['use_venue_manager']) ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = ed.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.event_id=ed.id ";
 	$sql .= " WHERE ea.id = '" . $attendee_id . "' ";
 	$data->event = $wpdb->get_row($sql, OBJECT);
@@ -182,7 +182,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = ''
 	$data->event->event_meta = unserialize($data->event->event_meta);
 
 	//Venue variables
-	if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+	if (!empty($org_options['use_venue_manager'])) {
 		$data->event->venue_meta = unserialize($data->event->venue_meta);
 
 		//Debug
@@ -493,7 +493,7 @@ if (!function_exists('event_espresso_send_email')) {
 		extract($params);
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		if ($org_options['email_fancy_headers'] == 'Y') {
+		if ($org_options['email_fancy_headers']) {
 			$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
 			$headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
 		} else {
@@ -552,7 +552,7 @@ if (!function_exists('event_espresso_send_payment_notification')) {
 
 		$attendees = $wpdb->get_results($sql);
 
-		if ($org_options['default_mail'] == 'Y') {
+		if ($org_options['default_mail']) {
 			foreach ($attendees as $attendee) {
 				$attendee_id = $attendee->id;
 				event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'false', 'send_attendee_email' => 'true', 'custom_data' => array('email_type' => 'payment', 'payment_subject' => $org_options['payment_subject'], 'payment_message' => $org_options['payment_message'])));
@@ -607,7 +607,7 @@ if (!function_exists('event_espresso_send_cancellation_notice')) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		if ($org_options['email_fancy_headers'] == 'Y') {
+		if ($org_options['email_fancy_headers']) {
 			$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
 			$headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
 		} else {

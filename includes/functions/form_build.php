@@ -3,7 +3,7 @@
 if (!function_exists('event_form_build')) {
 
 	function event_form_build( $question, $answer = "", $event_id = null, $multi_reg = 0, $extra = array(), $class='my_class') {
-		if ($question->admin_only == 'Y' && empty($show_admin_only)) {
+		if ($question->admin_only && empty($show_admin_only)) {
 			return;
 		}
 
@@ -83,7 +83,7 @@ if (!function_exists('event_form_build')) {
 									$member_answer = esc_attr(get_user_meta( $userid, 'event_espresso_' . $question->system_name, TRUE ));
 								break;
 							}
-							$disabled = ($answer == '' || $member_options['autofilled_editable'] == 'Y') ? '' : 'disabled="disabled"';
+							$disabled = ($answer == '' || $member_options['autofilled_editable']) ? '' : 'disabled="disabled"';
 							$answer = ( $member_answer == '' ) ? $answer : $member_answer;
 						}
 					}
@@ -207,7 +207,7 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
 		$question->id = $question->q_id;
 	}
 
-	if ($question->admin_only == 'Y' && $show_admin_only == false) {
+	if ($question->admin_only && $show_admin_only == false) {
 		return;
 	}
 

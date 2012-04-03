@@ -215,7 +215,7 @@ function espresso_event_editor_promotions_meta_box($event) {
 			foreach ($event_discounts as $event_discount) {
 				$discount_id = $event_discount->id;
 				$coupon_code = $event_discount->coupon_code;
-				$discount_type_price = $event_discount->use_percentage == 'Y' ? $event_discount->coupon_code_price . '%' : $org_options['currency_symbol'] . $event_discount->coupon_code_price;
+				$discount_type_price = $event_discount->use_percentage ? $event_discount->coupon_code_price . '%' : $org_options['currency_symbol'] . $event_discount->coupon_code_price;
 
 				$in_event_discounts = !empty($event_id) ? $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $event_id . "' AND discount_id='" . $discount_id . "'") : array();
 				$in_event_discount = '';
@@ -317,9 +317,9 @@ function espresso_event_editor_event_post_metabox($event) {
 	<div class="inside">
 		<?php
 		if (strlen($event->post_id) > 1) {
-			$create_post = 'Y'; //If a post was created previously, default to yes on the update post.
+			$create_post = true; //If a post was created previously, default to yes on the update post.
 		} else {
-			$create_post = 'N'; //If a post was NOT created previously, default to no so we do not create a post on accident.
+			$create_post = false; //If a post was NOT created previously, default to no so we do not create a post on accident.
 		}
 		global $current_user;
 		get_currentuserinfo();

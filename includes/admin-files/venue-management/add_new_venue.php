@@ -1,10 +1,10 @@
 <?php
 function add_new_event_venue(){
-	global $wpdb,$current_user;
-			
+	global $wpdb, $current_user;
+
 	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso'))
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso'))
 	);
 ?>
 
@@ -78,8 +78,8 @@ function add_new_event_venue(){
 											</label></th>
 										<td><input class="regular-text" type="text" id="country" name="country" /></td>
 									</tr>
-									<?php 
-							if ( defined('ESPRESSO_MANAGER_PRO_VERSION') ){ 
+									<?php
+							if ( defined('ESPRESSO_MANAGER_PRO_VERSION') ){
 						?>
 									<tr>
 										<th><label for="locale">
@@ -170,12 +170,12 @@ function add_new_event_venue(){
 				<!-- /#descriptiondivrich -->
 			</form>
 		</div>
-		<!-- /.inside --> 
+		<!-- /.inside -->
 	</div>
-	<!-- /.postbox --> 
+	<!-- /.postbox -->
 </div>
 <!-- /.metabox-holder -->
 
-<?php 
+<?php
 //espresso_tiny_mce();
 }

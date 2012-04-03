@@ -122,7 +122,7 @@ function event_espresso_multi_price_update($event_id) {
 	$sql .= " JOIN " . ESP_PRICE_TABLE . " prc ON prc.PRT_id=prt.PRT_id";
 	$sql .= " JOIN " . ESP_EVENT_PRICE_TABLE . " ep ON ep.PRC_id=prc.PRC_id";
 	$prices = $wpdb->get_results($sql);
-	
+
 }
 
 function espresso_event_editor_quick_overview_meta_box($event) {
@@ -397,7 +397,7 @@ function espresso_event_editor_date_time_metabox($event) {
 								<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
 							</a></p>
 					<?php } ?>
-					<?php if (isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y' && $espresso_premium == true) { ?>
+					<?php if (!empty($org_options['use_event_timezones']) && $espresso_premium) { ?>
 						<fieldset id="event-timezone">
 							<p>
 								<label>
@@ -471,7 +471,7 @@ function espresso_event_editor_venue_metabox($event) {
 			<tr valign="top">
 
 				<?php
-				if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
+				if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] && $espresso_premium) {
 					$ven_type = 'class="use-ven-manager"';
 					?>
 					<td <?php echo $ven_type ?>><fieldset id="venue-manager">

@@ -12,7 +12,7 @@ $realauth->set_sandbox($payment_settings['sandbox']);
 $realauth->set_attendee_id($attendee_id);
 $realauth->set_timestamp();
 $button_url = $payment_settings['button_url'];
-if (!empty($payment_settings['bypass_payment_page']) && $payment_settings['bypass_payment_page'] == 'Y') {
+if (!empty($payment_settings['bypass_payment_page'])) {
 	echo $realauth->submitPayment();
 } else {
 	echo $realauth->submitButton($button_url);

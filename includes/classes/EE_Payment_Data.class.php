@@ -70,7 +70,7 @@ class EE_Payment_Data {
 			$total_quantity += $ticket['quantity'];
 		}
 		if (!empty($tickets[0]['coupon_code_price'])) {
-			if ($tickets[0]['use_percentage'] == 'Y') {
+			if ($tickets[0]['use_percentage']) {
 				$this->total_cost = $total_cost * (1 - ($tickets[0]['coupon_code_price'] / 100));
 			} else {
 				$this->total_cost = max($total_cost - $tickets[0]['coupon_code_price'], 0);
@@ -178,7 +178,7 @@ function espresso_get_total_cost($payment_data) {
 		$total_quantity += $ticket['quantity'];
 	}
 	if (!empty($tickets[0]['coupon_code_price'])) {
-		if ($tickets[0]['use_percentage'] == 'Y') {
+		if ($tickets[0]['use_percentage']) {
 			$payment_data['total_cost'] = $total_cost * (1 - ($tickets[0]['coupon_code_price'] / 100));
 		} else {
 			$payment_data['total_cost'] = $total_cost - $tickets[0]['coupon_code_price'];

@@ -41,7 +41,7 @@ class TwoCo extends PaymentGateway {
 	public function enableTestMode() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->testMode = TRUE;
-		$this->addField('demo', 'Y');
+		$this->addField('demo', true);
 	}
 
 	/**
@@ -74,7 +74,7 @@ class TwoCo extends PaymentGateway {
 		$orderTotal = $this->ipnData["total"];
 
 		// If demo mode, the order number must be forced to 1
-		if ($this->demo == "Y" || $this->ipnData['demo'] == 'Y') {
+		if ($this->demo || $this->ipnData['demo']) {
 			$orderNumber = "1";
 		}
 

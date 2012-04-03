@@ -88,13 +88,13 @@ function event_espresso_form_builder_edit(){
 					<td>
 		  		<?php
 						$values=array(
-							array('id'=>'Y','text'=> __('Yes','event_espresso')),
-							array('id'=>'N','text'=> __('No','event_espresso'))
+							array('id'=>true,'text'=> __('Yes','event_espresso')),
+							array('id'=>false,'text'=> __('No','event_espresso'))
 						);
 						if ($system_question == true && ($system_name =='fname'||$system_name =='lname'||$system_name =='email')){
-								$values=array(array('id'=>'Y','text'=> __('Yes','event_espresso')));
+								$values=array(array('id'=>true,'text'=> __('Yes','event_espresso')));
 						}
-							echo select_input('required', $values, $required); 
+							echo select_input('required', $values, $required);
 						?><br />
 						<span class="description"><?php _e('Mark this question as required.', 'event_espresso'); ?></span>
 					</td>
@@ -105,14 +105,14 @@ function event_espresso_form_builder_edit(){
 							<?php _e('Admin View Only','event_espresso'); ?>
 		  			</label>
 					</th>
-					<td>						
+					<td>
 					<?php
 						$values=array(
-							array('id'=>'Y','text'=> __('Yes','event_espresso')),
-							array('id'=>'N','text'=> __('No','event_espresso'))
+							array('id'=>true,'text'=> __('Yes','event_espresso')),
+							array('id'=>false,'text'=> __('No','event_espresso'))
 						);
 						if ($system_question == true && ($system_name =='fname'||$system_name =='lname'||$system_name =='email')){
-							$values=array(array('id'=>'N','text'=> __('No','event_espresso')));
+							$values=array(array('id'=>false,'text'=> __('No','event_espresso')));
 						}
 						echo select_input('admin_only', $values, $admin_only);
 						?><br />

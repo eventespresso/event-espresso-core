@@ -17,9 +17,9 @@ if (function_exists('espresso_member_data')) {
 	<div class="inside">
 		<?php
 		if (strlen($event->post_id) > 1) {
-			$create_post = 'Y'; //If a post was created previously, default to yes on the update post.
+			$create_post = true; //If a post was created previously, default to yes on the update post.
 		} else {
-			$create_post = 'N'; //If a post was NOT created previously, default to no so we do not create a post on accident.
+			$create_post = false; //If a post was NOT created previously, default to no so we do not create a post on accident.
 		}
 		global $current_user;
 		get_currentuserinfo();

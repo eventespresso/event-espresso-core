@@ -1,6 +1,6 @@
 <?php
 $payment_settings = get_option('payment_data_'.$espresso_wp_user);
-$use_sandbox = $payment_settings['paypal_pro']['use_sandbox'] == 'Y' ? true : false;
+$use_sandbox = $payment_settings['paypal_pro']['use_sandbox'];
 ?>
 <div class="event-display-boxes">
 <?php

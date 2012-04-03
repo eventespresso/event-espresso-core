@@ -65,9 +65,9 @@ function event_espresso_get_event_details($attributes) {
 	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-	
+
 	//echo 'This page is located in ' . get_option( 'upload_path' );
 	$event_page_id = $org_options['event_page_id'];
 	$currency_symbol = isset($org_options['currency_symbol']) ? $org_options['currency_symbol'] : '';
@@ -154,13 +154,13 @@ function event_espresso_get_event_details($attributes) {
 	$SQL .= $show_recurrence == 'false' ? " AND eventDetails.recurrence_id = '0'" : ' GROUP BY eventDetails.id';
 	$SQL .= $order_by != NULL ? ' ORDER BY ' . $order_by . ' ASC' : ' ORDER BY date(eventDetails.start_date), eventDetails.id ASC';
 	$SQL .= $limit > 0 ? ' LIMIT 0,' . $limit . ' ' : '';
-	
-	
+
+
 	// check for cached events list
 	// we'll md5 the final SQL statement to create a string of consistent length
 	// this also allows us to cache all of the different queries that can be produced via the SQL options
 	$transient_key = md5( $SQL );
-	
+
 	// check if transient exists
 	if ( ! $events = get_transient( 'ee_events_' . $transient_key )) {
 		// no transient, so let's run the query
@@ -173,17 +173,17 @@ function event_espresso_get_event_details($attributes) {
 		} else {
 			$events = $wpdb->get_results($wpdb->prepare($SQL));
 		}
-		
+
 		// save the newly created transient value
 		// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
-		set_transient( 'ee_events_' . $transient_key, $events, 60*60*24*365 );	
-			
+		set_transient( 'ee_events_' . $transient_key, $events, 60*60*24*365 );
+
 	}
 
-	
+
 //		echo $wpdb->last_query;
 //		echo printr($events, '$events' );
-	
+
 
 	echo '
 <div id="mer-ajax-loading" style="display:none;">
@@ -274,8 +274,8 @@ function event_espresso_get_event_details($attributes) {
 // EVENT TIMES
 		// let's start with an empty array'
 		$event->times = array();
-		$event->times = espresso_event_list_get_event_times($event_id); 
-		// function found in includes/functions/event_details.helper.php 
+		$event->times = espresso_event_list_get_event_times($event_id);
+		// function found in includes/functions/event_details.helper.php
 		//echo pre_arr($event->times);
 
 
@@ -290,7 +290,7 @@ function event_espresso_get_event_details($attributes) {
 		}
 		//echo pre_arr($event->prices);
 		//echo $display_event_prices;
-		
+
 		$event->currency_symbol = $org_options['currency_symbol'];
 
 		$display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
@@ -439,7 +439,7 @@ function event_espresso_get_event_details($attributes) {
 			}
 		}
 
-		if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $event->member_only == 'Y' ) {
+		if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $event->member_only ) {
 			//Display a message if the user is not logged in.
 			_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
 		} else {

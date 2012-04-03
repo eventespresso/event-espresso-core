@@ -6,7 +6,7 @@ $espresso_manager = get_option('espresso_manager_settings');
 $default_status = array(array('id' => 'A', 'text' => __('Public', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')));
 
 //If event managers require approval, then add this array status'
-if (function_exists('espresso_member_data') && $espresso_manager['event_manager_approval'] == 'Y') {
+if (function_exists('espresso_member_data') && $espresso_manager['event_manager_approval']) {
 	$manager_status = array(array('id' => 'P', 'text' => __('Pending', 'event_espresso')), array('id' => 'X', 'text' => __('Denied', 'event_espresso')));
 } else
 	$manager_status = array();
@@ -17,24 +17,24 @@ $delete_status = array(array('id' => 'D', 'text' => __('Deleted', 'event_espress
 // Merge the satus arrays
 $status = array_merge((array) $default_status, (array) $manager_status, (array) $delete_status);
 
-if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_event_manager' && $espresso_manager['event_manager_approval'] == 'Y') {
+if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_event_manager' && $espresso_manager['event_manager_approval']) {
 	$status = array(array(
-		'id' => 'A', 
-		'text' => __('Public', 'event_espresso')), 
+		'id' => 'A',
+		'text' => __('Public', 'event_espresso')),
 		array(
-			'id' => 'S', 
+			'id' => 'S',
 			'text' => __('Waitlist', 'event_espresso')
-		), 
+		),
 		array(
-			'id' => 'O', 
+			'id' => 'O',
 			'text' => __('Ongoing', 'event_espresso')
 		),
 		array(
-			'id' => 'R', 
+			'id' => 'R',
 			'text' => __('Draft', 'event_espresso')
 		),
 		array(
-			'id' => 'D', 
+			'id' => 'D',
 			'text' => __('Deleted', 'event_espresso')
 		)
 	);
@@ -56,7 +56,7 @@ $default_payment_status = array(
 $advanced_options = '';
 $advanced_options .= '<p class="inputunder"><label>' . __('Additional Attendee Registration info?', 'event_espresso') . '</label> ' . select_input('additional_attendee_reg_info', $additional_attendee_reg_info, isset($event->event_meta['additional_attendee_reg_info']) ? $event->event_meta['additional_attendee_reg_info'] : '') . '</p>';
 $advanced_options .= '<p><strong>' . __('Advanced Options:', 'event_espresso') . '</strong></p>';
-if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_event_manager' && $espresso_manager['event_manager_approval'] == 'Y' && ($event->event_status == '' || $event->event_status == 'X' || $event->event_status == 'P')) {
+if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_event_manager' && $espresso_manager['event_manager_approval'] && ($event->event_status == '' || $event->event_status == 'X' || $event->event_status == 'P')) {
 	$advanced_options .= '<p><label>' . __('Event Status', 'event_espresso') . '</label> <span style="color: #ff8400; font-weight:bold;">' . __('PENDING', 'event_espresso') . '</span></p>';
 	$advanced_options .= '<input name="event_status" id="event_status" type="hidden" value="P" />';
 	$advanced_options .= '<input name="is_active" id="is_active" type="hidden" value="Y" />';

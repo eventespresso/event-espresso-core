@@ -151,12 +151,11 @@ function update_event_data() {
 			$error = true;
 		}
 	}
-	//Change fields that have 'yes' and 'no' values to 'Y' and 'N' values
+	//Change fields that have 'yes' and 'no' values to boolean values
 	$events_Y = $wpdb->get_results("SELECT id FROM " . EVENTS_DETAIL_TABLE . " WHERE is_active = 'yes' OR is_active = 'Yes'");
 	foreach ($events_Y as $event_Y) {
 		$event_id = $event_Y->id;
-		$is_active = "Y";
-		$update_events_Y = "UPDATE " . EVENTS_DETAIL_TABLE . " SET is_active = '" . $is_active . "' WHERE id = '" . $event_id . "'";
+		$update_events_Y = "UPDATE " . EVENTS_DETAIL_TABLE . " SET is_active =true WHERE id = '" . $event_id . "'";
 		if (!$wpdb->query($update_events_Y)) {
 			$error = true;
 		}
@@ -165,13 +164,12 @@ function update_event_data() {
 	$events_N = $wpdb->get_results("SELECT id FROM " . EVENTS_DETAIL_TABLE . " WHERE is_active = 'no' OR is_active = 'No'");
 	foreach ($events_N as $event_N) {
 		$event_id = $event_N->id;
-		$is_active = "N";
-		$update_events_N = "UPDATE " . EVENTS_DETAIL_TABLE . " SET is_active = '" . $is_active . "' WHERE id = '" . $event_id . "'";
+		$update_events_N = "UPDATE " . EVENTS_DETAIL_TABLE . " SET is_active =false WHERE id = '" . $event_id . "'";
 		if (!$wpdb->query($update_events_N)) {
 			$error = true;
 		}
 	}
-	//End change fields that have 'yes' and 'no' values to 'Y' and 'N' values
+	//End change fields that have 'yes' and 'no' values to boolean values
 	//This section copies the current prices, discounts, and event times from events and places them in their respective tables.
 	$wpdb->get_results("SELECT id FROM " . EVENTS_DISCOUNT_CODES_TABLE);
 	$disc_codes_num_rows = $wpdb->num_rows;

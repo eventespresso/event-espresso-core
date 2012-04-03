@@ -14,10 +14,10 @@ if (!function_exists('display_all_events')) {
 	function display_all_events($display_recurrence_event = true) {
 		global $org_options, $wpdb;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$use_venue_manager = isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y';
+		$use_venue_manager = !empty($org_options['use_venue_manager']);
 		$sql = "SELECT e.id FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id=e.id ";
-		$sql .= " WHERE e.is_active = 'Y' ";
+		$sql .= " WHERE e.is_active=true ";
 		$sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
 		$sql .= " AND e.event_status != 'D' ";
 		$sql .= " ORDER BY date(e.start_date), time(ese.start_time), e.id";
@@ -40,13 +40,13 @@ if (!function_exists('display_event_espresso_categories')) {
 			$display_recurrence_event = true; //If set to true, the event page will display recurring events.
 
 			$sql = "SELECT e.*, c.category_name, c.category_desc, c.display_desc, c.category_identifier, ese.start_time, ese.end_time, p.event_cost  ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+			!empty($org_options['use_venue_manager']) ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
 			$sql .= " JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
 			$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+			!empty($org_options['use_venue_manager']) ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 			$sql .= " WHERE c.category_identifier = '" . $event_category_id . "' ";
 			$sql .= $display_recurrence_event == false ? " AND e.recurrence_id = '0' " : '';
 			$sql .= " AND e.event_status != 'D' ";
@@ -103,7 +103,7 @@ if (!function_exists('event_espresso_get_event_details')) {
 			$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? ' - ' . $status['display_custom'] : '';
 			$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' - <span class="espresso_closed">' . __('Regsitration is Closed', 'event_espresso') . '</span>' : '';
 
-			if (! is_user_logged_in() && get_option('events_members_active') == 'true' && $event->is_member_only() == 'Y') {
+			if (! is_user_logged_in() && get_option('events_members_active') == 'true' && $event->is_member_only()) {
 				//Display a message if the user is not logged in.
 				//_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
 

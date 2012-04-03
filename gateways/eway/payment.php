@@ -53,7 +53,7 @@ $myeway->addField('MerchantOption3', '');
 $myeway->addField('ModifiableCustomerDetails', 'false');
 
 
-if ($eway_settings['bypass_payment_page'] == 'Y') {
+if ($eway_settings['bypass_payment_page']) {
 	$myeway->submitPayment(); //Enable auto redirect to payment site
 } else {
 	if (empty($eway_settings['button_url'])) {

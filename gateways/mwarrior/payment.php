@@ -52,7 +52,7 @@ $mwarrior->addField('hashSalt', $salt);
 //This function is copied on the payment processing page
 //event_espresso_send_payment_notification($attendee_id, $txn_id, $amount_pd);
 //Decide if you want to auto redirect to your payment website or display a payment button.
-if (!empty($mwarrior_settings['bypass_payment_page']) && $mwarrior_settings['bypass_payment_page'] == 'Y') {
+if (!empty($mwarrior_settings['bypass_payment_page'])) {
 	$mwarrior->submitPayment(); //Enable auto redirect to payment site
 } else {
 	if (empty($mwarrior_settings['button_url'])) {

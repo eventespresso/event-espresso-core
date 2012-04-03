@@ -6,8 +6,8 @@
 	<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
   <div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
 	<form method="post" action="<?php echo espresso_get_reg_page_full_url(); ?>" id="registration_form">
-	  	
-	<?php 
+
+	<?php
 
 	switch ($is_active['status']) {
 		case 'EXPIRED': //only show the event description.
@@ -17,12 +17,12 @@
 		// if todays date is after $reg_end_date
 		?>
 		  <div class="event-registration-closed event-messages ui-corner-all ui-widget-content">
-			
+
 			<p class="event_full ui-state-highlight">
 								<strong>
 			  <?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?>
 			  </strong>
-							</p> 
+							</p>
 			<p class="event_full ui-state-highlight">
 								<strong>
 			  <?php _e('Please <a href="contact" title="contact us">contact us</a> if you would like to know if spaces are still available.', 'event_espresso'); ?>
@@ -50,15 +50,15 @@
 			echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description.
 			/* Displays the social media buttons */
 			if (function_exists('espresso_show_social_media')){
-				echo '<p class="espresso_social">'.espresso_show_social_media($event_id, 'twitter').' '.espresso_show_social_media($event_id, 'facebook').'</p>'; 
+				echo '<p class="espresso_social">'.espresso_show_social_media($event_id, 'twitter').' '.espresso_show_social_media($event_id, 'facebook').'</p>';
 			}
 			?>
-	  
+
 			<input type="hidden" name="e_reg" id="e_reg-<?php echo $event_id; ?>" value="post_attendee">
 			<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 			<?php
 			//Recaptcha portion
-			if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
+			if ($org_options['use_captcha'] && $_REQUEST['edit_details'] != 'true') {
 				if (!function_exists('recaptcha_get_html')) {
 					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
 				}//End require captcha library
@@ -75,7 +75,7 @@
 				<input class="btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
 			  </p>
 			  <?php
-			
+
 		break;
 	}
 ?>

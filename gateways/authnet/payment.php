@@ -13,8 +13,8 @@ $authnet_transaction_key = empty($payment_settings['authnet_sim']['authnet_trans
 $button_type = empty($payment_settings['authnet_sim']['button_type']) ? '' : $payment_settings['authnet_sim']['button_type'];
 //$button_url = $payment_settings['authnet_sim']['button_url'];
 $image_url = empty($payment_settings['authnet_sim']['image_url']) ? '' : $payment_settings['authnet_sim']['image_url'];
-$use_sandbox = $payment_settings['authnet_sim']['use_sandbox'] == 'Y' ? true : false;
-$use_testmode = $payment_settings['authnet_sim']['test_transactions'] == 'Y' ? true : false;
+$use_sandbox = $payment_settings['authnet_sim']['use_sandbox'];
+$use_testmode = $payment_settings['authnet_sim']['test_transactions'];
 if ($use_testmode == true) {
 	// Enable test mode if needed
 	$myAuthorize->enableTestMode();
@@ -49,7 +49,7 @@ $myAuthorize->addField('x_Zip', $zip);
 //This function is copied on the payment processing page
 //event_espresso_send_payment_notification($attendee_id, $txn_id, $amount_pd);
 //Decide if you want to auto redirect to your payment website or display a payment button.
-if (!empty($payment_settings['authnet_sim']['bypass_payment_page']) && $payment_settings['authnet_sim']['bypass_payment_page'] == 'Y') {
+if (!empty($payment_settings['authnet_sim']['bypass_payment_page'])) {
 	$myAuthorize->submitPayment(); //Enable auto redirect to payment site
 } else {
 	if (empty($payment_settings['authnet_sim']['button_url'])) {

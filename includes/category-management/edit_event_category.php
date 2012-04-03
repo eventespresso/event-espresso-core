@@ -1,9 +1,9 @@
 <?php
 function edit_event_category(){
 	global $wpdb;
-	$values=array(					
-		array('id'=>'Y','text'=> __('Yes','event_espresso')),
-		array('id'=>'N','text'=> __('No','event_espresso'))
+	$values=array(
+		array('id'=>true,'text'=> __('Yes','event_espresso')),
+		array('id'=>false,'text'=> __('No','event_espresso'))
 	);
 	$id=$_REQUEST['id'];
 	$results = $wpdb->get_results("SELECT * FROM ". get_option('events_category_detail_tbl') ." WHERE id =".$id);
@@ -68,8 +68,8 @@ function edit_event_category(){
 					</tbody>
 				</table>
 				<?php
-					// create our nonces and do our form submit 
-					wp_nonce_field( 'espresso_form_check', 'ee_update_cat' ); 
+					// create our nonces and do our form submit
+					wp_nonce_field( 'espresso_form_check', 'ee_update_cat' );
 				?>
 				<input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
 				<input type="hidden" name="action" value="update">
@@ -78,12 +78,12 @@ function edit_event_category(){
 				</p>
 			</form>
 		</div>
-		<!-- /.inside --> 
+		<!-- /.inside -->
 	</div>
-	<!-- /.postbox --> 
+	<!-- /.postbox -->
 </div>
 <!-- /.metabox-holder -->
 
-<?php 
+<?php
 //espresso_tiny_mce();
 }

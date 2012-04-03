@@ -1,8 +1,8 @@
 <?php
 //Displays reCAPTCHA form
-$values=array(					
-	array('id'=>'N','text'=> __('No','event_espresso')),
-	array('id'=>'Y','text'=> __('Yes','event_espresso'))
+$values=array(
+	array('id'=>false,'text'=> __('No','event_espresso')),
+	array('id'=>true,'text'=> __('Yes','event_espresso'))
 );
 ?>
 
@@ -54,12 +54,12 @@ $values=array(
 					<?php _e('Theme','event_espresso'); ?>
 				</label></th>
 			<td><?php
-							$theme_values=array(					
+							$theme_values=array(
 								array('id'=>'red','text'=> __('Red','event_espresso')),
 								array('id'=>'white','text'=> __('White','event_espresso')),
 								array('id'=>'blackglass','text'=> __('Blackglass','event_espresso')),
 								array('id'=>'clean','text'=> __('Clean','event_espresso'))
-							);				
+							);
 							echo select_input('recaptcha_theme', $theme_values, isset($org_options['recaptcha_theme']) ? $org_options['recaptcha_theme'] : '');
 					?></td>
 		</tr>
@@ -68,16 +68,16 @@ $values=array(
 					<?php _e('Language','event_espresso'); ?>
 				</label></th>
 			<td><?php
-							$language_values=array(					
+							$language_values=array(
 								array('id'=>'en','text'=> __('English','event_espresso')),
 								array('id'=>'es','text'=> __('Spanish','event_espresso')),
 								array('id'=>'nl','text'=> __('Dutch','event_espresso')),
 								array('id'=>'fr','text'=> __('French','event_espresso')),
 								array('id'=>'de','text'=> __('German','event_espresso')),
 								array('id'=>'pt','text'=> __('Portuguese','event_espresso')),
-								array('id'=>'ru','text'=> __('Russian','event_espresso')),				
+								array('id'=>'ru','text'=> __('Russian','event_espresso')),
 								array('id'=>'tr','text'=> __('Turkish','event_espresso'))
-							);				
+							);
 							echo select_input('recaptcha_language', $language_values, isset($org_options['recaptcha_language']) ? $org_options['recaptcha_language'] : '');
 						?></td>
 		</tr>

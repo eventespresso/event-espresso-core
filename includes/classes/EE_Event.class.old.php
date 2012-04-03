@@ -318,7 +318,7 @@ class EE_Event  {  //extends EE_Event_Object
 				if ($price['event_cost'] != $price['member_price']) {
 					$price['early_member_price'] = $this->early_discount($price['member_price']);
 				}
-				if ($this->early_disc_percentage == 'Y') {
+				if ($this->early_disc_percentage) {
 					$price['early_display'] = $this->early_disc . '%';
 				} else {
 					global $org_options;
@@ -342,7 +342,7 @@ class EE_Event  {  //extends EE_Event_Object
 	 * @return 		void			var type
 	 */
 	private function early_discount($event_cost) {
-		if ($this->early_disc_percentage == 'Y') {
+		if ($this->early_disc_percentage) {
 			$pdisc = $this->early_disc / 100;
 			$event_cost = $event_cost - ($event_cost * $pdisc);
 		} else {
@@ -466,7 +466,7 @@ class EE_Event  {  //extends EE_Event_Object
 			$this->$key = $value;
 		}
 		$this->question_groups = unserialize($this->question_groups);
-		if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+		if (!empty($org_options['use_venue_manager'])) {
 			$sql = "SELECT ev.* FROM " . EVENTS_VENUE_TABLE . " ev ";
 			$sql .= "JOIN " . EVENTS_VENUE_REL_TABLE . " evr ON evr.venue_id = ev.id ";
 			$sql .= "WHERE evr.event_id = '" . $this->id . "'";

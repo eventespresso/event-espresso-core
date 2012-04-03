@@ -11,7 +11,7 @@ function espresso_payment_page() {
 		if ($payment_data->total_cost != '0.00') {
 			do_action('action_hook_espresso_display_payment_gateways', $payment_data);
 			//Check to see if the site owner wants to send an confirmation eamil before payment is recieved.
-			if ($org_options['email_before_payment'] == 'Y') {
+			if ($org_options['email_before_payment']) {
 				event_espresso_email_confirmations(array('registration_id' => $payment_data->registration_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
 			}
 		} else {

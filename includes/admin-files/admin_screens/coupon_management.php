@@ -123,8 +123,8 @@ function event_espresso_discount_config_mnu() {
 															</a> | </span><span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=discounts&action=delete_discount&discount_id=<?php echo $discount_id ?>">
 																<?php _e('Delete', 'event_espresso'); ?>
 															</a></span></div></td>
-												<td class="post-title page-title column-title"><?php echo isset($use_exp_date) && $use_exp_date == 'Y' ? event_espresso_paid_status_icon('Active') : event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($exp_date) ? event_date_display($exp_date) : '0000-00-00'; ?></td>
-												<td class="post-title page-title column-title"><?php echo isset($use_limit) && $use_limit == 'Y' ? event_espresso_paid_status_icon('Active') : event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($quantity) ? $quantity : ''; ?></td>
+												<td class="post-title page-title column-title"><?php echo !empty($use_exp_date) ? event_espresso_paid_status_icon('Active') : event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($exp_date) ? event_date_display($exp_date) : '0000-00-00'; ?></td>
+												<td class="post-title page-title column-title"><?php echo !empty($use_limit) ? event_espresso_paid_status_icon('Active') : event_espresso_paid_status_icon('Inactive'); ?> <?php echo isset($quantity) ? $quantity : ''; ?></td>
 												<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
 													<td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
 												<?php } ?>

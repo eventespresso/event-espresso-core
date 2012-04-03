@@ -123,7 +123,7 @@ function espresso_display_worldpay($attendee_id, $event_id, $event_cost) {
 //This function is copied on the payment processing page
 //event_espresso_send_payment_notification($attendee_id, $txn_id, $amount_pd);
 //Decide if you want to auto redirect to your payment website or display a payment button.
-	if (!empty($worldpay_settings['bypass_payment_page']) && $worldpay_settings['bypass_payment_page'] == 'Y') {
+	if (!empty($worldpay_settings['bypass_payment_page'])) {
 		$myworldpay->submitPayment(); //Enable auto redirect to payment site
 	} else {
 		if (empty($worldpay_settings['button_url'])) {

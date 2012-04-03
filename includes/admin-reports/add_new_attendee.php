@@ -6,7 +6,7 @@ function add_new_attendee($event_id) {
 	if (isset($_REQUEST['e_reg_admin']) && $_REQUEST['e_reg_admin'] == 'post_attendee') {
 		$attendee_id = event_espresso_add_attendees_to_db();
 		// SEND CONFIRMATION EMAIL MESSAGES
-		event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
+		event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => true, 'send_attendee_email' => true));
 		//echo $attendee_id;
 		?>
 		<div id="message" class="updated fade">
@@ -20,7 +20,7 @@ function add_new_attendee($event_id) {
 	wp_print_scripts('reCopy');
 
 	global $wpdb;
-	$sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE is_active='Y' AND event_status != 'D' AND id = '" . $event_id . "' LIMIT 0,1";
+	$sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE is_active=true AND event_status != 'D' AND id = '" . $event_id . "' LIMIT 0,1";
 
 	//Build the registration page
 	if ($wpdb->get_results($sql)) {
@@ -113,7 +113,7 @@ function add_new_attendee($event_id) {
 							echo event_espresso_add_question_groups($question_groups);
 
 							//Coupons
-							if (function_exists('event_espresso_coupon_registration_page' && $use_coupon_code == 'Y')) {
+							if (function_exists('event_espresso_coupon_registration_page' && $use_coupon_code)) {
 								echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
 							}//End coupons display
 							//Groupons

@@ -12,7 +12,7 @@ $paypal_id = empty($payment_settings['paypal']['paypal_id']) ? '' : $payment_set
 //$image_url = $payment_settings['paypal']['button_url'];
 $paypal_cur = empty($payment_settings['paypal']['currency_format']) ? '' : $payment_settings['paypal']['currency_format'];
 $no_shipping = isset($payment_settings['paypal']['no_shipping']) ? $payment_settings['paypal']['no_shipping'] : '0';
-$use_sandbox = $payment_settings['paypal']['use_sandbox'] == 'Y' ? true : false;
+$use_sandbox = $payment_settings['paypal']['use_sandbox'];
 if ($use_sandbox == true) {
 	// Enable test mode if needed
 	$myPaypal->enableTestMode();
@@ -109,7 +109,7 @@ if (count($attendees) > 0) {
 			$i++;
 		}
 	} else {
-		
+
 		$myPaypal->addField('cmd', '_cart');
 		foreach ($attendees as $attendee) {
 			$myPaypal->addField('item_name_' . $i, $attendee['attendee_info']); #stripslashes_deep($event_name) . ' | ' . __('Name:', 'event_espresso') . ' ' . stripslashes_deep($afname . ' ' . $alname) . ' | ' . __('Registrant Email:', 'event_espresso') . ' ' . $aemail);
@@ -118,11 +118,11 @@ if (count($attendees) > 0) {
 			if ( $attendee['discount'] > 0 ) {
 				$myPaypal->addField('discount_amount_' . $i, number_format($attendee['discount'], 2, '.', ''));
 			}
-			
+
 			$i++;
 		}
-	}  
-   
+	}
+
 }
 
 $myPaypal->addField('currency_code', $paypal_cur);
@@ -143,7 +143,7 @@ $myPaypal->addField('zip', $zip);
 //This function is copied on the payment processing page
 //event_espresso_send_payment_notification($attendee_id, $txn_id, $amount_pd);
 //Decide if you want to auto redirect to your payment website or display a payment button.
-if (!empty($payment_settings['paypal']['bypass_payment_page']) && $payment_settings['paypal']['bypass_payment_page'] == 'Y') {
+if (!empty($payment_settings['paypal']['bypass_payment_page'])) {
 	$myPaypal->submitPayment(); //Enable auto redirect to payment site
 } else {
 	if (empty($payment_settings['paypal']['button_url'])) {

@@ -16,7 +16,7 @@ $fdggutil->set_cancelUrl($org_options['cancel_return']);
 $fdggutil->set_attendee_id($attendee_id);
 $fdggutil->set_dateTime();
 $button_url = $firstdata_connect_2_settings['button_url'];
-if (!empty($firstdata_connect_2_settings['bypass_payment_page']) && $firstdata_connect_2_settings['bypass_payment_page'] == 'Y') {
+if (!empty($firstdata_connect_2_settings['bypass_payment_page'])) {
 	echo $fdggutil->submitPayment();
 } else {
 	echo $fdggutil->submitButton($button_url);

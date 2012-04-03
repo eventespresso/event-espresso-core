@@ -27,8 +27,8 @@ function edit_event_venue() {
 	$cur_locale_id = $wpdb->get_var("SELECT locale_id FROM " . EVENTS_LOCALE_REL_TABLE . " WHERE venue_id='" . $id . "'");
 
 	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso'))
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso'))
 	);
 
 	// build some data to feed to the map display
@@ -179,7 +179,7 @@ function edit_event_venue() {
 											<td colspan="2" class="ee-gmap-display"><div class="map-frame">
 													<?php
 													if (!empty($venue_address_elements)) {
-														if (isset($meta['enable_for_maps']) && $meta['enable_for_maps'] == 'Y' && empty($meta['gmap_static'])) {
+														if (!empty($meta['enable_for_maps']) && empty($meta['gmap_static'])) {
 															if (function_exists('ee_gmap_display')) {
 																$event_id = $venue_id;
 																echo ee_gmap_display($ee_gmap_location, $event_id);

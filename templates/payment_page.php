@@ -40,7 +40,7 @@ function espresso_display_payment_page_template($data) {
   <p> <span class="section-title">
 	<?php _e('Your Registration ID: ', 'event_espresso'); ?>
 	</span><?php echo $data->attendees[0]->registration_id ?> </p>
-  <p> <?php echo $org_options['email_before_payment'] == 'Y' ? __('A confirmation email has been sent with additional details of your registration.', 'event_espresso') : ''; ?> </p>
+  <p> <?php echo $org_options['email_before_payment'] ? __('A confirmation email has been sent with additional details of your registration.', 'event_espresso') : ''; ?> </p>
   <?php
 }
 ?>
