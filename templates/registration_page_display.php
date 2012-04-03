@@ -76,7 +76,7 @@
 					 */
 
 					if ( $display_reg_form ) {
-					
+
 
 						do_action( 'action_hook_espresso_ticket_selector', $event );
 
@@ -84,9 +84,9 @@
 						do_action( 'action_hook_espresso_seating_chart_select', $event_id);
 
 						/* Displays the social media buttons */
-						do_action( 'action_hook_espresso_social_display_buttons', $event_id); 
-						
-/*						
+						do_action( 'action_hook_espresso_social_display_buttons', $event_id);
+
+/*
 						?>
 
 						<fieldset id="event-reg-form-groups" class="ui-widget">
@@ -101,10 +101,10 @@
 						</fieldset>
 
 						<?php
-*/						
-						
+*/
+
 /*						//Multiple Attendees
-						if ($allow_multiple == "Y" && $number_available_spaces > 1) {
+						if ($allow_multiple && $number_available_spaces > 1) {
 
 							//This returns the additional attendee form fields. Can be overridden in the custom files addon.
 							echo event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, __('Number of Tickets', 'event_espresso'), true, $event_meta);
@@ -114,7 +114,7 @@
 							<?php
 						}//End allow multiple*/
 						//Coupons
-						if (function_exists('event_espresso_coupon_registration_page') && $use_coupon_code == 'Y') {
+						if (function_exists('event_espresso_coupon_registration_page') && $use_coupon_code) {
 							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
 						}//End coupons display
 						//Groupons
@@ -126,19 +126,19 @@
 						<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 
 						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
-						
-							<a 	id="event_form_field-<?php echo $event_id; ?>" 
-									class="event-list-reg-link-btn show-if-js ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right" 
+
+							<a 	id="event_form_field-<?php echo $event_id; ?>"
+									class="event-list-reg-link-btn show-if-js ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right"
 									style="display:none;"
-								>							
+								>
 								<span class="ui-icon ui-icon-cart"></span>&nbsp;<?php _e('Submit Registration', 'event_espresso'); ?>
 							</a>
-							
+
 							<noscript>
-								<input type="submit" 
+								<input type="submit"
 											 id="event_form_field-<?php echo $event_id; ?>"
-						 					name="event-list-reg-link-sbmt-btn" 
-											class="event-list-reg-link-sbmt-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right" 
+						 					name="event-list-reg-link-sbmt-btn"
+											class="event-list-reg-link-sbmt-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right"
 											value="<?php _e('Submit Registration', 'event_espresso'); ?>"
 											role="button"
 									/>
@@ -188,9 +188,9 @@
 				} ?>
 					</p>
 
-					<?php			
-			
-			if (isset($event_meta['display_thumb_in_regpage']) && $event_meta['display_thumb_in_regpage'] == 'Y' && !empty($event_meta['event_thumbnail_url'])) {
+					<?php
+
+			if (!empty($event_meta['display_thumb_in_regpage']) && !empty($event_meta['event_thumbnail_url'])) {
 				?>
 				<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a></p>
 					<?php
@@ -205,10 +205,10 @@
 				<?php
 			}
 
-			//End display description	
-			
-			
-			
+			//End display description
+
+
+
 			?>
 		</form>
 		<?php if (isset($ee_style['event_espresso_form_wrapper_close']))

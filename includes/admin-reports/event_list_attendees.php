@@ -311,7 +311,7 @@ function event_list_attendees() {
 							<?php echo function_exists('espresso_invoice_url') ? '<a href="'.espresso_invoice_url(isset($attendee_id) && !empty($attendee_id) ? $attendee_id: '', $registration_id, 'admin=true').'" target="_blank"  title="'.__('Download Invoice', 'event_espresso').'"><img src="'. EVENT_ESPRESSO_PLUGINFULLURL.'images/icons/page_white_acrobat.png" width="16" height="16" alt="'.__('Download Invoice', 'event_espresso').'" /></a>' : ''; ?>
 							<?php echo defined('ESPRESSO_TICKETING_VERSION') ? '<a href="'.espresso_ticket_url($id, $registration_id).'" target="_blank"  title="'. __('Download Ticket', 'event_espresso').'"><img src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/ticket-arrow-icon.png" width="16" height="16" alt="'. __('Download Ticket', 'event_espresso').'" /></a>' : ''; ?>
 								<?php
-								if ($org_options["use_attendee_pre_approval"] == "Y") {
+								if ($org_options["use_attendee_pre_approval"]) {
 									?>
 									<br/>
 									<a href="admin.php?page=attendees&amp;attendee_pay=paynow&amp;form_action=payment&amp;registration_id=<?php echo $registration_id ?>&amp;event_admin_reports=enter_attendee_payments&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Payment', 'event_espresso'); ?> ID: <?php echo $registration_id ?>">

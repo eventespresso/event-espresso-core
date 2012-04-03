@@ -24,13 +24,13 @@
 			<?php /* end venue details block */ ?>
 
 			<?php
-			if ($event->is_display_thumb_in_regpage() == 'Y' && !empty($event_thumbnail_url)) {
+			if ($event->is_display_thumb_in_regpage() && !empty($event_thumbnail_url)) {
 				?>
 				<p><a href="<?php echo $event_thumbnail_url ?>"><img src="<?php echo $event_thumbnail_url ?>" alt=""></a><p>
 					<?php
 				}
 
-				if ($display_desc == "Y") {//Show the description or not
+				if ($display_desc) {//Show the description or not
 					?>
 				<p class="section-title">
 					<?php _e('Description:', 'event_espresso') ?>
@@ -129,7 +129,7 @@
 					 * * This section shows the registration form if it is an active event * *
 					 */
 
-					if ($event->is_display_reg_form() == 'Y') {
+					if ($event->is_display_reg_form()) {
 						?>
 						<p class="event_time">
 							<?php
@@ -166,7 +166,7 @@
 
 						<?php
 						//Multiple Attendees
-						if ($allow_multiple == "Y" && $number_available_spaces > 1) {
+						if ($allow_multiple && $number_available_spaces > 1) {
 
 							//This returns the additional attendee form fields. Can be overridden in the custom files addon.
 							echo event_espresso_additional_attendees($event_id, $event->get_additional_limit(), $number_available_spaces, __('Number of Tickets', 'event_espresso'), true, $event->get_event_meta());
@@ -176,7 +176,7 @@
 							<?php
 						}//End allow multiple
 						//Coupons
-						if (function_exists('event_espresso_coupon_registration_page') && $use_coupon_code == 'Y') {
+						if (function_exists('event_espresso_coupon_registration_page') && $use_coupon_code) {
 							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
 						}//End coupons display
 						//Groupons
@@ -189,7 +189,7 @@
 						<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 						<?php
 						//Recaptcha portion
-						if ($org_options['use_captcha'] == 'Y'
+						if ($org_options['use_captcha']
 										&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
 										&& !is_user_logged_in()) {
 							if (!function_exists('recaptcha_get_html')) {

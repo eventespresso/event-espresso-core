@@ -19,7 +19,7 @@ function update_event($recurrence_arr = array()) {
 		 */
 		if (get_option('event_espresso_re_active') == 1) {
 			require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_functions.php");
-            
+
 			if ($_POST['recurrence_id'] > 0) {
 				/*
 				 * If the array is empty, then find the recurring dates
@@ -45,7 +45,7 @@ function update_event($recurrence_arr = array()) {
 							'recurrence_id' => $_POST['recurrence_id']
 					);
 
-					//$re_params['adding_to_db'] = 'Y';
+					//$re_params['adding_to_db'] = true;
 					//Has the form been modified
 					$recurrence_form_modified = recurrence_form_modified($re_params);
 

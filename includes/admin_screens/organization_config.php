@@ -495,7 +495,7 @@ and should always contain the %s shortcode.", 'event_espresso'), '<span class="h
 								$checked = '';
 							}
 							?>
-							<input type="checkbox"  value="Y" id="espresso_url_rewrite_activated" name="espresso_url_rewrite_activated" <?php echo $checked; ?>/>
+							<input type="checkbox"  value="true" id="espresso_url_rewrite_activated" name="espresso_url_rewrite_activated" <?php echo $checked; ?>/>
 							<?php _e('Activate "Pretty" Permalinks', 'event_espresso'); ?>
 							<br />
 							<span class="description">

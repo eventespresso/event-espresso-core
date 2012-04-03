@@ -72,7 +72,7 @@ function enter_attendee_payments() {
 		case 'send_invoice':
 			$_REQUEST['invoice_message'] = isset($_REQUEST['invoice_message']) && !empty($_REQUEST['invoice_message']) ? $_REQUEST['invoice_message'] : NULL;
 			//Added by Imon
-			if ($org_options["use_attendee_pre_approval"] == "Y") {
+			if ($org_options["use_attendee_pre_approval"]) {
 				$pre_approve = $_REQUEST['pre_approve'];
 				if (count($registration_ids) > 0) {
 					foreach ($registration_ids as $reg_id) {
@@ -348,7 +348,7 @@ function enter_attendee_payments() {
 								</div>
 							</li>
 							<?php
-	if ($org_options["use_attendee_pre_approval"] == "Y") {
+	if ($org_options["use_attendee_pre_approval"]) {
 		//$pre_approve = is_attendee_approved($event_id, $id) == true ? 1 : 0;
 		$pre_approve = is_attendee_approved( $require_pre_approval, $id ) == true ? 1 : 0;
 		?>

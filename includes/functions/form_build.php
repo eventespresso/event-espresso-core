@@ -32,7 +32,7 @@ if (!function_exists('event_form_build')) {
 		 */
 		$email_validate = $question->system_name == 'email' ? 'email' : '';
 
-		if ($question->required == "Y") {
+		if ($question->required) {
 			$required = ' title="' . $question->required_text . '" class="required ' . $email_validate . ' ' . $class . '"';
 			$required_label = "<em>*</em>";
 		}
@@ -178,7 +178,7 @@ if (!function_exists('event_form_build')) {
 function event_form_build_edit($question, $edits, $show_admin_only = false) {
 
 	$required = '';
-	/* if ($question->required == "Y") {
+	/* if ($question->required) {
         $required = ' class="required"';
     }*/
 
@@ -188,7 +188,7 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
          */
         $email_validate = $question->system_name == 'email' ? 'email' : '';
 
-        if ($question->required == "Y") {
+        if ($question->required) {
             $required = ' title="' . $question->required_text . '" class="required ' . $email_validate . '"';
             $required_label = "<em>*</em>";
         } else {

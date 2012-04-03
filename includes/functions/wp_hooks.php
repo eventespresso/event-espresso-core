@@ -36,10 +36,10 @@ function add_espresso_stylesheet() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	//Load the ThemeRoller styles if enabled
-	if (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') {
+	if (!empty($org_options['style_settings']['enable_default_style'])) {
 
 		//Load custom style sheet if available
-		if (!empty($org_options['style_settings']['use_grid_layout']) && $org_options['style_settings']['use_grid_layout'] == 'Y') {
+		if (!empty($org_options['style_settings']['use_grid_layout'])) {
 			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'css/grid_layout.css')) {
 				wp_register_style('espresso_grid_layout', EVENT_ESPRESSO_UPLOAD_URL . 'css/grid_layout.css');
 			} else {

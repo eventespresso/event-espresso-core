@@ -36,7 +36,7 @@ if (function_exists('espresso_member_data')) {
 						 	<?php echo select_input('create_post', $values, $create_post);
 						  if (strlen($event->post_id) > 1) {
 							echo '<p>' . __('If no, delete current post?', 'event_espresso'); ?>
-							<input name="delete_post" type="checkbox" value="Y" />
+							<input name="delete_post" type="checkbox" value="true" />
 							<?php } ?>
 							</p>
 							<input type="hidden" name="post_id" value="<?php if(isset($event->post_id)) echo $event->post_id; ?>">

@@ -108,8 +108,8 @@ function event_espresso_display_paypal_pro_settings() {
 	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 
 	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso')),
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso')),
 	);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_paypal_pro=true'));

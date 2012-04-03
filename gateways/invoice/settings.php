@@ -41,7 +41,7 @@ function event_espresso_invoice_payment_settings() {
 		$payment_settings['invoice']['payable_to'] = trim($org_options['organization']);
 		$payment_settings['invoice']['payment_address'] = $default_address;
 		$payment_settings['invoice']['image_url'] = '';
-		$payment_settings['invoice']['show'] = 'Y';
+		$payment_settings['invoice']['show'] = true;
 		$payment_settings['invoice']['invoice_css'] = '';
 		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
 			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
@@ -117,8 +117,8 @@ function event_espresso_display_invoice_payment_settings() {
 
 	$files = espresso_invoice_template_files();
 	$values = array(
-			array('id' => 'Y', 'text' => __('Yes', 'event_espresso')),
-			array('id' => 'N', 'text' => __('No', 'event_espresso')),
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso')),
 	);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_invoice_payment=true'));

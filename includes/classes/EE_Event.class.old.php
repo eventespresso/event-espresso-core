@@ -585,57 +585,57 @@ class EE_Event  {  //extends EE_Event_Object
 		$timestamp = strtotime($this->start_date . ' ' . $this->timeslots[0]['start_time']);
 		$registration_start_timestamp = strtotime($this->registration_start);
 		$registration_end_timestamp = strtotime($this->registration_end);
-		if ($this->is_active == "Y" && $this->event_status == "O") {
+		if ($this->is_active && $this->event_status == "O") {
 			$this->status = array(
 					'status' => 'ONGOING',
 					'display' => '<span style="color: #090; font-weight:bold;">' . __('ONGOING', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_ongoing">' . __('Ongoing', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && $this->event_status == "S") {
+		} elseif ($this->is_active && $this->event_status == "S") {
 			$this->status = array(
 					'status' => 'SECONDARY',
 					'display' => '<span style="color: #090; font-weight:bold;">' . __('WAITLIST', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_secondary">' . __('Waitlist', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && $this->event_status == "R") {
+		} elseif ($this->is_active && $this->event_status == "R") {
 			$this->status = array(
 					'status' => 'DRAFT',
 					'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('DRAFT', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_draft">' . __('Draft', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && $this->event_status == "P") {
+		} elseif ($this->is_active && $this->event_status == "P") {
 			$this->status = array(
 					'status' => 'PENDING',
 					'display' => '<span style="color: #ff8400; font-weight:bold;">' . __('PENDING', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_pending">' . __('Pending', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && $this->event_status == "X") {
+		} elseif ($this->is_active && $this->event_status == "X") {
 			$this->status = array(
 					'status' => 'DENIED',
 					'display' => '<span style="color: #F00; font-weight:bold;">' . __('DENIED', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_denied">' . __('Denied', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && date($registration_end_timestamp) <= date(time()) && $this->event_status != "D") {
+		} elseif ($this->is_active && date($registration_end_timestamp) <= date(time()) && $this->event_status != "D") {
 			$this->status = array(
 					'status' => 'REGISTRATION_CLOSED',
 					'display' => '<span style="color: #F00; font-weight:bold;">' . __('CLOSED', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_closed">' . __('Closed', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && date($registration_start_timestamp) >= date(time()) && $this->event_status != "D") {
+		} elseif ($this->is_active && date($registration_start_timestamp) >= date(time()) && $this->event_status != "D") {
 			$this->status = array(
 					'status' => 'REGISTRATION_NOT_OPEN',
 					'display' => '<span style="color: #090; font-weight:bold;">' . __('NOT_OPEN', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_not_open">' . __('Not Open', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && date($registration_start_timestamp) <= date(time()) && $this->event_status != "D") {
+		} elseif ($this->is_active && date($registration_start_timestamp) <= date(time()) && $this->event_status != "D") {
 			$this->status = array(
 					'status' => 'REGISTRATION_OPEN',
 					'display' => '<span style="color: #090; font-weight:bold;">' . __('OPEN', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && date($timestamp) <= date(time()) && $this->event_status != "D") {
+		} elseif ($this->is_active && date($timestamp) <= date(time()) && $this->event_status != "D") {
 			$this->status = array(
 					'status' => 'EXPIRED',
 					'display' => '<span style="color: #F00; font-weight:bold;">' . __('EXPIRED', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_expired">' . __('Expired', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "Y" && date($timestamp) >= date(time()) && $this->event_status != "D") {
+		} elseif ($this->is_active && date($timestamp) >= date(time()) && $this->event_status != "D") {
 			$this->status = array(
 					'status' => 'ACTIVE',
 					'display' => '<span style="color: #090; font-weight:bold;">' . __('ACTIVE', 'event_espresso') . '</span>',
 					'display_custom' => '<span class="espresso_active">' . __('Active', 'event_espresso') . '</span>');
-		} elseif ($this->is_active == "N" && $this->event_status != "D") {
+		} elseif (!$this->is_active && $this->event_status != "D") {
 			$this->status = array(
 					'status' => 'NOT_ACTIVE',
 					'display' => '<span style="color: #F00; font-weight:bold;">' . __('NOT_ACTIVE', 'event_espresso') . '</span>',

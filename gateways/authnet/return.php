@@ -14,7 +14,7 @@ $authnet_transaction_key = $payment_settings['authnet_sim']['authnet_transaction
 // Enable test mode if needed
 //4007000000027  <-- test successful visa
 //4222222222222  <-- test failure card number
-if ($payment_settings['authnet_sim']['use_sandbox'] == 'Y'){
+if ($payment_settings['authnet_sim']['use_sandbox']){
 	$myAuthorize->enableTestMode();
 	$email_transaction_dump = true;
 }
@@ -24,26 +24,26 @@ $myAuthorize->setUserInfo($authnet_login_id, $authnet_transaction_key);
 
 // Check validity and write down it
 if ($myAuthorize->validateIpn()){
-	
+
 	$txn_type = $myAuthorize->ipnData['x_method'];
 	$txn_id = $myAuthorize->ipnData['x_trans_id'];
 	$amount_pd = $myAuthorize->ipnData['x_amount'];
-	$attendee_id = $myAuthorize->ipnData['x_cust_id'];	
+	$attendee_id = $myAuthorize->ipnData['x_cust_id'];
 	$payment_date = date("d-m-Y");
-	
+
 	//file_put_contents('authorize.txt', 'SUCCESS' . date("m-d-Y")); //Used for debugging purposes
 	//Be sure to echo something to the screen so authent knows that the ipn works
-	//store the results in reusable variables	
+	//store the results in reusable variables
 	if ($myAuthorize->ipnData['x_response_code'] == 1){
 ?>
 		<h2><?php _e('Thank You!','event_espresso'); ?></h2>
 		<p><?php _e('Your transaction has been processed.','event_espresso'); ?></p>
-<?php 
+<?php
 		$payment_status = 'Completed';
 		$sql = "SELECT * FROM ". EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ";
 			$sql .= $id ==''?'':" AND id= '".$id."' ";
 			$sql .= " ORDER BY id LIMIT 0,1";
-			
+
 			$attendees = $wpdb->get_results($sql);
 			foreach ($attendees as $attendee){
 				$attendee_id = $attendee->id;
@@ -53,9 +53,9 @@ if ($myAuthorize->validateIpn()){
 				$amount_pd = $attendee->amount_pd;
 				$total_cost = $attendee->amount_pd;
 				$event_id = $attendee->event_id;
-				
+
 			}
-			
+
 			$events = $wpdb->get_results( "SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'" );
 			foreach ( $events as $event ) {
 				$event_id = $event->id;
@@ -77,11 +77,11 @@ if ($myAuthorize->validateIpn()){
 		$payment_status = 'Payment Declined';
 	}
 	global $wpdb;
-			
+
 	$sql = "UPDATE ". EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $payment_status . "', txn_type = '" . $txn_type . "', txn_id = '" . $txn_id . "', payment_date ='" . $payment_date . "', transaction_details = '" . serialize($myAuthorize) . "'  WHERE registration_id ='" . espresso_registration_id($attendee_id) . "'";
 
 	$wpdb->query($sql);
-			
+
 	//Debugging option
 	//$email_transaction_dump=true;
   if ($email_transaction_dump == true) {
@@ -93,7 +93,7 @@ if ($myAuthorize->validateIpn()){
 	 foreach ($myAuthorize->ipnData as $key => $value) { $body .= "\n$key: $value\n"; }
 	 wp_mail($contact, $subject, $body);
   }
-			
+
 }else{
   file_put_contents('authorize.txt', "FAILURE\n\n" . $myAuthorize->ipnData);
   //echo something to the screen so authent knows that the ipn works

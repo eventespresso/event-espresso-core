@@ -13,7 +13,7 @@ if (!function_exists('espresso_venue_dd')) {
 		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " el ON el.id = lr.locale_id ";
 
 		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_group_admin' )) {
-			if ($espresso_manager['event_manager_venue'] == "Y") {
+			if ($espresso_manager['event_manager_venue']) {
 				//show only venues inside their assigned locales.
 				$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 				$group = unserialize($group);

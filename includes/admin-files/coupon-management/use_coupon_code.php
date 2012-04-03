@@ -21,7 +21,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 		$error_message = '<p id="event_espresso_invalid_coupon">' . __('Sorry, that promotional code is invalid or expired.', 'event_espresso') . '</p>';
 		$today = date("m-d-Y");
 
-		if (!empty($use_coupon_code) && $use_coupon_code == 'Y') {
+		if (!empty($use_coupon_code)) {
 			if (!empty($_REQUEST['coupon_code']) || !empty($_POST['event_espresso_coupon_code'])) {
 
 				$coupon_code = !empty($_POST['event_espresso_coupon_code']) ? $_POST['event_espresso_coupon_code'] : $_REQUEST['coupon_code'];
@@ -46,7 +46,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 					}
 
 					//Check coupon count
-					if ($use_limit == 'Y') {
+					if ($use_limit) {
 						$valid_discount = false;
 						if ($quantity > 0) {
 							$valid_discount = true;
@@ -54,7 +54,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 					}
 
 					//Check the expiration date
-					if ($use_exp_date == 'Y') {
+					if ($use_exp_date) {
 						$valid_discount = false;
 						$todays_date = date("Y-m-d");
 						$today = strtotime($todays_date);
@@ -70,13 +70,13 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 						return $event_cost;
 					}
 
-					$discount_type_price = $use_percentage == 'Y' ? $coupon_code_price . '%' : $org_options['currency_symbol'] . $coupon_code_price;
+					$discount_type_price = $use_percentage ? $coupon_code_price . '%' : $org_options['currency_symbol'] . $coupon_code_price;
 					$response = '<p id="event_espresso_valid_coupon"><strong>' . __('You are using promotional code:', 'event_espresso') . '</strong> ' . $coupon_code . ' (' . $discount_type_price . ' ' . __('discount', 'event_espresso') . ')</p>';
 
 					if ($single_event)
 						echo $response;
 
-					if ($use_percentage == 'Y') {
+					if ($use_percentage) {
 						$pdisc = $coupon_code_price / 100;
 						$event_cost = $event_cost - ($event_cost * $pdisc);
 					} else {
@@ -102,7 +102,7 @@ if (!function_exists('event_espresso_coupon_payment_page')) {
 						$registration_ID = $wpdb->get_var($sql_registration_ID);
 
 						//If the coupon_code has not been used, deduct 1 from the quantity
-						if ($use_limit == 'Y') {
+						if ($use_limit) {
 							$used = 0;
 							if (isset($_SESSION['espresso_session']['coupon_data'])) {
 								if ($_SESSION['espresso_session']['coupon_data']['registration_id'] == $registration_ID) {
@@ -144,7 +144,7 @@ if (!function_exists('event_espresso_coupon_registration_page')) {
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
-		if ($use_coupon_code == "Y") {
+		if ($use_coupon_code) {
 
 			$multi_reg_adjust = $multi_reg == 1 ? "[$event_id]" : '';
 

@@ -172,8 +172,8 @@ function event_espresso_display_eway_settings() {
 							</label>
 							<?php
 							$values = array(
-									array('id' => 'N', 'text' => __('No', 'event_espresso')),
-									array('id' => 'Y', 'text' => __('Yes', 'event_espresso')));
+									array('id' => false, 'text' => __('No', 'event_espresso')),
+									array('id' => true, 'text' => __('Yes', 'event_espresso')));
 							echo select_input('bypass_payment_page', $values, $payment_settings['eway']['bypass_payment_page']);
 							?></li>
 						<li>

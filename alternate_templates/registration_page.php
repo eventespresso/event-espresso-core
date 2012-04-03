@@ -39,14 +39,14 @@ function event_registration($single_event_id = NULL, $event_id_sc =0) {
 
 		$message = $org_options['message'];
 
-		if (!empty($org_options['map_settings']['ee_display_map_no_shortcodes']) && $org_options['map_settings']['ee_display_map_no_shortcodes'] == 'Y') {
+		if (!empty($org_options['map_settings']['ee_display_map_no_shortcodes'])) {
 			$show_ee_gmap_no_shortcode = true;
 		} else {
 			$show_ee_gmap_no_shortcode = false;
 		}
 
 		$sql = "SELECT id FROM " . EVENTS_DETAIL_TABLE;
-		$sql.= " WHERE is_active='Y' AND event_status != 'D' ";
+		$sql.= " WHERE is_active=true AND event_status != 'D' ";
 		if ($single_event_id != NULL) {
 			$sql .= " AND event_identifier = '" . $single_event_id . "' LIMIT 0,1";
 		} else {
@@ -79,7 +79,7 @@ function event_registration($single_event_id = NULL, $event_id_sc =0) {
 			$use_groupon_code = $event->is_use_groupon_code();
 			$questions = $event->get_questions();
 
-			if ($org_options['use_captcha'] == 'Y'
+			if ($org_options['use_captcha']
 							&& (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true')
 							&& !is_user_logged_in()) {
 				?>
@@ -103,7 +103,7 @@ function event_registration($single_event_id = NULL, $event_id_sc =0) {
 						<p class="num_attendees"><?php _e('Current Number of Attendees:', 'event_espresso'); ?> <?php echo $num_attendees ?></p>
 					</div>
 					<?php
-					if ($allow_overflow == 'Y' && $overflow_event_id != 0) {
+					if ($allow_overflow && $overflow_event_id != 0) {
 						?>
 						<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo espresso_reg_url($overflow_event_id); ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
 					<?php } ?>
@@ -113,7 +113,7 @@ function event_registration($single_event_id = NULL, $event_id_sc =0) {
 			} else {
 //If enough spaces exist then show the form
 //Check to see if the Members plugin is installed.
-				if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $event->is_member_only() == 'Y') {
+				if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $event->is_member_only()) {
 					event_espresso_user_login();
 				} else {
 //Serve up the registration form

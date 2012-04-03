@@ -689,7 +689,7 @@ function espresso_display_questions($questions, $attendee) {
 			$html .= "<p class='quest-group-descript'>" . $group['group_description'] . "</p>";
 		}
 		foreach ($group['question'] as $question) {
-			if ($question['required'] == "Y") {
+			if ($question['required']) {
 				if (!empty($question['required_text'])) {
 					$required_text = $question['required_text'];
 				} else {

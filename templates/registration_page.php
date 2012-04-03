@@ -285,7 +285,7 @@ if (!function_exists('event_registration')) {
 					'google_map_link' => $google_map_link,
 							//'price' => event_espresso_price_dropdown($event_id, 0),
 							//'registration' => event_espresso_add_question_groups($question_groups),
-							//'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
+							//'additional_attendees' => $allow_multiple && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
 			);
 			//print_r($all_meta);
 //This function gets the status of the event.
@@ -321,28 +321,28 @@ if (!function_exists('event_registration')) {
 					if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only) {
 						event_espresso_user_login();
 					} else {
-					
+
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-			
+
 						$event->times = array();
 						$event->times = espresso_event_list_get_event_times($event_id);
-			
+
 						$event->prices = array();
 						if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
 							$event->prices = espresso_event_list_process_event_prices($event_prices);
 						}
-			
+
 						$event->currency_symbol = $org_options['currency_symbol'];
-			
+
 						$event->display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
 						$event->available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved');
 
 						// ticket selector
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
-						add_action('action_hook_espresso_ticket_selector', 'espresso_ticket_selector', 10, 1);		
+						add_action('action_hook_espresso_ticket_selector', 'espresso_ticket_selector', 10, 1);
 
-						$registration_url = add_query_arg( array( 'e_reg'=>'process_ticket_selections' ), espresso_get_reg_page_full_url() );   
-						
+						$registration_url = add_query_arg( array( 'e_reg'=>'process_ticket_selections' ), espresso_get_reg_page_full_url() );
+
 						//Serve up the registration form
 						require(espresso_get_registration_display_template());
 					}

@@ -127,7 +127,7 @@ function espresso_duration($event_start, $event_end, $allday) {
 		$hours_duration = "0" . $hours_duration;
 
 	$output_duration = '';
-	if ($allday == 'Y') {
+	if ($allday) {
 		$output_duration .= __('allday', 'event_espresso');
 	} else if (($days_duration == 0 and $hours_duration == 0 and $minutes_duration == 0) or ($event_start == $event_end)) {
 		$output_duration .= __('duration', 'event_espresso');
@@ -176,13 +176,13 @@ if (!function_exists('event_espresso_time_dropdown')) {
 		$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
 
 		$time_reg_limit = $org_options['time_reg_limit'];
-		//$time_reg_limit = 'Y';
+		//$time_reg_limit = true;
 		//echo $num_attendees;
 
 		$sql = "SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' ";
 
 		//Not sure if this is needed. Removed by Seth 2-10-11
-		/*if ( isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y') {
+		/*if (!empty($org_options['use_event_timezones'])) {
 			$sql = "SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "' ";
 			$events = $wpdb->get_results($sql);
 
@@ -192,7 +192,7 @@ if (!function_exists('event_espresso_time_dropdown')) {
 		}*/
 
 		//This is the initial check to see if we time slot are controlled by registration limits.
-		if ($time_reg_limit == 'Y') {
+		if ($time_reg_limit) {
 			//$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
 			//$sql .= " AND (reg_limit = '0' OR reg_limit >= '" .$num_attendees."') ";
 
@@ -234,7 +234,7 @@ if (!function_exists('event_espresso_time_dropdown')) {
 				foreach ($event_times as $time) {
 					$selected = $value == $time->id ? ' selected="selected" ' : '';
 					switch ($time_reg_limit) {//This checks to see if the time slots are controlled by registration limits.
-						case 'Y':
+						case true:
 							//If the time slot is controlled by a registration limit.
 							//Then we need to check if there are enough spaces available.
 							//if (($time->reg_limit == 0)||($time->reg_limit > 0 && $time->reg_limit >=$num_attendees))
@@ -242,7 +242,7 @@ if (!function_exists('event_espresso_time_dropdown')) {
 							if ($time->available_spaces > 0)
 								$html .= '<option' . $selected . ' value="' . $time->id . '">' . event_date_display($time->start_time, get_option('time_format')) . ' - ' . event_date_display($time->end_time, get_option('time_format')) . " ($time->available_spaces " . __('available spaces', 'event_espresso') . ")" . '</option>';
 							break;
-						case 'N'://If time slots are not controlled by registration limits, then we show the default dropdown list of times.
+						case false://If time slots are not controlled by registration limits, then we show the default dropdown list of times.
 						default:
 							$html .= '<option ' . $selected . ' value="' . $time->id . '">' . event_date_display($time->start_time, get_option('time_format')) . ' - ' . event_date_display($time->end_time, get_option('time_format')) . '</option>';
 							break;
@@ -275,13 +275,13 @@ function espresso_time_id_hidden_field($event_id, $multi_reg = 0) {
 	$multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
 
 	$time_reg_limit = $org_options['time_reg_limit'];
-	//$time_reg_limit = 'Y';
+	//$time_reg_limit = true;
 	//echo $num_attendees;
 	$sql = "SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ";
 
 
 	//This is the initial check to see if we time slot are controlled by registration limits.
-	if ($time_reg_limit == 'Y') {
+	if ($time_reg_limit) {
 		//$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
 		//$sql .= " AND (reg_limit = '0' OR reg_limit >= '" .$num_attendees."') ";
 

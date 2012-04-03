@@ -10,7 +10,7 @@ $myPaypal = new Paypal();
 $myPaypal->ipnLog = TRUE;
 
 // Enable test mode if needed
-if ($payment_settings['paypal']['use_sandbox'] == 'Y') {
+if ($payment_settings['paypal']['use_sandbox']) {
 	$myPaypal->enableTestMode();
 	$email_transaction_dump = true;
 }

@@ -110,7 +110,7 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
 //	global $wpdb, $org_options;
 //	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //	$result = true;
-//	if (isset($org_options["use_attendee_pre_approval"])&&$org_options["use_attendee_pre_approval"] == "Y") {
+//	if (!empty($org_options["use_attendee_pre_approval"])) {
 //		$result = false;
 //		$require_pre_approval = 0;
 //		$tmp_events = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id);
@@ -150,7 +150,7 @@ function is_attendee_approved( $require_pre_approval = FALSE, $attendee_id ) {
 
 	$result = TRUE;
 	// does the global option requesting attendee pre-approval ?
-	if ( isset( $org_options["use_attendee_pre_approval"] ) && $org_options["use_attendee_pre_approval"] == "Y" ) {
+	if ( !empty( $org_options["use_attendee_pre_approval"] ) ) {
 
 		$result = FALSE;
 		if ( $require_pre_approval ) {

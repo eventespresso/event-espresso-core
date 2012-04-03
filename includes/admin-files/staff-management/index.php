@@ -98,7 +98,7 @@ function event_espresso_staff_config_mnu() {
 								  global $espresso_manager;
 								  if( function_exists('espresso_member_data') ){
 								  if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_group_admin' ) ){
-								  if(	$espresso_manager['event_manager_staff'] == "Y" ){
+								  if(	$espresso_manager['event_manager_staff'] ){
 								  $limitstaff = true;
 								  }
 								  }else if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager') ){

@@ -98,7 +98,7 @@ function event_espresso_venue_config_mnu() {
 								// If user is an event manager, then show only their venues
 								$sql = "( SELECT v.* FROM " . EVENTS_VENUE_TABLE . " v ";
 								if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_group_admin' )) {
-									if ($espresso_manager['event_manager_venue'] == "Y") {
+									if ($espresso_manager['event_manager_venue']) {
 										//	show only venues inside their assigned locales.
 										$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 										$group = unserialize($group);

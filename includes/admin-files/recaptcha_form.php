@@ -8,7 +8,7 @@ function espresso_recaptcha_options_display() {
 	);
 	?>
 
-	<h4 class="hndle">
+	<h4 class="hndle">no
 	<?php _e('Anti-spam Settings', 'event_espresso'); ?>
 	</h4>
 	<table class="form-table">

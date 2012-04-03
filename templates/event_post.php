@@ -226,7 +226,7 @@ global $wpdb, $org_options;
 				'google_map_link' => $google_map_link,
 				//'price' => event_espresso_price_dropdown($event_id, 0),
 				//'registration' => event_espresso_add_question_groups($question_groups),
-				//'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
+				//'additional_attendees' => $allow_multiple && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
 			);
 			$registration_url = $externalURL != '' ? $externalURL : espresso_reg_url( $data->event->id, $data->event->slug );
 			//print_r($all_meta);
@@ -275,7 +275,7 @@ global $wpdb, $org_options;
 <p><?php echo $event_address ?></p>
 <p><img style="padding-right: 5px;" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/map.png" border="0" alt="<?php _e('View Map', 'event_espresso'); ?>" /><?php echo $google_map_link; ?> | <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register', 'event_espresso'); ?></a></p>
 <?php
-if ($display_desc == "Y"){ ?>
+if ($display_desc){ ?>
 <?php /*?><!--more--><?php */ //Uncomment this part to show the Read More link?>
 <?php _e('Description:','event_espresso'); ?>
 <?php echo wpautop($event_desc); ?>

@@ -59,7 +59,7 @@ $advanced_options .= '<p><strong>' . __('Advanced Options:', 'event_espresso') .
 if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_event_manager' && $espresso_manager['event_manager_approval'] && ($event->event_status == '' || $event->event_status == 'X' || $event->event_status == 'P')) {
 	$advanced_options .= '<p><label>' . __('Event Status', 'event_espresso') . '</label> <span style="color: #ff8400; font-weight:bold;">' . __('PENDING', 'event_espresso') . '</span></p>';
 	$advanced_options .= '<input name="event_status" id="event_status" type="hidden" value="P" />';
-	$advanced_options .= '<input name="is_active" id="is_active" type="hidden" value="Y" />';
+	$advanced_options .= '<input name="is_active" id="is_active" type="hidden" value="true" />';
 } else {
 	//$event->is_active = isset($event->is_active) ? $event->is_active : '';
 	//$event->event_status = isset($event->event_status) ? $event->event_status : '';
