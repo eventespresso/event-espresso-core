@@ -2,6 +2,10 @@
 
 function espresso_optional_settings_meta_box() {
 	global $org_options;
+
+	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php')) {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php');
+	}
 	$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
@@ -37,9 +41,7 @@ function espresso_optional_settings_meta_box() {
 
 	<div class="padding">
 		<?php
-		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php')) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/recaptcha_form.php');
-		}
+		do_action('action_hook_espresso_recaptcha_options_display');
 		?>
 		<h4>
 			<?php _e('Payment Settings', 'event_espresso'); ?>
@@ -197,7 +199,7 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 							<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
 						</span></td>
 				</tr>
-				<tr <?php //if (!empty($_REQUEST['create_postbin'])) echo ' class="yellow_inform"';  ?>>
+				<tr <?php //if (!empty($_REQUEST['create_postbin'])) echo ' class="yellow_inform"';   ?>>
 					<th>								<label>
 							<?php _e('Remote Logging URL', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'remote_logging_url_info'); ?><?php //if (!empty($_REQUEST['create_postbin'])) echo '<br /><span class="red_text">'.__('Don\'t forget to save!', 'event_espresso').'</span>'; ?></label></th>
