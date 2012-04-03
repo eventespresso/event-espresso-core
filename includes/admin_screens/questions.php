@@ -86,7 +86,7 @@ function event_espresso_questions_config_mnu() {
 								}
 								break;
 							case 'edit_question':
-								require_once("questions/edit_question.php");
+								require_once(EVENT_ESPRESSO_INCLUDES_DIR . "form-builder/questions/edit_question.php");
 								event_espresso_form_builder_edit();
 								break;
 							case 'delete_question':

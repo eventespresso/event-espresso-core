@@ -66,7 +66,7 @@ function event_espresso_question_groups_config_mnu() {
 								}
 								break;
 							case 'edit_group':
-								require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/groups/edit_group.php');
+								require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'form-builder/groups/edit_group.php');
 								event_espresso_form_group_edit();
 								break;
 							case 'insert_group':
