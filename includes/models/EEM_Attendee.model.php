@@ -100,7 +100,6 @@ class EEM_Attendee extends EEM_Base {
 
 		foreach ( $attendees as $attendee ) {
 				$array_of_objects[ $attendee->ATT_ID ] = new EE_Attendee(
-						$attendee->ATT_ID,
 						$attendee->ATT_fname,
 						$attendee->ATT_lname,
 						$attendee->ATT_address,
@@ -113,7 +112,8 @@ class EEM_Attendee extends EEM_Base {
 						$attendee->ATT_phone,
 						$attendee->ATT_social,
 						$attendee->ATT_comments,
-						$attendee->ATT_notes
+						$attendee->ATT_notes,
+						$attendee->ATT_ID
 				 	);
 		}	
 		return $array_of_objects;	
@@ -159,7 +159,33 @@ class EEM_Attendee extends EEM_Base {
 		// retreive a particular transaction
 		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
 		if ( $attendee = $this->select_row_where ( $where_cols_n_values )) {
-			return $this->_create_objects( array( $attendee ));
+			$attendee_array = $this->_create_objects( array( $attendee ));
+			return array_shift( $attendee_array );
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
+	/**
+	*		retreive  a single attendee from db via their ID
+	* 
+	* 		@access		public
+	* 		@param		$ATT_ID		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_attendee( $where_cols_n_values = FALSE ) {
+
+		if ( ! $where_cols_n_values ) {
+			return FALSE;
+		}
+
+		if ( $attendee = $this->select_row_where ( $where_cols_n_values )) {
+			$attendee_array = $this->_create_objects( array( $attendee ));
+			return array_shift( $attendee_array );
 		} else {
 			return FALSE;
 		}
@@ -198,7 +224,8 @@ class EEM_Attendee extends EEM_Base {
 			$espresso_notices['errors'][] = 'An error occured and the attendee has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
-		return $results['rows'];
+		$rows_n_ID = array( 'rows' => $results['rows'], 'new-ID' => $results['new-ID'] );
+		return $rows_n_ID;
 	
 	}
 
