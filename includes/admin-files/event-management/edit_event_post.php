@@ -2,7 +2,7 @@
 if (function_exists('espresso_member_data')) {
 	global $espresso_manager;
 	$is_admin = (espresso_member_data('role') == "administrator" || espresso_member_data('role') =='espresso_event_admin')? true:false;
-	if ($espresso_manager['event_manager_create_post'] == 'N' && $is_admin == false){
+	if (!$espresso_manager['event_manager_create_post'] && !$is_admin){
 		return;
 	}
 }

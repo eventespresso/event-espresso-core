@@ -629,7 +629,7 @@ function event_espresso_registration_id_notice() {
 //This function returns a dropdown of secondary events
 if (!function_exists('espresso_secondary_events_dd')) {
 
-	function espresso_secondary_events_dd($current_value = '0', $allow_overflow = 'N') {
+	function espresso_secondary_events_dd($current_value = '0', $allow_overflow = false) {
 		global $wpdb;
 		$sql = "SELECT id, event_name FROM " . EVENTS_DETAIL_TABLE;
 		$sql .= " WHERE event_status = 'S' ";

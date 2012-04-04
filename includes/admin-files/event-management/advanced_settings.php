@@ -69,7 +69,7 @@ if (function_exists('espresso_member_data') && espresso_member_data('role') == '
 //$event->display_desc = isset($event->display_desc) ? $event->display_desc : '';
 //$event->display_reg_form = isset($event->display_reg_form) ? $event->display_reg_form : '';
 $event->overflow_event_id = isset($event->overflow_event_id) ? $event->overflow_event_id : '0';
-$event->allow_overflow = isset($event->allow_overflow) ? $event->allow_overflow : 'N';
+$event->allow_overflow = isset($event->allow_overflow) ? $event->allow_overflow : false;
 $event->externalURL = isset($event->externalURL) ? $event->externalURL : '';
 $event->alt_email = isset($event->alt_email) ? $event->alt_email : '';
 $advanced_options .= '<p><label>' . __('Display  Description', 'event_espresso') . '</label>' . select_input('display_desc', $values, isset($event->display_desc) ? $event->display_desc : '') . '</p>';

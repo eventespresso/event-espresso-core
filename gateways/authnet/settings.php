@@ -33,8 +33,8 @@ function event_espresso_authnet_payment_settings() {
 		$payment_settings['authnet_sim']['authnet_login_id'] = '';
 		$payment_settings['authnet_sim']['authnet_transaction_key'] = '';
 		$payment_settings['authnet_sim']['image_url'] = '';
-		$payment_settings['authnet_sim']['use_sandbox'] = 'N';
-		$payment_settings['authnet_sim']['test_transactions'] = 'N';
+		$payment_settings['authnet_sim']['use_sandbox'] = false;
+		$payment_settings['authnet_sim']['test_transactions'] = false;
 		$payment_settings['authnet_sim']['bypass_payment_page'] = '';
 		$payment_settings['authnet_sim']['button_url'] = $button_url;
 		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {

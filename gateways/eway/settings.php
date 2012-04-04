@@ -35,7 +35,7 @@ function event_espresso_eway_payment_settings() {
 		$payment_settings['eway']['image_url'] = '';
 		$payment_settings['eway']['currency_format'] = 'GBP';
 		$payment_settings['eway']['use_sandbox'] = '';
-		$payment_settings['eway']['bypass_payment_page'] = 'N';
+		$payment_settings['eway']['bypass_payment_page'] = false;
 		$payment_settings['eway']['button_url'] = $button_url;
 		$payment_settings['eway']['region'] = 'UK';
 		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {

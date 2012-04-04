@@ -20,8 +20,8 @@ if ($_REQUEST['transStatus'] == 'Y') {
 	$SQL = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_id='$txn_id', txn_type='$txn_type', payment_date='$payment_date' WHERE id='$attendee_id'";
 	$wpdb->query($SQL);
 	event_espresso_send_payment_notification(array('attendee_id' => $attendee_id));
-	if ($email_before_payment == 'N') {
-		event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
+	if ($email_before_payment) {
+		event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => true, 'send_attendee_email' => true));
 	}
 	if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php")) {
 		require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php");

@@ -90,7 +90,7 @@ function attendee_edit_record() {
 						JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr on q.id = qgr.question_id
 						JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
 						WHERE qgr.group_id in (" . $questions_in . ")
-						AND q.admin_only = 'N'
+						AND q.admin_only = false
 						ORDER BY qg.id, q.sequence ASC";
 	$questions = $wpdb->get_results($q_sql_1);
 	/* DEBUG */
@@ -250,7 +250,7 @@ function attendee_edit_record() {
 					JOIN " . EVENTS_QST_GROUP_TABLE . " qg on qg.id = qgr.group_id
 					WHERE qgr.group_id in (" . $questions_in . ")
 					AND (at.attendee_id IS NULL OR at.attendee_id = '" . $id . "')
-					AND q.admin_only = 'N'
+					AND q.admin_only = false
 					" . $FILTER . "
 					ORDER BY qg.id, q.id ASC";
 

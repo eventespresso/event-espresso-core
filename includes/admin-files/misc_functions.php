@@ -13,8 +13,8 @@ if ( !function_exists( 'event_espresso_custom_questions_output' ) ){
 		$sql = "SELECT ea.answer, eq.question FROM " . EVENTS_ANSWER_TABLE . " ea ";
 		$sql .= " LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id ";
 		$sql .= " WHERE ea.attendee_id = '" . $attendee_id . "' ";
-		$all_questions == TRUE ? '':$sql .= " AND system_name IS NULL ";
-		!empty($show_admin) && $show_admin == TRUE ? '':$sql .= " AND eq.admin_only = 'N' ";
+		$all_questions ? '':$sql .= " AND system_name IS NULL ";
+		!empty($show_admin) ? '' : $sql .= " AND eq.admin_only = false ";
 		$sql .= " ORDER BY eq.sequence asc ";
 
 		$questions = $wpdb->get_results( $sql );

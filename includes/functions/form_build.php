@@ -19,7 +19,7 @@ if (!function_exists('event_form_build')) {
 		if (!empty($extra["x_attendee"])) {
 			$field_name = ($question->system_name != '') ? "x_attendee_" . $question->system_name : "x_attendee_" . $question->question_type . '_' . $question->id . '[]';
 			$question->system_name = "x_attendee_" . $question->system_name ;
-			$question->required = 'N';
+			$question->required = false;
 			$arrayed_field = '[]';
 		} else {
 			$field_name = ($question->system_name != '') ? $question->system_name : $question->question_type . '_' . $question->id;

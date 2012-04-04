@@ -34,7 +34,7 @@ function event_espresso_worldpay_payment_settings() {
 		$payment_settings['worldpay']['image_url'] = '';
 		$payment_settings['worldpay']['currency_format'] = 'USD';
 		$payment_settings['worldpay']['use_sandbox'] = '';
-		$payment_settings['worldpay']['bypass_payment_page'] = 'N';
+		$payment_settings['worldpay']['bypass_payment_page'] = false;
 		$payment_settings['worldpay']['button_url'] = $button_url;
 		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
 			update_option('payment_data_' . $espresso_wp_user, $payment_settings);

@@ -23,7 +23,7 @@ function espresso_confirmation_page($attendee_id, $price_id = 0, $coupon_code = 
 	$q_sql = "SELECT ea.answer, eq.question
 						FROM " . EVENTS_ANSWER_TABLE . " ea
 						LEFT JOIN " . EVENTS_QUESTION_TABLE . " eq ON eq.id = ea.question_id
-						WHERE ea.attendee_id = '" . $conf_page_data['attendee_id'] . "' and eq.admin_only = 'N' ORDER BY eq.sequence asc ";
+						WHERE ea.attendee_id = '" . $conf_page_data['attendee_id'] . "' and eq.admin_only = false ORDER BY eq.sequence asc ";
 	$conf_page_data['questions'] = $wpdb->get_results($q_sql);
 	$conf_page_data['display_questions'] = '';
 	foreach ($conf_page_data['questions'] as $question) {

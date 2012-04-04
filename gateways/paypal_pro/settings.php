@@ -32,7 +32,7 @@ function event_espresso_paypal_pro_payment_settings() {
 		$payment_settings['paypal_pro']['currency_format'] = 'USD';
 		$payment_settings['paypal_pro']['signature'] = '';
 		$payment_settings['paypal_pro']['credit_cards'] = '';
-		$payment_settings['paypal_pro']['use_sandbox'] = 'N';
+		$payment_settings['paypal_pro']['use_sandbox'] = false;
 		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
 			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
 		}

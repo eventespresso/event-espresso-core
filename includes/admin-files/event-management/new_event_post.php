@@ -15,7 +15,7 @@
 							</label>
 						</th>
 						<td class="med">
-							<?php echo select_input('create_post', $values, 'N'); ?>
+							<?php echo select_input('create_post', $values, false); ?>
 							<input type="hidden" name="post_id" value="<?php echo isset($event->post_id) ? $event->post_id : ''; ?>" />
 						</td>
 						<?php

@@ -39,9 +39,9 @@ if ( $verify_result )
 
 		//Send the email confirmation
 		//@params $attendee_id, $send_admin_email, $send_attendee_email
-		if ( $email_before_payment == 'N' )
+		if ( !$email_before_payment )
 		{
-			event_espresso_email_confirmations(array('attendee_id' => $attendee_id,'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
+			event_espresso_email_confirmations(array('attendee_id' => $attendee_id,'send_admin_email' => true, 'send_attendee_email' => true));
 		}
 
 	echo "success";

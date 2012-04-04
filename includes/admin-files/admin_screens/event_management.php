@@ -195,7 +195,7 @@ function espresso_event_editor_promotions_meta_box($event) {
 		<p><strong><?php _e('Promotion Codes', 'event_espresso'); ?></strong></p>
 		<p class="disc-codes">
 			<label><?php _e('Allow discount codes?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'coupon_code_info'); ?></label>
-			<?php echo select_input('use_coupon_code', $values, !isset($event->use_coupon_code) || $event->use_coupon_code == '' ? 'N' : $event->use_coupon_code); ?>
+			<?php echo select_input('use_coupon_code', $values, !isset($event->use_coupon_code) || $event->use_coupon_code == '' ? false : $event->use_coupon_code); ?>
 		</p>
 
 		<?php
@@ -309,7 +309,7 @@ function espresso_event_editor_event_post_metabox($event) {
 	if (function_exists('espresso_member_data')) {
 		global $espresso_manager;
 		$is_admin = (espresso_member_data('role') == "administrator" || espresso_member_data('role') == 'espresso_event_admin') ? true : false;
-		if ($espresso_manager['event_manager_create_post'] == 'N' && $is_admin == false) {
+		if (!$espresso_manager['event_manager_create_post'] && !$is_admin) {
 			return;
 		}
 	}
@@ -454,7 +454,7 @@ function espresso_premium_event_editor_footer() {
 	jQuery("p.event-featured-thumb").remove();
 	jQuery("p#image-display").remove();
 	jQuery('#remove-image').remove();
-	jQuery("#show_thumb_in_lists, #show_on_calendar, #show_thumb_in_regpage").val('N');
+	jQuery("#show_thumb_in_lists, #show_on_calendar, #show_thumb_in_regpage").val(false);
 	});
 	<?php
 }

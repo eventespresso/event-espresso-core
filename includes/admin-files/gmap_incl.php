@@ -84,7 +84,7 @@ function ee_gmap_display($location, $event_id){
 	//var_dump($ee_gmaps_opts);
 //print_r($event_meta);
 // check whether event_meta enable indivudual event for maps is true
-if($event_meta['enable_for_gmap'] !== 'N') {
+if($event_meta['enable_for_gmap']) {
 
  // Determine whether user has set a hardoded url to use and
 	// if so display a Google static iframe map else run V3 api

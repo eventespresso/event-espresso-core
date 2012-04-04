@@ -36,7 +36,7 @@ function event_espresso_mwarrior_payment_settings() {
 		$payment_settings['mwarrior']['image_url'] = '';
 		$payment_settings['mwarrior']['currency_format'] = 'USD';
 		$payment_settings['mwarrior']['use_sandbox'] = '';
-		$payment_settings['mwarrior']['bypass_payment_page'] = 'N';
+		$payment_settings['mwarrior']['bypass_payment_page'] = false;
 		$payment_settings['mwarrior']['button_url'] = $button_url;
 		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
 			update_option('payment_data_' . $espresso_wp_user, $payment_settings);

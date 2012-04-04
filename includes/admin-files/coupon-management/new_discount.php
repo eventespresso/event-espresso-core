@@ -2,7 +2,7 @@
 
 function add_new_event_discount() {
 	$values = array(
-			array('id' => 'N', 'text' => __('No', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso')),
 			array('id' => true, 'text' => __('Yes', 'event_espresso')));
 	?>
 	<div class="meta-box-sortables ui-sortables">
@@ -62,7 +62,7 @@ function add_new_event_discount() {
 										<?php _e('Percentage Discount', 'event_espresso'); ?>
 	<?php echo apply_filters( 'filter_hook_espresso_help', 'discount_amount_info') ?>
 									</label></th>
-								<td><?php echo select_input('use_percentage', $values, 'N'); ?></td>
+								<td><?php echo select_input('use_percentage', $values, false); ?></td>
 							</tr>
 							<tr>
 								<th><label>

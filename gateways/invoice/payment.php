@@ -1,6 +1,6 @@
 <?php
 // Setup payment page
-if ($payment_settings['invoice']['show'] == 'N')
+if (!$payment_settings['invoice']['show'])
 	return;
 if(isset($default_gateway_version))echo '<!--Event Espresso Default Gateway Version ' . $default_gateway_version . '-->';
 if(isset($payment_settings['invoice']['invoice_title'])) { ?>

@@ -164,7 +164,7 @@ function update_event($recurrence_arr = array()) {
 
 
 		if (defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE') &&
-						!empty($_POST['recurrence']) && $_POST['recurrence'] == 'Y' &&
+						!empty($_POST['recurrence']) && $_POST['recurrence'] == 'true' &&
 						count($recurrence_arr) == 0 && $_POST['recurrence_apply_changes_to'] > 1) {
 			//skip the first update
             $event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
@@ -184,11 +184,11 @@ function update_event($recurrence_arr = array()) {
 			$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
 
 			$overflow_event_id = (empty($_REQUEST['overflow_event_id'])) ? '0' : $_REQUEST['overflow_event_id'];
-			$allow_overflow = empty($_REQUEST['allow_overflow']) ? 'N' : $_REQUEST['allow_overflow'];
+			$allow_overflow = empty($_REQUEST['allow_overflow']) ? false : $_REQUEST['allow_overflow'];
 
 			$additional_limit = $_REQUEST['additional_limit'];
 			//$member_only=$_REQUEST['member_only'];
-			$member_only = empty($_REQUEST['member_only']) ? 'N' : $_REQUEST['member_only'];
+			$member_only = empty($_REQUEST['member_only']) ? false : $_REQUEST['member_only'];
 
 			$is_active = $_REQUEST['is_active'];
 			$event_status = $_REQUEST['event_status'];
@@ -278,7 +278,7 @@ function update_event($recurrence_arr = array()) {
 			if (!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])) {
 				$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
 			} else {
-				$event_meta['enable_for_gmap'] = 'N';
+				$event_meta['enable_for_gmap'] = false;
 			}
 
 			/*
@@ -298,7 +298,7 @@ function update_event($recurrence_arr = array()) {
 						}
 					}
 
-					if ($_REQUEST['allow_multiple'] == 'Y' && isset($_REQUEST['seating_chart_id']) && $tmp_seating_chart_id > 0) {
+					if ($_REQUEST['allow_multiple'] == 'true' && isset($_REQUEST['seating_chart_id']) && $tmp_seating_chart_id > 0) {
 
 						$event_meta['additional_attendee_reg_info'] = 3;
 					}
@@ -512,12 +512,12 @@ function update_event($recurrence_arr = array()) {
 
 			/// Create Event Post Code Here
 			switch ($_REQUEST['create_post']) {
-				case $_REQUEST['create_post'] == 'N':
+				case !$_REQUEST['create_post']:
 					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
 					$sql .= " WHERE id = '" . $event_id . "' ";
 					$wpdb->get_results($sql);
 					$post_id = $wpdb->last_result[0]->post_id;
-					if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'Y') {
+					if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'true') {
 						$sql = array('post_id' => '', 'post_type' => '');
 						$sql_data = array('%d', '%s');
 						$update_id = array('id' => $event_id);
@@ -526,7 +526,7 @@ function update_event($recurrence_arr = array()) {
 					}
 					break;
 
-				case $_REQUEST['create_post'] == 'Y':
+				case $_REQUEST['create_post']:
 					$post_type = $_REQUEST['post_type'];
 					if ($post_type == 'post') {
 						if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {

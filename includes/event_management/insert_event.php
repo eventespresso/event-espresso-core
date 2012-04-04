@@ -21,7 +21,7 @@ function add_event_to_db($recurrence_arr = array()) {
 		if (get_option('event_espresso_re_active') == 1) {
 			require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_functions.php");
 			$recurrence_id = array_key_exists('recurrence_id', $recurrence_arr) ? $recurrence_arr['recurrence_id'] : Null;
-			if ($_POST['recurrence'] == 'Y' && count($recurrence_arr) < 2) {
+			if ($_POST['recurrence'] == 'true' && count($recurrence_arr) < 2) {
 
 				if (is_null($recurrence_id))
 					$recurrence_id = add_recurrence_master_record();
@@ -42,7 +42,7 @@ function add_event_to_db($recurrence_arr = array()) {
 						'recurrence_manual_end_dates' => $_POST['recurrence_manual_end_dates'],
 						'recurrence_visibility' => isset($_POST['recurrence_visibility'])?$_POST['recurrence_visibility']:'',
 						'recurrence_id' => $recurrence_id,
-						'adding_to_db' => 'Y'
+						'adding_to_db' => true
 				);
 
 				$recurrence_dates = ($_POST['recurrence_type'] == 'm') ? find_recurrence_manual_dates($re_params) : find_recurrence_dates($re_params);
@@ -52,7 +52,7 @@ function add_event_to_db($recurrence_arr = array()) {
 //echo_f('re array', $recurrence_dates);
 
 
-		if (defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE') && $_POST['recurrence'] == 'Y' && count($recurrence_arr) == 0) {
+		if (defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE') && $_POST['recurrence'] == 'true' && count($recurrence_arr) == 0) {
 //skip the first insert because we do not have the start dates
 		} else {
 			$event_meta = array(); //will be used to hold event meta data
@@ -92,7 +92,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			if (!empty($_REQUEST['venue_id'][0]) || !empty($_REQUEST['zip']) || !empty($_REQUEST['city']) || !empty($_REQUEST['state'])) {
 				$event_meta['enable_for_gmap'] = $_REQUEST['enable_for_gmap'];
 			} else {
-				$event_meta['enable_for_gmap'] = 'N';
+				$event_meta['enable_for_gmap'] = false;
 			}
 
 			//$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
@@ -147,7 +147,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			} elseif ( !empty($_REQUEST['start_date']) && !empty($_REQUEST['recurrence_start_date']) ) {
 				//If they leave the Event Start Date empty, the First Event Date in the recurrence module is selected
 				$start_date = $_REQUEST['recurrence_start_date'];
-			} elseif (isset($_POST['recurrence']) && $_POST['recurrence'] == 'Y' && $_REQUEST['start_date'] == '') {
+			} elseif (isset($_POST['recurrence']) && $_POST['recurrence'] == 'true' && $_REQUEST['start_date'] == '') {
 				$start_date = $_REQUEST['recurrence_manual_dates'][0];
 			} else {
 				$start_date = $_REQUEST['start_date'];
@@ -159,7 +159,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			} elseif ( !empty($_REQUEST['end_date']) && !empty($_REQUEST['recurrence_event_end_date'])) {
 				//If they leave the Event Start Date empty, the First Event Date in the recurrence module is selected
 				$end_date = $_REQUEST['recurrence_event_end_date'];
-			} elseif (isset($_POST['recurrence']) && $_POST['recurrence'] == 'Y' && $_REQUEST['end_date'] == '') {
+			} elseif (isset($_POST['recurrence']) && $_POST['recurrence'] == 'true' && $_REQUEST['end_date'] == '') {
 				$end_date = $_REQUEST['recurrence_manual_end_dates'][count($_REQUEST['recurrence_manual_end_dates']) - 1];
 			} else {
 				$end_date = $_REQUEST['end_date'];
@@ -393,7 +393,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			$wpdb->query($sql);
 
 			// Create Event Post Code Here
-			if ($_REQUEST['create_post'] == 'Y') {
+			if ($_REQUEST['create_post'] == 'true') {
 				$post_type = $_REQUEST['post_type'];
 				if ($post_type == 'post') {
 					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
