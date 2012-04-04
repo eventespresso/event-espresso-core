@@ -74,7 +74,8 @@ function espresso_process_aim( $EE_Session ) {
 			} else {
 				$payment_data->txn_id = $response->transaction_id;
 			}
-			$payment_data->txn_details = serialize($response);
+			//$payment_data->txn_details = serialize($response);
+			$txn_details = $response;
 			if ($response->approved) {
 				$payment_data->payment_status = 'Completed';
 			} else {
@@ -82,7 +83,19 @@ function espresso_process_aim( $EE_Session ) {
 			}
 		}
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
-		$EE_Session->set_session_data(  array( 'payment_data' => $payment_data ), $section = 'session_data' );
+		
+		$txn_results = array(
+											'approved' => $txn_details->approved ? $txn_details->approved : 0,
+											'status' => $payment_data->payment_status,
+											'response_msg' => $txn_details->response_reason_text,
+											'md5_hash' => $txn_details->md5_hash,
+											'details'	=> array(
+																				  'transaction_id' => $txn_details->transaction_id,
+																				  'invoice_number' => $txn_details->invoice_number,
+																		 	),								
+										  );
+		
+		$EE_Session->set_session_data(  array( 'txn_results' => $txn_results ), $section = 'session_data' );
 	
 		add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');  //<-- Should this be here ? or in the successful txn bit above ( around line 79 ? ) or does this send failed txn info as well /
 	

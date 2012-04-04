@@ -15,7 +15,7 @@ function espresso_display_payment_gateways() {
 	}
 
 	echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';
-	echo '<h3 class="section-heading ui-widget-header ui-corner-top">' . __('Please select your method of payment:', 'event_espresso') . '</h3>';
+	echo '<h3>' . __('Please select your method of payment:', 'event_espresso') . '</h3>';
 //	echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
 
 	do_action('action_hook_espresso_display_onsite_payment_header');

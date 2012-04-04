@@ -426,9 +426,13 @@
 
 
 	function process_return_data( next, response ) {
+	
 		for ( key in response.return_data ) {
 			if ( key == 'reg-page-confirmation-dv' ) {			
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
+			} else if ( key == 'redirect-to-thank-you-page' ) {
+				window.location.replace( response.return_data[key] );
+				exit;
 			}			
 		}
 
@@ -482,6 +486,38 @@
 		$('#mer-error-msg-' + event_id ).show().delay(8000).fadeOut();
 	
 	}
+	
+	
+	// generic click event for displaying and giving focus to an element and hiding control 
+	$('.display-the-hidden').click(function() {
+		// get target element from "this" (the control element's) "rel" attribute
+		var item_to_display = $(this).attr("rel"); 
+		// hide the control element
+		$(this).addClass('hidden');  
+		// display the target's div container - use slideToggle or removeClass
+		$('#'+item_to_display+'-dv').slideToggle(500, function() {
+			// display the target div's hide link
+			$('#hide-'+item_to_display).removeClass('hidden'); 
+			// if hiding/showing a form input, then id of the form input must = item_to_display
+			//$('#'+item_to_display).focus(); // add focus to the target
+		}); 
+		return false;
+	});
+
+	// generic click event for re-hiding an element and displaying it's display control 
+	$('.hide-the-displayed').click(function() {
+		// get target element from "this" (the control element's) "rel" attribute
+		var item_to_hide = $(this).attr("rel"); 
+		// hide the control element
+		$(this).addClass('hidden');  
+		// hide the target's div container - use slideToggle or addClass
+		$('#'+item_to_hide+'-dv').slideToggle(500, function() {
+			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
+			// display the control element that toggles display of this element
+			$('#display-'+item_to_hide).removeClass('hidden');  
+		}); 
+		return false;
+	});	
 		
 
 

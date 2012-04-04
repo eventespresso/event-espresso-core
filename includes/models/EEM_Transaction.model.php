@@ -272,7 +272,7 @@ class EEM_Transaction extends EEM_Base {
 			$espresso_notices['errors'][] = 'An error occured and the datetime has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
-		return $results['rows'];
+		return array( 'rows' => $results['rows'], 'new-ID' => $results['new-ID'] );
 	
 	}
 

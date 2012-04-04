@@ -607,6 +607,8 @@ abstract class EEM_Base {
 			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not created.', 'rows' => 0 );
 		}
 		
+		$update_results['new-ID'] = $wpdb->insert_id;
+		
 		return $update_results;
 
 	}
