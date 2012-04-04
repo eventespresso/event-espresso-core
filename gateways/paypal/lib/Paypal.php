@@ -9,7 +9,7 @@
  */
 $paypal_gateway_version = '1.0';
 
-class Paypal extends PaymentGateway {
+class EE_Paypal extends PaymentGateway {
 
 	/**
 	 * Initialize the Paypal gateway

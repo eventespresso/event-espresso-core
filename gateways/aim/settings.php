@@ -77,8 +77,6 @@ function event_espresso_aim_payment_settings() {
 
 //Authorize.net Settings Form
 function event_espresso_display_authnet_aim_settings($payment_settings) {
-	global $org_options, $espresso_wp_user;
-
 	$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso')),

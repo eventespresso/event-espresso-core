@@ -1,9 +1,9 @@
 <?php
 
 function event_espresso_paypal_payment_settings() {
-	global $notices, $espresso_wp_user;
+	global $notices, $espresso_wp_user, $active_gateways;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
 
 	if (isset($_POST['update_paypal'])
 					&& check_admin_referer('espresso_form_check', 'add_paypal_settings')) {
@@ -17,7 +17,7 @@ function event_espresso_paypal_payment_settings() {
 		$payment_settings['paypal']['no_shipping'] = $_POST['no_shipping'];
 		$payment_settings['paypal']['button_url'] = $_POST['button_url'];
 
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings)) {
 			$notices['updates'][] = __('PayPal Payment Settings Updated!', 'event_espresso') . ' ' . $espresso_wp_user;
 		} else {
 			$notices['errors'][] = __('PayPal Payment Settings were not saved! ', 'event_espresso');
@@ -25,31 +25,28 @@ function event_espresso_paypal_payment_settings() {
 	}
 
 	if (empty($payment_settings['paypal'])) {
-		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/btn_stdCheckout2.gif")) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/btn_stdCheckout2.gif";
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/lib/btn_stdCheckout2.gif")) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/paypal/lib/btn_stdCheckout2.gif";
 		} else {
-			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/paypal/btn_stdCheckout2.gif";
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/paypal/lib/btn_stdCheckout2.gif";
 		}
-		$payment_settings['paypal']['active'] = false;
 		$payment_settings['paypal']['paypal_id'] = '';
 		$payment_settings['paypal']['image_url'] = '';
 		$payment_settings['paypal']['currency_format'] = 'USD';
-		$payment_settings['paypal']['use_sandbox'] = 'N';
-		$payment_settings['paypal']['bypass_payment_page'] = 'N';
-		$payment_settings['paypal']['no_shipping'] = '1';
+		$payment_settings['paypal']['use_sandbox'] = false;
+		$payment_settings['paypal']['bypass_payment_page'] = false;
+		$payment_settings['paypal']['no_shipping'] = '0';
 		$payment_settings['paypal']['button_url'] = $button_url;
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
-		}
+		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
 
 	//Open or close the postbox div
-	if (empty($payment_settings['paypal']['active'])
-					|| !empty($_REQUEST['deactivate_paypal'])) {
-		$postbox_style = 'closed';
-	}
-	if (isset($_REQUEST['activate_paypal']) && $_REQUEST['activate_paypal'] == 'true') {
+	if (empty($_REQUEST['deactivate_paypal'])
+					&& (!empty($_REQUEST['activate_paypal'])
+					|| array_key_exists('paypal', $active_gateways))) {
 		$postbox_style = '';
+	} else {
+		$postbox_style = 'closed';
 	}
 	?>
 
@@ -65,16 +62,16 @@ function event_espresso_paypal_payment_settings() {
 				<div class="padding">
 					<?php
 					if (!empty($_REQUEST['activate_paypal'])) {
-						$payment_settings['paypal']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						$active_gateways['aim'] = dirname(__FILE__);
+			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 							$notices['updates'][] = __('PayPal Payments Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate PayPal Payments', 'event_espresso');
 						}
 					}
 					if (!empty($_REQUEST['deactivate_paypal'])) {
-						$payment_settings['paypal']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						unset($active_gateways['aim']);
+			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 							$notices['updates'][] = __('PayPal Payments De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate PayPal Payments', 'event_espresso');
@@ -82,15 +79,11 @@ function event_espresso_paypal_payment_settings() {
 					}
 					echo '<ul>';
 
-					switch ($payment_settings['paypal']['active']) {
-
-						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_paypal=true#paypal\';" class="green_alert pointer"><strong>' . __('Activate PayPal Standard?', 'event_espresso') . '</strong></li>';
-							break;
-
-						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_paypal=true\';" class="red_alert pointer"><strong>' . __('Deactivate PayPal Standard?', 'event_espresso') . '</strong></li>';
-							event_espresso_display_paypal_settings();
+					if (!array_key_exists('paypal', $active_gateways)) {
+							echo '<li id="activate_paypal" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_paypal=true#paypal\';" class="green_alert pointer"><strong>' . __('Activate PayPal Standard?', 'event_espresso') . '</strong></li>';
+					} else {
+						echo '<li id="deactivate_paypal" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_paypal=true\';" class="red_alert pointer"><strong>' . __('Deactivate PayPal Standard?', 'event_espresso') . '</strong></li>';
+							event_espresso_display_paypal_settings($payment_settings);
 							break;
 					}
 
@@ -104,10 +97,9 @@ function event_espresso_paypal_payment_settings() {
 }
 
 //PayPal Settings Form
-function event_espresso_display_paypal_settings() {
+function event_espresso_display_paypal_settings($payment_settings) {
 	global $org_options, $espresso_wp_user;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
 
 	$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
@@ -258,23 +250,6 @@ function event_espresso_display_paypal_settings() {
 				</tr>
 			</tbody>
 		</table>
-		<?php /* ?><!-- TABLE TEMPLATE -->
-		  <table class="form-table">
-		  <tbody>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  </tbody>
-		  </table><?php */ ?>
 		<p>
 			<input type="hidden" name="update_paypal" value="update_paypal">
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update PayPal Settings', 'event_espresso') ?>" id="save_paypal_settings" />
