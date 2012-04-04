@@ -432,7 +432,7 @@
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 			} else if ( key == 'redirect-to-thank-you-page' ) {
 				window.location.replace( response.return_data[key] );
-				exit;
+				return;
 			}			
 		}
 

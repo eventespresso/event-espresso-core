@@ -1169,26 +1169,40 @@ class EE_Single_Page_Checkout {
 				$is_group_reg = count( $reg_item['attendees'] ) > 1 ? TRUE : $is_group_reg;
 				// cycle through attendees
 				foreach ( $reg_item['attendees'] as $att_nmbr => $attendee ) {
-					// create attendee
-					$att[ $att_nmbr ] = new EE_Attendee(
-																						isset( $attendee['fname'] ) ? $attendee['fname'] : '',
-																						isset( $attendee['lname'] ) ? $attendee['lname'] : '',
-																						isset( $attendee['address'] ) ? $attendee['address'] : NULL,
-																						isset( $attendee['address2'] ) ? $attendee['address2'] : NULL,
-																						isset( $attendee['cityaddress2'] ) ? $attendee['cityaddress2'] : NULL,
-																						isset( $attendee['state'] ) ? $attendee['state'] : NULL,
-																						isset( $attendee['country'] ) ? $attendee['country'] : NULL,
-																						isset( $attendee['zip'] ) ? $attendee['zip'] : NULL,
-																						isset( $attendee['email'] ) ? $attendee['email'] : NULL,
-																						isset( $attendee['phone'] ) ? $attendee['phone'] : NULL,
-																						isset( $attendee['social'] ) ? $attendee['social'] : NULL
-																					);
-					//add attendee to db
-					$att_results = $att[ $att_nmbr ]->insert();
+					
+					// grab main attendee details
+					$ATT_fname = isset( $attendee['fname'] ) ? $attendee['fname'] : '';
+					$ATT_lname = isset( $attendee['lname'] ) ? $attendee['lname'] : '';
+					$ATT_email = isset( $attendee['email'] ) ? $attendee['email'] : '';
+					// create array for query where statement
+					$where_cols_n_values = array( 'ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email );
+					// do we already have an existing record for this attendee ?														
+					if ( $existing_attendee = EE_Attendee::find_existing_attendee( $where_cols_n_values )) {
+						$ATT_ID = $existing_attendee->ID();
+					} else {
+						// create attendee
+						$att[ $att_nmbr ] = new EE_Attendee(
+																							$ATT_fname,
+																							$ATT_lname,
+																							isset( $attendee['address'] ) ? $attendee['address'] : NULL,
+																							isset( $attendee['address2'] ) ? $attendee['address2'] : NULL,
+																							isset( $attendee['city'] ) ? $attendee['city'] : NULL,
+																							isset( $attendee['state'] ) ? $attendee['state'] : NULL,
+																							isset( $attendee['country'] ) ? $attendee['country'] : NULL,
+																							isset( $attendee['zip'] ) ? $attendee['zip'] : NULL,
+																							$ATT_email,
+																							isset( $attendee['phone'] ) ? $attendee['phone'] : NULL,
+																							isset( $attendee['social'] ) ? $attendee['social'] : NULL
+																						);					
+						//add attendee to db
+						$att_results = $att[ $att_nmbr ]->insert();
+						$ATT_ID = $att_results['new-ID'];
+					}													
+
 					// now create registration for the attendee
 					$reg[ $line_item_id ] = new EE_Registration(
 																								$reg_item['id'],
-																								$att_results['new-ID'],
+																								$ATT_ID,
 																								$txn_results['new-ID'],
 																								$session['id'],
 																								$attendee['registration_id'],
@@ -1210,9 +1224,13 @@ class EE_Single_Page_Checkout {
 			$txn_details = $session['txn_results'];			
 			
 			if ( $txn_details['approved'] ) {
+				$txn->set_status( 'TAP' );
+				$txn->set_details( $txn_details );
 				$success_msg = $txn_details['response_msg'];
 			} else {
-				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . $txn_details['response_msg'];
+				$txn->set_status( 'DEC' );
+				$txn->set_details( $txn_details );
+				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
 			}
 									 
 		}
