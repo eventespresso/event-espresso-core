@@ -99,7 +99,7 @@ class EEM_Attendee extends EEM_Base {
 		} 		
 
 		foreach ( $attendees as $attendee ) {
-				$array_of_objects[ $attendee->ATT_ID ] = new EE_Transaction(
+				$array_of_objects[ $attendee->ATT_ID ] = new EE_Attendee(
 						$attendee->ATT_ID,
 						$attendee->ATT_fname,
 						$attendee->ATT_lname,

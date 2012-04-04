@@ -178,7 +178,7 @@ class EE_Attendee {
 	* @param 		string		 		$ATT_notes					Attendee Notes (about the attendee)
 	* @param 		int 					$ATT_ID 						Attendee ID
 	*/
-	public function __construct( $ATT_fname=NULL, $ATT_lname=NULL, $ATT_address=NULL, $ATT_address2=NULL, $ATT_city=NULL, $STA_ID=NULL,$CNT_ISO=NULL,$ATT_zip=NULL,$ATT_email=NULL,$ATT_phone=NULL,$ATT_social=NULL,$ATT_comments=NULL,$ATT_notes=NULL,$ATT_ID=FALSE ) {
+	public function __construct( $ATT_fname='', $ATT_lname='', $ATT_address=NULL, $ATT_address2=NULL, $ATT_city=NULL, $STA_ID=NULL,$CNT_ISO=NULL,$ATT_zip=NULL,$ATT_email=NULL,$ATT_phone=NULL,$ATT_social=NULL,$ATT_comments=NULL,$ATT_notes=NULL,$ATT_ID=FALSE ) {
 		$this->_ATT_ID 					= $ATT_ID;
 		$this->_ATT_fname 			= $ATT_fname;
 		$this->_ATT_lname 			= $ATT_lname;
