@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * Price Model
+ * Price Type Model
  *
  * @package				Event Espresso
  * @subpackage		includes/models/
@@ -25,9 +25,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EEM_Price extends EEM_Base {
+class EEM_Price_Type extends EEM_Base {
 
-	// private instance of the Price object
+	// private instance of the Price Type object
 	private static $_instance = NULL;
 
 	/**
@@ -39,17 +39,17 @@ class EEM_Price extends EEM_Base {
 	private function __construct() {
 		global $wpdb;
 		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_price';
-		// array representation of the price table and the data types for each field
+		$this->table_name = $wpdb->prefix . 'esp_price_type';
+		// array representation of the price type table and the data types for each field
 		$this->table_data_types = array(
-				'PRC_id' => '%d',
 				'PRT_id' => '%d',
-				'PRC_amount' => '%d',
-				'PRC_name' => '%s',
-				'PRC_desc' => '%s',
-				'PRC_is_active' => '%d');
-		// load Price object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
+				'PRT_name' => '%s',
+				'PRC_is_tax' => '%d',
+				'PRC_is_percent' => '%d',
+				'PRC_is_global' => '%d',
+				'PRC_order' => '%d');
+		// load Price_Type object class file
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price_Type.class.php');
 
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -60,99 +60,99 @@ class EEM_Price extends EEM_Base {
 	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 * 		@access public
-	 * 		@return EEM_Price instance
+	 * 		@return EEM_Price_Type instance
 	 */
 	public static function instance() {
 
-		// check if instance of EEM_Price already exists
+		// check if instance of EEM_Price_Type already exists
 		if (self::$_instance === NULL) {
-			// instantiate Price_model
+			// instantiate Price_Type model
 			self::$_instance = &new self();
 		}
-		// EEM_Price object
+		// EEM_Price_Type object
 		return self::$_instance;
 	}
 
 	/**
-	 * 		cycle though array of prices and create objects out of each item
+	 * 		cycle though array of price types and create objects out of each item
 	 *
 	 * 		@access		private
-	 * 		@param		array		$prices
+	 * 		@param		array		$price_types
 	 * 		@return 	mixed		array on success, FALSE on fail
 	 */
-	private function _create_objects($prices = FALSE) {
+	private function _create_objects($price_types = FALSE) {
 
-		if (!$prices) {
+		if (!$price_types) {
 			return FALSE;
 		}
 
-		foreach ($prices as $price) {
-			$array_of_objects[$price->PRC_id] = new EE_Price(
-											$price->PRT_id,
-											$price->PRC_amount,
-											$price->PRC_name,
-											$price->PRC_desc,
-											$price->PRC_is_active
+		foreach ($price_types as $price_type) {
+			$array_of_objects[$price->PRT_id] = new EE_Price_Type(
+							$price->PRT_name,
+							$price->PRT_is_tax,
+							$price->PRT_is_percent,
+							$price->PRT_is_global,
+							$price->PRT_order
 			);
 			return $array_of_objects;
 		}
 	}
 
 	/**
-	 * 		retreive  ALL prices from db
+	 * 		retreive  ALL price types from db
 	 *
 	 * 		@access		public
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
-	public function get_all_prices() {
+	public function get_all_price_types() {
 
-		$orderby = 'PRC_amount';
-		// retreive all prices
-		if ($prices = $this->select_all($orderby)) {
-			return $this->_create_objects($prices);
+		$orderby = 'PRT_order';
+		// retreive all price types
+		if ($price_types = $this->select_all($orderby)) {
+			return $this->_create_objects($price_types);
 		} else {
 			return FALSE;
 		}
 	}
 
 	/**
-	 * 		retreive  a single price from db via it's id
+	 * 		retreive  a single price type from db via it's id
 	 *
 	 * 		@access		public
-	 * 		@param		$PRC_id
+	 * 		@param		$PRT_id
 	 *		@return		mixed		array on success, FALSE on fail
 	 */
-	public function get_price_by_id($PRC_id = FALSE) {
+	public function get_price_type_by_id($PRT_id = FALSE) {
 
-		if (!$PRC_id) {
+		if (!$PRT_id) {
 			return FALSE;
 		}
 		// retreive a particular price
-		$where_cols_n_values = array('PRC_id' => $PRC_id);
-		if ($price = $this->select_row_where($where_cols_n_values)) {
-			$price_array = $this->_create_objects(array($price));
-			return array_shift($price_array);
+		$where_cols_n_values = array('PRT_id' => $PRC_id);
+		if ($price_type = $this->select_row_where($where_cols_n_values)) {
+			$price_type_array = $this->_create_objects(array($price_type));
+			return array_shift($price_type_array);
 		} else {
 			return FALSE;
 		}
 	}
 
 	/**
-	*		retreive a single price from db via it's column values
+	*		retreive a single price type from db via it's column values
 	*
 	* 	@access		public
 	* 	@param		array
 	*		@return 	mixed		array on success, FALSE on fail
 	*/
-	public function get_price( $where_cols_n_values = FALSE ) {
+	public function get_price_type( $where_cols_n_values = FALSE ) {
 
 		if ( ! $where_cols_n_values ) {
 			return FALSE;
 		}
 
-		if ( $price = $this->select_row_where ( $where_cols_n_values )) {
-			$price_array = $this->_create_objects( array( $price ));
-			return array_shift( $price_array );
+		if ( $price_type = $this->select_row_where ( $where_cols_n_values )) {
+			$price_type_array = $this->_create_objects( array( $price_type ));
+			return array_shift( $price_type_array );
 		} else {
 			return FALSE;
 		}
@@ -178,13 +178,13 @@ class EEM_Price extends EEM_Base {
 		// set some table specific success messages
 		if ($results['rows'] == 1) {
 			// one row was successfully updated
-			$espresso_notices['success'][] = 'Price details have been successfully saved to the database.';
+			$espresso_notices['success'][] = 'Price Type details have been successfully saved to the database.';
 		} elseif ($results['rows'] > 1) {
 			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for ' . $results . ' prices have been successfully saved to the database.';
+			$espresso_notices['success'][] = 'Details for ' . $results . ' price types have been successfully saved to the database.';
 		} else {
 			// error message
-			$espresso_notices['errors'][] = 'An error occured and the price has not been saved to the database. ' . $this->_get_error_code(__FILE__, __FUNCTION__, __LINE__);
+			$espresso_notices['errors'][] = 'An error occured and the price type has not been saved to the database. ' . $this->_get_error_code(__FILE__, __FUNCTION__, __LINE__);
 		}
 
 		$rows_n_ID = array('rows' => $results['rows'], 'new-ID' => $results['new-ID']);
@@ -211,13 +211,13 @@ class EEM_Price extends EEM_Base {
 		// set some table specific success messages
 		if ($results['rows'] == 1) {
 			// one row was successfully updated
-			$espresso_notices['success'][] = 'Price details have been successfully updated.';
+			$espresso_notices['success'][] = 'Price Type details have been successfully updated.';
 		} elseif ($results['rows'] > 1) {
 			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for ' . $results . ' prices have been successfully updated.';
+			$espresso_notices['success'][] = 'Details for ' . $results . ' price typess have been successfully updated.';
 		} else {
 			// error message
-			$espresso_notices['errors'][] = 'An error occured and the price has not been updated. ' . $this->_get_error_code(__FILE__, __FUNCTION__, __LINE__);
+			$espresso_notices['errors'][] = 'An error occured and the price type has not been updated. ' . $this->_get_error_code(__FILE__, __FUNCTION__, __LINE__);
 		}
 
 		return $results['rows'];
@@ -225,5 +225,5 @@ class EEM_Price extends EEM_Base {
 
 }
 
-// End of file EEM_Price.model.php
-// Location: /ee-mvc/models/EEM_Price.model.php
+// End of file EEM_Price_Type.model.php
+// Location: /ee-mvc/models/EEM_Price_Type.model.php
