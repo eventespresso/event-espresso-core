@@ -62,7 +62,8 @@
 
 <?php // end  if  $payment_required	
 			} else { ?>
-			<input type="hidden" id="reg-page-no-payment-required" name="reg-page-no-payment-required" value="1" />	
+			<input type="hidden" id="reg-page-no-payment-required-step-2" name="reg-page-no-payment-required" value="1" />
+			<?php _e('This is a free event, so no billing will occur.', 'event_espresso'); ?>
 <?php }  ?>
 	
 		<div id="mer-reg-page-whats-next-buttons" class="mer-whats-next-buttons">

@@ -29,10 +29,9 @@ class EE_Single_Page_Checkout {
 	private $_reg_page_base_url = '';
 	// array to hold parameters for the registration button
 	private $_reg_btn = array();
-	// url to redirect cart to
-	private $_reg_cart_url = '';
+
 	// url for thank you page
-	private $_return_page_url = '';
+	private $_return_page_url = FALSE;
 	private $_templates = array();
 	private $_ajax = 0;
 
@@ -906,7 +905,6 @@ class EE_Single_Page_Checkout {
 			if ( $EE_Session->set_session_data(  array( 'billing_info' => 'no payment required' ), $section = 'session_data' )) {
 				$success_msg = __( 'Registration Step 2 completed', 'event_espresso' );
 			} else {
-				//$error_msg = __( 'An error occured! The billing information could not be submitted. Please refresh your browser and try agin.', 'event_espresso' );
 				$espresso_notices = $EE_VnS->return_notices();
 				$notices = espresso_get_notices( FALSE );
 				$error_msg = $notices['errors'];
@@ -1217,11 +1215,22 @@ class EE_Single_Page_Checkout {
 			    	$reg[ $line_item_id ]->insert();	
 				}
 			}
-
-			do_action('action_hook_espresso_process_payments', $EE_Session);
-
-			$session = $EE_Session->get_session_data();
-			$txn_details = $session['txn_results'];			
+			
+			// free event?
+			if ( isset( $_POST['reg-page-no-payment-required'] ) && absint( $_POST['reg-page-no-payment-required'] ) == 1 ) {
+				// becuz this was a free event we need to generate some pseudo gateway results
+				$txn_details = array(
+														'approved' => TRUE,
+														'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
+														'status' => 'free event',
+														'details' => ''
+													);
+			} else {
+				// attempt to perform transaction via payment gateway 
+				do_action('action_hook_espresso_process_payments', $EE_Session);
+				$session = $EE_Session->get_session_data();
+				$txn_details = $session['txn_results'];			
+			}
 			
 			if ( $txn_details['approved'] ) {
 				$transaction->set_status( 'TAP' );
@@ -1234,12 +1243,16 @@ class EE_Single_Page_Checkout {
 				$transaction->update();
 				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
 			}
-									 
+
 		}
 
-		if ( $this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_3_ajax_response' )) {
-			$return_page_id = $org_options['return_url'];
-			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
+		if ( $this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_3_ajax_response' )) {		
+			if ( ! $this->_return_page_url ) {
+				$return_page_id = $org_options['return_url'];
+				// get permalink for thank you page
+				// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
+				$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');	
+			}			
 			wp_safe_redirect( $this->_return_page_url );
 			exit();
 		} else {
@@ -1268,15 +1281,15 @@ class EE_Single_Page_Checkout {
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
-		if ( ! isset( $this->_return_page_url )) {
+		if ( ! $this->_return_page_url ) {
 			$return_page_id = $org_options['return_url'];
 			// get permalink for thank you page
 			// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
 			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');	
-		}	
+		}
 										 
 		$response_data = array(
-				'success' => $return_page_url, // $success_msg,
+				'success' => $success_msg,
 				'return_data' => array( 'redirect-to-thank-you-page' => $this->_return_page_url )
 		);
 
