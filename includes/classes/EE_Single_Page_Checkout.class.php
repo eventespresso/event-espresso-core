@@ -31,6 +31,8 @@ class EE_Single_Page_Checkout {
 	private $_reg_btn = array();
 	// url to redirect cart to
 	private $_reg_cart_url = '';
+	// url for thank you page
+	private $_return_page_url = '';
 	private $_templates = array();
 	private $_ajax = 0;
 
@@ -641,8 +643,6 @@ class EE_Single_Page_Checkout {
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
 
-		$template_args['registration_steps'] = '<h1>'.$return_page_url.'</h1>' . $template_args['registration_steps'];
-
 		espresso_display_template( $this->_templates['registration_page_wrapper'], $template_args );
 		
 	}
@@ -1159,8 +1159,8 @@ class EE_Single_Page_Checkout {
 			$session = $EE_Session->get_session_data();
 			$reg_items = $session['cart']['REG']['items'];
 			// start the transaction record
-			$txn = new EE_Transaction( '0', 'TPN', NULL, $session, NULL, NULL );
-			$txn_results = $txn->insert();
+			$transaction = new EE_Transaction( '0', 'TPN', NULL, $session, NULL, NULL );
+			$txn_results = $transaction->insert();
 			// more than one item means this is a group registration
 			$is_group_reg = count( $reg_items ) > 1 ? TRUE : FALSE;
 			// cycle through items in session
@@ -1224,12 +1224,14 @@ class EE_Single_Page_Checkout {
 			$txn_details = $session['txn_results'];			
 			
 			if ( $txn_details['approved'] ) {
-				$txn->set_status( 'TAP' );
-				$txn->set_details( $txn_details );
+				$transaction->set_status( 'TAP' );
+				$transaction->set_details( $txn_details );
+				$transaction->update();
 				$success_msg = $txn_details['response_msg'];
 			} else {
-				$txn->set_status( 'DEC' );
-				$txn->set_details( $txn_details );
+				$transaction->set_status( 'DEC' );
+				$transaction->set_details( $txn_details );
+				$transaction->update();
 				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
 			}
 									 
@@ -1237,8 +1239,8 @@ class EE_Single_Page_Checkout {
 
 		if ( $this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_3_ajax_response' )) {
 			$return_page_id = $org_options['return_url'];
-			$return_page_url = rtrim(get_permalink($return_page_id), '/');
-			wp_safe_redirect( $return_page_url );
+			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
+			wp_safe_redirect( $this->_return_page_url );
 			exit();
 		} else {
 			$reg_page_step_3_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'3' ), $this->_reg_page_base_url );
@@ -1265,15 +1267,17 @@ class EE_Single_Page_Checkout {
 
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-		$return_page_id = $org_options['return_url'];
-		// get permalink for thank you page
-		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		$return_page_url = rtrim(get_permalink($return_page_id), '/');		
+		
+		if ( ! isset( $this->_return_page_url )) {
+			$return_page_id = $org_options['return_url'];
+			// get permalink for thank you page
+			// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
+			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');	
+		}	
 										 
 		$response_data = array(
 				'success' => $return_page_url, // $success_msg,
-				'return_data' => array( 'redirect-to-thank-you-page' => $return_page_url )
+				'return_data' => array( 'redirect-to-thank-you-page' => $this->_return_page_url )
 		);
 
 		echo json_encode($response_data);
