@@ -490,9 +490,9 @@ function event_espresso_get_event_details($attributes) {
 				//$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
 
 				$event_reg_link = '
-			<p id="register_link-' . $event_id . '" class="register-link-footer">
+			<p id="register_link-' . $event_id . '" class="">
 				<a	id="a_register_link-' . $event_id . '"
-						class="a_register_link ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all float-right"
+						class="ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all float-right"
 						href="' . $event->reg_url . '"
 						title="' . $event->event_name . '"
 					>
