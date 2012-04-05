@@ -88,7 +88,7 @@ class EE_Price_Type {
 	* @param			bool	 				$PRT_is_tax				is price type a tax?
 	* @param			bool					$PRT_is_percent		is price type a percent?
 	* @param	 		bool					$PRT_is_global		is price type a global?
-	* @param			int 					$PRT_order						Price Type order
+	* @param			int 					$PRT_order				Price Type order
 	*/
 	public function __construct( $PRT_name='', $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_id=FALSE ) {
 		$this->_PRT_id					= $PRT_id;

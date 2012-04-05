@@ -128,7 +128,15 @@ class EE_Price {
 			return FALSE;
 		}
 		if (empty($this->_PRC_adjustments)) {
-			$this->_PRC_adjustments
+			$this->_PRC_adjustments[] = array('name'=>'base price', 'amount'=>$this->_PRC_amount);
+		}
+		if ($adj_is_percent) {
+			$adjustment = $this->_PRC_amount * $adj_amount;
+			$this->_PRC_adjustments[] = array('name'=>wp_strip_all_tags( $adj_name ), 'is_percent'=>true, 'percent_adjustment'=>"$adj_amount %", 'adjustment'=>$adjustment);
+			$this->_PRC_amount = max($this->_PRC_amount+$adjustment, 0);
+		} else {
+			$this->_PRC_adjustments[] = array('name'=>wp_strip_all_tags( $adj_name ), 'is_percent'=>false, 'adjustment'=>$adj_amount);
+			$this->_PRC_amount = max($this->_PRC_amount+$adj_amount, 0);
 		}
 	}
 
