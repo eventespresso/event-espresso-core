@@ -84,13 +84,13 @@ class EE_Price_Type {
 	*
 	* @access 		public
 	* @param			int		 				$PRT_id						Price type id
-	* @param			float					$PRC_amount				Price amount
-	* @param			string 				$PRC_name					Price name
-	* @param			string				$PRC_desc					Price description
-	* @param	 		bool					$PRC_is_active		is the Price globally active
-	* @param			int 					$PRC_id						Price id
+	* @param			string				$PRT_name					Price Type name
+	* @param			bool	 				$PRT_is_tax				is price type a tax?
+	* @param			bool					$PRT_is_percent		is price type a percent?
+	* @param	 		bool					$PRT_is_global		is price type a global?
+	* @param			int 					$PRT_order						Price Type order
 	*/
-	public function __construct( $PRT_id=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_id=FALSE ) {
+	public function __construct( $PRT_name='', $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_id=FALSE ) {
 		$this->_PRT_id					= $PRT_id;
 		$this->_PRT_name				= $PRT_name;
 		$this->_PRT_is_tax			= $PRT_is_tax;
@@ -128,10 +128,10 @@ class EE_Price_Type {
 	* 	@access		public
 	*		@param		bool		$PRT_is_tax
 	*/
-	public function set_is_tax( $PRT_is_tax = FALSE ) {
+	public function set_is_tax( $PRT_is_tax = NULL ) {
 
 		global $espresso_notices;
-		if ( ! $PRT_is_tax || !is_bool($PRT_is_tax)) {
+		if (!is_bool($PRT_is_tax)) {
 			$espresso_notices['errors'][] = 'No tax flag was supplied.';
 			return FALSE;
 		}
@@ -146,10 +146,10 @@ class EE_Price_Type {
 	* 	@access		public
 	*		@param		bool		$PRT_is_percent
 	*/
-	public function set_is_percent( $PRT_is_percent = FALSE ) {
+	public function set_is_percent( $PRT_is_percent = NULL ) {
 
 		global $espresso_notices;
-		if ( ! $PRT_is_percent || !is_bool($PRT_is_percent)) {
+		if (!is_bool($PRT_is_percent)) {
 			$espresso_notices['errors'][] = 'No percent flag was supplied.';
 			return FALSE;
 		}
@@ -164,10 +164,10 @@ class EE_Price_Type {
 	* 	@access		public
 	*		@param		bool		$PRT_is_global
 	*/
-	public function set_is_global ( $PRT_is_global = FALSE ) {
+	public function set_is_global ( $PRT_is_global = NULL ) {
 
 		global $espresso_notices;
-		if ( ! $PRT_is_global || !is_bool($PRT_is_global)) {
+		if (!is_bool($PRT_is_global)) {
 			$espresso_notices['errors'][] = 'No percent flag was supplied.';
 			return FALSE;
 		}
@@ -326,14 +326,6 @@ class EE_Price_Type {
 		}
 
 	}
-
-
-
-
-
-
-
-
 
 
 	/**

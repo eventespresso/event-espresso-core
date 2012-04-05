@@ -79,7 +79,16 @@ class EE_Price {
 	private $_PRC_is_active = NULL;
 
 
-		/**
+	/**
+  *	Price adjustments
+	*
+	*	@access	private
+  *	@var array ('PRC_name' => amount)
+  */
+	private $_PRC_adjustments = NULL;
+
+
+	/**
 	*  Attendee constructor
 	*
 	* @access 		public
@@ -97,11 +106,31 @@ class EE_Price {
 		$this->_PRC_name				= $PRC_name;
 		$this->_PRC_desc				= $PRC_desc;
 		$this->_PRC_is_active		= $PRC_is_active;
+		$this->_PRC_adjustments = array();
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price.model.php');
 	}
 
+
+	/**
+	 *	Add Price adjustment
+	 *
+	 *	@access public
+	 *	@param $adj_name;
+	 *	@param $adj_is_percent;
+	 *	@param $adj_amount;
+	 */
+	public function add_adjustment( $adj_name = FALSE, $adj_is_percent = NULL, $adj_amount = FALSE ) {
+		global $espresso_notices;
+		if ( !$adj_name || !is_bool($adj_is_percent) || !adj_amount  ) {
+			$espresso_notices['errors'][] = 'A valid price adjustment was not supplied.';
+			return FALSE;
+		}
+		if (empty($this->_PRC_adjustments)) {
+			$this->_PRC_adjustments
+		}
+	}
 
 
 	/**
@@ -182,10 +211,10 @@ class EE_Price {
 	* 	@access		public
 	*		@param		bool		$PRC_is_active
 	*/
-	public function set_globally_active( $PRC_is_active = FALSE ) {
+	public function set_globally_active( $PRC_is_active = NULL ) {
 
 		global $espresso_notices;
-		if ( ! $PRC_is_active || !is_bool($PRC_is_active)) {
+		if ( !is_bool($PRC_is_active)) {
 			$espresso_notices['errors'][] = 'No globally active flag was supplied.';
 			return FALSE;
 		}
@@ -252,7 +281,7 @@ class EE_Price {
 	*		get Price id
 	* 		@access		public
 	*/
-	public function type() {
+	public function id() {
 		return $this->_PRC_id;
 	}
 
@@ -306,6 +335,13 @@ class EE_Price {
 	}
 
 
+	/**
+	 *	get adjustments array
+	 *	@access public
+	 */
+	public function adjustments() {
+		return $this->_PRC_adjustments;
+	}
 
 	/**
 	*		Search for an existing DB record for this Price
