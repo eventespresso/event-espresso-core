@@ -13,11 +13,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * @ version		 	3.1.P.7
+ * @ version		 	3.2
  *
  * ------------------------------------------------------------------------
  *
- * Attendee Model
+ * Price Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
@@ -135,6 +135,28 @@ class EEM_Price extends EEM_Base {
 		} else {
 			return FALSE;
 		}
+	}
+
+	/**
+	*		retreive a single price from db via it's column values
+	*
+	* 	@access		public
+	* 	@param		array
+	*		@return 	mixed		array on success, FALSE on fail
+	*/
+	public function get_price( $where_cols_n_values = FALSE ) {
+
+		if ( ! $where_cols_n_values ) {
+			return FALSE;
+		}
+
+		if ( $price = $this->select_row_where ( $where_cols_n_values )) {
+			$price_array = $this->_create_objects( array( $price ));
+			return array_shift( $price_array );
+		} else {
+			return FALSE;
+		}
+
 	}
 
 	/**
