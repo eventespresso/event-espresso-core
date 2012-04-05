@@ -201,7 +201,7 @@ class EE_Price {
 	*/
 	private function _save_to_db( $where_cols_n_values = FALSE ) {
 
-		 $MODEL = EEM_Attendee::instance();
+		 $MODEL = EEM_Price::instance();
 
 		$set_column_values = array(
 				'PRT_id'					=> $this->_PRT_id,
@@ -231,7 +231,7 @@ class EE_Price {
 	* 		@access		public
 	*/
 	public function update() {
-		return $this->_save_to_db( array( 'ATT_ID' => $this->_ATT_ID ));
+		return $this->_save_to_db( array( 'PRC_id' => $this->_PRC_id ));
 	}
 
 
@@ -248,9 +248,13 @@ class EE_Price {
 		return $this->_save_to_db();
 	}
 
-
-
-
+	/**
+	*		get Price id
+	* 		@access		public
+	*/
+	public function type() {
+		return $this->_PRC_id;
+	}
 
 
 	/**
@@ -304,22 +308,13 @@ class EE_Price {
 
 
 	/**
-	*		get Price id
-	* 		@access		public
-	*/
-	public function id() {
-		return $this->_PRT_id;
-	}
-
-
-	/**
 	*		Search for an existing DB record for this Price
 	* 		@access		public
 	*/
 	public function find_existing_price( $where_cols_n_values = FALSE ) {
 		// load model
 		$MODEL = EEM_Price::instance();
-		// no search params means attendee object already exists
+		// no search params means price object already exists
 		if ( ! $where_cols_n_values ) {
 			// search by combo of name, type, and amount
 			$where_cols_n_values = array( 'PRT_id'=>$this->_PRT_id, 'PRC_amount'=>$this->_PRC_amount, 'PRC_name'=>$this->_PRC_name );
