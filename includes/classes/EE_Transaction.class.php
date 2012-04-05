@@ -318,6 +318,8 @@ class EE_Transaction {
 			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
 		} else {
 			$results = $MODEL->insert ( $set_column_values );
+			$this->_TXN_ID = $results['new-ID'];
+			return $results;
 		}
 		
 		return $results;
