@@ -119,7 +119,7 @@ class EEM_Price extends EEM_Base {
 	 * 		retreive  a single price from db via it's id
 	 *
 	 * 		@access		public
-	 * 		@param		$PRC_id
+	 * 		@param		int 			$PRC_id
 	 *		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_price_by_id($PRC_id = FALSE) {
@@ -140,9 +140,9 @@ class EEM_Price extends EEM_Base {
 	/**
 	*		retreive a single price from db via it's column values
 	*
-	* 	@access		public
-	* 	@param		array
-	*		@return 	mixed		array on success, FALSE on fail
+	* 		@access		public
+	* 		@param		array		$where_cols_n_values
+	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_price( $where_cols_n_values = FALSE ) {
 
@@ -158,6 +158,110 @@ class EEM_Price extends EEM_Base {
 		}
 
 	}
+
+
+
+
+
+	/**
+	*		retreive all prices that are either taxes, or percentages, or global, or of a particular order #
+	* 
+	* 		@access		private 
+	* 		@param 		boolean 			$taxes  				true or false
+	* 		@param 		boolean 			$percentages  	true or false
+	* 		@param 		boolean 			$global  				true or false
+	* 		@param 		int 					$order  				the level or order that the prices are applied
+	* 		@return 		array				on success 		
+	* 		@return 		boolean			false on fail 		
+	*/
+	private function _get_all_prices_that_are( $taxes = FALSE, $percentages = FALSE, $global = FALSE, $order = FALSE ) {
+	
+		// you gimme nothing??? you get nothing!!!
+		if ( ! $taxes &&  ! $percentages &&  ! $global &&  ! $order ) {
+			return FALSE;
+		}
+	
+		// determine what we will be searching for via trickle down conditionals - it's just like PLINKO only better!
+		$what = $taxes ? 'PRT_is_tax' : ( $percentages ? 'PRT_is_percent' : ( $global ? 'PRT_is_global' : 'PRT_order' ) );
+		$value = $taxes ? $taxes : ( $percentages ? $percentages : ( $global ? $global : $order ) );
+		
+		global $wpdb;
+		// retreive prices
+		$SQL = 'SELECT prc.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prc.PRT_ID = prc.PRT_ID WHERE prt.'. $what .' = %d';	
+		if ( $prices = $wpdb->get_results( $wpdb->prepare( $SQL, $ID ))) {
+			return $this->_create_objects( $prices );
+		} else {
+			return FALSE;
+		}
+	
+	}
+
+
+
+
+
+	/**
+	*		retreive all prices that are taxes
+	* 
+	* 		@access		public
+	* 		@return 		array				on success 		
+	* 		@return 		boolean			false on fail 		
+	*/
+	public function get_all_prices_that_are_taxes() {
+		return $this->_get_all_prices_that_are( TRUE );	
+	}
+
+
+
+
+
+	/**
+	*		retreive all prices that are percentages
+	* 
+	* 		@access		public
+	* 		@return 		array				on success 		
+	* 		@return 		boolean			false on fail 		
+	*/
+	public function get_all_prices_that_are_percentages() {
+		return $this->_get_all_prices_that_are( FALSE, TRUE );	
+	}
+
+
+
+
+
+	/**
+	*		retreive all prices that are global
+	* 
+	* 		@access		public
+	* 		@return 		array				on success 		
+	* 		@return 		boolean			false on fail 		
+	*/
+	public function get_all_prices_that_are_global() {
+		return $this->_get_all_prices_that_are( FALSE, FALSE, TRUE );	
+	}
+
+
+
+
+
+	/**
+	*		retreive all prices that are of a particular order #
+	* 
+	* 		@access		public
+	* 		@param 		int 			$order the level or order that the prices are applied
+	* 		@return 		array				on success 		
+	* 		@return 		boolean			false on fail 		
+	*/
+	public function get_all_prices_that_are_order_nmbr( $order ) {
+		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, $order );	
+	}
+
+
+
+
+
+
 
 	/**
 	 * 		This function inserts table data
