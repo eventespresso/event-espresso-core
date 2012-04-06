@@ -37,6 +37,10 @@ function espresso_admin_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_menu.php');
+	
+	if (isset($org_options['espresso_dashboard_widget']) && $org_options['espresso_dashboard_widget'] == true && $espresso_premium == true){
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/dashboard_widget.php');
+	}
 
 	if (!empty($_REQUEST['page'])) {
 		if ($_REQUEST['page'] == 'events') {

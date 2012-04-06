@@ -15,7 +15,7 @@ function event_espresso_edit_list_widget() {
 		?>
 		<div id="message" class="updated fade">
 			<p><strong>
-		<?php _e('Event(s) have been permanently deleted.', 'event_espresso'); ?>
+		<?php _e('Event(s) have been deleted.', 'event_espresso'); ?>
 				</strong></p>
 		</div>
 		<?php
@@ -136,9 +136,7 @@ function event_espresso_edit_list_widget() {
 	add_action('wp_dashboard_setup', 'event_espresso_dashboard_widget');
 
 	function event_espresso_dashboard_widget() {
-		global $wp_meta_boxes, $org_options;
-		if (empty($org_options['espresso_dashboard_widget']))
-			return;
+		global $wp_meta_boxes;
 		wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
 		wp_add_dashboard_widget('todays_events_widget', __('Upcoming Events', 'event_espresso'), 'custom_dashboard_events');
 	}
