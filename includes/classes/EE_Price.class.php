@@ -24,23 +24,23 @@
 class EE_Price {
 
   /**
-  *		Price id
+  *		Price ID
 	*
 	* 	primary key
 	*
 	* 	@access	private
   *		@var int
   */
-	private $_PRC_id = FALSE;
+	private $_PRC_ID = FALSE;
 
 
   /**
-  *	Price Type id
+  *	Price Type ID
 	*
 	*	@access	private
   *	@var int
   */
-	private $_PRT_id = NULL;
+	private $_PRT_ID = NULL;
 
 
   /**
@@ -92,16 +92,16 @@ class EE_Price {
 	*  Attendee constructor
 	*
 	* @access 		public
-	* @param			int		 				$PRT_id						Price type id
+	* @param			int		 				$PRT_ID						Price type ID
 	* @param			float					$PRC_amount				Price amount
 	* @param			string 				$PRC_name					Price name
 	* @param			string				$PRC_desc					Price description
 	* @param	 		bool					$PRC_is_active		is the Price globally active
-	* @param			int 					$PRC_id						Price id
+	* @param			int 					$PRC_ID						Price ID
 	*/
-	public function __construct( $PRT_id=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_id=FALSE ) {
-		$this->_PRC_id 					= $PRC_id;
-		$this->_PRT_id					= $PRT_id;
+	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
+		$this->_PRC_ID 					= $PRC_ID;
+		$this->_PRT_ID					= $PRT_ID;
 		$this->_PRC_amount 			= $PRC_amount;
 		$this->_PRC_name				= $PRC_name;
 		$this->_PRC_desc				= $PRC_desc;
@@ -130,33 +130,34 @@ class EE_Price {
 		if (empty($this->_PRC_adjustments)) {
 			$this->_PRC_adjustments[] = array('name'=>'base price', 'amount'=>$this->_PRC_amount);
 		}
-		
+
 		if ($adj_is_percent) {
-			$adjustment = $this->_PRC_amount * $adj_amount;
-			$this->_PRC_adjustments[] = array('name'=>wp_strip_all_tags( $adj_name ), 'is_percent'=>true, 'percent_adjustment'=>"$adj_amount %", 'adjustment'=>$adjustment);
+			$percent_adj = $adj_amount;
+			$adj_amount = $this->_PRC_amount * $adj_amount;
+			$this->_PRC_adjustments[] = array('name'=>wp_strip_all_tags( $adj_name ), 'is_percent'=>true, 'percent_adjustment'=>"$percent_adj %", 'adjustment'=>$adj_amount);
 		} else {
 			$this->_PRC_adjustments[] = array('name'=>wp_strip_all_tags( $adj_name ), 'is_percent'=>false, 'adjustment'=>$adj_amount);
 		}
-		
+
 		$this->_PRC_amount = max($this->_PRC_amount+$adj_amount, 0);
 
 	}
 
 
 	/**
-	*		Set Price type id
+	*		Set Price type ID
 	*
 	* 		@access		public
-	*			@param		int			$PRT_id
+	*			@param		int			$PRT_ID
 	*/
-	public function set_type( $PRT_id = FALSE ) {
+	public function set_type( $PRT_ID = FALSE ) {
 
 		global $espresso_notices;
-		if ( ! $PRT_id ) {
+		if ( ! $PRT_ID ) {
 			$espresso_notices['errors'][] = 'No price type was supplied.';
 			return FALSE;
 		}
-		$this->_PRT_id = absint( $PRT_id );
+		$this->_PRT_ID = absint( $PRT_ID );
 		return TRUE;
 	}
 
@@ -243,7 +244,7 @@ class EE_Price {
 		 $MODEL = EEM_Price::instance();
 
 		$set_column_values = array(
-				'PRT_id'					=> $this->_PRT_id,
+				'PRT_ID'					=> $this->_PRT_ID,
 				'PRC_amount'			=> $this->_PRC_amount,
 				'PRC_name'				=> $this->_PRC_name,
 				'PRC_desc'				=> $this->_PRC_desc,
@@ -270,7 +271,7 @@ class EE_Price {
 	* 		@access		public
 	*/
 	public function update() {
-		return $this->_save_to_db( array( 'PRC_id' => $this->_PRC_id ));
+		return $this->_save_to_db( array( 'PRC_ID' => $this->_PRC_ID ));
 	}
 
 
@@ -288,11 +289,11 @@ class EE_Price {
 	}
 
 	/**
-	*		get Price id
+	*		get Price ID
 	* 		@access		public
 	*/
-	public function id() {
-		return $this->_PRC_id;
+	public function ID() {
+		return $this->_PRC_ID;
 	}
 
 
@@ -301,7 +302,7 @@ class EE_Price {
 	* 		@access		public
 	*/
 	public function type() {
-		return $this->_PRT_id;
+		return $this->_PRT_ID;
 	}
 
 
@@ -363,7 +364,7 @@ class EE_Price {
 		// no search params means price object already exists
 		if ( ! $where_cols_n_values ) {
 			// search by combo of name, type, and amount
-			$where_cols_n_values = array( 'PRT_id'=>$this->_PRT_id, 'PRC_amount'=>$this->_PRC_amount, 'PRC_name'=>$this->_PRC_name );
+			$where_cols_n_values = array( 'PRT_ID'=>$this->_PRT_ID, 'PRC_amount'=>$this->_PRC_amount, 'PRC_name'=>$this->_PRC_name );
 		}
 
 		if ( $price = $MODEL->get_price( $where_cols_n_values )) {

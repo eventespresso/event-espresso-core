@@ -42,7 +42,7 @@ class EEM_Price_Type extends EEM_Base {
 		$this->table_name = $wpdb->prefix . 'esp_price_type';
 		// array representation of the price type table and the data types for each field
 		$this->table_data_types = array(
-				'PRT_id' => '%d',
+				'PRT_ID' => '%d',
 				'PRT_name' => '%s',
 				'PRC_is_tax' => '%d',
 				'PRC_is_percent' => '%d',
@@ -87,7 +87,7 @@ class EEM_Price_Type extends EEM_Base {
 		}
 
 		foreach ($price_types as $price_type) {
-			$array_of_objects[$price->PRT_id] = new EE_Price_Type(
+			$array_of_objects[$price->PRT_ID] = new EE_Price_Type(
 							$price->PRT_name,
 							$price->PRT_is_tax,
 							$price->PRT_is_percent,
@@ -116,19 +116,19 @@ class EEM_Price_Type extends EEM_Base {
 	}
 
 	/**
-	 * 		retreive  a single price type from db via it's id
+	 * 		retreive  a single price type from db via it's ID
 	 *
 	 * 		@access		public
-	 * 		@param		$PRT_id
+	 * 		@param		$PRT_ID
 	 *		@return		mixed		array on success, FALSE on fail
 	 */
-	public function get_price_type_by_id($PRT_id = FALSE) {
+	public function get_price_type_by_ID($PRT_ID = FALSE) {
 
-		if (!$PRT_id) {
+		if (!$PRT_ID) {
 			return FALSE;
 		}
 		// retreive a particular price
-		$where_cols_n_values = array('PRT_id' => $PRC_id);
+		$where_cols_n_values = array('PRT_ID' => $PRC_ID);
 		if ($price_type = $this->select_row_where($where_cols_n_values)) {
 			$price_type_array = $this->_create_objects(array($price_type));
 			return array_shift($price_type_array);

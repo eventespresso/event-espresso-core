@@ -24,14 +24,14 @@
 class EE_Price_Type {
 
   /**
-  *		Price Type id
+  *		Price Type ID
 	*
 	* 	primary key
 	*
 	* 	@access	private
   *		@var int
   */
-	private $_PRT_id = FALSE;
+	private $_PRT_ID = FALSE;
 
 
   /**
@@ -83,15 +83,15 @@ class EE_Price_Type {
 	*  Attendee constructor
 	*
 	* @access 		public
-	* @param			int		 				$PRT_id						Price type id
+	* @param			int		 				$PRT_ID						Price type ID
 	* @param			string				$PRT_name					Price Type name
 	* @param			bool	 				$PRT_is_tax				is price type a tax?
 	* @param			bool					$PRT_is_percent		is price type a percent?
 	* @param	 		bool					$PRT_is_global		is price type a global?
 	* @param			int 					$PRT_order				Price Type order
 	*/
-	public function __construct( $PRT_name='', $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_id=FALSE ) {
-		$this->_PRT_id					= $PRT_id;
+	public function __construct( $PRT_name='', $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_ID=FALSE ) {
+		$this->_PRT_ID					= $PRT_ID;
 		$this->_PRT_name				= $PRT_name;
 		$this->_PRT_is_tax			= $PRT_is_tax;
 		$this->_PRT_is_percent	= $PRT_is_percent;
@@ -231,7 +231,7 @@ class EE_Price_Type {
 	* 		@access		public
 	*/
 	public function update() {
-		return $this->_save_to_db( array( 'PRT_id' => $this->_PRT_id ));
+		return $this->_save_to_db( array( 'PRT_ID' => $this->_PRT_ID ));
 	}
 
 
@@ -250,11 +250,11 @@ class EE_Price_Type {
 
 
 	/**
-	*		get Price Type id
+	*		get Price Type ID
 	* 		@access		public
 	*/
-	public function id() {
-		return $this->_PRT_id;
+	public function ID() {
+		return $this->_PRT_ID;
 	}
 
 
