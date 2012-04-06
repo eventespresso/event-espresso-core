@@ -188,7 +188,7 @@ class EEM_Price extends EEM_Base {
 		global $wpdb;
 		// retreive prices
 		$SQL = 'SELECT prc.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prc.PRT_ID = prc.PRT_ID WHERE prt.'. $what .' = %d';
-		if ( $prices = $wpdb->get_results( $wpdb->prepare( $SQL, $ID ))) {
+		if ( $prices = $wpdb->get_results( $wpdb->prepare( $SQL, $value ))) {
 			return $this->_create_objects( $prices );
 		} else {
 			return FALSE;
@@ -265,10 +265,13 @@ class EEM_Price extends EEM_Base {
 	 *	@return array of price objects
 	 */
 	public function get_prices_by_event_id( $event_id = FALSE ) {
-		if (!event_id) {
+		if (!$event_id) {
 			return FALSE;
 		}
+		$SQL = "SELECT * FROM " . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prc.PRT_ID = prc.PRT_ID JOIN ' . $wpdb->prefix . 'esp_event_price ev_pr  ON ev_pr.PRC_id=prc.PRC_id WHERE ev_pr.EVT_id = %d';
+		if ( $prices = $wpdb->get_results( $wpdb->prepare( $SQL, $event_id ))) {
 
+		}
 	}
 
 

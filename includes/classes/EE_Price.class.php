@@ -83,9 +83,18 @@ class EE_Price {
   *	Price adjustments
 	*
 	*	@access	private
-  *	@var array ('PRC_name' => amount)
+  *	@var array
   */
 	private $_PRC_adjustments = NULL;
+
+
+	/**
+	 *	Price Type object
+	 *
+	 *	@access private
+	 *	@var object
+	 */
+	private $_Price_Type = NULL;
 
 
 	/**
@@ -99,7 +108,7 @@ class EE_Price {
 	* @param	 		bool					$PRC_is_active		is the Price globally active
 	* @param			int 					$PRC_ID						Price ID
 	*/
-	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
+	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_ID=FALSE, $Price_Type=FALSE ) {
 		$this->_PRC_ID 					= $PRC_ID;
 		$this->_PRT_ID					= $PRT_ID;
 		$this->_PRC_amount 			= $PRC_amount;
@@ -110,6 +119,14 @@ class EE_Price {
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price.model.php');
+
+		if (!Price_Type) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price_Type.model.php');
+			$PRT = EEM_Price_Type::instance();
+			$this->_Price_Type = EEM_Price_Type::get_price_type_by_ID($PRT_ID);
+		} else {
+			$this->_Price_Type = $Price_Type;
+		}
 	}
 
 
@@ -158,6 +175,7 @@ class EE_Price {
 			return FALSE;
 		}
 		$this->_PRT_ID = absint( $PRT_ID );
+		$this->_Price_Type = EEM_Price_Type::get_price_type_by_ID($this->_PRT_ID);
 		return TRUE;
 	}
 
@@ -280,17 +298,18 @@ class EE_Price {
 
 
 	/**
-	*		insert new db record
+	*	insert new db record
 	*
-	* 		@access		public
+	* @access		public
 	*/
 	public function insert() {
 		return $this->_save_to_db();
 	}
 
 	/**
-	*		get Price ID
-	* 		@access		public
+	*	get Price ID
+	* @access		public
+	* @return type int
 	*/
 	public function ID() {
 		return $this->_PRC_ID;
@@ -298,8 +317,9 @@ class EE_Price {
 
 
 	/**
-	*		get Price type
-	* 		@access		public
+	*	get Price type
+	* @access		public
+	* @return type int
 	*/
 	public function type() {
 		return $this->_PRT_ID;
@@ -308,8 +328,9 @@ class EE_Price {
 
 
 	/**
-	*		get Price Amount
-	* 		@access		public
+	*	get Price Amount
+	* @access		public
+	* @return type float
 	*/
 	public function amount() {
 		return $this->_PRC_amount;
@@ -318,8 +339,9 @@ class EE_Price {
 
 
 	/**
-	*		get Price Name
-	* 		@access		public
+	*	get Price Name
+	* @access		public
+	* @return type string
 	*/
 	public function name() {
 		return $this->_PRC_name;
@@ -328,8 +350,9 @@ class EE_Price {
 
 
 	/**
-	*		get Price description
-	* 		@access		public
+	*	get Price description
+	* @access		public
+	* @return type string
 	*/
 	public function desc() {
 		return $this->_PRC_desc;
@@ -338,8 +361,9 @@ class EE_Price {
 
 
 	/**
-	*		get is Price globally active?
-	* 		@access		public
+	*	get is Price globally active?
+	* @access		public
+	* @return type bool
 	*/
 	public function is_active() {
 		return $this->_PRC_is_active;
@@ -349,9 +373,55 @@ class EE_Price {
 	/**
 	 *	get adjustments array
 	 *	@access public
+	 * @return type array
 	 */
 	public function adjustments() {
 		return $this->_PRC_adjustments;
+	}
+
+	/**
+	 *	get type name
+	 *	@access public
+	 *	@return type string
+	 */
+	public function type_name() {
+		return $this->_Price_Type->name();
+	}
+
+	/**
+	 *	get is type tax
+	 * @access public
+	 * @return type bool
+	 */
+	public function type_is_tax() {
+		return $this->_Price_Type->is_tax();
+	}
+
+	/**
+	 * get is type percent
+	 * @access public
+	 * @return type bool
+	 */
+	public function type_is_percent() {
+		return $this->_Price_Type->is_percent();
+	}
+
+	/**
+	 * get is type global
+	 * @access public
+	 * @return type bool
+	 */
+	public function type_is_global() {
+		return $this->_Price_Type->is_global();
+	}
+
+	/**
+	 * get type order
+	 * @access public
+	 * @return type int
+	 */
+	public function type_order() {
+		return $this->_Price_Type->order();
 	}
 
 	/**
