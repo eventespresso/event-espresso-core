@@ -84,11 +84,12 @@ function event_espresso_time_editor($event_id = 0) {
 				</p>
 				<p>
 					<label for="add-end-time"><?php _e('End', 'event_espresso'); ?></label>
-					<input size="10"  type="text" id="add-end-time" name="end_time[]" /> <?php
+					<input size="10"  type="text" id="add-end-time" name="end_time[]" /> 
+		<?php
 		if (isset($org_options['time_reg_limit']) && $org_options['time_reg_limit']) {
-			_e('Qty', 'event_espresso');
-				?><input size="3"  type="text" name="time_qty[]" />
-					</p><?php }
+			echo '<p><label for="time_qty">'.__('Qty', 'event_espresso').'</label>';
+				?><input size="3"  type="text" name="time_qty[]" /></p>
+	<?php }
 			?>
 			</li>
 			<?php
@@ -106,7 +107,7 @@ function event_espresso_time_editor($event_id = 0) {
 		var counter = <?php echo $time_counter++ ?>;
 		function addTimeInput(divName){
 			var newdiv = document.createElement('li');
-			newdiv.innerHTML = "<p><label for='add-start-time-"+ (counter) +"'><?php _e('Start', 'event_espresso'); ?> " + (counter) + "</label> <input type='text'id='add-start-time-"+ (counter) +"' size='10' name='start_time[]'></p><p> <label for='add-end-time-"+ (counter) +"'> <?php _e('End', 'event_espresso'); ?></label> <input type='text' id='add-end-time-"+ (counter) +"' size='10' name='end_time[]'> <?php echo $org_options['time_reg_limit'] ? __('Qty ', 'event_espresso') . " <input type='text'  size='3' name='time_qty[]'>" : ''; ?></p><input class='remove-this xtra-time' id='remove-added-time' type='button' value='Remove' onclick='this.parentNode.parentNode.removeChild(this.parentNode);'/>";
+			newdiv.innerHTML = "<p><label for='add-start-time-"+ (counter) +"'><?php _e('Start', 'event_espresso'); ?> " + (counter) + "</label> <input type='text'id='add-start-time-"+ (counter) +"' size='10' name='start_time[]'></p><p> <label for='add-end-time-"+ (counter) +"'> <?php _e('End', 'event_espresso'); ?></label> <input type='text' id='add-end-time-"+ (counter) +"' size='10' name='end_time[]'> <?php echo $org_options['time_reg_limit'] ? "<p><label for='time_qty'>".__('Qty ', 'event_espresso') . " <input type='text'  size='3' name='time_qty[]'>" : ''; ?></p><input class='remove-this xtra-time' id='remove-added-time' type='button' value='Remove' onclick='this.parentNode.parentNode.removeChild(this.parentNode);'/>";
 			document.getElementById(divName).appendChild(newdiv);
 			counter++;
 		}
