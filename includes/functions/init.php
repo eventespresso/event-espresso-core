@@ -30,17 +30,14 @@ function espresso_load_admin_ajax_callbacks() {
 }
 
 function espresso_admin_init() {
-	global $org_options;
+	global $org_options, $espresso_premium;
 	if (!is_user_logged_in())
 		return;
-	global $espresso_premium;
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_menu.php');
-	
-	if (isset($org_options['espresso_dashboard_widget']) && $org_options['espresso_dashboard_widget'] == true && $espresso_premium == true){
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/dashboard_widget.php');
-	}
+
+	add_action('wp_dashboard_setup', 'espresso_dashboard_init');
 
 	if (!empty($_REQUEST['page'])) {
 		if ($_REQUEST['page'] == 'events') {
@@ -362,5 +359,14 @@ function espresso_add_rewrite_rules() {
 function espresso_flush_rewrite_rules() {
 	if (is_admin() && isset($_REQUEST['page']) && $_REQUEST['page'] == 'event_espresso') {
 		flush_rewrite_rules();
+	}
+}
+
+function espresso_dashboard_init() {
+	global $org_options, $espresso_premium;
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/dashboard_widget.php');
+	wp_add_dashboard_widget('espresso_news_dashboard_widget', 'Event Espresso News', 'espresso_news_dashboard_widget_function');
+	if (!empty($org_options['espresso_dashboard_widget']) && $espresso_premium) {
+		event_espresso_dashboard_widget();
 	}
 }

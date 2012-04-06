@@ -257,10 +257,19 @@ class EEM_Price extends EEM_Base {
 		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, $order );
 	}
 
+	/**
+	 *	get all the final computed prices for an event
+	 *
+	 *	@access public
+	 *	@param int $event_id
+	 *	@return array of price objects
+	 */
+	public function get_prices_by_event_id( $event_id = FALSE ) {
+		if (!event_id) {
+			return FALSE;
+		}
 
-
-
-
+	}
 
 
 	/**

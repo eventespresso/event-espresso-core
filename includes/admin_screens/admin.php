@@ -444,17 +444,6 @@ function event_espresso_admin_news($url) {
 	return wp_remote_retrieve_body(wp_remote_get($url));
 }
 
-//Create a dashboard widget for Event Espresso News
-function espresso_news_dashboard_widget_function() {
-	wp_widget_rss_output('http://eventespresso.com/feed/', array('items' => 5, 'show_author' => 1, 'show_date' => 1, 'show_summary' => 0));
-}
-
-function espresso_news_dashboard_widgets() {
-	wp_add_dashboard_widget('espresso_news_dashboard_widget', 'Event Espresso News', 'espresso_news_dashboard_widget_function');
-}
-
-add_action('wp_dashboard_setup', 'espresso_news_dashboard_widgets');
-
 //Displays what email tags are available
 function event_espresso_custom_email_info() {
 	?>

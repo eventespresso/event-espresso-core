@@ -91,58 +91,68 @@ function event_espresso_edit_list_widget() {
 						$registration_startT = $result->registration_startT;
 						?>
 						<tr>
-							<td class="post-title page-title column-title"><strong><a class="row-title" href="admin.php?page=events&action=edit&event_id=<?php echo $event_id ?>"><?php echo $event_name ?></a></strong>
-								<div class="row-actions"><span><a href="#">View</a> | </span><span class='edit'><a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class='delete'><a onclick="return confirmDelete();" href='admin.php?page=events&amp;action=delete&amp;event_id=<?php echo $event_id ?>'><?php _e('Delete', 'event_espresso'); ?></a></span> | <span><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php _e('Attendees', 'event_espresso'); ?></a> | </span><span><a href="#"><?php _e('Export', 'event_espresso'); ?></a></span></div></td>
+							<td class="post-title page-title column-title">
+								<strong>
+									<a class="row-title" href="admin.php?page=events&action=edit&event_id=<?php echo $event_id ?>"><?php echo $event_name ?>
+									</a>
+								</strong>
+								<div class="row-actions">
+									<span><a href="#">View</a> | </span>
+									<span class='edit'><a href="admin.php?page=events&amp;action=edit&amp;event_id=<?php echo $event_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class='delete'><a onclick="return confirmDelete();" href='admin.php?page=events&amp;action=delete&amp;event_id=<?php echo $event_id ?>'><?php _e('Delete', 'event_espresso'); ?></a></span> | <span><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php _e('Attendees', 'event_espresso'); ?></a> | </span><span><a href="#"><?php _e('Export', 'event_espresso'); ?></a></span></div>
+							</td>
 							<td class="author column-author"><?php echo event_date_display($start_date, get_option('date_format')) ?> <br />
-			<?php echo event_espresso_get_time($event_id, 'start_time') ?></td>
+								<?php echo event_espresso_get_time($event_id, 'start_time') ?></td>
 							<td class="date column-date"><?php echo $status['display'] ?></td>
 							<td align="center" class="author column-attendees"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees'); ?></a></td>
 
 						</tr>
-					<?php
+						<?php
 					}
 				}
 				?>
 
 			</tbody>
-		</table><p>&nbsp;</p>
-		<div style="clear:both"></div>
-		<script>
+		</table>
+	</form>
+	<p>&nbsp;</p>
+	<div style="clear:both"></div>
+	<script>
 
-			jQuery(document).ready(function($) {
+		jQuery(document).ready(function($) {
 
-				var mytable = $('#table').dataTable( {
-					"bStateSave": true,
-					"sPaginationType": "full_numbers",
-					"oLanguage": {	"sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong>",
-						"sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" },
-					"aoColumns": [
-						null,
-						null,
-						null,
-						null
-					]
-
-				} );
+			var mytable = $('#table').dataTable( {
+				"bStateSave": true,
+				"sPaginationType": "full_numbers",
+				"oLanguage": {	"sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong>",
+					"sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" },
+				"aoColumns": [
+					null,
+					null,
+					null,
+					null
+				]
 
 			} );
-		</script>
 
-		<div style="clear:both"></div>
-		<?php
-	}
+		} );
+	</script>
 
-// Init WP Event Dashboard Widget
-	add_action('wp_dashboard_setup', 'event_espresso_dashboard_widget');
+	<div style="clear:both"></div>
+	<?php
+}
 
-	function event_espresso_dashboard_widget() {
-		global $wp_meta_boxes;
-		wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
-		wp_add_dashboard_widget('todays_events_widget', __('Upcoming Events', 'event_espresso'), 'custom_dashboard_events');
-	}
+function event_espresso_dashboard_widget() {
+	wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
+	wp_enqueue_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css'); //Events core style
+	wp_add_dashboard_widget('todays_events_widget', __('Upcoming Events', 'event_espresso'), 'custom_dashboard_events');
+}
 
-	function custom_dashboard_events() {
-		event_espresso_edit_list_widget();
-		global $how_many_events;
-		echo '<p>A quick overview of ' . $how_many_events . '.  For a complete list of events visit the <a href="admin.php?page=events">Events Overview</a> page.</p>';
-	}
+function custom_dashboard_events() {
+	event_espresso_edit_list_widget();
+	global $how_many_events;
+	echo '<p>A quick overview of ' . $how_many_events . '.  For a complete list of events visit the <a href="admin.php?page=events">Events Overview</a> page.</p>';
+}
+
+function espresso_news_dashboard_widget_function() {
+	wp_widget_rss_output('http://eventespresso.com/feed/', array('items' => 5, 'show_author' => 1, 'show_date' => 1, 'show_summary' => 0));
+}
