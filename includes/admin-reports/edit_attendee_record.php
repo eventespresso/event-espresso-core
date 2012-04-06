@@ -620,13 +620,13 @@ function edit_attendee_record() {
 					  </strong>
 					  <table width="100%" border="0">
 						<tr>
-						  <td width="25%" align="left" valign="top"><label>
+						  <td width="33%" align="left" valign="top"><label>
 							  <?php _e( 'Amount:', 'event_espresso' ); ?>
 							</label></td>
-						  <td width="25%" align="left" valign="top"><label>
+						  <td width="33%" align="left" valign="top"><label>
 							  <?php _e( '# Tickets:', 'event_espresso' ); ?>
 							</label></td>
-						  <td width="50%" align="left" valign="top"><label>
+						  <td width="34%" align="left" valign="top"><label>
 							  <?php _e( 'Total:', 'event_espresso' ); ?>
 							</label></td>
 						</tr>
