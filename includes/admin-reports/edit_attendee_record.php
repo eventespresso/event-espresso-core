@@ -118,7 +118,7 @@ function edit_attendee_record() {
 			$phone = isset($_POST['phone']) ? $_POST['phone']:'';
 			$email = isset($_POST['email']) ? $_POST['email']:'';
 			$event_id = isset($_POST['event_id']) ? $_POST['event_id']:'';
-			$txn_type = isset($_POST['txn_type']) ? $_POST['txn_type']:'';
+			#$txn_type = isset($_POST['txn_type']) ? $_POST['txn_type']:'';
 
 			$_POST['price_option'] = !empty($_POST['member_price_option']) ? $_POST['member_price_option'] : $_POST['price_option'];
 
@@ -126,7 +126,7 @@ function edit_attendee_record() {
 			//$price_id = $price_options[0];
 			$price_type = $price_options[1];
 
-			$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET fname='$fname', lname='$lname', address='$address',address2='$address2', city='$city', state='$state', zip='$zip', phone='$phone', email='$email', txn_type='$txn_type' ";
+			$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET fname='$fname', lname='$lname', address='$address',address2='$address2', city='$city', state='$state', zip='$zip', phone='$phone', email='$email'";//, txn_type='$txn_type' ";
 
 			if ( isset($price_type) && !empty($price_type) )
 				$sql .= ", price_option='$price_type' ";
