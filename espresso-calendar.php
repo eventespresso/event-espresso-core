@@ -350,8 +350,7 @@ function espresso_calendar_do_stuff($show_expired) {
 	}
 	//Debug:
 	//Print the results of the code above
-	var_dump($event_meta);
-	 echo json_encode($events);
+	// echo json_encode($events);
 }
 
 add_action('action_hook_espresso_calendar_do_stuff', 'espresso_calendar_do_stuff');
@@ -373,7 +372,6 @@ if (!function_exists('espresso_calendar')) {
 		$event_category_id = "{$event_category_id}";
 		$show_expired = "{$show_expired}";
 		$cal_view = "{$cal_view}";
-
 		do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
 
 		//Start the output of the calendar
@@ -678,7 +676,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 					if ( isset($category_id) ) {
 						$event_category_id = $category_id;
 					}
-					do_action('action_hook_espresso_calendar_do_stuff');
+					do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
 					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
 					//var_dump($events);
 					echo $espresso_calendar_widget;
