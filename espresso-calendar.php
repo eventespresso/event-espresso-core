@@ -231,26 +231,7 @@ function espresso_calendar_do_stuff($show_expired) {
 	//echo '<p>$sql - '.$sql.'</p>';
 
 	$events = array();
-
-	switch ($type) {
-		case 'all':
-			$events_data = get_transient('all_espresso_calendar_events');
-			if (false === $events_data) {
-				// if transient not set, do this!
-				// create the data that needs to be saved.
-				$events_data = $wpdb->get_results($sql);
-
-				// save the newly created transient value
-				// 60 seconds * 60 minutes * 24 hours = 1 day
-				set_transient('all_espresso_calendar_events', $events_data, 60 * 60 * 24);
-			}
-			break;
-		case 'cat':
-		default:
-			$events_data = $wpdb->get_results($sql);
-			break;
-	}
-
+	$events_data = $wpdb->get_results($sql);
 
 	foreach ($events_data as $event) {
 
