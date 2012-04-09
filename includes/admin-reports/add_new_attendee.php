@@ -94,9 +94,9 @@ function add_new_attendee($event_id) {
 								<?php
 								$time_selected = '';
 								//This block of code is used to display the times of an event in either a dropdown or text format.
-								if (!empty($time_selected) && $time_selected == true) {//If the customer is coming from a page where the time was preselected.
+								if (!empty($time_selected) && $time_selected) {//If the customer is coming from a page where the time was preselected.
 									echo event_espresso_display_selected_time($time_id); //Optional parameters start, end, default
-								} else if ($time_selected == false) {
+								} else if (!$time_selected) {
 									echo event_espresso_time_dropdown($event_id);
 								}//End time selected
 								?>
@@ -113,7 +113,7 @@ function add_new_attendee($event_id) {
 							echo event_espresso_add_question_groups($question_groups);
 
 							//Coupons
-							if (function_exists('event_espresso_coupon_registration_page' && $use_coupon_code)) {
+							if (function_exists('event_espresso_coupon_registration_page') && !empty($use_coupon_code)) {
 								echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
 							}//End coupons display
 							//Groupons

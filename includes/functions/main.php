@@ -878,7 +878,7 @@ if (!function_exists('event_espresso_add_question_groups')) {
 							$html .= $question->show_group_description != 0 && true == $question->group_description ? "<p class='quest-group-descript'>$question->group_description</p>" : '';
 							$group_name = $question->group_name;
 						}
-
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 						$html .= event_form_build($question, $answer, $event_id, $multi_reg, $meta);
 					}
 					$html .= $counter == $num_rows ? '</div>' : '';

@@ -678,32 +678,32 @@ function events_data_tables_install() {
 
 	$table_name = "esp_event_price";
 	$sql = "EVT_id int(11) DEFAULT NULL,
-				PRC_id int(11) DEFAULT NULL,
+				PRC_ID int(11) DEFAULT NULL,
 				is_active TINYINT(1) NOT NULL DEFAULT '0',
-				PRIMARY KEY  (EVT_id, PRC_id)";
+				PRIMARY KEY  (EVT_id, PRC_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 	$table_name = "esp_price";
-	$sql = "PRC_id int(11) NOT NULL AUTO_INCREMENT,
-				PRT_id int(7) DEFAULT NULL,
+	$sql = "PRC_ID int(11) NOT NULL AUTO_INCREMENT,
+				PRT_ID int(7) DEFAULT NULL,
 				PRC_amount decimal(20,2) NOT NULL DEFAULT '0.00',
 				PRC_name varchar(45) DEFAULT NULL,
 				PRC_desc text,
 				PRC_is_active TINYINT(1) NOT NULL DEFAULT '0',
-				PRIMARY KEY  (PRC_id),
-			  	KEY PRT_id (PRT_id),
+				PRIMARY KEY  (PRC_ID),
+			  	KEY PRT_ID (PRT_ID),
 					KEY PRC_amount (PRC_amount),
 					KEY PRC_name (PRC_name)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 	$table_name = "esp_price_type";
-	$sql = "PRT_id int(7) NOT NULL AUTO_INCREMENT,
+	$sql = "PRT_ID int(7) NOT NULL AUTO_INCREMENT,
 				PRT_name varchar(45) DEFAULT NULL,
 				PRT_is_tax TINYINT(1) NOT NULL DEFAULT '0',
 				PRT_is_percent TINYINT(1) NOT NULL DEFAULT '0',
 				PRT_is_global TINYINT(1) NOT NULL DEFAULT '0',
 				PRT_order int(7) DEFAULT '0',
-				PRIMARY KEY  (PRT_id),
+				PRIMARY KEY  (PRT_ID),
 			  	KEY PRT_name (PRT_name)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
@@ -1213,8 +1213,8 @@ function espresso_update_active_gateways() {
 
 function espresso_default_prices() {
 	global $wpdb;
-	$sql = "INSERT INTO `" . ESP_PRICE_TYPE . "` (`PRT_id`, `PRT_name`, `PRT_is_tax`, `PRT_is_percent`, `PRT_is_global`, `PRT_order`) VALUES (NULL, 'Base Ticket Price', '0', '0', '0', '0');";
+	$sql = "INSERT INTO `" . ESP_PRICE_TYPE . "` (`PRT_ID`, `PRT_name`, `PRT_is_tax`, `PRT_is_percent`, `PRT_is_global`, `PRT_order`) VALUES (NULL, 'Base Ticket Price', '0', '0', '0', '0');";
 	$wpdb->query($sql);
-	$sql = "INSERT INTO `" . ESP_PRICE_TABLE . "` (`PRC_id`, `PRT_id`, `PRC_amount`, `PRC_name`, `PRC_desc`, `PRC_is_active`) VALUES (NULL, '1', '20.00', 'General Admission', NULL, '0');";
+	$sql = "INSERT INTO `" . ESP_PRICE_TABLE . "` (`PRC_ID`, `PRT_ID`, `PRC_amount`, `PRC_name`, `PRC_desc`, `PRC_is_active`) VALUES (NULL, '1', '20.00', 'General Admission', NULL, '0');";
 	$wpdb->query($sql);
 }
