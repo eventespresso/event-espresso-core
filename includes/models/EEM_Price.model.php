@@ -25,6 +25,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 class EEM_Price extends EEM_Base {
 
 	// private instance of the Price object
@@ -50,12 +51,12 @@ class EEM_Price extends EEM_Base {
 				'PRC_is_active' => '%d');
 		// load Price object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price_Type.model.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
-		$this->_price_types = EEM_Price_Type::get_all_price_types();
+		$this->_price_types = $PRT->get_all_price_types();
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Encryption.class.php');
-		$ENCRYPT = EEM_Encryption::instance();
-		$this->_type_key = EEM_Encryption::generate_random_string();
+		$ENCRYPT = EE_Encryption::instance();
+		$this->_type_key = $ENCRYPT->generate_random_string();
 
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -274,6 +275,7 @@ class EEM_Price extends EEM_Base {
 	 *	@return array of price objects
 	 */
 	public function get_prices_by_event_id( $event_id = FALSE ) {
+		global $wpdb;
 		if (!$event_id) {
 			return FALSE;
 		}

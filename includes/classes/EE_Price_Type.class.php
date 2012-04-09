@@ -99,7 +99,7 @@ class EE_Price_Type {
 		$this->_PRT_order				= $PRT_order;
 
 		// load Price model object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price_Type.model.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	}
 
 

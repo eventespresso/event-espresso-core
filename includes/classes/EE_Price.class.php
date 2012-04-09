@@ -130,7 +130,7 @@ class EE_Price {
 
 
 		// load Price model object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price.model.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	}
 
 

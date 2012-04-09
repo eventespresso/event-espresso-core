@@ -30,6 +30,7 @@ class EEM_Price_Type extends EEM_Base {
 	// private instance of the Price Type object
 	private static $_instance = NULL;
 
+
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
@@ -44,10 +45,10 @@ class EEM_Price_Type extends EEM_Base {
 		$this->table_data_types = array(
 				'PRT_ID' => '%d',
 				'PRT_name' => '%s',
-				'PRC_is_tax' => '%d',
-				'PRC_is_percent' => '%d',
-				'PRC_is_global' => '%d',
-				'PRC_order' => '%d');
+				'PRT_is_tax' => '%d',
+				'PRT_is_percent' => '%d',
+				'PRT_is_global' => '%d',
+				'PRT_order' => '%d');
 		// load Price_Type object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price_Type.class.php');
 
@@ -87,12 +88,12 @@ class EEM_Price_Type extends EEM_Base {
 		}
 
 		foreach ($price_types as $price_type) {
-			$array_of_objects[$price->PRT_ID] = new EE_Price_Type(
-							$price->PRT_name,
-							$price->PRT_is_tax,
-							$price->PRT_is_percent,
-							$price->PRT_is_global,
-							$price->PRT_order
+			$array_of_objects[$price_type->PRT_ID] = new EE_Price_Type(
+							$price_type->PRT_name,
+							$price_type->PRT_is_tax,
+							$price_type->PRT_is_percent,
+							$price_type->PRT_is_global,
+							$price_type->PRT_order
 			);
 			return $array_of_objects;
 		}
