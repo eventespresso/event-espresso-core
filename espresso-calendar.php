@@ -317,14 +317,12 @@ function espresso_calendar_do_stuff($show_expired) {
 		// Add thumb to eventArray
 		$eventArray['event_img_thumb'] = '';
 		if ($espresso_calendar['enable_calendar_thumbs'] == 'true') {
-			if (!empty($event_meta['event_thumbnail_url'])) {
+			if (isset($event_meta['event_thumbnail_url'])) {
 				$calendar_thumb = $event_meta['event_thumbnail_url'];
 				//Debug:
 				//echo '<a href="' . $registration_url . '"><img class="event-id-'. $event->id . '" src="'. $calendar_thumb . '" alt="" title="' . $ee_event_title . '" / ></a>';
 				if (!empty($event_meta['display_thumb_in_calendar'])) {
-					if ($event_meta['display_thumb_in_calendar'] == 'Y') {
-						$eventArray['event_img_thumb'] = $calendar_thumb;
-					}
+					$eventArray['event_img_thumb'] = $calendar_thumb;
 				}
 			}
 		}
@@ -352,6 +350,7 @@ function espresso_calendar_do_stuff($show_expired) {
 	}
 	//Debug:
 	//Print the results of the code above
+	var_dump($event_meta);
 	 echo json_encode($events);
 }
 
@@ -374,7 +373,6 @@ if (!function_exists('espresso_calendar')) {
 		$event_category_id = "{$event_category_id}";
 		$show_expired = "{$show_expired}";
 		$cal_view = "{$cal_view}";
-		//$ee_img_size = '';
 
 		do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
 
