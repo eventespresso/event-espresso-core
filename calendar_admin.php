@@ -39,7 +39,6 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['espresso_calendar_weekends'] = $_POST['espresso_calendar_weekends'];
 		$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
 		$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
-		$espresso_calendar['calendar_thumb_size'] = (!empty($_POST['calendar_thumb_size'])) ? $_POST['calendar_thumb_size'] : $espresso_calendar['calendar_thumb_size'];
 		$espresso_calendar['show_tooltips'] = $_POST['show_tooltips'];
 		$espresso_calendar['show_time'] = $_POST['show_time'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
@@ -66,17 +65,6 @@ function espresso_calendar_config_mnu() {
 		$notices['updates'][] = __('The calendar settings were reset ', 'event_espresso');
 	}
 	$espresso_calendar = get_option('espresso_calendar_settings');
-
-	// checks value of calendar thumb size to set radio inputs
-	function espresso_is_selected($name) {
-		global $espresso_calendar;
-		$input_val = $name;
-		if ($espresso_calendar['calendar_thumb_size'] !== $input_val)
-			return false;
-		else
-			echo'checked="checked"';
-		return;
-	}
 
 	$values = array(
 			array('id' => 'false', 'text' => __('No', 'event_espresso')),
@@ -268,27 +256,6 @@ function espresso_calendar_config_mnu() {
 														</th>
 														<td><?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"'); ?>
 															</li></td>
-													</tr>
-													<tr>
-													<tr id="thumbnail-sizes">
-														<th>
-															<?php _e('Thumbnail Size', 'event_espresso'); ?>
-															<?php echo apply_filters('filter_hook_espresso_help', 'calendar-thumb-sizes'); ?>
-														</th>
-														<td><input id="calendar-thumb-size-sml" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('small') ?> value="small" />
-															<label for="calendar-thumb-size-sml">
-																<?php _e('Small (50px high)', 'event_espresso') ?>
-															</label>
-															<br />
-															<input id="calendar-thumb-size-med" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('medium') ?> value="medium" />
-															<label for="calendar-thumb-size-med">
-																<?php _e('Medium (100px high)', 'event_espresso') ?>
-															</label>
-															<br />
-															<input id="calendar-thumb-size-lrg" type="radio" name="calendar_thumb_size" <?php espresso_is_selected('large') ?> value="large" />
-															<label for="calendar-thumb-size-lrg">
-																<?php _e('Large (150px high)', 'event_espresso') ?>
-															</label></td>
 													</tr>
 												</tbody>
 											</table>

@@ -57,7 +57,6 @@ function espresso_calendar_install() {
 			'espresso_calendar_height' => '650',
 			'espresso_calendar_width' => '2',
 			'enable_calendar_thumbs' => false,
-			'calendar_thumb_size' => 'small',
 			'show_tooltips' => 'Y',
 			'espresso_use_pickers' => false,
 			'ee_event_background' => 'ffffff',
@@ -189,12 +188,6 @@ if ($espresso_calendar['espresso_use_pickers'] == 'true') {
 
 function espresso_calendar_do_stuff($show_expired) {
 	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
-		// grab the thumbnail size from calendar options settings
-		if (empty($espresso_calendar['calendar_thumb_size'])) {
-			$ee_img_size = 'small';
-		} else {
-			$ee_img_size = $espresso_calendar['calendar_thumb_size'];
-		}
 
 	//Build the SQL to run
 	//Get the categories
