@@ -1383,7 +1383,7 @@ label.error {
 	margin: 8px 0;
 }
 select.small, td.small select, td.small input {width:25px;}
-select.med, td.med select, td.med input {width: 100px}
+select.med, td.med select, td.med input {width: 55px}
 select.wide, td.wide select, td.wide input {width: 175px;}
 
 /** adjust 'Chosen' form control script controls **/
