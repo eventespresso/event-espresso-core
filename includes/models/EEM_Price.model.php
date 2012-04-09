@@ -50,6 +50,12 @@ class EEM_Price extends EEM_Base {
 				'PRC_is_active' => '%d');
 		// load Price object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price_Type.model.php');
+		$PRT = EEM_Price_Type::instance();
+		$this->_price_types = EEM_Price_Type::get_all_price_types();
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Encryption.class.php');
+		$ENCRYPT = EEM_Encryption::instance();
+		$this->_type_key = EEM_Encryption::generate_random_string();
 
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -88,11 +94,14 @@ class EEM_Price extends EEM_Base {
 
 		foreach ($prices as $price) {
 			$array_of_objects[$price->PRC_ID] = new EE_Price(
-											$price->PRT_ID,
-											$price->PRC_amount,
-											$price->PRC_name,
-											$price->PRC_desc,
-											$price->PRC_is_active
+							$price->PRT_ID,
+							$price->PRC_amount,
+							$price->PRC_name,
+							$price->PRC_desc,
+							$price->PRC_is_active,
+							$this->_price_types[$price->PRT_ID],
+							$this->_type_key,
+							$price->PRC_ID
 			);
 			return $array_of_objects;
 		}
@@ -268,12 +277,45 @@ class EEM_Price extends EEM_Base {
 		if (!$event_id) {
 			return FALSE;
 		}
-		$SQL = "SELECT * FROM " . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prc.PRT_ID = prc.PRT_ID JOIN ' . $wpdb->prefix . 'esp_event_price ev_pr  ON ev_pr.PRC_id=prc.PRC_id WHERE ev_pr.EVT_id = %d';
-		if ( $prices = $wpdb->get_results( $wpdb->prepare( $SQL, $event_id ))) {
-
+		$SQL = "SELECT * FROM " . $this->table_name . ' prc JOIN ' . $wpdb->prefix . 'esp_event_price ev_pr  ON ev_pr.PRC_id=prc.PRC_id WHERE ev_pr.EVT_id = %d';
+		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $event_id ))) {
+			$prices = $this->_create_objects( $results );
+			$ordered_prices = array();
+			foreach($prices as $price) {
+				$ordered_prices[$price->type_order][] = $price;
+			}
+			$computed_prices = $ordered_prices[0];
+			unset($ordered_prices[0]);
+			foreach($ordered_prices as $order=>$price_order) {
+				foreach($price_order as $adjustment) {
+					foreach($computed_prices as $computed_price) {
+						$computed_price->add_adjustment($adjustment->name(), $adjustment->type_is_percent(), $adjustment->amount());
+					}
+				}
+			}
+			if (!empty($computed_prices)) {
+				return $computed_prices;
+			} else {
+				return FALSE;
+			}
+		} else {
+			return FALSE;
 		}
 	}
 
+	/**
+	 * get reference to price type object by price type id
+	 *
+	 * @access public
+	 * @param int $PRT_id
+	 * @return object
+	 */
+	public function get_price_type_reference( $PRT_ID=FALSE, $Type_Key=FALSE ) {
+		if (!$PRT_ID || !array_key_exists($PRT_ID) || $Type_Key!=$this->_type_key) {
+			return FALSE;
+		}
+		return $this->_price_types[$PRT_ID];
+	}
 
 	/**
 	 * 		This function inserts table data

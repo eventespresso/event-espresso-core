@@ -80,6 +80,15 @@ class EE_Price {
 
 
 	/**
+	 * Type Key, needed to changed Price Type object reference
+	 *
+	 * @access private
+	 * @var string
+	 */
+	private $_Type_Key = NULL;
+
+
+	/**
   *	Price adjustments
 	*
 	*	@access	private
@@ -108,25 +117,20 @@ class EE_Price {
 	* @param	 		bool					$PRC_is_active		is the Price globally active
 	* @param			int 					$PRC_ID						Price ID
 	*/
-	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_ID=FALSE, $Price_Type=FALSE ) {
+	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $Price_Type=FALSE, $Type_Key=FALSE, $PRC_ID=FALSE ) {
 		$this->_PRC_ID 					= $PRC_ID;
 		$this->_PRT_ID					= $PRT_ID;
 		$this->_PRC_amount 			= $PRC_amount;
 		$this->_PRC_name				= $PRC_name;
 		$this->_PRC_desc				= $PRC_desc;
 		$this->_PRC_is_active		= $PRC_is_active;
+		$this->_Price_Type      = $Price_Type;
+		$this->_Type_Key        = $Type_Key;
 		$this->_PRC_adjustments = array();
+
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price.model.php');
-
-		if (!Price_Type) {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EE_Price_Type.model.php');
-			$PRT = EEM_Price_Type::instance();
-			$this->_Price_Type = EEM_Price_Type::get_price_type_by_ID($PRT_ID);
-		} else {
-			$this->_Price_Type = $Price_Type;
-		}
 	}
 
 
@@ -168,14 +172,14 @@ class EE_Price {
 	*			@param		int			$PRT_ID
 	*/
 	public function set_type( $PRT_ID = FALSE ) {
-
+		$MODEL = EEM_Price::instance();
 		global $espresso_notices;
 		if ( ! $PRT_ID ) {
 			$espresso_notices['errors'][] = 'No price type was supplied.';
 			return FALSE;
 		}
 		$this->_PRT_ID = absint( $PRT_ID );
-		$this->_Price_Type = EEM_Price_Type::get_price_type_by_ID($this->_PRT_ID);
+		$this->_Price_Type = $MODEL->get_price_type_reference( $PRT_ID, $this->_Type_Key );
 		return TRUE;
 	}
 
