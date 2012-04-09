@@ -72,7 +72,6 @@ function espresso_calendar_config_mnu() {
 	);
 ################## Begin admin settings screen ###########################
 	?>
-
 	<div id="ee-calendar-settings" class="wrap meta-box-sortables ui-sortable">
 		<div id="icon-options-event" class="icon32"> </div>
 		<h2>
@@ -249,6 +248,8 @@ function espresso_calendar_config_mnu() {
 																<?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso.', 'event_espresso'); ?>
 															</span></td>
 													</tr>
+													<?php if ( espresso_version() >= '3.2.P' ) {
+														//only display this if we're using 3.2 ?>
 													<tr>
 														<th> <label for="enable-calendar-thumbs">
 																<?php _e('Enable Images in Calendar', 'event_espresso'); ?>
@@ -257,6 +258,7 @@ function espresso_calendar_config_mnu() {
 														<td><?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"'); ?>
 															</li></td>
 													</tr>
+													<?php } ?>
 												</tbody>
 											</table>
 											<h4>
@@ -268,6 +270,8 @@ function espresso_calendar_config_mnu() {
 											?>
 											<table class="form-table">
 												<tbody>
+													<?php if ( espresso_version() >= '3.2.P' ) {
+														//only display this if we're using 3.2 ?>
 													<tr>
 														<th> <label for="use_themeroller">
 																<?php _e('Enable Themeroller', 'event_espresso'); ?>
@@ -275,6 +279,7 @@ function espresso_calendar_config_mnu() {
 														</th>
 														<td><?php echo select_input('use_themeroller', $values, $espresso_calendar['use_themeroller'], 'id="use_themeroller" class"' . $styled . '" ' . $disabled); ?></td>
 													</tr>
+													<?php } ?>
 													<tr>
 														<th> <label for="espresso_use_pickers">
 																<?php _e('Use Color Pickers', 'event_espresso'); ?>
