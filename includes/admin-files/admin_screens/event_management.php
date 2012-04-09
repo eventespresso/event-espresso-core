@@ -268,7 +268,6 @@ function espresso_featured_image_meta_box($event) {
 				<?php _e('Enable image in registration', 'event_espresso'); ?>
 			</label>
 			<?php echo select_input('show_thumb_in_regpage', $values, isset($event_meta['display_thumb_in_regpage']) ? $event_meta['display_thumb_in_regpage'] : '', 'id="show_thumb_in_regpage"'); ?> </p>
-		<?php do_action('action_hook_espresso_featured_image_add_to_meta_box', $event_meta); ?>
 	</div>
 	<?php
 }
