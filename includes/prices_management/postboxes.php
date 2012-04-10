@@ -4,24 +4,24 @@ function edit_event_price_postbox() {
 	global $wpdb;
 
 	if (!empty($_REQUEST['id'])) {
-		$price=$wpdb->get_row("SELECT * FROM ". ESP_PRICE_TABLE . " WHERE PRC_id=". $_REQUEST['id']);
+		$price=$wpdb->get_row("SELECT * FROM ". ESP_PRICE_TABLE . " WHERE PRC_ID=". $_REQUEST['id']);
 		$action = 'update_event_price';
 	} else {
 		$price = new stdClass;
 		$price->PRC_name = '';
 		$price->PRC_amount = 0.00;
-		$price->PRT_id = null;
+		$price->PRT_ID = null;
 		$price->PRC_is_active = false;
 		$price->PRC_desc = '';
 		$action = 'add_price_to_db';
 	}
 
 	$sql = "SELECT * FROM " . ESP_PRICE_TYPE;
-	$sql .= " ORDER BY PRT_id ASC";
+	$sql .= " ORDER BY PRT_ID ASC";
 	$results = $wpdb->get_results($sql);
 	if (!empty($results)) {
 	foreach ($results as $result) {
-		$price_types[] = array('id' => $result->PRT_id, 'text' => $result->PRT_name);
+		$price_types[] = array('id' => $result->PRT_ID, 'text' => $result->PRT_name);
 	}
 	} else {
 		_e('You have no price types defined. Please add a price type before adding a price.', 'event_espresso');
@@ -50,10 +50,10 @@ function edit_event_price_postbox() {
 						<td><input class="regular-text" type="text" id="PRC_amount" name="PRC_amount" value="<?php echo $price->PRC_amount; ?>"/></td>
 					</tr>
 					<tr>
-						<th><label for="PRT_id">
+						<th><label for="PRT_ID">
 								<?php _e('Price Type', 'event_espresso'); ?>
 							</label></th>
-						<td><?php echo select_input('PRT_id', $price_types, $price->PRT_id, 'id="PRT_id"'); ?></td>
+						<td><?php echo select_input('PRT_ID', $price_types, $price->PRT_ID, 'id="PRT_ID"'); ?></td>
 					</tr>
 					<tr>
 						<th><label for="PRC_is_active">
@@ -66,7 +66,7 @@ function edit_event_price_postbox() {
 			<?php do_meta_boxes('espresso_price_desc_editor', 'normal', $price->PRC_desc); ?>
 			<input type="hidden" name="action" value="<?php echo $action; ?>">
 			<?php if ($action == 'update_price') { ?>
-			<input type="hidden" name="PRC_id" value="<?php echo $_REQUEST['id']; ?>">
+			<input type="hidden" name="PRC_ID" value="<?php echo $_REQUEST['id']; ?>">
 			<?php } ?>
 			<p>
 				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save'); ?>" id="add_new_price" />
@@ -97,7 +97,7 @@ function edit_event_price_type_postbox() {
 	global $wpdb;
 
 	if (!empty($_REQUEST['id'])) {
-		$type=$wpdb->get_row("SELECT * FROM ". ESP_PRICE_TABLE . " WHERE PRC_id=". $_REQUEST['id']);
+		$type=$wpdb->get_row("SELECT * FROM ". ESP_PRICE_TABLE . " WHERE PRC_ID=". $_REQUEST['id']);
 		$action = 'update_event_price_type';
 	} else {
 		$type = new stdClass;
@@ -152,7 +152,7 @@ function edit_event_price_type_postbox() {
 			</table>
 			<input type="hidden" name="action" value="<?php echo $action; ?>">
 			<?php if ($action == 'update_event_price_type') { ?>
-			<input type="hidden" name="PRT_id" value="<?php echo $_REQUEST['id']; ?>">
+			<input type="hidden" name="PRT_ID" value="<?php echo $_REQUEST['id']; ?>">
 			<?php } ?>
 			<p>
 				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save'); ?>" id="add_new_price_type" />

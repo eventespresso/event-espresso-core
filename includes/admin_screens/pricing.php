@@ -40,18 +40,18 @@ function espresso_price_manager_menu() {
 							</thead>
 							<?php
 							$sql = "SELECT * FROM " . ESP_PRICE_TABLE . " prc";
-							$sql .= " JOIN " . ESP_PRICE_TYPE . " prt ON prc.PRT_id = prt.PRT_id ";
-							$sql .= " ORDER BY prc.PRC_id ASC";
+							$sql .= " JOIN " . ESP_PRICE_TYPE . " prt ON prc.PRT_ID = prt.PRT_ID ";
+							$sql .= " ORDER BY prc.PRC_ID ASC";
 							$results = $wpdb->get_results($sql);
 							foreach ($results as $result) {
 								?>
 								<tr>
-									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $result->PRC_id ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($result->PRC_name) ?>"></td>
-									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRC_id ?></td>
-									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $result->PRC_id ?>"><?php echo stripslashes_deep($result->PRC_name) ?></a></strong>
-										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $result->PRC_id ?>">
+									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $result->PRC_ID ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($result->PRC_name) ?>"></td>
+									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRC_ID ?></td>
+									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $result->PRC_ID ?>"><?php echo stripslashes_deep($result->PRC_name) ?></a></strong>
+										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $result->PRC_ID ?>">
 													<?php _e('Edit', 'event_espresso'); ?>
-												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price&id=<?php echo $result->PRC_id ?>">
+												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price&id=<?php echo $result->PRC_ID ?>">
 													<?php _e('Delete', 'event_espresso'); ?>
 												</a></span> </div>
 									</td>
@@ -86,7 +86,7 @@ function espresso_price_manager_menu() {
 							<thead>
 								<tr>
 									<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:2.5%;"><input type="checkbox"></th>
-									<th class="manage-column column-comments num" id="PRT_id" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort"><?php _e('ID', 'event_espresso'); ?></th>
+									<th class="manage-column column-comments num" id="PRT_ID" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort"><?php _e('ID', 'event_espresso'); ?></th>
 									<th class="manage-column column-title" id="PRT_name" scope="col" title="Click to Sort" style="width:20%;"><?php _e('Name', 'event_espresso'); ?></th>
 									<th class="manage-column column-title" id="PRT_is_tax" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Tax?', 'event_espresso'); ?></th>
 									<th class="manage-column column-title" id="PRT_is_percent" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Percent?', 'event_espresso'); ?></th>
@@ -96,17 +96,17 @@ function espresso_price_manager_menu() {
 							</thead>
 							<?php
 							$sql = "SELECT * FROM " . ESP_PRICE_TYPE;
-							$sql .= " ORDER BY PRT_id ASC";
+							$sql .= " ORDER BY PRT_ID ASC";
 							$price_types = $wpdb->get_results($sql);
 							foreach ($price_types as $result) {
 								?>
 								<tr>
-									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $result->PRT_id ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($result->PRT_name) ?>"></td>
-									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRT_id ?></td>
-									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $result->PRT_id ?>"><?php echo stripslashes_deep($result->PRT_name) ?></a></strong>
-										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $result->PRT_id ?>">
+									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $result->PRT_ID ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($result->PRT_name) ?>"></td>
+									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRT_ID ?></td>
+									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $result->PRT_ID ?>"><?php echo stripslashes_deep($result->PRT_name) ?></a></strong>
+										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $result->PRT_ID ?>">
 													<?php _e('Edit', 'event_espresso'); ?>
-												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price_type&id=<?php echo $result->PRT_id ?>">
+												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price_type&id=<?php echo $result->PRT_ID ?>">
 													<?php _e('Delete', 'event_espresso'); ?>
 												</a></span> </div>
 									</td>

@@ -389,7 +389,7 @@ function add_event_to_db($recurrence_arr = array()) {
 				}
 			}
 
-			$sql = "INSERT INTO `" . ESP_EVENT_PRICE_TABLE . "` (`EVT_id`, `PRC_id`, `is_active`) VALUES ('" . $last_event_id . "', '1', '1');";
+			$sql = "INSERT INTO `" . ESP_EVENT_PRICE_TABLE . "` (`EVT_ID`, `PRC_ID`, `is_active`) VALUES ('" . $last_event_id . "', '1', '1');";
 			$wpdb->query($sql);
 
 			// Create Event Post Code Here

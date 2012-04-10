@@ -84,13 +84,13 @@ function event_espresso_time_editor($event_id = 0) {
 				</p>
 				<p>
 					<label for="add-end-time"><?php _e('End', 'event_espresso'); ?></label>
-					<input size="10"  type="text" id="add-end-time" name="end_time[]" /> 
-		<?php
-		if (isset($org_options['time_reg_limit']) && $org_options['time_reg_limit']) {
-			echo '<p><label for="time_qty">'.__('Qty', 'event_espresso').'</label>';
-				?><input size="3"  type="text" name="time_qty[]" /></p>
-	<?php }
-			?>
+					<input size="10"  type="text" id="add-end-time" name="end_time[]" />
+					<?php
+					if (isset($org_options['time_reg_limit']) && $org_options['time_reg_limit']) {
+						echo '<p><label for="time_qty">' . __('Qty', 'event_espresso') . '</label>';
+						?><input size="3"  type="text" name="time_qty[]" /></p>
+				<?php }
+				?>
 			</li>
 			<?php
 		}
@@ -107,7 +107,7 @@ function event_espresso_time_editor($event_id = 0) {
 		var counter = <?php echo $time_counter++ ?>;
 		function addTimeInput(divName){
 			var newdiv = document.createElement('li');
-			newdiv.innerHTML = "<p><label for='add-start-time-"+ (counter) +"'><?php _e('Start', 'event_espresso'); ?> " + (counter) + "</label> <input type='text'id='add-start-time-"+ (counter) +"' size='10' name='start_time[]'></p><p> <label for='add-end-time-"+ (counter) +"'> <?php _e('End', 'event_espresso'); ?></label> <input type='text' id='add-end-time-"+ (counter) +"' size='10' name='end_time[]'> <?php echo $org_options['time_reg_limit'] ? "<p><label for='time_qty'>".__('Qty ', 'event_espresso') . " <input type='text'  size='3' name='time_qty[]'>" : ''; ?></p><input class='remove-this xtra-time' id='remove-added-time' type='button' value='Remove' onclick='this.parentNode.parentNode.removeChild(this.parentNode);'/>";
+			newdiv.innerHTML = "<p><label for='add-start-time-"+ (counter) +"'><?php _e('Start', 'event_espresso'); ?> " + (counter) + "</label> <input type='text'id='add-start-time-"+ (counter) +"' size='10' name='start_time[]'></p><p> <label for='add-end-time-"+ (counter) +"'> <?php _e('End', 'event_espresso'); ?></label> <input type='text' id='add-end-time-"+ (counter) +"' size='10' name='end_time[]'> <?php echo $org_options['time_reg_limit'] ? "<p><label for='time_qty'>" . __('Qty ', 'event_espresso') . " <input type='text'  size='3' name='time_qty[]'>" : ''; ?></p><input class='remove-this xtra-time' id='remove-added-time' type='button' value='Remove' onclick='this.parentNode.parentNode.removeChild(this.parentNode);'/>";
 			document.getElementById(divName).appendChild(newdiv);
 			counter++;
 		}
@@ -119,11 +119,10 @@ function event_espresso_multi_price_update($event_id) {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$price_counter = 1;
-	$sql = "SELECT prc.PRC_id, prc.PRC_name, prt.PRT_order, prc.PRC_amount, prt.PRT_name, prt.PRT_is_percent, prt.PRT_is_tax, ep.EVT_id FROM " . ESP_PRICE_TYPE . " prt";
-	$sql .= " JOIN " . ESP_PRICE_TABLE . " prc ON prc.PRT_id=prt.PRT_id";
-	$sql .= " JOIN " . ESP_EVENT_PRICE_TABLE . " ep ON ep.PRC_id=prc.PRC_id";
+	$sql = "SELECT prc.PRC_ID, prc.PRC_name, prt.PRT_order, prc.PRC_amount, prt.PRT_name, prt.PRT_is_percent, prt.PRT_is_tax, ep.EVT_ID FROM " . ESP_PRICE_TYPE . " prt";
+	$sql .= " JOIN " . ESP_PRICE_TABLE . " prc ON prc.PRT_ID=prt.PRT_ID";
+	$sql .= " JOIN " . ESP_EVENT_PRICE_TABLE . " ep ON ep.PRC_ID=prc.PRC_ID";
 	$prices = $wpdb->get_results($sql);
-
 }
 
 function espresso_event_editor_quick_overview_meta_box($event) {
@@ -407,18 +406,18 @@ function espresso_event_editor_date_time_metabox($event) {
 								<?php echo eventespresso_ddtimezone($event->id) ?></p>
 						</fieldset>
 					<?php } ?></td>
-				<?php // ADD TIME REGISTRATION    ?>
+					<?php // ADD TIME REGISTRATION    ?>
 				<td class="b"><fieldset id="add-register-times">
 						<legend>
 							<?php _e('Registration Times', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?> </legend>
-						<?php echo event_espresso_timereg_editor($event->id); ?>
+							<?php echo event_espresso_timereg_editor($event->id); ?>
 					</fieldset>
 					<fieldset id="add-event-times">
 						<legend>
 							<?php _e('Event Times', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'event_times_info'); ?> </legend>
-						<?php echo event_espresso_time_editor($event->id); ?>
+							<?php echo event_espresso_time_editor($event->id); ?>
 					</fieldset></td>
 			</tr>
 		</table>
@@ -431,9 +430,12 @@ function espresso_event_editor_pricing_metabox($event) {
 	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', '');
 	?>
 	<div class="inside">
-		<table <?php echo $table_class ?> width="100%" border="0" cellpadding="5">
+		<table id="event_editor_pricing" <?php echo $table_class ?> width="100%" border="0" cellpadding="5">
 			<thead>
 				<tr>
+					<td>
+						<?php _e('Active?'); ?>
+					</td>
 					<td>
 						<?php _e('Name'); ?>
 					</td>
@@ -454,7 +456,18 @@ function espresso_event_editor_pricing_metabox($event) {
 					</td>
 				</tr>
 			</thead>
-			<?php event_espresso_multi_price_update($event->id); ?>
+			<?php
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+			$PRC = EEM_Price::instance();
+			$prices = $PRC->get_all_prices();
+			foreach ($prices as $price) {
+				?>
+				<td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><!--Delete Events-->
+					<?php echo '<input name="checkbox[' . $price->ID() . ']" type="checkbox"  title="Activate Price ' . $price->name() . '" />'; ?></td>
+
+					<?php
+				}
+				?>
 		</table>
 	</div>
 	<?php

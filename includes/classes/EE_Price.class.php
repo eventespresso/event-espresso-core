@@ -374,6 +374,8 @@ class EE_Price {
 	}
 
 
+
+
 	/**
 	 *	get adjustments array
 	 *	@access public

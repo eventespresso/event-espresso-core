@@ -7,7 +7,7 @@ function espresso_prices_admin_helper() {
 		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):
 				$del_id = $key;
-				$sql = "SELECT PRC_id FROM " . ESP_PRICE_TABLE . " WHERE PRT_id='$del_id'";
+				$sql = "SELECT PRC_ID FROM " . ESP_PRICE_TABLE . " WHERE PRT_ID='$del_id'";
 				$row = $wpdb->get_row($sql, ARRAY_N);
 				if (!empty($row)) {
 					foreach ($row as $entry) {
@@ -15,21 +15,21 @@ function espresso_prices_admin_helper() {
 					}
 				}
 				// If a price type is deleted, delete the price
-				$sql = "DELETE FROM " . ESP_PRICE_TYPE . " WHERE PRT_id='$del_id'";
+				$sql = "DELETE FROM " . ESP_PRICE_TYPE . " WHERE PRT_ID='$del_id'";
 				$wpdb->query($sql);
 			endwhile;
 		}
 
 		//Delete link
 		if ($_REQUEST['action'] == 'delete_price_type') {
-			$sql = "SELECT PRC_id FROM " . ESP_PRICE_TABLE . " WHERE PRT_id='" . $_REQUEST['id'] . "'";
+			$sql = "SELECT PRC_ID FROM " . ESP_PRICE_TABLE . " WHERE PRT_ID='" . $_REQUEST['id'] . "'";
 			$row = $wpdb->get_row($sql, ARRAY_N);
 			if (!empty($row)) {
 				foreach ($row as $entry) {
 					$new_checkbox_list[$entry] = true;
 				}
 			}
-			$sql = "DELETE FROM " . ESP_PRICE_TYPE . " WHERE PRT_id='" . $_REQUEST['id'] . "'";
+			$sql = "DELETE FROM " . ESP_PRICE_TYPE . " WHERE PRT_ID='" . $_REQUEST['id'] . "'";
 			$wpdb->query($sql);
 		}
 		?>
@@ -51,10 +51,10 @@ function espresso_prices_admin_helper() {
 			while (list($key, $value) = each($_POST['checkbox'])):
 				$del_id = $key;
 				//Delete venue data
-				$sql = "DELETE FROM " . ESP_PRICE_TABLE . " WHERE PRC_id='$del_id'";
+				$sql = "DELETE FROM " . ESP_PRICE_TABLE . " WHERE PRC_ID='$del_id'";
 				$wpdb->query($sql);
 
-				$sql = "DELETE FROM " . ESP_EVENT_PRICE_TABLE . " WHERE PRC_id='$del_id'";
+				$sql = "DELETE FROM " . ESP_EVENT_PRICE_TABLE . " WHERE PRC_ID='$del_id'";
 				$wpdb->query($sql);
 			endwhile;
 		}
@@ -62,9 +62,9 @@ function espresso_prices_admin_helper() {
 		//Delete link
 		if ($_REQUEST['action'] == 'delete_price') {
 			//Delete discount data
-			$sql = "DELETE FROM " . ESP_PRICE_TABLE . " WHERE PRC_id='" . $_REQUEST['id'] . "'";
+			$sql = "DELETE FROM " . ESP_PRICE_TABLE . " WHERE PRC_ID='" . $_REQUEST['id'] . "'";
 			$wpdb->query($sql);
-			$sql = "DELETE FROM " . ESP_EVENT_PRICE_TABLE . " WHERE PRC_id='" . $_REQUEST['id'] . "'";
+			$sql = "DELETE FROM " . ESP_EVENT_PRICE_TABLE . " WHERE PRC_ID='" . $_REQUEST['id'] . "'";
 			$wpdb->query($sql);
 		}
 		?>
@@ -100,10 +100,10 @@ function update_event_price() {
 				'PRC_amount' => $_REQUEST['PRC_amount'],
 				'PRC_name' => $_REQUEST['PRC_name'],
 				'PRC_desc' => $_REQUEST['PRC_desc'],
-				'PRT_id' => $_REQUEST['PRT_id'],
+				'PRT_ID' => $_REQUEST['PRT_ID'],
 				'PRC_is_active' => $_REQUEST['PRC_is_active']);
 
-		$update_id = array('PRC_id' => $_REQUEST['PRC_id']);
+		$update_id = array('PRC_ID' => $_REQUEST['PRC_ID']);
 		$sql_data = array('%d', '%s', '%s', '%d', '%d');
 	}
 
@@ -122,7 +122,7 @@ function add_price_to_db() {
 				'PRC_amount' => $_REQUEST['PRC_amount'],
 				'PRC_name' => $_REQUEST['PRC_name'],
 				'PRC_desc' => $_REQUEST['PRC_desc'],
-				'PRT_id' => $_REQUEST['PRT_id'],
+				'PRT_ID' => $_REQUEST['PRT_ID'],
 				'PRC_is_active' => $_REQUEST['PRC_is_active']);
 
 		$sql_data = array('%d', '%s', '%s', '%d', '%d');
@@ -146,7 +146,7 @@ function update_event_price_type() {
 				'PRT_order' => $_REQUEST['PRT_order'],
 				'PRT_is_global' => $_REQUEST['PRT_is_global']);
 
-		$update_id = array('PRT_id' => $_REQUEST['PRT_id']);
+		$update_id = array('PRT_ID' => $_REQUEST['PRT_ID']);
 		$sql_data = array('%s', '%d', '%d', '%d', '%d');
 	}
 

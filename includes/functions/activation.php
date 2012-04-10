@@ -677,10 +677,10 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 	$table_name = "esp_event_price";
-	$sql = "EVT_id int(11) DEFAULT NULL,
+	$sql = "EVT_ID int(11) DEFAULT NULL,
 				PRC_ID int(11) DEFAULT NULL,
 				is_active TINYINT(1) NOT NULL DEFAULT '0',
-				PRIMARY KEY  (EVT_id, PRC_ID)";
+				PRIMARY KEY  (EVT_ID, PRC_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 	$table_name = "esp_price";
