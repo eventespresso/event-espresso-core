@@ -300,6 +300,11 @@ function espresso_calendar_do_stuff($show_expired) {
 		//important! time must be in iso8601 format 2010-05-10T08:30!!
 		$eventArray['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
 		$eventArray['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
+		if ( $eventArray['end'] < date('Y-m-d') ) {
+			$eventArray['expired'] = 'expired';
+		} else {
+			$eventArray['expired'] = '';
+		}
 		$eventArray['startTime'] = event_date_display($event->start_time, $espresso_calendar['time_format']);
 		$eventArray['endTime'] = event_date_display($event->end_time, $espresso_calendar['time_format']);
 
@@ -331,10 +336,11 @@ function espresso_calendar_do_stuff($show_expired) {
 		//End custom fields
 		//If set to true, events will be shown as all day events
 		$eventArray['allDay'] = FALSE;
-
 		//Array of the event details
 		$events[] = $eventArray;
+
 	}
+	// save the end date for later
 	//Debug:
 	//Print the results of the code above
 	// echo json_encode($events);
@@ -472,6 +478,11 @@ if (!function_exists('espresso_calendar')) {
 						//if(event.in_thickbox_url){
 						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
 						//}
+						if(event.expired){
+							//debug
+							//alert('We have thumbs!'); // that's the most ridiculous message I can think of, so I'm using it again.
+							element.addClass('expired');
+						}
 
 						if(event.event_img_thumb){
 							//alert('we have thumbs');
