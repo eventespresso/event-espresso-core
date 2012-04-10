@@ -153,7 +153,7 @@ class EE_Transaction {
 		$this->_TXN_total 					= $TXN_total;
 		$this->_STS_ID 						= $STS_ID;
 		$this->_TXN_details 				= $TXN_details;
-		$this->_TXN_session_data	= maybe_serialize( $TXN_session_data );
+		$this->_TXN_session_data	= $TXN_session_data;
 		$this->_TXN_hash_salt 			= $TXN_hash_salt;
 		$this->_TXN_tax_data 			= $TXN_tax_data;
 	}
@@ -220,7 +220,7 @@ class EE_Transaction {
 			$espresso_notices['errors'][] = 'No details were supplied.';
 			return FALSE;
 		}	
-		$this->_TXN_details = wp_strip_all_tags( $details );
+		$this->_TXN_details = stripslashes_deep( $details );
 		return TRUE;
 	}
 
@@ -242,7 +242,7 @@ class EE_Transaction {
 			$espresso_notices['errors'][] = 'No session data was supplied.';
 			return FALSE;
 		}	
-		$this->_TXN_session_data = maybe_serialize( wp_strip_all_tags( $session_data ));
+		$this->_TXN_session_data = stripslashes_deep( $session_data );
 		return TRUE;
 	}
 
@@ -278,14 +278,14 @@ class EE_Transaction {
 	* 		@access		public		
 	*		@param		string		$tax_data 		information regarding taxes
 	*/	
-	public function set_txn_session_data( $tax_data = FALSE ) {
+	public function set_tax_data( $tax_data = FALSE ) {
 		
 		global $espresso_notices;
 		if ( ! $tax_data ) {
 			$espresso_notices['errors'][] = 'No session data was supplied.';
 			return FALSE;
 		}	
-		$this->_TXN_tax_data = maybe_serialize( wp_strip_all_tags( $tax_data ));
+		$this->_TXN_tax_data = stripslashes_deep( $tax_data ); 
 		return TRUE;
 	}
 
@@ -308,10 +308,10 @@ class EE_Transaction {
 				'TXN_timestamp' 		=> $this->_TXN_timestamp,
 				'TXN_total' 					=> $this->_TXN_total,
 				'STS_ID' 						=> $this->_STS_ID,
-				'TXN_details' 				=> $this->_TXN_details,
+				'TXN_details' 				=> maybe_serialize( $this->_TXN_details ),
 				'TXN_session_data'		=> maybe_serialize( $this->_TXN_session_data ),
 				'TXN_hash_salt' 			=> $this->_TXN_hash_salt,
-				'TXN_tax_data' 			=> $this->_TXN_tax_data
+				'TXN_tax_data' 			=> maybe_serialize( $this->_TXN_tax_data )
 		);
 
 		if ( $where_cols_n_values ){
@@ -400,7 +400,7 @@ class EE_Transaction {
 	* 		@access		public
 	*/	
 	public function details() {
-		return $this->_TXN_details;
+		return maybe_unserialize( $this->_TXN_details );
 	}
 
 
@@ -411,7 +411,7 @@ class EE_Transaction {
 	* 		@access		public
 	*/	
 	public function session_data() {
-		return $this->_TXN_session_data;
+		return maybe_unserialize( $this->_TXN_session_data );
 	}
 
 
