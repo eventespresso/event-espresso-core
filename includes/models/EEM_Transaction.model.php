@@ -132,7 +132,8 @@ class EEM_Transaction extends EEM_Base {
 		// retreive a particular transaction
 		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
 		if ( $transaction = $this->select_row_where ( $where_cols_n_values )) {
-			return $this->_create_objects( array( $transaction ));
+			$transaction_array = $this->_create_objects( array( $transaction ));
+			return array_shift( $transaction_array );			
 		} else {
 			return FALSE;
 		}
