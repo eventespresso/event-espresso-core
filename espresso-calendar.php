@@ -340,7 +340,6 @@ function espresso_calendar_do_stuff($show_expired) {
 		$events[] = $eventArray;
 
 	}
-	// save the end date for later
 	//Debug:
 	//Print the results of the code above
 	// echo json_encode($events);
@@ -478,9 +477,9 @@ if (!function_exists('espresso_calendar')) {
 						//if(event.in_thickbox_url){
 						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
 						//}
+
+						// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
 						if(event.expired){
-							//debug
-							//alert('We have thumbs!'); // that's the most ridiculous message I can think of, so I'm using it again.
 							element.addClass('expired');
 						}
 
