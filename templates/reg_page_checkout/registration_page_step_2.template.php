@@ -52,13 +52,31 @@
 			<h4 class="mer-reg-page-discounts-hdr"><?php _e('Discounts:', 'event_espresso'); ?></h4>				
 		</div>
 
-		<h4 id="mer-reg-page-totals-hdr" class="overline-hdr">
+		<h4 id="reg-page-totals-hdr" class="overline-hdr">
 			<span class="drk-grey-text"><?php _e('Billable Registrations:', 'event_espresso'); ?></span> <?php echo $total_items;?> 
-			<span id="mer-reg-page-totals-spn">
-				<span class="drk-grey-text"><?php echo __('Total Amount Due: ', 'event_espresso');?></span>
-				<?php echo $currency_symbol;?><span id="mer-reg-page-grand-total-spn"><?php echo$grand_total;?></span>
-			</span>
 		</h4>
+		
+		<div class="reg-page-totals-spn">
+			<span class="lt-grey-text"><?php echo __('Sub Total: ', 'event_espresso');?></span>
+			<?php echo $currency_symbol;?><span class="reg-page-total-spn"><?php echo$sub_total;?></span>
+		</div>
+		
+<?php if ( $taxes ) {
+				foreach ( $taxes as $tax ){
+?>
+		<div class="reg-page-totals-spn">
+			<span class="lt-grey-text"><?php echo $tax['percent'] . '% ' . $tax['name'];?></span>
+			<?php echo $currency_symbol;?><span class="reg-page-total-spn"><?php echo$tax['amount'];?></span>
+		</div>	
+		
+<?php					
+				}
+			}
+?>
+		<div id="reg-page-grand-total-dv" class="reg-page-totals-spn">
+			<span class="drk-grey-text"><?php echo __('Total Amount Due: ', 'event_espresso');?></span>
+			<?php echo $currency_symbol;?><span class="reg-page-total-spn"><?php echo$grand_total;?></span>
+		</div>		
 
 <?php // end  if  $payment_required	
 			} else { ?>

@@ -62,44 +62,43 @@ function espresso_process_aim( $EE_Session ) {
 		$payment_data->payment_status = 'Incomplete';
 		$payment_data->txn_id = 0;
 		$payment_data->txn_details = 'No response from authorize.net';
+		$payment_data->amount_paid = 0;
 		$payment_data = apply_filters('filter_hook_espresso_prepare_event_link', $payment_data);
 		$payment_data = apply_filters('filter_hook_espresso_get_total_cost', $payment_data);
 	//Capture response
-		$response = $transaction->authorizeAndCapture();
+		$response = $transaction->authorizeAndCapture();	
 	
-	
-		if (!empty($response)) {
+		if ( ! empty( $response )) {
+		
 			if ($authnet_aim_settings['use_sandbox']) {
 				$payment_data->txn_id = $response->invoice_number;
 			} else {
 				$payment_data->txn_id = $response->transaction_id;
 			}
-			//$payment_data->txn_details = serialize($response);
-			$txn_details = $response;
-			if ($response->approved) {
-				$payment_data->payment_status = 'Completed';
-			} else {
-				$payment_data->payment_status = 'Payment Declined';
-			}
+
+			$payment_data->payment_status = $response->approved ? 'Completed' :  'Declined';
+			
 		}
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
 		
 		$txn_results = array(
-											'approved' => $txn_details->approved ? $txn_details->approved : 0,
-											'status' => $payment_data->payment_status,
-											'response_msg' => $txn_details->response_reason_text,
-											'md5_hash' => $txn_details->md5_hash,
-											'details'	=> array(
-																				  'transaction_id' => $txn_details->transaction_id,
-																				  'invoice_number' => $txn_details->invoice_number,
-																		 	),								
+											'approved' 			=> $response->approved ? $response->approved : 0,
+											'status' 				=> $payment_data->payment_status,
+											'response_msg'	=> $response->response_reason_text,
+											'amount'				=> $response->amount,
+											'md5_hash' 			=> $response->md5_hash,
+											'details'				=> array(
+																						  'transaction_id' => $response->transaction_id,
+																						  'invoice_number' => $response->invoice_number,
+																					 	),
+											'raw_response'	=> $response								
 										  );
 		
 		$EE_Session->set_session_data(  array( 'txn_results' => $txn_results ), $section = 'session_data' );
 	
-		add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');  //<-- Should this be here ? or in the successful txn bit above ( around line 79 ? ) or does this send failed txn info as well /
+		add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');  //<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
 	
-		// return $payment_data;  <<<<-------  do we need to return success or flase or anything ?
+		// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?
 		
 	} else {
 		// no payment required

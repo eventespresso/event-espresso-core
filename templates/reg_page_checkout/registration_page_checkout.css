@@ -154,7 +154,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .event_form_field input.medium-txt { width:35%; }
 .event_form_field input.small-txt { width:20%; }
 
-/*.mer-reg-page-attendee-panel-dv input[type="text"] { display:inline-block; width:68.5%; }*/
+
 .asterisk, label em { font-weight:bold; color:red !important; }
 .requires-value { border-color:red !important; border-width:2px !important; }
 
@@ -168,8 +168,9 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 
 #events-requiring-pre-approval-pg { margin:.5em 0 0; }
 
-/*#mer-reg-page-totals-hdr { margin:0em 0 2em; }*/
-#mer-reg-page-totals-spn { float:right; }
+#reg-page-totals-hdr { margin:2em 0 0; }
+.reg-page-totals-spn { text-align:right; }
+#reg-page-grand-total-dv { padding:0; margin:0 0 1em; border-top: 2px solid #eee; }
 
 #mer-reg-page-apply-coupon-btn { position:relative; top:-1px; font-size:.8em; }
 #mer-reg-page-coupon-codes-pg { padding:0 0 2em 155px; }

@@ -587,7 +587,40 @@ class EE_Single_Page_Checkout {
 
 		$template_args['total_items'] = $total_items;
 		$template_args['payment_required'] = $grand_total > 0 ? TRUE : FALSE;
+		$sub_total = $grand_total;
+
+		$template_args['taxes'] = FALSE;
+
+		// load and instantiate models
+	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
+	    $PRC = EEM_Price::instance();		
+		
+		// retreive all taxes
+		if ( $global_taxes = $PRC->get_all_prices_that_are_taxes() ) {
+			global $EE_Session;
+			$template_args['taxes'] = array();
+			$tax_totals = array();
+			foreach ( $global_taxes as $order => $taxes ) {
+				$tax_tier_total =0;
+				foreach ( $taxes as $tax ) {
+					$prcnt = $tax->PRC_amount / 100;
+					$amnt = number_format( $grand_total * $prcnt, 2, '.', '');
+					$prcnt = $prcnt*100;
+					$template_args['taxes'][ $tax->PRC_ID ] = array( 'name' => $tax->PRC_name, 'percent' => $prcnt, 'amount' => $amnt );
+					$tax_totals [ $tax->PRC_ID ] = $amnt;
+					$tax_tier_total = $tax_tier_total + $amnt;
+				}
+				// add tax to grand total
+				$grand_total = $grand_total + $amnt;
+			}
+			// add tax data to session
+			$EE_Session->set_session_data(  array( '_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals ), 'session_data' );
+		}
+		
+		$template_args['sub_total'] = number_format($sub_total, 2, '.', '');
 		$template_args['grand_total'] = number_format($grand_total, 2, '.', '');
+		
 		$template_args['event_queue'] = $event_queue;
 		$template_args['nmbr_of_carts'] = count($event_queue);
 		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
@@ -641,6 +674,8 @@ class EE_Single_Page_Checkout {
 		$registration_page_step_3 = espresso_display_template( $this->_templates['registration_page_step_3'], $template_args, TRUE );
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
+		
+		//echo printr( $EE_Session->get_session_data(), __FUNCTION__ );
 
 		espresso_display_template( $this->_templates['registration_page_wrapper'], $template_args );
 		
@@ -684,7 +719,9 @@ class EE_Single_Page_Checkout {
 
 		global $org_options, $EE_Session;
 
-		$session_data = $EE_Session->get_session_data();
+		$session_data = $EE_Session->get_session_data();		
+		//echo printr( $session_data, __FUNCTION__ );
+		
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
 		$primary_attendee = $session_data['primary_attendee'];
@@ -701,39 +738,29 @@ class EE_Single_Page_Checkout {
 			foreach ( $event['attendees'] as $att_nmbr => $attendee ) {
 			
 				$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] .  ' ' . $attendee['lname'];
-				$extra_att_details = FALSE;
+				$extra_att_details = array();
 				
 				foreach ( $attendee as $key => $value ) {
 					switch ( $key ) {
 
 						case 'fname' :
-//								$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $value;
-//								break;
-//
 						case 'lname' :
-//								$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] .= ' ' . $value;
-								if ( $value != '' ) {
-									$extra_att_details[] = '';
-								}
 								break;
 
 						default:
-								if ( ! in_array( $key, $exclude_attendee_info ) &&  is_numeric( $key ) && $value != '' ) {
-//									$template_args['events'][$line_item_id]['attendees'][$att_nmbr][] = $value;
-									$extra_att_details[] = $value;
+								if ( ! in_array( $key, $exclude_attendee_info ) && ! is_numeric( $key ) && $value != '' ) {
+									array_push( $extra_att_details, $value );
 								}
 
 					}
 				}
 				
-				if ( $extra_att_details ) {
-					foreach ( $extra_att_details as $extra_att_detail ) {
-						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = $extra_att_detail . ', ';
-					}
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = substr( $template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'], 0, -2 );
+				if ( ! empty( $extra_att_details )) {
+					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . implode( ', ', $extra_att_details ) . '</span>';
 				} else {
 					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
 				}
+
 
 			}
 		}
@@ -751,7 +778,16 @@ class EE_Single_Page_Checkout {
 			$template_args['billing']['credit card number'] = $billing_info['reg-page-billing-card-nmbr']['value'];
 			$template_args['billing']['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'].$billing_info['reg-page-billing-card-exp-date-year']['value'];
 			$template_args['billing']['ccv code'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format( $session_data['_cart_grand_total_amount'], 2 );
+			
+			$total = $session_data['_cart_grand_total_amount'];
+			if ( isset( $session_data['tax_totals'] )) {
+				foreach ( $session_data['tax_totals'] as $taxes ) {
+					$total = $total + $taxes;
+				}
+			}
+			
+			
+			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format( $total, 2 );
 			return espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE );
 
 		}
@@ -781,6 +817,8 @@ class EE_Single_Page_Checkout {
 		unset($_POST['action']);
 		if ($_POST['espresso_ajax'] == 1) {
 			$this->_ajax = 1;
+		} else {
+			$this->_ajax = 0;
 		}
 		unset($_POST['espresso_ajax']);
 
@@ -810,8 +848,8 @@ class EE_Single_Page_Checkout {
 									$cart_contents = $this->cart->whats_in_the_cart('REG', $line_item_id);
 
 									//$registration_id = uniqid( $event_id.'-', TRUE );
-									$registration_id = $event_id . '-' . $att_nmbr . '-' . $EE_Session->id();
-									$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['registration_id'] = $registration_id;
+//									$registration_id = $event_id . '-' . $att_nmbr . '-' . $EE_Session->id();
+//									$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['registration_id'] = $registration_id;
 
 									// add ticket price to the array
 									$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['price_paid'] = number_format($tckt_price / 100, 2, '.', '');
@@ -831,11 +869,11 @@ class EE_Single_Page_Checkout {
 									// store a bit of data about the primary attendee
 									if ( $form_input == 'primary_attendee' && $input_value == 1 ) {
 										$primary_attendee['line_item_id'] = $line_item_id;
-										$primary_attendee['registration_id'] = $registration_id;
+//										$primary_attendee['registration_id'] = $registration_id;
 										$primary_attendee['fname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['fname'];
                                         $primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['lname'];
                                         $primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['email'];
-										$EE_Session->set_session_data(  array( 'primary_attendee' => $primary_attendee ), $section = 'session_data' );
+										$EE_Session->set_session_data(  array( 'primary_attendee' => $primary_attendee ), 'session_data' );
 									}
 								}
 							}
@@ -863,9 +901,13 @@ class EE_Single_Page_Checkout {
 			$error_msg = __('An error occured! No valid question responses were received.', 'event_espresso');
 		}
 
-		if ( ! $this->send_ajax_response($success_msg, $error_msg ) ) {
+		if ( $this->send_ajax_response($success_msg, $error_msg ) ) {
 			$reg_page_step_2_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'2' ), $this->_reg_page_base_url );
 			wp_safe_redirect( $reg_page_step_2_url );
+			exit();
+		} else {
+			$reg_page_step_1_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'1' ), $this->_reg_page_base_url );
+			wp_safe_redirect( $reg_page_step_1_url );
 			exit();
 		}
 
@@ -1195,7 +1237,9 @@ class EE_Single_Page_Checkout {
 						//add attendee to db
 						$att_results = $att[ $att_nmbr ]->insert();
 						$ATT_ID = $att_results['new-ID'];
-					}													
+					}	
+					
+					$new_reg_ID  = $reg_item['id'] . '-' . $ATT_ID . '-' . $txn_results['new-ID'] . '-' . $session['id'];												
 
 					// now create registration for the attendee
 					$reg[ $line_item_id ] = new EE_Registration(
@@ -1203,7 +1247,8 @@ class EE_Single_Page_Checkout {
 																								$ATT_ID,
 																								$txn_results['new-ID'],
 																								$session['id'],
-																								$attendee['registration_id'],
+																								$new_reg_ID,
+//																								$attendee['registration_id'],
 																								isset( $attendee['primary_attendee'] ),
 																								$is_group_reg,
 																								'RPN',
@@ -1213,6 +1258,13 @@ class EE_Single_Page_Checkout {
 																								FALSE
 																							  );
 			    	$reg[ $line_item_id ]->insert();	
+					
+					// add registration id to session for the primary attendee
+					if ( isset( $attendee['primary_attendee']) && $attendee['primary_attendee'] == 1 ) {
+						$primary_attendee = $session['primary_attendee'];
+						$primary_attendee['registration_id'] = $new_reg_ID;
+						$EE_Session->set_session_data(  array( 'primary_attendee' => $primary_attendee ), 'session_data' );					
+					}
 				}
 			}
 			
@@ -1232,18 +1284,39 @@ class EE_Single_Page_Checkout {
 				$txn_details = $session['txn_results'];			
 			}
 			
-			if ( $txn_details['approved'] ) {
-				$transaction->set_status( 'TAP' );
-				$transaction->set_details( $txn_details );
-				$transaction->update();
-				$success_msg = $txn_details['response_msg'];
-			} else {
-				$transaction->set_status( 'DEC' );
-				$transaction->set_details( $txn_details );
-				$transaction->update();
-				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
+			switch ( $txn_details['status'] ) {
+			
+				case 'Completed' :
+						$status= 'TAP';
+						$success_msg = $txn_details['response_msg'];
+						break;
+				
+				case 'Declined' :
+						$status= 'DEC';
+						$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
+						break;
+				
+				case 'Incomplete' :
+						$status= 'INC';
+						$error_msg = __('We\'re sorry, but an error occured and the transaction could not be completed. Please try again. If problems persist, contact the site administrator.', 'event_espresso');
+						break;
 			}
-
+			
+			$transaction->set_total( $txn_details['amount'] ); 
+			$transaction->set_status( $status );
+			$transaction->set_details( $txn_details );
+			
+			if ( isset( $txn_details['md5_hash'] )) {
+				$transaction->set_hash_salt( $txn_details['md5_hash'] );
+			}
+			
+			if ( isset( $session['taxes'] )) {
+				$tax_data = array( 'taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals'] );
+				$transaction->set_tax_data( $tax_data );
+			}
+			
+			$transaction->update();
+				
 		}
 
 		if ( $this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_3_ajax_response' )) {		
@@ -1348,14 +1421,12 @@ class EE_Single_Page_Checkout {
 		}
 
 		if ($success_msg) {
-
+		
 			// if this is an ajax request AND a callback function exists
 			if ($this->_ajax === 1 && $valid_callback) {
-
 				// send data through to the callback function
 				$this->$callback($callback_param, $success_msg);
 			} elseif ($this->_ajax === 1) {
-
 				// just send the ajax
 				echo json_encode(array('success' => $success_msg));
 				// to be... or...
