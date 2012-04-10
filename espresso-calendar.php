@@ -726,15 +726,12 @@ function espresso_calendar_current_screen() {
 	if( !is_admin() ) return;
 
 	global $current_screen;
-	if ( $current_screen->base == 'widgets' )
+	if ( $current_screen->base == 'widgets' ) {
 		include_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_help.php'); // include the calendar help file, since that's what we're freaking trying to load
+		wp_enqueue_style('thickbox'); //load the freaking thickbox style
+		wp_enqueue_script('thickbox'); // load the freaking thickbox script
+	}
 }
-function espresso_load_calendar_help_thickbox() {
-	wp_enqueue_style('thickbox'); //load the freaking thickbox style
-	wp_enqueue_script('thickbox'); // load the freaking thickbox script
-}
-
-add_action('action_hook_espresso_require_admin_files', 'espresso_load_calendar_help_thickbox');
 
 if (is_admin()) {
 	require_once('calendar_admin.php');
