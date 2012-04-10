@@ -304,5 +304,25 @@
 			</p>
 		</div>
 	</div>
+	<?php
+		/**
+		 * Show Tooltips?
+		 */
+	?>
+	<div id="show-tooltips-info" class="pop-help">
+		<div class="TB-ee-frame">
+			<h2>
+				<?php _e( 'Show Tooltips', 'event_espresso' ); ?>
+			</h2>
+			<p>
+				<?php _e( 'If enabled, calendar will use jQuery qTip to add tooltip pop-ups for each event with the event details displayed inside (including any images in the event description, resized to fit the tooltip window).', 'event_espresso' ); ?>
+			</p>
+			<p>
+				<a href="http://craigsworks.com/projects/qtip/" target="_blank"><?php _e( 'Click here for more information about qTip.', 'event_espresso' ); ?></a>
+			</p>
+		</div>
+	</div>
+
 	<!-- / div display:none; -->
 </div>
+

@@ -318,7 +318,7 @@ function espresso_calendar_config_mnu() {
 															<label for="show_tooltips">
 																<?php _e('Show Tooltips', 'event_espresso'); ?><?php
 																if ( espresso_version() >= '3.2.P' )
-																	echo apply_filters('filter_hook_espresso_help', 'show_tooltips_info') ?>
+																	echo apply_filters('filter_hook_espresso_help', 'show-tooltips-info') ?>
 															</label>
 														</th>
 														<td>
