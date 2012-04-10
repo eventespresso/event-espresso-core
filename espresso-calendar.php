@@ -197,7 +197,11 @@ function espresso_calendar_do_stuff($show_expired) {
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		$sql .= " WHERE e.is_active != false ";
+		if ( espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
+			$sql .= " WHERE e.is_active != false ";
+		} else {
+			$sql .= " WHERE e.is_active != 'N' ";
+		}
 		$sql .= " AND e.event_status != 'D' ";
 		$sql .= " AND e.event_status != 'S' ";
 		$sql .= " AND e.event_status != 'P' ";
@@ -214,7 +218,11 @@ function espresso_calendar_do_stuff($show_expired) {
 		$type = 'all';
 		$sql = "SELECT e.*, ese.start_time, ese.end_time FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		$sql .= " WHERE is_active != false ";
+		if ( espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
+			$sql .= " WHERE e.is_active != false ";
+		} else {
+			$sql .= " WHERE e.is_active != 'N' ";
+		}
 		$sql .= " AND e.event_status != 'D' ";
 		$sql .= " AND e.event_status != 'S' ";
 		$sql .= " AND e.event_status != 'P' ";
@@ -302,9 +310,7 @@ function espresso_calendar_do_stuff($show_expired) {
 				$calendar_thumb = $event_meta['event_thumbnail_url'];
 				//Debug:
 				//echo '<a href="' . $registration_url . '"><img class="event-id-'. $event->id . '" src="'. $calendar_thumb . '" alt="" title="' . $ee_event_title . '" / ></a>';
-				if (!empty($event_meta['display_thumb_in_calendar'])) {
-					$eventArray['event_img_thumb'] = $calendar_thumb;
-				}
+				$eventArray['event_img_thumb'] = $calendar_thumb;
 			}
 		}
 
