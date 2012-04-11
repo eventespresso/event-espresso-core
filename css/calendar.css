@@ -623,37 +623,13 @@ class name '.event-has-thumb' is added to top level parent event */
 	vertical-align: middle;
 	}
 #espresso_calendar .thumb-wrap img {width: 100%;}
-#espresso_calendar .thumb-wrap img.small {height: 50px;}
-#espresso_calendar .thumb-wrap img.medium {height: 100px;}
-/*#espresso_calendar .fc-view-month .thumb-wrap img.medium {height: 100%;}*/
-#espresso_calendar .thumb-wrap img.large {height: 150px;}
 
-/* experimental - work in possible progress
-#espresso_calendar span.thumb-wrap:focus,
-#espresso_calendar span.thumb-wrap:hover {
-	height: auto;
-	width: auto;
-	position: relative;
-	z-index: 1000;
-	}
-#espresso_calendar .event-has-thumb:focus,
-#espresso_calendar .event-has-thumb:hover {
-	position: absolute !important;
-	width: auto !important;
-	}
-#espresso_calendar img.ee-event-thumb:focus,
-#espresso_calendar img.ee-event-thumb:hover,
-.fc-view {
-	height: auto;
-	width: auto;
-	overflow: visible !important;
-	}*/
+#espresso_calendar .fc-view-agendaWeek  .thumb-wrap { max-height: 20px; overflow: hidden; }
+.thumb-wrap { max-height: 90px; overflow: hidden; }
 
 /*___ adjust calendar & image dimensions based on view i.e 'day' ___*/
 
-.fc-view-agendaDay .fc-agenda-body   td div {min-height:50px;}
-#espresso_calendar .fc-view-agendaWeek  .thumb-wrap img {height: 20px;}
-.thumb-wrap { max-height: 90px; overflow: hidden; display: block; }
+.fc-view-agendaDay .fc-agenda-body td div {min-height:50px;}
 
 .fc-button-prev, .fc-button-next { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
@@ -708,6 +684,10 @@ class name '.event-has-thumb' is added to top level parent event */
 			color: #555;
 		}
 
+/* resets some common styles that make the calendar look uglerific */
+
+#content table.fc-header, #content table.fc-border-separate, .fc-header th, .fc-header td { border: none; }
+a.fc-event { line-height: 100%; }
 
 /* Calendar Widget CSS */
 /* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
