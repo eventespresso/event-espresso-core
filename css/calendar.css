@@ -694,8 +694,10 @@ a.fc-event { line-height: 100%; }
 /* added in 2.0 by Chris Reynolds */
 
 .espresso_calendar_widget span.fc-event-title,
-.espresso_calendar_widget p.time-display-block {
-	display: none; /* hide the titles because they make things ugly */
+.espresso_calendar_widget p.time-display-block,
+.espresso_calendar_widget .thumb-wrap {
+	position: absolute;
+	left: -999em; /* hide the titles because they make things ugly */
 }
 .espresso_calendar_widget .fc-event-skin {
 	background-color: transparent; /* get rid of the background color and border */
@@ -715,5 +717,11 @@ a.fc-event { line-height: 100%; }
 .espresso_calendar_widget table.fc-header { margin-bottom: 0; } /* removes any padding under the header table (might be built into the theme's style.css) */
 .espresso_calendar_widget table.fc-border-separate tbody { font-size: 0.8em; } /* resets the font size of the dates */
 .espresso_calendar_widget table.fc-border-separate thead { font-size: 0.9em; } /* resets the font size of the day names */
+
+/* default resets for themeroller */
+
+.ui-state-highlight.fc-today { border-top: 1px solid #AAA; border-left: 1px solid #aaa; }
+
+.espresso_calendar_widget th.ui-widget-header { font-weight: normal; }
 .espresso_calendar_widget .fc-button-content .ui-icon { margin-top: -50%; }
 .espresso_calendar_widget span.ui-icon { margin: 0; } /* this resets the style of the themeroller < > icons */
