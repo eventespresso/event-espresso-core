@@ -133,6 +133,14 @@ if (!function_exists('espresso_init_calendar_style')) {
 			}
 		}
 
+		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
+		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "css/calendar.css")) {
+			wp_register_style('calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css'); //This is the url to the css file if available
+		} else {
+			wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/calendar.css'); //calendar core style
+		}
+		wp_enqueue_style('calendar');
+
 		//Load tooltips styles
 		if (isset($espresso_calendar['show_tooltips'])) {
 			if ($espresso_calendar['show_tooltips'] == 'Y') {
@@ -143,16 +151,6 @@ if (!function_exists('espresso_init_calendar_style')) {
 	}
 
 }
-		function espresso_load_calendar_css() {
-			//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
-			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "css/calendar.css")) {
-				wp_register_style('calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css'); //This is the url to the css file if available
-			} else {
-				wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/calendar.css'); //calendar core style
-			}
-			wp_enqueue_style('calendar');
-		}
-add_action('wp_print_styles', 'espresso_load_calendar_css', 19);
 add_action('wp_print_styles', 'espresso_init_calendar_style', 30);
 
 // Add our embedded head styles for color picker selection
