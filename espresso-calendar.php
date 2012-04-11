@@ -173,12 +173,15 @@ if ($espresso_calendar['espresso_use_pickers'] == 'true') {
 				.ui-tooltip-ee .ui-tooltip-titlebar {
 					background: <?php echo $espresso_calendar['ee_event_background'] ?>;
 				}
+				th.fc-widget-header {
+					background-color: <?php echo $espresso_calendar['ee_event_background'] ?>;
+				}
 			<?php
 		}
 
 		if (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) {
 			?>
-				.fc-event-title, .time-display-block, .ui-tooltip-ee .ui-tooltip-titlebar {
+				.fc-event-title, .time-display-block, .ui-tooltip-ee .ui-tooltip-titlebar, th.fc-widget-header {
 					color: <?php echo $espresso_calendar['ee_event_text_color'] ?>;
 				}
 			<?php

@@ -134,7 +134,11 @@ html .fc,
 	filter: alpha(opacity=20); /* for IE */
 	}
 
-
+th.fc-widget-header {
+	background: #486D96;
+	color: #fff;
+	text-shadow: none;
+}
 
 /* Buttons
 ------------------------------------------------------------------------*/
