@@ -322,6 +322,23 @@
 			</p>
 		</div>
 	</div>
+	<div id="enable-images" class="pop-help">
+		<h2>
+			<?php _e( 'Enable Images In Calendar', 'event_espresso' ); ?>
+		</h2>
+		<p>
+			<?php _e( 'Activate this to enable image thumbnails (pulled from the Featured Image box in the event) on your calendar.  <span style="color: red; font-weight: bold;">Note:</span> This may not look good on all themes or may require additional styling.  If you have any problems, please consult our documentation or ask for support in the forums if you need help updating your CSS to work best for your theme.', 'event_espresso' ); ?>
+		</p>
+		<p>
+			<?php _e( 'If you are having trouble with this option turned on, consider disabling the calendar images and instead activating Show Tooltips, and adding an image into the event description.  The image in the event description (and any text) will display in the tooltip pop-up.','event_espresso' ); ?>
+		</p>
+		<p>
+			<strong><?php _e( 'More information', 'event_espresso' ); ?></strong><br />
+			<a href="http://eventespresso.com/support/documentation/"><?php _e( 'Event Espresso Support Documentation', 'event_espresso' ); ?></a><br />
+			<a href="http://eventespresso.com/forums/"><?php _e( 'Event Espresso Support Forums', 'event_espresso' ); ?></a><br />
+			<a href="http://eventespresso.com/support/"><?php _e( 'Premium Support Options', 'event_espresso' ); ?></a>
+		</p>
+	</div>
 
 	<!-- / div display:none; -->
 </div>

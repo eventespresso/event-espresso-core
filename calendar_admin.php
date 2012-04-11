@@ -261,7 +261,9 @@ function espresso_calendar_config_mnu() {
 														//only display this if we're using 3.2 ?>
 													<tr>
 														<th> <label for="enable-calendar-thumbs">
-																<?php _e('Enable Images in Calendar', 'event_espresso'); ?>
+																<?php _e('Enable Images in Calendar', 'event_espresso');
+																if ( espresso_version() >= '3.2.P' )
+																	echo apply_filters('filter_hook_espresso_help', 'enable-images')?>
 															</label>
 														</th>
 														<td><?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"'); ?>
