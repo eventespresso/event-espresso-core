@@ -637,53 +637,6 @@ class name '.event-has-thumb' is added to top level parent event */
 
 .fc-event-time { position: absolute; left: -999em; float: left; height: 0px; }
 
-/* Event Espresso default tooltip styles */
-.ui-tooltip-ee{
-
-}
-
-	.ui-tooltip-ee .ui-tooltip-titlebar,
-	.ui-tooltip-ee .ui-tooltip-content{
-		border: 1px solid rgba(72, 109, 150, 0.25);
-
-		filter: none; -ms-filter: none;
-	}
-
-	.ui-tooltip-ee .ui-tooltip-titlebar{
-		background: #486D96;
-		background-image: -moz-linear-gradient(top, #486D96, #2E629D);
-		background-image: -webkit-gradient(linear, left top, left bottom, from(#486D96), to(#2E629D));
-		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#486D96,endColorstr=#2E629D);
-		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#486D96,endColorstr=#2E629D)";
-
-		color: white;
-		font-weight: bold;
-
-		border-bottom-width: 0;
-		-moz-border-radius: 3px 3px 0 0;
-		-webkit-border-radius: 3px 3px 0 0;
-		border-radius: 3px 3px 0 0;
-	}
-
-	.ui-tooltip-ee .ui-tooltip-content{
-		background-color: #F9F9F9;
-		color: #454545;
-
-		-moz-border-radius: 0 0 3px 3px;
-		-webkit-border-radius: 0 0 3px 3px;
-		border-radius: 0 0 3px 3px;
-	}
-
-	.ui-tooltip-ee .ui-tooltip-icon{
-		border: 2px solid #285589;
-		background: #285589;
-	}
-
-		.ui-tooltip-ee .ui-tooltip-icon .ui-icon{
-			background-color: #FBFBFB;
-			color: #555;
-		}
-
 /* resets some common styles that make the calendar look uglerific */
 
 #content table.fc-header, #content table.fc-border-separate, .fc-header th, .fc-header td { border: none; }
