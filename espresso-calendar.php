@@ -491,7 +491,7 @@ if (!function_exists('espresso_calendar')) {
 			if (!empty($org_options['style_settings']['enable_default_style'])) {
 				if ($org_options['style_settings']['enable_default_style'] == true) {
 					if ($org_options['themeroller']['themeroller_style'] != '') { ?>
-						jQuery('a').addClass('themeroller');
+						jQuery('a.fc-event').addClass('themeroller ui-widget-header');
 					<?php }
 				}
 			}
