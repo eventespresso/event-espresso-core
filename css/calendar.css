@@ -674,6 +674,9 @@ a.fc-event { line-height: 100%; }
 /* default resets for themeroller */
 
 .ui-state-highlight.fc-today { border-top: 1px solid #AAA; border-left: 1px solid #aaa; }
+a.fc-event.themeroller.ui-widget-header span.fc-event-title,
+a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: normal; }
+.themeroller .thumb-wrap { max-height: 80px; overflow: hidden; }
 
 .espresso_calendar_widget th.ui-widget-header { font-weight: normal; }
 .espresso_calendar_widget .fc-button-content .ui-icon { margin-top: -50%; }
