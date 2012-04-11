@@ -84,8 +84,8 @@ class EE_Price {
 	/**
 	*  Price constructor
 	*
-	* @access 		public
-	* @param			int		 				$PRT_ID						Price type ID
+	* @access 			public
+	* @param			int		 			$PRT_ID						Price type ID
 	* @param			float					$PRC_amount				Price amount
 	* @param			string 				$PRC_name					Price name
 	* @param			string				$PRC_desc					Price description
@@ -95,8 +95,8 @@ class EE_Price {
 	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
 		$this->_PRC_ID 					= $PRC_ID;
 		$this->_PRT_ID					= $PRT_ID;
-		$this->_PRC_amount 			= $PRC_amount;
-		$this->_PRC_name				= $PRC_name;
+		$this->_PRC_amount 		= $PRC_amount;
+		$this->_PRC_name			= $PRC_name;
 		$this->_PRC_desc				= $PRC_desc;
 		$this->_PRC_is_active		= $PRC_is_active;
 
@@ -109,7 +109,7 @@ class EE_Price {
 	*		Set Price type ID
 	*
 	* 		@access		public
-	*			@param		int			$PRT_ID
+	*		@param		int			$PRT_ID
 	*/
 	public function set_type( $PRT_ID = FALSE ) {
 		global $espresso_notices;
@@ -125,7 +125,7 @@ class EE_Price {
 	/**
 	*		Set Price Amount
 	*
-	* 	@access		public
+	* 		@access		public
 	*		@param		float		$PRC_amount
 	*/
 	public function set_amount( $PRC_amount = FALSE ) {
@@ -143,7 +143,7 @@ class EE_Price {
 	/**
 	*		Set Price Name
 	*
-	* 	@access		public
+	* 		@access		public
 	*		@param		string		$PRC_name
 	*/
 	public function set_name( $PRC_name = FALSE ) {
@@ -179,7 +179,7 @@ class EE_Price {
 	/**
 	*		Set Price Globally Active
 	*
-	* 	@access		public
+	* 		@access		public
 	*		@param		bool		$PRC_is_active
 	*/
 	public function set_globally_active( $PRC_is_active = NULL ) {

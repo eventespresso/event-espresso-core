@@ -200,7 +200,7 @@ abstract class EEM_Base {
 	 *		@param mixed (string, array) - $operator -  operator to be used for WHERE clause  > = < 
 	 *		@return mixed (object, array)
 	 */	
-	protected function delete ( $where_cols_n_values=FALSE, $operator = '=' ) {
+	public function delete ( $where_cols_n_values=FALSE, $operator = '=' ) {
 		// grab data types from above and pass everything to _delete to perform the update
 		$results = $this->_delete ( $this->table_name, $this->table_data_types, $where_cols_n_values, $operator );
 		return $results;
@@ -590,9 +590,13 @@ abstract class EEM_Base {
 			}
 		}
 		
+//		echo printr( $em_updata, $em_table_name );			
+		
 		global $wpdb;
 		// use $wpdb->insert because it automagically escapes and sanitizes data for us
 		$row_results = $wpdb->insert( $em_table_name, $em_updata, $em_upformat);
+		
+//		echo $wpdb->last_query;
 		
 		// set generic success / error mesasges
 		if ( $row_results == 1 ) {

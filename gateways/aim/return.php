@@ -33,11 +33,19 @@ function espresso_process_aim( $EE_Session ) {
 	
 		$reg_info = $session_data['cart']['REG'];
 		$primary_attendee = $session_data['primary_attendee'];
+		
+		$grand_total = $session_data['_cart_grand_total_amount'];
+
+		$taxes = $session_data['tax_totals'];
+		foreach ( $taxes as $tax ) {
+			$grand_total += $tax;
+		}
 	
 	//start transaction
 		$transaction = new AuthorizeNetAIM($authnet_aim_login_id, $authnet_aim_transaction_key);
-	
-		$transaction->amount = $session_data['_cart_grand_total_amount'];
+		
+		
+		$transaction->amount = $grand_total;
 		$transaction->card_num = $billing_info['reg-page-billing-card-nmbr']['value'];
 		$transaction->exp_date = $billing_info['reg-page-billing-card-exp-date-mnth']['value'].$billing_info['reg-page-billing-card-exp-date-year']['value'];
 		$transaction->card_code = $billing_info['reg-page-billing-card-ccv-code']['value'];
@@ -86,6 +94,7 @@ function espresso_process_aim( $EE_Session ) {
 											'status' 				=> $payment_data->payment_status,
 											'response_msg'	=> $response->response_reason_text,
 											'amount'				=> $response->amount,
+											'method'				=> $response->method,
 											'md5_hash' 			=> $response->md5_hash,
 											'details'				=> array(
 																						  'transaction_id' => $response->transaction_id,

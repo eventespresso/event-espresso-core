@@ -595,29 +595,31 @@ class EE_Single_Page_Checkout {
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
 	    $PRC = EEM_Price::instance();		
-		
 		// retreive all taxes
 		if ( $global_taxes = $PRC->get_all_prices_that_are_taxes() ) {
+			//echo printr( $global_taxes, '$global_taxes' );
 			global $EE_Session;
 			$template_args['taxes'] = array();
 			$tax_totals = array();
+			$amnt = 0;
 			foreach ( $global_taxes as $order => $taxes ) {
 				$tax_tier_total =0;
 				foreach ( $taxes as $tax ) {
-					$prcnt = $tax->PRC_amount / 100;
+					//echo printr( $tax, '$tax' );
+					$prcnt = $tax->amount() / 100;
 					$amnt = number_format( $grand_total * $prcnt, 2, '.', '');
 					$prcnt = $prcnt*100;
-					$template_args['taxes'][ $tax->PRC_ID ] = array( 'name' => $tax->PRC_name, 'percent' => $prcnt, 'amount' => $amnt );
-					$tax_totals [ $tax->PRC_ID ] = $amnt;
+					$template_args['taxes'][ $tax->ID() ] = array( 'name' => $tax->name(), 'percent' => $prcnt, 'amount' => $amnt );
+					$tax_totals [ $tax->ID() ] = $amnt;
 					$tax_tier_total = $tax_tier_total + $amnt;
 				}
 				// add tax to grand total
-				$grand_total = $grand_total + $amnt;
+				$grand_total = $grand_total + $tax_tier_total;
 			}
 			// add tax data to session
 			$EE_Session->set_session_data(  array( '_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals ), 'session_data' );
 		}
-		
+
 		$template_args['sub_total'] = number_format($sub_total, 2, '.', '');
 		$template_args['grand_total'] = number_format($grand_total, 2, '.', '');
 		
@@ -1202,16 +1204,16 @@ class EE_Single_Page_Checkout {
 			$session = $EE_Session->get_session_data();
 			$reg_items = $session['cart']['REG']['items'];
 			// start the transaction record
-			$transaction = new EE_Transaction( '0', 'TPN', NULL, $session, NULL, NULL );
+			$transaction = new EE_Transaction( 0.00, 'TPN', NULL, $session, NULL, NULL );
 			$txn_results = $transaction->insert();
 			// more than one item means this is a group registration
 			$is_group_reg = count( $reg_items ) > 1 ? TRUE : FALSE;
 			// cycle through items in session
-			foreach ( $reg_items as $line_item_id => $reg_item ) {
+			foreach ( $reg_items as $line_item_id => $event ) {
 				// more than one attendee also means this is a group registration
-				$is_group_reg = count( $reg_item['attendees'] ) > 1 ? TRUE : $is_group_reg;
+				$is_group_reg = count( $event['attendees'] ) > 1 ? TRUE : $is_group_reg;
 				// cycle through attendees
-				foreach ( $reg_item['attendees'] as $att_nmbr => $attendee ) {
+				foreach ( $event['attendees'] as $att_nmbr => $attendee ) {
 					
 					// grab main attendee details
 					$ATT_fname = isset( $attendee['fname'] ) ? $attendee['fname'] : '';
@@ -1220,7 +1222,7 @@ class EE_Single_Page_Checkout {
 					// create array for query where statement
 					$where_cols_n_values = array( 'ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email );
 					// do we already have an existing record for this attendee ?														
-					if ( $existing_attendee = EE_Attendee::find_existing_attendee( $where_cols_n_values )) {
+					if ( $existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values )) {
 						$ATT_ID = $existing_attendee->ID();
 					} else {
 						// create attendee
@@ -1242,21 +1244,43 @@ class EE_Single_Page_Checkout {
 						$ATT_ID = $att_results['new-ID'];
 					}	
 					
-					$new_reg_ID  = $reg_item['id'] . '-' . $ATT_ID . '-' . $txn_results['new-ID'] . '-' . $session['id'];												
+					$new_reg_ID  = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $att_nmbr . '-' . $session['id'];	
+					
+					// check for existing registration attempt
+					if ( $prev_reg = $REG->find_existing_registrations_LIKE( '%' . $event['id'] . '-' . $ATT_ID . '-' . $att_nmbr . '-' . $session['id'] . '%' )) {
+					
+						// get previous transaction
+						$prev_txn_ID = $prev_reg->transaction_ID();
+						if ( $prev_txn = $TXN->get_transaction( $prev_txn_ID )) {
+							// get txn details
+							$prev_txn_details = $prev_txn->details();
+							if ( ! isset( $prev_txn_details['REDO_TXN'] )) {
+								$prev_txn_details['REDO_TXN'] = array();
+							}
+							// update with new TXN_ID
+							$prev_txn_details['REDO_TXN'][] = $txn_results['new-ID'];
+							$prev_txn->set_details( $prev_txn_details );
+							$prev_txn->update();	
+						}
 
-					// now create registration for the attendee
+						// delete prev registration so that they don't pile up in the DB 
+						// ( it's ok - we're tracking the failed transactions, and if they don't retry the transaction, then we will still have this record won't we? )
+						$REG->delete( array( 'REG_ID' => $prev_reg->ID() ));
+						
+					} 
+					
+					// now create a new registration for the attendee
 					$reg[ $line_item_id ] = new EE_Registration(
-																								$reg_item['id'],
+																								$event['id'],
 																								$ATT_ID,
 																								$txn_results['new-ID'],
 																								$session['id'],
 																								$new_reg_ID,
-//																								$attendee['registration_id'],
 																								isset( $attendee['primary_attendee'] ),
 																								$is_group_reg,
 																								'RPN',
 																								time(),
-																								$reg_item['price_id'],
+																								$event['price_id'],
 																								FALSE,
 																								FALSE
 																							  );
@@ -1268,6 +1292,7 @@ class EE_Single_Page_Checkout {
 						$primary_attendee['registration_id'] = $new_reg_ID;
 						$EE_Session->set_session_data(  array( 'primary_attendee' => $primary_attendee ), 'session_data' );					
 					}
+
 				}
 			}
 			
@@ -1278,7 +1303,9 @@ class EE_Single_Page_Checkout {
 														'approved' => TRUE,
 														'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
 														'status' => 'Approved',
-														'details' => 'free event'
+														'details' => 'free event',
+														'amount' => 0.00,
+														'method' => 'none'
 													);
 			} else {
 				// attempt to perform transaction via payment gateway 
@@ -1308,6 +1335,9 @@ class EE_Single_Page_Checkout {
 						break;
 			}
 			
+			$txn_details['amount'] = isset( $txn_details['amount'] ) ? abs( $txn_details['amount'] ) : 0.00;
+			$txn_details['method'] = isset( $txn_details['method'] ) ? $txn_details['method'] : '';
+			
 			$transaction->set_total( $txn_details['amount'] ); 
 			$transaction->set_status( $status );
 			$transaction->set_details( $txn_details );
@@ -1322,6 +1352,12 @@ class EE_Single_Page_Checkout {
 			}
 			
 			$transaction->update();
+			if ( $transaction->total() > 0 && $txn_details['status'] == 'Approved' ) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+				EEM_Payment::instance();
+				$payment = new EE_Payment( $transaction->ID(), $transaction->datetime(), $txn_details['method'], $txn_details['amount'] );
+				$results = $payment->insert();
+			}
 				
 		}
 

@@ -43,12 +43,13 @@ class EEM_Price extends EEM_Base {
 		$this->table_name = $wpdb->prefix . 'esp_price';
 		// array representation of the price table and the data types for each field
 		$this->table_data_types = array(
-				'PRC_ID' => '%d',
-				'PRT_ID' => '%d',
+				'PRC_ID' 			=> '%d',
+				'PRT_ID' 			=> '%d',
 				'PRC_amount' => '%d',
-				'PRC_name' => '%s',
-				'PRC_desc' => '%s',
-				'PRC_is_active' => '%d');
+				'PRC_name' 	=> '%s',
+				'PRC_desc' 		=> '%s',
+				'PRC_is_active' => '%d'
+		);
 		// load Price object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
 
@@ -87,8 +88,12 @@ class EEM_Price extends EEM_Base {
 			return FALSE;
 		}
 
+		if ( is_object( $prices )){
+			$prices = array( $prices );
+		}
+		
 		foreach ($prices as $price) {
-			$array_of_objects[$price->PRC_ID] = new EE_Price(
+			$array_of_objects[ $price->PRC_ID ] = new EE_Price(
 							$price->PRT_ID,
 							$price->PRC_amount,
 							$price->PRC_name,
@@ -96,8 +101,8 @@ class EEM_Price extends EEM_Base {
 							$price->PRC_is_active,
 							$price->PRC_ID
 			);
-			return $array_of_objects;
 		}
+		return $array_of_objects;
 	}
 
 	/**
@@ -189,9 +194,13 @@ class EEM_Price extends EEM_Base {
 
 		global $wpdb;
 		// retreive prices
-		$SQL = 'SELECT prc.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prc.PRT_ID = prc.PRT_ID WHERE prt.'. $what .' = %d';
+		$SQL = 'SELECT prc.*, prt.PRT_order FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.'. $what .' = %d GROUP BY PRT_order';
+
 		if ( $prices = $wpdb->get_results( $wpdb->prepare( $SQL, $value ))) {
-			return $this->_create_objects( $prices );
+			foreach ($prices as $price) {
+				$array_of_prices[ $price->PRT_order ] = $this->_create_objects( $price );
+			}
+			return $array_of_prices;
 		} else {
 			return FALSE;
 		}

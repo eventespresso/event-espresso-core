@@ -44,7 +44,7 @@ class EEM_Transaction extends EEM_Base {
 		$this->table_data_types = array (	
 			'TXN_ID' 						=> '%d', 	
 			'TXN_timestamp' 		=> '%d', 	
-			'TXN_total' 					=> '%d', 	
+			'TXN_total' 					=> '%s', 	
 			'STS_ID'						=> '%s', 	 	
 			'TXN_details'				=> '%s', 	 	
 			'TXN_session_data'		=> '%s',
@@ -101,10 +101,10 @@ class EEM_Transaction extends EEM_Base {
 				$array_of_objects[ $transaction->TXN_ID ] = new EE_Transaction(
 						$transaction->TXN_total, 
 						$transaction->STS_ID, 
-						$transaction->TXN_details, 
+						maybe_unserialize( $transaction->TXN_details ), 
 						maybe_unserialize( $transaction->TXN_session_data ), 
 						$transaction->TXN_hash_salt,
-						$transaction->TXN_tax_data,
+						maybe_unserialize( $transaction->TXN_tax_data ),
 						$transaction->TXN_timestamp, 
 						$transaction->TXN_ID
 				 	);
@@ -133,7 +133,7 @@ class EEM_Transaction extends EEM_Base {
 		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
 		if ( $transaction = $this->select_row_where ( $where_cols_n_values )) {
 			$transaction_array = $this->_create_objects( array( $transaction ));
-			return array_shift( $transaction_array );			
+			return array_shift( $transaction_array );
 		} else {
 			return FALSE;
 		}

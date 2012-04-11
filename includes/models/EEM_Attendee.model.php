@@ -196,6 +196,30 @@ class EEM_Attendee extends EEM_Base {
 
 
 
+
+	/**
+	*		Search for an existing Attendee record in the DB
+	* 		@access		public
+	*/	
+	public function find_existing_attendee( $where_cols_n_values = FALSE ) {
+
+		// no search params means attendee object already exists
+		if ( ! $where_cols_n_values ) {
+			// search by combo of first and last names plus the email address
+			$where_cols_n_values = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );  	 
+		}
+		
+		if ( $attendee = $this->get_attendee( $where_cols_n_values )) {
+			return $attendee;
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
 	/**
 	 *		This function inserts table data
 	 *		

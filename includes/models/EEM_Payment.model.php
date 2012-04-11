@@ -47,8 +47,10 @@ class EEM_Payment extends EEM_Base {
 			'TXN_ID' 					=> '%d',
 			'PAY_timestamp' 	=> '%d',
 			'PAY_method'			=> '%s',
+			'PAY_amount'			=> '%s',
 			'PAY_details'			=> '%s'
 		);
+		
 		// load Payment object class file
 		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php');
 
@@ -249,6 +251,8 @@ class EEM_Payment extends EEM_Base {
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		$results = $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
+
+		$rows_n_ID = array( 'rows' => $results['rows'], 'new-ID' => $results['new-ID'] );
 	
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {
@@ -258,11 +262,12 @@ class EEM_Payment extends EEM_Base {
 			// multiple rows were successfully updated
 			$espresso_notices['success'][] = 'Details for '.$results.' payments have been successfully saved to the database.';
 		} else {
-			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the payment has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			if ( empty( $espresso_notices['errors'] )) {
+				$espresso_notices['errors'][] = 'An error occured and the payment has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );	
+			} 
+			$rows_n_ID['errors'] = implode( "\n", $espresso_notices['errors'] );
 		}
 	
-		$rows_n_ID = array( 'rows' => $results['rows'], 'new-ID' => $results['new-ID'] );
 		return $rows_n_ID;
 	
 	}

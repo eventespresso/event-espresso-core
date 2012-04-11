@@ -689,22 +689,22 @@ class EE_Attendee {
 	*		Search for an existing DB record for this Attendee
 	* 		@access		public
 	*/	
-	public function find_existing_attendee( $where_cols_n_values = FALSE ) {
-		// load model
-		$MODEL = EEM_Attendee::instance();
-		// no search params means attendee object already exists
-		if ( ! $where_cols_n_values ) {
-			// search by combo of first and last names plus the email address
-			$where_cols_n_values = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );  	 
-		}
-		
-		if ( $attendee = $MODEL->get_attendee( $where_cols_n_values )) {
-			return $attendee;
-		} else {
-			return FALSE;
-		}
-
-	}
+//	public function find_existing_attendee( $where_cols_n_values = FALSE ) {
+//		// load model
+//		$MODEL = EEM_Attendee::instance();
+//		// no search params means attendee object already exists
+//		if ( ! $where_cols_n_values ) {
+//			// search by combo of first and last names plus the email address
+//			$where_cols_n_values = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );  	 
+//		}
+//		
+//		if ( $attendee = $MODEL->get_attendee( $where_cols_n_values )) {
+//			return $attendee;
+//		} else {
+//			return FALSE;
+//		}
+//
+//	}
 
 
 

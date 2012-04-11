@@ -169,6 +169,39 @@ class EEM_Registration extends EEM_Base {
 
 
 
+
+	/**
+	*		Search for an existing registration record in the DB using SQL LIKE clause - so go ahead - get wildcards !
+	* 		@access		public
+	*/	
+	public function find_existing_registrations_LIKE( $REG_code = FALSE ) {
+
+		// no search params means registration object already exists
+		if ( ! $REG_code ) {
+			$REG_code = $this->_REG_code;  	 
+		}
+		
+		global $wpdb;		
+		// we're using LIKE with wildcards so that partial REG_codes can be used
+		$SQL = 'SELECT * FROM ' . $this->table_name . ' WHERE REG_code LIKE "'.$REG_code.'" ORDER BY TXN_ID';
+	
+		if ( $registrations = $wpdb->get_results( $SQL )) {	
+			// if there's more than one, then we'll just grab the last one 
+			if ( is_array( $registrations )) {
+				$registrations = array_pop( $registrations );
+			}
+			$registration = $this->_create_objects( array( $registrations ));
+			return array_shift( $registration );
+			
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
 	/**
 	 *		This function inserts table data
 	 *		

@@ -147,7 +147,7 @@ class EE_Transaction {
 	* @param 		timestamp 		$TXN_timestamp 		Unix timestamp
 	* @param 		int 					$TXN_ID 						Transaction ID
 	*/
-	public function __construct( $TXN_total=0, $STS_ID=NULL, $TXN_details=NULL, $TXN_session_data=NULL, $TXN_hash_salt=NULL, $TXN_tax_data=NULL,$TXN_timestamp=FALSE,$TXN_ID=FALSE ) {
+	public function __construct( $TXN_total=0.00, $STS_ID=NULL, $TXN_details=NULL, $TXN_session_data=NULL, $TXN_hash_salt=NULL, $TXN_tax_data=NULL,$TXN_timestamp=FALSE,$TXN_ID=FALSE ) {
 		$this->_TXN_ID 						= $TXN_ID;
 		$this->_TXN_timestamp 		= $TXN_timestamp ? $TXN_timestamp : time();
 		$this->_TXN_total 					= $TXN_total;
