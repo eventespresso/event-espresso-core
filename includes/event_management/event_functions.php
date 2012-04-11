@@ -459,11 +459,14 @@ function espresso_event_editor_pricing_metabox($event) {
 			<?php
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 			$PRC = EEM_Price::instance();
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
+			$EP = EEM_Event_Price::instance();
 			$prices = $PRC->get_all_prices();
 			foreach ($prices as $price) {
+				$checked = $EP->is_price_active_for_event($price->ID(), $event->id) ? 'value="1" ' : '';
 				?>
 				<td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><!--Delete Events-->
-					<?php echo '<input name="checkbox[' . $price->ID() . ']" type="checkbox"  title="Activate Price ' . $price->name() . '" />'; ?></td>
+					<?php echo '<input name="checkbox[' . $price->ID() . ']" type="checkbox" ' . $checked . 'title="Activate Price ' . $price->name() . '" />'; ?></td>
 
 					<?php
 				}

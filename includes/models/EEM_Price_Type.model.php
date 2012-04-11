@@ -30,6 +30,8 @@ class EEM_Price_Type extends EEM_Base {
 	// private instance of the Price Type object
 	private static $_instance = NULL;
 
+	// An array of the price type objects
+	public $type = NULL;
 
 	/**
 	 * 		private constructor to prevent direct creation
@@ -51,6 +53,9 @@ class EEM_Price_Type extends EEM_Base {
 				'PRT_order' => '%d');
 		// load Price_Type object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price_Type.class.php');
+
+		$this->type = $this->get_all_price_types();
+
 
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();

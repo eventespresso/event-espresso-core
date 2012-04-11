@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Price Model
  *
  * @package				Event Espresso
- * @subpackage		includes/models/
+ * @subpackage		includes/models/EEM_Price.model.php
  * @author				Sidney Harrell
  *
  * ------------------------------------------------------------------------
@@ -28,18 +28,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 class EEM_Price extends EEM_Base {
 
-	// private instance of the Price object
+	// private instance of the EEM_Price object
 	private static $_instance = NULL;
-
-	// An array of the price type objects
-	private $_price_types = NULL;
-
-	// A key to restrict access to references to the price type objects in $_price_types
-	private $_type_key = NULL;
-
-	// A multi-dimensional array to hold the active status of prices / events from the event_price table.
-	// ie. $_active_status[price_id][event_id] = true
-	private $_active_status = NULL;
 
 	/**
 	 * 		private constructor to prevent direct creation
@@ -61,17 +51,6 @@ class EEM_Price extends EEM_Base {
 				'PRC_is_active' => '%d');
 		// load Price object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-		$PRT = EEM_Price_Type::instance();
-		$this->_price_types = $PRT->get_all_price_types();
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Encryption.class.php');
-		$ENCRYPT = EE_Encryption::instance();
-		$this->_type_key = $ENCRYPT->generate_random_string();
-		if ($statuses = $this->_select_all($wpdb->prefix . 'esp_event_price', FALSE, '', ARRAY_A)) {
-			foreach ($statuses as $status) {
-				$this->_active_status[$status['EVT_ID']][$status['PRC_ID']] = $status['is_active'];
-			}
-		}
 
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
@@ -115,8 +94,6 @@ class EEM_Price extends EEM_Base {
 							$price->PRC_name,
 							$price->PRC_desc,
 							$price->PRC_is_active,
-							$this->_price_types[$price->PRT_ID],
-							$this->_type_key,
 							$price->PRC_ID
 			);
 			return $array_of_objects;
@@ -282,57 +259,6 @@ class EEM_Price extends EEM_Base {
 		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, $order );
 	}
 
-	/**
-	 *	get all the final computed prices for an event
-	 *
-	 *	@access public
-	 *	@param int $event_id
-	 *	@return array of price objects
-	 */
-	public function get_prices_by_event_id( $event_id = FALSE ) {
-		global $wpdb;
-		if (!$event_id) {
-			return FALSE;
-		}
-		$SQL = "SELECT * FROM " . $this->table_name . ' prc JOIN ' . $wpdb->prefix . 'esp_event_price ev_pr  ON ev_pr.PRC_ID=prc.PRC_ID WHERE ev_pr.EVT_ID = %d';
-		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $event_id ))) {
-			$prices = $this->_create_objects( $results );
-			$ordered_prices = array();
-			foreach($prices as $price) {
-				$ordered_prices[$price->type_order][] = $price;
-			}
-			$computed_prices = $ordered_prices[0];
-			unset($ordered_prices[0]);
-			foreach($ordered_prices as $order=>$price_order) {
-				foreach($price_order as $adjustment) {
-					foreach($computed_prices as $computed_price) {
-						$computed_price->add_adjustment($adjustment->name(), $adjustment->type_is_percent(), $adjustment->amount());
-					}
-				}
-			}
-			if (!empty($computed_prices)) {
-				return $computed_prices;
-			} else {
-				return FALSE;
-			}
-		} else {
-			return FALSE;
-		}
-	}
-
-	/**
-	 * get reference to price type object by price type id
-	 *
-	 * @access public
-	 * @param int $PRT_ID
-	 * @return object
-	 */
-	public function get_price_type_reference( $PRT_ID=FALSE, $Type_Key=FALSE ) {
-		if (!$PRT_ID || !array_key_exists($PRT_ID) || $Type_Key!=$this->_type_key) {
-			return FALSE;
-		}
-		return $this->_price_types[$PRT_ID];
-	}
 
 	/**
 	 * 		This function inserts table data

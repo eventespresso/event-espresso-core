@@ -79,35 +79,10 @@ class EE_Price {
 	private $_PRC_is_active = NULL;
 
 
-	/**
-	 * Type Key, needed to changed Price Type object reference
-	 *
-	 * @access private
-	 * @var string
-	 */
-	private $_Type_Key = NULL;
 
 
 	/**
-  *	Price adjustments
-	*
-	*	@access	private
-  *	@var array
-  */
-	private $_PRC_adjustments = NULL;
-
-
-	/**
-	 *	Price Type object
-	 *
-	 *	@access private
-	 *	@var object
-	 */
-	private $_Price_Type = NULL;
-
-
-	/**
-	*  Attendee constructor
+	*  Price constructor
 	*
 	* @access 		public
 	* @param			int		 				$PRT_ID						Price type ID
@@ -117,51 +92,16 @@ class EE_Price {
 	* @param	 		bool					$PRC_is_active		is the Price globally active
 	* @param			int 					$PRC_ID						Price ID
 	*/
-	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $Price_Type=FALSE, $Type_Key=FALSE, $PRC_ID=FALSE ) {
+	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
 		$this->_PRC_ID 					= $PRC_ID;
 		$this->_PRT_ID					= $PRT_ID;
 		$this->_PRC_amount 			= $PRC_amount;
 		$this->_PRC_name				= $PRC_name;
 		$this->_PRC_desc				= $PRC_desc;
 		$this->_PRC_is_active		= $PRC_is_active;
-		$this->_Price_Type      = $Price_Type;
-		$this->_Type_Key        = $Type_Key;
-		$this->_PRC_adjustments = array();
-
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-	}
-
-
-	/**
-	 *	Add Price adjustment
-	 *
-	 *	@access public
-	 *	@param $adj_name;
-	 *	@param $adj_is_percent;
-	 *	@param $adj_amount;
-	 */
-	public function add_adjustment( $adj_name = FALSE, $adj_is_percent = NULL, $adj_amount = FALSE ) {
-		global $espresso_notices;
-		if ( ! $adj_name || ! is_bool($adj_is_percent) || ! $adj_amount  ) {
-			$espresso_notices['errors'][] = 'A valid price adjustment was not supplied.';
-			return FALSE;
-		}
-		if (empty($this->_PRC_adjustments)) {
-			$this->_PRC_adjustments[] = array('name'=>'base price', 'amount'=>$this->_PRC_amount);
-		}
-
-		if ($adj_is_percent) {
-			$percent_adj = $adj_amount;
-			$adj_amount = $this->_PRC_amount * $adj_amount;
-			$this->_PRC_adjustments[] = array('name'=>wp_strip_all_tags( $adj_name ), 'is_percent'=>true, 'percent_adjustment'=>"$percent_adj %", 'adjustment'=>$adj_amount);
-		} else {
-			$this->_PRC_adjustments[] = array('name'=>wp_strip_all_tags( $adj_name ), 'is_percent'=>false, 'adjustment'=>$adj_amount);
-		}
-
-		$this->_PRC_amount = max($this->_PRC_amount+$adj_amount, 0);
-
 	}
 
 
@@ -172,14 +112,12 @@ class EE_Price {
 	*			@param		int			$PRT_ID
 	*/
 	public function set_type( $PRT_ID = FALSE ) {
-		$MODEL = EEM_Price::instance();
 		global $espresso_notices;
 		if ( ! $PRT_ID ) {
 			$espresso_notices['errors'][] = 'No price type was supplied.';
 			return FALSE;
 		}
 		$this->_PRT_ID = absint( $PRT_ID );
-		$this->_Price_Type = $MODEL->get_price_type_reference( $PRT_ID, $this->_Type_Key );
 		return TRUE;
 	}
 
@@ -255,6 +193,7 @@ class EE_Price {
 		return TRUE;
 	}
 
+
 	/**
 	*		save object to db
 	*
@@ -283,10 +222,6 @@ class EE_Price {
 	}
 
 
-
-
-
-
 	/**
 	*		update existing db record
 	*
@@ -297,10 +232,6 @@ class EE_Price {
 	}
 
 
-
-
-
-
 	/**
 	*	insert new db record
 	*
@@ -309,6 +240,7 @@ class EE_Price {
 	public function insert() {
 		return $this->_save_to_db();
 	}
+
 
 	/**
 	*	get Price ID
@@ -330,7 +262,6 @@ class EE_Price {
 	}
 
 
-
 	/**
 	*	get Price Amount
 	* @access		public
@@ -339,7 +270,6 @@ class EE_Price {
 	public function amount() {
 		return $this->_PRC_amount;
 	}
-
 
 
 	/**
@@ -352,7 +282,6 @@ class EE_Price {
 	}
 
 
-
 	/**
 	*	get Price description
 	* @access		public
@@ -363,7 +292,6 @@ class EE_Price {
 	}
 
 
-
 	/**
 	*	get is Price globally active?
 	* @access		public
@@ -372,91 +300,6 @@ class EE_Price {
 	public function is_active() {
 		return $this->_PRC_is_active;
 	}
-
-
-
-
-	/**
-	 *	get adjustments array
-	 *	@access public
-	 * @return type array
-	 */
-	public function adjustments() {
-		return $this->_PRC_adjustments;
-	}
-
-	/**
-	 *	get type name
-	 *	@access public
-	 *	@return type string
-	 */
-	public function type_name() {
-		return $this->_Price_Type->name();
-	}
-
-	/**
-	 *	get is type tax
-	 * @access public
-	 * @return type bool
-	 */
-	public function type_is_tax() {
-		return $this->_Price_Type->is_tax();
-	}
-
-	/**
-	 * get is type percent
-	 * @access public
-	 * @return type bool
-	 */
-	public function type_is_percent() {
-		return $this->_Price_Type->is_percent();
-	}
-
-	/**
-	 * get is type global
-	 * @access public
-	 * @return type bool
-	 */
-	public function type_is_global() {
-		return $this->_Price_Type->is_global();
-	}
-
-	/**
-	 * get type order
-	 * @access public
-	 * @return type int
-	 */
-	public function type_order() {
-		return $this->_Price_Type->order();
-	}
-
-	/**
-	*		Search for an existing DB record for this Price
-	* 		@access		public
-	*/
-	public function find_existing_price( $where_cols_n_values = FALSE ) {
-		// load model
-		$MODEL = EEM_Price::instance();
-		// no search params means price object already exists
-		if ( ! $where_cols_n_values ) {
-			// search by combo of name, type, and amount
-			$where_cols_n_values = array( 'PRT_ID'=>$this->_PRT_ID, 'PRC_amount'=>$this->_PRC_amount, 'PRC_name'=>$this->_PRC_name );
-		}
-
-		if ( $price = $MODEL->get_price( $where_cols_n_values )) {
-			return $price;
-		} else {
-			return FALSE;
-		}
-
-	}
-
-
-
-
-
-
-
 
 
 	/**
