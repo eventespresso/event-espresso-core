@@ -521,7 +521,7 @@ if (!function_exists('espresso_calendar')) {
 												tip: {
 													corner: 'left top'
 												},
-												classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
+												classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
 												/*
 												 * The important part: style.widget property
 
