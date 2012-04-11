@@ -486,6 +486,18 @@ if (!function_exists('espresso_calendar')) {
 						//if(event.in_thickbox_url){
 						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
 						//}
+		<?php
+		if ($espresso_calendar['use_themeroller'] == 'true') {
+			if (!empty($org_options['style_settings']['enable_default_style'])) {
+				if ($org_options['style_settings']['enable_default_style'] == true) {
+					if ($org_options['themeroller']['themeroller_style'] != '') { ?>
+						jQuery('a').addClass('themeroller');
+					<?php }
+				}
+			}
+		}
+		?>
+
 
 						// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
 						if(event.expired){
