@@ -710,6 +710,7 @@ a.fc-event { line-height: 100%; }
 /* fugue icon pack can be downloaded here: http://randyjensenonline.com/thoughts/wordpress-custom-post-type-fugue-icons/ */
 /* using this pack is good if you want to have the same hover effects, otherwise, you can use any icon or icon pack.  I also like http://famfamfam.com */
 .espresso_calendar_widget .fc-header h2 { font-size: 1.2em; font-weight: normal; } /* resets the height of the month name */
+.espresso_calendar_widget th.fc-widget-header { font-weight: normal; } /* resets the weight of the days */
 .espresso_calendar_widget .fc-button-content { line-height: 16px; padding: 0 5px; height: 16px; font-size: 0.8em; } /* resets the button styles */
 .espresso_calendar_widget table.fc-header { margin-bottom: 0; } /* removes any padding under the header table (might be built into the theme's style.css) */
 .espresso_calendar_widget table.fc-border-separate tbody { font-size: 0.8em; } /* resets the font size of the dates */
