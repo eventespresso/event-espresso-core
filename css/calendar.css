@@ -298,6 +298,7 @@ a.fc-event {
 	}
 
 .fc-event-title {
+	margin: 0 6px;
 	padding: 0 1px;
 	}
 
@@ -605,13 +606,12 @@ class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar .event-has-thumb .fc-event-title {
 	display: block;
  	clear: left;
-	margin-left: 6px;
 	width: auto;
 	}
 #espresso_calendar p.time-display-block {
  padding: 0 6px;
  font-size: 84.50%;
- margin: 0;
+ margin: 3px 0;
 }
 #espresso_calendar  span.thumb-wrap {
 	display: inline-block !important;
