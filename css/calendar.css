@@ -45,7 +45,7 @@ html .fc,
 	text-align: left;
 	}
 
-.fc-header-center {
+.fc-header-center, table.fc-header-center td {
 	text-align: center;
 	}
 
@@ -123,9 +123,9 @@ html .fc,
 .fc-widget-content {  /* <td>, usually */
 	border: 1px solid #ccc;
 	}
-
+.fc-widget-content { height: 100%; }
 .fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
-	background: #ffc;
+	background: rgba(255, 255, 204, 0.3);
 	}
 
 .fc-cell-overlay { /* semi-transparent rectangle while dragging */
@@ -275,11 +275,15 @@ a.fc-event {
 	}
 
 .fc-event-skin {
-	border-color: #36c;     /* default BORDER color */
-	background-color: #36c; /* default BACKGROUND color */
-	color: #fff;            /* default TEXT color */
+	background-color: rgba(72, 109, 150, 0.5); /* using rgba values for opacity. bitchin */
+	border-color: rgba(72, 109, 150, 0.5);
+	color: #fff;
 	}
-
+.fc-event-skin.expired {
+	background-color: #ccc; /* using rgba values for opacity. bitchin */
+	border-color: #ccc;
+}
+.fc-event-skin.expired span { color: #333; }
 .fc-event-inner {
 	position: relative;
 	width: 100%;
@@ -612,7 +616,7 @@ class name '.event-has-thumb' is added to top level parent event */
 	}
 #espresso_calendar .event-has-thumb .fc-event-title {
 	display: block;
- clear: left;
+ 	clear: left;
 	margin-left: 6px;
 	width: auto;
 	}
@@ -622,21 +626,11 @@ class name '.event-has-thumb' is added to top level parent event */
  margin: 0;
 }
 #espresso_calendar  span.thumb-wrap {
-	background: #fff;
-	border: 1px solid #777;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	display: inline-block !important; 
-	padding: 6px;
+	display: inline-block !important;
 	margin: 6px;
 	vertical-align: middle;
 }
 #espresso_calendar .ee-event-thumb {
-	border: 1px solid #8e8e8e;
-	-moz-box-shadow: 0 0  2px 1px #d2d2d2;
-	-webkit-box-shadow: 0 0 2px 1px #d2d2d2;
-	box-shadow: 0 0 2px 1px #d2d2d2;
 	display: inline-block;
 	vertical-align: middle;
 	}
@@ -671,8 +665,60 @@ class name '.event-has-thumb' is added to top level parent event */
 
 .fc-view-agendaDay .fc-agenda-body   td div {min-height:50px;}
 #espresso_calendar .fc-view-agendaWeek  .thumb-wrap img {height: 20px;}
+.thumb-wrap { max-height: 75px; overflow: hidden; }
 
 .fc-button-prev, .fc-button-next { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+
+.fc-event a:hover { text-shadow: none; }
+
+/* Event Espresso default tooltip styles */
+.ui-tooltip-ee{
+
+}
+
+	.ui-tooltip-ee .ui-tooltip-titlebar,
+	.ui-tooltip-ee .ui-tooltip-content{
+		border: 1px solid rgba(72, 109, 150, 0.25);
+
+		filter: none; -ms-filter: none;
+	}
+
+	.ui-tooltip-ee .ui-tooltip-titlebar{
+		background: #486D96;
+		background-image: -moz-linear-gradient(top, #486D96, #2E629D);
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#486D96), to(#2E629D));
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#486D96,endColorstr=#2E629D);
+		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#486D96,endColorstr=#2E629D)";
+
+		color: white;
+		font-weight: bold;
+
+		border-bottom-width: 0;
+		-moz-border-radius: 3px 3px 0 0;
+		-webkit-border-radius: 3px 3px 0 0;
+		border-radius: 3px 3px 0 0;
+	}
+
+	.ui-tooltip-ee .ui-tooltip-content{
+		background-color: #F9F9F9;
+		color: #454545;
+
+		-moz-border-radius: 0 0 3px 3px;
+		-webkit-border-radius: 0 0 3px 3px;
+		border-radius: 0 0 3px 3px;
+	}
+
+	.ui-tooltip-ee .ui-tooltip-icon{
+		border: 2px solid #285589;
+		background: #285589;
+	}
+
+		.ui-tooltip-ee .ui-tooltip-icon .ui-icon{
+			background-color: #FBFBFB;
+			color: #555;
+		}
+
 
 /* Calendar Widget CSS */
 /* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
