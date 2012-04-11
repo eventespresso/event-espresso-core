@@ -1182,8 +1182,11 @@ class EE_Single_Page_Checkout {
 				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of it\'s three), and try again.', 'event_espresso');
 			}
 		}
+		
 
 		if ( $continue_reg ) {
+
+			do_action( 'action_hook_espresso_begin_reg' );
 
 			global $EE_Session;
 			
@@ -1274,8 +1277,8 @@ class EE_Single_Page_Checkout {
 				$txn_details = array(
 														'approved' => TRUE,
 														'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
-														'status' => 'free event',
-														'details' => ''
+														'status' => 'Approved',
+														'details' => 'free event'
 													);
 			} else {
 				// attempt to perform transaction via payment gateway 
@@ -1286,19 +1289,22 @@ class EE_Single_Page_Checkout {
 			
 			switch ( $txn_details['status'] ) {
 			
-				case 'Completed' :
+				case 'Approved' :
 						$status= 'TAP';
 						$success_msg = $txn_details['response_msg'];
+						do_action( 'action_hook_espresso_reg_approved' );
 						break;
 				
 				case 'Declined' :
 						$status= 'DEC';
 						$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
+						do_action( 'action_hook_espresso_reg_declined' );
 						break;
 				
 				case 'Incomplete' :
 						$status= 'INC';
 						$error_msg = __('We\'re sorry, but an error occured and the transaction could not be completed. Please try again. If problems persist, contact the site administrator.', 'event_espresso');
+						do_action( 'action_hook_espresso_reg_incomplete' );
 						break;
 			}
 			
