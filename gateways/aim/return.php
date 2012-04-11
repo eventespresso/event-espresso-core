@@ -76,7 +76,7 @@ function espresso_process_aim( $EE_Session ) {
 				$payment_data->txn_id = $response->transaction_id;
 			}
 
-			$payment_data->payment_status = $response->approved ? 'Completed' :  'Declined';
+			$payment_data->payment_status = $response->approved ? 'Approved' :  'Declined';
 			
 		}
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
