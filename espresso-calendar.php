@@ -166,13 +166,19 @@ if ($espresso_calendar['espresso_use_pickers'] == 'true') {
 				.fc-event-skin {
 					background-color: <?php echo $espresso_calendar['ee_event_background'] ?>;
 					border: 1px solid <?php echo $espresso_calendar['ee_event_background'] ?>;
+					-moz-border-radius: 3px;
+					-webkit-border-radius: 3px;
+					border-radius: 3px;
+				}
+				.ui-tooltip-ee .ui-tooltip-titlebar {
+					background: <?php echo $espresso_calendar['ee_event_background'] ?>;
 				}
 			<?php
 		}
 
 		if (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) {
 			?>
-				.fc-event-title, .time-display-block {
+				.fc-event-title, .time-display-block, .ui-tooltip-ee .ui-tooltip-titlebar {
 					color: <?php echo $espresso_calendar['ee_event_text_color'] ?>;
 				}
 			<?php
