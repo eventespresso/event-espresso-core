@@ -411,7 +411,7 @@ if (!function_exists('espresso_calendar')) {
 		<?php
 		if ($espresso_calendar['use_themeroller'] == 'true') {
 			if (!empty($org_options['style_settings']['enable_default_style'])) {
-				if ($org_options['style_settings']['enable_default_style'] == 'Y') {
+				if ($org_options['style_settings']['enable_default_style'] == true) {
 					if ($org_options['themeroller']['themeroller_style'] != '') {
 						echo "theme: true,";
 					}
