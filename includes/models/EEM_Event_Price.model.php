@@ -61,6 +61,7 @@ class EEM_Event_Price extends EEM_Base {
 			}
 			$this->_select_all = $statuses;
 		}
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php');
 	}
 
 	/**
@@ -80,7 +81,28 @@ class EEM_Event_Price extends EEM_Base {
 		return self::$_instance;
 	}
 
-		/**
+	private function _create_objects($base_prices = FALSE) {
+
+		if (!$base_prices) {
+			return FALSE;
+		}
+
+		if ( is_object( $base_prices )){
+			$base_prices = array( $base_prices );
+		}
+
+		foreach ($base_prices as $base_price) {
+			$array_of_objects[$base_price->ID()] = new EE_Event_Price(
+							$base_price->amount(),
+							$base_price->name(),
+							$base_price->desc(),
+							$base_price->ID()
+			);
+		}
+		return $array_of_objects;
+	}
+
+	/**
 	 * return is a price active for a particular event (per event_price table)
 	 *
 	 * @param type int $PRC_ID
@@ -98,18 +120,13 @@ class EEM_Event_Price extends EEM_Base {
 		}
 	}
 
-		/**
-	 *	get all the final computed prices for an event
+	/**
+	 * returns an array of the price ids active for an event
 	 *
-	 *	@access public
-	 *	@param int $event_id
-	 *	@return array of price objects
+	 * @param type int $event_id
+	 * @return array of price ids
 	 */
-	public function get_final_event_prices( $event_id = FALSE ) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-		$PRC = EEM_Price::instance();
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-		$PRT = EEM_Price_Type::instance();
+	private function _get_price_ids_by_event_id( $event_id = FALSE ) {
 		if (!$event_id) {
 			return FALSE;
 		}
@@ -120,6 +137,17 @@ class EEM_Event_Price extends EEM_Base {
 			}
 			$prices[] = $price_id;
 		}
+		return $prices;
+	}
+
+	private function _order_non_tax_prices ( $prices=FALSE ) {
+		if (!$prices) {
+			return FALSE;
+		}
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+		$PRC = EEM_Price::instance();
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		$PRT = EEM_Price_Type::instance();
 		$ordered_prices = array();
 		foreach($prices as $price) {
 			$price = $PRC->get_price_by_ID($price);
@@ -127,26 +155,47 @@ class EEM_Event_Price extends EEM_Base {
 				$ordered_prices[$PRT->type[$price->type()]->order()][] = $price;
 			}
 		}
-		foreach ($ordered_prices[0] as $base_price) {
-			$computed_prices[$base_price->ID()] = new EE_Event_Price(
-							$base_price->amount(),
-							$base_price->name(),
-							$base_price->desc(),
-							$base_price->ID());
+		return $ordered_prices;
+	}
+
+	private function _apply_adjustments_to_base_prices ($adjustments=FALSE, $base_prices=FALSE) {
+		if (!$base_prices) {
+			return FALSE;
 		}
-		unset($ordered_prices[0]);
-		foreach($ordered_prices as $order=>$price_order) {
+		if (!$adjustments) {
+			return $base_prices;
+		}
+		foreach($adjustments as $price_order) {
 			foreach($price_order as $adjustment) {
-				foreach($computed_prices as $computed_price) {
-					$computed_price->add_adjustment($adjustment->ID(), $adjustment->name(), $PRT->type[$adjustment->type()]->is_percent(), $adjustment->amount());
+				foreach($base_prices as $base_price) {
+					$base_price->add_adjustment($adjustment->ID(), $adjustment->name(), $PRT->type[$adjustment->type()]->is_percent(), $adjustment->amount());
 				}
 			}
 		}
-		if (!empty($computed_prices)) {
-			return $computed_prices;
-		} else {
+		return $base_prices;
+	}
+
+		/**
+	 *	get all the final computed prices for an event
+	 *
+	 *	@access public
+	 *	@param int $event_id
+	 *	@return array of price objects
+	 */
+	public function get_final_event_prices( $event_id = FALSE ) {
+		if (!$event_id) {
 			return FALSE;
 		}
+		$event_id = absint($event_id);
+		$computed_prices = array();
+		if ($prices = $this->_get_price_ids_by_event_id($event_id)) {
+			if ($ordered_prices = $this->_order_non_tax_prices( $prices )) {
+				$base_prices = $this->_create_objects($ordered_prices[0]);
+				unset($ordered_prices[0]);
+				$computed_prices = $this->_apply_adjustments_to_base_prices($ordered_prices, $base_prices);
+			}
+		}
+		return $computed_prices;
 	}
 
 
