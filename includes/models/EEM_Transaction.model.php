@@ -246,6 +246,74 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
+	*		retreive  all payments from db between two dates
+	* 
+	* 		@access		public
+	* 		@param		string		$start_date		
+	* 		@param		string		$end_date		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE ) { //$limit = 25, $offset = 0, 
+
+		if ( ! $start_date ) {
+			$start_date = date('Y-m-d', strtotime( 'Jan 1, 2010' ));
+		}
+
+		if ( ! $end_date ) {
+			$end_date = date('Y-m-d');
+		}
+		
+//echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
+//echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
+		
+		// make sure our timestamps start and end right at the boundries for each day
+		$start_date = date( 'Y-m-d', strtotime( $start_date )) . ' 00:00:00';
+		$end_date = date( 'Y-m-d', strtotime( $end_date )) . ' 23:59:59';
+
+//echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
+//echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
+		
+		// convert to timestamps
+		$start_date = strtotime( $start_date );
+		$end_date = strtotime( $end_date );
+
+		// make sure our start date is the lowest value and vice versa
+		$start_date = min( $start_date, $end_date );
+		$end_date = max( $start_date, $end_date );
+
+		
+//echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
+//echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
+
+		global $wpdb;
+		
+		$SQL = 'SELECT att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.STS_ID, txn.TXN_details ';
+		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
+		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
+		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
+		$SQL .= 'INNER JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
+		$SQL .= 'WHERE TXN_timestamp >= %d ';
+		$SQL .= 'AND TXN_timestamp <= %d ';
+		$SQL .= 'AND reg.REG_is_primary = 1 ';
+		$SQL .= 'ORDER BY TXN_timestamp DESC';
+
+		if ( $transactions = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A )) {
+//			echo $wpdb->last_query;
+//			echo printr( $payments );
+			return $transactions;
+		} else {
+			return FALSE;
+		}
+
+	}
+	
+	
+	
+
+
+
+
+	/**
 	 *		This function inserts table data
 	 *		
 	 *		@access public

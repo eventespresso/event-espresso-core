@@ -1313,6 +1313,9 @@ class EE_Single_Page_Checkout {
 				$session = $EE_Session->get_session_data();
 				$txn_details = $session['txn_results'];			
 			}
+
+			$txn_details['amount'] = isset( $txn_details['amount'] ) ? abs( $txn_details['amount'] ) : 0.00;
+			$txn_details['method'] = isset( $txn_details['method'] ) ? $txn_details['method'] : '';
 			
 			switch ( $txn_details['status'] ) {
 			
@@ -1335,9 +1338,6 @@ class EE_Single_Page_Checkout {
 						break;
 			}
 			
-			$txn_details['amount'] = isset( $txn_details['amount'] ) ? abs( $txn_details['amount'] ) : 0.00;
-			$txn_details['method'] = isset( $txn_details['method'] ) ? $txn_details['method'] : '';
-			
 			$transaction->set_total( $txn_details['amount'] ); 
 			$transaction->set_status( $status );
 			$transaction->set_details( $txn_details );
@@ -1352,6 +1352,7 @@ class EE_Single_Page_Checkout {
 			}
 			
 			$transaction->update();
+			
 			if ( $transaction->total() > 0 && $txn_details['status'] == 'Approved' ) {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
 				EEM_Payment::instance();
