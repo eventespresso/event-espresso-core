@@ -290,6 +290,7 @@ function espresso_org_option_initialization() {
 					'show_reg_footer' => true,
 					'use_attendee_pre_approval' => false,
 					'time_reg_limit' => false,
+					'espresso_url_rewrite_activated' => false,
 					'template_settings' => array(
 							'use_custom_post_types' => false,
 							'display_address_in_regform' => false,
@@ -414,8 +415,104 @@ function espresso_org_option_initialization() {
 
 //This function installs all the required database tables
 function events_data_tables_install() {
-	$table_version = EVENT_ESPRESSO_VERSION;
 
+	$table_version = EVENT_ESPRESSO_VERSION;
+	
+
+	$table_name = 'esp_attendee';
+	$sql = "ATT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+			  ATT_fname varchar(45) NOT NULL,
+			  ATT_lname varchar(45) NOT NULL,
+			  ATT_address varchar(45) DEFAULT NULL,
+			  ATT_address2 varchar(45) DEFAULT NULL,
+			  ATT_city varchar(45) DEFAULT NULL,
+			  STA_ID varchar(45) unsigned DEFAULT NULL,
+			  CNT_ISO varchar(45) DEFAULT NULL,
+			  ATT_zip varchar(12) DEFAULT NULL,
+			  ATT_email varchar(100) NOT NULL,
+			  ATT_phone varchar(45) DEFAULT NULL,
+			  ATT_social text,
+			  ATT_comments mediumtext,
+			  ATT_notes mediumtext,
+			  PRIMARY KEY (ATT_ID),
+			  KEY ATT_fname (ATT_fname),
+			  KEY ATT_lname (ATT_lname),
+			  KEY ATT_email (ATT_email)";
+	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	
+	
+
+	$table_name = 'esp_payment';
+	$sql = "PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  TXN_ID int(10) unsigned DEFAULT NULL,
+				  PAY_timestamp int(11) NOT NULL,
+				  PAY_method varchar(45) DEFAULT NULL,
+				  PAY_amount decimal(10,2) DEFAULT NULL,
+				  PAY_details text,
+				  PRIMARY KEY (PAY_ID),
+				  KEY TXN_ID (TXN_ID),
+				  KEY PAY_timestamp (PAY_timestamp)";
+	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	
+
+
+	$table_name = 'esp_registration';
+	$sql = "REG_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  EVT_ID int(10) unsigned NOT NULL,
+				  ATT_ID int(10) unsigned NOT NULL,
+				  TXN_ID int(10) unsigned NOT NULL,
+				  REG_session varchar(45) COLLATE utf8_bin NOT NULL,
+				  REG_code varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				  REG_is_primary tinyint(1) DEFAULT '0',
+				  REG_is_group_reg tinyint(1) DEFAULT '0',
+				  STS_ID varchar(3) NOT NULL DEFAULT 'PND',
+				  REG_date int(11) NOT NULL,
+				  PRC_ID varchar(45) DEFAULT NULL,
+				  REG_att_is_going tinyint(1) DEFAULT '0',
+				  REG_att_checked_in tinyint(1) DEFAULT '0',
+				  PRIMARY KEY (REG_ID),
+				  KEY EVT_ID (EVT_ID),
+				  KEY ATT_ID (ATT_ID),
+				  KEY TXN_ID (TXN_ID),
+				  KEY STS_ID (STS_ID),
+				  KEY REG_is_primary (REG_is_primary),
+				  KEY REG_code (REG_code),
+				  KEY REG_code_2 (REG_code)";
+	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	
+
+
+
+	$table_name = 'esp_transaction';
+	$sql = "TXN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  TXN_timestamp int(11) NOT NULL,
+				  TXN_total decimal(10,2) DEFAULT NULL,
+				  STS_ID varchar(3) NOT NULL DEFAULT 'TPN',
+				  TXN_details text COLLATE utf8_bin,
+				  TXN_tax_data text COLLATE utf8_bin,
+				  TXN_session_data text COLLATE utf8_bin,
+				  TXN_hash_salt varchar(250) COLLATE utf8_bin DEFAULT NULL,
+				  PRIMARY KEY (TXN_ID),
+				  KEY TXN_timestamp (TXN_timestamp),
+				  KEY STS_ID (STS_ID)";
+	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+
+
+
+
+
+	$table_name = 'esp_status';
+	$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
+				  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
+				  STS_type set('event','registration','transaction','email') COLLATE utf8_bin NOT NULL,
+				  STS_can_edit tinyint(1) NOT NULL DEFAULT '0',
+				  STS_desc tinytext COLLATE utf8_bin,
+				  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
+				  KEY STS_type (STS_type)";
+	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+
+	
+	
 	$table_name = "events_attendee";
 	$sql = " id int(11) unsigned NOT NULL AUTO_INCREMENT,
 					  registration_id VARCHAR(23) DEFAULT '0',
@@ -789,7 +886,7 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $table_version, $sql);
 }
 
-function event_espresso_run_install($table_name, $table_version, $sql) {
+function event_espresso_run_install( $table_name, $table_version, $sql, $engine='' ) {
 
 	global $wpdb;
 
@@ -797,7 +894,7 @@ function event_espresso_run_install($table_name, $table_version, $sql) {
 
 	if ($wpdb->get_var("SHOW TABLES LIKE '" . $wp_table_name . "'") != $wp_table_name) {
 
-		$sql_create_table = "CREATE TABLE " . $wp_table_name . " ( " . $sql . " ) DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+		$sql_create_table = "CREATE TABLE " . $wp_table_name . " ( " . $sql . " ) " . $engine . " DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
 
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		dbDelta($sql_create_table);
@@ -1213,8 +1310,19 @@ function espresso_update_active_gateways() {
 
 function espresso_default_prices() {
 	global $wpdb;
-	$sql = "INSERT INTO `" . ESP_PRICE_TYPE . "` (`PRT_ID`, `PRT_name`, `PRT_is_tax`, `PRT_is_percent`, `PRT_is_global`, `PRT_order`) VALUES (NULL, 'Base Ticket Price', '0', '0', '0', '0');";
+	$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) 
+	VALUES 
+	(NULL, 'Base Fee', '0', '0', '0', '0'),
+	(NULL, 'Surcharge', 0, 0, 1, 1),
+	(NULL, 'Regional Tax', 1, 1, 1, 2),
+	(NULL, 'Federal Tax', 1, 1, 1, 3);";
+	
 	$wpdb->query($sql);
-	$sql = "INSERT INTO `" . ESP_PRICE_TABLE . "` (`PRC_ID`, `PRT_ID`, `PRC_amount`, `PRC_name`, `PRC_desc`, `PRC_is_active`) VALUES (NULL, '1', '20.00', 'General Admission', NULL, '0');";
+	$sql = "INSERT INTO " . ESP_PRICE_TABLE . " (PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc, PRC_is_active) 
+	VALUES 
+	(NULL, 1, '20.00', 'General Admission', 'General base price for all Events', 1),
+	(NULL, 2, '7.50', 'Service Fee', 'Covers administrative expenses', 1),
+	(NULL, 3, '7.00', 'Sales Tax', 'Locally imposed tax', 1),
+	(NULL, 4, '5.00', 'VAT', 'Value Added Tax', 1));";
 	$wpdb->query($sql);
 }
