@@ -8,12 +8,12 @@
 	// close postboxes that should be closed
 	$('.if-js-closed').removeClass('if-js-closed').addClass('closed');
 	// postboxes setup
-	//postboxes.add_postbox_toggles('event-espresso_page_venue-seating');
+	postboxes.add_postbox_toggles('event-espresso_page_transactions');
 
 	$('#entries-per-page-slct').change( function() {
 		var per_page = $(this).val();
 		$('#per_page').val( per_page );
-		$('#transaction-admin-page-filter').submit();
+		$('#transactions-overview-frm').submit();
 	}); 
 
 	var dates = $( "#txn-filter-start-date" ).datepicker({

@@ -246,14 +246,14 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	*		retreive  all payments from db between two dates
+	*		retreive  all transactions from db between two dates
 	* 
 	* 		@access		public
 	* 		@param		string		$start_date		
 	* 		@param		string		$end_date		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE ) { //$limit = 25, $offset = 0, 
+	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE ) { 
 
 		if ( ! $start_date ) {
 			$start_date = date('Y-m-d', strtotime( 'Jan 1, 2010' ));
@@ -263,15 +263,9 @@ class EEM_Transaction extends EEM_Base {
 			$end_date = date('Y-m-d');
 		}
 		
-//echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
-//echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
-		
 		// make sure our timestamps start and end right at the boundries for each day
 		$start_date = date( 'Y-m-d', strtotime( $start_date )) . ' 00:00:00';
 		$end_date = date( 'Y-m-d', strtotime( $end_date )) . ' 23:59:59';
-
-//echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
-//echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 		
 		// convert to timestamps
 		$start_date = strtotime( $start_date );
@@ -280,10 +274,6 @@ class EEM_Transaction extends EEM_Base {
 		// make sure our start date is the lowest value and vice versa
 		$start_date = min( $start_date, $end_date );
 		$end_date = max( $start_date, $end_date );
-
-		
-//echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
-//echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 
 		global $wpdb;
 		
@@ -302,11 +292,55 @@ class EEM_Transaction extends EEM_Base {
 //			echo printr( $payments );
 			return $transactions;
 		} else {
+			global $espresso_notices;
+			$espresso_notices['errors'][] = $wpdb->print_error();
 			return FALSE;
 		}
 
 	}
-	
+
+
+
+
+
+	/**
+	*		retreive a single transaction from db via the TXN_ID
+	* 
+	* 		@access		public
+	* 		@param		string		$TXN_ID			
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_transaction_for_admin_page( $TXN_ID = FALSE ) { 
+
+		global $espresso_notices;
+
+		if ( ! $TXN_ID ) {
+			$espresso_notices['errors'][] = 'No Transaction ID was received.';
+			return FALSE;
+		}
+		
+		global $wpdb;
+		
+		$SQL = 'SELECT reg.*, txn.*, att.*, evt.id, evt.event_name, evt.slug ';
+		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
+		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
+		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
+		$SQL .= 'INNER JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
+		$SQL .= 'WHERE txn.TXN_ID = %d ';
+		$SQL .= 'AND reg.REG_is_primary = 1 ';
+		$SQL .= 'ORDER BY TXN_timestamp DESC';
+
+		if ( $transaction = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ))) {
+//			echo $wpdb->last_query;
+//			echo printr( $payments );
+			return $transaction;
+		} else {
+			$espresso_notices['errors'][] = $wpdb->print_error();
+			return FALSE;
+		}
+
+	}
+
 	
 	
 
