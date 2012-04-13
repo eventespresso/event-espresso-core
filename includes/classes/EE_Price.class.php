@@ -93,12 +93,12 @@ class EE_Price {
 	* @param			int 					$PRC_ID						Price ID
 	*/
 	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
-		$this->_PRC_ID 					= $PRC_ID;
-		$this->_PRT_ID					= $PRT_ID;
-		$this->_PRC_amount 		= $PRC_amount;
-		$this->_PRC_name			= $PRC_name;
-		$this->_PRC_desc				= $PRC_desc;
-		$this->_PRC_is_active		= $PRC_is_active;
+		$this->_PRC_ID 					= absint($PRC_ID);
+		$this->_PRT_ID					= absint($PRT_ID);
+		$this->_PRC_amount			= abs($PRC_amount);
+		$this->_PRC_name				= wp_strip_all_tags($PRC_name);
+		$this->_PRC_desc				= wp_strip_all_tags($PRC_desc);
+		$this->_PRC_is_active		= (bool)$PRC_is_active;
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');

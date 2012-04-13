@@ -25,6 +25,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 class EEM_Price_Type extends EEM_Base {
 
 	// private instance of the Price Type object
@@ -98,10 +99,11 @@ class EEM_Price_Type extends EEM_Base {
 							$price_type->PRT_is_tax,
 							$price_type->PRT_is_percent,
 							$price_type->PRT_is_global,
-							$price_type->PRT_order
+							$price_type->PRT_order,
+							$price_type->PRT_ID
 			);
-			return $array_of_objects;
 		}
+		return $array_of_objects;
 	}
 
 	/**

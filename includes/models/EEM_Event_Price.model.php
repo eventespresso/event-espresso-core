@@ -113,7 +113,7 @@ class EEM_Event_Price extends EEM_Base {
 		if (!$PRC_ID || !$EVT_ID) {
 			return FALSE;
 		}
-		if (!empty($this->_active_status[$EVT_ID][$PRC_ID])) {
+		if (!empty($this->_active_status[(bool)$EVT_ID][$PRC_ID])) {
 			return TRUE;
 		} else {
 			return FALSE;
@@ -140,6 +140,11 @@ class EEM_Event_Price extends EEM_Base {
 		return $prices;
 	}
 
+	/**
+	 *
+	 * @param type array $prices
+	 * @return array
+	 */
 	private function _order_non_tax_prices ( $prices=FALSE ) {
 		if (!$prices) {
 			return FALSE;
@@ -158,6 +163,12 @@ class EEM_Event_Price extends EEM_Base {
 		return $ordered_prices;
 	}
 
+	/**
+	 *
+	 * @param type array $adjustments
+	 * @param type array $base_prices
+	 * @return array
+	 */
 	private function _apply_adjustments_to_base_prices ($adjustments=FALSE, $base_prices=FALSE) {
 		if (!$base_prices) {
 			return FALSE;
