@@ -15,11 +15,11 @@ function event_espresso_timereg_editor($event_id = 0) {
 				<li>
 					<p>
 						<label for="add-reg-start"><?php _e('Reg Start Time', 'event_espresso'); ?></label>
-						<input size="10"  type="text" id="add-reg-start" name="registration_startT" value="<?php event_date_display($timex->registration_startT, get_option('time_format')); ?>" />
+						<input size="10"  type="text" id="add-reg-start" name="registration_startT" value="<?php echo event_date_display($timex->registration_startT, get_option('time_format')); ?>" />
 					</p>
 					<p>
 						<label for="ad-reg-end"><?php _e('Reg End Time', 'event_espresso'); ?></label>
-						<input size="10"  type="text" name="registration_endT" value="<?php event_date_display($timex->registration_endT, get_option('time_format')); ?>">
+						<input size="10"  type="text" name="registration_endT" value="<?php echo event_date_display($timex->registration_endT, get_option('time_format')); ?>">
 					</p>
 				</li>
 				<?php
@@ -60,11 +60,11 @@ function event_espresso_time_editor($event_id = 0) {
 				<li>
 					<p>
 						<label for="add-start-time"><?php _e('Start', 'event_espresso'); ?><?php echo $time_counter++; ?></label>
-						<input size="10"  type="text" id="add-start-time" name="start_time[]" value="<?php event_date_display($time->start_time, get_option('time_format')); ?>" />
+						<input size="10"  type="text" id="add-start-time" name="start_time[]" value="<?php echo event_date_display($time->start_time, get_option('time_format')); ?>" />
 					</p>
 					<p>
 						<label for="add-end-time"><?php _e('End', 'event_espresso'); ?></label>
-						<input size="10"  type="text" id="add-end-time" name="end_time[]" value="<?php event_date_display($time->end_time, get_option('time_format')); ?>"><?php
+						<input size="10"  type="text" id="add-end-time" name="end_time[]" value="<?php echo event_date_display($time->end_time, get_option('time_format')); ?>"><?php
 			if ($org_options['time_reg_limit']) {
 				_e('Qty', 'event_espresso');
 					?>
@@ -426,7 +426,7 @@ function espresso_event_editor_date_time_metabox($event) {
 }
 
 function espresso_event_editor_pricing_metabox($event) {
-	global $espresso_premium;
+	global $espresso_premium, $org_options;
 	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', '');
 	?>
 	<div class="inside">
@@ -457,17 +457,26 @@ function espresso_event_editor_pricing_metabox($event) {
 				</tr>
 			</thead>
 			<?php
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+			$PRT = EEM_Price_Type::instance();
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 			$PRC = EEM_Price::instance();
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
 			$EP = EEM_Event_Price::instance();
 			$prices = $PRC->get_all_prices();
 			foreach ($prices as $price) {
-				$checked = $EP->is_price_active_for_event($price->ID(), $event->id) ? 'value="1" ' : '';
+				$checked = $EP->is_price_active_for_event($price->ID(), $event->id) ? 'checked="checked" ' : '';
 				?>
-				<td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><!--Delete Events-->
+			<tr>
+				<td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;">
 					<?php echo '<input name="checkbox[' . $price->ID() . ']" type="checkbox" ' . $checked . 'title="Activate Price ' . $price->name() . '" />'; ?></td>
-
+				<td class="name-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $price->name(); ?></td>
+				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $org_options['currency_symbol'] . $price->amount(); ?></td>
+				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $PRT->type[$price->type()]->name(); ?></td>
+			</tr>
 					<?php
 				}
 				?>
