@@ -1,0 +1,25 @@
+#icon-options-event { background: url("../../../images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
+#entries-per-page-dv { display:inline; }
+
+#txn-filters-dv { clear:both; padding:1.5em 0; }
+.datepicker { width:125px; }
+
+/* TABLE COLUMNS */
+
+th#TXN_ID { width:3%; }
+
+th#TXN_timestamp { width:15%; }
+
+th#STS_ID { width:8%; }
+.status-TPN { color:#F93;  }
+.status-TAP { color:#090;  }
+.status-DEC { color:#F00;  }
+.status-CMP { color:#666;  }
+
+th#TXN_total { width:7%; }
+
+th#event_name {  }
+
+th#actions { width:10%; }
+
+
