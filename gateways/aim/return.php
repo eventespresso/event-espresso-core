@@ -90,6 +90,7 @@ function espresso_process_aim( $EE_Session ) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
 		
 		$txn_results = array(
+											'gateway' 			=> 'Authorize.Net AIM',
 											'approved' 			=> $response->approved ? $response->approved : 0,
 											'status' 				=> $payment_data->payment_status,
 											'response_msg'	=> $response->response_reason_text,
