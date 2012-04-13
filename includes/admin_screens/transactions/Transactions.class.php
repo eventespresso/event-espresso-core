@@ -40,17 +40,21 @@ class EE_Admin_Transactions {
 			
 			switch ( $_REQUEST['action'] ) {
 			
-				case 'edit_transaction': 				
-					$this->_edit_transaction(); 
-					break;
-
 				case 'view_transaction': 				
 					$this->_view_transaction_details(); 
 					break;
 
-			}			
+				case 'edit_transaction': 				
+					$this->_edit_transaction(); 
+					break;
+
+				case 'delete_transaction': 				
+					$this->_delete_transaction(); 
+					break;
+			}		
+				
 		} else {
-			$this->_transactions_list_table();
+			$this->_transactions_overview_list_table();
 		}
 
 	}
@@ -64,7 +68,7 @@ class EE_Admin_Transactions {
 	*		@access private
 	*		@return void
 	*/
-	private function _transactions_list_table() {
+	private function _transactions_overview_list_table() {
 		
 		global $wpdb;
 
@@ -113,19 +117,6 @@ class EE_Admin_Transactions {
 	*		@access private
 	*		@return void
 	*/
-	private function _view_transaction_details() {
-		echo '<h1>Why hello there!</h1>';
-	}
-
-
-
-
-
-	/**
-	 * 		generates HTML for the View Transaction Details Admin page
-	*		@access private
-	*		@return void
-	*/
 	private function _entries_per_page_dropdown( $max_entries = FALSE ) {
 		
 		$values = array( 10, 25, 50, 100 );
@@ -162,6 +153,47 @@ class EE_Admin_Transactions {
 ';
 		return $entries_per_page_dropdown;
 
+	}
+
+
+
+
+
+	/**
+	 * 		generates HTML for the View Transaction Details Admin page
+	*		@access private
+	*		@return void
+	*/
+	private function _view_transaction_details() {
+		echo '<h1>Why hello there!</h1>';
+	}
+
+
+
+
+
+	/**
+	 * 		generates HTML for the View Transaction Details Admin page
+	*		@access private
+	*		@return void
+	*/
+	private function _edit_transaction() {
+		echo '<h1>Edit</h1>';
+	}
+
+
+
+
+
+	/**
+	 * 		generates HTML for the View Transaction Details Admin page
+	*		@access private
+	*		@return void
+	*/
+	private function _delete_transaction() {
+		echo '<h1>OMG !!! You just deleted everything !!!</h1>';
+		echo '<h1>What have you done ?!?!?</h1>';
+		echo '<h1>Timmy\'s going to be maaaaaad at you !!! </h1>';
 	}
 
 

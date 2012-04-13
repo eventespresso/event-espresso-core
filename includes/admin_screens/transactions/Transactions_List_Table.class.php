@@ -94,9 +94,8 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
    function column_default($item, $column_name){
         switch($column_name){
             case 'TXN_ID':
-            case 'event_name':
-                return wp_trim_words( $item[$column_name], 30, '...' );
-            default:
+				return $item[$column_name];
+             default:
                 return print_r($item,true); //Show the whole array for troubleshooting purposes
         }
     }
@@ -143,6 +142,17 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	*/ 
     function column_ATT_email($item){
 		return '<a href="mailto:' . $item['ATT_email'] . '">' . $item['ATT_email'] . '</a>'; 
+	}
+
+
+
+
+	/**
+	 * 		column_event_name
+	*/ 
+    function column_event_name($item){	
+		$edit_event_url = add_query_arg( array( 'action'=>'edit', 'event_id'=>$item['id'] ), admin_url( 'admin.php?page=events' ));
+		return '<a href="' . $edit_event_url . '" title="Edit Event #'.$item['id'].'">' .  wp_trim_words( $item['event_name'], 30, '...' ) . '</a>'; 
 	}
 
 
@@ -199,10 +209,6 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 			<!--<img width="16" height="16" alt="Delete Transaction" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/remove.gif">-->
 		</a>';
         
-//		<a title="View attendees for this event" href="admin.php?page=attendees&event_admin_reports=list_attendee_payments&event_id=1">Dooms Night 2011 &ndash; Halloween Party </a>
-        //Return the title contents
-        //return $this->row_actions($actions);
-        //return $edit_lnk . '&nbsp;|&nbsp;' . $delete_lnk;
         return $view_lnk . '&nbsp;|&nbsp;' . $edit_lnk . '&nbsp;|&nbsp;' . $delete_lnk;
 
     }
@@ -266,8 +272,8 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
         $this->process_bulk_action();              
 				
         function usort_reorder($a,$b){
-            $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'TXN_timestamp'; // If no sort, default to titletimestamp
-            $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; // If no order, default to asc
+            $orderby = (!empty($_REQUEST['orderby'])) ? wp_strip_all_tags( $_REQUEST['orderby'] ) : 'TXN_timestamp'; // If no sort, default to titletimestamp
+            $order = (!empty($_REQUEST['order'])) ? wp_strip_all_tags( $_REQUEST['order'] ) : 'desc'; // If no order, default to asc
 			
 			if ( is_numeric( $a[$orderby] ) && is_numeric( $b[$orderby] )) {
 				$result = ( $a[$orderby] == $b[$orderby] ) ? 0 : ( $a[$orderby] < $b[$orderby] ) ? -1 : 1;	

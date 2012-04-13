@@ -7,7 +7,6 @@
 /* TABLE COLUMNS */
 
 th#TXN_ID { width:3%; }
-
 th#TXN_timestamp { width:15%; }
 
 th#STS_ID { width:8%; }
@@ -17,9 +16,9 @@ th#STS_ID { width:8%; }
 .status-CMP { color:#666;  }
 
 th#TXN_total { width:7%; }
-
+th#ATT_fname { width:13%; }
+th#ATT_email { width:15%; }
 th#event_name {  }
-
 th#actions { width:10%; }
 
 
