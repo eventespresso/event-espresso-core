@@ -123,7 +123,7 @@ if (is_admin()) {
  * wp_head:
  *	10: espresso_info_header
  * wp_print_styles:
- *	20: add_espresso_stylesheet
+ *	20: add_espresso_stylesheet (file includes/functions/wp_hooks.php, line 33)
  * wp_footer:
  *	10: espresso_load_javascript_files
  * admin_bar_menu:
