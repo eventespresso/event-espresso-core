@@ -102,7 +102,10 @@ function espresso_event_list_get_event_prices($event_id, $early_disc, $early_dis
 
 	global $wpdb;
 
-	$SQL = 'SELECT * FROM ' . EVENTS_PRICES_TABLE . ' WHERE event_id="%d" ORDER BY event_cost ASC';
+	$SQL = 'SELECT * FROM ' . ESP_PRICE_TABLE . ' price';
+	$SQL .= ' JOIN ' . ESP_PRICE_TYPE . ' type ON type.PRT_ID=price.PRT_ID';
+	$SQL .= ' JOIN ' . ESP_EVENT_PRICE_TABLE . ' e_p ON e_p.PRC_ID=price.PRC_ID';
+	$SQL .= ' WHERE e_p.EVT_ID="%d" ORDER BY PRT_order ASC';
 
 	if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $event_id), ARRAY_A)) {
 
@@ -128,7 +131,7 @@ function espresso_event_list_get_event_prices($event_id, $early_disc, $early_dis
 	$prices_a = array();
 
 	foreach ($prices as $price) {
-		$prices_a[$price['id']] = $price;
+		$prices_a[$price['PRC_ID']] = $price;
 	}
 
 	return $prices_a;
@@ -147,10 +150,10 @@ function espresso_event_list_process_event_prices($event_prices = array()) {
 		// cycle through all pricing options for the event
 		foreach ($event_prices as $price) {
 
-			$event_price = number_format($price['event_cost'], 2, '.', '');
+			$event_price = number_format($price['PRC_amount'], 2, '.', '');
 
-			$prices[$price['id']]['price_type'] = $price['price_type'];
-			$prices[$price['id']]['event_cost'] = $event_price;
+			$prices[$price['PRC_ID']]['PRT_name'] = $price['PRT_name'];
+			$prices[$price['PRC_ID']]['PRC_amount'] = $event_price;
 
 			// calculate surcharges if any
 			if ($price['surcharge'] != 0) {

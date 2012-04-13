@@ -363,12 +363,6 @@ function update_event($recurrence_arr = array()) {
 					'event_meta' => $event_meta,
 					'require_pre_approval' => $require_pre_approval,
 					'timezone_string' => $timezone_string,
-					'overflow_event_id' => $overflow_event_id,
-					'registration_startT' => $registration_startT,
-					'registration_endT' => $registration_endT,
-					'event_meta' => $event_meta,
-					'require_pre_approval' => $require_pre_approval,
-					'timezone_string' => $timezone_string,
 					'reg_limit' => $reg_limit,
 					'additional_limit' => $additional_limit,
 					'wp_user' => $wp_user_id,
@@ -386,9 +380,9 @@ function update_event($recurrence_arr = array()) {
 					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%d', '%d', '%d', '%d',
-					'%d', '%d', '%d'
+					'%s', '%s', '%s', '%s', '%d',
+					'%d', '%d', '%d',	'%d', '%d',
+					'%d'
 			);
 
 			$update_id = array('id' => $event_id);
@@ -483,7 +477,7 @@ function update_event($recurrence_arr = array()) {
 					}
 				}
 			}
-
+/*
 			$del_prices = "DELETE FROM " . EVENTS_PRICES_TABLE . " WHERE event_id = '" . $event_id . "'";
 			$wpdb->query($del_prices);
 
@@ -504,7 +498,7 @@ function update_event($recurrence_arr = array()) {
 					$error = true;
 				}
 			}
-
+*/
 			############# MailChimp Integration ###############
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpController::update_event_list_rel($event_id);
