@@ -61,7 +61,7 @@ function espresso_event_list_get_event_times($event_id) {
 		$time->id = 1;
 		$time->event_id = $event_id;
 		$time->start_time = '12:00:01am';
-		$time->end_time = '12:00:01pm';
+		$time->end_time = '11:59:59pm';
 		$reg_limit = 0;
 		$timeslots = array($time);
 	}
@@ -105,10 +105,12 @@ function espresso_event_list_get_event_prices($event_id, $early_disc, $early_dis
 	$SQL = 'SELECT * FROM ' . ESP_PRICE_TABLE . ' price';
 	$SQL .= ' JOIN ' . ESP_PRICE_TYPE . ' type ON type.PRT_ID=price.PRT_ID';
 	$SQL .= ' JOIN ' . ESP_EVENT_PRICE_TABLE . ' e_p ON e_p.PRC_ID=price.PRC_ID';
-	$SQL .= ' WHERE e_p.EVT_ID="%d" ORDER BY PRT_order ASC';
+	$SQL .= ' WHERE e_p.EVT_ID="%d"';
+	$SQL .= ' AND type.PRT_is_tax=0';
+	$SQL .= ' ORDER BY PRT_order ASC';
 
 	if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $event_id), ARRAY_A)) {
-
+echo printr( $prices );
 		if (!empty($early_disc) && !empty($early_disc_date) && strtotime($early_disc_date) > strtotime(date("Y-m-d"))) {
 
 			foreach ($prices as $price) {
