@@ -1,7 +1,7 @@
 <?php
 
 function espresso_price_manager_menu() {
-	global $wpdb;
+	global $wpdb, $org_options;
 	$_REQUEST['action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "prices_management/index.php");
 	?>
@@ -24,8 +24,10 @@ function espresso_price_manager_menu() {
 			</div>
 			<div id="post-body">
 				<div id="post-body-content">
-					<?php espresso_prices_admin_helper();
-					do_meta_boxes('event-espresso_page_event_prices', 'normal', null); ?>
+					<?php
+					espresso_prices_admin_helper();
+					do_meta_boxes('event-espresso_page_event_prices', 'normal', null);
+					?>
 					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 						<table id="table" class="widefat manage-discounts">
 							<thead>
@@ -39,30 +41,31 @@ function espresso_price_manager_menu() {
 								</tr>
 							</thead>
 							<?php
-							$sql = "SELECT * FROM " . ESP_PRICE_TABLE . " prc";
-							$sql .= " JOIN " . ESP_PRICE_TYPE . " prt ON prc.PRT_ID = prt.PRT_ID ";
-							$sql .= " ORDER BY prc.PRC_ID ASC";
-							$results = $wpdb->get_results($sql);
-							foreach ($results as $result) {
+							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+							$PRT = EEM_Price_Type::instance();
+							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+							$PRC = EEM_Price::instance();
+							$prices = $PRC->get_all_prices();
+							foreach ($prices as $price) {
 								?>
 								<tr>
-									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $result->PRC_ID ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($result->PRC_name) ?>"></td>
-									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRC_ID ?></td>
-									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $result->PRC_ID ?>"><?php echo stripslashes_deep($result->PRC_name) ?></a></strong>
-										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $result->PRC_ID ?>">
+									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $price->ID(); ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($price->name()); ?>"></td>
+									<td class="column-comments" style="padding-top:3px;"><?php echo $price->ID(); ?></td>
+									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $price->ID(); ?>"><?php echo stripslashes_deep($price->name()); ?></a></strong>
+										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $price->ID(); ?>">
 													<?php _e('Edit', 'event_espresso'); ?>
-												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price&id=<?php echo $result->PRC_ID ?>">
+												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price&id=<?php echo $price->ID(); ?>">
 													<?php _e('Delete', 'event_espresso'); ?>
 												</a></span> </div>
 									</td>
 									<td>
-										<?php echo $result->PRC_amount; ?>
+										<?php echo $org_options['currency_symbol'] . $price->amount(); ?>
 									</td>
 									<td>
-										<?php echo $result->PRT_name; ?>
+										<?php echo $PRT->type[$price->type()]->name(); ?>
 									</td>
 									<td>
-										<?php echo $result->PRC_is_active; ?>
+										<?php echo ($price->is_active()) ? "Yes" : "No"; ?>
 									</td>
 									<?php
 								}
@@ -95,32 +98,29 @@ function espresso_price_manager_menu() {
 								</tr>
 							</thead>
 							<?php
-							$sql = "SELECT * FROM " . ESP_PRICE_TYPE;
-							$sql .= " ORDER BY PRT_ID ASC";
-							$price_types = $wpdb->get_results($sql);
-							foreach ($price_types as $result) {
+							foreach ($PRT->type as $type) {
 								?>
 								<tr>
-									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $result->PRT_ID ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($result->PRT_name) ?>"></td>
-									<td class="column-comments" style="padding-top:3px;"><?php echo $result->PRT_ID ?></td>
-									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $result->PRT_ID ?>"><?php echo stripslashes_deep($result->PRT_name) ?></a></strong>
-										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $result->PRT_ID ?>">
+									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $type->ID(); ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($type->name()); ?>"></td>
+									<td class="column-comments" style="padding-top:3px;"><?php echo $type->ID(); ?></td>
+									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $type->ID(); ?>"><?php echo stripslashes_deep($type->name()); ?></a></strong>
+										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $type->ID(); ?>">
 													<?php _e('Edit', 'event_espresso'); ?>
-												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price_type&id=<?php echo $result->PRT_ID ?>">
+												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price_type&id=<?php echo $type->ID(); ?>">
 													<?php _e('Delete', 'event_espresso'); ?>
 												</a></span> </div>
 									</td>
 									<td>
-										<?php echo $result->PRT_is_tax; ?>
+										<?php echo ($type->is_tax()) ? "Yes" : "No"; ?>
 									</td>
 									<td>
-										<?php echo $result->PRT_is_percent; ?>
+										<?php echo ($type->is_percent()) ? "Yes" : "No"; ?>
 									</td>
 									<td>
-										<?php echo $result->PRT_is_global; ?>
+										<?php echo ($type->is_global()) ? "Yes" : "No"; ?>
 									</td>
 									<td>
-										<?php echo $result->PRT_order; ?>
+										<?php echo $type->order(); ?>
 									</td>
 									<?php
 								}

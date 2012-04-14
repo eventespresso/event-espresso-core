@@ -476,6 +476,12 @@ function espresso_event_editor_pricing_metabox($event) {
 					<?php echo $org_options['currency_symbol'] . $price->amount(); ?></td>
 				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
 					<?php echo $PRT->type[$price->type()]->name(); ?></td>
+				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $PRT->type[$price->type()]->order(); ?></td>
+				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo ($PRT->type[$price->type()]->is_percent()) ? "Yes" : "No"; ?></td>
+				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo ($PRT->type[$price->type()]->is_tax()) ? "Yes" : "No"; ?></td>
 			</tr>
 					<?php
 				}
