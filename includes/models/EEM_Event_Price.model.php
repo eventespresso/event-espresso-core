@@ -54,7 +54,9 @@ class EEM_Event_Price extends EEM_Base {
 		$this->table_data_types = array(
 				'EVT_ID' => '%d',
 				'PRC_ID' => '%d',
-				'is_active' => '%d');
+				'is_active' => '%d'
+		);
+		
 		if ($statuses = $this->select_all(FALSE, '', ARRAY_A)) {
 			foreach ($statuses as $status) {
 				$this->_active_status[$status['EVT_ID']][$status['PRC_ID']] = $status['is_active'];
@@ -75,7 +77,7 @@ class EEM_Event_Price extends EEM_Base {
 		// check if instance of EEM_Event_Price already exists
 		if (self::$_instance === NULL) {
 			// instantiate Event_Price_model
-			self::$_instance = &new self();
+			self::$_instance = new self();
 		}
 		// EEM_Event_Price object
 		return self::$_instance;
@@ -127,16 +129,20 @@ class EEM_Event_Price extends EEM_Base {
 	 * @return array of price ids
 	 */
 	private function _get_price_ids_by_event_id( $event_id = FALSE ) {
+	
 		if (!$event_id) {
 			return FALSE;
 		}
+
 		$prices = array();
-		foreach ($this->_active_status[$event_id] as $price_id => $is_active) {
-			if (!$is_active) {
-				continue;
+		if ( isset( $this->_active_status[ $event_id ] )) {
+			foreach ($this->_active_status[ $event_id ] as $price_id => $is_active) {
+				if ($is_active) {
+					$prices[] = $price_id;
+				}
 			}
-			$prices[] = $price_id;
 		}
+
 		return $prices;
 	}
 
@@ -153,13 +159,16 @@ class EEM_Event_Price extends EEM_Base {
 		$PRC = EEM_Price::instance();
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
+		
 		$ordered_prices = array();
 		foreach($prices as $price) {
 			$price = $PRC->get_price_by_ID($price);
-			if (!$PRT->type[$price->type()]->is_tax()) {
-				$ordered_prices[$PRT->type[$price->type()]->order()][] = $price;
+			if ( ! $PRT->type[ $price->type() ]->is_tax() ) {
+				$ordered_prices[ $PRT->type[ $price->type() ]->order() ][] = $price;
 			}
 		}
+		ksort($ordered_prices);
+		
 		return $ordered_prices;
 	}
 
@@ -176,10 +185,13 @@ class EEM_Event_Price extends EEM_Base {
 		if (!$adjustments) {
 			return $base_prices;
 		}
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		$PRT = EEM_Price_Type::instance();		
+		
 		foreach($adjustments as $price_order) {
 			foreach($price_order as $adjustment) {
 				foreach($base_prices as $base_price) {
-					$base_price->add_adjustment($adjustment->ID(), $adjustment->name(), $PRT->type[$adjustment->type()]->is_percent(), $adjustment->amount());
+					$base_price->add_adjustment($adjustment->ID(), $adjustment->name(), (bool)$PRT->type[$adjustment->type()]->is_percent(), $adjustment->amount());
 				}
 			}
 		}

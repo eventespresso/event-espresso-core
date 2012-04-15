@@ -81,7 +81,7 @@ class EE_Event_Price {
 		$this->_EP_amount = $EP_amount;
 		$this->_EP_name = $EP_name;
 		$this->_EP_desc = $EP_desc;
-		$this->_PRC_adjustments[] = array('name'=>'Base Price', 'ID'=>$Base_ID ,'amount'=>$EP_amount);
+		$this->_EP_adjustments[] = array('name'=>'Base Price', 'ID'=>$Base_ID ,'amount'=>$EP_amount);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
 	}
 
@@ -95,6 +95,7 @@ class EE_Event_Price {
 	 */
 	public function add_adjustment( $adj_ID=FALSE, $adj_name = FALSE, $adj_is_percent = NULL, $adj_amount = FALSE ) {
 		global $espresso_notices;
+		
 		if ( ! $adj_ID || ! $adj_name || ! is_bool($adj_is_percent) || ! $adj_amount  ) {
 			$espresso_notices['errors'][] = 'A valid price adjustment was not supplied.';
 			return FALSE;
@@ -107,7 +108,7 @@ class EE_Event_Price {
 		} else {
 			$this->_EP_adjustments[] = array('name'=>wp_strip_all_tags( $adj_name ), 'ID'=>$adj_ID, 'is_percent'=>false, 'adjustment'=>$adj_amount);
 		}
-
+		
 		$this->_EP_amount = max($this->_EP_amount+$adj_amount, 0);
 
 	}

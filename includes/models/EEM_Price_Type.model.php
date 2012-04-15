@@ -57,10 +57,10 @@ class EEM_Price_Type extends EEM_Base {
 
 		$this->type = $this->get_all_price_types();
 
-
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
 		//			self::how_to_use_update();
+		
 	}
 
 	/**
@@ -74,7 +74,7 @@ class EEM_Price_Type extends EEM_Base {
 		// check if instance of EEM_Price_Type already exists
 		if (self::$_instance === NULL) {
 			// instantiate Price_Type model
-			self::$_instance = &new self();
+			self::$_instance = new self();
 		}
 		// EEM_Price_Type object
 		return self::$_instance;

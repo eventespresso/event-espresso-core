@@ -69,7 +69,7 @@ class EEM_Price extends EEM_Base {
 		// check if instance of EEM_Price already exists
 		if (self::$_instance === NULL) {
 			// instantiate Price_model
-			self::$_instance = &new self();
+			self::$_instance = new self();
 		}
 		// EEM_Price object
 		return self::$_instance;
