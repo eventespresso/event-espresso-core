@@ -28,6 +28,8 @@ if ( ! class_exists( 'WP_List_Table' )) {
 
 class EE_Admin_Transactions_List_Table extends WP_List_Table {    
 
+	private $_data;
+	private $_transactions;
 	private $_status;
 	private $_entries_per_page_dropdown;
 
@@ -37,6 +39,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	*/ 
    function __construct( $data, $status, $entries_per_page_dropdown ){
  
+		$this->_data = $this->_transactions = $data;
 		$this->_status = $status;
 		$this->_entries_per_page_dropdown = $entries_per_page_dropdown;
                 
@@ -47,7 +50,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
             'ajax'      => FALSE        //does this table support ajax?
 		) );
 	
-		self::prepare_items( $data );
+		$this->prepare_items();
     
 	}
 
@@ -187,7 +190,8 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	 * 		column_actions
 	*/ 
     function column_actions($item){
-        
+
+
         //Build row actions	
 		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'view_transaction' );
 		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'edit_transaction' );
@@ -258,7 +262,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	/**
 	 * 		prepare_items
 	*/ 
-    function prepare_items( $data ) {
+    function prepare_items() {
 	
 //		global $wpdb;
 		
@@ -285,19 +289,19 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
         }
         
 		$current_page = $this->get_pagenum();        
-		$total_items = count($data);
+		$total_items = count($this->_transactions);
 		
 		// can't sort one item
 		if ( $total_items > 1 ) {
-			usort($data, 'usort_reorder');
+			usort($this->_transactions, 'usort_reorder');
 		}		
 
-         if ( is_array( $data )) {
-			$data = array_slice($data,(($current_page-1)*$per_page),$per_page);
+         if ( is_array( $this->_transactions )) {
+			$this->_transactions = array_slice($this->_transactions,(($current_page-1)*$per_page),$per_page);
 		}
         
         
-        $this->items = $data;
+        $this->items = $this->_transactions;
         
         $this->set_pagination_args( array(
             'total_items' => $total_items,                  //WE have to calculate the total number of items

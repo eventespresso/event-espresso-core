@@ -47,11 +47,17 @@ th#actions { width:10%; }
 .admin-primary-mbox-tbl th { font-size:.9em; font-weight:bold; }
 .admin-primary-mbox-tbl caption { display:none; }
 
-.admin-primary-mbox-tbl .jst-left { text-align:left; }
-.admin-primary-mbox-tbl .jst-cntr { text-align:center; }
-.admin-primary-mbox-tbl .jst-rght { text-align:right; }
+.form-table.skinny-rows th, .form-table.skinny-rows td { padding:3px 10px; }
 
 .admin-primary-mbox-total-tr { font-size:1.1em; }
+
+
+.jst-left { text-align:left; }
+.jst-cntr { text-align:center; }
+.jst-rght { text-align:right; }
+
+.display-the-hidden { float:right; padding-left:16px; background: url("../../../images/icons/additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
+.hide-the-displayed { float:right; padding-left:16px; background: url("../../../images/icons/close_additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
 
 
 .lt-grey-txt  { color:#999;  text-shadow:none; }
