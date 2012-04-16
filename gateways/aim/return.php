@@ -96,11 +96,11 @@ function espresso_process_aim( $EE_Session ) {
 											'response_msg'	=> $response->response_reason_text,
 											'amount'				=> $response->amount,
 											'method'				=> $response->method,
+											'card_type'			=> $response->card_type,
+											'auth_code'			=> $response->authorization_code,
 											'md5_hash' 			=> $response->md5_hash,
-											'details'				=> array(
-																						  'transaction_id' => $response->transaction_id,
-																						  'invoice_number' => $response->invoice_number,
-																					 	),
+											'transaction_id' => $response->transaction_id,
+											'invoice_number' => $response->invoice_number,
 											'raw_response'	=> $response								
 										  );
 		
