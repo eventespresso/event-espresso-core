@@ -60,7 +60,7 @@ class EEM_Price_Type extends EEM_Base {
 		// uncomment these for example code samples of how to use them
 		//			self::how_to_use_insert();
 		//			self::how_to_use_update();
-		
+
 	}
 
 	/**
@@ -145,7 +145,7 @@ class EEM_Price_Type extends EEM_Base {
 			return FALSE;
 		}
 		// retreive a particular price
-		$where_cols_n_values = array('PRT_ID' => $PRC_ID);
+		$where_cols_n_values = array('PRT_ID' => $PRT_ID);
 		if ($price_type = $this->select_row_where($where_cols_n_values)) {
 			$price_type_array = $this->_create_objects(array($price_type));
 			return array_shift($price_type_array);
