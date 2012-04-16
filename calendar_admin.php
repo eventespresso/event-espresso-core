@@ -79,7 +79,14 @@ function espresso_calendar_config_mnu() {
 		</h2>
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
 			<div id="side-info-column" class="inner-sidebar">
-				<?php do_meta_boxes('event-espresso_page_espresso_calendar', 'side', null); ?>
+			<?php 
+			//Right column menu
+				if ( espresso_version() >= '3.2.P' ){
+					do_meta_boxes('event-espresso_page_espresso_calendar', 'side', null);
+				}else{
+					event_espresso_display_right_column ();
+				}
+			?>
 			</div>
 			<div id="post-body">
 				<div id="post-body-content">
