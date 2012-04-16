@@ -160,7 +160,7 @@ function espresso_calendar_config_mnu() {
 																?></td>
 													</tr>
 													<tr>
-														<th><?php _e('Time Format') ?></th>
+														<th><label for="time_format"><?php _e('Time Format') ?></label></th>
 														<td><?php
 														$espresso_calendar['time_format'] = empty($espresso_calendar['time_format']) ? get_option('time_format') : $espresso_calendar['time_format'];
 														$time_formats = apply_filters('time_formats', array(
@@ -281,7 +281,7 @@ function espresso_calendar_config_mnu() {
 											?>
 											<table class="form-table">
 												<tbody>
-													<?php if ( espresso_version() >= '3.2.P' ) {
+													<?php if ( espresso_version() >= '3.1.22' ) {
 														//only display this if we're using 3.2 ?>
 													<tr>
 														<th> <label for="use_themeroller">
