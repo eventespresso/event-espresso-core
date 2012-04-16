@@ -1,7 +1,11 @@
 <?php
 
 function espresso_price_manager_menu() {
-	global $wpdb, $org_options;
+	global $org_options;
+	$values = array(
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso'))
+	);
 	$_REQUEST['action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "prices_management/index.php");
 	?>
@@ -45,29 +49,30 @@ function espresso_price_manager_menu() {
 							$PRT = EEM_Price_Type::instance();
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 							$PRC = EEM_Price::instance();
-							$prices = $PRC->get_all_prices();
-							foreach ($prices as $price) {
-								?>
-								<tr>
-									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $price->ID(); ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($price->name()); ?>"></td>
-									<td class="column-comments" style="padding-top:3px;"><?php echo $price->ID(); ?></td>
-									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $price->ID(); ?>"><?php echo stripslashes_deep($price->name()); ?></a></strong>
-										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $price->ID(); ?>">
-													<?php _e('Edit', 'event_espresso'); ?>
-												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price&id=<?php echo $price->ID(); ?>">
-													<?php _e('Delete', 'event_espresso'); ?>
-												</a></span> </div>
-									</td>
-									<td>
-										<?php echo $org_options['currency_symbol'] . $price->amount(); ?>
-									</td>
-									<td>
-										<?php echo $PRT->type[$price->type()]->name(); ?>
-									</td>
-									<td>
-										<?php echo ($price->is_active()) ? "Yes" : "No"; ?>
-									</td>
-									<?php
+							if ($prices = $PRC->get_all_prices()) {
+								foreach ($prices as $price) {
+									?>
+									<tr>
+										<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $price->ID(); ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($price->name()); ?>"></td>
+										<td class="column-comments" style="padding-top:3px;"><?php echo $price->ID(); ?></td>
+										<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $price->ID(); ?>"><?php echo stripslashes_deep($price->name()); ?></a></strong>
+											<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price&id=<?php echo $price->ID(); ?>">
+														<?php _e('Edit', 'event_espresso'); ?>
+													</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price&id=<?php echo $price->ID(); ?>">
+														<?php _e('Delete', 'event_espresso'); ?>
+													</a></span> </div>
+										</td>
+										<td>
+											<?php echo $org_options['currency_symbol'] . $price->amount(); ?>
+										</td>
+										<td>
+											<?php echo $PRT->type[$price->type()]->name(); ?>
+										</td>
+										<td>
+											<?php echo ($price->is_active()) ? "Yes" : "No"; ?>
+										</td>
+										<?php
+									}
 								}
 								?>
 								</tbody>
@@ -101,14 +106,31 @@ function espresso_price_manager_menu() {
 							foreach ($PRT->type as $type) {
 								?>
 								<tr>
-									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $type->ID(); ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($type->name()); ?>"></td>
+									<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $type->ID(); ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($type->name()); ?>">
+										<div style="display:none;">
+											<span class="PRT_ID"><?php echo $type->ID(); ?></span>
+											<span class="PRT_is_tax"><?php echo $type->is_tax(); ?></span>
+											<span class="PRT_name"><?php echo $type->name(); ?></span>
+											<span class="PRT_is_percent"><?php echo $type->is_percent(); ?></span>
+											<span class="PRT_is_global"><?php echo $type->is_global(); ?></span>
+											<span class="PRT_order"><?php echo $type->order(); ?></span>
+										</div>
+									</td>
 									<td class="column-comments" style="padding-top:3px;"><?php echo $type->ID(); ?></td>
 									<td class="post-title page-title column-title"><strong><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $type->ID(); ?>"><?php echo stripslashes_deep($type->name()); ?></a></strong>
-										<div class="row-actions"> <span class="edit"><a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $type->ID(); ?>">
+										<div class="row-actions">
+											<span class="edit">
+												<a href="admin.php?page=event_prices&action=edit_price_type&id=<?php echo $type->ID(); ?>">
 													<?php _e('Edit', 'event_espresso'); ?>
-												</a> | </span> <span class="delete"><a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price_type&id=<?php echo $type->ID(); ?>">
+												</a>
+											</span>
+											|
+											<span class="delete">
+												<a onclick="return confirmDelete();" class="submitdelete" href="admin.php?page=event_prices&action=delete_price_type&id=<?php echo $type->ID(); ?>">
 													<?php _e('Delete', 'event_espresso'); ?>
-												</a></span> </div>
+												</a>
+											</span>
+										</div>
 									</td>
 									<td>
 										<?php echo ($type->is_tax()) ? "Yes" : "No"; ?>

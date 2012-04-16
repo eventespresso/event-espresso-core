@@ -26,6 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+
 class EEM_Price extends EEM_Base {
 
 	// private instance of the EEM_Price object
@@ -43,11 +44,11 @@ class EEM_Price extends EEM_Base {
 		$this->table_name = $wpdb->prefix . 'esp_price';
 		// array representation of the price table and the data types for each field
 		$this->table_data_types = array(
-				'PRC_ID' 			=> '%d',
-				'PRT_ID' 			=> '%d',
+				'PRC_ID' => '%d',
+				'PRT_ID' => '%d',
 				'PRC_amount' => '%d',
-				'PRC_name' 	=> '%s',
-				'PRC_desc' 		=> '%s',
+				'PRC_name' => '%s',
+				'PRC_desc' => '%s',
 				'PRC_is_active' => '%d'
 		);
 		// load Price object class file
@@ -88,21 +89,30 @@ class EEM_Price extends EEM_Base {
 			return FALSE;
 		}
 
-		if ( is_object( $prices )){
-			$prices = array( $prices );
+		if (is_object($prices)) {
+			$prices = array($prices);
 		}
-		
+
 		foreach ($prices as $price) {
-			$array_of_objects[ $price->PRC_ID ] = new EE_Price(
-							$price->PRT_ID,
-							$price->PRC_amount,
-							$price->PRC_name,
-							$price->PRC_desc,
-							$price->PRC_is_active,
-							$price->PRC_ID
+			$array_of_objects[$price->PRC_ID] = new EE_Price(
+											$price->PRT_ID,
+											$price->PRC_amount,
+											$price->PRC_name,
+											$price->PRC_desc,
+											$price->PRC_is_active,
+											$price->PRC_ID
 			);
 		}
 		return $array_of_objects;
+	}
+
+	public function get_new_price() {
+		return new EE_Price(
+						0,
+						0.00,
+						'',
+						'',
+						FALSE);
 	}
 
 	/**
@@ -127,7 +137,7 @@ class EEM_Price extends EEM_Base {
 	 *
 	 * 		@access		public
 	 * 		@param		int 			$PRC_ID
-	 *		@return		mixed		array on success, FALSE on fail
+	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_price_by_ID($PRC_ID = FALSE) {
 
@@ -145,46 +155,41 @@ class EEM_Price extends EEM_Base {
 	}
 
 	/**
-	*		retreive a single price from db via it's column values
-	*
-	* 		@access		public
-	* 		@param		array		$where_cols_n_values
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_price( $where_cols_n_values = FALSE ) {
+	 * 		retreive a single price from db via it's column values
+	 *
+	 * 		@access		public
+	 * 		@param		array		$where_cols_n_values
+	 * 		@return 		mixed		array on success, FALSE on fail
+	 */
+	public function get_price($where_cols_n_values = FALSE) {
 
-		if ( ! $where_cols_n_values ) {
+		if (!$where_cols_n_values) {
 			return FALSE;
 		}
 
-		if ( $price = $this->select_row_where ( $where_cols_n_values )) {
-			$price_array = $this->_create_objects( array( $price ));
-			return array_shift( $price_array );
+		if ($price = $this->select_row_where($where_cols_n_values)) {
+			$price_array = $this->_create_objects(array($price));
+			return array_shift($price_array);
 		} else {
 			return FALSE;
 		}
-
 	}
 
-
-
-
-
 	/**
-	*		retreive all prices that are either taxes, or percentages, or global, or of a particular order #
-	*
-	* 		@access		private
-	* 		@param 		boolean 			$taxes  				true or false
-	* 		@param 		boolean 			$percentages  	true or false
-	* 		@param 		boolean 			$global  				true or false
-	* 		@param 		int 					$order  				the level or order that the prices are applied
-	* 		@return 		array				on success
-	* 		@return 		boolean			false on fail
-	*/
-	private function _get_all_prices_that_are( $taxes = FALSE, $percentages = FALSE, $global = FALSE, $order = FALSE ) {
+	 * 		retreive all prices that are either taxes, or percentages, or global, or of a particular order #
+	 *
+	 * 		@access		private
+	 * 		@param 		boolean 			$taxes  				true or false
+	 * 		@param 		boolean 			$percentages  	true or false
+	 * 		@param 		boolean 			$global  				true or false
+	 * 		@param 		int 					$order  				the level or order that the prices are applied
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
+	private function _get_all_prices_that_are($taxes = FALSE, $percentages = FALSE, $global = FALSE, $order = FALSE) {
 
 		// you gimme nothing??? you get nothing!!!
-		if ( ! $taxes &&  ! $percentages &&  ! $global &&  ! $order ) {
+		if (!$taxes && !$percentages && !$global && !$order) {
 			return FALSE;
 		}
 
@@ -194,80 +199,83 @@ class EEM_Price extends EEM_Base {
 
 		global $wpdb;
 		// retreive prices
-		$SQL = 'SELECT prc.*, prt.PRT_order FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.'. $what .' = %d GROUP BY PRT_order';
+		$SQL = 'SELECT prc.*, prt.PRT_order FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' = %d GROUP BY PRT_order';
 
-		if ( $prices = $wpdb->get_results( $wpdb->prepare( $SQL, $value ))) {
+		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $value))) {
 			foreach ($prices as $price) {
-				$array_of_prices[ $price->PRT_order ] = $this->_create_objects( $price );
+				$array_of_prices[$price->PRT_order] = $this->_create_objects($price);
 			}
 			return $array_of_prices;
 		} else {
 			return FALSE;
 		}
-
 	}
 
-
-
-
-
 	/**
-	*		retreive all prices that are taxes
-	*
-	* 		@access		public
-	* 		@return 		array				on success
-	* 		@return 		boolean			false on fail
-	*/
+	 * 		retreive all prices that are taxes
+	 *
+	 * 		@access		public
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
 	public function get_all_prices_that_are_taxes() {
-		return $this->_get_all_prices_that_are( TRUE );
+		return $this->_get_all_prices_that_are(TRUE);
 	}
 
-
-
-
-
 	/**
-	*		retreive all prices that are percentages
-	*
-	* 		@access		public
-	* 		@return 		array				on success
-	* 		@return 		boolean			false on fail
-	*/
+	 * 		retreive all prices that are percentages
+	 *
+	 * 		@access		public
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
 	public function get_all_prices_that_are_percentages() {
-		return $this->_get_all_prices_that_are( FALSE, TRUE );
+		return $this->_get_all_prices_that_are(FALSE, TRUE);
 	}
 
-
-
-
-
 	/**
-	*		retreive all prices that are global
-	*
-	* 		@access		public
-	* 		@return 		array				on success
-	* 		@return 		boolean			false on fail
-	*/
+	 * 		retreive all prices that are global
+	 *
+	 * 		@access		public
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
 	public function get_all_prices_that_are_global() {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, TRUE );
+		return $this->_get_all_prices_that_are(FALSE, FALSE, TRUE);
 	}
-
-
-
-
 
 	/**
-	*		retreive all prices that are of a particular order #
-	*
-	* 		@access		public
-	* 		@param 		int 			$order the level or order that the prices are applied
-	* 		@return 		array				on success
-	* 		@return 		boolean			false on fail
-	*/
-	public function get_all_prices_that_are_order_nmbr( $order ) {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, $order );
+	 * 		retreive all prices that are of a particular order #
+	 *
+	 * 		@access		public
+	 * 		@param 		int 			$order the level or order that the prices are applied
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
+	public function get_all_prices_that_are_order_nmbr($order) {
+		return $this->_get_all_prices_that_are(FALSE, FALSE, FALSE, $order);
 	}
 
+	public function delete_all_prices_that_are_type($type = FALSE) {
+		if (!$type) {
+			return FALSE;
+		}
+		if ($prices = $this->select_all_where(array('PRT_ID' => $type))) {
+			foreach ($prices as $PRC_ID => $price) {
+				$this->delete_by_id($PRC_ID);
+			}
+		}
+	}
+
+	public function delete_by_id($ID) {
+		if (!$ID) {
+			return FALSE;
+		}
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
+		$EP = EEM_Event_Price::instance();
+		$EP->delete_by_price_id($ID);
+		$this->delete(array('PRC_ID' => $ID));
+	}
 
 	/**
 	 * 		This function inserts table data

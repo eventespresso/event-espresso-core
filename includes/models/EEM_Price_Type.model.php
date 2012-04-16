@@ -26,11 +26,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+
 class EEM_Price_Type extends EEM_Base {
 
 	// private instance of the Price Type object
 	private static $_instance = NULL;
-
 	// An array of the price type objects
 	public $type = NULL;
 
@@ -95,15 +95,24 @@ class EEM_Price_Type extends EEM_Base {
 
 		foreach ($price_types as $price_type) {
 			$array_of_objects[$price_type->PRT_ID] = new EE_Price_Type(
-							$price_type->PRT_name,
-							$price_type->PRT_is_tax,
-							$price_type->PRT_is_percent,
-							$price_type->PRT_is_global,
-							$price_type->PRT_order,
-							$price_type->PRT_ID
+											$price_type->PRT_name,
+											$price_type->PRT_is_tax,
+											$price_type->PRT_is_percent,
+											$price_type->PRT_is_global,
+											$price_type->PRT_order,
+											$price_type->PRT_ID
 			);
 		}
 		return $array_of_objects;
+	}
+
+	public function get_new_price_type() {
+		return new EE_Price_Type(
+						'',
+						FALSE,
+						FALSE,
+						FALSE,
+						0);
 	}
 
 	/**
@@ -128,7 +137,7 @@ class EEM_Price_Type extends EEM_Base {
 	 *
 	 * 		@access		public
 	 * 		@param		$PRT_ID
-	 *		@return		mixed		array on success, FALSE on fail
+	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_price_type_by_ID($PRT_ID = FALSE) {
 
@@ -146,25 +155,24 @@ class EEM_Price_Type extends EEM_Base {
 	}
 
 	/**
-	*		retreive a single price type from db via it's column values
-	*
-	* 	@access		public
-	* 	@param		array
-	*		@return 	mixed		array on success, FALSE on fail
-	*/
-	public function get_price_type( $where_cols_n_values = FALSE ) {
+	 * 		retreive a single price type from db via it's column values
+	 *
+	 * 	@access		public
+	 * 	@param		array
+	 * 		@return 	mixed		array on success, FALSE on fail
+	 */
+	public function get_price_type($where_cols_n_values = FALSE) {
 
-		if ( ! $where_cols_n_values ) {
+		if (!$where_cols_n_values) {
 			return FALSE;
 		}
 
-		if ( $price_type = $this->select_row_where ( $where_cols_n_values )) {
-			$price_type_array = $this->_create_objects( array( $price_type ));
-			return array_shift( $price_type_array );
+		if ($price_type = $this->select_row_where($where_cols_n_values)) {
+			$price_type_array = $this->_create_objects(array($price_type));
+			return array_shift($price_type_array);
 		} else {
 			return FALSE;
 		}
-
 	}
 
 	/**
@@ -182,6 +190,7 @@ class EEM_Price_Type extends EEM_Base {
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		$results = $this->_insert($this->table_name, $this->table_data_types, $set_column_values);
+		$this->type = $this->get_all_price_types();
 
 		// set some table specific success messages
 		if ($results['rows'] == 1) {
@@ -229,6 +238,16 @@ class EEM_Price_Type extends EEM_Base {
 		}
 
 		return $results['rows'];
+	}
+
+	public function delete_by_id($ID) {
+		if (!$ID) {
+			return FALSE;
+		}
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+		$PRC = EEM_Price::instance();
+		$PRC->delete_all_prices_that_are_type($ID);
+		$this->delete(array('PRT_ID' => $ID));
 	}
 
 }

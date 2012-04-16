@@ -279,4 +279,17 @@ class EEM_Event_Price extends EEM_Base {
 		return $results['rows'];
 	}
 
+	public function delete_by_event_id ($EVT_ID=FALSE) {
+		if (!$EVT_ID) {
+			return FALSE;
+		}
+		$this->delete(array('EVT_ID'=>$EVT_ID));
+	}
+
+	public function delete_by_price_id ($PRC_ID=FALSE) {
+		if (!$PRC_ID) {
+			return FALSE;
+		}
+		$this->delete(array('PRC_ID'=>$PRC_ID));
+	}
 }
