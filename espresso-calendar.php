@@ -351,7 +351,7 @@ function espresso_calendar_do_stuff($show_expired) {
 	}
 	//Debug:
 	//Print the results of the code above
-	// echo json_encode($events);
+	//echo json_encode($events);
 }
 
 add_action('action_hook_espresso_calendar_do_stuff', 'espresso_calendar_do_stuff');
@@ -510,10 +510,8 @@ if (!function_exists('espresso_calendar')) {
 							element.addClass('event-has-thumb');
 
 							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
-						}<?php /*
-						//Shows spaces available
-						//element.find('.fc-event-title').after($jaer('<p class="time-display-block event-start-time">Spaces: <?php echo get_number_of_attendees_reg_limit($event->id, 'num_attendees_slash_reg_limit', 'All Seats Reserved'); ?> </p>'));
-						*/
+						}
+
 		if ($espresso_calendar['show_time'] == 'true') {
 			?>
 								element.find('.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">' + event.startTime + ' - </span><span class="event-end-time">' + event.endTime + '</span></p>'));
