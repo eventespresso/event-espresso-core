@@ -102,19 +102,21 @@ class EEM_Price extends EEM_Base {
 		if (is_object($prices)) {
 			$prices = array($prices);
 		}
-
+	
 		foreach ($prices as $price) {
+		
 			$array_of_objects[$price->PRC_ID] = new EE_Price(
+
 											$price->PRT_ID,
 											$price->PRC_amount,
 											$price->PRC_name,
 											$price->PRC_desc,
+											$price->PRC_use_dates,
+											$price->PRC_disc_limit_qty,
+											$price->PRC_disc_qty,
+											$price->PRC_disc_apply_all,
+											$price->PRC_disc_wp_user,
 											$price->PRC_is_active,
-											$price->_PRC_use_dates,
-											$price->_PRC_disc_limit_qty,
-											$price->_PRC_disc_qty,
-											$price->_PRC_disc_apply_all,
-											$price->_PRC_disc_wp_user,
 											$price->PRC_ID
 			);
 		}
@@ -161,6 +163,31 @@ class EEM_Price extends EEM_Base {
 
 
 	/**
+	 * 		get all prices from db where...
+	 *
+	 * 		@access		public
+	 * 		@param		array		$where_cols_n_values
+	 * 		@return		mixed		array on success, FALSE on fail
+	 */
+	public function get_all_prices_where( $where_cols_n_values = FALSE ) {
+
+		if (!$where_cols_n_values) {
+			return FALSE;
+		}
+		
+		$orderby = 'PRC_amount';
+		// retreive all prices
+		if ($prices = $this->select_all_where( $where_cols_n_values, $orderby )) {
+			return $this->_create_objects($prices);
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+	/**
 	 * 		retreive  a single price from db via it's ID
 	 *
 	 * 		@access		public
@@ -193,7 +220,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@param		array		$where_cols_n_values
 	 * 		@return 		mixed		array on success, FALSE on fail
 	 */
-	public function get_price($where_cols_n_values = FALSE) {
+	public function get_price( $where_cols_n_values = FALSE ) {
 
 		if (!$where_cols_n_values) {
 			return FALSE;
@@ -224,7 +251,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		array				on success
 	 * 		@return 		boolean			false on fail
 	 */
-	private function _get_all_prices_that_are( $member_prices = FALSE, $discounts = FALSE, $taxes = FALSE, $percentages = FALSE, $global = FALSE, $order = FALSE) {
+	private function _get_all_prices_that_are( $member_prices = FALSE, $discounts = FALSE, $taxes = FALSE, $percentages = FALSE, $global = FALSE, $order = FALSE, $operator = '=' ) {
 
 		// you gimme nothing??? you get nothing!!!
 		if ( ! $member_prices &&  ! $discounts &&  ! $taxes && ! $percentages && ! $global && ! $order ) {
@@ -237,11 +264,14 @@ class EEM_Price extends EEM_Base {
 
 		global $wpdb;
 		// retreive prices
-		$SQL = 'SELECT prc.*, prt.PRT_order FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' = %d GROUP BY PRT_order';
+		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt LEFT JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' '. $operator .' %d ORDER BY PRT_order';
+
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $value))) {
+//			echo $wpdb->last_query;
+//			echo printr($prices, '$prices' );
 			foreach ($prices as $price) {
-				$array_of_prices[$price->PRT_order] = $this->_create_objects($price);
+				$array_of_prices[ $price->PRT_ID ][ $price->PRC_ID ] = $this->_create_objects($price);
 			}
 			return $array_of_prices;
 		} else {
@@ -264,6 +294,10 @@ class EEM_Price extends EEM_Base {
 		return $this->_get_all_prices_that_are( TRUE );
 	}
 
+	public function get_all_prices_that_are_not_member_prices() {
+		return $this->_get_all_prices_that_are( TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, '!=' );
+	}
+
 
 
 
@@ -277,6 +311,10 @@ class EEM_Price extends EEM_Base {
 	 */
 	public function get_all_prices_that_are_discounts() {
 		return $this->_get_all_prices_that_are( FALSE, TRUE );
+	}
+
+	public function get_all_prices_that_are_not_discounts() {
+		return $this->_get_all_prices_that_are( FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, '!=' );
 	}
 
 
@@ -294,6 +332,10 @@ class EEM_Price extends EEM_Base {
 		return $this->_get_all_prices_that_are( FALSE, FALSE, TRUE );
 	}
 
+	public function get_all_prices_that_are_not_taxes() {
+		return $this->_get_all_prices_that_are( FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, '!=' );
+	}
+
 
 
 
@@ -309,6 +351,10 @@ class EEM_Price extends EEM_Base {
 		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, TRUE );
 	}
 
+	public function get_all_prices_that_are_not_percentages() {
+		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, '!=' );
+	}
+
 
 
 
@@ -322,6 +368,10 @@ class EEM_Price extends EEM_Base {
 	 */
 	public function get_all_prices_that_are_global() {
 		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE );
+	}
+
+	public function get_all_prices_that_are_not_global() {
+		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, '!=' );
 	}
 
 
@@ -340,6 +390,33 @@ class EEM_Price extends EEM_Base {
 		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, FALSE, $order );
 	}
 
+	public function get_all_prices_that_are_not_order_nmbr($order) {
+		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, FALSE, $order, '!=' );
+	}
+
+
+
+
+
+	/**
+	 * 		retreive all prices that are global, but not taxes
+	 *
+	 * 		@access		public
+	 * 		@return 		boolean			false on fail
+	 */
+	public function get_all_prices_for_pricing_admin() {
+
+		global $wpdb;
+		// retreive prices
+		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.PRT_is_tax = FALSE AND PRT_is_global = TRUE ORDER BY PRT_order';
+
+		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $value))) {
+			//echo printr($prices, '$prices' );
+			return $this->_create_objects($prices);
+		} else {
+			return FALSE;
+		}
+	}
 
 
 

@@ -87,7 +87,7 @@ function espresso_add_meta_boxes() {
 			add_meta_box('addons_custom_files', __('Custom Files', 'event_espresso'), 'espresso_admin_addons_custom_files_meta_box', $screen_id);
 			break;
 		case 'event-espresso_page_event_prices':
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . "prices_management/postboxes.php");
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/postboxes.php');
 			if (isset($_REQUEST['action'])) {
 				if ($_REQUEST['action'] == 'add_new_price') {
 					add_meta_box('add_new_price', __('Add a Price', 'event_espresso'), 'edit_event_price_postbox', $screen_id, 'normal');
