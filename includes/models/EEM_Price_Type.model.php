@@ -34,6 +34,10 @@ class EEM_Price_Type extends EEM_Base {
 	// An array of the price type objects
 	public $type = NULL;
 
+
+
+
+
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
@@ -46,22 +50,25 @@ class EEM_Price_Type extends EEM_Base {
 		$this->table_name = $wpdb->prefix . 'esp_price_type';
 		// array representation of the price type table and the data types for each field
 		$this->table_data_types = array(
-				'PRT_ID' => '%d',
-				'PRT_name' => '%s',
-				'PRT_is_tax' => '%d',
-				'PRT_is_percent' => '%d',
-				'PRT_is_global' => '%d',
-				'PRT_order' => '%d');
+				'PRT_ID' 					=> '%d',
+				'PRT_name' 			=> '%s',
+				'PRT_is_member' 	=> '%d',
+				'PRT_is_discount' 	=> '%d',
+				'PRT_is_tax' 			=> '%d',
+				'PRT_is_percent' 	=> '%d',
+				'PRT_is_global' 		=> '%d',
+				'PRT_order' 			=> '%d'
+		);
 		// load Price_Type object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price_Type.class.php');
 
 		$this->type = $this->get_all_price_types();
 
-		// uncomment these for example code samples of how to use them
-		//			self::how_to_use_insert();
-		//			self::how_to_use_update();
-
 	}
+
+
+
+
 
 	/**
 	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
@@ -80,6 +87,10 @@ class EEM_Price_Type extends EEM_Base {
 		return self::$_instance;
 	}
 
+
+
+
+
 	/**
 	 * 		cycle though array of price types and create objects out of each item
 	 *
@@ -96,6 +107,8 @@ class EEM_Price_Type extends EEM_Base {
 		foreach ($price_types as $price_type) {
 			$array_of_objects[$price_type->PRT_ID] = new EE_Price_Type(
 											$price_type->PRT_name,
+											$price_type->PRT_is_member,
+											$price_type->PRT_is_discount,
 											$price_type->PRT_is_tax,
 											$price_type->PRT_is_percent,
 											$price_type->PRT_is_global,
@@ -106,14 +119,23 @@ class EEM_Price_Type extends EEM_Base {
 		return $array_of_objects;
 	}
 
+
+
+
+
+	/**
+	 * 		instantiate a new price type object with blank/empty properties
+	 *
+	 * 		@access		public
+	 * 		@return		mixed		array on success, FALSE on fail
+	 */
 	public function get_new_price_type() {
-		return new EE_Price_Type(
-						'',
-						FALSE,
-						FALSE,
-						FALSE,
-						0);
+		return new EE_Price_Type( '', FALSE, FALSE, FALSE, FALSE, FALSE, 0 );
 	}
+
+
+
+
 
 	/**
 	 * 		retreive  ALL price types from db
@@ -131,6 +153,10 @@ class EEM_Price_Type extends EEM_Base {
 			return FALSE;
 		}
 	}
+
+
+
+
 
 	/**
 	 * 		retreive  a single price type from db via it's ID
@@ -154,6 +180,10 @@ class EEM_Price_Type extends EEM_Base {
 		}
 	}
 
+
+
+
+
 	/**
 	 * 		retreive a single price type from db via it's column values
 	 *
@@ -174,6 +204,10 @@ class EEM_Price_Type extends EEM_Base {
 			return FALSE;
 		}
 	}
+
+
+
+
 
 	/**
 	 * 		This function inserts table data
@@ -208,6 +242,10 @@ class EEM_Price_Type extends EEM_Base {
 		return $rows_n_ID;
 	}
 
+
+
+
+
 	/**
 	 * 		This function updates table data
 	 *
@@ -240,6 +278,10 @@ class EEM_Price_Type extends EEM_Base {
 		return $results['rows'];
 	}
 
+
+
+
+
 	public function delete_by_id($ID) {
 		if (!$ID) {
 			return FALSE;
@@ -249,6 +291,11 @@ class EEM_Price_Type extends EEM_Base {
 		$PRC->delete_all_prices_that_are_type($ID);
 		$this->delete(array('PRT_ID' => $ID));
 	}
+
+
+
+
+
 
 }
 

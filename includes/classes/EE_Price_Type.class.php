@@ -44,6 +44,24 @@ class EE_Price_Type {
 
 
   /**
+  *	Price type a member Price?
+	*
+	*	@access	private
+  *	@var bool
+  */
+	private $_PRT_is_member = NULL;
+
+
+  /**
+  *	Price type a discount?
+	*
+	*	@access	private
+  *	@var bool
+  */
+	private $_PRT_is_discount = NULL;
+
+
+  /**
   *	Price type a tax?
 	*
 	*	@access	private
@@ -79,28 +97,38 @@ class EE_Price_Type {
 	private $_PRT_order = NULL;
 
 
+
+
+
 		/**
 	*  Attendee constructor
 	*
-	* @access 		public
-	* @param			int		 				$PRT_ID						Price type ID
+	* @access 			public
 	* @param			string				$PRT_name					Price Type name
-	* @param			bool	 				$PRT_is_tax				is price type a tax?
-	* @param			bool					$PRT_is_percent		is price type a percent?
-	* @param	 		bool					$PRT_is_global		is price type a global?
-	* @param			int 					$PRT_order				Price Type order
+	* @param			bool	 				$PRT_is_member		is price type a member price?
+	* @param			bool	 				$PRT_is_discount		is price type a discount?
+	* @param			bool	 				$PRT_is_tax					is price type a tax?
+	* @param			bool					$PRT_is_percent			is price type a percent?
+	* @param	 		bool					$PRT_is_global			is price type a global?
+	* @param			int 					$PRT_order					Price Type order
+	* @param			int		 			$PRT_ID						Price type ID
 	*/
-	public function __construct( $PRT_name='', $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_ID=FALSE ) {
+	public function __construct( $PRT_name='', $PRT_is_member=FALSE, $PRT_is_discount=FALSE, $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_ID=FALSE ) {
+	
 		$this->_PRT_ID					= $PRT_ID;
 		$this->_PRT_name				= $PRT_name;
-		$this->_PRT_is_tax			= $PRT_is_tax;
-		$this->_PRT_is_percent	= $PRT_is_percent;
+		$this->_PRT_is_member	= $PRT_is_member;
+		$this->_PRT_is_discount	= $PRT_is_discount;
+		$this->_PRT_is_tax				= $PRT_is_tax;
+		$this->_PRT_is_percent		= $PRT_is_percent;
 		$this->_PRT_is_global		= $PRT_is_global;
 		$this->_PRT_order				= $PRT_order;
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	}
+
+
 
 
 
@@ -122,10 +150,55 @@ class EE_Price_Type {
 	}
 
 
+
+
+
+	/**
+	*		Set Price Type is member price
+	*
+	* 		@access		public
+	*		@param		bool		$PRT_is_member
+	*/
+	public function set_is_member( $PRT_is_member = NULL ) {
+
+		global $espresso_notices;
+		if (!is_bool($PRT_is_member)) {
+			$espresso_notices['errors'][] = 'No member flag was supplied.';
+			return FALSE;
+		}
+		$this->_PRT_is_member = $PRT_is_member;
+		return TRUE;
+	}
+
+
+
+
+
+	/**
+	*		Set Price Type is discount
+	*
+	* 		@access		public
+	*		@param		bool		$PRT_is_discount
+	*/
+	public function set_is_discount( $PRT_is_discount = NULL ) {
+
+		global $espresso_notices;
+		if (!is_bool($PRT_is_discount)) {
+			$espresso_notices['errors'][] = 'No discount flag was supplied.';
+			return FALSE;
+		}
+		$this->_PRT_is_discount = $PRT_is_discount;
+		return TRUE;
+	}
+
+
+
+
+
 	/**
 	*		Set Price Type is tax
 	*
-	* 	@access		public
+	* 		@access		public
 	*		@param		bool		$PRT_is_tax
 	*/
 	public function set_is_tax( $PRT_is_tax = NULL ) {
@@ -140,10 +213,13 @@ class EE_Price_Type {
 	}
 
 
+
+
+
 	/**
 	*		Set Price Type a percent
 	*
-	* 	@access		public
+	* 		@access		public
 	*		@param		bool		$PRT_is_percent
 	*/
 	public function set_is_percent( $PRT_is_percent = NULL ) {
@@ -158,10 +234,13 @@ class EE_Price_Type {
 	}
 
 
+
+
+
 	/**
 	*		Set Price Type a global
 	*
-	* 	@access		public
+	* 		@access		public
 	*		@param		bool		$PRT_is_global
 	*/
 	public function set_is_global ( $PRT_is_global = NULL ) {
@@ -176,10 +255,13 @@ class EE_Price_Type {
 	}
 
 
+
+
+
 	/**
 	*		Set Price Type order
 	*
-	* 	@access		public
+	* 		@access		public
 	*		@param		bool		$PRT_order
 	*/
 	public function set_order( $PRT_order = FALSE ) {
@@ -193,6 +275,10 @@ class EE_Price_Type {
 		return TRUE;
 	}
 
+
+
+
+
 	/**
 	*		save object to db
 	*
@@ -205,8 +291,10 @@ class EE_Price_Type {
 
 		$set_column_values = array(
 				'PRT_name'				=> $this->_PRT_name,
-				'PRT_is_tax'			=> $this->_PRT_is_tax,
-				'PRT_is_percent'	=> $this->_PRT_is_percent,
+				'PRT_is_member'	=> $this->_PRT_is_member,
+				'PRT_is_discount'	=> $this->_PRT_is_discount,
+				'PRT_is_tax'				=> $this->_PRT_is_tax,
+				'PRT_is_percent'		=> $this->_PRT_is_percent,
 				'PRT_is_global'		=> $this->_PRT_is_global,
 				'PRT_order'				=> $this->_PRT_order
 		);
@@ -265,6 +353,26 @@ class EE_Price_Type {
 	*/
 	public function name() {
 		return $this->_PRT_name;
+	}
+
+
+
+	/**
+	*		get is Price Type a discount?
+	* 		@access		public
+	*/
+	public function is_discount() {
+		return $this->_PRT_is_discount;
+	}
+
+
+
+	/**
+	*		get is Price Type a member price?
+	* 		@access		public
+	*/
+	public function is_member() {
+		return $this->_PRT_is_member;
 	}
 
 
