@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Event Espresso package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2012-03-30 16:48-0700\n"
+"PO-Revision-Date: 2012-04-17 12:55-0700\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -11,603 +11,607 @@ msgstr ""
 "Project-Id-Version: Event Espresso\n"
 "POT-Creation-Date: \n"
 "Last-Translator: Chris Reynolds <chris@jazzsequence.com>\n"
-"Language-Team: losegomax, Stefano Ferruggiara <support@eventespresso.com>\n"
+"Language-Team: losegomax, Stafano Ferruggiara <support@eventespresso.com>\n"
 "X-Poedit-Language: Italian\n"
 "X-Poedit-Country: ITALY\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
 
 #: ../includes/process-registration/ticket_selector.php:538
 msgid "We're sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets."
-msgstr ""
+msgstr "Siamo spiacenti, ma ci sono ancora %s posti disponibili per questo evento. Si prega di tornare indietro e selezionare un diverso numero di partecipazioni."
 
 #: ../../event-espresso.3.1.21.P/templates/multi_registration_page_display.php:20
 msgid "%d attendee"
-msgstr ""
+msgstr "%d patecipante"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:785
 msgid "%s event was "
-msgstr ""
+msgstr "%s evento era"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:109
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:130
 msgid "%s attendee  "
-msgstr ""
+msgstr "%s patecipante"
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_list.template.php:27
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:37
 msgid "%s item,  "
-msgstr ""
+msgstr "%s voce,  "
 
 #: ../includes/admin-files/email-manager/add_new_email.php:5
 #: ../includes/admin-files/email-manager/edit_email.php:16
 msgid "Confirmation"
-msgstr ""
+msgstr "Conferma"
 
 #: ../includes/admin-files/admin_screens/event_management.php:10
 msgid "Event Options"
-msgstr ""
+msgstr "Opzioni Evento"
 
 #: ../templates/event_list.php:444
 msgid "Member Only Event. Please "
-msgstr ""
+msgstr "Solo Membro Evento. Per favore"
 
 #: ../templates/event_list_display.php:85
 msgid "Sorry. This Event is sold out."
-msgstr ""
+msgstr "Spiacenti, non ci sono più posti disponibili per questo Evento!"
 
 #: ../templates/event_list.php:509
 msgid "This Event is no longer open for registration."
-msgstr ""
+msgstr "La registrazione per questo evento è chiusa."
 
 #: ../gateways/gateway_display.php:18
 msgid "Please select your method of payment:"
-msgstr ""
+msgstr "Per favore seleziona il tuo metodo di pagamento:"
 
 #: ../gateways/aim/payment.php:18
 msgid "Billing Address"
-msgstr ""
+msgstr "Indirizzo Fatturazione"
 
 #: ../gateways/aim/payment.php:69
 msgid "Expiry Date"
-msgstr ""
+msgstr "Data Scadenza"
 
 #: ../gateways/aim/payment.php:88
 msgid "(mm/yy)"
-msgstr ""
+msgstr "(mm/aa)"
 
 #: ../gateways/aim/payment.php:179
 msgid "Zip Code"
-msgstr ""
+msgstr "CAP"
 
 #: ../gateways/aim/payment.php:191
 msgid "Credit Card Number"
-msgstr ""
+msgstr "Numero Carta di Credito"
 
 #: ../gateways/aim/payment.php:215
 msgid "Expiry Date Month"
-msgstr ""
+msgstr "Mese Scadenza"
 
 #: ../gateways/aim/payment.php:227
 msgid "Expiry Date Year"
-msgstr ""
+msgstr "Anno Scadenza"
 
 #: ../includes/admin-files/admin_screens/event_management.php:19
 msgid "Attendee Pre-Approval"
-msgstr ""
+msgstr "Pre-approvazione Partecipante"
 
 #: ../includes/admin_screens/admin_menu.php:219
 msgid "Event Espresso - Pricing Manager"
-msgstr ""
+msgstr "Event Espresso - Gestore Prezzi/Quote"
 
 #: ../includes/admin_screens/admin_menu.php:219
 msgid "Pricing"
-msgstr ""
+msgstr "Prezzi/Quote"
 
 #: ../includes/admin_screens/admin_screen.php:93
 msgid "Add a Price"
-msgstr ""
+msgstr "Aggiungi un Prezzo/Quota"
 
 #: ../includes/admin_screens/admin_screen.php:97
 msgid "Edit Price"
-msgstr ""
+msgstr "Modifica Prezzo/Quota"
 
 #: ../includes/admin_screens/admin_screen.php:101
 msgid "Add a Price Type"
-msgstr ""
+msgstr "Aggiungi una Tipologia di Prezzo/Quota"
 
 #: ../includes/admin_screens/admin_screen.php:104
 msgid "Edit Price Type"
-msgstr ""
+msgstr "Modifica Tipologia Prezzo/Quota"
 
 #: ../includes/admin_screens/pricing.php:11
 msgid "Manage Prices"
-msgstr ""
+msgstr "Gestisci Prezzi/Quote"
 
 #: ../includes/admin_screens/pricing.php:16
 #: ../includes/admin_screens/pricing.php:80
 msgid "Add New Price"
-msgstr ""
+msgstr "Aggiungi Nuovo Prezzo/Quota"
 
 #: ../includes/admin_screens/pricing.php:17
 msgid "Add New Type"
-msgstr ""
+msgstr "Aggiungi Nuova Tipologia"
 
 #: ../includes/admin_screens/pricing.php:38
 msgid "Globally Active?"
-msgstr ""
+msgstr "Attivare Globally?"
 
 #: ../includes/admin_screens/pricing.php:78
 msgid "Delete Price"
-msgstr ""
+msgstr "Cancella Prezzo/Quota"
 
 #: ../includes/admin_screens/pricing.php:91
 msgid "Tax?"
-msgstr ""
+msgstr "Tassa?"
 
 #: ../includes/admin_screens/pricing.php:92
 msgid "Percent?"
-msgstr ""
+msgstr "Percentuale?"
 
 #: ../includes/admin_screens/pricing.php:93
 msgid "Global?"
-msgstr ""
+msgstr "Global?"
 
 #: ../includes/admin_screens/pricing.php:94
 msgid "Order"
-msgstr ""
+msgstr "Ordine"
 
 #: ../includes/admin_screens/pricing.php:136
 msgid "Delete Price Type"
-msgstr ""
+msgstr "Cancella Tipologia Prezzo/Quota"
 
 #: ../includes/admin_screens/pricing.php:138
 msgid "Add New Price Type"
-msgstr ""
+msgstr "Aggiungi un nuovo Tipo di Prezzo/Quota"
 
 #: ../includes/classes/EE_Cart.class.php:667
 msgid "All events have been successfully removed from the Event Queue."
-msgstr ""
+msgstr "Tutti gli eventi sono stati rimossi dalla coda eventi."
 
 #: ../includes/classes/EE_Cart.class.php:674
 msgid "An error occured! No Events could be removd from the Queue!"
-msgstr ""
+msgstr "Si è verificato un errore! Nessun evento può essere rimosso dalla coda!"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:720
 msgid "No payment required.<br/>Please click \"Confirm Registration\" below to complete the registration process."
-msgstr ""
+msgstr "Nessun pagamento richiesto. <br/> Fare clic su \"Conferma iscrizione\" qui sotto per completare il processo di registrazione."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:833
 msgid "Attendee information submitted successfully."
-msgstr ""
+msgstr "Le informazioni del partecipante sono state inviate con successo."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:837
 msgid "An error occured! No valid question responses were received."
-msgstr ""
+msgstr "Si è verificato un errore! Non ci sono state ricevute risposte valide alla domanda."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:881
 msgid "Registration Step 2 completed"
-msgstr ""
+msgstr "Registrazione Fase 2 completata"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:1045
 msgid "Billing information submitted successfully"
-msgstr ""
+msgstr "Informazioni di fatturazione sottoscritte con successo"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:1128
 msgid "Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of it's three), and try again."
-msgstr ""
+msgstr "Ci dispiace, ma non hai inserito la Frase anti-spam corretta! <br/> Si prega di aggiornare il Codice ReCaptcha e riprovare."
 
 #: ../includes/classes/EE_Validate_and_Sanitize.class.php:329
 msgid "An error occured! No post data was passed to the validator. Please click your browser's back button and try again. If the problem persists, contact customer support."
-msgstr ""
+msgstr "Si è verificato un errore! Nessun Post ha passato la validazione. Si prega di fare clic sul pulsante Indietro del browser e riprovare. Se il problema persiste, contattare l'assistenza clienti."
 
 #: ../includes/event_management/edit_event.php:64
 msgid "Event Editor"
-msgstr ""
+msgstr "Modificatore Evento"
 
 #: ../includes/event_management/help.php:113
 msgid "This type if event will appear in the event listings. It is a live event (not deleted, ongoing or secondary.)"
-msgstr ""
+msgstr "Questo tipo di evento apparirà nella lista degli eventi. Si tratta di un evento live (non eliminato, in corso o secondario)."
 
 #: ../includes/prices_management/index.php:38
 msgid "Price Types have been successfully deleted."
-msgstr ""
+msgstr "Le Tipologie di Prezzi/Quote sono state cancellate con successo."
 
 #: ../includes/prices_management/index.php:73
 msgid "Prices have been successfully deleted."
-msgstr ""
+msgstr "I prezzi/quote sono stati cancellati con successo."
 
 #: ../includes/prices_management/index.php:111
 #: ../includes/prices_management/index.php:113
 #: ../includes/prices_management/index.php:132
 #: ../includes/prices_management/index.php:134
 msgid "The price"
-msgstr ""
+msgstr "Il Prezzo/Quota"
 
 #: ../includes/prices_management/index.php:154
 #: ../includes/prices_management/index.php:156
 #: ../includes/prices_management/index.php:175
 #: ../includes/prices_management/index.php:177
 msgid "The price type"
-msgstr ""
+msgstr "Tipo di Prezzo/Quota"
 
 #: ../includes/prices_management/postboxes.php:27
 msgid "You have no price types defined. Please add a price type before adding a price."
-msgstr ""
+msgstr "Non ci sono tipologie di prezzo definito. Si prega di aggiungere un tipo di prezzo prima di aggiungere un prezzo."
 
 #: ../includes/prices_management/postboxes.php:42
 msgid "Price Name"
-msgstr ""
+msgstr "Nome Prezzo/Quota"
 
 #: ../includes/prices_management/postboxes.php:48
 msgid "Price Amount"
-msgstr ""
+msgstr "Ammontare Prezzo/Quota"
 
 #: ../includes/prices_management/postboxes.php:54
 msgid "Price Type"
-msgstr ""
+msgstr "Tipologia di Prezzo/Quota"
 
 #: ../includes/prices_management/postboxes.php:60
 msgid "Globally Active"
-msgstr ""
+msgstr "Globally Attivo"
 
 #: ../includes/prices_management/postboxes.php:123
 msgid "Price Type Name"
-msgstr ""
+msgstr "Nome Tipologi di Prezzo/Quota"
 
 #: ../includes/prices_management/postboxes.php:129
 msgid "Price Type Order"
-msgstr ""
+msgstr "Ordine Tipo di Prezzo/Quota"
 
 #: ../includes/prices_management/postboxes.php:135
 msgid "Is Type a tax?"
-msgstr ""
+msgstr "È una tipo di tassa?"
 
 #: ../includes/prices_management/postboxes.php:141
 msgid "Is Type applied as a percentage?"
-msgstr ""
+msgstr "Tipologia da applicare come percentuale?"
 
 #: ../includes/prices_management/postboxes.php:147
 msgid "Is Type to be applied globally?"
-msgstr ""
+msgstr "Tipologia da applicare a libello generale?"
 
 #: ../includes/process-registration/ticket_selector.php:320
 msgid "You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again."
-msgstr ""
+msgstr "È necessario selezionare selezionare almeno 1 partecipante come Qtà prima di procedere. <br/> Si prega di fare clic sul pulsante Indietro del browser e riprovare."
 
 #: ../includes/process-registration/ticket_selector.php:328
 msgid "An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again."
-msgstr ""
+msgstr "Si è verifato un errore! Non è stato fornito un ID evento o non è stato ricevuto. <br/> Fare clic sul pulsante Indietro del browser e riprovare."
 
 #: ../includes/process-registration/ticket_selector.php:542
 msgid "We're sorry, but there are no available spaces left for this event"
-msgstr ""
+msgstr "Siamo spiacenti ma non ci sono più posti disponibili per questo evento."
 
 #: ../templates/event_list_display.php:51
 msgid "Registration &amp; Ticket Information"
-msgstr ""
+msgstr "Informazioni &amp; sulle Partecipazioni di Registrazione"
 
 #: ../templates/event_list_display.php:103
 msgid "Event Information"
-msgstr ""
+msgstr "Informazioni Evento"
 
 #: ../templates/event_list_display.php:125
 msgid "Description: "
-msgstr ""
+msgstr "Descrizione:"
 
 #: ../templates/event_list_display.php:134
 msgid "click here for more details about "
-msgstr ""
+msgstr "clicca qui per maggiori dettagli su"
 
 #: ../templates/event_list_display.php:137
 msgid "click for more details"
-msgstr ""
+msgstr "clicca per maggiori dettagli"
 
 #: ../templates/registration_page_display.php:134
 #: ../templates/registration_page_display.php:142
 msgid "Submit Registration"
-msgstr ""
+msgstr "Sottoscrivi Registrazione"
 
 #: ../templates/reg_page_checkout/confirmation_page.template.php:5
 msgid "Event #"
-msgstr ""
+msgstr "Evento #"
 
 #: ../templates/reg_page_checkout/confirmation_page.template.php:35
 msgid "Billing Details"
-msgstr ""
+msgstr "Dettagli Fatturazione"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:4
 msgid "Step 1 -  Attendee Information"
-msgstr ""
+msgstr "Fase 1 - Informazioni Partecipante"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:10
 msgid ""
 " In order to process your registration, we ask you to provide the following information.<br/>\n"
 "\t\tPlease note that all fields marked with an asterisk (<span class=\"asterisk\">*</span>) are required."
 msgstr ""
+"Al fine di elaborare la vostra registrazione, vi chiediamo di fornire le seguenti informazioni. <br/> \n"
+" → → Si prega di notare che tutti i campi contrassegnati con un asterisco (* <span class=\"asterisk\"> </span>) sono obbligatori."
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:51
 msgid "Use Attendee #1's information for ALL attendees"
-msgstr ""
+msgstr "Usa le Infomazioni del #1's Partecipante per TUTTI i partecipanti"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:56
 msgid "This option allows you to use the above information for all additional attendee question fields. <span>( Please note that some events may have additional questions that you may still be required to answer in order to complete your registration. )</span>"
-msgstr ""
+msgstr "Questa opzione consente di utilizzare le suddette informazioni per tutti i campi aggiuntivi di domande per i partecipanti. <span> (Si prega di notare che alcuni eventi possono avere altre domande alle quali è necessario rispondere per completare la registrazione.) </span>"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:58
 msgid "more options"
-msgstr ""
+msgstr "ulteriori opzioni"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:61
 msgid "less options"
-msgstr ""
+msgstr "meno opzioni"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:62
 msgid "The following checkboxes allow you to use the above information for only the selected additional event attendees."
-msgstr ""
+msgstr "Le seguenti Casellle di Supnta consentono di utilizzare le informazioni di cui sopra solo per i partecipanti aggiuntivi selezionati."
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:73
 msgid "Attendee #"
-msgstr ""
+msgstr "Partecipante #"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:100
 msgid "No information is required to attend this event. Please proceed to Step 2"
-msgstr ""
+msgstr "Nessuna informazione è necessaria per partecipare a questo evento. Si prega di procedere alla Fase 2"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:121
 msgid "Registration&nbsp;Step&nbsp;2&nbsp;"
-msgstr ""
+msgstr "Registrazione&nbsp;Fase&nbsp;2&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:129
 msgid "Registration&nbsp;Step&nbsp;2"
-msgstr ""
+msgstr "Registrazione&nbsp;Fase&nbsp;2"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:4
 msgid "Step 2 - Payment Options"
-msgstr ""
+msgstr "Fase 2 - Opzioni di Pagamento"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:17
 msgid "Important Notice:"
-msgstr ""
+msgstr "Annotazione Importante:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:18
 msgid "The following events require attendee pre-approval and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. If this is a free event, then no billing will occur."
-msgstr ""
+msgstr "I seguenti eventi richiedono una pre-approvazione del partecipante e non sarà addebitato nulla durante la transazione. La fatturazione potrà avvenire soltanto dopo che il partecipante sarà stato approvato dall'organizzatore dell'evento. Se questo è un evento gratuito, non verrà fatturato nulla."
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:19
 msgid "Events Requiring Pre-Approval:"
-msgstr ""
+msgstr "Eventi che richiedono preapprovazione:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:32
 msgid "Discount Codes"
-msgstr ""
+msgstr "Codici Sconto"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:35
 msgid "Enter discount code"
-msgstr ""
+msgstr "Inserisci Codice Sconto"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:38
 msgid "apply&nbsp;coupon&nbsp;"
-msgstr ""
+msgstr "Applica&nbsp;Coupon&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:43
 msgid "Enter any coupon codes (including Groupons) you have into the above text field and then click apply coupon. Additional coupon codes can be entered one at a time."
-msgstr ""
+msgstr "Inserire qualunque codice promozionale (compresi quelli Groupons) che hai nel campo di testo qui sopra e poi fai clic su Applica Coupon. Codici promozionali aggiuntivi possono essere inseriti uno alla volta."
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:52
 msgid "Discounts:"
-msgstr ""
+msgstr "Sconti:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:56
 msgid "Billable Registrations:"
-msgstr ""
+msgstr "Registrazioni Fatturabili:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:58
 msgid "Total Amount Due: "
-msgstr ""
+msgstr "Importo Totale Dovuto:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:71
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:79
 msgid "Registration&nbsp;Step&nbsp;3&nbsp;"
-msgstr ""
+msgstr "Registrazione&nbsp;Fase&nbsp;3&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:4
 msgid "Step 3 - Registration Confirmation"
-msgstr ""
+msgstr "Fase 3 - Conferma Registrazione"
 
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:25
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:33
 msgid "YES!&nbsp;Confirm&nbsp;Registration&nbsp;"
-msgstr ""
+msgstr "SI!&nbsp;Conferma&nbsp;Registrazione&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:4
 msgid "loading..."
-msgstr ""
+msgstr "in caricamento..."
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:17
 msgid " Steps"
-msgstr ""
+msgstr "Fasi"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:20
 msgid "Attendee<br/>&nbsp;Information"
-msgstr ""
+msgstr "Informazioni<br/>&nbsp;Partecipante"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:25
 msgid "Payment<br/>&nbsp;Options"
-msgstr ""
+msgstr "Opzioni<br/>&nbsp;Pagamento"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:29
 msgid "Registration<br/>&nbsp;Confirmation"
-msgstr ""
+msgstr "Conferma<br/>&nbsp;di Registrazione"
 
 #: ../templates/ticket_selector/ticket_selector_chart.template.php:1
 msgid "Ticket Options"
-msgstr ""
+msgstr "Opzioni Partecipazione"
 
 #: ../templates/ticket_selector/ticket_selector_chart.template.php:34
 msgid "Ticket Price"
-msgstr ""
+msgstr "Quota Partecipazione"
 
 #: ../templates/ticket_selector/ticket_selector_threaded_chart.template.php:52
 msgid "Time : "
-msgstr ""
+msgstr "Ora :"
 
 #: ../../event-espresso.3.1/includes/functions/main.php:162
 msgid "Additional Attendee #"
-msgstr ""
+msgstr "Patecipante Aggiuntivo #"
 
 #: ../../espresso-members.1.9/member_functions.php:396
 msgid " (including "
-msgstr ""
+msgstr "(incluso"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:675
 msgid "An additional attendee was successfully added for this event."
-msgstr ""
+msgstr "Un ulteriore partecipante è stato aggiunto con successo a questo evento."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:678
 msgid "An error occured! An additional attendee could not be added for this event. Please refresh the page and try it again."
-msgstr ""
+msgstr "Si è verificato un errore! Un partecipante aggiuntivo non può essere aggiunto a questo evento. Si prega di ricaricare la pagina e riprovare. "
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:682
 msgid "We're sorry, but there are no available spaces left for this event. No additional attendees can be added."
-msgstr ""
+msgstr "Siamo spiacenti ma non ci sono più posti disponibili per questo evento. Non possono più essere aggiunti partecipanti."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:696
 msgid "An error occured! No quantity was specified, therefore an additional attendee could not be added. Please refresh the page and try again."
-msgstr ""
+msgstr "Si è verificato un errore! Nessuna quatità è stata specificata, quindi non uò essere rimosso nessun partecipante. Ricarica la pagina e riprova."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:700
 msgid "An error occured! No line item was specified, therefore an additional attendee could not be added. Please refresh the page and try again."
-msgstr ""
+msgstr "Si è verificato un errore! Nessuna voce è stata specificata, quindi un partecipante aggiuntivo non può essere aggiunto. Si prega di ricaricare la pagina e riprovare."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:739
 msgid "An attendee was successfully removed from this event."
-msgstr ""
+msgstr "Un patecipante è stato rimosso con successo da questo evento."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:742
 msgid "An error occured! No attendees could be removed for this event. Please refresh the page and try again."
-msgstr ""
+msgstr "Si è verificato un errore! Nessun partecipante può essere rimosso da questo evento. Si prega di ricaricare la pagina e riprovare."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:746
 msgid "Attendee quantity must be at least one for each event. If you wish to remove this event from the Event Queue, click on the trash can icon."
-msgstr ""
+msgstr "La quantità di partecipanti per ogni evento deve essere almeno 1. Se si desidera rimuovere questo evento dalla coda eventi, fare clic sulla icona del cestino."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:750
 msgid "An error occured! No quantity was specified, therefore no attendees could be removed. Please refresh the page and try again."
-msgstr ""
+msgstr "Si è verificato un errore! Nessuna quatità è stata specificata, quindi non uò essere rimosso nessun partecipante. Ricarica la pagina e riprova."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:754
 msgid "An error occured! No line item was specified, therefore no attendees could be removed. Please refresh the page and try again."
-msgstr ""
+msgstr "Si è verificato un errore! Nessuna voce è stata specificata, quindi i partecipanti non possono essere rimossi. Si prega di ricaricare la pagina e riprovare."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:785
 msgid "successfully removed from the Event Queue"
-msgstr ""
+msgstr "rimosso con successo dalla coda eventi"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:788
 msgid "An error occured! The event was not removed from the Event Queue"
-msgstr ""
+msgstr "Si è verificato un errore! L'evento non è stato rimosso dalla coda eventi"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:792
 msgid "An error occured! No line item was specified, therefore no event was not removed from the Event Queue. Please refresh the page and try again."
-msgstr ""
+msgstr "Si è verificato un errore! Nessuna voce è stata specificato, pertanto, nessun evento è stato rimosso dalla coda eventi. Si prega di ricaricare la pagina e riprovare."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:821
 msgid "An error occured! The Event Queue could not be emptied!"
-msgstr ""
+msgstr "Si è verificato un errore! La coda eventi non può essere svuotata!"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:50
 msgid "A widget for displaying Event Espresso regsitrations and purchases."
-msgstr ""
+msgstr "Un Widget per visualizzare le registrazioni e gli acquisti di Event Espresso."
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:75
 msgid "Mini Cart Title:"
-msgstr ""
+msgstr "Titolo Mini Carrello:"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:78
 msgid "Display content for the following carts:"
-msgstr ""
+msgstr "Mostra contenuto per le seguenti carte:"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:131
 msgid "Mini Cart Template:"
-msgstr ""
+msgstr "Template Mini Carrello:"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:48
 msgid "Date & Time"
-msgstr ""
+msgstr "Data & Ora"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:51
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:106
 msgid "Total"
-msgstr ""
+msgstr "Totale"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:129
 msgid "Grand Total: "
-msgstr ""
+msgstr "Totale Generale:"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:135
 msgid "remove all events from event queue"
-msgstr ""
+msgstr "remuovi tutti gli eventi dalla coda"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:146
 msgid "&nbsp;Return&nbsp;to&nbsp;Events&nbsp;List"
-msgstr ""
+msgstr "&nbsp;Ritorna&nbsp;alla&nbsp;Lista&nbsp;Eventi"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:152
 msgid "&nbsp;Proceed&nbsp;to&nbsp;Registration"
-msgstr ""
+msgstr "&nbsp;Procedi&nbsp;alla&nbsp;Registrazione"
 
 #: ../../espresso-multi-event.trunk/templates/view_event_queue_btn.template.php:2
 msgid "This event has already been added to the Event Queue."
-msgstr ""
+msgstr "Questo evento è già stato aggiunto alla coda eventi."
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:57
 msgid "empty event queue"
-msgstr ""
+msgstr "svuota coda evento"
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:70
 msgid "View Event Queue"
-msgstr ""
+msgstr "Mostra Coda Evento"
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:14
 msgid "An error occured and the Groupon Code(s) could not be exported from the database."
-msgstr ""
+msgstr "Si è verificato un errore e il Codice(i) Groupon non può essere importato nel database. "
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:87
 msgid "Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database."
-msgstr ""
+msgstr "Errore! Il file CSV contiene un nome tabella che non esiste. Il Codice Groupon (s) non è stata importata nel database."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:109
 msgid "Groupon Code(s) have been successfully imported into the database."
-msgstr ""
+msgstr "Il Codice(i) Groupon è stato importato con successo nel database."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:112
 msgid "An error occured and the Groupon Code(s) were not imported into the database."
-msgstr ""
+msgstr "Si è verificato un errore e il Codice(i) Groupon non può essere importato nel database."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:170
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:184
 msgid "Groupon Code(s) have been redeemed successfully."
-msgstr ""
+msgstr "Il Codice(i) Groupon è stato riscattato con successo"
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:363
 msgid "Unredeem Groupon(s)"
-msgstr ""
+msgstr "Non riscattare Groupon"
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:364
 msgid "Redeem Groupon(s)"
-msgstr ""
+msgstr "Ricattare Groupon"
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:369
 msgid "Export Groupon Codes to CSV"
-msgstr ""
+msgstr "Esporta Codici Groupon in CSV"
 
 #: ../../espresso-mailchimp.trunk/mailchimp.view.class.php:62
 msgid "You do not have any lists registered."
-msgstr ""
+msgstr "Non hai nessuna lista registrata."
 
 #: ../../../uploads/espresso/gateways/invoice/settings.php:53
 msgid "The Invoice Payments is installed. Would you like to activate it?"
-msgstr ""
+msgstr "I Pagamenti con Fattura sono installati. Vuoi attivarli?"
 
 #: ../alternate_templates/event_list.php:104
 msgid "Regsitration is Closed"
@@ -615,7 +619,7 @@ msgstr "La Registrazione è chiusa"
 
 #: ../alternate_templates/event_list_display.php:56
 msgid "Price: "
-msgstr "Prezzo:"
+msgstr "Prezzo/Quota:"
 
 #: ../alternate_templates/event_list_display.php:91
 msgid "Date:"
@@ -650,7 +654,7 @@ msgstr "Registrati all'Evento"
 
 #: ../alternate_templates/event_list_display.php:190
 msgid "View Details"
-msgstr "Vedi Dettagli"
+msgstr "Mostra Dettagli"
 
 #: ../alternate_templates/registration_page.php:101
 msgid "We are sorry but this event has reached the maximum number of attendees!"
@@ -828,7 +832,7 @@ msgstr "(Tipicamente 87654321)"
 
 #: ../gateways/2checkout/settings.php:123
 msgid "2checkout Username"
-msgstr "2checkout Username"
+msgstr "2checkout NomeUtente"
 
 #: ../gateways/2checkout/settings.php:128
 msgid "(Typically TestAccount)"
@@ -986,7 +990,7 @@ msgstr "Informazioni di Fatturazione"
 #: ../gateways/aim/payment.php:21
 #: ../gateways/aim/payment.php:107
 msgid "First Name"
-msgstr "Nome:"
+msgstr "Nome"
 
 #: ../gateways/aim/payment.php:26
 #: ../gateways/aim/payment.php:119
@@ -1301,7 +1305,7 @@ msgstr "Log in nell'Interfaccia Merchant al"
 
 #: ../gateways/authnet/lib/authnet_help.php:16
 msgid "Click Account from the main toolbar."
-msgstr "Cliccare su Account nella barra degli strumenti principale."
+msgstr "Cliccare su Conto nella barra principale degli strumenti."
 
 #: ../gateways/authnet/lib/authnet_help.php:17
 msgid "Click Settings in the main menu on the left."
@@ -1309,7 +1313,7 @@ msgstr "Cliccare su Settings nella barra degli strumenti a sinistra."
 
 #: ../gateways/authnet/lib/authnet_help.php:18
 msgid "Click API Login ID and Transaction Key in the Security Settings section."
-msgstr "Cliccare su API Login ID e Transaction Key nella sezione Impostazioni di Sicurezza."
+msgstr "Cliccare su API Login ID e Chiave di Transazione nella sezione Impostazioni di Sicurezza."
 
 #: ../gateways/authnet/lib/authnet_help.php:19
 msgid "If an API login ID has already been generated, it is visible on this  page. If an API Login ID needs to be generated, you can enter the answer  to your Secret Question in order to generate an API Login ID and  Transaction Key."
@@ -1369,7 +1373,7 @@ msgstr "Authorize.net Server Sviluppatori"
 
 #: ../gateways/authnet/lib/authnet_help.php:103
 msgid "Authorize.net maintains a development environment for testing your gateway. You may use this to test your setup without having a live account. You will need to sign up for a free account on the development server here: "
-msgstr "Authorize.net mantiene un ambiente di sviluppo per testare il gateway. È possibile utilizzare questo per verificare la configurazione senza avere un conto live. Avrete bisogno di registrarsi per un account gratuito sul server di sviluppo qui:"
+msgstr "Authorize.net ha un ambiente di sviluppo per testare il gateway. È possibile utilizzare questo per verificare la configurazione senza avere un conto live. Avrete bisogno di registrarsi per un account gratuito sul server di sviluppo qui:"
 
 #: ../gateways/authnet/lib/authnet_help.php:105
 msgid "Transactions that are submitted to the development server are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers."
@@ -1405,7 +1409,7 @@ msgstr "Impostazioni per Trasferimenti Elettronici (es: bonifico bancario) non s
 
 #: ../gateways/bank/settings.php:30
 msgid "Electronic Funds Transfers"
-msgstr "Trasferimento Elettronico di Fondi (es: Bonifico Bancario)"
+msgstr "Bonifico Bancario"
 
 #: ../gateways/bank/settings.php:31
 msgid "Please initiate an electronic payment using the bank information below. Payment must be received within 48 hours of event date."
@@ -1413,7 +1417,7 @@ msgstr "Si prega di avviare un pagamento elettronico utilizzando le informazioni
 
 #: ../gateways/bank/settings.php:55
 msgid "Electronic Funds Transfer Settings"
-msgstr "Impostazioni Trasferimento Elettronico di Fondi"
+msgstr "Impostazioni Bonifico Bancario"
 
 #: ../gateways/bank/settings.php:63
 msgid "Electronic Funds Transfers Activated"
@@ -1433,11 +1437,11 @@ msgstr "Non è possibile disattivare i Trasferimenti Elettronici (es: bonifico b
 
 #: ../gateways/bank/settings.php:81
 msgid "Activate Electronic Funds Transfers?"
-msgstr "Attivare il Trasferimento Elettronico di Fondi?"
+msgstr "Attivare Pagamento con Bonifico Bancario? "
 
 #: ../gateways/bank/settings.php:85
 msgid "Deactivate Electronic Funds Transfers?"
-msgstr "Disattivare il Trasferimento Elettronico di Fondi?"
+msgstr "Disattivare Pagamento con Bonifico Bancario?"
 
 #: ../gateways/bank/settings.php:112
 msgid "Page Title"
@@ -1453,7 +1457,7 @@ msgstr "Nome sul Conto"
 
 #: ../gateways/bank/settings.php:130
 msgid "Bank Account #"
-msgstr "Conto Bancario #"
+msgstr "IBAN "
 
 #: ../gateways/bank/settings.php:136
 msgid "Bank Name"
@@ -1465,7 +1469,7 @@ msgstr "Filiale o Indirizzo"
 
 #: ../gateways/bank/settings.php:168
 msgid "Update Electronic Funds Transfer Settings"
-msgstr "Aggiorna Impostazioni Trasferimento Elettronico di Fondi"
+msgstr "Aggiorna Impostazioni con Bonifico Bancario"
 
 #: ../gateways/check/payment.php:12
 msgid "Payable to:"
@@ -1645,7 +1649,7 @@ msgstr "L'URL per l'immagine da 150x50 pixel mostrata con tuo logo nella parte a
 
 #: ../gateways/eway/settings.php:226
 msgid "Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account."
-msgstr "Opzione Pre-definita - Nome della tua azienda, se hai un Business Account, o il tuo indirizzo Email, se hai un Account Premier o Personal."
+msgstr "Opzione Predefinita - Nome della tua azienda, se hai un Business Account, o il tuo indirizzo Email, se hai un Account Premier o Personal."
 
 #: ../gateways/eway/settings.php:230
 msgid "eway Currency"
@@ -1972,7 +1976,7 @@ msgstr "Seleziona stile"
 
 #: ../gateways/invoice/settings.php:194
 msgid "Default CSS - Simple"
-msgstr "Default CSS - Campione"
+msgstr "CSS predefinito - Campione"
 
 #: ../gateways/invoice/settings.php:200
 msgid ""
@@ -2106,7 +2110,7 @@ msgstr "MW API frase password"
 
 #: ../gateways/mwarrior/settings.php:180
 msgid "Image URL (logo for payment page): "
-msgstr "URL immagine (logo per pagina pagamenti):"
+msgstr "URL Immagine (logo per la pagina dei pagamenti) "
 
 #: ../gateways/mwarrior/settings.php:185
 msgid "(used for your business/personal logo on the Merchant Warrior page)"
@@ -2411,7 +2415,7 @@ msgstr "Paypal API Password"
 
 #: ../gateways/paypal_pro/settings.php:140
 msgid "Paypal API Signature"
-msgstr "Paypal API Signature"
+msgstr "Paypal API Firma/Signature"
 
 #: ../gateways/paypal_pro/settings.php:247
 msgid "Make sure you enter the sandbox credentials above."
@@ -2692,7 +2696,7 @@ msgstr "Disattivare IPN Worldpay?"
 
 #: ../gateways/worldpay/settings.php:112
 msgid "worldpay installation I.D."
-msgstr "Istallazione ID worldpay"
+msgstr "Istallazione ID Worldpay"
 
 #: ../gateways/worldpay/settings.php:115
 msgid "(Typically payment@yourdomain.com)"
@@ -2724,7 +2728,7 @@ msgstr "Aggiorna impostazioni Worldpay"
 
 #: ../gateways/worldpay/settings.php:245
 msgid "worldpay Sandbox"
-msgstr "worldpay Sandbox"
+msgstr "Worldpay Sandbox"
 
 #: ../gateways/worldpay/settings.php:246
 msgid "In addition to using the worldpay Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all worldpay variables."
@@ -2752,7 +2756,7 @@ msgstr "Worldpay usa codici 3-character ISO-4217 per specificare le valute nei c
 
 #: ../includes/help_global.php:14
 msgid "Default Payment Status Options"
-msgstr "Opzioni Status pagamenti predefiniti"
+msgstr "Opzioni predefinite Stato dei pagamenti"
 
 #: ../includes/help_global.php:15
 msgid "Incomplete"
@@ -2780,7 +2784,7 @@ msgstr "Questo rappresenta che una notifica di pagamento è stata ricevuta da Ga
 
 #: ../includes/help_global.php:35
 msgid "Example Example"
-msgstr "Esempio esempio"
+msgstr "Esempio Esempio"
 
 #: ../includes/help_global.php:36
 msgid "Hey Mickey, you're so fine, you're so fine you blow my mind, hey Mickey"
@@ -2930,7 +2934,7 @@ msgstr "Aggiungi Nuovo"
 
 #: ../includes/admin-files/custom_post_type.php:9
 msgid "Add New Event"
-msgstr "Aggiungi nuovo Evento"
+msgstr "Aggiungi Nuovo Evento"
 
 #: ../includes/admin-files/custom_post_type.php:10
 #: ../includes/admin-files/dashboard_widget.php:95
@@ -2947,7 +2951,7 @@ msgstr "Aggiungi nuovo Evento"
 
 #: ../includes/admin-files/custom_post_type.php:13
 msgid "View Event"
-msgstr "Vedi Evento"
+msgstr "Mostra Evento"
 
 #: ../includes/admin-files/custom_post_type.php:14
 msgid "View Events"
@@ -2987,7 +2991,7 @@ msgstr "Data"
 
 #: ../includes/admin-files/dashboard_widget.php:32
 msgid "Status"
-msgstr "Status"
+msgstr "Stato"
 
 #: ../includes/admin-files/dashboard_widget.php:33
 #: ../includes/admin-files/dashboard_widget.php:95
@@ -3040,7 +3044,7 @@ msgstr "Testo dell'Email"
 
 #: ../includes/admin-files/event_newsletter.php:47
 msgid "View Custom Email Tags"
-msgstr "Visualizza Tag Email Personalizzati"
+msgstr "Mostra Tag Email Personalizzati"
 
 #: ../includes/admin-files/event_newsletter.php:47
 msgid "Email Example"
@@ -3092,7 +3096,7 @@ msgstr "Seleziona dalla Lista Manager Email"
 
 #: ../includes/admin-files/functions.php:192
 msgid "Manage Staff Members"
-msgstr "Organizza i membri dello Staff"
+msgstr "Organizza Membri dello Staff"
 
 #: ../includes/admin-files/functions.php:196
 msgid "Staff Shortcode"
@@ -3150,7 +3154,7 @@ msgstr "Chiave"
 #: ../includes/admin-files/functions.php:416
 #: ../includes/admin-files/functions.php:430
 msgid "Remove this meta box"
-msgstr "Rimuovi il Meta Box/Casella"
+msgstr "Rimuovi questa Casella"
 
 #: ../includes/admin-files/functions.php:389
 #: ../includes/admin-files/functions.php:407
@@ -3242,7 +3246,7 @@ msgstr "Per spostare i file automaticamente, per favore setta i permessi a 755 n
 
 #: ../includes/admin-files/gateway_developer.php:54
 msgid "Click here to <a href='%s'>Move your files</a> to a safe place."
-msgstr "Clicca qui per <a href='%s'>Spostare i tuoi </a> in un posto sicuro."
+msgstr "Clicca qui per <a href='%s'>Spostare i tuoi files</a> in un posto sicuro."
 
 #: ../includes/admin-files/optional_event_settings.php:45
 msgid "Payment Settings"
@@ -3250,7 +3254,7 @@ msgstr "Impostazioni Pagamento"
 
 #: ../includes/admin-files/optional_event_settings.php:51
 msgid " Default Payment Status"
-msgstr "Status predefinito pagamenti"
+msgstr "Stato Predefinito dei Pagamenti"
 
 #: ../includes/admin-files/optional_event_settings.php:55
 msgid ""
@@ -3398,7 +3402,7 @@ msgstr "ID Affiliazione Event Espresso"
 
 #: ../includes/admin-files/optional_event_settings.php:227
 msgid "Earn cash for promoting our plugin."
-msgstr "Guadagna soldi promuovendo il nostro Plugin."
+msgstr "Guadagna promuovendo il nostro Plugin."
 
 #: ../includes/admin-files/optional_event_settings.php:232
 msgid "Your Event Espresso License Key"
@@ -3510,7 +3514,7 @@ msgstr "Turco"
 
 #: ../includes/admin-files/admin_screens/admin_addons.php:9
 msgid "Manage Addons"
-msgstr "Amministra Addons"
+msgstr "Amministra Optionals"
 
 #: ../includes/admin-files/admin_screens/admin_addons.php:39
 #: ../includes/admin-files/admin_screens/admin_addons.php:61
@@ -3544,7 +3548,7 @@ msgstr "Gestisci i codici promozionali Event"
 
 #: ../includes/admin-files/admin_screens/coupon_management.php:12
 msgid "Add New Code"
-msgstr "Aggiungi un nuovo codice"
+msgstr "Aggiungi Nuovo Codice"
 
 #: ../includes/admin-files/admin_screens/coupon_management.php:70
 msgid "Promotional Codes have been successfully deleted from the database."
@@ -3557,7 +3561,7 @@ msgstr "ID"
 
 #: ../includes/admin-files/admin_screens/coupon_management.php:83
 msgid "Exp Date"
-msgstr "Exp Date"
+msgstr "Data di Scadenza"
 
 #: ../includes/admin-files/admin_screens/coupon_management.php:84
 msgid "Qty Available"
@@ -3629,7 +3633,7 @@ msgstr "Lista Eventi"
 
 #: ../includes/admin-files/admin_screens/template_confg.php:120
 msgid "Display Descriptions"
-msgstr "Descrizione visualizzata"
+msgstr "Mostra Descrizioni"
 
 #: ../includes/admin-files/admin_screens/template_confg.php:127
 msgid "Use SHORT Descriptions"
@@ -3642,7 +3646,7 @@ msgstr "Assicurati di usare un more... tag nella descrizione dell'evento."
 #: ../includes/admin-files/admin_screens/template_confg.php:137
 #: ../includes/admin-files/admin_screens/template_confg.php:150
 msgid "Display Addresses"
-msgstr "Indirizzo visualizzato"
+msgstr "Mostra Indirizzi"
 
 #: ../includes/admin-files/admin_screens/template_confg.php:145
 msgid "Registration Pages"
@@ -3682,15 +3686,15 @@ msgstr "Stile ThemeRoller"
 
 #: ../includes/admin-files/admin_screens/template_confg.php:193
 msgid "Default"
-msgstr "Base"
+msgstr "Predefinito"
 
 #: ../includes/admin-files/admin_screens/template_confg.php:200
 msgid "Default style sheet is Smoothness."
-msgstr "Il foglio di stile base è Smoothness."
+msgstr "Il foglio di stile predefinito è Smoothness."
 
 #: ../includes/admin-files/admin_screens/template_confg.php:206
 msgid "Current Custom Style Sheet"
-msgstr "Il foglio di stile personalizza attuale."
+msgstr "Foglio di stile personalizzo attuale."
 
 #: ../includes/admin-files/admin_screens/template_confg.php:211
 msgid "Remove style sheet?"
@@ -3735,7 +3739,7 @@ msgstr "non è stato salvato"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:33
 msgid "Edit Code"
-msgstr "Modifica codice"
+msgstr "Modifica Codice"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:43
 #: ../includes/admin-files/coupon-management/new_discount.php:23
@@ -3760,7 +3764,7 @@ msgstr "Data di scadenza"
 #: ../includes/admin-files/coupon-management/edit_discount.php:77
 #: ../includes/admin-files/coupon-management/new_discount.php:56
 msgid "Price Discount"
-msgstr "Sconto"
+msgstr "Valore Sconto"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:83
 #: ../includes/admin-files/coupon-management/new_discount.php:62
@@ -3770,7 +3774,7 @@ msgstr "Percentuale di Sconto"
 #: ../includes/admin-files/coupon-management/edit_discount.php:90
 #: ../includes/admin-files/coupon-management/new_discount.php:69
 msgid "Short Description"
-msgstr "Descrizione BREVE"
+msgstr "Descrizione Breve"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:101
 #: ../includes/admin-files/email-manager/edit_email.php:75
@@ -3918,7 +3922,7 @@ msgstr "Mostra Modulo di Registrazione"
 
 #: ../includes/admin-files/admin_screens/event_management.php:98
 msgid "Default Payment Status"
-msgstr "Stato Pagamenti Base"
+msgstr "Stato predefinito Pagamenti"
 
 #: ../includes/admin-files/admin_screens/event_management.php:106
 msgid "Alternate Registration Page"
@@ -4093,7 +4097,7 @@ msgstr "non è stata salvata!"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:12
 msgid "Add New Questions"
-msgstr "Aggiungi una nuova Domanda"
+msgstr "Aggiungi Nuove Domande"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:14
 msgid "Add questions using the form below.  By default all participants will be asked for their first name, last name, and email address."
@@ -4121,11 +4125,11 @@ msgstr "Bottone Radio"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:37
 msgid "Drop Down"
-msgstr "Menu a cascata"
+msgstr "Menu a discesa"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:38
 msgid "Checkbox"
-msgstr "Box da spuntare"
+msgstr "Box con Spunta"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:39
 msgid "Date Picker"
@@ -4298,7 +4302,7 @@ msgstr "Il membro dello staff"
 
 #: ../includes/admin-files/staff-management/edit_staff.php:20
 msgid "Edit Staff Member:"
-msgstr "Modifica Membro dello staff:"
+msgstr "Modifica Membro dello Staff:"
 
 #: ../includes/admin-files/staff-management/edit_staff.php:133
 msgid "Update Staff Member"
@@ -4361,7 +4365,7 @@ msgstr "Imposta Tipo di Controllo Mappa"
 #: ../includes/admin-files/templates/event_gmaps_settings.php:74
 #: ../includes/admin-files/templates/event_gmaps_settings.php:168
 msgid " Default"
-msgstr "Base"
+msgstr "Predefinito"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:77
 #: ../includes/admin-files/templates/event_gmaps_settings.php:171
@@ -4463,7 +4467,7 @@ msgstr "Selezionare questa opzione per attivare la mappa dell'evento nel modello
 
 #: ../includes/admin-files/templates/templates_help.php:10
 msgid "Enable Built In Styles"
-msgstr "Abilita Built In Stile"
+msgstr "Abilita Costruzione Stile"
 
 #: ../includes/admin-files/templates/templates_help.php:13
 msgid "Enabling Styles tells Event Espresso to use it's built in stylesheets for styling the template files."
@@ -4487,7 +4491,7 @@ msgstr "Se si desidera modificare e personalizzare i template degli stili delle 
 
 #: ../includes/admin-files/templates/templates_help.php:36
 msgid "Default Event Espresso Style Settings"
-msgstr "Impostazioni base Stile Event Espresso"
+msgstr "Impostazioni predefinite Stile Event Espresso"
 
 #: ../includes/admin-files/templates/templates_help.php:40
 msgid "You currently either have <i>Enable Built in style sheets</i> disabled or have a copy of the default espresso stylesheet copied to your uploads folder, and the alternative stylesheets selections are therefore disabled."
@@ -4593,7 +4597,7 @@ msgstr "Per modificare l'elenco degli eventi e pagine di registrazione. È neces
 
 #: ../includes/admin-files/templates/template_files.php:72
 msgid "Current Template Files:"
-msgstr "File Template attuali:"
+msgstr "File Template Attuali:"
 
 #: ../includes/admin-files/templates/template_files.php:79
 msgid "(displays a list of attendees)"
@@ -4837,7 +4841,7 @@ msgstr "Ora"
 #: ../includes/admin-reports/edit_attendee_record.php:406
 #: ../includes/admin-reports/help.php:10
 msgid "Price Option"
-msgstr "Opzioni Prezzo"
+msgstr "Opzioni Prezzo/Quota"
 
 #: ../includes/admin-reports/edit_attendee_record.php:411
 #: ../includes/admin-reports/help.php:23
@@ -5026,7 +5030,7 @@ msgstr "Partecipante approvato?"
 
 #: ../includes/admin-reports/enter_attendee_payments.php:363
 msgid "(If not approved then invoice will not be sent.)"
-msgstr "(Se non approvi la fattura non verrà inviata.)"
+msgstr "(Se non approvato la fattura non verrà inviata.)"
 
 #: ../includes/admin-reports/enter_attendee_payments.php:397
 msgid "No transaction detials available at this time."
@@ -5066,7 +5070,7 @@ msgstr "Titolo Evento"
 
 #: ../includes/admin-reports/event_list_attendees.php:115
 msgid "Event Time"
-msgstr "Orari Evento:"
+msgstr "Orario Evento:"
 
 #: ../includes/admin-reports/event_list_attendees.php:122
 msgid "Option"
@@ -5246,7 +5250,7 @@ msgstr "per configurare, aggiorni le informazioni partecipante."
 
 #: ../includes/admin_screens/admin.php:650
 msgid "Assign a Waitlist Event? "
-msgstr "Assegnare una Waitlist Evento?"
+msgstr "Assegnare una Lista di Attesa Evento?"
 
 #: ../includes/admin_screens/admin.php:651
 msgid "Overflow Event"
@@ -5331,7 +5335,7 @@ msgstr "Event Espresso - Gestionale"
 
 #: ../includes/admin_screens/admin_menu.php:213
 msgid "Management"
-msgstr "Management"
+msgstr "Gestionale"
 
 #: ../includes/admin_screens/admin_menu.php:216
 msgid "Event Espresso - Email Manager"
@@ -5347,7 +5351,7 @@ msgstr "Event Espresso - Gestionale Staff"
 
 #: ../includes/admin_screens/admin_menu.php:223
 msgid "Staff"
-msgstr ""
+msgstr "Staff"
 
 #: ../includes/admin_screens/admin_menu.php:228
 msgid "Event Espresso - Venue Manager"
@@ -5441,7 +5445,7 @@ msgstr "Event Espresso - Impostazioni Partecipazione"
 
 #: ../includes/admin_screens/admin_menu.php:258
 msgid "Tickets"
-msgstr "Biglietti"
+msgstr "Partecipazioni"
 
 #: ../includes/admin_screens/admin_menu.php:263
 msgid "Event Espresso - Certificate Templates"
@@ -5458,7 +5462,7 @@ msgstr "Event Espresso - Mercato"
 
 #: ../includes/admin_screens/admin_menu.php:274
 msgid "Marketplace"
-msgstr "MArketplace"
+msgstr "Marketplace"
 
 #: ../includes/admin_screens/admin_menu.php:278
 msgid "Event Espresso - Test Drive Pro"
@@ -5466,7 +5470,7 @@ msgstr "Event Espresso - Prova la versione PRO"
 
 #: ../includes/admin_screens/admin_menu.php:278
 msgid "Test Drive Pro"
-msgstr "Test drive pro"
+msgstr "Testa Drive Pro"
 
 #: ../includes/admin_screens/admin_menu.php:281
 msgid "Event Espresso - Help/Support"
@@ -5490,7 +5494,7 @@ msgstr "Sponsors"
 
 #: ../includes/admin_screens/admin_screen.php:46
 msgid "Organization Settings"
-msgstr "Setting Organizzazione "
+msgstr "Impostazioni Organizzazione "
 
 #: ../includes/admin_screens/admin_screen.php:47
 msgid "Page Settings"
@@ -5503,7 +5507,7 @@ msgstr "Settaggio Email"
 #: ../includes/admin_screens/admin_screen.php:50
 #: ../includes/admin_screens/admin_screen.php:53
 msgid "Optional Event Settings"
-msgstr "Impostazioni Evento Opzionali"
+msgstr "Impostazioni Opzionali Evento"
 
 #: ../includes/admin_screens/admin_screen.php:58
 msgid "Developers Section"
@@ -5511,7 +5515,7 @@ msgstr "Sezione Sviluppatori"
 
 #: ../includes/admin_screens/admin_screen.php:63
 msgid "Customization Instructions"
-msgstr "Istruzioni personalizzazione"
+msgstr "Istruzioni per Personalizzazioni"
 
 #: ../includes/admin_screens/admin_screen.php:66
 msgid "Google Maps Display Options"
@@ -5610,7 +5614,7 @@ msgstr "Installazione &amp; Guida d'utilizzo"
 
 #: ../includes/admin_screens/admin_screen.php:167
 msgid "Customization Forums"
-msgstr "Forums per personalizzazioni"
+msgstr "Forums per Personalizzazioni"
 
 #: ../includes/admin_screens/admin_screen.php:170
 msgid "Plugin Support Forums"
@@ -5630,7 +5634,7 @@ msgstr "Changelog"
 
 #: ../includes/admin_screens/admin_screen.php:182
 msgid "Plugins and Addons"
-msgstr "Plugins e Accessori"
+msgstr "Plugins e Accessori Optional"
 
 #: ../includes/admin_screens/admin_support.php:11
 msgid "Help and Support"
@@ -6223,7 +6227,7 @@ msgstr "Aggiungi un Logo base"
 
 #: ../includes/admin_screens/organization_config.php:277
 msgid "Default Logo"
-msgstr "Logo Base"
+msgstr "Logo predefinito"
 
 #: ../includes/admin_screens/organization_config.php:279
 msgid "The default logo will be used in your custom invoice, ticketing, certificates, and payment templates."
@@ -6258,7 +6262,7 @@ msgstr "Pagina di Registrazione Principale"
 #: ../includes/admin_screens/organization_config.php:411
 #: ../includes/admin_screens/organization_config.php:451
 msgid "View"
-msgstr "Vedi"
+msgstr "Mostra"
 
 #: ../includes/admin_screens/organization_config.php:334
 #: ../includes/admin_screens/organization_config.php:375
@@ -6370,7 +6374,7 @@ msgstr "Spedisci Email di Conferma Pagamento?"
 
 #: ../includes/admin_screens/organization_config.php:559
 msgid "Default Registration Confirmation Email:"
-msgstr "Email di Conferma Registrazione Pre-Definita:"
+msgstr "Email di Conferma Registrazione predefinita:"
 
 #: ../includes/admin_screens/organization_config.php:565
 msgid "Send registration confirmation emails before payment is received?"
@@ -6419,7 +6423,7 @@ msgstr "Tipi di Post personalizzati per gli eventi"
 
 #: ../includes/admin_screens/organization_config.php:608
 msgid "Attendee pre-approval feature"
-msgstr "Funzioni per le pre-approvazioni dei partecipanti"
+msgstr "Funzioni pre-approvazioni partecipanti"
 
 #: ../includes/admin_screens/organization_config.php:611
 msgid "Event Venue/Staff Manager"
@@ -6471,7 +6475,7 @@ msgstr "Panoramica Gruppi Domande"
 
 #: ../includes/admin_screens/question_groups.php:206
 msgid "Question Groups are pre-populated groups of "
-msgstr "I Gruppi di Domande sono pre-popolati gruppi di"
+msgstr "I Gruppi di Domande sono gruppi precostituiti di"
 
 #: ../includes/admin-files/admin_screens/event_management.php:137
 msgid "questions"
@@ -6601,7 +6605,7 @@ msgstr "Tutti gli Eventi"
 
 #: ../includes/classes/EE_Export.class.php:462
 msgid "attendee-payments"
-msgstr "partecipante-pagamenti"
+msgstr "pagamenti-partecipante"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Group"
@@ -6641,7 +6645,7 @@ msgstr "Data Pagamento"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Event Name"
-msgstr "Corso:"
+msgstr "Nome Evento"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Event Date"
@@ -6702,7 +6706,7 @@ msgstr "Categorie Eventi"
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:187
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:360
 msgid "Groupon Options"
-msgstr "Opzioni Geuppo"
+msgstr "Opzioni Gruppo"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:72
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:229
@@ -6711,7 +6715,7 @@ msgstr "Posti a sedere"
 
 #: ../includes/admin-files/admin_screens/event_management.php:284
 msgid "Attendee pre-approval required?"
-msgstr "Pre-approvazione richiesta per il partecipante?"
+msgstr "Pre-approvazione partecipante richiesta?"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:126
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:283
@@ -6780,7 +6784,7 @@ msgstr "Tempi Registrazione"
 #: ../includes/event_management/event_functions.php:418
 #: ../includes/event_management/help.php:188
 msgid "Event Times"
-msgstr "Tempi Evento"
+msgstr "Orari Evento"
 
 #: ../includes/event_management/event_functions.php:638
 msgid "Event Pricing"
@@ -6907,7 +6911,7 @@ msgstr "Stato Attuali"
 #: ../includes/event_management/event_functions.php:158
 #: ../includes/event_management/event_list.php:390
 msgid "View Attendees"
-msgstr "Vedi Iscritti"
+msgstr "Mostra Iscritti"
 
 #: ../includes/event_management/event_functions.php:167
 msgid "Newsletter"
@@ -6948,7 +6952,7 @@ msgstr "Aggiorna Evento"
 
 #: ../includes/event_management/event_functions.php:324
 msgid "Short URL"
-msgstr "Short URL"
+msgstr "URL Breve"
 
 #: ../includes/event_management/event_functions.php:324
 msgid "Full URL"
@@ -6960,7 +6964,7 @@ msgstr "Identificatore"
 
 #: ../includes/event_management/event_functions.php:372
 msgid "Registration Start:"
-msgstr "Inizio Iscrizione:"
+msgstr "Inizio Registrazione:"
 
 #: ../includes/event_management/event_functions.php:376
 msgid "Registration End:"
@@ -7030,7 +7034,7 @@ msgstr "Prezzo"
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:128
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:152
 msgid "Remove this Price"
-msgstr "Rimuovi questo Prezzo"
+msgstr "Rimuovi questo Prezzo/Quota"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:103
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:128
@@ -7044,7 +7048,7 @@ msgstr "Inserisci 0.00 per gli eventi gratuiti, inserisci 2 decimali es. 7.00"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:144
 msgid "Add A Price"
-msgstr "Aggiungi un costo"
+msgstr "Aggiungi un Prezzo/Quota"
 
 #: ../includes/event_management/event_functions.php:303
 msgid "Manage Categories"
@@ -7060,7 +7064,7 @@ msgstr "Domande per il Partecipante Principale"
 
 #: ../includes/admin-files/admin_screens/event_management.php:131
 msgid "Add a pre-populated"
-msgstr "Aggiungi un pre-popolato"
+msgstr "Aggiungi un predefinito"
 
 #: ../includes/admin-files/admin_screens/event_management.php:133
 msgid "group"
@@ -7168,7 +7172,7 @@ msgstr "Invia Email Evento"
 
 #: ../includes/event_management/event_list.php:493
 msgid "Short Code"
-msgstr "ShortCode"
+msgstr "Shortcode"
 
 #: ../includes/event_management/event_list.php:497
 msgid "Excel Spreadsheet"
@@ -7211,7 +7215,7 @@ msgstr "Questo è usato per applicare uno sconto agli eventi."
 #: ../includes/event_management/event_list.php:538
 #: ../includes/event_management/help.php:37
 msgid "A coupon or promo code could can be anything you want. For example: Say you have an event that costs"
-msgstr "Un codice coupon o promo potrebbe essere qualsiasi cosa desideri. Per esempio: Diciamo che sono un evento che i costi"
+msgstr "Un codice coupon o promo potrebbe essere qualsiasi cosa desideri. Per esempio: Diciamo che hai un evento che i costa"
 
 #: ../includes/event_management/event_list.php:538
 #: ../includes/event_management/help.php:39
@@ -7270,7 +7274,7 @@ msgstr "Se è inserita una pagina di registrazione all'esterno del sito, essa av
 
 #: ../includes/event_management/help.php:107
 msgid "Event Status Types"
-msgstr "Tipi di Stato Evento"
+msgstr "Stato Tipo Evento"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/index.php:190
 msgid "This type if event should always appear in the event lsiting. It is a live event (not deleted, ongoing or secondary.)"
@@ -7497,7 +7501,7 @@ msgstr "non è stato aggiornato."
 
 #: ../includes/functions/attendee_functions.php:62
 msgid "Form Questions:"
-msgstr "Form Domande:"
+msgstr "Modulo Domande:"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:536
 msgid "Confirm and go to payment page"
@@ -7513,7 +7517,7 @@ msgstr "Aggiungi al Carrello"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:781
 msgid "View Cart"
-msgstr "Controlla Carrello"
+msgstr "Mostra Carrello"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:809
 msgid "It looks like you are attempting to refresh a page after completing your registration or your cart is empty.  Please go to the events page and try again."
@@ -7545,7 +7549,7 @@ msgstr " partecipanti"
 #: ../includes/functions/email.php:282
 #: ../includes/functions/email.php:395
 msgid " registration confirmation"
-msgstr " conferma registrazione"
+msgstr "conferma di registrazione"
 
 #: ../includes/functions/email.php:345
 msgid "Primary Attendee"
@@ -7553,7 +7557,7 @@ msgstr "Partecipante Principale"
 
 #: ../includes/functions/email.php:348
 msgid "Registration Summary:"
-msgstr "Sommario Registrazione:"
+msgstr "Riepilogo Registrazioni:"
 
 #: ../includes/functions/email.php:357
 msgid " attendee(s)"
@@ -7569,7 +7573,7 @@ msgstr "ID Registrazione:"
 
 #: ../includes/functions/email.php:374
 msgid "Ticket(s):"
-msgstr "Biglietto/i:"
+msgstr "Partecipazione(i):"
 
 #: ../includes/functions/email.php:380
 msgid "Certificate(s):"
@@ -7605,7 +7609,7 @@ msgstr "Per ulteriori informazioni, vi preghiamo di scrivere a "
 
 #: ../includes/functions/form_build.php:159
 msgid "Select One"
-msgstr "Seleziona Uno"
+msgstr "Selezionane Uno"
 
 #: ../includes/functions/main.php:23
 msgid "Edit Attendee Details"
@@ -7696,12 +7700,12 @@ msgstr " (incluso un %s di sconto iniziale) "
 #: ../includes/functions/pricing.php:201
 #: ../includes/functions/pricing.php:275
 msgid "Choose an Option: "
-msgstr "Scegli un'Opzione"
+msgstr "Scegli una Opzione"
 
 #: ../includes/functions/pricing.php:222
 #: ../includes/functions/pricing.php:360
 msgid "Price:"
-msgstr "Prezzo:"
+msgstr "Prezzo/Quota:"
 
 #: ../includes/functions/pricing.php:234
 msgid "Choose number of tickets for "
@@ -7828,7 +7832,7 @@ msgstr "Questa Timezone è attualmente sotto ora legale."
 
 #: ../includes/functions/time_date.php:553
 msgid "This timezone is currently in standard time."
-msgstr "Questo Timezone è attualmente sotto orario solare."
+msgstr "Questa Timezone è attualmente sotto orario solare."
 
 #: ../includes/functions/time_date.php:572
 msgid "Daylight saving time begins on: <code>%s</code>."
@@ -7894,7 +7898,7 @@ msgstr " o "
 
 #: ../includes/process-registration/add_attendees_to_db.php:640
 msgid "Edit Registrant Information"
-msgstr "Modifica Imformazioni Registrato:"
+msgstr "Modifica Imformazioni Registrante:"
 
 #: ../includes/process-registration/add_attendees_to_db.php:643
 msgid "Your registration is not complete until payment is received."
@@ -8068,11 +8072,11 @@ msgstr "Per favore verifica i dettagli della tua registrazione:"
 
 #: ../templates/confirmation_display.php:23
 msgid "Event Name:"
-msgstr "Corso:"
+msgstr "Nome Evento:"
 
 #: ../templates/confirmation_display.php:29
 msgid "Price per attendee:"
-msgstr "Quota per partecipante:"
+msgstr "Prezzo/Quota per partecipante:"
 
 #: ../templates/confirmation_display.php:35
 msgid "Attendee Name:"
@@ -8102,7 +8106,7 @@ msgstr "Imformazioni Aggiuntive per:"
 #: ../templates/event_post.php:276
 #: ../templates/event_post.php:282
 msgid "Register"
-msgstr "Registrati Online"
+msgstr "Registrati"
 
 #: ../templates/event_post.php:276
 msgid "View Map"
@@ -8118,7 +8122,7 @@ msgstr "<h3>Spiacenti, questo evento è scaduto o non è più disponibile.</h3>"
 
 #: ../../event-espresso.3.1.21.P/templates/multi_registration_page_display.php:17
 msgid "Price Type:"
-msgstr "Tipo di Quota:"
+msgstr "Tipo di Prezzo/Quota:"
 
 #: ../../event-espresso.3.1.21.P/templates/multi_registration_page_display.php:76
 #: ../../event-espresso.3.1.21.P/templates/multi_registration_page_display.php:134
@@ -8196,7 +8200,7 @@ msgstr "Un widget per visualizzare i tuoi prossimi eventi. "
 
 #: ../templates/widget.php:14
 msgid "Event Espresso Widget"
-msgstr "Widget Registrazione Eventi"
+msgstr "Widget Event Espresso"
 
 #: ../templates/widget.php:187
 msgid "false"
@@ -8373,11 +8377,11 @@ msgstr "Visto che si sta utilizzando l'opzione di pagamento a mezzo Bonifico, ti
 
 #: ../../event-espresso.3.1.21.P/gateways/bank/settings.php:16
 msgid "Electronic Funds Transfer settings saved."
-msgstr "Impostazioni Trasferimento Elettronico di Fondi Salvate Correttamente."
+msgstr "Impostazioni Bonifico Bancario Salvate Correttamente."
 
 #: ../../event-espresso.3.1.21.P/gateways/bank/settings.php:107
 msgid "Bank Account#:"
-msgstr "Conto Bancario#:"
+msgstr "IBAN:"
 
 #: ../../event-espresso.3.1.21.P/gateways/bank/settings.php:114
 msgid "Bank Name:"
@@ -8576,7 +8580,7 @@ msgstr "Paypal API password"
 
 #: ../../event-espresso.3.1.21.P/gateways/paypal_pro/settings.php:116
 msgid "Paypal API signature"
-msgstr "Paypal API firma/signature"
+msgstr "Paypal API Firma/Signature"
 
 #: ../../event-espresso.3.1.21.P/gateways/paypal_pro/settings.php:220
 msgid "Use PayPal PRO in Sandbox mode"
@@ -8624,7 +8628,7 @@ msgstr "Usa la funzione di debugging"
 
 #: ../../event-espresso.3.1.21.P/gateways/wepay/settings.php:23
 msgid "Wepay settings saved."
-msgstr "IMpostazioni Wepay salvate."
+msgstr "Impostazioni Wepay salvate."
 
 #: ../../event-espresso.3.1.21.P/gateways/wepay/settings.php:50
 msgid "Wepay Access Token saved."
@@ -8657,7 +8661,7 @@ msgstr "Seleziona l'account che intendi usare."
 #: ../../event-espresso.3.1.21.P/gateways/wepay/settings.php:180
 #: ../../event-espresso.3.1.21.P/gateways/wepay/settings.php:221
 msgid "wepay Sandbox"
-msgstr "wepay Sandbox"
+msgstr "Wepay Sandbox"
 
 #: ../../event-espresso.3.1.21.P/gateways/wepay/settings.php:201
 msgid "Update wepay Settings"
@@ -8685,7 +8689,7 @@ msgstr "Per usare Wepay, seguire questi passi:"
 
 #: ../../event-espresso.3.1.21.P/gateways/wepay/settings.php:231
 msgid "At wepay.com (or stage.wepay.com for sandbox) sign up as a user and add an account to your user."
-msgstr "A wepay.com (o stage.wepay.com per la Sandbox) iscriversi come utente e aggiungere un account per l'utente."
+msgstr "A Wepay.com (o stage.wepay.com per la Sandbox) iscriversi come utente e aggiungere un account per l'utente."
 
 #: ../../event-espresso.3.1.21.P/gateways/wepay/settings.php:234
 msgid "Register your instance of Event Espresso as an application in your wepay user profile."
@@ -8717,7 +8721,7 @@ msgstr "Location Shortcodes"
 
 #: ../../event-espresso.3.1.21.P/includes/admin_support.php:422
 msgid "Staff Shortcodes"
-msgstr "Staff Shortcodes"
+msgstr "Shortcode Staff"
 
 #: ../../event-espresso.3.1.21.P/includes/admin_support.php:470
 msgid "Calendar Shortcodes"
@@ -8761,7 +8765,7 @@ msgstr "Questa pagina deve contenere lo %s Shortcode. <br /> Questa pagina dovre
 
 #: ../../event-espresso.3.1.21.P/includes/organization_config.php:316
 msgid "Cancel Return URL (used for cancelled payments):"
-msgstr "Cancel Return URL (usato per i pagamenti cancellati):"
+msgstr "Cancella URL di Ritorno (usato per i pagamenti cancellati):"
 
 #: ../../event-espresso.3.1.21.P/includes/organization_config.php:337
 msgid "This should be a page on your website that contains a cancelled message and the %s shortcode."
@@ -8825,7 +8829,7 @@ msgstr "Opzioni Foglio di Stile"
 
 #: ../../event-espresso.3.1.21.P/includes/template_confg.php:72
 msgid "Enable built in style sheets?"
-msgstr "Abilitia Built In foglio di stile?"
+msgstr "Abilitia Costruzione foglio di stile?"
 
 #: ../../event-espresso.3.1.21.P/includes/template_confg.php:91
 msgid "Developers Only"
@@ -8861,7 +8865,7 @@ msgstr "Visualizzare brevi descrizioni nelle liste degli eventi? <br /> <em> (As
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/event_template_settings.php:11
 msgid "Display event descriptions in the multiple event registration pages?"
-msgstr "MOstrare la descrizione dell'evento nella pagina di registrazione per eventi multipli?"
+msgstr "Mostrare la descrizione dell'evento nella pagina di registrazione per eventi multipli?"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/event_template_settings.php:19
 msgid "Display addresses in the event listings?"
@@ -8894,7 +8898,7 @@ msgstr "Valore:"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/optional_event_settings.php:21
 msgid " Default Surcharge (this value will be automatically filled in for each price type when creating an event): "
-msgstr "Supplemento Base (questo valore verrà automaticamente compilato per ogni tipo di Quota durante la creazione di un evento):"
+msgstr "Supplemento Predefinito (questo valore verrà automaticamente compilato per ogni tipo di Quota durante la creazione di un evento):"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/optional_event_settings.php:33
 msgid "Display text (eg. Surcharge or Service Fee:"
@@ -8902,7 +8906,7 @@ msgstr "Visualizza testo (es. Ricarico o Tassa:"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/optional_event_settings.php:45
 msgid " Default Payment Status (this value will be automatically filled in for each person's payment status, until payment is made, for each event): "
-msgstr " Stato predefinito dei pagamento (questo valore verrà automaticamente compilato per lo stato del pagamento di ogni persona, fino a quando il pagamento non verrà effettuato, per ogni evento):"
+msgstr " Stato Predefinito dei Pagamenti (questo valore verrà automaticamente compilato per lo stato del pagamento di ogni persona, fino a quando il pagamento non verrà effettuato, per ogni evento):"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/optional_event_settings.php:53
 msgid "Show the next"
@@ -8998,7 +9002,7 @@ msgstr "Devi iscriverti per un"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/recaptcha_form.php:83
 msgid "account to use it with this plugin. If you already have a reCAPTCHA account enter your \"Public\" and \"Private\" keys on this page."
-msgstr "account da usare con questo plugin. Se hai già un account reCAPTCHA inserisci la tua chiave \"Pubblica\" e \"Private\" in questa pagina."
+msgstr "account da usare con questo plugin. Se hai già un account reCAPTCHA inserisci la tua chiave \"Pubblica\" e \"Privata\" in questa pagina."
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/templates_help.php:16
 msgid ""
@@ -9024,7 +9028,7 @@ msgstr "Devi solo modificare i file appropriati al seguente indirizzo."
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/template_files.php:38
 msgid "Current Template Files"
-msgstr "File Template Corrente"
+msgstr "File Template Attuali"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/template_files.php:114
 msgid "If you plan on modifying the look of your event listings, registration page, or attendee list. Use the option below to move these templates to a safe place. Keep in mind, if updates are made or features are added to these templates in the future. You will need to make the updates to your customized templates."
@@ -9036,7 +9040,7 @@ msgstr "I file del tuo template non è stato spostato."
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/coupon-management/add_discount.php:18
 msgid "The discount code  has been added."
-msgstr "Il codice di sconto è stato aggiunto."
+msgstr "Il Codice di Sconto è stato aggiunto."
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/coupon-management/add_discount.php:25
 msgid "The discount code  was not saved."
@@ -9111,7 +9115,7 @@ msgstr "Stato Evento:"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/event-management/advanced_settings.php:58
 msgid "Default Payment Status for Event: "
-msgstr "Stato Pagamenti Base per Evento:"
+msgstr "Stato predefinito Pagamenti per Evento:"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/event-management/advanced_settings.php:60
 msgid "Use an alternate registration page?"
@@ -9176,7 +9180,7 @@ msgstr "Salva Location"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/venue-management/add_venue_to_db.php:37
 msgid "The venue  has been added."
-msgstr "La location è stata aggiunta."
+msgstr "La Location è stata aggiunta."
 
 #: ../../event-espresso.3.1.21.P/includes/admin-files/venue-management/add_venue_to_db.php:44
 msgid "The venue  was not saved."
@@ -9208,7 +9212,7 @@ msgstr "Partecipa"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-reports/event_list_attendees.php:354
 msgid "Mark as Attended"
-msgstr "Seleziona con Partecipa"
+msgstr "Seleziona come Partecipa"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-reports/event_list_attendees.php:355
 msgid "Unmark as Attended"
@@ -9240,7 +9244,7 @@ msgstr "Nessuna corrispondenza trovata!"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-reports/process_payments.php:130
 msgid "View All"
-msgstr "Vedi Tutto"
+msgstr "Mostra tutto"
 
 #: ../../event-espresso.3.1.21.P/includes/admin-reports/process_payments.php:142
 msgid "Entries Per Page"
@@ -9299,7 +9303,7 @@ msgstr "Limite di partecipanti"
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:58
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:209
 msgid "Allow group registrations?"
-msgstr "Permetti la registrazione di gruppi?"
+msgstr "Permetti la registrazione di Gruppi?"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:59
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:210
@@ -9501,7 +9505,7 @@ msgstr "Accessori - Event Espresso"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/admin_menu.php:102
 msgid "Addons"
-msgstr "Accessori Supplementari"
+msgstr "Optional Attivabili"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/admin_menu.php:109
 msgid "<span style=\"color: red;\">Help/Support</span>"
@@ -9513,7 +9517,7 @@ msgstr "Per %s, per favore sii sicuro di selezionare tra 1 e %d partepicanti o c
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:719
 msgid "Additional Attendee"
-msgstr "Partepipanti Supplementari"
+msgstr "Partepipanti Aggiuntivi"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/database_install.php:194
 msgid "Payment Received for [event_name]"
@@ -9577,7 +9581,7 @@ msgstr "Su quale dipo di pagina mostrare il calendario?"
 
 #: ../../espresso-calendar.trunk/calendar_help.php:34
 msgid "<b>Registration Page (default)</b> -- Calendar links go to the Event Espresso registration page for the event. Use this if you are not using Custom Post Types."
-msgstr "<b> Pagina di registrazione (predefinita) </b> - i links Calendario indirizzano alla pagina di registrazione di quell'evento. Utilizzare questa opzione se non si utilizza un qualche tipo di  messaggio personalizzato."
+msgstr "<b>Pagina di Registrazione (predefinita) </b> - i links Calendario indirizzano alla pagina di registrazione di quell'evento. Utilizzare questa opzione se non si utilizza un qualche tipo di  messaggio personalizzato."
 
 #: ../../espresso-calendar.trunk/calendar_help.php:37
 msgid "<b>Post</b> -- Calendar links go to the Event Post for the event. Use this option <em><b>only</b></em> if you have enabled Custom Post Types."
@@ -9842,7 +9846,7 @@ msgstr "Grandezza Immagini in evidenza"
 
 #: ../../espresso-calendar.trunk/calendar_admin.php:280
 msgid "Small (50px high)"
-msgstr "Small (50px di altezza)"
+msgstr "Piccolo (50px di altezza)"
 
 #: ../../espresso-calendar.trunk/calendar_admin.php:285
 msgid "Medium (100px high)"
@@ -9956,7 +9960,7 @@ msgstr "Primo giorno della settimana:"
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:184
 msgid "Show Weekends:"
-msgstr "Mostra i weekends:"
+msgstr "Mostra i Fine Settimana:"
 
 #: ../../espresso-calendar.1.11/espresso-calendar.php:196
 msgid "Height:"
@@ -10293,7 +10297,7 @@ msgstr "Prezzo per Membri"
 #: ../../espresso-members.1.9/member_functions.php:261
 #: ../../espresso-members.trunk/member_functions.php:261
 msgid "Add A Member Price"
-msgstr "Aggiungi un prezzo per i Membri"
+msgstr "Aggiungi una Quota per i Membri"
 
 #: ../../espresso-members.1.9/member_functions.php:282
 #: ../../espresso-members.1.9/member_functions.php:300
@@ -10876,7 +10880,7 @@ msgid ""
 "</ul>\n"
 "</p>"
 msgstr ""
-"<h2>Tipo Ricorrenza</h2>\n"
+"<h2>Tipo di Ricorrenza</h2>\n"
 "      <p>\n"
 "      <ul>\n"
 "      <li>\n"
@@ -11089,7 +11093,7 @@ msgstr "Descrizione/Istruzioni Partecipazione"
 #: ../../espresso-ticketing/manager/add_new.php:88
 #: ../../espresso-ticketing/manager/edit_ticket.php:94
 msgid "View Custom Ticket Tags"
-msgstr "Visualizza i Tags per le Partecipazioni Personalizzate"
+msgstr "Mostra i Tags per le Partecipazioni Personalizzate"
 
 #: ../../espresso-ticketing/manager/add_new.php:98
 msgid "Add Ticket"
@@ -11123,7 +11127,7 @@ msgstr "Aggiorna Partecipazione"
 
 #: ../../espresso-ticketing/manager/index.php:8
 msgid "Manage Ticket Templates"
-msgstr "Organizza i Template Partecipazioni"
+msgstr "Organizza Template Partecipazioni"
 
 #: ../../espresso-ticketing/manager/index.php:35
 msgid "Ticket Templates have been successfully deleted."
@@ -11155,7 +11159,7 @@ msgstr "Il nome del Template appare nel menu a discesa delle Partecipazioni Pers
 
 #: ../../espresso-ticketing/manager/tickets_help.php:40
 msgid "Base Ticket Template"
-msgstr "Partecipazione Template Base "
+msgstr "Template Base Partecipazione"
 
 #: ../../espresso-ticketing/manager/tickets_help.php:43
 msgid "If you want to use customized ticket templates, templates must be uploaded to <tt>/wp-content/uploads/espresso/tickets/templates/</tt>."

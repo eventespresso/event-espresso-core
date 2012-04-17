@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Event Espresso package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2012-03-30 16:47-0700\n"
+"PO-Revision-Date: 2012-04-17 12:53-0700\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,599 +15,604 @@ msgstr ""
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ..\n"
 
 #: ../includes/process-registration/ticket_selector.php:538
 msgid "We're sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets."
-msgstr ""
+msgstr "Es tut uns Leid, aber es sind nur noch %s Plätze für diese Veranstaltung verfügbar. Bitte gehen Sie zurück und wählen Sie eine kleinere Anzahl an Tickets."
 
 #: ../../event-espresso.3.1.21.P/templates/multi_registration_page_display.php:20
 msgid "%d attendee"
-msgstr ""
+msgstr "%d Teilnehmer"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:785
 msgid "%s event was "
-msgstr ""
+msgstr "%s Veranstaltung war"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:109
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:130
 msgid "%s attendee  "
-msgstr ""
+msgstr "%s Teilnehmer"
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_list.template.php:27
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:37
 msgid "%s item,  "
-msgstr ""
+msgstr "%s Artikel,"
 
 #: ../includes/admin-files/email-manager/add_new_email.php:5
 #: ../includes/admin-files/email-manager/edit_email.php:16
 msgid "Confirmation"
-msgstr ""
+msgstr "Bestätigung"
 
 #: ../includes/admin-files/admin_screens/event_management.php:10
 msgid "Event Options"
-msgstr ""
+msgstr "Veranstaltungsoptionen"
 
 #: ../templates/event_list.php:444
 msgid "Member Only Event. Please "
-msgstr ""
+msgstr "Veranstaltung nur für Mitglieder. Bitte"
 
 #: ../templates/event_list_display.php:85
 msgid "Sorry. This Event is sold out."
-msgstr ""
+msgstr "Es tut uns Leid, aber diese Veranstaltung ist ausverkauft."
 
 #: ../templates/event_list.php:509
 msgid "This Event is no longer open for registration."
-msgstr ""
+msgstr "Die Anmeldung für diese Veranstaltung ist nicht länger geöffnet."
 
 #: ../gateways/gateway_display.php:18
 msgid "Please select your method of payment:"
-msgstr ""
+msgstr "Bitte wählen Sie Ihre Zahlungsmethode:"
 
 #: ../gateways/aim/payment.php:18
 msgid "Billing Address"
-msgstr ""
+msgstr "Rechnungsadresse"
 
 #: ../gateways/aim/payment.php:69
 msgid "Expiry Date"
-msgstr ""
+msgstr "Ablaufdatum"
 
 #: ../gateways/aim/payment.php:88
 msgid "(mm/yy)"
-msgstr ""
+msgstr "(mm/yy)"
 
 #: ../gateways/aim/payment.php:179
 msgid "Zip Code"
-msgstr ""
+msgstr "Postleitzahl"
 
 #: ../gateways/aim/payment.php:191
 msgid "Credit Card Number"
-msgstr ""
+msgstr "Kreditkartennummer"
 
 #: ../gateways/aim/payment.php:215
 msgid "Expiry Date Month"
-msgstr ""
+msgstr "Ablaufmonat"
 
 #: ../gateways/aim/payment.php:227
 msgid "Expiry Date Year"
-msgstr ""
+msgstr "Ablaufjahr"
 
 #: ../includes/admin-files/admin_screens/event_management.php:19
 msgid "Attendee Pre-Approval"
-msgstr ""
+msgstr "Vorherige Genehmigung von Teilnehmern"
 
 #: ../includes/admin_screens/admin_menu.php:219
 msgid "Event Espresso - Pricing Manager"
-msgstr ""
+msgstr "Event Espresso - Preisverwaltung"
 
 #: ../includes/admin_screens/admin_menu.php:219
 msgid "Pricing"
-msgstr ""
+msgstr "Preise"
 
 #: ../includes/admin_screens/admin_screen.php:93
 msgid "Add a Price"
-msgstr ""
+msgstr "Preis hinzufügen"
 
 #: ../includes/admin_screens/admin_screen.php:97
 msgid "Edit Price"
-msgstr ""
+msgstr "Preis bearbeiten"
 
 #: ../includes/admin_screens/admin_screen.php:101
 msgid "Add a Price Type"
-msgstr ""
+msgstr "Preistyp hinzufügen"
 
 #: ../includes/admin_screens/admin_screen.php:104
 msgid "Edit Price Type"
-msgstr ""
+msgstr "Preistyp bearbeiten"
 
 #: ../includes/admin_screens/pricing.php:11
 msgid "Manage Prices"
-msgstr ""
+msgstr "Preise verwalten"
 
 #: ../includes/admin_screens/pricing.php:16
 #: ../includes/admin_screens/pricing.php:80
 msgid "Add New Price"
-msgstr ""
+msgstr "Neuen Preis hinzufügen"
 
 #: ../includes/admin_screens/pricing.php:17
 msgid "Add New Type"
-msgstr ""
+msgstr "Neuen Typ hinzufügen"
 
 #: ../includes/admin_screens/pricing.php:38
 msgid "Globally Active?"
-msgstr ""
+msgstr "Global aktivieren?"
 
 #: ../includes/admin_screens/pricing.php:78
 msgid "Delete Price"
-msgstr ""
+msgstr "Preis löschen"
 
 #: ../includes/admin_screens/pricing.php:91
 msgid "Tax?"
-msgstr ""
+msgstr "Steuer?"
 
 #: ../includes/admin_screens/pricing.php:92
 msgid "Percent?"
-msgstr ""
+msgstr "Prozent?"
 
 #: ../includes/admin_screens/pricing.php:93
 msgid "Global?"
-msgstr ""
+msgstr "Global?"
 
 #: ../includes/admin_screens/pricing.php:94
 msgid "Order"
-msgstr ""
+msgstr "Bestellung"
 
 #: ../includes/admin_screens/pricing.php:136
 msgid "Delete Price Type"
-msgstr ""
+msgstr "Preistyp löschen"
 
 #: ../includes/admin_screens/pricing.php:138
 msgid "Add New Price Type"
-msgstr ""
+msgstr "Neuen Preistyp hinzufügen"
 
 #: ../includes/classes/EE_Cart.class.php:667
 msgid "All events have been successfully removed from the Event Queue."
-msgstr ""
+msgstr "Alle Veranstaltungen wurden erfolgreich von der Veranstaltungswarteschlange gelöscht."
 
 #: ../includes/classes/EE_Cart.class.php:674
 msgid "An error occured! No Events could be removd from the Queue!"
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Es konnten keine Veranstaltungen von der Warteschlange entfernt werden!"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:720
 msgid "No payment required.<br/>Please click \"Confirm Registration\" below to complete the registration process."
-msgstr ""
+msgstr "Keine Zahlung erforderlich.<br/> Bitte klicken Sie auf \"Anmeldung bestätigen\" weiter unten, um die Anmeldung zu vervollständigen."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:833
 msgid "Attendee information submitted successfully."
-msgstr ""
+msgstr "Teilnehmerinformationen erfolgreich übertragen."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:837
 msgid "An error occured! No valid question responses were received."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Es wurde keine gültige Antworten auf die Fragen geben."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:881
 msgid "Registration Step 2 completed"
-msgstr ""
+msgstr "Anmeldung Schritt 2 abgeschlossen"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:1045
 msgid "Billing information submitted successfully"
-msgstr ""
+msgstr "Rechnungsdaten erfolgreich übermittelt"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:1128
 msgid "Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of it's three), and try again."
-msgstr ""
+msgstr "Es tut uns leid, aber Sie haben nicht die korrekte Anti-Spam Phrase eingegeben.<br/> Bitte aktualisieren Sie das ReCaptcha (der obere der drei Buttons) und versuchen Sie es erneut."
 
 #: ../includes/classes/EE_Validate_and_Sanitize.class.php:329
 msgid "An error occured! No post data was passed to the validator. Please click your browser's back button and try again. If the problem persists, contact customer support."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Konnte Post-Daten konnten vom Validator bestätigt werden. Klicken Sie auf den Zurück-Button Ihres Browsers und versuchen Sie es erneut. Falls dieses Problem weiterhin besteht, kontaktieren Sie den Kunden-Support."
 
 #: ../includes/event_management/edit_event.php:64
 msgid "Event Editor"
-msgstr ""
+msgstr "Veranstaltungseditor"
 
 #: ../includes/event_management/help.php:113
 msgid "This type if event will appear in the event listings. It is a live event (not deleted, ongoing or secondary.)"
-msgstr ""
+msgstr "Dieser Veranstaltungstyp erscheint in den Veranstaltungslisten. Es ist eine Live-Veranstaltung (nicht gelöscht, laufend oder sekundär.)"
 
 #: ../includes/prices_management/index.php:38
 msgid "Price Types have been successfully deleted."
-msgstr ""
+msgstr "Die Preistypen wurden erfolgreich gelöscht."
 
 #: ../includes/prices_management/index.php:73
 msgid "Prices have been successfully deleted."
-msgstr ""
+msgstr "Preise wurden erfolgreich gelöscht."
 
 #: ../includes/prices_management/index.php:111
 #: ../includes/prices_management/index.php:113
 #: ../includes/prices_management/index.php:132
 #: ../includes/prices_management/index.php:134
 msgid "The price"
-msgstr ""
+msgstr "Der Preis"
 
 #: ../includes/prices_management/index.php:154
 #: ../includes/prices_management/index.php:156
 #: ../includes/prices_management/index.php:175
 #: ../includes/prices_management/index.php:177
 msgid "The price type"
-msgstr ""
+msgstr "Der Preistyp"
 
 #: ../includes/prices_management/postboxes.php:27
 msgid "You have no price types defined. Please add a price type before adding a price."
-msgstr ""
+msgstr "Sie haben keine Preistypen definiert. Bitte fügen Sie einen Preistyp hinzu, bevor Sie einen Preis hinzufügen."
 
 #: ../includes/prices_management/postboxes.php:42
 msgid "Price Name"
-msgstr ""
+msgstr "Preis-Titel"
 
 #: ../includes/prices_management/postboxes.php:48
 msgid "Price Amount"
-msgstr ""
+msgstr "Höhe des Preises"
 
 #: ../includes/prices_management/postboxes.php:54
 msgid "Price Type"
-msgstr ""
+msgstr "Preistyp"
 
 #: ../includes/prices_management/postboxes.php:60
 msgid "Globally Active"
-msgstr ""
+msgstr "Global aktiv"
 
 #: ../includes/prices_management/postboxes.php:123
 msgid "Price Type Name"
-msgstr ""
+msgstr "Name des Preistypes"
 
 #: ../includes/prices_management/postboxes.php:129
 msgid "Price Type Order"
-msgstr ""
+msgstr "Preistyp-Reihenfolge"
 
 #: ../includes/prices_management/postboxes.php:135
 msgid "Is Type a tax?"
-msgstr ""
+msgstr "Ist der Typ eine Steuer?"
 
 #: ../includes/prices_management/postboxes.php:141
 msgid "Is Type applied as a percentage?"
-msgstr ""
+msgstr "Wird der Typ prozentual angewandt?"
 
 #: ../includes/prices_management/postboxes.php:147
 msgid "Is Type to be applied globally?"
-msgstr ""
+msgstr "Wird der Typ global angewendet?"
 
 #: ../includes/process-registration/ticket_selector.php:320
 msgid "You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again."
-msgstr ""
+msgstr "Sie müssen die Anzahl an Tickets auswählen, bevor Sie fortfahren können.<br/> Bitte klicken Sie auf den Zurück-Button Ihres Browsers und versuchen Sie es erneut."
 
 #: ../includes/process-registration/ticket_selector.php:328
 msgid "An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten. Es wurde keine Veranstaltungs-ID übermittelt oder erhalten.<br/>Bitte klicken Sie auf den Zurück-Button Ihres Browsers und versuchen Sie es erneut."
 
 #: ../includes/process-registration/ticket_selector.php:542
 msgid "We're sorry, but there are no available spaces left for this event"
-msgstr ""
+msgstr "Es tut uns leid, aber es sind leider keine Plätze für diese Veranstaltung mehr verfügbar."
 
 #: ../templates/event_list_display.php:51
 msgid "Registration &amp; Ticket Information"
-msgstr ""
+msgstr "Anmeldung & Ticketinformationen"
 
 #: ../templates/event_list_display.php:103
 msgid "Event Information"
-msgstr ""
+msgstr "Veranstaltungsinformationen"
 
 #: ../templates/event_list_display.php:125
 msgid "Description: "
-msgstr ""
+msgstr "Beschreibung:"
 
 #: ../templates/event_list_display.php:134
 msgid "click here for more details about "
-msgstr ""
+msgstr "Klicken Sie hier für mehr Details über"
 
 #: ../templates/event_list_display.php:137
 msgid "click for more details"
-msgstr ""
+msgstr "Klicken Sie für mehr Details"
 
 #: ../templates/registration_page_display.php:134
 #: ../templates/registration_page_display.php:142
 msgid "Submit Registration"
-msgstr ""
+msgstr "Kostenpflichtig bestellen"
 
 #: ../templates/reg_page_checkout/confirmation_page.template.php:5
 msgid "Event #"
-msgstr ""
+msgstr "Veranstaltung #"
 
 #: ../templates/reg_page_checkout/confirmation_page.template.php:35
 msgid "Billing Details"
-msgstr ""
+msgstr "Rechnungsdetails"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:4
 msgid "Step 1 -  Attendee Information"
-msgstr ""
+msgstr "Schritt 1 - Teilnehmerinformationen"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:10
 msgid ""
 " In order to process your registration, we ask you to provide the following information.<br/>\n"
 "\t\tPlease note that all fields marked with an asterisk (<span class=\"asterisk\">*</span>) are required."
 msgstr ""
+" Um Ihre Anmeldung verarbeiten zu können, bitten wir Sie um folgende Informationen.<br/>\n"
+" →\t→\tBitte beachten Sie, dass alle Felder, die mit einen Sternchen (<span class=\"asterisk\">*</span>) markiert sind, Pflichtfelder sind."
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:51
 msgid "Use Attendee #1's information for ALL attendees"
-msgstr ""
+msgstr "Verwende die Informationen von Teilnehmer #1 für ALLE Teilnehmer"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:56
 msgid "This option allows you to use the above information for all additional attendee question fields. <span>( Please note that some events may have additional questions that you may still be required to answer in order to complete your registration. )</span>"
-msgstr ""
+msgstr "Diese Option erlaubt es Ihnen, die obigen Informationen in alle Felder für zusätzliche Teilnehmer zu kopieren.<span>( Bitte beachten Sie, dass bei manchen Veranstaltungen dennoch weitere Felder auszufüllen sind, bevor Sie Ihre Anmeldung abschließen können. )</span>"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:58
 msgid "more options"
-msgstr ""
+msgstr "mehr Optionen"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:61
 msgid "less options"
-msgstr ""
+msgstr "weniger Optionen"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:62
 msgid "The following checkboxes allow you to use the above information for only the selected additional event attendees."
-msgstr ""
+msgstr "Die folgenden Checkboxen erlaubt es Ihnen, die obrigen Informationen nur für die ausgewählten Teilnehmer zu verwenden."
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:73
 msgid "Attendee #"
-msgstr ""
+msgstr "Teilnehmer #"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:100
 msgid "No information is required to attend this event. Please proceed to Step 2"
-msgstr ""
+msgstr "Es sind keinen weiteren Informationen für diese Veranstaltung erforderlich. Sie können mit Schritt 2 fortfahren"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:121
 msgid "Registration&nbsp;Step&nbsp;2&nbsp;"
-msgstr ""
+msgstr "Anmeldung&nbsp;Schritt&nbsp;2&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:129
 msgid "Registration&nbsp;Step&nbsp;2"
-msgstr ""
+msgstr "Anmeldung&nbsp;Schritt&nbsp;2"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:4
 msgid "Step 2 - Payment Options"
-msgstr ""
+msgstr "Schritt 2 - Zahlungsmöglichkeiten"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:17
 msgid "Important Notice:"
-msgstr ""
+msgstr "Wichtiger Hinweis:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:18
 msgid "The following events require attendee pre-approval and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. If this is a free event, then no billing will occur."
-msgstr ""
+msgstr "Die folgenden Veranstaltungen erfordern eine vorherige Genehmigung durch den Organisator und werden während dieser Transaktion nicht in Rechnung gestellt. Eine Zahlungspflicht entsteht erst, wenn die Teilnehmer durch den Organisator der Veranstaltung genehmigt werden. Wenn es sich um eine kostenlose Veranstaltung handelt, entsteht natürlich keine Zahlungspflicht."
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:19
 msgid "Events Requiring Pre-Approval:"
-msgstr ""
+msgstr "Veranstaltungungen, die eine vorherige Genehmigung erfordern:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:32
 msgid "Discount Codes"
-msgstr ""
+msgstr "Rabattcodes"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:35
 msgid "Enter discount code"
-msgstr ""
+msgstr "Rabattcode eingeben"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:38
 msgid "apply&nbsp;coupon&nbsp;"
-msgstr ""
+msgstr "Rabatt&nbsp;anwenden&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:43
 msgid "Enter any coupon codes (including Groupons) you have into the above text field and then click apply coupon. Additional coupon codes can be entered one at a time."
-msgstr ""
+msgstr "Geben Sie hier Ihren Rabattcode (inklusive Groupon-Codes) in das obige Textfeld ein und klicken Sie dann auf \"Rabatt anwenden\". Zusätzliche Rabattcodes können anschließend einzelnd eingegeben werden."
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:52
 msgid "Discounts:"
-msgstr ""
+msgstr "Rabatte:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:56
 msgid "Billable Registrations:"
-msgstr ""
+msgstr "zahlungspflichtige Anmeldungen:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:58
 msgid "Total Amount Due: "
-msgstr ""
+msgstr "Gesamter fälliger Betrag:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:71
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:79
 msgid "Registration&nbsp;Step&nbsp;3&nbsp;"
-msgstr ""
+msgstr "Anmeldung&nbsp;Schritt&nbsp;3&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:4
 msgid "Step 3 - Registration Confirmation"
-msgstr ""
+msgstr "Schritt 3 - Anmeldung bestätigen"
 
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:25
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:33
 msgid "YES!&nbsp;Confirm&nbsp;Registration&nbsp;"
-msgstr ""
+msgstr "JA!&nbsp;Bestätige&nbsp;Anmeldung&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:4
 msgid "loading..."
-msgstr ""
+msgstr "lade..."
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:17
 msgid " Steps"
-msgstr ""
+msgstr "Schritte"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:20
 msgid "Attendee<br/>&nbsp;Information"
-msgstr ""
+msgstr "Teilnehmer<br/>&nbsp;Informationen"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:25
 msgid "Payment<br/>&nbsp;Options"
-msgstr ""
+msgstr "Zahlungs-<br/>&nbsp;Möglichkeiten"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:29
 msgid "Registration<br/>&nbsp;Confirmation"
-msgstr ""
+msgstr "Anmeldung<br/>&nbsp;Bestätigung"
 
 #: ../templates/ticket_selector/ticket_selector_chart.template.php:1
 msgid "Ticket Options"
-msgstr ""
+msgstr "Ticketoptionen"
 
 #: ../templates/ticket_selector/ticket_selector_chart.template.php:34
 msgid "Ticket Price"
-msgstr ""
+msgstr "Ticketpreis"
 
 #: ../templates/ticket_selector/ticket_selector_threaded_chart.template.php:52
 msgid "Time : "
-msgstr ""
+msgstr "Zeit:"
 
 #: ../../event-espresso.3.1/includes/functions/main.php:162
 msgid "Additional Attendee #"
-msgstr ""
+msgstr "Zusätzliche Teilnehmer #"
 
 #: ../../espresso-members.1.9/member_functions.php:396
 msgid " (including "
-msgstr ""
+msgstr "(inklusive"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:675
 msgid "An additional attendee was successfully added for this event."
-msgstr ""
+msgstr "Ein zusätzlicher Teilnehmer wurde erfolgreich zu dieser Veranstaltung hinzugefügt."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:678
 msgid "An error occured! An additional attendee could not be added for this event. Please refresh the page and try it again."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Es konnte kein zusätzlicher Teilnehmer zu dieser Veranstaltung hinzugefügt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:682
 msgid "We're sorry, but there are no available spaces left for this event. No additional attendees can be added."
-msgstr ""
+msgstr "Es tut uns Leid, es sind keine weiteren Plätze für diese Veranstaltung verfügbar. Es konnte kein weiterer Teilnehmer hinzugefügt werden."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:696
 msgid "An error occured! No quantity was specified, therefore an additional attendee could not be added. Please refresh the page and try again."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Da keine Anzahl festgelegt wurde, konnte kein zusätzlicher Teilnehmer hinzugefügt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:700
 msgid "An error occured! No line item was specified, therefore an additional attendee could not be added. Please refresh the page and try again."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Da kein Einzelposten spezifiziert wurde, konnten keine zusätzlichen Teilnehmer hinzugefügt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:739
 msgid "An attendee was successfully removed from this event."
-msgstr ""
+msgstr "Ein Teilnehmer wurde erfolgreich von dieser Veranstaltung entfernt."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:742
 msgid "An error occured! No attendees could be removed for this event. Please refresh the page and try again."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Es konnte kein Teilnehmer von dieser Veranstaltung entfernt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut. "
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:746
 msgid "Attendee quantity must be at least one for each event. If you wish to remove this event from the Event Queue, click on the trash can icon."
-msgstr ""
+msgstr "Die Teilnehmeranzahl muss mindestens 1 betragen für diese Veranstaltung. Falls Sie sie vom Warenkorb entfernen möchten, klicken Sie auf das Papierkorb-Icon."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:750
 msgid "An error occured! No quantity was specified, therefore no attendees could be removed. Please refresh the page and try again."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Da keine Anzahl festgelegt wurde, konnte kein Teilnehmer entfernt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut. "
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:754
 msgid "An error occured! No line item was specified, therefore no attendees could be removed. Please refresh the page and try again."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Da kein Einzelposten spezifiziert wurde, konnten keine Teilnehmer entfernt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:785
 msgid "successfully removed from the Event Queue"
-msgstr ""
+msgstr "erfolgreich aus dem Warenkorb entfernt"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:788
 msgid "An error occured! The event was not removed from the Event Queue"
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Die Veranstaltung wurde nicht aus dem Warenkorb entfernt."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:792
 msgid "An error occured! No line item was specified, therefore no event was not removed from the Event Queue. Please refresh the page and try again."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten! Da kein Einzelposten spezifiziert wurde, konnten keine Veranstaltung vom Warenkorb entfernt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:821
 msgid "An error occured! The Event Queue could not be emptied!"
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten. Der Warenkorb konnte nicht geleert werden!"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:50
 msgid "A widget for displaying Event Espresso regsitrations and purchases."
-msgstr ""
+msgstr "Ein Widget, um Anmeldungen und Käufe von Event Espresso anzuzeigen."
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:75
 msgid "Mini Cart Title:"
-msgstr ""
+msgstr "Titel des Mini-Warenkorbs"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:78
 msgid "Display content for the following carts:"
-msgstr ""
+msgstr "Zeigt Inhalt für die folgenden Warenkorbe an:"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:131
 msgid "Mini Cart Template:"
-msgstr ""
+msgstr "Template des Mini-Warenkorbs"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:48
 msgid "Date & Time"
-msgstr ""
+msgstr "Datum & Zeit"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:51
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:106
 msgid "Total"
-msgstr ""
+msgstr "Summe"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:129
 msgid "Grand Total: "
-msgstr ""
+msgstr "Gesamtsumme"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:135
 msgid "remove all events from event queue"
-msgstr ""
+msgstr "alle Veranstaltungen vom Warenkorb entfernen"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:146
 msgid "&nbsp;Return&nbsp;to&nbsp;Events&nbsp;List"
-msgstr ""
+msgstr "&nbsp;Zurück&nbsp;zur&nbsp;Veranstaltungsliste"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:152
 msgid "&nbsp;Proceed&nbsp;to&nbsp;Registration"
-msgstr ""
+msgstr "&nbsp;Weiter&nbsp;zur&nbsp;Anmeldung"
 
 #: ../../espresso-multi-event.trunk/templates/view_event_queue_btn.template.php:2
 msgid "This event has already been added to the Event Queue."
-msgstr ""
+msgstr "Diese Veranstaltung wurde erfolgreich zum Warenkorb hinzugefügt."
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:57
 msgid "empty event queue"
-msgstr ""
+msgstr "leerer Warenkorb"
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:70
 msgid "View Event Queue"
-msgstr ""
+msgstr "Warenkorb anzeigen"
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:14
 msgid "An error occured and the Groupon Code(s) could not be exported from the database."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten und die Groupon Codes konnten nicht aus der Datenbank exportiert werden."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:87
 msgid "Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database."
-msgstr ""
+msgstr "Fehler! Die CSV-Datei enthält einen Tabellennamen, der nicht existiert. Groupon Codes konnten nicht in die Datenbank importiert werden."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:109
 msgid "Groupon Code(s) have been successfully imported into the database."
-msgstr ""
+msgstr "Grupon Code(s) wurde(n) erfolgreich in die Datenbank importiert."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:112
 msgid "An error occured and the Groupon Code(s) were not imported into the database."
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten und keine Groupon Codes konnten in die Datenbank importiert werden."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:170
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:184
 msgid "Groupon Code(s) have been redeemed successfully."
-msgstr ""
+msgstr "Groupon Code(s) wurde(n) erfolgreich eingelöst."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:363
 msgid "Unredeem Groupon(s)"
-msgstr ""
+msgstr "Groupon(s) reaktivieren"
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:364
 msgid "Redeem Groupon(s)"
-msgstr ""
+msgstr "Groupon(s) einlösen"
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:369
 msgid "Export Groupon Codes to CSV"
-msgstr ""
+msgstr "Groupon Codes als CSV exportieren"
 
 #: ../../espresso-mailchimp.trunk/mailchimp.view.class.php:62
 msgid "You do not have any lists registered."
-msgstr ""
+msgstr "Sie haben keine Liste zugewiesen."
 
 #: ../../../uploads/espresso/gateways/invoice/settings.php:53
 msgid "The Invoice Payments is installed. Would you like to activate it?"
-msgstr ""
+msgstr "Rechnungszahlungen sind installiert. Möchten Sie sie aktivieren?"
 
 #: ../alternate_templates/event_list.php:104
 msgid "Regsitration is Closed"
@@ -5254,7 +5259,7 @@ msgstr "Überlauf-Veranstaltung"
 
 #: ../includes/admin_screens/admin.php:684
 msgid "Select Value"
-msgstr "Veranstaltungsort wählen"
+msgstr "Wert wählen"
 
 #: ../includes/admin_screens/admin.php:697
 #: ../includes/admin_screens/admin.php:785
@@ -10024,7 +10029,7 @@ msgstr "Twitterdetails gespeichert."
 #: ../../espresso-social.1.1/espresso-social.php:136
 #: ../../espresso-social.trunk/espresso-social.php:143
 msgid "Google details saved."
-msgstr "Googeldetails gespeichert."
+msgstr "Googledetails gespeichert."
 
 #: ../../espresso-social.1.1/espresso-social.php:190
 #: ../../espresso-social.trunk/espresso-social.php:199

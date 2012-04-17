@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Event Espresso package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2012-03-30 16:59-0700\n"
+"PO-Revision-Date: 2012-04-17 12:50-0700\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,6 +15,9 @@ msgstr ""
 "X-Poedit-Language: Dutch\n"
 "X-Poedit-Country: NETHERLANDS\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ..\n"
 
 #: ../includes/process-registration/ticket_selector.php:538
 msgid "We're sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets."
@@ -1852,125 +1855,127 @@ msgstr ""
 
 #: ../gateways/ideal/settings.php:62
 msgid "Unable to De-activate Ideal Mollie"
-msgstr ""
+msgstr "Het is niet mogelijk om iDEAL (Mollie) te deactiveren"
 
 #: ../gateways/ideal/settings.php:68
 msgid "Activate iDEAL (Mollie)?"
-msgstr ""
+msgstr "iDEAL (Mollie) activeren?"
 
 #: ../gateways/ideal/settings.php:71
 msgid "Deactivate iDEAL (Mollie)?"
-msgstr ""
+msgstr "iDEAL (Mollie) deactiveren?"
 
 #: ../gateways/ideal/settings.php:97
 msgid "iDEAL (Mollie) partner id"
-msgstr ""
+msgstr "iDEAL (Mollie) partner ID"
 
 #: ../gateways/ideal/settings.php:105
 msgid "Use Mollie in test mode"
-msgstr ""
+msgstr "Gebruik Mollie in testmodus"
 
 #: ../gateways/ideal/settings.php:109
 msgid "(Make sure you enable test mode in your Mollie account)."
-msgstr ""
+msgstr "(Zorg ervoor dat de testmodus in uw Mollie-account is ingeschakeld)."
 
 #: ../gateways/ideal/settings.php:117
 msgid "Update Settings"
-msgstr ""
+msgstr "update instellingen"
 
 #: ../gateways/invoice/payment.php:18
 msgid "Download PDF Invoice"
-msgstr ""
+msgstr "Download een PDF factuur"
 
 #: ../gateways/invoice/settings.php:23
 msgid "Invoice Payment Settings Updated!"
-msgstr ""
+msgstr "Factuur Betaling Instellingen Aangepast!"
 
 #: ../gateways/invoice/settings.php:25
 msgid "Invoice Payment Settings were not saved! "
-msgstr ""
+msgstr "Factuur Betaling Instellingen zijn niet opgeslagen!"
 
 #: ../gateways/invoice/settings.php:38
 msgid "Invoice Payments"
-msgstr ""
+msgstr "Factuur Betalingen"
 
 #: ../gateways/invoice/settings.php:39
 msgid "Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date."
-msgstr ""
+msgstr "Stuur deze factuur met de betaling bijgevoegd aan het bovenstaande adres, of gebruik de onderstaande betalings link. De betaling moet 48 uur voor de datum van het evenement zijn ontvangen."
 
 #: ../gateways/invoice/settings.php:40
 msgid "Please send Invoice to the address below. Payment must be received within 48 hours of event date."
-msgstr ""
+msgstr "Stuur de factuur naar het onderstaande adres. De betaling moet 48 uur voor de datum van het evenement zijn ontvangen."
 
 #: ../gateways/invoice/settings.php:67
 msgid "Invoice Payment Settings"
-msgstr ""
+msgstr "Factuur Betaling Instellingen"
 
 #: ../gateways/invoice/settings.php:76
 msgid "Invoice Payments Activated"
-msgstr ""
+msgstr "Factuur Betalingen zijn geactiveerd"
 
 #: ../gateways/invoice/settings.php:78
 msgid "Unable to Activate Invoice Payments"
-msgstr ""
+msgstr "Het is niet mogelijk om de Betalings Factuur te activeren"
 
 #: ../gateways/invoice/settings.php:85
 msgid "Invoice Payments De-activated"
-msgstr ""
+msgstr "Betalings Factuur uitgeschakeld"
 
 #: ../gateways/invoice/settings.php:87
 msgid "Unable to De-activate Invoice Payments"
-msgstr ""
+msgstr "Het is niet mogelijk om de Betalings Factuur in te schakelen"
 
 #: ../gateways/invoice/settings.php:95
 msgid "Activate Invoice Payments?"
-msgstr ""
+msgstr "Betalings Factuur Inschakelen?"
 
 #: ../gateways/invoice/settings.php:99
 msgid "Deactivate Invoice Payments?"
-msgstr ""
+msgstr "Betalings Factuur Uitschakelen?"
 
 #: ../gateways/invoice/settings.php:127
 msgid "On-page Settings"
-msgstr ""
+msgstr "Pagina Instellingen"
 
 #: ../gateways/invoice/settings.php:132
 msgid "Show as an option on the payment page?"
-msgstr ""
+msgstr "Als een optie op de betalingspagina weergeven?"
 
 #: ../gateways/invoice/settings.php:135
 msgid ""
 "Will display invoices as a payemnt option <br />\n"
 "on your payemnt page. (Default: Yes)"
 msgstr ""
+"Zal facturen als een betaal optie <br /> \n"
+" op uw betalingspagina weergeven. (Default: Yes)"
 
 #: ../gateways/invoice/settings.php:140
 msgid "Invoice Title"
-msgstr ""
+msgstr "Factuur Titel"
 
 #: ../gateways/invoice/settings.php:146
 msgid "Invoice Instructions"
-msgstr ""
+msgstr "Factuur Instructies"
 
 #: ../gateways/invoice/settings.php:152
 msgid "Payable To"
-msgstr ""
+msgstr "Te betalen aan"
 
 #: ../gateways/invoice/settings.php:158
 msgid "Address to Send Payment"
-msgstr ""
+msgstr "Adres om betaling te verzenden"
 
 #: ../gateways/invoice/settings.php:183
 msgid "Invoice Display Settings"
-msgstr ""
+msgstr "Instellingen Factuur Weergave "
 
 #: ../gateways/invoice/settings.php:189
 msgid "Select Stylesheet"
-msgstr ""
+msgstr "Selecteer Stylesheet"
 
 #: ../gateways/invoice/settings.php:194
 msgid "Default CSS - Simple"
-msgstr ""
+msgstr "Instellingen CSS - Eenvoudig"
 
 #: ../gateways/invoice/settings.php:200
 msgid ""
@@ -3650,7 +3655,7 @@ msgstr ""
 
 #: ../includes/admin-files/admin_screens/template_confg.php:166
 msgid "Use Built-in Style Sheets"
-msgstr ""
+msgstr "Gebruik ingebouwde style sheets"
 
 #: ../includes/admin-files/admin_screens/template_confg.php:172
 msgid "This option enables the style settings below."
@@ -3709,31 +3714,31 @@ msgstr ""
 #: ../includes/admin-files/coupon-management/update_discount.php:25
 #: ../includes/admin-files/coupon-management/update_discount.php:27
 msgid "The discount code "
-msgstr ""
+msgstr "De kortingscode "
 
 #: ../includes/admin-files/coupon-management/add_discount.php:25
 #: ../includes/admin-files/email-manager/add_email_to_db.php:21
 msgid " was saved"
-msgstr ""
+msgstr "Is opgeslagen"
 
 #: ../includes/admin-files/coupon-management/add_discount.php:28
 #: ../includes/admin-files/email-manager/add_email_to_db.php:23
 msgid " was not saved"
-msgstr ""
+msgstr "Is niet opgeslagen"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:33
 msgid "Edit Code"
-msgstr ""
+msgstr "bewerk code"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:43
 #: ../includes/admin-files/coupon-management/new_discount.php:23
 msgid "Promotional Code "
-msgstr ""
+msgstr "Promotiecode"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:50
 #: ../includes/admin-files/coupon-management/new_discount.php:30
 msgid "Limited Quantity"
-msgstr ""
+msgstr "Beperkte hoeveelheid"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:63
 #: ../includes/admin-files/coupon-management/new_discount.php:43
@@ -3748,22 +3753,22 @@ msgstr ""
 #: ../includes/admin-files/coupon-management/edit_discount.php:77
 #: ../includes/admin-files/coupon-management/new_discount.php:56
 msgid "Price Discount"
-msgstr ""
+msgstr "Kortingsprijs"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:83
 #: ../includes/admin-files/coupon-management/new_discount.php:62
 msgid "Percentage Discount"
-msgstr ""
+msgstr "Percentage korting"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:90
 #: ../includes/admin-files/coupon-management/new_discount.php:69
 msgid "Short Description"
-msgstr ""
+msgstr "Korte omschrijving"
 
 #: ../includes/admin-files/coupon-management/edit_discount.php:101
 #: ../includes/admin-files/email-manager/edit_email.php:75
 msgid "Update"
-msgstr ""
+msgstr "Update"
 
 #: ../includes/admin-files/coupon-management/help.php:7
 msgid "Enable Expiration Dates"
@@ -3779,19 +3784,19 @@ msgstr ""
 
 #: ../includes/admin-files/coupon-management/help.php:23
 msgid "Allows you to limit the amount of times this code can be used."
-msgstr ""
+msgstr "Hiermee kunt u het aantal keren dat een code gebruikt kan worden bepalen"
 
 #: ../includes/admin-files/coupon-management/help.php:33
 msgid "Amount and Type of Discount"
-msgstr ""
+msgstr "Bedrag en soort korting"
 
 #: ../includes/admin-files/coupon-management/help.php:36
 msgid "Choose an amount for the discount as a percentage or dollar amount."
-msgstr ""
+msgstr "Kies de korting als percentage of als bedrag in Euro's"
 
 #: ../includes/admin-files/coupon-management/help.php:46
 msgid "Description"
-msgstr ""
+msgstr "Omschrijving"
 
 #: ../includes/admin-files/coupon-management/help.php:49
 msgid "Leave a note about this code. Will not displayed on front facing pages."
@@ -3803,78 +3808,78 @@ msgstr ""
 
 #: ../includes/admin-files/coupon-management/help.php:62
 msgid "This is the actual code that will be used."
-msgstr ""
+msgstr "Dit is de code die zal worden gebruikt"
 
 #: ../includes/admin-files/coupon-management/help.php:65
 msgid "Example:"
-msgstr ""
+msgstr "Voorbeeld:"
 
 #: ../includes/admin-files/coupon-management/new_discount.php:14
 msgid "Add a New Promotional Code"
-msgstr ""
+msgstr "Voeg een nieuwe promotie code toe"
 
 #: ../includes/admin-files/coupon-management/update_discount.php:25
 msgid " was updated"
-msgstr ""
+msgstr "Is bijgewerkt"
 
 #: ../includes/admin-files/coupon-management/update_discount.php:27
 msgid " was not updated"
-msgstr ""
+msgstr "Is niet bijgewerkt"
 
 #: ../includes/admin-files/coupon-management/use_coupon_code.php:21
 msgid "Sorry, that promotional code is invalid or expired."
-msgstr ""
+msgstr "Sorry, deze promotie code is ongeldig of verlopen"
 
 #: ../includes/admin-files/coupon-management/use_coupon_code.php:74
 msgid "You are using promotional code:"
-msgstr ""
+msgstr "Je gebruikt promotie code:"
 
 #: ../includes/admin-files/coupon-management/use_coupon_code.php:74
 msgid "discount"
-msgstr ""
+msgstr "korting"
 
 #: ../includes/admin-files/coupon-management/use_coupon_code.php:152
 msgid "Enter Promotional/Discount Code"
-msgstr ""
+msgstr "Voer promotie/korting code in"
 
 #: ../includes/admin-files/email-manager/add_email_to_db.php:21
 #: ../includes/admin-files/email-manager/add_email_to_db.php:23
 msgid "The email "
-msgstr ""
+msgstr "De e-mail"
 
 #: ../includes/admin-files/email-manager/add_new_email.php:14
 msgid "Add an Email"
-msgstr ""
+msgstr "Voeg een e-mail adres toe"
 
 #: ../includes/admin-files/email-manager/add_new_email.php:22
 #: ../includes/admin-files/email-manager/edit_email.php:34
 msgid "Email Name"
-msgstr ""
+msgstr "E-mail adres"
 
 #: ../includes/admin-files/email-manager/add_new_email.php:28
 #: ../includes/admin-files/email-manager/edit_email.php:40
 msgid "Email Type"
-msgstr ""
+msgstr "Soort e-mail"
 
 #: ../includes/admin-files/email-manager/add_new_email.php:60
 msgid "Add Email"
-msgstr ""
+msgstr "Voeg een e-mail adres toe"
 
 #: ../includes/admin-files/admin_screens/event_management.php:40
 msgid "Public"
-msgstr ""
+msgstr "openbaar"
 
 #: ../includes/admin-files/admin_screens/event_management.php:35
 msgid "No info required"
-msgstr ""
+msgstr "Geen info vereist"
 
 #: ../includes/admin-files/admin_screens/event_management.php:36
 msgid "Personal Information only"
-msgstr ""
+msgstr "Alleen persoonlijke informatie"
 
 #: ../includes/admin-files/admin_screens/event_management.php:37
 msgid "Full registration information"
-msgstr ""
+msgstr "Volledige registratie"
 
 #: ../includes/admin-files/admin_screens/event_management.php:71
 msgid "Additional Attendee Registration info?"
@@ -3882,119 +3887,119 @@ msgstr ""
 
 #: ../includes/admin-files/event-management/advanced_settings.php:58
 msgid "Advanced Options:"
-msgstr ""
+msgstr "Geavanceerde opties"
 
 #: ../includes/admin-files/admin_screens/event_management.php:79
 msgid "Event Status"
-msgstr ""
+msgstr "Status event"
 
 #: ../includes/admin-files/event-management/advanced_settings.php:60
 msgid "PENDING"
-msgstr ""
+msgstr "in afwachting"
 
 #: ../includes/admin-files/admin_screens/event_management.php:75
 msgid "Event is Active"
-msgstr ""
+msgstr "Het event is actief"
 
 #: ../includes/admin-files/admin_screens/event_management.php:87
 msgid "Display  Description"
-msgstr ""
+msgstr "weer te geven omschrijving"
 
 #: ../includes/admin-files/admin_screens/event_management.php:92
 msgid "Display  Registration Form"
-msgstr ""
+msgstr "weer te geven inschrijfformulier "
 
 #: ../includes/admin-files/admin_screens/event_management.php:98
 msgid "Default Payment Status"
-msgstr ""
+msgstr "Standaard betalingsoverzicht"
 
 #: ../includes/admin-files/admin_screens/event_management.php:106
 msgid "Alternate Registration Page"
-msgstr ""
+msgstr "Alternatieve registratie pagina"
 
 #: ../includes/admin-files/admin_screens/event_management.php:114
 msgid "Alternate Email Address"
-msgstr ""
+msgstr "Alternatief e-mail adres"
 
 #: ../includes/admin-files/admin_screens/event_management.php:8
 msgid "Create a Post"
-msgstr ""
+msgstr "schrijf een bericht"
 
 #: ../includes/admin-files/admin_screens/event_management.php:332
 msgid "Add/Update post for this event?"
-msgstr ""
+msgstr "voeg toe/bewerk een bericht voor dit event"
 
 #: ../includes/admin-files/admin_screens/event_management.php:339
 msgid "If no, delete current post?"
-msgstr ""
+msgstr "Zo niet, huidig bericht verwijderen?"
 
 #: ../includes/admin-files/admin_screens/event_management.php:368
 msgid "Espresso Event"
-msgstr ""
+msgstr "Espresso Event"
 
 #: ../includes/admin-files/admin_screens/event_management.php:369
 msgid "Post"
-msgstr ""
+msgstr "Bericht"
 
 #: ../includes/admin-files/admin_screens/event_management.php:377
 msgid "Author"
-msgstr ""
+msgstr "Auteur"
 
 #: ../includes/admin-files/admin_screens/event_management.php:387
 msgid "Post Type"
-msgstr ""
+msgstr "Soort Bericht"
 
 #: ../includes/admin-files/admin_screens/event_management.php:397
 msgid "Tags"
-msgstr ""
+msgstr "Labels"
 
 #: ../includes/admin-files/admin_screens/event_management.php:409
 msgid "Post Categories:"
-msgstr ""
+msgstr "Bericht Categorieën:"
 
 #: ../includes/admin-files/event-management/new_event_post.php:14
 msgid "Create a post for this event?"
-msgstr ""
+msgstr "Een bericht creëren voor dit event?"
 
 #: ../includes/admin-files/event-management/new_event_post.php:87
 msgid "Post templates are stored in the \"templates\" directory of the plugin."
-msgstr ""
+msgstr "Bericht sjablonen worden opgeslagen in de map \"sjablonen''."
 
 #: ../includes/admin-files/admin_screens/event_management.php:14
 msgid "Event Promotions"
-msgstr ""
+msgstr "Event Promoties"
 
 #: ../includes/admin-files/admin_screens/event_management.php:181
 msgid "Early Registration Discount"
-msgstr ""
+msgstr "Vroegtijdig Registratie Korting"
 
 #: ../includes/admin-files/admin_screens/event_management.php:183
 msgid "End Date:"
-msgstr ""
+msgstr "Eind Datum:"
 
 #: ../includes/admin-files/admin_screens/event_management.php:186
 msgid "Amount:"
-msgstr ""
+msgstr "Bedrag:"
 
 #: ../includes/admin-files/admin_screens/event_management.php:186
 msgid "(Leave blank if not applicable)"
-msgstr ""
+msgstr "(Laat leeg indien niet van toepassing)"
 
 #: ../includes/admin-files/admin_screens/event_management.php:190
 msgid "Percentage:"
-msgstr ""
+msgstr "Percentage:"
 
 #: ../includes/admin-files/admin_screens/event_management.php:195
 msgid "Promotion Codes"
-msgstr ""
+msgstr "Promotie Codes"
 
 #: ../includes/admin-files/admin_screens/event_management.php:197
 msgid "Allow discount codes?"
-msgstr ""
+msgstr "Korting codes toegestaan?"
 
 #: ../includes/admin-files/admin_screens/event_management.php:229
 msgid "Manage Promotional Codes "
-msgstr ""
+msgstr "Beheer Promotie Codes"
 
 #: ../includes/admin-files/form-builder/groups/delete_group.php:31
 msgid "Question Groups have been successfully deleted."
@@ -4006,102 +4011,102 @@ msgstr ""
 
 #: ../includes/admin-files/form-builder/groups/insert_group.php:46
 msgid " The group was not added!"
-msgstr ""
+msgstr "De groep is niet toegevoegd!"
 
 #: ../includes/admin-files/form-builder/groups/insert_group.php:48
 msgid "The group "
-msgstr ""
+msgstr "De groep"
 
 #: ../includes/admin-files/form-builder/groups/insert_group.php:48
 msgid " has been added."
-msgstr ""
+msgstr "is toegevoegd"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:9
 msgid "Add New Group"
-msgstr ""
+msgstr "Voeg een nieuwe Groep toe"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:12
 msgid "Add new group using the form below."
-msgstr ""
+msgstr "Voeg een nieuwe groep toe via het onderstaande formulier."
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:17
 msgid "Group Information"
-msgstr ""
+msgstr "Groep Informatie"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:20
 msgid "Group Name:"
-msgstr ""
+msgstr "Groep naam:"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:20
 #: ../includes/admin-files/form-builder/questions/new_question.php:21
 msgid "This field is required"
-msgstr ""
+msgstr "Dit veld is vereist"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:25
 msgid "Group Order:"
-msgstr ""
+msgstr "Groep bestelling:"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:37
 msgid "Show group name on registration page?"
-msgstr ""
+msgstr "Groep naam tonen op registratie pagina?"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:44
 msgid "Show group description on registration page?"
-msgstr ""
+msgstr "Beschrijving groep op registratie pagina tonen?"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:53
 msgid "Add questions"
-msgstr ""
+msgstr "Vragen toevoegen"
 
 #: ../includes/admin-files/form-builder/groups/new_group.php:55
 msgid "Select questions to add to group:"
-msgstr ""
+msgstr "Selecteer vragen om aan de groep toe te voegen:"
 
 #: ../includes/admin-files/form-builder/questions/delete_question.php:31
 msgid "Questions have been successfully deleted."
-msgstr ""
+msgstr "Vragen zijn met succes verwijderd."
 
 #: ../includes/admin-files/form-builder/questions/insert_question.php:31
 msgid "The question "
-msgstr ""
+msgstr "De vraag"
 
 #: ../includes/admin-files/form-builder/questions/insert_question.php:31
 #: ../includes/admin-files/locale-management/add_locale_to_db.php:18
 msgid " has been added"
-msgstr ""
+msgstr "toegevoegd"
 
 #: ../includes/admin-files/form-builder/questions/insert_question.php:33
 msgid "The question"
-msgstr ""
+msgstr "De vraag"
 
 #: ../includes/admin-files/form-builder/questions/insert_question.php:33
 #: ../includes/admin-files/locale-management/add_locale_to_db.php:20
 msgid " was not saved!"
-msgstr ""
+msgstr "is niet opgeslagen!"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:12
 msgid "Add New Questions"
-msgstr ""
+msgstr "Voeg nieuwe vragen toe"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:14
 msgid "Add questions using the form below.  By default all participants will be asked for their first name, last name, and email address."
-msgstr ""
+msgstr "Voeg vragen toe door middel van het onderstaand formulier. Alle deelnemers worden gevraagd om hun voornaam, achternaam en e-mailadres."
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:21
 msgid "Question"
-msgstr ""
+msgstr "Vraag"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:29
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:34
 msgid "Text"
-msgstr ""
+msgstr "Tekst"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:35
 msgid "Text Area"
-msgstr ""
+msgstr "Tekstgebied"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:36
 msgid "Radio Button"
@@ -4117,23 +4122,23 @@ msgstr ""
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:39
 msgid "Date Picker"
-msgstr ""
+msgstr "Datumkiezer"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:48
 msgid "Values"
-msgstr ""
+msgstr "Waarden"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:52
 msgid "A comma seperated list of values. Eg. black, blue, red"
-msgstr ""
+msgstr "A comma seperated list of values. Eg. black, blue, red"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:57
 msgid "Required:"
-msgstr ""
+msgstr "Verplicht:"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:63
 msgid "Mark this question as required."
-msgstr ""
+msgstr "Markeer deze vraag indien nodig."
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:68
 msgid " Admin View Only"
@@ -4141,7 +4146,7 @@ msgstr ""
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:76
 msgid "Required Text"
-msgstr ""
+msgstr "Gewenste Tekst"
 
 #: ../includes/admin-files/form-builder/questions/new_question.php:80
 msgid "Text to display if not completed."
@@ -4204,13 +4209,13 @@ msgstr ""
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:35
 #: ../includes/admin-files/staff-management/update_staff.php:34
 msgid " has been updated"
-msgstr ""
+msgstr "Is bijgewerkt"
 
 #: ../includes/admin-files/locale-management/update_locale.php:13
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:37
 #: ../includes/admin-files/staff-management/update_staff.php:36
 msgid " was not updated!"
-msgstr ""
+msgstr "Is niet bijgewerkt!"
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:7
 msgid "Add a Staff Member"
@@ -4221,85 +4226,85 @@ msgstr ""
 #: ../includes/admin-files/venue-management/add_new_venue.php:108
 #: ../includes/admin-files/venue-management/edit_venue.php:147
 msgid "Phone"
-msgstr ""
+msgstr "Telefoon"
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:36
 #: ../includes/admin-files/staff-management/edit_staff.php:50
 #: ../includes/admin-files/venue-management/add_new_venue.php:114
 msgid "Twitter"
-msgstr ""
+msgstr "Twitter"
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:42
 #: ../includes/admin-files/staff-management/edit_staff.php:56
 #: ../includes/admin-files/venue-management/add_new_venue.php:30
 #: ../includes/admin-files/venue-management/edit_venue.php:69
 msgid "Website"
-msgstr ""
+msgstr "Website"
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:48
 #: ../includes/admin-files/staff-management/edit_staff.php:62
 #: ../includes/admin-files/venue-management/add_new_venue.php:36
 #: ../includes/admin-files/venue-management/edit_venue.php:75
 msgid "Image/Logo URL"
-msgstr ""
+msgstr "Afbeelding/Logo URL"
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:58
 #: ../includes/admin-files/staff-management/edit_staff.php:72
 msgid "Role"
-msgstr ""
+msgstr "Rol "
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:64
 #: ../includes/admin-files/staff-management/edit_staff.php:78
 msgid "Organization"
-msgstr ""
+msgstr "Organisatie"
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:70
 #: ../includes/admin-files/staff-management/edit_staff.php:84
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:76
 #: ../includes/admin-files/staff-management/edit_staff.php:90
 msgid "Industry"
-msgstr ""
+msgstr "Industrie "
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:88
 #: ../includes/admin-files/staff-management/edit_staff.php:102
 #: ../includes/admin-files/venue-management/add_new_venue.php:77
 #: ../includes/admin-files/venue-management/edit_venue.php:116
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: ../includes/admin-files/staff-management/add_new_staff.php:121
 msgid "Save Staff Member"
-msgstr ""
+msgstr "Opslaan Medewerker "
 
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:35
 #: ../includes/admin-files/staff-management/update_staff.php:34
 msgid "The staff member "
-msgstr ""
+msgstr "De medewerker"
 
 #: ../includes/admin-files/staff-management/add_staff_to_db.php:37
 #: ../includes/admin-files/staff-management/update_staff.php:36
 msgid "The staff member"
-msgstr ""
+msgstr "De medewerker"
 
 #: ../includes/admin-files/staff-management/edit_staff.php:20
 msgid "Edit Staff Member:"
-msgstr ""
+msgstr "Bewerk medewerker"
 
 #: ../includes/admin-files/staff-management/edit_staff.php:133
 msgid "Update Staff Member"
-msgstr ""
+msgstr "Bijwerken medeweker"
 
 #: ../includes/admin-files/staff-management/index.php:13
 #: ../includes/admin-files/staff-management/index.php:152
 msgid "Add New Staff Member"
-msgstr ""
+msgstr "Nieuwe medewerker toevoegen"
 
 #: ../includes/admin-files/staff-management/index.php:48
 msgid "Staff member(s) have been successfully deleted from the event."
-msgstr ""
+msgstr "Medewerker(s) zijn met succes verwijderd van het event"
 
 #: ../includes/admin-files/staff-management/index.php:83
 msgid "Shortcode"
@@ -4307,11 +4312,11 @@ msgstr ""
 
 #: ../includes/admin-files/staff-management/index.php:151
 msgid "Delete Staff Member(s)"
-msgstr ""
+msgstr "Medewerker(s) verwijderen"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:15
 msgid "Event Registration Options"
-msgstr ""
+msgstr "Registratie opties Event"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:21
 #: ../includes/admin-files/templates/event_gmaps_settings.php:115
@@ -4349,12 +4354,12 @@ msgstr ""
 #: ../includes/admin-files/templates/event_gmaps_settings.php:74
 #: ../includes/admin-files/templates/event_gmaps_settings.php:168
 msgid " Default"
-msgstr ""
+msgstr "Fout"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:77
 #: ../includes/admin-files/templates/event_gmaps_settings.php:171
 msgid " Horizontal"
-msgstr ""
+msgstr "Horizontaal"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:80
 #: ../includes/admin-files/templates/event_gmaps_settings.php:174
@@ -4370,7 +4375,7 @@ msgstr ""
 #: ../includes/admin-files/templates/event_gmaps_settings.php:89
 #: ../includes/admin-files/templates/event_gmaps_settings.php:184
 msgid " None"
-msgstr ""
+msgstr "Geen"
 
 #: ../includes/admin-files/templates/event_gmaps_settings.php:92
 #: ../includes/admin-files/templates/event_gmaps_settings.php:187
@@ -4403,7 +4408,7 @@ msgstr ""
 
 #: ../includes/admin-files/templates/map_confg_help.php:12
 msgid "Configuring the Google maps options"
-msgstr ""
+msgstr "Het configureren van de Google maps opties"
 
 #: ../includes/admin-files/templates/map_confg_help.php:15
 msgid "The map options allow you to configure how your event map is displayed. You may configure your events lists and event registration pages independently, so, for example, on a registration page you could set a much larger overall size."
@@ -5630,367 +5635,367 @@ msgstr ""
 
 #: ../includes/admin_screens/admin_support.php:241
 msgid "There was an error in your submission, please try again."
-msgstr ""
+msgstr "Er is een fout opgetreden in uw inzending, probeer het opnieuw."
 
 #: ../includes/admin_screens/admin_support.php:285
 msgid "Registration Page Problems"
-msgstr ""
+msgstr "Registratie pagina problemen"
 
 #: ../includes/admin_screens/admin_support.php:288
 msgid "Paypal IPN Problems"
-msgstr ""
+msgstr "Paypal IPN problemen"
 
 #: ../includes/admin_screens/admin_support.php:291
 msgid "Email Problems"
-msgstr ""
+msgstr "Email problemen"
 
 #: ../includes/admin_screens/admin_support.php:294
 msgid "Event Import Problems"
-msgstr ""
+msgstr "Event importeer problemen"
 
 #: ../includes/admin_screens/admin_support.php:297
 msgid "Translations"
-msgstr ""
+msgstr "Vertalingen"
 
 #: ../includes/admin_screens/admin_support.php:300
 msgid "Incomplete Payments"
-msgstr ""
+msgstr "Onvolledige betalingen"
 
 #: ../includes/admin_screens/admin_support.php:303
 msgid "Problems After Upgrading"
-msgstr ""
+msgstr "Problemen na het upgraden"
 
 #: ../includes/admin_screens/admin_support.php:321
 msgid "For the latest installation instructions please visit:"
-msgstr ""
+msgstr "Voor de nieuwste installatie intstructies bezoekt u:"
 
 #: ../includes/admin_screens/admin_support.php:334
 msgid "Become a Partner"
-msgstr ""
+msgstr "Word een partner"
 
 #: ../includes/admin_screens/admin_support.php:348
 msgid "Event Espresso Job Board"
-msgstr ""
+msgstr "Event Espresso Job Board"
 
 #: ../includes/admin_screens/admin_support.php:352
 msgid "WP Candy Pros"
-msgstr ""
+msgstr "WP Candy Pros"
 
 #: ../includes/admin_screens/admin_support.php:432
 msgid "For more information, please visit:"
-msgstr ""
+msgstr "Voor meer informatie bezoekt u:"
 
 #: ../includes/admin_screens/admin_support.php:438
 msgid "Single Events"
-msgstr ""
+msgstr "Enkele evenementen"
 
 #: ../includes/admin_screens/admin_support.php:441
 msgid "Displays a single event on a page or post"
-msgstr ""
+msgstr "Een enkele gebeurtenis wordt weergegeven op een pagina of post"
 
 #: ../includes/admin_screens/admin_support.php:447
 msgid "Add Events to Cart (premium version only, requires Multiple Event Registration addon)"
-msgstr ""
+msgstr "Voeg event toe aan winkelwagen (alleen premium versie, meerdere event registraties addon)"
 
 #: ../includes/admin_screens/admin_support.php:450
 msgid "Displays an \"Add Event to Cart\" link that can be added to the event details, page, or post. Requires the <a href=\"http://eventespresso.com/download/plugins-and-addons/multiple-event-registration/\" target=\"_blank\">Multiple Event Registration addon</a>."
-msgstr ""
+msgstr "Geeft een \"Voeg event toe aan winkelwagen\" link die kan worden toegevoegd aan het evenement details, pagina, of post. Vereist de <a href=\"http://eventespresso.com/download/plugins-and-addons/multiple-event-registration/\" target=\"_blank\"> Meerdere Event Registration addon</a>."
 
 #: ../includes/admin_screens/admin_support.php:454
 msgid "Additonal Examples:"
-msgstr ""
+msgstr "Additionele voorbeelden:"
 
 #: ../includes/admin_screens/admin_support.php:457
 msgid "(Used to redirect to the shopping cart page. Must be added to an event description.)"
-msgstr ""
+msgstr "Gebruikt om te verwijzen naar de winkelwagen pagina. Moet worden toegevoegd aan een event beschrijving.)"
 
 #: ../includes/admin_screens/admin_support.php:460
 msgid "(Same as above, but uses the event_id paramter and can be added to a page or post.)"
-msgstr ""
+msgstr "(Hetzelfde als hierboven, de event_id parameter moet worden gebruikt en kan worden toegevoegd aan de pagina of post.)"
 
 #: ../includes/admin_screens/admin_support.php:465
 msgid "Event List"
-msgstr ""
+msgstr "Event lijst"
 
 #: ../includes/admin_screens/admin_support.php:468
 msgid "Returns a list of events"
-msgstr ""
+msgstr "Geeft een lijst van events"
 
 #: ../includes/admin_screens/admin_support.php:481
 msgid "Order by parameters:"
-msgstr ""
+msgstr "Bestellen door parameters:"
 
 #: ../includes/admin_screens/admin_support.php:484
 msgid "(comma separated)"
-msgstr ""
+msgstr "(komma gescheiden)"
 
 #: ../includes/admin_screens/admin_support.php:497
 #: ../includes/admin_screens/admin_support.php:757
 msgid "Attention:"
-msgstr ""
+msgstr "Let op:"
 
 #: ../includes/admin_screens/admin_support.php:499
 msgid "The [EVENT_LIST] shortcode should not be used as a replacement for the [ESPRESSO_EVENTS] shortcode. Replacing the [ESPRESSO_EVENTS] shortcode will break your registration pages."
-msgstr ""
+msgstr "De shortcode [EVENT_LIST] dient niet als een vervanging voor de shortcode [ESPRESSO_EVENTS]. Het vervangen van de shortcode [ESPRESSO_EVENTS] zal uw registratie pagina eindigen."
 
 #: ../includes/admin_screens/admin_support.php:504
 msgid "Attendee Listings"
-msgstr ""
+msgstr "Genodigde aanbiedingen"
 
 #: ../includes/admin_screens/admin_support.php:518
 msgid "For more information about the attendee listing shortcodes and customizations. Please view the <a href=\"http://eventespresso.com/forums/2010/10/attendee-listing-shortcodes/\">Attendee Listing Shortcodes</a> page."
-msgstr ""
+msgstr "Voor meer informatie over de genodigde aanbieding shortcodes en aanpassingen. Kijkt u op <a href=\"http://eventespresso.com/forums/2010/10/attendee-listing-shortcodes/\"> Genodigde aanbieding Shortcodes</a> pagina."
 
 #: ../includes/admin_screens/admin_support.php:523
 msgid "Venue Shortcodes (premium version only)"
-msgstr ""
+msgstr "Locatie Shortcodes (alleen premieversie)"
 
 #: ../includes/admin_screens/admin_support.php:526
 #: ../includes/admin_screens/admin_support.php:591
 msgid "As of Event Espresso version 3.1"
-msgstr ""
+msgstr "Als van Event Espreso versie 3.1"
 
 #: ../includes/admin_screens/admin_support.php:531
 #: ../includes/admin_screens/admin_support.php:596
 msgid "Event Description Example:"
-msgstr ""
+msgstr "Voorbeeld event beschrijving:"
 
 #: ../includes/admin_screens/admin_support.php:534
 msgid "If you want to display venue details within an event, the venue id is not needed. Just add <span class=\"highlight\">[ESPRESSO_VENUE]</span> to your event description."
-msgstr ""
+msgstr "Als u de locatie details wilt weergeven binnen een event is de locatie id niet nodig. Voeg <span class=\"highlight\">[ESPRESSO_VENUE]</span> toe aan uw event beschrijving."
 
 #: ../includes/admin_screens/admin_support.php:537
 #: ../includes/admin_screens/admin_support.php:602
 msgid "Example with Optional Parameters:"
-msgstr ""
+msgstr "Voorbeeld met optionele Parameters: "
 
 #: ../includes/admin_screens/admin_support.php:541
 #: ../includes/admin_screens/admin_support.php:606
 msgid "Page/Post Example:"
-msgstr ""
+msgstr "Voorbeeld van de pagina/Post: "
 
 #: ../includes/admin_screens/admin_support.php:544
 msgid "You can display the details of any venue to a page, post or event by adding the id of the venue to the shortcode."
-msgstr ""
+msgstr "U kunt de details van elke locatie op een pagina, post of event weergeven door de id van de locatie toe te voegen aan de shortcode."
 
 #: ../includes/admin_screens/admin_support.php:548
 #: ../includes/admin_screens/admin_support.php:612
 msgid "Page/Post Example #2:"
-msgstr ""
+msgstr "Voorbeel van de pagina/post #2:"
 
 #: ../includes/admin_screens/admin_support.php:551
 msgid "If you want to display all available venues on a page, post, or event:"
-msgstr ""
+msgstr "Indien u alle beschikbare locaties wilt zien op een pagina, post of gebeurtenis: "
 
 #: ../includes/admin_screens/admin_support.php:555
 msgid "Add the event id to the shortcode to display all the venues for an event:"
-msgstr ""
+msgstr "Voeg het event id toe aan de shortcode om alle locaties voor een gebeurtenis te weergeven:"
 
 #: ../includes/admin_screens/admin_support.php:560
 #: ../includes/admin_screens/admin_support.php:620
 msgid "Available parameters:"
-msgstr ""
+msgstr "Beschikbare parameters:"
 
 #: ../includes/admin_screens/admin_support.php:580
 msgid "Show All Events in a Venue:"
-msgstr ""
+msgstr "Toon alle events op een locatie:"
 
 #: ../includes/admin_screens/admin_support.php:588
 msgid "Staff Shortcodes (premium version only)"
-msgstr ""
+msgstr "Personeel Shortcodes (alleen premieversie)"
 
 #: ../includes/admin_screens/admin_support.php:599
 msgid "If you want to display a list of staff members within an event, the staff id is not needed. Just add <span class=\"highlight\">[ESPRESSO_STAFF]</span> to your event description."
-msgstr ""
+msgstr "Als u een lijst van medewerkers binnen een event wilt zien, is de id van het personeel niet nodig. Voeg <span class=\"highlight\">[ESPRESSO_STAFF]</span> toe aan uw beschrijving van het evenement."
 
 #: ../includes/admin_screens/admin_support.php:609
 msgid "You can display the details of any staff member to a page, post or event by adding the id of the staff member to the shortcode."
-msgstr ""
+msgstr "U kunt de details van elke medewerker naar een pagina, post of event weergeven door de id van de medewerker toe te voegen aan de shortcode."
 
 #: ../includes/admin_screens/admin_support.php:615
 msgid "If you want to display a list of staff members assigned to an event, to a page, post or event add the event id to the  <span class=\"highlight\">[ESPRESSO_STAFF]</span> shortcode."
-msgstr ""
+msgstr "Als u een lijst van medewerkers die toegewezen zijn aan een evenement wilt zien. Ga naar een pagina, post of event, voeg dan het event id toe aan de <span class=\"highlight\">[ESPRESSO_STAFF]</span> shortcode."
 
 #: ../includes/admin_screens/admin_support.php:639
 msgid "Calendar Shortcodes (premium version only)"
-msgstr ""
+msgstr "Kalender Shortcodes (alleen premieversie)"
 
 #: ../includes/admin_screens/admin_support.php:651
 msgid "Category Shortcodes"
-msgstr ""
+msgstr "Catergorie Shortcodes"
 
 #: ../includes/admin_screens/admin_support.php:672
 msgid "This version of Event Espresso requires WordPress version"
-msgstr ""
+msgstr "Deze versie van Event Espresso is een WordPress versie vereist"
 
 #: ../includes/admin_screens/admin_support.php:672
 msgid "Please upgrade to the latest version of WordPress."
-msgstr ""
+msgstr "Gelieve te upgraden naar de nieuwste versie van WordPress."
 
 #: ../includes/admin_screens/admin_support.php:675
 msgid "Your version of PHP is out of date, please update to the latest version of PHP. <br>Required version of PHP:"
-msgstr ""
+msgstr "Uw versie van PHP is verouderd, gelieve te updaten naar de laatste versie van PHP. <br>Vereiste versie van PHP:"
 
 #: ../includes/admin_screens/admin_support.php:678
 msgid "Your version of MySQL is out of date, please update to the latest version of MySQL. <br>Required version of MySQL:"
-msgstr ""
+msgstr "U versie van MySQL is verouderd, gelieve te updaten naar de laatste versie van MySQL. <br>Vereiste versie van MySQL: "
 
 #: ../includes/admin_screens/admin_support.php:684
 msgid "WordPress Version:"
-msgstr ""
+msgstr "WordPress Versie:"
 
 #: ../includes/admin_screens/admin_support.php:688
 msgid "PHP Version:"
-msgstr ""
+msgstr "PHP Versie:"
 
 #: ../includes/admin_screens/admin_support.php:692
 msgid "MySQL Version:"
-msgstr ""
+msgstr "MySQL Versie:"
 
 #: ../includes/admin_screens/admin_support.php:698
 msgid "WordPress Address (URL):"
-msgstr ""
+msgstr "WordPress Adres (URL):"
 
 #: ../includes/admin_screens/admin_support.php:702
 msgid "WordPress Content Directory:"
-msgstr ""
+msgstr "Inhoud WordPress Directory:"
 
 #: ../includes/admin_screens/admin_support.php:706
 msgid "Site address (URL):"
-msgstr ""
+msgstr "Websiteadres (URL):"
 
 #: ../includes/admin_screens/admin_support.php:710
 msgid "Event Espresso Plugin URL:"
-msgstr ""
+msgstr "Event Espresso Plugin URL:"
 
 #: ../includes/admin_screens/admin_support.php:714
 msgid "Event Espresso Plugin Path:"
-msgstr ""
+msgstr "Event Espresso Pluging pad:"
 
 #: ../includes/admin_screens/admin_support.php:718
 msgid "Event Espresso Upload URL:"
-msgstr ""
+msgstr "Event Espresso Upload URL:"
 
 #: ../includes/admin_screens/admin_support.php:722
 msgid "Event Espresso Upload Path:"
-msgstr ""
+msgstr "Event Espresso Upload pad:"
 
 #: ../includes/admin_screens/admin_support.php:726
 msgid "Event Espresso Template Path:"
-msgstr ""
+msgstr "Event Espresso sjabloon pad:"
 
 #: ../includes/admin_screens/admin_support.php:730
 msgid "If you are having problems with regsitrations, display, etc. You should backup and remove these files immediately."
-msgstr ""
+msgstr "Als u problemen met registraties, weergave, etc. ondervind zal u een back-up moeten maken en verwijder deze bestanden onmiddellijk."
 
 #: ../includes/admin_screens/admin_support.php:734
 msgid "Event Espresso Gateway Path:"
-msgstr ""
+msgstr "Event Espresso Gateway Pad:"
 
 #: ../includes/admin_screens/admin_support.php:738
 msgid "If you are having problems with payments. You should backup and remove these files immediately."
-msgstr ""
+msgstr "Als u problemen ondervind met betalingen zal u een back-up moeten maken en verwijder deze bestanden onmiddellijk. "
 
 #: ../includes/admin_screens/admin_support.php:759
 msgid "When requesting support. Please copy and paste the details displayed of the <a href=\"admin.php?page=support#details\">Important Information</a> section above. This will help us determine potential problems with your server, WordPress installation, and/or the Event Espresso plugin. Please also include a list (or screenshot) of all <a href=\"plugins.php?plugin_status=active\">active plugins</a>."
-msgstr ""
+msgstr "Bij het aanvragen van hulp. Kopieer en plak de details weergegeven voor de <a href=\"admin.php?page=support#details\">Important Information</a> sectie bovenin.Dit zal ons helpen te bepalen of er potentiële problemen met uw server, WordPress-installatie, en/of de Event Espresso plugin zijn.Gelieve tevens een lijst (of printscreen) van alle <a href=\"plugins.php?plugin_status=active\">active plugins</a> toe te voegen. "
 
 #: ../includes/admin_screens/admin_support.php:762
 msgid "Premium Support Options"
-msgstr ""
+msgstr "Premium ondersteuningsopties"
 
 #: ../includes/admin_screens/admin_support.php:765
 msgid "We offer premium support to customers who desire or require a level of support beyond the complimentary support included with all Event Espresso products."
-msgstr ""
+msgstr "Wij bieden premium-ondersteuning aan klanten die wensen of vereisen van ondersteuning op een niveau buiten de gratis ondersteuning. Dit is opgenomen met alle Event Espresso producten."
 
 #: ../includes/admin_screens/admin_support.php:768
 msgid "Support Tokens"
-msgstr ""
+msgstr "Ondersteuning Tokens"
 
 #: ../includes/admin_screens/admin_support.php:771
 msgid "A support token can be used to get priority support for a single  incident. It can be used to schedule support via phone or IM for a  single incident (up to 30 minutes), or to receive priority e-mail  support. A support token can be used for &ldquo;how to&rdquo; questions, technical  issues, &ldquo;best practice&rdquo; questions or for custom development consulting. A  support token consists of the PayPal Transaction ID you received from  PayPal at the time of your purchase."
-msgstr ""
+msgstr "Een token ondersteuning kan worden gebruikt om priotiteit te krijgen bij ondersteuning voor een enkel incident. Het kan worden gebruikt om ondersteuning te plannen  via telefoon of IM voor een enkel incident (maximaal 30 minuten), of prioriteit e-mail ondersteuning te ontvangen. Een token ondersteuning kan worden gebruikt voor &ldquo;how to&rdquo; vragen, technische problemen, &ldquo;best practice&rdquo; vragen of voor raadpleging van aangepaste ontwikkeling. Een token ondersteuning bestaat uit de PayPal transactie ID die u ontvangt van PayPal op het moment van uw aankoop."
 
 #: ../includes/admin_screens/admin_support.php:774
 msgid "<strong>You can purchase support tokens</strong> on the <a href=\"http://eventespresso.com/support/premium-support-options/\">Premium Support page</a>. Tokens can be purchased one at a time, or in blocks of three at a discount."
-msgstr ""
+msgstr "<strong> u kunt ondersteuning tokens</strong> kopen op de <a href=\"http://eventespresso.com/support/premium-support-options/\">Premium Support page</a>. Van een token kan één per keer gekocht worden of in blokken van drie tegen een korting. "
 
 #: ../includes/admin_screens/admin_support.php:788
 msgid "Installation &amp; Consulting"
-msgstr ""
+msgstr "Installatie &amp; raadplegen"
 
 #: ../includes/admin_screens/admin_support.php:827
 msgid "Registration page just refreshes?"
-msgstr ""
+msgstr "Is de registratiepagina opnieuw geladen?"
 
 #: ../includes/admin_screens/admin_support.php:830
 msgid "Usually its because you need to point the &quot;Main registration page:&quot; (in the Organization Settings page) to whatever page you have the shortcode"
-msgstr ""
+msgstr "Meestal is het omdat u moet verwijzen naar de &quot;Main registration page:&quot; (in de organisatie-instellingen pagina) naar de pagina van welke u een shortcode nodig heeft. "
 
 #: ../includes/admin_screens/admin_support.php:832
 msgid "on."
-msgstr ""
+msgstr "Op."
 
 #: ../includes/admin_screens/admin_support.php:835
 msgid "Paypal IPN Problem?"
-msgstr ""
+msgstr "Paypal IPN probleem?"
 
 #: ../includes/admin_screens/admin_support.php:838
 msgid "Four things to check with PayPal when payments notifications are not being sent to Event Espresso."
-msgstr ""
+msgstr "Vier dingen die u moet controleren bij PayPal wanneer betalingsmeldingen niet worden verzonden naar Event Espresso. "
 
 #: ../includes/admin_screens/admin_support.php:842
 msgid "Make sure you have a standard or a business PayPal account, personal accounts don't work."
-msgstr ""
+msgstr "Zorg ervoor dat u een standaard of business PayPal-account heeft. Persoonlijke accounts werken niet."
 
 #: ../includes/admin_screens/admin_support.php:845
 msgid "Turn on your IPN."
-msgstr ""
+msgstr "Zet uw IPN aan."
 
 #: ../includes/admin_screens/admin_support.php:848
 msgid "Make sure your PayPal account is verified."
-msgstr ""
+msgstr "Zorg ervoord dat uw PayPal account is geverifieerd."
 
 #: ../includes/admin_screens/admin_support.php:851
 msgid "Make sure your Event Espresso pages are not protected or private."
-msgstr ""
+msgstr "Zorg ervoor dat uw Event Espresso pagina's niet beveiligd of privé zijn. "
 
 #: ../includes/admin_screens/admin_support.php:855
 msgid "More information can be found here:"
-msgstr ""
+msgstr "Meer informatie kan hier gevonden worden:"
 
 #: ../includes/admin_screens/admin_support.php:860
 msgid "Why are emails are not being sent when somone registers?"
-msgstr ""
+msgstr "Waarom worden emails niet verzonden wanneer iemand zich registreert?"
 
 #: ../includes/admin_screens/admin_support.php:863
 msgid "Check your email settings on the"
-msgstr ""
+msgstr "Controleer u email instellingen op de "
 
 #: ../includes/admin_screens/admin_support.php:868
 msgid "If you're using WP SMTP with Gmail, also check your spam box to make sure Gmail isn't filtering the confirmation emails as spam."
-msgstr ""
+msgstr "Als u WP SMTP met Gmail gebruikt, controleer dan ook uw spam box om er zeker van te zijn dat Gmail de bevestigings emails niet als spam markeerd. "
 
 #: ../includes/admin_screens/admin_support.php:870
 msgid "Send a Test Email"
-msgstr ""
+msgstr "Verstuur een test email"
 
 #: ../includes/admin_screens/admin_support.php:881
 #: ../includes/admin_screens/admin_support.php:891
 msgid "Optional"
-msgstr ""
+msgstr "Optioneel"
 
 #: ../includes/admin_screens/admin_support.php:886
 msgid "Message"
-msgstr ""
+msgstr "Bericht"
 
 #: ../includes/admin_screens/admin_support.php:897
 msgid "Send Test"
-msgstr ""
+msgstr "Verstuur Test"
 
 #: ../includes/admin_screens/admin_support.php:902
 msgid "My events are not importing correctly when I use the CSV upload tool."
-msgstr ""
+msgstr "Mijn events worden niet correct geïmporteerd wanneer ik de CSB upload tool gebruik."
 
 #: ../includes/admin_screens/admin_support.php:906
 msgid "Check your CSV for any apotrophes in the title or description. Using Excel (or someother spreadsheet application) find and replace all apostrophes with <tt>\\&amp;#039;</tt>.  This is the HTML entity for ' and is how the titles are entered into the database.  For more information, see <a href=\"http://eventespresso.com/forums/2011/08/import-csv-malfunction\" target=\"_blank\">this forum post</a>."
@@ -5998,68 +6003,68 @@ msgstr ""
 
 #: ../includes/admin_screens/admin_support.php:910
 msgid "Translating Event Espresso"
-msgstr ""
+msgstr "Vertalen Event Espresso"
 
 #: ../includes/admin_screens/admin_support.php:930
 msgid "Problems with Incomplete Payments"
-msgstr ""
+msgstr "Problemen met incomplete betalingen"
 
 #: ../includes/admin_screens/admin_support.php:940
 msgid "Problems after upgrading?"
-msgstr ""
+msgstr "Problemen na het upgraden?"
 
 #: ../includes/admin_screens/admin_support.php:943
 msgid "If you have just upgraded  from  the free version of this plugin, your event dates, times, and categories may be out of order, missing, showing an error, or are wrong.  Pressing the &quot;Run Upgrade Script&quot; button below should fix all of these problems."
-msgstr ""
+msgstr "Als u net een upgrade uitgevoerd heeft van de gratis versie van deze plugin, kan uw event data, tijden en categorieën buiten bedrijf zijn, ontbreken, een fout tonen of verkeerd zijn. Door op de \"Run Upgrade Script\" knop hieronder te drukken zouden al deze problemen opgelost moeten worden."
 
 #: ../includes/admin_screens/admin_support.php:947
 msgid "Run Upgrade Script"
-msgstr ""
+msgstr "Draai upgrade script"
 
 #: ../includes/admin_screens/admin_support.php:951
 msgid "If you have clicked the button above and event dates that should be expired, are showing an error or seem to be out of order. Go into the &quot;<a href=\"admin.php?page=events\">Event Management</a>&quot; page and click the &quot;Edit this Event&quot; button then click the &quot;Update Event&quot; button on each event that is displaying the wrong date(s). This process should fix the problem. If it doesn't then send a support request using the help and support button above."
-msgstr ""
+msgstr "Als u hebt geklikt op de knop hierboven en event data die verstreken moeten zijn, tonen een fout of zijn niet in gebruik. Ga dan naar de &quot;<a href=\"admin.php?page=events\">Event Management</a>&quot; pagina en klik op de &quot; \"Bewerk dit event\" knop klik vervolgens op de &quot;\"Update Event\"&quot; knop op elk event dat de verkeerde datum(s) weergeeft. Dit proces moet het probleem oplossen. Als het niet werkt stuur dan een verzoek om ondersteuning met behulp van de hulp en steun knop hierboven."
 
 #: ../includes/admin_screens/admin_support.php:958
 msgid "Attendee information is outdated"
-msgstr ""
+msgstr "Deelnemers informatie is verouderd"
 
 #: ../includes/admin_screens/admin_support.php:961
 msgid "Due to recent changes in the way attendee information is handled, attendee data may appear to be missing from some events. In order to reassign attendees to events, please run the attendee update script by pressing the button below."
-msgstr ""
+msgstr "Als gevolg van recente veranderingen op de manier waarop deelnemers gegevens worden verwerkt, kan het lijken dat er deelnemers gegevens ontbreken van een aantal evenementen. Om de deelnemers aan de events opnieuw toe te wijzen, voert u de deelnemer update script door te klikken op de knop hieronder."
 
 #: ../includes/admin_screens/admin_support.php:966
 msgid "Run Attendee Update Script"
-msgstr ""
+msgstr "Draai deelnemers update script"
 
 #: ../includes/admin_screens/categories.php:12
 msgid "Manage Event Categories"
-msgstr ""
+msgstr "Beheer event categorieën"
 
 #: ../includes/admin_screens/categories.php:15
 #: ../includes/admin_screens/categories.php:126
 msgid "Add New Category"
-msgstr ""
+msgstr "Voeg een nieuwe categorie toe"
 
 #: ../includes/admin_screens/categories.php:49
 msgid "Categories have been successfully deleted from the event."
-msgstr ""
+msgstr "Categorieën zijn succesvol verwijderd uit het event."
 
 #: ../includes/admin_screens/categories.php:125
 msgid "Delete Category"
-msgstr ""
+msgstr "Verwijder categorie"
 
 #: ../includes/admin_screens/categories.php:129
 msgid "Export to Excel"
-msgstr ""
+msgstr "Exporteren naar Excel"
 
 #: ../includes/admin_screens/categories.php:129
 msgid "Export All Categories to CSV"
-msgstr ""
+msgstr "Exporteer alle categorieën naar CSV"
 
 #: ../includes/admin_screens/categories.php:153
 msgid "Unique Category Identifier"
-msgstr ""
+msgstr "Unieke categorie identificeerder"
 
 #: ../includes/admin_screens/categories.php:154
 msgid "This should be a unique identifier for the category. Example: \"category1\" (without qoutes.)"
@@ -6067,377 +6072,379 @@ msgstr ""
 
 #: ../includes/admin_screens/categories.php:155
 msgid " unique ID can also be used in individual pages using the"
-msgstr ""
+msgstr "Unieke ID kan ook gebruikt worden in afzonderlijke pagina's met de"
 
 #: ../includes/admin_screens/categories.php:155
 msgid "shortcode"
-msgstr ""
+msgstr "Shortcode"
 
 #: ../includes/admin_screens/questions.php:33
 msgid "Manage Questions"
-msgstr ""
+msgstr "Beheer vragen"
 
 #: ../includes/admin_screens/questions.php:36
 #: ../includes/admin_screens/questions.php:189
 #: ../includes/admin_screens/questions.php:209
 msgid "Add New Question"
-msgstr ""
+msgstr "Voeg een nieuwe vraag toe"
 
 #: ../includes/admin_screens/questions.php:52
 msgid "My Questions"
-msgstr ""
+msgstr "Mijn vragen"
 
 #: ../includes/admin_screens/questions.php:55
 msgid "All Questions"
-msgstr ""
+msgstr "Alle vragen"
 
 #: ../includes/admin_screens/question_groups.php:90
 #: ../includes/admin_screens/question_groups.php:106
 #: ../includes/admin_screens/questions.php:100
 msgid "This function is not available in the free version of Event Espresso."
-msgstr ""
+msgstr "Deze functie is niet beschikbaar in de gratis versie van Event Espresso. "
 
 #: ../includes/admin_screens/questions.php:125
 msgid "Required"
-msgstr ""
+msgstr "Vereist"
 
 #: ../includes/admin_screens/questions.php:127
 msgid "Admin Only"
-msgstr ""
+msgstr "Alleen admin"
 
 #: ../includes/admin_screens/questions.php:187
 msgid "Delete Question"
-msgstr ""
+msgstr "Verwijder vraag"
 
 #: ../includes/admin_screens/questions.php:202
 msgid "Manage Questions Overview"
-msgstr ""
+msgstr "Beheer vragen overzicht"
 
 #: ../includes/admin_screens/questions.php:205
 msgid "The <code>Questions</code> page shows your list of available questions to add to your registration forms for events"
-msgstr ""
+msgstr "De <code>Questions</code> pagina laat u een lijst zien met beschikbare vragen om toe te voegen aan uw registratie formulier voor evenementen."
 
 #: ../includes/admin_screens/questions.php:207
 msgid "Use the add new question button at the top of the page to create a new question to add to the list "
-msgstr ""
+msgstr "Gebruik de \"voeg nieuwe vraag toe\" knop aan de bovenkant van de pagina om een nieuwe vraag toe te voegen aan de lijst"
 
 #: ../includes/admin_screens/questions.php:212
 msgid "Once you have a built a list of questions you may further organize your questions into <code>Groups.</code> These"
-msgstr ""
+msgstr "Zodra u een lijst met vragen heeft kunt u de vragen organiseren in <code>Groups.</code>. Deze"
 
 #: ../includes/admin_screens/questions.php:214
 msgid "Question Groups "
-msgstr ""
+msgstr "Vraag groepen"
 
 #: ../includes/admin_screens/questions.php:216
 msgid "allow you to easily and conveniently add a group to a registration that will have a pre populated set of questions, this is especially handy when creating many registration forms, saving time, by being able to re-use specific groups of questions repetedly."
-msgstr ""
+msgstr "laten u eenvoudig en gemakkelijk een groep toevoegen aan een registratie die een vooraf ingevulde reek vragen zal hebben. Dit is vooral handig bij het maken van een groot aantal registratie formulieren en bespaart tijd, door specifieke groepen herhaaldelijk opnieuw te gebruiken. "
 
 #: ../includes/admin_screens/organization_config.php:92
 msgid "Organization details saved"
-msgstr ""
+msgstr "Organisatie gegevens opgeslagen"
 
 #: ../includes/admin_screens/organization_config.php:97
 msgid "Unable to save Organization details."
-msgstr ""
+msgstr "Kan organisatie gegevens niet op slaan"
 
 #: ../includes/admin_screens/organization_config.php:112
 msgid "General Settings"
-msgstr ""
+msgstr "Algemene instellingen"
 
 #: ../includes/admin_screens/organization_config.php:184
 msgid "Organization Name:"
-msgstr ""
+msgstr "Naam Organisatie:"
 
 #: ../includes/admin_screens/organization_config.php:190
 msgid "Organization Street 1:"
-msgstr ""
+msgstr "Organisatie straat 1:"
 
 #: ../includes/admin_screens/organization_config.php:196
 msgid "Organization Street 2:"
-msgstr ""
+msgstr "Organisatie straat 2:"
 
 #: ../includes/admin_screens/organization_config.php:202
 msgid "Organization City:"
-msgstr ""
+msgstr "Stad organisatie:"
 
 #: ../includes/admin_screens/organization_config.php:208
 msgid "Organization State:"
-msgstr ""
+msgstr "Organistatie provincie:"
 
 #: ../includes/admin_screens/organization_config.php:214
 msgid "Organization Zip/Postal Code:"
-msgstr ""
+msgstr "Postcode organisatie: "
 
 #: ../includes/admin_screens/organization_config.php:220
 msgid "Organization Country:"
-msgstr ""
+msgstr "Land organisatie:"
 
 #: ../includes/admin_screens/organization_config.php:226
 msgid "Primary contact email:"
-msgstr ""
+msgstr "Primaire contact email gegevens: "
 
 #: ../includes/admin_screens/organization_config.php:233
 msgid "Time and Date Settings"
-msgstr ""
+msgstr "Tijd en datum instellingen"
 
 #: ../includes/admin_screens/organization_config.php:238
 msgid "Current Time: "
-msgstr ""
+msgstr "Huidige tijd:"
 
 #: ../includes/admin_screens/organization_config.php:241
 msgid "Change timezone and date format settings?"
-msgstr ""
+msgstr "Verander tijdzone en datum instellingen?"
 
 #: ../includes/admin_screens/organization_config.php:246
 msgid "You must set the time zone for your city, or the city closest to you. UTC time will not work."
-msgstr ""
+msgstr "U moet de tijdzone vaststellen van uw stad, of de stad die het dichtst bij u is. UTC-tijd zal niet werken."
 
 #: ../includes/admin_screens/organization_config.php:248
 msgid "View an example?"
-msgstr ""
+msgstr "Bekijk een voorbeeld?"
 
 #: ../includes/admin_screens/organization_config.php:253
 msgid "Events expire on registration end date?"
-msgstr ""
+msgstr "Events vervallen op de geregistreerde einddatum?"
 
 #: ../includes/admin_screens/organization_config.php:260
 msgid "Images"
-msgstr ""
+msgstr "Afbeeldingen"
 
 #: ../includes/admin_screens/organization_config.php:266
 msgid "Add a Default Logo"
-msgstr ""
+msgstr "Voeg een standaard logo toe"
 
 #: ../includes/admin_screens/organization_config.php:277
 msgid "Default Logo"
-msgstr ""
+msgstr "Standaard logo"
 
 #: ../includes/admin_screens/organization_config.php:279
 msgid "The default logo will be used in your custom invoice, ticketing, certificates, and payment templates."
-msgstr ""
+msgstr "Het standaard logo zal worden gebruikt in het aangepaste factuur, tickets, certificaten en betaling sjablonen."
 
 #: ../includes/admin_screens/organization_config.php:300
 msgid "The following shortcodes and page settings are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view <a href=\"admin.php?page=support#shortcodes\">this page</a> for a list of optional shortcodes."
-msgstr ""
+msgstr "De volgende shortcodes en pagina instellingen zijn nodig om Event Espresso goed te laten functioneren. Deze shortcodes dienen niet te worden vervangen voor andere shortcodes. Kijk dan op <a href=\"admin.php?page=support#shortcodes\">this page</a> voor een lijst met optionele shortcodes. "
 
 #: ../includes/admin_screens/organization_config.php:309
 msgid "The Secure Payment System has been removed."
-msgstr ""
+msgstr "Het beveiligde betaling systeem is verwijderd. "
 
 #: ../includes/admin_screens/organization_config.php:310
 msgid "If your site uses SSL to handle secure transactions. Please install the <a href=\"http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip\" title=\"Install Now\">Event Espresso SSL/HTTPS</a> plugin now."
-msgstr ""
+msgstr "Als uw site gebruikt maakt van SSL voor het afhandelen van veilige transacties. Installeer dan nu de <a href=\"http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip\" title=\"Install Now\">Event Espresso SSL/HTTPS</a> plugin."
 
 #: ../includes/admin_screens/organization_config.php:310
 msgid "<a href=\"http://eventespresso.com/forums/2011/09/use-wordpress-https-for-ssl-encryption-on-your-event-espresso-site/\" target=\"_blank\">More information here</a>."
-msgstr ""
+msgstr "<a href=\"http://eventespresso.com/forums/2011/09/use-wordpress-https-for-ssl-encryption-on-your-event-espresso-site/\" target=\"_blank\">Meer informatie hier</a>."
 
 #: ../includes/admin_screens/organization_config.php:313
 msgid "Turn off this message?"
-msgstr ""
+msgstr "Schakel dit bericht uit?"
 
 #: ../includes/admin_screens/organization_config.php:324
 msgid "Main registration page"
-msgstr ""
+msgstr "Hoofd registratie pagina"
 
 #: ../includes/admin_screens/organization_config.php:329
 #: ../includes/admin_screens/organization_config.php:370
 #: ../includes/admin_screens/organization_config.php:411
 #: ../includes/admin_screens/organization_config.php:451
 msgid "View"
-msgstr ""
+msgstr "Zien"
 
 #: ../includes/admin_screens/organization_config.php:334
 #: ../includes/admin_screens/organization_config.php:375
 #: ../includes/admin_screens/organization_config.php:416
 #: ../includes/admin_screens/organization_config.php:456
 msgid "Not Published"
-msgstr ""
+msgstr "Niet gepubliceerd"
 
 #: ../includes/admin_screens/organization_config.php:338
 #: ../includes/admin_screens/organization_config.php:379
 #: ../includes/admin_screens/organization_config.php:420
 #: ../includes/admin_screens/organization_config.php:460
 msgid "Published"
-msgstr ""
+msgstr "Gepubliceerd"
 
 #: ../includes/admin_screens/organization_config.php:345
 #: ../includes/admin_screens/organization_config.php:386
 #: ../includes/admin_screens/organization_config.php:427
 #: ../includes/admin_screens/organization_config.php:467
 msgid "Shortcode Problem"
-msgstr ""
+msgstr "Shortcode probleem"
 
 #: ../includes/admin_screens/organization_config.php:349
 #: ../includes/admin_screens/organization_config.php:390
 #: ../includes/admin_screens/organization_config.php:431
 #: ../includes/admin_screens/organization_config.php:471
 msgid "Shortcode OK"
-msgstr ""
+msgstr "Shortcode OK"
 
 #: ../includes/admin_screens/organization_config.php:356
 #: ../includes/admin_screens/organization_config.php:396
 #: ../includes/admin_screens/organization_config.php:437
 #: ../includes/admin_screens/organization_config.php:477
 msgid "Main page"
-msgstr ""
+msgstr "Hoofdpagina"
 
 #: ../includes/admin_screens/organization_config.php:361
 msgid "This page can be hidden from navigation if desired, <br />but should always contain the %s shortcode."
-msgstr ""
+msgstr "Indien gewenst kan deze pagina verborgen worden voor navigatie, <br /> maar moet altijd de %s shortcode bevatten. "
 
 #: ../includes/admin_screens/organization_config.php:365
 msgid "Auto Return URL"
-msgstr ""
+msgstr "Automatische terugkeer URL"
 
 #: ../includes/admin_screens/organization_config.php:401
 msgid ""
 "This page should hidden from your navigation,<br />but still viewable to the public (not password protected),<br />\n"
 "and should always contain the %s shortcode."
 msgstr ""
+"Deze pagina moet verborgen zijn voor uw navigatie,<br /> maar nog steeds zichtbaar zijn voor het publiek (niet beveiligd met een wachtwoord),<br />\n"
+"en moet altijd de %s shortcode bevatten. "
 
 #: ../includes/admin_screens/organization_config.php:406
 msgid "Payment Notification URL"
-msgstr ""
+msgstr "Betaalbericht URL"
 
 #: ../includes/admin_screens/organization_config.php:442
 msgid "This page should hidden from your navigation, <br />but still viewable to the public (not password protected),<br /> and should always contain the %s shortcode."
-msgstr ""
+msgstr "Deze pagina moet verborgen zijn voor uw navigatie,<br /> maar nog steeds zichtbaar zijn voor het publiek (niet beveiligd met een wachtwoord),<br /> en moet altijd de %s shortcode bevatten. "
 
 #: ../includes/admin_screens/organization_config.php:446
 msgid "Cancel Return URL"
-msgstr ""
+msgstr "Annuleer terugkeer URL"
 
 #: ../includes/admin_screens/organization_config.php:482
 msgid "This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)"
-msgstr ""
+msgstr "Dit moet een pagina op uw website zijn dat een geannuleerd bericht bevat %s en de %s shotcode. Deze pagina moet verborgen zijn %s voor uw navigatie, maar nog steeds zichtbaar zijn voor het publiek (niet beveiligd met een wachtwoord.)"
 
 #: ../includes/admin_screens/organization_config.php:485
 #: ../includes/admin_screens/organization_config.php:488
 msgid "Pretty Permalinks"
-msgstr ""
+msgstr "Mooie permalinks"
 
 #: ../includes/admin_screens/organization_config.php:499
 msgid "Activate \"Pretty\" Permalinks"
-msgstr ""
+msgstr "Activeer \"mooie\" Permalinks"
 
 #: ../includes/admin_screens/organization_config.php:502
 msgid "makes URLs look like:"
-msgstr ""
+msgstr "Laat URLs er zo uitzien: "
 
 #: ../includes/admin_screens/organization_config.php:506
 msgid "Must have"
-msgstr ""
+msgstr "Moet hebben"
 
 #: ../includes/admin_screens/organization_config.php:508
 msgid "WordPress Permalinks"
-msgstr ""
+msgstr "WordPress Permalinks"
 
 #: ../includes/admin_screens/organization_config.php:510
 msgid "turned on, and mod_rewrite (or similar) active on server"
-msgstr ""
+msgstr "ingeschakeld en mod_rewrite (of soortgelijke) die actief zijn op de server"
 
 #: ../includes/admin_screens/organization_config.php:533
 msgid "Email Server Options:"
-msgstr ""
+msgstr "Email server opties:"
 
 #: ../includes/admin_screens/organization_config.php:539
 msgid "Use Personalized Email Headers"
-msgstr ""
+msgstr "Gebruik gepersonaliseerde email headers"
 
 #: ../includes/admin_screens/organization_config.php:546
 msgid "Payment Confirmation Email:"
-msgstr ""
+msgstr "Betaling bevesting email:"
 
 #: ../includes/admin_screens/organization_config.php:552
 msgid "Send payment confirmation emails?"
-msgstr ""
+msgstr "Verstuur betaling bevestiging emails?"
 
 #: ../includes/admin_screens/organization_config.php:559
 msgid "Default Registration Confirmation Email:"
-msgstr ""
+msgstr "Standaard registratie bevestiging email:"
 
 #: ../includes/admin_screens/organization_config.php:565
 msgid "Send registration confirmation emails before payment is received?"
-msgstr ""
+msgstr "Verstuur de registratie bevestiging emails voor de betaling is ontvangen?"
 
 #: ../includes/admin_screens/organization_config.php:581
 msgid "Please purchase a %s to gain access to this feature."
-msgstr ""
+msgstr "Koop een %s om toegang te verkrijgen tot deze functie."
 
 #: ../includes/admin_screens/organization_config.php:581
 #: ../includes/admin_screens/organization_config.php:590
 msgid "support license"
-msgstr ""
+msgstr "Ondersteuning licentie"
 
 #: ../includes/admin_screens/organization_config.php:582
 msgid "reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions."
-msgstr ""
+msgstr "reCAPTCHA helpt te voorkomen dat geautomatiseerde misbruik van uw site (zoals comment spam of nep-registraties) met behulp van een %s dit om ervoor te zorgen dat alleen mensen bepaalde acties uit voeren."
 
 #: ../includes/admin_screens/organization_config.php:590
 msgid "Please purchase a"
-msgstr ""
+msgstr "Koop hier een"
 
 #: ../includes/admin_screens/organization_config.php:590
 msgid "to gain access to these features."
-msgstr ""
+msgstr "om toegang te verkrijgen tot deze functie. "
 
 #: ../includes/admin_screens/organization_config.php:592
 msgid "Additional features include:"
-msgstr ""
+msgstr "Extra functies zijn onder andere: "
 
 #: ../includes/admin_screens/organization_config.php:596
 msgid "Upcoming events widget in the admin dashboard"
-msgstr ""
+msgstr "Aankomende events widget in het admin dashboard"
 
 #: ../includes/admin_screens/organization_config.php:599
 msgid "Registration limits on time slots"
-msgstr ""
+msgstr "Registratie grenzen aan tijdvakken"
 
 #: ../includes/admin_screens/organization_config.php:602
 msgid "Ability to display short descriptions in the event listings"
-msgstr ""
+msgstr "De mogelijkheid om korte beschrijvingen weer te geven in de event lijsten"
 
 #: ../includes/admin_screens/organization_config.php:605
 msgid "Custom post types for events"
-msgstr ""
+msgstr "Aangepast bericht typen voor evenementen"
 
 #: ../includes/admin_screens/organization_config.php:608
 msgid "Attendee pre-approval feature"
-msgstr ""
+msgstr "Deelnemer voorafgaande goedkeuring functie"
 
 #: ../includes/admin_screens/organization_config.php:611
 msgid "Event Venue/Staff Manager"
-msgstr ""
+msgstr "Evenement Locatie / Staff Manager"
 
 #: ../includes/admin_screens/organization_config.php:614
 msgid "Graphical Reports"
-msgstr ""
+msgstr "Grafische rapporten"
 
 #: ../includes/admin_screens/payment_gateways.php:9
 msgid "Manage Payment Gateways"
-msgstr ""
+msgstr "Beheer betaling gateways"
 
 #: ../includes/admin_screens/payment_gateways.php:20
 msgid "Need more payment options?"
-msgstr ""
+msgstr "Meer betaling opties nodig?"
 
 #: ../includes/admin_screens/question_groups.php:32
 msgid "Manage Question Groups"
-msgstr ""
+msgstr "Beheer vraag groepen"
 
 #: ../includes/admin_screens/question_groups.php:49
 msgid "My Groups"
-msgstr ""
+msgstr "Mijn groepen"
 
 #: ../includes/admin_screens/question_groups.php:50
 msgid "All Groups"
-msgstr ""
+msgstr "Alle groepen"
 
 #: ../includes/admin_screens/question_groups.php:120
 msgid "Group Name"
-msgstr ""
+msgstr "Naam groep"
 
 #: ../includes/admin_screens/question_groups.php:123
 msgid "Indentifier"
@@ -6445,85 +6452,85 @@ msgstr ""
 
 #: ../includes/admin_screens/question_groups.php:192
 msgid "Delete Question Group"
-msgstr ""
+msgstr "Verwijder vraag groepen"
 
 #: ../includes/admin_screens/question_groups.php:195
 msgid "Help"
-msgstr ""
+msgstr "Help"
 
 #: ../includes/admin_screens/question_groups.php:205
 msgid "Question Groups Overview"
-msgstr ""
+msgstr "Overzicht vraag groepen "
 
 #: ../includes/admin_screens/question_groups.php:206
 msgid "Question Groups are pre-populated groups of "
-msgstr ""
+msgstr "Vraag Groepen zijn vooraf ingevulde groepen van"
 
 #: ../includes/admin-files/admin_screens/event_management.php:137
 msgid "questions"
-msgstr ""
+msgstr "vragen"
 
 #: ../includes/admin_screens/question_groups.php:206
 msgid "that can be added your events. These groups of questions are what make up your customized regsistration forms. The personal information group is required for all events and is shown by default on all registration forms."
-msgstr ""
+msgstr "die kunnen worden toegevoegd aan uw events. Deze groepen van vragen zijn wat maak je gepersonaliseerde regsistratie formulieren. De persoonlijke gegevens groep is vereist voor alle events en wordt standaard op alle inschrijfformulieren getoond."
 
 #: ../includes/admin_screens/question_groups.php:207
 msgid "Question Groups can be organized or re-ordered by dragging and dropping individual table rows into the desired positions."
-msgstr ""
+msgstr "Vraag groepen kunnen georganiseerd worden of herschikt door het slepen en neerzetten van individuele tabel rijen in de gewenste posities. "
 
 #: ../includes/category-management/add_cat_to_db.php:23
 #: ../includes/category-management/update_event_category.php:24
 #: ../includes/category-management/update_event_category.php:26
 msgid "The category "
-msgstr ""
+msgstr "De categorie"
 
 #: ../includes/category-management/add_cat_to_db.php:25
 msgid "The category"
-msgstr ""
+msgstr "De categorie"
 
 #: ../includes/category-management/add_new_category.php:14
 msgid "Add a Category"
-msgstr ""
+msgstr "Voeg een categorie toe"
 
 #: ../includes/category-management/add_new_category.php:22
 #: ../includes/category-management/edit_event_category.php:32
 msgid "Category Name"
-msgstr ""
+msgstr "Naam categorie"
 
 #: ../includes/category-management/add_new_category.php:28
 #: ../includes/category-management/edit_event_category.php:38
 msgid "Unique ID"
-msgstr ""
+msgstr "Unieke ID"
 
 #: ../includes/category-management/add_new_category.php:34
 #: ../includes/category-management/edit_event_category.php:44
 msgid "Display Category Description in Event Listing?"
-msgstr ""
+msgstr "Laat catergorie beschrijving zien in de event lijst?"
 
 #: ../includes/category-management/add_new_category.php:39
 #: ../includes/category-management/edit_event_category.php:49
 msgid "Category Description"
-msgstr ""
+msgstr "Categorie beschrijving"
 
 #: ../includes/category-management/edit_event_category.php:23
 msgid "Edit Category"
-msgstr ""
+msgstr "Voeg categorie toe"
 
 #: ../includes/category-management/update_event_category.php:24
 msgid " has been updated."
-msgstr ""
+msgstr "Is bijgewerkt."
 
 #: ../includes/category-management/update_event_category.php:26
 msgid " has not been updated"
-msgstr ""
+msgstr "Is niet bijgewerkt"
 
 #: ../includes/classes/EE_Event.class.old.php:591
 msgid "ONGOING"
-msgstr ""
+msgstr "lopend"
 
 #: ../includes/classes/EE_Event.class.old.php:596
 msgid "WAITLIST"
-msgstr ""
+msgstr "Wachtlijst"
 
 #: ../includes/classes/EE_Event.class.old.php:601
 msgid "DRAFT"
@@ -6531,464 +6538,464 @@ msgstr ""
 
 #: ../includes/classes/EE_Event.class.old.php:611
 msgid "DENIED"
-msgstr ""
+msgstr "Geweigerd"
 
 #: ../includes/classes/EE_Event.class.old.php:616
 msgid "CLOSED"
-msgstr ""
+msgstr "Gesloten"
 
 #: ../includes/classes/EE_Event.class.old.php:617
 msgid "Closed"
-msgstr ""
+msgstr "Gesloten"
 
 #: ../includes/classes/EE_Event.class.old.php:621
 msgid "NOT_OPEN"
-msgstr ""
+msgstr "Niet_open"
 
 #: ../includes/classes/EE_Event.class.old.php:622
 msgid "Not Open"
-msgstr ""
+msgstr "Niet open"
 
 #: ../includes/classes/EE_Event.class.old.php:626
 msgid "OPEN"
-msgstr ""
+msgstr "Open"
 
 #: ../includes/classes/EE_Event.class.old.php:627
 msgid "Open"
-msgstr ""
+msgstr "Open"
 
 #: ../includes/classes/EE_Event.class.old.php:631
 msgid "EXPIRED"
-msgstr ""
+msgstr "Verlopen"
 
 #: ../includes/classes/EE_Event.class.old.php:632
 msgid "Expired"
-msgstr ""
+msgstr "Verlopen"
 
 #: ../includes/classes/EE_Event.class.old.php:636
 msgid "ACTIVE"
-msgstr ""
+msgstr "Actief"
 
 #: ../includes/classes/EE_Event.class.old.php:641
 msgid "NOT_ACTIVE"
-msgstr ""
+msgstr "Niet_actief"
 
 #: ../includes/classes/EE_Event.class.old.php:642
 msgid "Not Active"
-msgstr ""
+msgstr "Niet actief"
 
 #: ../includes/classes/EE_Event.class.old.php:646
 msgid "DELETED"
-msgstr ""
+msgstr "Verwijderd"
 
 #: ../includes/classes/EE_Export.class.php:165
 msgid "all-events"
-msgstr ""
+msgstr "Alle-events"
 
 #: ../includes/classes/EE_Export.class.php:462
 msgid "attendee-payments"
-msgstr ""
+msgstr "deelnemers-betalingen"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Group"
-msgstr ""
+msgstr "Groep"
 
 #: ../gateways/aim/payment.php:31
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Payment Method"
-msgstr ""
+msgstr "Betaalmethode"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Reg Date"
-msgstr ""
+msgstr "Reg datum"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Pay Status"
-msgstr ""
+msgstr "Status van de betaling"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Type of Payment"
-msgstr ""
+msgstr "Betalings type"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Coupon Code"
-msgstr ""
+msgstr "Kortingsbon code"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "# Attendees"
-msgstr ""
+msgstr "# deelnemers"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Date Paid"
-msgstr ""
+msgstr "Betalingsdatum"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Event Name"
-msgstr ""
+msgstr "Naam event"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Event Date"
-msgstr ""
+msgstr "Datum event"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Website Check-in"
-msgstr ""
+msgstr "Website check-in"
 
 #: ../includes/classes/EE_Export.class.php:595
 msgid "Tickets Scanned"
-msgstr ""
+msgstr "Gescande tickets"
 
 #: ../includes/classes/EE_Log.class.php:43
 msgid "Your log file is not writable. Check if your server is able to write to %s."
-msgstr ""
+msgstr "Uw log-bestand is niet beschrijfbaar. Controleer of uw server in staat is om te schrijven naar %s.  "
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:24
 msgid "Cancel"
-msgstr ""
+msgstr "Annuleer"
 
 #: ../includes/event_management/add_new_event.php:117
 msgid "Submit New Event"
-msgstr ""
+msgstr "Voeg nieuw event toe"
 
 #: ../includes/lite-files/event_management.php:50
 msgid "Is this an active event? "
-msgstr ""
+msgstr "Is dit een actief event?"
 
 #: ../includes/lite-files/event_management.php:53
 msgid "Display  description? "
-msgstr ""
+msgstr "Beschrijving weergeven?"
 
 #: ../includes/lite-files/event_management.php:57
 msgid "Display  registration form? "
-msgstr ""
+msgstr "Registratie formulier weergeven?"
 
 #: ../includes/admin-files/admin_screens/event_management.php:57
 msgid "Attendee Limit: "
-msgstr ""
+msgstr "Deelnemers limiet:"
 
 #: ../includes/admin-files/admin_screens/event_management.php:60
 msgid "leave blank for unlimited"
-msgstr ""
+msgstr "Laat leeg voor onbeperkt"
 
 #: ../includes/admin-files/admin_screens/event_management.php:63
 msgid "Allow group registrations? "
-msgstr ""
+msgstr "Groep registraties toestaan?"
 
 #: ../includes/admin-files/admin_screens/event_management.php:67
 msgid "Max Group Registrants: "
-msgstr ""
+msgstr "Max groep registranten:"
 
 #: ../includes/event_management/event_functions.php:648
 msgid "Event Category"
-msgstr ""
+msgstr "Event categorie"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:187
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:360
 msgid "Groupon Options"
-msgstr ""
+msgstr "Groupon opties"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:72
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:229
 msgid "Seating chart"
-msgstr ""
+msgstr "Zitplaatsen grafiek"
 
 #: ../includes/admin-files/admin_screens/event_management.php:284
 msgid "Attendee pre-approval required?"
-msgstr ""
+msgstr "Voorafgaande deelenemer goedkeuring nodig?"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:126
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:283
 msgid "Member Options"
-msgstr ""
+msgstr "Lid opties"
 
 #: ../includes/admin-files/admin_screens/event_management.php:23
 msgid "Event Staff / Speakers"
-msgstr ""
+msgstr "Event staff / sprekers"
 
 #: ../includes/event_management/event_functions.php:323
 msgid "Permalink:"
-msgstr ""
+msgstr "Permalink:"
 
 #: ../includes/event_management/event_functions.php:634
 msgid "Event Description"
-msgstr ""
+msgstr "Event beschrijving"
 
 #: ../includes/event_management/event_functions.php:636
 msgid "Event Date/Times"
-msgstr ""
+msgstr "Event datum/tijden"
 
 #: ../includes/event_management/event_functions.php:369
 msgid "Registration Dates"
-msgstr ""
+msgstr "Registratie data"
 
 #: ../../espresso-recurring-events.1.1.5/functions/re_view_functions.php:655
 #: ../../espresso-recurring-events.trunk/functions/re_view_functions.php:348
 msgid "Registration Start"
-msgstr ""
+msgstr "Start registratie"
 
 #: ../../espresso-recurring-events.1.1.5/functions/re_view_functions.php:656
 #: ../../espresso-recurring-events.trunk/functions/re_view_functions.php:349
 msgid "Registration End"
-msgstr ""
+msgstr "Einde registratie"
 
 #: ../includes/event_management/event_functions.php:382
 msgid "Event Dates"
-msgstr ""
+msgstr "Data event"
 
 #: ../includes/event_management/event_functions.php:385
 msgid "Event Start Date"
-msgstr ""
+msgstr "Start datum event"
 
 #: ../includes/event_management/event_functions.php:389
 msgid "Event End Date"
-msgstr ""
+msgstr "Eind datum event"
 
 #: ../includes/event_management/help.php:209
 msgid "Current Time"
-msgstr ""
+msgstr "Huidige tijd"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:307
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:471
 msgid "Event Timezone"
-msgstr ""
+msgstr "Tijdzone event"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:315
 msgid "Recurring Event Manager Now Available!"
-msgstr ""
+msgstr "Terugkerend event manager nu beschikbaar!"
 
 #: ../includes/event_management/event_functions.php:412
 msgid "Registration Times"
-msgstr ""
+msgstr "Tijd registraties"
 
 #: ../includes/event_management/event_functions.php:418
 #: ../includes/event_management/help.php:188
 msgid "Event Times"
-msgstr ""
+msgstr "Event tijden"
 
 #: ../includes/event_management/event_functions.php:638
 msgid "Event Pricing"
-msgstr ""
+msgstr "Event prijzen"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/add_new_event.php:375
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:533
 msgid "Advanced Options"
-msgstr ""
+msgstr "Geavanceerde opties"
 
 #: ../includes/event_management/event_functions.php:640
 msgid "Venue Details"
-msgstr ""
+msgstr "Locatie details"
 
 #: ../includes/event_management/event_functions.php:478
 #: ../includes/event_management/event_functions.php:542
 msgid "Venue Information"
-msgstr ""
+msgstr "Locatie informatie"
 
 #: ../includes/event_management/event_functions.php:481
 msgid "You have not created any venues yet."
-msgstr ""
+msgstr "U heeft op dit moment nog geen locaties aangemaakt"
 
 #: ../includes/event_management/event_functions.php:483
 msgid "Add venues to the Venue Manager"
-msgstr ""
+msgstr "Voeg locatie toe aan de locatie manager"
 
 #: ../includes/event_management/event_functions.php:494
 msgid "Physical Location"
-msgstr ""
+msgstr "Fysieke locatie"
 
 #: ../includes/event_management/event_functions.php:504
 msgid "Address 2:"
-msgstr ""
+msgstr "Adres 2:"
 
 #: ../includes/event_management/event_functions.php:516
 msgid "State:"
-msgstr ""
+msgstr "Stad:"
 
 #: ../includes/event_management/event_functions.php:522
 msgid "Zip/Postal Code:"
-msgstr ""
+msgstr "Postcode:"
 
 #: ../includes/event_management/event_functions.php:564
 msgid "Image:"
-msgstr ""
+msgstr "Afbeelding:"
 
 #: ../includes/event_management/event_functions.php:573
 msgid "Virtual Location"
-msgstr ""
+msgstr "Virtuele locatie"
 
 #: ../includes/event_management/event_functions.php:583
 msgid "URL of Event:"
-msgstr ""
+msgstr "URL van het event"
 
 #: ../includes/event_management/event_functions.php:589
 msgid "Call in Number:"
-msgstr ""
+msgstr "In bel aantal:"
 
 #: ../includes/event_management/event_functions.php:599
 msgid "Enable event address in Google Maps? "
-msgstr ""
+msgstr "Schakel evenement adres in in Google Maps?"
 
 #: ../includes/admin-files/admin_screens/event_management.php:6
 msgid "Event Meta"
-msgstr ""
+msgstr "Event meta"
 
 #: ../includes/event_management/event_functions.php:642
 msgid "Email Confirmation:"
-msgstr ""
+msgstr "Bevestiging email:"
 
 #: ../includes/event_management/event_functions.php:613
 msgid "Email Information"
-msgstr ""
+msgstr "Email informatie:"
 
 #: ../includes/event_management/event_functions.php:620
 msgid "Add emails to the Email Manager"
-msgstr ""
+msgstr "Voeg emailt toe aan de email manager"
 
 #: ../includes/event_management/add_to_calendar.php:25
 #: ../includes/event_management/copy_event.php:264
 #: ../includes/event_management/insert_event.php:468
 #: ../includes/event_management/temp.php:23
 msgid "The event"
-msgstr ""
+msgstr "Het event"
 
 #: ../includes/event_management/add_to_calendar.php:25
 #: ../includes/event_management/copy_event.php:264
 msgid "has been added."
-msgstr ""
+msgstr "is toegevoegd"
 
 #: ../includes/event_management/add_to_calendar.php:27
 #: ../includes/event_management/copy_event.php:266
 #: ../includes/event_management/insert_event.php:473
 #: ../includes/event_management/temp.php:34
 msgid "There was an error in your submission, please try again. The event was not saved!"
-msgstr ""
+msgstr "Er is een fout opgetreden in uw inzending, probeer het opnieuw. Het event is niet opgeslagen!"
 
 #: ../includes/event_management/edit_event.php:55
 msgid "Sorry, you do not have permission to edit this event."
-msgstr ""
+msgstr "Sorry, u heeft geen toestemming om dit evenement te bewerken."
 
 #: ../includes/event_management/event_functions.php:644
 msgid "Quick Overview"
-msgstr ""
+msgstr "Snel overzicht"
 
 #: ../includes/event_management/event_functions.php:139
 msgid "Are you sure you want to copy "
-msgstr ""
+msgstr "Weet u zeker dat u wilt kopiëren"
 
 #: ../includes/event_management/event_functions.php:140
 msgid "Duplicate Event"
-msgstr ""
+msgstr "Dupliceer event"
 
 #: ../includes/event_management/event_functions.php:149
 #: ../includes/event_management/event_list.php:251
 msgid "Start Date"
-msgstr ""
+msgstr "Startdatum"
 
 #: ../includes/event_management/event_functions.php:153
 msgid "Current Status:"
-msgstr ""
+msgstr "Huidige status:"
 
 #: ../includes/event_management/event_functions.php:158
 #: ../includes/event_management/event_list.php:390
 msgid "View Attendees"
-msgstr ""
+msgstr "Bekijk de deelnemers"
 
 #: ../includes/event_management/event_functions.php:167
 msgid "Newsletter"
-msgstr ""
+msgstr "Nieuwsbrief"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:159
 msgid "Submitted By:"
-msgstr ""
+msgstr "Toegevoegd door:"
 
 #: ../includes/functions/main.php:276
 msgid "Email:"
-msgstr ""
+msgstr "Email:"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:161
 msgid "Organization:"
-msgstr ""
+msgstr "Organisatie:"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/edit_event.php:162
 msgid "Date Submitted:"
-msgstr ""
+msgstr "Datum toegevoegd:"
 
 #: ../includes/event_management/event_functions.php:183
 #: ../includes/event_management/event_functions.php:187
 msgid "Are you sure you want to delete "
-msgstr ""
+msgstr "Weet u zeker dat u dit wilt verwijderen"
 
 #: ../includes/event_management/event_functions.php:184
 msgid "Delete all events in this series"
-msgstr ""
+msgstr "Verwijder alle events in deze serie"
 
 #: ../includes/event_management/event_functions.php:188
 msgid "Delete Event"
-msgstr ""
+msgstr "Verwijder event"
 
 #: ../includes/event_management/edit_event.php:93
 msgid "Update Event"
-msgstr ""
+msgstr "Update event"
 
 #: ../includes/event_management/event_functions.php:324
 msgid "Short URL"
-msgstr ""
+msgstr "Korte URL"
 
 #: ../includes/event_management/event_functions.php:324
 msgid "Full URL"
-msgstr ""
+msgstr "Volledige URL"
 
 #: ../includes/event_management/event_functions.php:324
 msgid "Identifier"
-msgstr ""
+msgstr "Identificatie"
 
 #: ../includes/event_management/event_functions.php:372
 msgid "Registration Start:"
-msgstr ""
+msgstr "Start registratie:"
 
 #: ../includes/event_management/event_functions.php:376
 msgid "Registration End:"
-msgstr ""
+msgstr "Einde registratie:"
 
 #: ../includes/event_management/event_functions.php:395
 msgid "Current Time:"
-msgstr ""
+msgstr "Huidige tijd:"
 
 #: ../includes/event_management/event_functions.php:404
 msgid "Event Timezone:"
-msgstr ""
+msgstr "Tijdzone event:"
 
 #: ../includes/event_management/event_functions.php:533
 msgid "Google Map Link (for email):"
-msgstr ""
+msgstr "Google Map link (voor email):"
 
 #: ../includes/admin-files/admin_screens/event_management.php:452
 msgid "Do you really want to delete this image? Please remember to update your event to complete the removal."
-msgstr ""
+msgstr "Weet u zeker dat u dit plaatje wilt verwijderen? Vergeet niet om uw event bij te werken om het verwijderen af te ronden. "
 
 #: ../includes/event_management/event_functions.php:17
 #: ../includes/event_management/event_functions.php:31
 msgid "Reg Start Time"
-msgstr ""
+msgstr "Reg start tijd"
 
 #: ../includes/event_management/event_functions.php:21
 #: ../includes/event_management/event_functions.php:35
 msgid "Reg End Time"
-msgstr ""
+msgstr "Reg Eind tijd"
 
 #: ../includes/event_management/event_functions.php:62
 #: ../includes/event_management/event_functions.php:82
 #: ../includes/event_management/event_functions.php:109
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #: ../includes/event_management/event_functions.php:66
 #: ../includes/event_management/event_functions.php:86
 #: ../includes/event_management/event_functions.php:109
 msgid "End"
-msgstr ""
+msgstr "Einde"
 
 #: ../includes/event_management/event_functions.php:69
 #: ../includes/event_management/event_functions.php:89
@@ -6997,7 +7004,7 @@ msgstr ""
 
 #: ../includes/event_management/event_functions.php:103
 msgid "Add Additional Time"
-msgstr ""
+msgstr "Voeg extra tijd toe"
 
 #: ../includes/event_management/event_functions.php:109
 msgid "Qty "
@@ -7005,209 +7012,209 @@ msgstr ""
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:78
 msgid "Standard Pricing"
-msgstr ""
+msgstr "Standaar prijzen"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:91
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:152
 msgid "Price"
-msgstr ""
+msgstr "Prijs"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:103
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:128
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:152
 msgid "Remove this Price"
-msgstr ""
+msgstr "Verwijder deze prijs"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:103
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:128
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:152
 msgid "Remove Price"
-msgstr ""
+msgstr "Verwijder prijs"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:137
 msgid "enter 0.00 for free events, enter 2 place decimal i.e."
-msgstr ""
+msgstr "gaan 0,00 voor gratis events, typt u 2 decimalen dat wil zeggen"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/event_functions.php:144
 msgid "Add A Price"
-msgstr ""
+msgstr "Voeg een prijs toe"
 
 #: ../includes/event_management/event_functions.php:303
 msgid "Manage Categories"
-msgstr ""
+msgstr "Beheer categoriën"
 
 #: ../includes/event_management/event_functions.php:298
 msgid "No Categories"
-msgstr ""
+msgstr "Geen categoriën"
 
 #: ../includes/event_management/event_functions.php:646
 msgid "Questions for Primary Attendee"
-msgstr ""
+msgstr "Vragen voor primaire deelnemer"
 
 #: ../includes/admin-files/admin_screens/event_management.php:131
 msgid "Add a pre-populated"
-msgstr ""
+msgstr "Voeg een vooraf ingevulde"
 
 #: ../includes/admin-files/admin_screens/event_management.php:133
 msgid "group"
-msgstr ""
+msgstr "groep"
 
 #: ../includes/admin-files/admin_screens/event_management.php:135
 msgid "of"
-msgstr ""
+msgstr "van"
 
 #: ../includes/admin-files/admin_screens/event_management.php:139
 msgid "to your event. The personal information group is required for all events."
-msgstr ""
+msgstr "aan u event. De persoonlijke informatie groep is vereist voor alle events. "
 
 #: ../includes/admin-files/admin_screens/event_management.php:165
 msgid "There seems to be a problem with your questions. Please contact support@eventespresso.com"
-msgstr ""
+msgstr "Er lijkt een probleem te zijn met uw vragen. Neem contact op met support@eventespresso.com"
 
 #: ../includes/lite-files/event_management.php:11
 msgid "Need more questions?"
-msgstr ""
+msgstr "Meer vragen nodig?"
 
 #: ../includes/admin-files/admin_screens/event_management.php:12
 msgid "Questions for Additional Attendees"
-msgstr ""
+msgstr "Vragen voor extra deelnemers"
 
 #: ../includes/event_management/event_list.php:66
 msgid "Advanced filters are now available in the premium versions."
-msgstr ""
+msgstr "Geavanceerde filters zijn nu beschikbaar in de premium versies."
 
 #: ../includes/event_management/event_list.php:170
 msgid "row(s) starting from record #"
-msgstr ""
+msgstr "Rij(en) beginnend vanaf record #"
 
 #: ../includes/event_management/event_list.php:246
 msgid "Venue"
-msgstr ""
+msgstr "Locatie"
 
 #: ../includes/event_management/event_list.php:256
 msgid "Start Time"
-msgstr ""
+msgstr "Starttijd"
 
 #: ../includes/event_management/event_list.php:261
 msgid "DoW"
-msgstr ""
+msgstr "DoW"
 
 #: ../includes/event_management/event_list.php:266
 msgid "Reg Begins"
-msgstr ""
+msgstr "Reg begint"
 
 #: ../includes/event_management/event_list.php:284
 msgid "Owner"
-msgstr ""
+msgstr "Eigenaar"
 
 #: ../includes/event_management/event_list.php:293
 msgid "Actions"
-msgstr ""
+msgstr "Acties"
 
 #: ../includes/event_management/event_list.php:394
 msgid "Get Short URL/Shortcode"
-msgstr ""
+msgstr "Krijg korte URL/Shortcode"
 
 #: ../includes/event_management/event_list.php:398
 msgid "Export to CSV"
-msgstr ""
+msgstr "Exporteer naar CSV"
 
 #: ../includes/event_management/event_list.php:400
 msgid "Email Attendees"
-msgstr ""
+msgstr "Email deelnemers"
 
 #: ../includes/event_management/event_list.php:403
 msgid "<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class=\"updated fade\">"
-msgstr ""
+msgstr "<h2>Short URL/Shortcode</h2><p> Dit is de shortcode voor dit event:</p><p><span  class=\"updated fade\">"
 
 #: ../includes/event_management/event_list.php:448
 msgid "Permanently Delete Events(s)"
-msgstr ""
+msgstr "Permanent verwijderd(e) event(s)"
 
 #: ../includes/event_management/event_list.php:450
 msgid "Delete Events(s)"
-msgstr ""
+msgstr "Verwijderd(e) event(s)"
 
 #: ../includes/event_management/event_list.php:452
 msgid "Export All Payment Data to Excel"
-msgstr ""
+msgstr "Exporteer alle betaling gegevens naar Excel"
 
 #: ../includes/event_management/event_list.php:454
 msgid "Export All Event Data to CSV"
-msgstr ""
+msgstr "Exporteer alle evenement gegevens naar CSV"
 
 #: ../includes/event_management/event_list.php:466
 msgid "Actions Legend"
-msgstr ""
+msgstr "Acties Legende"
 
 #: ../includes/event_management/event_list.php:472
 msgid "Recurring Event"
-msgstr ""
+msgstr "Terugkerend event"
 
 #: ../includes/event_management/event_list.php:485
 msgid "Event Attendees"
-msgstr ""
+msgstr "Deelnemers event"
 
 #: ../includes/event_management/event_list.php:489
 msgid "Send Event Email"
-msgstr ""
+msgstr "Verstuur event email"
 
 #: ../includes/event_management/event_list.php:493
 msgid "Short Code"
-msgstr ""
+msgstr "Short code"
 
 #: ../includes/event_management/event_list.php:497
 msgid "Excel Spreadsheet"
-msgstr ""
+msgstr "Excel werkblad"
 
 #: ../includes/event_management/event_list.php:497
 msgid "Excel Export"
-msgstr ""
+msgstr "Excel export"
 
 #: ../includes/event_management/event_list.php:501
 msgid "CSV Spreadsheet"
-msgstr ""
+msgstr "CSV werkblad"
 
 #: ../includes/event_management/event_list.php:501
 msgid "CSV Export"
-msgstr ""
+msgstr "CSV export"
 
 #: ../includes/event_management/event_list.php:505
 msgid "Event Newsletter"
-msgstr ""
+msgstr "Nieuwsbrief event"
 
 #: ../includes/event_management/event_list.php:529
 msgid "If you have a CSV file that was exported from a previous version of Event Espresso, you can upload it by clicking here:"
-msgstr ""
+msgstr "Als u een CSV-bestand heeft dat is geëxporteerd uit een vorige versie van Event Espresso, dan kunt u het uploaden door hier te klikken:"
 
 #: ../includes/event_management/event_list.php:529
 msgid "Import CSV"
-msgstr ""
+msgstr "Importeer CSV"
 
 #: ../includes/event_management/event_list.php:538
 #: ../includes/event_management/help.php:31
 msgid "Coupon/Promo Code"
-msgstr ""
+msgstr "Kortingsbon / actiecode"
 
 #: ../includes/event_management/event_list.php:538
 #: ../includes/event_management/help.php:34
 msgid "This is used to apply discounts to events."
-msgstr ""
+msgstr "Dit wordt gebruikt om in aanmerking te komen voor kortingen bij events."
 
 #: ../includes/event_management/event_list.php:538
 #: ../includes/event_management/help.php:37
 msgid "A coupon or promo code could can be anything you want. For example: Say you have an event that costs"
-msgstr ""
+msgstr "Een kortingsbon of acties code kan alles zijn wat je wilt. Bijvoorbeeld: Zeg dat u een event heeft dat kost"
 
 #: ../includes/event_management/event_list.php:538
 #: ../includes/event_management/help.php:39
 msgid "If you supplied a promo like \"PROMO50\" and entered 50.00 into the \"Discount w/Promo Code\" field your event will be discounted"
-msgstr ""
+msgstr "Als u een promo levert zoals \"PROMO50\" en voegt 50.00 toe aan het \"Discount w/Promo Code\" veld, zal u event worden verdisconteerd"
 
 #: ../includes/event_management/event_list.php:538
 #: ../includes/event_management/help.php:41
 msgid "Bringing the cost of the event to"
-msgstr ""
+msgstr "Waardoor de kosten van het event "
 
 #: ../includes/event_management/event_list.php:541
 #: ../includes/event_management/help.php:53
@@ -7222,153 +7229,153 @@ msgstr ""
 #: ../includes/event_management/event_list.php:541
 #: ../includes/event_management/help.php:58
 msgid "Unique Event ID"
-msgstr ""
+msgstr "Uniek event ID"
 
 #: ../includes/event_management/help.php:18
 msgid "These emails will override the custom email if a pre-existing email is selected. You must select \"Yes\" in the \"Send custom confirmation emails for this event?\" above."
-msgstr ""
+msgstr "Deze emails zullen de aangepaste email overschrijden als er reeds een bestaande email is geselecteerd. U moet \"Ja\"selecteren in de \"stuur aangepaste bevestiging emails voor dit event?\" hierboven. "
 
 #: ../includes/event_management/help.php:72
 msgid "Waitlist Events"
-msgstr ""
+msgstr "Wachtlijst events"
 
 #: ../includes/event_management/help.php:75
 msgid "These types of events can be used as a overflow or waiting list events."
-msgstr ""
+msgstr "Deze event typen kunnen worden gebruik als overloop of event wachtlijst."
 
 #: ../includes/event_management/help.php:78
 msgid "If an event is set up as an \"Waitlist Event,\" it can be set to not appear in your event listings template. You may need to customize your event_listing.php file to make this work. For more information, please"
-msgstr ""
+msgstr "Als een event is opgezet als een \"Wachtlijst Event,\" kan het worden ingesteld om niet in uw event vermeldingen sjabloon te verschijnen. Mogelijk moet u uw event_listing.php bestand aan passen om dit te laten werken. Voor meer informatie kunt u"
 
 #: ../includes/event_management/help.php:80
 #: ../includes/event_management/help.php:120
 #: ../includes/event_management/help.php:127
 msgid "visit the forums"
-msgstr ""
+msgstr "bezoek het forum"
 
 #: ../includes/event_management/help.php:92
 msgid "Off-site Registration Page"
-msgstr ""
+msgstr "Off-site registratie pagina"
 
 #: ../includes/event_management/help.php:95
 msgid "If an off-site registration page is entered, it will override your registration page and send attendees to the URL that is entered."
-msgstr ""
+msgstr "Als een off-site registratie pagina is toegevoegd zal het uw registratie pagina en stuur deelenemers overschrijven naar de URL die is toegevoegd. "
 
 #: ../includes/event_management/help.php:107
 msgid "Event Status Types"
-msgstr ""
+msgstr "Status event typen"
 
 #: ../../event-espresso.3.1.21.P/includes/event-management/index.php:190
 msgid "This type if event should always appear in the event lsiting. It is a live event (not deleted, ongoing or secondary.)"
-msgstr ""
+msgstr "Dit type event zal altijd zichtbaar zijn in de event lijsten. Het is een live event (niet verwijderd, lopend of secundair.)"
 
 #: ../includes/event_management/help.php:118
 msgid "This type of event can be hidden and used as a waiting list for a primary event. Template customizations may be required. For more information, please"
-msgstr ""
+msgstr "Dit event type kan worden verborgen en gebruikt worden als wachtlijst voor een eerste event. Sjabloon aanpassingen zijn nodig. Voor meer informatie kunt u"
 
 #: ../includes/event_management/help.php:125
 msgid "This type of an event can be set to appear in your event listings and display a registration page. Template customizations are required. For more information, please"
-msgstr ""
+msgstr "Dit event type kan worden ingesteld  om te verschijnen in uw event lijst en geeft een registratie pagina aan. Sjabloon aanpassingen zijn nodig. Voor meer informatie kunt u"
 
 #: ../includes/event_management/help.php:132
 msgid "This is event type will not appear in the event listings and will not dispaly a registrations page. Deleted events can still be accessed in the"
-msgstr ""
+msgstr "Dit event type zal niet verschijnen in de event lijst en zal niet worden getoond op de registratie pagina. Verwijderde events zijn nog steeds toegankelijk in de"
 
 #: ../includes/event_management/help.php:134
 msgid "page"
-msgstr ""
+msgstr "Pagina"
 
 #: ../includes/event_management/help.php:147
 msgid "Registration Dates/Times"
-msgstr ""
+msgstr "Registratie data/tijden"
 
 #: ../includes/event_management/help.php:150
 msgid "The event will automatically turn the registration form on and off between these dates and times."
-msgstr ""
+msgstr "Het event zal automatisch het registratie formulier aan- en uitzetten tussen deze data en tijden. "
 
 #: ../includes/event_management/help.php:155
 msgid "If the date of your event occurs before the regisration end date. Then the registation form will be displayed and also accept registrations."
-msgstr ""
+msgstr "Als de datum van uw event plaatsvindt vóór de registratie einddatum dan zal het registratie formulier worden weergeven en zal deze ook registraties accepteren. "
 
 #: ../includes/event_management/help.php:158
 msgid "All events require registration start/end dates and start/end times in order to display properly on your pages."
-msgstr ""
+msgstr "Bij alle events is registratie van begin- en einddata en begin en eindtijden vereist om dit  goed op uw pagina's te weergeven. "
 
 #: ../includes/event_management/help.php:173
 msgid "This is the date of the event."
-msgstr ""
+msgstr "Dit is de datum van het event"
 
 #: ../includes/event_management/help.php:176
 msgid "All events require a start and end date in order to display properly on your pages."
-msgstr ""
+msgstr "Alle events vereisen een begin en einddatum om dit goed te kunnen weergeven op uw pagina's. "
 
 #: ../includes/event_management/help.php:191
 msgid "Each event can have an unlimited amount of start/end times. This is useful for event/class organizers to manage several different sessions in their events."
-msgstr ""
+msgstr "Elk event kan een onbeperkt aantal begin- en eindtijden bevatten. Dit is handig voor event organisatoren om meerdere sessies binnen hun events te beheren. "
 
 #: ../includes/event_management/help.php:194
 msgid "All events require a start and end time in order to display properly on your pages."
-msgstr ""
+msgstr "Alle events vereisen een begin- en eindtijd om dit goed te kunnen weergeven op uw pagina's."
 
 #: ../includes/event_management/help.php:197
 msgid "Event times can be entered in the format of: 09:00/21:00  or 9am/9pm "
-msgstr ""
+msgstr "Event tijden kunnen worden toegevoegd in het formaat van: 09:00/21:00  of 9am/9pm"
 
 #: ../includes/event_management/help.php:212
 msgid "This is the current time of your website. The timezone and date/time formats can be changed in your <a href=\"options-general.php\" target=\"_blank\">WordPress settings</a>."
-msgstr ""
+msgstr "Dit is de huidige tijd op uw website. De tijdzone en datum/tijd sjablonen kunnen worden veranderd in uw <a href=\"options-general.php\" target=\"_blank\">WordPress settings</a>."
 
 #: ../includes/event_management/help.php:224
 msgid "Custom Ticket"
-msgstr ""
+msgstr "Aangepast ticket"
 
 #: ../includes/event_management/help.php:227
 msgid "Choose a ticket template to be used for this event. If no template is selected, the default template will be used. Templates can be created on the Tickets page."
-msgstr ""
+msgstr "Kies een ticket sjabloon om te gebruiken voor dit event. Als er geen sjabloon is geselecteerd zal het standaard sjabloon worden gebruikt. Sjablonen kunnen worden aangemaakt op de ticket pagina. "
 
 #: ../includes/event_management/help.php:235
 msgid "Using the Event Meta boxes"
-msgstr ""
+msgstr "Gebruik de event meta boxen"
 
 #: ../includes/event_management/help.php:238
 msgid "Event meta boxes allow you to add extra information to your event that you can display in your templates or use in your custom pages. The name parameter is the the first box labeled 'Key' and allows the shortcode to identify which meta box is to be displayed; the 'Value' is the actual content you wish to be shown."
-msgstr ""
+msgstr "Event meta dozen staan u toe om extra informatie toe te voegen aan uw event die u kunt weergeven in uw sjablonen of gebruiken in uw aangepaste pagina's. De naam parameter is het het eerste vakje 'Key' en laat de shortcode zien om te bepalen met welke meta box moet worden weergegeven, de 'Waarde' is de werkelijke inhoud die u wenst te laten zien. "
 
 #: ../includes/event_management/help.php:242
 msgid "This extra information can be displayed in your event listings or registration pages via shortcodes added to the event description. The Shortcodes take the form of:"
-msgstr ""
+msgstr "Deze extra informatie kan worden getoont in uw event lijst of registratie pagina's door shortcodes toe te voegen aan de event beschrijving. De shortcodes hebben de vorm van: "
 
 #: ../includes/event_management/help.php:248
 msgid "If you are using custom templates (moved to the uploads folder) you can add the shortcode directly to the template, this would take the form of:"
-msgstr ""
+msgstr "Als u gebruik maakt van aangepaste sjablonen (verplaatst naar de upload folder) dan kunt u direcht de shortcode toevoegen aan het sjabloon. Deze shortcode zal de vorm hebben van: "
 
 #: ../includes/event_management/help.php:251
 msgid "Adding Default Meta Key/Values"
-msgstr ""
+msgstr "Voeg een standaard meta sleutel/waarden toe"
 
 #: ../includes/event_management/help.php:253
 msgid "To add default meta values, add the following code to your theme-name/functions.php file."
-msgstr ""
+msgstr "Als u de standaard meta waarden wilt toevoegen, dan voegt u de volgende code toe aan je thema-naam/functie.php file."
 
 #: ../includes/event_management/help.php:264
 msgid "Further information on shortcodes is available "
-msgstr ""
+msgstr "Verder informatie over shortcodes zijn beschikbaar"
 
 #: ../includes/event_management/help.php:264
 msgid "on the Help &amp; Support page"
-msgstr ""
+msgstr "Op de help &amp; ondersteuning pagina"
 
 #: ../includes/event_management/help.php:264
 msgid " or from the"
-msgstr ""
+msgstr "of van de"
 
 #: ../includes/event_management/help.php:264
 msgid "forums"
-msgstr ""
+msgstr "forums"
 
 #: ../includes/event_management/help.php:272
 msgid "Using Custom Emails Editor"
-msgstr ""
+msgstr "Gebruik aangepaste email editor"
 
 #: ../includes/event_management/help.php:275
 msgid "This area is used to add a  customized email to your registration. You must select \"Yes\" in the \"Send custom confirmation emails for this event?\" and nothing should be selected in the \"Use a pre-existing email?\" dropdown."
@@ -7376,58 +7383,58 @@ msgstr ""
 
 #: ../includes/event_management/help.php:278
 msgid "Please be aware that clicking the HTML will destroy all formatting."
-msgstr ""
+msgstr "Houd er rekening mee dat door te klikken op de HTML alle opmaak vernietigd wordt. "
 
 #: ../includes/admin_screens/event_management.php:31
 msgid "Event Overview"
-msgstr ""
+msgstr "Event overzicht"
 
 #: ../includes/event_management/help.php:3
 msgid "If an alternate email address is entered. Admin email notifications wil be sent to this address instead."
-msgstr ""
+msgstr "Als er een alternatief email adress is ingevuld zullen admin e-mailberichten naar dit adres gestuurd worden."
 
 #: ../includes/event_management/temp.php:446
 #: ../includes/event_management/update_event.php:492
 msgid "General Admission"
-msgstr ""
+msgstr "Algemene toelating"
 
 #: ../includes/event_management/temp.php:447
 #: ../includes/event_management/update_event.php:493
 msgid "Members Admission"
-msgstr ""
+msgstr "Leden entree"
 
 #: ../includes/event_management/temp.php:458
 #: ../includes/event_management/update_event.php:501
 msgid "Free"
-msgstr ""
+msgstr "Gratis"
 
 #: ../includes/event_management/insert_event.php:410
 #: ../includes/event_management/temp.php:478
 #: ../includes/event_management/update_event.php:542
 msgid "There was error finding a post template. Please verify your post templates are available."
-msgstr ""
+msgstr "Er is een fout opgetreden tijdens het zoeken van bericht sjabloon. Controleer of u bericht sjablonen beschikbaar zijn."
 
 #: ../includes/event_management/insert_event.php:471
 #: ../includes/event_management/temp.php:25
 msgid "has been added for "
-msgstr ""
+msgstr "Is toegevoegd voor"
 
 #: ../includes/event_management/insert_event.php:471
 #: ../includes/event_management/temp.php:25
 msgid "Edit this event?"
-msgstr ""
+msgstr "Bewerk dit event?"
 
 #: ../includes/event_management/update_event.php:648
 msgid "Event details updated for"
-msgstr ""
+msgstr "Event details bijgewerkt voor"
 
 #: ../includes/event_management/update_event.php:656
 msgid "Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)"
-msgstr ""
+msgstr "Kan geen nieuwe zitplaats grafiek koppelen aan dit event. (Stoelen van de huidige zitplaatsen kaart zou kunnen zijn gebruikt door een aantal deelnemers)"
 
 #: ../includes/form-builder/groups/edit_group.php:31
 msgid "Edit Group - "
-msgstr ""
+msgstr "Bewerk groep -"
 
 #: ../includes/form-builder/groups/edit_group.php:52
 msgid "Group Identifier:"
@@ -7435,90 +7442,90 @@ msgstr ""
 
 #: ../includes/form-builder/groups/edit_group.php:83
 msgid "Selected Questions for group<span class=\"info\"> Uncheck box to remove question from group</span>"
-msgstr ""
+msgstr "Geselecteerde vragen voor een groep <span class=\"info\"> Haal het vinkje weg bij de box om vragen van de groep te verwijderen</span>"
 
 #: ../includes/form-builder/groups/edit_group.php:121
 msgid "Add further questions to group"
-msgstr ""
+msgstr "Voeg verdere vragen van de groep toe"
 
 #: ../includes/form-builder/groups/update_group.php:38
 msgid "There was an error in your submission of group"
-msgstr ""
+msgstr "Er is een fout opgetreden in uw inzending van de groep"
 
 #: ../includes/form-builder/groups/update_group.php:38
 msgid " The group was not updated!"
-msgstr ""
+msgstr "De groep is niet bijgewerkt!"
 
 #: ../includes/form-builder/questions/edit_question.php:31
 msgid "Edit Question"
-msgstr ""
+msgstr "Bewerk vraag"
 
 #: ../includes/form-builder/questions/edit_question.php:35
 msgid "Edit the question using the form below.  By default all participants will be asked for their first name, last name, and email address."
-msgstr ""
+msgstr "Bewerk de vraag door het formulier hieronder te gebruiken. Standaard worden alle deelnemers gevraag om hun voornaam, achternaam en email adres in te vullen. "
 
 #: ../includes/form-builder/questions/edit_question.php:38
 msgid "Attention: This is a \"System Question\", some settings may be disabled."
-msgstr ""
+msgstr "Let op: Dit is een \"System vraag\", sommige instellingen kunnen zijn uitgeschakeld."
 
 #: ../includes/form-builder/questions/edit_question.php:105
 msgid "Admin View Only"
-msgstr ""
+msgstr "Alleen zichtbaar voor admin"
 
 #: ../includes/form-builder/questions/edit_question.php:119
 msgid "Only the administrator can see this field."
-msgstr ""
+msgstr "Alleen de beheerder kan dit veld zien. "
 
 #: ../includes/form-builder/questions/edit_question.php:130
 msgid "Text displayed if not completed."
-msgstr ""
+msgstr "Tekst weergeven als het niet voltooid is."
 
 #: ../includes/form-builder/questions/edit_question.php:159
 msgid "Nothing found!"
-msgstr ""
+msgstr "Niets gevonden!"
 
 #: ../includes/form-builder/questions/update_question.php:20
 msgid " was not updated ."
-msgstr ""
+msgstr "Is niet bijgewerkt."
 
 #: ../includes/functions/attendee_functions.php:62
 msgid "Form Questions:"
-msgstr ""
+msgstr "Vragen formulier:"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:536
 msgid "Confirm and go to payment page"
-msgstr ""
+msgstr "Bevestig en ga naar de betaling pagina"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:538
 msgid "<span> - OR - <span>"
-msgstr ""
+msgstr "<span> - of - <span>"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:766
 msgid "Add to cart"
-msgstr ""
+msgstr "Voeg toe aan winkelwagen"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:781
 msgid "View Cart"
-msgstr ""
+msgstr "Winkelwagen overzicht"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:809
 msgid "It looks like you are attempting to refresh a page after completing your registration or your cart is empty.  Please go to the events page and try again."
-msgstr ""
+msgstr "Het lijkt erop dat u probeert om een pagina te vernieuwen na het voltooien van uw inschrijven of uw winkelwagen is nog leeg. Ga naar de evenementen pagina en probeer opnieuw."
 
 #: ../includes/functions/pricing.php:216
 #: ../includes/functions/pricing.php:306
 msgid " Early Pricing"
-msgstr ""
+msgstr "Vroege prijzen"
 
 #: ../../event-espresso.3.1.21.P/includes/functions/cart.php:931
 msgid "You can register a maximum of %d attendees for this event."
-msgstr ""
+msgstr "U kunt maximaal %d deelnemers registreren voor dit evenement. "
 
 #: ../includes/functions/pricing.php:107
 #: ../includes/functions/pricing.php:110
 #: ../includes/functions/pricing.php:369
 msgid "Free Event"
-msgstr ""
+msgstr "Gratis event"
 
 #: ../includes/functions/pricing.php:370
 msgid "free event"

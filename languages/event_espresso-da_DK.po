@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Event Espresso package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2012-03-30 16:57-0700\n"
+"PO-Revision-Date: 2012-04-17 12:47-0700\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,562 +15,567 @@ msgstr ""
 "X-Poedit-Language: Danish\n"
 "X-Poedit-Country: DENMARK\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ..\n"
 
 #: ../includes/process-registration/ticket_selector.php:538
 msgid "We're sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets."
-msgstr ""
+msgstr "Vi beklager, men der er kun %s pladser til rådighed ved dette arrangement. Venligst gå tilbage ret antallet af billetter."
 
 #: ../../event-espresso.3.1.21.P/templates/multi_registration_page_display.php:20
 msgid "%d attendee"
-msgstr ""
+msgstr "%d deltager"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:785
 msgid "%s event was "
-msgstr ""
+msgstr "%s arrangementet var"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:109
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:130
 msgid "%s attendee  "
-msgstr ""
+msgstr "%s deltager"
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_list.template.php:27
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:37
 msgid "%s item,  "
-msgstr ""
+msgstr "%s vare,"
 
 #: ../includes/admin-files/email-manager/add_new_email.php:5
 #: ../includes/admin-files/email-manager/edit_email.php:16
 msgid "Confirmation"
-msgstr ""
+msgstr "Bekræftelse"
 
 #: ../includes/admin-files/admin_screens/event_management.php:10
 msgid "Event Options"
-msgstr ""
+msgstr "Arrangement valgmuligheder"
 
 #: ../templates/event_list.php:444
 msgid "Member Only Event. Please "
-msgstr ""
+msgstr "Kun for medlemmer. Venligst"
 
 #: ../templates/event_list_display.php:85
 msgid "Sorry. This Event is sold out."
-msgstr ""
+msgstr "Beklager, dette arrangement er udsolgt"
 
 #: ../templates/event_list.php:509
 msgid "This Event is no longer open for registration."
-msgstr ""
+msgstr "Arrangementet er ikke længere åbent for tilmelding"
 
 #: ../gateways/gateway_display.php:18
 msgid "Please select your method of payment:"
-msgstr ""
+msgstr "Venligst vælg betalingsmetode:"
 
 #: ../gateways/aim/payment.php:18
 msgid "Billing Address"
-msgstr ""
+msgstr "Faktureringsadresse"
 
 #: ../gateways/aim/payment.php:69
 msgid "Expiry Date"
-msgstr ""
+msgstr "Udløbsdato"
 
 #: ../gateways/aim/payment.php:88
 msgid "(mm/yy)"
-msgstr ""
+msgstr "(mm/åå)"
 
 #: ../gateways/aim/payment.php:179
 msgid "Zip Code"
-msgstr ""
+msgstr "Postnr."
 
 #: ../gateways/aim/payment.php:191
 msgid "Credit Card Number"
-msgstr ""
+msgstr "Kortnr."
 
 #: ../gateways/aim/payment.php:215
 msgid "Expiry Date Month"
-msgstr ""
+msgstr "Udløbsdato måned"
 
 #: ../gateways/aim/payment.php:227
 msgid "Expiry Date Year"
-msgstr ""
+msgstr "Udløbsdato år"
 
 #: ../includes/admin-files/admin_screens/event_management.php:19
 msgid "Attendee Pre-Approval"
-msgstr ""
+msgstr "Deltager pre-godkendelse"
 
 #: ../includes/admin_screens/admin_menu.php:219
 msgid "Event Espresso - Pricing Manager"
-msgstr ""
+msgstr "Event Espresso - Priser"
 
 #: ../includes/admin_screens/admin_menu.php:219
 msgid "Pricing"
-msgstr ""
+msgstr "Priser"
 
 #: ../includes/admin_screens/admin_screen.php:93
 msgid "Add a Price"
-msgstr ""
+msgstr "Tilføj en pris"
 
 #: ../includes/admin_screens/admin_screen.php:97
 msgid "Edit Price"
-msgstr ""
+msgstr "Rediger pris"
 
 #: ../includes/admin_screens/admin_screen.php:101
 msgid "Add a Price Type"
-msgstr ""
+msgstr "Tilføj en pristype"
 
 #: ../includes/admin_screens/admin_screen.php:104
 msgid "Edit Price Type"
-msgstr ""
+msgstr "Rediger pris type"
 
 #: ../includes/admin_screens/pricing.php:11
 msgid "Manage Prices"
-msgstr ""
+msgstr "Håndtér priser"
 
 #: ../includes/admin_screens/pricing.php:16
 #: ../includes/admin_screens/pricing.php:80
 msgid "Add New Price"
-msgstr ""
+msgstr "Tilføj ny pris"
 
 #: ../includes/admin_screens/pricing.php:17
 msgid "Add New Type"
-msgstr ""
+msgstr "Tilføj ny type"
 
 #: ../includes/admin_screens/pricing.php:38
 msgid "Globally Active?"
-msgstr ""
+msgstr "Aktivering globalt?"
 
 #: ../includes/admin_screens/pricing.php:78
 msgid "Delete Price"
-msgstr ""
+msgstr "Slet pris"
 
 #: ../includes/admin_screens/pricing.php:91
 msgid "Tax?"
-msgstr ""
+msgstr "Moms?"
 
 #: ../includes/admin_screens/pricing.php:92
 msgid "Percent?"
-msgstr ""
+msgstr "Procent?"
 
 #: ../includes/admin_screens/pricing.php:93
 msgid "Global?"
-msgstr ""
+msgstr "Global?"
 
 #: ../includes/admin_screens/pricing.php:94
 msgid "Order"
-msgstr ""
+msgstr "Ordre"
 
 #: ../includes/admin_screens/pricing.php:136
 msgid "Delete Price Type"
-msgstr ""
+msgstr "Slet pris type"
 
 #: ../includes/admin_screens/pricing.php:138
 msgid "Add New Price Type"
-msgstr ""
+msgstr "Tilføj ny pristype"
 
 #: ../includes/classes/EE_Cart.class.php:667
 msgid "All events have been successfully removed from the Event Queue."
-msgstr ""
+msgstr "Alle arrangementer er fjernet fra køen"
 
 #: ../includes/classes/EE_Cart.class.php:674
 msgid "An error occured! No Events could be removd from the Queue!"
-msgstr ""
+msgstr "Der opstod en fejl. Ingen arrangementer kunne fjernes fra køen!"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:720
 msgid "No payment required.<br/>Please click \"Confirm Registration\" below to complete the registration process."
-msgstr ""
+msgstr "Betaling ikke nødvendig.<br/>Venligst klik \"Bekræft tilmelding\" herunder for at færdiggøre din tilmelding."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:833
 msgid "Attendee information submitted successfully."
-msgstr ""
+msgstr "Deltager information er nu indsendt"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:837
 msgid "An error occured! No valid question responses were received."
-msgstr ""
+msgstr "Der opstod en fejl! Ingen svar er modtaget."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:881
 msgid "Registration Step 2 completed"
-msgstr ""
+msgstr "Tilmeldingens trin 2 er fuldført"
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:1045
 msgid "Billing information submitted successfully"
-msgstr ""
+msgstr "Faktureringsinformation er indsendt."
 
 #: ../includes/classes/EE_Single_Page_Checkout.class.php:1128
 msgid "Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of it's three), and try again."
-msgstr ""
+msgstr "Beklager, men du har ikke indtastet anti-spam sætningen.<br/>Venligst forny ReCaptcha (den øverste knap), og prøv igen."
 
 #: ../includes/classes/EE_Validate_and_Sanitize.class.php:329
 msgid "An error occured! No post data was passed to the validator. Please click your browser's back button and try again. If the problem persists, contact customer support."
-msgstr ""
+msgstr "Der opstod en fejl! Ingen data blev videresendt. Venligst klik Tilbage i din browser og prøv igen. Kontakt kundeservice hvis problemet fortsætter."
 
 #: ../includes/event_management/edit_event.php:64
 msgid "Event Editor"
-msgstr ""
+msgstr "Arrangement editor"
 
 #: ../includes/event_management/help.php:113
 msgid "This type if event will appear in the event listings. It is a live event (not deleted, ongoing or secondary.)"
-msgstr ""
+msgstr "Denne type arrangement fremkommer i arrangement lister. Det er et aktivt arrangement (dvs. ikke slettet, igangværende eller sekundært)."
 
 #: ../includes/prices_management/index.php:38
 msgid "Price Types have been successfully deleted."
-msgstr ""
+msgstr "Pristyperne er nu slettet."
 
 #: ../includes/prices_management/index.php:73
 msgid "Prices have been successfully deleted."
-msgstr ""
+msgstr "Priserne er nu slettet."
 
 #: ../includes/prices_management/index.php:111
 #: ../includes/prices_management/index.php:113
 #: ../includes/prices_management/index.php:132
 #: ../includes/prices_management/index.php:134
 msgid "The price"
-msgstr ""
+msgstr "Prisen"
 
 #: ../includes/prices_management/index.php:154
 #: ../includes/prices_management/index.php:156
 #: ../includes/prices_management/index.php:175
 #: ../includes/prices_management/index.php:177
 msgid "The price type"
-msgstr ""
+msgstr "Pristypen"
 
 #: ../includes/prices_management/postboxes.php:27
 msgid "You have no price types defined. Please add a price type before adding a price."
-msgstr ""
+msgstr "Der er ikke oprettet nogen pristyper. Venligst tilføj en pristype før du går igang med at oprette priser."
 
 #: ../includes/prices_management/postboxes.php:42
 msgid "Price Name"
-msgstr ""
+msgstr "Prisnavn"
 
 #: ../includes/prices_management/postboxes.php:48
 msgid "Price Amount"
-msgstr ""
+msgstr "Pris beløb"
 
 #: ../includes/prices_management/postboxes.php:54
 msgid "Price Type"
-msgstr ""
+msgstr "Pris type"
 
 #: ../includes/prices_management/postboxes.php:60
 msgid "Globally Active"
-msgstr ""
+msgstr "Aktiver globalt"
 
 #: ../includes/prices_management/postboxes.php:123
 msgid "Price Type Name"
-msgstr ""
+msgstr "Pristype navn"
 
 #: ../includes/prices_management/postboxes.php:129
 msgid "Price Type Order"
-msgstr ""
+msgstr "Pristype ordre"
 
 #: ../includes/prices_management/postboxes.php:135
 msgid "Is Type a tax?"
-msgstr ""
+msgstr "Er typen en moms?"
 
 #: ../includes/prices_management/postboxes.php:141
 msgid "Is Type applied as a percentage?"
-msgstr ""
+msgstr "Er typen en procent?"
 
 #: ../includes/prices_management/postboxes.php:147
 msgid "Is Type to be applied globally?"
-msgstr ""
+msgstr "Skal typen tilføjes globalt?"
 
 #: ../includes/process-registration/ticket_selector.php:320
 msgid "You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again."
-msgstr ""
+msgstr "Du skal vælge billetantal før du kan fortsætte.<br/>Venligst gå tilbage og prøv igen."
 
 #: ../includes/process-registration/ticket_selector.php:328
 msgid "An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again."
-msgstr ""
+msgstr "Der opstod en fejl. Arrangementets id er ikke oprettet eller blev ikke modtaget.<br/>Venligst gå tilbage og prøv igen."
 
 #: ../includes/process-registration/ticket_selector.php:542
 msgid "We're sorry, but there are no available spaces left for this event"
-msgstr ""
+msgstr "Vi beklager, men der er ikke flere pladser tilbage ved dette arrangement."
 
 #: ../templates/event_list_display.php:51
 msgid "Registration &amp; Ticket Information"
-msgstr ""
+msgstr "Tilmelding &amp; Billet information"
 
 #: ../templates/event_list_display.php:103
 msgid "Event Information"
-msgstr ""
+msgstr "Arrangement information"
 
 #: ../templates/event_list_display.php:125
 msgid "Description: "
-msgstr ""
+msgstr "Beskrivelse:"
 
 #: ../templates/event_list_display.php:134
 msgid "click here for more details about "
-msgstr ""
+msgstr "click her for flere detaljer vedr."
 
 #: ../templates/event_list_display.php:137
 msgid "click for more details"
-msgstr ""
+msgstr "click for flere detaljer"
 
 #: ../templates/registration_page_display.php:134
 #: ../templates/registration_page_display.php:142
 msgid "Submit Registration"
-msgstr ""
+msgstr "Indsend tilmelding"
 
 #: ../templates/reg_page_checkout/confirmation_page.template.php:5
 msgid "Event #"
-msgstr ""
+msgstr "Arrangement #"
 
 #: ../templates/reg_page_checkout/confirmation_page.template.php:35
 msgid "Billing Details"
-msgstr ""
+msgstr "Faktureringsinformation"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:4
 msgid "Step 1 -  Attendee Information"
-msgstr ""
+msgstr "Trin 1 - Deltager information"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:10
 msgid ""
 " In order to process your registration, we ask you to provide the following information.<br/>\n"
 "\t\tPlease note that all fields marked with an asterisk (<span class=\"asterisk\">*</span>) are required."
 msgstr ""
+"Før vi kan behandle din tilmelding, bedes du give følgende information.<br/>\n"
+" → → Venligst bemærk at alle felter markeret med stjerne (<span class=\"asterisk\">*</span>) er obligatoriske."
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:51
 msgid "Use Attendee #1's information for ALL attendees"
-msgstr ""
+msgstr "Brug deltager #1's information for alle deltagere"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:56
 msgid "This option allows you to use the above information for all additional attendee question fields. <span>( Please note that some events may have additional questions that you may still be required to answer in order to complete your registration. )</span>"
-msgstr ""
+msgstr "Dette giver dig mulighed for at bruge ovenstående information for alle yderligere felter.<span>(Venligst bemærk at nogle arrangementer kan have yderligere spørgsmål som du stadig skal besvare for at færdiggøre din tilmelding.)</span>"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:58
 msgid "more options"
-msgstr ""
+msgstr "flere valgmuligheder"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:61
 msgid "less options"
-msgstr ""
+msgstr "færre valgmuligheder"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:62
 msgid "The following checkboxes allow you to use the above information for only the selected additional event attendees."
-msgstr ""
+msgstr "Nedenstående kan du bruge til at vælge om ovenstående information kun skal benyttes for udvalgte deltagere."
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:73
 msgid "Attendee #"
-msgstr ""
+msgstr "Deltager #"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:100
 msgid "No information is required to attend this event. Please proceed to Step 2"
-msgstr ""
+msgstr "Ingen information er nødvendig for at deltage i dette arrangement. Venligst fortsæt til trin 2"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:121
 msgid "Registration&nbsp;Step&nbsp;2&nbsp;"
-msgstr ""
+msgstr "Tilmelding&nbsp;Trin&nbsp;2&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_1.template.php:129
 msgid "Registration&nbsp;Step&nbsp;2"
-msgstr ""
+msgstr "Tilmelding&nbsp;Trin&nbsp;2"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:4
 msgid "Step 2 - Payment Options"
-msgstr ""
+msgstr "Trin 2 - Betalings valgmuligheder"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:17
 msgid "Important Notice:"
-msgstr ""
+msgstr "Vigtig information:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:18
 msgid "The following events require attendee pre-approval and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. If this is a free event, then no billing will occur."
-msgstr ""
+msgstr "Disse arrangementer kræver forhåndsgodkendelse af deltagere, og disse bliver derfor ikke afkrævet betaling under tilmeldingen. Betaling sker først når deltageren er godkendt af de ansvarlige. Hvis dette er et gratis arrangement, opkræves ingen betaling."
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:19
 msgid "Events Requiring Pre-Approval:"
-msgstr ""
+msgstr "Arrangementer der kræver forhåndsgodkendelse:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:32
 msgid "Discount Codes"
-msgstr ""
+msgstr "Rabatkoder"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:35
 msgid "Enter discount code"
-msgstr ""
+msgstr "Angiv rabatkoder"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:38
 msgid "apply&nbsp;coupon&nbsp;"
-msgstr ""
+msgstr "tilføj&nbsp;kupon&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:43
 msgid "Enter any coupon codes (including Groupons) you have into the above text field and then click apply coupon. Additional coupon codes can be entered one at a time."
-msgstr ""
+msgstr "Angiv eventuelle kuponkoder (inkl. gruponer) i ovenstående tekstfelt og klik tilføj kupon. Yderligere kuponkoder kan indtastes én ad gangen."
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:52
 msgid "Discounts:"
-msgstr ""
+msgstr "Rabatter:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:56
 msgid "Billable Registrations:"
-msgstr ""
+msgstr "Fakturerbare tilmeldmelinger:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:58
 msgid "Total Amount Due: "
-msgstr ""
+msgstr "Total skyldig beløb:"
 
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:71
 #: ../templates/reg_page_checkout/registration_page_step_2.template.php:79
 msgid "Registration&nbsp;Step&nbsp;3&nbsp;"
-msgstr ""
+msgstr "Tilmelding&nbsp;Trin&nbsp;3&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:4
 msgid "Step 3 - Registration Confirmation"
-msgstr ""
+msgstr "Trin 3 - Tilmelding bekræftelse"
 
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:25
 #: ../templates/reg_page_checkout/registration_page_step_3.template.php:33
 msgid "YES!&nbsp;Confirm&nbsp;Registration&nbsp;"
-msgstr ""
+msgstr "JA!&nbsp;Bekræft&nbsp;tilmelding&nbsp;"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:4
 msgid "loading..."
-msgstr ""
+msgstr "henter..."
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:17
 msgid " Steps"
-msgstr ""
+msgstr "Trin"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:20
 msgid "Attendee<br/>&nbsp;Information"
-msgstr ""
+msgstr "Deltager<br/>&nbsp;information"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:25
 msgid "Payment<br/>&nbsp;Options"
-msgstr ""
+msgstr "Betaling<br/>&nbsp;valgmuligheder"
 
 #: ../templates/reg_page_checkout/registration_page_wrapper.template.php:29
 msgid "Registration<br/>&nbsp;Confirmation"
-msgstr ""
+msgstr "Tilmelding<br/>&nbsp;bekræftelse"
 
 #: ../templates/ticket_selector/ticket_selector_chart.template.php:1
 msgid "Ticket Options"
-msgstr ""
+msgstr "Billet valgmuligheder"
 
 #: ../templates/ticket_selector/ticket_selector_chart.template.php:34
 msgid "Ticket Price"
-msgstr ""
+msgstr "Billetpris"
 
 #: ../templates/ticket_selector/ticket_selector_threaded_chart.template.php:52
 msgid "Time : "
-msgstr ""
+msgstr "Tid:"
 
 #: ../../event-espresso.3.1/includes/functions/main.php:162
 msgid "Additional Attendee #"
-msgstr ""
+msgstr "Yderligere deltager #"
 
 #: ../../espresso-members.1.9/member_functions.php:396
 msgid " (including "
-msgstr ""
+msgstr "(inkl.)"
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:675
 msgid "An additional attendee was successfully added for this event."
-msgstr ""
+msgstr "En deltager mere blev tilføjet dette arrangement."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:678
 msgid "An error occured! An additional attendee could not be added for this event. Please refresh the page and try it again."
-msgstr ""
+msgstr "Der opstod en fejl! Den ekstra deltager kunne ikke tilføjes dette arrangement. Venligst genindlæs siden og prøv igen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:682
 msgid "We're sorry, but there are no available spaces left for this event. No additional attendees can be added."
-msgstr ""
+msgstr "Vi beklager, men der er ikke flere pladser ved dette arrangement. Der kan ikke tilføjes yderligere deltagere."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:696
 msgid "An error occured! No quantity was specified, therefore an additional attendee could not be added. Please refresh the page and try again."
-msgstr ""
+msgstr "Der opstod en fejl. Der er ikke specificeret et antal og derfor kan yderligere deltagere ikke tilføjes. Venligst genindlæs siden og prøv igen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:700
 msgid "An error occured! No line item was specified, therefore an additional attendee could not be added. Please refresh the page and try again."
-msgstr ""
+msgstr "Der opstod en fejl. Ingen linie blev specificeret og derfor kan yderligere deltagere ikke tilføjes. Venligst genindlæg siden og prøv igen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:739
 msgid "An attendee was successfully removed from this event."
-msgstr ""
+msgstr "En deltager blev fjernet fra dette arrangement."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:742
 msgid "An error occured! No attendees could be removed for this event. Please refresh the page and try again."
-msgstr ""
+msgstr "Der opstod en fejl! Kunne ikke fjerne deltageren. Venligst genindlæs siden og prøv igen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:746
 msgid "Attendee quantity must be at least one for each event. If you wish to remove this event from the Event Queue, click on the trash can icon."
-msgstr ""
+msgstr "Deltagerantal skal være mindst 1 for hvert arrangement. Hvis du ønsker at fjerne arrangementet, skal du klikke på affaldskurv ikonet."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:750
 msgid "An error occured! No quantity was specified, therefore no attendees could be removed. Please refresh the page and try again."
-msgstr ""
+msgstr "Der opstod en fejl! Der er ikke angivet et antal og ingen deltagere kunne derfor fjernes. Venligst genindlæs siden og prøv igen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:754
 msgid "An error occured! No line item was specified, therefore no attendees could be removed. Please refresh the page and try again."
-msgstr ""
+msgstr "Der opstod en fejl! Ingen række er specificeret, og derfor kunne ingen deltagere fjernes. Venligt genindlæs siden og prøv igen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:785
 msgid "successfully removed from the Event Queue"
-msgstr ""
+msgstr "fjernet fra arrangement køen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:788
 msgid "An error occured! The event was not removed from the Event Queue"
-msgstr ""
+msgstr "Der opstod en fejl! Arrangementet blev ikke fjernet fra køen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:792
 msgid "An error occured! No line item was specified, therefore no event was not removed from the Event Queue. Please refresh the page and try again."
-msgstr ""
+msgstr "Der opstod en fejl! Ingen række er specificeret og derfor blev arrangementet ikke fjernet. Venligst genindlæs siden og prøv igen."
 
 #: ../../espresso-multi-event.trunk/EE_MER_Frontend.class.php:821
 msgid "An error occured! The Event Queue could not be emptied!"
-msgstr ""
+msgstr "Der opstod en fejl! Kunne ikke tømme arrangement køen!"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:50
 msgid "A widget for displaying Event Espresso regsitrations and purchases."
-msgstr ""
+msgstr "En widget til visning af Event Espresso tilmeldinger og køb."
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:75
 msgid "Mini Cart Title:"
-msgstr ""
+msgstr "Mini kurv titel:"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:78
 msgid "Display content for the following carts:"
-msgstr ""
+msgstr "Vis indhold for følgende kurve:"
 
 #: ../../espresso-multi-event.trunk/EE_Minicart_widget.class.php:131
 msgid "Mini Cart Template:"
-msgstr ""
+msgstr "Mini kurv skabelon:"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:48
 msgid "Date & Time"
-msgstr ""
+msgstr "Dato & tid"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:51
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:106
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:129
 msgid "Grand Total: "
-msgstr ""
+msgstr "Grantotal"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:135
 msgid "remove all events from event queue"
-msgstr ""
+msgstr "fjern alle arrangementer fra arrangement køen"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:146
 msgid "&nbsp;Return&nbsp;to&nbsp;Events&nbsp;List"
-msgstr ""
+msgstr "&nbsp;Retur&nbsp;til&nbsp;Arrangementlisten"
 
 #: ../../espresso-multi-event.trunk/templates/event_queue.template.php:152
 msgid "&nbsp;Proceed&nbsp;to&nbsp;Registration"
-msgstr ""
+msgstr "&nbsp;Fortsæt&nbsp;til&nbsp;Tilmelding"
 
 #: ../../espresso-multi-event.trunk/templates/view_event_queue_btn.template.php:2
 msgid "This event has already been added to the Event Queue."
-msgstr ""
+msgstr "Dette arrangement er allerede tilføjet til arrangement køen."
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:57
 msgid "empty event queue"
-msgstr ""
+msgstr "tom arrangement kø"
 
 #: ../../espresso-multi-event.trunk/templates/widget_minicart_table.template.php:70
 msgid "View Event Queue"
-msgstr ""
+msgstr "Vis arrangement kø"
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:14
 msgid "An error occured and the Groupon Code(s) could not be exported from the database."
-msgstr ""
+msgstr "Der opstod en fejl og grupon kode(r) kunne ikke eksporteres fra databasen."
 
 #: ../../espresso-groupons.1.6/groupons_admin_page.php:87
 msgid "Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database."
