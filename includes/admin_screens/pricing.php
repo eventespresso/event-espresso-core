@@ -1,18 +1,25 @@
 <?php
 
 function espresso_price_manager_menu() {
+
 	global $org_options;
+	
 	$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 	);
-	$_REQUEST['action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
+	
+	$_REQUEST['action'] = isset($_REQUEST['action']) ? wp_strip_all_tags( $_REQUEST['action'] ) : NULL;
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "prices_management/index.php");
-	?>
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+	$PRT = EEM_Price_Type::instance();
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+	$PRC = EEM_Price::instance();
+?>
 	<div class="wrap">
 		<div id="icon-options-event" class="icon32"> </div>
 		<h2>
-			<?php _e('Manage Prices', 'event_espresso'); ?>
+			<?php _e('Manage Event Pricing', 'event_espresso'); ?>
 			<?php
 			if ($_REQUEST['action'] != 'edit'
 							&& $_REQUEST['action'] != 'add_new_price'
@@ -22,6 +29,7 @@ function espresso_price_manager_menu() {
 			}
 			?>
 		</h2>
+		
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
 			<div id="side-info-column" class="inner-sidebar">
 				<?php do_meta_boxes('event-espresso_page_event_prices', 'side', null); ?>
@@ -29,28 +37,40 @@ function espresso_price_manager_menu() {
 			<div id="post-body">
 				<div id="post-body-content">
 					<?php
-					espresso_prices_admin_helper();
-					do_meta_boxes('event-espresso_page_event_prices', 'normal', null);
+					//espresso_prices_admin_helper();
+					//do_meta_boxes('event-espresso_page_event_prices', 'normal', null);
 					?>
+					<h2><?php _e('Prices', 'event_espresso'); ?></h2>
+					<p><?php _e('Take total control of your event pricing', 'event_espresso'); ?></p>
 					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 						<table id="table" class="widefat manage-discounts">
 							<thead>
 								<tr>
 									<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:2.5%;"><input type="checkbox"></th>
-									<th class="manage-column column-comments num" id="id" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort"><?php _e('ID', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRC_name" scope="col" title="Click to Sort" style="width:20%;"><?php _e('Name', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRC_amount" scope="col" title="Click to Sort" style="width:20%;"><?php _e('Amount', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRT_name" scope="col" title="Click to Sort" style="width:20%;"><?php _e('Type', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRC_is_active" scope="col" title="Click to Sort" style="width:20%;"><?php _e('Globally Active?', 'event_espresso'); ?></th>
+									<th class="manage-column column-comments num" id="id" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort">
+										<?php _e('ID', 'event_espresso'); ?>
+									</th>
+									<th class="manage-column column-title" id="PRC_name" scope="col" title="Click to Sort" style="width:20%;">
+										<?php _e('Name', 'event_espresso'); ?>
+									</th>
+									<th class="manage-column column-title" id="PRC_amount" scope="col" title="Click to Sort" style="width:20%; text-align:center;"">
+										<?php _e('Amount', 'event_espresso'); ?>
+									</th>
+									<th class="manage-column column-title" id="PRT_name" scope="col" title="Click to Sort" style="width:20%;">
+										<?php _e('Price Type', 'event_espresso'); ?>
+									</th>
+									<th class="manage-column column-title" id="PRC_is_active" scope="col" title="Click to Sort" style="width:20%; text-align:center;"">
+										<?php _e('Active?', 'event_espresso'); ?>
+									</th>
 								</tr>
 							</thead>
+							<tbody>
 							<?php
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-							$PRT = EEM_Price_Type::instance();
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-							$PRC = EEM_Price::instance();
-							if ($prices = $PRC->get_all_prices()) {
-								foreach ($prices as $price) {
+
+						if ($prices = $PRC->get_all_prices_for_pricing_admin()) {			
+//						echo printr( $prices, '$prices' );		
+//						echo printr( $PRT->type, '$PRT->type' );		
+							foreach ($prices as $price ) {
 									?>
 									<tr>
 										<td class="check-column" style="padding:7px 0 22px 5px; vertical-align:top;"><input name="checkbox[<?php echo $price->ID(); ?>]" type="checkbox"  title="Delete <?php echo stripslashes_deep($price->name()); ?>"></td>
@@ -62,20 +82,28 @@ function espresso_price_manager_menu() {
 														<?php _e('Delete', 'event_espresso'); ?>
 													</a></span> </div>
 										</td>
-										<td>
-											<?php echo $org_options['currency_symbol'] . $price->amount(); ?>
+										<td style="text-align:center;">
+											<?php 
+												if ( $PRT->type[$price->type()]->is_percent() ) {
+													echo number_format( $price->amount(), 1 ) . '%'; 
+												} else {
+													echo $org_options['currency_symbol'] . number_format( $price->amount(), 2 ); 
+												}
+												
+											?>
 										</td>
 										<td>
 											<?php echo $PRT->type[$price->type()]->name(); ?>
 										</td>
-										<td>
-											<?php echo ($price->is_active()) ? "Yes" : "No"; ?>
+										<td style="text-align:center;">
+											<?php echo ($price->is_active()) ? 'Yes' : ''; ?>
 										</td>
+									</tr>
 										<?php
 									}
 								}
 								?>
-								</tbody>
+							</tbody>
 						</table>
 						<div style="clear:both">
 							<p>
@@ -89,19 +117,33 @@ function espresso_price_manager_menu() {
 								</a> </p>
 						</div>
 					</form>
+					<h2>Price Types</h2>
 					<form id="form2" name="form2" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 						<table id="table" class="widefat manage-discounts">
 							<thead>
 								<tr>
 									<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:2.5%;"><input type="checkbox"></th>
-									<th class="manage-column column-comments num" id="PRT_ID" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort"><?php _e('ID', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRT_name" scope="col" title="Click to Sort" style="width:20%;"><?php _e('Name', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRT_is_tax" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Tax?', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRT_is_percent" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Percent?', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRT_is_global" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Global?', 'event_espresso'); ?></th>
-									<th class="manage-column column-title" id="PRT_order" scope="col" title="Click to Sort" style="width:10%;"><?php _e('Order', 'event_espresso'); ?></th>
+									<th class="manage-column column-comments num" id="PRT_ID" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort">
+										<?php _e('ID', 'event_espresso'); ?>
+									</th>
+									<th class="manage-column column-title" id="PRT_name" scope="col" title="Click to Sort" style="width:20%;">
+										<?php _e('Name', 'event_espresso'); ?>
+									</th>
+									<th class="manage-column column-title" id="PRT_is_tax" scope="col" title="Click to Sort" style="width:10%; text-align:center;">
+										<?php _e('Applied as Tax<br />to Totals', 'event_espresso'); ?>
+									</th>
+									<th class="manage-column column-title" id="PRT_is_percent" scope="col" title="Click to Sort" style="width:10%; text-align:center;">
+										<?php echo __('Applied as<br />% or ', 'event_espresso') . $org_options['currency_symbol']; ?>
+									</th>
+									<th class="manage-column column-title" id="PRT_is_global" scope="col" title="Click to Sort" style="width:10%; text-align:center;">
+										<?php _e('Apply to ALL<br />New Events?', 'event_espresso'); ?>
+									</th>
+									<th class="manage-column column-title" id="PRT_order" scope="col" title="Click to Sort" style="width:10%; text-align:center;">
+										<?php _e('Order of<br />Application', 'event_espresso'); ?>
+									</th>
 								</tr>
 							</thead>
+							<tbody>
 							<?php
 							foreach ($PRT->type as $type) {
 								?>
@@ -132,22 +174,23 @@ function espresso_price_manager_menu() {
 											</span>
 										</div>
 									</td>
-									<td>
-										<?php echo ($type->is_tax()) ? "Yes" : "No"; ?>
+									<td style="text-align:center;">
+										<?php echo ($type->is_tax()) ? 'Yes' : ''; ?>
 									</td>
-									<td>
-										<?php echo ($type->is_percent()) ? "Yes" : "No"; ?>
+									<td style="text-align:center;">
+										<?php echo ($type->is_percent()) ? '%' : $org_options['currency_symbol']; ?>
 									</td>
-									<td>
-										<?php echo ($type->is_global()) ? "Yes" : "No"; ?>
+									<td style="text-align:center;">
+										<?php echo ($type->is_global()) ? 'Yes' : ''; ?>
 									</td>
-									<td>
+									<td style="text-align:center;">
 										<?php echo $type->order(); ?>
 									</td>
+								</tr>
 									<?php
 								}
 								?>
-								</tbody>
+							</tbody>
 						</table>
 						<div style="clear:both">
 							<p>
