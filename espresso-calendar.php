@@ -744,12 +744,14 @@ class Espresso_Calendar_Widget extends WP_Widget {
 		<p>
 			<label for="<?php echo $this->get_field_id('category_id'); ?>"><?php _e('Display Single Category?', 'event_espresso'); ?></label>
 			<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
-			<?php echo apply_filters('filter_hook_espresso_help', 'display_single_category'); ?>
+			<?php if ( espresso_version() >= '3.2.P' )
+				echo apply_filters('filter_hook_espresso_help', 'display_single_category'); ?>
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('calendar_page'); ?>"><?php _e('Calendar Page', 'event_espresso'); ?></label>
 			<input type="text" id="<?php echo $this->get_field_id('calendar_page'); ?>" name="<?php echo $this->get_field_name('calendar_page'); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
-			<?php echo apply_filters('filter_hook_espresso_help', 'calendar_page'); ?>
+			<?php if ( espresso_version() >= '3.2.P' )
+				echo apply_filters('filter_hook_espresso_help', 'calendar_page'); ?>
 		</p>
 		<?php
 	}
