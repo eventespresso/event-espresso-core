@@ -511,7 +511,7 @@ if (!function_exists('espresso_calendar')) {
 
 							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
-
+		<?php
 		if ($espresso_calendar['show_time'] == 'true') {
 			?>
 								element.find('.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">' + event.startTime + ' - </span><span class="event-end-time">' + event.endTime + '</span></p>'));
