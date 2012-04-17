@@ -623,9 +623,9 @@ class name '.event-has-thumb' is added to top level parent event */
 	vertical-align: middle;
 	}
 #espresso_calendar .thumb-wrap img {width: 100%;}
-
-#espresso_calendar .fc-view-agendaWeek  .thumb-wrap { max-height: 20px; overflow: hidden; }
 .thumb-wrap { max-height: 90px; overflow: hidden; }
+#espresso_calendar .fc-view-agendaWeek  .thumb-wrap { max-height: 20px; overflow: hidden; }
+.fc-view-agendaDay .thumb-wrap { height: auto; }
 
 /*___ adjust calendar & image dimensions based on view i.e 'day' ___*/
 
@@ -677,6 +677,7 @@ a.fc-event { line-height: 100%; }
 a.fc-event.themeroller.ui-widget-header span.fc-event-title,
 a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: normal; }
 .themeroller .thumb-wrap { max-height: 80px; overflow: hidden; }
+.fc-view-agendaDay .themeroller .thumb-wrap { max-height: 100%; }
 
 .espresso_calendar_widget th.ui-widget-header { font-weight: normal; }
 .espresso_calendar_widget .fc-button-content .ui-icon { margin-top: -50%; }
