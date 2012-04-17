@@ -1,8 +1,4 @@
-<?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -32,6 +28,10 @@ class EEM_Price extends EEM_Base {
 	// private instance of the EEM_Price object
 	private static $_instance = NULL;
 
+
+
+
+
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
@@ -44,20 +44,26 @@ class EEM_Price extends EEM_Base {
 		$this->table_name = $wpdb->prefix . 'esp_price';
 		// array representation of the price table and the data types for each field
 		$this->table_data_types = array(
-				'PRC_ID' => '%d',
-				'PRT_ID' => '%d',
-				'PRC_amount' => '%d',
-				'PRC_name' => '%s',
-				'PRC_desc' => '%s',
-				'PRC_is_active' => '%d'
+				'PRC_ID' 						=> '%d',
+				'PRT_ID' 						=> '%d',
+				'PRC_amount' 			=> '%d',
+				'PRC_name'					 => '%s',
+				'PRC_desc' 					=> '%s',
+				'PRC_use_dates'			=> '%d',
+				'PRC_disc_limit_qty'	=> '%d',
+				'PRC_disc_qty'				=> '%d',
+				'PRC_disc_apply_all'	=> '%d',
+				'PRC_disc_wp_user'	=> '%d',		
+				'PRC_is_active' 			=> '%d'
 		);
 		// load Price object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
 
-		// uncomment these for example code samples of how to use them
-		//			self::how_to_use_insert();
-		//			self::how_to_use_update();
 	}
+
+
+
+
 
 	/**
 	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
@@ -75,6 +81,10 @@ class EEM_Price extends EEM_Base {
 		// EEM_Price object
 		return self::$_instance;
 	}
+
+
+
+
 
 	/**
 	 * 		cycle though array of prices and create objects out of each item
@@ -100,20 +110,34 @@ class EEM_Price extends EEM_Base {
 											$price->PRC_name,
 											$price->PRC_desc,
 											$price->PRC_is_active,
+											$price->_PRC_use_dates,
+											$price->_PRC_disc_limit_qty,
+											$price->_PRC_disc_qty,
+											$price->_PRC_disc_apply_all,
+											$price->_PRC_disc_wp_user,
 											$price->PRC_ID
 			);
 		}
 		return $array_of_objects;
 	}
 
+
+
+
+
+	/**
+	 * 		instantiate a new price object with blank/empty properties
+	 *
+	 * 		@access		public
+	 * 		@return		mixed		array on success, FALSE on fail
+	 */
 	public function get_new_price() {
-		return new EE_Price(
-						0,
-						0.00,
-						'',
-						'',
-						FALSE);
+		return new EE_Price( 0, 0.00, '', '', FALSE, FALSE, 0, FALSE, 0, FALSE );
 	}
+
+
+
+
 
 	/**
 	 * 		retreive  ALL prices from db
@@ -131,6 +155,10 @@ class EEM_Price extends EEM_Base {
 			return FALSE;
 		}
 	}
+
+
+
+
 
 	/**
 	 * 		retreive  a single price from db via it's ID
@@ -154,6 +182,10 @@ class EEM_Price extends EEM_Base {
 		}
 	}
 
+
+
+
+
 	/**
 	 * 		retreive a single price from db via it's column values
 	 *
@@ -175,27 +207,33 @@ class EEM_Price extends EEM_Base {
 		}
 	}
 
+
+
+
+
 	/**
-	 * 		retreive all prices that are either taxes, or percentages, or global, or of a particular order #
+	 * 		retreive all prices that are either member_prices, discounts, taxes, or percentages, or global, or of a particular order #
 	 *
 	 * 		@access		private
-	 * 		@param 		boolean 			$taxes  				true or false
-	 * 		@param 		boolean 			$percentages  	true or false
-	 * 		@param 		boolean 			$global  				true or false
-	 * 		@param 		int 					$order  				the level or order that the prices are applied
+	 * 		@param 		boolean 			$member_prices  	true or false
+	 * 		@param 		boolean 			$discounts  			true or false
+	 * 		@param 		boolean 			$taxes  					true or false
+	 * 		@param 		boolean 			$percentages  		true or false
+	 * 		@param 		boolean 			$global  					true or false
+	 * 		@param 		int 					$order  					the level or order that the prices are applied
 	 * 		@return 		array				on success
 	 * 		@return 		boolean			false on fail
 	 */
-	private function _get_all_prices_that_are($taxes = FALSE, $percentages = FALSE, $global = FALSE, $order = FALSE) {
+	private function _get_all_prices_that_are( $member_prices = FALSE, $discounts = FALSE, $taxes = FALSE, $percentages = FALSE, $global = FALSE, $order = FALSE) {
 
 		// you gimme nothing??? you get nothing!!!
-		if (!$taxes && !$percentages && !$global && !$order) {
+		if ( ! $member_prices &&  ! $discounts &&  ! $taxes && ! $percentages && ! $global && ! $order ) {
 			return FALSE;
 		}
 
-		// determine what we will be searching for via trickle down conditionals - it's just like PLINKO only better!
-		$what = $taxes ? 'PRT_is_tax' : ( $percentages ? 'PRT_is_percent' : ( $global ? 'PRT_is_global' : 'PRT_order' ) );
-		$value = $taxes ? $taxes : ( $percentages ? $percentages : ( $global ? $global : $order ) );
+		// determine what we will be searching for via trickle down conditionals - it's just like PLINKO only better! and unlike trickle down economics - this WORKS!
+		$what = $member_prices ? 'PRT_is_member' : ( $discounts ? 'PRT_is_discount' : ( $taxes ? 'PRT_is_tax' : ( $percentages ? 'PRT_is_percent' : ( $global ? 'PRT_is_global' : 'PRT_order' ))));
+		$value = $member_prices ? $member_prices : ( $discounts ? $discounts : ( $taxes ? $taxes : ( $percentages ? $percentages : ( $global ? $global : $order ))));
 
 		global $wpdb;
 		// retreive prices
@@ -211,6 +249,40 @@ class EEM_Price extends EEM_Base {
 		}
 	}
 
+
+
+
+
+	/**
+	 * 		retreive all prices that are member prices
+	 *
+	 * 		@access		public
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
+	public function get_all_prices_that_are_member_prices() {
+		return $this->_get_all_prices_that_are( TRUE );
+	}
+
+
+
+
+
+	/**
+	 * 		retreive all prices that are discounts
+	 *
+	 * 		@access		public
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
+	public function get_all_prices_that_are_discounts() {
+		return $this->_get_all_prices_that_are( FALSE, TRUE );
+	}
+
+
+
+
+
 	/**
 	 * 		retreive all prices that are taxes
 	 *
@@ -219,8 +291,12 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_taxes() {
-		return $this->_get_all_prices_that_are(TRUE);
+		return $this->_get_all_prices_that_are( FALSE, FALSE, TRUE );
 	}
+
+
+
+
 
 	/**
 	 * 		retreive all prices that are percentages
@@ -230,8 +306,12 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_percentages() {
-		return $this->_get_all_prices_that_are(FALSE, TRUE);
+		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, TRUE );
 	}
+
+
+
+
 
 	/**
 	 * 		retreive all prices that are global
@@ -241,8 +321,12 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_global() {
-		return $this->_get_all_prices_that_are(FALSE, FALSE, TRUE);
+		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE );
 	}
+
+
+
+
 
 	/**
 	 * 		retreive all prices that are of a particular order #
@@ -253,8 +337,12 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_order_nmbr($order) {
-		return $this->_get_all_prices_that_are(FALSE, FALSE, FALSE, $order);
+		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, FALSE, $order );
 	}
+
+
+
+
 
 	public function delete_all_prices_that_are_type($type = FALSE) {
 		if (!$type) {
@@ -267,6 +355,10 @@ class EEM_Price extends EEM_Base {
 		}
 	}
 
+
+
+
+
 	public function delete_by_id($ID) {
 		if (!$ID) {
 			return FALSE;
@@ -276,6 +368,10 @@ class EEM_Price extends EEM_Base {
 		$EP->delete_by_price_id($ID);
 		$this->delete(array('PRC_ID' => $ID));
 	}
+
+
+
+
 
 	/**
 	 * 		This function inserts table data
@@ -308,6 +404,10 @@ class EEM_Price extends EEM_Base {
 		$rows_n_ID = array('rows' => $results['rows'], 'new-ID' => $results['new-ID']);
 		return $rows_n_ID;
 	}
+
+
+
+
 
 	/**
 	 * 		This function updates table data
