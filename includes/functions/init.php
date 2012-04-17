@@ -97,7 +97,7 @@ function espresso_admin_init() {
 
 		
 				case 'event_prices' :
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing.php');
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/pricing.php');
 					break;
 		
 				case 'event_staff' :
