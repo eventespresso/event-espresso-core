@@ -288,8 +288,9 @@ function espresso_calendar_config_mnu() {
 											?>
 											<table class="form-table">
 												<tbody>
+
 													<?php if ( espresso_version() >= '3.1.22' ) {
-														//only display this if we're using 3.2 ?>
+														//only display this if we're using 3.1.22 or higher ?>
 													<tr>
 														<th> <label for="use_themeroller">
 																<?php _e('Enable Themeroller', 'event_espresso'); ?>
