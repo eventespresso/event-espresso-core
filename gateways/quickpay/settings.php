@@ -101,7 +101,7 @@ function event_espresso_display_quickpay_settings() {
 				<td valign="top"><ul>
 						<li>
 							<label for="quickpay_merchantid">
-								<?php _e('quickpay I.D.', 'event_espresso'); ?>
+								<?php _e('quickpay ID', 'event_espresso'); ?>
 							</label>
 							<br />
 							<input class="regular-text" type="text" name="quickpay_merchantid" size="35" value="<?php echo $payment_settings['quickpay']['quickpay_merchantid']; ?>">

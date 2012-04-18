@@ -71,7 +71,7 @@ function event_espresso_display_alipay_settings() {
 				<td valign="top"><ul>
 						<li>
 							<label for="alipay_login_id">
-								<?php _e('Alipay partner I.D.', 'event_espresso'); ?>
+								<?php _e('Alipay partner ID', 'event_espresso'); ?>
 							</label>
 							<br />
 							<input class="regular-text" type="text" name="alipay_partner_id" size="35" value="<?php echo $alipay_settings['alipay_partner_id']; ?>">

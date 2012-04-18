@@ -115,7 +115,7 @@ function event_espresso_display_realauth_settings() {
 			<tbody>
 				<tr>
 					<th><label for="merchant_id">
-							<?php _e('Merchant I.D.', 'event_espresso'); ?>
+							<?php _e('Merchant ID', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="merchant_id" id="merchant_id" size="35" value="<?php echo $payment_settings['realauth']['merchant_id']; ?>"></td>
 				</tr>

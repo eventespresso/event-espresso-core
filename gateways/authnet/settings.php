@@ -121,12 +121,12 @@ function event_espresso_display_authnet_settings() {
 			<tbody>
 				<tr>
 					<th><label for="authnet_login_id">
-							<?php _e('Authorize.net Login I.D.', 'event_espresso'); ?>
+							<?php _e('Authorize.net Login ID', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="authnet_login_id" id="authnet_login_id" size="35" value="<?php echo $payment_settings['authnet_sim']['authnet_login_id']; ?>">
 						<br />
 						<span class="description">
-							<?php _e('Please enter your Authorize.net Login I.D.', 'event_espresso'); ?>
+							<?php _e('Please enter your Authorize.net Login ID', 'event_espresso'); ?>
 						</span></td>
 				</tr>
 				<tr>

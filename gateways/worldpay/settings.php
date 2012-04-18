@@ -109,7 +109,7 @@ function event_espresso_display_worldpay_settings() {
 					<ul>
 						<li>
 							<label for="worldpay_id">
-								<?php _e('worldpay installation I.D.', 'event_espresso'); ?>
+								<?php _e('worldpay installation ID', 'event_espresso'); ?>
 							</label>
 							<input class="regular-text" type="text" name="worldpay_id" size="35" value="<?php echo $payment_settings['worldpay']['worldpay_id']; ?>" />
 							<p><?php _e('(Typically payment@yourdomain.com)', 'event_espresso'); ?></p>

@@ -112,7 +112,7 @@ function event_espresso_display_eway_settings() {
 				<td valign="top"><ul>
 						<li>
 							<label for="eway_id">
-								<?php _e('eway I.D.', 'event_espresso'); ?>
+								<?php _e('eway ID', 'event_espresso'); ?>
 							</label>
 							<input class="regular-text" type="text" name="eway_id" size="35" value="<?php echo $payment_settings['eway']['eway_id']; ?>">
 							<br />

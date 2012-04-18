@@ -113,7 +113,7 @@ function event_espresso_display_paypal_settings($payment_settings) {
 			<tbody>
 				<tr>
 					<th><label for="paypal_id">
-							<?php _e('Paypal I.D.', 'event_espresso'); ?>
+							<?php _e('Paypal ID', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="paypal_id" size="35" id="paypal_id" value="<?php echo $payment_settings['paypal']['paypal_id']; ?>">
 						<br />
