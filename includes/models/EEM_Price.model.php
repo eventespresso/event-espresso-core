@@ -50,6 +50,7 @@ class EEM_Price extends EEM_Base {
 				'PRC_name'					 => '%s',
 				'PRC_desc' 					=> '%s',
 				'PRC_use_dates'			=> '%d',
+				'PRC_disc_code'			=> '%s',
 				'PRC_disc_limit_qty'	=> '%d',
 				'PRC_disc_qty'				=> '%d',
 				'PRC_disc_apply_all'	=> '%d',
@@ -112,6 +113,7 @@ class EEM_Price extends EEM_Base {
 											$price->PRC_name,
 											$price->PRC_desc,
 											$price->PRC_use_dates,
+											$price->PRC_disc_code,
 											$price->PRC_disc_limit_qty,
 											$price->PRC_disc_qty,
 											$price->PRC_disc_apply_all,
@@ -134,7 +136,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price() {
-		return new EE_Price( 0, 0.00, '', '', FALSE, FALSE, 0, FALSE, 0, FALSE );
+		return new EE_Price( 0, 0.00, '', '', FALSE, NULL, FALSE, 0, FALSE, 0, FALSE );
 	}
 
 

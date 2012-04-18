@@ -71,6 +71,15 @@ class EE_Price {
 
 
 	/**
+	*	The Promo Code to be entered to receive a discount (or a maybe scoobie snack ?)
+	*
+	*	@access	private
+	*	@var boolean
+	*/
+	private $_PRC_disc_code = NULL;
+
+
+	/**
 	*	Whether to use dates to control when pricing starts and ends
 	*
 	*	@access	private
@@ -135,7 +144,8 @@ class EE_Price {
 	* @param			float					$PRC_amount				Price amount
 	* @param			string 				$PRC_name					Price name
 	* @param			string				$PRC_desc						Price description
-	* @param	 		bool					$PRC_use_dates			Whether to use dates to control when pricing starts and ends
+	* @param	 		bool					$PRC_use_dates				Whether to use dates to control when pricing starts and ends
+	* @param	 		bool					$PRC_disc_code				The Promo Code to be entered to receive a discount (or a maybe scoobie snack ?)
 	* @param	 		int					$PRC_disc_limit_qty		Whether to limit the number of discount codes available
 	* @param	 		int					$PRC_disc_qty				The number of discounts available at this price level
 	* @param	 		bool					$PRC_disc_apply_all		Does discount apply to all attendees being registered?
@@ -143,7 +153,7 @@ class EE_Price {
 	* @param	 		bool					$PRC_is_active				is the Price globally active
 	* @param			int 					$PRC_ID							Price ID
 	*/
-	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_use_dates=FALSE, $PRC_disc_limit_qty=FALSE, $PRC_disc_qty=0, $PRC_disc_apply_all=TRUE, $PRC_disc_wp_user=0, $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
+	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_use_dates=FALSE, $PRC_disc_code=NULL, $PRC_disc_limit_qty=FALSE, $PRC_disc_qty=0, $PRC_disc_apply_all=TRUE, $PRC_disc_wp_user=0, $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
 	
 		$this->_PRC_ID 						= absint($PRC_ID);
 		$this->_PRT_ID						= absint($PRT_ID);
@@ -151,6 +161,7 @@ class EE_Price {
 		$this->_PRC_name				= wp_strip_all_tags($PRC_name);
 		$this->_PRC_desc					= wp_strip_all_tags($PRC_desc);
 		$this->_PRC_use_dates			= (bool)absint( $PRC_use_dates );
+		$this->_PRC_disc_code			= wp_strip_all_tags( $PRC_disc_code );
 		$this->_PRC_disc_limit_qty	= (bool)absint( $PRC_disc_limit_qty );
 		$this->_PRC_disc_qty			= absint( $PRC_disc_qty );
 		$this->_PRC_disc_apply_all	= (bool)absint( $PRC_disc_apply_all );
@@ -262,6 +273,27 @@ class EE_Price {
 			return FALSE;
 		}
 		$this->_PRC_use_dates = (bool)absint( $PRC_use_dates );
+		return TRUE;
+	}
+
+
+
+
+
+	/**
+	*		Set discount code
+	*
+	* 		@access		public
+	*		@param		float		$PRC_disc_code
+	*/
+	public function set_disc_code( $PRC_disc_code = FALSE ) {
+
+		global $espresso_notices;
+		if ( ! $PRC_disc_code ) {
+			$espresso_notices['errors'][] = 'No discount code was supplied.';
+			return FALSE;
+		}
+		$this->_PRC_disc_code = wp_strip_all_tags( $PRC_disc_code );
 		return TRUE;
 	}
 
@@ -390,6 +422,7 @@ class EE_Price {
 				'PRC_name'					=> $this->_PRC_name,
 				'PRC_desc'					=> $this->_PRC_desc,
 				'PRC_use_dates'			=> $this->_PRC_use_dates,
+				'PRC_disc_code'			=> $this->_PRC_disc_code,
 				'PRC_disc_limit_qty'	=> $this->_PRC_disc_limit_qty,
 				'PRC_disc_qty'				=> $this->_PRC_disc_qty,
 				'PRC_disc_apply_all'	=> $this->_PRC_disc_apply_all,
@@ -497,6 +530,16 @@ class EE_Price {
 	*/
 	public function disc_limit_qty() {
 		return $this->_PRC_disc_limit_qty;
+	}
+
+
+	/**
+	*	get Price disc_code
+	* @access		public
+	* @return type string
+	*/
+	public function disc_code() {
+		return $this->_PRC_disc_code;
 	}
 
 

@@ -96,7 +96,7 @@ function espresso_admin_init() {
 					break;
 
 		
-				case 'event_prices' :
+				case 'pricing' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/pricing.php');
 					break;
 		
@@ -181,7 +181,7 @@ function espresso_admin_init() {
 				'admin_addons', 'espresso_calendar', 'event_tickets',
 				'event_certificates', 'espresso-mailchimp',
 				'espresso_permissions', 'roles', 'event_locales',
-				'event_groups', 'test_drive', 'espresso_https', 'event_prices'
+				'event_groups', 'test_drive', 'espresso_https', 'pricing'
 		);
 		if (in_array($_REQUEST['page'], $espresso_pages)) {
 			add_action('admin_print_scripts', 'event_espresso_config_page_scripts');

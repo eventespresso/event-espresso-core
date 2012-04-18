@@ -175,7 +175,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		if (function_exists('espresso_permissions_config_mnu') && $espresso_premium == true) {
 			global $espresso_manager;
 		} else {
-			$espresso_manager = array('espresso_manager_events' => '', 'espresso_manager_categories' => '', 'espresso_manager_form_groups' => '', 'espresso_manager_form_builder' => '', 'espresso_manager_groupons' => '', 'espresso_manager_discounts' => '', 'espresso_manager_event_emails' => '', 'espresso_manager_personnel_manager' => '', 'espresso_manager_general' => '', 'espresso_manager_calendar' => '', 'espresso_manager_members' => '', 'espresso_manager_payment_gateways' => '', 'espresso_manager_social' => '', 'espresso_manager_addons' => '', 'espresso_manager_support' => '', 'espresso_manager_venue_manager' => '', 'espresso_manager_event_pricing' => '');
+			$espresso_manager = array('espresso_manager_events' => '', 'espresso_manager_categories' => '', 'espresso_manager_form_groups' => '', 'espresso_manager_form_builder' => '', 'espresso_manager_groupons' => '', 'espresso_manager_discounts' => '', 'espresso_manager_event_emails' => '', 'espresso_manager_personnel_manager' => '', 'espresso_manager_general' => '', 'espresso_manager_calendar' => '', 'espresso_manager_members' => '', 'espresso_manager_payment_gateways' => '', 'espresso_manager_social' => '', 'espresso_manager_addons' => '', 'espresso_manager_support' => '', 'espresso_manager_venue_manager' => '', 'espresso_manager_pricing' => '');
 		}
 
 // ---------------------------------------
@@ -220,7 +220,7 @@ if (!function_exists('add_event_espresso_menus')) {
 			$ee_admin_page['email'] = add_submenu_page('events', __('Event Espresso - Email Manager', 'event_espresso'), __('Emails', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']), 'event_emails', 'event_espresso_email_config_mnu');
 
 			//Pricing Manager
-			$ee_admin_page['pricing'] = add_submenu_page('events', __('Event Espresso - Pricing Manager', 'event_espresso'), __('Pricing', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_pricing']), 'event_prices', 'espresso_price_manager_menu');
+			$ee_admin_page['pricing'] = add_submenu_page('events', __('Event Espresso - Pricing Manager', 'event_espresso'), __('Pricing', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_pricing']), 'pricing', 'espresso_price_manager_menu');
 
 			//Personnel
 			if ($org_options['use_personnel_manager'] && $espresso_premium == true) {
