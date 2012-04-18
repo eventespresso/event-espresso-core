@@ -4,21 +4,20 @@ function espresso_price_manager_menu() {
 
 	global $org_options;
 	
-	$values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso'))
-	);
-	
-	$_REQUEST['action'] = isset($_REQUEST['action']) ?$_REQUEST['action'] : NULL;	
-	$edit_or_add_pages = array( 'edit_price', 'edit_price_type', 'add_new_price', 'add_new_type' );	
-	$edit_or_add_page =  ( in_array( $_REQUEST['action'], $edit_or_add_pages )) ? TRUE : FALSE;
+	define( 'PRC_ADMIN_URL', admin_url( 'admin.php?page=pricing' ));	
 
-	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/index.php');
+	espresso_prices_admin_helper();
+	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	$PRT = EEM_Price_Type::instance();
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	$PRC = EEM_Price::instance();
+
+	$_REQUEST['action'] = isset($_REQUEST['action']) ?$_REQUEST['action'] : NULL;	
+	$edit_or_add_pages = array( 'edit_price', 'edit_price_type', 'add_new_price', 'add_new_price_type' );	
+	$edit_or_add_page =  ( in_array( $_REQUEST['action'], $edit_or_add_pages )) ? TRUE : FALSE;
+
 ?>
 	<div class="wrap">
 		<div id="icon-options-event" class="icon32"> </div>
@@ -31,8 +30,7 @@ function espresso_price_manager_menu() {
 			<div id="post-body">
 				<div id="post-body-content">
 <?php
-			if ( $edit_or_add_page ) {
-				espresso_prices_admin_helper();
+			if ( $edit_or_add_page ) {				
 				do_meta_boxes('event-espresso_page_pricing', 'normal', null);
 			}
 ?>
@@ -42,12 +40,10 @@ function espresso_price_manager_menu() {
 				echo '<a href="admin.php?page=pricing&amp;action=add_new_price" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Price', 'event_espresso') . '</a>';
 			}
 ?>				</h2>
-					<!--<p><?php _e('Take total control of your event pricing', 'event_espresso'); ?></p>-->
 					<form id="espresso-admin-price-list-frm" name="espresso-admin-price-list-frm" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 						<table id="table" class="widefat manage-prices">
 							<thead>
 								<tr>
-<!--	PRC_ID 	PRT_ID 	PRC_amount 	PRC_name 	PRC_desc 	PRC_use_dates 	PRC_disc_code 	PRC_disc_limit_qty 	PRC_disc_qty 	PRC_disc_apply_all 	PRC_disc_wp_user 	PRC_is_active	-->
 									<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:2.5%; text-align:center;">
 										<input type="checkbox">
 									</th>
@@ -155,7 +151,7 @@ function espresso_price_manager_menu() {
 					<h2>Price Types
 <?php
 			if ( ! $edit_or_add_page ) {
-				echo '<a href="admin.php?page=pricing&amp;action=add_new_type" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Type', 'event_espresso') . '</a>';
+				echo '<a href="admin.php?page=pricing&amp;action=add_new_price_type" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Type', 'event_espresso') . '</a>';
 			}		
 ?>					
 					</h2>
@@ -163,7 +159,6 @@ function espresso_price_manager_menu() {
 						<table id="table" class="widefat manage-price-types">
 							<thead>
 								<tr>
-								<!--	PRT_ID 	PRT_name 	PRT_is_member 	PRT_is_discount 	PRT_is_tax 	PRT_is_percent 	PRT_is_global 	PRT_order	-->
 									<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:2.5%; text-align:center;"><input type="checkbox"></th>
 									<th class="manage-column column-comments num" id="PRT_ID" style="padding-top:7px; width:2.5%;" scope="col" title="Click to Sort">
 										<?php _e('ID', 'event_espresso'); ?>

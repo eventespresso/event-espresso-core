@@ -23,16 +23,18 @@ function edit_event_price_postbox() {
 			$price_types[] = array('id' => $type->ID(), 'text' => $type->name());
 		}
 	}
+	
+	$edit_event_price_form_url = add_query_arg( array( 'action' => 'update_event_price' ), PRC_ADMIN_URL );  
+	
 ?>
 
 	<div class="inside">
 	
-		<form id="price-form" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+		<form id="price-form" method="post" action="<?php echo $edit_event_price_form_url; ?>">
 			<?php wp_nonce_field('espresso_form_check', $action) ?>
-			<input type="hidden" name="action" value="<?php echo $action; ?>">
-<?php if ($action == 'update_event_price') { ?>
+			<?php if ($action == 'update_event_price') { ?>
 			<input type="hidden" name="PRC_ID" value="<?php echo $_REQUEST['id']; ?>">
-<?php } ?>
+			<?php } ?>
 			<input type="hidden" name="PRC_disc_code" value="<?php echo $price->disc_code(); ?>">
 			<input type="hidden" name="PRC_disc_limit_qty" value="<?php echo $price->disc_limit_qty(); ?>">
 			<input type="hidden" name="PRC_disc_qty" value="<?php echo $price->disc_qty(); ?>">
@@ -70,7 +72,7 @@ function edit_event_price_postbox() {
 						</td>
 					</tr>
 					<tr valign="top">
-						<th><label for="PRC_is_active"><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
+						<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
 						<td>
 							<?php $yes_checked = $price->use_dates() ? ' checked="checked"' : ''; ?>
 							<label style="margin-right:15px;">
@@ -86,7 +88,7 @@ function edit_event_price_postbox() {
 						</td>
 					</tr>
 					<tr valign="top">
-						<th><label for="PRC_is_active"><?php _e('Active', 'event_espresso'); ?></label></th>
+						<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 						<td>
 							<?php $yes_checked = $price->is_active() ? ' checked="checked"' : ''; ?>
 							<label style="margin-right:15px;"><input type="radio" name="PRC_is_active" value="1"<?php echo $yes_checked;?> style="margin-right:5px;"><?php _e('Yes', 'event_espresso');?></label>
@@ -125,10 +127,16 @@ function edit_event_price_type_postbox() {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 	);
+	
+	$edit_event_price_type_form_url = add_query_arg( array( 'action' => 'update_event_price_type' ), PRC_ADMIN_URL );  
+	
 	?>
 	<div class="inside">
-		<form id="price-type-form" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+		<form id="price-type-form" method="post" action="<?php echo $edit_event_price_type_form_url; ?>">
 			<?php wp_nonce_field('espresso_form_check', $action) ?>
+			<?php if ($action == 'update_event_price_type') { ?>
+			<input type="hidden" name="PRT_ID" value="<?php echo $_REQUEST['id']; ?>">
+			<?php } ?>
 		<!--	PRT_ID 	PRT_name 	PRT_is_member 	PRT_is_discount 	PRT_is_tax 	PRT_is_percent 	PRT_is_global 	PRT_order	-->
 			<table class="form-table">
 				<tbody>
@@ -139,10 +147,10 @@ function edit_event_price_type_postbox() {
 						<td>
 							<?php 
 								$values = array(
-															array('id' => 'Price', 'text' => __('Base Price', 'event_espresso')),
-															array('id' => 'Discount', 'text' => __('Discount', 'event_espresso')),
-															array('id' => 'Surcharge', 'text' => __('Surcharge', 'event_espresso')),
-															array('id' => 'Tax', 'text' => __('Tax', 'event_espresso'))
+															array('id' => 'Price', 'text' 			=> __('Base Price', 'event_espresso')),
+															array('id' => 'Discount', 'text' 	=> __('Discount', 'event_espresso')),
+															array('id' => 'Surcharge', 'text' 	=> __('Surcharge', 'event_espresso')),
+															array('id' => 'Tax', 'text' 			=> __('Tax', 'event_espresso'))
 														);
 								$set_value = 'Price';						
 								foreach ( $values as $value ) {
@@ -151,7 +159,7 @@ function edit_event_price_type_postbox() {
 										$set_value = $value['id'];
 									}
 								}
-								echo select_input('Base_Type', $values, $set_value, 'id="base-type"'); 
+								echo select_input('base_type', $values, $set_value, 'id="base-type"'); 
 							?><br/>
 							<span class="description"><?php _e('Choosing a basic type allows us to quickly configure a bunch of other options for you.<br/>All events need to have at least one Price type option.<br/>Discounts reduce the price of an event, Surcharges increase the price.<br/>Taxes are applied to the final total.', 'event_espresso'); ?></span>
 						</td>
@@ -195,7 +203,7 @@ function edit_event_price_type_postbox() {
 					</tr>
 					<tr>
 						<th>
-							<label for="PRT_is_percent"><?php _e('Percentage or Dollar Amount?', 'event_espresso'); ?></label>
+							<label><?php _e('Percentage or Dollar Amount?', 'event_espresso'); ?></label>
 						</th>
 						<td>
 							<?php $yes_checked = $type->is_percent() ? ' checked="checked"' : ''; ?>
@@ -211,7 +219,7 @@ function edit_event_price_type_postbox() {
 					</tr>
 					<tr>
 						<th>
-							<label for="PRT_is_global"><?php _e('Apply to ALL New Events? ', 'event_espresso'); ?></label>
+							<label><?php _e('Apply to ALL New Events? ', 'event_espresso'); ?></label>
 						</th>
 						<td>
 							<?php $yes_checked = $type->is_global() ? ' checked="checked"' : ''; ?>
@@ -237,11 +245,6 @@ function edit_event_price_type_postbox() {
 					</tr>
 				</tbody>
 			</table>
-			
-			<input type="hidden" name="action" value="<?php echo $action; ?>">
-			<?php if ($action == 'update_event_price_type') { ?>
-			<input type="hidden" name="PRT_ID" value="<?php echo $_REQUEST['id']; ?>">
-			<?php } ?>
 			
 			<p>
 				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Changes'); ?>" id="add_new_price_type" />
