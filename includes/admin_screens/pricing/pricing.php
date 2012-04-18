@@ -256,6 +256,7 @@ function espresso_price_manager_menu() {
 					</form>
 				</div>
 			</div>
+			<div class="clear"></div>
 		</div>
 	</div>
 	<?php

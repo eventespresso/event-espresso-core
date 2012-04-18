@@ -24,7 +24,7 @@ function edit_event_price_postbox() {
 		}
 	}
 	
-	$edit_event_price_form_url = add_query_arg( array( 'action' => 'update_event_price' ), PRC_ADMIN_URL );  
+	$edit_event_price_form_url = add_query_arg( array( 'action' => $action ), PRC_ADMIN_URL );  
 	
 ?>
 
@@ -53,15 +53,17 @@ function edit_event_price_postbox() {
 					<tr valign="top">
 						<th><label for="PRC_name"><?php _e('Price Name', 'event_espresso'); ?></label></th>
 						<td>
-							<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php echo $price->name(); ?>"/>
+							<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php echo html_entity_decode( stripslashes( $price->name() ), ENT_QUOTES, 'UTF-8' ); ?>"/>
 							<span class="description"><?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
 						<th><label for="PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 						<td>
-							<textarea class="regular-text" type="text" id="PRC_desc" name="PRC_desc" cols="100" rows="1" ><?php echo $price->desc(); ?></textarea><br/>
-							<span class="description"><?php _e('A brief description for this Price. More for your benefit.', 'event_espresso'); ?></span>
+							<textarea class="regular-text" type="text" id="PRC_desc" name="PRC_desc" cols="100" rows="1" ><?php
+							 echo html_entity_decode( stripslashes( $price->desc() ), ENT_QUOTES, 'UTF-8' ); 
+							?></textarea><br/>
+							<span class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></span>
 						</td>							
 					</tr>
 					<tr valign="top">
@@ -84,7 +86,7 @@ function edit_event_price_postbox() {
 							<input type="radio" name="PRC_use_dates" value="0"<?php echo $no_checked;?> style="margin-right:5px;">
 							<?php _e('No', 'event_espresso');?>
 							</label>
-							<span class="description"><?php _e('If set to "Yes", then in the Event Editor you will be able to set start and end dates for when this price will be active.', 'event_espresso'); ?></span>
+							<span class="description"><?php _e( sprintf( 'If set to "Yes", then when editing an Event in the %sEvent Editor%s you will be able to set the dates for when this price will become active / inactive.', '<a href="' .  admin_url( 'admin.php?page=events' ) . '" title="Go to the Events Overview List to choose an Event to edit">', '</a>' ), 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -128,7 +130,7 @@ function edit_event_price_type_postbox() {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 	);
 	
-	$edit_event_price_type_form_url = add_query_arg( array( 'action' => 'update_event_price_type' ), PRC_ADMIN_URL );  
+	$edit_event_price_type_form_url = add_query_arg( array( 'action' => $action ), PRC_ADMIN_URL );  
 	
 	?>
 	<div class="inside">
@@ -169,22 +171,10 @@ function edit_event_price_type_postbox() {
 							<label for="PRT_name"><?php _e('Price Type Name', 'event_espresso'); ?></label>
 						</th>
 						<td>
-							<input class="regular-text" type="text" id="PRT_name" name="PRT_name" value="<?php echo $type->name(); ?>"/>
+							<input class="regular-text" type="text" id="PRT_name" name="PRT_name" value="<?php echo html_entity_decode( stripslashes( $type->name() ), ENT_QUOTES, 'UTF-8' ); ?>"/>
 							<span class="description"><?php _e('A name for this Price Type.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
-<!--					<tr>
-						<th>
-							<label for="PRT_is_tax"><?php _e('Applied as Tax to Totals ', 'event_espresso'); ?></label>
-						</th>
-						<td>
-							<?php $yes_checked = $type->is_tax() ? ' checked="checked"' : ''; ?>
-							<label style="margin-right:15px;"><input type="radio" name="PRT_is_tax" value="1"<?php echo $yes_checked;?> style="margin-right:5px;"><?php _e('Yes', 'event_espresso');?></label>
-							<?php $no_checked = $type->is_tax() ? '' : ' checked="checked"'; ?>
-							<label style="margin-right:15px;"><input type="radio" name="PRT_is_tax" value="0"<?php echo $no_checked;?> style="margin-right:5px;"><?php _e('No', 'event_espresso');?></label>
-							<span class="description"><?php _e('Whether this Price Type will be applied to totals as a tax.', 'event_espresso'); ?></span>
-						</td>
-					</tr>-->
 					<tr>
 						<th>
 							<label><?php _e('Apply to Members Only', 'event_espresso'); ?></label>

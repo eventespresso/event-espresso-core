@@ -252,13 +252,14 @@ class EEM_Price_Type extends EEM_Base {
 	 */
 	public function update($set_column_values, $where_cols_n_values) {
 
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
+//		echo printr( $set_column_values, '$set_column_values' );
+//		echo printr( $where_cols_n_values, '$where_cols_n_values' );
 
 		global $espresso_notices;
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		$results = $this->_update($this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values);
-
+//		echo $wpdb->last_query;
 		// set some table specific success messages
 		if ($results['rows'] == 1) {
 			// one row was successfully updated
@@ -284,8 +285,16 @@ class EEM_Price_Type extends EEM_Base {
 		}
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
-		$PRC->delete_all_prices_that_are_type($ID);
-		$this->delete(array('PRT_ID' => $ID));
+		if ( $PRC->delete_all_prices_that_are_type($ID)) {
+			if ( $this->delete(array('PRT_ID' => $ID))) {
+				return TRUE;
+			} else {
+				return FALSE;
+			}
+		} else {
+			return FALSE;
+		}
+
 	}
 
 

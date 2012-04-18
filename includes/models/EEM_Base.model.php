@@ -755,6 +755,7 @@ abstract class EEM_Base {
 		global $wpdb;
 		$results = $wpdb->get_row( $wpdb->prepare( $SQL, $VAL ));
 		return $results;
+		
 	}
 
 

@@ -2021,7 +2021,7 @@ function update_ee_meta_cache($ee_meta_ids) {
 	* 		@param		boolean		$format		whether or not to format the messages for display in the WP admin
 	*		@return 		array
 	*/
-	function espresso_get_notices( $format = TRUE ) {
+	function espresso_get_notices( $format_output = TRUE, $url_encode = FALSE ) {
 
 		global $espresso_notices;
 
@@ -2029,6 +2029,14 @@ function update_ee_meta_cache($ee_meta_ids) {
 		$error_messages = '';
 
 		//echo printr($espresso_notices, '$espresso_notices' );
+		
+		// grab any notices that have been sent via REQUEST vars
+		if ( isset( $_REQUEST['success'] ) && $_REQUEST['success'] != '' ) {
+			$espresso_notices['success'][] = urldecode( $_REQUEST['success'] );
+		}
+		if ( isset( $_REQUEST['errors'] ) && $_REQUEST['errors'] != '' ) {
+			$espresso_notices['errors'][] = urldecode( $_REQUEST['errors'] );
+		}
 
 		// check for success messages
 		//if ( isset( $espresso_notices['success'] ) && is_array( $espresso_notices['success'] ) && ! empty( $espresso_notices['success'] )) {
@@ -2040,6 +2048,8 @@ function update_ee_meta_cache($ee_meta_ids) {
 			}
 			// remove last linebreak
 			$success_messages = substr( $success_messages, 0, ( count( $success_messages ) - 7 ));
+			// possibly encode for url transmission
+			$success_messages = $url_encode ? urlencode( $success_messages ) : $success_messages;
 		}
 
 		// check for error messages
@@ -2052,9 +2062,10 @@ function update_ee_meta_cache($ee_meta_ids) {
 			}
 			// remove last linebreak
 			$error_messages = substr( $error_messages, 0, ( count( $error_messages ) - 7 ));
+			$error_messages = $url_encode ? urlencode( $error_messages ) : $error_messages;
 		}
 
-		if ( $format ) {
+		if ( $format_output ) {
 
 			$notices = '';
 
@@ -2074,9 +2085,14 @@ function update_ee_meta_cache($ee_meta_ids) {
 											'success' => $success_messages,
 											'errors' => $error_messages
 										);
+			// remove empty notices						
+			foreach ( $notices as $type => $notice ) {
+				if ( empty( $notice )) {
+					unset( $notices[ $type ] );
+				}
+			}
 
 		}
-
 
 		return $notices;
 

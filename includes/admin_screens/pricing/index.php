@@ -2,135 +2,174 @@
 
 function espresso_prices_admin_helper() {
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-	$PRT = EEM_Price_Type::instance();
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-	$PRC = EEM_Price::instance();
+	global $org_options, $espresso_notices;
 	
+	$_REQUEST['action'] = isset( $_POST['delete_price'] ) ? 'delete_price' : $_REQUEST['action'];
+	$_REQUEST['action'] = isset( $_POST['delete_price_type'] ) ? 'delete_price_type' : $_REQUEST['action'];
 	
-	if (isset($_POST['delete_price_type']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_price_type')) {
-		//Checkboxes
-		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
-			while (list($key, $value) = each($_POST['checkbox'])) {
-				$del_id = $key;
-				$PRT->delete_by_id($del_id);
-			}
-		}
+	if ( isset( $_REQUEST['action'] )) {
+	
+		$action = wp_strip_all_tags( $_REQUEST['action'] );
+		switch ( $action  ) {
+		
+			case 'update_event_price' :
+				espresso_update_event_price();
+				break;
 
-		//Delete link
-		if ($_REQUEST['action'] == 'delete_price_type') {
-			$PRT->delete_by_id($_REQUEST['id']);
-		}
-		?>
-		<div id="message" class="updated fade">
-			<p><strong>
-					<?php _e('Price Types have been successfully deleted.', 'event_espresso'); ?>
-				</strong></p>
-		</div>
-		<?php
-	}
-	
-	
-	
-	if (isset($_POST['delete_price']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_price')) {
-		//Checkboxes
-		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
-			while (list($key, $value) = each($_POST['checkbox'])) {
-				$del_id = $key;
-				$PRC->delete_by_id($del_id);
-			}
-		}
+			case 'add_price_to_db' :
+				espresso_add_price_to_db();
+				break;
 
-		//Delete link
-		if ($_REQUEST['action'] == 'delete_price') {
-			$PRC->delete_by_id($_REQUEST['id']);
+			case 'update_event_price_type' :
+				espresso_update_event_price_type();
+				break;
+
+			case 'add_price_type_to_db' :
+				espresso_add_price_type_to_db();
+				break;
+
+			case 'delete_price' :
+				espresso_delete_price();
+				break;
+
+			case 'delete_price_type' :
+				espresso_delete_price_type();
+				break;
+
 		}
-		?>
-		<div id="message" class="updated fade">
-			<p><strong>
-					<?php _e('Prices have been successfully deleted.', 'event_espresso'); ?>
-				</strong></p>
-		</div>
-		<?php
+		
 	}
 	
+	echo espresso_get_notices();
 	
-	
-	if (isset($_REQUEST['action'])) {
-	
-		if ($_REQUEST['action'] == 'update_event_price') {
-			update_event_price();
-		}
-		if ($_REQUEST['action'] == 'add_price_to_db') {
-			add_price_to_db();
-		}
-		if ($_REQUEST['action'] == 'update_event_price_type') {
-			update_event_price_type();
-		}
-		if ($_REQUEST['action'] == 'add_price_type_to_db') {
-			add_price_type_to_db();
-		}
-		do_action('action_hook_espresso_admin_notices');
-	}
 }
 
-function update_event_price() {
+
+
+
+
+function espresso_update_event_price() {
 
 	if (check_admin_referer('espresso_form_check', 'update_event_price')) {
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 		
-		$set_column_values = array(
-				'PRT_ID' 						=> absint( $_REQUEST['PRT_ID'] ),
-				'PRC_amount' 			=> abs( $_REQUEST['PRC_amount'] ),
-				'PRC_name' 				=> wp_strip_all_tags( $_REQUEST['PRC_name'] ),
-				'PRC_desc' 					=> wp_strip_all_tags( $_REQUEST['PRC_desc'] ),
-				'PRC_use_dates'			=> absint( $_REQUEST['PRC_use_dates'] ),
-				'PRC_disc_code'			=> wp_strip_all_tags( $_REQUEST['PRC_disc_code'] ),
-				'PRC_disc_limit_qty'	=> absint( $_REQUEST['PRC_disc_limit_qty'] ),
-				'PRC_disc_qty'				=> absint( $_REQUEST['PRC_disc_qty'] ),
-				'PRC_disc_apply_all'	=> absint( $_REQUEST['PRC_disc_apply_all'] ),
-				'PRC_disc_wp_user'	=> absint( $_REQUEST['PRC_disc_wp_user'] ),
-				'PRC_is_active' 			=> absint( $_REQUEST['PRC_is_active'] )
-		);
-
+		$set_column_values = espresso_process_price();
 		$where_cols_n_values = array('PRC_ID' => $_REQUEST['PRC_ID']);
-		$PRC->update($set_column_values, $where_cols_n_values);
+		// run the update
+		if ( $PRC->update( $set_column_values, $where_cols_n_values )) {
+			global $espresso_notices;
+			$notices = espresso_get_notices( FALSE, TRUE );
+			$redirect_url = add_query_arg( $notices, PRC_ADMIN_URL );  
+			wp_redirect( $redirect_url );
+			exit();
+		} 
 	}
 }
 
-function add_price_to_db() {
+
+
+
+
+function espresso_add_price_to_db() {
 
 	if (check_admin_referer('espresso_form_check', 'add_price_to_db')) {
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
-
-		$set_column_values = array(
-				'PRT_ID' 						=> absint( $_REQUEST['PRT_ID'] ),
-				'PRC_amount' 			=> abs( $_REQUEST['PRC_amount'] ),
-				'PRC_name' 				=> wp_strip_all_tags( $_REQUEST['PRC_name'] ),
-				'PRC_desc' 					=> wp_strip_all_tags( $_REQUEST['PRC_desc'] ),
-				'PRC_use_dates'			=> absint( $_REQUEST['PRC_use_dates'] ),
-				'PRC_disc_code'			=> wp_strip_all_tags( $_REQUEST['PRC_disc_code'] ),
-				'PRC_disc_limit_qty'	=> absint( $_REQUEST['PRC_disc_limit_qty'] ),
-				'PRC_disc_qty'				=> absint( $_REQUEST['PRC_disc_qty'] ),
-				'PRC_disc_apply_all'	=> absint( $_REQUEST['PRC_disc_apply_all'] ),
-				'PRC_disc_wp_user'	=> absint( $_REQUEST['PRC_disc_wp_user'] ),
-				'PRC_is_active' 			=> absint( $_REQUEST['PRC_is_active'] )
-		);
-		$PRC->insert($set_column_values);
+		
+		$set_column_values = espresso_process_price();
+		// run the insert
+		if ( $PRC->insert( $set_column_values )) {
+			global $espresso_notices;
+			$notices = espresso_get_notices( FALSE, TRUE );
+			$redirect_url = add_query_arg( $notices, PRC_ADMIN_URL );  
+			wp_redirect( $redirect_url );
+			exit();
+		}
 	}
 }
 
-function update_event_price_type() {
+
+
+
+
+function espresso_process_price() {
+
+	$_REQUEST['PRC_name'] = ucwords( strtolower( $_REQUEST['PRC_name'] ));
+	$_REQUEST['PRC_name'] = htmlentities( $_REQUEST['PRC_name'], ENT_QUOTES, 'UTF-8' );				
+
+	$set_column_values = array(
+			'PRT_ID' 						=> absint( $_REQUEST['PRT_ID'] ),
+			'PRC_amount' 			=> abs( $_REQUEST['PRC_amount'] ),
+			'PRC_name' 				=>$_REQUEST['PRC_name'],
+			'PRC_desc' 					=> htmlentities( wp_strip_all_tags( $_REQUEST['PRC_desc'] ), ENT_QUOTES, 'UTF-8' ),
+			'PRC_use_dates'			=> absint( $_REQUEST['PRC_use_dates'] ),
+			'PRC_disc_code'			=> wp_strip_all_tags( $_REQUEST['PRC_disc_code'] ),
+			'PRC_disc_limit_qty'	=> absint( $_REQUEST['PRC_disc_limit_qty'] ),
+			'PRC_disc_qty'				=> absint( $_REQUEST['PRC_disc_qty'] ),
+			'PRC_disc_apply_all'	=> absint( $_REQUEST['PRC_disc_apply_all'] ),
+			'PRC_disc_wp_user'	=> absint( $_REQUEST['PRC_disc_wp_user'] ),
+			'PRC_is_active' 			=> absint( $_REQUEST['PRC_is_active'] )
+	);
+	return $set_column_values;
+}
+
+
+
+
+function espresso_update_event_price_type() {
 
 	if (check_admin_referer('espresso_form_check', 'update_event_price_type')) {
-	
+
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 		
+		// perform some voodoo
+		$set_column_values = espresso_process_price_type();
+		$where_cols_n_values = array( 'PRT_ID' => absint( $_REQUEST['PRT_ID'] ));
+		// run the update
+		if ( $PRT->update( $set_column_values, $where_cols_n_values )) {
+			global $espresso_notices;
+			$notices = espresso_get_notices( FALSE, TRUE );
+			$redirect_url = add_query_arg( $notices, PRC_ADMIN_URL );  
+			wp_redirect( $redirect_url );
+			exit();
+		} 		
+	}
+}
+
+
+
+
+
+function espresso_add_price_type_to_db() {
+
+	if (check_admin_referer('espresso_form_check', 'add_price_type_to_db')) {
+
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		$PRT = EEM_Price_Type::instance();
+		
+		// perform some voodoo
+		$set_column_values = espresso_process_price_type();
+		// run the insert
+		if ( $PRT->insert( $set_column_values )) {
+			global $espresso_notices;
+			$notices = espresso_get_notices( FALSE, TRUE );
+			$redirect_url = add_query_arg( $notices, PRC_ADMIN_URL );  
+			wp_redirect( $redirect_url );
+			exit();
+		}
+	}
+}
+
+
+
+
+
+function espresso_process_price_type() {
+
 		$base_type = wp_strip_all_tags( $_REQUEST['base_type'] );
 		$name = wp_strip_all_tags( $_REQUEST['PRT_name'] );
 		
@@ -171,7 +210,7 @@ function update_event_price_type() {
 					$name = substr( $name, 0, $trunc );
 				}
 				$name = trim( $name ) . ' Surcharge';
-				$_REQUEST['PRT_name'] = $name;				
+				$_REQUEST['PRT_name'] = $name;
 				break;
 			
 			case 'Tax' :
@@ -184,53 +223,86 @@ function update_event_price_type() {
 					$name = substr( $name, 0, $trunc );
 				}
 				$name = trim( $name ) . ' Tax';
-				$_REQUEST['PRT_name'] = $name;				
+				$_REQUEST['PRT_name'] = $name;
 				break;
 			
 		}
+		
+		$_REQUEST['PRT_name'] = ucwords( strtolower( $_REQUEST['PRT_name'] ));
+		$_REQUEST['PRT_name'] = htmlentities( $_REQUEST['PRT_name'], ENT_QUOTES, 'UTF-8' );				
 
-	
 		$set_column_values = array(
 				'PRT_name' 			=> $_REQUEST['PRT_name'],
-				'PRT_is_member' 	=> $_REQUEST['PRT_is_member'],
-				'PRT_is_discount' 	=> $_REQUEST['PRT_is_discount'],
-				'PRT_is_tax' 			=> $_REQUEST['PRT_is_tax'],
-				'PRT_is_percent' 	=> $_REQUEST['PRT_is_percent'],
-				'PRT_is_global' 		=> $_REQUEST['PRT_is_global'],
-				'PRT_order' 			=> $_REQUEST['PRT_order']
+				'PRT_is_member' 	=> absint( $_REQUEST['PRT_is_member'] ),
+				'PRT_is_discount' 	=> absint( $_REQUEST['PRT_is_discount'] ),
+				'PRT_is_tax' 			=> absint( $_REQUEST['PRT_is_tax'] ),
+				'PRT_is_percent' 	=> absint( $_REQUEST['PRT_is_percent'] ),
+				'PRT_is_global' 		=> absint( $_REQUEST['PRT_is_global'] ),
+				'PRT_order' 			=> absint( $_REQUEST['PRT_order'] )
 		);
 
-		$where_cols_n_values = array('PRT_ID' => $_REQUEST['PRT_ID']);
-		
+		return $set_column_values;
 //		echo printr( $set_column_values, '$set_column_values' );	
 //		echo printr( $where_cols_n_values, '$where_cols_n_values' );	
-
-		if ( $PRT->update($set_column_values, $where_cols_n_values) ) {
-			wp_redirect( PRC_ADMIN_URL );
-			exit();
-		}
 		
-	}
 }
 
-function add_price_type_to_db() {
 
-	if (check_admin_referer('espresso_form_check', 'add_price_type_to_db')) {
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-		$PRT = EEM_Price_Type::instance();
 
-		$set_column_values = array(
-				'PRT_name' 			=> $_REQUEST['PRT_name'],
-				'PRT_is_member' 	=> $_REQUEST['PRT_is_member'],
-				'PRT_is_discount' 	=> $_REQUEST['PRT_is_discount'],
-				'PRT_is_tax' 			=> $_REQUEST['PRT_is_tax'],
-				'PRT_is_percent' 	=> $_REQUEST['PRT_is_percent'],
-				'PRT_is_global' 		=> $_REQUEST['PRT_is_global'],
-				'PRT_order' 			=> $_REQUEST['PRT_order']
-		);
+function espresso_delete_price() {
 
-		$PRT->insert($set_column_values);
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+	$PRC = EEM_Price::instance();
+
+	
+	$success = TRUE;
+	//Checkboxes
+	if ( ! empty( $_POST['checkbox'] ) && is_array( $_POST['checkbox'] )) {
+		while ( list( $PRC_ID, $value ) = each( $_POST['checkbox'] )) {
+			if( ! $PRC->delete_by_id( absint( $PRC_ID ))) {
+				$success = FALSE;
+			}
+		}
+		
+		if( $success ) {
+			$espresso_notices['success'][] = __('Prices have been successfully deleted.', 'event_espresso');
+		}					
+
+	} elseif ( $_REQUEST['action'] == 'delete_price' ) {
+		$PRC_ID = absint( $_REQUEST['id'] );
+		if ( $PRC->delete_by_id( $PRC_ID )) {
+			$espresso_notices['success'][] = __('Prices have been successfully deleted.', 'event_espresso');
+		}
 	}
+		
+}
+
+
+function espresso_delete_price_type() {
+
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+	$PRT = EEM_Price_Type::instance();
+
+	$success = TRUE;
+	//Checkboxes
+	if ( ! empty( $_POST['checkbox'] ) && is_array( $_POST['checkbox'] )) {
+		while ( list( $PRT_ID, $value ) = each( $_POST['checkbox'] )) {
+			if ( ! $PRT->delete_by_id( absint( $PRT_ID ))) {
+				$success = FALSE;
+			}
+		}
+		
+		if( $success ) {
+			$espresso_notices['success'][] = __('Price Types have been successfully deleted.', 'event_espresso');
+		}					
+
+	} elseif ($_REQUEST['action'] == 'delete_price_type') {
+		$PRT_ID = absint( $_REQUEST['id'] );
+		if ( $PRT->delete_by_id( $PRT_ID )) {
+			$espresso_notices['success'][] = __('Price Types have been successfully deleted.', 'event_espresso');
+		}
+	}
+		
 }
 
