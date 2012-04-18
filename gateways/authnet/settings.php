@@ -193,7 +193,7 @@ function event_espresso_display_authnet_settings() {
 				</tr>
 				<tr>
 					<th><label for="bypass_payment_page">
-							<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?>
+							<?php _e('Bypass the payment confirmation page? ', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation') ?>
 						</label></th>
 					<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['authnet_sim']['bypass_payment_page']); ?></td>

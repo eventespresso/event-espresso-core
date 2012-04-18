@@ -129,14 +129,14 @@ function event_espresso_display_eway_settings() {
 
 						<li>
 							<label for="button_url">
-								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php apply_filters('filter_hook_espresso_help', 'eway_button_image'); ?>
+								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_button_image'); ?>
 							</label>
 							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $payment_settings['eway']['button_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
 							<?php echo '<img src="' . $payment_settings['eway']['button_url'] . '" />'; ?></li>
 						<li>
 							<label for="image_url">
-								<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php apply_filters('filter_hook_espresso_help', 'eway_image_url_info'); ?>
+								<?php _e('Image URL (logo for payment page):', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_image_url_info'); ?>
 							</label>
 							<input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $payment_settings['eway']['image_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
@@ -168,7 +168,7 @@ function event_espresso_display_eway_settings() {
 						</li>
 						<li>
 							<label for="bypass_payment_page">
-								<?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?> <?php apply_filters('filter_hook_espresso_help', 'eway_bypass_confirmation'); ?>
+								<?php _e('Bypass the payment confirmation page?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_bypass_confirmation'); ?>
 							</label>
 							<?php
 							$values = array(
@@ -195,7 +195,7 @@ function event_espresso_display_eway_settings() {
 						</li>
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the debugging feature and the eway Sandbox?', 'event_espresso'); ?></a> <?php apply_filters('filter_hook_espresso_help', 'eway_sandbox_info'); ?>
+								<?php _e('Use the debugging feature and the eway Sandbox?', 'event_espresso'); ?></a> <?php echo apply_filters('filter_hook_espresso_help', 'eway_sandbox_info'); ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['eway']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 
