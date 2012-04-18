@@ -6,8 +6,9 @@ function event_espresso_aim_payment_settings() {
 		return;
 
 	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
+	
 	//Update settings
-	if (isset($_POST['update_authnet_aim'])) {
+	if (isset($_POST['update_authnet_aim']) && check_admin_referer('espresso_form_check', 'add_authnet_aim_settings')) {
 		$payment_settings['aim']['authnet_aim_login_id'] = $_POST['authnet_aim_login_id'];
 		$payment_settings['aim']['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 		$payment_settings['aim']['use_sandbox'] = $_POST['use_sandbox'];
@@ -89,12 +90,12 @@ function event_espresso_display_authnet_aim_settings($payment_settings) {
 			<tbody>
 				<tr>
 					<th><label for="authnet_aim_login_id">
-							<?php _e('Authorize.net AIM Login I.D.', 'event_espresso'); ?>
+							<?php _e('Authorize.net AIM Login ID', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="authnet_aim_login_id" id="authnet_aim_login_id" size="35" value="<?php echo $payment_settings['aim']['authnet_aim_login_id']; ?>">
 						<br />
 						<span class="description">
-							<?php _e('Please enter your Authorize.net Login I.D.', 'event_espresso'); ?>
+							<?php _e('Please enter your Authorize.net Login ID', 'event_espresso'); ?>
 						</span></td>
 				</tr>
 				<tr>
@@ -130,6 +131,7 @@ function event_espresso_display_authnet_aim_settings($payment_settings) {
 		<p><strong style="color:#F00">
 				<?php _e('WARNING!', 'event_espresso'); ?>
 			</strong><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></p>
+		<?php wp_nonce_field('espresso_form_check', 'add_authnet_aim_settings'); ?>
 	</form>
 	<div id="authnet_aim_sandbox" style="display:none">
 		<h2>
