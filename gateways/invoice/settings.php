@@ -187,7 +187,7 @@ on your payemnt page. (Default: Yes)', 'event_espresso'); ?></span></td>
 				<tr>
 					<th><label for="base-invoice-select">
 							<?php _e('Select Stylesheet', 'event_espresso'); ?>
-							<?php //apply_filters('espresso_help', 'base_template_info')  ?>
+							<?php //apply_filters('filter_hook_espresso_help', 'base_template_info')  ?>
 						</label></th>
 					<td><select id="base-invoice-select" class="chzn-select wide" name="invoice_css">
 							<option <?php espresso_invoice_is_selected('', $payment_settings['invoice']['invoice_css']) ?> value="simple.css">
@@ -209,7 +209,7 @@ to change the look of your invoices.', 'event_espresso'); ?></span></td>
 				<tr>
 					<th><label for="image_url">
 							<?php _e('Logo Image', 'event_espresso'); ?>
-							<?php //apply_filters('espresso_help', 'invoice_logo_info') ?>
+							<?php //apply_filters('filter_hook_espresso_help', 'invoice_logo_info') ?>
 						</label></th>
 					<td><p id="invoice-logo-image">
 							<input id="image_url" type="hidden" size="36" name="image_url" value="<?php echo $payment_settings['invoice']['image_url']; ?>" />

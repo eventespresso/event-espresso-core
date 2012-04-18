@@ -138,7 +138,7 @@ function event_espresso_display_mwarrior_settings() {
 						</li>
 						<li>
 							<label for="currency_format">
-								<?php _e('Select the currency for your country: ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'currency_info') ?>
+								<?php _e('Select the currency for your country: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'currency_info') ?>
 							</label>
 							<br />
 							<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
@@ -170,14 +170,14 @@ function event_espresso_display_mwarrior_settings() {
 						</li>
 						<li>
 							<label for="button_url">
-								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'button_image') ?>
+								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'button_image') ?>
 							</label>
 							<br />
 							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $payment_settings['mwarrior']['button_url']; ?>" />
 							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> </li>
 						<li>
 							<label for="image_url">
-								<?php _e('Image URL (logo for payment page): ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'image_url_info') ?>
+								<?php _e('Image URL (logo for payment page): ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'image_url_info') ?>
 							</label>
 							<br />
 							<input class="regular-text" type="text" name="image_url" size="35" value="<?php echo $payment_settings['mwarrior']['image_url']; ?>" />
@@ -188,7 +188,7 @@ function event_espresso_display_mwarrior_settings() {
 				<td valign="top"><ul>
 						<li>
 							<label for="bypass_payment_page">
-								<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'bypass_confirmation') ?>
+								<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation') ?>
 							</label>
 							<?php
 							$values = array(
@@ -200,7 +200,7 @@ function event_espresso_display_mwarrior_settings() {
 						<li>
 							<label for="use_sandbox">
 								<?php _e('Use the Test Mode for Merchant Warrior? ', 'event_espresso');
-								echo apply_filters('espresso_help', 'sandbox_info') ?>
+								echo apply_filters('filter_hook_espresso_help', 'sandbox_info') ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['mwarrior']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 

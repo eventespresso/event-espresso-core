@@ -132,7 +132,7 @@ function event_espresso_display_authnet_settings() {
 				<tr>
 					<th><label for="authnet_transaction_key">
 							<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'transaction_key_info') ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'transaction_key_info') ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="authnet_transaction_key" id="authnet_transaction_key" size="35" value="<?php echo $payment_settings['authnet_sim']['authnet_transaction_key']; ?>">
 						<br />
@@ -143,7 +143,7 @@ function event_espresso_display_authnet_settings() {
 				<tr>
 					<th><label for="sim_button_url">
 							<?php _e('Button Image URL: ', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'authnet_button_url_info') ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'authnet_button_url_info') ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="button_url" id="sim_button_url" value="<?php echo $payment_settings['authnet_sim']['button_url']; ?>" />
 						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
@@ -155,7 +155,7 @@ function event_espresso_display_authnet_settings() {
 				<tr>
 					<th><label for="sim_image_url">
 							<?php _e('Image URL: ', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'authnet_image_url_info') ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'authnet_image_url_info') ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="image_url" id="sim_image_url" value="<?php echo $payment_settings['authnet_sim']['image_url']; ?>" />
 						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a><br />
@@ -170,7 +170,7 @@ function event_espresso_display_authnet_settings() {
 				<tr>
 					<th><label>
 							<?php _e('Relay Response URL: ', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'relay_response') ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'relay_response') ?>
 						</label></th>
 					<td><span class="display-path" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;"><?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?></span><br />
 						<span class="description">
@@ -180,21 +180,21 @@ function event_espresso_display_authnet_settings() {
 				<tr>
 					<th><label for="use_sandbox">
 							<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'authnet_sandbox'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'authnet_sandbox'); ?>
 						</label></th>
 					<td><?php echo select_input('use_sandbox', $values, $payment_settings['authnet_sim']['use_sandbox']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="test_transactions">
 							<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'authnet_test_transactions') ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
 						</label></th>
 					<td><?php echo select_input('test_transactions', $values, $payment_settings['authnet_sim']['test_transactions']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="bypass_payment_page">
 							<?php _e('By-pass the payment confirmation page? ', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'bypass_confirmation') ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation') ?>
 						</label></th>
 					<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['authnet_sim']['bypass_payment_page']); ?></td>
 				</tr>

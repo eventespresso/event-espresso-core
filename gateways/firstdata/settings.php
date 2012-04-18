@@ -122,7 +122,7 @@ function event_espresso_display_firstdata_settings() {
 						</li>
 						<li>
 							<label for="use_sandbox">
-	<?php _e('Use the debugging feature and the FirstData Sandbox? ', 'event_espresso'); ?> <?php echo apply_filters('espresso_help', 'sandbox_info_firstdata') ?>
+	<?php _e('Use the debugging feature and the FirstData Sandbox? ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info_firstdata') ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['firstdata']['use_sandbox'] == "1" ? $checked : '' ?> />
 

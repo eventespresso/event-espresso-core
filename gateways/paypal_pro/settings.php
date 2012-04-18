@@ -144,7 +144,7 @@ function event_espresso_display_paypal_pro_settings() {
 				<tr>
 					<th><label for="paypal_pro_currency_format">
 							<?php _e('Country Currency', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'paypal_pro_currency_info') ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'paypal_pro_currency_info') ?>
 						</label></th>
 					<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 							<option value="<?php echo $payment_settings['paypal_pro']['currency_format']; ?>"><?php echo $payment_settings['paypal_pro']['currency_format']; ?></option>
@@ -239,7 +239,7 @@ function event_espresso_display_paypal_pro_settings() {
 				<tr>
 					<th><label for="paypal_pro_use_sandbox">
 							<?php _e('Use the debugging feature and the PayPal Sandbox', 'event_espresso'); ?>
-							<?php apply_filters('espresso_help', 'paypal_pro_sandbox_info'); ?>
+							<?php apply_filters('filter_hook_espresso_help', 'paypal_pro_sandbox_info'); ?>
 						</label></th>
 					<td><?php echo select_input('use_sandbox', $values, $payment_settings['paypal_pro']['use_sandbox']); ?>
 						<br />

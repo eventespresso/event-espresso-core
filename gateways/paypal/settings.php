@@ -124,7 +124,7 @@ function event_espresso_display_paypal_settings($payment_settings) {
 				<tr>
 					<th><label for="currency_format">
 							<?php _e('Country Currency', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'currency_info'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'currency_info'); ?>
 						</label></th>
 					<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 							<option value="<?php echo $payment_settings['paypal']['currency_format']; ?>"><?php echo $payment_settings['paypal']['currency_format']; ?></option>
@@ -203,7 +203,7 @@ function event_espresso_display_paypal_settings($payment_settings) {
 				<tr>
 					<th><label for="pp_button_url">
 							<?php _e('Button Image URL', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'paypal_button_image'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'paypal_button_image'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="button_url" id="pp_button_url" size="34" value="<?php echo $payment_settings['paypal']['button_url']; ?>" /><br /><span class="description">
 							<?php _e('URL to the payment button.', 'event_espresso'); ?>
@@ -213,7 +213,7 @@ function event_espresso_display_paypal_settings($payment_settings) {
 				<tr>
 					<th><label for="pp_image_url">
 							<?php _e('Image URL', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'paypal_image_url_info'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'paypal_image_url_info'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="image_url" id="pp_image_url" size="35" value="<?php echo $payment_settings['paypal']['image_url']; ?>" />
 						<br />
@@ -224,21 +224,21 @@ function event_espresso_display_paypal_settings($payment_settings) {
 				<tr>
 					<th><label for="bypass_payment_page">
 							<?php _e('By-pass the payment confirmation page', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'bypass_confirmation'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation'); ?>
 						</label></th>
 					<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['paypal']['bypass_payment_page']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="use_sandbox">
 							<?php _e('Use the debugging feature and the PayPal Sandbox', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'sandbox_info'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info'); ?>
 						</label></th>
 					<td><?php echo select_input('use_sandbox', $values, $payment_settings['paypal']['use_sandbox']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="no_shipping">
 							<?php _e('Shipping address options?', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'no_shipping'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'no_shipping'); ?>
 						</label></th>
 					<td><?php
 						$shipping_values = array(

@@ -128,7 +128,7 @@ function event_espresso_display_realauth_settings() {
 				<tr>
 					<th><label for="currency_format">
 							<?php _e('Country Currency', 'event_espresso');
-							apply_filters('espresso_help', 'realauth_currency_info'); ?>
+							apply_filters('filter_hook_espresso_help', 'realauth_currency_info'); ?>
 						</label></th>
 					<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 							<option value="<?php echo $payment_settings['realauth']['currency_format']; ?>"><?php echo $payment_settings['realauth']['currency_format']; ?></option>
@@ -203,14 +203,14 @@ function event_espresso_display_realauth_settings() {
 				<tr>
 					<th><label for="bypass_payment_page">
 							<?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?>
-							<?php apply_filters('espresso_help', 'bypass_confirmation'); ?>
+							<?php apply_filters('filter_hook_espresso_help', 'bypass_confirmation'); ?>
 						</label></th>
 					<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['realauth']['bypass_payment_page']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="auto_settle">
 							<?php _e('Auto settle transactions', 'event_espresso'); ?>
-							<?php apply_filters('espresso_help', 'auto_settle_info'); ?>
+							<?php apply_filters('filter_hook_espresso_help', 'auto_settle_info'); ?>
 						</label></th>
 					<td><?php echo select_input('auto_settle', $values, $payment_settings['realauth']['auto_settle']); ?></td>
 				</tr>

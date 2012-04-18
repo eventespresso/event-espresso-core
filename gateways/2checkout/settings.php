@@ -131,14 +131,14 @@ function event_espresso_display_2checkout_settings($payment_settings) {
 				<tr>
 					<th><label for="2co_button_url">
 							<?php _e('Button Image URL', 'event_espresso'); ?>
-							<?php apply_filters('espresso_help', '2co_button_image'); ?>
+							<?php apply_filters('filter_hook_espresso_help', '2co_button_image'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="button_url" id="2co_button_url" size="34" value="<?php echo $payment_settings['2checkout']['button_url']; ?>" /></td>
 				</tr>
 				<tr>
 					<th><label for="currency_format">
 							<?php _e('Country Currency', 'event_espresso'); ?>
-							<?php apply_filters('espresso_help', '2co_currency_info'); ?>
+							<?php apply_filters('filter_hook_espresso_help', '2co_currency_info'); ?>
 						</label></th>
 					<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 							<option value="<?php echo $payment_settings['2checkout']['currency_format']; ?>"><?php echo $payment_settings['2checkout']['currency_format']; ?></option>
@@ -216,14 +216,14 @@ function event_espresso_display_2checkout_settings($payment_settings) {
 				<tr>
 					<th><label for="bypass_payment_page">
 							<?php _e('By-pass the payment confirmation page?', 'event_espresso'); ?>
-							<?php apply_filters('espresso_help', 'bypass_confirmation'); ?>
+							<?php apply_filters('filter_hook_espresso_help', 'bypass_confirmation'); ?>
 						</label></th>
 					<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['2checkout']['bypass_payment_page']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="2co_use_sandbox">
 							<?php _e('Use the debugging feature and the 2checkout Sandbox', 'event_espresso'); ?>
-							<?php apply_filters('espresso_help', '2co_sandbox_info'); ?>
+							<?php apply_filters('filter_hook_espresso_help', '2co_sandbox_info'); ?>
 						</label></th>
 					<td><?php echo select_input('use_sandbox', $values, $payment_settings['2checkout']['use_sandbox']); ?></td>
 				</tr>

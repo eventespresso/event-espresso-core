@@ -110,14 +110,14 @@ function event_espresso_display_authnet_aim_settings($payment_settings) {
 				<tr>
 					<th><label for="use_sandbox">
 							<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'authnet_aim_sandbox'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'authnet_aim_sandbox'); ?>
 						</label></th>
 					<td><?php echo select_input('use_sandbox', $values, $payment_settings['aim']['use_sandbox']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="test_transactions">
 							<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-							<?php echo apply_filters('espresso_help', 'authnet_test_transactions') ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
 						</label></th>
 					<td><?php echo select_input('test_transactions', $values, $payment_settings['aim']['test_transactions']); ?></td>
 				</tr>
