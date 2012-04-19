@@ -13,10 +13,10 @@
 				<?php _e('Enabling Styles tells Event Espresso to use it\'s built in stylesheets for styling the template files.', 'event_espresso'); ?>
 			</p>
 			<p>
-				<?php _e('If this option is enabled Event Espresso first looks in the /wp-content/uploads/espresso/templates folder for a copy of the stylesheet, if not found it then uses the copy found in the main templates folder.', 'event_espresso'); ?>
+				<?php _e('If this option is enabled Event Espresso first looks in the /wp-content/uploads/espresso/templates/css/themeroller/ folder for a copy of the stylesheet, if not found it then uses the copy found in the main /wp-content/event-espresso/templates/css/themeroller/ folder.', 'event_espresso'); ?>
 			</p>
 			<p>
-				<?php _e('If event espresso uses the original copy of the stylesheet you will have the option to select from a range of alternative sheets, these additional stylesheets however are not available if you have copied the default stylesheet to the uploads folder to customize yourself.', 'event_espresso'); ?>
+				<?php _e('If Event Espresso uses the original copy of the stylesheet you will have the option to select from a range of alternative sheets, these additional stylesheets however are not available if you have copied the default stylesheet to the uploads folder to customize yourself.', 'event_espresso'); ?>
 			</p>
 			<p> <em class="important"> <strong>
 				<?php _e('ATTENTION:', 'event_espresso'); ?>
