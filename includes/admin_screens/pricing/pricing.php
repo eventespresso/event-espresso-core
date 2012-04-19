@@ -14,7 +14,7 @@ function espresso_price_manager_menu() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	$PRC = EEM_Price::instance();
 
-	$_REQUEST['action'] = isset($_REQUEST['action']) ?$_REQUEST['action'] : NULL;	
+	$_REQUEST['action'] = isset($_REQUEST['action']) ? wp_strip_all_tags( $_REQUEST['action'] ) : NULL;	
 	$edit_or_add_pages = array( 'edit_price', 'edit_price_type', 'add_new_price', 'add_new_price_type' );	
 	$edit_or_add_page =  ( in_array( $_REQUEST['action'], $edit_or_add_pages )) ? TRUE : FALSE;
 
@@ -37,10 +37,12 @@ function espresso_price_manager_menu() {
 					<h2><?php _e('Prices', 'event_espresso'); ?>
 <?php
 			if ( ! $edit_or_add_page ) {
-				echo '<a href="admin.php?page=pricing&amp;action=add_new_price" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Price', 'event_espresso') . '</a>';
+				$add_new_price_url = add_query_arg( array( 'action' => 'add_new_price' ), PRC_ADMIN_URL );  
+				echo '<a href="'.$add_new_price_url.'" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Price', 'event_espresso') . '</a>';
 			}
 ?>				</h2>
-					<form id="espresso-admin-price-list-frm" name="espresso-admin-price-list-frm" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
+
+					<form id="espresso-admin-price-list-frm" name="espresso-admin-price-list-frm" method="post" action="<?php echo PRC_ADMIN_URL ?>">
 						<table id="table" class="widefat manage-prices">
 							<thead>
 								<tr>
@@ -151,11 +153,12 @@ function espresso_price_manager_menu() {
 					<h2>Price Types
 <?php
 			if ( ! $edit_or_add_page ) {
-				echo '<a href="admin.php?page=pricing&amp;action=add_new_price_type" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Type', 'event_espresso') . '</a>';
+				$add_new_price_type_url = add_query_arg( array( 'action' => 'add_new_price_type' ), PRC_ADMIN_URL );  
+				echo '<a href="'.$add_new_price_type_url.'" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Type', 'event_espresso') . '</a>';
 			}		
 ?>					
 					</h2>
-					<form id="espresso-admin-price-type-frm" name="espresso-admin-price-type-frm" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
+					<form id="espresso-admin-price-type-frm" name="espresso-admin-price-type-frm" method="post" action="<?php echo PRC_ADMIN_URL ?>">
 						<table id="table" class="widefat manage-price-types">
 							<thead>
 								<tr>

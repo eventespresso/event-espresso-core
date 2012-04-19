@@ -5,8 +5,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 function event_espresso_manage_events() {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	
+	define( 'EVENTS_ADMIN_URL', admin_url( 'admin.php?page=events' ));	
 
-	if (isset($_REQUEST['action'])) {
+	$_REQUEST['action'] = isset($_REQUEST['action']) ? wp_strip_all_tags( $_REQUEST['action'] ) : FALSE;	
+	
+	if ( $_REQUEST['action'] ) {	
 		// These three are different views, so return after each
 		switch ($_REQUEST['action']) {
 			case 'csv_import':
@@ -14,7 +18,7 @@ function event_espresso_manage_events() {
 				return;
 				break;
 			case 'edit':
-				edit_event($_REQUEST['event_id']);
+				edit_event( absint( $_REQUEST['event_id'] ));
 				return;
 				break;
 			case 'add_new_event':

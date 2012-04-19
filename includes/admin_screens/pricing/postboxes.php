@@ -44,14 +44,14 @@ function edit_event_price_postbox() {
 			<table class="form-table">
 				<tbody>
 					<tr valign="top">
-						<th><label for="PRT_ID"><?php _e('Price Type', 'event_espresso'); ?></label></th>
+						<th><label for="PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
 						<td>
 							<?php echo select_input('PRT_ID', $price_types, $price->type(), 'id="PRT_ID"'); ?>
 							<span class="description"><?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax. Default items will apply to ALL new events you create.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
-						<th><label for="PRC_name"><?php _e('Price Name', 'event_espresso'); ?></label></th>
+						<th><label for="PRC_name"><?php _e('Name', 'event_espresso'); ?></label></th>
 						<td>
 							<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php echo html_entity_decode( stripslashes( $price->name() ), ENT_QUOTES, 'UTF-8' ); ?>"/>
 							<span class="description"><?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></span>
@@ -67,7 +67,7 @@ function edit_event_price_postbox() {
 						</td>							
 					</tr>
 					<tr valign="top">
-						<th><label for="PRC_amount"><?php _e('Price Amount', 'event_espresso'); ?></label></th>
+						<th><label for="PRC_amount"><?php _e('Amount', 'event_espresso'); ?></label></th>
 						<td>
 							<input class="small-text" type="text" id="PRC_amount" name="PRC_amount" value="<?php echo $price->amount(); ?>"/>
 							<span class="description"><?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
@@ -229,7 +229,7 @@ function edit_event_price_type_postbox() {
 						</th>
 						<td>
 							<input class="small-text" type="text" id="PRT_order" name="PRT_order" value="<?php echo $type->order(); ?>"/><span class="description">
-							<?php _e('The order that Price Types are applied. .', 'event_espresso'); ?></span><br/><br/>
+							<?php _e('The order that Price Types are applied. .', 'event_espresso'); ?></span><br/>
 							<span class="description"><?php _e('Price types are applied sequentially according to their Order, where higher ordered Price Types will affect lower ordered Price Types.<br/>Price types with equal Orders will be applied in parrallel to whatever total preceeds them and will not affect each other. Actual Prices will be set to "0" so that they are processed first. Taxes will be always be applied last but their order will still determine if they are applied in parralel or as compound taxes (one tax on top of the other).', 'event_espresso'); ?></span>
 						</td>
 					</tr>

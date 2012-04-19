@@ -342,10 +342,10 @@ function update_event($recurrence_arr = array()) {
 					'venue_url' => $venue_url,
 					'venue_phone' => $venue_phone,
 					'venue_image' => $venue_image,
-					'registration_start' => $registration_start,
-					'registration_end' => $registration_end,
-					'start_date' => $start_date,
-					'end_date' => $end_date,
+//					'registration_start' => $registration_start,
+//					'registration_end' => $registration_end,
+//					'start_date' => $start_date,
+//					'end_date' => $end_date,
 					'allow_multiple' => $allow_multiple,
 					'is_active' => $is_active,
 					'event_status' => $event_status,
@@ -358,12 +358,12 @@ function update_event($recurrence_arr = array()) {
 					'alt_email' => $alt_email,
 					'question_groups' => $question_groups,
 					'allow_overflow' => $allow_overflow,
-					'registration_startT' => $registration_startT,
-					'registration_endT' => $registration_endT,
+//					'registration_startT' => $registration_startT,
+//					'registration_endT' => $registration_endT,
 					'event_meta' => $event_meta,
 					'require_pre_approval' => $require_pre_approval,
 					'timezone_string' => $timezone_string,
-					'reg_limit' => $reg_limit,
+//					'reg_limit' => $reg_limit,
 					'additional_limit' => $additional_limit,
 					'wp_user' => $wp_user_id,
 					'ticket_id' => $ticket_id,
@@ -372,15 +372,17 @@ function update_event($recurrence_arr = array()) {
 					'payment_email_id' => $payment_email_id
 			);
 
+
+
 			$sql_data = array(
 					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', '%s', /*'%s', '%s',
+					'%s', '%s',*/ '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s', '%d',
+					'%s', '%s', '%s', '%s', /*'%s',
+					'%s',*/ '%s', '%s', '%s', /*'%d',*/
 					'%d', '%d', '%d',	'%d', '%d',
 					'%d'
 			);
@@ -464,19 +466,57 @@ function update_event($recurrence_arr = array()) {
 				}
 			}
 
-			$del_times = "DELETE FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $event_id . "'";
-			$wpdb->query($del_times);
 
-			if ($_REQUEST['start_time'] != '') {
-				foreach ($_REQUEST['start_time'] as $k => $v) {
-					if ($v != '') {
-						$time_qty = empty($_REQUEST['time_qty'][$k]) ? '0' : "'" . $_REQUEST['time_qty'][$k] . "'";
-						$sql_times = "INSERT INTO " . EVENTS_START_END_TABLE . " (event_id, start_time, end_time, reg_limit) VALUES ('" . $event_id . "', '" . event_date_display($v, 'H:i') . "', '" . event_date_display($_REQUEST['end_time'][$k], 'H:i') . "', " . $time_qty . ")";
-						//echo "$sql_times <br>";
-						$wpdb->query($sql_times);
-					}
+//			$del_times = "DELETE FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $event_id . "'";
+//			$wpdb->query($del_times);
+//
+//			if ($_REQUEST['start_time'] != '') {
+//				foreach ($_REQUEST['start_time'] as $k => $v) {
+//					if ($v != '') {
+//						$time_qty = empty($_REQUEST['time_qty'][$k]) ? '0' : "'" . $_REQUEST['time_qty'][$k] . "'";
+//						$sql_times = "INSERT INTO " . EVENTS_START_END_TABLE . " (event_id, start_time, end_time, reg_limit) VALUES ('" . $event_id . "', '" . event_date_display($v, 'H:i') . "', '" . event_date_display($_REQUEST['end_time'][$k], 'H:i') . "', " . $time_qty . ")";
+//						echo "$sql_times <br>";
+//						$wpdb->query($sql_times);
+//					}
+//				}
+//			}
+			
+
+			$registration_start = wp_strip_all_tags( $_REQUEST['registration_start'] );
+			$registration_end = wp_strip_all_tags( $_REQUEST['registration_end'] );
+			$registration_startT = wp_strip_all_tags( $_REQUEST['registration_startT'] );
+			$registration_endT = wp_strip_all_tags( $_REQUEST['registration_endT'] );
+
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+			$DTM = EEM_Datetime::instance();			
+			
+			// delete old datetime entries
+			$DTM->delete_all_event_datetimes( $event_id );
+
+			$new_reg_dates = new EE_Datetime( $event_id, $registration_start . ' ' . $registration_startT, $registration_end . ' ' . $registration_endT, 'R' );
+			$new_reg_dates->insert();
+			
+			
+			//event_datetimes[]['start']['date']
+			if ( isset( $_REQUEST['event_datetimes'] )) {
+				foreach ( $_REQUEST['event_datetimes'] as $key => $dtm ) {		
+					//echo printr( $dtm, 'event_datetime' );				
+					$new_event_dates = new EE_Datetime( 
+																						absint( $event_id ), 
+																						wp_strip_all_tags( $dtm['start']['date'] ) . ' ' . wp_strip_all_tags( $dtm['start']['time'] ), 
+																						wp_strip_all_tags( $dtm['end']['date'] ) . ' ' . wp_strip_all_tags( $dtm['end']['time'] ), 
+																						'E', 
+																						absint( $dtm['start']['reg_limit'] )
+																					 );
+					$new_event_dates->insert();
 				}
-			}
+			}			
+			
+//			echo printr( $_REQUEST['event_datetimes'], 'event_datetimes' );
+//			global $espresso_notices;
+//			echo espresso_get_notices(); 			
+//			die();
+		
 /*
 			$del_prices = "DELETE FROM " . EVENTS_PRICES_TABLE . " WHERE event_id = '" . $event_id . "'";
 			$wpdb->query($del_prices);

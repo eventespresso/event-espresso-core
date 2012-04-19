@@ -497,9 +497,11 @@
 	public function _get_page_visit() {
 
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
+		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
+		
 		// check for request url
 		if ( isset( $_SERVER['REQUEST_URI'] )) {
+		
 			$request_uri = esc_url( $_SERVER['REQUEST_URI'] );
 
 			$ru_bits = explode( '?', $request_uri );
@@ -543,7 +545,8 @@
 //			}
 
 		}
-		if ( $page_visit != site_url('/') . 'wp-admin/admin-ajax.php' ) {
+		
+		if ( $page_visit != home_url('/') . 'wp-admin/admin-ajax.php' ) {
 			return $page_visit;
 		} else {
 			return FALSE;

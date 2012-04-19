@@ -3,116 +3,75 @@
 function event_espresso_timereg_editor($event_id = 0) {
 	global $wpdb;
 	$time_counter = 1;
-	?>
 
-	<ul id="staticTimeInput">
-
-		<?php
-		if ($event_id > 0) {
-			$timesx = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
-			foreach ($timesx as $timex) {
-				?>
-				<li>
-					<p>
-						<label for="add-reg-start"><?php _e('Reg Start Time', 'event_espresso'); ?></label>
-						<input size="10"  type="text" id="add-reg-start" name="registration_startT" value="<?php echo event_date_display($timex->registration_startT, get_option('time_format')); ?>" />
-					</p>
-					<p>
-						<label for="ad-reg-end"><?php _e('Reg End Time', 'event_espresso'); ?></label>
-						<input size="10"  type="text" name="registration_endT" value="<?php echo event_date_display($timex->registration_endT, get_option('time_format')); ?>">
-					</p>
-				</li>
-				<?php
-			}
-		} else {
-			?>
-			<li>
-				<p>
-					<label for="add-reg-start"><?php _e('Reg Start Time', 'event_espresso'); ?></label>
-					<input size="10"  type="text" id="add-reg-start" name="registration_startT" />
-				</p>
-				<p>
-					<label for="registration_endT"> <?php _e('Reg End Time', 'event_espresso'); ?></label>
-					<input size="10"  type="text" id="registration_endT" name="registration_endT" />
-				</p>
-			</li>
-			<?php
-		}
-		?>
-	</ul>
-	<?php
+	$timesx = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
+	
+	if ( ! $wpdb->num_rows > 0 ) {
+		$time = new stdClass;
+		$time->registration_startT = 0;
+		$time->registration_endT = 0;
+		$timesx = array( $time );
+	}
+	
+	foreach ($timesx as $timex) {
+?>
+<div style="width:66%;">
+	<div id="event-time-<?php echo $time_counter; ?>">
+		<table class="form-table">		
+			<tr valign="top">
+				<td scope="row" style="width:115px;">
+					<label for="add-reg-start-<?php echo $time_counter; ?>"><?php _e('Start Time', 'event_espresso'); ?></label>
+				</td>
+				<td>
+					<input id="add-reg-start-time-<?php echo $time_counter; ?>" name="registration_startT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_startT, get_option('time_format')); ?>" />
+				</td>
+			</tr>
+			<tr valign="top">
+				<td scope="row" style="width:115px;">
+					<label for="add-reg-end-<?php echo $time_counter; ?>"><?php _e('End Time', 'event_espresso'); ?></label>
+				</td>
+				<td>
+					<input id="add-reg-end-time-<?php echo $time_counter; ?>" name="registration_endT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_endT, get_option('time_format')); ?>" />
+				</td>
+			</tr>	
+		</table>	
+		<br/>		
+	</div>		
+</div>		
+<br class="clear"/>
+<?php
+	}
 }
 
-function event_espresso_time_editor($event_id = 0) {
+function event_espresso_time_editor( $event_id = 0 ) {
+
 	global $wpdb, $org_options;
+	
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$time_counter = 1;
 	//echo get_option('time_format');
-	?>
 
-	<ul id="dynamicTimeInput">
+	$times = $wpdb->get_results("SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $event_id . "' ORDER BY id");
 
-		<?php
-		$times = $wpdb->get_results("SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $event_id . "' ORDER BY id");
-		if ($wpdb->num_rows > 0) {
-			foreach ($times as $time) {
-				?>
-				<li>
-					<p>
-						<label for="add-start-time"><?php _e('Start', 'event_espresso'); ?><?php echo $time_counter++; ?></label>
-						<input size="10"  type="text" id="add-start-time" name="start_time[]" value="<?php echo event_date_display($time->start_time, get_option('time_format')); ?>" />
-					</p>
-					<p>
-						<label for="add-end-time"><?php _e('End', 'event_espresso'); ?></label>
-						<input size="10"  type="text" id="add-end-time" name="end_time[]" value="<?php echo event_date_display($time->end_time, get_option('time_format')); ?>"><?php
-			if ($org_options['time_reg_limit']) {
-				_e('Qty', 'event_espresso');
-					?>
-							<input size="3"  type="text" name="time_qty[]" value="<?php echo $time->reg_limit; ?>"><?php }
-				?>
-					</p>
-					<input class="remove-item xtra-time" type="button" value="Remove" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" />
-				</li>
-				<?php
-			}
-		} else {
-			?>
-			<li>
-				<p>
-					<label for="add-start-time"><?php _e('Start', 'event_espresso'); ?></label>
-					<input size="10"  type="text" id="add-start-time" name="start_time[]" />
-				</p>
-				<p>
-					<label for="add-end-time"><?php _e('End', 'event_espresso'); ?></label>
-					<input size="10"  type="text" id="add-end-time" name="end_time[]" />
-					<?php
-					if (isset($org_options['time_reg_limit']) && $org_options['time_reg_limit']) {
-						echo '<p><label for="time_qty">' . __('Qty', 'event_espresso') . '</label>';
-						?><input size="3"  type="text" name="time_qty[]" /></p>
-				<?php }
-				?>
-			</li>
-			<?php
-		}
-		?>
-	</ul>
-	<?php
-	global $espresso_premium;
-	if ($espresso_premium != true)
-		return;
-	?>
-	<input type="button" class="button" id="add-time" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" onClick="addTimeInput('dynamicTimeInput');">
-	<script type="text/javascript">
-		//Dynamic form fields
-		var counter = <?php echo $time_counter++ ?>;
-		function addTimeInput(divName){
-			var newdiv = document.createElement('li');
-			newdiv.innerHTML = "<p><label for='add-start-time-"+ (counter) +"'><?php _e('Start', 'event_espresso'); ?> " + (counter) + "</label> <input type='text'id='add-start-time-"+ (counter) +"' size='10' name='start_time[]'></p><p> <label for='add-end-time-"+ (counter) +"'> <?php _e('End', 'event_espresso'); ?></label> <input type='text' id='add-end-time-"+ (counter) +"' size='10' name='end_time[]'> <?php echo $org_options['time_reg_limit'] ? "<p><label for='time_qty'>" . __('Qty ', 'event_espresso') . " <input type='text'  size='3' name='time_qty[]'>" : ''; ?></p><input class='remove-this xtra-time' id='remove-added-time' type='button' value='Remove' onclick='this.parentNode.parentNode.removeChild(this.parentNode);'/>";
-			document.getElementById(divName).appendChild(newdiv);
-			counter++;
-		}
-	</script>
-	<?php
+	if ( ! $wpdb->num_rows > 0 ) {
+		$time = new stdClass;
+		$time->start_time = 0;
+		$time->end_time = 0;
+		$time->reg_limit = NULL;
+		$times = array( $time );
+	}
+		foreach ($times as $time) {
+
+?>
+
+
+
+<?php
+			$time_counter++;
+		} // end foreach ($times as $time)
+		
+		$time_counter--;
+
 }
 
 function event_espresso_multi_price_update($event_id) {
@@ -358,76 +317,159 @@ function espresso_event_editor_description_metabox($event) {
 	<?php
 }
 
-function espresso_event_editor_date_time_metabox($event) {
-	global $espresso_premium;
-	?>
+function espresso_event_editor_date_time_metabox( $event ) {
+	
+	global $wpdb, $org_options, $espresso_premium;
+	
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');	
+	
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+	$DTM = EEM_Datetime::instance();
+
+	// grab event times
+	if ( ! $times = $DTM->get_all_event_dates( $event->id )) {
+		$times = array( new EE_Datetime( $event->id, NULL, NULL, 'E', NULL ));
+	} 
+	//echo printr( $times, '$times' );
+	
+	// grab reg times
+	if ( ! $reg_times = $DTM->get_all_reg_dates( $event->id )) {
+		$reg_times = array( new EE_Datetime( $event->id, NULL, NULL, 'R', NULL ));
+	} 
+	//echo printr( $reg_times, '$reg_times' );
+?>
 	<div class="inside">
-		<table width="100%" border="0" cellpadding="5">
+<h1>NEEDS SOME FIXIN'</h1>
+		<h5><?php _e('Event', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></h5>
+	
+		<table id="event-dates-and-times">		
 			<tr valign="top">
-				<td class="a"><fieldset id="add-reg-dates">
-						<legend>
-							<?php _e('Registration Dates', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?> </legend>
-						<p>
-							<label for="registration_start"> <?php echo __('Registration Start:', 'event_espresso') ?></label>
-							<input type="text" class="datepicker" size="15" id="registration_start" name="registration_start"  value="<?php echo $event->registration_start ?>" />
-						</p>
-						<p>
-							<label for="registration_end"><?php echo __('Registration End:', 'event_espresso') ?></label>
-							<input type="text" class="datepicker" size="15" id="registration_end" name="registration_end"  value="<?php echo $event->registration_end ?>" />
-						</p>
-					</fieldset>
-					<fieldset>
-						<legend>
-							<?php _e('Event Dates', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?> </legend>
-						<p>
-							<label for="start_date"><?php echo __('Event Start Date', 'event_espresso') ?></label>
-							<input type="text" class="datepicker" size="15" id="start_date" name="start_date" value="<?php echo $event->start_date ?>" />
-						</p>
-						<p>
-							<label for="end_date"><?php echo __('Event End Date', 'event_espresso') ?></label>
-							<input type="text" class="datepicker" size="15" id="end_date" name="end_date" value="<?php echo $event->end_date ?>" />
-						</p>
-					</fieldset>
-					<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones']) && $espresso_premium == true) { ?>
-						<p><span class="run-in">
-								<?php _e('Current Time:', 'event_espresso'); ?>
-							</span> <span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> <?php echo apply_filters('filter_hook_espresso_help', 'current_time_info'); ?> <a class="change-date-time" href="options-general.php" target="_blank">
-								<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
-							</a></p>
-					<?php } ?>
-					<?php if (!empty($org_options['use_event_timezones']) && $espresso_premium) { ?>
-						<fieldset id="event-timezone">
-							<p>
-								<label>
-									<?php _e('Event Timezone:', 'event_espresso') ?>
-								</label>
-								<?php echo eventespresso_ddtimezone($event->id) ?></p>
-						</fieldset>
-					<?php } ?></td>
-					<?php // ADD TIME REGISTRATION    ?>
-				<td class="b"><fieldset id="add-register-times">
-						<legend>
-							<?php _e('Registration Times', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?> </legend>
-							<?php echo event_espresso_timereg_editor($event->id); ?>
-					</fieldset>
-					<fieldset id="add-event-times">
-						<legend>
-							<?php _e('Event Times', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'event_times_info'); ?> </legend>
-							<?php echo event_espresso_time_editor($event->id); ?>
-					</fieldset></td>
+				<td><?php echo __('Start Date', 'event_espresso') ?></td>
+				<td><?php echo __('End Date', 'event_espresso') ?></td>
+				<td><?php echo __('Start Time', 'event_espresso') ?></td>
+				<td><?php echo __('End Time', 'event_espresso') ?></td>
+<?php if ($org_options['time_reg_limit']) : ?>
+				<td><?php echo __('Reg Limit', 'event_espresso') ?></td>
+<?php endif; // time_reg_limit  ?>	
+				<td></td>
 			</tr>
-		</table>
+<?php $row = 1; ?>			
+<?php foreach ($times as $time) :  ?>
+			<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
+				<td>
+					<input id="start-date-<?php echo $row; ?>" name="event_datetimes[]['start']['date']" type="text" class="datepicker" value="<?php echo $time->start_date(); ?>" />
+				</td>
+				<td>
+					<input id="end-date-<?php echo $row; ?>" name="event_datetimes[]['end']['date']" type="text" class="datepicker" value="<?php echo $time->end_date(); ?>" />
+				</td>
+				<td>
+					<input id="add-start-time-<?php echo $row; ?>" name="event_datetimes[]['start']['time']" type="text" class="medium-text time-picker" value="<?php echo $time->start_time(); ?>" />
+				</td>
+				<td>
+					<input id="add-end-time-<?php echo $row; ?>" name="event_datetimes[]['end']['time']" type="text" class="medium-text time-picker" value="<?php echo $time->end_time(); ?>" />
+				</td>
+<?php if ($org_options['time_reg_limit']) : ?>
+				<td>
+					<input type="text" id="time_qty-<?php echo $row; ?>" name="event_datetimes[]['start']['reg_limit']" class="small-text" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
+				</td>
+<?php endif; // time_reg_limit  ?>	
+<?php if ( $row > 1 ) : ?>	
+				<td><input class='remove-xtra-time' rel='<?php echo $row; ?>' type='button' value='Remove'  title='Remove this Event Time' /></td>
+<?php else : ?>
+				<td></td>
+<?php endif; ?>
+			</tr>
+<?php $row++;  ?>
+<?php endforeach; // ($times as $time)  ?>			
+		</table>	
+		<br class="clear"/>
+		<input type="button" class="button" id="add-time" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />
+		<br class="clear"/><br/>	
+				
+<?php if ( $espresso_premium ) : ?>
+<script type="text/javascript">
+	(function($) {	
+		var counter = <?php echo $row; ?>;
+
+		$('#add-time').click(function() {
+		
+			var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='start-date-"+(counter)+"' name='start_date' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->start_date() ?>' /></td><td><input id='end-date-"+(counter)+"' name='end_date' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->end_date() ?>' /></td><td><input id='add-start-time-"+(counter)+"' name='start_time[]' type='text' class='medium-text time-picker' value='' /></td><td><input id='add-end-time-"+(counter)+"' name='end_time[]' type='text' class='medium-text time-picker' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='time_qty-"+(counter)+"' name='time_qty[]' class='small-text' style='text-align:right;' value=''/></td><?php endif; ?><td><input class='remove-xtra-time' rel='"+(counter)+"' type='button' value='Remove'  title='Remove this Event Time' /></td></tr>";
+			
+			$('#event-dates-and-times tr:last').after( newRow );
+			counter++;		
+		});		
+
+		$('.remove-xtra-time').live("click", function(){
+			var whichRow = '#event-dates-and-times-row-' + $(this).attr('rel');
+			$(whichRow).remove();
+			counter--;
+		});
+			
+	})(jQuery);
+</script>
+<?php endif; // $espresso_premium?>
+
+		
+		<h5><?php _e('Registration', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?></h5>
+				
+		<table id="reg-dates-and-times">		
+			<tr valign="top">
+				<td><?php echo __('Start Date', 'event_espresso') ?></td>
+				<td><?php echo __('End Date', 'event_espresso') ?></td>
+				<td><?php echo __('Start Time', 'event_espresso') ?></td>
+				<td><?php echo __('End Time', 'event_espresso') ?></td>
+			</tr>
+<?php $row = 1; ?>			
+<?php foreach ( $reg_times as $reg_time ) : ?>
+			<tr valign="top" id="reg-dates-and-times-row-<?php echo $row; ?>">
+				<td>
+					<input id="registration_start" name="registration_start" type="text" class="medium-text datepicker" value="<?php echo $reg_time->start_date() ?>" />
+				</td>
+				<td>
+					<input id="registration_end" name="registration_end" type="text" class="medium-text datepicker" value="<?php echo $reg_time->end_date() ?>" />
+				</td>
+				<td>
+					<input id="add-reg-start-time-<?php echo $row; ?>" name="registration_startT[]" type="text" class="medium-text time-picker" value="<?php echo $reg_time->start_time(); ?>" />
+				</td>
+				<td>
+					<input id="add-reg-end-time-<?php echo $row; ?>" name="registration_endT[]" type="text" class="medium-text time-picker" value="<?php echo $reg_time->end_time();?>" />
+				</td>
+			</tr>	
+<?php endforeach; // $reg_times ?>	
+		</table>	
+
+		<br class="clear"/>
+	
+		
+		<?php if (( ! isset( $org_options['use_event_timezones']) || $org_options['use_event_timezones'] ) && $espresso_premium === TRUE ) { ?>
+			<span class="run-in"> <?php _e('Current Time:', 'event_espresso'); ?> </span> 
+			<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> 
+			<?php echo apply_filters('filter_hook_espresso_help', 'current_time_info'); ?> 
+			<a class="change-date-time" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
+		<?php } ?>
+		
+		<?php if ( ! empty( $org_options['use_event_timezones'] ) && $espresso_premium === TRUE ) { ?>
+				<h6> <?php _e('Event Timezone:', 'event_espresso') ?> </h6>
+				<?php echo eventespresso_ddtimezone($event->id) ?>
+		<?php } ?>
 	</div>
 	<?php
 }
 
 function espresso_event_editor_pricing_metabox($event) {
+
 	global $espresso_premium, $org_options;
+	
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+	$PRT = EEM_Price_Type::instance();
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+	$PRC = EEM_Price::instance();
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
+	$EP = EEM_Event_Price::instance();
+	$prices = $PRC->get_all_prices();
+
 	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', '');
+	
 	?>
 	<div class="inside">
 		<table id="event_editor_pricing" <?php echo $table_class ?> width="100%" border="0" cellpadding="5">
@@ -457,13 +499,6 @@ function espresso_event_editor_pricing_metabox($event) {
 				</tr>
 			</thead>
 			<?php
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-			$PRT = EEM_Price_Type::instance();
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-			$PRC = EEM_Price::instance();
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
-			$EP = EEM_Event_Price::instance();
-			$prices = $PRC->get_all_prices();
 			foreach ($prices as $price) {
 				$checked = $EP->is_price_active_for_event($price->ID(), $event->id) ? 'checked="checked" ' : '';
 				?>
@@ -661,9 +696,9 @@ function espresso_event_editor_email_metabox($event) {
 function espresso_register_event_editor_meta_boxes() {
 	global $espresso_premium;
 
-	add_meta_box('espresso_event_editor_title', __('Event Title', 'event_espresso'), 'espresso_event_editor_title_metabox', 'toplevel_page_events', 'normal', 'high');
+	//add_meta_box('espresso_event_editor_title', __('Event Title', 'event_espresso'), 'espresso_event_editor_title_metabox', 'toplevel_page_events', 'normal', 'high');
 
-	add_meta_box('espresso_event_editor_description', __('Event Description', 'event_espresso'), 'espresso_event_editor_description_metabox', 'toplevel_page_events', 'normal', 'high');
+	//add_meta_box('espresso_event_editor_description', __('Event Description', 'event_espresso'), 'espresso_event_editor_description_metabox', 'toplevel_page_events', 'normal', 'high');
 
 	add_meta_box('espresso_event_editor_date_time', __('Event Date/Times', 'event_espresso'), 'espresso_event_editor_date_time_metabox', 'toplevel_page_events', 'normal', 'high');
 

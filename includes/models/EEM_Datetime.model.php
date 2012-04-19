@@ -21,6 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+
 class EEM_Datetime extends EEM_Base {
 
   	// private instance of the Event_datetime object
@@ -55,9 +57,9 @@ class EEM_Datetime extends EEM_Base {
 		$this->table_data_types = array (	
 			'DTT_ID' 					=> '%d', 	
 			'EVT_ID' 					=> '%d', 	
-			'DTT_timestamp' 	=> '%d', 	
+			'DTT_start' 				=> '%d', 	
+			'DTT_end' 				=> '%d', 	
 			'DTT_event_or_reg'	=> '%s', 	 	
-			'DTT_start_or_end'	=> '%s', 	 	
 			'DTT_reg_limit' 		=> '%d'
 		);		
 	
@@ -105,17 +107,22 @@ class EEM_Datetime extends EEM_Base {
 			return FALSE;
 		}		
 
-		$where = array( 'EVT_ID' => $EVT_ID );			
+		$where = array( 'EVT_ID' => $EVT_ID );
+		$operator = array( '=' );			
 
 		if ( $DTT_event_or_reg ) {
 			$where['DTT_event_or_reg'] = $DTT_event_or_reg;
 		} 
 				
-		if ( $start_or_end ) {
-			$where['DTT_start_or_end'] = $start_or_end;
-		} 	
+		if ( $start_or_end  == 'S' ) {
+			$where['DTT_start'] = '';
+			$operator[] = '!=';
+		} elseif ( $start_or_end  == 'E' ) {
+			$where['DTT_end'] = '';
+			$operator[] = '!=';
+		} 
 			
-		$orderby = 'DTT_timestamp';
+		$orderby = 'DTT_start';
 		
 		if ( $datetimes = $this->select_all_where ( $where, $orderby )) {
 
@@ -125,9 +132,9 @@ class EEM_Datetime extends EEM_Base {
 			foreach ( $datetimes as $datetime ) {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
 							$datetime->EVT_ID, 
-							$datetime->DTT_timestamp, 
+							$datetime->DTT_start, 
+							( $datetime->DTT_end != $datetime->DTT_start ) ? $datetime->DTT_end : '', 
 							$datetime->DTT_event_or_reg, 
-							$datetime->DTT_start_or_end, 
 							$datetime->DTT_reg_limit,
 							$datetime->DTT_ID
 					 	);
@@ -163,6 +170,18 @@ class EEM_Datetime extends EEM_Base {
 	* 		@access		public		
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
+	public function get_all_event_dates( $EVT_ID = FALSE ) {
+		return $this->_get_event_datetimes( $EVT_ID, 'E' );			
+	}
+
+
+
+	/**
+	*		get event start date from db
+	* 
+	* 		@access		public		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
 	public function get_event_start_dates( $EVT_ID = FALSE ) {
 		return $this->_get_event_datetimes( $EVT_ID, 'E', 'S' );			
 	}
@@ -181,6 +200,18 @@ class EEM_Datetime extends EEM_Base {
 		return $this->_get_event_datetimes( $EVT_ID, 'E', 'E' );			
 	}
 
+
+
+
+	/**
+	*		get registration date from db
+	* 
+	* 		@access		public		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_all_reg_dates( $EVT_ID = FALSE ) {
+		return $this->_get_event_datetimes( $EVT_ID, 'R' );			
+	}
 
 
 
@@ -212,6 +243,45 @@ class EEM_Datetime extends EEM_Base {
 
 
 
+	function convert_converted_event_datetimes() {
+
+		global $wpdb;
+
+		$SQL = 'SELECT * FROM wp_esp_datetime WHERE DTT_event_or_reg = "E" ORDER BY EVT_ID, DTT_start';
+		$DTMs = $wpdb->get_results( $SQL, OBJECT_K );	
+		
+		$start_dates = array( 3 => 1, 33 => 7 );
+		$end_dates = array( 3, 33 );
+		$delete = array( 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31 );
+			
+		foreach ( $DTMs as $DTM ) {
+		
+			echo '<h4>EVT_ID : ' . $DTM->EVT_ID . '   - DTT_ID : ' . $DTM->DTT_ID . ' : date : ' . date( 'F j, Y g:i a', $DTM->DTT_start )  . '</h4>';
+
+			if ( in_array( $DTM->DTT_ID, $end_dates )) {
+				$set_column_values = array( 'DTT_end' => $DTM->DTT_start  );
+				$where_cols_n_values = array( 'DTT_ID' => $start_dates[ $DTM->DTT_ID ] );
+				if ( $results = $this->update ( $set_column_values, $where_cols_n_values )) {			
+					echo '<h4>copy successful DTT_ID : ' . $DTM->DTT_ID . '</h4>';
+				} else {
+					echo '<h2 style="color:red;">COPY ERROR  DTT_ID : ' . $DTM->DTT_ID . '</h2>';
+				}
+			}
+
+			if ( in_array( $DTM->DTT_ID, $delete )) {
+				$where_cols_n_values = array( 'DTT_ID' => $DTM->DTT_ID );
+				if ( $results = $this->delete ( $where_cols_n_values )) {
+					echo '<h4>delete successful DTT_ID : ' . $DTM->DTT_ID . '</h4>';
+				} else {
+					echo '<h2 style="color:red;">delete ERROR  DTT_ID : ' . $DTM->DTT_ID . '</h2>';
+				}
+			}
+		}
+	}
+
+
+
+
 	function convert_existing_event_datetimes() {
 
 		global $wpdb;
@@ -223,7 +293,14 @@ class EEM_Datetime extends EEM_Base {
 		foreach ( $events as $id => $event ) {
 			
 			$SQL = 'SELECT * FROM wp_events_start_end WHERE event_id = '. $id .' ORDER BY start_time, end_time';
-			if ( $event_times = $wpdb->get_results( $SQL, OBJECT_K )) {
+			$event_times = $wpdb->get_results( $SQL, OBJECT_K );
+			
+			if( $event->recurrence_id ) {
+//				$SQL = 'SELECT * FROM wp_events_start_end WHERE event_id = '. $id .' ORDER BY start_time, end_time';
+//				$event_times = $wpdb->get_results( $SQL, OBJECT_K );
+			}
+			
+			if ( $event_times ) {
 					
 				foreach ( $event_times as $event_time ) {	
 		
@@ -235,74 +312,19 @@ class EEM_Datetime extends EEM_Base {
 					}
 					
 					$event->start_time = isset( $event_time->start_time ) ? ' ' . $event_time->start_time : '';
+					$event->end_date = isset( $event->end_date ) ? $event->end_date : $event->start_date;
+					$event->end_time = isset( $event_time->end_time ) ? ' ' . $event_time->end_time : '';
+					
 					// array of column names and values for the SQL INSERT... VALUES clause
 					$set_column_values = array(
 									'EVT_ID' => $id,
-									'DTT_timestamp' => strtotime( $event->start_date . $event->start_time ),
+									'DTT_start' => strtotime( $event->start_date . $event->start_time ),
+									'DTT_end' => strtotime( $event->end_date . $event->end_time ),
 									'DTT_event_or_reg' => 'E',
-									'DTT_start_or_end' => 'S',
 									'DTT_reg_limit' => $reg_limit
 								);
 					// model function to perform error checking and then run update
-					$results = $this->insert ($set_column_values);		
-				
-					// then convert Event End times
-					if ( isset( $event_time->end_time )) {
-						$event->end_time = isset( $event_time->end_time ) ? ' ' . $event_time->end_time : '';
-						// array of column names and values for the SQL INSERT... VALUES clause
-						$set_column_values = array(
-										'EVT_ID' => $id,
-										'DTT_timestamp' => strtotime( $event->start_date . $event_time->end_time ),
-										'DTT_event_or_reg' => 'E',
-										'DTT_start_or_end' => 'E',
-										'DTT_reg_limit' => NULL
-									);
-						// model function to perform error checking and then run update
-						$results = $this->insert ($set_column_values);
-					}	
-				
-					// then convert Event End dates if different from Start dates
-					while ( $event->start_date != $event->end_date ) {
-						
-						$start_date = strtotime( $event->start_date );
-						// increment start date by one day
-						$event->start_date =  date( 'Y-m-d', mktime( 0, 0, 0, date( 'm', $start_date )  , date( 'd', $start_date )+1, date( 'Y', $start_date )));
-	
-						if ( isset( $event_time->reg_limit ) && $event_time->reg_limit > 0 ) {
-							$reg_limit = $event_time->reg_limit;
-						} else {
-							$reg_limit = $event->reg_limit;
-						}
-					
-						// First convert Event Start times
-						if ( isset( $event_time->start_time ) && $event_time->start_time != '' ) {
-							// array of column names and values for the SQL INSERT... VALUES clause
-							$set_column_values = array(
-											'EVT_ID' => $id,
-											'DTT_timestamp' => strtotime( $event->start_date . ' ' . $event_time->start_time ),
-											'DTT_event_or_reg' => 'E',
-											'DTT_start_or_end' => 'S',
-											'DTT_reg_limit' => $reg_limit
-										);
-							// model function to perform error checking and then run update
-							$results = $this->insert ($set_column_values);
-						}		
-						
-						// then convert Event End times
-						if ( isset( $event_time->end_time ) && $event_time->end_time != '' ) {
-							// array of column names and values for the SQL INSERT... VALUES clause
-							$set_column_values = array(
-											'EVT_ID' => $id,
-											'DTT_timestamp' => strtotime( $event->start_date . ' ' . $event_time->end_time ),
-											'DTT_event_or_reg' => 'E',
-											'DTT_start_or_end' => 'E',
-											'DTT_reg_limit' => NULL
-										);
-							// model function to perform error checking and then run update
-							$results = $this->insert ($set_column_values);
-						}	
-					}
-					// end while					
+					$results = $this->insert ($set_column_values);					
 				
 				} 
 				
@@ -313,76 +335,34 @@ class EEM_Datetime extends EEM_Base {
 				// array of column names and values for the SQL INSERT... VALUES clause
 				$set_column_values = array(
 								'EVT_ID' => $id,
-								'DTT_timestamp' => strtotime( $event->start_date ),
+								'DTT_start' => strtotime( $event->start_date ),
+								'DTT_end' => isset( $event->end_date ) ? strtotime( $event->end_date ) : strtotime( $event->start_date ),
 								'DTT_event_or_reg' => 'E',
-								'DTT_start_or_end' => 'S',
 								'DTT_reg_limit' => $event->reg_limit
 							);
 				// model function to perform error checking and then run update
 				$results = $this->insert ($set_column_values);
-
-				// array of column names and values for the SQL INSERT... VALUES clause
-				$set_column_values = array(
-								'EVT_ID' => $id,
-								'DTT_timestamp' => strtotime( $event->start_date ),
-								'DTT_event_or_reg' => 'E',
-								'DTT_start_or_end' => 'E',
-								'DTT_reg_limit' => NULL
-							);
-				// model function to perform error checking and then run update
-				$results = $this->insert ($set_column_values);
-			
-				// then convert Event End dates if different from Start dates
-				while ( $event->start_date != $event->end_date ) {
-					
-					$start_date = strtotime( $event->start_date );
-					// increment start date by one day
-					$event->start_date =  date( 'Y-m-d', mktime( 0, 0, 0, date( 'm', $start_date )  , date( 'd', $start_date )+1, date( 'Y', $start_date )));
-					
-					// array of column names and values for the SQL INSERT... VALUES clause
-					$set_column_values = array(
-									'EVT_ID' => $id,
-									'DTT_timestamp' => strtotime( $event->start_date ),
-									'DTT_event_or_reg' => 'E',
-									'DTT_start_or_end' => 'S',
-									'DTT_reg_limit' => $event->reg_limit
-								);
-					// model function to perform error checking and then run update
-					$results = $this->insert ($set_column_values);
-
-				}
-				// end while						
+									
 			}
 						
 			// now convert registration datetimes
 
 			if ( isset( $event->registration_start )) {
-				$event->registration_startT = isset( $event->registration_startT ) ? ' ' . $event->registration_startT : '';
-				// array of column names and values for the SQL INSERT... VALUES clause
-				$set_column_values = array(
-								'EVT_ID' => $id,
-								'DTT_timestamp' => strtotime( $event->registration_start . $event->registration_startT ),
-								'DTT_event_or_reg' => 'R',
-								'DTT_start_or_end' => 'S',
-								'DTT_reg_limit' => NULL
-							);
-				// model function to perform error checking and then run update
-				$results = $this->insert ($set_column_values);
-			}	
 			
-			if ( isset( $event->registration_end )) {
+				$event->registration_startT = isset( $event->registration_startT ) ? ' ' . $event->registration_startT : '';
+				$event->registration_end = isset( $event->registration_end ) ? $event->registration_end : $event->registration_start;
 				$event->registration_endT = isset( $event->registration_endT ) ? ' ' . $event->registration_endT : '';
 				// array of column names and values for the SQL INSERT... VALUES clause
 				$set_column_values = array(
 								'EVT_ID' => $id,
-								'DTT_timestamp' => strtotime( $event->registration_end . $event->registration_endT ),
+								'DTT_start' => strtotime( $event->registration_start . $event->registration_startT ),
+								'DTT_end' => strtotime( $event->registration_end . $event->registration_endT ),
 								'DTT_event_or_reg' => 'R',
-								'DTT_start_or_end' => 'E',
 								'DTT_reg_limit' => NULL
 							);
 				// model function to perform error checking and then run update
 				$results = $this->insert ($set_column_values);
-			}	
+			}
 
 		}
 
@@ -390,6 +370,26 @@ class EEM_Datetime extends EEM_Base {
 		
 	}
 
+
+
+
+
+	public function delete_all_event_datetimes( $EVT_ID = FALSE ) {
+		if ( ! $EVT_ID ) {
+			return FALSE;
+		}
+		return $this->delete( array( 'EVT_ID' => $EVT_ID ));
+	}
+
+
+
+
+	public function delete_all_where( $where_cols_n_values = FALSE ) {
+		if ( ! $where_cols_n_values ) {
+			return FALSE;
+		}
+		return $this->delete( $where_cols_n_values );
+	}
 
 
 
@@ -440,10 +440,10 @@ class EEM_Datetime extends EEM_Base {
 	 *		
 	 *		@access public
 	 *		@param array $set_column_values - array of column names and values for the SQL SET clause
-	 *		@param array $where - column names and values for the SQL WHERE clause
+	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
 	 *		@return array
 	 */	
-	public function update ($set_column_values, $where) {
+	public function update ($set_column_values, $where_cols_n_values) {
 	
 		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
 			

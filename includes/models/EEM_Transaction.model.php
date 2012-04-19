@@ -287,9 +287,13 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= 'AND reg.REG_is_primary = 1 ';
 		$SQL .= 'ORDER BY TXN_timestamp DESC';
 
-		if ( $transactions = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A )) {
+		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A )) {
 //			echo $wpdb->last_query;
 //			echo printr( $payments );
+			$transactions = array();
+			foreach ( $results as $transaction ) {
+				$transactions[ $transaction['TXN_ID'] ] = $transaction;
+			}
 			return $transactions;
 		} else {
 			global $espresso_notices;

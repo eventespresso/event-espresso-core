@@ -281,15 +281,8 @@ ul.sexy-contributors li:hover a {
 li.time-date .run-in {
 	padding-right: 10px;
 }
-.current-date {
-	background: #F0F0D9;
-	border: 1px solid #bebebe;
-	color: #000;
-	padding: 2px 4px;
-}
-.change-date-time {
-	display: block;
-	margin: 8px 0 5px;
+.current-date { color:#d54e21; margin-left:5px; }
+.change-date-time { margin: 8px 15px 5px;
 }
 #post-body #payment-conf-email {/*postbox*/
 	margin-bottom: 30px;

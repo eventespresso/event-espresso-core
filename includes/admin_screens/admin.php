@@ -16,6 +16,8 @@ function event_espresso_config_page_styles() {
 			case ( 'attendees' ):
 				wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
 				wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
+				//wp_enqueue_style('ptTimeSelect', EVENT_ESPRESSO_PLUGINFULLURL . 'css/jquery.ptTimeSelect.css');
+//				wp_enqueue_style('anytime', EVENT_ESPRESSO_PLUGINFULLURL . 'css/anytime.css');
 				break;
 		}
 		if (isset($_REQUEST['event_admin_reports'])) {
@@ -54,6 +56,7 @@ function event_espresso_config_page_scripts() {
 	if ($_REQUEST['page'] == 'events') {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
+
 	}
 
 	if ($_REQUEST['page'] == 'discounts' && isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'new')) {
@@ -81,6 +84,10 @@ function event_espresso_config_page_scripts() {
 	//Load datepicker script
 	if ($load_datepicker == true) {
 		wp_enqueue_script('jquery-ui-datepicker');
+
+		//wp_register_script('ptTimeSelect', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ptTimeSelect.js', array('jquery')); 
+		//wp_enqueue_script('ptTimeSelect');
+//		wp_enqueue_script('anytime', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/anytime.js', array('jquery')); //Events core table script
 	}
 
 	if (isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'add_new_attendee' || $_REQUEST['page'] == 'form_groups' || $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'event_staff' || $_REQUEST['page'] == 'event_categories' || $_REQUEST['page'] == 'event_venues' || $_REQUEST['page'] == 'discounts' || $_REQUEST['page'] == 'groupons') {
@@ -89,7 +96,7 @@ function event_espresso_config_page_scripts() {
 		wp_enqueue_script('jquery.validate.js');
 	}
 
-	wp_register_script('event_espresso_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_espresso.js"), false);
+	wp_register_script('event_espresso_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_espresso.js"), '', '', true);
 	wp_enqueue_script('event_espresso_js');
 
 	if (isset($_REQUEST['event_admin_reports'])) {

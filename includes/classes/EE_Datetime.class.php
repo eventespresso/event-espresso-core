@@ -31,7 +31,7 @@ class EE_Datetime {
 	* 	@access	private
     *	@var int	
     */
-	private $DTT_ID;
+	private $_DTT_ID;
 	
 	
 	
@@ -43,19 +43,31 @@ class EE_Datetime {
 	*	@access	private
     *	@var int	
     */
-	private $EVT_ID;
+	private $_EVT_ID;
 	
 	
 	
     /**
-    *	Timestamp
+    *	Start Timestamp
 	* 
 	*	date / time
 	*  
 	*	@access	private
     *	@var int	
     */
-	private $DTT_timestamp;
+	private $_DTT_start;
+	
+	
+	
+    /**
+    *	End Timestamp
+	* 
+	*	date / time
+	*  
+	*	@access	private
+    *	@var int	
+    */
+	private $_DTT_end;
 	
 	
 	
@@ -68,20 +80,8 @@ class EE_Datetime {
 	*	@access	private
     *	@var string	
     */
-	private $DTT_event_or_reg = 0;	
-	
-	
-    /**
-    *	Start or End 
-	*
-	*	is this a start time? end time ? start date ? or end date ?
-	* 	start = 'S'	end = 'E'		not set = 0
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $DTT_start_or_end = 0;
-	
+	private $_DTT_event_or_reg = 0;	
+		
 	
 	
     /**
@@ -92,7 +92,7 @@ class EE_Datetime {
 	*	@access	private
     *	@var int	
     */
-	private $DTT_reg_limit = NULL;	
+	private $_DTT_reg_limit = NULL;	
 	
 	
 	
@@ -104,7 +104,7 @@ class EE_Datetime {
 	*	@access	private
     *	@var string	
     */
-	private $dt_frmt = 'F j, Y';	
+	private $_dt_frmt = 'F j, Y';	
 	
 	
 	
@@ -116,7 +116,7 @@ class EE_Datetime {
 	*	@access	private
     *	@var string	
     */
-	private $tm_frmt = 'g:i a';		
+	private $_tm_frmt = 'g:i a';
 	
 	
     /**
@@ -138,20 +138,32 @@ class EE_Datetime {
 	* Event Datetime constructor
 	*
 	* @access 		public
-	* @param 		int 					$EVT_ID 						Event ID
-	* @param 		timestamp 		$DTT_timestamp 		Unix timestamp
-	* @param 		string 				$DTT_event_or_reg  	Whether timestamp is for the actual Event, or for the Registration, denoted by "E" or "R"
-	* @param 		string 				$DTT_start_or_end  	Whether timestamp is for the start or end of an event, denoted by "S" or "E"
-	* @param 		mixed				$DTT_reg_limit 			Registration Limit for this time period - int for starts, NULL for ends
-	* @param 		int 					$DTT_ID 						Event Datetime ID
+	* @param 		int 							$EVT_ID 						Event ID
+	* @param 		mixed int | string 	$DTT_start 					Unix timestamp or date string for the event or reg beginning
+	* @param 		mixed int | string	$DTT_end 					Unix timestamp or date string for the event or reg end
+	* @param 		string 						$DTT_event_or_reg  	Whether timestamp is for the actual Event, or for the Registration, denoted by "E" or "R"
+	* @param 		mixed						$DTT_reg_limit 			Registration Limit for this time period - int for starts, NULL for ends
+	* @param 		int 							$DTT_ID 						Event Datetime ID
 	*/
-	public function __construct( $EVT_ID = NULL, $DTT_timestamp = NULL, $DTT_event_or_reg = 0, $DTT_start_or_end = 0, $DTT_reg_limit = NULL, $DTT_ID = NULL ) {
-		$this->EVT_ID = $EVT_ID;
-		$this->DTT_timestamp = $DTT_timestamp;
-		$this->DTT_event_or_reg = $DTT_event_or_reg;
-		$this->DTT_start_or_end = $DTT_start_or_end;
-		$this->DTT_reg_limit = $DTT_reg_limit;
-		$this->DTT_ID = $DTT_ID;
+	public function __construct( $EVT_ID = NULL, $DTT_start = NULL, $DTT_end = NULL, $DTT_event_or_reg = 0, $DTT_reg_limit = NULL, $DTT_ID = NULL ) {
+	
+		global $org_options;
+		
+		$date_format = get_option('date_format');
+		$this->_dt_frmt = $date_format ? $date_format : 'F j, Y';	
+		
+		$time_format = get_option('time_format');
+		$this->_tm_frmt = $time_format ? $time_format : 'g:i a';
+		
+		$DTT_start = is_int( $DTT_start ) ? $DTT_start : strtotime( $DTT_start );
+		$DTT_end = is_int( $DTT_end ) ? $DTT_end : strtotime( $DTT_end );		
+		
+		$this->_EVT_ID = $EVT_ID;
+		$this->_DTT_start = $DTT_start;
+		$this->_DTT_end = $DTT_end;
+		$this->_DTT_event_or_reg = $DTT_event_or_reg;
+		$this->_DTT_reg_limit = $DTT_reg_limit;
+		$this->_DTT_ID = $DTT_ID;
 	}
 
 
@@ -170,7 +182,7 @@ class EE_Datetime {
 		if ( $EVT_ID === FALSE or ! is_numeric($EVT_ID)){
 			return FALSE;
 		} else {
-			$this->EVT_ID = absint( $EVT_ID );
+			$this->_EVT_ID = absint( $EVT_ID );
 			return TRUE;
 		}
 	}
@@ -190,8 +202,8 @@ class EE_Datetime {
 	*/	
 	private function _start_date() {
 		// check for existing event date AND verify that it NOT an end date
-		if ( isset( $this->DTT_timestamp ) && ( $this->DTT_start_or_end != 'E' )) {
-			return date( $this->dt_frmt, $this->DTT_timestamp );
+		if ( isset( $this->_DTT_start )) {
+			return date( $this->_dt_frmt, $this->_DTT_start );
 		} else {
 			return FALSE;
 		}
@@ -211,8 +223,51 @@ class EE_Datetime {
 	*/	
 	private function _start_time() {
 		// check for existing event time
-		if ( isset( $this->DTT_timestamp ) && ( $this->DTT_start_or_end != 'E' )) {
-			return date( $this->tm_frmt, $this->DTT_timestamp );
+		if ( isset( $this->_DTT_start )) {
+			return date( $this->_tm_frmt, $this->_DTT_start );
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+
+
+	/**
+	*		Get event end date
+	* 
+	*		get the end date for an event 
+	* 
+	* 		@access		private		
+	*		@return		mixed 	string on success, FALSE if no existing end date
+	*/	
+	private function _end_date() {
+		// check for existing event date AND verify that it NOT an end date
+		if ( isset( $this->_DTT_end )) {
+			return date( $this->_dt_frmt, $this->_DTT_end );
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+
+	/**
+	*		Get event end time
+	* 
+	*		get the end time for an event 
+	* 
+	* 		@access		private		
+	*		@return		mixed 	string on success, FALSE if no existing end time
+	*/	
+	private function _end_time() {
+		// check for existing event time
+		if ( isset( $this->_DTT_end )) {
+			return date( $this->_tm_frmt, $this->_DTT_end );
 		} else {
 			return FALSE;
 		}
@@ -229,25 +284,35 @@ class EE_Datetime {
 	* 
 	* 		@access		private		
 	*		@param		string		$date 					a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
-	*		@param		string		$start_or_end 	start time = 'S'	end time = 'E'
+	*		@param		string		$start				 	whether to set start or end dates
 	*/	
-	private function _set_date( $date = FALSE, $start_or_end = 'S'  ) {
+	private function _set_date( $date = FALSE, $start = TRUE  ) {
 	
 		// if no date is set then use today
 		if ( ! $date ){
-			$event_date = date( $this->dt_frmt, time());
+			$event_date = date( $this->_dt_frmt, time());
 		} else {
-			$event_date = date( $this->dt_frmt, $date );
+			$event_date = date( $this->_dt_frmt, $date );
 		}
 		
-		// get existing event time
-		if ( ! $event_time = $this->start_time() ) {
-			// or if no time is set, use 1 second after midnight
-			$event_time = '00:00:01';
+		if( $start ) {
+			// get existing event start time
+			if ( ! $event_time = $this->_start_time() ) {
+				// or if no time is set, use 1 second after midnight
+				$event_time = '00:00:01';
+			}
+			$this->_DTT_start = strtotime( $event_date . ' ' . $event_time );
+
+		} else {
+			// get existing event end time
+			if ( ! $event_time = $this->_end_time() ) {
+				// or if no time is set, use 1 second after midnight
+				$event_time = '23:59:59';
+			}
+			$this->_DTT_end = strtotime( $event_date . ' ' . $event_time );
 		}
+
 		
-		$this->DTT_timestamp = strtotime( $event_date . ' ' . $event_time );
-		$this->DTT_start_or_end = $start_or_end;
 				
 	}
 
@@ -262,26 +327,33 @@ class EE_Datetime {
 	* 
 	* 		@access		private		
 	*		@param		string		$time 					a string representation of the event time ex:  9am  or  7:30 PM
-	*		@param		string		$start_or_end 	start time = 'S'	end time = 'E'
+	*		@param		string		$start				 	whether to set start or end times
 	*/	
-	private function _set_time( $time = FALSE, $start_or_end = 'S' ) {
+	private function _set_time( $time = FALSE, $start = TRUE ) {
 	
 		// if no time is set, then use RIGHT NOW!!!!
 		if ( ! $time ){
-			$event_time = date( $this->tm_frmt, time());
+			$event_time = date( $this->_tm_frmt, time());
 		} else {
-			$event_time = date( $this->tm_frmt, $time );
+			$event_time = date( $this->_tm_frmt, $time );
 		}
 		
-		// get existing event date
-		if ( ! $event_date = $this->start_date() ) {
-			// or if no date is set, then use RIGHT NOW!!!!
-			$event_date = date( $this->dt_frmt, time());
+		if( $start ) {
+			// get existing event date
+			if ( ! $event_date = $this->_start_date() ) {
+				// or if no date is set, then use RIGHT NOW!!!!
+				$event_date = date( $this->_dt_frmt, time());
+			}
+			$this->_DTT_start = strtotime( $event_date . ' ' . $event_time );
+		} else {
+			// get existing event date
+			if ( ! $event_date = $this->_end_date() ) {
+				// or if no date is set, then use RIGHT NOW!!!!
+				$event_date = date( $this->_dt_frmt, time());
+			}
+			$this->_DTT_endt = strtotime( $event_date . ' ' . $event_time );			
 		}
 		
-		$this->DTT_timestamp = strtotime( $event_date . ' ' . $event_time );
-		$this->DTT_start_or_end = $start_or_end;
-				
 	}
 
 
@@ -297,7 +369,7 @@ class EE_Datetime {
 	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
 	*/	
 	public function set_start_date( $date ) {
-		$this->_set_date( $date, 'S' );
+		$this->_set_date( $date );
 	}
 
 
@@ -313,7 +385,7 @@ class EE_Datetime {
 	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
 	*/	
 	public function set_start_time( $time ) {
-		$this->_set_time( $time, 'S' );
+		$this->_set_time( $time );
 	}
 
 
@@ -328,7 +400,7 @@ class EE_Datetime {
 	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
 	*/	
 	public function set_end_date( $date ) {
-		$this->_set_date( $date, 'E' );
+		$this->_set_date( $date, FALSE );
 	}
 
 
@@ -344,7 +416,7 @@ class EE_Datetime {
 	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
 	*/	
 	public function set_end_time( $time ) {
-		$this->_set_time( $time, 'E' );
+		$this->_set_time( $time, FALSE );
 	}
 
 
@@ -358,8 +430,8 @@ class EE_Datetime {
 	*		@return 		mixed		int on success, FALSE on fail
 	*/	
 	public function ID() {
-		if (isset($this->DTT_ID)) {
-			return $this->DTT_ID;
+		if (isset($this->_DTT_ID)) {
+			return $this->_DTT_ID;
 		} else {
 			return FALSE;
 		}
@@ -376,8 +448,8 @@ class EE_Datetime {
 	*		@return 		mixed		int on success, FALSE on fail
 	*/	
 	public function event_ID() {
-		if (isset($this->EVT_ID)) {
-			return $this->EVT_ID;
+		if (isset($this->_EVT_ID)) {
+			return $this->_EVT_ID;
 		} else {
 			return FALSE;
 		}
@@ -396,32 +468,33 @@ class EE_Datetime {
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	private function _show_datetime( $date_or_time = 'D', $dt_frmt = FALSE, $tm_format = FALSE ) {
+	private function _show_datetime( $date_or_time = 'D', $start = TRUE, $dt_frmt = FALSE, $tm_format = FALSE ) {
 		
-		if ( ! isset( $this->DTT_timestamp )) {
+		$start_or_end = $start ? 'DTT_start' : 'DTT_end';
+		if ( ! isset( $this->{$start_or_end} )) {
 			return FALSE;
 		}
 		
 		if ( ! $dt_frmt ){
-			$dt_frmt = $this->dt_frmt;
+			$dt_frmt = $this->_dt_frmt;
 		}
 		
 		if ( ! $tm_format ){
-			$tm_format = $this->tm_frmt;
+			$tm_format = $this->_tm_frmt;
 		}
 		
 		switch ( $date_or_time ) {
 			
 			case 'D' :
-				return date( $dt_frmt, $this->DTT_timestamp );
+				return date( $dt_frmt, $this->{$start_or_end} );
 				break;
 			
 			case 'T' :
-				return date( $tm_format, $this->DTT_timestamp );
+				return date( $tm_format, $this->{$start_or_end} );
 				break;
 			
 			default :
-				return date( $dt_frmt . ' ' . $tm_format, $this->DTT_timestamp );
+				return date( $dt_frmt . ' ' . $tm_format, $this->{$start_or_end} );
 				
 		}
 
@@ -431,14 +504,28 @@ class EE_Datetime {
 
 
 	/**
-	*		get date
+	*		get start date
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function get_date( $dt_frmt = FALSE ) {		
-		return $this->_show_datetime( 'D', $dt_frmt );
+	public function start_date( $dt_frmt = FALSE ) {		
+		return $this->_show_datetime( 'D', TRUE, $dt_frmt );
+	}
+
+
+
+
+	/**
+	*		get end date
+	* 
+	* 		@access		public	
+	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	public function end_date( $dt_frmt = FALSE ) {		
+		return $this->_show_datetime( 'D', FALSE, $dt_frmt );
 	}
 
 
@@ -446,14 +533,14 @@ class EE_Datetime {
 
 
 	/**
-	*		get time
+	*		get start time
 	* 
 	* 		@access		public	
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function get_time( $tm_format = FALSE ) {
-		return $this->_show_datetime( 'T', FALSE, $tm_format );
+	public function start_time( $tm_format = FALSE ) {
+		return $this->_show_datetime( 'T', TRUE, FALSE, $tm_format );
 	}
 
 
@@ -461,28 +548,72 @@ class EE_Datetime {
 
 
 	/**
-	*		get date and time
+	*		get end time
+	* 
+	* 		@access		public	
+	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	public function end_time( $tm_format = FALSE ) {
+		return $this->_show_datetime( 'T', FALSE, FALSE, $tm_format );
+	}
+
+
+
+
+
+	/**
+	*		get start date and start time
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function get_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
-		return $this->_show_datetime( '', $dt_frmt, $tm_format );
+	public function start_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+		return $this->_show_datetime( '', TRUE, $dt_frmt, $tm_format );
+	}
+
+
+
+
+
+	/**
+	*		get end date and time
+	* 
+	* 		@access		public	
+	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	public function end_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
+		return $this->_show_datetime( '', FALSE, $dt_frmt, $tm_format );
 	}
 
 
 
 
 	/**
-	*		get timestamp
+	*		get start timestamp
 	* 
 	* 		@access		public	
 	*		@return 		int
 	*/	
-	public function timestamp() {
-		return $this->DTT_timestamp;
+	public function start_timestamp() {
+		return $this->_DTT_start;
+	}
+
+
+
+
+	/**
+	*		get end timestamp
+	* 
+	* 		@access		public	
+	*		@return 		int
+	*/	
+	public function end_timestamp() {
+		return $this->_DTT_end;
 	}
 
 
@@ -495,7 +626,64 @@ class EE_Datetime {
 	*		@return 		int
 	*/	
 	public function reg_limit() {
-		return $this->DTT_reg_limit;
+		return $this->_DTT_reg_limit;
+	}
+
+
+
+
+
+	/**
+	*		update existing db record
+	*
+	* 		@access		public
+	*/
+	public function update() {
+		return $this->_save_to_db( array( 'DTT_ID' => $this->_DTT_ID ));
+	}
+
+
+	/**
+	*	insert new db record
+	*
+	* @access		public
+	*/
+	public function insert() {
+		return $this->_save_to_db();
+	}
+
+
+
+
+
+	/**
+	*		save object to db
+	*
+	* 		@access		private
+	* 		@param		array		$where_cols_n_values
+	*/
+	private function _save_to_db( $where_cols_n_values = FALSE ) {
+
+		 $MODEL = EEM_Datetime::instance();
+		
+		$this->_DTT_start = is_int( $this->_DTT_start ) ? $this->_DTT_start : strtotime( $this->_DTT_start );
+		$this->_DTT_end = is_int( $this->_DTT_end ) ? $this->_DTT_end : strtotime( $this->_DTT_end );		
+
+		$set_column_values = array(
+				'EVT_ID'						=> $this->_EVT_ID,
+				'DTT_start'					=> $this->_DTT_start,
+				'DTT_end'					=> $this->_DTT_end,
+				'DTT_event_or_reg'		=> $this->_DTT_event_or_reg,
+				'DTT_reg_limit'			=> $this->_DTT_reg_limit
+		);
+
+		if ( $where_cols_n_values ){
+			$results = $MODEL->update ( $set_column_values, $where_cols_n_values );
+		} else {
+			$results = $MODEL->insert ( $set_column_values );
+		}
+
+		return $results;
 	}
 
 
