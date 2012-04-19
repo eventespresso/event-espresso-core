@@ -49,7 +49,6 @@ function event_espresso_2co_settings() {
 	?>
 
 	<a name="2checkout" id="2checkout"></a>
-	
 	<div class="padding">
 	<?php
 		if (!empty($_REQUEST['activate_2checkout'])) {
@@ -259,4 +258,4 @@ function event_espresso_display_2checkout_settings($payment_settings) {
 	<?php
 }
 
-add_meta_box('espresso_2checkout_gateway_settings', __('2Checkout Settings', 'event_espresso'), 'event_espresso_display_2checkout_settings', 'event-espresso_page_payment_gateways');
+add_meta_box('espresso_2checkout_gateway_settings', __('2Checkout Settings', 'event_espresso'), 'event_espresso_2co_settings', 'event-espresso_page_payment_gateways');
