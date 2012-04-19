@@ -125,7 +125,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the debugging feature and the', 'event_espresso'); ?> <?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info_firstdata_connect_2') ?>
+								<?php _e('Use the Debugging Feature and the', 'event_espresso'); ?> <?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info_firstdata_connect_2') ?>
 							</label>
 							<input name="sandbox" type="checkbox" value="1" <?php echo $payment_settings['firstdata_connect_2']['sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 						</li>
@@ -135,7 +135,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 					<ul>
 						<li>
 							<label for="bypass_payment_page">
-								<?php _e('Bypass the payment confirmation page? ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation') ?>
+								<?php _e('Bypass Payment Overview Page? ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation') ?>
 							</label>
 							<?php
 							$values = array(

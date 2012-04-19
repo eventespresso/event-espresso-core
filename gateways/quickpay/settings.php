@@ -153,7 +153,7 @@ function event_espresso_display_quickpay_settings() {
 			<td>
 		<li>
 			<label for="use_sandbox">
-				<?php _e('Use the debugging feature and the sandbox', 'event_espresso'); ?>
+				<?php _e('Use the Debugging Feature and the sandbox', 'event_espresso'); ?>
 			</label>
 			<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['quickpay']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 		</li>

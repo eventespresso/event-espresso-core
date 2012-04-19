@@ -212,7 +212,7 @@ function event_espresso_display_worldpay_settings() {
 							</select>
 
 						<li><label for="bypass_payment_page">
-								<?php _e('Bypass the payment confirmation page?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'worldpay_bypass_confirmation'); ?>
+								<?php _e('Bypass Payment Overview Page?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'worldpay_bypass_confirmation'); ?>
 							</label>
 							<?php
 							$values = array(
@@ -223,7 +223,7 @@ function event_espresso_display_worldpay_settings() {
 
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the debugging feature and the worldpay Sandbox?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'worldpay_sandbox_info'); ?>
+								<?php _e('Use the Debugging Feature and the worldpay Sandbox?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'worldpay_sandbox_info'); ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['worldpay']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 

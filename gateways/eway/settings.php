@@ -168,7 +168,7 @@ function event_espresso_display_eway_settings() {
 						</li>
 						<li>
 							<label for="bypass_payment_page">
-								<?php _e('Bypass the payment confirmation page?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_bypass_confirmation'); ?>
+								<?php _e('Bypass Payment Overview Page?', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'eway_bypass_confirmation'); ?>
 							</label>
 							<?php
 							$values = array(
@@ -195,7 +195,7 @@ function event_espresso_display_eway_settings() {
 						</li>
 						<li>
 							<label for="use_sandbox">
-								<?php _e('Use the debugging feature and the eway Sandbox?', 'event_espresso'); ?></a> <?php echo apply_filters('filter_hook_espresso_help', 'eway_sandbox_info'); ?>
+								<?php _e('Use the Debugging Feature and the eway Sandbox?', 'event_espresso'); ?></a> <?php echo apply_filters('filter_hook_espresso_help', 'eway_sandbox_info'); ?>
 							</label>
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $payment_settings['eway']['use_sandbox'] == "1" ? 'checked="checked"' : '' ?> />
 
