@@ -10,7 +10,7 @@ function espresso_transactions_paypal_get_attendee_id($attendee_id) {
 function espresso_process_paypal() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$payment_data = new stdClass;
-	$payment_data->txn_type = 'Paypal';
+	$payment_data->txn_type = 'PayPal';
 	$payment_data->txn_id = 0;
 	$payment_data->payment_status = 'Incomplete';
 	$payment_data->txn_details = serialize($_REQUEST);

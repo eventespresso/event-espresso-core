@@ -49,14 +49,7 @@ function event_espresso_paypal_pro_payment_settings() {
 	?>
 
 	<a name="paypal_pro" id="paypal_pro"></a>
-	<div class="metabox-holder">
-		<div class="postbox <?php echo $postbox_style; ?>">
-			<div title="Click to toggle" class="handlediv"><br />
-			</div>
-			<h3 class="hndle">
-				<?php _e('PayPal Pro Settings', 'event_espresso'); ?>
-			</h3>
-			<div class="inside">
+	
 				<div class="padding">
 					<!--New -->
 					<?php
@@ -95,9 +88,7 @@ function event_espresso_paypal_pro_payment_settings() {
 					echo '</ul>';
 					?>
 				</div>
-			</div>
-		</div>
-	</div>
+			
 	<?php
 }
 
@@ -119,25 +110,25 @@ function event_espresso_display_paypal_pro_settings() {
 			<tbody>
 				<tr>
 					<th><label for="paypal_pro_email">
-							<?php _e('Paypal PRO Email', 'event_espresso'); ?>
+							<?php _e('PayPal PRO Email', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="email" id="paypal_pro_email" size="35" value="<?php echo $payment_settings['paypal_pro']['email']; ?>"></td>
 				</tr>
 				<tr>
 					<th><label for="paypal_pro_username">
-							<?php _e('Paypal API Username', 'event_espresso'); ?>
+							<?php _e('PayPal API Username', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="username" id="paypal_pro_username" size="35" value="<?php echo $payment_settings['paypal_pro']['username']; ?>"></td>
 				</tr>
 				<tr>
 					<th><label for="paypal_pro_password">
-							<?php _e('Paypal API Password', 'event_espresso'); ?>
+							<?php _e('PayPal API Password', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="password" id="paypal_pro_password" size="35" value="<?php echo $payment_settings['paypal_pro']['password']; ?>"></td>
 				</tr>
 				<tr>
 					<th><label for="paypal_pro_signature">
-							<?php _e('Paypal API Signature', 'event_espresso'); ?>
+							<?php _e('PayPal API Signature', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="signature" id="paypal_pro_signature" size="35" value="<?php echo $payment_settings['paypal_pro']['signature']; ?>"></td>
 				</tr>
@@ -238,7 +229,7 @@ function event_espresso_display_paypal_pro_settings() {
 				</tr>
 				<tr>
 					<th><label for="paypal_pro_use_sandbox">
-							<?php _e('Use the debugging feature and the PayPal Sandbox', 'event_espresso'); ?>
+							<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'paypal_pro_sandbox_info'); ?>
 						</label></th>
 					<td><?php echo select_input('use_sandbox', $values, $payment_settings['paypal_pro']['use_sandbox']); ?>
@@ -322,3 +313,4 @@ function event_espresso_display_paypal_pro_settings() {
 	</div>
 	<?php
 }
+add_meta_box('espresso_paypal_pro_gateway_settings', __('PayPal Payments Pro Settings', 'event_espresso'), 'event_espresso_paypal_pro_payment_settings', 'event-espresso_page_payment_gateways');

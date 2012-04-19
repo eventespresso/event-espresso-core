@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Paypal Class
+ * PayPal Class
  *
  * Author 		Seth Shoultes
  * @package		Event Espresso PayPal Gateway

@@ -82,7 +82,7 @@ function espresso_display_paypal($EE_Session) {
 
 	if ($use_sandbox) {
 
-		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Paypal Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('PayPal Debug Mode Is Turned On', 'event_espresso') . '</h3>';
 		$myPaypal->dump_fields();
 	}
 }

@@ -51,18 +51,11 @@ function event_espresso_paypal_payment_settings() {
 	?>
 
 	<a name="paypal" id="paypal"></a>
-	<div class="metabox-holder">
-		<div class="postbox <?php echo $postbox_style; ?>">
-			<div title="Click to toggle" class="handlediv"><br />
-			</div>
-			<h3 class="hndle">
-				<?php _e('PayPal Standard Settings', 'event_espresso'); ?>
-			</h3>
-			<div class="inside">
+	
 				<div class="padding">
 					<?php
 					if (!empty($_REQUEST['activate_paypal'])) {
-						$active_gateways['aim'] = dirname(__FILE__);
+						$active_gateways['paypal'] = dirname(__FILE__);
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 							$notices['updates'][] = __('PayPal Payments Activated', 'event_espresso');
 						} else {
@@ -84,15 +77,12 @@ function event_espresso_paypal_payment_settings() {
 					} else {
 						echo '<li id="deactivate_paypal" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_paypal=true\';" class="red_alert pointer"><strong>' . __('Deactivate PayPal Standard?', 'event_espresso') . '</strong></li>';
 							event_espresso_display_paypal_settings($payment_settings);
-							break;
+						//	break;
 					}
 
 					echo '</ul>';
 					?>
 				</div>
-			</div>
-		</div>
-	</div>
 	<?php
 }
 
@@ -113,7 +103,7 @@ function event_espresso_display_paypal_settings($payment_settings) {
 			<tbody>
 				<tr>
 					<th><label for="paypal_id">
-							<?php _e('Paypal ID', 'event_espresso'); ?>
+							<?php _e('PayPal ID', 'event_espresso'); ?>
 						</label></th>
 					<td><input class="regular-text" type="text" name="paypal_id" size="35" id="paypal_id" value="<?php echo $payment_settings['paypal']['paypal_id']; ?>">
 						<br />
@@ -223,21 +213,21 @@ function event_espresso_display_paypal_settings($payment_settings) {
 				</tr>
 				<tr>
 					<th><label for="bypass_payment_page">
-							<?php _e('Bypass the payment confirmation page', 'event_espresso'); ?>
+							<?php _e('Bypass Payment Overview Page', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation'); ?>
 						</label></th>
 					<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['paypal']['bypass_payment_page']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="use_sandbox">
-							<?php _e('Use the debugging feature and the PayPal Sandbox', 'event_espresso'); ?>
+							<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info'); ?>
 						</label></th>
 					<td><?php echo select_input('use_sandbox', $values, $payment_settings['paypal']['use_sandbox']); ?></td>
 				</tr>
 				<tr>
 					<th><label for="no_shipping">
-							<?php _e('Shipping address options?', 'event_espresso'); ?>
+							<?php _e('Shipping Address Options', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'no_shipping'); ?>
 						</label></th>
 					<td><?php
@@ -255,9 +245,9 @@ function event_espresso_display_paypal_settings($payment_settings) {
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update PayPal Settings', 'event_espresso') ?>" id="save_paypal_settings" />
 		</p>
 		<p><strong style="color:#F00">
-				<?php _e('Paypal Notes:', 'event_espresso'); ?>
+				<?php _e('PayPal Notes', 'event_espresso'); ?>
 			</strong><br />
-			<?php _e('For Paypal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?></p>
+			<?php _e('For PayPal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?></p>
 		<?php wp_nonce_field('espresso_form_check', 'add_paypal_settings'); ?>
 	</form>
 	<div id="sandbox_info" style="display:none">
@@ -272,7 +262,7 @@ function event_espresso_display_paypal_settings($payment_settings) {
 			<?php _e('The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?>
 		</p>
 		<hr />
-		<p><strong><?php _e('Helpful Links:', 'event_espresso'); ?></strong></p>
+		<p><strong><?php _e('Helpful Links', 'event_espresso'); ?></strong></p>
 		<ul>
 			<li><a href="https://developer.paypal.com/devscr?cmd=_home" target="_blank">PayPal Sandbox Login</a></li>
 			<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank">Sandbox Tutorial</a></li>
@@ -286,7 +276,7 @@ function event_espresso_display_paypal_settings($payment_settings) {
 		<p>
 			<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso'); ?>
 		</p>
-		<p><?php _e('Current Button Image:', 'event_espresso'); ?></p>
+		<p><?php _e('Current Button Image', 'event_espresso'); ?></p>
 		<p><?php echo '<img src="' . $payment_settings['paypal']['button_url'] . '" />'; ?></p>
 	</div>
 	<div id="paypal_image_url_info" style="display:none">
@@ -326,3 +316,5 @@ function event_espresso_display_paypal_settings($payment_settings) {
 	</div>
 	<?php
 }
+
+add_meta_box('espresso_paypal_gateway_settings', __('PayPal Standard Settings', 'event_espresso'), 'event_espresso_paypal_payment_settings', 'event-espresso_page_payment_gateways');
