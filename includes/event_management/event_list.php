@@ -174,9 +174,14 @@ function espresso_event_list_sql($sql) {
 		$records_to_show = " LIMIT $max_rows OFFSET $start_rec ";
 	} else
 		$records_to_show = '';
-	global $org_options;
-	$sql .= "(SELECT e.id event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, ";
-	$sql .= " e.is_active, e.recurrence_id,  e.event_meta, e.event_status, ";
+		
+	global $org_options, $wpdb;
+	
+	$sql .= "(SELECT e.id AS event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, ";
+	$sql .= " e.is_active, e.recurrence_id,  e.event_meta, e.event_status";
+	
+	$sql .= ", dtt.DTT_is_primary, dtt.DTT_start, dtt.DTT_end, dtt.DTT_event_or_reg, dtt.DTT_reg_limit";
+
 
 //Get the venue information
 	if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager']) {
@@ -188,9 +193,12 @@ function espresso_event_list_sql($sql) {
 		$sql .= ", lc.name AS locale_name, e.wp_user ";
 	}
 	$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+	$sql .= " INNER JOIN " . $wpdb->prefix . esp_datetime . " dtt ON dtt.EVT_ID = e.id ";	
+	
+		
 	if ($_REQUEST['category_id'] != '') {
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
-		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = cr.cat_id ";
+		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = cr.cat_id ";
 	}
 
 	if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager']) {
@@ -202,17 +210,20 @@ function espresso_event_list_sql($sql) {
 		$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = vr.venue_id ";
 		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " lc ON lc.id = l.locale_id ";
 	}
-	$sql .= ( isset($_POST['event_status']) && ($_POST['event_status'] != '' && $_POST['event_status'] != 'IA')) ? " WHERE e.event_status = '" . $_POST['event_status'] . "' " : " WHERE e.event_status != 'D' ";
+
+	$sql .= " WHERE dtt.DTT_is_primary = '1' AND dtt.DTT_event_or_reg ='E' ";	
+
+	$sql .= ( isset($_POST['event_status']) && ($_POST['event_status'] != '' && $_POST['event_status'] != 'IA')) ? " AND e.event_status = '" . $_POST['event_status'] . "' " : " AND e.event_status != 'D' ";
 	$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
-/*	if ($_POST['month_range'] != '' && $_POST['month_range'] > 0) {
-		$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
+	
+	if ($_POST['month_range'] != '' && $_POST['month_range'] > 0) {
+		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime( $year_r . '-' . $month_r . '-01' ) . "' AND '" . strtotime( $year_r . '-' . $month_r . '-31' ) . "' ";
+	} elseif (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
+		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime( date( 'Y-m-d' ) . ' 0:00:00' ) . "' AND '" . strtotime( date( 'Y-m-d' ) . ' 23:59:59' ) . "' ";
+	} elseif (isset($_REQUEST['this_month']) && $_REQUEST['this_month'] == 'true') {
+		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime( $this_year_r . '-' . $this_month_r . '-01' ) . "' AND '" . strtotime( $this_year_r . '-' . $this_month_r . '-' . $days_this_month ) . "' ";
 	}
-	if (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
-		$sql .= " AND e.start_date = '" . $curdate . "' ";
-	}
-	if (isset($_REQUEST['this_month']) && $_REQUEST['this_month'] == 'true') {
-		$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month)) . "' ";
-	}*/
+	
 //If user is an event manager, then show only their events
 	if (function_exists('espresso_manager_pro_version')) {
 		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
@@ -223,6 +234,9 @@ function espresso_event_list_sql($sql) {
 			$sql .= " AND e.wp_user = '" . $espresso_wp_user . "' ";
 		}
 	}
+	
+	$sql .= " GROUP BY e.id ORDER BY dtt.DTT_start DESC";
+	
 	$sql .= ") $records_to_show ";
 	return $sql;
 }
@@ -230,14 +244,14 @@ function espresso_event_list_sql($sql) {
 function espresso_event_list_header() {
 	global $espresso_premium;
 	?>
-	<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:28px;"><input type="checkbox"></th>
+	<th class="manage-column column-cb check-column" id="cb" scope="col" style="width:28px;  padding: 7px 0 0;"><input type="checkbox"></th>
 
 	<th class="manage-column column-comments num" id="id" style="padding-top:7px; width:3%;" scope="col" title="Click to Sort">
 		<span><?php _e('ID', 'event_espresso'); ?></span>
 		<span class="sorting-indicator"></span>
 	</th>
 
-	<th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:16%;">
+	<th class="manage-column column-title" id="name" scope="col" title="Click to Sort" style="width:20%;">
 		<span><?php _e('Name', 'event_espresso'); ?></span>
 		<span class="sorting-indicator"></span>
 	</th>
@@ -252,22 +266,22 @@ function espresso_event_list_header() {
 		<span class="sorting-indicator"></span>
 	</th>
 
-	<th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:10%;">
+	<th class="manage-column column-author" id="start" scope="col" title="Click to Sort" style="width:7.5%;">
 		<span><?php _e('Start Time', 'event_espresso'); ?></span>
 		<span class="sorting-indicator"></span>
 	</th>
 
-	<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;">
+<!--	<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;">
 		<span><?php _e('DoW', 'event_espresso'); ?></span>
 		<span class="sorting-indicator"></span>
-	</th>
+	</th>-->
 
-	<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:12%;">
+	<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:15%;">
 		<span><?php _e('Reg Begins', 'event_espresso'); ?></span>
 		<span class="sorting-indicator"></span>
 	</th>
 
-	<th class="manage-column column-date" id="status" scope="col" title="Click to Sort" style="width:10%;">
+	<th class="manage-column column-date" id="status" scope="col" title="Click to Sort" style="width:6%;">
 		<span><?php _e('Status', 'event_espresso'); ?></span>
 		<span class="sorting-indicator"></span>
 	</th>
@@ -285,7 +299,7 @@ function espresso_event_list_header() {
 			<span class="sorting-indicator"></span>
 		</th>
 	<?php } ?>
-	<th class="manage-column column-date" id="attendees" scope="col" title="Click to Sort" style="width:9%;">
+	<th class="manage-column column-date" id="attendees" scope="col" title="Click to Sort" style="width:6%;">
 		<span><?php _e('Attendees', 'event_espresso'); ?></span>
 		<span class="sorting-indicator"></span>
 	</th>
@@ -294,22 +308,23 @@ function espresso_event_list_header() {
 	</th>
 	<?php
 }
-
+//DTT_start 	DTT_end
 function espresso_event_list_entry($event) {
+
 	global $espresso_premium;
+	
 	$event_id = $event->event_id;
 	$event_slug = $event->slug;
 	$event_name = stripslashes_deep($event->event_name);
 	$event_identifier = stripslashes_deep($event->event_identifier);
 	$reg_limit = isset($event->reg_limit) ? $event->reg_limit : '';
 	$registration_start = isset($event->registration_start) ? $event->registration_start : '';
-	$start_date = isset($event->start_date) ? $event->start_date : '';
-	$end_date = isset($event->end_date) ? $event->end_date : '';
+	$start_date = isset($event->DTT_start) ? $event->DTT_start : '';
+	$end_date = isset($event->DTT_end) ? $event->DTT_end : '';
 	$is_active = isset($event->is_active) ? $event->is_active : '';
 	$status = array();
 	$status = event_espresso_get_is_active($event_id);
 	$recurrence_id = isset($event->recurrence_id) ? $event->recurrence_id : '';
-	$registration_startT = isset($event->registration_startT) ? $event->registration_startT : '';
 
 	$event_address = isset($event->address) ? $event->address : '';
 	$event_address2 = isset($event->address2) ? $event->address2 : '';
@@ -325,14 +340,32 @@ function espresso_event_list_entry($event) {
 	$event_meta = unserialize($event->event_meta);
 	$event_meta['is_active'] = $event->is_active;
 	$event_meta['event_status'] = $event->event_status;
-	$event_meta['registration_start'] =$event->registration_start;
-	$event_meta['registration_startT'] =$event->registration_startT;
-	$event_meta['registration_end'] =$event->registration_end;
-	$event_meta['registration_endT'] =$event->registration_endT;
+	
+	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php' );
+	$DTM = EEM_Datetime::instance();
+
+	// grab reg times
+	$reg_time = array_shift( $DTM->get_primary_reg_date_for_event( $event_id ));
+	$reg_start = $reg_time->start();
+	
+	//echo printr($reg_time, 'REG TIME');
+	
+	$registration_start = isset( $reg_start ) ? $reg_start : '';
+	
+	$event_meta['registration_start'] = date( get_option('date_format'), $reg_start );
+	$event_meta['registration_startT'] = date( get_option('time_format'), $reg_start );
+	$event_meta['registration_end'] = date( get_option('date_format'), $reg_start );
+	$event_meta['registration_endT'] = date( get_option('time_format'), $reg_start );	
+
+//	$event_meta['registration_start'] =$event->registration_start;
+//	$event_meta['registration_startT'] =$event->registration_startT;
+//	$event_meta['registration_end'] =$event->registration_end;
+//	$event_meta['registration_endT'] =$event->registration_endT;
+	
 //print_r( $event_meta );
 
 	$location = (!empty($event_address) ? $event_address : '') . (!empty($event_address2) ? '<br />' . $event_address2 : '') . (!empty($event_city) ? '<br />' . $event_city : '') . (!empty($event_state) ? ', ' . $event_state : '') . (!empty($event_zip) ? '<br />' . $event_zip : '') . (!empty($event_country) ? '<br />' . $event_country : '');
-	$dow = date("D", strtotime($start_date));
+//	$dow = date("D", strtotime($start_date));
 	ob_start();
 	?>
 	<tr>
@@ -349,16 +382,15 @@ function espresso_event_list_entry($event) {
 		echo $venue_locale != '' ? '<br />[' . $venue_locale . ']' : '';
 			?></td>
 
-		<td class="author"><?php echo event_date_display($start_date, get_option('date_format')) ?></td>
+		<td class="author"><?php echo date( 'D, M d, Y', $start_date ) ?></td>
 
-		<td class="author"><?php echo event_espresso_get_time($event_id, 'start_time') ?></td>
+		<td class="author"><?php echo date( get_option('time_format'), $start_date ) ?></td>
 
-		<td class="date"><?php echo $dow ?></td>
+		<!--<td class="date"><?php echo $dow ?></td>-->
 
-		<td class="date"><?php echo event_date_display($registration_start, get_option('date_format')); ?> <br />
-			<?php echo $registration_startT ?></td>
+		<td class="date"><?php echo date( 'D, M d, Y  @  G:i a', $registration_start ); ?> <?php //echo $registration_startT ?></td>
 
-		<td class="date"><?php echo $status['display'] ?></td>
+		<td class="date"><?php echo $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display']; ?></td>
 
 		<?php
 		if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $espresso_premium == true) {
@@ -382,7 +414,9 @@ function espresso_event_list_entry($event) {
 			</td>
 		<?php } ?>
 
-		<td class="author"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees_slash_reg_limit'); ?></a></td>
+		<td class="author"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees_slash_reg_limit'); ?></a>
+		</td>
+		
 		<td class="date"><div style="width:180px;"><a href="<?php echo espresso_reg_url($event_id, $event_slug); ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank"><div class="view_btn"></div></a>
 
 				<a href="admin.php?page=events&amp;action=edit_event&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Event', 'event_espresso'); ?>"><div class="edit_btn"></div></a>
@@ -463,45 +497,45 @@ function espresso_event_list_table_action_buttons() {
 function espresso_event_list_actions_legend() {
 	?>
 
-	<h4 style="clear:both"><?php _e('Actions Legend', 'event_espresso'); ?></h4>
-	<dl style="float:left; margin-left:10px; width:1000px; height:80px">
+	<h4 style="clear:both; margin:4em 0 0;"><?php _e('Actions Legend', 'event_espresso'); ?></h4>
+	<dl style="float:left; margin:0 0 0 10px; width:1000px; height:80px">
 
 		<?php
 		echo defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE') ?
-						'			<dt style="float:left;width:200px;">
+						'			<dt style="float:left;width:200px; margin: 7.5px 0;">
 				<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/arrow_rotate_clockwise.png" alt="Recurring Event" title="Recurring Event"  /> - ' . __('Recurring Event', 'event_espresso') . '
 			</dt>' : '';
 		?>
 
-		<dt style="float:left;width:200px;">
+		<dt style="float:left;width:200px; margin: 7.5px 0;">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/magnifier.png" width="16" height="16" alt="<?php _e('View Event', 'event_espresso'); ?>" /> - <?php _e('View Event', 'event_espresso'); ?>
 		</dt>
 
-		<dt style="float:left;width:200px;">
+		<dt style="float:left;width:200px; margin: 7.5px 0;">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/calendar_edit.png" width="16" height="16" alt="<?php _e('Edit Event', 'event_espresso'); ?>" /> - <?php _e('Edit Event', 'event_espresso'); ?>
 		</dt>
 
-		<dt style="float:left;width:200px;">
+		<dt style="float:left;width:200px; margin: 7.5px 0;">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/group.png" width="16" height="16" alt="<?php _e('Event Attendees', 'event_espresso'); ?>" /> - <?php _e('Event Attendees', 'event_espresso'); ?>
 		</dt>
 
-		<dt style="float:left;width:200px;">
+		<dt style="float:left;width:200px; margin: 7.5px 0;">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/chart_bar.png" width="16" height="16" alt="<?php _e('Send Event Email', 'event_espresso'); ?>" /> - <?php _e('View Report', 'event_espresso'); ?>
 		</dt>
 
-		<dt style="float:left;width:200px;">
+		<dt style="float:left;width:200px; margin: 7.5px 0;">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/tag.png" width="16" height="16" alt="<?php _e('Short Code', 'event_espresso'); ?>" /> - <?php _e('Short Code', 'event_espresso'); ?>
 		</dt>
 
-		<dt style="float:left;width:200px;">
+		<dt style="float:left;width:200px; margin: 7.5px 0;">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/excel_icon.png" width="16" height="16" alt="<?php _e('Excel Spreadsheet', 'event_espresso'); ?>" /> - <?php _e('Excel Export', 'event_espresso'); ?>
 		</dt>
 
-		<dt style="float:left;width:200px;">
+		<dt style="float:left;width:200px; margin: 7.5px 0;">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/csv_icon_sm.gif" width="16" height="16" alt="<?php _e('CSV Spreadsheet', 'event_espresso'); ?>" /> - <?php _e('CSV Export', 'event_espresso'); ?>
 		</dt>
 
-		<dt style="float:left;width:200px;">
+		<dt style="float:left;width:200px; margin: 7.5px 0;">
 		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_go.png" width="16" height="16" alt="<?php _e('View Report', 'event_espresso'); ?>" /> - <?php _e('Event Newsletter', 'event_espresso'); ?>
 		</dt>
 

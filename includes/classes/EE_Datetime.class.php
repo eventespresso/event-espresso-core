@@ -48,6 +48,18 @@ class EE_Datetime {
 	
 	
     /**
+    *	Primary Datetime (first)
+	* 
+	* 	foreign key
+	* 
+	*	@access	private
+    *	@var int	
+    */
+	private $_DTT_is_primary;
+	
+	
+	
+    /**
     *	Start Timestamp
 	* 
 	*	date / time
@@ -129,13 +141,14 @@ class EE_Datetime {
 	*
 	* @access 		public
 	* @param 		int 							$EVT_ID 						Event ID
+	* @param 		int 							$DTT_is_primary 		Primary Date time - the first event or reg date
 	* @param 		mixed int | string 	$DTT_start 					Unix timestamp or date string for the event or reg beginning
 	* @param 		mixed int | string	$DTT_end 					Unix timestamp or date string for the event or reg end
 	* @param 		string 						$DTT_event_or_reg  	Whether timestamp is for the actual Event, or for the Registration, denoted by "E" or "R"
 	* @param 		mixed						$DTT_reg_limit 			Registration Limit for this time period - int for starts, NULL for ends
 	* @param 		int 							$DTT_ID 						Event Datetime ID
 	*/
-	public function __construct( $EVT_ID = NULL, $DTT_start = NULL, $DTT_end = NULL, $DTT_event_or_reg = 0, $DTT_reg_limit = NULL, $DTT_ID = NULL ) {
+	public function __construct( $EVT_ID = NULL, $DTT_is_primary = 0, $DTT_start = NULL, $DTT_end = NULL, $DTT_event_or_reg = 0, $DTT_reg_limit = NULL, $DTT_ID = NULL ) {
 	
 		global $org_options;
 		
@@ -149,6 +162,7 @@ class EE_Datetime {
 		$DTT_end = is_numeric( $DTT_end ) ? $DTT_end : strtotime( $DTT_end );		
 		
 		$this->_EVT_ID = $EVT_ID;
+		$this->_DTT_is_primary = $DTT_is_primary;
 		$this->_DTT_start = $DTT_start;
 		$this->_DTT_end = $DTT_end;
 		$this->_DTT_event_or_reg = $DTT_event_or_reg;
@@ -176,6 +190,7 @@ class EE_Datetime {
 			return TRUE;
 		}
 	}
+
 
 
 
@@ -422,6 +437,22 @@ class EE_Datetime {
 
 
 	/**
+	*		Set as primary date
+	* 
+	*		set the datetime as the primary datetime - please verify that all other datetimes are now set to false
+	* 
+	* 		@access		public		
+	*		@param		string		$primary 		True or False ?
+	*/	
+	public function set_primary( $primary ) {
+		$this->_DTT_is_primary = (bool)absint( $primary );
+	}
+
+
+
+
+
+	/**
 	*		get Datetime ID
 	* 
 	* 		@access		public		
@@ -600,7 +631,7 @@ class EE_Datetime {
 	* 		@access		public	
 	*		@return 		int
 	*/	
-	public function start_timestamp() {
+	public function start() {
 		return $this->_DTT_start;
 	}
 
@@ -613,7 +644,7 @@ class EE_Datetime {
 	* 		@access		public	
 	*		@return 		int
 	*/	
-	public function end_timestamp() {
+	public function end() {
 		return $this->_DTT_end;
 	}
 
@@ -669,6 +700,7 @@ class EE_Datetime {
 		
 		$set_column_values = array(
 				'EVT_ID'						=> $this->_EVT_ID,
+				'DTT_is_primary'			=> $this->_DTT_is_primary,
 				'DTT_start'					=> $this->_DTT_start,
 				'DTT_end'					=> $this->_DTT_end,
 				'DTT_event_or_reg'		=> $this->_DTT_event_or_reg,

@@ -60,7 +60,7 @@ function espresso_event_list_get_event_times($event_id) {
 		$time = new stdClass;
 		$time->id = 1;
 		$time->event_id = $event_id;
-		$time->start_time = '12:00:01am';
+		$time->start_time = '12:00:00am';
 		$time->end_time = '11:59:59pm';
 		$reg_limit = 0;
 		$timeslots = array($time);
@@ -110,7 +110,7 @@ function espresso_event_list_get_event_prices($event_id, $early_disc, $early_dis
 	$SQL .= ' ORDER BY PRT_order ASC';
 
 	if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $event_id), ARRAY_A)) {
-echo printr( $prices );
+		//echo printr( $prices );
 		if (!empty($early_disc) && !empty($early_disc_date) && strtotime($early_disc_date) > strtotime(date("Y-m-d"))) {
 
 			foreach ($prices as $price) {
@@ -135,7 +135,7 @@ echo printr( $prices );
 	foreach ($prices as $price) {
 		$prices_a[$price['PRC_ID']] = $price;
 	}
-
+	echo printr( $prices_a );
 	return $prices_a;
 }
 
@@ -147,43 +147,52 @@ echo printr( $prices );
  */
 function espresso_event_list_process_event_prices($event_prices = array()) {
 
+	$prices = array();
 	if (!empty($event_prices)) {
 
 		// cycle through all pricing options for the event
 		foreach ($event_prices as $price) {
 
-			$event_price = number_format($price['PRC_amount'], 2, '.', '');
+			echo printr( $price, 'EVENT PRICE' );
+			
+			//$event_price = number_format($price['PRC_amount'], 2, '.', '');
+			$event_price = number_format($price->amount(), 2, '.', '');
 
-			$prices[$price['PRC_ID']]['PRT_name'] = $price['PRT_name'];
-			$prices[$price['PRC_ID']]['PRC_amount'] = $event_price;
+			//$prices[$price['PRC_ID']]['PRT_name'] = $price['PRT_name'];
+			$prices[ $price->ID() ]['PRT_name'] = $price->name();
+			$prices[ $price->ID() ]['PRC_amount'] = $event_price;
 
 			// calculate surcharges if any
-			if ($price['surcharge'] != 0) {
+			//if ($price['surcharge'] != 0) {
+			if ( count( $price->adjustments() ) > 0 ) {
+				foreach ( $price->adjustments() as $adjustment ) {
+					//$prices[ $price->ID() ]['surcharge']
+				}
 				if ($price['surcharge_type'] == 'flat_rate') {
-					$prices[$price['id']]['surcharge'] = number_format($price['surcharge'], 2, '.', '');
+					$prices[ $price->ID() ]['surcharge'] = number_format($price['surcharge'], 2, '.', '');
 				} else {
-					$prices[$price['id']]['surcharge'] = number_format($price['surcharge'] * $event_price, 2, '.', '');
+					$prices[ $price->ID() ]['surcharge'] = number_format($price['surcharge'] * $event_price, 2, '.', '');
 				}
 			} else {
-				$prices[$price['id']]['surcharge'] = 0;
+				$prices[ $price->ID() ]['surcharge'] = 0;
 			}
 
-			$prices[$price['id']]['ticket_price'] = $prices[$price['id']]['event_cost'];
-			$prices[$price['id']]['total'] = $prices[$price['id']]['event_cost'] + $prices[$price['id']]['surcharge'];
+			$prices[ $price->ID() ]['ticket_price'] = $prices[ $price->ID() ]['event_cost'];
+			$prices[ $price->ID() ]['total'] = $prices[ $price->ID() ]['event_cost'] + $prices[ $price->ID() ]['surcharge'];
 
 			// calculate member pricing
 			if ($price['event_cost'] != $price['member_price']) {
-				$prices[$price['id']]['member_pricing'] = TRUE;
-				$prices[$price['id']]['member_price_type'] = $price['member_price_type'];
-				$prices[$price['id']]['member_price'] = number_format($price['member_price'], 2, '.', '');
+				$prices[ $price->ID() ]['member_pricing'] = TRUE;
+				$prices[ $price->ID() ]['member_price_type'] = $price['member_price_type'];
+				$prices[ $price->ID() ]['member_price'] = number_format($price['member_price'], 2, '.', '');
 
 
-				if (is_user_logged_in()) {
-					$prices[$price['id']]['ticket_price'] = $prices[$price['id']]['member_price'];
-					$prices[$price['id']]['total'] = $prices[$price['id']]['member_price'] + $prices[$price['id']]['surcharge'];
+				if ( is_user_logged_in() ) {
+					$prices[ $price->ID() ]['ticket_price'] = $prices[ $price->ID() ]['member_price'];
+					$prices[ $price->ID() ]['total'] = $prices[ $price->ID() ]['member_price'] + $prices[ $price->ID() ]['surcharge'];
 				}
 			} else {
-				$prices[$price['id']]['member_pricing'] = FALSE;
+				$prices[ $price->ID() ]['member_pricing'] = FALSE;
 			}
 		}
 
@@ -192,6 +201,38 @@ function espresso_event_list_process_event_prices($event_prices = array()) {
 		return FALSE;
 	}
 }
+
+
+//EVENT PRICE
+//EE_Event_Price Object
+//(
+//    [_EP_adjustments:EE_Event_Price:private] => Array
+//        (
+//            [0] => Array
+//                (
+//                    [name] => Base Price
+//                    [ID] => 5
+//                    [amount] => 58.95
+//                )
+//
+//            [1] => Array
+//                (
+//                    [name] => Service Fee
+//                    [ID] => 2
+//                    [is_percent] => 
+//                    [adjustment] => 11
+//                )
+//
+//        )
+//
+//    [_EP_amount:EE_Event_Price:private] => 69.95
+//    [_EP_name:EE_Event_Price:private] => Floor Seats
+//    [_EP_desc:EE_Event_Price:private] => Standing room only - no seats
+//    [_EP_ID:EE_Event_Price:private] => 5
+
+
+
+
 
 /**
  * get_recurring_events

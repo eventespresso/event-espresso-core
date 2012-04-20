@@ -57,6 +57,7 @@ class EEM_Datetime extends EEM_Base {
 		$this->table_data_types = array (
 			'DTT_ID' 					=> '%d',
 			'EVT_ID' 					=> '%d',
+			'DTT_is_primary' 	=> '%d',
 			'DTT_start' 				=> '%d',
 			'DTT_end' 				=> '%d',
 			'DTT_event_or_reg'	=> '%s',
@@ -99,7 +100,7 @@ class EEM_Datetime extends EEM_Base {
 	* 		@param		$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	private function _get_event_datetimes( $EVT_ID = FALSE, $DTT_event_or_reg = FALSE, $start_or_end = FALSE ) {
+	private function _get_event_datetimes( $EVT_ID = FALSE, $DTT_event_or_reg = FALSE, $primary = FALSE ) {
 
 		if ( ! $EVT_ID ) {
 			global $espresso_notices;
@@ -108,18 +109,13 @@ class EEM_Datetime extends EEM_Base {
 		}
 
 		$where = array( 'EVT_ID' => $EVT_ID );
-		$operator = array( '=' );
 
 		if ( $DTT_event_or_reg ) {
 			$where['DTT_event_or_reg'] = $DTT_event_or_reg;
 		}
-
-		if ( $start_or_end  == 'S' ) {
-			$where['DTT_start'] = '';
-			$operator[] = '!=';
-		} elseif ( $start_or_end  == 'E' ) {
-			$where['DTT_end'] = '';
-			$operator[] = '!=';
+		
+		if ( $primary ) {
+			$where['DTT_is_primary'] = 1;
 		}
 
 		$orderby = 'DTT_start';
@@ -132,6 +128,7 @@ class EEM_Datetime extends EEM_Base {
 			foreach ( $datetimes as $datetime ) {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
 							$datetime->EVT_ID,
+							$datetime->DTT_is_primary,
 							$datetime->DTT_start,
 							$datetime->DTT_end,
 							$datetime->DTT_event_or_reg,
@@ -187,7 +184,7 @@ class EEM_Datetime extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_event_start_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, 'E', 'S' );
+		return $this->_get_event_datetimes( $EVT_ID, 'E', TRUE );
 	}
 
 
@@ -201,7 +198,7 @@ class EEM_Datetime extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_event_end_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, 'E', 'E' );
+		return $this->_get_event_datetimes( $EVT_ID, 'E', TRUE );
 	}
 
 
@@ -222,6 +219,22 @@ class EEM_Datetime extends EEM_Base {
 
 
 
+
+	/**
+	*		get registration date from db
+	*
+	* 		@access		public
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_primary_reg_date_for_event( $EVT_ID = FALSE ) {
+		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
+			return FALSE;
+		}
+		return $this->_get_event_datetimes( $EVT_ID, 'R', TRUE );
+	}
+
+
+
 	/**
 	*		get registration start date from db
 	*
@@ -229,7 +242,7 @@ class EEM_Datetime extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_reg_start_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, 'R', 'S' );
+		return $this->_get_event_datetimes( $EVT_ID, 'R', TRUE );
 	}
 
 
@@ -243,7 +256,7 @@ class EEM_Datetime extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_reg_end_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, 'R', 'E' );
+		return $this->_get_event_datetimes( $EVT_ID, 'R', TRUE );
 	}
 
 
