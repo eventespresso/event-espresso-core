@@ -266,14 +266,14 @@ class EEM_Price extends EEM_Base {
 
 		global $wpdb;
 		// retreive prices
-		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt LEFT JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' '. $operator .' %d ORDER BY PRT_order';
+		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' '. $operator .' %d ORDER BY PRT_order';
 
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $value))) {
 //			echo $wpdb->last_query;
-//			echo printr($prices, '$prices' );
+			echo printr($prices, '$prices' );
 			foreach ($prices as $price) {
-				$array_of_prices[ $price->PRT_ID ][ $price->PRC_ID ] = $this->_create_objects($price);
+				$array_of_prices[ $price->PRT_order ] = $this->_create_objects($price);
 			}
 			return $array_of_prices;
 		} else {
@@ -401,6 +401,44 @@ class EEM_Price extends EEM_Base {
 
 
 	/**
+	 * 		retreive all prices for an event plus default global prices, but not taxes
+	 *
+	 * 		@access		public
+	 * 		@return 		boolean			false on fail
+	 */
+	public function get_all_event_prices_for_admin( $EVT_ID ) {
+
+		if ( ! $EVT_ID ) {
+			global $espresso_notices;
+			$espresso_notices['success'][] = 'No Event ID was received.';
+			return FALSE;
+		}
+		
+		global $wpdb;
+		// retreive prices
+		$SQL = 'SELECT  evp.*, prc.*, prt.* ';
+		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_event_price evp ';
+		$SQL .= 'LEFT JOIN ' . $this->table_name . ' prc ON evp.PRC_ID = prc.PRC_ID ';
+		$SQL .= 'RIGHT JOIN ' . $wpdb->prefix . 'esp_price_type prt ON prt.PRT_ID = prc.PRT_ID ';
+		$SQL .= 'WHERE evp.EVT_ID = %d ';
+		$SQL .= 'AND prt.PRT_is_global = TRUE ';
+		$SQL .= 'AND prt.PRT_is_tax = FALSE ';
+		$SQL .= 'ORDER BY PRT_order';
+
+
+		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $EVT_ID))) {
+			//echo printr($prices, '$prices' );
+			return $this->_create_objects($prices);
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+
+	/**
 	 * 		retreive all prices that are global, but not taxes
 	 *
 	 * 		@access		public
@@ -412,7 +450,7 @@ class EEM_Price extends EEM_Base {
 		// retreive prices
 		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.PRT_is_tax = FALSE ORDER BY PRT_order';
 
-		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $value))) {
+		if ($prices = $wpdb->get_results($wpdb->prepare($SQL))) {
 			//echo printr($prices, '$prices' );
 			return $this->_create_objects($prices);
 		} else {

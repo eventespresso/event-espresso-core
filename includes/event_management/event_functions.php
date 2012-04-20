@@ -466,67 +466,99 @@ function espresso_event_editor_pricing_metabox($event) {
 	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	$PRT = EEM_Price_Type::instance();
+	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	$PRC = EEM_Price::instance();
+	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
-	$EP = EEM_Event_Price::instance();
-	$prices = $PRC->get_all_prices();
+	$EVP = EEM_Event_Price::instance();
+	
+	$prices = $PRC->get_all_event_prices_for_admin( $event->id );
+//	echo printr( $prices, '$prices' );
 
 	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', '');
 	
 	?>
-	<div class="inside">
-		<table id="event_editor_pricing" <?php echo $table_class ?> width="100%" border="0" cellpadding="5">
+
+		<table id="event_editor_pricing" <?php echo $table_class ?>>
 			<thead>
 				<tr>
-					<td>
-						<?php _e('Active?'); ?>
-					</td>
-					<td>
-						<?php _e('Name'); ?>
-					</td>
-					<td>
-						<?php _e('Amount'); ?>
-					</td>
-					<td>
-						<?php _e('Type'); ?>
-					</td>
-					<td>
-						<?php _e('Order'); ?>
-					</td>
-					<td>
-						<?php _e('Percent?'); ?>
-					</td>
-					<td>
-						<?php _e('Tax?'); ?>
-					</td>
+					<td style="width:3%; text-align:center;"><b><?php _e('Order'); ?></b></td>
+					<td style="width:15%; padding:0 .5em;"><b><?php _e('Name'); ?></b></td>
+					<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Type'); ?></b></td>
+					<td style="width:39.5%; padding:0 .5em;"><b><?php _e('Description'); ?></b></td>
+					<td style="width:5%; text-align:center;"><b><?php _e('Amount'); ?></b></td>
+					<td style="width:5%; text-align:center;"><b><?php _e('%'); ?></b></td>
+					<td style="width:5%; text-align:center;"><b><?php _e('Members'); ?></b></td>
+					<td style="width:5%; text-align:center;"><b><?php _e('Discount'); ?></b></td>
+					<td style="width:5%; text-align:center;"><b><?php _e('Active?'); ?></b></td>
 				</tr>
 			</thead>
-			<?php
-			foreach ($prices as $price) {
-				$checked = $EP->is_price_active_for_event($price->ID(), $event->id) ? 'checked="checked" ' : '';
-				?>
+				<tr>
+					<td style="width:3%; height:3.5em; text-align:center;">
+						<input name="price[0][order]" id="price_order_<?php echo $row; ?>" type="text" class="" value="" style="width:100%; text-align:center;" />
+					</td>
+					<td style="width:15%; height:3.5em; text-align:left;">
+						<input name="price[0][name]" id="price_name_<?php echo $row; ?>" type="text" class="" value="" style="width:100%;" />
+					</td>
+					<td style="width:17.5%; height:3.5em; text-align:left;">
+						<input name="price[0][type]" id="price_type_<?php echo $row; ?>" type="text" class="" value="" style="width:100%;" />
+					</td>
+					<td style="width:39.5%; height:3.5em; text-align:left;">
+						<input name="price[0][desc]" id="price_desc_<?php echo $row; ?>" type="text" class="" value="" style="width:100%;" />
+					</td>
+					<td style="width:5%; height:3.5em; text-align:center;">
+						<input name="price[0][amount]" id="price_amount_<?php echo $row; ?>" type="text" class="" value="" style="width:100%; text-align:center;" />
+					</td>
+					<td style="width:5%; height:3.5em; text-align:center;">
+						<input name="price[0][percent]" id="price_percent_<?php echo $row; ?>" type="checkbox" class="" value=""" />
+					</td>
+					<td style="width:5%; height:3.5em; text-align:center;">
+						<input name="price[0][members]" id="price_members_<?php echo $row; ?>" type="checkbox" class="" value=""  />
+					</td>
+					<td style="width:5%; height:3.5em; text-align:center;">
+						<input name="price[0][discount]" id="price_discount_<?php echo $row; ?>" type="checkbox" class="" value="" />
+					</td>
+					<td style="width:5%; height:3.5em; text-align:center;">
+						<input name="price[0][active]" type="checkbox" title="Activate Price"/>
+					</td>
+				</tr>						
+<?php $row = 1; ?>
+<?php foreach ($prices as $price) : ?>
 			<tr>
-				<td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-					<?php echo '<input name="checkbox[' . $price->ID() . ']" type="checkbox" ' . $checked . 'title="Activate Price ' . $price->name() . '" />'; ?></td>
-				<td class="name-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-					<?php echo $price->name(); ?></td>
-				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-					<?php echo $org_options['currency_symbol'] . $price->amount(); ?></td>
-				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-					<?php echo $PRT->type[$price->type()]->name(); ?></td>
-				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-					<?php echo $PRT->type[$price->type()]->order(); ?></td>
-				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-					<?php echo ($PRT->type[$price->type()]->is_percent()) ? "Yes" : "No"; ?></td>
-				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-					<?php echo ($PRT->type[$price->type()]->is_tax()) ? "Yes" : "No"; ?></td>
+				<td class="amount-column" style="width:3%; height:2.5em; vertical-align:top; text-align:center;">
+					<?php echo $PRT->type[$price->type()]->order(); ?>			
+				</td>
+				<td class="name-column" style="width:15%; height:2.5em; padding:0 .5em; vertical-align:top;">
+					<?php echo $price->name(); ?>
+				</td>
+				<td class="amount-column" style="width:17.5%; height:2.5em; padding:0 .5em; vertical-align:top;">
+					<?php echo $PRT->type[$price->type()]->name(); ?>
+				</td>
+				<td class="name-column" style="width:39.5%; height:2.5em; padding:0 .5em; vertical-align:top;">
+					<?php echo $price->desc(); ?>
+				</td>
+				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
+					<?php echo ($PRT->type[$price->type()]->is_percent()) ? $price->amount() . '%' : $org_options['currency_symbol'] . $price->amount(); ?>
+				</td>
+				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
+					<?php echo ($PRT->type[$price->type()]->is_percent()) ? 'Yes' : ''; ?>
+				</td>
+				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
+					<?php echo ($PRT->type[$price->type()]->is_member()) ? 'Yes' : ''; ?>
+				</td>
+				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
+					<?php echo ($PRT->type[$price->type()]->is_discount()) ? 'Yes' : ''; ?>
+				</td>
+				<td class="check-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
+					<?php $checked = $EVP->is_price_active_for_event($price->ID(), $event->id) ? 'checked="checked" ' : ''; ?>
+					<input name="price[<?php echo $row;?>][active][<?php echo $price->ID();?>]" type="checkbox" title="Activate Price <?php echo $price->name() . '"' . $checked;?>/>
+					<input type="hidden" name="price[<?php echo $row;?>][PRC_ID]" value="<?php echo $price->ID();?>"/>
+				</td>
 			</tr>
-					<?php
-				}
-				?>
+<?php endforeach; ?>
 		</table>
-	</div>
+
 	<?php
 }
 
