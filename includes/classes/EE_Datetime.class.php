@@ -117,17 +117,7 @@ class EE_Datetime {
     *	@var string	
     */
 	private $_tm_frmt = 'g:i a';
-	
-	
-    /**
-    *	datetimes
-	* 
-    *	an array of all datetimes for a particular event
-	* 
-	*	@access	private
-    *	@var array	
-    */
-	private $_all_datetimes = array();	
+
 
 
 
@@ -155,8 +145,8 @@ class EE_Datetime {
 		$time_format = get_option('time_format');
 		$this->_tm_frmt = $time_format ? $time_format : 'g:i a';
 		
-		$DTT_start = is_int( $DTT_start ) ? $DTT_start : strtotime( $DTT_start );
-		$DTT_end = is_int( $DTT_end ) ? $DTT_end : strtotime( $DTT_end );		
+		$DTT_start = is_numeric( $DTT_start ) ? $DTT_start : strtotime( $DTT_start );
+		$DTT_end = is_numeric( $DTT_end ) ? $DTT_end : strtotime( $DTT_end );		
 		
 		$this->_EVT_ID = $EVT_ID;
 		$this->_DTT_start = $DTT_start;
@@ -297,7 +287,9 @@ class EE_Datetime {
 		
 		if( $start ) {
 			// get existing event start time
-			if ( ! $event_time = $this->_start_time() ) {
+			if ( $event_time = $this->_start_time() ) {
+				$event_time = date ( $this->_tm_frmt, $event_time );
+			} else {
 				// or if no time is set, use 1 second after midnight
 				$event_time = '00:00:01';
 			}
@@ -305,7 +297,9 @@ class EE_Datetime {
 
 		} else {
 			// get existing event end time
-			if ( ! $event_time = $this->_end_time() ) {
+			if ( $event_time = $this->_end_time() ) {
+				$event_time = date ( $this->_tm_frmt, $event_time );
+			} else {
 				// or if no time is set, use 1 second after midnight
 				$event_time = '23:59:59';
 			}
@@ -340,14 +334,18 @@ class EE_Datetime {
 		
 		if( $start ) {
 			// get existing event date
-			if ( ! $event_date = $this->_start_date() ) {
+			if ( $event_date = $this->_start_date() ) {
+				$event_date = date ( $this->_dt_frmt, $event_date );
+			} else {
 				// or if no date is set, then use RIGHT NOW!!!!
 				$event_date = date( $this->_dt_frmt, time());
 			}
 			$this->_DTT_start = strtotime( $event_date . ' ' . $event_time );
 		} else {
 			// get existing event date
-			if ( ! $event_date = $this->_end_date() ) {
+			if ( $event_date = $this->_end_date() ) {
+				$event_date = date ( $this->_dt_frmt, $event_date );
+			} else {
 				// or if no date is set, then use RIGHT NOW!!!!
 				$event_date = date( $this->_dt_frmt, time());
 			}
@@ -470,7 +468,8 @@ class EE_Datetime {
 	*/	
 	private function _show_datetime( $date_or_time = 'D', $start = TRUE, $dt_frmt = FALSE, $tm_format = FALSE ) {
 		
-		$start_or_end = $start ? 'DTT_start' : 'DTT_end';
+		$start_or_end = $start ? '_DTT_start' : '_DTT_end';
+		
 		if ( ! isset( $this->{$start_or_end} )) {
 			return FALSE;
 		}
@@ -482,6 +481,8 @@ class EE_Datetime {
 		if ( ! $tm_format ){
 			$tm_format = $this->_tm_frmt;
 		}
+
+
 		
 		switch ( $date_or_time ) {
 			
@@ -666,9 +667,6 @@ class EE_Datetime {
 
 		 $MODEL = EEM_Datetime::instance();
 		
-		$this->_DTT_start = is_int( $this->_DTT_start ) ? $this->_DTT_start : strtotime( $this->_DTT_start );
-		$this->_DTT_end = is_int( $this->_DTT_end ) ? $this->_DTT_end : strtotime( $this->_DTT_end );		
-
 		$set_column_values = array(
 				'EVT_ID'						=> $this->_EVT_ID,
 				'DTT_start'					=> $this->_DTT_start,

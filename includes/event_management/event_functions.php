@@ -339,7 +339,7 @@ function espresso_event_editor_date_time_metabox( $event ) {
 	//echo printr( $reg_times, '$reg_times' );
 ?>
 	<div class="inside">
-<h1>NEEDS SOME FIXIN'</h1>
+
 		<h5><?php _e('Event', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></h5>
 	
 		<table id="event-dates-and-times">		
@@ -357,20 +357,20 @@ function espresso_event_editor_date_time_metabox( $event ) {
 <?php foreach ($times as $time) :  ?>
 			<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
 				<td>
-					<input id="start-date-<?php echo $row; ?>" name="event_datetimes[]['start']['date']" type="text" class="datepicker" value="<?php echo $time->start_date(); ?>" />
+					<input id="start-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][start][date]" type="text" class="datepicker" value="<?php echo $time->start_date(); ?>" />
 				</td>
 				<td>
-					<input id="end-date-<?php echo $row; ?>" name="event_datetimes[]['end']['date']" type="text" class="datepicker" value="<?php echo $time->end_date(); ?>" />
+					<input id="end-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][end][date]" type="text" class="datepicker" value="<?php echo $time->end_date(); ?>" />
 				</td>
 				<td>
-					<input id="add-start-time-<?php echo $row; ?>" name="event_datetimes[]['start']['time']" type="text" class="medium-text time-picker" value="<?php echo $time->start_time(); ?>" />
+					<input id="add-start-time-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][start][time]" type="text" class="medium-text time-picker" value="<?php echo $time->start_time(); ?>" />
 				</td>
 				<td>
-					<input id="add-end-time-<?php echo $row; ?>" name="event_datetimes[]['end']['time']" type="text" class="medium-text time-picker" value="<?php echo $time->end_time(); ?>" />
+					<input id="add-end-time-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][end][time]" type="text" class="medium-text time-picker" value="<?php echo $time->end_time(); ?>" />
 				</td>
 <?php if ($org_options['time_reg_limit']) : ?>
 				<td>
-					<input type="text" id="time_qty-<?php echo $row; ?>" name="event_datetimes[]['start']['reg_limit']" class="small-text" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
+					<input type="text" id="time_qty-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][start][reg_limit]" class="small-text" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
 				</td>
 <?php endif; // time_reg_limit  ?>	
 <?php if ( $row > 1 ) : ?>	
@@ -393,9 +393,13 @@ function espresso_event_editor_date_time_metabox( $event ) {
 
 		$('#add-time').click(function() {
 		
-			var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='start-date-"+(counter)+"' name='start_date' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->start_date() ?>' /></td><td><input id='end-date-"+(counter)+"' name='end_date' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->end_date() ?>' /></td><td><input id='add-start-time-"+(counter)+"' name='start_time[]' type='text' class='medium-text time-picker' value='' /></td><td><input id='add-end-time-"+(counter)+"' name='end_time[]' type='text' class='medium-text time-picker' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='time_qty-"+(counter)+"' name='time_qty[]' class='small-text' style='text-align:right;' value=''/></td><?php endif; ?><td><input class='remove-xtra-time' rel='"+(counter)+"' type='button' value='Remove'  title='Remove this Event Time' /></td></tr>";
+			var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='start-date-"+(counter)+"' name='event_datetimes["+(counter)+"][start][date]' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->start_date() ?>' /></td><td><input id='end-date-"+(counter)+"' name='event_datetimes["+(counter)+"][end][date]' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->end_date() ?>' /></td><td><input id='add-start-time-"+(counter)+"' name='event_datetimes["+(counter)+"][end][time]' type='text' class='medium-text time-picker' value='' /></td><td><input id='add-end-time-"+(counter)+"' name='event_datetimes["+(counter)+"][end][time]' type='text' class='medium-text time-picker' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='time_qty-"+(counter)+"' name='event_datetimes["+(counter)+"][start][reg_limit]' class='small-text' style='text-align:right;' value=''/></td><?php endif; ?><td><input class='remove-xtra-time' rel='"+(counter)+"' type='button' value='Remove'  title='Remove this Event Time' /></td></tr>";
 			
 			$('#event-dates-and-times tr:last').after( newRow );
+			var start_date = $('#start-date-1').val();
+			$('#start-date-'+counter).val( start_date );
+			var end_date = $('#end-date-1').val();
+			$('#end-date-'+counter).val( end_date );
 			counter++;		
 		});		
 
@@ -429,10 +433,10 @@ function espresso_event_editor_date_time_metabox( $event ) {
 					<input id="registration_end" name="registration_end" type="text" class="medium-text datepicker" value="<?php echo $reg_time->end_date() ?>" />
 				</td>
 				<td>
-					<input id="add-reg-start-time-<?php echo $row; ?>" name="registration_startT[]" type="text" class="medium-text time-picker" value="<?php echo $reg_time->start_time(); ?>" />
+					<input id="add-reg-start-time-<?php echo $row; ?>" name="registration_startT" type="text" class="medium-text time-picker" value="<?php echo $reg_time->start_time(); ?>" />
 				</td>
 				<td>
-					<input id="add-reg-end-time-<?php echo $row; ?>" name="registration_endT[]" type="text" class="medium-text time-picker" value="<?php echo $reg_time->end_time();?>" />
+					<input id="add-reg-end-time-<?php echo $row; ?>" name="registration_endT" type="text" class="medium-text time-picker" value="<?php echo $reg_time->end_time();?>" />
 				</td>
 			</tr>	
 <?php endforeach; // $reg_times ?>	

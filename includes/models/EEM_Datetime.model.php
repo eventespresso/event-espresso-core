@@ -125,7 +125,7 @@ class EEM_Datetime extends EEM_Base {
 		$orderby = 'DTT_start';
 		
 		if ( $datetimes = $this->select_all_where ( $where, $orderby )) {
-
+			
 			// load Datetime object class file
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
 
@@ -133,12 +133,13 @@ class EEM_Datetime extends EEM_Base {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
 							$datetime->EVT_ID, 
 							$datetime->DTT_start, 
-							( $datetime->DTT_end != $datetime->DTT_start ) ? $datetime->DTT_end : '', 
+							$datetime->DTT_end, 
 							$datetime->DTT_event_or_reg, 
 							$datetime->DTT_reg_limit,
 							$datetime->DTT_ID
 					 	);
-			}	
+			}
+
 			return $array_of_objects;	
 
 		} else {
@@ -422,7 +423,7 @@ class EEM_Datetime extends EEM_Base {
 			$espresso_notices['errors'][] = 'An error occured and the datetime has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
-		return $results['rows'];
+		return $results;
 	
 	}
 

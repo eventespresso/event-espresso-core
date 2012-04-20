@@ -495,20 +495,28 @@ function update_event($recurrence_arr = array()) {
 
 			$new_reg_dates = new EE_Datetime( $event_id, $registration_start . ' ' . $registration_startT, $registration_end . ' ' . $registration_endT, 'R' );
 			$new_reg_dates->insert();
+			//echo printr( $new_reg_dates, '$new_reg_dates' );
 			
+			//echo printr( $_REQUEST['event_datetimes'], 'event_datetimes' );		
 			
 			//event_datetimes[]['start']['date']
 			if ( isset( $_REQUEST['event_datetimes'] )) {
 				foreach ( $_REQUEST['event_datetimes'] as $key => $dtm ) {		
-					//echo printr( $dtm, 'event_datetime' );				
+
+					$dtm['end']['date'] = ( isset( $dtm['end']['date'] ) && $dtm['end']['date'] != '' ) ? $dtm['end']['date'] : $dtm['start']['date'];	
+						
 					$new_event_dates = new EE_Datetime( 
 																						absint( $event_id ), 
 																						wp_strip_all_tags( $dtm['start']['date'] ) . ' ' . wp_strip_all_tags( $dtm['start']['time'] ), 
 																						wp_strip_all_tags( $dtm['end']['date'] ) . ' ' . wp_strip_all_tags( $dtm['end']['time'] ), 
 																						'E', 
-																						absint( $dtm['start']['reg_limit'] )
+																						absint( (int)$dtm['start']['reg_limit'] )
 																					 );
-					$new_event_dates->insert();
+					if ( $results = $new_event_dates->insert() ) {
+						//echo printr( $results, '$results' );
+					}
+					//echo printr( $new_event_dates, '$new_event_dates' );	
+					
 				}
 			}			
 			

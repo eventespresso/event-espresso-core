@@ -1,6 +1,12 @@
 		
 jQuery(document).ready(function() {
 
+		//jQuery('.time-picker').ptTimeSelect();
+	
+		//jQuery('.time-picker').AnyTime_picker();
+
+	//$('#sample3 input').ptTimeSelect({ containerClass: "timeCntr", containerWidth: "350px", setButtonLabel: "Select", minutesLabel: "min", hoursLabel: "Hrs" });
+
 // Add class 'selected' to visual-toggle for email confirmation postbox
 // Add class to postbox for further styling hook
 jQuery("div.visual-toggle p a.toggleVisual").addClass('selected');
