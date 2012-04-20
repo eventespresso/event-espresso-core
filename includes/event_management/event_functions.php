@@ -5,73 +5,71 @@ function event_espresso_timereg_editor($event_id = 0) {
 	$time_counter = 1;
 
 	$timesx = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
-	
-	if ( ! $wpdb->num_rows > 0 ) {
+
+	if (!$wpdb->num_rows > 0) {
 		$time = new stdClass;
 		$time->registration_startT = 0;
 		$time->registration_endT = 0;
-		$timesx = array( $time );
+		$timesx = array($time);
 	}
-	
+
 	foreach ($timesx as $timex) {
-?>
-<div style="width:66%;">
-	<div id="event-time-<?php echo $time_counter; ?>">
-		<table class="form-table">		
-			<tr valign="top">
-				<td scope="row" style="width:115px;">
-					<label for="add-reg-start-<?php echo $time_counter; ?>"><?php _e('Start Time', 'event_espresso'); ?></label>
-				</td>
-				<td>
-					<input id="add-reg-start-time-<?php echo $time_counter; ?>" name="registration_startT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_startT, get_option('time_format')); ?>" />
-				</td>
-			</tr>
-			<tr valign="top">
-				<td scope="row" style="width:115px;">
-					<label for="add-reg-end-<?php echo $time_counter; ?>"><?php _e('End Time', 'event_espresso'); ?></label>
-				</td>
-				<td>
-					<input id="add-reg-end-time-<?php echo $time_counter; ?>" name="registration_endT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_endT, get_option('time_format')); ?>" />
-				</td>
-			</tr>	
-		</table>	
-		<br/>		
-	</div>		
-</div>		
-<br class="clear"/>
-<?php
+		?>
+		<div style="width:66%;">
+			<div id="event-time-<?php echo $time_counter; ?>">
+				<table class="form-table">
+					<tr valign="top">
+						<td scope="row" style="width:115px;">
+							<label for="add-reg-start-<?php echo $time_counter; ?>"><?php _e('Start Time', 'event_espresso'); ?></label>
+						</td>
+						<td>
+							<input id="add-reg-start-time-<?php echo $time_counter; ?>" name="registration_startT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_startT, get_option('time_format')); ?>" />
+						</td>
+					</tr>
+					<tr valign="top">
+						<td scope="row" style="width:115px;">
+							<label for="add-reg-end-<?php echo $time_counter; ?>"><?php _e('End Time', 'event_espresso'); ?></label>
+						</td>
+						<td>
+							<input id="add-reg-end-time-<?php echo $time_counter; ?>" name="registration_endT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_endT, get_option('time_format')); ?>" />
+						</td>
+					</tr>
+				</table>
+				<br/>
+			</div>
+		</div>
+		<br class="clear"/>
+		<?php
 	}
 }
 
-function event_espresso_time_editor( $event_id = 0 ) {
+function event_espresso_time_editor($event_id = 0) {
 
 	global $wpdb, $org_options;
-	
+
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$time_counter = 1;
 	//echo get_option('time_format');
 
 	$times = $wpdb->get_results("SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $event_id . "' ORDER BY id");
 
-	if ( ! $wpdb->num_rows > 0 ) {
+	if (!$wpdb->num_rows > 0) {
 		$time = new stdClass;
 		$time->start_time = 0;
 		$time->end_time = 0;
 		$time->reg_limit = NULL;
-		$times = array( $time );
+		$times = array($time);
 	}
-		foreach ($times as $time) {
-
-?>
-
+	foreach ($times as $time) {
+		?>
 
 
-<?php
-			$time_counter++;
-		} // end foreach ($times as $time)
-		
-		$time_counter--;
 
+		<?php
+		$time_counter++;
+	} // end foreach ($times as $time)
+
+	$time_counter--;
 }
 
 function event_espresso_multi_price_update($event_id) {
@@ -136,22 +134,6 @@ function espresso_event_editor_quick_overview_meta_box($event) {
 				<!-- /misc-publishing-actions -->
 			</div>
 			<!-- /minor-publishing -->
-
-			<div id="major-publishing-actions" class="clearfix">
-				<?php if ($event->recurrence_id > 0) : ?>
-					<div id="delete-action"> &nbsp; <a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $event->recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
-							<?php _e('Delete all events in this series', 'event_espresso'); ?>
-						</a> </div>
-				<?php else: ?>
-					<div id="delete-action"> <a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
-							<?php _e('Delete Event', 'event_espresso'); ?>
-						</a> </div>
-				<?php
-				endif;
-				do_action('action_hook_espresso_event_editor_publishing_action');
-				?>
-			</div>
-			<!-- /major-publishing-actions -->
 		</div>
 		<!-- /submitpost -->
 	</div>
@@ -266,195 +248,205 @@ function espresso_event_editor_categories_meta_box($event) {
 	<?php
 }
 
-function espresso_event_editor_title_metabox($event) {
-	global $org_options;
+function espresso_event_editor_title_div($event) {
 	?>
-	<div id="titlewrap">
-		<label class="screen-reader-text" for="title">
-			<?php _e('Event Title', 'event_espresso'); ?>
-		</label>
-		<input type="text" name="event" size="30" tabindex="1" value="<?php echo $event->event_name; ?>" id="title" autocomplete="off" />
-	</div>
-	<!-- /titlewrap -->
-	<div class="inside">
-		<div id="edit-slug">
-			<p>
-				<strong> <?php _e('Permalink:', 'event_espresso'); ?> </strong> <?php echo get_permalink($org_options['event_page_id']) ?><input size="30" type="text" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" /><br />
-				<?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;' . $event->event_identifier . '&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_short_reg_url($event->id) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . espresso_reg_url($event->id, $event->slug) . '\'); return false;">' . __('Full URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Unique Event Identifier:&#39;, \'' . $event->event_identifier . '\'); return false;">' . __('Identifier') . '</a>' ?>
-			</p>
+	<div id="titlediv">
+		<div id="titlewrap">
+			<label id="title-prompt-text" class="hide-if-no-js" for="title" style="visibility:hidden"><?php _e('Event Title', 'event_espresso'); ?></label>
+			<input id="title" type="text" autocomplete="off" value="<?php echo $event->event_name; ?>" tabindex="1" size="30" name="event">
 		</div>
-		<!-- /edit-slug-box -->
+		<!-- /titlewrap -->
+
+		<div class="inside">
+			<div id="edit-slug-box" style="height:auto;">
+
+				<strong><?php _e('Permalink:', 'event_espresso'); ?></strong>
+
+				<span id="sample-permalink">
+					<?php echo $event->page_url; ?><input size="50" type="text" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" />
+				</span>
+
+				<a class="button" onclick="prompt('Shortcode:', jQuery('#shortcode').val()); return false;" href="#"><?php _e('Shortcode'); ?></a>
+				<a class="button" onclick="prompt('Short URL:', jQuery('#shortlink').val()); return false;" href="#"><?php _e('Short URL'); ?></a>
+				<a class="button" onclick="prompt('Full URL:', jQuery('#fulllink').val()); return false;" href="#"><?php _e('Full URL'); ?></a>
+				<a class="button" onclick="prompt('Unique Event Identifier:', jQuery('#identifier').val()); return false;" href="#"><?php _e('Identifier'); ?></a>
+				<a class="button" target="_blank" href="<?php echo $event->page_url . $event->slug; ?>/"><?php _e('View Post'); ?></a>
+
+				<input id="shortcode" type="hidden" value='[SINGLEEVENT single_event_id="<?php echo $event->event_identifier; ?>"]'>
+				<input id="shortlink" type="hidden" value="<?php echo add_query_arg(array('ee' => $event->id), $event->page_url); ?>">
+				<input id="fulllink" type="hidden" value="<?php echo $event->page_url . $event->slug; ?>">
+				<input id="identifier" type="hidden" value="<?php echo $event->event_identifier; ?>">
+
+			</div>
+			<!-- /edit-slug-box -->
+		</div>
 	</div>
 	<?php
 }
 
-function espresso_event_editor_description_metabox($event) {
-	if (function_exists('wp_editor')) {
-		$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
-		wp_editor(espresso_admin_format_content($event->event_desc), "event_desc", $args);
-	} else {
-		/*
-		  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
-		  param: string $content Textarea content.
-		  param: string $id Optional, default is 'content'. HTML ID attribute value.
-		  param: string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
-		  param: bool $media_buttons Optional, default is true. Whether to display media buttons.
-		  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
-		 */
-		//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-		//the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
-		the_editor(espresso_admin_format_content($event->event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
-	}
+function espresso_event_editor_desc_div($event) {
 	?>
-	<table id="post-status-info" cellspacing="0">
-		<tbody>
-			<tr>
-				<td id="wp-word-count"></td>
-				<td class="autosave-info"><span id="autosave">&nbsp;</span></td>
-			</tr>
-		</tbody>
-	</table>
+	<div id="postdivrich" class="postarea">
+		<?php
+		if (function_exists('wp_editor')) {
+			$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
+			wp_editor(espresso_admin_format_content($event->event_desc), "event_desc", $args);
+		} else {
+			/*
+			  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
+			  param: string $content Textarea content.
+			  param: string $id Optional, default is 'content'. HTML ID attribute value.
+			  param: string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
+			  param: bool $media_buttons Optional, default is true. Whether to display media buttons.
+			  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
+			 */
+			//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
+			//the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+			the_editor(espresso_admin_format_content($event->event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+		}
+		?>
+		<table id="post-status-info" cellspacing="0">
+			<tbody>
+				<tr>
+					<td id="wp-word-count"> Word count: <span class="word-count"></span></td>
+					<td class="autosave-info"><span class="autosave-message"></span><span id="last-edit"></span></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 	<?php
 }
 
-function espresso_event_editor_date_time_metabox( $event ) {
-	
+function espresso_event_editor_date_time_metabox($event) {
+
 	global $wpdb, $org_options, $espresso_premium;
-	
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');	
-	
+
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 	$DTM = EEM_Datetime::instance();
 
 	// grab event times
-	if ( ! $times = $DTM->get_all_event_dates( $event->id )) {
-		$times = array( new EE_Datetime( $event->id, NULL, NULL, 'E', NULL ));
-	} 
-	//echo printr( $times, '$times' );
-	
+	if (!$times = $DTM->get_all_event_dates($event->id)) {
+		$times = array(new EE_Datetime($event->id, time(), time() + (60 * 60 * 24 * 30), 'E', NULL));
+	}
 	// grab reg times
-	if ( ! $reg_times = $DTM->get_all_reg_dates( $event->id )) {
-		$reg_times = array( new EE_Datetime( $event->id, NULL, NULL, 'R', NULL ));
-	} 
-	//echo printr( $reg_times, '$reg_times' );
-?>
+	if (!$reg_times = $DTM->get_all_reg_dates($event->id)) {
+		$reg_times = array(new EE_Datetime($event->id, time(), time() + (60 * 60 * 24 * 30), 'R', NULL));
+	}
+	?>
 	<div class="inside">
-
 		<h5><?php _e('Event', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></h5>
-	
-		<table id="event-dates-and-times">		
+
+		<table id="event-dates-and-times">
 			<tr valign="top">
 				<td><?php echo __('Start Date', 'event_espresso') ?></td>
 				<td><?php echo __('End Date', 'event_espresso') ?></td>
 				<td><?php echo __('Start Time', 'event_espresso') ?></td>
 				<td><?php echo __('End Time', 'event_espresso') ?></td>
-<?php if ($org_options['time_reg_limit']) : ?>
-				<td><?php echo __('Reg Limit', 'event_espresso') ?></td>
-<?php endif; // time_reg_limit  ?>	
+				<?php if ($org_options['time_reg_limit']) : ?>
+					<td><?php echo __('Reg Limit', 'event_espresso') ?></td>
+				<?php endif; // time_reg_limit   ?>
 				<td></td>
 			</tr>
-<?php $row = 1; ?>			
-<?php foreach ($times as $time) :  ?>
-			<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
-				<td>
-					<input id="start-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][start][date]" type="text" class="datepicker" value="<?php echo $time->start_date(); ?>" />
-				</td>
-				<td>
-					<input id="end-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][end][date]" type="text" class="datepicker" value="<?php echo $time->end_date(); ?>" />
-				</td>
-				<td>
-					<input id="add-start-time-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][start][time]" type="text" class="medium-text time-picker" value="<?php echo $time->start_time(); ?>" />
-				</td>
-				<td>
-					<input id="add-end-time-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][end][time]" type="text" class="medium-text time-picker" value="<?php echo $time->end_time(); ?>" />
-				</td>
-<?php if ($org_options['time_reg_limit']) : ?>
-				<td>
-					<input type="text" id="time_qty-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][start][reg_limit]" class="small-text" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
-				</td>
-<?php endif; // time_reg_limit  ?>	
-<?php if ( $row > 1 ) : ?>	
-				<td><input class='remove-xtra-time' rel='<?php echo $row; ?>' type='button' value='Remove'  title='Remove this Event Time' /></td>
-<?php else : ?>
-				<td></td>
-<?php endif; ?>
-			</tr>
-<?php $row++;  ?>
-<?php endforeach; // ($times as $time)  ?>			
-		</table>	
+			<?php $row = 1; ?>
+			<?php foreach ($times as $time) : ?>
+				<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
+					<td>
+						<input id="start-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][startdate]" type="text" class="datepicker" value="<?php echo $time->start_date(); ?>" />
+					</td>
+					<td>
+						<input id="end-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][enddate]" type="text" class="datepicker" value="<?php echo $time->end_date(); ?>" />
+					</td>
+					<td>
+						<input id="add-start-time-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][starttime]" type="text" class="medium-text time-picker" value="<?php echo $time->start_time(); ?>" />
+					</td>
+					<td>
+						<input id="add-end-time-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][endtime]" type="text" class="medium-text time-picker" value="<?php echo $time->end_time(); ?>" />
+					</td>
+					<?php if ($org_options['time_reg_limit']) : ?>
+						<td>
+							<input type="text" id="time_qty-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][startreg_limit]" class="small-text" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
+						</td>
+					<?php endif; // time_reg_limit   ?>
+					<?php if ($row > 1) : ?>
+						<td><input class='remove-xtra-time' rel='<?php echo $row; ?>' type='button' value='Remove'  title='Remove this Event Time' /></td>
+					<?php else : ?>
+						<td></td>
+					<?php endif; ?>
+				</tr>
+				<?php $row++; ?>
+			<?php endforeach; // ($times as $time)  ?>
+		</table>
 		<br class="clear"/>
 		<input type="button" class="button" id="add-time" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />
-		<br class="clear"/><br/>	
-				
-<?php if ( $espresso_premium ) : ?>
-<script type="text/javascript">
-	(function($) {	
-		var counter = <?php echo $row; ?>;
+		<br class="clear"/><br/>
 
-		$('#add-time').click(function() {
-		
-			var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='start-date-"+(counter)+"' name='event_datetimes["+(counter)+"][start][date]' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->start_date() ?>' /></td><td><input id='end-date-"+(counter)+"' name='event_datetimes["+(counter)+"][end][date]' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->end_date() ?>' /></td><td><input id='add-start-time-"+(counter)+"' name='event_datetimes["+(counter)+"][end][time]' type='text' class='medium-text time-picker' value='' /></td><td><input id='add-end-time-"+(counter)+"' name='event_datetimes["+(counter)+"][end][time]' type='text' class='medium-text time-picker' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='time_qty-"+(counter)+"' name='event_datetimes["+(counter)+"][start][reg_limit]' class='small-text' style='text-align:right;' value=''/></td><?php endif; ?><td><input class='remove-xtra-time' rel='"+(counter)+"' type='button' value='Remove'  title='Remove this Event Time' /></td></tr>";
-			
-			$('#event-dates-and-times tr:last').after( newRow );
-			var start_date = $('#start-date-1').val();
-			$('#start-date-'+counter).val( start_date );
-			var end_date = $('#end-date-1').val();
-			$('#end-date-'+counter).val( end_date );
-			counter++;		
-		});		
+		<?php if ($espresso_premium) : ?>
+			<script type="text/javascript">
+				(function($) {
+					var counter = <?php echo $row; ?>;
 
-		$('.remove-xtra-time').live("click", function(){
-			var whichRow = '#event-dates-and-times-row-' + $(this).attr('rel');
-			$(whichRow).remove();
-			counter--;
-		});
-			
-	})(jQuery);
-</script>
-<?php endif; // $espresso_premium?>
+					$('#add-time').click(function() {
 
-		
+						var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='start-date-"+(counter)+"' name='start_date' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->start_date() ?>' /></td><td><input id='end-date-"+(counter)+"' name='end_date' type='text' class='datepicker' disabled='disabled' value='<?php echo $time->end_date() ?>' /></td><td><input id='add-start-time-"+(counter)+"' name='start_time[]' type='text' class='medium-text time-picker' value='' /></td><td><input id='add-end-time-"+(counter)+"' name='end_time[]' type='text' class='medium-text time-picker' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='time_qty-"+(counter)+"' name='time_qty[]' class='small-text' style='text-align:right;' value=''/></td><?php endif; ?><td><input class='remove-xtra-time' rel='"+(counter)+"' type='button' value='Remove'  title='Remove this Event Time' /></td></tr>";
+
+						$('#event-dates-and-times tr:last').after( newRow );
+						counter++;
+					});
+
+					$('.remove-xtra-time').live("click", function(){
+						var whichRow = '#event-dates-and-times-row-' + $(this).attr('rel');
+						$(whichRow).remove();
+						counter--;
+					});
+
+				})(jQuery);
+			</script>
+		<?php endif; // $espresso_premium ?>
+
+
 		<h5><?php _e('Registration', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?></h5>
-				
-		<table id="reg-dates-and-times">		
+
+		<table id="reg-dates-and-times">
 			<tr valign="top">
 				<td><?php echo __('Start Date', 'event_espresso') ?></td>
 				<td><?php echo __('End Date', 'event_espresso') ?></td>
 				<td><?php echo __('Start Time', 'event_espresso') ?></td>
 				<td><?php echo __('End Time', 'event_espresso') ?></td>
 			</tr>
-<?php $row = 1; ?>			
-<?php foreach ( $reg_times as $reg_time ) : ?>
-			<tr valign="top" id="reg-dates-and-times-row-<?php echo $row; ?>">
-				<td>
-					<input id="registration_start" name="registration_start" type="text" class="medium-text datepicker" value="<?php echo $reg_time->start_date() ?>" />
-				</td>
-				<td>
-					<input id="registration_end" name="registration_end" type="text" class="medium-text datepicker" value="<?php echo $reg_time->end_date() ?>" />
-				</td>
-				<td>
-					<input id="add-reg-start-time-<?php echo $row; ?>" name="registration_startT" type="text" class="medium-text time-picker" value="<?php echo $reg_time->start_time(); ?>" />
-				</td>
-				<td>
-					<input id="add-reg-end-time-<?php echo $row; ?>" name="registration_endT" type="text" class="medium-text time-picker" value="<?php echo $reg_time->end_time();?>" />
-				</td>
-			</tr>	
-<?php endforeach; // $reg_times ?>	
-		</table>	
+			<?php $row = 1; ?>
+			<?php foreach ($reg_times as $reg_time) : ?>
+				<tr valign="top" id="reg-dates-and-times-row-<?php echo $row; ?>">
+					<td>
+						<input id="registration_start" name="registration_start" type="text" class="medium-text datepicker" value="<?php echo $reg_time->start_date() ?>" />
+					</td>
+					<td>
+						<input id="registration_end" name="registration_end" type="text" class="medium-text datepicker" value="<?php echo $reg_time->end_date() ?>" />
+					</td>
+					<td>
+						<input id="add-reg-start-time-<?php echo $row; ?>" name="registration_startT" type="text" class="medium-text time-picker" value="<?php echo $reg_time->start_time(); ?>" />
+					</td>
+					<td>
+						<input id="add-reg-end-time-<?php echo $row; ?>" name="registration_endT" type="text" class="medium-text time-picker" value="<?php echo $reg_time->end_time(); ?>" />
+					</td>
+				</tr>
+			<?php endforeach; // $reg_times  ?>
+		</table>
 
 		<br class="clear"/>
-	
-		
-		<?php if (( ! isset( $org_options['use_event_timezones']) || $org_options['use_event_timezones'] ) && $espresso_premium === TRUE ) { ?>
-			<span class="run-in"> <?php _e('Current Time:', 'event_espresso'); ?> </span> 
-			<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span> 
-			<?php echo apply_filters('filter_hook_espresso_help', 'current_time_info'); ?> 
+
+
+		<?php if ((!isset($org_options['use_event_timezones']) || $org_options['use_event_timezones'] ) && $espresso_premium === TRUE) { ?>
+			<span class="run-in"> <?php _e('Current Time:', 'event_espresso'); ?> </span>
+			<span class="current-date"> <?php echo date(get_option('date_format')) . ' ' . date(get_option('time_format')); ?></span>
+			<?php echo apply_filters('filter_hook_espresso_help', 'current_time_info'); ?>
 			<a class="change-date-time" href="options-general.php" target="_blank"><?php _e('Change timezone and date format settings?', 'event_espresso'); ?></a>
 		<?php } ?>
-		
-		<?php if ( ! empty( $org_options['use_event_timezones'] ) && $espresso_premium === TRUE ) { ?>
-				<h6> <?php _e('Event Timezone:', 'event_espresso') ?> </h6>
-				<?php echo eventespresso_ddtimezone($event->id) ?>
+
+		<?php if (!empty($org_options['use_event_timezones']) && $espresso_premium === TRUE) { ?>
+			<h6> <?php _e('Event Timezone:', 'event_espresso') ?> </h6>
+			<?php echo eventespresso_ddtimezone($event->id) ?>
 		<?php } ?>
 	</div>
 	<?php
@@ -463,101 +455,92 @@ function espresso_event_editor_date_time_metabox( $event ) {
 function espresso_event_editor_pricing_metabox($event) {
 
 	global $espresso_premium, $org_options;
-	
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	$PRT = EEM_Price_Type::instance();
-	
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	$PRC = EEM_Price::instance();
-	
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
 	$EVP = EEM_Event_Price::instance();
-	
-	$prices = $PRC->get_all_event_prices_for_admin( $event->id );
+
+	$prices = $PRC->get_all_event_prices_for_admin($event->id);
 //	echo printr( $prices, '$prices' );
 
 	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', '');
-	
 	?>
 
-		<table id="event_editor_pricing" <?php echo $table_class ?>>
-			<thead>
-				<tr>
-					<td style="width:3%; text-align:center;"><b><?php _e('Order'); ?></b></td>
-					<td style="width:15%; padding:0 .5em;"><b><?php _e('Name'); ?></b></td>
-					<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Type'); ?></b></td>
-					<td style="width:39.5%; padding:0 .5em;"><b><?php _e('Description'); ?></b></td>
-					<td style="width:5%; text-align:center;"><b><?php _e('Amount'); ?></b></td>
-					<td style="width:5%; text-align:center;"><b><?php _e('%'); ?></b></td>
-					<td style="width:5%; text-align:center;"><b><?php _e('Members'); ?></b></td>
-					<td style="width:5%; text-align:center;"><b><?php _e('Discount'); ?></b></td>
-					<td style="width:5%; text-align:center;"><b><?php _e('Active?'); ?></b></td>
-				</tr>
-			</thead>
-				<tr>
-					<td style="width:3%; height:3.5em; text-align:center;">
-						<input name="price[0][order]" id="price_order_<?php echo $row; ?>" type="text" class="" value="" style="width:100%; text-align:center;" />
-					</td>
-					<td style="width:15%; height:3.5em; text-align:left;">
-						<input name="price[0][name]" id="price_name_<?php echo $row; ?>" type="text" class="" value="" style="width:100%;" />
-					</td>
-					<td style="width:17.5%; height:3.5em; text-align:left;">
-						<input name="price[0][type]" id="price_type_<?php echo $row; ?>" type="text" class="" value="" style="width:100%;" />
-					</td>
-					<td style="width:39.5%; height:3.5em; text-align:left;">
-						<input name="price[0][desc]" id="price_desc_<?php echo $row; ?>" type="text" class="" value="" style="width:100%;" />
-					</td>
-					<td style="width:5%; height:3.5em; text-align:center;">
-						<input name="price[0][amount]" id="price_amount_<?php echo $row; ?>" type="text" class="" value="" style="width:100%; text-align:center;" />
-					</td>
-					<td style="width:5%; height:3.5em; text-align:center;">
-						<input name="price[0][percent]" id="price_percent_<?php echo $row; ?>" type="checkbox" class="" value=""" />
-					</td>
-					<td style="width:5%; height:3.5em; text-align:center;">
-						<input name="price[0][members]" id="price_members_<?php echo $row; ?>" type="checkbox" class="" value=""  />
-					</td>
-					<td style="width:5%; height:3.5em; text-align:center;">
-						<input name="price[0][discount]" id="price_discount_<?php echo $row; ?>" type="checkbox" class="" value="" />
-					</td>
-					<td style="width:5%; height:3.5em; text-align:center;">
-						<input name="price[0][active]" type="checkbox" title="Activate Price"/>
-					</td>
-				</tr>						
-<?php $row = 1; ?>
-<?php foreach ($prices as $price) : ?>
+	<table id="event_editor_pricing" <?php echo $table_class ?>>
+		<thead>
 			<tr>
-				<td class="amount-column" style="width:3%; height:2.5em; vertical-align:top; text-align:center;">
-					<?php echo $PRT->type[$price->type()]->order(); ?>			
-				</td>
-				<td class="name-column" style="width:15%; height:2.5em; padding:0 .5em; vertical-align:top;">
-					<?php echo $price->name(); ?>
-				</td>
-				<td class="amount-column" style="width:17.5%; height:2.5em; padding:0 .5em; vertical-align:top;">
-					<?php echo $PRT->type[$price->type()]->name(); ?>
-				</td>
-				<td class="name-column" style="width:39.5%; height:2.5em; padding:0 .5em; vertical-align:top;">
-					<?php echo $price->desc(); ?>
-				</td>
-				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
-					<?php echo ($PRT->type[$price->type()]->is_percent()) ? $price->amount() . '%' : $org_options['currency_symbol'] . $price->amount(); ?>
-				</td>
-				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
-					<?php echo ($PRT->type[$price->type()]->is_percent()) ? 'Yes' : ''; ?>
-				</td>
-				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
-					<?php echo ($PRT->type[$price->type()]->is_member()) ? 'Yes' : ''; ?>
-				</td>
-				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
-					<?php echo ($PRT->type[$price->type()]->is_discount()) ? 'Yes' : ''; ?>
-				</td>
-				<td class="check-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;">
-					<?php $checked = $EVP->is_price_active_for_event($price->ID(), $event->id) ? 'checked="checked" ' : ''; ?>
-					<input name="price[<?php echo $row;?>][active][<?php echo $price->ID();?>]" type="checkbox" title="Activate Price <?php echo $price->name() . '"' . $checked;?>/>
-					<input type="hidden" name="price[<?php echo $row;?>][PRC_ID]" value="<?php echo $price->ID();?>"/>
-				</td>
+				<td style="width:3%; text-align:center;"><b><?php _e('Order'); ?></b></td>
+				<td style="width:15%; padding:0 .5em;"><b><?php _e('Name'); ?></b></td>
+				<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Type'); ?></b></td>
+				<td style="width:39.5%; padding:0 .5em;"><b><?php _e('Description'); ?></b></td>
+				<td style="width:5%; text-align:center;"><b><?php _e('Amount'); ?></b></td>
+				<td style="width:5%; text-align:center;"><b><?php _e('%'); ?></b></td>
+				<td style="width:5%; text-align:center;"><b><?php _e('Members'); ?></b></td>
+				<td style="width:5%; text-align:center;"><b><?php _e('Discount'); ?></b></td>
+				<td style="width:5%; text-align:center;"><b><?php _e('Active?'); ?></b></td>
 			</tr>
-<?php endforeach; ?>
-		</table>
+		</thead>
+		<tr>
+			<td style="width:3%; height:3.5em; text-align:center;">
+				<input name="price[order]" id="price_order" type="text" class="" value="" style="width:100%; text-align:center;" />
+			</td>
+			<td style="width:15%; height:3.5em; text-align:left;">
+				<input name="price[name]" id="price_name" type="text" class="" value="" style="width:100%;" />
+			</td>
+			<td style="width:17.5%; height:3.5em; text-align:left;">
+				<input name="price[type]" id="price_type" type="text" class="" value="" style="width:100%;" />
+			</td>
+			<td style="width:39.5%; height:3.5em; text-align:left;">
+				<input name="price[desc]" id="price_desc" type="text" class="" value="" style="width:100%;" />
+			</td>
+			<td style="width:5%; height:3.5em; text-align:center;">
+				<input name="price[amount]" id="price_amount" type="text" class="" value="" style="width:100%; text-align:center;" />
+			</td>
+			<td style="width:5%; height:3.5em; text-align:center;">
+				<input name="price[percent]" id="price_percent" type="checkbox" class="" value=""" />
+			</td>
+			<td style="width:5%; height:3.5em; text-align:center;">
+				<input name="price[members]" id="price_members" type="checkbox" class="" value=""  />
+			</td>
+			<td style="width:5%; height:3.5em; text-align:center;">
+				<input name="price[discount]" id="price_discount" type="checkbox" class="" value="" />
+			</td>
+			<td style="width:5%; height:3.5em; text-align:center;">
+				<input name="price[active]" type="checkbox" title="Activate Price"/>
+			</td>
+		</tr>
+		<?php foreach ($prices as $is_active_and_price_object) :
+			$checked = ($is_active_and_price_object['active']) ? 'checked="checked"' : '';
+			$price = $is_active_and_price_object['price']; ?>
+			<tr>
+				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $PRT->type[$price->type()]->order(); ?></td>
+				<td class="name-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $price->name(); ?></td>
+				<td class="type-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $PRT->type[$price->type()]->name(); ?></td>
+				<td class="desc-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+				<?php echo $price->desc(); ?></td>
+				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $org_options['currency_symbol'] . $price->amount(); ?></td>
+				<td class="percent-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $PRT->type[$price->type()]->is_percent(); ?></td>
+				<td class="members-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $PRT->type[$price->type()]->is_member(); ?></td>
+				<td class="discount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo $PRT->type[$price->type()]->is_discount(); ?></td>
+				<td class="active-column" style="padding:7px 0 22px 7px; vertical-align:top;">
+					<?php echo '<input name="checkbox[' . $price->ID() . ']" type="checkbox" ' . $checked . 'title="Activate Price ' . $price->name() . '" />'; ?></td>
+			</tr>
+			<?php
+		endforeach;
+		?>
+	</table>
 
 	<?php
 }
@@ -732,9 +715,9 @@ function espresso_event_editor_email_metabox($event) {
 function espresso_register_event_editor_meta_boxes() {
 	global $espresso_premium;
 
-	//add_meta_box('espresso_event_editor_title', __('Event Title', 'event_espresso'), 'espresso_event_editor_title_metabox', 'toplevel_page_events', 'normal', 'high');
+	add_action('action_hook_espresso_event_editor_title_div', 'espresso_event_editor_title_div');
 
-	//add_meta_box('espresso_event_editor_description', __('Event Description', 'event_espresso'), 'espresso_event_editor_description_metabox', 'toplevel_page_events', 'normal', 'high');
+	add_action('action_hook_espresso_event_editor_desc_div', 'espresso_event_editor_desc_div');
 
 	add_meta_box('espresso_event_editor_date_time', __('Event Date/Times', 'event_espresso'), 'espresso_event_editor_date_time_metabox', 'toplevel_page_events', 'normal', 'high');
 
@@ -787,3 +770,24 @@ function espresso_event_editor_footer() {
 }
 
 add_action('action_hook_espresso_event_editor_footer', 'espresso_event_editor_footer');
+
+function espresso_save_buttons($event) {
+	?>
+	<div id="event_editor_major_buttons_wrapper">
+		<?php wp_nonce_field('espresso_form_check', 'ee__event_editor'); ?>
+		<input class="button-primary" type="submit" name="save" value="<?php _e('Save', 'event_espresso'); ?>" id="save" />
+		<input class="button-primary" type="submit" name="save_and_close" value="<?php _e('Save And Close', 'event_espresso'); ?>" id="save_and_close" />
+		<?php if ($event->recurrence_id > 0) : ?>
+			<a class="submitdelete deletion button-primary" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $event->recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
+				<?php _e('Delete all events in this series', 'event_espresso'); ?>
+			</a>
+		<?php else: ?>
+			<a class="submitdelete deletion button-primary" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
+				<?php _e('Delete Event', 'event_espresso'); ?>
+			</a>
+		<?php endif; ?>
+	</div>
+	<?php
+}
+
+add_action('action_hook_espresso_save_buttons', 'espresso_save_buttons');

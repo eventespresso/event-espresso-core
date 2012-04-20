@@ -5,20 +5,20 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 function event_espresso_manage_events() {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	
-	define( 'EVENTS_ADMIN_URL', admin_url( 'admin.php?page=events' ));	
 
-	$_REQUEST['action'] = isset($_REQUEST['action']) ? wp_strip_all_tags( $_REQUEST['action'] ) : FALSE;	
-	
-	if ( $_REQUEST['action'] ) {	
+	define('EVENTS_ADMIN_URL', admin_url('admin.php?page=events'));
+
+	$_REQUEST['action'] = isset($_REQUEST['action']) ? wp_strip_all_tags($_REQUEST['action']) : FALSE;
+
+	if ($_REQUEST['action']) {
 		// These three are different views, so return after each
 		switch ($_REQUEST['action']) {
 			case 'csv_import':
 				csv_import();
 				return;
 				break;
-			case 'edit':
-				edit_event( absint( $_REQUEST['event_id'] ));
+			case 'edit_event':
+				edit_event(absint($_REQUEST['event_id']));
 				return;
 				break;
 			case 'add_new_event':
@@ -44,22 +44,21 @@ function event_espresso_manage_events() {
 }
 
 function add_file_loads_for_event_management_screen() {
-//Update the event
-	if (isset($_REQUEST['edit_action']) && $_REQUEST['edit_action'] == 'update') {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/update_event.php");
-		update_event();
-	}
-
 	$load_event_list = true;
+
 	if (isset($_REQUEST['action'])) {
 		switch ($_REQUEST['action']) {
 			case 'copy_event':
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/copy_event.php");
 				copy_event();
 				break;
-			case 'add':
+			case 'insert':
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/insert_event.php");
 				add_event_to_db();
+				break;
+			case 'update':
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/update_event.php");
+				update_event();
 				break;
 			case 'delete':
 				event_espresso_delete_event();
@@ -77,7 +76,7 @@ function add_file_loads_for_event_management_screen() {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/csv_import.php");
 				$load_event_list = false;
 				break;
-			case 'edit':
+			case 'edit_event':
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
 				$load_event_list = false;
 				break;
@@ -87,7 +86,7 @@ function add_file_loads_for_event_management_screen() {
 				break;
 		}
 	}
-	if ($load_event_list == true){
+	if ($load_event_list) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_list.php");
 	}
 }

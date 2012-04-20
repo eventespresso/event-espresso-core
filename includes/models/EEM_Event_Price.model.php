@@ -54,12 +54,15 @@ class EEM_Event_Price extends EEM_Base {
 		$this->table_data_types = array(
 				'EVT_ID' => '%d',
 				'PRC_ID' => '%d',
-				'is_active' => '%d'
+				'EPR_reg_limit' => '%d',
+				'EPR_start_date' => '%d',
+				'EPR_end_date' => '$d',
+				'EPR_is_active' => '%d'
 		);
-		
+
 		if ($statuses = $this->select_all(FALSE, '', ARRAY_A)) {
 			foreach ($statuses as $status) {
-				$this->_active_status[$status['EVT_ID']][$status['PRC_ID']] = $status['is_active'];
+				$this->_active_status[$status['EVT_ID']][$status['PRC_ID']] = $status['EPR_is_active'];
 			}
 			$this->_select_all = $statuses;
 		}
@@ -129,7 +132,7 @@ class EEM_Event_Price extends EEM_Base {
 	 * @return array of price ids
 	 */
 	private function _get_price_ids_by_event_id( $event_id = FALSE ) {
-	
+
 		if (!$event_id) {
 			return FALSE;
 		}
@@ -159,7 +162,7 @@ class EEM_Event_Price extends EEM_Base {
 		$PRC = EEM_Price::instance();
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
-		
+
 		$ordered_prices = array();
 		foreach($prices as $price) {
 			$price = $PRC->get_price_by_ID($price);
@@ -168,7 +171,7 @@ class EEM_Event_Price extends EEM_Base {
 			}
 		}
 		ksort($ordered_prices);
-		
+
 		return $ordered_prices;
 	}
 
@@ -186,8 +189,8 @@ class EEM_Event_Price extends EEM_Base {
 			return $base_prices;
 		}
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-		$PRT = EEM_Price_Type::instance();		
-		
+		$PRT = EEM_Price_Type::instance();
+
 		foreach($adjustments as $price_order) {
 			foreach($price_order as $adjustment) {
 				foreach($base_prices as $base_price) {

@@ -8,7 +8,7 @@ function update_event($recurrence_arr = array()) {
 	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-	if (check_admin_referer('espresso_form_check', 'ee_update_event')) {
+	if (check_admin_referer('espresso_form_check', 'ee__event_editor')) {
 
 		$wpdb->show_errors();
 		/*
@@ -480,7 +480,7 @@ function update_event($recurrence_arr = array()) {
 //					}
 //				}
 //			}
-			
+
 
 			$registration_start = wp_strip_all_tags( $_REQUEST['registration_start'] );
 			$registration_end = wp_strip_all_tags( $_REQUEST['registration_end'] );
@@ -488,43 +488,43 @@ function update_event($recurrence_arr = array()) {
 			$registration_endT = wp_strip_all_tags( $_REQUEST['registration_endT'] );
 
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-			$DTM = EEM_Datetime::instance();			
-			
+			$DTM = EEM_Datetime::instance();
+
 			// delete old datetime entries
 			$DTM->delete_all_event_datetimes( $event_id );
 
 			$new_reg_dates = new EE_Datetime( $event_id, $registration_start . ' ' . $registration_startT, $registration_end . ' ' . $registration_endT, 'R' );
 			$new_reg_dates->insert();
 			//echo printr( $new_reg_dates, '$new_reg_dates' );
-			
-			//echo printr( $_REQUEST['event_datetimes'], 'event_datetimes' );		
-			
+
+			//echo printr( $_REQUEST['event_datetimes'], 'event_datetimes' );
+
 			//event_datetimes[]['start']['date']
 			if ( isset( $_REQUEST['event_datetimes'] )) {
-				foreach ( $_REQUEST['event_datetimes'] as $key => $dtm ) {		
+				foreach ( $_REQUEST['event_datetimes'] as $key => $dtm ) {
 
-					$dtm['end']['date'] = ( isset( $dtm['end']['date'] ) && $dtm['end']['date'] != '' ) ? $dtm['end']['date'] : $dtm['start']['date'];	
-						
-					$new_event_dates = new EE_Datetime( 
-																						absint( $event_id ), 
-																						wp_strip_all_tags( $dtm['start']['date'] ) . ' ' . wp_strip_all_tags( $dtm['start']['time'] ), 
-																						wp_strip_all_tags( $dtm['end']['date'] ) . ' ' . wp_strip_all_tags( $dtm['end']['time'] ), 
-																						'E', 
+					$dtm['end']['date'] = ( isset( $dtm['end']['date'] ) && $dtm['end']['date'] != '' ) ? $dtm['end']['date'] : $dtm['start']['date'];
+
+					$new_event_dates = new EE_Datetime(
+																						absint( $event_id ),
+																						wp_strip_all_tags( $dtm['start']['date'] ) . ' ' . wp_strip_all_tags( $dtm['start']['time'] ),
+																						wp_strip_all_tags( $dtm['end']['date'] ) . ' ' . wp_strip_all_tags( $dtm['end']['time'] ),
+																						'E',
 																						absint( (int)$dtm['start']['reg_limit'] )
 																					 );
 					if ( $results = $new_event_dates->insert() ) {
 						//echo printr( $results, '$results' );
 					}
-					//echo printr( $new_event_dates, '$new_event_dates' );	
-					
+					//echo printr( $new_event_dates, '$new_event_dates' );
+
 				}
-			}			
-			
+			}
+
 //			echo printr( $_REQUEST['event_datetimes'], 'event_datetimes' );
 //			global $espresso_notices;
-//			echo espresso_get_notices(); 			
+//			echo espresso_get_notices();
 //			die();
-		
+
 /*
 			$del_prices = "DELETE FROM " . EVENTS_PRICES_TABLE . " WHERE event_id = '" . $event_id . "'";
 			$wpdb->query($del_prices);

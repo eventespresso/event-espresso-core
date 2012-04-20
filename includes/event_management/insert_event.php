@@ -5,13 +5,13 @@ function add_event_to_db($recurrence_arr = array()) {
 	// echo "<pre>";
 	//print_r($_POST);
 	//echo "</pre>";
-    $last_event_id = 0; // it is being returned but not initialized if recurrence isn't active or if the event is the first one of the recurrence event - Imon
+	$last_event_id = 0; // it is being returned but not initialized if recurrence isn't active or if the event is the first one of the recurrence event - Imon
 	//Delete the transients that may be set
 	espresso_reset_cache();
 
 	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	if (check_admin_referer('espresso_form_check', 'ee_add_new_event')) {
+	if (check_admin_referer('espresso_form_check', 'ee__event_editor')) {
 
 		$wpdb->show_errors();
 
@@ -35,12 +35,12 @@ function add_event_to_db($recurrence_arr = array()) {
 						'frequency' => $_POST['recurrence_frequency'],
 						'interval' => $_POST['recurrence_interval'],
 						'type' => $_POST['recurrence_type'],
-						'weekdays' => isset($_POST['recurrence_weekday'])?$_POST['recurrence_weekday']:'',
+						'weekdays' => isset($_POST['recurrence_weekday']) ? $_POST['recurrence_weekday'] : '',
 						'repeat_by' => $_POST['recurrence_repeat_by'],
 						'recurrence_regis_date_increment' => $_POST['recurrence_regis_date_increment'],
 						'recurrence_manual_dates' => $_POST['recurrence_manual_dates'],
 						'recurrence_manual_end_dates' => $_POST['recurrence_manual_end_dates'],
-						'recurrence_visibility' => isset($_POST['recurrence_visibility'])?$_POST['recurrence_visibility']:'',
+						'recurrence_visibility' => isset($_POST['recurrence_visibility']) ? $_POST['recurrence_visibility'] : '',
 						'recurrence_id' => $recurrence_id,
 						'adding_to_db' => true
 				);
@@ -106,17 +106,6 @@ function add_event_to_db($recurrence_arr = array()) {
 			$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
 			$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
 
-			//Get the first instance of the start and end times
-			$start_time = $_REQUEST['start_time'][0];
-			$end_time = $_REQUEST['end_time'][0];
-
-			// Add registration times
-			$registration_startT = event_date_display($_REQUEST['registration_startT'], 'H:i');
-			$registration_endT = event_date_display($_REQUEST['registration_endT'], 'H:i');
-
-			// Add Timezone
-			$timezone_string = isset($_REQUEST['timezone_string']) ? $_REQUEST['timezone_string'] : '';
-
 			//Early discounts
 			$early_disc = $_REQUEST['early_disc'];
 			$early_disc_date = $_REQUEST['early_disc_date'];
@@ -136,47 +125,6 @@ function add_event_to_db($recurrence_arr = array()) {
 			//Virtual location
 			$virtual_url = $_REQUEST['virtual_url'];
 			$virtual_phone = $_REQUEST['virtual_phone'];
-
-			$registration_start = array_key_exists('registration_start', $recurrence_arr) ? $recurrence_arr['registration_start'] : $_REQUEST['registration_start'];
-			$registration_end = array_key_exists('registration_end', $recurrence_arr) ? $recurrence_arr['registration_end'] : $_REQUEST['registration_end'];
-
-			//Check which start/end date to use.  Will be determined by recurring events addon, if installed.
-			if (array_key_exists('recurrence_start_date', $recurrence_arr)) {
-				//Recurring event
-				$start_date = $recurrence_arr['recurrence_start_date'];
-			} elseif ( !empty($_REQUEST['start_date']) && !empty($_REQUEST['recurrence_start_date']) ) {
-				//If they leave the Event Start Date empty, the First Event Date in the recurrence module is selected
-				$start_date = $_REQUEST['recurrence_start_date'];
-			} elseif (isset($_POST['recurrence']) && $_POST['recurrence'] == 'true' && $_REQUEST['start_date'] == '') {
-				$start_date = $_REQUEST['recurrence_manual_dates'][0];
-			} else {
-				$start_date = $_REQUEST['start_date'];
-			}
-
-			if (array_key_exists('recurrence_event_end_date', $recurrence_arr)) {
-				//Recurring event
-				$end_date = $recurrence_arr['recurrence_event_end_date'];
-			} elseif ( !empty($_REQUEST['end_date']) && !empty($_REQUEST['recurrence_event_end_date'])) {
-				//If they leave the Event Start Date empty, the First Event Date in the recurrence module is selected
-				$end_date = $_REQUEST['recurrence_event_end_date'];
-			} elseif (isset($_POST['recurrence']) && $_POST['recurrence'] == 'true' && $_REQUEST['end_date'] == '') {
-				$end_date = $_REQUEST['recurrence_manual_end_dates'][count($_REQUEST['recurrence_manual_end_dates']) - 1];
-			} else {
-				$end_date = $_REQUEST['end_date'];
-			}
-
-			//I think Abel added this so we could have recurring events appear on a selected date.
-			//But it ended up not working so well. I think we may be able to remove this, but we need to make sure it doesn't break the system.
-			if (array_key_exists('visible_on', $recurrence_arr)) {
-				//Recurring event
-				$visible_on = $recurrence_arr['visible_on'];
-			} elseif (isset($_REQUEST['visible_on']) && $_REQUEST['visible_on'] != '') {
-				$visible_on = $_REQUEST['visible_on'];
-			} elseif (isset($_REQUEST['visible_on']) && $_REQUEST['visible_on'] == '' && count($recurrence_dates) > 0) {
-				$visible_on = $recurrence_dates[$start_date]['visible_on'];
-			} else {
-				$visible_on = date("Y-m-d");
-			}
 
 			if ($reg_limit == '') {
 				$reg_limit = 999;
@@ -208,9 +156,8 @@ function add_event_to_db($recurrence_arr = array()) {
 				$require_pre_approval = $_REQUEST['require_pre_approval'];
 			}
 			################# END #################
-
 			//Event name
-			$event_name = empty($_REQUEST['event']) ? $start_date : $_REQUEST['event'];
+			$event_name = empty($_REQUEST['event']) ? uniqid($espresso_wp_user . '-') : $_REQUEST['event'];
 
 			//Create the event code and prefix it with the user id
 			$event_code = uniqid($espresso_wp_user . '-');
@@ -228,57 +175,39 @@ function add_event_to_db($recurrence_arr = array()) {
 					'event_desc' => $event_desc,
 					'display_desc' => $display_desc,
 					'display_reg_form' => $display_reg_form,
-
 					'event_identifier' => $event_identifier,
 					'slug' => $event_slug,
 					'address' => $address,
 					'address2' => $address2,
 					'city' => $city,
-
 					'state' => $state,
 					'zip' => $zip,
 					'country' => $country,
 					'phone' => $phone,
 					'virtual_url' => $virtual_url,
-
 					'virtual_phone' => $virtual_phone,
 					'venue_title' => $venue_title,
 					'venue_url' => $venue_url,
 					'venue_phone' => $venue_phone,
 					'venue_image' => $venue_image,
-
-					'registration_start' => $registration_start,
-					'registration_end' => $registration_end,
-					'start_date' => $start_date,
-					'end_date' => $end_date,
 					'allow_multiple' => $allow_multiple,
-
 					'is_active' => $is_active,
 					'event_status' => $event_status,
 					'use_coupon_code' => $use_coupon_code,
 					'member_only' => $member_only,
 					'externalURL' => $externalURL,
-
 					'early_disc' => $early_disc,
 					'early_disc_date' => $early_disc_date,
 					'early_disc_percentage' => $early_disc_percentage,
 					'alt_email' => $alt_email,
 					'question_groups' => $question_groups,
-
-					'registration_startT' => $registration_startT,
-					'registration_endT' => $registration_endT,
 					'event_meta' => $event_meta,
 					'require_pre_approval' => $require_pre_approval,
-					'timezone_string' => $timezone_string,
-
 					'submitted' => date('Y-m-d H:i:s', time()),
-
 					'reg_limit' => $reg_limit,
 					'additional_limit' => $additional_limit,
 					'wp_user' => $wp_user_id,
-
 					'ticket_id' => $ticket_id,
-
 					'certificate_id' => $certificate_id,
 					'confirmation_email_id' => $confirmation_email_id,
 					'payment_email_id' => $payment_email_id
@@ -376,21 +305,34 @@ function add_event_to_db($recurrence_arr = array()) {
 				}
 			}
 
-			if (!empty($_REQUEST['start_time'])) {
-				foreach ($_REQUEST['start_time'] as $k => $v) {
-					if ($v != '') {
-						$time_qty = $_REQUEST['time_qty'][$k] == '' ? '0' : "'" . $_REQUEST['time_qty'][$k] . "'";
-						$sql3 = "INSERT INTO " . EVENTS_START_END_TABLE . " (event_id, start_time, end_time, reg_limit) VALUES ('" . $last_event_id . "', '" . event_date_display($v, 'H:i') . "', '" . event_date_display($_REQUEST['end_time'][$k], 'H:i') . "', " . $time_qty . ")";
-						//echo "$sql3 <br>";
-						if (!$wpdb->query($sql3)) {
-							$error = true;
-						}
-					}
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+			$DTM = EEM_Datetime::instance();
+
+			foreach ($_REQUEST['event_datetimes'] as $event_datetime) {
+				$insert = array(
+						'EVT_ID'=>$last_event_id,
+						'DTT_start'=>strtotime($event_datetime['startdate'] . ' ' . $event_datetime['starttime']),
+						'DTT_end'=>strtotime($event_datetime['enddate'] . ' ' . $event_datetime['endtime']),
+						'DTT_event_or_reg'=>'E');
+				if (!empty($event_datetime['startreg_limit'])) {
+					$insert['DTT_reg_limit'] = $event_datetime['startreg_limit'];
+				}
+				$DTM->insert($insert);
+			}
+			$insert = array(
+					'EVT_ID'=>$last_event_id,
+					'DTT_start'=>strtotime($_REQUEST['registration_start'] . ' ' . $_REQUEST['registration_startT']),
+					'DTT_end'=>strtotime($_REQUEST['registration_end'] . ' ' . $_REQUEST['registration_endT']),
+					'DTT_event_or_reg'=>'R');
+			$DTM->insert($insert);
+
+			if (!empty($_REQUEST['checkbox'])) {
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
+				$EVP = EEM_Event_Price::instance();
+				foreach ($_REQUEST['checkbox'] as $price_id => $value) {
+					$EVP->insert(array('EVT_ID' => $last_event_id, 'PRC_ID' => $price_id));
 				}
 			}
-
-			$sql = "INSERT INTO `" . ESP_EVENT_PRICE_TABLE . "` (`EVT_ID`, `PRC_ID`, `is_active`) VALUES ('" . $last_event_id . "', '1', '1');";
-			$wpdb->query($sql);
 
 			// Create Event Post Code Here
 			if ($_REQUEST['create_post'] == 'true') {

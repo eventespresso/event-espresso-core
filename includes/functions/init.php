@@ -40,9 +40,9 @@ function espresso_admin_init() {
 	add_action('wp_dashboard_setup', 'espresso_dashboard_init');
 
 	if (!empty($_REQUEST['page'])) {
-	
+
 		switch ( $_REQUEST['page'] ) {
-				
+
 				case 'events' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/event_management.php');
 					if ($espresso_premium) {
@@ -51,33 +51,33 @@ function espresso_admin_init() {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/event_management.php');
 					}
 					if (isset($_REQUEST['action'])) {
-						if ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'add_new_event') {
+						if ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'add_new_event') {
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_functions.php");
 						}
 					}
 					break;
-		
+
 				case 'attendees' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/attendees.php');
 					break;
-		
+
 				case 'transactions' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/transactions/Transactions.class.php');
 					break;
-		
+
 				case 'event_categories' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/categories.php');
 					break;
-		
+
 				case 'form_groups' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/question_groups.php');
 					break;
-		
+
 				case 'form_builder' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/questions.php');
 					break;
-		
+
 				case 'discounts' :
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/coupon_management.php');
@@ -86,7 +86,7 @@ function espresso_admin_init() {
 					}
 					break;
 
-		
+
 				case 'event_emails' :
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/email_manager.php');
@@ -95,11 +95,11 @@ function espresso_admin_init() {
 					}
 					break;
 
-		
+
 				case 'pricing' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/pricing.php');
 					break;
-		
+
 				case 'event_staff' :
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/staff-management/index.php');
@@ -108,7 +108,7 @@ function espresso_admin_init() {
 					}
 					break;
 
-		
+
 				case 'event_venues' :
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/venue-management/index.php');
@@ -116,15 +116,15 @@ function espresso_admin_init() {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/venue_management.php');
 					}
 					break;
-		
-		
+
+
 				case 'event_espresso' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/organization_config.php');
 					if ($espresso_premium)
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/optional_event_settings.php');
 					break;
-		
-		
+
+
 				case 'payment_gateways' :
 					add_action('admin_init', 'espresso_require_gateway_files');
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
@@ -132,8 +132,8 @@ function espresso_admin_init() {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');
 					}
 					break;
-		
-		
+
+
 				case 'template_confg' :
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/template_confg.php');
@@ -142,7 +142,7 @@ function espresso_admin_init() {
 					}
 					break;
 
-		
+
 				case 'template_map_confg' :
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/template_map_confg.php');
@@ -151,7 +151,7 @@ function espresso_admin_init() {
 					}
 					break;
 
-		
+
 				case 'admin_addons' :
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/admin_addons.php');
@@ -160,16 +160,16 @@ function espresso_admin_init() {
 					}
 					break;
 
-		
+
 				case 'test_drive' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/test_drive_pro.php');
 					break;
 
-		
+
 				case 'support' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_support.php');
 					break;
-		
+
 		} // end switch
 
 		$espresso_pages = array('event_espresso', 'discounts', 'groupons',
@@ -188,7 +188,7 @@ function espresso_admin_init() {
 			add_action('admin_print_styles', 'event_espresso_config_page_styles');
 			add_action('admin_head', 'espresso_add_meta_boxes');
 		}
-						
+
 	}
 
 	do_action('action_hook_espresso_require_admin_files');
@@ -281,7 +281,7 @@ function espresso_frontend_init() {
 	if ($espresso_reg_page) {
 		do_action('action_hook_espresso_load_reg_page_files');
 	}
-	
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
 	//Registration forms

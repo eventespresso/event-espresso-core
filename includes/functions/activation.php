@@ -417,7 +417,7 @@ function espresso_org_option_initialization() {
 function events_data_tables_install() {
 
 	$table_version = EVENT_ESPRESSO_VERSION;
-	
+
 
 	$table_name = 'esp_attendee';
 	$sql = "ATT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -439,8 +439,8 @@ function events_data_tables_install() {
 			  KEY ATT_lname (ATT_lname),
 			  KEY ATT_email (ATT_email)";
 	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
-	
-	
+
+
 
 	$table_name = 'esp_payment';
 	$sql = "PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -453,7 +453,19 @@ function events_data_tables_install() {
 				  KEY TXN_ID (TXN_ID),
 				  KEY PAY_timestamp (PAY_timestamp)";
 	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
-	
+
+	$table_name = 'esp_datetime';
+	$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  EVT_ID int(10) unsigned DEFAULT NULL,
+				  DTT_start int(20) NOT NULL,
+					DTT_end int(20) NOT NULL,
+				  DTT_event_or_reg varchar(1) DEFAULT NULL,
+				  DTT_reg_limit int(8) NOT NULL,
+				  PRIMARY KEY (DTT_ID),
+				  KEY EVT_ID (EVT_ID),
+				  KEY DTT_event_or_reg (DTT_event_or_reg)";
+	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+
 
 
 	$table_name = 'esp_registration';
@@ -479,7 +491,7 @@ function events_data_tables_install() {
 				  KEY REG_code (REG_code),
 				  KEY REG_code_2 (REG_code)";
 	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
-	
+
 
 
 
@@ -511,8 +523,8 @@ function events_data_tables_install() {
 				  KEY STS_type (STS_type)";
 	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
 
-	
-	
+
+
 	$table_name = "events_attendee";
 	$sql = " id int(11) unsigned NOT NULL AUTO_INCREMENT,
 					  registration_id VARCHAR(23) DEFAULT '0',
@@ -782,7 +794,7 @@ function events_data_tables_install() {
 			  EPR_is_active TINYINT(1) NULL DEFAULT 1 ,
 			  PRIMARY KEY (EVT_ID, PRC_ID)';
 	event_espresso_run_install($table_name, $table_version, $sql);
-	
+
 //CREATE  TABLE IF NOT EXISTS event_espresso.esp_event_price (
 //  EVT_ID INT UNSIGNED NOT NULL ,
 //  PRC_ID INT UNSIGNED NOT NULL ,
@@ -791,7 +803,7 @@ function events_data_tables_install() {
 //  EPR_disc_code VARCHAR(100) NULL ,
 //  EPR_is_active TINYINT(1) NULL DEFAULT 1 ,
 //  PRIMARY KEY (EVT_ID, PRC_ID) )
-//ENGINE = MyISAM	
+//ENGINE = MyISAM
 
 	$table_name = "esp_price";
 	$sql = 'PRC_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -808,7 +820,7 @@ function events_data_tables_install() {
 			  PRC_is_active TINYINT(1) NULL DEFAULT 1 ,
 			  PRIMARY KEY (PRC_ID)';
 	event_espresso_run_install($table_name, $table_version, $sql);
-	
+
 //CREATE  TABLE IF NOT EXISTS event_espresso.esp_price (
 //  PRC_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 //  PRT_ID TINYINT UNSIGNED NOT NULL ,
@@ -822,8 +834,8 @@ function events_data_tables_install() {
 //  PRC_disc_wp_user BIGINT NULL ,
 //  PRC_is_active TINYINT(1) NULL DEFAULT 1 ,
 //  PRIMARY KEY (PRC_ID) )
-//ENGINE = MyISAM	
-	
+//ENGINE = MyISAM
+
 
 	$table_name = "esp_price_type";
 	$sql = 'PRT_ID TINYINT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -837,7 +849,7 @@ function events_data_tables_install() {
 			  UNIQUE INDEX PRT_name_UNIQUE (PRT_name ASC) ,
 			  PRIMARY KEY (PRT_ID)';
 	event_espresso_run_install($table_name, $table_version, $sql);
-	
+
 //CREATE  TABLE IF NOT EXISTS event_espresso.esp_price_type (
 //  PRT_ID TINYINT UNSIGNED NOT NULL AUTO_INCREMENT ,
 //  PRT_name VARCHAR(45) NOT NULL ,
@@ -849,8 +861,8 @@ function events_data_tables_install() {
 //  PRT_order TINYINT UNSIGNED NULL ,
 //  UNIQUE INDEX PRT_name_UNIQUE (PRT_name ASC) ,
 //  PRIMARY KEY (PRT_ID) )
-//ENGINE = MyISAM	
-	
+//ENGINE = MyISAM
+
 
 	$table_name = "events_discount_codes";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
@@ -1358,7 +1370,7 @@ function espresso_update_active_gateways() {
 
 function espresso_default_prices() {
 	global $wpdb;
-	$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_member, PRT_is_discount, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) VALUES 
+	$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_member, PRT_is_discount, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) VALUES
 	(NULL, 'Default Event Price', 0, 0, 0, 0, 1, 0),
 	(NULL, 'Event Price', 0, 0, 0, 0, 0, 0),
 	(NULL, 'Default Member % Discount', 1, 1, 0, 1, 1, 10),
@@ -1367,10 +1379,10 @@ function espresso_default_prices() {
 	(NULL, 'Default Surcharge', 0, 0, 0, 0, 1, 30),
 	(NULL, 'Regional Tax', 0, 0, 1, 1, 1, 40),
 	(NULL, 'Federal Tax', 0, 0, 1, 1, 1, 50);";
-	
+
 	$wpdb->query($sql);
-	$sql = "INSERT INTO " . ESP_PRICE_TABLE . " 
-	(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active) VALUES 
+	$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
+	(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active) VALUES
 	(NULL, 1, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, 0, 0, 0, 0, 1),
 	(NULL, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, 0, 0, 0, 0, 1),
 	(NULL, 4, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.', 1, NULL, 0, 0, 0, 0, 1),

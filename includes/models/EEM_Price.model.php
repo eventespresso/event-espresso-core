@@ -54,7 +54,7 @@ class EEM_Price extends EEM_Base {
 				'PRC_disc_limit_qty'	=> '%d',
 				'PRC_disc_qty'				=> '%d',
 				'PRC_disc_apply_all'	=> '%d',
-				'PRC_disc_wp_user'	=> '%d',		
+				'PRC_disc_wp_user'	=> '%d',
 				'PRC_is_active' 			=> '%d'
 		);
 		// load Price object class file
@@ -103,9 +103,9 @@ class EEM_Price extends EEM_Base {
 		if (is_object($prices)) {
 			$prices = array($prices);
 		}
-	
+
 		foreach ($prices as $price) {
-		
+
 			$array_of_objects[$price->PRC_ID] = new EE_Price(
 
 											$price->PRT_ID,
@@ -176,7 +176,7 @@ class EEM_Price extends EEM_Base {
 		if (!$where_cols_n_values) {
 			return FALSE;
 		}
-		
+
 		$orderby = 'PRC_amount';
 		// retreive all prices
 		if ($prices = $this->select_all_where( $where_cols_n_values, $orderby )) {
@@ -261,19 +261,55 @@ class EEM_Price extends EEM_Base {
 		}
 
 		// determine what we will be searching for via trickle down conditionals - it's just like PLINKO only better! and unlike trickle down economics - this WORKS!
-		$what = $member_prices ? 'PRT_is_member' : ( $discounts ? 'PRT_is_discount' : ( $taxes ? 'PRT_is_tax' : ( $percentages ? 'PRT_is_percent' : ( $global ? 'PRT_is_global' : 'PRT_order' ))));
-		$value = $member_prices ? $member_prices : ( $discounts ? $discounts : ( $taxes ? $taxes : ( $percentages ? $percentages : ( $global ? $global : $order ))));
+		$what = '';
+		$value = array();
+		if ($member_prices) {
+			$what .= 'PRT_is_member '. $operator .' %d';
+			$value[] = $member_prices;
+		}
+		if (!empty($what) && ($discounts || $taxes || $percentages || $global || $order)) {
+			$what .= ' AND prt.';
+		}
+		if ($discounts) {
+			$what .= 'PRT_is_discount '. $operator .' %d';
+			$value[] = $discounts;
+		}
+		if (!empty($what) && ($taxes || $percentages || $global || $order)) {
+			$what .= ' AND prt.';
+		}
+		if ($taxes) {
+			$what .= 'PRT_is_tax '. $operator .' %d';
+			$value[] = $taxes;
+		}
+		if (!empty($what) && ($percentages || $global || $order)) {
+			$what .= ' AND prt.';
+		}
+		if ($percentages) {
+			$what .= 'PRT_is_percent '. $operator .' %d';
+			$value[] = $percentages;
+		}
+		if (!empty($what) && ($global || $order)) {
+			$what .= ' AND prt.';
+		}
+		if ($global) {
+			$what .= 'PRT_is_global '. $operator .' %d';
+			$value[] = $global;
+		}
+		if (!empty($what)) {
+			$what .= ' AND prt.';
+		}
+		if ($order !== FALSE) {
+			$what .= 'PRT_order '. $operator .' %d';
+			$value[] = $order;
+		}
 
 		global $wpdb;
 		// retreive prices
-		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' '. $operator .' %d ORDER BY PRT_order';
-
+		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' ORDER BY PRT_order';
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $value))) {
-//			echo $wpdb->last_query;
-			echo printr($prices, '$prices' );
 			foreach ($prices as $price) {
-				$array_of_prices[ $price->PRT_order ] = $this->_create_objects($price);
+				$array_of_prices[] = array_shift($this->_create_objects($price));
 			}
 			return $array_of_prices;
 		} else {
@@ -409,26 +445,34 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			global $espresso_notices;
-			$espresso_notices['success'][] = 'No Event ID was received.';
-			return FALSE;
+			$prices = $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE, 0);
+			foreach ($prices as $price) {
+				if (! $price->is_active()) {
+					continue;
+				}
+				$array_of_is_active_and_price_objects[] = array('active'=>TRUE, 'price'=>$price);
+			}
+			return $array_of_is_active_and_price_objects;
 		}
-		
+
 		global $wpdb;
 		// retreive prices
 		$SQL = 'SELECT  evp.*, prc.*, prt.* ';
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_event_price evp ';
 		$SQL .= 'LEFT JOIN ' . $this->table_name . ' prc ON evp.PRC_ID = prc.PRC_ID ';
 		$SQL .= 'RIGHT JOIN ' . $wpdb->prefix . 'esp_price_type prt ON prt.PRT_ID = prc.PRT_ID ';
-		$SQL .= 'WHERE evp.EVT_ID = %d ';
-		$SQL .= 'AND prt.PRT_is_global = TRUE ';
+		$SQL .= 'WHERE (evp.EVT_ID = %d ';
+		$SQL .= 'OR (prt.PRT_is_global = TRUE AND prc.PRC_is_active = TRUE)) ';
 		$SQL .= 'AND prt.PRT_is_tax = FALSE ';
 		$SQL .= 'ORDER BY PRT_order';
 
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $EVT_ID))) {
-			//echo printr($prices, '$prices' );
-			return $this->_create_objects($prices);
+			foreach ($prices as $price) {
+				$active = !empty($price->EPR_is_active) ? TRUE : FALSE;
+				$array_of_is_active_and_price_objects[] = array('active'=>$active, 'price'=>array_shift($this->_create_objects($price)));
+			}
+			return $array_of_is_active_and_price_objects;
 		} else {
 			return FALSE;
 		}

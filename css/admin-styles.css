@@ -352,6 +352,15 @@ div.tablenav {
 	height: auto;
 }
 /*** Add new events / Edit events ***/
+
+#event_editor_major_buttons_wrapper{
+	position:fixed;
+	bottom:0px;
+	right:5px;
+	background-image:url('../images/light_grey-pix.png');
+	padding: 2px;
+}
+
 .remove-item {
 	cursor: pointer;
 	vertical-align: middle;

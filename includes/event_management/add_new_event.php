@@ -75,6 +75,7 @@ function add_new_event() {
 	$event->venue_phone = '';
 	$event->venue_image = '';
 	$event = apply_filters('filter_hook_espresso_new_event_template', $event);
+	$event->page_url = get_permalink($org_options['event_page_id']);
 
 	espresso_display_add_event($event);
 	do_action('action_hook_espresso_event_editor_footer');
@@ -97,26 +98,18 @@ function espresso_display_add_event($event) {
 				</div>
 				<div id="post-body">
 					<div id="post-body-content">
+						<?php do_action('action_hook_espresso_event_editor_title_div', $event); ?>
+						<?php do_action('action_hook_espresso_event_editor_desc_div', $event); ?>
 						<?php do_meta_boxes('toplevel_page_events', 'normal', $event); ?>
 						<?php do_meta_boxes('toplevel_page_events', 'advanced', $event); ?>
-						<input type="hidden" name="action" value="add" />
+						<input type="hidden" name="action" value="insert" />
 						<input type="hidden" name="event_status" value="A" />
 					</div>
 				</div>
 			</div>
+			<?php do_action('action_hook_espresso_save_buttons', $event); ?>
 		</form>
 	</div>
 
 	<?php
 }
-
-function espresso_new_event_publishing_action() {
-	?>
-	<div id="publishing-action">
-		<?php wp_nonce_field('espresso_form_check', 'ee_add_new_event'); ?>
-		<input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit New Event', 'event_espresso'); ?>" id="add_new_event" />
-	</div>
-	<?php
-}
-
-add_action('action_hook_espresso_event_editor_publishing_action', 'espresso_new_event_publishing_action');
