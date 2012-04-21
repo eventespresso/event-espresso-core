@@ -73,21 +73,21 @@ function event_espresso_display_stripe_settings() {
                             <?php _e('Stripe Secret Key:', 'event_espresso'); ?>
                             </label>
                             <br />
-                            <input type="text" name="stripe_secret_key" size="35" value="<?php echo $stripe_settings['stripe_secret_key']; ?>"> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=stripe_secret_key"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+                            <input type="text" name="stripe_secret_key" size="35" value="<?php echo $stripe_settings['stripe_secret_key']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_secret_key') ?>
                         </li>
                         <li>
                             <label for="stripe_publishable_key">
     						<?php _e('Stripe Publishable Key:', 'event_espresso'); ?>
                             </label>
                             <br />
-                            <input type="text" name="stripe_publishable_key" size="35" value="<?php echo $stripe_settings['stripe_publishable_key']; ?>"> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=stripe_publishable_key"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+                            <input type="text" name="stripe_publishable_key" size="35" value="<?php echo $stripe_settings['stripe_publishable_key']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_publishable_key') ?>
                         </li>
                         <li>
                             <label for="stripe_currency_symbol">
     						<?php _e('Stripe Currency Symbol (usd):', 'event_espresso'); ?>
                             </label>
                             <br />
-                            <input type="text" name="stripe_currency_symbol" size="35" value="<?php echo $stripe_settings['stripe_currency_symbol']; ?>"> <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=stripe_currency_symbol"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+                            <input type="text" name="stripe_currency_symbol" size="35" value="<?php echo $stripe_settings['stripe_currency_symbol']; ?>"> <?php echo apply_filters('filter_hook_espresso_help', 'stripe_currency_symbol') ?>
                         </li>
                         <?php /* Commenting this out, as this is not required or even used, really
                         <li>
