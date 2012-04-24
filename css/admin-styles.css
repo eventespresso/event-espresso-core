@@ -356,13 +356,20 @@ div.tablenav {
 #event_editor_major_buttons_wrapper{
 	position:fixed;
 	bottom:0px;
-	right:5px;
+	right:21px;
 	background-image:url('../images/light_grey-pix.png');
-	padding: 2px;
+	padding: 2px 2px 2px 7px;
+	width: 271px;
+}
+
+#event_editor_major_buttons_wrapper input, #event_editor_major_buttons_wrapper a {
+	padding: 3px 6px;
+	margin: 5px 6px;
 }
 
 #event_editor_major_buttons_wrapper a.button-primary{
 	background-image: url('../images/red-button-grad.png');
+	border-color: red;
 }
 
 .remove-item {
