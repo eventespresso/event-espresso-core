@@ -361,6 +361,10 @@ div.tablenav {
 	padding: 2px;
 }
 
+#event_editor_major_buttons_wrapper a.button-primary{
+	background-image: url('../images/red-button-grad.png');
+}
+
 .remove-item {
 	cursor: pointer;
 	vertical-align: middle;

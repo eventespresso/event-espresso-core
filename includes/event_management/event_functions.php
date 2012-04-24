@@ -773,7 +773,7 @@ add_action('action_hook_espresso_event_editor_footer', 'espresso_event_editor_fo
 
 function espresso_save_buttons($event) {
 	?>
-	<div id="event_editor_major_buttons_wrapper">
+	<div id="event_editor_major_buttons_wrapper" class="inner-sidebar">
 		<?php wp_nonce_field('espresso_form_check', 'ee__event_editor'); ?>
 		<input class="button-primary" type="submit" name="save" value="<?php _e('Save', 'event_espresso'); ?>" id="save" />
 		<input class="button-primary" type="submit" name="save_and_close" value="<?php _e('Save And Close', 'event_espresso'); ?>" id="save_and_close" />
