@@ -118,9 +118,10 @@ class EEM_Datetime extends EEM_Base {
 			$where['DTT_is_primary'] = 1;
 		}
 
-		$orderby = 'DTT_start';
+		$orderby = array( 'DTT_is_primary', 'DTT_start' );
+		$sort = array( 'DESC', 'ASC' );
 
-		if ( $datetimes = $this->select_all_where ( $where, $orderby )) {
+		if ( $datetimes = $this->select_all_where ( $where, $orderby, $sort )) {
 
 			// load Datetime object class file
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');

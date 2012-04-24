@@ -51,26 +51,29 @@ if (!function_exists('espresso_venue_dd')) {
 				$hidden = "display:none;";
 				if ($selected)
 					$hidden = '';
-				$div .= "<fieldset id='eebox_" . $i . "' class='eebox' style='" . $hidden . "'>";
-				$div .= "<ul class='address-view'><li><p><span>Address:</span> " . stripslashes_deep($venue->address) . "</p>";
-				$div .= "<p><span>Address 2:</span> " . stripslashes_deep($venue->address2) . "</p>";
-				$div .= "<p><span>City:</span> " . stripslashes_deep($venue->city) . "</p>";
-				$div .= "<p><span>State:</span> " . stripslashes_deep($venue->state) . "</p>";
-				$div .= "<p><span>Zip:</span> " . stripslashes_deep($venue->zip) . "</p>";
-				$div .= "<p><span>Country:</span> " . stripslashes_deep($venue->country) . "</p>";
-				$div .= "<p><span>Venue ID:</span> " . $venue->id . "</p>";
-				$div .= "<p>This venues shortcode <b class='highlight'>[ESPRESSO_VENUE id='" . $venue->id . "']</b></p>";
-				$div .= '<p><a href="admin.php?page=event_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></p></li></ul>';
+				$div .= "
+	<fieldset id='eebox_" . $i . "' class='eebox' style='" . $hidden . "'>
+		<ul class='address-view'>
+			<li>
+				<p><span>Address:</span> " . stripslashes($venue->address) . "<br/>
+				<span></span> " . stripslashes($venue->address2) . "<br/>
+				<span>City:</span> " . stripslashes($venue->city) . "<br/>
+				<span>State:</span> " . stripslashes($venue->state) . "<br/>
+				<span>Zip:</span> " . stripslashes($venue->zip) . "<br/>
+				<span>Country:</span> " . stripslashes($venue->country) . "<br/>
+				<span>Venue ID:</span> " . $venue->id . "<br/></p>
+				This venues shortcode <b class='highlight'>[ESPRESSO_VENUE id='" . $venue->id . "']</b><br/>";
+				$div .= '<a href="admin.php?page=event_venues&action=edit&id=' . $venue->id . '" target="_blank">' . __('Edit this venue', 'event_espresso') . '</a> | <a class="thickbox link" href="#TB_inline?height=300&width=400&inlineId=venue_info">Shortcode</a></li></ul>';
 				$div .= "</fieldset>";
 			}
 			$field .= "</select>";
 			$help_div .= '<div id="venue_info" style="display:none">';
 			$help_div .= '<div class="TB-ee-frame">';
 			$help_div .= '<h2>' . __('Venue Shortcode', 'event_espresso') . '</h2>';
-			$help_div .= '<p>' . __('Add the following shortcode into the description to show the venue for this event.', 'event_espresso') . '</p>';
-			$help_div .= '<p>[ESPRESSO_VENUE]</p>';
-			$help_div .= '<p>' . __('To use this venue in a page or post. Use the following shortcode.', 'event_espresso') . '</p>';
-			$help_div .= '<p>[ESPRESSO_VENUE id="selected_venue_id"]</p>';
+			$help_div .= '<p>' . __('Add the following shortcode into the description to show the venue for this event.', 'event_espresso') . '<br/>';
+			$help_div .= '[ESPRESSO_VENUE]<br/>';
+			$help_div .=  __('To use this venue in a page or post. Use the following shortcode.', 'event_espresso') . '<br/>';
+			$help_div .= '[ESPRESSO_VENUE id="selected_venue_id"]</p>';
 			$help_div .= '<p>Example with Optional Parameters:<br />[ESPRESSO_VENUE outside_wrapper="div" outside_wrapper_class="event_venue"]</p>';
 			$help_div .= '<p><strong><a href="http://eventespresso.com/forums/2010/10/post-type-variables-and-shortcodes/#venue_shortcode" target="_blank">More Examples</a></strong></p>';
 			$help_div .= '</div>';

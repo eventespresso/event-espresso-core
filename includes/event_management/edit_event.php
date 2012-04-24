@@ -80,6 +80,7 @@ function espresso_display_edit_event($event) {
 				<div id="post-body">
 					<div id="post-body-content">
 						<?php do_action('action_hook_espresso_event_editor_title_div', $event); ?>
+						<?php //do_action('action_hook_espresso_event_editor_date_time_div', $event); ?>
 						<?php do_action('action_hook_espresso_event_editor_desc_div', $event); ?>
 						<?php do_meta_boxes('toplevel_page_events', 'normal', $event); ?>
 						<?php do_meta_boxes('toplevel_page_events', 'advanced', $event); ?>
