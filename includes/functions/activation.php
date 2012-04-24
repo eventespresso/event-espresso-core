@@ -461,6 +461,7 @@ function events_data_tables_install() {
 					DTT_end int(20) NOT NULL,
 				  DTT_event_or_reg varchar(1) DEFAULT NULL,
 				  DTT_reg_limit int(8) NOT NULL,
+					DTT_is_primary TINYINT(1) NULL DEFAULT 1 ,
 				  PRIMARY KEY (DTT_ID),
 				  KEY EVT_ID (EVT_ID),
 				  KEY DTT_event_or_reg (DTT_event_or_reg)";

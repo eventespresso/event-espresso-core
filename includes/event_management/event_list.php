@@ -140,15 +140,15 @@ function espresso_event_list_sql_with_members($sql) {
 	$sql .= ( $_POST['event_status'] != '' && $_POST['event_status'] != 'IA') ? " WHERE e.event_status = '" . $_POST['event_status'] . "' " : " WHERE e.event_status != 'D' ";
 	$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
 	$sql .= $group != '' && $org_options['use_venue_manager'] ? " AND l.locale_id IN (" . implode(",", $group) . ") " : '';
-	/*if ($_POST['month_range'] != '' && $_POST['month_range'] > 0) {
-		$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
-	}
-	if ($_REQUEST['today'] == 'true') {
-		$sql .= " AND e.start_date = '" . $curdate . "' ";
-	}
-	if ($_REQUEST['this_month'] == 'true') {
-		$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month)) . "' ";
-	}*/
+	/* if ($_POST['month_range'] != '' && $_POST['month_range'] > 0) {
+	  $sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
+	  }
+	  if ($_REQUEST['today'] == 'true') {
+	  $sql .= " AND e.start_date = '" . $curdate . "' ";
+	  }
+	  if ($_REQUEST['this_month'] == 'true') {
+	  $sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month)) . "' ";
+	  } */
 	$sql .= ") UNION ";
 	return $sql;
 }
@@ -172,14 +172,14 @@ function espresso_event_list_sql($sql) {
 		</form>
 		<?php
 		$records_to_show = " LIMIT $max_rows OFFSET $start_rec ";
-	} else
+	} else {
 		$records_to_show = '';
-		
+	}
 	global $org_options, $wpdb;
-	
+
 	$sql .= "(SELECT e.id AS event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, ";
 	$sql .= " e.is_active, e.recurrence_id,  e.event_meta, e.event_status";
-	
+
 	$sql .= ", dtt.DTT_is_primary, dtt.DTT_start, dtt.DTT_end, dtt.DTT_event_or_reg, dtt.DTT_reg_limit";
 
 
@@ -193,9 +193,9 @@ function espresso_event_list_sql($sql) {
 		$sql .= ", lc.name AS locale_name, e.wp_user ";
 	}
 	$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-	$sql .= " INNER JOIN " . $wpdb->prefix . esp_datetime . " dtt ON dtt.EVT_ID = e.id ";	
-	
-		
+	$sql .= " INNER JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+ 
+
 	if ($_REQUEST['category_id'] != '') {
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = cr.cat_id ";
@@ -211,19 +211,19 @@ function espresso_event_list_sql($sql) {
 		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " lc ON lc.id = l.locale_id ";
 	}
 
-	$sql .= " WHERE dtt.DTT_is_primary = '1' AND dtt.DTT_event_or_reg ='E' ";	
+	$sql .= " WHERE dtt.DTT_is_primary = '1' AND dtt.DTT_event_or_reg ='E' ";
 
 	$sql .= ( isset($_POST['event_status']) && ($_POST['event_status'] != '' && $_POST['event_status'] != 'IA')) ? " AND e.event_status = '" . $_POST['event_status'] . "' " : " AND e.event_status != 'D' ";
 	$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
-	
+
 	if ($_POST['month_range'] != '' && $_POST['month_range'] > 0) {
-		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime( $year_r . '-' . $month_r . '-01' ) . "' AND '" . strtotime( $year_r . '-' . $month_r . '-31' ) . "' ";
+		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
 	} elseif (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
-		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime( date( 'Y-m-d' ) . ' 0:00:00' ) . "' AND '" . strtotime( date( 'Y-m-d' ) . ' 23:59:59' ) . "' ";
+		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
 	} elseif (isset($_REQUEST['this_month']) && $_REQUEST['this_month'] == 'true') {
-		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime( $this_year_r . '-' . $this_month_r . '-01' ) . "' AND '" . strtotime( $this_year_r . '-' . $this_month_r . '-' . $days_this_month ) . "' ";
+		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
 	}
-	
+
 //If user is an event manager, then show only their events
 	if (function_exists('espresso_manager_pro_version')) {
 		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
@@ -234,9 +234,9 @@ function espresso_event_list_sql($sql) {
 			$sql .= " AND e.wp_user = '" . $espresso_wp_user . "' ";
 		}
 	}
-	
+
 	$sql .= " GROUP BY e.id ORDER BY dtt.DTT_start DESC";
-	
+
 	$sql .= ") $records_to_show ";
 	return $sql;
 }
@@ -271,10 +271,10 @@ function espresso_event_list_header() {
 		<span class="sorting-indicator"></span>
 	</th>
 
-<!--	<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;">
-		<span><?php _e('DoW', 'event_espresso'); ?></span>
-		<span class="sorting-indicator"></span>
-	</th>-->
+	<!--	<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;">
+			<span><?php _e('DoW', 'event_espresso'); ?></span>
+			<span class="sorting-indicator"></span>
+		</th>-->
 
 	<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:15%;">
 		<span><?php _e('Reg Begins', 'event_espresso'); ?></span>
@@ -308,11 +308,12 @@ function espresso_event_list_header() {
 	</th>
 	<?php
 }
+
 //DTT_start 	DTT_end
 function espresso_event_list_entry($event) {
 
 	global $espresso_premium;
-	
+
 	$event_id = $event->event_id;
 	$event_slug = $event->slug;
 	$event_name = stripslashes_deep($event->event_name);
@@ -340,28 +341,27 @@ function espresso_event_list_entry($event) {
 	$event_meta = unserialize($event->event_meta);
 	$event_meta['is_active'] = $event->is_active;
 	$event_meta['event_status'] = $event->event_status;
-	
+
 	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php' );
 	$DTM = EEM_Datetime::instance();
 
 	// grab reg times
-	$reg_time = array_shift( $DTM->get_primary_reg_date_for_event( $event_id ));
+	$reg_time = array_shift($DTM->get_primary_reg_date_for_event($event_id));
 	$reg_start = $reg_time->start();
-	
+
 	//echo printr($reg_time, 'REG TIME');
-	
-	$registration_start = isset( $reg_start ) ? $reg_start : '';
-	
-	$event_meta['registration_start'] = date( get_option('date_format'), $reg_start );
-	$event_meta['registration_startT'] = date( get_option('time_format'), $reg_start );
-	$event_meta['registration_end'] = date( get_option('date_format'), $reg_start );
-	$event_meta['registration_endT'] = date( get_option('time_format'), $reg_start );	
+
+	$registration_start = isset($reg_start) ? $reg_start : '';
+
+	$event_meta['registration_start'] = date(get_option('date_format'), $reg_start);
+	$event_meta['registration_startT'] = date(get_option('time_format'), $reg_start);
+	$event_meta['registration_end'] = date(get_option('date_format'), $reg_start);
+	$event_meta['registration_endT'] = date(get_option('time_format'), $reg_start);
 
 //	$event_meta['registration_start'] =$event->registration_start;
 //	$event_meta['registration_startT'] =$event->registration_startT;
 //	$event_meta['registration_end'] =$event->registration_end;
 //	$event_meta['registration_endT'] =$event->registration_endT;
-	
 //print_r( $event_meta );
 
 	$location = (!empty($event_address) ? $event_address : '') . (!empty($event_address2) ? '<br />' . $event_address2 : '') . (!empty($event_city) ? '<br />' . $event_city : '') . (!empty($event_state) ? ', ' . $event_state : '') . (!empty($event_zip) ? '<br />' . $event_zip : '') . (!empty($event_country) ? '<br />' . $event_country : '');
@@ -382,13 +382,13 @@ function espresso_event_list_entry($event) {
 		echo $venue_locale != '' ? '<br />[' . $venue_locale . ']' : '';
 			?></td>
 
-		<td class="author"><?php echo date( 'D, M d, Y', $start_date ) ?></td>
+		<td class="author"><?php echo date('D, M d, Y', $start_date) ?></td>
 
-		<td class="author"><?php echo date( get_option('time_format'), $start_date ) ?></td>
+		<td class="author"><?php echo date(get_option('time_format'), $start_date) ?></td>
 
-		<!--<td class="date"><?php echo $dow ?></td>-->
+			<!--<td class="date"><?php echo $dow ?></td>-->
 
-		<td class="date"><?php echo date( 'D, M d, Y  @  G:i a', $registration_start ); ?> <?php //echo $registration_startT ?></td>
+		<td class="date"><?php echo date('D, M d, Y  @  G:i a', $registration_start); ?> <?php //echo $registration_startT  ?></td>
 
 		<td class="date"><?php echo $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display']; ?></td>
 
@@ -416,7 +416,7 @@ function espresso_event_list_entry($event) {
 
 		<td class="author"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees_slash_reg_limit'); ?></a>
 		</td>
-		
+
 		<td class="date"><div style="width:180px;"><a href="<?php echo espresso_reg_url($event_id, $event_slug); ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank"><div class="view_btn"></div></a>
 
 				<a href="admin.php?page=events&amp;action=edit_event&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Event', 'event_espresso'); ?>"><div class="edit_btn"></div></a>
