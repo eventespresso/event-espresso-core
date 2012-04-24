@@ -1,87 +1,5 @@
 <?php
 
-function event_espresso_timereg_editor($event_id = 0) {
-	global $wpdb;
-	$time_counter = 1;
-
-	$timesx = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
-
-	if (!$wpdb->num_rows > 0) {
-		$time = new stdClass;
-		$time->registration_startT = 0;
-		$time->registration_endT = 0;
-		$timesx = array($time);
-	}
-
-	foreach ($timesx as $timex) {
-		?>
-		<div style="width:66%;">
-			<div id="event-time-<?php echo $time_counter; ?>">
-				<table class="form-table">
-					<tr valign="top">
-						<td scope="row" style="width:115px;">
-							<label for="add-reg-start-<?php echo $time_counter; ?>"><?php _e('Start Time', 'event_espresso'); ?></label>
-						</td>
-						<td>
-							<input id="add-reg-start-time-<?php echo $time_counter; ?>" name="registration_startT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_startT, get_option('time_format')); ?>" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<td scope="row" style="width:115px;">
-							<label for="add-reg-end-<?php echo $time_counter; ?>"><?php _e('End Time', 'event_espresso'); ?></label>
-						</td>
-						<td>
-							<input id="add-reg-end-time-<?php echo $time_counter; ?>" name="registration_endT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_endT, get_option('time_format')); ?>" />
-						</td>
-					</tr>
-				</table>
-				<br/>
-			</div>
-		</div>
-		<br class="clear"/>
-		<?php
-	}
-}
-
-function event_espresso_time_editor($event_id = 0) {
-
-	global $wpdb, $org_options;
-
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$time_counter = 1;
-	//echo get_option('time_format');
-
-	$times = $wpdb->get_results("SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $event_id . "' ORDER BY id");
-
-	if (!$wpdb->num_rows > 0) {
-		$time = new stdClass;
-		$time->start_time = 0;
-		$time->end_time = 0;
-		$time->reg_limit = NULL;
-		$times = array($time);
-	}
-	foreach ($times as $time) {
-		?>
-
-
-
-		<?php
-		$time_counter++;
-	} // end foreach ($times as $time)
-
-	$time_counter--;
-}
-
-function event_espresso_multi_price_update($event_id) {
-	global $wpdb, $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$price_counter = 1;
-	$sql = "SELECT prc.PRC_ID, prc.PRC_name, prt.PRT_order, prc.PRC_amount, prt.PRT_name, prt.PRT_is_percent, prt.PRT_is_tax, ep.EVT_ID FROM " . ESP_PRICE_TYPE . " prt";
-	$sql .= " JOIN " . ESP_PRICE_TABLE . " prc ON prc.PRT_ID=prt.PRT_ID";
-	$sql .= " JOIN " . ESP_EVENT_PRICE_TABLE . " ep ON ep.PRC_ID=prc.PRC_ID";
-	$prices = $wpdb->get_results($sql);
-}
-
 function espresso_event_editor_quick_overview_meta_box($event) {
 	?>
 	<div class="inside">
@@ -141,9 +59,7 @@ function espresso_event_editor_quick_overview_meta_box($event) {
 }
 
 function espresso_event_editor_primary_questions_group_meta_box($event) {
-	global $wpdb;
 	$question_groups = $event->question_groups;
-	$event_id = $event->id;
 	?>
 	<div class="inside">
 		<p><strong>
@@ -165,7 +81,6 @@ function espresso_event_editor_primary_questions_group_meta_box($event) {
 			$html = '';
 			foreach ($event->q_groups as $question_group) {
 				$question_group_id = $question_group->id;
-				$question_group_description = $question_group->group_description;
 				$group_name = $question_group->group_name;
 				//$checked = $question_group->system_group == 1 ? ' checked="checked" ' : '';
 				$checked = (is_array($question_groups) && array_key_exists($question_group_id, $question_groups)) || $question_group->system_group == 1 ? ' checked="checked" ' : '';
@@ -202,6 +117,9 @@ function espresso_event_editor_categories_meta_box($event) {
 		$event_categories = $wpdb->get_results($sql);
 		$num_rows = $wpdb->num_rows;
 		if ($num_rows > 0) {
+			if ($num_rows > 10) {
+				echo '<div style="height:250px;overflow:auto;">';
+			}
 			foreach ($event_categories as $category) {
 				$category_id = $category->id;
 				$category_name = $category->category_name;
@@ -212,7 +130,6 @@ function espresso_event_editor_categories_meta_box($event) {
 				}
 				if (empty($in_event_category))
 					$in_event_category = '';
-				ob_start();
 				?>
 				<p id="event-category-<?php echo $category_id; ?>">
 					<label for="in-event-category-<?php echo $category_id; ?>" class="selectit">
@@ -221,20 +138,10 @@ function espresso_event_editor_categories_meta_box($event) {
 					</label>
 				</p>
 				<?php
-				$html = ob_get_contents();
-				ob_end_clean();
 			}
 			if ($num_rows > 10) {
-				ob_start();
-				?>
-				<div style="height:250px;overflow:auto;">
-					<?php echo $html; ?>
-				</div>
-				<?php
-				$html = ob_get_contents();
-				ob_end_clean();
+				echo '</div>';
 			}
-			echo $html;
 		} else {
 			_e('No Categories', 'event_espresso');
 		}
@@ -301,8 +208,8 @@ function espresso_event_editor_desc_div($event) {
 			  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
 			 */
 			//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-			//the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
-			the_editor(espresso_admin_format_content($event->event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+			$id = 'event_desc';
+			the_editor(espresso_admin_format_content($event->event_desc), $id/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
 		}
 		?>
 		<table id="post-status-info" cellspacing="0">
@@ -319,7 +226,7 @@ function espresso_event_editor_desc_div($event) {
 
 function espresso_event_editor_date_time_metabox($event) {
 
-	global $wpdb, $org_options, $espresso_premium;
+	global $org_options, $espresso_premium;
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -328,11 +235,11 @@ function espresso_event_editor_date_time_metabox($event) {
 
 	// grab event times
 	if (!$times = $DTM->get_all_event_dates($event->id)) {
-		$times = array(new EE_Datetime($event->id, time(), time() + (60 * 60 * 24 * 30), 'E', NULL));
+		$times = array(new EE_Datetime($event->id, true, time(), time() + (60 * 60 * 24 * 30), 'E', NULL));
 	}
 	// grab reg times
 	if (!$reg_times = $DTM->get_all_reg_dates($event->id)) {
-		$reg_times = array(new EE_Datetime($event->id, time(), time() + (60 * 60 * 24 * 30), 'R', NULL));
+		$reg_times = array(new EE_Datetime($event->id, true, time(), time() + (60 * 60 * 24 * 30), 'R', NULL));
 	}
 	?>
 	<div class="inside">
@@ -454,7 +361,7 @@ function espresso_event_editor_date_time_metabox($event) {
 
 function espresso_event_editor_pricing_metabox($event) {
 
-	global $espresso_premium, $org_options;
+	global $org_options;
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	$PRT = EEM_Price_Type::instance();
@@ -462,11 +369,7 @@ function espresso_event_editor_pricing_metabox($event) {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	$PRC = EEM_Price::instance();
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
-	$EVP = EEM_Event_Price::instance();
-
 	$prices = $PRC->get_all_event_prices_for_admin($event->id);
-//	echo printr( $prices, '$prices' );
 
 	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', '');
 	?>
@@ -514,9 +417,11 @@ function espresso_event_editor_pricing_metabox($event) {
 				<input name="price[active]" type="checkbox" title="Activate Price"/>
 			</td>
 		</tr>
-		<?php foreach ($prices as $is_active_and_price_object) :
+		<?php
+		foreach ($prices as $is_active_and_price_object) :
 			$checked = ($is_active_and_price_object['active']) ? 'checked="checked"' : '';
-			$price = $is_active_and_price_object['price']; ?>
+			$price = $is_active_and_price_object['price'];
+			?>
 			<tr>
 				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
 					<?php echo $PRT->type[$price->type()]->order(); ?></td>
@@ -525,7 +430,7 @@ function espresso_event_editor_pricing_metabox($event) {
 				<td class="type-column" style="padding:7px 0 22px 7px; vertical-align:top;">
 					<?php echo $PRT->type[$price->type()]->name(); ?></td>
 				<td class="desc-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-				<?php echo $price->desc(); ?></td>
+					<?php echo $price->desc(); ?></td>
 				<td class="amount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
 					<?php echo $org_options['currency_symbol'] . $price->amount(); ?></td>
 				<td class="percent-column" style="padding:7px 0 22px 7px; vertical-align:top;">
@@ -535,7 +440,7 @@ function espresso_event_editor_pricing_metabox($event) {
 				<td class="discount-column" style="padding:7px 0 22px 7px; vertical-align:top;">
 					<?php echo $PRT->type[$price->type()]->is_discount(); ?></td>
 				<td class="active-column" style="padding:7px 0 22px 7px; vertical-align:top;">
-					<?php echo '<input name="checkbox[' . $price->ID() . ']" type="checkbox" ' . $checked . 'title="Activate Price ' . $price->name() . '" />'; ?></td>
+			<?php echo '<input name="checkbox[' . $price->ID() . ']" type="checkbox" ' . $checked . 'title="Activate Price ' . $price->name() . '" />'; ?></td>
 			</tr>
 			<?php
 		endforeach;
@@ -562,14 +467,14 @@ function espresso_event_editor_venue_metabox($event) {
 					?>
 					<td <?php echo $ven_type ?>><fieldset id="venue-manager">
 							<legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
-							<?php if (!espresso_venue_dd()) : ?>
+									<?php if (!espresso_venue_dd()) : ?>
 								<p class="info"><b>
-										<?php _e('You have not created any venues yet.', 'event_espresso'); ?>
+								<?php _e('You have not created any venues yet.', 'event_espresso'); ?>
 									</b></p>
 								<p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
 							<?php else: ?>
-								<?php echo espresso_venue_dd($event->venue_id) ?>
-							<?php endif; ?>
+						<?php echo espresso_venue_dd($event->venue_id) ?>
+					<?php endif; ?>
 						</fieldset></td>
 					<?php
 				} else {
@@ -577,102 +482,102 @@ function espresso_event_editor_venue_metabox($event) {
 					?>
 					<td <?php echo $ven_type ?>><fieldset>
 							<legend>
-								<?php _e('Physical Location', 'event_espresso'); ?>
+		<?php _e('Physical Location', 'event_espresso'); ?>
 							</legend>
 							<p>
 								<label for="phys-addr">
-									<?php _e('Address:', 'event_espresso'); ?>
+		<?php _e('Address:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="phys-addr" tabindex="100"  type="text"  value="<?php echo $event->address ?>" name="address" />
 							</p>
 							<p>
 								<label for="phys-addr-2">
-									<?php _e('Address 2:', 'event_espresso'); ?>
+		<?php _e('Address 2:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="phys-addr-2" tabindex="101"  type="text"  value="<?php echo $event->address2 ?>" name="address2" />
 							</p>
 							<p>
 								<label for="phys-city">
-									<?php _e('City:', 'event_espresso'); ?>
+		<?php _e('City:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="phys-city" tabindex="102"  type="text"  value="<?php echo $event->city ?>" name="city" />
 							</p>
 							<p>
 								<label for="phys-state">
-									<?php _e('State:', 'event_espresso'); ?>
+		<?php _e('State:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="phys-state" tabindex="103"  type="text"  value="<?php echo $event->state ?>" name="state" />
 							</p>
 							<p>
 								<label for="zip-postal">
-									<?php _e('Zip/Postal Code:', 'event_espresso'); ?>
+		<?php _e('Zip/Postal Code:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="zip-postal"  tabindex="104"  type="text"  value="<?php echo $event->zip ?>" name="zip" />
 							</p>
 							<p>
 								<label for="phys-country">
-									<?php _e('Country:', 'event_espresso'); ?>
+		<?php _e('Country:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="phys-country" tabindex="105"  type="text"  value="<?php echo $event->country ?>" name="country" />
 							</p>
 							<p>
 								<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
 								<br />
-								<?php echo $event->google_map_link; ?> </p>
+		<?php echo $event->google_map_link; ?> </p>
 						</fieldset></td>
 					<td <?php echo $ven_type; ?>>
 
 						<fieldset>
 
 							<legend>
-								<?php _e('Venue Information', 'event_espresso'); ?>
+		<?php _e('Venue Information', 'event_espresso'); ?>
 							</legend>
 							<p>
 								<label for="ven-title">
-									<?php _e('Title:', 'event_espresso'); ?>
+		<?php _e('Title:', 'event_espresso'); ?>
 								</label>
 								<input size="20"id="ven-title" tabindex="106"  type="text"  value="<?php echo stripslashes_deep($event->venue_title) ?>" name="venue_title" />
 							</p>
 							<p>
 								<label for="ven-website">
-									<?php _e('Website:', 'event_espresso'); ?>
+		<?php _e('Website:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="ven-website" tabindex="107"  type="text"  value="<?php echo stripslashes_deep($event->venue_url) ?>" name="venue_url" />
 							</p>
 							<p>
 								<label for="ven-phone">
-									<?php _e('Phone:', 'event_espresso'); ?>
+		<?php _e('Phone:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="ven-phone" tabindex="108"  type="text"  value="<?php echo stripslashes_deep($event->venue_phone) ?>" name="venue_phone" />
 							</p>
 							<p>
 								<label for="ven-image">
-									<?php _e('Image:', 'event_espresso'); ?>
+		<?php _e('Image:', 'event_espresso'); ?>
 								</label>
 								<input size="20" id="ven-image" tabindex="110"  type="text"  value="<?php echo stripslashes_deep($event->venue_image) ?>" name="venue_image" />
 							</p>
-						<?php } ?>
+	<?php } ?>
 				</td>
 
 				<td <?php echo $ven_type ?>><fieldset id="virt-location">
 						<legend>
-							<?php _e('Virtual Location', 'event_espresso'); ?>
+	<?php _e('Virtual Location', 'event_espresso'); ?>
 						</legend>
 						<p>
 							<label for="virt-phone">
-								<?php _e('Phone:', 'event_espresso'); ?>
+	<?php _e('Phone:', 'event_espresso'); ?>
 							</label>
 							<input size="20" id="virt-phone" type="text" tabindex="111" value="<?php echo $event->phone ?>" name="phone" />
 						</p>
 						<p>
 							<label for="url-event">
-								<?php _e('URL of Event:', 'event_espresso'); ?>
+	<?php _e('URL of Event:', 'event_espresso'); ?>
 							</label>
 							<textarea id="url-event" cols="30" rows="4" tabindex="112"  name="virtual_url"><?php echo stripslashes_deep($event->virtual_url) ?></textarea>
 						</p>
 						<p>
 							<label for="call-in-num">
-								<?php _e('Call in Number:', 'event_espresso'); ?>
+	<?php _e('Call in Number:', 'event_espresso'); ?>
 							</label>
 							<input id="call-in-num" size="20" tabindex="113"  type="text"  value="<?php echo stripslashes_deep($event->virtual_phone) ?>" name="virtual_phone" />
 						</p>
@@ -682,9 +587,9 @@ function espresso_event_editor_venue_metabox($event) {
 		</table>
 		<p>
 			<label for="enable_for_gmap">
-				<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
+			<?php _e('Enable event address in Google Maps? ', 'event_espresso') ?>
 			</label>
-			<?php echo select_input('enable_for_gmap', $values, isset($event->event_meta['enable_for_gmap']) ? $event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> </p>
+	<?php echo select_input('enable_for_gmap', $values, isset($event->event_meta['enable_for_gmap']) ? $event->event_meta['enable_for_gmap'] : '', 'id="enable_for_gmap"') ?> </p>
 	</div>
 	<?php
 }
@@ -700,7 +605,7 @@ function espresso_event_editor_email_metabox($event) {
 							<p class="info">Choose a payment confirmation email:</p>
 							<?php echo espresso_email_dd('payment', $event->payment_email_id); ?>
 							<p class="info">Choose a registration confirmation email:</p>
-							<?php echo espresso_email_dd('confirmation', $event->confirmation_email_id); ?>
+	<?php echo espresso_email_dd('confirmation', $event->confirmation_email_id); ?>
 						</fieldset></td>
 					<td>
 						<p><a href="admin.php?page=event_emails"><?php echo __('Add emails to the Email Manager', 'event_espresso') ?></a></p>
@@ -713,7 +618,6 @@ function espresso_event_editor_email_metabox($event) {
 }
 
 function espresso_register_event_editor_meta_boxes() {
-	global $espresso_premium;
 
 	add_action('action_hook_espresso_event_editor_title_div', 'espresso_event_editor_title_div');
 
@@ -777,15 +681,15 @@ function espresso_save_buttons($event) {
 		<?php wp_nonce_field('espresso_form_check', 'ee__event_editor'); ?>
 		<input class="button-primary" type="submit" name="save" value="<?php _e('Save', 'event_espresso'); ?>" id="save" />
 		<input class="button-primary" type="submit" name="save_and_close" value="<?php _e('Save And Close', 'event_espresso'); ?>" id="save_and_close" />
-		<?php if ($event->recurrence_id > 0) : ?>
+			<?php if ($event->recurrence_id > 0) : ?>
 			<a class="submitdelete deletion button-primary" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $event->recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
-				<?php _e('Delete all events in this series', 'event_espresso'); ?>
+			<?php _e('Delete all events in this series', 'event_espresso'); ?>
 			</a>
-		<?php else: ?>
+			<?php else: ?>
 			<a class="submitdelete deletion button-primary" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
-				<?php _e('Delete Event', 'event_espresso'); ?>
+			<?php _e('Delete Event', 'event_espresso'); ?>
 			</a>
-		<?php endif; ?>
+	<?php endif; ?>
 	</div>
 	<?php
 }

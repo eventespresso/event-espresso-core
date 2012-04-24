@@ -2,20 +2,18 @@
 
 // Adds an Event or Function to the Event Database
 function add_event_to_db($recurrence_arr = array()) {
-	// echo "<pre>";
-	//print_r($_POST);
-	//echo "</pre>";
 	$last_event_id = 0; // it is being returned but not initialized if recurrence isn't active or if the event is the first one of the recurrence event - Imon
 	//Delete the transients that may be set
 	espresso_reset_cache();
 
-	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
+/* @var $espresso_wp_user type array*/
+	global $wpdb, $espresso_wp_user, $espresso_premium;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if (check_admin_referer('espresso_form_check', 'ee__event_editor')) {
 
 		$wpdb->show_errors();
 
-		static $recurrence_id;
+		static $recurrence_id = NULL;
 
 
 		if (get_option('event_espresso_re_active') == 1) {
@@ -48,9 +46,6 @@ function add_event_to_db($recurrence_arr = array()) {
 				$recurrence_dates = ($_POST['recurrence_type'] == 'm') ? find_recurrence_manual_dates($re_params) : find_recurrence_dates($re_params);
 			}
 		}
-
-//echo_f('re array', $recurrence_dates);
-
 
 		if (defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE') && $_POST['recurrence'] == 'true' && count($recurrence_arr) == 0) {
 //skip the first insert because we do not have the start dates
@@ -102,7 +97,7 @@ function add_event_to_db($recurrence_arr = array()) {
 			$additional_limit = $_REQUEST['additional_limit'];
 			$member_only = isset($_REQUEST['member_only']) ? $_REQUEST['member_only'] : '';
 			$is_active = $_REQUEST['is_active'];
-			$event_status = $_REQUEST['event_status'];
+			$event_status = $_REQUEST['new_event_status'];
 			$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
 			$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
 
@@ -392,13 +387,6 @@ function add_event_to_db($recurrence_arr = array()) {
 				add_post_meta($post_id, 'venue_image', $venue_image);
 				add_post_meta($post_id, 'event_externalURL', $externalURL);
 				add_post_meta($post_id, 'event_reg_limit', $reg_limit);
-				add_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
-				add_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
-				add_post_meta($post_id, 'event_registration_start', $registration_start);
-				add_post_meta($post_id, 'event_registration_end', $registration_end);
-				add_post_meta($post_id, 'event_registration_startT', $registration_startT);
-				add_post_meta($post_id, 'event_registration_endT', $registration_endT);
-				//add_post_meta( $post_id, 'timezone_string', $_REQUEST['timezone_string'] );
 
 				$sql_data = array('%d', '%s');
 				$update_id = array('id' => $last_event_id);
@@ -410,7 +398,7 @@ function add_event_to_db($recurrence_arr = array()) {
 				<div id="message" class="updated fade"><p><strong><?php _e('The event', 'event_espresso'); ?>
 							<a href="<?php echo espresso_reg_url($last_event_id); ?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event']) ?></a>
 
-							<?php _e('has been added for ', 'event_espresso'); ?><?php echo date("m/d/Y", strtotime($start_date)); ?> <a href="admin.php?page=events&action=edit&event_id=<?php echo $last_event_id; ?>"><?php _e('Edit this event?', 'event_espresso'); ?></a></strong></p></div>
+							<?php _e('has been added for ', 'event_espresso'); ?><?php echo $_REQUEST['event_datetimes'][1]['startdate']; ?> <a href="admin.php?page=events&action=edit&event_id=<?php echo $last_event_id; ?>"><?php _e('Edit this event?', 'event_espresso'); ?></a></strong></p></div>
 			<?php } else { ?>
 				<div id="message" class="error"><p><strong><?php _e('There was an error in your submission, please try again. The event was not saved!', 'event_espresso'); ?><?php print $wpdb->print_error(); ?>.</strong></p></div>
 				<?php

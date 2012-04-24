@@ -3,19 +3,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
 function event_espresso_edit_list() {
-	global $wpdb, $org_options;
+	global $wpdb;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$wpdb->show_errors();
-
-//Clear the event id
-	$event_id = 0;
-
-//Dates
-	$curdate = date("Y-m-d");
-	$pieces = explode('-', $curdate, 3);
-	$this_year_r = $pieces[0];
-	$this_month_r = $pieces[1];
-	$days_this_month = date('t', strtotime($curdate));
 
 	if (isset($_POST['delete_event'])) {
 //Clear the events cache
@@ -67,8 +57,8 @@ function event_espresso_edit_list() {
 	}
 
 	if (espresso_total_events() > 0) {
+		do_action('action_hook_espresso_admin_reports_filters');
 		$sql = apply_filters('filter_hook_espresso_event_list_sql', '');
-//Debug
 		?>
 		<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 			<table id="table" class="widefat event-list" width="100%">
@@ -107,7 +97,6 @@ add_action('action_hook_espresso_event_list_entry', 'espresso_event_list_entry')
 add_action('action_hook_espresso_event_list_table_action_buttons', 'espresso_event_list_table_action_buttons');
 add_action('action_hook_espresso_event_list_actions_legend', 'espresso_event_list_actions_legend');
 add_action('action_hook_espresso_event_list_csv_importer_section', 'espresso_event_list_csv_importer_section');
-//add_action('action_hook_espresso_event_list_scripts', 'espresso_event_list_scripts');
 add_action('action_hook_espresso_event_list_help_section', 'espresso_event_list_help_section');
 
 function espresso_event_list_sql_with_members($sql) {
@@ -140,15 +129,6 @@ function espresso_event_list_sql_with_members($sql) {
 	$sql .= ( $_POST['event_status'] != '' && $_POST['event_status'] != 'IA') ? " WHERE e.event_status = '" . $_POST['event_status'] . "' " : " WHERE e.event_status != 'D' ";
 	$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
 	$sql .= $group != '' && $org_options['use_venue_manager'] ? " AND l.locale_id IN (" . implode(",", $group) . ") " : '';
-	/* if ($_POST['month_range'] != '' && $_POST['month_range'] > 0) {
-	  $sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
-	  }
-	  if ($_REQUEST['today'] == 'true') {
-	  $sql .= " AND e.start_date = '" . $curdate . "' ";
-	  }
-	  if ($_REQUEST['this_month'] == 'true') {
-	  $sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month)) . "' ";
-	  } */
 	$sql .= ") UNION ";
 	return $sql;
 }
@@ -175,7 +155,7 @@ function espresso_event_list_sql($sql) {
 	} else {
 		$records_to_show = '';
 	}
-	global $org_options, $wpdb;
+	global $org_options;
 
 	$sql .= "(SELECT e.id AS event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, ";
 	$sql .= " e.is_active, e.recurrence_id,  e.event_meta, e.event_status";
@@ -194,7 +174,7 @@ function espresso_event_list_sql($sql) {
 	}
 	$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 	$sql .= " INNER JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
- 
+
 
 	if ($_REQUEST['category_id'] != '') {
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
@@ -271,10 +251,10 @@ function espresso_event_list_header() {
 		<span class="sorting-indicator"></span>
 	</th>
 
-	<!--	<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;">
-			<span><?php _e('DoW', 'event_espresso'); ?></span>
-			<span class="sorting-indicator"></span>
-		</th>-->
+			<!--	<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;">
+					<span><?php _e('DoW', 'event_espresso'); ?></span>
+					<span class="sorting-indicator"></span>
+				</th>-->
 
 	<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:15%;">
 		<span><?php _e('Reg Begins', 'event_espresso'); ?></span>
@@ -318,22 +298,12 @@ function espresso_event_list_entry($event) {
 	$event_slug = $event->slug;
 	$event_name = stripslashes_deep($event->event_name);
 	$event_identifier = stripslashes_deep($event->event_identifier);
-	$reg_limit = isset($event->reg_limit) ? $event->reg_limit : '';
 	$registration_start = isset($event->registration_start) ? $event->registration_start : '';
 	$start_date = isset($event->DTT_start) ? $event->DTT_start : '';
-	$end_date = isset($event->DTT_end) ? $event->DTT_end : '';
-	$is_active = isset($event->is_active) ? $event->is_active : '';
 	$status = array();
 	$status = event_espresso_get_is_active($event_id);
 	$recurrence_id = isset($event->recurrence_id) ? $event->recurrence_id : '';
 
-	$event_address = isset($event->address) ? $event->address : '';
-	$event_address2 = isset($event->address2) ? $event->address2 : '';
-	$event_city = isset($event->city) ? $event->city : '';
-	$event_state = isset($event->state) ? $event->state : '';
-	$event_zip = isset($event->zip) ? $event->zip : '';
-	$event_country = isset($event->country) ? $event->country : '';
-//added new
 	$venue_title = isset($event->venue_title) ? $event->venue_title : '';
 	$venue_locale = isset($event->locale_name) ? $event->locale_name : '';
 	$wp_user = isset($event->wp_user) ? $event->wp_user : '';
@@ -349,8 +319,6 @@ function espresso_event_list_entry($event) {
 	$reg_time = array_shift($DTM->get_primary_reg_date_for_event($event_id));
 	$reg_start = $reg_time->start();
 
-	//echo printr($reg_time, 'REG TIME');
-
 	$registration_start = isset($reg_start) ? $reg_start : '';
 
 	$event_meta['registration_start'] = date(get_option('date_format'), $reg_start);
@@ -358,14 +326,6 @@ function espresso_event_list_entry($event) {
 	$event_meta['registration_end'] = date(get_option('date_format'), $reg_start);
 	$event_meta['registration_endT'] = date(get_option('time_format'), $reg_start);
 
-//	$event_meta['registration_start'] =$event->registration_start;
-//	$event_meta['registration_startT'] =$event->registration_startT;
-//	$event_meta['registration_end'] =$event->registration_end;
-//	$event_meta['registration_endT'] =$event->registration_endT;
-//print_r( $event_meta );
-
-	$location = (!empty($event_address) ? $event_address : '') . (!empty($event_address2) ? '<br />' . $event_address2 : '') . (!empty($event_city) ? '<br />' . $event_city : '') . (!empty($event_state) ? ', ' . $event_state : '') . (!empty($event_zip) ? '<br />' . $event_zip : '') . (!empty($event_country) ? '<br />' . $event_country : '');
-//	$dow = date("D", strtotime($start_date));
 	ob_start();
 	?>
 	<tr>
@@ -386,9 +346,7 @@ function espresso_event_list_entry($event) {
 
 		<td class="author"><?php echo date(get_option('time_format'), $start_date) ?></td>
 
-			<!--<td class="date"><?php echo $dow ?></td>-->
-
-		<td class="date"><?php echo date('D, M d, Y  @  G:i a', $registration_start); ?> <?php //echo $registration_startT  ?></td>
+		<td class="date"><?php echo date('D, M d, Y  @  G:i a', $registration_start); ?> <?php //echo $registration_startT    ?></td>
 
 		<td class="date"><?php echo $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display']; ?></td>
 
@@ -545,9 +503,10 @@ function espresso_event_list_actions_legend() {
 	<?php
 }
 
+/**
+ * @author brent 
+ */
 function espresso_event_list_csv_importer_section() {
-	/*	 * *************************** ADDED BY BRENT *********************** */
-
 	if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'edit_event') {
 		include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
 		$import_what = 'Event Details';
@@ -555,8 +514,6 @@ function espresso_event_list_csv_importer_section() {
 		$page = 'events';
 		echo espresso_csv_uploader($import_what, $import_intro, $page);
 	}
-
-	/*	 * *************************** brent done adding *********************** */
 	?>
 
 
@@ -580,7 +537,7 @@ function espresso_event_list_help_section() {
 add_action('admin_head', 'event_list_state_javascript');
 
 function event_list_state_javascript() {
-	global $espresso_wp_user, $org_options;
+	global $espresso_wp_user;
 	$nonce = wp_create_nonce('event_list_state');
 	?>
 	<style type="text/css">

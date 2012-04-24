@@ -103,7 +103,6 @@ function espresso_display_add_event($event) {
 						<?php do_meta_boxes('toplevel_page_events', 'normal', $event); ?>
 						<?php do_meta_boxes('toplevel_page_events', 'advanced', $event); ?>
 						<input type="hidden" name="action" value="insert" />
-						<input type="hidden" name="event_status" value="A" />
 					</div>
 				</div>
 			</div>

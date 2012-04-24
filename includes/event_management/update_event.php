@@ -5,7 +5,7 @@
 function update_event($recurrence_arr = array()) {
 	//print_r($_REQUEST);
 
-	global $wpdb, $org_options, $espresso_wp_user, $espresso_premium;
+	global $wpdb, $espresso_wp_user, $espresso_premium;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	if (check_admin_referer('espresso_form_check', 'ee__event_editor')) {
@@ -183,7 +183,6 @@ function update_event($recurrence_arr = array()) {
 			$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
 			$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];
 
-			$overflow_event_id = (empty($_REQUEST['overflow_event_id'])) ? '0' : $_REQUEST['overflow_event_id'];
 			$allow_overflow = empty($_REQUEST['allow_overflow']) ? false : $_REQUEST['allow_overflow'];
 
 			$additional_limit = $_REQUEST['additional_limit'];
@@ -191,7 +190,7 @@ function update_event($recurrence_arr = array()) {
 			$member_only = empty($_REQUEST['member_only']) ? false : $_REQUEST['member_only'];
 
 			$is_active = $_REQUEST['is_active'];
-			$event_status = $_REQUEST['event_status'];
+			$event_status = $_REQUEST['new_event_status'];
 
 			$address = !empty($_REQUEST['address']) ? esc_html($_REQUEST['address']) : '';
 			$address2 = !empty($_REQUEST['address2']) ? esc_html($_REQUEST['address2']) : '';
@@ -228,17 +227,12 @@ function update_event($recurrence_arr = array()) {
 			$payment_email_id = $_REQUEST['payment_email_id'];
 
 
-			$event_category = serialize(empty($_REQUEST['event_category']) ? '' : $_REQUEST['event_category']);
-			$event_discount = serialize(empty($_REQUEST['event_discount']) ? '' : $_REQUEST['event_discount']);
-
+/* @var $registration_start type int*/
 			$registration_start = array_key_exists('registration_start', $recurrence_arr) ? $recurrence_arr['registration_start'] : $_REQUEST['registration_start'];
 			$registration_end = array_key_exists('registration_end', $recurrence_arr) ? $recurrence_arr['registration_end'] : $_REQUEST['registration_end'];
 
 			$start_date = array_key_exists('recurrence_start_date', $recurrence_arr) ? $recurrence_arr['recurrence_start_date'] : ($_REQUEST['start_date'] == '' && isset($_REQUEST['recurrence_start_date']) ? $_REQUEST['recurrence_start_date'] : $_REQUEST['start_date']);
 			$end_date = array_key_exists('recurrence_event_end_date', $recurrence_arr) ? $recurrence_arr['recurrence_event_end_date'] : ($_REQUEST['end_date'] == '' && isset($_REQUEST['recurrence_event_end_date']) ? $_REQUEST['recurrence_event_end_date'] : $_REQUEST['end_date']);
-
-			$visible_on = array_key_exists('visible_on', $recurrence_arr) ? $recurrence_arr['visible_on'] : empty($_REQUEST['visible_on']) ? '' : $_REQUEST['visible_on'];
-
 			//Venue Information
 			$venue_title = isset($_REQUEST['venue_title']) ? $_REQUEST['venue_title'] : '';
 			$venue_url = isset($_REQUEST['venue_url']) ? $_REQUEST['venue_url'] : '';
@@ -256,8 +250,6 @@ function update_event($recurrence_arr = array()) {
 
 			$question_groups = serialize($_REQUEST['question_groups']);
 
-			$add_attendee_question_groups = serialize(empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups']);
-
 			$event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
 			$event_meta['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
 			$event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
@@ -265,7 +257,7 @@ function update_event($recurrence_arr = array()) {
 			$event_meta['date_submitted'] = $_REQUEST['date_submitted'];
 			$event_meta['originally_submitted_by'] = $_REQUEST['originally_submitted_by'];
 
-			if (isset($wp_user) && $wp_user != $event_meta['originally_submitted_by']) {
+			if (isset($espresso_wp_user) && $espresso_wp_user != $event_meta['originally_submitted_by']) {
 				$event_meta['orig_event_staff'] = !empty($_REQUEST['event_person']) ? serialize($_REQUEST['event_person']) : '';
 			}
 			//print_r($event_meta['orig_event_staff']);
@@ -466,22 +458,6 @@ function update_event($recurrence_arr = array()) {
 				}
 			}
 
-
-//			$del_times = "DELETE FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $event_id . "'";
-//			$wpdb->query($del_times);
-//
-//			if ($_REQUEST['start_time'] != '') {
-//				foreach ($_REQUEST['start_time'] as $k => $v) {
-//					if ($v != '') {
-//						$time_qty = empty($_REQUEST['time_qty'][$k]) ? '0' : "'" . $_REQUEST['time_qty'][$k] . "'";
-//						$sql_times = "INSERT INTO " . EVENTS_START_END_TABLE . " (event_id, start_time, end_time, reg_limit) VALUES ('" . $event_id . "', '" . event_date_display($v, 'H:i') . "', '" . event_date_display($_REQUEST['end_time'][$k], 'H:i') . "', " . $time_qty . ")";
-//						echo "$sql_times <br>";
-//						$wpdb->query($sql_times);
-//					}
-//				}
-//			}
-
-
 			$registration_start = wp_strip_all_tags( $_REQUEST['registration_start'] );
 			$registration_end = wp_strip_all_tags( $_REQUEST['registration_end'] );
 			$registration_startT = wp_strip_all_tags( $_REQUEST['registration_startT'] );
@@ -501,7 +477,8 @@ function update_event($recurrence_arr = array()) {
 
 			//event_datetimes[]['start']['date']
 			if ( isset( $_REQUEST['event_datetimes'] )) {
-				foreach ( $_REQUEST['event_datetimes'] as $key => $dtm ) {
+				/* @var $dtm type array*/
+				foreach ( $_REQUEST['event_datetimes'] as $dtm ) {
 
 					$dtm['end']['date'] = ( isset( $dtm['end']['date'] ) && $dtm['end']['date'] != '' ) ? $dtm['end']['date'] : $dtm['start']['date'];
 
@@ -512,41 +489,15 @@ function update_event($recurrence_arr = array()) {
 																						'E',
 																						absint( (int)$dtm['start']['reg_limit'] )
 																					 );
-					if ( $results = $new_event_dates->insert() ) {
-						//echo printr( $results, '$results' );
-					}
-					//echo printr( $new_event_dates, '$new_event_dates' );
-
+						$insert = $new_event_dates->insert();
+						if(!insert) {
+							?>
+							<p><?php _e('Failed to insert new event dates', 'event_espresso'); ?></p>
+							<?php
+						}
 				}
 			}
 
-//			echo printr( $_REQUEST['event_datetimes'], 'event_datetimes' );
-//			global $espresso_notices;
-//			echo espresso_get_notices();
-//			die();
-
-/*
-			$del_prices = "DELETE FROM " . EVENTS_PRICES_TABLE . " WHERE event_id = '" . $event_id . "'";
-			$wpdb->query($del_prices);
-
-			if (!empty($_REQUEST['event_cost'])) {
-				foreach ($_REQUEST['event_cost'] as $k => $v) {
-					if ($v != '') {
-						$price_type = $_REQUEST['price_type'][$k] != '' ? $_REQUEST['price_type'][$k] : __('General Admission', 'event_espresso');
-						$member_price_type = !empty($_REQUEST['member_price_type'][$k]) ? $_REQUEST['member_price_type'][$k] : __('Members Admission', 'event_espresso');
-						$member_price = !empty($_REQUEST['member_price'][$k]) ? $_REQUEST['member_price'][$k] : $v;
-						$sql_prices = "INSERT INTO " . EVENTS_PRICES_TABLE . " (event_id, event_cost, surcharge, surcharge_type, price_type, member_price, member_price_type) VALUES ('" . $event_id . "', '" . $v . "', '" . $_REQUEST['surcharge'][$k] . "', '" . $_REQUEST['surcharge_type'][$k] . "', '" . $price_type . "', '" . $member_price . "', '" . $member_price_type . "')";
-						//echo "$sql_prices <br>";
-						$wpdb->query($sql_prices);
-					}
-				}
-			} else {
-				$sql_price = "INSERT INTO " . EVENTS_PRICES_TABLE . " (event_id, event_cost, surcharge, price_type, member_price, member_price_type) VALUES ('" . $event_id . "', '0.00', '0.00', '" . __('Free', 'event_espresso') . "', '0.00', '" . __('Free', 'event_espresso') . "')";
-				if (!$wpdb->query($sql_price)) {
-					$error = true;
-				}
-			}
-*/
 			############# MailChimp Integration ###############
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpController::update_event_list_rel($event_id);

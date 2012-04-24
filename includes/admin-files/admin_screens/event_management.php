@@ -81,7 +81,7 @@ function espresso_event_editor_event_options_meta_box($event) {
 				<span class="question">[?]</span>
 			</a>
 		</label>
-		<?php echo select_input('event_status', $event_status_values, $event->event_status, '', '', false); ?>
+		<?php echo select_input('new_event_status', $event_status_values, $event->event_status, '', '', false); ?>
 	</p>
 	<p>
 		<label><?php _e('Display  Description', 'event_espresso'); ?></label>
