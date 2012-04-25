@@ -491,7 +491,6 @@ function espresso_event_editor_pricing_metabox($event) {
                   <?php echo ($PRT->type[$price->type()]->is_discount()) ? 'Yes' : ''; ?> 
               </td> 
               <td class="check-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
-                    <?php $checked = $EVP->is_price_active_for_event($price->ID(), $event->id) ? 'checked="checked" ' : ''; ?> 
                   <input name="price[<?php echo $row;?>][active][<?php echo $price->ID();?>]" type="checkbox" title="Activate Price <?php echo $price->name() . '"' . $checked;?>/> 
                   <input type="hidden" name="price[<?php echo $row;?>][PRC_ID]" value="<?php echo $price->ID();?>"/> 
               </td>
