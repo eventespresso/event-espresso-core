@@ -1,86 +1,5 @@
 <?php
 
-function event_espresso_timereg_editor($event_id = 0) {
-	global $wpdb;
-	$time_counter = 1;
-
-	$timesx = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
-
-	if (!$wpdb->num_rows > 0) {
-		$time = new stdClass;
-		$time->registration_startT = 0;
-		$time->registration_endT = 0;
-		$timesx = array($time);
-	}
-
-	foreach ($timesx as $timex) {
-		?>
-		<div style="width:66%;">
-			<div id="event-time-<?php echo $time_counter; ?>">
-				<table class="form-table">
-					<tr valign="top">
-						<td scope="row" style="width:115px;">
-							<label for="add-reg-start-<?php echo $time_counter; ?>"><?php _e('Start Time', 'event_espresso'); ?></label>
-						</td>
-						<td>
-							<input id="add-reg-start-time-<?php echo $time_counter; ?>" name="registration_startT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_startT, get_option('time_format')); ?>" />
-						</td>
-					</tr>
-					<tr valign="top">
-						<td scope="row" style="width:115px;">
-							<label for="add-reg-end-<?php echo $time_counter; ?>"><?php _e('End Time', 'event_espresso'); ?></label>
-						</td>
-						<td>
-							<input id="add-reg-end-time-<?php echo $time_counter; ?>" name="registration_endT[]" type="text" class="medium-text" value="<?php echo event_date_display($time->registration_endT, get_option('time_format')); ?>" />
-						</td>
-					</tr>
-				</table>
-				<br/>
-			</div>
-		</div>
-		<br class="clear"/>
-		<?php
-	}
-}
-
-function event_espresso_time_editor($event_id = 0) {
-
-	global $wpdb, $org_options;
-
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$time_counter = 1;
-	//echo get_option('time_format');
-
-	$times = $wpdb->get_results("SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE event_id = '" . $event_id . "' ORDER BY id");
-
-	if (!$wpdb->num_rows > 0) {
-		$time = new stdClass;
-		$time->start_time = 0;
-		$time->end_time = 0;
-		$time->reg_limit = NULL;
-		$times = array($time);
-	}
-	foreach ($times as $time) {
-		?>
-
-
-
-		<?php
-		$time_counter++;
-	} // end foreach ($times as $time)
-
-	$time_counter--;
-}
-
-function event_espresso_multi_price_update($event_id) {
-	global $wpdb, $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$price_counter = 1;
-	$sql = "SELECT prc.PRC_ID, prc.PRC_name, prt.PRT_order, prc.PRC_amount, prt.PRT_name, prt.PRT_is_percent, prt.PRT_is_tax, ep.EVT_ID FROM " . ESP_PRICE_TYPE . " prt";
-	$sql .= " JOIN " . ESP_PRICE_TABLE . " prc ON prc.PRT_ID=prt.PRT_ID";
-	$sql .= " JOIN " . ESP_EVENT_PRICE_TABLE . " ep ON ep.PRC_ID=prc.PRC_ID";
-	$prices = $wpdb->get_results($sql);
-}
 
 function espresso_event_editor_quick_overview_meta_box($event) {
 	?>
@@ -141,9 +60,7 @@ function espresso_event_editor_quick_overview_meta_box($event) {
 }
 
 function espresso_event_editor_primary_questions_group_meta_box($event) {
-	global $wpdb;
 	$question_groups = $event->question_groups;
-	$event_id = $event->id;
 	?>
 	<div class="inside">
 		<p><strong>
@@ -165,9 +82,7 @@ function espresso_event_editor_primary_questions_group_meta_box($event) {
 			$html = '';
 			foreach ($event->q_groups as $question_group) {
 				$question_group_id = $question_group->id;
-				$question_group_description = $question_group->group_description;
 				$group_name = $question_group->group_name;
-				//$checked = $question_group->system_group == 1 ? ' checked="checked" ' : '';
 				$checked = (is_array($question_groups) && array_key_exists($question_group_id, $question_groups)) || $question_group->system_group == 1 ? ' checked="checked" ' : '';
 				$visibility = $question_group->system_group == 1 ? 'style="visibility:hidden"' : '';
 				$group_id = isset($group_id) ? $group_id : '';
@@ -202,6 +117,9 @@ function espresso_event_editor_categories_meta_box($event) {
 		$event_categories = $wpdb->get_results($sql);
 		$num_rows = $wpdb->num_rows;
 		if ($num_rows > 0) {
+			if ($num_rows > 10) {
+				echo '<div style="height:250px;overflow:auto;">';
+			}
 			foreach ($event_categories as $category) {
 				$category_id = $category->id;
 				$category_name = $category->category_name;
@@ -212,7 +130,6 @@ function espresso_event_editor_categories_meta_box($event) {
 				}
 				if (empty($in_event_category))
 					$in_event_category = '';
-				ob_start();
 				?>
 				<p id="event-category-<?php echo $category_id; ?>">
 					<label for="in-event-category-<?php echo $category_id; ?>" class="selectit">
@@ -221,20 +138,10 @@ function espresso_event_editor_categories_meta_box($event) {
 					</label>
 				</p>
 				<?php
-				$html = ob_get_contents();
-				ob_end_clean();
 			}
 			if ($num_rows > 10) {
-				ob_start();
-				?>
-				<div style="height:250px;overflow:auto;">
-					<?php echo $html; ?>
-				</div>
-				<?php
-				$html = ob_get_contents();
-				ob_end_clean();
+				echo '</div>';
 			}
-			echo $html;
 		} else {
 			_e('No Categories', 'event_espresso');
 		}
@@ -302,7 +209,7 @@ function espresso_event_editor_desc_div($event) {
 			 */
 			//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
 			//the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
-			the_editor(espresso_admin_format_content($event->event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+			wp_editor(espresso_admin_format_content($event->event_desc), 'event_desc');
 		}
 		?>
 		<table id="post-status-info" cellspacing="0">
@@ -319,7 +226,7 @@ function espresso_event_editor_desc_div($event) {
 
 function espresso_event_editor_date_time_metabox($event) {
 
-	global $wpdb, $org_options, $espresso_premium;
+	global $org_options, $espresso_premium;
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -429,6 +336,9 @@ function espresso_event_editor_date_time_metabox($event) {
 				<tr valign="top" id="reg-dates-and-times-row-<?php echo $row; ?>">
 					<td>
 						<input id="registration_start" name="registration_start" type="text" class="medium-text datepicker" value="<?php echo $reg_time->start_date() ?>" />
+						<?php if ($reg_time->ID()) { ?>
+							<input id="ID-<?php echo $row; ?>" name="registration_id" type="hidden" value="<?php echo $reg_time->ID(); ?>" />
+						<?php } ?>
 					</td>
 					<td>
 						<input id="registration_end" name="registration_end" type="text" class="medium-text datepicker" value="<?php echo $reg_time->end_date() ?>" />
@@ -440,6 +350,7 @@ function espresso_event_editor_date_time_metabox($event) {
 						<input id="add-reg-end-time-<?php echo $row; ?>" name="registration_endT" type="text" class="medium-text time-picker" value="<?php echo $reg_time->end_time(); ?>" />
 					</td>
 				</tr>
+				<?php $row++; ?>
 			<?php endforeach; // $reg_times  ?>
 		</table>
 
@@ -470,7 +381,7 @@ function espresso_event_editor_date_time_metabox($event) {
 
 function espresso_event_editor_pricing_metabox($event) {
 
-	global $espresso_premium, $org_options;
+	global $org_options;
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	$PRT = EEM_Price_Type::instance();
@@ -484,13 +395,13 @@ function espresso_event_editor_pricing_metabox($event) {
 	$prices = $PRC->get_all_event_prices_for_admin($event->id);
 	//echo printr( $prices, '$prices' );
 
-	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', '');
+	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', 'event_editor_pricing');
 	?>
 
 
 	<div id="ticket-prices-dv" class="inside">
 
-	<table class="event_editor_pricing">
+	<table class="<?php echo $table_class; ?>">
 		<thead>
 			<tr>
 				<td style="width:3%; text-align:center;"><b><?php _e('Order'); ?></b></td>
@@ -550,32 +461,34 @@ function espresso_event_editor_pricing_metabox($event) {
 				<td style="width:5%; text-align:center;"><b><?php _e('Active?'); ?></b></td>
 			</tr>
 		</thead>
-		<?php foreach ($prices as $is_active_and_price_object) :
+		<?php
+		$row = 1;
+		foreach ($prices as $is_active_and_price_object) :
 			$checked = ($is_active_and_price_object['active']) ? 'checked="checked"' : '';
 			$price = $is_active_and_price_object['price']; ?>
 			<tr>
-                <td class="amount-column" style="width:3%; height:2.5em; vertical-align:top; text-align:center;"> 
+                <td class="order-column" style="width:3%; height:2.5em; vertical-align:top; text-align:center;"> 
                   <?php echo $PRT->type[$price->type()]->order(); ?>             
               </td> 
               <td class="name-column" style="width:15%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
                   <?php echo $price->name(); ?> 
               </td> 
-              <td class="amount-column" style="width:17.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
+              <td class="type-column" style="width:17.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
                   <?php echo $PRT->type[$price->type()]->name(); ?> 
               </td> 
-              <td class="name-column" style="width:39.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
+              <td class="desc-column" style="width:39.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
                   <?php echo $price->desc(); ?> 
               </td> 
               <td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
                   <?php echo ($PRT->type[$price->type()]->is_percent()) ? $price->amount() . '%' : $org_options['currency_symbol'] . $price->amount(); ?> 
               </td> 
-              <td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
+              <td class="percent-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
                   <?php echo ($PRT->type[$price->type()]->is_percent()) ? 'Yes' : ''; ?> 
               </td> 
-                <td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
+                <td class="member-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
                   <?php echo ($PRT->type[$price->type()]->is_member()) ? 'Yes' : ''; ?> 
               </td> 
-              <td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
+              <td class="discount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
                   <?php echo ($PRT->type[$price->type()]->is_discount()) ? 'Yes' : ''; ?> 
               </td> 
               <td class="check-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
@@ -585,6 +498,7 @@ function espresso_event_editor_pricing_metabox($event) {
               </td>
 			</tr>
 			<?php
+			$row++;
 		endforeach;
 		?>
 	</table>
