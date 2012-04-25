@@ -235,11 +235,11 @@ function espresso_event_editor_date_time_metabox($event) {
 
 	// grab event times
 	if (!$times = $DTM->get_all_event_dates($event->id)) {
-		$times = array(new EE_Datetime($event->id, time(), time() + (60 * 60 * 24 * 30), 'E', NULL));
+		$times = array(new EE_Datetime($event->id, true, time(), time() + (60 * 60 * 24 * 30), 'E', NULL));
 	}
 	// grab reg times
 	if (!$reg_times = $DTM->get_all_reg_dates($event->id)) {
-		$reg_times = array(new EE_Datetime($event->id, time(), time() + (60 * 60 * 24 * 30), 'R', NULL));
+		$reg_times = array(new EE_Datetime($event->id, true, time(), time() + (60 * 60 * 24 * 30), 'R', NULL));
 	}
 	?>
 
@@ -258,7 +258,6 @@ function espresso_event_editor_date_time_metabox($event) {
 				<?php if ($org_options['time_reg_limit']) : ?>
 					<td><?php echo __('Reg Limit', 'event_espresso') ?></td>
 				<?php endif; // time_reg_limit   ?>
-				<td></td>
 			</tr>
 			<?php $row = 1; ?>
 			<?php foreach ($times as $time) : ?>
