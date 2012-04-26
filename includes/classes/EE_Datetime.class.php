@@ -55,7 +55,7 @@ class EE_Datetime {
 	*	@access	private
     *	@var int	
     */
-	private $_DTT_is_primary;
+	private $_DTT_is_primary = NULL;
 	
 	
 	
@@ -157,17 +157,23 @@ class EE_Datetime {
 		
 		$time_format = get_option('time_format');
 		$this->_tm_frmt = $time_format ? $time_format : 'g:i a';
-		
-		$DTT_start = is_numeric( $DTT_start ) ? $DTT_start : strtotime( $DTT_start );
-		$DTT_end = is_numeric( $DTT_end ) ? $DTT_end : strtotime( $DTT_end );		
-		
-		$this->_EVT_ID = $EVT_ID;
+
+		$DTT_start = is_numeric( $DTT_start ) ? absint( $DTT_start ) : strtotime( wp_strip_all_tags( $DTT_start ));
+		$DTT_end = is_numeric( $DTT_end ) ? absint( $DTT_end ) : strtotime( wp_strip_all_tags( $DTT_end ));		
+		$DTT_is_primary = absint( $DTT_is_primary ) ? TRUE : FALSE;
+
+//echo '<h2>' . __FUNCTION__ . ' - line no: ' . __LINE__ . '</h4>';
+//echo '<h4>$DTT_start TIMESTAMP : ' .$DTT_start . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>$EVT_ID : ' . $EVT_ID . '   $DTT_start : ' . date( 'D, M d, Y ' . $this->_tm_frmt, $DTT_start ) . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4><br/>';
+
+		$this->_EVT_ID = absint( $EVT_ID );
 		$this->_DTT_is_primary = $DTT_is_primary;
 		$this->_DTT_start = $DTT_start;
 		$this->_DTT_end = $DTT_end;
-		$this->_DTT_event_or_reg = $DTT_event_or_reg;
-		$this->_DTT_reg_limit = $DTT_reg_limit;
-		$this->_DTT_ID = $DTT_ID;
+		$this->_DTT_event_or_reg = wp_strip_all_tags( $DTT_event_or_reg );
+		$this->_DTT_reg_limit = absint( $DTT_reg_limit );
+		$this->_DTT_ID = absint( $DTT_ID );
+
 	}
 
 
@@ -302,9 +308,7 @@ class EE_Datetime {
 		
 		if( $start ) {
 			// get existing event start time
-			if ( $event_time = $this->_start_time() ) {
-				$event_time = date ( $this->_tm_frmt, $event_time );
-			} else {
+			if ( ! $event_time = $this->_start_time() ) {
 				// or if no time is set, use 1 second after midnight
 				$event_time = '00:00:01';
 			}
@@ -312,9 +316,7 @@ class EE_Datetime {
 
 		} else {
 			// get existing event end time
-			if ( $event_time = $this->_end_time() ) {
-				$event_time = date ( $this->_tm_frmt, $event_time );
-			} else {
+			if ( ! $event_time = $this->_end_time() ) {
 				// or if no time is set, use 1 second after midnight
 				$event_time = '23:59:59';
 			}
@@ -349,22 +351,20 @@ class EE_Datetime {
 		
 		if( $start ) {
 			// get existing event date
-			if ( $event_date = $this->_start_date() ) {
-				$event_date = date ( $this->_dt_frmt, $event_date );
-			} else {
+			if ( ! $event_date = $this->_start_date() ) {
 				// or if no date is set, then use RIGHT NOW!!!!
 				$event_date = date( $this->_dt_frmt, time());
 			}
 			$this->_DTT_start = strtotime( $event_date . ' ' . $event_time );
+			
 		} else {
 			// get existing event date
-			if ( $event_date = $this->_end_date() ) {
-				$event_date = date ( $this->_dt_frmt, $event_date );
-			} else {
+			if ( ! $event_date = $this->_end_date() ) {
 				// or if no date is set, then use RIGHT NOW!!!!
 				$event_date = date( $this->_dt_frmt, time());
 			}
-			$this->_DTT_endt = strtotime( $event_date . ' ' . $event_time );			
+			$this->_DTT_end = strtotime( $event_date . ' ' . $event_time );	
+					
 		}
 		
 	}
@@ -484,6 +484,42 @@ class EE_Datetime {
 		}
 	}
 
+
+
+
+
+	/**
+	*		whether this is the primary datetime for the event or registration
+	* 
+	* 		@access		public		
+	*		@return 		bool		bool on success, FALSE on fail
+	*/	
+	public function is_primary() {
+	
+		if ( is_bool( $this->_DTT_is_primary )) {
+			return $this->_DTT_is_primary ? TRUE : FALSE;
+		} else {
+			return 'NOT SET';
+		}
+	}
+
+
+
+
+	
+	/**
+	*  get Datetime Eventtime or Regtime
+	* 
+	*   @access  public  
+	*  @return   mixed  string on success, FALSE on fail, defaults to 0
+	*/ 
+	public function event_or_reg() {
+		if (isset($this->_DTT_event_or_reg)) {
+			return $this->_DTT_event_or_reg;
+		} else {
+			return FALSE;
+		}
+	}
 
 
 

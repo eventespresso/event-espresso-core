@@ -70,6 +70,9 @@ function event_espresso_edit_list() {
 				<tbody>
 					<?php
 					$events = $wpdb->get_results($sql);
+					//echo $wpdb->last_query;
+					//echo printr( $events, '$events' );
+					
 					foreach ($events as $event) {
 						do_action('action_hook_espresso_event_list_entry', $event);
 					}
@@ -316,7 +319,7 @@ function espresso_event_list_entry($event) {
 	$DTM = EEM_Datetime::instance();
 
 	// grab reg times
-	$reg_time = array_shift($DTM->get_primary_reg_date_for_event($event_id));
+	$reg_time = array_shift( $DTM->get_primary_reg_date_for_event( $event_id ));
 	$reg_start = $reg_time->start();
 
 	$registration_start = isset($reg_start) ? $reg_start : '';
@@ -334,19 +337,39 @@ function espresso_event_list_entry($event) {
 
 		<td class="column-comments" style="padding-top:3px;"><?php echo $event_id ?></td>
 
-		<td class="post-title page-title"><strong><a class="row-title" href="admin.php?page=events&action=edit_event&event_id=<?php echo $event_id ?>"><?php echo $event_name ?></a> <?php echo ($recurrence_id > 0) ? $recurrence_icon : ''; ?> </strong>
-			<div class="row-actions"><span><a href="<?php echo espresso_reg_url($event_id, $event_slug); ?>" target="_blank"><?php _e('View', 'event_espresso'); ?></a> | </span><span class='edit'><a href="admin.php?page=events&amp;action=edit_event&amp;event_id=<?php echo $event_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span><span class='delete'><a onclick="return confirmDelete();" href='admin.php?page=events&amp;action=delete&amp;event_id=<?php echo $event_id ?>'><?php _e('Delete', 'event_espresso'); ?></a></span> | <span><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php _e('Attendees', 'event_espresso'); ?></a> | </span><span><a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $event_id . "&amp;export=report&action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export', 'event_espresso'); ?></a></span></div></td>
+		<td class="post-title page-title">
+			<strong>
+				<a class="row-title" href="admin.php?page=events&action=edit_event&event_id=<?php echo $event_id ?>"><?php echo $event_name ?></a> 
+				<?php echo ($recurrence_id > 0) ? $recurrence_icon : ''; ?> 
+			</strong>
+			
+			<div class="row-actions">
+				<span>
+					<a href="<?php echo espresso_reg_url($event_id, $event_slug); ?>" target="_blank"><?php _e('View', 'event_espresso'); ?></a> | </span>
+				<span class='edit'>
+					<a href="admin.php?page=events&amp;action=edit_event&amp;event_id=<?php echo $event_id ?>"><?php _e('Edit', 'event_espresso'); ?></a> | </span>
+				<span class='delete'>
+					<a onclick="return confirmDelete();" href='admin.php?page=events&amp;action=delete&amp;event_id=<?php echo $event_id ?>'><?php _e('Delete', 'event_espresso'); ?></a></span> | 
+				<span>
+					<a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php _e('Attendees', 'event_espresso'); ?></a> | </span>
+				<span>
+					<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $event_id . "&amp;export=report&action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export', 'event_espresso'); ?></a>
+				</span>
+			</div>
+		</td>
 
-		<td class="author"><?php
-		echo $venue_title != '' ? $venue_title : '';
-		echo $venue_locale != '' ? '<br />[' . $venue_locale . ']' : '';
-			?></td>
+		<td class="author">
+			<?php
+				echo $venue_title != '' ? $venue_title : '';
+				echo $venue_locale != '' ? '<br />[' . $venue_locale . ']' : '';
+			?>
+		</td>
 
 		<td class="author"><?php echo date('D, M d, Y', $start_date) ?></td>
 
-		<td class="author"><?php echo date(get_option('time_format'), $start_date) ?></td>
+		<td class="author"><?php echo date( get_option('time_format'), $start_date) ?></td>
 
-		<td class="date"><?php echo date('D, M d, Y  @  G:i a', $registration_start); ?> <?php //echo $registration_startT    ?></td>
+		<td class="date"><?php echo date('D, M d, Y  @  g:i a', $registration_start); ?> <?php //echo $registration_startT    ?></td>
 
 		<td class="date"><?php echo $status['display'] == 'OPEN' ? '<span style="color:green;"><b>' . $status['display'] . '</b></span>' : $status['display']; ?></td>
 
@@ -360,40 +383,66 @@ function espresso_event_list_entry($event) {
 			if (function_exists('espresso_manager_pro_version')) {
 				$orig_user = $event_meta['originally_submitted_by'];
 				?>
-				<td class="date"><?php echo espresso_user_meta($orig_user, 'user_firstname') != '' ? espresso_user_meta($orig_user, 'user_firstname') . ' ' . espresso_user_meta($orig_user, 'user_lastname') : espresso_user_meta($orig_user, 'display_name'); ?>
+				<td class="date">
+					<?php echo espresso_user_meta($orig_user, 'user_firstname') != '' ? espresso_user_meta($orig_user, 'user_firstname') . ' ' . espresso_user_meta($orig_user, 'user_lastname') : espresso_user_meta($orig_user, 'display_name'); ?>
 					<?php echo $user_co_org != '' ? '<br />[' . espresso_user_meta($orig_user, 'company') . ']' : ''; ?>
 				</td>
 				<?php
 				$wp_user = $wp_user != $orig_user ? $wp_user : $orig_user;
 			}
 			?>
-			<td class="date"><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?>
+			<td class="date">
+				<?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?>
 				<?php echo $user_co_org != '' ? '<br />[' . espresso_user_meta($wp_user, 'company') . ']' : ''; ?>
 			</td>
 		<?php } ?>
 
-		<td class="author"><a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>"><?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees_slash_reg_limit'); ?></a>
+		<td class="author">
+			<a href="admin.php?page=attendees&amp;event_admin_reports=list_attendee_payments&amp;event_id=<?php echo $event_id ?>">
+			<?php echo get_number_of_attendees_reg_limit($event_id, 'num_attendees_slash_reg_limit'); ?></a>
 		</td>
 
-		<td class="date"><div style="width:180px;"><a href="<?php echo espresso_reg_url($event_id, $event_slug); ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank"><div class="view_btn"></div></a>
+		<td class="date">
+			<div style="width:180px;">
+			
+				<a href="<?php echo espresso_reg_url($event_id, $event_slug); ?>" title="<?php _e('View Event', 'event_espresso'); ?>" target="_blank">
+					<div class="view_btn"></div>
+				</a>
 
-				<a href="admin.php?page=events&amp;action=edit_event&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Event', 'event_espresso'); ?>"><div class="edit_btn"></div></a>
+				<a href="admin.php?page=events&amp;action=edit_event&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Edit Event', 'event_espresso'); ?>">
+					<div class="edit_btn"></div>
+				</a>
 
-				<a href="admin.php?page=attendees&amp;event_id=<?php echo $event_id ?>&amp;event_admin_reports=list_attendee_payments" title="<?php _e('View Attendees', 'event_espresso'); ?>"><div class="complete_btn"></div></a>
-				<a href="admin.php?page=attendees&event_admin_reports=charts&event_id=<?php echo $event_id ?>" title="<?php _e('View Report', 'event_espresso'); ?>"><div class="reports_btn"></div></a>
+				<a href="admin.php?page=attendees&amp;event_id=<?php echo $event_id ?>&amp;event_admin_reports=list_attendee_payments" title="<?php _e('View Attendees', 'event_espresso'); ?>">
+					<div class="complete_btn"></div>
+				</a>
+				
+				<a href="admin.php?page=attendees&event_admin_reports=charts&event_id=<?php echo $event_id ?>" title="<?php _e('View Report', 'event_espresso'); ?>">
+					<div class="reports_btn"></div>
+				</a>
 
+				<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_<?php echo $event_id ?>" title="<?php _e('Get Short URL/Shortcode', 'event_espresso'); ?>">
+					<div class="shortcode_btn"></div>
+				</a>
 
-				<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=unique_id_info_<?php echo $event_id ?>" title="<?php _e('Get Short URL/Shortcode', 'event_espresso'); ?>"><div class="shortcode_btn"></div></a>
+				<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;event_id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>">
+					<div class="excel_exp_btn"></div>
+				</a>
 
-				<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;event_id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=excel"; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><div class="excel_exp_btn"></div></a>
+				<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;event_id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=csv"; ?>'" title="<?php _e('Export to CSV', 'event_espresso'); ?>">
+					<div class="csv_exp_btn"></div>
+				</a>
 
-				<a href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?page=events&amp;event_id=" . $event_id . "&amp;export=report&amp;action=payment&amp;type=csv"; ?>'" title="<?php _e('Export to CSV', 'event_espresso'); ?>"><div class="csv_exp_btn"></div></a>
-
-				<a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Email Attendees', 'event_espresso'); ?>"><div class="newsletter_btn"></div></a></div>
+				<a href="admin.php?page=attendees&amp;event_admin_reports=event_newsletter&amp;event_id=<?php echo $event_id ?>" title="<?php _e('Email Attendees', 'event_espresso'); ?>"><div class="newsletter_btn"></div>
+				</a>
+			
+			</div>
 
 			<div id="unique_id_info_<?php echo $event_id ?>" style="display:none">
 				<?php _e('<h2>Short URL/Shortcode</h2><p>This is the short URL to this event:</p><p><span  class="updated fade">' . espresso_reg_url($event_id, $event_slug) . '</span></p><p>This will show the registration form for this event just about anywhere. Copy and paste the following shortcode into any page or post.</p><p><span  class="updated fade">[SINGLEEVENT single_event_id="' . $event_identifier . '"]</span></p> <p class="red_text"> Do not use in place of the main events page that is set in the Organization Settings page.', 'event_espresso'); ?>
-			</div></td>
+			</div>
+			
+		</td>
 	</tr>
 	<?php
 //echo $_REQUEST['event_status'];

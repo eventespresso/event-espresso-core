@@ -399,6 +399,17 @@ class EEM_Datetime extends EEM_Base {
 
 
 
+	public function delete_datetime( $DTT_ID = FALSE ) {
+		if ( ! $DTT_ID ) {
+			return FALSE;
+		}
+		return $this->delete( array( 'DTT_ID' => $DTT_ID ));
+	}
+
+
+
+
+
 	public function delete_all_event_datetimes( $EVT_ID = FALSE ) {
 		if ( ! $EVT_ID ) {
 			return FALSE;
@@ -470,12 +481,12 @@ class EEM_Datetime extends EEM_Base {
 	 */
 	public function update ($set_column_values, $where_cols_n_values) {
 
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
+		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, '$where_cols_n_values' => $where_cols_n_values ) );
 
 		global $espresso_notices;
 
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where );
+		$results = $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {

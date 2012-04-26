@@ -161,7 +161,7 @@ class EE_Price {
 		$this->_PRC_name				= wp_strip_all_tags($PRC_name);
 		$this->_PRC_desc					= wp_strip_all_tags($PRC_desc);
 		$this->_PRC_use_dates			= (bool)absint( $PRC_use_dates );
-		$this->_PRC_disc_code			= wp_strip_all_tags( $PRC_disc_code );
+		$this->_PRC_disc_code			= $PRC_disc_code != NULL ? wp_strip_all_tags( $PRC_disc_code ): NULL;
 		$this->_PRC_disc_limit_qty	= (bool)absint( $PRC_disc_limit_qty );
 		$this->_PRC_disc_qty			= absint( $PRC_disc_qty );
 		$this->_PRC_disc_apply_all	= (bool)absint( $PRC_disc_apply_all );

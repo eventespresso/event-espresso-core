@@ -595,23 +595,24 @@ abstract class EEM_Base {
 		global $wpdb;
 		// use $wpdb->insert because it automagically escapes and sanitizes data for us
 		$row_results = $wpdb->insert( $em_table_name, $em_updata, $em_upformat);
-
+		
+		$update_results['new-ID'] = array();
 //		echo $wpdb->last_query;
 
 		// set generic success / error mesasges
 		if ( $row_results == 1 ) {
 			// one row was successfully updated
 			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully created.', 'rows' => $row_results );
+			$update_results['new-ID'] = $wpdb->insert_id;
 		}
 		elseif ( $row_results > 1 ) {
 			// multiple rows were successfully updated
 			$update_results = array( 'type' =>  'updated', 'msg' => $results.' records have been successfully created.', 'rows' => $row_results );
+			$update_results['new-ID'][] = $wpdb->insert_id;
 		} else {
 			// no result means an error occured
 			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not created.', 'rows' => 0 );
 		}
-
-		$update_results['new-ID'] = $wpdb->insert_id;
 
 		return $update_results;
 
@@ -630,15 +631,15 @@ abstract class EEM_Base {
 	 *		This function updates tables using $wpdb->update
 	 *
 	 *		@access private
-	 *		@param string $em_table_name
-	 *		@param array $set_cols_n_values - array of column names and values for the SQL SET clause
-	 *		@param array $em_table_data_types - ALL of the columns in the table and their corresponding data types
-	 *		@param array $where_cols_n_values - column names and values for the SQL WHERE clause
+	 *		@param string 	$em_table_name
+	 *		@param array 	$em_table_data_types  	ALL of the columns in the table and their corresponding data types
+	 *		@param array 	$set_cols_n_values 		array of column names and values for the SQL SET clause
+	 *		@param array 	$where_cols_n_values 	column names and values for the SQL WHERE clause
 	 *		@return array
 	 */
 	protected function _update( $em_table_name=FALSE, $em_table_data_types=array(), $set_cols_n_values=array(), $where_cols_n_values=array() ) {
 
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where_cols_n_values ) );
+		//$this->display_vars( __FUNCTION__, array( 'em_table_data_types' => $em_table_data_types, '$set_cols_n_values' => $set_cols_n_values, '$where_cols_n_values' => $where_cols_n_values ) );
 
 		global $espresso_notices;
 
@@ -706,6 +707,9 @@ abstract class EEM_Base {
 		} else {
 			// no result means an error occured
 			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not updated.', 'rows' => 0 );
+			global $espresso_notices;
+			$wpdb->hide_errors();
+			$espresso_notices['errors'][] = $wpdb->print_error();
 		}
 
 		return $update_results;
@@ -950,33 +954,37 @@ abstract class EEM_Base {
 					$file = $code_bit[ count($code_bit)-1 ];
 					// folder is the second to the last segment
 					$folder = $code_bit[ count($code_bit)-2 ];
-					// remove the mvc- from the folder
-					$folder = str_replace ( 'mvc-', '', $folder );
 					//change all dashes to underscores
 					$folder = str_replace ( '-', '_', $folder );
+					//strip vowels
+					$folder = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), array( '', '', '', '', '', '', '', '', '', '',  ), $folder );
 					// break it up by the _
 					$folder_bits = explode( '_', $folder);
 					$folder = '';
 					foreach ( $folder_bits as $folder_bit ) {
 						// grab the first 2 characters from each word
-						$folder .= substr($folder_bit, 0, 2);
+						$folder .= substr($folder_bit, 0, 3);
 					}
 					$error_code .= $folder . '-';
 
 					// break filename by the dots - to get at the first bit
 					$code_bit = explode('.', $file);
-					// remove EE_ from the folder name
+					// remove EE_ from the filename
 					$code_bit = str_replace ( 'EE_', '', $code_bit[0] );
+					// and EEM_ 
+					$code_bit = str_replace ( 'EEM_', '', $code_bit );
 					// remove all non-alpha characters
 					$code_bit = preg_replace( '[A-Za-z]', '', $code_bit );
 					//change all dashes to underscores
 					$file = str_replace ( '-', '_', $code_bit );
+					//strip vowels
+					$file = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), array( '', '', '', '', '', '', '', '', '', '',  ), $file );
 					// break it up by the _
 					$file_bits = explode( '_', $file);
 					$file = '';
 					foreach ( $file_bits as $file_bit ) {
 						// grab the first 2 characters from each word
-						$error_code .= substr($file_bit, 0, 2);
+						$error_code .= substr($file_bit, 0, 3);
 					}
 					$error_code .= '-';
 
@@ -990,7 +998,7 @@ abstract class EEM_Base {
 					$func = '';
 					$x = 0;
 					foreach ( $func_bits as $func_bit ) {
-						$error_code .= substr($func_bit, 0, 2);
+						$error_code .= substr($func_bit, 0, 3);
 					}
 					// convert to uppercase
 					$error_code = strtoupper( $error_code ) . '-';
@@ -1063,14 +1071,14 @@ abstract class EEM_Base {
 
 
 
-	private function display_vars( $method, $vars_array ) {
+	protected function display_vars( $method, $vars_array ) {
 
 		echo '<h1>Class: '.get_class($this).'</h1>';
 		echo '<h2>Method: '.$method.'</h2>';
-		echo '<h3>TABLE : ' . self::$table_name . '</h3>';
+		echo '<h3>TABLE : ' . $this->table_name . '</h3>';
 
 		foreach ( $vars_array as $var => $var_array ) {
-			echo '<h4> ' . self::$table_name . ' '.$var.'</h4>';
+			echo '<h4> ' . $this->table_name . ' ' . $var.'</h4>';
 			echo '<pre>';
 			echo print_r($var_array);
 			echo '</pre>';

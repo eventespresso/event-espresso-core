@@ -469,8 +469,8 @@ class EEM_Price extends EEM_Base {
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $EVT_ID))) {
 			foreach ($prices as $price) {
-				$active = !empty($price->EPR_is_active) ? TRUE : FALSE;
-				$array_of_is_active_and_price_objects[] = array('active'=>$active, 'price'=>array_shift($this->_create_objects($price)));
+				$active = ! empty( $price->EPR_is_active ) ? TRUE : FALSE;
+				$array_of_is_active_and_price_objects[ $price->PRT_ID ][] = array( 'active'=>$active, 'price'=>array_shift( $this->_create_objects( $price )));
 			}
 			return $array_of_is_active_and_price_objects;
 		} else {

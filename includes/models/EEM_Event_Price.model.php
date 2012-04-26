@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * Event - Price Model
  *
- * @package				Event Espresso
+ * @package			Event Espresso
  * @subpackage		includes/models/EEM_Event_Price.model.php
  * @author				Sidney Harrell
  *
@@ -281,6 +281,9 @@ class EEM_Event_Price extends EEM_Base {
 
 		return $results['rows'];
 	}
+	
+	
+	
 
 	public function delete_by_event_id ($EVT_ID=FALSE) {
 		if (!$EVT_ID) {
