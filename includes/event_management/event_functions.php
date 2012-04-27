@@ -421,7 +421,7 @@ function espresso_event_editor_pricing_metabox($event) {
 	if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 		$show_no_event_price_msg = TRUE;
 	}
-	echo printr( $all_prices, '$all_prices' );
+	//echo printr( $all_prices, '$all_prices' );
 
 	foreach ($PRT->type as $type) {
 		$all_price_types[] = array('id' => $type->ID(), 'text' => $type->name());
@@ -468,7 +468,7 @@ function espresso_event_editor_pricing_metabox($event) {
 				<td colspan="6">
 					<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price hidden" style="padding:5px 10px 10px; margin:10px 0 20px; background:#fcfcfc; border:1px solid #eee; border-radius:5px;">
 						<h6><?php _e('Edit : ', 'event_espresso'); ?><?php echo $price->name(); ?></h6>
-						<?php echo printr( $price, '$price' ); ?>
+						<?php //echo printr( $price, '$price' ); ?>
 						<table class="form-table">
 							<tbody>
 							

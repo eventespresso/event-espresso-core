@@ -466,7 +466,7 @@ class EEM_Price extends EEM_Base {
 		global $wpdb;
 		// retreive prices
 		$SQL = 'SELECT  prc.*, prt.* ';
-		$SQL .= 'JOIN ' . $this->table_name . ' prc ON evp.PRC_ID = prc.PRC_ID ';
+		$SQL .= 'FROM ' . $this->table_name . ' prc ';
 		$SQL .= 'JOIN ' . $wpdb->prefix . 'esp_price_type prt ON prt.PRT_ID = prc.PRT_ID ';
 		$SQL .= 'WHERE ( prc.EVT_ID = %d OR ( prt.PRT_is_global = TRUE AND prc.PRC_is_active = TRUE )) ';
 		$SQL .= 'AND prt.PRT_is_tax = FALSE ';
