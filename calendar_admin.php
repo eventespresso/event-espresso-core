@@ -282,10 +282,7 @@ function espresso_calendar_config_mnu() {
 											<h4>
 												<?php _e('Theme Settings', 'event_espresso'); ?>
 											</h4>
-											<?php
-											$disabled = !empty($org_options['themeroller']['use_themeroller']) && ($org_options['themeroller']['use_themeroller'] == 'N' || $org_options['themeroller']['use_themeroller'] == '') ? 'disabled="disabled"' : '';
-											$styled = (!empty($disabled) ) ? 'style="color: #ccc;"' : '';
-											?>
+											
 											<table class="form-table">
 												<tbody>
 													<tr>
@@ -297,19 +294,18 @@ function espresso_calendar_config_mnu() {
 													</tr>
 													<tr class="color-picker-selections">
 														<th class="color-picker-style"> <label for="event-background">
-																<?php _e('Event Background - color picker', 'event_espresso') ?>
+																<?php _e('Event Background Color', 'event_espresso') ?>
 															</label>
 														</th>
 														<td><input id="background-color"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background'])) ? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> /><div id="colorpicker-1"></div></td>
 													</tr>
 													<tr class="color-picker-selections">
 														<th class="color-picker-style"> <label for="event-text">
-																<?php _e('Event Text - color picker', 'event_espresso') ?>
+																<?php _e('Event Text Color', 'event_espresso') ?>
 															</label>
 														</th>
 														<td><input id="text-color" type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) ? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> /><div id="colorpicker-2"></div></td>
 													</tr>
-													<tr>
 
 
 													<tr>
@@ -508,7 +504,7 @@ function espresso_calendar_config_mnu() {
 			window.scp = $('select#espresso_use_pickers option:selected').val();
 			window.ect = $('select#enable-calendar-thumbs option:selected').val();
 
-			if(window.scp == 'false'){
+			if(window.scp == ''){
 				$('input#event-background, input#event-text').attr('disabled', true);
 				$('.color-picker-style').attr('style', "opacity: .3");
 				$('tr.color-picker-selections th, tr.color-picker-selections td').attr('style', "opacity: .3");
@@ -529,7 +525,7 @@ function espresso_calendar_config_mnu() {
 			});
 			$('select#espresso_use_pickers').change(function(){
 				window.scp = $('select#espresso_use_pickers option:selected').val();
-				if(window.scp == 'false'){
+				if(window.scp == ''){
 					$('input#event-background, input#event-text').attr('disabled', true);
 					$('tr.color-picker-selections th, tr.color-picker-selections td').attr('style', "opacity: .3");
 				}else {
