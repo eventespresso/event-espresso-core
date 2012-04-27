@@ -44,6 +44,15 @@ class EE_Price {
 
 
 	/**
+	 * Event ID
+	 *
+	 * @access private
+	 * @var int
+	 */
+	private $_EVT_ID = NULL;
+
+
+	/**
 	*	Price amount
 	*
 	*	@access	private
@@ -71,6 +80,15 @@ class EE_Price {
 
 
 	/**
+	*	Registration Limit for this Price Level
+	*
+	*	@access	private
+	*	@var int
+	*/
+	private $_PRC_reg_limit = NULL; 				
+
+
+	/**
 	*	The Promo Code to be entered to receive a discount (or a maybe scoobie snack ?)
 	*
 	*	@access	private
@@ -86,6 +104,24 @@ class EE_Price {
 	*	@var boolean
 	*/
 	private $_PRC_use_dates = NULL;
+
+
+	/**
+	*	If use dates is active, this is when this price becomes active
+	*
+	*	@access	private
+	*	@var int
+	*/
+	private $_PRC_start_date	 = NULL;
+
+
+	/**
+	*	If use dates is active, this is when this price becomes inactive
+	*
+	*	@access	private
+	*	@var int
+	*/
+	private $_PRC_end_date = NULL;
 
 
 	/**
@@ -141,10 +177,14 @@ class EE_Price {
 	*
 	* @access 			public
 	* @param			int		 			$PRT_ID							Price type ID
+	* @param			int		 			$EVT_ID							Event ID
 	* @param			float					$PRC_amount				Price amount
 	* @param			string 				$PRC_name					Price name
 	* @param			string				$PRC_desc						Price description
+	* @param			int					$PRC_reg_limit				Registration Limit for this Price Level
 	* @param	 		bool					$PRC_use_dates				Whether to use dates to control when pricing starts and ends
+	* @param	 		int					$PRC_start_date				If use dates is active, this is when this price becomes active
+	* @param	 		int					$PRC_end_date				If use dates is active, this is when this price becomes inactive
 	* @param	 		bool					$PRC_disc_code				The Promo Code to be entered to receive a discount (or a maybe scoobie snack ?)
 	* @param	 		int					$PRC_disc_limit_qty		Whether to limit the number of discount codes available
 	* @param	 		int					$PRC_disc_qty				The number of discounts available at this price level
@@ -153,20 +193,24 @@ class EE_Price {
 	* @param	 		bool					$PRC_is_active				is the Price globally active
 	* @param			int 					$PRC_ID							Price ID
 	*/
-	public function __construct( $PRT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_use_dates=FALSE, $PRC_disc_code=NULL, $PRC_disc_limit_qty=FALSE, $PRC_disc_qty=0, $PRC_disc_apply_all=TRUE, $PRC_disc_wp_user=0, $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
+	public function __construct( $PRT_ID=NULL, $EVT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_reg_limit=NULL, $PRC_use_dates=FALSE, $PRC_start_date=NULL, $PRC_end_date=NULL, $PRC_disc_code=NULL, $PRC_disc_limit_qty=FALSE, $PRC_disc_qty=0, $PRC_disc_apply_all=TRUE, $PRC_disc_wp_user=0, $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
 	
 		$this->_PRC_ID 						= absint($PRC_ID);
+		$this->_EVT_ID 						= absint($EVT_ID);
 		$this->_PRT_ID						= absint($PRT_ID);
 		$this->_PRC_amount			= abs($PRC_amount);
 		$this->_PRC_name				= wp_strip_all_tags($PRC_name);
 		$this->_PRC_desc					= wp_strip_all_tags($PRC_desc);
-		$this->_PRC_use_dates			= (bool)absint( $PRC_use_dates );
+		$this->_PRC_reg_limit			= is_numeric( $PRC_reg_limit ) ? absint( $PRC_reg_limit ) : NULL;
+		$this->_PRC_use_dates			= absint( $PRC_use_dates ) ? TRUE : FALSE;
+		$this->_PRC_start_date			= is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : NULL;
+		$this->_PRC_end_date			= is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : NULL;
 		$this->_PRC_disc_code			= $PRC_disc_code != NULL ? wp_strip_all_tags( $PRC_disc_code ): NULL;
-		$this->_PRC_disc_limit_qty	= (bool)absint( $PRC_disc_limit_qty );
+		$this->_PRC_disc_limit_qty	= absint( $PRC_disc_limit_qty ) ? TRUE : FALSE;
 		$this->_PRC_disc_qty			= absint( $PRC_disc_qty );
-		$this->_PRC_disc_apply_all	= (bool)absint( $PRC_disc_apply_all );
+		$this->_PRC_disc_apply_all	= absint( $PRC_disc_apply_all ) ? TRUE : FALSE;
 		$this->_PRC_disc_wp_user	= absint( $PRC_disc_wp_user );
-		$this->_PRC_is_active			= (bool)absint( $PRC_is_active );
+		$this->_PRC_is_active			= absint( $PRC_is_active ) ? TRUE : FALSE;
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
@@ -418,10 +462,14 @@ class EE_Price {
 
 		$set_column_values = array(
 				'PRT_ID'						=> $this->_PRT_ID,
+				'EVT_ID'						=> $this->_EVT_ID,
 				'PRC_amount'				=> $this->_PRC_amount,
 				'PRC_name'					=> $this->_PRC_name,
 				'PRC_desc'					=> $this->_PRC_desc,
+				'PRC_reg_limit'			=> $this->_PRC_reg_limit,
 				'PRC_use_dates'			=> $this->_PRC_use_dates,
+				'PRC_start_date'			=> $this->_PRC_start_date,
+				'PRC_end_date'			=> $this->_PRC_end_date,
 				'PRC_disc_code'			=> $this->_PRC_disc_code,
 				'PRC_disc_limit_qty'	=> $this->_PRC_disc_limit_qty,
 				'PRC_disc_qty'				=> $this->_PRC_disc_qty,
@@ -482,6 +530,15 @@ class EE_Price {
 		return $this->_PRT_ID;
 	}
 
+	/**
+	*	get Event ID
+	* @access		public
+	* @return type int
+	*/
+	public function event() {
+		return $this->_EVT_ID;
+	}
+
 
 	/**
 	*	get Price Amount
@@ -514,6 +571,16 @@ class EE_Price {
 
 
 	/**
+	*	get Reg Limit
+	* @access		public
+	* @return type string
+	*/
+	public function reg_limit() {
+		return $this->_PRC_reg_limit;
+	}
+
+
+	/**
 	*	get Price use_dates
 	* @access		public
 	* @return type string
@@ -521,6 +588,27 @@ class EE_Price {
 	public function use_dates() {
 		return $this->_PRC_use_dates;
 	}
+
+
+	/**
+	*	get start date
+	* @access		public
+	* @return type string
+	*/
+	public function start_date() {
+		return $this->_PRC_start_date;
+	}
+
+
+	/**
+	*	get end date
+	* @access		public
+	* @return type string
+	*/
+	public function end_date() {
+		return $this->_PRC_end_date;
+	}
+
 
 
 	/**
