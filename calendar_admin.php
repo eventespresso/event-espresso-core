@@ -46,7 +46,7 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['ee_event_background'] = (!empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : $espresso_calendar['ee_event_background'];
 		$espresso_calendar['ee_event_text_color'] = (!empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : $espresso_calendar['ee_event_text_color'];
 		$espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
-		$espresso_calendar['use_themeroller'] = $_POST['use_themeroller'];
+		//$espresso_calendar['use_themeroller'] = $_POST['use_themeroller'];
 		$espresso_calendar['espresso_calendar_titleFormat'] = $_POST['espresso_calendar_titleFormat'];
 		$espresso_calendar['espresso_calendar_columnFormat'] = $_POST['espresso_calendar_columnFormat'];
 		$espresso_calendar['espresso_calendar_monthNames'] = $_POST['espresso_calendar_monthNames'];
@@ -67,8 +67,8 @@ function espresso_calendar_config_mnu() {
 	$espresso_calendar = get_option('espresso_calendar_settings');
 
 	$values = array(
-			array('id' => 'false', 'text' => __('No', 'event_espresso')),
-			array('id' => 'true', 'text' => __('Yes', 'event_espresso'))
+			array('id' => false, 'text' => __('No', 'event_espresso')),
+			array('id' => true, 'text' => __('Yes', 'event_espresso'))
 	);
 ################## Begin admin settings screen ###########################
 	?>
@@ -288,17 +288,6 @@ function espresso_calendar_config_mnu() {
 											?>
 											<table class="form-table">
 												<tbody>
-
-													<?php if ( espresso_version() >= '3.1.22' ) {
-														//only display this if we're using 3.1.22 or higher ?>
-													<tr>
-														<th> <label for="use_themeroller">
-																<?php _e('Enable Themeroller', 'event_espresso'); ?>
-															</label>
-														</th>
-														<td><?php echo select_input('use_themeroller', $values, $espresso_calendar['use_themeroller'], 'id="use_themeroller" class"' . $styled . '" ' . $disabled); ?></td>
-													</tr>
-													<?php } ?>
 													<tr>
 														<th> <label for="espresso_use_pickers">
 																<?php _e('Use Color Pickers', 'event_espresso'); ?>

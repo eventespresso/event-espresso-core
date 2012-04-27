@@ -53,18 +53,18 @@ function espresso_calendar_install() {
 			'espresso_calendar_header' => "left: 'prev, today', center: 'title', right: 'month,agendaWeek,agendaDay,next'",
 			'espresso_calendar_buttonText' => "prev: '&nbsp;&#9668;&nbsp;',next: '&nbsp;&#9658;&nbsp;',prevYear: '&nbsp;&laquo;&nbsp;',nextYear: '&nbsp;&raquo;&nbsp;',today:'today',month:'month',week: 'week',day:'day'",
 			'espresso_calendar_firstday' => '0',
-			'espresso_calendar_weekends' => 'true',
+			'espresso_calendar_weekends' => true,
 			'espresso_calendar_height' => '650',
 			'espresso_calendar_width' => '2',
 			'enable_calendar_thumbs' => false,
-			'show_tooltips' => 'Y',
+			'show_tooltips' => true,
 			'espresso_use_pickers' => false,
 			'ee_event_background' => 'ffffff',
 			'ee_event_text_color' => '555555',
 			'enable_cat_classes' => false,
 			'time_format' => get_option('time_format'),
-			'show_time' => 'true',
-			'use_themeroller' => 'false',
+			'show_time' => true,
+			'use_themeroller' => false,
 			'espresso_calendar_titleFormat' => "month: 'MMMM yyyy', week: 'MMM dS[ yyyy] - {[ MMM] dS yyyy}', day: 'dddd, MMM dS, yyyy'",
 			'espresso_calendar_columnFormat' => "month: 'ddd', week: 'ddd M/d', day: 'dddd M/d'",
 			'espresso_calendar_monthNames' => "'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'",
@@ -154,40 +154,36 @@ if (!function_exists('espresso_init_calendar_style')) {
 add_action('wp_print_styles', 'espresso_init_calendar_style', 30);
 
 // Add our embedded head styles for color picker selection
-if ($espresso_calendar['espresso_use_pickers'] == 'true') {
+if ($espresso_calendar['espresso_use_pickers'] == true) {
 
 	function event_background_selection() {
 		global $espresso_calendar;
 		?>
 		<style type="text/css">
-		<?php
-		if (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background'])) {
-			?>
-				.fc-event-skin {
-					background-color: <?php echo $espresso_calendar['ee_event_background'] ?>;
-					border: 1px solid <?php echo $espresso_calendar['ee_event_background'] ?>;
-					-moz-border-radius: 3px;
-					-webkit-border-radius: 3px;
-					border-radius: 3px;
-				}
-				.ui-tooltip-ee .ui-tooltip-titlebar {
-					background: <?php echo $espresso_calendar['ee_event_background'] ?>;
-				}
-				th.fc-widget-header {
-					background-color: <?php echo $espresso_calendar['ee_event_background'] ?>;
-				}
-			<?php
-		}
-
-		if (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) {
-			?>
-				.fc-event-title, .time-display-block, .ui-tooltip-ee .ui-tooltip-titlebar, th.fc-widget-header {
-					color: <?php echo $espresso_calendar['ee_event_text_color'] ?>;
-				}
-			<?php
-		}
-		?>
-		</style>
+<?php  if (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background'])) {
+ ?>  .fc-event-skin {
+ background-color: <?php echo $espresso_calendar['ee_event_background'] ?>;
+ border: 1px solid <?php echo $espresso_calendar['ee_event_background'] ?>;
+ -moz-border-radius: 3px;
+ -webkit-border-radius: 3px;
+ border-radius: 3px;
+}
+ .ui-tooltip-ee .ui-tooltip-titlebar {
+ background: <?php echo $espresso_calendar['ee_event_background'] ?>;
+}
+ th.fc-widget-header {
+ background-color: <?php echo $espresso_calendar['ee_event_background'] ?>;
+}
+ <?php
+}
+ if (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) {
+ ?>  .fc-event-title, .time-display-block, .ui-tooltip-ee .ui-tooltip-titlebar, th.fc-widget-header {
+ color: <?php echo $espresso_calendar['ee_event_text_color'] ?>;
+}
+ <?php
+}
+ ?>
+</style>
 		<?php
 		return;
 	}
@@ -261,7 +257,7 @@ function espresso_calendar_do_stuff($show_expired) {
 
 		//Debug:
 		//var_dump($event);
-
+	if ( espresso_version() >= '3.2.P' ){
 		switch ($espresso_calendar['espresso_page_post']) {
 
 			case 'P':
@@ -274,6 +270,20 @@ function espresso_calendar_do_stuff($show_expired) {
 
 				break;
 		}
+	}else{
+		
+		switch ($espresso_calendar['espresso_page_post']){
+
+				case 'P':
+					$registration_url = get_option('siteurl'). '/?p=' . $event->post_id;
+				break;
+				case 'R':
+				default:
+					$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
+				break;
+
+			}
+	}
 
 		//Checkthe status of the event. If the event is expired, the link to the registration page will be deactivated.
 		$eventArray['url'] = '';
@@ -319,7 +329,7 @@ function espresso_calendar_do_stuff($show_expired) {
 
 		// Add thumb to eventArray
 		$eventArray['event_img_thumb'] = '';
-		if ($espresso_calendar['enable_calendar_thumbs'] == 'true') {
+		if ($espresso_calendar['enable_calendar_thumbs'] == true) {
 			if (isset($event_meta['event_thumbnail_url'])) {
 				$calendar_thumb = $event_meta['event_thumbnail_url'];
 				//Debug:
@@ -369,7 +379,7 @@ if (!function_exists('espresso_calendar')) {
 
 		$load_espresso_calendar_scripts = true; //This tells the plugin to load the required scripts
 
-		extract(shortcode_atts(array('event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month'), $atts));
+		extract(shortcode_atts(array('event_category_id' => '', 'show_expired' => false, 'cal_view' => 'month'), $atts));
 		$event_category_id = "{$event_category_id}";
 		$show_expired = "{$show_expired}";
 		$cal_view = "{$cal_view}";
@@ -395,7 +405,7 @@ if (!function_exists('espresso_calendar')) {
 
 					//Defines the buttons and title at the top of the calendar.
 					header: { //Settings: http://arshaw.com/fullcalendar/docs/display/header/
-		<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_header']) ?>
+						<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_header']) ?>
 					},
 
 					/**
@@ -408,17 +418,11 @@ if (!function_exists('espresso_calendar')) {
 					//jQuery UI Themeroller
 					//Enables/disables use of jQuery UI theming.
 					//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
-		<?php
-		if ($espresso_calendar['use_themeroller'] == 'true') {
-			if (!empty($org_options['style_settings']['enable_default_style'])) {
-				if ($org_options['style_settings']['enable_default_style'] == true) {
-					if ($org_options['themeroller']['themeroller_style'] != '') {
+					<?php
+					if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
 						echo "theme: true,";
 					}
-				}
-			}
-		}
-		?>
+					?>
 
 					//This option only applies to calendars that have jQuery UI theming enabled with the theme option.
 					/*buttonIcons:{ //Settings: http://arshaw.com/fullcalendar/docs/display/buttonIcons/
@@ -486,17 +490,13 @@ if (!function_exists('espresso_calendar')) {
 						//if(event.in_thickbox_url){
 						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
 						//}
-		<?php
-		if ($espresso_calendar['use_themeroller'] == 'true') {
-			if (!empty($org_options['style_settings']['enable_default_style'])) {
-				if ($org_options['style_settings']['enable_default_style'] == true) {
-					if ($org_options['themeroller']['themeroller_style'] != '') { ?>
-						jQuery('a.fc-event').addClass('themeroller ui-widget-header');
-					<?php }
-				}
-			}
-		}
-		?>
+						<?php
+						//Adds the themeroller styles to the links in the calendar
+						if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
+							jQuery('a.fc-event').addClass('themeroller ui-widget-header');
+						<?php
+						}
+						?>
 
 
 						// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
@@ -511,16 +511,16 @@ if (!function_exists('espresso_calendar')) {
 
 							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
-		<?php
-		if ($espresso_calendar['show_time'] == 'true') {
+			<?php
+					if ($espresso_calendar['show_time'] == true) {
 			?>
 								element.find('.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">' + event.startTime + ' - </span><span class="event-end-time">' + event.endTime + '</span></p>'));
 			<?php
-		}
+					}
 
 		if (isset($espresso_calendar['show_tooltips'])) {
 			if ($espresso_calendar['show_tooltips'] == 'Y') {
-				?>
+			?>
 										element.qtip({
 											content: {
 												text: event.description,
@@ -540,12 +540,12 @@ if (!function_exists('espresso_calendar')) {
 												tip: {
 													corner: 'left top'
 												},
-		<?php
-		if ($espresso_calendar['use_themeroller'] == 'true') { ?>
-											classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
-		<?php } else { ?>
-											classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
-		<?php } ?>
+									<?php
+											if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
+												classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
+									<?php 	} else { ?>
+												classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
+									<?php 	} ?>
 												/*
 												 * The important part: style.widget property
 
@@ -634,8 +634,8 @@ if (!function_exists('espresso_calendar')) {
 			});
 
 		</script>
-		<div id='espresso_calendar'></div>
-		<?php
+<div id='espresso_calendar'></div>
+<?php
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		return $buffer;
@@ -726,34 +726,41 @@ class Espresso_Calendar_Widget extends WP_Widget {
 	function form($instance) {
 
 		// Set up some default widget settings.
-		$defaults = array('title' => 'Calendar', 'show_expired' => 'false', 'category_id' => '', 'calendar_page' => '');
+		$defaults = array('title' => 'Calendar', 'show_expired' => false, 'category_id' => '', 'calendar_page' => '');
 		$instance = wp_parse_args((array) $instance, $defaults);
 
 		$values = array(
-				array('id' => 'false', 'text' => __('No', 'event_espresso')),
-				array('id' => 'true', 'text' => __('Yes', 'event_espresso')));
+				array('id' => false, 'text' => __('No', 'event_espresso')),
+				array('id' => true, 'text' => __('Yes', 'event_espresso')));
 		?>
-		<p>
-			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'event_espresso'); ?></label>
-			<input type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" width="20" value="<?php echo $instance['title']; ?>" />
-		</p>
-		<p>
-			<label for="<?php echo $this->get_field_id('show_expired'); ?>"><?php _e('Display Expired Events?', 'event_espresso'); ?></label>
-			<?php echo select_input($this->get_field_name('show_expired'), $values, $instance['show_expired']); ?>
-		</p>
-		<p>
-			<label for="<?php echo $this->get_field_id('category_id'); ?>"><?php _e('Display Single Category?', 'event_espresso'); ?></label>
-			<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
-			<?php if ( espresso_version() >= '3.2.P' )
+<p>
+	<label for="<?php echo $this->get_field_id('title'); ?>">
+		<?php _e('Title:', 'event_espresso'); ?>
+	</label>
+	<input type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" width="20" value="<?php echo $instance['title']; ?>" />
+</p>
+<p>
+	<label for="<?php echo $this->get_field_id('show_expired'); ?>">
+		<?php _e('Display Expired Events?', 'event_espresso'); ?>
+	</label>
+	<?php echo select_input($this->get_field_name('show_expired'), $values, $instance['show_expired']); ?> </p>
+<p>
+	<label for="<?php echo $this->get_field_id('category_id'); ?>">
+		<?php _e('Display Single Category?', 'event_espresso'); ?>
+	</label>
+	<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
+	<?php if ( espresso_version() >= '3.2.P' )
 				echo apply_filters('filter_hook_espresso_help', 'display_single_category'); ?>
-		</p>
-		<p>
-			<label for="<?php echo $this->get_field_id('calendar_page'); ?>"><?php _e('Calendar Page', 'event_espresso'); ?></label>
-			<input type="text" id="<?php echo $this->get_field_id('calendar_page'); ?>" name="<?php echo $this->get_field_name('calendar_page'); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
-			<?php if ( espresso_version() >= '3.2.P' )
+</p>
+<p>
+	<label for="<?php echo $this->get_field_id('calendar_page'); ?>">
+		<?php _e('Calendar Page', 'event_espresso'); ?>
+	</label>
+	<input type="text" id="<?php echo $this->get_field_id('calendar_page'); ?>" name="<?php echo $this->get_field_name('calendar_page'); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
+	<?php if ( espresso_version() >= '3.2.P' )
 				echo apply_filters('filter_hook_espresso_help', 'calendar_page'); ?>
-		</p>
-		<?php
+</p>
+<?php
 	}
 
 }
