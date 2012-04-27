@@ -508,22 +508,23 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">
 									<th><label for="edit-ticket-price-PRC_amount"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
 									<td>
-										<input type="text" id="edit_ticket_price[PRC_reg_limit]" name="edit_ticket_price[PRC_reg_limit]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php //echo $price->reg_limit(); ?>"/>
+										<input type="text" id="edit_ticket_price[PRC_reg_limit]" name="edit_ticket_price[PRC_reg_limit]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php echo $price->reg_limit(); ?>"/>
 										<span class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></span>
 									</td>
 								</tr>
 								
 								<tr valign="top">
-									<th><label><?php _e('Triggered by Date', 'event_espresso'); ?><?php $price->use_dates();?></label></th>
+									<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
 									<td>
+										<?php $price_uses_dates = $price->use_dates();?>
 										<label style="margin-right:15px;">
-											<?php $checked = $price->use_dates() ? ' checked="checked"' : '';?>
-											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[PRC_use_dates]" value="1" style="margin-right:5px;"<?php $checked;?>/>
+											<?php $checked = $price_uses_dates ===1 ? ' checked="checked"' : '';?>
+											<input class="edit-ticket-price-input etp-radio" type="radio" name="edit_ticket_price[PRC_use_dates]" value="1"<?php echo $checked;?> style="margin-right:5px;"/>
 											<?php _e('Yes', 'event_espresso');?>
 										</label>
 										<label style="margin-right:15px;">
-											<?php $checked = $price->use_dates() ? '' : ' checked="checked"';?>
-											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[PRC_use_dates]" value="0" style="margin-right:5px;"<?php $checked;?>/>
+											<?php $checked = $price_uses_dates === 0 ? ' checked="checked"' : '';?>
+											<input class="edit-ticket-price-input etp-radio" type="radio" name="edit_ticket_price[PRC_use_dates]" value="0"<?php echo $checked;?> style="margin-right:5px;"/>
 											<?php _e('No', 'event_espresso');?>
 										</label>
 										<span class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></span>
@@ -614,7 +615,7 @@ function espresso_event_editor_pricing_metabox($event) {
 		<br/>
 
 		<a id="display-add-new-ticket-price" class="button-secondary display-the-hidden" rel="add-new-ticket-price">
-			<?php _e('Add New Event Price', 'event_espresso'); ?><img src="../../../../images/icons/additional_info-10x10.png" alt="" />
+			<?php _e('Add New Event Price', 'event_espresso'); ?>
 		</a>
 		
 		<div id="add-new-ticket-price-dv" class="hidden">

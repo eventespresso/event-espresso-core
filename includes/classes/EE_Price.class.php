@@ -586,7 +586,7 @@ class EE_Price {
 	* @return type string
 	*/
 	public function use_dates() {
-		return $this->_PRC_use_dates;
+		return $this->_PRC_use_dates ? TRUE : FALSE;
 	}
 
 

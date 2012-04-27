@@ -786,41 +786,28 @@ function events_data_tables_install() {
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-	$table_name = "esp_event_price";
-	$sql = 'EVT_ID INT UNSIGNED NOT NULL ,
-			  PRC_ID INT UNSIGNED NOT NULL ,
-			  EPR_reg_limit SMALLINT UNSIGNED NULL DEFAULT 0 ,
-			  EPR_start_date INT UNSIGNED NULL DEFAULT 0 ,
-			  EPR_end_date INT UNSIGNED NULL DEFAULT 0 ,
-			  EPR_is_active TINYINT(1) NULL DEFAULT 1 ,
-			  PRIMARY KEY (EVT_ID, PRC_ID)';
-	event_espresso_run_install($table_name, $table_version, $sql);
 
-//CREATE  TABLE IF NOT EXISTS event_espresso.esp_event_price (
-//  EVT_ID INT UNSIGNED NOT NULL ,
-//  PRC_ID INT UNSIGNED NOT NULL ,
-//  EPR_start_date INT UNSIGNED NULL DEFAULT 0 ,
-//  EPR_end_date INT UNSIGNED NULL DEFAULT 0 ,
-//  EPR_disc_code VARCHAR(100) NULL ,
-//  EPR_is_active TINYINT(1) NULL DEFAULT 1 ,
-//  PRIMARY KEY (EVT_ID, PRC_ID) )
-//ENGINE = MyISAM
 
 	$table_name = "esp_price";
-	$sql = 'PRC_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-			  PRT_ID TINYINT UNSIGNED NOT NULL ,
-			  PRC_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00 ,
-			  PRC_name VARCHAR(45) NOT NULL ,
-			  PRC_desc TEXT NULL DEFAULT NULL ,
-			  PRC_use_dates TINYINT(1) NULL DEFAULT 0 ,
-			  PRC_disc_code VARCHAR(100) NULL ,
-			  PRC_disc_limit_qty TINYINT(1) NULL DEFAULT 0 ,
-			  PRC_disc_qty SMALLINT NULL DEFAULT 0 ,
-			  PRC_disc_apply_all TINYINT(1) NULL DEFAULT 0 ,
-			  PRC_disc_wp_user BIGINT NULL ,
-			  PRC_is_active TINYINT(1) NULL DEFAULT 1 ,
+	$sql = 'PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+			  PRT_ID tinyint(3) unsigned NOT NULL,
+			  EVT_ID int(10) unsigned NOT NULL,
+			  PRC_amount decimal(10,2) NOT NULL DEFAULT 0.00,
+			  PRC_name varchar(45) NOT NULL,
+			  PRC_desc text,
+			  PRC_reg_limit smallint(5) unsigned DEFAULT NULL,
+			  PRC_use_dates tinyint(1) DEFAULT 0,
+			  PRC_start_date int(10) unsigned DEFAULT NULL,
+			  PRC_end_date int(10) unsigned DEFAULT NULL,
+			  PRC_disc_code varchar(100) DEFAULT NULL,
+			  PRC_disc_limit_qty tinyint(1) DEFAULT 0,
+			  PRC_disc_qty smallint(6) DEFAULT 0,
+			  PRC_disc_apply_all tinyint(1) DEFAULT 0,
+			  PRC_disc_wp_user bigint(20) DEFAULT NULL,
+			  PRC_is_active tinyint(1) DEFAULT 1,
 			  PRIMARY KEY (PRC_ID)';
 	event_espresso_run_install($table_name, $table_version, $sql);
+
 
 //CREATE  TABLE IF NOT EXISTS event_espresso.esp_price (
 //  PRC_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
