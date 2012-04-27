@@ -467,67 +467,73 @@ function update_event($recurrence_arr = array()) {
 			$registration_end = wp_strip_all_tags( $_REQUEST['registration_end'] );
 			$registration_startT = wp_strip_all_tags( $_REQUEST['registration_startT'] );
 			$registration_endT = wp_strip_all_tags( $_REQUEST['registration_endT'] );
-
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-			$DTM = EEM_Datetime::instance();
-
-			// delete old datetime entries
-			//$DTM->delete_all_event_datetimes( $event_id );
-
-//			$new_reg_dates = new EE_Datetime( $event_id, 1, $registration_start . ' ' . $registration_startT, $registration_end . ' ' . $registration_endT, 'R',   );
-//			$new_reg_dates->insert();
-//			echo printr( $new_reg_dates, '$new_reg_dates1' );
-
-			// grab list of all datetime ID's we are processing
-			if ( isset( $_POST['datetime_IDs'] )) {
-				$datetime_IDs =  unserialize( stripslashes( $_POST['datetime_IDs'] ));
-				array_walk( $_POST['datetime_IDs'], 'absint' );
-				$datetime_IDs = array_flip($datetime_IDs);
-			} else {
-				$datetime_IDs = array();
-			}
-
 			
-			if ( isset( $_POST['event_datetimes'] )) {
+			if ( isset( $_POST['process_datetimes'] ) && $_POST['process_datetimes'] ) {
 			
-				ksort( $_POST['event_datetimes'] );
-
-				foreach ( $_POST['event_datetimes'] as $dtm ) {
-					
-//					echo printr( $dtm, '$dtm' );
-
-					$dtm['enddate'] = ( isset( $dtm['enddate'] ) && $dtm['enddate'] != '' ) ? $dtm['enddate'] : $dtm['startdate'];
-					$dtm['endtime'] = ( isset( $dtm['endtime'] ) && $dtm['endtime'] != '' ) ? $dtm['endtime'] : $dtm['starttime'];
-
-					$new_event_date = new EE_Datetime(
-																						$event_id,
-																						$dtm['is_primary'],
-																						$dtm['startdate'] . ' ' . $dtm['starttime'],
-																						$dtm['enddate'] . ' ' . $dtm['endtime'],
-																						$dtm['event_or_reg'], 
-																						$dtm['startreg_limit'],
-																						$dtm['ID']
-																					 );
-		
-					// if an ID exists then update
-					if ( $new_event_date->ID() ) {										
-						// remove this ID from list of datetime IDs - any remainders will get deleted afterwards
-						if ( array_key_exists( $new_event_date->ID(), $datetime_IDs )) {
-						    unset( $datetime_IDs[ $new_event_date->ID() ] );
-						}	
-						$update = $new_event_date->update();
-						
-					} else {	
-						$insert = $new_event_date->insert();
-					}
-
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+				$DTM = EEM_Datetime::instance();
+	
+				// delete old datetime entries
+				//$DTM->delete_all_event_datetimes( $event_id );
+	
+	//			$new_reg_dates = new EE_Datetime( $event_id, 1, $registration_start . ' ' . $registration_startT, $registration_end . ' ' . $registration_endT, 'R',   );
+	//			$new_reg_dates->insert();
+	//			echo printr( $new_reg_dates, '$new_reg_dates1' );
+	
+				// grab list of all datetime ID's we are processing
+				if ( isset( $_POST['datetime_IDs'] )) {
+					$datetime_IDs =  unserialize( stripslashes( $_POST['datetime_IDs'] ));
+					array_walk( $_POST['datetime_IDs'], 'absint' );
+					$datetime_IDs = array_flip($datetime_IDs);
+				} else {
+					$datetime_IDs = array();
 				}
-			}
+	
+				
+				if ( isset( $_POST['event_datetimes'] )) {
+				
+					ksort( $_POST['event_datetimes'] );
+	
+					foreach ( $_POST['event_datetimes'] as $dtm ) {
+						
+	//					echo printr( $dtm, '$dtm' );
+	
+						$dtm['enddate'] = ( isset( $dtm['enddate'] ) && $dtm['enddate'] != '' ) ? $dtm['enddate'] : $dtm['startdate'];
+						$dtm['endtime'] = ( isset( $dtm['endtime'] ) && $dtm['endtime'] != '' ) ? $dtm['endtime'] : $dtm['starttime'];
+	
+						$new_event_date = new EE_Datetime(
+																							$event_id,
+																							$dtm['is_primary'],
+																							$dtm['startdate'] . ' ' . $dtm['starttime'],
+																							$dtm['enddate'] . ' ' . $dtm['endtime'],
+																							$dtm['event_or_reg'], 
+																							$dtm['startreg_limit'],
+																							$dtm['ID']
+																						 );
+			
+						// if an ID exists then update
+						if ( $new_event_date->ID() ) {										
+							// remove this ID from list of datetime IDs - any remainders will get deleted afterwards
+							if ( array_key_exists( $new_event_date->ID(), $datetime_IDs )) {
+							    unset( $datetime_IDs[ $new_event_date->ID() ] );
+							}	
+							$update = $new_event_date->update();
+							
+						} else {	
+							$insert = $new_event_date->insert();
+						}
+	
+					}
+				}
+	
+				// delete any Datetimes that are not being resaved
+				foreach ( $datetime_IDs as $datetime_ID => $bunk ) {
+					$DTM->delete_datetime( $datetime_ID );
+				}
+				
+			}  // end if process_datetimes
 
-			// delete any Datetimes that are not being resaved
-			foreach ( $datetime_IDs as $datetime_ID => $bunk ) {
-				$DTM->delete_datetime( $datetime_ID );
-			}
+
 
 			/*************************************   PRICING   ********************************************/
 
@@ -536,46 +542,38 @@ function update_event($recurrence_arr = array()) {
 
 			if ( $new_ticket_price = isset( $_POST['new_ticket_price'] ) ? $_POST['new_ticket_price'] : FALSE ) {
 			
-				//echo printr( $new_ticket_price, '$new_ticket_price' );
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-				$PRC = EEM_Price::instance();
-
-				require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php' );
-				$EVP = EEM_Event_Price::instance();
-			
-				global $current_user;
-				get_currentuserinfo();
+				if ( ! empty( $new_ticket_price['PRC_name'] )) {
+					//echo printr( $new_ticket_price, '$new_ticket_price' );
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+					$PRC = EEM_Price::instance();
+	
+					require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php' );
+					$EVP = EEM_Event_Price::instance();
 				
-				$new_price = new EE_Price (
-																	$new_ticket_price['PRT_ID'],	 
-																	$new_ticket_price['PRC_amount'],	 
-																	$new_ticket_price['PRC_name'],	 
-																	$new_ticket_price['PRC_desc'],	 
-																	$new_ticket_price['PRC_use_dates'],	 
-																	NULL, 
-																	FALSE,
-																	0,
-																	TRUE,	 
-																	$current_user->ID,	 
-																	$new_ticket_price['PRC_is_active']
-															   );
-				//echo printr( $new_price, '$new_price' );		
-													 
-				if ( $results = $new_price->insert() ) {
-				
-					echo printr( $results, '$results' );		
-					$new_event_price = array ( 	 	 	 	 	
-																	'EVT_ID' 				=> $results['new-ID'],
-																	'PRC_ID' 				=> absint( $event_id ),
-//																	'EPR_reg_limit' 	=> absint( $new_ticket_price['PRT_amount'] ),
-//																	'EPR_start_date' 	=> absint( $event_id ),
-//																	'EPR_end_date' 	=> absint( $event_id ),
-																	'EPR_is_active' 	=> TRUE
-																);
+					global $current_user;
+					get_currentuserinfo();
 					
-					if ( $results = $EVP->insert( $new_event_price )) {
-						//echo printr( $results, '$results' );		
-					}
+					$new_price = new EE_Price (
+																		$new_ticket_price['PRT_ID'],	 
+																		absint( $event_id ),
+																		$new_ticket_price['PRC_amount'],	 
+																		$new_ticket_price['PRC_name'],	 
+																		$new_ticket_price['PRC_desc'],	 
+																		$new_ticket_price['PRC_reg_limit'],	 
+																		$new_ticket_price['PRC_use_dates'],	 
+																		$new_ticket_price['PRC_start_date'],
+																		$new_ticket_price['PRC_end_date'],
+																		FALSE,
+																		FALSE,
+																		0,
+																		TRUE,	 
+																		$current_user->ID,	 
+																		$new_ticket_price['PRC_is_active']
+																   );
+					//echo printr( $new_price, '$new_price' );		
+														 
+					if ( $results = $new_price->insert() ) {
+					}					
 				}
 			}
 			

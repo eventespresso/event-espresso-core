@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
 		var control = jQuery(this);
 		control.addClass('hidden');  
 		// display the target's div container - use slideToggle or removeClass
-		jQuery('#'+item_to_display+'-dv').slideToggle(500, function() {
+		jQuery('#'+item_to_display+'-dv').slideToggle( 750, function() {
 			// hide the control element
 			//control.addClass('hidden');  
 			// display the target div's hide link
@@ -26,7 +26,7 @@ jQuery(document).ready(function() {
 		var control = jQuery(this);
 		control.addClass('hidden');  
 		// hide the target's div container - use slideToggle or addClass
-		jQuery('#'+item_to_hide+'-dv').slideToggle(500, function() {
+		jQuery('#'+item_to_hide+'-dv').slideToggle( 750, function() {
 			//jQuery('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
 			// hide the control element
 			//control.addClass('hidden');  
@@ -41,7 +41,7 @@ jQuery(document).ready(function() {
 		var inputs_to_cancel = jQuery(this).attr("rel"); 
 		var control = jQuery(this);
 		// hide the target's div container - use slideToggle or addClass
-		jQuery('#'+inputs_to_cancel+'-dv').slideToggle(500, function() {
+		jQuery('#'+inputs_to_cancel+'-dv').slideToggle( 750, function() {
 			// hide the control element
 			control.addClass('hidden');  
 			// display the control element that toggles display of this element
@@ -56,6 +56,39 @@ jQuery(document).ready(function() {
 		}); 		
 	});	
 	
+	// set process_datetimes to false
+	jQuery('#process_datetimes').val(0);
+	// toggle process_datetimes to true if any datetime inputs are changed
+	jQuery('.dtm-inp').change( function() {
+		jQuery('#process_datetimes').val(1);
+	});
+	// or if any datetime buttons are clicked	
+	jQuery('.dtm-inp-btn').click( function() {
+		jQuery('#process_datetimes').val(1);
+	});
+	
+
+	jQuery('.edit-event-price-btn').click(function() {
+		// get target element ID from "this" (the control element's) "rel" attribute
+		var EVP_ID = jQuery(this).attr("rel"); 
+		jQuery( '#event-price-'+EVP_ID ).slideToggle( 250 );  
+		// display the target's div container - use slideToggle or removeClass
+		jQuery( '#edit-event-price-'+EVP_ID ).slideToggle( 750 ); 
+		return false;
+	});
+
+	
+	jQuery('.cancel-event-price-btn').click(function() {
+		// get target element ID from "this" (the control element's) "rel" attribute
+		var EVP_ID = jQuery(this).attr("rel"); 
+		jQuery( '#event-price-'+EVP_ID ).slideToggle( 250 );  
+		// display the target's div container - use slideToggle or removeClass
+		jQuery( '#edit-event-price-'+EVP_ID ).slideToggle( 750 ); 
+		return false;
+	});
+
+	
+
 	
 // Add class 'selected' to visual-toggle for email confirmation postbox
 // Add class to postbox for further styling hook

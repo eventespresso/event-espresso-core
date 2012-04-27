@@ -292,8 +292,8 @@ function espresso_event_editor_date_time_metabox($event) {
 							<input type="text" id="time_qty-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][startreg_limit]" class="small-text dtm-inp" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
 						</td>
 					<?php endif; // time_reg_limit   ?>
-					<?php if ($row > 1) : ?>
-						<td><input class='remove-xtra-time dtm-inp' rel='<?php echo $row; ?>' type='button' value='Remove'  title='Remove this Event Time' /></td>
+					<?php if ( $row != 2 ) : ?>
+						<td><input class='remove-xtra-time dtm-inp-btn' rel='<?php echo $row; ?>' type='button' value='Remove'  title='Remove this Event Time' style='cursor:pointer;'/></td>
 					<?php else : ?>
 						<td></td>
 					<?php endif; ?>
@@ -302,7 +302,7 @@ function espresso_event_editor_date_time_metabox($event) {
 			<?php endforeach; // ($times as $time)  ?>
 		</table>
 		<br class="clear"/>
-		<input type="button" id="add-time" class="button dtm-inp" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />
+		<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />
 		<br class="clear"/><br/>
 	</div>
 
@@ -365,7 +365,7 @@ function espresso_event_editor_date_time_metabox($event) {
 	</div>
 
 	<input  type="hidden" name="datetime_IDs" value="<?php echo esc_attr( serialize( $datetime_IDs )); ?>"/>
-	<input  type="hidden" name="process_datetimes" value="1"/>
+	<input  type="hidden" id="process_datetimes" name="process_datetimes" value="1"/>
 
 
 	<?php if ($espresso_premium) : ?>
@@ -375,7 +375,7 @@ function espresso_event_editor_date_time_metabox($event) {
 
 				$('#add-time').click(function() {
 
-					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='start-date-"+(counter)+"' name='event_datetimes["+(counter)+"][startdate]' type='text' class='datepicker' readonly='readonly' value='' /><input id='is-primary-"+(counter)+"' name='event_datetimes["+(counter)+"][is_primary]' type='hidden' value='0' /><input id='event-or-reg-"+(counter)+"' name='event_datetimes["+(counter)+"][event_or_reg]' type='hidden' value='E' /></td><td><input id='end-date-"+(counter)+"' name='event_datetimes["+(counter)+"][enddate]' type='text' class='datepicker' readonly='readonly' value='' /></td><td><input id='add-start-time-"+(counter)+"' name='event_datetimes["+(counter)+"][starttime]' type='text' class='medium-text time-picker' value='' /></td><td><input id='add-end-time-"+(counter)+"' name='event_datetimes["+(counter)+"][endtime]' type='text' class='medium-text time-picker' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='time_qty-"+(counter)+"' name='event_datetimes["+(counter)+"][startreg_limit]' class='small-text' style='text-align:right;' value=''/></td><?php endif; ?><td><input class='remove-xtra-time' rel='"+(counter)+"' type='button' value='Remove'  title='Remove this Event Time' /></td></tr>";
+					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='start-date-"+(counter)+"' name='event_datetimes["+(counter)+"][startdate]' type='text' class='datepicker dtm-inp' readonly='readonly' value='' /><input id='is-primary-"+(counter)+"' name='event_datetimes["+(counter)+"][is_primary]' type='hidden' value='0' /><input id='event-or-reg-"+(counter)+"' name='event_datetimes["+(counter)+"][event_or_reg]' type='hidden' value='E' /></td><td><input id='end-date-"+(counter)+"' name='event_datetimes["+(counter)+"][enddate]' type='text' class='datepicker dtm-inp' readonly='readonly' value='' /></td><td><input id='add-start-time-"+(counter)+"' name='event_datetimes["+(counter)+"][starttime]' type='text' class='medium-text time-picker dtm-inp' value='' /></td><td><input id='add-end-time-"+(counter)+"' name='event_datetimes["+(counter)+"][endtime]' type='text' class='medium-text time-picker dtm-inp' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='time_qty-"+(counter)+"' name='event_datetimes["+(counter)+"][startreg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; ?><td><input class='remove-xtra-time dtm-inp-btn' rel='"+(counter)+"' type='button' value='Remove'  title='Remove this Event Time' style='cursor:pointer;'/></td></tr>";
 
 					$('#event-dates-and-times tr:last').after( newRow );
 					$('#start-date-'+(counter)).val( $('#start-date-2').val() );
@@ -418,11 +418,18 @@ function espresso_event_editor_pricing_metabox($event) {
 		$all_prices = array();
 	}
 	
-	if ( empty( $all_prices[1] ) or empty( $all_prices[2] )) {
+	if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 		$show_no_event_price_msg = TRUE;
 	}
-	//echo printr( $prices, '$prices' );
+	echo printr( $all_prices, '$all_prices' );
 
+	foreach ($PRT->type as $type) {
+		$all_price_types[] = array('id' => $type->ID(), 'text' => $type->name());
+		if ( ! $type->is_global() ) {
+			$price_types[] = array('id' => $type->ID(), 'text' => $type->name());
+		}						
+	}
+	
 	$table_class = apply_filters('filter_hook_espresso_pricing_table_class_filter', 'event_editor_pricing');
 	?>
 
@@ -444,53 +451,161 @@ function espresso_event_editor_pricing_metabox($event) {
 		<thead>
 			<tr>
 				<td style="width:3%; text-align:center;"><b><?php _e('Order'); ?></b></td>
-				<td style="width:15%; padding:0 .5em;"><b><?php _e('Name'); ?></b></td>
-				<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Type'); ?></b></td>
-				<td style="width:39.5%; padding:0 .5em;"><b><?php _e('Description'); ?></b></td>
+				<td style="width:20%; padding:0 .5em;"><b><?php _e('Price Name'); ?></b></td>
+				<td style="width:22.5%; padding:0 .5em;"><b><?php _e('Type'); ?></b></td>
+				<td style="width:44.5%; padding:0 .5em;"><b><?php _e('Description'); ?></b></td>
 				<td style="width:5%; text-align:center;"><b><?php _e('Amount'); ?></b></td>
-				<td style="width:5%; text-align:center;"><b><?php _e('%'); ?></b></td>
-				<td style="width:5%; text-align:center;"><b><?php _e('Members'); ?></b></td>
-				<td style="width:5%; text-align:center;"><b><?php _e('Discount'); ?></b></td>
-				<td style="width:5%; text-align:center;"><b><?php _e('Active?'); ?></b></td>
+				<td style="width:7.5%; text-align:center;"></td>
 			</tr>
 		</thead>
 		<?php 
 		foreach ( $all_prices as $price_type => $prices ) :
 			foreach ($prices as $is_active_and_price_object) :
-				$checked = ($is_active_and_price_object['active']) ? 'checked="checked"' : '';
 				$price = $is_active_and_price_object['price']; 
 		?>
 
 			<tr>
-				<td class="order-column" style="width:3%; height:2.5em; vertical-align:top; text-align:center;"> 
-					<?php echo $PRT->type[$price->type()]->order(); ?>             
-				</td> 
-				<td class="name-column" style="width:15%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
-					<?php echo $price->name(); ?> 
-				</td> 
-				<td class="type-column" style="width:17.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
-					<?php echo $PRT->type[$price->type()]->name(); ?> 
-				</td> 
-				<td class="desc-column" style="width:39.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
-					<?php echo $price->desc(); ?> 
-				</td> 
-				<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
-					<?php echo ($PRT->type[$price->type()]->is_percent()) ? $price->amount() . '%' : $org_options['currency_symbol'] . $price->amount(); ?> 
-				</td> 
-				<td class="percent-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
-					<?php echo ($PRT->type[$price->type()]->is_percent()) ? 'Yes' : ''; ?> 
-				</td> 
-				<td class="member-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
-					<?php echo ($PRT->type[$price->type()]->is_member()) ? 'Yes' : ''; ?> 
-				</td> 
-				<td class="discount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
-					<?php echo ($PRT->type[$price->type()]->is_discount()) ? 'Yes' : ''; ?> 
-				</td> 
-				<td class="check-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
-					<input name="active_prices[<?php echo $price->ID();?>]" type="checkbox" title="Activate Price <?php echo $price->name(); ?>"<?php echo $checked;?>/>
-					<input name="listed_prices[<?php echo $price->ID();?>]" type="hidden" />
+				<td colspan="6">
+					<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price hidden" style="padding:5px 10px 10px; margin:10px 0 20px; background:#fcfcfc; border:1px solid #eee; border-radius:5px;">
+						<h6><?php _e('Edit : ', 'event_espresso'); ?><?php echo $price->name(); ?></h6>
+						<?php echo printr( $price, '$price' ); ?>
+						<table class="form-table">
+							<tbody>
+							
+								<tr valign="top">					
+									<th><label for="edit-ticket-price-PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
+									<td>
+										<?php echo select_input( 'edit_ticket_price[PRT_ID]', $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID"', 'edit-ticket-price-input' ); ?>
+										<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax.', 'event_espresso'); ?></span>
+										<input id="edit_ticket_price-EVT_ID" name="edit_ticket_price[EVT_ID]" type="hidden" value="<?php echo $event->id; ?>" />
+									</td>
+								</tr>
+								
+								<tr valign="top">
+									<th><label for="edit-ticket-price-PRC_name"><?php _e('Name', 'event_espresso'); ?></label></th>
+									<td>
+										<input class="edit-ticket-price-input regular-text" type="text" id="edit-ticket-price-PRC_name" name="edit_ticket_price[PRC_name]" value="<?php echo $price->name(); ?>"/>
+										<span class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></span>
+									</td>
+								</tr>
+								
+								<tr valign="top">
+									<th><label for="edit-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
+									<td>
+										<textarea class="edit-ticket-price-input regular-text" id="edit-ticket-price[PRC_desc]" name="edit_ticket_price[PRC_desc]" cols="100" rows="1" ><?php echo $price->desc(); ?></textarea><br/>
+										<span class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></span>
+									</td>							
+								</tr>
+								
+								<tr valign="top">
+									<th><label for="edit-ticket-price-PRC_amount"><?php _e('Amount', 'event_espresso'); ?></label></th>
+									<td>
+										<input class="edit-ticket-price-input small-text" type="text" id="edit-ticket-price[PRC_amount]" name="edit_ticket_price[PRC_amount]" style="text-align:right;" value="<?php echo $price->amount(); ?>"/>
+										<span class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
+									</td>
+								</tr>
+			
+								<tr valign="top">
+									<th><label for="edit-ticket-price-PRC_amount"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
+									<td>
+										<input type="text" id="edit_ticket_price[PRC_reg_limit]" name="edit_ticket_price[PRC_reg_limit]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php //echo $price->reg_limit(); ?>"/>
+										<span class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></span>
+									</td>
+								</tr>
+								
+								<tr valign="top">
+									<th><label><?php _e('Triggered by Date', 'event_espresso'); ?><?php $price->use_dates();?></label></th>
+									<td>
+										<label style="margin-right:15px;">
+											<?php $checked = $price->use_dates() ? ' checked="checked"' : '';?>
+											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[PRC_use_dates]" value="1" style="margin-right:5px;"<?php $checked;?>/>
+											<?php _e('Yes', 'event_espresso');?>
+										</label>
+										<label style="margin-right:15px;">
+											<?php $checked = $price->use_dates() ? '' : ' checked="checked"';?>
+											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[PRC_use_dates]" value="0" style="margin-right:5px;"<?php $checked;?>/>
+											<?php _e('No', 'event_espresso');?>
+										</label>
+										<span class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></span>
+									</td>
+								</tr>
+			
+								<tr valign="top">
+									<th><label for="edit_ticket_price[PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label></th>
+									<td>
+										<input id="edit-ticket-price[PRC_start_date]" name="edit_ticket_price[PRC_start_date]" type="text" class="datepicker edit-ticket-price-input" value="" />
+										<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed.' ), 'event_espresso'); ?></span>
+									</td>
+								</tr>
+			
+								<tr valign="top">
+									<th><label for="edit_ticket_price[PRC_end_date]"><?php _e('End Date', 'event_espresso'); ?></label></th>
+									<td>
+										<input id="edit-ticket-price[PRC_end_date]" name="edit_ticket_price[PRC_end_date]" type="text" class="datepicker edit-ticket-price-input" value="" />
+										<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed.' ), 'event_espresso'); ?></span>
+									</td>
+								</tr>			
+			
+								<tr valign="top">
+									<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
+									<td>
+										<label style="margin-right:15px;">
+											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[PRC_is_active]" value="1" style="margin-right:5px;" checked="checked" />
+											<?php _e('Yes', 'event_espresso');?>
+										</label>
+										<label style="margin-right:15px;">
+											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[PRC_is_active]" value="0" style="margin-right:5px;" />
+											<?php _e('No', 'event_espresso');?>
+										</label>
+										<span class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></span>
+									</td>
+								</tr>
+								
+							</tbody>
+						</table>
+
+						<div style="text-align:right;"><input class='cancel-event-price-btn' rel="<?php echo $price->ID(); ?>" type='button' value='cancel' style="cursor:pointer;" /></div>
+								
+					</div>
 				</td>
 			</tr>
+			
+			<tr>
+				<td colspan="6">
+					<div id="event-price-<?php echo $price->ID(); ?>" class="event-price">
+						<table width="100%">
+							<tr>
+							
+								<td class="order-column" style="width:3%; height:2.5em; vertical-align:top; text-align:center;"> 
+									<?php echo $PRT->type[$price->type()]->order(); ?>
+								</td> 
+								
+								<td class="name-column" style="width:20%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
+									<?php echo $price->name(); ?>
+								</td> 
+								
+								<td class="type-column" style="width:22.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
+									<?php echo $PRT->type[$price->type()]->name(); ?>
+								</td> 
+								
+								<td class="desc-column" style="width:44.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
+									<?php echo $price->desc(); ?>
+								</td> 
+								
+								<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
+									<?php echo ($PRT->type[$price->type()]->is_percent()) ? $price->amount() . '%' : $org_options['currency_symbol'] . $price->amount(); ?>
+								</td> 
+								
+								<td class="edit-column" style="width:7.5%; height:2.5em; vertical-align:top; text-align:right;">
+									<input class='edit-event-price-btn evt-prc-btn' rel="<?php echo $price->ID(); ?>" type='button' value='edit'  title='Edit this Event Price' style="cursor:pointer;" />
+								</td>
+
+							</tr>
+						</table>
+					</div>
+				</td>				
+			</tr>
+
 			<?php
 			endforeach;
 		endforeach;
@@ -505,30 +620,27 @@ function espresso_event_editor_pricing_metabox($event) {
 		<div id="add-new-ticket-price-dv" class="hidden">
 	
 			<h5 id="add-new-ticket-price-h5" ><?php _e('Add New Event Price', 'event_espresso'); ?></h5>
-			<?php
-					foreach ($PRT->type as $type) {
-						if ( ! $type->is_global() ) {
-							$price_types[] = array('id' => $type->ID(), 'text' => $type->name());
-						}						
-					}
-			?>					
+				
 			<table class="form-table">
 				<tbody>
-					<tr valign="top">
+				
+					<tr valign="top">					
 						<th><label for="new-ticket-price-PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
 						<td>
 							<?php echo select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' ); ?>
-							<span class="description"><?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax.', 'event_espresso'); ?></span>
+							<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax.', 'event_espresso'); ?></span>
 							<input id="new_ticket_price-EVT_ID" name="new_ticket_price[EVT_ID]" type="hidden" value="<?php echo $event->id; ?>" />
 						</td>
 					</tr>
+					
 					<tr valign="top">
 						<th><label for="new-ticket-price-PRC_name"><?php _e('Name', 'event_espresso'); ?></label></th>
 						<td>
 							<input class="add-new-ticket-price-input regular-text" type="text" id="new-ticket-price-PRC_name" name="new_ticket_price[PRC_name]" value=""/>
-							<span class="description"><?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></span>
+							<span class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
+					
 					<tr valign="top">
 						<th><label for="new-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 						<td>
@@ -536,13 +648,23 @@ function espresso_event_editor_pricing_metabox($event) {
 							<span class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></span>
 						</td>							
 					</tr>
+					
 					<tr valign="top">
 						<th><label for="new-ticket-price-PRC_amount"><?php _e('Amount', 'event_espresso'); ?></label></th>
 						<td>
-							<input class="add-new-ticket-price-input small-text" type="text" id="new-ticket-price[PRC_amount]" name="new_ticket_price[PRC_amount]" value=""/>
-							<span class="description"><?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
+							<input class="add-new-ticket-price-input small-text" type="text" id="new-ticket-price[PRC_amount]" name="new_ticket_price[PRC_amount]" style="text-align:right;" value=""/>
+							<span class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
+
+					<tr valign="top">
+						<th><label for="new-ticket-price-PRC_amount"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
+						<td>
+							<input type="text" id="new_ticket_price[PRC_reg_limit]" name="new_ticket_price[PRC_reg_limit]" class="add-new-ticket-price-input small-text" style="text-align:right;" value=""/>
+							<span class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></span>
+						</td>
+					</tr>
+					
 					<tr valign="top">
 						<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
 						<td>
@@ -551,26 +673,44 @@ function espresso_event_editor_pricing_metabox($event) {
 								<?php _e('Yes', 'event_espresso');?>
 							</label>
 							<label style="margin-right:15px;">
-								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="0" style="margin-right:5px;">
+								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="0" style="margin-right:5px;" checked="checked" />
 								<?php _e('No', 'event_espresso');?>
 							</label>
-							<span class="description"><?php _e( sprintf( 'If set to "Yes", then when editing an Event in the %sEvent Editor%s you will be able to set the dates for when this price will become active / inactive.', '<a href="' .  admin_url( 'admin.php?page=events' ) . '" title="Go to the Events Overview List to choose an Event to edit">', '</a>' ), 'event_espresso'); ?></span>
+							<span class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></span>
 						</td>
 					</tr>
+
+					<tr valign="top">
+						<th><label for="new_ticket_price[PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label></th>
+						<td>
+							<input id="new-ticket-price[PRC_start_date]" name="new_ticket_price[PRC_start_date]" type="text" class="datepicker add-new-ticket-price-input" value="" />
+							<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed for this Event.' ), 'event_espresso'); ?></span>
+						</td>
+					</tr>
+
+					<tr valign="top">
+						<th><label for="new_ticket_price[PRC_end_date]"><?php _e('End Date', 'event_espresso'); ?></label></th>
+						<td>
+							<input id="new-ticket-price[PRC_end_date]" name="new_ticket_price[PRC_end_date]" type="text" class="datepicker add-new-ticket-price-input" value="" />
+							<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed for this Event.' ), 'event_espresso'); ?></span>
+						</td>
+					</tr>			
+
 					<tr valign="top">
 						<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 						<td>
 							<label style="margin-right:15px;">
-								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_is_active]" value="1" style="margin-right:5px;">
+								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_is_active]" value="1" style="margin-right:5px;" checked="checked" />
 								<?php _e('Yes', 'event_espresso');?>
 							</label>
 							<label style="margin-right:15px;">
-								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_is_active]" value="0" style="margin-right:5px;">
+								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_is_active]" value="0" style="margin-right:5px;" />
 								<?php _e('No', 'event_espresso');?>
 							</label>
 							<span class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
+					
 				</tbody>
 			</table>
 			<br/>
