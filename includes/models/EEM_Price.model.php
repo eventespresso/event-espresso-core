@@ -46,10 +46,14 @@ class EEM_Price extends EEM_Base {
 		$this->table_data_types = array(
 				'PRC_ID' 						=> '%d',
 				'PRT_ID' 						=> '%d',
+				'EVT_ID' 						=> '%d',
 				'PRC_amount' 			=> '%d',
 				'PRC_name'					 => '%s',
 				'PRC_desc' 					=> '%s',
+				'PRC_reg_limit' 			=> '%d',
 				'PRC_use_dates'			=> '%d',
+				'PRC_start_date'			=> '%d',
+				'PRC_end_date'			=> '%d',
 				'PRC_disc_code'			=> '%s',
 				'PRC_disc_limit_qty'	=> '%d',
 				'PRC_disc_qty'				=> '%d',
@@ -109,10 +113,14 @@ class EEM_Price extends EEM_Base {
 			$array_of_objects[$price->PRC_ID] = new EE_Price(
 
 											$price->PRT_ID,
+											$price->EVT_ID,
 											$price->PRC_amount,
 											$price->PRC_name,
 											$price->PRC_desc,
+											$price->PRC_reg_limit,
 											$price->PRC_use_dates,
+											$price->PRC_start_date,
+											$price->PRC_end_date,
 											$price->PRC_disc_code,
 											$price->PRC_disc_limit_qty,
 											$price->PRC_disc_qty,
@@ -136,7 +144,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price() {
-		return new EE_Price( 0, 0.00, '', '', FALSE, NULL, FALSE, 0, FALSE, 0, FALSE );
+		return new EE_Price( 0, 0.00, '', '', NULL, FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 0, FALSE );
 	}
 
 
@@ -457,19 +465,18 @@ class EEM_Price extends EEM_Base {
 
 		global $wpdb;
 		// retreive prices
-		$SQL = 'SELECT  evp.*, prc.*, prt.* ';
-		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_event_price evp ';
-		$SQL .= 'LEFT JOIN ' . $this->table_name . ' prc ON evp.PRC_ID = prc.PRC_ID ';
-		$SQL .= 'RIGHT JOIN ' . $wpdb->prefix . 'esp_price_type prt ON prt.PRT_ID = prc.PRT_ID ';
-		$SQL .= 'WHERE (evp.EVT_ID = %d ';
-		$SQL .= 'OR (prt.PRT_is_global = TRUE AND prc.PRC_is_active = TRUE)) ';
+		$SQL = 'SELECT  prc.*, prt.* ';
+		$SQL .= 'JOIN ' . $this->table_name . ' prc ON evp.PRC_ID = prc.PRC_ID ';
+		$SQL .= 'JOIN ' . $wpdb->prefix . 'esp_price_type prt ON prt.PRT_ID = prc.PRT_ID ';
+		$SQL .= 'WHERE ( prc.EVT_ID = %d OR ( prt.PRT_is_global = TRUE AND prc.PRC_is_active = TRUE )) ';
 		$SQL .= 'AND prt.PRT_is_tax = FALSE ';
 		$SQL .= 'ORDER BY PRT_order';
 
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $EVT_ID))) {
+//			echo printr( $prices, '$prices' );		
 			foreach ($prices as $price) {
-				$active = ! empty( $price->EPR_is_active ) ? TRUE : FALSE;
+				$active = ! empty( $price->PRC_is_active ) ? TRUE : FALSE;
 				$array_of_is_active_and_price_objects[ $price->PRT_ID ][] = array( 'active'=>$active, 'price'=>array_shift( $this->_create_objects( $price )));
 			}
 			return $array_of_is_active_and_price_objects;
