@@ -457,10 +457,9 @@ class EEM_Price extends EEM_Base {
 		if ( ! $EVT_ID ) {
 			$prices = $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE, 0);
 			foreach ($prices as $price) {
-				if (! $price->is_active()) {
-					continue;
+				if ( $price->is_active()) {
+					$array_of_is_active_and_price_objects[ $price->PRT_ID ][] = array('active'=>TRUE, 'price'=>$price);
 				}
-				$array_of_is_active_and_price_objects[] = array('active'=>TRUE, 'price'=>$price);
 			}
 			return $array_of_is_active_and_price_objects;
 		}
@@ -476,7 +475,7 @@ class EEM_Price extends EEM_Base {
 
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $EVT_ID))) {
-//			echo printr( $prices, '$prices' );		
+			//echo printr( $prices, '$prices' );		
 			foreach ($prices as $price) {
 				$active = ! empty( $price->PRC_is_active ) ? TRUE : FALSE;
 				$array_of_is_active_and_price_objects[ $price->PRT_ID ][] = array( 'active'=>$active, 'price'=>array_shift( $this->_create_objects( $price )));
