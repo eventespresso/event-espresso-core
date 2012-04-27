@@ -59,7 +59,8 @@ class EEM_Price extends EEM_Base {
 				'PRC_disc_qty'				=> '%d',
 				'PRC_disc_apply_all'	=> '%d',
 				'PRC_disc_wp_user'	=> '%d',
-				'PRC_is_active' 			=> '%d'
+				'PRC_is_active' 			=> '%d',
+				'PRC_overrides' 			=> '%d'
 		);
 		// load Price object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
@@ -127,6 +128,7 @@ class EEM_Price extends EEM_Base {
 											$price->PRC_disc_apply_all,
 											$price->PRC_disc_wp_user,
 											$price->PRC_is_active,
+											$price->PRC_overrides,
 											$price->PRC_ID
 			);
 		}
@@ -144,7 +146,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price() {
-		return new EE_Price( 0, 0.00, '', '', NULL, FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 0, FALSE );
+		return new EE_Price( 0, 0, 0.00, '', '', NULL, FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 1, FALSE, NULL );
 	}
 
 

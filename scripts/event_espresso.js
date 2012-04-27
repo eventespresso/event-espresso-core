@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
 		var control = jQuery(this);
 		control.addClass('hidden');  
 		// display the target's div container - use slideToggle or removeClass
-		jQuery('#'+item_to_display+'-dv').slideToggle( 750, function() {
+		jQuery('#'+item_to_display+'-dv').slideToggle( 500, function() {
 			// hide the control element
 			//control.addClass('hidden');  
 			// display the target div's hide link
@@ -26,7 +26,7 @@ jQuery(document).ready(function() {
 		var control = jQuery(this);
 		control.addClass('hidden');  
 		// hide the target's div container - use slideToggle or addClass
-		jQuery('#'+item_to_hide+'-dv').slideToggle( 750, function() {
+		jQuery('#'+item_to_hide+'-dv').slideToggle( 500, function() {
 			//jQuery('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
 			// hide the control element
 			//control.addClass('hidden');  
@@ -41,7 +41,7 @@ jQuery(document).ready(function() {
 		var inputs_to_cancel = jQuery(this).attr("rel"); 
 		var control = jQuery(this);
 		// hide the target's div container - use slideToggle or addClass
-		jQuery('#'+inputs_to_cancel+'-dv').slideToggle( 750, function() {
+		jQuery('#'+inputs_to_cancel+'-dv').slideToggle( 500, function() {
 			// hide the control element
 			control.addClass('hidden');  
 			// display the control element that toggles display of this element
@@ -68,12 +68,25 @@ jQuery(document).ready(function() {
 	});
 	
 
-	jQuery('.edit-event-price-btn').click(function() {
-		// get target element ID from "this" (the control element's) "rel" attribute
+	jQuery('.edit-event-price-lnk').click(function() {
+		// get target element ID from "this" (the control element's) "rel" attribute 
+		jQuery( '.event-price-settings-dv' ).each( function() {
+			if ( jQuery(this).is(':visible')){
+				var evt_prc_row = jQuery(this).attr( 'id' );
+				jQuery( '#'+evt_prc_row ).slideToggle( 500 );  
+				evt_prc_row = evt_prc_row.replace('edit-', '');
+				jQuery( '#'+evt_prc_row ).slideToggle( 250 );  
+			}
+		});
 		var EVP_ID = jQuery(this).attr("rel"); 
 		jQuery( '#event-price-'+EVP_ID ).slideToggle( 250 );  
+//		jQuery( '#edit-event-price-'+EVP_ID+' .etp-radio' ).each(function() {
+//			if( jQuery(this).prop( 'checked' ) ) {
+//				jQuery(this).prop( 'checked', true );
+//			}
+//		}); 
 		// display the target's div container - use slideToggle or removeClass
-		jQuery( '#edit-event-price-'+EVP_ID ).slideToggle( 750 ); 
+		jQuery( '#edit-event-price-'+EVP_ID ).slideToggle( 500 ); 
 		return false;
 	});
 
@@ -83,7 +96,7 @@ jQuery(document).ready(function() {
 		var EVP_ID = jQuery(this).attr("rel"); 
 		jQuery( '#event-price-'+EVP_ID ).slideToggle( 250 );  
 		// display the target's div container - use slideToggle or removeClass
-		jQuery( '#edit-event-price-'+EVP_ID ).slideToggle( 750 ); 
+		jQuery( '#edit-event-price-'+EVP_ID ).slideToggle( 500 ); 
 		return false;
 	});
 

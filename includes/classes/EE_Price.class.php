@@ -169,6 +169,15 @@ class EE_Price {
 	private $_PRC_is_active = NULL;
 
 
+	/**
+	*	Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
+	*
+	*	@access	private
+	*	@var int
+	*/
+	private $_PRC_overrides = NULL;
+
+
 
 
 
@@ -191,9 +200,10 @@ class EE_Price {
 	* @param	 		bool					$PRC_disc_apply_all		Does discount apply to all attendees being registered?
 	* @param	 		int 					$PRC_disc_wp_user		WP user id of the admin that created the discount
 	* @param	 		bool					$PRC_is_active				is the Price globally active
+	* @param			int 					$PRC_overrides				Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
 	* @param			int 					$PRC_ID							Price ID
 	*/
-	public function __construct( $PRT_ID=NULL, $EVT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_reg_limit=NULL, $PRC_use_dates=FALSE, $PRC_start_date=NULL, $PRC_end_date=NULL, $PRC_disc_code=NULL, $PRC_disc_limit_qty=FALSE, $PRC_disc_qty=0, $PRC_disc_apply_all=TRUE, $PRC_disc_wp_user=0, $PRC_is_active=TRUE, $PRC_ID=FALSE ) {
+	public function __construct( $PRT_ID=NULL, $EVT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_reg_limit=NULL, $PRC_use_dates=FALSE, $PRC_start_date=NULL, $PRC_end_date=NULL, $PRC_disc_code=NULL, $PRC_disc_limit_qty=FALSE, $PRC_disc_qty=0, $PRC_disc_apply_all=TRUE, $PRC_disc_wp_user=0, $PRC_is_active=TRUE, $PRC_overrides=NULL, $PRC_ID=FALSE ) {
 	
 		$this->_PRC_ID 						= absint($PRC_ID);
 		$this->_EVT_ID 						= absint($EVT_ID);
@@ -211,6 +221,7 @@ class EE_Price {
 		$this->_PRC_disc_apply_all	= absint( $PRC_disc_apply_all ) ? TRUE : FALSE;
 		$this->_PRC_disc_wp_user	= absint( $PRC_disc_wp_user );
 		$this->_PRC_is_active			= absint( $PRC_is_active ) ? TRUE : FALSE;
+		$this->_PRC_overrides			= absint($PRC_overrides);
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
@@ -304,6 +315,27 @@ class EE_Price {
 
 
 	/**
+	*		Set Reg Limit
+	*
+	*		@access		public
+	*		@param		string		$PRC_desc
+	*/
+	public function set_reg_limit( $PRC_reg_limit = FALSE ) {
+
+		global $espresso_notices;
+		if ( ! $PRC_reg_limit ) {
+			$espresso_notices['errors'][] = 'No registration limit was supplied.';
+			return FALSE;
+		}
+		$this->_PRC_reg_limit = absint( $PRC_reg_limit );
+		return TRUE;
+	}
+
+
+
+
+
+	/**
 	*		Set use dates boolean flag
 	*
 	* 		@access		public
@@ -317,6 +349,50 @@ class EE_Price {
 			return FALSE;
 		}
 		$this->_PRC_use_dates = (bool)absint( $PRC_use_dates );
+		return TRUE;
+	}
+
+
+
+
+
+	/**
+	*		Set start date
+	*
+	* 		@access		public
+	*		@param		mixed		$PRC_start_date
+	*/
+	public function set_start_date( $PRC_start_date = NULL ) {
+
+		global $espresso_notices;
+		if ( ! $PRC_start_date ) {
+			$espresso_notices['errors'][] = 'No start date was supplied.';
+			return FALSE;
+		}
+		
+		$this->_PRC_start_date = is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : strtotime( wp_strip_all_tags( $PRC_start_date ));
+		return TRUE;
+	}
+
+
+
+
+
+	/**
+	*		Set end date
+	*
+	* 		@access		public
+	*		@param		mixed		$PRC_use_dates
+	*/
+	public function set_end_date( $PRC_end_date = NULL ) {
+
+		global $espresso_notices;
+		if ( ! $PRC_end_date ) {
+			$espresso_notices['errors'][] = 'No end date was supplied.';
+			return FALSE;
+		}
+		
+		$this->_PRC_end_date = is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : strtotime( wp_strip_all_tags( $PRC_end_date ));
 		return TRUE;
 	}
 
@@ -475,7 +551,8 @@ class EE_Price {
 				'PRC_disc_qty'				=> $this->_PRC_disc_qty,
 				'PRC_disc_apply_all'	=> $this->_PRC_disc_apply_all,
 				'PRC_disc_wp_user'	=> $this->_PRC_disc_wp_user,
-				'PRC_is_active'			=> $this->_PRC_is_active
+				'PRC_is_active'			=> $this->_PRC_is_active,
+				'PRC_overrides'			=> $this->_PRC_overrides
 		);
 
 		if ( $where_cols_n_values ){
@@ -514,7 +591,7 @@ class EE_Price {
 	/**
 	*	get Price ID
 	* @access		public
-	* @return type int
+	* @return 		int
 	*/
 	public function ID() {
 		return $this->_PRC_ID;
@@ -524,7 +601,7 @@ class EE_Price {
 	/**
 	*	get Price type
 	* @access		public
-	* @return type int
+	* @return 		int
 	*/
 	public function type() {
 		return $this->_PRT_ID;
@@ -533,7 +610,7 @@ class EE_Price {
 	/**
 	*	get Event ID
 	* @access		public
-	* @return type int
+	* @return 		int
 	*/
 	public function event() {
 		return $this->_EVT_ID;
@@ -543,7 +620,7 @@ class EE_Price {
 	/**
 	*	get Price Amount
 	* @access		public
-	* @return type float
+	* @return 		float
 	*/
 	public function amount() {
 		return $this->_PRC_amount;
@@ -553,7 +630,7 @@ class EE_Price {
 	/**
 	*	get Price Name
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function name() {
 		return $this->_PRC_name;
@@ -563,7 +640,7 @@ class EE_Price {
 	/**
 	*	get Price description
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function desc() {
 		return $this->_PRC_desc;
@@ -573,7 +650,7 @@ class EE_Price {
 	/**
 	*	get Reg Limit
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function reg_limit() {
 		return $this->_PRC_reg_limit;
@@ -583,7 +660,7 @@ class EE_Price {
 	/**
 	*	get Price use_dates
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function use_dates() {
 		return $this->_PRC_use_dates ? TRUE : FALSE;
@@ -593,7 +670,7 @@ class EE_Price {
 	/**
 	*	get start date
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function start_date() {
 		return $this->_PRC_start_date;
@@ -603,7 +680,7 @@ class EE_Price {
 	/**
 	*	get end date
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function end_date() {
 		return $this->_PRC_end_date;
@@ -614,7 +691,7 @@ class EE_Price {
 	/**
 	*	get Price disc_limit_qty
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function disc_limit_qty() {
 		return $this->_PRC_disc_limit_qty;
@@ -624,7 +701,7 @@ class EE_Price {
 	/**
 	*	get Price disc_code
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function disc_code() {
 		return $this->_PRC_disc_code;
@@ -634,7 +711,7 @@ class EE_Price {
 	/**
 	*	get Price disc_qty
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function disc_qty() {
 		return $this->_PRC_disc_qty;
@@ -644,7 +721,7 @@ class EE_Price {
 	/**
 	*	get Price disc_apply_all
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function disc_apply_all() {
 		return $this->_PRC_disc_apply_all;
@@ -654,7 +731,7 @@ class EE_Price {
 	/**
 	*	get Price disc_wp_user
 	* @access		public
-	* @return type string
+	* @return 		string
 	*/
 	public function disc_wp_user() {
 		return $this->_PRC_disc_wp_user;
@@ -664,11 +741,24 @@ class EE_Price {
 	/**
 	*	get is Price globally active?
 	* @access		public
-	* @return type bool
+	* @return 		bool
 	*/
 	public function is_active() {
 		return $this->_PRC_is_active;
 	}
+
+
+	/**
+	*	get overrides
+	* 	@access		public
+	* 	@return 		int
+	*/
+	public function overrides() {
+		return $this->_PRC_overrides;
+	}
+
+
+
 
 
 	/**

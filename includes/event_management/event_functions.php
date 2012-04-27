@@ -445,17 +445,19 @@ function espresso_event_editor_pricing_metabox($event) {
 		</div>
 	<?php endif; ?>
 
-	<h5 id="add-new-ticket-price-h5" ><?php _e('Active Prices Applied to This Event', 'event_espresso'); ?></h5>
+	<h5 id="add-new-ticket-price-h5" ><?php _e('All Prices, Discounts and Surcharges that are Currently Active for This Event', 'event_espresso'); ?></h5>
 
 	<table class="event_editor_pricing">
 		<thead>
 			<tr>
 				<td style="width:3%; text-align:center;"><b><?php _e('Order'); ?></b></td>
-				<td style="width:20%; padding:0 .5em;"><b><?php _e('Price Name'); ?></b></td>
+				<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Price Name'); ?></b></td>
 				<td style="width:22.5%; padding:0 .5em;"><b><?php _e('Type'); ?></b></td>
-				<td style="width:44.5%; padding:0 .5em;"><b><?php _e('Description'); ?></b></td>
+				<td style="width:42.5%; padding:0 .5em;"><b><?php _e('Description'); ?></b></td>
+				<td style="width:1.5%; text-align:center;"></td>
 				<td style="width:5%; text-align:center;"><b><?php _e('Amount'); ?></b></td>
-				<td style="width:7.5%; text-align:center;"></td>
+				<td style="width:1%; text-align:center;"></td>
+				<td style="text-align:center;"></td>
 			</tr>
 		</thead>
 		<?php 
@@ -465,8 +467,8 @@ function espresso_event_editor_pricing_metabox($event) {
 		?>
 
 			<tr>
-				<td colspan="6">
-					<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price hidden" style="padding:5px 10px 10px; margin:10px 0 20px; background:#fcfcfc; border:1px solid #eee; border-radius:5px;">
+				<td colspan="8">
+					<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price-settings-dv hidden" style="padding:5px 60px 10px 15px; margin:10px 0 20px; background:#fcfcfc; border:1px solid #eee; border-radius:5px;">
 						<h6><?php _e('Edit : ', 'event_espresso'); ?><?php echo $price->name(); ?></h6>
 						<?php //echo printr( $price, '$price' ); ?>
 						<table class="form-table">
@@ -475,8 +477,8 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">					
 									<th><label for="edit-ticket-price-PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
 									<td>
-										<?php echo select_input( 'edit_ticket_price[PRT_ID]', $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID"', 'edit-ticket-price-input' ); ?>
-										<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax.', 'event_espresso'); ?></span>
+										<?php echo select_input( 'edit_ticket_price[PRT_ID]', $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID" style="width:auto;"', 'edit-ticket-price-input' ); ?>
+										<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></span>
 										<input id="edit_ticket_price-EVT_ID" name="edit_ticket_price[EVT_ID]" type="hidden" value="<?php echo $event->id; ?>" />
 									</td>
 								</tr>
@@ -492,7 +494,7 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">
 									<th><label for="edit-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 									<td>
-										<textarea class="edit-ticket-price-input regular-text" id="edit-ticket-price[PRC_desc]" name="edit_ticket_price[PRC_desc]" cols="100" rows="1" ><?php echo $price->desc(); ?></textarea><br/>
+										<input class="edit-ticket-price-input widefat" type="text" id="edit-ticket-price[PRC_desc]" name="edit_ticket_price[PRC_desc]" value="<?php echo $price->desc(); ?>"/><br/>
 										<span class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></span>
 									</td>							
 								</tr>
@@ -565,40 +567,55 @@ function espresso_event_editor_pricing_metabox($event) {
 							</tbody>
 						</table>
 
-						<div style="text-align:right;"><input class='cancel-event-price-btn' rel="<?php echo $price->ID(); ?>" type='button' value='cancel' style="cursor:pointer;" /></div>
+						<div style="text-align:right;">
+							<input class='cancel-event-price-btn' rel="<?php echo $price->ID(); ?>" type='button' value='cancel' style="position:relative; right:-50px; cursor:pointer;" />
+						</div>
 								
 					</div>
 				</td>
 			</tr>
 			
 			<tr>
-				<td colspan="6">
+				<td colspan="8">
 					<div id="event-price-<?php echo $price->ID(); ?>" class="event-price">
 						<table width="100%">
 							<tr>
 							
-								<td class="order-column" style="width:3%; height:2.5em; vertical-align:top; text-align:center;"> 
+								<td class="order-column" style="width:3%; height:2.5em; text-align:center;"> 
 									<?php echo $PRT->type[$price->type()]->order(); ?>
 								</td> 
 								
-								<td class="name-column" style="width:20%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
+								<td class="name-column" style="width:17.5%; height:2.5em; padding:0 .5em;"> 
 									<?php echo $price->name(); ?>
 								</td> 
 								
-								<td class="type-column" style="width:22.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
+								<td class="type-column" style="width:22.5%; height:2.5em; padding:0 .5em;"> 
 									<?php echo $PRT->type[$price->type()]->name(); ?>
 								</td> 
 								
-								<td class="desc-column" style="width:44.5%; height:2.5em; padding:0 .5em; vertical-align:top;"> 
+								<td class="desc-column" style="width:42.5%; height:2.5em; padding:0 .5em;"> 
 									<?php echo $price->desc(); ?>
 								</td> 
 								
-								<td class="amount-column" style="width:5%; height:2.5em; vertical-align:top; text-align:center;"> 
-									<?php echo ($PRT->type[$price->type()]->is_percent()) ? $price->amount() . '%' : $org_options['currency_symbol'] . $price->amount(); ?>
+								<td class="amount-column" style="width:1.5%; height:2.5em; text-align:right;"> 
+									<?php echo ($PRT->type[$price->type()]->is_percent()) ?  '' : $org_options['currency_symbol']; ?>
 								</td> 
 								
-								<td class="edit-column" style="width:7.5%; height:2.5em; vertical-align:top; text-align:right;">
-									<input class='edit-event-price-btn evt-prc-btn' rel="<?php echo $price->ID(); ?>" type='button' value='edit'  title='Edit this Event Price' style="cursor:pointer;" />
+								<td class="amount-column" style="width:5%; height:2.5em; text-align:right;"> 
+									<input class="edit-ticket-price-input small-text" type="text" id="quick-edit-ticket-price[PRC_amount]" name="edit_ticket_price[PRC_amount][quick]" style="text-align:right;" value="<?php echo $price->amount(); ?>"/>
+								</td> 
+								
+								<td class="amount-column" style="width:1%; height:2.5em; text-align:left;"> 
+									<?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?>
+								</td> 
+								
+								<td class="edit-column" style=" height:2.5em; vertical-align:top; text-align:right;">
+									<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title='Edit Advanced Settings for this Event Price' style="cursor:pointer;" >
+										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
+									</a>
+									<a class='delete-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>" title='Delete this Event Price' style="margin:0 0 0 10px; font-size:.9em; cursor:pointer;" >
+										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
+									</a>
 								</td>
 
 							</tr>
@@ -614,10 +631,6 @@ function espresso_event_editor_pricing_metabox($event) {
 		</table>
 		<br/>
 
-		<a id="display-add-new-ticket-price" class="button-secondary display-the-hidden" rel="add-new-ticket-price">
-			<?php _e('Add New Event Price', 'event_espresso'); ?>
-		</a>
-		
 		<div id="add-new-ticket-price-dv" class="hidden">
 	
 			<h5 id="add-new-ticket-price-h5" ><?php _e('Add New Event Price', 'event_espresso'); ?></h5>
@@ -629,7 +642,7 @@ function espresso_event_editor_pricing_metabox($event) {
 						<th><label for="new-ticket-price-PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
 						<td>
 							<?php echo select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' ); ?>
-							<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax.', 'event_espresso'); ?></span>
+							<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></span>
 							<input id="new_ticket_price-EVT_ID" name="new_ticket_price[EVT_ID]" type="hidden" value="<?php echo $event->id; ?>" />
 						</td>
 					</tr>
@@ -716,12 +729,21 @@ function espresso_event_editor_pricing_metabox($event) {
 			</table>
 			<br/>
 
-			<a id="hide-add-new-ticket-price" class="button-secondary hidden" rel="add-new-ticket-price">
+			<div>
+				<input id="hide-add-new-ticket-price" class="cancel-event-price-btn hidden" rel="add-new-ticket-price" type="button" value="cancel" style="margin:0 5px; cursor:pointer;" />
+			</div>
+			
+			<!--<a id="hide-add-new-ticket-price" class="button-secondary hidden" rel="add-new-ticket-price">
 				<?php _e('cancel', 'event_espresso'); ?><img src="../../../../images/icons/close_additional_info-10x10.png" alt="" />
-			</a>
+			</a>-->
 			
 		</div>
-		<br class="clear"/><br/>	
+		
+		<a id="display-add-new-ticket-price" class="button-secondary display-the-hidden" rel="add-new-ticket-price">
+			<?php _e('Add New Event Price', 'event_espresso'); ?>
+		</a>
+		<br class="clear"/><br/>
+		
 		
 	</div>
 	<?php
