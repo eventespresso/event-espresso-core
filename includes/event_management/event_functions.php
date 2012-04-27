@@ -447,14 +447,14 @@ function espresso_event_editor_pricing_metabox($event) {
 
 	<h5 id="add-new-ticket-price-h5" ><?php _e('All Prices, Discounts and Surcharges that are Currently Active for This Event', 'event_espresso'); ?></h5>
 
-	<table class="event_editor_pricing">
+	<table class="event_editor_pricing" width="100%" >
 		<thead>
 			<tr>
-				<td style="width:3%; text-align:center;"><b><?php _e('Order'); ?></b></td>
+				<td style="width:4%; text-align:center;"><b><?php _e('Order'); ?></b></td>
 				<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Price Name'); ?></b></td>
 				<td style="width:22.5%; padding:0 .5em;"><b><?php _e('Type'); ?></b></td>
 				<td style="width:42.5%; padding:0 .5em;"><b><?php _e('Description'); ?></b></td>
-				<td style="width:1.5%; text-align:center;"></td>
+				<td style="width:2.5%; text-align:center;"></td>
 				<td style="width:5%; text-align:center;"><b><?php _e('Amount'); ?></b></td>
 				<td style="width:1%; text-align:center;"></td>
 				<td style="text-align:center;"></td>
@@ -471,7 +471,7 @@ function espresso_event_editor_pricing_metabox($event) {
 					<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price-settings-dv hidden" style="padding:5px 60px 10px 15px; margin:10px 0 20px; background:#fcfcfc; border:1px solid #eee; border-radius:5px;">
 						<h6><?php _e('Edit : ', 'event_espresso'); ?><?php echo $price->name(); ?></h6>
 						<?php //echo printr( $price, '$price' ); ?>
-						<table class="form-table">
+						<table class="form-table" width="100%">
 							<tbody>
 							
 								<tr valign="top">					
@@ -479,14 +479,14 @@ function espresso_event_editor_pricing_metabox($event) {
 									<td>
 										<?php echo select_input( 'edit_ticket_price[PRT_ID]', $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID" style="width:auto;"', 'edit-ticket-price-input' ); ?>
 										<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></span>
-										<input id="edit_ticket_price-EVT_ID" name="edit_ticket_price[EVT_ID]" type="hidden" value="<?php echo $event->id; ?>" />
+										<input id="edit_ticket_price[<?php echo $price->ID(); ?>][EVT_ID]" name="edit_ticket_price[<?php echo $price->ID(); ?>][EVT_ID]" type="hidden" value="<?php echo $event->id; ?>" />
 									</td>
 								</tr>
 								
 								<tr valign="top">
 									<th><label for="edit-ticket-price-PRC_name"><?php _e('Name', 'event_espresso'); ?></label></th>
 									<td>
-										<input class="edit-ticket-price-input regular-text" type="text" id="edit-ticket-price-PRC_name" name="edit_ticket_price[PRC_name]" value="<?php echo $price->name(); ?>"/>
+										<input class="edit-ticket-price-input regular-text" type="text" id="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>"/>
 										<span class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></span>
 									</td>
 								</tr>
@@ -494,7 +494,7 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">
 									<th><label for="edit-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 									<td>
-										<input class="edit-ticket-price-input widefat" type="text" id="edit-ticket-price[PRC_desc]" name="edit_ticket_price[PRC_desc]" value="<?php echo $price->desc(); ?>"/><br/>
+										<input class="edit-ticket-price-input widefat" type="text" id="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo $price->desc(); ?>"/><br/>
 										<span class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></span>
 									</td>							
 								</tr>
@@ -502,7 +502,7 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">
 									<th><label for="edit-ticket-price-PRC_amount"><?php _e('Amount', 'event_espresso'); ?></label></th>
 									<td>
-										<input class="edit-ticket-price-input small-text" type="text" id="edit-ticket-price[PRC_amount]" name="edit_ticket_price[PRC_amount]" style="text-align:right;" value="<?php echo $price->amount(); ?>"/>
+										<input class="edit-ticket-price-input small-text" type="text" id="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="text-align:right;" value="<?php echo $price->amount(); ?>"/>
 										<span class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
 									</td>
 								</tr>
@@ -510,7 +510,7 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">
 									<th><label for="edit-ticket-price-PRC_amount"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
 									<td>
-										<input type="text" id="edit_ticket_price[PRC_reg_limit]" name="edit_ticket_price[PRC_reg_limit]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php echo $price->reg_limit(); ?>"/>
+										<input type="text" id="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_reg_limit]" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_reg_limit]" class="edit-ticket-price-input small-text" style="text-align:right;" value="<?php echo $price->reg_limit(); ?>"/>
 										<span class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></span>
 									</td>
 								</tr>
@@ -521,12 +521,12 @@ function espresso_event_editor_pricing_metabox($event) {
 										<?php $price_uses_dates = $price->use_dates();?>
 										<label style="margin-right:15px;">
 											<?php $checked = $price_uses_dates ===1 ? ' checked="checked"' : '';?>
-											<input class="edit-ticket-price-input etp-radio" type="radio" name="edit_ticket_price[PRC_use_dates]" value="1"<?php echo $checked;?> style="margin-right:5px;"/>
+											<input class="edit-ticket-price-input etp-radio" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_use_dates]" value="1"<?php echo $checked;?> style="margin-right:5px;"/>
 											<?php _e('Yes', 'event_espresso');?>
 										</label>
 										<label style="margin-right:15px;">
 											<?php $checked = $price_uses_dates === 0 ? ' checked="checked"' : '';?>
-											<input class="edit-ticket-price-input etp-radio" type="radio" name="edit_ticket_price[PRC_use_dates]" value="0"<?php echo $checked;?> style="margin-right:5px;"/>
+											<input class="edit-ticket-price-input etp-radio" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_use_dates]" value="0"<?php echo $checked;?> style="margin-right:5px;"/>
 											<?php _e('No', 'event_espresso');?>
 										</label>
 										<span class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></span>
@@ -534,17 +534,17 @@ function espresso_event_editor_pricing_metabox($event) {
 								</tr>
 			
 								<tr valign="top">
-									<th><label for="edit_ticket_price[PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label></th>
+									<th><label for="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label></th>
 									<td>
-										<input id="edit-ticket-price[PRC_start_date]" name="edit_ticket_price[PRC_start_date]" type="text" class="datepicker edit-ticket-price-input" value="" />
+										<input id="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_start_date]" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_start_date]" type="text" class="datepicker edit-ticket-price-input" value="" />
 										<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed.' ), 'event_espresso'); ?></span>
 									</td>
 								</tr>
 			
 								<tr valign="top">
-									<th><label for="edit_ticket_price[PRC_end_date]"><?php _e('End Date', 'event_espresso'); ?></label></th>
+									<th><label for="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_end_date]"><?php _e('End Date', 'event_espresso'); ?></label></th>
 									<td>
-										<input id="edit-ticket-price[PRC_end_date]" name="edit_ticket_price[PRC_end_date]" type="text" class="datepicker edit-ticket-price-input" value="" />
+										<input id="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_end_date]" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_end_date]" type="text" class="datepicker edit-ticket-price-input" value="" />
 										<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed.' ), 'event_espresso'); ?></span>
 									</td>
 								</tr>			
@@ -553,11 +553,11 @@ function espresso_event_editor_pricing_metabox($event) {
 									<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 									<td>
 										<label style="margin-right:15px;">
-											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[PRC_is_active]" value="1" style="margin-right:5px;" checked="checked" />
+											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="1" style="margin-right:5px;" checked="checked" />
 											<?php _e('Yes', 'event_espresso');?>
 										</label>
 										<label style="margin-right:15px;">
-											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[PRC_is_active]" value="0" style="margin-right:5px;" />
+											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="0" style="margin-right:5px;" />
 											<?php _e('No', 'event_espresso');?>
 										</label>
 										<span class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></span>
@@ -581,35 +581,40 @@ function espresso_event_editor_pricing_metabox($event) {
 						<table width="100%">
 							<tr>
 							
-								<td class="order-column" style="width:3%; height:2.5em; text-align:center;"> 
-									<?php echo $PRT->type[$price->type()]->order(); ?>
+								<td class="order-column" style="width:4%; height:2.5em; text-align:center;"> 
+									<?php //echo $PRT->type[$price->type()]->order(); ?>
+									<input class="edit-ticket-price-input small-text" type="text" id="quick-edit-ticket-price-PRC_order" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $PRT->type[$price->type()]->order(); ?>" style="width:100%;text-align:right;"/>							
 								</td> 
 								
 								<td class="name-column" style="width:17.5%; height:2.5em; padding:0 .5em;"> 
-									<?php echo $price->name(); ?>
+									<?php //echo $price->name(); ?>
+									<input class="edit-ticket-price-input regular-text" type="text" id="quick-edit-ticket-price-PRC_name" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" style="width:100%;"/>
 								</td> 
 								
 								<td class="type-column" style="width:22.5%; height:2.5em; padding:0 .5em;"> 
-									<?php echo $PRT->type[$price->type()]->name(); ?>
+									<?php //echo $PRT->type[$price->type()]->name(); ?>
+									<?php $select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]'; ?>
+									<?php echo select_input( $select_name, $all_price_types, $price->type(), 'id="quick-edit-ticket-price-type-ID" style="width:100%;"', 'edit-ticket-price-input' ); ?>
 								</td> 
 								
 								<td class="desc-column" style="width:42.5%; height:2.5em; padding:0 .5em;"> 
-									<?php echo $price->desc(); ?>
+									<?php //echo $price->desc(); ?>
+									<input class="edit-ticket-price-input widefat" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_desc]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo $price->desc(); ?>" style="width:100%;"/>
 								</td> 
 								
-								<td class="amount-column" style="width:1.5%; height:2.5em; text-align:right;"> 
+								<td class="amount-column" style="width:2.5%; height:2.5em; text-align:right;"> 
 									<?php echo ($PRT->type[$price->type()]->is_percent()) ?  '' : $org_options['currency_symbol']; ?>
 								</td> 
 								
 								<td class="amount-column" style="width:5%; height:2.5em; text-align:right;"> 
-									<input class="edit-ticket-price-input small-text" type="text" id="quick-edit-ticket-price[PRC_amount]" name="edit_ticket_price[PRC_amount][quick]" style="text-align:right;" value="<?php echo $price->amount(); ?>"/>
+									<input class="edit-ticket-price-input small-text" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_amount]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="width:100%;text-align:right;" value="<?php echo $price->amount(); ?>"/>
 								</td> 
 								
 								<td class="amount-column" style="width:1%; height:2.5em; text-align:left;"> 
 									<?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?>
 								</td> 
 								
-								<td class="edit-column" style=" height:2.5em; vertical-align:top; text-align:right;">
+								<td class="edit-column" style=" height:2.5em; vertical-align:middle; text-align:right;">
 									<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title='Edit Advanced Settings for this Event Price' style="cursor:pointer;" >
 										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
 									</a>

@@ -537,10 +537,8 @@ function update_event($recurrence_arr = array()) {
 
 			/*************************************   PRICING   ********************************************/
 
-			// delete old pricing entries
-			//$EVP->delete_by_price_id( $event_id );
 
-			if ( $new_ticket_price = isset( $_POST['new_ticket_price'] ) ? $_POST['new_ticket_price'] : FALSE ) {
+			if ( $new_ticket_price = isset( $_POST['new_ticket_price'] ) ? $_POST['new_ticket_price'] : array( 'PRC_name' => NULL ) ) {
 			
 				if ( ! empty( $new_ticket_price['PRC_name'] )) {
 					//echo printr( $new_ticket_price, '$new_ticket_price' );
@@ -577,7 +575,14 @@ function update_event($recurrence_arr = array()) {
 				}
 			}
 			
-//global $espresso_notices;
+			
+			if ( $ticket_prices = isset( $_POST['edit_ticket_price'] ) ? $_POST['edit_ticket_price'] : FALSE ) {
+			
+//				echo printr( $ticket_prices, '$ticket_prices' );
+			}
+
+			
+//global $espresso_notices; 
 //echo espresso_get_notices();			
 //die();
 
