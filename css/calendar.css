@@ -287,7 +287,7 @@ a.fc-event {
 	background-color: #ccc; /* using rgba values for opacity. bitchin */
 	border-color: #ccc;
 }
-.fc-event-skin.expired span { color: #333; }
+
 .fc-event-inner {
 	position: relative;
 	width: 100%;
