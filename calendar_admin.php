@@ -293,18 +293,18 @@ function espresso_calendar_config_mnu() {
 														<td><?php echo select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?></td>
 													</tr>
 													<tr class="color-picker-selections">
-														<th class="color-picker-style"> <label for="event-background">
+														<th class="color-picker-style"> <label for="background-color">
 																<?php _e('Event Background Color', 'event_espresso') ?>
 															</label>
 														</th>
-														<td><input id="background-color"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background'])) ? 'value="' . $espresso_calendar['ee_event_background'] . '"' : '' ?> /><div id="colorpicker-1"></div></td>
+														<td><input id="background-color"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background'])) ? 'value="' . $espresso_calendar['ee_event_background'] . '"' : 'value="#486D96"' ?> /><div id="colorpicker-1"></div></td>
 													</tr>
 													<tr class="color-picker-selections">
-														<th class="color-picker-style"> <label for="event-text">
+														<th class="color-picker-style"> <label for="text-color">
 																<?php _e('Event Text Color', 'event_espresso') ?>
 															</label>
 														</th>
-														<td><input id="text-color" type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) ? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : '' ?> /><div id="colorpicker-2"></div></td>
+														<td><input id="text-color" type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) ? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : 'value="#ebe6e8"' ?> /><div id="colorpicker-2"></div></td>
 													</tr>
 
 
@@ -317,7 +317,7 @@ function espresso_calendar_config_mnu() {
 															</label>
 														</th>
 														<td>
-															<?php echo select_input('show_tooltips', array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso'))), $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?>
+															<?php echo select_input('show_tooltips', $values, $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?>
 														</td>
 													</tr>
 
@@ -330,7 +330,7 @@ function espresso_calendar_config_mnu() {
 																?>
 															</label>
 														</th>
-														<td><?php echo select_input('enable_cat_classes', array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso'))), $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"'); ?></td>
+														<td><?php echo select_input('enable_cat_classes', $values, $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"'); ?></td>
 													</tr>
 												</tbody>
 											</table>
