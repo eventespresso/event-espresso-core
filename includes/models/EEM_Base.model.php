@@ -948,8 +948,8 @@ abstract class EEM_Base {
 			switch ( $key ) {
 
 				case 0:
-					// break filepath up by the \
-					$code_bit = explode ( '\\', $code_bit );
+					// break filepath up by the /
+					$code_bit = explode ( '/', $code_bit );
 					// filename is the last segment
 					$file = $code_bit[ count($code_bit)-1 ];
 					// folder is the second to the last segment
