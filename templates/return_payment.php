@@ -19,12 +19,10 @@ function espresso_display_return_payment_template($data) {
 			<?php
 			return;
 		}
-		//Uncomment to check the number of available spaces
-		//echo get_number_of_attendees_reg_limit($data->event_id, 'number_available_spaces');
 		if ($data->total_cost != '0.00') {
 			do_action('action_hook_espresso_display_payment_gateways', $data);
 		}
-	}//End if ($data->payment_status == ("Incomplete") )
+	}
 }
 
 add_action('action_hook_espresso_display_return_payment_template', 'espresso_display_return_payment_template');
