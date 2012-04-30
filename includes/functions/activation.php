@@ -776,18 +776,6 @@ function events_data_tables_install() {
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-	$table_name = "events_start_end";
-	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
-				event_id int(11) DEFAULT NULL,
-				start_time varchar(10) DEFAULT NULL,
-				end_time varchar(10) DEFAULT NULL,
-				reg_limit int (15) DEFAULT '0',
-				PRIMARY KEY  (id),
-			  	KEY event_id (event_id)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
 	$table_name = "esp_price";
 	$sql = 'PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  PRT_ID tinyint(3) unsigned NOT NULL,
