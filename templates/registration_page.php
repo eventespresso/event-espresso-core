@@ -290,9 +290,8 @@ if (!function_exists('event_registration')) {
 			//print_r($all_meta);
 //This function gets the status of the event.
 			$is_active = array();
-			$is_active = event_espresso_get_is_active(0, $all_meta);
+			$is_active = event_espresso_get_is_active($event_id);
 
-			//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
 
 
 			//This is the start of the registration form. This is where you can start editing your display.
@@ -307,7 +306,7 @@ if (!function_exists('event_registration')) {
 						<p class="num_attendees"><?php _e('Current Number of Attendees:', 'event_espresso'); ?> <?php echo $num_attendees ?></p>
 					</div>
 				<?php
-				$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
+				$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); 
 				if (($num_attendees >= $reg_limit) && ($allow_overflow && $overflow_event_id != 0)) {
 					?>
 						<p id="register_link-<?php echo $overflow_event_id ?>" class="register-link-footer"><a class="a_register_link" id="a_register_link-<?php echo $overflow_event_id ?>" href="<?php echo espresso_reg_url($overflow_event_id); ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Join Waiting List', 'event_espresso'); ?></a></p>
@@ -335,7 +334,7 @@ if (!function_exists('event_registration')) {
 						$event->currency_symbol = $org_options['currency_symbol'];
 
 						$event->display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
-						$event->available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved');
+						$event->available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces');
 
 						// ticket selector
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
