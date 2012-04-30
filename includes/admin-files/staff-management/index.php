@@ -2,7 +2,6 @@
 
 function event_espresso_staff_config_mnu() {
 	global $wpdb, $espresso_wp_user, $espresso_premium, $notices;
-	do_action('action_hook_espresso_admin_notices');
 	$_REQUEST['action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : NULL;
 	?>
 	<div class="wrap">
