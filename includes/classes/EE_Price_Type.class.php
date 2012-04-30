@@ -103,26 +103,26 @@ class EE_Price_Type {
 		/**
 	*  Attendee constructor
 	*
-	* @access 			public
-	* @param			string				$PRT_name					Price Type name
-	* @param			bool	 				$PRT_is_member		is price type a member price?
+	* @access 		public
+	* @param			string				$PRT_name						Price Type name
+	* @param			bool	 				$PRT_is_member			is price type a member price?
 	* @param			bool	 				$PRT_is_discount		is price type a discount?
 	* @param			bool	 				$PRT_is_tax					is price type a tax?
 	* @param			bool					$PRT_is_percent			is price type a percent?
 	* @param	 		bool					$PRT_is_global			is price type a global?
 	* @param			int 					$PRT_order					Price Type order
-	* @param			int		 			$PRT_ID						Price type ID
+	* @param			int						$PRT_ID							Price type ID
 	*/
 	public function __construct( $PRT_name='', $PRT_is_member=FALSE, $PRT_is_discount=FALSE, $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_ID=FALSE ) {
 	
-		$this->_PRT_ID					= $PRT_ID;
-		$this->_PRT_name				= $PRT_name;
-		$this->_PRT_is_member	= $PRT_is_member;
-		$this->_PRT_is_discount	= $PRT_is_discount;
+		$this->_PRT_ID						= $PRT_ID;
+		$this->_PRT_name					= $PRT_name;
+		$this->_PRT_is_member			= $PRT_is_member;
+		$this->_PRT_is_discount		= $PRT_is_discount;
 		$this->_PRT_is_tax				= $PRT_is_tax;
 		$this->_PRT_is_percent		= $PRT_is_percent;
-		$this->_PRT_is_global		= $PRT_is_global;
-		$this->_PRT_order				= $PRT_order;
+		$this->_PRT_is_global			= $PRT_is_global;
+		$this->_PRT_order					= $PRT_order;
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
@@ -290,13 +290,13 @@ class EE_Price_Type {
 		 $MODEL = EEM_Price_Type::instance();
 
 		$set_column_values = array(
-				'PRT_name'				=> $this->_PRT_name,
-				'PRT_is_member'	=> $this->_PRT_is_member,
-				'PRT_is_discount'	=> $this->_PRT_is_discount,
+				'PRT_name'					=> $this->_PRT_name,
+				'PRT_is_member'			=> $this->_PRT_is_member,
+				'PRT_is_discount'		=> $this->_PRT_is_discount,
 				'PRT_is_tax'				=> $this->_PRT_is_tax,
 				'PRT_is_percent'		=> $this->_PRT_is_percent,
-				'PRT_is_global'		=> $this->_PRT_is_global,
-				'PRT_order'				=> $this->_PRT_order
+				'PRT_is_global'			=> $this->_PRT_is_global,
+				'PRT_order'					=> $this->_PRT_order
 		);
 
 		if ( $where_cols_n_values ){
