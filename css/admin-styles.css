@@ -787,6 +787,10 @@ table.ee-tables {
 	margin-top: 10px;
 	width: 100%;
 }
+table {
+	font-size: 12px;
+	line-height: 1.4em;
+}
 /*___ Event management main listings ___*/
 
 table.event-list td.column-comments {
