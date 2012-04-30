@@ -67,7 +67,6 @@ function event_espresso_categories_config_mnu() {
 								break;
 						}
 					}
-					do_action('action_hook_espresso_admin_notices');
 					?>
 					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 
