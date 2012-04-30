@@ -294,7 +294,7 @@ function event_espresso_get_event_details($attributes) {
 		$event->currency_symbol = $org_options['currency_symbol'];
 
 		$display_available_spaces = ( $event->display_reg_form && $event->externalURL == '' ) ? TRUE : FALSE;
-		$available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved');
+		$available_spaces = get_number_of_attendees_reg_limit($event_id, 'available_spaces');
 
 		//Venue information
 		if ($use_venues) {
@@ -456,8 +456,6 @@ function event_espresso_get_event_details($attributes) {
 
 				$can_register_for_event = TRUE;
 
-
-				//Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
 				$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
 				$event_is_sold_out = ( $num_attendees >= $event->reg_limit ) ? TRUE : FALSE;
 				$overflow_event = ($event->overflow_event_id != '0' && $event->allow_overflow) ? TRUE : FALSE;
@@ -510,25 +508,17 @@ function event_espresso_get_event_details($attributes) {
 			}
 
 			if ($allow_override == 1) {
-				//Uncomment to show active status array
-				//print_r( event_espresso_get_is_active($event_id));
 				include('event_list_display.php');
 			} else {
 
 				switch ($event_status) {
 
 					case 'NOT_ACTIVE':
-						//Don't show the event
-						//Uncomment the following two lines to show events that are not active and the active status array
-						//print_r( event_espresso_get_is_active($event_id));
-						//include('event_list_display.php');
 						break;
 
 					case 'PENDING':
 
 						if (current_user_can('administrator') || function_exists('espresso_member_data') && espresso_can_view_event($event_id) == true) {
-							//Uncomment to show active status array
-							//print_r( event_espresso_get_is_active($event_id));
 							echo '<div class="pending_event">';
 							//include('event_list_display.php');
 							include(espresso_get_event_list_display_template());
@@ -540,9 +530,6 @@ function event_espresso_get_event_details($attributes) {
 					case 'ACTIVE':
 					default:
 
-						//Uncomment to show active status array
-						//print_r( event_espresso_get_is_active($event_id));
-//							include('event_list_display.php');
 						include(espresso_get_event_list_display_template());
 
 						break;
