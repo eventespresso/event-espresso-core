@@ -50,8 +50,10 @@ function espresso_admin_init() {
 					} else {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'lite-files/event_management.php');
 					}
-					if (isset($_REQUEST['action'])) {
-						if ($_REQUEST['action'] == 'edit_event' || $_REQUEST['action'] == 'add_new_event') {
+					if (isset($_REQUEST['save']) || isset($_REQUEST['action'])) {
+						if (isset($_REQUEST['save'])
+										|| $_REQUEST['action'] == 'edit_event'
+										|| $_REQUEST['action'] == 'add_new_event') {
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_functions.php");
 						}
