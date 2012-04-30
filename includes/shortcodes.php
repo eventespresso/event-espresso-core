@@ -341,7 +341,6 @@ if (!function_exists('espresso_reg_form_sc')) {
 			<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
 				<form method="post" action="<?php echo espresso_get_reg_page_full_url(); ?>" id="registration_form">
 					<?php
-					//print_r( event_espresso_get_is_active($event_id));
 
 					switch ($is_active['status']) {
 						case 'EXPIRED': //only show the event description.
