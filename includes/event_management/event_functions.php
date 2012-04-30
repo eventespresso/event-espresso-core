@@ -992,7 +992,6 @@ function espresso_save_buttons($event) {
 		</div>
 		<br class="clear"/>		
 	</div>
-	<div id="save-event-floating-btns-spacer" class="hidden"></div>
 	<?php
 }
 

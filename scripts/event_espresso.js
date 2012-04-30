@@ -2,17 +2,15 @@
 jQuery(document).ready(function() {
 
 	jQuery(window).scroll(function() {
-//		var scrollTop = jQuery('#event_editor_major_buttons_wrapper').scrollTop();
 		var scrollTop = jQuery(this).scrollTop();
-//		alert(scrollTop);
-		if ( scrollTop > 300 ) { 
+		var offset = jQuery('#event_editor_major_buttons_wrapper').offset();
+//		alert( 'scrollTop : ' + scrollTop +  '   offset.top : ' +offset.top );
+		if ( (scrollTop+25) > offset.top ) { 
 			jQuery('#event-editor-floating-save-btns').removeClass('hidden');
-			jQuery('#event_editor_major_buttons_wrapper').addClass('hidden');
-			jQuery('#save-event-floating-btns-spacer').removeClass('hidden');
+			jQuery('#event_editor_major_buttons_wrapper .button-primary').addClass('hidden');
 		} else {
 			jQuery('#event-editor-floating-save-btns').addClass('hidden');
-			jQuery('#event_editor_major_buttons_wrapper').removeClass('hidden');
-			jQuery('#save-event-floating-btns-spacer').addClass('hidden');
+			jQuery('#event_editor_major_buttons_wrapper .button-primary').removeClass('hidden');
 		}
 	});
 
