@@ -243,7 +243,7 @@ function espresso_event_editor_date_time_metabox($event) {
 	if (!$reg_times = $DTM->get_all_reg_dates($event->id)) {
 		$reg_times = array(new EE_Datetime($event->id, true, time(), time() + (60 * 60 * 24 * 29), 'R', NULL));
 		$reg_times[0]->set_start_time("12:01AM");
-		$reg_times[0]->set_end_time("11:50PM");
+		$reg_times[0]->set_end_time("11:59PM");
 	}
 	
 	$datetime_IDs = array();
@@ -275,7 +275,7 @@ function espresso_event_editor_date_time_metabox($event) {
 					<td>
 						<input id="start-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][startdate]" type="text" class="datepicker dtm-inp" value="<?php echo $time->start_date( 'Y-m-d' ); ?>"<?php echo $disabled; ?>/>
 						<?php if ($time->ID()) { ?>
-						<?php $datetime_IDs[] = $time->ID(); ?>
+						<?php $datetime_IDs[$row] = $time->ID(); ?>
 						<input id="ID-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][ID]" type="hidden" value="<?php echo $time->ID(); ?>"/>
 						<?php } ?>						
 						<input id="is-primary-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][is_primary]" type="hidden" value="<?php echo $time->is_primary(); ?>" />
@@ -325,14 +325,11 @@ function espresso_event_editor_date_time_metabox($event) {
 					<td>
 						<input id="reg-start-date-1" name="event_datetimes[1][startdate]" type="text" class="medium-text datepicker dtm-inp" value="<?php echo $reg_time->start_date( 'Y-m-d' ) ?>" />
 						<?php if ($reg_time->ID()) { ?>
-						<?php $datetime_IDs[] = $reg_time->ID(); ?>
+						<?php $datetime_IDs[1] = $reg_time->ID(); ?>
 						<input id="ID-1" name="event_datetimes[1][ID]" type="hidden" value="<?php echo $reg_time->ID(); ?>" />
 						<?php } ?>
 						<input id="is-primary-1" name="event_datetimes[1][is_primary]" type="hidden" value="<?php echo $reg_time->is_primary(); ?>" />
 						<input id="event-or-reg-1" name="event_datetimes[1][event_or_reg]" type="hidden" value="R" />
-						<?php if ($reg_time->ID()) { ?>
-							<input id="ID-<?php echo $row; ?>" name="registration_id" type="hidden" value="<?php echo $reg_time->ID(); ?>" />
-						<?php } ?>
 					</td>
 					<td>
 						<input id="reg-end-date-1" name="event_datetimes[1][enddate]" type="text" class="medium-text datepicker dtm-inp" value="<?php echo $reg_time->end_date( 'Y-m-d' ) ?>" />
