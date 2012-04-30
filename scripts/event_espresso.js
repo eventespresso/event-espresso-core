@@ -78,15 +78,19 @@ jQuery(document).ready(function() {
 				jQuery( '#'+evt_prc_row ).slideToggle( 250 );  
 			}
 		});
-		var EVP_ID = jQuery(this).attr("rel"); 
-		jQuery( '#event-price-'+EVP_ID ).slideToggle( 250 );  
+		
+		var PRC_ID = jQuery(this).attr("rel"); 
+		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250 );  
+//		var edited_ticket_price_IDs = jQuery('#edited_ticket_price_IDs').val();
+//		edited_ticket_price_IDs = edited_ticket_price_IDs + PRC_ID + ',';
+//		jQuery('#edited_ticket_price_IDs').val( edited_ticket_price_IDs );
 //		jQuery( '#edit-event-price-'+EVP_ID+' .etp-radio' ).each(function() {
 //			if( jQuery(this).prop( 'checked' ) ) {
 //				jQuery(this).prop( 'checked', true );
 //			}
 //		}); 
 		// display the target's div container - use slideToggle or removeClass
-		jQuery( '#edit-event-price-'+EVP_ID ).slideToggle( 500 ); 
+		jQuery( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
 		return false;
 	});
 

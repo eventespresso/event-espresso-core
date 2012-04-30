@@ -474,7 +474,8 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">					
 									<th><label for="edit-ticket-price-PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
 									<td>
-										<?php echo select_input( 'edit_ticket_price[PRT_ID]', $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID" style="width:auto;"', 'edit-ticket-price-input' ); ?>
+										<?php $select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]'; ?>
+										<?php echo select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID" style="width:auto;"', 'edit-ticket-price-input' ); ?>
 										<span class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></span>
 										<input id="edit_ticket_price[<?php echo $price->ID(); ?>][EVT_ID]" name="edit_ticket_price[<?php echo $price->ID(); ?>][EVT_ID]" type="hidden" value="<?php echo $event->id; ?>" />
 									</td>
@@ -613,10 +614,10 @@ function espresso_event_editor_pricing_metabox($event) {
 								
 								<td class="edit-column" style=" height:2.5em; vertical-align:middle; text-align:right;">
 									<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title='Edit Advanced Settings for this Event Price' style="cursor:pointer;" >
-										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/add.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
+										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
 									</a>
 									<a class='delete-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>" title='Delete this Event Price' style="margin:0 0 0 10px; font-size:.9em; cursor:pointer;" >
-										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/remove.gif" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
+										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
 									</a>
 								</td>
 
@@ -746,6 +747,7 @@ function espresso_event_editor_pricing_metabox($event) {
 		</a>
 		<br class="clear"/><br/>
 		
+		<input id="edited-ticket-price-IDs" name="edited_ticket_price_IDs" type="hidden" value="" />
 		
 	</div>
 	<?php
