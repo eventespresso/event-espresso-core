@@ -423,30 +423,46 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			$prices = $this->get_all_prices_that_are_global();
+			$prices = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prc.PRC_is_active'=>TRUE ));
+			$array_of_is_active_and_price_objects = array();
 			foreach ($prices as $price) {
-				if ( $price->is_active()) {
 					$array_of_is_active_and_price_objects[ $price->type() ][] = array('active'=>TRUE, 'price'=>$price);
-				}
 			}
 			return $array_of_is_active_and_price_objects;
 		}
 
-		global $wpdb;
-		// retreive prices
-		$SQL = 'SELECT  prc.*, prt.* ';
-		$SQL .= 'FROM ' . $this->table_name . ' prc ';
-		$SQL .= 'JOIN ' . $wpdb->prefix . 'esp_price_type prt ON prt.PRT_ID = prc.PRT_ID ';
-		$SQL .= 'WHERE ( prc.EVT_ID = %d OR ( prt.PRT_is_global = TRUE AND prc.PRC_is_active = TRUE )) ';
-		$SQL .= 'AND prt.PRT_is_tax = FALSE ';
-		$SQL .= 'ORDER BY PRT_order';
-
-
-		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $EVT_ID))) {
-			//echo printr( $prices, '$prices' );		
+		if ( ! $globals = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prc.PRC_is_active'=>TRUE ))) {
+			$globals = array();
+		}
+		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID ))) {
+			$event_prices = array();
+		}
+		$overrides = array();
+		foreach ($event_prices as $event_price) {
+			if ($override = $event_price->overrides()) {
+				$overrides[] = $override;
+			}
+		}
+		foreach ($overrides as $override) {
+			if (array_key_exists($override, $globals)) {
+				unset( $globals[$override] );
+			}
+		}
+		$prices = array_merge( $event_prices, $globals);
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		
+		function cmp_order($price_a, $price_b) {
+			$PRT = EEM_Price_Type::instance();
+			if ($PRT->type[$price_a->type()]->order() == $PRT->type[$price_b->type()]->order()) {
+				return 0;
+			}
+			return ($PRT->type[$price_a->type()]->order() < $PRT->type[$price_b->type()]->order()) ? -1 : 1;
+		}
+		
+		uasort($prices, 'cmp_order');
+		if (!empty($prices)) {
 			foreach ($prices as $price) {
-				$active = ! empty( $price->PRC_is_active ) ? TRUE : FALSE;
-				$array_of_is_active_and_price_objects[ $price->PRT_ID ][] = array( 'active'=>$active, 'price'=>array_shift( $this->_create_objects( $price )));
+				$array_of_is_active_and_price_objects[ $price->type() ][] = array( 'active'=>$price->is_active(), 'price'=>$price );
 			}
 			return $array_of_is_active_and_price_objects;
 		} else {
