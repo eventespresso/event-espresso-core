@@ -354,22 +354,32 @@ div.tablenav {
 /*** Add new events / Edit events ***/
 
 #event_editor_major_buttons_wrapper{
-	position:fixed;
-	bottom:0px;
-	right:21px;
-	background-image:url('../images/light_grey-pix.png');
-	padding: 2px 2px 2px 7px;
-	width: 271px;
+    border-top: medium none;
+    clear: both;
+    padding: 10px 0 8px;	
+}
+#save-event-floating-btns-spacer {
+	height:45px;
+}
+#event-editor-floating-save-btns {
+	position:fixed; top:0px; right:21px;
+	padding: 35px 11px 10px 11px;
+	background:rgba(255,230,0,.2);
 }
 
-#event_editor_major_buttons_wrapper input, #event_editor_major_buttons_wrapper a {
+/*#event_editor_major_buttons_wrapper input, #event_editor_major_buttons_wrapper a {
 	padding: 3px;
 	margin: 5px 0;
-}
+}*/
 
-#event_editor_major_buttons_wrapper a.button-primary{
-	background-image: url('../images/red-button-grad.png');
-	border-color: red;
+#event_editor_major_buttons_wrapper .delete-event {
+	/*background-image: url('../images/red-button-grad.png');*/
+	background:#D54E21;
+	border:1px solid #D54E21;
+	color:#fff; text-shadow:none;
+}
+#event_editor_major_buttons_wrapper .delete-event:hover {
+	border-color:#A41200;
 }
 
 .remove-item {

@@ -1,6 +1,21 @@
 		
 jQuery(document).ready(function() {
 
+	jQuery(window).scroll(function() {
+//		var scrollTop = jQuery('#event_editor_major_buttons_wrapper').scrollTop();
+		var scrollTop = jQuery(this).scrollTop();
+//		alert(scrollTop);
+		if ( scrollTop > 300 ) { 
+			jQuery('#event-editor-floating-save-btns').removeClass('hidden');
+			jQuery('#event_editor_major_buttons_wrapper').addClass('hidden');
+			jQuery('#save-event-floating-btns-spacer').removeClass('hidden');
+		} else {
+			jQuery('#event-editor-floating-save-btns').addClass('hidden');
+			jQuery('#event_editor_major_buttons_wrapper').removeClass('hidden');
+			jQuery('#save-event-floating-btns-spacer').addClass('hidden');
+		}
+	});
+
 	// generic click event for displaying and giving focus to an element and hiding control 
 	jQuery('.display-the-hidden').click(function() {
 		// get target element from "this" (the control element's) "rel" attribute
@@ -81,14 +96,17 @@ jQuery(document).ready(function() {
 		
 		var PRC_ID = jQuery(this).attr("rel"); 
 		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250 );  
-//		var edited_ticket_price_IDs = jQuery('#edited_ticket_price_IDs').val();
-//		edited_ticket_price_IDs = edited_ticket_price_IDs + PRC_ID + ',';
-//		jQuery('#edited_ticket_price_IDs').val( edited_ticket_price_IDs );
-//		jQuery( '#edit-event-price-'+EVP_ID+' .etp-radio' ).each(function() {
-//			if( jQuery(this).prop( 'checked' ) ) {
-//				jQuery(this).prop( 'checked', true );
-//			}
-//		}); 
+		// add PRD_ID to list of edited prices
+		var edited_ticket_price_IDs = jQuery('#edited_ticket_price_IDs').val();
+		edited_ticket_price_IDs = edited_ticket_price_IDs + PRC_ID + ',';
+		jQuery('#edited_ticket_price_IDs').val( edited_ticket_price_IDs );
+		
+		jQuery( '#edit-event-price-'+EVP_ID+' .etp-radio' ).each(function() {
+			if( jQuery(this).prop( 'checked' ) ) {
+				jQuery(this).prop( 'checked', true );
+			}
+		}); 
+		
 		// display the target's div container - use slideToggle or removeClass
 		jQuery( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
 		return false;

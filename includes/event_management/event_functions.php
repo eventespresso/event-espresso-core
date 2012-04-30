@@ -3,9 +3,9 @@
 
 function espresso_event_editor_quick_overview_meta_box($event) {
 	?>
-	<div class="inside">
 		<div class="submitbox" id="submitpost">
 			<div id="minor-publishing">
+			
 				<div id="minor-publishing-actions" class="clearfix">
 					<div id="preview-action"> <a class="preview button" href="<?php echo espresso_reg_url($event->id, $event->slug); ?>" target="_blank" id="event-preview" tabindex="5">
 							<?php _e('View Event', 'event_espresso'); ?>
@@ -46,16 +46,16 @@ function espresso_event_editor_quick_overview_meta_box($event) {
 							<?php _e('Email Event Attendees', 'event_espresso'); ?>
 						</a>
 					</div>
-					<?php
-					do_action('action_hook_espresso_event_editor_overview_add', $event);
-					?>
-				</div>
+					<?php do_action('action_hook_espresso_event_editor_overview_add', $event); ?>
+				</div>			
 				<!-- /misc-publishing-actions -->
 			</div>
 			<!-- /minor-publishing -->
+			
+			<?php do_action('action_hook_espresso_save_buttons', $event); ?>
+
 		</div>
 		<!-- /submitpost -->
-	</div>
 	<?php
 }
 
@@ -970,20 +970,29 @@ add_action('action_hook_espresso_event_editor_footer', 'espresso_event_editor_fo
 
 function espresso_save_buttons($event) {
 	?>
-	<div id="event_editor_major_buttons_wrapper">
 		<?php wp_nonce_field('espresso_form_check', 'ee__event_editor'); ?>
-		<input class="button-primary" type="submit" name="save" value="<?php _e('Save', 'event_espresso'); ?>" id="save" />
-		<input class="button-primary" type="submit" name="save_and_close" value="<?php _e('Save And Close', 'event_espresso'); ?>" id="save_and_close" />
-		<?php if ($event->recurrence_id > 0) : ?>
-			<a class="submitdelete deletion button-primary" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $event->recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
-				<?php _e('Delete all events in this series', 'event_espresso'); ?>
-			</a>
-		<?php else: ?>
-			<a class="submitdelete deletion button-primary" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
-				<?php _e('Delete Event', 'event_espresso'); ?>
-			</a>
-		<?php endif; ?>
+
+		<div id="delete-action">
+			<?php if ($event->recurrence_id > 0) : ?>
+				<a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $event->recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
+					<?php _e('Delete all events in this series', 'event_espresso'); ?>
+				</a>
+			<?php else: ?>
+				<a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
+					<?php _e('Delete Event', 'event_espresso'); ?>
+				</a>
+			<?php endif; ?>
+		</div>
+		<br/>
+
+	<div id="event_editor_major_buttons_wrapper">	
+		<div id="publishing-action">
+			<input class="button-primary" type="submit" name="save" value="<?php _e('Save', 'event_espresso'); ?>" id="save" />
+			<input class="button-primary" type="submit" name="save_and_close" value="<?php _e('Save And Close', 'event_espresso'); ?>" id="save_and_close" />
+		</div>
+		<br class="clear"/>		
 	</div>
+	<div id="save-event-floating-btns-spacer" class="hidden"></div>
 	<?php
 }
 

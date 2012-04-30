@@ -92,7 +92,14 @@ function espresso_display_edit_event($event) {
 					</div>
 				</div>
 			</div>
-			<?php do_action('action_hook_espresso_save_buttons', $event); ?>
+			<?php //do_action('action_hook_espresso_save_buttons', $event); ?>
+			<div id="event-editor-floating-save-btns" class="hidden">	
+				<div id="publishing-action">
+					<input class="button-primary" type="submit" name="save" value="<?php _e('Save', 'event_espresso'); ?>" id="save" />
+					<input class="button-primary" type="submit" name="save_and_close" value="<?php _e('Save And Close', 'event_espresso'); ?>" id="save_and_close" />
+				</div>
+				<br class="clear"/>		
+			</div>			
 		</form>
 	</div>
 	<?php
