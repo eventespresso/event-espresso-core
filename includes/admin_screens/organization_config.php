@@ -98,8 +98,6 @@ function organization_config_mnu() {
 		}
 	}
 
-	do_action('action_hook_espresso_admin_notices');
-
 	espresso_org_confg_output();
 }
 
