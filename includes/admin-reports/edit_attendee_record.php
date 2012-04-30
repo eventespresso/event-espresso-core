@@ -213,11 +213,6 @@ function edit_attendee_record() {
 				$answer_a[]=$answer->question_id;
 			}
 
-			/* DEBUG */
-			//echo '<p> print_r($answers) = <br />'.var_dump($answers).'</p>';
-			//echo '<p> print_r($questions) = <br />'.print_r($questions).'</p>';
-			/* END DEBUG */
-
 			if ( $questions ){
 				foreach ( $questions as $question ) {
 					switch ( $question->question_type ){
