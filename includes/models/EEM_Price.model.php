@@ -246,86 +246,56 @@ class EEM_Price extends EEM_Base {
 		}
 	}
 
-
-
-
-
-	/**
-	 * 		retreive all prices that are either member_prices, discounts, taxes, or percentages, or global, or of a particular order #
-	 *
-	 * 		@access		private
-	 * 		@param 		boolean 			$member_prices  	true or false
-	 * 		@param 		boolean 			$discounts  			true or false
-	 * 		@param 		boolean 			$taxes  					true or false
-	 * 		@param 		boolean 			$percentages  		true or false
-	 * 		@param 		boolean 			$global  					true or false
-	 * 		@param 		int 					$order  					the level or order that the prices are applied
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
-	 */
-	private function _get_all_prices_that_are( $member_prices = FALSE, $discounts = FALSE, $taxes = FALSE, $percentages = FALSE, $global = FALSE, $order = FALSE, $operator = '=' ) {
-
-		// you gimme nothing??? you get nothing!!!
-		if ( ! $member_prices &&  ! $discounts &&  ! $taxes && ! $percentages && ! $global && ! $order ) {
-			return FALSE;
-		}
-
-		// determine what we will be searching for via trickle down conditionals - it's just like PLINKO only better! and unlike trickle down economics - this WORKS!
-		$what = '';
-		$value = array();
-		if ($member_prices) {
-			$what .= 'PRT_is_member '. $operator .' %d';
-			$value[] = $member_prices;
-		}
-		if (!empty($what) && ($discounts || $taxes || $percentages || $global || $order)) {
-			$what .= ' AND prt.';
-		}
-		if ($discounts) {
-			$what .= 'PRT_is_discount '. $operator .' %d';
-			$value[] = $discounts;
-		}
-		if (!empty($what) && ($taxes || $percentages || $global || $order)) {
-			$what .= ' AND prt.';
-		}
-		if ($taxes) {
-			$what .= 'PRT_is_tax '. $operator .' %d';
-			$value[] = $taxes;
-		}
-		if (!empty($what) && ($percentages || $global || $order)) {
-			$what .= ' AND prt.';
-		}
-		if ($percentages) {
-			$what .= 'PRT_is_percent '. $operator .' %d';
-			$value[] = $percentages;
-		}
-		if (!empty($what) && ($global || $order)) {
-			$what .= ' AND prt.';
-		}
-		if ($global) {
-			$what .= 'PRT_is_global '. $operator .' %d';
-			$value[] = $global;
-		}
-		if (!empty($what) && $order) {
-			$what .= ' AND prt.';
-		}
-		if ($order !== FALSE) {
-			$what .= 'PRT_order '. $operator .' %d';
-			$value[] = $order;
-		}
+	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $operator = '=' ) {
+	
+		$em_table_data_types = array(
+				'prt.PRT_ID'							=> '%d',
+				'prt.PRT_name'						=> '%s',
+				'prt.PRT_is_member'				=> '%d',
+				'prt.PRT_is_discount'			=> '%d',
+				'prt.PRT_is_tax'					=> '%d',
+				'prt.PRT_is_percent'			=> '%d',
+				'prt.PRT_is_global'				=> '%d',
+				'prt.PRT_order'						=> '%d',
+				'prc.PRC_ID'							=> '%d',
+				'prc.PRT_ID'							=> '%d',
+				'prc.EVT_ID'							=> '%d',
+				'prc.PRC_amount'					=> '%d',
+				'prc.PRC_name'						=> '%s',
+				'prc.PRC_desc'						=> '%s',
+				'prc.PRC_reg_limit' 			=> '%d',
+				'prc.PRC_use_dates'				=> '%d',
+				'prc.PRC_start_date'			=> '%d',
+				'prc.PRC_end_date'				=> '%d',
+				'prc.PRC_disc_code'				=> '%s',
+				'prc.PRC_disc_limit_qty'	=> '%d',
+				'prc.PRC_disc_qty'				=> '%d',
+				'prc.PRC_disc_apply_all'	=> '%d',
+				'prc.PRC_disc_wp_user'		=> '%d',
+				'prc.PRC_is_active' 			=> '%d',
+				'prc.PRC_overrides' 			=> '%d'
+		);
 
 		global $wpdb;
-		// retreive prices
-		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' ORDER BY PRT_order';
+		
+		$SQL = 'SELECT * FROM '. $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID';
 
-		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $value))) {
-			$array_of_prices = $this->_create_objects($prices);
-			return $array_of_prices;
+		if ( $where_cols_n_values ) {
+			$prepped = $this->_prepare_where ($where_cols_n_values, $em_table_data_types, $operator);
+			$SQL .= $prepped['where'];
+			$VAL = $prepped['value'];
+		}
+
+			$SQL .= $this->_orderby_n_sort ('prt.PRT_order', 'ASC');
+
+		$wpdb->show_errors();
+		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT_K' )) {
+			$price_array = $this->_create_objects($results);
+			return $price_array;
 		} else {
 			return FALSE;
 		}
 	}
-
-
 
 
 
@@ -337,11 +307,11 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_member_prices() {
-		return $this->_get_all_prices_that_are( TRUE );
+		return $this->_select_all_prices_where(array('prt.PRT_is_member' => TRUE ));
 	}
 
 	public function get_all_prices_that_are_not_member_prices() {
-		return $this->_get_all_prices_that_are( TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, '!=' );
+		return $this->_select_all_prices_where(array('prt.PRT_is_member' => FALSE ));
 	}
 
 
@@ -356,11 +326,11 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_discounts() {
-		return $this->_get_all_prices_that_are( FALSE, TRUE );
+		return $this->_select_all_prices_where(array('prt.PRT_is_discount' => TRUE ));
 	}
 
 	public function get_all_prices_that_are_not_discounts() {
-		return $this->_get_all_prices_that_are( FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, '!=' );
+		return $this->_select_all_prices_where(array('prt.PRT_is_discount' => FALSE ));
 	}
 
 
@@ -375,11 +345,11 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_taxes() {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, TRUE );
+		return $this->_select_all_prices_where(array('prt.PRT_is_tax' => TRUE ));
 	}
 
 	public function get_all_prices_that_are_not_taxes() {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, '!=' );
+		return $this->_select_all_prices_where(array('prt.PRT_is_tax' => FALSE ));
 	}
 
 
@@ -394,11 +364,11 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_percentages() {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, TRUE );
+		return $this->_select_all_prices_where(array('prt.PRT_is_percent' => TRUE ));
 	}
 
 	public function get_all_prices_that_are_not_percentages() {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, '!=' );
+		return $this->_select_all_prices_where(array('prt.PRT_is_percent' => FALSE ));
 	}
 
 
@@ -413,11 +383,11 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_global() {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE );
+		return $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE ));
 	}
 
 	public function get_all_prices_that_are_not_global() {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, '!=' );
+		return $this->_select_all_prices_where(array('prt.PRT_is_global' => FALSE ));
 	}
 
 
@@ -433,11 +403,11 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_order_nmbr($order) {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, FALSE, $order );
+		return $this->_select_all_prices_where(array('prt.PRT_order' => $order ));
 	}
 
 	public function get_all_prices_that_are_not_order_nmbr($order) {
-		return $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, FALSE, $order, '!=' );
+		return $this->_select_all_prices_where(array('prt.PRT_order' => $order ), '!=' );
 	}
 
 
@@ -453,7 +423,7 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			$prices = $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE);
+			$prices = $this->get_all_prices_that_are_global();
 			foreach ($prices as $price) {
 				if ( $price->is_active()) {
 					$array_of_is_active_and_price_objects[ $price->type() ][] = array('active'=>TRUE, 'price'=>$price);
