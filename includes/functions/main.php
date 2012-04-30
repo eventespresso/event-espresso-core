@@ -1,11 +1,5 @@
 <?php
 
-//Function to check if an array is empty
-function isEmptyArray($array) {
-	$my_not_empty = create_function('$v', 'return strlen($v) > 0;');
-	return (count(array_filter($array, $my_not_empty)) == 0) ? 1 : 0;
-}
-
 function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $type = '', $text = '') {
 	global $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -30,14 +24,6 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $
 function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
 	$extra = empty($extra) ? '' : '&amp;' . $extra;
 	return home_url() . '/?invoice_launch=true&amp;id=' . $attendee_id . '&amp;r_id=' . $registration_id . '&amp;html=true' . $extra;
-}
-
-function espresso_get_reg_page_url_slug() {
-	global $wpdb, $org_options;
-	$reg_page_id = $org_options['event_page_id'];
-	$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
-	$reg_page_url_slug = $wpdb->get_var($wpdb->prepare($SQL, $reg_page_id));
-	return $reg_page_url_slug;
 }
 
 function espresso_get_reg_page_full_url() {
@@ -82,14 +68,14 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 			$registration_url .= '/' . $event_slug;
 		} else {
 			// use fugly oldsckool link
-			$registration_url = add_query_arg( array( 'event_slug'=>$event_slug ), $registration_url );
+			$registration_url = add_query_arg(array('event_slug' => $event_slug), $registration_url);
 		}
 	} elseif ($event_id && absint($event_id) && $event_id != '' && $event_id > 0) {
 		// no event slug, so use  event_id
 		// check if permalinks are being used
 		if ($use_pretty_permalinks) {
 			// check for cached event slug
-			if ( ! $event_slug = get_transient( 'espresso_event_slug_' . $event_id )) {
+			if (!$event_slug = get_transient('espresso_event_slug_' . $event_id)) {
 				// create the data that needs to be saved.
 				$SQL = 'SELECT slug  FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id = %d';
 				$event_slug = $wpdb->get_var($wpdb->prepare($SQL, $event_id));
@@ -104,11 +90,11 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 				$registration_url .= '/' . $event_slug;
 			} else {
 				// couldn't find a slug, so use really fugly oldsckool link
-				$registration_url = add_query_arg( array( 'ee' => $event_id ), $registration_url );
+				$registration_url = add_query_arg(array('ee' => $event_id), $registration_url);
 			}
 		} else {
 			// use really fugly oldsckool link
-			$registration_url = add_query_arg( array( 'ee' => $event_id ), $registration_url );
+			$registration_url = add_query_arg(array('ee' => $event_id), $registration_url);
 		}
 	} else
 		$registration_url = '';
@@ -116,59 +102,10 @@ function espresso_reg_url($event_id = FALSE, $event_slug = FALSE) {
 	return $registration_url;
 }
 
-function espresso_short_reg_url($event_id = 0) {
-	global $org_options;
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	if ($event_id > 0) {
-		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&e_reg=register&event_id='.$event_id);
-		$registration_url = rtrim(get_permalink($org_options['event_page_id']), '/');
-		$new_url = add_query_arg( array( 'ee' => $event_id ), $registration_url );
-		return $new_url;
-	}/* else {
-	  echo 'No event id supplied'; */
-	return;
-	//}
-}
-
-function espresso_getTinyUrl($url) {
-	return file_get_contents("http://tinyurl.com/api-create.php?url=" . $url);
-}
-
 //Text formatting function.
 //This should fix all of the formatting issues of text output from the database.
 function espresso_format_content($content = '') {
 	return wpautop(stripslashes_deep(html_entity_decode(do_shortcode($content), ENT_QUOTES, "UTF-8")));
-}
-
-//This function pulls HTML entities back into HTML format first then strips it.
-//Use it if you want to strip the HTML from the event_desc column in the daatabase.
-//I have to store HTML as special chars in the database, because the html was breaking the sql queries.
-//I tried doing add_slashes, then strip_slashes, but it kept adding to many slashes and not removing the extras. It was a nightmare so i decided to jsut make all HTML into special chars.
-function event_espresso_strip_html_from_entity($html_entity) {
-	$stripped_html_entity = strip_tags(html_entity_decode($html_entity));
-	return $stripped_html_entity;
-}
-
-/* 	This function checks a registration id to see if their session is registered more than once, if so, it returns the session id	 */
-
-function event_espresso_more_than_one($registration_id) {
-	global $wpdb;
-	$sql = "SELECT a.attendee_session FROM " . EVENTS_ATTENDEE_TABLE . " a JOIN " . EVENTS_ATTENDEE_TABLE . " b ON b.attendee_session = a.attendee_session WHERE b.registration_id='" . $registration_id . "' GROUP BY a.id";
-	$res = $wpdb->get_results($sql);
-	if ($wpdb->num_rows > 1) {
-		$attendee_session = $wpdb->get_var($sql . " ORDER BY a.id LIMIT 1 ");
-		return $attendee_session;
-	}
-	return null;
-}
-
-//This function is not currently used
-function event_espresso_session_start() {
-	/* if(!isset($_SESSION['event_espresso_sessionid'])){
-	  $sessionid = (mt_rand(100,999).time());
-	  $_SESSION['event_espresso_sessionid'] = $sessionid;
-	  } */
-	//print_r( $_SESSION['event_espresso_sessionid']); //See if the session already exists
 }
 
 //This function just returns the session id.
@@ -178,16 +115,6 @@ function event_espresso_session_id() {
 		$_SESSION['espresso_session']['id'] = $sessionid;
 	}
 	return $_SESSION['espresso_session']['id'];
-}
-
-//This function just returns the session id.
-function espresso_reg_sessionid($registration_id) {
-	/* if(empty($_SESSION['espresso_reg_sessionid'])){
-	  $sessionid =  $registration_id;
-	  //$sessionid = (mt_rand(100,999).time());
-	  $_SESSION['espresso_reg_sessionid'] = $sessionid;
-	  }
-	  return $_SESSION['espresso_reg_sessionid']; */
 }
 
 //Function to display additional attendee fields.
@@ -203,11 +130,6 @@ function event_espresso_get_event_meta($event_id) {
 		}
 	}
 	return $event_meta;
-}
-
-function espresso_display_additional_attendees() {
-	$html = '<p class="event_form_field additional_header" id="additional_header">';
-	$html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ', 'event_espresso');
 }
 
 if (!function_exists('event_espresso_additional_attendees')) {
@@ -299,47 +221,32 @@ if (!function_exists('event_espresso_additional_attendees')) {
 if (!function_exists('event_espresso_get_is_active')) {
 
 	function event_espresso_get_is_active($event_id, $event_meta = '') {
-		global $wpdb, $org_options;
+		global $wpdb;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		//If the timezome is set in the wordpress database, then lets use it as the default timezone.
-		if (get_option('timezone_string') != '') {
-			date_default_timezone_set(get_option('timezone_string'));
+		$sql = "SELECT is_active, event_status ";
+		$sql .= "FROM " . EVENTS_DETAIL_TABLE;
+		$sql .= " WHERE id = '" . $event_id . "'";
+		$event = $wpdb->get_row($sql, ARRAY_A);
+		$is_active = $event['is_active'];
+		$event_status = $event['event_status'];
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+		$DTM = EEM_Datetime::instance();
+		$datetimes = $DTM->get_all_datetimes_for_event($event_id);var_dump($event_id);
+		$start = 10000000000;
+		$regstart = 10000000000;
+		$end = 0;
+		$regend = 0;
+		foreach ($datetimes as $datetime) {
+			if ($datetime->event_or_reg() == 'E') {
+				$start = min(array($start, $datetime->start()));
+				$end = max(array($end, $datetime->end()));
+			}
+			if ($datetime->event_or_reg() == 'R') {
+				$regstart = min(array($regstart, $datetime->start()));
+				$regend = max(array($regend, $datetime->end()));
+			}
 		}
-
-		if (!empty($event_meta)) {
-
-			$is_active = empty($event_meta['is_active']) ? '' : $event_meta['is_active'];
-			$event_status = empty($event_meta['event_status']) ? '' : $event_meta['event_status'];
-
-			$start_time = empty($event_meta['start_time']) ? '' : $event_meta['start_time'];
-			$start_date = empty($event_meta['start_date']) ? '' : $event_meta['start_date'];
-
-			$registration_start = empty($event_meta['registration_start']) ? '' : $event_meta['registration_start'];
-			$registration_startT = empty($event_meta['registration_startT']) ? '' : $event_meta['registration_startT'];
-
-			$registration_end = empty($event_meta['registration_end']) ? '' : $event_meta['registration_end'];
-			$registration_endT = empty($event_meta['registration_endT']) ? '' : $event_meta['registration_endT'];
-
-			$registration_start = $registration_start . " " . $registration_startT;
-			$registration_end = $registration_end . " " . $registration_endT;
-		} else {
-			$sql = "SELECT e.id, e.start_date start_date, e.is_active is_active, e.event_status event_status, e.registration_start, e.registration_startT, e.registration_end, e.registration_endT, ese.start_time start_time ";
-			$sql .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql .= "LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
-			$sql .= "WHERE e.id = '" . $event_id . "' LIMIT 0,1";
-			$events = $wpdb->get_results($sql);
-			$start_date = $wpdb->last_result[0]->start_date;
-			$is_active = $wpdb->last_result[0]->is_active;
-			$event_status = $wpdb->last_result[0]->event_status;
-			$start_time = $wpdb->last_result[0]->start_time;
-
-			$registration_start = $wpdb->last_result[0]->registration_start . " " . $wpdb->last_result[0]->registration_startT;
-			$registration_end = $wpdb->last_result[0]->registration_end . " " . $wpdb->last_result[0]->registration_endT;
-		}
-
-		$timestamp = strtotime($start_date . ' ' . $start_time); //Creates a timestamp from the event start date and start time
-		$registration_start_timestamp = strtotime($registration_start); //Creates a timestamp from the event registration start date
-		$registration_end_timestamp = strtotime($registration_end); //Creates a timestamp from the event registration start date
+		$now = time();
 
 		if ($is_active && $event_status == "O") {
 			$event_status = array('status' => 'ONGOING', 'display' => "<span style='color: #090; font-weight:bold;'>" . __('ONGOING', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_ongoing">' . __('Ongoing', 'event_espresso') . '</span>');
@@ -378,21 +285,21 @@ if (!function_exists('event_espresso_get_is_active')) {
 		/*		 * * Check registration dates ** */
 
 		//If the registration end date is greater than the current date
-		elseif ($is_active && date($registration_end_timestamp) <= date(time()) && $event_status != "D") {
+		elseif ($is_active && $regend <= $now && $event_status != "D") {
 			$event_status = array('status' => 'REGISTRATION_CLOSED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('CLOSED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_closed">' . __('Closed', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//If the registration start date is less than the current date
-		elseif ($is_active && date($registration_start_timestamp) >= date(time()) && $event_status != "D") {
+		elseif ($is_active && $regstart >= $now && $event_status != "D") {
 			$event_status = array('status' => 'REGISTRATION_NOT_OPEN', 'display' => '<span style="color: #090; font-weight:bold;">' . __('NOT_OPEN', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_not_open">' . __('Not Open', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//If the registration start date is less than the current date
-		elseif ($is_active && date($registration_start_timestamp) <= date(time()) && $event_status != "D") {
+		elseif ($is_active && $regstart <= $now && $event_status != "D") {
 			$event_status = array('status' => 'REGISTRATION_OPEN', 'display' => __('OPEN', 'event_espresso'), 'display_custom' => '<span class="espresso_open">' . __('Open', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
@@ -401,14 +308,14 @@ if (!function_exists('event_espresso_get_is_active')) {
 		/*		 * * End Check registration dates ** */
 
 		//If the start date and time has passed, show as expired.
-		elseif ($is_active && date($timestamp) <= date(time()) && $event_status != "D") {
+		elseif ($is_active && $start <= $now && $event_status != "D") {
 			$event_status = array('status' => 'EXPIRED', 'display' => '<span style="color: #F00; font-weight:bold;">' . __('EXPIRED', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_expired">' . __('Expired', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
 		}
 
 		//If the start date and time has not passed, show as active.
-		elseif ($is_active && date($timestamp) >= date(time()) && $event_status != "D") {
+		elseif ($is_active && $start >= $now && $event_status != "D") {
 			$event_status = array('status' => 'ACTIVE', 'display' => '<span style="color: #090; font-weight:bold;">' . __('ACTIVE', 'event_espresso') . '</span>', 'display_custom' => '<span class="espresso_active">' . __('Active', 'event_espresso') . '</span>');
 			//print_r( $event_status);
 			return $event_status;
@@ -442,7 +349,6 @@ if (!function_exists('event_espresso_get_status')) {
 			case 'DELETED':
 			case 'REGISTRATION_CLOSED':
 			case 'DENIED':
-				//case 'REGISTRATION_NOT_OPEN':
 				return 'NOT_ACTIVE';
 				break;
 
@@ -465,43 +371,6 @@ if (!function_exists('event_espresso_get_status')) {
 
 }
 
-if (!function_exists('espresso_status_detail')) {
-
-	function espresso_status_detail($event_id) {
-
-	}
-
-}
-/* Formats the event address */
-if (!function_exists('event_espresso_format_address')) {
-
-	function event_espresso_format_address($event_address) {
-		$event_address = str_replace(array("\r\n", "\n", "\r"), "<br>", $event_address);
-		return $event_address;
-	}
-
-}
-
-//Function for merging arrrays
-function event_espresso_array_merge($array1, $array2) {
-	$result = array_merge($array1, $array2);
-	return $result;
-}
-
-// Append associative array elements
-function event_espresso_array_push_associative(&$arr) {
-	$args = func_get_args();
-	foreach ($args as $arg) {
-		if (is_array($arg)) {
-			foreach ($arg as $key => $value) {
-				$arr[$key] = $value;
-			}
-		} else {
-			$arr[$arg] = "";
-		}
-	}
-}
-
 /*
  * Display the amount of attendees and/or registration limit
  * Available parameters for the get_number_of_attendees_reg_limit() function
@@ -519,7 +388,7 @@ function event_espresso_array_push_associative(&$arr) {
  */
 if (!function_exists('get_number_of_attendees_reg_limit')) {
 
-	function get_number_of_attendees_reg_limit($event_id, $type = 'NULL', $full_text = 'EVENT FULL') {
+	function get_number_of_attendees_reg_limit($event_id, $type = 'NULL') {
 		global $wpdb;
 
 		switch ($type) {
@@ -580,8 +449,8 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 			case 'all_attendees' :
 				$a_sql = "SELECT SUM(quantity) quantity  FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity >= 1 ";
 				$attendees = $wpdb->get_results($a_sql);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
-					$num_attendees = $wpdb->last_result[0]->quantity;
+				if ($wpdb->num_rows > 0 && $attendees[0]->quantity != NULL) {
+					$num_attendees = $attendees[0]->quantity;
 				}
 				return $num_attendees;
 				break;
@@ -634,41 +503,12 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 
 }
 
-function event_espresso_update_alert($url = '') {
-	return wp_remote_retrieve_body(wp_remote_get($url));
-}
-
 function espresso_registration_footer() {
 	global $espresso_premium, $org_options;
 	$url = (!isset($org_options['affiliate_id']) || $org_options['affiliate_id'] == '' || $org_options['affiliate_id'] == 0) ? 'http://eventespresso.com/' : 'https://www.e-junkie.com/ecom/gb.php?cl=113214&c=ib&aff=' . $org_options['affiliate_id'];
 	if (!$espresso_premium || !empty($org_options['show_reg_footer'])) {
 		return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></p>';
 	}
-}
-
-//Gets the current page url. Used for redirecting back to a page
-function event_espresso_cur_pageURL() {
-	$pageURL = 'http';
-	if ($_SERVER["HTTPS"] == "on") {
-		$pageURL .= "s";
-	}
-	$pageURL .= "://";
-	if ($_SERVER["SERVER_PORT"] != "80") {
-		$pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
-	} else {
-		$pageURL .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-	}
-	return $pageURL;
-}
-
-//This function simply returns a custom capability, nothing else. Can be used to change admin capability of the Event Manager menu without the admin losing rights to certain menus. Should be used with the custom files addon. Credit goes to Justin Tadlock (http://justintadlock.com/archives/2009/09/18/custom-capabilities-in-plugins-and-themes)
-if (!function_exists('event_espresso_management_capability')) {
-
-	function event_espresso_management_capability($default, $custom) {
-		return $custom;
-	}
-
-	add_filter('event_espresso_management_capability', 'event_espresso_management_capability', 10, 3);
 }
 
 function espresso_display_questions($questions, $attendee) {
@@ -787,9 +627,9 @@ function espresso_display_questions($questions, $attendee) {
 					$values = explode(",", $question['response']);
 					$html .= '<fieldset class="multi-checkbox">';
 					$html .= '<legend class="event_form_field">' . $question['question'] . '</legend>';
-					//$html .= '</p>';
 					$html .= '<ul class="event_form_field">';
-					foreach ($values as $key => $value) {
+					/* @var $value type */
+					foreach ($values as $value) {
 						$value = trim($value);
 						$html .= '<li><label for="' . str_replace(' ', '', $value);
 						$html .= '" class="my_class"><input id="' . str_replace(' ', '', $value);
@@ -894,14 +734,11 @@ if (!function_exists('event_espresso_add_question_groups')) {
 
 //Simple function to return the meta an event, venue, staff etc.
 function ee_show_meta($meta, $name) {
-	if ($meta == '')
-		return;
-	foreach ($meta as $key => $value) {
-		switch ($key) {
-			case $name:
-				return $value;
-				break;
-		}
+	if (empty($meta)) {
+		return FALSE;
+	}
+	if (array_key_exists($name, $meta)) {
+		return $meta[$name];
 	}
 }
 
@@ -942,58 +779,7 @@ if (!function_exists('espresso_registration_id')) {
 
 	function espresso_registration_id($attendee_id) {
 		global $wpdb;
-		$sql = $wpdb->get_results("SELECT registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='" . $wpdb->escape($attendee_id) . "'");
-		$num_rows = $wpdb->num_rows;
-
-		if ($num_rows > 0) {
-			return $wpdb->last_result[0]->registration_id;
-		} else {
-			return 0;
-		}
-	}
-
-}
-
-if (!function_exists('espresso_attendee_id')) {
-
-	function espresso_attendee_id($registration_id) {
-		global $wpdb;
-		$sql = $wpdb->get_results("SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='" . $wpdb->escape($registration_id) . "'");
-		$num_rows = $wpdb->num_rows;
-
-		if ($num_rows > 0) {
-			return $wpdb->last_result[0]->id;
-		} else {
-			return 0;
-		}
-	}
-
-}
-
-if (!function_exists('espresso_ticket_information')) {
-
-	function espresso_ticket_information($atts) {
-		global $wpdb;
-		extract($atts);
-		if (!empty($registration_id))
-			$registration_id = "{$registration_id}";
-		$price_option = "{$price_option}";
-
-		$type = "{$type}";
-
-		switch ($type) {
-			case 'ticket':
-				$sql = $wpdb->get_results("SELECT * FROM " . EVENTS_PRICES_TABLE . " WHERE id ='" . $price_option . "'");
-				$num_rows = $wpdb->num_rows;
-				if ($num_rows > 0) {
-					if (function_exists('espresso_members_installed') && is_user_logged_in() == true) {
-						return $wpdb->last_result[0]->member_price_type;
-					} else {
-						return $wpdb->last_result[0]->price_type;
-					}
-				}
-				break;
-		}
+		return $wpdb->get_var($wpdb->prepare("SELECT registration_id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='" . $attendee_id . "'"));
 	}
 
 }
@@ -1039,27 +825,6 @@ if (!function_exists('espresso_google_map_link')) {
 
 }
 
-//Returns a string of keys and values
-if (!function_exists("unkeyvaluepair")) {
-
-	function unkeyvaluepair($string) {
-		$array = array();
-		$pairs = explode("&", $string);
-		foreach ($pairs as $pair) {
-			list($key, $value) = explode("=", $pair, 2);
-			$array[$key] = urldecode($value);
-		}
-		return $array;
-	}
-
-}
-
-
-//Checks to see if the array is multidimensional
-function is_multi($array) {
-	return (count($array) != count($array, 1));
-}
-
 //escape the commas in csv file export
 function escape_csv_val($val) {
 
@@ -1069,15 +834,6 @@ function escape_csv_val($val) {
 	}
 
 	return $val;
-}
-
-//return field(s) from a table
-function get_event_field($field, $table, $where) {
-	global $wpdb;
-
-	$r = $wpdb->get_row('SELECT ' . $field . ' FROM ' . $table . $where, ARRAY_A);
-
-	return $r[$field];
 }
 
 /*
@@ -1098,13 +854,14 @@ function get_event_field($field, $table, $where) {
 
 if (!function_exists('espresso_show_personnel')) {
 
-	function espresso_show_personnel($event_id = 0, $atts) {
+	function espresso_show_personnel($event_id, $atts) {
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
 		global $wpdb;
 		extract($atts, EXTR_PREFIX_ALL, "v");
-		if ($event_id == 0 && ($v_staff_id == 0 || $v_staff_id == ''))
+		$v_staff_id = empty($v_staff_id) ? FALSE : $v_staff_id;
+		if (!$event_id && !$v_staff_id)
 			return;
 		$v_limit = $v_limit > 0 ? " LIMIT 0," . $v_limit . " " : '';
 		$sql = "SELECT s.id, s.name, s.role, s.meta ";
@@ -1116,13 +873,11 @@ if (!function_exists('espresso_show_personnel')) {
 			$sql .= " WHERE r.event_id ='" . $event_id . "' ";
 		}
 		$sql .= $v_limit;
-		//echo $sql;
 		$event_personnel = $wpdb->get_results($sql);
 		$num_rows = $wpdb->num_rows;
 		if ($num_rows > 0) {
 			$html = '';
 			foreach ($event_personnel as $person) {
-				$person_id = $person->id;
 				$person_name = $person->name;
 				$person_role = $person->role;
 
@@ -1136,6 +891,8 @@ if (!function_exists('espresso_show_personnel')) {
 				$html .= $v_before . $person_name . $person_info . $v_after;
 			}
 		}
+		$v_wrapper_start = empty($v_wrapper_start) ? '' : $v_wrapper_start;
+		$v_wrapper_end = empty($v_wrapper_end) ? FALSE : $v_wrapper_end;
 		return $v_wrapper_start . $html . $v_wrapper_end;
 	}
 
@@ -1242,8 +999,6 @@ function espresso_edit_this($event_id) {
 	global $espresso_premium;
 	if ($espresso_premium != true)
 		return;
-	global $current_user;
-	wp_get_current_user();
 	$curauth = wp_get_current_user();
 	$user_id = $curauth->ID;
 	$user = new WP_User($user_id);
@@ -1280,12 +1035,6 @@ function espresso_count_attendees_for_registration($attendee_id) {
 	return $cnt;
 }
 
-function espresso_quantity_for_registration($attendee_id) {
-	global $wpdb;
-	$cnt = $wpdb->get_var("SELECT quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . espresso_registration_id($attendee_id) . "' ORDER BY id ");
-	return $cnt;
-}
-
 function espresso_is_primary_attendee($attendee_id) {
 	global $wpdb;
 	$sql = "SELECT ea.id FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
@@ -1294,17 +1043,6 @@ function espresso_is_primary_attendee($attendee_id) {
 	$wpdb->get_results($sql);
 	if ($wpdb->num_rows > 0) {
 		return true;
-	}
-}
-
-function espresso_get_primary_attendee_id($registration_id) {
-	global $wpdb;
-	$sql = "SELECT ea.id FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
-	$sql .= " WHERE ea.registration_id = '" . $registration_id . "' AND ea.is_primary='1' ";
-	//echo $sql;
-	$wpdb->get_results($sql);
-	if ($wpdb->num_rows > 0) {
-		return $wpdb->last_result[0]->id;
 	}
 }
 
@@ -1332,80 +1070,6 @@ function espresso_ticket_links($registration_id, $attendee_id) {
 		return '<p>' . $group . $ticket_link . '</p>';
 	}
 }
-
-/**
- * Get either a Gravatar URL or complete image tag for a specified email address.
- *
- * @param string $email The email address
- * @param string $s Size in pixels, defaults to 80px [ 1 - 512 ]
- * @param string $d Default imageset to use [ 404 | mm | identicon | monsterid | wavatar ]
- * @param string $r Maximum rating (inclusive) [ g | pg | r | x ]
- * @param boole $img True to return a complete IMG tag False for just the URL
- * @param array $atts Optional, additional key/value attributes to include in the IMG tag
- * @return String containing either just a URL or a complete image tag
- * @source http://gravatar.com/site/implement/images/php/
- */
-if (!function_exists('espresso_get_gravatar')) {
-
-	function espresso_get_gravatar($email, $s = 80, $d = 'mm', $r = 'g', $img = true, $atts = array()) {
-		$url = 'http://www.gravatar.com/avatar/';
-		$url .= md5(strtolower(trim($email)));
-		$url .= "?s=$s&d=$d&r=$r";
-		if ($img) {
-			$url = '<img src="' . $url . '"';
-			foreach ($atts as $key => $val)
-				$url .= ' ' . $key . '="' . $val . '"';
-			$url .= ' />';
-		}
-		return $url;
-	}
-
-}
-
-/**
- * Function espresso_get_attendee_coupon_discount
- * Get discount amount for a given attendee id and cost
- *
- * @global wpdb $wpdb
- * @param int $attendee_id
- * @param double $cost
- */
-function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
-	global $wpdb;
-	$coupon_code = "";
-
-	$row = $wpdb->get_row($wpdb->prepare("select * from " . EVENTS_ATTENDEE_TABLE . " where id = %d", $attendee_id), ARRAY_A);
-	if (!is_null($row['coupon_code']) && !empty($row['coupon_code'])) {
-		$coupon_code = $row['coupon_code'];
-		$event_id = $row['event_id'];
-		//$results = $wpdb->get_results("SELECT * FROM ". EVENTS_DISCOUNT_CODES_TABLE ." WHERE coupon_code = '".$_REQUEST['coupon_code']."'");
-		$discounts = $wpdb->get_results("SELECT d.* FROM " . EVENTS_DISCOUNT_CODES_TABLE . " d JOIN " . EVENTS_DISCOUNT_REL_TABLE . " r ON r.discount_id  = d.id WHERE d.coupon_code = '" . $coupon_code . "'  AND r.event_id = '" . $event_id . "' ");
-		if ($wpdb->num_rows > 0) {
-			$valid_discount = true;
-			foreach ($discounts as $discount) {
-				$discount_id = $discount->id;
-				$coupon_code = $discount->coupon_code;
-				$coupon_code_price = $discount->coupon_code_price;
-				$coupon_code_description = $discount->coupon_code_description;
-				$use_percentage = $discount->use_percentage;
-			}
-			$discount_type_price = $use_percentage ? $coupon_code_price . '%' : $org_options['currency_symbol'] . $coupon_code_price;
-
-			if ($use_percentage) {
-				$pdisc = $coupon_code_price / 100;
-				$cost = $cost - ($cost * $pdisc);
-			} else {
-				$cost = $cost - $coupon_code_price;
-			}
-		}
-	}
-	return $cost;
-}
-
-//This function returns the user id of the current user, if the permissions pro addon is installed.
-//IF the permissions pro addon is installed and the admin has loaded a different manager id, then the system will return that users id.
-//Otherwise it returns the id of the primary admin.
-
 
 function getCountriesArray($lang = "en") {
 	//first code, country_id
@@ -1653,16 +1317,6 @@ function getCountryZoneId($country_id) {
 	return 0;
 }
 
-function getCountryBelongsZone($country_id, $zone_id = 1 /* USA by default */) {
-	//2 is for european union
-	$countries = getCountriesArray();
-	for ($t = 0; $t < sizeof($countries); $t++)
-		if ($country_id == $countries[$t][0])
-			if ($zone_id == $countries[$t][4])
-				return true;
-	return false;
-}
-
 function getCountryName($id, $lang = "en") {
 	$countries = getCountriesArray($lang);
 	for ($t = 0; $t < sizeof($countries); $t++)
@@ -1706,463 +1360,121 @@ function printCountriesSelector($name, $selected) {
  * 		@ access public
  * 		@ return void
  */
-function printr($var, $var_name = 'ARRAY', $height = 'auto' ) {
+function printr($var, $var_name = 'ARRAY', $height = 'auto') {
 
-	echo '<pre style="display:block; width:100%; height:'.$height.'; overflow:scroll; border:2px solid light-blue;">';
+	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
 	echo '<h3>' . $var_name . '</h3>';
 	echo print_r($var);
 	echo '</pre>';
 }
 
-//Creates an admin toolbar
-
 /**
- * Retrieve event meta data for an event. (note works similar to get_post_meta() core WordPress function)
- * @param int $event_id Event ID
- * @param string $key The meta key to retrieve
- * @param bool $single Whether to return a single value.
- * @param mixed Will be an array if $single is false. Will be value of meta data field if $single is true.
- */
-function ee_get_event_meta($event_id, $key, $single = false) {
-	if (!$event_id = absint($event_id))
-		return false;
-
-	$ee_meta_cache = wp_cache_get($event_id, 'ee_meta');
-
-	if (!$ee_meta_cache) {
-		$ee_meta_cache = update_ee_meta_cache(array($event_id));
-		$ee_meta_cache = $ee_meta_cache[$event_id];
-	}
-
-	if (!$key)
-		return $meta_cache;
-
-	if (isset($ee_meta_cache[$key])) {
-		if ($single)
-			return maybe_unserialize($ee_meta_cache[$key][0]);
-		else
-			return array_map('maybe_unserialize', $meta_cache[$key]);
-	}
-
-	if ($single)
-		return '';
-	else
-		return array();
-}
-
-/**
- * Add event meta data
- * (based of WordPress core add_metadata function)
- * @param int $event_id ID of the event metadata is for.
- * @param string $key event meta key
- * @param string $value event meta value
- * @param bool $unique OPtional, default is false. Whether the specified key shoudl be unique for the event. If true, and the event already has a value for the specified key, no change will be made.
- * @return bool. The event meta ID on successful update, false on failure.
- */
-function ee_add_event_meta($event_id, $key, $value, $unique = false) {
-
-	if (!$event_id = absint($event_id))
-		return false;
-
-	global $wpdb;
-
-	$table = $wpdb->prefix . 'events_meta';
-	$column = 'event_id';
-
-	// expected_slashed ($meta_key)
-	$meta_key = stripslashes($key);
-	$meta_value = stripslashes_deep($value);
-
-
-	if ($unique && $wpdb->get_var($wpdb->prepare(
-													"SELECT COUNT(*) FROM $table WHERE meta_key = %s AND $column = %d", $meta_key, $event_id)))
-		return false;
-
-	$_meta_value = $meta_value;
-	$meta_value = maybe_serialize($meta_value);
-	$date = current_time('mysql');
-
-	$result = $wpdb->insert($table, array(
-			$column => $object_id,
-			'meta_key' => $meta_key,
-			'meta_value' => $meta_value,
-			'date_added' => $date
-					));
-
-	if (!$result)
-		return false;
-
-	$mid = (int) $wpdb->insert_id;
-
-	wp_cache_delete($event_id, 'ee_meta');
-
-	return $mid;
-}
-
-/**
- * Update event meta data. If no value already exists for the specified event_id and event meta_key, the event meta will added.
- * (based of WordPress core update_metadata() function)
+ * 		compile all error or success messages into one string
  *
- * @param int $event_id ID of the event the meta is for.
- * @param string $key event meta key
- * @param string $value event meta value
- * @param string $prev_value Optional. If specified, only update existing meta entries with the specified value. Otherwise, update all entries.
- * @return bool True on successful update, false on failure
+ * 		@param		boolean		$format		whether or not to format the messages for display in the WP admin
+ * 		@return 		array
  */
-function ee_update_event_meta($event_id, $key, $value, $prev_value = '') {
-	if (!$key)
-		return false;
+function espresso_get_notices($format_output = TRUE, $url_encode = FALSE) {
 
-	if (!$event_id = absint($object_id))
-		return false;
+	global $espresso_notices;
 
-	global $wpdb;
+	$success_messages = '';
+	$error_messages = '';
 
-	$table = $wpdb->prefix . 'events_meta';
-	$column = 'event_id';
-	$id_column = 'emeta_id';
+	//echo printr($espresso_notices, '$espresso_notices' );
+	// grab any notices that have been sent via REQUEST vars
+	if (isset($_REQUEST['success']) && $_REQUEST['success'] != '') {
+		$espresso_notices['success'][] = urldecode($_REQUEST['success']);
+	}
+	if (isset($_REQUEST['errors']) && $_REQUEST['errors'] != '') {
+		$espresso_notices['errors'][] = urldecode($_REQUEST['errors']);
+	}
 
-	// expected_slashed ($key)
-	$meta_key = stripslashes($key);
-	$passed_value = $value;
-	$meta_value = stripslashes_deep($value);
-
-	if (!$meta_id = $wpdb->get_var($wpdb->prepare("SELECT $id_column FROM $table WHERE meta_key = %s AND $column = %d", $meta_key, $event_id)))
-		return ee_add_event_meta($event_id, $meta_key, $passed_value);
-
-	// Compare existing value to new value if no prev value given and the key exists only once.
-	if (empty($prev_value)) {
-		$old_value = ee_get_event_meta($event_id, $meta_key);
-		if (count($old_value) == 1) {
-			if ($old_value[0] === $meta_value)
-				return false;
+	// check for success messages
+	//if ( isset( $espresso_notices['success'] ) && is_array( $espresso_notices['success'] ) && ! empty( $espresso_notices['success'] )) {
+	if ($espresso_notices['success']) {
+		// cycle through all of them
+		foreach ($espresso_notices['success'] as $success) {
+			// compile them into one string of paragraphs
+			$success_messages .= $success . '<br />';
 		}
+		// remove last linebreak
+		$success_messages = substr($success_messages, 0, ( count($success_messages) - 7));
+		// possibly encode for url transmission
+		$success_messages = $url_encode ? urlencode($success_messages) : $success_messages;
 	}
 
-	$_meta_value = $meta_value;
-	$meta_value = maybe_serialize($meta_value);
-
-	$data = compact('meta_value');
-	$where = array($column => $event_id, 'meta_key' => $meta_key);
-
-	if (!empty($prev_value)) {
-		$prev_value = maybe_serialize($prev_value);
-		$where['meta_value'] = $prev_value;
+	// check for error messages
+	//if ( isset( $espresso_notices['errors'] ) && is_array( $espresso_notices['errors'] ) && ! empty( $espresso_notices['errors'] )) {
+	if ($espresso_notices['errors']) {
+		// cycle through all of them
+		foreach ($espresso_notices['errors'] as $error) {
+			// compile them into one string of paragraphs
+			$error_messages .= $error . '<br />';
+		}
+		// remove last linebreak
+		$error_messages = substr($error_messages, 0, ( count($error_messages) - 7));
+		$error_messages = $url_encode ? urlencode($error_messages) : $error_messages;
 	}
 
-	$wpdb->update($table, $data, $where);
+	if ($format_output) {
 
-	wp_cache_delete($event_id, 'ee_meta');
+		$notices = '';
 
-	return true;
-}
+		if ($success_messages != '') {
+			//showMessage( $success_messages );
+			$notices = '<div id="message" class="updated fade"><p>' . $success_messages . '</p></div>';
+		}
 
-/**
- * Delete event metadata for the specified event.
- * (based off of the core WordPress delete_metadata() function)
- *
- * @param int $event_id ID of the event the metadata is for
- * @param string $key event meta key
- * @param string $value Optional. event meta value. If specified, only delete metadata entries with this value. Otherwise, delete all entries with the specified key.
- * @param bool $delete_all Optional, default is false. If true, delete matching metadata entries for all events, ignoring the specified event_id. Otherwise, only delete matching metadata entries for the specified event_id.
- * @return bool True on successful delete, false on failure
- */
-function ee_delete_event_meta($event_id, $key, $value = '', $delete_all = false) {
-	if (!$meta_key)
-		return false;
-
-	if ((!$event_id = absint($event_id)) && !$delete_all)
-		return false;
-
-	global $wpdb;
-	$table = $wpdb->prefix . 'events_meta';
-	$type_column = 'event_id';
-	$id_column = 'emeta_id';
-
-	// expected_slashed ($key)
-	$meta_key = stripslashes($key);
-	$meta_value = stripslashes_deep($value);
-
-	$_meta_value = $meta_value;
-	$meta_value = maybe_serialize($meta_value);
-
-	$query = $wpdb->prepare("SELECT $id_column FROM $table WHERE meta_key = %s", $meta_key);
-
-	if (!$delete_all)
-		$query .= $wpdb->prepare(" AND $type_column = %d", $event_id);
-
-	if ($meta_value)
-		$query .= $wpdb->prepare(" AND meta_value = %s", $meta_value);
-
-	$meta_ids = $wpdb->get_col($query);
-	if (!count($meta_ids))
-		return false;
-
-	if ($delete_all)
-		$object_ids = $wpdb->get_col($wpdb->prepare("SELECT $type_column FROM $table WHERE meta_key = %s", $meta_key));
-
-	$query = "DELETE FROM $table WHERE $id_column IN( " . implode(',', $meta_ids) . " )";
-
-	$count = $wpdb->query($query);
-
-	if (!$count)
-		return false;
-
-	if ($delete_all) {
-		foreach ((array) $object_ids as $o_id) {
-			wp_cache_delete($o_id, 'ee_meta');
+		if ($error_messages != '') {
+			//showMessage( $error_messages, TRUE );
+			$notices .= '<div id="message" class="error"><p>' . $error_messages . '</p></div>';
 		}
 	} else {
-		wp_cache_delete($event_id, 'ee_meta');
+
+		$notices = array(
+				'success' => $success_messages,
+				'errors' => $error_messages
+		);
+		// remove empty notices						
+		foreach ($notices as $type => $notice) {
+			if (empty($notice)) {
+				unset($notices[$type]);
+			}
+		}
 	}
 
-	return true;
+	return $notices;
 }
 
 /**
- * Determine if a meta key is set for the given event
- * (based off the core WordPress metadata_exists() function)
- * @param int $event_id ID of the event the metadata is for
- * @param string $key meta_key for this metadata
- * @return bool true if the key is set, false if not.
+ * 		load and display a template
+ *
+ * 		@param 		string			$path_to_file		server path to the file to be loaded, including the file name and extension
+ * 		@param 		array			$template_args	an array of arguments to be extracted for use in the template
+ * 		@param 		boolean		$return_string	whether to send ouput immediately to screen, or capture and return as a string
+ * 		@return 		void
  */
-function ee_event_meta_exists($event_id, $key) {
+function espresso_display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
 
-	if (!$event_id = absint($event_id))
-		return false;
-
-
-	$meta_cache = wp_cache_get($event_id, 'ee_meta');
-
-	if (!$meta_cache) {
-		$meta_cache = update_ee_meta_cache(array($event_id));
-		$meta_cache = $meta_cache[$event_id];
+	// you gimme nuttin - YOU GET NUTTIN !!
+	if (!$path_to_file) {
+		return FALSE;
+	}
+	// if $template_args are not in an array, then make it so
+	if (!is_array($template_args)) {
+		$template_args = array($template_args);
 	}
 
-	if (isset($meta_cache[$meta_key]))
-		return true;
+	extract($template_args);
 
-	return false;
+	if ($return_string) {
+		// becuz we want to return a string, we are going to capture the output
+		ob_start();
+		include( $path_to_file );
+		$output = ob_get_clean();
+		return $output;
+	} else {
+		include( $path_to_file );
+	}
 }
-
-/**
- * Update the event metadata cache for event meta data
- * @param int|array $ee_meta_ids array or comma delimited list of event IDs to update cache for
- * @return mixed event meta cache data for the specified event(s), or false on failure
- */
-function update_ee_meta_cache($ee_meta_ids) {
-	if (empty($ee_meta_ids))
-		return false;
-
-	$column = 'event_id';
-	$table = $wpdb->prefix . 'events_meta';
-
-	global $wpdb;
-
-	if (!is_array($ee_meta_ids)) {
-		$ee_meta_ids = preg_replace('|[^0-9,]|', '', $ee_meta_ids);
-		$ee_meta_ids = explode(',', $ee_meta_ids);
-	}
-
-	$ee_meta_ids = array_map('intval', $ee_meta_ids);
-
-	$cache_key = 'ee_meta';
-	$ids = array();
-	$cache = array();
-	foreach ($ee_meta_ids as $id) {
-		$cached_object = wp_cache_get($id, $cache_key);
-		if (false === $cached_object)
-			$ids[] = $id;
-		else
-			$cache[$id] = $cached_object;
-	}
-
-	if (empty($ids))
-		return $cache;
-
-	// Get meta info
-	$id_list = join(',', $ids);
-	$meta_list = $wpdb->get_results($wpdb->prepare("SELECT $column, meta_key, meta_value, date_added FROM $table WHERE $column IN ($id_list)"), ARRAY_A);
-
-	if (!empty($meta_list)) {
-		foreach ($meta_list as $metarow) {
-			$mpid = intval($metarow[$column]);
-			$mkey = $metarow['meta_key'];
-			$mval = $metarow['meta_value'];
-
-			// Force subkeys to be array type:
-			if (!isset($cache[$mpid]) || !is_array($cache[$mpid]))
-				$cache[$mpid] = array();
-			if (!isset($cache[$mpid][$mkey]) || !is_array($cache[$mpid][$mkey]))
-				$cache[$mpid][$mkey] = array();
-
-			// Add a value to the current pid/key:
-			$cache[$mpid][$mkey][] = $mval;
-		}
-	}
-
-	foreach ($ids as $id) {
-		if (!isset($cache[$id]))
-			$cache[$id] = array();
-		wp_cache_add($id, $cache[$id], $cache_key);
-	}
-
-	return $cache;
-}
-
-
-
-
-
-
-	/**
-	*		compile all error or success messages into one string
-	*
-	* 		@param		boolean		$format		whether or not to format the messages for display in the WP admin
-	*		@return 		array
-	*/
-	function espresso_get_notices( $format_output = TRUE, $url_encode = FALSE ) {
-
-		global $espresso_notices;
-
-		$success_messages = '';
-		$error_messages = '';
-
-		//echo printr($espresso_notices, '$espresso_notices' );
-		
-		// grab any notices that have been sent via REQUEST vars
-		if ( isset( $_REQUEST['success'] ) && $_REQUEST['success'] != '' ) {
-			$espresso_notices['success'][] = urldecode( $_REQUEST['success'] );
-		}
-		if ( isset( $_REQUEST['errors'] ) && $_REQUEST['errors'] != '' ) {
-			$espresso_notices['errors'][] = urldecode( $_REQUEST['errors'] );
-		}
-
-		// check for success messages
-		//if ( isset( $espresso_notices['success'] ) && is_array( $espresso_notices['success'] ) && ! empty( $espresso_notices['success'] )) {
-		if ( $espresso_notices['success'] ) {
-			// cycle through all of them
-			foreach ( $espresso_notices['success'] as $success ) {
-				// compile them into one string of paragraphs
-				$success_messages .= $success . '<br />';
-			}
-			// remove last linebreak
-			$success_messages = substr( $success_messages, 0, ( count( $success_messages ) - 7 ));
-			// possibly encode for url transmission
-			$success_messages = $url_encode ? urlencode( $success_messages ) : $success_messages;
-		}
-
-		// check for error messages
-		//if ( isset( $espresso_notices['errors'] ) && is_array( $espresso_notices['errors'] ) && ! empty( $espresso_notices['errors'] )) {
-		if ( $espresso_notices['errors'] ) {
-			// cycle through all of them
-			foreach ( $espresso_notices['errors'] as $error ) {
-				// compile them into one string of paragraphs
-				$error_messages .= $error . '<br />';
-			}
-			// remove last linebreak
-			$error_messages = substr( $error_messages, 0, ( count( $error_messages ) - 7 ));
-			$error_messages = $url_encode ? urlencode( $error_messages ) : $error_messages;
-		}
-
-		if ( $format_output ) {
-
-			$notices = '';
-
-			if ( $success_messages != '' ) {
-				//showMessage( $success_messages );
-				$notices = '<div id="message" class="updated fade"><p>' . $success_messages . '</p></div>';
-			}
-
-			if  ( $error_messages != '' ) {
-				//showMessage( $error_messages, TRUE );
-				$notices .= '<div id="message" class="error"><p>' . $error_messages . '</p></div>';
-			}
-
-		} else {
-
-			$notices = array(
-											'success' => $success_messages,
-											'errors' => $error_messages
-										);
-			// remove empty notices						
-			foreach ( $notices as $type => $notice ) {
-				if ( empty( $notice )) {
-					unset( $notices[ $type ] );
-				}
-			}
-
-		}
-
-		return $notices;
-
-	}
-
-
-
-
-
-	/**
-	*		load and display a template
-	*
-	*		@param 		string			$path_to_file		server path to the file to be loaded, including the file name and extension
-	*		@param 		array			$template_args	an array of arguments to be extracted for use in the template
-	*		@param 		boolean		$return_string	whether to send ouput immediately to screen, or capture and return as a string
-	*		@return 		void
-	*/
-	function espresso_display_template( $path_to_file = FALSE, $template_args, $return_string = FALSE ) {
-
-		// you gimme nuttin - YOU GET NUTTIN !!
-		if ( ! $path_to_file ) {
-			return FALSE;
-		}
-		// if $template_args are not in an array, then make it so
-		if ( ! is_array( $template_args )) {
-			$template_args = array( $template_args );
-		}
-
-		extract( $template_args );
-
-		if ( $return_string ) {
-			// becuz we want to return a string, we are going to capture the output
-			ob_start();
-			include( $path_to_file );
-			$output = ob_get_clean();
-			return $output;
-		} else {
-			include( $path_to_file );
-		}
-
-	}
-
-
-
-
-
-
-	/**
-	*		render and display a template
-	*
-	*		@access public
-	*		@return void
-	*/
-	function espresso_eval_display_template( $path_to_file = FALSE, $template_args ) {
-
-		if ( ! $path_to_file ) {
-			return FALSE;
-		}
-
-		extract($template_args);
-		$view_template = file_get_contents( $path_to_file );
-
-		// check if short tags is on cuz eval chokes if not presented the correct tag type
-		$php_short_tags_on = (bool) ini_get('short_open_tag');
-
-		if ( $php_short_tags_on ) {
-			eval( "?> $view_template <? " );
-		} else {
-			// don't forget the space after php
-			eval( "?> $view_template <?php " );
-		}
-
-	}
