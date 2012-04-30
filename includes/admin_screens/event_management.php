@@ -14,7 +14,7 @@ function event_espresso_manage_events() {
 		edit_event(absint($_SESSION['event_id']));
 		return;
 	}
-	
+
 	if ($_REQUEST['action']) {
 		// These three are different views, so return after each
 		switch ($_REQUEST['action']) {
@@ -50,6 +50,13 @@ function event_espresso_manage_events() {
 
 function add_file_loads_for_event_management_screen() {
 	$load_event_list = true;
+	if (isset($_REQUEST['save'])) {
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
+		$_SESSION['return_to_editor'] = TRUE;
+		$load_event_list = false;
+	} else {
+		$_SESSION['return_to_editor'] = FALSE;
+	}
 	if (isset($_REQUEST['action'])) {
 		switch ($_REQUEST['action']) {
 			case 'copy_event':
@@ -59,22 +66,10 @@ function add_file_loads_for_event_management_screen() {
 			case 'insert':
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/insert_event.php");
 				$_SESSION['event_id'] = add_event_to_db();
-				if (isset($_REQUEST['save'])) {
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
-					$_SESSION['return_to_editor'] = TRUE;
-					$load_event_list = false;
-				}
-				if (isset($_REQUEST['save_and_close'])) $_SESSION['return_to_editor'] = FALSE;
 				break;
 			case 'update':
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/update_event.php");
 				$_SESSION['event_id'] = update_event();
-				if (isset($_REQUEST['save'])) {
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
-					$_SESSION['return_to_editor'] = TRUE;
-					$load_event_list = false;
-				}
-				if (isset($_REQUEST['save_and_close'])) $_SESSION['return_to_editor'] = FALSE;
 				break;
 			case 'delete':
 				event_espresso_delete_event();
