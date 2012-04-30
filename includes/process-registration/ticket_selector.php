@@ -262,6 +262,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	 */	
 	function process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
 	
+		global $espresso_notices;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//echo printr($_POST);
 		// do we have an event id?
