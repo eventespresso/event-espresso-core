@@ -771,7 +771,9 @@ function update_event($recurrence_arr = array()) {
 
 		//Empty the event cache
 		espresso_reset_cache($event_id);
+		return $event_id;
 	}// end nonce check
+	return FALSE;
 }
 
 // end 'update_event'
