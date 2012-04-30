@@ -305,7 +305,7 @@ class EEM_Price extends EEM_Base {
 			$what .= 'PRT_is_global '. $operator .' %d';
 			$value[] = $global;
 		}
-		if (!empty($what)) {
+		if (!empty($what) && $order) {
 			$what .= ' AND prt.';
 		}
 		if ($order !== FALSE) {
@@ -318,9 +318,7 @@ class EEM_Price extends EEM_Base {
 		$SQL = 'SELECT prc.*, prt.* FROM ' . $wpdb->prefix . 'esp_price_type prt JOIN ' . $this->table_name . ' prc ON prt.PRT_ID = prc.PRT_ID WHERE prt.' . $what . ' ORDER BY PRT_order';
 
 		if ($prices = $wpdb->get_results($wpdb->prepare($SQL, $value))) {
-			foreach ($prices as $price) {
-				$array_of_prices[] = array_shift($this->_create_objects($price));
-			}
+			$array_of_prices = $this->_create_objects($prices);
 			return $array_of_prices;
 		} else {
 			return FALSE;
@@ -455,10 +453,10 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			$prices = $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE, 0);
+			$prices = $this->_get_all_prices_that_are( FALSE, FALSE, FALSE, FALSE, TRUE);
 			foreach ($prices as $price) {
 				if ( $price->is_active()) {
-					$array_of_is_active_and_price_objects[ $price->PRT_ID ][] = array('active'=>TRUE, 'price'=>$price);
+					$array_of_is_active_and_price_objects[ $price->type() ][] = array('active'=>TRUE, 'price'=>$price);
 				}
 			}
 			return $array_of_is_active_and_price_objects;
