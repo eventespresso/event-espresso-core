@@ -193,8 +193,6 @@ if (!function_exists('event_espresso_time_dropdown')) {
 
 		//This is the initial check to see if we time slot are controlled by registration limits.
 		if ($time_reg_limit) {
-			//$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
-			//$sql .= " AND (reg_limit = '0' OR reg_limit >= '" .$num_attendees."') ";
 
 			$sql = "SELECT es.*, (es.reg_limit - count(ea.id)) as available_spaces FROM " . EVENTS_START_END_TABLE . " es
 								left join  " . EVENTS_ATTENDEE_TABLE . " ea
@@ -282,9 +280,6 @@ function espresso_time_id_hidden_field($event_id, $multi_reg = 0) {
 
 	//This is the initial check to see if we time slot are controlled by registration limits.
 	if ($time_reg_limit) {
-		//$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees');
-		//$sql .= " AND (reg_limit = '0' OR reg_limit >= '" .$num_attendees."') ";
-
 		$sql = "SELECT es.*, (es.reg_limit - count(ea.id)) as available_spaces FROM " . EVENTS_START_END_TABLE . " es
 								left join  " . EVENTS_ATTENDEE_TABLE . " ea
 								on
