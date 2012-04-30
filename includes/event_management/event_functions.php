@@ -235,12 +235,15 @@ function espresso_event_editor_date_time_metabox($event) {
 
 	// grab event times
 	if ( ! $times = $DTM->get_all_event_dates( $event->id )) {
-		$times = array(new EE_Datetime( $event->id, true, time(), time() + (60 * 60 * 24 * 30), 'E', NULL ));
+		$times = array(new EE_Datetime( $event->id, true, time() + (60 * 60 * 24 * 30), time() + (60 * 60 * 24 * 30), 'E', NULL ));
+		$times[0]->set_start_time("8AM");
+		$times[0]->set_end_time("3:30PM");
 	}
-	//echo printr( $times, '$times' );
 	// grab reg times
 	if (!$reg_times = $DTM->get_all_reg_dates($event->id)) {
-		$reg_times = array(new EE_Datetime($event->id, true, time(), time() + (60 * 60 * 24 * 30), 'R', NULL));
+		$reg_times = array(new EE_Datetime($event->id, true, time(), time() + (60 * 60 * 24 * 29), 'R', NULL));
+		$reg_times[0]->set_start_time("12:01AM");
+		$reg_times[0]->set_end_time("11:50PM");
 	}
 	
 	$datetime_IDs = array();
@@ -408,9 +411,6 @@ function espresso_event_editor_pricing_metabox($event) {
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	$PRC = EEM_Price::instance();
-
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
-	$EVP = EEM_Event_Price::instance();
 
 	$show_no_event_price_msg = FALSE;		
 
@@ -616,10 +616,10 @@ function espresso_event_editor_pricing_metabox($event) {
 								
 								<td class="edit-column" style=" height:2.5em; vertical-align:middle; text-align:right;">
 									<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title='Edit Advanced Settings for this Event Price' style="cursor:pointer;" >
-										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
+										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/add.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
 									</a>
 									<a class='delete-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>" title='Delete this Event Price' style="margin:0 0 0 10px; font-size:.9em; cursor:pointer;" >
-										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
+										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/remove.gif" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
 									</a>
 								</td>
 
