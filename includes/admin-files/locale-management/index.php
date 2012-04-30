@@ -47,7 +47,6 @@ if ($_REQUEST['action'] == 'update' ){require_once("update_locale.php");update_e
 if ($_REQUEST['action'] == 'add' ){require_once("add_locale_to_db.php");add_locale_to_db();}
 if ($_REQUEST['action'] == 'add_new_locale'){require_once("add_new_locale.php");add_new_event_locale();}
 if ($_REQUEST['action'] == 'edit'){require_once("edit_locale.php");edit_event_locale();}
-do_action( 'action_hook_espresso_admin_notices');
 ?>
 	  <form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
 	   
