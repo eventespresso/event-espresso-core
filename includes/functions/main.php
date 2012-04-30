@@ -231,7 +231,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 		$event_status = $event['event_status'];
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM = EEM_Datetime::instance();
-		$datetimes = $DTM->get_all_datetimes_for_event($event_id);var_dump($event_id);
+		$datetimes = $DTM->get_all_datetimes_for_event($event_id);
 		$start = 10000000000;
 		$regstart = 10000000000;
 		$end = 0;
