@@ -247,7 +247,6 @@ function espresso_featured_image_meta_box($event) {
 				$event_thumb = '';
 			}
 			?>
-			<?php // var_dump($event_meta['event_thumbnail_url']);   ?>
 			<label for="upload_image">
 				<?php _e('Add Featured Image', 'event_espresso'); ?>
 			</label>
