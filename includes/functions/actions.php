@@ -44,7 +44,6 @@ function display_espresso_admin_notices() {
 			echo '</div>';
 		}
 	}
-	remove_action('action_hook_espresso_admin_notices', 'display_espresso_admin_notices');
 }
 
 add_action('admin_notices', 'display_espresso_admin_notices');
