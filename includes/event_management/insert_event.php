@@ -308,25 +308,11 @@ function add_event_to_db($recurrence_arr = array()) {
 						'EVT_ID'=>$last_event_id,
 						'DTT_start'=>strtotime($event_datetime['startdate'] . ' ' . $event_datetime['starttime']),
 						'DTT_end'=>strtotime($event_datetime['enddate'] . ' ' . $event_datetime['endtime']),
-						'DTT_event_or_reg'=>'E');
+						'DTT_event_or_reg'=>$event_datetime['event_or_reg']);
 				if (!empty($event_datetime['startreg_limit'])) {
 					$insert['DTT_reg_limit'] = $event_datetime['startreg_limit'];
 				}
 				$DTM->insert($insert);
-			}
-			$insert = array(
-					'EVT_ID'=>$last_event_id,
-					'DTT_start'=>strtotime($_REQUEST['registration_start'] . ' ' . $_REQUEST['registration_startT']),
-					'DTT_end'=>strtotime($_REQUEST['registration_end'] . ' ' . $_REQUEST['registration_endT']),
-					'DTT_event_or_reg'=>'R');
-			$DTM->insert($insert);
-
-			if (!empty($_REQUEST['checkbox'])) {
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
-				$EVP = EEM_Event_Price::instance();
-				foreach ($_REQUEST['checkbox'] as $price_id => $value) {
-					$EVP->insert(array('EVT_ID' => $last_event_id, 'PRC_ID' => $price_id));
-				}
 			}
 
 			// Create Event Post Code Here
@@ -395,12 +381,24 @@ function add_event_to_db($recurrence_arr = array()) {
 
 			if (empty($error)) {
 				?>
-				<div id="message" class="updated fade"><p><strong><?php _e('The event', 'event_espresso'); ?>
+				<div id="message" class="updated fade">
+					<p>
+						<strong><?php _e('The event', 'event_espresso'); ?>
 							<a href="<?php echo espresso_reg_url($last_event_id); ?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event']) ?></a>
-
-							<?php _e('has been added for ', 'event_espresso'); ?><?php echo $_REQUEST['event_datetimes'][1]['startdate']; ?> <a href="admin.php?page=events&action=edit&event_id=<?php echo $last_event_id; ?>"><?php _e('Edit this event?', 'event_espresso'); ?></a></strong></p></div>
+							<?php _e('has been added for ', 'event_espresso'); ?><?php echo $_REQUEST['event_datetimes'][1]['startdate']; ?>
+							<?php if ( ! $_SESSION['return_to_editor'] ) { ?>
+							<a href="admin.php?page=events&action=edit&event_id=<?php echo $last_event_id; ?>"><?php _e('Edit this event?', 'event_espresso'); ?></a>
+							<?php } ?>
+						</strong>
+					</p>
+				</div>							
 			<?php } else { ?>
-				<div id="message" class="error"><p><strong><?php _e('There was an error in your submission, please try again. The event was not saved!', 'event_espresso'); ?><?php print $wpdb->print_error(); ?>.</strong></p></div>
+				<div id="message" class="error">
+					<p>
+						<strong><?php _e('There was an error in your submission, please try again. The event was not saved!', 'event_espresso'); ?><?php print $wpdb->print_error(); ?>.
+						</strong>
+					</p>
+				</div>
 				<?php
 			}
 		}
