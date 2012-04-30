@@ -185,43 +185,43 @@ class EE_Price {
 	*  Price constructor
 	*
 	* @access 			public
-	* @param			int		 			$PRT_ID							Price type ID
-	* @param			int		 			$EVT_ID							Event ID
-	* @param			float					$PRC_amount				Price amount
-	* @param			string 				$PRC_name					Price name
-	* @param			string				$PRC_desc						Price description
-	* @param			int					$PRC_reg_limit				Registration Limit for this Price Level
-	* @param	 		bool					$PRC_use_dates				Whether to use dates to control when pricing starts and ends
-	* @param	 		int					$PRC_start_date				If use dates is active, this is when this price becomes active
-	* @param	 		int					$PRC_end_date				If use dates is active, this is when this price becomes inactive
-	* @param	 		bool					$PRC_disc_code				The Promo Code to be entered to receive a discount (or a maybe scoobie snack ?)
-	* @param	 		int					$PRC_disc_limit_qty		Whether to limit the number of discount codes available
-	* @param	 		int					$PRC_disc_qty				The number of discounts available at this price level
-	* @param	 		bool					$PRC_disc_apply_all		Does discount apply to all attendees being registered?
-	* @param	 		int 					$PRC_disc_wp_user		WP user id of the admin that created the discount
-	* @param	 		bool					$PRC_is_active				is the Price globally active
-	* @param			int 					$PRC_overrides				Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
-	* @param			int 					$PRC_ID							Price ID
+	* @param				int						$PRT_ID							Price type ID
+	* @param				int						$EVT_ID							Event ID
+	* @param				float					$PRC_amount				Price amount
+	* @param				string 				$PRC_name					Price name
+	* @param				string				$PRC_desc						Price description
+	* @param				int						$PRC_reg_limit				Registration Limit for this Price Level
+	* @param				bool					$PRC_use_dates				Whether to use dates to control when pricing starts and ends
+	* @param				int						$PRC_start_date				If use dates is active, this is when this price becomes active
+	* @param				int						$PRC_end_date				If use dates is active, this is when this price becomes inactive
+	* @param				bool					$PRC_disc_code				The Promo Code to be entered to receive a discount (or a maybe scoobie snack ?)
+	* @param				int						$PRC_disc_limit_qty		Whether to limit the number of discount codes available
+	* @param				int						$PRC_disc_qty				The number of discounts available at this price level
+	* @param				bool					$PRC_disc_apply_all		Does discount apply to all attendees being registered?
+	* @param				int 					$PRC_disc_wp_user		WP user id of the admin that created the discount
+	* @param				bool					$PRC_is_active				is the Price globally active
+	* @param				int 					$PRC_overrides				Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
+	* @param				int 					$PRC_ID							Price ID
 	*/
 	public function __construct( $PRT_ID=NULL, $EVT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_reg_limit=NULL, $PRC_use_dates=FALSE, $PRC_start_date=NULL, $PRC_end_date=NULL, $PRC_disc_code=NULL, $PRC_disc_limit_qty=FALSE, $PRC_disc_qty=0, $PRC_disc_apply_all=TRUE, $PRC_disc_wp_user=0, $PRC_is_active=TRUE, $PRC_overrides=NULL, $PRC_ID=FALSE ) {
 	
-		$this->_PRC_ID 						= absint($PRC_ID);
-		$this->_EVT_ID 						= absint($EVT_ID);
-		$this->_PRT_ID						= absint($PRT_ID);
-		$this->_PRC_amount			= abs($PRC_amount);
-		$this->_PRC_name				= wp_strip_all_tags($PRC_name);
-		$this->_PRC_desc					= wp_strip_all_tags($PRC_desc);
-		$this->_PRC_reg_limit			= is_numeric( $PRC_reg_limit ) ? absint( $PRC_reg_limit ) : NULL;
-		$this->_PRC_use_dates			= absint( $PRC_use_dates ) ? TRUE : FALSE;
+		$this->_PRC_ID							= absint($PRC_ID);
+		$this->_EVT_ID							= absint($EVT_ID);
+		$this->_PRT_ID							= absint($PRT_ID);
+		$this->_PRC_amount					= abs($PRC_amount);
+		$this->_PRC_name						= wp_strip_all_tags($PRC_name);
+		$this->_PRC_desc						= wp_strip_all_tags($PRC_desc);
+		$this->_PRC_reg_limit				= is_numeric( $PRC_reg_limit ) ? absint( $PRC_reg_limit ) : NULL;
+		$this->_PRC_use_dates				= absint( $PRC_use_dates ) ? TRUE : FALSE;
 		$this->_PRC_start_date			= is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : NULL;
-		$this->_PRC_end_date			= is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : NULL;
-		$this->_PRC_disc_code			= $PRC_disc_code != NULL ? wp_strip_all_tags( $PRC_disc_code ): NULL;
+		$this->_PRC_end_date				= is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : NULL;
+		$this->_PRC_disc_code				= $PRC_disc_code != NULL ? wp_strip_all_tags( $PRC_disc_code ): NULL;
 		$this->_PRC_disc_limit_qty	= absint( $PRC_disc_limit_qty ) ? TRUE : FALSE;
-		$this->_PRC_disc_qty			= absint( $PRC_disc_qty );
+		$this->_PRC_disc_qty				= absint( $PRC_disc_qty );
 		$this->_PRC_disc_apply_all	= absint( $PRC_disc_apply_all ) ? TRUE : FALSE;
-		$this->_PRC_disc_wp_user	= absint( $PRC_disc_wp_user );
-		$this->_PRC_is_active			= absint( $PRC_is_active ) ? TRUE : FALSE;
-		$this->_PRC_overrides			= absint($PRC_overrides);
+		$this->_PRC_disc_wp_user		= absint( $PRC_disc_wp_user );
+		$this->_PRC_is_active				= absint( $PRC_is_active ) ? TRUE : FALSE;
+		$this->_PRC_overrides				= absint($PRC_overrides);
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
@@ -537,22 +537,22 @@ class EE_Price {
 		 $MODEL = EEM_Price::instance();
 
 		$set_column_values = array(
-				'PRT_ID'						=> $this->_PRT_ID,
-				'EVT_ID'						=> $this->_EVT_ID,
-				'PRC_amount'				=> $this->_PRC_amount,
-				'PRC_name'					=> $this->_PRC_name,
-				'PRC_desc'					=> $this->_PRC_desc,
-				'PRC_reg_limit'			=> $this->_PRC_reg_limit,
-				'PRC_use_dates'			=> $this->_PRC_use_dates,
+				'PRT_ID'							=> $this->_PRT_ID,
+				'EVT_ID'							=> $this->_EVT_ID,
+				'PRC_amount'					=> $this->_PRC_amount,
+				'PRC_name'						=> $this->_PRC_name,
+				'PRC_desc'						=> $this->_PRC_desc,
+				'PRC_reg_limit'				=> $this->_PRC_reg_limit,
+				'PRC_use_dates'				=> $this->_PRC_use_dates,
 				'PRC_start_date'			=> $this->_PRC_start_date,
-				'PRC_end_date'			=> $this->_PRC_end_date,
-				'PRC_disc_code'			=> $this->_PRC_disc_code,
+				'PRC_end_date'				=> $this->_PRC_end_date,
+				'PRC_disc_code'				=> $this->_PRC_disc_code,
 				'PRC_disc_limit_qty'	=> $this->_PRC_disc_limit_qty,
 				'PRC_disc_qty'				=> $this->_PRC_disc_qty,
 				'PRC_disc_apply_all'	=> $this->_PRC_disc_apply_all,
-				'PRC_disc_wp_user'	=> $this->_PRC_disc_wp_user,
-				'PRC_is_active'			=> $this->_PRC_is_active,
-				'PRC_overrides'			=> $this->_PRC_overrides
+				'PRC_disc_wp_user'		=> $this->_PRC_disc_wp_user,
+				'PRC_is_active'				=> $this->_PRC_is_active,
+				'PRC_overrides'				=> $this->_PRC_overrides
 		);
 
 		if ( $where_cols_n_values ){
