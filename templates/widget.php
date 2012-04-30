@@ -104,10 +104,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 										$event_state = $event->state . ' - ';
 								else
 										$event_state = '';
-
-							//Print out the array of event status options
-								//print_r (event_espresso_get_is_active($event_id));
-
+								
 								//Here we can create messages based on the event status
 								$status = event_espresso_get_is_active($event_id);
 								$status_display = ' - ' . $status['display_custom'];
