@@ -4,7 +4,6 @@ function espresso_admin_reports_filters() {
 	global $espresso_premium;
 	if ($espresso_premium != true)
 		return;
-	do_action('action_hook_espresso_admin_notices');
 	?>
 	<ul class="ee_subsubsub first subsubsub">
 		<li><h3><?php echo __('Filters', 'event_espresso'); ?></h3></li>
