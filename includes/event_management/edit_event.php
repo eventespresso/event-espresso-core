@@ -64,7 +64,7 @@ function espresso_display_edit_event($event) {
 	global $org_options;
 
 
-	$edit_event_form_url = add_query_arg( array( 'action' => 'edit', 'event_id' =>$event->id  ), EVENTS_ADMIN_URL );
+	$edit_event_form_url = add_query_arg( array( 'action' => 'edit_event', 'event_id' =>$event->id  ), EVENTS_ADMIN_URL );
 	?>
 	<div class="wrap columns-2">
 		<div id="icon-options-event" class="icon32"> </div>

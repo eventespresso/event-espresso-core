@@ -448,6 +448,16 @@ div.tablenav {
 	width: 50%;
 }
 #set-featured-image #image-display img {width: 100%;}
+
+
+.cancel-event-price-btn {
+	position:relative; display:inline-block; padding:3px 6px; 
+	background:#fff; border:1px solid #dfdfdf; border-radius:3px;
+	color:#666; cursor:pointer;
+}
+.cancel-event-price-btn:hover { border-color:#D54E21; }
+
+
 /*___ Venue Manager & Staff ___*/
 
 #add-edit-venue table ul, #add-edit-staff table ul {
