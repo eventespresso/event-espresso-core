@@ -44,21 +44,21 @@ class EEM_Price extends EEM_Base {
 		$this->table_name = $wpdb->prefix . 'esp_price';
 		// array representation of the price table and the data types for each field
 		$this->table_data_types = array(
-				'PRC_ID' 						=> '%d',
-				'PRT_ID' 						=> '%d',
-				'EVT_ID' 						=> '%d',
-				'PRC_amount' 			=> '%d',
-				'PRC_name'					 => '%s',
-				'PRC_desc' 					=> '%s',
-				'PRC_reg_limit' 			=> '%d',
-				'PRC_use_dates'			=> '%d',
+				'PRC_ID'							=> '%d',
+				'PRT_ID'							=> '%d',
+				'EVT_ID'							=> '%d',
+				'PRC_amount'					=> '%d',
+				'PRC_name'						=> '%s',
+				'PRC_desc'						=> '%s',
+				'PRC_reg_limit'				=> '%d',
+				'PRC_use_dates'				=> '%d',
 				'PRC_start_date'			=> '%d',
-				'PRC_end_date'			=> '%d',
-				'PRC_disc_code'			=> '%s',
+				'PRC_end_date'				=> '%d',
+				'PRC_disc_code'				=> '%s',
 				'PRC_disc_limit_qty'	=> '%d',
 				'PRC_disc_qty'				=> '%d',
 				'PRC_disc_apply_all'	=> '%d',
-				'PRC_disc_wp_user'	=> '%d',
+				'PRC_disc_wp_user'		=> '%d',
 				'PRC_is_active' 			=> '%d',
 				'PRC_overrides' 			=> '%d'
 		);
@@ -429,9 +429,9 @@ class EEM_Price extends EEM_Base {
 			$prices = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ));
 			$array_of_is_active_and_price_objects = array();
 			foreach ($prices as $price) {
-					$array_of_is_active_and_price_objects[ $price->type() ][] = array('active'=>TRUE, 'price'=>$price);
+					$array_of_price_objects[ $price->type() ][] = $price;
 			}
-			return $array_of_is_active_and_price_objects;
+			return $array_of_price_objects;
 		}
 
 		if ( ! $globals = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ))) {
@@ -440,8 +440,8 @@ class EEM_Price extends EEM_Base {
 		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID ))) {
 			$event_prices = array();
 		}
-//		echo printr( $event_prices, '$event_prices' ); 
-//		echo printr( $globals, '$globals' ); 
+		//echo printr( $event_prices, '$event_prices' ); 
+		//echo printr( $globals, '$globals' ); 
 
 		$overrides = array();
 		foreach ($event_prices as $event_price) {
@@ -455,6 +455,7 @@ class EEM_Price extends EEM_Base {
 			}
 		}
 		$prices = array_merge( $event_prices, $globals);
+		//echo printr( $prices, 'prices');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		
 		function cmp_order($price_a, $price_b) {
@@ -468,9 +469,9 @@ class EEM_Price extends EEM_Base {
 		uasort($prices, 'cmp_order');
 		if (!empty($prices)) {
 			foreach ($prices as $price) {
-				$array_of_is_active_and_price_objects[ $price->type() ][] = array( 'active'=>$price->is_active(), 'price'=>$price );
+				$array_of_price_objects[ $price->type() ][] = $price;
 			}
-			return $array_of_is_active_and_price_objects;
+			return $array_of_price_objects;
 		} else {
 			return FALSE;
 		}
