@@ -323,8 +323,9 @@ if (!function_exists('event_registration')) {
 
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
 
-						$event->times = array();
-						$event->times = espresso_event_list_get_event_times($event_id);
+						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+						$DTM = EEM_Datetime::instance();
+						$event->times = $DTM->get_all_datetimes_for_event($event_id);
 
 						$event->prices = array();
 						if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
