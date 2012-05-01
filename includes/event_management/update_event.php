@@ -2,7 +2,7 @@
 
 // TODO find out why $post_content is only added to the first post in case of a recurring event
 
-function update_event($recurrence_arr = array()) {  
+function update_event($recurrence_arr = array()) {
 	//print_r($_REQUEST);
 
 	global $wpdb, $espresso_wp_user, $espresso_premium;
@@ -136,7 +136,7 @@ function update_event($recurrence_arr = array()) {
 										'registration_start' => $v['registration_start'],
 										'registration_end' => $v['registration_end']));
 							} else {
-
+								
 							}
 						}
 
@@ -159,7 +159,6 @@ function update_event($recurrence_arr = array()) {
 				}
 			}
 		} // end recurrence functions
-
 		//  echo_f('rd',$recurrence_dates);
 
 
@@ -167,7 +166,7 @@ function update_event($recurrence_arr = array()) {
 						!empty($_POST['recurrence']) && $_POST['recurrence'] == 'true' &&
 						count($recurrence_arr) == 0 && $_POST['recurrence_apply_changes_to'] > 1) {
 			//skip the first update
-            $event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
+			$event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
 		} else {
 
 			$event_meta = array(); //will be used to hold event meta data
@@ -205,13 +204,11 @@ function update_event($recurrence_arr = array()) {
 			$event_location = ($address != '' ? $address . ' ' : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
 
 			//Get the first instance of the start and end times
-			$start_time = $_REQUEST['start_time'][0];
-			$end_time = $_REQUEST['end_time'][0];
-
+			//$start_time = $_REQUEST['start_time'][0];
+			//$end_time = $_REQUEST['end_time'][0];
 			// Add registration times
-			$registration_startT = event_date_display($_REQUEST['registration_startT'], 'H:i');
-			$registration_endT = event_date_display($_REQUEST['registration_endT'], 'H:i');
-
+			//$registration_startT = event_date_display($_REQUEST['registration_startT'], 'H:i');
+			//$registration_endT = event_date_display($_REQUEST['registration_endT'], 'H:i');
 			//Add timezone
 			$timezone_string = empty($_REQUEST['timezone_string']) ? '' : $_REQUEST['timezone_string'];
 
@@ -227,14 +224,11 @@ function update_event($recurrence_arr = array()) {
 			$payment_email_id = $_REQUEST['payment_email_id'];
 
 
-/* @var $registration_start type int*/
-			$registration_start = array_key_exists('registration_start', $recurrence_arr) ? $recurrence_arr['registration_start'] : $_REQUEST['registration_start'];
-			$registration_end = array_key_exists('registration_end', $recurrence_arr) ? $recurrence_arr['registration_end'] : $_REQUEST['registration_end'];
-
-			$start_date = array_key_exists('recurrence_start_date', $recurrence_arr) ? $recurrence_arr['recurrence_start_date'] : ($_REQUEST['start_date'] == '' && isset($_REQUEST['recurrence_start_date']) ? $_REQUEST['recurrence_start_date'] : $_REQUEST['start_date']);
-			$end_date = array_key_exists('recurrence_event_end_date', $recurrence_arr) ? $recurrence_arr['recurrence_event_end_date'] : ($_REQUEST['end_date'] == '' && isset($_REQUEST['recurrence_event_end_date']) ? $_REQUEST['recurrence_event_end_date'] : $_REQUEST['end_date']);
-			
-			
+			/* @var $registration_start type int */
+			//$registration_start = array_key_exists('registration_start', $recurrence_arr) ? $recurrence_arr['registration_start'] : $_REQUEST['registration_start'];
+			//$registration_end = array_key_exists('registration_end', $recurrence_arr) ? $recurrence_arr['registration_end'] : $_REQUEST['registration_end'];
+			//$start_date = array_key_exists('recurrence_start_date', $recurrence_arr) ? $recurrence_arr['recurrence_start_date'] : ($_REQUEST['start_date'] == '' && isset($_REQUEST['recurrence_start_date']) ? $_REQUEST['recurrence_start_date'] : $_REQUEST['start_date']);
+			//$end_date = array_key_exists('recurrence_event_end_date', $recurrence_arr) ? $recurrence_arr['recurrence_event_end_date'] : ($_REQUEST['end_date'] == '' && isset($_REQUEST['recurrence_event_end_date']) ? $_REQUEST['recurrence_event_end_date'] : $_REQUEST['end_date']);
 			//Venue Information
 			$venue_title = isset($_REQUEST['venue_title']) ? $_REQUEST['venue_title'] : '';
 			$venue_url = isset($_REQUEST['venue_url']) ? $_REQUEST['venue_url'] : '';
@@ -372,12 +366,12 @@ function update_event($recurrence_arr = array()) {
 					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', /*'%s', '%s',
-					'%s', '%s',*/ '%s', '%s', '%s',
+					'%s', '%s', '%s', /* '%s', '%s',
+					  '%s', '%s', */ '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s', /*'%s',
-					'%s',*/ '%s', '%s', '%s', /*'%d',*/
-					'%d', '%d', '%d',	'%d', '%d',
+					'%s', '%s', '%s', '%s', /* '%s',
+					  '%s', */ '%s', '%s', '%s', /* '%d', */
+					'%d', '%d', '%d', '%d', '%d',
 					'%d'
 			);
 
@@ -460,118 +454,112 @@ function update_event($recurrence_arr = array()) {
 				}
 			}
 
-			
-			/*************************************   DATE TIME   ********************************************/
-			
-			$registration_start = wp_strip_all_tags( $_REQUEST['registration_start'] );
-			$registration_end = wp_strip_all_tags( $_REQUEST['registration_end'] );
-			$registration_startT = wp_strip_all_tags( $_REQUEST['registration_startT'] );
-			$registration_endT = wp_strip_all_tags( $_REQUEST['registration_endT'] );
-			
-			if ( isset( $_POST['process_datetimes'] ) && $_POST['process_datetimes'] ) {
-			
+
+			/*			 * ***********************************   DATE TIME   ******************************************* */
+
+			//$registration_start = wp_strip_all_tags( $_REQUEST['registration_start'] );
+			//$registration_end = wp_strip_all_tags( $_REQUEST['registration_end'] );
+			//$registration_startT = wp_strip_all_tags( $_REQUEST['registration_startT'] );
+			//$registration_endT = wp_strip_all_tags( $_REQUEST['registration_endT'] );
+
+			if (isset($_POST['process_datetimes']) && $_POST['process_datetimes']) {
+
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 				$DTM = EEM_Datetime::instance();
-	
+
 				// delete old datetime entries
 				//$DTM->delete_all_event_datetimes( $event_id );
-	
-	//			$new_reg_dates = new EE_Datetime( $event_id, 1, $registration_start . ' ' . $registration_startT, $registration_end . ' ' . $registration_endT, 'R',   );
-	//			$new_reg_dates->insert();
-	//			echo printr( $new_reg_dates, '$new_reg_dates1' );
-	
+				//			$new_reg_dates = new EE_Datetime( $event_id, 1, $registration_start . ' ' . $registration_startT, $registration_end . ' ' . $registration_endT, 'R',   );
+				//			$new_reg_dates->insert();
+				//			echo printr( $new_reg_dates, '$new_reg_dates1' );
 				// grab list of all datetime ID's we are processing
-				if ( isset( $_POST['datetime_IDs'] )) {
-					$datetime_IDs =  unserialize( stripslashes( $_POST['datetime_IDs'] ));
-					array_walk( $_POST['datetime_IDs'], 'absint' );
+				if (isset($_POST['datetime_IDs'])) {
+					$datetime_IDs = unserialize(stripslashes($_POST['datetime_IDs']));
+					array_walk($_POST['datetime_IDs'], 'absint');
 					$datetime_IDs = array_flip($datetime_IDs);
 				} else {
 					$datetime_IDs = array();
 				}
-	
-				
-				if ( isset( $_POST['event_datetimes'] )) {
-				
-					ksort( $_POST['event_datetimes'] );
-	
-					foreach ( $_POST['event_datetimes'] as $dtm ) {
-						
-	//					echo printr( $dtm, '$dtm' );
-	
-						$dtm['enddate'] = ( isset( $dtm['enddate'] ) && $dtm['enddate'] != '' ) ? $dtm['enddate'] : $dtm['startdate'];
-						$dtm['endtime'] = ( isset( $dtm['endtime'] ) && $dtm['endtime'] != '' ) ? $dtm['endtime'] : $dtm['starttime'];
-	
+
+
+				if (isset($_POST['event_datetimes'])) {
+
+					ksort($_POST['event_datetimes']);
+
+					foreach ($_POST['event_datetimes'] as $dtm) {
+
+						//					echo printr( $dtm, '$dtm' );
+
+						$dtm['enddate'] = ( isset($dtm['enddate']) && $dtm['enddate'] != '' ) ? $dtm['enddate'] : $dtm['startdate'];
+						$dtm['endtime'] = ( isset($dtm['endtime']) && $dtm['endtime'] != '' ) ? $dtm['endtime'] : $dtm['starttime'];
+
 						$new_event_date = new EE_Datetime(
-																							$event_id,
-																							$dtm['is_primary'],
-																							$dtm['startdate'] . ' ' . $dtm['starttime'],
-																							$dtm['enddate'] . ' ' . $dtm['endtime'],
-																							$dtm['event_or_reg'], 
-																							$dtm['startreg_limit'],
-																							$dtm['ID']
-																						 );
-			
+														$event_id,
+														$dtm['is_primary'],
+														$dtm['startdate'] . ' ' . $dtm['starttime'],
+														$dtm['enddate'] . ' ' . $dtm['endtime'],
+														$dtm['event_or_reg'],
+														$dtm['startreg_limit'],
+														$dtm['ID']
+						);
+
 						// if an ID exists then update
-						if ( $new_event_date->ID() ) {										
+						if ($new_event_date->ID()) {
 							// remove this ID from list of datetime IDs - any remainders will get deleted afterwards
-							if ( array_key_exists( $new_event_date->ID(), $datetime_IDs )) {
-							    unset( $datetime_IDs[ $new_event_date->ID() ] );
-							}	
+							if (array_key_exists($new_event_date->ID(), $datetime_IDs)) {
+								unset($datetime_IDs[$new_event_date->ID()]);
+							}
 							$update = $new_event_date->update();
-							
-						} else {	
+						} else {
 							$insert = $new_event_date->insert();
 						}
-	
 					}
 				}
-	
+
 				// delete any Datetimes that are not being resaved
-				foreach ( $datetime_IDs as $datetime_ID => $bunk ) {
-					$DTM->delete_datetime( $datetime_ID );
+				foreach ($datetime_IDs as $datetime_ID => $bunk) {
+					$DTM->delete_datetime($datetime_ID);
 				}
-				
-			}  // end if process_datetimes
+			}	// end if process_datetimes
 
 
 
-			/*************************************   PRICING   ********************************************/
-
+			/*			 * ***********************************   PRICING   ******************************************* */
 			$ticket_prices_to_save = array();
-			$quick_edit_ticket_price = isset( $_POST['quick_edit_ticket_price'] ) ? $_POST['quick_edit_ticket_price'] : array();
-			
+			$quick_edit_ticket_price = isset($_POST['quick_edit_ticket_price']) ? $_POST['quick_edit_ticket_price'] : array();
+
 			// grab list of edited ticket prices
-			if ( $edited_ticket_price_IDs = isset( $_POST['edited_ticket_price_IDs'] ) ? $_POST['edited_ticket_price_IDs'] : FALSE ) {
+			if ($edited_ticket_price_IDs = isset($_POST['edited_ticket_price_IDs']) ? $_POST['edited_ticket_price_IDs'] : FALSE) {
 				// remove last comma
-				$edited_ticket_price_IDs = trim( $edited_ticket_price_IDs, ',' );
+				$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
 				// create array of edited ticket prices
-				$edited_ticket_price_IDs = explode( ',', $edited_ticket_price_IDs );
+				$edited_ticket_price_IDs = explode(',', $edited_ticket_price_IDs);
 				// flipper once
-				$edited_ticket_price_IDs = array_flip( $edited_ticket_price_IDs );
+				$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
 				// flipper twice - hey!?!?! where did all the duplicate entries go???
-				$edited_ticket_price_IDs = array_flip( $edited_ticket_price_IDs );	
+				$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
 				// grab existing ticket price data
-				if ( $edited_ticket_prices = isset( $_POST['edit_ticket_price'] ) ? $_POST['edit_ticket_price'] : FALSE ) {
-					// cycle thru list					
-					foreach ( $edited_ticket_prices as $PRC_ID => $edited_ticket_price ) {
+				if ($edited_ticket_prices = isset($_POST['edit_ticket_price']) ? $_POST['edit_ticket_price'] : FALSE) {
+					// cycle thru list                    
+					foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
 						// add edited ticket prices to list of ticket prices to save
-						if ( in_array( $PRC_ID, $edited_ticket_price_IDs )) {
-							$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[ $PRC_ID ] );
-							$ticket_prices_to_save[ $PRC_ID ] = $edited_ticket_price;
+						if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
+							$edited_ticket_price = array_merge($edited_ticket_price, $quick_edit_ticket_price[$PRC_ID]);
+							$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
 						}
 					}
-				}				
+				}
 			}
 
 			// add new tickets if any
-			if ( $new_ticket_price = isset( $_POST['new_ticket_price'] ) ? $_POST['new_ticket_price'] : array( 'PRC_name' => NULL ) ) {			
-				if ( ! empty( $new_ticket_price['PRC_name'] )) {
-					$ticket_prices_to_save['NEW'] = $new_ticket_price;
+			if ($new_ticket_price = isset($_POST['new_ticket_price']) ? $_POST['new_ticket_price'] : array('PRC_name' => NULL)) {
+				if (!empty($new_ticket_price['PRC_name'])) {
+					$ticket_prices_to_save[0] = $new_ticket_price;
 				}
-			}			
-			
+			}
+
 			// and now we actually save the ticket prices
-			if ( ! empty( $ticket_prices_to_save )) {
+			if (!empty($ticket_prices_to_save)) {
 
 				//echo printr( $new_ticket_price, '$new_ticket_price' );
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
@@ -580,50 +568,54 @@ function update_event($recurrence_arr = array()) {
 				global $current_user;
 				get_currentuserinfo();
 
-				foreach ( $ticket_prices_to_save as $PRC_ID => $ticket_price ) {
-				
-					//determine whether this price overrides an existing global or not
-					$overrides = absint( $ticket_price['PRT_is_global'] ) ? $PRC_ID : NULL;
-					// or whether it was already overriding a global from before
-					$overrides = isset( $ticket_price['PRC_overrides'] ) ? (bool)absint( $ticket_price['PRC_overrides'] ) : $overrides;
-				
-					// create ticket object
-					$new_price = new EE_Price (
-																		$ticket_price['PRT_ID'],
-																		absint( $event_id ),
-																		$ticket_price['PRC_amount'],
-																		$ticket_price['PRC_name'],
-																		$ticket_price['PRC_desc'],
-																		$ticket_price['PRC_reg_limit'],
-																		$ticket_price['PRC_use_dates'],
-																		$ticket_price['PRC_start_date'],
-																		$ticket_price['PRC_end_date'],
-																		FALSE,
-																		FALSE,
-																		0,
-																		TRUE,
-																		$current_user->ID,
-																		$ticket_price['PRC_is_active'],
-																		$overrides,
-																		$ticket_price['PRT_is_global'] ? 'NEW' : $PRC_ID
-																   );
+				foreach ($ticket_prices_to_save as $PRC_ID => $ticket_price) {
 
-					//echo printr( $new_price, '$new_price' );
-														 
-					if ( $PRC_ID == 'NEW'  ) {
+					//determine whether this price overrides an existing global or not
+					$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
+//echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+					// or whether it was already overriding a global from before
+					$overrides = $ticket_price['PRC_overrides'] ? (bool) absint($ticket_price['PRC_overrides']) : $overrides;
+//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+					// create ticket object
+					$new_price = new EE_Price(
+													$ticket_price['PRT_ID'],
+													absint($event_id),
+													$ticket_price['PRC_amount'],
+													$ticket_price['PRC_name'],
+													$ticket_price['PRC_desc'],
+													$ticket_price['PRC_reg_limit'],
+													$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
+													$ticket_price['PRC_start_date'],
+													$ticket_price['PRC_end_date'],
+													FALSE,
+													FALSE,
+													0,
+													TRUE,
+													$current_user->ID,
+													$ticket_price['PRC_is_active'] ? TRUE : FALSE,
+													$overrides,
+													$ticket_price['PRT_is_global'] == 1 ? 0 : $PRC_ID
+					);
+
+//                    echo printr( $ticket_price, '$ticket_price' );
+//                    echo printr( $new_price, '$new_price' );
+
+					if (!$new_price->ID()) {
+//echo '<h1>insert !!!</h1>';
+//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 						$results = $new_price->insert();
 					} else {
+//echo '<h1>update !!!</h1>';
+//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 						$results = $new_price->update();
 					}
-									
 				}
 			}
-		
-			
-//global $espresso_notices; 
-//echo espresso_get_notices();			
-//die();
 
+
+//global $espresso_notices; 
+//echo espresso_get_notices();            
+//die();
 			############# MailChimp Integration ###############
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpController::update_event_list_rel($event_id);
@@ -631,7 +623,7 @@ function update_event($recurrence_arr = array()) {
 
 			/// Create Event Post Code Here
 			switch ($_REQUEST['create_post']) {
-				case !$_REQUEST['create_post']:
+				case!$_REQUEST['create_post']:
 					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
 					$sql .= " WHERE id = '" . $event_id . "' ";
 					$wpdb->get_results($sql);
@@ -716,12 +708,12 @@ function update_event($recurrence_arr = array()) {
 						update_post_meta($post_id, 'venue_image', $venue_image);
 						update_post_meta($post_id, 'event_externalURL', $externalURL);
 						update_post_meta($post_id, 'event_reg_limit', $reg_limit);
-						update_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
-						update_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
-						update_post_meta($post_id, 'event_registration_start', $registration_start);
-						update_post_meta($post_id, 'event_registration_end', $registration_end);
-						update_post_meta($post_id, 'event_registration_startT', $registration_startT);
-						update_post_meta($post_id, 'event_registration_endT', $registration_endT);
+						//update_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
+						//update_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
+						//update_post_meta($post_id, 'event_registration_start', $registration_start);
+						//update_post_meta($post_id, 'event_registration_end', $registration_end);
+						//update_post_meta($post_id, 'event_registration_startT', $registration_startT);
+						//update_post_meta($post_id, 'event_registration_endT', $registration_endT);
 						//update_post_meta( $post_id, 'timezone_string', $timezone_string );
 					} else {
 						$post_id = wp_insert_post($my_post);
