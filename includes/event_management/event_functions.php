@@ -415,7 +415,7 @@ function espresso_event_editor_pricing_metabox($event) {
 	if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 		$show_no_event_price_msg = TRUE;
 	}
-	//echo printr( $all_prices, '$all_prices' );
+	// echo printr( $all_prices, '$all_prices' );
 
 	foreach ($PRT->type as $type) {
 		$all_price_types[] = array('id' => $type->ID(), 'text' => $type->name());
@@ -454,13 +454,12 @@ function espresso_event_editor_pricing_metabox($event) {
 				<td style="width:5%; text-align:center;"><b><?php _e('Amount'); ?></b></td>
 				<td style="width:1%; text-align:center;"></td>
 				<td style="width:7.5%; text-align:center;"></td>
-				<td style="width:42.5%; padding:0 .5em;"><b><?php// _e('Description'); ?></b></td>
+				<td style="width:42.5%; padding:0 .5em;"><b><?php // _e('Description'); ?></b></td>
 			</tr>
 		</thead>
 		<?php 
 		foreach ( $all_prices as $price_type => $prices ) :
-			foreach ($prices as $is_active_and_price_object) :
-				$price = $is_active_and_price_object['price']; 
+			foreach ($prices as $price) :
 				//echo printr( $price, '$price' );
 		?>
 
@@ -564,11 +563,11 @@ function espresso_event_editor_pricing_metabox($event) {
 									<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 									<td>
 										<label style="margin-right:15px;">
-											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="1" style="margin-right:5px;" checked="checked" />
+											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="1" style="margin-right:5px;" <?php echo $price->is_active() ? 'checked="checked"' : '' ?> />
 											<?php _e('Yes', 'event_espresso');?>
 										</label>
 										<label style="margin-right:15px;">
-											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="0" style="margin-right:5px;" />
+											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="0" style="margin-right:5px;" <?php echo ! $price->is_active() ? 'checked="checked"' : '' ?> />
 											<?php _e('No', 'event_espresso');?>
 										</label>
 										<span class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></span>
