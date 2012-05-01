@@ -44,32 +44,6 @@ function espresso_event_list_get_venues() {
 }
 
 /**
- * get_event_times
- *
- * @param 		int 			$event_id
- * @return 		array 		on success
- * @return 		FALSE 		on fail
- */
-function espresso_event_list_get_event_times($event_id) {
-
-	global $wpdb;
-
-	$SQL = 'SELECT * FROM ' . EVENTS_START_END_TABLE . ' WHERE event_id="%d" ORDER BY start_time ASC';
-
-	if (!$timeslots = $wpdb->get_results($wpdb->prepare($SQL, $event_id))) {
-		$time = new stdClass;
-		$time->id = 1;
-		$time->event_id = $event_id;
-		$time->start_time = '12:00:00am';
-		$time->end_time = '11:59:59pm';
-		$reg_limit = 0;
-		$timeslots = array($time);
-	}
-
-	return $timeslots;
-}
-
-/**
  * calculates early discount for an event price
  *
  * @param 		float 		$event_cost
