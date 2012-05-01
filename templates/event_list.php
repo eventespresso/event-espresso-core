@@ -272,12 +272,9 @@ function event_espresso_get_event_details($attributes) {
 
 
 // EVENT TIMES
-		// let's start with an empty array'
-		$event->times = array();
-		$event->times = espresso_event_list_get_event_times($event_id);
-		// function found in includes/functions/event_details.helper.php
-		//echo pre_arr($event->times);
-
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+		$DTM = EEM_Datetime::instance();
+		$event->times = $DTM->get_all_datetimes_for_event($event_id);
 
 		$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
 
