@@ -707,9 +707,9 @@ abstract class EEM_Base {
 		} else {
 			// no result means an error occured
 			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not updated.', 'rows' => 0 );
-			global $espresso_notices;
+			//global $espresso_notices;
 			//$wpdb->hide_errors();
-			$espresso_notices['errors'][] = $wpdb->print_error();
+			//$espresso_notices['errors'][] = $wpdb->print_error();
 		}
 
 		return $update_results;

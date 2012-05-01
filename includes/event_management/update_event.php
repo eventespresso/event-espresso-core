@@ -581,6 +581,12 @@ function update_event($recurrence_arr = array()) {
 				get_currentuserinfo();
 
 				foreach ( $ticket_prices_to_save as $PRC_ID => $ticket_price ) {
+				
+					//determine whether this price overrides an existing global or not
+					$overrides = absint( $ticket_price['PRT_is_global'] ) ? $PRC_ID : NULL;
+					// or whether it was already overriding a global from before
+					$overrides = isset( $ticket_price['PRC_overrides'] ) ? (bool)absint( $ticket_price['PRC_overrides'] ) : $overrides;
+				
 					// create ticket object
 					$new_price = new EE_Price (
 																		$ticket_price['PRT_ID'],
@@ -598,11 +604,11 @@ function update_event($recurrence_arr = array()) {
 																		TRUE,
 																		$current_user->ID,
 																		$ticket_price['PRC_is_active'],
-																		$ticket_price['PRT_is_global'] ? $PRC_ID : NULL,
+																		$overrides,
 																		$ticket_price['PRT_is_global'] ? 'NEW' : $PRC_ID
 																   );
 
-//					echo printr( $new_price, '$new_price' );
+					//echo printr( $new_price, '$new_price' );
 														 
 					if ( $PRC_ID == 'NEW'  ) {
 						$results = $new_price->insert();

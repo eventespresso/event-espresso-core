@@ -208,17 +208,17 @@ class EE_Price {
 		$this->_PRC_ID							= absint($PRC_ID);
 		$this->_EVT_ID							= absint($EVT_ID);
 		$this->_PRT_ID							= absint($PRT_ID);
-		$this->_PRC_amount					= abs($PRC_amount);
-		$this->_PRC_name						= wp_strip_all_tags($PRC_name);
+		$this->_PRC_amount				= (float)abs($PRC_amount);
+		$this->_PRC_name					= wp_strip_all_tags($PRC_name);
 		$this->_PRC_desc						= wp_strip_all_tags($PRC_desc);
 		$this->_PRC_reg_limit				= $PRC_reg_limit != NULL ? absint( $PRC_reg_limit ) : NULL;
 		$this->_PRC_use_dates				= absint( $PRC_use_dates ) ? TRUE : FALSE;
-		$this->_PRC_start_date			= is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : NULL;
+		$this->_PRC_start_date				= is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : NULL;
 		$this->_PRC_end_date				= is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : NULL;
 		$this->_PRC_disc_code				= $PRC_disc_code != NULL ? wp_strip_all_tags( $PRC_disc_code ): NULL;
-		$this->_PRC_disc_limit_qty	= absint( $PRC_disc_limit_qty ) ? TRUE : FALSE;
+		$this->_PRC_disc_limit_qty		= absint( $PRC_disc_limit_qty ) ? TRUE : FALSE;
 		$this->_PRC_disc_qty				= absint( $PRC_disc_qty );
-		$this->_PRC_disc_apply_all	= absint( $PRC_disc_apply_all ) ? TRUE : FALSE;
+		$this->_PRC_disc_apply_all		= absint( $PRC_disc_apply_all ) ? TRUE : FALSE;
 		$this->_PRC_disc_wp_user		= absint( $PRC_disc_wp_user );
 		$this->_PRC_is_active				= absint( $PRC_is_active ) ? TRUE : FALSE;
 		$this->_PRC_overrides				= $PRC_overrides != NULL ? absint($PRC_overrides) : FALSE;;
@@ -544,12 +544,12 @@ class EE_Price {
 				'PRC_desc'						=> $this->_PRC_desc,
 				'PRC_reg_limit'				=> $this->_PRC_reg_limit,
 				'PRC_use_dates'				=> $this->_PRC_use_dates,
-				'PRC_start_date'			=> $this->_PRC_start_date,
+				'PRC_start_date'				=> $this->_PRC_start_date,
 				'PRC_end_date'				=> $this->_PRC_end_date,
 				'PRC_disc_code'				=> $this->_PRC_disc_code,
-				'PRC_disc_limit_qty'	=> $this->_PRC_disc_limit_qty,
-				'PRC_disc_qty'				=> $this->_PRC_disc_qty,
-				'PRC_disc_apply_all'	=> $this->_PRC_disc_apply_all,
+				'PRC_disc_limit_qty'		=> $this->_PRC_disc_limit_qty,
+				'PRC_disc_qty'					=> $this->_PRC_disc_qty,
+				'PRC_disc_apply_all'		=> $this->_PRC_disc_apply_all,
 				'PRC_disc_wp_user'		=> $this->_PRC_disc_wp_user,
 				'PRC_is_active'				=> $this->_PRC_is_active,
 				'PRC_overrides'				=> $this->_PRC_overrides

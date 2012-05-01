@@ -291,7 +291,7 @@ class EEM_Price extends EEM_Base {
 
 			$SQL .= $this->_orderby_n_sort ('prt.PRT_order', 'ASC');
 
-		$wpdb->show_errors();
+		$wpdb->hide_errors();
 		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' )) {
 			$price_array = $this->_create_objects($results);
 			return $price_array;

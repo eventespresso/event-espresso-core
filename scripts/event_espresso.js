@@ -118,6 +118,7 @@ jQuery(document).ready(function() {
 			var edit_price_input_ID = 'quick-' + jQuery(this).attr('id');
 			edit_price_input_ID = escape_square_brackets( edit_price_input_ID );
 			var new_val = jQuery(this).val();
+alert( 'edit_price_input_ID = ' + edit_price_input_ID + '\n' + 'new_val = ' + new_val );
 			jQuery(edit_price_input_ID).val( new_val );
 		} 
 		add_price_ID_to_list_of_edited_prices( PRC_ID );
@@ -136,8 +137,8 @@ jQuery(document).ready(function() {
 	}
 	
 	function escape_square_brackets( ID ) {
-	    ID = ID.replace(/[[]/g,'\\\\[');
-	    ID = ID.replace(/]/g,'\\\\]'); 
+	    ID = ID.replace(/[[]/g,'\\\[');
+	    ID = ID.replace(/]/g,'\\\]'); 
 	    return '#' + ID; 
 	}
 
