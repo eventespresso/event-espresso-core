@@ -537,50 +537,82 @@ function update_event($recurrence_arr = array()) {
 
 			/*************************************   PRICING   ********************************************/
 
-
-			if ( $new_ticket_price = isset( $_POST['new_ticket_price'] ) ? $_POST['new_ticket_price'] : array( 'PRC_name' => NULL ) ) {
+			$ticket_prices_to_save = array();
+			$quick_edit_ticket_price = isset( $_POST['quick_edit_ticket_price'] ) ? $_POST['quick_edit_ticket_price'] : array();
 			
+			// grab list of edited ticket prices
+			if ( $edited_ticket_price_IDs = isset( $_POST['edited_ticket_price_IDs'] ) ? $_POST['edited_ticket_price_IDs'] : FALSE ) {
+				// remove last comma
+				$edited_ticket_price_IDs = trim( $edited_ticket_price_IDs, ',' );
+				// create array of edited ticket prices
+				$edited_ticket_price_IDs = explode( ',', $edited_ticket_price_IDs );
+				// flipper once
+				$edited_ticket_price_IDs = array_flip( $edited_ticket_price_IDs );
+				// flipper twice - hey!?!?! where did all the duplicate entries go???
+				$edited_ticket_price_IDs = array_flip( $edited_ticket_price_IDs );	
+				// grab existing ticket price data
+				if ( $edited_ticket_prices = isset( $_POST['edit_ticket_price'] ) ? $_POST['edit_ticket_price'] : FALSE ) {
+					// cycle thru list					
+					foreach ( $edited_ticket_prices as $PRC_ID => $edited_ticket_price ) {
+						// add edited ticket prices to list of ticket prices to save
+						if ( in_array( $PRC_ID, $edited_ticket_price_IDs )) {
+							$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[ $PRC_ID ] );
+							$ticket_prices_to_save[ $PRC_ID ] = $edited_ticket_price;
+						}
+					}
+				}				
+			}
+
+			// add new tickets if any
+			if ( $new_ticket_price = isset( $_POST['new_ticket_price'] ) ? $_POST['new_ticket_price'] : array( 'PRC_name' => NULL ) ) {			
 				if ( ! empty( $new_ticket_price['PRC_name'] )) {
-					//echo printr( $new_ticket_price, '$new_ticket_price' );
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
-					$PRC = EEM_Price::instance();
-	
-					require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php' );
-					$EVP = EEM_Event_Price::instance();
-				
-					global $current_user;
-					get_currentuserinfo();
-					
+					$ticket_prices_to_save['NEW'] = $new_ticket_price;
+				}
+			}			
+			
+			// and now we actually save the ticket prices
+			if ( ! empty( $ticket_prices_to_save )) {
+
+				//echo printr( $new_ticket_price, '$new_ticket_price' );
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+				$PRC = EEM_Price::instance();
+
+				global $current_user;
+				get_currentuserinfo();
+
+				foreach ( $ticket_prices_to_save as $PRC_ID => $ticket_price ) {
+					// create ticket object
 					$new_price = new EE_Price (
-																		$new_ticket_price['PRT_ID'],	 
+																		$ticket_price['PRT_ID'],
 																		absint( $event_id ),
-																		$new_ticket_price['PRC_amount'],	 
-																		$new_ticket_price['PRC_name'],	 
-																		$new_ticket_price['PRC_desc'],	 
-																		$new_ticket_price['PRC_reg_limit'],	 
-																		$new_ticket_price['PRC_use_dates'],	 
-																		$new_ticket_price['PRC_start_date'],
-																		$new_ticket_price['PRC_end_date'],
+																		$ticket_price['PRC_amount'],
+																		$ticket_price['PRC_name'],
+																		$ticket_price['PRC_desc'],
+																		$ticket_price['PRC_reg_limit'],
+																		$ticket_price['PRC_use_dates'],
+																		$ticket_price['PRC_start_date'],
+																		$ticket_price['PRC_end_date'],
 																		FALSE,
 																		FALSE,
 																		0,
-																		TRUE,	 
-																		$current_user->ID,	 
-																		$new_ticket_price['PRC_is_active']
+																		TRUE,
+																		$current_user->ID,
+																		$ticket_price['PRC_is_active'],
+																		$ticket_price['PRT_is_global'] ? $PRC_ID : NULL,
+																		$ticket_price['PRT_is_global'] ? 'NEW' : $PRC_ID
 																   );
-					//echo printr( $new_price, '$new_price' );		
+
+//					echo printr( $new_price, '$new_price' );
 														 
-					if ( $results = $new_price->insert() ) {
-					}					
+					if ( $PRC_ID == 'NEW'  ) {
+						$results = $new_price->insert();
+					} else {
+						$results = $new_price->update();
+					}
+									
 				}
 			}
-			
-			
-			if ( $ticket_prices = isset( $_POST['edit_ticket_price'] ) ? $_POST['edit_ticket_price'] : FALSE ) {
-			
-//				echo printr( $ticket_prices, '$ticket_prices' );
-			}
-
+		
 			
 //global $espresso_notices; 
 //echo espresso_get_notices();			

@@ -94,21 +94,52 @@ jQuery(document).ready(function() {
 		
 		var PRC_ID = jQuery(this).attr("rel"); 
 		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250 );  
-		// add PRD_ID to list of edited prices
-		var edited_ticket_price_IDs = jQuery('#edited_ticket_price_IDs').val();
-		edited_ticket_price_IDs = edited_ticket_price_IDs + PRC_ID + ',';
-		jQuery('#edited_ticket_price_IDs').val( edited_ticket_price_IDs );
-		
-		jQuery( '#edit-event-price-'+EVP_ID+' .etp-radio' ).each(function() {
-			if( jQuery(this).prop( 'checked' ) ) {
-				jQuery(this).prop( 'checked', true );
-			}
-		}); 
-		
+		//add_price_ID_to_list_of_edited_prices( PRC_ID );
 		// display the target's div container - use slideToggle or removeClass
 		jQuery( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
 		return false;
 	});
+
+
+	jQuery('.edit-ticket-price-input').change(function() {
+	
+		//var edited_input = jQuery(this);
+		// determine PRC_ID
+		var PRC_ID = jQuery(this).closest('.event-price').attr('id');
+		if ( PRC_ID == undefined ) {
+			var PRC_ID = jQuery(this).closest('.event-price-settings-dv').attr('id');
+			PRC_ID = PRC_ID.replace('edit-', '');
+		}
+		PRC_ID = PRC_ID.replace('event-price-', '');
+		
+		var edit_price_input_ID = '#quick-' + jQuery(this).attr('id');
+
+		if( ! jQuery(this).hasClass('quick-edit')) {
+			var edit_price_input_ID = 'quick-' + jQuery(this).attr('id');
+			edit_price_input_ID = escape_square_brackets( edit_price_input_ID );
+			var new_val = jQuery(this).val();
+			jQuery(edit_price_input_ID).val( new_val );
+		} 
+		add_price_ID_to_list_of_edited_prices( PRC_ID );
+	
+	});
+	
+	
+	function add_price_ID_to_list_of_edited_prices( PRC_ID ) {
+		// add PRD_ID to list of edited prices
+		var edited_ticket_price_IDs = jQuery('#edited-ticket-price-IDs').val();
+		if ( edited_ticket_price_IDs == undefined ) {
+			edited_ticket_price_IDs = '';
+		}
+		edited_ticket_price_IDs = edited_ticket_price_IDs + PRC_ID + ',';
+		jQuery('#edited-ticket-price-IDs').val( edited_ticket_price_IDs );		
+	}
+	
+	function escape_square_brackets( ID ) {
+	    ID = ID.replace(/[[]/g,'\\\\[');
+	    ID = ID.replace(/]/g,'\\\\]'); 
+	    return '#' + ID; 
+	}
 
 	
 	jQuery('.cancel-event-price-btn').click(function() {

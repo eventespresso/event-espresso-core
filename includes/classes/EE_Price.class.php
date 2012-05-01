@@ -211,7 +211,7 @@ class EE_Price {
 		$this->_PRC_amount					= abs($PRC_amount);
 		$this->_PRC_name						= wp_strip_all_tags($PRC_name);
 		$this->_PRC_desc						= wp_strip_all_tags($PRC_desc);
-		$this->_PRC_reg_limit				= is_numeric( $PRC_reg_limit ) ? absint( $PRC_reg_limit ) : NULL;
+		$this->_PRC_reg_limit				= $PRC_reg_limit != NULL ? absint( $PRC_reg_limit ) : NULL;
 		$this->_PRC_use_dates				= absint( $PRC_use_dates ) ? TRUE : FALSE;
 		$this->_PRC_start_date			= is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : NULL;
 		$this->_PRC_end_date				= is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : NULL;
@@ -221,7 +221,7 @@ class EE_Price {
 		$this->_PRC_disc_apply_all	= absint( $PRC_disc_apply_all ) ? TRUE : FALSE;
 		$this->_PRC_disc_wp_user		= absint( $PRC_disc_wp_user );
 		$this->_PRC_is_active				= absint( $PRC_is_active ) ? TRUE : FALSE;
-		$this->_PRC_overrides				= absint($PRC_overrides);
+		$this->_PRC_overrides				= $PRC_overrides != NULL ? absint($PRC_overrides) : FALSE;;
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
