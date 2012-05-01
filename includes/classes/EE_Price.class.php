@@ -203,7 +203,24 @@ class EE_Price {
 	* @param				int 					$PRC_overrides				Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
 	* @param				int 					$PRC_ID							Price ID
 	*/
-	public function __construct( $PRT_ID=NULL, $EVT_ID=NULL, $PRC_amount=0, $PRC_name='', $PRC_desc='', $PRC_reg_limit=NULL, $PRC_use_dates=FALSE, $PRC_start_date=NULL, $PRC_end_date=NULL, $PRC_disc_code=NULL, $PRC_disc_limit_qty=FALSE, $PRC_disc_qty=0, $PRC_disc_apply_all=TRUE, $PRC_disc_wp_user=0, $PRC_is_active=TRUE, $PRC_overrides=NULL, $PRC_ID=FALSE ) {
+	public function __construct( 
+					$PRT_ID=NULL,
+					$EVT_ID=NULL,
+					$PRC_amount=0,
+					$PRC_name='',
+					$PRC_desc='',
+					$PRC_reg_limit=NULL,
+					$PRC_use_dates=FALSE,
+					$PRC_start_date=NULL,
+					$PRC_end_date=NULL,
+					$PRC_disc_code=NULL,
+					$PRC_disc_limit_qty=FALSE,
+					$PRC_disc_qty=0,
+					$PRC_disc_apply_all=TRUE,
+					$PRC_disc_wp_user=0,
+					$PRC_is_active=TRUE,
+					$PRC_overrides=NULL,
+					$PRC_ID=FALSE ) {
 	
 		$this->_PRC_ID							= absint($PRC_ID);
 		$this->_EVT_ID							= absint($EVT_ID);
