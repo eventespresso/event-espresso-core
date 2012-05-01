@@ -238,7 +238,7 @@ function postbox($id, $title, $content) {
 
 /* Aurelio */
 
-function tep_not_null($value) {
+function ee_tep_not_null($value) {
 	if (is_array($value)) {
 		if (sizeof($value) > 0) {
 			return true;
@@ -254,7 +254,7 @@ function tep_not_null($value) {
 	}
 }
 
-function tep_round($number, $precision) {
+function ee_tep_round($number, $precision) {
 	if (strpos($number, '.') && (strlen(substr($number, strpos($number, '.') + 1)) > $precision)) {
 		$number = substr($number, 0, strpos($number, '.') + 1 + $precision + 1);
 
@@ -274,29 +274,29 @@ function tep_round($number, $precision) {
 	return $number;
 }
 
-function tep_output_string($string, $translate = false, $protected = false) {
+function ee_tep_output_string($string, $translate = false, $protected = false) {
 	if ($protected == true) {
 		return htmlspecialchars($string);
 	} else {
 		if ($translate == false) {
-			return tep_parse_input_field_data($string, array('"' => '&quot;'));
+			return ee_tep_parse_input_field_data($string, array('"' => '&quot;'));
 		} else {
-			return tep_parse_input_field_data($string, $translate);
+			return ee_tep_parse_input_field_data($string, $translate);
 		}
 	}
 }
 
-function tep_parse_input_field_data($data, $parse) {
+function ee_tep_parse_input_field_data($data, $parse) {
 	return strtr(trim($data), $parse);
 }
 
 /* Turns an array into a select field */
 
 function select_input($name, $values, $default = '', $parameters = '', $class = '', $autosize = true) {
-	$field = '<select name="' . tep_output_string($name) . '"';
+	$field = '<select name="' . ee_tep_output_string($name) . '"';
 	//Debug
 	//echo "<pre>".print_r($values,true)."</pre>";
-	if (tep_not_null($parameters))
+	if (ee_tep_not_null($parameters))
 		$field .= ' ' . $parameters;
 	if ($autosize) {
 		$size = 'med';
