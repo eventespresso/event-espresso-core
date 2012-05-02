@@ -713,20 +713,22 @@ class EE_Price {
 	/**
 	*	get start date
 	* @access		public
+	* @param 		string		$format 	defaults to 'Y-m-d'  
 	* @return 		string
 	*/
-	public function start_date() {
-		return date('Y-m-d', $this->_PRC_start_date);
+	public function start_date( $format = 'Y-m-d' ) {
+		return date( $format, $this->_PRC_start_date );
 	}
 
 
 	/**
 	*	get end date
 	* @access		public
+	* @param 		string		$format 	defaults to 'Y-m-d'  
 	* @return 		string
 	*/
-	public function end_date() {
-		return date('Y-m-d', $this->_PRC_end_date);
+	public function end_date( $format = 'Y-m-d' ) {
+		return date( $format, $this->_PRC_end_date );
 	}
 
 
