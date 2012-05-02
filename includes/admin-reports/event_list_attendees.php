@@ -5,7 +5,9 @@ function event_list_attendees() {
 	//Ticketing
 	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/ticketing/template.php") || function_exists('espresso_ticket_launch')) {
 		global $ticketing_installed;
-		$ticketing_installed = true;
+		$ticketing_installed = TRUE;
+	} else {
+		$ticketing_installed = FALSE;
 	}
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//Dates
@@ -33,7 +35,7 @@ function event_list_attendees() {
 		<?php
 	}
 	//	MARKING USERS AS ATTENDED (OR NOT)
-	if ((!empty($_POST['attended_customer']) || !empty($_POST['unattended_customer'])) && $ticketing_installed == true) {
+	if ((!empty($_POST['attended_customer']) || !empty($_POST['unattended_customer'])) && $ticketing_installed == TRUE) {
 		if (is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):
 				$del_id = $key;
@@ -70,6 +72,7 @@ function event_list_attendees() {
 	}
 
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/event_management/queries.php');
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/attendee_functions.php');
 
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php')) {
 		$total_events = espresso_total_events();
@@ -287,6 +290,8 @@ function event_list_attendees() {
 						$event_time = $attendee->event_time;
 						$event_name = $attendee->event_name;
 						$event_date = $attendee->start_date;
+						
+
 						?>
 						<tr>
 							<td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><input name="checkbox[<?php echo $id ?>]" type="checkbox"  title="Delete <?php echo $fname ?><?php echo $lname ?>"></td>
