@@ -381,7 +381,7 @@ function add_event_to_db($recurrence_arr = array()) {
 					// create ticket object
 					$new_price = new EE_Price(
 													$ticket_price['PRT_ID'],
-													absint($event_id),
+													absint($last_event_id),
 													$ticket_price['PRC_amount'],
 													$ticket_price['PRC_name'],
 													$ticket_price['PRC_desc'],

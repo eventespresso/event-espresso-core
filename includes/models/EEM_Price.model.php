@@ -430,7 +430,7 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			$prices = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ));
+			$prices = $this->_select_all_prices_where(array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ));
 			$array_of_is_active_and_price_objects = array();
 			foreach ($prices as $price) {
 					$array_of_price_objects[ $price->type() ][] = $price;
