@@ -467,11 +467,6 @@ function update_event($recurrence_arr = array()) {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 				$DTM = EEM_Datetime::instance();
 
-				// delete old datetime entries
-				//$DTM->delete_all_event_datetimes( $event_id );
-				//			$new_reg_dates = new EE_Datetime( $event_id, 1, $registration_start . ' ' . $registration_startT, $registration_end . ' ' . $registration_endT, 'R',   );
-				//			$new_reg_dates->insert();
-				//			echo printr( $new_reg_dates, '$new_reg_dates1' );
 				// grab list of all datetime ID's we are processing
 				if (isset($_POST['datetime_IDs'])) {
 					$datetime_IDs = unserialize(stripslashes($_POST['datetime_IDs']));
@@ -524,7 +519,7 @@ function update_event($recurrence_arr = array()) {
 
 
 
-			/*			 * ***********************************   PRICING   ******************************************* */
+			/************************************   PRICING   ******************************************* */
 			$ticket_prices_to_save = array();
 			$quick_edit_ticket_price = isset($_POST['quick_edit_ticket_price']) ? $_POST['quick_edit_ticket_price'] : array();
 //			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
@@ -584,7 +579,7 @@ function update_event($recurrence_arr = array()) {
 					$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
 //echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 					// or whether it was already overriding a global from before
-					$overrides = $ticket_price['PRC_overrides'] ? (bool) absint($ticket_price['PRC_overrides']) : $overrides;
+					$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
 //echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 					// create ticket object
 					$new_price = new EE_Price(

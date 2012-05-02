@@ -415,7 +415,7 @@ function espresso_event_editor_pricing_metabox($event) {
 	if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 		$show_no_event_price_msg = TRUE;
 	}
-	// echo printr( $all_prices, '$all_prices' );
+//	 echo printr( $all_prices, '$all_prices' );
 
 	foreach ($PRT->type as $type) {
 		$all_price_types[] = array('id' => $type->ID(), 'text' => $type->name());
