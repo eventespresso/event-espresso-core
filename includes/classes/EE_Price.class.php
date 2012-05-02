@@ -717,7 +717,11 @@ class EE_Price {
 	* @return 		string
 	*/
 	public function start_date( $format = 'Y-m-d' ) {
-		return date( $format, $this->_PRC_start_date );
+		if ( $this->_PRC_start_date ) {
+			return date( $format, $this->_PRC_start_date );
+		} else {
+			return NULL;
+		}		
 	}
 
 
@@ -728,7 +732,11 @@ class EE_Price {
 	* @return 		string
 	*/
 	public function end_date( $format = 'Y-m-d' ) {
-		return date( $format, $this->_PRC_end_date );
+		if ( $this->_PRC_end_date ) {
+			return date( $format, $this->_PRC_end_date );
+		} else {
+			return NULL;
+		}		
 	}
 
 

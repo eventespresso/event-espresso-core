@@ -457,9 +457,10 @@ div.tablenav {
 }
 .cancel-event-price-btn:hover { border-color:#D54E21; }
 
-.inactice-price { margin-right:1em; color:#aaa; }
+.inactice-price { margin-right:1em; color:#CE9B8B; }
 
-
+#ticket-prices-dv td { padding:0; }
+#ticket-prices-dv .event-price-settings-dv td { padding:10px 5px; }
 
 
 

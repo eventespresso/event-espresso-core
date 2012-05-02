@@ -155,7 +155,10 @@ jQuery(document).ready(function() {
 	jQuery('.delete-event-price-lnk').click(function() {
 		// get target element ID from "this" (the control element's) "rel" attribute
 		var PRC_ID = jQuery(this).attr("rel"); 
-		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250 );  
+		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250, function(){
+			jQuery( '#event-price-'+PRC_ID ).delay(100).closest('tr').css( 'display', 'none' ); 
+			jQuery( '#edit-event-price-'+PRC_ID ).delay(100).closest('tr').css( 'display', 'none' ); 
+		}); 
 		add_price_ID_to_list_of_edited_prices( PRC_ID );
 		// generate target name for hidden "deleted" input
 		var price_to_delete = escape_square_brackets( 'edit_ticket_price['+PRC_ID+'][PRC_deleted]' );
