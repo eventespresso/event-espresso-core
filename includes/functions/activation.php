@@ -794,6 +794,7 @@ function events_data_tables_install() {
 			  PRC_disc_wp_user bigint(20) DEFAULT NULL,
 			  PRC_is_active tinyint(1) DEFAULT 1,
 			  PRC_overrides int(10) unsigned DEFAULT NULL,
+			  PRC_order tinyint(3) unsigned DEFAULT NULL,
 			  PRC_deleted tinyint(1) DEFAULT 0,
 			  PRIMARY KEY (PRC_ID)';
 	event_espresso_run_install($table_name, $table_version, $sql);
@@ -1368,14 +1369,14 @@ function espresso_default_prices() {
 	$wpdb->query($sql);
 
 	$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
-	(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_reg_limit, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_deleted ) VALUES
-	(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0),
-	(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0),
-	(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.', NULL, 1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0),
-	(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', NULL, 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 0),
-	(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0),
-	(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0),
-	(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0);";
+	(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_reg_limit, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
+	(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
+	(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
+	(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.', NULL, 1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
+	(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', NULL, 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
+	(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
+	(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
+	(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
 	$wpdb->query($sql);
 	
 }

@@ -458,11 +458,12 @@ function espresso_event_editor_pricing_metabox($event) {
 			</tr>
 		</thead>
 		<?php 
-		foreach ( $all_prices as $price_type => $prices ) :
-			foreach ($prices as $price) :
+	foreach ( $all_prices as $price_type => $prices ) :
+		foreach ($prices as $price) :
+			if ( ! $price->deleted() ) :
 				//echo printr( $price, '$price' );
 				$disabled = ! $price->is_active() ? ' disabled="disabled"' : ''; 
-				$inactive = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive', 'event_espresso').'</span>' : ''; 
+				$inactive = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE; 
 		?>
 
 			<tr>
@@ -490,8 +491,7 @@ function espresso_event_editor_pricing_metabox($event) {
 										<?php $price_type = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE; ?>
 										<input name="edit_ticket_price[<?php echo $price->ID()?>][PRT_is_global]" type="hidden" value="<?php echo $price_type?>"/>
 										<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_overrides]" type="hidden" value="<?php echo $price->overrides()?>"/>
-										
-										
+										<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_deleted]" type="hidden" value="<?php echo $price->deleted()?>"/>										
 									</td>
 								</tr>
 								
@@ -632,7 +632,7 @@ function espresso_event_editor_pricing_metabox($event) {
 								<td class="desc-column" style="width:42.5%; height:2.5em; padding:0 .5em;"> 
 									<?php //echo $price->desc(); ?>
 									<!--<input class="edit-ticket-price-input quick-edit widefat" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_desc]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo $price->desc(); ?>" style="width:100%;"/>-->
-									<span class="description"><?php echo $inactive; ?><?php echo $price->desc(); ?></span>
+									<span class="description"><?php echo $inactive ? $inactive : $price->desc(); ?></span>
 								</td> 
 								
 
@@ -643,8 +643,9 @@ function espresso_event_editor_pricing_metabox($event) {
 			</tr>
 
 			<?php
-			endforeach;
+			endif;
 		endforeach;
+	endforeach;
 		?>
 		</table>
 		<br/>

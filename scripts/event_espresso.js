@@ -116,7 +116,7 @@ jQuery(document).ready(function() {
 
 		if( ! jQuery(this).hasClass('quick-edit')) {
 			var edit_price_input_ID = 'quick-' + jQuery(this).attr('id');
-			edit_price_input_ID = escape_square_brackets( edit_price_input_ID );
+			edit_price_input_ID = '#' + escape_square_brackets( edit_price_input_ID );
 			var new_val = jQuery(this).val();
 			jQuery(edit_price_input_ID).val( new_val );
 		} 
@@ -135,19 +135,32 @@ jQuery(document).ready(function() {
 		jQuery('#edited-ticket-price-IDs').val( edited_ticket_price_IDs );		
 	}
 	
-	function escape_square_brackets( ID ) {
-	    ID = ID.replace(/[[]/g,'\\\[');
-	    ID = ID.replace(/]/g,'\\\]'); 
-	    return '#' + ID; 
+	function escape_square_brackets( value ) {
+	    value = value.replace(/[[]/g,'\\\[');
+	    value = value.replace(/]/g,'\\\]'); 
+	    return value; 
 	}
 
 	
 	jQuery('.cancel-event-price-btn').click(function() {
 		// get target element ID from "this" (the control element's) "rel" attribute
-		var EVP_ID = jQuery(this).attr("rel"); 
-		jQuery( '#event-price-'+EVP_ID ).slideToggle( 250 );  
+		var PRC_ID = jQuery(this).attr("rel"); 
+		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250 );  
 		// display the target's div container - use slideToggle or removeClass
-		jQuery( '#edit-event-price-'+EVP_ID ).slideToggle( 500 ); 
+		jQuery( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
+		return false;
+	});
+
+	
+	jQuery('.delete-event-price-lnk').click(function() {
+		// get target element ID from "this" (the control element's) "rel" attribute
+		var PRC_ID = jQuery(this).attr("rel"); 
+		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250 );  
+		add_price_ID_to_list_of_edited_prices( PRC_ID );
+		// generate target name for hidden "deleted" input
+		var price_to_delete = escape_square_brackets( 'edit_ticket_price['+PRC_ID+'][PRC_deleted]' );
+		// set delete to true
+		jQuery( '[name="'+price_to_delete+'"]' ).val(1); 
 		return false;
 	});
 

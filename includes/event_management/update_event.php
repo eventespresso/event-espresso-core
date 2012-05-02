@@ -527,6 +527,7 @@ function update_event($recurrence_arr = array()) {
 			/*			 * ***********************************   PRICING   ******************************************* */
 			$ticket_prices_to_save = array();
 			$quick_edit_ticket_price = isset($_POST['quick_edit_ticket_price']) ? $_POST['quick_edit_ticket_price'] : array();
+//			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
 
 			// grab list of edited ticket prices
 			if ($edited_ticket_price_IDs = isset($_POST['edited_ticket_price_IDs']) ? $_POST['edited_ticket_price_IDs'] : FALSE) {
@@ -538,18 +539,27 @@ function update_event($recurrence_arr = array()) {
 				$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
 				// flipper twice - hey!?!?! where did all the duplicate entries go???
 				$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
+//				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
 				// grab existing ticket price data
 				if ($edited_ticket_prices = isset($_POST['edit_ticket_price']) ? $_POST['edit_ticket_price'] : FALSE) {
+//					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
 					// cycle thru list                    
 					foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
+//						echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 						// add edited ticket prices to list of ticket prices to save
 						if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
-							$edited_ticket_price = array_merge($edited_ticket_price, $quick_edit_ticket_price[$PRC_ID]);
+//							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
+							if ( is_array( $quick_edit_ticket_price[$PRC_ID] )) {
+								$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[$PRC_ID] );
+//								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
+							}
 							$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
 						}
 					}
 				}
 			}
+			
+//			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
 
 			// add new tickets if any
 			if ($new_ticket_price = isset($_POST['new_ticket_price']) ? $_POST['new_ticket_price'] : array('PRC_name' => NULL)) {
@@ -594,6 +604,8 @@ function update_event($recurrence_arr = array()) {
 													$current_user->ID,
 													$ticket_price['PRC_is_active'] ? TRUE : FALSE,
 													$overrides,
+													$ticket_price['PRC_order'],
+													$ticket_price['PRC_deleted'],
 													$ticket_price['PRT_is_global'] == 1 ? 0 : $PRC_ID
 					);
 
