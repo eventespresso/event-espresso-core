@@ -840,7 +840,7 @@ abstract class EEM_Base {
 			$OBS = ' ORDER BY ';
 			if ( is_array($orderby) ) {
 				foreach ( $orderby as $key => $order ) {
-					$OBS .= $order . ' ';
+					$OBS .= ' ' . $order . ' ';
 					if ( is_array($sort) ) {
 						$OBS .= $sort[$key] . ',';
 					} else {

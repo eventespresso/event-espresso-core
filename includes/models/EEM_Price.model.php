@@ -292,9 +292,10 @@ class EEM_Price extends EEM_Base {
 //echo '<h4>$SQL : ' . $SQL . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 //echo printr( $VAL, '$VAL' ); 
 
-			$SQL .= $this->_orderby_n_sort ('prt.PRT_order', 'ASC');
+//			$SQL .= $this->_orderby_n_sort ( array( 'prt.PRT_order' ), array( 'ASC' ));
+			$SQL .= $this->_orderby_n_sort ( array( 'prc.PRC_order', 'prt.PRT_order' ), array( 'ASC', 'ASC' ));
 
-		$wpdb->hide_errors();
+		//$wpdb->hide_errors();
 		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' )) {
 			$price_array = $this->_create_objects($results);
 			return $price_array;
@@ -429,7 +430,7 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			$prices = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE, 'prc.PRC_deleted'=>FALSE ));
+			$prices = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ));
 			$array_of_is_active_and_price_objects = array();
 			foreach ($prices as $price) {
 					$array_of_price_objects[ $price->type() ][] = $price;
@@ -437,14 +438,14 @@ class EEM_Price extends EEM_Base {
 			return $array_of_price_objects;
 		}
 
-		if ( ! $globals = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ))) {
+		if ( ! $globals = $this->_select_all_prices_where(array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ))) {
 			$globals = array();
 		}
-		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID, 'prc.PRC_deleted'=>FALSE ))) {
+		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID ))) {
 			$event_prices = array();
 		}
-		//echo printr( $event_prices, '$event_prices' ); 
-		//echo printr( $globals, '$globals' ); 
+//		echo printr( $event_prices, '$event_prices' ); 
+//		echo printr( $globals, '$globals' ); 
 
 		$overrides = array();
 		foreach ($event_prices as $event_price) {

@@ -240,8 +240,8 @@ class EE_Price {
 					$PRC_disc_wp_user=0,
 					$PRC_is_active=TRUE,
 					$PRC_overrides=NULL,
-					$PRC_deleted=NULL,
 					$PRC_order=NULL,
+					$PRC_deleted=NULL,
 					$PRC_ID=FALSE ) {
 	
 		$this->_PRC_ID							= absint($PRC_ID);
@@ -261,8 +261,8 @@ class EE_Price {
 		$this->_PRC_disc_wp_user		= absint( $PRC_disc_wp_user );
 		$this->_PRC_is_active				= absint( $PRC_is_active ) ? TRUE : FALSE;
 		$this->_PRC_overrides				= $PRC_overrides != NULL ? absint($PRC_overrides) : FALSE;
-		$this->_PRC_order						= $PRC_order != NULL ? absint($PRC_order) : NULL;
 		$this->_PRC_deleted					= $PRC_deleted != NULL ? absint($PRC_deleted) : FALSE;
+		$this->_PRC_order						= $PRC_order != NULL ? absint($PRC_order) : NULL;
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
