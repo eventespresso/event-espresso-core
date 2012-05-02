@@ -447,7 +447,7 @@ class EE_Price {
 	public function set_disc_limit_qty( $PRC_disc_limit_qty = NULL ) {
 
 		global $espresso_notices;
-		if ( ! is_bool( $PRC_is_active )) {
+		if ( ! is_bool( $PRC_disc_limit_qty )) {
 			$espresso_notices['errors'][] = 'No discount limit qty boolean flag was supplied.';
 			return FALSE;
 		}
@@ -489,7 +489,7 @@ class EE_Price {
 	public function set_disc_apply_all( $PRC_disc_apply_all = NULL ) {
 
 		global $espresso_notices;
-		if ( ! is_bool( $PRC_is_active )) {
+		if ( ! is_bool( $PRC_disc_apply_all )) {
 			$espresso_notices['errors'][] = 'No disc_apply_all was supplied.';
 			return FALSE;
 		}
