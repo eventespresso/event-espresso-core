@@ -448,10 +448,10 @@ function espresso_event_editor_pricing_metabox($event) {
 		<thead>
 			<tr>
 				<td style="width:17.5%; padding:0 .5em;"><b><?php //_e('Type'); ?></b></td>
-				<td style="width:4%; text-align:center;"><b><?php _e('Order'); ?></b></td>
-				<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Name'); ?></b></td>
+				<td style="width:4%; text-align:center;"><b><?php _e('Order', 'event_espresso'); ?></b></td>
+				<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Name', 'event_espresso'); ?></b></td>
 				<td style="width:2.5%; text-align:center;"></td>
-				<td style="width:5%; text-align:center;"><b><?php _e('Amount'); ?></b></td>
+				<td style="width:5%; text-align:center;"><b><?php _e('Amount', 'event_espresso'); ?></b></td>
 				<td style="width:1%; text-align:center;"></td>
 				<td style="width:7.5%; text-align:center;"></td>
 				<td style="width:42.5%; padding:0 .5em;"><b><?php // _e('Description'); ?></b></td>
@@ -461,6 +461,8 @@ function espresso_event_editor_pricing_metabox($event) {
 		foreach ( $all_prices as $price_type => $prices ) :
 			foreach ($prices as $price) :
 				//echo printr( $price, '$price' );
+				$disabled = ! $price->is_active() ? ' disabled="disabled"' : ''; 
+				$inactive = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive', 'event_espresso').'</span>' : ''; 
 		?>
 
 			<tr>
@@ -512,7 +514,8 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">
 									<th><label for="edit-ticket-price-PRC_amount"><?php _e('Amount', 'event_espresso'); ?></label></th>
 									<td>
-										<input class="edit-ticket-price-input small-text" type="text" id="edit-ticket-price[<?php echo $price->ID(); ?>][PRC_amount]" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="text-align:right;" value="<?php echo $price->amount(); ?>"/>
+										<?php $price_amount =  ($PRT->type[$price->type()]->is_percent()) ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 ); ?>
+										<input class="edit-ticket-price-input small-text" type="text" id="edit-ticket-price[<?php echo $price->ID(); ?>][PRC_amount]" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="text-align:right;" value="<?php echo $price_amount; ?>"/>
 										<span class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
 									</td>
 								</tr>
@@ -596,19 +599,20 @@ function espresso_event_editor_pricing_metabox($event) {
 								
 								<td class="order-column" style="width:4%; height:2.5em; text-align:center;"> 
 									<?php //echo $PRT->type[$price->type()]->order(); ?>
-									<input class="edit-ticket-price-input quick-edit small-text" type="text" id="quick-edit-ticket-price-PRC_order" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $PRT->type[$price->type()]->order(); ?>" style="width:100%;text-align:right;"/>							
+									<input class="edit-ticket-price-input quick-edit small-text" type="text" id="quick-edit-ticket-price-PRC_order" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $PRT->type[$price->type()]->order(); ?>" style="width:100%;text-align:right;"<?php echo $disabled; ?>/>							
 								</td> 
 								
 								<td class="name-column" style="width:17.5%; height:2.5em; padding:0 .5em;"> 
 									<?php //echo $price->name(); ?>
-									<input class="edit-ticket-price-input quick-edit regular-text" type="text" id="quick-edit-ticket-price-PRC_name" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" style="width:100%;"/>
+									<input class="edit-ticket-price-input quick-edit regular-text" type="text" id="quick-edit-ticket-price-PRC_name" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" style="width:100%;"<?php echo $disabled; ?>/>
 								</td> 
 								<td class="amount-column" style="width:2.5%; height:2.5em; text-align:right;"> 
 									<?php echo ($PRT->type[$price->type()]->is_percent()) ?  '' : $org_options['currency_symbol']; ?>
 								</td> 
 								
 								<td class="amount-column" style="width:5%; height:2.5em; text-align:right;"> 
-									<input class="edit-ticket-price-input quick-edit small-text" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_amount]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="width:100%;text-align:right;" value="<?php echo $price->amount(); ?>"/>
+									<?php $price_amount =  ($PRT->type[$price->type()]->is_percent()) ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 ); ?>
+									<input class="edit-ticket-price-input quick-edit small-text" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_amount]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="width:100%;text-align:right;" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
 								</td> 
 								
 								<td class="amount-column" style="width:1%; height:2.5em; text-align:left;"> 
@@ -628,7 +632,7 @@ function espresso_event_editor_pricing_metabox($event) {
 								<td class="desc-column" style="width:42.5%; height:2.5em; padding:0 .5em;"> 
 									<?php //echo $price->desc(); ?>
 									<!--<input class="edit-ticket-price-input quick-edit widefat" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_desc]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo $price->desc(); ?>" style="width:100%;"/>-->
-									<span class="description"><?php echo $price->desc(); ?></span>
+									<span class="description"><?php echo $inactive; ?><?php echo $price->desc(); ?></span>
 								</td> 
 								
 

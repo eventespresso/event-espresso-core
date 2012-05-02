@@ -457,6 +457,8 @@ div.tablenav {
 }
 .cancel-event-price-btn:hover { border-color:#D54E21; }
 
+.inactice-price { margin-right:1em; color:#D54E21; }
+
 
 /*___ Venue Manager & Staff ___*/
 
