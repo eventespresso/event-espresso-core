@@ -15,7 +15,7 @@
  *
  * Price Model
  *
- * @package				Event Espresso
+ * @package			Event Espresso
  * @subpackage		includes/models/EEM_Price.model.php
  * @author				Sidney Harrell
  *
@@ -27,47 +27,6 @@ class EEM_Price extends EEM_Base {
 
 	// private instance of the EEM_Price object
 	private static $_instance = NULL;
-
-
-
-
-
-	/**
-	 * 		private constructor to prevent direct creation
-	 * 		@Constructor
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function __construct() {
-		global $wpdb;
-		// set table name
-		$this->table_name = $wpdb->prefix . 'esp_price';
-		// array representation of the price table and the data types for each field
-		$this->table_data_types = array(
-				'PRC_ID'							=> '%d',
-				'PRT_ID'							=> '%d',
-				'EVT_ID'							=> '%d',
-				'PRC_amount'					=> '%f',
-				'PRC_name'						=> '%s',
-				'PRC_desc'						=> '%s',
-				'PRC_reg_limit'				=> '%d',
-				'PRC_use_dates'				=> '%d',
-				'PRC_start_date'			=> '%d',
-				'PRC_end_date'				=> '%d',
-				'PRC_disc_code'				=> '%s',
-				'PRC_disc_limit_qty'	=> '%d',
-				'PRC_disc_qty'				=> '%d',
-				'PRC_disc_apply_all'	=> '%d',
-				'PRC_disc_wp_user'		=> '%d',
-				'PRC_is_active' 			=> '%d',
-				'PRC_overrides' 			=> '%d'
-		);
-		// load Price object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
-
-	}
-
-
 
 
 
@@ -87,6 +46,46 @@ class EEM_Price extends EEM_Base {
 		// EEM_Price object
 		return self::$_instance;
 	}
+
+
+
+	/**
+	 * 		private constructor to prevent direct creation
+	 * 		@Constructor
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function __construct() {
+		global $wpdb;
+		// set table name
+		$this->table_name = $wpdb->prefix . 'esp_price';
+		// array representation of the price table and the data types for each field
+		$this->table_data_types = array(
+				'PRC_ID'						=> '%d',
+				'PRT_ID'						=> '%d',
+				'EVT_ID'						=> '%d',
+				'PRC_amount'				=> '%f',
+				'PRC_name'					=> '%s',
+				'PRC_desc'					=> '%s',
+				'PRC_reg_limit'			=> '%d',
+				'PRC_use_dates'			=> '%d',
+				'PRC_start_date'			=> '%d',
+				'PRC_end_date'			=> '%d',
+				'PRC_disc_code'			=> '%s',
+				'PRC_disc_limit_qty'	=> '%d',
+				'PRC_disc_qty'				=> '%d',
+				'PRC_disc_apply_all'	=> '%d',
+				'PRC_disc_wp_user'	=> '%d',
+				'PRC_is_active' 			=> '%d',
+				'PRC_overrides' 			=> '%d',
+				'PRC_order' 				=> '%d',
+				'PRC_deleted' 			=> '%d'
+		);
+		// load Price object class file
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price.class.php');
+
+	}
+
 
 
 
@@ -129,6 +128,8 @@ class EEM_Price extends EEM_Base {
 											$price->PRC_disc_wp_user,
 											$price->PRC_is_active,
 											$price->PRC_overrides,
+											$price->PRC_order,
+											$price->PRC_deleted,
 											$price->PRC_ID
 			);
 		}
@@ -146,7 +147,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price() {
-		return new EE_Price( 0, 0, 0.00, '', '', NULL, FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 1, FALSE, NULL );
+		return new EE_Price( 1, 0, 0.00, '', '', NULL, FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 1, FALSE, NULL, NULL, FALSE );
 	}
 
 
@@ -249,31 +250,33 @@ class EEM_Price extends EEM_Base {
 	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $operator = '=' ) {
 	
 		$em_table_data_types = array(
-				'prt.PRT_ID'							=> '%d',
-				'prt.PRT_name'						=> '%s',
-				'prt.PRT_is_member'				=> '%d',
-				'prt.PRT_is_discount'			=> '%d',
-				'prt.PRT_is_tax'					=> '%d',
-				'prt.PRT_is_percent'			=> '%d',
-				'prt.PRT_is_global'				=> '%d',
-				'prt.PRT_order'						=> '%d',
-				'prc.PRC_ID'							=> '%d',
-				'prc.PRT_ID'							=> '%d',
-				'prc.EVT_ID'							=> '%d',
-				'prc.PRC_amount'					=> '%f',
-				'prc.PRC_name'						=> '%s',
-				'prc.PRC_desc'						=> '%s',
-				'prc.PRC_reg_limit' 			=> '%d',
-				'prc.PRC_use_dates'				=> '%d',
-				'prc.PRC_start_date'			=> '%d',
-				'prc.PRC_end_date'				=> '%d',
-				'prc.PRC_disc_code'				=> '%s',
+				'prt.PRT_ID'						=> '%d',
+				'prt.PRT_name'				=> '%s',
+				'prt.PRT_is_member'		=> '%d',
+				'prt.PRT_is_discount'		=> '%d',
+				'prt.PRT_is_tax'				=> '%d',
+				'prt.PRT_is_percent'		=> '%d',
+				'prt.PRT_is_global'			=> '%d',
+				'prt.PRT_order'				=> '%d',
+				'prc.PRC_ID'					=> '%d',
+				'prc.PRT_ID'						=> '%d',
+				'prc.EVT_ID'						=> '%d',
+				'prc.PRC_amount'			=> '%f',
+				'prc.PRC_name'				=> '%s',
+				'prc.PRC_desc'				=> '%s',
+				'prc.PRC_reg_limit' 		=> '%d',
+				'prc.PRC_use_dates'		=> '%d',
+				'prc.PRC_start_date'		=> '%d',
+				'prc.PRC_end_date'		=> '%d',
+				'prc.PRC_disc_code'		=> '%s',
 				'prc.PRC_disc_limit_qty'	=> '%d',
-				'prc.PRC_disc_qty'				=> '%d',
+				'prc.PRC_disc_qty'			=> '%d',
 				'prc.PRC_disc_apply_all'	=> '%d',
-				'prc.PRC_disc_wp_user'		=> '%d',
+				'prc.PRC_disc_wp_user'	=> '%d',
 				'prc.PRC_is_active' 			=> '%d',
-				'prc.PRC_overrides' 			=> '%d'
+				'prc.PRC_overrides' 		=> '%d',
+				'prc.PRC_order' 				=> '%d',
+				'prc.PRC_deleted' 			=> '%d'
 		);
 
 		global $wpdb;
@@ -426,7 +429,7 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			$prices = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ));
+			$prices = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE, 'prc.PRC_deleted'=>FALSE ));
 			$array_of_is_active_and_price_objects = array();
 			foreach ($prices as $price) {
 					$array_of_price_objects[ $price->type() ][] = $price;
@@ -437,7 +440,7 @@ class EEM_Price extends EEM_Base {
 		if ( ! $globals = $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ))) {
 			$globals = array();
 		}
-		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID ))) {
+		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID, 'prc.PRC_deleted'=>FALSE ))) {
 			$event_prices = array();
 		}
 		//echo printr( $event_prices, '$event_prices' ); 
@@ -504,6 +507,12 @@ class EEM_Price extends EEM_Base {
 
 
 
+	/**
+	 * 		delete all prices of a specific type
+	 *
+	 * 		@access		public
+	 * 		@return 		boolean			false on fail
+	 */
 	public function delete_all_prices_that_are_type($type = FALSE) {
 		if (!$type) {
 			return FALSE;
@@ -519,14 +528,13 @@ class EEM_Price extends EEM_Base {
 
 
 
-	public function delete_by_id($ID) {
-		if (!$ID) {
+	public function delete_by_id($PRC_ID) {
+		if (!$PRC_ID) {
 			return FALSE;
 		}
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Event_Price.model.php');
-		$EP = EEM_Event_Price::instance();
-		$EP->delete_by_price_id($ID);
-		$this->delete(array('PRC_ID' => $ID));
+		if ( $this->delete(array('PRC_ID' => $PRC_ID))) {
+			return TRUE;
+		}		
 	}
 
 

@@ -24,7 +24,7 @@
 abstract class EEM_Base {
 
   	// private instance of the Espresso_model object
-	private static $_instance = NULL;
+	//private static $_instance = NULL;
 
 	protected $table_name = FALSE;
 	// array representation of a table and the data types for each field
@@ -39,27 +39,7 @@ abstract class EEM_Base {
 	 *		@return void
 	 */
 	private function __construct() {
-
 	}
-
-	/**
-	 *		This funtion is a singleton method used to instantiate the Espresso_model object
-	 *
-	 *		@access protected
-	 *		@return Espresso_model instance
-	 */
-/*	protected static function instance(){
-
-		// check if instance of Espresso_model already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = &new self();
-		}
-		// Espresso_model object
-		return self::$_instance;
-	}*/
-
-
 
 
 
