@@ -396,7 +396,7 @@ function add_event_to_db($recurrence_arr = array()) {
 													$current_user->ID,
 													$ticket_price['PRC_is_active'] ? TRUE : FALSE,
 													$overrides,
-													$ticket_price['PRC_order'],
+													$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
 													$ticket_price['PRC_deleted']
 					);
 

@@ -599,7 +599,7 @@ function update_event($recurrence_arr = array()) {
 													$current_user->ID,
 													$ticket_price['PRC_is_active'] ? TRUE : FALSE,
 													$overrides,
-													$ticket_price['PRC_order'],
+													$ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
 													$ticket_price['PRC_deleted'],
 													(( $ticket_price['PRT_is_global'] == 1 ) && ( ! isset ( $PRC_ID ))) ? 0 : $PRC_ID
 					);
