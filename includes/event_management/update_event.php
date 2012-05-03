@@ -601,7 +601,7 @@ function update_event($recurrence_arr = array()) {
 													$overrides,
 													$ticket_price['PRC_order'],
 													$ticket_price['PRC_deleted'],
-													$ticket_price['PRT_is_global'] == 1 ? 0 : $PRC_ID
+													(( $ticket_price['PRT_is_global'] == 1 ) && ( ! isset ( $PRC_ID ))) ? 0 : $PRC_ID
 					);
 
 //                    echo printr( $ticket_price, '$ticket_price' );
