@@ -293,15 +293,41 @@ class EEM_Price extends EEM_Base {
 //echo printr( $VAL, '$VAL' ); 
 
 //			$SQL .= $this->_orderby_n_sort ( array( 'prt.PRT_order' ), array( 'ASC' ));
-			$SQL .= $this->_orderby_n_sort ( array( 'prc.PRC_order', 'prt.PRT_order' ), array( 'ASC', 'ASC' ));
+			$SQL .= $this->_orderby_n_sort ( 'prc.PRC_order', 'ASC' );
 
 		//$wpdb->hide_errors();
 		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' )) {
 			$price_array = $this->_create_objects($results);
 			return $price_array;
 		} else {
+
 			return FALSE;
 		}
+	}
+
+
+
+	/**
+	 * 		retreive all active prices for a particular event
+	 *
+	 * 		@access		public
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
+	public function get_all_event_prices( $EVT_ID ) {
+		return $this->_select_all_prices_where( array( 'prc.EVT_ID' =>$EVT_ID ));
+	}
+
+
+	/**
+	 * 		retreive all active global prices for a particular event
+	 *
+	 * 		@access		public
+	 * 		@return 		array				on success
+	 * 		@return 		boolean			false on fail
+	 */
+	public function get_all_event_default_prices() {
+		return $this->_select_all_prices_where( array( 'prc.EVT_ID' =>0, 'prc.PRC_is_active' => TRUE, 'prt.PRT_is_tax' => FALSE ));
 	}
 
 
