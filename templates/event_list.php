@@ -270,7 +270,7 @@ function event_espresso_get_event_details($attributes) {
 
 
 		//Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
-		$status = event_espresso_get_is_active( $event_id, $event_meta);
+		$status = event_espresso_get_is_active( $event_id, $event_meta, $event->is_active, $event->event_status );
 
 		$status_display = $status['display_custom'];
 		$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? $status['display_custom'] : $status['status'];
@@ -461,7 +461,7 @@ function event_espresso_get_event_details($attributes) {
 			//As of version 3.0.17 the event list details have been moved to event_list_display.php
 
 
-			$event_status = event_espresso_get_status( 0, $event_meta );
+			$event_status = event_espresso_get_status( $event->id, $event_meta );
 
 
 			$open_event_status_list = array('ACTIVE', 'REGISTRATION_OPEN', 'ONGOING', 'SECONDARY', 'PENDING');

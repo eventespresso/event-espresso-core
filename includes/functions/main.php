@@ -220,15 +220,19 @@ if (!function_exists('event_espresso_additional_attendees')) {
 //This function returns the condition of an event
 if (!function_exists('event_espresso_get_is_active')) {
 
-	function event_espresso_get_is_active( $event_id, $event_meta = '' ) {
+	function event_espresso_get_is_active( $event_id, $event_meta = '', $is_active = FALSE, $event_status = FALSE ) {
 		global $wpdb;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$sql = "SELECT is_active, event_status ";
-		$sql .= "FROM " . EVENTS_DETAIL_TABLE;
-		$sql .= " WHERE id = '" . $event_id . "'";
-		$event = $wpdb->get_row($sql, ARRAY_A);
-		$is_active = $event['is_active'];
-		$event_status = $event['event_status'];
+		
+		if ( $is_active === FALSE || $event_status === FALSE ) {
+			$sql = "SELECT is_active, event_status ";
+			$sql .= "FROM " . EVENTS_DETAIL_TABLE;
+			$sql .= " WHERE id = '" . $event_id . "'";
+			$event = $wpdb->get_row($sql, ARRAY_A);
+			$is_active = $event['is_active'];
+			$event_status = $event['event_status'];
+		}
+		
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM = EEM_Datetime::instance();
 		$datetimes = $DTM->get_all_datetimes_for_event($event_id);
