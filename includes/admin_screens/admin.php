@@ -195,25 +195,30 @@ function event_espresso_empty_event_trash($event_id) {
 	//$event_id=$_REQUEST['id'];
 	//Remove the event
 	$sql = "DELETE FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-	$wpdb->query($sql);
-
-	//Remove the event times
-	$sql = "DELETE FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "'";
-	$wpdb->query($sql);
-
-	//Remove the event prices
-	$sql = "DELETE FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "'";
-	$wpdb->query($sql);
+	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
 
 	//Remove the event discount
 	$sql = "DELETE FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $event_id . "'";
-	$wpdb->query($sql);
-
-
+	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
 
 	$sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "'";
-	$wpdb->query($sql);
+	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
 
+
+/*********************** REMOVE AFTER DATA MIGRATION SCRIPTS WRITTEN ***********************/
+	//Remove the event times
+	$sql = "DELETE FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "'";
+	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
+
+	//Remove the event prices
+	$sql = "DELETE FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "'";
+	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
+	
+/*********************** END REMOVE ***********************/
+
+
+
+	
 	/* delete_price_from_event($event_id);
 	  delete_category_from_event($event_id);
 	  delete_discount_from_event($event_id);
@@ -936,3 +941,5 @@ if (!function_exists('espresso_reset_cache')) {
 	}
 
 }
+
+
