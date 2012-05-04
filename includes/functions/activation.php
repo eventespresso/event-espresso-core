@@ -1,5 +1,4 @@
 <?php
-
 //Install/update data tables in the Wordpress database
 //Attention!! The WP dbDelta function cannot modify unique keys
 //Please note that when updating the plugin and WordPress is in debug mode, you may see the following warning/notice:
@@ -996,7 +995,7 @@ function espresso_update_active_gateways() {
 	// Have to get a list of users already using the 3.2 system
 
 	global $wpdb;
-	$sql = "SELECT id FROM " . $wpdb->usermeta . " WHERE meta_key='events_organization_settings'";
+	$sql = "SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key='events_organization_settings'";
 	$users = $wpdb->get_col($sql);
 	if (empty($users)) {
 		$org_options = get_option('events_organization_settings');
@@ -1004,7 +1003,7 @@ function espresso_update_active_gateways() {
 			update_user_meta(1, 'events_organization_settings', $org_options);
 		}
 	}
-	$sql = "SELECT id FROM " . $wpdb->usermeta . " WHERE meta_key='payment_settings'";
+	$sql = "SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key='payment_settings'";
 	$users = $wpdb->get_col($sql);
 
 	// Payment settings prior to 3.2 have been independent wp_options in the db
