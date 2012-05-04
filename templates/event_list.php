@@ -15,7 +15,7 @@
  */
 function display_all_events($show_recurrence = TRUE) {
 
-	global $wpdb, $org_options;
+	global $org_options;
 	// error logging
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$attributes = array( 'show_recurrence' => $show_recurrence );
@@ -37,7 +37,7 @@ function display_all_events($show_recurrence = TRUE) {
  */
 function display_event_espresso_categories($category_identifier = 'null', $css_class = NULL) {
 
-	global $wpdb, $org_options;
+	global $org_options;
 	// error logging
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -87,14 +87,15 @@ function event_espresso_get_event_details($attributes) {
 	);
 
 	// loop thru default atts
-	foreach ($default_attributes as $key => $default_attribute) {
+/*	foreach ($default_attributes as $key => $default_attribute) {
 		// check if att exists
 		if (!isset($attributes[$key])) {
 			$attributes[$key] = $default_attribute;
 		}
-	}
-
-
+	}*/
+	
+	// let's just merge the arrays ( cuz the second one will overwrite the first for any dulplicate keys )
+	$attributes = array_merge( $default_attributes, $attributes );
 	// now extract shortcode attributes
 	extract($attributes);
 
@@ -139,6 +140,8 @@ function event_espresso_get_event_details($attributes) {
 		// maybe get venue info
 		$SQL .= $use_venues ? ' LEFT JOIN ' . EVENTS_VENUE_REL_TABLE . ' eventVenue ON eventVenue.event_id = eventDetails.id ' : '';
 	}
+	
+	$SQL .= ' JOIN ' . ESP_DATETIME . ' dateTime ON dateTime.EVT_ID = eventDetails.id ';
 
 	$SQL .= ' WHERE ';
 	// maybe get category info
@@ -148,21 +151,29 @@ function event_espresso_get_event_details($attributes) {
 
 	$SQL .= " eventDetails.is_active = 1 ";
 
-	$SQL .= $show_expired == 'false' ? ' AND (eventDetails.start_date >= "' . date('Y-m-d') . '" OR eventDetails.event_status = "O" OR eventDetails.registration_end >= "' . date('Y-m-d') . '")' : '';
+	//$SQL .= $show_expired == 'false' ? ' AND (eventDetails.start_date >= "' . date('Y-m-d') . '" OR eventDetails.event_status = "O" OR eventDetails.registration_end >= "' . date('Y-m-d') . '")' : '';
+	
+	$SQL .= $show_expired == 'false' ? ' AND (( dateTime.DTT_start >= "' . time() . '" AND DTT_event_or_reg = "E" ) OR ( eventDetails.event_status = "O" OR ( dateTime.DTT_end >= "' . time() . '" AND DTT_event_or_reg = "R" )))' : '';
+	
+	
 	$SQL .= $show_secondary == 'false' ? " AND eventDetails.event_status != 'S'" : '';
 	$SQL .= $show_deleted == 'false' ? " AND eventDetails.event_status != 'D'" : '';
 	$SQL .= $show_recurrence == 'false' ? " AND eventDetails.recurrence_id = '0'" : ' GROUP BY eventDetails.id';
-	$SQL .= $order_by != NULL ? ' ORDER BY ' . $order_by . ' ASC' : ' ORDER BY date(eventDetails.start_date), eventDetails.id ASC';
+	$SQL .= $order_by != NULL ? ' ORDER BY ' . $order_by . ' ASC' : ' ORDER BY date(dateTime.DTT_start), eventDetails.id ASC';
 	$SQL .= $limit > 0 ? ' LIMIT 0,' . $limit . ' ' : '';
 
 
 	// check for cached events list
 	// we'll md5 the final SQL statement to create a string of consistent length
 	// this also allows us to cache all of the different queries that can be produced via the SQL options
-	$transient_key = md5( $SQL );
+	$transient_key = 'ee_events_' . md5( $SQL );
+	
+	$transient_key = FALSE;  // disabled temporarily
+	
+	
 
 	// check if transient exists
-	if ( ! $events = get_transient( 'ee_events_' . $transient_key )) {
+	if ( ! $events = get_transient( $transient_key )) {
 		// no transient, so let's run the query
 		if ($category) {
 			// use the category id from the attributes
@@ -173,16 +184,16 @@ function event_espresso_get_event_details($attributes) {
 		} else {
 			$events = $wpdb->get_results($wpdb->prepare($SQL));
 		}
-
+			
 		// save the newly created transient value
+
 		// 60 seconds * 60 minutes * 24 hours * 365 = 1 year
-		set_transient( 'ee_events_' . $transient_key, $events, 60*60*24*365 );
+		//set_transient( $transient_key, $events, 60*60*24*365 );
 
-	}
-
+	} 
 
 //		echo $wpdb->last_query;
-//		echo printr($events, '$events' );
+//		printr($events, '$events' );
 
 
 	echo '
@@ -216,10 +227,16 @@ function event_espresso_get_event_details($attributes) {
 		echo $venue_hdr;
 	}
 
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+	$DTM_MDL = EEM_Datetime::instance();
 
 	foreach ($events as $event) {
+	
+		$EVT_Prices = new EE_Event_Prices( $event->id );
 
 		$event_id = $event->id;
+		// add event id to list of event ids to be used for the query cache transient key
 		$event_name = stripslashes_deep($event->event_name);
 		$event_desc = stripslashes_deep($event->event_desc);
 		$event_desc = str_replace('<p></p>', '', $event_desc);
@@ -253,7 +270,7 @@ function event_espresso_get_event_details($attributes) {
 
 
 		//Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
-		$status = event_espresso_get_is_active(0, $event_meta);
+		$status = event_espresso_get_is_active( $event_id, $event_meta);
 
 		$status_display = $status['display_custom'];
 		$status_display_open = $status['status'] == 'REGISTRATION_OPEN' ? $status['display_custom'] : $status['status'];
@@ -272,20 +289,20 @@ function event_espresso_get_event_details($attributes) {
 
 
 // EVENT TIMES
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-		$DTM = EEM_Datetime::instance();
-		$event->times = $DTM->get_all_datetimes_for_event($event_id);
+		$event->times = $DTM_MDL->get_all_datetimes_for_event($event_id);
 
 		$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
 
 // EVENT PRICING
 		// let's start with an empty array'
-		$event->prices = array();
+//		$event->prices = array();
+//
+//		if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
+//			$event->prices = espresso_event_list_process_event_prices($event_prices);
+//		}
+		$event->prices = $EVT_Prices->get_final_event_prices();
+//		echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
-		if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
-			$event->prices = espresso_event_list_process_event_prices($event_prices);
-		}
-		//echo pre_arr($event->prices);
 		//echo $display_event_prices;
 
 		$event->currency_symbol = $org_options['currency_symbol'];
@@ -537,4 +554,5 @@ function event_espresso_get_event_details($attributes) {
 	//Check to see how many database queries were performed
 	//echo '<p>Database Queries: ' . get_num_queries() .'</p>';
 	espresso_registration_footer();
+	
 }

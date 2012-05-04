@@ -220,7 +220,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 //This function returns the condition of an event
 if (!function_exists('event_espresso_get_is_active')) {
 
-	function event_espresso_get_is_active($event_id, $event_meta = '') {
+	function event_espresso_get_is_active( $event_id, $event_meta = '' ) {
 		global $wpdb;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$sql = "SELECT is_active, event_status ";
