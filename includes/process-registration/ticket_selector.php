@@ -212,14 +212,20 @@ function format_price($currency_symbol = '$', $price, $surcharge, $surcharge_typ
  * 		@return string
  */
 function process_event_prices($prices, $currency_symbol, $surcharge_type) {
+
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	// start with an empty array
 	$price_options = array();
 
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+	$PRT_MDL = EEM_Price_Type::instance();
+
 	foreach ($prices as $price_id => $price) {
 
+//printr( $price, '$price  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+
 		// are you a member of our club???
-		if ($price['member_pricing'] && is_user_logged_in()) {
+		if ( $price->is_member() && is_user_logged_in() ) {
 
 			// format member ticket price
 			$member_price = format_price($currency_symbol, $price['member_price'], $price['surcharge'], $surcharge_type);
@@ -237,12 +243,13 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 			$price_option = $price['member_price_type'] . '&nbsp;:&nbsp;' . $price_option;
 		} else {
 			// add non-member price type
-			$price_option = $price['price_type'] . '&nbsp;:&nbsp;';
+			$price_option = $price->name() . '&nbsp;:&nbsp;';
 			// format ticket price
-			$price_option .= format_price($currency_symbol, $price['ticket_price'], $price['surcharge'], $surcharge_type);
+			$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
+	
 		}
 		// add this price option to the array of options
-		$price_options[$price_id] = array('raw' => number_format((float) $price['total'], 2, '.', ''), 'option' => $price_option);
+		$price_options[$price_id] = array('raw' => number_format((float) $price->final_price(), 2, '.', ''), 'option' => $price_option);
 	}
 
 	//echo printr($price_options);

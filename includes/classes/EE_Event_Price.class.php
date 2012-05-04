@@ -28,30 +28,38 @@ class EE_Event_Price {
 
 
 	/**
-	 * Price object
-	 *
+	 * Properties copied from Price object
 	 * @access private
 	 * @var object
 	 */
-	private $_EVP_price = NULL;
+		private $_ID = NULL;
+		private $_event	= NULL;
+		private $_orig_price = NULL;
+		private $_final_price = NULL;
+		private $_name = NULL;
+		private $_desc	 = NULL;
+		private $_reg_limit = NULL;
+		private $_use_dates = NULL;
+		private $_start_date = NULL;
+		private $_end_date = NULL;
+		private $_is_active = NULL;
+		private $_overrides	 = NULL;
+		private $_deleted = NULL;
+		private $_order = NULL;
 
 
 	/**
-	 * Price Types
-	 *
+	 * Properties copied from Price Type object
 	 * @access private
 	 * @var object
 	 */
-	private static $_EVP_price_type = NULL;
-
-
-    /**
-	 *	Final Event Price 
-	 *
-	 *	@access	private
-	 *	@var array
-	 */
-	private $_EVP_final_price = NULL;
+		private $_price_type_ID = NULL;
+		private $_price_type = NULL;
+		private $_is_member = NULL;
+		private $_is_discount = NULL;
+		private $_is_tax = NULL;
+		private $_is_percent = NULL;
+		private $_is_global = NULL;
 
 
     /**
@@ -60,7 +68,16 @@ class EE_Event_Price {
 	 *	@access	private
 	 *	@var array
 	 */
-	private $_EVP_adjustments = NULL;
+	private $_adjustments = array();
+
+
+    /**
+	 *	Price Type Model
+	 *
+	 *	@access	private
+	 *	@var array
+	 */
+	private $_PRT_MDL = NULL;
 
 
 
@@ -71,16 +88,47 @@ class EE_Event_Price {
 	 * @param  object		$price_type
 	 */
 	public function __construct( EE_Price $price ) {
-		
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-		$PRT_MDL = EEM_Price_Type::instance();
-
-		$this->_EVP_price = $price;
-		self::$_EVP_price_type = $PRT_MDL->type[ $price->type() ];
-		$this->_EVP_final_price = $price->amount();
-		$this->_EVP_adjustments = array();
+		$this->_PRT_MDL = EEM_Price_Type::instance();
+		$this->copy_object_properties( $price );	
 	}
 
+
+
+
+
+	/**
+	 *	grab all properties from child object
+	 *
+	 *	@access 		public
+	* 	@return 		float
+	 */
+	public function copy_object_properties( $price ) {
+
+		$this->_ID						= $price->ID();
+		$this->_event					= $price->event();
+		$this->_orig_price			= $price->amount();
+		$this->_final_price			= $price->amount(); // duplicated so we can have both original AND final price
+		$this->_name					= $price->name();
+		$this->_desc					= $price->desc();
+		$this->_reg_limit				= $price->reg_limit();
+		$this->_use_dates			= $price->use_dates();
+		$this->_start_date			= $price->start_date();
+		$this->_end_date			= $price->end_date();
+		$this->_is_active				= $price->is_active();
+		$this->_overrides			= $price->overrides();
+		$this->_deleted				= $price->deleted();
+		$this->_order					= $price->order();
+
+		$this->_price_type_ID = $price->type();
+		$this->_price_type = $this->_PRT_MDL->type[ $price->type() ]->name();
+		$this->_is_member = $this->_PRT_MDL->type[ $price->type() ]->is_member();
+		$this->_is_discount = $this->_PRT_MDL->type[ $price->type() ]->is_discount();
+		$this->_is_tax = $this->_PRT_MDL->type[ $price->type() ]->is_tax();
+		$this->_is_percent = $this->_PRT_MDL->type[ $price->type() ]->is_percent();
+		$this->_is_global = $this->_PRT_MDL->type[ $price->type() ]->is_global();
+		
+	}
 
 
 
@@ -102,13 +150,12 @@ class EE_Event_Price {
 		//echo printr( $price_modifier, '$price_modifier <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 		
 		$mod_amount = $price_modifier->amount();
-		$PRT_MDL = EEM_Price_Type::instance();
 
-		if ( $PRT_MDL->type[ $price_modifier->type() ]->is_percent() ) {
+		if ( $this->_PRT_MDL->type[ $price_modifier->type() ]->is_percent() ) {
 		
 			$percent_adj = $mod_amount;
-			$mod_amount = $this->_EVP_final_price * $mod_amount / 100;
-			$this->_EVP_adjustments[] = array( 
+			$mod_amount = $this->_orig_price * $mod_amount / 100;
+			$this->_adjustments[] = array( 
 																		'PRC_ID'=>$price_modifier->ID(),
 																		'name'=>wp_strip_all_tags( $price_modifier->name() ),
 																		'is_percent'=>true,
@@ -117,7 +164,7 @@ class EE_Event_Price {
 																	);
 		} else {
 		
-			$this->_EVP_adjustments[] = array(
+			$this->_adjustments[] = array(
 																		'PRC_ID'=>$price_modifier->ID(),
 																		'name'=>wp_strip_all_tags( $price_modifier->name() ),
 																		'is_percent'=>false,
@@ -125,11 +172,10 @@ class EE_Event_Price {
 																	);
 		}
 		
-		$discount_or_surcharge = $PRT_MDL->type[ $price_modifier->type() ]->is_discount() ? 'discount' : 'surcharge';
-		// instead of using an IF statement to do either addition or subtraction, we simply add everything, but first multiply discounts by -1 to make them negative
-		$this->_EVP_final_price += (( $discount_or_surcharge == 'discount' ) ? -1 : 1) * $mod_amount;
+		// instead of using an IF statement to perform either addition or subtraction, we just use addition, but first multiply discounts by -1 to make them negative
+		$this->_final_price += (( $this->_is_discount ) ? -1 : 1) * $mod_amount;
 		
-		$this->_EVP_final_price = number_format( max( $this->_EVP_final_price, 0 ), 2 );
+		$this->_final_price = number_format( max( $this->_final_price, 0 ), 2 );
 
 	}
 
@@ -137,25 +183,206 @@ class EE_Event_Price {
 
 
 
+
+
 	/**
-	 * return array of adjustments done to arrive at the final price
-	 * @return type array
+	 * get original Price Object ID
+	 * @return int
 	 */
-	public function adjustments() {
-		return $this->_EVP_adjustments;
+	public function ID() {
+		return $this->_ID;
 	}
 
 
-
-
+	/**
+	 * get original Price Object event ID
+	 * @return int
+	 */
+	public function event() {
+		return $this->_event;
+	}
 
 
 	/**
-	 * return final price
-	 * @return type float
+	 * get original price before modifiers 
+	 * @return float
+	 */
+	public function orig_price() {
+		return $this->_amount;
+	}
+
+
+	/**
+	 * get final price
+	 * @return float
 	 */
 	public function final_price() {
-		return $this->_EVP_final_price;
+		return $this->_final_price;
+	}
+
+
+	/**
+	 * get original Price Object name
+	 * @return string
+	 */
+	public function name() {
+		return $this->_name;
+	}
+
+
+	/**
+	 * get original Price Object desc
+	 * @return string
+	 */
+	public function desc() {
+		return $this->_desc;
+	}
+
+
+	/**
+	 * get original Price Object reg_limit
+	 * @return int
+	 */
+	public function reg_limit() {
+		return $this->_reg_limit;
+	}
+
+
+	/**
+	 * get original Price Object use_dates flag
+	 * @return boolean
+	 */
+	public function use_dates() {
+		return $this->_use_dates;
+	}
+
+
+	/**
+	 * get original Price Object start_date
+	 * @return int
+	 */
+	public function start_date() {
+		return $this->_start_date;
+	}
+
+
+	/**
+	 * get original Price Object end_date
+	 * @return int
+	 */
+	public function end_date() {
+		return $this->_end_date;
+	}
+
+
+	/**
+	 * get original Price Object is_active flag
+	 * @return boolean
+	 */
+	public function is_active() {
+		return $this->_is_active;
+	}
+
+
+	/**
+	 * get original Price Object overrides ID
+	 * @return int
+	 */
+	public function overrides() {
+		return $this->_overrides;
+	}
+
+
+	/**
+	 * get original Price Object deleted flag
+	 * @return boolean
+	 */
+	public function deleted() {
+		return $this->_deleted;
+	}
+
+
+	/**
+	 * get original Price Object order
+	 * @return int
+	 */
+	public function order() {
+		return $this->_order;
+	}
+
+
+	/**
+	 * get original Price Object Price Type ID
+	 * @return int
+	 */
+	public function price_type_ID() {
+		return $this->_price_type_ID;
+	}
+
+
+
+
+
+	/**
+	 * get price type
+	 * @return string
+	 */
+	public function price_type() {		
+		return $this->_price_type;
+	}
+
+
+	/**
+	 * get price is_member from price type
+	 * @return boolean
+	 */
+	public function is_member() {		
+		return $this->_is_member;
+	}
+
+
+	/**
+	 * get price is_discount from price type
+	 * @return boolean
+	 */
+	public function is_discount() {		
+		return $this->_is_discount;
+	}
+
+
+	/**
+	 * get price is_tax from price type
+	 * @return boolean
+	 */
+	public function is_tax() {		
+		return $this->_is_tax;
+	}
+
+
+	/**
+	 * get price _is_percent from price type
+	 * @return boolean
+	 */
+	public function _is_percent() {		
+		return $this->_is_percent;
+	}
+
+
+	/**
+	 * get price is_global from price type
+	 * @return boolean
+	 */
+	public function is_global() {		
+		return $this->_is_global;
+	}
+
+
+	/**
+	 * get array of adjustments done to arrive at the final price
+	 * @return array
+	 */
+	public function adjustments() {
+		return $this->_adjustments;
 	}
 
 

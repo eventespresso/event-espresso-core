@@ -327,10 +327,16 @@ if (!function_exists('event_registration')) {
 						$DTM = EEM_Datetime::instance();
 						$event->times = $DTM->get_all_datetimes_for_event($event_id);
 
-						$event->prices = array();
-						if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
-							$event->prices = espresso_event_list_process_event_prices($event_prices);
-						}
+//						$event->prices = array();
+//						if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
+//							$event->prices = espresso_event_list_process_event_prices($event_prices);
+//						}
+
+						require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+						$EVT_Prices = new EE_Event_Prices( $event->id );
+						$event->prices = $EVT_Prices->get_final_event_prices();
+						//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+
 
 						$event->currency_symbol = $org_options['currency_symbol'];
 

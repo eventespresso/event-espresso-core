@@ -233,8 +233,6 @@ function event_espresso_get_event_details($attributes) {
 
 	foreach ($events as $event) {
 	
-		$EVT_Prices = new EE_Event_Prices( $event->id );
-
 		$event_id = $event->id;
 		// add event id to list of event ids to be used for the query cache transient key
 		$event_name = stripslashes_deep($event->event_name);
@@ -300,8 +298,9 @@ function event_espresso_get_event_details($attributes) {
 //		if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
 //			$event->prices = espresso_event_list_process_event_prices($event_prices);
 //		}
+		$EVT_Prices = new EE_Event_Prices( $event->id );
 		$event->prices = $EVT_Prices->get_final_event_prices();
-//		echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+		//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
 		//echo $display_event_prices;
 
