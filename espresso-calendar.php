@@ -4,7 +4,7 @@
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
   Version: 2.0.B.1
-  Author: Seth Shoultes
+  Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2012 Seth Shoultes(email : seth@eventespresso.com)
 
