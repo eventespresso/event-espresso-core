@@ -2,16 +2,18 @@
 
 function espresso_prices_admin_helper() {
 
-	global $org_options, $espresso_notices;
-	
-	$_REQUEST['action'] = isset( $_POST['delete_price'] ) ? 'delete_price' : $_REQUEST['action'];
-	$_REQUEST['action'] = isset( $_POST['delete_price_type'] ) ? 'delete_price_type' : $_REQUEST['action'];
-	
+	if (isset( $_POST['delete_price'] )) {
+		$_REQUEST['action'] = 'delete_price';
+	}
+	if (isset( $_POST['delete_price_type'] )) {
+		$_REQUEST['action'] = 'delete_price_type';
+	}
+
 	if ( isset( $_REQUEST['action'] )) {
-	
+
 		$action = wp_strip_all_tags( $_REQUEST['action'] );
 		switch ( $action  ) {
-		
+
 			case 'update_event_price' :
 				espresso_update_event_price();
 				break;
@@ -37,11 +39,11 @@ function espresso_prices_admin_helper() {
 				break;
 
 		}
-		
+
 	}
-	
+
 	echo espresso_get_notices();
-	
+
 }
 
 

@@ -163,7 +163,7 @@ function edit_event_price_type_postbox() {
 								}
 								echo select_input('base_type', $values, $set_value, 'id="base-type"'); 
 							?><br/>
-							<span class="description"><?php _e('Choosing a basic type allows us to quickly configure a bunch of other options for you.<br/>All events need to have at least one Price type option.<br/>Discounts reduce the price of an event, Surcharges increase the price.<br/>Taxes are applied to the final total.', 'event_espresso'); ?></span>
+							<span class="description"><?php _e('Choosing a basic type allows us to quickly configure a bunch of other options for you.<br/>All events need to have at least one Base Price type option.<br/>Discounts reduce the price of an event, Surcharges increase the price.<br/>Taxes are applied to the final total.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr>
@@ -189,6 +189,38 @@ function edit_event_price_type_postbox() {
 								<?php _e('No', 'event_espresso');?>
 							</label>
 							<span class="description"><?php _e('Whether this Price Type will <b>only</b> be available to members that are logged into the site.', 'event_espresso'); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label><?php _e('Raise or Lower Price?', 'event_espresso'); ?></label>
+						</th>
+						<td>
+							<?php $raise_checked = $type->is_discount() ? '' : ' checked="checked"'; ?>
+							<label style="margin-right:15px;"><input type="radio" name="PRT_is_discount" value="0"<?php echo $raise_checked;?> style="margin-right:5px;">
+								<?php _e('Raise', 'event_espresso');?>
+							</label>
+							<?php $lower_checked = $type->is_discount() ? ' checked="checked"' : ''; ?>
+							<label style="margin-right:15px;"><input type="radio" name="PRT_is_discount" value="0"<?php echo $no_checked;?> style="margin-right:5px;">
+								<?php _e('Lower', 'event_espresso');?>
+							</label>
+							<span class="description"><?php _e('Whether this Price Type applies a discount that will lower the final price or a surcharge that will raise the final price. (Use raise for base prices)', 'event_espresso'); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label><?php _e('Is this a Tax?', 'event_espresso'); ?></label>
+						</th>
+						<td>
+							<?php $tax_checked = $type->is_tax() ? ' checked="checked"' : ''; ?>
+							<label style="margin-right:15px;"><input type="radio" name="PRT_is_tax" value="0"<?php echo $tax_checked;?> style="margin-right:5px;">
+								<?php _e('Tax', 'event_espresso');?>
+							</label>
+							<?php $not_tax_checked = $type->is_tax() ? '' : ' checked="checked"'; ?>
+							<label style="margin-right:15px;"><input type="radio" name="PRT_is_tax" value="0"<?php echo $not_tax_checked;?> style="margin-right:5px;">
+								<?php _e('Not Tax', 'event_espresso');?>
+							</label>
+							<span class="description"><?php _e('Taxes are different from other prices that raise the final price in that they will be applied at the final stage of the registration process.', 'event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr>
