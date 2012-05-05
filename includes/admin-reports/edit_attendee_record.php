@@ -338,7 +338,7 @@ function edit_attendee_record() {
 					if ( $seating_chart_id !== false ){
 						$seat = $wpdb->get_row("select scs.* , sces.id as booking_id from ".EVENTS_SEATING_CHART_SEAT_TABLE." scs inner join ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces on scs.id = sces.seat_id where sces.attendee_id = '".$id."' ");
 						if ( $seat !== NULL ){
-							$booking_info = $seat->custom_tag." #booking id:".$seat->booking_id;
+							$booking_info = $seat->custom_tag." #booking id: ".$seat->booking_id;
 						}
 					}
 				}
@@ -361,11 +361,11 @@ function edit_attendee_record() {
 		if (!empty($_REQUEST['status']) && $_REQUEST['status'] == 'saved') {
 ?>
 
-<div id="message" class="updated fade">
-  <p><strong>
-	<?php _e('Attendee details saved for ' . $fname . ' ' . $lname . '.', 'event_espresso'); ?>
-	</strong></p>
-</div>
+			<div id="message" class="updated fade">
+			  <p><strong>
+				<?php _e('Attendee details saved for ' . $fname . ' ' . $lname . '.', 'event_espresso'); ?>
+				</strong></p>
+			</div>
 <?php
 		}
 ?>
