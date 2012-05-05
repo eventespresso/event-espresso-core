@@ -52,7 +52,7 @@
 	font-size:.75em; float:right; cursor:pointer;
 }
 
-.tkt-slctr-tbl { margin-bottom:1em;}
+.tkt-slctr-tbl { margin-bottom:1em; font-size:.9em; }
 .tkt-slctr-tbl td { line-height:2.4em; padding:0 1em 0 0; }
 
 .ui-widget-content .event-list-reg-link-sbmt-btn {	

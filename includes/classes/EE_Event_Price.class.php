@@ -111,11 +111,11 @@ class EE_Event_Price {
 		$this->_final_price			= $price->amount(); // duplicated so we can have both original AND final price
 		$this->_name					= $price->name();
 		$this->_desc					= $price->desc();
-		$this->_reg_limit				= $price->reg_limit();
+		$this->_reg_limit			= $price->reg_limit();
 		$this->_use_dates			= $price->use_dates();
 		$this->_start_date			= $price->start_date();
 		$this->_end_date			= $price->end_date();
-		$this->_is_active				= $price->is_active();
+		$this->_is_active			= $price->is_active();
 		$this->_overrides			= $price->overrides();
 		$this->_deleted				= $price->deleted();
 		$this->_order					= $price->order();

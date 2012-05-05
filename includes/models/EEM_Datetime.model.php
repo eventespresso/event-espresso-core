@@ -137,7 +137,8 @@ class EEM_Datetime extends EEM_Base {
 							$datetime->DTT_ID
 					 	);
 			}
-
+			// sort dates from earliest to latest
+			uasort( $array_of_objects, array( $this, '_compare_order' ));	
 			return $array_of_objects;
 
 		} else {
@@ -146,7 +147,9 @@ class EEM_Datetime extends EEM_Base {
 
 	}
 
-
+	private function _compare_order( $A, $B ) {
+		return ( $A->start() == $B->start() ) ? 0 : $A->start() < $B->start() ? -1 : 1;
+	}	
 
 
 

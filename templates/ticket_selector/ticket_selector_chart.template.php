@@ -50,7 +50,7 @@
 					<td>					
 						<select name="tkt-slctr-qty-<?php echo $event_id; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $event_id ?>" class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all">
 <?php for ($i = 0; $i <= $max_atndz; $i++) { ?>
-							<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;&nbsp;&nbsp;</option><?php } ?>
+							<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;</option><?php } ?>
 						</select>												
 						<input type="hidden"
 									name="tkt-slctr-date-<?php echo $event_id; ?>[]"

@@ -253,18 +253,17 @@ function event_espresso_get_event_details($attributes) {
 		$event_meta = unserialize($event->event_meta);
 		$event_meta['is_active'] = $event->is_active;
 		$event_meta['event_status'] = $event->event_status;
-		$event_meta['start_time'] = empty($event->start_time) ? '' : $event->start_time;
-		$event_meta['start_date'] = $event->start_date;
-		$event_meta['registration_start'] = $event->registration_start;
-		$event_meta['registration_startT'] = $event->registration_startT;
-		$event_meta['registration_end'] = $event->registration_end;
-		$event_meta['registration_endT'] = $event->registration_endT;
+//		$event_meta['start_time'] = empty($event->start_time) ? '' : $event->start_time;
+//		$event_meta['start_date'] = $event->start_date;
+//		$event_meta['registration_start'] = $event->registration_start;
+//		$event_meta['registration_startT'] = $event->registration_startT;
+//		$event_meta['registration_end'] = $event->registration_end;
+//		$event_meta['registration_endT'] = $event->registration_endT;
 
 		//$display_event_date = event_date_display( $event->start_date, get_option('date_format'));
 		//$display_event_date = date_i18n( 'l F jS, Y', strtotime( $event->start_date ));
 		//$event->single_date = date_i18n( 'D M jS', strtotime( $event->start_date ));
 		//$event->single_date = date_i18n( 'l F jS, Y', strtotime( $event->start_date ));
-		$display_event_date = $event->single_date = $event->start_date;
 
 
 		//Here we can create messages based on the event status. These variables can be echoed anywhere on the page to display your status message.
@@ -287,17 +286,19 @@ function event_espresso_get_event_details($attributes) {
 
 
 // EVENT TIMES
-		$event->times = $DTM_MDL->get_all_datetimes_for_event($event_id);
+		$event->datetimes = $DTM_MDL->get_all_event_dates($event_id);
+//		echo printr($event->datetimes, 'EVENT TIMES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+
+		$display_event_date = array_shift( $event->datetimes );
+//		echo printr( $event->datetimes, 'event->datetimes <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+//echo '<h4>$display_event_date : ' . $display_event_date->start() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+
+
 
 		$event->event_cost = empty($event->event_cost) ? '' : $event->event_cost;
 
 // EVENT PRICING
 		// let's start with an empty array'
-//		$event->prices = array();
-//
-//		if ($event_prices = espresso_event_list_get_event_prices($event_id, $event->early_disc, $event->early_disc_date, $event->early_disc_percentage)) {
-//			$event->prices = espresso_event_list_process_event_prices($event_prices);
-//		}
 		$EVT_Prices = new EE_Event_Prices( $event->id );
 		$event->prices = $EVT_Prices->get_final_event_prices();
 		//echo printr($event->prices, 'EVENT PRICES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						

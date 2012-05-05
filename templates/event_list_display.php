@@ -33,7 +33,7 @@
 		</a>
 	</h3>
 
-	<h4 class="event-date-hdr"><?php echo date_i18n('l F jS, Y', strtotime($display_event_date)); ?></h4>
+	<h4 class="event-date-hdr"><?php echo $display_event_date->start_date( 'l F jS, Y' ); ?></h4>
 
 	<?php do_action('action_hook_espresso_social_display_buttons', $event_id); ?>
 
