@@ -247,7 +247,7 @@ class EEM_Price extends EEM_Base {
 		}
 	}
 
-	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $operator = '=' ) {
+	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $orderby='prc.PRC_ID', $order='ASC', $operator = '=' ) {
 	
 		$em_table_data_types = array(
 				'prt.PRT_ID'						=> '%d',
@@ -293,14 +293,13 @@ class EEM_Price extends EEM_Base {
 //echo printr( $VAL, '$VAL' ); 
 
 //			$SQL .= $this->_orderby_n_sort ( array( 'prt.PRT_order' ), array( 'ASC' ));
-			$SQL .= $this->_orderby_n_sort ( 'prc.PRC_order', 'ASC' );
+			$SQL .= $this->_orderby_n_sort ( $orderby, $order );
 
 		//$wpdb->hide_errors();
 		if ( $results = $wpdb->get_results( $wpdb->prepare( $SQL, $VAL ), 'OBJECT' )) {
 			$price_array = $this->_create_objects($results);
 			return $price_array;
 		} else {
-
 			return FALSE;
 		}
 	}
@@ -415,17 +414,13 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		array				on success
 	 * 		@return 		boolean			false on fail
 	 */
-	public function get_all_prices_that_are_global() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE ));
+	public function get_all_prices_that_are_global($orderby='prc.PRC_ID', $order='ASC') {
+		return $this->_select_all_prices_where(array('prt.PRT_is_global' => TRUE ), $orderby, $order);
 	}
 
 	public function get_all_prices_that_are_not_global() {
 		return $this->_select_all_prices_where(array('prt.PRT_is_global' => FALSE ));
 	}
-
-
-
-
 
 	/**
 	 * 		retreive all prices that are of a particular order #
