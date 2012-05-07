@@ -95,7 +95,7 @@ function espresso_add_meta_boxes() {
 					//add_meta_box('description_editor', __('Description', 'event_espresso'), 'espresso_description_editor_postbox', 'espresso_price_desc_editor', 'normal');
 				}
 				if ($_REQUEST['action'] == 'edit_price') {
-					add_meta_box('edit_price', __('Edit Price', 'event_espresso'), 'edit_event_price_postbox', $screen_id, 'normal');
+					add_meta_box('edit_price', __('Edit Global Price', 'event_espresso'), 'edit_event_price_postbox', $screen_id, 'normal');
 					add_meta_box('description_editor', __('Description', 'event_espresso'), 'espresso_description_editor_postbox', 'espresso_price_desc_editor', 'normal');
 				}
 				if ($_REQUEST['action'] == 'add_new_price_type') {
