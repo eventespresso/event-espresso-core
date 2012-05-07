@@ -5,6 +5,12 @@ function espresso_prices_admin_helper() {
 	if (isset( $_POST['delete_price'] )) {
 		$_REQUEST['action'] = 'delete_price';
 	}
+	if (isset( $_POST['trash_price'] )) {
+		$_REQUEST['action'] = 'trash_price';
+	}
+	if (isset( $_POST['restore_price'] )) {
+		$_REQUEST['action'] = 'restore_price';
+	}
 	if (isset( $_POST['delete_price_type'] )) {
 		$_REQUEST['action'] = 'delete_price_type';
 	}
@@ -36,6 +42,14 @@ function espresso_prices_admin_helper() {
 
 			case 'delete_price_type' :
 				espresso_delete_price_type();
+				break;
+			
+			case 'trash_price' :
+				espresso_trash_price();
+				break;
+			
+			case 'restore_price' :
+				espresso_restore_price();
 				break;
 
 		}
@@ -308,3 +322,58 @@ function espresso_delete_price_type() {
 		
 }
 
+function espresso_trash_price() {
+
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+	$PRC = EEM_Price::instance();
+
+	
+	$success = TRUE;
+	//Checkboxes
+	if ( ! empty( $_POST['checkbox'] ) && is_array( $_POST['checkbox'] )) {
+		while ( list( $PRC_ID, $value ) = each( $_POST['checkbox'] )) {
+			if( ! $PRC->update( array('PRC_deleted' => TRUE), array('PRC_ID' => absint( $PRC_ID )))) {
+				$success = FALSE;
+			}
+		}
+		
+		if( $success ) {
+			$espresso_notices['success'][] = __('Prices have been moved to the trash.', 'event_espresso');
+		}					
+
+	} elseif ( $_REQUEST['action'] == 'trash_price' ) {
+		$PRC_ID = absint( $_REQUEST['id'] );
+		if ( $PRC->update( array('PRC_deleted' => TRUE), array('PRC_ID' => absint( $PRC_ID )))) {
+			$espresso_notices['success'][] = __('Price has been moved to the trash', 'event_espresso');
+		}
+	}
+		
+}
+
+function espresso_restore_price() {
+
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
+	$PRC = EEM_Price::instance();
+
+	
+	$success = TRUE;
+	//Checkboxes
+	if ( ! empty( $_POST['checkbox'] ) && is_array( $_POST['checkbox'] )) {
+		while ( list( $PRC_ID, $value ) = each( $_POST['checkbox'] )) {
+			if( ! $PRC->update( array('PRC_deleted' => FALSE), array('PRC_ID' => absint( $PRC_ID )))) {
+				$success = FALSE;
+			}
+		}
+		
+		if( $success ) {
+			$espresso_notices['success'][] = __('Prices have been successfully deleted.', 'event_espresso');
+		}					
+
+	} elseif ( $_REQUEST['action'] == 'restore_price' ) {
+		$PRC_ID = absint( $_REQUEST['id'] );
+		if ( $PRC->update( array('PRC_deleted' => FALSE), array('PRC_ID' => absint( $PRC_ID )))) {
+			$espresso_notices['success'][] = __('Prices have been successfully deleted.', 'event_espresso');
+		}
+	}
+		
+}
