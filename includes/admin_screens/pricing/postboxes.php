@@ -20,7 +20,9 @@ function edit_event_price_postbox() {
 		return;
 	} else {
 		foreach ($PRT->type as $type) {
-			$price_types[] = array('id' => $type->ID(), 'text' => $type->name());
+			if ($type->is_global()) {
+				$price_types[] = array('id' => $type->ID(), 'text' => $type->name());
+			}
 		}
 	}
 	
@@ -71,6 +73,13 @@ function edit_event_price_postbox() {
 						<td>
 							<input class="small-text" type="text" id="PRC_amount" name="PRC_amount" value="<?php echo $price->amount(); ?>"/>
 							<span class="description"><?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th><label for="PRC_disc_code"><?php _e('Discount Code', 'event_espresso'); ?></label></th>
+						<td>
+							<input class="regular-text" type="text" id="PRC_disc_code" name="PRC_disc_code"  value="<?php echo $price->disc_code(); ?>"/>
+							<span class="description"><?php _e('If this is a global discount code, enter the code here. For discount codes applicable to single events, see the Promotional Codes Event Espresso admin screen.','event_espresso'); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -201,7 +210,7 @@ function edit_event_price_type_postbox() {
 								<?php _e('Raise', 'event_espresso');?>
 							</label>
 							<?php $lower_checked = $type->is_discount() ? ' checked="checked"' : ''; ?>
-							<label style="margin-right:15px;"><input type="radio" name="PRT_is_discount" value="0"<?php echo $no_checked;?> style="margin-right:5px;">
+							<label style="margin-right:15px;"><input type="radio" name="PRT_is_discount" value="0"<?php echo $lower_checked;?> style="margin-right:5px;">
 								<?php _e('Lower', 'event_espresso');?>
 							</label>
 							<span class="description"><?php _e('Whether this Price Type applies a discount that will lower the final price or a surcharge that will raise the final price. (Use raise for base prices)', 'event_espresso'); ?></span>
