@@ -98,7 +98,7 @@ function espresso_initialize_system_questions() {
 
 	$system_name_data = "SELECT system_name FROM " . $wpdb->prefix . "events_question";
 
-	$system_names = $wpdb->get_results($system_name_data);
+	$system_names = $wpdb->get_col($system_name_data);
 
 	foreach ($system_names as $system_name) {
 		switch ($system_name->system_name) {
@@ -132,34 +132,34 @@ function espresso_initialize_system_questions() {
 		}
 	}
 
-	if ($fname == false)
+	if (empty($fname))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'First Name', 'question_type' => 'TEXT', 'system_name' => 'fname', 'required' => true, 'sequence' => '0'), array('%s', '%s', '%s', '%s', '%s'));
 
-	if ($lname == false)
+	if (empty($lname))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Last Name', 'question_type' => 'TEXT', 'system_name' => 'lname', 'required' => true, 'sequence' => '1'), array('%s', '%s', '%s', '%s', '%s'));
 
-	if ($email == false)
+	if (empty($email))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Email', 'question_type' => 'TEXT', 'system_name' => 'email', 'required' => true, 'sequence' => '2'), array('%s', '%s', '%s', '%s', '%s'));
 
-	if ($adress == false)
+	if (empty($adress))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address', 'system_name' => 'address', 'sequence' => '3'), array('%s', '%s', '%s'));
 
-	if ($adress2 == false)
+	if (empty($adress2))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Address 2', 'system_name' => 'address2', 'sequence' => '3'), array('%s', '%s', '%s'));
 
-	if ($city == false)
+	if (empty($city))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'City', 'system_name' => 'city', 'sequence' => '4'), array('%s', '%s', '%s'));
 
-	if ($state == false)
+	if (empty($state))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'State', 'system_name' => 'state', 'sequence' => '5'), array('%s', '%s', '%s'));
 
-	if ($zip == false)
+	if (empty($zip))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Zip', 'system_name' => 'zip', 'sequence' => '6'), array('%s', '%s', '%s'));
 
-	if ($zip == false)
+	if (empty($country))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Country', 'system_name' => 'country', 'sequence' => '6'), array('%s', '%s', '%s'));
 
-	if ($phone == false)
+	if (empty($phone))
 		$wpdb->insert($wpdb->prefix . "events_question", array('question' => 'Phone', 'system_name' => 'phone', 'sequence' => '7'), array('%s', '%s', '%s'));
 
 	$system_group = $wpdb->get_row("SELECT system_group FROM " . $wpdb->prefix . "events_qst_group" . " WHERE system_group = 1");
@@ -425,7 +425,7 @@ function events_data_tables_install() {
 			  ATT_address varchar(45) DEFAULT NULL,
 			  ATT_address2 varchar(45) DEFAULT NULL,
 			  ATT_city varchar(45) DEFAULT NULL,
-			  STA_ID varchar(45) unsigned DEFAULT NULL,
+			  STA_ID varchar(45) DEFAULT NULL,
 			  CNT_ISO varchar(45) DEFAULT NULL,
 			  ATT_zip varchar(12) DEFAULT NULL,
 			  ATT_email varchar(100) NOT NULL,
@@ -943,7 +943,7 @@ function event_espresso_run_install( $table_name, $table_version, $sql, $engine=
 		if (get_option($option_name)) {
 			update_option($option_name, $newvalue);
 		} else {
-			$deprecated = ' ';
+			$deprecated = '';
 			$autoload = 'no';
 			add_option($option_name, $newvalue, $deprecated, $autoload);
 		}
@@ -953,7 +953,7 @@ function event_espresso_run_install( $table_name, $table_version, $sql, $engine=
 		if (get_option($option_name)) {
 			update_option($option_name, $newvalue);
 		} else {
-			$deprecated = ' ';
+			$deprecated = '';
 			$autoload = 'no';
 			add_option($option_name, $newvalue, $deprecated, $autoload);
 		}
@@ -1108,7 +1108,7 @@ function espresso_update_active_gateways() {
 	// then they should be fine. If they hand uploaded to the old ee folder, manually linked to it, and then
 	// delete the old ee folder, advise them to use the media uploader.
 
-	foreach ($users_ as $user) {
+	foreach ($users as $user) {
 		$payment_settings = get_user_meta($user, 'payment_settings', true);
 		if (!empty($payment_settings['2checkout']) && strpos($payment_settings['2checkout']['button_url'], "/2checkout/lib/logo.png")) {
 			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/lib/logo.png")) {
@@ -1378,4 +1378,9 @@ function espresso_default_prices() {
 	(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
 	$wpdb->query($sql);
 	
+}
+
+add_action('activated_plugin','save_error');
+function save_error(){
+    update_option('plugin_error',  ob_get_contents());
 }
