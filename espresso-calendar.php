@@ -340,7 +340,14 @@ function espresso_calendar_do_stuff($show_expired) {
 
 		//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 		$eventArray['description'] = espresso_format_content($event->event_desc);
-		if (isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == 'Y') {
+		
+		//Supports 3.2 short descriptions
+		if (isset($org_options['template_settings']['display_short_description_in_event_list']) && $org_options['template_settings']['display_short_description_in_event_list'] == true) {
+			$eventArray['description'] = array_shift(explode('<!--more-->', $eventArray['description']));
+		}
+		
+		//Supports 3.1 short descriptions
+		if (isset($org_options['display_short_description_in_event_list']) && $org_options['display_short_description_in_event_list'] == 'Y') {
 			$eventArray['description'] = array_shift(explode('<!--more-->', $eventArray['description']));
 		}
 
