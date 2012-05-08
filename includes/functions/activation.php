@@ -1,4 +1,5 @@
 <?php
+
 //Install/update data tables in the Wordpress database
 //Attention!! The WP dbDelta function cannot modify unique keys
 //Please note that when updating the plugin and WordPress is in debug mode, you may see the following warning/notice:
@@ -98,7 +99,7 @@ function espresso_initialize_system_questions() {
 
 	$system_name_data = "SELECT system_name FROM " . $wpdb->prefix . "events_question";
 
-	$system_names = $wpdb->get_col($system_name_data);
+	$system_names = $wpdb->get_results($system_name_data);
 
 	foreach ($system_names as $system_name) {
 		switch ($system_name->system_name) {
@@ -433,11 +434,11 @@ function events_data_tables_install() {
 			  ATT_social text,
 			  ATT_comments mediumtext,
 			  ATT_notes mediumtext,
-			  PRIMARY KEY (ATT_ID),
+			  PRIMARY KEY  (ATT_ID),
 			  KEY ATT_fname (ATT_fname),
 			  KEY ATT_lname (ATT_lname),
 			  KEY ATT_email (ATT_email)";
-	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -448,10 +449,10 @@ function events_data_tables_install() {
 				  PAY_method varchar(45) DEFAULT NULL,
 				  PAY_amount decimal(10,2) DEFAULT NULL,
 				  PAY_details text,
-				  PRIMARY KEY (PAY_ID),
+				  PRIMARY KEY  (PAY_ID),
 				  KEY TXN_ID (TXN_ID),
 				  KEY PAY_timestamp (PAY_timestamp)";
-	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 	$table_name = 'esp_datetime';
 	$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -461,10 +462,10 @@ function events_data_tables_install() {
 				  DTT_event_or_reg varchar(1) DEFAULT NULL,
 				  DTT_reg_limit int(8) NOT NULL,
 					DTT_is_primary TINYINT(1) NULL DEFAULT 1 ,
-				  PRIMARY KEY (DTT_ID),
+				  PRIMARY KEY  (DTT_ID),
 				  KEY EVT_ID (EVT_ID),
 				  KEY DTT_event_or_reg (DTT_event_or_reg)";
-	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -482,7 +483,7 @@ function events_data_tables_install() {
 				  PRC_ID varchar(45) DEFAULT NULL,
 				  REG_att_is_going tinyint(1) DEFAULT '0',
 				  REG_att_checked_in tinyint(1) DEFAULT '0',
-				  PRIMARY KEY (REG_ID),
+				  PRIMARY KEY  (REG_ID),
 				  KEY EVT_ID (EVT_ID),
 				  KEY ATT_ID (ATT_ID),
 				  KEY TXN_ID (TXN_ID),
@@ -490,7 +491,7 @@ function events_data_tables_install() {
 				  KEY REG_is_primary (REG_is_primary),
 				  KEY REG_code (REG_code),
 				  KEY REG_code_2 (REG_code)";
-	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -504,10 +505,10 @@ function events_data_tables_install() {
 				  TXN_tax_data text COLLATE utf8_bin,
 				  TXN_session_data text COLLATE utf8_bin,
 				  TXN_hash_salt varchar(250) COLLATE utf8_bin DEFAULT NULL,
-				  PRIMARY KEY (TXN_ID),
+				  PRIMARY KEY  (TXN_ID),
 				  KEY TXN_timestamp (TXN_timestamp),
 				  KEY STS_ID (STS_ID)";
-	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -521,7 +522,7 @@ function events_data_tables_install() {
 				  STS_desc tinytext COLLATE utf8_bin,
 				  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 				  KEY STS_type (STS_type)";
-	event_espresso_run_install( $table_name, $table_version, $sql, 'ENGINE=InnoDB ' );
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -776,7 +777,7 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 	$table_name = "esp_price";
-	$sql = 'PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+	$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  PRT_ID tinyint(3) unsigned NOT NULL,
 			  EVT_ID int(10) unsigned NOT NULL,
 			  PRC_amount decimal(10,2) NOT NULL DEFAULT 0.00,
@@ -795,7 +796,7 @@ function events_data_tables_install() {
 			  PRC_overrides int(10) unsigned DEFAULT NULL,
 			  PRC_order tinyint(3) unsigned DEFAULT NULL,
 			  PRC_deleted tinyint(1) DEFAULT 0,
-			  PRIMARY KEY (PRC_ID)';
+			  PRIMARY KEY  (PRC_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 
@@ -824,8 +825,9 @@ function events_data_tables_install() {
 			  PRT_is_percent TINYINT(1) NULL DEFAULT 0 ,
 			  PRT_is_global TINYINT(1) NULL DEFAULT 0 ,
 			  PRT_order TINYINT UNSIGNED NULL ,
-			  UNIQUE INDEX PRT_name_UNIQUE (PRT_name ASC) ,
-			  PRIMARY KEY (PRT_ID)';
+				PRT_deleted tinyint(1) DEFAULT 0,
+			  UNIQUE INDEX  PRT_name (PRT_name ASC) ,
+			  PRIMARY KEY  (PRT_ID)';
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 //CREATE  TABLE IF NOT EXISTS event_espresso.esp_price_type (
@@ -924,7 +926,7 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $table_version, $sql);
 }
 
-function event_espresso_run_install( $table_name, $table_version, $sql, $engine='' ) {
+function event_espresso_run_install($table_name, $table_version, $sql, $engine = '') {
 
 	global $wpdb;
 
@@ -1349,8 +1351,8 @@ function espresso_update_active_gateways() {
 function espresso_default_prices() {
 
 	global $wpdb;
-	
-	$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 9';	
+
+	$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 9';
 	$wpdb->query($sql);
 
 	$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_member, PRT_is_discount, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) VALUES
@@ -1363,8 +1365,8 @@ function espresso_default_prices() {
 	(7, 'Regional Tax', 0, 0, 1, 1, 1, 40),
 	(8, 'Federal Tax', 0, 0, 1, 1, 1, 50);";
 	$wpdb->query($sql);
-	
-	$sql = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 8';	
+
+	$sql = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 8';
 	$wpdb->query($sql);
 
 	$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
@@ -1377,10 +1379,13 @@ function espresso_default_prices() {
 	(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
 	(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
 	$wpdb->query($sql);
-	
 }
 
-add_action('activated_plugin','save_error');
-function save_error(){
-    update_option('plugin_error',  ob_get_contents());
+add_action('activated_plugin', 'save_error');
+if (!function_exists('save_error')) {
+
+	function save_error() {
+		update_option('plugin_error', ob_get_contents());
+	}
+
 }
