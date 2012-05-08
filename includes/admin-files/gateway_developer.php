@@ -10,6 +10,10 @@ function espresso_gateway_developer_meta_box() {
 		<h2><?php _e('Bypassing the Confirmation Page', 'event_espresso'); ?></h2>
 		<p><?php _e('This will allow you to send your customers directly to the payment gateway of your choice.', 'event_espresso'); ?></p>
 	</div>
+	<div id="display_header" style="display:none">
+		<h2><?php _e('Display a Form Header','event_espresso'); ?></h2>
+		<p><?php _e('Select if you would like to display a header above the payment form.','event_espresso'); ?></p>
+	</div>
 	<div class="padding">
 		<?php
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/index.php")) {
