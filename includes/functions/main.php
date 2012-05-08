@@ -1435,7 +1435,7 @@ function espresso_get_notices($format_output = TRUE, $url_encode = FALSE) {
 
 		if ($error_messages != '') {
 			//showMessage( $error_messages, TRUE );
-			$notices .= '<div id="message" class="error"><p>' . $error_messages . '</p></div>';
+			$notices .= '<div id="message" class="error fade fade-away"><p>' . $error_messages . '</p></div>';
 		}
 	} else {
 

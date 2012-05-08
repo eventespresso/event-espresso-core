@@ -28,8 +28,10 @@
  * @return 		string	
  */
 function espresso_ticket_selector($event) {
-
+	
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	
+	global $espresso_notices;
 
 	add_action( 'wp_footer', 'espresso_load_tckt_slctr_js' );
 
@@ -73,9 +75,10 @@ function espresso_ticket_selector($event) {
 	//$template_args['meta'] = base64_encode(serialize($all_meta));
 
 	$template_args['currency_symbol'] = $event->currency_symbol;
+
+	$template_args['notices'] = espresso_get_notices();
 	
 	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php';
-
 	espresso_display_template($templates['ticket_selector'], $template_args);
 
 }
@@ -194,7 +197,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	
 		global $espresso_notices;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		//echo printr($_POST);
+		echo printr($_POST);
 		// do we have an event id?
 		if (isset($_POST['tkt-slctr-event-id'])) {
 		
@@ -212,7 +215,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$limit_error_2 = sprintf(_n($singular, $plural, $valid['atndz'], 'event_espresso'), $valid['atndz'], $valid['atndz']);
-				$espresso_notices['errors'][] = $limit_error_1 . '<br/>' . $limit_error_2;
+				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
 				
 			} else {
 				
@@ -257,36 +260,41 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 							if ( ! $registration_url ) {
 								$registration_url = add_query_arg( array( 'e_reg'=>'register', 'step' => 1 ), espresso_get_reg_page_full_url() );
 							}
-							wp_redirect($registration_url);
+							wp_safe_redirect($registration_url);
 							exit();
 						}
 					} else {
 						// nothing added to cart
-						echo '
-	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
-		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'An error occured. No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' ).'</span>
-	</div>
-<br/><br/>';	
+						$error_msg = __( 'An error occured. No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 					}
 
 				} else {
 					// no ticket quantities were selected
-					echo '
-	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
-		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' ).'</span>
-	</div>
-<br/><br/>';					
+					$error_msg = __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 				}				
 			}
 
+			if ( isset( $_POST['tkt-slctr-return-url-'.$valid_data['id']] )) {
+				$return_url = add_query_arg( array( 'errors'=>urlencode($error_msg) ), $_POST['tkt-slctr-return-url-'.$valid_data['id']] );
+				wp_safe_redirect( $return_url );
+				exit();
+			}	
+			
 		} else {
 			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
-			echo '
-	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all fade-away">
-		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg">'. __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' ).'</span>
-	</div>
-<br/><br/>';
+			$error_msg = __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 		}	
+
+		if ( isset( $_SERVER['HTTP_REFERER'] )) {
+			$return_url = add_query_arg( array( 'errors'=>urlencode($error_msg) ), $_SERVER['HTTP_REFERER'] );
+			wp_safe_redirect( $return_url );
+			exit();
+		}	
+
+
+
+		
+		
 	}
 
 
@@ -325,7 +333,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 					'time' => 'tkt-slctr-time-',
 					'price_desc' => 'tkt-slctr-price-desc-',
 					//'meta' => 'tkt-slctr-meta-',
-					'pre_approval' => 'tkt-slctr-pre-approval-',
+					'pre_approval' => 'tkt-slctr-pre-approval-'
 			);
 			// let's track the total number of tickets ordered.'
 			$valid_data['total_tickets'] = 0;
@@ -346,16 +354,28 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 
 					// arrays of integers
 					case 'price_id':
+					case 'time':
 					case 'qty':
 						// grab the array
 						$ints = $_POST[$input_to_clean . $id];
 						// cycle thru values
 						foreach ($ints as $int) {
-							// sanitize as integers
-							$valid_data[$what][] = absint($int);
-							if ($what == 'qty') {
-								$qty = absint($int);
-								$valid_data['total_tickets'] = $valid_data['total_tickets'] + $qty;
+							switch ($what ) {
+								case 'qty' :
+									// sanitize as integers
+									$valid_data[$what][] = absint($int);
+									$qty = absint($int);
+									$valid_data['total_tickets'] = $valid_data['total_tickets'] + $qty;
+									break;
+									
+								case 'time' :
+									$time = absint($int);
+									$valid_data[$what][] = date( 'g:i a', $time);
+									break;
+									
+								default :
+								// sanitize as integers
+								$valid_data[$what][] = absint($int);								
 							}
 						}
 						break;
@@ -373,7 +393,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 						break;
 
 					// string
-					case 'time':
+/*					case 'time':
 						// grab the array
 						$times = $_POST[$input_to_clean . $id];
 						// cycle thru values
@@ -382,7 +402,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 							$valid_var = trim(preg_replace('/[^0-9:+$]/', '', $time));
 							$valid_data[$what][] = number_format((float) $valid_var, 2, '.', '');
 						}
-						break;
+						break;*/
 
 					// string
 					case 'date':
@@ -420,6 +440,9 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 							//$valid_data[$what][] = $desc;
 						}
 						break;
+						
+						case 'return-url' :
+						break;
 				}
 			}
 		} else {
@@ -427,7 +450,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 			return FALSE;
 		}
 
-		//echo printr( $valid_data, '$valid_data' );
+		echo printr( $valid_data, '$valid_data' );
 		return $valid_data;
 	}
 

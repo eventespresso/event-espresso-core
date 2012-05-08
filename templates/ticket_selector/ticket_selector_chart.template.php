@@ -1,3 +1,5 @@
+	<?php echo $notices; ?>
+
 	<h4 class="event-list-reg-link-title"><span class="section-title"><?php _e( 'Ticket Options', 'event_espresso' ); ?></span></h4>
 
 		<input type="hidden"
