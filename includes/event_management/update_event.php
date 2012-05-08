@@ -469,7 +469,7 @@ function update_event($recurrence_arr = array()) {
 
 				// grab list of all datetime ID's we are processing
 				if (isset($_POST['datetime_IDs'])) {
-					$datetime_IDs = unserialize(stripslashes($_POST['datetime_IDs']));
+					$datetime_IDs = unserialize( $_POST['datetime_IDs'] );
 					array_walk($_POST['datetime_IDs'], 'absint');
 					$datetime_IDs = array_flip($datetime_IDs);
 				} else {

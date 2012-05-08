@@ -361,7 +361,7 @@ function espresso_event_editor_date_time_metabox($event) {
 
 	</div>
 
-	<input  type="hidden" name="datetime_IDs" value="<?php echo esc_attr( serialize( $datetime_IDs )); ?>"/>
+	<input  type="hidden" name="datetime_IDs" value="<?php echo serialize( $datetime_IDs ); ?>"/>
 	<input  type="hidden" id="process_datetimes" name="process_datetimes" value="1"/>
 
 
@@ -458,8 +458,9 @@ function espresso_event_editor_pricing_metabox($event) {
 			</tr>
 		</thead>
 		<?php 
+	$counter = 1;
 	foreach ( $all_prices as $price_type => $prices ) :
-		foreach ($prices as $price) :
+		foreach ( $prices as $price ) :
 			if ( ! $price->deleted() ) :
 				//echo printr( $price, '$price' );
 				$disabled = ! $price->is_active() ? ' disabled="disabled"' : ''; 
@@ -561,7 +562,7 @@ function espresso_event_editor_pricing_metabox($event) {
 										<span class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed.' ), 'event_espresso'); ?></span>
 									</td>
 								</tr>			
-			
+								<?php if ( $counter > 1 ) : ?>
 								<tr valign="top">
 									<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 									<td>
@@ -576,7 +577,7 @@ function espresso_event_editor_pricing_metabox($event) {
 										<span class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></span>
 									</td>
 								</tr>
-								
+								<?php endif; ?>
 							</tbody>
 						</table>
 			
@@ -644,6 +645,7 @@ function espresso_event_editor_pricing_metabox($event) {
 
 			<?php
 			endif;
+			$counter++;
 		endforeach;
 	endforeach;
 		?>

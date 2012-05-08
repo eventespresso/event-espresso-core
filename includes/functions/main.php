@@ -240,6 +240,9 @@ if (!function_exists('event_espresso_get_is_active')) {
 		$regstart = 10000000000;
 		$end = 0;
 		$regend = 0;
+		if ( ! is_array( $datetimes )) {
+			$datetimes = array( $datetimes );
+		}
 		foreach ($datetimes as $datetime) {
 			if ($datetime->event_or_reg() == 'E') {
 				$start = min(array($start, $datetime->start()));
