@@ -53,7 +53,8 @@ class EEM_Price_Type extends EEM_Base {
 				'PRT_is_tax' 			=> '%d',
 				'PRT_is_percent' 	=> '%d',
 				'PRT_is_global' 		=> '%d',
-				'PRT_order' 			=> '%d'
+				'PRT_order' 			=> '%d',
+				'PRT_deleted'			=> '%d'
 		);
 		// load Price_Type object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Price_Type.class.php');
@@ -109,6 +110,7 @@ class EEM_Price_Type extends EEM_Base {
 											$price_type->PRT_is_percent,
 											$price_type->PRT_is_global,
 											$price_type->PRT_order,
+											$price_type->PRT_deleted,
 											$price_type->PRT_ID
 			);
 		}
@@ -126,7 +128,7 @@ class EEM_Price_Type extends EEM_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price_type() {
-		return new EE_Price_Type( '', FALSE, FALSE, FALSE, FALSE, FALSE, 0 );
+		return new EE_Price_Type( '', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,0 );
 	}
 
 
@@ -139,11 +141,10 @@ class EEM_Price_Type extends EEM_Base {
 	 * 		@access		public
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
-	public function get_all_price_types() {
+	public function get_all_price_types($orderby='PRT_order', $order='ASC') {
 
-		$orderby = 'PRT_order';
 		// retreive all price types
-		if ($price_types = $this->select_all($orderby)) {
+		if ($price_types = $this->select_all($orderby, $order)) {
 			return $this->_create_objects($price_types);
 		} else {
 			return FALSE;
