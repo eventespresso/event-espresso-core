@@ -817,14 +817,14 @@ function events_data_tables_install() {
 
 
 	$table_name = "esp_price_type";
-	$sql = 'PRT_ID tinyint UNSIGNED NOT NULL AUTO_INCREMENT ,
+	$sql = 'PRT_ID tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT ,
 			  PRT_name VARCHAR(45) NOT NULL ,
 			  PRT_is_member tinyint(1) NULL DEFAULT 0 ,
 			  PRT_is_discount tinyint(1) NULL DEFAULT 0 ,
 			  PRT_is_tax tinyint(1) NULL DEFAULT 0 ,
 			  PRT_is_percent tinyint(1) NULL DEFAULT 0 ,
 			  PRT_is_global tinyint(1) NULL DEFAULT 0 ,
-			  PRT_order tinyint UNSIGNED NULL ,
+			  PRT_order tinyint(1) UNSIGNED NULL ,
 				PRT_deleted tinyint(1) DEFAULT 0,
 			  UNIQUE INDEX  PRT_name (PRT_name ASC) ,
 			  PRIMARY KEY  (PRT_ID)';
