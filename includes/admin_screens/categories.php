@@ -163,11 +163,7 @@ function event_espresso_categories_config_mnu() {
 
 			<div id="poststuff" class="metabox-holder has-right-sidebar">
 				<div id="side-info-column" class="inner-sidebar">
-					<div id="side-sortables" class="meta-box-sortables ui-sortable">
-
 						<?php echo $side_meta_boxes; ?>
-
-					</div> <!-- side-sortables -->
 				</div> <!-- side-info-column -->
 				<div id="post-body">
 					<div id="post-body-content">
