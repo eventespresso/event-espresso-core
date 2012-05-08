@@ -255,6 +255,10 @@ function event_espresso_display_2checkout_settings($payment_settings) {
 			<?php _e('2checkout uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that 2checkout (currently) supports.', 'event_espresso'); ?>
 		</p>
 	</div>
+	<div id="force_ssl_return" style="display:none">
+		<h2><?php _e('Force HTTPS on Return URL', 'event_espresso'); ?></h2>
+		<p><?php _e('Forces the gateway provider to send the customer back to the return page -- or pull the return page from the site -- using HTTPS.  This is required in some instances to prevent a warning that the page the user is going to is not secure.', 'event_espresso'); ?></p>
+	</div>
 	<?php
 }
 
