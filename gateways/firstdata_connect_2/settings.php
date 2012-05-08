@@ -185,6 +185,10 @@ function event_espresso_display_firstdata_connect_2_settings() {
 			<hr />
 			<p><?php _e('The First Data Sandbox is a testing environment that is a duplicate of the live First Data site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?></p>
 		</div>
+		<div id="timezone" style="display:none">
+			<h2><?php _e('Time Zone'); ?></h2>
+			<p><?php _e('Time zone of the transaction. Valid values are: GMT, EST, CST, MST, PST'); ?></p>
+		</div>
 	</div>
 	<?php
 }
