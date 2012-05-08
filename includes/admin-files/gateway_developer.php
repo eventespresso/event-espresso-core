@@ -6,6 +6,10 @@ function espresso_gateway_developer_meta_box() {
 		<h2><?php _e('Force HTTPS on Return URL', 'event_espresso'); ?></h2>
 		<p><?php _e('Forces the gateway provider to send the customer back to the return page -- or pull the return page from the site -- using HTTPS.  This is required in some instances to prevent a warning that the page the user is going to is not secure.', 'event_espresso'); ?></p>
 	</div>
+	<div id="bypass_confirmation" style="display:none">
+		<h2><?php _e('Bypassing the Confirmation Page', 'event_espresso'); ?></h2>
+		<p><?php _e('This will allow you to send your customers directly to the payment gateway of your choice.', 'event_espresso'); ?></p>
+	</div>
 	<div class="padding">
 		<?php
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/index.php")) {
