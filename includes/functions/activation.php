@@ -687,7 +687,7 @@ function events_data_tables_install() {
 				category_name VARCHAR(100) DEFAULT NULL,
 				category_identifier VARCHAR(45) DEFAULT NULL,
 				category_desc TEXT,
-				display_desc VARCHAR (4) DEFAULT NULL,
+				display_desc VARCHAR(4) DEFAULT NULL,
 				wp_user int(22) DEFAULT '1',
 				UNIQUE KEY id (id),
 				KEY category_identifier (category_identifier),
