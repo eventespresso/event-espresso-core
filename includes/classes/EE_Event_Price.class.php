@@ -147,7 +147,7 @@ class EE_Event_Price {
 			$espresso_notices['errors'][] = 'A valid price modifier was not supplied.';
 			return FALSE;
 		}
-		//echo printr( $price_modifier, '$price_modifier <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+//		echo printr( $price_modifier, '$price_modifier <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 		
 		$mod_amount = $price_modifier->amount();
 
@@ -156,25 +156,25 @@ class EE_Event_Price {
 			$percent_adj = $mod_amount;
 			$mod_amount = $this->_orig_price * $mod_amount / 100;
 			$this->_adjustments[] = array( 
-																		'PRC_ID'=>$price_modifier->ID(),
-																		'name'=>wp_strip_all_tags( $price_modifier->name() ),
-																		'is_percent'=>true,
-																		'percent_adjustment'=>"$percent_adj %",
-																		'adjustment'=>$mod_amount
-																	);
+																	'PRC_ID'=>$price_modifier->ID(),
+																	'name'=>wp_strip_all_tags( $price_modifier->name() ),
+																	'is_percent'=>true,
+																	'percent_adjustment'=>"$percent_adj %",
+																	'adjustment'=>$mod_amount
+																);
 		} else {
 		
 			$this->_adjustments[] = array(
-																		'PRC_ID'=>$price_modifier->ID(),
-																		'name'=>wp_strip_all_tags( $price_modifier->name() ),
-																		'is_percent'=>false,
-																		'adjustment'=>$mod_amount
-																	);
+																	'PRC_ID'=>$price_modifier->ID(),
+																	'name'=>wp_strip_all_tags( $price_modifier->name() ),
+																	'is_percent'=>false,
+																	'adjustment'=>$mod_amount
+																);
 		}
 		
 		// instead of using an IF statement to perform either addition or subtraction, we just use addition, but first multiply discounts by -1 to make them negative
-		$this->_final_price += (( $this->_is_discount ) ? -1 : 1) * $mod_amount;
-		
+		$this->_final_price += (( $this->_PRT_MDL->type[ $price_modifier->type() ]->is_discount() ) ? -1 : 1) * $mod_amount;
+		//echo 'modifier = ' . $price_modifier->name() . ' ' . (( $this->_PRT_MDL->type[ $price_modifier->type() ]->is_discount() ) ? -1 : 1) * $mod_amount . '<br />';
 		$this->_final_price = number_format( max( $this->_final_price, 0 ), 2 );
 
 	}

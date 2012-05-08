@@ -61,10 +61,11 @@ function espresso_ticket_selector($event) {
 	$template_args['times'] = process_event_times($event->datetimes);
 	$template_args['multiple_time_options'] = count($template_args['times']) > 1 ? TRUE : FALSE;
 //	echo printr( $template_args['times'], 'times <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+//	echo printr( $event->datetimes, 'event->datetimes <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 
 	$template_args['prices'] = process_event_prices($event->prices, $event->currency_symbol, 'included');
 	$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
-	//echo printr($event->prices, 'dates <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+//	echo printr($event->prices, 'event->prices <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 	
 	// had problems with event desc not playing nice with serialize so....
 	//$all_meta = array_map('wp_strip_all_tags', $event->reg_btn['all_meta']);
@@ -94,7 +95,8 @@ function format_date($datetimes) {
 	// start with an empty array
 	$dates = array();
 	foreach ($datetimes as $key => $date) {
-		$dates[] = $date->start_date('D M jS');
+		$frmtd = $date->start_date('D M jS');
+		$dates[] = str_replace( ' ', '&nbsp;', $frmtd );
 	}
 	// flip it once
 	$dates = array_flip( $dates );
@@ -119,13 +121,14 @@ function process_event_times($times) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize($times));
 	// start with an empty array
 	$time_options = array();
+	$tm_frmt = 'g:ia';
 
 	foreach ($times as $time) {		
 		$time_options[] = array(
 				'id' => $time->ID(),
 				'event_id' => $time->event_ID(),
 				'start_time' => $time->start(),
-				'formatted' => $time->end_time() ? $time->start_time() . ' - ' . $time->end_time() : $time->start_time()
+				'formatted' => $time->end_time() ? $time->start_time($tm_frmt) . ' - ' . $time->end_time($tm_frmt) : $time->start_time($tm_frmt)
 		);
 	}
 	//echo printr($time_options);
@@ -159,12 +162,12 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 		// are you a member of our club???
 		if ( $price->is_member() && is_user_logged_in() ) {
 			// format member ticket price
-			$price_option = $price->name() . '&nbsp;:&nbsp;';
+			$price_option = $price->name() . ' : ';
 			// format ticket price
 			$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
 		} else {
 			// add non-member price type
-			$price_option = $price->name() . '&nbsp;:&nbsp;';
+			$price_option = $price->name() . ' : ';
 			// format ticket price
 			$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
 		}

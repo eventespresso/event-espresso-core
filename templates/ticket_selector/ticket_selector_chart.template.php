@@ -29,10 +29,10 @@
 		<table id="tkt-slctr-tbl-<?php echo $event_id; ?>" class="tkt-slctr-tbl" border="1" cellspacing="0" cellpadding="0">		
 			<thead>
 				<tr>
-					<th scope="col"><?php _e( 'Date', 'event_espresso' ); ?></th>
-					<th scope="col"><?php _e( 'Time', 'event_espresso' ); ?></th>
-					<th scope="col"><?php _e( 'Ticket Price', 'event_espresso' ); ?></th>
-					<th scope="col"><?php _e( 'Qty', 'event_espresso' ); ?></th>
+					<th scope="col" width="18%"><?php _e( 'Date', 'event_espresso' ); ?></th>
+					<th scope="col" width="24%"><?php _e( 'Time', 'event_espresso' ); ?></th>
+					<th scope="col" width="50%"><?php _e( 'Ticket Price', 'event_espresso' ); ?></th>
+					<th scope="col" width="8%"><?php _e( 'Qty', 'event_espresso' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -44,10 +44,10 @@
 					
 ?>
 				<tr>				
-					<td ><?php echo $date; ?></td>
-					<td><?php echo $time['formatted']; ?></td>
-					<td><?php echo $price['option']; ?></td>	
-					<td>					
+					<td class="tckt-slctr-tbl-td-date"><?php echo $date; ?></td>
+					<td class="tckt-slctr-tbl-td-time"><?php echo $time['formatted']; ?></td>
+					<td class="tckt-slctr-tbl-td-desc"><?php echo $price['option']; ?></td>	
+					<td class="tckt-slctr-tbl-td-qty">					
 						<select name="tkt-slctr-qty-<?php echo $event_id; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $event_id ?>" class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all">
 <?php for ($i = 0; $i <= $max_atndz; $i++) { ?>
 							<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;</option><?php } ?>
