@@ -14,62 +14,56 @@ function event_espresso_categories_config_mnu() {
 			if (!isset($_REQUEST['action']) || ($_REQUEST['action'] != 'edit' && $_REQUEST['action'] != 'add_new_category')) {
 				echo '<a href="admin.php?page=event_categories&amp;action=add_new_category" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Category', 'event_espresso') . '</a>';
 			}
+			if (!empty($_POST['delete_category']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_category')) {
+				if (is_array($_POST['checkbox'])) {
+					while (list($key, $value) = each($_POST['checkbox'])):
+						$del_id = $key;
+						//Delete category data
+						$sql = "DELETE FROM " . EVENTS_CATEGORY_TABLE . " WHERE id='$del_id'";
+						$wpdb->query($sql);
+
+						$sql = "DELETE FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE cat_id='$del_id'";
+						$wpdb->query($sql);
+					endwhile;
+				}
+				if ($_REQUEST['action'] == 'delete_category') {
+					//Delete discount data
+					$sql = "DELETE FROM " . EVENTS_CATEGORY_TABLE . " WHERE id='" . $_REQUEST['id'] . "'";
+					$wpdb->query($sql);
+					$sql = "DELETE FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE cat_id='" . $_REQUEST['id'] . "'";
+					$wpdb->query($sql);
+				}
+				?>
+				<div id="message" class="updated fade">
+					<p><strong>
+							<?php _e('Categories have been successfully deleted from the event.', 'event_espresso'); ?>
+						</strong></p>
+				</div>
+				<?php
+			}
+			if (isset($_REQUEST['action'])) {
+				switch ($_REQUEST['action']) {
+					case 'update':
+						update_event_category();
+						break;
+					case 'add':
+						add_cat_to_db();
+						break;
+					case 'add_new_category':
+						add_new_event_category();
+						break;
+					case 'edit':
+						edit_event_category();
+						break;
+				}
+			}
 			?>
 		</h2>
 
-		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<div id="side-info-column" class="inner-sidebar">
-				<?php do_meta_boxes('event-espresso_page_event_categories', 'side', null); ?>
-			</div>
-			<div id="post-body">
+		<div id="poststuff">
+			<div id="post-body" class="metabox-holder columns-2">
 				<div id="post-body-content">
-					<?php
-					if (!empty($_POST['delete_category']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_category')) {
-						if (is_array($_POST['checkbox'])) {
-							while (list($key, $value) = each($_POST['checkbox'])):
-								$del_id = $key;
-								//Delete category data
-								$sql = "DELETE FROM " . EVENTS_CATEGORY_TABLE . " WHERE id='$del_id'";
-								$wpdb->query($sql);
-
-								$sql = "DELETE FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE cat_id='$del_id'";
-								$wpdb->query($sql);
-							endwhile;
-						}
-						if ($_REQUEST['action'] == 'delete_category') {
-							//Delete discount data
-							$sql = "DELETE FROM " . EVENTS_CATEGORY_TABLE . " WHERE id='" . $_REQUEST['id'] . "'";
-							$wpdb->query($sql);
-							$sql = "DELETE FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE cat_id='" . $_REQUEST['id'] . "'";
-							$wpdb->query($sql);
-						}
-						?>
-						<div id="message" class="updated fade">
-							<p><strong>
-									<?php _e('Categories have been successfully deleted from the event.', 'event_espresso'); ?>
-								</strong></p>
-						</div>
-						<?php
-					}
-					if (isset($_REQUEST['action'])) {
-						switch ($_REQUEST['action']) {
-							case 'update':
-								update_event_category();
-								break;
-							case 'add':
-								add_cat_to_db();
-								break;
-							case 'add_new_category':
-								add_new_event_category();
-								break;
-							case 'edit':
-								edit_event_category();
-								break;
-						}
-					}
-					?>
 					<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
-
 						<table id="table" class="widefat manage-categories">
 							<thead>
 								<tr>
@@ -113,7 +107,8 @@ function event_espresso_categories_config_mnu() {
 											<td>[EVENT_ESPRESSO_CATEGORY event_category_id="<?php echo $category_identifier ?>"]</td>
 
 										</tr>
-									<?php }
+										<?php
+									}
 								}
 								?>
 							</tbody>
@@ -126,69 +121,75 @@ function event_espresso_categories_config_mnu() {
 
 								<?php /*								 * *************************** ADDED BY BRENT *********************** */ ?>
 								<a  style="margin:10px 0 0 20px;" class="button-primary" href="<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?event_espresso&amp;export=report&action=categories&amp;type=csv" title="<?php _e('Export to Excel', 'event_espresso'); ?>"><?php _e('Export All Categories to CSV', 'event_espresso'); ?></a>
-	<?php /*	 * *************************** brent done adding *********************** */ ?>
+								<?php /*								 * *************************** brent done adding *********************** */ ?>
 
 							</p>
 						</div>
 					</form>
-				</div>
-				<?php
-				/*				 * *************************** ADDED BY BRENT *********************** */
+					<?php
+					/*					 * *************************** ADDED BY BRENT *********************** */
 
-				if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'edit') {
-					include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
-					$import_what = 'Categories';
-					$import_intro = 'If you have a previously exported list of Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ';
-					$page = 'event_categories';
-					echo espresso_csv_uploader($import_what, $import_intro, $page);
-				}
+					if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'edit') {
+						include( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/csv_uploader.php' );
+						$import_what = 'Categories';
+						$import_intro = 'If you have a previously exported list of Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ';
+						$page = 'event_categories';
+						echo espresso_csv_uploader($import_what, $import_intro, $page);
+					}
 
-				/*				 * *************************** brent done adding *********************** */
-				?>
-			</div>
+					/*					 * *************************** brent done adding *********************** */
+					?>
+				</div> <!-- post-body-content -->
+				<div id="postbox-container-1" class="postbox-container">
+					<?php do_meta_boxes('event-espresso_page_event_categories', 'side', null); ?>
+				</div> <!-- postbox-container-1 -->
+				<div id="postbox-container-2" class="postbox-container">
+				</div> <!-- postbox-container-2 -->
+			</div> <!-- post-body -->
+		</div> <!-- poststuff -->
+		<div id="unique_id_info" style="display:none">
+			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
+			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
+			<p>The<?php _e(' unique ID can also be used in individual pages using the', 'event_espresso'); ?>  	[EVENT_ESPRESSO_CATEGORY event_category_id="category_identifier"] <?php _e('shortcode', 'event_espresso'); ?>.</p>
 		</div>
-	</div>
-	<div id="unique_id_info" style="display:none">
-		<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
-		<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
-		<p>The<?php _e(' unique ID can also be used in individual pages using the', 'event_espresso'); ?>  	[EVENT_ESPRESSO_CATEGORY event_category_id="category_identifier"] <?php _e('shortcode', 'event_espresso'); ?>.</p>
-	</div>
-	<script>
-		jQuery(document).ready(function($) {
+		<script>
+			jQuery(document).ready(function($) {
 
-			/* show the table data */
-			var mytable = $('#table').dataTable( {
-				"bStateSave": true,
-				"sPaginationType": "full_numbers",
+				/* show the table data */
+				var mytable = $('#table').dataTable( {
+					"bStateSave": true,
+					"sPaginationType": "full_numbers",
 
-				"oLanguage": {	"sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong>",
-					"sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" },
-				"aoColumns": [
-					{ "bSortable": false },
-					null,
-					null,
+					"oLanguage": {	"sSearch": "<strong><?php _e('Live Search Filter', 'event_espresso'); ?>:</strong>",
+						"sZeroRecords": "<?php _e('No Records Found!', 'event_espresso'); ?>" },
+					"aoColumns": [
+						{ "bSortable": false },
+						null,
+						null,
 	<?php echo function_exists('espresso_is_admin') && espresso_is_admin() == true ? 'null,' : ''; ?>
-					{ "bSortable": false }
+						{ "bSortable": false }
 
-				]
+					]
+
+				} );
 
 			} );
+			// Add new category form validation
+			jQuery(function(){
+				jQuery("#add-new-cat").validate({
+					rules: {
+						category_name: "required"
+					},
+					messages: {
+						category_name: "please add a category name"
+					}
 
-		} );
-		// Add new category form validation
-		jQuery(function(){
-			jQuery("#add-new-cat").validate({
-				rules: {
-					category_name: "required"
-				},
-				messages: {
-					category_name: "please add a category name"
-				}
-
+				});
 			});
-		});
-	</script>
+		</script>
 
 
-	<?php
-}
+		<?php
+	}
+
+	
