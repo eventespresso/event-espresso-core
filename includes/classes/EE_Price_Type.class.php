@@ -96,6 +96,7 @@ class EE_Price_Type {
   */
 	private $_PRT_order = NULL;
 
+	private $_PRT_deleted = NULL;
 
 
 
@@ -113,7 +114,7 @@ class EE_Price_Type {
 	* @param			int 					$PRT_order					Price Type order
 	* @param			int						$PRT_ID							Price type ID
 	*/
-	public function __construct( $PRT_name='', $PRT_is_member=FALSE, $PRT_is_discount=FALSE, $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_ID=FALSE ) {
+	public function __construct( $PRT_name='', $PRT_is_member=FALSE, $PRT_is_discount=FALSE, $PRT_is_tax=FALSE, $PRT_is_percent=FALSE, $PRT_is_global=FALSE, $PRT_order=0, $PRT_deleted, $PRT_ID=FALSE ) {
 	
 		$this->_PRT_ID						= $PRT_ID;
 		$this->_PRT_name					= $PRT_name;
@@ -123,6 +124,7 @@ class EE_Price_Type {
 		$this->_PRT_is_percent		= $PRT_is_percent;
 		$this->_PRT_is_global			= $PRT_is_global;
 		$this->_PRT_order					= $PRT_order;
+		$this->_PRT_deleted				= $PRT_deleted;
 
 		// load Price model object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
@@ -275,8 +277,13 @@ class EE_Price_Type {
 		return TRUE;
 	}
 
+	public function move_to_trash() {
+		$this->_PRT_deleted = TRUE;
+	}
 
-
+	public function restore_from_trash() {
+		$this->_PRT_deleted = FALSE;
+	}
 
 
 	/**
@@ -296,7 +303,8 @@ class EE_Price_Type {
 				'PRT_is_tax'				=> $this->_PRT_is_tax,
 				'PRT_is_percent'		=> $this->_PRT_is_percent,
 				'PRT_is_global'			=> $this->_PRT_is_global,
-				'PRT_order'					=> $this->_PRT_order
+				'PRT_order'					=> $this->_PRT_order,
+				'PRT_deleted'				=> $this->_PRT_deleted
 		);
 
 		if ( $where_cols_n_values ){
@@ -413,6 +421,9 @@ class EE_Price_Type {
 		return $this->_PRT_order;
 	}
 
+	public function deleted() {
+		return $this->_PRT_deleted;
+	}
 
 	/**
 	*		Search for an existing DB record for this Price Type
