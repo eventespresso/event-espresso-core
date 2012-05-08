@@ -14,6 +14,12 @@ function espresso_prices_admin_helper() {
 	if (isset( $_POST['delete_price_type'] )) {
 		$_REQUEST['action'] = 'delete_price_type';
 	}
+	if (isset( $_POST['trash_price_type'] )) {
+		$_REQUEST['action'] = 'trash_price_type';
+	}
+	if (isset( $_POST['restore_price_type'] )) {
+		$_REQUEST['action'] = 'restore_price_type';
+	}
 
 	if ( isset( $_REQUEST['action'] )) {
 
@@ -51,9 +57,18 @@ function espresso_prices_admin_helper() {
 			case 'restore_price' :
 				espresso_restore_price();
 				break;
+			
+			case 'trash_price_type' :
+				espresso_trash_price_type();
+				break;
+			
+			case 'restore_price_type' :
+				espresso_restore_price_type();
+				break;
 
 		}
 
+		$_SERVER['REQUEST_URI'] = remove_query_arg('action');
 	}
 
 	echo espresso_get_notices();
@@ -373,6 +388,63 @@ function espresso_restore_price() {
 		$PRC_ID = absint( $_REQUEST['id'] );
 		if ( $PRC->update( array('PRC_deleted' => FALSE), array('PRC_ID' => absint( $PRC_ID )))) {
 			$espresso_notices['success'][] = __('Prices have been successfully deleted.', 'event_espresso');
+		}
+	}
+		
+}
+
+function espresso_trash_price_type() {
+
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+	$PRT = EEM_Price_Type::instance();
+
+	
+	$success = TRUE;
+	//Checkboxes
+	if ( ! empty( $_POST['checkbox'] ) && is_array( $_POST['checkbox'] )) {
+		while ( list( $PRT_ID, $value ) = each( $_POST['checkbox'] )) {
+			if( ! $PRT->update( array('PRT_deleted' => TRUE), array('PRT_ID' => absint( $PRT_ID )))) {
+				$success = FALSE;
+			}
+		}
+		
+		if( $success ) {
+			$espresso_notices['success'][] = __('Price Types have been moved to the trash.', 'event_espresso');
+		}					
+
+	} elseif ( $_REQUEST['action'] == 'trash_price_type' ) {
+		$PRT_ID = absint( $_REQUEST['id'] );
+		if ( $PRT->update( array('PRT_deleted' => TRUE), array('PRT_ID' => absint( $PRT_ID )))) {
+			$espresso_notices['success'][] = __('Price Type has been moved to the trash', 'event_espresso');
+		}
+	}
+	
+	
+}
+
+function espresso_restore_price_type() {
+
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+	$PRT = EEM_Price_Type::instance();
+
+	
+	$success = TRUE;
+	//Checkboxes
+	if ( ! empty( $_POST['checkbox'] ) && is_array( $_POST['checkbox'] )) {
+		while ( list( $PRT_ID, $value ) = each( $_POST['checkbox'] )) {
+			if( ! $PRT->update( array('PRT_deleted' => FALSE), array('PRT_ID' => absint( $PRT_ID )))) {
+				$success = FALSE;
+			}
+		}
+		
+		if( $success ) {
+			$espresso_notices['success'][] = __('Price Types hava been restored from trash.', 'event_espresso');
+		}					
+
+	} elseif ( $_REQUEST['action'] == 'restore_price_type' ) {
+		$PRT_ID = absint( $_REQUEST['id'] );
+		if ( $PRT->update( array('PRT_deleted' => FALSE), array('PRT_ID' => absint( $PRT_ID )))) {
+			$espresso_notices['success'][] = __('Price Type has been restored from trash.', 'event_espresso');
 		}
 	}
 		

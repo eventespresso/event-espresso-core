@@ -4,7 +4,7 @@ if (!class_exists('WP_List_Table')) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-class EE_Prices_List_Table extends WP_List_Table {
+class EE_Price_Types_List_Table extends WP_List_Table {
 
 	private $_PRT = NULL; // internal object reference to the EEM_Price_Type::instance
 	private $view = NULL;
@@ -58,7 +58,7 @@ class EE_Prices_List_Table extends WP_List_Table {
 		$data = array();
 
 		// Specific to this extension of WP_List_Table
-		$_GET['orderby'] = empty($_GET['orderby']) ? 0 : $_GET['orderby'];
+		$_GET['orderby'] = empty($_GET['orderby']) ? '' : $_GET['orderby'];
 		switch ($_GET['orderby']) {
 			case 'name':
 				$orderby = 'PRT_name';
@@ -66,7 +66,7 @@ class EE_Prices_List_Table extends WP_List_Table {
 			default:
 				$orderby = 'PRT_order';
 		}
-		$_GET['order'] = empty($_GET['order']) ? 0 : $_GET['order'];
+		$_GET['order'] = empty($_GET['order']) ? '' : $_GET['order'];
 		switch ($_GET['order']) {
 			case 'desc':
 				$order = 'DESC';
@@ -74,7 +74,7 @@ class EE_Prices_List_Table extends WP_List_Table {
 			default:
 				$order = 'ASC';
 		}
-		$this->_PRT->get_all_price_types($orderby, $order);
+		$types = $this->_PRT->get_all_price_types($orderby, $order);var_dump($_GET['orderby']);
 		foreach ($types as $type) {
 			if ($type->deleted()) {
 				$this->views['trashed']['count']++;
@@ -174,8 +174,8 @@ class EE_Prices_List_Table extends WP_List_Table {
 
 	function get_sortable_columns() {
 		$sortable_columns = array(
-				'name' => array('name', false), //true means its already sorted
-				'order' => array('order', true)
+				'name' => array('name', true), //true means its already sorted
+				'order' => array('order', false)
 		);
 		return $sortable_columns;
 	}
@@ -194,7 +194,7 @@ class EE_Prices_List_Table extends WP_List_Table {
 				} else {
 					$class = '';
 				}
-				$views[$view['slug']] = sprintf('<a href="?page=%1$s&price_status=%2$s"%3$s>%4$s (%5$d)</a>',
+				$views[$view['slug']] = sprintf('<a href="?page=%1$s&price_type_status=%2$s"%3$s>%4$s (%5$d)</a>',
 								$_REQUEST['page'],
 								$view['slug'],
 								$class,

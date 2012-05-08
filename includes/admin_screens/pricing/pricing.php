@@ -11,9 +11,6 @@ function espresso_price_manager_menu() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/index.php');
 	espresso_prices_admin_helper();
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-	$PRT = EEM_Price_Type::instance();
-
 	$_REQUEST['action'] = isset($_REQUEST['action']) ? wp_strip_all_tags($_REQUEST['action']) : NULL;
 	$edit_or_add_pages = array('edit_price', 'edit_price_type', 'add_new_price', 'add_new_price_type');
 	$edit_or_add_page = ( in_array($_REQUEST['action'], $edit_or_add_pages)) ? TRUE : FALSE;

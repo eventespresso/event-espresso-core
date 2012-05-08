@@ -58,7 +58,7 @@ class EE_Prices_List_Table extends WP_List_Table {
 		$data = array();
 
 		// Specific to this extension of WP_List_Table
-		$_GET['orderby'] = empty($_GET['orderby']) ? 0 : $_GET['orderby'];
+		$_GET['orderby'] = empty($_GET['orderby']) ? '' : $_GET['orderby'];
 		switch ($_GET['orderby']) {
 			case 'name':
 				$orderby = 'prc.PRC_name';
@@ -72,7 +72,7 @@ class EE_Prices_List_Table extends WP_List_Table {
 			default:
 				$orderby = 'prc.PRC_ID';
 		}
-		$_GET['order'] = empty($_GET['order']) ? 0 : $_GET['order'];
+		$_GET['order'] = empty($_GET['order']) ? '' : $_GET['order'];
 		switch ($_GET['order']) {
 			case 'desc':
 				$order = 'DESC';
