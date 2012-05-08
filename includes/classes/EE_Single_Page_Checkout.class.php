@@ -411,21 +411,27 @@ class EE_Single_Page_Checkout {
 
 
 					$attendee_questions = array();
-					$price_id = $item['price'];
+					$price_id = $item['price'] * 100;
 					$tckt_date = $item['options']['date'];
-					$tckt_time = $item['options']['time'];
+					$find = array( "\xC2\xA0", "\x20", "&#160;", "&nbsp;", ' ' );
+					$tckt_date = str_replace( $find, '_', $tckt_date );
+				
+					$tckt_time = $item['options']['time'] * 100;
 
 					// foreach ticket being purchased
 					for ($att_nmbr = 1; $att_nmbr <= $item['qty']; $att_nmbr++) {
 
-						$input_id = $item['id'] . '-' . $att_nmbr . '-' . str_replace(' ', '_', $tckt_date) . '-' . ($tckt_time * 100) . '-' . ($price_id * 100);
-						$input_name = '[' . $item['id'] . '][' . $att_nmbr . '][' . str_replace(' ', '_', $tckt_date) . '][' . ($tckt_time * 100) . '][' . ($price_id * 100) . ']';
+						$input_id = $item['id'] . '-' . $att_nmbr . '-' . $tckt_date . '-' . $tckt_time . '-' . $price_id;
+						$input_name = '[' . $item['id'] . '][' . $att_nmbr . '][' . $tckt_date . '][' . $tckt_time . '][' . $price_id. ']';
+						
+//echo '<h4>$input_id : ' . $input_id . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>$input_name : ' . $input_name . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
 						$question_meta = array(
 								'attendee_number' => $att_nmbr,
-								'price_id' => $price_id * 100,
-								'date' => str_replace(' ', '_', $tckt_date),
-								'time' => $tckt_time * 100,
+								'price_id' => $price_id,
+								'date' => $tckt_date,
+								'time' => $tckt_time,
 								'input_id' => $input_id
 						);
 						// grab questions

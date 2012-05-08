@@ -62,7 +62,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .mer-whats-next-buttons .event-queue-register-btn,
 .mer-whats-next-buttons .mer-register-btn { margin-left: 1em!important; }
 
-
+.act-like-link { cursor:pointer; }
 .small-text { font-size:.85em; letter-spacing:.5px; line-height:1.5em; }
 .smaller-text { font-size:.7em; letter-spacing:1px; line-height:1.25em; }
 .lt-grey-text { color:#999; }

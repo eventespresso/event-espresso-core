@@ -140,6 +140,7 @@
 		var prmry_att_qstn_grp = $(this).val();
 		// find all of the primaray attendee's questions for this event
 		var prmry_att_questions = $( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.event_questions' ).find('input');		
+		//$( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.event_questions' ).find('input').css('background','pink');		
 
 		// the targeted attendee question group
 		var trgt_att_qstn_grp = $(this).attr('rel');
@@ -164,7 +165,7 @@
 			input_name = $(this).attr('name');
 			input_value = $(this).val();
 			
-			//alert ( 'input_id = ' + input_id + '\n' + 'input_name = ' + input_name  + '\n' + 'event_id = ' + event_id + '\n' + 'att_nmbr = ' + trgt_att_nmbr );
+			//alert ( 'input_id = ' + input_id + '\n' + 'input_name = ' + input_name  + '\n' + 'event_id = ' + event_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
 						
 			// if the input is required but has not been filled out
 			if ( $(this).hasClass('required') && input_value == '' ) {  
@@ -174,7 +175,7 @@
 				var lbl = $(this).prev('label');
 				// grab it's text
 				var lbl_txt = $(lbl).html();
-				//alert(lbl_txt);
+				alert(lbl_txt);
 				// remove "<em>*</em>" from end
 				lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 				// show an error msg
@@ -189,6 +190,7 @@
 			} else {
 
 				new_input_id = '#' + trgt_att_qstn_grp + '-' +  input_id_array[5];
+//				alert ( 'new_input_id = ' + new_input_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
 				
 				if ( $(new_input_id).length > 0 ){
 					$(new_input_id).val(input_value);
@@ -469,10 +471,22 @@
 			}	
 		});
 		
+		if ( good_to_go && $('#mer-reg-page-copy-all-attendee-chk').prop('checked') ) {
+			$('.event_questions').slideUp();
+			$('#mer-reg-page-copy-attendee-dv').slideUp();
+			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
+		}
 		return good_to_go;
 				
 	}
 	
+
+	$('#mer-reg-page-display-event-questions-lnk').click(function() {
+		$('.event_questions').slideDown();
+		$('#mer-reg-page-copy-attendee-dv').slideDown();
+		$(this).addClass('hidden');
+	});
+
 		
 	
 	

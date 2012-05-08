@@ -115,6 +115,10 @@ foreach ( $event_queue as $cart_type => $cart ) {
  }  // $event_queue as $cart_type
 ?>
 
+			
+			<div><a id="mer-reg-page-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right" ><?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?></a></div>
+			
+			
 			<div id="mer-reg-page-whats-next-buttons" class="mer-whats-next-buttons">
 			
 				<a id="mer-reg-page-go-to-step-2-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >
