@@ -420,20 +420,20 @@ function events_data_tables_install() {
 
 
 	$table_name = 'esp_attendee';
-	$sql = "ATT_ID				int(10)				unsigned			NOT	NULL AUTO_INCREMENT,
-					ATT_fname			varchar(45)									NOT NULL,
-					ATT_lname			varchar(45)									NOT	NULL,
-					ATT_address		varchar(45)		DEFAULT	NULL,
-					ATT_address2	varchar(45)		DEFAULT	NULL,
-					ATT_city			varchar(45)		DEFAULT	NULL,
-					STA_ID				varchar(45)		DEFAULT	NULL,
-					CNT_ISO				varchar(45)		DEFAULT	NULL,
-					ATT_zip				varchar(12)		DEFAULT	NULL,
-					ATT_email			varchar(100)								NOT NULL,
-					ATT_phone			varchar(45)		DEFAULT NULL,
-					ATT_social		text,
-					ATT_comments	mediumtext,
-					ATT_notes			mediumtext,
+	$sql = "ATT_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
+					ATT_fname varchar(45) NOT NULL,
+					ATT_lname varchar(45) NOT	NULL,
+					ATT_address varchar(45) DEFAULT	NULL,
+					ATT_address2 varchar(45) DEFAULT	NULL,
+					ATT_city varchar(45) DEFAULT	NULL,
+					STA_ID varchar(45) DEFAULT	NULL,
+					CNT_ISO varchar(45) DEFAULT	NULL,
+					ATT_zip varchar(12) DEFAULT	NULL,
+					ATT_email varchar(100) NOT NULL,
+					ATT_phone varchar(45) DEFAULT NULL,
+					ATT_social text,
+					ATT_comments mediumtext,
+					ATT_notes mediumtext,
 						PRIMARY KEY  (ATT_ID),
 							KEY ATT_fname (ATT_fname),
 							KEY ATT_lname (ATT_lname),
@@ -443,46 +443,46 @@ function events_data_tables_install() {
 
 
 	$table_name = 'esp_payment';
-	$sql = "PAY_ID				int(10) unsigned								NOT NULL AUTO_INCREMENT,
-				  TXN_ID				int(10) unsigned	DEFAULT NULL,
-				  PAY_timestamp int(11)													NOT NULL,
-				  PAY_method		varchar(45)				DEFAULT NULL,
-				  PAY_amount		decimal(10,2)			DEFAULT NULL,
-				  PAY_details		text,
-						PRIMARY KEY					(PAY_ID),
-							KEY TXN_ID				(TXN_ID),
+	$sql = "PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  TXN_ID int(10) unsigned	DEFAULT NULL,
+				  PAY_timestamp int(11) NOT NULL,
+				  PAY_method varchar(45) DEFAULT NULL,
+				  PAY_amount decimal(10,2) DEFAULT NULL,
+				  PAY_details text,
+						PRIMARY KEY  (PAY_ID),
+							KEY TXN_ID (TXN_ID),
 							KEY PAY_timestamp (PAY_timestamp)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 	$table_name = 'esp_datetime';
-	$sql = "DTT_ID						int(10) unsigned							NOT NULL AUTO_INCREMENT,
-				  EVT_ID						int(10) unsigned DEFAULT NULL,
-				  DTT_start					int(20)												NOT NULL,
-					DTT_end						int(20)												NOT NULL,
-				  DTT_event_or_reg	varchar(1)			 DEFAULT NULL,
-				  DTT_reg_limit			int(8)												NOT NULL,
-					DTT_is_primary		tinyint(1)			 DEFAULT 1		NULL,
-						PRIMARY KEY							(DTT_ID),
-							KEY EVT_ID						(EVT_ID),
-							KEY DTT_event_or_reg	(DTT_event_or_reg)";
+	$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  EVT_ID int(10) unsigned DEFAULT NULL,
+				  DTT_start int(20) NOT NULL,
+					DTT_end int(20) NOT NULL,
+				  DTT_event_or_reg varchar(1) DEFAULT NULL,
+				  DTT_reg_limit int(8) NOT NULL,
+					DTT_is_primary tinyint(1) DEFAULT 1		NULL,
+						PRIMARY KEY  (DTT_ID),
+							KEY EVT_ID (EVT_ID),
+							KEY DTT_event_or_reg (DTT_event_or_reg)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
 
 	$table_name = 'esp_registration';
-	$sql = "REG_ID							int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  EVT_ID							int(10) unsigned NOT NULL,
-				  ATT_ID							int(10) unsigned NOT NULL,
-				  TXN_ID							int(10) unsigned NOT NULL,
-				  REG_session					varchar(45) COLLATE utf8_bin NOT NULL,
-				  REG_code						varchar(45) COLLATE utf8_bin DEFAULT NULL,
-				  REG_is_primary			tinyint(1) DEFAULT '0',
-				  REG_is_group_reg		tinyint(1) DEFAULT '0',
-				  STS_ID							varchar(3) NOT NULL DEFAULT 'PND',
-				  REG_date						int(11) NOT NULL,
-				  PRC_ID							varchar(45) DEFAULT NULL,
-				  REG_att_is_going		tinyint(1) DEFAULT '0',
-				  REG_att_checked_in	tinyint(1) DEFAULT '0',
+	$sql = "REG_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  EVT_ID int(10) unsigned NOT NULL,
+				  ATT_ID int(10) unsigned NOT NULL,
+				  TXN_ID int(10) unsigned NOT NULL,
+				  REG_session varchar(45) COLLATE utf8_bin NOT NULL,
+				  REG_code varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				  REG_is_primary tinyint(1) DEFAULT '0',
+				  REG_is_group_reg tinyint(1) DEFAULT '0',
+				  STS_ID varchar(3) NOT NULL DEFAULT 'PND',
+				  REG_date int(11) NOT NULL,
+				  PRC_ID varchar(45) DEFAULT NULL,
+				  REG_att_is_going tinyint(1) DEFAULT '0',
+				  REG_att_checked_in tinyint(1) DEFAULT '0',
 				  PRIMARY KEY  (REG_ID),
 				  KEY EVT_ID (EVT_ID),
 				  KEY ATT_ID (ATT_ID),
@@ -826,7 +826,7 @@ function events_data_tables_install() {
 			  PRT_is_global tinyint(1) NULL DEFAULT 0 ,
 			  PRT_order tinyint(1) UNSIGNED NULL ,
 				PRT_deleted tinyint(1) DEFAULT 0,
-			  UNIQUE INDEX  PRT_name (PRT_name ASC) ,
+			  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 			  PRIMARY KEY  (PRT_ID)';
 	event_espresso_run_install($table_name, $table_version, $sql);
 
@@ -1381,7 +1381,6 @@ function espresso_default_prices() {
 	$wpdb->query($sql);
 }
 
-add_action('activated_plugin', 'save_error');
 if (!function_exists('save_error')) {
 
 	function save_error() {
@@ -1389,3 +1388,5 @@ if (!function_exists('save_error')) {
 	}
 
 }
+
+//add_action('activated_plugin', 'save_error');

@@ -32,7 +32,7 @@
 
 //Returns the plugin version
 function espresso_version() {
-	return '3.2.3005';
+	return '3.2.3006';
 }
 
 define("EVENT_ESPRESSO_VERSION", espresso_version());
@@ -172,5 +172,5 @@ if (is_admin()) {
  *	10: event_espresso_filter_plugin_actions
  *
  */
-echo get_option('plugin_error');
-delete_option('plugin_error');
+//echo get_option('plugin_error');
+//delete_option('plugin_error');
