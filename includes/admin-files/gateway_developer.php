@@ -2,6 +2,10 @@
 
 function espresso_gateway_developer_meta_box() {
 	?>
+	<div id="force_ssl_return" style="display:none">
+		<h2><?php _e('Force HTTPS on Return URL', 'event_espresso'); ?></h2>
+		<p><?php _e('Forces the gateway provider to send the customer back to the return page -- or pull the return page from the site -- using HTTPS.  This is required in some instances to prevent a warning that the page the user is going to is not secure.', 'event_espresso'); ?></p>
+	</div>
 	<div class="padding">
 		<?php
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/index.php")) {
