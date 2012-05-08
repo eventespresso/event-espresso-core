@@ -9,10 +9,8 @@ class EE_Prices_List_Table extends WP_List_Table {
 	private $_PRT = NULL; // internal object reference to the EEM_Price_Type::instance
 	private $view = NULL;
 	private $views = NULL;
-	private $view_counts = NULL;
 
-	function __construct() {
-		global $status, $page;
+	public function __construct() {
 
 		// Specific to this extension of WP_List_Table
 		$this->views = array(
