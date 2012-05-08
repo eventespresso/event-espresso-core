@@ -77,7 +77,7 @@ class EE_Event_Price {
 	 *	@access	private
 	 *	@var array
 	 */
-	private $_PRT_MDL = NULL;
+	//private $_PRT_MDL = NULL;
 
 
 
@@ -88,8 +88,8 @@ class EE_Event_Price {
 	 * @param  object		$price_type
 	 */
 	public function __construct( EE_Price $price ) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
-		$this->_PRT_MDL = EEM_Price_Type::instance();
+//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+//		$this->_PRT_MDL = EEM_Price_Type::instance();
 		$this->copy_object_properties( $price );	
 	}
 
@@ -105,6 +105,9 @@ class EE_Event_Price {
 	 */
 	public function copy_object_properties( $price ) {
 
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		$Price_Types = EEM_Price_Type::instance()->type;
+		
 		$this->_ID						= $price->ID();
 		$this->_event					= $price->event();
 		$this->_orig_price			= $price->amount();
@@ -121,12 +124,12 @@ class EE_Event_Price {
 		$this->_order					= $price->order();
 
 		$this->_price_type_ID = $price->type();
-		$this->_price_type = $this->_PRT_MDL->type[ $price->type() ]->name();
-		$this->_is_member = $this->_PRT_MDL->type[ $price->type() ]->is_member();
-		$this->_is_discount = $this->_PRT_MDL->type[ $price->type() ]->is_discount();
-		$this->_is_tax = $this->_PRT_MDL->type[ $price->type() ]->is_tax();
-		$this->_is_percent = $this->_PRT_MDL->type[ $price->type() ]->is_percent();
-		$this->_is_global = $this->_PRT_MDL->type[ $price->type() ]->is_global();
+		$this->_price_type = $Price_Types[ $price->type() ]->name();
+		$this->_is_member = $Price_Types[ $price->type() ]->is_member();
+		$this->_is_discount = $Price_Types[ $price->type() ]->is_discount();
+		$this->_is_tax = $Price_Types[ $price->type() ]->is_tax();
+		$this->_is_percent = $Price_Types[ $price->type() ]->is_percent();
+		$this->_is_global = $Price_Types[ $price->type() ]->is_global();
 		
 	}
 
@@ -149,9 +152,12 @@ class EE_Event_Price {
 		}
 //		echo printr( $price_modifier, '$price_modifier <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 		
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		$Price_Types = EEM_Price_Type::instance()->type;
+		
 		$mod_amount = $price_modifier->amount();
 
-		if ( $this->_PRT_MDL->type[ $price_modifier->type() ]->is_percent() ) {
+		if ( $Price_Types[ $price_modifier->type() ]->is_percent() ) {
 		
 			$percent_adj = $mod_amount;
 			$mod_amount = $this->_orig_price * $mod_amount / 100;
@@ -173,8 +179,8 @@ class EE_Event_Price {
 		}
 		
 		// instead of using an IF statement to perform either addition or subtraction, we just use addition, but first multiply discounts by -1 to make them negative
-		$this->_final_price += (( $this->_PRT_MDL->type[ $price_modifier->type() ]->is_discount() ) ? -1 : 1) * $mod_amount;
-		//echo 'modifier = ' . $price_modifier->name() . ' ' . (( $this->_PRT_MDL->type[ $price_modifier->type() ]->is_discount() ) ? -1 : 1) * $mod_amount . '<br />';
+		$this->_final_price += (( $Price_Types[ $price_modifier->type() ]->is_discount() ) ? -1 : 1) * $mod_amount;
+		//echo 'modifier = ' . $price_modifier->name() . ' ' . (( $Price_Types[ $price_modifier->type() ]->is_discount() ) ? -1 : 1) * $mod_amount . '<br />';
 		$this->_final_price = number_format( max( $this->_final_price, 0 ), 2 );
 
 	}

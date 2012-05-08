@@ -67,6 +67,10 @@ function event_espresso_get_event_details($attributes) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+	$DTM_MDL = EEM_Datetime::instance();
+
 
 	//echo 'This page is located in ' . get_option( 'upload_path' );
 	$event_page_id = $org_options['event_page_id'];
@@ -227,9 +231,6 @@ function event_espresso_get_event_details($attributes) {
 		echo $venue_hdr;
 	}
 
-	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Price.class.php' );
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
-	$DTM_MDL = EEM_Datetime::instance();
 
 	foreach ($events as $event) {
 	
@@ -286,10 +287,10 @@ function event_espresso_get_event_details($attributes) {
 
 
 // EVENT TIMES
-		$event->datetimes = $DTM_MDL->get_all_event_dates($event_id);
-//		echo printr($event->datetimes, 'EVENT TIMES <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+		$event->datetimes = $edts = $DTM_MDL->get_all_event_dates($event->id);
+		//echo printr($event->datetimes, 'EVENT TIMES for '. $event_name.'  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
-		$display_event_date = array_shift( $event->datetimes );
+		$display_event_date = array_shift( $edts );
 //		echo printr( $event->datetimes, 'event->datetimes <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 //echo '<h4>$display_event_date : ' . $display_event_date->start() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
@@ -499,7 +500,7 @@ function event_espresso_get_event_details($attributes) {
 
 
 
-				//$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
+				$event->reg_btn = apply_filters( 'filter_hook_espresso_event_reg_btn', $event->reg_btn );
 
 				$event_reg_link = '
 			<p id="register_link-' . $event_id . '" class="">
