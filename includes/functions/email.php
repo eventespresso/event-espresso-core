@@ -257,7 +257,7 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = ''
 			<td>" . event_date_display($data->attendee->start_date) . ' - ' . event_date_display($data->attendee->end_date) . "</td>
 			<td>" . event_date_display($data->attendee->event_time, get_option('time_format')) . " - " . event_date_display($data->attendee->end_time, get_option('time_format')) . "</td>
 			<td>" . $data->event->venue_name . "<br />$data->location <br />$data->google_map_link</td>" .
-					($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendees', 'event_espresso') . '</td>' : '') .
+					($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . ' ' . _n('attendee', 'attendees', $data->attendee->quantity, 'event_espresso') . '</td>' : '') .
 					"</tr>";
 
 	//Output custom questions
@@ -271,15 +271,15 @@ function espresso_prepare_email_data($attendee_id, $multi_reg, $custom_data = ''
 
 	//Payment URL
 	$payment_url = get_option('siteurl') . "/?page_id=" . $org_options['return_url'] . "&amp;registration_id=" . $data->attendee->registration_id . "&amp;id=" . $data->attendee->id;
-	$data->payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details') . '</a>';
+	$data->payment_link = '<a href="' . $payment_url . '">' . __('View Your Payment Details', 'event_espresso') . '</a>';
 
 	// download link
 	$data->invoice_link = '<a href="' . espresso_invoice_url($data->attendee->id, $data->attendee->registration_id) . '" target="_blank">' . __('Download PDF Invoice', 'event_espresso') . '</a>';
 
 	//Edit attendee link
-	$data->edit_attendee = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'attendee', 'Edit Registration Details');
+	$data->edit_attendee = espresso_edit_attendee($data->attendee->registration_id, $data->attendee->id, $data->attendee->event_id, 'attendee', __('Edit Registration Details', 'event_espresso'));
 
-	$data->email_subject = !$data->multi_reg ? $data->event->event_name : $org_options['organization'] . __(' registration confirmation', 'event_espresso');
+	$data->email_subject = !$data->multi_reg ? $data->event->event_name : $org_options['organization'] . ' ' . __('registration confirmation', 'event_espresso');
 
 	switch($custom_data_email_type) {
 	//Build invoice email
@@ -348,13 +348,14 @@ function espresso_prepare_admin_email($data) {
 	$admin_message = "<h3>" . __('Registration Summary:', 'event_espresso') . "</h3>";
 
 	//Email body
+	$attendee_quantity_count = $data->attendee->quantity;
 	$admin_email_body = "<tr>
 		<td>$primary_attendee $admin_attendee_link</td>
 		<td>" . $data->attendee->email . "</td>
 		<td>" . stripslashes_deep($data->event->event_name) . " | " . $data->attendee->price_option . "</td>
 		<td>" . event_date_display($data->attendee->start_date) . ' - ' . event_date_display($data->attendee->end_date) . "</td>
 		<td>" . event_date_display($data->attendee->event_time, get_option('time_format')) . " - " . event_date_display($data->attendee->end_time, get_option('time_format')) . "</td> " .
-					($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendee(s)', 'event_espresso') . '</td>' : '') . "</tr>";
+					($attendee_quantity_count > 0 ? '<td>' . $attendee_quantity_count . ' ' . printf( _n('attendee', 'attendees', $attendee_quantity_count, 'event_espresso') ) . '</td>' : '') . "</tr>";
 
 	//Additional information/questions
 	$admin_additional_info = "<h3>" . __('Additional Information:', 'event_espresso') . "</h3>";
@@ -581,7 +582,7 @@ if (!function_exists('espresso_event_reminder')) {
 			?>
 			<div id="message" class="updated fade">
 				<p><strong>
-						<?php _e('Email Sent to ' . $count . ' people sucessfully.', 'event_espresso'); ?>
+						<?php echo printf( _n('Email Sent to %d person successfully.', 'Email Sent to %d people successfully.', $count, 'event_espresso'), $count ); ?>
 					</strong></p>
 			</div>
 			<?php
@@ -659,8 +660,8 @@ if (!function_exists('event_espresso_send_cancellation_notice')) {
 
 
 				$subject = __('Event Cancellation Notice', 'event_espresso');
-				$email_body = '<p>' . $event_name . __(' has been cancelled.', 'event_espresso') . '</p>';
-				$email_body .= '<p>' . __('For more information, please email ' . $alt_email == '' ? $org_options['contact_email'] : $alt_email, 'event_espresso') . '</p>';
+				$email_body = '<p>' . sprintf( __( '%d has been cancelled.', 'event_espresso' ), $event_name ) . '</p>';
+				$email_body .= '<p>' . sprintf( __('For more information, please email %d', 'event_espresso'), $alt_email == '' ? $org_options['contact_email'] : $alt_email ) . '</p>';
 				$body = str_replace($tags, $vals, $email_body);
 				wp_mail($attendee_email, stripslashes_deep(html_entity_decode($subject, ENT_QUOTES, "UTF-8")), stripslashes_deep(html_entity_decode(wpautop($email_body), ENT_QUOTES, "UTF-8")), $headers);
 			}
@@ -754,14 +755,12 @@ if (!function_exists('event_espresso_send_attendee_registration_approval_pending
 		}
 		$admin_email = $alt_email == '' ? $org_options['contact_email'] : $alt_email . ',' . $org_options['contact_email'];
 		if (!empty($admin_email)) {
-			$subject = "New attendee registration approval pending";
-			$body = "
-Event title: $event_name
-<br/>
-Attendee name: $fname&nbsp;$lname
-<br/>
-Thank You.
-";
+			$subject = __('New attendee registration approval pending','event_espresso');
+			$body = sprintf( __('Event title: %d', 'event_espresso'), $event_name );
+			$body .= '<br/>';
+			$body .= sprintf( __('Attendee name: %1$s %2$s', 'event_espresso'), $fname, $lname );
+			$body .= '<br/>';
+			$body .= __('Thank You.', 'event_espresso');
 			$email_params = array(
 					'send_to' => $admin_email,
 					'email_subject' => __($subject, 'event_espresso'),
@@ -771,16 +770,14 @@ Thank You.
 		}
 
 		if (!empty($attendee_email)) {
-			$subject = "Event registration pending";
-			$body = "
-Event title: $event_name
-<br/>
-Attendee name: $fname&nbsp;$lname
-<br/>
-Your registration is pending for approval from event admin. You will receive an email with payment info when admin approves your registration.
-<br/><br/>
-Thank You.
-";
+			$subject = __('Event registration pending','event_espresso');
+			$body = sprintf( __('Event title: %d', 'event_espresso'), $event_name );
+			$body .= '<br/>';
+			$body .= sprintf( __('Attendee name: %1$s %2$s', 'event_espresso'), $fname, $lname );
+			$body .= '<br/>';
+			$body .= __('Your registration is pending for approval from event admin. You will receive an email with payment info when admin approves your registration.', 'event_espresso');
+			$body .= '<br/><br/>';
+			$body .= __('Thank You.', 'event_espresso');
 			$email_params = array(
 					'send_to' => $attendee_email,
 					'email_subject' => __($subject, 'event_espresso'),
