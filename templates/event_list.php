@@ -204,15 +204,7 @@ function event_espresso_get_event_details($attributes) {
 <div id="mer-ajax-loading" style="display:none;">
 	<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-grey.gif" /><span>loading...</span>
 </div>
-
-<div id="mer-success-msg" class="event-queue-msg ui-widget-content ui-state-highlight ui-corner-all ui-helper-hidden" style="display:none;">
-	<span class="ui-icon ui-icon-circle-check"></span>&nbsp;<span class="msg"></span>
-</div>
-
-<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all ui-helper-hidden" style="display:none;">
-	<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg"></span>
-</div>
-
+' . espresso_get_notices() . '
 <input id="event-queue-poll-server" type="hidden" value="1" name="event-queue-poll-server">
 
 ';
@@ -231,7 +223,7 @@ function event_espresso_get_event_details($attributes) {
 		echo $venue_hdr;
 	}
 
-
+	
 	foreach ($events as $event) {
 	
 		$event_id = $event->id;

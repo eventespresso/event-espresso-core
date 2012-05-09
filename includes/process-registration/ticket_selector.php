@@ -75,8 +75,6 @@ function espresso_ticket_selector($event) {
 	//$template_args['meta'] = base64_encode(serialize($all_meta));
 
 	$template_args['currency_symbol'] = $event->currency_symbol;
-
-	$template_args['notices'] = espresso_get_notices();
 	
 	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php';
 	espresso_display_template($templates['ticket_selector'], $template_args);
@@ -197,12 +195,14 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	
 		global $espresso_notices;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		echo printr($_POST);
+		//echo printr($_POST, '$_POST' );
+		//$event_queue_request = ( isset( $_REQUEST['e_reg'] ) && $_REQUEST['e_reg'] == 'event_queue' ) ? TRUE : FALSE;
 		// do we have an event id?
-		if (isset($_POST['tkt-slctr-event-id'])) {
+		if ( isset($_POST['tkt-slctr-event-id'] )) {
 		
 			// validate/sanitize data
 			$valid = validate_post_data('add_event_to_cart');
+//			echo printr($valid, '$valid' );
 		
 			//check total tickets oredered vs max number of attendees that can register
 			if ($valid['total_tickets'] > $valid['atndz']) {
@@ -215,7 +215,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$limit_error_2 = sprintf(_n($singular, $plural, $valid['atndz'], 'event_espresso'), $valid['atndz'], $valid['atndz']);
-				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
+				$espresso_notices['errors'][] = $limit_error_1 . '<br/>' . $limit_error_2;
 				
 			} else {
 				
@@ -265,36 +265,40 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 						}
 					} else {
 						// nothing added to cart
-						$error_msg = __( 'An error occured. No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+						$espresso_notices['errors'][] = __( 'An error occured. No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 					}
 
 				} else {
 					// no ticket quantities were selected
-					$error_msg = __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+					$espresso_notices['errors'][] = __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 				}				
 			}
 
 			if ( isset( $_POST['tkt-slctr-return-url-'.$valid_data['id']] )) {
-				$return_url = add_query_arg( array( 'errors'=>urlencode($error_msg) ), $_POST['tkt-slctr-return-url-'.$valid_data['id']] );
+				$return_url = add_query_arg( espresso_get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid_data['id']] );
 				wp_safe_redirect( $return_url );
 				exit();
-			}	
+			} elseif ( isset( $_SERVER['HTTP_REFERER'] )) {
+				$return_url = add_query_arg( espresso_get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
+				wp_safe_redirect( $return_url );
+				exit();
+			} else {
+				echo espresso_get_notices();			
+			}
 			
-		} else {
+			
+		} /*else {
 			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
-			$error_msg = __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+			$espresso_notices['errors'][] = __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+			
 		}	
 
 		if ( isset( $_SERVER['HTTP_REFERER'] )) {
-			$return_url = add_query_arg( array( 'errors'=>urlencode($error_msg) ), $_SERVER['HTTP_REFERER'] );
+			$return_url = add_query_arg(  espresso_get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
 			wp_safe_redirect( $return_url );
 			exit();
-		}	
+		}	*/
 
-
-
-		
-		
 	}
 
 
@@ -450,7 +454,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 			return FALSE;
 		}
 
-		echo printr( $valid_data, '$valid_data' );
+		//echo printr( $valid_data, '$valid_data' );
 		return $valid_data;
 	}
 

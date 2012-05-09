@@ -5,7 +5,8 @@
 
 	// submit form
 	$('.event-list-reg-link-btn').click(function() { 
-		$(this).parents('form').submit();
+		$(this).closest('form').submit();
+		return false;
 	});	
 	
 	// close a div
