@@ -123,3 +123,4 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 }
 #message.success { border-color:#B9D147; }
 #message.error { border-color:#EB574D; }
+#message p { margin:0; }
