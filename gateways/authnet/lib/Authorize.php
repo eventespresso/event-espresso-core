@@ -9,7 +9,7 @@
  */
 $authnet_gateway_version = '1.0';
 
-class Authorize extends PaymentGateway {
+class EE_Authorize extends PaymentGateway {
 
 	/**
 	 * Login ID of authorize.net account

@@ -3,7 +3,7 @@
 include_once ('Authorize.php');
 echo '<!--Event Espresso Authorize.net SIM Gateway Version ' . $authnet_gateway_version . '-->';
 // Create an instance of the authorize.net library
-$myAuthorize = new Authorize();
+$myAuthorize = new EE_Authorize();
 
 // Log the IPN results
 $myAuthorize->ipnLog = TRUE;

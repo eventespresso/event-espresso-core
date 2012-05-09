@@ -5,7 +5,7 @@ include_once ('Authorize.php');
 echo '<!--Event Espresso Authorize.net Gateway Version ' . $authnet_gateway_version . '-->';
 global $org_options;
 do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-$myAuthorize = new Authorize(); // initiate an instance of the class
+$myAuthorize = new EE_Authorize(); // initiate an instance of the class
 
 $payment_settings = get_option('payment_data_' . $espresso_wp_user);
 $authnet_login_id = empty($payment_settings['authnet_sim']['authnet_login_id']) ? '' : $payment_settings['authnet_sim']['authnet_login_id'];
