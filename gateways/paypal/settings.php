@@ -121,14 +121,20 @@ function event_espresso_display_paypal_settings($payment_settings) {
 							<option value="USD">
 								<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
 							</option>
-							<option value="AUD">
-								<?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
-							</option>
 							<option value="GBP">
 								<?php _e('Pounds Sterling (&pound;)', 'event_espresso'); ?>
 							</option>
 							<option value="CAD">
 								<?php _e('Canadian Dollars (C $)', 'event_espresso'); ?>
+							</option>
+							<option value="AUD">
+								<?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
+							</option>
+							<option value="BRL">
+								<?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
+							</option>
+							<option value="CHF">
+								<?php _e('Swiss Franc', 'event_espresso'); ?>
 							</option>
 							<option value="CZK">
 								<?php _e('Czech Koruna', 'event_espresso'); ?>
@@ -138,9 +144,6 @@ function event_espresso_display_paypal_settings($payment_settings) {
 							</option>
 							<option value="EUR">
 								<?php _e('Euros (&#8364;)', 'event_espresso'); ?>
-							</option>
-							<option value="CHF">
-								<?php _e('Swiss Franc', 'event_espresso'); ?>
 							</option>
 							<option value="HKD">
 								<?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
@@ -157,35 +160,35 @@ function event_espresso_display_paypal_settings($payment_settings) {
 							<option value="MXN">
 								<?php _e('Mexican Peso', 'event_espresso'); ?>
 							</option>
-							<option value="NZD">
-								<?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
+							<option value="MYR">
+								<?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
 							</option>
 							<option value="NOK">
 								<?php _e('Norwegian Krone', 'event_espresso'); ?>
 							</option>
-							<option value="PLN">
-								<?php _e('Polish Zloty', 'event_espresso'); ?>
-							</option>
-							<option value="SGD">
-								<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
-							</option>
-							<option value="SEK">
-								<?php _e('Swedish Krona', 'event_espresso'); ?>
-							</option>
-							<option value="BRL">
-								<?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
-							</option>
-							<option value="MYR">
-								<?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
+							<option value="NZD">
+								<?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
 							</option>
 							<option value="PHP">
 								<?php _e('Philippine Pesos', 'event_espresso'); ?>
 							</option>
-							<option value="TWD">
-								<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
+							<option value="PLN">
+								<?php _e('Polish Zloty', 'event_espresso'); ?>
+							</option>
+							<option value="SEK">
+								<?php _e('Swedish Krona', 'event_espresso'); ?>
+							</option>
+							<option value="SGD">
+								<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
 							</option>
 							<option value="THB">
 								<?php _e('Thai Baht', 'event_espresso'); ?>
+							</option>
+							<option value="TRY">
+								<?php _e('Turkish Lira (only for Turkish users)', 'event_espresso'); ?>
+							</option>
+							<option value="TWD">
+								<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
 							</option>
 						</select></td>
 				</tr>
