@@ -264,8 +264,6 @@ function espresso_calendar_config_mnu() {
 																<?php _e('If you are using the "Create a Post" feature. Use this option to link to the posts that are created by Event Espresso.', 'event_espresso'); ?>
 															</span></td>
 													</tr>
-													<?php if ( espresso_version() >= '3.2.P' ) {
-														//only display this if we're using 3.2 ?>
 													<tr>
 														<th> <label for="enable-calendar-thumbs">
 																<?php _e('Enable Images in Calendar', 'event_espresso');
@@ -276,7 +274,6 @@ function espresso_calendar_config_mnu() {
 														<td><?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"'); ?>
 															</li></td>
 													</tr>
-													<?php } ?>
 												</tbody>
 											</table>
 											<h4>
