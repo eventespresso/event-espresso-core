@@ -542,19 +542,22 @@ if (!function_exists('espresso_calendar')) {
 						//if(event.in_thickbox_url){
 						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
 						//}
+						// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
+						if(event.expired){
+							jQuery('a.fc-event div').removeClass('fc-event-skin');
+							jQuery('a.fc-event').removeClass('ui-state-default').addClass('expired ui-state-focus');
+						}
+
 						<?php
 						//Adds the themeroller styles to the links in the calendar
 						if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
-							jQuery('a.fc-event').addClass('themeroller ui-widget-header');
+							jQuery('a.fc-event').addClass('themeroller ui-state-default');
+							jQuery('a.fc-event div').removeClass('fc-event-skin');
+							jQuery('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
+							jQuery('.fc-view').addClass('ui-widget-content');
 						<?php
 						}
 						?>
-
-
-						// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
-						if(event.expired){
-							element.addClass('expired');
-						}
 
 						if(event.event_img_thumb){
 							//alert('we have thumbs');

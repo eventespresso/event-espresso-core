@@ -263,6 +263,7 @@ th.fc-widget-header {
 	border-width: 0;
 	font-size: .85em;
 	cursor: default;
+	text-shadow: none;
 	}
 
 a.fc-event,
@@ -279,14 +280,14 @@ a.fc-event {
 	}
 
 .fc-event-skin {
-	background-color: rgba(72, 109, 150, 0.5); /* using rgba values for opacity. bitchin */
-	border-color: rgba(72, 109, 150, 0.5);
+	background-color: rgba(72, 109, 150, 0.5);
+	/* using rgba values for opacity. bitchin */
+	border: none;
 	color: #fff;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 	}
-.fc-event-skin.expired {
-	background-color: #ccc; /* using rgba values for opacity. bitchin */
-	border-color: #ccc;
-}
 
 .fc-event-inner {
 	position: relative;
@@ -641,6 +642,9 @@ class name '.event-has-thumb' is added to top level parent event */
 
 #content table.fc-header, #content table.fc-border-separate, .fc-header th, .fc-header td { border: none; }
 a.fc-event { line-height: 100%; }
+
+.qtip, .ui-tooltip-titlebar { font-size: 12px; }
+.ui-widget-content .fc-event.ui-state-focus, .ui-widget-content  .fc-event.ui-state-default, .ui-widget-content  .fc-content .ui-state-active, .fc-view .ui-state-active { background-image: none!important; }
 
 /* Calendar Widget CSS */
 /* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
