@@ -278,9 +278,9 @@ a.fc-event {
 .fc-rtl .fc-event {
 	text-align: right;
 	}
-
+.expired .fc-event-skin { background-color: #888; }
 .fc-event-skin {
-	background-color: rgba(72, 109, 150, 0.5);
+	background-color: rgb(72, 109, 150);
 	/* using rgba values for opacity. bitchin */
 	border: none;
 	color: #fff;
@@ -288,7 +288,6 @@ a.fc-event {
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	}
-
 .fc-event-inner {
 	position: relative;
 	width: 100%;
@@ -590,6 +589,7 @@ class name '.event-has-thumb' is added to top level parent event */
 a.fc-event { line-height: 100%; }
 
 .qtip, .ui-tooltip-titlebar { font-size: 12px; }
+.ui-tooltip-content { font-size: 11px; }
 .ui-widget-content .fc-event.ui-state-focus, .ui-widget-content  .fc-event.ui-state-default, .ui-widget-content  .fc-content .ui-state-active, .fc-view .ui-state-active { background-image: none!important; }
 
 /* Calendar Widget CSS */
