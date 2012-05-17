@@ -153,6 +153,38 @@ class EEM_Datetime extends EEM_Base {
 
 
 
+
+
+	/**
+	*		create new blank datetime
+	*
+	* 		@access		public
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function create_new_blank_datetime() {
+		$times = array( 
+				new EE_Datetime( 
+						0, 
+						true, 
+						time() + (60 * 60 * 24 * 30), 
+						time() + (60 * 60 * 24 * 30), 
+						time(), 
+						time() + (60 * 60 * 24 * 30), 
+						NULL,
+						NULL
+				)
+		);
+		$times[0]->set_start_time("8am");
+		$times[0]->set_end_time("5pm");
+		$times[0]->set_reg_start_time("8am");
+		$times[0]->set_reg_end_time("5pm");
+		return $times;
+	}
+
+
+
+
+
 	/**
 	*		get all event datetimes from db
 	*
@@ -163,30 +195,6 @@ class EEM_Datetime extends EEM_Base {
 		return $this->_get_event_datetimes( $EVT_ID );
 	}
 
-
-	/**
-	*		create new blank datetime
-	*
-	* 		@access		public
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function _create_new_blank_datetime() {
-		$times = array( 
-				new EE_Datetime( 
-						0, 
-						true, 
-						time() + (60 * 60 * 24 * 30), 
-						time() + (60 * 60 * 24 * 30), 
-						time() + (60 * 60 * 24 * 30), 
-						time() + (60 * 60 * 24 * 30), 
-						NULL,
-						NULL
-				)
-		);
-		$times[0]->set_start_time("8AM");
-		$times[0]->set_end_time("3:30PM");
-		return $times;
-	}
 
 
 
@@ -199,10 +207,12 @@ class EEM_Datetime extends EEM_Base {
 	*/
 	public function get_all_event_dates( $EVT_ID = FALSE ) {
 		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
-			return $this->_create_new_blank_datetime();
+			return $this->create_new_blank_datetime();
 		}
 		return $this->_get_event_datetimes( $EVT_ID, 'E' );
 	}
+
+
 
 
 
@@ -241,7 +251,7 @@ class EEM_Datetime extends EEM_Base {
 	*/
 	public function get_all_reg_dates( $EVT_ID = FALSE ) {
 		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
-			$reg_times = $this->_create_new_blank_datetime();
+			$reg_times = $this->create_new_blank_datetime();
 			$reg_times[0]->set_start_time("12:00:01AM");
 			$reg_times[0]->set_end_time("11:59:59PM");
 			return $reg_times;

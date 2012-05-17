@@ -234,7 +234,9 @@ function espresso_event_editor_date_time_metabox($event) {
 	$DTM = EEM_Datetime::instance();
 
 	// grab event times
-	$times = $DTM->get_all_datetimes_for_event( $event->id );
+	if ( ! $times = $DTM->get_all_datetimes_for_event( $event->id )) {
+		$times = $DTM->create_new_blank_datetime();
+	}
 	// grab reg times
 	//$reg_times = $DTM->get_all_reg_dates($event->id);
 	
