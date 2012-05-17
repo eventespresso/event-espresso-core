@@ -321,7 +321,7 @@ function espresso_event_editor_date_time_metabox($event) {
 		</table>
 		<br class="clear"/>
 		<!--<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />-->
-		<a id="add-new-date-time" class="button dtm-inp-btn" ><?php _e('Add Additional Time', 'event_espresso'); ?></a>
+		<a id="add-new-date-time" class="button dtm-inp-btn" ><?php _e('Add New Dates &amp; Times', 'event_espresso'); ?></a>
 		<br class="clear"/><br/>
 	</div>
 

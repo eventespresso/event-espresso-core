@@ -851,6 +851,8 @@ class EE_Single_Page_Checkout {
 						foreach ($event_details as $event_time => $tckt_details) {
 							foreach ($tckt_details as $tckt_price => $att_details) {
 								foreach ($att_details as $form_input => $input_value) {
+								
+									$input_value = htmlentities( $input_value, ENT_QUOTES, 'UTF-8' );
 
 									$line_item_id = $att_details['line_item_id'];							
 									$cart_contents = $this->cart->whats_in_the_cart('REG', $line_item_id);
