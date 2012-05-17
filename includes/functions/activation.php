@@ -465,7 +465,7 @@ function events_data_tables_install() {
 			  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
 			  DTT_avail_space mediumint(8) unsigned DEFAULT NULL,
 			  PRIMARY KEY (DTT_ID),
-			  KEY EVT_ID (EVT_ID)"
+			  KEY EVT_ID (EVT_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql );
 
 
