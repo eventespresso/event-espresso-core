@@ -38,9 +38,9 @@ jQuery(document).ready(function() {
 			separator: '  ',
 			stepHour: 1,
 			stepMinute: 5,
-			hourGrid: 4,
-			minuteGrid: 10,
-			numberOfMonths: 3,
+			hourGrid: 2,
+			minuteGrid: 5,
+			numberOfMonths: 2,
 			showOn:'focus'
 		}).focus();
 	});	
