@@ -304,16 +304,26 @@ function add_event_to_db($recurrence_arr = array()) {
 			$DTM = EEM_Datetime::instance();
 
 			foreach ($_REQUEST['event_datetimes'] as $event_datetime) {
+			
+				$event_datetime['evt_end'] = ( isset($event_datetime['evt_end']) && $event_datetime['evt_end'] != '' ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
+				$event_datetime['reg_end'] = ( isset($event_datetime['reg_end']) && $event_datetime['reg_end'] != '' ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
+							
 				$insert = array(
-						'EVT_ID'=>$last_event_id,
-						'DTT_start'=>strtotime($event_datetime['startdate'] . ' ' . $event_datetime['starttime']),
-						'DTT_end'=>strtotime($event_datetime['enddate'] . ' ' . $event_datetime['endtime']),
-						'DTT_event_or_reg'=>$event_datetime['event_or_reg']);
-				if (!empty($event_datetime['startreg_limit'])) {
-					$insert['DTT_reg_limit'] = $event_datetime['startreg_limit'];
-				}
+								'EVT_ID'					=>$last_event_id,
+								'DTT_EVT_start'		=>strtotime( $event_datetime['evt_start'] ),
+								'DTT_EVT_end' 		=>strtotime( $event_datetime['evt_end'] ),
+								'DTT_REG_start' 		=>strtotime( $event_datetime['reg_start'] ),
+								'DTT_REG_end' 		=>strtotime( $event_datetime['reg_end'] ),
+								'DTT_reg_limit' 		=>( isset( $event_datetime['reg_limit'] ) && $event_datetime['reg_limit'] != 0 ) ? $event_datetime['reg_limit'] : NULL,
+								'DTT_avail_space' 	=>( isset( $event_datetime['avail_space'] ) && $event_datetime['avail_space'] != 0 ) ? $event_datetime['avail_space'] : NULL,
+						);
+
 				$DTM->insert($insert);
 			}
+
+
+
+
 			
 			/************************************   PRICING   ******************************************* */
 			
