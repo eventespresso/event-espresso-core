@@ -244,14 +244,10 @@ if (!function_exists('event_espresso_get_is_active')) {
 			$datetimes = array( $datetimes );
 		}
 		foreach ($datetimes as $datetime) {
-			if ($datetime->event_or_reg() == 'E') {
-				$start = min(array($start, $datetime->start()));
-				$end = max(array($end, $datetime->end()));
-			}
-			if ($datetime->event_or_reg() == 'R') {
-				$regstart = min(array($regstart, $datetime->start()));
-				$regend = max(array($regend, $datetime->end()));
-			}
+			$start = min(array($start, $datetime->start()));
+			$end = max(array($end, $datetime->end()));
+			$regstart = min(array($regstart, $datetime->REG_start()));
+			$regend = max(array($regend, $datetime->REG_end()));
 		}
 		$now = time();
 

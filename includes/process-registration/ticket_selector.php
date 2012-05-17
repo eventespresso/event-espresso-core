@@ -95,9 +95,9 @@ function format_date($datetimes) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	// start with an empty array
 	$dates = array();
-	foreach ($datetimes as $key => $date) {
+	foreach ( $datetimes as $DTT_ID => $date ) {
 		$frmtd = $date->start_date('D M jS');
-		$dates[] = str_replace( ' ', '&nbsp;', $frmtd );
+		$dates[ $DTT_ID ] = str_replace( ' ', '&nbsp;', $frmtd );
 	}
 	// flip it once
 	$dates = array_flip( $dates );
@@ -123,10 +123,9 @@ function process_event_times($times) {
 	// start with an empty array
 	$time_options = array();
 	$tm_frmt = 'g:ia';
-
-	foreach ($times as $time) {		
-		$time_options[] = array(
-				'id' => $time->ID(),
+	foreach ($times as $DTT_ID => $time) {		
+		$time_options[ $DTT_ID ] = array(
+				'id' => $DTT_ID,
 				'event_id' => $time->event_ID(),
 				'start_time' => $time->start(),
 				'formatted' => $time->end_time() ? $time->start_time($tm_frmt) . ' - ' . $time->end_time($tm_frmt) : $time->start_time($tm_frmt)
@@ -157,7 +156,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 	$PRT_MDL = EEM_Price_Type::instance();
 
-	foreach ($prices as $price_id => $price) {
+	foreach ($prices as $price) {
 		//printr( $price, '$price  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 
 		// are you a member of our club???
@@ -173,10 +172,10 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 			$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
 		}
 		// add this price option to the array of options
-		$price_options[$price_id] = array('raw' => number_format((float) $price->final_price(), 2, '.', ''), 'option' => $price_option);
+		$price_options[$price->ID()] = array('raw' => number_format((float) $price->final_price(), 2, '.', ''), 'option' => $price_option);
 	}
 
-	//echo printr($price_options);
+//	echo printr($price_options);
 
 	return $price_options;
 }
@@ -239,6 +238,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 								'options' => array(
 										'date' => $valid['date'][$x],
 										'time' => $valid['time'][$x],
+										'dtt_id' => $valid['dtt_id'][$x],
 										'price_desc' => $valid['price_desc'][$x],
 										//'meta' => $valid['meta'][$x],
 										'pre_approval' => $valid['pre_approval']
@@ -334,6 +334,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 					'price' => 'tkt-slctr-price-',
 					'price_id' => 'tkt-slctr-price-id-',
 					'date' => 'tkt-slctr-date-',
+					'dtt_id' => 'tkt-slctr-dtt-id-',
 					'time' => 'tkt-slctr-time-',
 					'price_desc' => 'tkt-slctr-price-desc-',
 					//'meta' => 'tkt-slctr-meta-',
@@ -358,6 +359,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 
 					// arrays of integers
 					case 'price_id':
+					case 'dtt_id':
 					case 'time':
 					case 'qty':
 						// grab the array
@@ -555,11 +557,11 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 		if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
 			$nmbr_attendees = $wpdb->last_result[0]->quantity;
 		}
-
 		// now get the reg limit for the event
 		$SQL = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id=%d";
 
 		$reg_limit = $wpdb->get_var($wpdb->prepare($SQL, $event_id));
+		return $reg_limit;
 
 		// then determine how many spaces are left
 		//if ( $reg_limit > $nmbr_attendees ) {

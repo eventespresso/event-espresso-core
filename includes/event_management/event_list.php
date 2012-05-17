@@ -163,7 +163,7 @@ function espresso_event_list_sql($sql) {
 	$sql .= "(SELECT e.id AS event_id, e.event_name, e.slug, e.event_identifier, e.reg_limit, ";
 	$sql .= " e.is_active, e.recurrence_id,  e.event_meta, e.event_status";
 
-	$sql .= ", dtt.DTT_is_primary, dtt.DTT_start, dtt.DTT_end, dtt.DTT_event_or_reg, dtt.DTT_reg_limit";
+	$sql .= ", dtt.*";
 
 
 //Get the venue information
@@ -194,17 +194,17 @@ function espresso_event_list_sql($sql) {
 		$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " lc ON lc.id = l.locale_id ";
 	}
 
-	$sql .= " WHERE dtt.DTT_is_primary = '1' AND dtt.DTT_event_or_reg ='E' ";
+	$sql .= " WHERE dtt.DTT_is_primary = '1' ";
 
 	$sql .= ( isset($_POST['event_status']) && ($_POST['event_status'] != '' && $_POST['event_status'] != 'IA')) ? " AND e.event_status = '" . $_POST['event_status'] . "' " : " AND e.event_status != 'D' ";
 	$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
 
 	if ($_POST['month_range'] != '' && $_POST['month_range'] > 0) {
-		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
+		$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($year_r . '-' . $month_r . '-01') . "' AND '" . strtotime($year_r . '-' . $month_r . '-31') . "' ";
 	} elseif (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
-		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
+		$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
 	} elseif (isset($_REQUEST['this_month']) && $_REQUEST['this_month'] == 'true') {
-		$sql .= " AND dtt.DTT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
+		$sql .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
 	}
 
 //If user is an event manager, then show only their events
@@ -218,7 +218,7 @@ function espresso_event_list_sql($sql) {
 		}
 	}
 
-	$sql .= " GROUP BY e.id ORDER BY dtt.DTT_start DESC";
+	$sql .= " GROUP BY e.id ORDER BY dtt.DTT_EVT_start DESC";
 
 	$sql .= ") $records_to_show ";
 	return $sql;
@@ -292,7 +292,7 @@ function espresso_event_list_header() {
 	<?php
 }
 
-//DTT_start 	DTT_end
+//DTT_EVT_start 	DTT_EVT_end
 function espresso_event_list_entry($event) {
 
 	global $espresso_premium;
@@ -302,7 +302,7 @@ function espresso_event_list_entry($event) {
 	$event_name = stripslashes_deep($event->event_name);
 	$event_identifier = stripslashes_deep($event->event_identifier);
 	$registration_start = isset($event->registration_start) ? $event->registration_start : '';
-	$start_date = isset($event->DTT_start) ? $event->DTT_start : '';
+	$start_date = isset($event->DTT_EVT_start) ? $event->DTT_EVT_start : '';
 	$status = array();
 	$status = event_espresso_get_is_active($event_id);
 	$recurrence_id = isset($event->recurrence_id) ? $event->recurrence_id : '';

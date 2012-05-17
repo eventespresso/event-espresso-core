@@ -15,9 +15,7 @@ function event_espresso_config_page_styles() {
 			case ( 'espresso_reports' ):
 			case ( 'attendees' ):
 				wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
-				wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
-				//wp_enqueue_style('ptTimeSelect', EVENT_ESPRESSO_PLUGINFULLURL . 'css/jquery.ptTimeSelect.css');
-//				wp_enqueue_style('anytime', EVENT_ESPRESSO_PLUGINFULLURL . 'css/anytime.css');
+				wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');					
 				break;
 		}
 		if (isset($_REQUEST['event_admin_reports'])) {
@@ -56,7 +54,7 @@ function event_espresso_config_page_scripts() {
 	if ($_REQUEST['page'] == 'events') {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
-
+		$load_datetimepicker = true;
 	}
 
 	if ($_REQUEST['page'] == 'discounts' && isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'new')) {
@@ -84,11 +82,16 @@ function event_espresso_config_page_scripts() {
 	//Load datepicker script
 	if ($load_datepicker == true) {
 		wp_enqueue_script('jquery-ui-datepicker');
-
-		//wp_register_script('ptTimeSelect', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ptTimeSelect.js', array('jquery')); 
-		//wp_enqueue_script('ptTimeSelect');
-//		wp_enqueue_script('anytime', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/anytime.js', array('jquery')); //Events core table script
 	}
+	
+	//Load datetimepicker script
+	if ($load_datetimepicker == true) {
+
+		wp_enqueue_script('jquery-ui-slider');
+		wp_register_script('jquery-ui-timepicker', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery-ui-timepicker-addon.js"), array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-slider'), '1.0.0');
+		wp_enqueue_script('jquery-ui-timepicker');
+	}
+	
 
 	if (isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'add_new_attendee' || $_REQUEST['page'] == 'form_groups' || $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'event_staff' || $_REQUEST['page'] == 'event_categories' || $_REQUEST['page'] == 'event_venues' || $_REQUEST['page'] == 'discounts' || $_REQUEST['page'] == 'groupons') {
 		//Load form validation script
@@ -313,7 +316,7 @@ function select_input($name, $values, $default = '', $parameters = '', $class = 
 		}
 	} else $size = '';
 
-	$field .= ' class="chzn-select ' . $class . ' ' . $size . '">';
+	$field .= ' class="' . $class . ' ' . $size . '">';
 
 	if (empty($default) && isset($GLOBALS[$name]))
 		$default = stripslashes($GLOBALS[$name]);

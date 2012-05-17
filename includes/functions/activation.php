@@ -456,16 +456,18 @@ function events_data_tables_install() {
 
 	$table_name = 'esp_datetime';
 	$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  EVT_ID int(10) unsigned DEFAULT NULL,
-				  DTT_start int(20) NOT NULL,
-					DTT_end int(20) NOT NULL,
-				  DTT_event_or_reg varchar(1) DEFAULT NULL,
-				  DTT_reg_limit int(8) NOT NULL,
-					DTT_is_primary tinyint(1) DEFAULT 1		NULL,
-						PRIMARY KEY  (DTT_ID),
-							KEY EVT_ID (EVT_ID),
-							KEY DTT_event_or_reg (DTT_event_or_reg)";
-	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+			  EVT_ID int(10) unsigned NOT NULL,
+			  DTT_is_primary tinyint(1) DEFAULT '1',
+			  DTT_EVT_start int(10) unsigned NOT NULL,
+			  DTT_EVT_end int(10) unsigned NOT NULL,
+			  DTT_REG_start int(10) unsigned NOT NULL,
+			  DTT_REG_end int(10) unsigned NOT NULL,
+			  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
+			  DTT_avail_space mediumint(8) unsigned DEFAULT NULL,
+			  PRIMARY KEY (DTT_ID),
+			  KEY EVT_ID (EVT_ID)"
+	event_espresso_run_install($table_name, $table_version, $sql );
+
 
 
 
@@ -522,7 +524,7 @@ function events_data_tables_install() {
 				  STS_desc tinytext COLLATE utf8_bin,
 				  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 				  KEY STS_type (STS_type)";
-	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+	event_espresso_run_install($table_name, $table_version, $sql );
 
 
 

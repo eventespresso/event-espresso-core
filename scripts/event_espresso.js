@@ -15,6 +15,37 @@ jQuery(document).ready(function() {
 			}
 		}
 	});
+	
+	
+		
+	// set process_datetimes to false
+	jQuery('#process_datetimes').val(0);
+	// toggle process_datetimes to true if any datetime inputs are changed
+	jQuery('.dtm-inp').change( function() {
+		jQuery('#process_datetimes').val(1);
+	});
+	// or if any datetime buttons are clicked	
+	jQuery('.dtm-inp-btn').click( function() {
+		jQuery('#process_datetimes').val(1);
+	});
+
+
+
+	jQuery('.dtm-picker').live('click', function(){
+		jQuery(this).datetimepicker({
+			timeFormat: 'hh:mm tt',
+			ampm: true,
+			separator: '  ',
+			stepHour: 1,
+			stepMinute: 5,
+			hourGrid: 4,
+			minuteGrid: 10,
+			numberOfMonths: 3,
+			showOn:'focus'
+		}).focus();
+	});	
+
+
 
 	// generic click event for displaying and giving focus to an element and hiding control 
 	jQuery('.display-the-hidden').click(function() {
@@ -71,18 +102,9 @@ jQuery(document).ready(function() {
 		}); 		
 	});	
 	
-	// set process_datetimes to false
-	jQuery('#process_datetimes').val(0);
-	// toggle process_datetimes to true if any datetime inputs are changed
-	jQuery('.dtm-inp').change( function() {
-		jQuery('#process_datetimes').val(1);
-	});
-	// or if any datetime buttons are clicked	
-	jQuery('.dtm-inp-btn').click( function() {
-		jQuery('#process_datetimes').val(1);
-	});
-	
 
+				
+				
 	jQuery('.edit-event-price-lnk').click(function() {
 		// get target element ID from "this" (the control element's) "rel" attribute 
 		jQuery( '.event-price-settings-dv' ).each( function() {
@@ -169,7 +191,7 @@ jQuery(document).ready(function() {
 		return false;
 	});
 
-	
+
 
 	
 	// Add class 'selected' to visual-toggle for email confirmation postbox

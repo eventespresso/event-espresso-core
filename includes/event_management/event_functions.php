@@ -234,116 +234,95 @@ function espresso_event_editor_date_time_metabox($event) {
 	$DTM = EEM_Datetime::instance();
 
 	// grab event times
-	$times = $DTM->get_all_event_dates( $event->id );
+	$times = $DTM->get_all_datetimes_for_event( $event->id );
 	// grab reg times
-	$reg_times = $DTM->get_all_reg_dates($event->id);
+	//$reg_times = $DTM->get_all_reg_dates($event->id);
 	
 	$datetime_IDs = array();
 	
+	//printr( $times, '$times' );
 	?>
 
 
 	<div id="event-datetimes-dv" class="" >
-	
-		<h5 id="event-datetimes-h5" ><?php _e('Event', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></h5>
 		
 		<table id="event-dates-and-times">
-			<tr valign="top">
-				<td>
-					<?php echo __('Start Date', 'event_espresso') ?>
-					<span style="display:inline-block; position:relative; top:-2px; height:16px; margin:0 0 0 .5em;"><?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></span>
-				</td>
-				<td><?php echo __('End Date', 'event_espresso') ?></td>
-				<td><?php echo __('Start Time', 'event_espresso') ?></td>
-				<td><?php echo __('End Time', 'event_espresso') ?></td>
-			<?php if ($org_options['time_reg_limit']) : ?>
-				<td><?php echo __('Reg Limit', 'event_espresso') ?></td>
-			<?php endif; // time_reg_limit   ?>
-			</tr>
+			<thead>
+				<tr valign="top">
+					<td>
+						<?php echo __('Event Starts on', 'event_espresso') ?>
+						<span style="display:inline-block; position:relative; top:-2px; height:16px; margin:0 0 0 .5em;"><?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></span>
+					</td>
+					<td><?php echo __('Event Ends on', 'event_espresso') ?></td>
+					<td><?php echo __('Registration Starts on', 'event_espresso') ?> <?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?></td>
+					<td><?php echo __('Registration Ends on', 'event_espresso') ?></td>					
+					<td>
+					<?php 
+						if ($org_options['time_reg_limit']) {
+							 echo __('Reg Limit', 'event_espresso');
+						}
+					?>
+					</td>
+					<td><?php echo __('Tickets Left', 'event_espresso') ?></td>
+				</tr>
+			</thead>
+			
 			<?php $row = 2; ?>
+			
 			<?php foreach ($times as $time) : ?>
-			<?php $disabled = $row > 2 ? ' disabled="disabled"' : ''; ?>
 				<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
 					<td>
-						<input id="start-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][startdate]" type="text" class="datepicker dtm-inp" value="<?php echo $time->start_date( 'Y-m-d' ); ?>"<?php echo $disabled; ?>/>
+						<input id="event-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_start]" type="text" class="dtm-picker dtm-inp medium-text" value="<?php echo $time->start_date_and_time( 'm/d/Y ' ); ?>"/>
 						<?php if ($time->ID()) { ?>
 						<?php $datetime_IDs[$row] = $time->ID(); ?>
 						<input id="ID-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][ID]" type="hidden" value="<?php echo $time->ID(); ?>"/>
 						<?php } ?>						
 						<input id="is-primary-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][is_primary]" type="hidden" value="<?php echo $time->is_primary(); ?>" />
-						<input id="event-or-reg-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][event_or_reg]" type="hidden" value="E" />
 					</td>
+
 					<td>
-						<input id="end-date-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][enddate]" type="text" class="datepicker dtm-inp" value="<?php echo $time->end_date( 'Y-m-d' ); ?>"<?php echo $disabled; ?>/>
+						<input id="event-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_end]" type="text" class="dtm-picker dtm-inp medium-text" value="<?php echo $time->end_date_and_time( 'm/d/Y ' ); ?>"/>
 					</td>
+					
 					<td>
-						<input id="add-start-time-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][starttime]" type="text" class="medium-text time-picker dtm-inp" value="<?php echo $time->start_time( 'g:i a' ); ?>" />
+						<input id="reg-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_start]" type="text" class="dtm-picker dtm-inp medium-text" value="<?php echo $time->reg_start_date_and_time( 'm/d/Y ' ) ?>" />
 					</td>
+
 					<td>
-						<input id="add-end-time-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][endtime]" type="text" class="medium-text time-picker dtm-inp" value="<?php echo $time->end_time( 'g:i a' ); ?>" />
+						<input id="reg-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_end]" type="text" class="dtm-picker dtm-inp medium-text" value="<?php echo $time->reg_end_date_and_time( 'm/d/Y ' ) ?>" />
 					</td>
+		
 					<?php if ($org_options['time_reg_limit']) : ?>
 						<td>
-							<input type="text" id="time_qty-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][startreg_limit]" class="small-text dtm-inp" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
+							<input type="text" id="reg-limit-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_limit]" class="small-text dtm-inp" style="text-align:right;" value="<?php echo $time->reg_limit(); ?>"/>
 						</td>
 					<?php endif; // time_reg_limit   ?>
-					<?php if ( $row != 2 ) : ?>
-						<td><!--<input class='remove-xtra-time dtm-inp-btn' rel='<?php echo $row; ?>' type='button' value='Remove'  title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='cursor:pointer;'/>-->
-							<a class='remove-xtra-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
-								<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/>
-							</a>
-						</td>
-					<?php else : ?>
-						<td></td>
-					<?php endif; ?>
+					
+					<td>
+						<input type="text" id="tckts-left-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][avail_space]" class="small-text dtm-inp" style="text-align:right;" value="<?php echo $time->avail_space(); ?>"/>
+					</td>
+																
+					<td>
+						<a class='clone-date-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
+							<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/>
+						</a>
+				<?php if ( $row != 2 ) : ?>
+						<a class='remove-xtra-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Remove this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
+							<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/>
+						</a>
+				<?php endif; ?>
+					</td>
+					
 				</tr>
 				<?php $row++; ?>
 			<?php endforeach; // ($times as $time)  ?>
 		</table>
 		<br class="clear"/>
 		<!--<input type="button" id="add-time" class="button dtm-inp-btn" value="<?php _e('Add Additional Time', 'event_espresso'); ?>" />-->
-		<a id="add-time" class="button dtm-inp-btn" ><?php _e('Add Additional Time', 'event_espresso'); ?></a>
+		<a id="add-new-date-time" class="button dtm-inp-btn" ><?php _e('Add Additional Time', 'event_espresso'); ?></a>
 		<br class="clear"/><br/>
 	</div>
 
-	<div id="registration-datetimes-dv" class="">
-		<h5 id="registration-datetimes-h5" ><?php _e('Registration', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?></h5>
-
-		<table id="reg-dates-and-times">
-			<tr valign="top">
-				<td><?php echo __('Start Date', 'event_espresso') ?></td>
-				<td><?php echo __('End Date', 'event_espresso') ?></td>
-				<td><?php echo __('Start Time', 'event_espresso') ?></td>
-				<td><?php echo __('End Time', 'event_espresso') ?></td>
-			</tr>
-
-			<?php foreach ($reg_times as $reg_time) : ?>
-				<tr valign="top" id="reg-dates-and-times-row-1">
-					<td>
-						<input id="reg-start-date-1" name="event_datetimes[1][startdate]" type="text" class="medium-text datepicker dtm-inp" value="<?php echo $reg_time->start_date( 'Y-m-d' ) ?>" />
-						<?php if ($reg_time->ID()) { ?>
-						<?php $datetime_IDs[1] = $reg_time->ID(); ?>
-						<input id="ID-1" name="event_datetimes[1][ID]" type="hidden" value="<?php echo $reg_time->ID(); ?>" />
-						<?php } ?>
-						<input id="is-primary-1" name="event_datetimes[1][is_primary]" type="hidden" value="<?php echo $reg_time->is_primary(); ?>" />
-						<input id="event-or-reg-1" name="event_datetimes[1][event_or_reg]" type="hidden" value="R" />
-					</td>
-					<td>
-						<input id="reg-end-date-1" name="event_datetimes[1][enddate]" type="text" class="medium-text datepicker dtm-inp" value="<?php echo $reg_time->end_date( 'Y-m-d' ) ?>" />
-					</td>
-					<td>
-						<input id="reg-start-time-1" name="event_datetimes[1][starttime]" type="text" class="medium-text time-picker dtm-inp" value="<?php echo $reg_time->start_time( 'g:i a' ); ?>" />
-					</td>
-					<td>
-						<input id="add-end-time-1" name="event_datetimes[1][endtime]" type="text" class="medium-text time-picker dtm-inp" value="<?php echo $reg_time->end_time( 'g:i a' ); ?>" />
-					</td>
-				</tr>
-				<?php $row++; ?>
-			<?php endforeach; // $reg_times  ?>
-		</table>
-
-		<br class="clear"/>
-	</div>
 	
 	<div id="timezones-datetimes-dv" class="">
 
@@ -370,13 +349,22 @@ function espresso_event_editor_date_time_metabox($event) {
 			(function($) {
 				var counter = <?php echo $row; ?>;
 
-				$('#add-time').click(function() {
-
-					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='start-date-"+(counter)+"' name='event_datetimes["+(counter)+"][startdate]' type='text' class='datepicker dtm-inp' readonly='readonly' value='' /><input id='is-primary-"+(counter)+"' name='event_datetimes["+(counter)+"][is_primary]' type='hidden' value='0' /><input id='event-or-reg-"+(counter)+"' name='event_datetimes["+(counter)+"][event_or_reg]' type='hidden' value='E' /></td><td><input id='end-date-"+(counter)+"' name='event_datetimes["+(counter)+"][enddate]' type='text' class='datepicker dtm-inp' readonly='readonly' value='' /></td><td><input id='add-start-time-"+(counter)+"' name='event_datetimes["+(counter)+"][starttime]' type='text' class='medium-text time-picker dtm-inp' value='' /></td><td><input id='add-end-time-"+(counter)+"' name='event_datetimes["+(counter)+"][endtime]' type='text' class='medium-text time-picker dtm-inp' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='time_qty-"+(counter)+"' name='event_datetimes["+(counter)+"][startreg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; ?><td><a class='remove-xtra-time dtm-inp-btn' rel='"+(counter)+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></td></tr>";
-
+				$('#add-new-date-time').live('click', function(){
+					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='event-start-"+(counter)+"' name='event_datetimes["+(counter)+"][evt_start]' type='text' class='dtm-picker dtm-inp medium-text' value=''/><input id='is-primary-"+(counter)+"' name='event_datetimes["+(counter)+"][is_primary]' type='hidden' value='' /></td><td><input id='event-end-"+(counter)+"' name='event_datetimes["+(counter)+"][evt_end]' type='text' class='dtm-picker dtm-inp medium-text' value=''/></td><td><input id='reg-start-"+(counter)+"' name='event_datetimes["+(counter)+"][reg_start]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><td><input id='reg-end-"+(counter)+"' name='event_datetimes["+(counter)+"][reg_end]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+(counter)+"' name='event_datetimes["+(counter)+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+(counter)+"' name='event_datetimes["+(counter)+"][avail_space]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><td><a class='clone-date-time dtm-inp-btn' rel='"+(counter)+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+(counter)+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
 					$('#event-dates-and-times tr:last').after( newRow );
-					$('#start-date-'+(counter)).val( $('#start-date-2').val() );
-					$('#end-date-'+(counter)).val( $('#end-date-2').val() );
+					counter++;
+				});
+
+				$('.clone-date-time').live('click', function(){				
+					var cloneRow = $(this).attr('rel');					
+					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+(counter)+"'><td><input id='event-start-"+(counter)+"' name='event_datetimes["+(counter)+"][evt_start]' type='text' class='dtm-picker dtm-inp medium-text' value=''/><input id='is-primary-"+(counter)+"' name='event_datetimes["+(counter)+"][is_primary]' type='hidden' value='' /></td><td><input id='event-end-"+(counter)+"' name='event_datetimes["+(counter)+"][evt_end]' type='text' class='dtm-picker dtm-inp medium-text' value=''/></td><td><input id='reg-start-"+(counter)+"' name='event_datetimes["+(counter)+"][reg_start]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><td><input id='reg-end-"+(counter)+"' name='event_datetimes["+(counter)+"][reg_end]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+(counter)+"' name='event_datetimes["+(counter)+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+(counter)+"' name='event_datetimes["+(counter)+"][avail_space]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><td><a class='clone-date-time dtm-inp-btn' rel='"+(counter)+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+(counter)+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
+					$('#event-dates-and-times-row-'+cloneRow).after( newRow );
+					$('#event-start-'+(counter)).val( $('#event-start-'+(cloneRow)).val() );
+					$('#event-end-'+(counter)).val( $('#event-end-'+(cloneRow)).val() );
+					$('#reg-start-'+(counter)).val( $('#reg-start-'+(cloneRow)).val() );
+					$('#reg-end-'+(counter)).val( $('#reg-end-'+(cloneRow)).val() );
+					$('#reg-limit-'+(counter)).val( $('#reg-limit-'+(cloneRow)).val() );
+					$('#tckts-left-'+(counter)).val( $('#tckts-left-'+(cloneRow)).val() );
 					counter++;
 				});
 

@@ -40,7 +40,7 @@
 <?php 
 			$rows = 0;
 			foreach ( $dates as $date ) {
-				foreach ( $times as $time ) {  
+				foreach ( $times as $DTT_ID => $time ) {  
 					foreach ( $prices as $price_id => $price ) {
 					
 ?>
@@ -60,6 +60,10 @@
 						<input type="hidden"
 									name="tkt-slctr-time-<?php echo $event_id; ?>[]"
 									value="<?php echo $time['start_time']; ?>"
+							/>	
+						<input type="hidden"
+									name="tkt-slctr-dtt-id-<?php echo $event_id; ?>[]"
+									value="<?php echo $DTT_ID; ?>"
 							/>	
 						<input type="hidden"
 									name="tkt-slctr-price-<?php echo $event_id; ?>[]"

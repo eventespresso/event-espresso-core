@@ -461,6 +461,7 @@ function update_event($recurrence_arr = array()) {
 			//$registration_end = wp_strip_all_tags( $_REQUEST['registration_end'] );
 			//$registration_startT = wp_strip_all_tags( $_REQUEST['registration_startT'] );
 			//$registration_endT = wp_strip_all_tags( $_REQUEST['registration_endT'] );
+			
 
 			if (isset($_POST['process_datetimes']) && $_POST['process_datetimes']) {
 
@@ -483,20 +484,36 @@ function update_event($recurrence_arr = array()) {
 
 					foreach ($_POST['event_datetimes'] as $dtm) {
 
-						//					echo printr( $dtm, '$dtm' );
+//						echo printr( $dtm, '$dtm' );
 
-						$dtm['enddate'] = ( isset($dtm['enddate']) && $dtm['enddate'] != '' ) ? $dtm['enddate'] : $dtm['startdate'];
-						$dtm['endtime'] = ( isset($dtm['endtime']) && $dtm['endtime'] != '' ) ? $dtm['endtime'] : $dtm['starttime'];
+						$dtm['evt_end'] = ( isset($dtm['evt_end']) && $dtm['evt_end'] != '' ) ? $dtm['evt_end'] : $dtm['evt_start'];
+						$dtm['reg_end'] = ( isset($dtm['reg_end']) && $dtm['reg_end'] != '' ) ? $dtm['reg_end'] : $dtm['reg_start'];
 
+//echo '<h4>evt_start : ' . $dtm['evt_start'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>evt_end : ' . $dtm['evt_end'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>reg_start : ' . $dtm['reg_start'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>reg_end : ' . $dtm['reg_end'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+
+
+						//	EVT_ID 	DTT_is_primary 	DTT_EVT_start 	DTT_EVT_end 	DTT_REG_start 	DTT_REG_end 	DTT_event_or_reg 	DTT_reg_limit 	DTT_avail_space 	 DTT_ID
 						$new_event_date = new EE_Datetime(
 														$event_id,
 														$dtm['is_primary'],
-														$dtm['startdate'] . ' ' . $dtm['starttime'],
-														$dtm['enddate'] . ' ' . $dtm['endtime'],
-														$dtm['event_or_reg'],
-														$dtm['startreg_limit'],
+														$dtm['evt_start'],
+														$dtm['evt_end'],
+														$dtm['reg_start'],
+														$dtm['reg_end'],
+														$dtm['reg_limit'],
+														$dtm['avail_space'],
 														$dtm['ID']
 						);
+					
+//						echo printr( $new_event_date, '$new_event_date' );	
+
+//echo '<h4>start_date_and_time : ' . $new_event_date->start_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>end_date_and_time : ' . $new_event_date->end_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>reg_start_date_and_time : ' . $new_event_date->reg_start_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>reg_end_date_and_time : ' . $new_event_date->reg_end_date_and_time() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
 						// if an ID exists then update
 						if ($new_event_date->ID()) {
@@ -520,6 +537,7 @@ function update_event($recurrence_arr = array()) {
 
 
 			/************************************   PRICING   ******************************************* */
+			
 			$ticket_prices_to_save = array();
 			$quick_edit_ticket_price = isset($_POST['quick_edit_ticket_price']) ? $_POST['quick_edit_ticket_price'] : array();
 //			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
@@ -620,9 +638,12 @@ function update_event($recurrence_arr = array()) {
 			}
 
 
+//echo printr( $_POST, '$_POST' );	
 //global $espresso_notices; 
 //echo espresso_get_notices();            
 //die();
+
+
 			############# MailChimp Integration ###############
 			if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
 				MailChimpController::update_event_list_rel($event_id);

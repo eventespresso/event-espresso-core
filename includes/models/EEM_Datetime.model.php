@@ -58,10 +58,12 @@ class EEM_Datetime extends EEM_Base {
 			'DTT_ID' 					=> '%d',
 			'EVT_ID' 					=> '%d',
 			'DTT_is_primary' 	=> '%d',
-			'DTT_start' 				=> '%d',
-			'DTT_end' 				=> '%d',
-			'DTT_event_or_reg'	=> '%s',
-			'DTT_reg_limit' 		=> '%d'
+			'DTT_EVT_start' 		=> '%d',
+			'DTT_EVT_end' 		=> '%d',
+			'DTT_REG_start' 		=> '%d',
+			'DTT_REG_end' 		=> '%d',
+			'DTT_reg_limit' 		=> '%d',
+			'DTT_avail_space'	=> '%d'
 		);
 
 		// uncomment these for example code samples of how to use them
@@ -100,7 +102,7 @@ class EEM_Datetime extends EEM_Base {
 	* 		@param		$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	private function _get_event_datetimes( $EVT_ID = FALSE, $DTT_event_or_reg = FALSE, $primary = FALSE ) {
+	private function _get_event_datetimes( $EVT_ID = FALSE, $primary = FALSE ) {
 
 		if ( ! $EVT_ID ) {
 			global $espresso_notices;
@@ -109,16 +111,12 @@ class EEM_Datetime extends EEM_Base {
 		}
 
 		$where = array( 'EVT_ID' => $EVT_ID );
-
-		if ( $DTT_event_or_reg ) {
-			$where['DTT_event_or_reg'] = $DTT_event_or_reg;
-		}
 		
 		if ( $primary ) {
 			$where['DTT_is_primary'] = 1;
 		}
 
-		$orderby = array( 'DTT_is_primary', 'DTT_start' );
+		$orderby = array( 'DTT_is_primary', 'DTT_EVT_start' );
 		$sort = array( 'DESC', 'ASC' );
 
 		if ( $datetimes = $this->select_all_where ( $where, $orderby, $sort )) {
@@ -128,14 +126,16 @@ class EEM_Datetime extends EEM_Base {
 
 			foreach ( $datetimes as $datetime ) {
 					$array_of_objects[ $datetime->DTT_ID ] = new EE_Datetime(
-							$datetime->EVT_ID,
-							$datetime->DTT_is_primary,
-							$datetime->DTT_start,
-							$datetime->DTT_end,
-							$datetime->DTT_event_or_reg,
-							$datetime->DTT_reg_limit,
-							$datetime->DTT_ID
-					 	);
+																															$datetime->EVT_ID,
+																															$datetime->DTT_is_primary,
+																															$datetime->DTT_EVT_start,
+																															$datetime->DTT_EVT_end,
+																															$datetime->DTT_REG_start,
+																															$datetime->DTT_REG_end,
+																															$datetime->DTT_reg_limit,
+																															$datetime->DTT_avail_space,
+																															$datetime->DTT_ID
+																													 	);
 			}
 			// sort dates from earliest to latest
 			uasort( $array_of_objects, array( $this, '_compare_order' ));	
@@ -164,6 +164,31 @@ class EEM_Datetime extends EEM_Base {
 	}
 
 
+	/**
+	*		create new blank datetime
+	*
+	* 		@access		public
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function _create_new_blank_datetime() {
+		$times = array( 
+				new EE_Datetime( 
+						0, 
+						true, 
+						time() + (60 * 60 * 24 * 30), 
+						time() + (60 * 60 * 24 * 30), 
+						time() + (60 * 60 * 24 * 30), 
+						time() + (60 * 60 * 24 * 30), 
+						NULL,
+						NULL
+				)
+		);
+		$times[0]->set_start_time("8AM");
+		$times[0]->set_end_time("3:30PM");
+		return $times;
+	}
+
+
 
 
 	/**
@@ -174,10 +199,7 @@ class EEM_Datetime extends EEM_Base {
 	*/
 	public function get_all_event_dates( $EVT_ID = FALSE ) {
 		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
-			$times = array(new EE_Datetime( 0, true, time() + (60 * 60 * 24 * 30), time() + (60 * 60 * 24 * 30), 'E', NULL ));
-			$times[0]->set_start_time("8AM");
-			$times[0]->set_end_time("3:30PM");
-			return $times;
+			return $this->_create_new_blank_datetime();
 		}
 		return $this->_get_event_datetimes( $EVT_ID, 'E' );
 	}
@@ -219,9 +241,9 @@ class EEM_Datetime extends EEM_Base {
 	*/
 	public function get_all_reg_dates( $EVT_ID = FALSE ) {
 		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
-			$reg_times = array(new EE_Datetime(0, true, time(), time() + (60 * 60 * 24 * 30), 'R', NULL));
-			$reg_times[0]->set_start_time("12:01AM");
-			$reg_times[0]->set_end_time("11:59PM");
+			$reg_times = $this->_create_new_blank_datetime();
+			$reg_times[0]->set_start_time("12:00:01AM");
+			$reg_times[0]->set_end_time("11:59:59PM");
 			return $reg_times;
 		}
 		return $this->_get_event_datetimes( $EVT_ID, 'R' );

@@ -157,13 +157,13 @@ function event_espresso_get_event_details($attributes) {
 
 	//$SQL .= $show_expired == 'false' ? ' AND (eventDetails.start_date >= "' . date('Y-m-d') . '" OR eventDetails.event_status = "O" OR eventDetails.registration_end >= "' . date('Y-m-d') . '")' : '';
 	
-	$SQL .= $show_expired == 'false' ? ' AND (( dateTime.DTT_start >= "' . time() . '" AND DTT_event_or_reg = "E" ) OR ( eventDetails.event_status = "O" OR ( dateTime.DTT_end >= "' . time() . '" AND DTT_event_or_reg = "R" )))' : '';
+	$SQL .= $show_expired == 'false' ? ' AND (( dateTime.DTT_EVT_start >= "' . time() . '" ) OR ( eventDetails.event_status = "O" OR ( dateTime.DTT_REG_end >= "' . time() . '" )))' : '';
 	
 	
 	$SQL .= $show_secondary == 'false' ? " AND eventDetails.event_status != 'S'" : '';
 	$SQL .= $show_deleted == 'false' ? " AND eventDetails.event_status != 'D'" : '';
 	$SQL .= $show_recurrence == 'false' ? " AND eventDetails.recurrence_id = '0'" : ' GROUP BY eventDetails.id';
-	$SQL .= $order_by != NULL ? ' ORDER BY ' . $order_by . ' ASC' : ' ORDER BY date(dateTime.DTT_start), eventDetails.id ASC';
+	$SQL .= $order_by != NULL ? ' ORDER BY ' . $order_by . ' ASC' : ' ORDER BY date(dateTime.DTT_EVT_start), eventDetails.id ASC';
 	$SQL .= $limit > 0 ? ' LIMIT 0,' . $limit . ' ' : '';
 
 

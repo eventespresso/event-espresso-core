@@ -82,7 +82,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 
 
 .mini-btn {
-	display: inline-block; position: relative; padding: 0.4em .75em .45em;
+	display: inline-block; position: relative; /*padding: 0.4em .75em .45em;*/ padding:4px 5px 5px;
 	border:1px solid #ccc;
 	font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
 	text-align: center; font-weight: bold; line-height: 1; cursor: pointer; vertical-align:middle;
