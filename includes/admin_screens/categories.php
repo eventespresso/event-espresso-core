@@ -140,42 +140,7 @@ function event_espresso_categories_config_mnu() {
 		ob_start();
 		do_meta_boxes('event-espresso_page_event_categories', 'side', null);
 		$side_meta_boxes = ob_get_clean();
-		if (version_compare($wp_version, '3.3.2', '>' )) {
-			?>
-		
-		
-			<div id="poststuff">
-				<div id="post-body" class="metabox-holder columns-2">
-					<div id="post-body-content">
-						<?php echo $post_body_content; ?>
-					</div> <!-- post-body-content -->
-					<div id="postbox-container-1" class="postbox-container">
-						<?php echo $side_meta_boxes; ?>
-					</div> <!-- postbox-container-1 -->
-					<div id="postbox-container-2" class="postbox-container">
-					</div> <!-- postbox-container-2 -->
-				</div> <!-- post-body -->
-			</div> <!-- poststuff -->
-
-
-		<?php } else { ?>
-
-
-			<div id="poststuff" class="metabox-holder has-right-sidebar">
-				<div id="side-info-column" class="inner-sidebar">
-						<?php echo $side_meta_boxes; ?>
-				</div> <!-- side-info-column -->
-				<div id="post-body">
-					<div id="post-body-content">
-
-						<?php echo $post_body_content; ?>
-
-					</div> <!-- post-body-content -->
-				</div> <!-- post-body -->
-			</div> <!-- poststuff -->
-
-
-		<?php } ?>
+		espresso_choose_layout($post_body_content, $side_meta_boxes);?>
 
 
 		<div id="unique_id_info" style="display:none">

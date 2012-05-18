@@ -1,6 +1,57 @@
 <?php
 
 //All of the functions that deal with admin area should go here.
+
+function espresso_choose_layout($main_post_content = '', $sidebar_content = '', $center_metabox_content = '') {
+	global $wp_version;
+	if (version_compare($wp_version, '3.3.2', '>')) {
+		espresso_post_wp_3_4_layout($main_post_content, $sidebar_content, $center_metabox_content);
+	} else {
+		espresso_pre_wp_3_4_layout($main_post_content, $sidebar_content, $center_metabox_content);
+	}
+}
+
+function espresso_post_wp_3_4_layout($main_post_content = '', $sidebar_content = '', $center_metabox_content = '') {
+	?>
+	<div id="poststuff">
+		<div id="post-body" class="metabox-holder columns-2">
+			<div id="post-body-content">
+				<!-- main post stuff here -->
+				<?php echo $main_post_content; ?>
+			</div> <!-- post-body-content -->
+			<div id="postbox-container-1" class="postbox-container">
+				<!-- sidebar stuff here -->
+				<?php echo $sidebar_content; ?>
+			</div> <!-- postbox-container-1 -->
+			<div id="postbox-container-2" class="postbox-container">
+				<!-- main column metaboxes under the post content here -->
+				<?php echo $center_metabox_content; ?>
+			</div> <!-- postbox-container-2 -->
+		</div> <!-- post-body -->
+	</div> <!-- poststuff -->
+	<?php
+}
+
+function espresso_pre_wp_3_4_layout($main_post_content = '', $sidebar_content = '', $center_metabox_content = '') {
+	?>
+	<div id="poststuff" class="metabox-holder has-right-sidebar">
+		<div id="side-info-column" class="inner-sidebar">
+			<div id="side-sortables" class="meta-box-sortables ui-sortable">
+				<!-- sidebar stuff here -->
+				<?php echo $sidebar_content; ?>
+			</div> <!-- side-sortables -->
+		</div> <!-- side-info-column -->
+		<div id="post-body">
+			<div id="post-body-content">
+				<!-- post stuff here -->
+				<?php echo $main_post_content; ?>
+				<?php echo $center_metabox_content; ?>
+			</div> <!-- post-body-content -->
+		</div> <!-- post-body -->
+	</div> <!-- poststuff -->
+	<?php
+}
+
 //These are all of the scripts we need
 function event_espresso_config_page_styles() {
 	wp_enqueue_style('dashboard');

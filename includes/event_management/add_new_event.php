@@ -92,21 +92,21 @@ function espresso_display_add_event($event) {
 			<?php _e('New Event', 'event_espresso'); ?>
 		</h2>
 		<form name="form" method="post" action="<?php echo $uri; ?>">
-			<div id="poststuff" class="metabox-holder has-right-sidebar">
-				<div id="side-info-column" class="inner-sidebar">
-					<?php do_meta_boxes('toplevel_page_events', 'side', $event); ?>
-				</div>
-				<div id="post-body">
-					<div id="post-body-content">
-						<?php do_action('action_hook_espresso_event_editor_title_div', $event); ?>
-						<?php do_action('action_hook_espresso_event_editor_desc_div', $event); ?>
-						<?php do_meta_boxes('toplevel_page_events', 'normal', $event); ?>
-						<?php do_meta_boxes('toplevel_page_events', 'advanced', $event); ?>
-						<input type="hidden" name="action" value="insert" />
-					</div>
-				</div>
-			</div>
-			<?php //do_action('action_hook_espresso_save_buttons', $event); ?>
+			<?php
+			do_meta_boxes('toplevel_page_events', 'side', $event);
+			$sidebar_content = ob_get_clean();
+			ob_start();
+			do_action('action_hook_espresso_event_editor_title_div', $event);
+			do_action('action_hook_espresso_event_editor_desc_div', $event);
+			$main_post_content = ob_get_clean();
+			ob_start();
+			do_meta_boxes('toplevel_page_events', 'normal', $event);
+			do_meta_boxes('toplevel_page_events', 'advanced', $event);
+			$center_metabox_content = ob_get_clean();
+			espresso_choose_layout($main_post_content, $sidebar_content, $center_metabox_content);
+			?>
+			<input type="hidden" name="action" value="insert" />
+	<?php //do_action('action_hook_espresso_save_buttons', $event);  ?>
 			<div id="event-editor-floating-save-btns" class="hidden">	
 				<div id="publishing-action">
 					<input class="button-primary" type="submit" name="save" value="<?php _e('Save', 'event_espresso'); ?>" id="save" />

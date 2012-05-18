@@ -154,6 +154,9 @@ if (is_admin()) {
  *
  * init:
  *	25: espresso_admin_init
+ *			require_once /includes/admin-screens/admin.php
+ *			require_once /includes/admin-screens/admin_screen.php
+ *			require_once /includes/admin-screens/admin_menu.php
  *	25: espresso_load_admin_ajax_callbacks
  *	30: espresso_export_certificate
  *	30: espresso_export_invoice
