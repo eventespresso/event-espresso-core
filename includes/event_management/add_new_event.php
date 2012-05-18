@@ -93,6 +93,7 @@ function espresso_display_add_event($event) {
 		</h2>
 		<form name="form" method="post" action="<?php echo $uri; ?>">
 			<?php
+			ob_start();
 			do_meta_boxes('toplevel_page_events', 'side', $event);
 			$sidebar_content = ob_get_clean();
 			ob_start();
