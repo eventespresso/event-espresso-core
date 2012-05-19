@@ -3,6 +3,39 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
 function event_espresso_support() {
+	ob_start();
+	do_meta_boxes('event-espresso_page_support', 'side', null);
+	$sidebar_content = ob_get_clean();
+	ob_start();
+	do_meta_boxes('event-espresso_page_support', 'advanced', null);
+	$main_post_content = ob_get_clean();
+
+	//For testing email functions
+	function event_espresso_test_email($optional_email = '', $optional_message = 'None') {
+		global $org_options;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$to = !empty($optional_email) ? $optional_email : $org_options['contact_email'];
+		$subject = 'Event Espresso Test Message from' . $org_options['organization'];
+		$message = 'Event Espresso email is working properly. Optional message: ' . $optional_message;
+		$headers = 'From: ' . $org_options['contact_email'] . "\r\n" .
+						'Reply-To: ' . $org_options['contact_email'] . "\r\n" .
+						'X-Mailer: PHP/' . phpversion();
+		wp_mail($to, $subject, $message, $headers);
+	}
+
+	if (isset($_REQUEST['action'])) {
+		switch ($_REQUEST['action']) {
+			case "update_event_dates":
+				update_event_data();
+				break;
+			case "event_espresso_update_attendee_data":
+				event_espresso_update_attendee_data();
+				break;
+			case "test_email_function":
+				event_espresso_test_email($_REQUEST['optional_email'], $_REQUEST['optional_message']);
+				break;
+		}
+	}
 	?>
 
 	<div class="wrap columns-2">
@@ -11,40 +44,8 @@ function event_espresso_support() {
 			<?php _e('Help and Support', 'event_espresso'); ?>
 		</h2>
 		<?php
-
-		//For testing email functions
-		function event_espresso_test_email($optional_email = '', $optional_message = 'None') {
-			global $org_options;
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-			$to = !empty($optional_email) ? $optional_email : $org_options['contact_email'];
-			$subject = 'Event Espresso Test Message from' . $org_options['organization'];
-			$message = 'Event Espresso email is working properly. Optional message: ' . $optional_message;
-			$headers = 'From: ' . $org_options['contact_email'] . "\r\n" .
-							'Reply-To: ' . $org_options['contact_email'] . "\r\n" .
-							'X-Mailer: PHP/' . phpversion();
-			wp_mail($to, $subject, $message, $headers);
-		}
-
-		if (isset($_REQUEST['action'])) {
-			switch ($_REQUEST['action']) {
-				case "update_event_dates":
-					update_event_data();
-					break;
-				case "event_espresso_update_attendee_data":
-					event_espresso_update_attendee_data();
-					break;
-				case "test_email_function":
-					event_espresso_test_email($_REQUEST['optional_email'], $_REQUEST['optional_message']);
-					break;
-			}
-		}
-		ob_start();
-		do_meta_boxes('event-espresso_page_support', 'side', null);
-		$sidebar_content = ob_get_clean();
-		ob_start();
-		do_meta_boxes('event-espresso_page_support', 'advanced', null);
-		$main_post_content = ob_get_clean();
-		espresso_choose_layout($main_post_content, $sidebar_content);
+		if (!espresso_choose_layout($main_post_content, $sidebar_content))
+			return FALSE;
 		?>
 	</div>
 	<!-- / #wrap -->
@@ -54,6 +55,7 @@ function event_espresso_support() {
 function update_event_data() {
 	global $wpdb;
 	$wpdb->show_errors();
+	$error = FALSE;
 	$event_dates = $wpdb->get_results("SELECT * FROM " . EVENTS_DETAIL_TABLE . " WHERE start_date = '' OR start_date LIKE '%--%' OR end_date = '' OR end_date LIKE '%--%'");
 	foreach ($event_dates as $event_date) {
 		$event_id = $event_date->id;

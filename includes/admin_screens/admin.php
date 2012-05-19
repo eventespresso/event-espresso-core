@@ -9,6 +9,7 @@ function espresso_choose_layout($main_post_content = '', $sidebar_content = '', 
 	} else {
 		espresso_pre_wp_3_4_layout($main_post_content, $sidebar_content, $center_metabox_content);
 	}
+	return TRUE;
 }
 
 function espresso_post_wp_3_4_layout($main_post_content = '', $sidebar_content = '', $center_metabox_content = '') {
@@ -66,7 +67,7 @@ function event_espresso_config_page_styles() {
 			case ( 'espresso_reports' ):
 			case ( 'attendees' ):
 				wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
-				wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');					
+				wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
 				break;
 		}
 		if (isset($_REQUEST['event_admin_reports'])) {
@@ -134,7 +135,7 @@ function event_espresso_config_page_scripts() {
 	if ($load_datepicker == true) {
 		wp_enqueue_script('jquery-ui-datepicker');
 	}
-	
+
 	//Load datetimepicker script
 	if ($load_datetimepicker == true) {
 
@@ -142,7 +143,7 @@ function event_espresso_config_page_scripts() {
 		wp_register_script('jquery-ui-timepicker', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery-ui-timepicker-addon.js"), array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-slider'), '1.0.0');
 		wp_enqueue_script('jquery-ui-timepicker');
 	}
-	
+
 
 	if (isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'add_new_attendee' || $_REQUEST['page'] == 'form_groups' || $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'event_staff' || $_REQUEST['page'] == 'event_categories' || $_REQUEST['page'] == 'event_venues' || $_REQUEST['page'] == 'discounts' || $_REQUEST['page'] == 'groupons') {
 		//Load form validation script
@@ -240,7 +241,6 @@ if (!function_exists('event_espresso_delete_event')) {
 }
 
 //This function installs the tables
-
 //function to empty trash
 //This will delete everything that is related to the events that have been deleted
 function event_espresso_empty_event_trash($event_id) {
@@ -249,30 +249,30 @@ function event_espresso_empty_event_trash($event_id) {
 	//$event_id=$_REQUEST['id'];
 	//Remove the event
 	$sql = "DELETE FROM " . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'";
-	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
+	$wpdb->query($wpdb->prepare($sql, $event_id));
 
 	//Remove the event discount
 	$sql = "DELETE FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $event_id . "'";
-	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
+	$wpdb->query($wpdb->prepare($sql, $event_id));
 
 	$sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "'";
-	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
+	$wpdb->query($wpdb->prepare($sql, $event_id));
 
 
-/*********************** REMOVE AFTER DATA MIGRATION SCRIPTS WRITTEN ***********************/
+	/*	 * ********************* REMOVE AFTER DATA MIGRATION SCRIPTS WRITTEN ********************** */
 	//Remove the event times
 	$sql = "DELETE FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "'";
-	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
+	$wpdb->query($wpdb->prepare($sql, $event_id));
 
 	//Remove the event prices
 	$sql = "DELETE FROM " . EVENTS_PRICES_TABLE . " WHERE event_id='" . $event_id . "'";
-	$wpdb->query( $wpdb->prepare( $sql, $event_id ));
-	
-/*********************** END REMOVE ***********************/
+	$wpdb->query($wpdb->prepare($sql, $event_id));
+
+	/*	 * ********************* END REMOVE ********************** */
 
 
 
-	
+
 	/* delete_price_from_event($event_id);
 	  delete_category_from_event($event_id);
 	  delete_discount_from_event($event_id);
@@ -365,7 +365,8 @@ function select_input($name, $values, $default = '', $parameters = '', $class = 
 					$size = 'wide';
 			}
 		}
-	} else $size = '';
+	} else
+		$size = '';
 
 	$field .= ' class="' . $class . ' ' . $size . '">';
 
@@ -387,8 +388,6 @@ function select_input($name, $values, $default = '', $parameters = '', $class = 
 }
 
 /* * ** These functions deals with moving templates and files *** */
-
-
 
 /**
  * event_espresso_count_files, does exactly what the name says
@@ -517,10 +516,10 @@ function event_espresso_custom_email_info() {
 		<div id="custom_email_info" class="pop-help" >
 			<div class="TB-ee-frame">
 				<h2>
-					<?php _e('Email Confirmations', 'event_espresso'); ?>
+	<?php _e('Email Confirmations', 'event_espresso'); ?>
 				</h2>
 				<p>
-					<?php _e('For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.', 'event_espresso'); ?>
+	<?php _e('For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.', 'event_espresso'); ?>
 				</p>
 				<p>[registration_id], [fname], [lname], [phone], [event], [event_link], [event_url], [ticket_type], [ticket_link], [qr_code], [description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [invoice_link], [txn_id], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link], [venue_title], [venue_address], [venue_url], [venue_image], [venue_phone], [custom_questions]</p>
 			</div>
@@ -530,7 +529,7 @@ function event_espresso_custom_email_info() {
 		<div id="custom_email_example" class="pop-help" >
 			<div class="TB-ee-frame">
 				<h2>
-					<?php _e('Sample Mail Send:', 'event_espresso'); ?>
+	<?php _e('Sample Mail Send:', 'event_espresso'); ?>
 				</h2>
 				<p style="font-size:10px;">***This is an automated response - Do Not Reply***</p>
 				<p style="font-size:10px;">Thank you [fname] [lname] for registering for [event]. We hope that you will find this event both informative and enjoyable. Should have any questions, please contact [contact].</p>
