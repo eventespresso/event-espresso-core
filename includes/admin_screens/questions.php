@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_questions_config_mnu() {
-	global $wpdb, $notices;
+	global $wpdb;
 
 	//Update the questions when re-ordering
 	if (!empty($_REQUEST['update_sequence'])) {
@@ -26,6 +26,160 @@ function event_espresso_questions_config_mnu() {
 	}
 	$wpdb->get_results($sql);
 	$total_self_questions = $wpdb->num_rows;
+	ob_start();
+	do_meta_boxes('event-espresso_page_form_builder', 'side', null);
+	$sidebar_content = ob_get_clean();
+	ob_start();
+	?>
+	<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
+		<div style="margin-bottom: 10px;">
+			<ul class="subsubsub" style="margin-bottom: 0;clear:both;">
+				<li><strong>
+						<?php _e('Questions', 'event_espresso'); ?>
+						: </strong> </li>
+				<li><a <?php echo ( (!isset($_REQUEST['self']) && !isset($_REQUEST['all']) ) || ( isset($_REQUEST['self']) && $_REQUEST['self'] == 'true') ) ? ' class="current" ' : '' ?> href="admin.php?page=form_builder&self=true">
+						<?php _e('My Questions', 'event_espresso'); ?>
+						<span class="count">(<?php echo $total_self_questions; ?>)</span> </a> | </li>
+				<li><a <?php echo (isset($_REQUEST['all']) && $_REQUEST['all'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=form_builder&all=true">
+						<?php _e('All Questions', 'event_espresso'); ?>
+						<span class="count">(<?php echo $total_questions; ?>)</span> </a></li>
+			</ul>
+			<div class="clear"></div>
+		</div>
+	<?php } ?>
+	<?php
+	//Update the question
+	if (isset($_REQUEST['edit_action']) && $_REQUEST['edit_action'] == 'update') {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/update_question.php');
+		event_espresso_form_builder_update();
+	}
+
+	//Figure out which view to display
+	if (isset($_REQUEST['action'])) {
+		switch ($_REQUEST['action']) {
+			case 'insert':
+				if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/insert_question.php')) {
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/insert_question.php');
+					event_espresso_form_builder_insert();
+				} else {
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/pricing_table.php');
+				}
+				break;
+			case 'new_question':
+				if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/new_question.php')) {
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/new_question.php');
+					event_espresso_form_builder_new();
+				} else {
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/pricing_table.php');
+				}
+				break;
+			case 'edit_question':
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "form-builder/questions/edit_question.php");
+				event_espresso_form_builder_edit();
+				break;
+			case 'delete_question':
+				if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/delete_question.php')) {
+					require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/delete_question.php');
+					event_espresso_form_builder_delete();
+				} else {
+					?>
+					<div id="message" class="updated fade">
+						<p><strong>
+								<?php _e('This function is not available in the free version of Event Espresso.', 'event_espresso'); ?>
+							</strong></p>
+					</div>
+					<?php
+				}
+				break;
+		}
+	}
+	?>
+	<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
+		<table id="table" class="widefat manage-questions">
+			<thead>
+				<tr>
+					<th class="manage-column" id="cb" scope="col" ><input type="checkbox"></th>
+					<th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:25%;"> <?php _e('Question', 'event_espresso'); ?>
+					</th>
+					<th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:20%;"> <?php _e('Values', 'event_espresso'); ?>
+					</th>
+					<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
+						<th class="manage-column column-creator" id="creator" scope="col" title="Click to Sort" style="width:10%;"> <?php _e('Creator', 'event_espresso'); ?>
+						</th>
+					<?php } ?>
+					<th class="manage-column column-title" id="values" scope="col" title="Click to Sort"  style="width:10%;"> <?php _e('Type', 'event_espresso'); ?>
+					</th>
+					<th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:10%;"> <?php _e('Required', 'event_espresso'); ?>
+					</th>
+					<th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:10%;"> <?php _e('Admin Only', 'event_espresso'); ?>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				$sql = "SELECT * FROM " . EVENTS_QUESTION_TABLE . " WHERE ";
+				$sql .= apply_filters('filter_hook_espresso_question_list_sql', " (wp_user = '0' OR wp_user = '1') ");
+				$sql .= " ORDER BY sequence";
+				$questions = $wpdb->get_results($sql);
+				if ($wpdb->num_rows > 0) {
+					foreach ($questions as $question) {
+						$question_id = $question->id;
+						$question_name = stripslashes($question->question);
+						$values = stripslashes($question->response);
+						$question_type = stripslashes($question->question_type);
+						$required = stripslashes($question->required);
+						$system_name = $question->system_name;
+						$admin_only = $question->admin_only;
+						$wp_user = $question->wp_user == 0 ? 1 : $question->wp_user;
+						?>
+						<tr style="cursor: move" id="<?php echo $question_id ?>">
+							<td class="checkboxcol"><input name="row_id" type="hidden" value="<?php echo $question_id ?>" />
+								<?php if ($system_name == '') : ?>
+									<input  style="margin:7px 0 22px 8px; vertical-align:top;" name="checkbox[<?php echo $question_id ?>]" type="checkbox"  title="Delete <?php echo $question_name ?>">
+								<?php else: ?>
+									<span><?php echo '<img style="margin:7px 0 22px 8px; vertical-align:top;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/lock.png" alt="System Questions" title="System Questions" />'; ?></span>
+								<?php endif; ?></td>
+							<td class="post-title page-title column-title"><strong><a href="admin.php?page=form_builder&amp;action=edit_question&amp;question_id=<?php echo $question_id ?>"><?php echo $question_name ?></a></strong>
+								<div class="row-actions"> <span class="edit"><a href="admin.php?page=form_builder&amp;action=edit_question&amp;question_id=<?php echo $question_id ?>">
+											<?php _e('Edit', 'event_espresso'); ?>
+										</a> | </span>
+									<?php if ($system_name == ''): ?>
+										<span class="delete"><a onclick="return confirmDelete();" class="submitdelete"  href="admin.php?page=form_builder&amp;action=delete_question&amp;question_id=<?php echo $question_id ?>">
+												<?php _e('Delete', 'event_espresso'); ?>
+											</a></span>
+									<?php endif; ?>
+								</div></td>
+							<td class="author column-author"><?php echo $values ?></td>
+							<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
+								<td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
+							<?php } ?>
+							<td class="author column-author"><?php echo $question_type ?></td>
+							<td class="author column-author"><?php echo $required ?></td>
+							<td class="author column-author"><?php echo $admin_only ?></td>
+						</tr>
+						<?php
+					}
+				}
+				?>
+			</tbody>
+		</table>
+		<div>
+			<p>
+				<input type="checkbox" name="sAll" onclick="selectAll(this)" />
+				<strong>
+					<?php _e('Check All', 'event_espresso'); ?>
+				</strong>
+				<input type="hidden" name="action" value="delete_question" />
+				<input name="delete_question" type="submit" class="button-secondary" id="delete_question" value="<?php _e('Delete Question', 'event_espresso'); ?>" style="margin-left:10px 0 0 10px;" onclick="return confirmDelete();">
+				<a  style="margin-left:5px"class="button-primary" href="admin.php?page=form_builder&amp;action=new_question">
+					<?php _e('Add New Question', 'event_espresso'); ?>
+				</a> <a  style="margin-left:5px"class="button-primary" href="admin.php?page=form_groups">
+					<?php _e('Question Groups', 'event_espresso'); ?>
+				</a> <a style="color:#FFF; text-decoration:none; margin-left:5px"class="button-primary thickbox" href="#TB_inline?height=400&width=500&inlineId=question_info">Help</a> </p>
+		</div>
+	</form>
+	<?php
+	$main_post_content = ob_get_clean();
 	?>
 
 	<div class="wrap">
@@ -38,161 +192,6 @@ function event_espresso_questions_config_mnu() {
 			?>
 		</h2>
 		<?php
-		ob_start();
-		do_meta_boxes('event-espresso_page_form_builder', 'side', null);
-		$sidebar_content = ob_get_clean();
-		ob_start();
-		?>
-		<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
-			<div style="margin-bottom: 10px;">
-				<ul class="subsubsub" style="margin-bottom: 0;clear:both;">
-					<li><strong>
-							<?php _e('Questions', 'event_espresso'); ?>
-							: </strong> </li>
-					<li><a <?php echo ( (!isset($_REQUEST['self']) && !isset($_REQUEST['all']) ) || ( isset($_REQUEST['self']) && $_REQUEST['self'] == 'true') ) ? ' class="current" ' : '' ?> href="admin.php?page=form_builder&self=true">
-							<?php _e('My Questions', 'event_espresso'); ?>
-							<span class="count">(<?php echo $total_self_questions; ?>)</span> </a> | </li>
-					<li><a <?php echo (isset($_REQUEST['all']) && $_REQUEST['all'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=form_builder&all=true">
-							<?php _e('All Questions', 'event_espresso'); ?>
-							<span class="count">(<?php echo $total_questions; ?>)</span> </a></li>
-				</ul>
-				<div class="clear"></div>
-			</div>
-		<?php } ?>
-		<?php
-		//Update the question
-		if (isset($_REQUEST['edit_action']) && $_REQUEST['edit_action'] == 'update') {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/update_question.php');
-			event_espresso_form_builder_update();
-		}
-
-		//Figure out which view to display
-		if (isset($_REQUEST['action'])) {
-			switch ($_REQUEST['action']) {
-				case 'insert':
-					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/insert_question.php')) {
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/insert_question.php');
-						event_espresso_form_builder_insert();
-					} else {
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/pricing_table.php');
-					}
-					break;
-				case 'new_question':
-					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/new_question.php')) {
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/new_question.php');
-						event_espresso_form_builder_new();
-					} else {
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/pricing_table.php');
-					}
-					break;
-				case 'edit_question':
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . "form-builder/questions/edit_question.php");
-					event_espresso_form_builder_edit();
-					break;
-				case 'delete_question':
-					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/delete_question.php')) {
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/delete_question.php');
-						event_espresso_form_builder_delete();
-					} else {
-						?>
-						<div id="message" class="updated fade">
-							<p><strong>
-									<?php _e('This function is not available in the free version of Event Espresso.', 'event_espresso'); ?>
-								</strong></p>
-						</div>
-						<?php
-					}
-					break;
-			}
-		}
-		?>
-		<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
-			<table id="table" class="widefat manage-questions">
-				<thead>
-					<tr>
-						<th class="manage-column" id="cb" scope="col" ><input type="checkbox"></th>
-						<th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:25%;"> <?php _e('Question', 'event_espresso'); ?>
-						</th>
-						<th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:20%;"> <?php _e('Values', 'event_espresso'); ?>
-						</th>
-						<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
-							<th class="manage-column column-creator" id="creator" scope="col" title="Click to Sort" style="width:10%;"> <?php _e('Creator', 'event_espresso'); ?>
-							</th>
-						<?php } ?>
-						<th class="manage-column column-title" id="values" scope="col" title="Click to Sort"  style="width:10%;"> <?php _e('Type', 'event_espresso'); ?>
-						</th>
-						<th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:10%;"> <?php _e('Required', 'event_espresso'); ?>
-						</th>
-						<th class="manage-column column-title" id="values" scope="col" title="Click to Sort" style="width:10%;"> <?php _e('Admin Only', 'event_espresso'); ?>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php
-					$sql = "SELECT * FROM " . EVENTS_QUESTION_TABLE . " WHERE ";
-					$sql .= apply_filters('filter_hook_espresso_question_list_sql', " (wp_user = '0' OR wp_user = '1') ");
-					$sql .= " ORDER BY sequence";
-					$questions = $wpdb->get_results($sql);
-					if ($wpdb->num_rows > 0) {
-						foreach ($questions as $question) {
-							$question_id = $question->id;
-							$question_name = stripslashes($question->question);
-							$values = stripslashes($question->response);
-							$question_type = stripslashes($question->question_type);
-							$required = stripslashes($question->required);
-							$system_name = $question->system_name;
-							$sequence = $question->sequence;
-							$admin_only = $question->admin_only;
-							$wp_user = $question->wp_user == 0 ? 1 : $question->wp_user;
-							?>
-							<tr style="cursor: move" id="<?php echo $question_id ?>">
-								<td class="checkboxcol"><input name="row_id" type="hidden" value="<?php echo $question_id ?>" />
-									<?php if ($system_name == '') : ?>
-										<input  style="margin:7px 0 22px 8px; vertical-align:top;" name="checkbox[<?php echo $question_id ?>]" type="checkbox"  title="Delete <?php echo $question_name ?>">
-									<?php else: ?>
-										<span><?php echo '<img style="margin:7px 0 22px 8px; vertical-align:top;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/lock.png" alt="System Questions" title="System Questions" />'; ?></span>
-									<?php endif; ?></td>
-								<td class="post-title page-title column-title"><strong><a href="admin.php?page=form_builder&amp;action=edit_question&amp;question_id=<?php echo $question_id ?>"><?php echo $question_name ?></a></strong>
-									<div class="row-actions"> <span class="edit"><a href="admin.php?page=form_builder&amp;action=edit_question&amp;question_id=<?php echo $question_id ?>">
-												<?php _e('Edit', 'event_espresso'); ?>
-											</a> | </span>
-										<?php if ($system_name == ''): ?>
-											<span class="delete"><a onclick="return confirmDelete();" class="submitdelete"  href="admin.php?page=form_builder&amp;action=delete_question&amp;question_id=<?php echo $question_id ?>">
-													<?php _e('Delete', 'event_espresso'); ?>
-												</a></span>
-										<?php endif; ?>
-									</div></td>
-								<td class="author column-author"><?php echo $values ?></td>
-								<?php if (function_exists('espresso_is_admin') && espresso_is_admin() == true) { ?>
-									<td><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?></td>
-								<?php } ?>
-								<td class="author column-author"><?php echo $question_type ?></td>
-								<td class="author column-author"><?php echo $required ?></td>
-								<td class="author column-author"><?php echo $admin_only ?></td>
-							</tr>
-							<?php
-						}
-					}
-					?>
-				</tbody>
-			</table>
-			<div>
-				<p>
-					<input type="checkbox" name="sAll" onclick="selectAll(this)" />
-					<strong>
-						<?php _e('Check All', 'event_espresso'); ?>
-					</strong>
-					<input type="hidden" name="action" value="delete_question" />
-					<input name="delete_question" type="submit" class="button-secondary" id="delete_question" value="<?php _e('Delete Question', 'event_espresso'); ?>" style="margin-left:10px 0 0 10px;" onclick="return confirmDelete();">
-					<a  style="margin-left:5px"class="button-primary" href="admin.php?page=form_builder&amp;action=new_question">
-						<?php _e('Add New Question', 'event_espresso'); ?>
-					</a> <a  style="margin-left:5px"class="button-primary" href="admin.php?page=form_groups">
-						<?php _e('Question Groups', 'event_espresso'); ?>
-					</a> <a style="color:#FFF; text-decoration:none; margin-left:5px"class="button-primary thickbox" href="#TB_inline?height=400&width=500&inlineId=question_info">Help</a> </p>
-			</div>
-		</form>
-		<?php
-		$main_post_content = ob_get_clean();
 		espresso_choose_layout($main_post_content, $sidebar_content);
 		?>
 	</div>
