@@ -1,20 +1,20 @@
 <?php
 
 function event_espresso_addons_mnu() {
-	global $wpdb;
+	ob_start();
+	do_meta_boxes('event-espresso_page_admin_addons', 'side', null);
+	$sidebar_content = ob_get_clean();
+	ob_start();
+	do_meta_boxes('event-espresso_page_admin_addons', 'advanced', null);
+	$main_post_content = ob_get_clean();
 	?>
 
 	<div id="event_reg_theme" class="wrap">
 		<div id="icon-options-event" class="icon32"></div>
 		<h2><?php echo _e('Manage Addons', 'event_espresso') ?></h2>
 		<?php
-		ob_start();
-		do_meta_boxes('event-espresso_page_admin_addons', 'side', null);
-		$sidebar_content = ob_get_clean();
-		ob_start();
-		do_meta_boxes('event-espresso_page_admin_addons', 'advanced', null);
-		$main_post_content = ob_get_clean();
-		espresso_choose_layout($main_post_content, $sidebar_content);
+		if (!espresso_choose_layout($main_post_content, $sidebar_content))
+			return FALSE;
 		?>
 	</div>
 
