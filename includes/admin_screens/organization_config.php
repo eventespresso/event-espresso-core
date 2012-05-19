@@ -109,19 +109,20 @@ function espresso_org_confg_output() {
 		<h2>
 			<?php _e('General Settings', 'event_espresso'); ?>
 		</h2>
-		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<div id="side-info-column" class="inner-sidebar">
-				<?php do_meta_boxes('event-espresso_page_event_espresso', 'side', null); ?>
-			</div>
-			<div id="post-body">
-				<div id="post-body-content">
-					<form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-						<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
-						<input type="hidden" name="update_org" value="update" />
-					</form>
-				</div>
-			</div>
-		</div>
+		<?php
+		ob_start();
+		do_meta_boxes('event-espresso_page_event_espresso', 'side', null);
+		$sidebar_content = ob_get_clean();
+		ob_start();
+		?>
+		<form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+			<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
+			<input type="hidden" name="update_org" value="update" />
+		</form>
+		<?php
+		$main_post_content = ob_get_clean();
+		espresso_choose_layout($main_post_content, $sidebar_content);
+		?>
 	</div>
 	<?php
 	// Help Pop-up Boxes
