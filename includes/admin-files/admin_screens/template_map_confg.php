@@ -69,28 +69,31 @@ function event_espresso_manage_maps() {
 }
 
 function espresso_template_map_confg_display() {
+	ob_start();
+	do_meta_boxes('event-espresso_page_template_map_confg', 'side', null);
+	$sidebar_content = ob_get_clean();
+	ob_start();
+	?>
+	<form id="template-settings-form" class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+		<?php
+		do_meta_boxes('event-espresso_page_template_map_confg', 'advanced', null);
+		espresso_map_confg_help_display();
+		// create our nonces and do our form submit
+		wp_nonce_field('espresso_form_check', 'ee_maps_update');
+		?>
+		<input type="hidden" name="update_org" value="update" />
+	</form>
+	<?php
+	$main_post_content = ob_get_clean();
 	?>
 	<div class="wrap columns-2">
 		<div id="icon-options-event" class="icon32"> </div>
 		<h2>
 			<?php _e('Event Espresso - Event Map Settings', 'event_espresso'); ?>
 		</h2>
-		<<?php
-		ob_start();
-		do_meta_boxes('event-espresso_page_template_map_confg', 'side', null);
-		$sidebar_content = ob_get_clean();
-		ob_start();
-			?>
-		<form id="template-settings-form" class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-			<?php do_meta_boxes('event-espresso_page_template_map_confg', 'advanced', null); ?>
-			<?php espresso_map_confg_help_display(); ?>
-			<?php // create our nonces and do our form submit    ?>
-			<?php wp_nonce_field('espresso_form_check', 'ee_maps_update'); ?>
-			<input type="hidden" name="update_org" value="update" />
-		</form>
 		<?php
-		$main_post_content = ob_get_clean();
-		espresso_choose_layout($main_post_content, $sidebar_content);
+		if (!espresso_choose_layout($main_post_content, $sidebar_content))
+			return FALSE;
 		?>
 	</div><!-- / #wrap -->
 
