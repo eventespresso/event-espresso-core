@@ -1,217 +1,180 @@
 <?php
+
 //This is the registration form.
 //This is a template file for displaying a registration form for an event on a page.
-//There should be a copy of this file in your wp-content/uploads/espresso/ folder.
-?>
+// The following keys are available in the $data array:
+// event_id, event_name, is_active, registration_url, reg_start_date, display_reg_form, event, use_coupon_code, use_groupon_code, location, org_options, google_map_link, show_ee_gmap_no_shortcode, end_date, start_date, display_desc, event_desc
+function espresso_display_reg_page($data) {
+	?>
 
-<div id="event_espresso_registration_form" class="event-display-boxes ui-widget">
-	<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
+	<div id="event_espresso_registration_form" class="event-display-boxes ui-widget">
+		<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $data['event_id']; ?>"> <?php echo $data['event_name'] ?> <?php echo $data['is_active']['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $data['is_active']['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $data['is_active']['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
 
-	<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
-		<form method="post" action="<?php echo $registration_url; ?>" id="registration_form">
+		<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
+			<form method="post" action="<?php echo $data['registration_url']; ?>" id="registration_form">
 
-			<?php /* Venue details. Un-comment first and last lines & any venue details you wish to display or use the provided shortcodes. */ ?>
-			<?php // echo '<div id="venue-details-display">'; ?>
-			<?php // echo '<p class="section-title">' . __('Venue Details', 'event_espresso') . '</p>'; ?>
-			<?php // echo $venue_title != ''?'<p id="event_venue_name-'.$event_id.'" class="event_venue_name">'.stripslashes_deep($venue_title).'</p>':''?>
-			<?php // echo $venue_address != ''?'<p id="event_venue_address-'.$event_id.'" class="event_venue_address">'.stripslashes_deep($venue_address).'</p>':''?>
-			<?php // echo $venue_address2 != ''?'<p id="event_venue_address2-'.$event_id.'" class="event_venue_address2">'.stripslashes_deep($venue_address2).'</p>':''?>
-			<?php // echo $venue_city != ''?'<p id="event_venue_city-'.$event_id.'" class="event_venue_city">'.stripslashes_deep($venue_city).'</p>':''?>
-			<?php // echo $venue_state != ''?'<p id="event_venue_state-'.$event_id.'" class="event_venue_state">'.stripslashes_deep($venue_state).'</p>':''?>
-			<?php // echo $venue_zip != ''?'<p id="event_venue_zip-'.$event_id.'" class="event_venue_zip">'.stripslashes_deep($venue_zip).'</p>':''?>
-			<?php // echo $venue_country != ''?'<p id="event_venue_country-'.$event_id.'" class="event_venue_country">'.stripslashes_deep($venue_country).'</p>':''?>
-			<?php // echo '</div>'; ?>
-			<?php /* end venue details block */ ?>
+				<?php
+				switch ($data['is_active']['status']) {
+					case 'EXPIRED': //only show the event description.
+						echo '<h3 class="expired_event">' . __('This event has passed.</h3>', 'event_espresso') . '</h3>';
+						break;
 
-			<?php
-			switch ($is_active['status']) {
-				case 'EXPIRED': //only show the event description.
-					echo '<h3 class="expired_event">' . __('This event has passed.</h3>', 'event_espresso') . '</h3>';
-					break;
-
-				case 'REGISTRATION_CLOSED': //only show the event description.
-					// if todays date is after $reg_end_date
-					?>
-					<div class="event-registration-closed event-messages ui-corner-all ui-state-highlight">
-						<span class="ui-icon ui-icon-alert"></span>
-						<p class="event_full">
-							<strong>
-								<?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?>
-							</strong>
-						</p>
-						<p class="event_full">
-							<strong>
-								<?php _e('Please <a href="contact" title="contact us">contact us</a> if you would like to know if spaces are still available.', 'event_espresso'); ?>
-							</strong>
-						</p>
-					</div>
-					<?php
-					break;
-
-				case 'REGISTRATION_NOT_OPEN': //only show the event description.
-					// if todays date is after $reg_end_date
-					// if todays date is prior to $reg_start_date
-					?>
-					<div class="event-registration-pending event-messages ui-corner-all ui-state-highlight">
-						<span class="ui-icon ui-icon-alert"></span>
-						<p class="event_full">
-							<strong>
-								<?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?>
-							</strong>
-						</p>
-						<p class="event_full">
-							<strong>
-								<?php _e('You will be able to register starting ', 'event_espresso');
-								echo event_espresso_no_format_date($reg_start_date, 'F d, Y'); ?>
-							</strong>
-						</p>
-					</div>
-					<?php
-					break;
-
-				default://This will display the registration form
-
-					/*
-					 * * This section shows the registration form if it is an active event * *
-					 */
-
-					if ( $display_reg_form ) {
-
-
-						do_action( 'action_hook_espresso_ticket_selector', $event );
-
-						//Added for seating chart addon. Creates a field to select a seat from a popup.
-						do_action( 'action_hook_espresso_seating_chart_select', $event_id);
-
-						/* Displays the social media buttons */
-						do_action( 'action_hook_espresso_social_display_buttons', $event_id);
-
-/*
+					case 'REGISTRATION_CLOSED': //only show the event description.
+						// if todays date is after $reg_end_date
 						?>
-
-						<fieldset id="event-reg-form-groups" class="ui-widget">
-							<!--<h3 class="section-heading ui-widget-header">
-							<?php _e('Registration Details', 'event_espresso'); ?>
-							</h3>-->
-							<?php
-							$css_class = 'ui-widget-content ui-corner-all';
-							//Outputs the custom form questions. This function can be overridden using the custom files addon
-							echo event_espresso_add_question_groups($question_groups, '', null, 0, array('attendee_number' => 1), $css_class);
-							?>
-						</fieldset>
-
+						<div class="event-registration-closed event-messages ui-corner-all ui-state-highlight">
+							<span class="ui-icon ui-icon-alert"></span>
+							<p class="event_full">
+								<strong>
+									<?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?>
+								</strong>
+							</p>
+							<p class="event_full">
+								<strong>
+									<?php _e('Please <a href="contact" title="contact us">contact us</a> if you would like to know if spaces are still available.', 'event_espresso'); ?>
+								</strong>
+							</p>
+						</div>
 						<?php
-*/
+						break;
 
-/*						//Multiple Attendees
-						if ($allow_multiple && $number_available_spaces > 1) {
-
-							//This returns the additional attendee form fields. Can be overridden in the custom files addon.
-							echo event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, __('Number of Tickets', 'event_espresso'), true, $event_meta);
-						} else {
-							?>
-							<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
-							<?php
-						}//End allow multiple*/
-						//Coupons
-						if (function_exists('event_espresso_coupon_registration_page') && $use_coupon_code) {
-							echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
-						}//End coupons display
-						//Groupons
-						if (function_exists('event_espresso_groupon_registration_page')) {
-							echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
-						}//End groupons display
+					case 'REGISTRATION_NOT_OPEN': //only show the event description.
+						// if todays date is after $reg_end_date
+						// if todays date is prior to $reg_start_date
 						?>
+						<div class="event-registration-pending event-messages ui-corner-all ui-state-highlight">
+							<span class="ui-icon ui-icon-alert"></span>
+							<p class="event_full">
+								<strong>
+									<?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?>
+								</strong>
+							</p>
+							<p class="event_full">
+								<strong>
+									<?php
+									_e('You will be able to register starting ', 'event_espresso');
+									echo event_espresso_no_format_date($data['reg_start_date'], 'F d, Y');
+									?>
+								</strong>
+							</p>
+						</div>
+						<?php
+						break;
 
-						<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
+					default://This will display the registration form
 
-						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
+						/*
+						 * * This section shows the registration form if it is an active event * *
+						 */
 
-							<a 	id="event_form_field-<?php echo $event_id; ?>"
-									class="event-list-reg-link-btn show-if-js ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right"
-									style="display:none;"
-								>
-								<span class="ui-icon ui-icon-cart"></span>&nbsp;<?php _e('Submit Registration', 'event_espresso'); ?>
-							</a>
+						if ($data['display_reg_form']) {
 
-							<noscript>
+
+							do_action('action_hook_espresso_ticket_selector', $data['event']);
+
+							//Added for seating chart addon. Creates a field to select a seat from a popup.
+							do_action('action_hook_espresso_seating_chart_select', $data['event_id']);
+
+							/* Displays the social media buttons */
+							do_action('action_hook_espresso_social_display_buttons', $data['event_id']);
+
+							//Coupons
+							if (function_exists('event_espresso_coupon_registration_page') && $data['use_coupon_code']) {
+								echo event_espresso_coupon_registration_page($data['use_coupon_code'], $data['event_id']);
+							}//End coupons display
+							//Groupons
+							if (function_exists('event_espresso_groupon_registration_page')) {
+								echo event_espresso_groupon_registration_page($data['use_groupon_code'], $data['event_id']);
+							}//End groupons display
+							?>
+
+							<input type="hidden" name="event_id" id="event_id-<?php echo $data['event_id']; ?>" value="<?php echo $data['event_id']; ?>">
+
+							<p class="event_form_submit" id="event_form_submit-<?php echo $data['event_id']; ?>">
+
+								<a 	id="event_form_field-<?php echo $data['event_id']; ?>"
+										class="event-list-reg-link-btn show-if-js ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right"
+										style="display:none;"
+										>
+									<span class="ui-icon ui-icon-cart"></span>&nbsp;<?php _e('Submit Registration', 'event_espresso'); ?>
+								</a>
+
+								<noscript>
 								<input type="submit"
-											 id="event_form_field-<?php echo $event_id; ?>"
-						 					name="event-list-reg-link-sbmt-btn"
-											class="event-list-reg-link-sbmt-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right"
-											value="<?php _e('Submit Registration', 'event_espresso'); ?>"
-											role="button"
-									/>
-							</noscript>
+											 id="event_form_field-<?php echo $data['event_id']; ?>"
+											 name="event-list-reg-link-sbmt-btn"
+											 class="event-list-reg-link-sbmt-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx float-right"
+											 value="<?php _e('Submit Registration', 'event_espresso'); ?>"
+											 role="button"
+											 />
+								</noscript>
 							<div class="clear"></div>
-						</p>
-						<?php
-					}
-					break;
-			}//End Switch statement to check the status of the event
-
-
-					/* Display the address and google map link if available */
-					if ($location != '' && (empty($org_options['template_settings']['display_address_in_regform']) || $org_options['template_settings']['display_address_in_regform'])) {
-						?>
-						<p class="event_address" id="event_address-<?php echo $event_id ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
-							<span class="address-block"> <?php echo stripslashes_deep($location); ?><br />
-								<span class="google-map-link"><?php echo $google_map_link; ?></span></span> </p>
-						<?php
-					}
-
-					if ($show_ee_gmap_no_shortcode && $event_meta['enable_for_gmap']) {
-						echo ee_gmap_display($ee_gmap_location, $event_id);
-					}
-
-					//Meta example
-					//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
-					?>
-					<p class="start_date">
-						<?php if ($end_date !== $start_date) { ?>
-							<span class="section-title">
-								<?php _e('Start Date: ', 'event_espresso'); ?>
-							</span>
-						<?php } else { ?>
-							<span class="section-title">
-								<?php _e('Date: ', 'event_espresso'); ?>
-							</span>
+							</p>
 							<?php
 						}
-						echo event_date_display($start_date, get_option('date_format'));
-						if ($end_date !== $start_date) {
-							echo '<br />';
-							?>
-							<span class="section-title">
-								<?php _e('End Date: ', 'event_espresso'); ?>
-							</span> <?php echo event_date_display($end_date, get_option('date_format'));
-				} ?>
-					</p>
+						break;
+				}//End Switch statement to check the status of the event
 
-					<?php
 
-			if (!empty($event_meta['display_thumb_in_regpage']) && !empty($event_meta['event_thumbnail_url'])) {
-				?>
-				<p><a href="<?php echo $event_meta['event_thumbnail_url'] ?>"><img src="<?php echo $event_meta['event_thumbnail_url'] ?>" alt=""></a></p>
+				/* Display the address and google map link if available */
+				if ($data['location'] != '' && (empty($data['org_options']['template_settings']['display_address_in_regform']) || $data['org_options']['template_settings']['display_address_in_regform'])) {
+					?>
+					<p class="event_address" id="event_address-<?php echo $data['event_id'] ?>"><span class="section-title"><?php echo __('Address:', 'event_espresso'); ?></span> <br />
+						<span class="address-block"> <?php echo stripslashes_deep($data['location']); ?><br />
+							<span class="google-map-link"><?php echo $data['google_map_link']; ?></span></span> </p>
 					<?php
 				}
 
-				if ( $display_desc ) {//Show the description or not
+				if ($data['show_ee_gmap_no_shortcode'] && $data['event_meta']['enable_for_gmap']) {
+					echo ee_gmap_display($data['ee_gmap_location'], $data['event_id']);
+				}
+
+				//Meta example
+				//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
+				?>
+				<p class="start_date">
+						<?php if ($data['end_date'] !== $data['start_date']) { ?>
+						<span class="section-title">
+						<?php _e('Start Date: ', 'event_espresso'); ?>
+						</span>
+						<?php } else { ?>
+						<span class="section-title">
+						<?php _e('Date: ', 'event_espresso'); ?>
+						</span>
+						<?php
+					}
+					echo event_date_display($data['start_date'], get_option('date_format'));
+					if ($data['end_date'] !== $data['start_date']) {
+						echo '<br />';
+						?>
+						<span class="section-title">
+						<?php _e('End Date: ', 'event_espresso'); ?>
+						</span> <?php
+						echo event_date_display($data['end_date'], get_option('date_format'));
+					}
 					?>
-				<p class="section-title">
-					<?php _e('Description:', 'event_espresso') ?>
 				</p>
-				<div class="event_description clearfix"><?php echo espresso_format_content($event_desc); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description. ?></div>
+
 				<?php
-			}
+				if (!empty($data['event_meta']['display_thumb_in_regpage']) && !empty($data['event_meta']['event_thumbnail_url'])) {
+					?>
+					<p><a href="<?php echo $data['event_meta']['event_thumbnail_url'] ?>"><img src="<?php echo $data['event_meta']['event_thumbnail_url'] ?>" alt=""></a></p>
+					<?php
+				}
 
-			//End display description
+				if ($data['display_desc']) {//Show the description or not
+					?>
+					<p class="section-title">
+					<?php _e('Description:', 'event_espresso') ?>
+					</p>
+					<div class="event_description clearfix"><?php echo espresso_format_content($data['event_desc']); //Code to show the actual description. The Wordpress function "wpautop" adds formatting to your description. ?></div>
+					<?php
+				}
 
-
-
-			?>
-		</form>
-		<?php if (isset($ee_style['event_espresso_form_wrapper_close']))
-			echo $ee_style['event_espresso_form_wrapper_close']; ?>
-<?php echo '<p class="register-link-footer">' . espresso_edit_this($event_id) . '</p>' ?> </div>
-</div>
+				//End display description
+				?>
+			</form>
+	<?php echo '<p class="register-link-footer">' . espresso_edit_this($data['event_id']) . '</p>' ?> </div>
+	</div>
+	<?php
+}
