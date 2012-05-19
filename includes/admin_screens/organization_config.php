@@ -102,6 +102,17 @@ function organization_config_mnu() {
 }
 
 function espresso_org_confg_output() {
+	ob_start();
+	do_meta_boxes('event-espresso_page_event_espresso', 'side', null);
+	$sidebar_content = ob_get_clean();
+	ob_start();
+	?>
+	<form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+		<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
+		<input type="hidden" name="update_org" value="update" />
+	</form>
+	<?php
+	$main_post_content = ob_get_clean();
 	?>
 
 	<div class="wrap columns-2">
@@ -110,18 +121,8 @@ function espresso_org_confg_output() {
 			<?php _e('General Settings', 'event_espresso'); ?>
 		</h2>
 		<?php
-		ob_start();
-		do_meta_boxes('event-espresso_page_event_espresso', 'side', null);
-		$sidebar_content = ob_get_clean();
-		ob_start();
-		?>
-		<form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-			<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
-			<input type="hidden" name="update_org" value="update" />
-		</form>
-		<?php
-		$main_post_content = ob_get_clean();
-		espresso_choose_layout($main_post_content, $sidebar_content);
+		if (!espresso_choose_layout($main_post_content, $sidebar_content))
+			return FALSE;
 		?>
 	</div>
 	<?php
