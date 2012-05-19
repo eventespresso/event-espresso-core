@@ -7,16 +7,15 @@ function event_espresso_addons_mnu() {
 	<div id="event_reg_theme" class="wrap">
 		<div id="icon-options-event" class="icon32"></div>
 		<h2><?php echo _e('Manage Addons', 'event_espresso') ?></h2>
-		<div id="poststuff" class="metabox-holder has-right-sidebar">
-			<div id="side-info-column" class="inner-sidebar">
-				<?php do_meta_boxes('event-espresso_page_admin_addons', 'side', null); ?>
-			</div>
-			<div id="post-body">
-				<div id="post-body-content">
-					<?php do_meta_boxes('event-espresso_page_admin_addons', 'advanced', null); ?>
-				</div>
-			</div>
-		</div>
+		<?php
+		ob_start();
+		do_meta_boxes('event-espresso_page_admin_addons', 'side', null);
+		$sidebar_content = ob_get_clean();
+		ob_start();
+		do_meta_boxes('event-espresso_page_admin_addons', 'advanced', null);
+		$main_post_content = ob_get_clean();
+		espresso_choose_layout($main_post_content, $sidebar_content);
+		?>
 	</div>
 
 	<script language="javascript" type="text/javascript">
