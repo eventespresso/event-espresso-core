@@ -144,7 +144,6 @@ function espresso_event_editor_additional_attendees_question_groups_meta_box($ev
 			$html = '';
 			foreach ($event->q_groups as $question_group) {
 				$question_group_id = $question_group->id;
-				$question_group_description = $question_group->group_description;
 				$group_name = $question_group->group_name;
 				$checked = (is_array($add_attendee_question_groups) && array_key_exists($question_group_id, $add_attendee_question_groups)) || ($question_group->system_group == 1) ? ' checked="checked" ' : '';
 
@@ -174,7 +173,7 @@ function espresso_event_editor_promotions_meta_box($event) {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 	);
-	global $wpdb, $org_options;
+	global $wpdb;
 	?>
 	<div class="inside">
 
@@ -200,8 +199,8 @@ function espresso_event_editor_promotions_meta_box($event) {
 
 		<?php
 		$sql = "SELECT * FROM " . EVENTS_DISCOUNT_CODES_TABLE;
-		if (function_exists('espresso_member_data') && !empty($event_id)) {
-			$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'");
+		if (function_exists('espresso_member_data') && !empty($event->event_id)) {
+			$wpdb->get_results("SELECT wp_user FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event->event_id . "'");
 			$event->wp_user = $wpdb->last_result[0]->wp_user != '' ? $wpdb->last_result[0]->wp_user : espresso_member_data('id');
 			$sql .= " WHERE ";
 			if ($event->wp_user == 0 || $event->wp_user == 1) {
@@ -215,9 +214,8 @@ function espresso_event_editor_promotions_meta_box($event) {
 			foreach ($event_discounts as $event_discount) {
 				$discount_id = $event_discount->id;
 				$coupon_code = $event_discount->coupon_code;
-				$discount_type_price = $event_discount->use_percentage ? $event_discount->coupon_code_price . '%' : $org_options['currency_symbol'] . $event_discount->coupon_code_price;
 
-				$in_event_discounts = !empty($event_id) ? $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $event_id . "' AND discount_id='" . $discount_id . "'") : array();
+				$in_event_discounts = !empty($event->event_id) ? $wpdb->get_results("SELECT * FROM " . EVENTS_DISCOUNT_REL_TABLE . " WHERE event_id='" . $event->event_id . "' AND discount_id='" . $discount_id . "'") : array();
 				$in_event_discount = '';
 				foreach ($in_event_discounts as $in_discount) {
 					$in_event_discount = $in_discount->discount_id;
