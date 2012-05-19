@@ -61,10 +61,19 @@ function edit_event($event_id = 0) {
 
 function espresso_display_edit_event($event) {
 
-	global $org_options;
-
-
 	$edit_event_form_url = add_query_arg(array('action' => 'edit_event', 'event_id' => $event->id), EVENTS_ADMIN_URL);
+
+	ob_start();
+	do_meta_boxes('toplevel_page_events', 'side', $event);
+	$sidebar_content = ob_get_clean();
+	ob_start();
+	do_action('action_hook_espresso_event_editor_title_div', $event);
+	do_action('action_hook_espresso_event_editor_desc_div', $event);
+	$main_post_content = ob_get_clean();
+	ob_start();
+	do_meta_boxes('toplevel_page_events', 'normal', $event);
+	do_meta_boxes('toplevel_page_events', 'advanced', $event);
+	$center_metabox_content = ob_get_clean();
 	?>
 	<div class="wrap columns-2">
 		<div id="icon-options-event" class="icon32"> </div>
@@ -73,25 +82,15 @@ function espresso_display_edit_event($event) {
 
 		<form name="form" method="post" action="<?php echo $edit_event_form_url; ?>">
 			<?php
-			ob_start();
-			do_meta_boxes('toplevel_page_events', 'side', $event);
-			$sidebar_content = ob_get_clean();
-			ob_start();
-			do_action('action_hook_espresso_event_editor_title_div', $event);
-			do_action('action_hook_espresso_event_editor_desc_div', $event);
-			$main_post_content = ob_get_clean();
-			ob_start();
-			do_meta_boxes('toplevel_page_events', 'normal', $event);
-			do_meta_boxes('toplevel_page_events', 'advanced', $event);
-			$center_metabox_content = ob_get_clean();
-			espresso_choose_layout($main_post_content, $sidebar_content, $center_metabox_content);
+			if (!espresso_choose_layout($main_post_content, $sidebar_content, $center_metabox_content))
+				return FALSE;
 			?>
 			<input type="hidden" name="action" value="update">
 			<input type="hidden" name="date_submitted" value="<?php echo $event->submitted; ?>">
 			<input type="hidden" name="recurrence_id" value="<?php echo $event->recurrence_id; ?>">
 			<input type="hidden" name="event_id" value="<?php echo $event->id ?>">
 			<input type="hidden" name="originally_submitted_by" value="<?php echo!empty($event->event_meta['originally_submitted_by']) ? $event->event_meta['originally_submitted_by'] : $event->wp_user ?>">
-			<?php //do_action('action_hook_espresso_save_buttons', $event); ?>
+			<?php //do_action('action_hook_espresso_save_buttons', $event);  ?>
 			<div id="event-editor-floating-save-btns" class="hidden">	
 				<div id="publishing-action">
 					<input class="button-primary" type="submit" name="save" value="<?php _e('Save', 'event_espresso'); ?>" id="save" />
