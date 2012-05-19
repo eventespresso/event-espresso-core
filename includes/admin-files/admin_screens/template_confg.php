@@ -47,6 +47,18 @@ function event_espresso_manage_templates() {
 }
 
 function espresso_template_confg_output() {
+	ob_start();
+	do_meta_boxes('event-espresso_page_template_confg', 'side', null);
+	$sidebar_content = ob_get_clean();
+	ob_start();
+	?>
+	<form id="template-settings-form" class="espresso_form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+		<?php do_meta_boxes('event-espresso_page_template_confg', 'advanced', null); ?>
+		<input type="hidden" name="update_org" value="update" />
+	</form>
+	<?php
+	include_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/templates/templates_help.php');
+	$main_post_content = ob_get_clean();
 	?>
 	<div class="wrap columns-2">
 		<div id="icon-options-event" class="icon32"> </div>
@@ -54,19 +66,8 @@ function espresso_template_confg_output() {
 			<?php _e('Template Settings', 'event_espresso'); ?>
 		</h2>
 		<?php
-		ob_start();
-		do_meta_boxes('event-espresso_page_template_confg', 'side', null);
-		$sidebar_content = ob_get_clean();
-		ob_start();
-		?>
-		<form id="template-settings-form" class="espresso_form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-			<?php do_meta_boxes('event-espresso_page_template_confg', 'advanced', null); ?>
-			<input type="hidden" name="update_org" value="update" />
-		</form>
-		<?php
-		include_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/templates/templates_help.php');
-		$main_post_content = ob_get_clean();
-		espresso_choose_layout($main_post_content, $sidebar_content);
+		if (!espresso_choose_layout($main_post_content, $sidebar_content))
+			return FALSE;
 		?>
 
 	</div>
