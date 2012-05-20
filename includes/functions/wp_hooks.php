@@ -318,3 +318,7 @@ function espresso_add_query_vars($query_vars) {
 	$query_vars[] = 'ee';
 	return $query_vars;
 }
+
+function espresso_buffer_headers() {
+	ob_start();
+}

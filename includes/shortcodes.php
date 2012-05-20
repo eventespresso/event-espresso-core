@@ -1160,7 +1160,7 @@ add_shortcode('EE_ANSWER', 'espresso_questions_answers');
 function event_espresso_run() {
 
 	// grab some globals
-	global $wpdb, $org_options, $load_espresso_scripts;
+	global $org_options, $load_espresso_scripts;
 
 	$message = "\nREQUEST variables:\n";
 	foreach ($_REQUEST as $key => $value) {
@@ -1217,9 +1217,10 @@ function event_espresso_run() {
 
 	}
 
-	$content = ob_get_contents();
-	ob_end_clean();
-	return $content;
+	$content = ob_get_clean();
+	echo $content;
+	$headers_to_current = ob_get_clean();
+	return $headers_to_current;
 
 }
 add_shortcode('ESPRESSO_EVENTS', 'event_espresso_run');

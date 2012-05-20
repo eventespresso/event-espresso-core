@@ -89,6 +89,7 @@ if (is_admin()) {
 	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
 	add_action('wp_print_styles', 'add_espresso_stylesheet', 20);
+	add_action('wp_loaded', 'espresso_buffer_headers');
 //	add_action('wp_footer', 'espresso_load_javascript_files');
 }
 
@@ -119,7 +120,7 @@ if (is_admin()) {
  *	30: espresso_export_ticket
  *	40: espresso_add_rewrite_rules
  *	41: espresso_flush_rewrite_rules
-
+ * wp_loaded: espresso_buffer_headers
  * wp_head:
  *	10: espresso_info_header
  * wp_print_styles:
