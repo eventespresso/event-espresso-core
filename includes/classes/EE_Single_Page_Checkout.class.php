@@ -272,11 +272,11 @@ class EE_Single_Page_Checkout {
 		// retreive all success and error messages
 		$notices = espresso_get_notices( FALSE );
 		// success messages
-		$template_args['success_msg'] = $notices['success'];
-		$template_args['success_msg_class'] = $notices['success'] == '' ? ' ui-helper-hidden' : ' fade-away';
+		$template_args['success_msg'] = empty($notices['success']) ? '' : $notices['success'];
+		$template_args['success_msg_class'] = empty($notices['success']) ? ' ui-helper-hidden' : ' fade-away';
 		// error messages - none right?  : )
-		$template_args['error_msg'] = $notices['errors'];
-		$template_args['error_msg_class'] = $notices['errors'] == '' ? ' ui-helper-hidden' : ' fade-away';
+		$template_args['error_msg'] = empty($notices['errors']) ? '' : $notices['errors'];
+		$template_args['error_msg_class'] = empty($notices['errors']) ? ' ui-helper-hidden' : ' fade-away';
 
 		$template_args['currency_symbol'] = $org_options['currency_symbol'];
 		$template_args['reg_page_url'] = $this->_reg_page_base_url;
