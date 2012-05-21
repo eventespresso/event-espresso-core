@@ -87,13 +87,14 @@ add_action('action_hook_espresso_mail_failed_transaction_debugging_output', 'esp
 function espresso_process_payments($EE_Session) {
 	global $espresso_wp_user;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, "Hello World!");
+	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
 	$session_data = $EE_Session->get_session_data();
 	$billing_info = $session_data['billing_info'];
 	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
 	foreach ($active_gateways as $gateway => $path) {
 		require_once($path . "/init.php");
 	}
-	do_action('action_hook_espresso_process_transaction');
+	do_action('action_hook_espresso_process_transaction', $EE_Session, $payment_settings);
 }
 
 add_action('action_hook_espresso_process_payments', 'espresso_process_payments');

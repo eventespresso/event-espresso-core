@@ -150,6 +150,7 @@ if (!class_exists('PaymentGateway')) {
 			echo "<input type=\"submit\" value=\"Click Here\"></p>\n";
 			echo "</form>\n";
 			echo "</body></html>\n";
+			die();
 		}
 
 		/**
