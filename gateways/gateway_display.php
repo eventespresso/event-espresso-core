@@ -10,7 +10,7 @@ function espresso_display_payment_gateways() {
 //	echo var_dump($active_gateways);
 //	echo var_dump($payment_settings);
 
-	foreach ($active_gateways as $gateway => $path) {
+	foreach ($active_gateways as $path) {
 		require_once($path . "/init.php");
 	}
 
@@ -23,7 +23,7 @@ function espresso_display_payment_gateways() {
 	do_action('action_hook_espresso_display_onsite_payment_footer');
 
 	do_action('action_hook_espresso_display_offsite_payment_header');
-	do_action('action_hook_espresso_display_offsite_payment_gateway');
+	do_action('action_hook_espresso_display_offsite_payment_gateway_selection');
 	do_action('action_hook_espresso_display_offsite_payment_footer');
 
 	do_action('action_hook_espresso_display_offline_payment_header');

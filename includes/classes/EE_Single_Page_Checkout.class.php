@@ -1,4 +1,8 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+
+if (!defined('EVENT_ESPRESSO_VERSION'))
+	exit('No direct script access allowed');
+
 /**
  * Event Espresso
  *
@@ -29,12 +33,10 @@ class EE_Single_Page_Checkout {
 	private $_reg_page_base_url = '';
 	// array to hold parameters for the registration button
 	private $_reg_btn = array();
-
 	// url for thank you page
 	private $_return_page_url = FALSE;
 	private $_templates = array();
 	private $_ajax = 0;
-
 	public $cart;
 
 	/**
@@ -51,10 +53,6 @@ class EE_Single_Page_Checkout {
 		return self::$_instance;
 	}
 
-
-
-
-
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
@@ -70,17 +68,16 @@ class EE_Single_Page_Checkout {
 			$this->_ajax = absint($_REQUEST['espresso_ajax']);
 
 			// ajax available_spaces
-			add_action('wp_ajax_espresso_process_registration_step_1', array( &$this, 'process_registration_step_1' ));
-			add_action('wp_ajax_nopriv_espresso_process_registration_step_1', array( &$this, 'process_registration_step_1' ));
+			add_action('wp_ajax_espresso_process_registration_step_1', array(&$this, 'process_registration_step_1'));
+			add_action('wp_ajax_nopriv_espresso_process_registration_step_1', array(&$this, 'process_registration_step_1'));
 
 			// ajax available_spaces
-			add_action('wp_ajax_espresso_process_registration_step_2', array( &$this, 'process_registration_step_2' ));
-			add_action('wp_ajax_nopriv_espresso_process_registration_step_2', array( &$this, 'process_registration_step_2' ));
+			add_action('wp_ajax_espresso_process_registration_step_2', array(&$this, 'process_registration_step_2'));
+			add_action('wp_ajax_nopriv_espresso_process_registration_step_2', array(&$this, 'process_registration_step_2'));
 
 			// ajax available_spaces
-			add_action('wp_ajax_espresso_process_registration_step_3', array( &$this, 'process_registration_step_3' ));
-			add_action('wp_ajax_nopriv_espresso_process_registration_step_3', array( &$this, 'process_registration_step_3' ));
-
+			add_action('wp_ajax_espresso_process_registration_step_3', array(&$this, 'process_registration_step_3'));
+			add_action('wp_ajax_nopriv_espresso_process_registration_step_3', array(&$this, 'process_registration_step_3'));
 		} else {
 			$this->_ajax = 0;
 		}
@@ -94,13 +91,7 @@ class EE_Single_Page_Checkout {
 
 		// hooks that happen during the regevent action and other pathing stuff
 		add_action('init', array(&$this, 'set_paths_and_routing'), 30);
-
-
 	}
-
-
-
-
 
 	/**
 	 * 		load resources required during the checkout process
@@ -120,10 +111,6 @@ class EE_Single_Page_Checkout {
 		$this->cart = $EE_Cart;
 	}
 
-
-
-
-
 	/**
 	 * 		set templates
 	 *
@@ -132,11 +119,11 @@ class EE_Single_Page_Checkout {
 	 */
 	public function set_templates() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$this->_templates['confirmation_page'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/confirmation_page.template.php';
-		$this->_templates['registration_page_wrapper'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_wrapper.template.php';
-		$this->_templates['registration_page_step_1'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_1.template.php';
-		$this->_templates['registration_page_step_2'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_2.template.php';
-		$this->_templates['registration_page_step_3'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_3.template.php';
+		$this->_templates['confirmation_page'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/confirmation_page.template.php';
+		$this->_templates['registration_page_wrapper'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_wrapper.template.php';
+		$this->_templates['registration_page_step_1'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_1.template.php';
+		$this->_templates['registration_page_step_2'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_2.template.php';
+		$this->_templates['registration_page_step_3'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_3.template.php';
 	}
 
 	/**
@@ -146,7 +133,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function load_css() {
-		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && ! is_admin() )) {
+		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && !is_admin() )) {
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			wp_register_style('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/reg_page_checkout/registration_page_checkout.css');
 			wp_enqueue_style('single_page_checkout');
@@ -160,7 +147,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function load_js() {
-		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && ! is_admin() )) {
+		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && !is_admin() )) {
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			wp_register_script('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/registration_page_checkout.js', array('jquery'), '', TRUE);
 			wp_enqueue_script('single_page_checkout');
@@ -173,10 +160,6 @@ class EE_Single_Page_Checkout {
 		}
 	}
 
-
-
-
-
 	/**
 	 * 		set_paths_and_routing
 	 *
@@ -186,14 +169,14 @@ class EE_Single_Page_Checkout {
 	public function set_paths_and_routing() {
 
 		// grab some globals store them by reference
-		global $org_options, $EE_Session;
+		global $org_options;
 
 		$event_page_id = $org_options['event_page_id'];
 		// get permalink for registration page
 		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
 		$this->_reg_page_base_url = rtrim(get_permalink($event_page_id), '/');
 
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $event_page_id.'|'.$this->_reg_page_base_url);
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $event_page_id . '|' . $this->_reg_page_base_url);
 
 		// set pathing based on regevent request
 		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] != '' )) {
@@ -236,22 +219,14 @@ class EE_Single_Page_Checkout {
 					// empty cart or else items build up indefinately
 //					$cart_total = $this->cart->get_cart_grand_totals();
 //					if ( $cart_total['grand_total_qty'] != 0 && ! MER_ACTIVE ){
-					if ( ! defined( 'MER_ACTIVE' )){
+					if (!defined('MER_ACTIVE')) {
 						$this->cart->empty_cart('AJAX');
 					}
 			}
-
 		} else {
-
-
-
+			
 		}
-
 	}
-
-
-
-
 
 	/**
 	 * 		load and display the Registration Single Page Checkout
@@ -270,7 +245,7 @@ class EE_Single_Page_Checkout {
 
 
 		// retreive all success and error messages
-		$notices = espresso_get_notices( FALSE );
+		$notices = espresso_get_notices(FALSE);
 		// success messages
 		$template_args['success_msg'] = empty($notices['success']) ? '' : $notices['success'];
 		$template_args['success_msg_class'] = empty($notices['success']) ? ' ui-helper-hidden' : ' fade-away';
@@ -285,14 +260,14 @@ class EE_Single_Page_Checkout {
 		$template_args['confirmation_data'] = '';
 
 		// grab what step we're on
-		if ( isset( $_GET['step'] )) {
-			$step = absint( $_GET['step'] );
+		if (isset($_GET['step'])) {
+			$step = absint($_GET['step']);
 		} else {
 			$step = 1;
 		}
 
 		// use step to change css classes for displaying how far along the reg process we have gotten
-		switch ( $step ) {
+		switch ($step) {
 
 			case 1:
 				$template_args['step_display_dv_1_class'] = 'active-step';
@@ -332,7 +307,6 @@ class EE_Single_Page_Checkout {
 				$template_args['confirmation_data'] = $this->display_data_for_confirmation();
 
 				break;
-
 		}
 
 		$grand_total = 0;
@@ -413,17 +387,17 @@ class EE_Single_Page_Checkout {
 					$attendee_questions = array();
 					$price_id = $item['price'] * 100;
 					$tckt_date = $item['options']['date'];
-					$find = array( "\xC2\xA0", "\x20", "&#160;", "&nbsp;", ' ' );
-					$tckt_date = str_replace( $find, '_', $tckt_date );
-				
+					$find = array("\xC2\xA0", "\x20", "&#160;", "&nbsp;", ' ');
+					$tckt_date = str_replace($find, '_', $tckt_date);
+
 					$tckt_time = $item['options']['time'] * 100;
 
 					// foreach ticket being purchased
 					for ($att_nmbr = 1; $att_nmbr <= $item['qty']; $att_nmbr++) {
 
 						$input_id = $item['id'] . '-' . $att_nmbr . '-' . $tckt_date . '-' . $tckt_time . '-' . $price_id;
-						$input_name = '[' . $item['id'] . '][' . $att_nmbr . '][' . $tckt_date . '][' . $tckt_time . '][' . $price_id. ']';
-						
+						$input_name = '[' . $item['id'] . '][' . $att_nmbr . '][' . $tckt_date . '][' . $tckt_time . '][' . $price_id . ']';
+
 //echo '<h4>$input_id : ' . $input_id . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 //echo '<h4>$input_name : ' . $input_name . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
@@ -436,10 +410,10 @@ class EE_Single_Page_Checkout {
 						);
 						// grab questions
 						$att_questions = event_espresso_add_question_groups(
-							$event_reg_details->question_groups, '', $item['id'], TRUE, $question_meta, $template_args['css_class']
+										$event_reg_details->question_groups, '', $item['id'], TRUE, $question_meta, $template_args['css_class']
 						);
 
-						if ( $att_questions != '' ) {
+						if ($att_questions != '') {
 							$att_questions .= '
 							<input
 									type="hidden"
@@ -496,7 +470,7 @@ class EE_Single_Page_Checkout {
 					$event_queue[$cart_type]['items'][$item['line_item']]['attendee_questions'] = $attendee_questions;
 
 					$x++;
-				}	// end foreach ( $cart_contents['items'] as $item )
+				} // end foreach ( $cart_contents['items'] as $item )
 				// delete empty placeholder data for primary attendee
 				unset($additional_attendees[$prim_att_line_item][1]);
 				//echo printr( $additional_attendees );
@@ -519,7 +493,6 @@ class EE_Single_Page_Checkout {
 		if (!empty($events_requiring_pre_approval)) {
 
 			// echo printr( $events_requiring_pre_approval, '$events_requiring_pre_approval' );
-			$q = 1;
 			// cycle through array of events requiring pre approval
 			foreach ($events_requiring_pre_approval as $cart_type => $cart_contents) {
 				foreach ($cart_contents as $items) {
@@ -583,7 +556,7 @@ class EE_Single_Page_Checkout {
 		}
 
 
-		$template_args['mer_reg_page_ajax_coupons_url'] = add_query_arg( array( 'e_reg'=>'apply_coupon' ), $this->_reg_page_base_url );
+		$template_args['mer_reg_page_ajax_coupons_url'] = add_query_arg(array('e_reg' => 'apply_coupon'), $this->_reg_page_base_url);
 		$template_args['step_1_line_items'] = $step_1_line_items;
 
 		$template_args['target_inputs'] = rtrim($target_inputs, '&&');
@@ -598,49 +571,50 @@ class EE_Single_Page_Checkout {
 		$template_args['taxes'] = FALSE;
 
 		// load and instantiate models
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
-	    $PRC = EEM_Price::instance();		
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
+		$PRC = EEM_Price::instance();
 		// retreive all taxes
-		if ( $global_taxes = $PRC->get_all_prices_that_are_taxes() ) {
+		$global_taxes = $PRC->get_all_prices_that_are_taxes();
+		if ($global_taxes) {
 			//echo printr( $global_taxes, '$global_taxes' );
 			global $EE_Session;
 			$template_args['taxes'] = array();
 			$tax_totals = array();
 			$amnt = 0;
-			foreach ( $global_taxes as $order => $taxes ) {
-				$tax_tier_total =0;
-				foreach ( $taxes as $tax ) {
+			foreach ($global_taxes as $taxes) {
+				$tax_tier_total = 0;
+				foreach ($taxes as $tax) {
 					//echo printr( $tax, '$tax' );
 					$prcnt = $tax->amount() / 100;
-					$amnt = number_format( $grand_total * $prcnt, 2, '.', '');
-					$prcnt = $prcnt*100;
-					$template_args['taxes'][ $tax->ID() ] = array( 'name' => $tax->name(), 'percent' => $prcnt, 'amount' => $amnt );
-					$tax_totals [ $tax->ID() ] = $amnt;
+					$amnt = number_format($grand_total * $prcnt, 2, '.', '');
+					$prcnt = $prcnt * 100;
+					$template_args['taxes'][$tax->ID()] = array('name' => $tax->name(), 'percent' => $prcnt, 'amount' => $amnt);
+					$tax_totals [$tax->ID()] = $amnt;
 					$tax_tier_total = $tax_tier_total + $amnt;
 				}
 				// add tax to grand total
 				$grand_total = $grand_total + $tax_tier_total;
 			}
 			// add tax data to session
-			$EE_Session->set_session_data(  array( '_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals ), 'session_data' );
+			$EE_Session->set_session_data(array('_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals), 'session_data');
 		}
 
 		$template_args['sub_total'] = number_format($sub_total, 2, '.', '');
 		$template_args['grand_total'] = number_format($grand_total, 2, '.', '');
-		
+
 		$template_args['event_queue'] = $event_queue;
 		$template_args['nmbr_of_carts'] = count($event_queue);
 		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
 
-		$template_args['return_url'] = add_query_arg( array( 'e_reg'=>'event_queue' ), $this->_reg_page_base_url );
-		$template_args['update_url'] = add_query_arg( array( 'e_reg'=>'update_event_queue' ), $this->_reg_page_base_url );
-		$template_args['event_queue_url'] = add_query_arg( array( 'e_reg'=>'event_queue' ), $this->_reg_page_base_url );
-		$template_args['register_url'] = add_query_arg( array( 'e_reg'=>'register' ), $this->_reg_page_base_url );
-		$template_args['reg_page_step_1_url'] = add_query_arg( array( 'e_reg'=>'register', 'step' => 1 ), $this->_reg_page_base_url );
-		$template_args['reg_page_goto_step_2_url'] = add_query_arg( array( 'e_reg'=>'process_reg_step_1' ), $this->_reg_page_base_url );
-		$template_args['reg_page_goto_step_3_url'] = add_query_arg( array( 'e_reg'=>'process_reg_step_2' ), $this->_reg_page_base_url );
-		$template_args['reg_page_complete_reg_url'] = add_query_arg( array( 'e_reg'=>'process_reg_step_3' ), $this->_reg_page_base_url );
+		$template_args['return_url'] = add_query_arg(array('e_reg' => 'event_queue'), $this->_reg_page_base_url);
+		$template_args['update_url'] = add_query_arg(array('e_reg' => 'update_event_queue'), $this->_reg_page_base_url);
+		$template_args['event_queue_url'] = add_query_arg(array('e_reg' => 'event_queue'), $this->_reg_page_base_url);
+		$template_args['register_url'] = add_query_arg(array('e_reg' => 'register'), $this->_reg_page_base_url);
+		$template_args['reg_page_step_1_url'] = add_query_arg(array('e_reg' => 'register', 'step' => 1), $this->_reg_page_base_url);
+		$template_args['reg_page_goto_step_2_url'] = add_query_arg(array('e_reg' => 'process_reg_step_1'), $this->_reg_page_base_url);
+		$template_args['reg_page_goto_step_3_url'] = add_query_arg(array('e_reg' => 'process_reg_step_2'), $this->_reg_page_base_url);
+		$template_args['reg_page_complete_reg_url'] = add_query_arg(array('e_reg' => 'process_reg_step_3'), $this->_reg_page_base_url);
 
 		$template_args['recaptcha'] = '';
 
@@ -651,22 +625,20 @@ class EE_Single_Page_Checkout {
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
 			}
 
-			# the response from reCAPTCHA
-			$resp = null;
 			# the error code from reCAPTCHA, if any
 			$error = null;
-			$rc_theme = empty( $org_options['recaptcha_theme'] ) ? 'clean' : $org_options['recaptcha_theme'];
-			$rc_lang = empty( $org_options['recaptcha_language'] ) ? 'en' : $org_options['recaptcha_language'];
+			$rc_theme = empty($org_options['recaptcha_theme']) ? 'clean' : $org_options['recaptcha_theme'];
+			$rc_lang = empty($org_options['recaptcha_language']) ? 'en' : $org_options['recaptcha_language'];
 
 			$template_args['recaptcha'] .= '
 <script type="text/javascript">
 /* <! [CDATA [ */
-	var RecaptchaOptions = { theme : "'.$rc_theme.'", lang : "'.$rc_lang.'" };
+	var RecaptchaOptions = { theme : "' . $rc_theme . '", lang : "' . $rc_lang . '" };
 /*  ] ]>  */
 </script>
 <p class="event_form_field" id="spc-captcha">
-	'. __('Anti-Spam Measure: Please enter the following phrase', 'event_espresso') .'
-	'. recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false) .'
+	' . __('Anti-Spam Measure: Please enter the following phrase', 'event_espresso') . '
+	' . recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false) . '
 ';
 
 //	var RecaptchaOptions = { theme : "'. $org_options['recaptcha_theme'] == '' ? 'clean' : $org_options['recaptcha_theme'] .'", lang : "'. $org_options['recaptcha_language'] == '' ? 'en' : $org_options['recaptcha_l
@@ -677,21 +649,16 @@ class EE_Single_Page_Checkout {
 </p>
 ';
 
-		$registration_page_step_1 = espresso_display_template( $this->_templates['registration_page_step_1'], $template_args, TRUE );
-		$registration_page_step_2 = espresso_display_template( $this->_templates['registration_page_step_2'], $template_args, TRUE );
-		$registration_page_step_3 = espresso_display_template( $this->_templates['registration_page_step_3'], $template_args, TRUE );
+		$registration_page_step_1 = espresso_display_template($this->_templates['registration_page_step_1'], $template_args, TRUE);
+		$registration_page_step_2 = espresso_display_template($this->_templates['registration_page_step_2'], $template_args, TRUE);
+		$registration_page_step_3 = espresso_display_template($this->_templates['registration_page_step_3'], $template_args, TRUE);
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
-		
+
 		//echo printr( $EE_Session->get_session_data(), __FUNCTION__ );
 
-		espresso_display_template( $this->_templates['registration_page_wrapper'], $template_args );
-		
+		espresso_display_template($this->_templates['registration_page_wrapper'], $template_args);
 	}
-
-
-
-
 
 	/**
 	 * 		get additional event details required for registration
@@ -705,17 +672,13 @@ class EE_Single_Page_Checkout {
 		global $wpdb;
 
 		$SQL = "SELECT event_code, use_coupon_code, use_groupon_code, category_id, coupon_id, tax_percentage, tax_mode, early_disc, early_disc_date, early_disc_percentage, question_groups, allow_overflow, overflow_event_id, event_meta, require_pre_approval FROM " . EVENTS_DETAIL_TABLE . " WHERE id=%d";
-
-		if ($event_reg_details = $wpdb->get_row($wpdb->prepare($SQL, $event_id))) {
+		$event_reg_details = $wpdb->get_row($wpdb->prepare($SQL, $event_id));
+		if ($event_reg_details) {
 			return $event_reg_details;
 		}
 
 		return FALSE;
 	}
-
-
-
-
 
 	/**
 	 * 		display session info for confirmation
@@ -727,53 +690,49 @@ class EE_Single_Page_Checkout {
 
 		global $org_options, $EE_Session;
 
-		$session_data = $EE_Session->get_session_data();		
+		$session_data = $EE_Session->get_session_data();
 		//echo printr( $session_data, __FUNCTION__ );
-		
+
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
-		$primary_attendee = $session_data['primary_attendee'];
+		$template_args = array();
+		$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
 
-		$exclude_attendee_info = array( 'registration_id', 'price_paid', 'primary_attendee' );
+		foreach ($reg_info['items'] as $line_item_id => $event) {
 
-		foreach ( $reg_info['items'] as $line_item_id => $event ) {
-		
 			$template_args['events'][$line_item_id]['name'] = $event['name'];
 			$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
-			$template_args['events'][$line_item_id]['time'] = date( 'g:i a', $event['options']['time'] );
+			$template_args['events'][$line_item_id]['time'] = date('g:i a', $event['options']['time']);
 			$template_args['events'][$line_item_id]['ticket-price'] = $event['options']['price_desc'];
 
-			foreach ( $event['attendees'] as $att_nmbr => $attendee ) {
-			
-				$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] .  ' ' . $attendee['lname'];
+			foreach ($event['attendees'] as $att_nmbr => $attendee) {
+
+				$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] . ' ' . $attendee['lname'];
 				$extra_att_details = array();
-				
-				foreach ( $attendee as $key => $value ) {
-					switch ( $key ) {
+
+				foreach ($attendee as $key => $value) {
+					switch ($key) {
 
 						case 'fname' :
 						case 'lname' :
-								break;
+							break;
 
 						default:
-								if ( ! in_array( $key, $exclude_attendee_info ) && ! is_numeric( $key ) && $value != '' ) {
-									array_push( $extra_att_details, $value );
-								}
-
+							if (!in_array($key, $exclude_attendee_info) && !is_numeric($key) && $value != '') {
+								array_push($extra_att_details, $value);
+							}
 					}
 				}
-				
-				if ( ! empty( $extra_att_details )) {
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . implode( ', ', $extra_att_details ) . '</span>';
+
+				if (!empty($extra_att_details)) {
+					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . implode(', ', $extra_att_details) . '</span>';
 				} else {
 					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
 				}
-
-
 			}
 		}
 
-		if ( $billing_info == 'no payment required' ) {
+		if ($billing_info == 'no payment required') {
 			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
 		} else {
 			$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
@@ -784,28 +743,21 @@ class EE_Single_Page_Checkout {
 			$template_args['billing']['state'] = $billing_info['reg-page-billing-state']['value'];
 			$template_args['billing']['zip'] = $billing_info['reg-page-billing-zip']['value'];
 			$template_args['billing']['credit card number'] = $billing_info['reg-page-billing-card-nmbr']['value'];
-			$template_args['billing']['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'].$billing_info['reg-page-billing-card-exp-date-year']['value'];
+			$template_args['billing']['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value'];
 			$template_args['billing']['ccv code'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-			
+
 			$total = $session_data['_cart_grand_total_amount'];
-			if ( isset( $session_data['tax_totals'] )) {
-				foreach ( $session_data['tax_totals'] as $taxes ) {
+			if (isset($session_data['tax_totals'])) {
+				foreach ($session_data['tax_totals'] as $taxes) {
 					$total = $total + $taxes;
 				}
 			}
-			
-			
-			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format( $total, 2 );
-			return espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE );
 
+
+			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format($total, 2);
+			return espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
 		}
-
-
-
-
 	}
-
-
 
 	/**
 	 * 		process_registration_step_1
@@ -816,7 +768,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function process_registration_step_1() {
 
-		global $org_options, $EE_Session;
+		global $EE_Session;
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -831,10 +783,9 @@ class EE_Single_Page_Checkout {
 		unset($_POST['espresso_ajax']);
 
 		// some empty containers
-		$line_item_ids = array();
 		$attendees = array();
-		$payment_data = array();
 		$primary_attendee = array();
+		$valid_data = array();
 
 		// loop through post data and sanitize all elements
 		foreach ($_POST as $key => $value) {
@@ -851,16 +802,15 @@ class EE_Single_Page_Checkout {
 						foreach ($event_details as $event_time => $tckt_details) {
 							foreach ($tckt_details as $tckt_price => $att_details) {
 								foreach ($att_details as $form_input => $input_value) {
-								
-									$input_value = htmlentities( $input_value, ENT_QUOTES, 'UTF-8' );
 
-									$line_item_id = $att_details['line_item_id'];							
+									$input_value = htmlentities($input_value, ENT_QUOTES, 'UTF-8');
+
+									$line_item_id = $att_details['line_item_id'];
 									$cart_contents = $this->cart->whats_in_the_cart('REG', $line_item_id);
 
 									//$registration_id = uniqid( $event_id.'-', TRUE );
 //									$registration_id = $event_id . '-' . $att_nmbr . '-' . $EE_Session->id();
 //									$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['registration_id'] = $registration_id;
-
 									// add ticket price to the array
 									$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['price_paid'] = number_format($tckt_price / 100, 2, '.', '');
 
@@ -877,13 +827,13 @@ class EE_Single_Page_Checkout {
 									}
 
 									// store a bit of data about the primary attendee
-									if ( $form_input == 'primary_attendee' && $input_value == 1 ) {
+									if ($form_input == 'primary_attendee' && $input_value == 1) {
 										$primary_attendee['line_item_id'] = $line_item_id;
 //										$primary_attendee['registration_id'] = $registration_id;
 										$primary_attendee['fname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['fname'];
-                                        $primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['lname'];
-                                        $primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['email'];
-										$EE_Session->set_session_data(  array( 'primary_attendee' => $primary_attendee ), 'session_data' );
+										$primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['lname'];
+										$primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['email'];
+										$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 									}
 								}
 							}
@@ -891,41 +841,35 @@ class EE_Single_Page_Checkout {
 					}
 				}
 			}
-			
+
 			// now we'll save our data to the session by doing... MORE LOOPING !!!
 			foreach ($attendees as $line_item_id => $line_item) {
 				foreach ($line_item as $event_id => $attendees_data) {
-					if ( ! $this->cart->set_line_item_details( $attendees_data, $line_item_id )) {
-						$notices = espresso_get_notices( FALSE );
-						$error_msg = $notices['errors'];						
+					if (!$this->cart->set_line_item_details($attendees_data, $line_item_id)) {
+						$notices = espresso_get_notices(FALSE);
+						$error_msg = $notices['errors'];
 					}
 				}
 			}
-			
-			if ( ! $error_msg ) {
+
+			if (!$error_msg) {
 				$success_msg .= __('Attendee information submitted successfully.', 'event_espresso');
 			}
-			
 		} else {
 			$success_msg = FALSE;
 			$error_msg = __('An error occured! No valid question responses were received.', 'event_espresso');
 		}
 
-		if ( $this->send_ajax_response($success_msg, $error_msg ) ) {
-			$reg_page_step_2_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'2' ), $this->_reg_page_base_url );
-			wp_safe_redirect( $reg_page_step_2_url );
+		if ($this->send_ajax_response($success_msg, $error_msg)) {
+			$reg_page_step_2_url = add_query_arg(array('e_reg' => 'register', 'step' => '2'), $this->_reg_page_base_url);
+			wp_safe_redirect($reg_page_step_2_url);
 			exit();
 		} else {
-			$reg_page_step_1_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'1' ), $this->_reg_page_base_url );
-			wp_safe_redirect( $reg_page_step_1_url );
+			$reg_page_step_1_url = add_query_arg(array('e_reg' => 'register', 'step' => '1'), $this->_reg_page_base_url);
+			wp_safe_redirect($reg_page_step_1_url);
 			exit();
 		}
-
 	}
-
-
-
-
 
 	/**
 	 * 		process_registration_step_2
@@ -935,7 +879,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function process_registration_step_2() {
 
-		global $org_options, $EE_Session, $espresso_notices;
+		global $EE_Session, $espresso_notices;
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -948,195 +892,177 @@ class EE_Single_Page_Checkout {
 		unset($_POST['espresso_ajax']);
 
 		// if sessions is not instantiated
-		if ( ! defined( 'EE_Validate_and_Sanitize' )) {
+		if (!defined('EE_Validate_and_Sanitize')) {
 			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
 			$EE_VnS = EE_Validate_and_Sanitize::instance();
 		}
 
-		if ( isset( $_POST['reg-page-no-payment-required'] ) && absint( $_POST['reg-page-no-payment-required'] ) == 1 ) {
-			if ( $EE_Session->set_session_data(  array( 'billing_info' => 'no payment required' ), $section = 'session_data' )) {
-				$success_msg = __( 'Registration Step 2 completed', 'event_espresso' );
+		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
+			if ($EE_Session->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
+				$success_msg = __('Registration Step 2 completed', 'event_espresso');
 			} else {
 				$espresso_notices = $EE_VnS->return_notices();
-				$notices = espresso_get_notices( FALSE );
+				$notices = espresso_get_notices(FALSE);
 				$error_msg = $notices['errors'];
 			}
 		} else {
 
-			$reg_page_billing_inputs = array (
-
-							'reg-page-billing-fname' => array(
-									'db-col' =>'fname',
-									'label' => __( 'First Name', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'string',
-									'sanitize' => 'no_html',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-lname' => array(
-									'db-col' =>'lname',
-									'label' => __( 'Last Name', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'string',
-									'sanitize' => 'no_html',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-email' => array(
-									'db-col' =>'email',
-									'label' => __( 'Email Address', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'string',
-									'sanitize' => 'email',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-address' => array(
-									'db-col' =>'address',
-									'label' => __( 'Address', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'string',
-									'sanitize' => 'no_html',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-city' => array(
-									'db-col' =>'city',
-									'label' => __( 'City', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'string',
-									'sanitize' => 'no_html',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-state' => array(
-									'db-col' =>'state',
-									'label' => __( 'State', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'string',
-									'sanitize' => 'no_html',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-zip' => array(
-									'db-col' =>'zip',
-									'label' => __( 'Zip Code', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'string',
-									'sanitize' => 'no_html',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-card-nmbr' => array(
-									'db-col' =>'card-nmbr',
-									'label' => __( 'Credit Card Number', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'int',
-									'sanitize' => 'ccard',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-card-exp-date-mnth' => array(
-									'db-col' =>'exp-date-mnth',
-									'label' => __( 'Expiry Date Month', 'event_espresso' ),
-									'input' =>'select',
-									'type' =>'int',
-									'sanitize' => 'ccmm',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-card-exp-date-year' => array(
-									'db-col' =>'exp-date-year',
-									'label' => __( 'Expiry Date Year', 'event_espresso' ),
-									'input' =>'select',
-									'type' =>'int',
-									'sanitize' => 'ccyy',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-							'reg-page-billing-card-ccv-code' => array(
-									'db-col' =>'ccv-code',
-									'label' => __( 'CCV Code', 'event_espresso' ),
-									'input' =>'text',
-									'type' =>'int',
-									'sanitize' => 'ccv',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => NULL,
-									'format' => '%s'
-							),
-
-					);
+			$reg_page_billing_inputs = array(
+					'reg-page-billing-fname' => array(
+							'db-col' => 'fname',
+							'label' => __('First Name', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'string',
+							'sanitize' => 'no_html',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-lname' => array(
+							'db-col' => 'lname',
+							'label' => __('Last Name', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'string',
+							'sanitize' => 'no_html',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-email' => array(
+							'db-col' => 'email',
+							'label' => __('Email Address', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'string',
+							'sanitize' => 'email',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-address' => array(
+							'db-col' => 'address',
+							'label' => __('Address', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'string',
+							'sanitize' => 'no_html',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-city' => array(
+							'db-col' => 'city',
+							'label' => __('City', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'string',
+							'sanitize' => 'no_html',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-state' => array(
+							'db-col' => 'state',
+							'label' => __('State', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'string',
+							'sanitize' => 'no_html',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-zip' => array(
+							'db-col' => 'zip',
+							'label' => __('Zip Code', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'string',
+							'sanitize' => 'no_html',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-card-nmbr' => array(
+							'db-col' => 'card-nmbr',
+							'label' => __('Credit Card Number', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'int',
+							'sanitize' => 'ccard',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-card-exp-date-mnth' => array(
+							'db-col' => 'exp-date-mnth',
+							'label' => __('Expiry Date Month', 'event_espresso'),
+							'input' => 'select',
+							'type' => 'int',
+							'sanitize' => 'ccmm',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-card-exp-date-year' => array(
+							'db-col' => 'exp-date-year',
+							'label' => __('Expiry Date Year', 'event_espresso'),
+							'input' => 'select',
+							'type' => 'int',
+							'sanitize' => 'ccyy',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+					'reg-page-billing-card-ccv-code' => array(
+							'db-col' => 'ccv-code',
+							'label' => __('CCV Code', 'event_espresso'),
+							'input' => 'text',
+							'type' => 'int',
+							'sanitize' => 'ccv',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => NULL,
+							'format' => '%s'
+					),
+			);
 
 
 			// allow others to edit post input array
-			$reg_page_billing_inputs = apply_filters( 'filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs );
+			$reg_page_billing_inputs = apply_filters('filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs);
 			// validate and sanitize	post data
-			if ( $reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs( $reg_page_billing_inputs ) ) {
+			$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
+			if ($reg_page_billing_inputs) {
 				// add billing info to the session
-				if ( $EE_Session->set_session_data(  array( 'billing_info' => $reg_page_billing_inputs ), $section = 'session_data' )) {
-					$success_msg = __( 'Billing information submitted successfully', 'event_espresso' );
+				if ($EE_Session->set_session_data(array('billing_info' => $reg_page_billing_inputs), $section = 'session_data')) {
+					$success_msg = __('Billing information submitted successfully', 'event_espresso');
 				} else {
 					//$error_msg = __( 'An error occured! The billing information could not be submitted. Please refresh your browser and try agin.', 'event_espresso' );
 					$espresso_notices = $EE_VnS->return_notices();
-					$notices = espresso_get_notices( FALSE );
+					$notices = espresso_get_notices(FALSE);
 					$error_msg = $notices['errors'];
 				}
-
 			} else {
 				$espresso_notices = $EE_VnS->return_notices();
-				$notices = espresso_get_notices( FALSE );
+				$notices = espresso_get_notices(FALSE);
 				$error_msg = $notices['errors'];
 			}
-
 		}
 
-		if ( $this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_2_ajax_response' )) {
-			$reg_page_step_3_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'3' ), $this->_reg_page_base_url );
-			wp_safe_redirect( $reg_page_step_3_url );
+		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response')) {
+			$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
+			wp_safe_redirect($reg_page_step_3_url);
 			exit();
 		} else {
-			$reg_page_step_2_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'2' ), $this->_reg_page_base_url );
-			wp_safe_redirect( $reg_page_step_2_url );
+			$reg_page_step_2_url = add_query_arg(array('e_reg' => 'register', 'step' => '2'), $this->_reg_page_base_url);
+			wp_safe_redirect($reg_page_step_2_url);
 			exit();
 		}
-
 	}
-
-
-
-
 
 	/**
 	 * 		send reg step 2 ajax response
@@ -1145,8 +1071,10 @@ class EE_Single_Page_Checkout {
 	 * 		@param 		string 		$success_msg
 	 * 		@return 		JSON
 	 */
-	private function _send_reg_step_2_ajax_response( $args, $success_msg ) {
-
+	private function _send_reg_step_2_ajax_response($args, $success_msg) {
+		// What's args for?
+		$dummy_var = $args;
+		$dummy_var = $dummy_var;
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -1154,17 +1082,13 @@ class EE_Single_Page_Checkout {
 
 		$response_data = array(
 				'success' => $success_msg,
-				'return_data' => array( 'reg-page-confirmation-dv' => $confirmation_page )
+				'return_data' => array('reg-page-confirmation-dv' => $confirmation_page)
 		);
 
 		echo json_encode($response_data);
 		// to be... or...
 		die();
 	}
-
-
-
-
 
 	/**
 	 * 		process_registration_step_3
@@ -1181,215 +1105,213 @@ class EE_Single_Page_Checkout {
 		$continue_reg = TRUE;
 
 		// check recaptcha
-		if ( $org_options['use_captcha'] && ! is_user_logged_in() ) {
-			if ( ! function_exists('recaptcha_check_answer') ) {
+		if ($org_options['use_captcha'] && !is_user_logged_in()) {
+			if (!function_exists('recaptcha_check_answer')) {
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
 			}
 
 			$response = recaptcha_check_answer($org_options['recaptcha_privatekey'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
-			if ( ! $response->is_valid ) {
+			if (!$response->is_valid) {
 				$continue_reg = FALSE;
 				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of it\'s three), and try again.', 'event_espresso');
 			}
 		}
-		
 
-		if ( $continue_reg ) {
 
-			do_action( 'action_hook_espresso_begin_reg' );
+		if ($continue_reg) {
+
+			do_action('action_hook_espresso_begin_reg');
 
 			global $EE_Session;
-			
+
 			// load and instantiate models
-		    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-		    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
-		    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-		    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
-		    $REG = EEM_Registration::instance();
-		    $TXN = EEM_Transaction::instance();
-		    $ATT = EEM_Attendee::instance();
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+			$REG = EEM_Registration::instance();
+			$TXN = EEM_Transaction::instance();
+			$ATT = EEM_Attendee::instance();
 			// grab session data
 			$session = $EE_Session->get_session_data();
 			$reg_items = $session['cart']['REG']['items'];
 			// start the transaction record
-			$transaction = new EE_Transaction( 0.00, 'TPN', NULL, $session, NULL, NULL );
+			$transaction = new EE_Transaction(0.00, 'TPN', NULL, $session, NULL, NULL);
 			$txn_results = $transaction->insert();
 			// more than one item means this is a group registration
-			$is_group_reg = count( $reg_items ) > 1 ? TRUE : FALSE;
+			$is_group_reg = count($reg_items) > 1 ? TRUE : FALSE;
 			// cycle through items in session
-			foreach ( $reg_items as $line_item_id => $event ) {
+			foreach ($reg_items as $line_item_id => $event) {
 				// more than one attendee also means this is a group registration
-				$is_group_reg = count( $event['attendees'] ) > 1 ? TRUE : $is_group_reg;
+				$is_group_reg = count($event['attendees']) > 1 ? TRUE : $is_group_reg;
 				// cycle through attendees
-				foreach ( $event['attendees'] as $att_nmbr => $attendee ) {
-					
+				foreach ($event['attendees'] as $att_nmbr => $attendee) {
+
 					// grab main attendee details
-					$ATT_fname = isset( $attendee['fname'] ) ? $attendee['fname'] : '';
-					$ATT_lname = isset( $attendee['lname'] ) ? $attendee['lname'] : '';
-					$ATT_email = isset( $attendee['email'] ) ? $attendee['email'] : '';
+					$ATT_fname = isset($attendee['fname']) ? $attendee['fname'] : '';
+					$ATT_lname = isset($attendee['lname']) ? $attendee['lname'] : '';
+					$ATT_email = isset($attendee['email']) ? $attendee['email'] : '';
 					// create array for query where statement
-					$where_cols_n_values = array( 'ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email );
-					// do we already have an existing record for this attendee ?														
-					if ( $existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values )) {
+					$where_cols_n_values = array('ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email);
+					// do we already have an existing record for this attendee ?
+					$existing_attendee = $ATT->find_existing_attendee($where_cols_n_values);
+					if ($existing_attendee) {
 						$ATT_ID = $existing_attendee->ID();
 					} else {
 						// create attendee
-						$att[ $att_nmbr ] = new EE_Attendee(
-																							$ATT_fname,
-																							$ATT_lname,
-																							isset( $attendee['address'] ) ? $attendee['address'] : NULL,
-																							isset( $attendee['address2'] ) ? $attendee['address2'] : NULL,
-																							isset( $attendee['city'] ) ? $attendee['city'] : NULL,
-																							isset( $attendee['state'] ) ? $attendee['state'] : NULL,
-																							isset( $attendee['country'] ) ? $attendee['country'] : NULL,
-																							isset( $attendee['zip'] ) ? $attendee['zip'] : NULL,
-																							$ATT_email,
-																							isset( $attendee['phone'] ) ? $attendee['phone'] : NULL,
-																							isset( $attendee['social'] ) ? $attendee['social'] : NULL
-																						);					
+						$att[$att_nmbr] = new EE_Attendee(
+														$ATT_fname,
+														$ATT_lname,
+														isset($attendee['address']) ? $attendee['address'] : NULL,
+														isset($attendee['address2']) ? $attendee['address2'] : NULL,
+														isset($attendee['city']) ? $attendee['city'] : NULL,
+														isset($attendee['state']) ? $attendee['state'] : NULL,
+														isset($attendee['country']) ? $attendee['country'] : NULL,
+														isset($attendee['zip']) ? $attendee['zip'] : NULL,
+														$ATT_email,
+														isset($attendee['phone']) ? $attendee['phone'] : NULL,
+														isset($attendee['social']) ? $attendee['social'] : NULL
+						);
 						//add attendee to db
-						$att_results = $att[ $att_nmbr ]->insert();
+						$att_results = $att[$att_nmbr]->insert();
 						$ATT_ID = $att_results['new-ID'];
-					}	
-					
-					$new_reg_ID  = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $att_nmbr . '-' . $session['id'];	
-					
+					}
+
+					$new_reg_ID = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $att_nmbr . '-' . $session['id'];
+
 					// check for existing registration attempt
-					if ( $prev_reg = $REG->find_existing_registrations_LIKE( '%' . $event['id'] . '-' . $ATT_ID . '-' . $att_nmbr . '-' . $session['id'] . '%' )) {
-					
+					$prev_reg = $REG->find_existing_registrations_LIKE('%' . $event['id'] . '-' . $ATT_ID . '-' . $att_nmbr . '-' . $session['id'] . '%');
+					if ($prev_reg) {
+
 						// get previous transaction
 						$prev_txn_ID = $prev_reg->transaction_ID();
-						if ( $prev_txn = $TXN->get_transaction( $prev_txn_ID )) {
+						$prev_txn = $TXN->get_transaction($prev_txn_ID);
+						if ($prev_txn) {
 							// get txn details
 							$prev_txn_details = $prev_txn->details();
-							if ( ! isset( $prev_txn_details['REDO_TXN'] )) {
+							if (!isset($prev_txn_details['REDO_TXN'])) {
 								$prev_txn_details['REDO_TXN'] = array();
 							}
 							// update with new TXN_ID
 							$prev_txn_details['REDO_TXN'][] = $txn_results['new-ID'];
-							$prev_txn->set_details( $prev_txn_details );
-							$prev_txn->update();	
+							$prev_txn->set_details($prev_txn_details);
+							$prev_txn->update();
 						}
 
 						// delete prev registration so that they don't pile up in the DB 
 						// ( it's ok - we're tracking the failed transactions, and if they don't retry the transaction, then we will still have this record won't we? )
-						$REG->delete( array( 'REG_ID' => $prev_reg->ID() ));
-						
-					} 
-					
-					// now create a new registration for the attendee
-					$reg[ $line_item_id ] = new EE_Registration(
-																								$event['id'],
-																								$ATT_ID,
-																								$txn_results['new-ID'],
-																								$session['id'],
-																								$new_reg_ID,
-																								isset( $attendee['primary_attendee'] ),
-																								$is_group_reg,
-																								'RPN',
-																								time(),
-																								$event['price_id'],
-																								FALSE,
-																								FALSE
-																							  );
-			    	$reg[ $line_item_id ]->insert();	
-					
-					// add registration id to session for the primary attendee
-					if ( isset( $attendee['primary_attendee']) && $attendee['primary_attendee'] == 1 ) {
-						$primary_attendee = $session['primary_attendee'];
-						$primary_attendee['registration_id'] = $new_reg_ID;
-						$EE_Session->set_session_data(  array( 'primary_attendee' => $primary_attendee ), 'session_data' );					
+						$REG->delete(array('REG_ID' => $prev_reg->ID()));
 					}
 
+					// now create a new registration for the attendee
+					$reg[$line_item_id] = new EE_Registration(
+													$event['id'],
+													$ATT_ID,
+													$txn_results['new-ID'],
+													$session['id'],
+													$new_reg_ID,
+													isset($attendee['primary_attendee']),
+													$is_group_reg,
+													'RPN',
+													time(),
+													$event['price_id'],
+													FALSE,
+													FALSE
+					);
+					$reg[$line_item_id]->insert();
+
+					// add registration id to session for the primary attendee
+					if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
+						$primary_attendee = $session['primary_attendee'];
+						$primary_attendee['registration_id'] = $new_reg_ID;
+						$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+					}
 				}
 			}
-			
+
 			// free event?
-			if ( isset( $_POST['reg-page-no-payment-required'] ) && absint( $_POST['reg-page-no-payment-required'] ) == 1 ) {
+			if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 				// becuz this was a free event we need to generate some pseudo gateway results
 				$txn_details = array(
-														'approved' => TRUE,
-														'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
-														'status' => 'Approved',
-														'details' => 'free event',
-														'amount' => 0.00,
-														'method' => 'none'
-													);
+						'approved' => TRUE,
+						'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
+						'status' => 'Approved',
+						'details' => 'free event',
+						'amount' => 0.00,
+						'method' => 'none'
+				);
 			} else {
 				// attempt to perform transaction via payment gateway 
 				do_action('action_hook_espresso_process_payments', $EE_Session);
 				$session = $EE_Session->get_session_data();
-				$txn_details = $session['txn_results'];			
+				$txn_details = $session['txn_results'];
 			}
 
-			$txn_details['amount'] = isset( $txn_details['amount'] ) ? abs( $txn_details['amount'] ) : 0.00;
-			$txn_details['method'] = isset( $txn_details['method'] ) ? $txn_details['method'] : '';
-			
-			switch ( $txn_details['status'] ) {
-			
+			$txn_details['amount'] = isset($txn_details['amount']) ? abs($txn_details['amount']) : 0.00;
+			$txn_details['method'] = isset($txn_details['method']) ? $txn_details['method'] : '';
+
+			switch ($txn_details['status']) {
+
 				case 'Approved' :
-						$status= 'TAP';
-						$success_msg = $txn_details['response_msg'];
-						do_action( 'action_hook_espresso_reg_approved' );
-						break;
-				
+					$status = 'TAP';
+					$success_msg = $txn_details['response_msg'];
+					do_action('action_hook_espresso_reg_approved');
+					break;
+
 				case 'Declined' :
-						$status= 'DEC';
-						$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
-						do_action( 'action_hook_espresso_reg_declined' );
-						break;
-				
+					$status = 'DEC';
+					$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
+					do_action('action_hook_espresso_reg_declined');
+					break;
+
 				case 'Incomplete' :
-						$status= 'INC';
-						$error_msg = __('We\'re sorry, but an error occured and the transaction could not be completed. Please try again. If problems persist, contact the site administrator.', 'event_espresso');
-						do_action( 'action_hook_espresso_reg_incomplete' );
-						break;
+					$status = 'INC';
+					$error_msg = __('We\'re sorry, but an error occured and the transaction could not be completed. Please try again. If problems persist, contact the site administrator.', 'event_espresso');
+					do_action('action_hook_espresso_reg_incomplete');
+					break;
 			}
-			
-			$transaction->set_total( $txn_details['amount'] ); 
-			$transaction->set_status( $status );
-			$transaction->set_details( $txn_details );
-			
-			if ( isset( $txn_details['md5_hash'] )) {
-				$transaction->set_hash_salt( $txn_details['md5_hash'] );
+
+			$transaction->set_total($txn_details['amount']);
+			$transaction->set_status($status);
+			$transaction->set_details($txn_details);
+
+			if (isset($txn_details['md5_hash'])) {
+				$transaction->set_hash_salt($txn_details['md5_hash']);
 			}
-			
-			if ( isset( $session['taxes'] )) {
-				$tax_data = array( 'taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals'] );
-				$transaction->set_tax_data( $tax_data );
+
+			if (isset($session['taxes'])) {
+				$tax_data = array('taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals']);
+				$transaction->set_tax_data($tax_data);
 			}
-			
+
 			$transaction->update();
-			
-			if ( $transaction->total() > 0 && $txn_details['status'] == 'Approved' ) {
+
+			if ($transaction->total() > 0 && $txn_details['status'] == 'Approved') {
 				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
 				EEM_Payment::instance();
-				$payment = new EE_Payment( $transaction->ID(), $transaction->datetime(), $txn_details['method'], $txn_details['amount'] );
+				$payment = new EE_Payment($transaction->ID(), $transaction->datetime(), $txn_details['method'], $txn_details['amount']);
 				$results = $payment->insert();
+				if (!$results) {
+					$error_msg = __('There was a problem inserting your payment into our records.', 'event_espresso');
+				}
 			}
-				
 		}
 
-		if ( $this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_3_ajax_response' )) {		
-			if ( ! $this->_return_page_url ) {
+		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
+			if (!$this->_return_page_url) {
 				$return_page_id = $org_options['return_url'];
 				// get permalink for thank you page
 				// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-				$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');	
-			}			
-			wp_safe_redirect( $this->_return_page_url );
+				$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
+			}
+			wp_safe_redirect($this->_return_page_url);
 			exit();
 		} else {
-			$reg_page_step_3_url = add_query_arg( array( 'e_reg'=>'register', 'step'=>'3' ), $this->_reg_page_base_url );
-			wp_safe_redirect( $reg_page_step_3_url );
+			$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
+			wp_safe_redirect($reg_page_step_3_url);
 			exit();
 		}
-
 	}
-
-
-
-
 
 	/**
 	 * 		send reg step 3 ajax response
@@ -1398,34 +1320,33 @@ class EE_Single_Page_Checkout {
 	 * 		@param 		string 		$success_msg
 	 * 		@return 		JSON
 	 */
-	private function _send_reg_step_3_ajax_response( $args, $success_msg ) {
+	private function _send_reg_step_3_ajax_response($args, $success_msg) {
 
 		global $org_options;
 
+		// What's args for?
+		$dummy_var = $args;
+		$dummy_var = $dummy_var;
+
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		
-		if ( ! $this->_return_page_url ) {
+
+		if (!$this->_return_page_url) {
 			$return_page_id = $org_options['return_url'];
 			// get permalink for thank you page
 			// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');	
+			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
 		}
-										 
+
 		$response_data = array(
 				'success' => $success_msg,
-				'return_data' => array( 'redirect-to-thank-you-page' => $this->_return_page_url )
+				'return_data' => array('redirect-to-thank-you-page' => $this->_return_page_url)
 		);
 
 		echo json_encode($response_data);
 		// to be... or...
 		die();
 	}
-
-
-
-
-
 
 	/**
 	 * 		load and display Registration Complete Page
@@ -1434,27 +1355,22 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function registration_complete() {
-	
-			global $EE_Session;
 
-			$session = $EE_Session->get_session_data();
-			$txn_details = $session['txn_results'];
+		global $EE_Session;
 
-			$txn_results = array(
-											'approved' => $payment_data->approved ? $payment_data->approved : 0,
-											'response_msg' => $payment_data->response_reason_text,
-											'md5_hash' => $payment_data->md5_hash,
-											'details'	=> array(
-																				  'transaction_id' => $payment_data->transaction_id,
-																				  'invoice_number' => $payment_data->invoice_number,
-																		 	),								
-										  );		
+		$session = $EE_Session->get_session_data();
+		$txn_details = $session['txn_results'];
+
+		$txn_results = array(
+				'approved' => $payment_data->approved ? $payment_data->approved : 0,
+				'response_msg' => $payment_data->response_reason_text,
+				'md5_hash' => $payment_data->md5_hash,
+				'details' => array(
+						'transaction_id' => $payment_data->transaction_id,
+						'invoice_number' => $payment_data->invoice_number,
+				),
+		);
 	}
-
-
-
-
-
 
 	/**
 	 *   handle ajax message responses
@@ -1472,7 +1388,7 @@ class EE_Single_Page_Checkout {
 		}
 
 		if ($success_msg) {
-		
+
 			// if this is an ajax request AND a callback function exists
 			if ($this->_ajax === 1 && $valid_callback) {
 				// send data through to the callback function
@@ -1488,7 +1404,6 @@ class EE_Single_Page_Checkout {
 				// return false becuz response was not ajax
 				return TRUE;
 			}
-
 		} elseif ($error_msg) {
 
 			if ($this->_ajax === 1) {
@@ -1502,12 +1417,7 @@ class EE_Single_Page_Checkout {
 		}
 	}
 
-
-
-
-
-
-
 }
+
 /* End of file EE_Single_Page_Checkout.class.php */
 /* Location: includes/process-registration/EE_Single_Page_Checkout.class.php */

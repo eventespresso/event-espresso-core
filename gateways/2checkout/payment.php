@@ -4,7 +4,7 @@
  * Gets included in /gateways/gateway_display.php
  */
 function espresso_display_2checkout($payment_data) {
-	global $org_options, $payment_settings, $wpdb;
+	global $org_options, $payment_settings;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	include_once ('lib/2checkout.php');
 	$my2checkout = new TwoCo();
@@ -42,3 +42,10 @@ function espresso_display_2checkout($payment_data) {
 }
 
 add_action('action_hook_espresso_display_offsite_payment_gateway', 'espresso_display_2checkout');
+
+function espresso_choose_2checkout() {
+	global $payment_settings;
+	echo '<input class="espresso_payment_button_2checkout" type="image" name="off_site_gateway_selection" value="2checkout" alt="Pay using 2checkout" src="' . $payment_settings['2checkout']['button_url'] . '" />';
+}
+
+add_action('action_hook_espresso_display_offsite_payment_gateway_selection', 'espresso_choose_2checkout');
