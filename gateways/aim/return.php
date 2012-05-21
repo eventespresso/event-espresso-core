@@ -119,4 +119,3 @@ function espresso_process_aim( $EE_Session ) {
 
 }
 
-add_action('action_hook_espresso_process_transaction', 'espresso_process_aim');

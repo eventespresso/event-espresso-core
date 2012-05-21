@@ -3,7 +3,7 @@
 /**
  * Gets included in /gateways/gateway_display.php
  */
-function espresso_display_2checkout($payment_data) {
+function espresso_send_to_2checkout($payment_data) {
 	global $org_options, $payment_settings;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	include_once ('lib/2checkout.php');
@@ -28,20 +28,8 @@ function espresso_display_2checkout($payment_data) {
 	$my2checkout->addField('total', number_format($payment_data['total_cost'], 2, '.', ''));
 	$my2checkout->addField('tco_currency', $payment_settings['2checkout']['currency_format']);
 
-	if ($payment_settings['2checkout']['bypass_payment_page']) {
-		$my2checkout->submitPayment();
-	} else {
-		$my2checkout->submitButton($payment_settings['2checkout']['button_url'], '2checkout');
-		wp_deregister_script('jquery.validate.pack');
-	}
-
-	if ($payment_settings['2checkout']['use_sandbox']) {
-		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __(' 2checkout.com Debug Mode Is Turned On', 'event_espresso') . '</h3>';
-		$my2checkout->dump_fields();
-	}
+	$my2checkout->submitPayment();
 }
-
-add_action('action_hook_espresso_display_offsite_payment_gateway', 'espresso_display_2checkout');
 
 function espresso_choose_2checkout() {
 	global $payment_settings;

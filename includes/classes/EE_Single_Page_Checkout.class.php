@@ -735,17 +735,20 @@ class EE_Single_Page_Checkout {
 		if ($billing_info == 'no payment required') {
 			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
 		} else {
-			$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
-			$template_args['billing']['last name'] = $billing_info['reg-page-billing-lname']['value'];
-			$template_args['billing']['email address'] = $billing_info['reg-page-billing-email']['value'];
-			$template_args['billing']['address'] = $billing_info['reg-page-billing-address']['value'];
-			$template_args['billing']['city'] = $billing_info['reg-page-billing-city']['value'];
-			$template_args['billing']['state'] = $billing_info['reg-page-billing-state']['value'];
-			$template_args['billing']['zip'] = $billing_info['reg-page-billing-zip']['value'];
-			$template_args['billing']['credit card number'] = $billing_info['reg-page-billing-card-nmbr']['value'];
-			$template_args['billing']['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value'];
-			$template_args['billing']['ccv code'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-
+			if ($billing_info['type']=='offsite') {
+				$template_args['billing']['gateway'] = $billing_info['gateway'];
+			} else {
+				$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
+				$template_args['billing']['last name'] = $billing_info['reg-page-billing-lname']['value'];
+				$template_args['billing']['email address'] = $billing_info['reg-page-billing-email']['value'];
+				$template_args['billing']['address'] = $billing_info['reg-page-billing-address']['value'];
+				$template_args['billing']['city'] = $billing_info['reg-page-billing-city']['value'];
+				$template_args['billing']['state'] = $billing_info['reg-page-billing-state']['value'];
+				$template_args['billing']['zip'] = $billing_info['reg-page-billing-zip']['value'];
+				$template_args['billing']['credit card number'] = $billing_info['reg-page-billing-card-nmbr']['value'];
+				$template_args['billing']['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value'];
+				$template_args['billing']['ccv code'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
+			}
 			$total = $session_data['_cart_grand_total_amount'];
 			if (isset($session_data['tax_totals'])) {
 				foreach ($session_data['tax_totals'] as $taxes) {
@@ -907,9 +910,12 @@ class EE_Single_Page_Checkout {
 			}
 		} else {
 			if (!empty($_POST['off_site_gateway_selection'])) {
-				if ($EE_Session->set_session_data(array('billing_info' => $_POST['off_site_gateway_selection']), $section = 'session_data')) {
-						$success_msg = __('Billing information submitted successfully', 'event_espresso');
-					}
+				$billing_info = array();
+				$billing_info['type'] = 'offsite';
+				$billing_info['gateway'] = '2checkout';
+				if ($EE_Session->set_session_data(array('billing_info' => $billing_info), $section = 'session_data')) {
+					$success_msg = __('Billing information submitted successfully', 'event_espresso');
+				}
 			} else {
 
 				$reg_page_billing_inputs = array(
@@ -1034,6 +1040,7 @@ class EE_Single_Page_Checkout {
 								'value' => NULL,
 								'format' => '%s'
 						),
+						'type' => 'onsite'
 				);
 
 
@@ -1103,6 +1110,8 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function process_registration_step_3() {
+// Sidney is watching me...   { : \
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		global $org_options;
 

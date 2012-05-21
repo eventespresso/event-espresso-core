@@ -119,7 +119,7 @@ function format_date($datetimes) {
  * 		@return string
  */
 function process_event_times($times) {
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize($times));
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	// start with an empty array
 	$time_options = array();
 	$tm_frmt = 'g:ia';
