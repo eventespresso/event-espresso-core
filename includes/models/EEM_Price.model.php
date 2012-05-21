@@ -67,7 +67,9 @@ class EEM_Price extends EEM_Base {
 				'PRC_amount'				=> '%f',
 				'PRC_name'					=> '%s',
 				'PRC_desc'					=> '%s',
+				/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 				'PRC_reg_limit'			=> '%d',
+				'PRC_tckts_left'			=> '%d',*/
 				'PRC_use_dates'			=> '%d',
 				'PRC_start_date'			=> '%d',
 				'PRC_end_date'			=> '%d',
@@ -117,7 +119,9 @@ class EEM_Price extends EEM_Base {
 											$price->PRC_amount,
 											$price->PRC_name,
 											$price->PRC_desc,
+											/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 											$price->PRC_reg_limit,
+											$price->PRC_tckts_left,*/
 											$price->PRC_use_dates,
 											$price->PRC_start_date,
 											$price->PRC_end_date,
@@ -146,8 +150,8 @@ class EEM_Price extends EEM_Base {
 	 * 		@access		public
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
-	public function get_new_price() {
-		return new EE_Price( 1, 0, 0.00, '', '', NULL, FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 1, FALSE, NULL, NULL, FALSE );
+	public function get_new_price() { 
+		return new EE_Price( 1, 0, 0.00, '', '', /*NULL, NULL,*/ FALSE, NULL, NULL, NULL, FALSE, 0, FALSE, 1, FALSE, NULL, NULL, FALSE );
 	}
 
 
@@ -247,6 +251,20 @@ class EEM_Price extends EEM_Base {
 		}
 	}
 
+
+
+
+
+	/**
+	 * 		retreive prices from db 
+	 *
+	 * 		@access		public
+	 * 		@param		array							$where_cols_n_values
+	 * 		@param		mixed 	string|array		$orderby
+	 * 		@param		mixed 	string|array		$order
+	 * 		@param		mixed  string|array		$operator
+	 * 		@return 		mixed array on success, FALSE on fail
+	 */
 	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $orderby='prc.PRC_ID', $order='ASC', $operator = '=' ) {
 	
 		$em_table_data_types = array(
@@ -264,7 +282,9 @@ class EEM_Price extends EEM_Base {
 				'prc.PRC_amount'			=> '%f',
 				'prc.PRC_name'				=> '%s',
 				'prc.PRC_desc'				=> '%s',
+				/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 				'prc.PRC_reg_limit' 		=> '%d',
+				'prc.PRC_tckts_left' 		=> '%d',*/
 				'prc.PRC_use_dates'		=> '%d',
 				'prc.PRC_start_date'		=> '%d',
 				'prc.PRC_end_date'		=> '%d',
@@ -483,15 +503,18 @@ class EEM_Price extends EEM_Base {
 		//echo printr( $prices, 'prices');
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		
-		function cmp_order($price_a, $price_b) {
-			$PRT = EEM_Price_Type::instance();
-			if ($PRT->type[$price_a->type()]->order() == $PRT->type[$price_b->type()]->order()) {
-				return 0;
+		if( ! function_exists( 'sort_event_prices' )) {
+			function sort_event_prices($price_a, $price_b) {
+				$PRT = EEM_Price_Type::instance();
+				if ($PRT->type[$price_a->type()]->order() == $PRT->type[$price_b->type()]->order()) {
+					return 0;
+				}
+				return ($PRT->type[$price_a->type()]->order() < $PRT->type[$price_b->type()]->order()) ? -1 : 1;
 			}
-			return ($PRT->type[$price_a->type()]->order() < $PRT->type[$price_b->type()]->order()) ? -1 : 1;
 		}
 		
-		uasort($prices, 'cmp_order');
+		uasort($prices, 'sort_event_prices');
+		
 		if (!empty($prices)) {
 			foreach ($prices as $price) {
 				$array_of_price_objects[ $price->type() ][] = $price;

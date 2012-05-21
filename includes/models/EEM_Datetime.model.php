@@ -63,7 +63,7 @@ class EEM_Datetime extends EEM_Base {
 			'DTT_REG_start' 		=> '%d',
 			'DTT_REG_end' 		=> '%d',
 			'DTT_reg_limit' 		=> '%d',
-			'DTT_avail_space'	=> '%d'
+			'DTT_tckts_left'	=> '%d'
 		);
 
 		// uncomment these for example code samples of how to use them
@@ -133,7 +133,7 @@ class EEM_Datetime extends EEM_Base {
 																															$datetime->DTT_REG_start,
 																															$datetime->DTT_REG_end,
 																															$datetime->DTT_reg_limit,
-																															$datetime->DTT_avail_space,
+																															$datetime->DTT_tckts_left,
 																															$datetime->DTT_ID
 																													 	);
 			}

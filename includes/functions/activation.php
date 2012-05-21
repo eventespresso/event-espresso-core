@@ -453,6 +453,25 @@ function events_data_tables_install() {
 							KEY TXN_ID (TXN_ID),
 							KEY PAY_timestamp (PAY_timestamp)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+	
+	
+
+/*	$table_name = 'esp_datetime';
+	$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+			  EVT_ID int(10) unsigned NOT NULL,
+			  DTT_is_primary tinyint(1) DEFAULT '1',
+			  DTT_EVT_start int(10) unsigned NOT NULL,
+			  DTT_EVT_end int(10) unsigned NOT NULL,
+			  DTT_REG_start int(10) unsigned NOT NULL,
+			  DTT_REG_end int(10) unsigned NOT NULL,
+			  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
+			  DTT_tckts_left mediumint(8) unsigned DEFAULT NULL,
+			  PRIMARY KEY (DTT_ID),
+			  KEY EVT_ID (EVT_ID)";
+	event_espresso_run_install($table_name, $table_version, $sql );*/
+
+
+
 
 	$table_name = 'esp_datetime';
 	$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -462,8 +481,6 @@ function events_data_tables_install() {
 			  DTT_EVT_end int(10) unsigned NOT NULL,
 			  DTT_REG_start int(10) unsigned NOT NULL,
 			  DTT_REG_end int(10) unsigned NOT NULL,
-			  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
-			  DTT_avail_space mediumint(8) unsigned DEFAULT NULL,
 			  PRIMARY KEY (DTT_ID),
 			  KEY EVT_ID (EVT_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql );
@@ -778,7 +795,7 @@ function events_data_tables_install() {
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-	$table_name = "esp_price";
+/*	$table_name = "esp_price";
 	$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  PRT_ID tinyint(3) unsigned NOT NULL,
 			  EVT_ID int(10) unsigned NOT NULL,
@@ -799,23 +816,30 @@ function events_data_tables_install() {
 			  PRC_order tinyint(3) unsigned DEFAULT NULL,
 			  PRC_deleted tinyint(1) DEFAULT 0,
 			  PRIMARY KEY  (PRC_ID)";
+	event_espresso_run_install($table_name, $table_version, $sql);*/
+
+	$table_name = "esp_price";
+	$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+			  PRT_ID tinyint(3) unsigned NOT NULL,
+			  EVT_ID int(10) unsigned NOT NULL,
+			  PRC_amount decimal(10,2) NOT NULL DEFAULT 0.00,
+			  PRC_name varchar(45) NOT NULL,
+			  PRC_desc text,
+			  PRC_use_dates tinyint(1) DEFAULT 0,
+			  PRC_start_date int(10) unsigned DEFAULT NULL,
+			  PRC_end_date int(10) unsigned DEFAULT NULL,
+			  PRC_disc_code varchar(100) DEFAULT NULL,
+			  PRC_disc_limit_qty tinyint(1) DEFAULT 0,
+			  PRC_disc_qty smallint(6) DEFAULT 0,
+			  PRC_disc_apply_all tinyint(1) DEFAULT 0,
+			  PRC_disc_wp_user bigint(20) DEFAULT NULL,
+			  PRC_is_active tinyint(1) DEFAULT 1,
+			  PRC_overrides int(10) unsigned DEFAULT NULL,
+			  PRC_order tinyint(3) unsigned DEFAULT NULL,
+			  PRC_deleted tinyint(1) DEFAULT 0,
+			  PRIMARY KEY  (PRC_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-
-//CREATE  TABLE IF NOT EXISTS event_espresso.esp_price (
-//  PRC_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-//  PRT_ID tinyint UNSIGNED NOT NULL ,
-//  PRC_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00 ,
-//  PRC_name VARCHAR(45) NOT NULL ,
-//  PRC_desc TEXT NULL DEFAULT NULL ,
-//  PRC_use_dates tinyint(1) NULL DEFAULT 0 ,
-//  PRC_disc_limit_qty tinyint(1) NULL DEFAULT 0 ,
-//  PRC_disc_qty SMALLINT NULL DEFAULT 0 ,
-//  PRC_disc_apply_all tinyint(1) NULL DEFAULT 0 ,
-//  PRC_disc_wp_user BIGINT NULL ,
-//  PRC_is_active tinyint(1) NULL DEFAULT 1 ,
-//  PRIMARY KEY (PRC_ID) )
-//ENGINE = MyISAM
 
 
 	$table_name = "esp_price_type";
@@ -832,18 +856,7 @@ function events_data_tables_install() {
 			  PRIMARY KEY  (PRT_ID)';
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-//CREATE  TABLE IF NOT EXISTS event_espresso.esp_price_type (
-//  PRT_ID tinyint UNSIGNED NOT NULL AUTO_INCREMENT ,
-//  PRT_name VARCHAR(45) NOT NULL ,
-//  PRT_is_discount tinyint(1) NULL DEFAULT 0 ,
-//  PRT_is_member tinyint(1) NULL DEFAULT 0 ,
-//  PRT_is_tax tinyint(1) NULL DEFAULT 0 ,
-//  PRT_is_percentage tinyint(1) NULL DEFAULT 0 ,
-//  PRT_is_global tinyint(1) NULL DEFAULT 0 ,
-//  PRT_order tinyint UNSIGNED NULL ,
-//  UNIQUE INDEX PRT_name_UNIQUE (PRT_name ASC) ,
-//  PRIMARY KEY (PRT_ID) )
-//ENGINE = MyISAM
+
 
 
 	$table_name = "events_discount_codes";
@@ -1372,14 +1385,14 @@ function espresso_default_prices() {
 	$wpdb->query($sql);
 
 	$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
-	(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_reg_limit, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
-	(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
-	(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
-	(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.', NULL, 1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
-	(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', NULL, 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
-	(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
-	(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
-	(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', NULL, 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
+	(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
+	(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
+	(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
+	(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
+	(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
+	(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
+	(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
+	(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
 	$wpdb->query($sql);
 }
 

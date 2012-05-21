@@ -495,7 +495,7 @@ function update_event($recurrence_arr = array()) {
 //echo '<h4>reg_end : ' . $dtm['reg_end'] . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
 
-						//	EVT_ID 	DTT_is_primary 	DTT_EVT_start 	DTT_EVT_end 	DTT_REG_start 	DTT_REG_end 	DTT_event_or_reg 	DTT_reg_limit 	DTT_avail_space 	 DTT_ID
+						//	EVT_ID 	DTT_is_primary 	DTT_EVT_start 	DTT_EVT_end 	DTT_REG_start 	DTT_REG_end 	DTT_event_or_reg 	DTT_reg_limit 	DTT_tckts_left 	 DTT_ID
 						$new_event_date = new EE_Datetime(
 														$event_id,
 														$dtm['is_primary'],
@@ -503,8 +503,10 @@ function update_event($recurrence_arr = array()) {
 														$dtm['evt_end'],
 														$dtm['reg_start'],
 														$dtm['reg_end'],
+														/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 														$dtm['reg_limit'],
-														$dtm['avail_space'],
+														$dtm['tckts_left'],
+														DO NOT DELETE - NEW FEATURE IN PROGRESS   */
 														$dtm['ID']
 						);
 					
@@ -606,7 +608,10 @@ function update_event($recurrence_arr = array()) {
 													$ticket_price['PRC_amount'],
 													$ticket_price['PRC_name'],
 													$ticket_price['PRC_desc'],
+													/* DO NOT DELETE - NEW FEATURE IN PROGRESS   
 													$ticket_price['PRC_reg_limit'],
+													$ticket_price['PRC_tckts_left'],
+													*/
 													$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
 													$ticket_price['PRC_start_date'],
 													$ticket_price['PRC_end_date'],

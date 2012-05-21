@@ -107,6 +107,8 @@ function event_espresso_config_page_scripts() {
 		$load_jquery_ui = true;
 		$load_datepicker = true;
 		$load_datetimepicker = true;
+		/*wp_register_script('jquery.reveal.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.reveal.js"), array('jquery'), '1.0');
+		wp_enqueue_script('jquery.reveal.js');*/
 	}
 
 	if ($_REQUEST['page'] == 'discounts' && isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'new')) {

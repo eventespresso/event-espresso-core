@@ -1,6 +1,24 @@
 		
 jQuery(document).ready(function() {
 
+//	jQuery('.display-ticket-manager').live('click', function(){
+//		var page = jQuery('html').scrollTop();
+//		var tk_mng_tp = jQuery('#event-datetimes-dv').offset();
+//		tk_mng_tp = Math.round( tk_mng_tp.top )-page;  
+//		if ( tk_mng_tp > 0 ){
+//			tk_mng_tp = 0;
+//		}
+//		tk_mng_tp = ( tk_mng_tp * (-1))+'px';
+//		alert(tk_mng_tp);
+//		jQuery('#ticket-manager-dv').animate({ top : tk_mng_tp, opacity : 'show' }, 200 );
+//	});
+
+
+//	jQuery('html').click(function(){
+//		jQuery('#ticket-manager-dv').css({ top : 0, opacity : 0 });
+//	});
+	
+
 	jQuery(window).scroll(function() {
 		var scrollTop = jQuery(this).scrollTop();
 		var offset = jQuery('#event_editor_major_buttons_wrapper').offset();

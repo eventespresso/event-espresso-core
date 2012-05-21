@@ -130,7 +130,7 @@ class EE_Datetime {
 	*	@access	private
     *	@var int	
     */
-	private $_DTT_avail_space = NULL;	
+	private $_DTT_tckts_left = NULL;	
 	
 	
 	
@@ -173,7 +173,7 @@ class EE_Datetime {
 	* @param			mixed int | string 		$DTT_REG_start 			Unix timestamp or date string for the registration beginning
 	* @param			mixed int | string		$DTT_REG_end			Unix timestamp or date string for the registration end
 	* @param			mixed int | NULL		$DTT_reg_limit 			Registration Limit for this time period - int for limit, NULL for no limit
-	* @param			mixed int | NULL		$DTT_avail_space 		Spaces left for this timeslot - int for limit, NULL for no limit
+	* @param			mixed int | NULL		$DTT_tckts_left 		Spaces left for this timeslot - int for limit, NULL for no limit
 	* @param			int								$DTT_ID 						Event Datetime ID
 	*/
 	public function __construct( 
@@ -183,8 +183,9 @@ class EE_Datetime {
 														$DTT_EVT_end = NULL, 
 														$DTT_REG_start = NULL, 
 														$DTT_REG_end = NULL, 
+														/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 														$DTT_reg_limit = NULL, 
-														$DTT_avail_space = NULL, 
+														$DTT_tckts_left = NULL, */
 														$DTT_ID = NULL 
 												) {
 	
@@ -220,8 +221,9 @@ class EE_Datetime {
 		$this->_DTT_EVT_end			= $DTT_EVT_end;
 		$this->_DTT_REG_start			= $DTT_REG_start;
 		$this->_DTT_REG_end			= $DTT_REG_end;
+		/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 		$this->_DTT_reg_limit			= absint( $DTT_reg_limit );
-		$this->_DTT_avail_space		= absint( $DTT_avail_space );
+		$this->_DTT_tckts_left		= absint( $DTT_tckts_left );*/
 		$this->_DTT_ID						= absint( $DTT_ID );
 
 	}
@@ -667,10 +669,10 @@ class EE_Datetime {
 	*		set remaining number of spaces left for this datetime slot
 	* 
 	* 		@access		public		
-	*		@param		int		$avail_space 
+	*		@param		int		$tckts_left 
 	*/	
-	public function set_avail_space( $avail_space ) {
-		$this->_DTT_avail_space = absint( $avail_space );
+	public function set_tckts_left( $tckts_left ) {
+		$this->_DTT_tckts_left = absint( $tckts_left );
 	}
 
 
@@ -1028,8 +1030,8 @@ class EE_Datetime {
 	* 		@access		public		
 	*		@return 		mixed		int on success, FALSE on fail
 	*/	
-	public function avail_space() {
-		return $this->_DTT_avail_space;
+	public function tckts_left() {
+		return $this->_DTT_tckts_left;
 	}
 
 
@@ -1077,8 +1079,8 @@ class EE_Datetime {
 				'DTT_EVT_end'			=> $this->_DTT_EVT_end,
 				'DTT_REG_start'			=> $this->_DTT_REG_start,
 				'DTT_REG_end'			=> $this->_DTT_REG_end,
-				'DTT_reg_limit'			=> $this->_DTT_reg_limit,
-				'DTT_avail_space'		=> $this->_DTT_avail_space
+				/*'DTT_reg_limit'			=> $this->_DTT_reg_limit,
+				'DTT_tckts_left'		=> $this->_DTT_tckts_left*/
 		);
 
 		if ( $where_cols_n_values ){

@@ -314,8 +314,9 @@ function add_event_to_db($recurrence_arr = array()) {
 								'DTT_EVT_end' 		=>strtotime( $event_datetime['evt_end'] ),
 								'DTT_REG_start' 		=>strtotime( $event_datetime['reg_start'] ),
 								'DTT_REG_end' 		=>strtotime( $event_datetime['reg_end'] ),
+								/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 								'DTT_reg_limit' 		=>( isset( $event_datetime['reg_limit'] ) && $event_datetime['reg_limit'] != 0 ) ? $event_datetime['reg_limit'] : NULL,
-								'DTT_avail_space' 	=>( isset( $event_datetime['avail_space'] ) && $event_datetime['avail_space'] != 0 ) ? $event_datetime['avail_space'] : NULL,
+								'DTT_tckts_left' 	=>( isset( $event_datetime['tckts_left'] ) && $event_datetime['tckts_left'] != 0 ) ? $event_datetime['tckts_left'] : NULL,*/
 						);
 
 				$DTM->insert($insert);
@@ -395,7 +396,9 @@ function add_event_to_db($recurrence_arr = array()) {
 													$ticket_price['PRC_amount'],
 													$ticket_price['PRC_name'],
 													$ticket_price['PRC_desc'],
+													 /* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 													$ticket_price['PRC_reg_limit'],
+													*/
 													$ticket_price['PRC_use_dates'] ? TRUE : FALSE,
 													$ticket_price['PRC_start_date'],
 													$ticket_price['PRC_end_date'],

@@ -34,6 +34,7 @@ class EE_Event_Price {
 	 */
 		private $_ID = NULL;
 		private $_event	= NULL;
+		private $_datetime = NULL;
 		private $_orig_price = NULL;
 		private $_final_price = NULL;
 		private $_name = NULL;
@@ -105,16 +106,17 @@ class EE_Event_Price {
 	 */
 	public function copy_object_properties( $price ) {
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+		//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
 		$Price_Types = EEM_Price_Type::instance()->type;
 		
 		$this->_ID						= $price->ID();
 		$this->_event					= $price->event();
+		//$this->_datetime			= $price->datetime();
 		$this->_orig_price			= $price->amount();
 		$this->_final_price			= $price->amount(); // duplicated so we can have both original AND final price
 		$this->_name					= $price->name();
 		$this->_desc					= $price->desc();
-		$this->_reg_limit			= $price->reg_limit();
+		/*$this->_reg_limit			= $price->reg_limit();*/
 		$this->_use_dates			= $price->use_dates();
 		$this->_start_date			= $price->start_date();
 		$this->_end_date			= $price->end_date();

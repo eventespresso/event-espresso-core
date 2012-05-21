@@ -89,6 +89,15 @@ class EE_Price {
 
 
 	/**
+	*	Number of tickets left or spaces available at this Price Level
+	*
+	*	@access	private
+	*	@var int
+	*/
+	private $_PRC_tckts_left = NULL; 				
+
+
+	/**
 	*	Whether to use dates to control when pricing starts and ends
 	*
 	*	@access	private
@@ -209,6 +218,7 @@ class EE_Price {
 	* @param				string 				$PRC_name					Price name
 	* @param				string				$PRC_desc						Price description
 	* @param				int					$PRC_reg_limit				Registration Limit for this Price Level
+	* @param				int					$PRC_tckts_left				Registration Limit for this Price Level
 	* @param				bool					$PRC_use_dates				Whether to use dates to control when pricing starts and ends
 	* @param				int					$PRC_start_date				If use dates is active, this is when this price becomes active
 	* @param				int					$PRC_end_date				If use dates is active, this is when this price becomes inactive
@@ -229,7 +239,9 @@ class EE_Price {
 					$PRC_amount=0,
 					$PRC_name='',
 					$PRC_desc='',
+					/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 					$PRC_reg_limit=NULL,
+					$PRC_tckts_left=NULL,*/
 					$PRC_use_dates=FALSE,
 					$PRC_start_date=NULL,
 					$PRC_end_date=NULL,
@@ -250,7 +262,9 @@ class EE_Price {
 		$this->_PRC_amount				= (float)abs($PRC_amount);
 		$this->_PRC_name					= wp_strip_all_tags($PRC_name);
 		$this->_PRC_desc						= wp_strip_all_tags($PRC_desc);
+		/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 		$this->_PRC_reg_limit				= $PRC_reg_limit != NULL ? absint( $PRC_reg_limit ) : NULL;
+		$this->_PRC_tckts_left				= $PRC_tckts_left != NULL ? absint( $PRC_tckts_left ) : NULL;*/
 		$this->_PRC_use_dates				= absint( $PRC_use_dates ) ? TRUE : FALSE;
 		$this->_PRC_start_date				= is_numeric( $PRC_start_date ) ? absint( $PRC_start_date ) : strtotime( $PRC_start_date );
 		$this->_PRC_end_date				= is_numeric( $PRC_end_date ) ? absint( $PRC_end_date ) : strtotime( $PRC_end_date );
@@ -264,7 +278,7 @@ class EE_Price {
 		$this->_PRC_deleted					= $PRC_deleted != NULL ? absint($PRC_deleted) : FALSE;
 		$this->_PRC_order						= $PRC_order != NULL ? absint($PRC_order) : NULL;
 
-		// load Price model object class file
+		// load Price model file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 	}
 
@@ -369,6 +383,27 @@ class EE_Price {
 			return FALSE;
 		}
 		$this->_PRC_reg_limit = absint( $PRC_reg_limit );
+		return TRUE;
+	}
+
+
+
+
+
+	/**
+	*		Set Tickets Left
+	*
+	*		@access		public
+	*		@param		string		$PRC_desc
+	*/
+	public function set_tckts_left( $PRC_tckts_left = FALSE ) {
+
+		global $espresso_notices;
+		if ( ! $PRC_tckts_left ) {
+			$espresso_notices['errors'][] = 'No tickets left quantity was supplied.';
+			return FALSE;
+		}
+		$this->_PRC_tckts_left = absint( $PRC_tckts_left );
 		return TRUE;
 	}
 
@@ -583,7 +618,9 @@ class EE_Price {
 				'PRC_amount'						=> $this->_PRC_amount,
 				'PRC_name'							=> $this->_PRC_name,
 				'PRC_desc'							=> $this->_PRC_desc,
+				/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 				'PRC_reg_limit'					=> $this->_PRC_reg_limit,
+				'PRC_tckts_left'					=> $this->_PRC_tckts_left,*/
 				'PRC_use_dates'					=> $this->_PRC_use_dates,
 				'PRC_start_date'					=> $this->_PRC_start_date,
 				'PRC_end_date'					=> $this->_PRC_end_date,
@@ -697,6 +734,16 @@ class EE_Price {
 	*/
 	public function reg_limit() {
 		return $this->_PRC_reg_limit;
+	}
+
+
+	/**
+	*	get # of Tickets Left 
+	* @access		public
+	* @return 		string
+	*/
+	public function tckts_left() {
+		return $this->_PRC_tckts_left;
 	}
 
 
