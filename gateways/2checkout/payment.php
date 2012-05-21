@@ -45,7 +45,10 @@ add_action('action_hook_espresso_display_offsite_payment_gateway', 'espresso_dis
 
 function espresso_choose_2checkout() {
 	global $payment_settings;
-	echo '<input class="espresso_payment_button_2checkout" type="image" name="off_site_gateway_selection" value="2checkout" alt="Pay using 2checkout" src="' . $payment_settings['2checkout']['button_url'] . '" />';
+	echo '<style> .espresso_payment_button_2checkout {background: url("' . $payment_settings['2checkout']['button_url'] . '") no-repeat center center; width: 200px; height: 67px; border: none; color:transparent;</style>';
+	// www.suburban-glory.com/blog?page=140
+	// need to put in another line for legacy browsers
+	echo '<input class="espresso_payment_button_2checkout" type="submit" name="off_site_gateway_selection" value="2checkout" alt="Pay using 2checkout" src="' . $payment_settings['2checkout']['button_url'] . '" />';
 }
 
 add_action('action_hook_espresso_display_offsite_payment_gateway_selection', 'espresso_choose_2checkout');
