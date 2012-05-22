@@ -169,7 +169,7 @@ class EEM_Datetime extends EEM_Base {
 						time() + (60 * 60 * 24 * 30), 
 						time() + (60 * 60 * 24 * 30), 
 						time(), 
-						time() + (60 * 60 * 24 * 30), 
+						time() + (60 * 60 * 24 * 30) 
 						/*NULL,
 						NULL*/
 				)
