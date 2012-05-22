@@ -8,7 +8,7 @@
  * 		@return void
  */
 function __autoload( $class_name ) {
-	$include_path = plugin_dir_url(espresso_main_file()) . 'includes/classes/'
+	$include_path = plugin_dir_url(espresso_main_file()) . 'includes/classes/';
     file_exists( $include_path . $class_name . '.class.php') and include_once ( $include_path . $class_name . '.class.php' );
 }
 
