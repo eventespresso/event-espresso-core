@@ -1,4 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+
 /**
  * 		Automagically load non-singleton class files - no need to include or require
  * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
@@ -7,8 +8,11 @@
  * 		@return void
  */
 function __autoload( $class_name ) {
-    file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/' . $class_name . '.class.php') and include_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/' . $class_name . '.class.php';
+	$include_path = plugin_dir_url(espresso_main_file()) . 'includes/classes/'
+    file_exists( $include_path . $class_name . '.class.php') and include_once ( $include_path . $class_name . '.class.php' );
 }
+
+
 
 /**
  * 		define all event espresso db table names plus directory and url paths
@@ -74,6 +78,10 @@ function espresso_define_tables_and_paths() {
 	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . '/espresso/gateways/');
 	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] . '/espresso/gateways/');
 }
+
+
+
+
 
 function espresso_get_user_id() {
 	global $current_user, $espresso_wp_user;
