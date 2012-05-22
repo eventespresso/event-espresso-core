@@ -132,8 +132,8 @@ class EEM_Datetime extends EEM_Base {
 																															$datetime->DTT_EVT_end,
 																															$datetime->DTT_REG_start,
 																															$datetime->DTT_REG_end,
-																															$datetime->DTT_reg_limit,
-																															$datetime->DTT_tckts_left,
+																															/*$datetime->DTT_reg_limit,
+																															$datetime->DTT_tckts_left,*/
 																															$datetime->DTT_ID
 																													 	);
 			}
@@ -170,8 +170,8 @@ class EEM_Datetime extends EEM_Base {
 						time() + (60 * 60 * 24 * 30), 
 						time(), 
 						time() + (60 * 60 * 24 * 30), 
-						NULL,
-						NULL
+						/*NULL,
+						NULL*/
 				)
 		);
 		$times[0]->set_start_time("8am");
