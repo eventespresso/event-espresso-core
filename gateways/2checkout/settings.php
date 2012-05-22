@@ -52,7 +52,7 @@ function event_espresso_2co_settings() {
 	<div class="padding">
 	<?php
 		if (!empty($_REQUEST['activate_2checkout'])) {
-			$active_gateways['2checkout'] = dirname(__FILE__);
+			$active_gateways['2checkout'] = str_replace( '\\', '/', dirname(__FILE__ ));			
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 				$notices['updates'][] = __('2checkout Payments Activated', 'event_espresso');
 			} else {

@@ -405,7 +405,7 @@
 							}								
 						},
 						error: function(response) {
-						alert( response.error );
+							alert( response.error );
 							msg = new Object();
 							msg.error = 'An error occured! Registration Step '+step+' could not be completed. Please refresh the page and try again.';
 							show_event_queue_ajax_error_msg( msg );
@@ -502,7 +502,7 @@
 	}
 	
 	
-	// generic click event for displaying and giving focus to an element and hiding control 
+/*	// generic click event for displaying and giving focus to an element and hiding control 
 	$('.display-the-hidden').click(function() {
 		// get target element from "this" (the control element's) "rel" attribute
 		var item_to_display = $(this).attr("rel"); 
@@ -531,8 +531,42 @@
 			$('#display-'+item_to_hide).removeClass('hidden');  
 		}); 
 		return false;
-	});	
-		
+	});	*/
+	
+	// generic click event for displaying and giving focus to an element and hiding control 
+	jQuery('.display-the-hidden').click(function() {
+		// get target element from "this" (the control element's) "rel" attribute
+		var item_to_display = jQuery(this).attr("rel"); 
+		var control = jQuery(this);
+		control.addClass('hidden');  
+		// display the target's div container - use slideToggle or removeClass
+		jQuery('#'+item_to_display+'-dv').slideToggle( 500, function() {
+			// hide the control element
+			//control.addClass('hidden');  
+			// display the target div's hide link
+			jQuery('#hide-'+item_to_display).removeClass('hidden'); 
+		// if hiding/showing a form input, then id of the form input must = item_to_display
+		//jQuery('#'+item_to_display).focus(); // add focus to the target
+		}); 
+		return false;
+	});
+
+	// generic click event for re-hiding an element and displaying it's display control 
+	jQuery('.hide-the-displayed').click(function() {
+		// get target element from "this" (the control element's) "rel" attribute
+		var item_to_hide = jQuery(this).attr("rel"); 
+		var control = jQuery(this);
+		control.addClass('hidden');  
+		// hide the target's div container - use slideToggle or addClass
+		jQuery('#'+item_to_hide+'-dv').slideToggle( 500, function() {
+			//jQuery('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
+			// hide the control element
+			//control.addClass('hidden');  
+			// display the control element that toggles display of this element
+			jQuery('#display-'+item_to_hide).removeClass('hidden');  
+		}); 
+		return false;
+	});			
 
 
 })(jQuery);

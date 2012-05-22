@@ -1,7 +1,7 @@
 <?php
 function espresso_display_aim() {
 
-	global $org_options, $payment_settings, $css_class;
+	global $org_options, $payment_settings, $css_class, $gateways;
 	
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	
@@ -11,88 +11,100 @@ function espresso_display_aim() {
 	$authnet_aim_settings = $payment_settings['aim'];
 	$use_sandbox = $authnet_aim_settings['use_sandbox'] || $authnet_aim_settings['test_transactions'];
 	if ($use_sandbox) {
-		echo '<p>Test credit card # 4007000000027</p>';
-		echo '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+		$test_dcreds = '<p>Test credit card # 4007000000027</p>';
+		$test_dcreds .= '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+	} else {
+		$test_dcreds = '';
 	}
+	$logo = EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/authnet/lib/logo-auth_net.png';
 ?>
-			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
+
+			<a id="payment-gateway-button-auth_net" class="reg-page-payment-option display-the-hidden" rel="reg-page-billing-info-authnet-aim" href="" >
+				<img src="<?php echo $logo; ?>" alt="Pay using Authorize.Net" />
+			</a>
 			
-			<p class="event_form_field">
-				<label for="reg-page-billing-fname"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-fname" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-fname" title="">
-			</p>
-
-			<p class="event_form_field">
-				<label for="reg-page-billing-lname"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-lname" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-lname" title="">
-			</p>
+			<div id="reg-page-billing-info-authnet-aim-dv" class="<?php echo $gateways['authnet-aim']['form_class'];?>">
 			
-			<p class="event_form_field">
-				<label for="reg-page-billing-email"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-email" class="required email <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-email" title="">
-			</p>
-
-			<p class="event_form_field">
-				<label for="reg-page-billing-address"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-address" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-address">
-			</p>
-
-			<p class="event_form_field">
-				<label for="reg-page-billing-city"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-city" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-city">
-			</p>
-
-			<p class="event_form_field">
-				<label for="reg-page-billing-state"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-state" class="required medium-txt <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-state">
-			</p>
-
-			<p class="event_form_field">
-				<label for="reg-page-billing-zip"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
-				<input id="reg-page-billing-zip" class="required small-txt <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-zip">
-			</p>
+				<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
+				
+				<p class="event_form_field">
+					<label for="reg-page-billing-fname"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
+					<input id="reg-page-billing-fname" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-fname" title="">
+				</p>
+	
+				<p class="event_form_field">
+					<label for="reg-page-billing-lname"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
+					<input id="reg-page-billing-lname" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-lname" title="">
+				</p>
+				
+				<p class="event_form_field">
+					<label for="reg-page-billing-email"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
+					<input id="reg-page-billing-email" class="required email <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-email" title="">
+				</p>
+	
+				<p class="event_form_field">
+					<label for="reg-page-billing-address"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
+					<input id="reg-page-billing-address" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-address">
+				</p>
+	
+				<p class="event_form_field">
+					<label for="reg-page-billing-city"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
+					<input id="reg-page-billing-city" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-city">
+				</p>
+	
+				<p class="event_form_field">
+					<label for="reg-page-billing-state"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
+					<input id="reg-page-billing-state" class="required medium-txt <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-state">
+				</p>
+	
+				<p class="event_form_field">
+					<label for="reg-page-billing-zip"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
+					<input id="reg-page-billing-zip" class="required small-txt <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-zip">
+				</p>
+				
+				<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
+				
+				<p class="event_form_field">
+					<label for="reg-page-billing-card-nmbr"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
+		        	<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class;?>" type="text" name="reg-page-billing-card-nmbr"/>
+				</p>
+	
+	<?php /*
+				<p class="event_form_field">
+					<label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
+		        	<input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
+				</p>
+	*/?>
+				<p class="event_form_field">
+					<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
+					<select id="reg-page-billing-card-exp-date-mnth" class="required small-txt <?php echo $css_class;?>" name="reg-page-billing-card-exp-date-mnth">
+	<?php	for ( $x = 1; $x <= 12; $x++ ) { 
+					$value = $x < 10 ? '0'.$x : $x;
+					echo '
+						<option value="'.$value.'">'.$value.'</option>';
+				} ?>				
+					</select>
+					&nbsp;/&nbsp;
+					<select id="reg-page-billing-card-exp-date-year" class="required small-txt <?php echo $css_class;?>" name="reg-page-billing-card-exp-date-year">
+	<?php
+				$current_year = date( 'y' );
+				$next_decade = $current_year + 10;
+				for ( $x = $current_year; $x <= $next_decade; $x++ ) { 
+					$value = $x < 10 ? '0'.$x : $x;
+					echo '
+						<option value="'.$value.'">'.$value.'</option>';
+				} ?>				
+					</select>
+					<span class="small-text lt-grey-text"><?php _e('(mm/yy)', 'event_espresso'); ?></span>
+				</p>
+				
+				<p class="event_form_field">
+					<label for="reg-page-billing-card-ccv-code"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
+		        	<input id="reg-page-billing-card-ccv-code"  class="required small-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-ccv-code"/>
+				</p>
 			
-			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
+			</div>
 			
-			<p class="event_form_field">
-				<label for="reg-page-billing-card-nmbr"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
-	        	<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class;?>" type="text" name="reg-page-billing-card-nmbr"/>
-			</p>
-
-<?php /*
-			<p class="event_form_field">
-				<label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
-	        	<input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
-			</p>
-*/?>
-			<p class="event_form_field">
-				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
-				<select id="reg-page-billing-card-exp-date-mnth" class="required small-txt <?php echo $css_class;?>" name="reg-page-billing-card-exp-date-mnth">
-<?php	for ( $x = 1; $x <= 12; $x++ ) { 
-				$value = $x < 10 ? '0'.$x : $x;
-				echo '
-					<option value="'.$value.'">'.$value.'</option>';
-			} ?>				
-				</select>
-				&nbsp;/&nbsp;
-				<select id="reg-page-billing-card-exp-date-year" class="required small-txt <?php echo $css_class;?>" name="reg-page-billing-card-exp-date-year">
-<?php
-			$current_year = date( 'y' );
-			$next_decade = $current_year + 10;
-			for ( $x = $current_year; $x <= $next_decade; $x++ ) { 
-				$value = $x < 10 ? '0'.$x : $x;
-				echo '
-					<option value="'.$value.'">'.$value.'</option>';
-			} ?>				
-				</select>
-				<span class="small-text lt-grey-text"><?php _e('(mm/yy)', 'event_espresso'); ?></span>
-			</p>
-			
-			<p class="event_form_field">
-				<label for="reg-page-billing-card-ccv-code"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
-	        	<input id="reg-page-billing-card-ccv-code"  class="required small-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-ccv-code"/>
-			</p>
-
 <?php
 }
 add_action('action_hook_espresso_display_onsite_payment_gateway', 'espresso_display_aim');

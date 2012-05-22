@@ -92,7 +92,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .float-right { float:right; }
 .left { float:left; }
 .clear, .clear-float { clear:both; }
-.hidden { display:none!important; }
+.hidden { display:none/*!important*/; }
 .hide-if-no-js { display:none; }
 
 .tkt-sltr-thrd-chrt-price-spn {

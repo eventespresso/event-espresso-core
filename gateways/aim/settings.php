@@ -44,7 +44,7 @@ function event_espresso_aim_payment_settings() {
 		<!--New -->
 		<?php
 		if (!empty($_REQUEST['activate_authnet_aim'])) {
-			$active_gateways['aim'] = dirname(__FILE__);
+			$active_gateways['aim'] = str_replace( '\\', '/', dirname(__FILE__ ));			
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 				$notices['updates'][] = __('Authorize.net AIM Gateway Activated', 'event_espresso');
 			} else {

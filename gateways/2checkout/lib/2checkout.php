@@ -1,5 +1,7 @@
 <?php
 
+require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/PaymentGateway.php' );
+
 /**
  * Gets included in 2checkout_vars.php
  *

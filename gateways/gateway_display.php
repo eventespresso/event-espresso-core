@@ -18,19 +18,19 @@ function espresso_display_payment_gateways() {
 	echo '<h3>' . __('Please select your method of payment:', 'event_espresso') . '</h3>';
 //	echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
 
-	do_action('action_hook_espresso_display_onsite_payment_header');
+//	do_action('action_hook_espresso_display_onsite_payment_header');
 	do_action('action_hook_espresso_display_onsite_payment_gateway');
-	do_action('action_hook_espresso_display_onsite_payment_footer');
+//	do_action('action_hook_espresso_display_onsite_payment_footer');
 
-	do_action('action_hook_espresso_display_offsite_payment_header');
+//	do_action('action_hook_espresso_display_offsite_payment_header');
 	do_action('action_hook_espresso_display_offsite_payment_gateway_selection');
-	do_action('action_hook_espresso_display_offsite_payment_footer');
+//	do_action('action_hook_espresso_display_offsite_payment_footer');
 
-	do_action('action_hook_espresso_display_offline_payment_header');
+//	do_action('action_hook_espresso_display_offline_payment_header');
 	do_action('action_hook_espresso_display_offline_payment_gateway');
 	do_action('action_hook_espresso_display_finalize_payment_header');
 	do_action('action_hook_espresso_display_offline_payment_gateway_2');
-	do_action('action_hook_espresso_display_offline_payment_footer');
+//	do_action('action_hook_espresso_display_offline_payment_footer');
 
 
 //	echo '</div><!-- / .event-data-display -->';

@@ -63,7 +63,7 @@ function event_espresso_paypal_payment_settings() {
 						}
 					}
 					if (!empty($_REQUEST['deactivate_paypal'])) {
-						unset($active_gateways['aim']);
+						unset($active_gateways['paypal']);
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 							$notices['updates'][] = __('PayPal Payments De-activated', 'event_espresso');
 						} else {

@@ -81,7 +81,7 @@ if (!class_exists('PaymentGateway')) {
 		 * @return
 		 */
 		public function addField($field, $value) {
-			$this->fields["$field"] = $value;
+			$this->fields["$field"] = rawurlencode($value);
 		}
 
 		/**

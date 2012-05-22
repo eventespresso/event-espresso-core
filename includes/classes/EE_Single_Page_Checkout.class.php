@@ -308,7 +308,11 @@ class EE_Single_Page_Checkout {
 
 				break;
 		}
-
+		
+		global $gateways;
+		$gateways['authnet-aim']['form_url'] = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' =>'authaim' ), $this->_reg_page_base_url);
+		$gateways['authnet-aim']['form_class'] = 'hidden';
+		
 		$grand_total = 0;
 		$total_items = 0;
 
@@ -912,7 +916,7 @@ class EE_Single_Page_Checkout {
 			if (!empty($_POST['off_site_gateway_selection'])) {
 				$billing_info = array();
 				$billing_info['type'] = 'offsite';
-				$billing_info['gateway'] = '2checkout';
+				$billing_info['gateway'] = sanitize_text_field( $_POST['off_site_gateway_selection'] );
 				if ($EE_Session->set_session_data(array('billing_info' => $billing_info), $section = 'session_data')) {
 					$success_msg = __('Billing information submitted successfully', 'event_espresso');
 				}
@@ -1084,7 +1088,7 @@ class EE_Single_Page_Checkout {
 	 * 		@param 		string 		$success_msg
 	 * 		@return 		JSON
 	 */
-	private function _send_reg_step_2_ajax_response($args, $success_msg) {
+	private function _send_reg_step_2_ajax_response( $args, $success_msg) {
 // What's args for?
 		$dummy_var = $args;
 		$dummy_var = $dummy_var;
@@ -1131,7 +1135,6 @@ class EE_Single_Page_Checkout {
 				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of it\'s three), and try again.', 'event_espresso');
 			}
 		}
-
 
 		if ($continue_reg) {
 
@@ -1287,10 +1290,6 @@ class EE_Single_Page_Checkout {
 					do_action('action_hook_espresso_reg_incomplete');
 					break;
 			}
-			
-			$response_data = array( 'success' => print_r( $transaction ));		
-			echo json_encode($response_data);
-			die();
 					
 			$transaction->set_total($txn_details['amount']);
 			$transaction->set_status($status);
@@ -1318,7 +1317,7 @@ class EE_Single_Page_Checkout {
 			}
 		}
 
-		global $espresso_notices;
+/*		global $espresso_notices;
 		$espresso_notices['success'][] = $success_msg;
 		$espresso_notices['errors'][] = $error_msg;
 
@@ -1328,7 +1327,7 @@ class EE_Single_Page_Checkout {
 			
 		$response_data = array( 'success' => $notices['success'], 'error' => $notices['errors'], 'continue' => $continue_reg );		
 		echo json_encode($response_data);
-		die();
+		die();*/
 		
 
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
@@ -1346,6 +1345,15 @@ class EE_Single_Page_Checkout {
 			exit();
 		}
 	}
+	
+	
+	
+	function _process_registration_payment() {
+		
+	}
+	
+	
+	
 
 	/**
 	 * 		send reg step 3 ajax response
