@@ -1260,9 +1260,11 @@ class EE_Single_Page_Checkout {
 				do_action('action_hook_espresso_process_payments', $EE_Session);
 				$session = $EE_Session->get_session_data();
 				$txn_details = $session['txn_results'];
+				$txn_details['txn_results'] = $session;
 			}
 
-			$txn_details['amount'] = isset($txn_details['amount']) ? abs($txn_details['amount']) : 0.00;
+			
+			$txn_details['amount'] = isset($txn_details['amount']) ? (float)abs($txn_details['amount']) : 0.00;
 			$txn_details['method'] = isset($txn_details['method']) ? $txn_details['method'] : '';
 
 			switch ($txn_details['status']) {
@@ -1285,7 +1287,11 @@ class EE_Single_Page_Checkout {
 					do_action('action_hook_espresso_reg_incomplete');
 					break;
 			}
-
+			
+			$response_data = array( 'success' => print_r( $transaction ));		
+			echo json_encode($response_data);
+			die();
+					
 			$transaction->set_total($txn_details['amount']);
 			$transaction->set_status($status);
 			$transaction->set_details($txn_details);
@@ -1311,6 +1317,19 @@ class EE_Single_Page_Checkout {
 				}
 			}
 		}
+
+		global $espresso_notices;
+		$espresso_notices['success'][] = $success_msg;
+		$espresso_notices['errors'][] = $error_msg;
+
+//		$espresso_notices = $EE_VnS->return_notices();
+		$notices = espresso_get_notices(FALSE);
+		$error_msg = $notices['errors'];	
+			
+		$response_data = array( 'success' => $notices['success'], 'error' => $notices['errors'], 'continue' => $continue_reg );		
+		echo json_encode($response_data);
+		die();
+		
 
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
 			if (!$this->_return_page_url) {
