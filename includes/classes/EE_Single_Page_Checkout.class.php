@@ -239,7 +239,8 @@ class EE_Single_Page_Checkout {
 //echo '<h1>FUNCTION: '.__FUNCTION__.'  ( line no: '. __LINE__ .' )</h1>';
 //echo printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart' );
 
-		global $org_options;
+		global $org_options, $espresso_wp_user, $gateways;
+
 
 		$template_args = array();
 
@@ -309,9 +310,28 @@ class EE_Single_Page_Checkout {
 				break;
 		}
 		
-		global $gateways;
-		$gateways['authnet-aim']['form_url'] = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' =>'authaim' ), $this->_reg_page_base_url);
-		$gateways['authnet-aim']['form_class'] = 'hidden';
+		// has gateway been set by no-js user?
+		if (isset($_GET['payment'])) {
+			$selected_gateway = sanitize_key($_GET['payment']);
+		} else {
+			$selected_gateway = FALSE;
+		}
+		
+		// get active gateways for this event
+		$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
+		foreach ( $active_gateways as $gateway => $path ) {
+			$gateway = sanitize_key($gateway);
+			$gateways[ $gateway ]['form_url'] = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' => $gateway  ), $this->_reg_page_base_url);
+			// set display mode for gateway form
+			if ( $gateway == $selected_gateway ) {
+				$gateways[ $gateway ]['css_class'] = '';
+				$gateways[ $gateway ]['selected'] = TRUE;
+			} else {
+				$gateways[ $gateway ]['css_class'] = 'hidden';
+				$gateways[ $gateway ]['selected'] = FALSE;
+			}
+		}
+		//printr( $gateways, '$gateways' );
 		
 		$grand_total = 0;
 		$total_items = 0;
@@ -569,6 +589,8 @@ class EE_Single_Page_Checkout {
 		$template_args['additional_attendees'] = $additional_attendees;
 
 		$template_args['total_items'] = $total_items;
+		$template_args['empty_cart'] = $total_items < 1 ? TRUE : FALSE;
+		
 		$template_args['payment_required'] = $grand_total > 0 ? TRUE : FALSE;
 		$sub_total = $grand_total;
 
@@ -905,6 +927,7 @@ class EE_Single_Page_Checkout {
 		}
 
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
+			// FREE EVENT !!! YEAH : )
 			if ($EE_Session->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
 				$success_msg = __('Registration Step 2 completed', 'event_espresso');
 			} else {
@@ -912,14 +935,17 @@ class EE_Single_Page_Checkout {
 				$notices = espresso_get_notices(FALSE);
 				$error_msg = $notices['errors'];
 			}
+			
 		} else {
-			if (!empty($_POST['off_site_gateway_selection'])) {
+			// PAID EVENT !!!  BOO  : (
+			if (isset($_POST['reg_page_off_site_gateway']) && absint($_POST['reg_page_off_site_gateway']) == 1) {
 				$billing_info = array();
 				$billing_info['type'] = 'offsite';
-				$billing_info['gateway'] = sanitize_text_field( $_POST['off_site_gateway_selection'] );
+				$billing_info['gateway'] = sanitize_text_field( $_POST['selected_gateway_name'][$_POST['selected_gateway']] );
 				if ($EE_Session->set_session_data(array('billing_info' => $billing_info), $section = 'session_data')) {
 					$success_msg = __('Billing information submitted successfully', 'event_espresso');
 				}
+				
 			} else {
 
 				$reg_page_billing_inputs = array(
@@ -1150,6 +1176,7 @@ class EE_Single_Page_Checkout {
 			$REG = EEM_Registration::instance();
 			$TXN = EEM_Transaction::instance();
 			$ATT = EEM_Attendee::instance();
+
 // grab session data
 			$session = $EE_Session->get_session_data();
 			$reg_items = $session['cart']['REG']['items'];

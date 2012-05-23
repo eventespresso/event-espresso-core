@@ -224,7 +224,7 @@
 
 	// hide and display steps
 	function hide_step_goto( step_to_hide, step_to_show, msg ) {
-		//alert('hide_step_goto');
+		//alert('hide_step '+step_to_hide+', goto '+step_to_show);
 		$('#mer-reg-page-step-'+step_to_hide+'-dv').slideUp( function() {				
 			$('#mer-reg-page-step-'+step_to_hide+'-dv').height(0);
 			$('#mer-reg-page-edit-step-'+step_to_hide+'-lnk').removeClass('hidden');		
@@ -267,6 +267,8 @@
 		if ( msg == undefined ) {
 			msg ='';
 		}
+		$('.reg-page-billing-info-dv').addClass('hidden');
+		$('.reg-page-payment-option-lnk').removeClass('hidden');
 		//	$('.mer-reg-page-go-to-step-2').click(function() {
 		$('#mer-reg-page-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
 		// set step 2 back to auto height 
@@ -289,9 +291,11 @@
 		if ( msg == undefined ) {
 			msg ='';
 		}
+
+//		var selected_gateway = $('#reg-page-selected-gateway').val();
 			
-		if ( verify_all_questions_answered('#mer-registration-frm-2')) {
-		
+//		if ( verify_all_questions_answered('#mer-registration-frm-2')) {
+//		if ( verify_all_questions_answered( selected_gateway )) {
 			$('#mer-reg-page-step-3-dv').css({ 'display' : 'none' }).removeClass('hidden');		
 			// set step 3 back to auto height 
 			$('#mer-reg-page-step-3-dv').css( 'height', 'auto' );	
@@ -304,11 +308,11 @@
 				hide_step_goto( 2, 3, msg );	
 			}	
 			
-		} else {
-			msg = new Object();
-			msg.error = 'Sorry, but you need to answer all required questions before you may proceed.';		
-			scroll_to_top_of_form( msg );			
-		}
+//		} else {
+//			msg = new Object();
+//			msg.error = 'Sorry, but you need to answer all required questions before you may proceed.';		
+//			scroll_to_top_of_form( msg );			
+//		}
 
 	}
 	
@@ -333,7 +337,10 @@
 
 	// go to step 3 via edit link
 	$('.mer-reg-page-go-to-step-3').click(function() {
-		mer_reg_page_go_to_step_3('');
+//		mer_reg_page_go_to_step_3('');
+		var selected_gateway = $('#reg-page-selected-gateway').val();
+		process_reg_step ( 2, selected_gateway );
+		selected_gateway = '#reg-page-billing-info-'+selected_gateway+'-dv';
 		return false;
 	});
 
@@ -346,7 +353,9 @@
 	
 	// submit Step 2 of registraion form
 	$('#mer-reg-page-go-to-step-3-btn').click(function() {	
-		process_reg_step ( 2 );
+		var selected_gateway = $('#reg-page-selected-gateway').val();
+		selected_gateway = '#reg-page-billing-info-'+selected_gateway+'-dv';
+		process_reg_step ( 2, selected_gateway );
 	});
 		
 	
@@ -377,9 +386,12 @@
 		/**
 	*		submit a step of registraion form
 	*/	
-	function process_reg_step ( step ) {
+	function process_reg_step ( step, form_to_check ) {
 
-		if ( verify_all_questions_answered('#mer-registration-frm-'+step) ) {
+		if ( form_to_check == '' || form_to_check == undefined ) {
+			form_to_check = '#mer-registration-frm-'+step;
+		}
+		if ( verify_all_questions_answered( form_to_check )) {
 
 			$('#mer-reg-page-step-'+step+'-ajax').val(1);
 			$('#mer-reg-page-step-'+step+'-action').attr( 'name', 'action' );		
@@ -415,6 +427,7 @@
 		} else {
 			msg = new Object();
 			msg.error = 'You need to answer all required questions before you can proceed.';		
+			$( form_to_check ).slideDown();
 			scroll_to_top_of_form( msg );
 		}
 		
@@ -461,8 +474,11 @@
 			whch_form = '#mer-registration-frm-1';
 		}
 		
+		//alert( 'whch_form = '+whch_form );
+		
 		var good_to_go = true;
 		$( whch_form + ' .required' ).each(function(index) {
+			//alert( $(this).attr('id') );
 			if ( $(this).val() == '' ) {
 				good_to_go = false;
 				$(this).addClass('requires-value');
@@ -502,6 +518,8 @@
 	}
 	
 	
+	
+	
 /*	// generic click event for displaying and giving focus to an element and hiding control 
 	$('.display-the-hidden').click(function() {
 		// get target element from "this" (the control element's) "rel" attribute
@@ -533,37 +551,68 @@
 		return false;
 	});	*/
 	
-	// generic click event for displaying and giving focus to an element and hiding control 
-	jQuery('.display-the-hidden').click(function() {
+	
+	
+
+	$('.reg-page-payment-option-lnk').click(function() {
+	
+		var selected_gateway = $(this).attr('id');
+		
+		$('.reg-page-payment-option-lnk').each(function() {
+			if ( $(this).attr('id') != selected_gateway ) {
+				//alert( $(this).attr('id') )
+				$(this).slideToggle( 250 );
+			}			
+		});		
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = jQuery(this).attr("rel"); 
-		var control = jQuery(this);
-		control.addClass('hidden');  
+		var gateway_form = 'reg-page-billing-info-' + $(this).attr("rel"); 
+
+		$('#reg-page-selected-gateway').val( $(this).attr("rel") );
+
 		// display the target's div container - use slideToggle or removeClass
-		jQuery('#'+item_to_display+'-dv').slideToggle( 500, function() {
+		$('#'+gateway_form+'-dv').slideToggle( 500, function() {
 			// hide the control element
 			//control.addClass('hidden');  
 			// display the target div's hide link
-			jQuery('#hide-'+item_to_display).removeClass('hidden'); 
+			$('#hide-'+gateway_form).removeClass('hidden'); 
+			// if hiding/showing a form input, then id of the form input must = item_to_display
+			//$('#'+item_to_display).focus(); // add focus to the target
+		}); 
+		return false;
+		
+	});
+	
+	// generic click event for displaying and giving focus to an element and hiding control 
+	$('.display-the-hidden').click(function() {
+		// get target element from "this" (the control element's) "rel" attribute
+		var item_to_display = $(this).attr("rel"); 
+		var control = $(this);
+		control.addClass('hidden');  
+		// display the target's div container - use slideToggle or removeClass
+		$('#'+item_to_display+'-dv').slideToggle( 500, function() {
+			// hide the control element
+			//control.addClass('hidden');  
+			// display the target div's hide link
+			$('#hide-'+item_to_display).removeClass('hidden'); 
 		// if hiding/showing a form input, then id of the form input must = item_to_display
-		//jQuery('#'+item_to_display).focus(); // add focus to the target
+		//$('#'+item_to_display).focus(); // add focus to the target
 		}); 
 		return false;
 	});
 
 	// generic click event for re-hiding an element and displaying it's display control 
-	jQuery('.hide-the-displayed').click(function() {
+	$('.hide-the-displayed').click(function() {
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = jQuery(this).attr("rel"); 
-		var control = jQuery(this);
+		var item_to_hide = $(this).attr("rel"); 
+		var control = $(this);
 		control.addClass('hidden');  
 		// hide the target's div container - use slideToggle or addClass
-		jQuery('#'+item_to_hide+'-dv').slideToggle( 500, function() {
-			//jQuery('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
+		$('#'+item_to_hide+'-dv').slideToggle( 500, function() {
+			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
 			// hide the control element
 			//control.addClass('hidden');  
 			// display the control element that toggles display of this element
-			jQuery('#display-'+item_to_hide).removeClass('hidden');  
+			$('#display-'+item_to_hide).removeClass('hidden');  
 		}); 
 		return false;
 	});			

@@ -175,15 +175,16 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #mer-reg-page-apply-coupon-btn { position:relative; top:-1px; font-size:.8em; }
 #mer-reg-page-coupon-codes-pg { padding:0 0 2em 155px; }
 
-#mer-reg-page-step-2-dv .reg-page-payment-option {
+#mer-reg-page-step-2-dv .reg-page-payment-option-lnk {
 	display:block; padding:.5em; margin:1em 0;
 	border:1px solid #ddd; border-radius:5px;
 	color:transparent; cursor:pointer; vertical-align:middle;
 }
+#mer-reg-page-step-2-dv .reg-page-payment-option-lnk.hidden { display:none; }
 
 #payment-gateway-button-2checkout { 
 	background: url("../gateways/2checkout/lib/logo-2checkout.png") no-repeat center center; width: 200px; height: 62px;
 }
-#payment-gateway-button-auth_net { 
+#payment-gateway-button-aim { 
 	background:  no-repeat center center; width: 150px; height: 62px;
 }

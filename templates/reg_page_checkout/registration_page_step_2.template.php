@@ -24,8 +24,6 @@
 
 			if ( $payment_required ) {
 			
-				do_action('action_hook_espresso_display_payment_gateways');
-				
 				 if ( $use_coupon_codes or $use_groupon_codes ) { 
 ?>
 		
@@ -46,7 +44,7 @@
 			<input type="hidden" id="mer-reg-page-events-that-use-coupon-codes" name="mer-reg-page-events-that-use-coupon-codes" value="<?php echo $events_that_use_coupon_codes;?>" />
 			<input type="hidden" id="mer-reg-page-events-that-use-groupon-codes" name="mer-reg-page-events-that-use-groupon-codes" value="<?php echo $events_that_use_groupon_codes;?>"/>	
 		
-<?php } // end if $use_coupon_codes ?>
+	<?php } // end if $use_coupon_codes ?>
 
 		<div id="mer-reg-page-discounts-dv" class="<?php echo $reg_page_discounts_dv_class;?>">		
 			<h4 class="mer-reg-page-discounts-hdr"><?php _e('Discounts:', 'event_espresso'); ?></h4>				
@@ -78,7 +76,13 @@
 			<?php echo $currency_symbol;?><span class="reg-page-total-spn"><?php echo$grand_total;?></span>
 		</div>		
 
-<?php // end  if  $payment_required	
+		<input id="reg-page-selected-gateway" type="hidden" value="free" name="selected_gateway">
+
+<?php 
+
+				do_action('action_hook_espresso_display_payment_gateways');
+
+				// end  if  $payment_required	
 			} else { ?>
 			<input type="hidden" id="reg-page-no-payment-required-step-2" name="reg-page-no-payment-required" value="1" />
 			<?php _e('This is a free event, so no billing will occur.', 'event_espresso'); ?>
