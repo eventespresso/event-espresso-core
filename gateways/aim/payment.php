@@ -7,24 +7,30 @@ function espresso_display_aim() {
 	
 	// this filter allows whatever function is processing the registration page to know what inputs to expect
 	add_filter( 'filter_hook_espresso_reg_page_billing_inputs', 'espresso_reg_page_billing_inputs_aim' );
-
-	$authnet_aim_settings = $payment_settings['aim'];
+	$gateway = 'aim';
+	$authnet_aim_settings = $payment_settings[ $gateway ];
 	$use_sandbox = $authnet_aim_settings['use_sandbox'] || $authnet_aim_settings['test_transactions'];
 	if ($use_sandbox) {
-		$test_dcreds = '<p>Test credit card # 4007000000027</p>';
-		$test_dcreds .= '<h3 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h3>';
+		$test_creds = '
+		<h4 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h4>
+		<p style="color:#ff0000;">Test credit card # 4007000000027</p><br/>
+		';
 	} else {
-		$test_dcreds = '';
+		$test_creds = '';
 	}
 	$logo = EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/authnet/lib/logo-auth_net.png';
 ?>
 
-			<a id="payment-gateway-button-auth_net" class="reg-page-payment-option display-the-hidden" rel="reg-page-billing-info-authnet-aim" href="" >
+			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
 				<img src="<?php echo $logo; ?>" alt="Pay using Authorize.Net" />
 			</a>
 			
-			<div id="reg-page-billing-info-authnet-aim-dv" class="<?php echo $gateways['authnet-aim']['form_class'];?>">
-			
+			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
+				
+				<input id="reg-page-selected-gateway-name" type="hidden" value="Authorize.Net AIM" name="selected_gateway_name[<?php echo $gateway;?>]">
+		
+				<?php echo $test_creds; ?>
+				
 				<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 				
 				<p class="event_form_field">

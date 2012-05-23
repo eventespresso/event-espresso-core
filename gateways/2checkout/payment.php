@@ -39,18 +39,26 @@ function espresso_send_to_2checkout( $EE_Session, $payment_settings ) {
 }
 
 function espresso_choose_2checkout() {
-	global $payment_settings;
+	global $payment_settings, $gateways;
+	$gateway = '2checkout';
+
 	//echo '<style> #payment-gateway-button-2checkout {background: url("' . $payment_settings['2checkout']['button_url'] . '") no-repeat center center; width: 200px; height: 67px; }</style>';
 	// www.suburban-glory.com/blog?page=140
 	// need to put in another line for legacy browsers
 	//echo '<input id="payment-gateway-button-2checkout" class="reg-page-payment-option" type="submit" name="off_site_gateway_selection" value="2checkout" alt="Pay using 2checkout" src="' . $payment_settings['2checkout']['button_url'] . '" />';
 	
-	echo '
-			<a id="payment-gateway-button-2checkout" class="reg-page-payment-option" >
-				<img src="'. $payment_settings['2checkout']['button_url'] .'" alt="Pay using 2Checkout.com" />
+?>
+			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
+				<img src="<?php echo $payment_settings['2checkout']['button_url'];?>" alt="Pay using 2Checkout.com" />
 			</a>
-';
-	
+
+			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
+				<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the 2Checkout website where your payment will be securely processed.', 'event_espresso'); ?>
+				<input id="reg-page-off-site-gateway" type="hidden" value="1" name="reg_page_off_site_gateway">
+				<input id="reg-page-selected-gateway-name" type="hidden" value="2Checkout.com" name="selected_gateway_name[<?php echo $gateway;?>]">
+			</div>
+
+<?php	
 }
 
 add_action('action_hook_espresso_display_offsite_payment_gateway_selection', 'espresso_choose_2checkout');
