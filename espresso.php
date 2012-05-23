@@ -50,6 +50,31 @@ function espresso_main_file() {
 	return $main_file;
 }
 
+
+// add ESPRESSO directories to include_path
+set_include_path(
+		dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
+		dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'functions' . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
+		dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
+		dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'gateways' . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
+		get_include_path()
+);
+
+/**
+ * 		Automagically load non-singleton class files - no need to include or require
+ * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
+ *
+ * 		@access public
+ * 		@return void
+ */
+function __autoload( $class_name ) {
+	$include_path = dirname(__FILE__) . '/includes/classes/';
+   if ( file_exists( $include_path . $class_name . '.class.php' )) {
+		require_once( $include_path . $class_name . '.class.php' );
+	}
+}
+
+
 /**
  * The following are the WordPress actions for a typical request
  * in the order that they are executed along with the corresopnding

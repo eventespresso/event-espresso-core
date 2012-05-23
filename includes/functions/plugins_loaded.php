@@ -1,18 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
-/**
- * 		Automagically load non-singleton class files - no need to include or require
- * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
- *
- * 		@access public
- * 		@return void
- */
-function __autoload( $class_name ) {
-	$include_path = plugin_dir_url(espresso_main_file()) . 'includes/classes/';
-    file_exists( $include_path . $class_name . '.class.php') and include_once ( $include_path . $class_name . '.class.php' );
-}
-
-
 
 /**
  * 		define all event espresso db table names plus directory and url paths
