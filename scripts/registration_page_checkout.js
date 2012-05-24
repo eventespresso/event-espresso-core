@@ -337,11 +337,8 @@
 
 	// go to step 3 via edit link
 	$('.mer-reg-page-go-to-step-3').click(function() {
-//		mer_reg_page_go_to_step_3('');
-		//var selected_gateway = $('#reg-page-selected-gateway').val();
 		selected_gateway_dv = process_selected_gateway();		
 		process_reg_step ( 2, selected_gateway_dv );
-		//selected_gateway = '#reg-page-billing-info-'+selected_gateway+'-dv';
 		return false;
 	});
 
@@ -379,9 +376,11 @@
 		var off_site_payment = $( off_site_gateway ).val(); 
 		var selected_gateway_dv = '#reg-page-billing-info-'+selected_gateway+'-dv';
 		//alert( 'selected_gateway : ' + selected_gateway + '\n' + 'off_site_gateway : ' + off_site_gateway + '\n' + 'off_site_payment : ' + off_site_payment + '\n' + 'selected_gateway_dv : ' + selected_gateway_dv );
+		// set off-site-gateway status
 		if ( off_site_payment == 1 ) {
-			// set off-site-gateway status to TRUE
 			$('#reg-page-off-site-gateway').val( 1 );
+		} else {
+			$('#reg-page-off-site-gateway').val( 0 );
 		}
 		return selected_gateway_dv;
 	}
