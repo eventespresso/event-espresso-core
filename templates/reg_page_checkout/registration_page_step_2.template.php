@@ -77,6 +77,7 @@
 		</div>		
 
 		<input id="reg-page-selected-gateway" type="hidden" value="free" name="selected_gateway">
+		<input id="reg-page-off-site-gateway" type="hidden" value="0" name="reg_page_off_site_gateway">
 
 <?php 
 

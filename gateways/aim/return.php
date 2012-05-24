@@ -97,7 +97,7 @@ function espresso_process_aim( $EE_Session, $payment_settings ) {
 											'card_type'			=> $response->card_type,
 											'auth_code'			=> $response->authorization_code,
 											'md5_hash' 			=> $response->md5_hash,
-											'transaction_id' => $response->transaction_id,
+											'transaction_id' 	=> $response->transaction_id,
 											'invoice_number' => $response->invoice_number,
 											'raw_response'	=> $response								
 										  );

@@ -338,9 +338,10 @@
 	// go to step 3 via edit link
 	$('.mer-reg-page-go-to-step-3').click(function() {
 //		mer_reg_page_go_to_step_3('');
-		var selected_gateway = $('#reg-page-selected-gateway').val();
-		process_reg_step ( 2, selected_gateway );
-		selected_gateway = '#reg-page-billing-info-'+selected_gateway+'-dv';
+		//var selected_gateway = $('#reg-page-selected-gateway').val();
+		selected_gateway_dv = process_selected_gateway();		
+		process_reg_step ( 2, selected_gateway_dv );
+		//selected_gateway = '#reg-page-billing-info-'+selected_gateway+'-dv';
 		return false;
 	});
 
@@ -353,16 +354,37 @@
 	
 	// submit Step 2 of registraion form
 	$('#mer-reg-page-go-to-step-3-btn').click(function() {	
-		var selected_gateway = $('#reg-page-selected-gateway').val();
-		selected_gateway = '#reg-page-billing-info-'+selected_gateway+'-dv';
-		process_reg_step ( 2, selected_gateway );
+		selected_gateway_dv = process_selected_gateway();
+		process_reg_step ( 2, selected_gateway_dv );
 	});
 		
 	
 	// submit Step 3 of registraion form
 	$('#mer-reg-page-confirm-reg-btn').click(function() {	
-		process_reg_step ( 3 );
+
+		off_site_payment = $('#reg-page-off-site-gateway').val();
+		if ( off_site_payment == 1 ) {
+			$('#mer-registration-frm-3').submit();
+		} else {
+			process_reg_step ( 3 );
+		}		
+		
 	});
+	
+	
+	function process_selected_gateway() {
+		
+		var selected_gateway = $('#reg-page-selected-gateway').val();
+		var off_site_gateway = '#reg-page-gateway-off-site-'+selected_gateway;
+		var off_site_payment = $( off_site_gateway ).val(); 
+		var selected_gateway_dv = '#reg-page-billing-info-'+selected_gateway+'-dv';
+		//alert( 'selected_gateway : ' + selected_gateway + '\n' + 'off_site_gateway : ' + off_site_gateway + '\n' + 'off_site_payment : ' + off_site_payment + '\n' + 'selected_gateway_dv : ' + selected_gateway_dv );
+		if ( off_site_payment == 1 ) {
+			// set off-site-gateway status to TRUE
+			$('#reg-page-off-site-gateway').val( 1 );
+		}
+		return selected_gateway_dv;
+	}
 	
 	
 	
@@ -386,11 +408,12 @@
 		/**
 	*		submit a step of registraion form
 	*/	
-	function process_reg_step ( step, form_to_check ) {
-
+	function process_reg_step ( step, form_to_check, off_site_payment ) {
+		
 		if ( form_to_check == '' || form_to_check == undefined ) {
 			form_to_check = '#mer-registration-frm-'+step;
 		}
+		
 		if ( verify_all_questions_answered( form_to_check )) {
 
 			$('#mer-reg-page-step-'+step+'-ajax').val(1);
@@ -417,7 +440,7 @@
 							}								
 						},
 						error: function(response) {
-							alert( response.error );
+							//alert( dump( response ) );
 							msg = new Object();
 							msg.error = 'An error occured! Registration Step '+step+' could not be completed. Please refresh the page and try again.';
 							show_event_queue_ajax_error_msg( msg );
@@ -616,6 +639,44 @@
 		}); 
 		return false;
 	});			
+
+	
+	/**
+	 * Function : dump()
+	 * Arguments: The data - array,hash(associative array),object
+	 *    The level - OPTIONAL
+	 * Returns  : The textual representation of the array.
+	 * This function was inspired by the print_r function of PHP.
+	 * This will accept some data as the argument and return a
+	 * text that will be a more readable version of the
+	 * array/hash/object that is given.
+	 * Docs: http://www.openjs.com/scripts/others/dump_function_php_print_r.php
+	 */
+	function dump(arr,level) {
+		var dumped_text = "";
+		if(!level) level = 0;
+		
+		//The padding given at the beginning of the line.
+		var level_padding = "";
+		for(var j=0;j<level+1;j++) level_padding += "    ";
+		
+		if(typeof(arr) == 'object') { //Array/Hashes/Objects 
+			for(var item in arr) {
+				var value = arr[item];
+				
+				if(typeof(value) == 'object') { //If it is an array,
+					dumped_text += level_padding + "'" + item + "' ...\n";
+					dumped_text += dump(value,level+1);
+				} else {
+					dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+				}
+			}
+		} else { //Stings/Chars/Numbers etc.
+			dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+		}
+		return dumped_text;
+	}
+
 
 
 })(jQuery);

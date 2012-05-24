@@ -54,8 +54,8 @@ function espresso_choose_2checkout() {
 
 			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
 				<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the 2Checkout website where your payment will be securely processed.', 'event_espresso'); ?>
-				<input id="reg-page-off-site-gateway" type="hidden" value="1" name="reg_page_off_site_gateway">
-				<input id="reg-page-selected-gateway-name" type="hidden" value="2Checkout.com" name="selected_gateway_name[<?php echo $gateway;?>]">
+				<input id="reg-page-gateway-off-site-<?php echo $gateway;?>" type="hidden" value="1" name="reg_page_gateway_off_site[<?php echo $gateway;?>]">
+				<input id="reg-page-selected-gateway-name-<?php echo $gateway;?>" type="hidden" value="2Checkout.com" name="selected_gateway_name[<?php echo $gateway;?>]">
 			</div>
 
 <?php	

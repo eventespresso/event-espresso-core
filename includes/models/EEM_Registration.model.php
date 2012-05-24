@@ -221,13 +221,13 @@ class EEM_Registration extends EEM_Base {
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {
 			// one row was successfully updated
-			$espresso_notices['success'][] = 'Datetime details have been successfully saved to the database.';
+			$espresso_notices['success'][] = 'Registration details have been successfully saved to the database.';
 		} elseif ( $results['rows'] > 1 ) {
 			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully saved to the database.';
+			$espresso_notices['success'][] = 'Details for '.$results.' registrations have been successfully saved to the database.';
 		} else {
 			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the datetime has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = 'An error occured and the registration has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
 		return $results['rows'];
@@ -263,13 +263,13 @@ class EEM_Registration extends EEM_Base {
 		// set some table specific success messages
 		if ( $results['rows'] == 1 ) {
 			// one row was successfully updated
-			$espresso_notices['success'][] = 'Datetime details have been successfully updated.';
+			$espresso_notices['success'][] = 'Registration details have been successfully updated.';
 		} elseif ( $results['rows'] > 1 ) {
 			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully updated.';
+			$espresso_notices['success'][] = 'Details for '.$results.' registrations have been successfully updated.';
 		} else {
 			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the datetime has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = 'An error occured and the registration has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 	
 		return $results['rows'];

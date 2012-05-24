@@ -27,7 +27,8 @@ function espresso_display_aim() {
 			
 			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
 				
-				<input id="reg-page-selected-gateway-name" type="hidden" value="Authorize.Net AIM" name="selected_gateway_name[<?php echo $gateway;?>]">
+				<input id="reg-page-gateway-off-site-<?php echo $gateway;?>" type="hidden" value="0" name="reg_page_gateway_off_site[<?php echo $gateway;?>]">
+				<input id="reg-page-selected-gateway-name-<?php echo $gateway;?>" type="hidden" value="Authorize.Net AIM" name="selected_gateway_name[<?php echo $gateway;?>]">
 		
 				<?php echo $test_creds; ?>
 				
@@ -119,7 +120,11 @@ add_action('action_hook_espresso_display_onsite_payment_gateway', 'espresso_disp
 function espresso_reg_page_billing_inputs_aim() {
 
 		$reg_page_billing_inputs = array (
-		
+						
+						'type' => 'onsite',
+						
+						'gateway' => 'Authorize.Net AIM',
+						
 						'reg-page-billing-fname' => array(
 								'db-col' =>'fname',
 								'label' => __( 'First Name', 'event_espresso' ),
@@ -262,8 +267,8 @@ function espresso_reg_page_billing_inputs_aim() {
 								'validation' => TRUE,
 								'value' => NULL,
 								'format' => '%d' 
-						),
-				
+						)
+											
 				);
 					
 		return $reg_page_billing_inputs;
