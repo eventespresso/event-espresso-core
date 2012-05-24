@@ -125,8 +125,11 @@ function espresso_prepare_payment_data_for_gateways($payment_data) {
 	$sql .= " ea.zip, ea.state, ea.phone FROM " . EVENTS_ATTENDEE_TABLE . " ea";
 	$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=ea.event_id";
 	$sql .= " WHERE ea.id='" . $payment_data['attendee_id'] . "'";
-	$temp_data = $wpdb->get_row($sql, ARRAY_A);
-	$payment_data = array_merge($payment_data, $temp_data);
+	
+	if ( $temp_data = $wpdb->get_row( $sql, ARRAY_A )) {
+		$payment_data = array_merge($payment_data, $temp_data);
+	}
+	
 	$payment_data['contact'] = $org_options['contact_email'];
 	return $payment_data;
 }
@@ -165,7 +168,8 @@ function espresso_prepare_event_link($payment_data) {
  * discount_applied
  */
 function espresso_get_total_cost($payment_data) {
-	global $wpdb;
+
+/*	global $wpdb;
 	$sql = "SELECT ac.cost, ac.quantity, dc.coupon_code_price, dc.use_percentage  FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 	$sql .= " JOIN " . EVENTS_ATTENDEE_COST_TABLE . " ac ON a.id=ac.attendee_id ";
 	$sql .= " LEFT JOIN " . EVENTS_DISCOUNT_CODES_TABLE . " dc ON a.coupon_code=dc.coupon_code ";
@@ -189,7 +193,24 @@ function espresso_get_total_cost($payment_data) {
 	$payment_data['quantity'] = $total_quantity;
 	$payment_data['discount_applied'] = $total_cost - $payment_data['total_cost'];
 	$payment_data['pre_discount_cost'] = $total_cost;
-	$payment_data['tickets'] = $tickets;
+	$payment_data['tickets'] = $tickets;*/
+	
+	global $session_data;
+
+	$total_qty = $session_data['_cart_grand_total_qty'];
+	$grand_total = $session_data['_cart_grand_total_amount'];
+
+	$taxes = $session_data['tax_totals'];
+	foreach ( $taxes as $tax ) {
+		$grand_total += $tax;
+	}
+
+	$payment_data['quantity'] = $session_data['_cart_grand_total_amount'];
+	$payment_data['pre_discount_cost'] = $grand_total;
+
+//echo printr( $payment_data, '$payment_data' );
+//die();
+				
 	return $payment_data;
 }
 
@@ -217,4 +238,10 @@ function espresso_update_attendee_payment_status_in_db($payment_data) {
 	$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $payment_data['payment_status'] . "', txn_type = '" . $payment_data['txn_type'] . "', txn_id = '" . $payment_data['txn_id'] . "', payment_date ='" . $payment_data['payment_date'] . "', transaction_details = '" . $payment_data['txn_details'] . "' WHERE attendee_session ='" . $payment_data['attendee_session'] . "' ";
 	$wpdb->query($sql);
 	return $payment_data;
+}
+
+
+function espresso_process_registration_payment() {
+	$SPC = EE_Single_Page_Checkout::instance();
+	$SPC->process_registration_payment();
 }

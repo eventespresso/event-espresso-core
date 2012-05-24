@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * 		event_espresso_txn
+ *
+ * 		@access 		public
+ * 		@return 		void
+ */
 function event_espresso_txn() {
 	global $wpdb, $org_options, $espresso_wp_user, $payment_settings;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -35,9 +40,18 @@ function event_espresso_txn() {
 	$_REQUEST['page_id'] = $org_options['return_url'];
 	espresso_init_session();
 }
-
 add_shortcode('ESPRESSO_TXN_PAGE', 'event_espresso_txn');
 
+
+
+
+
+/**
+ * 		deal_with_ideal
+ *
+ * 		@access 		public
+ * 		@return 		void
+ */
 function deal_with_ideal() {
 	if (!empty($_POST['bank_id'])) {
 		$active_gateways = get_option('event_espresso_active_gateways', array());
@@ -49,9 +63,19 @@ function deal_with_ideal() {
 		}
 	}
 }
-
 add_action('wp_loaded', 'deal_with_ideal');
 
+
+
+
+
+/**
+ * 		espresso_email_after_payment
+ *
+ * 		@access 		public
+ * 		@param 		array		$payment_data
+ * 		@return 		void
+ */
 function espresso_email_after_payment($payment_data) {
 	global $org_options;
 	if ($payment_data->payment_status == 'Completed') {
@@ -62,6 +86,17 @@ function espresso_email_after_payment($payment_data) {
 	}
 }
 
+
+
+
+
+/**
+ * 		espresso_mail_successful_transaction_debugging_output
+ *
+ * 		@access 		public
+ * 		@param 		array		$payment_data
+ * 		@return 		void
+ */
 function espresso_mail_successful_transaction_debugging_output($payment_data) {
 	$subject = 'Instant Payment Notification - Gateway Variable Dump';
 	$body = "An instant payment notification was successfully recieved\n";
@@ -70,9 +105,19 @@ function espresso_mail_successful_transaction_debugging_output($payment_data) {
 	$body .= unserialize($payment_data['txn_details']);
 	wp_mail($payment_data['contact'], $subject, $body);
 }
-
 add_action('action_hook_espresso_mail_successful_transaction_debugging_output', 'espresso_mail_successful_transaction_debugging_output');
 
+
+
+
+
+/**
+ * 		espresso_mail_failed_transaction_debugging_output
+ *
+ * 		@access 		public
+ * 		@param 		array		$payment_data
+ * 		@return 		void
+ */
 function espresso_mail_failed_transaction_debugging_output($payment_data) {
 	$subject = 'Instant Payment Notification - Gateway Variable Dump';
 	$body = "An instant payment notification failed\n";
@@ -81,20 +126,38 @@ function espresso_mail_failed_transaction_debugging_output($payment_data) {
 	$body .= unserialize($payment_data['txn_details']);
 	wp_mail($payment_data['contact'], $subject, $body);
 }
-
 add_action('action_hook_espresso_mail_failed_transaction_debugging_output', 'espresso_mail_failed_transaction_debugging_output');
 
+
+
+
+
+/**
+ * 		espresso_process_payments
+ *
+ * 		@access 		public
+ * 		@param 		object		$EE_Session
+ * 		@return 		void
+ */
 function espresso_process_payments($EE_Session) {
-	global $espresso_wp_user;
+
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, "Hello World!");
-	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
+	// sometimes globalization is unavoidable
+	global $espresso_wp_user, $session_data, $billing_info;
+	// grab session and billing data
 	$session_data = $EE_Session->get_session_data();
 	$billing_info = $session_data['billing_info'];
+	
+	//echo printr( $session_data, '$session_data ' . __FUNCTION__ );
+
+	// grab wp user data	for event manager
+	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);	
 	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
+	// load gateways
 	foreach ($active_gateways as $gateway => $path) {
 		require_once($path . "/init.php");
 	}
+	
 	do_action('action_hook_espresso_process_transaction', $EE_Session, $payment_settings);
 }
-
 add_action('action_hook_espresso_process_payments', 'espresso_process_payments');

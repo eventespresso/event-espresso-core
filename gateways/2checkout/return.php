@@ -9,9 +9,13 @@
  * @return type int $attendee_id
  */
 function espresso_transactions_2checkout_get_attendee_id($attendee_id) {
-	if (isset($_REQUEST['id']))
-		$attendee_id = $_REQUEST['id'];
-	return $attendee_id;
+//	if (isset($_REQUEST['id']))
+//		$attendee_id = $_REQUEST['id'];
+//	return $attendee_id;
+
+	global $EE_Session;
+	return $EE_Session->id();
+
 }
 
 add_filter('filter_hook_espresso_transactions_get_attendee_id', 'espresso_transactions_2checkout_get_attendee_id');

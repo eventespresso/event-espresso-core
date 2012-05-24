@@ -1364,9 +1364,12 @@ function printCountriesSelector($name, $selected) {
  * 		@ return void
  */
 function printr($var, $var_name = 'ARRAY', $height = 'auto') {
-
+	
+	$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
+	$var_name = ucwords( $var_name );
+	
 	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
-	echo '<h3>' . $var_name . '</h3>';
+	echo '<h3><b>' . $var_name . '</b></h3>';
 	echo print_r($var);
 	echo '</pre>';
 }

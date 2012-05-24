@@ -137,16 +137,15 @@ if (!class_exists('PaymentGateway')) {
 			echo "<html>\n";
 			echo "<head><title>Processing Payment...</title></head>\n";
 			echo "<body onLoad=\"document.forms['gateway_form'].submit();\">\n";
-			echo "<p style=\"text-align:center;\"><h2>Please wait, your order is being processed and you";
-			echo " will be redirected to the payment website.</h2></p>\n";
+			echo "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
 			echo "<form method=\"POST\" name=\"gateway_form\" ";
 			echo "action=\"" . $this->gatewayUrl . "\">\n";
 			foreach ($this->fields as $name => $value) {
 				echo "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
 				//echo 'Field name: ' . $name . ' Field value : ' . $value . '<br>';
 			}
-			echo "<p style=\"text-align:center;\"><br/><br/>If you are not automatically redirected to ";
-			echo "the payment website within 5 seconds...<br/><br/>\n";
+			echo "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
+			echo "the payment website within 10 seconds...<br/><br/>\n";
 			echo "<input type=\"submit\" value=\"Click Here\"></p>\n";
 			echo "</form>\n";
 			echo "</body></html>\n";

@@ -1,8 +1,4 @@
-<?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Event Espresso
  *
@@ -1173,16 +1169,12 @@ class EE_Single_Page_Checkout {
 // Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-//		$s ='';
-//		foreach ( $_POST as $k => $v ) {
-//			$s .= $k . ' = ' . $v . "\n";
-//		}
-
 		global $org_options;
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
 		$continue_reg = TRUE;
+		$txn_details = array();
 
 		// check recaptcha
 		if ($org_options['use_captcha'] && !is_user_logged_in()) {
@@ -1215,6 +1207,14 @@ class EE_Single_Page_Checkout {
 			// grab session data
 			$session = $EE_Session->get_session_data();
 			$reg_items = $session['cart']['REG']['items'];
+			// remove so that duplicates don't pile up'
+			if ( isset( $session['registration'] )) {
+				unset( $session['registration'] );
+			}
+			if ( isset( $session['transaction'] )) {
+				unset( $session['transaction'] );
+			}
+			
 			// start the transaction record
 			$transaction = new EE_Transaction(0.00, 'TPN', NULL, $session, NULL, NULL);
 			$txn_results = $transaction->insert();
@@ -1308,6 +1308,9 @@ class EE_Single_Page_Checkout {
 					}
 				}
 			}
+			
+			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
+			
 
 			// free event?
 			if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
@@ -1319,42 +1322,52 @@ class EE_Single_Page_Checkout {
 						'details' => 'free event',
 						'amount' => 0.00,
 						'method' => 'none'
-				);
-								
+				);								
+				$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+
 			} else {
 				// attempt to perform transaction via payment gateway 
 				do_action('action_hook_espresso_process_payments', $EE_Session);
 			}
 		}
 		
+		//$this->process_registration_payment( $transaction );
+		
 		if ( $this->_ajax == 1 ) {
 			$this->process_registration_payment( $transaction );
 		}
 
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	function process_registration_payment( $transaction ) {
+
+
+
+
+
+	/**
+	 * 		process_registration_payment
+	 *
+	 * 		@access 		private
+	 * 		@param 		object 		$transaction
+	 * 		@return 		JSON		or redirect
+	 */
+	function process_registration_payment() {
 	
 		global $EE_Session;
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-
+		
+		// grab session data
 		$session = $EE_Session->get_session_data();
+		$transaction = $session['transaction'];
 		$txn_details = $session['txn_results'];
 		$txn_details['txn_results'] = $session;
 		
 		$txn_details['amount'] = isset($txn_details['amount']) ? (float)abs($txn_details['amount']) : 0.00;
 		$txn_details['method'] = isset($txn_details['method']) ? $txn_details['method'] : '';
 
-		$response_data = array( 'success' => print_r($txn_details) );		
-		echo json_encode($response_data);
-		die();
+//echo printr( $txn_details, '$txn_details' );
+//		$response_data = array( 'success' => print_r($txn_details) );		
+//		echo json_encode($response_data);
+//die();
 		
 		switch ($txn_details['status']) {
 
@@ -1409,10 +1422,11 @@ class EE_Single_Page_Checkout {
 
 //		$espresso_notices = $EE_VnS->return_notices();
 		$notices = espresso_get_notices(FALSE);
-		$error_msg = $notices['errors'];	
-			
-		$response_data = array( 'success' => $notices['success'], 'error' => $notices['errors'], 'continue' => $continue_reg );		
-		echo json_encode($response_data);
+		echo $notices;
+		
+//		$error_msg = $notices['errors'];				
+//		$response_data = array( 'success' => $notices['success'], 'error' => $notices['errors'], 'continue' => $continue_reg );		
+//		echo json_encode($response_data);
 		die();*/
 		
 
