@@ -298,6 +298,17 @@ class EEM_Price extends EEM_Base {
 				'prc.PRC_order' 				=> '%d',
 				'prc.PRC_deleted' 			=> '%d'
 		);
+		
+//		printr( $em_table_data_types, '$em_table_data_types' );
+//		
+//		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price_Type.model.php');
+//		$PRT_MDL = EEM_Price_Type::instance();
+//		$prc_data_types = $this->table_data_types;
+//		unset( $prc_data_types['PRT_ID'] );
+//		$em_table_data_types = array_merge( $prc_data_types, $PRT_MDL->get_table_data_types() );
+//		
+//		printr( $em_table_data_types, '$em_table_data_types' );
+		
 
 		global $wpdb;
 		
@@ -397,7 +408,12 @@ class EEM_Price extends EEM_Base {
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_prices_that_are_taxes() {
-		return $this->_select_all_prices_where(array('prt.PRT_is_tax' => TRUE ));
+		$all_taxes = $this->_select_all_prices_where(array('prt.PRT_is_tax' => TRUE ));
+		$taxes = array();
+		foreach ( $all_taxes as $tax ) {
+			$taxes[ $tax->order() ][ $tax->ID() ] = $tax;
+		}
+		return $taxes;
 	}
 
 	public function get_all_prices_that_are_not_taxes() {

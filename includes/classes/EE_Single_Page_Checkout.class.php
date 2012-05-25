@@ -597,34 +597,36 @@ class EE_Single_Page_Checkout {
 
 		$template_args['taxes'] = FALSE;
 
-		// load and instantiate models
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
-		$PRC = EEM_Price::instance();
-		// retreive all taxes
-		$global_taxes = $PRC->get_all_prices_that_are_taxes();
-		if ($global_taxes) {
-			//echo printr( $global_taxes, '$global_taxes' );
-			global $EE_Session;
-			$template_args['taxes'] = array();
-			$tax_totals = array();
-			$amnt = 0;
-			foreach ($global_taxes as $taxes) {
-				$tax_tier_total = 0;
-				foreach ($taxes as $tax) {
-					//echo printr( $tax, '$tax' );
-					$prcnt = $tax->amount() / 100;
-					$amnt = number_format($grand_total * $prcnt, 2, '.', '');
-					$prcnt = $prcnt * 100;
-					$template_args['taxes'][$tax->ID()] = array('name' => $tax->name(), 'percent' => $prcnt, 'amount' => $amnt);
-					$tax_totals [$tax->ID()] = $amnt;
-					$tax_tier_total = $tax_tier_total + $amnt;
+		if ( $step > 1 ) {
+			// load and instantiate models
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
+			$PRC = EEM_Price::instance();
+			// retreive all taxes
+			$global_taxes = $PRC->get_all_prices_that_are_taxes();
+			if ($global_taxes) {
+				//echo printr( $global_taxes, '$global_taxes' );
+				global $EE_Session;
+				$template_args['taxes'] = array();
+				$tax_totals = array();
+				$amnt = 0;
+				foreach ($global_taxes as $taxes) {
+					$tax_tier_total = 0;
+					foreach ($taxes as $tax) {
+						//echo printr( $tax, '$tax' );
+						$prcnt = $tax->amount() / 100;
+						$amnt = number_format($grand_total * $prcnt, 2, '.', '');
+						$prcnt = $prcnt * 100;
+						$template_args['taxes'][$tax->ID()] = array('name' => $tax->name(), 'percent' => $prcnt, 'amount' => $amnt);
+						$tax_totals [$tax->ID()] = $amnt;
+						$tax_tier_total = $tax_tier_total + $amnt;
+					}
+					// add tax to grand total
+					$grand_total = $grand_total + $tax_tier_total;
 				}
-				// add tax to grand total
-				$grand_total = $grand_total + $tax_tier_total;
+				// add tax data to session
+				$EE_Session->set_session_data(array('_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals), 'session_data');
 			}
-			// add tax data to session
-			$EE_Session->set_session_data(array('_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals), 'session_data');
 		}
 
 		$template_args['sub_total'] = number_format($sub_total, 2, '.', '');
@@ -643,9 +645,8 @@ class EE_Single_Page_Checkout {
 		$template_args['reg_page_goto_step_3_url'] = add_query_arg(array('e_reg' => 'process_reg_step_2'), $this->_reg_page_base_url);
 		$template_args['reg_page_complete_reg_url'] = add_query_arg(array('e_reg' => 'process_reg_step_3'), $this->_reg_page_base_url);
 
-		$template_args['recaptcha'] = '';
-
 		//Recaptcha
+		$template_args['recaptcha'] = '';
 		if ($org_options['use_captcha'] && (empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
 
 			if (!function_exists('recaptcha_get_html')) {
@@ -669,12 +670,13 @@ class EE_Single_Page_Checkout {
 ';
 
 			//	var RecaptchaOptions = { theme : "'. $org_options['recaptcha_theme'] == '' ? 'clean' : $org_options['recaptcha_theme'] .'", lang : "'. $org_options['recaptcha_language'] == '' ? 'en' : $org_options['recaptcha_l
+
+			$template_args['recaptcha'] .= '
+</p>
+';			
 		}
 		//End use captcha
 
-		$template_args['recaptcha'] .= '
-</p>
-';
 
 		$registration_page_step_1 = espresso_display_template($this->_templates['registration_page_step_1'], $template_args, TRUE);
 		$registration_page_step_2 = espresso_display_template($this->_templates['registration_page_step_2'], $template_args, TRUE);

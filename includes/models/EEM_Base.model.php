@@ -41,6 +41,9 @@ abstract class EEM_Base {
 	private function __construct() {
 	}
 
+	function get_table_data_types() {
+		return $this->table_data_types;
+	}
 
 
 

@@ -246,8 +246,8 @@ if (!function_exists('event_espresso_get_is_active')) {
 		foreach ($datetimes as $datetime) {
 			$start = min(array($start, $datetime->start()));
 			$end = max(array($end, $datetime->end()));
-			$regstart = min(array($regstart, $datetime->REG_start()));
-			$regend = max(array($regend, $datetime->REG_end()));
+			$regstart = min(array($regstart, $datetime->reg_start()));
+			$regend = max(array($regend, $datetime->reg_end()));
 		}
 		$now = time();
 
