@@ -267,6 +267,8 @@ abstract class EEM_Base {
 			$prepped = $this->_prepare_where ($where_cols_n_values, $em_table_data_types, $operator);
 			$SQL .= $prepped['where'];
 			$VAL = $prepped['value'];
+		} else {
+			$VAL = '';
 		}
 
 		if ( $orderby ) {

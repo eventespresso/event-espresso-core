@@ -597,7 +597,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['taxes'] = FALSE;
 
-		if ( $step > 1 ) {
+		if ( $step == 2 ) {
 			// load and instantiate models
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );

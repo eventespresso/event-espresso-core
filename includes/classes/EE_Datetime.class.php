@@ -760,15 +760,15 @@ class EE_Datetime {
 		switch ( $date_or_time ) {
 			
 			case 'D' :
-				return date( $dt_frmt, $this->$var_name );
+				return date( $dt_frmt, $this->{$var_name} );
 				break;
 			
 			case 'T' :
-				return date( $tm_format, $this->$var_name );
+				return date( $tm_format, $this->{$var_name} );
 				break;
 			
 			default :
-				return date( $dt_frmt . ' ' . $tm_format, $this->$var_name );
+				return date( $dt_frmt . ' ' . $tm_format, $this->{$var_name} );
 				
 		}
 
