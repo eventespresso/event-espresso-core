@@ -55,7 +55,7 @@ function espresso_admin_init() {
 										|| $_REQUEST['action'] == 'edit_event'
 										|| $_REQUEST['action'] == 'add_new_event') {
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/functions.php');
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_functions.php");
+							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/event_functions.php");
 						}
 					}
 					break;

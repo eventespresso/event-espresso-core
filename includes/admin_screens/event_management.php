@@ -51,7 +51,7 @@ function event_espresso_manage_events() {
 function add_file_loads_for_event_management_screen() {
 	$load_event_list = true;
 	if (isset($_REQUEST['save'])) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/edit_event.php");
 		$_SESSION['return_to_editor'] = TRUE;
 		$load_event_list = false;
 	} else {
@@ -60,15 +60,15 @@ function add_file_loads_for_event_management_screen() {
 	if (isset($_REQUEST['action'])) {
 		switch ($_REQUEST['action']) {
 			case 'copy_event':
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/copy_event.php");
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/copy_event.php");
 				copy_event();
 				break;
 			case 'insert':
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/insert_event.php");
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/insert_event.php");
 				$_SESSION['event_id'] = add_event_to_db();
 				break;
 			case 'update':
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/update_event.php");
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/update_event.php");
 				$_SESSION['event_id'] = update_event();
 				break;
 			case 'delete':
@@ -84,21 +84,21 @@ function add_file_loads_for_event_management_screen() {
 				}
 				break;
 			case 'csv_import':
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/csv_import.php");
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/csv_import.php");
 				$load_event_list = false;
 				break;
 			case 'edit_event':
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/edit_event.php");
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/edit_event.php");
 				$load_event_list = false;
 				break;
 			case 'add_new_event':
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/add_new_event.php");
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/add_new_event.php");
 				$load_event_list = false;
 				break;
 		}
 	}
 	if ($load_event_list) {
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_list.php");
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/event_list.php");
 	}
 }
 

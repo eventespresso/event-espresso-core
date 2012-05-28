@@ -1,8 +1,8 @@
-<?php
+<?php 
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 //Add/Delete/Edit Events
-require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'event_management/event_functions.php');
+require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/events/event_functions.php');
 require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-reports/event_list_attendees.php");
 
 function event_espresso_manage_attendees() {
@@ -86,7 +86,7 @@ function event_espresso_manage_attendees() {
 							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin-files/event_newsletter.php");
 							event_newsletter($_REQUEST['event_id']);
 						} else {
-							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "event_management/event_newsletter.php");
+							require_once(EVENT_ESPRESSO_INCLUDES_DIR . "admin_screens/events/event_newsletter.php");
 						}
 
 						break;

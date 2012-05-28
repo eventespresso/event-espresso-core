@@ -40,7 +40,12 @@ function espresso_total_events(){
 	}
 	return $total_events;
 }
-	
+
+
+
+
+
+
 function espresso_total_events_today(){
 	//Get total events today
 	global $wpdb;
@@ -55,14 +60,20 @@ function espresso_total_events_today(){
 	$sql2 = "(";
 	if ( !empty($group)){
 		$sql2 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
+		$sql2 .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
 		$sql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
-		$sql2 .= " WHERE e.event_status != 'D' AND e.start_date = '" . $curdate . "' ";
+//		$sql2 .= " WHERE e.event_status != 'D' AND e.start_date = '" . $curdate . "' ";
+		$sql2 .= " WHERE e.event_status != 'D'";
+		$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
 		$sql2 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
 		$sql2 .= ") UNION (";
 	}
 	$sql2 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
-	$sql2 .= " WHERE e.event_status != 'D' AND e.start_date = '" . $curdate . "' ";
+	$sql2 .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+	$sql2 .= " WHERE e.event_status != 'D'";
+	$sql2 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime(date('Y-m-d') . ' 0:00:00') . "' AND '" . strtotime(date('Y-m-d') . ' 23:59:59') . "' ";
+	
 	if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
 		$sql2 .= " AND e.wp_user = '" . espresso_member_data('id') ."' ";
 	}
@@ -74,6 +85,11 @@ function espresso_total_events_today(){
 	return $total_events_today;
 }
 
+
+
+
+
+
 function espresso_total_events_this_month(){	
 	//Get total events this month
 	global $wpdb;
@@ -83,19 +99,25 @@ function espresso_total_events_this_month(){
 	$pieces = explode('-',$curdate, 3);
 	$this_year_r = $pieces[0];
 	$this_month_r = $pieces[1];
-	$days_this_month = date('t', strtotime($curdate));
+	$days_this_month = date( 't' );
 	
 	$sql3 = "(";
 	if (!empty($group)){
 		$sql3 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
+		$sql3 .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
 		$sql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
-		$sql3 .= " WHERE event_status != 'D' AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
+		$sql3 .= " WHERE event_status != 'D'";
+		$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
+		
 		$sql3 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
 		$sql3 .= ") UNION (";
 	}
 	$sql3 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
-	$sql3 .= " WHERE event_status != 'D' AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
+	$sql3 .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+	$sql3 .= " WHERE event_status != 'D'";
+	$sql3 .= " AND dtt.DTT_EVT_start BETWEEN '" . strtotime($this_year_r . '-' . $this_month_r . '-01') . "' AND '" . strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) . "' ";
+
 	if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
 		$sql3 .= " AND wp_user = '" . espresso_member_data('id') ."' ";
 	}
@@ -108,7 +130,13 @@ function espresso_total_events_this_month(){
 	}
 	return $total_events_this_month;
 }
-	
+
+
+
+
+
+
+
 	/* Attendees */
 	
 	function espresso_total_all_attendees(){
@@ -155,7 +183,13 @@ function espresso_total_events_this_month(){
 		}
 		return $total_a;
 	}
-	
+
+
+
+
+
+
+
 	function espresso_total_attendees_today(){
 		//Get total attendees today
 		global $wpdb;
@@ -196,7 +230,11 @@ function espresso_total_events_this_month(){
 		return $total_a_today;
 	}
 	//echo total_attendees_today();
-	
+
+
+
+
+
 	function espresso_total_attendees_this_month(){
 		//Get total attendees this month
 		global $wpdb;
