@@ -16,12 +16,7 @@ function add_new_event() {
 	$event->early_disc_date = '';
 	$event->early_disc_percentage = '';
 	$event->event_identifier = '';
-	$event->start_date = '';
-	$event->end_date = '';
-	$event->start_time = '';
-	$event->end_time = '';
-	$event->registration_start = '';
-	$event->registration_end = '';
+
 	$event->status = array('display' => 'OPEN');
 	$event->address = '';
 	$event->address2 = '';

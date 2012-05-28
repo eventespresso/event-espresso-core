@@ -330,10 +330,7 @@ function update_event($recurrence_arr = array()) {
 					'venue_url' => $venue_url,
 					'venue_phone' => $venue_phone,
 					'venue_image' => $venue_image,
-//					'registration_start' => $registration_start,
-//					'registration_end' => $registration_end,
-//					'start_date' => $start_date,
-//					'end_date' => $end_date,
+
 					'allow_multiple' => $allow_multiple,
 					'is_active' => $is_active,
 					'event_status' => $event_status,
@@ -346,12 +343,11 @@ function update_event($recurrence_arr = array()) {
 					'alt_email' => $alt_email,
 					'question_groups' => $question_groups,
 					'allow_overflow' => $allow_overflow,
-//					'registration_startT' => $registration_startT,
-//					'registration_endT' => $registration_endT,
+
 					'event_meta' => $event_meta,
 					'require_pre_approval' => $require_pre_approval,
 					'timezone_string' => $timezone_string,
-//					'reg_limit' => $reg_limit,
+					'reg_limit' => $reg_limit,
 					'additional_limit' => $additional_limit,
 					'wp_user' => $wp_user_id,
 					'ticket_id' => $ticket_id,
@@ -366,13 +362,11 @@ function update_event($recurrence_arr = array()) {
 					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', /* '%s', '%s',
-					  '%s', '%s', */ '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', '%s', '%s', /* '%s',
-					  '%s', */ '%s', '%s', '%s', /* '%d', */
-					'%d', '%d', '%d', '%d', '%d',
-					'%d'
+					'%s', '%s', '%s', '%s', '%s', 
+					'%s', '%s', '%s', '%s', '%s', 
+					'%s', '%s', '%s', '%s', '%s', 
+					'%s', '%s', '%s',  '%d', '%d', 
+					'%d', '%d', '%d', '%d', '%d'
 			);
 
 			$update_id = array('id' => $event_id);

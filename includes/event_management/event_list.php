@@ -176,7 +176,7 @@ function espresso_event_list_sql($sql) {
 		$sql .= ", lc.name AS locale_name, e.wp_user ";
 	}
 	$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-	$sql .= " INNER JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
+	$sql .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
 
 
 	if ($_REQUEST['category_id'] != '') {
@@ -301,7 +301,7 @@ function espresso_event_list_entry($event) {
 	$event_slug = $event->slug;
 	$event_name = stripslashes_deep($event->event_name);
 	$event_identifier = stripslashes_deep($event->event_identifier);
-	$registration_start = isset($event->registration_start) ? $event->registration_start : '';
+	$registration_start = isset($event->DTT_REG_start) ? $event->DTT_REG_start : '';
 	$start_date = isset($event->DTT_EVT_start) ? $event->DTT_EVT_start : '';
 	$status = array();
 	$status = event_espresso_get_is_active($event_id);
@@ -320,14 +320,15 @@ function espresso_event_list_entry($event) {
 
 	// grab reg times
 	$reg_time = array_shift( $DTM->get_primary_reg_date_for_event( $event_id ));
-	$reg_start = $reg_time->start();
+	$reg_start = $reg_time->reg_start();
+	$reg_end = $reg_time->reg_end();
 
 	$registration_start = isset($reg_start) ? $reg_start : '';
 
 	$event_meta['registration_start'] = date(get_option('date_format'), $reg_start);
 	$event_meta['registration_startT'] = date(get_option('time_format'), $reg_start);
-	$event_meta['registration_end'] = date(get_option('date_format'), $reg_start);
-	$event_meta['registration_endT'] = date(get_option('time_format'), $reg_start);
+	$event_meta['registration_end'] = date(get_option('date_format'), $reg_end);
+	$event_meta['registration_endT'] = date(get_option('time_format'), $reg_end);
 
 	ob_start();
 	?>
