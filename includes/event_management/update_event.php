@@ -509,6 +509,19 @@ function update_event($recurrence_arr = array()) {
 														DO NOT DELETE - NEW FEATURE IN PROGRESS   */
 														$dtm['ID']
 						);
+						
+						// copy primary datetime info for event post
+						if ( $new_event_date->is_primary() ) {
+							$start_date = $new_event_date->start_date();
+							$end_date = $new_event_date->end_date();
+							$start_time = $new_event_date->start_time();
+							$end_time = $new_event_date->end_time();
+							$registration_start = $new_event_date->reg_start_date();
+							$registration_end = $new_event_date->reg_end_date();
+							$registration_startT =$new_event_date->reg_start_time() ;
+							$registration_endT = $new_event_date->reg_end_time();
+						}
+					
 					
 //						echo printr( $new_event_date, '$new_event_date' );	
 
@@ -535,7 +548,6 @@ function update_event($recurrence_arr = array()) {
 					$DTM->delete_datetime($datetime_ID);
 				}
 			}	// end if process_datetimes
-
 
 
 			/************************************   PRICING   ******************************************* */
@@ -656,11 +668,17 @@ function update_event($recurrence_arr = array()) {
 
 			/// Create Event Post Code Here
 			switch ($_REQUEST['create_post']) {
-				case!$_REQUEST['create_post']:
-					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
-					$sql .= " WHERE id = '" . $event_id . "' ";
-					$wpdb->get_results($sql);
-					$post_id = $wpdb->last_result[0]->post_id;
+				case ! $_REQUEST['create_post']:
+					// check for post id in form input first before just hitting the db
+					if ( isset( $_POST['post_id'] ) && ! empty( $_POST['post_id'] )) {
+						$post_id = absint( $_POST['post_id'] );
+					} else {
+						$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
+						$sql .= " WHERE id = '" . $event_id . "' ";
+						$wpdb->get_results($sql);
+						$post_id = $wpdb->last_result[0]->post_id;
+					}
+
 					if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'true') {
 						$sql = array('post_id' => '', 'post_type' => '');
 						$sql_data = array('%d', '%s');
@@ -670,7 +688,7 @@ function update_event($recurrence_arr = array()) {
 					}
 					break;
 
-				case $_REQUEST['create_post']:
+				case $_REQUEST['create_post']:			
 					$post_type = $_REQUEST['post_type'];
 					if ($post_type == 'post') {
 						if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
@@ -683,6 +701,7 @@ function update_event($recurrence_arr = array()) {
 							}
 							$post_content = ob_get_contents();
 							ob_end_clean();
+														
 						} else {
 							_e('There was error finding a post template. Please verify your post templates are available.', 'event_espresso');
 						}
@@ -695,11 +714,15 @@ function update_event($recurrence_arr = array()) {
 
 					$my_post = array();
 
-					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
-					$sql .= " WHERE id = '" . $event_id . "' ";
-					$wpdb->get_results($sql);
-					$post_id = $wpdb->last_result[0]->post_id;
-
+					// check for post id in form input first before just hitting the db
+					if ( isset( $_POST['post_id'] ) && ! empty( $_POST['post_id'] )) {
+						$post_id = absint( $_POST['post_id'] );
+					} else {
+						$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
+						$sql .= " WHERE id = '" . $event_id . "' ";
+						$wpdb->get_results($sql);
+						$post_id = $wpdb->last_result[0]->post_id;
+					}
 
 					$post_type = $_REQUEST['post_type'];
 
@@ -715,9 +738,8 @@ function update_event($recurrence_arr = array()) {
 					$my_post['tags_input'] = $_REQUEST['post_tags'];
 					$my_post['post_type'] = $post_type;
 					//print_r($my_post);
-					// Insert the post into the database
-
-
+					// Insert the post into the database					
+						
 					if ($post_id > 0) {
 						$post_id = wp_update_post($my_post);
 						update_post_meta($post_id, 'event_id', $event_id);
@@ -741,13 +763,13 @@ function update_event($recurrence_arr = array()) {
 						update_post_meta($post_id, 'venue_image', $venue_image);
 						update_post_meta($post_id, 'event_externalURL', $externalURL);
 						update_post_meta($post_id, 'event_reg_limit', $reg_limit);
-						//update_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
-						//update_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
-						//update_post_meta($post_id, 'event_registration_start', $registration_start);
-						//update_post_meta($post_id, 'event_registration_end', $registration_end);
-						//update_post_meta($post_id, 'event_registration_startT', $registration_startT);
-						//update_post_meta($post_id, 'event_registration_endT', $registration_endT);
-						//update_post_meta( $post_id, 'timezone_string', $timezone_string );
+						update_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
+						update_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
+						update_post_meta($post_id, 'event_registration_start', $registration_start);
+						update_post_meta($post_id, 'event_registration_end', $registration_end);
+						update_post_meta($post_id, 'event_registration_startT', $registration_startT);
+						update_post_meta($post_id, 'event_registration_endT', $registration_endT);
+						update_post_meta( $post_id, 'timezone_string', $timezone_string );
 					} else {
 						$post_id = wp_insert_post($my_post);
 						add_post_meta($post_id, 'event_id', $event_id);
@@ -790,7 +812,7 @@ function update_event($recurrence_arr = array()) {
 
 			//Show the saved event notice
 			global $notices;
-			$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="' . espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' for ' . date("m/d/Y", strtotime($start_date));
+			$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="' . espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' ' . $start_date;
 			do_action('action_hook_espresso_admin_notices');
 
 			/*

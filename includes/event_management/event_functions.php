@@ -230,10 +230,10 @@ function espresso_event_editor_date_time_metabox($event) {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Ticket.model.php');
-	$TKT_MDL = EEM_Ticket::instance();
-	
-	$all_event_tickets = $TKT_MDL->get_all_event_tickets( $event->id );
+//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Ticket.model.php');
+//	$TKT_MDL = EEM_Ticket::instance();
+//	
+//	$all_event_tickets = $TKT_MDL->get_all_event_tickets( $event->id );
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 	$DTM_MDL = EEM_Datetime::instance();

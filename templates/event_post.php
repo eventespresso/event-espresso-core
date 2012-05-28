@@ -1,5 +1,5 @@
 <?php
-global $wpdb, $org_options;
+global $wpdb, $org_options;  
 
 if (isset($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
@@ -31,12 +31,17 @@ $registrar = $org_options['contact_email'];
  * as Thesis developers would say, this is all copy pasta.
  */
 //Build event queries
-$sql = "SELECT e.*, ese.start_time, ese.end_time ";
-!empty($org_options['use_venue_manager']) ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+$sql = "SELECT e.*, dtt.* ";
+if ( ! empty( $org_options['use_venue_manager'] )) {
+ 	$sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta ";
+}
 $sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
+$sql .= " INNER JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
 
-!empty($org_options['use_venue_manager']) ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+
+if ( ! empty( $org_options['use_venue_manager'] )) {
+	$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id ";
+}
 $sql.= " WHERE e.is_active=true ";
 $sql.= " AND e.event_status != 'D' ";
 
@@ -50,14 +55,14 @@ if (isset($single_event_id) && $single_event_id != NULL) {
 
 //Support for diarise
 if (!empty($_REQUEST['post_event_id'])) {
-	$sql = "SELECT e.* FROM " . EVENTS_DETAIL_TABLE . ' e';
-	$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
+	$sql = "SELECT e.*, dtt.* FROM " . EVENTS_DETAIL_TABLE . ' e';
+	$sql .= " INNER JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
 	$sql .= " WHERE post_id = '" . $_REQUEST['post_event_id'] . "' ";
 	$sql .= " LIMIT 0,1";
 }
 
 $data->event = $wpdb->get_row($sql, OBJECT);
-//print_r($data->event);
+//echo printr( $data->event, '$data->event' );
 
 $num_rows = $wpdb->num_rows;
 
@@ -89,8 +94,10 @@ if ($num_rows > 0) {
 	$member_only = $data->event->member_only;
 	$reg_limit = $data->event->reg_limit;
 	$allow_multiple = $data->event->allow_multiple;
-	$start_date = $data->event->start_date;
-	$end_date = $data->event->end_date;
+	
+	$start_date = date( 'F j, Y', $data->event->DTT_EVT_start );
+	$end_date = date( 'F j, Y', $data->event->DTT_EVT_end );
+	
 	$allow_overflow = $data->event->allow_overflow;
 	$overflow_event_id = $data->event->overflow_event_id;
 
@@ -149,9 +156,9 @@ if ($num_rows > 0) {
 	$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
 
 	$question_groups = unserialize($data->event->question_groups);
-	$reg_start_date = $data->event->registration_start;
-	$reg_end_date = $data->event->registration_end;
-	$today = date("Y-m-d");
+	$reg_start_date = date( 'F j, Y', $data->event->DTT_REG_start );
+	$reg_end_date = date( 'F j, Y', $data->event->DTT_REG_end );
+	$today = date("F j, Y");
 	if (isset($data->event->timezone_string) && $data->event->timezone_string != '') {
 		$timezone_string = $data->event->timezone_string;
 	} else {
@@ -193,6 +200,7 @@ if ($num_rows > 0) {
 
 	global $all_meta;
 	$all_meta = array(
+	// DTT_EVT_start 	DTT_EVT_end 	DTT_REG_start 	DTT_REG_end
 			'event_name' => '<p class="section-title">' . stripslashes_deep($event_name) . '</span>',
 			'event_desc' => stripslashes_deep($event_desc),
 			'event_address' => $event_address,
@@ -209,15 +217,17 @@ if ($num_rows > 0) {
 			'venue_country' => $venue_country,
 			'is_active' => $data->event->is_active,
 			'event_status' => $data->event->event_status,
-			'start_time' => $data->event->start_time,
-			'start_time' => empty($data->event->start_time) ? '' : $data->event->start_time,
-			'registration_startT' => $data->event->registration_startT,
-			'registration_start' => $data->event->registration_start,
-			'registration_endT' => $data->event->registration_endT,
-			'registration_end' => $data->event->registration_end,
+			'start_time' => date( 'H:i A', $data->event->start_time ),
+			'start_time' => empty($data->event->start_time) ? '' : date( 'H:i A', $data->event->start_time ),
+			'registration_startT' => date( 'H:i A', $data->event->registration_startT ),
+			'registration_start' => date( 'F j, Y', $data->event->registration_start ),
+			'registration_endT' => date( 'H:i A', $data->event->registration_endT ),
+			'registration_end' => date( 'F j, Y', $data->event->registration_end ),
 			'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
-			'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
-			'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
+//			'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
+//			'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
+			'start_date' => '<span class="section-title">' . $start_date . '</span>',
+			'end_date' => '<span class="section-title">' . $end_date . '</span>',
 			//'time' => event_espresso_time_dropdown($event_id, 0),
 			'google_map_link' => $google_map_link,
 					//'price' => event_espresso_price_dropdown($event_id, 0),
@@ -268,7 +278,7 @@ if ($num_rows > 0) {
   }//End foreach ($events as $event)
   } */
 ?>
-<p><?php echo date('l F j, Y', strtotime($start_date)) . " - " . date('l F j, Y', strtotime($end_date)); ?></p>
+<p><?php echo date( 'l F j, Y', $data->event->DTT_EVT_start ) . " - " . date( 'l F j, Y', $data->event->DTT_EVT_end ); ?></p>
 <p><?php echo $event_address ?></p>
 <p><img style="padding-right: 5px;" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/map.png" border="0" alt="<?php _e('View Map', 'event_espresso'); ?>" /><?php echo $google_map_link; ?> | <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register', 'event_espresso'); ?></a></p>
 <?php if ($display_desc) { ?>
