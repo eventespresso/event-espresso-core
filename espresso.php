@@ -32,7 +32,7 @@
 
 //Returns the plugin version
 function espresso_version() {
-	return '3.2.3006';
+	return '3.2.3007';
 }
 
 define("EVENT_ESPRESSO_VERSION", espresso_version());
