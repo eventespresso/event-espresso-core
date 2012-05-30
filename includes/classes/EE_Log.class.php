@@ -31,13 +31,13 @@ class espresso_log {
 	}
 
 	public function log($message) {
-		if(!file_exists($this->file)) {
+		if (!file_exists($this->file)) {
 			touch($this->file);
 		}
-		if(is_writable($this->file)) {
-		$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
-		fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
-		fclose($fh);
+		if (is_writable($this->file)) {
+			$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
+			fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
+			fclose($fh);
 		} else {
 			global $notices;
 			$notices['errors'][] = sprintf(__('Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso'), $this->file);
@@ -46,7 +46,8 @@ class espresso_log {
 
 	public function remote_log($message) {
 		global $remote_log;
-		if(empty($remote_log)) $remote_log = '';
+		if (empty($remote_log))
+			$remote_log = '';
 		$remote_log .= '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n";
 	}
 
@@ -62,33 +63,32 @@ class espresso_log {
 
 		//Encrypt the $remote_log?
 		//$remote_log = base64_encode($remote_log);
-
 		//Encrypt the $request_array?
 		//$request_array = base64_encode($request_array);
 
-		$data = 'domain='.$domain
-				.'&ip='.$ip
-				.'&server_type='.$server_type
-				.'&time='.time()
-				.'&remote_log='.$remote_log
-				.'&request_array='.$request_array //<-- Do we want to leave this turned on?
-				.'&action=save';
+		$data = 'domain=' . $domain
+						. '&ip=' . $ip
+						. '&server_type=' . $server_type
+						. '&time=' . time()
+						. '&remote_log=' . $remote_log
+						. '&request_array=' . $request_array //<-- Do we want to leave this turned on?
+						. '&action=save';
 
-		if ( defined('EELOGGING_PASS') ){
-			$data .= '&pass='.EELOGGING_PASS;
+		if (defined('EELOGGING_PASS')) {
+			$data .= '&pass=' . EELOGGING_PASS;
 		}
 
-		if ( defined('EELOGGING_KEY') ){
-			$data .= '&key='.EELOGGING_KEY;
+		if (defined('EELOGGING_KEY')) {
+			$data .= '&key=' . EELOGGING_KEY;
 		}
 
 
-		$c = curl_init ($url);
-		curl_setopt ($c, CURLOPT_POST, true);
-		curl_setopt ($c, CURLOPT_POSTFIELDS, $data);
-		curl_setopt ($c, CURLOPT_RETURNTRANSFER, true);
-		$page = curl_exec ($c);
-		curl_close ($c);
+		$c = curl_init($url);
+		curl_setopt($c, CURLOPT_POST, true);
+		curl_setopt($c, CURLOPT_POSTFIELDS, $data);
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+		$page = curl_exec($c);
+		curl_close($c);
 	}
 
 	public function __clone() {
@@ -100,23 +100,24 @@ class espresso_log {
 global $org_options;
 
 //Create logging function and action
-function espresso_log ($file,$function,$message) {
+function espresso_log($file, $function, $message) {
 	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message));
 }
 
 if (!empty($org_options['full_logging'])) {
 	add_action('action_hook_espresso_log', 'espresso_log', 10, 3);
+	add_action('action_hook_espresso_debug_file', 'espresso_debug_file');	
 }
 
 //Remote logging stuff
-function espresso_remote_log($file,$function,$message) {
+function espresso_remote_log($file, $function, $message) {
 	espresso_log::singleton()->remote_log(array('file' => $file, 'function' => $function, 'status' => $message));
 }
 
 function espresso_send_log() {
 	global $org_options;
 
-	if ( empty($org_options['remote_logging_url']) ) {
+	if (empty($org_options['remote_logging_url'])) {
 		return;
 	}
 	$url = $org_options['remote_logging_url'];
@@ -127,4 +128,29 @@ if (!empty($org_options['remote_logging'])) {
 	//echo "<pre>".print_r($org_options,true)."</pre>";
 	add_action('action_hook_espresso_log', 'espresso_remote_log', 10, 3);
 	add_action('wp_footer', 'espresso_send_log');
+}
+
+function espresso_debug_file() {
+	$message = "<?php\n";
+	foreach ($_GET as $key => $value) {
+		$message .= '$my_GET["' . $key . '"] = ' . "'"  . serialize($value) . "';\n";
+	}
+	foreach ($_POST as $key => $value) {
+		$message .= '$my_POST["' . $key . '"] = ' . "'"  . serialize($value) . "';\n";
+	}
+	foreach ($_REQUEST as $key => $value) {
+		$message .= '$my_REQUEST["' . $key . '"] = ' . "'"  . serialize($value) . "';\n";
+	}
+	$file = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/espresso_debug.php';
+	if (!file_exists($file)) {
+		touch($file);
+	}
+	if (is_writable($file)) {
+		$fh = fopen($file, 'w') or die("Cannot open file! " . $file);
+		fwrite($fh, $message);
+		fclose($fh);
+	} else {
+		global $notices;
+		$notices['errors'][] = sprintf(__('Your debug file is not writable. Check if your server is able to write to %s.', 'event_espresso'), $file);
+	}
 }
