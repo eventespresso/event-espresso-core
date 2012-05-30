@@ -280,6 +280,7 @@ function espresso_org_option_initialization() {
 					'surcharge' => '0.00',
 					'surcharge_type' => 'flat_rate',
 					'events_in_dasboard' => '30',
+					'use_captcha' => false,
 					'expire_on_registration_end' => true,
 					'email_before_payment' => false,
 					'email_fancy_headers' => false,
