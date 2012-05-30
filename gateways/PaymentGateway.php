@@ -81,7 +81,7 @@ if (!class_exists('PaymentGateway')) {
 		 * @return
 		 */
 		public function addField($field, $value) {
-			$this->fields["$field"] = rawurlencode($value);
+			$this->fields["$field"] = $value;
 		}
 
 		/**
@@ -134,21 +134,21 @@ if (!class_exists('PaymentGateway')) {
 		 */
 		public function submitPayment() {
 			$this->prepareSubmit();
-			echo "<html>\n";
-			echo "<head><title>Processing Payment...</title></head>\n";
-			echo "<body onLoad=\"document.forms['gateway_form'].submit();\">\n";
-			echo "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
-			echo "<form method=\"POST\" name=\"gateway_form\" ";
-			echo "action=\"" . $this->gatewayUrl . "\">\n";
+			$html = "<html>\n";
+			$html .= "<head><title>Processing Payment...</title></head>\n";
+			$html .= "<body onLoad=\"document.forms['gateway_form'].submit();\">\n";
+			$html .= "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
+			$html .= "<form method=\"POST\" name=\"gateway_form\" ";
+			$html .= "action=\"" . $this->gatewayUrl . "\">\n";
 			foreach ($this->fields as $name => $value) {
-				echo "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
-				//echo 'Field name: ' . $name . ' Field value : ' . $value . '<br>';
+				$html .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
 			}
-			echo "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
-			echo "the payment website within 10 seconds...<br/><br/>\n";
-			echo "<input type=\"submit\" value=\"Click Here\"></p>\n";
-			echo "</form>\n";
-			echo "</body></html>\n";
+			$html .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
+			$html .= "the payment website within 10 seconds...<br/><br/>\n";
+			$html .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+			$html .= "</form>\n";
+			$html .= "</body></html>\n";
+			echo $html;
 			die();
 		}
 
