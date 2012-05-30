@@ -38,7 +38,7 @@ th#actions { width:10%; }
 }
 .admin-primary-mbox-tbl th, .admin-primary-mbox-tbl td {
 	padding:6px 12px; margin: 0;
-	border:1px solid #dfdfdf; background:#fafafa;
+	border:1px solid #dfdfdf; background:#fcfcfc;
 	font-family: sans-serif; font-size: 1em; vertical-align:middle;
 }
 .admin-primary-mbox-tbl tr + tr { border-top:none; }

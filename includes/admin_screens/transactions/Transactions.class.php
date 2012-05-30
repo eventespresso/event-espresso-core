@@ -27,6 +27,7 @@ class EE_Admin_Transactions {
 	private $_session;
 	private static $_status;
 	private $_view_or_edit = FALSE;
+	
 
 	public function __construct() {
 
@@ -233,8 +234,12 @@ class EE_Admin_Transactions {
 		}
 
 		// process taxes
-		$taxes = maybe_unserialize( $this->_transaction->TXN_tax_data );
-		$template_args['taxes'] = $taxes['taxes'];
+		if ( $taxes = maybe_unserialize( $this->_transaction->TXN_tax_data )) {
+			$template_args['taxes'] = $taxes['taxes'];
+		} else {
+			$template_args['taxes'] = FALSE;
+		}
+
 		$template_args['grand_total'] = $this->_transaction->TXN_total;
 
 		$template_args['currency_sign'] = $org_options['currency_symbol'];

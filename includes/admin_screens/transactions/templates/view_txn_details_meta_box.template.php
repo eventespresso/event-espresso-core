@@ -40,14 +40,17 @@
 				<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $item['line_total'], 2 );?></td>
 			</tr>
 		<?php endforeach; // $items?>
-		<?php foreach ( $taxes as $tax ) : ?>
+		<?php if ( $taxes ) : ?>
+			<?php foreach ( $taxes as $tax ) : ?>
 				<tr>
 					<th class=" jst-rght" colspan="6"><?php echo $tax['name'];?></th>
 					<th class=" jst-rght"><?php echo $currency_sign . ' ' . number_format( $tax['amount'], 2 );?></th>
 				</tr>
-		<?php endforeach; // $taxes?>
+			<?php endforeach; // $taxes?>
+		<?php endif; // $taxes?>
 				<tr class="admin-primary-mbox-total-tr">
 					<th class=" jst-rght" colspan="6"><?php _e( 'Grand Total', 'event_espresso' );?></th>
+					.
 					<th class=" jst-rght"><?php echo $currency_sign . ' ' . number_format( $grand_total, 2 );?></th>
 				</tr>
 			</tbody>	
