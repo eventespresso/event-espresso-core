@@ -450,9 +450,9 @@ function events_data_tables_install() {
 				  PAY_method varchar(45) DEFAULT NULL,
 				  PAY_amount decimal(10,2) DEFAULT NULL,
 				  PAY_details text,
-						PRIMARY KEY  (PAY_ID),
-							KEY TXN_ID (TXN_ID),
-							KEY PAY_timestamp (PAY_timestamp)";
+					PRIMARY KEY  (PAY_ID),
+					KEY TXN_ID (TXN_ID),
+					KEY PAY_timestamp (PAY_timestamp)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 	
 	
@@ -482,8 +482,11 @@ function events_data_tables_install() {
 			  DTT_EVT_end int(10) unsigned NOT NULL,
 			  DTT_REG_start int(10) unsigned NOT NULL,
 			  DTT_REG_end int(10) unsigned NOT NULL,
+			  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
+			  DTT_tckts_left mediumint(8) unsigned DEFAULT NULL,
 			  PRIMARY KEY (DTT_ID),
-			  KEY EVT_ID (EVT_ID)";
+			  KEY EVT_ID (EVT_ID),
+			  KEY DTT_is_primary (DTT_is_primary)";
 	event_espresso_run_install($table_name, $table_version, $sql );
 
 
@@ -494,12 +497,14 @@ function events_data_tables_install() {
 				  EVT_ID int(10) unsigned NOT NULL,
 				  ATT_ID int(10) unsigned NOT NULL,
 				  TXN_ID int(10) unsigned NOT NULL,
+				  DTT_ID int(10) unsigned NOT NULL,
+				  PRC_ID varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				  STS_ID varchar(3) NOT NULL DEFAULT 'PND',
+				  REG_date int(11) NOT NULL,
 				  REG_session varchar(45) COLLATE utf8_bin NOT NULL,
 				  REG_code varchar(45) COLLATE utf8_bin DEFAULT NULL,
 				  REG_is_primary tinyint(1) DEFAULT '0',
 				  REG_is_group_reg tinyint(1) DEFAULT '0',
-				  STS_ID varchar(3) NOT NULL DEFAULT 'PND',
-				  REG_date int(11) NOT NULL,
 				  PRC_ID varchar(45) DEFAULT NULL,
 				  REG_att_is_going tinyint(1) DEFAULT '0',
 				  REG_att_checked_in tinyint(1) DEFAULT '0',
@@ -509,8 +514,7 @@ function events_data_tables_install() {
 				  KEY TXN_ID (TXN_ID),
 				  KEY STS_ID (STS_ID),
 				  KEY REG_is_primary (REG_is_primary),
-				  KEY REG_code (REG_code),
-				  KEY REG_code_2 (REG_code)";
+				  KEY REG_code (REG_code)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
@@ -834,9 +838,9 @@ function events_data_tables_install() {
 			  PRC_disc_qty smallint(6) DEFAULT 0,
 			  PRC_disc_apply_all tinyint(1) DEFAULT 0,
 			  PRC_disc_wp_user bigint(20) DEFAULT NULL,
-			  PRC_is_active tinyint(1) DEFAULT 1,
 			  PRC_overrides int(10) unsigned DEFAULT NULL,
 			  PRC_order tinyint(3) unsigned DEFAULT NULL,
+			  PRC_is_active tinyint(1) DEFAULT 1,
 			  PRC_deleted tinyint(1) DEFAULT 0,
 			  PRIMARY KEY  (PRC_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql);

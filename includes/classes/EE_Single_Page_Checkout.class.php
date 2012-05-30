@@ -213,7 +213,8 @@ class EE_Single_Page_Checkout {
 				case 'registration_complete' :
 					remove_all_actions('action_hook_espresso_regevent_default_action');
 					remove_all_actions('action_hook_espresso_event_registration');
-					$this->registration_complete();
+					//$this->registration_complete();
+					$this->process_registration_payment();
 					break;
 
 				default :
@@ -597,7 +598,7 @@ class EE_Single_Page_Checkout {
 
 		$template_args['taxes'] = FALSE;
 
-		if ( $step == 2 ) {
+//		if ( $step == 2 ) {
 			// load and instantiate models
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
@@ -627,7 +628,7 @@ class EE_Single_Page_Checkout {
 				// add tax data to session
 				$EE_Session->set_session_data(array('_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals), 'session_data');
 			}
-		}
+//		}
 
 		$template_args['sub_total'] = number_format($sub_total, 2, '.', '');
 		$template_args['grand_total'] = number_format($grand_total, 2, '.', '');
@@ -1085,7 +1086,7 @@ class EE_Single_Page_Checkout {
 		global $org_options, $EE_Session;
 
 		$session_data = $EE_Session->get_session_data();
-		//echo printr( $session_data, __FUNCTION__ );
+//		printr( $session_data, '$session_data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );
 
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
@@ -1152,6 +1153,7 @@ class EE_Single_Page_Checkout {
 
 
 			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format($total, 2);
+			
 			return espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
 		}
 	}
@@ -1208,14 +1210,21 @@ class EE_Single_Page_Checkout {
 
 			// grab session data
 			$session = $EE_Session->get_session_data();
+//			printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+
 			$reg_items = $session['cart']['REG']['items'];
-			// remove so that duplicates don't pile up'
+			
+			// in case of back button shenanigans or multiple orders in the same session , we'll remove these so that duplicates don't pile up'
 			if ( isset( $session['registration'] )) {
 				unset( $session['registration'] );
 			}
 			if ( isset( $session['transaction'] )) {
 				unset( $session['transaction'] );
 			}
+			if ( isset( $session['txn_results'] )) {
+				unset( $session['txn_results'] );
+			}
+//			printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 			
 			// start the transaction record
 			$transaction = new EE_Transaction(0.00, 'TPN', NULL, $session, NULL, NULL);
@@ -1258,11 +1267,14 @@ class EE_Single_Page_Checkout {
 						$att_results = $att[$att_nmbr]->insert();
 						$ATT_ID = $att_results['new-ID'];
 					}
+					
+					$DTT_ID = $event['options']['dtt_id'];
+					$PRC_ID = $event['options']['price_id'];
 
-					$new_reg_ID = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $att_nmbr . '-' . $session['id'];
+					$new_reg_ID = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session['id'];
 
 					// check for existing registration attempt
-					$prev_reg = $REG->find_existing_registrations_LIKE('%' . $event['id'] . '-' . $ATT_ID . '-' . $att_nmbr . '-' . $session['id'] . '%');
+					$prev_reg = $REG->find_existing_registrations_LIKE('%' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session['id'] . '%');
 					if ($prev_reg) {
 
 						// get previous transaction
@@ -1290,12 +1302,14 @@ class EE_Single_Page_Checkout {
 													$event['id'],
 													$ATT_ID,
 													$txn_results['new-ID'],
+													$DTT_ID,
+													$PRC_ID,
+													'RPN',
+													time(),
 													$session['id'],
 													$new_reg_ID,
 													isset($attendee['primary_attendee']),
 													$is_group_reg,
-													'RPN',
-													time(),
 													$event['price_id'],
 													FALSE,
 													FALSE
@@ -1313,7 +1327,9 @@ class EE_Single_Page_Checkout {
 			
 			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
 			
-
+//			$session2 = $EE_Session->get_session_data();
+//			printr( $session2, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+			
 			// free event?
 			if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 				// becuz this was a free event we need to generate some pseudo gateway results
@@ -1336,7 +1352,7 @@ class EE_Single_Page_Checkout {
 		//$this->process_registration_payment( $transaction );
 		
 		if ( $this->_ajax == 1 ) {
-			$this->process_registration_payment( $transaction );
+			$this->process_registration_payment();
 		}
 
 	}
@@ -1352,36 +1368,33 @@ class EE_Single_Page_Checkout {
 	 * 		@param 		object 		$transaction
 	 * 		@return 		JSON		or redirect
 	 */
-	function process_registration_payment() {
+	function process_registration_payment( $perform_redirect = TRUE ) {
 	
 		global $EE_Session;
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 		
 		// grab session data
 		$session = $EE_Session->get_session_data();
+//		printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+		
 		$transaction = $session['transaction'];
-		$txn_details = $session['txn_results'];
-		$txn_details['txn_results'] = $session;
+		$txn_results = $session['txn_results'];
+		// $txn_results['txn_results'] = $session;
 		
-		$txn_details['amount'] = isset($txn_details['amount']) ? (float)abs($txn_details['amount']) : 0.00;
-		$txn_details['method'] = isset($txn_details['method']) ? $txn_details['method'] : '';
-
-//echo printr( $txn_details, '$txn_details' );
-//		$response_data = array( 'success' => print_r($txn_details) );		
-//		echo json_encode($response_data);
-//die();
+		$txn_results['amount'] = isset($txn_results['amount']) ? (float)abs($txn_results['amount']) : 0.00;
+		$txn_results['method'] = isset($txn_results['method']) ? $txn_results['method'] : '';
 		
-		switch ($txn_details['status']) {
+		switch ($txn_results['status']) {
 
 			case 'Approved' :
 				$status = 'TAP';
-				$success_msg = $txn_details['response_msg'];
+				$success_msg = $txn_results['response_msg'];
 				do_action('action_hook_espresso_reg_approved');
 				break;
 
 			case 'Declined' :
 				$status = 'DEC';
-				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_details['response_msg'] . '</b>';
+				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_results['response_msg'] . '</b>';
 				do_action('action_hook_espresso_reg_declined');
 				break;
 
@@ -1392,12 +1405,13 @@ class EE_Single_Page_Checkout {
 				break;
 		}
 	
-		$transaction->set_total($txn_details['amount']);
+		$transaction->set_total($txn_results['amount']);
 		$transaction->set_status($status);
-		$transaction->set_details($txn_details);
+		$transaction->set_details($txn_results);
+		$transaction->set_session_data( $session );
 
-		if (isset($txn_details['md5_hash'])) {
-			$transaction->set_hash_salt($txn_details['md5_hash']);
+		if (isset($txn_results['md5_hash'])) {
+			$transaction->set_hash_salt($txn_results['md5_hash']);
 		}
 
 		if (isset($session['taxes'])) {
@@ -1407,10 +1421,10 @@ class EE_Single_Page_Checkout {
 
 		$transaction->update();
 
-		if ($transaction->total() > 0 && $txn_details['status'] == 'Approved') {
+		if ($transaction->total() > 0 && $txn_results['status'] == 'Approved') {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
 			EEM_Payment::instance();
-			$payment = new EE_Payment($transaction->ID(), $transaction->datetime(), $txn_details['method'], $txn_details['amount']);
+			$payment = new EE_Payment($transaction->ID(), $transaction->datetime(), $txn_results['method'], $txn_results['amount']);
 			$results = $payment->insert();
 			if (!$results) {
 				$error_msg = __('There was a problem inserting your payment into our records.', 'event_espresso');
@@ -1431,22 +1445,22 @@ class EE_Single_Page_Checkout {
 //		echo json_encode($response_data);
 		die();*/
 		
-
-		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
-			if (!$this->_return_page_url) {
-				$return_page_id = $org_options['return_url'];
-				// get permalink for thank you page
-				// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-				$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
+		if( $perform_redirect ) {
+			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
+				if (!$this->_return_page_url) {
+					$return_page_id = $org_options['return_url'];
+					// get permalink for thank you page
+					// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
+					$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
+				}
+				wp_safe_redirect($this->_return_page_url);
+				exit();
+			} else {
+				$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
+				wp_safe_redirect($reg_page_step_3_url);
+				exit();
 			}
-			wp_safe_redirect($this->_return_page_url);
-			exit();
-		} else {
-			$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
-			wp_safe_redirect($reg_page_step_3_url);
-			exit();
 		}		
-		
 		
 	}
 	
@@ -1467,7 +1481,6 @@ class EE_Single_Page_Checkout {
 
 		// What's args for?
 		$dummy_var = $args;
-		$dummy_var = $dummy_var;
 
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -1504,7 +1517,7 @@ class EE_Single_Page_Checkout {
 		global $EE_Session;
 
 		$session = $EE_Session->get_session_data();
-		$txn_details = $session['txn_results'];
+		$txn_results = $session['txn_results'];
 
 		$txn_results = array(
 				'approved' => $payment_data->approved ? $payment_data->approved : 0,

@@ -192,19 +192,36 @@ class EE_Registration {
 	* @param 		boolean		$REG_att_checked_in	Attendee Checked In
 	* @param 		int 				$REG_ID 							Registration ID
 	*/
-	public function __construct( $EVT_ID = NULL, $ATT_ID = NULL, $TXN_ID = NULL, $REG_session = NULL, $REG_code = NULL, $REG_is_primary = NULL, $REG_is_group_reg = NULL, $STS_ID = NULL, $REG_date = NULL, $PRC_ID = NULL, $REG_att_is_going = NULL, $REG_att_checked_in = NULL, $REG_ID = NULL ) {
+	public function __construct( 
+													$EVT_ID = NULL, 
+													$ATT_ID = NULL, 
+													$TXN_ID = NULL, 
+													$DTT_ID = NULL, 
+													$PRC_ID = NULL, 
+													$STS_ID = NULL, 
+													$REG_date = NULL, 
+													$REG_session = NULL, 
+													$REG_code = NULL, 
+													$REG_is_primary = NULL, 
+													$REG_is_group_reg = NULL, 
+													$REG_att_is_going = NULL, 
+													$REG_att_checked_in = NULL, 
+													$REG_ID = NULL 
+												) {
 												
+		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_is_primary 	REG_is_group_reg 	REG_att_is_going 	REG_att_checked_in
 		$this->_REG_ID 						= $REG_ID;
 		$this->_EVT_ID 						= $EVT_ID;
 		$this->_ATT_ID 						= $ATT_ID;
 		$this->_TXN_ID 						= $TXN_ID;
+		$this->_DTT_ID 						= $DTT_ID;
+		$this->_PRC_ID 						= $PRC_ID;
+		$this->_STS_ID 						= $STS_ID;
+		$this->_REG_date 					= $REG_date;
 		$this->_REG_session 				= $REG_session;
 		$this->_REG_code					= $REG_code;
 		$this->_REG_is_primary 		= $REG_is_primary;
 		$this->_REG_is_group_reg 	= $REG_is_group_reg;
-		$this->_STS_ID 						= $STS_ID;
-		$this->_REG_date 					= $REG_date;
-		$this->_PRC_ID 						= $PRC_ID;
 		$this->_REG_att_is_going 	= $REG_att_is_going;
 		$this->_REG_att_checked_in= $REG_att_checked_in;
 	}
