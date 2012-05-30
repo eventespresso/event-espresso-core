@@ -52,6 +52,7 @@ class EEM_Registration extends EEM_Base {
 			'PRC_ID' 						=> '%d',
 			'STS_ID' 						=> '%s',
 			'REG_date' 					=> '%d',
+			'REG_price_paid' 		=> '%d',
 			'REG_session' 				=> '%s',
 			'REG_code'					=> '%s',
 			'REG_is_primary' 		=> '%d',
@@ -109,6 +110,7 @@ class EEM_Registration extends EEM_Base {
 						$reg->PRC_ID,
 						$reg->STS_ID,
 						$reg->REG_date,
+						$reg->REG_price_paid,
 						$reg->REG_session, 
 						$reg->REG_code,
 						$reg->REG_is_primary,
@@ -336,12 +338,13 @@ class EEM_Registration extends EEM_Base {
 				$locales = FALSE;
 			}
 			
-			$SQL .= 'SELECT att.*, reg.*, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID txn_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name';
+			$SQL .= 'SELECT att.*, reg.*, dtt.*, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID txn_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name';
 			$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
 			$SQL .= ' JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
 			$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID ';
 			$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';		
 			$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';		
+			$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';		
 
 			if ( $CAT_ID ) {
 				$SQL .= ' JOIN ' . EVENTS_CATEGORY_REL_TABLE . ' ect ON ect.event_id = evt.id ';
@@ -397,13 +400,13 @@ class EEM_Registration extends EEM_Base {
 
 		}  // end if (function_exists('espresso_member_data')
 
-		$SQL .= 'SELECT att.*, reg.*, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID txn_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name';
+		$SQL .= 'SELECT att.*, reg.*, dtt.*, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID txn_status, TXN_details, TXN_tax_data, PRC_amount, PRC_name';
 		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
 		$SQL .= ' RIGHT JOIN ' . $this->table_name . ' reg ON reg.ATT_ID = att.ATT_ID';
 		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';		
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';		
 		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';		
-//		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';		
+		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';		
 
 		if ( $CAT_ID ) {
 			$SQL .= ' JOIN ' . EVENTS_CATEGORY_REL_TABLE . ' ect ON ect.event_id = evt.id';

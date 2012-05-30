@@ -1270,6 +1270,7 @@ class EE_Single_Page_Checkout {
 					
 					$DTT_ID = $event['options']['dtt_id'];
 					$PRC_ID = $event['options']['price_id'];
+					$price_paid = $attendee['price_paid'];
 
 					$new_reg_ID = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session['id'];
 
@@ -1306,14 +1307,16 @@ class EE_Single_Page_Checkout {
 													$PRC_ID,
 													'RPN',
 													time(),
+													$price_paid,
 													$session['id'],
 													$new_reg_ID,
 													isset($attendee['primary_attendee']),
 													$is_group_reg,
-													$event['price_id'],
 													FALSE,
 													FALSE
 					);
+					//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
+
 					$reg[$line_item_id]->insert();
 
 					// add registration id to session for the primary attendee

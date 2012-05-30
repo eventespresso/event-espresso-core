@@ -501,6 +501,7 @@ function events_data_tables_install() {
 				  PRC_ID varchar(45) COLLATE utf8_bin DEFAULT NULL,
 				  STS_ID varchar(3) NOT NULL DEFAULT 'PND',
 				  REG_date int(11) NOT NULL,
+				  REG_price_paid decimal(10,2) NOT NULL DEFAULT '0.00',
 				  REG_session varchar(45) COLLATE utf8_bin NOT NULL,
 				  REG_code varchar(45) COLLATE utf8_bin DEFAULT NULL,
 				  REG_is_primary tinyint(1) DEFAULT '0',

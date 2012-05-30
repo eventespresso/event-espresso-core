@@ -70,6 +70,61 @@ class EE_Registration {
 	private $_TXN_ID = NULL;
 	
 	
+    /**
+    *	Datetime ID
+	* 
+    *	foreign key from Datetime table
+	* 
+	*	@access	private
+    *	@var int	
+    */
+	private $_DTT_ID = NULL;	
+	
+	
+    /**
+    *	Price ID
+	* 
+    *	foreign key from Price table
+	* 
+	*	@access	private
+    *	@var int	
+    */
+	private $_PRC_ID = NULL;	
+	
+	
+    /**
+    *	Status ID
+	* 
+    *	registration status code - Pending, Complete, Incomplete
+	* 
+	*	@access	private
+    *	@var string	
+    */
+	private $_STS_ID = NULL;	
+	
+	
+    /**
+    *	Registration Date
+	* 
+    *	Unix timestamp
+	* 
+	*	@access	private
+    *	@var int	
+    */
+	private $_REG_date = NULL;	
+	
+	
+    /**
+    *	Price Paid
+	* 
+    *	Final Price for ticket after all modifications
+	* 
+	*	@access	private
+    *	@var float	
+    */
+	private $_REG_price_paid = NULL;	
+	
+	
 	
     /**
     *	PHP Session ID
@@ -116,39 +171,6 @@ class EE_Registration {
 	
 	
     /**
-    *	Status ID
-	* 
-    *	registration status code - Pending, Complete, Incomplete
-	* 
-	*	@access	private
-    *	@var string	
-    */
-	private $_STS_ID = NULL;	
-	
-	
-    /**
-    *	Registration Date
-	* 
-    *	Unix timestamp
-	* 
-	*	@access	private
-    *	@var int	
-    */
-	private $_REG_date = NULL;	
-	
-	
-    /**
-    *	Price ID
-	* 
-    *	foreign key from Price table
-	* 
-	*	@access	private
-    *	@var int	
-    */
-	private $_PRC_ID = NULL;	
-	
-	
-    /**
     *	Attendee Is Going
 	* 
     *	whether or not the attendee has confirmed they will be going to the event
@@ -181,13 +203,15 @@ class EE_Registration {
 	* @param 		int 				$EVT_ID 							Event ID
 	* @param 		int 				$ATT_ID 							Attendee ID
 	* @param 		int 				$TXN_ID 							Transaction ID
+	* @param 		int 				$DTT_ID 							Transaction ID
+	* @param 		int 				$PRC_ID 							Transaction ID
+	* @param 		int				$STS_ID		 					Status ID
+	* @param 		int				$REG_date					 	Registration Date
+	* @param 		float				$REG_price_paid			Price Paid
 	* @param 		string			$REG_session  				PHP Session ID
 	* @param 		string 			$REG_code  					Registration Code
 	* @param 		boolean		$REG_is_primary 			Is Primary Attendee
 	* @param 		boolean		$REG_is_group_reg		Is Group Registration
-	* @param 		int				$STS_ID		 					Status ID
-	* @param 		int				$REG_date					 	Registration Date
-	* @param 		int				$PRC_ID		 					Price ID
 	* @param 		boolean		$REG_att_is_going		 	Attendee Is Going
 	* @param 		boolean		$REG_att_checked_in	Attendee Checked In
 	* @param 		int 				$REG_ID 							Registration ID
@@ -200,6 +224,7 @@ class EE_Registration {
 													$PRC_ID = NULL, 
 													$STS_ID = NULL, 
 													$REG_date = NULL, 
+													$REG_price_paid = NULL, 
 													$REG_session = NULL, 
 													$REG_code = NULL, 
 													$REG_is_primary = NULL, 
@@ -218,6 +243,7 @@ class EE_Registration {
 		$this->_PRC_ID 						= $PRC_ID;
 		$this->_STS_ID 						= $STS_ID;
 		$this->_REG_date 					= $REG_date;
+		$this->_REG_price_paid		= $REG_price_paid;
 		$this->_REG_session 				= $REG_session;
 		$this->_REG_code					= $REG_code;
 		$this->_REG_is_primary 		= $REG_is_primary;
@@ -362,6 +388,20 @@ class EE_Registration {
 
 
 	/**
+	*		Set final Price Paid for ticket after all modifications
+	* 
+	* 		@access		public		
+	*		@param		float		$REG_price_paid 		Price Paid
+	*/	
+	public function set_price_paid( $REG_price_paid = FALSE ) {		
+		if ( ! $REG_price_paid ) { return FALSE; }
+		$this->_REG_price_paid = abs( $REG_price_paid );
+		return TRUE;
+	}
+
+
+
+	/**
 	*		Set Price ID
 	* 
 	* 		@access		public		
@@ -419,13 +459,15 @@ class EE_Registration {
 				'EVT_ID' 						=> $this->_EVT_ID,
 				'ATT_ID' 						=> $this->_ATT_ID,
 				'TXN_ID' 						=> $this->_TXN_ID,
+				'DTT_ID' 						=> $this->_DTT_ID,
+				'PRC_ID' 						=> $this->_PRC_ID,
+				'STS_ID' 						=> $this->_STS_ID,
+				'REG_date' 					=> $this->_REG_date,
+				'REG_price_paid' 		=> $this->_REG_price_paid,
 				'REG_session' 				=> $this->_REG_session,
 				'REG_code'					=> $this->_REG_code,
 				'REG_is_primary' 		=> $this->_REG_is_primary,
 				'REG_is_group_reg' 	=> $this->_REG_is_group_reg,
-				'STS_ID' 						=> $this->_STS_ID,
-				'REG_date' 					=> $this->_REG_date,
-				'PRC_ID' 						=> $this->_PRC_ID,
 				'REG_att_is_going' 		=> $this->_REG_att_is_going,
 				'REG_att_checked_in' => $this->_REG_att_checked_in
 		);
@@ -590,6 +632,16 @@ class EE_Registration {
 	*/	
 	public function date() {
 		return $this->_REG_date;
+	}
+
+
+
+	/**
+	*		get Price Paid
+	* 		@access		public
+	*/	
+	public function price_paid() {
+		return $this->_REG_price_paid;
 	}
 
 
