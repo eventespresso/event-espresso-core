@@ -844,23 +844,27 @@ function espresso_attendees_by_month_dropdown($current_value = '') {
 
 if (!function_exists('espresso_event_list_attendee_title')) {
 
-	function espresso_event_list_attendee_title($event_id = NULL) {
-		global $wpdb;
-
-		$events = $wpdb->get_results("SELECT event_name FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "' ");
-
-		foreach ($events as $event) {
-			$title_event_name = stripslashes_deep($event->event_name);
+	function espresso_event_list_attendee_title( $event_id = FALSE ) {
+		
+		if ( ! $event_id ) {
+			return FALSE;
+		}
+		
+		global $wpdb;		
+		$SQL = 'SELECT event_name FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id = %d';
+		if ( $event = $wpdb->get_row( $wpdb->prepare( $SQL, $event_id ))) {	
+			$content = stripslashes_deep( $event->event_name);
+			$content .= ' | ';
+			$content .= 'ID: ' . $event_id;
+			$content .= ' | ';
+			$content .= espresso_event_time( $event_id, 'start_date_time' );			
+			return $content;
+			
+		} else {
+			return '';
 		}
 
-		$content = $title_event_name;
-		$content .= ' | ';
-		$content .= 'ID: ' . $event_id;
-		$content .= ' | ';
-		$content .= espresso_event_time($event_id, 'start_date_time');
-		return $content;
 	}
-
 }
 
 function espresso_payment_reports($atts) {

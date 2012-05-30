@@ -5,8 +5,12 @@ function espresso_admin_reports_filters() {
 	if ($espresso_premium != true)
 		return;
 	?>
-	<ul class="ee_subsubsub first subsubsub">
-		<li><h3><?php echo __('Filters', 'event_espresso'); ?></h3></li>
+<?php if ($_REQUEST['page'] == 'events' || $_REQUEST['page'] == 'attendees') : ?>
+	<h3 style="margin-bottom:0;"><?php echo __('Filters', 'event_espresso'); ?></h3>
+<?php endif; ?>
+
+<?php if ($_REQUEST['page'] == 'events') : ?>
+	<ul class="ee_subsubsub subsubsub">
 		<li><strong>
 	<?php _e('Events', 'event_espresso'); ?>
 				: </strong> </li>
@@ -20,6 +24,9 @@ function espresso_admin_reports_filters() {
 	<?php _e('This Month', 'event_espresso'); ?>
 				<span class="count">(<?php echo espresso_total_events_this_month(); ?>)</span></a></li>
 	</ul>
+<?php endif; ?>
+
+<?php if ($_REQUEST['page'] == 'attendees') : ?>
 	<ul class="ee_subsubsub subsubsub">
 		<li><strong>
 	<?php _e('Registrations', 'event_espresso'); ?>
@@ -39,6 +46,8 @@ function espresso_admin_reports_filters() {
 				</a></li>
 	<?php } ?>
 	</ul>
+<?php endif; ?>
+
 	<div style="clear:both"></div>
 
 	<?php if ($_REQUEST['page'] == 'events' || $_REQUEST['page'] == 'attendees') { ?>
