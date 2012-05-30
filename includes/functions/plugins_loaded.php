@@ -114,8 +114,9 @@ function espresso_setup_notices() {
 
 function espresso_init() {
 
+	do_action('action_hook_espresso_debug_file');
 	//Globals used throughout the site
-	global $org_options, $wpdb, $espresso_wp_user, $espresso_premium;
+	global $espresso_premium;
 
 	//Set the default time zone
 	//If the default time zone is set up in the WP Settings, then we will use that as the default.
