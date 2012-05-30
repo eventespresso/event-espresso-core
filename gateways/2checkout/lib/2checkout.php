@@ -43,7 +43,7 @@ class TwoCo extends PaymentGateway {
 	public function enableTestMode() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->testMode = TRUE;
-		$this->addField('demo', true);
+		$this->addField('demo', 'Y');
 	}
 
 	/**
