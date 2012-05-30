@@ -1160,13 +1160,7 @@ add_shortcode('EE_ANSWER', 'espresso_questions_answers');
 function event_espresso_run() {
 
 	// grab some globals
-	global $org_options, $load_espresso_scripts;
-
-	$message = "\nREQUEST variables:\n";
-	foreach ($_REQUEST as $key => $value) {
-		$message .= $key . " = " . $value . "\n";
-	}
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $message);
+	global $load_espresso_scripts;
 
 	// tell the plugin to load the required scripts
 	$load_espresso_scripts = true;
