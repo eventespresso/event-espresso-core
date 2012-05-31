@@ -242,6 +242,11 @@
 	private function _espresso_session() {
 
 		// starts a new session if one doesn't already exist, or reinitiates an existing one
+		if (isset($_GET['session_id'])) {
+			session_id(sanitize_key($_GET['session_id']));
+			session_start();
+		}
+		
 		if ( ! session_id() ) {
 			session_start();
 			// set initial site access time
