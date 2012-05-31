@@ -86,7 +86,7 @@ function espresso_load_reg_page_files() {
 
 //	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment_Data.class.php');
 //	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/payment_page.php');
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
 //	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/confirmation_page.php');
 //	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/pending_approval_page.php');
 //	require_once(espresso_get_payment_page_template());
