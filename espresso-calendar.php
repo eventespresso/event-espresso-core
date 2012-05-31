@@ -28,10 +28,9 @@ function espresso_calendar_version() {
 }
 
 //Update notifications
-add_action('plugins_loaded', 'ee_calendar_load_pue_update');
+add_action('action_hook_espresso_calendar_update_api', 'ee_calendar_load_pue_update');
 function ee_calendar_load_pue_update() {
-	global $org_options, $ee_pue_checkPeriod, $lang_domain, $espresso_check_for_updates;
-	
+	global $org_options, $espresso_check_for_updates;
 	if ( $espresso_check_for_updates == false )
 		return;
 		
@@ -43,7 +42,8 @@ function ee_calendar_load_pue_update() {
 		$options = array(
 			'apikey' => $api_key,
 			'lang_domain' => 'event_espresso',
-			'checkPeriod' => $ee_pue_checkPeriod,
+			'checkPeriod' => '24',
+			'option_key' => 'site_license_key'
 		);
 		$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 	}
