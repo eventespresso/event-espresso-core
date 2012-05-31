@@ -15,19 +15,19 @@ function espresso_display_payment_gateways() {
 		require_once($path . "/payment.php");
 	}
 
-	echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';
+	echo '<div id="methods-of-payment">';
 	echo '<h3>' . __('Please select your method of payment:', 'event_espresso') . '</h3>';
-	
+
 	do_action('action_hook_espresso_display_onsite_payment_gateway');
-	
+
 	do_action('action_hook_espresso_display_offsite_payment_gateway');
-	
+
 	do_action('action_hook_espresso_display_offline_payment_gateway');
-	
+
 	do_action('action_hook_espresso_display_finalize_payment_header');
-	
+
 	do_action('action_hook_espresso_display_offline_payment_gateway_2');
-	
+
 	echo '</div><!-- / .event-display-boxes payment opts -->';
 }
 

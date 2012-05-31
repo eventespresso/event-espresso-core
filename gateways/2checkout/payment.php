@@ -6,7 +6,7 @@ function espresso_display_2checkout() {
 	$twoco_settings = $session_data['payment_settings']['2checkout'];
 	$gateway = '2checkout';
 ?>
-			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
+			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk<?php echo $gateways[ $gateway ]['css_link_class'];?>" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
 				<img src="<?php echo $twoco_settings['button_url'];?>" alt="Pay using 2CheckOut.com" />
 			</a>
 
@@ -16,7 +16,7 @@ function espresso_display_2checkout() {
 				<input id="reg-page-selected-gateway-name-<?php echo $gateway;?>" type="hidden" value="<?php echo $gateway; ?>" name="selected_gateway_name[<?php echo $gateway;?>]">
 			</div>
 
-<?php	
+<?php
 }
 
 add_action('action_hook_espresso_display_offsite_payment_gateway', 'espresso_display_2checkout');

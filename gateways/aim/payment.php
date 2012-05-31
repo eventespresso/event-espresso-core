@@ -2,9 +2,9 @@
 function espresso_display_aim() {
 
 	global $org_options, $payment_settings, $css_class, $gateways;
-	
+
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	
+
 	// this filter allows whatever function is processing the registration page to know what inputs to expect
 	add_filter( 'filter_hook_espresso_reg_page_billing_inputs', 'espresso_reg_page_billing_inputs_aim' );
 	$gateway = 'aim';
@@ -21,61 +21,61 @@ function espresso_display_aim() {
 	$logo = EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/authnet/lib/logo-auth_net.png';
 ?>
 
-			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
+			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk<?php echo $gateways[ $gateway ]['css_link_class'];?>" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
 				<img src="<?php echo $logo; ?>" alt="Pay using Authorize.Net" />
 			</a>
-			
+
 			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
-				
+
 				<input id="reg-page-gateway-off-site-<?php echo $gateway;?>" type="hidden" value="0" name="reg_page_gateway_off_site[<?php echo $gateway;?>]">
 				<input id="reg-page-selected-gateway-name-<?php echo $gateway;?>" type="hidden" value="Authorize.Net AIM" name="selected_gateway_name[<?php echo $gateway;?>]">
-		
+
 				<?php echo $test_creds; ?>
-				
+
 				<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
-				
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-fname"><?php _e('First Name', 'event_espresso'); ?> <em>*</em></label>
 					<input id="reg-page-billing-fname" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-fname" title="">
 				</p>
-	
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-lname"><?php _e('Last Name', 'event_espresso'); ?> <em>*</em></label>
 					<input id="reg-page-billing-lname" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-lname" title="">
 				</p>
-				
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-email"><?php _e('Email', 'event_espresso'); ?> <em>*</em></label>
 					<input id="reg-page-billing-email" class="required email <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-email" title="">
 				</p>
-	
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-address"><?php _e('Address', 'event_espresso'); ?> <em>*</em></label>
 					<input id="reg-page-billing-address" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-address">
 				</p>
-	
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-city"><?php _e('City', 'event_espresso'); ?> <em>*</em></label>
 					<input id="reg-page-billing-city" class="required <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-city">
 				</p>
-	
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-state"><?php _e('State', 'event_espresso'); ?> <em>*</em></label>
 					<input id="reg-page-billing-state" class="required medium-txt <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-state">
 				</p>
-	
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-zip"><?php _e('Zip', 'event_espresso'); ?> <em>*</em></label>
 					<input id="reg-page-billing-zip" class="required small-txt <?php echo $css_class;?>" type="text" value="" name="reg-page-billing-zip">
 				</p>
-				
+
 				<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
-				
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-card-nmbr"><?php _e('Card Number', 'event_espresso'); ?> <em>*</em></label>
 		        	<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class;?>" type="text" name="reg-page-billing-card-nmbr"/>
 				</p>
-	
+
 	<?php /*
 				<p class="event_form_field">
 					<label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
@@ -85,33 +85,33 @@ function espresso_display_aim() {
 				<p class="event_form_field">
 					<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
 					<select id="reg-page-billing-card-exp-date-mnth" class="required small-txt <?php echo $css_class;?>" name="reg-page-billing-card-exp-date-mnth">
-	<?php	for ( $x = 1; $x <= 12; $x++ ) { 
+	<?php	for ( $x = 1; $x <= 12; $x++ ) {
 					$value = $x < 10 ? '0'.$x : $x;
 					echo '
 						<option value="'.$value.'">'.$value.'</option>';
-				} ?>				
+				} ?>
 					</select>
 					&nbsp;/&nbsp;
 					<select id="reg-page-billing-card-exp-date-year" class="required small-txt <?php echo $css_class;?>" name="reg-page-billing-card-exp-date-year">
 	<?php
 				$current_year = date( 'y' );
 				$next_decade = $current_year + 10;
-				for ( $x = $current_year; $x <= $next_decade; $x++ ) { 
+				for ( $x = $current_year; $x <= $next_decade; $x++ ) {
 					$value = $x < 10 ? '0'.$x : $x;
 					echo '
 						<option value="'.$value.'">'.$value.'</option>';
-				} ?>				
+				} ?>
 					</select>
 					<span class="small-text lt-grey-text"><?php _e('(mm/yy)', 'event_espresso'); ?></span>
 				</p>
-				
+
 				<p class="event_form_field">
 					<label for="reg-page-billing-card-ccv-code"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
 		        	<input id="reg-page-billing-card-ccv-code"  class="required small-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-ccv-code"/>
 				</p>
-			
+
 			</div>
-			
+
 <?php
 }
 add_action('action_hook_espresso_display_onsite_payment_gateway', 'espresso_display_aim');
@@ -120,11 +120,11 @@ add_action('action_hook_espresso_display_onsite_payment_gateway', 'espresso_disp
 function espresso_reg_page_billing_inputs_aim() {
 
 		$reg_page_billing_inputs = array (
-						
+
 						'type' => 'onsite',
-						
+
 						'gateway' => 'Authorize.Net AIM',
-						
+
 						'reg-page-billing-fname' => array(
 								'db-col' =>'fname',
 								'label' => __( 'First Name', 'event_espresso' ),
@@ -134,9 +134,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-lname' => array(
 								'db-col' =>'lname',
 								'label' => __( 'Last Name', 'event_espresso' ),
@@ -146,9 +146,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-email' => array(
 								'db-col' =>'email',
 								'label' => __( 'Email Address', 'event_espresso' ),
@@ -158,9 +158,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-address' => array(
 								'db-col' =>'address',
 								'label' => __( 'Address', 'event_espresso' ),
@@ -170,9 +170,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-city' => array(
 								'db-col' =>'city',
 								'label' => __( 'City', 'event_espresso' ),
@@ -182,9 +182,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-state' => array(
 								'db-col' =>'state',
 								'label' => __( 'State', 'event_espresso' ),
@@ -194,9 +194,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-zip' => array(
 								'db-col' =>'zip',
 								'label' => __( 'Zip Code', 'event_espresso' ),
@@ -206,9 +206,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-card-nmbr' => array(
 								'db-col' =>'card-nmbr',
 								'label' => __( 'Credit Card Number', 'event_espresso' ),
@@ -218,9 +218,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%d' 
+								'format' => '%d'
 						),
-						
+
 /*						'reg-page-billing-card-exp-date' => array(
 								'db-col' =>'exp-date',
 								'label' => __( 'Expiry Date', 'event_espresso' ),
@@ -230,9 +230,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),*/
-						
+
 						'reg-page-billing-card-exp-date-mnth' => array(
 								'db-col' =>'exp-date-mnth',
 								'label' => __( 'Expiry Date Month', 'event_espresso' ),
@@ -242,9 +242,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-card-exp-date-year' => array(
 								'db-col' =>'exp-date-year',
 								'label' => __( 'Expiry Date Year', 'event_espresso' ),
@@ -254,9 +254,9 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%s' 
+								'format' => '%s'
 						),
-						
+
 						'reg-page-billing-card-ccv-code' => array(
 								'db-col' =>'ccv-code',
 								'label' => __( 'CCV Code', 'event_espresso' ),
@@ -266,10 +266,10 @@ function espresso_reg_page_billing_inputs_aim() {
 								'required' => TRUE,
 								'validation' => TRUE,
 								'value' => NULL,
-								'format' => '%d' 
+								'format' => '%d'
 						)
-											
+
 				);
-					
+
 		return $reg_page_billing_inputs;
 }
