@@ -6,7 +6,7 @@ function espresso_transactions_aim_get_attendee_id($attendee_id) {
 }
 add_filter('filter_hook_espresso_transactions_get_attendee_id', 'espresso_transactions_aim_get_attendee_id');
 
-function espresso_process_aim( $EE_Session, $payment_settings ) {
+function espresso_process_aim( $EE_Session ) {
 
 	$session_data = $EE_Session->get_session_data();
 	$billing_info = $session_data['billing_info'];	
@@ -15,7 +15,7 @@ function espresso_process_aim( $EE_Session, $payment_settings ) {
 
 		require_once 'lib/AuthorizeNet.php';
 	
-		$authnet_aim_settings = $payment_settings['aim'];
+		$authnet_aim_settings = $session_data['payment_settings']['aim'];
 		$authnet_aim_login_id = $authnet_aim_settings['authnet_aim_login_id'];
 		$authnet_aim_transaction_key = $authnet_aim_settings['authnet_aim_transaction_key'];
 	
@@ -117,3 +117,4 @@ function espresso_process_aim( $EE_Session, $payment_settings ) {
 
 }
 
+add_action('action_hook_espresso_gateway_process_step_3', 'espresso_process_aim');
