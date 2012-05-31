@@ -1348,13 +1348,17 @@ class EE_Single_Page_Checkout {
 
 			} else {
 				// attempt to perform transaction via payment gateway 
-				do_action('action_hook_espresso_process_payments', $EE_Session);
+				$session_data = $EE_Session->get_session_data();
+				$selected_gateway = $session_data['billing_info']['gateway'];
+				$gateway_path = $session_data['active_gateways'][$selected_gateway];
+				require_once($gateway_path . "/return.php");
+				do_action('action_hook_espresso_gateway_process_step_3', $EE_Session);
 			}
 		}
 		
 		//$this->process_registration_payment( $transaction );
 		
-		if ( $this->_ajax == 1 ) {
+		if ( $this->_ajax == 1) {
 			$this->process_registration_payment();
 		}
 
@@ -1371,7 +1375,7 @@ class EE_Single_Page_Checkout {
 	 * 		@param 		object 		$transaction
 	 * 		@return 		JSON		or redirect
 	 */
-	function process_registration_payment( $perform_redirect = TRUE ) {
+	public function process_registration_payment( $perform_redirect = TRUE ) {
 	
 		global $EE_Session;
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
