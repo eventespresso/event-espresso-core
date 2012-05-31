@@ -97,13 +97,16 @@ function espresso_email_after_payment($payment_data) {
  * 		@param 		array		$payment_data
  * 		@return 		void
  */
-function espresso_mail_successful_transaction_debugging_output($payment_data) {
+function espresso_mail_successful_transaction_debugging_output() {
+	global $EE_Session, $org_options;
+	$session_data = $EE_Session->get_session_data();
+
 	$subject = 'Instant Payment Notification - Gateway Variable Dump';
 	$body = "An instant payment notification was successfully recieved\n";
 	$body .= "from " . " on " . date('m/d/Y');
 	$body .= " at " . date('g:i A') . "\n\nDetails:\n";
-	$body .= unserialize($payment_data['txn_details']);
-	wp_mail($payment_data['contact'], $subject, $body);
+	$body .= unserialize($session_data['txn_results']['details']);
+	wp_mail($org_options['contact_email'], $subject, $body);
 }
 add_action('action_hook_espresso_mail_successful_transaction_debugging_output', 'espresso_mail_successful_transaction_debugging_output');
 
@@ -118,46 +121,15 @@ add_action('action_hook_espresso_mail_successful_transaction_debugging_output', 
  * 		@param 		array		$payment_data
  * 		@return 		void
  */
-function espresso_mail_failed_transaction_debugging_output($payment_data) {
+function espresso_mail_failed_transaction_debugging_output() {
+	global $EE_Session, $org_options;
+	$session_data = $EE_Session->get_session_data();
 	$subject = 'Instant Payment Notification - Gateway Variable Dump';
 	$body = "An instant payment notification failed\n";
 	$body .= "from " . " on " . date('m/d/Y');
 	$body .= " at " . date('g:i A') . "\n\nDetails:\n";
-	$body .= unserialize($payment_data['txn_details']);
-	wp_mail($payment_data['contact'], $subject, $body);
+	$body .= unserialize($session_data['txn_results']['details']);
+	wp_mail($org_options['contact_email'], $subject, $body);
 }
 add_action('action_hook_espresso_mail_failed_transaction_debugging_output', 'espresso_mail_failed_transaction_debugging_output');
 
-
-
-
-
-/**
- * 		espresso_process_payments
- *
- * 		@access 		public
- * 		@param 		object		$EE_Session
- * 		@return 		void
- */
-function espresso_process_payments($EE_Session) {
-
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, "Hello World!");
-	// sometimes globalization is unavoidable
-	global $espresso_wp_user, $session_data, $billing_info;
-	// grab session and billing data
-	$session_data = $EE_Session->get_session_data();
-	$billing_info = $session_data['billing_info'];
-	
-	//echo printr( $session_data, '$session_data ' . __FUNCTION__ );
-
-	// grab wp user data	for event manager
-	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);	
-	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
-	// load gateways
-	foreach ($active_gateways as $gateway => $path) {
-		require_once($path . "/init.php");
-	}
-	
-	do_action('action_hook_espresso_process_transaction', $EE_Session, $payment_settings);
-}
-add_action('action_hook_espresso_process_payments', 'espresso_process_payments');
