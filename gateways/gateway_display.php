@@ -2,38 +2,32 @@
 
 function espresso_display_payment_gateways() {
 //Get the payment settings
-	global $active_gateways, $payment_settings, $espresso_wp_user;
+	global $espresso_wp_user, $EE_Session;
 	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
 	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
+	$EE_Session->set_session_data(array('active_gateways' => $active_gateways, 'payment_settings' => $payment_settings), 'session_data');
 
 //	echo var_dump($espresso_wp_user);
 //	echo var_dump($active_gateways);
 //	echo var_dump($payment_settings);
 
 	foreach ($active_gateways as $path) {
-		require_once($path . "/init.php");
+		require_once($path . "/payment.php");
 	}
 
 	echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';
 	echo '<h3>' . __('Please select your method of payment:', 'event_espresso') . '</h3>';
-//	echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
-
-//	do_action('action_hook_espresso_display_onsite_payment_header');
+	
 	do_action('action_hook_espresso_display_onsite_payment_gateway');
-//	do_action('action_hook_espresso_display_onsite_payment_footer');
-
-//	do_action('action_hook_espresso_display_offsite_payment_header');
-	do_action('action_hook_espresso_display_offsite_payment_gateway_selection');
-//	do_action('action_hook_espresso_display_offsite_payment_footer');
-
-//	do_action('action_hook_espresso_display_offline_payment_header');
+	
+	do_action('action_hook_espresso_display_offsite_payment_gateway');
+	
 	do_action('action_hook_espresso_display_offline_payment_gateway');
+	
 	do_action('action_hook_espresso_display_finalize_payment_header');
+	
 	do_action('action_hook_espresso_display_offline_payment_gateway_2');
-//	do_action('action_hook_espresso_display_offline_payment_footer');
-
-
-//	echo '</div><!-- / .event-data-display -->';
+	
 	echo '</div><!-- / .event-display-boxes payment opts -->';
 }
 
