@@ -205,7 +205,7 @@ if ($espresso_calendar['espresso_use_pickers'] == true) {
 }// close if use picker is Yes*/
 
 function espresso_calendar_do_stuff($show_expired) {
-	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray, $category_styles;
+	global $wpdb, $org_options, $espresso_calendar, $event_category_id, $events, $eventsArray;
 
 	//Build the SQL to run
 	//Get the categories
@@ -402,8 +402,7 @@ function espresso_calendar_do_stuff($show_expired) {
 	//Debug:
 	//Print the results of the code above
 	//echo json_encode($events);
-	
-	echo '<style type="text/css">'.$category_styles.'</style>';
+	//echo '<style type="text/css">'.$category_styles.'</style>';
 	
 	
 }
