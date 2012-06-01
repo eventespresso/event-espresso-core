@@ -35,6 +35,8 @@ function event_espresso_2co_settings() {
 		$payment_settings['2checkout']['use_sandbox'] = false;
 		$payment_settings['2checkout']['bypass_payment_page'] = false;
 		$payment_settings['2checkout']['button_url'] = $button_url;
+		$payment_settings['2checkout']['type'] = 'off-site';
+		$payment_settings['2checkout']['display_name'] = '2CheckOut';
 		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
 
