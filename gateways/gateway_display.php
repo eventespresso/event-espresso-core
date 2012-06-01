@@ -2,16 +2,14 @@
 
 function espresso_display_payment_gateways() {
 //Get the payment settings
-	global $espresso_wp_user, $EE_Session;
-	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
-	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
-	$EE_Session->set_session_data(array('active_gateways' => $active_gateways, 'payment_settings' => $payment_settings), 'session_data');
+	global $EE_Session;
+	$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 
 //	echo var_dump($espresso_wp_user);
 //	echo var_dump($active_gateways);
 //	echo var_dump($payment_settings);
 
-	foreach ($active_gateways as $path) {
+	foreach ($gateway_data['active_gateways'] as $path) {
 		require_once($path . "/payment.php");
 	}
 
