@@ -219,8 +219,8 @@ class EE_Transaction {
 		if ( ! $details ) {
 			$espresso_notices['errors'][] = 'No details were supplied.';
 			return FALSE;
-		}	
-		$this->_TXN_details = stripslashes_deep( $details );
+		}
+		$this->_TXN_details = $details;
 		return TRUE;
 	}
 
@@ -242,7 +242,7 @@ class EE_Transaction {
 			$espresso_notices['errors'][] = 'No session data was supplied.';
 			return FALSE;
 		}	
-		$this->_TXN_session_data = stripslashes_deep( $session_data );
+		$this->_TXN_session_data = $session_data;
 		return TRUE;
 	}
 
