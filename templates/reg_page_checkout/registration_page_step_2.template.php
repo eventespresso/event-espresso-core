@@ -73,11 +73,10 @@
 ?>
 		<div id="reg-page-grand-total-dv" class="reg-page-totals-spn">
 			<span class="drk-grey-text"><?php echo __('Total Amount Due: ', 'event_espresso');?></span>
-			<?php echo $currency_symbol;?><span class="reg-page-total-spn"><?php echo$grand_total;?></span>
+			<?php echo $currency_symbol;?><span class="reg-page-total-spn"><?php echo $grand_total;?></span>
 		</div>
 
-		<input id="reg-page-selected-gateway" type="hidden" value="<?php echo $selected_gateway;?>" name="selected_gateway">
-		<input id="reg-page-off-site-gateway" type="hidden" value="0" name="reg_page_off_site_gateway">
+		<input id="reg-page-selected-gateway" type="hidden" value="<?php echo $selected_gateway; ?>" name="selected_gateway">
 		<input id="reg-page-selected-gateway-name-free" type="hidden" value="free" name="selected_gateway_name[free]">
 
 <?php
