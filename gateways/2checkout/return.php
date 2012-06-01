@@ -10,7 +10,7 @@ function espresso_send_to_2checkout( $EE_Session ) {
 	include_once ('lib/2checkout.php');	
 	$my2checkout = new TwoCo();
 	$session_data = $EE_Session->get_session_data();
-	$two_checkout_settings = $session_data['payment_settings']['2checkout'];
+	$two_checkout_settings = $session_data['gateway_data']['payment_settings']['2checkout'];
 	
 	echo '<!-- Event Espresso 2checkout Gateway Version ' . $my2checkout->twocheckout_gateway_version . '-->';
 	
