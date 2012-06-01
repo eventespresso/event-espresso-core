@@ -241,7 +241,7 @@ class EE_Single_Page_Checkout {
 		//echo '<h1>FUNCTION: '.__FUNCTION__.'  ( line no: '. __LINE__ .' )</h1>';
 		//echo printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart' );
 
-		global $org_options, $espresso_wp_user, $gateways;
+		global $org_options, $espresso_wp_user, $EE_Session;
 
 
 		$template_args = array();
@@ -312,21 +312,32 @@ class EE_Single_Page_Checkout {
 				break;
 		}
 
-		// has gateway been set by no-js user?
-		if (isset($_GET['payment'])) {
-			$selected_gateway = sanitize_key($_GET['payment']);
-			$template_args['selected_gateway'] = $selected_gateway;
-			$hide_other_gateways = TRUE;
+		$session_data = $EE_Session->get_session_data();
+		if ( empty($session_data['gateway_data'])) {
+			$gateway_data['active_gateways'] = get_user_meta($espresso_wp_user, 'active_gateways', true);
+			$gateway_data['payment_settings'] = get_user_meta($espresso_wp_user, 'payment_settings', true);
 		} else {
-			$selected_gateway = FALSE;
-			$template_args['selected_gateway'] = 'free';
-			$hide_other_gateways = FALSE;
+			$gateway_data = $session_data['gateway_data'];
 		}
 
-		// get active gateways for this event
-		$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
+		// has gateway been set by no-js user?
+		if (isset($_GET['payment'])) {
+			$gateway_data['selected_gateway'] = sanitize_key($_GET['payment']);
+			$gateway_data['type'] = $gateway_data['payment_settings'][$gateway_data['selected_gateway']]['type'];
+			$template_args['selected_gateway'] = $selected_gateway;
+			$hide_other_gateways = TRUE;
+		} elseif (empty($gateway_data['selected_gateway'])) {
+			$gateway_data['selected_gateway'] = 'free';
+			$hide_other_gateways = FALSE;
+			$gateway_data['type'] = FALSE;
+		}
+		
+		$selected_gateway = $gateway_data['selected_gateway'];
 
-		foreach ( $active_gateways as $gateway => $path ) {
+		$template_args['selected_gateway'] = $selected_gateway;
+		
+		// get active gateways for this event
+		foreach ( $gateway_data['active_gateways'] as $gateway => $path ) {
 			$gateway = sanitize_key($gateway);
 			$gateways[ $gateway ]['form_url'] = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' => $gateway  ), $this->_reg_page_base_url);
 			// set display mode for gateway form
@@ -344,11 +355,16 @@ class EE_Single_Page_Checkout {
 			// if
 		}
 		//printr( $gateways, '$gateways' );
-
+		$gateway_data['html_data'] = $gateways;
+		$EE_Session->set_session_data($gateway_data, 'gateway_data');
+		if (empty($session_data['billing_info'])) {
+			$EE_Session->set_session_data(array('fill' => TRUE), 'billing_info');
+		}
 		// printr(  $template_args, '$template_args' );
 		// printr(  $_REQUEST, '$_REQUEST' );
 		// printr(  $_POST, '$_POST' );
 		// die();
+
 
 
 		$grand_total = 0;
@@ -614,37 +630,36 @@ class EE_Single_Page_Checkout {
 
 		$template_args['taxes'] = FALSE;
 
-//		if ( $step == 2 ) {
-			// load and instantiate models
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
-			require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
-			$PRC = EEM_Price::instance();
-			// retreive all taxes
-			$global_taxes = $PRC->get_all_prices_that_are_taxes();
-			if ($global_taxes) {
-				//echo printr( $global_taxes, '$global_taxes' );
-				global $EE_Session;
-				$template_args['taxes'] = array();
-				$tax_totals = array();
-				$amnt = 0;
-				foreach ($global_taxes as $taxes) {
-					$tax_tier_total = 0;
-					foreach ($taxes as $tax) {
-						//echo printr( $tax, '$tax' );
-						$prcnt = $tax->amount() / 100;
-						$amnt = number_format($grand_total * $prcnt, 2, '.', '');
-						$prcnt = $prcnt * 100;
-						$template_args['taxes'][$tax->ID()] = array('name' => $tax->name(), 'percent' => $prcnt, 'amount' => $amnt);
-						$tax_totals [$tax->ID()] = $amnt;
-						$tax_tier_total = $tax_tier_total + $amnt;
-					}
-					// add tax to grand total
-					$grand_total = $grand_total + $tax_tier_total;
+		//		if ( $step == 2 ) {
+		// load and instantiate models
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php' );
+		$PRC = EEM_Price::instance();
+		// retreive all taxes
+		$global_taxes = $PRC->get_all_prices_that_are_taxes();
+		if ($global_taxes) {
+			//echo printr( $global_taxes, '$global_taxes' );
+			$template_args['taxes'] = array();
+			$tax_totals = array();
+			$amnt = 0;
+			foreach ($global_taxes as $taxes) {
+				$tax_tier_total = 0;
+				foreach ($taxes as $tax) {
+					//echo printr( $tax, '$tax' );
+					$prcnt = $tax->amount() / 100;
+					$amnt = number_format($grand_total * $prcnt, 2, '.', '');
+					$prcnt = $prcnt * 100;
+					$template_args['taxes'][$tax->ID()] = array('name' => $tax->name(), 'percent' => $prcnt, 'amount' => $amnt);
+					$tax_totals [$tax->ID()] = $amnt;
+					$tax_tier_total = $tax_tier_total + $amnt;
 				}
+				// add tax to grand total
+				$grand_total = $grand_total + $tax_tier_total;
+			}
 				// add tax data to session
 				$EE_Session->set_session_data(array('_cart_grand_total_amount' => $grand_total, 'taxes' => $template_args['taxes'], 'tax_totals' => $tax_totals), 'session_data');
-			}
-//		}
+		}
+		//		}
 
 		$template_args['sub_total'] = number_format($sub_total, 2, '.', '');
 		$template_args['grand_total'] = number_format($grand_total, 2, '.', '');
@@ -878,33 +893,27 @@ class EE_Single_Page_Checkout {
 
 		} else { // PAID EVENT !!!  BOO  : (
 
+			$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+
 			// check for off site payment
 			if ( isset( $_POST['selected_gateway'] )) {
-				$selected_gateway = sanitize_text_field( $_POST['selected_gateway'] );
+				$gateway_data['selected_gateway'] = sanitize_text_field( $_POST['selected_gateway'] );
+				$gateway_data['type'] = $gateway_data['payment_settings'][$gateway_data['selected_gateway']]['type'];
+				$EE_Session->set_session_data($gateway_data, 'gateway_data');
 			}
 
 			// check for off site payment
-			if ( isset( $_POST['reg_page_gateway_off_site'] )) {
-				$offsite_payment = sanitize_text_field( $_POST['reg_page_gateway_off_site'][ $selected_gateway ] );
-			}
 
-			if ( $offsite_payment ) {
-
-				$billing_info = array();
-				$billing_info['type'] = 'offsite';
-				$billing_info['gateway'] = sanitize_text_field( $_POST['selected_gateway_name'][ $selected_gateway ] );
-				if ($EE_Session->set_session_data(array('billing_info' => $billing_info), $section = 'session_data')) {
-					$success_msg = __('Off-site Payment Gateway selected', 'event_espresso');
-				}
-
-			} else {
+			$continue = ($gateway_data['type'] == 'off-site') ? TRUE : FALSE;
+			
+			if ($gateway_data['type'] == 'on-site') { // on site payment
 				// on site payment
 				// load default billing inputs
 				$reg_page_billing_inputs = array(
 
 						'type' => 'onsite',
 
-						'gateway' => sanitize_text_field( $_POST['selected_gateway_name'][$_POST['selected_gateway']] ),
+						'gateway' => sanitize_text_field( $_POST['gateway'] ),
 
 						'reg-page-billing-fname' => array(
 								'db-col' => 'fname',
@@ -1054,7 +1063,7 @@ class EE_Single_Page_Checkout {
 				// End of onsite payment
 			}
 
-			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response')) {
+			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response') || $continue) {
 				$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();
@@ -1079,9 +1088,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		JSON
 	 */
 	private function _send_reg_step_2_ajax_response( $args, $success_msg) {
-		// What's args for?
-		$dummy_var = $args;
-		$dummy_var = $dummy_var;
+
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
@@ -1113,9 +1120,10 @@ class EE_Single_Page_Checkout {
 		global $org_options, $EE_Session;
 
 		$session_data = $EE_Session->get_session_data();
-//		printr( $session_data, '$session_data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );
+		//printr( $session_data, '$session_data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );
 
 		$billing_info = $session_data['billing_info'];
+		$gateway_data = $session_data['gateway_data'];
 		$reg_info = $session_data['cart']['REG'];
 		$template_args = array();
 		$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
@@ -1157,8 +1165,8 @@ class EE_Single_Page_Checkout {
 		if ($billing_info == 'no payment required') {
 			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
 		} else {
-			if ($billing_info['type']=='offsite') {
-				$template_args['billing']['gateway'] = $billing_info['gateway'];
+			if ($gateway_data['type']=='off-site') {
+				$template_args['billing']['gateway'] = $gateway_data['payment_settings'][$gateway_data['selected_gateway']]['display_name'];
 			} else {
 				$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
 				$template_args['billing']['last name'] = $billing_info['reg-page-billing-lname']['value'];
@@ -1315,8 +1323,8 @@ class EE_Single_Page_Checkout {
 								$prev_txn_details['REDO_TXN'] = array();
 							}
 							// update with new TXN_ID
-							$prev_txn_details['REDO_TXN'][] = $txn_results['new-ID'];
-							$prev_txn->set_details($prev_txn_details);
+							$prev_txn_details['REDO_TXN'][] = $txn_results['new-ID'];//var_dump($prev_txn_details);die();
+							$prev_txn->set_details( $prev_txn_details );
 							$prev_txn->update();
 						}
 
@@ -1375,14 +1383,26 @@ class EE_Single_Page_Checkout {
 
 			} else {
 				// attempt to perform transaction via payment gateway
-				$session_data = $EE_Session->get_session_data();
-				$selected_gateway = $session_data['billing_info']['gateway'];
-				$gateway_path = $session_data['active_gateways'][$selected_gateway];
+				$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+				$selected_gateway = $gateway_data['selected_gateway'];
+				$gateway_path = $gateway_data['active_gateways'][$selected_gateway];
 				require_once($gateway_path . "/return.php");
 				do_action('action_hook_espresso_gateway_process_step_3', $EE_Session);
+				if ( $this->_ajax == 0) {
+					$gateway_data['type'] = 'onsite_noajax';
+					$EE_Session->set_session_data($gateway_data, 'gateway_data');
+					if (!$this->_return_page_url) {
+						$return_page_id = $org_options['return_url'];
+						// get permalink for thank you page
+						// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
+						$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
+					}
+					wp_safe_redirect($this->_return_page_url);
+					exit();
+				}
 			}
 		}
-
+		//$session_data = $EE_Session->get_session_data();var_dump($session_data);die();
 		//$this->process_registration_payment( $transaction );
 
 		if ( $this->_ajax == 1) {
@@ -1444,7 +1464,7 @@ class EE_Single_Page_Checkout {
 
 		$transaction->set_total($txn_results['amount']);
 		$transaction->set_status($status);
-		$transaction->set_details($txn_results);
+		$transaction->set_details( $txn_results );
 		$transaction->set_session_data( $session );
 
 		if (isset($txn_results['md5_hash'])) {
