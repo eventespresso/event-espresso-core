@@ -26,6 +26,8 @@ function event_espresso_aim_payment_settings() {
 		$payment_settings['aim']['authnet_aim_transaction_key'] = '';
 		$payment_settings['aim']['use_sandbox'] = false;
 		$payment_settings['aim']['test_transactions'] = false;
+		$payment_settings['aim']['type'] = 'on-site';
+		$payment_settings['aim']['display_name'] = 'Authorize.net';
 		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
 
