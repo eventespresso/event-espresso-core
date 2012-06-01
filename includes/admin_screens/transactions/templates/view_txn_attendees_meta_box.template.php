@@ -27,11 +27,11 @@
 					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $att_details['price_paid'], 2 );?></td>
 					<td class="jst-left"><?php echo $att_details['email'];?></td>
 					<td class="jst-left">
-						<?php 
+						<?php
 							echo isset( $att_details['address'] ) ? $att_details['address'] . ', ' : '';
 							echo isset( $att_details['city'] ) ? $att_details['city'] . ', ' : '';
 							echo isset( $att_details['state'] ) ? $att_details['state'] . ', ' : '';
-							echo $att_details['zip'];
+							echo isset( $att_details['zip'] ) ? $att_details['zip']  : '';
 						?>
 					</td>
 					<th class="jst-cntr"><a href="" title="View details for this attendee">view</a></th>
@@ -39,8 +39,8 @@
 			<?php endforeach; // $attendee?>
 		<?php endforeach; // $attendees?>
 	<?php endforeach; // $event_attendees?>
-			</tbody>	
+			</tbody>
 		</table>
-	</div>			
-	
+	</div>
+
 </div>

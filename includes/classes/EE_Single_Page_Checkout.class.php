@@ -1407,6 +1407,9 @@ class EE_Single_Page_Checkout {
 		global $EE_Session;
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 
+		$success_msg = FALSE;
+		$error_msg = FALSE;
+
 		// grab session data
 		$session = $EE_Session->get_session_data();
 //		printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
