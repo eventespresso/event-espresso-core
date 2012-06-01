@@ -1,14 +1,14 @@
 <?php
 function espresso_display_aim() {
 
-	global $org_options, $payment_settings, $css_class, $gateways;
-
+	global $org_options, $css_class, $EE_Session;
+	$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	// this filter allows whatever function is processing the registration page to know what inputs to expect
 	add_filter( 'filter_hook_espresso_reg_page_billing_inputs', 'espresso_reg_page_billing_inputs_aim' );
 	$gateway = 'aim';
-	$authnet_aim_settings = $payment_settings[ $gateway ];
+	$authnet_aim_settings = $gateway_data['payment_settings'][ $gateway ];
 	$use_sandbox = $authnet_aim_settings['use_sandbox'] || $authnet_aim_settings['test_transactions'];
 	if ($use_sandbox) {
 		$test_creds = '
@@ -19,6 +19,7 @@ function espresso_display_aim() {
 		$test_creds = '';
 	}
 	$logo = EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/authnet/lib/logo-auth_net.png';
+	$gateways = $gateway_data['html_data']
 ?>
 
 			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk<?php echo $gateways[ $gateway ]['css_link_class'];?>" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
@@ -27,8 +28,6 @@ function espresso_display_aim() {
 
 			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
 
-				<input id="reg-page-gateway-off-site-<?php echo $gateway;?>" type="hidden" value="0" name="reg_page_gateway_off_site[<?php echo $gateway;?>]">
-				<input id="reg-page-selected-gateway-name-<?php echo $gateway;?>" type="hidden" value="Authorize.Net AIM" name="selected_gateway_name[<?php echo $gateway;?>]">
 
 				<?php echo $test_creds; ?>
 
