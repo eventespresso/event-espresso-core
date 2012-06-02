@@ -1185,7 +1185,6 @@ class EE_Single_Page_Checkout {
 				}
 			}
 
-
 			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format($total, 2);
 
 			return espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);

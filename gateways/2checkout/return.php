@@ -32,10 +32,21 @@ function espresso_send_to_2checkout( $EE_Session ) {
 		}
 	}
 
+	$total = $session_data['_cart_grand_total_amount'];
+	if (isset($session_data['tax_totals'])) {
+		foreach ($session_data['tax_totals'] as $key => $taxes) {
+			$total = $total + $taxes;
+			$my2checkout->addField('c_prod_' . $item_num, rand(1, 100));
+			$my2checkout->addField('c_name_' . $item_num, $session_data['taxes'][$key]['name']);
+			$my2checkout->addField('c_description_' . $item_num, 'Tax');
+			$my2checkout->addField('c_price_' . $item_num, $taxes);
+			$item_num++;
+		}
+	}
 	$my2checkout->addField('sid', $two_checkout_settings['2checkout_id']);
 	$my2checkout->addField('cart_order_id', $session_data['transaction']->ID() );
 	$my2checkout->addField('x_Receipt_Link_URL', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
-	$my2checkout->addField('total', number_format($session_data['_cart_grand_total_amount'], 2, '.', ''));
+	$my2checkout->addField('total', number_format($total, 2, '.', ''));
 	$my2checkout->addField('tco_currency', $two_checkout_settings['currency_format']);
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize($my2checkout));
 	$my2checkout->submitPayment();
