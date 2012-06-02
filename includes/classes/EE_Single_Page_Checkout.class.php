@@ -327,7 +327,7 @@ class EE_Single_Page_Checkout {
 			$template_args['selected_gateway'] = $selected_gateway;
 			$hide_other_gateways = TRUE;
 		} elseif (empty($gateway_data['selected_gateway'])) {
-			$gateway_data['selected_gateway'] = 'free';
+			$gateway_data['selected_gateway'] = null;
 			$hide_other_gateways = FALSE;
 			$gateway_data['type'] = FALSE;
 		}
