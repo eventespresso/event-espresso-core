@@ -324,7 +324,7 @@ class EE_Single_Page_Checkout {
 		if (isset($_GET['payment'])) {
 			$gateway_data['selected_gateway'] = sanitize_key($_GET['payment']);
 			$gateway_data['type'] = $gateway_data['payment_settings'][$gateway_data['selected_gateway']]['type'];
-			$template_args['selected_gateway'] = $selected_gateway;
+			$template_args['selected_gateway'] = $gateway_data['selected_gateway'];
 			$hide_other_gateways = TRUE;
 		} elseif (empty($gateway_data['selected_gateway'])) {
 			$gateway_data['selected_gateway'] = null;
