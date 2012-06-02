@@ -55,26 +55,6 @@ function espresso_send_to_2checkout( $EE_Session ) {
 add_action('action_hook_espresso_gateway_process_step_3', 'espresso_send_to_2checkout');
 
 /**
- * function espresso_transactions_2checkout_get_attendee_id
- *
- * $_REQUEST from 2checkout needs:
- *    id
- * @param type int $attendee_id
- * @return type int $attendee_id
- */
-function espresso_transactions_2checkout_get_attendee_id($attendee_id) {
-//	if (isset($_REQUEST['id']))
-//		$attendee_id = $_REQUEST['id'];
-//	return $attendee_id;
-
-	global $EE_Session;
-	return $EE_Session->id();
-
-}
-
-add_filter('filter_hook_espresso_transactions_get_attendee_id', 'espresso_transactions_2checkout_get_attendee_id');
-
-/**
  * function espresso_process_2checkout
  * @global type $wpdb
  * @param type array $payment_data
@@ -93,7 +73,7 @@ add_filter('filter_hook_espresso_transactions_get_attendee_id', 'espresso_transa
  */
 function espresso_process_2checkout($EE_Session) {
 	$session_data = $EE_Session->get_session_data();
-	$twoco_settings = $session_data['payment_settings']['2checkout'];
+	$twoco_settings = $session_data['gateway_data']['payment_settings']['2checkout'];
 	$txn_details = array(
 						'approved' => FALSE,
 						'response_msg' => __('You\'re registration has not been completed successfully.', 'event_espresso'),

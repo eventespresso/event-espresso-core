@@ -4,9 +4,9 @@ function espresso_thank_you_page() {
 	global $espresso_wp_user, $EE_Session;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$EE_Session = EE_Session::instance();
-	$session_data = $EE_Session->get_session_data('session_data');
+	$session_data = $EE_Session->get_session_data();
 	switch ($session_data['gateway_data']['type']) {
-		case 'offsite':
+		case 'off-site':
 			$selected_gateway = $session_data['gateway_data']['selected_gateway'];
 			$gateway_path = $session_data['gateway_data']['active_gateways'][$selected_gateway];
 			require_once($gateway_path . "/return.php");
