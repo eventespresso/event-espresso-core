@@ -30,6 +30,9 @@ function espresso_thank_you_page() {
 		);
 		espresso_require_template('payment_overview.php');
 		do_action('action_hook_espresso_display_payment_overview_template', $data);
+		$gateway_data['selected_gateway'] = null;
+		$gateway_data['type'] = null;
+		$EE_Session->set_session_data($gateway_data, 'gateway_data');
 	}
 }
 

@@ -902,8 +902,12 @@ class EE_Single_Page_Checkout {
 			}
 
 			// check for off site payment
-
-			$continue = ($gateway_data['type'] == 'off-site') ? TRUE : FALSE;
+			if ($gateway_data['type'] == 'off-site') {
+				$continue = TRUE;
+				$success_msg = __('Off-site gateway choosen');
+			} else {
+				FALSE;
+			}
 			
 			if ($gateway_data['type'] == 'on-site') { // on site payment
 				// on site payment
@@ -912,7 +916,7 @@ class EE_Single_Page_Checkout {
 
 						'type' => 'onsite',
 
-						'gateway' => sanitize_text_field( $_POST['gateway'] ),
+						'gateway' => sanitize_text_field( $_POST['selected_gateway'] ),
 
 						'reg-page-billing-fname' => array(
 								'db-col' => 'fname',
@@ -1386,7 +1390,7 @@ class EE_Single_Page_Checkout {
 				$gateway_path = $gateway_data['active_gateways'][$selected_gateway];
 				require_once($gateway_path . "/return.php");
 				do_action('action_hook_espresso_gateway_process_step_3', $EE_Session);
-				if ( $this->_ajax == 0) {
+				if ( $this->_ajax == 0 && $gateway_data['type'] == 'on-site') {
 					$gateway_data['type'] = 'onsite_noajax';
 					$EE_Session->set_session_data($gateway_data, 'gateway_data');
 					if (!$this->_return_page_url) {
@@ -1397,6 +1401,15 @@ class EE_Single_Page_Checkout {
 					}
 					wp_safe_redirect($this->_return_page_url);
 					exit();
+				}
+				if ($gateway_data['type'] == 'off-site') {
+					$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+					if ($this->_ajax == 0) {
+						echo $gateway_data['off-site-form']['pre-form'] . $gateway_data['off-site-form']['form'] . $gateway_data['off-site-form']['post-form'];
+						die();
+					} else {
+						$this->send_ajax_response("Redirecting to Off-site Payment Provider", FALSE, '_redirect_to_off_site');
+					}
 				}
 			}
 		}
@@ -1534,8 +1547,6 @@ class EE_Single_Page_Checkout {
 
 		global $org_options;
 
-		// What's args for?
-		$dummy_var = $args;
 
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -1558,6 +1569,16 @@ class EE_Single_Page_Checkout {
 	}
 
 
+	private function _redirect_to_off_site($args, $success_msg) {
+		global $EE_Session;
+		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+		$response_data = array(
+				'success' => 'Forwarding to Off-Site Payment Provider',
+				'return_data' => array('off-site-redirect' => $gateway_data['off-site-form']['form'])
+		);
+		echo json_encode($response_data);
+		die();
+	}
 
 
 

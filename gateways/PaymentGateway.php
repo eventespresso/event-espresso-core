@@ -134,22 +134,22 @@ if (!class_exists('PaymentGateway')) {
 		 */
 		public function submitPayment() {
 			$this->prepareSubmit();
-			$html = "<html>\n";
-			$html .= "<head><title>Processing Payment...</title></head>\n";
-			$html .= "<body onLoad=\"document.forms['gateway_form'].submit();\">\n";
-			$html .= "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
-			$html .= "<form method=\"POST\" name=\"gateway_form\" ";
-			$html .= "action=\"" . $this->gatewayUrl . "\">\n";
+			$pre_form = "<html>\n";
+			$pre_form .= "<head><title>Processing Payment...</title></head>\n";
+			$pre_form .= "<body>\n";
+			$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
+			$form .= "<form method=\"POST\" name=\"gateway_form\" ";
+			$form .= "action=\"" . $this->gatewayUrl . "\">\n";
 			foreach ($this->fields as $name => $value) {
-				$html .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
+				$form .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
 			}
-			$html .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
-			$html .= "the payment website within 10 seconds...<br/><br/>\n";
-			$html .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
-			$html .= "</form>\n";
-			$html .= "</body></html>\n";
-			echo $html;
-			die();
+			$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
+			$form .= "the payment website within 10 seconds...<br/><br/>\n";
+			$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+			$form .= "</form>\n";
+			$post_form = "</body></html>\n";
+			return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
+			
 		}
 
 		/**

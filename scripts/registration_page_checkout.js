@@ -470,8 +470,12 @@
 			} else if ( key == 'redirect-to-thank-you-page' ) {
 				window.location.replace( response.return_data[key] );
 				return;
-			}			
-		}
+			} else if ( key == 'off-site-redirect') {
+				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
+				document.forms['gateway_form'].submit();
+			}
+		}		
+		
 
 		msg = new Object();
 		msg.success = response.success;

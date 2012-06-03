@@ -11,9 +11,7 @@ function espresso_send_to_2checkout( $EE_Session ) {
 	$my2checkout = new TwoCo();
 	$session_data = $EE_Session->get_session_data();
 	$two_checkout_settings = $session_data['gateway_data']['payment_settings']['2checkout'];
-	
-	echo '<!-- Event Espresso 2checkout Gateway Version ' . $my2checkout->twocheckout_gateway_version . '-->';
-	
+		
 	// Enable test mode if needed
 	if ($two_checkout_settings['use_sandbox']) {
 		$my2checkout->enableTestMode();
@@ -49,7 +47,8 @@ function espresso_send_to_2checkout( $EE_Session ) {
 	$my2checkout->addField('total', number_format($total, 2, '.', ''));
 	$my2checkout->addField('tco_currency', $two_checkout_settings['currency_format']);
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize($my2checkout));
-	$my2checkout->submitPayment();
+	$session_data['gateway_data']['off-site-form'] = $my2checkout->submitPayment();
+	$EE_Session->set_session_data($session_data['gateway_data'], 'gateway_data');
 }
 
 add_action('action_hook_espresso_gateway_process_step_3', 'espresso_send_to_2checkout');
