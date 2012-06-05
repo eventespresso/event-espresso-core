@@ -95,51 +95,52 @@ function event_espresso_config_page_scripts() {
 	wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery', 'dataTables')); //Events core table column hide/show script
 	//wp_enqueue_script('dataTablesColFilter', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.columnFilter.js', array('jquery', 'dataTables')); //Events core table column filtering
 
-	$load_jquery_ui = false;
-	$load_datepicker = false;
-	$load_farbtastic = false;
+	$load_jquery_ui = FALSE;
+	$load_datepicker = FALSE;
+	$load_farbtastic = FALSE;
+	$load_datetimepicker = FALSE;
 
 	if ($_REQUEST['page'] == 'espresso_calendar') {
-		$load_farbtastic = true;
+		$load_farbtastic = TRUE;
 	}
 
 	if ($_REQUEST['page'] == 'events') {
-		$load_jquery_ui = true;
-		$load_datepicker = true;
-		$load_datetimepicker = true;
+		$load_jquery_ui = TRUE;
+		$load_datepicker = TRUE;
+		$load_datetimepicker = TRUE;
 		/*wp_register_script('jquery.reveal.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.reveal.js"), array('jquery'), '1.0');
 		wp_enqueue_script('jquery.reveal.js');*/
 	}
 
 	if ($_REQUEST['page'] == 'discounts' && isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'new')) {
-		$load_jquery_ui = true;
-		$load_datepicker = true;
+		$load_jquery_ui = TRUE;
+		$load_datepicker = TRUE;
 	}
 
 	if ($_REQUEST['page'] == 'attendees' && isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'enter_attendee_payments') {
-		$load_jquery_ui = true;
-		$load_datepicker = true;
+		$load_jquery_ui = TRUE;
+		$load_datepicker = TRUE;
 	}
 
 	//Load farbtastic
-	if ($load_farbtastic == true) {
+	if ($load_farbtastic) {
 		wp_enqueue_script('farbtastic');
 		wp_enqueue_style('farbtastic');
 	}
 
 	//Load jquery UI scripts
-	if ($load_jquery_ui == true) {
+	if ($load_jquery_ui) {
 		wp_enqueue_script('jquery-ui-core');
 		wp_enqueue_script('jquery-ui-tabs');
 	}
 
 	//Load datepicker script
-	if ($load_datepicker == true) {
+	if ($load_datepicker) {
 		wp_enqueue_script('jquery-ui-datepicker');
 	}
 
 	//Load datetimepicker script
-	if ($load_datetimepicker == true) {
+	if ($load_datetimepicker) {
 
 		wp_enqueue_script('jquery-ui-slider');
 		wp_register_script('jquery-ui-timepicker', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery-ui-timepicker-addon.js"), array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-slider'), '1.0.0');
@@ -845,21 +846,21 @@ function espresso_attendees_by_month_dropdown($current_value = '') {
 if (!function_exists('espresso_event_list_attendee_title')) {
 
 	function espresso_event_list_attendee_title( $event_id = FALSE ) {
-		
+
 		if ( ! $event_id ) {
 			return FALSE;
 		}
-		
-		global $wpdb;		
+
+		global $wpdb;
 		$SQL = 'SELECT event_name FROM ' . EVENTS_DETAIL_TABLE . ' WHERE id = %d';
-		if ( $event = $wpdb->get_row( $wpdb->prepare( $SQL, $event_id ))) {	
+		if ( $event = $wpdb->get_row( $wpdb->prepare( $SQL, $event_id ))) {
 			$content = stripslashes_deep( $event->event_name);
 			$content .= ' | ';
 			$content .= 'ID: ' . $event_id;
 			$content .= ' | ';
-			$content .= espresso_event_time( $event_id, 'start_date_time' );			
+			$content .= espresso_event_time( $event_id, 'start_date_time' );
 			return $content;
-			
+
 		} else {
 			return '';
 		}
