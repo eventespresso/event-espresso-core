@@ -13,7 +13,6 @@ function event_espresso_2co_settings() {
 		$payment_settings['2checkout']['2checkout_username'] = $_POST['2checkout_username'];
 		$payment_settings['2checkout']['currency_format'] = $_POST['currency_format'];
 		$payment_settings['2checkout']['use_sandbox'] = $_POST['use_sandbox'];
-		$payment_settings['2checkout']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 		$payment_settings['2checkout']['button_url'] = $_POST['button_url'];
 
 		if (update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings)) {
@@ -33,7 +32,6 @@ function event_espresso_2co_settings() {
 		$payment_settings['2checkout']['2checkout_username'] = '';
 		$payment_settings['2checkout']['currency_format'] = 'USD';
 		$payment_settings['2checkout']['use_sandbox'] = false;
-		$payment_settings['2checkout']['bypass_payment_page'] = false;
 		$payment_settings['2checkout']['button_url'] = $button_url;
 		$payment_settings['2checkout']['type'] = 'off-site';
 		$payment_settings['2checkout']['display_name'] = '2CheckOut';
@@ -54,14 +52,14 @@ function event_espresso_2co_settings() {
 	<div class="padding">
 	<?php
 		if (!empty($_REQUEST['activate_2checkout'])) {
-			$active_gateways['2checkout'] = str_replace( '\\', '/', dirname(__FILE__ ));			
+			$active_gateways['2checkout'] = str_replace( '\\', '/', dirname(__FILE__ ));
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 				$notices['updates'][] = __('2checkout Payments Activated', 'event_espresso');
 			} else {
 				$notices['errors'][] = __('Unable to Activate 2checkout Payments', 'event_espresso');
 			}
 		}
-		
+
 		if (!empty($_REQUEST['deactivate_2checkout'])) {
 			unset($active_gateways['2checkout']);
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
@@ -123,7 +121,10 @@ function event_espresso_display_2checkout_settings($payment_settings) {
 							<?php _e('Button Image URL', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', '2co_button_image'); ?>
 						</label></th>
-					<td><input class="regular-text" type="text" name="button_url" id="2co_button_url" size="34" value="<?php echo $payment_settings['2checkout']['button_url']; ?>" /></td>
+					<td>
+						<input class="regular-text" type="text" name="button_url" id="2co_button_url" size="34" value="<?php echo $payment_settings['2checkout']['button_url']; ?>" />
+						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+					</td>
 				</tr>
 				<tr>
 					<th><label for="currency_format">
@@ -204,18 +205,17 @@ function event_espresso_display_2checkout_settings($payment_settings) {
 						</select></td>
 				</tr>
 				<tr>
-					<th><label for="bypass_payment_page">
-							<?php _e('Bypass Payment Confirmation Page', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation'); ?>
-						</label></th>
-					<td><?php echo select_input('bypass_payment_page', $values, $payment_settings['2checkout']['bypass_payment_page']); ?></td>
-				</tr>
-				<tr>
 					<th><label for="2co_use_sandbox">
 							<?php _e('Turn on Debugging Using the 2checkout Sandbox', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', '2co_sandbox_info'); ?>
 						</label></th>
 					<td><?php echo select_input('use_sandbox', $values, $payment_settings['2checkout']['use_sandbox']); ?></td>
+				</tr>
+				<tr>
+					<td>
+						<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+						<?php echo '<img src="' . $payment_settings['2checkout']['button_url'] . '" />'; ?>
+					</td>
 				</tr>
 			</tbody>
 		</table>
