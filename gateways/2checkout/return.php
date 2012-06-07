@@ -6,17 +6,17 @@
 function espresso_send_to_2checkout( $EE_Session ) {
 
 	global $org_options;
-	
-	include_once ('lib/2checkout.php');	
+
+	include_once ('lib/2checkout.php');
 	$my2checkout = new TwoCo();
 	$session_data = $EE_Session->get_session_data();
 	$two_checkout_settings = $session_data['gateway_data']['payment_settings']['2checkout'];
-		
+
 	// Enable test mode if needed
 	if ($two_checkout_settings['use_sandbox']) {
 		$my2checkout->enableTestMode();
 	}
-		
+
 	$item_num = 1;
 	$registrations = $session_data['cart']['REG']['items'];
 	$my2checkout->addField('id_type', 1);
@@ -74,27 +74,32 @@ function espresso_process_2checkout($EE_Session) {
 	$session_data = $EE_Session->get_session_data();
 	$twoco_settings = $session_data['gateway_data']['payment_settings']['2checkout'];
 	$txn_details = array(
-						'approved' => FALSE,
-						'response_msg' => __('You\'re registration has not been completed successfully.', 'event_espresso'),
-						'status' => 'Incomplete',
-						'details' => serialize($_POST),
-						'amount' => 0.00,
-						'method' => '2checkout'
+						'gateway'				=> $twoco_settings['display_name'],
+						'approved'				=> FALSE,
+						'response_msg'		=> __('You\'re registration has not been completed successfully.', 'event_espresso'),
+						'status'					=> 'Incomplete',
+						'raw_response'		=> serialize($_POST),
+						'amount'				=> 0.00,
+						'method'				=> sanitize_text_field($_POST['pay_method']),
+						'auth_code'			=> sanitize_text_field($_POST['order_number']),
+						'md5_hash'			=> sanitize_text_field($_POST['key']),
+						'invoice_number'	=> sanitize_text_field($_POST['invoice_id']),
+						'transaction_id'		=> sanitize_text_field($_POST['invoice_id'])
 				);
 	if ($_REQUEST['credit_card_processed'] == 'Y') {
-		$txn_details['approved'] = TRUE;
-		$txn_details['amount'] = floatval($_REQUEST['total']);
-		$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
-		$txn_details['status'] = 'Approved';
+		$txn_details['approved']			= TRUE;
+		$txn_details['amount']			= floatval($_REQUEST['total']);
+		$txn_details['response_msg']	= __('You\'re registration has been completed successfully.', 'event_espresso');
+		$txn_details['status']				= 'Approved';
 	}
 	$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
-	
+
 	if ($txn_details['approved'] == TRUE && $twoco_settings['use_sandbox']) {
 		do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
 	} else {
 		do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
 	}
-	
+
 }
 
 add_action('action_hook_espresso_process_off_site_payment', 'espresso_process_2checkout');
