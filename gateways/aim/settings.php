@@ -6,13 +6,14 @@ function event_espresso_aim_payment_settings() {
 		return;
 
 	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
-	
+
 	//Update settings
 	if (isset($_POST['update_authnet_aim']) && check_admin_referer('espresso_form_check', 'add_authnet_aim_settings')) {
 		$payment_settings['aim']['authnet_aim_login_id'] = $_POST['authnet_aim_login_id'];
 		$payment_settings['aim']['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 		$payment_settings['aim']['use_sandbox'] = $_POST['use_sandbox'];
 		$payment_settings['aim']['test_transactions'] = $_POST['test_transactions'];
+		$payment_settings['aim']['button_url'] = $_POST['button_url'];
 
 		if (update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings)) {
 			$notices['updates'][] = __('Authorize.net AIM Payment Settings Updated!', 'event_espresso');
@@ -22,6 +23,12 @@ function event_espresso_aim_payment_settings() {
 	}
 
 	if (empty($payment_settings['aim'])) {
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/lib/logo.gif")) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/aim/lib/logo.gif";
+		} else {
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/aim/lib/logo.gif";
+		}
+		$payment_settings['aim']['button_url'] = $button_url;
 		$payment_settings['aim']['authnet_aim_login_id'] = '';
 		$payment_settings['aim']['authnet_aim_transaction_key'] = '';
 		$payment_settings['aim']['use_sandbox'] = false;
@@ -46,7 +53,7 @@ function event_espresso_aim_payment_settings() {
 		<!--New -->
 		<?php
 		if (!empty($_REQUEST['activate_authnet_aim'])) {
-			$active_gateways['aim'] = str_replace( '\\', '/', dirname(__FILE__ ));			
+			$active_gateways['aim'] = str_replace( '\\', '/', dirname(__FILE__ ));
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
 				$notices['updates'][] = __('Authorize.net AIM Gateway Activated', 'event_espresso');
 			} else {
@@ -123,6 +130,22 @@ function event_espresso_display_authnet_aim_settings($payment_settings) {
 							<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
 						</label></th>
 					<td><?php echo select_input('test_transactions', $values, $payment_settings['aim']['test_transactions']); ?></td>
+				</tr>
+				<tr>
+					<th><label for="aim_button_url">
+							<?php _e('Button Image URL', 'event_espresso'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'aim_button_image'); ?>
+						</label></th>
+					<td>
+						<input class="regular-text" type="text" name="button_url" id="aim_button_url" size="34" value="<?php echo $payment_settings['aim']['button_url']; ?>" />
+						<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+						<?php echo '<img src="' . $payment_settings['aim']['button_url'] . '" />'; ?>
+					</td>
 				</tr>
 			</tbody>
 		</table>
