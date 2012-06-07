@@ -72,18 +72,18 @@ function espresso_process_aim() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
 
 		$txn_results = array(
-											'gateway' 			=> 'Authorize.Net AIM',
-											'approved' 			=> $response->approved ? $response->approved : 0,
-											'status' 				=> $payment_data->payment_status,
-											'response_msg'	=> $response->response_reason_text,
-											'amount'				=> $response->amount,
-											'method'				=> $response->method,
-											'card_type'			=> $response->card_type,
-											'auth_code'			=> $response->authorization_code,
-											'md5_hash' 			=> $response->md5_hash,
-											'transaction_id' 	=> $response->transaction_id,
-											'invoice_number' => $response->invoice_number,
-											'raw_response'	=> $response
+											'gateway'					=> $authnet_aim_settings['display_name'],
+											'approved'					=> $response->approved ? $response->approved : 0,
+											'status'						=> $payment_data->payment_status,
+											'response_msg'			=> $response->response_reason_text,
+											'amount'					=> $response->amount,
+											'method'					=> $response->method,
+											'card_type'					=> $response->card_type,
+											'auth_code'				=> $response->authorization_code,
+											'md5_hash'				=> $response->md5_hash,
+											'transaction_id'			=> $response->transaction_id,
+											'invoice_number'		=> $response->invoice_number,
+											'raw_response'			=> $response
 										  );
 
 		$EE_Session->set_session_data(  array( 'txn_results' => $txn_results ), $section = 'session_data' );
