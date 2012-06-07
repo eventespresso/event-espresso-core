@@ -18,12 +18,11 @@ function espresso_display_aim() {
 	} else {
 		$test_creds = '';
 	}
-	$logo = EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/authnet/lib/logo-auth_net.png';
 	$gateways = $gateway_data['html_data']
 ?>
 
 			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk<?php echo $gateways[ $gateway ]['css_link_class'];?>" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
-				<img src="<?php echo $logo; ?>" alt="Pay using Authorize.Net" />
+				<img src="<?php echo $authnet_aim_settings['button_url']; ?>" alt="Pay using Authorize.Net" />
 			</a>
 
 			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
