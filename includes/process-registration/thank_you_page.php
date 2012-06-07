@@ -17,6 +17,12 @@ function espresso_thank_you_page() {
 	}
 	if (!empty($session_data['txn_results'])) {
 		//printr( $session_data);
+		$grand_total = $session_data['_cart_grand_total_amount'];
+
+		$taxes = $session_data['tax_totals'];
+		foreach ( $taxes as $tax ) {
+			$grand_total += $tax;
+		}
 		$data = array(
 			'event_links' => array(),
 			'fname' => $session_data['primary_attendee']['fname'],
@@ -24,7 +30,8 @@ function espresso_thank_you_page() {
 			'txn_type' => $session_data['txn_results']['method'],
 			'payment_date' => date( 'D M j, Y g:i a' ),
 			'payment_status' => $session_data['txn_results']['status'],
-			'total_cost' => $session_data['_cart_grand_total_amount'],
+			'amount_paid' => $session_data['txn_results']['amount'],
+			'total_cost' => $grand_total,
 			'registration_id' => $session_data['primary_attendee']['registration_id'],
 			'txn_id' => ''//$session_data['txn_results']['transaction_id']
 		);
