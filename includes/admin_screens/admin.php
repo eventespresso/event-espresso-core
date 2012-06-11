@@ -37,10 +37,8 @@ function espresso_pre_wp_3_4_layout($main_post_content = '', $sidebar_content = 
 	?>
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
 		<div id="side-info-column" class="inner-sidebar">
-			<div id="side-sortables" class="meta-box-sortables ui-sortable">
 				<!-- sidebar stuff here -->
 				<?php echo $sidebar_content; ?>
-			</div> <!-- side-sortables -->
 		</div> <!-- side-info-column -->
 		<div id="post-body">
 			<div id="post-body-content">
