@@ -7,7 +7,7 @@
  * @package		Event Espresso Authorize.net SIM Gateway
  * @category	Library
  */
-$authnet_gateway_version = '1.0';
+require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/PaymentGateway.php' );
 
 class EE_Authorize extends PaymentGateway {
 
@@ -140,4 +140,39 @@ class EE_Authorize extends PaymentGateway {
 		return md5($k_opad . pack("H*", md5($k_ipad . $data)));
 	}
 
+	/**
+		 * Submit Payment Request (redirect)
+		 *
+		 * Generates a form with hidden elements from the fields array
+		 * and submits it to the payment gateway URL. The user is presented
+		 * a redirecting message along with a button to click.
+		 *
+		 * @param string value of buttn text
+		 * @return void
+		 */
+		public function submitPayment() {
+			$this->prepareSubmit();
+			$pre_form = "<html>\n";
+			$pre_form .= "<head><title>Processing Payment...</title></head>\n";
+			$pre_form .= "<body>\n";
+			$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
+			$form .= "<form method=\"POST\" name=\"gateway_form\" ";
+			$form .= "action=\"" . $this->gatewayUrl . "\">\n";
+			foreach ($this->fields as $name => $value) {
+				if ($name == 'x_line_item') {
+					foreach ($value as $line_item) {
+						$form .= "<input type=\"hidden\" name=\"x_line_item\" value=\"$line_item\"/>\n";
+					}
+				} else {
+					$form .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
+				}
+			}
+			$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
+			$form .= "the payment website within 10 seconds...<br/><br/>\n";
+			$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+			$form .= "</form>\n";
+			$post_form = "</body></html>\n";
+			return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
+			
+		}
 }
