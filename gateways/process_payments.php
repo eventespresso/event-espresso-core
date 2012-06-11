@@ -105,7 +105,7 @@ function espresso_mail_successful_transaction_debugging_output() {
 	$body = "An instant payment notification was successfully recieved\n";
 	$body .= "from " . " on " . date('m/d/Y');
 	$body .= " at " . date('g:i A') . "\n\nDetails:\n";
-	$body .= unserialize($session_data['txn_results']['details']);
+	$body .= unserialize($session_data['txn_results']['raw_response']);
 	wp_mail($org_options['contact_email'], $subject, $body);
 }
 add_action('action_hook_espresso_mail_successful_transaction_debugging_output', 'espresso_mail_successful_transaction_debugging_output');
@@ -128,7 +128,7 @@ function espresso_mail_failed_transaction_debugging_output() {
 	$body = "An instant payment notification failed\n";
 	$body .= "from " . " on " . date('m/d/Y');
 	$body .= " at " . date('g:i A') . "\n\nDetails:\n";
-	$body .= unserialize($session_data['txn_results']['details']);
+	$body .= unserialize($session_data['txn_results']['raw_response']);
 	wp_mail($org_options['contact_email'], $subject, $body);
 }
 add_action('action_hook_espresso_mail_failed_transaction_debugging_output', 'espresso_mail_failed_transaction_debugging_output');
