@@ -46,7 +46,7 @@ function espresso_send_to_2checkout( $EE_Session ) {
 	$my2checkout->addField('x_Receipt_Link_URL', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
 	$my2checkout->addField('total', number_format($total, 2, '.', ''));
 	$my2checkout->addField('tco_currency', $two_checkout_settings['currency_format']);
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize($my2checkout));
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($my2checkout)));
 	$session_data['gateway_data']['off-site-form'] = $my2checkout->submitPayment();
 	$EE_Session->set_session_data($session_data['gateway_data'], 'gateway_data');
 }
