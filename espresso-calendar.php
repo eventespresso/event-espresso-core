@@ -355,6 +355,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		//important! time must be in iso8601 format 2010-05-10T08:30!!
 		$eventArray['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
 		$eventArray['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
+		$eventArray['day'] = date("d", strtotime($event->end_date));
 		if ( $eventArray['end'] < date('Y-m-d') ) {
 			$eventArray['expired'] = 'expired';
 		} else {
@@ -548,26 +549,37 @@ if (!function_exists('espresso_calendar')) {
 						<?php
 						//Adds the themeroller styles to the links in the calendar
 						if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
-							jQuery('a.fc-event').addClass('themeroller ui-state-focus');
-							jQuery('a.fc-event div').removeClass('fc-event-skin');
-							jQuery('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
-							jQuery('.fc-view').addClass('ui-widget-content');
-							jQuery('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
+							$jaer('a.fc-event').addClass('themeroller ui-state-focus');
+							$jaer('a.fc-event div').removeClass('fc-event-skin');
+							$jaer('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
+							$jaer('.fc-view').addClass('ui-widget-content');
+							$jaer('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
 						<?php
 						}
 						?>
 
 						if(event.event_img_thumb){
-							//alert('we have thumbs');
-
-							element.addClass('event-has-thumb');
-
+							element.addClass('event-has-thumb');							
+							element.attr( 'rel', event.day );
 							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
 			<?php
 					if ($espresso_calendar['show_time'] == true) {
-			?>
-								element.find('.fc-event-title').after($jaer('<p class="time-display-block"><span class="event-start-time">' + event.startTime + ' - </span><span class="event-end-time">' + event.endTime + '</span></p>'));
+			?>				
+								if ( event.startTime != '' && event.startTime != undefined ) {
+									event.startTime = '<span class="event-start-time">' + event.startTime + '</span>';
+								} else {
+									event.startTime = false;
+								}
+								
+								if ( event.startTime != false && event.endTime != '' && event.endTime != undefined ) {
+									event.startTime = event.startTime + ' - <span class="event-end-time">' + event.endTime + '</span>';
+								}
+								
+								if ( event.startTime ) {
+									element.find('.fc-event-title').after($jaer('<p class="time-display-block">' + event.startTime + '</p>'));
+								}
+								
 			<?php
 					}
 
@@ -631,6 +643,11 @@ if (!function_exists('espresso_calendar')) {
 								default :
 								break;
 								}*/
+								
+						if( event.expired!='' ){
+							$jaer('a.fc-event').addClass('expired');
+						}								
+
 					},
 
 					//Determines the text that will be displayed on the calendar's column headings.
@@ -679,8 +696,8 @@ if (!function_exists('espresso_calendar')) {
 
 						// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
 						<?php /*if ( json_encode($events['expired'] != '' ) ) { ?>
-							jQuery('a.fc-event div').removeClass('fc-event-skin');
-							jQuery('a.fc-event').removeClass('ui-state-default').addClass('expired ui-state-focus');
+							$jaer('a.fc-event div').removeClass('fc-event-skin');
+							$jaer('a.fc-event').removeClass('ui-state-default').addClass('expired ui-state-focus');
 						<?php } */?>
 					loading: function(bool) {
 						if (bool) $('#loading').show();
@@ -688,9 +705,68 @@ if (!function_exists('espresso_calendar')) {
 					}
 
 				});
+
+				setTimeout(  
+					function() {  
+
+						var day = 0;
+						var days = new Array();
+						var heights = new Array();
+						var dayHeights = new Array();
+						var imgsPerDay = new Array();
+						var prevEventHeight = 0;
+						$jaer('.event-has-thumb').each( function(index){
+							day = parseInt( $jaer(this).attr( 'rel' ));
+							days[index] = day;
+							heights[index] = $jaer(this).find('.fc-event-inner').outerHeight();
+							if ( dayHeights[day] == undefined ) {
+								dayHeights[day] = 0;
+							}
+							dayHeights[day] = parseInt( dayHeights[day] ) + parseInt( heights[index] );					
+		
+							if ( imgsPerDay[ day ] == undefined ) {
+								imgsPerDay[ day ] = 0;
+							}
+							imgsPerDay[ day ] = imgsPerDay[ day ] + 1;
+							
+							if ( imgsPerDay[ day ] > 1 ) {
+								prevEvent = $jaer(this).siblings('a[rel="'+day+'"]');
+								prevEventTitle = prevEvent.find('.fc-event-title').outerHeight();
+								prevEventTime = prevEvent.find('.fc-event-time').outerHeight();
+								prevEventImg = prevEvent.find('img').outerHeight();
+								prevEventHeight = prevEventTitle + prevEventTime + prevEventImg + 8;
+								prevEventTop = prevEvent.css( 'top' );
+								newTop = prevEventHeight + parseInt( prevEventTop.replace('px', '')) + 4;
+								$jaer(this).css({ 'top' : newTop })
+							}
+						});											
+		
+						var day_modifier = 0;
+						var day_class = '';
+						$jaer.each( [ 0, 1, 2, 3, 4, 5, 6 ], function(index, value) { 
+							day_class = '.fc-day'+value;
+							if ( ! $jaer( day_class ).hasClass('fc-other-month') && day_modifier == 0 ) {					
+								day_modifier = value;
+							}
+						});
+						day_modifier = day_modifier - 1;
+						
+						var cal_day = 0;
+						$jaer.each( days, function(index, value) { 		
+							cal_day = parseInt( days[index] ) + parseInt( day_modifier );
+							day_class = '.fc-day'+cal_day;
+							var target = $jaer( day_class ).closest( 'tr' ).children('.fc-first').find('.fc-day-content').children('div');
+							target.css({ 'height' : dayHeights[ days[index] ] + 4 });
+						});					
+					
+					},  
+					250  
+				); 		
+											
 			});
-if(event.expired!=''){jQuery('a.fc-event').addClass('expired');}
-		</script>
+	
+
+</script>
 <div id='espresso_calendar'></div>
 <?php
 		$buffer = ob_get_contents();
