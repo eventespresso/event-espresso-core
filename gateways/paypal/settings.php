@@ -76,7 +76,6 @@ function event_espresso_paypal_payment_settings() {
 		} else {
 			echo '<li id="deactivate_paypal" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_paypal=true\';" class="red_alert pointer"><strong>' . __('Deactivate PayPal Standard?', 'event_espresso') . '</strong></li>';
 			event_espresso_display_paypal_settings($payment_settings);
-			//	break;
 		}
 
 		echo '</ul>';
@@ -87,7 +86,6 @@ function event_espresso_paypal_payment_settings() {
 
 //PayPal Settings Form
 function event_espresso_display_paypal_settings($payment_settings) {
-	global $org_options, $espresso_wp_user;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	$values = array(
