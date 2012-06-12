@@ -1,6 +1,6 @@
 <?php
 
-function espresso_display_paypal($EE_Session) {
+function espresso_display_paypal() {
 	global $EE_Session;
 	$gateway = 'paypal';
 	$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
