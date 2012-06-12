@@ -264,7 +264,7 @@ if (!function_exists('add_event_espresso_menus')) {
 				)
 		);
 
-		apply_filters('filter_hook_espresso_submenus_main_section', $submenu_page_sections['main']);
+		$submenu_page_sections['main'] = apply_filters('filter_hook_espresso_submenus_main_section', $submenu_page_sections['main'], $espresso_manager);
 
 		$submenu_page_sections['management'] = array(
 				'management' => array(
@@ -314,7 +314,7 @@ if (!function_exists('add_event_espresso_menus')) {
 				)
 		);
 
-		apply_filters('filter_hook_espresso_submenus_management_section', $submenu_page_sections['management']);
+		$submenu_page_sections['management'] = apply_filters('filter_hook_espresso_submenus_management_section', $submenu_page_sections['management'], $espresso_manager);
 
 		$submenu_page_sections['settings'] = array(
 				'settings' => array(
@@ -346,7 +346,7 @@ if (!function_exists('add_event_espresso_menus')) {
 				)
 		);
 
-		apply_filters('filter_hook_espresso_submenus_settings_section', $submenu_page_sections['settings']);
+		$submenu_page_sections['settings'] = apply_filters('filter_hook_espresso_submenus_settings_section', $submenu_page_sections['settings'], $espresso_manager);
 
 		$submenu_page_sections['templates'] = array(
 				'templates' => array(
@@ -396,7 +396,7 @@ if (!function_exists('add_event_espresso_menus')) {
 				)
 		);
 
-		apply_filters('filter_hook_espresso_submenus_templates_section', $submenu_page_sections['templates']);
+		$submenu_page_sections['templates'] = apply_filters('filter_hook_espresso_submenus_templates_section', $submenu_page_sections['templates'], $espresso_manager);
 
 		$submenu_page_sections['extras'] = array(
 				'extras' => array(
@@ -437,7 +437,7 @@ if (!function_exists('add_event_espresso_menus')) {
 				)
 		);
 
-		apply_filters('filter_hook_espresso_submenus_extras_section', $submenu_page_sections['extras']);
+		$submenu_page_sections['extras'] = apply_filters('filter_hook_espresso_submenus_extras_section', $submenu_page_sections['extras'], $espresso_manager);
 
 // ---------------------------------------
 
