@@ -1,7 +1,7 @@
 <?php
 
 function espresso_send_to_paypal($EE_Session) {
-	global $wpdb, $org_options;
+	global $org_options;
 	include_once ('lib/Paypal.php');
 	$myPaypal = new EE_Paypal();
 	$session_data = $EE_Session->get_session_data();
