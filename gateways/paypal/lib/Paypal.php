@@ -7,7 +7,7 @@
  * @package		Event Espresso PayPal Gateway
  * @category	Library
  */
-$paypal_gateway_version = '1.0';
+require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/PaymentGateway.php' );
 
 class EE_Paypal extends PaymentGateway {
 
