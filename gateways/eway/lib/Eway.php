@@ -7,7 +7,7 @@
  * @package		Event Espresso eway Gateway
  * @category	Library
  */
-$eway_gateway_version = '1.0';
+require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/PaymentGateway.php' );
 
 class eway extends PaymentGateway {
 
@@ -17,10 +17,9 @@ class eway extends PaymentGateway {
 	 * @param none
 	 * @return void
 	 */
-	public function __construct() {
+	public function __construct($eway_settings) {
 		parent::__construct();
 		// Some default values of the class
-		$eway_settings = get_option('event_espresso_eway_settings');
 		switch ($eway_settings['region']) {
 			case 'NZ':
 				$this->gatewayUrl = 'https://nz.ewaygateway.com/Request/';
@@ -70,9 +69,7 @@ class eway extends PaymentGateway {
 		$responseurl = fetch_data($response, '<uri>', '</uri>');
 
 		if ($responsemode == "True") {
-			$this->gatewayUrl = explode("?", $responseurl);
-			parse_str($this->gatewayUrl[1]);
-			$this->gatewayUrl[1] = $value;
+			$this->gatewayUrl = $responseurl;
 		} else {
 			echo "ERROR";
 		}
