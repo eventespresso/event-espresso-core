@@ -387,7 +387,7 @@ div.tablenav {
 	vertical-align: middle;
 }
 #event-dates-and-times { }
-#event-dates-and-times .dtm-picker { width:200px; }
+#event-dates-and-times .dtm-picker { width:178px; }
 #event-dates-and-times .dtm-inp.small-text { width:75px; }
 #event-date-time .recurring-available {
 	bottom: -10px;
