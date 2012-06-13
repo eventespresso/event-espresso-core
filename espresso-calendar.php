@@ -910,5 +910,13 @@ function espresso_calendar_current_screen() {
 }
 
 if (is_admin()) {
-	require_once('calendar_admin.php');
+	add_action('plugins_loaded', 'espresso_calendar_load_admin_file');
+}
+
+function espresso_calendar_load_admin_file() {
+	if ( espresso_version() >= '3.2' ){
+		require_once('calendar_admin.php');
+	} else {
+		require_once('calendar_admin_classic.php');
+	}
 }
