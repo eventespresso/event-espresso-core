@@ -733,30 +733,31 @@ if (!function_exists('time_to_24hr')) {
 
 }
 
-function espresso_event_months_dropdown($current_value = 0) {
+function espresso_event_months_dropdown( $current_value = FALSE ) {
+
 	global $wpdb;
-	$current_value = empty($current_value) ? 0 : $current_value;
-	$strQuery = "select id, start_date from " . EVENTS_DETAIL_TABLE . " WHERE event_status != 'D' group by YEAR(start_date), MONTH(start_date) ";
-	//$rsrcResult = mysql_query($strQuery);
-	$data = $wpdb->get_results($strQuery, ARRAY_A);
-	//print_r($data);
+	$eemd = '';
+	$current_value = $current_value ? $current_value : 0;
 
-	if ($wpdb->num_rows > 0) {
-		echo '<select name="month_range" class="chzn-select" style="width:160px;">';
-		echo '<option value="0">' . __('Select a Month/Year', 'event_espresso') . '</option>';
+	$SQL = "SELECT DATE_FORMAT( FROM_UNIXTIME( REG_date ), '%Y') AS 'YR', DATE_FORMAT( FROM_UNIXTIME( REG_date ), '%M') AS 'MN' FROM {$wpdb->prefix}esp_registration reg LEFT JOIN {$wpdb->prefix}events_detail evt ON evt.id=reg.EVT_ID WHERE event_status != 'D' GROUP BY YR, MN";
 
-		/*		 * * loop over the results ** */
-		foreach ($data as $row) {
+	if ( $dates = $wpdb->get_results( $SQL )) {
 
-			/*			 * * create the options ** */
-			echo '<option value="' . event_espresso_no_format_date($row["start_date"], $format = 'Y-m-d') . '"';
-			if ($row["start_date"] === $current_value) {
-				echo ' selected';
-			}
-			echo '>' . event_espresso_no_format_date($row["start_date"], $format = 'F  Y') . '</option>' . "\n";
+		$eemd .= '<select name="month_range" class="" style="width:160px;">';
+		$eemd .= '<option value="0">' . __('Select a Month/Year', 'event_espresso') . '</option>';
+
+		foreach ($dates as $date) {
+			$option_date =  $date->YR . '-' . $date->MN;
+			$eemd .= '<option value="' . $option_date . '"';
+			$eemd .= $option_date == $current_value ? ' selected="selected"' : '';
+			$eemd .= '>' . $date->MN . ' ' . $date->YR . '</option>' . "\n";
 		}
-		echo "</select>";
+
+		$eemd .= "</select>";
+
 	} else {
-		_e('No Results', 'event_espresso');
+		$eemd = __('No Results', 'event_espresso');
 	}
+
+	return $eemd;
 }
