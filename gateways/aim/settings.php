@@ -23,10 +23,10 @@ function event_espresso_aim_payment_settings() {
 	}
 
 	if (empty($payment_settings['aim'])) {
-		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/lib/logo.gif")) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/aim/lib/logo.gif";
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/aim/lib/logo-aim.png")) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/aim/lib/logo-aim.png";
 		} else {
-			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/aim/lib/logo.gif";
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/aim/lib/logo-aim.png";
 		}
 		$payment_settings['aim']['button_url'] = $button_url;
 		$payment_settings['aim']['authnet_aim_login_id'] = '';
