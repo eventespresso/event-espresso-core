@@ -43,12 +43,17 @@ class EEM_Payment extends EEM_Base {
 		$this->table_name = $wpdb->prefix . 'esp_payment';
 		// array representation of the payment table and the data types for each field 
 		$this->table_data_types = array (	
-			'PAY_ID' 					=> '%d',
-			'TXN_ID' 					=> '%d',
-			'PAY_timestamp' 	=> '%d',
-			'PAY_method'			=> '%s',
-			'PAY_amount'			=> '%s',
-			'PAY_details'			=> '%s'
+			'PAY_ID' 								=> '%d',
+			'TXN_ID' 								=> '%d',
+			'STS_ID' 								=> '%s',
+			'PAY_timestamp' 				=> '%d',
+			'PAY_method'						=> '%s',
+			'PAY_amount'						=> '%s',
+			'PAY_gateway'					=> '%s',
+			'PAY_gateway_response'	=> '%s',
+			'PAY_gateway_txn_id'		=> '%s',
+			'PAY_extra_accntng'			=> '%s',
+			'PAY_details'						=> '%s'
 		);
 		
 		// load Payment object class file
@@ -89,12 +94,21 @@ class EEM_Payment extends EEM_Base {
 			return FALSE;
 		} 		
 
+		if ( ! is_array( $payments )) {
+			$payments = array( $payments );
+		} 		
+
 		foreach ( $payments as $payment ) {
 				$array_of_objects[ $payment->PAY_ID ] = new EE_Payment(
 						$payment->TXN_ID,
+						$payment->STS_ID,
 						$payment->PAY_timestamp,
 						$payment->PAY_method,
 						$payment->PAY_amount,
+						$payment->PAY_gateway,
+						$payment->PAY_gateway_response,
+						$payment->PAY_gateway_txn_id,
+						$payment->PAY_extra_accntng,
 						$payment->PAY_details,
 						$payment->PAY_ID
 				 	);
@@ -169,8 +183,8 @@ class EEM_Payment extends EEM_Base {
 		// retreive payments
 		$where_cols_n_values = array( 'TXN_ID' => $TXN_ID );
 		
-		if ( $payment = $this->select_all_where ( $where_cols_n_values )) {  
-			return $this->_create_objects( array( $payment ));
+		if ( $payments = $this->select_all_where ( $where_cols_n_values, 'PAY_timestamp' )) {  
+			return $this->_create_objects( $payments );
 		} else {
 			return FALSE;
 		}
