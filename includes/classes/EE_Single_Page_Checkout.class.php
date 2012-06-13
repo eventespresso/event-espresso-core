@@ -903,20 +903,19 @@ class EE_Single_Page_Checkout {
 
 			// check for off site payment
 			if ($gateway_data['type'] == 'off-site') {
-				$continue = TRUE;
-				$success_msg = __('Off-site gateway choosen');
-			} else {
-				FALSE;
-			}
 			
-			if ($gateway_data['type'] == 'on-site') { // on site payment
+				// off site payment
+				$success_msg = __('Off-site gateway choosen');
+				
+			} elseif ($gateway_data['type'] == 'on-site') { 
+			
 				// on site payment
 				// load default billing inputs
 				$reg_page_billing_inputs = array(
 
-						'type' => 'onsite',
+						'type' => 'on-site',
 
-						'gateway' => sanitize_text_field( $_POST['selected_gateway'] ),
+						'gateway' => $gateway_data['selected_gateway'],
 
 						'reg-page-billing-fname' => array(
 								'db-col' => 'fname',
@@ -1063,7 +1062,14 @@ class EE_Single_Page_Checkout {
 					$error_msg = $notices['errors'];
 				}
 
-				// End of onsite payment
+				// End of on-site payment
+				
+			} else {
+				// off-line payment
+				
+				
+				
+				
 			}
 
 			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response') || $continue) {
@@ -1226,7 +1232,7 @@ class EE_Single_Page_Checkout {
 			$response = recaptcha_check_answer($org_options['recaptcha_privatekey'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
 			if (!$response->is_valid) {
 				$continue_reg = FALSE;
-				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of it\'s three), and try again.', 'event_espresso');
+				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
 			}
 		}
 
@@ -1263,8 +1269,15 @@ class EE_Single_Page_Checkout {
 			}
 //			printr( $session, '$session ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
+			$grand_total = $session['_cart_grand_total_amount'];
+	
+			$taxes = $session['tax_totals'];
+			foreach ( $taxes as $tax ) {
+				$grand_total += $tax;
+			}
+
 			// start the transaction record
-			$transaction = new EE_Transaction(0.00, 'TPN', NULL, $session, NULL, NULL);
+			$transaction = new EE_Transaction( time(), $grand_total, 0, 'TPN', NULL, $session, NULL, NULL );
 			$txn_results = $transaction->insert();
 			// more than one item means this is a group registration
 			$is_group_reg = count($reg_items) > 1 ? TRUE : FALSE;
@@ -1309,11 +1322,12 @@ class EE_Single_Page_Checkout {
 					$PRC_ID = $event['options']['price_id'];
 					$price_paid = $attendee['price_paid'];
 
-					$new_reg_ID = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session['id'];
+					$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );
+
+					$new_reg_ID = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
 
 					// check for existing registration attempt
-					$prev_reg = $REG->find_existing_registrations_LIKE('%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session['id'] . '%');
-					if ($prev_reg) {
+					if ( $prev_reg = $REG->find_existing_registrations_LIKE('%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%')) {
 
 						// get previous transaction
 						$prev_txn_ID = $prev_reg->transaction_ID();
@@ -1347,6 +1361,7 @@ class EE_Single_Page_Checkout {
 													$price_paid,
 													$session['id'],
 													$new_reg_ID,
+													md5( $new_reg_ID ),
 													isset($attendee['primary_attendee']),
 													$is_group_reg,
 													FALSE,
@@ -1373,7 +1388,7 @@ class EE_Single_Page_Checkout {
 			// free event?
 			if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 				// becuz this was a free event we need to generate some pseudo gateway results
-				$txn_details = array(
+				$txn_results = array(
 						'approved' => TRUE,
 						'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
 						'status' => 'Approved',
@@ -1381,7 +1396,7 @@ class EE_Single_Page_Checkout {
 						'amount' => 0.00,
 						'method' => 'none'
 				);
-				$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+				$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
 
 			} else {
 				// attempt to perform transaction via payment gateway
@@ -1390,6 +1405,8 @@ class EE_Single_Page_Checkout {
 				$gateway_path = $gateway_data['active_gateways'][$selected_gateway];
 				require_once($gateway_path . "/return.php");
 				do_action('action_hook_espresso_gateway_process_step_3', $EE_Session);
+				
+				// process on-site payments
 				if ( $this->_ajax == 0 && $gateway_data['type'] == 'on-site') {
 					$gateway_data['type'] = 'onsite_noajax';
 					$EE_Session->set_session_data($gateway_data, 'gateway_data');
@@ -1402,15 +1419,22 @@ class EE_Single_Page_Checkout {
 					wp_safe_redirect($this->_return_page_url);
 					exit();
 				}
+				
+				// process off-site payments
 				if ($gateway_data['type'] == 'off-site') {
 					$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 					if ($this->_ajax == 0) {
 						echo $gateway_data['off-site-form']['pre-form'] . $gateway_data['off-site-form']['form'] . $gateway_data['off-site-form']['post-form'];
 						die();
 					} else {
-						$this->send_ajax_response("Redirecting to Off-site Payment Provider", FALSE, '_redirect_to_off_site');
+						$this->send_ajax_response('Redirecting to Off-site Payment Provider', FALSE, '_redirect_to_off_site');
 					}
 				}
+
+				// process off-line payments
+				if ($gateway_data['type'] == 'off-line') {
+				}
+				
 			}
 		}
 		//$session_data = $EE_Session->get_session_data();var_dump($session_data);die();
@@ -1427,11 +1451,11 @@ class EE_Single_Page_Checkout {
 
 
 	/**
-	 * 		process_registration_payment
+	 * 		process registration payment
 	 *
 	 * 		@access 		private
-	 * 		@param 		object 		$transaction
-	 * 		@return 		JSON		or redirect
+	 * 		@param 		boolean 		$perform_redirect  - whether to send JSON response or redirect
+	 * 		@return 		JSON			or redirect
 	 */
 	public function process_registration_payment( $perform_redirect = TRUE ) {
 
@@ -1447,6 +1471,7 @@ class EE_Single_Page_Checkout {
 
 		$transaction = $session['transaction'];
 		$txn_results = $session['txn_results'];
+		$gateway_data = $session['gateway_data'];
 		// $txn_results['txn_results'] = $session;
 
 		$txn_results['amount'] = isset($txn_results['amount']) ? (float)abs($txn_results['amount']) : 0.00;
@@ -1455,27 +1480,55 @@ class EE_Single_Page_Checkout {
 		switch ($txn_results['status']) {
 
 			case 'Approved' :
-				$status = 'TAP';
+				$pay_status = 'PAP';
 				$success_msg = $txn_results['response_msg'];
 				do_action('action_hook_espresso_reg_approved');
 				break;
 
 			case 'Declined' :
-				$status = 'DEC';
+				$pay_status = 'PDC';
 				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_results['response_msg'] . '</b>';
 				do_action('action_hook_espresso_reg_declined');
 				break;
 
-			case 'Incomplete' :
-				$status = 'INC';
+			case 'Cancelled' :
+				$pay_status = 'PCN';
+				$error_msg = __('The Transaction was cancelled.', 'event_espresso');
+				do_action('action_hook_espresso_reg_cancelled');
+				break;
+
+			case 'FAILED' :
+				$pay_status = 'PFL';
 				$error_msg = __('We\'re sorry, but an error occured and the transaction could not be completed. Please try again. If problems persist, contact the site administrator.', 'event_espresso');
 				do_action('action_hook_espresso_reg_incomplete');
 				break;
 		}
 
+		if ( $txn_results['amount'] > 0 ) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+			EEM_Payment::instance();
+			$payment = new EE_Payment( 
+																	$transaction->ID(), 
+																	$pay_status,
+																	$transaction->datetime(), 
+																	$txn_results['method'], 
+																	$txn_results['amount'],
+																	$gateway_data['active_gateways'][$selected_gateway]['display_name'],
+																	$txn_results['response_msg'],
+																	$txn_results['transaction_id'],
+																	NULL,
+																	maybe_serialize( $txn_results )
+																);
+			$results = $payment->insert();
+			if (!$results) {
+				$error_msg = __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
+			}
+		}
+		
 		$transaction->set_total($txn_results['amount']);
 		$transaction->set_status($status);
 		$transaction->set_details( $txn_results );
+		unset( $session['transaction'] );
 		$transaction->set_session_data( $session );
 
 		if (isset($txn_results['md5_hash'])) {
@@ -1489,15 +1542,6 @@ class EE_Single_Page_Checkout {
 
 		$transaction->update();
 
-		if ($transaction->total() > 0 && $txn_results['status'] == 'Approved') {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-			EEM_Payment::instance();
-			$payment = new EE_Payment($transaction->ID(), $transaction->datetime(), $txn_results['method'], $txn_results['amount']);
-			$results = $payment->insert();
-			if (!$results) {
-				$error_msg = __('There was a problem inserting your payment into our records.', 'event_espresso');
-			}
-		}
 
 
 /*		global $espresso_notices;

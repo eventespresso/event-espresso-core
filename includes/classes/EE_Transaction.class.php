@@ -59,6 +59,18 @@ class EE_Transaction {
 	private $_TXN_total = 0;	
 	
 	
+	
+    /**
+    *	Total Amount Paid to Date
+	* 
+	* 	note: always use Decimal(10,2) as SQL type for money
+	*
+	*	@access	private
+    *	@var float	
+    */
+	private $_TXN_paid = 0;	
+	
+	
     /**
     *	Transaction Status
 	*
@@ -138,26 +150,27 @@ class EE_Transaction {
 	*  Transaction constructor
 	*
 	* @access 		public
+	* @param 		timestamp 		$TXN_timestamp 		Unix timestamp
 	* @param 		float 				$TXN_total 					Transaction Total
+	* @param 		float 				$TXN_paid 					Total Amount Paid to Date
 	* @param 		string				$STS_ID  						Transaction Status - foreign key from status type table
 	* @param 		string 				$TXN_details  			notes regarding the transaction
 	* @param 		string				$TXN_session_data 	dump off the entire session object 
 	* @param 		string				$TXN_hash_salt 			required for some payment gateways
 	* @param 		string				$TXN_tax_data		 	information regarding taxes
-	* @param 		timestamp 		$TXN_timestamp 		Unix timestamp
 	* @param 		int 					$TXN_ID 						Transaction ID
 	*/
-	public function __construct( $TXN_total=0.00, $STS_ID=NULL, $TXN_details=NULL, $TXN_session_data=NULL, $TXN_hash_salt=NULL, $TXN_tax_data=NULL,$TXN_timestamp=FALSE,$TXN_ID=FALSE ) {
-		$this->_TXN_ID 						= $TXN_ID;
-		$this->_TXN_timestamp 		= $TXN_timestamp ? $TXN_timestamp : time();
-		$this->_TXN_total 					= $TXN_total;
-		$this->_STS_ID 						= $STS_ID;
+	public function __construct( $TXN_timestamp=FALSE, $TXN_total=0.00, $TXN_paid=0.00, $STS_ID=NULL, $TXN_details=NULL, $TXN_session_data=NULL, $TXN_hash_salt=NULL, $TXN_tax_data=NULL, $TXN_ID=FALSE ) {
+		$this->_TXN_ID 						= absint( $TXN_ID );
+		$this->_TXN_timestamp 		= $TXN_timestamp ? absint( $TXN_timestamp ) : time();
+		$this->_TXN_total 					= abs( $TXN_total );
+		$this->_TXN_paid 					= abs( $TXN_paid );
+		$this->_STS_ID 						= wp_strip_all_tags( $STS_ID );
 		$this->_TXN_details 				= $TXN_details;
 		$this->_TXN_session_data	= $TXN_session_data;
 		$this->_TXN_hash_salt 			= $TXN_hash_salt;
 		$this->_TXN_tax_data 			= $TXN_tax_data;
 	}
-
 
 
 
@@ -180,6 +193,26 @@ class EE_Transaction {
 		return TRUE;
 	}
 
+
+
+
+
+	/**
+	*		Set Total Amount Paid to Date
+	* 
+	* 		@access		public		
+	*		@param		float		$payment 		total amount paid to date (sum of all payments)
+	*/	
+	public function set_paid( $payment = FALSE ) {
+		
+		global $espresso_notices;
+		if ( ! $payment || ! is_numeric( $payment )) {
+			$espresso_notices['errors'][] = 'No payment amount or an invalid payment amount was supplied.';
+			return FALSE;
+		}	
+		$this->_TXN_total += $payment;
+		return TRUE;
+	}
 
 
 
@@ -307,6 +340,7 @@ class EE_Transaction {
 		$set_column_values = array(		
 				'TXN_timestamp' 		=> $this->_TXN_timestamp,
 				'TXN_total' 					=> $this->_TXN_total,
+				'TXN_paid' 					=> $this->_TXN_paid,
 				'STS_ID' 						=> $this->_STS_ID,
 				'TXN_details' 				=> maybe_serialize( $this->_TXN_details ),
 				'TXN_session_data'		=> maybe_serialize( $this->_TXN_session_data ),
@@ -324,7 +358,6 @@ class EE_Transaction {
 		
 		return $results;
 	}
-
 
 
 
@@ -379,6 +412,18 @@ class EE_Transaction {
 	*/	
 	public function total() {
 		return $this->_TXN_total;
+	}
+
+
+
+
+
+	/**
+	*		get Total Amount Paid to Date
+	* 		@access		public
+	*/	
+	public function paid() {
+		return $this->_TXN_paid;
 	}
 
 
