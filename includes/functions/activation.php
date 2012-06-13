@@ -444,32 +444,22 @@ function events_data_tables_install() {
 
 
 	$table_name = 'esp_payment';
-	$sql = "PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  TXN_ID int(10) unsigned	DEFAULT NULL,
+	$sql = "  PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  TXN_ID int(10) unsigned DEFAULT NULL,
+				  STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
 				  PAY_timestamp int(11) NOT NULL,
-				  PAY_method varchar(45) DEFAULT NULL,
+				  PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
 				  PAY_amount decimal(10,2) DEFAULT NULL,
-				  PAY_details text,
-					PRIMARY KEY  (PAY_ID),
-					KEY TXN_ID (TXN_ID),
-					KEY PAY_timestamp (PAY_timestamp)";
+				  PAY_gateway int(11) DEFAULT NULL,
+				  PAY_gateway_response int(11) DEFAULT NULL,
+				  PAY_gateway_txn_id int(11) DEFAULT NULL,
+				  PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				  PAY_details text COLLATE utf8_bin,
+				  PRIMARY KEY (PAY_ID),
+					  KEY TXN_ID (TXN_ID),
+					  KEY PAY_timestamp (PAY_timestamp)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
-	
-	
 
-/*	$table_name = 'esp_datetime';
-	$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  EVT_ID int(10) unsigned NOT NULL,
-			  DTT_is_primary tinyint(1) DEFAULT '1',
-			  DTT_EVT_start int(10) unsigned NOT NULL,
-			  DTT_EVT_end int(10) unsigned NOT NULL,
-			  DTT_REG_start int(10) unsigned NOT NULL,
-			  DTT_REG_end int(10) unsigned NOT NULL,
-			  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
-			  DTT_tckts_left mediumint(8) unsigned DEFAULT NULL,
-			  PRIMARY KEY (DTT_ID),
-			  KEY EVT_ID (EVT_ID)";
-	event_espresso_run_install($table_name, $table_version, $sql );*/
 
 
 
@@ -498,21 +488,22 @@ function events_data_tables_install() {
 				  ATT_ID int(10) unsigned NOT NULL,
 				  TXN_ID int(10) unsigned NOT NULL,
 				  DTT_ID int(10) unsigned NOT NULL,
-				  PRC_ID varchar(45) COLLATE utf8_bin DEFAULT NULL,
-				  STS_ID varchar(3) NOT NULL DEFAULT 'PND',
+				  PRC_ID int(10) unsigned NOT NULL,
+				  STS_ID varchar(3) NOT NULL DEFAULT 'RPN',
 				  REG_date int(11) NOT NULL,
-				  REG_price_paid decimal(10,2) NOT NULL DEFAULT '0.00',
+				  REG_final_price decimal(10,2) NOT NULL DEFAULT '0.00',
 				  REG_session varchar(45) COLLATE utf8_bin NOT NULL,
 				  REG_code varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				  REG_url_link varchar(64) COLLATE utf8_bin DEFAULT NULL,
 				  REG_is_primary tinyint(1) DEFAULT '0',
 				  REG_is_group_reg tinyint(1) DEFAULT '0',
-				  PRC_ID varchar(45) DEFAULT NULL,
 				  REG_att_is_going tinyint(1) DEFAULT '0',
 				  REG_att_checked_in tinyint(1) DEFAULT '0',
 				  PRIMARY KEY  (REG_ID),
 				  KEY EVT_ID (EVT_ID),
 				  KEY ATT_ID (ATT_ID),
 				  KEY TXN_ID (TXN_ID),
+				  KEY DTT_ID (DTT_ID),
 				  KEY STS_ID (STS_ID),
 				  KEY REG_is_primary (REG_is_primary),
 				  KEY REG_code (REG_code)";
@@ -525,6 +516,7 @@ function events_data_tables_install() {
 	$sql = "TXN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  TXN_timestamp int(11) NOT NULL,
 				  TXN_total decimal(10,2) DEFAULT NULL,
+				  TXN_paid decimal(10,2) NOT NULL DEFAULT '0.00',
 				  STS_ID varchar(3) NOT NULL DEFAULT 'TPN',
 				  TXN_details text COLLATE utf8_bin,
 				  TXN_tax_data text COLLATE utf8_bin,
@@ -1333,29 +1325,60 @@ function espresso_default_prices() {
 	$wpdb->query($sql);
 
 	$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_member, PRT_is_discount, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) VALUES
-	(1, 'Default Event Price', 0, 0, 0, 0, 1, 0),
-	(2, 'Event Price', 0, 0, 0, 0, 0, 0),
-	(3, 'Default Member % Discount', 1, 1, 0, 1, 1, 10),
-	(4, 'Default Early Bird % Discount', 0, 1, 0, 1, 1, 20),
-	(5, 'Promo Code Discount', 0, 1, 0, 0, 1, 10),
-	(6, 'Default Surcharge', 0, 0, 0, 0, 1, 30),
-	(7, 'Regional Tax', 0, 0, 1, 1, 1, 40),
-	(8, 'Federal Tax', 0, 0, 1, 1, 1, 50);";
+				(1, 'Default Event Price', 0, 0, 0, 0, 1, 0),
+				(2, 'Event Price', 0, 0, 0, 0, 0, 0),
+				(3, 'Default Member % Discount', 1, 1, 0, 1, 1, 10),
+				(4, 'Default Early Bird % Discount', 0, 1, 0, 1, 1, 20),
+				(5, 'Promo Code Discount', 0, 1, 0, 0, 1, 10),
+				(6, 'Default Surcharge', 0, 0, 0, 0, 1, 30),
+				(7, 'Regional Tax', 0, 0, 1, 1, 1, 40),
+				(8, 'Federal Tax', 0, 0, 1, 1, 1, 50);";
 	$wpdb->query($sql);
 
 	$sql = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 8';
 	$wpdb->query($sql);
 
 	$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
-	(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
-	(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
-	(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
-	(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
-	(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
-	(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
-	(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
-	(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
+				(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
+				(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
+				(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
+				(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
+				(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
+				(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
+				(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
+				(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
 	$wpdb->query($sql);
+	
+	
+	$sql = "INSERT INTO " . ESP_STATUS_TABLE . " 
+			(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc) VALUES
+			('ACT', 'ACTIVE', 'event', 0, NULL),
+			('RAP', 'APPROVED', 'registration', 0, NULL),
+			('CLS', 'REGISTRATION_CLOSED', 'event', 0, NULL),
+			('TCM', 'COMPLETE', 'transaction', 0, NULL),
+			('PDC', 'DECLINED', 'payment', 0, NULL),
+			('DEL', 'DELETED', 'event', 0, NULL),
+			('DEN', 'DENIED', 'event', 0, NULL),
+			('DRF', 'DRAFT', 'event', 0, NULL),
+			('EDR', 'DRAFT', 'email', 0, NULL),
+			('EXP', 'EXPIRED', 'event', 0, NULL),
+			('TOP', 'OPEN', 'transaction', 0, NULL),
+			('NAC', 'NOT_ACTIVE', 'event', 0, NULL),
+			('RNA', 'NOT_APPROVED', 'registration', 0, NULL),
+			('NOP', 'REGISTRATION_NOT_OPEN', 'event', 0, NULL),
+			('ONG', 'ONGOING', 'event', 0, NULL),
+			('OPN', 'REGISTRATION_OPEN', 'event', 0, NULL),
+			('PND', 'PENDING', 'event', 0, NULL),
+			('RPN', 'PENDING', 'registration', 0, NULL),
+			('SEC', 'SECONDARY', 'event', 0, NULL),
+			('SNT', 'SENT', 'email', 0, NULL),
+			('PAP', 'APPROVED', 'payment', 0, NULL),
+			('TPN', 'PENDING', 'transaction', 0, NULL),
+			('RCN', 'CANCELLED', 'registration', 0, NULL),
+			('PCN', 'CANCELLED', 'payment', 0, NULL),
+			('PFL', 'FAILED', 'payment', 0, NULL);";
+	$wpdb->query($sql);
+	
 }
 
 if (!function_exists('save_error')) {
