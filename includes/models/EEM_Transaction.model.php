@@ -46,7 +46,8 @@ class EEM_Transaction extends EEM_Base {
 		$this->table_data_types = array (	
 			'TXN_ID' 						=> '%d', 	
 			'TXN_timestamp' 		=> '%d', 	
-			'TXN_total' 					=> '%s', 	
+			'TXN_total' 					=> '%f', 	
+			'TXN_paid' 					=> '%f', 	
 			'STS_ID'						=> '%s', 	 	
 			'TXN_details'				=> '%s', 	 	
 			'TXN_session_data'		=> '%s',
@@ -101,13 +102,14 @@ class EEM_Transaction extends EEM_Base {
 
 		foreach ( $transactions as $transaction ) {
 				$array_of_objects[ $transaction->TXN_ID ] = new EE_Transaction(
+						$transaction->TXN_timestamp, 
 						$transaction->TXN_total, 
+						$transaction->TXN_paid, 
 						$transaction->STS_ID, 
 						maybe_unserialize( $transaction->TXN_details ), 
 						maybe_unserialize( $transaction->TXN_session_data ), 
 						$transaction->TXN_hash_salt,
 						maybe_unserialize( $transaction->TXN_tax_data ),
-						$transaction->TXN_timestamp, 
 						$transaction->TXN_ID
 				 	);
 		}	
@@ -279,7 +281,7 @@ class EEM_Transaction extends EEM_Base {
 
 		global $wpdb;
 		
-		$SQL = 'SELECT att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.STS_ID, txn.TXN_details ';
+		$SQL = 'SELECT att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
