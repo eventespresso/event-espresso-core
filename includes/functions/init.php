@@ -64,6 +64,10 @@ function espresso_admin_init() {
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/attendees.php');
 					break;
 
+				case 'registrations' :
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/registrations/Registrations.class.php');
+					break;
+
 				case 'transactions' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/transactions/Transactions.class.php');
 					break;
