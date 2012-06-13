@@ -45,8 +45,8 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
                 
         //Set parent defaults
         parent::__construct( array(
-            'singular'  => 'Transaction',     //singular name of the listed records
-            'plural'    => 'Transactions',    //plural name of the listed records
+            'singular'  => __( 'Transaction', 'event_espresso' ),     //singular name of the listed records
+            'plural'    => __( 'Transactions', 'event_espresso' ),    //plural name of the listed records
             'ajax'      => FALSE        //does this table support ajax?
 		) );
 	
@@ -61,14 +61,15 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
     function get_columns(){
         $columns = array(
             'cb'        					=> '<input type="checkbox" />', //Render a checkbox instead of text
-            'TXN_ID'   				=> 'ID',
-			'TXN_timestamp'	=> 'Transaction Date',
-            'STS_ID'	   				=> 'Status',
-            'TXN_total'	   			=> 'Total',
-			'ATT_fname'			=> 'Primary Registrant',
-			'ATT_email'				=> 'Email Address',
-			'event_name'			=> 'Event',
-            'actions'	   				=> 'Actions'
+            'TXN_ID'   				=> __( 'ID', 'event_espresso' ),
+			'TXN_timestamp'	=> __( 'Transaction Date', 'event_espresso' ),
+            'STS_ID'	   				=> __( 'Status', 'event_espresso' ),
+            'TXN_total'	   			=> __( 'Total', 'event_espresso' ),
+            'TXN_paid'	   			=> __( 'Paid', 'event_espresso' ),
+			'ATT_fname'			=> __( 'Primary Registrant', 'event_espresso' ),
+			'ATT_email'				=> __( 'Email Address', 'event_espresso' ),
+			'event_name'			=> __( 'Event', 'event_espresso' ),
+            'actions'	   				=> __( 'Actions', 'event_espresso' )
         );
         return $columns;
     }
@@ -85,7 +86,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
             'event_name'			=> array( 'event_name', FALSE ),
             'ATT_fname'			=> array( 'ATT_fname', FALSE ),
            	'TXN_timestamp'	=> array( 'TXN_timestamp', TRUE ),
-            'TXN_total'				=> array( 'TXN_total', FALSE ),
+      //      'TXN_total'				=> array( 'TXN_total', FALSE ),
         );
         return $sortable_columns;
     }
@@ -99,7 +100,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
             case 'TXN_ID':
 				return $item[$column_name];
              default:
-                return print_r($item,true); //Show the whole array for troubleshooting purposes
+				return ( isset( $item->$column_name )) ? $item->$column_name : '';
         }
     }
 
@@ -124,7 +125,10 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	 * 		column_STS_ID
 	*/ 
     function column_STS_ID($item){
-		return '<span class="status-'. $item['STS_ID'] .'">' . $this->_status[ $item['STS_ID'] ] . '</span>';
+		return '<span class="status-'. $item['STS_ID'] .'">' . __( $this->_status[ $item['STS_ID'] ], 'event_espresso' ) . '</span>';
+//		$status = ucwords( strtolower( $this->_status[ $item['STS_ID'] ] ));
+//		return event_espresso_paid_status_icon( $status ); 
+
 	}
 
 
@@ -155,7 +159,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	*/ 
     function column_event_name($item){	
 		$edit_event_url = add_query_arg( array( 'action'=>'edit', 'event_id'=>$item['id'] ), admin_url( 'admin.php?page=events' ));
-		return '<a href="' . $edit_event_url . '" title="Edit Event #'.$item['id'].'">' .  wp_trim_words( $item['event_name'], 30, '...' ) . '</a>'; 
+		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit Event #', 'event_espresso' ) . $item['id'].'">' .  wp_trim_words( $item['event_name'], 30, '...' ) . '</a>'; 
 	}
 
 
@@ -167,8 +171,46 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 	*/ 
     function column_TXN_total($item){
 		global $org_options;
-		//return '<div style="text-align:right;">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_total'], 2 ) . '</div>';
-		return $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_total'], 2 );
+		if ( $item['TXN_total'] > 0 ) {
+			return '<span class="txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_total'], 2 ) . '</span>';	
+		} else {
+			return '<span class="txn-overview-free-event-spn">' . __( 'free', 'event_espresso' ) . '</span>';
+		}
+		
+	}
+
+
+
+
+
+	/**
+	 * 		column_TXN_paid
+	*/ 
+    function column_TXN_paid($item){
+		global $org_options;
+		
+		$item['TXN_total'] = abs( $item['TXN_total'] );
+		$item['TXN_paid'] = abs( $item['TXN_paid'] );
+		
+		if (( $item['TXN_total'] > 0 ) && ( $item['TXN_paid'] >= $item['TXN_total'] )) {
+			// paid in full
+			return '<span class="txn-overview-full-payment-spn txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_paid'], 2 ) . '</span>';
+			
+		} elseif (( $item['TXN_total'] > 0 ) && ( $item['TXN_paid'] > 0 )) {
+			// monies owing
+			return '<span class="txn-overview-part-payment-spn txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_paid'], 2 ) . '</span>';
+			
+		} elseif (( $item['TXN_total'] > 0 ) && ( $item['TXN_paid'] == 0 )) {
+			// no payments made
+			return '<span class="txn-overview-no-payment-spn txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_paid'], 2 ) . '</span>';
+			
+		} else {
+			// free event
+			$nothing = array( 'nothing', 'nil', 'nada', 'zero', 'zilch', 'zip', 'zippo', 'not a penny', 'boo', 'diddly-squat' );
+			$rnd = rand( 0, 9 );
+			return '<span class="txn-overview-free-event-spn">' . __( $nothing[ $rnd ], 'event_espresso' ) . '</span>';
+		}
+		
 	}
 
 
@@ -194,27 +236,44 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 
         //Build row actions	
 		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'view_transaction' );
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'edit_transaction' );
-		$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'delete_transaction' );
+		$view_reg_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item['REG_ID'] ), admin_url( 'admin.php?page=registrations' )), 'view_registration' );
+		$send_pay_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'send_payment_reminder', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'send_payment_reminder' );
 		
         //Build row actions
         $view_lnk = '
-		<a href="'.$view_lnk_url.'" title="View Transaction Details">view
-			<!--<img width="14" height="14" alt="View Transaction Details" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/magnifier.png">-->
-		</a>';
+		<li>
+			<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
+				<img width="16" height="16" alt="' . __( 'View Transaction Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/magnifier.png">
+			</a>
+		</li>';
 		
-       $edit_lnk = '
-		<a href="'.$edit_lnk_url.'" title="Edit Transaction">edit
-			<!--<img width="14" height="14" alt="Edit Transaction" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/edit.png">-->
-		</a>';
+         $dl_invoice_lnk = '
+		<li>
+			<a title="Download Invoice" target="_blank" href="http://localhost/EVENT_ESPRESSO/?invoice_launch=true&id=&r_id=43653465634&html=true&admin=true">
+				<img width="16" height="16" alt="Download Invoice" src="http://localhost/EVENT_ESPRESSO/wp-content/plugins/event-espresso.svn/images/icons/invoice-1-16x16.png">
+			</a>
+		</li>';
+      
+	       $send_pay_lnk = '
+		<li>
+			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
+				<img width="20" height="20" alt="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/payment-reminder-20x20.png">
+			</a>
+		</li>';
 		
-         $delete_lnk = '
-		<a class="confirm-delete" rel="Transaction" href="'.$delete_lnk_url.'" title="Delete Transaction">delete
-			<!--<img width="16" height="16" alt="Delete Transaction" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/remove.gif">-->
-		</a>';
-        
-        return $view_lnk . '&nbsp;|&nbsp;' . $edit_lnk . '&nbsp;|&nbsp;' . $delete_lnk;
+	        $view_reg_lnk = '
+		<li>
+			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
+				<img width="13" height="13" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/edit.png">
+			</a>
+		</li>';
 
+			$actions = '
+	<ul class="txn-overview-actions-ul">' . 
+	$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
+	</ul>';
+			
+			return $actions;
     }
 
  
@@ -282,7 +341,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 			if ( is_numeric( $a[$orderby] ) && is_numeric( $b[$orderby] )) {
 				$result = ( $a[$orderby] == $b[$orderby] ) ? 0 : ( $a[$orderby] < $b[$orderby] ) ? -1 : 1;	
 			} else {
-				$result = strcmp($a[$orderby], $b[$orderby]); // Determine sort order for strings
+				$result = strcasecmp($a[$orderby], $b[$orderby]); // Determine sort order for strings
 			}
 			
            	return ($order==='asc') ? $result : -$result; // Send final sort direction to usort

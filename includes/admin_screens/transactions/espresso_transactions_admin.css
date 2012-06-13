@@ -6,20 +6,32 @@
 
 /* TABLE COLUMNS */
 
-th#TXN_ID { width:3%; }
-th#TXN_timestamp { width:15%; }
+.column-TXN_ID { width:3%; }
+.column-TXN_timestamp { width:15%; }
 
-th#STS_ID { width:8%; }
-.status-TPN { color:#F93;  }
-.status-TAP { color:#090;  }
-.status-DEC { color:#F00;  }
-.status-CMP { color:#666;  }
+#STS_ID {}
+.column-STS_ID { width:6%; /*text-align:center; */}
+.status-TOP, .txn-overview-full-payment-spn { color:#090;  }
+.status-TPN, .txn-overview-part-payment-spn { color:#F93; font-weight:bold;  }
+.txn-overview-no-payment-spn { color:#F00; font-weight:bold; }
+.status-TCM { color:#999;  }
 
-th#TXN_total { width:7%; }
-th#ATT_fname { width:13%; }
-th#ATT_email { width:15%; }
-th#event_name {  }
-th#actions { width:10%; }
+#TXN_total, #TXN_paid { text-align:center; }
+.column-TXN_total, .column-TXN_paid { width:6.5%; text-align:right; }
+.txn-pad-rght { display:block; padding-right:1.5em; }
+
+.column-ATT_fname { width:14%; }
+.column-ATT_email { width:14%; }
+.column-event_name {  }
+.column-actions { width:7.5%; }
+
+.txn-overview-free-event-spn {
+	display: block; text-align:center;
+}
+
+.txn-overview-actions-ul { list-style:none; margin:0; }
+.txn-overview-actions-ul li { display: inline; margin:0; }
+.txn-overview-actions-ul li + li { margin-left:.25em; }
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
 .admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0px 1px 0px #fff; }
@@ -50,6 +62,21 @@ th#actions { width:10%; }
 .form-table.skinny-rows th, .form-table.skinny-rows td { padding:3px 10px; }
 
 .admin-primary-mbox-total-tr { font-size:1.1em; }
+
+#txn-admin-gateway-img {
+	position:absolute; top:0; right:2em;
+}
+
+
+#txn-admin-payment-options-ul { float:right; list-style:none; margin:0 .5em 1em; }
+#txn-admin-payment-options-ul li { display:inline-block; }
+#txn-admin-payment-options-ul li + li { margin-left:1em; }
+.txn-admin-payment-option-lnk {
+	display:block; width:auto; padding:3px 6px;; margin:0;
+	background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #DFDFDF; border-radius: 3px 3px 3px 3px;
+    color: #666; cursor: pointer; vertical-align:middle;
+	
+}
 
 
 .jst-left { text-align:left; }

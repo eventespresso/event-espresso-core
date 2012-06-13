@@ -56,8 +56,8 @@ class EE_Admin_Transactions {
 					$this->_transaction_details( 'edit' ); 
 					break;
 
-				case 'delete_transaction': 				
-					$this->_delete_transaction(); 
+				case 'send_payment_reminder': 				
+					$this->_send_payment_reminder(); 
 					break;
 			}		
 				
@@ -246,30 +246,62 @@ class EE_Admin_Transactions {
 		$txn_status_class = 'status-' . $this->_transaction->STS_ID;
 		
 		$txn_details = maybe_unserialize( $this->_transaction ->TXN_details );
-		//echo printr( $txn_details, '$txn_details' );
+		
+		// process payment details
+	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php' );
+	    $PAY = EEM_Payment::instance();
+		if ( ! $template_args['payments'] = $PAY->get_payments_for_transaction( $this->_transaction->TXN_ID )) {
+			$template_args['payments'] = FALSE;
+		}
+		$template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );  
+
+		//printr( $template_args['payments'], '$payments  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 		
 		$card_type = isset( $txn_details['card_type'] ) ? ' : ' . $txn_details['card_type'] : '';
-		$txn_details['method'] = $txn_details['method'] == 'CC' ? 'Credit Card' . $card_type : $txn_details['method'];
+		$txn_details['method'] = ( $txn_details['method'] == 'CC' ) ? 'Credit Card' . $card_type : $txn_details['method'];
 		$template_args['method']['value'] = $txn_details['method'];
 		$template_args['method']['label'] = __( 'Payment Method', 'event_espresso' );
 		$template_args['method']['class'] = 'regular-text';
+		
+		//echo printr( $this->_session, '$this->_session' );
+		$template_args['payment_gateway'] = FALSE;
+		
+		if ( isset( $this->_session['gateway_data'] )){
+			if ( isset( $this->_session['gateway_data']['payment_settings'][ $this->_session['gateway_data']['selected_gateway'] ] )){
+				$template_args['payment_gateway']['value'] = $this->_session['gateway_data']['payment_settings'][ $this->_session['gateway_data']['selected_gateway'] ]['display_name'];
+				$template_args['payment_gateway']['label'] = __( 'Payment Gateway', 'event_espresso' );
+				$template_args['payment_gateway']['class'] = 'regular-text';
+			
+				if ( file_exists( $this->_session['gateway_data']['payment_settings'][ $this->_session['gateway_data']['selected_gateway'] ]['button_url'] )) {			
+					$template_args['payment_gateway']['button_url'] = $this->_session['gateway_data']['payment_settings'][ $this->_session['gateway_data']['selected_gateway'] ]['button_url'];
+				} else {
+					$template_args['payment_gateway']['button_url'] = '';
+				}
+			}
+		}
 		
 		$txn_details['response_msg'] = $this->_view_or_edit == 'view' ? '<span class="' . $txn_status_class . '">' . $txn_details['response_msg'] . '</span>' : $txn_details['response_msg'];
 		$template_args['gateway_response_msg']['value'] = $txn_details['response_msg'];
 		$template_args['gateway_response_msg']['label'] = __( 'Gateway Response Message', 'event_espresso' );
 		$template_args['gateway_response_msg']['class'] = 'regular-text';
 		
+		
 		if ( isset( $txn_details['transaction_id'] )) {
-			$template_args['txn_details']['transaction_id']['value'] = $txn_details['transaction_id'];
-			$template_args['txn_details']['transaction_id']['label'] = __( 'Transaction ID', 'event_espresso' );
-			$template_args['txn_details']['transaction_id']['class'] = 'regular-text';
+//			$template_args['txn_details']['transaction_id']['value'] = $txn_details['transaction_id'];
+//			$template_args['txn_details']['transaction_id']['label'] = __( 'Transaction ID', 'event_espresso' );
+//			$template_args['txn_details']['transaction_id']['class'] = 'regular-text';
+			$template_args['transaction_id']['value'] = $txn_details['transaction_id'];
+			$template_args['transaction_id']['label'] = __( 'Gateway Transaction ID', 'event_espresso' );
+			$template_args['transaction_id']['class'] = 'regular-text';
+		} else {
+			$template_args['transaction_id'] = FALSE;
 		}
 
 		if ( isset( $txn_details['invoice_number'] )) {
 			$template_args['txn_details']['invoice_number']['value'] = $txn_details['invoice_number'];
 			$template_args['txn_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
 			$template_args['txn_details']['invoice_number']['class'] = 'regular-text';
-		}
+		} 
 
 		$template_args['txn_details']['registration_session']['value'] = $this->_transaction->REG_session;
 		$template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
@@ -402,29 +434,29 @@ class EE_Admin_Transactions {
 		
 			$template_args['free_event'] = FALSE; 
 			
-			$template_args['fname']['value'] = $billing_info['reg-page-billing-fname']['value'];
-			$template_args['fname']['label'] = $billing_info['reg-page-billing-fname']['label'];
+			$template_args['fname']['value'] = ! empty ( $billing_info['reg-page-billing-fname']['value'] ) ? $billing_info['reg-page-billing-fname']['value'] : '';
+			$template_args['fname']['label'] = ! empty ( $billing_info['reg-page-billing-fname']['label'] ) ? $billing_info['reg-page-billing-fname']['label'] :  __( 'First Name', 'event_espresso' );
 			
-			$template_args['lname']['value'] = $billing_info['reg-page-billing-lname']['value'];
-			$template_args['lname']['label'] = $billing_info['reg-page-billing-lname']['label'];
+			$template_args['lname']['value'] = ! empty ( $billing_info['reg-page-billing-lname']['value'] ) ? $billing_info['reg-page-billing-lname']['value'] : '';
+			$template_args['lname']['label'] = ! empty ( $billing_info['reg-page-billing-lname']['label'] ) ? $billing_info['reg-page-billing-lname']['label'] :  __( 'Last Name', 'event_espresso' );
 			
-			$template_args['email']['value'] = $billing_info['reg-page-billing-email']['value'];
-			$template_args['email']['label'] = 'Email';
+			$template_args['email']['value'] = ! empty ( $billing_info['reg-page-billing-email']['value'] ) ? $billing_info['reg-page-billing-email']['value'] : '';
+			$template_args['email']['label'] = __( 'Email', 'event_espresso' );
 			
-			$template_args['address']['value'] = $billing_info['reg-page-billing-address']['value'];
-			$template_args['address']['label'] = $billing_info['reg-page-billing-address']['label'];
+			$template_args['address']['value'] = ! empty ( $billing_info['reg-page-billing-address']['value'] ) ? $billing_info['reg-page-billing-address']['value'] : '';
+			$template_args['address']['label'] = ! empty ( $billing_info['reg-page-billing-address']['label'] ) ? $billing_info['reg-page-billing-address']['label'] :  __( 'Address', 'event_espresso' );
 			
-			$template_args['city']['value'] = $billing_info['reg-page-billing-city']['value'];
-			$template_args['city']['label'] = $billing_info['reg-page-billing-city']['label'];
+			$template_args['city']['value'] = ! empty ( $billing_info['reg-page-billing-city']['value'] ) ? $billing_info['reg-page-billing-city']['value'] : '';
+			$template_args['city']['label'] = ! empty ( $billing_info['reg-page-billing-city']['label'] ) ? $billing_info['reg-page-billing-city']['label'] :  __( 'City', 'event_espresso' );
 			
-			$template_args['state']['value'] = $billing_info['reg-page-billing-state']['value'];
-			$template_args['state']['label'] = $billing_info['reg-page-billing-state']['label'];
+			$template_args['state']['value'] = ! empty ( $billing_info['reg-page-billing-state']['value'] ) ? $billing_info['reg-page-billing-state']['value'] : '';
+			$template_args['state']['label'] = ! empty ( $billing_info['reg-page-billing-state']['label'] ) ? $billing_info['reg-page-billing-state']['label'] :  __( 'State', 'event_espresso' );
 			
 			$template_args['country']['value'] = ! empty ( $billing_info['reg-page-billing-country']['value'] ) ? $billing_info['reg-page-billing-country']['value'] : '';
-			$template_args['country']['label'] = ! empty ( $billing_info['reg-page-billing-country']['label'] ) ? $billing_info['reg-page-billing-country']['label'] : 'Country';
+			$template_args['country']['label'] = ! empty ( $billing_info['reg-page-billing-country']['label'] ) ? $billing_info['reg-page-billing-country']['label'] : __( 'Country', 'event_espresso' );
 			
-			$template_args['zip']['value'] = $billing_info['reg-page-billing-zip']['value'];
-			$template_args['zip']['label'] = $billing_info['reg-page-billing-zip']['label'];
+			$template_args['zip']['value'] = ! empty ( $billing_info['reg-page-billing-zip']['value'] ) ? $billing_info['reg-page-billing-zip']['value'] : '';
+			$template_args['zip']['label'] = ! empty ( $billing_info['reg-page-billing-zip']['label'] ) ? $billing_info['reg-page-billing-zip']['label'] :  __( 'Zip Code', 'event_espresso' );
 			
 			if ( isset( $billing_info['reg-page-billing-card-nmbr'] )) {
 				
@@ -469,10 +501,8 @@ class EE_Admin_Transactions {
 	*		@access private
 	*		@return void
 	*/
-	private function _delete_transaction() {
-		echo '<h1>OMG !!! You just deleted everything !!!</h1>';
-		echo '<h1>What have you done ?!?!?</h1>';
-		echo '<h1>Timmy\'s gonna be maaaaaad at you !!! </h1>';
+	private function _send_payment_reminder() {
+		echo '<div style="margin:2em auto; text-align:center;">Vinnie da Finger says: <h1>"YO!!!"</h1><h1>"Time to PAY UP!!!</h1></div>';
 	}
 
 
