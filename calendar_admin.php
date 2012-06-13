@@ -30,7 +30,7 @@ function espresso_add_calendar_to_admin_menu($submenu_page_sections, $espresso_m
 	return $submenu_page_sections;
 }
 
-add_filter('filter_hook_espresso_submenus_management_section', 'espresso_add_calendar_to_admin_menu', 30, 2);
+add_filter('filter_hook_espresso_submenus_settings_section', 'espresso_add_calendar_to_admin_menu', 30, 2);
 
 add_action('admin_head', 'espresso_add_calendar_meta_boxes');
 
