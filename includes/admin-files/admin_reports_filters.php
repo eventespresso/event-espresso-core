@@ -1,7 +1,9 @@
 <?php
 
 function espresso_admin_reports_filters() {
+
 	global $espresso_premium;
+
 	if ($espresso_premium != true)
 		return;
 	?>
@@ -11,12 +13,14 @@ function espresso_admin_reports_filters() {
 
 <?php if ($_REQUEST['page'] == 'events') : ?>
 	<ul class="ee_subsubsub subsubsub">
-		<li><strong>
-	<?php _e('Events', 'event_espresso'); ?>
-				: </strong> </li>
-		<li><a <?php echo (isset($_REQUEST['all']) && $_REQUEST['all'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&all=true">
-	<?php _e('All Events', 'event_espresso'); ?>
-				<span class="count">(<?php echo espresso_total_events(); ?>)</span></a> |</li>
+		<li>
+			<strong><?php _e('Events', 'event_espresso'); ?> : </strong>
+		</li>
+		<li>
+			<a <?php echo (isset($_REQUEST['all']) && $_REQUEST['all'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&all=true">
+				<?php _e('All Events', 'event_espresso'); ?> <span class="count">(<?php echo espresso_total_events(); ?>)</span>
+			</a> |
+			</li>
 		<li><a <?php echo (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') ? ' class="current" ' : '' ?> href="admin.php?page=events&today=true">
 	<?php _e('Today', 'event_espresso'); ?>
 				<span class="count">(<?php echo espresso_total_events_today(); ?>)</span></a> |</li>
@@ -26,7 +30,7 @@ function espresso_admin_reports_filters() {
 	</ul>
 <?php endif; ?>
 
-<?php if ($_REQUEST['page'] == 'attendees') : ?>
+<?php if ($_REQUEST['page'] == 'attendees' || $_REQUEST['page'] == 'registrations') : ?>
 	<ul class="ee_subsubsub subsubsub">
 		<li><strong>
 	<?php _e('Registrations', 'event_espresso'); ?>
@@ -50,7 +54,7 @@ function espresso_admin_reports_filters() {
 
 	<div style="clear:both"></div>
 
-	<?php if ($_REQUEST['page'] == 'events' || $_REQUEST['page'] == 'attendees') { ?>
+	<?php if ($_REQUEST['page'] == 'events' || $_REQUEST['page'] == 'attendees' || $_REQUEST['page'] == 'registrations') { ?>
 		<div class="tablenav">
 			<div class="alignleft actions">
 				<form id="form2" name="form2" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
@@ -86,7 +90,7 @@ function espresso_admin_reports_filters() {
 							?>
 							<?php
 							$_POST['month_range'] = isset($_POST['month_range']) ? $_POST['month_range'] : '';
-							espresso_event_months_dropdown($_POST['month_range']); //echo $_POST[ 'month_range' ];
+							echo espresso_event_months_dropdown($_POST['month_range']); //echo $_POST[ 'month_range' ];
 							?>
 							<input type="submit" class="button-secondary" value="Filter Month" id="post-query-submit">
 							<?php
