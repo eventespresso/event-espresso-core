@@ -543,9 +543,7 @@ if (!function_exists('espresso_calendar')) {
 						//if(event.in_thickbox_url){
 						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
 						//}
-						if(event.expired) {
-							element.addClass('expired');
-						}
+
 						<?php
 						//Adds the themeroller styles to the links in the calendar
 						if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
@@ -560,9 +558,14 @@ if (!function_exists('espresso_calendar')) {
 
 						if(event.event_img_thumb){
 							element.addClass('event-has-thumb');							
-							element.attr( 'rel', event.day );
+							element.attr( 'rel', event.day ).attr( 'id', 'EVT_ID-'+event.id );
 							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
+						
+						if( event.expired ) {
+							element.addClass('expired');
+						}
+						
 			<?php
 					if ($espresso_calendar['show_time'] == true) {
 			?>				
@@ -643,10 +646,9 @@ if (!function_exists('espresso_calendar')) {
 								default :
 								break;
 								}*/
+
+						 		
 								
-						if( event.expired!='' ){
-							$jaer('a.fc-event').addClass('expired');
-						}								
 
 					},
 
@@ -708,56 +710,74 @@ if (!function_exists('espresso_calendar')) {
 
 				setTimeout(  
 					function() {  
-
+						
+						// establish vars we need to resize calendar cells properly
+						var evtID = 0;
 						var day = 0;
 						var days = new Array();
 						var heights = new Array();
 						var dayHeights = new Array();
-						var imgsPerDay = new Array();
-						var prevEventHeight = 0;
-						$jaer('.event-has-thumb').each( function(index){
+						var calDay = 0;
+						var dayClass = '';
+						var parentRow;
+						var target;
+						var rowOffset;
+						var targetOffset;
+						var newTop = 0;						
+						var calendarOffset = $jaer('.fc-content').offset();						
+						var daysOffset = 0;
+
+						/// calculate the day offset that the calendar uses
+						$jaer.each( [ 0, 1, 2, 3, 4, 5, 6 ], function(index, value) { 
+							dayClass = '.fc-day'+value;
+							if ( ! $jaer( dayClass ).hasClass('fc-other-month') && daysOffset == 0 ) {					
+								daysOffset = parseInt( value );
+							}
+						});
+						daysOffset = daysOffset - 1;
+						
+						
+						$jaer('.fc-event').each( function(index){ 
+						
+							// grab event ID
+							evtID = $jaer(this).attr( 'id' );
+							
+							// determine what day this event is on
 							day = parseInt( $jaer(this).attr( 'rel' ));
-							days[index] = day;
-							heights[index] = $jaer(this).find('.fc-event-inner').outerHeight();
+							calDay = day + daysOffset;
+							dayClass = '.fc-day'+calDay;
+							
+							// store days and heights in arrays
+							days[ evtID ] = day;							
+							heights[ evtID ] = parseInt( $jaer(this).find('.fc-event-inner').outerHeight() );
+							// now store that data together
 							if ( dayHeights[day] == undefined ) {
 								dayHeights[day] = 0;
 							}
-							dayHeights[day] = parseInt( dayHeights[day] ) + parseInt( heights[index] );					
-		
-							if ( imgsPerDay[ day ] == undefined ) {
-								imgsPerDay[ day ] = 0;
-							}
-							imgsPerDay[ day ] = imgsPerDay[ day ] + 1;
+							// sum the height of all calendar boxes for this day
+							dayHeights[day] = dayHeights[day] + heights[evtID];
+
+							// find parent row and target div we need to adjust height of
+							parentRow = $jaer( dayClass ).closest( 'tr' );
+							target = parentRow.children('.fc-first').find('.fc-day-content').children('div');
+							target.css({ 'height' : dayHeights[ day ] + 6 });
 							
-							if ( imgsPerDay[ day ] > 1 ) {
-								prevEvent = $jaer(this).siblings('a[rel="'+day+'"]');
-								prevEventTitle = prevEvent.find('.fc-event-title').outerHeight();
-								prevEventTime = prevEvent.find('.fc-event-time').outerHeight();
-								prevEventImg = prevEvent.find('img').outerHeight();
-								prevEventHeight = prevEventTitle + prevEventTime + prevEventImg + 8;
-								prevEventTop = prevEvent.css( 'top' );
-								newTop = prevEventHeight + parseInt( prevEventTop.replace('px', '')) + 4;
-								$jaer(this).css({ 'top' : newTop })
+							// determine row offset 
+							targetOffset = target.offset();
+							targetOffset.top = targetOffset.top - calendarOffset.top; 
+							
+							// if this is not the first event
+							if ( dayHeights[day] > heights[evtID] ) {
+								newTop = dayHeights[day] - heights[evtID] + 3;
+							} else {
+								newTop = 0;
 							}
-						});											
-		
-						var day_modifier = 0;
-						var day_class = '';
-						$jaer.each( [ 0, 1, 2, 3, 4, 5, 6 ], function(index, value) { 
-							day_class = '.fc-day'+value;
-							if ( ! $jaer( day_class ).hasClass('fc-other-month') && day_modifier == 0 ) {					
-								day_modifier = value;
-							}
-						});
-						day_modifier = day_modifier - 1;
-						
-						var cal_day = 0;
-						$jaer.each( days, function(index, value) { 		
-							cal_day = parseInt( days[index] ) + parseInt( day_modifier );
-							day_class = '.fc-day'+cal_day;
-							var target = $jaer( day_class ).closest( 'tr' ).children('.fc-first').find('.fc-day-content').children('div');
-							target.css({ 'height' : dayHeights[ days[index] ] + 4 });
-						});					
+							
+							// set new offset for event
+							newTop = newTop + targetOffset.top + 3;
+							$jaer(this).css({ 'top' : newTop });
+							
+						});													
 					
 					},  
 					250  
