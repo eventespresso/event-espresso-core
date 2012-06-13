@@ -5,6 +5,7 @@ function espresso_thank_you_page() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$EE_Session = EE_Session::instance();
 	$session_data = $EE_Session->get_session_data();
+
 	switch ($session_data['gateway_data']['type']) {
 		case 'off-site':
 			$selected_gateway = $session_data['gateway_data']['selected_gateway'];
@@ -15,6 +16,7 @@ function espresso_thank_you_page() {
 			$SPCO = EE_Single_Page_Checkout::instance();
 			$SPCO->process_registration_payment(FALSE);
 	}
+
 	if (!empty($session_data['txn_results'])) {
 		//printr( $session_data);
 		$grand_total = $session_data['_cart_grand_total_amount'];
@@ -40,6 +42,15 @@ function espresso_thank_you_page() {
 		$gateway_data['selected_gateway'] = null;
 		$gateway_data['type'] = null;
 		$EE_Session->set_session_data($gateway_data, 'gateway_data');
+
+	} else {
+
+		echo '
+		<h2>' . __( "Oops! Don't quite know how you ended up here, but it doesn't appear that you have registered for anything. Thanks for visiting the site anyways. ", 'event_espresso' ) . '</h2>
+		<p>
+			' . __( "If you were looking to register, you might want to have a look here:  ", 'event_espresso' ) . '<a href="'.espresso_get_reg_page_full_url().'">' . __( "Events", 'event_espresso' ) . '</a><br /><br /><br />
+		</p>';
+
 	}
 }
 
