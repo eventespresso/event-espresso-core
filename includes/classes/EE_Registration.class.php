@@ -115,14 +115,14 @@ class EE_Registration {
 	
 	
     /**
-    *	Price Paid
+    *	Final Price
 	* 
     *	Final Price for ticket after all modifications
 	* 
 	*	@access	private
     *	@var float	
     */
-	private $_REG_price_paid = NULL;	
+	private $_REG_final_price = NULL;	
 	
 	
 	
@@ -145,6 +145,18 @@ class EE_Registration {
     *	@var string	
     */
 	private $_REG_code = NULL;	
+	
+	
+	
+    /**
+    *	Registration URL Link
+	* 
+    *	a unique string for use in email links, etc
+	* 
+	*	@access	private
+    *	@var string	
+    */
+	private $_REG_url_link = NULL;	
 	
 	
 	
@@ -207,9 +219,10 @@ class EE_Registration {
 	* @param 		int 				$PRC_ID 							Transaction ID
 	* @param 		int				$STS_ID		 					Status ID
 	* @param 		int				$REG_date					 	Registration Date
-	* @param 		float				$REG_price_paid			Price Paid
+	* @param 		float				$REG_final_price			Price Paid
 	* @param 		string			$REG_session  				PHP Session ID
 	* @param 		string 			$REG_code  					Registration Code
+	* @param 		string 			$REG_url_link					Registration URL Link
 	* @param 		boolean		$REG_is_primary 			Is Primary Attendee
 	* @param 		boolean		$REG_is_group_reg		Is Group Registration
 	* @param 		boolean		$REG_att_is_going		 	Attendee Is Going
@@ -224,9 +237,10 @@ class EE_Registration {
 													$PRC_ID = NULL, 
 													$STS_ID = NULL, 
 													$REG_date = NULL, 
-													$REG_price_paid = NULL, 
+													$REG_final_price = NULL, 
 													$REG_session = NULL, 
 													$REG_code = NULL, 
+													$REG_url_link = NULL, 
 													$REG_is_primary = NULL, 
 													$REG_is_group_reg = NULL, 
 													$REG_att_is_going = NULL, 
@@ -243,9 +257,10 @@ class EE_Registration {
 		$this->_PRC_ID 						= $PRC_ID;
 		$this->_STS_ID 						= $STS_ID;
 		$this->_REG_date 					= $REG_date;
-		$this->_REG_price_paid		= $REG_price_paid;
+		$this->_REG_final_price		= $REG_final_price;
 		$this->_REG_session 				= $REG_session;
 		$this->_REG_code					= $REG_code;
+		$this->_REG_url_link				= $REG_url_link;
 		$this->_REG_is_primary 		= $REG_is_primary;
 		$this->_REG_is_group_reg 	= $REG_is_group_reg;
 		$this->_REG_att_is_going 	= $REG_att_is_going;
@@ -327,6 +342,20 @@ class EE_Registration {
 
 
 	/**
+	*		Set Registration URL Link 
+	* 
+	* 		@access		public		
+	*		@param		string		$REG_url_link 		Registration URL Link 
+	*/	
+	public function set_reg_url_link( $REG_url_link = FALSE ) {		
+		if ( ! $this->_check_for( $REG_url_link, 'Registration URL Link' )) { return FALSE; }
+		$this->_REG_url_link = wp_strip_all_tags( $REG_url_link );
+		return TRUE;
+	}
+
+
+
+	/**
 	*		Set Is Primary Attendee
 	* 
 	* 		@access		public		
@@ -391,11 +420,11 @@ class EE_Registration {
 	*		Set final Price Paid for ticket after all modifications
 	* 
 	* 		@access		public		
-	*		@param		float		$REG_price_paid 		Price Paid
+	*		@param		float		$REG_final_price 		Price Paid
 	*/	
-	public function set_price_paid( $REG_price_paid = FALSE ) {		
-		if ( ! $REG_price_paid ) { return FALSE; }
-		$this->_REG_price_paid = abs( $REG_price_paid );
+	public function set_price_paid( $REG_final_price = FALSE ) {		
+		if ( ! $REG_final_price ) { return FALSE; }
+		$this->_REG_final_price = abs( $REG_final_price );
 		return TRUE;
 	}
 
@@ -463,9 +492,10 @@ class EE_Registration {
 				'PRC_ID' 						=> $this->_PRC_ID,
 				'STS_ID' 						=> $this->_STS_ID,
 				'REG_date' 					=> $this->_REG_date,
-				'REG_price_paid' 		=> $this->_REG_price_paid,
+				'REG_final_price' 		=> $this->_REG_final_price,
 				'REG_session' 				=> $this->_REG_session,
 				'REG_code'					=> $this->_REG_code,
+				'REG_url_link'				=> $this->_REG_url_link,
 				'REG_is_primary' 		=> $this->_REG_is_primary,
 				'REG_is_group_reg' 	=> $this->_REG_is_group_reg,
 				'REG_att_is_going' 		=> $this->_REG_att_is_going,
@@ -520,7 +550,7 @@ class EE_Registration {
 	private function _check_for( $var = FALSE, $var_name ) {
 		global $espresso_notices;
 		if ( ! $var ) {
-			$espresso_notices['errors'][] = 'No '.$var_name.' value was supplied.';
+			$espresso_notices['errors'][] = 'No value for '.$var_name.' was supplied.';
 			return FALSE;
 		} else {
 			return TRUE;
@@ -597,6 +627,16 @@ class EE_Registration {
 
 
 	/**
+	*		get Registration URL Link
+	* 		@access		public
+	*/	
+	public function reg_url_link() {
+		return $this->_REG_url_link;
+	}
+
+
+
+	/**
 	*		get Is Primary Attendee
 	* 		@access		public
 	*/	
@@ -641,7 +681,7 @@ class EE_Registration {
 	* 		@access		public
 	*/	
 	public function price_paid() {
-		return $this->_REG_price_paid;
+		return $this->_REG_final_price;
 	}
 
 
