@@ -763,29 +763,32 @@ function espresso_email_message($id) {
 }
 
 function espresso_category_dropdown($current_value = '') {
+
 	global $wpdb;
+
+	$ecd = '';
 
 	$strQuery = "select id, category_name from " . EVENTS_CATEGORY_TABLE;
 	$data = $wpdb->get_results($strQuery, ARRAY_A);
 	//print_r($data);
 
 	if ($wpdb->num_rows > 0) {
-		echo '<select name="category_id" class="chzn-select" style="width:160px;">';
-		echo '<option value="">' . __('Show All Categories', 'event_espresso') . '</option>';
+		$ecd .= '<select name="category_id" class="" style="width:160px;">';
+		$ecd .= '<option value="">' . __('Show All Categories', 'event_espresso') . '</option>';
 
 		/*		 * * loop over the results ** */
 		foreach ($data as $row) {
 			/*			 * * create the options ** */
-			echo '<option value="' . $row["id"] . '"';
+			$ecd .= '<option value="' . $row["id"] . '"';
 			if ($row["id"] == $current_value) {
-				echo ' selected';
+				$ecd .= ' selected';
 			}
-			echo '>' . stripslashes_deep($row["category_name"]) . '</option>' . "\n";
+			$ecd .= '>' . stripslashes_deep($row["category_name"]) . '</option>' . "\n";
 		}
-		echo "</select>";
-	} else {
-		return;
+		$ecd .= "</select>";
 	}
+
+	return $ecd;
 }
 
 /**
@@ -816,24 +819,17 @@ function event_espresso_list_categories($event_id = 0) {
 
 function espresso_attendees_by_month_dropdown($current_value = '') {
 	global $wpdb;
-
-	$strQuery = "select id, date from " . EVENTS_ATTENDEE_TABLE . " group by YEAR(date), MONTH(date) ";
-	//$rsrcResult = mysql_query($strQuery);
-	$data = $wpdb->get_results($strQuery, ARRAY_A);
-	//print_r($data);
+	$SQL = "SELECT REG_date FROM " . $wpdb->prefix . "esp_registration GROUP BY YEAR(REG_date), MONTH(REG_date)";
+	$dates = $wpdb->get_results($SQL, ARRAY_A);
 
 	if ($wpdb->num_rows > 0) {
-		echo '<select name="month_range" class="chzn-select wide">';
+		echo '<select name="month_range" class="wide">';
 		echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
-
-		/*		 * * loop over the results ** */
-		foreach ($data as $row) {
-			/*			 * * create the options ** */
-			echo '<option value="' . event_espresso_no_format_date($row["date"], $format = 'Y-m-d') . '"';
-			if (event_espresso_no_format_date($row["date"], $format = 'Y-m-d') == $current_value) {
-				echo ' selected';
-			}
-			echo '>' . event_espresso_no_format_date($row["date"], $format = 'F  Y') . '</option>' . "\n";
+		foreach ($dates as $row) {
+			$option_date =  date( 'M Y', $row["date"] );
+			echo '<option value="' . $option_date . '"';
+			echo $option_date == $current_value ? ' selected="selected=selected"' : '';
+			echo '>' . $option_date . '</option>' . "\n";
 		}
 		echo "</select>";
 	} else {
