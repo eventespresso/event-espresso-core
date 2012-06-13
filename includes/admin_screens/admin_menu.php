@@ -177,6 +177,10 @@ if (!function_exists('add_event_espresso_menus')) {
 		} else {
 			$espresso_manager = array('espresso_manager_events' => '', 'espresso_manager_categories' => '', 'espresso_manager_form_groups' => '', 'espresso_manager_form_builder' => '', 'espresso_manager_groupons' => '', 'espresso_manager_discounts' => '', 'espresso_manager_event_emails' => '', 'espresso_manager_personnel_manager' => '', 'espresso_manager_general' => '', 'espresso_manager_calendar' => '', 'espresso_manager_members' => '', 'espresso_manager_payment_gateways' => '', 'espresso_manager_social' => '', 'espresso_manager_addons' => '', 'espresso_manager_support' => '', 'espresso_manager_venue_manager' => '', 'espresso_manager_pricing' => '');
 		}
+		
+		if ( ! isset( $espresso_manager['espresso_manager_pricing'] )) {
+			$espresso_manager['espresso_manager_pricing'] = '';
+		}
 
 		$menu_pages = array(
 				'events' => array(
@@ -202,16 +206,25 @@ if (!function_exists('add_event_espresso_menus')) {
 				'registrations' => array(
 						TRUE,
 						'events',
-						__('Event Espresso - Registration Overview', 'event_espresso'),
+						__('Event Espresso - Registrations Overview', 'event_espresso'),
 						__('Registrations', 'event_espresso'),
 						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
-						'attendees',
-						'event_espresso_manage_attendees'
+						'registrations',
+						'event_espresso_manage_registrations'
 				),
+//				'attendees' => array(
+//						TRUE,
+//						'events',
+//						__('Event Espresso - Attendees Overview', 'event_espresso'),
+//						__('Attendees', 'event_espresso'),
+//						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
+//						'attendees',
+//						'event_espresso_manage_attendees'
+//				),
 				'transactions' => array(
 						TRUE,
 						'events',
-						__('Event Espresso - Transactions', 'event_espresso'),
+						__('Event Espresso - Transactions Overview', 'event_espresso'),
 						__('Transactions', 'event_espresso'),
 						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
 						'transactions',
