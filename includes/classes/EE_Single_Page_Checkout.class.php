@@ -1513,7 +1513,7 @@ class EE_Single_Page_Checkout {
 																	$transaction->datetime(), 
 																	$txn_results['method'], 
 																	$txn_results['amount'],
-																	$gateway_data['active_gateways'][$selected_gateway]['display_name'],
+																	$gateway_data['active_gateways'][ $gateway_data['selected_gateway'] ]['display_name'],
 																	$txn_results['response_msg'],
 																	$txn_results['transaction_id'],
 																	NULL,
@@ -1525,8 +1525,14 @@ class EE_Single_Page_Checkout {
 			}
 		}
 		
-		$transaction->set_total($txn_results['amount']);
-		$transaction->set_status($status);
+		if ( $payment->amount() >= $transaction->total() ) {
+			$txn_status = 'TCM';
+		} else {
+			$txn_status = 'TOP';
+		} 
+		
+		$transaction->set_paid($txn_results['amount']);
+		$transaction->set_status($txn_status);
 		$transaction->set_details( $txn_results );
 		unset( $session['transaction'] );
 		$transaction->set_session_data( $session );
