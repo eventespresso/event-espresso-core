@@ -1503,8 +1503,12 @@ class EE_Single_Page_Checkout {
 				do_action('action_hook_espresso_reg_incomplete');
 				break;
 		}
-
-		if ( $txn_results['amount'] > 0 ) {
+		
+		$txn_status = 'TOP';
+		
+		// did transaction require payment ? or was it free ?
+		if ( $transaction->total() > 0 ) {
+		
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
 			EEM_Payment::instance();
 			$payment = new EE_Payment( 
@@ -1523,13 +1527,19 @@ class EE_Single_Page_Checkout {
 			if (!$results) {
 				$error_msg = __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
 			}
-		}
 		
-		if ( $payment->amount() >= $transaction->total() ) {
-			$txn_status = 'TCM';
+//printr( $payment, '$payment  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+
+		
+			if ( $payment->amount() >= $transaction->total() ) {
+				$txn_status = 'TCM';
+			} 
+			
 		} else {
-			$txn_status = 'TOP';
-		} 
+			// free events get set as completed too !
+			$txn_status = 'TCM';
+		}
 		
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_status($txn_status);
@@ -1548,20 +1558,9 @@ class EE_Single_Page_Checkout {
 
 		$transaction->update();
 
+//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+//die();
 
-
-/*		global $espresso_notices;
-		$espresso_notices['success'][] = $success_msg;
-		$espresso_notices['errors'][] = $error_msg;
-
-//		$espresso_notices = $EE_VnS->return_notices();
-		$notices = espresso_get_notices(FALSE);
-		echo $notices;
-
-//		$error_msg = $notices['errors'];
-//		$response_data = array( 'success' => $notices['success'], 'error' => $notices['errors'], 'continue' => $continue_reg );
-//		echo json_encode($response_data);
-		die();*/
 
 		if( $perform_redirect ) {
 			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
