@@ -210,7 +210,7 @@ class EE_Transaction {
 			$espresso_notices['errors'][] = 'No payment amount or an invalid payment amount was supplied.';
 			return FALSE;
 		}	
-		$this->_TXN_total += $payment;
+		$this->_TXN_paid += $payment;
 		return TRUE;
 	}
 
