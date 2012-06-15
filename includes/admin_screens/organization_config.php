@@ -147,15 +147,34 @@ function espresso_org_confg_output() {
 
 			window.send_to_editor = function(html) {
 				if(header_clicked) {
+					//Remove old image
+					jQuery("#upload_image").val('');
+					jQuery("p.default-logo-thumb").remove();
+					jQuery("p#image-display").remove();
+					jQuery('#remove-image').remove();
+					
+					//Add new image
 					imgurl = jQuery('img',html).attr('src');
 					jQuery('#' + formfield).val(imgurl);
-					jQuery('#default-logo-image').append("<p><img src='"+imgurl+"' alt='' /></p>");
+					jQuery('#default-logo-image').append("<p id='image-display'><img src='"+imgurl+"' alt='' /></p>");
 					header_clicked = false;
 					tb_remove();
 				} else {
 					window.original_send_to_editor(html);
 				}
 			}
+			
+			// process the remove link in the metabox
+			jQuery('#remove-image').click(function(){
+				var answer = confirm('<?php _e('Do you really want to delete this image? Please remember to save your settings to complete the removal.', 'event_espresso'); ?>');
+				if (answer){
+					jQuery("#upload_image").val('');
+					jQuery("p.default-logo-thumb").remove();
+					jQuery("p#image-display").remove();
+					jQuery('#remove-image').remove();
+				}
+				return false;
+			});
 
 		});
 		//]]>
@@ -257,7 +276,7 @@ function espresso_org_settings_meta_box() {
 			</tbody>
 		</table>
 		<h4>
-			<?php _e('Images', 'event_espresso'); ?>
+			<?php _e('Logo', 'event_espresso'); ?>
 		</h4>
 		<table class="form-table">
 			<tbody>
@@ -270,6 +289,7 @@ function espresso_org_settings_meta_box() {
 							<input id="upload_image_button" type="button" value="Upload Image" />
 							<?php if ($org_options['default_logo_url'] != '') { ?>
 								<p class="default-logo-thumb"><img src="<?php echo $org_options['default_logo_url'] ?>" alt="" /></p>
+								<p><a id='remove-image' href='#' title='Remove this image' onclick='return false;'><?php _e('Remove Image', 'event_espresso'); ?></a></p>
 							<?php } ?>
 						</div>
 						<div id="espresso_default_logo_info" class="pop-help" style="display:none">
