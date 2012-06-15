@@ -556,9 +556,10 @@ if (!function_exists('espresso_calendar')) {
 						}
 						?>
 
+						element.attr( 'rel', event.day ).attr( 'id', 'EVT_ID-'+event.id );
+
 						if(event.event_img_thumb){
 							element.addClass('event-has-thumb');							
-							element.attr( 'rel', event.day ).attr( 'id', 'EVT_ID-'+event.id );
 							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
 						
@@ -761,10 +762,9 @@ if (!function_exists('espresso_calendar')) {
 							parentRow = $jaer( dayClass ).closest( 'tr' );
 							target = parentRow.children('.fc-first').find('.fc-day-content').children('div');
 							target.css({ 'height' : dayHeights[ day ] + 6 });
-							
-							// determine row offset 
+
 							targetOffset = target.offset();
-							targetOffset.top = targetOffset.top - calendarOffset.top; 
+							targetTop = targetOffset.top - calendarOffset.top; 							
 							
 							// if this is not the first event
 							if ( dayHeights[day] > heights[evtID] ) {
@@ -774,7 +774,7 @@ if (!function_exists('espresso_calendar')) {
 							}
 							
 							// set new offset for event
-							newTop = newTop + targetOffset.top + 3;
+							newTop = newTop + targetTop + 3;
 							$jaer(this).css({ 'top' : newTop });
 							
 						});													

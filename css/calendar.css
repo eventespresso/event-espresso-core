@@ -299,7 +299,7 @@ a.fc-event {
 
 .fc-event-title {
 	margin: 0 6px;
-	padding: 0 1px;
+	padding:6px 1px 0;
 	}
 
 .fc .ui-resizable-handle { /*** TODO: don't use ui-resizable anymore, change class ***/
