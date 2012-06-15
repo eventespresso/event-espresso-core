@@ -186,14 +186,20 @@
 
 		if ( $section != FALSE && $key != FALSE ) {
 			//echo  '1 key : ' . $key . '<br />section : ' . $section . '<br />';
-			return $this->_session_data[ $section ][$key];
+			if ( isset( $this->_session_data[ $section ][$key] )) {
+				return $this->_session_data[ $section ][$key];
+			}			
 		} elseif ( $section != FALSE )  {
 			//echo  '2 key : ' . $key . '<br />section : ' . $section . '<br />';
-			return $this->_session_data[ $section ];
+			if ( isset( $this->_session_data[ $section ] )) {
+				return $this->_session_data[ $section ];
+			}
 		}  else  {
 			//echo  '3 key : ' . $key . '<br />section : ' . $section . '<br />';
 			return $this->_session_data;
 		}
+		
+		return FALSE;
 
 	}
 
