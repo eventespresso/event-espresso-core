@@ -193,6 +193,32 @@ function espresso_org_settings_meta_box() {
 	);
 	?>
 	<div class="padding">
+	<h4>
+			<?php _e('Company Logo', 'event_espresso'); ?>
+		</h4>
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<th><label for="upload_image">
+							<?php _e('Add a Default Logo', 'event_espresso'); ?>
+							<?php echo apply_filters('filter_hook_espresso_help', 'espresso_default_logo_info'); ?> </label></th>
+					<td><div id="default-logo-image">
+							<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $org_options['default_logo_url'] ?>" />
+							<input id="upload_image_button" type="button" value="Upload Image" />
+							<?php if ($org_options['default_logo_url'] != '') { ?>
+								<p class="default-logo-thumb"><img src="<?php echo $org_options['default_logo_url'] ?>" alt="" /><br />
+								<a id='remove-image' href='#' title='Remove this image' onclick='return false;'><?php _e('Remove Image', 'event_espresso'); ?></a></p>
+							<?php } ?>
+						</div>
+						<div id="espresso_default_logo_info" class="pop-help" style="display:none">
+							<h2>
+								<?php _e('Default Logo', 'event_espresso'); ?>
+							</h2>
+							<p><?php echo __('The default logo will be used in your custom invoice, ticketing, certificates, and payment templates.', 'event_espresso'); ?></p>
+						</div></td>
+				</tr>
+			</tbody>
+		</table>
 		<h4>
 			<?php _e('Contact Information', 'event_espresso'); ?>
 			<?php echo apply_filters('filter_hook_espresso_help', 'contact_info'); ?> </h4>
@@ -275,32 +301,7 @@ function espresso_org_settings_meta_box() {
 				</tr>
 			</tbody>
 		</table>
-		<h4>
-			<?php _e('Logo', 'event_espresso'); ?>
-		</h4>
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th><label for="upload_image">
-							<?php _e('Add a Default Logo', 'event_espresso'); ?>
-							<?php echo apply_filters('filter_hook_espresso_help', 'espresso_default_logo_info'); ?> </label></th>
-					<td><div id="default-logo-image">
-							<input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php echo $org_options['default_logo_url'] ?>" />
-							<input id="upload_image_button" type="button" value="Upload Image" />
-							<?php if ($org_options['default_logo_url'] != '') { ?>
-								<p class="default-logo-thumb"><img src="<?php echo $org_options['default_logo_url'] ?>" alt="" /></p>
-								<p><a id='remove-image' href='#' title='Remove this image' onclick='return false;'><?php _e('Remove Image', 'event_espresso'); ?></a></p>
-							<?php } ?>
-						</div>
-						<div id="espresso_default_logo_info" class="pop-help" style="display:none">
-							<h2>
-								<?php _e('Default Logo', 'event_espresso'); ?>
-							</h2>
-							<p><?php echo __('The default logo will be used in your custom invoice, ticketing, certificates, and payment templates.', 'event_espresso'); ?></p>
-						</div></td>
-				</tr>
-			</tbody>
-		</table>
+		
 		<p>
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_saetting_1" />
 		</p>
