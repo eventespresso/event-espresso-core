@@ -437,8 +437,9 @@ if (!function_exists('espresso_calendar')) {
 			$jaer = jQuery.noConflict();
 			jQuery(document).ready(function($jaer) {
 
-				$jaer('#espresso_calendar').fullCalendar({
+				var total_images = 0;
 
+				$jaer('#espresso_calendar').fullCalendar({
 
 					/**
 					 * General Display
@@ -529,7 +530,7 @@ if (!function_exists('espresso_calendar')) {
 
 					//Changes the colors of the events as seen here:
 					//http://code.google.com/p/fullcalendar/issues/detail?id=6&can=1&q=css&colspec=ID%20Type%20Status%20Milestone%20Summary%20Stars
-					eventRender: function(event, element) {
+					eventRender: function( event, element) {
 
 						// set an event category class
 						//alert(event.className);
@@ -559,6 +560,7 @@ if (!function_exists('espresso_calendar')) {
 						element.attr( 'rel', event.day ).attr( 'id', 'EVT_ID-'+event.id );
 
 						if(event.event_img_thumb){
+							total_images = parseInt( total_images ) + 1;
 							element.addClass('event-has-thumb');							
 							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
@@ -707,8 +709,11 @@ if (!function_exists('espresso_calendar')) {
 						else $jaer('#loading').hide();
 					}
 
+											
 				});
-
+				
+				var imgTimeout = total_images * 50;
+				
 				setTimeout(  
 					function() {  
 						
@@ -777,12 +782,15 @@ if (!function_exists('espresso_calendar')) {
 							newTop = newTop + targetTop + 3;
 							$jaer(this).css({ 'top' : newTop });
 							
-						});													
+						});		
+						
+											
 					
 					},  
-					250  
+					imgTimeout 
 				); 		
-											
+
+
 			});
 	
 
