@@ -127,7 +127,7 @@ function espresso_org_confg_output() {
 	</div>
 	<?php
 	// Help Pop-up Boxes
-	include(EVENT_ESPRESSO_INCLUDES_DIR . 'settings/help.php');
+	include('organization_config_help.php');
 	echo event_espresso_custom_email_info();
 	?>
 	<script type="text/javascript" charset="utf-8">
