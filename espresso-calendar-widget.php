@@ -25,7 +25,7 @@
 					//Enables/disables use of jQuery UI theming.
 					//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
 
-					if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
+					if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
 						$espresso_calendar_widget .= 'theme: true,';
 					}
 
