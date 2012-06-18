@@ -579,13 +579,15 @@ if (!function_exists('espresso_calendar')) {
 								}
 								
 								if ( event.startTime != false && event.endTime != '' && event.endTime != undefined ) {
-									event.startTime = event.startTime + ' - <span class="event-end-time">' + event.endTime + '</span>';
+									event.endTime = '<span class="event-end-time">' + event.endTime + '</span>';
+								} else {
+									event.endTime = '';
 								}
 								
 								if ( event.startTime ) {
-									element.find('.fc-event-title').after($jaer('<p class="time-display-block">' + event.startTime + '</p>'));
+									element.find('.fc-event-title').after($jaer('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
 								}
-								
+
 			<?php
 					}
 
