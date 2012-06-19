@@ -79,6 +79,8 @@ function espresso_display_edit_event($event) {
 		<div id="icon-options-event" class="icon32"> </div>
 
 		<h2><?php _e('Event Editor', 'event_espresso'); ?></h2>
+		
+		<?php echo espresso_get_notices(); ?>
 
 		<form name="form" method="post" action="<?php echo $edit_event_form_url; ?>">
 			<?php

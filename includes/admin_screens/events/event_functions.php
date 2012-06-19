@@ -242,9 +242,7 @@ function espresso_event_editor_date_time_metabox($event) {
 
 	global $times;
 	// grab event times
-	if ( ! $times = $DTM_MDL->get_all_datetimes_for_event( $event->id )) {
-		$times = $DTM_MDL->create_new_blank_datetime();
-	}
+	$times = $DTM_MDL->get_all_event_dates( $event->id );
 	// grab reg times
 	//$reg_times = $DTM_MDL->get_all_reg_dates($event->id);
 	
@@ -1064,15 +1062,15 @@ function espresso_save_buttons($event) {
 		<?php wp_nonce_field('espresso_form_check', 'ee__event_editor'); ?>
 
 		<div id="delete-action">
-			<?php if ($event->recurrence_id > 0) : ?>
+			<?php /*if ($event->recurrence_id > 0) : ?>
 				<a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $event->recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
 					<?php _e('Delete all events in this series', 'event_espresso'); ?>
 				</a>
-			<?php else: ?>
+			<?php else:*/ ?>
 				<a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete&event_id=<?php echo $event->id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event->event_name . '?', 'event_espresso'); ?>')">
 					<?php _e('Delete Event', 'event_espresso'); ?>
 				</a>
-			<?php endif; ?>
+			<?php //endif; ?>
 		</div>
 		<br/>
 

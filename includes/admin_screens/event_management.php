@@ -5,8 +5,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 function event_espresso_manage_events() {
 	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	define('EVENTS_ADMIN_URL', admin_url('admin.php?page=events'));
-
 
 	$_REQUEST['action'] = isset($_REQUEST['action']) ? wp_strip_all_tags($_REQUEST['action']) : FALSE;
 

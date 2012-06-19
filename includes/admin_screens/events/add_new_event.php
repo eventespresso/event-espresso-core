@@ -66,7 +66,7 @@ function add_new_event() {
 	$event->certificate_id = 0;
 	$event->post_id = '';
 	$event->slug = '';
-	$event->recurrence_id = 0;
+	$event->venue_id = FALSE;
 	$event->venue_title = '';
 	$event->venue_url = '';
 	$event->venue_phone = '';
