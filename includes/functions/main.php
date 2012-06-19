@@ -235,7 +235,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 		
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
 		$DTM = EEM_Datetime::instance();
-		$datetimes = $DTM->get_all_datetimes_for_event($event_id);
+		$datetimes = $DTM->get_all_event_dates($event_id);
 		$start = 10000000000;
 		$regstart = 10000000000;
 		$end = 0;
@@ -1377,10 +1377,12 @@ function printr($var, $var_name = 'ARRAY', $height = 'auto') {
 /**
  * 		compile all error or success messages into one string
  *
- * 		@param		boolean		$format		whether or not to format the messages for display in the WP admin
+ * 		@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
+ * 		@param		boolean		$url_encode			whether or not to urlencode messages for use as REQUEST vars
+ * 		@param		boolean		$remove_empty		whether or not to unset empty messages
  * 		@return 		array
  */
-function espresso_get_notices($format_output = TRUE, $url_encode = FALSE) {
+function espresso_get_notices( $format_output = TRUE, $url_encode = FALSE, $remove_empty = TRUE ) {
 
 	global $espresso_notices;
 
@@ -1442,12 +1444,16 @@ function espresso_get_notices($format_output = TRUE, $url_encode = FALSE) {
 				'success' => $success_messages,
 				'errors' => $error_messages
 		);
-		// remove empty notices						
-		foreach ($notices as $type => $notice) {
-			if (empty($notice)) {
-				unset($notices[$type]);
+		
+		if ( $remove_empty ) {
+			// remove empty notices						
+			foreach ($notices as $type => $notice) {
+				if (empty($notice)) {
+					unset($notices[$type]);
+				}
 			}
 		}
+
 	}
 
 	return $notices;

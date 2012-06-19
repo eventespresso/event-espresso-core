@@ -31,8 +31,12 @@ function espresso_load_admin_ajax_callbacks() {
 
 function espresso_admin_init() {
 	global $org_options, $espresso_premium;
-	if (!is_user_logged_in())
+	if (!is_user_logged_in()) {
 		return;
+	}
+		
+	define('EVENTS_ADMIN_URL', admin_url('admin.php?page=events'));
+
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_menu.php');
