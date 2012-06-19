@@ -398,9 +398,12 @@ function add_event_to_db( ) {
 		
 		
 
-		// Create Event Post Code Here
-		if ($_REQUEST['create_post'] == 'true') {
+		/// Create Event Post Code Here
+		if ( isset( $_REQUEST['create_post'] ) && $_REQUEST['create_post'] == 1 ) {
+
 			$post_type = $_REQUEST['post_type'];
+			
+			
 			if ($post_type == 'post') {
 				if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
 					// Load message from template into message post variable
@@ -415,12 +418,14 @@ function add_event_to_db( ) {
 				} else {
 					_e('There was error finding a post template. Please verify your post templates are available.', 'event_espresso');
 				}
+				
 			} elseif ($post_type == 'espresso_event') {
 				ob_start();
 				echo $event_desc;
 				$post_content = ob_get_contents();
 				ob_end_clean();
 			}
+			
 			$my_post = array();
 
 			$my_post['post_title'] = esc_html($_REQUEST['event']);

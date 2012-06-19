@@ -495,28 +495,10 @@ function update_event() {
 		}
 
 		/// Create Event Post Code Here
-		switch ($_REQUEST['create_post']) {
-			case ! $_REQUEST['create_post']:
-				// check for post id in form input first before just hitting the db
-				if ( isset( $_POST['post_id'] ) && ! empty( $_POST['post_id'] )) {
-					$post_id = absint( $_POST['post_id'] );
-				} else {
-					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
-					$sql .= " WHERE id = '" . $event_id . "' ";
-					$wpdb->get_results($sql);
-					$post_id = $wpdb->last_result[0]->post_id;
-				}
-
-				if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'true') {
-					$sql = array('post_id' => '', 'post_type' => '');
-					$sql_data = array('%d', '%s');
-					$update_id = array('id' => $event_id);
-					$wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
-					wp_delete_post($post_id, 'true');
-				}
-				break;
-
-			case $_REQUEST['create_post']:			
+		if ( isset( $_REQUEST['create_post'] )) {
+		
+			if ( $_REQUEST['create_post'] ) {
+			
 				$post_type = $_REQUEST['post_type'];
 				if ($post_type == 'post') {
 					if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
@@ -634,8 +616,28 @@ function update_event() {
 				$sql_data = array('%d', '%s');
 				$update_id = array('id' => $event_id);
 				$wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
+				
+			} else {
+			
+				// check for post id in form input first before just hitting the db
+				if ( isset( $_POST['post_id'] ) && ! empty( $_POST['post_id'] )) {
+					$post_id = absint( $_POST['post_id'] );
+				} else {
+					$sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
+					$sql .= " WHERE id = '" . $event_id . "' ";
+					$wpdb->get_results($sql);
+					$post_id = $wpdb->last_result[0]->post_id;
+				}
 
-				break;
+				if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'true') {
+					$sql = array('post_id' => '', 'post_type' => '');
+					$sql_data = array('%d', '%s');
+					$update_id = array('id' => $event_id);
+					$wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
+					wp_delete_post($post_id, 'true');
+				}
+				
+			}
 		}
 
 		//Show the saved event notice
