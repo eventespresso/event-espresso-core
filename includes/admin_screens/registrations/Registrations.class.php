@@ -32,27 +32,18 @@ class EE_Admin_Registrations {
 
 	public function __construct() {
 
-		if ( ! function_exists( 'is_admin' ) or  ! current_user_can( 'manage_options' )) {
-		    header('Status: 403 Forbidden');
-		    header('HTTP/1.1 403 Forbidden');
-			wp_die( 'Insufficient privileges!' );
-		    exit();
-		}		
-		
-		global $org_options;
-		define( 'REG_ADMIN_URL', admin_url( 'admin.php?page=registrations' ));
-		define( 'REG_DIR_PATH', plugin_dir_path( __FILE__ ) );
-		define( 'REG_DIR_URL', plugin_dir_url( __FILE__ ) );	
-		define( 'REG_TEMPLATE_PATH', REG_DIR_PATH . 'templates/' );		
-		define( 'REG_TEMPLATE_URL', REG_DIR_URL . 'templates/' );		
-	    define( 'REG_PG_SLUG', 'registrations' );
+	global $org_options;
+//echo '<h4>REG_ADMIN_URL : ' . REG_ADMIN_URL . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>REG_DIR_PATH : ' . REG_DIR_PATH . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>REG_DIR_URL : ' . REG_DIR_URL . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>REG_TEMPLATE_PATH : ' . REG_TEMPLATE_PATH . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>REG_TEMPLATE_URL : ' . REG_TEMPLATE_URL . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>REG_ASSETS_PATH : ' . REG_ASSETS_PATH . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>REG_ASSETS_URL : ' . REG_ASSETS_URL . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>REG_PG_SLUG : ' . REG_PG_SLUG . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 			
 		echo '<style> .xdebug-error { font-size:1.5em; } </style>';
 
-		// add some style
-		$this->load_css();
-		// and make it dance
-		$this->load_js();
 
 		$this->_get_registration_status_array();
 
@@ -73,9 +64,15 @@ class EE_Admin_Registrations {
 				case 'delete_registration':
 					$this->_delete_registration();
 					break;
+					
+				case 'reports':
+					$this->_registration_reports();
+					break;
+					
 			}
 
 		} else {
+			$_REQUEST['action'] = FALSE;
 			$this->_registrations_overview_list_table();
 		}
 
@@ -128,12 +125,20 @@ class EE_Admin_Registrations {
 		$this->_template_args['tab_lnk_setttings'] = __( 'Settings', 'event_espresso' );
 		$this->_template_args['tab_active_setttings'] = '';
 
-		if ( isset( $_REQUEST['registration-reports']  )) {
-			$active_tab = 'reports';
-		} elseif ( isset( $_REQUEST['registration-setttings']  )) {
-			$active_tab = 'setttings';
-		} else {
-			$active_tab = 'overview';
+		switch ( $_REQUEST['action'] ) {
+			
+			case 'reports' :
+				$active_tab = 'reports';
+				break;
+				
+			case 'setttings' :
+				$active_tab = 'setttings';
+				break;
+				
+			default :
+				$active_tab = 'overview';
+
+				
 		}
 
 		$this->_template_args['tab_active_'.$active_tab] = ' nav-tab-active';
@@ -614,6 +619,140 @@ class EE_Admin_Registrations {
 
 
 
+	/**
+	 * 		generates Business Reports regarding Registrations
+	*		@access private
+	*		@return void
+	*/
+	private function _registration_reports() {
+
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	
+		$page_args = array();
+		$reg_reports = array();
+		
+		$page_args['reg_reports'][] = $this->_registrations_per_day_report();  //  option: 'week' defaults to 'month'
+		$page_args['reg_reports'][] = $this->_get_registrations_per_event_report(); //  option: 'week' defaults to 'month'
+//		$page_args['reg_reports'][] = 'chart1';
+		
+		$template_path = REG_TEMPLATE_PATH . 'registration_reports.template.php';
+		$this->_template_args['reg_content'] = espresso_display_template( $template_path, $page_args, TRUE );
+		
+		//printr( $page_args, '$page_args' );
+		
+		// the final template wrapper
+		$this->reg_admin_wrapper();
+		
+	}
+
+
+
+
+
+
+	/**
+	 * 		generates Business Report showing total registratiopns per day
+	*		@access private
+	*		@return void
+	*/
+	private function _registrations_per_day_report( $period = 'month' ) {
+	
+		$report_ID = 'reg-admin-registrations-per-day-report-dv';
+		$report_JS = 'espresso_reg_admin_regs_per_day';
+		
+		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery'), '1.0', TRUE);
+
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+	    $REG = EEM_Registration::instance();
+	 
+		if( $results = $REG->get_registrations_per_day_report( $period ) ) {		
+//			printr( $results, '$registrations_per_day' );
+			$regs = array();
+			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
+			$xmax = 0;
+			$ymax = 0;
+			foreach ( $results as $result ) {
+				$regs[] = array( $result->regDate, (int)$result->total );
+				$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
+				$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
+				$ymax = $result->total > $ymax ? $result->total : $ymax;
+			}
+			
+			$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
+			$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
+			// calculate # days between our min and max dates				
+			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
+			
+			$report_params = array(
+														'title' 	=> 'Total Registrations per Day',
+														'id' 		=> $report_ID,
+														'regs' 	=> $regs,												
+														'xmin' 	=> $xmin,
+														'xmax' 	=> $xmax,
+														'ymax' 	=> ceil($ymax * 1.25),
+														'span' 	=> $span,
+														'width'	=> ceil(900 / $span)												
+													);
+			wp_localize_script( $report_JS, 'regPerDay', $report_params );
+		}
+												
+		return $report_ID;
+	}
+
+
+
+
+
+
+	/**
+	 * 		generates Business Report showing total registratiopns per event
+	*		@access private
+	*		@return void
+	*/
+	private function _get_registrations_per_event_report( $period = 'month' ) {
+	
+		$report_ID = 'reg-admin-registrations-per-event-report-dv';
+		$report_JS = 'espresso_reg_admin_regs_per_event';
+		
+		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery'), '1.0', TRUE);
+
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+	    $REG = EEM_Registration::instance();
+	 
+		if( $results = $REG->get_registrations_per_event_report( $period ) ) {		
+//			printr( $results, '$registrations_per_event' );
+			$regs = array();
+			$limits = array();
+			$ymax = 0;
+			foreach ( $results as $result ) {
+				$regs[] = array( $result->event_name, (int)$result->total );
+				$ymax = $result->total > $ymax ? $result->total : $ymax;
+			}	
+
+			$span = $period == 'week' ? 9 : 33;
+
+			$report_params = array(
+														'title' 	=> 'Total Registrations per Event',
+														'id' 		=> $report_ID,
+														'regs' 	=> $regs,												
+														'limits' => $limits,												
+														'ymax' 	=> ceil($ymax * 1.25),
+														'span' 	=> $span,
+														'width'	=> ceil(900 / $span)								
+													);
+			wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
+													}
+
+		return $report_ID;
+	}
+
+
+
+
+
+
+
+
 
 	/**
 	 * 		generates HTML for the View Registration Details Admin page
@@ -662,48 +801,122 @@ class EE_Admin_Registrations {
 
 
 
-	/**
-	*		load css
-	*
-	*		@access 		public
-	*		@return 		void
-	*/
-	public function load_css() {
-		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
-		wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
-		wp_register_style('espresso_reg', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/admin_screens/registrations/espresso_registrations_admin.css' );
-		wp_enqueue_style('espresso_reg');
-	}
-
-
-
-
-
-	/**
-	*		load js
-	*
-	*		@access 		public
-	*		@return 		void
-	*/
-	public function load_js() {
-		wp_enqueue_script('jquery-ui-core');
-		wp_enqueue_script('jquery-ui-tabs');
-		wp_enqueue_script('jquery-ui-datepicker');
-		wp_enqueue_script('common');
-		wp_enqueue_script('wp-lists');
-		wp_enqueue_script('postbox');
-		wp_register_script('espresso_reg', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/admin_screens/registrations/espresso_registrations_admin.js', array('jquery'), '1.0', TRUE);
-		wp_enqueue_script('espresso_reg');
-	}
-
-
-
-
-
 }
+
+
+
+
 
 function event_espresso_manage_registrations() {
 	new EE_Admin_Registrations();
 }
+
+
+
+
+
+if ( ! function_exists( 'is_admin' ) or  ! current_user_can( 'manage_options' )) {
+    header('Status: 403 Forbidden');
+    header('HTTP/1.1 403 Forbidden');
+	wp_die( 'Insufficient privileges!' );
+    exit();
+}		
+
+
+define( 'REG_ADMIN_URL', admin_url( 'admin.php?page=registrations' ));
+define( 'REG_DIR_PATH', plugin_dir_path( __FILE__ ) );
+define( 'REG_DIR_URL', plugin_dir_url( __FILE__ ) );	
+define( 'REG_TEMPLATE_PATH', REG_DIR_PATH . 'templates/' );		
+define( 'REG_TEMPLATE_URL', REG_DIR_URL . 'templates/' );		
+define( 'REG_ASSETS_PATH', REG_DIR_PATH . 'css_n_js/' );		
+define( 'REG_ASSETS_URL', REG_DIR_URL . 'css_n_js/' );		
+define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );		
+define( 'REG_PG_SLUG', 'registrations' );
+
+
+
+
+
+/**
+*		add some style
+*
+*		@access 		public
+*		@return 		void
+*/
+function espresso_load_reg_admin_css() {
+	if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'reports' ) {
+		wp_deregister_style('jqplot');
+		wp_enqueue_style('jquery-jqplot-css', JQPLOT_URL . 'jquery.jqplot.min.css');			
+	} else {
+		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
+		wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
+	}	
+	wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css' );
+	wp_enqueue_style('espresso_reg');
+
+}
+add_action('admin_print_styles', 'espresso_load_reg_admin_css');
+
+
+
+
+
+/**
+*		make it dance
+*
+*		@access 		public
+*		@return 		void
+*/
+function espresso_load_reg_admin_js() {
+//	wp_enqueue_script('jquery-ui-core');
+//	wp_enqueue_script('jquery-ui-tabs');
+//	wp_enqueue_script('jquery-ui-datepicker');
+	wp_enqueue_script('common');
+	wp_enqueue_script('wp-lists');
+	wp_enqueue_script('postbox');
+	
+	
+	
+	if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'reports' ) {
+	    wp_deregister_script( 'jquery' );
+	    wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
+	    wp_enqueue_script( 'jquery' );
+		wp_deregister_script('jqplot');
+		wp_deregister_script('jquery-ui-core');
+		wp_deregister_script('jquery-ui-tabs');
+		wp_deregister_script('jquery-ui-datepicker');
+		
+//		wp_enqueue_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
+//		wp_enqueue_script('jqplot-barRenderer', JQPLOT_URL . 'plugins/jqplot.barRenderer.min.js', array('jquery'), '', FALSE);
+//		echo '
+//<!--[if IE]><script language="javascript" type="text/javascript" src="'.JQPLOT_URL.'excanvas.js"></script><![endif]-->
+//';
+		global $is_IE;
+	    if( $is_IE ) {
+	        wp_enqueue_script( 'excanvas' , JQPLOT_URL . 'excanvas.js', '', '', FALSE);
+	    }
+		wp_enqueue_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
+		wp_enqueue_script('jqplot-barRenderer', JQPLOT_URL . 'plugins/jqplot.barRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_enqueue_script('jqplot-canvasTextRenderer', JQPLOT_URL . 'plugins/jqplot.canvasTextRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_enqueue_script('jqplot-canvasAxisTickRenderer', JQPLOT_URL . 'plugins/jqplot.canvasAxisTickRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_enqueue_script('jqplot-categoryAxisRenderer', JQPLOT_URL . 'plugins/jqplot.categoryAxisRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_enqueue_script('jqplot-dateAxisRenderer', JQPLOT_URL . 'plugins/jqplot.dateAxisRenderer.min.js', array('jqplot'), '', FALSE);
+		wp_enqueue_script('jqplot-highlighter', JQPLOT_URL . 'plugins/jqplot.highlighter.min.js', array('jqplot'), '', FALSE);
+		wp_enqueue_script('jqplot-pointLabels', JQPLOT_URL . 'plugins/jqplot.pointLabels.min.js', array('jqplot'), '', FALSE);
+//<script type="text/javascript" src="../src/plugins/jqplot.dateAxisRenderer.min.js"></script>
+//<script type="text/javascript" src="../src/plugins/jqplot.canvasTextRenderer.min.js"></script>
+//<script type="text/javascript" src="../src/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+//<script type="text/javascript" src="../src/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+//<script type="text/javascript" src="../src/plugins/jqplot.barRenderer.min.js"></script>
+
+	} else {
+		wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery'), '1.0', TRUE);
+		wp_enqueue_script('espresso_reg');
+	}		
+
+
+}
+add_action('admin_print_scripts', 'espresso_load_reg_admin_js', 0);
+
 
 // end of file:  includes/admin_screens/registrations/Registrations.class.php
