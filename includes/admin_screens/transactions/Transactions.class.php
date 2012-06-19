@@ -168,6 +168,22 @@ class EE_Admin_Transactions {
 		$template_args['txn_status']['class'] = 'status-' . $this->_transaction->STS_ID;
 
 		$template_args['grand_total'] = $this->_transaction->TXN_total;
+		$template_args['total_paid'] = $this->_transaction->TXN_paid;
+		$amount_due = number_format(( (float)$this->_transaction->TXN_total - (float)$this->_transaction->TXN_paid ), 2 );
+
+
+		if (( $this->_transaction->TXN_total > 0 ) && ( $this->_transaction->TXN_paid > 0 ) && ( $this->_transaction->TXN_paid < $this->_transaction->TXN_total )) {
+			// monies owing
+			$template_args['amount_due'] =  '<span class="txn-overview-part-payment-spn">' . $org_options['currency_symbol'] . ' ' . $amount_due . '</span>';
+			
+		} elseif (( $this->_transaction->TXN_total > 0 ) && ( $this->_transaction->TXN_paid == 0 )) {
+			// no payments made yet
+			$template_args['amount_due'] =  '<span class="txn-overview-no-payment-spn">' . $org_options['currency_symbol'] . ' ' . $amount_due . '</span>';
+			
+		} else {
+			// free event
+			$template_args['amount_due'] =  FALSE;
+		}
 
 		$template_args['currency_sign'] = $org_options['currency_symbol'];
 		// link back to overview
@@ -241,6 +257,7 @@ class EE_Admin_Transactions {
 		}
 
 		$template_args['grand_total'] = $this->_transaction->TXN_total;
+
 
 		$template_args['currency_sign'] = $org_options['currency_symbol'];
 		$txn_status_class = 'status-' . $this->_transaction->STS_ID;
@@ -319,6 +336,23 @@ class EE_Admin_Transactions {
 //		$template_args['txn_details']['session_dump']['label'] = __( 'Session Dump', 'event_espresso' );
 //		$template_args['txn_details']['session_dump']['class'] = 'large-text';
 
+		$template_args['payment_methods'] = array(
+																						'CC' 		=> 'Credit Card',
+																						'CHQ' 	=> 'Cheque',
+																						'CSH' 	=> 'Cash'
+																					);
+
+		$template_args['active_gateways'] = array();
+
+		global $EE_Session;
+		if ( $gateways = $EE_Session->get_session_data( FALSE, 'gateway_data' )) {
+			//echo printr( $gateways, '$gateways' );
+			foreach ( $gateways['active_gateways'] as $gw_key => $gateway ) {
+				$template_args['active_gateways'][ $gw_key ] = $gateways['payment_settings'][ $gw_key ]['display_name'];
+			}
+		}
+		
+		//echo printr( $template_args['active_gateways'], 'active_gateways' );
 		//echo printr( $template_args, '$template_args' );
 		
 		

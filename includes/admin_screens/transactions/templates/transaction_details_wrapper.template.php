@@ -9,7 +9,9 @@
 		<h3><?php echo __( 'Transaction # ', 'event_espresso' ) . $txn_nmbr['value'];?></h3>
 		<h2><?php echo $txn_datetime['value'];?></h2>
 		<h2><?php echo __( 'Transaction Status : ', 'event_espresso' );?><span class="<?php echo $txn_status['class'];?>"><?php echo $txn_status['value'];?></span></h2>
-		
+		<?php if ( $amount_due ) : ?>
+		<h2><?php echo __( 'Total Amount Due : ', 'event_espresso' );?><?php echo $amount_due;?></h2>
+		<?php endif; ?>
 		<?php echo $notices; ?>
 				
 	    <div id="poststuff" class="metabox-holder has-right-sidebar">

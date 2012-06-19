@@ -52,7 +52,8 @@
 	padding:6px 12px; margin: 0;
 	border:1px solid #dfdfdf; background:#fcfcfc;
 	font-family: sans-serif; font-size: 1em; vertical-align:middle;
-}
+}.admin-primary-mbox-tbl.borderless th { padding:6px 12px 0; border:none; background:none; }
+.admin-primary-mbox-tbl.borderless td { padding:0 12px 6px; border:none; background:none; }
 .admin-primary-mbox-tbl tr + tr { border-top:none; }
 .admin-primary-mbox-tbl th + th,
 .admin-primary-mbox-tbl td + td { border-left:none; }
@@ -62,6 +63,10 @@
 .form-table.skinny-rows th, .form-table.skinny-rows td { padding:3px 10px; }
 
 .admin-primary-mbox-total-tr { font-size:1.1em; }
+
+.truncate-50 {
+	 width:50px; height:1em; overflow:hidden;
+}
 
 #txn-admin-gateway-img {
 	position:absolute; top:0; right:2em;
@@ -85,6 +90,7 @@
 
 .display-the-hidden { float:right; padding-left:16px; background: url("../../../images/icons/additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
 .hide-the-displayed { float:right; padding-left:16px; background: url("../../../images/icons/close_additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
+.display-the-hidden.no-icon, .hide-the-displayed.no-icon { padding-left:10px!important;  /*!important*/ background-image:none; }
 
 
 .lt-grey-txt  { color:#999;  text-shadow:none; }

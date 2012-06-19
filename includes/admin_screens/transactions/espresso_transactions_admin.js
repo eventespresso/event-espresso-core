@@ -62,9 +62,11 @@
 		var item_to_display = $(this).attr("rel"); 
 		var control = $(this);
 		// display the target's div container - use slideToggle or removeClass
-		$('#'+item_to_display+'-dv').slideToggle(500, function() {
-			// hide the control element
-			control.addClass('hidden');  
+		$('#'+item_to_display+'-dv').slideToggle(500, function() {		
+			if ( ! control.hasClass('no-hide') ){
+				// hide the control element
+				control.addClass('hidden'); 
+			} 
 			// display the target div's hide link
 			$('#hide-'+item_to_display).removeClass('hidden'); 
 			// if hiding/showing a form input, then id of the form input must = item_to_display
@@ -81,8 +83,10 @@
 		// hide the target's div container - use slideToggle or addClass
 		$('#'+item_to_hide+'-dv').slideToggle(500, function() {
 			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
-			// hide the control element
-			control.addClass('hidden');  
+			if ( ! control.hasClass('no-hide') ){
+				// hide the control element
+				control.addClass('hidden'); 
+			}
 			// display the control element that toggles display of this element
 			$('#display-'+item_to_hide).removeClass('hidden');  
 		}); 

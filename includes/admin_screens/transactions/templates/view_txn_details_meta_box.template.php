@@ -75,6 +75,8 @@
 	<br class="clear"/>
 	
 
+	<?php if ( $grand_total > 0 ) : ?>
+
 	<h4 class="admin-primary-mbox-h4"><?php _e( 'Payment Details', 'event_espresso' );?></h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
@@ -84,12 +86,12 @@
 					<th class="jst-cntr"><?php _e( '', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Date', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( 'Method', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway Response', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway TXN ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'For Your Accounting', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Details', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Method', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Amount', 'event_espresso' );?></th>
 				</tr>
 			</thead>
@@ -97,19 +99,25 @@
 		<?php if ( $payments ) : ?>
 			<?php foreach ( $payments as $PAY_ID => $payment ) : ?>
 				<tr>
-					<th class=" jst-rght"><a class="txn-admin-edit-payment-lnk" href="<?php echo $edit_payment_url;?>&amp;id=<?php echo $PAY_ID;?>" title="<?php _e( 'Edit Payment', 'event_espresso' );?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/edit.png" alt="" /></a>
-					</th>
-					<th class=" jst-rght"><?php echo $PAY_ID;?></th>
-					<th class=" jst-left"><?php echo $payment->timestamp();?></th>
-					<th class=" jst-left"><?php echo $payment->gateway();?></th>
-					<th class=" jst-left"><?php echo $payment->gateway_response();?></th>
-					<th class=" jst-left"><?php echo $payment->gateway_txn_id();?></th>
-					<th class=" jst-left"><?php echo $payment->extra_accntng();?></th>
-					<th class=" jst-left"><?php echo $payment->details();?></th>				
-					<th class=" jst-cntr"><?php echo $payment->method();?></th>
-					<th class=" jst-rght"><?php echo $currency_sign . ' ' . number_format( $payment->amount(), 2 );?></th>
+					<td class=" jst-rght"><a class="txn-admin-edit-payment-lnk" href="<?php echo $edit_payment_url;?>&amp;id=<?php echo $PAY_ID;?>" title="<?php _e( 'Edit Payment', 'event_espresso' );?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/edit.png" alt="" /></a>
+					</td>
+					<td class=" jst-rght"><?php echo $PAY_ID;?></td>
+					<td class=" jst-left"><?php echo $payment->timestamp();?></td>
+					<td class=" jst-cntr"><?php echo $payment->method();?></td>
+					<td class=" jst-left"><?php echo $payment->gateway();?></td>
+					<td class=" jst-left"><?php echo $payment->gateway_response();?></td>
+					<td class=" jst-left"><?php echo $payment->gateway_txn_id();?></td>
+					<td class=" jst-left"><?php echo $payment->extra_accntng();?></td>
+					<td class=" jst-left">
+						<div id="payment-details-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->details();?></div>
+					</td>				
+					<td class=" jst-rght"><?php echo $currency_sign . ' ' . number_format( $payment->amount(), 2 );?></td>
 				</tr>
 			<?php endforeach; // $payment?>
+		<?php else : ?>
+				<tr>
+					<td class=" jst-left" colspan="10"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to do so.', 'event_espresso' ); ?></td>
+				</tr>		
 		<?php endif; // $payments?>
 			</tbody>	
 		</table>
@@ -117,17 +125,70 @@
 	
 	<ul id="txn-admin-payment-options-ul">
 		<li>
-			<a id="txn-admin-add-payment-lnk" class="button-primary" >
+			<a id="display-txn-admin-apply-payment" class="button-primary display-the-hidden no-icon no-hide" rel="txn-admin-apply-payment" >
 				<?php _e( 'Apply Payment', 'event_espresso' );?>
 			</a>
 		</li>
 		<li>
-			<a id="txn-admin-add-payment-lnk" class="button-secondary" >
+			<a id="txn-admin-apply-refund-lnk" class="button-secondary display-the-hidden no-icon no-hide" rel="txn-admin-apply-refund" >
 				<?php _e( 'Apply Refund', 'event_espresso' );?>
 			</a>
 		</li>
 	</ul>	
 	<br class="clear"/>
+	
+	<div id="txn-admin-apply-payment-dv" class="hidden">
+		<h4 class="admin-primary-mbox-h4"><?php _e( 'Apply a Payment to this Transaction', 'event_espresso' );?></h4>
+		<form name="txn-admin-apply-payment-frm">
+			<!--<div class="admin-primary-mbox-tbl-wrap">-->
+				<table class="admin-primary-mbox-tbl borderless">
+					<thead>
+						<tr>
+							<th class="jst-left"><label for="txn-admin-payment-date-inp"><?php _e( 'Payment Date', 'event_espresso' );?></label></th>
+							<th class="jst-left"><label for="txn-admin-payment-method-inp"><?php _e( 'Method of Payment', 'event_espresso' );?></label></th>
+							<th class="jst-left"><label for="txn-admin-payment-gateway-inp"><?php _e( 'Gateway', 'event_espresso' );?></label></th>
+							<th class="jst-left"><label for="txn-admin-payment-gateway-response-inp"><?php _e( 'Gateway Response', 'event_espresso' );?></label></th>
+							<th class="jst-left"><label for="txn-admin-payment-gateway-txn-id-inp"><?php _e( 'Gateway TXN ID', 'event_espresso' );?></label></th>
+						</tr>
+					</thead>
+					<tbody>								
+						<tr>
+							<td class="jst-left">
+								<input name="txn-filter-start-date" id="txn-admin-payment-method-inp" class="datepicker hasDatepicker" type="text" value="<?php echo date( 'F j, Y g:i a' ); ?>">
+							</td>
+							<td class="jst-left">
+								<select name="txn_admin_payment[method]" id="txn-admin-payment-method-slct" type="text" >
+								<?php foreach ( $payment_methods as $method_ID => $method ) : ?>
+									<option value="<?php echo $method_ID; ?>"><?php echo $method; ?>&nbsp;&nbsp;</option>		
+								<?php endforeach; ?>
+								</select>
+							</td>
+							<td class="jst-left">
+								<select name="txn_admin_payment[gateway]" id="txn-admin-payment-method-slct" type="text" >
+								<?php foreach ( $active_gateways as $gateway_ID => $gateway_name ) : ?>
+									<option value="<?php echo $gateway_ID; ?>"><?php echo $gateway_name; ?>&nbsp;&nbsp;</option>		
+								<?php endforeach; ?>
+									<option value="NULL"><?php _e( 'not applicable', 'event_espresso' );?>&nbsp;&nbsp;</option>
+								</select>
+							</td>
+							<td class="jst-left">
+								<input id="txn-admin-payment-gateway-response-inp" name="txn_admin_payment[gateway_response]" type="text" />
+							</td>
+							<td class="jst-left">
+								<input id="txn-admin-payment-gateway-response-inp" name="txn_admin_payment[gateway_response]" type="text" />
+							</td>
+						</tr>								
+					</tbody>	
+				</table>
+			<!--</div>	-->
+		</form>
+	</div>
+	
+	<div id="txn-admin-apply-refund-dv" class="hidden">
+		<h4 class="admin-primary-mbox-h4"><?php _e( 'Apply a Refund to this Transaction', 'event_espresso' );?></h4>
+	</div>
+
+	<?php endif; // $grand_total > 0?>
 	
 </div>
 	
