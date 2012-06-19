@@ -510,6 +510,56 @@ class EEM_Registration extends EEM_Base {
 
 
 	/**
+	*		get the number of registrations per day  for the Registration Admin page Reports Tab
+	* 		@access		public
+	*/
+	public function get_registrations_per_day_report( $period = 'month' ) {
+
+		global $wpdb;
+		$date_mod = strtotime( '-1 ' . $period );
+
+		$SQL = "SELECT DATE(FROM_UNIXTIME(reg.REG_date)) AS 'regDate', COUNT(REG_ID) AS total";
+		$SQL .= ' FROM ' . $this->table_name . ' reg';
+		$SQL .= ' WHERE REG_date >= %d';
+		$SQL .= ' GROUP BY `regDate`';
+		$SQL .= ' ORDER BY REG_date DESC';
+		
+		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+
+	}
+
+
+
+
+
+	/**
+	*		get the number of registrations per event  for the Registration Admin page Reports Tab
+	* 		@access		public
+	*/
+	public function get_registrations_per_event_report( $period = 'month' ) {
+
+		global $wpdb;
+		$date_mod = strtotime( '-1 ' . $period );
+
+		$SQL = "SELECT event_name, reg_limit, COUNT(REG_ID) AS total";
+		$SQL .= ' FROM ' . $this->table_name . ' reg';
+		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
+		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
+		$SQL .= ' WHERE REG_date >= %d';
+		$SQL .= ' AND DTT_is_primary = 1';
+		$SQL .= ' GROUP BY event_name';
+		$SQL .= ' ORDER BY DTT_EVT_start';
+		$SQL .= ' LIMIT 0, 24';
+		
+		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+
+	}
+
+
+
+
+
+	/**
 	*		get all registrations for a specific transaction, possibly excluding one (ie: get all OTHER registrations except this one )
 	* 
 	* 		@access		public
