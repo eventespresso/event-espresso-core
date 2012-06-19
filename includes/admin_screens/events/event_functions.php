@@ -173,17 +173,19 @@ function espresso_event_editor_title_div($event) {
 					<?php echo $event->page_url; ?><input size="50" type="text" tabindex="2" name="slug" id="slug" value ="<?php echo $event->slug; ?>" />
 				</span>
 
-				<a class="button" onclick="prompt('Shortcode:', jQuery('#shortcode').val()); return false;" href="#"><?php _e('Shortcode'); ?></a>
-				<a class="button" onclick="prompt('Short URL:', jQuery('#shortlink').val()); return false;" href="#"><?php _e('Short URL'); ?></a>
-				<a class="button" onclick="prompt('Full URL:', jQuery('#fulllink').val()); return false;" href="#"><?php _e('Full URL'); ?></a>
-				<a class="button" onclick="prompt('Unique Event Identifier:', jQuery('#identifier').val()); return false;" href="#"><?php _e('Identifier'); ?></a>
-				<a class="button" target="_blank" href="<?php echo $event->page_url . $event->slug; ?>/"><?php _e('View Post'); ?></a>
+				<?php if ( ! $event->is_new ) : ?>
+					<a class="button" onclick="prompt('Shortcode:', jQuery('#shortcode').val()); return false;" href="#"><?php _e('Shortcode'); ?></a>
+					<a class="button" onclick="prompt('Short URL:', jQuery('#shortlink').val()); return false;" href="#"><?php _e('Short URL'); ?></a>
+					<a class="button" onclick="prompt('Full URL:', jQuery('#fulllink').val()); return false;" href="#"><?php _e('Full URL'); ?></a>
+					<a class="button" onclick="prompt('Unique Event Identifier:', jQuery('#identifier').val()); return false;" href="#"><?php _e('Identifier'); ?></a>
+					<a class="button" target="_blank" href="<?php echo $event->page_url . $event->slug; ?>/"><?php _e('View Post'); ?></a>
+				<?php endif; ?>
 
 				<input id="shortcode" type="hidden" value='[SINGLEEVENT single_event_id="<?php echo $event->event_identifier; ?>"]'>
 				<input id="shortlink" type="hidden" value="<?php echo add_query_arg(array('ee' => $event->id), $event->page_url); ?>">
 				<input id="fulllink" type="hidden" value="<?php echo $event->page_url . $event->slug; ?>">
 				<input id="identifier" type="hidden" value="<?php echo $event->event_identifier; ?>">
-
+				
 			</div>
 			<!-- /edit-slug-box -->
 		</div>

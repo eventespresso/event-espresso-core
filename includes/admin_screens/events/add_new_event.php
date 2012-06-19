@@ -7,8 +7,10 @@ function add_new_event() {
 	get_currentuserinfo();
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$event = new stdClass();
+	$event->is_new = TRUE;
 	$event->id = 0;
 	$event->event_name = '';
+	$event->start_date = date( 'Y-m-d', time() + (60 * 60 * 24 * 30));
 	$event->event_desc = '';
 	$event->phone = '';
 	$event->externalURL = '';
@@ -50,7 +52,7 @@ function add_new_event() {
 	//echo $sql;
 	$event->q_groups = $wpdb->get_results($sql);
 	$event->num_rows = $wpdb->num_rows;
-	$event->reg_limit = 999;
+	$event->reg_limit = '';
 	$event->allow_multiple = false;
 	$event->additional_limit = 0;
 	$event->is_active = true;

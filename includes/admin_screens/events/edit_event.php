@@ -17,7 +17,7 @@ function edit_event($event_id = 0) {
 
 	//Debug
 	//echo "<pre>".print_r($event,true)."</pre>";
-
+	$event->is_new = FALSE;
 	$event->event_name = stripslashes_deep($event->event_name);
 	$event->event_desc = stripslashes_deep($event->event_desc);
 	$event->phone = stripslashes_deep($event->phone);
