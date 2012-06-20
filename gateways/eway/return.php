@@ -72,11 +72,11 @@ function espresso_process_eway($EE_Session) {
 			'status' => 'Incomplete',
 			'raw_response' => serialize($_POST),
 			'amount' => 0.00,
-			'method' => sanitize_text_field($_POST['txn_type']),
-			'auth_code' => sanitize_text_field($_POST['payer_id']),
-			'md5_hash' => sanitize_text_field($_POST['verify_sign']),
-			'invoice_number' => sanitize_text_field($_POST['invoice_id']),
-			'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
+			'method' => 'CC',
+			'auth_code' => '0',
+			'md5_hash' => sanitize_text_field($_POST['AccessPaymentCode']),
+			'invoice_number' => '0',
+			'transaction_id' => '0'
 	);
 	switch ($eway_settings['region']) {
 		case 'NZ':
@@ -104,7 +104,7 @@ function espresso_process_eway($EE_Session) {
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_HEADER, 1);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	if (CURL_PROXY_REQUIRED == 'True') {
+	if (defined('CURL_PROXY_REQUIRED') && CURL_PROXY_REQUIRED == 'True') {
 		$proxy_tunnel_flag = (defined('CURL_PROXY_TUNNEL_FLAG') && strtoupper(CURL_PROXY_TUNNEL_FLAG) == 'FALSE') ? false : true;
 		curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, $proxy_tunnel_flag);
 		curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
@@ -124,25 +124,31 @@ function espresso_process_eway($EE_Session) {
 
 	$response = curl_exec($ch);
 
-	$authecode = fetch_data($response, '<authCode>', '</authCode>');
-	$responsecode = fetch_data($response, '<responsecode>', '</responsecode>');
-	$retrunamount = fetch_data($response, '<returnamount>', '</returnamount>');
-	$txn_id = fetch_data($response, '<trxnnumber>', '</trxnnumber>');
-	$trxnstatus = fetch_data($response, '<trxnstatus>', '</trxnstatus>');
-	$trxnresponsemessage = fetch_data($response, '<trxnresponsemessage>', '</trxnresponsemessage>');
+	$response_array['authecode'] = fetch_data($response, '<authCode>', '</authCode>');
+	$response_array['responsecode'] = fetch_data($response, '<responsecode>', '</responsecode>');
+	$response_array['retrunamount'] = fetch_data($response, '<returnamount>', '</returnamount>');
+	$response_array['txn_id'] = fetch_data($response, '<trxnnumber>', '</trxnnumber>');
+	$response_array['trxnstatus'] = fetch_data($response, '<trxnstatus>', '</trxnstatus>');
+	$response_array['trxnresponsemessage'] = fetch_data($response, '<trxnresponsemessage>', '</trxnresponsemessage>');
 
-	$merchantoption1 = fetch_data($response, '<merchantoption1>', '</merchantoption1>');
-	$merchantoption2 = fetch_data($response, '<merchantoption2>', '</merchantoption2>');
-	$merchantoption3 = fetch_data($response, '<merchantoption3>', '</merchantoption3>');
-	$merchantreference = fetch_data($response, '<merchantreference>', '</merchantreference>');
-	$merchantinvoice = fetch_data($response, '<merchantinvoice>', '</merchantinvoice>');
-	$id = $_REQUEST['id'];
-	if ($responsecode == '00') {
-		
+	$response_array['merchantoption1'] = fetch_data($response, '<merchantoption1>', '</merchantoption1>');
+	$response_array['merchantoption2'] = fetch_data($response, '<merchantoption2>', '</merchantoption2>');
+	$response_array['merchantoption3'] = fetch_data($response, '<merchantoption3>', '</merchantoption3>');
+	$response_array['merchantreference'] = fetch_data($response, '<merchantreference>', '</merchantreference>');
+	$response_array['merchantinvoice'] = fetch_data($response, '<merchantinvoice>', '</merchantinvoice>');
+	if ($response_array['responsecode'] == '00' || $response_array['responsecode'] == '08') {
+		$txn_details['approved'] = TRUE;
+		$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
+		$txn_details['status'] = 'Approved';
+		$txn_details['raw_response'] = serialize($response_array);
+		$txn_details['amount'] = $response_array['retrunamount'];
+		$txn_details['auth_code'] = $response_array['authecode'];
+		$txn_details['invoice_number'] = $response_array['txn_id'];
+		$txn_details['transaction_id'] = $response_array['txn_id'];
 	}
 	$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
 
-	if ($txn_details['approved'] == TRUE && $eway_settings['use_sandbox']) {
+	if ($txn_details['approved'] && $eway_settings['use_sandbox']) {
 		do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
 	} else {
 		do_action('action_hook_espresso_mail_failed_transaction_debugging_output');

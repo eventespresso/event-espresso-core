@@ -74,17 +74,17 @@ function espresso_process_2checkout($EE_Session) {
 	$session_data = $EE_Session->get_session_data();
 	$twoco_settings = $session_data['gateway_data']['payment_settings']['2checkout'];
 	$txn_details = array(
-						'gateway'				=> $twoco_settings['display_name'],
+						'gateway'					=> $twoco_settings['display_name'],
 						'approved'				=> FALSE,
 						'response_msg'		=> __('You\'re registration has not been completed successfully.', 'event_espresso'),
 						'status'					=> 'Incomplete',
 						'raw_response'		=> serialize($_POST),
-						'amount'				=> 0.00,
-						'method'				=> sanitize_text_field($_POST['pay_method']),
-						'auth_code'			=> sanitize_text_field($_POST['order_number']),
-						'md5_hash'			=> sanitize_text_field($_POST['key']),
+						'amount'					=> 0.00,
+						'method'					=> sanitize_text_field($_POST['pay_method']),
+						'auth_code'				=> sanitize_text_field($_POST['order_number']),
+						'md5_hash'				=> sanitize_text_field($_POST['key']),
 						'invoice_number'	=> sanitize_text_field($_POST['invoice_id']),
-						'transaction_id'		=> sanitize_text_field($_POST['invoice_id'])
+						'transaction_id'	=> sanitize_text_field($_POST['invoice_id'])
 				);
 	if ($_REQUEST['credit_card_processed'] == 'Y') {
 		$txn_details['approved']			= TRUE;
