@@ -455,9 +455,9 @@ function events_data_tables_install() {
 				  PAY_gateway_txn_id int(11) DEFAULT NULL,
 				  PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
 				  PAY_details text COLLATE utf8_bin,
-				  PRIMARY KEY (PAY_ID),
-					  KEY TXN_ID (TXN_ID),
-					  KEY PAY_timestamp (PAY_timestamp)";
+						PRIMARY KEY  (PAY_ID),
+							KEY TXN_ID (TXN_ID),
+							KEY PAY_timestamp (PAY_timestamp)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
 
 
@@ -474,9 +474,9 @@ function events_data_tables_install() {
 			  DTT_REG_end int(10) unsigned NOT NULL,
 			  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
 			  DTT_tckts_left mediumint(8) unsigned DEFAULT NULL,
-			  PRIMARY KEY (DTT_ID),
-			  KEY EVT_ID (EVT_ID),
-			  KEY DTT_is_primary (DTT_is_primary)";
+					PRIMARY KEY  (DTT_ID),
+						KEY EVT_ID (EVT_ID),
+						KEY DTT_is_primary (DTT_is_primary)";
 	event_espresso_run_install($table_name, $table_version, $sql );
 
 
@@ -1349,6 +1349,8 @@ function espresso_default_prices() {
 				(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
 	$wpdb->query($sql);
 	
+	$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ('ACT','RAP','CLS','TCM','PDC','DEL','DEN','DRF','EDR','EXP','TOP','NAC','RNA','NOP','ONG','OPN','PND','RPN','SEC','SNT','PAP','TPN','RCN','PCN','PFL');";
+	$wpdb->query($sql);
 	
 	$sql = "INSERT INTO " . ESP_STATUS_TABLE . " 
 			(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc) VALUES
