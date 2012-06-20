@@ -215,7 +215,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		if ( espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
+		if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
 			$sql .= " WHERE e.is_active != false ";
 		} else {
 			$sql .= " WHERE e.is_active != 'N' ";
@@ -236,7 +236,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		$type = 'all';
 		$sql = "SELECT e.*, ese.start_time, ese.end_time FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		if ( espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
+		if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
 			$sql .= " WHERE e.is_active != false ";
 		} else {
 			$sql .= " WHERE e.is_active != 'N' ";
@@ -286,7 +286,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		//var_dump($event);
 		
 		//If the version of Event Espresso is 3.2 or older, we need to use the new permalink structure. If not, then we need to default to the structure.
-		if ( espresso_version() >= '3.2.P' ){
+		if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' ){
 			switch ($espresso_calendar['espresso_page_post']) {
 	
 				case 'P':
@@ -473,7 +473,7 @@ if (!function_exists('espresso_calendar')) {
 					//Enables/disables use of jQuery UI theming.
 					//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
 					<?php
-					if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
+					if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || ( function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
 						echo "theme: true,";
 					}
 					?>
@@ -547,7 +547,7 @@ if (!function_exists('espresso_calendar')) {
 
 						<?php
 						//Adds the themeroller styles to the links in the calendar
-						if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
+						if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || ( function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
 							$jaer('a.fc-event').addClass('themeroller ui-state-focus');
 							$jaer('a.fc-event div').removeClass('fc-event-skin');
 							$jaer('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
@@ -613,7 +613,7 @@ if (!function_exists('espresso_calendar')) {
 													corner: 'left top'
 												},
 									<?php
-											if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
+											if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || ( function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
 												classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
 									<?php 	} else { ?>
 												classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
@@ -912,7 +912,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 		<?php _e('Display Single Category?', 'event_espresso'); ?>
 	</label>
 	<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
-	<?php if ( espresso_version() >= '3.2.P' )
+	<?php if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' )
 				echo apply_filters('filter_hook_espresso_help', 'display_single_category'); ?>
 </p>
 <p>
@@ -920,7 +920,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 		<?php _e('Calendar Page', 'event_espresso'); ?>
 	</label>
 	<input type="text" id="<?php echo $this->get_field_id('calendar_page'); ?>" name="<?php echo $this->get_field_name('calendar_page'); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
-	<?php if ( espresso_version() >= '3.2.P' )
+	<?php if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' )
 				echo apply_filters('filter_hook_espresso_help', 'calendar_page'); ?>
 </p>
 <?php
@@ -944,7 +944,7 @@ if (is_admin()) {
 }
 
 function espresso_calendar_load_admin_file() {
-	if ( espresso_version() >= '3.2' ){
+	if ( function_exists('espresso_version') && espresso_version() >= '3.2' ){
 		require_once('calendar_admin.php');
 	} else {
 		require_once('calendar_admin_classic.php');
