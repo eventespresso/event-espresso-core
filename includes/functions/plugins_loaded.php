@@ -28,6 +28,7 @@ function espresso_define_tables_and_paths() {
 	define("ESP_PRICE_TABLE", $wpdb->prefix . "esp_price");
 	define("ESP_PRICE_TYPE", $wpdb->prefix . "esp_price_type");
 	define("ESP_DATETIME", $wpdb->prefix . "esp_datetime");
+	define("ESP_STATUS_TABLE", $wpdb->prefix . "esp_status");
 	define("EVENTS_QST_GROUP_TABLE", $wpdb->prefix . "events_qst_group");
 	define("EVENTS_QST_GROUP_REL_TABLE", $wpdb->prefix . "events_qst_group_rel");
 	define("EVENTS_QUESTION_TABLE", $wpdb->prefix . "events_question");
