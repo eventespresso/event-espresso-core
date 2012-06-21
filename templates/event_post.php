@@ -217,17 +217,20 @@ if ($num_rows > 0) {
 			'venue_country' => $venue_country,
 			'is_active' => $data->event->is_active,
 			'event_status' => $data->event->event_status,
-			'start_time' => date( 'H:i A', $data->event->start_time ),
-			'start_time' => empty($data->event->start_time) ? '' : date( 'H:i A', $data->event->start_time ),
-			'registration_startT' => date( 'H:i A', $data->event->registration_startT ),
-			'registration_start' => date( 'F j, Y', $data->event->registration_start ),
-			'registration_endT' => date( 'H:i A', $data->event->registration_endT ),
-			'registration_end' => date( 'F j, Y', $data->event->registration_end ),
+			
+			'start_time' => empty($data->event->DTT_EVT_start) ? '' : date( 'H:i A', $data->event->DTT_EVT_start ),
+			
+			'registration_start' => date( 'F j, Y', $data->event->DTT_REG_start ),
+			'registration_startT' => date( 'H:i A', $data->event->DTT_REG_start ),
+			
+			'registration_end' => date( 'F j, Y', $data->event->DTT_REG_end ),
+			'registration_endT' => date( 'H:i A', $data->event->DTT_REG_end ),
+			
 			'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
 //			'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
 //			'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
-			'start_date' => '<span class="section-title">' . $start_date . '</span>',
-			'end_date' => '<span class="section-title">' . $end_date . '</span>',
+			'start_date' => '<span class="section-title">' . date( 'F j, Y', $data->event->DTT_EVT_start ) . '</span>',
+			'end_date' => '<span class="section-title">' . date( 'F j, Y', $data->event->DTT_EVT_end ) . '</span>',
 			//'time' => event_espresso_time_dropdown($event_id, 0),
 			'google_map_link' => $google_map_link,
 					//'price' => event_espresso_price_dropdown($event_id, 0),
