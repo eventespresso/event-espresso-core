@@ -924,9 +924,10 @@ abstract class EEM_Base {
 	 */
 	protected function _get_error_code (  $file, $func, $line ) {
 
-//echo 'file : ' . $file . '<br />';
-//echo 'func : ' . $func . '<br />';
-//echo 'line : ' . $line . '<br />';
+//echo '<h4>$file : ' . $file . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+
 
 		$error_code = '';
 		$code_bits = array( 0 => $file, 1 => $func, 2 => $line );
@@ -935,6 +936,7 @@ abstract class EEM_Base {
 			switch ( $key ) {
 
 				case 0:
+					$code_bit = str_replace( '\\', '/', $code_bit );
 					// break filepath up by the /
 					$code_bit = explode ( '/', $code_bit );
 					// filename is the last segment

@@ -186,12 +186,15 @@ class EEM_Datetime extends EEM_Base {
 
 
 	/**
-	*		get all event datetimes from db
+	*		get event start date from db
 	*
 	* 		@access		public
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_all_datetimes_for_event( $EVT_ID = FALSE ) {
+	public function get_all_event_dates( $EVT_ID = FALSE ) {
+		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
+			return $this->create_new_blank_datetime();
+		}
 		return $this->_get_event_datetimes( $EVT_ID );
 	}
 
@@ -205,25 +208,8 @@ class EEM_Datetime extends EEM_Base {
 	* 		@access		public
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_all_event_dates( $EVT_ID = FALSE ) {
-		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
-			return $this->create_new_blank_datetime();
-		}
-		return $this->_get_event_datetimes( $EVT_ID, 'E' );
-	}
-
-
-
-
-
-	/**
-	*		get event start date from db
-	*
-	* 		@access		public
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
 	public function get_event_start_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, 'E', TRUE );
+		return $this->_get_event_datetimes( $EVT_ID, TRUE );
 	}
 
 
@@ -237,7 +223,7 @@ class EEM_Datetime extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_event_end_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, 'E', TRUE );
+		return $this->_get_event_datetimes( $EVT_ID, TRUE );
 	}
 
 
@@ -256,7 +242,7 @@ class EEM_Datetime extends EEM_Base {
 			$reg_times[0]->set_end_time("11:59:59PM");
 			return $reg_times;
 		}
-		return $this->_get_event_datetimes( $EVT_ID, 'R' );
+		return $this->_get_event_datetimes( $EVT_ID );
 	}
 
 
@@ -272,7 +258,7 @@ class EEM_Datetime extends EEM_Base {
 		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
 			return FALSE;
 		}
-		return $this->_get_event_datetimes( $EVT_ID, 'R', TRUE );
+		return $this->_get_event_datetimes( $EVT_ID, TRUE );
 	}
 
 
@@ -284,7 +270,7 @@ class EEM_Datetime extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_reg_start_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, 'R', TRUE );
+		return $this->_get_event_datetimes( $EVT_ID, TRUE );
 	}
 
 
@@ -298,7 +284,7 @@ class EEM_Datetime extends EEM_Base {
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_reg_end_dates( $EVT_ID = FALSE ) {
-		return $this->_get_event_datetimes( $EVT_ID, 'R', TRUE );
+		return $this->_get_event_datetimes( $EVT_ID, TRUE );
 	}
 
 
@@ -538,7 +524,7 @@ class EEM_Datetime extends EEM_Base {
 			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully updated.';
 		} else {
 			// error message
-			$espresso_notices['errors'][] = 'An error occured and the datetime has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			//$espresso_notices['errors'][] = 'An error occured and the datetime has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		return $results['rows'];
