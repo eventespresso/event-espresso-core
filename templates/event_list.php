@@ -279,10 +279,14 @@ function event_espresso_get_event_details($attributes) {
 
 
 // EVENT TIMES
-		$event->datetimes = $edts = $DTM_MDL->get_all_event_dates($event->id);
-		//echo printr($event->datetimes, 'EVENT TIMES for '. $event_name.'  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
+		if ( $event->datetimes = $edts = $DTM_MDL->get_all_event_dates($event->id) ) {
+			//echo printr($event->datetimes, 'EVENT TIMES for '. $event_name.'  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );	
+			$display_event_date = array_shift( $edts );
+		} else {
+			$display_event_date = FALSE;
+		}
+			
 
-		$display_event_date = array_shift( $edts );
 //		echo printr( $event->datetimes, 'event->datetimes <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
 //echo '<h4>$display_event_date : ' . $display_event_date->start() . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
