@@ -516,15 +516,21 @@ class EEM_Datetime extends EEM_Base {
 		$results = $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 
 		// set some table specific success messages
-		if ( $results['rows'] == 1 ) {
+		if ( $results['rows'] > 1 ) {
+			// multiple rows were successfully updated
+			$espresso_notices['success'][] = 'Details for '.$results['rows'].' datetimes have been successfully updated.';
+			
+		} elseif ( $results['rows'] == 1 ) {
 			// one row was successfully updated
 			$espresso_notices['success'][] = 'Datetime details have been successfully updated.';
-		} elseif ( $results['rows'] > 1 ) {
-			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully updated.';
+			
+		} elseif ( $results['rows'] === 0 ) {
+			// no update performed, so do nothing
+			//$espresso_notices['success'][] = $results['msg'];
+			
 		} else {
 			// error message
-			//$espresso_notices['errors'][] = 'An error occured and the datetime has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = $results['msg'] . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		return $results['rows'];

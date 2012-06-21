@@ -684,20 +684,38 @@ abstract class EEM_Base {
 		$row_results = $wpdb->update( $em_table_name, $em_updata, $em_where, $em_upformat, $em_where_format);
 
 		// set generic success / error mesasges
-		if ( $row_results == 1 ) {
-			// one row was successfully updated
-			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully updated.', 'rows' => $row_results );
-		}
-		elseif ( $row_results > 1 ) {
+		if ( $row_results > 1 ) {
 			// multiple rows were successfully updated
 			$update_results = array( 'type' =>  'updated', 'msg' => $results.' records have been successfully updated.', 'rows' => $row_results );
+			
+		} elseif ( $row_results == 1 ) {
+			// one row was successfully updated
+			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully updated.', 'rows' => $row_results );
+			
+		} elseif ( $row_results === 0 ) {
+			// zero row updated means that the data was identical to the existing record so no update occured
+			$update_results = array( 'type' =>  'error', 'msg' => 'The submitted record was identical to existing data, no so update was performed.', 'rows' => 0 );
+			
 		} else {
-			// no result means an error occured
-			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not updated.', 'rows' => 0 );
-			//global $espresso_notices;
-			//$wpdb->hide_errors();
-			//$espresso_notices['errors'][] = $wpdb->print_error();
+			// an actual error occured so let's capture that from WP'
+			ob_start();
+			$wpdb->print_error();
+			$db_error = ob_get_clean();			
+			
+			$db_error = str_replace( "<div id='error'>
+			<p class='wpdberror'><strong>WordPress database error:</strong> [", '', $db_error );
+			
+			$db_error = str_replace( "</code></p>
+			</div>", '', $db_error );
+			
+			$db_error = explode( ']<br />
+			<code>', $db_error );	
+			
+			$error = $db_error[0];	
+			
+			$update_results = array( 'type' =>  'error', 'msg' => "The following error occured and the record was not updated : \n" . $error, 'rows' => FALSE );
 		}
+
 
 		return $update_results;
 
