@@ -326,6 +326,7 @@ if (!function_exists('event_registration')) {
 					$data['start_date'] = $start_date;
 					$data['display_desc'] = $display_desc;
 					$data['event_desc'] = $event_desc;
+					$data['event_meta'] = $event_meta;
 					espresso_display_reg_page($data);
 				}
 			}//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
