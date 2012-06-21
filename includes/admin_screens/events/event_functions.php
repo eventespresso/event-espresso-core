@@ -257,10 +257,7 @@ function espresso_event_editor_date_time_metabox($event) {
 		<table id="event-dates-and-times">
 			<thead>
 				<tr valign="top">
-					<td>
-						<?php echo __('Event Starts on', 'event_espresso') ?>
-						<span style="display:inline-block; position:relative; top:-2px; height:16px; margin:0 0 0 .5em;"><?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></span>
-					</td>
+					<td> <?php echo __('Event Starts on', 'event_espresso') ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?> </td>
 					<td><?php echo __('Event Ends on', 'event_espresso') ?></td>
 					<td><?php echo __('Registration Starts on', 'event_espresso') ?> <?php echo apply_filters('filter_hook_espresso_help', 'reg_date_info'); ?></td>
 					<td><?php echo __('Registration Ends on', 'event_espresso') ?></td>					
@@ -273,6 +270,7 @@ function espresso_event_editor_date_time_metabox($event) {
 			<?php foreach ($times as $time) : ?>
 				<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
 					<td>
+						<div class="small-screen-table-label"><?php echo __('Event Starts on', 'event_espresso') ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></div>
 						<input id="event-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_start]" type="text" class="dtm-picker dtm-inp medium-text" value="<?php echo $time->start_date_and_time( 'm/d/Y ' ); ?>"/>
 						<?php if ($time->ID()) { ?>
 						<?php $datetime_IDs[$row] = $time->ID(); ?>
@@ -282,14 +280,17 @@ function espresso_event_editor_date_time_metabox($event) {
 					</td>
 
 					<td>
+						<div class="small-screen-table-label"><?php echo __('Event Ends on', 'event_espresso') ?></div>
 						<input id="event-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_end]" type="text" class="dtm-picker dtm-inp medium-text" value="<?php echo $time->end_date_and_time( 'm/d/Y ' ); ?>"/>
 					</td>
 					
 					<td>
+						<div class="small-screen-table-label"><?php echo __('Registration Starts on', 'event_espresso') ?></div>
 						<input id="reg-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_start]" type="text" class="dtm-picker dtm-inp medium-text" value="<?php echo $time->reg_start_date_and_time( 'm/d/Y ' ) ?>" />
 					</td>
 
 					<td>
+						<div class="small-screen-table-label"><?php echo __('Registration Ends on', 'event_espresso') ?></div>
 						<input id="reg-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_end]" type="text" class="dtm-picker dtm-inp medium-text" value="<?php echo $time->reg_end_date_and_time( 'm/d/Y ' ) ?>" />
 					</td>
 		
@@ -306,6 +307,7 @@ function espresso_event_editor_date_time_metabox($event) {
 					</td>-->
 																
 					<td>
+						<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>
 						<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <a class='display-dtm-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="<?php echo $time->ID(); ?>"  title='Display the Ticket Manager for this Date Time' style="position:relative; top:5px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;" >
 							<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
 						</a> */ ?>
@@ -356,7 +358,7 @@ function espresso_event_editor_date_time_metabox($event) {
 				var counter = <?php echo $row; ?>;
 
 				$('#add-new-date-time').live('click', function(){
-					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-picker dtm-inp medium-text' value=''/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-picker dtm-inp medium-text' value=''/></td><td><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><td><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td> */ ?><td><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
+					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><div class='small-screen-table-label'><?php echo __('Event Starts on', 'event_espresso') ?></div><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-picker dtm-inp medium-text' value=''/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Event Ends on', 'event_espresso') ?></div><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-picker dtm-inp medium-text' value=''/></td><td><div class='small-screen-table-label'><?php echo __('Registration Starts on', 'event_espresso') ?></div><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Registration Ends on', 'event_espresso') ?></div><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td> */ ?><td><div class=small-screen-table-label><?php echo __('Actions', 'event_espresso') ?></div><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
 					$('#event-dates-and-times tr:last').after( newRow );
 					counter++;
 				});
@@ -364,7 +366,7 @@ function espresso_event_editor_date_time_metabox($event) {
 
 				$('.clone-date-time').live('click', function(){				
 					var cloneRow = $(this).attr('rel');					
-					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-picker dtm-inp medium-text' value=''/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-picker dtm-inp medium-text' value=''/></td><td><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><td><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td>  */ ?><td><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
+					var newRow = "<tr valign='top' id='event-dates-and-times-row-"+counter+"'><td><div class='small-screen-table-label'><?php echo __('Event Starts on', 'event_espresso') ?></div><input id='event-start-"+counter+"' name='event_datetimes["+counter+"][evt_start]' type='text' class='dtm-picker dtm-inp medium-text' value=''/><input id='is-primary-"+counter+"' name='event_datetimes["+counter+"][is_primary]' type='hidden' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Event Ends on', 'event_espresso') ?></div><input id='event-end-"+counter+"' name='event_datetimes["+counter+"][evt_end]' type='text' class='dtm-picker dtm-inp medium-text' value=''/></td><td><div class='small-screen-table-label'><?php echo __('Registration Starts on', 'event_espresso') ?></div><input id='reg-start-"+counter+"' name='event_datetimes["+counter+"][reg_start]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><td><div class='small-screen-table-label'><?php echo __('Registration Ends on', 'event_espresso') ?></div><input id='reg-end-"+counter+"' name='event_datetimes["+counter+"][reg_end]' type='text' class='dtm-picker dtm-inp medium-text' value='' /></td><?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS <?php if ($org_options['time_reg_limit']) : ?><td><input type='text' id='reg-limit-"+counter+"' name='event_datetimes["+counter+"][reg_limit]' class='small-text dtm-inp' style='text-align:right;' value=''/></td><?php endif; // time_reg_limit   ?><td><input type='text' id='tckts-left-"+counter+"' name='event_datetimes["+counter+"][tckts_left]' class='small-text dtm-inp' style='text-align:right;' value=''/></td>  */ ?><td><div class=small-screen-table-label><?php echo __('Actions', 'event_espresso') ?></div><a class='clone-date-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/></a><a class='remove-xtra-time dtm-inp-btn' rel='"+counter+"' title='<?php _e('Remove this Event Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'><img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/></a></td></tr>";
 					$('#event-dates-and-times-row-'+cloneRow).after( newRow );
 					$('#event-start-'+counter).val( $('#event-start-'+(cloneRow)).val() );
 					$('#event-end-'+counter).val( $('#event-end-'+(cloneRow)).val() );
@@ -435,24 +437,24 @@ function espresso_event_editor_pricing_metabox($event) {
 		<div class="error">
 			<p><?php _e('There are currently no Prices set for this Event. Please see the Event Pricing section for more details.', 'event_espresso'); ?></p>
 		</div>	
-		<div style="padding: 0 0.6em; margin: 1em 0; background-color: #FFEBE8; border: 1px solid #CC0000; border-radius: 3px 3px 3px 3px; color: #333;">
-			<p style="padding: 2px; margin: 0.5em 0;"><?php _e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); ?></p>
+		<div id="no-ticket-prices-msg-dv">
+			<p><?php _e('Please enter at lease one Event Price for this Event, or one Default Event Price to ensure that this Event displays and functions properly. Default Event Prices can be set on the <a href="'. admin_url( 'admin.php?page=pricing' ) .'">Pricing Management</a> page.', 'event_espresso'); ?></p>
 		</div>
 	<?php endif; ?>
 
 	<!--<h5 id="add-new-ticket-price-h5" ><?php _e('All Prices, Discounts and Surcharges that are Currently Active for This Event', 'event_espresso'); ?></h5>-->
 
-	<table class="event_editor_pricing" width="100%" >
+	<table id="event_editor_pricing" width="100%" >
 		<thead>
 			<tr>
-				<td style="width:15%; padding:0 .5em;"><b><?php //_e('Type'); ?></b></td>
-				<td style="width:4%; text-align:center;"><b><?php _e('Order', 'event_espresso'); ?></b></td>
-				<td style="width:17.5%; padding:0 .5em;"><b><?php _e('Name', 'event_espresso'); ?></b></td>
-				<td style="width:2.5%; text-align:center;"></td>
-				<td style="width:5%; text-align:center;"><b><?php _e('Amount', 'event_espresso'); ?></b></td>
-				<td style="width:1%; text-align:center;"></td>
-				<td style="width:7.5%; text-align:center;"></td>
-				<td style="width:42.5%; padding:0 .5em;"></td>
+				<td class="event-price-tbl-hdr-type"><b><?php //_e('Type'); ?></b></td>
+				<td class="event-price-tbl-hdr-order"><b><?php _e('Order', 'event_espresso'); ?></b></td>
+				<td class="event-price-tbl-hdr-name"><b><?php _e('Name', 'event_espresso'); ?></b></td>
+				<!--<td style="width:2.5%; text-align:center;"></td>-->
+				<td class="event-price-tbl-hdr-amount"><b><?php _e('Amount', 'event_espresso'); ?></b></td>
+				<!--<td style="width:1%; text-align:center;"></td>-->
+				<td class="event-price-tbl-hdr-actions"></td>
+				<td class="event-price-tbl-hdr-desc"></td>
 			</tr>
 		</thead>
 		<?php 
@@ -466,14 +468,11 @@ function espresso_event_editor_pricing_metabox($event) {
 		?>
 
 			<tr>
-				<td colspan="8">
-					<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price-settings-dv hidden" style="padding:5px 60px 10px 15px; margin:10px 0 20px; background:#fcfcfc; border:1px solid #eee; border-radius:5px;">
+				<td colspan="6">					
+					<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price-settings-dv hidden">
 
-						<div style="float:right;">
-							<!--<input class='cancel-event-price-btn' rel="<?php echo $price->ID(); ?>" type='button' value='&nbsp;x&nbsp;' style="position:relative; right:-50px; cursor:pointer;" />-->
-							<a class="cancel-event-price-btn" rel="<?php echo $price->ID(); ?>" style="top:5px; right:-50px;" ><?php _e('close', 'event_espresso'); ?></a>
-						</div>
-
+						<a class="cancel-event-price-btn" rel="<?php echo $price->ID(); ?>" ><?php _e('close', 'event_espresso'); ?></a>
+						
 						<h6><?php _e('Edit : ', 'event_espresso'); ?><?php echo $price->name(); ?></h6>
 						<?php //echo printr( $price, '$price' ); ?>
 						<table class="form-table" width="100%">
@@ -540,12 +539,12 @@ function espresso_event_editor_pricing_metabox($event) {
 									<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
 									<td>
 										<?php $price_uses_dates = $price->use_dates();?>
-										<label style="margin-right:15px;">
+										<label class="edit-ticket-price-radio-lbl">
 											<?php $checked = $price_uses_dates == 1 ? ' checked="checked"' : '';?>
 											<input class="edit-ticket-price-input etp-radio" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_use_dates]" value="1"<?php echo $checked;?> style="margin-right:5px;"/>
 											<?php _e('Yes', 'event_espresso');?>
 										</label>
-										<label style="margin-right:15px;">
+										<label class="edit-ticket-price-radio-lbl">
 											<?php $checked = $price_uses_dates == 0 ? ' checked="checked"' : '';?>
 											<input class="edit-ticket-price-input etp-radio" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_use_dates]" value="0"<?php echo $checked;?> style="margin-right:5px;"/>
 											<?php _e('No', 'event_espresso');?>
@@ -573,11 +572,11 @@ function espresso_event_editor_pricing_metabox($event) {
 								<tr valign="top">
 									<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 									<td>
-										<label style="margin-right:15px;">
+										<label class="edit-ticket-price-radio-lbl">
 											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="1" style="margin-right:5px;" <?php echo $price->is_active() ? 'checked="checked"' : '' ?> />
 											<?php _e('Yes', 'event_espresso');?>
 										</label>
-										<label style="margin-right:15px;">
+										<label class="edit-ticket-price-radio-lbl">
 											<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="0" style="margin-right:5px;" <?php echo ! $price->is_active() ? 'checked="checked"' : '' ?> />
 											<?php _e('No', 'event_espresso');?>
 										</label>
@@ -595,39 +594,49 @@ function espresso_event_editor_pricing_metabox($event) {
 			</tr>
 			
 			<tr>
-				<td colspan="8">
+				<td colspan="6">
 					<div id="event-price-<?php echo $price->ID(); ?>" class="event-price">
-						<table width="100%">
+						<table class="ticket-price-quick-edit-tbl" width="100%">
 							<tr>
 							
-								<td class="type-column" style="width:15%; height:2.5em; padding:0 .5em;"> 
-									<?php //echo $PRT->type[$price->type()]->name(); ?>
-									<?php //$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]'; ?>
-									<?php //echo select_input( $select_name, $all_price_types, $price->type(), 'id="quick-edit-ticket-price-type-ID" style="width:100%;"', 'edit-ticket-price-input quick-edit' ); ?>
-									<?php echo $PRT->type[$price->type()]->name(); ?>
+								<td class="type-column ticket-price-quick-edit-column"> 
+									<?php
+									 //echo $PRT->type[$price->type()]->name(); 
+									 //$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]'; 
+									//echo select_input( $select_name, $all_price_types, $price->type(), 'id="quick-edit-ticket-price-type-ID" ', 'edit-ticket-price-input quick-edit' ); 
+									?>
+									<div class="small-screen-table-label"><?php echo __('Type', 'event_espresso') ?></div>
+									<span><?php echo $PRT->type[$price->type()]->name(); ?></span>
 								</td> 
 								
-								<td class="order-column" style="width:4%; height:2.5em; text-align:center;"> 
+								<td class="order-column ticket-price-quick-edit-column"> 
 									<?php //echo $PRT->type[$price->type()]->order(); ?>
-									<input class="edit-ticket-price-input quick-edit small-text" type="text" id="quick-edit-ticket-price-PRC_order" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $PRT->type[$price->type()]->order(); ?>" style="width:100%;text-align:right;"<?php echo $disabled; ?>/>							
+									<div class="small-screen-table-label"><?php echo __('Order', 'event_espresso') ?></div>
+									<input class="edit-ticket-price-input quick-edit small-text jst-rght" type="text" id="quick-edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $PRT->type[$price->type()]->order(); ?>"<?php echo $disabled; ?>/>							
 								</td> 
 								
-								<td class="name-column" style="width:17.5%; height:2.5em; padding:0 .5em;"> 
+								<td class="name-column ticket-price-quick-edit-column"> 
 									<?php //echo $price->name(); ?>
-									<input class="edit-ticket-price-input quick-edit regular-text" type="text" id="quick-edit-ticket-price-PRC_name" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" style="width:100%;"<?php echo $disabled; ?>/>
+									<div class="small-screen-table-label"><?php echo __('Name', 'event_espresso') ?></div>
+									<input class="edit-ticket-price-input quick-edit regular-text" type="text" id="quick-edit-ticket-price-PRC_name-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" <?php echo $disabled; ?>/>
 								</td> 
-								<td class="amount-column" style="width:2.5%; height:2.5em; text-align:right;"> 
+								
+								<!--<td class="cur-sign-column ticket-price-quick-edit-column"> 
+									<div class="small-screen-table-label"><?php echo __('Amount', 'event_espresso') ?></div>
 									<?php echo ($PRT->type[$price->type()]->is_percent()) ?  '' : $org_options['currency_symbol']; ?>
-								</td> 
+								</td>--> 
 								
-								<td class="amount-column" style="width:5%; height:2.5em; text-align:right;"> 
+								<td class="amount-column ticket-price-quick-edit-column"> 
+									<div class="small-screen-table-label"><?php echo __('Amount', 'event_espresso') ?></div>
+									<span class="cur-sign jst-rght"><?php echo ($PRT->type[$price->type()]->is_percent()) ?  '' : $org_options['currency_symbol']; ?></span>
 									<?php $price_amount =  ($PRT->type[$price->type()]->is_percent()) ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 ); ?>
-									<input class="edit-ticket-price-input quick-edit small-text" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_amount]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="width:100%;text-align:right;" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
+									<input class="edit-ticket-price-input quick-edit small-text jst-rght" type="text" id="quick-edit-ticket-price-PRC_amount-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
+									<span class="percent-sign jst-left"><?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?></span>
 								</td> 
 								
-								<td class="amount-column" style="width:1%; height:2.5em; text-align:left;"> 
+								<!--<td class="percent-column ticket-price-quick-edit-column"> 
 									<?php echo ($PRT->type[$price->type()]->is_percent()) ? '%' : ''; ?>
-								</td> 
+								</td> -->
 								
 <?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
 								<td class="tckts-left-column" style="width:7.5%; height:2.5em; text-align:right;"> 
@@ -635,22 +644,24 @@ function espresso_event_editor_pricing_metabox($event) {
 								</td> 
  */ ?>
 								
-								<td class="edit-column" style="width:7.5%; height:2.5em; vertical-align:middle; text-align:center;">
+								<td class="edit-column ticket-price-quick-edit-column">
+									<div class="small-screen-table-label"><?php echo __('Actions', 'event_espresso') ?></div>									
 									<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
 									<a class='display-price-tickets-left-lnk display-ticket-manager' data-reveal-id="ticket-manager-dv" rel="<?php echo $price->ID(); ?>"  title='Display the Ticket Manager for this Event' style="cursor:pointer;" >
 										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
 									</a>
 									 */ ?>
-									<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title='Edit Advanced Settings for this Event Price' style="margin:0 0 0 10px; cursor:pointer;" >
+									<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title="Edit Advanced Settings for this Event Price">
 										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
 									</a>
-									<a class='delete-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>" title='Delete this Event Price' style="margin:0 0 0 10px; cursor:pointer;" >
+									<a class='delete-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>" title="Delete this Event Price" >
 										<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
 									</a>
 								</td>
 
 								
-								<td class="desc-column" style="width:42.5%; height:2.5em; padding:0 .5em;"> 
+								<td class="desc-column ticket-price-quick-edit-column"> 
+									<div class="small-screen-table-label"><?php echo __('Description', 'event_espresso') ?></div>		
 									<?php //echo $price->desc(); ?>
 									<!--<input class="edit-ticket-price-input quick-edit widefat" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_desc]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo $price->desc(); ?>" style="width:100%;"/>-->
 									<span class="description"><?php echo $inactive ? $inactive : $price->desc(); ?></span>
@@ -725,11 +736,11 @@ function espresso_event_editor_pricing_metabox($event) {
 					<tr valign="top">
 						<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
 						<td>
-							<label style="margin-right:15px;">
+							<label class="edit-ticket-price-radio-lbl">
 								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="1" style="margin-right:5px;">
 								<?php _e('Yes', 'event_espresso');?>
 							</label>
-							<label style="margin-right:15px;">
+							<label class="edit-ticket-price-radio-lbl">
 								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="0" style="margin-right:5px;" checked="checked" />
 								<?php _e('No', 'event_espresso');?>
 							</label>
@@ -756,11 +767,11 @@ function espresso_event_editor_pricing_metabox($event) {
 					<tr valign="top">
 						<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 						<td>
-							<label style="margin-right:15px;">
+							<label class="edit-ticket-price-radio-lbl">
 								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_is_active]" value="1" style="margin-right:5px;" checked="checked" />
 								<?php _e('Yes', 'event_espresso');?>
 							</label>
-							<label style="margin-right:15px;">
+							<label class="edit-ticket-price-radio-lbl">
 								<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_is_active]" value="0" style="margin-right:5px;" />
 								<?php _e('No', 'event_espresso');?>
 							</label>
