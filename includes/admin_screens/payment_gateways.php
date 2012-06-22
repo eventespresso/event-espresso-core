@@ -2,7 +2,10 @@
 
 //This is the payment gateway settings page.
 function event_espresso_gateways_options() {
-	global $espresso_premium;
+	global $espresso_premium, $EE_Session;
+	if (isset($_POST['_wp_http_referer'])) {
+		$EE_Session->set_session_data(array(), 'gateway_data');
+	}
 	ob_start();
 	do_meta_boxes('event-espresso_page_payment_gateways', 'side', null);
 	$sidebar_content = ob_get_clean();
