@@ -593,6 +593,7 @@ if (!function_exists('espresso_calendar')) {
 
 		if (isset($espresso_calendar['show_tooltips']) && $espresso_calendar['show_tooltips'] == true) {
 			?>
+									if ( ! ( $jaer.browser.msie && parseInt($jaer.browser.version, 10) === 7 )) {	
 										element.qtip({
 											content: {
 												text: event.description,
@@ -629,6 +630,7 @@ if (!function_exists('espresso_calendar')) {
 												widget: true
 											}
 										});
+									}
 				<?php
 		}
 		?>
