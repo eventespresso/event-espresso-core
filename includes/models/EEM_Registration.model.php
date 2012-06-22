@@ -41,6 +41,9 @@ class EEM_Registration extends EEM_Base {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_registration';
+		// set item names
+		$this->singlular_item = 'Registration';
+		$this->plual_item = 'Registrations';		
 		// array representation of the transaction table and the data types for each field
 		// REG_ID 	EVT_ID 	ATT_ID 	TXN_ID 	DTT_ID 	PRC_ID 	STS_ID 	REG_date 	REG_session 	REG_code 	REG_is_primary 	REG_is_group_reg 	REG_att_is_going 	REG_att_checked_in
 		$this->table_data_types = array (
@@ -649,28 +652,9 @@ class EEM_Registration extends EEM_Base {
 	 *		@return array
 	 */
 	public function update ($set_column_values, $where_cols_n_values) {
-
 		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
-
-		global $espresso_notices;
-
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
-
-		// set some table specific success messages
-		if ( $results['rows'] == 1 ) {
-			// one row was successfully updated
-			$espresso_notices['success'][] = 'Registration details have been successfully updated.';
-		} elseif ( $results['rows'] > 1 ) {
-			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' registrations have been successfully updated.';
-		} else {
-			// error message
-			$espresso_notices['errors'][] = 'An error occured and the registration has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		return $results['rows'];
-
+		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
 
 

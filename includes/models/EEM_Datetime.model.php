@@ -41,8 +41,6 @@ class EEM_Datetime extends EEM_Base {
 
 
 
-
-
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -53,6 +51,9 @@ class EEM_Datetime extends EEM_Base {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_datetime';
+		// set item names
+		$this->singlular_item = 'Datetime';
+		$this->plual_item = 'Datetimes';		
 		// array representation of the datetime table and the data types for each field
 		$this->table_data_types = array (
 			'DTT_ID' 					=> '%d',
@@ -507,34 +508,9 @@ class EEM_Datetime extends EEM_Base {
 	 *		@return array
 	 */
 	public function update ($set_column_values, $where_cols_n_values) {
-
 		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, '$where_cols_n_values' => $where_cols_n_values ) );
-
-		global $espresso_notices;
-
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
-
-		// set some table specific success messages
-		if ( $results['rows'] > 1 ) {
-			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results['rows'].' datetimes have been successfully updated.';
-			
-		} elseif ( $results['rows'] == 1 ) {
-			// one row was successfully updated
-			$espresso_notices['success'][] = 'Datetime details have been successfully updated.';
-			
-		} elseif ( $results['rows'] === 0 ) {
-			// no update performed, so do nothing
-			//$espresso_notices['success'][] = $results['msg'];
-			
-		} else {
-			// error message
-			$espresso_notices['errors'][] = $results['msg'] . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		return $results['rows'];
-
+		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
 
 

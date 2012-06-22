@@ -30,7 +30,8 @@ abstract class EEM_Base {
 	// array representation of a table and the data types for each field
 	protected $table_data_types = array();
 
-
+	protected $singlular_item = 'Item';
+	protected $plual_item = 'Items';
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -686,15 +687,18 @@ abstract class EEM_Base {
 		// set generic success / error mesasges
 		if ( $row_results > 1 ) {
 			// multiple rows were successfully updated
-			$update_results = array( 'type' =>  'updated', 'msg' => $results.' records have been successfully updated.', 'rows' => $row_results );
+//			$update_results = array( 'type' =>  'updated', 'msg' => 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.', 'rows' => $row_results );
+			$espresso_notices['success'][] = 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.';
 			
 		} elseif ( $row_results == 1 ) {
 			// one row was successfully updated
-			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully updated.', 'rows' => $row_results );
+//			$update_results = array( 'type' =>  'updated', 'msg' => $this->singlular_item . ' details have been successfully updated.', 'rows' => $row_results );
+			$espresso_notices['success'][] = $this->singlular_item . ' details have been successfully updated.';
 			
 		} elseif ( $row_results === 0 ) {
 			// zero row updated means that the data was identical to the existing record so no update occured
-			$update_results = array( 'type' =>  'error', 'msg' => 'The submitted record was identical to existing data, no so update was performed.', 'rows' => 0 );
+//			$update_results = array( 'type' =>  'error', 'msg' => 'The submitted record was identical to existing data, no so update was performed.', 'rows' => 0 );
+			//$espresso_notices['success'][] = 'The submitted record was identical to existing data, no so update was performed.';
 			
 		} else {
 			// an actual error occured so let's capture that from WP'
@@ -713,14 +717,14 @@ abstract class EEM_Base {
 			
 			$error = $db_error[0];	
 			
-			$update_results = array( 'type' =>  'error', 'msg' => "The following error occured and the record was not updated : \n" . $error, 'rows' => FALSE );
+//			$update_results = array( 'type' =>  'error', 'msg' => "The following error occured and the record was not updated : \n" . $error, 'rows' => FALSE );
+			$espresso_notices['errors'][] = "The following error occured and the record was not updated : \n" . $error;
+			
 		}
 
-
-		return $update_results;
+		return $row_results;
 
 	}
-
 
 
 

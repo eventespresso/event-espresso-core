@@ -41,6 +41,9 @@ class EEM_Payment extends EEM_Base {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_payment';
+		// set item names
+		$this->singlular_item = 'Payment';
+		$this->plual_item = 'Payments';		
 		// array representation of the payment table and the data types for each field 
 		$this->table_data_types = array (	
 			'PAY_ID' 								=> '%d',
@@ -299,28 +302,9 @@ class EEM_Payment extends EEM_Base {
 	 *		@return array
 	 */	
 	public function update ($set_column_values, $where_cols_n_values) {
-	
 		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where ) );
-			
-		global $espresso_notices;
-
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
-	
-		// set some table specific success messages
-		if ( $results['rows'] == 1 ) {
-			// one row was successfully updated
-			$espresso_notices['success'][] = 'Payment details have been successfully updated.';
-		} elseif ( $results['rows'] > 1 ) {
-			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' payments have been successfully updated.';
-		} else {
-			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the payment has not been updated. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-		}
-	
-		return $results['rows'];
-	
+		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
 
 

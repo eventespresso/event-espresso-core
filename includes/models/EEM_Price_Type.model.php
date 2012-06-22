@@ -44,6 +44,9 @@ class EEM_Price_Type extends EEM_Base {
 		global $wpdb;
 		// set table name
 		$this->table_name = $wpdb->prefix . 'esp_price_type';
+		// set item names
+		$this->singlular_item = 'Price Type';
+		$this->plual_item = 'Price Types';		
 		// array representation of the price type table and the data types for each field
 		$this->table_data_types = array(
 				'PRT_ID' 					=> '%d',
@@ -252,28 +255,10 @@ class EEM_Price_Type extends EEM_Base {
 	 * 		@return array
 	 */
 	public function update($set_column_values, $where_cols_n_values) {
-
 //		echo printr( $set_column_values, '$set_column_values' );
 //		echo printr( $where_cols_n_values, '$where_cols_n_values' );
-
-		global $espresso_notices;
-
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_update($this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values);
-//		echo $wpdb->last_query;
-		// set some table specific success messages
-		if ($results['rows'] == 1) {
-			// one row was successfully updated
-			$espresso_notices['success'][] = 'Price Type details have been successfully updated.';
-		} elseif ($results['rows'] > 1) {
-			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for ' . $results . ' price typess have been successfully updated.';
-		} else {
-			// error message
-			$espresso_notices['errors'][] = 'An error occured and the price type has not been updated. ' . $this->_get_error_code(__FILE__, __FUNCTION__, __LINE__);
-		}
-
-		return $results['rows'];
+		return $this->_update($this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values);
 	}
 
 
