@@ -570,7 +570,7 @@ if (!function_exists('espresso_calendar')) {
 						}
 						
 			<?php
-					if ($espresso_calendar['show_time'] == true) {
+			if ($espresso_calendar['show_time'] == true) {
 			?>				
 								if ( event.startTime != '' && event.startTime != undefined ) {
 									event.startTime = '<span class="event-start-time">' + event.startTime + '</span>';
@@ -589,7 +589,9 @@ if (!function_exists('espresso_calendar')) {
 								}
 
 			<?php
-					}
+		}
+		
+		//Hide the tooltips in IE 7
 		$using_ie7 = (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 7.') !== FALSE);
 		if (isset($espresso_calendar['show_tooltips']) && $espresso_calendar['show_tooltips'] == true && $using_ie7 == false) {
 			?>
