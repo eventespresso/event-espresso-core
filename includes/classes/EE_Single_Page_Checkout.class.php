@@ -313,7 +313,7 @@ class EE_Single_Page_Checkout {
 		}
 
 		$session_data = $EE_Session->get_session_data();
-		if ( empty($session_data['gateway_data'])) {
+		if ( empty($session_data['gateway_data']['active_gateways']) || empty($session_data['gateway_data']['payment_settings'])) {
 			$gateway_data['active_gateways'] = get_user_meta($espresso_wp_user, 'active_gateways', true);
 			$gateway_data['payment_settings'] = get_user_meta($espresso_wp_user, 'payment_settings', true);
 		} else {
