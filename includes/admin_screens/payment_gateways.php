@@ -3,8 +3,19 @@
 //This is the payment gateway settings page.
 function event_espresso_gateways_options() {
 	global $espresso_premium, $EE_Session;
-	if (isset($_POST['_wp_http_referer'])) {
-		$EE_Session->set_session_data(array(), 'gateway_data');
+	if (isset($_POST['_wp_http_referer']) || in_array(TRUE, $_GET)) {
+		$EE_Session->set_session_data(
+						array(
+								'active_gateways'=>array(),
+								'payment_settings'=>array(),
+								'selected_gateway'=>'',
+								'hide_other_gateways'=>FALSE,
+								'type'=>'',
+								'html_data'=>array(),
+								'transaction_dateTime'=>'',
+								'off-site-form'=>array()
+								),
+						'gateway_data');
 	}
 	ob_start();
 	do_meta_boxes('event-espresso_page_payment_gateways', 'side', null);
