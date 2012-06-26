@@ -13,7 +13,7 @@
 	</div>
 
 <?php if ( ! $empty_cart ) : ?>
-	
+
 	<h2 id="mer-reg-page-steps-big-hdr" class="mer-reg-page-steps-big-hdr"><?php _e(' Steps', 'event_espresso'); ?></h2>
 	<div id="mer-reg-page-steps-display-dv">
 		<div id="mer-reg-page-step-1-display-dv" class="mer-reg-page-step-display-dv <?php echo $step_display_dv_1_class; ?>">
@@ -39,4 +39,8 @@
 <?php	 endif; // $! empty_cart ?>
 	
 </div>
-
+<script>
+	jQuery(document).ready(function() {
+		jQuery('html, body').scrollTop(jQuery("#mer-reg-page-steps-big-hdr").offset().top);
+	});
+</script>
