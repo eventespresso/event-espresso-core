@@ -90,9 +90,9 @@ if (!function_exists('event_form_build')) {
 				}
 
 				$input_id = isset($extra['input_id']) ? $extra['input_id'].'-'.$field_name : 'qstn' . $multi_name.'-'.$field_name;
-
+				$autofocused = $attendee_number == 1 && $field_name == 'fname' ? ' autofocus' : '';
 				$html .= '<p class="event_form_field">' . $label;
-				$html .= '<input type="text" ' . $required . ' id="' .$input_id. '"  name="qstn' . $multi_name.'['.$field_name.']'. $arrayed_field . '" class="' . $class . '" value="' . $answer . '" ' . $disabled . ' /></p>';
+				$html .= '<input type="text" ' . $required . ' id="' .$input_id. '"  name="qstn' . $multi_name.'['.$field_name.']'. $arrayed_field . '" class="' . $class . '" value="' . $answer . '" ' . $disabled . $autofocused . ' /></p>';
 				$html .= '</p>';
 
 				break;
