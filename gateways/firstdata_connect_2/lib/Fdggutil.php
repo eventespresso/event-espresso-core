@@ -10,7 +10,6 @@ class Fdggutil {
 	private $gatewayUrl;
 	private $returnUrl;
 	private $cancelUrl;
-	private $attendee_id;
 
 	public function Fdggutil($storename, $sharedSecret) {
 		$this->storename = $storename;
@@ -18,19 +17,18 @@ class Fdggutil {
 	}
 
 	public function set_timezone($timezone) {
-				$this->timezone = $timezone;
+		$this->timezone = $timezone;
 	}
 
-	public function set_dateTime() {
-				$this->dateTime = date("Y:m:d-H:i:s");
-				global $wpdb;
-				$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_date ='" . $this->dateTime . "' ";
-				$sql .= "WHERE id='" . $this->attendee_id . "'";
-				$wpdb->query($sql);
+	public function set_dateTime($EE_Session) {
+		$this->dateTime = date("Y:m:d-H:i:s");
+		$session_data = $EE_Session->get_session_data();
+		$session_data['gateway_data']['transaction_dateTime'] = $this->dateTime;
+		$EE_Session->set_session_data($session_data['gateway_data'], 'gateway_data');
 	}
 
 	public function set_chargetotal($chargetotal) {
-				$this->chargetotal = $chargetotal;
+		$this->chargetotal = $chargetotal;
 	}
 
 	public function set_sandbox($sandbox) {
@@ -42,15 +40,11 @@ class Fdggutil {
 	}
 
 	public function set_returnUrl($returnUrl) {
-				$this->returnUrl = $returnUrl;
+		$this->returnUrl = $returnUrl;
 	}
 
 	public function set_cancelUrl($cancelUrl) {
 		$this->cancelUrl = $cancelUrl;
-	}
-
-	public function set_attendee_id($attendee_id) {
-		$this->attendee_id = $attendee_id;
 	}
 
 	private function createHash() {
@@ -72,7 +66,9 @@ class Fdggutil {
 		return hash('sha256', $hex_str);
 	}
 
-	private function submitForm() {
+	private function submitForm($EE_Session) {
+		global $org_options;
+		$session_data = $EE_Session->get_session_data();
 		$out = '<input type="hidden" name="timezone" value="' . $this->timezone . '" />';
 		$out .= '<input type="hidden" name="authenticateTransaction" value="false" />';
 		$out .= '<input size="50" type="hidden" name="txntype" value="sale"/>';
@@ -83,8 +79,8 @@ class Fdggutil {
 		$out .= '<input size="50" type="hidden" name="chargetotal" value="' . $this->chargetotal . '"/>';
 		$out .= '<input size="50" type="hidden" name="subtotal" value="' . $this->chargetotal . '"/>';
 		$out .= '<input size="50" type="hidden" name="trxOrigin" value="ECI"/>';
-		$out .= '<input size="50" type="hidden" name="responseSuccessURL" value="' . home_url() . '/?page_id=' . $this->returnUrl . '&id=' . $this->attendee_id . '"/>';
-		$out .= '<input size="50" type="hidden" name="responseFailURL" value="' . home_url() . '/?page_id=' . $this->cancelUrl . '"/>';
+		$out .= '<input size="50" type="hidden" name="responseSuccessURL" value="' . str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment') . '"/>';
+		$out .= '<input size="50" type="hidden" name="responseFailURL" value="' . str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['cancel_return']) . '"/>';
 		return $out;
 	}
 
@@ -97,19 +93,19 @@ class Fdggutil {
 		return $out;
 	}
 
-	public function submitPayment() {
-		$out = "<html>\n";
-	$out .= "<head><title>Processing Payment...</title></head>\n";
-	$out .= "<body onLoad=\"document.forms['gateway_form'].submit();\">\n";
-	$out .= "<p style=\"text-align:center;\"><h2>Please wait, your order is being processed and you";
-	$out .= " will be redirected to the payment website.</h2></p>\n";
-	$out .= '<form method="post" name="gateway_form" action="' . $this->gatewayUrl . '">\n';
-	$out .= $this->submitForm();
-		$out .= "<p style=\"text-align:center;\"><br/><br/>If you are not automatically redirected to ";
-	$out .= "the payment website within 5 seconds...<br/><br/>\n";
-	$out .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
-	$out .= "</form>\n";
-	$out .= "</body></html>\n";
-		return $out;
+	public function submitPayment($EE_Session) {
+		$pre_form = "<html>\n";
+		$pre_form .= "<head><title>Processing Payment...</title></head>\n";
+		$pre_form .= "<body>\n";
+		$form = "<h2>Please wait, your order is being processed and you";
+		$form .= " will be redirected to the payment website.</h2></p>\n";
+		$form .= '<form method="post" name="gateway_form" action="' . $this->gatewayUrl . '">\n';
+		$form .= $this->submitForm($EE_Session);
+		$form .= "<p style=\"text-align:center;\"><br/><br/>If you are not automatically redirected to ";
+		$form .= "the payment website within 5 seconds...<br/><br/>\n";
+		$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+		$form .= "</form>\n";
+		$post_form = "</body></html>\n";
+		return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
 	}
 }
