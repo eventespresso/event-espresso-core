@@ -1,21 +1,20 @@
 <?php
 
 function event_espresso_firstdata_connect_2_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user;
+	global $espresso_premium, $notices, $espresso_wp_user, $active_gateways;
 	if ($espresso_premium != true)
 		return;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
+	
 	if (isset($_POST['update_firstdata_connect_2'])
 					&& check_admin_referer('espresso_form_check', 'add_firstdata2_settings')) {
-		$payment_settings['firstdata_connect_2']['storename'] = $_POST['storename'];
+		$payment_settings['firstdata_connect_2']['storename']    = $_POST['storename'];
 		$payment_settings['firstdata_connect_2']['sharedSecret'] = $_POST['sharedSecret'];
-		$payment_settings['firstdata_connect_2']['timezone'] = $_POST['timezone'];
-		$payment_settings['firstdata_connect_2']['sandbox'] = empty($_POST['sandbox']) ? '' : $_POST['sandbox'];
-		$payment_settings['firstdata_connect_2']['button_url'] = $_POST['button_url'];
-		$payment_settings['firstdata_connect_2']['bypass_payment_page'] = $_POST['bypass_payment_page'];
-
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		$payment_settings['firstdata_connect_2']['timezone']     = $_POST['timezone'];
+		$payment_settings['firstdata_connect_2']['sandbox']      = empty($_POST['sandbox']) ? '' : $_POST['sandbox'];
+		$payment_settings['firstdata_connect_2']['button_url']   = $_POST['button_url'];
+		if (update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings)) {
 			$notices['updates'][] = __('Firstdata Connect 2.0 Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Firstdata Connect 2.0 Settings were not saved! ', 'event_espresso');
@@ -23,154 +22,128 @@ function event_espresso_firstdata_connect_2_payment_settings() {
 	}
 
 	if (empty($payment_settings['firstdata_connect_2'])) {
-		$payment_settings['firstdata_connect_2']['active'] = false;
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata_connect_2/lib/standard_button.gif")) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/firstdata_connect_2/lib/standard_button.gif";
+		} else {
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/firstdata_connect_2/lib/standard_button.gif";
+		}
 		$payment_settings['firstdata_connect_2']['storename'] = '';
 		$payment_settings['firstdata_connect_2']['sharedSecret'] = '';
 		$payment_settings['firstdata_connect_2']['timezone'] = '';
 		$payment_settings['firstdata_connect_2']['sandbox'] = '';
-		$payment_settings['firstdata_connect_2']['button_url'] = '';
-		$payment_settings['firstdata_connect_2']['bypass_payment_page'] = '';
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
-		}
+		$payment_settings['firstdata_connect_2']['button_url'] = $button_url;
+		$payment_settings['firstdata_connect_2']['type'] = 'off-site';
+		$payment_settings['firstdata_connect_2']['display_name'] = "FirstData Connect 2.0";
+		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
 	//Open or close the postbox div
-	if (empty($payment_settings['firstdata_connect_2']['active'])
-					|| !empty($_REQUEST['deactivate_firstdata_connect_2'])) {
+	if (empty($_REQUEST['deactivate_firstdata_connect_2'])
+					&& (!empty($_REQUEST['activate_firstdata_connect_2'])
+									|| array_key_exists('firstdata_connect_2', $active_gateways))) {
+		$postbox_style = '';
+	} else {
 		$postbox_style = 'closed';
 	}
-	if (!empty($_REQUEST['activate_firstdata_connect_2'])) {
-		$postbox_style = '';
-	}
 	?>
-<a name="firstdata_connect_2" id="firstdata_connect_2"></a>
-	<div class="metabox-holder">
-		<div class="postbox <?php echo $postbox_style; ?>">
-			<div title="Click to toggle" class="handlediv"><br /></div>
-			<h3 class="hndle">
-				<?php _e('First Data Connect 2 Settings', 'event_espresso'); ?>
-			</h3>
-			<div class="inside">
-				<div class="padding">
-					<?php
-					if (!empty($_REQUEST['activate_firstdata_connect_2'])) {
-						$payment_settings['firstdata_connect_2']['active'] = true;
-						if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata_connect_2/standard_button.gif")) {
-							$payment_settings['firstdata_connect_2']['button_url'] = EVENT_ESPRESSO_GATEWAY_DIR
-											. "/firstdata_connect_2/standard_button.gif";
-						} else {
-							$payment_settings['firstdata_connect_2']['button_url'] = EVENT_ESPRESSO_PLUGINFULLURL
-											. "gateways/firstdata_connect_2/standard_button.gif";
-						}
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('First Data Connect 2 Activated', 'event_espresso');
-						} else {
-							$notices['errors'][] = __('Unable to Activate First Data Connect 2', 'event_espresso');
-						}
-					}
-
-					if (!empty($_REQUEST['deactivate_firstdata_connect_2'])) {
-						$payment_settings['firstdata_connect_2']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('First Data Connect 2 De-activated', 'event_espresso');
-						} else {
-							$notices['errors'][] = __('Unable to De-activate First Data Connect 2', 'event_espresso');
-						}
-					}
-					echo '<ul>';
-					switch ($payment_settings['firstdata_connect_2']['active']) {
-						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_firstdata_connect_2=true#firstdata_connect_2\';" class="green_alert pointer"><strong>' . __('Activate First Data Connect 2?', 'event_espresso') . '</strong></li>';
-							break;
-						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_firstdata_connect_2=true\';" class="red_alert pointer"><strong>' . __('Deactivate First Data Connect 2?', 'event_espresso') . '</strong></li>';
-							event_espresso_display_firstdata_connect_2_settings();
-							break;
-					}
-					echo '</ul>';
-					?>
-				</div>
-			</div>
-		</div>
+	<a name="firstdata_connect_2" id="firstdata_connect_2"></a>
+	<div class="padding">
+		<?php
+		if (!empty($_REQUEST['activate_firstdata_connect_2'])) {
+			$active_gateways['firstdata_connect_2'] = str_replace('\\', '/', dirname(__FILE__));
+			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
+				$notices['updates'][] = __('First Data Connect 2 Activated', 'event_espresso');
+			} else {
+				$notices['errors'][] = __('Unable to Activate First Data Connect 2', 'event_espresso');
+			}
+		}
+	
+		if (!empty($_REQUEST['deactivate_firstdata_connect_2'])) {
+			unset($active_gateways['firstdata_connect_2']);
+			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
+				$notices['updates'][] = __('First Data Connect 2 De-activated', 'event_espresso');
+			} else {
+				$notices['errors'][] = __('Unable to De-activate First Data Connect 2', 'event_espresso');
+			}
+		}
+			
+		echo '<ul>';
+		if (!array_key_exists('firstdata_connect_2', $active_gateways)) {
+			echo '<li id="activate_firstdata_connect_2" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_firstdata_connect_2=true#firstdata_connect_2\';" class="green_alert pointer"><strong>' . __('Activate First Data Connect 2?', 'event_espresso') . '</strong></li>';
+		} else {
+			echo '<li id="deactivate_firstdata_connect_2" style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_firstdata_connect_2=true\';" class="red_alert pointer"><strong>' . __('Deactivate First Data Connect 2?', 'event_espresso') . '</strong></li>';
+			event_espresso_display_firstdata_connect_2_settings($payment_settings);
+		}
+		echo '</ul>';
+		?>
 	</div>
 	<?php
 }
 
 //PayPal Settings Form
-function event_espresso_display_firstdata_connect_2_settings() {
-	global $espresso_wp_user;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
-	$file_location = EVENT_ESPRESSO_GATEWAY_DIR . "firstdata_connect_2";
+function event_espresso_display_firstdata_connect_2_settings($payment_settings) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+	$values = array(
+			array('id' => true, 'text' => __('Yes', 'event_espresso')),
+			array('id' => false, 'text' => __('No', 'event_espresso')),
+	);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri",0,strpos($uri,'&activate_firstdata_connect_2=true'));
 	?>
 	<form method="post" action="<?php echo $uri; ?>#firstdata_connect_2">
-		<table width="99%" border="0" cellspacing="5" cellpadding="5">
-			<tr>
-				<td valign="top">
-					<ul>
-						<li>
-							<label>
-								<?php _e('First Data Storename', 'event_espresso'); ?>
-							</label>
-							<input class="regular-text" type="text" name="storename" size="35" value="<?php echo $payment_settings['firstdata_connect_2']['storename']; ?>">
-						</li>
-
-						<li>
-							<label>
-								<?php _e('First Data Shared Secret', 'event_espresso'); ?>
-							</label>
-							<input class="regular-text" type="text" name="sharedSecret" size="35" value="<?php echo $payment_settings['firstdata_connect_2']['sharedSecret']; ?>">
-						</li>
-
-						<li>
-							<label for="use_sandbox">
-								<?php _e('Use the Debugging Feature and the', 'event_espresso'); ?> <?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info_firstdata_connect_2') ?>
-							</label>
-							<input name="sandbox" type="checkbox" value="1" <?php echo $payment_settings['firstdata_connect_2']['sandbox'] == "1" ? 'checked="checked"' : '' ?> />
-						</li>
-					</ul>
-				</td>
-				<td valign="top">
-					<ul>
-						<li>
-							<label for="bypass_payment_page">
-								<?php _e('Bypass Payment Overview Page? ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'bypass_confirmation') ?>
-							</label>
-							<?php
-							$values = array(
-									array('id' => false, 'text' => __('No', 'event_espresso')),
-									array('id' => true, 'text' => __('Yes', 'event_espresso')));
-							echo select_input('bypass_payment_page', $values, $payment_settings['firstdata_connect_2']['bypass_payment_page']);
-							?>
-						</li>
-
-						<li>
-							<label for="button_url">
-								<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'button_image') ?>
-							</label>
-							<br />
-							<input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $payment_settings['firstdata_connect_2']['button_url']; ?>" />
-							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-						</li>
-
-						<li>
-							<label for="timezone">
-								<?php _e('Choose a timezone for the transaction? ', 'event_espresso'); ?><?php // apply_filters('filter_hook_espresso_help', 'timezone') // removed: no relevent help available, is it required? self explanatory?  ?>
-							</label>
-							<?php
-							$values = array(
-									array('id' => 'GMT', 'text' => __('GMT', 'event_espresso')),
-									array('id' => 'EST', 'text' => __('EST', 'event_espresso')),
-									array('id' => 'CST', 'text' => __('CST', 'event_espresso')),
-									array('id' => 'MST', 'text' => __('MST', 'event_espresso')),
-									array('id' => 'PST', 'text' => __('PST', 'event_espresso')));
-							echo select_input('timezone', $values, $payment_settings['firstdata_connect_2']['timezone']);
-							?>
-						</li>
-					</ul>
-				</td>
-			</tr>
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<th><label for="storename">
+						<?php _e('First Data Storename', 'event_espresso'); ?>
+					</label></th>
+					<td><input class="regular-text" type="text" name="storename" size="35" value="<?php echo $payment_settings['firstdata_connect_2']['storename']; ?>">
+					</td>
+				</tr>
+				<tr>
+					<th><label for="sharedSecret">
+						<?php _e('First Data Shared Secret', 'event_espresso'); ?>
+					</label></th>
+					<td><input class="regular-text" type="text" name="sharedSecret" size="35" value="<?php echo $payment_settings['firstdata_connect_2']['sharedSecret']; ?>">
+					</td>
+				</tr>
+				<tr>
+					<th><label for="use_sandbox">
+						<?php _e('Use the Debugging Feature and the', 'event_espresso'); ?> <?php _e('FirstData Connect 2 Sandbox? ', 'event_espresso'); ?><?php echo apply_filters('filter_hook_espresso_help', 'sandbox_info_firstdata_connect_2') ?>
+					</label></th>
+					<td><?php
+						echo select_input('sandbox', $values, $payment_settings['firstdata_connect_2']['sandbox']);
+					?>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="button_url">
+						<?php _e('Button Image URL: ', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'button_image') ?>
+					</label></th>
+					<td><input class="regular-text" type="text" name="button_url" size="34" value="<?php echo $payment_settings['firstdata_connect_2']['button_url']; ?>" />
+							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a></td>
+				</tr>
+				<tr>
+					<th><label for="timezone">
+						<?php _e('Choose a timezone for the transaction? ', 'event_espresso'); ?><?php // apply_filters('filter_hook_espresso_help', 'timezone') // removed: no relevent help available, is it required? self explanatory?  ?>
+					</label></th>
+					<td><?php
+						$values = array(
+							array('id' => 'GMT', 'text' => __('GMT', 'event_espresso')),
+							array('id' => 'EST', 'text' => __('EST', 'event_espresso')),
+							array('id' => 'CST', 'text' => __('CST', 'event_espresso')),
+							array('id' => 'MST', 'text' => __('MST', 'event_espresso')),
+							array('id' => 'PST', 'text' => __('PST', 'event_espresso')));
+						echo select_input('timezone', $values, $payment_settings['firstdata_connect_2']['timezone']);
+					?></td>
+				</tr>
+				<tr>
+					<td>
+						<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+						<?php echo '<img src="' . $payment_settings['firstdata_connect_2']['button_url'] . '" />'; ?>
+					</td>
+				</tr>
+			</tbody>
 		</table>
 		<p>
 			<input type="hidden" name="update_firstdata_connect_2" value="update_firstdata_connect_2">
@@ -189,6 +162,7 @@ function event_espresso_display_firstdata_connect_2_settings() {
 			<h2><?php _e('Time Zone'); ?></h2>
 			<p><?php _e('Time zone of the transaction. Valid values are: GMT, EST, CST, MST, PST'); ?></p>
 		</div>
-	</div>
 	<?php
 }
+
+add_meta_box('espresso_firstdata_connect_2_gateway_settings', __('First Data Connect 2 Settings', 'event_espresso'), 'event_espresso_firstdata_connect_2_payment_settings', 'event-espresso_page_payment_gateways');
