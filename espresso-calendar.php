@@ -355,13 +355,15 @@ function espresso_calendar_do_stuff($show_expired) {
 		//important! time must be in iso8601 format 2010-05-10T08:30!!
 		$eventArray['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
 		$eventArray['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
-		$eventArray['day'] = date("d", strtotime($event->end_date));
+		$eventArray['day'] = date("j", strtotime($event->end_date));
+		$eventArray['month'] = date("n", strtotime($event->end_date));
 		if ( $eventArray['end'] < date('Y-m-d') ) {
 			$eventArray['expired'] = 'expired';
 		} else {
 			$eventArray['expired'] = '';
 		}
 		$eventArray['today'] = date('Y-m-d');
+		$eventArray['this_month'] = date('m');
 		$eventArray['startTime'] = event_date_display($event->start_time, $espresso_calendar['time_format']);
 		$eventArray['endTime'] = event_date_display($event->end_time, $espresso_calendar['time_format']);
 
@@ -556,8 +558,9 @@ if (!function_exists('espresso_calendar')) {
 						<?php
 						}
 						?>
+						var month_day = event.month + '-' + event.day;
+						element.attr( 'rel', month_day ).attr( 'id', 'EVT_ID-'+event.id );
 
-						element.attr( 'rel', event.day ).attr( 'id', 'EVT_ID-'+event.id );
 
 						if(event.event_img_thumb){
 							total_images = parseInt( total_images ) + 1;
@@ -716,76 +719,75 @@ if (!function_exists('espresso_calendar')) {
 											
 				});
 				
-				var imgTimeout = total_images * 50;
+				
+				var imgTimeout = total_images * 75;
 				
 				setTimeout(  
 					function() {  
 						
 						// establish vars we need to resize calendar cells properly
-						var evtID = 0;
 						var day = 0;
-						var days = new Array();
-						var heights = new Array();
-						var dayHeights = new Array();
-						var calDay = 0;
-						var dayClass = '';
-						var parentRow;
-						var target;
-						var rowOffset;
-						var targetOffset;
-						var newTop = 0;						
-						var calendarOffset = $jaer('.fc-content').offset();						
-						var daysOffset = 0;
-
-						/// calculate the day offset that the calendar uses
-						$jaer.each( [ 0, 1, 2, 3, 4, 5, 6 ], function(index, value) { 
-							dayClass = '.fc-day'+value;
-							if ( ! $jaer( dayClass ).hasClass('fc-other-month') && daysOffset == 0 ) {					
-								daysOffset = parseInt( value );
-							}
+						var month = 0;
+						var thisMonth = 0;
+						var thisYear = 0;
+						var prevMonth = 0;
+						var nextMonth = 0;
+						var newTop = 0;			
+									
+						var months = new Object();
+						var monthNames = new Object();						
+						monthNames= [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']); ?>];						
+						for ( i=0; i<12; i++ ) {
+							months[ monthNames[i] ] = i+1;
+						}
+						
+						var monthYear = $jaer('.fc-header-title h2').html();
+						var monthYearArray = monthYear.split(' ');
+						thisMonth = months[ monthYearArray[0] ];
+						thisYear = monthYearArray[1];
+						prevMonth = thisMonth - 1;
+						nextMonth =  thisMonth +1;	
+//						alert( 'prevMonth = ' + prevMonth + '\n' + 'nextMonth = ' + nextMonth );
+						
+						$jaer('.fc-view-month .fc-widget-content').each(function(index) {							
+							setMonth = thisMonth;							
+							if ( $jaer(this).closest('tr').hasClass('fc-first') && $jaer(this).hasClass('fc-other-month') ){
+								setMonth = prevMonth;
+							} else if ( $jaer(this).closest('tr').hasClass('fc-last') && $jaer(this).hasClass('fc-other-month') ){
+								setMonth = nextMonth;
+							}  							
+							setDay =$jaer(this).find('.fc-day-number').html();
+							setID = setMonth + '-' + setDay;
+							//alert( 'setID = ' + setID );							
+							$jaer(this).find('.fc-day-content > div').attr( 'id', setID );
 						});
-						daysOffset = daysOffset - 1;
 						
-						
-						$jaer('.fc-event').each( function(index){ 
-						
-							// grab event ID
-							evtID = $jaer(this).attr( 'id' );
-							
-							// determine what day this event is on
-							day = parseInt( $jaer(this).attr( 'rel' ));
-							calDay = day + daysOffset;
-							dayClass = '.fc-day'+calDay;
-							
-							// store days and heights in arrays
-							days[ evtID ] = day;							
-							heights[ evtID ] = parseInt( $jaer(this).find('.fc-event-inner').outerHeight() );
-							// now store that data together
-							if ( dayHeights[day] == undefined ) {
-								dayHeights[day] = 0;
+						$jaer('.fc-event').each( function(index){ 						
+							// determine what month and day this event is on
+							monthDay = $jaer(this).attr( 'rel' );
+//							alert( 'month Day = ' + monthDay );
+							// find day container in calendar
+							dayCnt = $jaer('#'+monthDay);
+							dayCntHTML = dayCnt.html();
+							if ( dayCntHTML == '&nbsp;' ) {
+								dayCntHTML = '';
+								dayCnt.html( dayCntHTML );
+								dayCnt.css({ 'height' : 0 });
 							}
-							// sum the height of all calendar boxes for this day
-							dayHeights[day] = dayHeights[day] + heights[evtID];
-
-							// find parent row and target div we need to adjust height of
-							parentRow = $jaer( dayClass ).closest( 'tr' );
-							target = parentRow.children('.fc-first').find('.fc-day-content').children('div');
-							target.css({ 'height' : dayHeights[ day ] + 6 });
-
-							targetOffset = target.offset();
-							targetTop = targetOffset.top - calendarOffset.top; 							
-							
-							// if this is not the first event
-							if ( dayHeights[day] > heights[evtID] ) {
-								newTop = dayHeights[day] - heights[evtID] + 3;
-							} else {
-								newTop = 0;
-							}
-							
-							// set new offset for event
-							newTop = newTop + targetTop + 3;
-							$jaer(this).css({ 'top' : newTop });
-							
+							// grab offset for dayCnt
+							dayCntPos = dayCnt.position();
+//							alert( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
+							dayCntHgt = dayCnt.css( 'height' );
+							dayCntHgt = parseInt( dayCntHgt.replace( 'px', '' ));
+//							alert( 'dayCntHgt = ' + dayCntHgt );														
+							newTop = dayCntPos.top + dayCntHgt;
+//							alert( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );					
+							$jaer(this).css({ 'top' : newTop });							
+							linkHeight = parseInt( $jaer(this).find('.fc-event-inner').outerHeight() );
+//							alert( 'linkHeight = ' + linkHeight );								
+							newHeight = dayCntHgt + linkHeight + 3;
+							dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
+//							alert( 'newHeight = ' + newHeight );							
 						});		
 						
 											
