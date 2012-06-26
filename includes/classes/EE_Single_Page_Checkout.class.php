@@ -1688,7 +1688,7 @@ class EE_Single_Page_Checkout {
 			} else {
 				// not ajax
 				$espresso_notices['success'][] = $success_msg;
-				// return false becuz response was not ajax
+				// return true to advance to next step
 				return TRUE;
 			}
 		} elseif ($error_msg) {
@@ -1698,7 +1698,7 @@ class EE_Single_Page_Checkout {
 				die();
 			} else {
 				$espresso_notices['errors'][] = $error_msg;
-				// return false becuz response was not ajax
+				// return false to return to retry step
 				return FALSE;
 			}
 		}
