@@ -3,10 +3,10 @@
 //Returns an array of available template files
 function espresso_invoice_template_files() {
 // read our template dir and build an array of files
-	if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "invoice/templates/index.php")) {
-		$dhandle = opendir(EVENT_ESPRESSO_GATEWAY_DIR . 'invoice/templates/css/'); //If the template files have been moved to the uplaods folder
+	if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "invoice/lib/templates/index.php")) {
+		$dhandle = opendir(EVENT_ESPRESSO_GATEWAY_DIR . 'invoice/lib/templates/css/'); //If the template files have been moved to the uplaods folder
 	} else {
-		$dhandle = opendir(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/invoice/templates/css/');
+		$dhandle = opendir(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/invoice/lib/templates/css/');
 	}
 
 	$files = array();
