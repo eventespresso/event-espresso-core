@@ -98,6 +98,18 @@ function espresso_EE_Session() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
+	if (!empty($_POST['clear_cart'])) {
+		$EE_Session->reset_data(array(
+				'cart',
+				'gateway_data', 
+				'transaction', 
+				'registration',
+				'primary_attendee',
+				'tax_totals',
+				'taxes',
+				'billing_info'
+				));
+	}
 }
 
 /**
