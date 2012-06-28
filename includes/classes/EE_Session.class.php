@@ -173,6 +173,9 @@
 
 
 
+	public function get_notices() {
+		return $this->_notices;
+	}
 
 
 	/**
@@ -601,7 +604,6 @@
 			$this->_notices['errors'][] = 'An error occured. No session data could be reset, because no session var name was provided.';
 			return FALSE;
 		}
-
 		// if $data_to_reset is not in an array, then put it in one
 		if ( ! is_array( $data_to_reset ) ) {
 			$data_to_reset = array ( $data_to_reset );
@@ -618,21 +620,22 @@
 					// set var to NULL
 					$this->_session_data[ $reset ] = NULL;
 					$this->_notices['updates'][] = 'The session variable '.$reset.' was reset.';
-					return TRUE;
+					$return_value = !isset($return_value) ? TRUE : $return_value;
 
 				} else {
 					// yeeeeeeeeerrrrrrrrrrr OUT !!!!
-					$this->_notices['errors'][] = 'Sorry! Default session data can not be reset.';
-					return FALSE;
+					$this->_notices['errors'][] = 'Sorry! '.$reset.' is a default session datum and can not be reset.';
+					$return_value = FALSE;
 				}
 
 			} else {
 				// opps! that session var does not exist!
-				$this->_notices['errors'][] = 'An error occured. The session item provided is invalid or does not exist.';
-				return FALSE;
+				$this->_notices['errors'][] = 'An error occured. The session item provided, '.$reset.', is invalid or does not exist.';
+				$return_value = FALSE;
 			}
 
 		} // end of foreach
+		return $return_value;
 
 	}
 
