@@ -2,12 +2,12 @@
 //Invoice verion 2.0
 include('lib/invoice_functions.php');
 
-function event_espresso_invoice_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user, $org_options;
+function espresso_invoice_settings() {
+	global $espresso_premium, $notices, $espresso_wp_user, $org_options, $active_gateways;
 	if ($espresso_premium != true)
 		return;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
 
 	if (isset($_POST['update_invoice_payment_settings'])) {
 		$payment_settings['invoice']['pdf_title'] = trim(strip_tags($_POST['pdf_title']));
@@ -19,7 +19,7 @@ function event_espresso_invoice_payment_settings() {
 		$payment_settings['invoice']['show'] = $_POST['show'];
 		$payment_settings['invoice']['invoice_css'] = trim(strip_tags($_POST['invoice_css']));
 
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings)) {
 			$notices['updates'][] = __('Invoice Payment Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Invoice Payment Settings were not saved! ', 'event_espresso');
@@ -43,78 +43,46 @@ function event_espresso_invoice_payment_settings() {
 		$payment_settings['invoice']['image_url'] = '';
 		$payment_settings['invoice']['show'] = true;
 		$payment_settings['invoice']['invoice_css'] = '';
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
-		}
-	}
-
-	//Open or close the postbox div
-	if (empty($payment_settings['invoice']['active'])
-					|| !empty($_REQUEST['deactivate_invoice_payment'])) {
-		$postbox_style = 'closed';
-	}
-	if (!empty($_REQUEST['activate_invoice_payment'])) {
-		$postbox_style = '';
+		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
 	?>
 
 	<a name="invoice" id="invoice"></a>
-	<div class="metabox-holder">
-		<div class="postbox <?php echo $postbox_style; ?>">
-			<div title="Click to toggle" class="handlediv"><br />
-			</div>
-			<h3 class="hndle">
-				<?php _e('Invoice Payment Settings', 'event_espresso'); ?>
-			</h3>
-			<div class="inside">
-				<div class="padding">
-					<?php
-					if (!empty($_REQUEST['activate_invoice_payment'])) {
-						$payment_settings['invoice']['active'] = true;
-						//echo 'active = '.$payment_settings['invoice']['active'];
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
-						} else {
-							$notices['errors'][] = __('Unable to Activate Invoice Payments', 'event_espresso');
-						}
-					}
+	<div class="padding">
+		<?php
+		if (!empty($_REQUEST['activate_invoice_payment'])) {
+			$active_gateways['invoice'] = str_replace( '\\', '/', dirname(__FILE__ ));
+			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
+				$notices['updates'][] = __('Invoice Payments Activated', 'event_espresso');
+			} else {
+				$notices['errors'][] = __('Unable to Activate Invoice Payments', 'event_espresso');
+			}
+		}
 
-					if (!empty($_REQUEST['deactivate_invoice_payment'])) {
-						$payment_settings['invoice']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('Invoice Payments De-activated', 'event_espresso');
-						} else {
-							$notices['errors'][] = __('Unable to De-activate Invoice Payments', 'event_espresso');
-						}
-					}
+		if (!empty($_REQUEST['deactivate_invoice_payment'])) {
+			unset($active_gateways['invoice']);
+			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
+				$notices['updates'][] = __('Invoice Payments De-activated', 'event_espresso');
+			} else {
+				$notices['errors'][] = __('Unable to De-activate Invoice Payments', 'event_espresso');
+			}
+		}
 
-					echo '<ul>';
-					switch ($payment_settings['invoice']['active']) {
-
-						case false:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_invoice_payment=true#invoice\';" class="green_alert pointer"><strong>' . __('Activate Invoice Payments?', 'event_espresso') . '</strong></li>';
-							break;
-
-						case true:
-							echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_invoice_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Invoice Payments?', 'event_espresso') . '</strong></li>';
-							event_espresso_display_invoice_payment_settings();
-							break;
-					}
-					echo '</ul>';
-					?>
-				</div>
-			</div>
-		</div>
+		echo '<ul>';
+		if (!array_key_exists('invoice', $active_gateways)) {
+			echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&activate_invoice_payment=true#invoice\';" class="green_alert pointer"><strong>' . __('Activate Invoice Payments?', 'event_espresso') . '</strong></li>';
+		} else {
+			echo '<li style="width:30%;" onclick="location.href=\'' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=payment_gateways&deactivate_invoice_payment=true\';" class="red_alert pointer"><strong>' . __('Deactivate Invoice Payments?', 'event_espresso') . '</strong></li>';
+			event_espresso_display_invoice_payment_settings($payment_settings);
+		}
+		echo '</ul>';
+		?>
 	</div>
 	<?php
 }
 
 //Invoice Payments Settings Form
-function event_espresso_display_invoice_payment_settings() {
-	global $espresso_wp_user;
-
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
-
+function event_espresso_display_invoice_payment_settings($payment_settings) {
 	$files = espresso_invoice_template_files();
 	$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
@@ -162,23 +130,6 @@ on your payemnt page. (Default: Yes)', 'event_espresso'); ?></span></td>
 				</tr>
 			</tbody>
 		</table>
-		<?php /* ?><!-- TABLE TEMPLATE -->
-		  <table class="form-table">
-		  <tbody>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  <tr>
-		  <th> </th>
-		  <td></td>
-		  </tr>
-		  </tbody>
-		  </table><?php */ ?>
 		<h4>
 			<?php _e('Invoice Display Settings', 'event_espresso'); ?>
 		</h4>
@@ -269,3 +220,4 @@ to change the look of your invoices.', 'event_espresso'); ?></span></td>
 	<?php
 }
 
+add_meta_box('espresso_invoice_gateway_settings', __('Invoice Payment Settings', 'event_espresso'), 'espresso_invoice_settings', 'event-espresso_page_payment_gateways');
