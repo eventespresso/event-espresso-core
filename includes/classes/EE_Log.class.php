@@ -20,6 +20,21 @@ class espresso_log {
 		$folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
 		//echo $folder;
 		$this->file = $folder . 'espresso_log.txt';
+		
+		$uploads = wp_upload_dir();
+		if (!is_dir(EVENT_ESPRESSO_UPLOAD_DIR) && is_writable($uploads['baseurl'])) {
+			mkdir(EVENT_ESPRESSO_UPLOAD_DIR);
+		}
+		if (!is_dir(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && is_writable(EVENT_ESPRESSO_UPLOAD_DIR)) {
+			mkdir(EVENT_ESPRESSO_UPLOAD_DIR.'logs');
+		}
+		
+		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->file)) {
+			touch($this->file);
+		}
+		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($folder.'espresso_debug.php')) {
+			touch($folder.'espresso_debug.php');
+		}
 	}
 
 	public static function singleton() {
@@ -31,9 +46,6 @@ class espresso_log {
 	}
 
 	public function log($message) {
-		if (!file_exists($this->file)) {
-			touch($this->file);
-		}
 		if (is_writable($this->file)) {
 			$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
 			fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
@@ -142,9 +154,7 @@ function espresso_debug_file() {
 		$message .= '$my_REQUEST["' . $key . '"] = ' . "'"  . serialize($value) . "';\n";
 	}
 	$file = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/espresso_debug.php';
-	if (!file_exists($file)) {
-		touch($file);
-	}
+
 	if (is_writable($file)) {
 		$fh = fopen($file, 'w') or die("Cannot open file! " . $file);
 		fwrite($fh, $message);
