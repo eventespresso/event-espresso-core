@@ -74,7 +74,8 @@ class EE_Price_Types_List_Table extends WP_List_Table {
 			default:
 				$order = 'ASC';
 		}
-		$types = $this->_PRT->get_all_price_types($orderby, $order);var_dump($_GET['orderby']);
+		$types = $this->_PRT->get_all_price_types($orderby, $order);
+		//var_dump($_GET['orderby']);
 		foreach ($types as $type) {
 			if ($type->deleted()) {
 				$this->views['trashed']['count']++;
