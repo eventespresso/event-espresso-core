@@ -6,34 +6,24 @@ if (!function_exists('event_form_build')) {
 		if ($question->admin_only && empty($show_admin_only)) {
 			return;
 		}
-
+		$html = '';
 		$required = '';
 		$attendee_number = isset($extra['attendee_number']) ? $extra['attendee_number'] : 0;
 		$tckt_date = isset($extra['date']) ? $extra['date'] : 0;
 		$tckt_time = isset($extra['time']) ? $extra['time'] : 0;
 		$price_id = isset($extra['price_id']) ? $extra['price_id'] : 0;
 
-		//$multi_name_adjust = $multi_reg == 1 ? "[$event_id][$price_id][$attendee_number]" : '';
 		$multi_name = $multi_reg == 1 ? "[$event_id][$attendee_number][$tckt_date][$tckt_time][$price_id]" : '';
-
-		if (!empty($extra["x_attendee"])) {
-			$field_name = ($question->system_name != '') ? "x_attendee_" . $question->system_name : "x_attendee_" . $question->question_type . '_' . $question->id . '[]';
-			$question->system_name = "x_attendee_" . $question->system_name ;
-			$question->required = false;
-			$arrayed_field = '[]';
+		if (!empty($question->system_name)) {
+			$field_name = $question->system_name;
 		} else {
-			$field_name = ($question->system_name != '') ? $question->system_name : $question->question_type . '_' . $question->id;
-			$arrayed_field = '';
+			$field_name = $question->question_type . '_' . $question->id;
+			$html .= '<input type="hidden" name="qstn[custom_questions]['.$field_name.']" value="'.$question->question.'"/>';
 		}
-
-		/**
-		 * Temporary client side email validation solution by Abel, will be replaced
-		 * in the next version with a full validation suite.
-		 */
-		$email_validate = $question->system_name == 'email' ? 'email' : '';
+		$arrayed_field = '';
 
 		if ($question->required) {
-			$required = ' title="' . $question->required_text . '" class="required ' . $email_validate . ' ' . $class . '"';
+			$required = ' title="' . $question->required_text . '" class="required ' . $class . '"';
 			$required_label = "<em>*</em>";
 		}
 		if (is_array($answer) && array_key_exists($event_id, $answer)) {
@@ -44,6 +34,7 @@ if (!function_exists('event_form_build')) {
 		$required_label = isset($required_label) ? $required_label : '';
 
 		$label = '<label for="' . $field_name . '">' . $question->question . $required_label . '</label> ';
+
 		//If the members addon is installed, get the users information if available
 		if( defined( 'EVENT_ESPRESSO_MEMBERS_DIR' )) {
 			global $current_user;
@@ -53,11 +44,7 @@ if (!function_exists('event_form_build')) {
 			$member_options = get_option('events_member_settings');
 		}
 
-		//print_r( $member_options );
 
-
-
-		$html = '';
 		switch ($question->question_type) {
 
 			case "TEXT" :
