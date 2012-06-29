@@ -170,7 +170,8 @@ class EEM_Registration extends EEM_Base {
 	public function get_registration( $where_cols_n_values = array() ) {
 		// retreive a particular registration
 		if ( $registration = $this->select_row_where ( $where_cols_n_values )) {
-			return $this->_create_objects( array( $registration ));
+			$reg_array = $this->_create_objects( array( $registration ));
+			return array_shift($reg_array);
 		} else {
 			return FALSE;
 		}
