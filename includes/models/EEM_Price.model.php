@@ -490,7 +490,7 @@ class EEM_Price extends EEM_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID ) {
 
 		if ( ! $EVT_ID ) {
-			$prices = $this->_select_all_prices_where(array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ));
+			$prices = $this->_select_all_prices_where(array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ), array('PRC_start_date'), array('DESC'));
 			$array_of_is_active_and_price_objects = array();
 			foreach ($prices as $price) {
 					$array_of_price_objects[ $price->type() ][] = $price;
@@ -498,10 +498,10 @@ class EEM_Price extends EEM_Base {
 			return $array_of_price_objects;
 		}
 
-		if ( ! $globals = $this->_select_all_prices_where(array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ))) {
+		if ( ! $globals = $this->_select_all_prices_where(array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PRT_is_tax' => FALSE, 'prc.PRC_is_active'=>TRUE ), array('PRC_start_date'), array('DESC'))) {
 			$globals = array();
 		}
-		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID ))) {
+		if ( ! $event_prices = $this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID ), array('PRC_start_date'), array('DESC'))) {
 			$event_prices = array();
 		}
 //		echo printr( $event_prices, '$event_prices' ); 
@@ -526,11 +526,20 @@ class EEM_Price extends EEM_Base {
 			function sort_event_prices($price_a, $price_b) {
 				$PRT = EEM_Price_Type::instance();
 				if ($PRT->type[$price_a->type()]->order() == $PRT->type[$price_b->type()]->order()) {
-					return 0;
+					return sort_event_prices_by_start_date($price_a, $price_b);
 				}
 				return ($PRT->type[$price_a->type()]->order() < $PRT->type[$price_b->type()]->order()) ? -1 : 1;
 			}
 		}
+		
+
+		function sort_event_prices_by_start_date($price_a, $price_b) {
+			if ( $price_a->start_date( FALSE ) == $price_b->start_date( FALSE )) {
+				return 0;
+			}
+			return ($price_a->start_date( FALSE ) < $price_b->start_date( FALSE )) ? -1 : 1;
+		}
+
 		
 		uasort($prices, 'sort_event_prices');
 		

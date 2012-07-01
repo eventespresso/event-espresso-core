@@ -1,35 +1,35 @@
 		
-jQuery(document).ready(function() {
+(function($) {
 
-//	jQuery('.display-ticket-manager').live('click', function(){
-//		var page = jQuery('html').scrollTop();
-//		var tk_mng_tp = jQuery('#event-datetimes-dv').offset();
+//	$('.display-ticket-manager').live('click', function(){
+//		var page = $('html').scrollTop();
+//		var tk_mng_tp = $('#event-datetimes-dv').offset();
 //		tk_mng_tp = Math.round( tk_mng_tp.top )-page;  
 //		if ( tk_mng_tp > 0 ){
 //			tk_mng_tp = 0;
 //		}
 //		tk_mng_tp = ( tk_mng_tp * (-1))+'px';
 //		alert(tk_mng_tp);
-//		jQuery('#ticket-manager-dv').animate({ top : tk_mng_tp, opacity : 'show' }, 200 );
+//		$('#ticket-manager-dv').animate({ top : tk_mng_tp, opacity : 'show' }, 200 );
 //	});
 
 
-//	jQuery('html').click(function(){
-//		jQuery('#ticket-manager-dv').css({ top : 0, opacity : 0 });
+//	$('html').click(function(){
+//		$('#ticket-manager-dv').css({ top : 0, opacity : 0 });
 //	});
 	
 
-	jQuery(window).scroll(function() {
-		var scrollTop = jQuery(this).scrollTop();
-		var offset = jQuery('#event_editor_major_buttons_wrapper').offset();
+	$(window).scroll(function() {
+		var scrollTop = $(this).scrollTop();
+		var offset = $('#event_editor_major_buttons_wrapper').offset();
 		//		alert( 'scrollTop : ' + scrollTop +  '   offset.top : ' +offset.top );
 		if(offset != null) { 
 			if ( (scrollTop+25) > offset.top ) {
-				jQuery('#event-editor-floating-save-btns').removeClass('hidden');
-				jQuery('#event_editor_major_buttons_wrapper .button-primary').addClass('hidden');
+				$('#event-editor-floating-save-btns').removeClass('hidden');
+				$('#event_editor_major_buttons_wrapper .button-primary').addClass('hidden');
 			} else {
-				jQuery('#event-editor-floating-save-btns').addClass('hidden');
-				jQuery('#event_editor_major_buttons_wrapper .button-primary').removeClass('hidden');
+				$('#event-editor-floating-save-btns').addClass('hidden');
+				$('#event_editor_major_buttons_wrapper .button-primary').removeClass('hidden');
 			}
 		}
 	});
@@ -37,20 +37,20 @@ jQuery(document).ready(function() {
 	
 		
 	// set process_datetimes to false
-	jQuery('#process_datetimes').val(0);
+	$('#process_datetimes').val(0);
 	// toggle process_datetimes to true if any datetime inputs are changed
-	jQuery('.dtm-inp').change( function() {
-		jQuery('#process_datetimes').val(1);
+	$('.dtm-inp').change( function() {
+		$('#process_datetimes').val(1);
 	});
 	// or if any datetime buttons are clicked	
-	jQuery('.dtm-inp-btn').click( function() {
-		jQuery('#process_datetimes').val(1);
+	$('.dtm-inp-btn').click( function() {
+		$('#process_datetimes').val(1);
 	});
 
 
 
-	jQuery('.dtm-picker').live('click', function(){
-		jQuery(this).datetimepicker({
+	$('.dtm-picker').live('click', function(){
+		$(this).datetimepicker({
 			timeFormat: 'hh:mm tt',
 			ampm: true,
 			separator: '  ',
@@ -66,55 +66,55 @@ jQuery(document).ready(function() {
 
 
 	// generic click event for displaying and giving focus to an element and hiding control 
-	jQuery('.display-the-hidden').click(function() {
+	$('.display-the-hidden').click(function() {
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = jQuery(this).attr("rel"); 
-		var control = jQuery(this);
+		var item_to_display = $(this).attr("rel"); 
+		var control = $(this);
 		control.addClass('hidden');  
 		// display the target's div container - use slideToggle or removeClass
-		jQuery('#'+item_to_display+'-dv').slideToggle( 500, function() {
+		$('#'+item_to_display+'-dv').slideToggle( 500, function() {
 			// hide the control element
 			//control.addClass('hidden');  
 			// display the target div's hide link
-			jQuery('#hide-'+item_to_display).removeClass('hidden'); 
+			$('#hide-'+item_to_display).removeClass('hidden'); 
 		// if hiding/showing a form input, then id of the form input must = item_to_display
-		//jQuery('#'+item_to_display).focus(); // add focus to the target
+		//$('#'+item_to_display).focus(); // add focus to the target
 		}); 
 		return false;
 	});
 
 	// generic click event for re-hiding an element and displaying it's display control 
-	jQuery('.hide-the-displayed').click(function() {
+	$('.hide-the-displayed').click(function() {
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = jQuery(this).attr("rel"); 
-		var control = jQuery(this);
+		var item_to_hide = $(this).attr("rel"); 
+		var control = $(this);
 		control.addClass('hidden');  
 		// hide the target's div container - use slideToggle or addClass
-		jQuery('#'+item_to_hide+'-dv').slideToggle( 500, function() {
-			//jQuery('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
+		$('#'+item_to_hide+'-dv').slideToggle( 500, function() {
+			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
 			// hide the control element
 			//control.addClass('hidden');  
 			// display the control element that toggles display of this element
-			jQuery('#display-'+item_to_hide).removeClass('hidden');  
+			$('#display-'+item_to_hide).removeClass('hidden');  
 		}); 
 		return false;
 	});	
 	
 	
-	jQuery('#hide-add-new-ticket-price').click(function() {
-		var inputs_to_cancel = jQuery(this).attr("rel"); 
-		var control = jQuery(this);
+	$('#hide-add-new-ticket-price').click(function() {
+		var inputs_to_cancel = $(this).attr("rel"); 
+		var control = $(this);
 		// hide the target's div container - use slideToggle or addClass
-		jQuery('#'+inputs_to_cancel+'-dv').slideToggle( 500, function() {
+		$('#'+inputs_to_cancel+'-dv').slideToggle( 500, function() {
 			// hide the control element
 			control.addClass('hidden');  
 			// display the control element that toggles display of this element
-			jQuery('#display-'+inputs_to_cancel).removeClass('hidden');  
-			jQuery( '.' + inputs_to_cancel + '-input' ).each(function() {
-				if ( jQuery(this).is(':radio') ) {
-					jQuery(this).prop( 'checked', false );
+			$('#display-'+inputs_to_cancel).removeClass('hidden');  
+			$( '.' + inputs_to_cancel + '-input' ).each(function() {
+				if ( $(this).is(':radio') ) {
+					$(this).prop( 'checked', false );
 				} else {
-					jQuery(this).val('');
+					$(this).val('');
 				}				
 			});			
 		}); 		
@@ -123,45 +123,56 @@ jQuery(document).ready(function() {
 
 				
 				
-	jQuery('.edit-event-price-lnk').click(function() {
+	$('.edit-event-price-lnk').click(function() {
 		// get target element ID from "this" (the control element's) "rel" attribute 
-		jQuery( '.event-price-settings-dv' ).each( function() {
-			if ( jQuery(this).is(':visible')){
-				var evt_prc_row = jQuery(this).attr( 'id' );
-				jQuery( '#'+evt_prc_row ).slideToggle( 500 );  
+		$( '.event-price-settings-dv' ).each( function() {
+			if ( $(this).is(':visible')){
+				var evt_prc_row = $(this).attr( 'id' );
+				$( '#'+evt_prc_row ).slideToggle( 500 );  
 				evt_prc_row = evt_prc_row.replace('edit-', '');
-				jQuery( '#'+evt_prc_row ).slideToggle( 250 );  
+				$( '#'+evt_prc_row ).slideToggle( 250 );  
 			}
 		});
 		
-		var PRC_ID = jQuery(this).attr("rel"); 
-		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250 );  
-		//add_price_ID_to_list_of_edited_prices( PRC_ID );
+		var PRC_ID = $(this).attr("rel"); 
+		$( '#event-price-'+PRC_ID ).slideToggle( 250 );  
 		// display the target's div container - use slideToggle or removeClass
-		jQuery( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
+		$( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
+		toggle_edit_ticket_price_dates();
 		return false;
 	});
 
 
-	jQuery('.edit-ticket-price-input').change(function() {
-	
-		//var edited_input = jQuery(this);
+	$('.edit-ticket-price-input').change(function() {
+		
+		//var edited_input = $(this);
 		// determine PRC_ID
-		var PRC_ID = jQuery(this).closest('.event-price').attr('id');
+		var PRC_ID = $(this).closest('.event-price-dv').attr('id');
 		if ( PRC_ID == undefined ) {
-			var PRC_ID = jQuery(this).closest('.event-price-settings-dv').attr('id');
+			var PRC_ID = $(this).closest('.event-price-settings-dv').attr('id');
 			PRC_ID = PRC_ID.replace('edit-', '');
 		}
 		PRC_ID = PRC_ID.replace('event-price-', '');
-		
-		var edit_price_input_ID = '#quick-' + jQuery(this).attr('id');
+		var edit_price_input_ID = $(this).attr('id');
+		var copy_values = true;
 
-		if( ! jQuery(this).hasClass('quick-edit')) {
-			var edit_price_input_ID = 'quick-' + jQuery(this).attr('id');
-			edit_price_input_ID = '#' + escape_square_brackets( edit_price_input_ID );
-			var new_val = jQuery(this).val();
-			jQuery(edit_price_input_ID).val( new_val );
-		} 
+		if( $(this).hasClass('quick-edit')) {
+			edit_price_input_ID = '#' + edit_price_input_ID.replace('quick-', '');
+		} else {
+			edit_price_input_ID = '#quick-' + edit_price_input_ID;
+			var orderInp = '#quick-edit-ticket-price-PRC_order-'+PRC_ID;
+			var nameInp = '#quick-edit-ticket-price-PRC_name-'+PRC_ID;
+			var amntInp = '#quick-edit-ticket-price-PRC_amount-'+PRC_ID;
+
+			if ( edit_price_input_ID !== orderInp && edit_price_input_ID !== nameInp && edit_price_input_ID !== amntInp ) {
+				copy_values = false;
+			}  
+		}
+
+		if ( copy_values ) {
+			var new_val = $(this).val();
+			$(edit_price_input_ID).val( new_val );
+		}
 		add_price_ID_to_list_of_edited_prices( PRC_ID );
 	
 	});
@@ -169,12 +180,12 @@ jQuery(document).ready(function() {
 	
 	function add_price_ID_to_list_of_edited_prices( PRC_ID ) {
 		// add PRD_ID to list of edited prices
-		var edited_ticket_price_IDs = jQuery('#edited-ticket-price-IDs').val();
+		var edited_ticket_price_IDs = $('#edited-ticket-price-IDs').val();
 		if ( edited_ticket_price_IDs == undefined ) {
 			edited_ticket_price_IDs = '';
 		}
 		edited_ticket_price_IDs = edited_ticket_price_IDs + PRC_ID + ',';
-		jQuery('#edited-ticket-price-IDs').val( edited_ticket_price_IDs );		
+		$('#edited-ticket-price-IDs').val( edited_ticket_price_IDs );		
 	}
 	
 	function escape_square_brackets( value ) {
@@ -184,65 +195,97 @@ jQuery(document).ready(function() {
 	}
 
 	
-	jQuery('.cancel-event-price-btn').click(function() {
+	$('.cancel-event-price-btn').click(function() {
 		// get target element ID from "this" (the control element's) "rel" attribute
-		var PRC_ID = jQuery(this).attr("rel"); 
-		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250 );  
+		var PRC_ID = $(this).attr("rel"); 
+		$( '#event-price-'+PRC_ID ).slideToggle( 250 );  
 		// display the target's div container - use slideToggle or removeClass
-		jQuery( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
+		$( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
 		return false;
 	});
 
 	
-	jQuery('.delete-event-price-lnk').click(function() {
+	$('.delete-event-price-lnk').click(function() {
 		// get target element ID from "this" (the control element's) "rel" attribute
-		var PRC_ID = jQuery(this).attr("rel"); 
-		jQuery( '#event-price-'+PRC_ID ).slideToggle( 250, function(){
-			jQuery( '#event-price-'+PRC_ID ).delay(100).closest('tr').css( 'display', 'none' ); 
-			jQuery( '#edit-event-price-'+PRC_ID ).delay(100).closest('tr').css( 'display', 'none' ); 
+		var PRC_ID = $(this).attr("rel"); 
+		$( '#event-price-'+PRC_ID ).slideToggle( 250, function(){
+			$( '#event-price-'+PRC_ID ).delay(100).closest('tr').css( 'display', 'none' ); 
+			$( '#edit-event-price-'+PRC_ID ).delay(100).closest('tr').css( 'display', 'none' ); 
 		}); 
 		add_price_ID_to_list_of_edited_prices( PRC_ID );
 		// generate target name for hidden "deleted" input
-		var price_to_delete = escape_square_brackets( 'edit_ticket_price['+PRC_ID+'][PRC_deleted]' );
+//		var price_to_delete = escape_square_brackets( 'edit_ticket_price['+PRC_ID+'][PRC_deleted]' );
 		// set delete to true
-		jQuery( '[name="'+price_to_delete+'"]' ).val(1); 
+//		$( '[name="'+price_to_delete+'"]' ).val(1); 
+		$( '#edit-ticket-price-PRC_deleted-'+PRC_ID ).val(1); 
 		return false;
 	});
 
+	function toggle_edit_ticket_price_dates() {
+		$( '.edit-ticket-price-use-dates-yes' ).each(function() {
+			if ( $(this).prop( 'checked' ) ) {
+				//alert( $(this).attr('name') + ' = YES' );
+				$(this).trigger('click');
+			}			
+		});		
+	
+		$( '.edit-ticket-price-use-dates-no' ).each(function() {
+			if ( $(this).prop( 'checked' ) ) {
+				//alert( $(this).attr('name') + ' = NO' );
+				$(this).trigger('click');
+			}			
+		});	
+	}	
+
+	$('.edit-ticket-price-use-dates-yes').bind('click', function() {
+		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().find('.edit-ticket-price-dates').slideDown().parent().animate({ 'padding-top' : '10', 'padding-bottom' : '10' }, 250);
+		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().next().find('.edit-ticket-price-dates').slideDown().parent().animate({ 'padding-top' : '10', 'padding-bottom' : '10' }, 250);
+	});
+
+	$('.edit-ticket-price-use-dates-no').bind('click', function() {
+		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().find('.edit-ticket-price-dates').slideUp().parent().animate({ 'padding-top' : '0', 'padding-bottom' : '0' }, 250);
+		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().next().find('.edit-ticket-price-dates').slideUp().parent().animate({ 'padding-top' : '0', 'padding-bottom' : '0' }, 250);
+	});
 
 
 	
 	// Add class 'selected' to visual-toggle for email confirmation postbox
 	// Add class to postbox for further styling hook
-	jQuery("div.visual-toggle p a.toggleVisual").addClass('selected');
-	jQuery("div.visual-toggle p a.toggleHTML").click(
+	$("div.visual-toggle p a.toggleVisual").addClass('selected');
+	$("div.visual-toggle p a.toggleHTML").click(
 		function(){
-			jQuery(this).parent("p").children("a.toggleHTML").addClass('selected');
-			jQuery(this).closest("div.visual-toggle").next(".postbox").addClass('visHTML');
-			jQuery(this).parent("p").children("a.toggleVisual").removeClass('selected');
+			$(this).parent("p").children("a.toggleHTML").addClass('selected');
+			$(this).closest("div.visual-toggle").next(".postbox").addClass('visHTML');
+			$(this).parent("p").children("a.toggleVisual").removeClass('selected');
 		});
-	jQuery("div.visual-toggle p a.toggleVisual").click(
+	$("div.visual-toggle p a.toggleVisual").click(
 		function() {
-			jQuery(this).parent("p").children("a.toggleHTML").removeClass('selected');
-			jQuery(this).closest("div.visual-toggle").next(".postbox").removeClass('visHTML');
-			jQuery(this).parent("p").children("a.toggleVisual").addClass('selected');
+			$(this).parent("p").children("a.toggleHTML").removeClass('selected');
+			$(this).closest("div.visual-toggle").next(".postbox").removeClass('visHTML');
+			$(this).parent("p").children("a.toggleVisual").addClass('selected');
 		});
 	// add or remove the mce editor 
-	jQuery('a.toggleVisual').click(
+	$('a.toggleVisual').click(
 		function() {
-			var id = jQuery(this).closest('div.visual-toggle').next('div.postbox').children('textarea').attr('id');
+			var id = $(this).closest('div.visual-toggle').next('div.postbox').children('textarea').attr('id');
 			//alert( id );
 			tinyMCE.execCommand('mceAddControl', false, id);
 		}
 		);
 
-	jQuery('a.toggleHTML').click(
+	$('a.toggleHTML').click(
 		function() {
-			var id = jQuery(this).closest('div.visual-toggle').next('div.postbox').children('textarea').attr('id');
+			var id = $(this).closest('div.visual-toggle').next('div.postbox').children('textarea').attr('id');
 			tinyMCE.execCommand('mceRemoveControl', false, id);
 		}
 		);
-});
+
+
+
+})(jQuery);
+
+
+
 
 //Confirm Delete
 function confirmDelete(){

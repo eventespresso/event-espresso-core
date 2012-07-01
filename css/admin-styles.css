@@ -362,7 +362,7 @@ div.tablenav {
 	height:45px;
 }
 #event-editor-floating-save-btns {
-	position:fixed; top:0px; right:21px;
+	position:fixed; top:0px; right:15px;
 	padding: 35px 11px 10px 11px;
 	background:rgba(255,230,0,.2);
 }
@@ -449,6 +449,9 @@ div.tablenav {
 	margin: 5px 0;
 }*/
 
+
+/*  TICKET PRICES  */
+
 #no-ticket-prices-msg-dv {
 	padding: 0 0.6em; margin: 1em 0; background-color: #FFEBE8; border: 1px solid #CC0000; border-radius: 3px 3px 3px 3px; color: #333;
 }
@@ -468,8 +471,12 @@ div.tablenav {
 
 .inactice-price { margin-right:1em; color:#CE9B8B; }
 
+.price-date-status-img {
+	 position:relative; top:5px; left:4px;
+}
+.input-disabled { color:#999 !important; }
 
-/*  TICKET PRICES  */
+
 #ticket-prices-dv .event-price-settings-dv td { padding:10px 5px; vertical-align:middle; }
 
 .event-price-tbl-hdr-type { width:15%; padding:0 .5em; }
