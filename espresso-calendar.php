@@ -43,7 +43,8 @@ function ee_calendar_load_pue_update() {
 			'apikey' => $api_key,
 			'lang_domain' => 'event_espresso',
 			'checkPeriod' => '24',
-			'option_key' => 'site_license_key'
+			'option_key' => 'site_license_key',
+			'options_page_slug' => 'event-espresso'
 		);
 		$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 	}
