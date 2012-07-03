@@ -1327,9 +1327,15 @@ class EE_Single_Page_Checkout {
 					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
 					
 					$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
+					
+					if ( has_filter( 'filter_hook_espresso_new_registration_code' ) ) {
+						$prev_reg_code = $new_reg_code;
+					} else {
+						$prev_reg_code = '%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%';
+					}					
 
-					// check for existing registration attempt
-					if ( $prev_reg = $REG->find_existing_registrations_LIKE('%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%')) {
+					// check for existing registration attempt, taking filtered reg_codes into consideration
+					if ( $prev_reg = $REG->find_existing_registrations_LIKE( $prev_reg_code ) ) {
 
 						// get previous transaction
 						$prev_txn_ID = $prev_reg->transaction_ID();
