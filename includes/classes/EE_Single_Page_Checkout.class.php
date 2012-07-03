@@ -1324,7 +1324,9 @@ class EE_Single_Page_Checkout {
 
 					$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );
 
-					$new_reg_ID = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
+					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
+					
+					$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
 
 					// check for existing registration attempt
 					if ( $prev_reg = $REG->find_existing_registrations_LIKE('%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%')) {
@@ -1360,8 +1362,8 @@ class EE_Single_Page_Checkout {
 													time(),
 													$price_paid,
 													$session['id'],
-													$new_reg_ID,
-													md5( $new_reg_ID ),
+													$new_reg_code,
+													md5( $new_reg_code ),
 													isset($attendee['primary_attendee']),
 													$is_group_reg,
 													FALSE,
@@ -1374,7 +1376,7 @@ class EE_Single_Page_Checkout {
 					// add registration id to session for the primary attendee
 					if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
 						$primary_attendee = $session['primary_attendee'];
-						$primary_attendee['registration_id'] = $new_reg_ID;
+						$primary_attendee['registration_id'] = $new_reg_code;
 						$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 					}
 				}
