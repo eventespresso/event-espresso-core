@@ -1,114 +1,33 @@
 <?php
 //Creates the invoice pdf
-function espresso_invoice_launch($attendee_id=0, $registration_id=0){
-	global $wpdb, $org_options, $payment_settings;
-
-	$data = new stdClass;
-
-	//Checks if this is a multi-event registration
-	$multi_reg = false;
-
-	//Tells the system to mark the payment status as pending
-	$update_paid_status = true;
-
-	//Create a Payment link
-	$payment_link = home_url() . "/?page_id=" . $org_options['return_url'] . "&id=" . $attendee_id;
-
-	//Perform logging actions
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-	//Unset the session id
-	if(isset($_SESSION['espresso_session']['id'])){
-		//unset($_SESSION['espresso_session']['id']);
-	}
-
-	//Get the event record
-	$sql = "SELECT ed.* ";
-	$sql .= " FROM " . EVENTS_DETAIL_TABLE . " ed ";
-	$sql .= " JOIN " . EVENTS_ATTENDEE_TABLE . " ea ON ea.event_id=ed.id ";
-	$sql .= " WHERE ea.id = '" . $attendee_id . "' AND ea.registration_id = '" . $registration_id . "' ";
-	$data->event = $wpdb->get_row($sql, OBJECT);
-
-	//Debug:
-	//echo '<pre>$sql = '.$sql.'</pre>';
-
-	//Retrieve the payment settings
-	if ( empty($payment_settings) ){
-		if ($data->event->wp_user == 0 || $data->event->wp_user == ''){
-			$data->event->wp_user = 1;
-		}
-		$payment_settings = get_option('payment_data_'.$data->event->wp_user);
-	}
-
-	//Get the attendee record
-	$sql = "SELECT ea.* FROM " . EVENTS_ATTENDEE_TABLE . " ea WHERE ea.id = '" . $attendee_id . "' ";
-	$data->attendee = $wpdb->get_row($sql, OBJECT);
-
-	//Get the primary/first attendee
-	$data->primary_attendee = espresso_is_primary_attendee($data->attendee->id) == true ? true : false;
-
-	//unserialize the event meta
-	$data->event->event_meta = unserialize($data->event->event_meta);
-
-	//Get the registration date
-	$data->attendee->registration_date = $data->attendee->date;
+function espresso_invoice_launch($session_id=0){
+	global $wpdb, $org_options;
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+	$REG = EEM_Registration::instance();
+	$TXN = EEM_Transaction::instance();
+	$registration = $REG->get_registration(array('REG_session'=>$session_id));
+	$transaction = $TXN->get_transaction($registration->transaction_ID());
+	$session_data = $transaction->session_data();
+	printr($session_data);
 
 	//Get the HTML file
-	$data->event->invoice_file = !empty($payment_settings['invoice']['invoice_css']) ? $payment_settings['invoice']['invoice_css'] : 'simple.css';
-	//Debug:
-	//echo '<p>invoice_file = '.$payment_settings['invoice']['invoice_file'].'</p>';
-
+	if (!empty($session_data['gateway_data']['payment_settings']['invoice']['invoice_css'])) {
+		$invoice_file =  $session_data['gateway_data']['payment_settings']['invoice']['invoice_css'];
+	} else {
+		$invoice_file = 'simple.css';
+	}
 	//Create the logo
-	$data->event->invoice_logo_url = empty($payment_settings['invoice']['invoice_logo_url']) ? $org_options['default_logo_url']: $payment_settings['invoice']['invoice_logo_url'];
-	if ( !empty($data->event->invoice_logo_url) ){
-		$image_size = getimagesize($data->event->invoice_logo_url);
-		$data->event->invoice_logo_image = '<img class="logo screen" src="'.$data->event->invoice_logo_url.'" '.$image_size[3].' alt="logo" /> ';
+	if (!empty($session_data['gateway_data']['payment_settings']['invoice']['invoice_logo_url'])) {
+		$invoice_logo_url = $session_data['gateway_data']['payment_settings']['invoice']['invoice_logo_url'];
+	}	else {
+		$invoice_logo_url = $org_options['default_logo_url'];
 	}
-
-	//Create an array of the registration ids
-	$registration_ids = array();
-	$c_sql = "SELECT * FROM ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." WHERE registration_id = '".$data->attendee->registration_id."' ";
-	//Debug:
-	//echo $c_sql;
-
-	$check = $wpdb->get_row($c_sql);
-//Need to check this with the multi-event addon installed
-	//Debug:
-	//echo '<p>$check->primary_registration_id = '.$check->primary_registration_id.'</p>';
-
-	if ( $check !== NULL ){
-		$registration_id = $check->primary_registration_id;
-		$registration_ids = $wpdb->get_results("SELECT registration_id FROM ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." WHERE primary_registration_id = '$registration_id' ", ARRAY_A);
-		$multi_reg = true;
-	}else{
-		$registration_ids[] = array("registration_id"=>$registration_id);
+	if ( !empty($invoice_logo_url) ){
+		$image_size = getimagesize($invoice_logo_url);
+		$invoice_logo_image = '<img class="logo screen" src="'.$invoice_logo_url.'" '.$image_size[3].' alt="logo" /> ';
 	}
-
-	//If an admin user is downloading the invoice, we don't want to update the payment status
-	$update_paid_status = isset($_REQUEST['admin']) ? false : true;
-
-	//If the payment status is already completed, don't update the payment status
-	if ($data->attendee->payment_status == "Completed"){
-		$update_paid_status = false;
-	}
-
-	//Define the payment status as pending
-	$data->attendee->payment_status = 'Pending';
-
-	//Define the transaction type as invoice (INV)
-	$data->attendee->txn_type = 'INV';
-
-	//Define the date the invoice was updated
-	$payment_date = date("d-m-Y");
-
-	//Update the payment status
-	if ( count($registration_ids) > 0 && $update_paid_status == true ){
-		foreach($registration_ids as $reg_id){
-			$sql = "UPDATE ". EVENTS_ATTENDEE_TABLE . " SET payment_status = '" . $data->attendee->payment_status . "', txn_type = '" . $data->attendee->txn_type . "', payment_date ='" . $payment_date . "'  WHERE registration_id ='" . $reg_id['registration_id'] . "'";
-			$wpdb->query($sql);
-		}
-	}
-
+	
 	function espressoLoadData($items){
 		$lines=$items;
 		$data=array();
@@ -117,34 +36,6 @@ function espresso_invoice_launch($attendee_id=0, $registration_id=0){
 
 		return $data;
 	}
-
-	$attendees = array();
-	$total_cost = 0.00;
-	foreach($registration_ids as $reg_id){
-		$sql = "select ea.registration_id, ed.event_name, ed.start_date, ed.event_identifier, ea.fname, ea.lname, eac.quantity, eac.cost from ". EVENTS_ATTENDEE_TABLE ." ea
-				inner join ".EVENTS_ATTENDEE_COST_TABLE." eac on ea.id = eac.attendee_id
-				inner join " . EVENTS_DETAIL_TABLE . " ed on ea.event_id = ed.id
-				where ea.registration_id = '".$reg_id['registration_id']."' order by ed.event_name ";
-
-		$tmp_attendees = $wpdb->get_results($sql,ARRAY_A);
-
-		foreach($tmp_attendees as $tmp_attendee){
-			$sub_total = $tmp_attendee["cost"];
-			$attendees[] = espressoLoadData(array(
-				$tmp_attendee["event_name"]." [".date('m-d-Y',strtotime($tmp_attendee['start_date']))."] ". ' | '
-				. $tmp_attendee["fname"]." ".$tmp_attendee["lname"] . ';'
-				. $tmp_attendee["quantity"] .';'
-				. doubleval($tmp_attendee["cost"]) . ';'
-				. doubleval($sub_total)
-				)
-			);
-			$total_cost += $sub_total;
-			$event_identifier = $tmp_attendee["event_identifier"];
-		}
-	}
-	//Debug
-	/*echo '<p>$sub_total = '.$sub_total.'</p>';
-	echo '<p>$total_cost = '.$total_cost.'</p>';*/
 
 	function espressoInvoiceTotals($text,$total_cost){
 		global $org_options;
@@ -160,7 +51,6 @@ function espresso_invoice_launch($attendee_id=0, $registration_id=0){
 		$html .= '</tr>';
 		return $html;
 	}
-
 
 	function espressoImprovedTable($event_data){
 		global $org_options;
@@ -182,21 +72,17 @@ function espresso_invoice_launch($attendee_id=0, $registration_id=0){
 		return $html;
 	}
 
-	//Build the invoice name
-	$invoice_name = sanitize_title_with_dashes($data->attendee->id.' '.$data->attendee->fname.' '.$data->attendee->lname);
-
+	$template_args = array();
+	$template_args['primary_attendee'] = $session_data['primary_attendee'];
+	
 	//Get the HTML as an object
 	ob_start();
-	if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "invoice/index.php")) {
-		require_once(EVENT_ESPRESSO_UPLOAD_DIR . 'invoice/index.php');
-	} else {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/invoice/templates/index.php');
-	}
+	espresso_display_template('templates/index.php', $template_args);
 	$content = ob_get_clean();
-	$content = espresso_replace_invoice_shortcodes($content, $data);
+	$content = espresso_replace_invoice_shortcodes($content, $session_data);
 
 	//Check if debugging or mobile is set
-	if ( (isset($_REQUEST['html']) && $_REQUEST['html']==true) ){
+	if (!empty($_REQUEST['html'])){
 		echo $content;
 		exit(0);
 	}
@@ -216,7 +102,7 @@ function espresso_invoice_launch($attendee_id=0, $registration_id=0){
 
 //Performst the shortcode replacement
 function espresso_replace_invoice_shortcodes($content, $data) {
-	global $wpdb, $org_options, $payment_settings;
+	global $wpdb, $org_options;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$SearchValues = array(
 		//Attendee/Event Information
@@ -331,11 +217,12 @@ function espresso_replace_invoice_shortcodes($content, $data) {
 	}
 
 	//Get the event meta
-	//echo '<p>'.print_r($data->event->event_meta).'</p>';
-	if (!empty($data->event->event_meta)) {
-		foreach ($data->event->event_meta as $k => $v) {
-			array_push($SearchValues, "[" . $k . "]");
-			array_push($ReplaceValues, stripslashes_deep($v));
+	if (!empty($data['event_details'])) {
+		foreach ($data['event_details'] as $event) {
+			foreach($event['event_meta'] as $key => $value) {
+				array_push($SearchValues, "[" . $key . "]");
+				array_push($ReplaceValues, stripslashes_deep($value));
+			}
 		}
 	}
 
