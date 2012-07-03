@@ -37,15 +37,6 @@ function event_espresso_2co_settings() {
 		$payment_settings['2checkout']['display_name'] = '2CheckOut';
 		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
-
-	//Open or close the postbox div
-	if (empty($_REQUEST['deactivate_2checkout'])
-					&& (!empty($_REQUEST['activate_2checkout'])
-					|| array_key_exists('2checkout', $active_gateways))) {
-		$postbox_style = '';
-	} else {
-		$postbox_style = 'closed';
-	}
 	?>
 
 	<a name="2checkout" id="2checkout"></a>
