@@ -1,6 +1,6 @@
 <?php
 
-class Fdggutil {
+class espresso_Fdggutil {
 
 	private $storename; // Replace with your Storenumber here
 	private $sharedSecret; //Replace with your Shared Secret here
@@ -11,7 +11,7 @@ class Fdggutil {
 	private $returnUrl;
 	private $cancelUrl;
 
-	public function Fdggutil($storename, $sharedSecret) {
+	public function espresso_Fdggutil($storename, $sharedSecret) {
 		$this->storename = $storename;
 		$this->sharedSecret = $sharedSecret;
 	}
@@ -79,7 +79,7 @@ class Fdggutil {
 		$out .= '<input size="50" type="hidden" name="chargetotal" value="' . $this->chargetotal . '"/>';
 		$out .= '<input size="50" type="hidden" name="subtotal" value="' . $this->chargetotal . '"/>';
 		$out .= '<input size="50" type="hidden" name="trxOrigin" value="ECI"/>';
-		$out .= '<input size="50" type="hidden" name="responseSuccessURL" value="' . str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment') . '"/>';
+		$out .= '<input size="50" type="hidden" name="responseSuccessURL" value="' . home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment"/>';
 		$out .= '<input size="50" type="hidden" name="responseFailURL" value="' . str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['cancel_return']) . '"/>';
 		return $out;
 	}
@@ -95,17 +95,17 @@ class Fdggutil {
 
 	public function submitPayment($EE_Session) {
 		$pre_form = "<html>\n";
-		$pre_form .= "<head><title>Processing Payment...</title></head>\n";
-		$pre_form .= "<body>\n";
+		$pre_form .= "<head><title>Processing Payment...</title></head>";
+		$pre_form .= "<body>";
 		$form = "<h2>Please wait, your order is being processed and you";
-		$form .= " will be redirected to the payment website.</h2></p>\n";
-		$form .= '<form method="post" name="gateway_form" action="' . $this->gatewayUrl . '">\n';
+		$form .= " will be redirected to the payment website.</h2></p>";
+		$form .= '<form method="post" name="gateway_form" action="' . $this->gatewayUrl . '">';
 		$form .= $this->submitForm($EE_Session);
 		$form .= "<p style=\"text-align:center;\"><br/><br/>If you are not automatically redirected to ";
-		$form .= "the payment website within 5 seconds...<br/><br/>\n";
-		$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
-		$form .= "</form>\n";
-		$post_form = "</body></html>\n";
+		$form .= "the payment website within 5 seconds...<br/><br/>";
+		$form .= "<input type=\"submit\" value=\"Click Here\"></p>";
+		$form .= "</form>";
+		$post_form = "</body></html>";
 		return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
 	}
 }
