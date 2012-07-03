@@ -335,14 +335,15 @@ function espresso_export_certificate() {
 
 function espresso_export_invoice() {
 	//Version 2.0
-	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/launch_invoice.php");
-		echo espresso_invoice_launch($_REQUEST['id'], $_REQUEST['r_id']);
+	if (!empty($_REQUEST['invoice_launch'])) {
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/launch_invoice.php");
+		
+		echo espresso_invoice_launch($_REQUEST['id']);
 	}
 	//End Version 2.0
 	//Export pdf version
 	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/template.php");
 	}
 	//End pdf version
 }
