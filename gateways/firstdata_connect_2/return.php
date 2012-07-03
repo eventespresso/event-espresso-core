@@ -12,7 +12,7 @@ function espresso_send_to_firstdata_connect_2($EE_Session) {
 			$total = $total + $taxes;
 		}
 	}
-	$fdggutil = new Fdggutil($firstdata_connect_2_settings['storename'],
+	$fdggutil = new espresso_Fdggutil($firstdata_connect_2_settings['storename'],
 									$firstdata_connect_2_settings['sharedSecret']);
 	$fdggutil->set_timezone($firstdata_connect_2_settings['timezone']);
 	$fdggutil->set_chargetotal($total);
@@ -28,22 +28,26 @@ function espresso_send_to_firstdata_connect_2($EE_Session) {
 add_action('action_hook_espresso_gateway_process_step_3', 'espresso_send_to_firstdata_connect_2');
 
 function espresso_process_firstdata_connect_2($EE_Session) {
+	$session_data = $EE_Session->get_session_data();
+	$firstdata_connect_2_settings = $session_data['gateway_data']['payment_settings']['firstdata_connect_2'];
+	$txn_details = array(
+						'gateway'					=> $firstdata_connect_2_settings['display_name'],
+						'approved'				=> FALSE,
+						'response_msg'		=> __('You\'re registration has not been completed successfully.', 'event_espresso'),
+						'status'					=> 'Incomplete',
+						'raw_response'		=> serialize($_REQUEST),
+						'amount'					=> 0.00,
+						'method'					=> sanitize_text_field($_POST['pay_method']),
+						'auth_code'				=> sanitize_text_field($_POST['order_number']),
+						'md5_hash'				=> sanitize_text_field($_POST['key']),
+						'invoice_number'	=> sanitize_text_field($_POST['invoice_id']),
+						'transaction_id'	=> sanitize_text_field($_POST['invoice_id'])
+				);
 	if($_REQUEST['status']=='APPROVED') {
-		$payment_status = 'Completed';
-		$sql = "SELECT ea.event_id, ed.event_name, ea.fname, ea.lname, ";
-		$sql .= "ea.payment_date, ea.amount_pd total_cost, ";
-		$sql .= "ea.registration_id att_registration_id FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
-		$sql .= "JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=ea.event_id ";
-		$sql .= "WHERE ea.id = '" . $attendee_id . "'";
-		$result = $wpdb->get_row($sql, ARRAY_A);
-		extract($result);
-		$event_link = '<a href="' . home_url() . '/?page_id=';
-		$event_link .= $org_options['event_page_id'] . '&ee=' . $event_id . '">';
-		$event_link .= $event_name . '</a>';
+		$txn_details['status'] = 'Completed';
 		$txn_type = 'Firstdata Connect 2.0';
-		$firstdata_connect_2_settings = get_option('event_espresso_firstdata_connect_2_settings');
-		include("Fdggutil.php");
-		$fdggutil = new Fdggutil($firstdata_connect_2_settings['storename'],
+		include("lib/Fdggutil.php");
+		$fdggutil = new espresso_Fdggutil($firstdata_connect_2_settings['storename'],
 									$firstdata_connect_2_settings['sharedSecret']);
 		$hash = $fdggutil->check_return_hash($payment_date);
 		$txn_id = $_REQUEST['refnumber'];
