@@ -43,6 +43,8 @@ function espresso_invoice_settings() {
 		$payment_settings['invoice']['image_url'] = '';
 		$payment_settings['invoice']['show'] = true;
 		$payment_settings['invoice']['invoice_css'] = '';
+		$payment_settings['invoice']['type'] = 'off-line';
+		$payment_settings['invoice']['display_name'] = 'Invoice';
 		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
 	}
 	?>
