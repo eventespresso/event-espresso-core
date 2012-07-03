@@ -13,7 +13,7 @@ if (!function_exists('event_form_build')) {
 		$tckt_time = isset($extra['time']) ? $extra['time'] : 0;
 		$price_id = isset($extra['price_id']) ? $extra['price_id'] : 0;
 
-		$multi_name = $multi_reg == 1 ? "[$event_id][$attendee_number][$tckt_date][$tckt_time][$price_id]" : '';
+		$multi_name = "[$event_id][$attendee_number][$tckt_date][$tckt_time][$price_id]";
 		if (!empty($question->system_name)) {
 			$field_name = $question->system_name;
 		} else {
