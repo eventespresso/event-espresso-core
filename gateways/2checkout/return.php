@@ -55,20 +55,9 @@ add_action('action_hook_espresso_gateway_process_step_3', 'espresso_send_to_2che
 
 /**
  * function espresso_process_2checkout
- * @global type $wpdb
- * @param type array $payment_data
- * $_REQUEST from 2checkout needs:
- * 		credit_card_processed
- * 		total
- * 		invoice_id
+ * @param type 
  *
- * @return type array $payment_data
- *    $payment_data returns
- * 				event_link
- * 				payment_status
- * 				txn_type
- * 				total_cost
- * 				txn_id
+ * @return 
  */
 function espresso_process_2checkout($EE_Session) {
 	$session_data = $EE_Session->get_session_data();
