@@ -80,7 +80,7 @@ class EEM_Registration extends EEM_Base {
 		// check if instance of Espresso_model already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model
-			self::$_instance = &new self();
+			self::$_instance = new self();
 		}
 		// Espresso_model object
 		return self::$_instance;
