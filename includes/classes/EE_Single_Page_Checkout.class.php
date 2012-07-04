@@ -1324,14 +1324,16 @@ class EE_Single_Page_Checkout {
 
 					$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );
 
-					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
+//					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
+					$new_reg_code = $txn_results['new-ID'] . '-' . $att_nmbr . '-' . $session_snip;
 					
 					$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
 					
 					if ( has_filter( 'filter_hook_espresso_new_registration_code' ) ) {
 						$prev_reg_code = $new_reg_code;
 					} else {
-						$prev_reg_code = '%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%';
+//						$prev_reg_code = '%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%';
+						$prev_reg_code = '%-' . $att_nmbr . '-' . $session_snip . '%';
 					}					
 
 					// check for existing registration attempt, taking filtered reg_codes into consideration
@@ -1529,6 +1531,8 @@ class EE_Single_Page_Checkout {
 																	$txn_results['response_msg'],
 																	$txn_results['transaction_id'],
 																	NULL,
+																	NULL,
+																	FALSE,
 																	maybe_serialize( $txn_results )
 																);
 			$results = $payment->insert();
