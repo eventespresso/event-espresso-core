@@ -108,12 +108,30 @@ class EE_Payment {
 
  	 	 	
     /**
+    *	Purchase Order Number
+	*
+	*	@access	private
+    *	@var string
+    */
+	private $_PAY_po_number = NULL;
+
+ 	 	 	
+    /**
     *	Extra Accounting Field
 	*
 	*	@access	private
     *	@var string
     */
 	private $_PAY_extra_accntng = NULL;
+
+
+    /**
+    *	Payment made via admin
+	*
+	*	@access	private
+    *	@var string
+    */
+	private $_PAY_via_admin = NULL;
 
 
     /**
@@ -137,29 +155,32 @@ class EE_Payment {
 	* @param 		int					$TXN_ID		 							Transaction ID
 	* @param 		string				$STS_ID		 							Payment Status
 	* @param 		int 					$PAY_timestamp 					Payment Timestamp
-	* @param 		string 				$PAY_method							Payment Method
-	* @param 		float 				$PAY_amount							Payment Amount
+	* @param 		string 				$PAY_method						Payment Method
+	* @param 		float 				$PAY_amount						Payment Amount
 	* @param 		string 				$PAY_gateway						Payment Gateway 
 	* @param 		string 				$PAY_gateway_response		Payment Gateway Response
 	* @param 		string 				$PAY_gateway_txn_id			Payment Gateway Transaction ID
+	* @param 		string 				$PAY_po_number					Payment Purchase Order Number
 	* @param 		string 				$PAY_extra_accntng				Payment Extra Accounting Field
+	* @param 		string 				$PAY_via_admin					Payment made via admin
 	* @param 		string 				$PAY_details							Payment Details
 	* @param 		int 					$PAY_ID 									Payment ID
 	*/
-	public function __construct( $TXN_ID=FALSE, $STS_ID=FALSE, $PAY_timestamp=NULL, $PAY_method=NULL, $PAY_amount=NULL, $PAY_gateway=NULL, $PAY_gateway_response=NULL, $PAY_gateway_txn_id=NULL, $PAY_extra_accntng=NULL, $PAY_details=NULL, $PAY_ID=FALSE ) {
+	public function __construct( $TXN_ID=FALSE, $STS_ID=FALSE, $PAY_timestamp=NULL, $PAY_method=NULL, $PAY_amount=NULL, $PAY_gateway=NULL, $PAY_gateway_response=NULL, $PAY_gateway_txn_id=NULL, $PAY_po_number=NULL, $PAY_extra_accntng=NULL, $PAY_via_admin=NULL, $PAY_details=NULL, $PAY_ID=FALSE ) {
 		$this->_PAY_ID 								= $PAY_ID;
 		$this->_TXN_ID 								= $TXN_ID;
 		$this->_STS_ID 								= $STS_ID;
 		$this->_PAY_timestamp			 	= $PAY_timestamp;
 		$this->_PAY_method 					= $PAY_method;
-		$this->_PAY_amount						= $PAY_amount;
+		$this->_PAY_amount					= $PAY_amount;
 		$this->_PAY_gateway					= $PAY_gateway;
 		$this->_PAY_gateway_response	= $PAY_gateway_response;
 		$this->_PAY_gateway_txn_id		= $PAY_gateway_txn_id;
+		$this->_PAY_po_number				= $PAY_po_number;
 		$this->_PAY_extra_accntng			= $PAY_extra_accntng;
+		$this->_PAY_via_admin				= $PAY_via_admin;
 		$this->_PAY_details						= $PAY_details;
 	}
-
 
 
 
@@ -333,6 +354,26 @@ class EE_Payment {
 
 
 
+	/**
+	*		Set Purchase Order Number
+	*
+	* 		@access		public
+	*		@param		string		$PAY_po_number
+	*/
+	public function set_po_number( $PAY_po_number = FALSE ) {
+
+		global $espresso_notices;
+		if ( ! $PAY_po_number ) {
+			$espresso_notices['errors'][] = 'No Purchase Order Number info was supplied.';
+			return FALSE;
+		}
+		$this->_PAY_po_number = wp_strip_all_tags( $PAY_po_number );
+		return TRUE;
+	}
+
+
+
+
 
 	/**
 	*		Set Extra Accounting Field
@@ -348,6 +389,27 @@ class EE_Payment {
 			return FALSE;
 		}
 		$this->_PAY_extra_accntng = wp_strip_all_tags( $PAY_extra_accntng );
+		return TRUE;
+	}
+
+
+
+
+
+	/**
+	*		Set Payment made via admin flag
+	*
+	* 		@access		public
+	*		@param		string		$details
+	*/
+	public function set_payment_made_via_admin( $PAY_via_admin = FALSE ) {
+
+		global $espresso_notices;
+		if ( ! is_bool( $PAY_via_admin )) {
+			$espresso_notices['errors'][] = 'The supplied value for the "payment made via admin" flag was not a boolean.';
+			return FALSE;
+		}
+		$this->_PAY_via_admin = (bool)absint( $PAY_via_admin );
 		return TRUE;
 	}
 
@@ -391,7 +453,8 @@ class EE_Payment {
 	*/
 	private function _save_to_db( $where_cols_n_values = FALSE ) {
 
-		 $MODEL = EEM_Payment::instance();
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+		$MODEL = EEM_Payment::instance();
 
 		$set_column_values = array(
 				'TXN_ID' 								=> $this->_TXN_ID,
@@ -540,11 +603,31 @@ class EE_Payment {
 
 
 	/**
+	*		get Purchase Order Number
+	* 		@access		public
+	*/
+	public function po_number() {
+		return $this->_PAY_po_number;
+	}
+
+
+
+	/**
 	*		get Extra Accounting Field
 	* 		@access		public
 	*/
 	public function extra_accntng() {
 		return $this->_PAY_extra_accntng;
+	}
+
+
+
+	/**
+	*		get Payment made via admin flag
+	* 		@access		public
+	*/
+	public function payment_made_via_admin() {
+		return $this->_PAY_via_admin;
 	}
 
 
