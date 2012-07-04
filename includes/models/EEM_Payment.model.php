@@ -50,12 +50,14 @@ class EEM_Payment extends EEM_Base {
 			'TXN_ID' 								=> '%d',
 			'STS_ID' 								=> '%s',
 			'PAY_timestamp' 				=> '%d',
-			'PAY_method'						=> '%s',
+			'PAY_method'					=> '%s',
 			'PAY_amount'						=> '%s',
 			'PAY_gateway'					=> '%s',
 			'PAY_gateway_response'	=> '%s',
 			'PAY_gateway_txn_id'		=> '%s',
+			'PAY_po_number'				=> '%s',
 			'PAY_extra_accntng'			=> '%s',
+			'PAY_via_admin'					=> '%d',
 			'PAY_details'						=> '%s'
 		);
 		
@@ -75,7 +77,7 @@ class EEM_Payment extends EEM_Base {
 		// check if instance of EEM_Payment already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model 
-			self::$_instance = &new self();
+			self::$_instance = new self();
 		}
 		// EEM_Payment object
 		return self::$_instance;
@@ -99,7 +101,9 @@ class EEM_Payment extends EEM_Base {
 
 		if ( ! is_array( $payments )) {
 			$payments = array( $payments );
-		} 		
+		} 	
+		
+	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment.class.php' );
 
 		foreach ( $payments as $payment ) {
 				$array_of_objects[ $payment->PAY_ID ] = new EE_Payment(
@@ -111,7 +115,9 @@ class EEM_Payment extends EEM_Base {
 						$payment->PAY_gateway,
 						$payment->PAY_gateway_response,
 						$payment->PAY_gateway_txn_id,
+						$payment->PAY_po_number,
 						$payment->PAY_extra_accntng,
+						$payment->PAY_via_admin,
 						$payment->PAY_details,
 						$payment->PAY_ID
 				 	);
