@@ -73,6 +73,8 @@ function espresso_ticket_selector($event) {
 	//$all_meta = array_map('wp_strip_all_tags', $event->reg_btn['all_meta']);
 	//$template_args['meta'] = serialize( $all_meta );
 	//$template_args['meta'] = base64_encode(serialize($all_meta));
+	$template_args['meta_keys'] = $event->meta_keys;
+	$template_args['meta_values'] = $event->meta_values;
 
 	$template_args['currency_symbol'] = $event->currency_symbol;
 	
@@ -240,11 +242,12 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 										'time' => $valid['time'][$x],
 										'dtt_id' => $valid['dtt_id'][$x],
 										'price_desc' => $valid['price_desc'][$x],
-										//'meta' => $valid['meta'][$x],
 										'pre_approval' => $valid['pre_approval']
-								)
+								),
+								'meta_keys' => $valid['meta_keys'][$x],
+								'meta_values' => $valid['meta_values'][$x],
 						);
-						//echo printr($event_to_add);
+						//echo printr($event_to_add);die();
 						// then add event
 						if ( add_event_to_cart( $event_to_add )) {
 							$success = TRUE;
@@ -337,7 +340,8 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 					'dtt_id' => 'tkt-slctr-dtt-id-',
 					'time' => 'tkt-slctr-time-',
 					'price_desc' => 'tkt-slctr-price-desc-',
-					//'meta' => 'tkt-slctr-meta-',
+					'meta_keys' => 'tkt-slctr-meta-keys-',
+					'meta_values' => 'tkt-slctr-meta-values-',
 					'pre_approval' => 'tkt-slctr-pre-approval-'
 			);
 			// let's track the total number of tickets ordered.'
@@ -432,8 +436,18 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 						break;
 
 					// arrays of string
-					case 'meta':
-					break;
+					case 'meta_keys':
+					case 'meta_values':
+						$value_array = array();
+						// grab the array
+						$values = $_POST[$input_to_clean . $id];
+						// cycle thru values
+						foreach ($values as $key=>$value) {
+							// allow only numbers, letters,  spaces, commas and dashes
+							$value_array[$key] = wp_strip_all_tags($value);
+						}
+						$valid_data[$what][] = $value_array;
+						break;
 					case 'price_desc':
 						// grab the array
 						$descs = maybe_unserialize($_POST[$input_to_clean . $id]);
@@ -456,7 +470,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 			return FALSE;
 		}
 
-		//echo printr( $valid_data, '$valid_data' );
+		//echo printr( $valid_data, '$valid_data' );die();
 		return $valid_data;
 	}
 
@@ -490,7 +504,9 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 				'price' => $event['price'],
 				'price_id' => $event['price_id'],
 				'qty' => $event['qty'],
-				'options' => $event['options']
+				'options' => $event['options'],
+				'meta_keys' => $event['meta_keys'],
+				'meta_values' => $event['meta_values']
 		);
 
 		// get the number of spaces left for this event
