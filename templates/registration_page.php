@@ -222,33 +222,63 @@ if (!function_exists('event_registration')) {
 
 			$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees
 			
-			global $all_meta;
-			$all_meta = array(
-					'event_name' => '<p class="section-title">' . stripslashes_deep($event_name) . '</span>',
-					'event_desc' => stripslashes_deep($event_desc),
-					'event_address' => $event_address,
-					'event_address2' => $event_address2,
-					'event_city' => $event_city,
-					'event_state' => $event_state,
-					'event_zip' => $event_zip,
-					'event_country' => $event_country,
-					'venue_title' => '<span class="section-title">' . $venue_title . '</span>',
-					'venue_address' => $venue_address,
-					'venue_address2' => $venue_address2,
-					'venue_city' => $venue_city,
-					'venue_state' => $venue_state,
-					'venue_country' => $venue_country,
-					'is_active' => $event->is_active,
-					'event_status' => $event->event_status,
-					'registration_startT' => $event->registration_startT,
-					'registration_start' => $event->registration_start,
-					'registration_endT' => $event->registration_endT,
-					'registration_end' => $event->registration_end,
-					'event_address' => empty($event->event_address) ? '' : $event->event_address,
-					'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
-					'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
-					//'time' => event_espresso_time_dropdown($event_id, 0),
-					'google_map_link' => $google_map_link);
+			$meta_keys = array(
+					'event_name',
+					'event_desc',
+					'event_address',
+					'event_address2',
+					'event_city',
+					'event_state',
+					'event_zip',
+					'event_country',
+					'venue_title',
+					'venue_address',
+					'venue_address2',
+					'venue_city',
+					'venue_state',
+					'venue_country',
+					'is_active',
+					'event_status',
+					'registration_startT',
+					'registration_start',
+					'registration_endT',
+					'registration_end',
+					'event_address',
+					'start_date',
+					'end_date',
+					'google_map_link');
+			$meta_values = array(
+					'<p class="section-title">' . stripslashes_deep($event_name) . '</span>',
+					stripslashes_deep($event_desc),
+					$event_address,
+					$event_address2,
+					$event_city,
+					$event_state,
+					$event_zip,
+					$event_country,
+					'<span class="section-title">' . $venue_title . '</span>',
+					$venue_address,
+					$venue_address2,
+					$venue_city,
+					$venue_state,
+					$venue_country,
+					$event->is_active,
+					$event->event_status,
+					$event->registration_startT,
+					$event->registration_start,
+					$event->registration_endT,
+					$event->registration_end,
+					empty($event->event_address) ? '' : $event->event_address,
+					'<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
+					'<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
+					$google_map_link
+					);
+			foreach ($meta_keys as $key=>$meta_key) {
+				$event->meta_keys[$key] = htmlspecialchars($meta_key);
+			}
+			foreach ($meta_values as $key=>$meta_value) {
+				$event->meta_values[$key] = htmlspecialchars($meta_value);
+			}
 			$is_active = array();
 			$is_active = event_espresso_get_is_active($event_id);
 
