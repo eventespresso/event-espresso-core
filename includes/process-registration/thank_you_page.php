@@ -5,19 +5,18 @@ function espresso_thank_you_page() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$EE_Session = EE_Session::instance();
 	$session_data = $EE_Session->get_session_data();
- 
-	switch ($session_data['gateway_data']['type']) {
-		case 'off-site':
-		case 'off-line':
-			$selected_gateway = $session_data['gateway_data']['selected_gateway'];
-			$gateway_path = $session_data['gateway_data']['active_gateways'][$selected_gateway];
-			require_once($gateway_path . "/return.php");
-			do_action('action_hook_espresso_process_off_site_payment', $EE_Session);
-		case 'onsite_noajax':
+	$type = $session_data['gateway_data']['type'];
+	if ($type == 'off-site' || $type == 'off-line') {
+		$selected_gateway = $session_data['gateway_data']['selected_gateway'];
+		$gateway_path = $session_data['gateway_data']['active_gateways'][$selected_gateway];
+		require_once($gateway_path . "/return.php");
+		do_action('action_hook_espresso_process_off_site_payment', $EE_Session);
+	}
+	if ($type == 'off-site' || $type == 'onsite_noajax') {
 			$SPCO = EE_Single_Page_Checkout::instance();
 			$SPCO->process_registration_payment(FALSE);
 	}
-
+	$session_data = $EE_Session->get_session_data();
 	if (!empty($session_data['txn_results'])) {
 		//printr( $session_data);
 		$grand_total = $session_data['_cart_grand_total_amount'];
