@@ -237,7 +237,7 @@
 		}
 		
 //		echo '<h1>items</h1>';
-//		echo pre_arr($items);
+//		printr($items);die();
 		
 		// cycle thru them multiple items
 		foreach ( $items as $item ) {
@@ -319,7 +319,7 @@
 		}
 		
 //		echo '<h1>$item</h1>';
-//		echo pre_arr( $item );
+//		printr( $item );
 			
 		// each line item in the cart requires a unique identifier
 		if ( isset( $item['options'] ) && ! empty( $item['options'] ) ) { 
