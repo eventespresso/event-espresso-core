@@ -777,6 +777,11 @@ class EE_Single_Page_Checkout {
 
 		// if we don't have a qstn field then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if (isset($valid_data['qstn'])) {
+			if (isset($valid_data['qstn']['custom_questions'])) {
+				$custom_questions = $valid_data['qstn']['custom_questions'];
+				$EE_Session->set_session_data(array('custom_questions'=>$custom_questions), 'session_data');
+				unset($valid_data['qstn']['custom_questions']);
+			}
 			// now loop through our array of valid post data
 			foreach ($valid_data['qstn'] as $event_id => $event_data) {
 				// continue to drill down through the array and set paramaters
@@ -906,6 +911,10 @@ class EE_Single_Page_Checkout {
 			
 				// off site payment
 				$success_msg = __('Off-site gateway choosen');
+				
+			} elseif ($gateway_data['type'] == 'off-line') {
+				
+				$success_msg = __('Off-line gateway choosen');
 				
 			} elseif ($gateway_data['type'] == 'on-site') { 
 			
@@ -1174,7 +1183,7 @@ class EE_Single_Page_Checkout {
 		if ($billing_info == 'no payment required') {
 			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
 		} else {
-			if ($gateway_data['type']=='off-site') {
+			if ($gateway_data['type']=='off-site' || $gateway_data['type']=='off-line') {
 				$template_args['billing']['gateway'] = $gateway_data['payment_settings'][$gateway_data['selected_gateway']]['display_name'];
 			} else {
 				$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
@@ -1431,7 +1440,7 @@ class EE_Single_Page_Checkout {
 				}
 				
 				// process off-site payments
-				if ($gateway_data['type'] == 'off-site') {
+				if ($gateway_data['type'] == 'off-site' || $gateway_data['type'] == 'off-line') {
 					$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 					if ($this->_ajax == 0) {
 						echo $gateway_data['off-site-form']['pre-form'] . $gateway_data['off-site-form']['form'] . $gateway_data['off-site-form']['post-form'];
@@ -1439,12 +1448,7 @@ class EE_Single_Page_Checkout {
 					} else {
 						$this->send_ajax_response('Redirecting to Off-site Payment Provider', FALSE, '_redirect_to_off_site');
 					}
-				}
-
-				// process off-line payments
-				if ($gateway_data['type'] == 'off-line') {
-				}
-				
+				}				
 			}
 		}
 		//$session_data = $EE_Session->get_session_data();var_dump($session_data);die();
@@ -1494,7 +1498,7 @@ class EE_Single_Page_Checkout {
 				$success_msg = $txn_results['response_msg'];
 				do_action('action_hook_espresso_reg_approved');
 				break;
-
+			
 			case 'Declined' :
 				$pay_status = 'PDC';
 				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_results['response_msg'] . '</b>';
