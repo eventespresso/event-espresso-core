@@ -1,18 +1,11 @@
 <?php
-global $wpdb, $org_options, $payment_settings;
-if (file_exists(EVENT_ESPRESSO_GATEWAY_URL . "invoice/templates/base.css")) {
-	$base_dir = EVENT_ESPRESSO_GATEWAY_URL . 'invoice/templates/';//If the template files have been moved to the uploads folder
-} else {
-	$base_dir = EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/templates/';
-}
-//Debug;
-//echo "<pre>".print_r($org_options,true)."</pre>";
-//echo "<pre>".print_r($payment_settings,true)."</pre>";
+global $org_options, $payment_settings;
+$base_dir = dirname(__FILE__);
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title><?php echo stripslashes_deep($org_options['organization']) ?> <?php _e('Invoice for', 'event_espresso'); ?> <?php echo stripslashes_deep($data->attendee->fname . ' ' .$data->attendee->lname) ?> | <?php echo $data->attendee->registration_id ?></title>
+<title><?php echo stripslashes_deep($org_options['organization']) ?> <?php _e('Invoice for', 'event_espresso'); ?> <?php echo stripslashes_deep($primary_attendee['fname'] . ' ' .$primary_attendee['lname']) ?> | <?php echo $primary_attendee['registration_id'] ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Base Stylesheet do not change or remove -->
 <link rel="stylesheet" type="text/css" href="<?php echo $base_dir; ?>base.css" media="screen" />
