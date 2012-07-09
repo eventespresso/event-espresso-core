@@ -1,0 +1,635 @@
+/*
+ * FullCalendar v1.5.2 Stylesheet
+ *
+ * Copyright (c) 2011 Adam Shaw
+ * Dual licensed under the MIT and GPL licenses, located in
+ * MIT-LICENSE.txt and GPL-LICENSE.txt respectively.
+ *
+ * Date: Sun Aug 21 22:06:09 2011 -0700
+ *
+ */
+
+
+.fc {
+	direction: ltr;
+	text-align: left;
+	}
+
+.fc table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	}
+
+html .fc,
+.fc table {
+	font-size: 1em;
+	}
+
+.fc td,
+.fc th {
+	padding: 0;
+	vertical-align: top;
+	}
+
+
+
+/* Header
+------------------------------------------------------------------------*/
+
+.fc-header td {
+	white-space: nowrap;
+	}
+
+.fc-header-left {
+	width: 25%;
+	text-align: left;
+	}
+
+.fc-header-center, table.fc-header-center td {
+	text-align: center;
+	}
+
+.fc-header-right {
+	width: 25%;
+	text-align: right;
+	}
+
+.fc-header-title {
+	display: inline-block;
+	vertical-align: top;
+	}
+
+.fc-header-title h2 {
+	margin-top: 0;
+	white-space: nowrap;
+	}
+
+.fc .fc-header-space {
+	padding-left: 10px;
+	}
+
+.fc-header .fc-button {
+	margin-bottom: 1em;
+	vertical-align: top;
+	}
+
+/* buttons edges butting together */
+
+.fc-header .fc-button {
+	margin-right: -1px;
+	}
+
+.fc-header .fc-corner-right {
+	margin-right: 1px; /* back to normal */
+	}
+
+.fc-header .ui-corner-right {
+	margin-right: 0; /* back to normal */
+	}
+
+/* button layering (for border precedence) */
+
+.fc-header .fc-state-hover,
+.fc-header .ui-state-hover {
+	z-index: 2;
+	}
+
+.fc-header .fc-state-down {
+	z-index: 3;
+	}
+
+.fc-header .fc-state-active,
+.fc-header .ui-state-active {
+	z-index: 4;
+	}
+
+/* Content
+------------------------------------------------------------------------*/
+
+.fc-content {
+	clear: both;
+	}
+
+.fc-view {
+	width: 100%; /* needed for view switching (when view is absolute) */
+	overflow: hidden;
+	}
+
+
+/* Cell Styles
+------------------------------------------------------------------------*/
+
+.fc-widget-header,    /* <th>, usually */
+.fc-widget-content {  /* <td>, usually */
+	border: 1px solid #ccc;
+	}
+.fc-widget-content { height: 100%; }
+.fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
+	background: rgba(255, 255, 204, 0.3);
+	}
+
+.fc-cell-overlay { /* semi-transparent rectangle while dragging */
+	background: #9cf;
+	opacity: .2;
+	filter: alpha(opacity=20); /* for IE */
+	}
+
+th.fc-widget-header {
+	background: #486D96;
+	color: #fff;
+	text-shadow: none;
+}
+
+/* Buttons
+------------------------------------------------------------------------*/
+
+.fc-button {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	}
+
+.fc-state-default { /* non-theme */
+	border-style: solid;
+	border-width: 1px 0;
+	}
+
+.fc-button-inner {
+	position: relative;
+	float: left;
+	overflow: hidden;
+	}
+
+.fc-state-default .fc-button-inner { /* non-theme */
+	border-style: solid;
+	border-width: 0 1px;
+	}
+
+.fc-button-content {
+	position: relative;
+	float: left;
+	height: 1.9em;
+	line-height: 1.9em;
+	padding: 0 .6em;
+	white-space: nowrap;
+	}
+
+/* icon (for jquery ui) */
+
+.fc-button-content .fc-icon-wrap {
+	position: relative;
+	float: left;
+	top: 50%;
+	}
+
+.fc-button-content .ui-icon {
+	position: relative;
+	float: left;
+	margin-top: -50%;
+	*margin-top: 0;
+	*top: -50%;
+	}
+
+/* gloss effect */
+
+.fc-state-default .fc-button-effect {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	}
+
+.fc-state-default .fc-button-effect span {
+	position: absolute;
+	top: -100px;
+	left: 0;
+	width: 500px;
+	height: 100px;
+	border-width: 100px 0 0 1px;
+	border-style: solid;
+	border-color: #fff;
+	background: #444;
+	opacity: .09;
+	filter: alpha(opacity=9);
+	}
+
+/* button states (determines colors)  */
+
+.fc-state-default,
+.fc-state-default .fc-button-inner {
+	border-style: solid;
+	border-color: #ccc #bbb #aaa;
+	background: #F3F3F3;
+	color: #000;
+	}
+
+.fc-state-hover,
+.fc-state-hover .fc-button-inner {
+	border-color: #999;
+	}
+
+.fc-state-down,
+.fc-state-down .fc-button-inner {
+	border-color: #555;
+	background: #777;
+	}
+
+.fc-state-active,
+.fc-state-active .fc-button-inner {
+	border-color: #555;
+	background: #777;
+	color: #fff;
+	}
+
+.fc-state-disabled,
+.fc-state-disabled .fc-button-inner {
+	color: #999;
+	border-color: #ddd;
+	}
+
+.fc-state-disabled {
+	cursor: default;
+	}
+
+.fc-state-disabled .fc-button-effect {
+	display: none;
+	}
+
+
+/* Global Event Styles
+------------------------------------------------------------------------*/
+
+.fc-event {
+	border-style: solid;
+	border-width: 0;
+	font-size: .85em;
+	cursor: default;
+	text-shadow: none;
+	}
+
+a.fc-event,
+.fc-event-draggable {
+	cursor: pointer;
+	}
+
+a.fc-event {
+	text-decoration: none;
+	}
+
+.fc-rtl .fc-event {
+	text-align: right;
+	}
+.expired .fc-event-skin { background-color: #888; }
+.fc-event-skin {
+	background-color: rgb(72, 109, 150);
+	/* using rgba values for opacity. bitchin */
+	border: none;
+	color: #fff;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	}
+.fc-event-inner {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	border-style: solid;
+	border-width: 0;
+	overflow: hidden;
+	}
+
+.fc-event-title {
+	margin: 0 6px;
+	padding:6px 1px 0;
+	}
+
+.fc .ui-resizable-handle { /*** TODO: don't use ui-resizable anymore, change class ***/
+	display: block;
+	position: absolute;
+	z-index: 99999;
+	overflow: hidden; /* hacky spaces (IE6/7) */
+	font-size: 300%;  /* */
+	line-height: 50%; /* */
+	}
+
+/* Horizontal Events
+------------------------------------------------------------------------*/
+
+.fc-event-hori {
+	border-width: 1px 0;
+	margin-bottom: 1px;
+	}
+
+/* resizable */
+
+.fc-event-hori .ui-resizable-e {
+	top: 0           !important; /* importants override pre jquery ui 1.7 styles */
+	right: -3px      !important;
+	width: 7px       !important;
+	height: 100%     !important;
+	cursor: e-resize;
+	}
+
+.fc-event-hori .ui-resizable-w {
+	top: 0           !important;
+	left: -3px       !important;
+	width: 7px       !important;
+	height: 100%     !important;
+	cursor: w-resize;
+	}
+
+.fc-event-hori .ui-resizable-handle {
+	_padding-bottom: 14px; /* IE6 had 0 height */
+	}
+
+/* removing fake rounded corners -- we can use REAL rounded corners... */
+
+/* Reusable Separate-border Table
+------------------------------------------------------------*/
+
+table.fc-border-separate {
+	border-collapse: separate;
+	}
+
+.fc-border-separate th,
+.fc-border-separate td {
+	border-width: 1px 0 0 1px;
+	}
+
+.fc-border-separate th.fc-last,
+.fc-border-separate td.fc-last {
+	border-right-width: 1px;
+	}
+
+.fc-border-separate tr.fc-last th,
+.fc-border-separate tr.fc-last td {
+	border-bottom-width: 1px;
+	}
+
+.fc-border-separate tbody tr.fc-first td,
+.fc-border-separate tbody tr.fc-first th {
+	border-top-width: 0;
+	}
+
+
+/* Month View, Basic Week View, Basic Day View
+------------------------------------------------------------------------*/
+
+.fc-grid th {
+	text-align: center;
+	}
+
+.fc-grid .fc-day-number {
+	float: right;
+	padding: 0 2px;
+	}
+
+.fc-grid .fc-other-month .fc-day-number {
+	opacity: 0.3;
+	filter: alpha(opacity=30); /* for IE */
+	/* opacity with small font can sometimes look too faded
+	   might want to set the 'color' property instead
+	   making day-numbers bold also fixes the problem */
+	}
+
+.fc-grid .fc-day-content {
+	clear: both;
+	padding: 2px 2px 1px; /* distance between events and day edges */
+	}
+
+/* right-to-left */
+
+.fc-rtl .fc-grid .fc-day-number {
+	float: left;
+	}
+
+
+/* Agenda Week View, Agenda Day View
+------------------------------------------------------------------------*/
+
+.fc-agenda table {
+	border-collapse: separate;
+	}
+
+.fc-agenda-days th {
+	text-align: center;
+	}
+
+.fc-agenda .fc-agenda-axis {
+	width: 50px;
+	padding: 0 4px;
+	vertical-align: middle;
+	text-align: right;
+	white-space: nowrap;
+	font-weight: normal;
+	}
+
+.fc-agenda .fc-day-content {
+	padding: 2px 2px 1px;
+	}
+
+/* make axis border take precedence */
+
+.fc-agenda-days .fc-agenda-axis {
+	border-right-width: 1px;
+	}
+
+.fc-agenda-days .fc-col0 {
+	border-left-width: 0;
+	}
+
+/* all-day area */
+
+.fc-agenda-allday th {
+	border-width: 0 1px;
+	}
+
+.fc-agenda-allday .fc-day-content {
+	min-height: 34px; /* TODO: doesnt work well in quirksmode */
+	_height: 34px;
+	}
+
+/* divider (between all-day and slots) */
+
+.fc-agenda-divider-inner {
+	height: 2px;
+	overflow: hidden;
+	}
+
+.fc-widget-header .fc-agenda-divider-inner {
+	background: #eee;
+	}
+
+/* slot rows */
+
+.fc-agenda-slots th {
+	border-width: 1px 1px 0;
+	}
+
+.fc-agenda-slots td {
+	border-width: 1px 0 0;
+	background: none;
+	}
+
+.fc-agenda-slots td div {
+	height: 20px;
+	}
+
+.fc-agenda-slots tr.fc-slot0 th,
+.fc-agenda-slots tr.fc-slot0 td {
+	border-top-width: 0;
+	}
+
+.fc-agenda-slots tr.fc-minor th,
+.fc-agenda-slots tr.fc-minor td {
+	border-top-style: dotted;
+	}
+
+.fc-agenda-slots tr.fc-minor th.ui-widget-header {
+	*border-top-style: solid; /* doesn't work with background in IE6/7 */
+	}
+
+
+/* Vertical Events
+------------------------------------------------------------------------*/
+
+.fc-event-vert {
+	border-width: 0 1px;
+	}
+
+.fc-event-vert .fc-event-head,
+.fc-event-vert .fc-event-content {
+	position: relative;
+	z-index: 2;
+	width: 100%;
+	overflow: hidden;
+	}
+
+.fc-event-vert .fc-event-bg { /* makes the event lighter w/ a semi-transparent overlay  */
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	opacity: .3;
+	filter: alpha(opacity=30);
+	}
+
+.fc .ui-draggable-dragging .fc-event-bg, /* TODO: something nicer like .fc-opacity */
+.fc-select-helper .fc-event-bg {
+	display: none\9; /* for IE6/7/8. nested opacity filters while dragging don't work */
+	}
+
+/* resizable */
+
+.fc-event-vert .ui-resizable-s {
+	bottom: 0        !important; /* importants override pre jquery ui 1.7 styles */
+	width: 100%      !important;
+	height: 8px      !important;
+	overflow: hidden !important;
+	line-height: 8px !important;
+	font-size: 11px  !important;
+	font-family: monospace;
+	text-align: center;
+	cursor: s-resize;
+	}
+
+.fc-agenda .ui-resizable-resizing { /* TODO: better selector */
+	_overflow: hidden;
+	}
+
+/* Espresso Events custom styles
+-------------------------------------------------------------------------*/
+
+/* calendar thumbnail rules */
+/* if thumbnails are set to display for an event
+class name '.event-has-thumb' is added to top level parent event */
+
+#content #espresso_calendar td {
+	padding: 3px 0;
+	}
+#espresso_calendar .event-has-thumb .fc-event-title {
+	display: block;
+ 	clear: left;
+	width: auto;
+	}
+#espresso_calendar p.time-display-block {
+ padding: 0 6px;
+ font-size: 84.50%;
+ margin: 3px 0;
+}
+#espresso_calendar  span.thumb-wrap {
+	display: inline-block !important;
+	margin: 6px;
+	vertical-align: middle;
+}
+#espresso_calendar .ee-event-thumb {
+	display: inline-block;
+	vertical-align: middle;
+	}
+#espresso_calendar .thumb-wrap img {width: 100%;}
+.thumb-wrap { max-height: 90px; overflow: hidden; }
+#espresso_calendar .fc-view-agendaWeek  .thumb-wrap { max-height: 20px; overflow: hidden; }
+.fc-view-agendaDay .thumb-wrap { height: auto; }
+
+/*___ adjust calendar & image dimensions based on view i.e 'day' ___*/
+
+.fc-view-agendaDay .fc-agenda-body td div {min-height:50px;}
+
+.fc-button-prev, .fc-button-next { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+.fc-event a:hover { text-shadow: none; }
+
+.fc-event-time { position: absolute; left: -999em; float: left; height: 0px; }
+
+/* resets some common styles that make the calendar look uglerific */
+
+#content table.fc-header, #content table.fc-border-separate, .fc-header th, .fc-header td { border: none; }
+a.fc-event { line-height: 100%; }
+
+.qtip, .ui-tooltip-titlebar { font-size: 12px; }
+.ui-tooltip-content { font-size: 11px; }
+.ui-widget-content .fc-event.ui-state-focus, .ui-widget-content  .fc-event.ui-state-default, .ui-widget-content  .fc-content .ui-state-active, .fc-view .ui-state-active { background-image: none!important; }
+
+/* Calendar Widget CSS */
+/* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
+/* added in 2.0 by Chris Reynolds */
+
+.espresso_calendar_widget span.fc-event-title,
+.espresso_calendar_widget p.time-display-block,
+.espresso_calendar_widget .thumb-wrap {
+	position: absolute;
+	left: -999em; /* hide the titles because they make things ugly */
+}
+.espresso_calendar_widget .fc-event-skin {
+	background-color: transparent; /* get rid of the background color and border */
+	border: none;
+	height: 16px;
+}
+.espresso_calendar_widget a.fc-event-skin div {
+	background: url('images/tick-circle-frame.png') no-repeat 6px -24px; /* add an image instead */
+}
+.espresso_calendar_widget .fc-day-content { min-width: 26px; }
+.espresso_calendar_widget a.fc-event-skin div:hover { background-position:6px 0px!important; }
+/* fugue icon pack can be downloaded here: http://randyjensenonline.com/thoughts/wordpress-custom-post-type-fugue-icons/ */
+/* using this pack is good if you want to have the same hover effects, otherwise, you can use any icon or icon pack.  I also like http://famfamfam.com */
+.espresso_calendar_widget .fc-header h2 { font-size: 1.2em; font-weight: normal; } /* resets the height of the month name */
+.espresso_calendar_widget th.fc-widget-header { font-weight: normal; } /* resets the weight of the days */
+.espresso_calendar_widget .fc-button-content { line-height: 16px; padding: 0 5px; height: 16px; font-size: 0.8em; } /* resets the button styles */
+.espresso_calendar_widget table.fc-header { margin-bottom: 0; } /* removes any padding under the header table (might be built into the theme's style.css) */
+.espresso_calendar_widget table.fc-border-separate tbody { font-size: 0.8em; } /* resets the font size of the dates */
+.espresso_calendar_widget table.fc-border-separate thead { font-size: 0.9em; } /* resets the font size of the day names */
+
+/* default resets for themeroller */
+
+.ui-state-highlight.fc-today { border-top: 1px solid #AAA; border-left: 1px solid #aaa; }
+a.fc-event.themeroller.ui-widget-header span.fc-event-title,
+a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: normal; }
+.themeroller .thumb-wrap { max-height: 80px; overflow: hidden; }
+.fc-view-agendaDay .themeroller .thumb-wrap { max-height: 100%; }
+.fc-corner-left .fc-event-inner { border-left: 0px; }
+
+.espresso_calendar_widget th.ui-widget-header { font-weight: normal; }
+.espresso_calendar_widget .fc-button-content .ui-icon { margin-top: -50%; }
+.espresso_calendar_widget span.ui-icon { margin: 0; } /* this resets the style of the themeroller < > icons */
