@@ -626,11 +626,13 @@ if (!function_exists('espresso_calendar')) {
 													corner: 'left top'
 												},
 									<?php
+										if ( function_exists('espresso_version') ) {
 											if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
 												classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
 									<?php 	} else { ?>
 												classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
-									<?php 	} ?>
+									<?php 	}
+										} ?>
 												/*
 												 * The important part: style.widget property
 
@@ -858,7 +860,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 
 		/* User-selected settings. */
 		$title = apply_filters('widget_title', $instance['title']);
-		$show_expired = $instance['show_expired'];
+		$widget_show_expired = $instance['show_expired'];
 		$category_id = $instance['category_id'];
 		$calendar_page = $instance['calendar_page'];
 		$load_espresso_calendar_scripts = true;
@@ -878,6 +880,13 @@ class Espresso_Calendar_Widget extends WP_Widget {
 				if (function_exists('espresso_calendar_do_stuff')) {
 					if ( isset($category_id) ) {
 						$event_category_id = $category_id;
+					}
+					if ( !$widget_show_expired ) {
+						$dont_show_expired = "if( event.expired ) {
+							element.css('display','none');
+							}";
+					} else {
+						$dont_show_expired = null;
 					}
 					do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
 					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
@@ -931,16 +940,23 @@ class Espresso_Calendar_Widget extends WP_Widget {
 		<?php _e('Display Single Category?', 'event_espresso'); ?>
 	</label>
 	<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
-	<?php if ( espresso_version() >= '3.2.P' )
-				echo apply_filters('filter_hook_espresso_help', 'display_single_category'); ?>
+	<?php
+		if ( function_exists('espresso_version') ) {
+			if ( espresso_version() >= '3.2.P' )
+				echo apply_filters('filter_hook_espresso_help', 'display_single_category');
+		} ?>
 </p>
 <p>
 	<label for="<?php echo $this->get_field_id('calendar_page'); ?>">
 		<?php _e('Calendar Page', 'event_espresso'); ?>
 	</label>
 	<input type="text" id="<?php echo $this->get_field_id('calendar_page'); ?>" name="<?php echo $this->get_field_name('calendar_page'); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
-	<?php if ( espresso_version() >= '3.2.P' )
-				echo apply_filters('filter_hook_espresso_help', 'calendar_page'); ?>
+	<?php
+		if ( function_exists('espresso_version') ) {
+			if ( espresso_version() >= '3.2.P' )
+				echo apply_filters('filter_hook_espresso_help', 'calendar_page');
+		}
+	?>
 </p>
 <?php
 	}
