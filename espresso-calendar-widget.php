@@ -28,7 +28,6 @@
 					if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
 						$espresso_calendar_widget .= 'theme: true,';
 					}
-
 					//This option only applies to calendars that have jQuery UI theming enabled with the theme option.
 					/*buttonIcons:{ //Settings: http://arshaw.com/fullcalendar/docs/display/buttonIcons/
 						prev: 'circle-triangle-w',
@@ -87,7 +86,9 @@
 						//alert(event.className);
 	$espresso_calendar_widget .= 'if(event.className){';
 	$espresso_calendar_widget .= 'element.find(\'a\').addClass(event.className);';
+	$espresso_calendar_widget .= 'element.attr(\'title\',event.title)';
 	$espresso_calendar_widget .= '}';
+	$espresso_calendar_widget .= $dont_show_expired;
 						//This displays the title of the event when hovering
 						//element.attr('title', event.title + " - Event Times: " + event.start + event.end);
 
