@@ -73,8 +73,8 @@ function espresso_ticket_selector($event) {
 	//$all_meta = array_map('wp_strip_all_tags', $event->reg_btn['all_meta']);
 	//$template_args['meta'] = serialize( $all_meta );
 	//$template_args['meta'] = base64_encode(serialize($all_meta));
-	$template_args['meta_keys'] = $event->meta_keys;
-	$template_args['meta_values'] = $event->meta_values;
+	$template_args['meta_keys'] = empty($event->meta_keys) ? array() : $event->meta_keys;
+	$template_args['meta_values'] = empty($event->meta_values) ? array() : $event->meta_values;
 
 	$template_args['currency_symbol'] = $event->currency_symbol;
 	
