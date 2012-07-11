@@ -423,7 +423,7 @@ function event_espresso_get_event_details($attributes) {
 				event_date_display($event->start_date, get_option('date_format')),
 				event_date_display($event->end_date, get_option('date_format')),
 				empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				$google_map_link,
+				htmlentities($google_map_link),
 				empty($event->event_cost) ? '' : $event->event_cost,
 				empty($event->event_cost) ? '' : $event->event_cost,
 		);
