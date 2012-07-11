@@ -381,29 +381,51 @@ function event_espresso_get_event_details($attributes) {
 		$ee_gmap_location = $venue_address_elements;
 
 		//Create all meta vars
-		global $all_meta;
-		$all_meta = array(
-				'event_name' => $event_name,
-				'event_desc' => $event_desc,
-				'event_address' => $event_address,
-				'event_address2' => $event_address2,
-				'event_city' => $event_city,
-				'event_state' => $event_state,
-				'event_zip' => $event_zip,
-				'event_status' => $event->event_status,
-				'start_time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				'registration_startT' => $event->registration_startT,
-				'registration_start' => $event->registration_start,
-				'registration_endT' => $event->registration_endT,
-				'registration_end' => $event->registration_end,
-				'is_active' => empty($event->is_active) ? '' : $event->is_active,
-				'event_country' => $event->country,
-				'start_date' => event_date_display($event->start_date, get_option('date_format')),
-				'end_date' => event_date_display($event->end_date, get_option('date_format')),
-				'time' => empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				'google_map_link' => $google_map_link,
-				'price' => empty($event->event_cost) ? '' : $event->event_cost,
-				'event_cost' => empty($event->event_cost) ? '' : $event->event_cost,
+		$event->meta_keys = array(
+				'event_name',
+				'event_desc',
+				'event_address',
+				'event_address2',
+				'event_city',
+				'event_state',
+				'event_zip',
+				'event_status',
+				'start_time', // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				'registration_startT',
+				'registration_start',
+				'registration_endT',
+				'registration_end',
+				'is_active',
+				'event_country',
+				'start_date',
+				'end_date',
+				'time', // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				'google_map_link',
+				'price',
+				'event_cost',
+		);
+		$event->meta_values = array(
+				$event_name,
+				$event_desc,
+				$event_address,
+				$event_address2,
+				$event_city,
+				$event_state,
+				$event_zip,
+				$event->event_status,
+				empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				$event->registration_startT,
+				$event->registration_start,
+				$event->registration_endT,
+				$event->registration_end,
+				empty($event->is_active) ? '' : $event->is_active,
+				$event->country,
+				event_date_display($event->start_date, get_option('date_format')),
+				event_date_display($event->end_date, get_option('date_format')),
+				empty($event->start_time) ? '' : $event->start_time, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				$google_map_link,
+				empty($event->event_cost) ? '' : $event->event_cost,
+				empty($event->event_cost) ? '' : $event->event_cost,
 		);
 
 
