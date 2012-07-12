@@ -517,10 +517,10 @@ class EEM_Registration extends EEM_Base {
 	*		get the number of registrations per day  for the Registration Admin page Reports Tab
 	* 		@access		public
 	*/
-	public function get_registrations_per_day_report( $period = 'month' ) {
+	public function get_registrations_per_day_report( $period = '-1 month' ) {
 
 		global $wpdb;
-		$date_mod = strtotime( '-1 ' . $period );
+		$date_mod = strtotime( $period );
 
 		$SQL = "SELECT DATE(FROM_UNIXTIME(reg.REG_date)) AS 'regDate', COUNT(REG_ID) AS total";
 		$SQL .= ' FROM ' . $this->table_name . ' reg';
@@ -540,10 +540,10 @@ class EEM_Registration extends EEM_Base {
 	*		get the number of registrations per event  for the Registration Admin page Reports Tab
 	* 		@access		public
 	*/
-	public function get_registrations_per_event_report( $period = 'month' ) {
+	public function get_registrations_per_event_report( $period = '-1 month' ) {
 
 		global $wpdb;
-		$date_mod = strtotime( '-1 ' . $period );
+		$date_mod = strtotime( $period );
 
 		$SQL = "SELECT event_name, reg_limit, COUNT(REG_ID) AS total";
 		$SQL .= ' FROM ' . $this->table_name . ' reg';
@@ -552,7 +552,7 @@ class EEM_Registration extends EEM_Base {
 		$SQL .= ' WHERE REG_date >= %d';
 		$SQL .= ' AND DTT_is_primary = 1';
 		$SQL .= ' GROUP BY event_name';
-		$SQL .= ' ORDER BY DTT_EVT_start';
+		$SQL .= ' ORDER BY event_name';  // DTT_EVT_start
 		$SQL .= ' LIMIT 0, 24';
 		
 		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
@@ -611,28 +611,8 @@ class EEM_Registration extends EEM_Base {
 	 *		@return array
 	 */
 	public function insert ($set_column_values) {
-
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values ) );
-
-		global $espresso_notices;
-
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
-
-		// set some table specific success messages
-		if ( $results['rows'] == 1 ) {
-			// one row was successfully updated
-			$espresso_notices['success'][] = 'Registration details have been successfully saved to the database.';
-		} elseif ( $results['rows'] > 1 ) {
-			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' registrations have been successfully saved to the database.';
-		} else {
-			// error message
-			$espresso_notices['errors'][] = 'An error occured and the registration has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		return $results['rows'];
-
+		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
 	}
 
 
