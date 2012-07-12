@@ -179,7 +179,7 @@ function espresso_event_list_sql($sql) {
 	$sql .= " JOIN " . ESP_DATETIME . " dtt ON dtt.EVT_ID = e.id ";
 
 
-	if ($_REQUEST['category_id'] != '') {
+	if ( isset($_REQUEST['category_id']) && $_REQUEST['category_id'] != '') {
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = cr.cat_id ";
 	}
