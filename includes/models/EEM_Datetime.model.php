@@ -22,6 +22,7 @@
  * ------------------------------------------------------------------------
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
+require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php' );
 
 class EEM_Datetime extends EEM_Base {
 
@@ -466,28 +467,8 @@ class EEM_Datetime extends EEM_Base {
 	 *		@return array
 	 */
 	public function insert ($set_column_values) {
-
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values ) );
-
-		global $espresso_notices;
-
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
-
-		// set some table specific success messages
-		if ( $results['rows'] == 1 ) {
-			// one row was successfully updated
-			$espresso_notices['success'][] = 'Datetime details have been successfully saved to the database.';
-		} elseif ( $results['rows'] > 1 ) {
-			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' datetimes have been successfully saved to the database.';
-		} else {
-			// error message
-			$espresso_notices['errors'][] = 'An error occured and the datetime has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		return $results;
-
+		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
 	}
 
 
