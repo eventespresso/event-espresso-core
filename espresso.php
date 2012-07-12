@@ -51,29 +51,6 @@ function espresso_main_file() {
 }
 
 
-// add ESPRESSO directories to include_path
-set_include_path(
-		dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
-		dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'functions' . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
-		dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
-		dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'gateways' . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
-		get_include_path()
-);
-
-/**
- * 		Automagically load non-singleton class files - no need to include or require
- * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
- *
- * 		@access public
- * 		@return void
- */
-function __autoload( $class_name ) {
-	$include_path = dirname(__FILE__) . '/includes/classes/';
-   if ( file_exists( $include_path . $class_name . '.class.php' )) {
-		require_once( $include_path . $class_name . '.class.php' );
-	}
-}
-
 
 /**
  * The following are the WordPress actions for a typical request
@@ -88,25 +65,31 @@ require_once(dirname(__FILE__) . '/includes/functions/init.php');
 require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
-add_action('plugins_loaded', 'espresso_get_user_id', 2);
-add_action('plugins_loaded', 'espresso_load_org_options', 3);
-add_action('plugins_loaded', 'espresso_EE_Session', 4);
-add_action('plugins_loaded', 'espresso_setup_notices', 5);
+add_action('plugins_loaded', 'espresso_setup_notices', 2);
+add_action('plugins_loaded', 'espresso_autoload', 3);
+add_action('plugins_loaded', 'espresso_get_user_id', 4);
+add_action('plugins_loaded', 'espresso_load_org_options', 5);
+add_action('plugins_loaded', 'espresso_EE_Session', 6);
 add_action('plugins_loaded', 'espresso_init', 25);
-add_action('init', 'espresso_export_certificate', 30);
-add_action('init', 'espresso_export_invoice', 30);
-add_action('init', 'espresso_export_ticket', 30);
-add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
-add_filter('query_vars', 'espresso_add_query_vars');
 
-if (is_admin()) {
+if ( is_admin() ) {
+
 	register_activation_hook(__FILE__, 'espresso_plugin_activation');
 	add_action('plugins_loaded', 'espresso_check_for_export');
 	add_action('plugins_loaded', 'espresso_check_for_import');
+	add_action('plugins_loaded', 'espresso_admin_pages', 100);
+	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	add_action('init', 'espresso_admin_init', 25);
 	add_action('init', 'espresso_load_admin_ajax_callbacks', 25);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
+	
 } else {
+
+	add_action('init', 'espresso_export_certificate', 30);
+	add_action('init', 'espresso_export_invoice', 30);
+	add_action('init', 'espresso_export_ticket', 30);
+
+	add_filter('query_vars', 'espresso_add_query_vars');
 	add_action('init', 'espresso_load_jquery', 10);
 	add_action('init', 'espresso_frontend_init', 25);
 	add_action('init', 'espresso_add_rewrite_rules', 40);
