@@ -1,4 +1,4 @@
-(function($) {
+jQuery(document).ready(function($) {
 
 	$.ajaxSetup ({ cache: false });
 
@@ -91,5 +91,5 @@
 
 
 
-})(jQuery);
+});
 

@@ -1,6 +1,5 @@
 // reg admin registrations per day report
-(function($) {
-	$(document).ready(function(){	
+jQuery(document).ready(function($) {
 
 		$.jqplot( regPerDay.id, [regPerDay.regs], {
 			title: regPerDay.title,
@@ -39,4 +38,3 @@
 		});
 		
 	});
-})(jQuery);
