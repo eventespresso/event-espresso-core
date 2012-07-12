@@ -1,10 +1,10 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 function espresso_load_menu_css() {
 	wp_enqueue_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
 }
-
 add_action('admin_init', 'espresso_load_menu_css');
+
 
 //Build the admin menu
 if (!function_exists('add_event_espresso_menus')) {
@@ -167,6 +167,7 @@ if (!function_exists('add_event_espresso_menus')) {
 	 *
 	 */
 	function add_event_espresso_menus() {
+
 		global $org_options, $espresso_premium, $ee_admin_page;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$espresso_manager = '';
@@ -221,15 +222,15 @@ if (!function_exists('add_event_espresso_menus')) {
 //						'attendees',
 //						'event_espresso_manage_attendees'
 //				),
-				'transactions' => array(
-						TRUE,
-						'events',
-						__('Event Espresso - Transactions Overview', 'event_espresso'),
-						__('Transactions', 'event_espresso'),
-						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
-						'transactions',
-						'event_espresso_manage_transactions'
-				),
+//				'transactions' => array(
+//						TRUE,
+//						'events',
+//						__('Event Espresso - Transactions Overview', 'event_espresso'),
+//						__('Transactions', 'event_espresso'),
+//						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
+//						'transactions',
+//						array( 'Transactions_Admin_Page', 'run' ) // event_espresso_manage_transactions
+//				),
 				'event_categories' => array(
 						TRUE,
 						'events',
