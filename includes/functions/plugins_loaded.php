@@ -8,8 +8,24 @@
  * 		@return void
  */
 function espresso_define_tables_and_paths() {
+
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 	global $wpdb;
 
+	define( 'DS', DIRECTORY_SEPARATOR );
+	define( 'PS', PATH_SEPARATOR );
+	
+	// add ESPRESSO directories to include_path
+	set_include_path(
+		dirname( __FILE__ ) . DS . 'includes' . DS . 'core' . DS . PS .
+		dirname( __FILE__ ) . DS . 'includes' . DS . 'models' . DS . PS .
+		dirname( __FILE__ ) . DS . 'includes' . DS . 'classes' . DS . PS .
+		dirname( __FILE__ ) . DS . 'includes' . DS . 'functions' . DS . PS .
+		dirname( __FILE__ ) . DS . 'gateways' . DS . PS .
+		get_include_path()
+	);
+	
 	// Define all plugin database tables
 	define("EVENTS_ANSWER_TABLE", $wpdb->prefix . "events_answer");
 	define("EVENTS_ATTENDEE_TABLE", $wpdb->prefix . "events_attendee");
@@ -43,28 +59,93 @@ function espresso_define_tables_and_paths() {
 
 	//Define the plugin directory and path
 	$main_file = espresso_main_file();
-	define("EVENT_ESPRESSO_PLUGINPATH", "/" . plugin_basename($main_file) . "/");
+	define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename($main_file) . DS);
 	define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path($main_file));
 	define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url($main_file));
 
 	//Define the includes directory
-	define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/');
+	define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
+	define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
+
 
 	//Define directory structure for uploads
 	//Create the paths
 	$uploads = wp_upload_dir();
 
 	//Define the uploads directory and url
-	define("EVENT_ESPRESSO_UPLOAD_DIR", $uploads['basedir'] . '/espresso/');
-	define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . '/espresso/');
+	define("EVENT_ESPRESSO_UPLOAD_DIR", $uploads['basedir'] . DS . 'espresso' . DS);
+	define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . DS . 'espresso' . DS);
 
 	//Define the templates dirrectory and url
-	define("EVENT_ESPRESSO_TEMPLATE_DIR", $uploads['basedir'] . '/espresso/templates/');
-	define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates/');
+	define("EVENT_ESPRESSO_TEMPLATE_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS);
+	define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'templates' . DS);
 
 	//Define the gateway directory and url
-	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . '/espresso/gateways/');
-	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] . '/espresso/gateways/');
+	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
+	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS);
+}
+
+
+
+
+
+/**
+ * 		initialize and globalize espresso messages array
+ *
+ * 		@access public
+ * 		@return void
+ */
+function espresso_setup_notices() {
+	// global error notices
+	global $espresso_notices;
+	$espresso_notices	= array( 'success' => FALSE, 'errors' => FALSE );
+}
+
+
+
+
+
+/**
+ * 		Automagically load non-singleton class files - no need to include or require
+ * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
+* 		directory path can be designated by substituting underscores for directory separators
+* 		ie: new admin_transactions_TransactionsInit() would load the file located at : includes/core/admin/transactions/EE_TransactionsInit.class.php
+ *
+ * 		@access 		public
+* 		@param		$class		path and name of the class file to be loaded
+ * 		@return 		void
+ */
+function espresso_autoload() {
+//	function __autoload( $class_name ) {
+//		echo '<h3>'. __FILE__ . ' - ' . __CLASS__ . ' - ' . __FUNCTION__ . ' - ' . $class_name . ' <br /><span style="font-size:10px;font-weight:normal;">( line no: ' . __LINE__ . ' )</span></h3>';
+//		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $class_name );
+//		$include_path = dirname(__FILE__) . '/includes/classes/';
+//	   if ( file_exists( $include_path . $class_name . '.class.php' )) {
+//			require_once( $include_path . $class_name . '.class.php' );
+//		}
+//	}
+}
+
+
+
+
+
+function espresso_display_exception( $excptn ) {
+	echo '
+<style type="text/css">
+body { 
+	width:100%; height:100%; padding:1px; margin:0; background:#f8f8f8;
+}
+#error_msg {
+	width:60%; height:auto; padding:2em 4em; margin:4em auto; 
+	background:#fff; border:2px solid #D54E21; border-radius:3px;
+	color: #666; font-size:18px;
+}
+</style>';
+	echo '<div id="error_msg">';
+	echo 'Error : ' . $excptn->getMessage();
+	echo '</div>';
+	die();
 }
 
 
@@ -81,11 +162,19 @@ function espresso_get_user_id() {
 	return $espresso_wp_user;
 }
 
+
+
+
+
 function espresso_load_org_options() {
 	global $org_options, $espresso_wp_user;
 	$org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
 	require_once (EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
 }
+
+
+
+
 
 /**
  * 		load and instantiate EE_Session class
@@ -112,17 +201,8 @@ function espresso_EE_Session() {
 	}
 }
 
-/**
- * 		initialize and globalize espresso messages array
- *
- * 		@access public
- * 		@return void
- */
-function espresso_setup_notices() {
-	// global error notices
-	global $espresso_notices;
-	$espresso_notices	= array( 'success' => FALSE, 'errors' => FALSE );
-}
+
+
 
 
 function espresso_init() {
@@ -146,28 +226,47 @@ function espresso_init() {
 	load_plugin_textdomain('event_espresso', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
 	//Core function files			
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
+//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
+//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
+//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
+//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
 	
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
+	// following two files moved to espresso_admin_init() in init.php becuz they only pertain to the EE admin
+	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
+	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
-	global $Single_Page_Checkout;
-	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-	
-	event_espresso_require_gateway('process_payments.php');
+//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
+//	global $Single_Page_Checkout;
+//	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+//	
+//	event_espresso_require_gateway('process_payments.php');
 	
 	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
 
 	do_action('action_hook_espresso_coupon_codes');
 }
+
+
+
+function espresso_systems_check($check) {
+	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php')) {
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php');
+		$check = espresso_system_check();
+	}
+
+	//These files need to be above the core function files
+	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/addons_includes.php')) {
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/addons_includes.php');
+	}
+	return $check;
+}
+
+add_filter('filter_hook_espresso_systems_check', 'espresso_systems_check');
+
 
 
 /**
@@ -257,3 +356,55 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
 		update_option($table_name . '_tbl_version', $table_version);
 	}
 }
+
+
+
+
+
+function espresso_admin_pages() {
+
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+	define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
+	define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes' . DS . 'core' . DS . 'admin' . DS );
+	define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
+	
+	
+	$page_request = FALSE;
+	// start with an empty array
+	$admin_pages = array();
+	// folders we don't want
+	$exclude = array();
+	// grab everything in the  admin core directory
+	if ( $admin_screens = glob( EE_CORE_ADMIN . '*' )) {	
+		foreach( $admin_screens as $admin_screen ) {
+			// files and anything in the exclude array need not apply
+			if ( is_dir( $admin_screen ) && ! in_array( $admin_screen, $exclude )) {
+				// these folders represent the different EE admin pages
+				$admin_pages[] = basename( $admin_screen );
+			}
+		}
+	}
+	// allow addons to insert their data into the admin pages array
+	$admin_pages = apply_filters( 'filter_hook_espresso_admin_pages_array', $admin_pages );	
+	//echo '<pre style="height:auto;border:2px solid #FF6600;">' . print_r( $admin_pages, TRUE ) . '</pre>';
+
+	// load admin page factory
+	require_once( EE_CORE_ADMIN . 'Admin_Page_Init.core.php' );
+	$Admin_Page_Init = Admin_Page_Init::instance();
+
+	if ( ! empty( $_REQUEST['page'] )) {
+		// grab page request
+		$page_request = sanitize_key( $_REQUEST['page'] );
+		// if it's' an admin page then initialize it
+		if ( ! in_array( $page_request, $admin_pages )) {
+			$page_request = FALSE;
+		}
+	}
+	
+	foreach ( $admin_pages as $admin_page ) {	
+		$Admin_Page_Init->initialize_admin_page( $admin_page, $page_request );	
+	}
+	
+}
+

@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 function espresso_load_jquery() {
 
@@ -10,6 +10,10 @@ function espresso_load_jquery() {
 //		wp_localize_script('ee_ajax_request', 'EEGlobals', array('ajaxurl' => admin_url('admin-ajax.php'), 'plugin_url' => EVENT_ESPRESSO_PLUGINFULLURL, 'event_page_id' => $org_options['event_page_id']));
 //	}
 }
+
+
+
+
 
 function espresso_load_admin_ajax_callbacks() {
 
@@ -29,13 +33,25 @@ function espresso_load_admin_ajax_callbacks() {
 
 }
 
+
+
+
+
+
 function espresso_admin_init() {
+
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
 	global $org_options, $espresso_premium;
 	if (!is_user_logged_in()) {
 		return;
 	}
 		
 	define('EVENTS_ADMIN_URL', admin_url('admin.php?page=events'));
+
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
@@ -72,9 +88,9 @@ function espresso_admin_init() {
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/registrations/Registrations.class.php');
 					break;
 
-				case 'transactions' :
-					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/transactions/Transactions.class.php');
-					break;
+//				case 'transactions' :
+//					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/transactions/Transactions.class.php');
+//					break;
 
 				case 'event_categories' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/categories.php');
@@ -284,6 +300,17 @@ function espresso_test_for_reg_page() {
 
 
 function espresso_frontend_init() {
+
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
+
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
+	global $Single_Page_Checkout;
+	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+	
+	event_espresso_require_gateway('process_payments.php');
 
 	global $espresso_reg_page;
 	$espresso_reg_page = espresso_test_for_reg_page();
