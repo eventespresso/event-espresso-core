@@ -588,16 +588,20 @@ abstract class EEM_Base {
 		// set generic success / error mesasges
 		if ( $row_results == 1 ) {
 			// one row was successfully updated
-			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully created.', 'rows' => $row_results );
+			$espresso_notices['success'][] = $this->singlular_item . 'details have been successfully saved to the database.';
+//			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully created.', 'rows' => $row_results );
 			$update_results['new-ID'] = $wpdb->insert_id;
 		}
 		elseif ( $row_results > 1 ) {
 			// multiple rows were successfully updated
-			$update_results = array( 'type' =>  'updated', 'msg' => $results.' records have been successfully created.', 'rows' => $row_results );
-			$update_results['new-ID'][] = $wpdb->insert_id;
+			$espresso_notices['success'][] = 'Details for '.$results.' ' . $this->plual_item . ' have been successfully saved to the database.';
+//			$update_results = array( 'type' =>  'updated', 'msg' => $results.' records have been successfully created.', 'rows' => $row_results );
+			$update_results = TRUE;
 		} else {
 			// no result means an error occured
-			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not created.', 'rows' => 0 );
+			$espresso_notices['errors'][] = 'An error occured and the ' . $this->singlular_item . ' has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+//			$update_results = array( 'type' =>  'error', 'msg' => 'An error occured and the record was not created.', 'rows' => 0 );
+			$update_results = FALSE;
 		}
 
 		return $update_results;
@@ -687,21 +691,24 @@ abstract class EEM_Base {
 		// set generic success / error mesasges
 		if ( $row_results > 1 ) {
 			// multiple rows were successfully updated
-//			$update_results = array( 'type' =>  'updated', 'msg' => 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.', 'rows' => $row_results );
+			//$update_results = array( 'type' =>  'updated', 'msg' => 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.', 'rows' => $row_results );
 			$espresso_notices['success'][] = 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.';
 			
-		} elseif ( $row_results == 1 ) {
+		} elseif ( $row_results === 1 ) {
 			// one row was successfully updated
-//			$update_results = array( 'type' =>  'updated', 'msg' => $this->singlular_item . ' details have been successfully updated.', 'rows' => $row_results );
+			// $update_results = array( 'type' =>  'updated', 'msg' => $this->singlular_item . ' details have been successfully updated.', 'rows' => $row_results );
 			$espresso_notices['success'][] = $this->singlular_item . ' details have been successfully updated.';
 			
 		} elseif ( $row_results === 0 ) {
 			// zero row updated means that the data was identical to the existing record so no update occured
-//			$update_results = array( 'type' =>  'error', 'msg' => 'The submitted record was identical to existing data, no so update was performed.', 'rows' => 0 );
+			//changing this to return 1 becuz returning zero appears as an error
+			$row_results = 1;
+			//	$update_results = array( 'type' =>  'error', 'msg' => 'The submitted record was identical to existing data, no so update was performed.', 'rows' => 0 );
 			//$espresso_notices['success'][] = 'The submitted record was identical to existing data, no so update was performed.';
-			
+
 		} else {
-			// an actual error occured so let's capture that from WP'
+			// an actual error occured!
+			// so let's capture that from WP via the output buffer *cough*hack*cough* since $wpdb can't return those errors as a string
 			ob_start();
 			$wpdb->print_error();
 			$db_error = ob_get_clean();			
@@ -766,7 +773,7 @@ abstract class EEM_Base {
 		}
 
 		global $wpdb;
-		$results = $wpdb->get_row( $wpdb->prepare( $SQL, $VAL ));
+		$results = $wpdb->query( $wpdb->prepare( $SQL, $VAL ));
 		return $results;
 		
 	}
