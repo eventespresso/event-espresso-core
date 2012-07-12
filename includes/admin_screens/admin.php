@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 //All of the functions that deal with admin area should go here.
 
