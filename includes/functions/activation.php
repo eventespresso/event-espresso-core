@@ -416,7 +416,7 @@ function espresso_org_option_initialization() {
 
 //This function installs all the required database tables
 function events_data_tables_install() {
-
+	
 	$table_version = EVENT_ESPRESSO_VERSION;
 
 
@@ -443,31 +443,10 @@ function events_data_tables_install() {
 
 
 
-	$table_name = 'esp_payment';
-	$sql = "  PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  TXN_ID int(10) unsigned DEFAULT NULL,
-				  STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
-				  PAY_timestamp int(11) NOT NULL,
-				  PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
-				  PAY_amount decimal(10,2) DEFAULT NULL,
-				  PAY_gateway int(11) DEFAULT NULL,
-				  PAY_gateway_response int(11) DEFAULT NULL,
-				  PAY_gateway_txn_id int(11) DEFAULT NULL,
-				  PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
-				  PAY_details text COLLATE utf8_bin,
-						PRIMARY KEY  (PAY_ID),
-							KEY TXN_ID (TXN_ID),
-							KEY PAY_timestamp (PAY_timestamp)";
-	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
-
-
-
-
-
 	$table_name = 'esp_datetime';
 	$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  EVT_ID int(10) unsigned NOT NULL,
-			  DTT_is_primary tinyint(1) DEFAULT '1',
+			  DTT_is_primary tinyint(1) unsigned NOT NULL DEFAULT '0',
 			  DTT_EVT_start int(10) unsigned NOT NULL,
 			  DTT_EVT_end int(10) unsigned NOT NULL,
 			  DTT_REG_start int(10) unsigned NOT NULL,
@@ -478,7 +457,68 @@ function events_data_tables_install() {
 						KEY EVT_ID (EVT_ID),
 						KEY DTT_is_primary (DTT_is_primary)";
 	event_espresso_run_install($table_name, $table_version, $sql );
+	
 
+
+	$table_name = 'esp_payment';
+	$sql = "  PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				  TXN_ID int(10) unsigned DEFAULT NULL,
+				  STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
+				  PAY_timestamp int(11) NOT NULL,
+				  PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				  PAY_amount decimal(10,2) DEFAULT NULL,
+				  PAY_gateway varchar(32) COLLATE utf8_bin DEFAULT NULL,
+				  PAY_gateway_response text COLLATE utf8_bin,
+				  PAY_txn_id_chq_nmbr varchar(32) COLLATE utf8_bin DEFAULT NULL,
+				  PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				  PAY_via_admin tinyint(1) NOT NULL DEFAULT '0',
+				  PAY_details text COLLATE utf8_bin,
+						PRIMARY KEY  (PAY_ID),
+							KEY TXN_ID (TXN_ID),
+							KEY PAY_timestamp (PAY_timestamp)";
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+
+
+
+	$table_name = "esp_price";
+	$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+			  PRT_ID tinyint(3) unsigned NOT NULL,
+			  EVT_ID int(10) unsigned NOT NULL,
+			  PRC_amount decimal(10,2) NOT NULL DEFAULT '0.00',
+			  PRC_name varchar(45) NOT NULL,
+			  PRC_desc text,
+			  PRC_reg_limit mediumint(8) unsigned DEFAULT NULL,
+			  PRC_tckts_left mediumint(8) unsigned DEFAULT NULL,
+			  PRC_use_dates tinyint(1) unsigned NOT NULL DEFAULT '0',
+			  PRC_start_date int(10) unsigned DEFAULT NULL,
+			  PRC_end_date int(10) unsigned DEFAULT NULL,
+			  PRC_disc_code varchar(100) DEFAULT NULL,
+			  PRC_disc_limit_qty tinyint(1) unsigned NOT NULL DEFAULT '0',
+			  PRC_disc_qty smallint(6) DEFAULT '0',
+			  PRC_disc_apply_all tinyint(1) unsigned NOT NULL DEFAULT '0',
+			  PRC_disc_wp_user bigint(20) DEFAULT '1',
+			  PRC_is_active tinyint(1) unsigned NOT NULL DEFAULT '1',
+			  PRC_overrides int(10) unsigned DEFAULT NULL,
+			  PRC_order tinyint(3) unsigned NOT NULL DEFAULT NULL,
+			  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
+			  PRIMARY KEY  (PRC_ID)";
+	event_espresso_run_install($table_name, $table_version, $sql);
+
+
+
+	$table_name = "esp_price_type";
+	$sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+			  PRT_name VARCHAR(45) NOT NULL ,
+			  PRT_is_member tinyint(1) NOT NULL DEFAULT '0',
+			  PRT_is_discount tinyint(1) NOT NULL DEFAULT '0',
+			  PRT_is_tax tinyint(1) NOT NULL DEFAULT '0',
+			  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
+			  PRT_is_global tinyint(1) NOT NULL DEFAULT '0',
+			  PRT_order tinyint(1) UNSIGNED NULL ,
+			  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
+			  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
+			  PRIMARY KEY  (PRT_ID)";
+	event_espresso_run_install($table_name, $table_version, $sql);
 
 
 
@@ -489,7 +529,7 @@ function events_data_tables_install() {
 				  TXN_ID int(10) unsigned NOT NULL,
 				  DTT_ID int(10) unsigned NOT NULL,
 				  PRC_ID int(10) unsigned NOT NULL,
-				  STS_ID varchar(3) NOT NULL DEFAULT 'RPN',
+				  STS_ID varchar(3) COLLATE utf8_bin NOT NULL DEFAULT 'RPN',
 				  REG_date int(11) NOT NULL,
 				  REG_final_price decimal(10,2) NOT NULL DEFAULT '0.00',
 				  REG_session varchar(45) COLLATE utf8_bin NOT NULL,
@@ -511,13 +551,24 @@ function events_data_tables_install() {
 
 
 
+	$table_name = 'esp_status';
+	$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
+				  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
+				  STS_type set('event','registration','transaction','payment','email') COLLATE utf8_bin NOT NULL,
+				  STS_can_edit tinyint(1) NOT NULL DEFAULT '0',
+				  STS_desc tinytext COLLATE utf8_bin,
+				  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
+				  KEY STS_type (STS_type)";
+	event_espresso_run_install($table_name, $table_version, $sql );
+
+
 
 	$table_name = 'esp_transaction';
 	$sql = "TXN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  TXN_timestamp int(11) NOT NULL,
-				  TXN_total decimal(10,2) DEFAULT NULL,
+				  TXN_total decimal(10,2) DEFAULT '0.00',
 				  TXN_paid decimal(10,2) NOT NULL DEFAULT '0.00',
-				  STS_ID varchar(3) NOT NULL DEFAULT 'TPN',
+				  STS_ID varchar(3) NOT NULL DEFAULT 'TOP',
 				  TXN_details text COLLATE utf8_bin,
 				  TXN_tax_data text COLLATE utf8_bin,
 				  TXN_session_data text COLLATE utf8_bin,
@@ -526,20 +577,6 @@ function events_data_tables_install() {
 				  KEY TXN_timestamp (TXN_timestamp),
 				  KEY STS_ID (STS_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
-
-
-
-
-
-	$table_name = 'esp_status';
-	$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
-				  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
-				  STS_type set('event','registration','transaction','email') COLLATE utf8_bin NOT NULL,
-				  STS_can_edit tinyint(1) NOT NULL DEFAULT '0',
-				  STS_desc tinytext COLLATE utf8_bin,
-				  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
-				  KEY STS_type (STS_type)";
-	event_espresso_run_install($table_name, $table_version, $sql );
 
 
 
@@ -587,6 +624,8 @@ function events_data_tables_install() {
 					KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_status";
 	$sql = "id int(3) unsigned NOT NULL AUTO_INCREMENT,
 					  code VARCHAR(45) DEFAULT NULL,
@@ -594,6 +633,8 @@ function events_data_tables_install() {
 					  can_edit BOOLEAN DEFAULT '0',
 					PRIMARY KEY  (id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 	$table_name = "events_detail";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -677,6 +718,8 @@ function events_data_tables_install() {
 				KEY likes (likes)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_meta";
 	$sql = "emeta_id bigint(20) NOT NULL AUTO_INCREMENT,
 			  event_id int(11) DEFAULT NULL,
@@ -688,6 +731,8 @@ function events_data_tables_install() {
 			  KEY meta_key (meta_key)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_email";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
 				email_type VARCHAR(25) DEFAULT NULL,
@@ -698,6 +743,8 @@ function events_data_tables_install() {
 				UNIQUE KEY id (id),
 				KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 	$table_name = "events_category_detail";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -711,6 +758,8 @@ function events_data_tables_install() {
 				KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_category_rel";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
 				event_id int(11) DEFAULT NULL,
@@ -718,6 +767,8 @@ function events_data_tables_install() {
 				PRIMARY KEY  (id),
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 	$table_name = "events_venue";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -737,6 +788,8 @@ function events_data_tables_install() {
 				KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_venue_rel";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
 				event_id int(11) DEFAULT NULL,
@@ -744,6 +797,8 @@ function events_data_tables_install() {
 				PRIMARY KEY  (id),
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 	$table_name = "events_locale";
 	$sql = "id int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -755,6 +810,8 @@ function events_data_tables_install() {
 			  KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_locale_rel";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
 				venue_id int(11) DEFAULT NULL,
@@ -762,6 +819,8 @@ function events_data_tables_install() {
 				PRIMARY KEY  (id),
 			  	KEY venue_id (venue_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 	$table_name = "events_personnel";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
@@ -776,6 +835,8 @@ function events_data_tables_install() {
 			  	KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_personnel_rel";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
 				event_id int(11) DEFAULT NULL,
@@ -785,6 +846,8 @@ function events_data_tables_install() {
 			  	KEY person_id (person_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_discount_rel";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
 				event_id int(11) DEFAULT NULL,
@@ -792,68 +855,6 @@ function events_data_tables_install() {
 				PRIMARY KEY  (id),
 			  	KEY event_id (event_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
-
-/*	$table_name = "esp_price";
-	$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  PRT_ID tinyint(3) unsigned NOT NULL,
-			  EVT_ID int(10) unsigned NOT NULL,
-			  PRC_amount decimal(10,2) NOT NULL DEFAULT 0.00,
-			  PRC_name varchar(45) NOT NULL,
-			  PRC_desc text,
-			  PRC_reg_limit smallint(5) unsigned DEFAULT NULL,
-			  PRC_use_dates tinyint(1) DEFAULT 0,
-			  PRC_start_date int(10) unsigned DEFAULT NULL,
-			  PRC_end_date int(10) unsigned DEFAULT NULL,
-			  PRC_disc_code varchar(100) DEFAULT NULL,
-			  PRC_disc_limit_qty tinyint(1) DEFAULT 0,
-			  PRC_disc_qty smallint(6) DEFAULT 0,
-			  PRC_disc_apply_all tinyint(1) DEFAULT 0,
-			  PRC_disc_wp_user bigint(20) DEFAULT NULL,
-			  PRC_is_active tinyint(1) DEFAULT 1,
-			  PRC_overrides int(10) unsigned DEFAULT NULL,
-			  PRC_order tinyint(3) unsigned DEFAULT NULL,
-			  PRC_deleted tinyint(1) DEFAULT 0,
-			  PRIMARY KEY  (PRC_ID)";
-	event_espresso_run_install($table_name, $table_version, $sql);*/
-
-	$table_name = "esp_price";
-	$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  PRT_ID tinyint(3) unsigned NOT NULL,
-			  EVT_ID int(10) unsigned NOT NULL,
-			  PRC_amount decimal(10,2) NOT NULL DEFAULT 0.00,
-			  PRC_name varchar(45) NOT NULL,
-			  PRC_desc text,
-			  PRC_use_dates tinyint(1) DEFAULT 0,
-			  PRC_start_date int(10) unsigned DEFAULT NULL,
-			  PRC_end_date int(10) unsigned DEFAULT NULL,
-			  PRC_disc_code varchar(100) DEFAULT NULL,
-			  PRC_disc_limit_qty tinyint(1) DEFAULT 0,
-			  PRC_disc_qty smallint(6) DEFAULT 0,
-			  PRC_disc_apply_all tinyint(1) DEFAULT 0,
-			  PRC_disc_wp_user bigint(20) DEFAULT NULL,
-			  PRC_overrides int(10) unsigned DEFAULT NULL,
-			  PRC_order tinyint(3) unsigned DEFAULT NULL,
-			  PRC_is_active tinyint(1) DEFAULT 1,
-			  PRC_deleted tinyint(1) DEFAULT 0,
-			  PRIMARY KEY  (PRC_ID)";
-	event_espresso_run_install($table_name, $table_version, $sql);
-
-
-
-	$table_name = "esp_price_type";
-	$sql = 'PRT_ID tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT ,
-			  PRT_name VARCHAR(45) NOT NULL ,
-			  PRT_is_member tinyint(1) NULL DEFAULT 0 ,
-			  PRT_is_discount tinyint(1) NULL DEFAULT 0 ,
-			  PRT_is_tax tinyint(1) NULL DEFAULT 0 ,
-			  PRT_is_percent tinyint(1) NULL DEFAULT 0 ,
-			  PRT_is_global tinyint(1) NULL DEFAULT 0 ,
-			  PRT_order tinyint(1) UNSIGNED NULL ,
-				PRT_deleted tinyint(1) DEFAULT 0,
-			  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
-			  PRIMARY KEY  (PRT_ID)';
-	event_espresso_run_install($table_name, $table_version, $sql);
-
 
 
 
@@ -874,10 +875,14 @@ function events_data_tables_install() {
 			  	KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_multi_event_registration_id_group";
 	$sql = "primary_registration_id varchar(255) DEFAULT NULL,
 			registration_id varchar(255) DEFAULT NULL  ";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 	$table_name = "events_attendee_cost";
 	$sql = "attendee_id int(11) DEFAULT NULL,
@@ -885,6 +890,8 @@ function events_data_tables_install() {
 			quantity int(11) DEFAULT NULL,
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 	$table_name = "events_question";
 	$sql = "id int(11) unsigned NOT NULL auto_increment,
@@ -903,6 +910,8 @@ function events_data_tables_install() {
 			KEY admin_only (admin_only)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_qst_group";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
 				group_name VARCHAR(100) NOT NULL default 'NULL',
@@ -918,6 +927,8 @@ function events_data_tables_install() {
 			  	KEY wp_user (wp_user)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+
+
 	$table_name = "events_qst_group_rel";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
 				group_id int(11)  NOT NULL,
@@ -926,6 +937,8 @@ function events_data_tables_install() {
 			  	KEY group_id (group_id),
 			  	KEY question_id (question_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 	$table_name = "events_answer";
 	$sql = "id int(11) NOT NULL AUTO_INCREMENT,
@@ -937,6 +950,7 @@ function events_data_tables_install() {
 			KEY registration_id (registration_id),
 			KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
 }
 
 
