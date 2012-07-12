@@ -294,6 +294,7 @@ function update_event() {
 //			if (isset($_POST['process_datetimes']) && $_POST['process_datetimes']) {
 
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Datetime.class.php');
 			$DTM = EEM_Datetime::instance();
 
 			// grab list of all datetime ID's we are processing
@@ -304,9 +305,12 @@ function update_event() {
 			} else {
 				$datetime_IDs = array();
 			}
+			
+			$event_datetimes = isset($_POST['event_datetimes']) ? $_POST['event_datetimes'] : array();
+			// add hook so addons can manipulate event datetimes prior to saving			
+			$event_datetimes = apply_filters( 'filter_hook_espresso_update_event_datetimes', $event_datetimes );
 
-
-			if (isset($_POST['event_datetimes'])) {
+			if ( $event_datetimes ) {			
 
 				ksort($_POST['event_datetimes']);
 
@@ -396,7 +400,7 @@ function update_event() {
 			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
 //				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
 			// grab existing ticket price data
-			if ($edited_ticket_prices = isset($_POST['edit_ticket_price']) ? $_POST['edit_ticket_price'] : FALSE) {
+			if ( $edited_ticket_prices = isset($_POST['edit_ticket_price']) ? $_POST['edit_ticket_price'] : array() ) {
 //					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
 				// cycle thru list                    
 				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
@@ -405,7 +409,7 @@ function update_event() {
 					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
 //							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
 						if ( is_array( $quick_edit_ticket_price[$PRC_ID] )) {
-							$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[$PRC_ID] );
+							$edited_ticket_price = array_merge( $quick_edit_ticket_price[$PRC_ID], $edited_ticket_price );
 //								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 						}
 						$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
@@ -422,6 +426,9 @@ function update_event() {
 				$ticket_prices_to_save[0] = $new_ticket_price;
 			}
 		}
+		
+		// add hook so addons can manipulate event ticket prices prior to saving			
+		$ticket_prices_to_save = apply_filters( 'filter_hook_espresso_update_event_ticket_prices', $ticket_prices_to_save );
 
 		// and now we actually save the ticket prices
 		if (!empty($ticket_prices_to_save)) {
@@ -434,7 +441,7 @@ function update_event() {
 			get_currentuserinfo();
 
 			foreach ($ticket_prices_to_save as $PRC_ID => $ticket_price) {
-
+				//printr( $ticket_price, '$ticket_price' );
 				//determine whether this price overrides an existing global or not
 				$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
 //echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
@@ -642,8 +649,8 @@ function update_event() {
 
 		//Show the saved event notice
 		global $notices;
-		$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="' . espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' ' . $start_date;
-		do_action('action_hook_espresso_admin_notices');
+		$notices['updates'][] = __('Event details updated for', 'event_espresso') . ' <a href="' . espresso_reg_url($event_id) . '" target="_blank">' . stripslashes_deep($_REQUEST['event']) . ' ' . $start_date . '</a>';
+		//do_action('action_hook_espresso_admin_notices');
 
 		/*
 		 * Added for seating chart addon
