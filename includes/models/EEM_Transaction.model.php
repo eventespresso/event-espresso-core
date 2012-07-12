@@ -284,11 +284,12 @@ class EEM_Transaction extends EEM_Base {
 
 		global $wpdb;
 		
-		$SQL = 'SELECT att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';
+		$SQL = 'SELECT att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';		
+
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
-		$SQL .= 'INNER JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
+		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
+		$SQL .= 'JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
+		$SQL .= 'RIGHT JOIN ' . $this->table_name . ' txn ON reg.TXN_ID = txn.TXN_ID ';
 		$SQL .= 'WHERE TXN_timestamp >= %d ';
 		$SQL .= 'AND TXN_timestamp <= %d ';
 		$SQL .= 'AND reg.REG_is_primary = 1 ';
@@ -352,6 +353,57 @@ class EEM_Transaction extends EEM_Base {
 
 	}
 
+
+
+
+
+	/**
+	*		get the revenue per day  for the Transaction Admin page Reports Tab
+	* 		@access		public
+	*/
+	public function get_revenue_per_day_report( $period = '-1 month' ) {
+
+		global $wpdb;
+		$date_mod = strtotime( $period );
+
+		$SQL = 'SELECT DATE(FROM_UNIXTIME(TXN_timestamp)) AS txnDate, SUM(TXN_paid) AS revenue';
+		$SQL .= ' FROM ' . $this->table_name;
+		$SQL .= ' WHERE TXN_timestamp >= %d';
+		$SQL .= ' GROUP BY `txnDate`';
+		$SQL .= ' ORDER BY TXN_timestamp DESC';
+
+		//echo '<h3>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+
+		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+
+	}
+
+
+
+
+
+	/**
+	*		get the revenue per event  for the Transaction Admin page Reports Tab
+	* 		@access		public
+	*/
+	public function get_revenue_per_event_report( $period = 'month' ) {
+
+		global $wpdb;
+		$date_mod = strtotime( '-1 ' . $period );
+
+		$SQL = 'SELECT event_name, SUM(TXN_paid) AS revenue';
+		$SQL .= ' FROM ' . $this->table_name . ' txn';
+		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
+		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
+		$SQL .= ' WHERE REG_date >= %d';
+		$SQL .= ' GROUP BY event_name';
+		$SQL .= ' ORDER BY event_name';
+		$SQL .= ' LIMIT 0, 24';
+		
+		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+
+	}
+
 	
 	
 
@@ -366,29 +418,8 @@ class EEM_Transaction extends EEM_Base {
 	 *		@return array
 	 */	
 	public function insert ($set_column_values) {
-
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values ) );
-			
-		global $espresso_notices;
-
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
-		$results = $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
-	
-		// set some table specific success messages
-		if ( $results['rows'] == 1 ) {
-			// one row was successfully updated
-			$espresso_notices['success'][] = 'Transaction details have been successfully saved to the database.';
-		} elseif ( $results['rows'] > 1 ) {
-			// multiple rows were successfully updated
-			$espresso_notices['success'][] = 'Details for '.$results.' transactions have been successfully saved to the database.';
-		} else {
-			// error message 
-			$espresso_notices['errors'][] = 'An error occured and the transaction has not been saved to the database. ' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
-		}
-	
-		$rows_n_ID = array( 'rows' => $results['rows'], 'new-ID' => $results['new-ID'] );
-		return $rows_n_ID;
-	
+		return $this->_insert( $this->table_name, $this->table_data_types, $set_column_values );
 	}
 
 
@@ -409,7 +440,7 @@ class EEM_Transaction extends EEM_Base {
 	 *		@return array
 	 */	
 	public function update ($set_column_values, $where_cols_n_values) {
-		//$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where_cols_n_values ) );
+//		$this->display_vars( __FUNCTION__, array( 'set_column_values' => $set_column_values, 'where' => $where_cols_n_values ) );
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );
 	}
