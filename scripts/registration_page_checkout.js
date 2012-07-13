@@ -471,7 +471,7 @@
 	function process_return_data( next, response ) {
 //alert('process_return_data');
 		for ( key in response.return_data ) {
-			alert( 'key = ' + key + '\n' + 'response.return_data[key] = ' + response.return_data[key] );
+			//alert( 'key = ' + key + '\n' + 'response.return_data[key] = ' + response.return_data[key] );
 			if ( key == 'reg-page-confirmation-dv' ) {
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 			} else if ( key == 'redirect-to-thank-you-page' ) {
