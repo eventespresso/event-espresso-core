@@ -50,7 +50,7 @@ if (!function_exists('event_form_build')) {
 			case "TEXT" :
 
 				$disabled = isset($disabled) ? $disabled : '';
-				if (get_option('events_members_active') == 'true' && (empty($_REQUEST['event_admin_reports']) || $_REQUEST['event_admin_reports'] != 'add_new_attendee')) {
+				if (defined( 'EVENT_ESPRESSO_MEMBERS_DIR' ) && (empty($_REQUEST['event_admin_reports']) || $_REQUEST['event_admin_reports'] != 'add_new_attendee')) {
 					if (!empty($question->system_name)) {
 						if ( $attendee_number == 1 ) {
 							switch ($question->system_name) {
