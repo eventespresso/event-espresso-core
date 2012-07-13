@@ -304,11 +304,7 @@ function espresso_frontend_init() {
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
-
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
-	global $Single_Page_Checkout;
-	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';	
 	
 	event_espresso_require_gateway('process_payments.php');
 

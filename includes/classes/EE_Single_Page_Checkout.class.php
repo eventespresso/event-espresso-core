@@ -353,7 +353,7 @@ class EE_Single_Page_Checkout {
 
 			// if
 		}
-		//printr( $gateways, '$gateways' );
+		// printr( $gateways, '$gateways' );
 		$gateway_data['html_data'] = $gateways;
 		$EE_Session->set_session_data($gateway_data, 'gateway_data');
 		if (empty($session_data['billing_info'])) {

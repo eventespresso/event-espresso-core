@@ -84,7 +84,7 @@ if ( is_admin() ) {
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	
 } else {
-
+die();
 	add_action('init', 'espresso_export_certificate', 30);
 	add_action('init', 'espresso_export_invoice', 30);
 	add_action('init', 'espresso_export_ticket', 30);

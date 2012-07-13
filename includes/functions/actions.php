@@ -48,59 +48,6 @@ function display_espresso_admin_notices() {
 
 add_action('admin_notices', 'display_espresso_admin_notices');
 
-
-
-function espresso_load_reg_page_files() {
-
-	define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
-
-
-//Check to see if this a reg page
-//May cause admin and front facing pages to break if turned on
-//global $this_is_a_reg_page;
-//echo '<p>$this_is_a_reg_page ='.$this_is_a_reg_page .'</p>';
-//Process email confirmations
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
-
-//Various attendee functions
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/attendee_functions.php');
-
-
-//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
-
-
-
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Payment_Data.class.php');
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/payment_page.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/confirmation_page.php');
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/pending_approval_page.php');
-//	require_once(espresso_get_payment_page_template());
-//	require_once(espresso_get_payment_overview_template());
-//	require_once(espresso_get_return_payment_template());
-//Add attendees to the database
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/add_attendees_to_db.php');
-
-
-	event_espresso_require_gateway('PaymentGateway.php');
-	event_espresso_require_gateway('gateway_display.php');
-
-// AJAX functions
-//	add_action('wp_ajax_event_espresso_add_item', 'event_espresso_add_item_to_session');
-//	add_action('wp_ajax_nopriv_event_espresso_add_item', 'event_espresso_add_item_to_session');
-//	add_action('wp_ajax_event_espresso_delete_item', 'event_espresso_delete_item_from_session');
-//	add_action('wp_ajax_nopriv_event_espresso_delete_item', 'event_espresso_delete_item_from_session');
-//	add_action('wp_ajax_event_espresso_update_item', 'event_espresso_update_item_in_session');
-//	add_action('wp_ajax_nopriv_event_espresso_update_item', 'event_espresso_update_item_in_session');
-//	add_action('wp_ajax_event_espresso_calculate_total', 'event_espresso_calculate_total');
-//	add_action('wp_ajax_nopriv_event_espresso_calculate_total', 'event_espresso_calculate_total');
-//	add_action('wp_ajax_event_espresso_load_regis_form', 'event_espresso_load_regis_form');
-//	add_action('wp_ajax_nopriv_event_espresso_load_regis_form', 'event_espresso_load_regis_form');
-//	add_action('wp_ajax_event_espresso_confirm_and_pay', 'event_espresso_confirm_and_pay');
-//	add_action('wp_ajax_nopriv_event_espresso_confirm_and_pay', 'event_espresso_confirm_and_pay');
-}
-add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_files');
-
 function espresso_site_license() {
 	global $org_options;
 // PUE Auto Upgrades stuff
