@@ -1,5 +1,5 @@
 		
-(function($) {
+jQuery(document).ready(function($) {
 
 //	$('.display-ticket-manager').live('click', function(){
 //		var page = $('html').scrollTop();
@@ -282,7 +282,7 @@
 
 
 
-})(jQuery);
+});
 
 
 

@@ -1,22 +1,36 @@
 <?php
 
 function espresso_plugin_activation() {
-	// define tables and pathing
-	espresso_define_tables_and_paths();
-	espresso_get_user_id();
-	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
-	events_data_tables_install();
-	require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
-	espresso_initialize_system_questions();
-	espresso_initialize_email();
-	event_espresso_create_upload_directories();
-	event_espresso_update_shortcodes();
-	event_espresso_update_attendee_data();
-	espresso_update_attendee_qty();
-	espresso_org_option_initialization();
-	espresso_fix_org_options();
-	espresso_update_active_gateways();
-	espresso_default_prices();
+
+	global $wpdb;
+	$SQL = 'SELECT * FROM '. $wpdb->prefix ."options WHERE option_value LIKE '%event_espresso%'";	
+	$results = $wpdb->query($SQL);
+	// WHAT?!?!?! Trying to install this on an existing EE site???
+	if ( $results > 0 ) {
+		wp_die( '
+		<h2 style="color:red; font-size:2em; text-align:center;">' . __( 'Warning!', 'event_espresso' ) . '</h2>
+		<p style="font-size:1.4em; text-align:center;">
+			' . __( 'THIS COPY OF EVENT ESPRESSO IS FOR TESTING OR DEVELOPMENT PURPOSES ONLY.<br/><br/>DO NOT USE THIS SOFTWARE ON A LIVE OR ACTIVE WEBSITE.<br/><br/>Alpha versions of this software can not be activated on sites containing existing installations of Event Espresso.<br/><br/>If you wish to activate this software for testing or development purposes, please utilize a fresh install of WordPress on a localhost or password protected development server.<br/><br/><span style="font-size:.7em;">Please press the back button on your browser to return to the plugins page.</span>', 'event_espresso' ) . '
+		</p>');
+
+	} else {
+		// define tables and pathing
+		espresso_define_tables_and_paths();
+		espresso_get_user_id();
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/activation.php');
+		events_data_tables_install();
+		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
+		espresso_initialize_system_questions();
+		espresso_initialize_email();
+		event_espresso_create_upload_directories();
+		event_espresso_update_shortcodes();
+		event_espresso_update_attendee_data();
+		espresso_update_attendee_qty();
+		espresso_org_option_initialization();
+		espresso_fix_org_options();
+		espresso_update_active_gateways();
+		espresso_default_prices();
+	}
 }
 
 function espresso_widget() {
@@ -322,3 +336,18 @@ function espresso_add_query_vars($query_vars) {
 function espresso_buffer_headers() {
 	ob_start();
 }
+
+/**
+ * event_espresso_require_template()
+ *
+ * @param mixed $template_file_name // Name of template file.
+ * @param bool $must_exist		  // Error if neither file exist.
+ * @param bool $as_require_once	 // True for require_once(), False for require()
+ * @return void	// No return value. File already included.
+ *
+ * Usage: event_espresso_require_template('shopping_cart.php')
+ */
+function espresso_require_template($template_file_name, $must_exist = true, $as_require_once = true) {
+	event_espresso_require_file($template_file_name, EVENT_ESPRESSO_TEMPLATE_DIR, EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/', $must_exist, $as_require_once);
+}
+add_action('action_hook_espresso_require_template', 'espresso_require_template');

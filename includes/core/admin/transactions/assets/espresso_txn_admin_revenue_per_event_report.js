@@ -1,13 +1,13 @@
-// reg admin registrations per event report
+// txn admin revenue per event report
 jQuery(document).ready(function($) {
 
-	$.jqplot( regPerEvent.id, [regPerEvent.regs], {
-		title: regPerEvent.title,
+	$.jqplot( revenuePerEvent.id, [revenuePerEvent.revenue], {
+		title: revenuePerEvent.title,
 		animate: !$.jqplot.use_excanvas,
 		seriesDefaults:{
             renderer:$.jqplot.BarRenderer,
             pointLabels: { show: true, location: 'n', sizeAdjust:5 },
-       		rendererOptions: { varyBarColor: true, barWidth: regPerEvent.width }				
+       		rendererOptions: { varyBarColor: true, barWidth: revenuePerEvent.width }				
         },
 		axes: {
 			xaxis: { 
@@ -20,9 +20,8 @@ jQuery(document).ready(function($) {
 			},
 			yaxis: {
 				min: 0, 
-				max: regPerEvent.ymax,
 				tickOptions: {
-					formatString:'%.0f'
+					formatString:"$%'.2f"
 				}
 			}
 		},

@@ -42,8 +42,6 @@ class EE_Admin_Registrations {
 //echo '<h4>REG_ASSETS_URL : ' . REG_ASSETS_URL . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 //echo '<h4>REG_PG_SLUG : ' . REG_PG_SLUG . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 			
-		echo '<style> .xdebug-error { font-size:1.5em; } </style>';
-
 
 		$this->_get_registration_status_array();
 
@@ -98,13 +96,11 @@ class EE_Admin_Registrations {
 			self::$_status[ $status->STS_ID ] = $status->STS_code;
 		}
 	}
-	
-	
-	
 
 
 
-	
+
+
 	/**
 	*		generates  HTML for the reg admin page
 	*		@access public
@@ -170,7 +166,7 @@ class EE_Admin_Registrations {
 		// default page args
 		$page_args = array();
 		
-		require_once ( 'EEM_Base.model.php' );
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/registrations/Registrations_List_Table.class.php' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 		$REG = EEM_Registration::instance();
@@ -631,8 +627,8 @@ class EE_Admin_Registrations {
 		$page_args = array();
 		$reg_reports = array();
 		
-		$page_args['reg_reports'][] = $this->_registrations_per_day_report();  //  option: 'week' defaults to 'month'
-		$page_args['reg_reports'][] = $this->_get_registrations_per_event_report(); //  option: 'week' defaults to 'month'
+		$page_args['reg_reports'][] = $this->_registrations_per_day_report( '-3 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
+		$page_args['reg_reports'][] = $this->_get_registrations_per_event_report( '-3 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['reg_reports'][] = 'chart1';
 		
 		$template_path = REG_TEMPLATE_PATH . 'registration_reports.template.php';
@@ -655,7 +651,7 @@ class EE_Admin_Registrations {
 	*		@access private
 	*		@return void
 	*/
-	private function _registrations_per_day_report( $period = 'month' ) {
+	private function _registrations_per_day_report( $period = '-1 month' ) {
 	
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_day';
@@ -709,7 +705,7 @@ class EE_Admin_Registrations {
 	*		@access private
 	*		@return void
 	*/
-	private function _get_registrations_per_event_report( $period = 'month' ) {
+	private function _get_registrations_per_event_report( $period = '-1 month' ) {
 	
 		$report_ID = 'reg-admin-registrations-per-event-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_event';
@@ -830,7 +826,7 @@ define( 'REG_TEMPLATE_PATH', REG_DIR_PATH . 'templates/' );
 define( 'REG_TEMPLATE_URL', REG_DIR_URL . 'templates/' );		
 define( 'REG_ASSETS_PATH', REG_DIR_PATH . 'css_n_js/' );		
 define( 'REG_ASSETS_URL', REG_DIR_URL . 'css_n_js/' );		
-define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );		
+//define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );		
 define( 'REG_PG_SLUG', 'registrations' );
 
 

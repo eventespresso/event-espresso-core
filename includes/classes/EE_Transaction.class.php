@@ -160,11 +160,22 @@ class EE_Transaction {
 	* @param 		string				$TXN_tax_data		 	information regarding taxes
 	* @param 		int 					$TXN_ID 						Transaction ID
 	*/
-	public function __construct( $TXN_timestamp=FALSE, $TXN_total=0.00, $TXN_paid=0.00, $STS_ID=NULL, $TXN_details=NULL, $TXN_session_data=NULL, $TXN_hash_salt=NULL, $TXN_tax_data=NULL, $TXN_ID=FALSE ) {
+	public function __construct( 
+														$TXN_timestamp = FALSE, 
+														$TXN_total = 0.00, 
+														$TXN_paid = 0.00, 
+														$STS_ID = NULL, 
+														$TXN_details = NULL, 
+														$TXN_session_data = NULL, 
+														$TXN_hash_salt = NULL, 
+														$TXN_tax_data = NULL, 
+														$TXN_ID = FALSE 
+													) {
+													
 		$this->_TXN_ID 						= absint( $TXN_ID );
-		$this->_TXN_timestamp 		= $TXN_timestamp ? absint( $TXN_timestamp ) : time();
-		$this->_TXN_total 					= abs( $TXN_total );
-		$this->_TXN_paid 					= abs( $TXN_paid );
+		$this->_TXN_timestamp 		= $TXN_timestamp != NULL ? ( is_numeric( $TXN_timestamp ) ? absint( $TXN_timestamp ) : strtotime( $TXN_timestamp )) : time();
+		$this->_TXN_total 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_total ) ));
+		$this->_TXN_paid 					= floatval( preg_replace( "/^[^0-9\.]-/", "", preg_replace( "/,/", ".", $TXN_paid ) ));
 		$this->_STS_ID 						= wp_strip_all_tags( $STS_ID );
 		$this->_TXN_details 				= $TXN_details;
 		$this->_TXN_session_data	= $TXN_session_data;
@@ -184,12 +195,16 @@ class EE_Transaction {
 	*/	
 	public function set_total( $total = FALSE ) {
 		
-		global $espresso_notices;
-		if ( ! $total || ! is_numeric( $total )) {
+		if ( $total === FALSE || ! is_numeric( $total )) {
+			global $espresso_notices;
 			$espresso_notices['errors'][] = 'No total or an invalid total was supplied.';
 			return FALSE;
 		}	
-		$this->_TXN_total = $total;
+		// change commas to decimals
+		$total = ( preg_replace( '/,/', '.', $total ));
+		// remove all other characters and cast as float
+		$this->_TXN_total = floatval( preg_replace( '/[^-0-9.]*/', '', $total ));
+
 		return TRUE;
 	}
 
@@ -201,16 +216,20 @@ class EE_Transaction {
 	*		Set Total Amount Paid to Date
 	* 
 	* 		@access		public		
-	*		@param		float		$payment 		total amount paid to date (sum of all payments)
+	*		@param		float		$total_paid 		total amount paid to date (sum of all payments)
 	*/	
-	public function set_paid( $payment = FALSE ) {
+	public function set_paid( $total_paid = FALSE ) {
 		
-		global $espresso_notices;
-		if ( ! $payment || ! is_numeric( $payment )) {
+		if ( $total_paid === FALSE || ! is_numeric( $total_paid )) {
+			global $espresso_notices;
 			$espresso_notices['errors'][] = 'No payment amount or an invalid payment amount was supplied.';
 			return FALSE;
 		}	
-		$this->_TXN_paid += $payment;
+		// change commas to decimals
+		$total_paid = ( preg_replace( '/,/', '.', $total_paid ));
+		// remove all other characters and cast as float
+		$this->_TXN_paid = floatval( preg_replace( '/[^-0-9.]*/', '', $total_paid ));
+
 		return TRUE;
 	}
 
@@ -226,8 +245,8 @@ class EE_Transaction {
 	*/	
 	public function set_status( $status = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $status ) {
+			global $espresso_notices;
 			$espresso_notices['errors'][] = 'No status was supplied.';
 			return FALSE;
 		}	
@@ -248,8 +267,8 @@ class EE_Transaction {
 	*/	
 	public function set_details( $details = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $details ) {
+			global $espresso_notices;
 			$espresso_notices['errors'][] = 'No details were supplied.';
 			return FALSE;
 		}
@@ -270,8 +289,8 @@ class EE_Transaction {
 	*/	
 	public function set_session_data( $session_data = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $session_data ) {
+			global $espresso_notices;
 			$espresso_notices['errors'][] = 'No session data was supplied.';
 			return FALSE;
 		}	
@@ -291,8 +310,8 @@ class EE_Transaction {
 	*/	
 	public function set_hash_salt( $hash_salt = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $hash_salt ) {
+			global $espresso_notices;
 			$espresso_notices['errors'][] = 'No hash salt was supplied.';
 			return FALSE;
 		}	
@@ -313,12 +332,12 @@ class EE_Transaction {
 	*/	
 	public function set_tax_data( $tax_data = FALSE ) {
 		
-		global $espresso_notices;
 		if ( ! $tax_data ) {
+			global $espresso_notices;
 			$espresso_notices['errors'][] = 'No session data was supplied.';
 			return FALSE;
 		}	
-		$this->_TXN_tax_data = stripslashes_deep( $tax_data ); 
+		$this->_TXN_tax_data = $tax_data; 
 		return TRUE;
 	}
 
@@ -335,17 +354,19 @@ class EE_Transaction {
 	*/	
 	private function _save_to_db( $where_cols_n_values = FALSE ) {
 		
-		 $MODEL = EEM_Transaction::instance();
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php');
+		$MODEL = EEM_Transaction::instance();
 		
+		//TXN_ID 	TXN_timestamp 	TXN_total 	TXN_paid 	STS_ID 	TXN_details 	TXN_tax_data 	TXN_session_data 	TXN_hash_salt
 		$set_column_values = array(		
 				'TXN_timestamp' 		=> $this->_TXN_timestamp,
 				'TXN_total' 					=> $this->_TXN_total,
 				'TXN_paid' 					=> $this->_TXN_paid,
 				'STS_ID' 						=> $this->_STS_ID,
 				'TXN_details' 				=> maybe_serialize( $this->_TXN_details ),
-				'TXN_session_data'		=> maybe_serialize( $this->_TXN_session_data ),
-				'TXN_hash_salt' 			=> $this->_TXN_hash_salt,
-				'TXN_tax_data' 			=> maybe_serialize( $this->_TXN_tax_data )
+				'TXN_tax_data' 			=> maybe_serialize( $this->_TXN_tax_data ),
+				'TXN_session_data'	=> maybe_serialize( $this->_TXN_session_data ),
+				'TXN_hash_salt' 			=> $this->_TXN_hash_salt
 		);
 
 		if ( $where_cols_n_values ){
@@ -353,9 +374,8 @@ class EE_Transaction {
 		} else {
 			$results = $MODEL->insert ( $set_column_values );
 			$this->_TXN_ID = $results['new-ID'];
-			return $results;
 		}
-		
+
 		return $results;
 	}
 
@@ -411,7 +431,7 @@ class EE_Transaction {
 	* 		@access		public
 	*/	
 	public function total() {
-		return $this->_TXN_total;
+		return (float)$this->_TXN_total;
 	}
 
 
@@ -423,7 +443,7 @@ class EE_Transaction {
 	* 		@access		public
 	*/	
 	public function paid() {
-		return $this->_TXN_paid;
+		return (float)$this->_TXN_paid;
 	}
 
 

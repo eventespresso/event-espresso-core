@@ -1,6 +1,8 @@
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 	
-	<h4 class="admin-primary-mbox-h4"><?php _e( 'Transaction Items', 'event_espresso' );?></h4>
+	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
+		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/invoice-1-16x16.png" alt="" /><?php _e( 'Transaction Items', 'event_espresso' );?>
+	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
 		<table class="admin-primary-mbox-tbl">
@@ -77,7 +79,9 @@
 
 	<?php if ( $grand_total > 0 ) : ?>
 
-	<h4 class="admin-primary-mbox-h4"><?php _e( 'Payment Details', 'event_espresso' );?></h4>
+	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
+		<img id="cash-single" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/Cash - Single_16x16.png" alt="" /><?php _e( 'Payment Details', 'event_espresso' );?>
+	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
 		<table class="admin-primary-mbox-tbl">
@@ -99,18 +103,19 @@
 		<?php if ( $payments ) : ?>
 			<?php foreach ( $payments as $PAY_ID => $payment ) : ?>
 				<tr>
-					<td class=" jst-rght"><a class="txn-admin-edit-payment-lnk" href="<?php echo $edit_payment_url;?>&amp;id=<?php echo $PAY_ID;?>" title="<?php _e( 'Edit Payment', 'event_espresso' );?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/edit.png" alt="" /></a>
+					<td class=" jst-rght">
+						<a class="txn-admin-edit-payment-lnk" href="<?php echo $edit_payment_url;?>&amp;id=<?php echo $PAY_ID;?>" title="<?php _e( 'Edit Payment', 'event_espresso' );?>">
+							<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/edit.png" alt="" />
+						</a>
 					</td>
 					<td class=" jst-rght"><?php echo $PAY_ID;?></td>
 					<td class=" jst-left"><?php echo $payment->timestamp();?></td>
 					<td class=" jst-cntr"><?php echo $payment->method();?></td>
 					<td class=" jst-left"><?php echo $payment->gateway();?></td>
 					<td class=" jst-left"><?php echo $payment->gateway_response();?></td>
-					<td class=" jst-left"><?php echo $payment->gateway_txn_id();?></td>
+					<td class=" jst-left"><?php echo $payment->txn_id_chq_nmbr();?></td>
 					<td class=" jst-left"><?php echo $payment->extra_accntng();?></td>
-					<td class=" jst-left">
-						<div id="payment-details-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->details();?></div>
-					</td>				
+					<td class=" jst-left"><div id="payment-details-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->details();?></div></td>				
 					<td class=" jst-rght"><?php echo $currency_sign . ' ' . number_format( $payment->amount(), 2 );?></td>
 				</tr>
 			<?php endforeach; // $payment?>
@@ -125,37 +130,52 @@
 	
 	<ul id="txn-admin-payment-options-ul">
 		<li>
-			<a id="display-txn-admin-apply-payment" class="button-primary display-the-hidden no-icon no-hide" rel="txn-admin-apply-payment" >
+			<a id="display-txn-admin-apply-payment" class="button-primary no-icon no-hide" rel="txn-admin-apply-payment" > <!--display-the-hidden -->
 				<?php _e( 'Apply Payment', 'event_espresso' );?>
 			</a>
 		</li>
 		<li>
-			<a id="txn-admin-apply-refund-lnk" class="button-secondary display-the-hidden no-icon no-hide" rel="txn-admin-apply-refund" >
+			<a id="display-txn-admin-apply-refund" class="button-secondary no-icon no-hide" rel="txn-admin-apply-refund" >  <!--display-the-hidden -->
 				<?php _e( 'Apply Refund', 'event_espresso' );?>
 			</a>
 		</li>
 	</ul>	
 	<br class="clear"/>
 	
-	<div id="txn-admin-apply-payment-dv" class="hidden">
-		<h4 class="admin-primary-mbox-h4"><?php _e( 'Apply a Payment to this Transaction', 'event_espresso' );?></h4>
+
+	<div id="txn-admin-apply-payment-dv" class="txn-admin-payment-option auto-hide hidden">
+		<h4 class="admin-primary-mbox-h4 hdr-has-icon">
+		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/Cash - Single (Add)_16x16.png" alt="" /><?php _e( 'Apply a Payment to this Transaction', 'event_espresso' );?>
+		</h4>
 		<form name="txn-admin-apply-payment-frm">
 			<!--<div class="admin-primary-mbox-tbl-wrap">-->
-				<table class="admin-primary-mbox-tbl borderless">
+				<table id="txn-admin-apply-payment-tbl" class="admin-primary-mbox-tbl borderless">
+				
 					<thead>
 						<tr>
 							<th class="jst-left"><label for="txn-admin-payment-date-inp"><?php _e( 'Payment Date', 'event_espresso' );?></label></th>
+							<th class="jst-left"><label for="txn-admin-payment-amount-inp"><?php _e( 'Amount', 'event_espresso' );?></label></th>
 							<th class="jst-left"><label for="txn-admin-payment-method-inp"><?php _e( 'Method of Payment', 'event_espresso' );?></label></th>
-							<th class="jst-left"><label for="txn-admin-payment-gateway-inp"><?php _e( 'Gateway', 'event_espresso' );?></label></th>
-							<th class="jst-left"><label for="txn-admin-payment-gateway-response-inp"><?php _e( 'Gateway Response', 'event_espresso' );?></label></th>
-							<th class="jst-left"><label for="txn-admin-payment-gateway-txn-id-inp"><?php _e( 'Gateway TXN ID', 'event_espresso' );?></label></th>
+							<th class="jst-left mop-CC mop"><label for="txn-admin-payment-gateway-inp"><?php _e( 'Gateway', 'event_espresso' );?></label></th>
+							<th class="jst-left mop-CC mop"><label for="txn-admin-payment-gateway-response-inp"><?php _e( 'Gateway Response', 'event_espresso' );?></label></th>
+							<th class="jst-left mop-CC mop"><label for="txn-admin-payment-gateway-txn-id-inp"><?php _e( 'Gateway TXN ID', 'event_espresso' );?></label></th>
+							<th class="jst-left mop-CHQ mop hidden"><label for="txn-admin-payment-cheque-number-inp"><?php _e( 'Cheque Number', 'event_espresso' );?></label></th>
+							<th class="jst-left"><label for="txn-admin-payment-po-so-nmbr-inp"><?php _e( 'P.O. / S.O. #', 'event_espresso' );?></label></th>
+							<th class="jst-left"><label for="txn-admin-payment-gateway-txn-id-inp"><?php _e( 'For Your Accounting', 'event_espresso' );?></label></th>
 						</tr>
 					</thead>
+					
 					<tbody>								
 						<tr>
+						
 							<td class="jst-left">
-								<input name="txn-filter-start-date" id="txn-admin-payment-method-inp" class="datepicker hasDatepicker" type="text" value="<?php echo date( 'F j, Y g:i a' ); ?>">
+								<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="datepicker" type="text" value="<?php echo date( 'F j, Y g:i a' ); ?>">
 							</td>
+							
+							<td class="jst-left">
+								<input name="txn_admin_payment[amount]" id="txn-admin-payment-amount-inp" class="" type="text" value="">
+							</td>
+							
 							<td class="jst-left">
 								<select name="txn_admin_payment[method]" id="txn-admin-payment-method-slct" type="text" >
 								<?php foreach ( $payment_methods as $method_ID => $method ) : ?>
@@ -163,20 +183,36 @@
 								<?php endforeach; ?>
 								</select>
 							</td>
-							<td class="jst-left">
-								<select name="txn_admin_payment[gateway]" id="txn-admin-payment-method-slct" type="text" >
+							
+							<td class="jst-left mop-CC mop">
+								<select name="txn_admin_payment[gateway]" id="txn-admin-payment-gateway-slct" type="text" >
 								<?php foreach ( $active_gateways as $gateway_ID => $gateway_name ) : ?>
 									<option value="<?php echo $gateway_ID; ?>"><?php echo $gateway_name; ?>&nbsp;&nbsp;</option>		
 								<?php endforeach; ?>
 									<option value="NULL"><?php _e( 'not applicable', 'event_espresso' );?>&nbsp;&nbsp;</option>
 								</select>
 							</td>
-							<td class="jst-left">
-								<input id="txn-admin-payment-gateway-response-inp" name="txn_admin_payment[gateway_response]" type="text" />
+							
+							<td class="jst-left mop-CC mop">
+								<input name="txn_admin_payment[gateway_response]" id="txn-admin-payment-gateway-response-inp" type="text" />
 							</td>
-							<td class="jst-left">
-								<input id="txn-admin-payment-gateway-response-inp" name="txn_admin_payment[gateway_response]" type="text" />
+							
+							<td class="jst-left mop-CC mop">
+								<input name="txn_admin_payment[txn_id_chq_nmbr]" id="txn-admin-payment-gateway-txn-id-inp" type="text" />
 							</td>
+							
+							<td class="jst-left mop-CHQ mop hidden">
+								<input name="txn_admin_payment[cheque_number]" id="txn-admin-payment-cheque-number-inp" type="text" />
+							</td>
+							
+							<td class="jst-left">
+								<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting" type="text" />
+							</td>
+							
+							<td class="jst-left">
+								<input name="txn_admin_payment[po_so_nmbr]" id="txn-admin-payment-po-so-nmbr" type="text" />
+							</td>
+							
 						</tr>								
 					</tbody>	
 				</table>
@@ -184,7 +220,7 @@
 		</form>
 	</div>
 	
-	<div id="txn-admin-apply-refund-dv" class="hidden">
+	<div id="txn-admin-apply-refund-dv" class="txn-admin-payment-option auto-hide hidden">
 		<h4 class="admin-primary-mbox-h4"><?php _e( 'Apply a Refund to this Transaction', 'event_espresso' );?></h4>
 	</div>
 
