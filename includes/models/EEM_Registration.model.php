@@ -23,6 +23,7 @@
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
+
 class EEM_Registration extends EEM_Base {
 
   	// private instance of the Registration object
@@ -101,9 +102,6 @@ class EEM_Registration extends EEM_Base {
 		if ( ! $registrations ) {
 			return FALSE;
 		}
-
-		// load Registration object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php');
 
 		foreach ( $registrations as $reg ) {
 				$array_of_objects[ $reg->REG_ID ] = new EE_Registration(
