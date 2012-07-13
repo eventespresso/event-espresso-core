@@ -156,52 +156,56 @@
 		$( prmry_att_questions ).each(function(index) {
 		
 			input_id = $(this).attr('id');
-			// split the above var
-			var input_id_array =  input_id.split('-');
-
-			// grab the current event id
-			var event_id = input_id_array[0];		 
 			
-			input_name = $(this).attr('name');
-			input_value = $(this).val();
-			
-			//alert ( 'input_id = ' + input_id + '\n' + 'input_name = ' + input_name  + '\n' + 'event_id = ' + event_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
-						
-			// if the input is required but has not been filled out
-			if ( $(this).hasClass('required') && input_value == '' ) {  
-			
-				$(this).addClass('requires-value');
-				// find label for this input
-				var lbl = $(this).prev('label');
-				// grab it's text
-				var lbl_txt = $(lbl).html();
-				alert(lbl_txt);
-				// remove "<em>*</em>" from end
-				lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
-				// show an error msg
-				var error_msg = 'The ' + lbl_txt + ' input is a required field. Please enter a value for this field and all other required fields before preceeding.';
-				//show_reg_page_copy_attendee_error( event_id, error_msg );	
-				show_event_queue_ajax_error_msg( error_msg );	
-				// uncheck the checkbox that was clicked
-				$(clicked_checkbox).prop('checked', false);
-				// fill out yer damn form will ya!!!
-				exit;			
-			
-			} else {
-
-				new_input_id = '#' + trgt_att_qstn_grp + '-' +  input_id_array[5];
-//				alert ( 'new_input_id = ' + new_input_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
+			if ( input_id != undefined ) {
+				// split the above var
+				var input_id_array =  input_id.split('-');
+	
+				// grab the current event id
+				var event_id = input_id_array[0];		 
 				
-				if ( $(new_input_id).length > 0 ){
-					$(new_input_id).val(input_value);
+				input_name = $(this).attr('name');
+				input_value = $(this).val();
+				
+				//alert ( 'input_id = ' + input_id + '\n' + 'input_name = ' + input_name  + '\n' + 'event_id = ' + event_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
+							
+				// if the input is required but has not been filled out
+				if ( $(this).hasClass('required') && input_value == '' ) {  
+				
+					$(this).addClass('requires-value');
+					// find label for this input
+					var lbl = $(this).prev('label');
+					// grab it's text
+					var lbl_txt = $(lbl).html();
+					alert(lbl_txt);
+					// remove "<em>*</em>" from end
+					lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
+					// show an error msg
+					var error_msg = 'The ' + lbl_txt + ' input is a required field. Please enter a value for this field and all other required fields before preceeding.';
+					//show_reg_page_copy_attendee_error( event_id, error_msg );	
+					show_event_queue_ajax_error_msg( error_msg );	
+					// uncheck the checkbox that was clicked
+					$(clicked_checkbox).prop('checked', false);
+					// fill out yer damn form will ya!!!
+					exit;			
+				
+				} else {
+	
+					new_input_id = '#' + trgt_att_qstn_grp + '-' +  input_id_array[5];
+	//				alert ( 'new_input_id = ' + new_input_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
+					
+					if ( $(new_input_id).length > 0 ){
+						$(new_input_id).val(input_value);
+					}
+	
+					var billing = '#reg-page-billing-' + input_id_array[5];
+					// copy to billing info
+					if ( $(billing).val() == '' ) {
+						$(billing).val(input_value);
+					}				
 				}
-
-				var billing = '#reg-page-billing-' + input_id_array[5];
-				// copy to billing info
-				if ( $(billing).val() == '' ) {
-					$(billing).val(input_value);
-				}				
 			}
+
 		});		
 	});	
 	
@@ -407,7 +411,7 @@
 		/**
 	*		submit a step of registraion form
 	*/	
-	function process_reg_step ( step, form_to_check, off_site_payment ) {
+	function process_reg_step ( step, form_to_check ) { //, off_site_payment
 		
 		if ( form_to_check == '' || form_to_check == undefined ) {
 			form_to_check = '#mer-registration-frm-'+step;
@@ -418,8 +422,10 @@
 			$('#mer-reg-page-step-'+step+'-ajax').val(1);
 			$('#mer-reg-page-step-'+step+'-action').attr( 'name', 'action' );		
 			var form_data = $('#mer-registration-frm-'+step).serialize();
-			
-//alert( '#mer-reg-page-step-'+step+'-action = ' + $('#mer-reg-page-step-'+step+'-action').val() + '\n' + 'espresso.ajax_url = ' + espresso.ajax_url );
+//alert	(form_data);
+//alert( '#mer-reg-page-step-'+step+'-action = ' + $('#mer-reg-page-step-'+step+'-action').val() );
+//alert( 'event_espresso.ajax_url = ' + event_espresso.ajax_url );
+
 
 			$.ajax({
 						type: "POST",
@@ -463,9 +469,10 @@
 
 
 	function process_return_data( next, response ) {
-	
+//alert('process_return_data');
 		for ( key in response.return_data ) {
-			if ( key == 'reg-page-confirmation-dv' ) {			
+			alert( 'key = ' + key + '\n' + 'response.return_data[key] = ' + response.return_data[key] );
+			if ( key == 'reg-page-confirmation-dv' ) {
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 			} else if ( key == 'redirect-to-thank-you-page' ) {
 				window.location.replace( response.return_data[key] );
@@ -474,32 +481,31 @@
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 				document.forms['gateway_form'].submit();
 			}
-		}		
-		
+		}
 
 		msg = new Object();
 		msg.success = response.success;
-		mer_reg_page_go_to( next, msg );		
-			
-	}
-	
+		mer_reg_page_go_to( next, msg );
 
-	
-	
-	
+	}
+
+
+
+
+
 	/**
 	*		show reg page copy attendee error msg
-	*/	
-	function verify_all_questions_answered( whch_form ) {	
-	
+	*/
+	function verify_all_questions_answered( whch_form ) {
+
 		if ( $('#reg-page-no-payment-required').val() == 1 ) {
 			return true;
 		}
-		
+
 		 if ( whch_form == '' ){
 			whch_form = '#mer-registration-frm-1';
 		}
-		
+
 		//alert( 'whch_form = '+whch_form );
 		
 		var good_to_go = true;
