@@ -49,9 +49,9 @@ function espresso_admin_init() {
 		
 	define('EVENTS_ADMIN_URL', admin_url('admin.php?page=events'));
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
+//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . "functions/main.php");
+//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
+//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
@@ -306,10 +306,6 @@ function espresso_frontend_init() {
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
 
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
-	global $Single_Page_Checkout;
-	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-	
 	event_espresso_require_gateway('process_payments.php');
 
 	global $espresso_reg_page;
@@ -323,7 +319,7 @@ function espresso_frontend_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
 	//Registration forms
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/cart.php');
+
 	//Custom post type integration
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && !empty($org_options['template_settings']['use_custom_post_types'])) {
 		require(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php');
@@ -332,11 +328,12 @@ function espresso_frontend_init() {
 
 	add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1 );
 	add_action ( 'action_hook_espresso_event_registration', 'event_details_page', 10, 2 );
-//	add_action ( 'action_hook_espresso_regevent_post_attendee', 'event_espresso_add_attendees_to_db' );
-//	add_action ( 'action_hook_espresso_event_registration', 'event_details_page' );
 
-	wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
-	wp_enqueue_style('ticket_selector');
+	if ( ! isset( $_REQUEST['e_reg'] ) && ! is_admin() ) {
+		wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
+		wp_enqueue_style('ticket_selector');
+	}
+
 
 	do_action('action_hook_espresso_require_template', 'init.php');
 	//These may be loaded in posts and pages outside of the default EE pages

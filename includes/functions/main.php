@@ -1363,7 +1363,7 @@ function printCountriesSelector($name, $selected) {
  * 		@ access public
  * 		@ return void
  */
-function printr($var, $var_name = 'ARRAY', $height = 'auto') {
+function printr( $var, $var_name = 'ARRAY', $height = 'auto', $die = FALSE ) {
 	
 	$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
 	$var_name = ucwords( $var_name );
@@ -1372,6 +1372,10 @@ function printr($var, $var_name = 'ARRAY', $height = 'auto') {
 	echo '<h3><b>' . $var_name . '</b></h3>';
 	echo print_r($var);
 	echo '</pre>';
+	
+	if( $die ) {
+		die();
+	}
 }
 
 /**

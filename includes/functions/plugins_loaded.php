@@ -235,14 +235,13 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 
-	// following two files moved to espresso_admin_init() in init.php becuz they only pertain to the EE admin
-	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
-	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
-//	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
-//	global $Single_Page_Checkout;
-//	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-//	
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
+	global $Single_Page_Checkout;
+	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
+	
 //	event_espresso_require_gateway('process_payments.php');
 	
 	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
