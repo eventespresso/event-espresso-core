@@ -58,7 +58,7 @@ class EE_Single_Page_Checkout {
 	private function __construct() {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
+		
 		if ( isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1 ) {
 			$this->_ajax = 1;
 			unset($_POST['espresso_ajax']);
@@ -82,16 +82,21 @@ class EE_Single_Page_Checkout {
 			add_action('wp_ajax_nopriv_espresso_process_registration_step_3', array(&$this, 'process_registration_step_3'));
 
 		}
-
+	
 		// load classes
 		$this->load_classes();
 		$this->set_templates();
+	
+		if ( isset( $_REQUEST['e_reg'] ) && ( $_REQUEST['e_reg'] == 'register' || $_REQUEST['e_reg'] == 'event_queue' ) && !is_admin() ) {
+	
+			add_action('init', array(&$this, 'load_css'), 20);
+			add_action('init', array(&$this, 'load_js'), 20);
+	
+			// hooks that happen during the regevent action and other pathing stuff
+			add_action('init', array(&$this, 'set_paths_and_routing'), 30);
 
-		add_action('init', array(&$this, 'load_css'), 20);
-		add_action('init', array(&$this, 'load_js'), 20);
-
-		// hooks that happen during the regevent action and other pathing stuff
-		add_action('init', array(&$this, 'set_paths_and_routing'), 30);
+		}
+	
 	}
 
 	/**
@@ -134,11 +139,11 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function load_css() {
-		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && !is_admin() )) {
+//		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && !is_admin() )) {
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			wp_register_style('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/reg_page_checkout/registration_page_checkout.css');
 			wp_enqueue_style('single_page_checkout');
-		}
+//		}
 	}
 
 	/**
@@ -148,7 +153,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function load_js() {
-		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && !is_admin() )) {
+//		if (isset($_REQUEST['e_reg']) && ( $_REQUEST['e_reg'] == 'register' && !is_admin() )) {
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 			wp_register_script('single_page_checkout', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/registration_page_checkout.js', array('jquery'), '', TRUE);
 			wp_enqueue_script('single_page_checkout');
@@ -158,7 +163,7 @@ class EE_Single_Page_Checkout {
 			// Output admin-ajax.php URL with same protocol as current page
 			$params['ajax_url'] = admin_url('admin-ajax.php', $protocol);
 			wp_localize_script('single_page_checkout', 'event_espresso', $params);
-		}
+//		}
 	}
 
 	/**
@@ -773,15 +778,22 @@ class EE_Single_Page_Checkout {
 		// loop through post data and sanitize all elements
 		foreach ($_POST as $key => $value) {
 			$valid_data[$key] = stripslashes_deep($value);
+			//$valid_data[$key] = wp_strip_all_tags($value);
 		}
+		
+		//printr( $valid_data, '$valid_data' );
 
 		// if we don't have a qstn field then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if (isset($valid_data['qstn'])) {
+		
 			if (isset($valid_data['qstn']['custom_questions'])) {
 				$custom_questions = $valid_data['qstn']['custom_questions'];
 				$EE_Session->set_session_data(array('custom_questions'=>$custom_questions), 'session_data');
+//				var_dump( $valid_data['qstn']['custom_questions'] );
+//				printr( $valid_data, '$valid_data' );
 				unset($valid_data['qstn']['custom_questions']);
 			}
+			
 			// now loop through our array of valid post data
 			foreach ($valid_data['qstn'] as $event_id => $event_data) {
 				// continue to drill down through the array and set paramaters
@@ -1236,9 +1248,14 @@ class EE_Single_Page_Checkout {
 		if ($org_options['use_captcha'] && !is_user_logged_in()) {
 			if (!function_exists('recaptcha_check_answer')) {
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
+				$response = recaptcha_check_answer(
+										$org_options['recaptcha_privatekey'], 
+										$_SERVER["REMOTE_ADDR"], 
+										$_POST["recaptcha_challenge_field"], 
+										$_POST["recaptcha_response_field"]
+								);
 			}
 
-			$response = recaptcha_check_answer($org_options['recaptcha_privatekey'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
 			if (!$response->is_valid) {
 				$continue_reg = FALSE;
 				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
@@ -1488,7 +1505,7 @@ class EE_Single_Page_Checkout {
 		$gateway_data = $session['gateway_data'];
 		// $txn_results['txn_results'] = $session;
 
-		$txn_results['amount'] = isset($txn_results['amount']) ? (float)abs($txn_results['amount']) : 0.00;
+		$txn_results['amount'] = isset($txn_results['amount']) ? $txn_results['amount'] : 0.00;
 		$txn_results['method'] = isset($txn_results['method']) ? $txn_results['method'] : '';
 
 		switch ($txn_results['status']) {
