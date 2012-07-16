@@ -179,7 +179,7 @@
 					<th class=" jst-rght"><?php echo $currency_sign;?> <span id="txn-admin-payment-total"><?php echo number_format( $payment_total, 2 );?></span></th>
 				</tr>			
 		<?php else : ?>
-				<tr class="admin-primary-mbox-total-tr">>
+				<tr class="admin-primary-mbox-total-tr">
 					<td class=" jst-left" colspan="11">
 						<span class="red-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
 					</td>

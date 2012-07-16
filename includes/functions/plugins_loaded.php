@@ -102,9 +102,6 @@ function espresso_setup_notices() {
 }
 
 
-
-
-
 /**
  * 		Automagically load non-singleton class files - no need to include or require
  * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
@@ -116,14 +113,12 @@ function espresso_setup_notices() {
  * 		@return 		void
  */
 function espresso_autoload() {
-//	function __autoload( $class_name ) {
-//		echo '<h3>'. __FILE__ . ' - ' . __CLASS__ . ' - ' . __FUNCTION__ . ' - ' . $class_name . ' <br /><span style="font-size:10px;font-weight:normal;">( line no: ' . __LINE__ . ' )</span></h3>';
-//		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $class_name );
-//		$include_path = dirname(__FILE__) . '/includes/classes/';
-//	   if ( file_exists( $include_path . $class_name . '.class.php' )) {
-//			require_once( $include_path . $class_name . '.class.php' );
-//		}
-//	}
+	function __autoload( $class_name ) {
+		$include_path = dirname(__FILE__) . '/includes/classes/';
+	   if ( file_exists( $include_path . $class_name . '.class.php' )) {
+			require_once( $include_path . $class_name . '.class.php' );
+		}
+	}
 }
 
 
@@ -235,9 +230,8 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/pricing.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/time_date.php');
 
-	// following two files moved to espresso_admin_init() in init.php becuz they only pertain to the EE admin
-	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
-	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/actions.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/filters.php');
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
 	global $Single_Page_Checkout;

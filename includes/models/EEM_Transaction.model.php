@@ -23,6 +23,7 @@
  */
 require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 
+
 class EEM_Transaction extends EEM_Base {
 
   	// private instance of the Transaction object
@@ -100,8 +101,6 @@ class EEM_Transaction extends EEM_Base {
 			$transactions = array( $transactions );
 		}
 
-		// load Transaction object class file
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Transaction.class.php');
 
 		foreach ( $transactions as $transaction ) {
 				$array_of_objects[ $transaction->TXN_ID ] = new EE_Transaction(
