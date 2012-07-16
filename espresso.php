@@ -51,6 +51,25 @@ function espresso_main_file() {
 }
 
 
+/**
+ * 		Automagically load non-singleton class files - no need to include or require
+ * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
+* 		directory path can be designated by substituting underscores for directory separators
+* 		ie: new admin_transactions_TransactionsInit() would load the file located at : includes/core/admin/transactions/EE_TransactionsInit.class.php
+ *
+ * 		@access 		public
+* 		@param		$class		path and name of the class file to be loaded
+ * 		@return 		void
+ */
+function espresso_autoload() {
+	function __autoload( $class_name ) {
+		$include_path = dirname(__FILE__) . '/includes/classes/';
+		if ( file_exists( $include_path . $class_name . '.class.php' )) {
+			require_once( $include_path . $class_name . '.class.php' );
+		}
+	}
+}
+
 
 /**
  * The following are the WordPress actions for a typical request
