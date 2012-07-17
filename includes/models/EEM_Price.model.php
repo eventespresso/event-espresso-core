@@ -268,7 +268,7 @@ class EEM_Price extends EEM_Base {
 	 * 		@param		mixed  string|array		$operator
 	 * 		@return 		mixed array on success, FALSE on fail
 	 */
-	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $orderby='prc.PRC_ID', $order='ASC', $operator = '=' ) {
+	private function _select_all_prices_where ( $where_cols_n_values=FALSE, $orderby=array( 'prc.PRC_amount', 'prc.PRC_ID'), $order='ASC', $operator = '=' ) {
 	
 		$em_table_data_types = array(
 				'prt.PRT_ID'						=> '%d',
