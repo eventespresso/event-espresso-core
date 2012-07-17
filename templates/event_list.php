@@ -427,6 +427,12 @@ function event_espresso_get_event_details($attributes) {
 				empty($event->event_cost) ? '' : $event->event_cost,
 				empty($event->event_cost) ? '' : $event->event_cost,
 		);
+		foreach ($meta_keys as $key=>$meta_key) {
+			$event->meta_keys[$key] = htmlspecialchars($meta_key);
+		}
+		foreach ($meta_values as $key=>$meta_value) {
+			$event->meta_values[$key] = htmlspecialchars($meta_value);
+		}
 
 
 		// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
@@ -472,7 +478,7 @@ function event_espresso_get_event_details($attributes) {
 			}
 		}
 
-		if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $event->member_only ) {
+		if (!is_user_logged_in() && defined( 'EVENT_ESPRESSO_MEMBERS_DIR' ) && $event->member_only ) {
 			//Display a message if the user is not logged in.
 			_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
 		} else {
