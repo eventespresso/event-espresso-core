@@ -51,22 +51,43 @@
 			<thead>
 				<tr>
 					<th scope="col" width="18%"><?php _e( 'Date', 'event_espresso' ); ?></th>
-					<th scope="col" width="24%"><?php _e( 'Time', 'event_espresso' ); ?></th>
-					<th scope="col" width="50%"><?php _e( 'Ticket Price', 'event_espresso' ); ?></th>
+					<th scope="col" width="25%"><?php _e( 'Time', 'event_espresso' ); ?></th>
+					<th scope="col" width="49%"><?php _e( 'Ticket Price', 'event_espresso' ); ?></th>
 					<th scope="col" width="8%"><?php _e( 'Qty', 'event_espresso' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 <?php 
-			$rows = 0;
-			foreach ( $dates as $date ) {
-				foreach ( $times as $DTT_ID => $time ) {  
-					foreach ( $prices as $price_id => $price ) {
+
+			$row = 0;
+			$prev_date = '';
+			$prev_time = '';
+			
+			foreach ( $datetimes as $DTT_ID => $datetime ) {  
+				foreach ( $prices as $price_id => $price ) {
+
+				if ( $row == 0 ) {
+					$date_display = $prev_date = $datetime['start_date'];
+				} elseif ( $datetime['start_date'] == $prev_date ) { 
+					// add styling to duplicate dates
+					$date_display = '<span class="lt-grey-text">' . $datetime['start_date'] . '</span>';
+				} else {
+					$date_display = $prev_date = $datetime['start_date'];
+				}				
 					
+				if ( $row == 0 ) {
+					$time_display = $prev_time = $datetime['formatted'];
+				} elseif ( $datetime['formatted'] == $prev_time ) { 
+					// add styling to duplicate times
+					$time_display = '<span class="lt-grey-text">' . $datetime['formatted'] . '</span>';
+				} else {
+					$time_display = $prev_time = $datetime['formatted'];
+				}
+
 ?>
 				<tr>				
-					<td class="tckt-slctr-tbl-td-date"><?php echo $date; ?></td>
-					<td class="tckt-slctr-tbl-td-time"><?php echo $time['formatted']; ?></td>
+					<td class="tckt-slctr-tbl-td-date"><?php echo $date_display; ?></td>
+					<td class="tckt-slctr-tbl-td-time"><?php echo $time_display; ?></td>
 					<td class="tckt-slctr-tbl-td-desc"><?php echo $price['option']; ?></td>	
 					<td class="tckt-slctr-tbl-td-qty">					
 						<select name="tkt-slctr-qty-<?php echo $event_id; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $event_id ?>" class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all">
@@ -75,11 +96,11 @@
 						</select>												
 						<input type="hidden"
 									name="tkt-slctr-date-<?php echo $event_id; ?>[]"
-									value="<?php echo $date; ?>"
+									value="<?php echo $datetime['start_date']; ?>"
 							/>	
 						<input type="hidden"
 									name="tkt-slctr-time-<?php echo $event_id; ?>[]"
-									value="<?php echo $time['start_time']; ?>"
+									value="<?php echo $datetime['start_time']; ?>"
 							/>	
 						<input type="hidden"
 									name="tkt-slctr-dtt-id-<?php echo $event_id; ?>[]"
@@ -101,16 +122,16 @@
 					</td>
 				</tr>
 <?php
-								$rows++;
-							} 
-						}
+							$row++;
+						} 
 					}
+
 ?>				
 				<input type="hidden"
 							name="tkt-slctr-rows-<?php echo $event_id; ?>"
-							value="<?php echo $rows; ?>"
+							value="<?php echo $row; ?>"
 					/>
 							
 			</tbody>
 		
-		</table>						
+		</table>

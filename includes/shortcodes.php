@@ -1178,7 +1178,7 @@ function event_espresso_run() {
 
 		case 'process_ticket_selections' :
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/ticket_selector.php');
-			process_ticket_selections();
+			espresso_process_ticket_selections();
 			break;
 
 		case 'register' :
