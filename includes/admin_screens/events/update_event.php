@@ -14,13 +14,13 @@ function update_event() {
 
 		$event_meta = array(); //will be used to hold event meta data
 		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
-		$event_id = $_REQUEST['event_id'];
-		$event_name = $_REQUEST['event'];
+		$event_id = absint( $_REQUEST['event_id'] );
+		$event_name = esc_html( wp_strip_all_tags( $_REQUEST['event'] ));
 		$event_slug = ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name . '-' . $event_id) : sanitize_title_with_dashes($_REQUEST['slug']);
 		$event_desc = $_REQUEST['event_desc'];
 		$display_desc = $_REQUEST['display_desc'];
 		$display_reg_form = $_REQUEST['display_reg_form'];
-		$reg_limit = $_REQUEST['reg_limit'];
+		$reg_limit = absint( $_REQUEST['reg_limit'] );
 		$allow_multiple = $_REQUEST['allow_multiple'];
 		$ticket_id = empty($_REQUEST['ticket_id']) ? '' : $_REQUEST['ticket_id'];
 		$certificate_id = empty($_REQUEST['certificate_id']) ? '' : $_REQUEST['certificate_id'];

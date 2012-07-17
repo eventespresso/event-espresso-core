@@ -427,6 +427,12 @@ function event_espresso_get_event_details($attributes) {
 				empty($event->event_cost) ? '' : $event->event_cost,
 				empty($event->event_cost) ? '' : $event->event_cost,
 		);
+		foreach ($meta_keys as $key=>$meta_key) {
+			$event->meta_keys[$key] = htmlspecialchars($meta_key);
+		}
+		foreach ($meta_values as $key=>$meta_value) {
+			$event->meta_values[$key] = htmlspecialchars($meta_value);
+		}
 
 
 		// EE gmaps needs it's own org_options array populated on a per page basis to enable common queries in gmaps api function
