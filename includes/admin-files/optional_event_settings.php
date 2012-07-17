@@ -157,18 +157,20 @@ until payment is made, for each event.', 'event_espresso'); ?>
 					<td><input name="events_in_dasboard" size="5" style="width:50px;" type="text" value="<?php echo stripslashes_deep($org_options['events_in_dasboard']); ?>" /></td>
 				</tr>
 				<tr>
-					<td colspan="2"><strong>
-							<?php _e('Advanced Time Settings', 'event_espresso'); ?>
-						</strong></td>
+					<td colspan="2">
+						<strong><?php _e('Advanced Time Settings', 'event_espresso'); ?></strong>
+					</td>
+				</tr>
 				<tr>
-					<th><label for="time_reg_limit">
-							<?php _e('Registration Limits on Time Slots', 'event_espresso'); ?>
-						</label></th>
-					<td><?php echo select_input('time_reg_limit', $values, isset($org_options['time_reg_limit']) ? $org_options['time_reg_limit'] : false); ?><br />
+					<th>
+						<label for="time_reg_limit"><?php _e('Registration Limits on Time Slots', 'event_espresso'); ?></label>
+					</th>
+					<td>
+						<?php echo select_input('time_reg_limit', $values, isset($org_options['time_reg_limit']) ? $org_options['time_reg_limit'] : false); ?><br />
 						<span class="important description">
-							<?php _e('This function is experimental and may not function as expected.<br />
-You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
-						</span></td>
+							<?php _e('This function is experimental and may not function as expected.<br />You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
+						</span>
+					</td>
 				</tr>
 				<tr>
 					<th><label>
@@ -183,7 +185,7 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 					<td colspan="2"><a name="remote_logging_stuff" id="remote_logging_stuff"></a><strong>
 							<?php _e('Debug/Logging Options', 'event_espresso'); ?>
 						</strong></td>
-				<tr>
+				</tr>
 				<tr>
 					<th><label>
 							<?php _e('Enable Full Logging', 'event_espresso'); ?> <?php echo apply_filters('filter_hook_espresso_help', 'full_logging_info'); ?>
@@ -213,7 +215,7 @@ You will need adjust your attendee limit accordingly.', 'event_espresso'); ?>
 					<td colspan="2"><strong>
 							<?php _e('Promote Event Espresso', 'event_espresso'); ?>
 						</strong></td>
-				<tr>
+				</tr>
 				<tr>
 					<th><label>
 							<?php _e('Link to Event Espresso in your Registration Page', 'event_espresso'); ?>
@@ -254,7 +256,7 @@ and backend updates for Event Espresso Core and any installed addons.'); ?>
 
 		</table>
 		<p>
-			<input class="button-primary" type="submit" name="Submit_4" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_4" />
+			<input class="button-primary submit-for-validation" type="submit" name="Submit_4" value="<?php _e('Save Options', 'event_espresso'); ?>" id="save_organization_setting_4" />
 		</p>
 	</div>
 	<?php
