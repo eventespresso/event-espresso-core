@@ -115,7 +115,7 @@ function add_event_to_db( ) {
 		}
 		################# END #################
 		//Event name
-		$event_name = empty($_REQUEST['event']) ? uniqid($espresso_wp_user . '-') : htmlentities( wp_strip_all_tags( $_REQUEST['event'] ), ENT_QUOTES, 'UTF-8' );
+		$event_name = empty($_REQUEST['event']) ? uniqid($espresso_wp_user . '-') : esc_html( wp_strip_all_tags( $_REQUEST['event'] ));
 
 		//Create the event code and prefix it with the user id
 		$event_code = uniqid($espresso_wp_user . '-');
