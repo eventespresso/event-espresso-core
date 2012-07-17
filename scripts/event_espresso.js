@@ -49,8 +49,15 @@ jQuery(document).ready(function($) {
 
 
 
-	$('.dtm-picker').live('click', function(){
-		$(this).datetimepicker({
+
+
+$('#event-datetimes-dv').on( 'focusin', '.dtm-es-picker', function () {	
+	
+	var row = $(this).next().val();
+
+	$(this).datetimepicker({
+
+			dateFormat : 'mm-dd-yy',
 			timeFormat: 'hh:mm tt',
 			ampm: true,
 			separator: '  ',
@@ -58,10 +65,281 @@ jQuery(document).ready(function($) {
 			stepMinute: 5,
 			hourGrid: 2,
 			minuteGrid: 5,
-			numberOfMonths: 2,
-			showOn:'focus'
-		}).focus();
+			numberOfMonths: 2,			
+			minDate: new Date(),
+			showOn:'focus',
+
+//			beforeShow:function( input, inst ) {
+//				inst.settings.timepicker._defaults.hourMin = time.getHours();
+//			},
+	
+			onClose: function(dateText, inst) {
+			
+				var eventEndsOn = $('#event-end-'+row).val();
+
+				if ( eventEndsOn != '' ) {	
+					var newStartDate = new Date( dateText );
+					var newEndDate = new Date( eventEndsOn );
+					if ( newStartDate > newEndDate ) {
+						$('#event-end-'+row).val( dateText );
+					}
+											
+				} else {
+					$('#event-end-'+row).val( dateText );
+				}
+				
+				//var start = $(this).datetimepicker('getDate');
+				var newStartDate = new Date( dateText );
+//				if ( newStartDate == undefined || newStartDate == '' || newStartDate = null ) {
+//					newStartDate = ;
+//				}
+				//alert( 'newStartDate = '+newStartDate );
+				$('#event-end-'+row).focusin().datetimepicker('option', 'minDate', newStartDate ).focusout();
+				$('#reg-start-'+row).focusin().datetimepicker('option', 'maxDate', newStartDate ).focusout();
+				//$(this).focusout();
+			
+			}/*,
+			
+		    onSelect: function (){
+				var row = $(this).next().val();
+				var start = $(this).datetimepicker('getDate');
+				var newStartDate = new Date( start );
+				$('#event-end-'+row).datepicker('option', 'minDate', newStartDate );
+				$('#reg-start-'+row).datepicker('option', 'maxDate', newStartDate );
+		 		//alert( 'other box = ' + $('#event-end-'+row).datetimepicker('getDate'));
+		    }*/	
+
+		});			 
 	});	
+	
+	
+
+$('#event-datetimes-dv').on( 'focusin', '.dtm-ee-picker', function () {	
+	
+	var row = $(this).next().val();
+
+	$(this).datetimepicker({
+		
+			dateFormat : 'mm-dd-yy',
+			timeFormat: 'h:mm tt',
+			ampm: true,
+			separator: '  ',
+			stepHour: 1,
+			stepMinute: 5,
+			hourGrid: 2,
+			minuteGrid: 5,
+			numberOfMonths: 2,
+			maxDate: new Date( 'Dec 31, 2100' ),
+			showOn:'focus',
+			
+//			beforeShow:function( input, inst ) {
+//				inst.settings.timepicker._defaults.hourMin = time.getHours();
+//			},
+	
+			onClose: function( dateText, inst ) {
+
+				var eventStartsOn = $('#event-start-'+row).val();
+				if ( eventStartsOn != '' ) {
+					var newStartDate = new Date( eventStartsOn );
+					var newEndDate = new Date( dateText );
+					if ( newStartDate > newEndDate ) {
+						$('#event-start-'+row).val( dateText );
+						$('#reg-end-'+row).val( dateText );
+					}						
+				} else {
+					$('#event-start-'+row).val( dateText );
+					$('#reg-end-'+row).val( dateText );
+				}	
+
+				//var end = $(this).datetimepicker('getDate');
+				var newEndDate = new Date( dateText );
+				//alert( 'newEndDate = '+newEndDate );
+				$('#event-start-'+row).focusin().datetimepicker('option', 'maxDate', newEndDate ).focusout();
+				$('#reg-end-'+row).focusin().datetimepicker('option', 'maxDate', newEndDate ).focusout();
+				//$(this).focusout();
+				//$(this).focus().focusout();
+
+			}/*,			
+			
+		    onSelect: function() {
+				var row = $(this).next().val();
+				var end = $(this).datetimepicker('getDate');
+				var newEndDate = new Date( end );
+				$('#event-start-'+row).datepicker('option', 'maxDate', newEndDate );
+				$('#reg-end-'+row).datepicker('option', 'maxDate', newEndDate );
+		 		//alert( 'other box = ' + $('#event-start-'+row).datetimepicker('getDate'));
+		    }*/
+
+		});	
+	});	
+
+
+
+
+
+
+
+$('#event-datetimes-dv').on( 'focusin', '.dtm-rs-picker', function () {	
+	
+	var row = $(this).next().val();
+
+	$(this).datetimepicker({
+		
+			dateFormat : 'mm-dd-yy',
+			timeFormat: 'hh:mm tt',
+			ampm: true,
+			separator: '  ',
+			stepHour: 1,
+			stepMinute: 5,
+			hourGrid: 2,
+			minuteGrid: 5,
+			numberOfMonths: 2,		
+			minDate: new Date(),	
+			showOn:'focus',			
+
+//			beforeShow:function( input, inst ) {
+//				inst.settings.timepicker._defaults.hourMin = time.getHours();
+//			},
+	
+			onClose: function(dateText, inst) {
+			
+				var eventEndsOn = $('#reg-end-'+row).val();
+
+				if ( eventEndsOn != '' ) {	
+					var newStartDate = new Date( dateText );
+					var newEndDate = new Date( eventEndsOn );
+					if ( newStartDate > newEndDate ) {
+						$('#reg-end-'+row).val( dateText );
+					}
+											
+				} else {
+					$('#reg-end-'+row).val( dateText );
+				}
+
+				var newRegEndDate = new Date( dateText );
+				//alert( 'newRegEndDate = '+newRegEndDate );
+				$('#reg-end-'+row).focusin().datetimepicker('option', 'minDate', newRegEndDate ).focusout();
+				//$(this).focus().focusout();
+			
+			}/*,
+			
+		    onSelect: function (){
+				var row = $(this).next().val();
+				var start = $(this).datetimepicker('getDate');
+				$('#reg-end-'+row).datepicker('option', 'minDate', new Date( start ));
+		 		//alert( 'other box = ' + $('#reg-end-'+row).datetimepicker('getDate'));
+		    }	*/
+
+		});			 
+	});	
+	
+	
+
+$('#event-datetimes-dv').on( 'focusin', '.dtm-re-picker', function () {	
+	
+	var row = $(this).next().val();
+
+	$(this).datetimepicker({
+		
+			dateFormat : 'mm-dd-yy',
+			timeFormat: 'h:mm tt',
+			ampm: true,
+			separator: '  ',
+			stepHour: 1,
+			stepMinute: 5,
+			hourGrid: 2,
+			minuteGrid: 5,
+			numberOfMonths: 2,
+			maxDate: new Date( 'Dec 31, 2100' ),
+			showOn:'focus',
+			
+//			beforeShow:function( input, inst ) {
+//				inst.settings.timepicker._defaults.hourMin = time.getHours();
+//			},
+	
+			onClose: function( dateText, inst ) {
+
+				var eventStartsOn = $('#reg-start-'+row).val();
+				if ( eventStartsOn != '' ) {
+					var newStartDate = new Date( eventStartsOn );
+					var newEndDate = new Date( dateText );
+					if ( newStartDate > newEndDate ) {
+						$('#reg-start-'+row).val( dateText );
+					}						
+				}
+				else {
+					$('#reg-start-'+row).val( dateText );
+				}	
+
+				var newRegStartDate = new Date( dateText );
+				//alert( 'newRegStartDate = '+newRegStartDate );
+				$('#reg-start-'+row).focusin().datetimepicker('option', 'maxDate', newRegStartDate ).focusout();
+				//$(this).focus().focusout();
+
+			}/*,			
+		    onSelect: function() {
+				var row = $(this).next().val();
+				var end = $(this).datetimepicker('getDate');
+				$('#reg-start-'+row).datepicker('option', 'maxDate', new Date( end ));
+		 		//alert( 'other box = ' + $('#reg-start-'+row).datetimepicker('getDate'));
+		    }*/
+
+		});	
+	});	
+
+
+
+
+
+
+
+/*	function format_the_time( timeObj, HoursOrMinutes ) {
+		
+		if ( HoursOrMinutes == undefined || HoursOrMinutes == '' || HoursOrMinutes == null ) {
+			HoursOrMinutes = 'B';
+		}
+		
+		if ( HoursOrMinutes == 'H' || HoursOrMinutes == 'B' ) {
+		
+			var amPm = '';
+			var theHour = timeObj.getHours();
+			
+			if ( theHour < 12 ) {
+				amPm = 'am';
+			} else {
+				amPm = 'pm';
+			}
+			
+			if ( theHour == 0 ) {
+				theHour = 12;
+			}
+			
+			if ( theHour > 12 ) {
+				theHour = theHour - 12;
+			}
+
+		}
+
+		if ( HoursOrMinutes == 'M' || HoursOrMinutes == 'B' ) {
+			
+			var theMinutes = timeObj.getMinutes();			
+			theMinutes = theMinutes + '';
+						
+			if ( theMinutes.length == 1 ) {
+				theMinutes = '0' + theMinutes;
+			}
+			
+		}
+		
+		if ( HoursOrMinutes == 'H' ) {
+			return theHour;
+		} else if ( HoursOrMinutes == 'M' ) {
+			return theMinutes;
+		} else {
+			return theHour + " : " + theMinutes + ' ' + amPm;
+		}
+		
+	}*/
 
 
 
