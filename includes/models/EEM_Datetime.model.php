@@ -101,7 +101,8 @@ class EEM_Datetime extends EEM_Base {
 	*		get event times from db
 	*
 	* 		@access		private
-	* 		@param		$EVT_ID
+	* 		@param		int 				$EVT_ID
+	* 		@param		boolean 		$primary
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	private function _get_event_datetimes( $EVT_ID = FALSE, $primary = FALSE ) {
@@ -191,6 +192,7 @@ class EEM_Datetime extends EEM_Base {
 	*		get event start date from db
 	*
 	* 		@access		public
+	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_all_event_dates( $EVT_ID = FALSE ) {
@@ -208,6 +210,7 @@ class EEM_Datetime extends EEM_Base {
 	*		get event start date from db
 	*
 	* 		@access		public
+	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_event_start_dates( $EVT_ID = FALSE ) {
@@ -222,6 +225,7 @@ class EEM_Datetime extends EEM_Base {
 	*		get event start date from db
 	*
 	* 		@access		public
+	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_event_end_dates( $EVT_ID = FALSE ) {
@@ -231,10 +235,12 @@ class EEM_Datetime extends EEM_Base {
 
 
 
+
 	/**
 	*		get registration date from db
 	*
 	* 		@access		public
+	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_all_reg_dates( $EVT_ID = FALSE ) {
@@ -254,6 +260,7 @@ class EEM_Datetime extends EEM_Base {
 	*		get registration date from db
 	*
 	* 		@access		public
+	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_primary_reg_date_for_event( $EVT_ID = FALSE ) {
@@ -269,6 +276,7 @@ class EEM_Datetime extends EEM_Base {
 	*		get registration start date from db
 	*
 	* 		@access		public
+	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_reg_start_dates( $EVT_ID = FALSE ) {
@@ -283,6 +291,7 @@ class EEM_Datetime extends EEM_Base {
 	*		get registration start date from db
 	*
 	* 		@access		public
+	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
 	public function get_reg_end_dates( $EVT_ID = FALSE ) {
