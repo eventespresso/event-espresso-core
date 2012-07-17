@@ -57,7 +57,7 @@ $('#event-datetimes-dv').on( 'focusin', '.dtm-es-picker', function () {
 
 	$(this).datetimepicker({
 
-			dateFormat : 'mm-dd-yy',
+			dateFormat : 'yy-mm-dd',
 			timeFormat: 'hh:mm tt',
 			ampm: true,
 			separator: '  ',
@@ -120,7 +120,7 @@ $('#event-datetimes-dv').on( 'focusin', '.dtm-ee-picker', function () {
 
 	$(this).datetimepicker({
 		
-			dateFormat : 'mm-dd-yy',
+			dateFormat : 'yy-mm-dd',
 			timeFormat: 'h:mm tt',
 			ampm: true,
 			separator: '  ',
@@ -185,7 +185,7 @@ $('#event-datetimes-dv').on( 'focusin', '.dtm-rs-picker', function () {
 
 	$(this).datetimepicker({
 		
-			dateFormat : 'mm-dd-yy',
+			dateFormat : 'yy-mm-dd',
 			timeFormat: 'hh:mm tt',
 			ampm: true,
 			separator: '  ',
@@ -241,7 +241,7 @@ $('#event-datetimes-dv').on( 'focusin', '.dtm-re-picker', function () {
 
 	$(this).datetimepicker({
 		
-			dateFormat : 'mm-dd-yy',
+			dateFormat : 'yy-mm-dd',
 			timeFormat: 'h:mm tt',
 			ampm: true,
 			separator: '  ',

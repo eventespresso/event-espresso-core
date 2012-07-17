@@ -271,7 +271,7 @@ function espresso_event_editor_date_time_metabox($event) {
 				<tr valign="top" id="event-dates-and-times-row-<?php echo $row; ?>">
 					<td>
 						<div class="small-screen-table-label"><?php echo __('Event Starts on', 'event_espresso') ?> <?php echo apply_filters('filter_hook_espresso_help', 'event_date_info'); ?></div>
-						<input id="event-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_start]" type="text" class="dtm-es-picker dtm-inp medium-text" value="<?php echo $time->start_date_and_time(  'm-d-Y '  ); ?>"/>
+						<input id="event-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_start]" type="text" class="dtm-es-picker dtm-inp medium-text" value="<?php echo $time->start_date_and_time(  'Y-m-d '  ); ?>"/>
 						<input name="event-start-row-<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
 						<?php /* <input id="event-start-max-date-<?php echo $row; ?>" type="hidden" value=""/> */ ?>
 						<?php if ($time->ID()) { ?>
@@ -283,20 +283,20 @@ function espresso_event_editor_date_time_metabox($event) {
 
 					<td>
 						<div class="small-screen-table-label"><?php echo __('Event Ends on', 'event_espresso') ?></div>
-						<input id="event-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_end]" type="text" class="dtm-ee-picker dtm-inp medium-text" value="<?php echo $time->end_date_and_time(  'm-d-Y '  ); ?>"/>
+						<input id="event-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][evt_end]" type="text" class="dtm-ee-picker dtm-inp medium-text" value="<?php echo $time->end_date_and_time(  'Y-m-d '  ); ?>"/>
 						<input name="event-end-row_<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
 						<?php /* <input id="event-end-min-date-<?php echo $row; ?>" type="hidden" value=""/> */ ?>
 					</td>
 					
 					<td>
 						<div class="small-screen-table-label"><?php echo __('Registration Starts on', 'event_espresso') ?></div>
-						<input id="reg-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_start]" type="text" class="dtm-rs-picker dtm-inp medium-text" value="<?php echo $time->reg_start_date_and_time(  'm-d-Y '  ) ?>" />
+						<input id="reg-start-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_start]" type="text" class="dtm-rs-picker dtm-inp medium-text" value="<?php echo $time->reg_start_date_and_time(  'Y-m-d '  ) ?>" />
 						<input name="reg-start-row-<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
 					</td>
 
 					<td>
 						<div class="small-screen-table-label"><?php echo __('Registration Ends on', 'event_espresso') ?></div>
-						<input id="reg-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_end]" type="text" class="dtm-re-picker dtm-inp medium-text" value="<?php echo $time->reg_end_date_and_time(  'm-d-Y '  ) ?>" />
+						<input id="reg-end-<?php echo $row; ?>" name="event_datetimes[<?php echo $row; ?>][reg_end]" type="text" class="dtm-re-picker dtm-inp medium-text" value="<?php echo $time->reg_end_date_and_time(  'Y-m-d '  ) ?>" />
 						<input name="reg-end-row_<?php echo $row; ?>" type="hidden" value="<?php echo $row; ?>"/>
 					</td>
 		
