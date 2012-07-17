@@ -479,7 +479,7 @@ div.tablenav {
 
 #ticket-prices-dv .event-price-settings-dv td { padding:10px 5px; vertical-align:middle; }
 
-.event-price-tbl-hdr-type { width:15%; padding:0 .5em; }
+.event-price-tbl-hdr-type { width:17.5%; padding:0 .5em; }
 .event-price-tbl-hdr-order { width:4%; text-align:center; }
 .event-price-tbl-hdr-name { width:17.5%; padding:0 .5em; }
 .event-price-tbl-hdr-amount { width:100px; text-align:center; }
@@ -491,7 +491,7 @@ div.tablenav {
 .jst-cntr { text-align:center; }
 .jst-rght { text-align:right; }
 
-.ticket-price-quick-edit-tbl .type-column { width:15%; height:2.5em; }
+.ticket-price-quick-edit-tbl .type-column { width:17.5%; height:2.5em; }
 .ticket-price-quick-edit-tbl .order-column { width:4%; height:2.5em; text-align:center; }
 .ticket-price-quick-edit-tbl .name-column { width:17.5%; height:2.5em; }
 .ticket-price-quick-edit-tbl .amount-column { width:100px; height:2.5em; text-align:right; }

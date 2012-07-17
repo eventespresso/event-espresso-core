@@ -1,38 +1,55 @@
-<div id="event-list-reg-link-div-<?php echo $event_id ?>" class="event-list-reg-link-dv">
 
-	<h4 class="event-list-reg-link-title"><span class="section-title">Ticket Options</span></h4>
-
-	<form id="event-list-reg-link-form-<?php echo $event_id ?>" action="<?php echo $reg_href; ?>" method="post">
+	<h4 class="event-list-reg-link-title"><span class="section-title"><?php _e( 'Ticket Options', 'event_espresso' ); ?></span></h4>
 
 		<input type="hidden"
-					name="event-list-reg-link-event-id"
-					value="<?php echo $event_id ?>"
-			/>		
+					name="tkt-slctr-event-id"
+					value="<?php echo $event_id; ?>"
+			/>
+		
+		<?php
+		foreach ($meta_keys as $key=>$meta_key) {
+		?>
+			<input type="hidden"
+						name="tkt-slctr-meta-keys-<?php echo $event_id ?>[<?php echo $key; ?>]"
+						value="<?php echo $meta_key; ?>"
+				/>
+		<?php
+		}
+		
+		foreach ($meta_values as $key=>$meta_value) {
+		?>
+		<input type="hidden"
+					name="tkt-slctr-meta-values-<?php echo $event_id ?>[<?php echo $key; ?>]"
+					value="<?php echo $meta_value; ?>"
+			/>
+		<?php
+		}
+		?>
 
 		<input type="hidden"
-					id="event-list-reg-link-nmbr-attndees-<?php echo $event_id ?>"
-					name="event-list-reg-link-nmbr-attndees"
-					value="1"
+					id="tkt-slctr-max-atndz-<?php echo $event_id ?>"
+					name="tkt-slctr-max-atndz-<?php echo $event_id ?>"
+					value="<?php echo $max_atndz; ?>"
 			/>	
 				
 		<input type="hidden"
-					name="event-list-reg-link-event-name"
-					value="<?php echo $event_name ?>"
+					name="tkt-slctr-event-name-<?php echo $event_id ?>"
+					value="<?php echo $event_name; ?>"
 			/>
 
 		<input type="hidden"
-					name="event-list-reg-link-return-url"
+					name="tkt-slctr-return-url-<?php echo $event_id ?>"
 					value="<?php echo $_SERVER['REQUEST_URI']?>"
 			/>
 
 		<input type="hidden"
-					name="event-list-ticket-selector-table-rows"
-					value="1"
+					name="tkt-slctr-pre-approval-<?php echo $event_id ?>"
+					value="<?php echo $require_pre_approval; ?>"
 			/>
-
-		<table id="event-list-ticket-selector-tbl-<?php echo $event_id ?>" class="event-list-ticket-selector-tbl" border="1" cellspacing="0" cellpadding="0">		
-
+		
+		<table id="tkt-slctr-tbl-<?php echo $event_id; ?>" class="tkt-slctr-tbl" border="1" cellspacing="0" cellpadding="0">		
 			<tbody>
+			
 			<?php 
 			$row = 1; 
 			foreach ( $dates as $date ) {
@@ -43,7 +60,8 @@
 					</td>		
 				</tr>				
 	
-			<?php foreach ( $times as $time ) {  ?>
+			<?php foreach ( $times as $time ) {  
+							if ( $time['date'] == $date ) { ?>
 
 				<tr>				
 					<td>&nbsp;</td>	
@@ -61,10 +79,11 @@
 					
 					<?php foreach ( $prices as $price_key => $price ) {  ?>	
 
-						<span class="tkt-sltr-thrd-chrt-price-spn"><?php echo $price; ?></span>
+						<span class="tkt-sltr-thrd-chrt-price-spn"><?php echo $price['option']; ?></span>
 
 						<!--<div class="float-right">-->
 							<select name="qty-slct-<?php echo $event_id; ?>-1" id="ticket-selector-tbl-qty-slct-<?php echo $event_id ?>" class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all">
+								<option value="0">&nbsp;0&nbsp;&nbsp;&nbsp;</option>
 							<?php for ($i = 1; $i <= $max_atndz; $i++) { ?>
 								<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;&nbsp;&nbsp;</option>
 							<?php } ?>
@@ -93,7 +112,8 @@
 				</tr>
 										
 				<?php	}
-						$row++;
+							$row++;
+						}
 					}
 				?>
 				
@@ -112,24 +132,3 @@
 		</table>				
 		
 		
-		<div class="event-more-info-dv clear-float">	
-		
-			<noscript>
-				<input type="submit" 
-		 					name="event-list-reg-link-sbmt-btn" 
-							class="event-list-reg-link-sbmt-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx" 
-							value="<?php _e( $sbmt_btn_text, 'event_espresso' ); ?>"
-							role="button"
-					/>
-			</noscript>
-	
-			<a class="event-list-reg-link-btn show-if-js ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx" style="display:none;">
-				<span class="ui-icon ui-icon-cart"></span>&nbsp;<?php _e( $sbmt_btn_text, 'event_espresso' ); ?>
-			</a>
-
-		</div>
-						
-
-	</form>
-</div>
-						

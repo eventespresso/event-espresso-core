@@ -88,8 +88,37 @@ if (!function_exists('event_registration')) {
 //		die();
 
 
+//
 		//Build the registration page
 		if (!empty($event)) {
+		
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Datetime.model.php');
+			$DTM_MDL = EEM_Datetime::instance();
+
+			// grab event times
+			if ( $datetimes = $DTM_MDL->get_all_event_dates( $event->id )) {
+				//printr( $datetimes, '$datetimes' );
+
+				$single_event = count( $datetimes ) == 1 ? TRUE : FALSE;
+
+				$first_event = current( $datetimes );
+
+				if ( $single_event ) {
+					$last_event = end( $datetimes );
+					$start_date = $first_event->start_date_and_time( get_option('date_format') );
+					$reg_start_date = $first_event->reg_start_date_and_time( get_option('date_format') );
+					$end_date = $last_event->end_date_and_time( get_option('date_format'));
+				}
+
+				
+
+				$event->registration_startT = $first_event->reg_start_time();
+				$event->registration_start = $first_event->reg_start_date();
+				$event->registration_endT = $first_event->reg_end_time();
+				$event->registration_end = $first_event->reg_end_date();			
+
+			}
+				
 			//Create a log file
 			//espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " $sql] [ sqldump = " . var_export($events, true) ) );
 			//These are the variables that can be used throughout the registration page
@@ -112,8 +141,7 @@ if (!function_exists('event_registration')) {
 
 			$member_only = $event->member_only;
 			$reg_limit = $event->reg_limit;
-			$start_date = $event->start_date;
-			$end_date = $event->end_date;
+
 			$allow_overflow = $event->allow_overflow;
 			$overflow_event_id = $event->overflow_event_id;
 
@@ -181,7 +209,6 @@ if (!function_exists('event_registration')) {
 			//Google map link creation
 			$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
 
-			$reg_start_date = $event->registration_start;
 			$today = date("Y-m-d");
 			if (isset($event->timezone_string) && $event->timezone_string != '') {
 				$timezone_string = $event->timezone_string;
@@ -357,6 +384,7 @@ if (!function_exists('event_registration')) {
 					$data['display_desc'] = $display_desc;
 					$data['event_desc'] = $event_desc;
 					$data['event_meta'] = $event_meta;
+					$data['single_event'] = $single_event;
 					espresso_display_reg_page($data);
 				}
 			}//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)

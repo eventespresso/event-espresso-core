@@ -114,14 +114,12 @@ function espresso_setup_notices() {
  */
 function espresso_autoload() {
 	function __autoload( $class_name ) {
-		$include_path = dirname(__FILE__) . '/includes/classes/';
-	   if ( file_exists( $include_path . $class_name . '.class.php' )) {
+		$include_path = dirname(espresso_main_file()) . '/includes/classes/';
+		if ( file_exists( $include_path . $class_name . '.class.php' )) {
 			require_once( $include_path . $class_name . '.class.php' );
 		}
 	}
 }
-
-
 
 
 

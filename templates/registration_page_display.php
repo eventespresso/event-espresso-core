@@ -7,7 +7,7 @@
 function espresso_display_reg_page($data) {
 	?>
 
-	<div id="event_espresso_registration_form" class="event-display-boxes ui-widget">
+	<div id="event_espresso_registration_form" class="event-display-boxes">
 		<h2 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $data['event_id']; ?>"> <?php echo $data['event_name'] ?> <?php echo $data['is_active']['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $data['is_active']['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $data['is_active']['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
 
 		<div class="event_espresso_form_wrapper event-data-display ui-widget-content ui-corner-bottom">
@@ -131,6 +131,7 @@ function espresso_display_reg_page($data) {
 
 				//Meta example
 				//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
+				if ( $single_event ) :
 				?>
 				<p class="start_date">
 						<?php if ($data['end_date'] !== $data['start_date']) { ?>
@@ -143,19 +144,21 @@ function espresso_display_reg_page($data) {
 						</span>
 						<?php
 					}
-					echo event_date_display($data['start_date'], get_option('date_format'));
+					echo $data['start_date'];
 					if ($data['end_date'] !== $data['start_date']) {
 						echo '<br />';
 						?>
 						<span class="section-title">
 						<?php _e('End Date: ', 'event_espresso'); ?>
 						</span> <?php
-						echo event_date_display($data['end_date'], get_option('date_format'));
+						echo $data['end_date'];
 					}
 					?>
 				</p>
 
 				<?php
+				endif; // single_event
+				
 				if (!empty($data['event_meta']['display_thumb_in_regpage']) && !empty($data['event_meta']['event_thumbnail_url'])) {
 					?>
 					<p><a href="<?php echo $data['event_meta']['event_thumbnail_url'] ?>"><img src="<?php echo $data['event_meta']['event_thumbnail_url'] ?>" alt=""></a></p>

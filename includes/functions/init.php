@@ -304,8 +304,8 @@ function espresso_frontend_init() {
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
 	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';	
-	
+	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
+
 	event_espresso_require_gateway('process_payments.php');
 
 	global $espresso_reg_page;

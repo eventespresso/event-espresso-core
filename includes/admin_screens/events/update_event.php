@@ -15,7 +15,7 @@ function update_event() {
 		$event_meta = array(); //will be used to hold event meta data
 		$wp_user_id = empty($_REQUEST['wp_user']) ? $espresso_wp_user : $_REQUEST['wp_user'][0];
 		$event_id = absint( $_REQUEST['event_id'] );
-		$event_name = esc_html( wp_strip_all_tags( $_REQUEST['event'] ));
+		$event_name = htmlentities( wp_strip_all_tags( $_REQUEST['event'] ), ENT_QUOTES, 'UTF-8' );
 		$event_slug = ($_REQUEST['slug'] == '') ? sanitize_title_with_dashes($event_name . '-' . $event_id) : sanitize_title_with_dashes($_REQUEST['slug']);
 		$event_desc = $_REQUEST['event_desc'];
 		$display_desc = $_REQUEST['display_desc'];
@@ -339,7 +339,7 @@ function update_event() {
 													$dtm['reg_limit'],
 													$dtm['tckts_left'],
 													DO NOT DELETE - NEW FEATURE IN PROGRESS   */
-													$dtm['ID']
+													isset( $dtm['ID'] ) ? $dtm['ID'] : NULL
 					);
 					
 					// copy primary datetime info for event post

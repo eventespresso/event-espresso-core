@@ -58,14 +58,15 @@ function espresso_ticket_selector($event) {
 	$template_args['max_atndz'] = $max_atndz;
 
 	$template_args['dates'] = is_array($event->recurring_events) ? $event->recurring_events : $event->datetimes;
-	$template_args['dates'] = format_date($template_args['dates']);
+	$template_args['dates'] = espresso_format_date($template_args['dates']);
 
-	$template_args['times'] = process_event_times($event->datetimes);
+	$template_args['times'] = espresso_process_event_times($event->datetimes);
+	$template_args['datetimes'] = espresso_process_event_datetimes($event->datetimes);
 	$template_args['multiple_time_options'] = count($template_args['times']) > 1 ? TRUE : FALSE;
 //	echo printr( $template_args['times'], 'times <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 //	echo printr( $event->datetimes, 'event->datetimes <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 
-	$template_args['prices'] = process_event_prices($event->prices, $event->currency_symbol, 'included');
+	$template_args['prices'] = espresso_process_event_prices($event->prices, $event->currency_symbol, 'included');
 	$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
 //	echo printr($event->prices, 'event->prices <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 	
@@ -74,15 +75,23 @@ function espresso_ticket_selector($event) {
 	//$template_args['meta'] = serialize( $all_meta );
 	//$template_args['meta'] = base64_encode(serialize($all_meta));
 	$template_args['meta_keys'] = empty($event->meta_keys) ? array() : $event->meta_keys;
+	array_walk_recursive( $event->meta_values, 'espresso_apply_htmlentities' );
 	$template_args['meta_values'] = empty($event->meta_values) ? array() : $event->meta_values;
+
 
 	$template_args['currency_symbol'] = $event->currency_symbol;
 	
 	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php';
+//	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_multi_selects.template.php';
+//	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_threaded_chart.template.php';
 	espresso_display_template($templates['ticket_selector'], $template_args);
 
 }
 
+
+function espresso_apply_htmlentities( &$item, $key ) {
+	$item = htmlentities( $item, ENT_QUOTES, 'UTF-8' );
+}
 
 
 
@@ -93,7 +102,7 @@ function espresso_ticket_selector($event) {
  * 		@param  mixed 		$dates
  * 		@return 	string
  */
-function format_date($datetimes) {
+function espresso_format_date($datetimes) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	// start with an empty array
 	$dates = array();
@@ -112,7 +121,6 @@ function format_date($datetimes) {
 
 
 
-
 /**
  * 		process event times
  *
@@ -120,7 +128,7 @@ function format_date($datetimes) {
  * 		@return array
  * 		@return string
  */
-function process_event_times($times) {
+function espresso_process_event_times($times) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	// start with an empty array
 	$time_options = array();
@@ -130,11 +138,43 @@ function process_event_times($times) {
 				'id' => $DTT_ID,
 				'event_id' => $time->event_ID(),
 				'start_time' => $time->start(),
-				'formatted' => $time->end_time() ? $time->start_time($tm_frmt) . ' - ' . $time->end_time($tm_frmt) : $time->start_time($tm_frmt)
+				'formatted' => $time->end_time() ? $time->start_time($tm_frmt) . ' - ' . $time->end_time($tm_frmt) : $time->start_time($tm_frmt),
+				'date' => str_replace( ' ', '&nbsp;', $time->start_date('D M jS') )	
 		);
 	}
 	//echo printr($time_options);
 	return $time_options;
+}
+
+
+
+
+
+
+/**
+ * 		process event date times
+ *
+ * 		@param array  	$times
+ * 		@return array
+ * 		@return string
+ */
+function espresso_process_event_datetimes($datetimes) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+	// start with an empty array
+	$datetime_options = array();
+	$tm_frmt = 'g:ia';
+	foreach ($datetimes as $DTT_ID => $datetime) {		
+		$datetime_options[ $DTT_ID ] = array(
+				'id' => $DTT_ID,
+				'event_id' => $datetime->event_ID(),
+				'start_date' => str_replace( ' ', '&nbsp;', $datetime->start_date('D M jS') ),
+				'start_time' => $datetime->start(),
+				'formatted' => $datetime->end_time() ? $datetime->start_time($tm_frmt) . ' - ' . $datetime->end_time($tm_frmt) : $datetime->start_time($tm_frmt)
+		);
+	}
+	//echo printr( $datetime_options,'$datetime_options'  );
+
+	return $datetime_options;
 }
 
 
@@ -149,7 +189,7 @@ function process_event_times($times) {
  * 		@return array
  * 		@return string
  */
-function process_event_prices($prices, $currency_symbol, $surcharge_type) {
+function espresso_process_event_prices($prices, $currency_symbol, $surcharge_type) {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	// start with an empty array
@@ -192,7 +232,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	 * 		@access 		public
 	 * 		@return		array  or FALSE
 	 */	
-	function process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
+	function espresso_process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
 	
 		global $espresso_notices;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -202,7 +242,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 		if ( isset($_POST['tkt-slctr-event-id'] )) {
 		
 			// validate/sanitize data
-			$valid = validate_post_data('add_event_to_cart');
+			$valid = espresso_validate_post_data('add_event_to_cart');
 //			echo printr($valid, '$valid' );
 		
 			//check total tickets oredered vs max number of attendees that can register
@@ -249,7 +289,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 						);
 						//echo printr($event_to_add);die();
 						// then add event
-						if ( add_event_to_cart( $event_to_add )) {
+						if ( espresso_add_event_to_cart( $event_to_add )) {
 							$success = TRUE;
 						}
 					} 
@@ -315,7 +355,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	 *    	@param 		string 		$stage - where we are in the registration process
 	 * 		@return		array  or FALSE
 	 */
-	function validate_post_data() {
+	function espresso_validate_post_data() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
 		global $espresso_notices;
@@ -485,7 +525,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	 * 		  	@param array - items
 	 * 			@return TRUE on success, FALSE on fail
 	 */
-	function add_event_to_cart( $event = FALSE, $qty = 1, $which_cart = 'REG' ) {
+	function espresso_add_event_to_cart( $event = FALSE, $qty = 1, $which_cart = 'REG' ) {
 	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		
@@ -510,7 +550,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 		);
 
 		// get the number of spaces left for this event
-		$available_spaces = get_available_spaces($event['id']);
+		$available_spaces = espresso_get_available_spaces($event['id']);
 
 		// compare availalbe spaces against the number of tickets being purchased
 		if ($available_spaces >= $event['qty']) {
@@ -558,7 +598,7 @@ function process_event_prices($prices, $currency_symbol, $surcharge_type) {
 	 * 		@param 		string 		$event_id
 	 * 		@return 		int
 	 */
-	function get_available_spaces($event_id) {
+	function espresso_get_available_spaces($event_id) {
 
 		global $wpdb;
 
