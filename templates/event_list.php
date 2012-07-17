@@ -381,7 +381,7 @@ function event_espresso_get_event_details($attributes) {
 		$ee_gmap_location = $venue_address_elements;
 
 		//Create all meta vars
-		$event->meta_keys = array(
+		$meta_keys = array(
 				'event_name',
 				'event_desc',
 				'event_address',
@@ -404,7 +404,7 @@ function event_espresso_get_event_details($attributes) {
 				'price',
 				'event_cost',
 		);
-		$event->meta_values = array(
+		$meta_values = array(
 				$event_name,
 				$event_desc,
 				$event_address,
