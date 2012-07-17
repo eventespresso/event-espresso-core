@@ -107,7 +107,7 @@ function espresso_org_confg_output() {
 	$sidebar_content = ob_get_clean();
 	ob_start();
 	?>
-	<form class="espresso_form" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+	<form class="espresso_form form-to-validate" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 		<?php do_meta_boxes('event-espresso_page_event_espresso', 'advanced', null); ?>
 		<input type="hidden" name="update_org" value="update" />
 	</form>
