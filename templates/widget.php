@@ -118,7 +118,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 								//You can also display a custom message. For example, this is a custom registration not open message:
 								$status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED'? ' - <span class="espresso_closed">'.__('Regsitration is Closed','event_espresso').'</span>':'';
 
-								if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only) {
+								if (!is_user_logged_in() && defined( 'EVENT_ESPRESSO_MEMBERS_DIR' ) && $member_only) {
 									//Display a message if the user is not logged in.
 									 //_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
 								}else{
