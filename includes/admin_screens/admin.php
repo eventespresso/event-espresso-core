@@ -89,14 +89,13 @@ function event_espresso_config_page_scripts() {
 	wp_enqueue_script('editor-functions');
 	wp_enqueue_script('media-upload');
 	wp_enqueue_script('post');
-	wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
-	wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery', 'dataTables')); //Events core table column hide/show script
-	//wp_enqueue_script('dataTablesColFilter', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.columnFilter.js', array('jquery', 'dataTables')); //Events core table column filtering
+
 
 	$load_jquery_ui = FALSE;
 	$load_datepicker = FALSE;
 	$load_farbtastic = FALSE;
 	$load_datetimepicker = FALSE;
+	$load_dataTables_and_ColVis = FALSE;
 
 	if ($_REQUEST['page'] == 'espresso_calendar') {
 		$load_farbtastic = TRUE;
@@ -106,8 +105,9 @@ function event_espresso_config_page_scripts() {
 		$load_jquery_ui = TRUE;
 		$load_datepicker = TRUE;
 		$load_datetimepicker = TRUE;
-		/*wp_register_script('jquery.reveal.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.reveal.js"), array('jquery'), '1.0');
-		wp_enqueue_script('jquery.reveal.js');*/
+		$load_dataTables_and_ColVis = TRUE;
+		wp_register_script('event_editor_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_editor.js"), '', '', true);
+		wp_enqueue_script('event_editor_js');
 	}
 
 	if ($_REQUEST['page'] == 'discounts' && isset($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'new')) {
@@ -139,10 +139,16 @@ function event_espresso_config_page_scripts() {
 
 	//Load datetimepicker script
 	if ($load_datetimepicker) {
-
 		wp_enqueue_script('jquery-ui-slider');
 		wp_register_script('jquery-ui-timepicker', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery-ui-timepicker-addon.js"), array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-slider'), '1.0.0');
 		wp_enqueue_script('jquery-ui-timepicker');
+	}
+	
+	
+	if ( $load_dataTables_and_ColVis ) {
+		wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
+		wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery', 'dataTables')); //Events core table column hide/show script
+		//wp_enqueue_script('dataTablesColFilter', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.columnFilter.js', array('jquery', 'dataTables')); //Events core table column filtering
 	}
 
 
