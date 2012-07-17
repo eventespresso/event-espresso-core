@@ -515,7 +515,7 @@ function espresso_registration_footer() {
 }
 
 function espresso_display_questions($questions, $attendee) {
-	if (get_option('events_members_active') == 'true') {
+	if (defined( 'EVENT_ESPRESSO_MEMBERS_DIR' )) {
 		global $current_user;
 		global $user_email;
 		require_once(EVENT_ESPRESSO_MEMBERS_DIR . "user_vars.php"); //Load Members functions
@@ -560,7 +560,7 @@ function espresso_display_questions($questions, $attendee) {
 				case "TEXT" :
 					$disabled = '';
 					$answer = '';
-					if (get_option('events_members_active') == 'true'
+					if (defined( 'EVENT_ESPRESSO_MEMBERS_DIR' )
 									&& !empty($question['system_name'])
 									&& $attendee == 'primary') {
 						switch ($question['system_name']) {
