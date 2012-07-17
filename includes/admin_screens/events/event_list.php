@@ -3,12 +3,16 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
 function event_espresso_edit_list() {
-	global $wpdb;
+
+	global $wpdb, $espresso_notices;
+	
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$wpdb->show_errors();
+	
+	//printr( $_POST, 'POST' );
 
 	if (isset($_POST['delete_event'])) {
-//Clear the events cache
+		//Clear the events cache
 		espresso_reset_cache();
 		if (!empty($_POST['checkbox']) && is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):
@@ -16,16 +20,10 @@ function event_espresso_edit_list() {
 				event_espresso_delete_event($del_id);
 			endwhile;
 		}
-		?>
-		<div id="message" class="updated fade">
-			<p><strong>
-					<?php _e('Event(s) have been permanently deleted.', 'event_espresso'); ?>
-				</strong></p>
-		</div>
-		<?php
 	}
+	
 	if (isset($_POST['perm_delete_event'])) {
-//Clear the events cache
+		//Clear the events cache
 		espresso_reset_cache();
 		if (is_array($_POST['checkbox'])) {
 			while (list($key, $value) = each($_POST['checkbox'])):
@@ -33,20 +31,9 @@ function event_espresso_edit_list() {
 				event_espresso_empty_event_trash($del_id);
 			endwhile;
 		}
-		?>
-
-		<div id="message" class="updated fade">
-			<p><strong>
-					<?php _e('Event(s) have been permanently deleted.', 'event_espresso'); ?>
-				</strong></p>
-		</div>
-		<?php
 	}
-
-	$recurrence_icon = '';
-	if (defined('EVENT_ESPRESSO_RECURRENCE_MODULE_ACTIVE')) {
-		$recurrence_icon = '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/arrow_rotate_clockwise.png" alt="Recurring Event" title="Recurring Event" class="re_fr" />';
-	}
+	
+	echo espresso_get_notices();
 
 	require_once('queries.php');
 
@@ -254,11 +241,6 @@ function espresso_event_list_header() {
 		<span class="sorting-indicator"></span>
 	</th>
 
-			<!--	<th class="manage-column column-date" id="dow" scope="col" title="Click to Sort" style="width:6%;">
-					<span><?php _e('DoW', 'event_espresso'); ?></span>
-					<span class="sorting-indicator"></span>
-				</th>-->
-
 	<th class="manage-column column-date" id="begins" scope="col" title="Click to Sort" style="width:15%;">
 		<span><?php _e('Reg Begins', 'event_espresso'); ?></span>
 		<span class="sorting-indicator"></span>
@@ -341,7 +323,6 @@ function espresso_event_list_entry($event) {
 		<td class="post-title page-title">
 			<strong>
 				<a class="row-title" href="admin.php?page=events&action=edit_event&event_id=<?php echo $event_id ?>"><?php echo $event_name ?></a> 
-				<?php echo ($recurrence_id > 0) ? $recurrence_icon : ''; ?> 
 			</strong>
 			
 			<div class="row-actions">
