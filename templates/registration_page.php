@@ -300,6 +300,10 @@ if (!function_exists('event_registration')) {
 					'<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
 					$google_map_link
 					);
+			foreach ($event_meta as $key => $value) {
+				$meta_key[] = $key;
+				$meta_value[] = $value;
+			}
 			foreach ($meta_keys as $key=>$meta_key) {
 				$event->meta_keys[$key] = htmlspecialchars($meta_key);
 			}
