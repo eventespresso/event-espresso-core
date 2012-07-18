@@ -13,8 +13,11 @@ function espresso_thank_you_page() {
 		do_action('action_hook_espresso_process_off_site_payment', $EE_Session);
 	}
 	if ($type == 'off-site' || $type == 'onsite_noajax') {
-			$SPCO = EE_Single_Page_Checkout::instance();
-			$SPCO->process_registration_payment(FALSE);
+		$SPCO = EE_Single_Page_Checkout::instance();
+		$SPCO->process_registration_payment(FALSE);
+	} elseif ($type == 'off-line') {
+		$SPCO = EE_Single_Page_Checkout::instance();
+		$SPCO->process_off_line_gateway();
 	}
 	$session_data = $EE_Session->get_session_data();
 	if (!empty($session_data['txn_results'])) {
