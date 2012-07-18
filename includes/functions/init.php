@@ -360,9 +360,9 @@ function espresso_export_certificate() {
 function espresso_export_invoice() {
 	//Version 2.0
 	if (!empty($_REQUEST['invoice_launch'])) {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/launch_invoice.php");
-		
-		echo espresso_invoice_launch($_REQUEST['id']);
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/Invoice.class.php");
+		$invoice = new Invoice($_REQUEST['id']);
+		$invoice->send_invoice();
 	}
 	//End Version 2.0
 	//Export pdf version
