@@ -23,8 +23,11 @@ add_action('action_hook_espresso_gateway_process_step_3', 'espresso_send_to_than
 
 function espresso_display_invoice_download_link($EE_Session) {
 	$gateway = 'invoice';
-	$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+	$session_data = $EE_Session->get_session_data();
+	$gateway_data = $session_data['gateway_data'];
 	$invoice_settings = $gateway_data['payment_settings'][$gateway];
+	require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
+	$registration = $session_data['registration'][$session_data['primary_attendee']['line_item_id']];
 
 	$txn_details = array(
 			'gateway' => $invoice_settings['display_name'],
@@ -56,7 +59,7 @@ function espresso_display_invoice_download_link($EE_Session) {
 		  $page_url = home_url().'/?invoice_type=' . ( empty($invoice_type) ? '' : $invoice_type ) . '&amp;download_invoice=true&amp;attendee_id='.$attendee_id.'&amp;registration_id='.registration_id;
 		 */
 		?>
-		<p><a href="<?php echo home_url() . '/?invoice_launch=true&amp;id='.$EE_Session->id(); ?>" class="inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
+		<p><a href="<?php echo home_url() . '/?invoice_launch=true&amp;id='.$registration->reg_url_link(); ?>" class="inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
 		<?php _e('Download PDF Invoice', 'event_espresso'); ?>
 			</a></p>
 		<?php
