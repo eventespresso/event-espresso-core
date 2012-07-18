@@ -482,27 +482,29 @@ function events_data_tables_install() {
 
 	$table_name = "esp_price";
 	$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  PRT_ID tinyint(3) unsigned NOT NULL,
-			  EVT_ID int(10) unsigned NOT NULL,
-			  PRC_amount decimal(10,2) NOT NULL DEFAULT '0.00',
-			  PRC_name varchar(45) NOT NULL,
-			  PRC_desc text,
-			  PRC_reg_limit mediumint(8) unsigned DEFAULT NULL,
-			  PRC_tckts_left mediumint(8) unsigned DEFAULT NULL,
-			  PRC_use_dates tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  PRC_start_date int(10) unsigned DEFAULT NULL,
-			  PRC_end_date int(10) unsigned DEFAULT NULL,
-			  PRC_disc_code varchar(100) DEFAULT NULL,
-			  PRC_disc_limit_qty tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  PRC_disc_qty smallint(6) DEFAULT '0',
-			  PRC_disc_apply_all tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  PRC_disc_wp_user bigint(20) DEFAULT '1',
-			  PRC_is_active tinyint(1) unsigned NOT NULL DEFAULT '1',
-			  PRC_overrides int(10) unsigned DEFAULT NULL,
-			  PRC_order tinyint(3) unsigned NOT NULL DEFAULT NULL,
-			  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  PRIMARY KEY  (PRC_ID)";
-	event_espresso_run_install($table_name, $table_version, $sql);
+				PRT_ID tinyint(3) unsigned NOT NULL,
+				EVT_ID int(10) unsigned NOT NULL,
+				PRC_amount decimal(10,2) NOT NULL DEFAULT '0.00',
+				PRC_name varchar(45) NOT NULL,
+				PRC_desc text,
+				PRC_reg_limit mediumint(8) unsigned DEFAULT NULL,
+				PRC_tckts_left mediumint(8) unsigned DEFAULT NULL,
+				PRC_use_dates tinyint(1) unsigned NOT NULL DEFAULT '0',
+				PRC_start_date int(10) unsigned DEFAULT NULL,
+				PRC_end_date int(10) unsigned DEFAULT NULL,
+				PRC_disc_code varchar(100) DEFAULT NULL,
+				PRC_disc_limit_qty tinyint(1) unsigned NOT NULL DEFAULT '0',
+				PRC_disc_qty smallint(6) DEFAULT '0',
+				PRC_disc_apply_all tinyint(1) unsigned NOT NULL DEFAULT '0',
+				PRC_disc_wp_user bigint(20) DEFAULT '1',
+				PRC_is_active tinyint(1) unsigned NOT NULL DEFAULT '1',
+				PRC_overrides int(10) unsigned DEFAULT NULL,
+				PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
+				PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
+				PRIMARY KEY  (PRC_ID)";
+	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+
+
 
 
 
