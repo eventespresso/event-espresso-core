@@ -82,20 +82,22 @@ class EE_Prices_List_Table extends WP_List_Table {
 		}
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
-		$prices = $PRC->get_all_prices_that_are_global($orderby, $order);
-		foreach ($prices as $price) {
-			if ($price->deleted()) {
-				$this->views['trashed']['count']++;
-				if ($this->view == 'trashed') {
-					$data[] = $price;
-				}
-			} else {
-				$this->views['in_use']['count']++;
-				if ($this->view == 'in_use') {
-					$data[] = $price;
+		if ( $prices = $PRC->get_all_prices_that_are_global($orderby, $order)) {
+			foreach ($prices as $price) {
+				if ($price->deleted()) {
+					$this->views['trashed']['count']++;
+					if ($this->view == 'trashed') {
+						$data[] = $price;
+					}
+				} else {
+					$this->views['in_use']['count']++;
+					if ($this->view == 'in_use') {
+						$data[] = $price;
+					}
 				}
 			}
 		}
+
 
 
 		$current_page = $this->get_pagenum();
