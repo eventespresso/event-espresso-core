@@ -1,5 +1,8 @@
-#icon-options-event { background: url("../../../images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
+#icon-options-event { background: url("../../../../../images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
 #entries-per-page-dv { display:inline; }
+
+.wrap .nav-tab-wrapper { margin-bottom:1em; }
+.wrap .subsubsub { margin:0; }
 
 #reg-filters-dv { clear:both; padding:1.5em 0; }
 .datepicker { width:125px; }

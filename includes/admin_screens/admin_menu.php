@@ -204,15 +204,15 @@ if (!function_exists('add_event_espresso_menus')) {
 						'events',
 						'event_espresso_manage_events'
 				),
-				'registrations' => array(
-						TRUE,
-						'events',
-						__('Event Espresso - Registrations Overview', 'event_espresso'),
-						__('Registrations', 'event_espresso'),
-						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
-						'registrations',
-						'event_espresso_manage_registrations'
-				),
+//				'registrations' => array(
+//						TRUE,
+//						'events',
+//						__('Event Espresso - Registrations Overview', 'event_espresso'),
+//						__('Registrations', 'event_espresso'),
+//						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
+//						'registrations',
+//						'event_espresso_manage_registrations'
+//				),
 //				'attendees' => array(
 //						TRUE,
 //						'events',

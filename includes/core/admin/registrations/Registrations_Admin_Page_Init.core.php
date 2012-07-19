@@ -13,31 +13,32 @@
  *
  * ------------------------------------------------------------------------
  *
- * Transactions_Admin_Page_Init class
+ * Registrations_Admin_Page_Init class
  *
  * @package			Event Espresso
- * @subpackage	includes/core/admin/transactions/Transactions_Admin_Page_Init.class.php
+ * @subpackage	includes/core/admin/registrations/Registrations_Admin_Page_Init.core.php
  * @author				Brent Christensen 
  *
  * ------------------------------------------------------------------------
  */
-class Transactions_Admin_Page_Init extends Admin_Page_Init implements Admin_Page_Init_Interface {
+class Registrations_Admin_Page_Init extends Admin_Page_Init implements Admin_Page_Init_Interface {
 	
 	var $_ajax;
 	
 	public function __construct() { 
-
+		
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		define( 'TXN_PG_SLUG', 'transactions' );	
-		define( 'TXN_PG_NAME', ucwords( str_replace( '_', '', TXN_PG_SLUG )));	
-		define( 'TXN_ADMIN', EE_CORE_ADMIN . TXN_PG_SLUG . DS );	
-		define( 'TXN_ADMIN_URL', admin_url( 'admin.php?page=' . TXN_PG_SLUG ));	
-		define( 'TXN_ASSETS_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . TXN_PG_SLUG . DS . 'assets' . DS ));	
-		define( 'TXN_TEMPLATE_PATH', TXN_ADMIN . 'templates' . DS );	
-		define( 'TXN_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . TXN_PG_SLUG . DS . 'templates' . DS ));
+		define( 'REG_PG_SLUG', 'registrations' );	
+		define( 'REG_PG_NAME', ucwords( str_replace( '_', '', REG_PG_SLUG )));	
+		define( 'REG_ADMIN', EE_CORE_ADMIN . REG_PG_SLUG . DS );	
+		define( 'REG_ADMIN_URL', admin_url( 'admin.php?page=' . REG_PG_SLUG ));	
+		define( 'REG_ASSETS_PATH', REG_ADMIN . 'assets' . DS );		
+		define( 'REG_ASSETS_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . REG_PG_SLUG . DS . 'assets' . DS ));	
+		define( 'REG_TEMPLATE_PATH', REG_ADMIN . 'templates' . DS );	
+		define( 'REG_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . REG_PG_SLUG . DS . 'templates' . DS ));
 
 	}
 
@@ -67,7 +68,7 @@ class Transactions_Admin_Page_Init extends Admin_Page_Init implements Admin_Page
 	*		@return 		void
 	*/	
 	public function get_admin_menu_order() {
-		return 30;  
+		return 20;  
 	}
 
 
@@ -101,8 +102,8 @@ class Transactions_Admin_Page_Init extends Admin_Page_Init implements Admin_Page
 		} else {
 			wp_enqueue_style('jquery-ui-style-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css');
 		}		
-		wp_register_style('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.css' );		
-		wp_enqueue_style('espresso_txn');
+		wp_register_style('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.css' );		
+		wp_enqueue_style('espresso_reg');
 	}
 
 
@@ -138,14 +139,14 @@ class Transactions_Admin_Page_Init extends Admin_Page_Init implements Admin_Page
 			wp_enqueue_script('jqplot-highlighter', JQPLOT_URL . 'plugins/jqplot.highlighter.min.js', array('jqplot'), '', FALSE);
 			wp_enqueue_script('jqplot-pointLabels', JQPLOT_URL . 'plugins/jqplot.pointLabels.min.js', array('jqplot'), '', FALSE);	
 		} else {
-			// other txn admin pages
+			// other reg admin pages
 			wp_enqueue_script('jquery-ui-position');
 			wp_enqueue_script('jquery-ui-widget');
 			wp_enqueue_script('jquery-ui-dialog');
 			wp_enqueue_script('jquery-ui-draggable');
 			wp_enqueue_script('jquery-ui-datepicker');
-			wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('jquery'), '1.0', TRUE);
-			wp_enqueue_script('espresso_txn');			
+			wp_register_script('espresso_reg', REG_ASSETS_URL . 'espresso_registrations_admin.js', array('jquery'), '1.0', TRUE);
+			wp_enqueue_script('espresso_reg');			
 		}
 
 	}
@@ -155,4 +156,4 @@ class Transactions_Admin_Page_Init extends Admin_Page_Init implements Admin_Page
 
 
 	
-// end of file:	includes/core/admin/transactions/Transactions_Admin_Page_Init.class.php
+// end of file:	includes/core/admin/registrations/Registrations_Admin_Page_Init.core.php

@@ -161,7 +161,8 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 	*/
 	function column_event_name($item){
 		$edit_event_url = add_query_arg( array( 'action'=>'edit_event', 'event_id'=>$item->EVT_ID ), admin_url( 'admin.php?page=events' ));
-		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit Event #', 'event_espresso' ) . $item->EVT_ID.'">' .  wp_trim_words( $item->event_name, 30, '...' ) . '</a>';
+		$event_name = stripslashes( html_entity_decode( $item->event_name, ENT_QUOTES, 'UTF-8' ));
+		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit Event #', 'event_espresso' ) . $item->EVT_ID.'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
 	}
 
 
