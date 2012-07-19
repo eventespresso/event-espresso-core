@@ -23,6 +23,7 @@ Created by Roan Lavery
 #invoice-info #payment-total{display:none}
 #comments {font-weight:normal; color:#888; font-size:9pt; text-align:center;}
 #bank_name{color:#666}
+
 /*=========================== LAYOUT =========================*/
 
 #invoice{ padding:0 0.8cm 1.8cm 0.8cm; background: #fff url(../images/ripple.jpg) 0px 120px no-repeat;  }

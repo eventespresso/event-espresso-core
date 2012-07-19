@@ -46,7 +46,7 @@ class Invoice {
 										6 => "tranquility.css",
 										7 => "union.css"
 									);
-		$this->invoice_settings['invoice_css'] = $themes[6];
+		$this->invoice_settings['invoice_css'] = $themes[7];
 
 //echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
 

@@ -9,13 +9,14 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 .print_button_div{
 	margin: 0 12pt; 
 	width:660px;
-	padding: 10px 20px; 
-	margin: 0 auto 2em auto;
+	padding: 10px; 
+	margin:1em auto;
 }
 
-.print_button_div .print_button{
+.print_button_div form{
 	font-size:14px;
 	float:right;
+	margin:0 0 0 1em;
 }
 
 table { border-collapse:collapse!important; width:100%!important; }
@@ -23,18 +24,8 @@ td { vertical-align:top!important; }
 .not-really-a-table  { border:none!important; }
 
 #invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
-/*#logo-dv, #invoice-info, #company-address { display:block; }*/
 #logo-dv { width:150px!important; }
 #logo-dv img { max-width:150px!important; border: none; }
-/*#invoice-info { width:250px!important; }
-#company-address { width:250px!important; }*/
-
-#invoice-amount .quantity_th{/*width:4.5%!important;*/}
-#invoice-amount .event_th{/*width:25%*/}
-#invoice-amount .ticket_th{/*width:22.5%*/}
-#invoice-amount .datetime_th{/*width:22.5%*/}
-#invoice-amount .attendee_th{/*width:16%*/}
-#invoice-amount .subtotal_th{/*width:12%!important;*/ text-align:right}
 
 #comments{padding-top:1cm; line-height:1.2em; }
 

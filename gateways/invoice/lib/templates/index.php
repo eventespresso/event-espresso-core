@@ -23,6 +23,7 @@
 		<form method="post" action="<?php echo $download_link; ?>" >
 			<input class="print_button noPrint" type="submit" value=" Download PDF " />
 		</form>
+		<div class="clear"></div>
 	</div>
 
 	<div id="invoice">
@@ -162,6 +163,7 @@
 		<form method="post" action="<?php echo home_url(); ?>/?download_invoice=true&amp;attendee_id=<?php echo $data->attendee->id ?>&amp;registration_id=<?php echo $data->attendee->registration_id ?>" >
 			<input class="print_button noPrint" type="submit" value=" Download PDF " />
 		</form>
+		<div class="clear"></div>
 	</div>
 
 </body>
