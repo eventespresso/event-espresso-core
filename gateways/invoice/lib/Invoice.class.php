@@ -13,13 +13,17 @@ class Invoice {
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 		$REG = EEM_Registration::instance();
 		$TXN = EEM_Transaction::instance();
-		$this->registration = $REG->get_registration(array('REG_url_link' => $url_link));
-		$this->transaction = $TXN->get_transaction($this->registration->transaction_ID());
-		$this->session_data = $this->transaction->session_data();
-		$this->invoice_settings = $this->session_data['gateway_data']['payment_settings']['invoice'];
+		if ( $this->registration = $REG->get_registration(array('REG_url_link' => $url_link))) {
+			$this->transaction = $TXN->get_transaction($this->registration->transaction_ID());
+			$this->session_data = $this->transaction->session_data();
+			$this->invoice_settings = $this->session_data['gateway_data']['payment_settings']['invoice'];
+		} else {
+			echo "error message";
+		}
+
 	}
 
-	public function send_invoice() {
+	public function send_invoice( $download = FALSE ) {
 		global $org_options;
 //printr($this->registration);
 //printr($this->transaction);
@@ -42,7 +46,7 @@ class Invoice {
 										6 => "tranquility.css",
 										7 => "union.css"
 									);
-		$this->invoice_settings['invoice_css'] = $themes[5];
+		$this->invoice_settings['invoice_css'] = $themes[6];
 
 //echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
 
@@ -117,7 +121,9 @@ class Invoice {
 			echo $content;
 			exit(0);
 		}
-
+		$invoice_name = $template_args['organization'] . ' ' . __('Invoice #', 'event_espresso') . $template_args['registration_code'] . __(' for ', 'event_espresso') . $template_args['name'];
+		$invoice_name = str_replace( ' ', '_', $invoice_name );
+		
 		//Create the PDF
 		define('DOMPDF_ENABLE_REMOTE', TRUE);
 		define('DOMPDF_ENABLE_JAVASCRIPT', FALSE);
@@ -125,8 +131,8 @@ class Invoice {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . '/tpc/dompdf/dompdf_config.inc.php');
 		$dompdf = new DOMPDF();
 		$dompdf->load_html($content);
-		$dompdf->render();
-		$dompdf->stream($invoice_name . ".pdf", array("Attachment" => false));
+		$dompdf->render();		
+		$dompdf->stream($invoice_name . ".pdf", array( 'Attachment' => $download ));
 		exit(0);
 	}
 
