@@ -29,7 +29,16 @@
 	</form>
 </div>
 <div id="invoice">
-	<div id="invoice-header"> <?php echo $invoice_logo_image; ?>
+	<div id="invoice-header">
+		<div id="logo-dv"><?php echo $invoice_logo_image; ?></div>
+
+		<div id="invoice-info">
+			<h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso')?></h2>
+			<h3><b><?php _e('Date:', 'event_espresso')?></b> <span><?php echo $registration_date; ?></span></h3>
+			<h3><b><?php _e('Invoice #', 'event_espresso')?></b> <span><?php echo $registration_code; ?></span></h3>
+		</div>
+		<!-- #invoice-info -->
+		
 		<!-- hCard microformat -->
 		<div class="vcard" id="company-address">
 			<div class="fn org"><strong><?php echo $organization; ?></strong></div>
@@ -43,53 +52,62 @@
 			<!-- adr -->
 			<div class="email"><?php echo $email; ?></div>
 		</div>
-		<!-- company-address vcard --> 
+		<!-- company-address vcard -->		
 		
+		<div class="clear"></div>
 	</div>
 	<!-- #invoice-header -->
-	<div id="invoice-info">
-		<h2>Invoice <strong><?php echo $registration_code; ?></strong></h2>
-		<h3><?php echo $registration_date; ?></h3>
-	</div>
-	<!-- #invoice-info -->
+	
+
+	<div id="bill-to" class="ship-bill-to"><b><?php _e('Bill To:', 'event_espresso')?></b></div>
 	<div class="vcard" id="client-details">
 		<div class="fn"><?php echo $name ?></div>
 		<!--<div class="org">Client Company</div> -->
 		<div class="adr">
-			<div class="street-address"><?php echo $attendee_address; ?>
-			</div>
 			<!-- street-address -->
-			<div class="locality"><?php echo $attendee_city; ?>, <?php echo $attendee_state; ?></div>
+			<div class="street-address"><?php echo $attendee_address; ?></div>
+			<div class="locality"><?php echo $attendee_city; ?> <?php echo $attendee_state; ?></div>
 			<div id="client-postcode"><?php echo $attendee_zip; ?></div>
 			<!--<div id="your-tax-number">SALES TAX: 193528491</div> -->
 		</div>
 		<!-- adr --> 
 	</div>
 	<!-- #client-details vcard -->
+	
+	<div id="ship-to" class="ship-bill-to"><b><?php _e('Ship To:', 'event_espresso')?></b></div>
+	<div class="vcard" id="shipping-details">
+		<div class="fn"><?php echo $ship_name ?></div>
+		<!--<div class="org">Client Company</div> -->
+		<div class="adr">
+			<!-- street-address -->
+			<div class="street-address"><?php echo $ship_address; ?></div>
+			<div class="locality"><?php echo $ship_city; ?> <?php echo $ship_state; ?></div>
+			<div id="client-postcode"><?php echo $ship_zip; ?></div>
+			<!--<div id="your-tax-number">SALES TAX: 193528491</div> -->
+		</div>
+		<!-- adr --> 
+	</div>
+	<!-- #shipping-details vcard -->
+	
+	
 	<table id="invoice-amount">
 		<thead>
 			<tr id="header_row">
-				<th class="quantity_th"><?php _e('Quantity', 'event_espresso'); ?></th>
-				<th class="left details_th"><?php _e('Event & Attendee', 'event_espresso'); ?></th>
-				<th class="unitprice_th"><?php _e('Unit Price', 'event_espresso'); ?> (<?php echo $currency_symbol ?>)</th>
-				<th class="subtotal_th"><?php _e('Net Subtotal', 'event_espresso'); ?> (<?php echo $currency_symbol ?>)</th>
+				<th class="quantity_th"><span class=""><?php _e('Qty', 'event_espresso'); ?></span></th>
+				<th class="left event_th"><?php _e('Event', 'event_espresso'); ?></th>
+				<th class="left ticket_th"><?php _e('Ticket', 'event_espresso'); ?></th>
+				<th class="left datetime_th"><?php _e('Date & Time', 'event_espresso'); ?></th>
+				<th class="left attendee_th"><?php _e('Attendee', 'event_espresso'); ?></th>
+				<th class="subtotal_th"><?php _e('Line Total', 'event_espresso'); ?></th>
 			</tr>
 		</thead>
 		<tfoot>
-			<tr id="net_total_tr">
-				<td colspan="2">&nbsp;</td>
-				<td class="item_r"><?php _e('Net Total', 'event_espresso'); ?></td>
-				<td class="item_r"><?php echo $currency_symbol.$net_total ?></td>
-			</tr>
-			<!--<tr id="vat_tr">
-				<td colspan="2">&nbsp;</td>
-				<td class="item_r">VAT</td>
-				<td class="item_r">393.75</td>
-			</tr> -->
+			<?php echo $net_total; ?>
+			<?php //echo $discount; ?>
 			<tr id="total_tr">
-				<td colspan="2">&nbsp;</td>
-				<td class="total" id="total_currency"><span class="currency"><?php echo $currency_symbol; ?> </span> Total</td>
-				<td class="total"><?php echo $currency_symbol.$total_cost ?></td>
+				<td colspan="4">&nbsp;</td>
+				<td class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
+				<td class="total"><span class="float-left"><?php echo $currency_symbol?></span><?php echo $total_cost ?></td>
 			</tr>
 		</tfoot>
 		<tbody>
@@ -99,13 +117,13 @@
 	</table>
 	<!-- invoice-amount -->
 	<div id="invoice-other">
-		<h2><?php _e('Other Information', 'event_espresso'); ?></h2>
+		<h3><?php _e('Other Information', 'event_espresso'); ?></h3>
 		<div id="company-reg-number"><strong>Company Registration Number:</strong> 9273109</div>
 		<div id="contract-number"><strong>Contract/PO:</strong> PO 87227643</div>
 	</div>
 	<!-- invoice-other -->
 	<div id="payment-details">
-		<h2><?php _e('Payment Details', 'event_espresso'); ?></h2>
+		<h3><?php _e('Payment Details', 'event_espresso'); ?></h3>
 		<div id="bank_name">Bank Name</div>
 		<div id="sort-code"><strong>Bank/Sort Code:</strong> 32-75-97</div>
 		<div id="account-number"><strong>Account Number:</strong> 28270761</div>

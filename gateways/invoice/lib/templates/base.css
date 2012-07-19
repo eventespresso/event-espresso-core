@@ -18,3 +18,18 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 	font-size:14px;
 	float:right;
 }
+#invoice-hdr { margin:0!important; font-size:24pt!important; font-weight:bold!important; opacity:.1; }
+
+#invoice-amount .quantity_th{/*width:4.5%!important;*/}
+#invoice-amount .event_th{/*width:25%*/}
+#invoice-amount .ticket_th{/*width:22.5%*/}
+#invoice-amount .datetime_th{/*width:22.5%*/}
+#invoice-amount .attendee_th{/*width:16%*/}
+#invoice-amount .subtotal_th{/*width:12%!important;*/ text-align:right}
+
+#comments{clear:both; padding-top:1cm!important; line-height:1.2em; }
+
+.small-text { font-size:.8em; }
+.float-left { float:left; }
+.float-right { float:right; }
+.clear { clear:both; }

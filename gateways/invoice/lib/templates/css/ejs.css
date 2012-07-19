@@ -30,13 +30,16 @@ div#company-address strong { color:#fff }
 #invoice { *padding-bottom:0;} /* Hack for IE6 and 7 */
 #invoice-header { padding:1cm 0 }
 #invoice-header h1 { float:left; width:350px; color:#000; margin:5px 0 0 0 }
-#invoice-header .logo { float:left }
-#invoice-header #company-address { margin:-1cm 0 0 0; float:right; padding:20px; width:210px; clear:right; background:#000 }
+#logo-dv { float:left; width:150px; height:150px; padding:1px; margin:0 20px 0 0; }
+#invoice-header .logo { /*display:block; float:left; margin:0 20px 0 0;*/ }
+#company-address { width:57.5%; height:150px; margin:-1cm 0 0 -1cm;  padding:1cm;  background:#000; }
 #invoice-header #company-address div.org { font-size:14pt; font-weight:bold }
 #invoice-blank-header { margin-top: 1.6cm }
-#client-details { padding-top:10px; float:left; width:330px; margin-top:20px; margin-bottom:20px }
+.ship-bill-to { float:left; width:10%;padding:0.7cm 0 20px;}
+#client-details, #shipping-details {float:left;width:40%;padding:0.7cm 0 20px;}  
+
 #client-details div.org { font-size:14pt; font-weight:bold }
-#invoice-info { width:250px; float:right; clear:both;margin-top:20px;margin-bottom:20px }
+#invoice-info { float:right;margin-top:20px;margin-bottom:20px }
 #invoice-info th { text-align:right }
 #invoice-info h2 { margin-bottom: 0px; text-transform:uppercase; font-size:14pt }
 #invoice-info h3 { margin: 0px 0 0 0px }
@@ -64,11 +67,11 @@ div#company-address strong { color:#fff }
 #invoice-amount td.item_l { text-align:left; white-space:normal }
 #invoice-amount td.total { text-align:right; font-weight:bold }
 
-#invoice-amount .details_th { width:44% }
+/*#invoice-amount .details_th { width:44% }
 #invoice-amount .details_notax_th { width:52% }
 #invoice-amount .quantity_th { width:13% }
 #invoice-amount .subtotal_th { width:18%; text-align:right }
 #invoice-amount .unitprice_th { width:17%; text-align:right }
-#invoice-amount .salestax_th { width:8%; text-align:center }
+#invoice-amount .salestax_th { width:8%; text-align:center }*/
 
 #invoice-amount tr#discount_tr, #invoice-amount tr#net_total_tr, #invoice-amount tr#vat_tr { color: #777 }

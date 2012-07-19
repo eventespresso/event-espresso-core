@@ -29,11 +29,13 @@ Created by Olly Headey
 #invoice-header{margin-top:1.5cm; border-bottom:1px solid #a10000;padding-bottom:10px; overflow:hidden}
 * html #invoice-header {height:1%}
 #invoice-blank-header {margin-top: 1.6cm;}
-#invoice-info{margin: 0.7cm 0 20px 0; width:55%; float:right; text-align:right;}
+#invoice-info{ margin:0 0 20px 0; width:55%; float:right; text-align:right;}
 #invoice-info #payment-terms {display:none;}
 #invoice-info #payment-due {font-style: italic;}
 #company-address {margin: 0; padding: 0; width:300px; float:right}
-#client-details {margin:0.7cm 0 20px 0cm;float:left;width:35%}   /* Positioned to appear in a standard envelope window when printed */
+.ship-bill-to { float:left; width:10%;padding:0.7cm 0 20px;}
+#client-details, #shipping-details {float:left;width:40%;padding:0.7cm 0 20px;}  
+/*#client-details {margin:0.7cm 0 20px 0cm;float:left;width:35%} */  /* Positioned to appear in a standard envelope window when printed */
 #invoice-other {text-align: right;clear:both; float: right;width:50%;margin-top:0}
 #invoice #payment-details{float:left; width:45%;margin-top:0 }
 #payment-details .sort-code, #payment-details .account-number, #payment-details .payment-reference {clear: left;}
@@ -42,7 +44,6 @@ Created by Olly Headey
 #invoice-other #comments {clear: both; margin-top: 0em; font-weight: normal; color: #a10000;}
 #invoice-other #contract-number{margin-bottom:3em}
 
-#comments{clear:both; padding-top:0.3cm}
 
 /*=========================== TABLES =========================*/
 
@@ -57,10 +58,10 @@ Created by Olly Headey
 #invoice-amount td {border-top: 1px solid #F2F2F2;}
 #invoice-amount tr#discount_tr, #invoice-amount tr#net_total_tr, #invoice-amount tr#vat_tr {color: #777;}
 
-#invoice-amount .details_th{width:46%}
+/*#invoice-amount .details_th{width:46%}
 #invoice-amount .details_notax_th{width:54%}
 #invoice-amount .quantity_th{width:13%}
 #invoice-amount .subtotal_th{width:18%; text-align:right}
 #invoice-amount .unitprice_th{width:15%; text-align:right}
-#invoice-amount .salestax_th{width:8%; text-align:center}
+#invoice-amount .salestax_th{width:8%; text-align:center}*/
 

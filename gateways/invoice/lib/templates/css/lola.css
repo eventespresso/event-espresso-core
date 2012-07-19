@@ -16,7 +16,7 @@ Created by Olly Headey
 #invoice {font-family: "Gill Sans", "Gill Sans MT", Helvetica, Arial, Verdana, sans-serif; color:#000; text-transform: none; color: #699}
 #invoice h2 {margin: 10px 0;font-size: 14pt; }
 #invoice-amount td, th {font-size: 11pt;}
-#invoice-header #company-address {clear: right; text-align: right; font-size: 11pt; line-height: 14pt; padding-top: 2em;}
+#invoice-header #company-address { text-align: left; font-size: 11pt; line-height: 14pt; padding-top: 2em;}
 #invoice-header #company-address div.org {font-size: 13pt}
 #invoice #client-details, #invoice-info  p, #invoice #invoice-other, #invoice #payment-details {font-size: 11pt; line-height: 14pt;}
 #invoice-info h2, #invoice-info h3 {margin: 0; font-weight: normal; }
@@ -34,15 +34,17 @@ Created by Olly Headey
 #invoice-other strong {font-weight: normal; float: left; width: 15em; }
 #comments {clear: both;  font-weight: bold; font-size:10pt}
 #invoice-other #contract-number{margin-bottom:3em}
-
+#invoice-hdr { position:absolute; top:1cm; right:1cm; }
 /*=========================== LAYOUT =========================*/
 
 #invoice{padding:0 1cm 1cm 1cm; }
-#invoice-header .logo {float:right;}
+#invoice-header .logo {/*float:left;*/ margin:0 20px 0 0;}
 #invoice-header{margin:1em 0 0 0; padding-bottom:10px}
 #invoice-blank-header {margin-top: 1.6cm;}
 #invoice-info{margin: 0em 0 20px 0; width: 48%; float:right; text-align:right; }
-#client-details {margin: 1em 0 20px 2.5cm;float:left;width: 35%; }
+.ship-bill-to { float:left; width:10%;padding:0.7cm 0 20px;}
+#client-details, #shipping-details {float:left;width:40%;padding:0.7cm 0 20px;}  
+/*#client-details {margin: 1em 0 20px 2.5cm;float:left;width: 35%; }*/
 #invoice-other {text-align: right;clear:both; float: right;width:50%; }
 #invoice #payment-details{float:left; width:45%; margin-top:0;}
 #invoice-amount {margin: 2em 0; clear: both; }
@@ -62,10 +64,10 @@ Created by Olly Headey
 #invoice-amount td.item_l{text-align: left;white-space: normal; padding-bottom: 14px;}
 #invoice-amount td.total{text-align: right;font-weight: bold; padding: 3px 5px 3px 5px; }
 #invoice-amount span.currency {display: none}
-
+/*
 #invoice-amount .details_th{width:54%}
 #invoice-amount .details_notax_th{width:62%}
 #invoice-amount .quantity_th{width:13%}
 #invoice-amount .subtotal_th{width:15%; text-align:right}
 #invoice-amount .unitprice_th{width:10%; text-align:right}
-#invoice-amount .salestax_th{width:8%; text-align:center} 
+#invoice-amount .salestax_th{width:8%; text-align:center} */

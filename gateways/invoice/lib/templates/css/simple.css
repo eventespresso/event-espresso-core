@@ -10,7 +10,7 @@ Created by Ed Molyneux
 #Main #invoice h2, #Main #invoice h3 {color:#000; text-transform: none;font-family: Helvetica, Arial, Verdana, sans-serif !important}
 #invoice h2 {margin: 10px 0;font-size: 14pt;}
 #invoice-amount td, th {font-size: 9pt;}
-#invoice-header #company-address {text-align: right; font-size: 11pt; line-height: 14pt;}
+#invoice-header #company-address {text-align: left; font-size: 11pt; line-height: 13pt;}
 #invoice #client-details, #invoice-info  p, #invoice #invoice-other, #invoice #payment-details {font-size: 9pt; line-height: 12pt;}
 #invoice-info h2, #invoice-info h3 {margin: 0; font-weight: normal;}
 #invoice-info h2{text-transform:uppercase}
@@ -22,13 +22,17 @@ Created by Ed Molyneux
 /*=========================== LAYOUT =========================*/
 
 #invoice{padding:0 1cm 1cm 1cm; }
-#invoice-header .logo {float:left;}
+#invoice-header .logo {float:left; margin:0 20px 0 0;}
 #invoice-header{margin-top:0.3cm; border-bottom:4px solid #000;padding-bottom:10px; overflow:hidden}
 * html #invoice-header {height:1%}
 #invoice-blank-header {margin-top: 1.6cm;}
-#company-address {margin: 0; padding: 0; width:300px; float:right}
-#invoice-info{margin: 0.7cm 0 20px 0; width:250px; float:right; text-align:right}
-#client-details {margin:0.7cm 0 20px 2.5cm;float:left;width:250px}   /* Positioned to appear in a standard envelope window when printed */
+#company-address {padding:40px 20px 20px;}
+#invoice-info{margin: 0 0 20px 0; /*width:250px;*/ float:right; text-align:right}
+#invoice-info h2{ margin:0 0 20px;font-weight:bold; }
+#invoice-info span { display:inline-block; width:135px; text-align:right; }
+.ship-bill-to { float:left; width:10%;padding:0.7cm 0 20px;}
+#client-details, #shipping-details {float:left;width:40%;padding:0.7cm 0 20px;}  
+/*#client-details {margin:0.7cm 0 20px 2.5cm;float:left;width:250px} */  /* Positioned to appear in a standard envelope window when printed */
 #invoice-other {text-align: right; float: right;width:250px; }
 #invoice #payment-details{float:left; width:250px;}
 #invoice-amount {margin: 1em 0; clear: both; }
@@ -46,9 +50,10 @@ Created by Ed Molyneux
 #invoice-amount td.item_l{text-align: left;white-space: normal;}
 #invoice-amount td.total{text-align: right;font-weight: bold}
 
-#invoice-amount .details_th{width:54%}
-#invoice-amount .details_notax_th{width:62%}
-#invoice-amount .quantity_th{width:13%}
-#invoice-amount .subtotal_th{width:15%; text-align:right}
-#invoice-amount .unitprice_th{width:10%; text-align:right}
-#invoice-amount .salestax_th{width:8%; text-align:center}
+#invoice-amount .quantity_th{width:3%}
+#invoice-amount .event_th{/*width:25%*/}
+#invoice-amount .ticket_th{/*width:22.5%*/}
+#invoice-amount .datetime_th{/*width:22.5%*/}
+#invoice-amount .attendee_th{/*width:16%*/}
+#invoice-amount .subtotal_th{width:11%; text-align:right}
+

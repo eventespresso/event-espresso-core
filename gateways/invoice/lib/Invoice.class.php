@@ -27,12 +27,32 @@ class Invoice {
 //printr($this->invoice_settings);
 		$template_args = array();
 
+//		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php' );
+//		$SSN = EE_Session::instance();
+//		$session_data = $SSN->get_session_data();
+//		$this->invoice_settings = $session_data['gateway_data']['payment_settings']['invoice'];
+//		printr( $invoice_settings, 'invoice_settings' );
+
+//		$themes = array(
+//										1 => "simple.css",
+//										2 => "bauhaus.css",
+//										3 => "ejs.css",
+//										4 => "horizon.css",
+//										5 => "lola.css",
+//										6 => "tranquility.css",
+//										7 => "union.css"
+//									);
+//		$this->invoice_settings['invoice_css'] = $themes[7];
+
+//echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
+
 		//Get the CSS file
 		if (!empty($this->invoice_settings['invoice_css'])) {
 			$template_args['invoice_css'] = $this->invoice_settings['invoice_css'];
 		} else {
 			$template_args['invoice_css'] = 'simple.css';
 		}
+
 		//Create the logo
 		if (!empty($this->invoice_settings['invoice_logo_url'])) {
 			$invoice_logo_url = $this->invoice_settings['invoice_logo_url'];
@@ -70,16 +90,19 @@ class Invoice {
 		$template_args['attendee_zip'] = empty($attendee['zip']) ? '' : stripslashes_deep($attendee['zip']);
 		$template_args['total_cost'] = $this->transaction->total();
 		$template_args['amount_pd'] = $this->transaction->paid();
+		
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
-			$template_args['net_total'] = $this->espressoInvoiceTotals("", $template_args['total_cost']);
+			$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $template_args['total_cost']);
+			
 			$difference = $template_args['amount_pd'] - $template_args['total_cost'];
 			if ($difference < 0) {
-				$text = "Discount:";
+				$text = __('Discount', 'event_espresso');
 			} else {
-				$text = "Extra:";
+				$text = __('Extra', 'event_espresso');
 			}
-			$discount = $this->espressoInvoiceTotals($text, $difference);
+			$template_args['discount'] = $this->espressoInvoiceTotals( $text, $difference );
 		}
+		
 		$template_args['currency_symbol'] = $org_options['currency_symbol'];
 		$template_args['table_output'] = $this->espressoImprovedTable();
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
@@ -203,18 +226,26 @@ class Invoice {
 	}
 
 	public function espressoImprovedTable() {
+		global $org_options;
 		$html = '';
 		$c = false;
+//		echo '<div style="font-size:1.5em">';
+//		printr( $this->session_data['cart']['REG']['items'], 'items' );
+//		echo '</div>';
 		//Data
-		foreach ($this->session_data['cart']['REG']['items'][$this->session_data['primary_attendee']['line_item_id']]['attendees'] as $attendee) {
-			//Debug:
-			//echo '<pre>'.print_r($data, true).'</pre>';
-			$html .= '<tr class="item ' . (($c = !$c) ? ' odd' : '') . '">';
-			$html .= '<td class="item_l">' . $attendee['lname'] . '</td>';
-			$html .= '<td class="item_l">' . $attendee['fname'] . '</td>';
-			$html .= '<td class="item_r">' . $attendee['email'] . '</td>';
-			$html .= '<td class="item_r">' . $attendee['price_paid'] . '</td>';
-			$html .= '</tr>';
+		foreach ($this->session_data['cart']['REG']['items'] as $line_item ) {
+			foreach ( $line_item['attendees'] as $attendee) {
+				//Debug:
+				//echo '<pre>'.print_r($data, true).'</pre>';
+				$html .= '<tr class="item ' . (($c = !$c) ? ' odd' : '') . '">';
+				$html .= '<td class="item_l">1</td>';
+				$html .= '<td class="item_l">' . $line_item['name'] . '</td>';
+				$html .= '<td class="item_l">' . $line_item['options']['price_desc'] . '</td>';
+				$html .= '<td class="item_l">' . $line_item['options']['date'] . ' @ ' . $line_item['options']['time'] . '</td>';
+				$html .= '<td class="item_l">' . $attendee['fname'] . ' ' . $attendee['lname'] . '</td>';
+				$html .= '<td class="item_r"><span class="float-left">' . $org_options['currency_symbol'] . '</span>' . $attendee['price_paid'] . '</td>';
+				$html .= '</tr>';
+			}
 		}
 		return $html;
 	}
@@ -227,9 +258,12 @@ class Invoice {
 			$minus = '-';
 			$total_cost = (-1) * $total_cost;
 		}
-		$html .= '<tr id="discount_tr"><td colspan="2">&nbsp;</td>';
+		$find = array( ' ' );
+		$replace = array( '-' );
+		$row_id = strtolower( str_replace( $find, $replace, $text ));
+		$html .= '<tr id="'.$row_id.'-tr"><td colspan="4">&nbsp;</td>';
 		$html .= '<td class="item_r">' . $text . '</td>';
-		$html .= '<td class="item_r">' . $minus . $org_options['currency_symbol'] . number_format($total_cost, 2, '.', '') . '</td>';
+		$html .= '<td class="item_r"><span class="float-left">' . $org_options['currency_symbol'] . '</span>' . $minus . number_format($total_cost, 2, '.', '') . '</td>';
 		$html .= '</tr>';
 		return $html;
 	}
