@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-<title><?php echo $organization; ?> <?php _e('Invoice for', 'event_espresso'); ?> <?php echo $name; ?> | <?php echo $primary_attendee['registration_id'] ?></title>
+<title><?php echo $organization . __(' Invoice #', 'event_espresso') . $registration_code .  __(' for ', 'event_espresso') . $name; ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Base Stylesheet do not change or remove -->
 <link rel="stylesheet" type="text/css" href="<?php echo $base_url; ?>base.css" media="screen" />

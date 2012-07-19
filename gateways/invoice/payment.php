@@ -9,7 +9,7 @@ function espresso_display_invoice() {
 	$gateways = $gateway_data['html_data']
 ?>
 			<a id="payment-gateway-button-<?php echo $gateway;?>" class="reg-page-payment-option-lnk<?php echo $gateways[ $gateway ]['css_link_class'];?>" rel="<?php echo $gateway;?>" href="<?php echo $gateways[ $gateway ]['form_url'];?>" >
-				<button type="button">Invoice</button>
+				<button type="button"><?php _e('Invoice', 'event_espresso'); ?></button>
 			</a>
 
 			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
