@@ -45,10 +45,12 @@
 						<div class="email"><?php echo $email; ?></div>
 					</div>
 				</td>
-				<td id="invoice-info">
-					<h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso')?></h2>
-					<h3><b><?php _e('Date:', 'event_espresso')?></b> <span><?php echo $registration_date; ?></span></h3>
-					<h3><b><?php _e('Invoice #', 'event_espresso')?></b> <span><?php echo $registration_code; ?></span></h3>
+				<td>
+					<div id="invoice-info">
+						<h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso')?></h2>
+						<h3><b><?php _e('Date:', 'event_espresso')?></b> <span><?php echo $registration_date; ?></span></h3>
+						<h3><b><?php _e('Invoice #', 'event_espresso')?></b> <span><?php echo $registration_code; ?></span></h3>
+					</div>
 				</td>
 			</tr>
 		</table>
