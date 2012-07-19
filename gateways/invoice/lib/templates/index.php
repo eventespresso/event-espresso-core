@@ -57,7 +57,7 @@
 		<div class="clear"></div>
 	</div>
 	<!-- #invoice-header -->
-	
+	<div class="clear"></div>
 
 	<div id="bill-to" class="ship-bill-to"><b><?php _e('Bill To:', 'event_espresso')?></b></div>
 	<div class="vcard" id="client-details">
@@ -88,6 +88,7 @@
 		<!-- adr --> 
 	</div>
 	<!-- #shipping-details vcard -->
+	<div class="clear"></div>
 	
 	
 	<table id="invoice-amount">
@@ -115,6 +116,8 @@
 			<?php echo $table_output;?>
 		</tbody>
 	</table>
+	<div class="clear"></div>
+
 	<!-- invoice-amount -->
 	<div id="invoice-other">
 		<h3><?php _e('Other Information', 'event_espresso'); ?></h3>

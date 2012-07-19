@@ -108,9 +108,10 @@ class Invoice {
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
 		//Get the HTML as an object
-		$template_content = espresso_display_template(dirname(__FILE__) . '/templates/index.php', $template_args);
+		$template_content = espresso_display_template( dirname(__FILE__) . '/templates/index.php', $template_args, TRUE );
 		$content = $this->espresso_replace_invoice_shortcodes($template_content);
 
+//$_REQUEST['html'] = 1;
 		//Check if debugging or mobile is set
 		if (!empty($_REQUEST['html'])) {
 			echo $content;
@@ -118,18 +119,19 @@ class Invoice {
 		}
 
 		//Create the PDF
-		define('DOMPDF_ENABLE_REMOTE', true);
+		define('DOMPDF_ENABLE_REMOTE', TRUE);
+		define('DOMPDF_ENABLE_JAVASCRIPT', FALSE);
+		define('DOMPDF_ENABLE_CSS_FLOAT', TRUE);
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . '/tpc/dompdf/dompdf_config.inc.php');
 		$dompdf = new DOMPDF();
 		$dompdf->load_html($content);
-		//$dompdf->set_paper('A4', 'landscape');
 		$dompdf->render();
 		$dompdf->stream($invoice_name . ".pdf", array("Attachment" => false));
 		exit(0);
 	}
 
 //Perform the shortcode replacement
-	function espresso_replace_invoice_shortcodes() {
+	function espresso_replace_invoice_shortcodes( $content ) {
 		$SearchValues = array(
 				"[invoice_css]",
 				"[invoice_logo_image]",
@@ -190,7 +192,7 @@ class Invoice {
 				$data->event_link,
 				$data->event_url,
 				//Payment details
-				$org_options['currency_symbol'] . ' ' . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => true)),
+				$org_options['currency_symbol'] . ' ' . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => TRUE)),
 				$data->attendee->price_option,
 				//Organization details
 				stripslashes_deep($org_options['organization']),
@@ -236,7 +238,7 @@ class Invoice {
 		foreach ($this->session_data['cart']['REG']['items'] as $line_item ) {
 			foreach ( $line_item['attendees'] as $attendee) {
 				//Debug:
-				//echo '<pre>'.print_r($data, true).'</pre>';
+				//echo '<pre>'.print_r($data, TRUE).'</pre>';
 				$html .= '<tr class="item ' . (($c = !$c) ? ' odd' : '') . '">';
 				$html .= '<td class="item_l">1</td>';
 				$html .= '<td class="item_l">' . $line_item['name'] . '</td>';
