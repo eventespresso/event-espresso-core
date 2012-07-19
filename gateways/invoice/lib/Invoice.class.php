@@ -33,16 +33,16 @@ class Invoice {
 //		$this->invoice_settings = $session_data['gateway_data']['payment_settings']['invoice'];
 //		printr( $invoice_settings, 'invoice_settings' );
 
-//		$themes = array(
-//										1 => "simple.css",
-//										2 => "bauhaus.css",
-//										3 => "ejs.css",
-//										4 => "horizon.css",
-//										5 => "lola.css",
-//										6 => "tranquility.css",
-//										7 => "union.css"
-//									);
-//		$this->invoice_settings['invoice_css'] = $themes[7];
+		$themes = array(
+										1 => "simple.css",
+										2 => "bauhaus.css",
+										3 => "ejs.css",
+										4 => "horizon.css",
+										5 => "lola.css",
+										6 => "tranquility.css",
+										7 => "union.css"
+									);
+		$this->invoice_settings['invoice_css'] = $themes[2];
 
 //echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
 
@@ -245,7 +245,7 @@ class Invoice {
 				$html .= '<td class="item_l">' . $line_item['options']['price_desc'] . '</td>';
 				$html .= '<td class="item_l">' . $line_item['options']['date'] . ' @ ' . $line_item['options']['time'] . '</td>';
 				$html .= '<td class="item_l">' . $attendee['fname'] . ' ' . $attendee['lname'] . '</td>';
-				$html .= '<td class="item_r"><span class="float-left">' . $org_options['currency_symbol'] . '</span>' . $attendee['price_paid'] . '</td>';
+				$html .= '<td class="item_r"><span class="crncy-sign">' . $org_options['currency_symbol'] . '</span>' . $attendee['price_paid'] . '</td>';
 				$html .= '</tr>';
 			}
 		}
@@ -265,7 +265,7 @@ class Invoice {
 		$row_id = strtolower( str_replace( $find, $replace, $text ));
 		$html .= '<tr id="'.$row_id.'-tr"><td colspan="4">&nbsp;</td>';
 		$html .= '<td class="item_r">' . $text . '</td>';
-		$html .= '<td class="item_r"><span class="float-left">' . $org_options['currency_symbol'] . '</span>' . $minus . number_format($total_cost, 2, '.', '') . '</td>';
+		$html .= '<td class="item_r"><span class="crncy-sign">' . $org_options['currency_symbol'] . '</span>' . $minus . number_format($total_cost, 2, '.', '') . '</td>';
 		$html .= '</tr>';
 		return $html;
 	}

@@ -1,11 +1,10 @@
 /* Base CSS styles DO NOT CHANGE OR REMOVE */
 
-body {margin: 0;padding: 0;font:62.5%/1.5 Helvetica, Arial, Verdana, sans-serif;background: #eee;}
+body {margin: 0!important;padding: 0!important;font:62.5%/1.5 Helvetica, Arial, Verdana, sans-serif;background: #eee;}
 ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 
-#invoice { margin: 0 12pt; width:660px;padding: 10px 20px; margin: 1em auto;border-top: 1px solid #CCC;border-left: solid 1px #CCC;border-bottom: solid 2px #888;border-right: solid 2px #888;clear:both;position:relative;overflow:hidden; background:#fff }
+#invoice { width:660px; min-height:22.5cm; margin:0 auto;overflow:hidden; background:#fff }
 
-#invoice img { border: none; }
 
 .print_button_div{
 	margin: 0 12pt; 
@@ -18,7 +17,16 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 	font-size:14px;
 	float:right;
 }
-#invoice-hdr { margin:0!important; font-size:24pt!important; font-weight:bold!important; opacity:.1; }
+
+table { border-collapse:collapse!important; width:100%!important; }
+td { vertical-align:top!important; }
+
+#invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
+/*#logo-dv, #invoice-info, #company-address { display:block; }*/
+#logo-dv { width:150px!important; }
+#logo-dv img { max-width:150px!important; border: none; }
+/*#invoice-info { width:250px!important; }
+#company-address { width:250px!important; }*/
 
 #invoice-amount .quantity_th{/*width:4.5%!important;*/}
 #invoice-amount .event_th{/*width:25%*/}
@@ -28,6 +36,10 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 #invoice-amount .subtotal_th{/*width:12%!important;*/ text-align:right}
 
 #comments{clear:both; padding-top:1cm!important; line-height:1.2em; }
+
+.aln-left { text-align:left; }
+.aln-cntr { text-align:center; }
+.aln-rght { text-align:right; }
 
 .small-text { font-size:.8em; }
 .float-left { float:left; }
