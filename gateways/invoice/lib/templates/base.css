@@ -20,6 +20,7 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 
 table { border-collapse:collapse!important; width:100%!important; }
 td { vertical-align:top!important; }
+.not-really-a-table  { border:none!important; background:#fff!important; }
 
 #invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
 /*#logo-dv, #invoice-info, #company-address { display:block; }*/
@@ -35,7 +36,7 @@ td { vertical-align:top!important; }
 #invoice-amount .attendee_th{/*width:16%*/}
 #invoice-amount .subtotal_th{/*width:12%!important;*/ text-align:right}
 
-#comments{clear:both; padding-top:1cm!important; line-height:1.2em; }
+#comments{padding-top:1cm; line-height:1.2em; }
 
 .aln-left { text-align:left; }
 .aln-cntr { text-align:center; }

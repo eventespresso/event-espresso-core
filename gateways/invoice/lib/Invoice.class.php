@@ -37,12 +37,12 @@ class Invoice {
 										1 => "simple.css",
 										2 => "bauhaus.css",
 										3 => "ejs.css",
-										4 => "horizon.css",
+										4 => "horizon.css", 
 										5 => "lola.css",
 										6 => "tranquility.css",
 										7 => "union.css"
 									);
-		$this->invoice_settings['invoice_css'] = $themes[2];
+		$this->invoice_settings['invoice_css'] = $themes[3];
 
 //echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
 

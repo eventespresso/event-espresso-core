@@ -26,7 +26,7 @@
 	</div>
 
 	<div id="invoice">
-		<table id="invoice-header">
+		<table id="invoice-header" class="not-really-a-table">
 			<tr>
 				<td id="logo-dv">
 					<?php echo $invoice_logo_image; ?>
@@ -53,7 +53,7 @@
 			</tr>
 		</table>
 		
-		<table id="bill-to-ship-to">
+		<table id="bill-to-ship-to" class="not-really-a-table">
 			<tr>
 				<td id="bill-to">
 					<?php _e('Bill To:', 'event_espresso')?>
@@ -121,26 +121,32 @@
 		</table>			
 		<!-- invoice-amount -->
 		
-		<table>
+		<table class="not-really-a-table">
 			<tr>
 				<td id="payment-details">
-					<h3><?php _e('Payment Details', 'event_espresso'); ?></h3>
-					<div id="bank_name">Bank Name</div>
-					<div id="sort-code"><strong>Bank/Sort Code:</strong> 32-75-97</div>
-					<div id="account-number"><strong>Account Number:</strong> 28270761</div>
-					<div id="iban"><strong>IBAN:</strong> 973547</div>
-					<div id="bic"><strong>BIC:</strong> 220197</div>
-					<div id="payment-reference"><strong><?php _e('Payment Reference:', 'event_espresso'); ?></strong> INV001</div>
+					<div class="wrapper">
+						<h3><?php _e('Payment Details', 'event_espresso'); ?></h3>
+						<div id="bank_name">Bank Name</div>
+						<div id="sort-code"><strong>Bank/Sort Code:</strong> 32-75-97</div>
+						<div id="account-number"><strong>Account Number:</strong> 28270761</div>
+						<div id="iban"><strong>IBAN:</strong> 973547</div>
+						<div id="bic"><strong>BIC:</strong> 220197</div>
+						<div id="payment-reference"><strong><?php _e('Payment Reference:', 'event_espresso'); ?></strong> INV001</div>
+					</div>
 				</td>
 				<td id="invoice-other">
-					<h3><?php _e('Other Information', 'event_espresso'); ?></h3>
-					<div id="company-reg-number"><strong>Company Registration Number:</strong> 9273109</div>
-					<div id="contract-number"><strong>Contract/PO:</strong> PO 87227643</div>
+					<div class="wrapper">
+						<h3><?php _e('Other Information', 'event_espresso'); ?></h3>
+						<div id="company-reg-number"><strong>Company Registration Number:</strong> 9273109</div>
+						<div id="contract-number"><strong>Contract/PO:</strong> PO 87227643</div>
+					</div>
 				</td>
 			</tr>
 			<tr>
 				<td id="comments" colspan="2">
-					<?php echo $pdf_instructions; ?>
+					<div class="wrapper">
+						<?php echo $pdf_instructions; ?>
+					</div>
 				</td>
 			</tr>
 		</table>

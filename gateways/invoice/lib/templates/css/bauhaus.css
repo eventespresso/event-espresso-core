@@ -11,7 +11,7 @@ Created by Roan Lavery
 #invoice h2, #invoice h3 {font-family: Helvetica, Arial, Verdana, sans-serif; color:#000; text-transform: none; line-height:1.2;margin-top:10px}
 #invoice #invoice-info h3 {margin: 3px 0 0 0; font-size:11pt}
 #invoice h2 {font-size:11pt}
-#company-address, #client-details, #payment-details, #invoice-other, #invoice-amount td, th,  #invoice-info {font-size:10pt}
+#bill-to-ship-to, #company-address, #client-details, #payment-details, #invoice-other, #invoice-amount td, th,  #invoice-info {font-size:10pt}
 #invoice #invoice-terms h2{margin-bottom:3px}
 #invoice #invoice-terms h3{margin-top:0;margin-bottom:5px;font-weight:normal;font-style:italic; color:#666; font-size:9pt}
 #invoice #payment-due{color:#999;font-weight:bold; font-size:10pt}
