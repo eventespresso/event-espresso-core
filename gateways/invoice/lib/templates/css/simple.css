@@ -37,8 +37,8 @@ Created by Ed Molyneux
 /*=========================== TABLES =========================*/
 
 #invoice table#invoice-amount {}
-#invoice-amount th {text-align: left;white-space: nowrap;padding: 1px 2px 0 5px; font-weight: bold;background: #FFF;border-bottom: solid 1px #444; }
-#invoice-amount tr.odd{background: #EEE;}
+#invoice-amount th {text-align: left;white-space: nowrap;padding: 1px 2px 0 5px; font-weight: bold;background-color: #FFF;border-bottom: solid 1px #444; }
+#invoice-amount tr.odd{background-color: #EEE;}
 #invoice-amount td {margin: 0;padding: 2px 5px 2px 5px; vertical-align: top;}
 #invoice-amount td.item_r{text-align: right;}
 #invoice-amount td.item_l{text-align: left;white-space: normal;}

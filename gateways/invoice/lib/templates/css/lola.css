@@ -53,9 +53,9 @@ h1,h2,h3,h4,h5,h6  {color: #699}
 /*=========================== TABLES =========================*/
 
 #invoice table#invoice-amount { border-collapse:collapse; clear:both;  width:100%;}
-#invoice-amount th {color: #fff; text-align: left;white-space: nowrap;padding: 3px 5px 3px 5px; font-weight: normal;background: #B8B885; }
+#invoice-amount th {color: #fff; text-align: left;white-space: nowrap;padding: 3px 5px 3px 5px; font-weight: normal;background-color: #B8B885; }
 #invoice-amount tr#discount_tr, #invoice-amount tr#net_total_tr, #invoice-amount tr#vat_tr {color: #699}
-#invoice-amount tr#total_tr {background: #B8B885; color: #fff; }
+#invoice-amount tr#total_tr {background-color: #B8B885; color: #fff; }
 #invoice-amount tr.item td {padding-top: 7px; padding-bottom: 7px;border-bottom: 1px solid #B8B885; }
 #invoice-amount td {margin: 0; padding:2px 5px; vertical-align: top; }
 #invoice-amount td.item_r{text-align: right;}

@@ -46,12 +46,12 @@ Created by Roan Lavery
 #invoice table { border-collapse:collapse; width:100%;font-family:"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif}
 #invoice table th {text-align:left;padding: 2px 2px 5px 2px; }
 #invoice #header_row th {color:#5F7C91; border-bottom:1px solid #3E596C}
-#invoice table tr.odd{background:#EBECEB}
+#invoice table tr.odd{background-color:#EBECEB}
 #invoice-amount td.action{border-bottom:0}
-#invoice-amount #discount_tr{background:#F8F8F8}
-#invoice-amount #net_total_tr{background:#F8F8F8}
-#invoice-amount #vat_tr{background:#F8F8F8}
-#invoice-amount #total_tr td{border-bottom:0;background:#eee}
+#invoice-amount #discount_tr{background-color:#F8F8F8}
+#invoice-amount #net_total_tr{background-color:#F8F8F8}
+#invoice-amount #vat_tr{background-color:#F8F8F8}
+#invoice-amount #total_tr td{border-bottom:0;background-color:#eee}
 #invoice-amount #vat_tr td{border-bottom:1px solid #3E596C; }
 #invoice-amount td {white-space: nowrap;margin: 0;padding: 2px; vertical-align: center; border-bottom:1px solid #ddd}
 
@@ -59,7 +59,7 @@ Created by Roan Lavery
 #invoice-amount td.item_r{text-align: right;}
 #invoice-amount td.item_l{text-align: left;white-space: normal; }
 #invoice-amount td.total{text-align: right;font-weight: bold; }
-#invoice-amount td.action{background: #FFF; width:7%;padding-right:0; white-space:nowrap;text-align:center}
+#invoice-amount td.action{background-color: #FFF; width:7%;padding-right:0; white-space:nowrap;text-align:center}
 #invoice-amount #total_currency{text-align:right;}
 
 /*#invoice-amount .details_th{width:45%}

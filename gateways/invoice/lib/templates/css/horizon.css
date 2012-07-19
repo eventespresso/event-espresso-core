@@ -32,7 +32,7 @@ Created by Roan Lavery
 #invoice{padding:0 1cm 1cm 1cm;background:#fff url(../images/horizon-greenbar.gif) left top repeat-x}
 #invoice-header{ padding-top:1cm; margin-top:10px; }
 #company-address { padding:40px 20px 20px; }
-#invoice-info { padding:20px; margin:20px; background:#F1FAE3; border:1px solid #BECEA5; z-index:10 }
+#invoice-info { padding:20px; margin:20px; background-color:#F1FAE3; border:1px solid #BECEA5; z-index:10 }
 #invoice-info th{text-align:right}
 
 #bill-to-ship-to, #invoice-amount { margin:20px 0; }
@@ -43,15 +43,15 @@ Created by Roan Lavery
 #invoice-other{margin-bottom:5mm   }
 #invoice-other h2, #payment-details h2 {margin-bottom: 1mm;}
 
-#comments .wrapper{ padding:9px 0.4cm 9px 0.4cm; margin:0; background:#F2F2F2; border:1px solid #ccc; vertical-align:bottom; line-height:1.2;zoom:1}
+#comments .wrapper{ padding:9px 0.4cm 9px 0.4cm; margin:0; background-color:#F2F2F2; border:1px solid #ccc; vertical-align:bottom; line-height:1.2;zoom:1}
 
 /*=========================== TABLES =========================*/
 
 #invoice table { border-collapse:collapse; width:100%;clear:both;}
 #invoice table th {text-align:left;padding:3px 4px}
-#invoice #header_row th{background:#67A30F; color:#fff; border-top:1px solid #67A30F}
+#invoice #header_row th{background-color:#67A30F; color:#fff; border-top:1px solid #67A30F}
 #invoice-amount td.action{border-bottom:0}
-#invoice-amount tr.odd td{background:#F2F2F2} 
+#invoice-amount tr.odd td{background-color:#F2F2F2} 
 
 #invoice-amount .quantity_th{border-left:1px solid #67A30F}
 #invoice-amount .subtotal_th{border-right:1px solid #67A30F}

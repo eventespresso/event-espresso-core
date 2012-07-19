@@ -31,23 +31,16 @@ class Invoice {
 //printr($this->invoice_settings);
 		$template_args = array();
 
-//		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php' );
-//		$SSN = EE_Session::instance();
-//		$session_data = $SSN->get_session_data();
-//		$this->invoice_settings = $session_data['gateway_data']['payment_settings']['invoice'];
-//		printr( $invoice_settings, 'invoice_settings' );
-
-		$themes = array(
-										1 => "simple.css",
-										2 => "bauhaus.css",
-										3 => "ejs.css",
-										4 => "horizon.css", 
-										5 => "lola.css",
-										6 => "tranquility.css",
-										7 => "union.css"
-									);
-		$this->invoice_settings['invoice_css'] = $themes[7];
-
+//		$themes = array(
+//										1 => "simple.css",
+//										2 => "bauhaus.css",
+//										3 => "ejs.css",
+//										4 => "horizon.css", 
+//										5 => "lola.css",
+//										6 => "tranquility.css",
+//										7 => "union.css"
+//									);
+//		$this->invoice_settings['invoice_css'] = $themes[7];
 //echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
 
 		//Get the CSS file
@@ -115,7 +108,6 @@ class Invoice {
 		$template_content = espresso_display_template( dirname(__FILE__) . '/templates/index.php', $template_args, TRUE );
 		$content = $this->espresso_replace_invoice_shortcodes($template_content);
 
-//$_REQUEST['html'] = 1;
 		//Check if debugging or mobile is set
 		if (!empty($_REQUEST['html'])) {
 			echo $content;

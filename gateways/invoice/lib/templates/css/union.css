@@ -42,13 +42,13 @@ Created by Olly Headey
 /*=========================== TABLES =========================*/
 
 #invoice table#invoice-amount { border-collapse:collapse; width:100%;clear:both;margin:1cm 0 0.4cm 0; }
-#invoice-amount th {text-align: left;white-space: nowrap;padding: 3px 5px 3px 5px; font-weight: normal;background: #F2F2F2; }
+#invoice-amount th {text-align: left;white-space: nowrap;padding: 3px 5px 3px 5px; font-weight: normal;background-color: #F2F2F2; }
 #invoice-amount td {margin: 0;padding: 4px 5px 4px 5px; vertical-align: top;}
 #invoice-amount td.item_r{text-align: right;}
 #invoice-amount td.item_l{text-align: left;white-space: normal;}
 #invoice-amount td.total{text-align: right;font-weight: bold; /*color: #a10000;*/}
-#invoice-amount td.action{background: #FFF; width:7%;padding-right:0; white-space:nowrap;text-align:center}
-#invoice-amount tr#total_tr {background: #F2F2F2;}
+#invoice-amount td.action{background-color: #FFF; width:7%;padding-right:0; white-space:nowrap;text-align:center}
+#invoice-amount tr#total_tr {background-color: #F2F2F2;}
 #invoice-amount td {border-top: 1px solid #F2F2F2;}
 #invoice-amount tr#discount_tr, #invoice-amount tr#net_total_tr, #invoice-amount tr#vat_tr {color: #777;}
 

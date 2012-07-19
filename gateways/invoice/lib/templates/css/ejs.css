@@ -33,7 +33,7 @@ div#company-address strong { color:#fff }
 
 #logo-dv { padding:.5cm 20px 0 0; margin:0 20px 0 0; }
 
-#company-address { width:57.5%; margin:0;  padding:.75cm 1cm 1cm;  background:#000; }
+#company-address { width:57.5%; margin:0;  padding:.75cm 1cm 1cm;  background-color:#000; }
 
 #bill-to-ship-to, #invoice-amount { margin:20px 0; }
 
@@ -48,17 +48,17 @@ div#company-address strong { color:#fff }
 #invoice-other h2, #payment-details h2 { margin-bottom: 1em }
 
 #comments { padding:0; }
-#comments .wrapper { padding:1cm; margin:0 -1cm 0 60%; background:#000;}
+#comments .wrapper { padding:1cm; margin:0 -1cm 0 60%; background-color:#000;}
 
 /*=========================== TABLES =========================*/
 
-#invoice-amount { border-collapse:collapse; width:100%; clear:both; background:#eee; border-right:1px solid #000; border-left:1px solid #000; border-top:1px solid #000 }
+#invoice-amount { border-collapse:collapse; width:100%; clear:both; background-color:#eee; border-right:1px solid #000; border-left:1px solid #000; border-top:1px solid #000 }
 
 #invoice table th { text-align:left;padding: 4px 5px 4px 5px }
 #invoice #header_row th{ color:#000; border-bottom:1px solid #000 }
 #invoice-amount td.action { border-bottom:0 }
 
-#invoice-amount #total_tr td { border-bottom:0; background:#000; color:#fff }
+#invoice-amount #total_tr td { border-bottom:0; background-color:#000; color:#fff }
 #invoice-amount td {white-space: nowrap;margin: 0;vertical-align: center }
 
 #invoice-amount td {margin: 0;padding: 4px 5px 4px 5px; vertical-align: top }
