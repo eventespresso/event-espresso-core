@@ -60,6 +60,36 @@
 .metabox-holder h4, .metabox-holder h5, .metabox-holder h6 {margin: 1em 0;}
 dt {font-weight: bold; margin: 15px 0 10px ;}
 
+
+.jst-left { text-align:left; }
+.jst-cntr { text-align:center; }
+.jst-rght { text-align:right; }
+
+.display-the-hidden { float:right; cursor:pointer; }
+.hide-the-displayed { float:right; cursor:pointer; }
+.display-the-hidden img, .hide-the-displayed img { position:relative; top:1px; left:-4px; }
+.display-the-hidden.no-icon, .hide-the-displayed.no-icon { background-image:none; }
+
+.big-text { font-size:.1.2em; letter-spacing:-.5px; }
+.bigger-text { font-size:1.45em; letter-spacing:-1px; }
+.huge-text { font-size:2em; letter-spacing:-2px; }
+
+.small-text { font-size:.85em; letter-spacing:.5px; line-height:1.5em; }
+.smaller-text { font-size:.7em; letter-spacing:1px; line-height:1.25em; }
+.tiny-text { font-size:.5em; letter-spacing:1px; line-height:1.25em; }
+
+.lt-grey-text { color:#999; }
+.drk-grey-text { color:#666; }
+.important-notice { font-weight:bold; color:#f59200; }
+.float-left { float:left; }
+
+/* Nicolas Gallagher's micro clearfix */
+.clearfix:before, .clearfix:after { content:""; display:table; }
+.clearfix:after { clear: both; }
+.clearfix { zoom: 1; } 
+
+input.small-text { font-size:1em; }
+
 /*___ Structure ___*/
 
 /*** 2 columns event admin area ***/

@@ -29,7 +29,7 @@ function espresso_price_manager_menu() {
 		do_meta_boxes('event-espresso_page_pricing', 'normal', null);
 	}
 	?>
-	<h2><?php _e('Global Prices', 'event_espresso'); ?>
+	<h2><?php _e('Default Prices', 'event_espresso'); ?>&nbsp;&nbsp;&nbsp;<span class="tiny-text"><?php _e('Added to New Events', 'event_espresso'); ?></span>
 		<?php
 		if (!$edit_or_add_page) {
 			$add_new_price_url = add_query_arg(array('action' => 'add_new_price'), PRC_ADMIN_URL);

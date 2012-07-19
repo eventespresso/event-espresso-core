@@ -135,40 +135,40 @@ class EE_Price_Types_List_Table extends WP_List_Table {
 	}
 
 	function column_member($item) {
-		return ($item->is_member()) ? 'Yes' : '';
+		return '<div class="jst-cntr">' . (($item->is_member()) ? 'Yes' : '') . '</div>';
 	}
 
 	function column_discount($item) {
-		return ($item->is_discount()) ? 'Yes' : '';
+		return '<div class="jst-cntr">' . (($item->is_discount()) ? 'Yes' : '') . '</div>';
 	}
 
 	function column_tax($item) {
-		return ($item->is_tax()) ? 'Yes' : '';
+		return '<div class="jst-cntr">' . (($item->is_tax()) ? 'Yes' : '') . '</div>';
 	}
 
 	function column_percent($item) {
 		global $org_options;
-		return ($item->is_percent()) ? '%' : $org_options['currency_symbol'];
+		return '<div class="jst-cntr">' . (($item->is_percent()) ? '%' : $org_options['currency_symbol']) . '</div>';
 	}
 
 	function column_global($item) {
-		return ($item->is_global()) ? 'Yes' : '';
+		return ($item->is_global()) ? '<div class="jst-cntr">Yes</div>' : '';
 	}
 	
 	function column_order($item) {
-		return $item->order();
+		return '<div class="jst-cntr">' . $item->order() . '</div>';
 	}
 
 	function get_columns() {
 		$columns = array(
 				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-				'name' => 'Name',
-				'member' => 'Members Only?',
-				'discount' => 'Discount (reduces price)',
-				'tax' => 'Applied as Tax',
-				'percent' => 'Applied as % or $',
-				'global' => 'Global Type?',
-				'order' => 'Order of Application'
+				'name' => __('Name', 'event_espresso'),
+				'member' => '<div class="jst-cntr">' . __('Members', 'event_espresso') . '<br/>' . __('Only?', 'event_espresso') . '</div>',
+				'discount' => '<div class="jst-cntr">' . __('Discount', 'event_espresso') . '<br/><span class="smaller-text">(' . __('reduces price', 'event_espresso') . ')</span>' . '</div>',
+				'tax' => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>' . __('as a Tax', 'event_espresso') . '</div>',
+				'percent' => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>' . __('as ', 'event_espresso') . '<span class="big-text">' . __('%', 'event_espresso') . '</span>' . __(' or ', 'event_espresso') . '<span class="big-text">' . __('$', 'event_espresso') . '</span></div>',
+				'global' => '<div class="jst-cntr">' . __('Add as a Default', 'event_espresso') . '<br/>' . __('Price to New Events?', 'event_espresso') . '</div>',
+				'order' => '<div class="jst-cntr">' . __('Order of', 'event_espresso') . '<br/>' . __('Application', 'event_espresso') . '</div>'
 		);
 		return $columns;
 	}
@@ -176,7 +176,7 @@ class EE_Price_Types_List_Table extends WP_List_Table {
 	function get_sortable_columns() {
 		$sortable_columns = array(
 				'name' => array('name', true), //true means its already sorted
-				'order' => array('order', false)
+			//	'order' => array('order', false)
 		);
 		return $sortable_columns;
 	}
