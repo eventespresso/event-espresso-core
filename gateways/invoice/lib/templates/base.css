@@ -3,7 +3,7 @@
 body {margin: 0!important;padding: 0!important;font:62.5%/1.5 Helvetica, Arial, Verdana, sans-serif;background: #eee;}
 ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 
-#invoice { width:660px; min-height:22.5cm; margin:0 auto;overflow:hidden; background:#fff }
+#invoice { width:660px; min-height:21.5cm; margin:0 auto;overflow:hidden; background:#fff }
 
 
 .print_button_div{
@@ -20,7 +20,7 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 
 table { border-collapse:collapse!important; width:100%!important; }
 td { vertical-align:top!important; }
-.not-really-a-table  { border:none!important; background:#fff!important; }
+.not-really-a-table  { border:none!important; }
 
 #invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
 /*#logo-dv, #invoice-info, #company-address { display:block; }*/
