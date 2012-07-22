@@ -85,12 +85,22 @@ class Invoice {
 		$template_args['attendee_city'] = empty($attendee['city']) ? '' : stripslashes_deep($attendee['city']);
 		$template_args['attendee_state'] = empty($attendee['state']) ? '' : stripslashes_deep($attendee['state']);
 		$template_args['attendee_zip'] = empty($attendee['zip']) ? '' : stripslashes_deep($attendee['zip']);
+		
+		$template_args['ship_name'] = $template_args['name'];
+		$template_args['ship_address'] = $template_args['attendee_address'];
+		$template_args['ship_city'] = $template_args['attendee_city'];
+		$template_args['ship_state'] = $template_args['attendee_state'];
+		$template_args['ship_zip'] = $template_args['attendee_zip'];
+		
 		$template_args['total_cost'] = $this->transaction->total();
 		$template_args['amount_pd'] = $this->transaction->paid();
 		
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
-			$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $template_args['total_cost']);
-			
+			$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->session_data['cart']['REG']['sub_total']);
+			foreach ($this->session_data['taxes'] as $tax) {
+				$template_args['net_total'] .= $this->espressoInvoiceTotals( $tax['name'], $tax['amount']);
+			}
+						
 			$difference = $template_args['amount_pd'] - $template_args['total_cost'];
 			if ($difference < 0) {
 				$text = __('Discount', 'event_espresso');
@@ -105,8 +115,8 @@ class Invoice {
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
 		//Get the HTML as an object
-		$template_content = espresso_display_template( dirname(__FILE__) . '/templates/index.php', $template_args, TRUE );
-		$content = $this->espresso_replace_invoice_shortcodes($template_content);
+		$content = espresso_display_template( dirname(__FILE__) . '/templates/index.php', $template_args, TRUE );
+		//$content = $this->espresso_replace_invoice_shortcodes($template_content);
 
 		//Check if debugging or mobile is set
 		if (!empty($_REQUEST['html'])) {
