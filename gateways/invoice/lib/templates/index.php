@@ -1,14 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-<title><?php echo $organization . __(' Invoice #', 'event_espresso') . $registration_code .  __(' for ', 'event_espresso') . $name; ?></title>
+<title>[organization]<?php __(' Invoice #', 'event_espresso'); ?>[registration_code]<?php __(' for ', 'event_espresso'); ?>[name]</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Base Stylesheet do not change or remove -->
-<link rel="stylesheet" type="text/css" href="<?php echo $base_url; ?>base.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="[base_url]base.css" media="screen" />
 <!-- Print Style Sheet -->
-<link rel="stylesheet" type="text/css" href="<?php echo $base_url; ?>css/print/<?php echo str_replace('.css', '',$invoice_css); ?>_print.css" media="print" />
+<link rel="stylesheet" type="text/css" href="[base_url]css/print/<?php echo str_replace('.css', '',$invoice_css); ?>_print.css" media="print" />
 <!-- Primary Style Sheet -->
-<link rel="stylesheet" type="text/css" href="<?php echo $base_url; ?>css/<?php echo $invoice_css; ?>" />
+<link rel="stylesheet" type="text/css" href="[base_url]css/<?php echo $invoice_css; ?>" />
 <!-- Make sure the buttons don't print -->
 <style type="text/css">
 @media print{ .noPrint{display:none!important;height:0!important; width:0!important;} }
@@ -20,7 +20,7 @@
 		<form>
 			<input class="print_button noPrint" type="button" value=" Print Invoice " onclick="window.print();return false;" />
 		</form>
-		<form method="post" action="<?php echo $download_link; ?>" >
+		<form method="post" action="[download_link]" >
 			<input class="print_button noPrint" type="submit" value=" Download PDF " />
 		</form>
 		<div class="clear"></div>
@@ -30,27 +30,27 @@
 		<table id="invoice-header" class="not-really-a-table">
 			<tr>
 				<td id="logo-dv">
-					<?php echo $invoice_logo_image; ?>
+					[invoice_logo_image]
 				</td>
 				<td>
 					<div class="vcard" id="company-address">
-						<div class="fn org"><strong><?php echo $organization; ?></strong></div>
+						<div class="fn org"><strong>[organization]</strong></div>
 						<div class="adr">
-							<div class="street-address"><?php echo $street; ?>
+							<div class="street-address">[street]
 							</div>
 							<!-- street-address -->
-							<div class="locality"><?php echo $city; ?>, <?php echo $state; ?></div>
-							<div id="company-postcode"><span class="postal-code"><?php echo $zip; ?></span></div>
+							<div class="locality">[city], [state]</div>
+							<div id="company-postcode"><span class="postal-code">[zip]</span></div>
 						</div>
 						<!-- adr -->
-						<div class="email"><?php echo $email; ?></div>
+						<div class="email">[email]</div>
 					</div>
 				</td>
 				<td>
 					<div id="invoice-info">
 						<h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso')?></h2>
-						<h3><b><?php _e('Date:', 'event_espresso')?></b> <span><?php echo $registration_date; ?></span></h3>
-						<h3><b><?php _e('Invoice #', 'event_espresso')?></b> <span><?php echo $registration_code; ?></span></h3>
+						<h3><b><?php _e('Date:', 'event_espresso')?></b> <span>[registration_date]</span></h3>
+						<h3><b><?php _e('Invoice #', 'event_espresso')?></b> <span>[registration_code]</span></h3>
 					</div>
 				</td>
 			</tr>
@@ -63,7 +63,7 @@
 				</td>
 				<td colspan="4">
 					<div class="vcard" id="client-details">
-						<div class="fn"><?php echo $name ?></div>
+						<div class="fn">[name]</div>
 						<!--<div class="org">Client Company</div> -->
 						<div class="adr">
 							<!-- street-address -->

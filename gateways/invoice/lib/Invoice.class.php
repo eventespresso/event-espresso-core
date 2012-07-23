@@ -115,8 +115,8 @@ class Invoice {
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
 		//Get the HTML as an object
-		$content = espresso_display_template( dirname(__FILE__) . '/templates/index.php', $template_args, TRUE );
-		//$content = $this->espresso_replace_invoice_shortcodes($template_content);
+		$template_content = espresso_display_template( dirname(__FILE__) . '/templates/index.php', $template_args, TRUE );
+		$content = $this->espresso_replace_invoice_shortcodes($template_content);
 
 		//Check if debugging or mobile is set
 		if (!empty($_REQUEST['html'])) {
@@ -140,87 +140,47 @@ class Invoice {
 
 //Perform the shortcode replacement
 	function espresso_replace_invoice_shortcodes( $content ) {
+		global $org_options;
+		//Create the logo
+		if (!empty($this->invoice_settings['invoice_logo_url'])) {
+			$invoice_logo_url = $this->invoice_settings['invoice_logo_url'];
+		} else {
+			$invoice_logo_url = $org_options['default_logo_url'];
+		}
+		if (!empty($invoice_logo_url)) {
+			$image_size = getimagesize($invoice_logo_url);
+			$invoice_logo_image = '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" /> ';
+		} else {
+			$invoice_logo_image = '';
+		}
 		$SearchValues = array(
-				"[invoice_css]",
+				"[organization]",
+				"[registration_code]",
+				"[name]",
+				"[base_url]",
+				"[download_link]",
 				"[invoice_logo_image]",
-				"[base_dir]",
-				"[registration_id]",
-				"[registration_date]",
-				"[fname]",
-				"[lname]",
-				"[address]",
-				"[address2]",
+				"[street]",
 				"[city]",
 				"[state]",
 				"[zip]",
-				"[event_name]",
-				"[description]",
-				"[event_link]",
-				"[event_url]",
-				//Payment details
-				"[cost]",
-				"[invoice_type]",
-				//Organization details
-				"[company]",
-				"[co_add1]",
-				"[co_add2]",
-				"[co_city]",
-				"[co_state]",
-				"[co_zip]",
-				"[contact_email]",
-				//Dates
-				"[start_date]",
-				"[start_time]",
-				"[end_date]",
-				"[end_time]",
-				"[invoice_date]",
-				//invoice data
-				"[invoice_content]",
-				//Logo
-				"[invoice_logo_url]",
-				"[invoice_logo_image]",
+				"[email]",
+				"[registration_date]"
 		);
 
 		$ReplaceValues = array(
-				//Attendee/Event Information
-				$this->registration->attendee_ID(),
-				$this->registration->event_ID(),
-				$data->event->event_identifier,
-				$data->attendee->registration_id,
-				event_date_display($data->attendee->registration_date),
-				stripslashes_deep($data->attendee->fname),
-				stripslashes_deep($data->attendee->lname),
-				stripslashes_deep($data->attendee->address),
-				stripslashes_deep($data->attendee->address2),
-				stripslashes_deep($data->attendee->city),
-				stripslashes_deep($data->attendee->state),
-				stripslashes_deep($data->attendee->zip),
-				stripslashes_deep($data->event->event_name),
-				stripslashes_deep($data->event->event_desc),
-				$data->event_link,
-				$data->event_url,
-				//Payment details
-				$org_options['currency_symbol'] . ' ' . espresso_attendee_price(array('registration_id' => $data->attendee->registration_id, 'session_total' => TRUE)),
-				$data->attendee->price_option,
-				//Organization details
 				stripslashes_deep($org_options['organization']),
-				$org_options['organization_street1'],
-				$org_options['organization_street2'],
+				$this->registration->reg_code(),
+				stripslashes_deep($this->session_data['primary_attendee']['fname'] . ' ' . $this->session_data['primary_attendee']['lname']),
+				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/' : EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/lib/templates/',
+				home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
+				$invoice_logo_image,
+				empty($org_options['organization_street2']) ? $org_options['organization_street1'] : $org_options['organization_street1'] . '<br>' . $org_options['organization_street2'],
 				$org_options['organization_city'],
 				$org_options['organization_state'],
 				$org_options['organization_zip'],
 				$org_options['contact_email'],
-				//Dates
-				event_date_display($data->attendee->start_date),
-				event_date_display($data->attendee->event_time, get_option('time_format')),
-				event_date_display($data->attendee->end_date),
-				event_date_display($data->attendee->end_time, get_option('time_format')),
-				event_date_display(date(get_option('date_format'))),
-				//invoice data
-				wpautop(stripslashes_deep(html_entity_decode($data->event->invoice_content, ENT_QUOTES))),
-				//Logo
-				$data->event->invoice_logo_url,
-				$data->event->invoice_logo_image, //Returns the logo wrapped in an image tag
+				date_i18n(get_option('date_format'), $this->registration->date())
 		);
 
 		return str_replace($SearchValues, $ReplaceValues, $content);

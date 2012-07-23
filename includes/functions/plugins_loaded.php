@@ -302,7 +302,6 @@ function espresso_load_reg_page_files() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/attendee_functions.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
 	event_espresso_require_gateway('PaymentGateway.php');
-	event_espresso_require_gateway('gateway_display.php');
 }
 add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_files');
 

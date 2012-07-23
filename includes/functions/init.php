@@ -152,7 +152,6 @@ function espresso_admin_init() {
 
 
 				case 'payment_gateways' :
-					add_action('admin_init', 'espresso_require_gateway_files');
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');

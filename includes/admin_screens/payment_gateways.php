@@ -2,7 +2,11 @@
 
 //This is the payment gateway settings page.
 function event_espresso_gateways_options() {
-	global $espresso_premium, $EE_Session;
+	global $espresso_premium, $EE_Session, $EEM_Gateways;
+	if (!defined('ESPRESSO_GATEWAYS')) {
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+		$EEM_Gateways = EEM_Gateways::instance();
+	}
 	if (isset($_POST['_wp_http_referer']) || in_array(TRUE, $_GET)) {
 		$EE_Session->set_session_data(
 						array(

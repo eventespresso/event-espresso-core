@@ -107,7 +107,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function load_classes() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $EE_Cart;
+		global $EE_Cart, $EEM_Gateways, $EE_Session;
 		if (!defined('ESPRESSO_CART')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php');
 			// instantiate the class object
@@ -115,6 +115,11 @@ class EE_Single_Page_Checkout {
 		}
 		// make all cart properties and methods accessible via $this->cart ex: $this->cart->data();
 		$this->cart = $EE_Cart;
+		if (!defined('ESPRESSO_GATEWAYS')) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+			$EEM_Gateways = EEM_Gateways::instance();
+		}
+		$this->gateways = $EEM_Gateways;
 	}
 
 	/**
@@ -317,50 +322,12 @@ class EE_Single_Page_Checkout {
 				break;
 		}
 
-		$session_data = $EE_Session->get_session_data();
-		if ( empty($session_data['gateway_data']['active_gateways']) || empty($session_data['gateway_data']['payment_settings'])) {
-			$gateway_data['active_gateways'] = get_user_meta($espresso_wp_user, 'active_gateways', true);
-			$gateway_data['payment_settings'] = get_user_meta($espresso_wp_user, 'payment_settings', true);
-		} else {
-			$gateway_data = $session_data['gateway_data'];
-		}
-
 		// has gateway been set by no-js user?
 		if (isset($_GET['payment'])) {
-			$gateway_data['selected_gateway'] = sanitize_key($_GET['payment']);
-			$gateway_data['type'] = $gateway_data['payment_settings'][$gateway_data['selected_gateway']]['type'];
-			$gateway_data['hide_other_gateways'] = TRUE;
-		} elseif (empty($gateway_data['selected_gateway'])) {
-			$gateway_data['selected_gateway'] = null;
-			$gateway_data['hide_other_gateways'] = FALSE;
-			$gateway_data['type'] = FALSE;
+			$this->gateways->set_selected_gateway(sanitize_key($_GET['payment']));
 		}
-		$hide_other_gateways = $gateway_data['hide_other_gateways'];
-		$selected_gateway = $gateway_data['selected_gateway'];
-
-		$template_args['selected_gateway'] = $selected_gateway;
-		
-		// get active gateways for this event
-		foreach ( $gateway_data['active_gateways'] as $gateway => $path ) {
-			$gateway = sanitize_key($gateway);
-			$gateways[ $gateway ]['form_url'] = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' => $gateway  ), $this->_reg_page_base_url);
-			// set display mode for gateway form
-			if ( $gateway == $selected_gateway ) {
-				$gateways[ $gateway ]['css_class'] = '';
-				$gateways[ $gateway ]['selected'] = TRUE;
-				$gateways[ $gateway ]['css_link_class'] = '';
-
-			} else {
-				$gateways[ $gateway ]['css_class'] = 'hidden';
-				$gateways[ $gateway ]['selected'] = FALSE;
-				$gateways[ $gateway ]['css_link_class'] = $hide_other_gateways ? ' hidden' : '';
-			}
-
-			// if
-		}
-		// printr( $gateways, '$gateways' );
-		$gateway_data['html_data'] = $gateways;
-		$EE_Session->set_session_data($gateway_data, 'gateway_data');
+		$template_args['selected_gateway'] = $this->gateways->selected_gateway();
+		$this->gateways->set_form_url($this->_reg_page_base_url);
 		if (empty($session_data['billing_info'])) {
 			$EE_Session->set_session_data(array('fill' => TRUE), 'billing_info');
 		}
@@ -909,26 +876,23 @@ class EE_Single_Page_Checkout {
 
 		} else { // PAID EVENT !!!  BOO  : (
 
-			$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
-
 			// check for off site payment
 			if ( isset( $_POST['selected_gateway'] )) {
-				$gateway_data['selected_gateway'] = sanitize_text_field( $_POST['selected_gateway'] );
-				$gateway_data['type'] = $gateway_data['payment_settings'][$gateway_data['selected_gateway']]['type'];
-				$EE_Session->set_session_data($gateway_data, 'gateway_data');
+				$this->gateways->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
 			}
 
+			$type = $this->gateways->type();
 			// check for off site payment
-			if ($gateway_data['type'] == 'off-site') {
+			if ($type == 'off-site') {
 			
 				// off site payment
 				$success_msg = __('Off-site gateway choosen');
 				
-			} elseif ($gateway_data['type'] == 'off-line') {
+			} elseif ($type == 'off-line') {
 				
 				$success_msg = __('Off-line gateway choosen');
 				
-			} elseif ($gateway_data['type'] == 'on-site') { 
+			} elseif ($type == 'on-site') { 
 			
 				// on site payment
 				// load default billing inputs
@@ -936,7 +900,7 @@ class EE_Single_Page_Checkout {
 
 						'type' => 'on-site',
 
-						'gateway' => $gateway_data['selected_gateway'],
+						'gateway' => $this->gateways->selected_gateway(),
 
 						'reg-page-billing-fname' => array(
 								'db-col' => 'fname',
@@ -1085,12 +1049,6 @@ class EE_Single_Page_Checkout {
 
 				// End of on-site payment
 				
-			} else {
-				// off-line payment
-				
-				
-				
-				
 			}
 
 			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response') || $continue) {
@@ -1153,7 +1111,6 @@ class EE_Single_Page_Checkout {
 		//printr( $session_data, '$session_data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );
 
 		$billing_info = $session_data['billing_info'];
-		$gateway_data = $session_data['gateway_data'];
 		$reg_info = $session_data['cart']['REG'];
 		$template_args = array();
 		$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
@@ -1195,8 +1152,9 @@ class EE_Single_Page_Checkout {
 		if ($billing_info == 'no payment required') {
 			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
 		} else {
-			if ($gateway_data['type']=='off-site' || $gateway_data['type']=='off-line') {
-				$template_args['billing']['gateway'] = $gateway_data['payment_settings'][$gateway_data['selected_gateway']]['display_name'];
+			$type = $this->gateways->type();
+			if ($type=='off-site' || $type=='off-line') {
+				$template_args['billing']['gateway'] = $this->gateways->display_name();
 			} else {
 				$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
 				$template_args['billing']['last name'] = $billing_info['reg-page-billing-lname']['value'];
@@ -1438,16 +1396,13 @@ class EE_Single_Page_Checkout {
 
 			} else {
 				// attempt to perform transaction via payment gateway
-				$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
-				$selected_gateway = $gateway_data['selected_gateway'];
-				$gateway_path = $gateway_data['active_gateways'][$selected_gateway];
-				require_once($gateway_path . "/return.php");
-				do_action('action_hook_espresso_gateway_process_step_3', $EE_Session);
+
+				do_action('action_hook_espresso_gateway_process_step_3');
 				
+				$type = $this->gateways->type();
 				// process on-site payments
-				if ( $this->_ajax == 0 && $gateway_data['type'] == 'on-site') {
-					$gateway_data['type'] = 'onsite_noajax';
-					$EE_Session->set_session_data($gateway_data, 'gateway_data');
+				if ( $this->_ajax == 0 && $type == 'on-site') {
+					$this->gateways->set_noajax();
 					if (!$this->_return_page_url) {
 						$return_page_id = $org_options['return_url'];
 						// get permalink for thank you page
@@ -1459,10 +1414,10 @@ class EE_Single_Page_Checkout {
 				}
 				
 				// process off-site payments
-				if ($gateway_data['type'] == 'off-site' || $gateway_data['type'] == 'off-line') {
-					$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+				if ($type == 'off-site' || $type == 'off-line') {
 					if ($this->_ajax == 0) {
-						echo $gateway_data['off-site-form']['pre-form'] . $gateway_data['off-site-form']['form'] . $gateway_data['off-site-form']['post-form'];
+						$form_data = $this->gateways->off_site_form();
+						echo $form_data['pre-form'] . $form_data['form'] . $form_data['post-form'];
 						die();
 					} else {
 						$this->send_ajax_response('Redirecting to Off-site Payment Provider', FALSE, '_redirect_to_off_site');
@@ -1500,11 +1455,10 @@ class EE_Single_Page_Checkout {
 
 		// grab session data
 		$session = $EE_Session->get_session_data();
-//		printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+		//printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 		$transaction = $session['transaction'];
 		$txn_results = $session['txn_results'];
-		$gateway_data = $session['gateway_data'];
 		// $txn_results['txn_results'] = $session;
 
 		$txn_results['amount'] = isset($txn_results['amount']) ? $txn_results['amount'] : 0.00;
@@ -1550,7 +1504,7 @@ class EE_Single_Page_Checkout {
 																	$transaction->datetime(), 
 																	$txn_results['method'], 
 																	$txn_results['amount'],
-																	$gateway_data['active_gateways'][ $gateway_data['selected_gateway'] ]['display_name'],
+																	$this->gateways->display_name(),
 																	$txn_results['response_msg'],
 																	$txn_results['transaction_id'],
 																	NULL,
@@ -1668,11 +1622,10 @@ class EE_Single_Page_Checkout {
 
 
 	private function _redirect_to_off_site($args, $success_msg) {
-		global $EE_Session;
-		$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+		$form_data =  $this->gateways->off_site_form();
 		$response_data = array(
 				'success' => 'Forwarding to Off-Site Payment Provider',
-				'return_data' => array('off-site-redirect' => $gateway_data['off-site-form']['form'])
+				'return_data' => array('off-site-redirect' => $form_data['form'])
 		);
 		echo json_encode($response_data);
 		die();

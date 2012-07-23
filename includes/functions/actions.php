@@ -71,33 +71,6 @@ function espresso_site_license() {
 
 add_action('action_hook_espresso_require_admin_files', 'espresso_site_license');
 
-function espresso_require_gateway_files() {
-	global $active_gateways, $espresso_wp_user, $espresso_premium;
-	$active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', true);
-	$gateways_glob = glob(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/*/settings.php");
-	$upload_gateways_glob = glob(EVENT_ESPRESSO_GATEWAY_DIR . '*/settings.php');
-	if (!is_array($upload_gateways_glob))
-		$upload_gateways_glob = array();
-	foreach ($upload_gateways_glob as $upload_gateway) {
-		$pos = strpos($upload_gateway, 'gateways');
-		$sub = substr($upload_gateway, $pos);
-		foreach ($gateways_glob as &$gateway) {
-			$pos2 = strpos($gateway, 'gateways');
-			$sub2 = substr($gateway, $pos2);
-			if ($sub == $sub2) {
-				$gateway = $upload_gateway;
-			}
-		}
-		unset($gateway);
-	}
-	$gateways = array_merge($upload_gateways_glob, $gateways_glob);
-	$gateways = array_unique($gateways);
-
-	foreach ($gateways as $gateway) {
-		require_once($gateway);
-	}
-}
-
 function espresso_admin_page_footer() {
 	?>
 	<script type="text/javascript" charset="utf-8">
