@@ -87,7 +87,17 @@ class EE_Single_Page_Checkout {
 		$this->load_classes();
 		$this->set_templates();
 	
-		if ( isset( $_REQUEST['e_reg'] ) && ( $_REQUEST['e_reg'] == 'register' || $_REQUEST['e_reg'] == 'event_queue' ) && !is_admin() ) {
+		$e_reg_pages = array(
+				'register',
+				'process_reg_step_1',
+				'process_reg_step_2',
+				'process_reg_step_3',
+				'registration_complete',
+				'event_queue'
+				);
+		if ( isset( $_REQUEST['e_reg'] ) 
+						&& ( in_array($_REQUEST['e_reg'], $e_reg_pages) ) 
+						&& !is_admin() ) {
 	
 			add_action('init', array(&$this, 'load_css'), 20);
 			add_action('init', array(&$this, 'load_js'), 20);
@@ -324,7 +334,11 @@ class EE_Single_Page_Checkout {
 
 		// has gateway been set by no-js user?
 		if (isset($_GET['payment'])) {
-			$this->gateways->set_selected_gateway(sanitize_key($_GET['payment']));
+			if ($this->gateways->selected_gateway() != $_GET['payment']) {
+				$this->gateways->set_selected_gateway(sanitize_text_field($_GET['payment']));
+			} else {
+				$this->gateways->unset_selected_gateway(sanitize_text_field($_GET['payment']));
+			}
 		}
 		$template_args['selected_gateway'] = $this->gateways->selected_gateway();
 		$this->gateways->set_form_url($this->_reg_page_base_url);

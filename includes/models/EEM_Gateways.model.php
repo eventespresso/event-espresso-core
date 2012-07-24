@@ -357,7 +357,7 @@ Class EEM_Gateways {
 				'hide_other_gateways' => $this->_hide_other_gateways,
 				'off_site_form' => $this->_off_site_form,
 				'ajax' => $this->_ajax,
-				'payment_gateways' => $this->_payment_gateways,
+				'payment_settings' => $this->_payment_settings,
 				'active_gateways' => $this->_active_gateways
 						), 'gateway_data');
 		return TRUE;

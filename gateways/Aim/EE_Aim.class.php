@@ -299,7 +299,6 @@ Class EE_Aim extends EE_Gateway {
 
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
 		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_aim'));
-		$gateway = 'aim';
 		$use_sandbox = $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'];
 		if ($use_sandbox) {
 			$test_creds = '
@@ -311,11 +310,11 @@ Class EE_Aim extends EE_Gateway {
 		}
 		?>
 
-		<a id="payment-gateway-button-<?php echo $gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $gateway; ?>" href="<?php echo $this->_form_url; ?>" >
+		<a id="payment-gateway-button-<?php echo $this->_gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $this->_gateway; ?>" href="<?php echo $this->_form_url; ?>" >
 			<img src="<?php echo $this->_payment_settings['button_url']; ?>" alt="Pay using Authorize.Net" />
 		</a>
 
-		<div id="reg-page-billing-info-<?php echo $gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
+		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 
 
 		<?php echo $test_creds; ?>
