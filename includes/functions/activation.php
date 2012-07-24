@@ -461,22 +461,24 @@ function events_data_tables_install() {
 
 
 	$table_name = 'esp_payment';
-	$sql = "  PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  TXN_ID int(10) unsigned DEFAULT NULL,
-				  STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
-				  PAY_timestamp int(11) NOT NULL,
-				  PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
-				  PAY_amount decimal(10,2) DEFAULT NULL,
-				  PAY_gateway varchar(32) COLLATE utf8_bin DEFAULT NULL,
-				  PAY_gateway_response text COLLATE utf8_bin,
-				  PAY_txn_id_chq_nmbr varchar(32) COLLATE utf8_bin DEFAULT NULL,
-				  PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
-				  PAY_via_admin tinyint(1) NOT NULL DEFAULT '0',
-				  PAY_details text COLLATE utf8_bin,
-						PRIMARY KEY  (PAY_ID),
-							KEY TXN_ID (TXN_ID),
-							KEY PAY_timestamp (PAY_timestamp)";
+	$sql = "PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+				TXN_ID int(10) unsigned DEFAULT NULL,
+				STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
+				PAY_timestamp int(11) NOT NULL,
+				PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				PAY_amount decimal(10,2) DEFAULT NULL,
+				PAY_gateway varchar(32) COLLATE utf8_bin DEFAULT NULL,
+				PAY_gateway_response text COLLATE utf8_bin,
+				PAY_txn_id_chq_nmbr varchar(32) COLLATE utf8_bin DEFAULT NULL,
+				PAY_po_number varchar(32) COLLATE utf8_bin DEFAULT NULL,
+				PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
+				PAY_via_admin tinyint(1) NOT NULL DEFAULT '0',
+				PAY_details text COLLATE utf8_bin,
+				PRIMARY KEY  (PAY_ID),
+				KEY TXN_ID (TXN_ID),
+				KEY PAY_timestamp (PAY_timestamp)";
 	event_espresso_run_install($table_name, $table_version, $sql, 'ENGINE=InnoDB ');
+
 
 
 
@@ -952,6 +954,9 @@ function events_data_tables_install() {
 	event_espresso_run_install($table_name, $table_version, $sql);
 
 }
+
+
+
 
 
 
