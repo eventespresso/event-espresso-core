@@ -167,11 +167,11 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 		$this->_payment_settings[$gateway] = $settings;
-		global $espresso_wp_user, $notices;
+		global $espresso_wp_user, $espresso_notices;
 		if (update_user_meta($espresso_wp_user, 'payment_settings', $this->_payment_settings)) {
-			$notices['updates'][] = __('Payment Settings Updated!', 'event_espresso');
+			$espresso_notices['updates'][] = __('Payment Settings Updated!', 'event_espresso');
 		} else {
-			$notices['errors'][] = __('Payment Settings were not saved! ', 'event_espresso');
+			$espresso_notices['errors'][] = __('Payment Settings were not saved! ', 'event_espresso');
 		}
 	}
 
@@ -203,11 +203,11 @@ Class EEM_Gateways {
 		}
 		if (array_key_exists($gateway, $this->_all_gateways)) {
 			$this->_active_gateways[$gateway] = $this->_all_gateways[$gateway];
-			global $espresso_wp_user;
+			global $espresso_wp_user, $espresso_notices;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
-				$notices['updates'][] = __('Gateway Activated!', 'event_espresso');
+				$espresso_notices['updates'][] = __('Gateway Activated!', 'event_espresso');
 			} else {
-				$notices['errors'][] = __('Gateway Not Activated! ', 'event_espresso');
+				$espresso_notices['errors'][] = __('Gateway Not Activated! ', 'event_espresso');
 			}
 		} else {
 			return FALSE;
@@ -220,11 +220,11 @@ Class EEM_Gateways {
 		}
 		if (array_key_exists($gateway, $this->_active_gateways)) {
 			unset($this->_active_gateways[$gateway]);
-			global $espresso_wp_user;
+			global $espresso_wp_user, $espresso_notices;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
-				$notices['updates'][] = __('Gateway Deactivated!', 'event_espresso');
+				$espresso_notices['updates'][] = __('Gateway Deactivated!', 'event_espresso');
 			} else {
-				$notices['errors'][] = __('Gateway Not Deactivated! ', 'event_espresso');
+				$espresso_notices['errors'][] = __('Gateway Not Deactivated! ', 'event_espresso');
 			}
 		} else {
 			return FALSE;

@@ -51,7 +51,7 @@ abstract class EE_Gateway {
 
 	abstract public function espresso_process_off_site_payment();
 
-	protected function __construct(&$model) {
+	protected function __construct( EEM_Gateways &$model) {
 		$this->_EEM_Gateways = $model;
 		global $EE_Session;
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway)) {
