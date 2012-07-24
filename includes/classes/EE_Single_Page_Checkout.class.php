@@ -1051,7 +1051,7 @@ class EE_Single_Page_Checkout {
 				
 			}
 
-			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response') || $continue) {
+			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response')) {
 				$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();

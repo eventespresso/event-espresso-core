@@ -55,7 +55,6 @@ Class EE_2checkout extends EE_Gateway {
 		}
 		$this->_payment_settings['button_url'] = $button_url;
 		$this->_payment_settings['current_path'] = __FILE__;
-		echo "here";
 		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
 			$notices['updates'][] = __('2checkout Button URL Reset!', 'event_espresso');
 		} else {

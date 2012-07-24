@@ -94,7 +94,7 @@ abstract class EE_Gateway {
 
 	public function add_settings_page_meta_box() {
 		add_meta_box(
-						'espresso_' . $this->_gateway . '_gateway_settings', $this->_gateway . ' ' . __('Settings', 'event_espresso'), array($this, 'settings_meta_box'), 'event-espresso_page_payment_gateways'
+						'espresso_' . $this->_gateway . '_gateway_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_payment_gateways'
 		);
 	}
 
@@ -113,14 +113,14 @@ abstract class EE_Gateway {
 				<?php if (!$this->_EEM_Gateways->is_active($this->_gateway)) { ?>
 					<li id="activate_<?php echo $this->_gateway; ?>" style="width:30%;" onclick="location.href='<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?page=payment_gateways&activate_<?php echo $this->_gateway; ?>=true#<?php echo $this->_gateway; ?>'" class="green_alert pointer"><strong><?php
 			_e('Activate', 'event_espresso');
-			echo ' ' . $this->_gateway . ' ';
+			echo ' ' . $this->_payment_settings['display_name'] . ' ';
 			_e('Payments');
 			echo '?';
 					?></strong></li>
 				<?php } else { ?>
 					<li id="deactivate_<?php echo $this->_gateway; ?>" style="width:30%;" onclick="location.href='<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?page=payment_gateways&deactivate_<?php echo $this->_gateway; ?>=true'" class="red_alert pointer"><strong><?php
 			_e('Deactivate', 'event_espresso');
-			echo ' ' . $this->_gateway . ' ';
+			echo ' ' . $this->_payment_settings['display_name'] . ' ';
 			_e('Payments');
 			echo '?';
 					?></strong></li>
