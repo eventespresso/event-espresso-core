@@ -32,7 +32,7 @@ Class EE_2checkout extends EE_Gateway {
 		return __FILE__;
 	}
 
-	public static function instance(&$model) {
+	public static function instance( EEM_Gateways &$model) {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
 			self::$_instance = new self($model);
@@ -41,12 +41,13 @@ Class EE_2checkout extends EE_Gateway {
 		return self::$_instance;
 	}
 
-	protected function __construct(&$model) {
+	protected function __construct( EEM_Gateways &$model) {
 		$this->_gateway = '2checkout';
 		parent::__construct($model);
 	}
 
 	protected function _reset_button_url() {
+		global $espresso_notices;
 		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway);
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway]) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . "/lib/logo.png";
@@ -56,13 +57,14 @@ Class EE_2checkout extends EE_Gateway {
 		$this->_payment_settings['button_url'] = $button_url;
 		$this->_payment_settings['current_path'] = __FILE__;
 		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-			$notices['updates'][] = __('2checkout Button URL Reset!', 'event_espresso');
+			$espresso_notices['updates'][] = __('2checkout Button URL Reset!', 'event_espresso');
 		} else {
-			$notices['errors'][] = __('2checkout Button URL was not reset! ', 'event_espresso');
+			$espresso_notices['errors'][] = __('2checkout Button URL was not reset! ', 'event_espresso');
 		}
 	}
 
 	protected function _default_settings() {
+		global $espresso_notices;
 		$this->_payment_settings['2checkout_id'] = '';
 		$this->_payment_settings['2checkout_username'] = '';
 		$this->_payment_settings['currency_format'] = 'USD';
@@ -71,14 +73,15 @@ Class EE_2checkout extends EE_Gateway {
 		$this->_payment_settings['display_name'] = '2CheckOut';
 		$this->_payment_settings['current_path'] = '';
 		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-			$notices['updates'][] = __('2checkout Payment Settings Initialized!', 'event_espresso');
+			$espresso_notices['updates'][] = __('2checkout Payment Settings Initialized!', 'event_espresso');
 		} else {
-			$notices['errors'][] = __('2checkout Payment Settings were not initialized! ', 'event_espresso');
+			$espresso_notices['errors'][] = __('2checkout Payment Settings were not initialized! ', 'event_espresso');
 		}
 	}
 
 	protected function _update_settings() {
 		if (isset($_POST['update_2checkout']) && check_admin_referer('espresso_form_check', 'add_2checkout_settings')) {
+			global $espresso_notices;
 			$this->_payment_settings['2checkout_id'] = $_POST['2checkout_id'];
 			$this->_payment_settings['2checkout_username'] = $_POST['2checkout_username'];
 			$this->_payment_settings['currency_format'] = $_POST['currency_format'];
@@ -86,9 +89,9 @@ Class EE_2checkout extends EE_Gateway {
 			$this->_payment_settings['button_url'] = $_POST['button_url'];
 
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-				$notices['updates'][] = __('2checkout Payment Settings Updated!', 'event_espresso');
+				$espresso_notices['updates'][] = __('2checkout Payment Settings Updated!', 'event_espresso');
 			} else {
-				$notices['errors'][] = __('2checkout Payment Settings were not saved! ', 'event_espresso');
+				$espresso_notices['errors'][] = __('2checkout Payment Settings were not saved! ', 'event_espresso');
 			}
 		}
 	}

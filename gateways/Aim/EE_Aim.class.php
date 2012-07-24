@@ -32,7 +32,7 @@ Class EE_Aim extends EE_Gateway {
 		return __FILE__;
 	}
 
-	public static function instance(&$model) {
+	public static function instance( EEM_Gateways &$model) {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
 			self::$_instance = new self($model);
@@ -41,12 +41,13 @@ Class EE_Aim extends EE_Gateway {
 		return self::$_instance;
 	}
 
-	protected function __construct(&$model) {
+	private function __construct( EEM_Gateways &$model) {
 		$this->_gateway = 'Aim';
 		parent::__construct($model);
 	}
 
 	protected function _reset_button_url() {
+		global $espresso_notices;
 		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway);
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway]) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . "/lib/logo-aim.png";
@@ -56,13 +57,14 @@ Class EE_Aim extends EE_Gateway {
 		$this->_payment_settings['button_url'] = $button_url;
 		$this->_payment_settings['current_path'] = __FILE__;
 		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-			$notices['updates'][] = __('Authorize AIM Button URL Reset!', 'event_espresso');
+			$espresso_notices['updates'][] = __('Authorize AIM Button URL Reset!', 'event_espresso');
 		} else {
-			$notices['errors'][] = __('Authorize AIM Button URL was not reset! ', 'event_espresso');
+			$espresso_notices['errors'][] = __('Authorize AIM Button URL was not reset! ', 'event_espresso');
 		}
 	}
 
 	protected function _default_settings() {
+		global $espresso_notices;
 		$this->_payment_settings['authnet_aim_login_id'] = '';
 		$this->_payment_settings['authnet_aim_transaction_key'] = '';
 		$this->_payment_settings['use_sandbox'] = false;
@@ -71,14 +73,15 @@ Class EE_Aim extends EE_Gateway {
 		$this->_payment_settings['display_name'] = 'Authorize.net AIM';
 		$this->_payment_settings['current_path'] = '';
 		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-			$notices['updates'][] = __('Authorize AIM Payment Settings Initialized!', 'event_espresso');
+			$espresso_notices['updates'][] = __('Authorize AIM Payment Settings Initialized!', 'event_espresso');
 		} else {
-			$notices['errors'][] = __('Authorize AIM Payment Settings were not initialized! ', 'event_espresso');
+			$espresso_notices['errors'][] = __('Authorize AIM Payment Settings were not initialized! ', 'event_espresso');
 		}
 	}
 
 	protected function _update_settings() {
 		if (isset($_POST['update_authnet_aim']) && check_admin_referer('espresso_form_check', 'add_authnet_aim_settings')) {
+			global $espresso_notices;
 			$this->_payment_settings['authnet_aim_login_id'] = $_POST['authnet_aim_login_id'];
 			$this->_payment_settings['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 			$this->_payment_settings['test_transactions'] = $_POST['test_transactions'];
@@ -86,9 +89,9 @@ Class EE_Aim extends EE_Gateway {
 			$this->_payment_settings['button_url'] = $_POST['button_url'];
 
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-				$notices['updates'][] = __('Authorize AIM Payment Settings Updated!', 'event_espresso');
+				$espresso_notices['updates'][] = __('Authorize AIM Payment Settings Updated!', 'event_espresso');
 			} else {
-				$notices['errors'][] = __('Authorize AIM Payment Settings were not saved! ', 'event_espresso');
+				$espresso_notices['errors'][] = __('Authorize AIM Payment Settings were not saved! ', 'event_espresso');
 			}
 		}
 	}
