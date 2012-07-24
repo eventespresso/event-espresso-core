@@ -42,6 +42,7 @@ function espresso_thank_you_page() {
 		$gateway_data['selected_gateway'] = null;
 		$gateway_data['type'] = null;
 		$EE_Session->set_session_data($gateway_data, 'gateway_data');
+		do_action( 'action_hook_espresso_reg_completed' );
 
 	} else {
 
