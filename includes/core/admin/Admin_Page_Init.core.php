@@ -40,8 +40,6 @@ interface Admin_Page_Init_Interface {
  * ------------------------------------------------------------------------
  */
 class Admin_Page_Init {
-
-	public static $_instance = NULL;
 	
 	protected $page_name = NULL;
 	protected $page_slug = NULL;
@@ -54,36 +52,22 @@ class Admin_Page_Init {
 
 
 	/**
-	*		private constructor to prevent direct creation
 	*		@Constructor
-	*		@access private
 	*		@return void
 	*/
-	private function __construct() {}
-	private function __clone() {}
- 
-
-
-
-
-	/**
-	*		@singleton method used to instantiate class object
-	*		@access public
-	*		@return class instance
-	*/	
-	public static function &instance ( ) {
-		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
-			self::$_instance = new self();
-			require_once( EE_CORE_ADMIN . DS . 'Admin_Page.core.php' );
-		}
-		return self::$_instance;
+	 function __construct( $admin_page, $page_request ) { 
+		require_once( EE_CORE_ADMIN . DS . 'Admin_Page.core.php' ); 
+		$this->initialize_admin_page( $admin_page, $page_request );		
 	}
 
 
 
 
 
+	/**
+	*		instantiates page init files, adds admin menu filter, and instantiates requested page class
+	*		@return void
+	*/
 	public function initialize_admin_page( $page_slug, $page_request ) {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -92,11 +76,15 @@ class Admin_Page_Init {
 		$this->page_name = ucwords( $this->page_slug );
 		
 		// find, load and instantiate admin page init file
-		$path_to_init = EE_CORE_ADMIN . strtolower( $this->page_slug ) . DS . $this->page_name . '_Admin_Page_Init.core.php';
+		$path_to_init = str_replace( '\\', '/', EE_CORE_ADMIN . strtolower( $this->page_slug ) . DS . $this->page_name . '_Admin_Page_Init.core.php' );
+		//echo '<h2>$path_to_init : ' . $path_to_init . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';		
 		if ( file_exists( $path_to_init )) {
 			require_once( $path_to_init );
 			$page_class =  ucwords( $this->page_slug ) . '_Admin_Page_Init';
 			$this->admin_init = new $page_class( $this->page_slug );
+
+			// now hook into admin menu to add settings page for this page
+			add_filter( $this->admin_init->get_admin_menu_filter_name(), array( &$this, 'create_admin_menu_subpage' ), $this->admin_init->get_admin_menu_order(), 2 );
 
 			if ( $this->page_slug == $page_request ) {				
 				// define requested admin page class name then load the file and instantiate
@@ -108,8 +96,7 @@ class Admin_Page_Init {
 				}
 				add_action( 'admin_init', array( &$this, 'add_assets' ));
 			}
-			// now hook into admin menu to add settings page for this page
-			add_filter( $this->admin_init->get_admin_menu_filter_name(), array( &$this, 'create_admin_menu_subpage' ), $this->admin_init->get_admin_menu_order(), 2 );
+			
 		}	
 	}
 
@@ -124,6 +111,21 @@ class Admin_Page_Init {
 	*/		
 	public function create_admin_menu_subpage( $menu_section, $espresso_manager ) {
 
+/*		echo '<h4>page_name : ' . $this->page_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		echo '<h4>page_slug : ' . $this->page_slug . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
+		echo '<h4>admin_menu_filter_name : ' . $this->admin_init->get_admin_menu_filter_name() . '  <br />
+		<span style="font-size:10px;font-weight:normal;">' . __FILE__ . '
+		<br />line no: ' . __LINE__ . '</span></h4>';
+		
+		echo '<h4>admin_menu_order : ' . $this->admin_init->get_admin_menu_order() . '  
+		<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '
+		<br />line no: ' . __LINE__ . '</span></h4>';
+			
+		echo '<h4>page_access_capability : ' . $this->admin_init->get_page_access_capability() . '  
+		<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '
+		<br />line no: ' . __LINE__ . '</span></h4>';*/
+			
 		$menu_section[$this->page_slug] = array(
 					TRUE,
 					'events',
@@ -215,6 +217,12 @@ class Admin_Page_Init {
 		wp_enqueue_script('wp-lists');
 		wp_enqueue_script('postbox');	
 	}
+	
+	
+	function __clone() {}
+	function __set( $a, $b ) {}
+	function __get( $a ) {}
+	
 
 }
 

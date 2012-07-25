@@ -27,6 +27,8 @@ class Transactions_Admin_Page_Init extends Admin_Page_Init implements Admin_Page
 	
 	public function __construct() { 
 
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		define( 'TXN_PG_SLUG', 'transactions' );	
@@ -36,7 +38,6 @@ class Transactions_Admin_Page_Init extends Admin_Page_Init implements Admin_Page
 		define( 'TXN_ASSETS_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . TXN_PG_SLUG . DS . 'assets' . DS ));	
 		define( 'TXN_TEMPLATE_PATH', TXN_ADMIN . 'templates' . DS );	
 		define( 'TXN_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . TXN_PG_SLUG . DS . 'templates' . DS ));
-		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 
 	}
 

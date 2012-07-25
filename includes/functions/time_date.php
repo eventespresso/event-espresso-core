@@ -217,7 +217,7 @@ if (!function_exists('event_espresso_time_dropdown')) {
 			// create the data that needs to be saved.
 			$event_times = $wpdb->get_results($sql);
 			if ($wpdb->num_rows == 1) {//If one result, then display the times.
-				$html .= $label == 1 ? '<span class="span_event_time_label">' . __('Start Time:</span> ', 'event_espresso') . '</span>' : '';
+				$html .= $label == 1 ? '<span class="span_event_time_label">' . __('Start Time: ', 'event_espresso') . '</span>' : '';
 				foreach ($event_times as $time) {
 					$html .= '<span class="span_event_time_value">' . event_date_display($time->start_time, get_option('time_format')) . '</span>';
 					$html .= $label == 1 ? '<br /><span class="span_event_time_label">' . __('End Time: ', 'event_espresso') . '</span>' : __(' to ', 'event_espresso');

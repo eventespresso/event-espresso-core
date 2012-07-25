@@ -41,30 +41,13 @@ Class EE_Aim extends EE_Gateway {
 		return self::$_instance;
 	}
 
-	private function __construct( EEM_Gateways &$model) {
+	protected function __construct( EEM_Gateways &$model) {
 		$this->_gateway = 'Aim';
+		$this->_button_base = 'logo-aim.png';
 		parent::__construct($model);
 	}
 
-	protected function _reset_button_url() {
-		global $espresso_notices;
-		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway);
-		if (is_array($in_uploads) && $in_uploads[$this->_gateway]) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . "/lib/logo-aim.png";
-		} else {
-			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/" . $this->_gateway . "/lib/logo-aim.png";
-		}
-		$this->_payment_settings['button_url'] = $button_url;
-		$this->_payment_settings['current_path'] = __FILE__;
-		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-			$espresso_notices['updates'][] = __('Authorize AIM Button URL Reset!', 'event_espresso');
-		} else {
-			$espresso_notices['errors'][] = __('Authorize AIM Button URL was not reset! ', 'event_espresso');
-		}
-	}
-
 	protected function _default_settings() {
-		global $espresso_notices;
 		$this->_payment_settings['authnet_aim_login_id'] = '';
 		$this->_payment_settings['authnet_aim_transaction_key'] = '';
 		$this->_payment_settings['use_sandbox'] = false;
@@ -72,11 +55,6 @@ Class EE_Aim extends EE_Gateway {
 		$this->_payment_settings['type'] = 'on-site';
 		$this->_payment_settings['display_name'] = 'Authorize.net AIM';
 		$this->_payment_settings['current_path'] = '';
-		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-			$espresso_notices['updates'][] = __('Authorize AIM Payment Settings Initialized!', 'event_espresso');
-		} else {
-			$espresso_notices['errors'][] = __('Authorize AIM Payment Settings were not initialized! ', 'event_espresso');
-		}
 	}
 
 	protected function _update_settings() {
@@ -103,7 +81,7 @@ Class EE_Aim extends EE_Gateway {
 				array('id' => false, 'text' => __('No', 'event_espresso')),
 		);
 		$raw_uri = $_SERVER['REQUEST_URI'];
-		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_authnet_aim=true'));
+		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_'.$this->_gateway.'=true'));
 		?>
 		<form method="post" action="<?php echo $uri; ?>#<?php echo $this->_gateway; ?>">
 			<table class="form-table">
@@ -161,13 +139,13 @@ Class EE_Aim extends EE_Gateway {
 				</tbody>
 			</table>
 			<p>
-				<input type="hidden" name="update_authnet_aim" value="update_authnet_aim">
+				<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="update_<?php echo $this->_gateway; ?>">
 				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Authorize.net AIM Settings', 'event_espresso') ?>" id="save_authnet_aim_settings" />
 			</p>
 			<p><strong style="color:#F00">
 					<?php _e('WARNING!', 'event_espresso'); ?>
 				</strong><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></p>
-			<?php wp_nonce_field('espresso_form_check', 'add_authnet_aim_settings'); ?>
+			<?php wp_nonce_field('espresso_form_check', 'add_'.$this->_gateway.'_settings'); ?>
 		</form>
 		<div id="authnet_aim_sandbox" style="display:none">
 			<h2>

@@ -16,7 +16,7 @@
  * EE_Admin_Transactions class
  *
  * @package			Event Espresso
- * @subpackage	includes/core/admin/transactions/EE_Admin_Transactions.class.php
+ * @subpackage	includes/core/admin/transactions/Transactions_Admin_Page.core.php
  * @author				Brent Christensen 
  *
  * ------------------------------------------------------------------------
@@ -32,6 +32,9 @@ class Transactions_Admin_Page extends Admin_Page {
 	
 
 	public function __construct() {
+
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		parent::__construct();
 		$this->define_page_vars();
@@ -859,7 +862,9 @@ class Transactions_Admin_Page extends Admin_Page {
 			//printr( $results, '$registrations_per_event' );
 			$revenue = array();
 			foreach ( $results as $result ) {
-				$revenue[] = array( $result->event_name, (float)$result->revenue );
+				$event_name = stripslashes( html_entity_decode( $result->event_name, ENT_QUOTES, 'UTF-8' ));
+				$event_name = wp_trim_words( $event_name, 5, '...' );				
+				$revenue[] = array( $event_name, (float)$result->revenue );
 			}	
 
 			$span = $period == 'week' ? 9 : 33;
@@ -872,7 +877,7 @@ class Transactions_Admin_Page extends Admin_Page {
 														'width'		=> ceil(900 / $span)								
 													);
 			wp_localize_script( $report_JS, 'revenuePerEvent', $report_params );		
-													}
+		}
 
 		return $report_ID;
 	}
@@ -884,6 +889,5 @@ class Transactions_Admin_Page extends Admin_Page {
 }
 
 
-
 	
-// end of file:  includes/core/admin/transactions/EE_Admin_Transactions.class.php
+// end of file:  includes/core/admin/transactions/Transactions_Admin_Page.core.php

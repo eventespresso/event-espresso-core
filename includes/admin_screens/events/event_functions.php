@@ -320,7 +320,7 @@ function espresso_event_editor_date_time_metabox($event) {
 						<a class='clone-date-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Clone this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:5px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
 							<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/clone-trooper-16x16.png' width='16' height='16' alt='<?php _e('clone', 'event_espresso'); ?>'/>
 						</a>
-				<?php if ( $row != 2 ) : ?>
+				<?php if ( $row != 1 ) : ?>
 						<a class='remove-xtra-time dtm-inp-btn' rel='<?php echo $row; ?>' title='<?php _e('Remove this Event Date and Time', 'event_espresso'); ?>' style='position:relative; top:6px; margin:0 0 0 10px; font-size:.9em; cursor:pointer;'>
 							<img src='<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/trash-16x16.png' width='16' height='16' alt='<?php _e('trash', 'event_espresso'); ?>'/>
 						</a>

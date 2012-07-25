@@ -60,35 +60,8 @@
 .metabox-holder h4, .metabox-holder h5, .metabox-holder h6 {margin: 1em 0;}
 dt {font-weight: bold; margin: 15px 0 10px ;}
 
-
-.jst-left { text-align:left; }
-.jst-cntr { text-align:center; }
-.jst-rght { text-align:right; }
-
-.display-the-hidden { float:right; cursor:pointer; }
-.hide-the-displayed { float:right; cursor:pointer; }
-.display-the-hidden img, .hide-the-displayed img { position:relative; top:1px; left:-4px; }
-.display-the-hidden.no-icon, .hide-the-displayed.no-icon { background-image:none; }
-
-.big-text { font-size:.1.2em; letter-spacing:-.5px; }
-.bigger-text { font-size:1.45em; letter-spacing:-1px; }
-.huge-text { font-size:2em; letter-spacing:-2px; }
-
-.small-text { font-size:.85em; letter-spacing:.5px; line-height:1.5em; }
-.smaller-text { font-size:.7em; letter-spacing:1px; line-height:1.25em; }
-.tiny-text { font-size:.5em; letter-spacing:1px; line-height:1.25em; }
-
-.lt-grey-text { color:#999; }
-.drk-grey-text { color:#666; }
-.important-notice { font-weight:bold; color:#f59200; }
-.float-left { float:left; }
-
-/* Nicolas Gallagher's micro clearfix */
-.clearfix:before, .clearfix:after { content:""; display:table; }
-.clearfix:after { clear: both; }
-.clearfix { zoom: 1; } 
-
-input.small-text { font-size:1em; }
+.validation-notice-dv { display:none; padding:0; margin:0; color:red; }
+.requires-value { border:1px solid #FE2A00 !important; }
 
 /*___ Structure ___*/
 
@@ -317,51 +290,12 @@ li.time-date .run-in {
 #post-body #payment-conf-email {/*postbox*/
 	margin-bottom: 30px;
 }
-/*** Pluralink - recaptcha settings ***/
-.pluralink-overlay {
-	width: 263px;
+/***  recaptcha settings ***/
+
+.admin-recaptcha-settings-tr {
+	display:none;
 }
-.pluralink-overlay a {
-	display: inline-block;
-	margin: 0;
-}
-.pluralink-overlay a:link, .pluralink-overlay a:visited {
-	color: #0071BC !important;
-	text-decoration: underline;
-	width: 196px;
-	padding: 4px 26px 5px;
-	background: white;
-}
-.pluralink-overlay a:hover {
-	background: url(images/over.png) repeat-y left top #F2F2F2;
-}
-.pluralink-overlay #pluralink-top {
-	background: url(images/top.png) no-repeat left top;
-	width: 263px;
-	height: 17px;
-}
-.pluralink-overlay #pluralink-bottom {
-	background: url(images/bottom.png) no-repeat left top;
-	width: 263px;
-	height: 16px;
-}
-.pluralink-overlay #pluralink-bg {
-	background: url(images/bg.png) repeat-y left top;
-	width: 255px;
-	padding-left: 8px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-/* Pluralink IE6 */
-* html .pluralink-overlay #pluralink-top {
-	background: url(images/top-ie.png) no-repeat left top;
-}
-* html .pluralink-overlay #pluralink-bottom {
-	background: url(images/bottom-ie.png) no-repeat left top;
-}
-* html .pluralink-overlay #pluralink-bg {
-	background: url(images/bg-ie.png) repeat-y left top;
-}
+
 /*___ Overview screen ___*/
 
 ul.ee_subsubsub {

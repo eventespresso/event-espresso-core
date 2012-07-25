@@ -62,10 +62,7 @@ abstract class Admin_Page {
 	*/
 	private function _check_user_access() {
 		if ( ! function_exists( 'is_admin' ) or  ! current_user_can( 'manage_options' )) {
-//		    header('Status: 403 Forbidden');
-//		    header('HTTP/1.1 403 Forbidden');
-//			wp_die( 'Insufficient privileges!' );
-//		    exit();
+			wp_redirect( home_url('/') . 'wp-admin/' );
 		}
 	}
 

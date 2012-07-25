@@ -83,6 +83,9 @@ function espresso_define_tables_and_paths() {
 	//Define the gateway directory and url
 	define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
 	define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS);
+	
+
+	
 }
 
 
@@ -370,6 +373,7 @@ function espresso_admin_pages() {
 	define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
 	define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes' . DS . 'core' . DS . 'admin' . DS );
 	define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
+	define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	
 	
 	$page_request = FALSE;
@@ -391,10 +395,6 @@ function espresso_admin_pages() {
 	$admin_pages = apply_filters( 'filter_hook_espresso_admin_pages_array', $admin_pages );	
 	//echo '<pre style="height:auto;border:2px solid #FF6600;">' . print_r( $admin_pages, TRUE ) . '</pre>';
 
-	// load admin page factory
-	require_once( EE_CORE_ADMIN . 'Admin_Page_Init.core.php' );
-	$Admin_Page_Init = Admin_Page_Init::instance();
-
 	if ( ! empty( $_REQUEST['page'] )) {
 		// grab page request
 		$page_request = sanitize_key( $_REQUEST['page'] );
@@ -404,8 +404,12 @@ function espresso_admin_pages() {
 		}
 	}
 	
-	foreach ( $admin_pages as $admin_page ) {	
-		$Admin_Page_Init->initialize_admin_page( $admin_page, $page_request );	
+	// load admin page factory
+	require_once( EE_CORE_ADMIN . 'Admin_Page_Init.core.php' );
+	// now loop thru all of our admin pages
+	foreach ( $admin_pages as $admin_page ) {
+		// and instantiate each page's init file
+		$Admin_Page_Init = new Admin_Page_Init( $admin_page, $page_request );
 	}
 	
 }

@@ -28,14 +28,13 @@ abstract class EE_Gateway {
 
 	protected $_payment_settings = array();
 	protected $_gateway = NULL;
+	protected $_button_base = NULL;
 	protected $_EEM_Gateways = NULL;
 	protected $_form_url = NULL;
 	protected $_css_class = 'hidden';
 	protected $_selected = FALSE;
 	protected $_css_link_class = '';
 	private $_session_gateway_data = NULL;
-
-	abstract protected function _reset_button_url();
 
 	abstract protected function _default_settings();
 
@@ -51,11 +50,17 @@ abstract class EE_Gateway {
 
 	abstract public function espresso_process_off_site_payment();
 
-	protected function __construct( EEM_Gateways &$model) {
+	protected function __construct(EEM_Gateways &$model) {
 		$this->_EEM_Gateways = $model;
-		global $EE_Session;
+		global $EE_Session, $espresso_notices;
+		;
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway)) {
 			$this->_default_settings();
+			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
+				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Initialized!', 'event_espresso');
+			} else {
+				$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings were not initialized! ', 'event_espresso');
+			}
 		}
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
 			add_action('admin_init', array(&$this, 'add_settings_page_meta_box'));
@@ -99,12 +104,18 @@ abstract class EE_Gateway {
 	}
 
 	public function settings_meta_box() {
-		global $espresso_premium;
+		global $espresso_premium, $espresso_notices;
 		if ($espresso_premium != true) {
 			return;
 		}
-
-		$this->_update_settings();
+		if (isset($_POST['update_'.$this->_gateway]) && check_admin_referer('espresso_form_check', 'add_'.$this->_gateway.'_settings')) {
+			$this->_update_settings();
+			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
+				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Updated!', 'event_espresso');
+			} else {
+				$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings were not saved! ', 'event_espresso');
+			}
+		}
 		?>
 
 		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
@@ -201,6 +212,24 @@ abstract class EE_Gateway {
 			if (has_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'))) {
 				remove_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'));
 			}
+		}
+	}
+
+	protected function _reset_button_url() {
+		global $espresso_notices;
+		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway);
+		if (is_array($in_uploads) && $in_uploads[$this->_gateway]) {
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . $this->_button_base;
+		} else {
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/" . $this->_gateway . $this->_button_base;
+		}
+		$this->_payment_settings['button_url'] = $button_url;
+		$this->_payment_settings['current_path'] = $this->_path();
+		;
+		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
+			$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL Reset!', 'event_espresso');
+		} else {
+			$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL was not reset! ', 'event_espresso');
 		}
 	}
 

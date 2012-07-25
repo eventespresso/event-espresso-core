@@ -154,13 +154,15 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 
 
 
+
 	/**
 	 * 		column_event_name
 	*/ 
     function column_event_name($item){	
 		//$edit_event_url = add_query_arg( array( 'action'=>'edit', 'event_id'=>$item['id'] ), admin_url( 'admin.php?page=events' ));
 		$edit_event_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn' => $item['TXN_ID'] ), TXN_ADMIN_URL ), 'view_transaction' );  
-		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit TXN #', 'event_espresso' ) . $item['TXN_ID'].'">' .  wp_trim_words( $item['event_name'], 30, '...' ) . '</a>'; 
+		$event_name = stripslashes( html_entity_decode( $item['event_name'], ENT_QUOTES, 'UTF-8' ));		
+		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit TXN #', 'event_espresso' ) . $item['TXN_ID'].'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>'; 
 	}
 
 
