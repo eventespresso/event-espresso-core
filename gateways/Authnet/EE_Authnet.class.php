@@ -69,6 +69,7 @@ Class EE_Authnet extends EE_Gateway {
 
 	protected function _display_settings() {
 
+		global $org_options;
 		$values = array(
 				array('id' => true, 'text' => __('Yes', 'event_espresso')),
 				array('id' => false, 'text' => __('No', 'event_espresso')),
@@ -230,7 +231,6 @@ Class EE_Authnet extends EE_Gateway {
 // Log the IPN results
 		$myAuthorize->ipnLog = TRUE;
 		$session_data = $EE_Session->get_session_data();
-		$this->_payment_settings = $session_data['gateway_data']['payment_settings']['authnet_sim'];
 
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],

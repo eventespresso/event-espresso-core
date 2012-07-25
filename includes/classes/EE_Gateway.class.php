@@ -219,9 +219,9 @@ abstract class EE_Gateway {
 		global $espresso_notices;
 		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway);
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway]) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . $this->_button_base;
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . '/lib/' .$this->_button_base;
 		} else {
-			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/" . $this->_gateway . $this->_button_base;
+			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/" . $this->_gateway . '/lib/' . $this->_button_base;
 		}
 		$this->_payment_settings['button_url'] = $button_url;
 		$this->_payment_settings['current_path'] = $this->_path();
