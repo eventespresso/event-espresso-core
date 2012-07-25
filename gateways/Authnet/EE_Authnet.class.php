@@ -230,7 +230,6 @@ Class EE_Authnet extends EE_Gateway {
 
 // Log the IPN results
 		$myAuthorize->ipnLog = TRUE;
-		$session_data = $EE_Session->get_session_data();
 
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
@@ -253,7 +252,6 @@ Class EE_Authnet extends EE_Gateway {
 //4222222222222  <-- test failure card number
 		if ($this->_payment_settings['use_sandbox']) {
 			$myAuthorize->enableTestMode();
-			$email_transaction_dump = true;
 		}
 
 // Specify your authorize login and secret

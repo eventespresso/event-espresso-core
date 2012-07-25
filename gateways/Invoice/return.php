@@ -2,7 +2,6 @@
 
 function espresso_send_to_thankyou_page_for_invoice($EE_Session) {
 	global $org_options;
-	$session_data = $EE_Session->get_session_data();
 	$pre_form = "<html>";
 	$pre_form .= "<head><title>Processing Invoice...</title></head>";
 	$pre_form .= "<body>";
@@ -14,9 +13,7 @@ function espresso_send_to_thankyou_page_for_invoice($EE_Session) {
 	$form .= "<input type=\"submit\" value=\"Click Here\"></p>";
 	$form .= "</form>";
 	$post_form = "</body></html>";
-	$session_data['gateway_data']['off-site-form'] = array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
-	;
-	$EE_Session->set_session_data($session_data['gateway_data'], 'gateway_data');
+	$this->_EEM_Gateways->set_off_site_form(array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form));
 }
 
 add_action('action_hook_espresso_gateway_process_step_3', 'espresso_send_to_thankyou_page_for_invoice');
