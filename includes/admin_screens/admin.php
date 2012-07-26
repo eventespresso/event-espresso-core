@@ -588,41 +588,9 @@ function event_espresso_verify_attendee_data() {
 	}
 }
 
-function event_espresso_update_attendee_data() {
-	global $wpdb;
-	//$wpdb->show_errors();
 
-	$sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' ";
-	$attendees = $wpdb->get_results($sql);
 
-	if ($wpdb->num_rows > 0) {
 
-		//echo $sql;
-		foreach ($attendees as $attendee) {
-
-			/**			 * *******************************
-			 * ******	Update single registrations
-			 * ********************************* */
-			$registration_id = uniqid('', true);
-			$update_attendee = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET registration_id = '" . $registration_id . "' WHERE id = '" . $attendee->id . "'";
-			$wpdb->query($update_attendee);
-		}
-	}
-
-	$sql2 = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity IS NULL OR quantity = '' OR quantity = '0' ";
-	$attendees2 = $wpdb->get_results($sql2);
-	if ($wpdb->num_rows > 0) {
-		//echo $sql;
-		foreach ($attendees2 as $attendee2) {
-
-			/**			 * *******************************
-			 * ******	Update pricing
-			 * ********************************* */
-			$update_attendee2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '1' WHERE id = '" . $attendee2->id . "'";
-			$wpdb->query($update_attendee2);
-		}
-	}
-}
 
 //This function installs the required pages
 function espresso_create_default_pages() {
