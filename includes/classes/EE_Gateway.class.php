@@ -34,10 +34,7 @@ abstract class EE_Gateway {
 	protected $_css_class = 'hidden';
 	protected $_selected = FALSE;
 	protected $_css_link_class = '';
-	protected $_yes_no_options = array(
-				array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
-				array('id' => FALSE, 'text' => __('No', 'event_espresso')),
-		);
+	protected $_yes_no_options = array();
 	private $_session_gateway_data = NULL;
 
 	abstract protected function _default_settings();
@@ -56,6 +53,10 @@ abstract class EE_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_EEM_Gateways = $model;
+		$this->_yes_no_options = array(
+				array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
+				array('id' => FALSE, 'text' => __('No', 'event_espresso'))
+		);
 		global $EE_Session, $espresso_notices;
 		;
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway)) {

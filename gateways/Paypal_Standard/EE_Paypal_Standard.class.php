@@ -338,8 +338,7 @@ Class EE_Paypal_Standard extends EE_Gateway {
 		$myPaypal->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
 		$myPaypal->addField('no_shipping ', $no_shipping);
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($myPaypal)));
-		$session_data['gateway_data']['off-site-form'] = $myPaypal->submitPayment();
-		$EE_Session->set_session_data($session_data['gateway_data'], 'gateway_data');
+		$this->_EEM_Gateways->set_off_site_form($myPaypal->submitPayment());
 	}
 
 	public function espresso_process_off_site_payment() {
