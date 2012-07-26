@@ -244,15 +244,7 @@ function event_espresso_update_shortcodes() {
 	}
 }
 
-function espresso_update_attendee_qty() {
-	global $wpdb;
-	$sql = "SELECT id FROM " . $wpdb->prefix . "events_attendee WHERE quantity = 0 ";
-	$results = $wpdb->get_results($sql);
-	if ($wpdb->num_rows > 0) {
-		$update_attendee_qty = $wpdb->query("UPDATE " . $wpdb->prefix . "events_attendee SET quantity = 1 OR quantity = '' WHERE quantity = 0");
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, " sqldump = " . var_export($results, true) . " ] [ rows affected = " . var_export($update_attendee_qty, true));
-	}
-}
+
 
 function espresso_org_option_initialization() {
 	global $wpdb, $espresso_wp_user;
