@@ -138,7 +138,7 @@ class Registrations_Admin_Page extends Admin_Page {
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 		$REG = EEM_Registration::instance();
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/registrations/Registrations_List_Table.class.php' );
+		require_once( REG_ADMIN . 'Registrations_List_Table.class.php' );
 
 		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin_screens/events/queries.php' );
 		// require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/attendee_functions.php' );
