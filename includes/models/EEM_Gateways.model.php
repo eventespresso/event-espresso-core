@@ -87,10 +87,14 @@ Class EEM_Gateways {
 				if ($in_uploads) {
 					if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 						require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
+					} else {
+						$this->unset_active($gateway);
 					}
 				} else {
 					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
 						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
+					} else {
+						$this->unset_active($gateway);
 					}
 				}
 				if (class_exists($classname)) {
