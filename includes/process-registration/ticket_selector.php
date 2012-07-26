@@ -199,22 +199,25 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 	$PRT_MDL = EEM_Price_Type::instance();
 
 	foreach ($prices as $price) {
-		//printr( $price, '$price  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );						
-
-		// are you a member of our club???
-		if ( $price->is_member() && is_user_logged_in() ) {
-			// format member ticket price
-			$price_option = $price->name() . ' : ';
-			// format ticket price
-			$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
-		} else {
-			// add non-member price type
-			$price_option = $price->name() . ' : ';
-			// format ticket price
-			$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
+		//printr( $price, '$price  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );		
+		
+		// if not a calendar controlled price OR if it IS a calendar controlled price and the today falls between the start and end dates
+		if ( ! $price->use_dates() || ( $price->use_dates() && time() > $price->start_date( FALSE ) && time() < $price->end_date( FALSE ) )) {
+			// are you a member of our club???
+			if ( $price->is_member() && is_user_logged_in() ) {
+				// format member ticket price
+				$price_option = $price->name() . ' : ';
+				// format ticket price
+				$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
+			} else {
+				// add non-member price type
+				$price_option = $price->name() . ' : ';
+				// format ticket price
+				$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
+			}
+			// add this price option to the array of options
+			$price_options[$price->ID()] = array('raw' => number_format((float) $price->final_price(), 2, '.', ''), 'option' => $price_option);
 		}
-		// add this price option to the array of options
-		$price_options[$price->ID()] = array('raw' => number_format((float) $price->final_price(), 2, '.', ''), 'option' => $price_option);
 	}
 
 //	echo printr($price_options);
