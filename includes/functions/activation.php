@@ -474,29 +474,31 @@ function events_data_tables_install() {
 
 
 
-	$table_name = "esp_price";
+	$table_name = "esp_price";  
 	$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  PRT_ID tinyint(3) unsigned NOT NULL,
-			  EVT_ID int(10) unsigned NOT NULL,
-			  PRC_amount decimal(10,2) NOT NULL DEFAULT '0.00',
-			  PRC_name varchar(45) NOT NULL,
-			  PRC_desc text,
-			  PRC_reg_limit mediumint(8) unsigned DEFAULT NULL,
-			  PRC_tckts_left mediumint(8) unsigned DEFAULT NULL,
-			  PRC_use_dates tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  PRC_start_date int(10) unsigned DEFAULT NULL,
-			  PRC_end_date int(10) unsigned DEFAULT NULL,
-			  PRC_disc_code varchar(100) DEFAULT NULL,
-			  PRC_disc_limit_qty tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  PRC_disc_qty smallint(6) DEFAULT '0',
-			  PRC_disc_apply_all tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  PRC_disc_wp_user bigint(20) DEFAULT '1',
-			  PRC_is_active tinyint(1) unsigned NOT NULL DEFAULT '1',
-			  PRC_overrides int(10) unsigned DEFAULT NULL,
-			  PRC_order tinyint(3) unsigned NOT NULL DEFAULT NULL,
-			  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  PRIMARY KEY  (PRC_ID)";
+				  PRT_ID tinyint(3) unsigned NOT NULL,
+				  EVT_ID int(10) unsigned NOT NULL,
+				  PRC_amount decimal(10,2) NOT NULL DEFAULT '0.00',
+				  PRC_name varchar(45) NOT NULL,
+				  PRC_desc text,
+				  PRC_reg_limit mediumint(8) unsigned DEFAULT NULL,
+				  PRC_tckts_left mediumint(8) unsigned DEFAULT NULL,
+				  PRC_use_dates tinyint(1) unsigned NOT NULL DEFAULT '0',
+				  PRC_start_date int(10) unsigned DEFAULT NULL,
+				  PRC_end_date int(10) unsigned DEFAULT NULL,
+				  PRC_disc_code varchar(100) DEFAULT NULL,
+				  PRC_disc_limit_qty tinyint(1) unsigned NOT NULL DEFAULT '0',
+				  PRC_disc_qty smallint(6) DEFAULT '0',
+				  PRC_disc_apply_all tinyint(1) unsigned NOT NULL DEFAULT '0',
+				  PRC_disc_wp_user bigint(20) DEFAULT '1',
+				  PRC_is_active tinyint(1) unsigned NOT NULL DEFAULT '1',
+				  PRC_overrides int(10) unsigned DEFAULT NULL,
+				  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
+				  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
+				  PRIMARY KEY  (PRC_ID)";
 	event_espresso_run_install($table_name, $table_version, $sql);
+
+
 
 
 
@@ -1332,65 +1334,74 @@ function espresso_default_prices() {
 
 	global $wpdb;
 
-	$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 9';
-	$wpdb->query($sql);
-
-	$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_member, PRT_is_discount, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) VALUES
-				(1, 'Default Event Price', 0, 0, 0, 0, 1, 0),
-				(2, 'Event Price', 0, 0, 0, 0, 0, 0),
-				(3, 'Default Member % Discount', 1, 1, 0, 1, 1, 10),
-				(4, 'Default Early Bird % Discount', 0, 1, 0, 1, 1, 20),
-				(5, 'Promo Code Discount', 0, 1, 0, 0, 1, 10),
-				(6, 'Default Surcharge', 0, 0, 0, 0, 1, 30),
-				(7, 'Regional Tax', 0, 0, 1, 1, 1, 40),
-				(8, 'Federal Tax', 0, 0, 1, 1, 1, 50);";
-	$wpdb->query($sql);
-
-	$sql = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 8';
-	$wpdb->query($sql);
-
-	$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
-				(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
-				(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
-				(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
-				(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
-				(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
-				(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
-				(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
-				(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
-	$wpdb->query($sql);
+	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE . "'") == ESP_PRICE_TYPE) {
+		$sql = 'DELETE FROM ' . ESP_PRICE_TYPE . ' WHERE PRT_ID < 9';
+		$wpdb->query($sql);
 	
-	$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ('ACT','RAP','CLS','TCM','PDC','DEL','DEN','DRF','EDR','EXP','TOP','NAC','RNA','NOP','ONG','OPN','PND','RPN','SEC','SNT','PAP','TPN','RCN','PCN','PFL');";
-	$wpdb->query($sql);
+		$sql = "INSERT INTO " . ESP_PRICE_TYPE . " (PRT_ID, PRT_name, PRT_is_member, PRT_is_discount, PRT_is_tax, PRT_is_percent, PRT_is_global, PRT_order) VALUES
+					(1, 'Default Event Price', 0, 0, 0, 0, 1, 0),
+					(2, 'Event Price', 0, 0, 0, 0, 0, 0),
+					(3, 'Default Member % Discount', 1, 1, 0, 1, 1, 10),
+					(4, 'Default Early Bird % Discount', 0, 1, 0, 1, 1, 20),
+					(5, 'Promo Code Discount', 0, 1, 0, 0, 1, 10),
+					(6, 'Default Surcharge', 0, 0, 0, 0, 1, 30),
+					(7, 'Regional Tax', 0, 0, 1, 1, 1, 40),
+					(8, 'Federal Tax', 0, 0, 1, 1, 1, 50);";
+		$wpdb->query($sql);	
+	}
+
+
+	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TABLE . "'") == ESP_PRICE_TABLE) {
+		$sql = 'DELETE FROM ' . ESP_PRICE_TABLE . ' WHERE PRC_ID < 8';
+		$wpdb->query($sql);
 	
-	$sql = "INSERT INTO " . ESP_STATUS_TABLE . " 
-			(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc) VALUES
-			('ACT', 'ACTIVE', 'event', 0, NULL),
-			('RAP', 'APPROVED', 'registration', 0, NULL),
-			('CLS', 'REGISTRATION_CLOSED', 'event', 0, NULL),
-			('TCM', 'COMPLETE', 'transaction', 0, NULL),
-			('PDC', 'DECLINED', 'payment', 0, NULL),
-			('DEL', 'DELETED', 'event', 0, NULL),
-			('DEN', 'DENIED', 'event', 0, NULL),
-			('DRF', 'DRAFT', 'event', 0, NULL),
-			('EDR', 'DRAFT', 'email', 0, NULL),
-			('EXP', 'EXPIRED', 'event', 0, NULL),
-			('TOP', 'OPEN', 'transaction', 0, NULL),
-			('NAC', 'NOT_ACTIVE', 'event', 0, NULL),
-			('RNA', 'NOT_APPROVED', 'registration', 0, NULL),
-			('NOP', 'REGISTRATION_NOT_OPEN', 'event', 0, NULL),
-			('ONG', 'ONGOING', 'event', 0, NULL),
-			('OPN', 'REGISTRATION_OPEN', 'event', 0, NULL),
-			('PND', 'PENDING', 'event', 0, NULL),
-			('RPN', 'PENDING', 'registration', 0, NULL),
-			('SEC', 'SECONDARY', 'event', 0, NULL),
-			('SNT', 'SENT', 'email', 0, NULL),
-			('PAP', 'APPROVED', 'payment', 0, NULL),
-			('TPN', 'PENDING', 'transaction', 0, NULL),
-			('RCN', 'CANCELLED', 'registration', 0, NULL),
-			('PCN', 'CANCELLED', 'payment', 0, NULL),
-			('PFL', 'FAILED', 'payment', 0, NULL);";
-	$wpdb->query($sql);
+		$sql = "INSERT INTO " . ESP_PRICE_TABLE . "
+					(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_use_dates, PRC_start_date, PRC_end_date, PRC_disc_code, PRC_disc_limit_qty, PRC_disc_qty, PRC_disc_apply_all, PRC_disc_wp_user, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted ) VALUES
+					(1, 1, 0, '100.00', 'General Admission', 'Regular price for all Events.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 0, 0),
+					(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 10, 0),
+					(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price.',  1, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 20, 0),
+					(4, 5, 0, '25', 'Super Promo 25', 'The first 50 to enter this Promo Code will receive $25 off of the regular price.', 0, NULL, NULL, 'Sup3rPr0m025', 1, 50, 0, 1, 1, NULL, 10, 0),
+					(5, 6, 0, '7.50', 'Service Fee', 'Covers administrative expenses.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 30, 0),
+					(6, 7, 0, '7.00', 'Sales Tax', 'Locally imposed tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 40, 0),
+					(7, 8, 0, '15.00', 'VAT', 'Value Added Tax.', 0, NULL, NULL, NULL, 0, 0, 0, 0, 1, NULL, 50, 0);";
+		$wpdb->query($sql);
+	}
+	
+
+
+	if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'") == ESP_STATUS_TABLE) {
+		$sql = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ('ACT','RAP','CLS','TCM','PDC','DEL','DEN','DRF','EDR','EXP','TOP','NAC','RNA','NOP','ONG','OPN','PND','RPN','SEC','SNT','PAP','TPN','RCN','PCN','PFL');";
+		$wpdb->query($sql);
+		
+		$sql = "INSERT INTO " . ESP_STATUS_TABLE . " 
+				(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc) VALUES
+				('ACT', 'ACTIVE', 'event', 0, NULL),
+				('RAP', 'APPROVED', 'registration', 0, NULL),
+				('CLS', 'REGISTRATION_CLOSED', 'event', 0, NULL),
+				('TCM', 'COMPLETE', 'transaction', 0, NULL),
+				('PDC', 'DECLINED', 'payment', 0, NULL),
+				('DEL', 'DELETED', 'event', 0, NULL),
+				('DEN', 'DENIED', 'event', 0, NULL),
+				('DRF', 'DRAFT', 'event', 0, NULL),
+				('EDR', 'DRAFT', 'email', 0, NULL),
+				('EXP', 'EXPIRED', 'event', 0, NULL),
+				('TOP', 'OPEN', 'transaction', 0, NULL),
+				('NAC', 'NOT_ACTIVE', 'event', 0, NULL),
+				('RNA', 'NOT_APPROVED', 'registration', 0, NULL),
+				('NOP', 'REGISTRATION_NOT_OPEN', 'event', 0, NULL),
+				('ONG', 'ONGOING', 'event', 0, NULL),
+				('OPN', 'REGISTRATION_OPEN', 'event', 0, NULL),
+				('PND', 'PENDING', 'event', 0, NULL),
+				('RPN', 'PENDING', 'registration', 0, NULL),
+				('SEC', 'SECONDARY', 'event', 0, NULL),
+				('SNT', 'SENT', 'email', 0, NULL),
+				('PAP', 'APPROVED', 'payment', 0, NULL),
+				('TPN', 'PENDING', 'transaction', 0, NULL),
+				('RCN', 'CANCELLED', 'registration', 0, NULL),
+				('PCN', 'CANCELLED', 'payment', 0, NULL),
+				('PFL', 'FAILED', 'payment', 0, NULL);";
+		$wpdb->query($sql);
+	}
 	
 }
 
