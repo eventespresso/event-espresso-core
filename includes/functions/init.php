@@ -358,19 +358,24 @@ function espresso_export_certificate() {
 
 function espresso_export_invoice() {
 	//Version 2.0
-	if (!empty($_REQUEST['invoice_launch'])) {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/Invoice.class.php");
-		$invoice = new Invoice($_REQUEST['id']);
-		$invoice->send_invoice();
+	if (isset($_REQUEST['invoice_launch']) && $_REQUEST['invoice_launch'] == 'true') {
+		if (isset($_REQUEST['id'])) {
+			$_REQUEST['id'] = sanitize_key( $_REQUEST['id'] );
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/Invoice.class.php");
+			$invoice = new Invoice($_REQUEST['id']);
+			$invoice->send_invoice();
+		}
 	}
 	//End Version 2.0
 	//Export pdf version
 	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
-//		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/template.php");
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/Invoice.class.php");
-		$invoice = new Invoice($_REQUEST['id']);
-		// send invoice but force download
-		$invoice->send_invoice( TRUE ); 
+		if (isset($_REQUEST['id'])) {
+			$_REQUEST['id'] = sanitize_key( $_REQUEST['id'] );
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/lib/Invoice.class.php");
+			$invoice = new Invoice($_REQUEST['id']);
+			// send invoice but force download
+			$invoice->send_invoice( TRUE ); 
+		}
 	}
 	//End pdf version
 }
