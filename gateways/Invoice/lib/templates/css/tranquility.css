@@ -26,7 +26,7 @@ Created by Roan Lavery
 
 /*=========================== LAYOUT =========================*/
 
-#invoice{ padding:0 0.8cm 1.8cm 0.8cm; background: #fff url(../images/ripple.jpg) 0px 120px no-repeat;  }
+#invoice{ padding:1cm; background: #fff url(../images/ripple.jpg) 0px 120px no-repeat;  }
 #invoice-header{padding-top:1cm; }
 #invoice-info { margin:10px 0 20px 0 }
 #invoice-info th{text-align:right}
@@ -62,10 +62,4 @@ Created by Roan Lavery
 #invoice-amount td.action{background-color: #FFF; width:7%;padding-right:0; white-space:nowrap;text-align:center}
 #invoice-amount #total_currency{text-align:right;}
 
-/*#invoice-amount .details_th{width:45%}
-#invoice-amount .details_notax_th{width:52%}
-#invoice-amount .quantity_th{width:13%}
-#invoice-amount .subtotal_th{width:20%; text-align:right}
-#invoice-amount .unitprice_th{width:15%; text-align:right}
-#invoice-amount .salestax_th{width:7%; text-align:center}*/
 

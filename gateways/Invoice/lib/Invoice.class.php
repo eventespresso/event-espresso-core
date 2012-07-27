@@ -31,17 +31,18 @@ class Invoice {
 //printr($this->invoice_settings);
 		$template_args = array();
 
-//		$themes = array(
-//										1 => "simple.css",
-//										2 => "bauhaus.css",
-//										3 => "ejs.css",
-//										4 => "horizon.css", 
-//										5 => "lola.css",
-//										6 => "tranquility.css",
-//										7 => "union.css"
-//									);
-//		$this->invoice_settings['invoice_css'] = $themes[7];
-//echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
+		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : 1;		
+		$themes = array(
+										1 => "simple.css",
+										2 => "bauhaus.css",
+										3 => "ejs.css",
+										4 => "horizon.css", 
+										5 => "lola.css",
+										6 => "tranquility.css",
+										7 => "union.css"
+									);
+		$this->invoice_settings['invoice_css'] = $themes[ $theme ];
+		//echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
 
 		//Get the CSS file
 		if (!empty($this->invoice_settings['invoice_css'])) {
@@ -115,8 +116,17 @@ class Invoice {
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
 		//Get the HTML as an object
-		$template_content = espresso_display_template( dirname(__FILE__) . '/templates/index.php', $template_args, TRUE );
-		$content = $this->espresso_replace_invoice_shortcodes($template_content);
+		$template_header = espresso_display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
+		$template_body = espresso_display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
+		$template_footer = espresso_display_template( dirname(__FILE__) . '/templates/invoice_footer.template.php', $template_args, TRUE );
+		
+		$copies =  ! empty( $_REQUEST['copies'] ) ? $_REQUEST['copies'] : 1;
+
+		$content = $this->espresso_replace_invoice_shortcodes($template_header);
+		for( $x = 1; $x <= $copies; $x++ ) {
+			$content .= $this->espresso_replace_invoice_shortcodes($template_body);
+		}
+		$content .= $this->espresso_replace_invoice_shortcodes($template_footer);
 
 		//Check if debugging or mobile is set
 		if (!empty($_REQUEST['html'])) {

@@ -2,10 +2,10 @@
 
 //Returns an array of available template files
 function espresso_invoice_template_files($class_file) {
-// read our template dir and build an array of files
-	if (file_exists(dirname($class_file) .'/lib/templates/index.php')) {
-		$dhandle = opendir(dirname($class_file) . '/lib/templates/css/'); //If the template files have been moved to the uplaods folder
-	} else return FALSE;
+	// read our template dir and build an array of files
+	//if (file_exists(dirname($class_file) .'/lib/templates/index.php')) {
+	$dhandle = opendir(dirname($class_file) . '/lib/templates/css/'); //If the template files have been moved to the uplaods folder
+	//} else return FALSE;
 
 	$files = array();
 
@@ -34,13 +34,10 @@ function espresso_invoice_template_files($class_file) {
 }
 
 //Checks to see if the invoice is selected
-function espresso_invoice_is_selected($name, $selected='') {
-	$input_item = $name;
-	$option_selections = array($selected);
-	if (!in_array($input_item, $option_selections)) {
-		return false;
+function espresso_invoice_is_selected($input_item, $selected='') {
+	if ( $input_item == $option_selections ) {
+		return 'selected="selected"';
 	} else {
-		echo 'selected="selected"';
-		return;
+		return '';
 	}
 }
