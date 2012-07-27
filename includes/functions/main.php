@@ -21,10 +21,14 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $
 	return $html;
 }
 
+
+
 function espresso_invoice_url($attendee_id, $registration_id, $extra = '') {
 	$extra = empty($extra) ? '' : '&amp;' . $extra;
 	return home_url() . '/?invoice_launch=true&amp;id=' . $attendee_id . '&amp;r_id=' . $registration_id . '&amp;html=true' . $extra;
 }
+
+
 
 function espresso_get_reg_page_full_url() {
 	global $org_options;

@@ -78,11 +78,11 @@
 
 		<input id="reg-page-selected-gateway" type="hidden" value="<?php echo $selected_gateway; ?>" name="selected_gateway">
 		<input id="reg-page-selected-gateway-name-free" type="hidden" value="free" name="selected_gateway_name[free]">
-
-<?php
-
-				do_action('action_hook_espresso_display_payment_gateways');
-
+		<div id="methods-of-payment">
+			<h3><?php _e('Please select your method of payment:', 'event_espresso'); ?></h3>
+			<?php	do_action('action_hook_espresso_display_payment_gateways'); ?>
+		</div><!-- / .event-display-boxes payment opts -->
+		<?php
 				// end  if  $payment_required
 			} else { ?>
 			<input type="hidden" id="reg-page-no-payment-required-step-2" name="reg-page-no-payment-required" value="1" />

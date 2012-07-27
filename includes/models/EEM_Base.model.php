@@ -576,7 +576,7 @@ abstract class EEM_Base {
 			}
 		}
 
-//		echo printr( $em_updata, $em_table_name );
+		//echo printr( $em_updata, $em_table_name );
 
 		global $wpdb;
 		// use $wpdb->insert because it automagically escapes and sanitizes data for us

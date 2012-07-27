@@ -131,7 +131,7 @@ function espresso_display_reg_page($data) {
 
 				//Meta example
 				//echo do_shortcode('[EE_META type="event_meta" name="test_meta"]');
-				if ( $single_event ) :
+				if ( $data['single_event'] ) :
 				?>
 				<p class="start_date">
 						<?php if ($data['end_date'] !== $data['start_date']) { ?>

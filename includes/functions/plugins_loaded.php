@@ -237,9 +237,6 @@ function espresso_init() {
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Single_Page_Checkout.class.php');
 	global $Single_Page_Checkout;
 	$Single_Page_Checkout = EE_Single_Page_Checkout::instance();	
-	
-//	event_espresso_require_gateway('process_payments.php');
-	
 	$espresso_premium = apply_filters('filter_hook_espresso_systems_check', false);
 
 	do_action('action_hook_espresso_coupon_codes');
@@ -297,6 +294,19 @@ function espresso_check_for_import() {
 }
 
 
+function espresso_load_reg_page_files() {
+
+	define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
+
+//Process email confirmations
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/email.php');
+
+//Various attendee functions
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/attendee_functions.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'process-registration/thank_you_page.php');
+	event_espresso_require_gateway('PaymentGateway.php');
+}
+add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_files');
 
 
 

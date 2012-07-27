@@ -1,20 +1,22 @@
 <?php
 
 function espresso_thank_you_page() {
-	global $EE_Session;
+	global $EE_Session, $EEM_Gateways;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	$EE_Session = EE_Session::instance();
-	$session_data = $EE_Session->get_session_data();
-	$type = $session_data['gateway_data']['type'];
-	if ($type == 'off-site' || $type == 'off-line') {
-		$selected_gateway = $session_data['gateway_data']['selected_gateway'];
-		$gateway_path = $session_data['gateway_data']['active_gateways'][$selected_gateway];
-		require_once($gateway_path . "/return.php");
-		do_action('action_hook_espresso_process_off_site_payment', $EE_Session);
+	if (!defined('ESPRESSO_GATEWAYS')) {
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
+		$EEM_Gateways = EEM_Gateways::instance();
 	}
-	if ($type == 'off-site' || $type == 'onsite_noajax') {
-			$SPCO = EE_Single_Page_Checkout::instance();
-			$SPCO->process_registration_payment(FALSE);
+	$type = $EEM_Gateways->type();
+	if ($type == 'off-site' || $type == 'off-line') {
+		do_action('action_hook_espresso_process_off_site_payment');
+	}
+	if ($type == 'off-site' || ($type == 'onsite' && !$EEM_Gateways->ajax())) {
+		$SPCO = EE_Single_Page_Checkout::instance();
+		$SPCO->process_registration_payment(FALSE);
+	} elseif ($type == 'off-line') {
+		$SPCO = EE_Single_Page_Checkout::instance();
+		$SPCO->process_off_line_gateway();
 	}
 	$session_data = $EE_Session->get_session_data();
 	if (!empty($session_data['txn_results'])) {
@@ -39,9 +41,8 @@ function espresso_thank_you_page() {
 		);
 		espresso_require_template('payment_overview.php');
 		do_action('action_hook_espresso_display_payment_overview_template', $data);
-		$gateway_data['selected_gateway'] = null;
-		$gateway_data['type'] = null;
-		$EE_Session->set_session_data($gateway_data, 'gateway_data');
+		$EEM_Gateways->reset_session_data();
+		do_action( 'action_hook_espresso_reg_completed' );
 		do_action( 'action_hook_espresso_reg_completed' );
 
 	} else {
