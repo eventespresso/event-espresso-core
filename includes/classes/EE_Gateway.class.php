@@ -113,7 +113,7 @@ abstract class EE_Gateway {
 		if ($espresso_premium != true) {
 			return;
 		}
-		if (isset($_POST['update_'.$this->_gateway]) && check_admin_referer('espresso_form_check', 'add_'.$this->_gateway.'_settings')) {
+		if (isset($_POST['update_' . $this->_gateway]) && check_admin_referer('espresso_form_check', 'add_' . $this->_gateway . '_settings')) {
 			$this->_update_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
 				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Updated!', 'event_espresso');
@@ -141,12 +141,41 @@ abstract class EE_Gateway {
 			echo '?';
 					?></strong></li>
 					<?php
-					$this->_display_settings();
+					$this->_display_settings_wrapper();
 				}
 				?>
 			</ul>
 		</div> <!-- Class=padding -->
 		<?php
+	}
+
+	private function _display_settings_wrapper() {
+		$raw_uri = $_SERVER['REQUEST_URI'];
+		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_' . $this->_gateway . '=true'));
+		?>
+		<form method="post" action="<?php echo $uri; ?>#<?php echo $this->_gateway; ?>">
+			<table class="form-table">
+				<tbody>
+					<?php $this->_display_settings(); ?>
+					<tr>
+						<td>
+							<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+							<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<p>
+				<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="update_<?php echo $this->_gateway; ?>">
+				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update', 'event_espresso');
+					echo ' ' . $this->_payment_settings['display_name'] . ' ';
+					_e('Settings', 'event_espresso') ?>" id="save_<?php echo $this->_gateway; ?>_settings" />
+			</p>
+
+		<?php wp_nonce_field('espresso_form_check', 'add_' . $this->_gateway . '_settings'); ?>
+		</form>
+		<?php
+		$this->_display_settings_help();
 	}
 
 	public function set_form_url($base_url = FALSE) {
@@ -224,7 +253,7 @@ abstract class EE_Gateway {
 		global $espresso_notices;
 		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway);
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway]) {
-			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . '/lib/' .$this->_button_base;
+			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway . '/lib/' . $this->_button_base;
 		} else {
 			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/" . $this->_gateway . '/lib/' . $this->_button_base;
 		}
