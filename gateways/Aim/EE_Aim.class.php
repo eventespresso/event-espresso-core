@@ -32,7 +32,7 @@ Class EE_Aim extends EE_Gateway {
 		return __FILE__;
 	}
 
-	public static function instance( EEM_Gateways &$model) {
+	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
 			self::$_instance = new self($model);
@@ -41,7 +41,7 @@ Class EE_Aim extends EE_Gateway {
 		return self::$_instance;
 	}
 
-	protected function __construct( EEM_Gateways &$model) {
+	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Aim';
 		$this->_button_base = 'logo-aim.png';
 		parent::__construct($model);
@@ -75,78 +75,59 @@ Class EE_Aim extends EE_Gateway {
 	}
 
 	protected function _display_settings() {
-
-		$values = array(
-				array('id' => true, 'text' => __('Yes', 'event_espresso')),
-				array('id' => false, 'text' => __('No', 'event_espresso')),
-		);
-		$raw_uri = $_SERVER['REQUEST_URI'];
-		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_'.$this->_gateway.'=true'));
 		?>
-		<form method="post" action="<?php echo $uri; ?>#<?php echo $this->_gateway; ?>">
-			<table class="form-table">
-				<tbody>
-					<tr>
-						<th><label for="authnet_aim_login_id">
-								<?php _e('Authorize.net AIM Login ID', 'event_espresso'); ?>
-							</label></th>
-						<td><input class="regular-text" type="text" name="authnet_aim_login_id" id="authnet_aim_login_id" size="35" value="<?php echo $this->_payment_settings['authnet_aim_login_id']; ?>">
-							<br />
-							<span class="description">
-								<?php _e('Please enter your Authorize.net Login ID', 'event_espresso'); ?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label for="authnet_aim_transaction_key">
-								<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?>
-							</label></th>
-						<td><input class="regular-text" type="text" name="authnet_aim_transaction_key" id="authnet_aim_transaction_key" size="35" value="<?php echo $this->_payment_settings['authnet_aim_transaction_key']; ?>">
-							<br />
-							<span class="description">
-								<?php _e('Please enter your Authorize.net Transaction Key.', 'event_espresso'); ?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label for="use_sandbox">
-								<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'authnet_aim_sandbox'); ?>
-							</label></th>
-						<td><?php echo select_input('use_sandbox', $values, $this->_payment_settings['use_sandbox']); ?></td>
-					</tr>
-					<tr>
-						<th><label for="test_transactions">
-								<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
-							</label></th>
-						<td><?php echo select_input('test_transactions', $values, $this->_payment_settings['test_transactions']); ?></td>
-					</tr>
-					<tr>
-						<th><label for="aim_button_url">
-								<?php _e('Button Image URL', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'aim_button_image'); ?>
-							</label></th>
-						<td>
-							<input class="regular-text" type="text" name="button_url" id="aim_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
-							<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<p>
-				<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="update_<?php echo $this->_gateway; ?>">
-				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Authorize.net AIM Settings', 'event_espresso') ?>" id="save_authnet_aim_settings" />
-			</p>
-			<p><strong style="color:#F00">
-					<?php _e('WARNING!', 'event_espresso'); ?>
-				</strong><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></p>
-			<?php wp_nonce_field('espresso_form_check', 'add_'.$this->_gateway.'_settings'); ?>
-		</form>
+		<tr>
+			<th><label for="authnet_aim_login_id">
+					<?php _e('Authorize.net AIM Login ID', 'event_espresso'); ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="authnet_aim_login_id" id="authnet_aim_login_id" size="35" value="<?php echo $this->_payment_settings['authnet_aim_login_id']; ?>">
+				<br />
+				<span class="description">
+					<?php _e('Please enter your Authorize.net Login ID', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label for="authnet_aim_transaction_key">
+					<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="authnet_aim_transaction_key" id="authnet_aim_transaction_key" size="35" value="<?php echo $this->_payment_settings['authnet_aim_transaction_key']; ?>">
+				<br />
+				<span class="description">
+					<?php _e('Please enter your Authorize.net Transaction Key.', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label for="use_sandbox">
+					<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_aim_sandbox'); ?>
+				</label></th>
+			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+		</tr>
+		<tr>
+			<th><label for="test_transactions">
+					<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
+				</label></th>
+			<td><?php echo select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
+		</tr>
+		<tr>
+			<th><label for="aim_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'aim_button_image'); ?>
+				</label></th>
+			<td>
+				<input class="regular-text" type="text" name="button_url" id="aim_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+			</td>
+		</tr>
+		<?php
+	}
+
+	protected function _display_settings_help() {
+		?>
+		<p><strong style="color:#F00">
+				<?php _e('WARNING!', 'event_espresso'); ?>
+			</strong><?php _e('You are responsible for your own security and PCI compliance.', 'event_espresso'); ?></p>
 		<div id="authnet_aim_sandbox" style="display:none">
 			<h2>
 				<?php _e('Authorize.net AIM Test Mode', 'event_espresso'); ?>
@@ -259,7 +240,7 @@ Class EE_Aim extends EE_Gateway {
 
 			$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 
-			add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');	//<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
+			add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment'); //<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
 			// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?
 		} else {
 			// no payment required
@@ -298,7 +279,7 @@ Class EE_Aim extends EE_Gateway {
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 
 
-		<?php echo $test_creds; ?>
+			<?php echo $test_creds; ?>
 
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 
@@ -344,34 +325,34 @@ Class EE_Aim extends EE_Gateway {
 				<input id="reg-page-billing-card-nmbr" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr"/>
 			</p>
 
-		<?php /*
-		  <p class="event_form_field">
-		  <label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
-		  <input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
-		  </p>
-		 */ ?>
+			<?php /*
+			  <p class="event_form_field">
+			  <label for="reg-page-billing-card-exp-date"><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
+			  <input id="reg-page-billing-card-exp-date" class="required medium-txt <?php echo $css_class;?>" type="text" name="reg-page-billing-card-exp-date"/>
+			  </p>
+			 */ ?>
 			<p class="event_form_field">
 				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
 				<select id="reg-page-billing-card-exp-date-mnth" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth">
-			<?php
-			for ($x = 1; $x <= 12; $x++) {
-				$value = $x < 10 ? '0' . $x : $x;
-				echo '
+					<?php
+					for ($x = 1; $x <= 12; $x++) {
+						$value = $x < 10 ? '0' . $x : $x;
+						echo '
 						<option value="' . $value . '">' . $value . '</option>';
-			}
-			?>
+					}
+					?>
 				</select>
 				&nbsp;/&nbsp;
 				<select id="reg-page-billing-card-exp-date-year" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year">
-		<?php
-		$current_year = date('y');
-		$next_decade = $current_year + 10;
-		for ($x = $current_year; $x <= $next_decade; $x++) {
-			$value = $x < 10 ? '0' . $x : $x;
-			echo '
+					<?php
+					$current_year = date('y');
+					$next_decade = $current_year + 10;
+					for ($x = $current_year; $x <= $next_decade; $x++) {
+						$value = $x < 10 ? '0' . $x : $x;
+						echo '
 						<option value="' . $value . '">' . $value . '</option>';
-		}
-		?>
+					}
+					?>
 				</select>
 				<span class="small-text lt-grey-text"><?php _e('(mm/yy)', 'event_espresso'); ?></span>
 			</p>

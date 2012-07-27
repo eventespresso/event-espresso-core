@@ -70,103 +70,242 @@ Class EE_Authnet extends EE_Gateway {
 	protected function _display_settings() {
 
 		global $org_options;
-		$values = array(
-				array('id' => true, 'text' => __('Yes', 'event_espresso')),
-				array('id' => false, 'text' => __('No', 'event_espresso')),
-		);
-		$raw_uri = $_SERVER['REQUEST_URI'];
-		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_' . $this->_gateway . '=true'));
 		?>
-		<form method="post" action="<?php echo $uri; ?>#<?php echo $this->_gateway; ?>">
-			<table class="form-table">
-				<tbody>
-					<tr>
-						<th><label for="authnet_login_id">
-								<?php _e('Authorize.net Login ID', 'event_espresso'); ?>
-							</label></th>
-						<td><input class="regular-text" type="text" name="authnet_login_id" id="authnet_login_id" size="35" value="<?php echo $this->_payment_settings['authnet_login_id']; ?>">
-							<br />
-							<span class="description">
-								<?php _e('Please enter your Authorize.net Login ID', 'event_espresso'); ?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label for="authnet_transaction_key">
-								<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'transaction_key_info') ?>
-							</label></th>
-						<td><input class="regular-text" type="text" name="authnet_transaction_key" id="authnet_transaction_key" size="35" value="<?php echo $this->_payment_settings['authnet_transaction_key']; ?>">
-							<br />
-							<span class="description">
-								<?php _e('Please enter your Authorize.net Transaction Key.', 'event_espresso'); ?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label for="sim_button_url">
-								<?php _e('Button Image URL: ', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'authnet_button_url_info') ?>
-							</label></th>
-						<td><input class="regular-text" type="text" name="button_url" id="sim_button_url" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
-							<span class="description">
-								<?php _e('URL to the payment button.', 'event_espresso'); ?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label for="sim_image_url">
-								<?php _e('Image URL: ', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'authnet_image_url_info') ?>
-							</label></th>
-						<td><input class="regular-text" type="text" name="image_url" id="sim_image_url" value="<?php echo $this->_payment_settings['image_url']; ?>" />
-							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a><br />
-							<span class="description">
-								<?php
-								_e('Used for your business/personal logo on the Authorize.net SIM payment page.', 'event_espresso');
-								if ($this->_payment_settings['image_url'] != '')
-									echo '<br /><img src="' . $this->_payment_settings['image_url'] . '" />';
-								?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label>
-								<?php _e('Relay Response URL: ', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'relay_response') ?>
-							</label></th>
-						<td><span class="display-path" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;"><?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?></span><br />
-							<span class="description">
-								<?php _e('URL to the transaction page.', 'event_espresso'); ?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label for="use_sandbox">
-								<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'authnet_sandbox'); ?>
-							</label></th>
-						<td><?php echo select_input('use_sandbox', $values, $this->_payment_settings['use_sandbox']); ?></td>
-					</tr>
-					<tr>
-						<th><label for="test_transactions">
-								<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
-							</label></th>
-						<td><?php echo select_input('test_transactions', $values, $this->_payment_settings['test_transactions']); ?></td>
-					</tr>
-					<tr>
-						<td>
-							<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
-							<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<p>
-				<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="update_<?php echo $this->_gateway; ?>">
-				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Authorize.net SIM Settings', 'event_espresso') ?>" id="save_authnet_settings" />
-			</p>
-			<?php wp_nonce_field('espresso_form_check', 'add_' . $this->_gateway . '_settings'); ?>
-		</form>
+		<tr>
+			<th><label for="authnet_login_id">
+					<?php _e('Authorize.net Login ID', 'event_espresso'); ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="authnet_login_id" id="authnet_login_id" size="35" value="<?php echo $this->_payment_settings['authnet_login_id']; ?>">
+				<br />
+				<span class="description">
+					<?php _e('Please enter your Authorize.net Login ID', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label for="authnet_transaction_key">
+					<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'transaction_key_info') ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="authnet_transaction_key" id="authnet_transaction_key" size="35" value="<?php echo $this->_payment_settings['authnet_transaction_key']; ?>">
+				<br />
+				<span class="description">
+					<?php _e('Please enter your Authorize.net Transaction Key.', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label for="sim_button_url">
+					<?php _e('Button Image URL: ', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_button_url_info') ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="button_url" id="sim_button_url" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a> <br />
+				<span class="description">
+					<?php _e('URL to the payment button.', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label for="sim_image_url">
+					<?php _e('Image URL: ', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_image_url_info') ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="image_url" id="sim_image_url" value="<?php echo $this->_payment_settings['image_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=image_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a><br />
+				<span class="description">
+					<?php
+					_e('Used for your business/personal logo on the Authorize.net SIM payment page.', 'event_espresso');
+					if ($this->_payment_settings['image_url'] != '')
+						echo '<br /><img src="' . $this->_payment_settings['image_url'] . '" />';
+					?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label>
+					<?php _e('Relay Response URL: ', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'relay_response') ?>
+				</label></th>
+			<td><span class="display-path" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;"><?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?></span><br />
+				<span class="description">
+					<?php _e('URL to the transaction page.', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label for="use_sandbox">
+					<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_sandbox'); ?>
+				</label></th>
+			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+		</tr>
+		<tr>
+			<th><label for="test_transactions">
+					<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
+				</label></th>
+			<td><?php echo select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
+		</tr>
+
 		<?php
-		include_once('lib/authnet_help.php');
+	}
+
+	protected function _display_settings_help() {
+		?>
+		<div style="display: none;">
+			<?php
+			/**
+			 * Relay Response
+			 */
+			?>
+			<div id="transaction_key_info" class="pop-help" >
+				<div class="TB-ee-frame">
+					<h2>
+						<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?>
+					</h2>
+					<p><?php _e('The Transaction Key is  a 16-character alphanumeric value that is randomly generated in the  Merchant Interface and is used for authentication when submitting  transaction requests from your Web site.', 'event_espresso'); ?></p>
+					<p><?php _e('To generate a Transaction Key for your account:', 'event_espresso'); ?></p>
+					<ol>
+						<li><?php _e('Log into the Merchant Interface at', 'event_espresso'); ?> <a href="https://account.authorize.net/" target="_blank">https://account.authorize.net/</a>.</li>
+						<li><?php _e('Click Account from the main toolbar.', 'event_espresso'); ?></li>
+						<li><?php _e('Click Settings in the main menu on the left.', 'event_espresso'); ?></li>
+						<li><?php _e('Click API Login ID and Transaction Key in the Security Settings section.', 'event_espresso'); ?></li>
+						<li><?php _e('If an API login ID has already been generated, it is visible on this  page. If an API Login ID needs to be generated, you can enter the answer  to your Secret Question in order to generate an API Login ID and  Transaction Key.', 'event_espresso'); ?></li>
+					</ol>
+					<p><?php _e('IMPORTANT: The Transaction Key will not be visible at any other time in  the Merchant Interface. You must record it temporarily or copy and paste  it to a secure file location immediately. Like the API Login ID, the  Transaction Key is sensitive account information and should only be  shared on a need-to-know basis, for example with your Web developer for  the purposes of integration with the payment gateway. Upon activating a new Transaction Key, all other keys will be disabled after 24 hours.', 'event_espresso'); ?></p>
+				</div>
+			</div>
+
+			<?php
+			/**
+			 * Relay Response
+			 */
+			?>
+			<div id="relay_response" class="pop-help" >
+				<div class="TB-ee-frame">
+					<h2>
+						<?php _e('Relay Response', 'event_espresso'); ?>
+					</h2>
+					<p>
+						<?php _e('This shows the specific the URL to which the gateway should return the relay response for a transaction. This the page should be set in your Authorize.net account. Login to Authorize.net, goto Account > Response/Receipt URLs > Add URL and enter the following URL.', 'event_espresso'); ?>
+					</p>
+					<p><strong>
+							<?php _e('Relay Response URL:', 'event_espresso'); ?>
+						</strong> <?php echo home_url() . '/?page_id=' . $org_options['notify_url'] ?><br />
+						<span style="color:red;">
+							<?php _e('Note:', 'event_espresso'); ?>
+						</span>
+						<?php _e('This URL can be changed in the "Organization Settings" page.', 'event_espresso'); ?>
+					</p>
+					<p>
+						<?php _e('For complete information on configuring relay response, please refer to', 'event_espresso'); ?>
+						<a href="https://account.authorize.net/help/Merchant_Interface_RoboHelp_Project.htm#Miscellaneous/Reference.htm%3E%3Epan=2">
+							<?php _e('Reference &amp; User Guides', 'event_espresso'); ?>
+						</a>.</p>
+				</div>
+			</div>
+			<?php
+			/**
+			 * Button Image URL
+			 */
+			?>
+			<div id="authnet_button_url_info" class="pop-help" >
+				<div class="TB-ee-frame">
+					<h2>
+						<?php _e('Button Image URL', 'event_espresso'); ?>
+					</h2>
+					<p>
+						<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso'); ?>
+					</p>
+					<p><strong>
+							<?php _e('Current button image:', 'event_espresso'); ?>
+						</strong></p>
+					<p><?php echo '<img src="' . $payment_settings['authnet_sim']['button_url'] . '" />'; ?></p>
+				</div>
+			</div>
+			<?php
+			/**
+			 * Authorize.net SIM Image URL
+			 */
+			?>
+			<div id="authnet_image_url_info" class="pop-help" >
+				<div class="TB-ee-frame">
+					<h2>
+						<?php _e('Authorize.net SIM Image URL (logo for payment page)', 'event_espresso'); ?>
+					</h2>
+					<p>
+						<?php _e('The URL of the image displayed as your logo in the header of the Authorize.net checkout pages.', 'event_espresso'); ?>
+					</p>
+					<p><strong>
+							<?php _e('Current logo image:', 'event_espresso'); ?>
+						</strong></p>
+					<p><?php echo '<img src="' . $payment_settings['authnet_sim']['image_url'] . '" />'; ?></p>
+
+				</div>
+			</div>
+			<?php
+			/**
+			 * Authorize.net Development Server
+			 */
+			?>
+			<div id="authnet_sandbox" class="pop-help" >
+				<div class="TB-ee-frame">
+					<h2>
+						<?php _e('Authorize.net Development Server', 'event_espresso'); ?>
+					</h2>
+					<p>
+						<?php _e('Authorize.net maintains a development environment for testing your gateway. You may use this to test your setup without having a live account. You will need to sign up for a free account on the development server here: '); ?>
+						<a href="https://developer.authorize.net/testaccount/">https://developer.authorize.net/testaccount/</a>
+						<?php _e('Transactions that are submitted to the development server are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers.', 'event_espresso'); ?>
+					</p>
+					<p><strong>
+							<?php _e('Example Card Numbers:', 'event_espresso'); ?>
+						</strong></p>
+					<p>370000000000002 (
+						<?php _e('American Express', 'event_espresso'); ?>
+						)<br />
+						6011000000000012 (
+						<?php _e('Discover', 'event_espresso'); ?>
+						)<br />
+						5424000000000015 (
+						<?php _e('Master Card', 'event_espresso'); ?>
+						)<br />
+						4007000000027 (
+						<?php _e('Visa', 'event_espresso'); ?>
+						)</p>
+				</div>
+			</div>
+
+			<?php
+			/**
+			 * Authorize.net SIM Image URL
+			 */
+			?>
+			<div id="authnet_test_transactions" class="pop-help" >
+				<div class="TB-ee-frame">
+					<h2>
+						<?php _e('Authorize.net Test Transactions', 'event_espresso'); ?>
+					</h2>
+					<p>
+						<?php _e('Transactions that are submitted as test transactions are NOT actually processed. The result of a transaction depends on the card number submitted, and the invoice amount. If you want a transaction to be approved, use one of the following card numbers.', 'event_espresso'); ?>
+					</p>
+					<p><strong>
+							<?php _e('Example Card Numbers:', 'event_espresso'); ?>
+						</strong></p>
+					<p>370000000000002 (
+						<?php _e('American Express', 'event_espresso'); ?>
+						)<br />
+						6011000000000012 (
+						<?php _e('Discover', 'event_espresso'); ?>
+						)<br />
+						5424000000000015 (
+						<?php _e('Master Card', 'event_espresso'); ?>
+						)<br />
+						4007000000027 (
+						<?php _e('Visa', 'event_espresso'); ?>
+						)</p>
+				</div>
+			</div>
+
+		</div>
+
+		<?php
 	}
 
 	public function espresso_gateway_process_step_3() {
@@ -283,7 +422,7 @@ Class EE_Authnet extends EE_Gateway {
 		</a>
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
-			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the Authorize.net website where your payment will be securely processed.', 'event_espresso'); ?>
+		<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the Authorize.net website where your payment will be securely processed.', 'event_espresso'); ?>
 		</div>
 
 		<?php
