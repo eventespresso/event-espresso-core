@@ -43,6 +43,7 @@ function espresso_thank_you_page() {
 		do_action('action_hook_espresso_display_payment_overview_template', $data);
 		$EEM_Gateways->reset_session_data();
 		do_action( 'action_hook_espresso_reg_completed' );
+		do_action( 'action_hook_espresso_reg_completed' );
 
 	} else {
 
