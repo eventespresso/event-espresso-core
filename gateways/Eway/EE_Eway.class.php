@@ -180,6 +180,8 @@ Class EE_Eway extends EE_Gateway {
 	}
 
 	public function espresso_gateway_process_step_3() {
+		global $EE_Session;
+		$session_data = $EE_Session->get_session_data();
 		include_once ('lib/Eway.php');
 		$myeway = new eway($this->_payment_settings); // initiate an instance of the class
 		global $org_options;
