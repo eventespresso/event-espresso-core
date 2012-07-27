@@ -1,0 +1,39 @@
+/* Base CSS styles DO NOT CHANGE OR REMOVE */
+
+body {margin: 0!important;padding: 0!important;font:62.5%/1.5 Helvetica, Arial, Verdana, sans-serif;background-color: #eee;}
+ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
+
+#invoice { width:660px; min-height:21.5cm; margin:0 auto;overflow:hidden; background-color:#fff }
+
+
+.print_button_div{
+	margin: 0 12pt; 
+	width:660px;
+	padding: 10px; 
+	margin:1em auto;
+}
+
+.print_button_div form{
+	font-size:14px;
+	float:right;
+	margin:0 0 0 1em;
+}
+
+table { border-collapse:collapse!important; width:100%!important; }
+td { vertical-align:top!important; }
+.not-really-a-table  { border:none!important; }
+
+#invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
+#logo-dv { width:150px!important; }
+#logo-dv img { max-width:150px!important; border: none; }
+
+#comments{padding-top:1cm; line-height:1.2em; }
+
+.aln-left { text-align:left; }
+.aln-cntr { text-align:center; }
+.aln-rght { text-align:right; }
+
+.small-text { font-size:.8em; }
+.float-left { float:left; }
+.float-right { float:right; }
+.clear { clear:both; }
