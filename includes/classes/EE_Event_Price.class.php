@@ -118,8 +118,8 @@ class EE_Event_Price {
 		$this->_desc					= $price->desc();
 		/*$this->_reg_limit			= $price->reg_limit();*/
 		$this->_use_dates			= $price->use_dates();
-		$this->_start_date			= $price->start_date();
-		$this->_end_date			= $price->end_date();
+		$this->_start_date			= $price->start_date( FALSE );
+		$this->_end_date			= $price->end_date( FALSE );
 		$this->_is_active			= $price->is_active();
 		$this->_overrides			= $price->overrides();
 		$this->_deleted				= $price->deleted();
@@ -269,8 +269,12 @@ class EE_Event_Price {
 	 * get original Price Object start_date
 	 * @return int
 	 */
-	public function start_date() {
-		return $this->_start_date;
+	public function start_date( $format = 'Y-m-d' ) {
+		if ( $format === FALSE ) {
+			return $this->_start_date;
+		} else {
+			return date( $format, $this->_start_date );
+		}
 	}
 
 
@@ -278,8 +282,12 @@ class EE_Event_Price {
 	 * get original Price Object end_date
 	 * @return int
 	 */
-	public function end_date() {
-		return $this->_end_date;
+	public function end_date( $format = 'Y-m-d' ) {
+		if ( $format === FALSE ) {
+			return $this->_end_date;
+		} else {
+			return date( $format, $this->_end_date );
+		}
 	}
 
 

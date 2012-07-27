@@ -42,6 +42,7 @@ function espresso_thank_you_page() {
 		espresso_require_template('payment_overview.php');
 		do_action('action_hook_espresso_display_payment_overview_template', $data);
 		$EEM_Gateways->reset_session_data();
+		do_action( 'action_hook_espresso_reg_completed' );
 
 	} else {
 

@@ -24,8 +24,6 @@ function espresso_plugin_activation() {
 		espresso_initialize_email();
 		event_espresso_create_upload_directories();
 		event_espresso_update_shortcodes();
-		event_espresso_update_attendee_data();
-		espresso_update_attendee_qty();
 		espresso_org_option_initialization();
 		espresso_fix_org_options();
 		espresso_update_active_gateways();
