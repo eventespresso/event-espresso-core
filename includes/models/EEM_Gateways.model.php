@@ -39,9 +39,10 @@ Class EEM_Gateways {
 	private $_ajax = TRUE;
 
 	private function __construct() {
-		define('ESPRESSO_GATEWAYS', TRUE);
+		define('ESPRESSO_GATEWAYS', TRUE);		//so client code can check for instatiation b4 including
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Gateway.class.php');
 		global $espresso_wp_user, $EE_Session;
+		// try to pull data from session b4 hitting db
 		$this->_session_gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		if (!empty($this->_session_gateway_data['selected_gateway'])) {
 			$this->_selected_gateway = $this->_session_gateway_data['selected_gateway'];
@@ -73,10 +74,11 @@ Class EEM_Gateways {
 			}
 			$EE_Session->set_session_data(array('payment_settings'=>$this->_payment_settings), 'gateway_data');
 		}
+		// on the settings page, scan and load all the gateways
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
 			$this->_load_all_gateway_files();
 		} else {
-			if (!is_array($this->_active_gateways)) {
+			if (!is_array($this->_active_gateways)) {  // if something went wrong, fail gracefully
 				//global $espresso_notices;
 				//$espresso_notices['errors'][] = 'No Active Event Espresso Payment Gateways';
 				return;
@@ -88,13 +90,13 @@ Class EEM_Gateways {
 					if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 						require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
 					} else {
-						$this->unset_active($gateway);
+						$this->unset_active($gateway);  // if it can't find a gateway, delete it from the active_gateways
 					}
 				} else {
 					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
 						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
 					} else {
-						$this->unset_active($gateway);
+						$this->unset_active($gateway);  // if it can't find a gateway, delete it from the active_gateways
 					}
 				}
 				if (class_exists($classname)) {
