@@ -66,146 +66,127 @@ Class EE_2checkout extends EE_Gateway {
 	}
 
 	protected function _display_settings() {
-
-		$values = array(
-				array('id' => true, 'text' => __('Yes', 'event_espresso')),
-				array('id' => false, 'text' => __('No', 'event_espresso')),
-		);
-		$raw_uri = $_SERVER['REQUEST_URI'];
-		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_'.$this->_gateway.'=true'));
 		?>
-		<form method="post" action="<?php echo $uri; ?>#<?php echo $this->_gateway; ?>">
-			<table class="form-table">
-				<tbody>
-					<tr>
-						<th><label for="2checkout_id">
-								<?php _e('2checkout ID', 'event_espresso'); ?>
-							</label></th>
-						<td><input class="regular-text" type="text" name="2checkout_id" id="2checkout_id" size="35" value="<?php echo $this->_payment_settings['2checkout_id']; ?>">
-							<br />
-							<span class="description">
-								<?php _e('(Typically 87654321)', 'event_espresso'); ?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label for="2checkout_username">
-								<?php _e('2checkout Username', 'event_espresso'); ?>
-							</label></th>
-						<td><input class="regular-text" type="text" name="2checkout_username" id="2checkout_username" size="35" value="<?php echo $this->_payment_settings['2checkout_username']; ?>">
-							<br />
-							<span class="description">
-								<?php _e('(Typically TestAccount)', 'event_espresso'); ?>
-							</span></td>
-					</tr>
-					<tr>
-						<th><label for="2co_button_url">
-								<?php _e('Button Image URL', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', '2co_button_image'); ?>
-							</label></th>
-						<td>
-							<input class="regular-text" type="text" name="button_url" id="2co_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-							<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-						</td>
-					</tr>
-					<tr>
-						<th><label for="currency_format">
-								<?php _e('Country Currency', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', '2co_currency_info'); ?>
-							</label></th>
-						<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
-								<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
-								<option value="USD">
-									<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
-								</option>
-								<option value="AUD">
-									<?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
-								</option>
-								<option value="GBP">
-									<?php _e('Pounds Sterling (&pound;)', 'event_espresso'); ?>
-								</option>
-								<option value="CAD">
-									<?php _e('Canadian Dollars (C $)', 'event_espresso'); ?>
-								</option>
-								<option value="CZK">
-									<?php _e('Czech Koruna', 'event_espresso'); ?>
-								</option>
-								<option value="DKK">
-									<?php _e('Danish Krone', 'event_espresso'); ?>
-								</option>
-								<option value="EUR">
-									<?php _e('Euros (&#8364;)', 'event_espresso'); ?>
-								</option>
-								<option value="HKD">
-									<?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
-								</option>
-								<option value="HUF">
-									<?php _e('Hungarian Forint', 'event_espresso'); ?>
-								</option>
-								<option value="ILS">
-									<?php _e('Israeli Shekel', 'event_espresso'); ?>
-								</option>
-								<option value="JPY">
-									<?php _e('Yen (&yen;)', 'event_espresso'); ?>
-								</option>
-								<option value="MXN">
-									<?php _e('Mexican Peso', 'event_espresso'); ?>
-								</option>
-								<option value="NZD">
-									<?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
-								</option>
-								<option value="NOK">
-									<?php _e('Norwegian Krone', 'event_espresso'); ?>
-								</option>
-								<option value="PLN">
-									<?php _e('Polish Zloty', 'event_espresso'); ?>
-								</option>
-								<option value="SGD">
-									<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
-								</option>
-								<option value="SEK">
-									<?php _e('Swedish Krona', 'event_espresso'); ?>
-								</option>
-								<option value="BRL">
-									<?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
-								</option>
-								<option value="MYR">
-									<?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
-								</option>
-								<option value="PHP">
-									<?php _e('Philippine Pesos', 'event_espresso'); ?>
-								</option>
-								<option value="TWD">
-									<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
-								</option>
-								<option value="THB">
-									<?php _e('Thai Baht', 'event_espresso'); ?>
-								</option>
-								<option value="INR">
-									<?php _e('Indian Rupee (Rs.)', 'event_espresso'); ?>
-								</option>
-							</select></td>
-					</tr>
-					<tr>
-						<th><label for="2co_use_sandbox">
-								<?php _e('Turn on Debugging Using the 2checkout Sandbox', 'event_espresso'); ?>
-								<?php echo apply_filters('filter_hook_espresso_help', '2co_sandbox_info'); ?>
-							</label></th>
-						<td><?php echo select_input('use_sandbox', $values, $this->_payment_settings['use_sandbox']); ?></td>
-					</tr>
-					<tr>
-						<td>
-							<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
-							<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<p>
-				<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="update_<?php echo $this->_gateway; ?>">
-				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update 2checkout Settings', 'event_espresso') ?>" id="save_2checkout_settings" />
-			</p>
-			<?php wp_nonce_field('espresso_form_check', 'add_'.$this->_gateway.'_settings'); ?>
-		</form>
+		<tr>
+			<th><label for="2checkout_id">
+					<?php _e('2checkout ID', 'event_espresso'); ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="2checkout_id" id="2checkout_id" size="35" value="<?php echo $this->_payment_settings['2checkout_id']; ?>">
+				<br />
+				<span class="description">
+					<?php _e('(Typically 87654321)', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label for="2checkout_username">
+					<?php _e('2checkout Username', 'event_espresso'); ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="2checkout_username" id="2checkout_username" size="35" value="<?php echo $this->_payment_settings['2checkout_username']; ?>">
+				<br />
+				<span class="description">
+					<?php _e('(Typically TestAccount)', 'event_espresso'); ?>
+				</span></td>
+		</tr>
+		<tr>
+			<th><label for="2co_button_url">
+					<?php _e('Button Image URL', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', '2co_button_image'); ?>
+				</label></th>
+			<td>
+				<input class="regular-text" type="text" name="button_url" id="2co_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
+				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
+			</td>
+		</tr>
+		<tr>
+			<th><label for="currency_format">
+					<?php _e('Country Currency', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', '2co_currency_info'); ?>
+				</label></th>
+			<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
+					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
+					<option value="USD">
+						<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
+					</option>
+					<option value="AUD">
+						<?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
+					</option>
+					<option value="GBP">
+						<?php _e('Pounds Sterling (&pound;)', 'event_espresso'); ?>
+					</option>
+					<option value="CAD">
+						<?php _e('Canadian Dollars (C $)', 'event_espresso'); ?>
+					</option>
+					<option value="CZK">
+						<?php _e('Czech Koruna', 'event_espresso'); ?>
+					</option>
+					<option value="DKK">
+						<?php _e('Danish Krone', 'event_espresso'); ?>
+					</option>
+					<option value="EUR">
+						<?php _e('Euros (&#8364;)', 'event_espresso'); ?>
+					</option>
+					<option value="HKD">
+						<?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
+					</option>
+					<option value="HUF">
+						<?php _e('Hungarian Forint', 'event_espresso'); ?>
+					</option>
+					<option value="ILS">
+						<?php _e('Israeli Shekel', 'event_espresso'); ?>
+					</option>
+					<option value="JPY">
+						<?php _e('Yen (&yen;)', 'event_espresso'); ?>
+					</option>
+					<option value="MXN">
+						<?php _e('Mexican Peso', 'event_espresso'); ?>
+					</option>
+					<option value="NZD">
+						<?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
+					</option>
+					<option value="NOK">
+						<?php _e('Norwegian Krone', 'event_espresso'); ?>
+					</option>
+					<option value="PLN">
+						<?php _e('Polish Zloty', 'event_espresso'); ?>
+					</option>
+					<option value="SGD">
+						<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
+					</option>
+					<option value="SEK">
+						<?php _e('Swedish Krona', 'event_espresso'); ?>
+					</option>
+					<option value="BRL">
+						<?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
+					</option>
+					<option value="MYR">
+						<?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
+					</option>
+					<option value="PHP">
+						<?php _e('Philippine Pesos', 'event_espresso'); ?>
+					</option>
+					<option value="TWD">
+						<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
+					</option>
+					<option value="THB">
+						<?php _e('Thai Baht', 'event_espresso'); ?>
+					</option>
+					<option value="INR">
+						<?php _e('Indian Rupee (Rs.)', 'event_espresso'); ?>
+					</option>
+				</select></td>
+		</tr>
+		<tr>
+			<th><label for="2co_use_sandbox">
+					<?php _e('Turn on Debugging Using the 2checkout Sandbox', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', '2co_sandbox_info'); ?>
+				</label></th>
+			<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+		</tr>
+		<?php
+	}
+
+	protected function _display_settings_help() {
+		?>
 		<div id="2co_button_image" style="display:none">
 			<h2>
 				<?php _e('Button Image URL', 'event_espresso'); ?>
