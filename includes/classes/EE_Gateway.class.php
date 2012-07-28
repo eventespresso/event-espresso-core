@@ -58,7 +58,7 @@ abstract class EE_Gateway {
 				array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 		);
 		global $EE_Session, $espresso_notices;
-		;
+		
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway)) {
 			$this->_default_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
@@ -259,7 +259,7 @@ abstract class EE_Gateway {
 		}
 		$this->_payment_settings['button_url'] = $button_url;
 		$this->_payment_settings['current_path'] = $this->_path();
-		;
+		
 		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
 			$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL Reset!', 'event_espresso');
 		} else {
