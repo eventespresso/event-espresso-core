@@ -52,6 +52,9 @@ abstract class EE_Gateway {
 	abstract public function espresso_process_off_site_payment();
 
 	protected function __construct(EEM_Gateways &$model) {
+
+		printr( $_POST, 'POST' );		
+
 		$this->_EEM_Gateways = $model;
 		$this->_yes_no_options = array(
 				array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
@@ -121,6 +124,9 @@ abstract class EE_Gateway {
 				$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings were not saved! ', 'event_espresso');
 			}
 		}
+
+		echo espresso_get_notices();
+		
 		?>
 
 		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
