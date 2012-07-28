@@ -159,75 +159,79 @@ Class EE_Stripe extends EE_Gateway {
 	}
 
 	public function espresso_gateway_process_step_3() {
-		global $org_options, $EE_Session;
-		include_once('lib/stripe.class.php');
-		$cls_stripe = new ClsStripe();
+		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
 		$billing_info = $session_data['billing_info'];
-		$stripe_settings = $this->_payment_settings;
-
-		//assemble the description and totals.
-		$item_num = 1;
-		$registration = $session_data['cart']['REG']['items'];
-		$description = '';
 		
-		foreach ($registrations as $registration) {
-			foreach ($registration['attendees'] as $attendee) {
-				$description .= $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'];
-				$item_num++;
+		if ( $billing_info != 'no payment required' ) {
+			require_once ('lib/stripe.class.php');
+			$cls_stripe = new ClsStripe();
+			$stripe_settings = $this->_payment_settings;
+
+			//assemble the description and totals.
+			$item_num = 1;
+			$registration = $session_data['cart']['REG']['items'];
+			$description = '';
+			
+			foreach ($registrations as $registration) {
+				foreach ($registration['attendees'] as $attendee) {
+					$description .= $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'];
+					$item_num++;
+				}
 			}
-		}
 
-		$total = $session_data['_cart_grand_total_amount'];
-		if (isset($session_data['tax_totals'])) {
-			foreach ($session_data['tax_totals'] as $key => $taxes) {
-				$total = $total + $taxes;
-				$description .= $session_data['taxes'][$key]['name'];
+			$total = $session_data['_cart_grand_total_amount'];
+			if (isset($session_data['tax_totals'])) {
+				foreach ($session_data['tax_totals'] as $key => $taxes) {
+					$total = $total + $taxes;
+					$description .= $session_data['taxes'][$key]['name'];
+				}
 			}
-		}
 
-		$amount_pd = $total;
+			$amount_pd = $total;
 
-		//setup transaction
-		$amount_pd = $grand_total;
-		$cc = $billing_info['reg-page-billing-card-nmb']['value'];
-		$csc = $billing_info['reg-page-billing-card-ccv-code']['value'];
-		$exp_month = $billing_info['reg-page-billing-card-exp-date-mnth']['value'];
-		$exp_year = $billing_info['reg-page-billing-card-exp-date-year']['value'];
-		$bname = $billing_info['reg-page-billing-fname']['value'].' '.$billing_info['reg-page-billing-lname']['value'];
-		
-		$item_num = 1;
-		$response = $cls_stripe->do_transaction($amount_pd, $cc, $csc, $exp_month, $exp_year, $bname, $description, $stripe_settings);
+			//setup transaction
+			$amount_pd = $grand_total;
+			$cc = $billing_info['reg-page-billing-card-nmb']['value'];
+			$csc = $billing_info['reg-page-billing-card-ccv-code']['value'];
+			$exp_month = $billing_info['reg-page-billing-card-exp-date-mnth']['value'];
+			$exp_year = $billing_info['reg-page-billing-card-exp-date-year']['value'];
+			$bname = $billing_info['reg-page-billing-fname']['value'].' '.$billing_info['reg-page-billing-lname']['value'];
+			
+			$item_num = 1;
+			$response = $cls_stripe->do_transaction($amount_pd, $cc, $csc, $exp_month, $exp_year, $bname, $description, $stripe_settings);
 
-		if ( isset($response['status']) )
-		{
+			if ( isset($response['status']) )
+			{
 
-			$payment_data->txn_id = $response['txid'];
-			$payment_data->payment_status = ( $response['status'] > 0 ) ? 'Approved' : 'Declined';
+				$payment_data->txn_id = $response['txid'];
+				$payment_data->payment_status = ( $response['status'] > 0 ) ? 'Approved' : 'Declined';
 
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
+				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
 
-			$txn_results = array(
-				'gateway' => $this->_payment_settings['display_name'],
-				'approved' => ( $response['status'] > 0 ) ? $response['status'] : 0,
-				'status' => $payment_data->payment_status,
-				'response_msg' => $response['msg'],
-				'amount' => $amount_pd,
-				'method' => '',
-				'card_type' => '',
-				'auth_code' => '',
-				'md5_hash' => '',
-				'transaction_id' => $response['txid'],
-				'invoice_number' => $response['txid'],
-				'raw_response' => $response
-				);
+				$txn_results = array(
+					'gateway' => $this->_payment_settings['display_name'],
+					'approved' => ( $response['status'] > 0 ) ? $response['status'] : 0,
+					'status' => $payment_data->payment_status,
+					'response_msg' => $response['msg'],
+					'amount' => $amount_pd,
+					'method' => '',
+					'card_type' => '',
+					'auth_code' => '',
+					'md5_hash' => '',
+					'transaction_id' => $response['txid'],
+					'invoice_number' => $response['txid'],
+					'raw_response' => $response
+					);
 
-			$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 
-			add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment'); // COPIED FROM @AIM Gateway -->//<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
-			// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?
+				add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment'); // COPIED FROM @AIM Gateway -->//<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
+				// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?
+			} 
+
 		} else {
-			//no payment required
+
 		}
 	}
 
@@ -244,13 +248,11 @@ Class EE_Stripe extends EE_Gateway {
 		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_stripe'));
 		?>
 		<a id="payment-gateway-button-<?php echo $this->_gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $this->_gateway; ?>" href="<?php echo $this->_form_url; ?>" >
-			<img src="<?php echo $this->_payment_settings['button_url']; ?>" alt="Pay using Authorize.Net" />
+			<img src="<?php echo $this->_payment_settings['button_url']; ?>" alt="Pay using Stripe" />
 		</a>
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 
-
-			<?php echo $test_creds; ?>
 
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 
@@ -341,7 +343,7 @@ Class EE_Stripe extends EE_Gateway {
 	public function espresso_reg_page_billing_inputs_stripe() {
 		$reg_page_billing_inputs = array(
 				'type' => 'onsite',
-				'gateway' => 'Authorize.Net AIM',
+				'gateway' => 'Stripe',
 				'reg-page-billing-fname' => array(
 						'db-col' => 'fname',
 						'label' => __('First Name', 'event_espresso'),
