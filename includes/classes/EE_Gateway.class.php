@@ -53,13 +53,16 @@ abstract class EE_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 
-		printr( $_POST, 'POST' );		
+		//echo '<h4>$this->_gateway : ' . $this->_gateway . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		
+		define( 'GATEWAYS_ADMIN_URL', admin_url( 'admin.php?page=payment_gateways' ));	
 
 		$this->_EEM_Gateways = $model;
 		$this->_yes_no_options = array(
 				array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
 				array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 		);
+		
 		global $EE_Session, $espresso_notices;
 		
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway)) {
@@ -117,6 +120,7 @@ abstract class EE_Gateway {
 			return;
 		}
 		if (isset($_POST['update_' . $this->_gateway]) && check_admin_referer('espresso_form_check', 'add_' . $this->_gateway . '_settings')) {
+			printr( $_POST, 'POST' );		
 			$this->_update_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
 				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Updated!', 'event_espresso');
@@ -125,8 +129,6 @@ abstract class EE_Gateway {
 			}
 		}
 
-		echo espresso_get_notices();
-		
 		?>
 
 		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
@@ -156,10 +158,11 @@ abstract class EE_Gateway {
 	}
 
 	private function _display_settings_wrapper() {
-		$raw_uri = $_SERVER['REQUEST_URI'];
-		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_' . $this->_gateway . '=true'));
+//		$raw_uri = $_SERVER['REQUEST_URI'];
+//		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_' . $this->_gateway . '=true'));
+		$form_url = add_query_arg( array( 'update_' . $this->_gateway => TRUE  ), GATEWAYS_ADMIN_URL );
 		?>
-		<form method="post" action="<?php echo $uri; ?>#<?php echo $this->_gateway; ?>">
+		<form method="post" action="<?php echo $form_url; ?>#<?php echo $this->_gateway; ?>">
 			<table class="form-table">
 				<tbody>
 					<?php $this->_display_settings(); ?>
