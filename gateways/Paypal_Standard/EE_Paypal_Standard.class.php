@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * @package			Event Espresso
  * @subpackage		gateways/
- * @author				Sidney Harrell
+ * @author				Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
