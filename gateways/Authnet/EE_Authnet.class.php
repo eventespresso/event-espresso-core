@@ -28,10 +28,6 @@ Class EE_Authnet extends EE_Gateway {
 
 	private static $_instance = NULL;
 
-	protected function _path() {
-		return __FILE__;
-	}
-
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
@@ -44,6 +40,7 @@ Class EE_Authnet extends EE_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Authnet';
 		$this->_button_base = 'btn_cc_vmad.gif';
+		$this->_path = str_replace( '\\', '/', __FILE__ );
 		parent::__construct($model);
 	}
 

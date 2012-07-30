@@ -28,9 +28,6 @@ Class EE_Invoice extends EE_Gateway {
 
 	private static $_instance = NULL;
 
-	protected function _path() {
-		return __FILE__;
-	}
 
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
@@ -43,6 +40,7 @@ Class EE_Invoice extends EE_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Invoice';
+		$this->_path = str_replace( '\\', '/', __FILE__ );
 		parent::__construct($model);
 	}
 

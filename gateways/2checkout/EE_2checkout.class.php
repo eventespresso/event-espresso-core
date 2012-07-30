@@ -28,9 +28,7 @@ Class EE_2checkout extends EE_Gateway {
 
 	private static $_instance = NULL;
 
-	protected function _path() {
-		return __FILE__;
-	}
+
 
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
@@ -44,6 +42,7 @@ Class EE_2checkout extends EE_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = '2checkout';
 		$this->_button_base = 'logo.png';
+		$this->_path =  str_replace( '\\', '/', __FILE__ );
 		parent::__construct($model);
 	}
 
@@ -54,7 +53,7 @@ Class EE_2checkout extends EE_Gateway {
 		$this->_payment_settings['use_sandbox'] = false;
 		$this->_payment_settings['type'] = 'off-site';
 		$this->_payment_settings['display_name'] = '2CheckOut';
-		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['current_path'] = $this->_path;
 	}
 
 	protected function _update_settings() {
