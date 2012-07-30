@@ -79,7 +79,7 @@ Class EE_Invoice extends EE_Gateway {
 
 	protected function _display_settings() {
 		require_once('lib/invoice_functions.php');
-		$files = espresso_invoice_template_files($this->_path());
+		$files = espresso_invoice_template_files($this->_path);
 		?>
 		<tr>
 			<th><label for="show">
