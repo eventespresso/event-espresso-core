@@ -10,7 +10,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @ package			Event Espresso
  * @ author				Seth Shoultes
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license				http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
  * @ version		 	3.1.P.7
  *
@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Payment Model
  *
  * @package			Event Espresso
- * @subpackage		gateways/
+ * @subpackage	gateways/
  * @author				Sidney Harrell
  *
  * ------------------------------------------------------------------------
@@ -30,6 +30,8 @@ abstract class EE_Gateway {
 	private $_session_gateway_data = NULL;
 	// gateway name 
 	protected $_gateway = NULL;
+	// path to gateway class file 
+	protected $_path = NULL;
 	// image name for gateway button
 	protected $_button_base = NULL;
 	// holder for the Gateways MODEL
@@ -56,7 +58,7 @@ abstract class EE_Gateway {
 	abstract protected function _default_settings();
 	abstract protected function _update_settings();
 	abstract protected function _display_settings();
-	abstract protected function _path();
+	//abstract protected function _path();
 	abstract public function espresso_display_payment_gateways();
 	abstract public function espresso_gateway_process_step_3();
 	abstract public function espresso_process_off_site_payment();
@@ -67,6 +69,8 @@ abstract class EE_Gateway {
 	
 		global $EE_Session, $espresso_notices;
 		
+		define( 'GATEWAYS_ADMIN_URL', admin_url( 'admin.php?page=payment_gateways' ));	
+
 		$this->_EEM_Gateways = $model;
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
@@ -126,7 +130,8 @@ abstract class EE_Gateway {
 
 	private function _gateways_admin() {
 		add_action('admin_init', array(&$this, 'add_settings_page_meta_box'));
-		if ($this->_payment_settings['current_path'] != $this->_path()) {
+		// if our current path is empty or doesn't match what's in the db, then maybe something changed?
+		if ( $this->_payment_settings['current_path'] == '' || $this->_payment_settings['current_path'] != $this->_path ) {
 			$this->_reset_button_url();
 		}
 		if (!empty($_REQUEST['activate_' . $this->_gateway])) {
@@ -140,6 +145,7 @@ abstract class EE_Gateway {
 
 
 	private function _gateways_frontend() {
+		global $EE_Session;
 		add_action('action_hook_espresso_display_payment_gateways', array(&$this, 'espresso_display_payment_gateways'));
 		if ($this->_session_gateway_data = $EE_Session->get_session_data($this->_gateway, "gateway_data")) {
 			if (!empty($this->_session_gateway_data['form_url'])) {
@@ -180,7 +186,7 @@ abstract class EE_Gateway {
 			return;
 		}
 		if (isset($_POST['update_' . $this->_gateway]) && check_admin_referer('espresso_form_check', 'add_' . $this->_gateway . '_settings')) {
-			printr( $_POST, 'POST' );		
+			//printr( $_POST, 'POST' );		
 			$this->_update_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
 				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Updated!', 'event_espresso');
@@ -194,14 +200,14 @@ abstract class EE_Gateway {
 		<div class="padding">
 			<ul>
 				<?php if (!$this->_EEM_Gateways->is_active($this->_gateway)) { ?>
-					<li id="activate_<?php echo $this->_gateway; ?>" style="width:30%;" onclick="location.href='<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?page=payment_gateways&activate_<?php echo $this->_gateway; ?>=true#<?php echo $this->_gateway; ?>'" class="green_alert pointer"><strong><?php
+					<li id="activate_<?php echo $this->_gateway; ?>" class="green_alert pointer" onclick="location.href='<?php echo add_query_arg( array( 'update_' . $this->_gateway => TRUE, 'activate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL ); ?>#<?php echo $this->_gateway; ?>'"><strong><?php
 			_e('Activate', 'event_espresso');
 			echo ' ' . $this->_payment_settings['display_name'] . ' ';
 			_e('Payments');
 			echo '?';
 					?></strong></li>
 				<?php } else { ?>
-					<li id="deactivate_<?php echo $this->_gateway; ?>" style="width:30%;" onclick="location.href='<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin.php?page=payment_gateways&deactivate_<?php echo $this->_gateway; ?>=true'" class="red_alert pointer"><strong><?php
+					<li id="deactivate_<?php echo $this->_gateway; ?>" class="red_alert pointer" onclick="location.href='<?php echo add_query_arg( array( 'update_' . $this->_gateway => TRUE, 'deactivate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL ); ?>#<?php echo $this->_gateway; ?>'"><strong><?php
 			_e('Deactivate', 'event_espresso');
 			echo ' ' . $this->_payment_settings['display_name'] . ' ';
 			_e('Payments');
@@ -221,7 +227,7 @@ abstract class EE_Gateway {
 	private function _display_settings_wrapper() {
 //		$raw_uri = $_SERVER['REQUEST_URI'];
 //		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_' . $this->_gateway . '=true'));
-		$form_url = add_query_arg( array( 'update_' . $this->_gateway => TRUE  ), GATEWAYS_ADMIN_URL );
+		$form_url = add_query_arg( array( 'update_' . $this->_gateway => TRUE, 'activate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL );
 		?>
 		<form method="post" action="<?php echo $form_url; ?>#<?php echo $this->_gateway; ?>">
 			<table class="form-table">
@@ -344,9 +350,10 @@ abstract class EE_Gateway {
 			$button_url = EVENT_ESPRESSO_PLUGINFULLURL . "gateways/" . $this->_gateway . '/lib/' . $this->_button_base;
 		}
 		$this->_payment_settings['button_url'] = $button_url;
-		$this->_payment_settings['current_path'] = $this->_path();
-		;
-		if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
+		// change windows style filepaths to Unix style filepaths
+		$this->_payment_settings['current_path'] = str_replace( '\\', '/', $this->_path );
+		
+		if ($this->_EEM_Gateways->update_payment_settings( $this->_gateway, $this->_payment_settings )) {
 			$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL Reset!', 'event_espresso');
 		} else {
 			$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL was not reset! ', 'event_espresso');
