@@ -60,8 +60,8 @@ Class EE_Eway extends EE_Gateway {
 	}
 
 	protected function _update_settings() {
-		$this->_payment_settings['eway_id'] = $_POST['2checkout_id'];
-		$this->_payment_settings['eway_username'] = $_POST['2checkout_username'];
+		$this->_payment_settings['eway_id'] = $_POST['eway_id'];
+		$this->_payment_settings['eway_username'] = $_POST['eway_username'];
 		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
 		$this->_payment_settings['region'] = $_POST['region'];
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
