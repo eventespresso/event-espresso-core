@@ -862,6 +862,9 @@ div#gmap-reg-events { padding-left: 3%;}
 	text-decoration: none;
 	vertical-align: top;
 }
+.gateway-checkbox-options { margin-right:2em; vertical-align:middle; }
+.gateway-checkbox-options input { position:relative; vertical-align:middle; }
+
 /*___ Help & Support ___*/
 
 .localhost-information,
