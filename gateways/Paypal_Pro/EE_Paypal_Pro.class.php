@@ -748,7 +748,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				),
 				'reg-page-billing-card-nmbr' => array(
 						'db-col' => 'card-nmbr',
-						'label' => __('Credit Card Number', 'event_espresso'),
+						'label' => __('Credit Card #', 'event_espresso'),
 						'input' => 'text',
 						'type' => 'int',
 						'sanitize' => 'ccard',
@@ -766,7 +766,8 @@ Class EE_Paypal_Pro extends EE_Gateway {
 						'sanitize' => 'no_html',
 						'required' => TRUE,
 						'validation' => TRUE,
-						'value' =>  $this->_payment_settings['credit_cards'],
+						'options' =>  $this->_payment_settings['credit_cards'],
+						'value' =>  '',
 						'format' => '%s'
 				), 
 
