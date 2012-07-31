@@ -220,7 +220,7 @@ function DisplayErrors($Errors) {
 
 			echo $CurrentVarName . ': ' . $CurrentErrorVal . '<br />';
 		}
-		echo '<br />';
-		echo event_espresso_pay($att_registration_id);
+//		echo '<br />';
+//		echo event_espresso_pay($att_registration_id);
 	}
 }

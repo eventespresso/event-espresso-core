@@ -862,6 +862,9 @@ div#gmap-reg-events { padding-left: 3%;}
 	text-decoration: none;
 	vertical-align: top;
 }
+.gateway-checkbox-options { margin-right:2em; vertical-align:middle; }
+.gateway-checkbox-options input { position:relative; vertical-align:middle; }
+
 /*___ Help & Support ___*/
 
 .localhost-information,
@@ -2051,24 +2054,19 @@ a.thickbox.link  {
 	background: #D36D6D !important;
 	color: #333 !important;
 }
-.green_alert {
-	background-color: #A4E7A6;
-	border: #060 1px solid;
-	padding:2px;
-}
-.red_alert, .yellow_alert {
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
-	padding: 2px 4px;
+
+.green_alert, .red_alert, .yellow_alert {
+	display:inline-block; padding:.5em 1em; text-shadow:0 1px 1px #fff;
+	-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
 	}
+.green_alert {
+	background-color: #d2f5d2; border: #009900 1px solid;
+}
 .red_alert {
-	background-color: #FEBCBE;
-	border: #F00 1px solid;
+    background-color: #FFEBE8; border: #CC0000 1px solid;
 }
 .yellow_alert {
-	background-color: #ffffe0;
-	border: #e6db55 1px solid;
+	background-color: #ffffe0; border: #e6db55 1px solid;
 }
 .yellow_alert:hover {
 	background-color: #A4E7A6;

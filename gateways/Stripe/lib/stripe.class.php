@@ -5,14 +5,13 @@ if(!class_exists("Stripe")) {
 
 class ClsStripe
 {	
-	function do_transaction($amount ,$cc, $cvc, $exp_month, $exp_year, $name, $description)
+	function do_transaction($amount ,$cc, $cvc, $exp_month, $exp_year, $name, $description, $settings)
 	{
 		$result = array();
 
-		$stripe_settings = get_option('event_espresso_stripe_settings');
-        $publishableKey = $stripe_settings['stripe_publishable_key'];
-        $secretKey = $stripe_settings['stripe_secret_key'];
-        $currencySymbol = $stripe_settings['stripe_currency_symbol'];
+        $publishableKey = $settings['stripe_publishable_key'];
+        $secretKey = $settings['stripe_secret_key'];
+        $currencySymbol = $settings['stripe_currency_symbol'];
         //$transactionPrefix = $stripe_settings['stripe_transaction_prefix'];
 		
 		Stripe::setApiKey($secretKey);
