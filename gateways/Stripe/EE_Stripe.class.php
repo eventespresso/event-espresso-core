@@ -59,12 +59,10 @@ Class EE_Stripe extends EE_Gateway {
 	}
 
 	protected function _update_settings() {
-		$this->_payment_settings = array(
-			'stripe_currency_symbol' => $_POST['stripe_currency_symbol'],
-			'stripe_publishable_key' => $_POST['stripe_publishable_key'],
-			'stripe_secret_key' => $_POST['stripe_secret_key'],
-			'button_url' => $_POST['stripe_button_url'],
-			);
+		$this->_payment_settings['stripe_currency_symbol'] = $_POST['stripe_currency_symbol'];
+		$this->_payment_settings['stripe_publishable_key'] = $_POST['stripe_publishable_key'];
+		$this->_payment_settings['stripe_secret_key'] = $_POST['stripe_secret_key'];
+		$this->_payment_settings['button_url'] = $_POST['stripe_button_url'];
 	}
 
 	protected function _display_settings() {
@@ -160,7 +158,7 @@ Class EE_Stripe extends EE_Gateway {
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
 		$billing_info = $session_data['billing_info'];
-		
+		//printr($billing_info);die();
 		if ( $billing_info != 'no payment required' ) {
 			require_once ('lib/stripe.class.php');
 			$cls_stripe = new ClsStripe();
@@ -168,7 +166,7 @@ Class EE_Stripe extends EE_Gateway {
 
 			//assemble the description and totals.
 			$item_num = 1;
-			$registration = $session_data['cart']['REG']['items'];
+			$registrations = $session_data['cart']['REG']['items'];
 			$description = '';
 			
 			foreach ($registrations as $registration) {
@@ -189,11 +187,10 @@ Class EE_Stripe extends EE_Gateway {
 			$amount_pd = $total;
 
 			//setup transaction
-			$amount_pd = $grand_total;
-			$cc = $billing_info['reg-page-billing-card-nmb']['value'];
+			$cc = $billing_info['reg-page-billing-card-nmbr']['value'];
 			$csc = $billing_info['reg-page-billing-card-ccv-code']['value'];
 			$exp_month = $billing_info['reg-page-billing-card-exp-date-mnth']['value'];
-			$exp_year = $billing_info['reg-page-billing-card-exp-date-year']['value'];
+			$exp_year = '20'.$billing_info['reg-page-billing-card-exp-date-year']['value'];
 			$bname = $billing_info['reg-page-billing-fname']['value'].' '.$billing_info['reg-page-billing-lname']['value'];
 			
 			$item_num = 1;
@@ -202,23 +199,24 @@ Class EE_Stripe extends EE_Gateway {
 			if ( isset($response['status']) )
 			{
 
-				$payment_data->txn_id = $response['txid'];
-				$payment_data->payment_status = ( $response['status'] > 0 ) ? 'Approved' : 'Declined';
+				$txn_id = empty($response['txid']) ? '' : $response['txid'];
+				$payment_status = ( $response['status'] > 0 ) ? 'Approved' : 'Declined';
+				$msg = empty($response['msg']) ? '' : $response['msg'];
 
-				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
+				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_status);
 
 				$txn_results = array(
 					'gateway' => $this->_payment_settings['display_name'],
 					'approved' => ( $response['status'] > 0 ) ? $response['status'] : 0,
-					'status' => $payment_data->payment_status,
-					'response_msg' => $response['msg'],
+					'status' => $payment_status,
+					'response_msg' => $msg,
 					'amount' => $amount_pd,
 					'method' => '',
 					'card_type' => '',
 					'auth_code' => '',
 					'md5_hash' => '',
-					'transaction_id' => $response['txid'],
-					'invoice_number' => $response['txid'],
+					'transaction_id' => $txn_id,
+					'invoice_number' => $txn_id,
 					'raw_response' => $response
 					);
 
