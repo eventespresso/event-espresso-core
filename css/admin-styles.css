@@ -852,10 +852,9 @@ div#gmap-reg-events { padding-left: 3%;}
 
 /*___ Payment Settings ___*/
 
-/*.event-espresso_page_payment_gateways .postbox ul li{
-	margin: 10px 0 20px;
-}
-*/.event-espresso_page_payment_gateways .user-add-images {
+
+#payment-gateways-settings-ul li { margin:0; }
+.event-espresso_page_payment_gateways .user-add-images {
 	clear: left;
 	display: block;
 	margin: 3px 0 0 2px ;

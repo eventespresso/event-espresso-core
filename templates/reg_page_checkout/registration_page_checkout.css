@@ -187,9 +187,27 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 	float:right; margin:2em 0 0; cursor:pointer;
 }
 
-/*#payment-gateway-button-2checkout { 
-	background: url("../gateways/2checkout/lib/logo-2checkout.png") no-repeat center center; width: 200px; height: 62px;
+
+.sandbox-panel {
+   padding: 10px; margin:0 0 2em; background-color: #FFFFE0; border:1px solid #E6DB55; border-radius:3px;
 }
-#payment-gateway-button-Aim { 
-	background:  no-repeat center center; width: 150px; height: 62px;
-}*/
+
+.sandbox-panel .tbl-wrap {
+   padding: 3px; margin:0; background-color: #fff; border:1px solid #dfdfdf; border-radius:3px;
+}
+.sandbox-panel .test-credit-card-data-tbl {
+   width:100%; padding: 0; margin:0; background-color: #fff; border:1px solid #dfdfdf; border-collapse:collapse; font-size:.9em;
+}
+.sandbox-panel .test-credit-card-data-tbl thead td {
+   font-weight:bold;
+}
+.sandbox-panel .test-credit-card-data-tbl td {
+   padding: .5% 2.5%; margin:0; border:1px solid #dfdfdf;
+}
+
+.sandbox-panel ul { margin:0 0 0 2em; line-height:1em; }
+.sandbox-panel ul li { margin:0 0 1em; }
+.test-credit-cards-info-pg { margin:1em; line-height:1.25em; font-size:1em; }
+
+
+
