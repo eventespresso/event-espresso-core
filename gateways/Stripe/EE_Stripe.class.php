@@ -59,12 +59,11 @@ Class EE_Stripe extends EE_Gateway {
 	}
 
 	protected function _update_settings() {
-		$this->_payment_settings = array(
-			'stripe_currency_symbol' => $_POST['stripe_currency_symbol'],
-			'stripe_publishable_key' => $_POST['stripe_publishable_key'],
-			'stripe_secret_key' => $_POST['stripe_secret_key'],
-			'button_url' => $_POST['stripe_button_url'],
-			);
+		//todo: add in notices and nonce_check;
+		$this->_payment_settings['stripe_currency_symbol'] = $_POST['stripe_currency_symbol'];
+		$this->_payment_settings['stripe_publishable_key'] = $_POST['stripe_publishable_key'];
+		$this->_payment_settings['stripe_secret_key'] = $_POST['stripe_secret_key'];
+		$this->_payment_settings['button_url'] = $_POST['stripe_button_url'];
 	}
 
 	protected function _display_settings() {
