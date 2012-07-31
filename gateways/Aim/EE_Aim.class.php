@@ -214,26 +214,26 @@ Class EE_Aim extends EE_Gateway {
 			if (!empty($response)) {
 
 				if ($this->_payment_settings['use_sandbox']) {
-					$payment_data->txn_id = $response->invoice_number;
+					$txn_id = $response->invoice_number;
 				} else {
-					$payment_data->txn_id = $response->transaction_id;
+					$txn_id = $response->transaction_id;
 				}
 
-				$payment_data->payment_status = $response->approved ? 'Approved' : 'Declined';
+				$payment_status = $response->approved ? 'Approved' : 'Declined';
 			}
 			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
 
 			$txn_results = array(
 					'gateway' => $this->_payment_settings['display_name'],
 					'approved' => $response->approved ? $response->approved : 0,
-					'status' => $payment_data->payment_status,
+					'status' => $payment_status,
 					'response_msg' => $response->response_reason_text,
 					'amount' => $response->amount,
 					'method' => $response->method,
 					'card_type' => $response->card_type,
 					'auth_code' => $response->authorization_code,
 					'md5_hash' => $response->md5_hash,
-					'transaction_id' => $response->transaction_id,
+					'transaction_id' => $txn_id,
 					'invoice_number' => $response->invoice_number,
 					'raw_response' => $response
 			);
