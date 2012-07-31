@@ -54,6 +54,9 @@ Class EE_Paypal_Pro extends EE_Gateway {
 		$this->_gateway = 'Paypal_Pro';
 		$this->_button_base = 'logo-paypal_pro.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
+		// this filter allows whatever function is processing the registration page to know what inputs to expect
+		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_paypal_pro'));
+		
 		parent::__construct($model);
 	}
 
@@ -355,6 +358,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 	
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
+		
 		$billing_info = $session_data['billing_info'];
 
 		if ($billing_info != 'no payment required') {
@@ -488,7 +492,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				// Description of the order the customer is purchasing.  127 char max.
 				'desc' => $list_of_events, 
 				// Free-form field for your own use.  256 char max.
-				'custom' => '', 
+				'custom' => $session_data['primary_attendee']['registration_id'], 
 				// Your own invoice or tracking number
 				'invnum' => $session_data['transaction']->ID(), 
 				// URL for receiving Instant Payment Notifications.  This overrides what your profile is set to use.
@@ -534,48 +538,51 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				'PaymentDetails' => $PaymentDetails,
 				'OrderItems' => $OrderItems
 			);
-			// printr( $PayPalRequestData, '$PayPalRequestData' );
+			 printr( $PayPalRequestData, '$PayPalRequestData' );
 			
 			// Pass the master array into the PayPal class function
 			$PayPalResult = $PayPal->DoDirectPayment($PayPalRequestData);
 			printr( $PayPalResult, '$PayPalResult' );
 
-			if ( APICallSuccessful( $PayPalResult['ACK'] )) {		
+echo '<h4>APICallSuccessful : ' . $this->_APICallSuccessful( $PayPalResult['ACK'] ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
+			if ( $this->_APICallSuccessful( $PayPalResult['ACK'] )) {		
 	
-				if ($this->_payment_settings['use_sandbox']) {
-					$payment_data->txn_id = $response->invoice_number;
+/*				if ($this->_payment_settings['use_sandbox']) {
+					$payment_data->txn_id = $PayPalResult['TRANSACTIONID'];
 				} else {
-					$payment_data->txn_id = $response->transaction_id;
+					$payment_data->txn_id = $PayPalResult['TRANSACTIONID'];
 				}
 
-				$payment_data->payment_status = $response->approved ? 'Approved' : 'Declined';
+				$payment_data->payment_status = $PayPalResult['ACK'] == 'success' ? 'Approved' : 'Declined';
 
 				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
-	
+*/	
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
-						'approved' => $response->approved ? $response->approved : 0,
-						'status' => $payment_data->payment_status,
-						'response_msg' => $response->response_reason_text,
-						'amount' => $response->amount,
-						'method' => $response->method,
-						'card_type' => $response->card_type,
-						'auth_code' => $response->authorization_code,
-						'md5_hash' => $response->md5_hash,
-						'transaction_id' => $response->transaction_id,
-						'invoice_number' => $response->invoice_number,
-						'raw_response' => $response
+						'approved' => TRUE,
+						'status' => 'Approved',
+						'response_msg' => isset( $PayPalResult['L_LONGMESSAGE0'] ) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'],
+						'amount' => $PayPalResult['AMT'],
+						'method' => 'CC',
+						'card_type' => $billing_info['reg-page-billing-card-type']['value'],
+						'auth_code' => '',
+						'md5_hash' => $PayPalResult['CORRELATIONID'],
+						'transaction_id' => $PayPalResult['TRANSACTIONID'],
+						'invoice_number' => $session_data['primary_attendee']['registration_id'], 
+						'raw_response' => $PayPalResult
 				);
-	
+
+		printr( $txn_results, '$txn_results ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );
+		die();	
+		
 				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 	
-				add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');	//<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
-				// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?	
+				//add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');	
 				
 			} else {
-				$Errors = GetErrors($PayPalResult);
-				//printr( $Errors, '$Errors' );		
-				DisplayErrors( $Errors );
+				$Errors = $this->_GetErrors($PayPalResult);
+				echo $this->_DisplayErrors( $Errors );
 			} 
 		
 		// return ? or redirect ?
@@ -583,6 +590,69 @@ Class EE_Paypal_Pro extends EE_Gateway {
 		
 		}  // end if ($billing_info != 'no payment required')
 		
+		//APICallSuccessful( $PayPalResult );
+		
+	}
+
+
+
+	private function _APICallSuccessful($ack) {
+		if (strtoupper($ack) != 'SUCCESS' && strtoupper($ack) != 'SUCCESSWITHWARNING' && strtoupper($ack) != 'PARTIALSUCCESS')
+			return false;
+		else
+			return true;
+	}
+
+
+
+	private function _GetErrors($DataArray) {
+	
+		$Errors = array();
+		$n = 0;
+		while (isset($DataArray['L_ERRORCODE' . $n . ''])) {
+			$LErrorCode = isset($DataArray['L_ERRORCODE' . $n . '']) ? $DataArray['L_ERRORCODE' . $n . ''] : '';
+			$LShortMessage = isset($DataArray['L_SHORTMESSAGE' . $n . '']) ? $DataArray['L_SHORTMESSAGE' . $n . ''] : '';
+			$LLongMessage = isset($DataArray['L_LONGMESSAGE' . $n . '']) ? $DataArray['L_LONGMESSAGE' . $n . ''] : '';
+			$LSeverityCode = isset($DataArray['L_SEVERITYCODE' . $n . '']) ? $DataArray['L_SEVERITYCODE' . $n . ''] : '';
+	
+			$CurrentItem = array(
+				'L_ERRORCODE' => $LErrorCode,
+				'L_SHORTMESSAGE' => $LShortMessage,
+				'L_LONGMESSAGE' => $LLongMessage,
+				'L_SEVERITYCODE' => $LSeverityCode
+			);
+	
+			array_push($Errors, $CurrentItem);
+			$n++;
+		}
+	
+		return $Errors;
+	}
+
+
+
+	/**
+	 * 		nothing to see here...  move along....
+	 * 		@access protected
+	 * 		@return void
+	 */
+	private function _DisplayErrors($Errors) {
+		foreach ($Errors as $ErrorVar => $ErrorVal) {
+			$CurrentError = $Errors[$ErrorVar];
+			foreach ($CurrentError as $CurrentErrorVar => $CurrentErrorVal) {
+				if ($CurrentErrorVar == 'L_ERRORCODE')
+					$CurrentVarName = 'Error Code';
+				elseif ($CurrentErrorVar == 'L_SHORTMESSAGE')
+					$CurrentVarName = 'Short Message';
+				elseif ($CurrentErrorVar == 'L_LONGMESSAGE')
+					$CurrentVarName == 'Long Message';
+				elseif ($CurrentErrorVar == 'L_SEVERITYCODE')
+					$CurrentVarName = 'Severity Code';
+	
+				$error .= '<br />' . $CurrentVarName . ': ' . $CurrentErrorVal;
+			}
+		}
+		return $error;
 	}
 
 
@@ -605,12 +675,8 @@ Class EE_Paypal_Pro extends EE_Gateway {
 	 */
 	public function espresso_display_payment_gateways() {
 
-		global $css_class;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_aim'));
-		
 		echo $this->_generate_payment_gateway_selection_button(); 
 		?>
 
@@ -620,24 +686,165 @@ Class EE_Paypal_Pro extends EE_Gateway {
 		// check for sandbox mode
 		if ( $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'] ) : 
 		?>			
-		<div id="sandbox-panel">
-			<h2 class="section-title"><?php  _e('PayPal Sandbox Mode', 'event_espreso');?></h2>
-			<p><?php  _e('Test Master Card', 'event_espreso');?> # 5424180818927383</p>
-			<p><?php  _e('Expiry Date', 'event_espreso');?>: 10/2012</p>
-			<p><?php  _e('CVV2', 'event_espreso');?>: 123 </p>
-			<h3 style="color:#ff0000;" title="<?php  _e('Payments will not be processed', 'event_espreso');?>"><?php _e('Debug Mode Is Turned On', 'event_espresso');?></h3>
-		</div>
-		<?php endif; ?>
-
+			<div class="sandbox-panel">
+				<h2 class="section-title"><?php  _e('PayPal Sandbox Mode', 'event_espreso');?></h2>
+				<h3 style="color:#ff0000;"><?php _e('Debug Mode Is Turned On. Payments will not be processed', 'event_espresso');?></h3>
+				
+				<p class="test-credit-cards-info-pg">
+					<strong><?php  _e('Testing Guidelines', 'event_espreso');?></strong>
+					<ul>
+						<li><?php  _e('While testing, use only the credit card numbers listed below. Other numbers will produce an error.', 'event_espreso');?></li>
+						<li><?php  _e('Expiry Date must be a valid date in the future', 'event_espreso');?></li>
+						<li><?php  _e('CVV2 can be any 3 digits', 'event_espreso');?></li>
+					</ul>
+				</p>
+		
+				<p class="test-credit-cards-info-pg">
+					<strong><?php  _e('Credit Card Numbers Used for Testing', 'event_espreso');?></strong><br/>
+					<span class="small-text"><?php  _e('Use the following credit card numbers for testing. Any other card number produces a general failure.', 'event_espreso');?></span>
+				</p>
+				
+				<div class="tbl-wrap">
+					<table id="paypal-test-credit-cards" class="test-credit-card-data-tbl">
+						<thead>
+							<tr>
+								<td style="width:40%;"><?php  _e('Test Card Type', 'event_espreso');?></td>
+								<td><?php  _e('Test Card Numbers', 'event_espreso');?></td>
+							</tr>				
+						</thead>
+						<tbody>
+							<tr>
+								<td><?php  _e('American Express', 'event_espreso');?></td>
+								<td>378282246310005</td>
+							</tr>
+							<tr>
+								<td><?php  _e('American Express', 'event_espreso');?></td>
+								<td>371449635398431</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Amex Corporate', 'event_espreso');?></td>
+								<td>378734493671000</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Australian BankCard', 'event_espreso');?></td>
+								<td>5610591081018250</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Diners Club', 'event_espreso');?></td>
+								<td>30569309025904</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Diners Club', 'event_espreso');?></td>
+								<td>38520000023237</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Discover', 'event_espreso');?></td>
+								<td>6011111111111117</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Discover', 'event_espreso');?></td>
+								<td>6011000990139424</td>
+							</tr>
+							<tr>
+								<td><?php  _e('JCB', 'event_espreso');?></td>
+								<td>3530111333300000</td>
+							</tr>
+							<tr>
+								<td><?php  _e('JCB', 'event_espreso');?></td>
+								<td>3566002020360505</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Master Card', 'event_espreso');?></td>
+								<td>5555555555554444</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Master Card', 'event_espreso');?></td>
+								<td>5105105105105100</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Visa', 'event_espreso');?></td>
+								<td>4111111111111111</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Visa', 'event_espreso');?></td>
+								<td>4012888888881881</td>
+							</tr>
+							<tr>
+								<td><?php  _e('Visa', 'event_espreso');?></td>
+								<td>4222222222222*</td>
+							</tr>
+						</tbody>
+					</table>	
+				</div>
+				<p class="test-credit-cards-info-pg">
+					<span class="smaller-text light-grey-text">* <?php  _e('Even though this number has a different character count than the other test numbers, it is the correct and functional number.', 'event_espreso');?></span>
+				</p>
+				
+				<p class="test-credit-cards-info-pg">
+					<strong><?php  _e('Testing Result Code Responses', 'event_espreso');?></strong><br/>
+					<span class="small-text"><?php  _e('You can use the amount of the transaction to generate a particular result code. The table below lists the general guidelines for specifying amounts.', 'event_espreso');?></span>
+				</p>			
+				
+				<div class="tbl-wrap">
+					<table id="paypal-test-credit-cards" class="test-credit-card-data-tbl">
+						<thead>
+							<tr>
+								<td style="width:30%;"><?php  _e('Amount', 'event_espreso');?></td>
+								<td><?php  _e('Response', 'event_espreso');?></td>
+							</tr>				
+						</thead>
+						<tbody>
+							<tr>
+								<td>$0 - $10,000</td>
+								<td><?php  _e('Approved', 'event_espreso');?></td>
+							</tr>				
+							<tr>
+								<td>$10,400</td>
+								<td><?php  _e('Invalid amount', 'event_espreso');?></td>
+							</tr>
+							<tr>
+								<td>$10,402</td>
+								<td><?php  _e('Invalid transaction type', 'event_espreso');?></td>
+							</tr>
+							<tr>
+								<td>$10,405</td>
+								<td><?php  _e('Field format error', 'event_espreso');?></td>
+							</tr>
+							<tr>
+								<td>$10,502</td>
+								<td><?php  _e('Invalid expiry date', 'event_espreso');?></td>
+							</tr>
+							<tr>
+								<td>$10,504</td>
+								<td><?php  _e('CVV2 Mismatch', 'event_espreso');?></td>
+							</tr>
+							<tr>
+								<td>$10,506</td>
+								<td><?php  _e('Declined', 'event_espreso');?></td>
+							</tr>
+							<tr>
+								<td>$10,522</td>
+								<td><?php  _e('Invalid account number', 'event_espreso');?></td>
+							</tr>
+							<tr>
+								<td>$10,536</td>
+								<td><?php  _e('Invalid account number', 'event_espreso');?></td>
+							</tr>
+						</tbody>
+					</table>	
+				</div>			
+			</div>
+			<?php endif; ?>
+	
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 			
 			<?php $billing_inputs = $this->espresso_reg_page_billing_inputs_paypal_pro(); ?>
 			<?php echo $this->_generate_billing_info_form_fields( $billing_inputs, 'address' ); ?>
-
+	
 			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
-
+	
 			<?php echo $this->_generate_billing_info_form_fields( $billing_inputs, 'credit_card' ); ?>
-
+	
 		</div>
 
 		<?php
@@ -760,7 +967,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				
 				'reg-page-billing-card-type' => array(
 						'db-col' =>'card-type',
-						'label' => __( 'Type of credit card', 'event_espresso' ),
+						'label' => __( 'Credit Card Type', 'event_espresso' ),
 						'input' =>'select',
 						'type' =>'string',
 						'sanitize' => 'no_html',
