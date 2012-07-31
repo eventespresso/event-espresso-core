@@ -371,7 +371,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 			}
 			
 			// Include required files.
-			require_once('includes/paypal.nvp.class.php');
+			require_once('lib/paypal.nvp.class.php');
 			
 			// Setup PayPal object
 			$PayPalConfig = array(
