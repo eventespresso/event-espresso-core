@@ -87,24 +87,22 @@ Class EE_Paypal_Pro extends EE_Gateway {
 	 */
 	protected function _update_settings() {
 
-		if ( isset( $_POST['update_paypal_pro'] ) & check_admin_referer( 'espresso_form_check', 'add_paypal_pro_settings' )) {
-		
-			$this->_payment_settings['email'] = $_POST['email'];
-			$this->_payment_settings['username'] = $_POST['username'];
-			$this->_payment_settings['password'] = $_POST['password'];
-			$this->_payment_settings['currency_format'] = $_POST['currency_format'];
-			$this->_payment_settings['signature'] = $_POST['signature'];
-			$this->_payment_settings['credit_cards'] = implode(",", empty($_POST['credit_cards']) ? array() : $_POST['credit_cards']);
-			$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
-	
-			global $espresso_notices;
-			if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
-				$espresso_notices['updates'][] = __('PayPal Pro Payment Settings Updated!', 'event_espresso');
-			} else {
-				$espresso_notices['errors'][] = __('PayPal Pro Payment Settings were not saved! ', 'event_espresso');
-			}
+		global $espresso_notices;
 
+		$this->_payment_settings['email'] = $_POST['email'];
+		$this->_payment_settings['username'] = $_POST['username'];
+		$this->_payment_settings['password'] = $_POST['password'];
+		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
+		$this->_payment_settings['signature'] = $_POST['signature'];
+		$this->_payment_settings['credit_cards'] = implode(",", empty($_POST['credit_cards']) ? array() : $_POST['credit_cards']);
+		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
+
+		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+			$espresso_notices['updates'][] = __('PayPal Pro Payment Settings Updated!', 'event_espresso');
+		} else {
+			$espresso_notices['errors'][] = __('PayPal Pro Payment Settings were not saved! ', 'event_espresso');
 		}
+
 	}
 
 
@@ -118,35 +116,54 @@ Class EE_Paypal_Pro extends EE_Gateway {
 
 	?>
 				<tr>
-					<th><label for="paypal_pro_email">
+					<th>
+						<label for="paypal_pro_email">
 							<?php _e('PayPal PRO Email', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="email" id="paypal_pro_email" size="35" value="<?php echo $this->_payment_settings['email']; ?>"></td>
+						</label>
+					</th>
+					<td>
+						<input class="regular-text" type="text" name="email" id="paypal_pro_email" size="35" value="<?php echo $this->_payment_settings['email']; ?>">
+					</td>
 				</tr>
 				<tr>
-					<th><label for="paypal_pro_username">
+					<th>
+						<label for="paypal_pro_username">
 							<?php _e('PayPal API Username', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="username" id="paypal_pro_username" size="35" value="<?php echo $this->_payment_settings['username']; ?>"></td>
+						</label>
+					</th>
+					<td>
+						<input class="regular-text" type="text" name="username" id="paypal_pro_username" size="35" value="<?php echo $this->_payment_settings['username']; ?>">
+					</td>
 				</tr>
 				<tr>
-					<th><label for="paypal_pro_password">
+					<th>
+						<label for="paypal_pro_password">
 							<?php _e('PayPal API Password', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="password" id="paypal_pro_password" size="35" value="<?php echo $this->_payment_settings['password']; ?>"></td>
+						</label>
+					</th>
+					<td>
+						<input class="regular-text" type="text" name="password" id="paypal_pro_password" size="35" value="<?php echo $this->_payment_settings['password']; ?>">
+					</td>
 				</tr>
 				<tr>
-					<th><label for="paypal_pro_signature">
+					<th>
+						<label for="paypal_pro_signature">
 							<?php _e('PayPal API Signature', 'event_espresso'); ?>
-						</label></th>
-					<td><input class="regular-text" type="text" name="signature" id="paypal_pro_signature" size="35" value="<?php echo $this->_payment_settings['signature']; ?>"></td>
+						</label>
+					</th>
+					<td>
+						<input class="regular-text" type="text" name="signature" id="paypal_pro_signature" size="35" value="<?php echo $this->_payment_settings['signature']; ?>">
+					</td>
 				</tr>
 				<tr>
-					<th><label for="paypal_pro_currency_format">
+					<th>
+						<label for="paypal_pro_currency_format">
 							<?php _e('Country Currency', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'paypal_pro_currency_info') ?>
-						</label></th>
-					<td><select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
+						</label>
+					</th>
+					<td>
+						<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
 							<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
 							<option value="USD">
 								<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
@@ -220,44 +237,56 @@ Class EE_Paypal_Pro extends EE_Gateway {
 							<option value="TWD">
 								<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
 							</option>
-						</select></td>
-				</tr>
-				<tr>
-					<th><label>
-							<?php _e('Accepted Credit Cards', 'event_espresso'); ?>
-						</label>
-					</th>
-					<td><?php
-						$checked = 'checked="checked"';
-						$credit_cards = explode(",", $this->_payment_settings['credit_cards']);
-							?>
-						<input type="checkbox" name="credit_cards[]" size="35" value="Visa" <?php echo in_array("Visa", $credit_cards) ? $checked : ''; ?> />
-						<?php _e('Visa', 'event_espresso'); ?>
-						<input type="checkbox" name="credit_cards[]" size="35" value="MasterCard" <?php echo in_array("MasterCard", $credit_cards) ? $checked : ''; ?> />
-						<?php _e('Master Card', 'event_espresso'); ?>
-						<input type="checkbox" name="credit_cards[]" size="35" value="Amex" <?php echo in_array("Amex", $credit_cards) ? $checked : ''; ?> />
-						<?php _e('Amex', 'event_espresso'); ?>
-						<input type="checkbox" name="credit_cards[]" size="35" value="Discover" <?php echo in_array("Discover", $credit_cards) ? $checked : ''; ?> />
-						<?php _e('Discover', 'event_espresso'); ?>
+						</select>
 					</td>
 				</tr>
 				<tr>
-					<th><label for="paypal_pro_use_sandbox">
-							<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
+					<th>
+						<label>
+							<?php _e('Accepted Credit Cards', 'event_espresso'); ?>
+						</label>
+					</th>
+					<td>
+						<?php
+							$checked = 'checked="checked"';
+							$credit_cards = explode(",", $this->_payment_settings['credit_cards']);
+						?>
+						<label class="gateway-checkbox-options">
+							<?php _e('Visa', 'event_espresso'); ?>
+							<input type="checkbox" name="credit_cards[]" size="35" value="Visa" <?php echo in_array("Visa", $credit_cards) ? $checked : ''; ?> />
+						</label>
+						
+						<label class="gateway-checkbox-options">
+							<?php _e('Master Card', 'event_espresso'); ?>
+							<input type="checkbox" name="credit_cards[]" size="35" value="MasterCard" <?php echo in_array("MasterCard", $credit_cards) ? $checked : ''; ?> />
+						</label>
+						
+						<label class="gateway-checkbox-options">
+							<?php _e('Amex', 'event_espresso'); ?>
+							<input type="checkbox" name="credit_cards[]" size="35" value="Amex" <?php echo in_array("Amex", $credit_cards) ? $checked : ''; ?> />
+						</label>
+						
+						<label class="gateway-checkbox-options">
+							<?php _e('Discover', 'event_espresso'); ?>
+							<input type="checkbox" name="credit_cards[]" size="35" value="Discover" <?php echo in_array("Discover", $credit_cards) ? $checked : ''; ?> />
+						</label>
+						
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<label for="paypal_pro_use_sandbox">
+							<?php _e('Use the Debugging Feature<br/>and the PayPal Sandbox', 'event_espresso'); ?>
 							<?php echo apply_filters('filter_hook_espresso_help', 'paypal_pro_sandbox_info'); ?>
-						</label></th>
-					<td><?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>
-						<br />
+						</label>
+					</th>
+					<td>
+						<?php echo select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>						
 						<span class="description">
 							<?php _e('Make sure you enter the sandbox credentials above.', 'event_espresso'); ?>
-						</span></td>
+						</span>
+					</td>
 				</tr>
-
-
-<!--		<p>
-			<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="update_<?php echo $this->_gateway; ?>">
-			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update PayPal PRO Settings', 'event_espresso') ?>" id="save_paypal_settings" />
-		</p>-->
 
 		<?php
 	}
@@ -581,24 +610,24 @@ Class EE_Paypal_Pro extends EE_Gateway {
 
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
 		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_aim'));
-		$use_sandbox = $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'];
-		if ($use_sandbox) {
-			$test_creds = '
-		<h4 style="color:#ff0000;" title="Payments will not be processed">' . __('Debug Mode Is Turned On', 'event_espresso') . '</h4>
-		<p style="color:#ff0000;">Test credit card # 4007000000027</p><br/>
-		';
-		} else {
-			$test_creds = '';
-		}
+		
+		echo $this->_generate_payment_gateway_selection_button(); 
 		?>
-
-		<a id="payment-gateway-button-<?php echo $this->_gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $this->_gateway; ?>" href="<?php echo $this->_form_url; ?>" >
-			<img src="<?php echo $this->_payment_settings['button_url']; ?>" alt="Pay using PayPal Pro" />
-		</a>
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 
-		<?php echo $test_creds; ?>
+		<?php 
+		// check for sandbox mode
+		if ( $this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions'] ) : 
+		?>			
+		<div id="sandbox-panel">
+			<h2 class="section-title"><?php  _e('PayPal Sandbox Mode', 'event_espreso');?></h2>
+			<p><?php  _e('Test Master Card', 'event_espreso');?> # 5424180818927383</p>
+			<p><?php  _e('Expiry Date', 'event_espreso');?>: 10/2012</p>
+			<p><?php  _e('CVV2', 'event_espreso');?>: 123 </p>
+			<h3 style="color:#ff0000;" title="<?php  _e('Payments will not be processed', 'event_espreso');?>"><?php _e('Debug Mode Is Turned On', 'event_espresso');?></h3>
+		</div>
+		<?php endif; ?>
 
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 			
@@ -608,7 +637,6 @@ Class EE_Paypal_Pro extends EE_Gateway {
 			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
 
 			<?php $this->_generate_billing_info_form_fields( $billing_inputs, 'credit_card' ); ?>
-
 
 		</div>
 
