@@ -405,7 +405,7 @@ abstract class EE_Gateway {
 			// is the billing input in the requested section	?
 			if ( in_array( $input_key, $this->$section )) {
 				// required fields get a * 
-				$required = $billing_input['required'] ? ' <em>*</em>' : '';
+				$required = $billing_input['required'] ? '&nbsp;<em>*</em>' : '';
 				// and the css class "required"
 				$css_class = $billing_input['required'] ? 'required ' . $css_class : $css_class;	
 						
@@ -429,7 +429,7 @@ abstract class EE_Gateway {
 
 						if ( $input_key == 'reg-page-billing-card-exp-date-mnth' ) {
 						
-							$output .= "\n\t\t\t" . '<label>' . __('Expiry Date', 'event_espresso') . ' <em>*</em></label>';
+							$output .= "\n\t\t\t" . '<label>' . __('Expiry Date', 'event_espresso') . '&nbsp;<em>*</em></label>';
 							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-mnth" class="'. $css_class . ' small-txt" name="reg-page-billing-card-exp-date-mnth">';
 							for ($x = 1; $x <= 12; $x++) {
 								$value = $x < 10 ? '0' . $x : $x;
@@ -454,8 +454,11 @@ abstract class EE_Gateway {
 
 							$output .= "\n\t\t\t" . '<label for="' . $input_key . '">' .$billing_input['label'] . $required . '</label>';
 							$output .= "\n\t\t\t" . '<select id="' .$input_key . '" class="'. $css_class . ' small-txt" name="' .$input_key . '">';
-							foreach ( $billing_input['value']  as $key => $value ) {
-								$output .= "\n\t\t\t\t" . '<option value="' . $key . '">' . $value . '</option>';
+							
+							$options = explode( ',', $billing_input['options'] );
+							foreach ( $options  as $value ) {
+								//$key = str_replace( ' ', '_', sanitize_key( $value ));
+								$output .= "\n\t\t\t\t" . '<option value="' . $value . '">' . $value . '</option>';
 							}
 							$output .= "\n\t\t\t" . '</select>';
 							
@@ -476,6 +479,10 @@ abstract class EE_Gateway {
 		return $output;
 		
 	}
+	
+	
+	
+	
 	
 
 }
