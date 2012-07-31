@@ -181,7 +181,11 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 	color:transparent; cursor:pointer; vertical-align:middle;
 }
 #mer-reg-page-step-2-dv .reg-page-payment-option-lnk.hidden { display:none; }
-#mer-reg-page-step-2-dv .reg-page-payment-option-lnk img { vertical-align:middle; max-width:100% !important; }
+#mer-reg-page-step-2-dv .reg-page-payment-option-lnk img { vertical-align:middle; max-width:100% !important; margin:auto; }
+
+#reg-page-select-other-gateway-lnk {
+	float:right; margin:2em 0 0; cursor:pointer;
+}
 
 /*#payment-gateway-button-2checkout { 
 	background: url("../gateways/2checkout/lib/logo-2checkout.png") no-repeat center center; width: 200px; height: 62px;
