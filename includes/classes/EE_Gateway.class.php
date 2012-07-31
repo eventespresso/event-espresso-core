@@ -140,6 +140,16 @@ abstract class EE_Gateway {
 		if (!empty($_REQUEST['deactivate_' . $this->_gateway])) {
 			$this->_EEM_Gateways->unset_active($this->_gateway);
 		}
+		
+		if ( isset( $_POST['update_' . $this->_gateway] ) && check_admin_referer( 'espresso_form_check', 'add_' . $this->_gateway . '_settings' )) {
+			//printr( $_POST, 'POST' );		
+			$this->_update_settings();
+			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
+				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Updated!', 'event_espresso');
+			} else {
+				$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings were not saved! ', 'event_espresso');
+			}
+		}		
 	}
 
 
@@ -185,34 +195,22 @@ abstract class EE_Gateway {
 		if ($espresso_premium != true) {
 			return;
 		}
-		if (isset($_POST['update_' . $this->_gateway]) && check_admin_referer('espresso_form_check', 'add_' . $this->_gateway . '_settings')) {
-			//printr( $_POST, 'POST' );		
-			$this->_update_settings();
-			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Updated!', 'event_espresso');
-			} else {
-				$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings were not saved! ', 'event_espresso');
-			}
-		}
+
 		?>
 
 		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
 		<div class="padding">
 			<ul>
 				<?php if (!$this->_EEM_Gateways->is_active($this->_gateway)) { ?>
-					<li id="activate_<?php echo $this->_gateway; ?>" class="green_alert pointer" onclick="location.href='<?php echo add_query_arg( array( 'update_' . $this->_gateway => TRUE, 'activate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL ); ?>#<?php echo $this->_gateway; ?>'"><strong><?php
-			_e('Activate', 'event_espresso');
-			echo ' ' . $this->_payment_settings['display_name'] . ' ';
-			_e('Payments');
-			echo '?';
-					?></strong></li>
+					<?php $activate = add_query_arg( array( 'activate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL ).'#'.$this->_gateway;?>
+					<li id="activate_<?php echo $this->_gateway; ?>" class="green_alert pointer" onclick="location.href='<?php echo $activate;?>'">
+						<strong><?php echo __('Activate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?');?></strong>
+					</li>
 				<?php } else { ?>
-					<li id="deactivate_<?php echo $this->_gateway; ?>" class="red_alert pointer" onclick="location.href='<?php echo add_query_arg( array( 'update_' . $this->_gateway => TRUE, 'deactivate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL ); ?>#<?php echo $this->_gateway; ?>'"><strong><?php
-			_e('Deactivate', 'event_espresso');
-			echo ' ' . $this->_payment_settings['display_name'] . ' ';
-			_e('Payments');
-			echo '?';
-					?></strong></li>
+					<?php $deactivate = add_query_arg( array( 'deactivate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL ).'#'.$this->_gateway;?>
+					<li id="deactivate_<?php echo $this->_gateway; ?>" class="red_alert pointer" onclick="location.href='<?php echo $deactivate; ?>'">
+						<strong><?php echo __('Deactivate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?');?></strong>
+					</li>
 					<?php
 					$this->_display_settings_wrapper();
 				}
@@ -227,28 +225,32 @@ abstract class EE_Gateway {
 	private function _display_settings_wrapper() {
 //		$raw_uri = $_SERVER['REQUEST_URI'];
 //		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_' . $this->_gateway . '=true'));
-		$form_url = add_query_arg( array( 'update_' . $this->_gateway => TRUE, 'activate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL );
+		$form_url = add_query_arg( array( 'activate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL ) . '#' . $this->_gateway;
 		?>
-		<form method="post" action="<?php echo $form_url; ?>#<?php echo $this->_gateway; ?>">
+		<form method="post" action="<?php echo $form_url; ?>">
 			<table class="form-table">
 				<tbody>
 					<?php $this->_display_settings(); ?>
 					<tr>
-						<td>
+						<th>
 							<label><?php _e('Current Button Image', 'event_espresso'); ?></label>
+						</th>
+						<td>
 							<?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?>
 						</td>
 					</tr>
 				</tbody>
 			</table>
+			
 			<p>
-				<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="update_<?php echo $this->_gateway; ?>">
+				<input type="hidden" name="update_<?php echo $this->_gateway; ?>" value="1">
 				<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update', 'event_espresso');
 					echo ' ' . $this->_payment_settings['display_name'] . ' ';
 					_e('Settings', 'event_espresso') ?>" id="save_<?php echo $this->_gateway; ?>_settings" />
 			</p>
 
-		<?php wp_nonce_field('espresso_form_check', 'add_' . $this->_gateway . '_settings'); ?>
+			<?php wp_nonce_field( 'espresso_form_check', 'add_' . $this->_gateway . '_settings' ); ?>
+			
 		</form>
 		<?php
 		$this->_display_settings_help();
@@ -358,6 +360,7 @@ abstract class EE_Gateway {
 		} else {
 			$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL was not reset! ', 'event_espresso');
 		}
+
 	}
 
 
@@ -365,7 +368,24 @@ abstract class EE_Gateway {
 
 
 	/**
-	 * 		generate the HTML for the billing info form during registration
+	 * 		generates HTML for the payment gateway selection button during registration
+	 * 		@access 		protected
+	 * 		@return 		string
+	 */	
+	protected function _generate_payment_gateway_selection_button() {
+		return '
+		<a id="payment-gateway-button-' . $this->_gateway . '" class="reg-page-payment-option-lnk' . $this->_css_link_class . '" rel="' . $this->_gateway . '" href="' . $this->_form_url . '" >
+			<img src="' . $this->_payment_settings['button_url'] . '" alt="Pay using ' . $this->_payment_settings['display_name'] . '" />
+		</a>
+';
+	}
+
+
+
+
+
+	/**
+	 * 		generate s HTML for the billing info form during registration
 	 * 		@access 		protected
 	* 		@param		array	$billing_inputs - array of input field details
 	* 		@param		array	$section - what part of the billing info form, "address", "credit_card", or "other"
