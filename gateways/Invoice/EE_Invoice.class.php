@@ -40,6 +40,7 @@ Class EE_Invoice extends EE_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Invoice';
+		$this->_button_base = 'invoice.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
 		parent::__construct($model);
 	}
@@ -270,11 +271,13 @@ to change the look of your invoices.', 'event_espresso'); ?></span>
 	}
 
 	public function espresso_display_payment_gateways() {
+	
+		echo $this->_generate_payment_gateway_selection_button(); 
 		?>
-		<a id="payment-gateway-button-<?php echo $this->_gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $this->_gateway; ?>" href="<?php echo $this->_form_url; ?>" >
+<!--		<a id="payment-gateway-button-<?php echo $this->_gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $this->_gateway; ?>" href="<?php echo $this->_form_url; ?>" >
 			<button type="button"><?php _e('Invoice', 'event_espresso'); ?></button>
 		</a>
-
+-->
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the payment overview where you can download your invoice.', 'event_espresso'); ?>
 		</div>

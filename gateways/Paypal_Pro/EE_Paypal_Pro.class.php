@@ -98,7 +98,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
 
 		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
-			$espresso_notices['updates'][] = __('PayPal Pro Payment Settings Updated!', 'event_espresso');
+			$espresso_notices['success'][] = __('PayPal Pro Payment Settings Updated!', 'event_espresso');
 		} else {
 			$espresso_notices['errors'][] = __('PayPal Pro Payment Settings were not saved! ', 'event_espresso');
 		}
@@ -632,11 +632,11 @@ Class EE_Paypal_Pro extends EE_Gateway {
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 			
 			<?php $billing_inputs = $this->espresso_reg_page_billing_inputs_paypal_pro(); ?>
-			<?php $this->_generate_billing_info_form_fields( $billing_inputs, 'address' ); ?>
+			<?php echo $this->_generate_billing_info_form_fields( $billing_inputs, 'address' ); ?>
 
 			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
 
-			<?php $this->_generate_billing_info_form_fields( $billing_inputs, 'credit_card' ); ?>
+			<?php echo $this->_generate_billing_info_form_fields( $billing_inputs, 'credit_card' ); ?>
 
 		</div>
 
@@ -761,12 +761,12 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				'reg-page-billing-card-type' => array(
 						'db-col' =>'card-type',
 						'label' => __( 'Type of credit card', 'event_espresso' ),
-						'input' =>'text',
+						'input' =>'select',
 						'type' =>'string',
 						'sanitize' => 'no_html',
 						'required' => TRUE,
 						'validation' => TRUE,
-						'value' => NULL,
+						'value' =>  $this->_payment_settings['credit_cards'],
 						'format' => '%s'
 				), 
 

@@ -119,7 +119,7 @@ abstract class EE_Gateway {
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway)) {
 			$this->_default_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Initialized!', 'event_espresso');
+				$espresso_notices['success'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Initialized!', 'event_espresso');
 			} else {
 				$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings were not initialized! ', 'event_espresso');
 			}
@@ -145,7 +145,7 @@ abstract class EE_Gateway {
 			//printr( $_POST, 'POST' );		
 			$this->_update_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-				$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Updated!', 'event_espresso');
+				$espresso_notices['success'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings Updated!', 'event_espresso');
 			} else {
 				$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Payment Settings were not saved! ', 'event_espresso');
 			}
@@ -192,10 +192,10 @@ abstract class EE_Gateway {
 
 	public function settings_meta_box() {
 		global $espresso_premium, $espresso_notices;
+		
 		if ($espresso_premium != true) {
 			return;
 		}
-
 		?>
 
 		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
@@ -356,7 +356,7 @@ abstract class EE_Gateway {
 		$this->_payment_settings['current_path'] = str_replace( '\\', '/', $this->_path );
 		
 		if ($this->_EEM_Gateways->update_payment_settings( $this->_gateway, $this->_payment_settings )) {
-			$espresso_notices['updates'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL Reset!', 'event_espresso');
+			$espresso_notices['success'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL Reset!', 'event_espresso');
 		} else {
 			$espresso_notices['errors'][] = $this->_payment_settings['display_name'] . ' ' . __('Button URL was not reset! ', 'event_espresso');
 		}
@@ -396,12 +396,12 @@ abstract class EE_Gateway {
 		if ( empty( $billing_inputs ) || ! $section ) {
 			return;
 		}
+		// fill out section name
+		$section = '_billing_info_' . $section . '_fields';
 		// if you don't behave - this is what you're gonna get !!!
 		$output = '';
 		// cycle thru billing inputs
 		foreach( $billing_inputs as $input_key => $billing_input ) {
-			// fill out section name
-			$section = '_billing_info_' . $section . '_fields';
 			// is the billing input in the requested section	?
 			if ( in_array( $input_key, $this->$section )) {
 				// required fields get a * 
@@ -409,8 +409,10 @@ abstract class EE_Gateway {
 				// and the css class "required"
 				$css_class = $billing_input['required'] ? 'required ' . $css_class : $css_class;	
 						
-				// start with a p tag
-				$output =  "\n\t\t" . '<p class="event_form_field">';
+				// start with a p tag, unless this is the credit card year field
+				if ( $input_key != 'reg-page-billing-card-exp-date-year' ) {
+					$output .=  "\n\t\t" . '<p class="event_form_field">';
+				}
 								
 				// what type of input are we dealing with ?
 				switch ( $billing_input['input'] ) {
@@ -462,6 +464,12 @@ abstract class EE_Gateway {
 					break;
 					
 				} // end switch
+				
+				// end with a p tag, unless this is the credit card month field
+				if ( $input_key != 'reg-page-billing-card-exp-date-mnth' ) {
+					$output .=  "\n\t\t" . '</p>';
+				}
+				
 			} // end if ( in_array( $input_key, $this->$section ))
 		} // end foreach( $billing_inputs as $input_key => $billing_input ) 
 		

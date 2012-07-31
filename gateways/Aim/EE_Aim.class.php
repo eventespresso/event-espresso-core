@@ -65,7 +65,7 @@ Class EE_Aim extends EE_Gateway {
 			$this->_payment_settings['button_url'] = $_POST['button_url'];
 
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-				$espresso_notices['updates'][] = __('Authorize AIM Payment Settings Updated!', 'event_espresso');
+				$espresso_notices['success'][] = __('Authorize AIM Payment Settings Updated!', 'event_espresso');
 			} else {
 				$espresso_notices['errors'][] = __('Authorize AIM Payment Settings were not saved! ', 'event_espresso');
 			}
