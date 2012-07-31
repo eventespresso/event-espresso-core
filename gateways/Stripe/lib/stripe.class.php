@@ -36,7 +36,7 @@ class ClsStripe
 			$result['txid'] = $charge->id;
 		} catch (Exception $e) {
 			$result["status"] = 0;
-			$result["error_msg"] = "Failed to charge the card.";
+			$result["msg"] = "Failed to charge the card." . $e->getMessage();
 		}
 		
 		return $result;
