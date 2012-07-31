@@ -876,7 +876,7 @@
 		
 		// WHAT?!?!! check the validity of properties before you validate them ?!?!? geez... my head hurts
 		if ( ! isset( $properties ) or ! is_array( $properties ) or empty( $properties )) {
-			$espresso_notices = $this->_notices['errors'][] = 'An error occured. No cart properties were submitted for verification .';
+			$espresso_notices[] = 'An error occured. No cart properties were submitted for verification .';
 			return FALSE;
 		}
 		
@@ -886,7 +886,7 @@
 				case 'which_cart' :
 						// check for a valid cart
 						if ( ! $property or ! isset( $this->cart[ $property ] )) {
-							$espresso_notices = $this->_notices['errors'][] = 'An error occured. No cart or an invalid cart was specified.';
+							$espresso_notices[] = 'An error occured. No cart or an invalid cart was specified.';
 							return FALSE;
 						}
 				break;
@@ -894,7 +894,7 @@
 				case 'line_item_ids' :
 						//check for a line item id(s)
 						if ( ! $property ) {
-							$espresso_notices = $this->_notices['errors'][] = 'An error occured. No item was specified.';
+							$espresso_notices[] = 'An error occured. No item was specified.';
 							return FALSE;
 						}
 				break;
@@ -902,7 +902,7 @@
 				case 'line_item_id' :
 						// check for a line item id(s)
 						if ( ! $property or ! isset( $this->cart[ $properties['which_cart'] ]['items'][ $property ] )) {
-							$espresso_notices = $this->_notices['errors'][] = 'An error occured. No item was specified.';
+							$espresso_notices[] = 'An error occured. No item was specified.';
 							return FALSE;
 						}						
 				break;
@@ -910,7 +910,7 @@
 				case 'new_qty' :
 						//check for a new_qty
 						if ( ! $property or ! is_int( $property )) {
-							$espresso_notices = $this->_notices['errors'][] = 'An error occured. Either no item quantity, or an invalid item quantity was specified.';
+							$espresso_notices[] = 'An error occured. Either no item quantity, or an invalid item quantity was specified.';
 							return FALSE;
 						}
 				break;
@@ -922,7 +922,7 @@
 						foreach ( $required_keys as $required_key ) {
 							// check that item has required property
 							if ( ! isset ( $property[ $required_key ] )) { 
-								$espresso_notices = $this->_notices['errors'][] = 'An error occured. Items passed to the cart must possess a valid ' . $required_key . '.';
+								$espresso_notices[] = 'An error occured. Items passed to the cart must possess a valid ' . $required_key . '.';
 								return FALSE;
 							}
 						}
@@ -930,7 +930,7 @@
 				
 				case 'items' :
 						if ( ! is_array( $property ) or empty( $property ) ) {
-							$espresso_notices = $this->_notices['errors'][] = 'An error occured. The data passed to the cart was invalid. No items could be added to the cart.';
+							$espresso_notices[] = 'An error occured. The data passed to the cart was invalid. No items could be added to the cart.';
 							return FALSE;
 						}
 				break;
@@ -938,7 +938,7 @@
 				case 'event_id' :
 						// check $event_id 
 						if ( ! $property or ! is_int( $property )) {
-							$espresso_notices = $this->_notices['errors'][] = 'An error occured. An invalid or missing event id was submitted and therefore could not be added to the events in cart list.';
+							$espresso_notices[] = 'An error occured. An invalid or missing event id was submitted and therefore could not be added to the events in cart list.';
 							return FALSE;
 						}						
 				break;
@@ -1025,13 +1025,14 @@
 			return FALSE;
 		}
 		
+		global $espresso_notices;		
 		// first check that the event id exists
 		if ( isset( $this->cart[$which_cart]['event_id_list'][ $event_id ] )) {
 			// found it? now kill it!
 			unset( $this->cart[$which_cart]['event_id_list'][ $event_id ] );
 			return TRUE;
 		} else {
-			$this->_notices['errors'][] = 'An error occured. The submitted event id was not found in the events in cart list.';
+			$espresso_notices[] = 'An error occured. The submitted event id was not found in the events in cart list.';
 			return FALSE;
 		}		
 				
@@ -1089,9 +1090,10 @@
 	*/	
 	public function unset_events_in_cart_list( $event_id = FALSE ) {
 
+		global $espresso_notices;		
 		// check $event_id 
 		if ( ! $event_id or ! is_int( $event_id )) {
-			$this->_notices['errors'][] = 'An error occured. An invalid or missing event id was submitted and therefore could not be removed from the events in cart list.';
+			$espresso_notices[] = 'An error occured. An invalid or missing event id was submitted and therefore could not be removed from the events in cart list.';
 			return FALSE;
 		}
 		
@@ -1101,7 +1103,7 @@
 			unset( $this->_events_in_cart[ $event_id ]);
 			return TRUE;
 		} else {
-			$this->_notices['errors'][] = 'An error occured. The submitted event id was not found in the events in cart list.';
+			$espresso_notices[] = 'An error occured. The submitted event id was not found in the events in cart list.';
 			return FALSE;
 		}		
 	
@@ -1152,7 +1154,7 @@
 
 		// check $extra_details
 		if ( ! $extra_details or ! is_array( $extra_details ) or empty( $extra_details )) {
-			$espresso_notices = $this->_notices['errors'][] = 'An error occured. An invalid or missing set of details was submitted and therefore could not be added to the cart item.';
+			$espresso_notices[] = 'An error occured. An invalid or missing set of details was submitted and therefore could not be added to the cart item.';
 			return FALSE;
 		}
 

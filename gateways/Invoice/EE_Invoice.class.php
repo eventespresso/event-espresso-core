@@ -80,86 +80,108 @@ Class EE_Invoice extends EE_Gateway {
 
 	protected function _display_settings() {
 		require_once('lib/invoice_functions.php');
-		$files = espresso_invoice_template_files($this->_path);
+		$themes = espresso_invoice_template_files($this->_path());
 		?>
-		<tr>
-			<th><label for="show">
-					<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
-				</label></th>
-			<td><?php echo select_input('show', $this->_yes_no_options, $this->_payment_settings['show']); ?><br />
-				<span class="description"><?php _e('Will display invoices as a payemnt option <br />
-on your payemnt page. (Default: Yes)', 'event_espresso'); ?></span></td>
-		</tr>
-		<tr>
-			<th><label for="pdf_title">
-					<?php _e('Invoice Title', 'event_espresso'); ?>
-				</label></th>
-			<td><input class="regular-text" type="text" name="pdf_title" id="pdf_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['pdf_title']); ?>" /></td>
-		</tr>
-		<tr>
-			<th><label for="page_instructions">
-					<?php _e('Invoice Instructions', 'event_espresso'); ?>
-				</label></th>
-			<td><textarea name="page_instructions" cols="30" rows="5"><?php echo trim(stripslashes_deep($this->_payment_settings['page_instructions'])); ?></textarea></td>
-		</tr>
-		<tr>
-			<th><label for="payable_to">
-					<?php _e('Payable To', 'event_espresso'); ?>
-				</label></th>
-			<td><input class="regular-text" type="text" name="payable_to" id="payable_to" size="30" value="<?php echo trim(stripslashes_deep($this->_payment_settings['payable_to'])); ?>" /></td>
-		</tr>
-		<tr>
-			<th><label for="payment_address">
-					<?php _e('Address to Send Payment', 'event_espresso'); ?>
-				</label></th>
-			<td><textarea name="payment_address" cols="30" rows="5"><?php echo trim($this->_payment_settings['payment_address']); ?>
-				</textarea></td>
-		</tr>
-		<tr>
-			<th><label for="base-invoice-select">
-					<?php _e('Select Stylesheet', 'event_espresso'); ?>
-					<?php //apply_filters('filter_hook_espresso_help', 'base_template_info')  ?>
-				</label>
-			</th>
-			<td><select id="base-invoice-select" class="chzn-select wide" name="invoice_css">
-					<option <?php espresso_invoice_is_selected('', $this->_payment_settings['invoice_css']) ?> value="simple.css">
-						<?php _e('Default CSS - Simple', 'event_espresso'); ?>
-					</option>
-					<?php foreach ($files as $fname) { ?>
-						<option <?php espresso_invoice_is_selected($fname, $this->_payment_settings['invoice_css']) ?> value="<?php echo $fname ?>"><?php echo $fname; ?></option>
-					<?php } ?>
-				</select><br />
-				<span class="description"><?php _e('Load a custom/pre-made style sheet <br />
-to change the look of your invoices.', 'event_espresso'); ?></span>
-			</td>
-		</tr>
-		<tr>
-			<th><label for="pdf_instructions">
-					<?php _e('Instructions', 'event_espresso'); ?>
-				</label></th>
-			<td><textarea name="pdf_instructions" cols="30" rows="5"><?php echo stripslashes_deep($this->_payment_settings['pdf_instructions']); ?></textarea></td>
-		</tr>
-		<tr>
-			<th><label for="image_url">
-					<?php _e('Logo Image', 'event_espresso'); ?>
-					<?php //apply_filters('filter_hook_espresso_help', 'invoice_logo_info') ?>
-				</label></th>
-			<td><p id="invoice-logo-image">
-					<input id="image_url" type="hidden" size="36" name="image_url" value="<?php echo $this->_payment_settings['image_url']; ?>" />
-					<input id="upload_image_button" type="button" value="Upload Image" />
-					<br />
-					<span class="description">
-						<?php _e('(logo for the top left of the invoice)', 'event_espresso'); ?>
-					</span>
-				<p class="invoice-logo"><img src="<?php echo $this->_payment_settings['image_url']; ?>" alt="" /></p>
-				<a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'>
-					<?php _e('Remove Image', 'event_espresso'); ?>
-				</a>
-			</p></td>
-		</tr>
+		<h4>
+			<?php _e('Invoice Details', 'event_espresso'); ?>
+		</h4>		
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<th><label for="show">
+							<?php _e('Show as an option on the payment page?', 'event_espresso'); ?>
+						</label></th>
+					<td><?php echo select_input('show', $this->_yes_no_options, $this->_payment_settings['show']); ?><br />
+						<span class="description"><?php _e('Will display invoices as a payemnt option <br />
+		on your payemnt page. (Default: Yes)', 'event_espresso'); ?></span></td>
+				</tr>
+				<tr>
+					<th><label for="pdf_title">
+							<?php _e('Invoice Title', 'event_espresso'); ?>
+						</label></th>
+					<td><input class="regular-text" type="text" name="pdf_title" id="pdf_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['pdf_title']); ?>" /></td>
+				</tr>
+				<tr>
+					<th><label for="page_instructions">
+							<?php _e('Invoice Instructions', 'event_espresso'); ?>
+						</label></th>
+					<td><textarea name="page_instructions" cols="30" rows="5"><?php echo trim(stripslashes_deep($this->_payment_settings['page_instructions'])); ?></textarea></td>
+				</tr>
+				<tr>
+					<th>
+						<label for="payable_to">
+							<?php _e('Payable To', 'event_espresso'); ?>
+						</label>
+					</th>
+					<td>
+						<input class="regular-text" type="text" name="payable_to" id="payable_to" size="30" value="<?php echo trim(stripslashes_deep($this->_payment_settings['payable_to'])); ?>" />
+					</td>
+				</tr>
+				<tr>
+					<th><label for="payment_address">
+							<?php _e('Address to Send Payment', 'event_espresso'); ?>
+						</label></th>
+					<td><textarea name="payment_address" cols="30" rows="5"><?php echo trim($this->_payment_settings['payment_address']); ?>
+						</textarea></td>
+				</tr>
+			</tbody>
+		</table>
+			<h4>
+				<?php _e('Invoice Display Settings', 'event_espresso'); ?>
+			</h4>
+			<table class="form-table">
+				<tbody>
+					<tr>
+						<th><label for="base-invoice-select">
+								<?php _e('Select Stylesheet', 'event_espresso'); ?>
+								<?php //apply_filters('filter_hook_espresso_help', 'base_template_info')  ?>
+							</label>
+						</th>
+						<td>
+							<select id="base-invoice-select" class="chzn-select wide" name="invoice_css">
+							<?php $this->_payment_settings['invoice_css'] = ! empty( $this->_payment_settings['invoice_css'] ) ? $this->_payment_settings['invoice_css'] : 'simple.css'; ?>
+							<?php foreach ($themes as $theme) { ?>
+							<?php $selected = ( $theme == $this->_payment_settings['invoice_css'] ) ? 'selected="selected"' : ''; ?>
+								<option value="<?php echo $theme ?>" <?php echo $selected; ?>><?php echo $theme; ?></option>
+							<?php } ?>
+							</select><br />
+							<span class="description"><?php _e('Load a custom/pre-made style sheet <br />
+to change the look of your invoices.', 'event_espresso'); ?></span></td>
+					</tr>
+					<tr>
+						<th><label for="pdf_instructions">
+								<?php _e('Instructions', 'event_espresso'); ?>
+							</label></th>
+						<td><textarea name="pdf_instructions" cols="30" rows="5"><?php echo stripslashes_deep($this->_payment_settings['pdf_instructions']); ?></textarea></td>
+					</tr>
+					<tr>
+						<th><label for="image_url">
+								<?php _e('Logo Image', 'event_espresso'); ?>
+								<?php //apply_filters('filter_hook_espresso_help', 'invoice_logo_info') ?>
+							</label></th>
+						<td><p id="invoice-logo-image">
+								<input id="image_url" type="hidden" size="36" name="image_url" value="<?php echo $this->_payment_settings['image_url']; ?>" />
+								<input id="upload_image_button" type="button" value="Upload Image" />
+								<br />
+								<span class="description">
+									<?php _e('(logo for the top left of the invoice)', 'event_espresso'); ?>
+								</span>
+							<p class="invoice-logo"><img src="<?php echo $this->_payment_settings['image_url']; ?>" alt="" /></p>
+							<a id='remove-image' href='#' title='<?php _e('Remove this image', 'event_espresso'); ?>' onclick='return false;'>
+								<?php _e('Remove Image', 'event_espresso'); ?>
+							</a>
+							</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
 		<?php
 	}
-
+	
+	
+	
+	
 	protected function _display_settings_help() {
 		?>
 		<script type="text/javascript" charset="utf-8">

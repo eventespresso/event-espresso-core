@@ -40,6 +40,7 @@ function event_espresso_gateways_options() {
 		<h2><?php _e('Manage Payment Gateways', 'event_espresso'); ?></h2>
 		<?php
 		echo espresso_get_notices();
+
 		if (!espresso_choose_layout($main_post_content, $sidebar_content))
 			return FALSE;
 		?>

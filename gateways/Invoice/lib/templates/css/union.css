@@ -24,8 +24,8 @@ Created by Olly Headey
 
 /*=========================== LAYOUT =========================*/
 
-#invoice {padding:0 1cm 1cm 2.5cm; background: #fff url(../images/red-bg.gif) top left repeat-y; width: 600px; }
-#invoice-header{margin-top:1.5cm; border-bottom:1px solid #a10000;padding-bottom:10px; overflow:hidden}
+#invoice {padding:1cm 1cm 1cm 2.5cm; background: #fff url(../images/red-bg.gif) top left repeat-y; width:684px; }
+#invoice-header{margin-top:0cm; border-bottom:1px solid #a10000;padding-bottom:10px; overflow:hidden}
 #invoice-info{ margin:0 0 20px 0; text-align:right;}
 #company-address {margin: 0; padding: 0; }
 

@@ -150,7 +150,8 @@ Class EEM_Gateways {
 					}
 				}
 				if (class_exists($classname)) {
-					$gateway = $classname::instance($this);
+					//$gateway = $classname::instance($this);
+					$gateway = call_user_func( array( $classname, 'instance' ), &$this );				
 					$this->_gateway_instances[$gateway->gateway()] = $gateway;
 				}
 			}

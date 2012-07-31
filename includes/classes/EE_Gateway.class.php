@@ -66,8 +66,8 @@ abstract class EE_Gateway {
 
 
 	protected function __construct(EEM_Gateways &$model) {
-	
-		global $EE_Session, $espresso_notices;
+
+		//echo '<h4>$this->_gateway : ' . $this->_gateway . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		
 		define( 'GATEWAYS_ADMIN_URL', admin_url( 'admin.php?page=payment_gateways' ));	
 
@@ -196,6 +196,7 @@ abstract class EE_Gateway {
 		if ($espresso_premium != true) {
 			return;
 		}
+
 		?>
 
 		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
