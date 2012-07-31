@@ -80,7 +80,7 @@ Class EE_Invoice extends EE_Gateway {
 
 	protected function _display_settings() {
 		require_once('lib/invoice_functions.php');
-		$themes = espresso_invoice_template_files($this->_path());
+		$themes = espresso_invoice_template_files($this->_path);
 		?>
 		<h4>
 			<?php _e('Invoice Details', 'event_espresso'); ?>
@@ -307,4 +307,11 @@ to change the look of your invoices.', 'event_espresso'); ?></span></td>
 		<?php
 	}
 
+	public function send_invoice($id) {
+		require_once('lib/Invoice.class.php');
+		if (class_exists('Invoice')) {
+			$invoice = new Invoice($id);
+			$invoice->send_invoice();
+		}
+	}
 }

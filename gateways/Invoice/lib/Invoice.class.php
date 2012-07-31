@@ -16,7 +16,7 @@ class Invoice {
 		if ( $this->registration = $REG->get_registration(array('REG_url_link' => $url_link))) {
 			$this->transaction = $TXN->get_transaction($this->registration->transaction_ID());
 			$this->session_data = $this->transaction->session_data();
-			$this->invoice_settings = $this->session_data['gateway_data']['payment_settings']['invoice'];
+			$this->invoice_settings = $this->session_data['gateway_data']['payment_settings']['Invoice'];
 		} else {
 			echo "error message";
 		}
@@ -76,7 +76,7 @@ class Invoice {
 		$template_args['state'] = $org_options['organization_state'];
 		$template_args['zip'] = $org_options['organization_zip'];
 		$template_args['email'] = $org_options['contact_email'];
-		$template_args['download_link'] = home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link();
+		$template_args['download_link'] = home_url() . '/?invoice_launch=true&amp;id=' . $this->registration->reg_url_link();
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = date_i18n(get_option('date_format'), $this->registration->date());
 		$template_args['name'] = stripslashes_deep($this->session_data['primary_attendee']['fname'] . ' ' . $this->session_data['primary_attendee']['lname']);
