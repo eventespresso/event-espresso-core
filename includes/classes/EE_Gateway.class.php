@@ -399,6 +399,7 @@ abstract class EE_Gateway {
 		if ( empty( $billing_inputs ) || ! $section ) {
 			return;
 		}
+		global $css_class;
 		// fill out section name
 		$section = '_billing_info_' . $section . '_fields';
 		// if you don't behave - this is what you're gonna get !!!
@@ -410,7 +411,7 @@ abstract class EE_Gateway {
 				// required fields get a * 
 				$required = $billing_input['required'] ? '&nbsp;<em>*</em>' : '';
 				// and the css class "required"
-				$css_class = $billing_input['required'] ? 'required ' . $css_class : $css_class;	
+				$styles = $billing_input['required'] ? 'required ' . $css_class : $css_class;	
 						
 				// start with a p tag, unless this is the credit card year field
 				if ( $input_key != 'reg-page-billing-card-exp-date-year' ) {
