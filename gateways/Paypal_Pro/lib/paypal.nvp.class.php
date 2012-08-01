@@ -56,7 +56,7 @@ class PayPal
 				$this -> APIUsername = isset($DataArray['APIUsername']) && $DataArray['APIUsername'] != '' ? $DataArray['APIUsername'] : '';
 				$this -> APIPassword = isset($DataArray['APIPassword']) && $DataArray['APIPassword'] != '' ? $DataArray['APIPassword'] : '';
 				$this -> APISignature = isset($DataArray['APISignature']) && $DataArray['APISignature'] != '' ? $DataArray['APISignature'] : '';
-				$this -> EndPointURL = isset($DataArray['EndPointURL']) && $DataArray['EndPointURL'] != '' ? $DataArray['EndPointURL'] : 'https://api-3t.sandbox.paypal.com/nvp';	
+				$this -> EndPointURL = isset($DataArray['EndPointURL']) && $DataArray['EndPointURL'] != '' ? $DataArray['EndPointURL'] : 'https://api-3t.sandbox.paypal.com/nvp';
 			}
 		}
 		else
@@ -74,7 +74,7 @@ class PayPal
 		
 		$this -> Countries = array(
 							'Afghanistan' => 'AF',
-							'ÌÉland Islands' => 'AX',
+							'ï¿½ï¿½land Islands' => 'AX',
 							'Albania' => 'AL',
 							'Algeria' => 'DZ',
 							'American Samoa' => 'AS',
@@ -512,14 +512,14 @@ class PayPal
 		$curl = curl_init();
 				curl_setopt($curl, CURLOPT_VERBOSE, 1);
 				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-				curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+				curl_setopt($curl, CURLOPT_TIMEOUT, 60);
 				curl_setopt($curl, CURLOPT_URL, $this -> EndPointURL);
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
 				
 		if($this -> APIMode == 'Certificate')
 			curl_setopt($curl, CURLOPT_SSLCERT, $this -> PathToCertKeyPEM);
-		
+	
 		//execute the curl POST		
 		$Response = curl_exec($curl);
 		

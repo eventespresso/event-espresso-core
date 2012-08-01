@@ -268,11 +268,9 @@ Class EE_Aim extends EE_Gateway {
 		} else {
 			$test_creds = '';
 		}
+		echo $this->_generate_payment_gateway_selection_button();
 		?>
 
-		<a id="payment-gateway-button-<?php echo $this->_gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $this->_gateway; ?>" href="<?php echo $this->_form_url; ?>" >
-			<img src="<?php echo $this->_payment_settings['button_url']; ?>" alt="Pay using Authorize.Net" />
-		</a>
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 

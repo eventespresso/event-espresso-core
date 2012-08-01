@@ -328,10 +328,9 @@ Class EE_Eway extends EE_Gateway {
 	}
 
 	public function espresso_display_payment_gateways() {
+		echo $this->_generate_payment_gateway_selection_button();
 		?>
-		<a id="payment-gateway-button-<?php echo $this->_gateway;?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class;?>" rel="<?php echo $this->_gateway;?>" href="<?php echo $this->_form_url;?>" >
-				<img src="<?php echo $this->_payment_settings['button_url'];?>" alt="Pay using Eway" />
-			</a>
+		
 
 			<div id="reg-page-billing-info-<?php echo $this->gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class;?>">
 				<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the Eway.com website where your payment will be securely processed.', 'event_espresso'); ?>

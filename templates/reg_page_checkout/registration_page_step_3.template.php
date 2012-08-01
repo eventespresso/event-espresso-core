@@ -23,7 +23,7 @@
 				
 			<div id="mer-reg-page-whats-next-buttons" class="mer-whats-next-buttons">
 			
-				<a id="mer-reg-page-confirm-reg-btn" class="ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >
+				<a href="" onclick="return false" id="mer-reg-page-confirm-reg-btn" class="ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >
 					<strong><?php _e('YES!&nbsp;Confirm&nbsp;Registration&nbsp;', 'event_espresso'); ?></strong><span class="ui-icon ui-icon-circle-check"></span>
 				</a>
 

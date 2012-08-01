@@ -29,6 +29,7 @@ class Invoice {
 //printr($this->transaction);
 //printr($this->session_data);
 //printr($this->invoice_settings);
+//exit;
 		$template_args = array();
 
 		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : 1;		
@@ -52,7 +53,7 @@ class Invoice {
 		}
 
 		//Create the logo
-		if (!empty($this->invoice_settings['invoice_logo_url'])) {
+/*		if (!empty($this->invoice_settings['invoice_logo_url'])) {
 			$invoice_logo_url = $this->invoice_settings['invoice_logo_url'];
 		} else {
 			$invoice_logo_url = $org_options['default_logo_url'];
@@ -62,7 +63,7 @@ class Invoice {
 			$template_args['invoice_logo_image'] = '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" /> ';
 		} else {
 			$template_args['invoice_logo_image'] = '';
-		}
+		}*/
 
 		if (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) {
 			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/';

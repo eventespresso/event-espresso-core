@@ -399,7 +399,7 @@ abstract class EE_Gateway {
 		if ( empty( $billing_inputs ) || ! $section ) {
 			return;
 		}
-		global $css_class; 
+		global $css_class;
 		// fill out section name
 		$section = '_billing_info_' . $section . '_fields';
 		// if you don't behave - this is what you're gonna get !!!
