@@ -399,6 +399,7 @@ abstract class EE_Gateway {
 		if ( empty( $billing_inputs ) || ! $section ) {
 			return;
 		}
+		global $css_class; 
 		// fill out section name
 		$section = '_billing_info_' . $section . '_fields';
 		// if you don't behave - this is what you're gonna get !!!
@@ -410,7 +411,7 @@ abstract class EE_Gateway {
 				// required fields get a * 
 				$required = $billing_input['required'] ? '&nbsp;<em>*</em>' : '';
 				// and the css class "required"
-				$css_class = $billing_input['required'] ? 'required ' . $css_class : $css_class;	
+				$styles = $billing_input['required'] ? 'required ' . $css_class : $css_class;	
 						
 				// start with a p tag, unless this is the credit card year field
 				if ( $input_key != 'reg-page-billing-card-exp-date-year' ) {
@@ -424,7 +425,7 @@ abstract class EE_Gateway {
 					case 'text' :		
 								
 						$output .= "\n\t\t\t" . '<label for="' . $input_key . '">' .$billing_input['label'] . $required . '</label>';
-						$output .= "\n\t\t\t" . '<input id="' .$input_key . '" class="' .$css_class . '" type="text" value="' .$billing_input['value'] . '" name="' .$input_key . '">';
+						$output .= "\n\t\t\t" . '<input id="' .$input_key . '" class="' . $styles . '" type="text" value="' .$billing_input['value'] . '" name="' .$input_key . '">';
 						break;
 						
 					// dropdowns
@@ -433,7 +434,7 @@ abstract class EE_Gateway {
 						if ( $input_key == 'reg-page-billing-card-exp-date-mnth' ) {
 						
 							$output .= "\n\t\t\t" . '<label>' . __('Expiry Date', 'event_espresso') . '&nbsp;<em>*</em></label>';
-							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-mnth" class="'. $css_class . ' small-txt" name="reg-page-billing-card-exp-date-mnth">';
+							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-mnth" class="'. $styles . ' small-txt" name="reg-page-billing-card-exp-date-mnth">';
 							for ($x = 1; $x <= 12; $x++) {
 								$value = $x < 10 ? '0' . $x : $x;
 								$output .= "\n\t\t\t\t" . '<option value="' . $value . '">' . $value . '</option>';
@@ -443,7 +444,7 @@ abstract class EE_Gateway {
 
 						} elseif ( $input_key == 'reg-page-billing-card-exp-date-year' ) {
 						
-							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-year" class="'. $css_class . ' small-txt" name="reg-page-billing-card-exp-date-year">';
+							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-year" class="'. $styles . ' small-txt" name="reg-page-billing-card-exp-date-year">';
 							$current_year = date('y');
 							$next_decade = $current_year + 10;
 							for ($x = $current_year; $x <= $next_decade; $x++) {
@@ -456,7 +457,7 @@ abstract class EE_Gateway {
 						} else {
 
 							$output .= "\n\t\t\t" . '<label for="' . $input_key . '">' .$billing_input['label'] . $required . '</label>';
-							$output .= "\n\t\t\t" . '<select id="' .$input_key . '" class="'. $css_class . ' small-txt" name="' .$input_key . '">';
+							$output .= "\n\t\t\t" . '<select id="' .$input_key . '" class="'. $styles . ' small-txt" name="' .$input_key . '">';
 							
 							$options = explode( ',', $billing_input['options'] );
 							foreach ( $options  as $value ) {
