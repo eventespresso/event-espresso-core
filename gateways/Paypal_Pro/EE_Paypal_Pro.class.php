@@ -69,16 +69,18 @@ Class EE_Paypal_Pro extends EE_Gateway {
 	 * 		@return void
 	 */
 	protected function _default_settings() {
-		$this->_payment_settings['active'] = false;
-		$this->_payment_settings['email'] = '';
-		$this->_payment_settings['username'] = false;
-		$this->_payment_settings['password'] = false;
-		$this->_payment_settings['currency_format'] = false;
-		$this->_payment_settings['currencsignaturey_format'] = false;
-		$this->_payment_settings['credit_cards'] = false;		
-		$this->_payment_settings['type'] = 'on-site';
-		$this->_payment_settings['display_name'] = 'PayPal Pro';
-		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings = array(
+			'email' => '',
+			'username' => '',
+			'password' => '',
+			'currency_format' => 'USD',
+			'signature' => '',
+			'credit_cards' => '',
+			'use_sandbox' => false,
+			'type' => 'on-site',
+			'display_name' => 'PayPal Pro',
+			'current_path' => ''
+		);
 	}
 
 
@@ -89,9 +91,6 @@ Class EE_Paypal_Pro extends EE_Gateway {
 	 * 		@return void
 	 */
 	protected function _update_settings() {
-
-		global $espresso_notices;
-
 		$this->_payment_settings['email'] = $_POST['email'];
 		$this->_payment_settings['username'] = $_POST['username'];
 		$this->_payment_settings['password'] = $_POST['password'];
@@ -99,13 +98,6 @@ Class EE_Paypal_Pro extends EE_Gateway {
 		$this->_payment_settings['signature'] = $_POST['signature'];
 		$this->_payment_settings['credit_cards'] = implode(",", empty($_POST['credit_cards']) ? array() : $_POST['credit_cards']);
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
-
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
-			$espresso_notices['success'][] = __('PayPal Pro Payment Settings Updated!', 'event_espresso');
-		} else {
-			$espresso_notices['errors'][] = __('PayPal Pro Payment Settings were not saved! ', 'event_espresso');
-		}
-
 	}
 
 
@@ -374,6 +366,18 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				$total_taxes += $tax;
 			}
 			
+			//assemble the description.
+			$item_num = 1;
+			$registrations = $reg_info['items'];
+			$description = '';
+			
+			foreach ($registrations as $registration) {
+				foreach ($registration['attendees'] as $attendee) {
+					$description .= $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'];
+					$item_num++;
+				}
+			}
+			
 			// Include required files.
 			require_once('lib/paypal.nvp.class.php');
 			
@@ -490,7 +494,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				// Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
 				'taxamt' => $total_taxes, 
 				// Description of the order the customer is purchasing.  127 char max.
-				'desc' => $list_of_events, 
+				'desc' => $description, 
 				// Free-form field for your own use.  256 char max.
 				'custom' => $session_data['primary_attendee']['registration_id'], 
 				// Your own invoice or tracking number
@@ -538,26 +542,12 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				'PaymentDetails' => $PaymentDetails,
 				'OrderItems' => $OrderItems
 			);
-			 printr( $PayPalRequestData, '$PayPalRequestData' );
 			
 			// Pass the master array into the PayPal class function
 			$PayPalResult = $PayPal->DoDirectPayment($PayPalRequestData);
-			printr( $PayPalResult, '$PayPalResult' );
 
-echo '<h4>APICallSuccessful : ' . $this->_APICallSuccessful( $PayPalResult['ACK'] ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-			if ( $this->_APICallSuccessful( $PayPalResult['ACK'] )) {		
+			if ( !empty($PayPalResult['ACK']) && $this->_APICallSuccessful( $PayPalResult['ACK'] )) {		
 	
-/*				if ($this->_payment_settings['use_sandbox']) {
-					$payment_data->txn_id = $PayPalResult['TRANSACTIONID'];
-				} else {
-					$payment_data->txn_id = $PayPalResult['TRANSACTIONID'];
-				}
-
-				$payment_data->payment_status = $PayPalResult['ACK'] == 'success' ? 'Approved' : 'Declined';
-
-				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
-*/	
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
 						'approved' => TRUE,
@@ -572,17 +562,27 @@ echo '<h4>APICallSuccessful : ' . $this->_APICallSuccessful( $PayPalResult['ACK'
 						'invoice_number' => $session_data['primary_attendee']['registration_id'], 
 						'raw_response' => $PayPalResult
 				);
-
-		printr( $txn_results, '$txn_results ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );
-		die();	
-		
 				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 	
 				//add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');	
 				
 			} else {
 				$Errors = $this->_GetErrors($PayPalResult);
-				echo $this->_DisplayErrors( $Errors );
+				$txn_results = array(
+						'gateway' => $this->_payment_settings['display_name'],
+						'approved' => FALSE,
+						'status' => 'Declined',
+						'response_msg' => $this->_DisplayErrors( $Errors ),
+						'amount' => '0.00',
+						'method' => 'CC',
+						'card_type' => $billing_info['reg-page-billing-card-type']['value'],
+						'auth_code' => '',
+						'md5_hash' => '',
+						'transaction_id' => '',
+						'invoice_number' => $session_data['primary_attendee']['registration_id'], 
+						'raw_response' => $PayPalResult
+				);
+				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 			} 
 		
 		// return ? or redirect ?
@@ -637,6 +637,7 @@ echo '<h4>APICallSuccessful : ' . $this->_APICallSuccessful( $PayPalResult['ACK'
 	 * 		@return void
 	 */
 	private function _DisplayErrors($Errors) {
+		$error = '';
 		foreach ($Errors as $ErrorVar => $ErrorVal) {
 			$CurrentError = $Errors[$ErrorVar];
 			foreach ($CurrentError as $CurrentErrorVar => $CurrentErrorVal) {
@@ -714,64 +715,8 @@ echo '<h4>APICallSuccessful : ' . $this->_APICallSuccessful( $PayPalResult['ACK'
 						</thead>
 						<tbody>
 							<tr>
-								<td><?php  _e('American Express', 'event_espreso');?></td>
-								<td>378282246310005</td>
-							</tr>
-							<tr>
-								<td><?php  _e('American Express', 'event_espreso');?></td>
-								<td>371449635398431</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Amex Corporate', 'event_espreso');?></td>
-								<td>378734493671000</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Australian BankCard', 'event_espreso');?></td>
-								<td>5610591081018250</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Diners Club', 'event_espreso');?></td>
-								<td>30569309025904</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Diners Club', 'event_espreso');?></td>
-								<td>38520000023237</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Discover', 'event_espreso');?></td>
-								<td>6011111111111117</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Discover', 'event_espreso');?></td>
-								<td>6011000990139424</td>
-							</tr>
-							<tr>
-								<td><?php  _e('JCB', 'event_espreso');?></td>
-								<td>3530111333300000</td>
-							</tr>
-							<tr>
-								<td><?php  _e('JCB', 'event_espreso');?></td>
-								<td>3566002020360505</td>
-							</tr>
-							<tr>
 								<td><?php  _e('Master Card', 'event_espreso');?></td>
-								<td>5555555555554444</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Master Card', 'event_espreso');?></td>
-								<td>5105105105105100</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Visa', 'event_espreso');?></td>
-								<td>4111111111111111</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Visa', 'event_espreso');?></td>
-								<td>4012888888881881</td>
-							</tr>
-							<tr>
-								<td><?php  _e('Visa', 'event_espreso');?></td>
-								<td>4222222222222*</td>
+								<td>5424180818927383</td>
 							</tr>
 						</tbody>
 					</table>	
