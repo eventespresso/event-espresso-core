@@ -182,7 +182,8 @@ Class EEM_Gateways {
 			}
 
 			if (class_exists($classname)) {
-				$this->_gateway_instances[] = $classname::instance($this);
+				$gateway = call_user_func(array($classname, 'instance'), &$this);
+				$this->_gateway_instances[$gateway->gateway()] = $gateway;
 			}
 		}
 	}
@@ -411,7 +412,7 @@ Class EEM_Gateways {
 		}
 
 		if (class_exists($classname)) {
-			$invoice = $classname::instance($this);
+			$invoice = call_user_func(array($classname, 'instance'), &$this);
 			$invoice->send_invoice($id);
 		}
 	}

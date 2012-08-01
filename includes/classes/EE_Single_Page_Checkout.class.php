@@ -883,7 +883,7 @@ class EE_Single_Page_Checkout {
 			if ($EE_Session->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
 				$success_msg = __('Registration Step 2 completed', 'event_espresso');
 			} else {
-				$espresso_notices = $EE_VnS->return_notices();
+				//$espresso_notices = $EE_VnS->return_notices();
 				$notices = espresso_get_notices(FALSE);
 				$error_msg = $notices['errors'];
 			}
@@ -909,8 +909,10 @@ class EE_Single_Page_Checkout {
 			} elseif ($type == 'on-site') { 
 			
 				// on site payment
-				// load default billing inputs
-				$reg_page_billing_inputs = array(
+				// set  billing inputs in the individual gateways plz
+				$reg_page_billing_inputs = array();
+
+/*				$reg_page_billing_inputs = array(
 
 						'type' => 'on-site',
 
@@ -1040,9 +1042,10 @@ class EE_Single_Page_Checkout {
 
 				);
 
-
+*/
 				// allow others to edit post input array
 				$reg_page_billing_inputs = apply_filters('filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs);
+
 				// validate and sanitize	post data
 				$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
 				if ($reg_page_billing_inputs) {
@@ -1129,36 +1132,39 @@ class EE_Single_Page_Checkout {
 		$template_args = array();
 		$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
 
-		foreach ($reg_info['items'] as $line_item_id => $event) {
-
-			$template_args['events'][$line_item_id]['name'] = $event['name'];
-			$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
-			$template_args['events'][$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
-			$template_args['events'][$line_item_id]['ticket-price'] = $event['options']['price_desc'];
-
-			foreach ($event['attendees'] as $att_nmbr => $attendee) {
-
-				$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] . ' ' . $attendee['lname'];
-				$extra_att_details = array();
-
-				foreach ($attendee as $key => $value) {
-					switch ($key) {
-
-						case 'fname' :
-						case 'lname' :
-							break;
-
-						default:
-							if (!in_array($key, $exclude_attendee_info) && !is_numeric($key) && $value != '') {
-								array_push($extra_att_details, $value);
-							}
+		if ( isset( $reg_info['items'] )) {
+			
+			foreach ($reg_info['items'] as $line_item_id => $event) {
+	
+				$template_args['events'][$line_item_id]['name'] = $event['name'];
+				$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
+				$template_args['events'][$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
+				$template_args['events'][$line_item_id]['ticket-price'] = $event['options']['price_desc'];
+	
+				foreach ($event['attendees'] as $att_nmbr => $attendee) {
+	
+					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] . ' ' . $attendee['lname'];
+					$extra_att_details = array();
+	
+					foreach ($attendee as $key => $value) {
+						switch ($key) {
+	
+							case 'fname' :
+							case 'lname' :
+								break;
+	
+							default:
+								if (!in_array($key, $exclude_attendee_info) && !is_numeric($key) && $value != '') {
+									array_push($extra_att_details, $value);
+								}
+						}
 					}
-				}
-
-				if (!empty($extra_att_details)) {
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . implode(', ', $extra_att_details) . '</span>';
-				} else {
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
+	
+					if (!empty($extra_att_details)) {
+						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . implode(', ', $extra_att_details) . '</span>';
+					} else {
+						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
+					}
 				}
 			}
 		}
@@ -1206,7 +1212,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function process_registration_step_3() {
-// Sidney is watching me...   { : \
+		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		global $org_options;

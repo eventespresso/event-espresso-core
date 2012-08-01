@@ -159,6 +159,7 @@ abstract class EE_Gateway {
 	private function _gateways_frontend() {
 		global $EE_Session;
 		add_action('action_hook_espresso_display_payment_gateways', array(&$this, 'espresso_display_payment_gateways'));
+		// grab session data for this gateway
 		if ($this->_session_gateway_data = $EE_Session->get_session_data($this->_gateway, "gateway_data")) {
 			if (!empty($this->_session_gateway_data['form_url'])) {
 				$this->_form_url = $this->_session_gateway_data['form_url'];
@@ -204,7 +205,7 @@ abstract class EE_Gateway {
 
 		<a name="<?php echo $this->_gateway; ?>" id="<?php echo $this->_gateway; ?>"></a>
 		<div class="padding">
-			<ul>
+			<ul id="payment-gateways-settings-ul">
 				<?php if (!$this->_EEM_Gateways->is_active($this->_gateway)) { ?>
 					<?php $activate = add_query_arg( array( 'activate_' . $this->_gateway => 'true'  ), GATEWAYS_ADMIN_URL ).'#'.$this->_gateway;?>
 					<li id="activate_<?php echo $this->_gateway; ?>" class="green_alert pointer" onclick="location.href='<?php echo $activate;?>'">
