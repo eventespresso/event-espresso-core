@@ -242,11 +242,9 @@ Class EE_Stripe extends EE_Gateway {
 
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
 		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_stripe'));
+		echo $this->_generate_payment_gateway_selection_button();
 		?>
-		<a id="payment-gateway-button-<?php echo $this->_gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $this->_gateway; ?>" href="<?php echo $this->_form_url; ?>" >
-			<img src="<?php echo $this->_payment_settings['button_url']; ?>" alt="Pay using Stripe" />
-		</a>
-
+		
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 
 
