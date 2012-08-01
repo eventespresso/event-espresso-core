@@ -454,7 +454,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				// Required. Name of State or Province.
 				'state' => $billing_info['reg-page-billing-state']['value'], 
 				// Required.  Country code.
-				'countrycode' => $billing_info['reg-page-billing-country']['value'], 
+				'countrycode' => 'US',//$billing_info['reg-page-billing-country']['value'], 
 				// Required.  Postal code of payer.
 				'zip' => $billing_info['reg-page-billing-zip']['value'], 
 				// Phone Number of payer.  20 char max.
