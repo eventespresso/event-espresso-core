@@ -38,8 +38,6 @@ Class EEM_Gateways {
 	private $_off_site_form = NULL;
 	private $_ajax = TRUE;
 
-
-
 	/**
 	 * 		@singleton method used to instantiate class object
 	 * 		@access public
@@ -53,21 +51,16 @@ Class EEM_Gateways {
 		return self::$_instance;
 	}
 
-
-
 	private function __construct() {
 		//so client code can check for instatiation b4 including
-		define('ESPRESSO_GATEWAYS', TRUE);		
+		define('ESPRESSO_GATEWAYS', TRUE);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Gateway.class.php');
 
 		$this->_load_session_gateway_data();
 		$this->_set_active_gateways();
 		$this->_load_payment_settings();
 		$this->_scan_and_load_all_gateways();
-
 	}
-
-
 
 	private function _load_session_gateway_data() {
 		global $EE_Session;
@@ -87,8 +80,6 @@ Class EEM_Gateways {
 		}
 	}
 
-
-
 	private function _set_active_gateways() {
 		if (!empty($this->_session_gateway_data['active_gateways'])) {
 			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
@@ -98,37 +89,32 @@ Class EEM_Gateways {
 			if (!is_array($this->_active_gateways)) {
 				$this->_active_gateways = array();
 			}
-			$EE_Session->set_session_data(array('active_gateways'=>$this->_active_gateways), 'gateway_data');
+			$EE_Session->set_session_data(array('active_gateways' => $this->_active_gateways), 'gateway_data');
 		}
 	}
 
-
-
 	private function _load_payment_settings() {
-	
+
 		if (!empty($this->_session_gateway_data['payment_settings'])) {
 			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
 		} else {
 			global $espresso_wp_user, $EE_Session;
-			$this->_payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', TRUE );
+			$this->_payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', TRUE);
 			if (!is_array($this->_payment_settings)) {
 				$this->_payment_settings = array();
 			}
-			$EE_Session->set_session_data(array('payment_settings'=>$this->_payment_settings), 'gateway_data');
+			$EE_Session->set_session_data(array('payment_settings' => $this->_payment_settings), 'gateway_data');
 		}
 
 		//echo printr( $this->_payment_settings, __CLASS__ . ' ->' . __FUNCTION__ . ' ( line #' .  __LINE__ . ' )' );
-		
 	}
-
-
 
 	private function _scan_and_load_all_gateways() {
 		// on the settings page, scan and load all the gateways
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
 			$this->_load_all_gateway_files();
 		} else {
-			if (!is_array($this->_active_gateways)) {  // if something went wrong, fail gracefully
+			if (!is_array($this->_active_gateways)) {	// if something went wrong, fail gracefully
 				//global $espresso_notices;
 				//$espresso_notices['errors'][] = 'No Active Event Espresso Payment Gateways';
 				return;
@@ -140,24 +126,23 @@ Class EEM_Gateways {
 					if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 						require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
 					} else {
-						$this->unset_active($gateway);  // if it can't find a gateway, delete it from the active_gateways
+						$this->unset_active($gateway);	// if it can't find a gateway, delete it from the active_gateways
 					}
 				} else {
 					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
 						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
 					} else {
-						$this->unset_active($gateway);  // if it can't find a gateway, delete it from the active_gateways
+						$this->unset_active($gateway);	// if it can't find a gateway, delete it from the active_gateways
 					}
 				}
 				if (class_exists($classname)) {
 					//$gateway = $classname::instance($this);
-					$gateway = call_user_func( array( $classname, 'instance' ), &$this );				
+					$gateway = call_user_func(array($classname, 'instance'), &$this);
 					$this->_gateway_instances[$gateway->gateway()] = $gateway;
 				}
 			}
 		}
 	}
-
 
 
 	private function _load_all_gateway_files() {
@@ -188,7 +173,7 @@ Class EEM_Gateways {
 			if ($in_uploads) {
 				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
-				}  else {
+				} else {
 					$espresso_notices['errors'][] = 'The file : <b>' . $filename . '</b> could not be located in either : <b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>';
 				}
 			} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
@@ -196,9 +181,10 @@ Class EEM_Gateways {
 			} else {
 				$espresso_notices['errors'][] = 'The file : <b>' . $filename . '</b> could not be located in either : <b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b> or <b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>';
 			}
-			
+
 			if (class_exists($classname)) {
-				$this->_gateway_instances[] = $classname::instance($this);
+				$gateway = call_user_func(array($classname, 'instance'), &$this);
+				$this->_gateway_instances[$gateway->gateway()] = $gateway;
 			}
 		}
 	}
@@ -220,10 +206,10 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 		$this->_payment_settings[$gateway] = $settings;
-		
+
 		global $espresso_wp_user, $espresso_notices;
 
-		if (update_user_meta( $espresso_wp_user, 'payment_settings', $this->_payment_settings )) {
+		if (update_user_meta($espresso_wp_user, 'payment_settings', $this->_payment_settings)) {
 			$espresso_notices['success'][] = __('Payment Settings Updated!', 'event_espresso');
 		} else {
 			$espresso_notices['errors'][] = __('Payment Settings were not saved! ', 'event_espresso');
@@ -358,8 +344,6 @@ Class EEM_Gateways {
 		}
 	}
 
-
-
 	public function display_name() {
 		if (!empty($this->_payment_settings[$this->_selected_gateway]['display_name'])) {
 			return $this->_payment_settings[$this->_selected_gateway]['display_name'];
@@ -367,8 +351,6 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 	}
-
-
 
 	public function off_site_form() {
 		if (!empty($this->_off_site_form)) {
@@ -378,8 +360,6 @@ Class EEM_Gateways {
 		}
 	}
 
-
-
 	public function set_off_site_form($form_data = FALSE) {
 		if (!$form_data) {
 			return FALSE;
@@ -388,8 +368,6 @@ Class EEM_Gateways {
 		$this->_set_session_data();
 		return TRUE;
 	}
-
-
 
 	private function _set_session_data() {
 		global $EE_Session;
@@ -409,21 +387,15 @@ Class EEM_Gateways {
 		return TRUE;
 	}
 
-
-
 	public function set_noajax() {
 		$this->_ajax = FALSE;
 		$this->_set_session_data();
 		return TRUE;
 	}
 
-
-
 	public function ajax() {
 		return $this->_ajax;
 	}
-
-
 
 	public function reset_session_data() {
 		foreach ($this->_active_gateways as $gateway => $in_uploads) {
@@ -451,6 +423,23 @@ Class EEM_Gateways {
 		return TRUE;
 	}
 
+	public function send_invoice($id) {
+		$gateway = 'Invoice';
+		$classname = 'EE_' . $gateway;
+		$filename = $classname . '.class.php';
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
+		} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
+		} else {
+			global $espresso_notices;
+			$espresso_notices['errors'][] = 'The file : <b>' . $filename . '</b> could not be located in either : <b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b> or <b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>';
+		}
 
+		if (class_exists($classname)) {
+			$invoice = call_user_func(array($classname, 'instance'), &$this);
+			$invoice->send_invoice($id);
+		}
+	}
 
 }
