@@ -1288,6 +1288,8 @@ class EE_Single_Page_Checkout {
 
 				do_action('action_hook_espresso_gateway_process_step_3');
 				
+				//TODO: create a method in the gateway type classes for processing reg step 3 and handling redirects and/or JSON responses
+				
 				$type = $this->gateways->type();
 				// process on-site payments
 				if ( $this->_ajax == 0 && $type == 'on-site') {
@@ -1305,6 +1307,7 @@ class EE_Single_Page_Checkout {
 				// process off-site payments
 				if ($type == 'off-site' || $type == 'off-line') {
 					if ($this->_ajax == 0) {
+						//TODO: compile output from off_site_form() function into one string before returning, then do: echo $this->gateways->off_site_form();
 						$form_data = $this->gateways->off_site_form();
 						echo $form_data['pre-form'] . $form_data['form'] . $form_data['post-form'];
 						die();
@@ -1414,6 +1417,7 @@ class EE_Single_Page_Checkout {
 				$txn_status = 'TCM';
 			} 
 			
+		//TODO: 	set $txn_status in gateway type classes
 		} elseif ( $gateway_type == 'off-line' ) {
 			// payments using 'off-line' gateways stay at OPEN status
 			$txn_status = 'TOP';
@@ -1462,7 +1466,7 @@ class EE_Single_Page_Checkout {
 
 	}
 
-
+	//TODO: delete this method and send off-line gateways through the same method as the on-site and off-site gateways
 	public function process_off_line_gateway() {
 		global $EE_Session;
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
@@ -1513,6 +1517,9 @@ class EE_Single_Page_Checkout {
 	}
 
 
+
+
+	//TODO: delete this method as it's functionality seems to be handled in process_registration_step_3() around line 1315
 	private function _redirect_to_off_site($args, $success_msg) {
 		$form_data =  $this->gateways->off_site_form();
 		$response_data = array(
