@@ -74,7 +74,7 @@ class PayPal
 		
 		$this -> Countries = array(
 							'Afghanistan' => 'AF',
-							'��land Islands' => 'AX',
+							'Åland Islands' => 'AX',
 							'Albania' => 'AL',
 							'Algeria' => 'DZ',
 							'American Samoa' => 'AS',

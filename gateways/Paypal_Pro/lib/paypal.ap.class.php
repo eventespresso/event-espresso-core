@@ -73,7 +73,7 @@ class PayPalAdaptivePayments
 		
 		$this -> Countries = array(
 							'Afghanistan' => 'AF',
-							'ÌÉland Islands' => 'AX',
+							'Ã…Ì‰land Islands' => 'AX',
 							'Albania' => 'AL',
 							'Algeria' => 'DZ',
 							'American Samoa' => 'AS',
@@ -393,7 +393,8 @@ class PayPalAdaptivePayments
 						'Armed Forces' => 'AE',
 						'Armed Forces Pacific' => 'AP');
 						
-		$this -> AVSCodes = array("A" => "Address Matches Only (No ZIP)", 
+		$this -> AVSCodes = array(
+								  "A" => "Address Matches Only (No ZIP)", 
 								  "B" => "Address Matches Only (No ZIP)", 
 								  "C" => "This tranaction was declined.", 
 								  "D" => "Address and Postal Code Match", 
