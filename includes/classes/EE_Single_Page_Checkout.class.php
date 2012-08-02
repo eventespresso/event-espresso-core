@@ -908,141 +908,9 @@ class EE_Single_Page_Checkout {
 				
 			} elseif ($type == 'on-site') { 
 			
-				// on site payment
 				// set  billing inputs in the individual gateways plz
 				$reg_page_billing_inputs = array();
 
-/*				$reg_page_billing_inputs = array(
-
-						'type' => 'on-site',
-
-						'gateway' => $this->gateways->selected_gateway(),
-
-						'reg-page-billing-fname' => array(
-								'db-col' => 'fname',
-								'label' => __('First Name', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-lname' => array(
-								'db-col' => 'lname',
-								'label' => __('Last Name', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-email' => array(
-								'db-col' => 'email',
-								'label' => __('Email Address', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'email',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-address' => array(
-								'db-col' => 'address',
-								'label' => __('Address', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-city' => array(
-								'db-col' => 'city',
-								'label' => __('City', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-state' => array(
-								'db-col' => 'state',
-								'label' => __('State', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-zip' => array(
-								'db-col' => 'zip',
-								'label' => __('Zip Code', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-card-nmbr' => array(
-								'db-col' => 'card-nmbr',
-								'label' => __('Credit Card Number', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'int',
-								'sanitize' => 'ccard',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-card-exp-date-mnth' => array(
-								'db-col' => 'exp-date-mnth',
-								'label' => __('Expiry Date Month', 'event_espresso'),
-								'input' => 'select',
-								'type' => 'int',
-								'sanitize' => 'ccmm',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-card-exp-date-year' => array(
-								'db-col' => 'exp-date-year',
-								'label' => __('Expiry Date Year', 'event_espresso'),
-								'input' => 'select',
-								'type' => 'int',
-								'sanitize' => 'ccyy',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-card-ccv-code' => array(
-								'db-col' => 'ccv-code',
-								'label' => __('CCV Code', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'int',
-								'sanitize' => 'ccv',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						)
-
-				);
-
-*/
 				// allow others to edit post input array
 				$reg_page_billing_inputs = apply_filters('filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs);
 
@@ -1182,6 +1050,7 @@ class EE_Single_Page_Checkout {
 				$template_args['billing']['address'] = $billing_info['reg-page-billing-address']['value'];
 				$template_args['billing']['city'] = $billing_info['reg-page-billing-city']['value'];
 				$template_args['billing']['state'] = $billing_info['reg-page-billing-state']['value'];
+				$template_args['billing']['country'] = $billing_info['reg-page-billing-country']['value'];
 				$template_args['billing']['zip'] = $billing_info['reg-page-billing-zip']['value'];
 				$template_args['billing']['credit card number'] = $billing_info['reg-page-billing-card-nmbr']['value'];
 				$template_args['billing']['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value'];
@@ -1465,7 +1334,7 @@ class EE_Single_Page_Checkout {
 	 * 		@param 		boolean 		$perform_redirect  - whether to send JSON response or redirect
 	 * 		@return 		JSON			or redirect
 	 */
-	public function process_registration_payment( $perform_redirect = TRUE ) {
+	public function process_registration_payment( $perform_redirect = TRUE, $gateway_type = 'on-site' ) {
 
 		global $EE_Session;
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
@@ -1513,8 +1382,8 @@ class EE_Single_Page_Checkout {
 		
 		$txn_status = 'TOP';
 		
-		// did transaction require payment ? or was it free ?
-		if ( $transaction->total() > 0 ) {
+		// did transaction require payment now ? later ? or was it free ?
+		if ( $transaction->total() > 0 && $gateway_type != 'off-line' ) {
 		
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
 			EEM_Payment::instance();
@@ -1528,7 +1397,7 @@ class EE_Single_Page_Checkout {
 																	$txn_results['response_msg'],
 																	$txn_results['transaction_id'],
 																	NULL,
-																	NULL,
+																	$session['primary_attendee']['registration_id'],
 																	FALSE,
 																	maybe_serialize( $txn_results )
 																);
@@ -1545,10 +1414,13 @@ class EE_Single_Page_Checkout {
 				$txn_status = 'TCM';
 			} 
 			
+		} elseif ( $gateway_type == 'off-line' ) {
+			// payments using 'off-line' gateways stay at OPEN status
+			$txn_status = 'TOP';
 		} else {
-			// free events get set as completed too !
+			// but free events get set as completed !
 			$txn_status = 'TCM';
-		}
+		} 
 		
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_status($txn_status);
