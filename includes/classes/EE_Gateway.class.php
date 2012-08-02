@@ -101,13 +101,14 @@ abstract class EE_Gateway {
 						'reg-page-billing-address',
 						'reg-page-billing-city',
 						'reg-page-billing-state',
+						'reg-page-billing-country',
 						'reg-page-billing-zip'
 				);
 		
 		// list of fields required for capturing the credit card information
 		$this->_billing_info_credit_card_fields = array(
-						'reg-page-billing-card-nmbr',
 						'reg-page-billing-card-type',
+						'reg-page-billing-card-nmbr',
 						'reg-page-billing-card-exp-date-mnth',
 						'reg-page-billing-card-exp-date-year',
 						'reg-page-billing-card-ccv-code'
@@ -459,10 +460,15 @@ abstract class EE_Gateway {
 							$output .= "\n\t\t\t" . '<label for="' . $input_key . '">' .$billing_input['label'] . $required . '</label>';
 							$output .= "\n\t\t\t" . '<select id="' .$input_key . '" class="'. $styles . ' small-txt" name="' .$input_key . '">';
 							
-							$options = explode( ',', $billing_input['options'] );
-							foreach ( $options  as $value ) {
+							if ( is_array( $billing_input['options'] )) {
+								$options = $billing_input['options'];
+							} else {
+								$options = explode( ',', $billing_input['options'] );
+							}
+							
+							foreach ( $options  as $key => $value ) {
 								//$key = str_replace( ' ', '_', sanitize_key( $value ));
-								$output .= "\n\t\t\t\t" . '<option value="' . $value . '">' . $value . '</option>';
+								$output .= "\n\t\t\t\t" . '<option value="' . $key . '">' . $value . '</option>';
 							}
 							$output .= "\n\t\t\t" . '</select>';
 							
