@@ -38,6 +38,8 @@ Class EEM_Gateways {
 	private $_off_site_form = NULL;
 	private $_ajax = TRUE;
 
+
+
 	/**
 	 * 		@singleton method used to instantiate class object
 	 * 		@access public
@@ -51,6 +53,13 @@ Class EEM_Gateways {
 		return self::$_instance;
 	}
 
+
+
+	/**
+	 * 		class constructor
+	 * 		@access private
+	 * 		@return void
+	 */
 	private function __construct() {
 		//so client code can check for instatiation b4 including
 		define('ESPRESSO_GATEWAYS', TRUE);
@@ -65,9 +74,16 @@ Class EEM_Gateways {
 		$this->_scan_and_load_all_gateways();
 	}
 
+
+
+	/**
+	 * 		load_session_gateway_data
+	 * 		try to pull data from session b4 hitting db
+	 * 		@access private
+	 * 		@return void
+	 */
 	private function _load_session_gateway_data() {
 		global $EE_Session;
-		// try to pull data from session b4 hitting db
 		$this->_session_gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		if (!empty($this->_session_gateway_data['selected_gateway'])) {
 			$this->_selected_gateway = $this->_session_gateway_data['selected_gateway'];
@@ -83,6 +99,13 @@ Class EEM_Gateways {
 		}
 	}
 
+
+
+	/**
+	 * 		_set_active_gateways
+	 * 		@access private
+	 * 		@return void
+	 */
 	private function _set_active_gateways() {
 		if (!empty($this->_session_gateway_data['active_gateways'])) {
 			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
@@ -96,6 +119,13 @@ Class EEM_Gateways {
 		}
 	}
 
+
+
+	/**
+	 * 		_load_payment_settings
+	 * 		@access private
+	 * 		@return void
+	 */
 	private function _load_payment_settings() {
 
 		if (!empty($this->_session_gateway_data['payment_settings'])) {
@@ -112,6 +142,14 @@ Class EEM_Gateways {
 		//echo printr( $this->_payment_settings, __CLASS__ . ' ->' . __FUNCTION__ . ' ( line #' .  __LINE__ . ' )' );
 	}
 
+
+
+
+	/**
+	 * 		_scan_and_load_all_gateways
+	 * 		@access private
+	 * 		@return void
+	 */
 	private function _scan_and_load_all_gateways() {
 		// on the settings page, scan and load all the gateways
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
@@ -148,6 +186,13 @@ Class EEM_Gateways {
 	}
 
 
+
+
+	/**
+	 * 		_load_all_gateway_files
+	 * 		@access private
+	 * 		@return void
+	 */
 	private function _load_all_gateway_files() {
 		global $espresso_notices;
 		$gateways = array();
@@ -194,6 +239,12 @@ Class EEM_Gateways {
 
 
 
+	/**
+	 * 		get payment settings for specific gateway
+	 * 		@access public
+	* 		@param	string	$gateway
+	 * 		@return 	mixed	array on success FALSE on fail
+	 */
 	public function payment_settings($gateway = FALSE) {
 		if (!empty($this->_payment_settings[$gateway])) {
 			return $this->_payment_settings[$gateway];
@@ -204,6 +255,13 @@ Class EEM_Gateways {
 
 
 
+	/**
+	 * 		update payment settings for specific gateway
+	 * 		@access public
+	* 		@param	string	$gateway
+	* 		@param	array	$settings
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	public function update_payment_settings($gateway = FALSE, $settings = FALSE) {
 		if (!$gateway || !$settings) {
 			return FALSE;
@@ -214,13 +272,21 @@ Class EEM_Gateways {
 
 		if (update_user_meta($espresso_wp_user, 'payment_settings', $this->_payment_settings)) {
 			$espresso_notices['success'][] = __('Payment Settings Updated!', 'event_espresso');
+			return TRUE;
 		} else {
 			$espresso_notices['errors'][] = __('Payment Settings were not saved! ', 'event_espresso');
+			return FALSE;
 		}
 	}
 
 
 
+	/**
+	 * 		is gateway active ?
+	 * 		@access public
+	* 		@param	string	$gateway
+	 * 		@return 	mixed	array on success FALSE on fail
+	 */
 	public function is_active($gateway = FALSE) {
 		if (!$gateway) {
 			return FALSE;
@@ -234,6 +300,12 @@ Class EEM_Gateways {
 
 
 
+	/**
+	 * 		is gateway in the uploads dir ?
+	 * 		@access public
+	* 		@param	string	$gateway
+	 * 		@return 	mixed	array on success FALSE on fail
+	 */
 	public function is_in_uploads($gateway = FALSE) {
 		if (!$gateway) {
 			return FALSE;
@@ -247,6 +319,12 @@ Class EEM_Gateways {
 
 
 
+	/**
+	 * 		set gateway as active and available during registration
+	 * 		@access public
+	* 		@param	string	$gateway
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	public function set_active($gateway = FALSE) {
 		if (!$gateway) {
 			return FALSE;
@@ -256,8 +334,10 @@ Class EEM_Gateways {
 			global $espresso_wp_user, $espresso_notices;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
 				$espresso_notices['success'][] = $gateway . __(' Gateway Activated!', 'event_espresso');
+				return TRUE;
 			} else {
 				$espresso_notices['errors'][] = $gateway . __(' Gateway Not Activated! ', 'event_espresso');
+				return FALSE;
 			}
 		} else {
 			return FALSE;
@@ -266,6 +346,12 @@ Class EEM_Gateways {
 
 
 
+	/**
+	 * 		unset gateway as active and available during registration
+	 * 		@access public
+	* 		@param	string	$gateway
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	public function unset_active($gateway = FALSE) {
 		if (!$gateway) {
 			return FALSE;
@@ -275,8 +361,10 @@ Class EEM_Gateways {
 			global $espresso_wp_user, $espresso_notices;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
 				$espresso_notices['success'][] = __('Gateway Deactivated!', 'event_espresso');
+				return TRUE;
 			} else {
 				$espresso_notices['errors'][] = __('Gateway Not Deactivated! ', 'event_espresso');
+				return FALSE;
 			}
 		} else {
 			return FALSE;
@@ -285,26 +373,39 @@ Class EEM_Gateways {
 
 
 
+	/**
+	 * 		set gateway as selected
+	 * 		@access public
+	* 		@param	string	$gateway
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	public function set_selected_gateway($gateway = FALSE) {
+	
 		if (!$gateway || !array_key_exists($gateway, $this->_active_gateways)) {
 			return FALSE;
-		} else {
-			$this->_selected_gateway = $gateway;
-			$this->_hide_other_gateways = TRUE;
-			$this->_set_session_data();
-			foreach ($this->_active_gateways as $gateway => $in_uploads) {
-				if ($this->_selected_gateway == $gateway) {
-					$this->_gateway_instances[$gateway]->set_selected();
-				} else {
-					$this->_gateway_instances[$gateway]->set_hidden();
-				}
+		} 
+		
+		$this->_selected_gateway = $gateway;
+		$this->_hide_other_gateways = TRUE;
+		$this->_set_session_data();
+		foreach ($this->_active_gateways as $gateway => $in_uploads) {
+			if ($this->_selected_gateway == $gateway) {
+				$this->_gateway_instances[$gateway]->set_selected();
+			} else {
+				$this->_gateway_instances[$gateway]->set_hidden();
 			}
-			return TRUE;
 		}
+		return TRUE;
+
 	}
 
 
 
+	/**
+	 * 		unset gateway as selected
+	 * 		@access public
+	 * 		@return 	boolean	TRUE 
+	 */
 	public function unset_selected_gateway() {
 		$this->_selected_gateway = NULL;
 		$this->_hide_other_gateways = FALSE;
@@ -317,12 +418,23 @@ Class EEM_Gateways {
 
 
 
+	/**
+	 * 		get selected gateway
+	 * 		@access public
+	 * 		@return 	string
+	 */
 	public function selected_gateway() {
 		return $this->_selected_gateway;
 	}
 
 
 
+	/**
+	 * 		set_form_url
+	 * 		@access public
+	* 		@param	string	$base_url
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	public function set_form_url($base_url = FALSE) {
 		if (!$base_url) {
 			return FALSE;
@@ -339,6 +451,11 @@ Class EEM_Gateways {
 
 
 
+	/**
+	 * 		get gateway type
+	 * 		@access public
+	 * 		@return 	mixed	string on success FALSE on fail
+	 */
 	public function type() {
 		if (!empty($this->_payment_settings[$this->_selected_gateway]['type'])) {
 			return $this->_payment_settings[$this->_selected_gateway]['type'];
@@ -347,6 +464,13 @@ Class EEM_Gateways {
 		}
 	}
 
+
+
+	/**
+	 * 		get gateway display name
+	 * 		@access public
+	 * 		@return 	mixed	string on success FALSE on fail
+	 */
 	public function display_name() {
 		if (!empty($this->_payment_settings[$this->_selected_gateway]['display_name'])) {
 			return $this->_payment_settings[$this->_selected_gateway]['display_name'];
@@ -355,6 +479,13 @@ Class EEM_Gateways {
 		}
 	}
 
+
+
+	/**
+	 * 		get gateway off_site_form
+	 * 		@access public
+	 * 		@return 	mixed	string on success FALSE on fail
+	 */
 	public function off_site_form() {
 		if (!empty($this->_off_site_form)) {
 			return $this->_off_site_form;
@@ -363,6 +494,14 @@ Class EEM_Gateways {
 		}
 	}
 
+
+
+	/**
+	 * 		set_off_site_form
+	 * 		@access public
+	* 		@param	array	$form_data
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	public function set_off_site_form($form_data = FALSE) {
 		if (!$form_data) {
 			return FALSE;
@@ -372,34 +511,63 @@ Class EEM_Gateways {
 		return TRUE;
 	}
 
+
+
+	/**
+	 * 		set_session_data
+	 * 		@access public
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	private function _set_session_data() {
 		global $EE_Session;
-		$EE_Session->set_session_data(array(
-				'selected_gateway' => $this->_selected_gateway,
-				'hide_other_gateways' => $this->_hide_other_gateways,
-				'off_site_form' => $this->_off_site_form,
-				'ajax' => $this->_ajax
-						), 'gateway_data');
+		
+		$session_data = array(
+						'selected_gateway' => $this->_selected_gateway,
+						'hide_other_gateways' => $this->_hide_other_gateways,
+						'off_site_form' => $this->_off_site_form,
+						'ajax' => $this->_ajax
+				);
+		// returns TRUE or FALSE
+		return $EE_Session->set_session_data( $session_data, 'gateway_data' );		
+
 	}
 
 
 
-	public function set_ajax() {
-		$this->_ajax = TRUE;
-		$this->_set_session_data();
-		return TRUE;
+	/**
+	 * 		set_ajax
+	 * 		@access public
+	* 		@param	boolean	$on_or_off
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
+	public function set_ajax( $on_or_off ) {
+		if ( ! is_bool( $on_or_off )) {
+			$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
+			return FALSE;
+		}
+		$this->_ajax = $on_or_off;
+		return $this->_set_session_data();
 	}
 
-	public function set_noajax() {
-		$this->_ajax = FALSE;
-		$this->_set_session_data();
-		return TRUE;
-	}
 
+
+
+	/**
+	 * 		get ajax - whether request is regular HTML or via ajax
+	 * 		@access public
+	 * 		@return 	boolean
+	 */
 	public function ajax() {
 		return $this->_ajax;
 	}
 
+
+
+	/**
+	 * 		reset_session_data
+	 * 		@access public
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	public function reset_session_data() {
 		foreach ($this->_active_gateways as $gateway => $in_uploads) {
 			if (!empty($this->_gateway_instances[$gateway])) {
@@ -426,6 +594,14 @@ Class EEM_Gateways {
 		return TRUE;
 	}
 
+
+
+	/**
+	 * 		send_invoice
+	 * 		@access public
+	* 		@param	int	$id
+	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 */
 	public function send_invoice($id) {
 		$gateway = 'Invoice';
 		$classname = 'EE_' . $gateway;
@@ -442,11 +618,19 @@ Class EEM_Gateways {
 		if (class_exists($classname)) {
 			$invoice = call_user_func(array($classname, 'instance'), &$this);
 			$invoice->send_invoice($id);
+			return TRUE;
+		} else {
+			return FALSE;
 		}
 	}
-	
-	
-	
+
+
+
+	/**
+	 * 		get_country_ISO2_codes
+	 * 		@access public
+	 * 		@return 	array
+	 */
 	public function get_country_ISO2_codes() {
 		
 		return array(
@@ -674,8 +858,109 @@ Class EEM_Gateways {
 					'ZM' => 'Zambia', 
 					'ZW' => 'Zimbabwe'					
 				);
-		
+	
 	}
+
+
+
+	/**
+	 * 		process_gateway_selection()
+	 * 		@access public
+	 * 		@return 	mixed	array on success or FALSE on fail
+	 */
+	public function process_gateway_selection() {	
+
+			global $espresso_notices;
+			// check for off site payment
+			if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
+				$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
+			} else {
+				$espresso_notices['errors'][] =  __( 'An error occured. No gateway has been selected.', 'event_espresso' );
+			}
+			$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
+	}
+
+
+
+	/**
+	 * 		set_billing_info_for_confirmation
+	 * 		@access public
+	* 		@param	array	$billing_info
+	 * 		@return 	mixed	array on success or FALSE on fail
+	 */
+	public function set_billing_info_for_confirmation( $billing_info = FALSE ) {
+		if( ! is_array( $billing_info )) {
+			return FALSE;
+		}		
+		return $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
+	}
+
+
+
+	/**
+	 * 		process_reg_step_3
+	 * 		@access public
+	* 		@param	int	$id
+	 * 		@return 	mixed	void or FALSE on fail
+	 */
+	public function process_reg_step_3( $return_page_url = FALSE ) {
+
+		if( ! $return_page_url ) {
+			return FALSE;
+		}		
+		$this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3();
+		$this->_gateway_instances[ $this->_selected_gateway ]->redirect_after_reg_step_3( $return_page_url );	
+	}	
+
+
+
+	/**
+	 * Replaces all but the last for digits with x's in the given credit card number
+	 * @param int|string $cc The credit card number to mask
+	 * @return string The masked credit card number
+	 */
+	function MaskCreditCard($cc){
+		// Get the cc Length
+		$cc_length = strlen($cc);
+		// Replace all characters of credit card except the last four and dashes
+		for($i=0; $i<$cc_length-4; $i++){
+			if($cc[$i] == '-'){continue;}
+			$cc[$i] = 'X';
+		}
+		// Return the masked Credit Card #
+		return $cc;
+	}
+	
+	
+	
+	/**
+	 * Add dashes to a credit card number.
+	 * @param int|string $cc The credit card number to format with dashes.
+	 * @return string The credit card with dashes.
+	 */
+	function FormatCreditCard($cc)
+	{
+		// Clean out extra data that might be in the cc
+		$cc = str_replace(array('-',' '),'',$cc);
+		// Get the CC Length
+		$cc_length = strlen($cc);
+		// Initialize the new credit card to contian the last four digits
+		$newCreditCard = substr($cc,-4);
+		// Walk backwards through the credit card number and add a dash after every fourth digit
+		for($i=$cc_length-5;$i>=0;$i--){
+			// If on the fourth character add a dash
+			if((($i+1)-$cc_length)%4 == 0){
+				$newCreditCard = '&nbsp;'.$newCreditCard;
+			}
+			// Add the current character to the new credit card
+			$newCreditCard = $cc[$i].$newCreditCard;
+		}
+		// Return the formatted credit card number
+		return $newCreditCard;
+	}
+		
+		
+	
 	
 
 }
