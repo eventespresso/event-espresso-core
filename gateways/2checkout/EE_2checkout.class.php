@@ -311,7 +311,6 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 	}
 
 
-	public function espresso_process_off_site_payment() {}
 
 
 }
