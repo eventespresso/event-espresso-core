@@ -96,7 +96,8 @@ Class EE_Paypal_Pro extends EE_Gateway {
 		$this->_payment_settings['password'] = $_POST['password'];
 		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
 		$this->_payment_settings['signature'] = $_POST['signature'];
-		$this->_payment_settings['credit_cards'] = implode(",", empty($_POST['credit_cards']) ? array() : $_POST['credit_cards']);
+		//$this->_payment_settings['credit_cards'] = implode(",", empty($_POST['credit_cards']) ? array() : $_POST['credit_cards']);
+		$this->_payment_settings['credit_cards'] = empty($_POST['credit_cards']) ? array() : $_POST['credit_cards'];
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
 	}
 
@@ -244,7 +245,8 @@ Class EE_Paypal_Pro extends EE_Gateway {
 					<td>
 						<?php
 							$checked = 'checked="checked"';
-							$credit_cards = explode(",", $this->_payment_settings['credit_cards']);
+//							$credit_cards = explode(",", $this->_payment_settings['credit_cards']);
+							$credit_cards = $this->_payment_settings['credit_cards'];
 						?>
 						<label class="gateway-checkbox-options">
 							<?php _e('Visa', 'event_espresso'); ?>
@@ -367,7 +369,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 			}
 			
 			//assemble the description.
-			$item_num = 1;
+/*			$item_num = 1;
 			$registrations = $reg_info['items'];
 			$description = '';
 			
@@ -376,7 +378,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 					$description .= $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'];
 					$item_num++;
 				}
-			}
+			}*/
 			
 			// Include required files.
 			require_once('lib/paypal.nvp.class.php');
@@ -494,7 +496,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				// Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
 				'taxamt' => $total_taxes, 
 				// Description of the order the customer is purchasing.  127 char max.
-				'desc' => $description, 
+				'desc' => 'Event Registrations from ' . get_bloginfo('name'), 
 				// Free-form field for your own use.  256 char max.
 				'custom' => $session_data['primary_attendee']['registration_id'], 
 				// Your own invoice or tracking number
@@ -508,28 +510,30 @@ Class EE_Paypal_Pro extends EE_Gateway {
 			$OrderItems = array();
 			
 			foreach ( $reg_info['items'] as $item ) {
-				$Item = array(
-					// Item Name.  127 char max.
-					'l_name' => stripslashes($item['name']), 
-					// Item description.  127 char max.
-					'l_desc' => $item['options']['price_desc'], 
-					// Cost of individual item.
-					'l_amt' => $item['price'], 
-					// Item Number.  127 char max.
-					'l_number' => $item['line_item'], 
-					// Item quantity.  Must be any positive integer.
-					'l_qty' => $item['qty'], 
-					// Item's sales tax amount.
-					'l_taxamt' => '', 
-					// eBay auction number of item.
-					'l_ebayitemnumber' => '', 
-					// eBay transaction ID of purchased item.
-					'l_ebayitemauctiontxnid' => '', 
-					// eBay order ID for the item.
-					'l_ebayitemorderid' => ''	 
-				);
-				// add to array of all items
-				array_push($OrderItems, $Item);
+				foreach ( $item['attendees'] as $attendee ) {
+					$Item = array(
+						// Item Name.  127 char max.
+						'l_name' => $attendee['fname'] . ' ' . $attendee['lname'] . ' : ' . stripslashes($item['name']), 
+						// Item description.  127 char max.
+						'l_desc' => $item['options']['date'] . ' ' . $item['options']['time'] . ', ' . $item['options']['price_desc'],
+						// Cost of individual item.
+						'l_amt' => $item['price'], 
+						// Item Number.  127 char max.
+						'l_number' => $item['line_item'], 
+						// Item quantity.  Must be any positive integer.
+						'l_qty' => 1, 
+						// Item's sales tax amount.
+						'l_taxamt' => '', 
+						// eBay auction number of item.
+						'l_ebayitemnumber' => '', 
+						// eBay transaction ID of purchased item.
+						'l_ebayitemauctiontxnid' => '', 
+						// eBay order ID for the item.
+						'l_ebayitemorderid' => ''	 
+					);
+					// add to array of all items
+					array_push($OrderItems, $Item);
+				}
 			}
 			
 			
@@ -546,7 +550,7 @@ Class EE_Paypal_Pro extends EE_Gateway {
 			// Pass the master array into the PayPal class function
 			$PayPalResult = $PayPal->DoDirectPayment($PayPalRequestData);
 
-			if ( !empty($PayPalResult['ACK']) && $this->_APICallSuccessful( $PayPalResult['ACK'] )) {		
+			if ( $this->_APICallSuccessful( $PayPalResult )) {		
 	
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
@@ -564,10 +568,13 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				);
 				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 	
-				//add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');	
+				add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');	
 				
 			} else {
+			
 				$Errors = $this->_GetErrors($PayPalResult);
+				//printr( $PayPalResult, '$PayPalResult' );
+				
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
 						'approved' => FALSE,
@@ -585,22 +592,26 @@ Class EE_Paypal_Pro extends EE_Gateway {
 				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 			} 
 		
-		// return ? or redirect ?
-		// we need to update the registration and transaction tables
-		
 		}  // end if ($billing_info != 'no payment required')
-		
-		//APICallSuccessful( $PayPalResult );
 		
 	}
 
 
 
-	private function _APICallSuccessful($ack) {
-		if (strtoupper($ack) != 'SUCCESS' && strtoupper($ack) != 'SUCCESSWITHWARNING' && strtoupper($ack) != 'PARTIALSUCCESS')
-			return false;
-		else
-			return true;
+	private function _APICallSuccessful( $PayPalResult ) {
+		
+		// check main response message from PayPal
+		if ( isset( $PayPalResult['ACK'] ) && ! empty( $PayPalResult['ACK'] )) {
+			$ack = strtoupper($ack);
+			$approved = ( $ack == 'SUCCESS' || $ack == 'SUCCESSWITHWARNING' || $ack == 'PARTIALSUCCESS' ) ? TRUE : FALSE;
+		}
+		// check if CVV2 code matches
+		if ( isset( $PayPalResult['CVV2MATCH'] ) && ! empty( $PayPalResult['CVV2MATCH'] )) {
+			$cvv2_matches = $PayPalResult['CVV2MATCH'] == 'M' ? TRUE : FALSE;
+		}
+		
+		return $approved && $cvv2_matches ? TRUE : FALSE;
+		
 	}
 
 
@@ -798,6 +809,24 @@ Class EE_Paypal_Pro extends EE_Gateway {
 
 
 	/**
+	 * 		format credit card types array
+	 * 		@access private
+	 * 		@return array
+	 */
+	private function _get_formated_credit_card_types() {
+		
+		$credit_cards = array();
+		if ( is_array( $this->_payment_settings['credit_cards'] )) {
+			foreach( $this->_payment_settings['credit_cards'] as $credit_card ) {
+				$credit_cards[ strtolower( sanitize_key( $credit_card )) ] = $credit_card;
+			}
+		}
+		return $credit_cards;
+	}
+
+
+
+	/**
 	 * 		billing inputs
 	 * 		@access public
 	 * 		@return array
@@ -887,6 +916,18 @@ Class EE_Paypal_Pro extends EE_Gateway {
 						'value' => NULL,
 						'format' => '%s'
 				),
+				'reg-page-billing-country' => array(
+						'db-col' => 'country',
+						'label' => __('Country', 'event_espresso'),
+						'input' => 'select',
+						'options' => $this->_EEM_Gateways->get_country_ISO2_codes(),
+						'type' => 'string',
+						'sanitize' => 'no_html',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'value' => NULL,
+						'format' => '%s'
+				),
 				'reg-page-billing-zip' => array(
 						'db-col' => 'zip',
 						'label' => __('Zip Code', 'event_espresso'),
@@ -914,11 +955,11 @@ Class EE_Paypal_Pro extends EE_Gateway {
 						'db-col' =>'card-type',
 						'label' => __( 'Credit Card Type', 'event_espresso' ),
 						'input' =>'select',
+						'options' =>  $this->_get_formated_credit_card_types(),
 						'type' =>'string',
 						'sanitize' => 'no_html',
 						'required' => TRUE,
 						'validation' => TRUE,
-						'options' =>  $this->_payment_settings['credit_cards'],
 						'value' =>  '',
 						'format' => '%s'
 				), 
