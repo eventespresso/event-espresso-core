@@ -95,16 +95,15 @@ class EE_Single_Page_Checkout {
 				'registration_complete',
 				'event_queue'
 				);
-		if ( isset( $_REQUEST['e_reg'] ) 
-						&& ( in_array($_REQUEST['e_reg'], $e_reg_pages) ) 
-						&& !is_admin() ) {
+		if (( isset( $_REQUEST['e_reg'] ) && ( in_array($_REQUEST['e_reg'], $e_reg_pages))) || $this->_ajax ) {
 	
 			add_action('init', array(&$this, 'load_css'), 20);
 			add_action('init', array(&$this, 'load_js'), 20);
-	
+			// get permalink for Thank You page
+			add_action('init', array(&$this, 'set_return_page_url'), 29);
 			// hooks that happen during the regevent action and other pathing stuff
 			add_action('init', array(&$this, 'set_paths_and_routing'), 30);
-
+		
 		}
 	
 	}
@@ -125,11 +124,13 @@ class EE_Single_Page_Checkout {
 		}
 		// make all cart properties and methods accessible via $this->cart ex: $this->cart->data();
 		$this->cart = $EE_Cart;
+		// load gateways
 		if (!defined('ESPRESSO_GATEWAYS')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 			$EEM_Gateways = EEM_Gateways::instance();
 		}
 		$this->gateways = $EEM_Gateways;
+		$this->gateways->set_ajax( $this->_ajax );
 	}
 
 	/**
@@ -178,8 +179,26 @@ class EE_Single_Page_Checkout {
 			// Output admin-ajax.php URL with same protocol as current page
 			$params['ajax_url'] = admin_url('admin-ajax.php', $protocol);
 			wp_localize_script('single_page_checkout', 'event_espresso', $params);
-//		}
+
 	}
+
+
+
+	/**
+	 * 		set_return_page_url
+	 *
+	 * 		@access 		public
+	 * 		@return 		void
+	 */
+	public function set_return_page_url() {
+		global $org_options;
+		$return_page_id = $org_options['return_url'];
+		// get permalink for thank you page
+		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
+		$this->_return_page_url = rtrim( get_permalink( $return_page_id ), '/' );
+	}
+
+
 
 	/**
 	 * 		set_paths_and_routing
@@ -872,71 +891,21 @@ class EE_Single_Page_Checkout {
 		// don't need these so get rid of them'
 		unset($_POST['action']);
 
-		// if sessions is not instantiated
-		if (!defined('EE_Validate_and_Sanitize')) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
-			$EE_VnS = EE_Validate_and_Sanitize::instance();
-		}
-
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 			// FREE EVENT !!! YEAH : )
 			if ($EE_Session->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
-				$success_msg = __('Registration Step 2 completed', 'event_espresso');
-			} else {
-				//$espresso_notices = $EE_VnS->return_notices();
-				$notices = espresso_get_notices(FALSE);
-				$error_msg = $notices['errors'];
-			}
+				$espresso_notices['success'][] = __('Registration Step 2 completed', 'event_espresso');
+			} 
 
-		} else { // PAID EVENT !!!  BOO  : (
-
-			// check for off site payment
-			if ( isset( $_POST['selected_gateway'] )) {
-				$this->gateways->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
-			}
-
-			$type = $this->gateways->type();
-			// check for off site payment
-			if ($type == 'off-site') {
+		} else { 
 			
-				// off site payment
-				$success_msg = __('Off-site gateway choosen');
-				
-			} elseif ($type == 'off-line') {
-				
-				$success_msg = __('Off-line gateway choosen');
-				
-			} elseif ($type == 'on-site') { 
+			// PAID EVENT !!!  BOO  : (
+			$this->gateways->process_gateway_selection();
 			
-				// set  billing inputs in the individual gateways plz
-				$reg_page_billing_inputs = array();
+			//grab notices
+			$notices = espresso_get_notices(FALSE);
 
-				// allow others to edit post input array
-				$reg_page_billing_inputs = apply_filters('filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs);
-
-				// validate and sanitize	post data
-				$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
-				if ($reg_page_billing_inputs) {
-					// add billing info to the session
-					if ($EE_Session->set_session_data(array('billing_info' => $reg_page_billing_inputs), $section = 'session_data')) {
-						$success_msg = __('Billing information submitted successfully', 'event_espresso');
-					} else {
-						//$error_msg = __( 'An error occured! The billing information could not be submitted. Please refresh your browser and try agin.', 'event_espresso' );
-						$espresso_notices = $EE_VnS->return_notices();
-						$notices = espresso_get_notices(FALSE);
-						$error_msg = $notices['errors'];
-					}
-				} else {
-					$espresso_notices = $EE_VnS->return_notices();
-					$notices = espresso_get_notices(FALSE);
-					$error_msg = $notices['errors'];
-				}
-
-				// End of on-site payment
-				
-			}
-
-			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response')) {
+			if ($this->send_ajax_response( $notices['success'], $notices['errors'], '_send_reg_step_2_ajax_response' )) {
 				$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();
@@ -1038,25 +1007,13 @@ class EE_Single_Page_Checkout {
 		}
 
 		if ($billing_info == 'no payment required') {
-			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
+			$ouput = '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
 		} else {
-			$type = $this->gateways->type();
-			if ($type=='off-site' || $type=='off-line') {
-				$template_args['billing']['gateway'] = $this->gateways->display_name();
-			} else {
-				$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
-				$template_args['billing']['last name'] = $billing_info['reg-page-billing-lname']['value'];
-				$template_args['billing']['email address'] = $billing_info['reg-page-billing-email']['value'];
-				$template_args['billing']['address'] = $billing_info['reg-page-billing-address']['value'];
-				$template_args['billing']['city'] = $billing_info['reg-page-billing-city']['value'];
-				$template_args['billing']['state'] = $billing_info['reg-page-billing-state']['value'];
-				$template_args['billing']['country'] = $billing_info['reg-page-billing-country']['value'];
-				$template_args['billing']['zip'] = $billing_info['reg-page-billing-zip']['value'];
-				$template_args['billing']['credit card number'] = $billing_info['reg-page-billing-card-nmbr']['value'];
-				$template_args['billing']['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value'];
-				$template_args['billing']['ccv code'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-			}
+			// get billing info fields
+			$template_args['billing'] = $this->gateways->set_billing_info_for_confirmation( $billing_info );
+
 			$total = $session_data['_cart_grand_total_amount'];
+			// add taxes
 			if (isset($session_data['tax_totals'])) {
 				foreach ($session_data['tax_totals'] as $taxes) {
 					$total = $total + $taxes;
@@ -1065,8 +1022,9 @@ class EE_Single_Page_Checkout {
 
 			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format($total, 2);
 
-			return espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
-		}
+			$ouput = espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
+		}		
+		return $ouput;		
 	}
 
 
@@ -1285,42 +1243,11 @@ class EE_Single_Page_Checkout {
 
 			} else {
 				// attempt to perform transaction via payment gateway
-
-				do_action('action_hook_espresso_gateway_process_step_3');
-				
-				//TODO: create a method in the gateway type classes for processing reg step 3 and handling redirects and/or JSON responses
-				
-				$type = $this->gateways->type();
-				// process on-site payments
-				if ( $this->_ajax == 0 && $type == 'on-site') {
-					$this->gateways->set_noajax();
-					if (!$this->_return_page_url) {
-						$return_page_id = $org_options['return_url'];
-						// get permalink for thank you page
-						// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-						$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
-					}
-					wp_safe_redirect($this->_return_page_url);
-					exit();
-				}
-				
-				// process off-site payments
-				if ($type == 'off-site' || $type == 'off-line') {
-					if ($this->_ajax == 0) {
-						//TODO: compile output from off_site_form() function into one string before returning, then do: echo $this->gateways->off_site_form();
-						$form_data = $this->gateways->off_site_form();
-						echo $form_data['pre-form'] . $form_data['form'] . $form_data['post-form'];
-						die();
-					} else {
-						$this->send_ajax_response('Redirecting to Off-site Payment Provider', FALSE, '_redirect_to_off_site');
-					}
-				}				
+				$this->gateways->process_reg_step_3( $this->_return_page_url );				
 			}
 		}
-		//$session_data = $EE_Session->get_session_data();var_dump($session_data);die();
-		//$this->process_registration_payment( $transaction );
 
-		if ( $this->_ajax == 1) {
+		if ( $this->_ajax ) {
 			$this->process_registration_payment();
 		}
 
@@ -1563,10 +1490,10 @@ class EE_Single_Page_Checkout {
 	/**
 	 *   handle ajax message responses
 	 *
-	 *   @access private
+	 *   @access public
 	 *   @return void
 	 */
-	private function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
+	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
 
 		global $espresso_notices;
 		$valid_callback = FALSE;
