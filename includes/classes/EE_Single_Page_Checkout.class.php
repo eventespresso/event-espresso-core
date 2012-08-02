@@ -904,8 +904,10 @@ class EE_Single_Page_Checkout {
 			
 			//grab notices
 			$notices = espresso_get_notices(FALSE);
+			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
+			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 
-			if ($this->send_ajax_response( $notices['success'], $notices['errors'], '_send_reg_step_2_ajax_response' )) {
+			if ($this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_2_ajax_response' )) {
 				$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();
