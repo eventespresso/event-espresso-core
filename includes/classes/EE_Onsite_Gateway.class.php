@@ -12,6 +12,8 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 		parent::__construct($model);
 	}
+	
+	public function espresso_process_off_site_payment() {}
 
 	protected function _set_default_properties() {
 		parent::_set_default_properties();
@@ -132,5 +134,82 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 
 		return $output;
 	}
+
+
+
+	/**
+	 * 		process_gateway_selection()
+	 * 		@access public
+	 * 		@return 	mixed	array on success or FALSE on fail
+	 */
+	public function process_gateway_selection() {	
+	
+		global $EE_Session, $espresso_notices;
+		// set  billing inputs in the individual gateways plz
+		$reg_page_billing_inputs = array();
+		// allow others to edit post input array
+		$reg_page_billing_inputs = apply_filters('filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs);
+
+		// if EE_Validate_and_Sanitize is not instantiated
+		if (!defined('EE_Validate_and_Sanitize')) {
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
+			$EE_VnS = EE_Validate_and_Sanitize::instance();
+		}
+
+		// validate and sanitize	post data
+		$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
+		if ($reg_page_billing_inputs) {
+			// add billing info to the session
+			if ($EE_Session->set_session_data(array('billing_info' => $reg_page_billing_inputs), $section = 'session_data')) {
+				$espresso_notices['success'][] = __('Billing information submitted successfully', 'event_espresso');
+			} 
+		}
+
+
+	}
+
+
+
+	/**
+	 * 		set_billing_info_for_confirmation
+	 * 		@access public
+	 * 		@param array	$billing_info
+	 * 		@return array
+	 */
+	public function set_billing_info_for_confirmation( $billing_info ) {
+		$confirm_data = array();
+		$confirm_data['first name'] = $billing_info['reg-page-billing-fname']['value'];
+		$confirm_data['last name'] = $billing_info['reg-page-billing-lname']['value'];
+		$confirm_data['email address'] = $billing_info['reg-page-billing-email']['value'];
+		$confirm_data['address'] = $billing_info['reg-page-billing-address']['value'];
+		$confirm_data['city'] = $billing_info['reg-page-billing-city']['value'];
+		$confirm_data['state'] = $billing_info['reg-page-billing-state']['value'];
+		$confirm_data['country'] = $billing_info['reg-page-billing-country']['value'];
+		$confirm_data['zip'] = $billing_info['reg-page-billing-zip']['value'];
+		$confirm_data['credit card #'] = $this->_EEM_Gateways->FormatCreditCard( $billing_info['reg-page-billing-card-nmbr']['value'] );
+		$confirm_data['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . '&nbsp;/&nbsp;' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
+		$confirm_data['ccv code'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
+		return $confirm_data;
+	}
+
+
+	/**
+	 * 		_redirect_after_reg_step_3 - how to handle redirection after processing reg step 3
+	 * 		@access public
+	 * 		@return 	void
+	 */
+	public function redirect_after_reg_step_3( $return_page_url ) {
+
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	
+		if ( ! $this->_EEM_Gateways->ajax() ) {
+			wp_safe_redirect( $return_page_url );
+			exit();
+		}
+
+	}
+
+	
+
 
 }
