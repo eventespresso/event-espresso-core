@@ -602,7 +602,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		
 		// check main response message from PayPal
 		if ( isset( $PayPalResult['ACK'] ) && ! empty( $PayPalResult['ACK'] )) {
-			$ack = strtoupper($ack);
+			$ack = strtoupper($PayPalResult['ACK']);
 			$approved = ( $ack == 'SUCCESS' || $ack == 'SUCCESSWITHWARNING' || $ack == 'PARTIALSUCCESS' ) ? TRUE : FALSE;
 		}
 		// check if CVV2 code matches
