@@ -221,7 +221,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function espresso_gateway_process_step_3() {
+	public function process_reg_step_3() {
 
 		global $org_options, $EE_Session;
 
@@ -268,6 +268,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 	}
 
 	public function espresso_process_off_site_payment() {
+
 		global $EE_Session;
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
@@ -308,5 +309,9 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 
 		<?php
 	}
+
+
+	public function espresso_process_off_site_payment() {}
+
 
 }

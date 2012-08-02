@@ -155,7 +155,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 	    <?php
 	}
 
-	public function espresso_gateway_process_step_3() {
+	public function process_reg_step_3() {
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
 		$billing_info = $session_data['billing_info'];

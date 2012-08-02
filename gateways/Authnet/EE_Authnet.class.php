@@ -305,7 +305,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function espresso_gateway_process_step_3() {
+	public function process_reg_step_3() {
 
 		global $org_options, $EE_Session;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');

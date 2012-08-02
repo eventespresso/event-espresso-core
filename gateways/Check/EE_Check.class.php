@@ -95,7 +95,7 @@ Class EE_Check extends EE_Offline_Gateway {
 		
 	}
 
-	public function espresso_gateway_process_step_3() {
+	public function process_reg_step_3() {
 		global $org_options;
 		$pre_form = "<html>";
 		$pre_form .= "<head><title>Processing Check Payment...</title></head>";

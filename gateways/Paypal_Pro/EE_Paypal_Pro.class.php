@@ -348,7 +348,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function espresso_gateway_process_step_3() {
+//	public function espresso_gateway_process_step_3() {
+	public function process_reg_step_3() {
 	
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
