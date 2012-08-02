@@ -26,8 +26,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 abstract class EE_Gateway {
 
-	protected $_payment_settings = array();
 	private $_session_gateway_data = NULL;
+	protected $_payment_settings = array();
 	// gateway name 
 	protected $_gateway = NULL;
 	// path to gateway class file 
@@ -47,15 +47,13 @@ abstract class EE_Gateway {
 	protected $_yes_no_options = array();
 
 	abstract protected function _default_settings();
-
 	abstract protected function _update_settings();
-
 	abstract protected function _display_settings();
-
-	//abstract protected function _path();
 	abstract public function espresso_display_payment_gateways();
-
-	abstract public function espresso_gateway_process_step_3();
+	abstract public function process_reg_step_3();
+	abstract public function redirect_after_reg_step_3( $return_page_url );
+//	abstract public function espresso_gateway_process_step_3();
+	
 
 	protected function __construct(EEM_Gateways &$model) {
 
@@ -133,7 +131,7 @@ abstract class EE_Gateway {
 			}
 			if (!empty($this->_session_gateway_data['selected'])) {
 				$this->_selected = $this->_session_gateway_data['selected'];
-				$this->_update_actions();
+				//$this->_update_actions();
 			}
 			if (!empty($this->_session_gateway_data['css_link_class'])) {
 				$this->_css_link_class = $this->_session_gateway_data['css_link_class'];
@@ -226,7 +224,7 @@ abstract class EE_Gateway {
 
 	public function set_selected() {
 		$this->_selected = TRUE;
-		$this->_update_actions();
+		//$this->_update_actions();
 		$this->_css_class = '';
 		$this->_css_link_class = '';
 		$this->_set_session_data();
@@ -235,7 +233,7 @@ abstract class EE_Gateway {
 	public function unset_selected() {
 		$this->_css_class = 'hidden';
 		$this->_selected = FALSE;
-		$this->_update_actions();
+		//$this->_update_actions();
 		$this->_css_link_class = '';
 		$this->_set_session_data();
 	}
@@ -243,7 +241,7 @@ abstract class EE_Gateway {
 	public function set_hidden() {
 		$this->_css_class = 'hidden';
 		$this->_selected = FALSE;
-		$this->_update_actions();
+		//$this->_update_actions();
 		$this->_css_link_class = ' hidden';
 		$this->_set_session_data();
 	}
@@ -268,7 +266,7 @@ abstract class EE_Gateway {
 		$this->_set_session_data();
 	}
 
-	protected function _update_actions() {
+/*	protected function _update_actions() {
 		if ($this->_selected) {
 			if (!has_action('action_hook_espresso_gateway_process_step_3', array(&$this, 'espresso_gateway_process_step_3'))) {
 				add_action('action_hook_espresso_gateway_process_step_3', array(&$this, 'espresso_gateway_process_step_3'));
@@ -278,7 +276,7 @@ abstract class EE_Gateway {
 				remove_action('action_hook_espresso_gateway_process_step_3', array(&$this, 'espresso_gateway_process_step_3'));
 			}
 		}
-	}
+	}*/
 
 	protected function _reset_button_url() {
 		global $espresso_notices;
