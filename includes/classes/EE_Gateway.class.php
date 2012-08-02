@@ -85,6 +85,7 @@ abstract class EE_Gateway {
 	}
 
 	private function _handle_payment_settings() {
+		global $espresso_notices;
 		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway)) {
 			$this->_default_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {

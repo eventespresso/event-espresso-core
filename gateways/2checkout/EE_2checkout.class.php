@@ -53,7 +53,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		$this->_payment_settings['use_sandbox'] = false;
 		$this->_payment_settings['type'] = 'off-site';
 		$this->_payment_settings['display_name'] = '2CheckOut';
-		$this->_payment_settings['current_path'] = $this->_path;
+		$this->_payment_settings['current_path'] = '';
 	}
 
 	protected function _update_settings() {
