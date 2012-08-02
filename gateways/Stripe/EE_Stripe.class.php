@@ -24,7 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-Class EE_Stripe extends EE_Gateway {
+Class EE_Stripe extends EE_Onsite_Gateway {
 	
 	private static $_instance = NULL;
 

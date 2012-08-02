@@ -24,7 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-Class EE_Eway extends EE_Gateway {
+Class EE_Eway extends EE_Offsite_Gateway {
 
 	private static $_instance = NULL;
 

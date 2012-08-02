@@ -55,6 +55,9 @@ Class EEM_Gateways {
 		//so client code can check for instatiation b4 including
 		define('ESPRESSO_GATEWAYS', TRUE);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Gateway.class.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Offline_Gateway.class.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Offsite_Gateway.class.php');
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Onsite_Gateway.class.php');
 
 		$this->_load_session_gateway_data();
 		$this->_set_active_gateways();

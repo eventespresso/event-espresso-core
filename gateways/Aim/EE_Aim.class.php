@@ -24,7 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-Class EE_Aim extends EE_Gateway {
+Class EE_Aim extends EE_Onsite_Gateway {
 
 	private static $_instance = NULL;
 
