@@ -1159,7 +1159,8 @@ class EE_Single_Page_Checkout {
 					$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );
 
 //					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
-					$new_reg_code = $txn_results['new-ID'] . '-' . $att_nmbr . '-' . $session_snip;
+					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip;
+//					$new_reg_code = $txn_results['new-ID'] . '-' . $att_nmbr . '-' . $session_snip;
 					
 					$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
 					
@@ -1167,7 +1168,8 @@ class EE_Single_Page_Checkout {
 						$prev_reg_code = $new_reg_code;
 					} else {
 //						$prev_reg_code = '%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%';
-						$prev_reg_code = '%-' . $att_nmbr . '-' . $session_snip . '%';
+						$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . '%';
+//						$prev_reg_code = '%-' . $att_nmbr . '-' . $session_snip . '%';
 					}					
 
 					// check for existing registration attempt, taking filtered reg_codes into consideration
@@ -1447,9 +1449,18 @@ class EE_Single_Page_Checkout {
 
 
 
-
-	//TODO: delete this method as it's functionality seems to be handled in process_registration_step_3() around line 1315
-	private function _redirect_to_off_site($args, $success_msg) {
+	/**
+	 * 		send reg step 3 ajax response
+	 *
+	 * 		@access 		public
+	 * 		@param 		array 		$args
+	 * 		@param 		string 		$success_msg
+	 * 		@return 		JSON
+	 */
+	public function redirect_to_off_site( $args = FALSE, $success_msg ) {
+		if( ! $args ) {
+			$args = array();
+		}
 		$form_data =  $this->gateways->off_site_form();
 		$response_data = array(
 				'success' => 'Forwarding to Off-Site Payment Provider',
