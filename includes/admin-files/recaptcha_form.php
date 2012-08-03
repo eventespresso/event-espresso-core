@@ -2,6 +2,7 @@
 
 //Displays reCAPTCHA form
 function espresso_recaptcha_options_display() {
+	global $org_options;
 	$values = array(
 			array('id' => false, 'text' => __('No', 'event_espresso')),
 			array('id' => true, 'text' => __('Yes', 'event_espresso'))
