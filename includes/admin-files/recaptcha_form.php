@@ -7,6 +7,7 @@ function espresso_recaptcha_options_display() {
 			array('id' => false, 'text' => __('No', 'event_espresso')),
 			array('id' => true, 'text' => __('Yes', 'event_espresso'))
 	);
+	$show = !empty($org_options['use_captcha']) ? 'style="display:block"': '';
 	?>
 
 	<h4 class="hndle"><?php _e('Anti-spam Settings', 'event_espresso'); ?></h4>
@@ -22,11 +23,11 @@ function espresso_recaptcha_options_display() {
 					<label for="use_captcha"><?php _e('Use reCAPTCHA', 'event_espresso'); ?></label>
 				</th>
 				<td>
-					<?php echo select_input( 'use_captcha', $values, isset($org_options['use_captcha']) ? $org_options['use_captcha'] : false, 'id="admin-recaptcha-settings-slct"' ); ?>
+					<?php echo select_input( 'use_captcha', $values, !empty($org_options['use_captcha']) ? $org_options['use_captcha'] : false, 'id="admin-recaptcha-settings-slct"' ); ?>
 					<span class="description"><?php _e('Used to block spam registrations. Sign up', 'event_espresso'); ?> <a href="http://www.google.com/recaptcha/whyrecaptcha"><?php _e('here', 'event_espresso'); ?></a> <?php _e('to receive your Public and Private keys.', 'event_espresso'); ?></span>
 				</td>
 			</tr>
-			<tr class="admin-recaptcha-settings-tr">
+			<tr class="admin-recaptcha-settings-tr" <?php echo $show; ?>>
 				<th>
 					<label for="recaptcha_publickey">
 					<?php _e('Public Key', 'event_espresso'); ?>
@@ -37,7 +38,7 @@ function espresso_recaptcha_options_display() {
 					<input type="text" name="recaptcha_publickey" class="maybe-required regular-text" value="<?php if (isset($org_options['recaptcha_publickey'])) echo $org_options['recaptcha_publickey']; ?>" />
 				</td>
 			</tr>
-			<tr class="admin-recaptcha-settings-tr">
+			<tr class="admin-recaptcha-settings-tr" <?php echo $show; ?>>
 				<th>
 					<label for="recaptcha_privatekey"><?php _e('Private Key', 'event_espresso'); ?></label>
 				</th>
@@ -46,12 +47,12 @@ function espresso_recaptcha_options_display() {
 					<input type="text" name="recaptcha_privatekey" class="maybe-required regular-text" value="<?php if (isset($org_options['recaptcha_privatekey'])) echo $org_options['recaptcha_privatekey']; ?>" />
 				</td>
 			</tr>
-			<tr class="admin-recaptcha-settings-tr">
+			<tr class="admin-recaptcha-settings-tr" <?php echo $show; ?>>
 				<td colspan="2">
 					<strong><?php _e('reCAPTCHA Look &amp; Feel', 'event_espresso'); ?></strong>
 				</td>
 			</tr>
-			<tr class="admin-recaptcha-settings-tr">
+			<tr class="admin-recaptcha-settings-tr" <?php echo $show; ?>>
 				<th>
 					<label for="recaptcha_width"><?php _e('Width', 'event_espresso'); ?></label>
 				</th>
@@ -59,7 +60,7 @@ function espresso_recaptcha_options_display() {
 					<input name="recaptcha_width" type="text" class="regular-text" value="<?php echo!isset($org_options['recaptcha_width']) || $org_options['recaptcha_width'] == '' ? '500' : $org_options['recaptcha_width']; ?>" size="5" maxlength="6" />
 				</td>
 			</tr>
-			<tr class="admin-recaptcha-settings-tr">
+			<tr class="admin-recaptcha-settings-tr" <?php echo $show; ?>>
 				<th>
 					<label for="recaptcha_theme"><?php _e('Theme', 'event_espresso'); ?></label>
 				</th>
@@ -75,7 +76,7 @@ function espresso_recaptcha_options_display() {
 					?>
 				</td>
 			</tr>
-			<tr class="admin-recaptcha-settings-tr">
+			<tr class="admin-recaptcha-settings-tr" <?php echo $show; ?>>
 				<th>
 					<label for="recaptcha_language"><?php _e('Language', 'event_espresso'); ?></label>
 				</th>
