@@ -1,6 +1,4 @@
-<?php
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 function espresso_price_manager_menu() {
 
@@ -14,6 +12,8 @@ function espresso_price_manager_menu() {
 	$_REQUEST['action'] = isset($_REQUEST['action']) ? wp_strip_all_tags($_REQUEST['action']) : NULL;
 	$edit_or_add_pages = array('edit_price', 'edit_price_type', 'add_new_price', 'add_new_price_type');
 	$edit_or_add_page = ( in_array($_REQUEST['action'], $edit_or_add_pages)) ? TRUE : FALSE;
+	
+	echo espresso_get_notices();
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/EE_Prices_List_Table.class.php');
 	$pricesListTable = new EE_Prices_List_Table();
@@ -28,6 +28,7 @@ function espresso_price_manager_menu() {
 	if ($edit_or_add_page) {
 		do_meta_boxes('event-espresso_page_pricing', 'normal', null);
 	}
+	
 	?>
 	<h2><?php _e('Default Prices', 'event_espresso'); ?>&nbsp;&nbsp;&nbsp;<span class="tiny-text"><?php _e('Added to New Events', 'event_espresso'); ?></span>
 		<?php
@@ -47,7 +48,7 @@ function espresso_price_manager_menu() {
 
 
 
-	<h2>Price Types
+	<h2><?php _e('Price Types', 'event_espresso'); ?>
 		<?php
 		if (!$edit_or_add_page) {
 			$add_new_price_type_url = add_query_arg(array('action' => 'add_new_price_type'), PRC_ADMIN_URL);

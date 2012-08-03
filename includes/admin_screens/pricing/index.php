@@ -1,7 +1,4 @@
-<?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 function espresso_prices_admin_helper() {
 
@@ -73,7 +70,6 @@ function espresso_prices_admin_helper() {
 		$_SERVER['REQUEST_URI'] = remove_query_arg('action');
 	}
 
-	echo espresso_get_notices();
 }
 
 function espresso_update_event_price() {
@@ -87,7 +83,7 @@ function espresso_update_event_price() {
 		$where_cols_n_values = array('PRC_ID' => $_REQUEST['PRC_ID']);
 		// run the update
 		if ($PRC->update($set_column_values, $where_cols_n_values)) {
-			$notices = espresso_get_notices(FALSE, TRUE);
+			$notices = espresso_get_notices(FALSE, TRUE, TRUE);
 			$redirect_url = add_query_arg($notices, PRC_ADMIN_URL);
 			wp_redirect($redirect_url);
 			exit();
@@ -97,6 +93,8 @@ function espresso_update_event_price() {
 
 function espresso_add_price_to_db() {
 
+echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+
 	if (check_admin_referer('espresso_form_check', 'add_price_to_db')) {
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
@@ -105,7 +103,7 @@ function espresso_add_price_to_db() {
 		$set_column_values = espresso_process_price();
 		// run the insert
 		if ($PRC->insert($set_column_values)) {
-			$notices = espresso_get_notices(FALSE, TRUE);
+			$notices = espresso_get_notices(FALSE, TRUE, TRUE);
 			$redirect_url = add_query_arg($notices, PRC_ADMIN_URL);
 			wp_redirect($redirect_url);
 			exit();
@@ -114,6 +112,8 @@ function espresso_add_price_to_db() {
 }
 
 function espresso_process_price() {
+
+echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 	$_REQUEST['PRC_name'] = ucwords(strtolower($_REQUEST['PRC_name']));
 	$_REQUEST['PRC_name'] = htmlentities($_REQUEST['PRC_name'], ENT_QUOTES, 'UTF-8');
