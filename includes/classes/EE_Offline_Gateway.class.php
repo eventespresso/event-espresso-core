@@ -60,7 +60,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	
 		if ( $this->_EEM_Gateways->ajax() ) {
 			$SPCO = EE_Single_Page_Checkout::instance();
-			$SPCO->send_ajax_response( 'Redirecting to Off-site Payment Provider', FALSE, '_redirect_to_off_site', $return_page_url );
+			$SPCO->send_ajax_response( 'Redirecting to Off-site Payment Provider', FALSE, 'redirect_to_off_site', $return_page_url );
 		} else {
 			$form_data = $this->_EEM_Gateways->off_site_form();
 			echo $form_data['pre-form'] . $form_data['form'] . $form_data['post-form'];
