@@ -28,7 +28,7 @@ function espresso_thank_you_page() {
 			$grand_total += $tax;
 		}
 		$data = array(
-			'event_links' => array(),
+			'events' => array(),
 			'fname' => $session_data['primary_attendee']['fname'],
 			'lname' => $session_data['primary_attendee']['lname'],
 			'txn_type' => $session_data['txn_results']['method'],
@@ -37,8 +37,13 @@ function espresso_thank_you_page() {
 			'amount_paid' => $session_data['txn_results']['amount'],
 			'total_cost' => $grand_total,
 			'registration_id' => $session_data['primary_attendee']['registration_id'],
-			'txn_id' => ''//$session_data['txn_results']['transaction_id']
+			'txn_id' => $session_data['txn_results']['transaction_id']
 		);
+
+		foreach ( $session_data['cart']['REG']['items'] as $item ) {
+			$data['events'][] = $item['name'] . ' :<br/>&nbsp;&nbsp;&nbsp;&nbsp;' . $item['options']['date'] . ' @ ' . $item['options']['time'] . ', ' . $item['options']['price_desc'];
+		}
+		
 		espresso_require_template('payment_overview.php');
 		do_action('action_hook_espresso_display_payment_overview_template', $data);
 		$EEM_Gateways->reset_session_data();
