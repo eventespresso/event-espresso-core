@@ -1244,135 +1244,9 @@ class EE_Single_Page_Checkout {
 			}
 		}
 
-		if ( $this->_ajax ) {
-			$this->process_registration_payment();
-		}
-
-	}
-
-
-
-
-
-	/**
-	 * 		process registration payment
-	 *
-	 * 		@access 		private
-	 * 		@param 		boolean 		$perform_redirect  - whether to send JSON response or redirect
-	 * 		@return 		JSON			or redirect
-	 */
-	public function process_registration_payment( $perform_redirect = TRUE, $gateway_type = 'on-site' ) {
-
-		global $EE_Session;
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-
-		$success_msg = FALSE;
-		$error_msg = FALSE;
-
-		// grab session data
-		$session = $EE_Session->get_session_data();
-		//printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
-
-		$transaction = $session['transaction'];
-		$txn_results = $session['txn_results'];
-		// $txn_results['txn_results'] = $session;
-
-		$txn_results['amount'] = isset($txn_results['amount']) ? $txn_results['amount'] : 0.00;
-		$txn_results['method'] = isset($txn_results['method']) ? $txn_results['method'] : '';
-
-		switch ($txn_results['status']) {
-
-			case 'Approved' :
-				$pay_status = 'PAP';
-				$success_msg = $txn_results['response_msg'];
-				do_action('action_hook_espresso_reg_approved');
-				break;
-			
-			case 'Declined' :
-				$pay_status = 'PDC';
-				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_results['response_msg'] . '</b>';
-				do_action('action_hook_espresso_reg_declined');
-				break;
-
-			case 'Cancelled' :
-				$pay_status = 'PCN';
-				$error_msg = __('The Transaction was cancelled.', 'event_espresso');
-				do_action('action_hook_espresso_reg_cancelled');
-				break;
-
-			case 'FAILED' :
-				$pay_status = 'PFL';
-				$error_msg = __('We\'re sorry, but an error occured and the transaction could not be completed. Please try again. If problems persist, contact the site administrator.', 'event_espresso');
-				do_action('action_hook_espresso_reg_incomplete');
-				break;
-		}
+		$this->process_registration_payment();
 		
-		$txn_status = 'TOP';
-		
-		// did transaction require payment now ? later ? or was it free ?
-		if ( $transaction->total() > 0 && $gateway_type != 'off-line' ) {
-		
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-			EEM_Payment::instance();
-			$payment = new EE_Payment( 
-																	$transaction->ID(), 
-																	$pay_status,
-																	$transaction->datetime(), 
-																	$txn_results['method'], 
-																	$txn_results['amount'],
-																	$this->gateways->display_name(),
-																	$txn_results['response_msg'],
-																	$txn_results['transaction_id'],
-																	NULL,
-																	$session['primary_attendee']['registration_id'],
-																	FALSE,
-																	maybe_serialize( $txn_results )
-																);
-			$results = $payment->insert();
-			if (!$results) {
-				$error_msg = __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
-			}
-		
-//printr( $payment, '$payment  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-
-		
-			if ( $payment->amount() >= $transaction->total() ) {
-				$txn_status = 'TCM';
-			} 
-			
-		//TODO: 	set $txn_status in gateway type classes
-		} elseif ( $gateway_type == 'off-line' ) {
-			// payments using 'off-line' gateways stay at OPEN status
-			$txn_status = 'TOP';
-		} else {
-			// but free events get set as completed !
-			$txn_status = 'TCM';
-		} 
-		
-		$transaction->set_paid($txn_results['amount']);
-		$transaction->set_status($txn_status);
-		$transaction->set_details( $txn_results );
-		unset( $session['transaction'] );
-		$transaction->set_session_data( $session );
-
-		if (isset($txn_results['md5_hash'])) {
-			$transaction->set_hash_salt($txn_results['md5_hash']);
-		}
-
-		if (isset($session['taxes'])) {
-			$tax_data = array('taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals']);
-			$transaction->set_tax_data($tax_data);
-		}
-
-		$transaction->update();
-
-//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-//die();
-
-
-		if( $perform_redirect ) {
-			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
+		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
 				if (!$this->_return_page_url) {
 					$return_page_id = $org_options['return_url'];
 					// get permalink for thank you page
@@ -1386,10 +1260,13 @@ class EE_Single_Page_Checkout {
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();
 			}
-		}
-
 	}
 
+
+
+
+
+	
 	/**
 	 * 		send reg step 3 ajax response
 	 *
