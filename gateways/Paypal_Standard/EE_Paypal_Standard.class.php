@@ -42,6 +42,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_gateway = 'Paypal_Standard';
 		$this->_button_base = 'paypal.gif';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
+		$this->gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
+		$this->addField('rm', '2');		   // Return method = POST
+		$this->addField('cmd', '_xclick');
 		parent::__construct($model);
 	}
 
@@ -279,25 +282,22 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	public function process_reg_step_3() {
 		global $org_options, $EE_Session;
 
-		include_once ('lib/Paypal.php');
-		$myPaypal = new EE_Paypal();
 		$session_data = $EE_Session->get_session_data();
 		$paypal_settings = $this->_payment_settings;
 		$paypal_id = $paypal_settings['paypal_id'];
 		$paypal_cur = $paypal_settings['currency_format'];
 		$no_shipping = $paypal_settings['no_shipping'];
-		$use_sandbox = $paypal_settings['use_sandbox'];
-		if ($use_sandbox) {
-			$myPaypal->enableTestMode();
+		if ($paypal_settings['use_sandbox']) {
+			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
 		}
 
 		$item_num = 1;
 		$registrations = $session_data['cart']['REG']['items'];
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
-				$myPaypal->addField('item_name_' . $item_num, $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
-				$myPaypal->addField('amount_' . $item_num, $attendee['price_paid']);
-				$myPaypal->addField('quantity_' . $item_num, '1');
+				$this->addField('item_name_' . $item_num, $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
+				$this->addField('amount_' . $item_num, $attendee['price_paid']);
+				$this->addField('quantity_' . $item_num, '1');
 				$item_num++;
 			}
 		}
@@ -306,32 +306,31 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if (isset($session_data['tax_totals'])) {
 			foreach ($session_data['tax_totals'] as $key => $taxes) {
 				$total = $total + $taxes;
-				$myPaypal->addField('item_name_' . $item_num, $session_data['taxes'][$key]['name']);
-				$myPaypal->addField('amount_' . $item_num, $taxes);
-				$myPaypal->addField('quantity_' . $item_num, '1');
+				$this->addField('item_name_' . $item_num, $session_data['taxes'][$key]['name']);
+				$this->addField('amount_' . $item_num, $taxes);
+				$this->addField('quantity_' . $item_num, '1');
 				$item_num++;
 			}
 		}
-		$myPaypal->addField('business', $paypal_id);
-		$myPaypal->addField('return', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
-		$myPaypal->addField('cancel_return', home_url() . '/?page_id=' . $org_options['cancel_return']);
-		$myPaypal->addField('notify_url', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
-		$myPaypal->addField('cmd', '_cart');
-		$myPaypal->addField('upload', '1');
-		$myPaypal->addField('currency_code', $paypal_cur);
-		$myPaypal->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
-		$myPaypal->addField('no_shipping ', $no_shipping);
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($myPaypal)));
-		$this->_EEM_Gateways->set_off_site_form($myPaypal->submitPayment());
+		$this->addField('business', $paypal_id);
+		$this->addField('return', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
+		$this->addField('cancel_return', home_url() . '/?page_id=' . $org_options['cancel_return']);
+		$this->addField('notify_url', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
+		$this->addField('cmd', '_cart');
+		$this->addField('upload', '1');
+		$this->addField('currency_code', $paypal_cur);
+		$this->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
+		$this->addField('no_shipping ', $no_shipping);
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
+		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 	}
 
 	public function espresso_process_off_site_payment() {
-		global $EE_Session;
+		global $EE_Session;die();
 		$session_data = $EE_Session->get_session_data();
-		$gateway_settings = $this->_payment_settings;
 		if (empty($session_data['session_data']['txn_results']['approved'])) {
 			$txn_details = array(
-					'gateway' => $gateway_settings['display_name'],
+					'gateway' => $this->_payment_settings['display_name'],
 					'approved' => FALSE,
 					'response_msg' => __('You\'re registration has not been completed successfully.', 'event_espresso'),
 					'status' => 'Incomplete',
@@ -343,16 +342,14 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 					'invoice_number' => sanitize_text_field($_POST['invoice_id']),
 					'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
 			);
-			include_once ('lib/Paypal.php');
-			$myPaypal = new EE_Paypal();
-			$myPaypal->ipnLog = TRUE;
-			if ($gateway_settings['use_sandbox']) {
-				$myPaypal->enableTestMode();
+			$this->ipnLog = TRUE;
+			if ($this->_payment_settings['use_sandbox']) {
+				$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
 			}
-			if ($myPaypal->validateIpn()) {
-				$txn_details['raw_response'] = serialize($myPaypal->ipnData);
-				$txn_details['transaction_id'] = $myPaypal->ipnData['txn_id'];
-				if ($myPaypal->ipnData['payment_status'] == 'Completed' || $myPaypal->ipnData['payment_status'] == 'Pending') {
+			if ($this->validateIpn()) {
+				$txn_details['raw_response'] = serialize($this->ipnData);
+				$txn_details['transaction_id'] = $this->ipnData['txn_id'];
+				if ($this->ipnData['payment_status'] == 'Completed' || $this->ipnData['payment_status'] == 'Pending') {
 					$txn_details['approved'] = TRUE;
 					$txn_details['amount'] = floatval($_REQUEST['mc_gross']);
 					$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
@@ -361,7 +358,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 			$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
 
-			if ($txn_details['approved'] == TRUE && $gateway_settings['use_sandbox']) {
+			if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
 				do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
 			} else {
 				do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
@@ -381,6 +378,119 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<?php
 	}
 
+	/**
+	 * Validate the IPN notification
+	 *
+	 * @param none
+	 * @return boolean
+	 */
+	public function validateIpn() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		if (function_exists('curl_init')) {
+			//new paypal code//
+			// parse the paypal URL
+			$urlParsed = parse_url($this->_gatewayUrl);
+
+			// generate the post string from the _POST vars
+			$req = '';
+
+			$errors = "\nUsing BUILT-IN PHP curl methods\n";
+			// Run through the posted array
+			foreach ($_POST as $key => $value) {
+				$this->ipnData["$key"] = $value;
+				$errors .= "key = " . $key . "\nvalue = " . $value . "\n";
+				$value = urlencode(stripslashes($value));
+				$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
+				$req .= $key . '=' . $value . '&';
+			}
+			$req .= 'cmd=_notify-validate';
+			$url = $this->_gatewayUrl;
+			$ch = curl_init();	// Starts the curl handler
+			$error = array();
+			$error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the paypal address for curl
+			$error["set_fail_on_error"] = curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+			$error["set_return_transfer"] = curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
+			$error["set_timeout"] = curl_setopt($ch, CURLOPT_TIMEOUT, 45); // Sets a time limit for curl in seconds (do not set too low)
+			$error["set_post"] = curl_setopt($ch, CURLOPT_POST, 1); // Set curl to send data using post
+			$error["set_post_fields"] = curl_setopt($ch, CURLOPT_POSTFIELDS, $req); // Add the request parameters to the post
+			$errors .= $error["set_host"] ? "Success" : "Failure";
+			$errors .= " Setting host: " . $url . "\n";
+			$errors .= $error["set_post"] ? "Success" : "Failure";
+			$errors .= " Setting request type to post\n";
+			$errors .= $error["set_post_fields"] ? "Success" : "Failure";
+			$errors .= " Setting post fields: " . htmlspecialchars($req) . "\n";
+			$errors .= $error["set_fail_on_error"] ? "Success" : "Failure";
+			$errors .= " Setting Fain On Error\n";
+			$errors .= $error["set_return_transfer"] ? "Success" : "Failure";
+			$errors .= " Setting return transfer\n";
+			$errors .= $error["set_timeout"] ? "Success" : "Failure";
+			$errors .= " Setting Timeout\n";
+			$error["set_verbose"] = curl_setopt($ch, CURLOPT_VERBOSE, 1);
+			$errors .= $error["set_verbose"] ? "Success" : "Failure";
+			$errors .= " Setting verbose mode\n";
+			$result = curl_exec($ch); // run the curl process (and return the result to $result
+			$this->ipnResponse = $result;
+			$error["result"] = curl_error($ch);
+			curl_close($ch);
+			$errors .= "Errors resulting from the execution of curl transfer: " . $error["result"];
+
+			if (strcmp($result, "VERIFIED") == 0) { // It may seem strange but this function returns 0 if the result matches the string So you MUST check it is 0 and not just do strcmp ($result, "VERIFIED") (the if will fail as it will equate the result as false)
+				// Do some checks to ensure that the payment has been sent to the correct person
+				// Check and ensure currency and amount are correct
+				// Check that the transaction has not been processed before
+				// Ensure the payment is complete
+				// Valid IPN transaction.
+				return true;
+			} else {
+				// Log an invalid request to look into
+				// Invalid IPN transaction.  Check the log for details.
+				$this->lastError = "IPN Validation Failed . $urlParsed[path] : $urlParsed[host]";
+				return false;
+			}
+		} else {
+
+			//Old paypal code
+			// parse the paypal URL
+			$urlParsed = parse_url($this->_gatewayUrl);
+			// generate the post string from the _POST vars
+			$postString = '';
+			foreach ($_POST as $key => $value) {
+				$this->ipnData["$key"] = $value;
+				$value = urlencode(stripslashes($value));
+				$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
+				$postString .= $key . '=' . $value . '&';
+			}
+			$postString .="cmd=_notify-validate"; // append ipn command
+			// open the connection to paypal
+			$fp = fsockopen($urlParsed[host], "80", $errNum, $errStr, 30);
+			if (!$fp) {
+				// Could not open the connection, log error if enabled
+				$this->lastError = "fsockopen error no. $errNum: $errStr";
+				return false;
+			} else {
+				// Post the data back to paypal
+				fputs($fp, "POST $urlParsed[path] HTTP/1.1\r\n");
+				fputs($fp, "Host: $urlParsed[host]\r\n");
+				fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
+				fputs($fp, "Content-length: " . strlen($postString) . "\r\n");
+				fputs($fp, "Connection: close\r\n\r\n");
+				fputs($fp, $postString . "\r\n\r\n");
+				// loop through the response from the server and append to variable
+				while (!feof($fp)) {
+					$this->ipnResponse .= fgets($fp, 1024);
+				}
+				fclose($fp); // close connection
+			}
+			if (eregi("VERIFIED", $this->ipnResponse)) {
+				// Valid IPN transaction.
+				return true;
+			} else {
+				// Invalid IPN transaction.  Check the log for details.
+				$this->lastError = "IPN Validation Failed . $urlParsed[path] : $urlParsed[host]";
+				return false;
+			}
+		}
+	}
 }
 
 //end class
