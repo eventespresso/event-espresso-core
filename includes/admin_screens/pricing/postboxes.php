@@ -286,6 +286,3 @@ function edit_event_price_type_postbox() {
 	</div>
 	<?php
 }
-
-
-
