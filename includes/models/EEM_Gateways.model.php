@@ -921,7 +921,7 @@ Class EEM_Gateways {
 			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
 
 		} else {
-			$this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3($return_page_url);
+			$this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3();
 		}
 		return $return_page_url;
 	}	
@@ -987,13 +987,7 @@ Class EEM_Gateways {
 	}
 		
 	public function thank_you_page() {
-	if ($type == 'off-site' || ($type == 'onsite' && !$EEM_Gateways->ajax())) {
-		$SPCO = EE_Single_Page_Checkout::instance();
-		$SPCO->process_registration_payment(FALSE);
-	} elseif ($type == 'off-line') {
-		$SPCO = EE_Single_Page_Checkout::instance();
-		$SPCO->process_off_line_gateway();
-	}
+		$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
 	}
 	
 	/**
@@ -1054,34 +1048,7 @@ Class EEM_Gateways {
 		// did transaction require payment now ? later ? or was it free ?
 		if ( $transaction->total() > 0 && $gateway_type != 'off-line' ) {
 		
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-			EEM_Payment::instance();
-			$payment = new EE_Payment( 
-																	$transaction->ID(), 
-																	$pay_status,
-																	$transaction->datetime(), 
-																	$txn_results['method'], 
-																	$txn_results['amount'],
-																	$this->display_name(),
-																	$txn_results['response_msg'],
-																	$txn_results['transaction_id'],
-																	NULL,
-																	$session['primary_attendee']['registration_id'],
-																	FALSE,
-																	maybe_serialize( $txn_results )
-																);
-			$results = $payment->insert();
-			if (!$results) {
-				$error_msg = __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
-			}
-		
-//printr( $payment, '$payment  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-
-		
-			if ( $payment->amount() >= $transaction->total() ) {
-				$txn_status = 'TCM';
-			} 
+			
 			
 		//TODO: 	set $txn_status in gateway type classes
 		} elseif ( $gateway_type == 'off-line' ) {
@@ -1114,6 +1081,5 @@ Class EEM_Gateways {
 
 
 	}
-
 
 }

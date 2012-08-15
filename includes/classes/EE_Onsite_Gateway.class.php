@@ -17,8 +17,10 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		parent::__construct($model);
 	}
 	
-	public function espresso_process_off_site_payment() {}
-
+	public function thank_you_page() {
+		$this->_EEM_Gateways->process_registration_payment();
+	}
+	
 	protected function _set_default_properties() {
 		parent::_set_default_properties();
 		// list of fields required for capturing the billing address 

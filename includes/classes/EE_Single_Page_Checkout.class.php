@@ -92,7 +92,6 @@ class EE_Single_Page_Checkout {
 				'process_reg_step_1',
 				'process_reg_step_2',
 				'process_reg_step_3',
-				'registration_complete',
 				'event_queue'
 				);
 		if (( isset( $_REQUEST['e_reg'] ) && ( in_array($_REQUEST['e_reg'], $e_reg_pages))) || $this->_ajax ) {
@@ -1235,20 +1234,9 @@ class EE_Single_Page_Checkout {
 	 */
 	private function _send_reg_step_3_ajax_response($args, $success_msg) {
 
-		global $org_options;
-
-
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		if (!$this->_return_page_url) {
-			$return_page_id = $org_options['return_url'];
-			// get permalink for thank you page
-			// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
-		}
-
-		$response_data = $this->gateways->get_gateway_redirect_response();
 		$response_data = array(
 				'success' => $success_msg,
 				'return_data' => array('redirect-to-thank-you-page' => $this->_return_page_url)
@@ -1259,59 +1247,8 @@ class EE_Single_Page_Checkout {
 		die();
 	}
 
-
-
-	/**
-	 * 		send reg step 3 ajax response
-	 *
-	 * 		@access 		public
-	 * 		@param 		array 		$args
-	 * 		@param 		string 		$success_msg
-	 * 		@return 		JSON
-	 */
-	public function redirect_to_off_site( $args = FALSE, $success_msg ) {
-		if( ! $args ) {
-			$args = array();
-		}
-		$form_data =  $this->gateways->off_site_form();
-		$response_data = array(
-				'success' => 'Forwarding to Off-Site Payment Provider',
-				'return_data' => array('off-site-redirect' => $form_data['form'])
-		);
-		echo json_encode($response_data);
-		die();
-	}
-
-
-
-	/**
-	 * 		load and display Registration Complete Page
-	 *
-	 * 		@access 		public
-	 * 		@return 		void
-	 */
-	public function registration_complete() {
-
-		global $EE_Session;
-
-		$session = $EE_Session->get_session_data();
-		$txn_results = $session['txn_results'];
-
-		$txn_results = array(
-				'approved' => $payment_data->approved ? $payment_data->approved : 0,
-				'response_msg' => $payment_data->response_reason_text,
-				'md5_hash' => $payment_data->md5_hash,
-				'details' => array(
-						'transaction_id' => $payment_data->transaction_id,
-						'invoice_number' => $payment_data->invoice_number,
-				),
-		);
-	}
-
-
-
-
-
+	
+	
 	/**
 	 *   handle ajax message responses
 	 *

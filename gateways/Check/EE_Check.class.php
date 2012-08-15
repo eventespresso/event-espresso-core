@@ -95,22 +95,6 @@ Class EE_Check extends EE_Offline_Gateway {
 		
 	}
 
-	public function process_reg_step_3() {
-		global $org_options;
-		$pre_form = "<html>";
-		$pre_form .= "<head><title>Processing Check Payment...</title></head>";
-		$pre_form .= "<body>";
-		$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the transaction results page, where you can view details of how to complete your payment by check.</h2>";
-		$form .= "<form method=\"POST\" name=\"gateway_form\" ";
-		$form .= "action=\"" . get_permalink($org_options['return_url']) . "\">";
-		$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
-		$form .= "the payment website within 10 seconds...<br/><br/>";
-		$form .= "<input type=\"submit\" value=\"Click Here\"></p>";
-		$form .= "</form>";
-		$post_form = "</body></html>";
-		$this->_EEM_Gateways->set_off_site_form(array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form));
-	}
-
 	public function espresso_process_off_site_payment() {
 		global $EE_Session;
 

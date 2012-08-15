@@ -50,7 +50,7 @@ abstract class EE_Gateway {
 	abstract protected function _update_settings();
 	abstract protected function _display_settings();
 	abstract public function espresso_display_payment_gateways();
-	abstract public function process_reg_step_3($return_page_url);
+	abstract public function process_reg_step_3();
 	
 
 	protected function __construct(EEM_Gateways &$model) {
@@ -297,4 +297,34 @@ abstract class EE_Gateway {
 ';
 	}
 
+	protected function create_payment() {
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
+			EEM_Payment::instance();
+			$payment = new EE_Payment( 
+																	$transaction->ID(), 
+																	$pay_status,
+																	$transaction->datetime(), 
+																	$txn_results['method'], 
+																	$txn_results['amount'],
+																	$this->display_name(),
+																	$txn_results['response_msg'],
+																	$txn_results['transaction_id'],
+																	NULL,
+																	$session['primary_attendee']['registration_id'],
+																	FALSE,
+																	maybe_serialize( $txn_results )
+																);
+			$results = $payment->insert();
+			if (!$results) {
+				$error_msg = __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
+			}
+		
+//printr( $payment, '$payment  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+
+		
+			if ( $payment->amount() >= $transaction->total() ) {
+				$txn_status = 'TCM';
+			} 
+	}
 }

@@ -221,7 +221,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function process_reg_step_3($return_page_url) {
+	public function process_reg_step_3() {
 
 		global $org_options, $EE_Session;
 
@@ -263,7 +263,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		$this->addField('total', number_format($total, 2, '.', ''));
 		$this->addField('tco_currency', $this->_payment_settings['currency_format']);
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
-		$this->redirect_after_reg_step_3($return_page_url);
+		$this->redirect_after_reg_step_3();
 	}
 
 	public function espresso_process_off_site_payment() {

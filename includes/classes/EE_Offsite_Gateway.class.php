@@ -20,6 +20,9 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		$espresso_notices['success'][] = __('Off-site gateway selected', 'event_espresso');
 	}
 
+	public function thank_you_page() {
+		$this->_EEM_Gateways->process_registration_payment();
+	}
 
 
 	/**
@@ -41,7 +44,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@param	string 	$return_page_url
 	 * 		@return 	mixed	void or echo
 	 */
-	public function redirect_after_reg_step_3( $return_page_url ) {
+	public function redirect_after_reg_step_3() {
 		
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
