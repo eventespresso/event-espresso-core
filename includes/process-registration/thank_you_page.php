@@ -7,17 +7,7 @@ function espresso_thank_you_page() {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 		$EEM_Gateways = EEM_Gateways::instance();
 	}
-	$type = $EEM_Gateways->type();
-	if ($type == 'off-site' || $type == 'off-line') {
-		do_action('action_hook_espresso_process_off_site_payment');
-	}
-	if ($type == 'off-site' || ($type == 'onsite' && !$EEM_Gateways->ajax())) {
-		$SPCO = EE_Single_Page_Checkout::instance();
-		$SPCO->process_registration_payment(FALSE);
-	} elseif ($type == 'off-line') {
-		$SPCO = EE_Single_Page_Checkout::instance();
-		$SPCO->process_off_line_gateway();
-	}
+	$EEM_Gateways->thank_you_page();
 	$session_data = $EE_Session->get_session_data();
 	if (!empty($session_data['txn_results'])) {
 		//printr( $session_data);

@@ -209,7 +209,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 * 		@access public
 	 * 		@return 	void
 	 */
-	public function redirect_after_reg_step_3( $return_page_url ) {
+	public function process_reg_step_3( $return_page_url ) {
 
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	

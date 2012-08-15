@@ -8,21 +8,6 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		parent::__construct($model);
 	}
 
-//	protected function _update_actions() {
-//		parent::_update_actions();
-//		if ($this->_selected) {
-//			if (!has_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'))) {
-//				add_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'));
-//			}
-//		} else {
-//			if (has_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'))) {
-//				remove_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'));
-//			}
-//		}
-//	}
-
-
-
 	/**
 	 * 		process_gateway_selection()
 	 * 		@access public
@@ -69,6 +54,20 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 
 	}
 
+	public function thank_you_page() {
+		global $EE_Session;
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+
+		// grab session data
+		$session = $EE_Session->get_session_data();
+
+		$transaction = $session['transaction'];
+		$txn_results = $session['txn_results'];
+		$transaction->set_details( $txn_results );
+		unset( $session['transaction'] );
+		$transaction->set_session_data( $session );
+		$transaction->update();
+	}
 	
 
 }

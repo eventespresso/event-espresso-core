@@ -1390,24 +1390,6 @@ class EE_Single_Page_Checkout {
 
 	}
 
-	//TODO: delete this method and send off-line gateways through the same method as the on-site and off-site gateways
-	public function process_off_line_gateway() {
-		global $EE_Session;
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-
-		// grab session data
-		$session = $EE_Session->get_session_data();
-
-		$transaction = $session['transaction'];
-		$txn_results = $session['txn_results'];
-		$transaction->set_details( $txn_results );
-		unset( $session['transaction'] );
-		$transaction->set_session_data( $session );
-		$transaction->update();
-	}
-
-
-
 	/**
 	 * 		send reg step 3 ajax response
 	 *

@@ -910,8 +910,7 @@ Class EEM_Gateways {
 		if( ! $return_page_url ) {
 			return FALSE;
 		}		
-		$this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3();
-		$this->_gateway_instances[ $this->_selected_gateway ]->redirect_after_reg_step_3( $return_page_url );	
+		$this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3($return_page_url);
 	}	
 
 
@@ -961,7 +960,15 @@ Class EEM_Gateways {
 		return $newCreditCard;
 	}
 		
-		
+	public function thank_you_page() {
+	if ($type == 'off-site' || ($type == 'onsite' && !$EEM_Gateways->ajax())) {
+		$SPCO = EE_Single_Page_Checkout::instance();
+		$SPCO->process_registration_payment(FALSE);
+	} elseif ($type == 'off-line') {
+		$SPCO = EE_Single_Page_Checkout::instance();
+		$SPCO->process_off_line_gateway();
+	}
+	}
 	
 	
 

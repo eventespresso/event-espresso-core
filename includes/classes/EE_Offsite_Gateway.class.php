@@ -41,7 +41,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@param	string 	$return_page_url
 	 * 		@return 	mixed	void or echo
 	 */
-	public function redirect_after_reg_step_3( $return_page_url ) {
+	public function process_reg_step_3( $return_page_url ) {
 		
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
