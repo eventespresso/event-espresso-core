@@ -588,7 +588,7 @@ abstract class EEM_Base {
 		// set generic success / error mesasges
 		if ( $row_results == 1 ) {
 			// one row was successfully updated
-			$espresso_notices['success'][] = $this->singlular_item . 'details have been successfully saved to the database.';
+			$espresso_notices['success'][] = $this->singlular_item . ' details have been successfully saved to the database.';
 //			$update_results = array( 'type' =>  'updated', 'msg' => 'The record has been successfully created.', 'rows' => $row_results );
 			$update_results['new-ID'] = $wpdb->insert_id;
 		}
