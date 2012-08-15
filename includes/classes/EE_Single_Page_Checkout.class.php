@@ -99,8 +99,6 @@ class EE_Single_Page_Checkout {
 	
 			add_action('init', array(&$this, 'load_css'), 20);
 			add_action('init', array(&$this, 'load_js'), 20);
-			// get permalink for Thank You page
-			add_action('init', array(&$this, 'set_return_page_url'), 29);
 			// hooks that happen during the regevent action and other pathing stuff
 			add_action('init', array(&$this, 'set_paths_and_routing'), 30);
 		
@@ -181,23 +179,6 @@ class EE_Single_Page_Checkout {
 			wp_localize_script('single_page_checkout', 'event_espresso', $params);
 
 	}
-
-
-
-	/**
-	 * 		set_return_page_url
-	 *
-	 * 		@access 		public
-	 * 		@return 		void
-	 */
-	public function set_return_page_url() {
-		global $org_options;
-		$return_page_id = $org_options['return_url'];
-		// get permalink for thank you page
-		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		$this->_return_page_url = rtrim( get_permalink( $return_page_id ), '/' );
-	}
-
 
 
 	/**
@@ -1225,34 +1206,12 @@ class EE_Single_Page_Checkout {
 //			$session2 = $EE_Session->get_session_data();
 //			printr( $session2, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
-			// free event?
-			if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
-				// becuz this was a free event we need to generate some pseudo gateway results
-				$txn_results = array(
-						'approved' => TRUE,
-						'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
-						'status' => 'Approved',
-						'details' => 'free event',
-						'amount' => 0.00,
-						'method' => 'none'
-				);
-				$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
-
-			} else {
-				// attempt to perform transaction via payment gateway
-				$this->gateways->process_reg_step_3( $this->_return_page_url );				
-			}
+			// attempt to perform transaction via payment gateway
+				$this->_return_page_url = $this->gateways->process_reg_step_3();				
+			
 		}
-
-		$this->process_registration_payment();
 		
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
-				if (!$this->_return_page_url) {
-					$return_page_id = $org_options['return_url'];
-					// get permalink for thank you page
-					// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-					$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
-				}
 				wp_safe_redirect($this->_return_page_url);
 				exit();
 			} else {
@@ -1289,6 +1248,7 @@ class EE_Single_Page_Checkout {
 			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
 		}
 
+		$response_data = $this->gateways->get_gateway_redirect_response();
 		$response_data = array(
 				'success' => $success_msg,
 				'return_data' => array('redirect-to-thank-you-page' => $this->_return_page_url)

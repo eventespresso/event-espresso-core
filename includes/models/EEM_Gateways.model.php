@@ -905,14 +905,40 @@ Class EEM_Gateways {
 	* 		@param	int	$id
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
-	public function process_reg_step_3( $return_page_url = FALSE ) {
+	public function process_reg_step_3() {
+		$return_page_url = $this->_set_return_page_url();
+		// free event?
+		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
+			// becuz this was a free event we need to generate some pseudo gateway results
+			$txn_results = array(
+					'approved' => TRUE,
+					'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
+					'status' => 'Approved',
+					'details' => 'free event',
+					'amount' => 0.00,
+					'method' => 'none'
+			);
+			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
 
-		if( ! $return_page_url ) {
-			return FALSE;
-		}		
-		$this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3($return_page_url);
+		} else {
+			$this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3($return_page_url);
+		}
+		return $return_page_url;
 	}	
 
+		/**
+	 * 		set_return_page_url
+	 *
+	 * 		@access 		public
+	 * 		@return 		void
+	 */
+	private function _set_return_page_url() {
+		global $org_options;
+		$return_page_id = $org_options['return_url'];
+		// get permalink for thank you page
+		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
+		$this->_return_page_url = rtrim( get_permalink( $return_page_id ), '/' );
+	}
 
 
 	/**

@@ -50,9 +50,7 @@ abstract class EE_Gateway {
 	abstract protected function _update_settings();
 	abstract protected function _display_settings();
 	abstract public function espresso_display_payment_gateways();
-	abstract public function process_reg_step_3();
-	abstract public function redirect_after_reg_step_3( $return_page_url );
-//	abstract public function espresso_gateway_process_step_3();
+	abstract public function process_reg_step_3($return_page_url);
 	
 
 	protected function __construct(EEM_Gateways &$model) {

@@ -41,13 +41,17 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * 		@param	string 	$return_page_url
 	 * 		@return 	mixed	void or echo
 	 */
-	public function process_reg_step_3( $return_page_url ) {
+	public function redirect_after_reg_step_3( $return_page_url ) {
 		
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
 		if ( $this->_EEM_Gateways->ajax() ) {
-			$SPCO = EE_Single_Page_Checkout::instance();
-			$SPCO->send_ajax_response( 'Redirecting to Off-site Payment Provider', FALSE, 'redirect_to_off_site', $return_page_url );
+			$form_data =  $this->_EEM_Gateways->off_site_form();
+			$response_data = array(
+					'success' => 'Forwarding to Off-Site Payment Provider',
+					'return_data' => array('off-site-redirect' => $form_data['form'])
+			);
+			echo json_encode($response_data);
 		} else {
 			$form_data = $this->_EEM_Gateways->off_site_form();
 			echo $form_data['pre-form'] . $form_data['form'] . $form_data['post-form'];
