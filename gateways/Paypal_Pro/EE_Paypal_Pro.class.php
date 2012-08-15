@@ -53,10 +53,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	protected function __construct( EEM_Gateways &$model) {
 		$this->_gateway = 'Paypal_Pro';
 		$this->_button_base = 'logo-paypal_pro.png';
-		$this->_path = str_replace( '\\', '/', __FILE__ );
-		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs_paypal_pro'));
-		
+		$this->_path = str_replace( '\\', '/', __FILE__ );	
 		parent::__construct($model);
 	}
 
@@ -75,7 +72,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			'password' => '',
 			'currency_format' => 'USD',
 			'signature' => '',
-			'credit_cards' => '',
+			'credit_cards' => array(),
 			'use_sandbox' => false,
 			'type' => 'on-site',
 			'display_name' => 'PayPal Pro',
@@ -832,13 +829,9 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 * 		@access public
 	 * 		@return array
 	 */
-	public function espresso_reg_page_billing_inputs_paypal_pro() {
+	public function espresso_reg_page_billing_inputs() {
 
 		$reg_page_billing_inputs = array(
-		
-				'type' => 'onsite',
-				
-				'gateway' => 'PayPal_Pro',
 				
 				'reg-page-billing-fname' => array(
 						'db-col' => 'fname',

@@ -62,7 +62,6 @@ class EE_Paypal extends PaymentGateway {
 	 * @return boolean
 	 */
 	public function validateIpn() {
-		global $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (function_exists('curl_init')) {
 			//new paypal code//

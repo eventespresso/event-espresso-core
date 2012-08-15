@@ -321,11 +321,11 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$use_testmode = $this->_payment_settings['test_transactions'];
 		if ($use_testmode == true) {
 			// Enable test mode if needed
-			$myAuthorize->enableTestMode();
+			$this->addField('x_Test_Request', 'TRUE');
 		}
 		if ($use_sandbox == true) {
 			// Enable test mode if needed
-			$myAuthorize->useTestServer();
+			$this->_gatewayUrl = 'https://test.authorize.net/gateway/transact.dll';
 		}
 
 		$myAuthorize->setUserInfo($authnet_login_id, $authnet_transaction_key);
@@ -354,7 +354,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$myAuthorize->addField('x_Logo_URL', $image_url);
 		$myAuthorize->addField('x_Invoice_num', 'au-' . $session_data['id']);
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($myAuthorize)));
-		$this->_EEM_Gateways->set_off_site_form($myAuthorize->submitPayment());
+		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 	}
 
 	public function espresso_process_off_site_payment() {
@@ -422,6 +422,39 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		</div>
 
 		<?php
+	}
+	
+	public function submitPayment() {
+		$this->addField('x_Login', $this->login);
+		$this->addField('x_fp_sequence', $this->fields['x_Invoice_num']);
+		$this->addField('x_fp_timestamp', time());
+		$data = $this->fields['x_Login'] . '^' .
+				$this->fields['x_Invoice_num'] . '^' .
+				$this->fields['x_fp_timestamp'] . '^' .
+				$this->fields['x_Amount'] . '^';
+		$this->addField('x_fp_hash', $this->hmac($this->secret, $data));
+		$pre_form = "<html>\n";
+		$pre_form .= "<head><title>Processing Payment...</title></head>\n";
+		$pre_form .= "<body>\n";
+		$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
+		$form .= "<form method=\"POST\" name=\"gateway_form\" ";
+		$form .= "action=\"" . $this->gatewayUrl . "\">\n";
+		foreach ($this->fields as $name => $value) {
+			if ($name == 'x_line_item') {
+				foreach ($value as $line_item) {
+					$form .= "<input type=\"hidden\" name=\"x_line_item\" value=\"$line_item\"/>\n";
+				}
+			} else {
+				$form .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
+			}
+		}
+		$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
+		$form .= "the payment website within 10 seconds...<br/><br/>\n";
+		$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+		$form .= "</form>\n";
+		$post_form = "</body></html>\n";
+		return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
+
 	}
 
 }

@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 if (!class_exists('WP_List_Table')) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -50,7 +50,7 @@ class EE_Prices_List_Table extends WP_List_Table {
 	}
 
 	function prepare_items() {
-		$per_page = 5;
+		$per_page = 10;
 		$columns = $this->get_columns();
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();

@@ -360,10 +360,10 @@ Class EEM_Gateways {
 			unset($this->_active_gateways[$gateway]);
 			global $espresso_wp_user, $espresso_notices;
 			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
-				$espresso_notices['success'][] = __('Gateway Deactivated!', 'event_espresso');
+				$espresso_notices['success'][] =$gateway .  __('Gateway Deactivated!', 'event_espresso');
 				return TRUE;
 			} else {
-				$espresso_notices['errors'][] = __('Gateway Not Deactivated! ', 'event_espresso');
+				$espresso_notices['errors'][] = $gateway . __('Gateway Not Deactivated! ', 'event_espresso');
 				return FALSE;
 			}
 		} else {
@@ -891,8 +891,10 @@ Class EEM_Gateways {
 	public function set_billing_info_for_confirmation( $billing_info = FALSE ) {
 		if( ! is_array( $billing_info )) {
 			return FALSE;
-		}		
-		return $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
+		}
+		$confirm_info = $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
+		$confirm_info['gateway'] = $this->display_name();
+		return $confirm_info;
 	}
 
 

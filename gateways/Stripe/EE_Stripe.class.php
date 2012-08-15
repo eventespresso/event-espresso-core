@@ -67,8 +67,6 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 	}
 
 	protected function _display_settings() {
-		$raw_uri = $_SERVER['REQUEST_URI'];
-		$uri = substr("$raw_uri", 0, strpos($raw_uri, '&activate_'.$this->_gateway.'=true'));
 		?>
             <tr>
                 <td valign="top">
@@ -167,7 +165,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 
 			//assemble the description and totals.
 			$item_num = 1;
-			$registration = $session_data['cart']['REG']['items'];
+			$registrations = $session_data['cart']['REG']['items'];
 			$description = '';
 			
 			foreach ($registrations as $registration) {
@@ -188,36 +186,41 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			$amount_pd = $total;
 
 			//setup transaction
-			$amount_pd = $grand_total;
-			$cc = $billing_info['reg-page-billing-card-nmb']['value'];
+			$cc = $billing_info['reg-page-billing-card-nmbr']['value'];
 			$csc = $billing_info['reg-page-billing-card-ccv-code']['value'];
 			$exp_month = $billing_info['reg-page-billing-card-exp-date-mnth']['value'];
 			$exp_year = $billing_info['reg-page-billing-card-exp-date-year']['value'];
 			$bname = $billing_info['reg-page-billing-fname']['value'].' '.$billing_info['reg-page-billing-lname']['value'];
 			
-			$item_num = 1;
+			// Note that this is only valid until expiration years reach 2100, but by then I'll be dead, so sue me.
 			$response = $cls_stripe->do_transaction($amount_pd, $cc, $csc, $exp_month, $exp_year, $bname, $description, $stripe_settings);
 
 			if ( isset($response['status']) )
 			{
 
-				$payment_data->txn_id = $response['txid'];
-				$payment_data->payment_status = ( $response['status'] > 0 ) ? 'Approved' : 'Declined';
+				if ( $response['status'] > 0 ) {
+					$payment_status =  'Approved';
+					$approval = $response['status'];
+					$txid = $response['txid'];
+				} else {
+					$payment_status =  'Declined';
+					$approval = 0;
+					$txid = '';
+				}
 
-				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
 
 				$txn_results = array(
 					'gateway' => $this->_payment_settings['display_name'],
-					'approved' => ( $response['status'] > 0 ) ? $response['status'] : 0,
-					'status' => $payment_data->payment_status,
+					'approved' => $approval,
+					'status' => $payment_status,
 					'response_msg' => $response['msg'],
 					'amount' => $amount_pd,
 					'method' => '',
 					'card_type' => '',
 					'auth_code' => '',
 					'md5_hash' => '',
-					'transaction_id' => $response['txid'],
-					'invoice_number' => $response['txid'],
+					'transaction_id' => $txid,
+					'invoice_number' => $txid,
 					'raw_response' => $response
 					);
 
@@ -232,9 +235,6 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 		}
 	}
 
-	public function espresso_process_off_site_payment() {
-
-	}	
 
 	public function espresso_display_payment_gateways() {
 		global $css_class;
@@ -313,7 +313,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 				&nbsp;/&nbsp;
 				<select id="reg-page-billing-card-exp-date-year" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year">
 					<?php
-					$current_year = date('y');
+					$current_year = date('Y');
 					$next_decade = $current_year + 10;
 					for ($x = $current_year; $x <= $next_decade; $x++) {
 						$value = $x < 10 ? '0' . $x : $x;
@@ -335,10 +335,8 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 		<?php
 	}
 
-	public function espresso_reg_page_billing_inputs_stripe() {
+	public function espresso_reg_page_billing_inputs() {
 		$reg_page_billing_inputs = array(
-				'type' => 'onsite',
-				'gateway' => 'Stripe',
 				'reg-page-billing-fname' => array(
 						'db-col' => 'fname',
 						'label' => __('First Name', 'event_espresso'),

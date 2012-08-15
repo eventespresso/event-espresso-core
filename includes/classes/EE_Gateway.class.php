@@ -266,17 +266,6 @@ abstract class EE_Gateway {
 		$this->_set_session_data();
 	}
 
-/*	protected function _update_actions() {
-		if ($this->_selected) {
-			if (!has_action('action_hook_espresso_gateway_process_step_3', array(&$this, 'espresso_gateway_process_step_3'))) {
-				add_action('action_hook_espresso_gateway_process_step_3', array(&$this, 'espresso_gateway_process_step_3'));
-			}
-		} else {
-			if (has_action('action_hook_espresso_gateway_process_step_3', array(&$this, 'espresso_gateway_process_step_3'))) {
-				remove_action('action_hook_espresso_gateway_process_step_3', array(&$this, 'espresso_gateway_process_step_3'));
-			}
-		}
-	}*/
 
 	protected function _reset_button_url() {
 		global $espresso_notices;

@@ -8,8 +8,12 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	protected $_billing_info_credit_card_fields = array();
 	// list of fields required for capturing other information
 	protected $_billing_info_other_fields = array();
+	
+	abstract public function espresso_reg_page_billing_inputs();
 
 	protected function __construct(EEM_Gateways &$model) {
+		// this filter allows whatever function is processing the registration page to know what inputs to expect
+		add_filter('filter_hook_espresso_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
 		parent::__construct($model);
 	}
 	
@@ -142,7 +146,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 * 		@access public
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
-	public function process_gateway_selection() {	
+	public function process_gateway_selection() {
 	
 		global $EE_Session, $espresso_notices;
 		// set  billing inputs in the individual gateways plz
@@ -177,18 +181,25 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
+		$confirm_inputs = array(
+				'first name'=>'fname',
+				'last name'=>'lname',
+				'email address'=>'email',
+				'address'=>'address',
+				'city'=>'city',
+				'state'=>'state',
+				'country'=>'country',
+				'zip'=>'zip',
+				'ccv code'=>'ccv-code'
+				);
 		$confirm_data = array();
-		$confirm_data['first name'] = $billing_info['reg-page-billing-fname']['value'];
-		$confirm_data['last name'] = $billing_info['reg-page-billing-lname']['value'];
-		$confirm_data['email address'] = $billing_info['reg-page-billing-email']['value'];
-		$confirm_data['address'] = $billing_info['reg-page-billing-address']['value'];
-		$confirm_data['city'] = $billing_info['reg-page-billing-city']['value'];
-		$confirm_data['state'] = $billing_info['reg-page-billing-state']['value'];
-		$confirm_data['country'] = $billing_info['reg-page-billing-country']['value'];
-		$confirm_data['zip'] = $billing_info['reg-page-billing-zip']['value'];
+		foreach ($confirm_inputs as $confirm_name=>$billing_name) {
+			if(!empty($billing_info['reg-page-billing-'.$billing_name]['value'])) {
+				$confirm_data[$confirm_name] = $billing_info['reg-page-billing-'.$billing_name]['value'];
+			}
+		}
 		$confirm_data['credit card #'] = $this->_EEM_Gateways->FormatCreditCard( $billing_info['reg-page-billing-card-nmbr']['value'] );
 		$confirm_data['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . '&nbsp;/&nbsp;' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
-		$confirm_data['ccv code'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
 		return $confirm_data;
 	}
 

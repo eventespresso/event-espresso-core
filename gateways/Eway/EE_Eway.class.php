@@ -229,7 +229,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		$myeway->addField('MerchantOption3', '');
 		$myeway->addField('ModifiableCustomerDetails', 'false');
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($myeway)));
-		$this->_EEM_Gateways->set_off_site_form($myeway->submitPayment());
+		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 	}
 
 	public function espresso_process_off_site_payment() {

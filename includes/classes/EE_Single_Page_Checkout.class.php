@@ -249,13 +249,6 @@ class EE_Single_Page_Checkout {
 					break;
 
 
-				case 'registration_complete' :
-					remove_all_actions('action_hook_espresso_regevent_default_action');
-					remove_all_actions('action_hook_espresso_event_registration');
-					//$this->registration_complete();
-					$this->process_registration_payment();
-					break;
-
 				default :
 					// empty cart or else items build up indefinately
 					// $cart_total = $this->cart->get_cart_grand_totals();

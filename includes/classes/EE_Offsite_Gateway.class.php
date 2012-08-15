@@ -2,27 +2,14 @@
 
 abstract class EE_Offsite_Gateway extends EE_Gateway {
 
+	protected $_gatewayURL = NULL;
+	
 	abstract public function espresso_process_off_site_payment();
 	
 	protected function __construct(EEM_Gateways &$model) {
 		parent::__construct($model);
 	}
 	
-//	protected function _update_actions() {
-//		parent::_update_actions();
-//		if ($this->_selected) {
-//			if (!has_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'))) {
-//				add_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'));
-//			}
-//		} else {
-//			if (has_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'))) {
-//				remove_action('action_hook_espresso_process_off_site_payment', array(&$this, 'espresso_process_off_site_payment'));
-//			}
-//		}
-//	}
-
-
-
 	/**
 	 * 		process_gateway_selection()
 	 * 		@access public
@@ -69,5 +56,43 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 
 	}
 
+	/**
+		 * Adds a key=>value pair to the fields array
+		 *
+		 * @param string key of field
+		 * @param string value of field
+		 * @return
+		 */
+		public function addField($field, $value) {
+			$this->fields["$field"] = $value;
+		}
 
+	/**
+		 * Submit Payment Request (redirect)
+		 *
+		 * Generates a form with hidden elements from the fields array
+		 * and submits it to the payment gateway URL. The user is presented
+		 * a redirecting message along with a button to click.
+		 *
+		 * @param string value of buttn text
+		 * @return void
+		 */
+		public function submitPayment() {
+			$pre_form = "<html>\n";
+			$pre_form .= "<head><title>Processing Payment...</title></head>\n";
+			$pre_form .= "<body>\n";
+			$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
+			$form .= "<form method=\"POST\" name=\"gateway_form\" ";
+			$form .= "action=\"" . $this->_gatewayUrl . "\">\n";
+			foreach ($this->fields as $name => $value) {
+				$form .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
+			}
+			$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
+			$form .= "the payment website within 10 seconds...<br/><br/>\n";
+			$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+			$form .= "</form>\n";
+			$post_form = "</body></html>\n";
+			return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
+			
+		}
 }
