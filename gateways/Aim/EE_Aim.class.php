@@ -363,11 +363,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		<?php
 	}
 
-	public function espresso_reg_page_billing_inputs_aim() {
+	public function espresso_reg_page_billing_inputs() {
 
 		$reg_page_billing_inputs = array(
-				'type' => 'onsite',
-				'gateway' => 'Authorize.Net AIM',
 				'reg-page-billing-fname' => array(
 						'db-col' => 'fname',
 						'label' => __('First Name', 'event_espresso'),
