@@ -50,9 +50,7 @@ abstract class EE_Gateway {
 	abstract protected function _update_settings();
 	abstract protected function _display_settings();
 	abstract public function espresso_display_payment_gateways();
-	abstract public function process_reg_step_3();
 	
-
 	protected function __construct(EEM_Gateways &$model) {
 
 		//echo '<h4>$this->_gateway : ' . $this->_gateway . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -70,6 +68,10 @@ abstract class EE_Gateway {
 		} else {
 			$this->_gateways_frontend();
 		}
+	}
+	
+	public function process_reg_step_3(){
+		return array('success'=>TRUE);
 	}
 
 	protected function _set_default_properties() {
