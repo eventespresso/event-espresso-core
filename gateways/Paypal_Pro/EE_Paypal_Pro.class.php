@@ -592,6 +592,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		
 		}  // end if ($billing_info != 'no payment required')
 		
+		return array('success'=>TRUE);
+		
 	}
 
 

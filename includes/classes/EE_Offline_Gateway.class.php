@@ -2,7 +2,6 @@
 
 abstract class EE_Offline_Gateway extends EE_Gateway {
 
-	abstract public function espresso_process_off_site_payment();
 
 	protected function __construct(EEM_Gateways &$model) {
 		parent::__construct($model);
@@ -30,10 +29,6 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$confirm_data = array();
 		$confirm_data['gateway'] = $this->_EEM_Gateways->display_name();
 		return $confirm_data;
-	}
-
-	public function process_reg_step_3() {
-
 	}
 
 	public function thank_you_page() {

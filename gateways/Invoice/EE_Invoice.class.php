@@ -221,7 +221,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 	}
 
 
-	public function espresso_process_off_site_payment() {
+	public function thank_you_page() {
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );

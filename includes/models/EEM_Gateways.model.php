@@ -919,11 +919,18 @@ Class EEM_Gateways {
 					'method' => 'none'
 			);
 			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
+			$response = array(
+					'msg' => array('success'=>TRUE),
+					'forward_url' => $this->_get_return_page_url()
+			);
 
 		} else {
-			$this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3();
+			$response = array(
+					'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
+					'forward_url' => $this->_get_return_page_url()
+				);
 		}
-		return $return_page_url;
+		return $response;
 	}	
 
 		/**

@@ -1206,8 +1206,9 @@ class EE_Single_Page_Checkout {
 //			printr( $session2, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
 			// attempt to perform transaction via payment gateway
-				$this->_return_page_url = $this->gateways->process_reg_step_3();				
-			
+				$response = $this->gateways->process_reg_step_3();
+				$this->_return_page_url = $response['forward_url'];
+				$success_msg = $response['msg']['success'];
 		}
 		
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {

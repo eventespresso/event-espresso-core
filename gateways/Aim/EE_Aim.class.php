@@ -244,8 +244,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			// no payment required
 		}
 
-		// return ? or redirect ?
-		// we need to update the registration and transaction tables
+		return array('success'=>TRUE);
 	}
 
 	public function espresso_process_off_site_payment() {

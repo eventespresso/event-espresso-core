@@ -233,7 +233,9 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 		} else {
 
 		}
-		parent::process_reg_step_3($return_page_url);
+		
+		return array('success'=>TRUE);
+		
 	}
 
 
