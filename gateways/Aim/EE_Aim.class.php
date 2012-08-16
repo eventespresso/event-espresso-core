@@ -56,20 +56,11 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	}
 
 	protected function _update_settings() {
-		if (isset($_POST['update_authnet_aim']) && check_admin_referer('espresso_form_check', 'add_authnet_aim_settings')) {
-			global $espresso_notices;
 			$this->_payment_settings['authnet_aim_login_id'] = $_POST['authnet_aim_login_id'];
 			$this->_payment_settings['authnet_aim_transaction_key'] = $_POST['authnet_aim_transaction_key'];
 			$this->_payment_settings['test_transactions'] = $_POST['test_transactions'];
 			$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
 			$this->_payment_settings['button_url'] = $_POST['button_url'];
-
-			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway, $this->_payment_settings)) {
-				$espresso_notices['success'][] = __('Authorize AIM Payment Settings Updated!', 'event_espresso');
-			} else {
-				$espresso_notices['errors'][] = __('Authorize AIM Payment Settings were not saved! ', 'event_espresso');
-			}
-		}
 	}
 
 	protected function _display_settings() {
@@ -219,7 +210,6 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 				$payment_status = $response->approved ? 'Approved' : 'Declined';
 			}
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data->payment_status);
 
 			$txn_results = array(
 					'gateway' => $this->_payment_settings['display_name'],
