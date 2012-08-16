@@ -55,6 +55,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 					'return_data' => array('off-site-redirect' => $form_data['form'])
 			);
 			echo json_encode($response_data);
+			die();
 		} else {
 			$form_data = $this->_EEM_Gateways->off_site_form();
 			echo $form_data['pre-form'] . $form_data['form'] . $form_data['post-form'];

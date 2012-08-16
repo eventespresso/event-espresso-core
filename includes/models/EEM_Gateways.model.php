@@ -178,7 +178,8 @@ Class EEM_Gateways {
 				}
 				if (class_exists($classname)) {
 					//$gateway = $classname::instance($this);
-					$gateway = call_user_func(array($classname, 'instance'), &$this);
+					$that = &$this;
+					$gateway = call_user_func(array($classname, 'instance'), $that);
 					$this->_gateway_instances[$gateway->gateway()] = $gateway;
 				}
 			}
@@ -231,7 +232,8 @@ Class EEM_Gateways {
 			}
 
 			if (class_exists($classname)) {
-				$gateway = call_user_func(array($classname, 'instance'), &$this);
+				$that = &$this;
+				$gateway = call_user_func(array($classname, 'instance'), $that);
 				$this->_gateway_instances[$gateway->gateway()] = $gateway;
 			}
 		}
@@ -616,7 +618,8 @@ Class EEM_Gateways {
 		}
 
 		if (class_exists($classname)) {
-			$invoice = call_user_func(array($classname, 'instance'), &$this);
+			$that = &$this;
+			$invoice = call_user_func(array($classname, 'instance'), $that);
 			$invoice->send_invoice($id);
 			return TRUE;
 		} else {
