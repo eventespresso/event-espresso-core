@@ -266,7 +266,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		$this->redirect_after_reg_step_3();
 	}
 
-	public function espresso_process_off_site_payment() {
+	public function thank_you_page() {
 
 		global $EE_Session;
 		$txn_details = array(
@@ -295,6 +295,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		} else {
 			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
 		}
+		parent::thank_you_page();
 	}
 
 	public function espresso_display_payment_gateways() {

@@ -4,8 +4,6 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 
 	protected $_gatewayURL = NULL;
 	
-	abstract public function espresso_process_off_site_payment();
-	
 	protected function __construct(EEM_Gateways &$model) {
 		parent::__construct($model);
 	}
@@ -19,11 +17,6 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		global $espresso_notices;
 		$espresso_notices['success'][] = __('Off-site gateway selected', 'event_espresso');
 	}
-
-	public function thank_you_page() {
-		$this->_EEM_Gateways->process_registration_payment();
-	}
-
 
 	/**
 	 * 		set_billing_info_for_confirmation

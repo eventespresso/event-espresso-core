@@ -226,21 +226,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$session_data = $EE_Session->get_session_data();
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Registration.class.php' );
 		$registration = $session_data['registration'][$session_data['primary_attendee']['line_item_id']];
-
-		$txn_details = array(
-				'gateway' => $this->_payment_settings['display_name'],
-				'approved' => FALSE,
-				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
-				'status' => 'Incomplete',
-				'raw_response' => serialize($_REQUEST),
-				'amount' => 0.00,
-				'method' => 'Off-line',
-				'auth_code' => '',
-				'md5_hash' => '',
-				'invoice_number' => '',
-				'transaction_id' => ''
-		);
-		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+		$this->set_transaction_details();
 
 		if (!$this->_payment_settings['show'])
 			return;

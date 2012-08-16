@@ -31,7 +31,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		return $confirm_data;
 	}
 
-	public function thank_you_page() {
+	public function set_transaction_details() {
 		global $EE_Session;
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 
@@ -39,10 +39,29 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		$session = $EE_Session->get_session_data();
 
 		$transaction = $session['transaction'];
-		$txn_results = $session['txn_results'];
+		$txn_results = array(
+				'gateway' => $this->_payment_settings['display_name'],
+				'approved' => FALSE,
+				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
+				'status' => 'Incomplete',
+				'raw_response' => serialize($_REQUEST),
+				'amount' => 0.00,
+				'method' => 'Off-line',
+				'auth_code' => '',
+				'md5_hash' => '',
+				'invoice_number' => '',
+				'transaction_id' => ''
+		);
+		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_details( $txn_results );
+		$txn_status = 'TOP';
+		$transaction->set_status($txn_status);
 		unset( $session['transaction'] );
 		$transaction->set_session_data( $session );
+		if (isset($session['taxes'])) {
+			$tax_data = array('taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals']);
+			$transaction->set_tax_data($tax_data);
+		}
 		$transaction->update();
 	}
 	
