@@ -28,9 +28,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	const LIVE_URL = 'https://secure.authorize.net/gateway/transact.dll'; //Authnet URL
 	const SANDBOX_URL = 'https://test.authorize.net/gateway/transact.dll';
-	public $VERIFY_PEER = false;
+	private $VERIFY_PEER = false;
 	
-	protected $_x_post_fields = array(
+	private $_x_post_fields = array(
 			"version" => "3.1",
 			"delim_char" => ",",
 			"delim_data" => "TRUE",

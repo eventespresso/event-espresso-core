@@ -28,6 +28,20 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 
 	private static $_instance = NULL;
 
+	private $_x_post_fields = array(
+			"x_Version" => "3.0",
+			"x_Show_Form" => "PAYMENT_FORM",
+			"x_Relay_Response" => "TRUE"
+	);
+	private $_x_line_items = array();
+
+	/**
+	 * IPN post values as array
+	 *
+	 * @var array
+	 */
+	private $ipnData = array();
+
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
@@ -40,7 +54,8 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Authnet';
 		$this->_button_base = 'btn_cc_vmad.gif';
-		$this->_path = str_replace( '\\', '/', __FILE__ );
+		$this->_path = str_replace('\\', '/', __FILE__);
+		$this->_gatewayUrl = 'https://secure.authorize.net/gateway/transact.dll';
 		parent::__construct($model);
 	}
 
@@ -50,6 +65,8 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$this->_payment_settings['image_url'] = '';
 		$this->_payment_settings['use_sandbox'] = false;
 		$this->_payment_settings['test_transactions'] = false;
+		$this->_payment_settings['use_md5'] = false;
+		$this->_payment_settings['authnet_md5_value'] = '';
 		$this->_payment_settings['type'] = 'off-site';
 		$this->_payment_settings['display_name'] = 'Authorize.net SIM';
 		$this->_payment_settings['current_path'] = '';
@@ -60,6 +77,8 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$this->_payment_settings['authnet_transaction_key'] = sanitize_text_field($_POST['authnet_transaction_key']);
 		$this->_payment_settings['test_transactions'] = empty($_POST['test_transactions']) ? FALSE : TRUE;
 		$this->_payment_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? FALSE : TRUE;
+		$this->_payment_settings['use_md5'] = empty($_POST['use_md5']) ? false : true;
+		$this->_payment_settings['authnet_md5_value'] = $_POST['authnet_md5_value'];
 		$this->_payment_settings['button_url'] = sanitize_text_field($_POST['button_url']);
 		$this->_payment_settings['image_url'] = sanitize_text_field($_POST['image_url']);
 	}
@@ -138,6 +157,20 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_test_transactions') ?>
 				</label></th>
 			<td><?php echo select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
+		</tr>
+		<tr>
+			<th><label for="use_md5">
+					<?php _e('Use md5 check to secure payment response', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_use_md5'); ?>
+				</label></th>
+			<td><?php echo select_input('use_md5', $this->_yes_no_options, $this->_payment_settings['use_md5']); ?></td>
+		</tr>
+		<tr>
+			<th><label for="authnet_md5_value">
+					<?php _e('Authorize.net MD5 Hash value', 'event_espresso'); ?>
+					<?php echo apply_filters('filter_hook_espresso_help', 'authnet_md5_value') ?>
+				</label></th>
+			<td><input class="regular-text" type="text" name="authnet_md5_value" id="authnet_md5_value" size="35" value="<?php echo $this->_payment_settings['authnet_md5_value']; ?>"></td>
 		</tr>
 
 		<?php
@@ -309,32 +342,22 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 
 		global $org_options, $EE_Session;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		// Setup class
-		include_once ('lib/Authorize.php');
-		$myAuthorize = new EE_Authorize(); // initiate an instance of the class
 
 		$session_data = $EE_Session->get_session_data();
-		$authnet_login_id = $this->_payment_settings['authnet_login_id'];
-		$authnet_transaction_key = $this->_payment_settings['authnet_transaction_key'];
-		$image_url = $this->_payment_settings['image_url'];
-		$use_sandbox = $this->_payment_settings['use_sandbox'];
-		$use_testmode = $this->_payment_settings['test_transactions'];
-		if ($use_testmode == true) {
+		if ($this->_payment_settings['test_transactions']) {
 			// Enable test mode if needed
 			$this->addField('x_Test_Request', 'TRUE');
 		}
-		if ($use_sandbox == true) {
+		if ($this->_payment_settings['use_sandbox']) {
 			// Enable test mode if needed
 			$this->_gatewayUrl = 'https://test.authorize.net/gateway/transact.dll';
 		}
 
-		$myAuthorize->setUserInfo($authnet_login_id, $authnet_transaction_key);
-		$x_line_item = array();
 		$item_num = 1;
 		$registrations = $session_data['cart']['REG']['items'];
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
-				$x_line_item[] = 'item' . $item_num . '<|>' . $registration['name'] . '<|>' . $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'] . '<|>1<|>' . $attendee['price_paid'] . '<|>N&';
+				$this->_x_line_items[] = 'item' . $item_num . '<|>' . $registration['name'] . '<|>' . $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'] . '<|>1<|>' . $attendee['price_paid'] . '<|>N&';
 				$item_num++;
 			}
 		}
@@ -343,29 +366,55 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		if (isset($session_data['tax_totals'])) {
 			foreach ($session_data['tax_totals'] as $key => $taxes) {
 				$total = $total + $taxes;
-				$x_line_item[] = 'item' . $item_num . '<|>' . $session_data['taxes'][$key]['name'] . '<|>' . 'Tax' . '<|>1<|>' . $taxes . '<|>N&';
+				$this->_x_line_items[] = 'item' . $item_num . '<|>' . $session_data['taxes'][$key]['name'] . '<|>' . 'Tax' . '<|>1<|>' . $taxes . '<|>N&';
 				$item_num++;
 			}
 		}
 
-		$myAuthorize->addField('x_line_item', $x_line_item);
-		$myAuthorize->addField('x_Relay_URL', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
-		$myAuthorize->addField('x_Amount', number_format($total, 2));
-		$myAuthorize->addField('x_Logo_URL', $image_url);
-		$myAuthorize->addField('x_Invoice_num', 'au-' . $session_data['id']);
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($myAuthorize)));
+		$this->_x_post_fields['x_Relay_URL'] = home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment';
+		$this->_x_post_fields['x_Amount'] = number_format($total, 2);
+		$this->_x_post_fields['x_Logo_URL'] = $this->_payment_settings['image_url'];
+		$this->_x_post_fields['x_Invoice_num'] = 'au-' . $session_data['id'];
+		$this->_x_post_fields['x_fp_timestamp'] = time();
+		$this->_x_post_fields['x_Login'] = $this->_payment_settings['authnet_login_id'];
+		$this->_x_post_fields['x_fp_sequence'] = 'au-' . $session_data['id'];
+		$data = $this->_payment_settings['authnet_login_id'] . '^' . $this->_x_post_fields['x_Invoice_num'] . '^' . $this->_x_post_fields['x_fp_timestamp'] . '^' . $this->_x_post_fields['x_Amount'] . '^';
+		if (phpversion() >= '5.1.2') {
+			$this->_x_post_fields['x_fp_hash'] = hash_hmac("md5", $data, $this->_payment_settings['authnet_transaction_key']);
+		} else {
+			$this->_x_post_fields['x_fp_hash'] = bin2hex(mhash(MHASH_MD5, $data, $this->_payment_settings['authnet_transaction_key']));
+		}
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+		$this->redirect_after_reg_step_3();
 	}
 
-	public function espresso_process_off_site_payment() {
+	protected function _output_inputs() {
+		$output = '';
+		foreach ($this->_x_line_items as $x_line_item) {
+			$output .= "<input type=\"hidden\" name=\"x_line_item\" value=\"$x_line_item\"/>\n";
+		}
+		foreach ($this->_x_post_fields as $name => $value) {
+			$output .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
+		}
+		return $output;
+	}
+
+	public function thank_you_page() {
 		global $EE_Session;
 
-		// Include the authorize.net library
-		include_once ('lib/Authorize.php');
-		$myAuthorize = new EE_Authorize();
+		$expected_fields = array(
+				'x_method',
+				'x_auth_code',
+				'x_MD5_Hash',
+				'x_invoice_num',
+				'x_trans_id',
+				'x_amount',
+				'x_response_code'
+		);
 
-// Log the IPN results
-		$myAuthorize->ipnLog = TRUE;
+		foreach ($expected_fields as $field) {
+			$this->ipnData["$field"] = empty($_POST[$field]) ? '' : $_POST[$field];
+		}
 
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
@@ -374,87 +423,45 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 				'status' => 'Incomplete',
 				'raw_response' => serialize($_POST),
 				'amount' => 0.00,
-				'method' => sanitize_text_field($_POST['x_method']),
-				'auth_code' => sanitize_text_field($_POST['x_auth_code']),
-				'md5_hash' => sanitize_text_field($_POST['x_MD5_Hash']),
-				'invoice_number' => sanitize_text_field($_POST['x_invoice_num']),
-				'transaction_id' => sanitize_text_field($_POST['x_invoice_num'])
+				'method' => sanitize_text_field($this->ipnData['x_method']),
+				'auth_code' => sanitize_text_field($this->ipnData['x_auth_code']),
+				'md5_hash' => sanitize_text_field($this->ipnData['x_MD5_Hash']),
+				'invoice_number' => sanitize_text_field($this->ipnData['x_invoice_num']),
+				'transaction_id' => sanitize_text_field($this->ipnData['x_invoice_num'])
 		);
-		$authnet_login_id = $this->_payment_settings['authnet_login_id'];
-		$authnet_transaction_key = $this->_payment_settings['authnet_transaction_key'];
 
-// Enable test mode if needed
-//4007000000027  <-- test successful visa
-//4222222222222  <-- test failure card number
-		if ($this->_payment_settings['use_sandbox']) {
-			$myAuthorize->enableTestMode();
+		$md5source = $this->_payment_settings['authnet_md5_value'] . $this->_payment_settings['authnet_login_id'] . $this->ipnData['x_trans_id'] . $this->ipnData['x_amount'];
+		$md5 = md5($md5source);
+
+		if ($this->_payment_settings['use_md5'] && strtoupper($md5) != $this->ipnData['x_MD5_Hash']) {
+			$txn_details['response_msg'] = __('There was an MD5 mismatch. Contact the website administrator.', 'event_espresso');
+			$txn_details['status'] = 'Declined';
+		} elseif ($this->ipnData['x_response_code'] == 1) {
+			$txn_details['approved'] = TRUE;
+			$txn_details['amount'] = floatval($_REQUEST['x_amount']);
+			$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
+			$txn_details['status'] = 'Approved';
 		}
+		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
 
-// Specify your authorize login and secret
-		$myAuthorize->setUserInfo($authnet_login_id, $authnet_transaction_key);
-
-// Check validity and write down it
-		if ($myAuthorize->validateIpn()) {
-
-			if ($myAuthorize->ipnData['x_response_code'] == 1) {
-				$txn_details['approved'] = TRUE;
-				$txn_details['amount'] = floatval($_REQUEST['x_amount']);
-				$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
-				$txn_details['status'] = 'Approved';
-			}
-			$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
-
-			if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
-				do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
-			} else {
-				do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
-			}
+		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
+			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
+		} else {
+			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
 		}
+		parent::thank_you_page();
 	}
 
 	public function espresso_display_payment_gateways() {
 		echo $this->_generate_payment_gateway_selection_button();
 		?>
-		
+
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
-		<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the Authorize.net website where your payment will be securely processed.', 'event_espresso'); ?>
+			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the Authorize.net website where your payment will be securely processed.', 'event_espresso'); ?>
 		</div>
 
 		<?php
-	}
-	
-	public function submitPayment() {
-		$this->addField('x_Login', $this->login);
-		$this->addField('x_fp_sequence', $this->fields['x_Invoice_num']);
-		$this->addField('x_fp_timestamp', time());
-		$data = $this->fields['x_Login'] . '^' .
-				$this->fields['x_Invoice_num'] . '^' .
-				$this->fields['x_fp_timestamp'] . '^' .
-				$this->fields['x_Amount'] . '^';
-		$this->addField('x_fp_hash', $this->hmac($this->secret, $data));
-		$pre_form = "<html>\n";
-		$pre_form .= "<head><title>Processing Payment...</title></head>\n";
-		$pre_form .= "<body>\n";
-		$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
-		$form .= "<form method=\"POST\" name=\"gateway_form\" ";
-		$form .= "action=\"" . $this->gatewayUrl . "\">\n";
-		foreach ($this->fields as $name => $value) {
-			if ($name == 'x_line_item') {
-				foreach ($value as $line_item) {
-					$form .= "<input type=\"hidden\" name=\"x_line_item\" value=\"$line_item\"/>\n";
-				}
-			} else {
-				$form .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
-			}
-		}
-		$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
-		$form .= "the payment website within 10 seconds...<br/><br/>\n";
-		$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
-		$form .= "</form>\n";
-		$post_form = "</body></html>\n";
-		return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
-
 	}
 
 }

@@ -85,15 +85,20 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 			$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
 			$form .= "<form method=\"POST\" name=\"gateway_form\" ";
 			$form .= "action=\"" . $this->_gatewayUrl . "\">\n";
-			foreach ($this->fields as $name => $value) {
-				$form .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
-			}
+			$form .= $this->_output_inputs();
 			$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
 			$form .= "the payment website within 10 seconds...<br/><br/>\n";
 			$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
 			$form .= "</form>\n";
 			$post_form = "</body></html>\n";
 			return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
-			
+		}
+		
+		protected function _output_inputs() {
+			$output = '';
+			foreach ($this->fields as $name => $value) {
+				$output .= "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
+			}
+			return $output;
 		}
 }
