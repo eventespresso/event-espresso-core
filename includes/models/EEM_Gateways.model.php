@@ -997,7 +997,13 @@ Class EEM_Gateways {
 	}
 		
 	public function thank_you_page() {
-		$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
+		global $EE_Session;
+		$session_data = $EE_Session->get_session_data();
+		if (empty($session_data['txn_results']['approved'])
+						&& !empty($this->_selected_gateway)
+						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
+			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
+		}
 	}
 	
 }

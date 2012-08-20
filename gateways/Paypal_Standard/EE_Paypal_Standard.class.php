@@ -28,7 +28,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 	private static $_instance = NULL;
 
-
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
@@ -41,9 +40,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = 'Paypal_Standard';
 		$this->_button_base = 'paypal.gif';
-		$this->_path = str_replace( '\\', '/', __FILE__ );
+		$this->_path = str_replace('\\', '/', __FILE__);
 		$this->gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
-		$this->addField('rm', '2');		   // Return method = POST
+		$this->addField('rm', '2');		 // Return method = POST
 		$this->addField('cmd', '_xclick');
 		parent::__construct($model);
 	}
@@ -323,53 +322,52 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->addField('no_shipping ', $no_shipping);
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+		$this->redirect_after_reg_step_3();
 	}
 
-	public function espresso_process_off_site_payment() {
-		global $EE_Session;die();
-		$session_data = $EE_Session->get_session_data();
-		if (empty($session_data['session_data']['txn_results']['approved'])) {
-			$txn_details = array(
-					'gateway' => $this->_payment_settings['display_name'],
-					'approved' => FALSE,
-					'response_msg' => __('You\'re registration has not been completed successfully.', 'event_espresso'),
-					'status' => 'Incomplete',
-					'raw_response' => serialize($_POST),
-					'amount' => 0.00,
-					'method' => sanitize_text_field($_POST['txn_type']),
-					'auth_code' => sanitize_text_field($_POST['payer_id']),
-					'md5_hash' => sanitize_text_field($_POST['verify_sign']),
-					'invoice_number' => sanitize_text_field($_POST['invoice_id']),
-					'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
-			);
-			$this->ipnLog = TRUE;
-			if ($this->_payment_settings['use_sandbox']) {
-				$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-			}
-			if ($this->validateIpn()) {
-				$txn_details['raw_response'] = serialize($this->ipnData);
-				$txn_details['transaction_id'] = $this->ipnData['txn_id'];
-				if ($this->ipnData['payment_status'] == 'Completed' || $this->ipnData['payment_status'] == 'Pending') {
-					$txn_details['approved'] = TRUE;
-					$txn_details['amount'] = floatval($_REQUEST['mc_gross']);
-					$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
-					$txn_details['status'] = 'Approved';
-				}
-			}
-			$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
-
-			if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
-				do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
-			} else {
-				do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
+	public function thank_you_page() {
+		global $EE_Session;
+		$txn_details = array(
+				'gateway' => $this->_payment_settings['display_name'],
+				'approved' => FALSE,
+				'response_msg' => __('You\'re registration has not been completed successfully.', 'event_espresso'),
+				'status' => 'Incomplete',
+				'raw_response' => serialize($_POST),
+				'amount' => 0.00,
+				'method' => sanitize_text_field($_POST['txn_type']),
+				'auth_code' => sanitize_text_field($_POST['payer_id']),
+				'md5_hash' => sanitize_text_field($_POST['verify_sign']),
+				'invoice_number' => sanitize_text_field($_POST['invoice_id']),
+				'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
+		);
+		$this->ipnLog = TRUE;
+		if ($this->_payment_settings['use_sandbox']) {
+			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+		}
+		if ($this->validateIpn()) {
+			$txn_details['raw_response'] = serialize($this->ipnData);
+			$txn_details['transaction_id'] = $this->ipnData['txn_id'];
+			if ($this->ipnData['payment_status'] == 'Completed' || $this->ipnData['payment_status'] == 'Pending') {
+				$txn_details['approved'] = TRUE;
+				$txn_details['amount'] = floatval($_REQUEST['mc_gross']);
+				$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
+				$txn_details['status'] = 'Approved';
 			}
 		}
+		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+
+		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
+			do_action('action_hook_espresso_mail_successful_transaction_debugging_output');
+		} else {
+			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
+		}
+		parent::thank_you_page();
 	}
 
 	public function espresso_display_payment_gateways() {
 		echo $this->_generate_payment_gateway_selection_button();
 		?>
-		
+
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the PayPal.com website where your payment will be securely processed.', 'event_espresso'); ?>
@@ -405,7 +403,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 			$req .= 'cmd=_notify-validate';
 			$url = $this->_gatewayUrl;
-			$ch = curl_init();	// Starts the curl handler
+			$ch = curl_init(); // Starts the curl handler
 			$error = array();
 			$error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the paypal address for curl
 			$error["set_fail_on_error"] = curl_setopt($ch, CURLOPT_FAILONERROR, 1);
@@ -491,6 +489,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 		}
 	}
+
 }
 
 //end class
