@@ -280,10 +280,6 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		}
 	}
 
-	public function espresso_process_off_site_payment() {
-		
-	}
-
 	public function espresso_display_payment_gateways() {
 
 		global $css_class;

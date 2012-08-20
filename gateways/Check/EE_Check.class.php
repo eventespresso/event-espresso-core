@@ -54,13 +54,13 @@ Class EE_Check extends EE_Offline_Gateway {
 		$default_address .= $org_options['organization_country'] != '' ? getCountryName($org_options['organization_country']) . '<br />' : '';
 		$default_address .= $org_options['organization_zip'] != '' ? $org_options['organization_zip'] : '';
 		$this->_payment_settings = array(
-			'check_title' => __('Check/Money Order Payments', 'event_espresso'),
-			'check_instructions' => __('Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.', 'event_espresso'),
-			'payable_to' => $org_options['organization'],
-			'payment_address' => $default_address,
-			'display_name' => 'Check',
-			'type' => 'off-line',
-			'current_path' => ''
+				'check_title' => __('Check/Money Order Payments', 'event_espresso'),
+				'check_instructions' => __('Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.', 'event_espresso'),
+				'payable_to' => $org_options['organization'],
+				'payment_address' => $default_address,
+				'display_name' => 'Check',
+				'type' => 'off-line',
+				'current_path' => ''
 		);
 	}
 
@@ -75,57 +75,24 @@ Class EE_Check extends EE_Offline_Gateway {
 	protected function _display_settings() {
 		?>
 		<tr>
-				<td valign="top"><ul><li><label for="check_title"><?php _e('Title:', 'event_espresso'); ?></label><br />
-							<input class="regular-text" type="text" name="check_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['check_title']); ?>" />
-						</li>
-						<li><label for="check_instructions"><?php _e('Payment Instructions:', 'event_espresso'); ?></label><br />
-							<textarea name="check_instructions" cols="30" rows="5"><?php echo stripslashes_deep($this->_payment_settings['check_instructions']); ?></textarea>
-						</li></ul></td>
-				<td valign="top"><ul><li><label for="payable_to"><?php _e('Payable To:', 'event_espresso'); ?></label><br />
-							<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['payable_to']); ?>" />
-						</li>
-						<li><label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label><br />
-							<textarea name="payment_address" cols="30" rows="5"><?php echo $this->_payment_settings['payment_address']; ?></textarea>
-						</li></ul></td>
-			</tr>
+			<td valign="top"><ul><li><label for="check_title"><?php _e('Title:', 'event_espresso'); ?></label><br />
+						<input class="regular-text" type="text" name="check_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['check_title']); ?>" />
+					</li>
+					<li><label for="check_instructions"><?php _e('Payment Instructions:', 'event_espresso'); ?></label><br />
+						<textarea name="check_instructions" cols="30" rows="5"><?php echo stripslashes_deep($this->_payment_settings['check_instructions']); ?></textarea>
+					</li></ul></td>
+			<td valign="top"><ul><li><label for="payable_to"><?php _e('Payable To:', 'event_espresso'); ?></label><br />
+						<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['payable_to']); ?>" />
+					</li>
+					<li><label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label><br />
+						<textarea name="payment_address" cols="30" rows="5"><?php echo $this->_payment_settings['payment_address']; ?></textarea>
+					</li></ul></td>
+		</tr>
 		<?php
 	}
 
 	protected function _display_settings_help() {
 		
-	}
-
-	public function espresso_process_off_site_payment() {
-		global $EE_Session;
-
-		$txn_details = array(
-				'gateway' => $this->_payment_settings['display_name'],
-				'approved' => FALSE,
-				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
-				'status' => 'Incomplete',
-				'raw_response' => serialize($_REQUEST),
-				'amount' => 0.00,
-				'method' => 'Off-line',
-				'auth_code' => '',
-				'md5_hash' => '',
-				'invoice_number' => '',
-				'transaction_id' => ''
-		);
-		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
-		?>
-		<div class="event-display-boxes">
-	<h4 id="check_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['check_title']) ? '' : $this->_payment_settings['check_title']) ?></h4>
-	<p class="instruct"><?php echo stripslashes_deep(empty($this->_payment_settings['check_instructions']) ? '' : $this->_payment_settings['check_instructions'] ); ?></p>
-	<p>
-		<span class="section-title"><?php _e('Payable to:', 'event_espresso'); ?></span>
-		<span class="highlight"><?php echo stripslashes_deep(empty($this->_payment_settings['payable_to']) ? '' : $this->_payment_settings['payable_to']); ?></span>
-	</p>
-	<p class="section-title"><?php _e('Payment Address: ', 'event_espresso'); ?></p>
-	<div class="address-block">
-		<?php echo wpautop(stripslashes_deep(empty($this->_payment_settings['payment_address']) ? '' : $this->_payment_settings['payment_address'])); ?>
-	</div>
-</div>
-		<?php
 	}
 
 	public function espresso_display_payment_gateways() {
@@ -137,6 +104,24 @@ Class EE_Check extends EE_Offline_Gateway {
 			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the payment overview where you can view details of how to complete your payment by Check.', 'event_espresso'); ?>
 		</div>
 
+		<?php
+	}
+
+	public function thank_you_page() {
+		$this->set_transaction_details();
+		?>
+		<div class="event-display-boxes">
+			<h4 id="check_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['check_title']) ? '' : $this->_payment_settings['check_title']) ?></h4>
+			<p class="instruct"><?php echo stripslashes_deep(empty($this->_payment_settings['check_instructions']) ? '' : $this->_payment_settings['check_instructions'] ); ?></p>
+			<p>
+				<span class="section-title"><?php _e('Payable to:', 'event_espresso'); ?></span>
+				<span class="highlight"><?php echo stripslashes_deep(empty($this->_payment_settings['payable_to']) ? '' : $this->_payment_settings['payable_to']); ?></span>
+			</p>
+			<p class="section-title"><?php _e('Payment Address: ', 'event_espresso'); ?></p>
+			<div class="address-block">
+				<?php echo wpautop(stripslashes_deep(empty($this->_payment_settings['payment_address']) ? '' : $this->_payment_settings['payment_address'])); ?>
+			</div>
+		</div>
 		<?php
 	}
 

@@ -32,13 +32,6 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	}
 
 	public function set_transaction_details() {
-		global $EE_Session;
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-
-		// grab session data
-		$session = $EE_Session->get_session_data();
-
-		$transaction = $session['transaction'];
 		$txn_results = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
@@ -52,6 +45,11 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 				'invoice_number' => '',
 				'transaction_id' => ''
 		);
+		global $EE_Session;
+		$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
+		$session = $EE_Session->get_session_data();
+		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
+		$transaction = $session['transaction'];
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_details( $txn_results );
 		$txn_status = 'TOP';
