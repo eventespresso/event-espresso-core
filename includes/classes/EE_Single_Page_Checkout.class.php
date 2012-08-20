@@ -92,19 +92,15 @@ class EE_Single_Page_Checkout {
 				'process_reg_step_1',
 				'process_reg_step_2',
 				'process_reg_step_3',
-				'registration_complete',
 				'event_queue'
 				);
-		if ( isset( $_REQUEST['e_reg'] ) 
-						&& ( in_array($_REQUEST['e_reg'], $e_reg_pages) ) 
-						&& !is_admin() ) {
+		if (( isset( $_REQUEST['e_reg'] ) && ( in_array($_REQUEST['e_reg'], $e_reg_pages))) || $this->_ajax ) {
 	
 			add_action('init', array(&$this, 'load_css'), 20);
 			add_action('init', array(&$this, 'load_js'), 20);
-	
 			// hooks that happen during the regevent action and other pathing stuff
 			add_action('init', array(&$this, 'set_paths_and_routing'), 30);
-
+		
 		}
 	
 	}
@@ -125,11 +121,13 @@ class EE_Single_Page_Checkout {
 		}
 		// make all cart properties and methods accessible via $this->cart ex: $this->cart->data();
 		$this->cart = $EE_Cart;
+		// load gateways
 		if (!defined('ESPRESSO_GATEWAYS')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
 			$EEM_Gateways = EEM_Gateways::instance();
 		}
 		$this->gateways = $EEM_Gateways;
+		$this->gateways->set_ajax( $this->_ajax );
 	}
 
 	/**
@@ -178,8 +176,9 @@ class EE_Single_Page_Checkout {
 			// Output admin-ajax.php URL with same protocol as current page
 			$params['ajax_url'] = admin_url('admin-ajax.php', $protocol);
 			wp_localize_script('single_page_checkout', 'event_espresso', $params);
-//		}
+
 	}
+
 
 	/**
 	 * 		set_paths_and_routing
@@ -229,13 +228,6 @@ class EE_Single_Page_Checkout {
 					$this->process_registration_step_3();
 					break;
 
-
-				case 'registration_complete' :
-					remove_all_actions('action_hook_espresso_regevent_default_action');
-					remove_all_actions('action_hook_espresso_event_registration');
-					//$this->registration_complete();
-					$this->process_registration_payment();
-					break;
 
 				default :
 					// empty cart or else items build up indefinately
@@ -872,200 +864,23 @@ class EE_Single_Page_Checkout {
 		// don't need these so get rid of them'
 		unset($_POST['action']);
 
-		// if sessions is not instantiated
-		if (!defined('EE_Validate_and_Sanitize')) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
-			$EE_VnS = EE_Validate_and_Sanitize::instance();
-		}
-
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 			// FREE EVENT !!! YEAH : )
 			if ($EE_Session->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
-				$success_msg = __('Registration Step 2 completed', 'event_espresso');
-			} else {
-				$espresso_notices = $EE_VnS->return_notices();
-				$notices = espresso_get_notices(FALSE);
-				$error_msg = $notices['errors'];
-			}
+				$espresso_notices['success'][] = __('Registration Step 2 completed', 'event_espresso');
+			} 
 
-		} else { // PAID EVENT !!!  BOO  : (
-
-			// check for off site payment
-			if ( isset( $_POST['selected_gateway'] )) {
-				$this->gateways->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
-			}
-
-			$type = $this->gateways->type();
-			// check for off site payment
-			if ($type == 'off-site') {
+		} else { 
 			
-				// off site payment
-				$success_msg = __('Off-site gateway choosen');
-				
-			} elseif ($type == 'off-line') {
-				
-				$success_msg = __('Off-line gateway choosen');
-				
-			} elseif ($type == 'on-site') { 
+			// PAID EVENT !!!  BOO  : (
+			$this->gateways->process_gateway_selection();
 			
-				// on site payment
-				// load default billing inputs
-				$reg_page_billing_inputs = array(
+			//grab notices
+			$notices = espresso_get_notices(FALSE);
+			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
+			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 
-						'type' => 'on-site',
-
-						'gateway' => $this->gateways->selected_gateway(),
-
-						'reg-page-billing-fname' => array(
-								'db-col' => 'fname',
-								'label' => __('First Name', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-lname' => array(
-								'db-col' => 'lname',
-								'label' => __('Last Name', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-email' => array(
-								'db-col' => 'email',
-								'label' => __('Email Address', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'email',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-address' => array(
-								'db-col' => 'address',
-								'label' => __('Address', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-city' => array(
-								'db-col' => 'city',
-								'label' => __('City', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-state' => array(
-								'db-col' => 'state',
-								'label' => __('State', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-zip' => array(
-								'db-col' => 'zip',
-								'label' => __('Zip Code', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'string',
-								'sanitize' => 'no_html',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-card-nmbr' => array(
-								'db-col' => 'card-nmbr',
-								'label' => __('Credit Card Number', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'int',
-								'sanitize' => 'ccard',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-card-exp-date-mnth' => array(
-								'db-col' => 'exp-date-mnth',
-								'label' => __('Expiry Date Month', 'event_espresso'),
-								'input' => 'select',
-								'type' => 'int',
-								'sanitize' => 'ccmm',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-card-exp-date-year' => array(
-								'db-col' => 'exp-date-year',
-								'label' => __('Expiry Date Year', 'event_espresso'),
-								'input' => 'select',
-								'type' => 'int',
-								'sanitize' => 'ccyy',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						),
-						'reg-page-billing-card-ccv-code' => array(
-								'db-col' => 'ccv-code',
-								'label' => __('CCV Code', 'event_espresso'),
-								'input' => 'text',
-								'type' => 'int',
-								'sanitize' => 'ccv',
-								'required' => TRUE,
-								'validation' => TRUE,
-								'value' => NULL,
-								'format' => '%s'
-						)
-
-				);
-
-
-				// allow others to edit post input array
-				$reg_page_billing_inputs = apply_filters('filter_hook_espresso_reg_page_billing_inputs', $reg_page_billing_inputs);
-				// validate and sanitize	post data
-				$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
-				if ($reg_page_billing_inputs) {
-					// add billing info to the session
-					if ($EE_Session->set_session_data(array('billing_info' => $reg_page_billing_inputs), $section = 'session_data')) {
-						$success_msg = __('Billing information submitted successfully', 'event_espresso');
-					} else {
-						//$error_msg = __( 'An error occured! The billing information could not be submitted. Please refresh your browser and try agin.', 'event_espresso' );
-						$espresso_notices = $EE_VnS->return_notices();
-						$notices = espresso_get_notices(FALSE);
-						$error_msg = $notices['errors'];
-					}
-				} else {
-					$espresso_notices = $EE_VnS->return_notices();
-					$notices = espresso_get_notices(FALSE);
-					$error_msg = $notices['errors'];
-				}
-
-				// End of on-site payment
-				
-			}
-
-			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_2_ajax_response')) {
+			if ($this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_2_ajax_response' )) {
 				$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();
@@ -1129,59 +944,51 @@ class EE_Single_Page_Checkout {
 		$template_args = array();
 		$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
 
-		foreach ($reg_info['items'] as $line_item_id => $event) {
-
-			$template_args['events'][$line_item_id]['name'] = $event['name'];
-			$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
-			$template_args['events'][$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
-			$template_args['events'][$line_item_id]['ticket-price'] = $event['options']['price_desc'];
-
-			foreach ($event['attendees'] as $att_nmbr => $attendee) {
-
-				$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] . ' ' . $attendee['lname'];
-				$extra_att_details = array();
-
-				foreach ($attendee as $key => $value) {
-					switch ($key) {
-
-						case 'fname' :
-						case 'lname' :
-							break;
-
-						default:
-							if (!in_array($key, $exclude_attendee_info) && !is_numeric($key) && $value != '') {
-								array_push($extra_att_details, $value);
-							}
+		if ( isset( $reg_info['items'] )) {
+			
+			foreach ($reg_info['items'] as $line_item_id => $event) {
+	
+				$template_args['events'][$line_item_id]['name'] = $event['name'];
+				$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
+				$template_args['events'][$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
+				$template_args['events'][$line_item_id]['ticket-price'] = $event['options']['price_desc'];
+	
+				foreach ($event['attendees'] as $att_nmbr => $attendee) {
+	
+					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['name'] = $attendee['fname'] . ' ' . $attendee['lname'];
+					$extra_att_details = array();
+	
+					foreach ($attendee as $key => $value) {
+						switch ($key) {
+	
+							case 'fname' :
+							case 'lname' :
+								break;
+	
+							default:
+								if (!in_array($key, $exclude_attendee_info) && !is_numeric($key) && $value != '') {
+									array_push($extra_att_details, $value);
+								}
+						}
 					}
-				}
-
-				if (!empty($extra_att_details)) {
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . implode(', ', $extra_att_details) . '</span>';
-				} else {
-					$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
+	
+					if (!empty($extra_att_details)) {
+						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . implode(', ', $extra_att_details) . '</span>';
+					} else {
+						$template_args['events'][$line_item_id]['attendees'][$att_nmbr]['extra_att_detail'] = '<span class="small-text lt-grey-text">' . __('no attendee details submitted', 'event_espresso') . '</span>';
+					}
 				}
 			}
 		}
 
 		if ($billing_info == 'no payment required') {
-			return '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
+			$ouput = '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
 		} else {
-			$type = $this->gateways->type();
-			if ($type=='off-site' || $type=='off-line') {
-				$template_args['billing']['gateway'] = $this->gateways->display_name();
-			} else {
-				$template_args['billing']['first name'] = $billing_info['reg-page-billing-fname']['value'];
-				$template_args['billing']['last name'] = $billing_info['reg-page-billing-lname']['value'];
-				$template_args['billing']['email address'] = $billing_info['reg-page-billing-email']['value'];
-				$template_args['billing']['address'] = $billing_info['reg-page-billing-address']['value'];
-				$template_args['billing']['city'] = $billing_info['reg-page-billing-city']['value'];
-				$template_args['billing']['state'] = $billing_info['reg-page-billing-state']['value'];
-				$template_args['billing']['zip'] = $billing_info['reg-page-billing-zip']['value'];
-				$template_args['billing']['credit card number'] = $billing_info['reg-page-billing-card-nmbr']['value'];
-				$template_args['billing']['expiry date'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value'];
-				$template_args['billing']['ccv code'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-			}
+			// get billing info fields
+			$template_args['billing'] = $this->gateways->set_billing_info_for_confirmation( $billing_info );
+
 			$total = $session_data['_cart_grand_total_amount'];
+			// add taxes
 			if (isset($session_data['tax_totals'])) {
 				foreach ($session_data['tax_totals'] as $taxes) {
 					$total = $total + $taxes;
@@ -1190,8 +997,9 @@ class EE_Single_Page_Checkout {
 
 			$template_args['billing']['total due'] = $org_options['currency_symbol'] . number_format($total, 2);
 
-			return espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
-		}
+			$ouput = espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
+		}		
+		return $ouput;		
 	}
 
 
@@ -1206,7 +1014,7 @@ class EE_Single_Page_Checkout {
 	 * 		@return 		void
 	 */
 	public function process_registration_step_3() {
-// Sidney is watching me...   { : \
+		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		global $org_options;
@@ -1324,7 +1132,8 @@ class EE_Single_Page_Checkout {
 					$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );
 
 //					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip;
-					$new_reg_code = $txn_results['new-ID'] . '-' . $att_nmbr . '-' . $session_snip;
+					$new_reg_code = $txn_results['new-ID'] . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip;
+//					$new_reg_code = $txn_results['new-ID'] . '-' . $att_nmbr . '-' . $session_snip;
 					
 					$new_reg_code = apply_filters( 'filter_hook_espresso_new_registration_code', $new_reg_code );
 					
@@ -1332,7 +1141,8 @@ class EE_Single_Page_Checkout {
 						$prev_reg_code = $new_reg_code;
 					} else {
 //						$prev_reg_code = '%-' . $event['id'] . '-' . $ATT_ID . '-' . $DTT_ID . '-' . $PRC_ID . '-' . $att_nmbr . '-' . $session_snip . '%';
-						$prev_reg_code = '%-' . $att_nmbr . '-' . $session_snip . '%';
+						$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . '%';
+//						$prev_reg_code = '%-' . $att_nmbr . '-' . $session_snip . '%';
 					}					
 
 					// check for existing registration attempt, taking filtered reg_codes into consideration
@@ -1395,184 +1205,13 @@ class EE_Single_Page_Checkout {
 //			$session2 = $EE_Session->get_session_data();
 //			printr( $session2, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 
-			// free event?
-			if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
-				// becuz this was a free event we need to generate some pseudo gateway results
-				$txn_results = array(
-						'approved' => TRUE,
-						'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
-						'status' => 'Approved',
-						'details' => 'free event',
-						'amount' => 0.00,
-						'method' => 'none'
-				);
-				$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
-
-			} else {
-				// attempt to perform transaction via payment gateway
-
-				do_action('action_hook_espresso_gateway_process_step_3');
-				
-				$type = $this->gateways->type();
-				// process on-site payments
-				if ( $this->_ajax == 0 && $type == 'on-site') {
-					$this->gateways->set_noajax();
-					if (!$this->_return_page_url) {
-						$return_page_id = $org_options['return_url'];
-						// get permalink for thank you page
-						// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-						$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
-					}
-					wp_safe_redirect($this->_return_page_url);
-					exit();
-				}
-				
-				// process off-site payments
-				if ($type == 'off-site' || $type == 'off-line') {
-					if ($this->_ajax == 0) {
-						$form_data = $this->gateways->off_site_form();
-						echo $form_data['pre-form'] . $form_data['form'] . $form_data['post-form'];
-						die();
-					} else {
-						$this->send_ajax_response('Redirecting to Off-site Payment Provider', FALSE, '_redirect_to_off_site');
-					}
-				}				
-			}
-		}
-		//$session_data = $EE_Session->get_session_data();var_dump($session_data);die();
-		//$this->process_registration_payment( $transaction );
-
-		if ( $this->_ajax == 1) {
-			$this->process_registration_payment();
-		}
-
-	}
-
-
-
-
-
-	/**
-	 * 		process registration payment
-	 *
-	 * 		@access 		private
-	 * 		@param 		boolean 		$perform_redirect  - whether to send JSON response or redirect
-	 * 		@return 		JSON			or redirect
-	 */
-	public function process_registration_payment( $perform_redirect = TRUE ) {
-
-		global $EE_Session;
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-
-		$success_msg = FALSE;
-		$error_msg = FALSE;
-
-		// grab session data
-		$session = $EE_Session->get_session_data();
-		//printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
-
-		$transaction = $session['transaction'];
-		$txn_results = $session['txn_results'];
-		// $txn_results['txn_results'] = $session;
-
-		$txn_results['amount'] = isset($txn_results['amount']) ? $txn_results['amount'] : 0.00;
-		$txn_results['method'] = isset($txn_results['method']) ? $txn_results['method'] : '';
-
-		switch ($txn_results['status']) {
-
-			case 'Approved' :
-				$pay_status = 'PAP';
-				$success_msg = $txn_results['response_msg'];
-				do_action('action_hook_espresso_reg_approved');
-				break;
-			
-			case 'Declined' :
-				$pay_status = 'PDC';
-				$error_msg = __('We\'re sorry, but the transaction was declined for the following reasons: <br />', 'event_espresso') . '<b>' . $txn_results['response_msg'] . '</b>';
-				do_action('action_hook_espresso_reg_declined');
-				break;
-
-			case 'Cancelled' :
-				$pay_status = 'PCN';
-				$error_msg = __('The Transaction was cancelled.', 'event_espresso');
-				do_action('action_hook_espresso_reg_cancelled');
-				break;
-
-			case 'FAILED' :
-				$pay_status = 'PFL';
-				$error_msg = __('We\'re sorry, but an error occured and the transaction could not be completed. Please try again. If problems persist, contact the site administrator.', 'event_espresso');
-				do_action('action_hook_espresso_reg_incomplete');
-				break;
+			// attempt to perform transaction via payment gateway
+				$response = $this->gateways->process_reg_step_3();
+				$this->_return_page_url = $response['forward_url'];
+				$success_msg = $response['msg']['success'];
 		}
 		
-		$txn_status = 'TOP';
-		
-		// did transaction require payment ? or was it free ?
-		if ( $transaction->total() > 0 ) {
-		
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Payment.model.php');
-			EEM_Payment::instance();
-			$payment = new EE_Payment( 
-																	$transaction->ID(), 
-																	$pay_status,
-																	$transaction->datetime(), 
-																	$txn_results['method'], 
-																	$txn_results['amount'],
-																	$this->gateways->display_name(),
-																	$txn_results['response_msg'],
-																	$txn_results['transaction_id'],
-																	NULL,
-																	NULL,
-																	FALSE,
-																	maybe_serialize( $txn_results )
-																);
-			$results = $payment->insert();
-			if (!$results) {
-				$error_msg = __('There was a problem inserting your payment into our records. Do not attempt the transaction again. Please contact support.', 'event_espresso');
-			}
-		
-//printr( $payment, '$payment  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-
-		
-			if ( $payment->amount() >= $transaction->total() ) {
-				$txn_status = 'TCM';
-			} 
-			
-		} else {
-			// free events get set as completed too !
-			$txn_status = 'TCM';
-		}
-		
-		$transaction->set_paid($txn_results['amount']);
-		$transaction->set_status($txn_status);
-		$transaction->set_details( $txn_results );
-		unset( $session['transaction'] );
-		$transaction->set_session_data( $session );
-
-		if (isset($txn_results['md5_hash'])) {
-			$transaction->set_hash_salt($txn_results['md5_hash']);
-		}
-
-		if (isset($session['taxes'])) {
-			$tax_data = array('taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals']);
-			$transaction->set_tax_data($tax_data);
-		}
-
-		$transaction->update();
-
-//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-//die();
-
-
-		if( $perform_redirect ) {
-			if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
-				if (!$this->_return_page_url) {
-					$return_page_id = $org_options['return_url'];
-					// get permalink for thank you page
-					// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-					$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
-				}
+		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
 				wp_safe_redirect($this->_return_page_url);
 				exit();
 			} else {
@@ -1580,28 +1219,13 @@ class EE_Single_Page_Checkout {
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();
 			}
-		}
-
-	}
-
-
-	public function process_off_line_gateway() {
-		global $EE_Session;
-		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
-
-		// grab session data
-		$session = $EE_Session->get_session_data();
-
-		$transaction = $session['transaction'];
-		$txn_results = $session['txn_results'];
-		$transaction->set_details( $txn_results );
-		unset( $session['transaction'] );
-		$transaction->set_session_data( $session );
-		$transaction->update();
 	}
 
 
 
+
+
+	
 	/**
 	 * 		send reg step 3 ajax response
 	 *
@@ -1611,18 +1235,8 @@ class EE_Single_Page_Checkout {
 	 */
 	private function _send_reg_step_3_ajax_response($args, $success_msg) {
 
-		global $org_options;
-
-
 		// Sidney is watching me...   { : \
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-		if (!$this->_return_page_url) {
-			$return_page_id = $org_options['return_url'];
-			// get permalink for thank you page
-			// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-			$this->_return_page_url = rtrim(get_permalink($return_page_id), '/');
-		}
 
 		$response_data = array(
 				'success' => $success_msg,
@@ -1634,54 +1248,15 @@ class EE_Single_Page_Checkout {
 		die();
 	}
 
-
-	private function _redirect_to_off_site($args, $success_msg) {
-		$form_data =  $this->gateways->off_site_form();
-		$response_data = array(
-				'success' => 'Forwarding to Off-Site Payment Provider',
-				'return_data' => array('off-site-redirect' => $form_data['form'])
-		);
-		echo json_encode($response_data);
-		die();
-	}
-
-
-
-	/**
-	 * 		load and display Registration Complete Page
-	 *
-	 * 		@access 		public
-	 * 		@return 		void
-	 */
-	public function registration_complete() {
-
-		global $EE_Session;
-
-		$session = $EE_Session->get_session_data();
-		$txn_results = $session['txn_results'];
-
-		$txn_results = array(
-				'approved' => $payment_data->approved ? $payment_data->approved : 0,
-				'response_msg' => $payment_data->response_reason_text,
-				'md5_hash' => $payment_data->md5_hash,
-				'details' => array(
-						'transaction_id' => $payment_data->transaction_id,
-						'invoice_number' => $payment_data->invoice_number,
-				),
-		);
-	}
-
-
-
-
-
+	
+	
 	/**
 	 *   handle ajax message responses
 	 *
-	 *   @access private
+	 *   @access public
 	 *   @return void
 	 */
-	private function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
+	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
 
 		global $espresso_notices;
 		$valid_callback = FALSE;
