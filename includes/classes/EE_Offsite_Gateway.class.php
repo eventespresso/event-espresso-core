@@ -2,7 +2,7 @@
 
 abstract class EE_Offsite_Gateway extends EE_Gateway {
 
-	protected $_gatewayURL = NULL;
+	protected $_gatewayUrl = NULL;
 	
 	protected function __construct(EEM_Gateways &$model) {
 		parent::__construct($model);

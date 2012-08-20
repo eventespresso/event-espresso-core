@@ -177,62 +177,105 @@ Class EE_Eway extends EE_Offsite_Gateway {
 	}
 
 	public function process_reg_step_3() {
-		global $EE_Session;
+		global $EE_Session, $org_options;
 		$session_data = $EE_Session->get_session_data();
-		include_once ('lib/Eway.php');
-		$myeway = new eway($this->_payment_settings); // initiate an instance of the class
-		global $org_options;
 
-		$eway_id = $this->_payment_settings['eway_id'];
-		$eway_username = $this->_payment_settings['eway_username'];
-		$eway_cur = $this->_payment_settings['currency_format'];
-		$use_sandbox = $this->_payment_settings['use_sandbox'];
 		$total = $session_data['_cart_grand_total_amount'];
 		if (isset($session_data['tax_totals'])) {
 			foreach ($session_data['tax_totals'] as $taxes) {
 				$total = $total + $taxes;
 			}
 		}
-		if ($use_sandbox) {
+		switch ($this->_payment_settings['region']) {
+			case 'NZ':
+				$this->_gatewayUrl = 'https://nz.ewaygateway.com/Request/';
+				break;
+			case 'AU':
+				$this->_gatewayUrl = 'https://au.ewaygateway.com/Request/';
+				break;
+			case 'UK':
+				$this->_gatewayUrl = 'https://payment.ewaygateway.com/Request/';
+				break;
+		}
+		if ($this->_payment_settings['use_sandbox']) {
 			// Enable test mode if needed
-			$myeway->enableTestMode();
-			$myeway->addField('CustomerID', '87654321');
-			$myeway->addField('UserName', 'TestAccount');
+			$this->addField('CustomerID', '87654321');
+			$this->addField('UserName', 'TestAccount');
 			$total = "10.00";
 		} else {
-			$myeway->addField('CustomerID', $eway_id);
-			$myeway->addField('UserName', $eway_username);
+			$this->addField('CustomerID', $this->_payment_settings['eway_id']);
+			$this->addField('UserName', $this->_payment_settings['eway_username']);
 		}
 
-		$myeway->addField('Amount', number_format($total, 2, '.', ''));
-		$myeway->addField('Currency', $eway_cur);
-		$myeway->addField('PageTitle', '');
-		$myeway->addField('PageDescription', '');
-		$myeway->addField('PageFooter', '');
-		$myeway->addField('Language', '');
-		$myeway->addField('CompanyName', str_replace("&", "%26", $org_options['organization']));
+		$this->addField('Amount', number_format($total, 2, '.', ''));
+		$this->addField('Currency', $this->_payment_settings['currency_format']);
+		$this->addField('PageTitle', '');
+		$this->addField('PageDescription', '');
+		$this->addField('PageFooter', '');
+		$this->addField('Language', '');
+		$this->addField('CompanyName', str_replace("&", "%26", $org_options['organization']));
 		$registrations = $session_data['cart']['REG']['items'];
 		$description = '';
 		foreach ($registrations as $registration) {
 			$description .= $registration['qty'] . ' ticket to ' . $registration['name'] . ', ';
 		}
 		$description = rtrim($description, ', ');
-		$myeway->addField('InvoiceDescription', $description);
-		$myeway->addField('CancelURL', str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['cancel_return']));
-		$myeway->addField('ReturnURL', str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment'));
-		$myeway->addField('CompanyLogo', $this->_payment_settings['image_url']);
-		$myeway->addField('PageBanner', '');
-		$myeway->addField('MerchantReference', '');
-		$myeway->addField('MerchantInvoice', '');
-		$myeway->addField('MerchantOption1', '');
-		$myeway->addField('MerchantOption2', '');
-		$myeway->addField('MerchantOption3', '');
-		$myeway->addField('ModifiableCustomerDetails', 'false');
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($myeway)));
+		$this->addField('InvoiceDescription', $description);
+		$this->addField('CancelURL', str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['cancel_return']));
+		$this->addField('ReturnURL', str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment'));
+		$this->addField('CompanyLogo', $this->_payment_settings['image_url']);
+		$this->addField('PageBanner', '');
+		$this->addField('MerchantReference', '');
+		$this->addField('MerchantInvoice', '');
+		$this->addField('MerchantOption1', '');
+		$this->addField('MerchantOption2', '');
+		$this->addField('MerchantOption3', '');
+		$this->addField('ModifiableCustomerDetails', 'false');
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
+		$this->prepareSubmit();
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+		$this->redirect_after_reg_step_3();
 	}
+	
+	protected function prepareSubmit() {
+		$ewayurl = "?";
+		foreach ($this->fields as $name => $value) {
+			$ewayurl .= $name . '=' . $value . '&';
+		}
+		$ewayurl = rtrim($ewayurl, "&");
+		$spacereplace = str_replace(" ", "%20", $ewayurl);
+		$posturl = $this->_gatewayUrl . $spacereplace;
 
-	public function espresso_process_off_site_payment() {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $posturl);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+		$response = curl_exec($ch);
+
+		$responsemode = $this->_fetch_data($response, '<result>', '</result>');
+		$responseurl = $this->_fetch_data($response, '<uri>', '</uri>');
+
+		if ($responsemode == "True") {
+			$this->_gatewayUrl = $responseurl;
+			$this->fields = array();
+		} else {
+			echo "ERROR";
+		}
+	}
+	
+	private function _fetch_data($string, $start_tag, $end_tag) {
+			$position = stripos($string, $start_tag);
+			$str = substr($string, $position);
+			$str_second = substr($str, strlen($start_tag));
+			$second_positon = stripos($str_second, $end_tag);
+			$str_third = substr($str_second, 0, $second_positon);
+			$fetch_data = trim($str_third);
+			return $fetch_data;
+		}
+
+	public function thank_you_page() {
 		global $EE_Session;
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
@@ -280,31 +323,20 @@ Class EE_Eway extends EE_Offsite_Gateway {
 			curl_setopt($ch, CURLOPT_PROXY, CURL_PROXY_SERVER_DETAILS);
 		}
 
-		function fetch_data($string, $start_tag, $end_tag) {
-
-			$position = stripos($string, $start_tag);
-			$str = substr($string, $position);
-			$str_second = substr($str, strlen($start_tag));
-			$second_positon = stripos($str_second, $end_tag);
-			$str_third = substr($str_second, 0, $second_positon);
-			$fetch_data = trim($str_third);
-			return $fetch_data;
-		}
-
 		$response = curl_exec($ch);
 
-		$response_array['authecode'] = fetch_data($response, '<authCode>', '</authCode>');
-		$response_array['responsecode'] = fetch_data($response, '<responsecode>', '</responsecode>');
-		$response_array['retrunamount'] = fetch_data($response, '<returnamount>', '</returnamount>');
-		$response_array['txn_id'] = fetch_data($response, '<trxnnumber>', '</trxnnumber>');
-		$response_array['trxnstatus'] = fetch_data($response, '<trxnstatus>', '</trxnstatus>');
-		$response_array['trxnresponsemessage'] = fetch_data($response, '<trxnresponsemessage>', '</trxnresponsemessage>');
+		$response_array['authecode'] = $this->_fetch_data($response, '<authCode>', '</authCode>');
+		$response_array['responsecode'] = $this->_fetch_data($response, '<responsecode>', '</responsecode>');
+		$response_array['retrunamount'] = $this->_fetch_data($response, '<returnamount>', '</returnamount>');
+		$response_array['txn_id'] = $this->_fetch_data($response, '<trxnnumber>', '</trxnnumber>');
+		$response_array['trxnstatus'] = $this->_fetch_data($response, '<trxnstatus>', '</trxnstatus>');
+		$response_array['trxnresponsemessage'] = $this->_fetch_data($response, '<trxnresponsemessage>', '</trxnresponsemessage>');
 
-		$response_array['merchantoption1'] = fetch_data($response, '<merchantoption1>', '</merchantoption1>');
-		$response_array['merchantoption2'] = fetch_data($response, '<merchantoption2>', '</merchantoption2>');
-		$response_array['merchantoption3'] = fetch_data($response, '<merchantoption3>', '</merchantoption3>');
-		$response_array['merchantreference'] = fetch_data($response, '<merchantreference>', '</merchantreference>');
-		$response_array['merchantinvoice'] = fetch_data($response, '<merchantinvoice>', '</merchantinvoice>');
+		$response_array['merchantoption1'] = $this->_fetch_data($response, '<merchantoption1>', '</merchantoption1>');
+		$response_array['merchantoption2'] = $this->_fetch_data($response, '<merchantoption2>', '</merchantoption2>');
+		$response_array['merchantoption3'] = $this->_fetch_data($response, '<merchantoption3>', '</merchantoption3>');
+		$response_array['merchantreference'] = $this->_fetch_data($response, '<merchantreference>', '</merchantreference>');
+		$response_array['merchantinvoice'] = $this->_fetch_data($response, '<merchantinvoice>', '</merchantinvoice>');
 		if ($response_array['responsecode'] == '00' || $response_array['responsecode'] == '08') {
 			$txn_details['approved'] = TRUE;
 			$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
@@ -322,6 +354,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		} else {
 			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
 		}
+		parent::thank_you_page();
 	}
 
 	public function espresso_display_payment_gateways() {
