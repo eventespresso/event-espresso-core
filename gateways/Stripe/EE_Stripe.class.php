@@ -153,7 +153,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 	    <?php
 	}
 
-	public function process_reg_step_3($return_page_url) {
+	public function process_reg_step_3() {
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
 		$billing_info = $session_data['billing_info'];
@@ -191,8 +191,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 			$exp_month = $billing_info['reg-page-billing-card-exp-date-mnth']['value'];
 			$exp_year = $billing_info['reg-page-billing-card-exp-date-year']['value'];
 			$bname = $billing_info['reg-page-billing-fname']['value'].' '.$billing_info['reg-page-billing-lname']['value'];
-			
-			// Note that this is only valid until expiration years reach 2100, but by then I'll be dead, so sue me.
+
 			$response = $cls_stripe->do_transaction($amount_pd, $cc, $csc, $exp_month, $exp_year, $bname, $description, $stripe_settings);
 
 			if ( isset($response['status']) )
@@ -444,7 +443,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 						'label' => __('Expiry Date Year', 'event_espresso'),
 						'input' => 'select',
 						'type' => 'int',
-						'sanitize' => 'ccyy',
+						'sanitize' => 'ccyyyy',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'value' => NULL,

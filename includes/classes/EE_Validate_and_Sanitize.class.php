@@ -209,6 +209,12 @@
 								}
 								break;
 								
+						case 'ccyyyy' :				
+								if ( preg_match( '/([0-9]{4})/', $value, $matches )) {
+									$input_data['value'] = $matches[1];
+								}
+								break;
+								
 						case 'ccv' :													
 								if ( preg_match( '/^[0-9]{3,4}$/', $value )) {
 									$input_data['value'] = $value;
