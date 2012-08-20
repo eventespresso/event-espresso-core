@@ -114,23 +114,8 @@ Class EE_Bank extends EE_Offline_Gateway {
 		
 	}
 
-	public function espresso_process_off_site_payment() {
-		global $EE_Session;
-
-		$txn_details = array(
-				'gateway' => $this->_payment_settings['display_name'],
-				'approved' => FALSE,
-				'response_msg' => __('You\'re registration will be marked as complete once your payment is received.', 'event_espresso'),
-				'status' => 'Incomplete',
-				'raw_response' => serialize($_REQUEST),
-				'amount' => 0.00,
-				'method' => 'Off-line',
-				'auth_code' => '',
-				'md5_hash' => '',
-				'invoice_number' => '',
-				'transaction_id' => ''
-		);
-		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+	public function thank_you_page() {
+		$this->set_transaction_details();
 		?>
 		<div class="event-display-boxes">
 			<h4 id="page_title" class="payment_type_title section-heading"><?php echo stripslashes_deep(empty($this->_payment_settings['page_title']) ? '' : $this->_payment_settings['page_title']) ?></h3>
