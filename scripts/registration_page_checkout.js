@@ -588,31 +588,40 @@
 
 	$('.reg-page-payment-option-lnk').click(function() {
 	
+		var selected_payment_option = $(this);
 		var selected_gateway = $(this).attr('id');
+		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );
 		
-		$('.reg-page-payment-option-lnk').each(function() {
-			if ( $(this).attr('id') != selected_gateway ) {
-				//alert( $(this).attr('id') )
-				$(this).slideToggle( 250 );
-			}			
-		});		
-		// get target element from "this" (the control element's) "rel" attribute
-		var gateway_form = 'reg-page-billing-info-' + $(this).attr("rel"); 
+		$('#methods-of-payment').slideUp( 250, function() {
 
-		$('#reg-page-selected-gateway').val( $(this).attr("rel") );
-
-		// display the target's div container - use slideToggle or removeClass
-		$('#'+gateway_form+'-dv').slideToggle( 500, function() {
-			// hide the control element
-			//control.addClass('hidden');  
-			// display the target div's hide link
+			$('.reg-page-payment-option-lnk').each(function() {
+				if ( $(this).attr('id') != selected_gateway ) {
+					$(this).toggleClass( 'hidden' );
+				}			
+			});		
+			// get target element from "this" (the control element's) "rel" attribute
+			var gateway_form = 'reg-page-billing-info-' + selected_payment_option.attr("rel"); 	
+			$('#reg-page-selected-gateway').val( selected_payment_option.attr("rel") );
+			$('#'+gateway_form+'-dv').toggleClass( 'hidden' );
 			$('#hide-'+gateway_form).removeClass('hidden'); 
-			// if hiding/showing a form input, then id of the form input must = item_to_display
-			//$('#'+item_to_display).focus(); // add focus to the target
-		}); 
+			$('#reg-page-select-other-gateway-lnk').toggleClass( 'hidden' );
+			$('#methods-of-payment').slideDown( 500 );
+
+		});		
+
 		return false;
 		
 	});
+	
+	
+	
+	$('#reg-page-select-other-gateway-lnk').on( 'click', function() {
+		selected_gateway = '#' + $(this).attr('rel');
+		$(this).attr('rel', '');
+		$( selected_gateway ).trigger('click');
+		return false;
+	});
+	
 	
 	// generic click event for displaying and giving focus to an element and hiding control 
 	$('.display-the-hidden').click(function() {

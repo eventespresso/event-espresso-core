@@ -16,7 +16,7 @@ class Invoice {
 		if ( $this->registration = $REG->get_registration(array('REG_url_link' => $url_link))) {
 			$this->transaction = $TXN->get_transaction($this->registration->transaction_ID());
 			$this->session_data = $this->transaction->session_data();
-			$this->invoice_settings = $this->session_data['gateway_data']['payment_settings']['invoice'];
+			$this->invoice_settings = $this->session_data['gateway_data']['payment_settings']['Invoice'];
 		} else {
 			echo "error message";
 		}
@@ -29,19 +29,21 @@ class Invoice {
 //printr($this->transaction);
 //printr($this->session_data);
 //printr($this->invoice_settings);
+//exit;
 		$template_args = array();
 
-//		$themes = array(
-//										1 => "simple.css",
-//										2 => "bauhaus.css",
-//										3 => "ejs.css",
-//										4 => "horizon.css", 
-//										5 => "lola.css",
-//										6 => "tranquility.css",
-//										7 => "union.css"
-//									);
-//		$this->invoice_settings['invoice_css'] = $themes[7];
-//echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
+		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : 1;		
+		$themes = array(
+										1 => "simple.css",
+										2 => "bauhaus.css",
+										3 => "ejs.css",
+										4 => "horizon.css", 
+										5 => "lola.css",
+										6 => "tranquility.css",
+										7 => "union.css"
+									);
+		$this->invoice_settings['invoice_css'] = $themes[ $theme ];
+		//echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
 
 		//Get the CSS file
 		if (!empty($this->invoice_settings['invoice_css'])) {
@@ -51,7 +53,7 @@ class Invoice {
 		}
 
 		//Create the logo
-		if (!empty($this->invoice_settings['invoice_logo_url'])) {
+/*		if (!empty($this->invoice_settings['invoice_logo_url'])) {
 			$invoice_logo_url = $this->invoice_settings['invoice_logo_url'];
 		} else {
 			$invoice_logo_url = $org_options['default_logo_url'];
@@ -61,7 +63,7 @@ class Invoice {
 			$template_args['invoice_logo_image'] = '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" /> ';
 		} else {
 			$template_args['invoice_logo_image'] = '';
-		}
+		}*/
 
 		if (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) {
 			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/';
@@ -75,7 +77,7 @@ class Invoice {
 		$template_args['state'] = $org_options['organization_state'];
 		$template_args['zip'] = $org_options['organization_zip'];
 		$template_args['email'] = $org_options['contact_email'];
-		$template_args['download_link'] = home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link();
+		$template_args['download_link'] = home_url() . '/?invoice_launch=true&amp;id=' . $this->registration->reg_url_link();
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = date_i18n(get_option('date_format'), $this->registration->date());
 		$template_args['name'] = stripslashes_deep($this->session_data['primary_attendee']['fname'] . ' ' . $this->session_data['primary_attendee']['lname']);
@@ -115,8 +117,17 @@ class Invoice {
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
 		//Get the HTML as an object
-		$template_content = espresso_display_template( dirname(__FILE__) . '/templates/index.php', $template_args, TRUE );
-		$content = $this->espresso_replace_invoice_shortcodes($template_content);
+		$template_header = espresso_display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
+		$template_body = espresso_display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
+		$template_footer = espresso_display_template( dirname(__FILE__) . '/templates/invoice_footer.template.php', $template_args, TRUE );
+		
+		$copies =  ! empty( $_REQUEST['copies'] ) ? $_REQUEST['copies'] : 1;
+
+		$content = $this->espresso_replace_invoice_shortcodes($template_header);
+		for( $x = 1; $x <= $copies; $x++ ) {
+			$content .= $this->espresso_replace_invoice_shortcodes($template_body);
+		}
+		$content .= $this->espresso_replace_invoice_shortcodes($template_footer);
 
 		//Check if debugging or mobile is set
 		if (!empty($_REQUEST['html'])) {

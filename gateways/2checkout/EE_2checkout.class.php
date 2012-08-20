@@ -24,13 +24,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-Class EE_2checkout extends EE_Gateway {
+Class EE_2checkout extends EE_Offsite_Gateway {
 
 	private static $_instance = NULL;
 
-	protected function _path() {
-		return __FILE__;
-	}
+
 
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
@@ -44,6 +42,7 @@ Class EE_2checkout extends EE_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway = '2checkout';
 		$this->_button_base = 'logo.png';
+		$this->_path =  str_replace( '\\', '/', __FILE__ );
 		parent::__construct($model);
 	}
 
@@ -222,28 +221,27 @@ Class EE_2checkout extends EE_Gateway {
 		<?php
 	}
 
-	public function espresso_gateway_process_step_3() {
+	public function process_reg_step_3() {
 
 		global $org_options, $EE_Session;
 
-		include_once ('lib/2checkout.php');
-		$my2checkout = new TwoCo();
+		$this->_gatewayUrl = 'https://www.2checkout.com/checkout/purchase';
 		$session_data = $EE_Session->get_session_data();
 
 		// Enable test mode if needed
 		if ($this->_payment_settings['use_sandbox']) {
-			$my2checkout->enableTestMode();
+			$this->addField('demo', 'Y');
 		}
 
 		$item_num = 1;
 		$registrations = $session_data['cart']['REG']['items'];
-		$my2checkout->addField('id_type', 1);
+		$this->addField('id_type', 1);
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
-				$my2checkout->addField('c_prod_' . $item_num, rand(1, 100));
-				$my2checkout->addField('c_name_' . $item_num, $registration['name']);
-				$my2checkout->addField('c_description_' . $item_num, $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
-				$my2checkout->addField('c_price_' . $item_num, $attendee['price_paid']);
+				$this->addField('c_prod_' . $item_num, rand(1, 100));
+				$this->addField('c_name_' . $item_num, $registration['name']);
+				$this->addField('c_description_' . $item_num, $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
+				$this->addField('c_price_' . $item_num, $attendee['price_paid']);
 				$item_num++;
 			}
 		}
@@ -252,23 +250,24 @@ Class EE_2checkout extends EE_Gateway {
 		if (isset($session_data['tax_totals'])) {
 			foreach ($session_data['tax_totals'] as $key => $taxes) {
 				$total = $total + $taxes;
-				$my2checkout->addField('c_prod_' . $item_num, rand(1, 100));
-				$my2checkout->addField('c_name_' . $item_num, $session_data['taxes'][$key]['name']);
-				$my2checkout->addField('c_description_' . $item_num, 'Tax');
-				$my2checkout->addField('c_price_' . $item_num, $taxes);
+				$this->addField('c_prod_' . $item_num, rand(1, 100));
+				$this->addField('c_name_' . $item_num, $session_data['taxes'][$key]['name']);
+				$this->addField('c_description_' . $item_num, 'Tax');
+				$this->addField('c_price_' . $item_num, $taxes);
 				$item_num++;
 			}
 		}
-		$my2checkout->addField('sid', $this->_payment_settings['2checkout_id']);
-		$my2checkout->addField('cart_order_id', $session_data['transaction']->ID());
-		$my2checkout->addField('x_Receipt_Link_URL', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
-		$my2checkout->addField('total', number_format($total, 2, '.', ''));
-		$my2checkout->addField('tco_currency', $this->_payment_settings['currency_format']);
-		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, serialize(get_object_vars($my2checkout)));
-		$this->_EEM_Gateways->set_off_site_form($my2checkout->submitPayment());
+		$this->addField('sid', $this->_payment_settings['2checkout_id']);
+		$this->addField('cart_order_id', $session_data['transaction']->ID());
+		$this->addField('x_Receipt_Link_URL', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
+		$this->addField('total', number_format($total, 2, '.', ''));
+		$this->addField('tco_currency', $this->_payment_settings['currency_format']);
+		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+		$this->redirect_after_reg_step_3();
 	}
 
-	public function espresso_process_off_site_payment() {
+	public function thank_you_page() {
+
 		global $EE_Session;
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
@@ -296,13 +295,13 @@ Class EE_2checkout extends EE_Gateway {
 		} else {
 			do_action('action_hook_espresso_mail_failed_transaction_debugging_output');
 		}
+		parent::thank_you_page();
 	}
 
 	public function espresso_display_payment_gateways() {
+		echo $this->_generate_payment_gateway_selection_button();
 		?>
-		<a id="payment-gateway-button-<?php echo $this->_gateway; ?>" class="reg-page-payment-option-lnk<?php echo $this->_css_link_class; ?>" rel="<?php echo $this->_gateway; ?>" href="<?php echo $this->_form_url; ?>" >
-			<img src="<?php echo $this->_payment_settings['button_url']; ?>" alt="Pay using 2CheckOut.com" />
-		</a>
+		
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the 2CheckOut.com website where your payment will be securely processed.', 'event_espresso'); ?>
@@ -310,5 +309,16 @@ Class EE_2checkout extends EE_Gateway {
 
 		<?php
 	}
+
+		/**
+	 * Enables the test mode
+	 *
+	 * @param none
+	 * @return none
+	 */
+	public function enableTestMode() {
+		$this->addField('demo', 'Y');
+	}
+
 
 }

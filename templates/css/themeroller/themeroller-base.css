@@ -220,12 +220,8 @@ span.remove-cart-item {
 }
 /*___ Payment options page ___*/
 
-#sandbox-panel {
-	border: 1px solid #bebebe;
-	background: #eee;
-	padding: 10px;
-}
-ul#espresso_payment_buttons {
+
+/*ul#espresso_payment_buttons {
 	margin: 0;
 	text-align: center;
 }
@@ -236,7 +232,7 @@ ul#espresso_payment_buttons li {
 	vertical-align: top;
 }
 ul#espresso_payment_buttons li form {
-}
+}*/
 /*___ payment overview - thank you page ___*/
 
 .event-list-payment-overview {

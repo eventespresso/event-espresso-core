@@ -1,6 +1,6 @@
 .event-list-reg-link-title { font-size:1.1em; margin:1em 0 .5em; }
 
- span.ui-icon { float:none !important; }
+/* span.ui-icon { float:none !important; }*/
 .icon-right span.ui-icon { margin: 0.7em 0.3em 0 0; }
 
 .event-list-display-dv {

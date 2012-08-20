@@ -53,5 +53,3 @@ function espresso_process_firstdata_connect_2($EE_Session) {
 		$txn_id = $_REQUEST['refnumber'];
 	}
 }
-
-add_action('action_hook_espresso_process_off_site_payment', 'espresso_process_firstdata_connect_2');

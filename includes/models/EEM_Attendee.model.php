@@ -78,7 +78,7 @@ class EEM_Attendee extends EEM_Base {
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model 
-			self::$_instance = &new self();
+			self::$_instance = new self();
 		}
 		// EEM_Attendee object
 		return self::$_instance;

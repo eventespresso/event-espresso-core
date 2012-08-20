@@ -11,35 +11,77 @@ function espresso_display_payment_overview_template($data) {
 			<h4 class="section-title list-events">
 			<?php _e('Class/Event:', 'event_espresso'); ?>
 			</h4>
-				<?php foreach ($data['event_links'] as $event_link) { ?>
 				<div>
-				<?php echo stripslashes_deep($event_link) ?>
+				<?php echo implode( '<br />', $data['events'] ); ?>
 				</div>
-	<?php } ?>
 			<h4 class="section-title"><?php _e('Registration  Details:', 'event_espreso'); ?></h4>
 			<div class="reg-gen-details">
-				<dl class="dl-inline">
-					<dt>
-	<?php _e('Primary Registrant:', 'event_espresso'); ?>
-					</dt>
-					<dd><?php echo stripslashes_deep($data['fname'] . ' ' . $data['lname']) ?></dd>
-					<?php echo $data['txn_type'] == '' ? '' : '<dt>' . __('Payment Type:', 'event_espresso') . '</dt> <dd>' . espresso_payment_type($data['txn_type']) . '</dd>'; ?> <?php echo ($data['payment_date'] == '' || ($data['payment_status'] == 'Pending' && (espresso_payment_type($data['txn_type']) == 'Invoice' || espresso_payment_type($data['txn_type']) == 'Offline payment'))) ? '' : '<dt>' . __('Payment Date:', 'event_espresso') . '</dt> <dd>' . event_date_display($data['payment_date']) . '</dd>'; ?>
-					<dt>
-	<?php _e('Amount Paid/Owed:', 'event_espresso'); ?>
-					</dt>
-					<dd><?php echo $org_options['currency_symbol'] ?><?php echo $data['total_cost'] ?>
-	<?php event_espresso_paid_status_icon($data['payment_status']) ?>
-					</dd>
-					<dt>
-	<?php _e('Payment Status:', 'event_espresso'); ?>
-					</dt>
-					<dd><?php echo $data['payment_status'] ?></dd>
-					<dt>
-	<?php _e('Registration ID:', 'event_espresso'); ?>
-					</dt>
-					<dd><?php echo $data['registration_id'] ?></dd>
-	<?php echo $data['txn_id'] == '' ? '' : '<dt>' . __('Transaction ID:', 'event_espresso') . '</dt> <dd>' . $data['txn_id'] . '</dd>'; ?>
-				</dl>
+				<table id="thank-you-page-reg-details-tbl">
+					<tbody>			
+						<tr>
+							<td>
+								<label><?php _e('Primary Registrant:', 'event_espresso'); ?></label>
+							</td>
+							<td>
+								<?php echo stripslashes_deep($data['fname'] . ' ' . $data['lname']); ?>
+							</td>
+						</tr>
+						<?php if( ! empty( $data['txn_type'] )) : ?>
+						<tr>
+							<td>
+								<label><?php _e('Payment Type:', 'event_espresso'); ?></label>
+							</td>
+							<td>
+								<?php echo espresso_payment_type($data['txn_type']); ?>
+							</td>
+						</tr>
+						<?php endif;?>
+						<?php if( $data['payment_date'] == '' || ($data['payment_status'] == 'Pending' && (espresso_payment_type($data['txn_type']) == 'Invoice' || espresso_payment_type($data['txn_type']) == 'Offline payment'))) : ?>
+						<tr>
+							<td>
+								<label><?php _e('Payment Date:', 'event_espresso'); ?></label>
+							</td>
+							<td>
+								<?php echo event_date_display($data['payment_date']); ?>
+							</td>
+						</tr>
+						<?php endif;?>
+						<tr>
+							<td>
+								<label><?php _e('Amount Paid/Owed:', 'event_espresso'); ?></label>
+							</td>
+							<td>
+								<?php echo event_espresso_paid_status_icon($data['payment_status']) . ' ' . $org_options['currency_symbol'] . $data['total_cost']; ?>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label><?php _e('Payment Status:', 'event_espresso'); ?></label>
+							</td>
+							<td>
+								<?php echo $data['payment_status']; ?>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label><?php _e('Registration ID:', 'event_espresso'); ?></label>
+							</td>
+							<td>
+								<?php echo $data['registration_id']; ?>
+							</td>
+						</tr>
+						<?php if( ! empty( $data['txn_id'] )) : ?>
+						<tr>
+							<td>
+								<label><?php _e('Transaction ID:', 'event_espresso'); ?></label>
+							</td>
+							<td>
+								<?php echo $data['txn_id']; ?>
+							</td>
+						</tr>
+						<?php endif;?>
+					</tbody>
+				</table>					
 			</div><!-- / .reg-gen-details -->
 		</div><!-- / .event-data-display -->
 	</div><!-- / .event-display-boxes -->

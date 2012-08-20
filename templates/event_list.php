@@ -427,6 +427,7 @@ function event_espresso_get_event_details($attributes) {
 				empty($event->event_cost) ? '' : $event->event_cost,
 				empty($event->event_cost) ? '' : $event->event_cost,
 		);
+		$meta_key = array();
 		foreach ($event_meta as $key => $value) {
 			$meta_key[] = $key;
 			$meta_value[] = $value;

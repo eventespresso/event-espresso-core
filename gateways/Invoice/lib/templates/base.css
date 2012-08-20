@@ -1,9 +1,10 @@
 /* Base CSS styles DO NOT CHANGE OR REMOVE */
 
-body {margin: 0!important;padding: 0!important;font:62.5%/1.5 Helvetica, Arial, Verdana, sans-serif;background-color: #eee;}
+body { margin: 0!important;padding: 0!important;font:62.5%/1.5 Helvetica, Arial, Verdana, sans-serif; background-color:#eee; }
 ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 
-#invoice { width:660px; min-height:21.5cm; margin:0 auto;overflow:hidden; background-color:#fff }
+#invoice { width:740px; min-height:21.5cm; padding:0; margin:0 auto; overflow:hidden; background-color:#fff; }
+#invoice + #invoice { margin-top:5em;}
 
 
 .print_button_div{
