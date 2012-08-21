@@ -219,9 +219,9 @@ function espresso_admin_init() {
 	do_action('action_hook_espresso_require_admin_files');
 
 	// Update the question sequences
-	add_action('wp_ajax_update_sequence', 'event_espresso_questions_config_mnu');
+	add_action('wp_ajax_update_sequence', 'ee_update_questions_sequence');
 	// Update the question group sequences
-	add_action('wp_ajax_update_qgr_sequence', 'event_espresso_question_groups_config_mnu');
+	add_action('wp_ajax_update_qgr_sequence', 'ee_update_question_groups_sequence');
 
 	// Check to make sure there are no empty registration id fields in the database.
 	if (event_espresso_verify_attendee_data() == true &&
@@ -262,6 +262,30 @@ function espresso_admin_init() {
 		if ($ee_page[0]->post_status != 'publish' or strpos($ee_page[0]->post_content, $ee_page[1]) === false) {
 			add_action('admin_notices', 'espresso_page_problems');
 		}
+	}
+}
+
+function ee_update_questions_sequence() {
+	global $wpdb;
+	//Update the questions when re-ordering
+	if (!empty($_POST['update_sequence'])) {
+		$rows = explode(",", $_POST['row_ids']);
+		for ($i = 0; $i < count($rows); $i++) {
+			$wpdb->query("UPDATE " . EVENTS_QUESTION_TABLE . " SET sequence=" . $i . " WHERE id='" . $rows[$i] . "'");
+		}
+		exit();
+	}
+}
+
+function ee_update_question_groups_sequence() {
+	global $wpdb;
+	//Update the questions when re-ordering
+	if (!empty($_POST['update_sequence'])) {
+		$rows = explode(",", $_POST['row_ids']);
+		for ($i = 0; $i < count($rows); $i++) {
+			$wpdb->query("UPDATE " . EVENTS_QST_GROUP_TABLE . " SET group_order=" . $i . " WHERE id='" . $rows[$i] . "'");
+		}
+		exit();
 	}
 }
 
