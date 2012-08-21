@@ -127,6 +127,9 @@ function espresso_initialize_system_questions() {
 			case 'zip':
 				$zip = true;
 				break;
+			case 'country' : 
+				$country = true;
+				break;
 			case 'phone':
 				$phone = true;
 				break;
@@ -183,7 +186,7 @@ function espresso_initialize_system_questions() {
 			$wpdb->insert($wpdb->prefix . "events_qst_group_rel", array('group_id' => $personal_group_id, 'question_id' => $system_name->id), array('%d', '%d'));
 		}
 
-		$system_name_data = "SELECT id, system_name FROM " . $wpdb->prefix . "events_question" . " where system_name IN ('address', 'city', 'state', 'zip' )";
+		$system_name_data = "SELECT id, system_name FROM " . $wpdb->prefix . "events_question" . " where system_name IN ('address', 'city', 'state', 'zip', 'country' )";
 		$system_names = $wpdb->get_results($system_name_data);
 
 		foreach ($system_names as $system_name) {
