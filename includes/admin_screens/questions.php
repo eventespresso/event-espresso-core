@@ -1,16 +1,7 @@
 <?php
 
 function event_espresso_questions_config_mnu() {
-	global $wpdb;
-
-	//Update the questions when re-ordering
-	if (!empty($_REQUEST['update_sequence'])) {
-		$rows = explode(",", $_POST['row_ids']);
-		for ($i = 0; $i < count($rows); $i++) {
-			$wpdb->query("UPDATE " . EVENTS_QUESTION_TABLE . " SET sequence=" . $i . " WHERE id='" . $rows[$i] . "'");
-		}
-		die();
-	}
+	global $wpdb, $espresso_notices;
 
 	// get counts
 	$sql = "SELECT id FROM " . EVENTS_QUESTION_TABLE;
@@ -50,7 +41,7 @@ function event_espresso_questions_config_mnu() {
 	<?php
 	//Update the question
 	if (isset($_REQUEST['edit_action']) && $_REQUEST['edit_action'] == 'update') {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/questions/update_question.php');
+		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/form-builder/questions/update_question.php');
 		event_espresso_form_builder_update();
 	}
 
@@ -74,7 +65,7 @@ function event_espresso_questions_config_mnu() {
 				}
 				break;
 			case 'edit_question':
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "form-builder/questions/edit_question.php");
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . "/form-builder/questions/edit_question.php");
 				event_espresso_form_builder_edit();
 				break;
 			case 'delete_question':
@@ -191,10 +182,10 @@ function event_espresso_questions_config_mnu() {
 			}
 			?>
 		</h2>
+		<?php echo espresso_get_notices(); ?>
 		<?php
 		espresso_choose_layout($main_post_content, $sidebar_content);
 		?>
-	</div>
 	</div>
 	<div id="question_info" class="pop-help" style="display:none">
 		<div class="TB-ee-frame">
@@ -252,7 +243,7 @@ function event_espresso_questions_config_mnu() {
 					$('#table tbody input[name="row_id"]').each(function(i){
 						row_ids= row_ids + ',' + $(this).val();
 					});
-					$.post(EEGlobals.ajaxurl, { action: "update_sequence", row_ids: row_ids, update_sequence: "true"} );
+					$.post(ajaxurl, { action: "update_sequence", row_ids: row_ids, update_sequence: "true"} );
 				}
 			});
 			postboxes.add_postbox_toggles('form_builder');

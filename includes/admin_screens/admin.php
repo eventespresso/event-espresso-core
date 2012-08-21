@@ -101,7 +101,7 @@ function event_espresso_config_page_scripts() {
 		$load_farbtastic = TRUE;
 	}
 
-	if ($_REQUEST['page'] == 'events') {
+	if ($_REQUEST['page'] == 'events' || $_REQUEST['page'] == 'form_groups' || $_REQUEST['page'] == 'form_builder') {
 		$load_jquery_ui = TRUE;
 		$load_datepicker = TRUE;
 		$load_datetimepicker = TRUE;

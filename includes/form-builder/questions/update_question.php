@@ -1,7 +1,7 @@
 <?php
 //Function to update questions in the database
 function event_espresso_form_builder_update(){
-	global $wpdb, $notices;
+	global $wpdb, $espresso_notices;
 	
 	if( check_admin_referer('espresso_form_check', 'edit_question') ) {
 	$question_text = $_POST['question'];
@@ -15,8 +15,8 @@ function event_espresso_form_builder_update(){
 	}
 		
 	if( $wpdb->query("UPDATE " . EVENTS_QUESTION_TABLE . " SET question_type = '" . $question_type . "', question = '" . $question_text . "', response = '" . $values . "', required = '" . $required . "',admin_only = '" . $admin_only . "', required_text = '" . $required_text . "', sequence = '" . $sequence . "' WHERE id = '" . $question_id . "'") ) {
-		$notices['updates'][] = __('The question ', 'event_espresso') .  htmlentities2($_REQUEST['question']) . __(' has been updated.', 'event_espresso');
+		$espresso_notices['success'][] = __('The question ', 'event_espresso') .  htmlentities2($_REQUEST['question']) . __(' has been updated.', 'event_espresso');
 	}else {
-		$notices['errors'][] = __('The question ', 'event_espresso') .  htmlentities2($_REQUEST['question']) . __(' was not updated .', 'event_espresso');
+		$espresso_notices['errors'][] = __('The question ', 'event_espresso') .  htmlentities2($_REQUEST['question']) . __(' was not updated .', 'event_espresso');
 	}
 }
