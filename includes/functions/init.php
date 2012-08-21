@@ -153,6 +153,7 @@ function espresso_admin_init() {
 
 				case 'payment_gateways' :
 					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/payment_gateways.php');
+					require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/admin_screens/affiliate-options.php');
 					if ($espresso_premium) {
 						require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gateway_developer.php');
 					}
@@ -340,6 +341,8 @@ function espresso_frontend_init() {
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/affiliate-handling.php');
+
 	//Registration forms
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 
