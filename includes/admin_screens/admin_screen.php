@@ -31,7 +31,7 @@ function espresso_add_meta_boxes() {
 		case 'event-espresso_page_template_map_confg':
 		case 'event-espresso_page_event_emails':
 		case 'event-espresso_page_support':
-		case 'event-espresso_page_pricing':
+		//case 'event-espresso_page_pricing':
 			add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), 'espresso_news_post_box', $screen_id, 'side');
 			add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), 'espresso_links_post_box', $screen_id, 'side');
 			if (!$espresso_premium)
@@ -86,30 +86,30 @@ function espresso_add_meta_boxes() {
 			add_meta_box('addons_members', __('Members Integration Module', 'event_espresso'), 'espresso_admin_addons_members_meta_box', $screen_id);
 			add_meta_box('addons_custom_files', __('Custom Files', 'event_espresso'), 'espresso_admin_addons_custom_files_meta_box', $screen_id);
 			break;
-		case 'event-espresso_page_pricing':
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/postboxes.php');
-			if (isset($_REQUEST['action'])) {
-				if ($_REQUEST['action'] == 'add_new_price') {
-					add_meta_box('add_new_price', __('Add a Price', 'event_espresso'), 'edit_event_price_postbox', $screen_id, 'normal');
-					//add_meta_box('description_editor', __('Description', 'event_espresso'), 'espresso_description_editor_postbox', 'espresso_price_desc_editor', 'normal');
-				}
-				if ($_REQUEST['action'] == 'edit_price') {
-					add_meta_box('edit_price', __('Edit Global Price', 'event_espresso'), 'edit_event_price_postbox', $screen_id, 'normal');
-					add_meta_box('description_editor', __('Description', 'event_espresso'), 'espresso_description_editor_postbox', 'espresso_price_desc_editor', 'normal');
-				}
-				if ($_REQUEST['action'] == 'add_new_price_type') {
-					add_meta_box('add_new_price_type', __('Add a Price Type', 'event_espresso'), 'edit_event_price_type_postbox', $screen_id, 'normal');
-				}
-				if ($_REQUEST['action'] == 'edit_price_type') {
-					add_meta_box('edit_price_type', __('Edit Price Type', 'event_espresso'), 'edit_event_price_type_postbox', $screen_id, 'normal');
-				}
-			}
-			break;
+//		case 'event-espresso_page_pricing':
+//			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/postboxes.php');
+//			if (isset($_REQUEST['action'])) {
+//				if ($_REQUEST['action'] == 'add_new_price') {
+//					add_meta_box('add_new_price', __('Add a Price', 'event_espresso'), 'edit_event_price_postbox', $screen_id, 'normal');
+//					//add_meta_box('description_editor', __('Description', 'event_espresso'), 'espresso_description_editor_postbox', 'espresso_price_desc_editor', 'normal');
+//				}
+//				if ($_REQUEST['action'] == 'edit_price') {
+//					add_meta_box('edit_price', __('Edit Global Price', 'event_espresso'), 'edit_event_price_postbox', $screen_id, 'normal');
+//					add_meta_box('description_editor', __('Description', 'event_espresso'), 'espresso_description_editor_postbox', 'espresso_price_desc_editor', 'normal');
+//				}
+//				if ($_REQUEST['action'] == 'add_new_price_type') {
+//					add_meta_box('add_new_price_type', __('Add a Price Type', 'event_espresso'), 'edit_event_price_type_postbox', $screen_id, 'normal');
+//				}
+//				if ($_REQUEST['action'] == 'edit_price_type') {
+//					add_meta_box('edit_price_type', __('Edit Price Type', 'event_espresso'), 'edit_event_price_type_postbox', $screen_id, 'normal');
+//				}
+//			}
+//			break;
 	}
 
 
 	switch ($screen_id) {
-		case 'event-espresso_page_pricing':
+		//case 'event-espresso_page_pricing':
 		case 'event-espresso_page_event_categories':
 		case 'event-espresso_page_form_groups':
 		case 'event-espresso_page_form_builder':

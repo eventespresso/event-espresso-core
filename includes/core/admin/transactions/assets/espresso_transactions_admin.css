@@ -1,3 +1,6 @@
+.espresso-admin .form-table th { max-width:!important 30%; min-width:!important 20%; }
+.espresso-admin .form-table td { max-width:!important 79%; min-width:!important 69%; }
+.espresso-admin .regular-text { width:!important 98%; }
 #icon-options-event { background: url("../../../../../images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
 #entries-per-page-dv { display:inline; }
 
@@ -14,13 +17,17 @@
 
 #STS_ID {}
 .column-STS_ID { width:6%; /*text-align:center; */}
-.status-TOP, .txn-overview-full-payment-spn,
+/* green text */
+.status-TCM, .txn-overview-full-payment-spn,
 .txn-admin-payment-status-PAP { color:#090;  }
+/* orange text */
 .status-TPN, .txn-overview-part-payment-spn,
 .txn-admin-payment-status-PFL { color:#F93; font-weight:bold;  }
+/* red text */
+.status-TOP,
 .txn-overview-no-payment-spn,
 .txn-admin-payment-status-PDC { color:#F00; font-weight:bold; }
-.status-TCM,
+/* grey text */
 .txn-admin-payment-status-PCN { color:#999;  }
 
 #TXN_total, #TXN_paid { text-align:center; }
@@ -111,7 +118,7 @@
 
 
 #txn-admin-apply-payment-dv {
-	position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:1000;
+	position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
 	background:#fff; border:1px solid #ddd; border-radius:5px;
 }
 #txn-admin-apply-payment-frm { }
@@ -191,5 +198,6 @@
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; } 
 
+#adminmenuwrap { z-index:100; }
 #espresso-admin-page-ajax-loading { display:none; position:absolute; top:18px; left:50%; margin-left:-15px; padding:0; z-index:99999; }
 #espresso-admin-page-ajax-loading span { display:none; }

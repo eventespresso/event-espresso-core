@@ -72,16 +72,6 @@ function espresso_site_license() {
 add_action('action_hook_espresso_require_admin_files', 'espresso_site_license');
 
 function espresso_admin_page_footer() {
-	?>
-	<script type="text/javascript" charset="utf-8">
-		//<![CDATA[
-		jQuery(document).ready(function() {
-			postboxes.add_postbox_toggles("payment_gateways");
-		});
-		//]]>
-	</script>
-	<?php
-
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
 	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
 }

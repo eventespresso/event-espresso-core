@@ -206,12 +206,12 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 			// are you a member of our club???
 			if ( $price->is_member() && is_user_logged_in() ) {
 				// format member ticket price
-				$price_option = $price->name() . ' : ';
+				$price_option = $price->name() . ': ';
 				// format ticket price
 				$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
 			} else {
 				// add non-member price type
-				$price_option = $price->name() . ' : ';
+				$price_option = $price->name() . ': ';
 				// format ticket price
 				$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . number_format((float) $price->final_price(), 2, '.', '');
 			}
