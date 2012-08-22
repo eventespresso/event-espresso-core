@@ -61,10 +61,8 @@ class EE_Single_Page_Checkout {
 		
 		if ( isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1 ) {
 			$this->_ajax = 1;
-			unset($_POST['espresso_ajax']);
 		} else if (  isset($_REQUEST['espresso_ajax']) && $_REQUEST['espresso_ajax'] == 1 ) {
 			$this->_ajax = 1;
-			unset($_REQUEST['espresso_ajax']);
 		} else {
 			 $this->_ajax = 0;
 		}
@@ -85,22 +83,26 @@ class EE_Single_Page_Checkout {
 	
 		// load classes
 		$this->load_classes();
-		$this->set_templates();
-	
-		$e_reg_pages = array(
-				'register',
-				'process_reg_step_1',
-				'process_reg_step_2',
-				'process_reg_step_3',
-				'event_queue'
-				);
-		if (( isset( $_REQUEST['e_reg'] ) && ( in_array($_REQUEST['e_reg'], $e_reg_pages))) || $this->_ajax ) {
-	
-			add_action('init', array(&$this, 'load_css'), 20);
-			add_action('init', array(&$this, 'load_js'), 20);
-			// hooks that happen during the regevent action and other pathing stuff
-			add_action('init', array(&$this, 'set_paths_and_routing'), 30);
+
+		global $is_UI_request;
+		if ( $is_UI_request ) {
+			$this->set_templates();
 		
+			$e_reg_pages = array(
+					'register',
+					'process_reg_step_1',
+					'process_reg_step_2',
+					'process_reg_step_3',
+					'event_queue'
+					);
+			if (( isset( $_REQUEST['e_reg'] ) && ( in_array($_REQUEST['e_reg'], $e_reg_pages))) || $this->_ajax ) {
+		
+				add_action('init', array(&$this, 'load_css'), 20);
+				add_action('init', array(&$this, 'load_js'), 20);
+				// hooks that happen during the regevent action and other pathing stuff
+				add_action('init', array(&$this, 'set_paths_and_routing'), 30);
+			
+			}
 		}
 	
 	}
@@ -742,6 +744,7 @@ class EE_Single_Page_Checkout {
 
 		// don't need these so get rid of them so they don't get processed
 		unset($_POST['action']);
+		unset($_REQUEST['espresso_ajax']);
 
 		// some empty containers
 		$attendees = array();

@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE_Admin_Registrations class
+ * Registrations_Admin_Page class
  *
  * @package			Event Espresso
  * @subpackage	includes/core/admin/transactions/Registrations_Admin_Page.core.php 
@@ -21,26 +21,37 @@
  *
  * ------------------------------------------------------------------------
  */
-class Registrations_Admin_Page extends Admin_Page {
+class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
 
 	private $_registration;
 	private $_session;
 	private static $_reg_status;
 
 
-	
 
+
+
+	/**
+	 * 		constructor
+	 * 		@Constructor
+	 * 		@access public
+	 * 		@return void
+	 */
 	public function __construct() {
 
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		parent::__construct();
-		$this->define_page_vars();
-		if ( isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1 ) {
-//			add_action('wp_ajax_espresso_apply_payment', array( &$this, 'apply_payments_or_refunds'));
-//			add_action('wp_ajax_espresso_delete_payment', array( &$this, 'delete_payment'));
+
+		$this->page_slug = REG_PG_SLUG;
+		
+		$this->_init();
+
+		if ( $this->_AJAX ) {
 		}
+
+		// remove settings tab
+		add_filter( 'filter_hook_espresso_admin_page_nav_tabs', array( &$this, '_remove_settings_from_admin_page_nav_tabs' ), 10 , 1 );
 
 	}
 
@@ -52,39 +63,20 @@ class Registrations_Admin_Page extends Admin_Page {
 	*		@access private
 	*		@return void
 	*/
-	public function route_admin_request() {			
+	public function set_page_routes() {			
+
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$this->_get_registration_status_array();
 
-		if ( isset( $_REQUEST['action'] )) {
-
-			check_admin_referer( $_REQUEST['action'] );
-
-			switch ( $_REQUEST['action'] ) {
-
-				case 'view_registration':
-					$this->_registration_details();
-					break;
-
-				case 'edit_registration':
-					$this->_registration_details( 'edit' );
-					break;
-
-				case 'delete_registration':
-					$this->_delete_registration();
-					break;
-					
-				case 'reports':
-					$this->_registration_reports();
-					break;
-					
-			}
-
-		} else {
-			$_REQUEST['action'] = FALSE;
-			$this->_registrations_overview_list_table();
-		}
-
+		$this->_page_routes = array(
+				'default'	=> '_registrations_overview_list_table',
+				'view_registration'	=> '_registration_details',
+				'edit_registration'	=> array( 'func' => '_registration_details', 'param' => array( 'edit' )),
+				'delete_registration'	=> '_delete_registration',
+				'reports'	=> '_registration_reports'
+		);
+		
 	}
 
 
@@ -128,12 +120,13 @@ class Registrations_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for main Registrations Admin page
-	*		@access private
+	*		@access protected
 	*		@return void
 	*/
-	private function _registrations_overview_list_table() {
+	protected function _registrations_overview_list_table() {
 
 		global $wpdb, $espresso_premium;
+		//$espresso_premium = FALSE;
 		
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
@@ -143,7 +136,23 @@ class Registrations_Admin_Page extends Admin_Page {
 		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin_screens/events/queries.php' );
 		// require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/attendee_functions.php' );
 
+		$EVT_ID = FALSE;
+		$CAT_ID = FALSE;
+		$reg_status = FALSE;
+		$month_range = FALSE;
+		$today_a = FALSE;
+		$this_month_a = FALSE;
+		$start_date = FALSE;
+		$end_date = FALSE;
+
 		if ( $espresso_premium ) {
+
+			$EVT_ID = isset( $_REQUEST['event_id'] ) ? absint( $_REQUEST['event_id'] ) : FALSE;
+			$CAT_ID = isset( $_REQUEST['category_id'] ) ? absint( $_REQUEST['category_id'] ) : FALSE;
+			$reg_status = isset( $_REQUEST['reg_status'] ) ? sanitize_text_field( $_REQUEST['reg_status'] ) : FALSE;
+			$month_range = isset( $_REQUEST['month_range'] ) ? sanitize_text_field( $_REQUEST['month_range'] ) : FALSE;
+			$today_a = isset( $_REQUEST['today_a'] ) && $_REQUEST['today_a'] == 'true' ? sanitize_text_field( $_REQUEST['today_a'] ) : FALSE;
+			$this_month_a = isset( $_REQUEST['this_month_a'] ) ? sanitize_text_field( $_REQUEST['this_month_a'] ) : FALSE;
 
 			$filter_template_args = array();
 			// base form url for filters
@@ -179,13 +188,21 @@ class Registrations_Admin_Page extends Admin_Page {
 		} else {
 			// no soup for you !!!
 			$this->template_args['premium_reg_filters'] = FALSE;
+			$start_date = isset( $_POST['reg-filter-start-date'] ) ? wp_strip_all_tags( $_POST['reg-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-1 month' ));
+			$end_date = isset( $_POST['reg-filter-end-date'] ) ? wp_strip_all_tags( $_POST['reg-filter-end-date'] ) : date( 'D M j, Y' );
+			$end_date = ( strtotime( $end_date ) < strtotime( $start_date )) ? $start_date : $end_date;
+			$this->template_args['start_date'] = $start_date;
+			$this->template_args['end_date'] = $end_date;
 		}
-		
-		$this->template_args['start_date'] = isset( $_POST['reg-filter-start-date'] ) ? wp_strip_all_tags( $_POST['reg-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-1 month' ));
-		$this->template_args['end_date'] = isset( $_POST['reg-filter-end-date'] ) ? wp_strip_all_tags( $_POST['reg-filter-end-date'] ) : date( 'D M j, Y' );
-		$this->template_args['end_date'] = ( strtotime( $this->template_args['end_date'] ) < strtotime( $this->template_args['start_date'] )) ? $this->template_args['start_date'] : $this->template_args['end_date'];
 
-		$registrations = $REG->get_registrations_for_admin_page();
+//echo '<h4>$EVT_ID : ' . $EVT_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>$CAT_ID : ' . $CAT_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>$reg_status : ' . $reg_status . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>$month_range : ' . $month_range . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>$today_a : ' . $today_a . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>$this_month_a : ' . $this_month_a . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
+		$registrations = $REG->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date );
 		//echo printr( $registrations, '$registrations' );
 		$this->template_args['table_rows'] = $wpdb->num_rows;
 
@@ -200,11 +217,11 @@ class Registrations_Admin_Page extends Admin_Page {
 		$this->template_args['reg_overview_url'] = REG_ADMIN_URL;
 		$this->template_args['view_all_url'] = add_query_arg( array( 'per_page' => $this->template_args['table_rows'] ), REG_ADMIN_URL );
 		// grab messages at the last second
-		$this->template_args['notices'] = espresso_get_notices();
+		//$this->template_args['notices'] = espresso_get_notices();
 		// path to template
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_overview.template.php';
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
-		
+
 		// the final template wrapper
 		$this->admin_page_wrapper();	
  
@@ -216,15 +233,14 @@ class Registrations_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for the View Registration Details Admin page
-	*		@access private
+	*		@access protected
 	*		@return void
 	*/
-	private function _registration_details() {
+	protected function _registration_details() {
 
-		global $wpdb, $org_options, $ee_admin_page;
+		global $wpdb, $org_options;
 		
 		$this->template_args = array();
-		$this->template_args['registrations_page'] = $ee_admin_page['registrations'];
 
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
@@ -235,9 +251,12 @@ class Registrations_Admin_Page extends Admin_Page {
 		$this->_session = maybe_unserialize( maybe_unserialize( $this->_registration->TXN_session_data ));
 
 		//printr( $this->_registration, '$this->_registration  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+		$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
+		// add PRC_ID to title if editing 
+		$title = $REG_ID ? $title . ' # ' . $REG_ID : $title;
 
 		// add nav tab for this details page
-		$this->nav_tabs['details']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg' => $REG_ID ), REG_ADMIN_URL ), 'view_registration' );  
+		$this->nav_tabs['details']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg' => $REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );  
 		$this->nav_tabs['details']['link_text'] = __( 'REG Details', 'event_espresso' );
 		$this->nav_tabs['details']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['details']['order'] = 15;
@@ -258,23 +277,20 @@ class Registrations_Admin_Page extends Admin_Page {
 		// link back to overview
 		$this->template_args['reg_overview_url'] = REG_ADMIN_URL;
 
-		add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $ee_admin_page['registrations'], 'normal', 'high' );
-		add_meta_box( 'edit-reg-registrant-mbox', __( 'Attendee Details', 'event_espresso' ), array( $this, '_reg_registrant_side_meta_box' ), $ee_admin_page['registrations'], 'side', 'high' );
-		//add_meta_box( 'edit-reg-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_reg_billing_info_side_meta_box' ), $ee_admin_page['registrations'], 'side', 'high' );
+		add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		add_meta_box( 'edit-reg-registrant-mbox', __( 'Attendee Details', 'event_espresso' ), array( $this, '_reg_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
 
 		if ( $this->_registration->REG_is_group_reg ) {
-			add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Attendees Registered in the Same Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $ee_admin_page['registrations'], 'normal', 'high' );
+			add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Attendees Registered in the Same Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		}
 		
 
-		// grab messages at the last second
-		$this->template_args['notices'] = espresso_get_notices();
-		// path to template
-		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_wrapper.template.php';
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
-		
-		// the final template wrapper
-		$this->admin_page_wrapper();
+		// grab header
+		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
+		$this->template_args['admin_page_header'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+
+		// the details template wrapper
+		$this->display_admin_page_with_sidebar();		
 
 	}
 
@@ -284,10 +300,10 @@ class Registrations_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for the Registration main meta box
-	*		@access private
+	*		@access public
 	*		@return void
 	*/
-	function _reg_details_meta_box() {
+	public function _reg_details_meta_box() {
 
 		global $wpdb, $org_options;
 
@@ -391,10 +407,10 @@ class Registrations_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for the Attendees Registration main meta box
-	*		@access private
+	*		@access public
 	*		@return void
 	*/
-	function _reg_attendees_meta_box() {
+	public function _reg_attendees_meta_box() {
 
 		global $wpdb, $org_options;
 
@@ -454,10 +470,10 @@ class Registrations_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for the Edit Registration side meta box
-	*		@access private
+	*		@access public
 	*		@return void
 	*/
-	function _reg_registrant_side_meta_box() {
+	public function _reg_registrant_side_meta_box() {
 
 		$this->template_args['fname'] = $this->_registration->ATT_fname;
 		$this->template_args['lname'] = $this->_registration->ATT_lname;
@@ -485,10 +501,10 @@ class Registrations_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for the Edit Registration side meta box
-	*		@access private
+	*		@access public
 	*		@return void
 	*/
-	function _reg_billing_info_side_meta_box() {
+	public function _reg_billing_info_side_meta_box() {
 
 		$billing_info = $this->_session['billing_info'];
 		//echo printr( $billing_info, '$billing_info' );
@@ -572,10 +588,10 @@ class Registrations_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates Business Reports regarding Registrations
-	*		@access private
+	*		@access protected
 	*		@return void
 	*/
-	private function _registration_reports() {
+	protected function _registration_reports() {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	
@@ -588,11 +604,11 @@ class Registrations_Admin_Page extends Admin_Page {
 		$template_path = EE_CORE_ADMIN . 'admin_reports.template.php';
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
 		
-		//printr( $page_args, '$page_args' );
+//		printr( $page_args, '$page_args' );
 		
 		// the final template wrapper
 		$this->admin_page_wrapper();
-		
+
 	}
 
 
@@ -610,13 +626,13 @@ class Registrations_Admin_Page extends Admin_Page {
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_day';
 		
-		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery'), '1.0', TRUE);
+		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), '1.0', TRUE);
 
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 	 
 		if( $results = $REG->get_registrations_per_day_report( $period ) ) {		
-//			printr( $results, '$registrations_per_day' );
+			//printr( $results, '$registrations_per_day' );
 			$regs = array();
 			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
 			$xmax = 0;
@@ -664,13 +680,13 @@ class Registrations_Admin_Page extends Admin_Page {
 		$report_ID = 'reg-admin-registrations-per-event-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_event';
 		
-		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery'), '1.0', TRUE);
+		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), '1.0', TRUE);
 
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 	 
 		if( $results = $REG->get_registrations_per_event_report( $period ) ) {		
-//			printr( $results, '$registrations_per_event' );
+			//printr( $results, '$registrations_per_event' );
 			$regs = array();
 			$limits = array();
 			$ymax = 0;

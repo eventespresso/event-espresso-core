@@ -204,33 +204,6 @@ if (!function_exists('add_event_espresso_menus')) {
 						'events',
 						'event_espresso_manage_events'
 				),
-//				'registrations' => array(
-//						TRUE,
-//						'events',
-//						__('Event Espresso - Registrations Overview', 'event_espresso'),
-//						__('Registrations', 'event_espresso'),
-//						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
-//						'registrations',
-//						'event_espresso_manage_registrations'
-//				),
-//				'attendees' => array(
-//						TRUE,
-//						'events',
-//						__('Event Espresso - Attendees Overview', 'event_espresso'),
-//						__('Attendees', 'event_espresso'),
-//						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
-//						'attendees',
-//						'event_espresso_manage_attendees'
-//				),
-//				'transactions' => array(
-//						TRUE,
-//						'events',
-//						__('Event Espresso - Transactions Overview', 'event_espresso'),
-//						__('Transactions', 'event_espresso'),
-//						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_events']),
-//						'transactions',
-//						array( 'Transactions_Admin_Page', 'run' ) // event_espresso_manage_transactions
-//				),
 				'event_categories' => array(
 						TRUE,
 						'events',
@@ -239,8 +212,13 @@ if (!function_exists('add_event_espresso_menus')) {
 						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_categories']),
 						'event_categories',
 						'event_espresso_categories_config_mnu'
-				),
-				'question_groups' => array(
+				)
+			);
+			
+			$submenu_page_sections['main'] = apply_filters('filter_hook_espresso_submenus_main_section', $submenu_page_sections['main'], $espresso_manager);
+
+
+			$submenu_page_sections['main']['question_groups'] = array(
 						TRUE,
 						'events',
 						__('Event Espresso - Question Groups', 'event_espresso'),
@@ -248,8 +226,8 @@ if (!function_exists('add_event_espresso_menus')) {
 						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_form_groups']),
 						'form_groups',
 						'event_espresso_question_groups_config_mnu'
-				),
-				'questions' => array(
+			);
+			$submenu_page_sections['main']['questions'] = array(
 						TRUE,
 						'events',
 						__('Event Espresso - Questions', 'event_espresso'),
@@ -257,8 +235,8 @@ if (!function_exists('add_event_espresso_menus')) {
 						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_form_builder']),
 						'form_builder',
 						'event_espresso_questions_config_mnu'
-				),
-				'discounts' => array(
+			);
+			$submenu_page_sections['main']['discounts'] = array(
 						TRUE,
 						'events',
 						__('Event Espresso - Promotional Codes', 'event_espresso'),
@@ -266,8 +244,8 @@ if (!function_exists('add_event_espresso_menus')) {
 						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_discounts']),
 						'discounts',
 						'event_espresso_discount_config_mnu'
-				),
-				'groupons' => array(
+			);
+			$submenu_page_sections['main']['groupons'] = array(
 						(function_exists('event_espresso_groupon_config_mnu') && $espresso_premium == true),
 						'events',
 						__('Groupons', 'event_espresso'),
@@ -275,10 +253,7 @@ if (!function_exists('add_event_espresso_menus')) {
 						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_groupons']),
 						'groupons',
 						'event_espresso_groupon_config_mnu'
-				)
-		);
-
-		$submenu_page_sections['main'] = apply_filters('filter_hook_espresso_submenus_main_section', $submenu_page_sections['main'], $espresso_manager);
+			);
 
 		$submenu_page_sections['management'] = array(
 				'management' => array(
@@ -298,15 +273,6 @@ if (!function_exists('add_event_espresso_menus')) {
 						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_event_emails']),
 						'event_emails',
 						'event_espresso_email_config_mnu'
-				),
-				'pricing' => array(
-						TRUE,
-						'events',
-						__('Event Espresso - Pricing Manager', 'event_espresso'),
-						__('Pricing', 'event_espresso'),
-						apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_pricing']),
-						'pricing',
-						'espresso_price_manager_menu'
 				),
 				'use_personnel_manager' => array(
 						($org_options['use_personnel_manager'] && $espresso_premium == true),
@@ -456,13 +422,13 @@ if (!function_exists('add_event_espresso_menus')) {
 // ---------------------------------------
 
 		foreach ($menu_pages as $menu_page) {
-			add_menu_page($menu_page[0], $menu_page[1], $menu_page[2], $menu_page[3], $menu_page[4], $menu_page[5]);
+			@add_menu_page($menu_page[0], $menu_page[1], $menu_page[2], $menu_page[3], $menu_page[4], $menu_page[5]);
 		}
 
 		foreach ($submenu_page_sections as $submenu_pages) {
 			foreach ($submenu_pages as $slug => $submenu_page) {
 				if ($submenu_page[0]) {
-					$ee_admin_page[$slug] = add_submenu_page($submenu_page[1], $submenu_page[2], $submenu_page[3], $submenu_page[4], $submenu_page[5], $submenu_page[6]);
+					$ee_admin_page[$slug] = @add_submenu_page($submenu_page[1], $submenu_page[2], $submenu_page[3], $submenu_page[4], $submenu_page[5], $submenu_page[6]);
 				}
 			}
 		}

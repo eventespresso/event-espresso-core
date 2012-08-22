@@ -1013,6 +1013,8 @@ abstract class EEM_Base {
 					$code_bit = str_replace ( '-', '_', $code_bit );
 					// break function name by the underscore if there are any
 					$func_bits = explode('_', $code_bit);
+					// split camelCase
+					// preg_match_all('/((?:^|[A-Z])[a-z]+)/',$str,$matches);
 					$func = '';
 					$x = 0;
 					foreach ( $func_bits as $func_bit ) {

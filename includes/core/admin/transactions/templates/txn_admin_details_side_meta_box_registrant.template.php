@@ -1,15 +1,15 @@
 <div id="admin-side-mbox-primary-registrant-dv" class="admin-side-mbox-dv">
 	<p class="clearfix">
-		<span class="admin-side-mbox-label-spn lt-grey-txt float-left">Name</span><?php echo $prime_reg_fname . ' ' . $prime_reg_lname;?>
+		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e( 'Name', 'event_espresso' );?></span><?php echo $prime_reg_fname . ' ' . $prime_reg_lname;?>
 	</p>
 	<p class="clearfix">
-		<span class="admin-side-mbox-label-spn lt-grey-txt float-left">Email</span><a href="mailto:<?php echo $prime_reg_email;?>"><?php echo $prime_reg_email;?></a>
+		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e( 'Email', 'event_espresso' );?></span><a href="mailto:<?php echo $prime_reg_email;?>"><?php echo $prime_reg_email;?></a>
 	</p>
 	<p class="clearfix">
-		<span class="admin-side-mbox-label-spn lt-grey-txt float-left">Phone #</span><?php echo $prime_reg_phone;?>
+		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e( 'Phone #', 'event_espresso' );?></span><?php echo $prime_reg_phone;?>
 	</p>
 	<p class="clearfix">
-		<span class="admin-side-mbox-label-spn lt-grey-txt float-left">Address</span>
+		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e( 'Address', 'event_espresso' );?></span>
 		<div class="admin-side-mbox-text-dv">
 			<?php echo $prime_reg_address;?>
 			<?php echo $prime_reg_address2;?>
@@ -19,19 +19,19 @@
 		</div>
 	</p>
 	<p class="clearfix">
-		<span class="admin-side-mbox-label-full-spn lt-grey-txt">Social Networking Contacts</span>&nbsp;
+		<span class="admin-side-mbox-label-full-spn lt-grey-txt"><?php _e( 'Social Networking Contacts', 'event_espresso' );?></span>&nbsp;
 		<div class="admin-side-mbox-text-dv">
 			<?php echo $prime_reg_social;?>
 		</div>
 	</p>
 	<p class="clearfix">
-		<span class="admin-side-mbox-label-full-spn lt-grey-txt">Attendee Comments</span>&nbsp;
+		<span class="admin-side-mbox-label-full-spn lt-grey-txt"><?php _e( 'Attendee Comments', 'event_espresso' );?></span>&nbsp;
 		<div class="admin-side-mbox-text-dv">
 			<?php echo $prime_reg_comments;?>
 		</div>
 	</p>
 	<p class="clearfix">
-		<span class="admin-side-mbox-label-spn lt-grey-txt float-left">Admin Notes</span>&nbsp;
+		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e( 'Admin Notes', 'event_espresso' );?></span>&nbsp;
 		<div class="admin-side-mbox-text-dv">
 			<?php echo $prime_reg_notes;?>
 		</div>

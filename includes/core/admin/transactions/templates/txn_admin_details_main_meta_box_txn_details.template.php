@@ -82,7 +82,7 @@
 	<?php if ( $grand_total > 0 ) : ?>
 
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
-		<img id="cash-single" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/Cash - Single_16x16.png" alt="" /><?php _e( 'Payment Details', 'event_espresso' );?>
+		<img id="cash-single" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/cash-single-16x16.png" alt="" /><?php _e( 'Payment Details', 'event_espresso' );?>
 	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
@@ -174,16 +174,25 @@
 				$pay_totals_class = $payment_total > $grand_total ? ' red-text' : '';
 				$overpaid = $payment_total > $grand_total ? '<span id="overpaid">' . __( 'This transaction has been overpaid ! ', 'event_espresso' ) . '</span>' : '';
 			?>
+				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
+					<td class=" jst-rght" colspan="11">
+						<span class="red-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+					</td>
+				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr<?php echo $pay_totals_class;?>">
 					<th class=" jst-rght" colspan="10"><span id="payments-total-spn"><?php echo $overpaid . __( 'Payments Total', 'event_espresso' );?></span></th>
 					<th class=" jst-rght"><?php echo $currency_sign;?> <span id="txn-admin-payment-total"><?php echo number_format( $payment_total, 2 );?></span></th>
 				</tr>			
 		<?php else : ?>
-				<tr class="admin-primary-mbox-total-tr">
+				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
 					<td class=" jst-rght" colspan="11">
 						<span class="red-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
 					</td>
-				</tr>		
+				</tr>
+				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
+					<th class=" jst-rght" colspan="10"><span id="payments-total-spn"><?php echo __( 'Payments Total', 'event_espresso' );?></span></th>
+					<th class=" jst-rght"><?php echo $currency_sign;?> <span id="txn-admin-payment-total"></span></th>
+				</tr>				
 		<?php endif; // $payments?>
 
 				<tr id="txn-admin-payment-empty-row-tr" class="hidden">  
@@ -257,23 +266,23 @@
 				<?php _e( 'Apply Refund', 'event_espresso' );?>
 			</a>
 		</li>
-	</ul>	
+	</ul>
 	<br class="clear"/>
-	
+
 	<div id="txn-admin-apply-payment-dv" class="txn-admin-payment-option auto-hide hidden">
-	
+
 		<h2 id="admin-modal-dialog-apply-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon hidden">
-			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/Cash - Single (Add)_24x24.png" alt="" />
+			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/cash-single-add-24x24.png" alt="" />
 			<?php echo __( 'Apply a Payment to Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
-		
+
 		<h2 id="admin-modal-dialog-edit-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon hidden">
-			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/Cash - Single (Edit)_24x24.png" alt="" />
+			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/cash-single-edit-24x24.png" alt="" />
 			<?php echo __( 'Edit Payment #', 'event_espresso' ) . '<span></span>' . __( ' for Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
 		
 		<h2 id="admin-modal-dialog-apply-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon hidden">
-			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/Cash - Single (Remove)_24x24.png" alt="" />
+			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/icons/cash-single-remove-24x24.png" alt="" />
 			<?php echo __( 'Apply a Refund to Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
 		
@@ -281,7 +290,9 @@
 			<div class="admin-modal-dialog-wrap">
 				<div class="admin-modal-dialog-inner">
 					
+					<?php wp_nonce_field( 'espresso_apply_payment_nonce' ); ?>
 					<input  type="hidden" name="espresso_ajax" id="espresso-ajax" value="0"/>
+					<input  type="hidden" name="noheader" id="txn-admin-noheader-inp" value="0"/>
 					<input  type="hidden" name="txn_admin_payment[PAY_ID]" id="txn-admin-payment-payment-id-inp" class="txn-admin-apply-payment-inp" value="0"/>
 					<input  type="hidden" name="txn_admin_payment[TXN_ID]" id="txn-admin-payment-txn-id-inp" value="<?php echo $txn_nmbr['value']; ?>"/>
 					<input  type="hidden" name="txn_admin_payment[type]" id="txn-admin-payment-type-inp" value="1"/>

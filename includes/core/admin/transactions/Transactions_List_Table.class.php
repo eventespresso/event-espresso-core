@@ -209,9 +209,10 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 			
 		} else {
 			// free event
-			$nothing = array( 'nothing', 'nil', 'nada', 'zero', 'zilch', 'zip', 'zippo', 'not a penny', 'boo', 'diddly-squat' );
-			$rnd = rand( 0, 9 );
-			return '<span class="txn-overview-free-event-spn">' . __( $nothing[ $rnd ], 'event_espresso' ) . '</span>';
+//			$nothing = array( 'nothing', 'nil', 'nada', 'zero', 'zilch', 'zip', 'zippo', 'not a penny', 'boo', 'diddly-squat' );
+//			$rnd = rand( 0, 9 );
+//			return '<span class="txn-overview-free-event-spn">' . __( $nothing[ $rnd ], 'event_espresso' ) . '</span>';
+			return '<span class="txn-overview-free-event-spn">' . $org_options['currency_symbol'] . '0.00</span>';
 		}
 		
 	}
@@ -238,9 +239,9 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 
 
         //Build row actions	
-		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'view_transaction' );
-		$view_reg_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item['REG_ID'] ), admin_url( 'admin.php?page=registrations' )), 'view_registration' );
-		$send_pay_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'send_payment_reminder', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'send_payment_reminder' );
+		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'view_transaction_nonce' );
+		$view_reg_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item['REG_ID'] ), admin_url( 'admin.php?page=registrations' )), 'view_registration_nonce' );
+		$send_pay_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'send_payment_reminder', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'send_payment_reminder_nonce' );
 		
         //Build row actions
         $view_lnk = '

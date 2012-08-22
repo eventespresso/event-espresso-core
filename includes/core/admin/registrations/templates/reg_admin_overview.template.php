@@ -7,12 +7,12 @@
 	?>
 		<ul class="subsubsub">
 			<li class="all">
-				<a class="current" href="<?php echo $view_all_url;?>">View All <span class="count">(<?php echo $table_rows; ?>)</span></a>
+				<a class="current" href="<?php echo $view_all_url;?>"><?php _e( 'View All', 'event_espresso' ); ?> <span class="count">(<?php echo $table_rows; ?>)</span></a>
 			</li>
 		</ul>
 		<div class="clear"></div>
 		<form id="reg-filters-frm" action="<?php echo $reg_overview_url;?>" method="post" name="reg-filters-frm">
-			<label for="reg-filter-start-date"><?php _e( 'Display Registrations from ', 'event_espresso' ); ?></label>
+			<label for="reg-filter-start-date"><?php _e( 'Display Registrations from', 'event_espresso' ); ?> </label>
 			<input id="reg-filter-start-date" class="datepicker" type="text" value="<?php echo $start_date; ?>" name="reg-filter-start-date" size="15"/>
 			<label for="reg-filter-end-date"> <?php _e( 'until', 'event_espresso' ); ?> </label>
 			<input id="reg-filter-end-date" class="datepicker" type="text" value="<?php echo $end_date; ?>" name="reg-filter-end-date" size="15"/>

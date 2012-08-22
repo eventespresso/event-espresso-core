@@ -9,8 +9,6 @@
  */
 function espresso_define_tables_and_paths() {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
 	global $wpdb;
 
 	define( 'DS', DIRECTORY_SEPARATOR );
@@ -165,8 +163,10 @@ function espresso_get_user_id() {
 function espresso_load_org_options() {
 	global $org_options, $espresso_wp_user;
 	$org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
-	require_once (EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
 }
+
+
 
 
 
@@ -203,9 +203,15 @@ function espresso_EE_Session() {
 
 function espresso_init() {
 
+//	echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//	echo '<pre style="height:auto;border:2px solid #FF6600;">' . print_r( $_REQUEST, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
+
 	do_action('action_hook_espresso_debug_file');
 	//Globals used throughout the site
-	global $espresso_premium;
+	global $espresso_premium, $is_UI_request;
+	// is this request for UI or backend 
+	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'is_UI_request = ' . $is_UI_request );
 
 	//Set the default time zone
 	//If the default time zone is set up in the WP Settings, then we will use that as the default.
@@ -245,6 +251,7 @@ function espresso_init() {
 
 
 function espresso_systems_check($check) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php')) {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/misc_functions.php');
 		$check = espresso_system_check();
@@ -268,6 +275,7 @@ add_filter('filter_hook_espresso_systems_check', 'espresso_systems_check');
  * 		@return void
  */
 function espresso_check_for_export() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	if (isset($_REQUEST['export'])) {
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
@@ -284,6 +292,7 @@ function espresso_check_for_export() {
  * 		@return void
  */
 function espresso_check_for_import() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	if (isset($_REQUEST['import'])) {
 		if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
@@ -296,6 +305,7 @@ function espresso_check_for_import() {
 
 function espresso_load_reg_page_files() {
 
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	define("ESPRESSO_REG_PAGE_FILES_LOADED", "true");
 
 //Process email confirmations
@@ -318,6 +328,7 @@ add_action('action_hook_espresso_load_reg_page_files', 'espresso_load_reg_page_f
  */
 function event_espresso_run_install($table_name, $table_version, $sql, $engine = '') {
 
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 
 	$wp_table_name = $wpdb->prefix . $table_name;
@@ -366,6 +377,12 @@ function event_espresso_run_install($table_name, $table_version, $sql, $engine =
 
 
 
+/**
+ * 		loads and instantiates files and objects for EE admin pages
+ *
+ * 		@access public
+ * 		@return void
+ */
 function espresso_admin_pages() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
@@ -375,42 +392,82 @@ function espresso_admin_pages() {
 	define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 	define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	
+	global $is_UI_request;
+
+	// load admin page factory files
+	require_once( EE_CORE_ADMIN . 'EE_Admin_Page_Init.core.php' );
+	require_once( EE_CORE_ADMIN . DS . 'EE_Admin_Page.core.php' ); 
+
+	$load_admin = TRUE;
+	// grab page request
+	$page_request = ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : FALSE;
+
+	// are we just doing some backend processing or runnning the whole shebang?
+	if ( ! $is_UI_request ) {
+		//echo '<h4>load admin page : ' . $page_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		// if the page_request doesn't load here for some reason then load the entire admin
+		$load_admin = ! espresso_load_admin_page( $page_request, $page_request ) ? TRUE : FALSE;
+	}
 	
-	$page_request = FALSE;
-	// start with an empty array
-	$admin_pages = array();
-	// folders we don't want
-	$exclude = array();
-	// grab everything in the  admin core directory
-	if ( $admin_screens = glob( EE_CORE_ADMIN . '*' )) {	
-		foreach( $admin_screens as $admin_screen ) {
-			// files and anything in the exclude array need not apply
-			if ( is_dir( $admin_screen ) && ! in_array( $admin_screen, $exclude )) {
-				// these folders represent the different EE admin pages
-				$admin_pages[] = basename( $admin_screen );
+	if ( $load_admin ) {
+		//echo '<h4>load all admin pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		// start with an empty array
+		$admin_pages = array();
+		// folders we don't want
+		$exclude = array();
+		// grab everything in the  admin core directory
+		if ( $admin_screens = glob( EE_CORE_ADMIN . '*' )) {	
+			foreach( $admin_screens as $admin_screen ) {
+				// files and anything in the exclude array need not apply
+				if ( is_dir( $admin_screen ) && ! in_array( $admin_screen, $exclude )) {
+					// these folders represent the different EE admin pages
+					$admin_pages[] = basename( $admin_screen );
+				}
 			}
 		}
-	}
-	// allow addons to insert their data into the admin pages array
-	$admin_pages = apply_filters( 'filter_hook_espresso_admin_pages_array', $admin_pages );	
-	//echo '<pre style="height:auto;border:2px solid #FF6600;">' . print_r( $admin_pages, TRUE ) . '</pre>';
+		// allow addons to insert their data into the admin pages array
+		$admin_pages = apply_filters( 'filter_hook_espresso_admin_pages_array', $admin_pages );	
+		//echo '<pre style="height:auto;border:2px solid #FF6600;">' . print_r( $admin_pages, TRUE ) . '</pre>';
 
-	if ( ! empty( $_REQUEST['page'] )) {
-		// grab page request
-		$page_request = sanitize_key( $_REQUEST['page'] );
 		// if it's' an admin page then initialize it
 		if ( ! in_array( $page_request, $admin_pages )) {
 			$page_request = FALSE;
 		}
-	}
-	
-	// load admin page factory
-	require_once( EE_CORE_ADMIN . 'Admin_Page_Init.core.php' );
-	// now loop thru all of our admin pages
-	foreach ( $admin_pages as $admin_page ) {
-		// and instantiate each page's init file
-		$Admin_Page_Init = new Admin_Page_Init( $admin_page, $page_request );
+
+		// now loop thru all of our admin pages
+		foreach ( $admin_pages as $admin_page ) {
+			espresso_load_admin_page( $admin_page, $page_request );
+		}
 	}
 	
 }
 
+
+
+
+/**
+ * 		loads and instantiates files and objects for a single EE admin page
+ *
+ * 		@access public
+ * 		@param string	$admin_page
+ * 		@return void
+ */
+function espresso_load_admin_page( $admin_page, $page_request ) {
+
+	$admin_page = strtolower( $admin_page );
+	$page_name = ucwords(  str_replace( '_', ' ', $admin_page ));
+	$class_name = str_replace( ' ', '_', $page_name );
+	
+	// find, load and instantiate admin page init file
+	$path_to_init = EE_CORE_ADMIN . $admin_page . DS . $class_name . '_Admin_Page_Init.core.php';		
+	if ( file_exists( $path_to_init )) {
+		//echo '<h2>$path_to_init : ' . $path_to_init . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';		
+		require_once( $path_to_init );
+		$page_class =  $class_name . '_Admin_Page_Init';
+		$a = new ReflectionClass( $page_class );
+		$a->newInstance( $admin_page, $page_name, $class_name, $page_request );	
+		return TRUE;					
+	} else {
+		return FALSE;
+	}
+}
