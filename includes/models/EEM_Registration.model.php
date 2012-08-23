@@ -307,7 +307,7 @@ class EEM_Registration extends EEM_Base {
 	*		return a list of attendees for a specific locale for the Registration Overview Admin page
 	* 		@access		public
 	*/
-	public function get_registrations_for_admin_page() {
+	public function get_registrations_for_admin_page( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $month_range = FALSE, $today_a = FALSE, $this_month_a = FALSE, $start_date = FALSE, $end_date = FALSE ) {
 
 		global $wpdb;
 
@@ -318,13 +318,6 @@ class EEM_Registration extends EEM_Base {
 		$days_this_month = date( 't' );
 		$time_start = ' 00:00:00';
 		$time_end = ' 23:59:59';
-
-		$EVT_ID = isset( $_REQUEST['event_id'] ) ? absint( $_REQUEST['event_id'] ) : FALSE;
-		$CAT_ID = isset( $_REQUEST['category_id'] ) ? absint( $_REQUEST['category_id'] ) : FALSE;
-		$reg_status = isset( $_REQUEST['reg_status'] ) ? sanitize_text_field( $_REQUEST['reg_status'] ) : FALSE;
-		$month_range = isset( $_REQUEST['month_range'] ) ? sanitize_text_field( $_REQUEST['month_range'] ) : FALSE;
-		$today_a = isset( $_REQUEST['today_a'] ) && $_REQUEST['today_a'] == 'true' ? sanitize_text_field( $_REQUEST['today_a'] ) : FALSE;
-		$this_month_a = isset( $_REQUEST['this_month_a'] ) ? sanitize_text_field( $_REQUEST['this_month_a'] ) : FALSE;
 
 		$sql_clause = ' WHERE ';
 		$SQL = '(';
@@ -434,6 +427,11 @@ class EEM_Registration extends EEM_Base {
 			$sql_clause = ' AND ';
 		}
 
+		if ( $EVT_ID ) {
+			$SQL .= $sql_clause .' reg.EVT_ID = "' . $EVT_ID  . '"';
+			$sql_clause = ' AND ';
+		}
+
 		if ( $month_range ) {
 			$pieces = explode('-', $month_range, 3);
 			$year_r = $pieces[0];
@@ -441,11 +439,6 @@ class EEM_Registration extends EEM_Base {
 
 			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) . '" ';
 			$SQL .= 'AND "' . strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end )  . '"';
-			$sql_clause = ' AND ';
-		}
-
-		if ( $EVT_ID ) {
-			$SQL .= $sql_clause .' reg.EVT_ID = "' . $EVT_ID  . '"';
 			$sql_clause = ' AND ';
 		}
 
@@ -467,13 +460,13 @@ class EEM_Registration extends EEM_Base {
 		$SQL .= ' AND evt.event_status != "D" ';
 		$SQL .= ') ORDER BY reg.REG_date DESC, reg.EVT_ID ASC';
 
-		$attendees = $wpdb->get_results( $SQL );
+		$registrations = $wpdb->get_results( $SQL );
 
 // echo '<h4>last_query : ' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-// printr( $attendees, '$attendees' );
+// printr( $registrations, '$registrations' );
 // die();
 
-		return $attendees;
+		return $registrations;
 	}
 
 

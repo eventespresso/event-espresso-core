@@ -13,38 +13,12 @@ jQuery(document).ready(function($) {
 	$('#entries-per-page-slct').on( 'change', function() {
 		var per_page = $(this).val();
 		$('#per_page').val( per_page );
-		$('#transactions-overview-frm').submit();
+		var theForm = $(this).parents('form');
+		var formURL = theForm.attr('action');
+		formURL = formURL.replace( '&noheader=true', '' );
+		theForm.attr( 'action', formURL );
+		theForm.submit();
 	}); 
-
-//	var dates = $( "#txn-filter-start-date" ).datepicker({
-//		defaultDate: "-1m",
-//		changeMonth: true,
-//		//numberOfMonths: 3,
-//		onSelect: function( selectedDate ) {
-//			var option = this.id == "txn-filter-start-date" ? "minDate" : "maxDate",
-//				instance = $( this ).data( "datepicker" ),
-//				date = $.datepicker.parseDate(
-//					instance.settings.dateFormat ||
-//					$.datepicker._defaults.dateFormat,
-//					selectedDate, instance.settings );
-//			dates.not( this ).datepicker( "option", option, date );
-//		}
-//	});
-//
-//	var dates = $( "#txn-filter-end-date" ).datepicker({
-//		//defaultDate: "-1m",
-//		changeMonth: true,
-//		//numberOfMonths: 3,
-//		onSelect: function( selectedDate ) {
-//			var option = this.id == "txn-filter-start-date" ? "minDate" : "maxDate",
-//				instance = $( this ).data( "datepicker" ),
-//				date = $.datepicker.parseDate(
-//					instance.settings.dateFormat ||
-//					$.datepicker._defaults.dateFormat,
-//					selectedDate, instance.settings );
-//			dates.not( this ).datepicker( "option", option, date );
-//		}
-//	});
 
 	var dates = $( '.datepicker' ).datepicker({
 		defaultDate: "-1m",
@@ -164,6 +138,7 @@ jQuery(document).ready(function($) {
 
 	
 	function display_payments_and_refunds_modal_dialog() {
+		$('#message').hide();
 		position_overlay();
 		position_dialog();
 		overlay.on('click', function() {
@@ -187,7 +162,7 @@ jQuery(document).ready(function($) {
 				
 				$('.mop').hide();		
 			});
-		});			
+		});	
 	}
 
 
@@ -283,8 +258,12 @@ jQuery(document).ready(function($) {
 	function apply_payment_or_refund( editOrApply ) {
  
 		var formURL = $('#txn-admin-apply-payment-frm').attr('action');
+		formURL = formURL + '&noheader=true';		
+		$('#espresso-ajax').val(1);
+		$('#txn-admin-noheader-inp').val('true');
 		var formData = $('#txn-admin-apply-payment-frm').serialize();
-		//alert( 'formURL = ' + formURL + '\n' + 'formData = ' + formData );
+		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
+		response = new Object();
 
 		$.ajax({
 					type: "POST",
@@ -294,14 +273,13 @@ jQuery(document).ready(function($) {
 					beforeSend: function() {
 						do_before_admin_page_ajax();
 					},
-					success: function(response) {
+					success: function( response ) {
 						if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
 							response.edit_or_apply = editOrApply;
 							process_return_data( response );
 						} else if ( response.errors ) {
 							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 						} else {
-							response = new Object();
 							response.errors = 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.';
 							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 						}
@@ -368,64 +346,19 @@ jQuery(document).ready(function($) {
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 
-		update_payment_totals( response );
-		
 		if ( response.edit_or_apply == 'apply' ) {
 			// grab empty paymnet table row
 			var newRow = '\n				<tr id="txn-admin-payment-tr-PAY_ID">' + $('#txn-admin-payment-empty-row-tr').html() + '\n				</tr>\n';
 			// insert new PAY_ID 
 			newRow = newRow.replace( /PAY_ID/g, PAY_ID );
 			$('#txn-admin-payments-total-tr').before( newRow );
+//			$('#txn-admin-payments-tbl tr:last').after( newRow );
 		}
 			
 		update_payment( PAY_ID, response );
+		update_payment_totals( response );
+		
 		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
-
-	}
-
-
-
-	function update_payment_totals( response ) {
-		//alert( response.toSource() );	
-		// payment-total
-		var totalPaid = parseFloat( response.return_data.total_paid );	
-		$('#txn-admin-payment-total').html( totalPaid.toFixed(2) );
-		// total-amount-due
-		var txnTotal = parseFloat( $('#txn-admin-grand-total').html() );			
-		var totalAmountDue = txnTotal - totalPaid;
-		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
-		$('#txn-amount-due-h2 > span').html( totalAmountDue.toFixed(2) );
-
-		$('#txn-status').html( txn_status_array[ response.return_data.txn_status ] );
-		$('#txn-status').removeClass().addClass( 'status-' + response.return_data.txn_status  );
-
-		if ( totalPaid == txnTotal ) {
-			//alert( 'paid in full' );
-			$('#txn-amount-due-h2').addClass('hidden');
-			$('#txn-amount-due-h2 > span').removeClass();
-			$('#payments-total-spn').html( 'Payments Total' );
-			$('#payments-total-spn').parents('tr').removeClass( 'red-text');
-		} else if ( totalPaid > txnTotal ) {
-			//alert( 'overpaid' );
-			$('#txn-amount-due-h2').removeClass('hidden');
-			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-no-payment-spn');
-			$('#payments-total-spn').html( 'This transaction has been overpaid ! Payments Total' );
-			$('#payments-total-spn').parents('tr').addClass( 'red-text');
-		} else if ( totalPaid > 0 ) {
-			alert( 'part payment' );
-			$('#txn-amount-due-h2').removeClass('hidden');
-			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-part-payment-spn');
-			$('#payments-total-spn').html( 'Payments Total' );
-			$('#overpaid').remove();
-			$('#payments-total-spn').parents('tr').removeClass( 'red-text');			
-		} else {
-			alert( 'no payment' );
-			$('#txn-amount-due-h2').removeClass('hidden');
-			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-no-payment-spn');
-			$('#payments-total-spn').html( 'Payments Total' );
-			$('#overpaid').remove();
-			$('#payments-total-spn').parents('tr').removeClass( 'red-text');			
-		}
 
 	}
 
@@ -460,6 +393,62 @@ jQuery(document).ready(function($) {
 			response.return_data.pay_status = 'PDC';
 		}
 		$('#payment-amount-' + PAY_ID).parent().removeClass().addClass( 'txn-admin-payment-status-'+response.return_data.pay_status );		
+		
+	}
+
+
+
+	function update_payment_totals( response ) {
+		//alert( response.toSource() );	
+
+		// payment-total
+		var totalPaid = parseFloat( response.return_data.total_paid );	
+		$('#txn-admin-payment-total').html( totalPaid.toFixed(2) );
+		// total-amount-due
+		var txnTotal = parseFloat( $('#txn-admin-grand-total').html() );			
+		var totalAmountDue = txnTotal - totalPaid;
+		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
+		$('#txn-amount-due-h2 > span').html( totalAmountDue.toFixed(2) );
+
+		$('#txn-status').html( txn_status_array[ response.return_data.txn_status ] );
+		$('#txn-status').removeClass().addClass( 'status-' + response.return_data.txn_status  );
+
+		if ( totalPaid == txnTotal ) {
+			//alert( 'paid in full' );
+			$('#txn-amount-due-h2').addClass('hidden');
+			$('#txn-amount-due-h2 > span').removeClass();
+			$('#txn-admin-payments-total-tr').removeClass('hidden')
+			$('#txn-admin-no-payments-tr').addClass('hidden');
+			$('#payments-total-spn').html( 'Payments Total' );
+			$('#payments-total-spn').parents('tr').removeClass( 'red-text');
+		} else if ( totalPaid > txnTotal ) {
+			//alert( 'overpaid' );
+			$('#txn-amount-due-h2').removeClass('hidden');
+			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-no-payment-spn');
+			$('#txn-admin-payments-total-tr').removeClass('hidden')
+			$('#txn-admin-no-payments-tr').addClass('hidden');
+			$('#payments-total-spn').html( 'This transaction has been overpaid ! Payments Total' );
+			$('#payments-total-spn').parents('tr').addClass( 'red-text');
+		} else if ( totalPaid > 0 ) {
+			//alert( 'part payment' );
+			$('#txn-amount-due-h2').removeClass('hidden');
+			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-part-payment-spn');
+			$('#txn-admin-payments-total-tr').removeClass('hidden')
+			$('#txn-admin-no-payments-tr').addClass('hidden');
+			$('#payments-total-spn').html( 'Payments Total' );
+			$('#overpaid').remove();
+			$('#payments-total-spn').parents('tr').removeClass( 'red-text');			
+		} else {
+			//alert( 'no payment' );
+			$('#txn-amount-due-h2').removeClass('hidden');
+			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-no-payment-spn');
+			$('#txn-admin-payments-total-tr').addClass('hidden')
+			$('#txn-admin-no-payments-tr').removeClass('hidden');
+			$('#payments-total-spn').html( 'Payments Total' );
+			$('#overpaid').remove();
+			$('#payments-total-spn').parents('tr').removeClass( 'red-text');			
+		}
+
 	}
 
 
@@ -476,7 +465,7 @@ jQuery(document).ready(function($) {
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 		update_payment_totals( response );
-		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', false );
 	}
 
 
@@ -506,6 +495,7 @@ jQuery(document).ready(function($) {
 
 	function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
 			
+		$('#espresso-admin-page-ajax-loading').fadeOut('fast');
 		//alert( response.toSource() );
 		if (( response.success != undefined && response.success != '' ) || ( response.errors != undefined && response.errors != '' )) {
 		
@@ -517,34 +507,38 @@ jQuery(document).ready(function($) {
 
 			if ( response.success != undefined && response.success != '' ) {
 				msg = '<div id="message" class="updated hidden"><p>' + response.success + '</p></div>';
-				closeModal = true;
+				//closeModal = true;
 			}
 		
 			if ( response.errors != undefined && response.errors != '' ) {
 				msg = '<div id="message" class="error hidden"><p>' + response.errors + '</p></div>';
-				closeModal = false;
+				//closeModal = false;
 				fadeaway = false;
 			}
-		
+			// display message
 			$( beforeWhat ).before( msg );
-			$('#espresso-admin-page-ajax-loading').fadeOut('fast');
-				if ( fadeaway == true ) {
-					$('#message').removeClass('hidden').show().delay(8000).fadeOut( function(){
-						if ( closeModal ) {
-							overlay.trigger('click');
-						}
-					});
-				} else {
-					$('#message').removeClass('hidden').show().delay(8000).queue( function() {
-						if ( closeModal ) {
-							overlay.trigger('click');
-						}
-					});
-				}
+			if ( fadeaway == true ) {
+				$('#message').removeClass('hidden').show().delay(8000).fadeOut();
+//				$('#message').removeClass('hidden').show().delay(8000).fadeOut( function(){
+//						if ( closeModal ) {
+//							overlay.trigger('click');
+//						}
+//				});
+			} else {
+				$('#message').removeClass('hidden').show();
+//				$('#message').removeClass('hidden').show().delay(8000).queue( function() {
+//						if ( closeModal ) {
+//							overlay.trigger('click');
+//						}
+//				});
+			}
 
-		} else {
-			$('#espresso-admin-page-ajax-loading').fadeOut('fast');
-		}
+		} 
+		
+//		response.success = '';
+//		response.errors = '';
+		//response = null;
+			
 		
 	}
 

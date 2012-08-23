@@ -252,12 +252,15 @@ class EEM_Price_Type extends EEM_Base {
 		}
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
-		if ( $PRC->delete_all_prices_that_are_type($ID)) {
-			if ( $this->delete(array('PRT_ID' => $ID))) {
-				return TRUE;
-			} else {
-				return FALSE;
-			}
+		//check if any prices use this price type
+		if ( $prices = $PRC->get_all_prices_that_are_type($ID)) {
+			global $espresso_notices;
+			$espresso_notices['errors'][] = __('The Price Type could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.', 'event_espresso');
+			return FALSE;
+		} 
+		
+		if ( $this->delete(array('PRT_ID' => $ID))) {
+			return TRUE;
 		} else {
 			return FALSE;
 		}

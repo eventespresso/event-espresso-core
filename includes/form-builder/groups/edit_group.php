@@ -3,7 +3,7 @@
 //Function to edit a group of questions
 function event_espresso_form_group_edit() {
 	global $wpdb;
-	$g_sql = "SELECT qg.id, qg.group_name, qg.group_order, qg.group_identifier, qg.group_description, qg.show_group_name, qg.show_group_description, qg.wp_user ";
+	$g_sql = "SELECT qg.id, qg.group_name, qg.group_order, qg.group_identifier, qg.group_description, qg.show_group_name, qg.show_group_description, qg.wp_user, qg.system_group ";
 	$g_sql .= " FROM  " . EVENTS_QST_GROUP_TABLE . " qg ";
 	$g_sql .= " WHERE ";
 	$g_sql .= " qg.id = '" . $_REQUEST['group_id'] . "' ";
@@ -21,6 +21,7 @@ function event_espresso_form_group_edit() {
 			$question = stripslashes(empty($group->question) ? '' : $group->question);
 			$show_group_name = $group->show_group_name;
 			$show_group_description = $group->show_group_description;
+			$system_group = $group->system_group;
 			$wp_user = $group->wp_user;
 		}
 	}
@@ -35,8 +36,8 @@ function event_espresso_form_group_edit() {
 						<tr>
 							<td class="a"  valign="top">
 								<fieldset id="general-group-info">
-																		<legend><?php _e('Group Information', 'event_espresso') ?></legend>
-																	<ul>
+								<legend><?php _e('Group Information', 'event_espresso') ?></legend>
+								<ul>
 
 									<li>
 										<label for="group_name"><?php _e('Group Name:', 'event_espresso'); ?></label>
@@ -73,14 +74,14 @@ function event_espresso_form_group_edit() {
 									</li>
 
 								</ul>
-																</fieldset>
+								</fieldset>
 							</td>
 							<td class="b"  valign="top">
 							  <fieldset id="questions-for-group">
-																		<legend><?php _e('Questions', 'event_espresso') ?></legend>															
-								
-																	<ul>
-																	 <li><p><?php _e('Selected Questions for group<span class="info"> Uncheck box to remove question from group</span>', 'event_espresso') ?></p></li>
+								<legend><?php _e('Questions', 'event_espresso') ?></legend>															
+
+									<ul>
+									 <li><p><?php _e('Selected Questions for group<span class="info"> Uncheck box to remove question from group</span>', 'event_espresso') ?></p></li>
 									<?php
 //Questions that are already associated with this group
 									$q_sql = "SELECT q.id, q.question, qgr.id as rel_id, q.system_name, qg.system_group ";
@@ -110,19 +111,20 @@ function event_espresso_form_group_edit() {
 
 											$disabled_system_required = (preg_match("/fname|lname|email/", $question->system_name) == 1 && $question->system_group == 1 ) ? 'disabled="disabled"' : '';
 
+											if ( $question->system_group && !$system_group ) continue;
 											echo '<li><label><input ' . $checked . ' type="checkbox" ' . $disabled_system_required . ' name="question_id[' . $question->id . ']" value="' . $question->id . '" id="question_id_' . $question->id . '" />' . stripslashes($question->question) . '</label></li>';
 										}
 										$questions_in_group = substr($questions_in_group, 0, -1);
 									}
 									?>
 									
-																			</ul>
-																			<ul id="add-more-questions">
-																			<li><p><?php _e('Add further questions to group', 'event_espresso') ?></p></li>
+									</ul>
+									<ul id="add-more-questions">
+									<li><p><?php _e('Add further questions to group', 'event_espresso') ?></p></li>
 									<?php
-//Questions that are NOT part of this group.
-// @todo Make this happen with one query above
-									$q_sql2 = "SELECT q.id, q.question FROM " . EVENTS_QUESTION_TABLE . " q WHERE ";
+									//Questions that are NOT part of this group.
+									// @todo Make this happen with one query above 
+									$q_sql2 = "SELECT q.id, q.question, qg.system_group FROM " . EVENTS_QUESTION_TABLE . " q LEFT JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qr ON q.id = qr.question_id LEFT JOIN " . EVENTS_QST_GROUP_TABLE . " qg ON qg.id = qr.group_id WHERE";
 									if ($questions_in_group != '') {
 										$q_sql2 .= " q.id not in($questions_in_group) AND ";
 									}
@@ -135,27 +137,30 @@ function event_espresso_form_group_edit() {
 									} else {
 										$q_sql2 .= " (q.wp_user = '0' OR q.wp_user = '1') ";
 									}
-									$q_sql2 .= " ORDER BY id ASC ";
+									$q_sql2 .= " GROUP BY id ORDER BY id ASC ";
 									$questions = $wpdb->get_results($q_sql2);
 
 									if ($wpdb->num_rows > 0) {
 
 										foreach ($questions as $question) {
 											$checked = '';
+											if ( $question->system_group && !$system_group ) continue;
 											echo '<li><label><input ' . $checked . ' type="checkbox" name="question_id[' . $question->id . ']" value="' . $question->id . '" id="question_id_' . $question->id . '" />' . stripslashes($question->question) . '</label></li>';
 										}
 									}
 									?>
 								</ul>
-																</fieldset>
+								</fieldset>
 							</td>
 						</tr>
 					</table>
 
 					<p class="submit-footer">
-						<input type="hidden" name="question_id[1]" value="1" />
-						<input type="hidden" name="question_id[2]" value="2" />
-						<input type="hidden" name="question_id[3]" value="3" />
+						<?php if ( $system_group ) : ?>
+							<input type="hidden" name="question_id[1]" value="1" />
+							<input type="hidden" name="question_id[2]" value="2" />
+							<input type="hidden" name="question_id[3]" value="3" />
+						<?php endif; ?>
 						<input type="hidden" name="edit_action" value="update_group" />
 						<input type="hidden" name="action" value="update_group" />
 						<input type="hidden" name="group_id" value="<?php echo $group_id ?>" />

@@ -97,11 +97,15 @@ function event_espresso_config_page_scripts() {
 	$load_datetimepicker = FALSE;
 	$load_dataTables_and_ColVis = FALSE;
 
+	if ($_REQUEST['page'] == 'payment_gateways') {
+		add_action( 'admin_print_footer_scripts', 'espresso_add_postbox_toggles_for_payment_gateways' );
+	}
+
 	if ($_REQUEST['page'] == 'espresso_calendar') {
 		$load_farbtastic = TRUE;
 	}
 
-	if ($_REQUEST['page'] == 'events') {
+	if ($_REQUEST['page'] == 'events' || $_REQUEST['page'] == 'form_groups' || $_REQUEST['page'] == 'form_builder') {
 		$load_jquery_ui = TRUE;
 		$load_datepicker = TRUE;
 		$load_datetimepicker = TRUE;
@@ -174,6 +178,18 @@ function event_espresso_config_page_scripts() {
 		}
 	}
 	remove_all_filters('mce_external_plugins');
+}
+
+function espresso_add_postbox_toggles_for_payment_gateways() {
+?>
+<script type="text/javascript" charset="utf-8">
+	//<![CDATA[
+	jQuery(document).ready(function() {
+		postboxes.add_postbox_toggles("payment_gateways");
+	});
+	//]]>
+</script>
+<?php	
 }
 
 //Text formatting function for the_editor.

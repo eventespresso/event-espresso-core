@@ -234,7 +234,7 @@ class EEM_Payment extends EEM_Base {
 		if ( $total_paid == $transaction->total() || $transaction->total() == 0 ) {
 			$transaction->set_status('TCM');
 		} else {
-			$transaction->set_status('TOP');
+			$transaction->set_status('TPN');
 		}
 
 		// update transaction and return results

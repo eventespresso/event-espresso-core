@@ -68,11 +68,10 @@ class EEM_Price extends EEM_Base {
 				'PRT_ID'						=> '%d',
 				'EVT_ID'						=> '%d',
 				'PRC_amount'				=> '%f',
-				'PRC_name'					=> '%s',
+				'PRC_name'				=> '%s',
 				'PRC_desc'					=> '%s',
-				/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 				'PRC_reg_limit'			=> '%d',
-				'PRC_tckts_left'			=> '%d',*/
+				'PRC_tckts_left'			=> '%d',
 				'PRC_use_dates'			=> '%d',
 				'PRC_start_date'			=> '%d',
 				'PRC_end_date'			=> '%d',
@@ -122,9 +121,8 @@ class EEM_Price extends EEM_Base {
 											$price->PRC_amount,
 											$price->PRC_name,
 											$price->PRC_desc,
-											/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-											$price->PRC_reg_limit,
-											$price->PRC_tckts_left,*/
+//											$price->PRC_reg_limit,
+//											$price->PRC_tckts_left,
 											$price->PRC_use_dates,
 											$price->PRC_start_date,
 											$price->PRC_end_date,
@@ -285,9 +283,8 @@ class EEM_Price extends EEM_Base {
 				'prc.PRC_amount'			=> '%f',
 				'prc.PRC_name'				=> '%s',
 				'prc.PRC_desc'				=> '%s',
-				/* DO NOT DELETE - NEW FEATURE IN PROGRESS 
-				'prc.PRC_reg_limit' 		=> '%d',
-				'prc.PRC_tckts_left' 		=> '%d',*/
+//				'prc.PRC_reg_limit' 		=> '%d',
+//				'prc.PRC_tckts_left' 		=> '%d',
 				'prc.PRC_use_dates'		=> '%d',
 				'prc.PRC_start_date'		=> '%d',
 				'prc.PRC_end_date'		=> '%d',
@@ -584,20 +581,22 @@ class EEM_Price extends EEM_Base {
 
 
 
+
 	/**
-	 * 		delete all prices of a specific type
+	 * 		get all prices of a specific type
 	 *
 	 * 		@access		public
-	 * 		@return 		boolean			false on fail
+	 * 		@param 		int 				$type - PRT_ID
+	 * 		@return 		boolean		false on fail
 	 */
-	public function delete_all_prices_that_are_type($type = FALSE) {
-		if (!$type) {
+	public function get_all_prices_that_are_type($type = FALSE) {
+		if ( ! $type || ! is_int( $type )) {
 			return FALSE;
 		}
-		if ($prices = $this->select_all_where(array('PRT_ID' => $type))) {
-			foreach ($prices as $PRC_ID => $price) {
-				$this->delete_by_id($PRC_ID);
-			}
+		if ( $prices = $this->select_all_where(array('PRT_ID' => $type))) {
+			return $prices;
+		} else {
+			return FALSE;
 		}
 	}
 
@@ -605,8 +604,15 @@ class EEM_Price extends EEM_Base {
 
 
 
+	/**
+	 * 		delete price by ID
+	 *
+	 * 		@access		public
+	 * 		@param 		int 				$PRC_ID - price ID
+	 * 		@return 		boolean		false on fail
+	 */
 	public function delete_by_id($PRC_ID) {
-		if (!$PRC_ID) {
+		if ( ! $PRC_ID || ! is_int( $PRC_ID )) {
 			return FALSE;
 		}
 		if ( $this->delete(array('PRC_ID' => $PRC_ID))) {

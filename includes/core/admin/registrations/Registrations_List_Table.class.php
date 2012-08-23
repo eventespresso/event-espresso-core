@@ -48,13 +48,69 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
         //Set parent defaults
         parent::__construct( array(
             	'singular'  	=> 'Registration',     //singular name of the listed records
-           		'plural'   	 	=> 'Registrations',    //plural name of the listed records
+           	'plural'   	 	=> 'Registrations',    //plural name of the listed records
             	'ajax'      		=> FALSE        //does this table support ajax?
 		) );
 
 		$this->prepare_items();
 
 	}
+
+
+
+
+
+	/**
+	 * 		prepare_items
+	*/
+    function prepare_items() {
+
+        $per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;
+        $columns = $this->get_columns();
+        $hidden = array();
+        $sortable = $this->get_sortable_columns();
+        $this->_column_headers = array($columns, $hidden, $sortable);
+
+        $this->process_bulk_action();
+
+        function usort_reorder($a,$b){
+            $orderby = (!empty($_REQUEST['orderby'])) ? wp_strip_all_tags( $_REQUEST['orderby'] ) : 'REG_date'; // If no sort, default to titletimestamp
+            $order = (!empty($_REQUEST['order'])) ? wp_strip_all_tags( $_REQUEST['order'] ) : 'desc'; // If no order, default to desc
+
+			if ( is_numeric( $a->$orderby ) && is_numeric( $b->$orderby )) {
+				$result = ( $a->$orderby == $b->$orderby ) ? 0 : ( $a->$orderby < $b->$orderby ) ? -1 : 1;
+			} else {
+				$result = strcasecmp($a->$orderby, $b->$orderby); // Determine sort order for strings
+			}
+
+           	return ($order==='asc') ? $result : -$result; // Send final sort direction to usort
+        }
+
+		$current_page = $this->get_pagenum();
+		$total_items = count($this->_registrations);
+
+		// can't sort one item
+		if ( $total_items > 1 ) {
+			usort($this->_registrations, 'usort_reorder');
+		}
+
+         if ( is_array( $this->_registrations )) {
+			$this->_registrations = array_slice($this->_registrations,(($current_page-1)*$per_page),$per_page);
+		}
+
+
+        $this->items = $this->_registrations;
+
+        $this->set_pagination_args( array(
+            'total_items' => $total_items,                  //WE have to calculate the total number of items
+            'per_page'    => $per_page,                     //WE have to determine how many items to show on a page
+            'total_pages' => ceil($total_items/$per_page)   //WE have to calculate the total number of pages
+        ) );
+    }
+
+
+
+
 
 
 	/**
@@ -160,7 +216,7 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 	* 		column_event_name
 	*/
 	function column_event_name($item){
-		$edit_event_url = add_query_arg( array( 'action'=>'edit_event', 'event_id'=>$item->EVT_ID ), admin_url( 'admin.php?page=events' ));
+		$edit_event_url = add_query_arg( array( 'event_id'=>$item->EVT_ID ), REG_ADMIN_URL );
 		$event_name = stripslashes( html_entity_decode( $item->event_name, ENT_QUOTES, 'UTF-8' ));
 		return '<a href="' . $edit_event_url . '" title="' . __( 'Edit Event #', 'event_espresso' ) . $item->EVT_ID.'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
 	}
@@ -211,15 +267,15 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 	function column_actions($item) {
 
 	        //Build row actions
-		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration' );
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'att'=>$item->ATT_ID ), REG_ADMIN_URL ), 'edit_registration' );
+		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'view_registration_nonce' );
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'att'=>$item->ATT_ID ), REG_ADMIN_URL ), 'edit_attendee_nonce' );
 		
 		// page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
 		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID );
-		$resend_reg_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'resend_registration' );
+		$resend_reg_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'resend_registration', 'reg'=>$item->REG_ID ), REG_ADMIN_URL ), 'resend_registration_nonce' );
 		
 		// page=transactions&action=view_transaction&txn=256&_wpnonce=6414da4dbb
-		$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), admin_url( 'admin.php?page=transactions' ) ), 'view_transaction' );
+		$view_txn_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item->TXN_ID ), admin_url( 'admin.php?page=transactions' ) ), 'view_transaction_nonce' );
 
 	        //Build row actions
 	        $view_lnk = '
@@ -308,56 +364,6 @@ class EE_Admin_Registrations_List_Table extends WP_List_Table {
 
 
 
-	/**
-	 * 		prepare_items
-	*/
-    function prepare_items() {
-
-//		global $wpdb;
-
-        $per_page = ( ! empty( $_REQUEST['per_page'] )) ? absint( $_REQUEST['per_page'] ) : 10;
-        $columns = $this->get_columns();
-        $hidden = array();
-        $sortable = $this->get_sortable_columns();
-
-        $this->_column_headers = array($columns, $hidden, $sortable);
-
-        $this->process_bulk_action();
-
-        function usort_reorder($a,$b){
-            $orderby = (!empty($_REQUEST['orderby'])) ? wp_strip_all_tags( $_REQUEST['orderby'] ) : 'REG_date'; // If no sort, default to titletimestamp
-            $order = (!empty($_REQUEST['order'])) ? wp_strip_all_tags( $_REQUEST['order'] ) : 'desc'; // If no order, default to desc
-
-			if ( is_numeric( $a->$orderby ) && is_numeric( $b->$orderby )) {
-				$result = ( $a->$orderby == $b->$orderby ) ? 0 : ( $a->$orderby < $b->$orderby ) ? -1 : 1;
-			} else {
-				$result = strcasecmp($a->$orderby, $b->$orderby); // Determine sort order for strings
-			}
-
-           	return ($order==='asc') ? $result : -$result; // Send final sort direction to usort
-        }
-
-		$current_page = $this->get_pagenum();
-		$total_items = count($this->_registrations);
-
-		// can't sort one item
-		if ( $total_items > 1 ) {
-			usort($this->_registrations, 'usort_reorder');
-		}
-
-         if ( is_array( $this->_registrations )) {
-			$this->_registrations = array_slice($this->_registrations,(($current_page-1)*$per_page),$per_page);
-		}
-
-
-        $this->items = $this->_registrations;
-
-        $this->set_pagination_args( array(
-            'total_items' => $total_items,                  //WE have to calculate the total number of items
-            'per_page'    => $per_page,                     //WE have to determine how many items to show on a page
-            'total_pages' => ceil($total_items/$per_page)   //WE have to calculate the total number of pages
-        ) );
-    }
 
 }
 

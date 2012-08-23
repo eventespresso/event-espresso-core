@@ -7,7 +7,7 @@
  * @ package			Event Espresso
  * @ author				Seth Shoultes
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license				{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @ link					{@link http://www.eventespresso.com}
  * @ since		 		3.2.P
  *
@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class Transactions_Admin_Page extends Admin_Page {
+class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
 
 	private $_transaction;
 	private $_session;
@@ -29,21 +29,62 @@ class Transactions_Admin_Page extends Admin_Page {
 	private static $_pay_status;
 
 
-	
 
+
+
+	/**
+	 * 		@Constructor
+	 * 		@access public
+	 * 		@return void
+	 */
 	public function __construct() {
+
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+		$this->page_slug = TXN_PG_SLUG;
+
+		$this->_init();
+
+		if ( $this->_AJAX ) {
+			add_action('wp_ajax_espresso_apply_payment', array( &$this, 'apply_payments_or_refunds'));
+			add_action('wp_ajax_espresso_apply_refund', array( &$this, 'apply_payments_or_refunds'));
+			add_action('wp_ajax_espresso_delete_payment', array( &$this, 'delete_payment'));
+		}
+		
+		// remove settings tab
+		add_filter( 'filter_hook_espresso_admin_page_nav_tabs', array( &$this, '_remove_settings_from_admin_page_nav_tabs' ), 10 , 1 );
+		// remove espresso_meta_boxes
+		add_action( 'admin_init', array( &$this, '_remove_espresso_meta_boxes' ), 100 );
+
+		
+	}
+
+
+
+
+	/**
+	 * 		grab url requests and route them
+	*		@access private
+	*		@return void
+	*/
+	public function set_page_routes() {			
 
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		parent::__construct();
-		$this->define_page_vars();
-		if ( isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1 ) {
-			add_action('wp_ajax_espresso_apply_payment', array( &$this, 'apply_payments_or_refunds'));
-			add_action('wp_ajax_espresso_delete_payment', array( &$this, 'delete_payment'));
-		}
-	}
 
+		$this->_page_routes = array(
+				'default'	=> '_transactions_overview_list_table',
+				'view_transaction'	=> '_transaction_details',
+				'send_payment_reminder'	=> '_send_payment_reminder',
+				'delete_registration'	=> '_delete_registration',
+				'reports'	=> '_transaction_reports',
+				'espresso_apply_payment'	=> 'apply_payments_or_refunds',
+				'espresso_apply_refund'	=> 'apply_payments_or_refunds',
+				'espresso_delete_payment'	=> 'delete_payment'
+		);	
+	}
 
 
 
@@ -61,49 +102,6 @@ class Transactions_Admin_Page extends Admin_Page {
 
 
 
-	/**
-	 * 		grab url requests and route them
-	*		@access private
-	*		@return void
-	*/
-	public function route_admin_request() {
-
-		$this->_get_transaction_status_array();
-		
-		if ( isset( $_REQUEST['action'] )) {
-		
-			check_admin_referer( $_REQUEST['action'] );	
-			
-			switch ( $_REQUEST['action'] ) {
-			
-				case 'view_transaction':
-					$this->_transaction_details();
-					break;
-
-				case 'reports':
-					$this->_transaction_reports();
-					break;
-
-				case 'send_payment_reminder':
-					$this->_send_payment_reminder();
-					break;
-
-//				case 'espresso_apply_payment':
-//				case 'espresso_apply_refund':
-//					$this->apply_payments_or_refunds();
-//					break;
-//
-//				case 'espresso_delete_payment':		
-//					$this->delete_payment(); 
-//					break;
-			}		
-				
-		} else {
-			$_REQUEST['action'] = FALSE;
-			$this->_transactions_overview_list_table();
-		}
-		
-	}
 
 
 
@@ -125,8 +123,22 @@ class Transactions_Admin_Page extends Admin_Page {
 			self::$_txn_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
 		}
 		// add status array to js available parameters
+		//add_action( 'init', array( &$this, '_set_wp_localize_script_for_txn_status_array'));
 		wp_localize_script('espresso_txn', 'txn_status_array', self::$_txn_status);		
 	}
+
+
+
+
+
+	/**
+	 * 		_set_wp_localize_script
+	*		@access public
+	*		@return void
+	*/
+//	public function _set_wp_localize_script_for_txn_status_array() {
+//		wp_localize_script('espresso_txn', 'txn_status_array', self::$_txn_status);		
+//	}
 
 
 
@@ -159,12 +171,14 @@ class Transactions_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for main Transactions Admin page
-	*		@access private
+	*		@access protected
 	*		@return void
 	*/
-	private function _transactions_overview_list_table() {
+	protected function _transactions_overview_list_table() {
 		
 		global $wpdb;
+
+		$this->_get_transaction_status_array();
 
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Base.model.php' );
 	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
@@ -200,13 +214,15 @@ class Transactions_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for the View Transaction Details Admin page
-	*		@access private
+	*		@access protected
 	*		@return void
 	*/
-	private function _transaction_details() {
+	protected function _transaction_details() {
 
 		global $wpdb, $org_options, $ee_admin_page;
 		
+		$this->_get_transaction_status_array();
+
 		$this->template_args = array();		
 		$this->template_args['transactions_page'] = $ee_admin_page['transactions'];  
 
@@ -271,11 +287,11 @@ class Transactions_Admin_Page extends Admin_Page {
 		// grab messages at the last second
 		$this->template_args['notices'] = espresso_get_notices();
 		// path to template 
-		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_wrapper.template.php';
-		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_header.template.php';
+		$this->template_args['admin_page_header'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 		
-		// the final template wrapper
-		$this->admin_page_wrapper();
+		// the details template wrapper
+		$this->display_admin_page_with_sidebar();
 				
 	}
 
@@ -346,8 +362,9 @@ class Transactions_Admin_Page extends Admin_Page {
 			$this->template_args['payments'] = FALSE;
 		}
 		
-		$this->template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );  
-		$this->template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment'  ), TXN_ADMIN_URL );  
+		$this->template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
+		$this->template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
+
 
 		//printr( $this->template_args['payments'], '$payments  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 		
@@ -415,9 +432,11 @@ class Transactions_Admin_Page extends Admin_Page {
 		// printr( $this->template_args['active_gateways'], 'active_gateways' );
 		$this->_get_payment_status_array();
 		
-		$this->template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );  
-		$this->template_args['apply_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_apply_payment'  ), WP_AJAX_URL );  
-		$this->template_args['delete_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_delete_payment'  ), WP_AJAX_URL );  
+		$this->template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
+		$this->template_args['apply_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_apply_payment' ), WP_AJAX_URL );
+		$this->template_args['delete_payment_form_url'] = add_query_arg( array( 'page' => 'transactions', 'action' => 'espresso_delete_payment' ), WP_AJAX_URL );
+		
+		// 'espresso_delete_payment_nonce'
 		
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_txn_details.template.php';
 		echo espresso_display_template( $template_path, $this->template_args, TRUE );
@@ -617,6 +636,8 @@ class Transactions_Admin_Page extends Admin_Page {
 	*/
 	public function apply_payments_or_refunds() {
 		
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+
 		$return_data = FALSE;
 
 		if ( isset( $_POST['txn_admin_payment'] )) {
@@ -641,8 +662,7 @@ class Transactions_Admin_Page extends Admin_Page {
 			switch( $payment['method'] ) {
 				
 				case 'PP' :
-					$payment['gateway'] = 'paypal';
-					$payment['txn_id_chq_nmbr'] = $payment['paypal_txn_id'];
+					$payment['gateway'] = 'PayPal';
 					break;
 
 				case 'CC' :
@@ -702,8 +722,9 @@ class Transactions_Admin_Page extends Admin_Page {
 		}
 		
 		$notices = espresso_get_notices( FALSE ); // , TRUE
-//		printr( $notices, '$notices' );
-//		printr( $return_data, '$return_data' ); 
+		
+//		echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $notices, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
+//		echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $return_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 //		die();
 		
 		echo json_encode( array( 'return_data' => $return_data, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
@@ -748,10 +769,10 @@ class Transactions_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates HTML for the View Transaction Details Admin page
-	*		@access private
+	*		@access protected
 	*		@return void
 	*/
-	private function _send_payment_reminder() {
+	protected function _send_payment_reminder() {
 		echo '<div style="margin:2em auto; text-align:center;">Vinnie da Finger says: <h1>"YO!!!"</h1><h1>"Time to PAY UP!!!</h1></div>';
 	}
 
@@ -761,10 +782,10 @@ class Transactions_Admin_Page extends Admin_Page {
 
 	/**
 	 * 		generates Business Reports regarding Transactions
-	*		@access private
+	*		@access protected
 	*		@return void
 	*/
-	private function _transaction_reports() {
+	protected function _transaction_reports() {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	
@@ -882,6 +903,20 @@ class Transactions_Admin_Page extends Admin_Page {
 		return $report_ID;
 	}
 
+
+
+
+
+	/**
+	 * 		_remove_espresso_meta_boxes
+	*		@access public
+	*		@return array
+	*/
+	public function _remove_espresso_meta_boxes() {	
+		remove_meta_box('espresso_news_post_box', $this->wp_page_slug, 'side');
+		remove_meta_box('espresso_links_post_box', $this->wp_page_slug, 'side');
+		remove_meta_box('espresso_sponsors_post_box', $this->wp_page_slug, 'side');
+	}
 
 
 

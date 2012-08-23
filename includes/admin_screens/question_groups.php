@@ -1,16 +1,8 @@
 <?php
 
 function event_espresso_question_groups_config_mnu() {
-	global $wpdb;
-	//Update the questions when re-ordering
-	if (!empty($_REQUEST['update_sequence'])) {
-		$rows = explode(",", $_POST['row_ids']);
-		for ($i = 0; $i < count($rows); $i++) {
-			$wpdb->query("UPDATE " . EVENTS_QST_GROUP_TABLE . " SET group_order=" . $i . " WHERE id='" . $rows[$i] . "'");
-		}
-		die();
-	}
-
+	global $wpdb, $espresso_notices;
+	
 	// get counts
 	$sql = "SELECT id FROM " . EVENTS_QST_GROUP_TABLE;
 	$wpdb->get_results($sql);
@@ -53,7 +45,7 @@ function event_espresso_question_groups_config_mnu() {
 				}
 				break;
 			case 'edit_group':
-				require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'form-builder/groups/edit_group.php');
+				require_once(EVENT_ESPRESSO_INCLUDES_DIR . '/form-builder/groups/edit_group.php');
 				event_espresso_form_group_edit();
 				break;
 			case 'insert_group':
@@ -63,7 +55,7 @@ function event_espresso_question_groups_config_mnu() {
 				}
 				break;
 			case 'update_group':
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/form-builder/groups/update_group.php');
+				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/form-builder/groups/update_group.php');
 				event_espresso_form_group_update($_REQUEST['group_id']);
 				break;
 			case 'delete_group':
@@ -96,6 +88,7 @@ function event_espresso_question_groups_config_mnu() {
 			<?php
 		}
 	}
+	echo espresso_get_notices();
 	?>
 	<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 		<table id="table" class="widefat manage-question-group">
@@ -141,7 +134,7 @@ function event_espresso_question_groups_config_mnu() {
 						$system_group = $group->system_group;
 						$wp_user = $group->wp_user == 0 ? 1 : $group->wp_user;
 						?>
-						<tr>
+						<tr style="cursor: move" id="<?php echo $group_id; ?>">
 							<td class="checkboxcol">
 								<input name="row_id" type="hidden" value="<?php echo $group_id ?>" />
 								<?php if ($system_group == 0) : ?>
@@ -238,7 +231,7 @@ function event_espresso_question_groups_config_mnu() {
 					$('#table tbody input[name="row_id"]').each(function(i){
 						row_ids= row_ids + ',' + $(this).val();
 					});
-					$.post(EEGlobals.ajaxurl, { action: "update_qgr_sequence", row_ids: row_ids, update_sequence: "true"} );
+					$.post(ajaxurl, { action: "update_qgr_sequence", row_ids: row_ids, update_sequence: "true"});
 				}
 			});
 			postboxes.add_postbox_toggles('form_groups');

@@ -7,7 +7,7 @@
  * @ package			Event Espresso
  * @ author				Seth Shoultes
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license				{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @ link					{@link http://www.eventespresso.com}
  * @ since		 		3.2.P
  *
@@ -21,16 +21,23 @@
  *
  * ------------------------------------------------------------------------
  */
-class Registrations_Admin_Page_Init extends Admin_Page_Init implements Admin_Page_Init_Interface {
-	
-	var $_ajax;
-	
-	public function __construct() { 
+class Registrations_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page_Init_Interface {
+
+
+
+
+
+	/**
+	 * 		constructor
+	 * 		@Constructor
+	 * 		@access public
+	 * 		@return void
+	 */
+	public function __construct( $page_slug, $page_name, $dir_name, $page_request ) { 
 		
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
+		
 		define( 'REG_PG_SLUG', 'registrations' );	
 		define( 'REG_PG_NAME', ucwords( str_replace( '_', '', REG_PG_SLUG )));	
 		define( 'REG_ADMIN', EE_CORE_ADMIN . REG_PG_SLUG . DS );	
@@ -39,6 +46,8 @@ class Registrations_Admin_Page_Init extends Admin_Page_Init implements Admin_Pag
 		define( 'REG_ASSETS_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . REG_PG_SLUG . DS . 'assets' . DS ));	
 		define( 'REG_TEMPLATE_PATH', REG_ADMIN . 'templates' . DS );	
 		define( 'REG_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . REG_PG_SLUG . DS . 'templates' . DS ));
+
+		$this->_init( $page_slug, $page_name, $dir_name, $page_request );
 
 	}
 
@@ -49,6 +58,7 @@ class Registrations_Admin_Page_Init extends Admin_Page_Init implements Admin_Pag
 	/**
 	*		sets vars in parent for creating menu settings page
 	* 		return the name of the filter that should be used for inserting into the EE admin menu
+	* 		filters can be found in /includes/admin_screens/admin_menu.php
 	* 
 	*		@access 		public
 	*		@return 		void
@@ -96,7 +106,7 @@ class Registrations_Admin_Page_Init extends Admin_Page_Init implements Admin_Pag
 	*		@return 		void
 	*/	
 	public function load_css() {
-		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'reports' ) {
+		if ( $this->is_biz_reports_tab ) {
 			wp_deregister_style('jqplot');
 			wp_enqueue_style('jquery-jqplot-css', JQPLOT_URL . 'jquery.jqplot.min.css');			
 		} else {
@@ -117,8 +127,8 @@ class Registrations_Admin_Page_Init extends Admin_Page_Init implements Admin_Pag
 	*		@return 		void
 	*/	
 	public function load_js() {
-		
-		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'reports' ) {		
+
+		if ( $this->is_biz_reports_tab ) {		
 		    wp_deregister_script( 'jquery' );
 		    wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
 		    wp_enqueue_script( 'jquery' );
