@@ -1498,3 +1498,102 @@ function espresso_display_template($path_to_file = FALSE, $template_args = FALSE
 		include( $path_to_file );
 	}
 }
+
+
+
+
+
+
+
+/**
+ *		create error code from filepath, function name,
+ *		and line number where exception or error was thrown
+ * 
+ *		@ param string $file
+ *		@ param string $func
+ *		@ param string $line
+ *		@ return string
+ */
+function espresso_get_error_code (  $file, $func, $line ) {
+
+//echo '<h4>$file : ' . $file . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
+
+
+	$error_code = '';
+	$code_bits = array( 0 => $file, 1 => $func, 2 => $line );
+
+	foreach ( $code_bits as $key => $code_bit ) {
+		switch ( $key ) {
+
+			case 0:
+				$code_bit = str_replace( '\\', '/', $code_bit );
+				// break filepath up by the /
+				$code_bit = explode ( '/', $code_bit );
+				// filename is the last segment
+				$file = $code_bit[ count($code_bit)-1 ];
+				// folder is the second to the last segment
+				$folder = $code_bit[ count($code_bit)-2 ];
+				//change all dashes to underscores
+				$folder = str_replace ( '-', '_', $folder );
+				//strip vowels
+				$folder = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), array( '', '', '', '', '', '', '', '', '', '',  ), $folder );
+				// break it up by the _
+				$folder_bits = explode( '_', $folder);
+				$folder = '';
+				foreach ( $folder_bits as $folder_bit ) {
+					// grab the first 2 characters from each word
+					$folder .= substr($folder_bit, 0, 3);
+				}
+				$error_code .= $folder . '-';
+
+				// break filename by the dots - to get at the first bit
+				$code_bit = explode('.', $file);
+				// remove EE_ from the filename
+				$code_bit = str_replace ( 'EE_', '', $code_bit[0] );
+				// and EEM_ 
+				$code_bit = str_replace ( 'EEM_', '', $code_bit );
+				// remove all non-alpha characters
+				$code_bit = preg_replace( '[A-Za-z]', '', $code_bit );
+				//change all dashes to underscores
+				$file = str_replace ( '-', '_', $code_bit );
+				//strip vowels
+				$file = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), array( '', '', '', '', '', '', '', '', '', '',  ), $file );
+				// break it up by the _
+				$file_bits = explode( '_', $file);
+				$file = '';
+				foreach ( $file_bits as $file_bit ) {
+					// grab the first 2 characters from each word
+					$error_code .= substr($file_bit, 0, 3);
+				}
+				$error_code .= '-';
+
+			break;
+
+			case 1:
+				//change all dashes to underscores
+				$code_bit = str_replace ( '-', '_', $code_bit );
+				// break function name by the underscore if there are any
+				$func_bits = explode('_', $code_bit);
+				// split camelCase
+				// preg_match_all('/((?:^|[A-Z])[a-z]+)/',$str,$matches);
+				$func = '';
+				$x = 0;
+				foreach ( $func_bits as $func_bit ) {
+					$error_code .= substr($func_bit, 0, 3);
+				}
+				// convert to uppercase
+				$error_code = strtoupper( $error_code ) . '-';
+			break;
+
+			case 2:
+				// i can't figure this one out
+				$error_code .= $code_bit;
+			break;
+
+		}
+	}
+	return '<sup>' . $error_code . '</sup>';
+}
+
