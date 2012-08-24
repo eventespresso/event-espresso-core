@@ -109,12 +109,12 @@ class EE_Message_Template {
 	private $_MTP_content = NULL;
 
 	/**
-	 * Is Template Active?
+	 * holds count of active contexts.
 	 * 
 	 * @access private
 	 * @var boolean
 	 */
-	private $_MTP_is_active = FALSE;
+	private $_is_active_count = FALSE;
 
 	/**
 	 * is template global?
@@ -125,20 +125,20 @@ class EE_Message_Template {
 	private $_MTP_is_global = FALSE;
 
 	/**
-	 * is template an override?
+	 * count of contexts that override (per group).
 	 * 
 	 * @access private
 	 * @var boolean
 	 */
-	private $_MTP_is_override = FALSE;
+	private $_is_override = FALSE;
 
 	/**
-	 * is template trashed (not permenantly deleted)
+	 * count of trashed contexts (per group)
 	 * 
 	 * @access private
 	 * @var boolean
 	 */
-	private $_MTP_deleted = FALSE;
+	private $_trashed_count = FALSE;
 
 	/**
 	 * Message Template constructor
@@ -154,6 +154,13 @@ class EE_Message_Template {
 		$this->_MTP_message_type = wp_strip_all_tags(strtolower($template_group['MTP_message_type']));
 		$this->_EVT_ID = absint($template_group['EVT_ID']);
 		$this->_contexts = (array) $template_group['templates'];
+
+		//initialize group counts
+		$this->_is_active_count = 0;
+		$this->_is_override = 0;
+		$this->_is_trashed_count = 0;
+		$group_count = array_fill_keys( array('MTP_is_active', 'MTP_is_override', 'MTP_deleted'), 0);
+
 		foreach ( $this->_contexts as $context => $template_type ) {
 			$context = wp_strip_all_tags(strtolower($context) );
 			foreach ( $template_type as $key => $value ) {
@@ -164,8 +171,14 @@ class EE_Message_Template {
 					$template_type[$key] = array_map('absint', $value );
 				} else if ( in_array( $key, $bool_array) ) {
 					$template_type[$key] = absint( $value ) ? TRUE : FALSE;
+					if ( $template_type[$key] ) {
+						$group_counts[$key]++;
+					}
 				} else if ( in_array( $key, $bool_null_array ) ) {
 					$template_type[$key] = $value != NULL ? absint($value ) : FALSE;
+					if ( $template_type[$key] ) {
+						$group_counts[$key]++;
+					}
 				} else if ( is_array($value) ) {
 					$value['MTP_ID'] = absint($value['MTP_ID']);
 					$value['content'] = wp_strip_all_tags($value['content']);
@@ -176,6 +189,9 @@ class EE_Message_Template {
 			}
 			
 			$this->_contexts[$context] = $template_type;
+			$this->_is_active_count = $group_count['MTP_is_active'];
+			$this->_is_override = $group_count['MTP_is_override'];
+			$this->_is_trashed_count = $group_count['MTP_is_trashed_count'];
 		}
 
 		//load Message Template Model file
