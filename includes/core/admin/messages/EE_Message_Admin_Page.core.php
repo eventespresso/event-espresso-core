@@ -171,7 +171,30 @@ class EE_Message_Admin_Page extends Admin_Page {
 		require_once( EE_MSG_ADMIN . 'EE_Message_Template_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 		$MTP = EEM_Message_Template::instance();
-		//todo left off here.
+		
+		$_GET['orderby'] = empty($_GET['orderby']) ? '' : $_GET['orderby'];
+
+		switch ( $_GET['orderby'] ) {
+			case 'messenger' :
+				$orderby = 'MTP_messenger';
+				break;
+			case 'message_type' :
+				$orderby = 'MTP_message_type';
+				break;
+			case 'user_id' :
+				$orderby = 'MTP_user_id';
+				break;
+			default:
+				$orderby = 'GRP_ID';
+				break; 
+		}
+
+		$order = ( isset( $_GET['order'] ) && ! empty( $_GET['order'] ) ) ? $_GET['order'] : 'ASC';
+
+		if ( $message_templates = $MTP->get_all_global_message_templates() ) {
+			//todo: left off here	
+		}
+
 	}
 
 	/**
