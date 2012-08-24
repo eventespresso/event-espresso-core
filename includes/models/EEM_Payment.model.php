@@ -187,7 +187,7 @@ class EEM_Payment extends EEM_Base {
 
 		if ( ! $TXN_ID ) {
 			global $espresso_notices;
-			$espresso_notices['errors'][] = __('No Transaction ID was supplied.', 'event_espresso') . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = __('No Transaction ID was supplied.', 'event_espresso') . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -217,7 +217,7 @@ class EEM_Payment extends EEM_Base {
 
 		global $espresso_notices;
 		if ( ! is_object( $payment ) && ! $payment->ID() ) {
-			$espresso_notices['errors'][] = __('A vaild payment object was not supplied.', 'event_espresso') . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = __('A vaild payment object was not supplied.', 'event_espresso') . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -234,7 +234,7 @@ class EEM_Payment extends EEM_Base {
 		if ( $total_paid == $transaction->total() || $transaction->total() == 0 ) {
 			$transaction->set_status('TCM');
 		} else {
-			$transaction->set_status('TPN');
+			$transaction->set_status('TOP');
 		}
 
 		// update transaction and return results
@@ -248,7 +248,7 @@ class EEM_Payment extends EEM_Base {
 									'pay_status' => $payment->STS_ID() 
 								);
 		} else {
-			$espresso_notices['errors'][] = __('An error occured. The payment was ' . $what . ' succesfully but the amount paid for the transaction was not updated.', 'event_espresso') . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = __('An error occured. The payment was ' . $what . ' succesfully but the amount paid for the transaction was not updated.', 'event_espresso') . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -268,7 +268,7 @@ class EEM_Payment extends EEM_Base {
 
 		if ( ! $TXN_ID ) {
 			global $espresso_notices;
-			$espresso_notices['errors'][] = 'No Transaction ID was supplied.' . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = 'No Transaction ID was supplied.' . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -297,7 +297,7 @@ class EEM_Payment extends EEM_Base {
 
 		global $espresso_notices;
 		if ( ! $PAY_ID ) {
-			$espresso_notices['errors'][] = __('No Payment ID was supplied.', 'event_espresso') . $this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+			$espresso_notices['errors'][] = __('No Payment ID was supplied.', 'event_espresso') . espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -309,13 +309,13 @@ class EEM_Payment extends EEM_Base {
 				
 			} else {
 				$espresso_notices['errors'][] = __('An error occured. The payment has not been deleted succesfully.', 'event_espresso') . 
-																	$this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+																	espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 			
 		} else {
 			$espresso_notices['errors'][] = __('An error occured. The database record for the payment could not be located for deletion.', 'event_espresso') . 
-																$this->_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
+																espresso_get_error_code (  __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		

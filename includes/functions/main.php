@@ -1499,27 +1499,15 @@ function espresso_display_template($path_to_file = FALSE, $template_args = FALSE
 	}
 }
 
-
-
-
-
-
-
 /**
- *		create error code from filepath, function name,
- *		and line number where exception or error was thrown
- * 
+ *		@ create error code from filepath, function name,
+ *		@ and line number where exception or error was thrown
  *		@ param string $file
  *		@ param string $func
  *		@ param string $line
  *		@ return string
  */
 function espresso_get_error_code (  $file, $func, $line ) {
-
-//echo '<h4>$file : ' . $file . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
 
 	$error_code = '';
 	$code_bits = array( 0 => $file, 1 => $func, 2 => $line );
@@ -1576,8 +1564,6 @@ function espresso_get_error_code (  $file, $func, $line ) {
 				$code_bit = str_replace ( '-', '_', $code_bit );
 				// break function name by the underscore if there are any
 				$func_bits = explode('_', $code_bit);
-				// split camelCase
-				// preg_match_all('/((?:^|[A-Z])[a-z]+)/',$str,$matches);
 				$func = '';
 				$x = 0;
 				foreach ( $func_bits as $func_bit ) {
@@ -1595,5 +1581,4 @@ function espresso_get_error_code (  $file, $func, $line ) {
 		}
 	}
 	return '<sup>' . $error_code . '</sup>';
-}
-
+	}
