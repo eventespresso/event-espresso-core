@@ -147,6 +147,7 @@ class EEM_Attendee extends EEM_Base {
 
 
 
+
 	/**
 	*		retreive  a single attendee from db via their ID
 	* 
@@ -267,6 +268,16 @@ class EEM_Attendee extends EEM_Base {
 		if ( ! $ATT_ID ) {
 			return FALSE;
 		}
+		
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
+		$REG_MDL = EEM_Registration::instance();
+		//check if the attendee is associated with any registrations
+		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID )) {
+			global $espresso_notices;
+			$espresso_notices['errors'][] = __('The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso');
+			return FALSE;
+		} 
+				
 		// retreive a particular transaction
 		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
 		if ( $attendee = $this->delete ( $where_cols_n_values )) {

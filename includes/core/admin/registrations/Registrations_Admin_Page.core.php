@@ -446,7 +446,7 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 			}
 			$this->template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $address );
 			
-			$this->template_args['attendees'][ $att_nmbr ]['view_link'] = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$attendee->REG_ID ), REG_ADMIN_URL ), 'view_registration' );
+			$this->template_args['attendees'][ $att_nmbr ]['att_link'] = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$attendee->ATT_ID ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
 			
 			$att_nmbr++;
 		}

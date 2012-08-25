@@ -280,7 +280,15 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		$this->template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;  
 		
 		add_meta_box( 'edit-txn-details-mbox', __( 'Transaction Details', 'event_espresso' ), array( $this, '_txn_details_meta_box' ), $ee_admin_page['transactions'], 'normal', 'high' );
-		add_meta_box( 'edit-txn-attendees-mbox', __( 'Attendees Registered in this Transaction', 'event_espresso' ), array( $this, '_txn_attendees_meta_box' ), $ee_admin_page['transactions'], 'normal', 'high' );
+		add_meta_box( 
+									'edit-txn-attendees-mbox',
+									__( 'Attendees Registered in this Transaction', 'event_espresso' ),
+									array( $this, '_txn_attendees_meta_box' ),
+									$ee_admin_page['transactions'],
+									'normal',
+									'high',
+									array( 'TXN_ID' => $TXN_ID )
+								);
 		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Registrant', 'event_espresso' ), array( $this, '_txn_registrant_side_meta_box' ), $ee_admin_page['transactions'], 'side', 'high' );
 		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_txn_billing_info_side_meta_box' ), $ee_admin_page['transactions'], 'side', 'high' );
 
@@ -334,9 +342,9 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 					} else {
 						$this->template_args['items'][ $item['name'] ][ $key ] = $value;
 					}					
-				} else {
+				} /*else {
 					$this->template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
-				}
+				}*/
 			}
 		}
 		
@@ -494,22 +502,29 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	*		@access private
 	*		@return void
 	*/
-	function _txn_attendees_meta_box() {
+	function _txn_attendees_meta_box(  $post, $metabox = array( 'args' => array()) ) {
 	
 		global $wpdb, $org_options;
+		
+		extract( $metabox['args'] );
 		
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
 		$this->template_args['items'] = array();
-		$exclude = array( 'attendees' );
 
 		foreach ( $cart_items as $line_item_ID => $item ) {
-			foreach ( $item as $key => $value ) {
-				if ( $key == 'attendees' ) {
-					$this->template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
+			$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['price_desc'];
+			foreach ( $item['attendees'] as $att_nmbr => $attendee ) {
+				// check for attendee object
+				$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : new EE_Attendee();
+				// check for reg object
+				$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : new EE_Registration();		
+				foreach ( $attendee as $key => $value ) {
+					$this->template_args['event_attendees'][ $event_name_and_price_option ][ $att_nmbr ][ $key ] = maybe_unserialize( $value );
 				}
 			}
 		}
+		//printr( $this->template_args['event_attendees'], 'event_attendees' );
 
 		$this->template_args['currency_sign'] = $org_options['currency_symbol'];
 		$this->template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  

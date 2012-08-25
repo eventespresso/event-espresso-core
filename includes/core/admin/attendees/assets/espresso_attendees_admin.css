@@ -1,0 +1,42 @@
+.espresso-admin .form-table th { max-width:30%!important; min-width:20%!important; }
+.espresso-admin .form-table td { max-width:79%!important; min-width:69%!important; }
+.espresso-admin .regular-text { max-width:99%!important; min-width:40%!important; }
+textarea { width:25em; }
+.espresso-admin textarea { max-width:99%!important; min-width:40%!important; }
+#icon-options-event { background: url("../../../../../images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
+#entries-per-page-dv { display:inline; }
+
+.wrap .nav-tab-wrapper { margin-bottom:1em; }
+.wrap .subsubsub { margin:0; }
+
+.validation-notice-dv { display:none; /*padding:0 0 0 150px; margin-left:1em;*/ color:red; }
+.requires-value { border:1px solid #FE2A00 !important; }
+
+/* TABLE COLUMNS */
+
+.column-ATT_ID { width:3%; }
+.column-ATT_lname { width:12.5%; }
+.column-ATT_fname { width:10%; }
+.column-ATT_email { }
+.column-ATT_address { width:15%; }
+.column-ATT_city { width:10%; }
+.column-STA_ID { width:5.5%; }
+.column-CNT_ISO { width:7%; }
+.column-ATT_phone { width:10%; }
+.column-actions { width:5%;  }
+
+
+.jst-left { text-align:left; }
+.jst-cntr { text-align:center; }
+.jst-rght { text-align:right; }
+
+.display-the-hidden { float:right; padding-left:16px; background: url("../../../images/icons/additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
+.hide-the-displayed { float:right; padding-left:16px; background: url("../../../images/icons/close_additional_info-10x10.png") no-repeat scroll left center transparent; cursor:pointer; }
+
+.lt-grey-txt  { color:#999;  text-shadow:none; }
+.float-left { float:left; }
+
+/* Nicolas Gallagher's micro clearfix */
+.clearfix:before, .clearfix:after { content:""; display:table; }
+.clearfix:after { clear: both; }
+.clearfix { zoom: 1; }

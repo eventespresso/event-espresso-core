@@ -48,14 +48,16 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		global $EE_Session;
 		$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
 		$session = $EE_Session->get_session_data();
+//		printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+//		die();	
 		require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 		$transaction = $session['transaction'];
 		$transaction->set_paid($txn_results['amount']);
 		$transaction->set_details( $txn_results );
-		$txn_status = 'TOP';
+		$txn_status = 'TPN';
 		$transaction->set_status($txn_status);
 		unset( $session['transaction'] );
-		$transaction->set_session_data( $session );
+		$transaction->set_txn_session_data( $session );
 		if (isset($session['taxes'])) {
 			$tax_data = array('taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals']);
 			$transaction->set_tax_data($tax_data);

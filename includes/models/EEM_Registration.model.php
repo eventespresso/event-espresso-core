@@ -181,6 +181,53 @@ class EEM_Registration extends EEM_Base {
 
 
 	/**
+	*		retreive ALL registrations for a particular Attendee from db
+	* 		@access		public
+	* 		@param		int		$ATT_ID
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_all_registrations_for_attendee( $ATT_ID = FALSE ) {
+
+		if ( ! $ATT_ID ) {
+			return FALSE;
+		}
+		if ( $registrations = $this->get_all_registrations( array( 'ATT_ID' => $ATT_ID ))) {
+			return $registrations;
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+
+	/**
+	*		retreive ALL registrations for a specific transaction from db
+	* 
+	* 		@access		public
+	* 		@param		$TXN_ID		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function get_all_registrations_for_transaction( $TXN_ID = FALSE ) {
+	
+		if ( ! $TXN_ID ) {
+			return FALSE;
+		}
+		// retreive all registrations	
+		if ( $registrations = $this->select_all_where ( array( 'TXN_ID' => $TXN_ID ), 'REG_ID' )) {
+			return $this->_create_objects( $registrations );
+		} else {
+			return FALSE;
+		}
+		
+	}
+
+
+
+
+
+
+	/**
 	*		Search for an existing registration record in the DB using SQL LIKE clause - so go ahead - get wildcards !
 	* 		@access		public
 	* 		@param		string		$REG_code
