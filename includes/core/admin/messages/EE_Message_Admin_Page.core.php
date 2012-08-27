@@ -132,6 +132,10 @@ class EE_Message_Admin_Page extends Admin_Page {
 		$this->admin_page_title .= $this->_learn_more_about_message_templates_link();
 		
 		$message_templates = $this->_get_message_templates();
+		
+		if ( empty($message_templates) ) {
+			$message_templates = new WP_Error( __('no_message_templates', 'event_espresso'), __('There are no message templates in the system.  Have you activated any messengers?', 'event_espresso') . espresso_get_error_code( __FILE__, __FUNCTION__, __LINE__) );
+		}
 
 		//$message_templates COULD be an error object. IF it is then we want to handle/display the error
 		if ( is_wp_error($message_templates) ) {
@@ -166,7 +170,7 @@ class EE_Message_Admin_Page extends Admin_Page {
 		global $espresso_wp_user;
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
-		$message_templates = array();
+		$msg_templates = array();
 
 		require_once( EE_MSG_ADMIN . 'EE_Message_Template_List_Table.class.php' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
@@ -191,11 +195,18 @@ class EE_Message_Admin_Page extends Admin_Page {
 
 		$order = ( isset( $_GET['order'] ) && ! empty( $_GET['order'] ) ) ? $_GET['order'] : 'ASC';
 
-		if ( $message_templates = $MTP->get_all_global_message_templates() ) {
-			//todo: left off here	
+		if ( $message_templates = $MTP->get_all_global_message_templates($orderby, $order) ) {
+			$this->views['trashed']['count'] = 0;
+			$this->views['in_use']['count'] = 0;
+			foreach ( $message_templates as $template ) {
+				$this->views['trashed']['count'] += $template->trash_count();
+				$this->views['in_use']['count'] += $template->is_active_count();
+				$msg_templates[] = $template;
+			}
 		}
-
+		return $msg_templates;
 	}
+
 
 	/**
 	 * 	_learn_more_about_message_templates_link

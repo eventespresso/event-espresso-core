@@ -130,7 +130,7 @@ class EE_Message_Template {
 	 * @access private
 	 * @var boolean
 	 */
-	private $_is_override = FALSE;
+	private $_is_override_count = FALSE;
 
 	/**
 	 * count of trashed contexts (per group)
@@ -157,7 +157,7 @@ class EE_Message_Template {
 
 		//initialize group counts
 		$this->_is_active_count = 0;
-		$this->_is_override = 0;
+		$this->_is_override_count = 0;
 		$this->_is_trashed_count = 0;
 		$group_count = array_fill_keys( array('MTP_is_active', 'MTP_is_override', 'MTP_deleted'), 0);
 
@@ -190,7 +190,7 @@ class EE_Message_Template {
 			
 			$this->_contexts[$context] = $template_type;
 			$this->_is_active_count = $group_count['MTP_is_active'];
-			$this->_is_override = $group_count['MTP_is_override'];
+			$this->_is_override_count = $group_count['MTP_is_override'];
 			$this->_is_trashed_count = $group_count['MTP_is_trashed_count'];
 		}
 
@@ -200,7 +200,7 @@ class EE_Message_Template {
 
 	public function set_message_type( $message_type = FALSE ) {
 		if ( !$message_type ) {
-			new WP_Error(__('missing_parameter_value', 'event_espresso'), __('Missing required value for the message_type parameter') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			new WP_Error(__('missing_parameter_value', 'event_espresso'), __('Missing required value for the message_type parameter', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 		}
 
 		$this->_MTP_message_type = wp_strip_all_tags( strtolower($message_type) );
@@ -396,6 +396,32 @@ class EE_Message_Template {
 	 */
 	public function contexts() {
 		return $this->_MTP_context;
+	}
+
+	/**
+	 * get number of trashed contexts
+	 * 
+	 * @access  public
+	 * @return int count of trashed context templates in this template group
+	 */
+	public function trash_count() {
+		return $this->_trashed_count;
+	}
+
+	/**
+	 * get number of override contexts
+	 * @return int count of context templates in template group that are marked override (i.e. they will override any custom event templates setup)
+	 */
+	public function is_override_count() {
+		return $this->_is_override_count;
+	}
+
+	/**
+	 * get number of active contexts
+	 * @return int count of context templates in template group that are active.
+	 */
+	public function is_active_count() {
+		return $this->_is_active_count;
 	}
 
 	/**
