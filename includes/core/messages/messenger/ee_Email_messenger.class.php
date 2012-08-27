@@ -38,12 +38,16 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return void
 	 */
 	public function __construct() {
-		//we're using defaults so let's call parent constructor
+		//set name and description properties
+		$this->name = 'email';
+		$this->description = __('Email messenger.  This sends out email via the built-in wp_mail function included with WordPress', 'event_espresso');
+
+		//we're using defaults so let's call parent constructor that will take care of setting up all the other properties
 		parent::__construct();
 	}
 
 	/**
-	 * We just deliver the messages don't kill us!!  This method will need to be modified by child classes for whatever action is taken to actually send a message.
+	 * We just deliver the messages don't kill us!!  
 	 * @return void
 	 * @return bool|error_object true if message delivered, false if it didn't deliver OR bubble up any error object if present.
 	 */

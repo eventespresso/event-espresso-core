@@ -237,8 +237,6 @@ abstract class EE_message_type {
 		global $EEM_Gateways;
 		//get shortcode_replace instance- set when parent::__construct() is called in child...
 		$this->shortcode_replace = EE_Parse_Shortcodes::instance();
-
-		$this->EEM_data = EEM_Message_Template::instance();
 		$this->active_messenger = $active_messenger;
 		$this->data = $data;
 
@@ -260,7 +258,7 @@ abstract class EE_message_type {
 	 */
 	protected function _get_templates() {
 		//todo: $this->data is set by the message_type child at this point SO... we CAN check for if there is an event_specific template in here eventually. 
-		$current_templates = $this->EEM_data->get_all_active_message_templates_by_messenger($this->active_messenger->name);
+		$current_templates = $this->active_messenger->active_templates;
 
 		if ( isset($current_templates) ) {
 			foreach ( $current_templates as $template_object ) {
@@ -343,6 +341,12 @@ abstract class EE_messenger {
 	public $description;
 
 	/**
+	 * This wil hold the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
+	 * @var object
+	 */
+	protected $_EEM_data;
+
+	/**
 	 * this property just holds an array of the various template refs.
 	 * @var array
 	 */
@@ -359,6 +363,7 @@ abstract class EE_messenger {
 	protected $_content;
 
 	public function __construct() {
+		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_templates();	
 	}
 
@@ -373,6 +378,7 @@ abstract class EE_messenger {
 			'subject',
 			'content'
 			);
+		$this->active_templates = $this->EEM_data->get_all_active_message_templates_by_messenger($this->name);
 	}
 
 
