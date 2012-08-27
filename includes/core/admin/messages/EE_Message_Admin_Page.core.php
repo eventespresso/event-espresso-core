@@ -172,7 +172,8 @@ class EE_Message_Admin_Page extends Admin_Page {
 		// start with an empty array
 		$msg_templates = array();
 
-		require_once( EE_MSG_ADMIN . 'EE_Message_Template_List_Table.class.php' );
+		/** todo: is this even needed?
+		//require_once( EE_MSG_ADMIN . 'EE_Message_Template_List_Table.class.php' ); /**/
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 		$MTP = EEM_Message_Template::instance();
 		
@@ -196,6 +197,12 @@ class EE_Message_Admin_Page extends Admin_Page {
 		$order = ( isset( $_GET['order'] ) && ! empty( $_GET['order'] ) ) ? $_GET['order'] : 'ASC';
 
 		if ( $message_templates = $MTP->get_all_global_message_templates($orderby, $order) ) {
+			
+			//bubble up error_object if present
+			if ( is_wp_error($message_templates) ) {
+				return $message_templates;
+			}
+
 			$this->views['trashed']['count'] = 0;
 			$this->views['in_use']['count'] = 0;
 			foreach ( $message_templates as $template ) {
@@ -206,6 +213,8 @@ class EE_Message_Admin_Page extends Admin_Page {
 		}
 		return $msg_templates;
 	}
+
+	//todo: left off here (see _edit_event_price_details() as example in Event_Pricing_admin_Page.core.php )
 
 
 	/**
