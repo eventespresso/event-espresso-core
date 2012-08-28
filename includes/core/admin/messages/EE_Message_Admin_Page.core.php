@@ -282,24 +282,82 @@ class EE_Message_Admin_Page extends Admin_Page {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$set_column_values = array(
-			'MTP_ID' => absint($_REQUEST['MTP_ID']),
+			'MTP_ID' => absint($_REQUEST['MTP_template_field'][$index]['MTP_ID']),
 			'EVT_ID' => absint($_REQUEST['EVT_ID']),
 			'GRP_ID' => absint($_REQUEST['GRP_ID']),
 			'MTP_user_id' => absint($_REQUEST['MTP_user_id']),
 			'MTP_messenger'	=> strtolower($_REQUEST['MTP_messenger']),
 			'MTP_message_type' => strtolower($_REQUEST['MTP_message_type']),
-			'MTP_template_field' => strtolower($_REQUEST['MTP_template_field'][$index]),
+			'MTP_template_field' => strtolower($_REQUEST['MTP_template_field'][$index]['name']),
 			'MTP_context' => strtolower($_REQUEST['MTP_context']),
-			'MTP_content' => strtolower($_REQUEST['MTP_template_field'][$index]),
+			'MTP_content' => strtolower($_REQUEST['MTP_template_field'][$index]['content']),
 			'MTP_is_active' => absint($_REQUEST['MTP_is_active']),
 			'MTP_is_global' => absint($_REQUEST['MTP_is_global']),
 			'MTP_is_override' => absint($_REQUEST['MTP_is_override']),
 			'MTP_deleted' => absint($_REQUEST['MTP_deleted'])
 		);
+		return $set_column_values;
 	}
 
 	protected function _insert_or_update_message_template($new = FALSE ) {
-		//todo
+		
+		do_action ( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$success = 0;
+		//setup notices description	
+		$messenger = !empty($_REQUEST['MTP_messenger']) ? ucwords(str_replace('_', ' ', $_REQUEST['MTP_messenger'] ) ) : false;
+		$message_type = !empty($_REQUEST['MTP_message_type']) ? ucwords(str_replace('_', ' ', $_REQUEST['MTP_message_type'] ) ) : false;
+		$context = !empty($_REQUEST['MTP_context']) ? ucwords(str_replace('_', ' ', $_REQUEST['MTP_context'] ) ) : false;
+
+		$item_desc = $messenger ? $messenger . ' ' . $message_type . ' ' . $context . ' ' : '';
+		$item_desc .= 'Message Template';
+		$query_args = array();
+
+		//if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
+		if ( $new_price ) {
+			if ( $edit_array = $this->_generate_new_templates() ) {
+				if ( is_wp_error ($edit_array) ) {
+					$this->_handle_errors($edit_array);
+				} else {
+					$success = 1;
+					$query_args = array(
+						'id' => $edit_array['GRP_ID'],
+						'evt_id' => $edit_array['EVT_ID'],
+						'context' => $edit_array['MTP_context'],
+						'action' => 'edit_message_template'
+						);
+				}
+			}
+			$action_desc = 'created';
+		} else {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Type.model.php');
+			$MTP = EEM_Message_Type::instance();
+			
+			//run update for each template field in displayed context
+			for ( $i=0; $i < count($_REQUEST['MTP_template_field']); $i++ ) {
+				$set_column_values = $this->_set_message_template_column_values($i);
+				$where_cols_n_values = array( 'MTP_ID' => $_REQUEST['MTP_template_field'][$index]['MTP_ID']);
+				if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
+					if ( is_wp_error($updated) ) {
+						$this->_handle_errors($edit_array);
+					} else {
+						$success = 1;
+					}
+				}
+				$action_desc = 'updated';
+			}
+		}
+		
+		$this->_redirect_after_admin_action( $success, $item_desc, $action_desc, $query_args );
+
+	}
+
+	/**
+	 * _generate_new_templates
+	 * This will handle the messenger, message_type selection when "adding a new custom template" for an event and will automaticlaly create the defaults for the event.  The user would then be redirected to edit the default context for the event.
+	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
+	 */
+	protected function _generate_new_templates() {
+		//todo: this automatically setsup new templates in the database.  Redirect to "edit" the default tempalte after successful generation.
 	}
 
 	protected function _trash_or_restore_message_template($trash = TRUE ) {

@@ -607,10 +607,23 @@ class EE_Admin_Page {
 	<div id="espresso-admin-page-overlay-dv" class=""></div>
 ';
 	}
-	
-	
 
-
+	/**
+	 * _handle_errors
+	 * This will take an incoming error object and add it to the espresso_notices array.
+	 * @param  object $error_obj a WP_Error object
+	 * @access protected
+	 * @return void
+	 * @todo Currently this is just being used by EE_messages subsystem. IF this works well, we could roll it out to all systems for handling errors and switch things over to using WP_Error objects.
+	 */
+	protected function _handle_errors($error_obj) {
+		global $espresso_notices;
+		
+		if ( is_wp_error($error_obj) ) {
+			$espresso_notices['errors'][] = $error_obj->get_error_msg;
+		}
+	}
+	
 }
 
 
