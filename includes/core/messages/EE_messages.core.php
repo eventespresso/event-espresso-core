@@ -234,8 +234,8 @@ abstract class EE_message_type {
 	 */
 	protected $data;
 
-	public function __construct($data, $active_messenger) {
-		//todo: need to setup defaults for when new templates are created.
+	public function __construct() {
+		//whistle... move along... nothing in here yet.
 	}
 
 	/** METHODS **/
