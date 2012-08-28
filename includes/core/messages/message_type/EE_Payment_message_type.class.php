@@ -30,13 +30,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class EE_Payment_message_type extends EE_message_type {
 
-	function __construct( $data, $active_messenger ) {
+	function __construct() {
 
 		//setup type details for reference
 		$this->name = 'payment';
 		$this->description = 'Sets up payment messages when triggered by a payment'; //is it possible that these coudld be triggered by ipn or by manual payment?
 
-		parent::__construct($data, $active_messenger);
+		parent::__construct();
 
 		// load gateways
 		if (!defined('ESPRESSO_GATEWAYS')) {
@@ -44,11 +44,7 @@ class EE_Payment_message_type extends EE_message_type {
 			$EEM_Gateways = EEM_Gateways::instance();
 		}
 
-		$this->gateways = $EEM_Gateways;
-
-		$this->_init_data();
-		$this->_assemble_messages();
-		
+		$this->gateways = $EEM_Gateways;	
 	}
 
 	/**

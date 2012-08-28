@@ -148,6 +148,17 @@ class EE_Message_Template {
 	 * @return void
 	 */
 	public function __construct($template_group) {
+		
+		if ( isset($template_group['new_template'] && $template_group['new_template'] ) ) ) {
+			//let's loop through the included keys first
+		 	foreach ( $template_group as $key => $value ) {
+		 		if ( $key == 'new_template' )
+		 			continue;
+		 		$_key = '_' . $key;
+		 		$this->$_key = $value;
+		 	}
+		}
+
 		$this->_GRP_ID = absint($template_group['group_id']);
 		$this->_MTP_user_id = absint($template_group['MTP_user_id']);
 		$this->_MTP_messenger = wp_strip_all_tags(strtolower($template_group['MTP_messenger']));
@@ -253,8 +264,6 @@ class EE_Message_Template {
 	 */
 	private function _save_to_db( $where_cols_n_values = array() ) {
 		$MODEL = EEM_Message_Template::instance();
-
-		
 
 		$i = 0;
 		foreach ( $this->_contexts as $context => $template_types ) {

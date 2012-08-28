@@ -30,18 +30,14 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class EE_Admin_Payment_message_type extends EE_message_type {
 
-	function __construct( $data, $active_messenger ) {
+	function __construct() {
 
 		//setup type details for reference
 		$this->name = 'admin_payment';
 		$this->description = 'Handles setting up message objects for when the action is an admin payment';
 
 		//all types should call parent construct and then modify as needed.
-		parent::__construct($data, $active_messenger);
-
-		//these must always be called.
-		$this->_init_data(); //must be declared in each message type
-		$this->_assemble_messages();
+		parent::__construct();
 		
 	}
 

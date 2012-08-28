@@ -115,7 +115,8 @@ class EE_messages {
 			// then send it
 			foreach ( $this->active_messengers as $active_messenger ) {
 				// create message data
-				$messages = call_user_func( $classname, $vars, $active_messenger );
+				$messages = call_user_func( $classname );
+				$messages->_get_messages($vars, $active_messenger);
 
 				if ( is_wp_error($messages) ) {
 					//we've got an error so let's bubble up the error_object to be caught by caller.
@@ -213,7 +214,7 @@ abstract class EE_message_type {
 	 * This will hold the shortcode_replace instance for handling replacement of shortcodes in the various templates
 	 * @var object
 	 */
-	protected $shortcode_replace;
+	protected $_shortcode_replace;
 
 	/**
 	 * This will hold the EEM_message_templates model for interacting with the database and retrieving templates.
@@ -234,16 +235,30 @@ abstract class EE_message_type {
 	protected $data;
 
 	public function __construct($data, $active_messenger) {
-		global $EEM_Gateways;
-		//get shortcode_replace instance- set when parent::__construct() is called in child...
-		$this->shortcode_replace = EE_Parse_Shortcodes::instance();
+		//todo: need to setup defaults for when new templates are created.
+	}
+
+	/** METHODS **/
+
+	/**
+	 * This method simply takes care of setting up message objects and returning them in an array.
+	 * 
+	 * @access public
+	 * @param  array|object $data       Data to be parsed for messenger/message_type
+	 * @param  string $active_messenger The active messenger being used
+	 * @return void      
+	 */
+	public function get_messages($data, $active_messenger) {
+		//get shortcode_replace instance- set when _get_messages is called in child...
+		$this->_shortcode_replace = EE_Parse_Shortcodes::instance();
 		$this->active_messenger = $active_messenger;
 		$this->data = $data;
 
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
+		$this->_init_data();
+		$this->_assemble_messages();
+		$this->count = count($this->messages);
 	}
-
-	/** METHODS **/
 	/**
 	 * The main purpose of this function is to setup the various parameters within the message_type.  $templates and any extra stuff to the data object that can come from the messenger template options for the child class type.
 	 * @return void
@@ -298,7 +313,7 @@ abstract class EE_message_type {
 		
 		foreach ( $this->templates as $template_type => $context ) {
 			if ( isset( $this->templates[$template_type][$reciever->context] ) ) {
-				$message->$template_type = $this->shortcode_replace->parse_template($this->templates[$template_type][$reciever->context], $this->data);
+				$message->$template_type = $this->_shortcode_replace->parse_template($this->templates[$template_type][$reciever->context], $this->data);
 			}
 		}
 		return $message;
@@ -390,6 +405,57 @@ abstract class EE_messenger {
 	protected function _set_template_value($item, $value) {
 		if ( in_array($item, $this->_templates) )
 			$this->$item = $value;
+	}
+
+	/**
+	 * This is a wrapper for the protected _create_new_templates function
+	 * @param  string $message_type message type that the templates are being created for
+	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned. 
+	 */
+	public function create_new_templates( $message_type, $evt_id, $is_global = false ) {
+		$valid_mt = false;
+		$evt_id = absint($evt_id);
+		$message_type = strtolower(str_replace(' ', '_', $message_type) );
+		//is given message_type valid?
+		foreach ( $this->active_templates as $template ) {
+			if ( $template_object->message_type() == $message_type )
+				$valid_mt = true;
+		}
+		
+		if ( !$valid_mt && $is_global ) {
+			//we're setting up a brand global templates (with messenger activation) so we're assuming that the message types sent in are valid.
+			$valid_mt = true;
+		}
+
+		if ( !$valid_mt ) {
+			//if we've still got no valid_mt then error roger
+			return new WP_Error(__('invalid_message_type', 'event_espresso'), sprintf(__(' % is an invalid message_type', 'event_espresso'), $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		}
+
+		if ( !$is_global && empty($evt_id) ) {
+			//hey we need an evt_id to create this custom template
+			return new WP_Error(__('missing_event_id', 'event_espresso'), __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
+		}
+
+		//whew made it this far!  Okay, let's go ahead and create the templates then
+		return $this->_create_new_templates($message_type, $evt_id, $is_global);
+	}
+
+	protected function _create_new_templates($message_type, $evt_id, $is_global) {
+
+		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
+		if ( empty($evt_id) && $is_global ) {
+			$new_template = $this->_default_templates
+		}
+		//setup data
+		$new_template = array(
+			'MTP_messenger' => $this->name,
+			'MTP_message_type' => $message_type,
+			'GRP_ID' => $this->EEM_data->generate_grp_id(),
+			'MTP_evt_id' => $evt_it,
+			'MTP_is_global' => $is_global,
+			'new_template' => true
+			);
 	}
 
 	/**

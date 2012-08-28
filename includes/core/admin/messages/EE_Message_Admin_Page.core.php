@@ -314,7 +314,7 @@ class EE_Message_Admin_Page extends Admin_Page {
 
 		//if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
 		if ( $new_price ) {
-			if ( $edit_array = $this->_generate_new_templates() ) {
+			if ( $edit_array = $this->_generate_new_templates($messenger, $message_type) ) {
 				if ( is_wp_error ($edit_array) ) {
 					$this->_handle_errors($edit_array);
 				} else {
@@ -356,8 +356,23 @@ class EE_Message_Admin_Page extends Admin_Page {
 	 * This will handle the messenger, message_type selection when "adding a new custom template" for an event and will automaticlaly create the defaults for the event.  The user would then be redirected to edit the default context for the event.
 	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
 	 */
-	protected function _generate_new_templates() {
-		//todo: this automatically setsup new templates in the database.  Redirect to "edit" the default tempalte after successful generation.
+	protected function _generate_new_templates($messenger, $message_type, $evt_id) {
+		if ( empty($messenger) || empty($message_type) ) {
+			return new WP_Error(__('empty_variable', 'event_espresso'), __('Missing required messenger or message_type', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		}
+		$messenger = ucwords(str_replace(' ', '_', $messenger) );
+
+		//load messenger object so we know what to do.
+		$messenger_class = 'EE_' . $messenger . '_messenger';
+		if ( !class_exists($messenger_class) ) {
+			return new WP_Error(__('no_class_exists', 'event_espresso'), sprintf(__('%s class could not be loaded or doesn\'t exist', 'event_espresso'), $messenger) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		}
+
+		//k we can safely assume the class can be called.
+		$msgr = call_user_func($messenger_class);
+		$new_message_template_group = $msgr->create_new_templates($message_type, $evt_id);
+		return $new_message_template_group;
+
 	}
 
 	protected function _trash_or_restore_message_template($trash = TRUE ) {
@@ -391,21 +406,5 @@ class EE_Message_Admin_Page extends Admin_Page {
 	*/
 	protected function _learn_more_about_message_templates_link() {
 		return '<a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >' . __('learn more about how message templates works', 'event_espresso') . '</a>';
-	}
-
-	/**
-	 * _handle_errors
-	 * This will take an incoming error object and add it to the espresso_notices array.
-	 * @param  object $error_obj a WP_Error object
-	 * @access protected
-	 * @return void
-	 * @todo IF this works well, we could use this in the Admin_Page parent class to handle errors and switch things over to using WP_Errors.
-	 */
-	protected function _handle_errors($error_obj) {
-		global $espresso_notices;
-		
-		if ( is_wp_error($error_obj) ) {
-			$espresso_notices['errors'][] = $error_obj->get_error_msg;
-		}
 	}
 }

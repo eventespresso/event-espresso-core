@@ -345,6 +345,22 @@ class EEM_Message_Template extends EEM_Base {
 	public function update($set_column_values, $where_cols_n_values) {
 		// grab data types from above and pass everything to espresso_model (parent model) to perform the update
 		return $this->_update($this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values);
+	}
+
+	
+	/**
+	 * generates a unique group id for any new templates being added.
+	 * we need to do this because we already have an auto_incrementing column (MTP_ID).
+	 * @return int unique grp_id
+	 */
+	public function generate_grp_id() {
+		global $wpdb;
+		//first let's find out whether there is already a max value
+		$query = "SELECT MAX(GRP_ID) FROM " . $this->table_name . ";";
+		$max_grp_id = $wpdb->get_var( $wpdb->prepare($query) );
+		if ( empty($max_grp_id) )
+			$max_grp_id = 0;
+		return (int) $max_grp_id++;
 	}	
 
 } //end class EEM_Message_Template.model

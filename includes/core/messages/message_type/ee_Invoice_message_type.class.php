@@ -30,14 +30,14 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class EE_{type}_message_type extends EE_message_type {
 
-	function __construct( $data, $active_messenger ) {
+	function __construct() {
 
 		//setup type details for reference
 		$this->name = '{type_name}';
 		$this->description = '{type_description}';
 
 		//all types should call parent construct and then modify as needed.
-		parent::__construct($data, $active_messenger);
+		parent::__construct();
 
 		// load gateways BUT only if needed.  This is mostly used for payment message types remove if not needed.
 		if (!defined('ESPRESSO_GATEWAYS')) {
@@ -47,14 +47,11 @@ class EE_{type}_message_type extends EE_message_type {
 
 		$this->gateways = $EEM_Gateways;
 
-		//these must always be called.
-		$this->_init_data(); //must be declared in each message type
-		$this->_assemble_messages();
-
 		//and believe it or not, that's IT!  unless you want to modify the following methods (by declaring/overriding them here!!) that are in the EE_message_type parent class for special cases (see comments for them in parent class)
 		// _assemble_messages()
 		// _setup_message_object()
 		// _get_templates()
+		// _get_messages()
 		
 	}
 
