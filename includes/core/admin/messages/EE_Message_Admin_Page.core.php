@@ -271,8 +271,31 @@ class EE_Message_Admin_Page extends Admin_Page {
 		$this->display_admin_page_with_sidebar();
 	}
 
-	protected function _set_message_template_column_values() {
-		//todo
+	/**
+	 * utility for sanitizing new values coming in.
+	 * Note: this is only used when updating a context.
+	 * 
+	 * @access protected
+	 * @param int $index This helps us know which template field to select from the request array.
+	 */
+	protected function _set_message_template_column_values($index=null) {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		$set_column_values = array(
+			'MTP_ID' => absint($_REQUEST['MTP_ID']),
+			'EVT_ID' => absint($_REQUEST['EVT_ID']),
+			'GRP_ID' => absint($_REQUEST['GRP_ID']),
+			'MTP_user_id' => absint($_REQUEST['MTP_user_id']),
+			'MTP_messenger'	=> strtolower($_REQUEST['MTP_messenger']),
+			'MTP_message_type' => strtolower($_REQUEST['MTP_message_type']),
+			'MTP_template_field' => strtolower($_REQUEST['MTP_template_field'][$index]),
+			'MTP_context' => strtolower($_REQUEST['MTP_context']),
+			'MTP_content' => strtolower($_REQUEST['MTP_template_field'][$index]),
+			'MTP_is_active' => absint($_REQUEST['MTP_is_active']),
+			'MTP_is_global' => absint($_REQUEST['MTP_is_global']),
+			'MTP_is_override' => absint($_REQUEST['MTP_is_override']),
+			'MTP_deleted' => absint($_REQUEST['MTP_deleted'])
+		);
 	}
 
 	protected function _insert_or_update_message_template($new = FALSE ) {

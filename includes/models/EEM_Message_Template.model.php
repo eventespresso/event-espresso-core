@@ -68,7 +68,7 @@ class EEM_Message_Template extends EEM_Base {
 				'MTP_user_id' => '%d',
 				'MTP_messenger'	=> '%s',
 				'MTP_message_type' => '%s',
-				'MTP_template_type' => '%s',
+				'MTP_template_field' => '%s',
 				'MTP_context' => '%s',
 				'MTP_content' => '%s',
 				'MTP_is_active' => '%d',
@@ -119,8 +119,8 @@ class EEM_Message_Template extends EEM_Base {
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_deleted'] = $template->MTP_deleted;
 
 			//now also within the template group->context groups we have the various template_types and the actual template as represented below.
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_type]['MTP_ID'] = $template->MTP_ID;
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_type]['content'] = $template->MTP_content;
+			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_field]['MTP_ID'] = $template->MTP_ID;
+			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_field]['content'] = $template->MTP_content;
 		}
 
 		//now let's setup the template objects

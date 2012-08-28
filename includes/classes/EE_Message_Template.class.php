@@ -93,12 +93,12 @@ class EE_Message_Template {
 	private $_MTP_context = NULL;
 
 	/**
-	 * Template type
+	 * Template field
 	 * 
 	 * @access private
 	 * @var string
 	 */
-	private $_MTP_template_type = NULL;
+	private $_MTP_template_field = NULL;
 
 	/**
 	 * template content
@@ -161,40 +161,41 @@ class EE_Message_Template {
 		$this->_is_trashed_count = 0;
 		$group_count = array_fill_keys( array('MTP_is_active', 'MTP_is_override', 'MTP_deleted'), 0);
 
-		foreach ( $this->_contexts as $context => $template_type ) {
+		foreach ( $this->_contexts as $context => $template_fields ) {
 			$context = wp_strip_all_tags(strtolower($context) );
-			foreach ( $template_type as $key => $value ) {
+			foreach ( $template_fields as $key => $value ) {
 				$bool_array = array('MTP_is_active','MTP_is_global');
 				$bool_null_array = array('MTP_is_override', 'MTP_deleted');
 
 				if ( $key == 'MTP_ID' ) {
-					$template_type[$key] = array_map('absint', $value );
+					$template_fields[$key] = array_map('absint', $value );
 				} else if ( in_array( $key, $bool_array) ) {
-					$template_type[$key] = absint( $value ) ? TRUE : FALSE;
-					if ( $template_type[$key] ) {
+					$template_fields[$key] = absint( $value ) ? TRUE : FALSE;
+					if ( $template_fields[$key] ) {
 						$group_counts[$key]++;
 					}
 				} else if ( in_array( $key, $bool_null_array ) ) {
-					$template_type[$key] = $value != NULL ? absint($value ) : FALSE;
-					if ( $template_type[$key] ) {
+					$template_fields[$key] = $value != NULL ? absint($value ) : FALSE;
+					if ( $template_fields[$key] ) {
 						$group_counts[$key]++;
 					}
 				} else if ( is_array($value) ) {
 					$value['MTP_ID'] = absint($value['MTP_ID']);
 					$value['content'] = wp_strip_all_tags($value['content']);
-					$template_type[$key] = $value;
+					$template_fields[$key] = $value;
 				} else {
 					continue;
 				}
 			}
 			
-			$this->_contexts[$context] = $template_type;
+			$this->_contexts[$context] = $template_fields;
 			$this->_is_active_count = $group_count['MTP_is_active'];
 			$this->_is_override_count = $group_count['MTP_is_override'];
 			$this->_is_trashed_count = $group_count['MTP_is_trashed_count'];
 		}
 
 		//load Message Template Model file
+		//todo: why is this getting loaded here?
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 	}
 
@@ -244,16 +245,16 @@ class EE_Message_Template {
 	//todo: add more setters as needed.  Not sure we'll need them all right now.
 	
 	/**
-	 * save to db (this actually saves multiple rows in a group)
-	 * It is expected that the incoming $where_cols_n_values could contain the given context to update.  If not, then we assume all the rows in the group need updated/inserted.
+	 * save to db (one template field = 1 row)
 	 * 
 	 * @access private
 	 * @param  array $where_cols_n_values  
-	 * @return todo:uncertain what is returned at the moment
+	 * @return bool true on success false on fail
 	 */
 	private function _save_to_db( $where_cols_n_values = array() ) {
 		$MODEL = EEM_Message_Template::instance();
 
+		
 
 		$i = 0;
 		foreach ( $this->_contexts as $context => $template_types ) {
