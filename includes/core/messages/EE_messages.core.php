@@ -206,15 +206,16 @@ class EE_messages {
 		$variable_template_data = array();
 
 		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
-		if ( empty($evt_id) && $is_global ) {}
+		if ( empty($evt_id) && $is_global ) {
 			//setup templates array
 			foreach ( $mt_contexts as $context ) {
-				foreach ( $m_fields as $field ) {
-					$templates[$context][$field] = ( isset($mt_defaults[$field]) ? maybe_serialize($mt_defaults[$field]) : maybe_serialize($m_defaults[$field]) );
+				foreach ( $m_fields as $field => $field_type ) {
+					if ( $field !== 'extra' )
+						$templates[$context][$field] = ( isset($mt_defaults[$field]) ? maybe_serialize($mt_defaults[$field]) : maybe_serialize($m_defaults[$field]) );
 				}
 			}
 
-		} else if !(empty($evt_id) ) {
+		} else if ( !empty($evt_id) ) {
 			//k we're setting up a custom event template so let's just copy what's currently in the active global template for this messenger and message_type
 			//first let's get all templates for this messenger
 			$all_templates = $this->_EEM_data->get_all_message_templates_by_messenger($this->_messenger->name);
@@ -222,9 +223,11 @@ class EE_messages {
 				if ( $this->_message_type->name == $template_object->message_type() ) {
 					$context_templates = $template_object->context_templates();
 					foreach ( $mt_contexts as $context ) {
-						foreach ( $m_fields as $field ) {
-							$templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field] : '';
-							$templates[$context][$field] = (!is_serialized($templates[$context][$field]) ) ? maybe_serialize($templates[$context][$field]) : $templates[$context][$field];
+						foreach ( $m_fields as $field => $field_type ) {
+							if ( $field !== 'extra' ) {
+								$templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field] : '';
+								$templates[$context][$field] = (!is_serialized($templates[$context][$field]) ) ? maybe_serialize($templates[$context][$field]) : $templates[$context][$field];
+							}
 						}
 					}
 				}
@@ -246,13 +249,15 @@ class EE_messages {
 		);
 
 		foreach ( $mt_contexts as $context ) {
-			foreach ( $m_fields as $field ) {
-				$template_data['MTP_context'] = $context;
-				$template_data['MTP_template_field'] = $field;
-				$template_data['MTP_content'] = $templates[$context][$field];
-				$MTP = $this->_EEM_data->insert($template_data);
-				if ( !$MTP ) 
-					return new WP_Error( __('template_creation_error', 'event_espresso'), sprintf(__('There was an error in saving new template data for %s messenger, %s message type, %s context and %s template field.', 'event_espresso'), $this->_messenger->name, $this->_message_type->name, $context, $field) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__));
+			foreach ( $m_fields as $field => $field_type ) {
+				if ( $field != 'extra' ) {
+					$template_data['MTP_context'] = $context;
+					$template_data['MTP_template_field'] = $field;
+					$template_data['MTP_content'] = $templates[$context][$field];
+					$MTP = $this->_EEM_data->insert($template_data);
+					if ( !$MTP ) 
+						return new WP_Error( __('template_creation_error', 'event_espresso'), sprintf(__('There was an error in saving new template data for %s messenger, %s message type, %s context and %s template field.', 'event_espresso'), $this->_messenger->name, $this->_message_type->name, $context, $field) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__));
+				}
 			}
 		}
 
