@@ -360,17 +360,11 @@ class EE_Message_Admin_Page extends Admin_Page {
 		if ( empty($messenger) || empty($message_type) ) {
 			return new WP_Error(__('empty_variable', 'event_espresso'), __('Missing required messenger or message_type', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 		}
-		$messenger = ucwords(str_replace(' ', '_', $messenger) );
 
-		//load messenger object so we know what to do.
-		$messenger_class = 'EE_' . $messenger . '_messenger';
-		if ( !class_exists($messenger_class) ) {
-			return new WP_Error(__('no_class_exists', 'event_espresso'), sprintf(__('%s class could not be loaded or doesn\'t exist', 'event_espresso'), $messenger) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
-		}
+		//todo: may need to explicitly load the file containing the class here.
+		$MSG = new EE_messages();
+		$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id)
 
-		//k we can safely assume the class can be called.
-		$msgr = call_user_func($messenger_class);
-		$new_message_template_group = $msgr->create_new_templates($message_type, $evt_id);
 		return $new_message_template_group;
 
 	}

@@ -120,7 +120,7 @@ class EEM_Message_Template extends EEM_Base {
 
 			//now also within the template group->context groups we have the various template_types and the actual template as represented below.
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_field]['MTP_ID'] = $template->MTP_ID;
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_field]['content'] = $template->MTP_content;
+			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_field]['content'] = maybe_unserialize($template->MTP_content);
 		}
 
 		//now let's setup the template objects
@@ -239,6 +239,16 @@ class EEM_Message_Template extends EEM_Base {
 
 		global $wpdb;
 		return $this->select_value_where($this->table_name, $this->table_data_types, 'GRP_ID', $where_cols_n_values );
+	}
+
+	/**
+	 * get_all_message_templates_by_messenger
+	 * 
+	 * @access public
+	 * @return array all (including trashed or inactive) message tempalte objects for the given messenger
+	 */
+	public function get_all_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC' ) {
+		return $this->get_all_message_templates_where(array('MTP_messenger' => $messenger), $orderby, $order );
 	}
 
 	/**
