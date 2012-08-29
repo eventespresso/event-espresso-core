@@ -89,6 +89,9 @@ class EE_Payment_message_type extends EE_message_type {
 			'primary_attendee',
 			'attendee'
 		);
+
+		$this->_contexts = apply_filters('_set_contexts_'. $this->name, $this->_contexts);
+		$this->_contexts = apply_filters('_set_contexts_all', $this->_contexts);
 	}
 
 	/**

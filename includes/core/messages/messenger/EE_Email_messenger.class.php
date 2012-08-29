@@ -63,7 +63,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return void
 	 */
 	protected function _set_template_fields() {
-		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  
+		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  Also, notice that the "values" are equal to the field type that messages admin will use to know what kind of field to display. 
 		$this->_template_fields = array(
 				'to' => 'text',
 				'from' => 'text',
@@ -76,7 +76,8 @@ class EE_Email_messenger extends EE_messenger  {
 					)
 				);
 
-		apply_filters('_set_template_fields_'.$this->name, $this->_template_fields);	
+		$this->_template_fields = apply_filters('_set_template_fields_'.$this->name, $this->_template_fields);
+		$this->_template_fields = apply_filters('_set_template_fields_all', $this->_template_fields);	
 	}
 
 	/**
