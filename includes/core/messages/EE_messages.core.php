@@ -342,6 +342,8 @@ abstract class EE_message_type {
 		$this->data = $data;
 
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
+		$this->_set_default_field_content;
+		$this->_set_contexts;
 		$this->_init_data();
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
