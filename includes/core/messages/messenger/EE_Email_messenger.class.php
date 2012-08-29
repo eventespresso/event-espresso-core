@@ -65,19 +65,39 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_template_fields() {
 		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  
 		$this->_template_fields = array(
-				'to',
-				'from',
-				'subject',
-				'content',
+				'to' => 'text',
+				'from' => 'text',
+				'subject' => 'text',
+				'content' => 'textarea',
 				'extra' => array(
 					'content' => array(
-						'main',
-						'attendee_list')
+						'main' => 'textarea',
+						'attendee_list' => 'textarea')
 					)
 				);
 
 		apply_filters('_set_template_fields_'.$this->name, $this->_template_fields);	
 	}
+
+	/**
+	 * _set_default_field_content
+	 * set the _default_field_content property (what gets added in the default templates).
+	 * 
+	 * @access protected
+	 * @return void
+	 */
+	protected function _set_default_field_content() {
+		$this->_default_field_content = array(
+			'to' => '[ATTENDEE_EMAIL]',
+			'from' => '[ADMIN_EMAIL]',
+			'subject' => 'Notification Email - should be replaced',
+			'content' => array(
+				'main' => 'This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in this template',
+				'attendee_list' => 'This contains the formatting for each attendee in a attendee list'
+				)
+			);
+	}
+
 	/**
 	 * We just deliver the messages don't kill us!!  
 	 * @return void

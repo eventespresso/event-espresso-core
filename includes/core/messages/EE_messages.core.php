@@ -201,7 +201,8 @@ class EE_messages {
 
 		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
 		if ( empty($evt_id) && $is_global ) {
-			$new_template = $this->_default_templates
+			$messenger_fields = $this->_messenger->get_template_fields();
+			$messenger_defaults = $This->_messenger->
 		}
 		//setup data
 		$new_template = array(
@@ -476,7 +477,7 @@ abstract class EE_messenger {
 	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
 	 * @var array
 	 */
-	protected $default_field_content = array();
+	protected $_default_field_content = array();
 
 	/**
 	 * This wil hold the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
@@ -495,14 +496,7 @@ abstract class EE_messenger {
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_templates();	
 		$this->_set_template_fields();
-	}
-
-	/**
-	 * This sets the active templates for the messenger.  
-	 * @access protected
-	 */
-	protected function _set_templates() {
-		$this->active_templates = $this->EEM_data->get_all_active_message_templates_by_messenger($this->name);
+		$this->_set_default_field_content();
 	}
 
 	/**
@@ -515,6 +509,38 @@ abstract class EE_messenger {
 	 */
 	abstract protected function _set_template_fields() {}
 
+	/**
+	 * _set_default_field_content
+	 * child classes need to define this function to set the _default_field_content property (what gets added in the default templates).
+	 * 
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_default_field_content() {}
+
+	/**
+	 * get_template_fields
+	 * 
+	 * @access public
+	 * @return array $this->_template_fields
+	 */
+	public function get_template_fields() {
+		return $this->_template_fields;
+	}
+
+	public function get_default_field_content() {
+		return $this->_default_field_template;
+	}
+
+	/**
+	 * This sets the active templates for the messenger.  
+	 * @access protected
+	 */
+	protected function _set_templates() {
+		$this->active_templates = $this->EEM_data->get_all_active_message_templates_by_messenger($this->name);
+	}
+
 
 	/** SETUP METHODS **/
 
@@ -522,7 +548,7 @@ abstract class EE_messenger {
 	 * The following method doesn't NEED to be used by child classes but might be modified by the specific messenger
 	 */
 	protected function _set_template_value($item, $value) {
-		if ( in_array($item, $this->_template_fields) )
+		if ( array_key_exists($item, $this->_template_fields) )
 			$this->$item = $value;
 	}
 
