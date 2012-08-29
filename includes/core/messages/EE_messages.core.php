@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_messages class
  *
- * This class is the main controller class for EE_messages, it delegates messages to the messengers.
+ * This class is the main controller class for EE_messages, it delegates messages to the messengers and contains other methods for obtaining various details about the active messengers and message types.
  *
  * @package			Event Espresso
  * @subpackage	includes/core/messages
@@ -29,13 +29,22 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_messages {
  
-	private $active_messengers = array();
-	private $active_message_types = array();
+	private $_active_messengers = array();
+	private $_active_message_types = array();
+	private $_messenger;
+	private $_message_type;
+
+	/**
+	 * holds the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
+	 * @var object
+	 */
+	private $_EEM_data;
 	// main controller
 	function __construct() {
 		global $espresso_wp_user;
 		
 		// get list of active messengers and active message types
+		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_get_active_messengers();
 		$this->_load_active_message_types();	
 	}
@@ -53,14 +62,14 @@ class EE_messages {
 			return new WP_Error(__('no_active_messengers', 'event_espresso'), __('No messages have gone out because there are no active_messengers.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 		}
 
-		foreach ( $active_names as $name ) {
-			$active = call_user_func($name);
+		foreach ( $active_names as $name => $class ) {
+			$active = call_user_func($class);
 			if ( is_wp_error($active) ) {
 				//we've got an error so let's bubble up the error_object to be caught by caller.
 				//todo: would be better to just catch the errors and then return any aggregated errors later.
 				return $active;
 			}
-			$this->active_messengers[] = $active;
+			$this->_active_messengers[$name] = $active;
 		}
 	}
 
@@ -77,7 +86,7 @@ class EE_messages {
 			return new WP_Error(__('no_active_types', 'event_espresso'), __('No messages have gone out because there are no active message types.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 		} 
 
-		$this->active_message_types = $active_names;
+		$this->_active_message_types = $active_names;
 	}
 
 	/**
@@ -108,12 +117,12 @@ class EE_messages {
 	public function send_message( $type, $vars ) {
 		
 		//getting classname from $this->active_message_types array.  However, if we don't have it let's set up a default for the error message.
-		$classname = empty($this->active_message_types[$type]) ? 'EE_' . $type . '_something' : $this->active_message_types[$type];
+		$classname = empty($this->_active_message_types[$type]) ? 'EE_' . $type . '_something' : $this->_active_message_types[$type];
 
 		// is that a real class ?
 		if ( class_exists( $classname ) ) {
 			// then send it
-			foreach ( $this->active_messengers as $active_messenger ) {
+			foreach ( $this->_active_messengers as $active_messenger ) {
 				// create message data
 				$messages = call_user_func( $classname );
 				$messages->_get_messages($vars, $active_messenger);
@@ -138,6 +147,71 @@ class EE_messages {
 		} else {
 			return new WP_Error(__('missing_class', 'event_espresso'), sprintf(__('Class: %s does not exist', 'event_espresso'), $classname) .espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
 		}
+	}
+
+	/**
+	 * This is a wrapper for the protected _create_new_templates function
+	 * @param  string $message_type message type that the templates are being created for
+	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned. 
+	 */
+	public function create_new_templates( $messenger, $message_type, $evt_id, $is_global = false ) {
+		$valid_mt = false;
+		$evt_id = absint($evt_id);
+		
+		$message_type = strtolower(str_replace(' ', '_', $message_type) );
+		$messenger = strtolower(str_replace(' ', '_', $messenger));
+
+		//setup messenger and message_type object
+		$this->_messenger = isset($this->_active_messengers[$messenger]) ? $this->active_messenger[$messenger] : null;
+
+		//message type
+		$mt_class = isset($this->_active_message_types[$message_type]) ? $this->_active_message_types[$message_type] : 'non_existant_class';
+		$this->_message_type = class_exists($mt_class) ? call_user_func( $mt_class ) : null;
+
+		//do we have the necessary objects loaded?
+		if ( empty( $this->_messenger) || empty($this->_message_type) )
+			return new WP_Error(__('problem_creating_required_objects', 'event_espresso'), sprintf(__(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) ); 
+		
+		//is given message_type valid for given messenger?
+		foreach ( $this_messenger->active_templates as $template ) {
+			if ( $template->message_type() == $message_type )
+				$valid_mt = true;
+		}
+		
+		if ( !$valid_mt && $is_global ) {
+			//we're setting up a brand global templates (with messenger activation) so we're assuming that the message types sent in are valid.
+			$valid_mt = true;
+		}
+
+		if ( !$valid_mt ) {
+			//if we've still got no valid_mt then error roger
+			return new WP_Error(__('invalid_message_type', 'event_espresso'), sprintf(__(' % is an invalid message_type', 'event_espresso'), $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		}
+
+		if ( !$is_global && empty($evt_id) ) {
+			//hey we need an evt_id to create this custom template
+			return new WP_Error(__('missing_event_id', 'event_espresso'), __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
+		}
+
+		//whew made it this far!  Okay, let's go ahead and create the templates then
+		return $this->_create_new_templates($evt_id, $is_global);
+	}
+
+	protected function _create_new_templates($evt_id, $is_global) {
+
+		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
+		if ( empty($evt_id) && $is_global ) {
+			$new_template = $this->_default_templates
+		}
+		//setup data
+		$new_template = array(
+			'MTP_messenger' => $this->name,
+			'MTP_message_type' => $message_type,
+			'GRP_ID' => $this->EEM_data->generate_grp_id(),
+			'MTP_evt_id' => $evt_it,
+			'MTP_is_global' => $is_global,
+			'new_template' => true
+			);
 	}
 
 } 
@@ -180,6 +254,18 @@ abstract class EE_message_type {
 	 */
 	protected $name;
 	protected $description;
+
+	/**
+	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
+	 * @var array
+	 */
+	protected $_default_field_content = array();
+
+	/**
+	 * message type child classes will set what contexts are associated with the message type via this array.
+	 * @var array
+	 */
+	protected $_contexts = array();
 
 	
 	/** MESSAGE ASSEMBLING PROPERTIES **/	
@@ -235,7 +321,8 @@ abstract class EE_message_type {
 	protected $data;
 
 	public function __construct() {
-		//whistle... move along... nothing in here yet.
+		$this->_set_default_field_content();
+		$this->_set_contexts();
 	}
 
 	/** METHODS **/
@@ -262,9 +349,37 @@ abstract class EE_message_type {
 	/**
 	 * The main purpose of this function is to setup the various parameters within the message_type.  $templates and any extra stuff to the data object that can come from the messenger template options for the child class type.
 	 * @return void
+	 * @abstract
 	 * @access protected
 	 */
 	abstract protected function _init_data() {}
+
+	/**
+	 * This sets the _default_field_content property which needs to be defined by child classes.
+	 * 
+	 * @abstract
+	 * @access  protected
+	 * @return void
+	 */
+	abstract protected function _set_default_field_content() {}
+
+	/**
+	 * _set_contexts
+	 * This sets up the contexts associated with the message_type
+	 * 
+	 * @abstract
+	 * @access  protected
+	 * @return  void
+	 */
+	abstract protected function _set_contexts() {}
+
+	public function get_default_field_content() {
+		return $this->_default_field_content;
+	}
+
+	public function get_contexts() {
+		return $this->_contexts;
+	}
 
 	/**
 	 * get and set the templates for the type and messenger from the database
@@ -356,6 +471,12 @@ abstract class EE_messenger {
 	public $description;
 
 	/**
+	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
+	 * @var array
+	 */
+	protected $default_field_content = array();
+
+	/**
 	 * This wil hold the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
 	 * @var object
 	 */
@@ -365,36 +486,32 @@ abstract class EE_messenger {
 	 * this property just holds an array of the various template refs.
 	 * @var array
 	 */
-	protected $_templates = array();
+	protected $_template_fields = array();
 	public $active_templates = array(); //holds all the active templates saved in the database.
-
-	/** MESSAGE SEND PROPERTIES **/
-	/**
-	 * The following are some common properties that would be shared by most messengers for delivering messages. However, individual messengers may add more items (or not use all of these)
-	 */
-	protected $_to;
-	protected $_from;
-	protected $_subject;
-	protected $_content;
 
 	public function __construct() {
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_templates();	
+		$this->_set_template_fields();
 	}
 
 	/**
-	 * This sets the templates property to the different template_types used by the messenger.  We set defaults in here but the child classes could setup their own. Child classes will also need to make sure that they declare any different "templates" as properties.
+	 * This sets the active templates for the messenger.  
 	 * @access protected
 	 */
 	protected function _set_templates() {
-		$this->_templates = array(
-			'to',
-			'from',
-			'subject',
-			'content'
-			);
 		$this->active_templates = $this->EEM_data->get_all_active_message_templates_by_messenger($this->name);
 	}
+
+	/**
+	 * _set_template_fields
+	 * This sets up the fields that a messenger requires for the message to go out.
+	 * 
+	 * @abstract
+	 * @access  protected
+	 * @return void
+	 */
+	abstract protected function _set_template_fields() {}
 
 
 	/** SETUP METHODS **/
@@ -403,59 +520,8 @@ abstract class EE_messenger {
 	 * The following method doesn't NEED to be used by child classes but might be modified by the specific messenger
 	 */
 	protected function _set_template_value($item, $value) {
-		if ( in_array($item, $this->_templates) )
+		if ( in_array($item, $this->_template_fields) )
 			$this->$item = $value;
-	}
-
-	/**
-	 * This is a wrapper for the protected _create_new_templates function
-	 * @param  string $message_type message type that the templates are being created for
-	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned. 
-	 */
-	public function create_new_templates( $message_type, $evt_id, $is_global = false ) {
-		$valid_mt = false;
-		$evt_id = absint($evt_id);
-		$message_type = strtolower(str_replace(' ', '_', $message_type) );
-		//is given message_type valid?
-		foreach ( $this->active_templates as $template ) {
-			if ( $template_object->message_type() == $message_type )
-				$valid_mt = true;
-		}
-		
-		if ( !$valid_mt && $is_global ) {
-			//we're setting up a brand global templates (with messenger activation) so we're assuming that the message types sent in are valid.
-			$valid_mt = true;
-		}
-
-		if ( !$valid_mt ) {
-			//if we've still got no valid_mt then error roger
-			return new WP_Error(__('invalid_message_type', 'event_espresso'), sprintf(__(' % is an invalid message_type', 'event_espresso'), $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
-		}
-
-		if ( !$is_global && empty($evt_id) ) {
-			//hey we need an evt_id to create this custom template
-			return new WP_Error(__('missing_event_id', 'event_espresso'), __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) );
-		}
-
-		//whew made it this far!  Okay, let's go ahead and create the templates then
-		return $this->_create_new_templates($message_type, $evt_id, $is_global);
-	}
-
-	protected function _create_new_templates($message_type, $evt_id, $is_global) {
-
-		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
-		if ( empty($evt_id) && $is_global ) {
-			$new_template = $this->_default_templates
-		}
-		//setup data
-		$new_template = array(
-			'MTP_messenger' => $this->name,
-			'MTP_message_type' => $message_type,
-			'GRP_ID' => $this->EEM_data->generate_grp_id(),
-			'MTP_evt_id' => $evt_it,
-			'MTP_is_global' => $is_global,
-			'new_template' => true
-			);
 	}
 
 	/**
@@ -463,7 +529,7 @@ abstract class EE_messenger {
 	 * @param  EE_message_type $message the message object that contains details about the message.
 	 */
 	public function send_message( EE_message_type $message ) {
-		foreach ( $this->_templates as $template ) {
+		foreach ( $this->_template_fields as $template ) {
 			$this->_set_template_value($template, $message->$template);
 		}
 		$this->_send_message();

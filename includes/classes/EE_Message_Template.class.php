@@ -192,7 +192,7 @@ class EE_Message_Template {
 					}
 				} else if ( is_array($value) ) {
 					$value['MTP_ID'] = absint($value['MTP_ID']);
-					$value['content'] = wp_strip_all_tags($value['content']);
+					$value['content'] = is_array($value['content']) ? array_map(wp_strip_all_tags($value['content']) ) : wp_strip_all_tags($value['content']);
 					$template_fields[$key] = $value;
 				} else {
 					continue;

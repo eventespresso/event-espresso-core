@@ -166,7 +166,9 @@ class EE_Parse_Shortcodes {
 			//"[QR_CODE]" => isset($data->qr_code) ? $data->qr_code : '', //I'm assuming that this would get added by the ticketing addon.
 			"[EDIT_ATTENDEE_LINK]" => isset($data['edit_attendee_link']) ? $data['edit_attendee_link'] : '', //todo this would be useful for the admin context... so should be setup in message types
 			"[TOTAL_COST]" => isset($this->data->billing['total_due']) ? $this->data->billing['total_due'] : '',
-			"[EVENT_PRICE]" => isset($data['price']) ? $data['price'] : ''
+			"[EVENT_PRICE]" => isset($data['price']) ? $data['price'] : '',
+			"[PAYMENT_STATUS]" => isset($this->data->txn['status']) ? $this->data->txn['status'] : __('Unknown', 'event_espresso'),
+			"[PAYMENT_GATEWAY]" => isset($this->data->txn['gateway']) ? $this->data->txn['gateway'] : __('Unknown', 'event_espresso')
 			//todo we need to add any other shortcodes that we can use.
 		);
 

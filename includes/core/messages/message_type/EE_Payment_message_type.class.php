@@ -34,7 +34,7 @@ class EE_Payment_message_type extends EE_message_type {
 
 		//setup type details for reference
 		$this->name = 'payment';
-		$this->description = 'Sets up payment messages when triggered by a payment'; //is it possible that these coudld be triggered by ipn or by manual payment?
+		$this->description = 'Sets up payment messages when triggered by a payment'; //is it possible that these coudld be triggered by ipn or by manual payment? 
 
 		parent::__construct();
 
@@ -45,6 +45,50 @@ class EE_Payment_message_type extends EE_message_type {
 		}
 
 		$this->gateways = $EEM_Gateways;	
+	}
+
+	protected function _set_default_field_content() {
+		$this->_default_field_content = array(
+			'subject' => sprintf(__('Payment processed for %s', 'event_espresso'), '[EVENT_NAME]'),
+			'content' => $this->_default_template_field_content(),
+		);
+		$this->default_field_content = apply_filters('_default_field_content_'.$this->name, $this->default_field_content);
+	}
+
+	protected function _default_template_field_content() {
+		$content = array();
+		$content['main'] = "<h3>Payment Details:</h3>\n";
+		$content['main'] .= "<p>For Event: [EVENT_NAME]</p>\n";
+		$content['main'] .= "<p>Payment status: [PAYMENT_STATUS]</p>\n";
+		$content['main'] .= "<p>Payment gateway: [PAYMENT_GATEWAY]</p>\n";
+		$content['main'] .= "<p>Total Cost: [TOTAL_COST]</p>\n";
+		$content['main'] .= "<p>Event Price: [EVENT_PRICE]</p>\n";
+		$content['main'] .= "<p>[ATTENDEE_LIST_UNORDERED]</p>\n";
+		$content['main'] .= "\n<br /><p>Thanks for your purchase,</p>\n";
+		$content['main'] .= "<p>[COMPANY]</p>\n";
+		$content['main'] .= "<p>[CO_ADD1]</p>\n";
+		$content['main'] .= "<p>[CO_ADD2]</p>\n";
+		$content['main'] .= "<p>[CO_STATE], [CO_ZIP]\n";
+		
+		//ATTENDEE_LIST field
+		$content['attendee_list'] = "[FIRST_NAME] [LAST_NAME]";
+
+		return $content;
+	}
+
+	/**
+	 * _set_contexts
+	 * This sets up the contexts associated with the message_type
+	 * 
+	 * @access  protected
+	 * @return  void
+	 */
+	protected function _set_contexts() {
+		$this->_contexts = array(
+			'admin',
+			'primary_attendee',
+			'attendee'
+		);
 	}
 
 	/**
@@ -135,8 +179,7 @@ class EE_Payment_message_type extends EE_message_type {
 			$this->data->billing['total_due'] = $org_options['currency_symbol'] . number_format($total, 2);
 		}
 
-		$contexts = array_values($this->templates);
-		foreach ( $contexts as $context => $template ) {
+		foreach ( $this->_contexts as $context ) {
 			switch ( $context ) {
 				case 'admin' :
 				$user_info = get_userdata($espresso_wp_user);
@@ -147,6 +190,7 @@ class EE_Payment_message_type extends EE_message_type {
 				break;
 
 				case 'primary_attendee' :
+				case 'attendee' :
 				if ( isset($this->data['primary_attendee']) && !empty($this->data['primary_attendee']['line_item_id'] ) ) {
 					foreach ( $this->data->attendees as $a_index => $a_data ) {
 						//todo: this won't work because 'line_item_id' will be found within the line_ref array for $a_data.  So we have to modify.
@@ -159,9 +203,7 @@ class EE_Payment_message_type extends EE_message_type {
 						}
 					}
 				}
-				break;
 
-				case 'attendee' :
 				break;
 			}
 		}

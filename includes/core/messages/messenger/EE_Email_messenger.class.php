@@ -31,6 +31,15 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Email_messenger extends EE_messenger  {
 
+	/** MESSAGE SEND PROPERTIES **/
+	/**
+	 * The following are the properties that email requires for the message going out.
+	 */
+	protected $_to;
+	protected $_from;
+	protected $_subject;
+	protected $_content;
+
 	/**
 	 * constructor
 	 * 
@@ -46,6 +55,21 @@ class EE_Email_messenger extends EE_messenger  {
 		parent::__construct();
 	}
 
+	/**
+	 * _set_template_fields
+	 * This sets up the fields that a messenger requires for the message to go out.
+	 * 
+	 * @access  protected
+	 * @return void
+	 */
+	protected function _set_template_fields() {
+		$this->_template_fields = array(
+				'to',
+				'from',
+				'subject',
+				'content'
+				);	
+	}
 	/**
 	 * We just deliver the messages don't kill us!!  
 	 * @return void

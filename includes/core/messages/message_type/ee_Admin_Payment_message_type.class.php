@@ -71,6 +71,28 @@ class EE_Admin_Payment_message_type extends EE_message_type {
 		//heres a filter you should always include after processing the data):
 		$this->data = apply_filters('ee_message_type_'.$this->name.'_data', $this->data, $this->name);
 	}
+
+	/**
+	 * _set_contexts
+	 * This sets up the contexts associated with the message_type
+	 * 
+	 * @access  protected
+	 * @return  void
+	 */
+	protected function _set_contexts() {
+		//$this->_contexts = array();
+	}
+
+	/**
+	 * This sets the _default_field_content property which for message type
+	 * 
+	 * @access  protected
+	 * @return void
+	 */
+	protected function _set_default_field_content() {
+		//$this->_default_field_content = array();
+	}
+
 }
 
 // end of file:	includes/core/messages/types/EE_Admin_Payment_message.class.php
