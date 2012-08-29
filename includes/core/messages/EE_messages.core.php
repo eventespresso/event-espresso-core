@@ -529,8 +529,9 @@ abstract class EE_messenger {
 	 * @param  EE_message_type $message the message object that contains details about the message.
 	 */
 	public function send_message( EE_message_type $message ) {
-		foreach ( $this->_template_fields as $template ) {
-			$this->_set_template_value($template, $message->$template);
+		foreach ( $this->_template_fields as $template => $value ) {
+			if ( $template !== 'extra' )
+				$this->_set_template_value($template, $message->$template);
 		}
 		$this->_send_message();
 	}

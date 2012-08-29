@@ -63,12 +63,20 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return void
 	 */
 	protected function _set_template_fields() {
+		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  
 		$this->_template_fields = array(
 				'to',
 				'from',
 				'subject',
-				'content'
-				);	
+				'content',
+				'extra' => array(
+					'content' => array(
+						'main',
+						'attendee_list')
+					)
+				);
+
+		apply_filters('_set_template_fields_'.$this->name, $this->_template_fields);	
 	}
 	/**
 	 * We just deliver the messages don't kill us!!  
