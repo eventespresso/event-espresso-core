@@ -461,8 +461,59 @@ class EE_Message_Admin_Page extends Admin_Page {
 
 	}
 
+	/**
+	 * 	_redirect_after_admin_action
+	 *	@param int 		$success 				- whether success was for two or more records, or just one, or none
+	 *	@param string 	$what 					- what the action was performed on
+	 *	@param string 	$action_desc 		- what was done ie: updated, deleted, etc
+	 *	@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
+	 *	@access private
+	 *	@return void
+	 */
 	private function _redirect_after_admin_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
-		//todo
+		global $espresso_notices;
+
+		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		// overwrite default success messages
+		$espresso_notices['success'] = array();
+		// how many records affected ? more than one record ? or just one ?
+		if ( $success == 2 ) {
+			// set plural msg
+			$espresso_notices['success'][] = __('The ' . $what . ' have been successfully ' . $action_desc . '.', 'event_espresso');
+		} else if ( $success == 1 ) {
+			// set singular msg
+			$espresso_notices['success'][] = __('The ' . $what . ' has been successfully ' . $action_desc . '.', 'event_espresso');
+		}
+
+		// check that $query_args isn't something crazy
+		// check that $query_args isn't something crazy
+		if ( ! is_array( $query_args )) {
+			$query_args = array();
+		}
+		// grab messages
+		$notices = espresso_get_notices( FALSE, TRUE, TRUE, FALSE );
+		//combine $query_args and $notices
+		$query_args = array_merge( $query_args, $notices );
+		// generate redirect url
+
+		// if redirecting to anything other than the main page, add a nonce
+		if ( isset( $query_args['action'] )) {
+			// manually generate wp_nonce
+			$nonce = array( '_wpnonce' => wp_create_nonce( $query_args['action'] . '_nonce' ));
+			// and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
+			$query_args = array_merge( $query_args, $nonce );
+		} 
+		//printr( $query_args, '$query_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		$redirect_url = add_query_arg( $query_args, EE_MSG_ADMIN_URL ); 
+		//echo '<h4>$redirect_url : ' . $redirect_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//die();
+		wp_safe_redirect( $redirect_url );	
+		exit();
+		
 	}
 
 	/**
