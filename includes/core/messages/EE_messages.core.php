@@ -584,7 +584,7 @@ abstract class EE_messenger {
 	}
 
 	public function get_default_field_content() {
-		return $this->_default_field_template;
+		return $this->_default_field_content;
 	}
 
 	/**
