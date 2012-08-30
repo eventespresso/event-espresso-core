@@ -388,7 +388,7 @@ class EE_Message_Admin_Page extends Admin_Page {
 		$success = 1;
 		$MTP_deleted = $trash ? TRUE : FALSE;
 
-		//incoming GPR_IDs
+		//incoming GRP_IDs
 		if ( $all ) {
 			//Checkboxes
 			if ( !empty( $_POST['checkbox'] ) && is_array($_POST['checkbox'] ) ) {
@@ -409,11 +409,15 @@ class EE_Message_Admin_Page extends Admin_Page {
 					$success = 0;
 				}
 			}
+		//not entire GRP, just individual context
 		} else {
 			//we should only have the MTP_id for the context,
 			//todo: will probably need to make sure we have a nonce here?
-			$MTP_ID = absint( $_REQUEST['id'] );
-			if ( !$MTP->update(array('MTP_deleted' => $MTP_deleted), array('MTP_ID' => $MTP_ID) ) ) {
+			$GRP_ID = absint( $_REQUEST['id'] );
+			$MTP_message_type = strtolower( $_REQUEST['message_type']);
+			$MTP_context = strtolower( $_REQUEST['context'] );
+			
+			if ( !$MTP->update(array('MTP_deleted' => $MTP_deleted), array('GRP_ID' => $GRP_ID, 'MTP_message_type' => $MTP_message_type, 'MTP_context' => $MTP_context ) ) ) {
 				$success = 0;
 			}
 		}
@@ -424,8 +428,14 @@ class EE_Message_Admin_Page extends Admin_Page {
 	
 	}
 
-	protected function _delete_message_template() {
-		//todo
+	protected function _delete_message_template( $all = TRUE ) {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Type.model.php');
+			$MTP = EEM_Message_Type::instance();
+
+		$success = 1;
+
+		//
 	}
 
 	private function _redirect_after_admin_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
