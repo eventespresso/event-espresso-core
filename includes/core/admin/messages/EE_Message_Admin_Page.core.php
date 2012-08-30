@@ -438,19 +438,27 @@ class EE_Message_Admin_Page extends Admin_Page {
 
 		$success = 1;
 
-		//incoming GRP
-		if ( $all ) {
-			//checkboxes
-			if ( !empty($_POST['checkbox']) && is_array($_POST['checkbox'] ) ) {
-				//if array has more than one element then success message should be plural
-				$success = count( $_POST['checkbox'] ) > 1 ? 2 : 1;
+		//checkboxes
+		if ( !empty($_POST['checkbox']) && is_array($_POST['checkbox'] ) ) {
+			//if array has more than one element then success message should be plural
+			$success = count( $_POST['checkbox'] ) > 1 ? 2 : 1;
 
-				//cycle through bulk action checkboxes
-				while ( list( $GRP_ID, $value ) = each($_pOST['checkbox'] ) ) {
-					if ( ! $GRP->)
+			//cycle through bulk action checkboxes
+			while ( list( $GRP_ID, $value ) = each($_POST['checkbox'] ) ) {
+				if ( ! $MTP->delete_by_id(absint($GRP_ID) ) ) {
+					$success = 0;
 				}
 			}
+		} else {
+			//grab single grp_id and delete
+			$GRP_ID = absint($_REQUEST['id'] );
+			if ( ! $MTP->delete_by_id($GRP_ID) ) {
+				$success = 0;
+			}
 		}
+
+		$this->_redirect_after_admin_action( $success, 'Message Templates', 'deleted', array() );
+
 	}
 
 	private function _redirect_after_admin_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
