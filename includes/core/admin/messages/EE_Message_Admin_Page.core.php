@@ -83,9 +83,12 @@ class EE_Message_Admin_Page extends Admin_Page {
 				'edit_message_template'	=> array( 'func' => '_edit_message_template', 'args' => array( 'new_template' => FALSE )),
 				'insert_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE )),
 				'update_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE )),
-				'trash_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE )),
+				'trash_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE )),
+				'trash_message_template_context' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE )),
 				'restore_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE )),
+				'restore_message_template_context' => array( 'func' => '_trash_or_restore_message_template' , 'args' => array('trash' => FALSE) ),
 				'delete_message_template'	=> '_delete_message_template',
+				'delete_message_template_context' => array('func' => '_delete_message_template', 'args' => array('all' => FALSE ) ),
 				'settings'	=> array( 'func' => '_activate_messagenger', 'args' => array( 'new_price' => TRUE )),
 				'reports' => '_messages_reports'
 		);
@@ -363,14 +366,62 @@ class EE_Message_Admin_Page extends Admin_Page {
 
 		//todo: may need to explicitly load the file containing the class here.
 		$MSG = new EE_messages();
-		$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id)
+		$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id);
 
 		return $new_message_template_group;
 
 	}
 
-	protected function _trash_or_restore_message_template($trash = TRUE ) {
-		//todo
+	/**
+	 * [_trash_or_restore_message_template]
+	 * 
+	 * @access protected
+	 * @param  boolean $trash whether to move an item to trash (TRUE) or restore it (FALSE)
+	 * @param boolean $all whether this is going to trash all contexts within a template group (TRUE) OR just an individual context (FALSE).
+	 * @return void
+	 */
+	protected function _trash_or_restore_message_template($trash = TRUE, $all = FALSE ) {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Type.model.php');
+			$MTP = EEM_Message_Type::instance();
+
+		$success = 1;
+		$MTP_deleted = $trash ? TRUE : FALSE;
+
+		//incoming GPR_IDs
+		if ( $all ) {
+			//Checkboxes
+			if ( !empty( $_POST['checkbox'] ) && is_array($_POST['checkbox'] ) ) {
+				//if array has more than one element then success message should be plural.
+				//todo: what about nonce?
+				$success = count( $_POST['checkbox'] ) > 1 ? 2 : 1;
+
+				//cycle through checkboxes
+				while ( list( $GRP_ID, $value ) = each ($_POST['checkbox']) ) {
+					if ( ! $MTP->update(array('MTP_deleted' => $MTP_deleted), array('GRP_ID' => absint($GRP_ID) ) ) ) {
+						$success = 0;
+					}
+				}
+			} else {
+				//grab single GRP_ID and handle
+				$GRP_ID = absint($_REQUEST['id']);
+				if ( !$MTP->update(array('MTP_deleted' => $MTP_deleted), array('GRP_ID' => $GRP_ID ) ) ) {
+					$success = 0;
+				}
+			}
+		} else {
+			//we should only have the MTP_id for the context,
+			//todo: will probably need to make sure we have a nonce here?
+			$MTP_ID = absint( $_REQUEST['id'] );
+			if ( !$MTP->update(array('MTP_deleted' => $MTP_deleted), array('MTP_ID' => $MTP_ID) ) ) {
+				$success = 0;
+			}
+		}
+
+		$action_desc = $trash ? 'moved to the trash' : 'restored';
+		$item_desc = $all ? 'Message Template Group' : 'Message Template Context';
+		$this->_redirect_after_admin_action( $success, $item_desc, $action_desc, array() );
+	
 	}
 
 	protected function _delete_message_template() {
