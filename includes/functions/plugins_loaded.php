@@ -106,23 +106,94 @@ function espresso_setup_notices() {
 /**
  * 		Automagically load non-singleton class files - no need to include or require
  * 		ONLY woks with class objects created via  "new"  ie: $object = new SomeClassName();
-* 		directory path can be designated by substituting underscores for directory separators
-* 		ie: new admin_transactions_TransactionsInit() would load the file located at : includes/core/admin/transactions/EE_TransactionsInit.class.php
  *
  * 		@access 		public
 * 		@param		$class		path and name of the class file to be loaded
  * 		@return 		void
  */
 function espresso_autoload() {
-	function __autoload( $class_name ) {
-		$include_path = dirname(espresso_main_file()) . '/includes/classes/';
-		if ( file_exists( $include_path . $class_name . '.class.php' )) {
-			require_once( $include_path . $class_name . '.class.php' );
-		}
+	//core
+	spl_auto_load_register('espresso_models_autoload');
+	spl_auto_load_register('espresso_classes_autoload');
+	spl_auto_load_register('espresso_classes_core_autoload');	
+	spl_auto_load_register('espresso_core_admin_core_autoload');
+	spl_auto_load_register('espresso_core_admin_classes_autoload');
+}
+
+function espresso_models_autoload($className) {
+	$filename = dirname(espresso_main_file()) . '/includes/models/' . $className . '.model.php';
+	if ( is_readable($filename) ) {
+		require_once( $filename );
 	}
 }
 
+function espresso_classes_autoload($className) {
+	$filename = dirname(espresso_main_file()) . '/includes/classes/' . $className . '.class.php';
+	if ( is_readable($filename) ) {
+		require_once( $filename );
+	}
+}
 
+function espresso_classes_core_autoload($className) {
+	//let's setup an array of paths to check (for each subsystem)
+	$root = dirname(espresso_main_file()) . '/includes/core/';
+	
+	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
+	$dir_ref[] = array(
+		'root' => array('core', 'class'),
+		'/messages/' => 'core',
+		'/messages/message_type/' => 'class',
+		'/messages/messenger/' => 'class'
+		);
+
+	//assemble a list of filenames
+	foreach ( $dir_ref as $dir => $types ) {
+		if ( is_array($types) ) {
+			foreach ( $types as $type) {
+				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
+			}
+		} else {
+			$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
+		}
+	}
+
+	//now loop through assembled filenames and require as available
+	foreach ( $filenames as $filename ) {
+		if ( is_readable($filename) )
+			require_once( $filename );
+	}
+}
+
+function espresso_core_admin_autoload($className) {
+	//let's setup an array of paths to check (for each subsystem)
+	$root = dirname(espresso_main_file()) . '/includes/core/admin/';
+	
+	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
+	$dir_ref[] = array(
+		'root' => array('core', 'class'),
+		'/event_pricing/' => array('core','class'),
+		'/messages/' => array('core', 'class'),
+		'/registrations/' => array('core','class'),
+		'/transactions/' => array('class', 'class')
+		);
+
+	//assemble a list of filenames
+	foreach ( $dir_ref as $dir => $types ) {
+		if ( is_array($types) ) {
+			foreach ( $types as $type) {
+				$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $type . '.php' : $root . $dir . $className . '.' . $type . '.php';
+			}
+		} else {
+			$filenames[] = ( $dir == 'root' ) ? $root . $className . '.' . $types . '.php' : $root . $dir . $className . '.' . $types . '.php';
+		}
+	}
+
+	//now loop through assembled filenames and require as available
+	foreach ( $filenames as $filename ) {
+		if ( is_readable($filename) )
+			require_once( $filename );
+	}
+}
 
 function espresso_display_exception( $excptn ) {
 	echo '
