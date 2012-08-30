@@ -63,12 +63,15 @@ class EE_{type}_message_type extends EE_message_type {
 	protected function _init_data() {
 		//here's an example (modify if needed):
 		//assuming the incoming data is the $EE_Session object
-		$session_stuff = is_object($this->data) && method_exists($this->data, 'get_session_data') ? $this->data->get_session_data() : null;
+		if ( is_a($this->data, 'EE_Session') ) {
+			return new WP_Error( __('wrong data type', 'event_espresso'), __('Payment message type expects data from the EE_Session object. This ain\'t it!', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		}
+
+		$session_stuff = $this->data->get_session_data();
 		$this->data = $session_stuff;
 		
-		//don't forget to return an error if there is no data
-		if ( empty( $this->data ) ) {
-			return new WP_Error( __('no_data_for_payment_type', 'event_espresso'), __('{type} message type expected data and none given', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		if ( is_array($this->data) && empty($this->data) ) {
+			return new WP_Error( __('no_data_for_payment_type', 'event_espresso'), __('Payment message type expected data and none given', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 		}
 		
 		//what you need to setup here and return is the following:
