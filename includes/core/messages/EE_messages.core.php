@@ -125,7 +125,7 @@ class EE_messages {
 			foreach ( $this->_active_messengers as $active_messenger ) {
 				// create message data
 				$messages = call_user_func( $classname );
-				$messages->_get_messages($vars, $active_messenger);
+				$messages->set_messages($vars, $active_messenger);
 
 				if ( is_wp_error($messages) ) {
 					//we've got an error so let's bubble up the error_object to be caught by caller.
@@ -390,7 +390,7 @@ abstract class EE_message_type {
 	 * @param  string $active_messenger The active messenger being used
 	 * @return void      
 	 */
-	public function get_messages($data, $active_messenger) {
+	public function set_messages($data, $active_messenger) {
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = EE_Parse_Shortcodes::instance();
 		$this->active_messenger = $active_messenger;
