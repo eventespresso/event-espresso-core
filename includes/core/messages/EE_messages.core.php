@@ -241,7 +241,6 @@ class EE_messages {
 			'MTP_message_type' => $this->_message_type->name,
 			'GRP_ID' => $this->_EEM_data->generate_grp_id(),
 			'EVT_ID' => $evt_id,
-			'MTP_is_active' => 1,
 			'MTP_is_override' => 0,
 			'MTP_deleted' => 0,
 			'MTP_is_global' => $is_global,

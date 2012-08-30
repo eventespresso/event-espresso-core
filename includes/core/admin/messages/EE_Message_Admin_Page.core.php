@@ -88,7 +88,6 @@ class EE_Message_Admin_Page extends Admin_Page {
 				'restore_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE )),
 				'restore_message_template_context' => array( 'func' => '_trash_or_restore_message_template' , 'args' => array('trash' => FALSE) ),
 				'delete_message_template'	=> '_delete_message_template',
-				'delete_message_template_context' => array('func' => '_delete_message_template', 'args' => array('all' => FALSE ) ),
 				'settings'	=> array( 'func' => '_activate_messagenger', 'args' => array( 'new_price' => TRUE )),
 				'reports' => '_messages_reports'
 		);
@@ -294,7 +293,6 @@ class EE_Message_Admin_Page extends Admin_Page {
 			'MTP_template_field' => strtolower($_REQUEST['MTP_template_field'][$index]['name']),
 			'MTP_context' => strtolower($_REQUEST['MTP_context']),
 			'MTP_content' => strtolower($_REQUEST['MTP_template_field'][$index]['content']),
-			'MTP_is_active' => absint($_REQUEST['MTP_is_active']),
 			'MTP_is_global' => absint($_REQUEST['MTP_is_global']),
 			'MTP_is_override' => absint($_REQUEST['MTP_is_override']),
 			'MTP_deleted' => absint($_REQUEST['MTP_deleted'])
@@ -428,14 +426,31 @@ class EE_Message_Admin_Page extends Admin_Page {
 	
 	}
 
-	protected function _delete_message_template( $all = TRUE ) {
+	/**
+	 * [_delete_message_template]
+	 * NOTE: at this point only entire message template GROUPS can be deleted because it 
+	 * @return void
+	 */
+	protected function _delete_message_template() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Type.model.php');
 			$MTP = EEM_Message_Type::instance();
 
 		$success = 1;
 
-		//
+		//incoming GRP
+		if ( $all ) {
+			//checkboxes
+			if ( !empty($_POST['checkbox']) && is_array($_POST['checkbox'] ) ) {
+				//if array has more than one element then success message should be plural
+				$success = count( $_POST['checkbox'] ) > 1 ? 2 : 1;
+
+				//cycle through bulk action checkboxes
+				while ( list( $GRP_ID, $value ) = each($_pOST['checkbox'] ) ) {
+					if ( ! $GRP->)
+				}
+			}
+		}
 	}
 
 	private function _redirect_after_admin_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {

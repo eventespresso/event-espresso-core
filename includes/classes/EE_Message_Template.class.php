@@ -170,12 +170,13 @@ class EE_Message_Template {
 		$this->_is_active_count = 0;
 		$this->_is_override_count = 0;
 		$this->_is_trashed_count = 0;
-		$group_count = array_fill_keys( array('MTP_is_active', 'MTP_is_override', 'MTP_deleted'), 0);
+		$group_count = array_fill_keys( array('total_count', 'MTP_is_override', 'MTP_deleted'), 0);
 
 		foreach ( $this->_contexts as $context => $template_fields ) {
 			$context = wp_strip_all_tags(strtolower($context) );
 			foreach ( $template_fields as $key => $value ) {
-				$bool_array = array('MTP_is_active','MTP_is_global');
+				$group_count['total_count']++;
+				$bool_array = array('MTP_is_global');
 				$bool_null_array = array('MTP_is_override', 'MTP_deleted');
 
 				if ( $key == 'MTP_ID' ) {
@@ -200,7 +201,7 @@ class EE_Message_Template {
 			}
 			
 			$this->_contexts[$context] = $template_fields;
-			$this->_is_active_count = $group_count['MTP_is_active'];
+			$this->_is_active_count = $group_count['total_count'] - $group_count['MTP_is_trashed_count'];
 			$this->_is_override_count = $group_count['MTP_is_override'];
 			$this->_is_trashed_count = $group_count['MTP_is_trashed_count'];
 		}
@@ -282,7 +283,7 @@ class EE_Message_Template {
 				);
 
 				//next data for this template type
-				$non_template_types = array( 'MTP_is_active','MTP_is_global', 'MTP_is_override', 'MTP_deleted');
+				$non_template_types = array( 'MTP_is_global', 'MTP_is_override', 'MTP_deleted');
 				if ( !in_array($template_type, $non_template_types) ) {
 					$set_column_values[$i]['MTP_template_type'] = $template_type;
 					$set_column_values[$i]['MTP_ID'] = $data['MTP_ID'];

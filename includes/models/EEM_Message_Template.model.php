@@ -71,7 +71,6 @@ class EEM_Message_Template extends EEM_Base {
 				'MTP_template_field' => '%s',
 				'MTP_context' => '%s',
 				'MTP_content' => '%s',
-				'MTP_is_active' => '%d',
 				'MTP_is_global' => '%d',
 				'MTP_is_override' => '%d',
 				'MTP_deleted' => '%d'
@@ -113,7 +112,6 @@ class EEM_Message_Template extends EEM_Base {
 			
 			//within the template group templates are grouped by contexts.  below are items common to template types within a context (i.e. "is_active").  We also have an array of template_ids attached to a context to make it easier to update all the templates in this context with the new values.
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_ID'][] = $template->MTP_ID;
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_is_active'] = $template->MTP_is_active;
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_is_global'] = $template->MTP_is_global;
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_is_override'] = $template->MTP_is_override;
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_deleted'] = $template->MTP_deleted;
@@ -257,7 +255,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array  all active (non_trashed, active) message template objects
 	 */
 	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where( array('MTP_is_active' => TRUE, 'MTP_deleted' => FALSE ), $orderby, $order );
+		return $this->get_all_message_templates_where( array('MTP_deleted' => FALSE ), $orderby, $order );
 	}
 
 	/**
@@ -266,7 +264,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return  array all active (non trashed, active) message template objects for the given messenger
 	 */
 	public function get_all_active_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where(array('MTP_is_active' => TRUE, 'MTP_deleted' => FALSE, 'MTP_messenger' => $messenger), $orderby, $order );
+		return $this->get_all_message_templates_where(array('MTP_deleted' => FALSE, 'MTP_messenger' => $messenger), $orderby, $order );
 	}
 
 	/**
@@ -293,7 +291,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array all message templates that are global (i.e. non-event)
 	 */
 	public function get_all_global_message_templates($orderby = 'GRP_ID', $order = 'ASC' ) {
-		return $this->get_all_message_templates_where( array('MTP_is_global' => TRUE, 'MTP_is_active' => TRUE, 'MTP_deleted' => FALSE ), $orderby, $order );
+		return $this->get_all_message_templates_where( array('MTP_is_global' => TRUE, 'MTP_deleted' => FALSE ), $orderby, $order );
 	}
 
 	/**
@@ -302,7 +300,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array all message templates that are non-global and are event specific
 	 */
 	public function get_all_event_message_templates($orderby = 'GRP_ID', $order = 'ASC' ) {
-		return $this->get_all_message_templates_where( array( 'MTP_is_global' => FALSE, 'MTP_is_active' => TRUE, 'MTP_deleted' => FALSE ), $orderby, $order );
+		return $this->get_all_message_templates_where( array( 'MTP_is_global' => FALSE, 'MTP_deleted' => FALSE ), $orderby, $order );
 	}
 
 	/**
@@ -312,7 +310,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * @return array         message template objects that are attached to a specific event.
 	 */
 	public function get_all_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC') {
-		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_is_active' => TRUE, 'MTP_deleted' => FALSE ), $orderby, $order );
+		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_deleted' => FALSE ), $orderby, $order );
 	}
 
 	/**
