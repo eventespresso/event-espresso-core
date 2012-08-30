@@ -113,11 +113,11 @@ function espresso_setup_notices() {
  */
 function espresso_autoload() {
 	//core
-	spl_auto_load_register('espresso_models_autoload');
-	spl_auto_load_register('espresso_classes_autoload');
-	spl_auto_load_register('espresso_classes_core_autoload');	
-	spl_auto_load_register('espresso_core_admin_core_autoload');
-	spl_auto_load_register('espresso_core_admin_classes_autoload');
+	spl_autoload_register('espresso_models_autoload');
+	spl_autoload_register('espresso_classes_autoload');
+	spl_autoload_register('espresso_classes_core_autoload');	
+	spl_autoload_register('espresso_core_admin_core_autoload');
+	spl_autoload_register('espresso_core_admin_classes_autoload');
 }
 
 function espresso_models_autoload($className) {
