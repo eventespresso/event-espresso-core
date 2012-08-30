@@ -224,7 +224,7 @@ class EE_Message_Admin_Page extends Admin_Page {
 	 * @access protected
 	 * @return void
 	 */
-	protected function _edit_message_template() {
+	protected function _edit_message_template($new_template) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$GRP_ID = isset( $_REQUEST['id'] ) && !empty( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : FALSE;
 
@@ -238,7 +238,7 @@ class EE_Message_Admin_Page extends Admin_Page {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 		$MTP = EEM_Message_Template::instance();
 
-		if ( empty($GRP_ID) ) {
+		if ( empty($GRP_ID) && $new_template ) {
 			$message_template = $MTP->get_new_template;
 			$action = 'insert_message_template';
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );

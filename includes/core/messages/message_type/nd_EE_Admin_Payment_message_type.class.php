@@ -69,7 +69,7 @@ class EE_Admin_Payment_message_type extends EE_message_type {
 		
 
 		//heres a filter you should always include after processing the data):
-		$this->data = apply_filters('ee_message_type_'.$this->name.'_data', $this->data, $this->name);
+		$this->data = apply_filters('filter_hook_espresso_message_type_'.$this->name.'_data', $this->data, $this->name);
 	}
 
 	/**

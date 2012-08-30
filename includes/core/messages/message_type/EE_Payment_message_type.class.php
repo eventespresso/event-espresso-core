@@ -52,7 +52,7 @@ class EE_Payment_message_type extends EE_message_type {
 			'subject' => sprintf(__('Payment processed for %s', 'event_espresso'), '[EVENT_NAME]'),
 			'content' => $this->_default_template_field_content(),
 		);
-		$this->default_field_content = apply_filters('_default_field_content_'.$this->name, $this->default_field_content);
+		$this->default_field_content = apply_filters('filter_hook_espresso_default_field_content_'.$this->name, $this->default_field_content);
 	}
 
 	protected function _default_template_field_content() {
@@ -90,8 +90,8 @@ class EE_Payment_message_type extends EE_message_type {
 			'attendee'
 		);
 
-		$this->_contexts = apply_filters('_set_contexts_'. $this->name, $this->_contexts);
-		$this->_contexts = apply_filters('_set_contexts_all', $this->_contexts);
+		$this->_contexts = apply_filters('filter_hook_espresso_set_contexts_'. $this->name, $this->_contexts);
+		$this->_contexts = apply_filters('filter_hook_espresso_set_contexts_all', $this->_contexts);
 	}
 
 	/**
@@ -211,7 +211,7 @@ class EE_Payment_message_type extends EE_message_type {
 			}
 		}
 
-		$this->data = apply_filters('ee_message_type_'.$this->name.'_data', $this->data, $this->name);
+		$this->data = apply_filters('filter_hook_espresso_message_type_'.$this->name.'_data', $this->data, $this->name);
 
 		foreach ( $this->data->attendees as $attendee ) {
 			$this->addressees[] = $this->_set_addressees($attendee);

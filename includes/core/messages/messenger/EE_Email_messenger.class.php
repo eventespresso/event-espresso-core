@@ -76,8 +76,8 @@ class EE_Email_messenger extends EE_messenger  {
 					)
 				);
 
-		$this->_template_fields = apply_filters('_set_template_fields_'.$this->name, $this->_template_fields);
-		$this->_template_fields = apply_filters('_set_template_fields_all', $this->_template_fields);	
+		$this->_template_fields = apply_filters('filter_hook_espresso_set_template_fields_'.$this->name, $this->_template_fields);
+		$this->_template_fields = apply_filters('filter_hook_espresso_set_template_fields_all', $this->_template_fields);	
 	}
 
 	/**

@@ -198,7 +198,7 @@ class EE_Parse_Shortcodes {
 			}
 		}
 
-		$this->shortcodes = apply_filters('ee_shortcodes_handling', $this->shortcode, $this->data, $this->template);
+		$this->shortcodes = apply_filters('filter_hook_espresso_shortcodes_handling', $this->shortcode, $this->data, $this->template);
 		//let's set the template to the main template after processing.
 		$this->template = ( is_array($this->template) ) ? $this->template['main'] : $this->template;
 	}
