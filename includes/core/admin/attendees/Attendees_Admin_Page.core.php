@@ -17,7 +17,6 @@
  *
  * @package			Event Espresso
  * @subpackage	includes/core/admin/attendees/Attendees_Admin_Page.core.php 
- * @subpackage	includes/core/admin/attendees/Attendees_Admin_Page.core.php 
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
@@ -296,8 +295,14 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 		$this->nav_tabs['edit_attendee']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['edit_attendee']['order'] = 15;
 
+		//get list of all registrations for this attendee
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
+		$REG_MDL = EEM_Registration::instance();		
+		if ( $meta_box_args['registrations'] = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID )) {
+			$this->_add_admin_page_meta_box( 'attendee_registrations', __( 'Event Registrations for this Attendee', 'event_espresso' ), 'attendee_registrations', $meta_box_args );
+		}
 		// generate metabox - you MUST create a callback named __FUNCTION__ . '_meta_box'  ( see "_edit_attendee_details_meta_box" below )
-		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
+		$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
 
 		// the final template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -314,10 +319,26 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 	*		@access public
 	*		@return void
 	*/
-	public function _edit_attendee_details_meta_box() {		
+	public function edit_attendee_details_meta_box() {		
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$template_path = ATT_TEMPLATE_PATH . 'attendee_details_main_meta_box.template.php';
 		echo espresso_display_template( $template_path, $this->template_args, TRUE );		
+	}
+
+
+
+
+
+
+	/**
+	 * 		_edit_attendee_details_meta_box
+	*		@access public
+	*		@return void
+	*/
+	public function attendee_registrations_meta_box(  $post, $metabox = array( 'args' => array()) ) {		
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+		$template_path = ATT_TEMPLATE_PATH . 'attendee_registrations_main_meta_box.template.php';
+		echo espresso_display_template( $template_path, $metabox['args'], TRUE );		
 	}
 
 
