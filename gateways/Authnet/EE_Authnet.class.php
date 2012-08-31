@@ -357,7 +357,9 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$registrations = $session_data['cart']['REG']['items'];
 		foreach ($registrations as $registration) {
 			foreach ($registration['attendees'] as $attendee) {
-				$this->_x_line_items[] = 'item' . $item_num . '<|>' . $registration['name'] . '<|>' . $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'] . '<|>1<|>' . $attendee['price_paid'] . '<|>N&';
+				$item_name = substr( $registration['name'], 0, 31 );
+				$item_desc = substr( $attendee['fname'] . ' ' . $attendee['lname'] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
+				$this->_x_line_items[] = 'item ' . $item_num . '<|>' . $item_name . '<|>' . $item_desc . '<|>1<|>' . $attendee['price_paid'] . '<|>N&';
 				$item_num++;
 			}
 		}
@@ -366,7 +368,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		if (isset($session_data['tax_totals'])) {
 			foreach ($session_data['tax_totals'] as $key => $taxes) {
 				$total = $total + $taxes;
-				$this->_x_line_items[] = 'item' . $item_num . '<|>' . $session_data['taxes'][$key]['name'] . '<|>' . 'Tax' . '<|>1<|>' . $taxes . '<|>N&';
+				$this->_x_line_items[] = '<|>' . $session_data['taxes'][$key]['name'] . '<|><|>1<|>' . $taxes . '<|>N&';
 				$item_num++;
 			}
 		}
