@@ -51,8 +51,7 @@ class EE_Admin_Page_Init {
 	 * 		@access public
 	 * 		@return void
 	 */
-	protected function __construct( $page_slug, $page_name, $dir_name, $page_request ) { 
-	}
+	private function __construct() {}
 
 
 
