@@ -439,7 +439,22 @@ class EE_Admin_Page {
 	*/		
 	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args ) {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
-		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, array( $this, $callback . '_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, array( $this, $callback . '_meta_box' ), $this->wp_page_slug, 'normal', 'high', $callback_args );
+	}
+
+
+
+
+
+	/**
+	*		_add_admin_page_sidebar_meta_box - facade for add_meta_box
+	*		@access public
+	* 		@param		int 			$max_entries 		total number of rows in the table
+	*		@return void
+	*/		
+	public function _add_admin_page_sidebar_meta_box( $action, $title, $callback, $callback_args ) {	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
+		add_meta_box( str_replace( '_', '-', $action ) . '-sidebar-mbox', $title, array( $this, $callback . '_sidebar_meta_box' ), $this->wp_page_slug, 'side', 'high', $callback_args );
 	}
 
 
@@ -465,7 +480,7 @@ class EE_Admin_Page {
 			$template_path = EE_CORE_ADMIN . 'admin_details_wrapper_pre_34.template.php';
 		}
 
-		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
+		$this->template_args['post_body_content'] = isset( $this->template_args['admin_page_content'] ) ? $this->template_args['admin_page_content'] : NULL;
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 
 		// the final template wrapper
