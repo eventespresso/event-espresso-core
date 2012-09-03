@@ -181,6 +181,13 @@ class EE_Payment {
 														$PAY_details = NULL, 
 														$PAY_ID = FALSE 
 													) {
+													
+		// filter out unwanted junk from Pay_details
+		if ( is_array( $PAY_details )) {
+			array_walk_recursive( $PAY_details, array( $this, '_strip_all_tags_within_array' ));
+		} else {
+			$PAY_details =  wp_strip_all_tags( $PAY_details );
+		}
 
 		$this->_PAY_ID 								= absint( $PAY_ID );
 		$this->_TXN_ID 								= absint( $TXN_ID );
@@ -194,7 +201,7 @@ class EE_Payment {
 		$this->_PAY_po_number				= sanitize_key( $PAY_po_number );
 		$this->_PAY_extra_accntng			= wp_strip_all_tags( $PAY_extra_accntng );
 		$this->_PAY_via_admin				= absint( $PAY_via_admin ) ? TRUE : FALSE;
-		$this->_PAY_details						= maybe_serialize( wp_strip_all_tags( $PAY_details ));
+		$this->_PAY_details						= maybe_serialize( $PAY_details );
 	}
 
 
@@ -708,13 +715,16 @@ class EE_Payment {
 
 
 
-
-
-
-
-
-
-
+	/**
+	*		apply wp_strip_all_tags to all elements within an array
+	*
+	* 		@access		private
+	*		@param		mixed		$item
+	*		@param		mixed		$key
+	*/
+	private function _strip_all_tags_within_array( &$item, $key ){
+	        wp_strip_all_tags( $item );
+	}
 
 
 
