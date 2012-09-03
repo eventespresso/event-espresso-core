@@ -710,7 +710,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$return_data['date'] = $payment->timestamp( 'D M j, Y' );
 			$return_data['method'] = strtoupper( $payment->method() ) ;
 			$this->_get_active_gateways();
-			$return_data['gateway'] = $this->template_args['active_gateways'][ $payment->gateway() ];
+			$return_data['gateway'] = isset( $this->template_args['active_gateways'][ $payment->gateway() ] ) ? $this->template_args['active_gateways'][ $payment->gateway() ] : $payment->gateway();
 			$return_data['gateway_response'] = $payment->gateway_response();
 			$return_data['txn_id_chq_nmbr'] = $payment->txn_id_chq_nmbr();
 			$return_data['po_number'] = $payment->po_number();
@@ -721,7 +721,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$espresso_notices['errors'][] = __('An error occured. The payment form data could not be loaded.', 'event_espresso');
 		}
 		
-		$notices = espresso_get_notices( FALSE ); // , TRUE
+		$notices = espresso_get_notices( FALSE, FALSE, FALSE ); // , TRUE
 		
 //		echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $notices, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 //		echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $return_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
@@ -756,7 +756,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		} else {
 			$espresso_notices['errors'][] = __('An error occured. The payment form data could not be loaded.', 'event_espresso');
 		}
-		$notices = espresso_get_notices( FALSE );
+		$notices = espresso_get_notices( FALSE, FALSE, FALSE );
 //		printr( $notices, '$notices' );
 //		printr( $return_data, '$return_data' ); 
 //		die();
