@@ -116,7 +116,7 @@ function espresso_autoload() {
 	spl_autoload_register('espresso_models_autoload');
 	spl_autoload_register('espresso_classes_autoload');
 	spl_autoload_register('espresso_classes_core_autoload');	
-	spl_autoload_register('espresso_core_admin_core_autoload');
+	spl_autoload_register('espresso_core_admin_autoload');
 }
 
 function espresso_models_autoload($className) {

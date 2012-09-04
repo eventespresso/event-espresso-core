@@ -58,7 +58,7 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 
 		//Set parent defaults
 		parent::__construct(array(
-			'singluar' => 'Message Template Group', //singular name of the listed records
+			'singular' => 'Message Template Group', //singular name of the listed records
 			'plural' => 'Message Template',
 			'ajax' => false //not yet but will
 		));

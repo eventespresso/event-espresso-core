@@ -28,7 +28,8 @@
 
 class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
 
-	private $_session;
+	private $_active_messengers;
+	private $_active_message_types;
 
 	/**
 	 * constructor
@@ -45,10 +46,6 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		//add ajax calls here
 		if ( $this->_AJAX ) {
 		}
-
-		if ( $this->_is_UI_request ) {
-			add_action( 'admin_init', array( &$this, '_set_bulk_actions' ) );
-		}
 	}
 
 	/**
@@ -60,6 +57,57 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$this->admin_base_url = EE_MSG_ADMIN_URL;
 		$this->admin_page_title = __( 'Messages', 'event_espresso' );
+	}
+
+	/**
+	 * set views array for List Table
+	 * @access public
+	 * @return array
+	 */
+	public function _set_list_table_views() {
+		global $espresso_wp_user;
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+		//we're also going to set the active messengers and active message types in here.
+		
+		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
+
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('All', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_message_template' => __('Move to Trash', 'event_espresso')
+				)
+			),
+			'global' => array(
+				'slug' => 'global',
+				'label' => __('Global', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_message_template' => __('Move to Trash', 'event_espresso')
+				)
+			),
+			'event' => array(
+				'slug' => 'event',
+				'label' => __('Events', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_message_template' => __('Move to Trash', 'event_espresso')
+				)
+			),
+			'trashed' => array(
+				'slug' => 'trashed',
+				'label' => __('Trash', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_message_template' => __('Restore From Trash', 'event_espresso'),
+					'delete_message_template' => __('Delete Permanently', 'event_espresso')
+				)
+			)
+		);
 	}
 
 	/**
@@ -75,8 +123,8 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		$this->_page_routes = array(
 				// prices
 				'default'	=> '_ee_messages_overview_list_table',
-				'add_new_message_template'	=> array( 'func' => '_edit_message_template', 'args' => array( 'new_template' => TRUE )),
-				'edit_message_template'	=> array( 'func' => '_edit_message_template', 'args' => array( 'new_template' => FALSE )),
+				'add_new_message_template'	=> '_add_message_template',
+				'edit_message_template'	=> '_edit_message_template',
 				'insert_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE )),
 				'update_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE )),
 				'trash_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE )),
@@ -84,37 +132,9 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 				'restore_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE )),
 				'restore_message_template_context' => array( 'func' => '_trash_or_restore_message_template' , 'args' => array('trash' => FALSE) ),
 				'delete_message_template'	=> '_delete_message_template',
-				'settings'	=> array( 'func' => '_activate_messagenger', 'args' => array( 'new_price' => TRUE )),
+				'settings'	=> array( 'func' => '_activate_messenger', 'args' => array( 'new_price' => TRUE )),
 				'reports' => '_messages_reports'
 		);
-	}
-
-	/**
-	 * _set_bulk_actions
-	 * @access public
-	 * @return void
-	 */
-	public function _set_bulk_actions() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
-		// lists of bulk actions
-		$messages_bulk_actions = array( 'trash_message_template', 'restore_message_template', 'delete_message_template' );
-		
-		if ( $this->_req_action == 'default' ) {
-//			echo '<h1>1 !!!</h1>';
-			$this->_views['in_use']['bulk_action'] = array( 'trash_message_template' => 'Move to Trash' );
-			$this->_views['trashed']['bulk_action'] = array( 'restore_message_template' => 'Restore From Trash', 'delete_message_template' => 'Delete Permanently' );
-		} else if ( in_array( $this->_req_action, $messages_bulk_actions )) {
-//			echo '<h1>3 !!!</h1>';
-			// POST request
-			if ( ! empty( $_POST )) {
-				// reset requested nonce value - name = 'bulk-' . $this->_args['plural']  ( with spaces removed from $this->_args['plural'] )
-				$this->_req_nonce = 'bulk-message-templates';				
-			}
-			// set bulk actions
-			$this->_views['in_use']['bulk_action'] = array( 'trash_message_template' => 'Move to Trash' );
-			$this->_views['trashed']['bulk_action'] = array( 'restore_message_template' => 'Restore From Trash', 'delete_message_template' => 'Delete Permanently' );
-		} 
 	}
 
 	/**
@@ -131,7 +151,7 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		$this->admin_page_title .= ' <a href="' . $add_new_message_template_url . '" class="button add-new-h2" style="margin-left: 20px;">' . __('Add New Message Template', 'event_espresso') . '</a>';
 		$this->admin_page_title .= $this->_learn_more_about_message_templates_link();
 		
-		$message_templates = $this->_get_message_templates();
+		$all_message_templates = $this->_get_message_templates();
 		
 		if ( empty($message_templates) ) {
 			$message_templates = new WP_Error( __('no_message_templates', 'event_espresso'), __('There are no message templates in the system.  Have you activated any messengers?', 'event_espresso') . espresso_get_error_code( __FILE__, __FUNCTION__, __LINE__) );
@@ -144,6 +164,11 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		}
 
 		$this->template_args['table_rows'] = count( $message_templates );
+
+		//send along active messengers and active message_types for filters
+		$this->template_args['active_messengers'] = $this->_active_messengers;
+		$this->template_args['active_message_types'] = $this->_active_message_types;
+
 		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
 
 		$this->template_args['view_RLs'] = $this->get_list_table_view_RLs();
@@ -170,7 +195,7 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		global $espresso_wp_user;
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
-		$msg_templates = array();
+		$message_templates = array();
 
 		/** todo: is this even needed?
 		//require_once( EE_MSG_ADMIN . 'EE_Message_Template_List_Table.class.php' ); /**/
@@ -196,22 +221,54 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 
 		$order = ( isset( $_GET['order'] ) && ! empty( $_GET['order'] ) ) ? $_GET['order'] : 'ASC';
 
-		if ( $message_templates = $MTP->get_all_global_message_templates($orderby, $order) ) {
-			
-			//bubble up error_object if present
-			if ( is_wp_error($message_templates) ) {
-				return $message_templates;
-			}
-			//todo: pretty sure this won't work as expected.  We're not handling the _view correctly.  Actually... under the new system there won't even BE a trashed view UNLESS the entire template group is trashed.
-			$this->views['trashed']['count'] = 0;
-			$this->views['in_use']['count'] = 0;
-			foreach ( $message_templates as $template ) {
-				$this->views['trashed']['count'] += $template->trash_count();
-				$this->views['in_use']['count'] += $template->is_active_count();
-				$msg_templates[] = $template;
-			}
+		$trashed_templates = $MTP->get_all_trashed_grouped_message_templates();
+		$all_templates = $MTP->get_all_message_templates($orderby, $order);
+		$global_templates = $MTP->get_all_global_message_templates($orderby, $order);
+		$event_templates = $MTP->get_all_event_message_templates($orderby, $order);
+
+		$view_templates_ref = $this->view . '_templates';
+		$message_templates = ${$view_templates_ref};
+
+		foreach ( $this->_views as $view ) {
+			$count_ref = $view['slug'] . '_templates';
+			$this->_views[$view['slug']]['count'] = count(${$count_ref});
 		}
-		return $msg_templates;
+
+		return $message_templates;
+	}
+
+	/**
+	 * _add_message_template
+	 * 
+	 * @access  protected
+	 * @return void
+	 */
+	protected function _add_message_template() {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+		//we need to ask for a messenger and message type in order to generate the templates.
+		
+		//is this for a custom evt?
+		$EVT_ID = isset( $_REQUEST['evt_id'] ) && !empty( $_REQUEST['evt_id'] ) ? absint( $_REQUEST['evt_id'] ) : FALSE;
+		
+		$this->template_args['EVT_ID'] = $EVT_ID ? $EVT_ID : FALSE;
+		$this->template_args['event_name'] = $EVT_ID ? $this->_event_name($EVT_ID) : FALSE;
+		$this->template_args['action'] = 'insert_message_template';
+		$this->template_args['edit_message_template_form_url'] = add_query_arg( array( 'action' => 'insert_message_template', 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
+		$this->template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
+
+		//add nav tab for this page
+		$this->nav_tabs['add_message_template']['url'] = wp_nonce_url( add_query_arg( array( 'action' => 'add_message_template'), EE_MSG_ADMIN_URL ), 'add_message_template_nonce' );
+		$this->nav_tabs['add_message_template']['link_text'] = __('Add Message Template', 'event_espresso');
+		$this->nav_tabs['add_message_template']['css_class'] = ' nav-tab-active';
+		$this->nav_tabs['add_message_template']['order'] = 15;
+
+		//generate metabox
+		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL);
+
+		//final template wrapper
+		$this->display_admin_page_with_sidebar();
+
 	}
 
 	/**
@@ -220,14 +277,15 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 	 * @access protected
 	 * @return void
 	 */
-	protected function _edit_message_template($new_template) {
+	protected function _edit_message_template() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$GRP_ID = isset( $_REQUEST['id'] ) && !empty( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : FALSE;
 
 		$EVT_ID = isset( $_REQUEST['evt_id'] ) && !empty( $_REQUEST['evt_id'] ) ? absint( $_REQUEST['evt_id'] ) : FALSE;
 
 		$context = isset( $_REQUEST['context']) && !empty($_REQUEST['context'] ) ? strtolower($_REQUEST['context']) : FALSE;
-
+		
+		//todo: this localization won't work for translators because the string is variable.
 		$title = __(ucwords( str_replace( '_', ' ', $this->_req_action ) ), 'event_espresso' );
 
 		//let's get the message templates
@@ -257,8 +315,8 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		$this->template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
 
 		//add nav tab for this page
-		$this->nav_tabs['edit_message_template']['url'] = wp_nonce_url( add_query_arg( array( 'action' => $action, 'id' => $GRP_ID, 'context' => $context, 'evt_id' => $EVT_ID), EE_MSG_ADMIN_URL ), $action . '_nonce' );
-		$this->nav_tabs['edit_message_template']['link_text'] = __('Message Template', 'event_espresso');
+		$this->nav_tabs['edit_message_template']['url'] = wp_nonce_url( add_query_arg( array( 'action' => 'edit_message_template', 'id' => $GRP_ID, 'context' => $context, 'evt_id' => $EVT_ID), EE_MSG_ADMIN_URL ), $action . '_nonce' );
+		$this->nav_tabs['edit_message_template']['link_text'] = __('Edit Message Template', 'event_espresso');
 		$this->nav_tabs['edit_message_template']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['edit_message_template']['order'] = 15;
 
@@ -523,6 +581,18 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		echo espresso_display_template( $template_path, $this->template_args, TRUE);
 	}
 
+	/**
+	 * _add_message_template_meta_box()
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function _add_message_template_meta_box() {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
+		echo espresso_display_template( $template_path, $this->template_args, TRUE);
+	}
+
 
 	/**
 	 * 	_learn_more_about_message_templates_link
@@ -531,5 +601,22 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 	*/
 	protected function _learn_more_about_message_templates_link() {
 		return '<a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >' . __('learn more about how message templates works', 'event_espresso') . '</a>';
+	}
+
+	/**
+	 * [_event_name description]
+	 * This just takes a given event_id and will output the name of the event for it.
+	 * @todo: temporary... will need to remove/replace once proper Event models/classes are in place.
+	 * @access private
+	 * @param  int $evt_id event_id
+	 * @return string event_name 
+	 */
+	private function _event_name($evt_id) {
+		global $wpdb;
+		$evt_id = absint($evt_id);
+		$tablename = $wpdb->prefix . 'events_detail';
+		$query = "SELECT event_name FROM {$table_name} WHERE id = '{$evt_id}'";
+		$event_name = $wpdb->get_var( $wpdb->prepare($query) );
+		return $event_name;
 	}
 }

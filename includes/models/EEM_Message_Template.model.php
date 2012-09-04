@@ -277,6 +277,33 @@ class EEM_Message_Template extends EEM_Base {
 	}
 
 	/**
+	 * get_all_trashed_grouped_message_templates
+	 * this returns ONLY the tempalte groups where ALL contexts are trashed and none of the group are non-trashed
+	 * 
+	 * @access public
+	 * @return array message template groups.
+	 * @return [type] [description]
+	 */
+	public function get_all_trashed_grouped_message_templates($orderby = 'GRP_ID', $order = 'ASC') {
+		$msg_tmps = array();
+		
+		//first let's get all the templates
+		$message_templates = $this->get_all_message_templates($orderby, $order);
+
+		//now let's loop through the templates and assemble an array that has NO active contexts.
+		if ( $message_templates ) {
+			foreach ( $message_templates as $template_group ) {
+				if ( $templates->is_active_count() > 0 )
+					continue;
+				$msg_tmps[] = $template_group;
+			}
+		}
+
+		return ( empty($msg_tmps) ) ? FALSE : $msg_tmps;
+
+	}
+
+	/**
 	 * get_all_non_trashed_message_templates
 	 * @access public
 	 * @return array message template objects that aren't trashed (could be active or non-active)
