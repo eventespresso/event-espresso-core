@@ -24,7 +24,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Message_Admin_Page_Init extends Admin_Page_Init {
+class EE_Message_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page_Init_Interface {
 	/**
 	 *constructor
 	 *@Constructor
@@ -44,7 +44,7 @@ class EE_Message_Admin_Page_Init extends Admin_Page_Init {
 		define( 'EE_MSG_TEMPLATE_PATH', EE_MSG_ADMIN . 'templates' . DS );	
 		define( 'EE_MSG_TEMPLATE_URL', str_replace( '\\', '/', EE_CORE_ADMIN_URL . EE_MSG_PG_SLUG . DS . 'templates' . DS ));
 
-		parent::__construct( $page_slug, $page_name, $dir_name, $page_request );
+		$this->_init( $page_slug, $page_name, $dir_name, $page_request );
 	}
 
 	/**

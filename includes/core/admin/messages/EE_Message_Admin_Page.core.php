@@ -26,7 +26,7 @@
  * ------------------------------------------------------------------------
  */
 
-class EE_Message_Admin_Page extends Admin_Page {
+class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
 
 	private $_session;
 
@@ -36,14 +36,11 @@ class EE_Message_Admin_Page extends Admin_Page {
 	 * @access public
 	 * @return void
 	 */
-	public function __construct( $_is_UI_request ) {
+	public function __construct() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$this->page_slug = EE_MSG_PG_SLUG;
-		$this->default_nav_tab_name = 'message templates';
-		$this->_is_UI_request = $_is_UI_request;
-
-		parent::__construct();
+		$this->init();
 
 		//add ajax calls here
 		if ( $this->_AJAX ) {
@@ -51,7 +48,6 @@ class EE_Message_Admin_Page extends Admin_Page {
 
 		if ( $this->_is_UI_request ) {
 			add_action( 'admin_init', array( &$this, '_set_bulk_actions' ) );
-			//we're actually going to leave the default tabs which are going to be "message types", "settings" and "reports" (for reporting the messages that have gone out).
 		}
 	}
 
@@ -230,7 +226,7 @@ class EE_Message_Admin_Page extends Admin_Page {
 
 		$EVT_ID = isset( $_REQUEST['evt_id'] ) && !empty( $_REQUEST['evt_id'] ) ? absint( $_REQUEST['evt_id'] ) : FALSE;
 
-		$context = isset( $_REQUEST['context'] && !empty($_REQUEST['context'] ) ) ? strtolower($_REQUEST['context']) : FALSE;
+		$context = isset( $_REQUEST['context']) && !empty($_REQUEST['context'] ) ? strtolower($_REQUEST['context']) : FALSE;
 
 		$title = __(ucwords( str_replace( '_', ' ', $this->_req_action ) ), 'event_espresso' );
 

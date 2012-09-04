@@ -128,12 +128,28 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 		);
 	}
 
+	/**
+	 * [column_event description]
+	 * 
+	 * @todo: right now we're not using a nonce because legacy EE doesn't look for it.. but it should be added when the new Event management is in place.
+	 * @param  array $item message_template group data
+	 * @return string       column output
+	 */
 	function column_event($item) {
 		if ( empty($item->event() ) ) 
 			return __('Global', 'event_espresso');
 
-		$event_name = $this->_event_name($item->event());
-		$query_args = 
+		$get_event_name = $this->_event_name($item->event());
+		$event_name = empty($get_event_name) ? __('Cannot find Event', 'event_espresso') : $get_event_name
+
+		$base_event_admin_url = admin_url( 'admin.php?page=events' );
+		$query_args = array(
+			'action' => 'edit_event',
+			'event_id' => $item->event()
+			);
+		$edit_event_url = add_query_arg( $query_args, $base_event_admin_url );
+		$event_link = '<a href="'.$edit_event_url.'" title="Edit Event">' . $event_name . '</a>';
+
 	}
 
 	/**
