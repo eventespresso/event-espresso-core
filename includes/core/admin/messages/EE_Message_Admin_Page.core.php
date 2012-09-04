@@ -253,9 +253,12 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		
 		$this->template_args['EVT_ID'] = $EVT_ID ? $EVT_ID : FALSE;
 		$this->template_args['event_name'] = $EVT_ID ? $this->_event_name($EVT_ID) : FALSE;
+		$this->template_args['active_messengers'] = $this->_active_messengers;
+		$this->template_args['active_message_types'] = $this->_active_message_types;
 		$this->template_args['action'] = 'insert_message_template';
 		$this->template_args['edit_message_template_form_url'] = add_query_arg( array( 'action' => 'insert_message_template', 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		$this->template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
+		$this->template_args['action_message'] = __('Before we generate the new templates we need to ask you what messenger and message type you want the templates for');
 
 		//add nav tab for this page
 		$this->nav_tabs['add_message_template']['url'] = wp_nonce_url( add_query_arg( array( 'action' => 'add_message_template'), EE_MSG_ADMIN_URL ), 'add_message_template_nonce' );
