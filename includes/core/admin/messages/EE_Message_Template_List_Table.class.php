@@ -2,10 +2,6 @@
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
-if (!class_exists('WP_List_Table')) {
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
-}
-
 /**
  * Evetn Espresso
  *
@@ -30,6 +26,11 @@ if (!class_exists('WP_List_Table')) {
  *
  * ------------------------------------------------------------------------
  */
+
+if (!class_exists('WP_List_Table')) {
+	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+}
+
 class EE_Message_Template_List_Table extends WP_List_Table {
 	
 	private $_data;
@@ -58,8 +59,8 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 		//Set parent defaults
 		parent::__construct(array(
 			'singluar' => 'Message Template Group', //singular name of the listed records
-			'plural' => 'prices',
-			'ajax' => false
+			'plural' => 'Message Template',
+			'ajax' => false //not yet but will
 		));
 
 		$this->prepare_items();
@@ -75,7 +76,10 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 		$current_page = $this->get_pagenum();
 		$total_items = count( $this->_data );
 
-		$this->_data = array_slice( $this->_data, (( $current_page-1 ) * $per_page ), $per_page );
+		//$this->process_bulk_action(); //todo: ? is this something in the new system?
+
+		if ( is_array( $this->_data) )
+			$this->_data = array_slice( $this->_data, (( $current_page-1 ) * $per_page ), $per_page );
 		//printr( $prices, '$prices <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
         $this->items = $this->_data;
@@ -87,6 +91,50 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 						'total_pages' => ceil($total_items / $per_page) //WE have to calculate the total number of pages
 				)
 		);
+	}
+
+	/**
+	 * get_columns
+	 * @return array array of the columns.
+	 */
+	function get_columns() {
+		$columns = array(
+			'cb' => '<input type="checkbox" />', //render checkbox instead of text.
+			'event' => __( 'Event', 'event_espresso'),
+			'messenger' => __( 'Messenger', 'event_espresso'),
+			'message_type' => __('Message Type', 'event_espresso'),
+			'context' => __('Context', 'event_espresso'),
+			'messages_sent' => __( 'Total Sent', 'event_espresso' )
+		);
+		return $columns;
+	}
+
+	/**
+	 * get_sortable_columns
+	 * @return array of columns that are sortable.
+	 */
+	function get_sortable_columns() {
+		$sortable_columns = array(
+			'event' => array( 'EVT_ID', FALSE ), //true means it's already sorted.
+			'messenger' => array( 'MTP_messenger', TRUE ),
+			'message_type' => array( 'MTP_message_type', FALSE )
+		);
+		return $sortable_columns;
+	}
+
+	/**
+	 * column_default
+	 * @param  object $item        item for row
+	 * @param  string $column_name name of column
+	 * @return string              column_name for default column
+	 */
+	function column_default($item, $column_name) {
+		switch( $column_name ) {
+			case 'event' :
+				return $item[$column_name];
+			default:
+				return ( isset( $item->$column_name ) ) ? $item->column_name : '';
+		}
 	}
 
 	function extra_tablenav( $which ) {
@@ -148,7 +196,60 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 			'event_id' => $item->event()
 			);
 		$edit_event_url = add_query_arg( $query_args, $base_event_admin_url );
-		$event_link = '<a href="'.$edit_event_url.'" title="Edit Event">' . $event_name . '</a>';
+		$event_link = '<a href="'.$edit_event_url.'" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a>';
+		return $event_link;
+	}
+
+	/**
+	 * column_message_type
+	 * @param  object $item message info for the row
+	 * @return string       message_type name
+	 */
+	function column_message_type($item) {
+		return ucwords(str_replace('_', ' ', $item->message_type()) );
+	}
+
+	function column_context($item) {
+		$content = '<ul>';
+		foreach ( $item->context_templates() as $context => $template_fields ) {
+			$context_title = ucwords(str_replace('_', ' ', $context ) );
+			$edit_link = wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
+			$do_restore = $template_fields['MTP_deleted'] ? TRUE : FALSE;
+			$trash_restore_link = $do_restore ? wp_nonce_url( add_query_arg( array( 'action'=>'trash_message_template_context', 'id'=>$item->GRP_ID(), 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'trash_message_template_nonce' ), wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template_context', 'id'=>$item->GRP_ID(), 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'restore_message_template_nonce' );
+			$trash_img_url = EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/trash-16x16.png';
+			$restore_img_url = EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png';
+			$t_r_image = $do_restore ? $restore_img_url : $trash_img_url;
+			$t_r_title = $do_restore ? __('Restore Context', 'event_espresso') : __('Trash Context', 'event_espresso');
+			$t_r_alt = $do_restore ? __('Restore icon', 'event_espresso') : __('Trash icon', 'event_espresso');
+
+
+			$content .= '<li><a href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a><span class="right"><a href="'. $trash_restore_link . '" title="'.$t_r_title . '"><img src="' . $t_r_image . '" alt="' . $t_r_alt . '" /></a></span></li>';  ;
+		}
+		$content .= '</ul>';
+		return $content;
+	}
+
+	function column_messages_sent($item) {
+		//todo: we need to obtain the messages sent and the link to the messages report table and output
+		return __('feature in progress', 'event_espresso');
+	}
+
+	/**
+	 * get_bulk_actions
+	 * @return array bulk actions
+	 * @todo: not certain if this is needed will verify in testing.
+	 */
+	function get_bulk_actions() {
+		$actions = array();
+		return $actions;
+	}
+
+	/**
+	 * process_bulk_action
+	 * @return void
+	 * @todo: not certain if this is needed will verify in testing
+	 */
+	function process_bulk_action() {
 
 	}
 
