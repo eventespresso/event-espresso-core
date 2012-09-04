@@ -162,7 +162,7 @@ class EE_messages {
 		$messenger = strtolower(str_replace(' ', '_', $messenger));
 
 		//setup messenger and message_type object
-		$this->_messenger = isset($this->_active_messengers[$messenger]) ? $this->active_messenger[$messenger] : null;
+		$this->_messenger = isset($this->_active_messengers[$messenger]) ? $this->_active_messengers[$messenger] : null;
 
 		//message type
 		$mt_class = isset($this->_active_message_types[$message_type]) ? $this->_active_message_types[$message_type] : 'non_existant_class';
@@ -173,13 +173,13 @@ class EE_messages {
 			return new WP_Error(__('problem_creating_required_objects', 'event_espresso'), sprintf(__(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) ); 
 		
 		//is given message_type valid for given messenger?
-		foreach ( $this_messenger->active_templates as $template ) {
+		foreach ( $this->_messenger->active_templates as $template ) {
 			if ( $template->message_type() == $message_type )
 				$valid_mt = true;
 		}
 		
 		if ( !$valid_mt && $is_global ) {
-			//we're setting up a brand global templates (with messenger activation) so we're assuming that the message types sent in are valid.
+			//we're setting up a brand new global templates (with messenger activation) so we're assuming that the message types sent in are valid.
 			$valid_mt = true;
 		}
 
