@@ -20,6 +20,6 @@
 			<option value="<?php echo $message_type; ?>"><?php echo ucwords(str_replace('_', ' ', $message_type) ); ?></option>
 			<?php endforeach; ?>
 		</select>
-		<input id="submit-txn-filters-sbmt" class="button-secondary" type="submit" value="Generate Templates">
+		<input id="submit-msg-add-sbmt" class="button-secondary" type="submit" value="Generate Templates">
 	</form>
 </div> <!-- end #admin-primary-mbox-dv -->

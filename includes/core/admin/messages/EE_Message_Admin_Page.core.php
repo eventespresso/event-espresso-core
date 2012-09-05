@@ -306,15 +306,29 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 			$title .= $message_template->messenger() . ' ' . $message_template->message_type . ' Template'; 
 		}
 
+		$context_switcher_url = add_query_arg( array( 'action' => 'edit_message_template', 'noheader' => TRUE, 'id' => $GRP_ID, 'evt_id' => $EVT_ID ), EE_MSG_ADMIN_URL);
+
 		//todo: let's display the event name rather than ID. 
 		$title .= $EVT_ID ? ' for EVT_ID: ' . $EVT_ID : '';
 
 		$this->template_args['GRP_ID'] = $GRP_ID;
 		$this->template_args['message_template'] = $message_template;
+
+		//let's get the EE_messages_controller so we can get templates
+		$MSG = new EE_messages();
+		$template_fields = $MSG->get_fields($message_template->messenger(), $message_template->message_type());
+		
+		if ( is_wp_error($template_fields) ) {
+			$this->_handle_errors($template_fields); 
+			$template_fields = false;
+		}
+
+		$this->template_args['template_fields'] = $template_fields;
 		$this->template_args['action'] = $action;
 		$this->template_args['context'] = $context;
 		$this->template_args['EVT_ID'] = $EVT_ID;
 		$this->template_args['edit_message_template_form_url'] = $edit_message_template_form_url;
+		$this->template_args['context_switcher_url'] = $context_switcher_url;
 		$this->template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
 
 		//add nav tab for this page

@@ -311,7 +311,6 @@ class EE_messages {
 
 		return $template_fields;
 	}
-
 } 
 //end EE_messages class
 
