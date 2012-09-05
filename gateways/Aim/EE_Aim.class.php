@@ -56,6 +56,11 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			"split_tender_id", "state", "tax", "tax_exempt", "test_request", "tran_key",
 			"trans_id", "type", "version", "zip"
 	);
+
+    /**
+     * Only used if merchant wants to send multiple line items about the charge.
+     */
+    private $_additional_line_items = array();
 		
 	private static $_instance = NULL;
 
@@ -195,17 +200,30 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			$reg_info = $session_data['cart']['REG'];
 			$primary_attendee = $session_data['primary_attendee'];
+			
+			$registrations = $session_data['cart']['REG']['items'];
+
+			$item_num = 1;
+			foreach ($registrations as $registration) {
+				foreach ($registration['attendees'] as $attendee) {			
+					$item_name = substr( $registration['name'], 0, 31 );
+					$item_desc = substr( $attendee['fname'] . ' ' . $attendee['lname'] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
+					$this->addLineItem( $item_num, $item_name, $item_desc, 1, $attendee['price_paid'], 'N');
+					$item_num++;				
+				}
+			}
+
+			if (isset($session_data['tax_totals'])) {
+				foreach ($session_data['tax_totals'] as $key => $tax) {
+					$grand_total += $tax;
+					$this->addLineItem( $item_num, $session_data['taxes'][$key]['name'], '', 1, $tax, 'N');
+					$item_num++;
+				}
+			}
 
 			$grand_total = $session_data['_cart_grand_total_amount'];
 
-			$taxes = $session_data['tax_totals'];
-			foreach ($taxes as $tax) {
-				$grand_total += $tax;
-			}
-
 			//start transaction
-
-
 			$this->setField('amount', $grand_total);
 			$this->setField('card_num', $billing_info['reg-page-billing-card-nmbr']['value']);
 			$this->setField('exp_date', $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . $billing_info['reg-page-billing-card-exp-date-year']['value']);
@@ -218,8 +236,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('state', $billing_info['reg-page-billing-state']['value']);
 			$this->setField('zip', $billing_info['reg-page-billing-zip']['value']);
 			$this->setField('cust_id', $primary_attendee['registration_id']['value']);
-			$this->setField('invoice_num',$EE_Session->id()); // <<<<<<<<<<<<<<<<<<<<<<< This actually should NOT be generated YET !!! right?? or is it ? and if so from where ?
+			$this->setField('invoice_num',$EE_Session->id()); 
 
+	
 			if ($this->_payment_settings['test_transactions']) {
 				$this->test_request = "true";
 			}
@@ -279,6 +298,27 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			To set a custom field use setCustomField('field','value') instead.");
 		}
 	}
+
+
+
+    
+    /**
+     * Add a line item.
+     * 
+     * @param string $item_id
+     * @param string $item_name
+     * @param string $item_description
+     * @param string $item_quantity
+     * @param string $item_unit_price
+     * @param string $item_taxable
+     */
+    public function addLineItem($item_id, $item_name, $item_description, $item_quantity, $item_unit_price, $item_taxable) {
+		$args = func_get_args();
+		$this->_additional_line_items[] = implode( '<|>', $args );
+    }
+
+
+
 
 	public function espresso_display_payment_gateways() {
 
@@ -562,8 +602,11 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		$this->_post_string = "";
 		foreach ($this->_x_post_fields as $key => $value) {
 			$this->_post_string .= "x_$key=" . urlencode($value) . "&";
-		}
-
+		}		
+        // Add line items
+        foreach ($this->_additional_line_items as $key => $value) {
+            $this->_post_string .= "x_line_item=" . urlencode($value) . "&";
+        }
 		$this->_post_string = rtrim($this->_post_string, "& ");
 		$post_url = ($this->_payment_settings['use_sandbox'] ? self::SANDBOX_URL : self::LIVE_URL);
 		$curl_request = curl_init($post_url);
