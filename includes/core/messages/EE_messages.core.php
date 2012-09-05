@@ -150,14 +150,13 @@ class EE_messages {
 	}
 
 	/**
-	 * This is a wrapper for the protected _create_new_templates function
-	 * @param  string $message_type message type that the templates are being created for
-	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned. 
+	 * _validate_setup
+	 * @param  string $messenger    EE_messenger
+	 * @param  string $message_type EE_message_type
+	 * @return bool(true)|wp_error_object
 	 */
-	public function create_new_templates( $messenger, $message_type, $evt_id, $is_global = false ) {
-		$valid_mt = false;
-		$evt_id = absint($evt_id);
-		
+	private function _validate_setup($messenger, $message_type) {
+
 		$message_type = strtolower(str_replace(' ', '_', $message_type) );
 		$messenger = strtolower(str_replace(' ', '_', $messenger));
 
@@ -176,16 +175,30 @@ class EE_messages {
 		foreach ( $this->_messenger->active_templates as $template ) {
 			if ( $template->message_type() == $message_type )
 				$valid_mt = true;
+				return new WP_Error(__('invalid_message_type_messenger_match', 'event_espresso'), sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 		}
+		return true;
+	}
+
+	/**
+	 * This is a wrapper for the protected _create_new_templates function
+	 * @param  string $message_type message type that the templates are being created for
+	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned. 
+	 */
+	public function create_new_templates( $messenger, $message_type, $evt_id, $is_global = false ) {
+		$valid_mt = false;
+		$evt_id = absint($evt_id);
+
+		$valid_mt = $this->_validate_setup($messenger, $message_type);
 		
-		if ( !$valid_mt && $is_global ) {
+		if ( is_wp_error($valid_mt) && $is_global ) {
 			//we're setting up a brand new global templates (with messenger activation) so we're assuming that the message types sent in are valid.
 			$valid_mt = true;
 		}
 
-		if ( !$valid_mt ) {
-			//if we've still got no valid_mt then error roger
-			return new WP_Error(__('invalid_message_type', 'event_espresso'), sprintf(__(' % is an invalid message_type', 'event_espresso'), $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		if ( is_wp_error($valid_mt) ) {
+			//if we've still got no valid_mt then bubble up error object
+			return $valid_mt;
 		}
 
 		if ( !$is_global && empty($evt_id) ) {
@@ -267,6 +280,36 @@ class EE_messages {
 		);	
 
 		return $success_array;	
+	}
+
+	/**
+	 * get_fields
+	 * This takes a given messenger and message type and returns all the template fields indexed by context (and with field type).
+	 * @param  string $messenger    EE_messenger
+	 * @param  string $message_type EE_message_type
+	 * @return array|wp_error_object  template fields indexed by context.
+	 */
+	public function get_fields($messenger, $message_type) {
+		$template_fields = array();
+
+		$valid_msg = $this->_validate_setup($messenger, $message_type);
+
+		//bubble up wp_error_obj if exists
+		if ( is_wp_error($valid_msg) )
+			return $valid_msg;
+
+
+		//okay now let's assemble an array with the messenger template fields added to the message_type contexts.
+		foreach ( $this->_message_type->get_contexts() as $context ) {
+			foreach ( $this->_messenger->get_template_fields() as $field => $value ) {
+				$template_fields[$context][$field] = $value;
+			} 
+		}
+
+		if ( empty($template_fields) )
+			return new WP_Error( __('get_template_field_error', 'event_espresso'), __('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__));
+
+		return $template_fields;
 	}
 
 } 
