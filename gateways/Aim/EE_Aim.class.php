@@ -213,6 +213,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				}
 			}
 
+			$grand_total = $session_data['_cart_grand_total_amount'];
+
 			if (isset($session_data['tax_totals'])) {
 				foreach ($session_data['tax_totals'] as $key => $tax) {
 					$grand_total += $tax;
@@ -220,8 +222,6 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					$item_num++;
 				}
 			}
-
-			$grand_total = $session_data['_cart_grand_total_amount'];
 
 			//start transaction
 			$this->setField('amount', $grand_total);
