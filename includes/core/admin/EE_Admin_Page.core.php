@@ -623,6 +623,74 @@ class EE_Admin_Page {
 			$espresso_notices['errors'][] = $error_obj->get_error_msg;
 		}
 	}
+
+	/**
+	 * 	generates HTML for the forms used on admin pages
+	 * 	@access protected
+	 * 	@param	array $input_vars - array of input field details
+	 * 	@param	array $id - used for defining unique identifiers for the form.
+	 * 	@return string
+	 * 	@todo: note this should be extracted eventually into some sort of form-builder/sanitizer/validation library for use with EE.
+	 */
+	protected function _generate_admin_form_fields($input_vars = array(), $id = FALSE) {
+
+		if (empty($input_vars) || !$id) {
+			return new WP_Error(__('form_field_generator_error', 'event_espresso'), __('missing required variables for the form field generator', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		}
+		
+		// if you don't behave - this is what you're gonna get !!!
+		$output = '';
+
+		// cycle thru billing inputs
+		foreach ($input_vars as $input_key => $input_value) {
+
+			// required fields get a * 
+			$required = $input_value['required'] ? '&nbsp;<em>*</em>' : '';
+			// and the css class "required"
+			$styles = $input_value['required'] ? 'required ' . $input_value['css_class'] : $input_value['css_class'];
+			$field_id = $id . '-' . $input_key;
+
+			// what type of input are we dealing with ?
+			switch ($input_vars['input']) {
+
+				// text inputs
+				case 'text' :
+
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['db-col'] . '">';
+					break;
+
+				// dropdowns
+				case 'select' :
+
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['db-col'] . '">';
+
+					if (is_array($input_value['options'])) {
+						$options = $input_value['options'];
+					} else {
+						$options = explode(',', $input_value['options']);
+					}
+
+					foreach ($options as $key => $value) {
+						//$key = str_replace( ' ', '_', sanitize_key( $value ));
+						$output .= "\n\t\t\t\t" . '<option value="' . $key . '">' . $value . '</option>';
+					}
+					$output .= "\n\t\t\t" . '</select>';
+
+					break;
+
+				case 'textarea' :
+
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['db-col'] . '">' . $input_value['value'] . '</textarea>';
+				break;
+			} // end switch
+			
+		} // end foreach( $input_vars as $input_key => $input_value ) 
+
+		return $output;
+	}
 	
 }
 
