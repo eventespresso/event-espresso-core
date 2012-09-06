@@ -149,7 +149,7 @@ class EE_Message_Template {
 	 */
 	public function __construct($template_group) {
 		
-		if ( isset($template_group['new_template'] && $template_group['new_template'] ) ) ) {
+		if ( isset($template_group['new_template']) && $template_group['new_template'] ) {
 			//let's loop through the included keys first
 		 	foreach ( $template_group as $key => $value ) {
 		 		if ( $key == 'new_template' )
@@ -179,9 +179,8 @@ class EE_Message_Template {
 				$bool_array = array('MTP_is_global');
 				$bool_null_array = array('MTP_is_override', 'MTP_deleted');
 
-				if ( $key == 'MTP_ID' ) {
-					$template_fields[$key] = array_map('absint', $value );
-				} else if ( in_array( $key, $bool_array) ) {
+				
+				if ( in_array( $key, $bool_array) ) {
 					$template_fields[$key] = absint( $value ) ? TRUE : FALSE;
 					if ( $template_fields[$key] ) {
 						$group_counts[$key]++;

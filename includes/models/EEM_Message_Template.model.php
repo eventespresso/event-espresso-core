@@ -111,7 +111,6 @@ class EEM_Message_Template extends EEM_Base {
 			$a_temp[$template->GRP_ID]['EVT_ID'] = $template->EVT_ID;
 			
 			//within the template group templates are grouped by contexts.  below are items common to template types within a context (i.e. "is_active").  We also have an array of template_ids attached to a context to make it easier to update all the templates in this context with the new values.
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_ID'][] = $template->MTP_ID;
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_is_global'] = $template->MTP_is_global;
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_is_override'] = $template->MTP_is_override;
 			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_deleted'] = $template->MTP_deleted;

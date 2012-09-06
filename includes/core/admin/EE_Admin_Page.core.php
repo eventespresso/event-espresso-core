@@ -657,14 +657,14 @@ class EE_Admin_Page {
 				case 'text' :
 
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['db-col'] . '">';
+					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['name'] . '">';
 					break;
 
 				// dropdowns
 				case 'select' :
 
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['db-col'] . '">';
+					$output .= "\n\t\t\t" . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '">';
 
 					if (is_array($input_value['options'])) {
 						$options = $input_value['options'];
@@ -683,7 +683,11 @@ class EE_Admin_Page {
 				case 'textarea' :
 
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['db-col'] . '">' . $input_value['value'] . '</textarea>';
+					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '">' . $input_value['value'] . '</textarea>';
+				break;
+
+				case 'hidden' :
+					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" type="hidden" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '">';
 				break;
 			} // end switch
 			

@@ -313,14 +313,91 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 
 		$this->template_args['GRP_ID'] = $GRP_ID;
 		$this->template_args['message_template'] = $message_template;
+		$this->template_args['is_extra_fields'] = FALSE;
 
 		//let's get the EE_messages_controller so we can get templates
 		$MSG = new EE_messages();
-		$template_fields = $MSG->get_fields($message_template->messenger(), $message_template->message_type());
+		$template_field_structure = $MSG->get_fields($message_template->messenger(), $message_template->message_type());
 		
-		if ( is_wp_error($template_fields) ) {
-			$this->_handle_errors($template_fields); 
-			$template_fields = false;
+		if ( is_wp_error($template_field_structure) ) {
+			$this->_handle_errors($template_field_structure); 
+			$template_field_structure = false;
+			$template_fields = 'There was an error in assembling the fields for this display (you should see an error message';
+		}
+
+		//let's loop through the template_field_structure and actually assemble the input fields!
+		if ( !empty($template_field_structure) ) {
+			$id_prefix= 'ee-msg-edit-template-fields-';
+			foreach ( $template_field_structure[$context] as $template_field => $type ) {
+				//if this is an 'extra' template field then we need to remove any existing fields that are keyed up in the extra array and reset them.
+				if ( $template_field == 'extra' ) {
+					$this->template_args['is_extra_fields'] = TRUE;
+					foreach ( $type as $reference_field => $new_fields ) {
+						foreach ( $new_fields as $extra_field =>  $extra_type ) {
+							$template_form_fields[$reference_field . '-' . $extra_field . '-content'] = array(
+									'name' => 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']',
+									'label' => ( $extra_field == 'main' ) ? ucwords(str_replace('_', ' ', $reference_field) ) : ucwords(str_replace('_', ' ', $extra_field) ),
+									'input' => $extra_type,
+									'type' => 'string',
+									'required' => TRUE,
+									'validation' => TRUE,
+									'value' => !empty($message_template) && isset($message_template[$context][$reference_field][$extra_field]) ? $message_template[$context][$reference_field][$extra_field] : '',
+									'format' => '%s',
+									'db-col' => 'MTP_content'
+								);
+
+						}
+					}
+				} else {
+					$template_form_fields[$template_field . '-content'] = array(
+							'name' => 'MTP_template_fields[' . $reference_field . '][content]',
+							'label' => ucwords(str_replace('_', ' ', $template_field) ),
+							'input' => $type,
+							'type' => 'string',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => !empty($message_template) && isset($message_template[$context][$template_field]) ? $message_template[$context][$template_field] : '',
+							'format' => '%s',
+							'db-col' => 'MTP_content'
+						);
+				}
+
+				//k took care of content field(s) now let's take care of others.
+
+				$templatefield_MTP_id = $template_field . 'MTP_ID';
+				$templatefield_field_templatename_id = $template_field . '-name';
+
+				//foreach template field there are actually three form fields created
+				$template_form_fields = array(
+					$templatefield_MTP_id => array(
+						'name' => 'MTP_template_fields[' . $template_field . '][MTP_id]',
+						'label' => NULL,
+						'input' => 'hidden',
+						'type' => 'int',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'value' => !empty($message_template) ? $message_template[$context][$template_field]['MTP_ID'] : '',
+						'format' => '%d',
+						'db-col' => 'MTP_ID'
+						),
+					$templatefield_field_templatename_id = array(
+							'name' => 'MTP_template_fields[' . $template_field . '][mtp_]',
+							'label' => NULL,
+							'input' => 'hidden',
+							'type' => 'string',
+							'required' => TRUE,
+							'validation' => TRUE,
+							'value' => $template_field,
+							'format' => '%s',
+							'db-col' => 'MTP_template_field'
+						),
+				);
+
+				//send to field generator
+				foreach ( $template_form_fields as $template_form_field ) {
+					$t_fields[] = $this->_generate_admin_form_fields( $template_form_field)
+				}
+			}
 		}
 
 		$this->template_args['template_fields'] = $template_fields;
@@ -351,19 +428,19 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 	 * @access protected
 	 * @param int $index This helps us know which template field to select from the request array.
 	 */
-	protected function _set_message_template_column_values($index=null) {
+	protected function _set_message_template_column_values($index) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$set_column_values = array(
-			'MTP_ID' => absint($_REQUEST['MTP_template_field'][$index]['MTP_ID']),
+			'MTP_ID' => absint($_REQUEST['MTP_template_fields'][$index]['MTP_ID']),
 			'EVT_ID' => absint($_REQUEST['EVT_ID']),
 			'GRP_ID' => absint($_REQUEST['GRP_ID']),
 			'MTP_user_id' => absint($_REQUEST['MTP_user_id']),
 			'MTP_messenger'	=> strtolower($_REQUEST['MTP_messenger']),
 			'MTP_message_type' => strtolower($_REQUEST['MTP_message_type']),
-			'MTP_template_field' => strtolower($_REQUEST['MTP_template_field'][$index]['name']),
+			'MTP_template_field' => strtolower($_REQUEST['MTP_template_fields'][$index]['name']),
 			'MTP_context' => strtolower($_REQUEST['MTP_context']),
-			'MTP_content' => strtolower($_REQUEST['MTP_template_field'][$index]['content']),
+			'MTP_content' => strtolower($_REQUEST['MTP_template_fields'][$index]['content']),
 			'MTP_is_global' => absint($_REQUEST['MTP_is_global']),
 			'MTP_is_override' => absint($_REQUEST['MTP_is_override']),
 			'MTP_deleted' => absint($_REQUEST['MTP_deleted'])
@@ -405,9 +482,22 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 			$MTP = EEM_Message_Type::instance();
 			
 			//run update for each template field in displayed context
-			for ( $i=0; $i < count($_REQUEST['MTP_template_field']); $i++ ) {
-				$set_column_values = $this->_set_message_template_column_values($i);
-				$where_cols_n_values = array( 'MTP_ID' => $_REQUEST['MTP_template_field'][$index]['MTP_ID']);
+			if ( !isset($_REQUEST['MTP_template_fields'] && empty($_REQUEST['MTP_template_fields'] ) ) {
+				$error =  new WP_Error( __('problem_saving_template_fields', 'event_espresso'), __('There was a problem saving the template fields from the form becuase I didn\'t receive any actual template field data.', 'even_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+				$this->_handle_errors($error);
+				$success = 0;
+				$query_args = array(
+						'id' => $edit_array['GRP_ID'],
+						'evt_id' => $edit_array['EVT_ID'],
+						'context' => $edit_array['MTP_context'],
+						'action' => 'edit_message_template'
+						);
+			}
+
+			if ( $success ) { 	
+			foreach ( $_REQUEST['MTP_template_fields'] as $template_field => $content ) {
+				$set_column_values = $this->_set_message_template_column_values($template_field);
+				$where_cols_n_values = array( 'MTP_ID' => $_REQUEST['MTP_template_field'][$template_field]['MTP_ID']);
 				if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
 					if ( is_wp_error($updated) ) {
 						$this->_handle_errors($edit_array);
