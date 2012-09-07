@@ -225,6 +225,38 @@ class EEM_Registration extends EEM_Base {
 
 
 
+	/**
+	*		retreive registration for a specific transaction attendee from db
+	* 
+	* 		@access		public
+	* 		@param		$TXN_ID
+	* 		@param		$ATT_ID
+	* 		@param		$att_nmbr 	in case the ATT_ID is the same for multiple registrations (same details used) then the attendee number is required
+	*		@return 		mixed		array on success, FALSE on fail
+	*/
+	public function get_registration_for_transaction_attendee( $TXN_ID = FALSE, $ATT_ID = FALSE, $att_nmbr = FALSE ) {
+
+		if ( ! $TXN_ID && ! $ATT_ID && ! $att_nmbr ) {
+			return FALSE;
+		}
+		// retreive all registrations
+		if ( $registrations = $this->select_all_where ( array( 'TXN_ID' => $TXN_ID, 'ATT_ID' => $ATT_ID ), 'REG_ID' )) {
+			$registrations = $this->_create_objects( $registrations );
+			// need to reduce $att_nmbr which starts at 1 to match array keys that start at 0
+			$att_nmbr--;
+			// just grab 1 element from array starting at $att_nmbr
+			$registration = array_slice( $registrations, $att_nmbr, 1 );
+			//printr( $registration );
+			return isset( $registration[0] ) ? $registration[0] : $registration;
+		} else {
+			return FALSE;
+		}
+
+	}
+
+
+
+
 
 
 	/**

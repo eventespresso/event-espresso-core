@@ -14,9 +14,9 @@ textarea { width:25em; }
 
 /* TABLE COLUMNS */
 
-.column-ATT_ID { width:3%; }
-.column-ATT_lname { width:12.5%; }
+.column-ATT_ID { width:2%; }
 .column-ATT_fname { width:10%; }
+.column-ATT_lname { width:12.5%; }
 .column-ATT_email { }
 .column-ATT_address { width:15%; }
 .column-ATT_city { width:10%; }
@@ -28,6 +28,11 @@ textarea { width:25em; }
 .jst-left { text-align:left; }
 .jst-cntr { text-align:center; }
 .jst-rght { text-align:right; }
+
+.att-overview-actions-ul { list-style:none; margin:0; }
+.att-overview-actions-ul li { display: inline; margin:0; }
+.att-overview-actions-ul li + li { margin-left:.5em; }
+.att-action-lnk { cursor:pointer; }
 
 .admin-primary-mbox-tbl-wrap {
 	padding:3px; margin:0em 0 2em;

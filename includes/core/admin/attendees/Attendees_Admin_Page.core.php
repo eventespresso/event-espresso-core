@@ -274,20 +274,35 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 		$ATT_MDL = EEM_Attendee::instance();
 
 		if ( $ATT_ID ) {
+		
 			$attendee = $ATT_MDL->get_attendee_by_ID( $ATT_ID );
 			$action = 'update_attendee';
-			$edit_attendee_form_url = add_query_arg( array( 'action' => $action, 'id' => $ATT_ID, 'noheader' => TRUE ), ATT_ADMIN_URL );
+			$form_url = add_query_arg( array( 'action' => $action, 'id' => $ATT_ID, 'noheader' => TRUE ), ATT_ADMIN_URL );
+			
 		} else {
 			$attendee = new EE_Attendee();
 			$action = 'insert_attendee';
-			$edit_attendee_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), ATT_ADMIN_URL );
+			$form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), ATT_ADMIN_URL );
 		}
 		
 		$this->template_args['ATT_ID'] = $ATT_ID;
-		$this->template_args['attendee'] = $attendee;
+		$this->template_args['attendee_fname'] = html_entity_decode( stripslashes( $attendee->fname() ), ENT_QUOTES, 'UTF-8' );
+		$this->template_args['attendee_lname'] = html_entity_decode( stripslashes( $attendee->lname() ), ENT_QUOTES, 'UTF-8' );
+		$this->template_args['attendee_email'] = $attendee->email();
+		$this->template_args['attendee_phone'] = $attendee->phone();
+		$this->template_args['attendee_address'] = html_entity_decode( stripslashes( $attendee->address() ), ENT_QUOTES, 'UTF-8' );
+		$this->template_args['attendee_address2'] = html_entity_decode( stripslashes( $attendee->address2() ), ENT_QUOTES, 'UTF-8' );
+		$this->template_args['attendee_city'] = html_entity_decode( stripslashes( $attendee->city() ), ENT_QUOTES, 'UTF-8' );		
+		$this->template_args['attendee_state_ID'] = $attendee->state_ID();
+		$this->template_args['attendee_country_ISO'] = $attendee->country_ISO();
+		$this->template_args['attendee_zip'] = $attendee->zip();
+		$this->template_args['attendee_social'] = html_entity_decode( stripslashes( $attendee->social() ), ENT_QUOTES, 'UTF-8' );
+		$this->template_args['attendee_comments'] = html_entity_decode( stripslashes( $attendee->comments() ), ENT_QUOTES, 'UTF-8' );
+		$this->template_args['attendee_notes'] = html_entity_decode( stripslashes( $attendee->notes() ), ENT_QUOTES, 'UTF-8' );
+		//$this->template_args['attendee'] = $attendee;
 
 		$this->template_args['action'] = $action;
-		$this->template_args['edit_attendee_form_url'] = $edit_attendee_form_url;
+		$this->template_args['form_url'] = $form_url;
 	
 		// add nav tab for this details page
 		$this->nav_tabs['edit_attendee']['url'] = wp_nonce_url( add_query_arg( array( 'action'=>$action, 'id' => $ATT_ID ), ATT_ADMIN_URL ), $action . '_nonce' );  
@@ -359,7 +374,9 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
-
+		
+		//printr( $_POST ); die();
+		
 		// why be so pessimistic ???  : (
 		$success = 0;
 		//create attendee object
@@ -501,6 +518,7 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 
 	/**
 	 * 		_redirect_after_admin_action
+	*		@param int 		$redirect_to		- the URL to redirect to after the form is processed
 	*		@param int 		$success 				- whether success was for two or more records, or just one, or none
 	*		@param string 	$what 					- what the action was performed on
 	*		@param string 	$action_desc 		- what was done ie: updated, deleted, etc
@@ -542,8 +560,10 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 			$query_args = array_merge( $query_args, $nonce );
 		} 
 		//printr( $query_args, '$query_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		$redirect_url = add_query_arg( $query_args, ATT_ADMIN_URL ); 
+		
+		// redirect back to the page we came from ? (Save) OR redirect back to the Attendee Overview ? (Save & Close)
+		$redirect_to = isset( $_POST['save_and_edit'] ) ? $_POST['_wp_http_referer'] : ATT_ADMIN_URL;		
+		$redirect_url = add_query_arg( $query_args, $redirect_to ); 
 		//echo '<h4>$redirect_url : ' . $redirect_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		//die();
 		wp_safe_redirect( $redirect_url );	

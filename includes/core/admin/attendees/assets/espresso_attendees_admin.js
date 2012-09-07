@@ -21,8 +21,7 @@ jQuery(document).ready(function($) {
 		formURL = formURL.replace( '&noheader=true', '' );
 		theForm.attr( 'action', formURL );
 		theForm.submit();
-	}); 
-
+	}); 	
 
 
 
@@ -68,12 +67,13 @@ jQuery(document).ready(function($) {
 		return false;
 	});	
 
-	$('#add_new_attendee').on( 'click', function( event ) {
+	$('.add_new_attendee').on( 'click', function( event ) {
   		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$(this).parents('form').submit();
-		}
-		return false;
+		} else {
+			return false;
+		}		
 	});
 
 

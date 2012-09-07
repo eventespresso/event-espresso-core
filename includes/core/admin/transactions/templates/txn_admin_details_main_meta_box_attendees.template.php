@@ -33,7 +33,8 @@
 							<?php echo $attendee_name;?>
 						</a>					
 					</td>
-					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $reg->price_paid(), 2 );?></td>
+					<?php $price_paid = is_object( $reg ) && $reg->price_paid() != '' ? $reg->price_paid() : $attendee['price_paid']; ?>
+					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $price_paid, 2 );?></td>
 					<td class="jst-left"><?php echo $att->email() != '' ? $att->email() : $attendee['email'];?></td>
 					<td class="jst-left">
 						<?php

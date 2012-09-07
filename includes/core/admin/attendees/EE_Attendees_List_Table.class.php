@@ -78,15 +78,16 @@ class EE_Attendees_List_Table extends WP_List_Table {
 	function get_columns() {
 		$columns = array(
 				'cb' 					=> '<input type="checkbox" />', //Render a checkbox instead of text
-				'ATT_lname' 	=> __('Last Name', 'event_espresso'),
+				'ATT_ID' 			=> __('ID', 'event_espresso'),
 				'ATT_fname' 	=> __('First Name', 'event_espresso'),
+				'ATT_lname' 	=> __('Last Name', 'event_espresso'),
 				'ATT_email' 	=> __('Email Address', 'event_espresso'),
 				'ATT_phone' 	=> __('Phone', 'event_espresso'),
-				'ATT_address' 	=> __('Address', 'event_espresso'),
+				'ATT_address' => __('Address', 'event_espresso'),
 				'ATT_city' 		=> __('City', 'event_espresso'),
 				'STA_ID' 			=> __('State', 'event_espresso'),
-				'CNT_ISO' 		=> __('Country', 'event_espresso')
-				/*'actions' 	=> __('Actions', 'event_espresso')*/
+				'CNT_ISO' 		=> __('Country', 'event_espresso'),
+				'actions' 			=> __('Actions', 'event_espresso')
 		);
 		return $columns;
 	}
@@ -132,30 +133,20 @@ class EE_Attendees_List_Table extends WP_List_Table {
 
 
 
+	function column_ATT_ID($item) {
+		return $item->ID();
+	}
+
+
+
+
+
 	function column_ATT_lname($item) {
-		//Build row actions
-		$actions = array();
-		// edit price link
+
+		// edit attendee link
 		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
-		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
-		
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . stripslashes( $item->lname() ) . '</a>';
-
-		if ( $this->_view == 'in_use' ) {
-			// trash price link
-			$trash_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'trash_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'trash_attendees_nonce' );
-			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Attendee to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
-		} else {
-			// restore price link
-			$restore_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'restore_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'restore_attendees_nonce' );
-			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Attendee', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
-			// delete price link
-			$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'delete_attendees_nonce' );
-			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Attendee Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
-		}
-
-		//Return the name contents
-		return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s', $name_link, $item->ID(), $this->row_actions($actions) );
+		return $name_link;
 
 	}
 
@@ -163,7 +154,28 @@ class EE_Attendees_List_Table extends WP_List_Table {
 
 
 	function column_ATT_fname($item) {
-		return $item->fname();
+
+		//Build row actions
+		$actions = array();
+		// edit attendee link
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
+
+		if ( $this->_view == 'in_use' ) {
+			// trash attendee link
+			$trash_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'trash_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'trash_attendees_nonce' );
+			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Attendee to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
+		} else {
+			// restore attendee link
+			$restore_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'restore_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'restore_attendees_nonce' );
+			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Attendee', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
+			// delete attendee link
+			$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'delete_attendees_nonce' );
+			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Attendee Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
+		}
+
+		//Return the name contents
+		return sprintf('%1$s %2$s', $item->fname(), $this->row_actions($actions) );		
 	}
 
 
@@ -208,13 +220,56 @@ class EE_Attendees_List_Table extends WP_List_Table {
 
 	function column_actions($item) {
 	
-		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
 		
-		$actions = '
-<a title="'. __('Edit Attendee Details', 'event_espresso') .'" href="'. $edit_lnk_url .'">
-	<img width="13" height="13" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/edit.png" alt="'. __('Edit Attendee Details', 'event_espresso') .'" ">
-</a>';
+//		$actions = '
+//<a title="'. __('Edit Attendee Details', 'event_espresso') .'" href="'. $edit_lnk_url .'">
+//	<img width="13" height="13" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/edit.png" alt="'. __('Edit Attendee Details', 'event_espresso') .'" ">
+//</a>';
 
+		//Build row actions
+		$actions = '
+<ul class="att-overview-actions-ul">';
+		// edit price link
+		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
+		$actions .= '
+	<li>
+		<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '" class="att-action-lnk">
+			<img width="13" height="13" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/edit.png" alt="'. __('Edit Attendee Details', 'event_espresso') .'" ">
+		</a>
+	</li>';
+
+
+		if ( $this->_view == 'in_use' ) {
+			// trash price link
+			$trash_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'trash_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'trash_attendees_nonce' );
+			$actions .= '
+	<li>
+		<a href="'.$trash_lnk_url.'" title="' . __( 'Move Attendee to Trash', 'event_espresso' ) . '" class="att-action-lnk">
+			<img width="14" height="14" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/trash-16x16.png" alt="'. __('Edit Attendee Details', 'event_espresso') .'" ">
+		</a>
+	</li>';
+		} else {
+			// restore price link
+			$restore_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'restore_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'restore_attendees_nonce' );
+			$actions .= '
+	<li>
+		<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Attendee', 'event_espresso' ) . '" class="att-action-lnk">
+			<img width="16" height="16" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/restore-16x16.png" alt="'. __('Edit Attendee Details', 'event_espresso') .'" ">
+		</a>
+	</li>';
+			
+			// delete price link
+			$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_attendees', 'id'=>$item->ID(), 'noheader' => TRUE ), ATT_ADMIN_URL ), 'delete_attendees_nonce' );
+			$actions .= '
+	<li>
+		<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Attendee Permanently', 'event_espresso' ) . '" class="att-action-lnk">
+			<img width="15" height="15" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/delete-16x16.png" alt="'. __('Delete Attendee Permanently', 'event_espresso') .'" ">
+		</a>
+	</li>';
+		}
+
+		$actions .= '
+</ul>';		
 		return $actions;
 		
 	}

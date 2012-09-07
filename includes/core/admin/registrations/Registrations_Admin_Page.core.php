@@ -475,6 +475,7 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 	*/
 	public function _reg_registrant_side_meta_box() {
 
+		$this->template_args['ATT_ID'] = $this->_registration->ATT_ID;
 		$this->template_args['fname'] = $this->_registration->ATT_fname;
 		$this->template_args['lname'] = $this->_registration->ATT_lname;
 		$this->template_args['email'] = $this->_registration->ATT_email;

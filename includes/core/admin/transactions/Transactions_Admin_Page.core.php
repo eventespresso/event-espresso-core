@@ -506,19 +506,37 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	
 		global $wpdb, $org_options;
 		
-		extract( $metabox['args'] );
+		extract( $metabox['args'] );		
+		//printr( $metabox['args'] );
 		
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
 		$this->template_args['items'] = array();
-
 		foreach ( $cart_items as $line_item_ID => $item ) {
 			$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['price_desc'];
+			//printr( $item, '$item' );
 			foreach ( $item['attendees'] as $att_nmbr => $attendee ) {
 				// check for attendee object
-				$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : new EE_Attendee();
+				$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
+				if ( ! $attendee['att_obj'] ) {
+					$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
+				    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Attendee.model.php' );
+				    $ATT_MDL = EEM_Attendee::instance();
+					if ( ! $attendee['att_obj'] = $ATT_MDL->find_existing_attendee( $where_cols_n_values )) {
+						$attendee['att_obj'] = new EE_Attendee;
+					}	 
+				}
 				// check for reg object
-				$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : new EE_Registration();		
+				$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
+				if ( ! $attendee['reg_obj'] ) {
+					$where_cols_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
+				    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php' );
+				    $REG_MDL = EEM_Registration::instance();
+					if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
+						$attendee['reg_obj'] = new EE_Registration;
+					}	 
+				}
+				
 				foreach ( $attendee as $key => $value ) {
 					$this->template_args['event_attendees'][ $event_name_and_price_option ][ $att_nmbr ][ $key ] = maybe_unserialize( $value );
 				}
@@ -546,6 +564,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	*/
 	function _txn_registrant_side_meta_box() {
 	
+		$this->template_args['ATT_ID'] = $this->_transaction->ATT_ID;
 		$this->template_args['prime_reg_fname'] = $this->_transaction->ATT_fname;
 		$this->template_args['prime_reg_lname'] = $this->_transaction->ATT_lname;
 		$this->template_args['prime_reg_email'] = $this->_transaction->ATT_email;
