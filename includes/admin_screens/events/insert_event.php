@@ -325,7 +325,7 @@ function add_event_to_db( ) {
 					// add edited ticket prices to list of ticket prices to save
 					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
 //							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
-						if ( is_array( $quick_edit_ticket_price[$PRC_ID] )) {
+						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
 							$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[$PRC_ID] );
 //								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
 						}
