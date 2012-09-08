@@ -41,7 +41,7 @@ function add_new_event_category() {
 						</tr>
 						<tr>
 							<td colspan="2"><div class="postbox">
-									<?php //the_editor('', $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);
+									<?php
 										$args = array("textarea_rows" => 5, "textarea_name" => "category_desc", "editor_class" => "my_editor_custom");
 										wp_editor('', "category_desc", $args);
 									?>
