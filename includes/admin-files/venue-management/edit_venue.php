@@ -216,7 +216,7 @@ function edit_event_venue() {
 						<div class="postbox">
 						<?php 
 							$args = array("textarea_rows" => 5, "textarea_name" => "venue_desc", "editor_class" => "my_editor_custom");
-							wp_editor('', "venue_desc", $args);
+							wp_editor( espresso_admin_format_content($meta['description']), "venue_desc", $args);
 						?>	
 							<table id="venue-descr-add-form"  cellspacing="0">
 								<tbody>
