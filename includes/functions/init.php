@@ -58,6 +58,7 @@ function espresso_admin_init() {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
 
 		add_action('wp_dashboard_setup', 'espresso_dashboard_init');
+		do_action('action_hook_espresso_require_template', 'init.php'); 
 
 		if (!empty($_REQUEST['page'])) {
 
