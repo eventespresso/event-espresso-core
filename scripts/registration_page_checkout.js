@@ -420,6 +420,7 @@
 		if ( verify_all_questions_answered( form_to_check )) {
 
 			$('#mer-reg-page-step-'+step+'-ajax').val(1);
+			$('#mer-reg-page-step-'+step+'-noheader').val('true');
 			$('#mer-reg-page-step-'+step+'-action').attr( 'name', 'action' );		
 			var form_data = $('#mer-registration-frm-'+step).serialize();
 //alert	(form_data);
