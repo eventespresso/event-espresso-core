@@ -14,11 +14,11 @@ function espresso_define_tables_and_paths() {
 	
 	// add ESPRESSO directories to include_path
 	set_include_path(
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'core' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'models' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'classes' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'functions' . DS . PS .
-		dirname( __FILE__ ) . DS . 'gateways' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'core' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'models' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'classes' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'includes' . DS . 'functions' . DS . PS .
+		dirname( espresso_main_file() ) . DS . 'gateways' . DS . PS .
 		get_include_path()
 	);
 	
@@ -171,7 +171,8 @@ function espresso_get_user_id() {
 function espresso_load_org_options() {
 	global $org_options, $espresso_wp_user;
 	$org_options = get_user_meta($espresso_wp_user, 'events_organization_settings', true);
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
+	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Log.class.php');
+	require_once( 'EE_Log.class.php' );
 	do_action('action_hook_espresso_debug_file');
 	$req_vars = '';
 	foreach ( $_REQUEST as $k => $v ){
@@ -192,7 +193,8 @@ function espresso_load_org_options() {
  */
 function espresso_EE_Session() {
 	global $EE_Session;
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
+	//require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Session.class.php');
+	require_once( 'EE_Session.class.php' );
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
 	if (!empty($_POST['clear_cart'])) {
