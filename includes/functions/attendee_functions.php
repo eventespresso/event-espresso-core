@@ -1,8 +1,10 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 //Attendee functions
 
 function add_attendee_questions($questions, $registration_id, $attendee_id=0, $extra=array()) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	if (array_key_exists('session_vars', $extra)) {
 

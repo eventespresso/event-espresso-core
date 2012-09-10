@@ -1,9 +1,11 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 //Show pricing in a dropdown or text
-if (!function_exists('espresso_price_select_action')) {
+/*if (!function_exists('espresso_price_select_action')) {
 
 	function espresso_price_select_action($event_id, $atts = '') {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$html = '';
 		$html .= is_admin() ? '' : '<p class="event_prices">';
@@ -14,16 +16,19 @@ if (!function_exists('espresso_price_select_action')) {
 
 		return;
 	}
-
 	add_action('action_hook_espresso_price_select', 'espresso_price_select_action', 10, 2);
 }
+*/
+
+
 
 /**
  * 		@ display admin update & error messages
  * 		@access public
  * 		@return void
  * */
-function display_espresso_admin_notices() {
+/*function display_espresso_admin_notices() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 	global $notices;
 
@@ -45,10 +50,13 @@ function display_espresso_admin_notices() {
 		}
 	}
 }
+add_action('admin_notices', 'display_espresso_admin_notices');*/
 
-add_action('admin_notices', 'display_espresso_admin_notices');
+
+
 
 function espresso_site_license() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $org_options;
 // PUE Auto Upgrades stuff
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/pue/pue-client.php') && !empty($org_options['site_license_key'])) {
@@ -68,10 +76,13 @@ function espresso_site_license() {
 //$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //let's make sure this addon is in the updater routine!
 	}
 }
-
 add_action('action_hook_espresso_require_admin_files', 'espresso_site_license');
 
+
+
+
 function espresso_admin_page_footer() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
 	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
 }

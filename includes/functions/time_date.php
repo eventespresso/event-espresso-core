@@ -1,6 +1,5 @@
-<?php
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 //Time and date functions
 
@@ -12,6 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
   Return:	$output_countdown
   ------------------------------------------------------------- */
 function espresso_countdown($time_start, $time_end, $expired_message) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 	if (get_option('timezone_string') != '') {
 		date_default_timezone_set(get_option('timezone_string'));
@@ -62,6 +62,7 @@ function espresso_countdown($time_start, $time_end, $expired_message) {
   ------------------------------------------------------------- */
 
 function espresso_countup($time_start, $time_end, $expired_message) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 	if (get_option('timezone_string') != '') {
 		date_default_timezone_set(get_option('timezone_string'));
@@ -108,6 +109,7 @@ function espresso_countup($time_start, $time_end, $expired_message) {
   ------------------------------------------------------------- */
 
 function espresso_duration($event_start, $event_end, $allday) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 	if (get_option('timezone_string') != '') {
 		date_default_timezone_set(get_option('timezone_string'));
@@ -151,6 +153,7 @@ function espresso_duration($event_start, $event_end, $allday) {
 if (!function_exists('espresso_get_time_reg_limit')) {
 
 	function espresso_get_time_reg_limit($time_id=0) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		if ($time_id == 0)
 			return 0;
 		global $wpdb;
@@ -302,6 +305,7 @@ function espresso_time_id_hidden_field($event_id, $multi_reg = 0) {
 if (!function_exists('event_espresso_get_time')) {
 
 	function event_espresso_get_time($event_id, $format = 'start_time') {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 		$event_times = $wpdb->get_results("SELECT " . $format . " FROM " . EVENTS_START_END_TABLE . " WHERE event_id='" . $event_id . "' LIMIT 0,1 ");
 		if ($wpdb->num_rows > 0) {
@@ -333,6 +337,7 @@ if (!function_exists('event_espresso_get_time')) {
 if (!function_exists('event_espresso_display_selected_time')) {
 
 	function event_espresso_display_selected_time($time_id = 0, $format = 'NULL') {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 		$html = '';
 		$event_times = $wpdb->get_results("SELECT * FROM " . EVENTS_START_END_TABLE . " WHERE id='" . $time_id . "'");
@@ -361,6 +366,7 @@ if (!function_exists('event_espresso_display_selected_time')) {
 if (!function_exists('event_espresso_firstdate_later')) {
 
 	function event_espresso_firstdate_later($first_date, $second_date) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$start = strtotime($first_date);
 		$end = strtotime($second_date);
 		if ($start - $end > 0)
@@ -382,6 +388,7 @@ if (!function_exists('event_espresso_firstdate_later')) {
 if (!function_exists('event_espresso_no_format_date')) {
 
 	function event_espresso_no_format_date($date, $format = '') {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$format = $format == '' ? get_option('date_format') : $format;
 		if (empty($date)) {
 			return NULL;
@@ -402,6 +409,7 @@ if (!function_exists('event_espresso_no_format_date')) {
 if (!function_exists('event_date_display')) {
 
 	function event_date_display($date, $format = '') {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$format = $format == '' ? get_option('date_format') : $format;
 		if (empty($date)) {
 			$event_date_display = '';
@@ -420,6 +428,7 @@ if (!function_exists('event_date_display')) {
 if (!function_exists('event_espresso_event_start_date')) {
 
 	function event_espresso_event_start_date($event_id) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 		$sql = "SELECT e.start_date FROM " . EVENTS_DETAIL_TABLE . " e
 		WHERE e.id = '" . $event_id . "'";
@@ -434,6 +443,7 @@ function event_espresso_datetime2mysqldatetime($datetime) {// "25.12.2010 12:10:
 }
 
 function event_espresso_mysqldatetime2datetime($mysql_datetime) {// "2010-12-25 12:10:00" -> "25.12.2010 12:10:00"
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	$d = split(' ', $mysql_datetime); // "2010-12-25" -> "25.12.2010"
 	if ($d && count($d) > 1) {
 		list($year, $month, $day) = split("-", $d[0]);
@@ -454,6 +464,7 @@ function event_espresso_mysqldatetime2datetime($mysql_datetime) {// "2010-12-25 
 if (!function_exists('espresso_event_time')) {
 
 	function espresso_event_time($event_id, $type, $format = '') {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		global $wpdb;
 
 		$sql = "SELECT e.id, e.start_date start_date, e.end_date end_date, ese.start_time start_time, ese.end_time end_time ";
@@ -498,6 +509,7 @@ if (!function_exists('espresso_event_time')) {
 }
 
 function eventespresso_ddtimezone($event_id = 0) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 	$tz_event = $wpdb->get_var($wpdb->prepare("SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'"));
 
@@ -581,6 +593,7 @@ function eventespresso_ddtimezone($event_id = 0) {
 }
 
 function espresso_ddtimezone_simple($event_id = 0) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 	$tz_event = $wpdb->get_var($wpdb->prepare("SELECT timezone_string FROM " . EVENTS_DETAIL_TABLE . " WHERE id = '" . $event_id . "'"));
 
@@ -671,6 +684,7 @@ function espresso_ddtimezone_simple($event_id = 0) {
   } */
 
 function formatOffset($offset) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	$hours = $offset / 3600;
 	$remainder = $offset % 3600;
 	$sign = $hours > 0 ? '+' : '-';
@@ -685,6 +699,7 @@ function formatOffset($offset) {
 }
 
 function date_at_timezone($format, $locale, $timestamp=null) {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 //http://php.net/manual/en/function.date.php
 //Examples
 //$t = time();
@@ -735,6 +750,7 @@ if (!function_exists('time_to_24hr')) {
 
 function espresso_event_months_dropdown( $current_value = FALSE ) {
 
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	global $wpdb;
 	$eemd = '';
 	$current_value = $current_value ? $current_value : 0;
