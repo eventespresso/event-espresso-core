@@ -1,5 +1,4 @@
-<?php
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * * Singleton logging class. Can be called from anywhere in the plugin to log data to a log file.
  * * Defaults to wp-content/uploads/espresso/logs/espresso_log.txt
@@ -48,7 +47,7 @@ class espresso_log {
 	public function log($message) {
 		if (is_writable($this->file)) {
 			$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
-			fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
+			fwrite($fh, '[' . date("m.d.y H:i:s") . '], ' . basename($message['file']) . ' ->' . $message['function'] . ',  ' . $message['status'] . "\n");
 			fclose($fh);
 		} else {
 			global $notices;
@@ -60,7 +59,7 @@ class espresso_log {
 		global $remote_log;
 		if (empty($remote_log))
 			$remote_log = '';
-		$remote_log .= '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n";
+		$remote_log .= '[' . date("m.d.y H:i:s") . '], ' . basename($message['file']) . ' -> ' . $message['function'] . ',  ' . $message['status'] . "\n";
 	}
 
 	public function send_log($url) {
