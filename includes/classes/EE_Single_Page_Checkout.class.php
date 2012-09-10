@@ -1,5 +1,5 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-/**
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
  * Event Espresso
  *
  * Event Registration and Management Plugin for WordPress
@@ -85,24 +85,19 @@ class EE_Single_Page_Checkout {
 		$this->load_classes();
 
 		global $is_UI_request;
-		if ( $is_UI_request ) {
-			$this->set_templates();
+		$this->set_templates();
 		
-			$e_reg_pages = array(
-					'register',
-					'process_reg_step_1',
-					'process_reg_step_2',
-					'process_reg_step_3',
-					'event_queue'
-					);
-			if (( isset( $_REQUEST['e_reg'] ) && ( in_array($_REQUEST['e_reg'], $e_reg_pages))) || $this->_ajax ) {
+		$e_reg_pages = array( 'register', 'process_reg_step_1', 'process_reg_step_2', 'process_reg_step_3', 'event_queue' );
+		if (( isset( $_REQUEST['e_reg'] ) && ( in_array($_REQUEST['e_reg'], $e_reg_pages))) || $this->_ajax ) {
 		
+			if ( $is_UI_request ) {
 				add_action('init', array(&$this, 'load_css'), 20);
 				add_action('init', array(&$this, 'load_js'), 20);
-				// hooks that happen during the regevent action and other pathing stuff
-				add_action('init', array(&$this, 'set_paths_and_routing'), 30);
-			
 			}
+			
+			// hooks that happen during the regevent action and other pathing stuff
+			add_action('init', array(&$this, 'set_paths_and_routing'), 30);
+
 		}
 	
 	}
@@ -140,11 +135,11 @@ class EE_Single_Page_Checkout {
 	 */
 	public function set_templates() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$this->_templates['confirmation_page'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/confirmation_page.template.php';
 		$this->_templates['registration_page_wrapper'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_wrapper.template.php';
 		$this->_templates['registration_page_step_1'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_1.template.php';
 		$this->_templates['registration_page_step_2'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_2.template.php';
 		$this->_templates['registration_page_step_3'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/registration_page_step_3.template.php';
+		$this->_templates['confirmation_page'] = EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/reg_page_checkout/confirmation_page.template.php';
 	}
 
 	/**
@@ -252,6 +247,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function _event_reg_single_page_checkout() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//echo '<h1>FUNCTION: '.__FUNCTION__.'  ( line no: '. __LINE__ .' )</h1>';
 		//echo printr( $this->cart->whats_in_the_cart(), 'whats_in_the_cart' );
 
@@ -713,6 +709,7 @@ class EE_Single_Page_Checkout {
 	 */
 	private function _get_event_reg_details($event_id) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $wpdb;
 
 		$SQL = "SELECT event_code, use_coupon_code, use_groupon_code, category_id, coupon_id, tax_percentage, tax_mode, early_disc, early_disc_date, early_disc_percentage, question_groups, allow_overflow, overflow_event_id, event_meta, require_pre_approval FROM " . EVENTS_DETAIL_TABLE . " WHERE id=%d";
@@ -737,6 +734,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function process_registration_step_1() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 
 		$success_msg = FALSE;
@@ -859,6 +857,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function process_registration_step_2() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session, $espresso_notices;
 
 		$success_msg = FALSE;
@@ -937,6 +936,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function display_data_for_confirmation() {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $org_options, $EE_Session;
 
 		$session_data = $EE_Session->get_session_data();
@@ -1261,6 +1261,7 @@ class EE_Single_Page_Checkout {
 	 */
 	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_notices;
 		$valid_callback = FALSE;
 		// check for valid callback function
