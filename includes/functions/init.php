@@ -1,4 +1,6 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
+
 
 function espresso_load_jquery() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
@@ -10,6 +12,7 @@ function espresso_load_jquery() {
 
 
 function espresso_load_admin_ajax_callbacks() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 	function event_list_save_state_callback() {
 		check_ajax_referer('event_list_state', 'nonce');
@@ -55,7 +58,6 @@ function espresso_admin_init() {
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/admin_screen.php');
 
 		add_action('wp_dashboard_setup', 'espresso_dashboard_init');
-		do_action('action_hook_espresso_require_template', 'init.php');
 
 		if (!empty($_REQUEST['page'])) {
 
@@ -257,6 +259,7 @@ function espresso_admin_init() {
 }
 
 function ee_update_questions_sequence() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	global $wpdb;
 	//Update the questions when re-ordering
 	if (!empty($_POST['update_sequence'])) {
@@ -269,6 +272,7 @@ function ee_update_questions_sequence() {
 }
 
 function ee_update_question_groups_sequence() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	global $wpdb;
 	//Update the questions when re-ordering
 	if (!empty($_POST['update_sequence'])) {
@@ -283,8 +287,10 @@ function ee_update_question_groups_sequence() {
 
 function espresso_test_for_reg_page() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	global $org_options;
+	global $org_options, $current_ee_page;
 	$this_is_a_reg_page = FALSE;
+	
+	$page_id = isset( $_GET['page_id'] ) ? absint( $_GET['page_id'] ) : ''; 
 
 	if (isset($org_options['event_page_id'])) {
 		$reg_page_ids = array(
@@ -293,20 +299,23 @@ function espresso_test_for_reg_page() {
 				'cancel_return' => $org_options['cancel_return'],
 				'notify_url' => $org_options['notify_url']
 		);
-
-		if (empty($_GET['page_id'])) {
-			foreach ($reg_page_ids as $reg_page_id) {
-				$link = get_permalink($reg_page_id);
-				$offset = strlen($_SERVER['SERVER_NAME']) + strpos($link, $_SERVER['SERVER_NAME']);
-				$stripped_link = substr($link, $offset);
-				if (strpos($_SERVER['REQUEST_URI'], $stripped_link) !== false) {
+		
+		
+		if ( empty( $page_id )) {
+			foreach ( $reg_page_ids as $reg_page_id ) {
+				$link = get_permalink( $reg_page_id );
+				$offset = strlen( $_SERVER['SERVER_NAME'] ) + strpos( $link, $_SERVER['SERVER_NAME'] );
+				$stripped_link = substr( $link, $offset );
+				if ( strpos( $_SERVER['REQUEST_URI'], $stripped_link ) !== false) {
 					$this_is_a_reg_page = TRUE;
+					$current_ee_page = $reg_page_id;
 					break;
 				}
 			}
 		} else {
-			if (in_array($_GET['page_id'], $reg_page_ids)) {
+			if ( in_array( $page_id, $reg_page_ids )) {
 				$this_is_a_reg_page = TRUE;
+				$current_ee_page = $page_id;
 			}
 		}
 	}
@@ -317,12 +326,12 @@ function espresso_test_for_reg_page() {
 function espresso_frontend_init() {
 
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
-	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
+//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event_Object.class.php';
+//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Event.class.php';
+//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php';
+//	require_once EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Venue.class.php';
 
-	event_espresso_require_gateway('process_payments.php');
+	//event_espresso_require_gateway('process_payments.php');
 
 	global $espresso_reg_page;
 	$espresso_reg_page = espresso_test_for_reg_page();
@@ -340,24 +349,17 @@ function espresso_frontend_init() {
 	if (file_exists(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php') && !empty($org_options['template_settings']['use_custom_post_types'])) {
 		require(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/custom_post_type.php');
 	}
-	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
-
+	
 	add_action ( 'action_hook_espresso_regevent_default_action', 'display_all_events', 10, 1 );
 	add_action ( 'action_hook_espresso_event_registration', 'event_details_page', 10, 2 );
 
-	if ( ! isset( $_REQUEST['e_reg'] ) && ! is_admin() ) {
-		wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
-		wp_enqueue_style('ticket_selector');
-	}
-
-
-	do_action('action_hook_espresso_require_template', 'init.php');
-	//These may be loaded in posts and pages outside of the default EE pages
-	require_once(espresso_get_event_list_template());
-	//This is the form page for registering the attendee
-	require_once(espresso_get_registration_page_template());
-	//List Attendees - Used with the [LISTATTENDEES] shortcode
-	require_once(espresso_get_attendee_list_template());
+//	do_action('action_hook_espresso_require_template', 'init.php');
+//	//These may be loaded in posts and pages outside of the default EE pages
+//	require_once(espresso_get_event_list_template());
+//	//This is the form page for registering the attendee
+//	require_once(espresso_get_registration_page_template());
+//	//List Attendees - Used with the [LISTATTENDEES] shortcode
+//	require_once(espresso_get_attendee_list_template());
 
 	// Export iCal file
 	if (!empty($_REQUEST['iCal'])) {
@@ -434,14 +436,17 @@ function espresso_add_rewrite_rules() {
 		$reg_page_url_slug = $wpdb->get_var($wpdb->prepare($SQL, $reg_page_id));
 
 		// rules for event slug pretty links
-		add_rewrite_rule($reg_page_url_slug . '/([^/]+)?/$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
-		add_rewrite_rule($reg_page_url_slug . '/([^/]+)?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
+		add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&event_slug=$matches[1]', 'top');
+		//add_rewrite_rule( $reg_page_url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $reg_page_url_slug . '&e_reg=$matches[1]', 'top');
 	}
+	
 }
 
 function espresso_flush_rewrite_rules() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-	if (is_admin() && isset($_REQUEST['page']) && $_REQUEST['page'] == 'event_espresso') {
+	global $pagenow;
+	if ( is_admin() && (( isset($_REQUEST['page']) && $_REQUEST['page'] == 'event_espresso' ) || ( $pagenow == 'options-permalink.php' ))) {
+		espresso_add_rewrite_rules();
 		flush_rewrite_rules();
 	}
 }
