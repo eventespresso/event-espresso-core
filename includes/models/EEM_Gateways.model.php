@@ -1,8 +1,5 @@
-<?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 /**
  * Event Espresso
  *
@@ -61,6 +58,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function __construct() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//so client code can check for instatiation b4 including
 		define('ESPRESSO_GATEWAYS', TRUE);
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Gateway.class.php');
@@ -83,6 +81,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _load_session_gateway_data() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 		$this->_session_gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
 		if (!empty($this->_session_gateway_data['selected_gateway'])) {
@@ -107,6 +106,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _set_active_gateways() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_session_gateway_data['active_gateways'])) {
 			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
 		} else {
@@ -127,7 +127,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _load_payment_settings() {
-
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_session_gateway_data['payment_settings'])) {
 			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
 		} else {
@@ -151,6 +151,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _scan_and_load_all_gateways() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// on the settings page, scan and load all the gateways
 		if (is_admin() && !empty($_GET['page']) && $_GET['page'] == 'payment_gateways') {
 			$this->_load_all_gateway_files();
@@ -195,6 +196,7 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function _load_all_gateway_files() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_notices;
 		$gateways = array();
 		$upload_gateways = array();
@@ -248,6 +250,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	array on success FALSE on fail
 	 */
 	public function payment_settings($gateway = FALSE) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_payment_settings[$gateway])) {
 			return $this->_payment_settings[$gateway];
 		} else {
@@ -265,6 +268,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function update_payment_settings($gateway = FALSE, $settings = FALSE) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway || !$settings) {
 			return FALSE;
 		}
@@ -290,6 +294,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	array on success FALSE on fail
 	 */
 	public function is_active($gateway = FALSE) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway) {
 			return FALSE;
 		}
@@ -309,6 +314,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	array on success FALSE on fail
 	 */
 	public function is_in_uploads($gateway = FALSE) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway) {
 			return FALSE;
 		}
@@ -328,6 +334,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_active($gateway = FALSE) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway) {
 			return FALSE;
 		}
@@ -355,6 +362,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function unset_active($gateway = FALSE) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway) {
 			return FALSE;
 		}
@@ -382,7 +390,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_selected_gateway($gateway = FALSE) {
-	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!$gateway || !array_key_exists($gateway, $this->_active_gateways)) {
 			return FALSE;
 		} 
@@ -409,6 +417,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE 
 	 */
 	public function unset_selected_gateway() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->_selected_gateway = NULL;
 		$this->_hide_other_gateways = FALSE;
 		$this->_set_session_data();
@@ -426,6 +435,7 @@ Class EEM_Gateways {
 	 * 		@return 	string
 	 */
 	public function selected_gateway() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		return $this->_selected_gateway;
 	}
 
@@ -438,6 +448,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_form_url($base_url = FALSE) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!$base_url) {
 			return FALSE;
 		}
@@ -459,6 +470,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	string on success FALSE on fail
 	 */
 	public function type() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_payment_settings[$this->_selected_gateway]['type'])) {
 			return $this->_payment_settings[$this->_selected_gateway]['type'];
 		} else {
@@ -474,6 +486,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	string on success FALSE on fail
 	 */
 	public function display_name() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_payment_settings[$this->_selected_gateway]['display_name'])) {
 			return $this->_payment_settings[$this->_selected_gateway]['display_name'];
 		} else {
@@ -489,6 +502,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	string on success FALSE on fail
 	 */
 	public function off_site_form() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!empty($this->_off_site_form)) {
 			return $this->_off_site_form;
 		} else {
@@ -505,6 +519,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_off_site_form($form_data = FALSE) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!$form_data) {
 			return FALSE;
 		}
@@ -521,6 +536,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	private function _set_session_data() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $EE_Session;
 		
 		$session_data = array(
@@ -543,6 +559,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_ajax( $on_or_off ) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! is_bool( $on_or_off )) {
 			$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
 			return FALSE;
@@ -571,6 +588,10 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function reset_session_data() {
+
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $EE_Session;
+	
 		foreach ($this->_active_gateways as $gateway => $in_uploads) {
 			if (!empty($this->_gateway_instances[$gateway])) {
 				$this->_gateway_instances[$gateway]->reset_session_data();
@@ -578,21 +599,28 @@ Class EEM_Gateways {
 				return FALSE;
 			}
 		}
+		
 		$this->_selected_gateway = NULL;
 		$this->_hide_other_gateways = FALSE;
 		$this->_off_site_form = NULL;
 		$this->_ajax = TRUE;
 		$this->_payment_settings = array();
 		$this->_active_gateways = array();
-		global $EE_Session;
-		$EE_Session->set_session_data(array(
-				'selected_gateway' => $this->_selected_gateway,
-				'hide_other_gateways' => $this->_hide_other_gateways,
-				'off_site_form' => $this->_off_site_form,
-				'ajax' => $this->_ajax,
-				'payment_settings' => $this->_payment_settings,
-				'active_gateways' => $this->_active_gateways
-						), 'gateway_data');
+		
+		$EE_Session->set_session_data(
+				array(
+							'selected_gateway' => $this->_selected_gateway,
+							'hide_other_gateways' => $this->_hide_other_gateways,
+							'off_site_form' => $this->_off_site_form,
+							'ajax' => $this->_ajax,
+							'payment_settings' => $this->_payment_settings,
+							'active_gateways' => $this->_active_gateways
+						), 
+						'gateway_data'
+				);
+						
+		espresso_clear_session();
+		
 		return TRUE;
 	}
 
@@ -605,6 +633,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function send_invoice($id) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$gateway = 'Invoice';
 		$classname = 'EE_' . $gateway;
 		$filename = $classname . '.class.php';
@@ -629,13 +658,163 @@ Class EEM_Gateways {
 
 
 
+
+	/**
+	 * 		process_gateway_selection()
+	 * 		@access public
+	 * 		@return 	mixed	array on success or FALSE on fail
+	 */
+	public function process_gateway_selection() {	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $espresso_notices;
+		// check for off site payment
+		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
+			$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
+		} else {
+			$espresso_notices['errors'][] =  __( 'An error occured. No gateway has been selected.', 'event_espresso' );
+		}
+		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
+	}
+
+
+
+	/**
+	 * 		set_billing_info_for_confirmation
+	 * 		@access public
+	* 		@param	array	$billing_info
+	 * 		@return 	mixed	array on success or FALSE on fail
+	 */
+	public function set_billing_info_for_confirmation( $billing_info = FALSE ) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		if( ! is_array( $billing_info )) {
+			return FALSE;
+		}
+		$confirm_info = $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
+		$confirm_info['gateway'] = $this->display_name();
+		return $confirm_info;
+	}
+
+
+
+	/**
+	 * 		process_reg_step_3
+	 * 		@access public
+	* 		@param	int	$id
+	 * 		@return 	mixed	void or FALSE on fail
+	 */
+	public function process_reg_step_3() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		$return_page_url = $this->_get_return_page_url();
+		// free event?
+		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
+			// becuz this was a free event we need to generate some pseudo gateway results
+			$txn_results = array(
+					'approved' => TRUE,
+					'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
+					'status' => 'Approved',
+					'details' => 'free event',
+					'amount' => 0.00,
+					'method' => 'none'
+			);
+			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
+			$response = array(
+					'msg' => array('success'=>TRUE),
+					'forward_url' => $this->_get_return_page_url()
+			);
+
+		} else {
+			$response = array(
+					'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
+					'forward_url' => $this->_get_return_page_url()
+				);
+		}
+		return $response;
+	}	
+
+		/**
+	 * 		set_return_page_url
+	 *
+	 * 		@access 		public
+	 * 		@return 		void
+	 */
+	private function _get_return_page_url() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $org_options;
+		$return_page_id = $org_options['return_url'];
+		// get permalink for thank you page
+		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
+		return rtrim( get_permalink( $return_page_id ), '/' );
+	}
+
+
+	/**
+	 * Replaces all but the last for digits with x's in the given credit card number
+	 * @param int|string $cc The credit card number to mask
+	 * @return string The masked credit card number
+	 */
+	function MaskCreditCard($cc){
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		// Get the cc Length
+		$cc_length = strlen($cc);
+		// Replace all characters of credit card except the last four and dashes
+		for($i=0; $i<$cc_length-4; $i++){
+			if($cc[$i] == '-'){continue;}
+			$cc[$i] = 'X';
+		}
+		// Return the masked Credit Card #
+		return $cc;
+	}
+	
+	
+	
+	/**
+	 * Add dashes to a credit card number.
+	 * @param int|string $cc The credit card number to format with dashes.
+	 * @return string The credit card with dashes.
+	 */
+	function FormatCreditCard($cc) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		// Clean out extra data that might be in the cc
+		$cc = str_replace(array('-',' '),'',$cc);
+		// Get the CC Length
+		$cc_length = strlen($cc);
+		// Initialize the new credit card to contian the last four digits
+		$newCreditCard = substr($cc,-4);
+		// Walk backwards through the credit card number and add a dash after every fourth digit
+		for($i=$cc_length-5;$i>=0;$i--){
+			// If on the fourth character add a dash
+			if((($i+1)-$cc_length)%4 == 0){
+				$newCreditCard = '&nbsp;'.$newCreditCard;
+			}
+			// Add the current character to the new credit card
+			$newCreditCard = $cc[$i].$newCreditCard;
+		}
+		// Return the formatted credit card number
+		return $newCreditCard;
+	}
+		
+	public function thank_you_page() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+		global $EE_Session;
+		$session_data = $EE_Session->get_session_data();
+		if (empty($session_data['txn_results']['approved'])
+						&& !empty($this->_selected_gateway)
+						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
+			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
+		}
+	}
+
+
+
+
 	/**
 	 * 		get_country_ISO2_codes
 	 * 		@access public
 	 * 		@return 	array
 	 */
 	public function get_country_ISO2_codes() {
-		
+	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		return array(
 					'US' => 'United States',
 					'AU' => 'Australia',
@@ -866,144 +1045,5 @@ Class EEM_Gateways {
 
 
 
-	/**
-	 * 		process_gateway_selection()
-	 * 		@access public
-	 * 		@return 	mixed	array on success or FALSE on fail
-	 */
-	public function process_gateway_selection() {	
-
-			global $espresso_notices;
-			// check for off site payment
-			if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
-				$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
-			} else {
-				$espresso_notices['errors'][] =  __( 'An error occured. No gateway has been selected.', 'event_espresso' );
-			}
-			$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
-	}
-
-
-
-	/**
-	 * 		set_billing_info_for_confirmation
-	 * 		@access public
-	* 		@param	array	$billing_info
-	 * 		@return 	mixed	array on success or FALSE on fail
-	 */
-	public function set_billing_info_for_confirmation( $billing_info = FALSE ) {
-		if( ! is_array( $billing_info )) {
-			return FALSE;
-		}
-		$confirm_info = $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
-		$confirm_info['gateway'] = $this->display_name();
-		return $confirm_info;
-	}
-
-
-
-	/**
-	 * 		process_reg_step_3
-	 * 		@access public
-	* 		@param	int	$id
-	 * 		@return 	mixed	void or FALSE on fail
-	 */
-	public function process_reg_step_3() {
-		$return_page_url = $this->_get_return_page_url();
-		// free event?
-		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
-			// becuz this was a free event we need to generate some pseudo gateway results
-			$txn_results = array(
-					'approved' => TRUE,
-					'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
-					'status' => 'Approved',
-					'details' => 'free event',
-					'amount' => 0.00,
-					'method' => 'none'
-			);
-			$EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
-			$response = array(
-					'msg' => array('success'=>TRUE),
-					'forward_url' => $this->_get_return_page_url()
-			);
-
-		} else {
-			$response = array(
-					'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
-					'forward_url' => $this->_get_return_page_url()
-				);
-		}
-		return $response;
-	}	
-
-		/**
-	 * 		set_return_page_url
-	 *
-	 * 		@access 		public
-	 * 		@return 		void
-	 */
-	private function _get_return_page_url() {
-		global $org_options;
-		$return_page_id = $org_options['return_url'];
-		// get permalink for thank you page
-		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		return rtrim( get_permalink( $return_page_id ), '/' );
-	}
-
-
-	/**
-	 * Replaces all but the last for digits with x's in the given credit card number
-	 * @param int|string $cc The credit card number to mask
-	 * @return string The masked credit card number
-	 */
-	function MaskCreditCard($cc){
-		// Get the cc Length
-		$cc_length = strlen($cc);
-		// Replace all characters of credit card except the last four and dashes
-		for($i=0; $i<$cc_length-4; $i++){
-			if($cc[$i] == '-'){continue;}
-			$cc[$i] = 'X';
-		}
-		// Return the masked Credit Card #
-		return $cc;
-	}
-	
-	
-	
-	/**
-	 * Add dashes to a credit card number.
-	 * @param int|string $cc The credit card number to format with dashes.
-	 * @return string The credit card with dashes.
-	 */
-	function FormatCreditCard($cc)
-	{
-		// Clean out extra data that might be in the cc
-		$cc = str_replace(array('-',' '),'',$cc);
-		// Get the CC Length
-		$cc_length = strlen($cc);
-		// Initialize the new credit card to contian the last four digits
-		$newCreditCard = substr($cc,-4);
-		// Walk backwards through the credit card number and add a dash after every fourth digit
-		for($i=$cc_length-5;$i>=0;$i--){
-			// If on the fourth character add a dash
-			if((($i+1)-$cc_length)%4 == 0){
-				$newCreditCard = '&nbsp;'.$newCreditCard;
-			}
-			// Add the current character to the new credit card
-			$newCreditCard = $cc[$i].$newCreditCard;
-		}
-		// Return the formatted credit card number
-		return $newCreditCard;
-	}
-		
-	public function thank_you_page() {
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
-		if (empty($session_data['txn_results']['approved'])
-						&& !empty($this->_selected_gateway)
-						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
-			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page();
-		}
-	}
 	
 }
