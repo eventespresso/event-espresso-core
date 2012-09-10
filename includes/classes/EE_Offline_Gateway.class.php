@@ -1,9 +1,11 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 
 abstract class EE_Offline_Gateway extends EE_Gateway {
 
 
 	protected function __construct(EEM_Gateways &$model) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		parent::__construct($model);
 	}
 
@@ -13,6 +15,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function process_gateway_selection() {	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_notices;
 		$espresso_notices['success'][] = __('Off-line gateway selected', 'event_espresso');
 	}
@@ -26,12 +29,17 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$confirm_data = array();
 		$confirm_data['gateway'] = $this->_EEM_Gateways->display_name();
 		return $confirm_data;
 	}
 
+
+
+
 	public function set_transaction_details() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$txn_results = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
