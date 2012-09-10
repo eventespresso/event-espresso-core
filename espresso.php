@@ -66,6 +66,7 @@ require_once(dirname(__FILE__) . '/includes/functions/plugins_loaded.php');
 require_once(dirname(__FILE__) . '/includes/functions/init.php');
 require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
+
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
 add_action('plugins_loaded', 'espresso_setup_notices', 2);
 add_action('plugins_loaded', 'espresso_autoload', 3);
@@ -73,6 +74,8 @@ add_action('plugins_loaded', 'espresso_get_user_id', 4);
 add_action('plugins_loaded', 'espresso_load_org_options', 5);
 add_action('plugins_loaded', 'espresso_EE_Session', 6);
 add_action('plugins_loaded', 'espresso_init', 25);
+add_action('init', 'espresso_add_rewrite_rules');
+add_filter('query_vars', 'espresso_add_query_vars');
 
 if ( is_admin() ) {
 
@@ -83,6 +86,7 @@ if ( is_admin() ) {
 	add_action('admin_bar_menu', 'espresso_toolbar_items', 100);
 	add_action('init', 'espresso_admin_init', 25);
 	add_action('init', 'espresso_load_admin_ajax_callbacks', 25);
+	add_action('init', 'espresso_flush_rewrite_rules', 41);
 	add_filter('plugin_action_links', 'event_espresso_filter_plugin_actions', 10, 2);
 	
 } else {
@@ -91,11 +95,8 @@ if ( is_admin() ) {
 	add_action('init', 'espresso_export_invoice', 30);
 	add_action('init', 'espresso_export_ticket', 30);
 
-	add_filter('query_vars', 'espresso_add_query_vars');
 	add_action('init', 'espresso_load_jquery', 10);
 	add_action('init', 'espresso_frontend_init', 25);
-	add_action('init', 'espresso_add_rewrite_rules', 40);
-	add_action('init', 'espresso_flush_rewrite_rules', 41);
 	add_action('widgets_init', 'espresso_widget');
 	add_action('wp_head', 'espresso_info_header');
 	add_action('wp_print_styles', 'add_espresso_stylesheet', 20);
@@ -188,3 +189,46 @@ if ( is_admin() ) {
  */
 //echo get_option('plugin_error');
 //delete_option('plugin_error');
+
+$hookpoints = array(
+		'plugins_loaded',
+		'setup_theme	',
+		'after_setup_theme',
+		'set_current_user',
+		'init',
+		'widgets_init',
+		'wp_default_scripts',
+		'wp_default_styles',
+		'admin_bar_init',
+		'add_admin_bar_menus',
+		'wp_loaded',
+		'parse_request',
+		'send_headers',
+		'parse_query',
+		'pre_get_posts',
+		'posts_selection',
+		'wp',
+		'template_redirect',
+		'get_header',
+		'wp_head',
+		'wp_enqueue_scripts',
+		'wp_print_styles',
+		'wp_print_scripts',
+		'get_sidebar',
+		'pre_get_posts',
+		'pre_get_comments',
+		'wp_meta',
+		'get_footer',
+		'get_sidebar',
+		'wp_footer',
+		'wp_print_footer_scripts',
+		'admin_bar_menu',
+		'wp_before_admin_bar_render',
+		'wp_after_admin_bar_render',
+		'shutdown'
+	);
+	
+	foreach ( $hookpoints as $hookpoint ) {
+		$mark_hookpoint = create_function('$hookpoint', 'do_action("action_hook_espresso_log", "HOOK", "'.$hookpoint.'", "" );');
+		add_action( $hookpoint, $mark_hookpoint, 1 );		
+	}
