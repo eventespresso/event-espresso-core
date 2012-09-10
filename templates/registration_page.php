@@ -16,6 +16,8 @@ if (!function_exists('event_registration')) {
 		global $wpdb, $org_options;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin-files/gmap_incl.php');
+
 		$event_slug = (get_query_var('event_slug')) ? get_query_var('event_slug') : FALSE;
 
 
