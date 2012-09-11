@@ -301,7 +301,6 @@ function espresso_test_for_reg_page() {
 				'notify_url' => $org_options['notify_url']
 		);
 		
-		
 		if ( empty( $page_id )) {
 			foreach ( $reg_page_ids as $reg_page_id ) {
 				$link = get_permalink( $reg_page_id );

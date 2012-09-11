@@ -275,9 +275,11 @@ add_action( 'shutdown', 'espresso_printr_session' );
 function espresso_init() {
 
 	//Globals used throughout the site
-	global $espresso_premium, $is_UI_request;
+	global $espresso_premium, $is_UI_request, $is_ajax_request;
 	// is this request for UI or backend 
 	$is_UI_request = ( ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' ) ? TRUE : FALSE;
+	$is_ajax_request = ( isset( $_REQUEST['espresso_ajax'] ) && $_REQUEST['espresso_ajax'] == 1 ) ? TRUE : FALSE;
+
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'is_UI_request = ' . $is_UI_request );
 
 	//Set the default time zone
@@ -392,9 +394,12 @@ function espresso_check_for_import() {
  */
 function espresso_load_reg_page_files() {
 
-	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
 	global $org_options, $current_ee_page;
+	
+	$current_ee_page = isset( $current_ee_page ) ? $current_ee_page : $org_options['event_page_id'];
+	
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '$current_ee_page = ' . $current_ee_page );
+
 	$reg_pages = array(
 		$org_options['event_page_id']	 => 'event_page_id',
 		$org_options['return_url']	 => 'return_url',
@@ -531,7 +536,7 @@ function espresso_admin_pages() {
 	define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 	define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
 	
-	global $is_UI_request;
+	global $is_UI_request, $is_ajax_request;
 
 	// load admin page factory files
 	require_once( EE_CORE_ADMIN . 'EE_Admin_Page_Init.core.php' );
@@ -540,21 +545,18 @@ function espresso_admin_pages() {
 	$load_admin = TRUE;
 	// grab page request
 	$page_request = ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : FALSE;
-	$ajax_request = ( isset( $_REQUEST['espresso_ajax'] ) && $_REQUEST['espresso_ajax'] == 1 ) ? TRUE : FALSE;
 
-	do_action('action_hook_espresso_log', '$page_request = ' . $page_request, '$is_UI_request = ' . $is_UI_request, '$ajax_request = ' . $ajax_request );
+	do_action('action_hook_espresso_log', 'admin page request = ' . $page_request, '$is_UI_request = ' . $is_UI_request, '$is_ajax_request = ' . $is_ajax_request );
 
 	// are we just doing some backend processing or runnning the whole shebang?
 	if ( ! $is_UI_request ) {
 		//echo '<h4>load admin page : ' . $page_request . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		do_action('action_hook_espresso_log', 'load admin page', $page_request, '');
-
 		do_action('action_hook_espresso_load_reg_page_files');
 		// if the page_request doesn't load here for some reason then load the entire admin
 		$load_admin = ! espresso_load_admin_page( $page_request, $page_request ) ? TRUE : FALSE;
 	}
 	
-	if ( $load_admin && ! $ajax_request ) {
+	if ( $load_admin && ! $is_ajax_request ) {
 		//echo '<h4>load all admin pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// start with an empty array
 		$admin_pages = array();
