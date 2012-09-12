@@ -151,14 +151,14 @@ class EE_Admin_Page {
 	*/
 	public function display_no_javascript_warning() {
 		echo '
-<noscript>
-	<div id="no-js-message" class="error">
-		<p style="font-size:1.3em;">
-			<span style="color:red;">' . __( 'Warning!', 'event_espresso' ) . '</span>
-			' . __( 'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso' ) . '
-		</p>
-	</div>
-</noscript>';
+		<noscript>
+			<div id="no-js-message" class="error">
+				<p style="font-size:1.3em;">
+					<span style="color:red;">' . __( 'Warning!', 'event_espresso' ) . '</span>
+					' . __( 'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso' ) . '
+				</p>
+			</div>
+		</noscript>';
 	}
 
 
@@ -187,11 +187,6 @@ class EE_Admin_Page {
 	public function route_admin_request() {			
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		echo '<h4>$this->_req_action : ' . $this->_req_action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_req_nonce : ' . $this->_req_nonce . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $_REQUEST, '$_REQUEST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		if ( $this->_req_action != 'default' ) {
 			wp_verify_nonce( $this->_req_nonce );
@@ -231,10 +226,6 @@ class EE_Admin_Page {
 			$args = array();	
 		}
 
-//		echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		die();
-		// and finally,  try to access page route
 		if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
 			$error_msg =  __('An error occured and the  ' . $func . ' page route could not be called.', 'event_espresso');
 			$espresso_notices['errors'][] = $error_msg . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ );
@@ -243,9 +234,6 @@ class EE_Admin_Page {
 		}
 
 	}
-
-
-
 
 
 	/**
@@ -264,9 +252,6 @@ class EE_Admin_Page {
 	}
 
 
-
-
-
 	/**
 	 * 		set current view for List Table
 	*		@access public
@@ -281,9 +266,6 @@ class EE_Admin_Page {
 			$this->_view = sanitize_key( $_REQUEST['status'] );
 		}
 	}
-
-
-
 
 
 	/**
@@ -310,9 +292,6 @@ class EE_Admin_Page {
 				)
 		);			
 	}
-
-
-
 
 
 	/**
@@ -349,9 +328,6 @@ class EE_Admin_Page {
 	}
 
 
-
-
-
 	/**
 	*		generates  HTML wrapper for an admin details page
 	*		@access public
@@ -364,9 +340,6 @@ class EE_Admin_Page {
 	}
 
 
-
-
-
 	/**
 	 * 		_set_search_attributes
 	*		@access 		public
@@ -376,9 +349,6 @@ class EE_Admin_Page {
 		$this->template_args['search']['btn_label'] = __( 'Search ' . ucwords( str_replace( '_', ' ', $this->page_slug )), 'event_espresso' );
 		$this->template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
-
-
-
 
 
 	/**
@@ -422,13 +392,10 @@ class EE_Admin_Page {
 				</label>
 				<input id="entries-per-page-btn" class="button-secondary" type="submit" value="Go" >
 			</div>
-';			
+		';			
 		return $entries_per_page_dropdown;
 
 	}
-
-
-
 
 
 	/**
@@ -441,9 +408,6 @@ class EE_Admin_Page {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
 		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, array( $this, $callback . '_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 	}
-
-
-
 
 
 	/**
@@ -472,9 +436,6 @@ class EE_Admin_Page {
 		$this->admin_page_wrapper();
 
 	}
-
-
-
 
 
 	/**
@@ -526,9 +487,6 @@ class EE_Admin_Page {
 	}
 
 
-
-
-
 	/**
 	*		sort nav tabs
 	*		@access public
@@ -541,9 +499,6 @@ class EE_Admin_Page {
 	    }
 	    return ($a['order'] < $b['order']) ? -1 : 1;
 	}
-
-
-
 
 
 	/**
@@ -559,9 +514,6 @@ class EE_Admin_Page {
 	}
 
 
-
-
-
 	/**
 	 * 		remove settings tab from admin_page_nav_tabs
 	*		@access private
@@ -573,9 +525,6 @@ class EE_Admin_Page {
 		unset ( $nav_tabs['settings'] );	
 		return $nav_tabs;		
 	}
-
-
-
 
 
 	/**
@@ -591,9 +540,6 @@ class EE_Admin_Page {
 	</div>
 ';
 	}
-
-
-
 
 
 	/**
@@ -641,7 +587,7 @@ class EE_Admin_Page {
 		// if you don't behave - this is what you're gonna get !!!
 		$output = '';
 
-		// cycle thru billing inputs
+		// cycle thru inputs
 		foreach ($input_vars as $input_key => $input_value) {
 
 			// required fields get a * 
@@ -684,20 +630,23 @@ class EE_Admin_Page {
 
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
 					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '">' . $input_value['value'] . '</textarea>';
-				break;
+					break;
 
 				case 'hidden' :
 					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" type="hidden" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '">';
-				break;
-			} // end switch
+					break;
+
+				case 'checkbox' : 
+					$checked = ( $input_value['value'] == 1 ) ? 'checked="checked"' : '';
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<input id="' . $field_id. '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . ' />';
+					break; 
+				}
 			
 		} // end foreach( $input_vars as $input_key => $input_value ) 
 
 		return $output;
 	}
 	
-}
-
-
-	
+}	
 // end of file:  includes/core/admin/EE_Admin_Page.core.php

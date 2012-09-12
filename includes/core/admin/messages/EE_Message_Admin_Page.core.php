@@ -367,25 +367,25 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 				$templatefield_MTP_id = $template_field . 'MTP_ID';
 				$templatefield_field_templatename_id = $template_field . '-name';
 
-				//foreach template field there are actually three form fields created
+				//foreach template field there are actually two form fields created
 				$template_form_fields = array(
-					$templatefield_MTP_id => array(
+					${$templatefield_MTP_id} => array(
 						'name' => 'MTP_template_fields[' . $template_field . '][MTP_id]',
 						'label' => NULL,
 						'input' => 'hidden',
 						'type' => 'int',
-						'required' => TRUE,
+						'required' => FALSE,
 						'validation' => TRUE,
 						'value' => !empty($message_template) ? $message_template[$context][$template_field]['MTP_ID'] : '',
 						'format' => '%d',
 						'db-col' => 'MTP_ID'
 						),
-					$templatefield_field_templatename_id = array(
-							'name' => 'MTP_template_fields[' . $template_field . '][mtp_]',
+					${$templatefield_field_templatename_id} = array(
+							'name' => 'MTP_template_fields[' . $template_field . '][name]',
 							'label' => NULL,
 							'input' => 'hidden',
 							'type' => 'string',
-							'required' => TRUE,
+							'required' => FALSE,
 							'validation' => TRUE,
 							'value' => $template_field,
 							'format' => '%s',
@@ -393,12 +393,111 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 						),
 				);
 
-				//send to field generator
-				foreach ( $template_form_fields as $template_form_field ) {
-					$t_fields[] = $this->_generate_admin_form_fields( $template_form_field)
-				}
 			}
-		}
+
+			//add other fields
+			$template_form_fields['ee-msg-current-context'] = array(
+					'name' => 'MTP_context',
+					'label' => null,
+					'input' => 'hidden',
+					'type' => 'string',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $context,
+					'format' => '%s',
+					'db-col' => 'MTP_context'
+				);
+			$template_form_fields['ee-msg-event'] = array(
+					'name' => 'EVT_ID',
+					'label' => null,
+					'input' => 'hidden',
+					'type' => 'int',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $EVT_ID,
+					'format' => '%d',
+					'db-col' => 'EVT_ID'
+				);
+
+			$template_form_fields['ee-msg-grp-id'] = array(
+					'name' => 'GRP_ID',
+					'label' => null,
+					'input' => 'hidden',
+					'type' => 'int',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $GRP_ID,
+					'format' => '%d',
+					'db-col' => 'GRP_ID'
+				);
+
+			$template_form_fields['ee-msg-messenger'] = array(
+					'name' => 'MTP_messenger',
+					'label' => null,
+					'input' => 'hidden',
+					'type' => 'string',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $message_template->messenger(),
+					'format' => '%s',
+					'db-col' => 'MTP_messenger'
+				);
+
+			$template_form_fields['ee-msg-message-type'] = array(
+					'name' => 'MTP_message_type',
+					'label' => null,
+					'input' => 'hidden',
+					'type' => 'string',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $message_template->message_type(),
+					'format' => '%s',
+					'db-col' => 'MTP_message_type'
+				);
+
+			$template_form_fields['ee-msg-is-global'] = array(
+					'name' => 'MTP_is_global',
+					'label' => null,
+					'input' => 'checkbox',
+					'type' => 'int',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $message_template[$context]['MTP_is_global'],
+					'format' => '%d',
+					'db-col' => 'MTP_is_global'
+				);
+
+			$template_form_fields['ee-msg-is-override'] = array(
+					'name' => 'MTP_is_override',
+					'label' => null,
+					'input' => 'checkbox',
+					'type' => 'int',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $message_template[$context]['MTP_is_override'],
+					'format' => '%d',
+					'db-col' => 'MTP_is_override'
+				);
+
+			$template_form_fields['ee-msg-deleted'] = array(
+					'name' => 'MTP_deleted',
+					'label' => null,
+					'input' => 'hidden',
+					'type' => 'int',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $message_template[$context]['MTP_deleted'],
+					'format' => '%d',
+					'db-col' => 'MTP_deleted'
+				);
+
+			//send to field generator
+			foreach ( $template_form_fields as $field_id => $template_form_field ) {
+				$template_fields[$field_id] = $this->_generate_admin_form_fields( $template_form_field, $field_id );
+			}
+			
+		} //end if ( !empty($template_field_structure) )
+
 
 		$this->template_args['template_fields'] = $template_fields;
 		$this->template_args['action'] = $action;
@@ -413,6 +512,7 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		$this->nav_tabs['edit_message_template']['link_text'] = __('Edit Message Template', 'event_espresso');
 		$this->nav_tabs['edit_message_template']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['edit_message_template']['order'] = 15;
+		//todo: need to change the $template_args['post_body_content'] and $tempalte_args['admin_page_content'] (see 432-436 of EE_admin_page.core.php) so that the template_path is custom for messages and then create the new template based on admin_details_wrapper.template.php.  I know it WON'T work... but I have to start with that so I have an idea how to MAKE it work. OR... I could just override that function b/c it is public ;)  BUT the best solution would be for the admin_page core to see if the $template_args are set for those values first, and if they aren't to set the values.  That way it can be overridden... (same with $template path on line 484); //talk with br3nt about this.
 
 		//generate metabox
 		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
