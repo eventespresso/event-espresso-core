@@ -138,7 +138,7 @@ function espresso_classes_core_autoload($className) {
 	$root = dirname(espresso_main_file()) . '/includes/core/';
 	
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
-	$dir_ref[] = array(
+	$dir_ref = array(
 		'root' => array('core', 'class'),
 		'/messages/' => 'core',
 		'/messages/message_type/' => 'class',
@@ -168,12 +168,12 @@ function espresso_core_admin_autoload($className) {
 	$root = dirname(espresso_main_file()) . '/includes/core/admin/';
 	
 	//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
-	$dir_ref[] = array(
+	$dir_ref = array(
 		'root' => array('core', 'class'),
-		'/event_pricing/' => array('core','class'),
-		'/messages/' => array('core', 'class'),
-		'/registrations/' => array('core','class'),
-		'/transactions/' => array('class', 'class')
+		'event_pricing/' => array('core','class'),
+		'messages/' => array('core', 'class'),
+		'registrations/' => array('core','class'),
+		'transactions/' => array('class', 'class')
 		);
 
 	//assemble a list of filenames
