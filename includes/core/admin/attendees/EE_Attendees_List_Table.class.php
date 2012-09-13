@@ -145,7 +145,7 @@ class EE_Attendees_List_Table extends WP_List_Table {
 
 		// edit attendee link
 		$edit_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$item->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' );
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . stripslashes( $item->lname() ) . '</a>';
+		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->lname() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
 		return $name_link;
 
 	}
@@ -175,7 +175,7 @@ class EE_Attendees_List_Table extends WP_List_Table {
 		}
 
 		//Return the name contents
-		return sprintf('%1$s %2$s', $item->fname(), $this->row_actions($actions) );		
+		return sprintf('%1$s %2$s',  html_entity_decode( stripslashes( $item->fname() ), ENT_QUOTES, 'UTF-8' ), $this->row_actions($actions) );		
 	}
 
 
@@ -190,13 +190,13 @@ class EE_Attendees_List_Table extends WP_List_Table {
 
 
 	function column_ATT_address($item) {
-		return $item->address();
+		return html_entity_decode( stripslashes( $item->address() ), ENT_QUOTES, 'UTF-8' );
 	}
 
 
 
 	function column_ATT_city($item) {
-		return $item->city();
+		return html_entity_decode( stripslashes( $item->city() ), ENT_QUOTES, 'UTF-8' );
 	}
 
 
