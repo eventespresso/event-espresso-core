@@ -3,10 +3,10 @@
 			<?php foreach ( $view_RLs as $vw ) : ?>
 				<li class="<?php echo $vw['slug']; ?>"><a class="<?php echo $vw['class']; ?>" href="<?php echo $vw['url'];?>"><?php echo $vw['label']; ?><span class="count">(<?php echo $vw['count']; ?>)</span></a></li>
 		 	<?php endforeach; ?>
+		 		<li>
+		 		</li>
 		</ul>
-
-
-
+		<div class="clear"></div>
 		<div id="ee-messenger-filters-dv">
 			<form id="ee-messenger-filters-frm" action="<?php echo $ee_msg_overview_url;?>" method="post" name="ee-messenger-filters-frm">
 				<select name="ee_messenger_filter_by" id="ee_messenger_filter_by">
@@ -15,11 +15,7 @@
 					<?php endforeach; ?>
 				</select>
 				<input id="submit-ee-messenger-filters-sbmt" class="button-secondary" type="submit" value="Filter Messenger">
-			</form>
-		</div>
 
-		<div id="ee-message-type-filters-dv">
-			<form id="ee-message-type-filters-frm" action="<?php echo $ee_msg_overview_url;?>" method="post" name="ee-message-type-filters-frm">
 				<select name="ee_message_type_filter_by" id="ee_message_type_filter_by">
 					<?php foreach ( $active_message_types as $message_type ) : ?>
 					<option value="<?php echo $message_type; ?>"><?php echo ucwords(str_replace('_', ' ', $message_type) ); ?></option>

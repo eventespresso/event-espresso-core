@@ -31,6 +31,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	private $_active_messengers;
 	private $_active_message_types;
 
+	private $_all_installed_messengers;
+	private $_all_installed_message_types;
+
 	/**
 	 * constructor
 	 * @constructor 
@@ -46,6 +49,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//add ajax calls here
 		if ( $this->_AJAX ) {
 		}
+
+		// remove settings tab
+		add_filter( 'filter_hook_espresso_admin_page_nav_tabs', array( &$this, '_remove_settings_from_admin_page_nav_tabs' ), 10 , 1 );
 	}
 
 	/**
@@ -57,6 +63,14 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$this->admin_base_url = EE_MSG_ADMIN_URL;
 		$this->admin_page_title = __( 'Messages', 'event_espresso' );
+
+		//add new default tab for activation
+		$this->nav_tabs['activate'] = array(
+			'link_text' => __('Activate', 'event_espresso'),
+			'url' => add_query_arg( array( 'action' => 'activate'), EE_MSG_ADMIN_URL),
+			'order' => 40,
+			'css_class' => ''
+			);
 	}
 
 	/**
@@ -73,7 +87,18 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
 		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 
+		$this->_all_installed_messengers = $this->_get_installed_messengers();
+		$this->_all_installed_message_types = $this->_get_installed_message_types();
+
 		$this->_views = array(
+			'in_use' => array(
+				'slug' => 'in_use',
+				'label' => __('In Use', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_message_template' => __('Move to Trash', 'event_espresso')
+				)
+			),
 			'all' => array(
 				'slug' => 'all',
 				'label' => __('All', 'event_espresso'),
@@ -106,14 +131,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'restore_message_template' => __('Restore From Trash', 'event_espresso'),
 					'delete_message_template' => __('Delete Permanently', 'event_espresso')
 				)
-			),
-			'in_use' => array(
-				'slug' => 'in_use',
-				'label' => __('In Use', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
 			)
 		);
 	}
@@ -140,7 +157,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 				'restore_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE )),
 				'restore_message_template_context' => array( 'func' => '_trash_or_restore_message_template' , 'args' => array('trash' => FALSE) ),
 				'delete_message_template'	=> '_delete_message_template',
-				'settings'	=> array( 'func' => '_activate_messenger', 'args' => array( 'new_price' => TRUE )),
+				'activate'	=> array( 'func' => '_activate_messenger', 'args' => array( 'new_price' => TRUE )),
 				'reports' => '_messages_reports'
 		);
 	}
@@ -173,6 +190,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		$this->template_args['table_rows'] = count( $message_templates );
 
+
+		//setup dropdown filters
+		//todo: we need to make sure that the dropdown filters (i.e. messenger/message_type) show the active status.  and that they are handled correctly by the list table.  We will need to use $this->_get_message_templates method to select the called templates.
 		//send along active messengers and active message_types for filters
 		$this->template_args['active_messengers'] = $this->_active_messengers;
 		$this->template_args['active_message_types'] = $this->_active_message_types;
@@ -190,7 +210,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 		
 		// the final template wrapper
-		$this->display_admin_page_with_sidebar();
+		$this->admin_page_wrapper();
 	}
 
 	/**
@@ -240,7 +260,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		foreach ( $this->_views as $view ) {
 			$count_ref = $view['slug'] . '_templates';
-			$this->_views[$view['slug']]['count'] = count(${$count_ref});
+			$this->_views[$view['slug']]['count'] = (${$count_ref}) ? count(${$count_ref}) : 0;
 		}
 
 		return $message_templates;
@@ -845,5 +865,14 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$query = "SELECT event_name FROM {$table_name} WHERE id = '{$evt_id}'";
 		$event_name = $wpdb->get_var( $wpdb->prepare($query) );
 		return $event_name;
+	}
+
+	private function _get_installed_messengers() {
+		//todo: left off here
+		/** need to use the EE_messages controller to get an array of all messenger objects with the display methods within them and then do the add_meta_box for the settings page for each messenger. we can view how sidney setup the gateways for this. **/
+	}
+
+	private function _get_installed_message_types() {
+
 	}
 }

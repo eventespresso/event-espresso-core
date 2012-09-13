@@ -75,7 +75,7 @@ class Messages_Template_List_Table extends WP_List_Table {
 		$current_page = $this->get_pagenum();
 		$total_items = count( $this->_data );
 
-		//$this->process_bulk_action(); //todo: ? is this something in the new system?
+		//$this->process_bulk_action(); //todo: ? is this something in the new system? //don't even think we'll do bulk... yet.
 
 		if ( is_array( $this->_data) )
 			$this->_data = array_slice( $this->_data, (( $current_page-1 ) * $per_page ), $per_page );
@@ -98,7 +98,7 @@ class Messages_Template_List_Table extends WP_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'cb' => '<input type="checkbox" />', //render checkbox instead of text.
+			/*'cb' => '<input type="checkbox" />', //render checkbox instead of text. */
 			'event' => __( 'Event', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
 			'message_type' => __('Message Type', 'event_espresso'),
@@ -140,9 +140,9 @@ class Messages_Template_List_Table extends WP_List_Table {
 		echo $this->_entries_per_page_dropdown;
 	}
 
-	function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', /* $1%s */ $item->GRP_ID() );
-	}
+	/*function column_cb($item) {
+		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', $item->GRP_ID() );
+	}/**/
 
 	function column_messenger($item) {
 		
