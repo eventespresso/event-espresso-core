@@ -26,7 +26,7 @@
  * ------------------------------------------------------------------------
  */
 
-class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
+class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
 
 	private $_active_messengers;
 	private $_active_message_types;
@@ -41,7 +41,7 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$this->page_slug = EE_MSG_PG_SLUG;
-		$this->init();
+		$this->_init();
 
 		//add ajax calls here
 		if ( $this->_AJAX ) {
@@ -50,10 +50,10 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 
 	/**
 	 * 		define_page_vars
-	*		@access private
+	*		@access public
 	*		@return void
 	*/
-	protected function define_page_vars() {
+	public function define_page_vars() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 		$this->admin_base_url = EE_MSG_ADMIN_URL;
 		$this->admin_page_title = __( 'Messages', 'event_espresso' );
@@ -112,10 +112,10 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 
 	/**
 	 * 		an array for storing key => value pairs of request actions and their corresponding methods
-	*		@access private
+	*		@access public
 	*		@return void
 	*/
-	protected function set_page_routes() {			
+	public function set_page_routes() {			
 
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
@@ -512,7 +512,7 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 		$this->nav_tabs['edit_message_template']['link_text'] = __('Edit Message Template', 'event_espresso');
 		$this->nav_tabs['edit_message_template']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['edit_message_template']['order'] = 15;
-		//todo: need to change the $template_args['post_body_content'] and $tempalte_args['admin_page_content'] (see 432-436 of EE_admin_page.core.php) so that the template_path is custom for messages and then create the new template based on admin_details_wrapper.template.php.  I know it WON'T work... but I have to start with that so I have an idea how to MAKE it work. OR... I could just override that function b/c it is public ;)  BUT the best solution would be for the admin_page core to see if the $template_args are set for those values first, and if they aren't to set the values.  That way it can be overridden... (same with $template path on line 484); //talk with br3nt about this.
+		//todo: need to change the $template_args['post_body_content'] and $template_args['admin_page_content'] (see 432-436 of EE_admin_page.core.php) so that the template_path is custom for messages and then create the new template based on admin_details_wrapper.template.php.  I know it WON'T work... but I have to start with that so I have an idea how to MAKE it work. OR... I could just override that function b/c it is public ;)  BUT the best solution would be for the admin_page core to see if the $template_args are set for those values first, and if they aren't to set the values.  That way it can be overridden... (same with $template path on line 484); //talk with br3nt about this.
 
 		//generate metabox
 		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
@@ -582,7 +582,7 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 			$MTP = EEM_Message_Type::instance();
 			
 			//run update for each template field in displayed context
-			if ( !isset($_REQUEST['MTP_template_fields'] && empty($_REQUEST['MTP_template_fields'] ) ) {
+			if ( !isset($_REQUEST['MTP_template_fields']) && empty($_REQUEST['MTP_template_fields'] ) ) {
 				$error =  new WP_Error( __('problem_saving_template_fields', 'event_espresso'), __('There was a problem saving the template fields from the form becuase I didn\'t receive any actual template field data.', 'even_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 				$this->_handle_errors($error);
 				$success = 0;
@@ -595,22 +595,23 @@ class EE_Message_Admin_Page extends EE_Admin_Page implements Admin_Page_Interfac
 			}
 
 			if ( $success ) { 	
-			foreach ( $_REQUEST['MTP_template_fields'] as $template_field => $content ) {
-				$set_column_values = $this->_set_message_template_column_values($template_field);
-				$where_cols_n_values = array( 'MTP_ID' => $_REQUEST['MTP_template_field'][$template_field]['MTP_ID']);
-				if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
-					if ( is_wp_error($updated) ) {
-						$this->_handle_errors($edit_array);
-					} else {
-						$success = 1;
+				foreach ( $_REQUEST['MTP_template_fields'] as $template_field => $content ) {
+					$set_column_values = $this->_set_message_template_column_values($template_field);
+					$where_cols_n_values = array( 'MTP_ID' => $_REQUEST['MTP_template_field'][$template_field]['MTP_ID']);
+					if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
+						if ( is_wp_error($updated) ) {
+							$this->_handle_errors($edit_array);
+						} else {
+							$success = 1;
+						}
 					}
+					$action_desc = 'updated';
 				}
-				$action_desc = 'updated';
 			}
-		}
 		
 		$this->_redirect_after_admin_action( $success, $item_desc, $action_desc, $query_args );
 
+		}
 	}
 
 	/**
