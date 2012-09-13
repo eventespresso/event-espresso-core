@@ -16,7 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Message_Template_List_Table
+ * Messages_Template_List_Table
  *
  * extends WP_List_Table class
  *
@@ -31,7 +31,7 @@ if (!class_exists('WP_List_Table')) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-class EE_Message_Template_List_Table extends WP_List_Table {
+class Messages_Template_List_Table extends WP_List_Table {
 	
 	private $_data;
 	private $_view;
@@ -50,7 +50,6 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 		
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		//
-		
 		$this->_data = $data;
 		$this->_view = $view;
 		$this->_views = $views;
@@ -184,11 +183,11 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 	 * @return string       column output
 	 */
 	function column_event($item) {
-		if ( empty($item->event() ) ) 
+		if ( empty($item->EVT_ID ) ) 
 			return __('Global', 'event_espresso');
 
 		$get_event_name = $this->_event_name($item->event());
-		$event_name = empty($get_event_name) ? __('Cannot find Event', 'event_espresso') : $get_event_name
+		$event_name = empty($get_event_name) ? __('Cannot find Event', 'event_espresso') : $get_event_name;
 
 		$base_event_admin_url = admin_url( 'admin.php?page=events' );
 		$query_args = array(
@@ -215,7 +214,7 @@ class EE_Message_Template_List_Table extends WP_List_Table {
 			$context_title = ucwords(str_replace('_', ' ', $context ) );
 			$edit_link = wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
 			$do_restore = $template_fields['MTP_deleted'] ? TRUE : FALSE;
-			$trash_restore_link = $do_restore ? wp_nonce_url( add_query_arg( array( 'action'=>'trash_message_template_context', 'id'=>$item->GRP_ID(), 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'trash_message_template_nonce' ), wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template_context', 'id'=>$item->GRP_ID(), 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'restore_message_template_nonce' );
+			$trash_restore_link = $do_restore ? wp_nonce_url( add_query_arg( array( 'action'=>'trash_message_template_context', 'id'=>$item->GRP_ID, 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'trash_message_template_nonce' ) : wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template_context', 'id'=>$item->GRP_ID, 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'restore_message_template_nonce' );
 			$trash_img_url = EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/trash-16x16.png';
 			$restore_img_url = EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png';
 			$t_r_image = $do_restore ? $restore_img_url : $trash_img_url;

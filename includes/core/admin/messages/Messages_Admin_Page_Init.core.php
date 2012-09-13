@@ -77,7 +77,7 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page_
 	*		@return 		void
 	*/	
 	public function get_page_access_capability() {
-		return 'espresso_manager_messages';
+		return 'espresso_manager_events';
 	}
 
 	/**

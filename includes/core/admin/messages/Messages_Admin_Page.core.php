@@ -106,6 +106,14 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'restore_message_template' => __('Restore From Trash', 'event_espresso'),
 					'delete_message_template' => __('Delete Permanently', 'event_espresso')
 				)
+			),
+			'in_use' => array(
+				'slug' => 'in_use',
+				'label' => __('In Use', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_message_template' => __('Move to Trash', 'event_espresso')
+				)
 			)
 		);
 	}
@@ -172,7 +180,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
 
 		$this->template_args['view_RLs'] = $this->get_list_table_view_RLs();
-		$this->template_args['list_table'] = new EE_Messages_List_Table( $message_templates, $this->_view, $this->_views, $entries_per_page_dropdown );
+		$this->template_args['list_table'] = new Messages_Template_List_Table( $message_templates, $this->_view, $this->_views, $entries_per_page_dropdown );
 
 		// link back to here
 		$this->template_args['ee_msg_overview_url'] = add_query_arg( array( 'noheader' => 'true' ), EE_MSG_ADMIN_URL );
@@ -225,8 +233,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$all_templates = $MTP->get_all_message_templates($orderby, $order);
 		$global_templates = $MTP->get_all_global_message_templates($orderby, $order);
 		$event_templates = $MTP->get_all_event_message_templates($orderby, $order);
+		$in_use_templates = $MTP->get_all_active_message_templates($orderby, $order);
 
-		$view_templates_ref = $this->view . '_templates';
+		$view_templates_ref = $this->_view . '_templates';
 		$message_templates = ${$view_templates_ref};
 
 		foreach ( $this->_views as $view ) {
@@ -495,7 +504,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			foreach ( $template_form_fields as $field_id => $template_form_field ) {
 				$template_fields[$field_id] = $this->_generate_admin_form_fields( $template_form_field, $field_id );
 			}
-			
+
 		} //end if ( !empty($template_field_structure) )
 
 
@@ -512,13 +521,23 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->nav_tabs['edit_message_template']['link_text'] = __('Edit Message Template', 'event_espresso');
 		$this->nav_tabs['edit_message_template']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['edit_message_template']['order'] = 15;
-		//todo: need to change the $template_args['post_body_content'] and $template_args['admin_page_content'] (see 432-436 of EE_admin_page.core.php) so that the template_path is custom for messages and then create the new template based on admin_details_wrapper.template.php.  I know it WON'T work... but I have to start with that so I have an idea how to MAKE it work. OR... I could just override that function b/c it is public ;)  BUT the best solution would be for the admin_page core to see if the $template_args are set for those values first, and if they aren't to set the values.  That way it can be overridden... (same with $template path on line 484); //talk with br3nt about this.
+
+		add_action('action_hook_espresso_before_admin_page_content', array($this, '_add_form_element_before') );
+		add_action('action_hook_espresso_after_admin_page_content', array($this, '_add_form_element_after') );
 
 		//generate metabox
 		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
 
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
+	}
+
+	protected function _add_form_element_before() {
+		echo '<form method="get" action="<?php echo $this->template_args["edit_message_template_form_url"]; ?>" id="ee-msg-edit-frm">';
+	}
+
+	protected function _add_form_element_after() {
+		echo '</form>';
 	}
 
 	/**
