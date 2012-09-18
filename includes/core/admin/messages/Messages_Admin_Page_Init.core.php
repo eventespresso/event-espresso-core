@@ -35,7 +35,7 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init implements Admin_Page_
 		
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		define( 'EE_MSG_PG_SLUG', 'ee-messages' );	
+		define( 'EE_MSG_PG_SLUG', 'messages' );	
 		define( 'EE_MSG_PG_NAME', ucwords( str_replace( '_', '', EE_MSG_PG_SLUG )));	
 		define( 'EE_MSG_ADMIN', EE_CORE_ADMIN . 'messages' . DS );	
 		define( 'EE_MSG_ADMIN_URL', admin_url( 'admin.php?page=' . EE_MSG_PG_SLUG ));	

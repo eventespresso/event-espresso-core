@@ -124,8 +124,14 @@ class EE_Admin_Page {
 		}
 	}
 
-
-
+	/**
+	 * child classes can call this in their constructor if they want their page to use columns (similar to wp_dashboard)
+	 * @access protected
+	 * @return void
+	 */
+	protected function _use_columns() {
+		add_action( 'admin_print_scripts', array( $this, 'set_screen_options') );
+	}
 
 
 	/**
@@ -142,7 +148,13 @@ class EE_Admin_Page {
 
 
 
-
+	/**
+	 * use for setting screen options on a page.
+	 */
+	public function set_screen_options() {
+		wp_enqueue_script('dashboard');
+		add_screen_option('layout_columns', array('max' => 4, 'default' => 3) );
+	}
 
 	/**
 	 * 		displays an error message to ppl who have javascript disabled
@@ -415,7 +427,8 @@ class EE_Admin_Page {
 	 */
 	public function display_admin_page_with_metabox_columns() {
 		$screen = get_current_screen();
-		$this->template_args['current_screen_widget_class'] = 'columns-' . get_current_screen()->get_columns();
+		$this->template_args['current_screen_widget_class'] = 'columns-' . 
+		$screen->get_columns();
 		$template_path = EE_CORE_ADMIN. 'admin_details_metabox_column_wrapper.template.php';
 
 		$this->template_args['screen'] = $screen;
@@ -462,6 +475,7 @@ class EE_Admin_Page {
 	public function admin_page_wrapper(  ) {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 		// tab urls
 		$this->nav_tabs[ $this->default_nav_tab_name ]['url'] = $this->admin_base_url;  
 		$this->nav_tabs[ $this->default_nav_tab_name ]['link_text'] = __( ucwords( str_replace( '_', ' ', $this->default_nav_tab_name )), 'event_espresso' );

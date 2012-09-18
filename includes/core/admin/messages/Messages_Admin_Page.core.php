@@ -31,9 +31,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	private $_active_messengers;
 	private $_active_message_types;
 
-	private $_all_installed_messengers;
-	private $_all_installed_message_types;
-
 	/**
 	 * constructor
 	 * @constructor 
@@ -45,6 +42,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		$this->page_slug = EE_MSG_PG_SLUG;
 		$this->_init();
+		
+		if ( $this->_req_action == 'activate' )
+			$this->_use_columns();
 
 		//add ajax calls here
 		if ( $this->_AJAX ) {
@@ -67,7 +67,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//add new default tab for activation
 		$this->nav_tabs['activate'] = array(
 			'link_text' => __('Activate', 'event_espresso'),
-			'url' => add_query_arg( array( 'action' => 'activate'), EE_MSG_ADMIN_URL),
+			'url' => wp_nonce_url( add_query_arg( array( 'action' => 'activate'), EE_MSG_ADMIN_URL), 'activate_nonce'),
 			'order' => 40,
 			'css_class' => ''
 			);
@@ -157,7 +157,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 				'restore_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE )),
 				'restore_message_template_context' => array( 'func' => '_trash_or_restore_message_template' , 'args' => array('trash' => FALSE) ),
 				'delete_message_template'	=> '_delete_message_template',
-				'activate'	=> array( 'func' => '_activate_messenger', 'args' => array( 'new_price' => TRUE )),
+				'activate'	=> '_activate_messages',
 				'reports' => '_messages_reports'
 		);
 	}
@@ -865,6 +865,27 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$query = "SELECT event_name FROM {$table_name} WHERE id = '{$evt_id}'";
 		$event_name = $wpdb->get_var( $wpdb->prepare($query) );
 		return $event_name;
+	}
+
+	/**
+	 * This sets up the activate messages and message types templates.
+	 * 
+	 * @access protected
+	 * @return void
+	 */
+	protected function _activate_messages() {
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+		//get installed messages objects (need to use EE_messages controller to do this).
+		//$installed_messengers = $this->_get_installed_messengers;
+
+		//loop through installed_messengers and setup metaboxes for each one.
+		//foreach ( $installed_messengers as $messenger ) {
+
+		//}
+
+		//final template wrapper
+		$this->display_admin_page_with_metabox_columns();
 	}
 
 	private function _get_installed_messengers() {
