@@ -1,5 +1,5 @@
 <div id="poststuff">
-	<div id="post-body" class="metabox-holder <?php echo $current_screen_widget_class; ?>">
+	<div id="dashboard-widgets" class="metabox-holder <?php echo $current_screen_widget_class; ?>">
 		<div id="admin-page-header">
 			<?php echo $admin_page_header; ?>
 		</div> <!-- admin-page-header -->
