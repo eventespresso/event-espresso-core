@@ -19,10 +19,13 @@
 		<div id='postbox-container-3' class='postbox-container'>
 			<?php do_meta_boxes( $screen->id, 'column3', '' ); ?>
 		</div>
-		
+
 		<div id='postbox-container-4' class='postbox-container'>
 			<?php do_meta_boxes( $screen->id, 'column4', '' ); ?>
 		</div>
-
 	</div> <!-- post-body -->
+	<?php
+		wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
+		wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
+	?>
 </div> <!-- poststuff -->
