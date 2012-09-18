@@ -409,6 +409,22 @@ class EE_Admin_Page {
 		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, array( $this, $callback . '_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 	}
 
+	/**
+	 * generates HTML wrapper for and admin details page that contains metaboxes in columns
+	 * @return [type] [description]
+	 */
+	public function display_admin_page_with_metabox_columns() {
+		$screen = get_current_screen();
+		$this->template_args['current_screen_widget_class'] = 'columns-' . get_current_screen()->get_columns();
+		$template_path = EE_CORE_ADMIN. 'admin_details_metabox_column_wrapper.template.php';
+
+		$this->template_args['screen'] = $screen;
+		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
+		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE);
+
+		//the final wrapper
+		$this->admin_page_wrapper();
+	}
 
 	/**
 	*		generates  HTML wrapper for an admin details page
