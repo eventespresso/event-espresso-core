@@ -63,7 +63,8 @@ class EE_messages {
 		}
 
 		foreach ( $active_names as $name => $class ) {
-			$active = call_user_func($class);
+			$a = new ReflectionClass( $class );
+			$active = $a->newInstance();
 			if ( is_wp_error($active) ) {
 				//we've got an error so let's bubble up the error_object to be caught by caller.
 				//todo: would be better to just catch the errors and then return any aggregated errors later.
@@ -124,7 +125,8 @@ class EE_messages {
 			// then send it
 			foreach ( $this->_active_messengers as $active_messenger ) {
 				// create message data
-				$messages = call_user_func( $classname );
+				$a = new ReflectionClass( $classname );
+				$messages = $a->newInstance();
 				$messages->set_messages($vars, $active_messenger);
 
 				if ( is_wp_error($messages) ) {
@@ -165,7 +167,9 @@ class EE_messages {
 
 		//message type
 		$mt_class = isset($this->_active_message_types[$message_type]) ? $this->_active_message_types[$message_type] : 'non_existant_class';
-		$this->_message_type = class_exists($mt_class) ? call_user_func( $mt_class ) : null;
+
+		$mt = class_exists($mt_class) ? new ReflectionClass($mt_class) : false;
+		$this->_message_type = $mt ? $mt->newInstance() : null;
 
 		//do we have the necessary objects loaded?
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
@@ -311,6 +315,48 @@ class EE_messages {
 
 		return $template_fields;
 	}
+
+	/**
+	 * gets an array of installed messengers and message objects.
+	 * 
+	 * @access public
+	 * @return array multidimensional array of messenger and message_type objects (messengers index, and message_type index);
+	 */
+	public function get_installed() {
+		$installed = array();
+		$message_base = EVENT_ESPRESSO_INCLUDES_DIR . "core" . DS . "messages" . DS;
+		$messenger_files = scandir( $message_base . "messenger", 1);
+		$messagetype_files = scandir( $message_base . "message_type", 1);
+
+		$installed['messengers'] = $this->_get_installed($messenger_files);
+		$installed['message_types'] = $this->_get_installed($messagetype_files);
+
+		return $installed;
+	}
+
+	/**
+	 * _get_installed
+	 * takes an array of filenames and returns an array of objects instantiated from the class name found in the filename. 	
+	 * @param  array $filenames and array of filenames
+	 * @return array       array of objects
+	 */
+	private function _get_installed($filenames) {
+		//make sure incoming filenames are in an array.
+		$the_goods = array();
+		$filenames = (array) $filenames;
+		$replace = ".class.php";
+		foreach ( $filenames as $filename ) {
+			$classname = preg_match("/" . $replace . "/", $filename ) ? str_replace($replace, "", $filename) : false;
+			
+			//no classname? no match? move along, nothing to see here.
+			if ( !$classname ) continue;
+
+			//note: I'm not sure if this will work without including the file.  We do have autoloaders so it "may" work.
+			$a = new ReflectionClass($classname);
+			$the_goods[] = $a->newInstance();
+		}
+		return $the_goods;
+	}
 } 
 //end EE_messages class
 
@@ -349,8 +395,8 @@ abstract class EE_message_type {
 	/** 
 	 * The following are used to hold details on the type for reference (i.e. on admin screens)
 	 */
-	protected $name;
-	protected $description;
+	public $name;
+	public $description;
 
 	/**
 	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 

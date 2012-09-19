@@ -87,9 +87,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
 		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 
-		$this->_all_installed_messengers = $this->_get_installed_messengers();
-		$this->_all_installed_message_types = $this->_get_installed_message_types();
-
 		$this->_views = array(
 			'in_use' => array(
 				'slug' => 'in_use',
@@ -876,24 +873,54 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	protected function _activate_messages() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		//get installed messages objects (need to use EE_messages controller to do this).
-		//$installed_messengers = $this->_get_installed_messengers;
+		$view = isset($_REQUEST['activate_view']) ? $_REQUEST['activate_view'] : 'messengers';
 
-		//loop through installed_messengers and setup metaboxes for each one.
-		//foreach ( $installed_messengers as $messenger ) {
+		//this will be an associative array for setting up the initial metaboxes for display.
+		$meta_box_callbacks = array();
 
-		//}
+		$box_reference = array(
+			'1' => 'normal',
+			'2' => 'side',
+			'3' => 'column3',
+			'4' => 'column4'
+			);
 
+		$EE_MSG = new EE_messages();
+		$installed_message_objects = $EE_MSG->get_installed();
+
+		$column = 1;
+		foreach ( $installed_message_objects[$view] as $installed ) {
+
+			//if column is equal to 5 let's reset to 1.
+			$column = 5 ? 1 : $column;
+			$metabox_callback = 'activate_' . $view . '_template_meta_box';
+			$meta_box_callbacks[$column]['metabox_callbacks'][] = array(
+				'callback' => $metabox_callback,
+				'object' => $installed
+				); 
+			$column++;
+		}
+
+		//now let's handle adding the metaboxes
+		foreach ( $meta_box_callbacks as $column => $callbacks ) {
+			foreach ( $callbacks as $callback ) {
+				add_meta_box( $callback['object']->name . '-' . $view . '-metabox', $callback['object']->name, array($this, $callback['callback']), $this->_req_action, $box_reference[$column] ); //note: if we need to we can pass through args.
+			}
+		}
 		//final template wrapper
 		$this->display_admin_page_with_metabox_columns();
 	}
 
-	private function _get_installed_messengers() {
-		//todo: left off here
-		/** need to use the EE_messages controller to get an array of all messenger objects with the display methods within them and then do the add_meta_box for the settings page for each messenger. we can view how sidney setup the gateways for this. **/
-	}
-
-	private function _get_installed_message_types() {
+	//todo: left off here need to use these functions below to setup the metabox contents.  Will need to make sure there is a relevant ".template.php" file for each one of these as well.
+	//Also, need to make sure that we know what state messenger or message_type is in so we know what context to display (i.e. 'inactive', 'editing', 'active');
+	//-
+	public function activate_messenger_template_meta_box() {
 
 	}
+
+	public function activate_message_type_template_meta_box() {
+
+	}
+
+
 }
