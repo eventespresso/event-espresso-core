@@ -894,7 +894,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			//if column is equal to 5 let's reset to 1.
 			$column = 5 ? 1 : $column;
 			$metabox_callback = 'activate_' . $view . '_template_meta_box';
-			$meta_box_callbacks[$column]['metabox_callbacks'][] = array(
+			$meta_box_callbacks[$column][] = array(
 				'callback' => $metabox_callback,
 				'object' => $installed
 				); 
@@ -904,6 +904,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//now let's handle adding the metaboxes
 		foreach ( $meta_box_callbacks as $column => $callbacks ) {
 			foreach ( $callbacks as $callback ) {
+				var_dump($callback);
+				var_dump("<br /><br />");
 				add_meta_box( $callback['object']->name . '-' . $view . '-metabox', $callback['object']->name, array($this, $callback['callback']), $this->_req_action, $box_reference[$column] ); //note: if we need to we can pass through args.
 			}
 		}

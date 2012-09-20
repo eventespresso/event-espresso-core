@@ -41,10 +41,9 @@ class EE_Payment_message_type extends EE_message_type {
 		// load gateways
 		if (!defined('ESPRESSO_GATEWAYS')) {
 			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Gateways.model.php');
-			$EEM_Gateways = EEM_Gateways::instance();
+			$this->gateways = EEM_Gateways::instance();
 		}
-
-		$this->gateways = $EEM_Gateways;	
+	
 	}
 
 	protected function _set_default_field_content() {
@@ -52,7 +51,7 @@ class EE_Payment_message_type extends EE_message_type {
 			'subject' => sprintf(__('Payment processed for %s', 'event_espresso'), '[EVENT_NAME]'),
 			'content' => $this->_default_template_field_content(),
 		);
-		$this->default_field_content = apply_filters('filter_hook_espresso_default_field_content_'.$this->name, $this->default_field_content);
+		$this->_default_field_content = apply_filters('filter_hook_espresso_default_field_content_'.$this->name, $this->_default_field_content);
 	}
 
 	protected function _default_template_field_content() {

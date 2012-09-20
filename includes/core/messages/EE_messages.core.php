@@ -98,6 +98,11 @@ class EE_messages {
 	private function _load_files($kind, $actives) {
 		$active_names = array();
 		$base_path = EE_CORE . 'messages' . DS . $kind . DS;
+		if ( empty($actives) ) return false;
+
+		//make sure $actives is an array
+		$actives = (array) $actives;
+
 		foreach ( $actives as $active ) {
 			$messenger_name = 'EE_' . ucwords( str_replace( ' ', '_', $active) ) . '_' . $kind;
 			$filename = $messenger_name . '.class.php';
@@ -348,8 +353,8 @@ class EE_messages {
 		foreach ( $filenames as $filename ) {
 			$classname = preg_match("/" . $replace . "/", $filename ) ? str_replace($replace, "", $filename) : false;
 			
-			//no classname? no match? move along, nothing to see here.
-			if ( !$classname ) continue;
+			//no classname? no match? move along, nothing to see here. note, the stripos is checking to make sure the filename (classname) begins with EE.
+			if ( !$classname || 0 !== stripos($classname, 'EE') ) continue;
 
 			//note: I'm not sure if this will work without including the file.  We do have autoloaders so it "may" work.
 			$a = new ReflectionClass($classname);
@@ -497,7 +502,7 @@ abstract class EE_message_type {
 	 * @abstract
 	 * @access protected
 	 */
-	abstract protected function _init_data() {}
+	abstract protected function _init_data();
 
 	/**
 	 * This sets the _default_field_content property which needs to be defined by child classes.
@@ -506,7 +511,7 @@ abstract class EE_message_type {
 	 * @access  protected
 	 * @return void
 	 */
-	abstract protected function _set_default_field_content() {}
+	abstract protected function _set_default_field_content();
 
 	/**
 	 * _set_contexts
@@ -516,7 +521,7 @@ abstract class EE_message_type {
 	 * @access  protected
 	 * @return  void
 	 */
-	abstract protected function _set_contexts() {}
+	abstract protected function _set_contexts();
 
 	public function get_default_field_content() {
 		return $this->_default_field_content;
@@ -649,7 +654,7 @@ abstract class EE_messenger {
 	 * @access  protected
 	 * @return void
 	 */
-	abstract protected function _set_template_fields() {}
+	abstract protected function _set_template_fields();
 
 	/**
 	 * _set_default_field_content
@@ -659,7 +664,7 @@ abstract class EE_messenger {
 	 * @access protected
 	 * @return void
 	 */
-	abstract protected function _set_default_field_content() {}
+	abstract protected function _set_default_field_content();
 
 	/**
 	 * get_template_fields
@@ -680,7 +685,7 @@ abstract class EE_messenger {
 	 * @access protected
 	 */
 	protected function _set_templates() {
-		$this->active_templates = $this->EEM_data->get_all_active_message_templates_by_messenger($this->name);
+		$this->active_templates = $this->_EEM_data->get_all_active_message_templates_by_messenger($this->name);
 	}
 
 	/** SETUP METHODS **/
@@ -710,7 +715,7 @@ abstract class EE_messenger {
 	 * @return void
 	 * @todo  at some point we may want to return success or fail so we know whether a message has gone off okay and we can assemble reporting.
 	 */
-	abstract protected function _send_message() {}
+	abstract protected function _send_message();
 
 	
 
