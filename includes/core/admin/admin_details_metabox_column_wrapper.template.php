@@ -9,19 +9,19 @@
 		</div> <!-- post-body-content -->
 
 		<div id='postbox-container-1' class='postbox-container'>
-			<?php do_meta_boxes( $screen->id, 'normal', '' ); ?>
+			<?php do_meta_boxes( $current_page, 'normal', '' ); ?>
 		</div>
 
 		<div id='postbox-container-2' class='postbox-container'>
-			<?php do_meta_boxes( $screen->id, 'side', '' ); ?>
+			<?php do_meta_boxes( $current_page, 'side', '' ); ?>
 		</div>
 
 		<div id='postbox-container-3' class='postbox-container'>
-			<?php do_meta_boxes( $screen->id, 'column3', '' ); ?>
+			<?php do_meta_boxes( $current_page, 'column3', '' ); ?>
 		</div>
 
 		<div id='postbox-container-4' class='postbox-container'>
-			<?php do_meta_boxes( $screen->id, 'column4', '' ); ?>
+			<?php do_meta_boxes( $current_page, 'column4', '' ); ?>
 		</div>
 	</div> <!-- post-body -->
 	<?php

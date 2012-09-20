@@ -56,7 +56,9 @@ class EE_messages {
 		global $espresso_wp_user;
 		// todo: right now this just gets active global messengers: at some point we'll have to get what the active messengers are for the event.
 		$actives = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+		$actives = is_array($actives) ? array_keys($actives) : $actives;
 		$active_names = $this->_load_files('messenger', $actives);
+		$active_names = is_array($active_names) ? array_keys($active_names) : $active_names;
 
 		if ( empty($active_names) ) {
 			return new WP_Error(__('no_active_messengers', 'event_espresso'), __('No messages have gone out because there are no active_messengers.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );

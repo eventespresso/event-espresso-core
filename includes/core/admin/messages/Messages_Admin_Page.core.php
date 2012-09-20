@@ -30,6 +30,10 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 	private $_active_messengers;
 	private $_active_message_types;
+	private $_activate_state;
+	private $_activate_meta_box_type;
+	private $_current_message_meta_box;
+	private $_current_message_meta_box_object;
 
 	/**
 	 * constructor
@@ -38,6 +42,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 * @return void
 	 */
 	public function __construct() {
+		global $espresso_wp_user;
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 
 		$this->page_slug = EE_MSG_PG_SLUG;
@@ -49,6 +54,12 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//add ajax calls here
 		if ( $this->_AJAX ) {
 		}
+
+		$this->_activate_state = isset($_REQUEST['activate_state']) ? (array) $_REQUEST['activate_state'] : array();
+
+		//we're also going to set the active messengers and active message types in here.
+		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 
 		// remove settings tab
 		add_filter( 'filter_hook_espresso_admin_page_nav_tabs', array( &$this, '_remove_settings_from_admin_page_nav_tabs' ), 10 , 1 );
@@ -81,11 +92,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	public function _set_list_table_views() {
 		global $espresso_wp_user;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-		//we're also going to set the active messengers and active message types in here.
-		
-		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
-		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 
 		$this->_views = array(
 			'in_use' => array(
@@ -873,7 +879,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	protected function _activate_messages() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		$view = isset($_REQUEST['activate_view']) ? $_REQUEST['activate_view'] : 'messengers';
+		$view = isset($_REQUEST['activate_view']) ? $_REQUEST['activate_view'] : 'message_types';
 
 		//this will be an associative array for setting up the initial metaboxes for display.
 		$meta_box_callbacks = array();
@@ -893,10 +899,11 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 			//if column is equal to 5 let's reset to 1.
 			$column = 5 ? 1 : $column;
-			$metabox_callback = 'activate_' . $view . '_template_meta_box';
+			$metabox_callback = 'activate_message_template_meta_box';
 			$meta_box_callbacks[$column][] = array(
 				'callback' => $metabox_callback,
-				'object' => $installed
+				'object' => $installed,
+				'view' => $view
 				); 
 			$column++;
 		}
@@ -904,23 +911,77 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//now let's handle adding the metaboxes
 		foreach ( $meta_box_callbacks as $column => $callbacks ) {
 			foreach ( $callbacks as $callback ) {
-				var_dump($callback);
-				var_dump("<br /><br />");
-				add_meta_box( $callback['object']->name . '-' . $view . '-metabox', $callback['object']->name, array($this, $callback['callback']), $this->_req_action, $box_reference[$column] ); //note: if we need to we can pass through args.
+				add_meta_box( $callback['object']->name . '-' . $view . '-metabox', ucwords( str_replace('_', '', $callback['object']->name) ), array(&$this, $callback['callback']), $this->wp_page_slug, $box_reference[$column],  'default', array('name' => $callback['object']->name, 'view' => $callback['view'], 'object' => $callback['object'] ) ); //note: if we need to we can pass through args.
 			}
 		}
+
+		//oh while we're at it... let's remove the espresso metaboxes.  We don't need them on this page.
+		remove_meta_box('espresso_news_post_box', $this->wp_page_slug, 'side');
+		remove_meta_box('espresso_links_post_box', $this->wp_page_slug, 'side');
 		//final template wrapper
 		$this->display_admin_page_with_metabox_columns();
 	}
 
-	//todo: left off here need to use these functions below to setup the metabox contents.  Will need to make sure there is a relevant ".template.php" file for each one of these as well.
-	//Also, need to make sure that we know what state messenger or message_type is in so we know what context to display (i.e. 'inactive', 'editing', 'active');
-	//-
-	public function activate_messenger_template_meta_box() {
+	/**
+	 * this method assembles the messenger/message_type metabox contents
+	 * @param  object $post    WP metabox caller sends along the wp_post object.  We won't use this (won't be present)
+	 * @param  array $metabox arguments passed via the caller
+	 * @return string          outputs the actual metabox contents
+	 */
+	public function activate_message_template_meta_box($post, $metabox) {
+		$box_name = false;
+		$this->_activate_meta_box_type = $metabox['args']['view'];
+		$this->_current_message_meta_box = $metabox['args']['name'];
+		$this->_current_message_meta_box_object = $metabox['args']['object'];
+		//let's check and see if we've got a specific state for this box. if so we need to set the state accordingly (or if no state set we need to try and figure that out - can't be stateless now can we?)
+		if ( empty($this->_activate_state) || ( $box_name = explode('_', $this->_activate_state) && $box_name[0] == $this->_current_message_meta_box ) ) {
+			$this->_activate_state = $box_name ? $box_name[1] : false;
+
+			//still stateless eh?  K let's see if we can get the state from the database.
+			if ( !$this->_activate_state ) {
+				$this->_activate_state = isset($this->_active_messengers[$this->_current_message_meta_box]) ? $this->_active_messengers[$this->_current_message_meta_box]['state'] : 'inactive';
+			}
+		}
+
+		call_user_func( array($this, '_box_content_'.$this->_activate_state) );
+		$template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_activate_meta_box.template.php';
+		echo espresso_display_template( $template_path, $this->template_args, TRUE);
+	}
+
+
+	/**
+	 * this method sets up basic info about the messenger/message type and the relevant buttons for activating.
+	 * @return void	
+	 */
+	private function _box_content_inactive() {
+		$query_args = array(
+			'activate_view' => $this->_activate_meta_box_type,
+			'activate_state' => $this->_current_message_meta_box . '_editing',
+			'action' => 'activate'
+		);
+
+		//common elements
+		$this->template_args['box_id'] = $this->_current_message_meta_box;
+		$this->template_args['box_view'] = $this->_activate_meta_box_type;
+		$this->template_args['on_off_action'] = wp_nonce_url(add_query_arg($query_args, $this->admin_base_url), 'activate_nonce');
+		$this->template_args['on_off_status'] = false;
+		$this->template_args['activate_state'] = 'inactive';
+		$this->template_args['box_content'] = "<p>" . $this->_current_message_meta_box_object->description . "</p>";
+	}
+
+	/**
+	 * this method shows the messenger/message type as active and shows buttons for editing settings/making inactive
+	 * @return void 
+	 */
+	private function _box_content_active() {
 
 	}
 
-	public function activate_message_type_template_meta_box() {
+	/**
+	 * this method shows the settings form for the displayed messenger/message_type meta box.
+	 * @return void 
+	 */
+	private function _box_content_editing() {
 
 	}
 

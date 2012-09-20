@@ -429,6 +429,7 @@ class EE_Admin_Page {
 		$screen = get_current_screen();
 		$this->template_args['current_screen_widget_class'] = 'columns-' . 
 		$screen->get_columns();
+		$this->template_args['current_page'] = $this->wp_page_slug;
 		$template_path = EE_CORE_ADMIN. 'admin_details_metabox_column_wrapper.template.php';
 
 		$this->template_args['screen'] = $screen;
