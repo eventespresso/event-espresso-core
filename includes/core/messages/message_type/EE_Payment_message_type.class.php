@@ -100,7 +100,7 @@ class EE_Payment_message_type extends EE_message_type {
 	 */
 	protected function _init_data() {
 		//assuming the incoming data is the $EE_Session object
-		if ( is_a($this->data, 'EE_Session') ) {
+		if ( !is_a($this->data, 'EE_Session') ) {
 			return new WP_Error( __('wrong data type', 'event_espresso'), __('Payment message type expects data from the EE_Session object. This ain\'t it!', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 		}
 
