@@ -31,6 +31,7 @@
 		<div class="clear-float"></div>
 	</div>
 	
+	<?php do_action('before_reg-page-steps'); ?>
 	<?php echo $registration_steps; ?>
 
 <?php	 else :  ?>
