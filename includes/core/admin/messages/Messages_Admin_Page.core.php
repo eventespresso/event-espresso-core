@@ -181,17 +181,17 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		
 		$all_message_templates = $this->_get_message_templates();
 		
-		if ( empty($message_templates) ) {
-			$message_templates = new WP_Error( __('no_message_templates', 'event_espresso'), __('There are no message templates in the system.  Have you activated any messengers?', 'event_espresso') . espresso_get_error_code( __FILE__, __FUNCTION__, __LINE__) );
+		if ( empty($all_message_templates) ) {
+			$all_message_templates = new WP_Error( __('no_message_templates', 'event_espresso'), __('There are no message templates in the system.  Have you activated any messengers?', 'event_espresso') . espresso_get_error_code( __FILE__, __FUNCTION__, __LINE__) );
 		}
 
 		//$message_templates COULD be an error object. IF it is then we want to handle/display the error
-		if ( is_wp_error($message_templates) ) {
-			$this->_handle_errors($message_templates);
-			$message_templates = array();
+		if ( is_wp_error($all_message_templates) ) {
+			$this->_handle_errors($all_message_templates);
+			$all_message_templates = array();
 		}
 
-		$this->template_args['table_rows'] = count( $message_templates );
+		$this->template_args['table_rows'] = count( $all_message_templates );
 
 
 		//setup dropdown filters
@@ -203,7 +203,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$entries_per_page_dropdown = $this->_entries_per_page_dropdown( $this->template_args['table_rows'] );
 
 		$this->template_args['view_RLs'] = $this->get_list_table_view_RLs();
-		$this->template_args['list_table'] = new Messages_Template_List_Table( $message_templates, $this->_view, $this->_views, $entries_per_page_dropdown );
+		$this->template_args['list_table'] = new Messages_Template_List_Table( $all_message_templates, $this->_view, $this->_views, $entries_per_page_dropdown );
 
 		// link back to here
 		$this->template_args['ee_msg_overview_url'] = add_query_arg( array( 'noheader' => 'true' ), EE_MSG_ADMIN_URL );
@@ -299,7 +299,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->nav_tabs['add_message_template']['order'] = 15;
 
 		//generate metabox
-		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL);
+		
+		$this->_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
+		$this->_add_admin_page_meta_box( 'insert_message_template', __('Add New Message Templates', 'event_espresso'), __FUNCTION__, NULL);
 
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -547,6 +549,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		add_action('action_hook_espresso_before_admin_page_content', array($this, '_add_form_element_before') );
 		add_action('action_hook_espresso_after_admin_page_content', array($this, '_add_form_element_after') );
+
+		$this->_template_path = $this->template_args['GRP_ID'] ?EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
 		//generate metabox
 		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
@@ -819,31 +823,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		exit();
 		
 	}
-
-	/**
-	 * _edit_message_template_fields_meta_box
-	 * @access public
-	 * @return void
-	 */
-	public function _edit_message_template_meta_box() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$template_path = $this->template_args['GRP_ID'] ?EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE);
-	}
-
-	/**
-	 * _add_message_template_meta_box()
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	public function _add_message_template_meta_box() {
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		$template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE);
-	}
-
-
+	
 	/**
 	 * 	_learn_more_about_message_templates_link
 	*	@access protected
@@ -880,6 +860,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$view = isset($_REQUEST['activate_view']) ? $_REQUEST['activate_view'] : 'message_types';
+		$this->_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_activate_meta_box.template.php';
 
 		//this will be an associative array for setting up the initial metaboxes for display.
 		$meta_box_callbacks = array();
@@ -911,7 +892,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//now let's handle adding the metaboxes
 		foreach ( $meta_box_callbacks as $column => $callbacks ) {
 			foreach ( $callbacks as $callback ) {
-				add_meta_box( $callback['object']->name . '-' . $view . '-metabox', ucwords( str_replace('_', '', $callback['object']->name) ), array(&$this, $callback['callback']), $this->wp_page_slug, $box_reference[$column],  'default', array('name' => $callback['object']->name, 'view' => $callback['view'], 'object' => $callback['object'] ) ); //note: if we need to we can pass through args.
+				$this->_activate_message_template_meta_box(array('name' => $callback['object']->name, 'view' => $callback['view'], 'object' => $callback['object'] ) );
+				$this->_add_admin_page_meta_box( $callback['object']->name . '-' . $view . '-metabox', ucwords( str_replace('_', '', $callback['object'] -> name) ), $callback['callback'], '', $box_reference[$column], 'default' );
 			}
 		}
 
@@ -923,16 +905,15 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	}
 
 	/**
-	 * this method assembles the messenger/message_type metabox contents
-	 * @param  object $post    WP metabox caller sends along the wp_post object.  We won't use this (won't be present)
+	 * this method sets the messenger/message_type metabox contents
 	 * @param  array $metabox arguments passed via the caller
 	 * @return string          outputs the actual metabox contents
 	 */
-	public function activate_message_template_meta_box($post, $metabox) {
+	private function _activate_message_template_meta_box($args) {
 		$box_name = false;
-		$this->_activate_meta_box_type = $metabox['args']['view'];
-		$this->_current_message_meta_box = $metabox['args']['name'];
-		$this->_current_message_meta_box_object = $metabox['args']['object'];
+		$this->_activate_meta_box_type = $args['view'];
+		$this->_current_message_meta_box = $args['name'];
+		$this->_current_message_meta_box_object = $args['object'];
 		//let's check and see if we've got a specific state for this box. if so we need to set the state accordingly (or if no state set we need to try and figure that out - can't be stateless now can we?)
 		if ( empty($this->_activate_state) || ( $box_name = explode('_', $this->_activate_state) && $box_name[0] == $this->_current_message_meta_box ) ) {
 			$this->_activate_state = $box_name ? $box_name[1] : false;
@@ -944,8 +925,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		}
 
 		call_user_func( array($this, '_box_content_'.$this->_activate_state) );
-		$template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_activate_meta_box.template.php';
-		echo espresso_display_template( $template_path, $this->template_args, TRUE);
 	}
 
 
