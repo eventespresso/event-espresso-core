@@ -78,7 +78,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//add new default tab for activation
 		$this->nav_tabs['activate'] = array(
 			'link_text' => __('Activate', 'event_espresso'),
-			'url' => wp_nonce_url( add_query_arg( array( 'action' => 'activate'), EE_MSG_ADMIN_URL), 'activate_nonce'),
+			'url' => add_query_arg( array( 'action' => 'activate'), EE_MSG_ADMIN_URL),
 			'order' => 40,
 			'css_class' => ''
 			);
@@ -823,7 +823,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		exit();
 		
 	}
-	
+
 	/**
 	 * 	_learn_more_about_message_templates_link
 	*	@access protected
@@ -914,6 +914,52 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->_activate_meta_box_type = $args['view'];
 		$this->_current_message_meta_box = $args['name'];
 		$this->_current_message_meta_box_object = $args['object'];
+
+		//define template arg defaults
+		$default_edit_query_args = array(
+			'activate_view' => $this->_activate_meta_box_type,
+			'activate_state' => $this->_current_message_meta_box . '_editing',
+			'action' => 'activate'
+		);
+		$nonce_edit_ref = $this->_current_message_meta_box . '_edit_nonce';
+
+		$default_activate_query_args = array(
+			'activate_view' => $this->_activate_meta_box_type,
+			'activate_state' => $this->_current_message_meta_box . '_active',
+			'box_action' => 'activated',
+			'action' => 'activate'
+		);
+		$nonce_activate_ref = $this->_current_message_meta_box . '_activate_nonce';
+
+		$switch_view_toggle_text = $this->_activate_meta_box_type == 'message_types' ? 'messengers' : 'message_types';
+
+		$switch_view_query_args = array(
+			'action' => 'activate',
+			'activate_view' => $switch_view_toggle_text,
+		);
+
+		$default_template_args = array(
+			'box_id' => $this->_current_message_meta_box,
+			'box_view' => $this->_activate_meta_box_type,
+			'activate_state' => 'inactive',
+			'box_head_content' => 'hmm... missing some content',
+			'show_hide_active_content' => 'hidden',
+			'activate_msgs_active_details' => '',
+			'activate_msgs_details_url' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->admin_base_url), $nonce_edit_ref),
+			'show_hide_edit_form' => 'hidden',
+			'activate_message_template_form_action' => wp_nonce_url(add_query_arg($default_activate_query_args, $this->admin_base_url), $nonce_activate_ref),
+			'activate_msgs_form_fields' => '',
+			'on_off_action' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->admin_base_url), $nonce_edit_ref),
+			'on_off_status' => 'inactive',
+			'activate_meta_box_type' => ucwords(str_replace('_', ' ', $this->_activate_meta_box_type) ),
+			'activate_meta_box_page_instructions' => $this->_activate_meta_box_type == 'message_types' ? __('Message Types are the areas of Event Espresso that you can activate notifications for.  On this page you can see all the various message types currently available and whether they are active or not.', 'event-espresso') : __('Messengers are the vehicles for delivering your notifications.  On this page you can see all the various messengers available and whether they are active or not.', 'event-espresso'),
+			'activate_msg_type_toggle_link' => add_query_arg($switch_view_query_args, $this->admin_base_url),
+			'activate_meta_box_toggle_type' => ucwords(str_replace('_', ' ', $switch_view_toggle_text) )
+			);
+
+		$this->template_args = array_merge($default_template_args, $this->template_args);
+
+		
 		//let's check and see if we've got a specific state for this box. if so we need to set the state accordingly (or if no state set we need to try and figure that out - can't be stateless now can we?)
 		if ( empty($this->_activate_state) || ( $box_name = explode('_', $this->_activate_state) && $box_name[0] == $this->_current_message_meta_box ) ) {
 			$this->_activate_state = $box_name ? $box_name[1] : false;
@@ -923,6 +969,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 				$this->_activate_state = isset($this->_active_messengers[$this->_current_message_meta_box]) ? $this->_active_messengers[$this->_current_message_meta_box]['state'] : 'inactive';
 			}
 		}
+		$admin_header_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_activate_details_header.template.php';
+		$this->template_args['admin_page_header'] = espresso_display_template( $admin_header_template_path, $this->template_args, TRUE);
 
 		call_user_func( array($this, '_box_content_'.$this->_activate_state) );
 	}
@@ -933,19 +981,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 * @return void	
 	 */
 	private function _box_content_inactive() {
-		$query_args = array(
-			'activate_view' => $this->_activate_meta_box_type,
-			'activate_state' => $this->_current_message_meta_box . '_editing',
-			'action' => 'activate'
-		);
-
 		//common elements
-		$this->template_args['box_id'] = $this->_current_message_meta_box;
-		$this->template_args['box_view'] = $this->_activate_meta_box_type;
-		$this->template_args['on_off_action'] = wp_nonce_url(add_query_arg($query_args, $this->admin_base_url), 'activate_nonce');
-		$this->template_args['on_off_status'] = false;
-		$this->template_args['activate_state'] = 'inactive';
-		$this->template_args['box_content'] = "<p>" . $this->_current_message_meta_box_object->description . "</p>";
+		$this->template_args['activate_state'] = 'inactive'; 
+		$this->template_args['box_head_content'] = $this->_current_message_meta_box_object->description;
 	}
 
 	/**

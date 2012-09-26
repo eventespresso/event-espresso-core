@@ -459,9 +459,9 @@ class EE_Admin_Page {
 	}
 
 	/**
-	*		generates  HTML wrapper for an admin details page
-	*		@access public
-	*		@return void
+	*	generates  HTML wrapper for an admin details page
+	*	@access public
+	*	@return void
 	*/		
 	public function display_admin_page_with_sidebar() {		
 		
