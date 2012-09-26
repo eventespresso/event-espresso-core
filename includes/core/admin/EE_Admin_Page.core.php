@@ -436,7 +436,7 @@ class EE_Admin_Page {
 		//if $create_func is true (default) then we automatically create the function for displaying the actual meta box.  If false then we take the $callback reference passed through and use it instead (so callers can define their own callback function/method if they wish)
 		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "action_hook_espresso_log", __FILE__, __FUNCTION__, ""); echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
 
-		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, $call_back_func, $this->wp_page_slug, 'normal', 'high', $callback_args );
+		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, $call_back_func, $this->wp_page_slug, $column, $priority, $callback_args );
 	}
 
 	/**
