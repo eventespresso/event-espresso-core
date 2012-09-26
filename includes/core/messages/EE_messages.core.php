@@ -470,6 +470,12 @@ abstract class EE_message_type {
 	 */
 	protected $data;
 
+	/**
+	 * This holds any specific fields for holding any settings related to a message type (if any needed)
+	 * @var array
+	 */
+	protected $_admin_settings_fields = array();
+
 	public function __construct() {
 		$this->_set_default_field_content();
 		$this->_set_contexts();
@@ -514,6 +520,25 @@ abstract class EE_message_type {
 	 * @return void
 	 */
 	abstract protected function _set_default_field_content();
+
+	/**
+	 * sets the _admin_settings_fields property which needs to be defined by child classes.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_admin_settings_fields();
+
+	/**
+	 * getter that returns the protected admin_settings_fields property
+	 * 
+	 * @access public
+	 * @return array admin settings fields
+	 */
+	public function get_admin_settings_fields() {
+		return $this->_admin_settings_fields;
+	}
 
 	/**
 	 * _set_contexts
@@ -639,6 +664,13 @@ abstract class EE_messenger {
 	 * @var array
 	 */
 	protected $_template_fields = array();
+
+	/**
+	 * this property holds any specific fields for holding any settings related to a messenger (if any needed)
+	 * @var array
+	 */
+	protected $_admin_settings_fields = array();
+
 	public $active_templates = array(); //holds all the active templates saved in the database.
 
 	public function __construct() {
@@ -667,6 +699,25 @@ abstract class EE_messenger {
 	 * @return void
 	 */
 	abstract protected function _set_default_field_content();
+
+	/**
+	 * sets the _admin_settings_fields property which needs to be defined by child classes.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_admin_settings_fields();
+
+	/**
+	 * getter that returns the protected admin_settings_fields property
+	 * 
+	 * @access public
+	 * @return array admin settings fields
+	 */
+	public function get_admin_settings_fields() {
+		return $this->_admin_settings_fields;
+	}
 
 	/**
 	 * get_template_fields

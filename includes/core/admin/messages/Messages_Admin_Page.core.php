@@ -983,7 +983,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 */
 	private function _box_content_inactive() {
 		//common elements
-		$this->template_args['activate_state'] = 'inactive'; 
 		$this->template_args['box_head_content'] = $this->_current_message_meta_box_object->description;
 	}
 
@@ -992,7 +991,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 * @return void 
 	 */
 	private function _box_content_active() {
-
+		$this->template_args['activate_state'] = 'active'
+		$this->template_args['box_head_content'] = __('<strong>Current Settings:</strong>');
+		
 	}
 
 	/**

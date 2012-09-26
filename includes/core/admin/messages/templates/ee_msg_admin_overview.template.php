@@ -10,14 +10,14 @@
 		<div id="ee-messenger-filters-dv">
 			<form id="ee-messenger-filters-frm" action="<?php echo $ee_msg_overview_url;?>" method="post" name="ee-messenger-filters-frm">
 				<select name="ee_messenger_filter_by" id="ee_messenger_filter_by">
-					<?php foreach ( $active_messengers as $messenger ) : ?>
+					<?php foreach ( $active_messengers as $messenger => $args ) : ?>
 					<option value="<?php echo $messenger; ?>"><?php echo ucwords(str_replace('_', ' ', $messenger) ); ?></option>
 					<?php endforeach; ?>
 				</select>
 				<input id="submit-ee-messenger-filters-sbmt" class="button-secondary" type="submit" value="Filter Messenger">
 
 				<select name="ee_message_type_filter_by" id="ee_message_type_filter_by">
-					<?php foreach ( $active_message_types as $message_type ) : ?>
+					<?php foreach ( $active_message_types as $message_type => $args ) : ?>
 					<option value="<?php echo $message_type; ?>"><?php echo ucwords(str_replace('_', ' ', $message_type) ); ?></option>
 					<?php endforeach; ?>
 				</select>
