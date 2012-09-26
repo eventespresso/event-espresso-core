@@ -951,6 +951,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			'activate_msgs_form_fields' => '',
 			'on_off_action' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->admin_base_url), $nonce_edit_ref),
 			'on_off_status' => 'inactive',
+			'activate_msgs_on_off_descrp' => __('Activate', 'event-espresso'),
 			'activate_meta_box_type' => ucwords(str_replace('_', ' ', $this->_activate_meta_box_type) ),
 			'activate_meta_box_page_instructions' => $this->_activate_meta_box_type == 'message_types' ? __('Message Types are the areas of Event Espresso that you can activate notifications for.  On this page you can see all the various message types currently available and whether they are active or not.', 'event-espresso') : __('Messengers are the vehicles for delivering your notifications.  On this page you can see all the various messengers available and whether they are active or not.', 'event-espresso'),
 			'activate_msg_type_toggle_link' => add_query_arg($switch_view_query_args, $this->admin_base_url),
