@@ -52,10 +52,10 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->description = __('Email messenger.  This sends out email via the built-in wp_mail function included with WordPress', 'event_espresso');
 
 		//we're using defaults so let's call parent constructor that will take care of setting up all the other properties
-		parent::__construct();
-
 		//email messenger DOES have admin settings so let's check to see if any are set.
 		$this->_set_existing_admin_settings();
+		
+		parent::__construct();
 	}
 
 	/**

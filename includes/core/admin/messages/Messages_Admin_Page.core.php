@@ -1018,12 +1018,12 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$content = '<ul>';
 		foreach ( $existing_settings_fields as $field_name => $field_value ) {
 			$content .= '<li>' . ucwords(str_replace('_', ' ', $field_name) ) . ': ';
-			if ( $field_name => 'message_types' ) {
+			if ( $field_name == 'message_types' ) {
 				$content .= '<ul class="message-type-list">';
 				foreach ( $field_value as $mt ) {
 					$content .= '<li>' . $mt . '</li>';
 				}
-				$content .= '</ul></li>'
+				$content .= '</ul></li>';
 			} else {
 				$content .= $field_value;
 			}
@@ -1031,7 +1031,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$content .= '</ul>';
 
 		//setup template args
-		$this->template_args['activate_state'] = 'active'
+		$this->template_args['activate_state'] = 'active';
 		$this->template_args['box_head_content'] = $this->_current_message_meta_box_object->description;
 
 		if ( !empty($content ) ) {
