@@ -53,6 +53,9 @@ class EE_Email_messenger extends EE_messenger  {
 
 		//we're using defaults so let's call parent constructor that will take care of setting up all the other properties
 		parent::__construct();
+
+		//email messenger DOES have admin settings so let's check to see if any are set.
+		$this->_set_existing_admin_settings();
 	}
 
 	/**
@@ -90,10 +93,10 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_default_field_content() {
 		$this->_default_field_content = array(
 			'to' => '[ATTENDEE_EMAIL]',
-			'from' => '[ADMIN_EMAIL]',
-			'subject' => 'Notification Email - should be replaced',
+			'from' => $this->_existing_admin_settings['from'],
+			'subject' => '',
 			'content' => array(
-				'main' => 'This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in this template',
+				'main' => 'This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template',
 				'attendee_list' => 'This contains the formatting for each attendee in a attendee list'
 				)
 			);
@@ -103,7 +106,14 @@ class EE_Email_messenger extends EE_messenger  {
 	 * If this message type needs admin settings fields this is where we add it.
 	 */
 	protected function _set_admin_settings_fields() {
-		$this->_admin_settings_fields = array();
+		$this->_admin_settings_fields = array(
+			'from' => array(
+					'type' => 'text',
+					'label' => __('Default From Address', 'event_espresso'),
+					'default' => '[ADMIN_EMAIL]'
+				),
+
+		);
 	}
 
 	/**

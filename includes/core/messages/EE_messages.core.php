@@ -502,6 +502,7 @@ abstract class EE_message_type {
 		$this->_shortcode_replace = EE_Parse_Shortcodes::instance();
 		$this->active_messenger = $active_messenger;
 		$this->data = $data;
+		$this->_set_admin_settings_fields();
 
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
 		$this->_set_default_field_content;
@@ -543,8 +544,16 @@ abstract class EE_message_type {
 	 * @return void
 	 */
 	protected function _set_existing_admin_settings() {
+		global $espresso_wp_user;
 		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 		$this->_existing_admin_settings = $active_message_types[$this->name]['settings'];
+
+		//if this is empty, let's try getting the defaults (if they exist)
+		if ( empty($this->_existing_admin_settings) ) {
+			foreach ( $this->_admin_settings_fields as $field => $items ) {
+				$this->_existing_admin_settings[$field] = $field['default'];
+			}
+		}
 	}
 
 	public function get_existing_admin_settings() {
@@ -702,29 +711,11 @@ abstract class EE_messenger {
 	 */
 	protected $_existing_admin_settings = array();
 
-	/**
-	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _set_existing_admin_settings() {
-		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
-		$this->_existing_admin_settings = $active_message_types[$this->name]['settings'];
-	}
-
-	public function get_existing_admin_settings() {
-		// if admin_settings property empty lets try setting it.
-		if ( empty( $this->_existing_admin_settings ) )
-			$this->_set_existing_admin_settings();
-
-		return $this->_set_existing_admin_setttings;
-	}
-
 	public $active_templates = array(); //holds all the active templates saved in the database.
 
 	public function __construct() {
 		$this->_EEM_data = EEM_Message_Template::instance();
+		$this->_set_admin_settings_fields();
 		$this->_set_templates();	
 		$this->_set_template_fields();
 		$this->_set_default_field_content();
@@ -752,12 +743,54 @@ abstract class EE_messenger {
 
 	/**
 	 * sets the _admin_settings_fields property which needs to be defined by child classes.
+	 * You will want to set the _admint_settings_fields properties as a multi-dimensional array with the following format
+	 * array(
+	 * 		{field_name - also used for setting index} => array(
+	 * 			'type' => {type of field: 'text', 'textarea', 'checkbox'},
+	 * 			'label' => {label for the field, make sure it's localized},
+	 * 			'default' => {default value for the setting}
+	 * 		),
+	 * );
 	 *
 	 * @abstract
 	 * @access protected
 	 * @return void
 	 */
 	abstract protected function _set_admin_settings_fields();
+
+	/**
+	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _set_existing_admin_settings() {
+		global $espresso_wp_user;
+		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+		$this->_existing_admin_settings = isset($active_message_types[$this->name]) ? $active_message_types[$this->name]['settings'] : null;
+
+		//if this is empty, let's try getting the defaults (if they exist)
+		if ( empty($this->_existing_admin_settings) ) {
+			foreach ( $this->_admin_settings_fields as $field => $items ) {
+				$this->_existing_admin_settings[$field] = $field['default'];
+			}
+		}
+	}
+
+	/**
+	 * get_existing_admin_settings
+	 * (if needed) sets and returns the _existing_admin_settings property.
+	 *
+	 * @access public
+	 * @return array          settings
+	 */
+	public function get_existing_admin_settings() {
+		// if admin_settings property empty lets try setting it.
+		if ( empty( $this->_existing_admin_settings ) )
+			$this->_set_existing_admin_settings();
+
+		return $this->_set_existing_admin_setttings;
+	}
 
 	/**
 	 * getter that returns the protected admin_settings_fields property
