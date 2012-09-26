@@ -422,7 +422,7 @@ class EE_Admin_Page {
 	 * @param string  $priority      give this metabox a priority (using accepted priorities for wp meta boxes)
 	 * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function created but just set our own callback for wp's add_meta_box.
 	 */
-	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column, $priority, $create_func = true ) {	
+	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column = 'default', $priority = 'high', $create_func = true ) {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
 
 		//if we have empty callback args and we want to automatically create the metabox callback then we need to make sure the callback args are generated.
