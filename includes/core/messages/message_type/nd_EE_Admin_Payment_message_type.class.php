@@ -42,6 +42,13 @@ class EE_Admin_Payment_message_type extends EE_message_type {
 	}
 
 	/**
+	 * If this message type needs admin settings fields this is where we add it.
+	 */
+	protected function _set_admin_settings_fields() {
+		$this->_admin_settings_fields = array();
+	}
+
+	/**
 	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->templates, $this->count, and any extra stuff to the data object that can come from the messenger template options.
 	 * @return void
 	 * @access protected

@@ -100,6 +100,13 @@ class EE_Email_messenger extends EE_messenger  {
 	}
 
 	/**
+	 * If this message type needs admin settings fields this is where we add it.
+	 */
+	protected function _set_admin_settings_fields() {
+		$this->_admin_settings_fields = array();
+	}
+
+	/**
 	 * We just deliver the messages don't kill us!!  
 	 * @return void
 	 * @return bool|error_object true if message delivered, false if it didn't deliver OR bubble up any error object if present.

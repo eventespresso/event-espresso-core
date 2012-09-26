@@ -46,6 +46,13 @@ class EE_Payment_message_type extends EE_message_type {
 	
 	}
 
+	/**
+	 * This message type doesn't need any settings so we are just setting to empty array.
+	 */
+	protected function _set_admin_settings_fields() {
+		$this->_admin_settings_fields = array();
+	}
+
 	protected function _set_default_field_content() {
 		$this->_default_field_content = array(
 			'subject' => sprintf(__('Payment processed for %s', 'event_espresso'), '[EVENT_NAME]'),

@@ -476,6 +476,12 @@ abstract class EE_message_type {
 	 */
 	protected $_admin_settings_fields = array();
 
+	/**
+	 * this property will hold any existing setting that may have been set in the admin.
+	 * @var array
+	 */
+	protected $_existing_admin_settings = array();
+
 	public function __construct() {
 		$this->_set_default_field_content();
 		$this->_set_contexts();
@@ -529,6 +535,25 @@ abstract class EE_message_type {
 	 * @return void
 	 */
 	abstract protected function _set_admin_settings_fields();
+
+	/**
+	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _set_existing_admin_settings() {
+		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
+		$this->_existing_admin_settings = $active_message_types[$this->name]['settings'];
+	}
+
+	public function get_existing_admin_settings() {
+		// if admin_settings property empty lets try setting it.
+		if ( empty( $this->_existing_admin_settings ) )
+			$this->_set_existing_admin_settings();
+
+		return $this->_set_existing_admin_setttings;
+	}
 
 	/**
 	 * getter that returns the protected admin_settings_fields property
@@ -670,6 +695,31 @@ abstract class EE_messenger {
 	 * @var array
 	 */
 	protected $_admin_settings_fields = array();
+
+	/**
+	 * this property will hold any existing settings that may have been set in the admin.
+	 * @var array
+	 */
+	protected $_existing_admin_settings = array();
+
+	/**
+	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _set_existing_admin_settings() {
+		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
+		$this->_existing_admin_settings = $active_message_types[$this->name]['settings'];
+	}
+
+	public function get_existing_admin_settings() {
+		// if admin_settings property empty lets try setting it.
+		if ( empty( $this->_existing_admin_settings ) )
+			$this->_set_existing_admin_settings();
+
+		return $this->_set_existing_admin_setttings;
+	}
 
 	public $active_templates = array(); //holds all the active templates saved in the database.
 
