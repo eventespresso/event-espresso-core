@@ -746,7 +746,11 @@ abstract class EE_messenger {
 	 * You will want to set the _admint_settings_fields properties as a multi-dimensional array with the following format
 	 * array(
 	 * 		{field_name - also used for setting index} => array(
-	 * 			'type' => {type of field: 'text', 'textarea', 'checkbox'},
+	 * 			'field_type' => {type of field: 'text', 'textarea', 'checkbox'},
+	 * 			'value_type' => {type of value: 'string', 'int', 'array', 'bool'},
+	 * 			'required' => {bool, required or not},
+	 * 			'validation' => {bool, true if we want validation, false if not},
+	 * 			'format' => {%d, or %s},
 	 * 			'label' => {label for the field, make sure it's localized},
 	 * 			'default' => {default value for the setting}
 	 * 		),
@@ -789,7 +793,7 @@ abstract class EE_messenger {
 		if ( empty( $this->_existing_admin_settings ) )
 			$this->_set_existing_admin_settings();
 
-		return $this->_set_existing_admin_setttings;
+		return $this->_set_existing_admin_settings;
 	}
 
 	/**

@@ -6,7 +6,7 @@
 	<div class="activate_messages_meta_box_active_content <?php echo $show_hide_active_content; ?>">
 		<?php echo $activate_msgs_active_details; ?>
 		<div class="active_msgs_details_button">
-			<?php echo $activate_msgs_details_url; ?>
+			<a class="button-primary" href="<?php echo $activate_msgs_details_url; ?>" title="<?php _e('Change Settings', 'event_espresso'); ?>"><?php _e('Change', 'event_espresso'); ?></a>
 		</div>
 	</div> <!-- end .activate_messages_meta_box_active_content -->
 
@@ -15,7 +15,7 @@
 		<form id="ee-msg-activate-<?php echo $box_view;?>-<?php echo $box_id; ?>-frm" action="<?php echo $activate_message_template_form_action; ?>" method="get">
 			<?php echo $activate_msgs_form_fields; ?>
 			<div class="active_msgs_details_button">
-				<?php echo $activate_msgs_details_url; ?>
+				<input type="submit" class="button-primary" value="Submit" />
 			</div>
 		</form>
 	</div> <!-- end .activate_messages_meta_box_form -->

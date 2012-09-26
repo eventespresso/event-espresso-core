@@ -931,6 +931,16 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		);
 		$nonce_activate_ref = $this->_current_message_meta_box . '_activate_nonce';
 
+		$default_deactivate_query_args = array(
+			'activate_view' => $this->_activate_meta_box_type,
+			'activate_state' => $this->_current_message_meta_box . '_inactive',
+			'box_action' => 'deactivated',
+			'action' => 'activate'
+		);
+		$nonce_deactivate_ref = $this->_current_message_meta_box . '_deactivate_nonce';
+
+		
+
 		$switch_view_toggle_text = $this->_activate_meta_box_type == 'message_types' ? 'messengers' : 'message_types';
 
 		$switch_view_query_args = array(
@@ -955,7 +965,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			'activate_meta_box_type' => ucwords(str_replace('_', ' ', $this->_activate_meta_box_type) ),
 			'activate_meta_box_page_instructions' => $this->_activate_meta_box_type == 'message_types' ? __('Message Types are the areas of Event Espresso that you can activate notifications for.  On this page you can see all the various message types currently available and whether they are active or not.', 'event-espresso') : __('Messengers are the vehicles for delivering your notifications.  On this page you can see all the various messengers available and whether they are active or not.', 'event-espresso'),
 			'activate_msg_type_toggle_link' => add_query_arg($switch_view_query_args, $this->admin_base_url),
-			'activate_meta_box_toggle_type' => ucwords(str_replace('_', ' ', $switch_view_toggle_text) )
+			'activate_meta_box_toggle_type' => ucwords(str_replace('_', ' ', $switch_view_toggle_text) ),
+			'on_off_action_on' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->admin_base_url), $nonce_edit_ref),
+			'on_off_action_off' => wp_nonce_url(add_query_arg($default_deactivate_query_args, $this->admin_base_url), $nonce_deactivate_ref)
 			);
 
 		$this->template_args = array_merge($default_template_args, $this->template_args);
@@ -991,9 +1003,46 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 * @return void 
 	 */
 	private function _box_content_active() {
+		//setup content
+		$content = '';
+
+		//fields
+		$settings_fields = $this->_current_message_meta_box_object->get_admin_settings_fields();
+		$existing_settings_fields = $this->_current_message_meta_box_object->get_existing_admin_settings();
+
+		//if the following condition is met then we need to load the edit form instead.
+		if ( (empty($existing_settings_fields) && $this->_activate_meta_box_type == 'messenger') || (!empty($settings_fields) && empty($existing_settings_fields) ) )
+			return $this->_box_content_editing();
+
+		//we're still here so let's setup the display for this page.
+		$content = '<ul>';
+		foreach ( $existing_settings_fields as $field_name => $field_value ) {
+			$content .= '<li>' . ucwords(str_replace('_', ' ', $field_name) ) . ': ';
+			if ( $field_name => 'message_types' ) {
+				$content .= '<ul class="message-type-list">';
+				foreach ( $field_value as $mt ) {
+					$content .= '<li>' . $mt . '</li>';
+				}
+				$content .= '</ul></li>'
+			} else {
+				$content .= $field_value;
+			}
+		}
+		$content .= '</ul>';
+
+		//setup template args
 		$this->template_args['activate_state'] = 'active'
-		$this->template_args['box_head_content'] = __('<strong>Current Settings:</strong>');
-		
+		$this->template_args['box_head_content'] = $this->_current_message_meta_box_object->description;
+
+		if ( !empty($content ) ) {
+			$this->template_args['show_hide_active_content'] = '';
+			$this->template_args['activate_msgs_active_details'] = $content;
+			$this->template_args['activate_msgs_details_url'] = $this->template_args['on_off_action'];
+		}
+
+		$this->template_args['on_off_status'] = 'active';
+		$this->template_args['activate_msgs_on_off_descrp'] = __('Deactivate', 'event_espresso');
+		$this->template_args['on_off_action'] = $this->template_args['on_off_action_off'];
 	}
 
 	/**
@@ -1001,7 +1050,15 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 * @return void 
 	 */
 	private function _box_content_editing() {
+		foreach ( $settings_fields as $field ) {
+			$field_id = $this->_current_message_meta_box . '-' . $field;
+			$template_form_fields[$field_id] = array(
+				'name' => $field_id,
+				'label' => $field['label'],
+				'input' => $field['input'],
+			);
 
+		}
 	}
 
 
