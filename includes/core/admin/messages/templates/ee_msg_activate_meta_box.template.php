@@ -1,4 +1,4 @@
-<div id="<?php echo $box_view; ?>_<?php echo $box_id; ?>_meta_box" class="admin-primary-mbox-dv <?php echo $activate_state; ?>">
+<div id="<?php echo $box_view; ?>_<?php echo $box_id; ?>_meta_box" class="admin-primary-mbox-dv">
 	
 	<p><?php echo $box_head_content; ?></p>
 

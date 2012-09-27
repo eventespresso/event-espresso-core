@@ -893,7 +893,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		foreach ( $meta_box_callbacks as $column => $callbacks ) {
 			foreach ( $callbacks as $callback ) {
 				$this->_activate_message_template_meta_box(array('name' => $callback['object']->name, 'view' => $callback['view'], 'object' => $callback['object'] ) );
-				$this->_add_admin_page_meta_box( $callback['object']->name . '-' . $view . '-metabox', ucwords( str_replace('_', '', $callback['object'] -> name) ), $callback['callback'], '', $box_reference[$column], 'default' );
+				$meta_box_title = ucwords( str_replace('_', '', $callback['object'] -> name) ) . '  <span class="' . $this->_activate_state . '">[' . $this->_activate_state . ']</span>';
+				$this->_add_admin_page_meta_box( $callback['object']->name . '-' . $view . '-metabox', $meta_box_title, $callback['callback'], '', $box_reference[$column], 'default' );
 			}
 		}
 
@@ -1016,7 +1017,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//note that if there are not any existing settings and this is a messengers box display then we show editing even if there are no default fields BECAUSE, messengers need to have selected message types with them.
 		
 		if ( ( empty($existing_settings_fields) && !empty($settings_fields) ) || ( empty($existing_settings_fields) && $this->_activate_meta_box_type == 'messengers' ) ) {
-			return $this->_box_content_editing();
+			$this->_box_content_editing();
+			return;
 		}
 
 		//we're still here so let's setup the display for this page.
@@ -1047,6 +1049,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$this->template_args['activate_msgs_details_url'] = $this->template_args['on_off_action'];
 		}
 
+		$this->_activate_state = 'active';
+
 		$this->template_args['on_off_status'] = 'active';
 		$this->template_args['activate_msgs_on_off_descrp'] = __('Deactivate', 'event_espresso');
 		$this->template_args['on_off_action'] = $this->template_args['on_off_action_off'];
@@ -1061,9 +1065,10 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$settings_fields = $this->_current_message_meta_box_object->get_admin_settings_fields();
 		$existing_settings_fields = $this->_current_message_meta_box_object->get_existing_admin_settings();
 
-		//if we don't have any settings fields then we don't need to do any editing so let's just make active.
-		if ( empty($settings_fields) ) {
-			return $this->_box_content_active();
+		//if we don't have any settings fields then we don't need to do any editing so let's just make active
+		if ( empty($settings_fields) && $this->_activate_meta_box_type != 'messengers' ) {
+			$this->_box_content_active();
+			return;
 		}
 
 		foreach ( $settings_fields as $field => $items ) {
@@ -1084,8 +1089,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		$template_form_fields = $this->_generate_admin_form_fields( $template_form_field, 'ee_msg_activate_form' );
 
-		$this->template_args['activate_state'] = 'active';
+		$this->template_args['activate_state'] = 'editing';
 		$this->template_args['box_head_content'] = $this->_current_message_meta_box_object->description;
+		$this->_activate_state = 'editing';
 
 		if ( !empty($template_form_fields) ) {
 			$this->template_args['show_hide_edit_form'] = '';
@@ -1095,6 +1101,4 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$this->template_args['on_off_status'] = 'active';
 		}
 	}
-
-
 }
