@@ -15,7 +15,7 @@
 		<form id="ee-msg-activate-<?php echo $box_view;?>-<?php echo $box_id; ?>-frm" action="<?php echo $activate_message_template_form_action; ?>" method="get">
 			<?php echo $activate_msgs_form_fields; ?>
 			<div class="active_msgs_details_button">
-				<input type="submit" class="button-primary" value="Submit" />
+				<input type="submit" class="button-primary" value="<?php _e('Submit'); ?>" />
 			</div>
 		</form>
 	</div> <!-- end .activate_messages_meta_box_form -->

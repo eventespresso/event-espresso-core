@@ -483,6 +483,8 @@ abstract class EE_message_type {
 	protected $_existing_admin_settings = array();
 
 	public function __construct() {
+		$this->_set_admin_settings_fields();
+		$this->_set_existing_admin_settings();
 		$this->_set_default_field_content();
 		$this->_set_contexts();
 	}
@@ -502,8 +504,6 @@ abstract class EE_message_type {
 		$this->_shortcode_replace = EE_Parse_Shortcodes::instance();
 		$this->active_messenger = $active_messenger;
 		$this->data = $data;
-		$this->_set_admin_settings_fields();
-
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
 		$this->_set_default_field_content;
 		$this->_set_contexts;
@@ -546,22 +546,27 @@ abstract class EE_message_type {
 	protected function _set_existing_admin_settings() {
 		global $espresso_wp_user;
 		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
-		$this->_existing_admin_settings = $active_message_types[$this->name]['settings'];
+
+		//if there are no setting fields then there won't be any existing admin settings either.
+		if ( !isset($active_message_types[$this->name]) && empty($this->_admin_settings_fields) )
+			return $this->_existing_admin_settings = NULL;
+		
+		$this->_existing_admin_settings = isset($active_message_types[$this->name] ) ?  $active_message_types[$this->name]['settings'] : null;
 
 		//if this is empty, let's try getting the defaults (if they exist)
 		if ( empty($this->_existing_admin_settings) ) {
 			foreach ( $this->_admin_settings_fields as $field => $items ) {
-				$this->_existing_admin_settings[$field] = $field['default'];
+				$this->_existing_admin_settings[$this->name . '-' . $field] = $field['default'];
 			}
 		}
 	}
 
 	public function get_existing_admin_settings() {
 		// if admin_settings property empty lets try setting it.
-		if ( empty( $this->_existing_admin_settings ) )
+		if ( empty( $this->_existing_admin_settings ) && method_exists($this, '_set_existing_admin_settings') )
 			$this->_set_existing_admin_settings();
 
-		return $this->_set_existing_admin_setttings;
+		return property_exists($this,'_existing_admin_setttings') ? $this->_existing_admin_settings : null;
 	}
 
 	/**
@@ -716,6 +721,7 @@ abstract class EE_messenger {
 	public function __construct() {
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_admin_settings_fields();
+		$this->_set_existing_admin_settings();
 		$this->_set_templates();	
 		$this->_set_template_fields();
 		$this->_set_default_field_content();
@@ -770,13 +776,19 @@ abstract class EE_messenger {
 	 */
 	protected function _set_existing_admin_settings() {
 		global $espresso_wp_user;
-		$active_message_types = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
-		$this->_existing_admin_settings = isset($active_message_types[$this->name]) ? $active_message_types[$this->name]['settings'] : null;
+			
+		$active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+
+		//if there are no setting fields then there won't be any existing admin settings either.
+		if ( !isset($active_messengers[$this->name]) && empty($this->_admin_settings_fields) )
+			return $this->_existing_admin_settings = NULL;
+		
+		$this->_existing_admin_settings = isset($active_messengers[$this->name]) ? $active_messengers[$this->name]['settings'] : null;
 
 		//if this is empty, let's try getting the defaults (if they exist)
 		if ( empty($this->_existing_admin_settings) ) {
 			foreach ( $this->_admin_settings_fields as $field => $items ) {
-				$this->_existing_admin_settings[$field] = $field['default'];
+				$this->_existing_admin_settings[$this->name . '-' . $field] = $items['default'];
 			}
 		}
 	}
@@ -790,10 +802,10 @@ abstract class EE_messenger {
 	 */
 	public function get_existing_admin_settings() {
 		// if admin_settings property empty lets try setting it.
-		if ( empty( $this->_existing_admin_settings ) )
+		if ( method_exists($this, '_set_existing_admin_settings()') && empty( $this->_existing_admin_settings ) )
 			$this->_set_existing_admin_settings();
 
-		return $this->_set_existing_admin_settings;
+		return property_exists($this, '_existing_admin_settings') ? $this->_existing_admin_settings : null;
 	}
 
 	/**

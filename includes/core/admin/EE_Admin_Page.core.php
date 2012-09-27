@@ -636,6 +636,7 @@ class EE_Admin_Page {
 		// if you don't behave - this is what you're gonna get !!!
 		$output = '';
 
+
 		// cycle thru inputs
 		foreach ($input_vars as $input_key => $input_value) {
 
@@ -646,7 +647,7 @@ class EE_Admin_Page {
 			$field_id = $id . '-' . $input_key;
 
 			// what type of input are we dealing with ?
-			switch ($input_vars['input']) {
+			switch ($input_value['input']) {
 
 				// text inputs
 				case 'text' :

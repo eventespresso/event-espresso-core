@@ -974,14 +974,16 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		
 		//let's check and see if we've got a specific state for this box. if so we need to set the state accordingly (or if no state set we need to try and figure that out - can't be stateless now can we?)
-		if ( empty($this->_activate_state) || ( $box_name = explode('_', $this->_activate_state) && $box_name[0] == $this->_current_message_meta_box ) ) {
-			$this->_activate_state = $box_name ? $box_name[1] : false;
+		if ( !empty($this->_activate_state) && is_array($this->_activate_state) && $box_name = explode('_', $this->_activate_state[0]) ) {
 
-			//still stateless eh?  K let's see if we can get the state from the database.
-			if ( !$this->_activate_state ) {
-				$this->_activate_state = isset($this->_active_messengers[$this->_current_message_meta_box]) ? $this->_active_messengers[$this->_current_message_meta_box]['state'] : 'inactive';
-			}
+			$this->_activate_state = $box_name ? $box_name[1] : false;
 		}
+
+		//still stateless eh?  K let's see if we can get the state from the database.
+		if ( !$this->_activate_state ) {
+			$this->_activate_state = isset($this->_active_messengers[$this->_current_message_meta_box]) ? $this->_active_messengers[$this->_current_message_meta_box]['state'] : 'inactive';
+		}
+
 		$admin_header_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_activate_details_header.template.php';
 		$this->template_args['admin_page_header'] = espresso_display_template( $admin_header_template_path, $this->template_args, TRUE);
 
@@ -1011,24 +1013,29 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$existing_settings_fields = $this->_current_message_meta_box_object->get_existing_admin_settings();
 
 		//if the following condition is met then we need to load the edit form instead.
-		if ( (empty($existing_settings_fields) && $this->_activate_meta_box_type == 'messenger') || (!empty($settings_fields) && empty($existing_settings_fields) ) )
+		//note that if there are not any existing settings and this is a messengers box display then we show editing even if there are no default fields BECAUSE, messengers need to have selected message types with them.
+		
+		if ( ( empty($existing_settings_fields) && !empty($settings_fields) ) || ( empty($existing_settings_fields) && $this->_activate_meta_box_type == 'messengers' ) ) {
 			return $this->_box_content_editing();
+		}
 
 		//we're still here so let's setup the display for this page.
-		$content = '<ul>';
-		foreach ( $existing_settings_fields as $field_name => $field_value ) {
-			$content .= '<li>' . ucwords(str_replace('_', ' ', $field_name) ) . ': ';
-			if ( $field_name == 'message_types' ) {
-				$content .= '<ul class="message-type-list">';
-				foreach ( $field_value as $mt ) {
-					$content .= '<li>' . $mt . '</li>';
+		if ( !empty($existing_settings_fields) ) {
+			$content = '<ul>';
+			foreach ( $existing_settings_fields as $field_name => $field_value ) {
+				$content .= '<li>' . ucwords(str_replace('_', ' ', $field_name) ) . ': ';
+				if ( $field_name == 'message_types' ) {
+					$content .= '<ul class="message-type-list">';
+					foreach ( $field_value as $mt ) {
+						$content .= '<li>' . $mt . '</li>';
+					}
+					$content .= '</ul></li>';
+				} else {
+					$content .= $field_value;
 				}
-				$content .= '</ul></li>';
-			} else {
-				$content .= $field_value;
 			}
+			$content .= '</ul>';
 		}
-		$content .= '</ul>';
 
 		//setup template args
 		$this->template_args['activate_state'] = 'active';
@@ -1050,14 +1057,42 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 * @return void 
 	 */
 	private function _box_content_editing() {
-		foreach ( $settings_fields as $field ) {
-			$field_id = $this->_current_message_meta_box . '-' . $field;
-			$template_form_fields[$field_id] = array(
-				'name' => $field_id,
-				'label' => $field['label'],
-				'input' => $field['input'],
-			);
+		$template_form_fields = '';
+		$settings_fields = $this->_current_message_meta_box_object->get_admin_settings_fields();
+		$existing_settings_fields = $this->_current_message_meta_box_object->get_existing_admin_settings();
 
+		//if we don't have any settings fields then we don't need to do any editing so let's just make active.
+		if ( empty($settings_fields) ) {
+			return $this->_box_content_active();
+		}
+
+		foreach ( $settings_fields as $field => $items ) {
+			$field_id = $this->_current_message_meta_box . '-' . $field;
+			$template_form_field[$field_id] = array(
+				'name' => $field_id,
+				'label' => $items['label'],
+				'input' => $items['field_type'],
+				'type' => $items['value_type'],
+				'required' => $items['required'],
+				'validation' => $items['validation'],
+				'value' => isset($existing_settings_fields[$field_id]) ? $existing_settings_fields[$field_id] : NULL,
+				'css_class' => '',
+				'format' => $items['format'],
+				'db-col' => NULL
+			);
+		}
+
+		$template_form_fields = $this->_generate_admin_form_fields( $template_form_field, 'ee_msg_activate_form' );
+
+		$this->template_args['activate_state'] = 'active';
+		$this->template_args['box_head_content'] = $this->_current_message_meta_box_object->description;
+
+		if ( !empty($template_form_fields) ) {
+			$this->template_args['show_hide_edit_form'] = '';
+			$this->template_args['activate_msgs_form_fields'] = $template_form_fields;
+			$this->template_args['on_off_action'] = $this->template_args['on_off_action_off'];
+			$this->template_args['activate_msgs_on_off_descrp'] = __('Deactivate', 'event_espresso');
+			$this->template_args['on_off_status'] = 'active';
 		}
 	}
 
