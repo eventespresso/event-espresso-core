@@ -465,7 +465,7 @@ class EE_Admin_Page {
 			$template_path = EE_CORE_ADMIN . 'admin_details_wrapper_pre_34.template.php';
 		}
 
-		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
+		$this->template_args['post_body_content'] = isset( $this->template_args['admin_page_content'] ) ? $this->template_args['admin_page_content'] : '';
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 
 		// the final template wrapper
