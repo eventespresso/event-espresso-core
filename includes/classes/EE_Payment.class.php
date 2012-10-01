@@ -618,7 +618,7 @@ class EE_Payment {
 	* 		@access		public
 	*/
 	public function gateway_response() {
-		return $this->_PAY_gateway_response ? html_entity_decode( $this->_PAY_gateway_response, ENT_QUOTES, 'UTF-8' ) : '';
+		return $this->_PAY_gateway_response ? stripslashes( html_entity_decode( $this->_PAY_gateway_response, ENT_QUOTES, 'UTF-8' )) : '';
 	}
 
 
