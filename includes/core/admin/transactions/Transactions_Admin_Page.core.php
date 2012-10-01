@@ -308,12 +308,15 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	
 		global $wpdb, $org_options;
 
-//		echo printr( $this->_session, '$this->_session' );
+//		printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
 		$this->template_args['items'] = array();
 		$exclude = array( 'attendees' );
+		
+		$this->template_args['REG_code'] = $this->_transaction->REG_code;
 
 		foreach ( $cart_items as $line_item_ID => $item ) {
 			foreach ( $item as $key => $value ) {
@@ -365,46 +368,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		$this->template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
 		$this->template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
 
-
-		//printr( $this->template_args['payments'], '$payments  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-		
-/*		$card_type = isset( $txn_details['card_type'] ) ? ' : ' . $txn_details['card_type'] : '';
-		$txn_details['method'] = ( strtoupper( $txn_details['method'] ) == 'CC' ) ? 'Credit Card' . $card_type : $txn_details['method'];
-		$this->template_args['method']['value'] = strtoupper( $txn_details['method'] );
-		$this->template_args['method']['label'] = __( 'Payment Method', 'event_espresso' );
-		$this->template_args['method']['class'] = 'regular-text';
-		
-		//echo printr( $this->_session, '$this->_session' );
-		$this->template_args['payment_gateway'] = FALSE;
-		
-		if ( isset( $this->_session['gateway_data'] )){
-			if ( isset( $this->_session['gateway_data']['payment_settings'][ $this->_session['gateway_data']['selected_gateway'] ] )){
-				$this->template_args['payment_gateway']['value'] = $this->_session['gateway_data']['payment_settings'][ $this->_session['gateway_data']['selected_gateway'] ]['display_name'];
-				$this->template_args['payment_gateway']['label'] = __( 'Payment Gateway', 'event_espresso' );
-				$this->template_args['payment_gateway']['class'] = 'regular-text';
-			
-				if ( file_exists( $this->_session['gateway_data']['payment_settings'][ $this->_session['gateway_data']['selected_gateway'] ]['button_url'] )) {			
-					$this->template_args['payment_gateway']['button_url'] = $this->_session['gateway_data']['payment_settings'][ $this->_session['gateway_data']['selected_gateway'] ]['button_url'];
-				} else {
-					$this->template_args['payment_gateway']['button_url'] = '';
-				}
-			}
-		}
-		
-		$txn_details['response_msg'] = '<span class="' . $txn_status_class . '">' . $txn_details['response_msg'] . '</span>';
-		$this->template_args['gateway_response_msg']['value'] = $txn_details['response_msg'];
-		$this->template_args['gateway_response_msg']['label'] = __( 'Gateway Response Message', 'event_espresso' );
-		$this->template_args['gateway_response_msg']['class'] = 'regular-text';
-		
-		
-		if ( isset( $txn_details['transaction_id'] )) {
-			$this->template_args['transaction_id']['value'] = $txn_details['transaction_id'];
-			$this->template_args['transaction_id']['label'] = __( 'Gateway Transaction ID', 'event_espresso' );
-			$this->template_args['transaction_id']['class'] = 'regular-text';
-		} else {
-			$this->template_args['transaction_id'] = FALSE;
-		}
-*/
 		if ( isset( $txn_details['invoice_number'] )) {
 			$this->template_args['txn_details']['invoice_number']['value'] = $txn_details['invoice_number'];
 			$this->template_args['txn_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );

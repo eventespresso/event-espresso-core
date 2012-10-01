@@ -302,23 +302,23 @@
 
 					<div class="txn-admin-apply-payment-date-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
-						<label for="txn-admin-payment-date-inp" class="float-left"><?php _e( 'Payment Date', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp datepicker required" type="text" value="<?php echo date( 'F j, Y g:i a' ); ?>">
+						<label for="txn-admin-payment-date-inp" class=""><?php _e( 'Payment Date', 'event_espresso' );?></label>
+						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp datepicker required" type="text" value="<?php echo date( 'F j, Y g:i a' ); ?>"/>
 						<br/>
 						<span class="description"><?php _e( 'The date the payment was actually made on', 'event_espresso' );?></span>
 					</div>
 					
 					<div class="txn-admin-apply-payment-amount-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
-						<label for="txn-admin-payment-amount-inp" class="float-left"><?php _e( 'Amount', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[amount]" id="txn-admin-payment-amount-inp" class="txn-admin-apply-payment-inp required" type="text" value="">
+						<label for="txn-admin-payment-amount-inp" class=""><?php _e( 'Amount', 'event_espresso' );?></label>
+						<input name="txn_admin_payment[amount]" id="txn-admin-payment-amount-inp" class="txn-admin-apply-payment-inp required" type="text" value=""/>
 						<br/>
 						<span class="description"><?php _e( 'The amount of the payment', 'event_espresso' );?></span>
 					</div>
 					
 					<div class="txn-admin-apply-payment-method-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
-						<label for="txn-admin-payment-method-inp" class="float-left"><?php _e( 'Method of Payment', 'event_espresso' );?></label>
+						<label for="txn-admin-payment-method-inp" class=""><?php _e( 'Method of Payment', 'event_espresso' );?></label>
 						<select name="txn_admin_payment[method]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
 							<option value="0" selected="selected"><?php _e( 'please select an option', 'event_espresso' );?>&nbsp;&nbsp;</option>
 						<?php foreach ( $payment_methods as $method_ID => $method ) : ?>
@@ -331,7 +331,7 @@
 					
 					<div class="mop-CC mop hidden">
 						<div class="txn-admin-apply-payment-gateway admin-modal-dialog-row">
-							<label for="txn-admin-payment-gateway-inp" class="float-left"><?php _e( 'Gateway', 'event_espresso' );?></label>
+							<label for="txn-admin-payment-gateway-inp" class=""><?php _e( 'Gateway', 'event_espresso' );?></label>
 							<select name="txn_admin_payment[gateway]" id="txn-admin-payment-gateway-slct" class="txn-admin-apply-payment-slct" type="text" >
 								<option value="0" selected="selected"><?php _e( 'please select an option', 'event_espresso' );?>&nbsp;&nbsp;</option>
 							<?php foreach ( $active_gateways as $gateway_ID => $gateway_name ) : ?>
@@ -345,8 +345,8 @@
 					
 					<div class="mop-PP mop-CC mop-CHQ mop hidden">
 						<div class="txn-admin-apply-payment-gw-txn-id-dv admin-modal-dialog-row">
-							<label for="txn-admin-payment-txn-id-inp" class="float-left"><?php _e( 'TXN ID / CHQ #', 'event_espresso' );?></label>
-							<input name="txn_admin_payment[txn_id_chq_nmbr]" id="txn-admin-payment-txn-id-chq-nmbr-inp" class="txn-admin-apply-payment-inp" type="text" />
+							<label for="txn-admin-payment-txn-id-inp" class=""><?php _e( 'TXN ID / CHQ #', 'event_espresso' );?></label>
+							<input name="txn_admin_payment[txn_id_chq_nmbr]" id="txn-admin-payment-txn-id-chq-nmbr-inp" class="txn-admin-apply-payment-inp" type="text"/>
 							<br/>
 							<span class="description"><?php _e( 'The Transaction ID sent back from the payment gateway, or the Cheque #', 'event_espresso' );?></span>
 						</div>						
@@ -354,8 +354,8 @@
 					
 					<div class="mop-CC mop hidden">
 						<div class="txn-admin-apply-payment-response-dv admin-modal-dialog-row">
-							<label for="txn-admin-payment-gateway-response-inp" class="float-left"><?php _e( 'Gateway Response', 'event_espresso' );?></label>
-							<input name="txn_admin_payment[gateway_response]" id="txn-admin-payment-gateway-response-inp" class="txn-admin-apply-payment-inp" type="text" />
+							<label for="txn-admin-payment-gateway-response-inp" class=""><?php _e( 'Gateway Response', 'event_espresso' );?></label>
+							<input name="txn_admin_payment[gateway_response]" id="txn-admin-payment-gateway-response-inp" class="txn-admin-apply-payment-inp" type="text"/>
 							<br/>
 							<span class="description"><?php _e( 'The gateway response string (optional)', 'event_espresso' );?></span>
 						</div>						
@@ -363,7 +363,7 @@
 
 					<div class="mop-PP mop-CC mop hidden">
 						<div class="txn-admin-apply-payment-status-dv admin-modal-dialog-row">
-							<label for="txn-admin-payment-status-inp" class="float-left"><?php _e( 'Payment Status', 'event_espresso' );?></label>
+							<label for="txn-admin-payment-status-inp" class=""><?php _e( 'Payment Status', 'event_espresso' );?></label>
 							<select name="txn_admin_payment[status]" id="txn-admin-payment-status-slct" class="txn-admin-apply-payment-slct" type="text" >
 							<?php foreach ( $payment_status as $STS_ID => $STS_code ) : ?>
 								<?php $selected = $STS_ID == 'PAP' ? ' selected="selected"' : ''; ?>
@@ -376,19 +376,20 @@
 					</div>
 																
 					<div class="txn-admin-apply-payment-po-nmbr-dv admin-modal-dialog-row">
-						<label for="txn-admin-payment-po-nmbr-inp" class="float-left"><?php _e( 'P.O. / S.O. #', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[po_number]" id="txn-admin-payment-po-nmbr-inp" class="txn-admin-apply-payment-inp" type="text" />
+						<label for="txn-admin-payment-po-nmbr-inp" class=""><?php _e( 'P.O. / S.O. #', 'event_espresso' );?></label>
+						<input name="txn_admin_payment[po_number]" id="txn-admin-payment-po-nmbr-inp" class="txn-admin-apply-payment-inp" type="text"/>
 						<br/>
 						<span class="description"><?php _e( 'The Purchase or Sales Order Number if any (optional)', 'event_espresso' );?></span>
 					</div>
 					
 					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
-						<label class="last" for="txn-admin-payment-accounting-inp"><?php _e( 'Notes / Extra Accounting', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp" class="txn-admin-apply-payment-inp" type="text" />
+						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Notes / Extra Accounting', 'event_espresso' );?></label>
+						<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp" class="txn-admin-apply-payment-inp" type="text" value="<?php echo $REG_code; ?>"/>		<input type="hidden" id="txn-admin-reg-code-inp" value="<?php echo $REG_code; ?>"/>
 						<br/>
-						<span class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes', 'event_espresso' );?></span>
-					</div>
-					
+						<span class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes.', 'event_espresso' );?></span><br/>
+						<label></label>
+						<span class="description"><?php _e( 'Defaults to the primary attendee\'s registration code.', 'event_espresso' );?></span>
+					</div>			
 					<div class="clear"></div>
 	
 				</div>	

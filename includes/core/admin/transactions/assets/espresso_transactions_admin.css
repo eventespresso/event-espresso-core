@@ -133,6 +133,7 @@
 }
 .admin-modal-dialog-row { clear:both; margin:0 0 1em; }
 .admin-modal-dialog-inner label { display:inline-block; float:left; width:150px; padding-top:.4em; margin:0 1em .5em 0; vertical-align:top; }
+.admin-modal-dialog-inner .left-150 { display:inline-block; padding-left:150px; margin-left:1em; }
 .admin-modal-dialog-inner .description { vertical-align:top; }
 .admin-modal-dialog-inner input,
 .admin-modal-dialog-inner select { vertical-align:top; }
