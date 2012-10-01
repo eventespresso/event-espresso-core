@@ -67,13 +67,17 @@ jQuery(document).ready(function($) {
 		return false;
 	});	
 
+
+
 	$('.add_new_attendee').on( 'click', function( event ) {
   		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$(this).parents('form').submit();
 		} else {
+			$('body,html').animate({ scrollTop: 100 }, 500 );
 			return false;
 		}		
+		return false;
 	});
 
 
@@ -91,6 +95,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 		});
+		
 		return goodToGo;
 	}
 

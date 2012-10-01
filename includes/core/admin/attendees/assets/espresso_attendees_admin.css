@@ -11,6 +11,7 @@ textarea { width:25em; }
 
 .validation-notice-dv { display:none; /*padding:0 0 0 150px; margin-left:1em;*/ color:red; }
 .requires-value { border:1px solid #FE2A00 !important; }
+.denotes-required-spn { margin-left:.5em; font-weight: bold; color:#ff0000; }
 
 /* TABLE COLUMNS */
 
