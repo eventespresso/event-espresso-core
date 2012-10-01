@@ -1,4 +1,7 @@
 <div style="padding:1em;">	
+
+	<div id="att-admin-add-new-attendee-messages-dv"></div>
+	
 	<form id="att-admin-add-new-attendee-frm" method="post" action="<?php echo $form_url; ?>">
 		<?php wp_nonce_field( $action . '_nonce' ); ?>
 		<?php if ( $action == 'update_attendee' ) : ?>
