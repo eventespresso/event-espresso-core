@@ -671,7 +671,8 @@ Class EEM_Gateways {
 		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
 			$this->set_selected_gateway(sanitize_text_field( $_POST['selected_gateway'] ));
 		} else {
-			$espresso_notices['errors'][] =  __( 'An error occured. No gateway has been selected.', 'event_espresso' );
+			$espresso_notices['errors'][] =  __( 'Please select a method of payment in order to continue.', 'event_espresso' );
+			return FALSE;
 		}
 		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
 	}

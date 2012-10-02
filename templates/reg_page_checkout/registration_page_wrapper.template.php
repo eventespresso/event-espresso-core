@@ -1,15 +1,21 @@
 <div id="multi-event-registration" class="ui-widget">
 
-	<div id="mer-ajax-loading" class="" style="display:none;">
-		<img src="<?php echo $images_dir_url;?>ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?></span>
-	</div>
+	<div id="multi-event-registration-notifications" >
 
-	<div id="mer-success-msg" class="event-queue-msg ui-widget-content ui-state-highlight ui-corner-all<?php echo $success_msg_class;?>" style="display:none;">
-		<span class="ui-icon ui-icon-circle-check"></span>&nbsp;<span class="msg"><?php echo $success_msg;?></span>
-	</div>
+		<div id="mer-ajax-loading" class="" style="display:none;">
+			<img src="<?php echo $images_dir_url;?>ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?></span>
+		</div>
 
-	<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all<?php echo $error_msg_class;?>" style="display:none;">
-		<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg"><?php echo $error_msg;?></span>
+		<div id="mer-success-msg" class="event-queue-msg ui-widget-content ui-state-highlight ui-corner-all<?php echo $success_msg_class;?>" style="display:none;">
+			<span class="ui-icon ui-icon-circle-check"></span>&nbsp;<span class="msg"><?php echo $success_msg;?></span>
+			<a class="close-event-queue-msg">x</a>
+		</div>
+
+		<div id="mer-error-msg" class="event-queue-msg ui-widget-content ui-state-error ui-corner-all<?php echo $error_msg_class;?>" style="display:none;">
+			<span class="ui-icon ui-icon-notice"></span>&nbsp;<span class="msg"><?php echo $error_msg;?></span>
+			<a class="close-event-queue-msg">x</a>
+		</div>
+		
 	</div>
 
 <?php if ( ! $empty_cart ) : ?>
@@ -39,8 +45,4 @@
 <?php	 endif; // $! empty_cart ?>
 	
 </div>
-<script>
-	jQuery(document).ready(function() {
-		jQuery('html, body').scrollTop(jQuery("#mer-reg-page-steps-big-hdr").offset().top);
-	});
-</script>
+
