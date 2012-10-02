@@ -58,7 +58,7 @@ class EE_messages {
 		$actives = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
 		$actives = is_array($actives) ? array_keys($actives) : $actives;
 		$active_names = $this->_load_files('messenger', $actives);
-		$active_names = is_array($active_names) ? array_keys($active_names) : $active_names;
+
 
 		if ( empty($active_names) ) {
 			return new WP_Error(__('no_active_messengers', 'event_espresso'), __('No messages have gone out because there are no active_messengers.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
@@ -82,7 +82,8 @@ class EE_messages {
 	 */
 	private function _load_active_message_types() {
 		global $espresso_wp_user;
-		$actives = get_user_meta($espresso_wp_user, 'ee_active_message_types');
+		$actives = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
+		$actives = is_array($actives) ? array_keys($actives) : $actives;
 		$active_names = $this->_load_files('message_type', $actives);
 
 		if ( empty($active_names) ) {
@@ -106,19 +107,38 @@ class EE_messages {
 		$actives = (array) $actives;
 
 		foreach ( $actives as $active ) {
-			$messenger_name = 'EE_' . ucwords( str_replace( ' ', '_', $active) ) . '_' . $kind;
-			$filename = $messenger_name . '.class.php';
+			$msg_name = 'EE_' . ucwords( str_replace( ' ', '_', $active) ) . '_' . $kind;
+			$filename = $msg_name . '.class.php';
 			$load_file = $base_path . DS . $filename;
 			if ( file_exists($load_file) ) {
 				require_once($load_file);
-				$active_names[$active] = $messenger_name;
+				$active_names[$active] = $msg_name;
 			} else {
-				$this->unset_active($active);
+				$this->_unset_active($active, $kind);
 				//set WP_Error
 				return new WP_Error(__('missing_file', 'event_espresso'), sprintf(__("missing messenger file set as active: (%s) %s \nMessenger has been made inactive.", 'event_espresso'), $load_file, espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ ) ) );
 			}
 		}
 		return $active_names; 
+	}
+
+	
+
+
+	/**
+	 * unsets the active if we can't find the file (failsafe)
+	 *
+	 * @access private
+	 * @param  string $active_name name of messenger or message type
+	 * @param  string $kind        messenger or message_type?
+	 * @return void              
+	 */
+	private function _unset_active( $active_name, $kind ) {
+		global $espresso_wp_user;
+		//pluralize
+		$kind = $kind . 's';
+		unset($this->_active_{$kind}[$active_name]);
+		update_user_meta($espresso_wp_user, 'ee_active_'.$kind, $this->_active{$kind});
 	}
 
 	// delegates message sending to messengers

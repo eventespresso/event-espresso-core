@@ -28,8 +28,8 @@
 
 class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface {
 
-	private $_active_messengers;
-	private $_active_message_types;
+	private $_active_messengers = array();
+	private $_active_message_types = array();
 	private $_activate_state;
 	private $_activate_meta_box_type;
 	private $_current_message_meta_box;
@@ -59,7 +59,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//we're also going to set the active messengers and active message types in here.
 		$this->_active_messengers = get_user_meta($espresso_wp_user, 'ee_active_messengers', true);
+		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
 		$this->_active_message_types = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
+		$this->_active_message_types = !empty($this->_active_message_types ) ? $this->_active_message_types : array();
 
 		// remove settings tab
 		add_filter( 'filter_hook_espresso_admin_page_nav_tabs', array( &$this, '_remove_settings_from_admin_page_nav_tabs' ), 10 , 1 );
@@ -602,6 +604,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$messenger = !empty($_REQUEST['MTP_messenger']) ? ucwords(str_replace('_', ' ', $_REQUEST['MTP_messenger'] ) ) : false;
 		$message_type = !empty($_REQUEST['MTP_message_type']) ? ucwords(str_replace('_', ' ', $_REQUEST['MTP_message_type'] ) ) : false;
 		$context = !empty($_REQUEST['MTP_context']) ? ucwords(str_replace('_', ' ', $_REQUEST['MTP_context'] ) ) : false;
+		$evt_id = !empty($_REQUEST['EVT_ID']) ? (int) $_REQUEST['EVT_ID'] : NULL;
 
 		$item_desc = $messenger ? $messenger . ' ' . $message_type . ' ' . $context . ' ' : '';
 		$item_desc .= 'Message Template';
@@ -609,11 +612,12 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
 		if ( $new_price ) {
-			if ( $edit_array = $this->_generate_new_templates($messenger, $message_type) ) {
-				if ( is_wp_error ($edit_array) ) {
-					$this->_handle_errors($edit_array);
+			if ( $edit_array = $this->_generate_new_templates($messenger, $message_type, $evt_id) ) {
+				if ( is_wp_error($edit_array) ) {
+					$success = 0;
 				} else {
 					$success = 1;
+					$edit_array = $edit_array[0];
 					$query_args = array(
 						'id' => $edit_array['GRP_ID'],
 						'evt_id' => $edit_array['EVT_ID'],
@@ -662,17 +666,38 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 	/**
 	 * _generate_new_templates
-	 * This will handle the messenger, message_type selection when "adding a new custom template" for an event and will automaticlaly create the defaults for the event.  The user would then be redirected to edit the default context for the event.
+	 * This will handle the messenger, message_type selection when "adding a new custom template" for an event and will automatically create the defaults for the event.  The user would then be redirected to edit the default context for the event.
 	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
 	 */
-	protected function _generate_new_templates($messenger, $message_type, $evt_id) {
-		if ( empty($messenger) || empty($message_type) ) {
-			return new WP_Error(__('empty_variable', 'event_espresso'), __('Missing required messenger or message_type', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+	protected function _generate_new_templates($messenger, $message_types = array(), $evt_id = NULL) {
+
+		//make sure message_type is an array.
+		$message_types = (array) $message_types;
+
+		if ( empty($messenger) ) {
+			$error = new WP_Error('empty_variable', __('We need a messenger to generate templates!', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			$this->_handle_errors($error);
+			return $error;
+		}
+
+		//if $message_type is empty.. let's try to get the $message type from the $_active_messenger settings.
+		if ( empty($message_types) ) {
+			$message_types = isset($this->_active_messenger[$messenger]['settings'][$messenger.'-message_type']) ? array_keys($this->_active_messenger[$messenger]['settings'][$messenger.'-message_types']) : array();
+		}
+
+		//if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
+		if ( empty($message_types) ) {
+			$error = new WP_Error('empty_variable', __('We need at least one message type to generate templates!', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			$this->_handle_errors($error);
+			return $error;
 		}
 
 		//todo: may need to explicitly load the file containing the class here.
 		$MSG = new EE_messages();
-		$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id);
+		
+		foreach ( $message_types as $message_type ) {
+			$new_message_template_group[] = $MSG->create_new_templates($messenger, $message_type, $evt_id);
+		}
 
 		return $new_message_template_group;
 
@@ -917,6 +942,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->_current_message_meta_box = $args['name'];
 		$this->_current_message_meta_box_object = $args['object'];
 
+		//first let's handle any database actions
+		$this->_handle_activate_db_actions();
+
 		//define template arg defaults
 		$default_edit_query_args = array(
 			'activate_view' => $this->_activate_meta_box_type,
@@ -983,7 +1011,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//still stateless eh?  K let's see if we can get the state from the database.
 		if ( !$this->_activate_state ) {
-			$this->_activate_state = isset($this->_active_messengers[$this->_current_message_meta_box]) ? $this->_active_messengers[$this->_current_message_meta_box]['state'] : 'inactive';
+			$this->_activate_state = isset($this->_active_messengers[$this->_current_message_meta_box]) ? 'active' : 'inactive';
 		}
 
 		$admin_header_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_activate_details_header.template.php';
@@ -998,6 +1026,13 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 * @return void	
 	 */
 	private function _box_content_inactive() {
+		//this is default view.  But we need to check and see if this messenger/message_type is actually active.  If it is, then let's load that instead.
+
+		if ( (in_array($this->_current_message_meta_box, array_keys($this->_active_messengers) ) || in_array($this->_current_message_meta_box, array_keys($this->_active_message_types) )) && !isset($_REQUEST['box_action']) ) {
+			$this->_box_content_active();
+			return;
+		}
+
 		//common elements
 		$this->template_args['box_head_content'] = $this->_current_message_meta_box_object->description;
 	}
@@ -1070,7 +1105,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//if we don't have any settings fields then we don't need to do any editing so let's just make active
 		if ( empty($settings_fields) && $this->_activate_meta_box_type != 'messengers' ) {
-			$this->_box_content_active();
+			$_REQUEST['box_action'] = 'activated';
+			$this->_activate_state = 'active';
+			$this->_handle_activate_db_actions();
 			return;
 		}
 
@@ -1108,7 +1145,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		
 		if ( $this->_activate_meta_box_type == 'messengers' && !empty($this->_active_message_types) ) {
 			foreach ( $this->_active_message_types as $mt => $values ) {
-				$field_id = $this->_current_message_meta_box . '-message_type[' . $mt . ']';
+				$field_id = $this->_current_message_meta_box . '-message_types[' . $mt . ']';
 				$is_using_message_type = isset($existing_settings_fields[$field_id]) && $existing_settings_fields[$field_id] ? TRUE : FALSE;
 				$mt_template_form_field[$field_id] = array(
 					'name' => $field_id,
@@ -1126,10 +1163,20 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 			//we need to make sure at least one of these fields is checked.  If there is no fields checked then let's check the payment message type.
 			if ( isset($is_using_message_type) && !$is_using_message_type ) {
-				$mt_template_form_field[$this->_current_message_meta_box . '-message_type[payment]']['value'] = 1;
+				$mt_template_form_field[$this->_current_message_meta_box . '-message_types[payment]']['value'] = 1;
 			}
 
-			$mt_template_form_fields = !empty($mt_template_form_field) ? $this->_generate_admin_form_fields( $mt_template_form_field, '') : NULL;
+			$mt_template_form_fields = !empty($mt_template_form_field) ? $this->_generate_admin_form_fields( $mt_template_form_field, 'ee_msg_activate_form') : NULL;
+
+			//make sure is an array.
+			$mt_template_form_fields = (array) $mt_template_form_fields;
+
+			if ( is_wp_error($mt_template_form_fields) ) {
+				$this->_handle_errors($mt_template_form_fields);
+				$mt_template_form_fields = NULL;
+			}
+
+
 			if ( !empty($mt_template_form_fields) ) {
 				$mt_field_content = '<div class="ee_msg_activate_form_mts">';
 				$mt_field_content .= '<p><strong>' . __('Use these message types', 'event_espresso') . '</strong></p>';
@@ -1145,6 +1192,12 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		}
 
 		$template_form_fields = !empty($template_form_field) ? $this->_generate_admin_form_fields( $template_form_field, 'ee_msg_activate_form' ) : '';
+
+		if ( is_wp_error($template_form_fields) ) {
+			$this->_handle_errors($template_form_fields);
+			$template_form_fields = NULL;
+		}
+
 		$template_form_fields = !empty($mt_field_content) ? $template_form_fields . $mt_field_content : $template_form_fields;
 
 		$this->template_args['activate_state'] = 'editing';
@@ -1158,5 +1211,89 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$this->template_args['activate_msgs_on_off_descrp'] = empty($existing_settings_fields) ? __('Activate','event_espresso') : __('Deactivate', 'event_espresso');
 			$this->template_args['on_off_status'] = empty($existing_settings_fields) ? 'inactive' : 'active';
 		}
+	}
+
+
+
+
+
+	/**
+	 * this simply takes care of any box_actions coming in for activation metaboxes and handles the data appropriately.
+	 *
+	 * @access  private
+	 * @return void
+	 */
+	private function _handle_activate_db_actions() {
+		//nothing needed if there is no box_action.
+		if ( !isset($_REQUEST['box_action'] ) )
+			return;
+		
+		switch ( $_REQUEST['box_action'] ) {
+			case 'activated' :
+				//check nonces
+				$nonce = $_REQUEST['_wpnonce'];
+				if ( !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_activate_nonce' ) && !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_edit_nonce') ) {
+					$this->_nonce_error( espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+					$this->_activate_state = 'inactive';
+					$this->_box_content_inactive();
+					return;
+				}
+				$this->_update_msg_settings();
+				break;
+
+			case 'deactivated' :
+				//check nonce
+				$nonce = $_REQUEST['_wpnonce'];
+				if ( !wp_verify_nonce($nonce, $this->_current_message_meta_box . '_deactivate_nonce' ) ) {
+					$this->_nonce_error( espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+					$this->_activate_state = 'inactive';
+					$this->_box_content_inactive();
+					return;
+				}
+				$this->_update_msg_settings(true);
+				break;	
+		}
+	}
+
+
+
+
+	/**
+	 * This just updates the active_messenger or active_message_types usermeta field when activated/deactivated.
+	 * @param  boolean $remove if true then we remove
+	 * @return void
+	 */
+	private function _update_msg_settings($remove = false) {
+		global $espresso_wp_user, $espresso_notices;
+		$success_msg = array();
+		if ( !$remove ) {
+			$this->_active_{$this->_activate_meta_box_type}[$this->_current_message_meta_box]['settings'] = isset($_POST['ee-msg-activate-form']) ? $_POST : NULL;
+			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->_active_{$this->_activate_meta_box_type});
+			$success_msg = sprintf( __('%s has been successfully activated', 'event_espresso'), $this->_current_message_meta_box);
+			
+			if ( $this->_activate_meta_box_type == 'messengers' && $this->_activate_state == 'active' ) {
+				$templates = $this->_generate_new_templates($this->_current_message_meta_box);
+				//todo: templates aren't getting generated.
+			}
+		} else {
+			unset($this->_active_{$this->_activate_meta_box_type}[$this->_current_message_meta_box]);
+			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->_active_{$this->_activate_meta_box_type});
+			$success_msg = sprintf( sprintf( __('%s has been successfully deactivated', 'event_espresso'), $this->_current_message_meta_box) );
+			//todo: we need to delete any templates that are associated.  If this is a messenger, then delete all templates matching the messenger.  If this is a message_type, then delete all templates matching the message type.
+		}
+
+		$espresso_notices['success'][] = $success_msg;
+	}
+
+
+
+	/**
+	 * This is just a common error handler for nonce check fails.
+	 * @param  string $error_code generated error code (so we know where the nonce fail happened)
+	 * @return void 
+	 */
+	private function _nonce_error($error_code) {
+		$error = new WP_Error('nonce_check_fail', __('Security check failed.', 'event_espresso') . $error_code);
+		$this->_handle_errors($error);
 	}
 }
