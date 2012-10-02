@@ -12,7 +12,7 @@
 
 	<!-- holds the form for the edit state  -->
 	<div class="activate_messages_meta_box_form <?php echo $show_hide_edit_form; ?>">
-		<form id="ee-msg-activate-<?php echo $box_view;?>-<?php echo $box_id; ?>-frm" action="<?php echo $activate_message_template_form_action; ?>" method="get">
+		<form id="ee-msg-activate-<?php echo $box_view;?>-<?php echo $box_id; ?>-frm" action="<?php echo $activate_message_template_form_action; ?>" method="POST">
 			<?php echo $activate_msgs_form_fields; ?>
 			<div class="active_msgs_details_button">
 				<input type="submit" class="button-primary" value="<?php _e('Submit'); ?>" />

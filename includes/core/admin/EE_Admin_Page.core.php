@@ -454,6 +454,9 @@ class EE_Admin_Page {
 		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE);
 
+		//display any espresso_notices (generated from metaboxes)
+		$this->display_espresso_notices();
+
 		//the final wrapper
 		$this->admin_page_wrapper();
 	}

@@ -3,7 +3,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
 /**
- * Evetn Espresso
+ * Event Espresso
  *
  * Event Registration and Management Plugin for WordPress
  *

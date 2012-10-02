@@ -553,12 +553,6 @@ abstract class EE_message_type {
 		
 		$this->_existing_admin_settings = isset($active_message_types[$this->name] ) ?  $active_message_types[$this->name]['settings'] : null;
 
-		//if this is empty, let's try getting the defaults (if they exist)
-		if ( empty($this->_existing_admin_settings) ) {
-			foreach ( $this->_admin_settings_fields as $field => $items ) {
-				$this->_existing_admin_settings[$this->name . '-' . $field] = $field['default'];
-			}
-		}
 	}
 
 	public function get_existing_admin_settings() {
@@ -784,13 +778,6 @@ abstract class EE_messenger {
 			return $this->_existing_admin_settings = NULL;
 		
 		$this->_existing_admin_settings = isset($active_messengers[$this->name]) ? $active_messengers[$this->name]['settings'] : null;
-
-		//if this is empty, let's try getting the defaults (if they exist)
-		if ( empty($this->_existing_admin_settings) ) {
-			foreach ( $this->_admin_settings_fields as $field => $items ) {
-				$this->_existing_admin_settings[$this->name . '-' . $field] = $items['default'];
-			}
-		}
 	}
 
 	/**
