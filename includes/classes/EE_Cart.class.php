@@ -855,7 +855,11 @@ do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
 					foreach ( $items as $line_item_id => $item ) {
 					
 						// do both instances of the line item id match ???
-						if ( $line_item_id != $item['line_item'] ) {
+                                                if(!isset($item['line_item'])){
+                                                        $this->remove_from_cart( $which_cart, $line_item_id );
+							break;
+                                                }
+						elseif ( $line_item_id != $item['line_item'] ) {
 							// delete
 							$this->remove_from_cart( $which_cart, $line_item_id );
 							break;
