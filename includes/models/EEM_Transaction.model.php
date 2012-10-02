@@ -302,8 +302,8 @@ class EEM_Transaction extends EEM_Base {
 			}
 			return $transactions;
 		} else {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = $wpdb->print_error();
+//			global $espresso_notices;
+//			$espresso_notices['errors'][] = $wpdb->print_error();
 			return FALSE;
 		}
 

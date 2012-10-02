@@ -12,7 +12,7 @@ function add_venue_to_db(){
 		$venue_meta['description'] = esc_html($_REQUEST['description']);
 		$venue_meta['enable_for_maps'] = $_REQUEST['enable_for_maps'];
 		$venue_meta['gmap_static'] = esc_url($_REQUEST['gmap_static']);
-		$locale = $_REQUEST['locale'];
+		$locale = isset( $_REQUEST['locale'] ) ? $_REQUEST['locale'] : '';
 		$meta = serialize($venue_meta);	
 		
 		$identifier=uniqid($espresso_wp_user.'-');

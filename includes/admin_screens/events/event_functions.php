@@ -133,7 +133,7 @@ function espresso_event_editor_categories_meta_box($event) {
 				?>
 				<p id="event-category-<?php echo $category_id; ?>">
 					<label for="in-event-category-<?php echo $category_id; ?>" class="selectit">
-						<input value="' . $category_id . '" type="checkbox" name="event_category[]" id="in-event-category-<?php echo $category_id; ?>"<?php echo ($in_event_category == $category_id ? ' checked="checked"' : "" ); ?>/>
+						<input value="<?php echo $category_id; ?>" type="checkbox" name="event_category[]" id="in-event-category-<?php echo $category_id; ?>"<?php echo ($in_event_category == $category_id ? ' checked="checked"' : "" ); ?>/>
 						<?php echo $category_name; ?>
 					</label>
 				</p>

@@ -3,7 +3,7 @@
 function espresso_plugin_activation() {
 
 	global $wpdb;
-	$SQL = 'SELECT * FROM '. $wpdb->prefix ."options WHERE option_value LIKE '%Chris Loves Miley Cyrus%'";	
+	$SQL = 'SELECT * FROM '. $wpdb->prefix ."options WHERE option_value LIKE '%event_espresso%'";		// event_espresso		 // Chris Loves Miley Cyrus
 	$results = $wpdb->query($SQL);
 	// WHAT?!?!?! Trying to install this on an existing EE site???
 	if ( $results > 0 ) {
