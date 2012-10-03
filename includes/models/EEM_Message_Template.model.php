@@ -105,7 +105,7 @@ class EEM_Message_Template extends EEM_Base {
 		foreach ($templates as $template) {
 			//below will be items common to all templates in a template group.  Templates are grouped by messenger AND message type.  So all templates within a group will have the same messenger and message type and user_id and event_id (and of course group_id);
 			$a_temp[$template->GRP_ID]['GRP_ID'] = $template->GRP_ID;
-			$a_temp[$template->GRP_ID]['MTP_messenger'] = $template->messenger;
+			$a_temp[$template->GRP_ID]['MTP_messenger'] = $template->MTP_messenger;
 			$a_temp[$template->GRP_ID]['MTP_message_type'] = $template->MTP_message_type;
 			$a_temp[$template->GRP_ID]['MTP_user_id'] = $template->MTP_user_id;
 			$a_temp[$template->GRP_ID]['EVT_ID'] = $template->EVT_ID;
@@ -292,7 +292,7 @@ class EEM_Message_Template extends EEM_Base {
 		//now let's loop through the templates and assemble an array that has NO active contexts.
 		if ( $message_templates ) {
 			foreach ( $message_templates as $template_group ) {
-				if ( $templates->is_active_count() > 0 )
+				if ( $template_group->is_active_count() > 0 )
 					continue;
 				$msg_tmps[] = $template_group;
 			}
@@ -392,9 +392,10 @@ class EEM_Message_Template extends EEM_Base {
 		//first let's find out whether there is already a max value
 		$query = "SELECT MAX(GRP_ID) FROM " . $this->table_name . ";";
 		$max_grp_id = $wpdb->get_var( $wpdb->prepare($query) );
-		if ( empty($max_grp_id) )
+		if ( empty($max_grp_id) || $max_grp_id === 0 )
 			$max_grp_id = 0;
-		return (int) $max_grp_id++;
+		$max_grp_id++;
+		return $max_grp_id;
 	}	
 
 } //end class EEM_Message_Template.model

@@ -667,9 +667,15 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	/**
 	 * _generate_new_templates
 	 * This will handle the messenger, message_type selection when "adding a new custom template" for an event and will automatically create the defaults for the event.  The user would then be redirected to edit the default context for the event.
+	 *
+	 * @access protected
+	 * @param  string  $messenger the messenger we are generating templates for
+	 * @param array $message_types array of message types that the templates are generated for.
+	 * @param int $evt_id If templates are event specific then we are also including the event_id
+	 * @param bool $global true indicates generating templates on messenger activation. false requires evt_id for event specific template generation.
 	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
 	 */
-	protected function _generate_new_templates($messenger, $message_types = array(), $evt_id = NULL) {
+	protected function _generate_new_templates($messenger, $message_types, $evt_id = NULL, $global = FALSE) {
 
 		//make sure message_type is an array.
 		$message_types = (array) $message_types;
@@ -679,11 +685,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$error = new WP_Error('empty_variable', __('We need a messenger to generate templates!', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 			$this->_handle_errors($error);
 			return $error;
-		}
-
-		//if $message_type is empty.. let's try to get the $message type from the $_active_messenger settings.
-		if ( empty($message_types) ) {
-			$message_types = isset($this->_active_messengers[$messenger]['settings'][$messenger . '-message_types']) ? array_keys($this->_active_messengers[$messenger]['settings'][$messenger . '-message_types']) : array();
 		}
 
 		//if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
@@ -697,7 +698,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$MSG = new EE_messages();
 		
 		foreach ( $message_types as $message_type ) {
-			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id);
+			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id, $global);
 			if ( is_wp_error($new_message_template_group) ) {
 				$this->_handle_errors($new_message_template_group);
 				continue;
@@ -1290,7 +1291,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$success_msg = sprintf( __('%s %s has been successfully activated', 'event_espresso'), ucwords(str_replace('_', ' ' , $this->_current_message_meta_box) ), ucwords(str_replace('_', ' ', rtrim($this->_activate_meta_box_type, 's') ) ) );
 			
 			if ( $this->_activate_meta_box_type == 'messengers' && $this->_activate_state[0] == $this->_current_message_meta_box . '_active' ) {
-				$templates = $this->_generate_new_templates($this->_current_message_meta_box);
+				$message_types = isset($this->_active_messengers[$this->_current_message_meta_box]['settings'][$this->_current_message_meta_box . '-message_types']) ? array_keys($this->_active_messengers[$this->_current_message_meta_box]['settings'][$this->_current_message_meta_box . '-message_types']) : NULL;
+				$templates = $this->_generate_new_templates($this->_current_message_meta_box, $message_types, '', TRUE);
 				//todo: templates aren't getting generated.
 			}
 		} else {

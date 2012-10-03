@@ -182,9 +182,10 @@ class EE_messages {
 	 * _validate_setup
 	 * @param  string $messenger    EE_messenger
 	 * @param  string $message_type EE_message_type
+	 * @param bool $is_global whether this is a global template or not.
 	 * @return bool(true)|wp_error_object
 	 */
-	private function _validate_setup($messenger, $message_type) {
+	private function _validate_setup($messenger, $message_type, $is_global) {
 
 		$message_type = strtolower(str_replace(' ', '_', $message_type) );
 		$messenger = strtolower(str_replace(' ', '_', $messenger));
@@ -202,11 +203,13 @@ class EE_messages {
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
 			return new WP_Error(__('problem_creating_required_objects', 'event_espresso'), sprintf(__(' We had a problem creating the %s messenger or the %s message_type. Are you sure they exist?', 'event_espresso'), $messenger, $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) ); 
 		
-		//is given message_type valid for given messenger?
-		foreach ( $this->_messenger->active_templates as $template ) {
-			if ( $template->message_type() == $message_type )
-				$valid_mt = true;
-				return new WP_Error(__('invalid_message_type_messenger_match', 'event_espresso'), sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		//is given message_type valid for given messenger (if this is not a global save)
+		if ( !$is_global ) {
+			foreach ( $this->_messenger->active_templates as $template ) {
+				if ( $template->message_type() == $message_type )
+					$valid_mt = true;
+					return new WP_Error(__('invalid_message_type_messenger_match', 'event_espresso'), sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type) . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+			}
 		}
 		return true;
 	}
@@ -220,7 +223,7 @@ class EE_messages {
 		$valid_mt = false;
 		$evt_id = absint($evt_id);
 
-		$valid_mt = $this->_validate_setup($messenger, $message_type);
+		$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
 		
 		if ( is_wp_error($valid_mt) && $is_global ) {
 			//we're setting up a brand new global templates (with messenger activation) so we're assuming that the message types sent in are valid.

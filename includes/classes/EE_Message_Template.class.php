@@ -159,7 +159,7 @@ class EE_Message_Template {
 		 	}
 		}
 
-		$this->_GRP_ID = absint($template_group['group_id']);
+		$this->_GRP_ID = absint($template_group['GRP_ID']);
 		$this->_MTP_user_id = absint($template_group['MTP_user_id']);
 		$this->_MTP_messenger = wp_strip_all_tags(strtolower($template_group['MTP_messenger']));
 		$this->_MTP_message_type = wp_strip_all_tags(strtolower($template_group['MTP_message_type']));
@@ -170,29 +170,29 @@ class EE_Message_Template {
 		$this->_is_active_count = 0;
 		$this->_is_override_count = 0;
 		$this->_is_trashed_count = 0;
-		$group_count = array_fill_keys( array('total_count', 'MTP_is_override', 'MTP_deleted'), 0);
+		$group_counts = array_fill_keys( array('total_count', 'MTP_is_override', 'MTP_deleted', 'MTP_is_trashed_count'), 0);
 
 		foreach ( $this->_contexts as $context => $template_fields ) {
 			$context = wp_strip_all_tags(strtolower($context) );
 			foreach ( $template_fields as $key => $value ) {
-				$group_count['total_count']++;
+				$group_counts['total_count']++;
 				$bool_array = array('MTP_is_global');
 				$bool_null_array = array('MTP_is_override', 'MTP_deleted');
 
 				
 				if ( in_array( $key, $bool_array) ) {
 					$template_fields[$key] = absint( $value ) ? TRUE : FALSE;
-					if ( $template_fields[$key] ) {
+					if ( $template_fields[$key] && isset($group_counts[$key]) ) {
 						$group_counts[$key]++;
 					}
 				} else if ( in_array( $key, $bool_null_array ) ) {
 					$template_fields[$key] = $value != NULL ? absint($value ) : FALSE;
-					if ( $template_fields[$key] ) {
+					if ( $template_fields[$key] && isset($group_counts[$key]) ) {
 						$group_counts[$key]++;
 					}
 				} else if ( is_array($value) ) {
 					$value['MTP_ID'] = absint($value['MTP_ID']);
-					$value['content'] = is_array($value['content']) ? array_map(wp_strip_all_tags($value['content']) ) : wp_strip_all_tags($value['content']);
+					$value['content'] = is_array($value['content']) ? array_map('wp_strip_all_tags', $value['content'] ) : wp_strip_all_tags($value['content']);
 					$template_fields[$key] = $value;
 				} else {
 					continue;
@@ -200,9 +200,9 @@ class EE_Message_Template {
 			}
 			
 			$this->_contexts[$context] = $template_fields;
-			$this->_is_active_count = $group_count['total_count'] - $group_count['MTP_is_trashed_count'];
-			$this->_is_override_count = $group_count['MTP_is_override'];
-			$this->_is_trashed_count = $group_count['MTP_is_trashed_count'];
+			$this->_is_active_count = $group_counts['total_count'] - $group_counts['MTP_is_trashed_count'];
+			$this->_is_override_count = $group_counts['MTP_is_override'];
+			$this->_is_trashed_count = $group_counts['MTP_is_trashed_count'];
 		}
 
 		//load Message Template Model file
