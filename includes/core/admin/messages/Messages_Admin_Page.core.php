@@ -673,6 +673,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//make sure message_type is an array.
 		$message_types = (array) $message_types;
+		$templates = array();
 
 		if ( empty($messenger) ) {
 			$error = new WP_Error('empty_variable', __('We need a messenger to generate templates!', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
@@ -682,7 +683,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//if $message_type is empty.. let's try to get the $message type from the $_active_messenger settings.
 		if ( empty($message_types) ) {
-			$message_types = isset($this->_active_messenger[$messenger]['settings']['message_types']) ? array_keys($this->_active_messenger[$messenger]['settings']['message_types']) : array();
+			$message_types = isset($this->_active_messengers[$messenger]['settings'][$messenger . '-message_types']) ? array_keys($this->_active_messengers[$messenger]['settings'][$messenger . '-message_types']) : array();
 		}
 
 		//if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
@@ -696,10 +697,15 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$MSG = new EE_messages();
 		
 		foreach ( $message_types as $message_type ) {
-			$new_message_template_group[] = $MSG->create_new_templates($messenger, $message_type, $evt_id);
+			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id);
+			if ( is_wp_error($new_message_template_group) ) {
+				$this->_handle_errors($new_message_template_group);
+				continue;
+			}
+			$templates[] = $new_message_template_group;
 		}
 
-		return $new_message_template_group;
+		return $templates;
 
 	}
 
@@ -1062,7 +1068,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		}
 
 		//we're still here so let's setup the display for this page.
-		//todo:  need to work out a way of NOT displaying hidden fields (maybe don't save to db?) and also make sure message types with messengers are displayed differently!
 		if ( !empty($existing_settings_fields) ) {
 			$content = '<ul>';
 			foreach ( $existing_settings_fields as $field_name => $field_value ) {
@@ -1284,7 +1289,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->{$ref});
 			$success_msg = sprintf( __('%s %s has been successfully activated', 'event_espresso'), ucwords(str_replace('_', ' ' , $this->_current_message_meta_box) ), ucwords(str_replace('_', ' ', rtrim($this->_activate_meta_box_type, 's') ) ) );
 			
-			if ( $this->_activate_meta_box_type == 'messengers' && $this->_activate_state == 'active' ) {
+			if ( $this->_activate_meta_box_type == 'messengers' && $this->_activate_state[0] == $this->_current_message_meta_box . '_active' ) {
 				$templates = $this->_generate_new_templates($this->_current_message_meta_box);
 				//todo: templates aren't getting generated.
 			}
@@ -1292,7 +1297,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			unset($this->{$ref}[$this->_current_message_meta_box]);
 			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->{$ref});
 			$success_msg = sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords(str_replace('_', ' ', $this->_current_message_meta_box) ) , ucwords(str_replace('_', ' ', rtrim($this->_activate_meta_box_type, 's') ) ) );
-			//todo: we need to delete any templates that are associated.  If this is a messenger, then delete all templates matching the messenger.  If this is a message_type, then delete all templates matching the message type.
+			//todo: we need to delete any templates that are associated.  If this is a messenger, then delete all templates matching the messenger.  If this is a message_type, then delete all templates matching the message type.  We also need to make sure that any messengers that have this associated message type have that message type removed from the messenger settings.
 		}
 
 		$espresso_notices['success'][] = $success_msg;
