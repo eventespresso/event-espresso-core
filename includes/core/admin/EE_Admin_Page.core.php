@@ -422,7 +422,7 @@ class EE_Admin_Page {
 	 * @param string  $priority      give this metabox a priority (using accepted priorities for wp meta boxes)
 	 * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function created but just set our own callback for wp's add_meta_box.
 	 */
-	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column = 'default', $priority = 'high', $create_func = true ) {	
+	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column = 'normal', $priority = 'high', $create_func = true ) {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
 
 		//if we have empty callback args and we want to automatically create the metabox callback then we need to make sure the callback args are generated.
@@ -482,6 +482,9 @@ class EE_Admin_Page {
 
 		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
+
+		//display any espresso_notices (generated from metaboxes)
+		$this->display_espresso_notices();
 
 		// the final template wrapper
 		$this->admin_page_wrapper();
@@ -632,13 +635,12 @@ class EE_Admin_Page {
 	 */
 	protected function _generate_admin_form_fields($input_vars = array(), $id = FALSE) {
 
-		if (empty($input_vars) || !$id) {
+		if ( empty($input_vars) ) {
 			return new WP_Error(__('form_field_generator_error', 'event_espresso'), __('missing required variables for the form field generator', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 		}
 		
 		// if you don't behave - this is what you're gonna get !!!
 		$output = '';
-
 
 		// cycle thru inputs
 		foreach ($input_vars as $input_key => $input_value) {
@@ -646,8 +648,9 @@ class EE_Admin_Page {
 			// required fields get a * 
 			$required = $input_value['required'] ? '&nbsp;<em>*</em>' : '';
 			// and the css class "required"
-			$styles = $input_value['required'] ? 'required ' . $input_value['css_class'] : $input_value['css_class'];
-			$field_id = $id . '-' . $input_key;
+			$styles = $input_value['required']? 'required ' . $input_value['css_class'] : $input_value['css_class'];
+			$field_id = ($id) ? $id . '-' . $input_key : $input_key;
+			$output .= '<div class="msg-field-section">';
 
 			// what type of input are we dealing with ?
 			switch ($input_value['input']) {
@@ -695,6 +698,7 @@ class EE_Admin_Page {
 					$output .= "\n\t\t\t" . '<input id="' . $field_id. '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . ' />';
 					break; 
 				}
+				$output .= '</div>';
 			
 		} // end foreach( $input_vars as $input_key => $input_value ) 
 
