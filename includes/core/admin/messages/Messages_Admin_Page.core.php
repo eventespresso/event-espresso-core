@@ -682,7 +682,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//if $message_type is empty.. let's try to get the $message type from the $_active_messenger settings.
 		if ( empty($message_types) ) {
-			$message_types = isset($this->_active_messenger[$messenger]['settings'][$messenger.'-message_type']) ? array_keys($this->_active_messenger[$messenger]['settings'][$messenger.'-message_types']) : array();
+			$message_types = isset($this->_active_messenger[$messenger]['settings']['message_types']) ? array_keys($this->_active_messenger[$messenger]['settings']['message_types']) : array();
 		}
 
 		//if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
@@ -1011,8 +1011,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		}
 
 		//still stateless eh?  K let's see if we can get the state from the database.
+		$ref = '_active_' . $this->_activate_meta_box_type;
 		if ( !$this->_activate_state ) {
-			$this->_activate_state = isset($this->_active_messengers[$this->_current_message_meta_box]) ? 'active' : 'inactive';
+			$this->_activate_state = isset($this->{$ref}[$this->_current_message_meta_box]) ? 'active' : 'inactive';
 		}
 
 		$admin_header_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_activate_details_header.template.php';
@@ -1065,10 +1066,11 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		if ( !empty($existing_settings_fields) ) {
 			$content = '<ul>';
 			foreach ( $existing_settings_fields as $field_name => $field_value ) {
+				$field_name = str_replace($this->_current_message_meta_box . '-', '', $field_name);
 				$content .= '<li>' . ucwords(str_replace('_', ' ', $field_name) ) . ': ';
 				if ( $field_name == 'message_types' ) {
 					$content .= '<ul class="message-type-list">';
-					foreach ( $field_value as $mt ) {
+					foreach ( $field_value as $mt => $value ) {
 						$content .= '<li>' . $mt . '</li>';
 					}
 					$content .= '</ul></li>';
