@@ -34,6 +34,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	private $_activate_meta_box_type;
 	private $_current_message_meta_box;
 	private $_current_message_meta_box_object;
+	private $_context_switcher;
 
 	/**
 	 * constructor
@@ -322,7 +323,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		$EVT_ID = isset( $_REQUEST['evt_id'] ) && !empty( $_REQUEST['evt_id'] ) ? absint( $_REQUEST['evt_id'] ) : FALSE;
 
-		$context = isset( $_REQUEST['context']) && !empty($_REQUEST['context'] ) ? strtolower($_REQUEST['context']) : FALSE;
+		$context = isset( $_REQUEST['context']) && !empty($_REQUEST['context'] ) ? strtolower($_REQUEST['context']) : 'admin';
+
 		
 		//todo: this localization won't work for translators because the string is variable.
 		$title = __(ucwords( str_replace( '_', ' ', $this->_req_action ) ), 'event_espresso' );
@@ -339,10 +341,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
 			$action = 'update_message_template';
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
-			$title .= $message_template->messenger() . ' ' . $message_template->message_type . ' Template'; 
+			$title .= $message_template->MTP_messenger . ' ' . $message_template->MTP_message_type . ' Template'; 
 		}
 
-		$context_switcher_url = add_query_arg( array( 'action' => 'edit_message_template', 'noheader' => TRUE, 'id' => $GRP_ID, 'evt_id' => $EVT_ID ), EE_MSG_ADMIN_URL);
 
 		//todo: let's display the event name rather than ID. 
 		$title .= $EVT_ID ? ' for EVT_ID: ' . $EVT_ID : '';
@@ -350,6 +351,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->template_args['GRP_ID'] = $GRP_ID;
 		$this->template_args['message_template'] = $message_template;
 		$this->template_args['is_extra_fields'] = FALSE;
+
+
 
 		//let's get the EE_messages_controller so we can get templates
 		$MSG = new EE_messages();
@@ -359,6 +362,15 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$this->_handle_errors($template_field_structure); 
 			$template_field_structure = false;
 			$template_fields = 'There was an error in assembling the fields for this display (you should see an error message';
+		}
+
+		$message_templates = $message_template->context_templates();
+
+		//if we have the extra key.. then we need to remove the content index from the template_field_structure as it will get handled in the "extra" array.
+		if ( isset( $template_field_structure[$context]['extra']) ) {
+			foreach ( $template_field_structure[$context]['extra'] as $reference_field => $new_fields ) {
+				unset( $template_field_structure[$context][$reference_field] );
+			}
 		}
 
 		//let's loop through the template_field_structure and actually assemble the input fields!
@@ -377,22 +389,52 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 									'type' => 'string',
 									'required' => TRUE,
 									'validation' => TRUE,
-									'value' => !empty($message_template) && isset($message_template[$context][$reference_field][$extra_field]) ? $message_template[$context][$reference_field][$extra_field] : '',
+									'value' => !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? $message_templates[$context][$reference_field]['content'][$extra_field] : '',
+									'css_class' => '',
 									'format' => '%s',
 									'db-col' => 'MTP_content'
 								);
-
 						}
+						$templatefield_MTP_id = $reference_field . '-MTP_ID';
+						$templatefield_templatename_id = $reference_field . '-name';
+
+						$template_form_fields[$templatefield_MTP_id] = array(
+							'name' => 'MTP_template_fields[' . $reference_field . '][MTP_id]',
+							'label' => NULL,
+							'input' => 'hidden',
+							'type' => 'int',
+							'required' => FALSE,
+							'validation' => FALSE,
+							'value' => !empty($message_templates) ? $message_templates[$context][$reference_field]['MTP_ID'] : '',
+							'css_class' => '',
+							'format' => '%d',
+							'db-col' => 'MPT_id'
+						);
+
+						$template_form_fields[$templatefield_templatename_id] = array(
+							'name' => 'MTP_template_fields[' . $reference_field . '][name]',
+							'label' => NULL,
+							'input' => 'hidden',
+							'type' => 'string',
+							'required' => FALSE,
+							'validation' => TRUE,
+							'value' => $reference_field,
+							'css_class' => '',
+							'format' => '%s',
+							'db-col' => 'MTP_template_field'
+						);
 					}
+					continue; //skip the next stuff, we got the necessary fields here for this dataset.
 				} else {
 					$template_form_fields[$template_field . '-content'] = array(
-							'name' => 'MTP_template_fields[' . $reference_field . '][content]',
+							'name' => 'MTP_template_fields[' . $template_field . '][content]',
 							'label' => ucwords(str_replace('_', ' ', $template_field) ),
 							'input' => $type,
 							'type' => 'string',
 							'required' => TRUE,
 							'validation' => TRUE,
-							'value' => !empty($message_template) && isset($message_template[$context][$template_field]) ? $message_template[$context][$template_field] : '',
+							'value' => !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? $message_templates[$context][$template_field]['content'] : '',
+							'css_class' => '',
 							'format' => '%s',
 							'db-col' => 'MTP_content'
 						);
@@ -400,33 +442,34 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 				//k took care of content field(s) now let's take care of others.
 
-				$templatefield_MTP_id = $template_field . 'MTP_ID';
+				$templatefield_MTP_id = $template_field . '-MTP_ID';
 				$templatefield_field_templatename_id = $template_field . '-name';
 
 				//foreach template field there are actually two form fields created
-				$template_form_fields = array(
-					${$templatefield_MTP_id} => array(
-						'name' => 'MTP_template_fields[' . $template_field . '][MTP_id]',
-						'label' => NULL,
-						'input' => 'hidden',
-						'type' => 'int',
-						'required' => FALSE,
-						'validation' => TRUE,
-						'value' => !empty($message_template) ? $message_template[$context][$template_field]['MTP_ID'] : '',
-						'format' => '%d',
-						'db-col' => 'MTP_ID'
-						),
-					${$templatefield_field_templatename_id} = array(
-							'name' => 'MTP_template_fields[' . $template_field . '][name]',
-							'label' => NULL,
-							'input' => 'hidden',
-							'type' => 'string',
-							'required' => FALSE,
-							'validation' => TRUE,
-							'value' => $template_field,
-							'format' => '%s',
-							'db-col' => 'MTP_template_field'
-						),
+				$template_form_fields[$templatefield_MTP_id] = array(
+					'name' => 'MTP_template_fields[' . $template_field . '][MTP_id]',
+					'label' => NULL,
+					'input' => 'hidden',
+					'type' => 'int',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => !empty($message_templates) ? $message_templates[$context][$template_field]['MTP_ID'] : '',
+					'css_class' => '',
+					'format' => '%d',
+					'db-col' => 'MTP_ID'
+				);
+
+				$template_form_fields[$templatefield_field_templatename_id] = array(
+					'name' => 'MTP_template_fields[' . $template_field . '][name]',
+					'label' => NULL,
+					'input' => 'hidden',
+					'type' => 'string',
+					'required' => FALSE,
+					'validation' => TRUE,
+					'value' => $template_field,
+					'css_class' => '',
+					'format' => '%s',
+					'db-col' => 'MTP_template_field'
 				);
 
 			}
@@ -440,6 +483,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'required' => FALSE,
 					'validation' => TRUE,
 					'value' => $context,
+					'css_class' => '',
 					'format' => '%s',
 					'db-col' => 'MTP_context'
 				);
@@ -451,6 +495,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'required' => FALSE,
 					'validation' => TRUE,
 					'value' => $EVT_ID,
+					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'EVT_ID'
 				);
@@ -463,6 +508,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'required' => FALSE,
 					'validation' => TRUE,
 					'value' => $GRP_ID,
+					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'GRP_ID'
 				);
@@ -475,6 +521,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'required' => FALSE,
 					'validation' => TRUE,
 					'value' => $message_template->messenger(),
+					'css_class' => '',
 					'format' => '%s',
 					'db-col' => 'MTP_messenger'
 				);
@@ -487,6 +534,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'required' => FALSE,
 					'validation' => TRUE,
 					'value' => $message_template->message_type(),
+					'css_class' => '',
 					'format' => '%s',
 					'db-col' => 'MTP_message_type'
 				);
@@ -498,7 +546,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_template[$context]['MTP_is_global'],
+					'value' => $message_templates[$context]['MTP_is_global'],
+					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'MTP_is_global'
 				);
@@ -510,7 +559,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_template[$context]['MTP_is_override'],
+					'value' => $message_templates[$context]['MTP_is_override'],
+					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'MTP_is_override'
 				);
@@ -522,17 +572,31 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_template[$context]['MTP_deleted'],
+					'value' => $message_templates[$context]['MTP_deleted'],
+					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'MTP_deleted'
 				);
 
 			//send to field generator
-			foreach ( $template_form_fields as $field_id => $template_form_field ) {
-				$template_fields[$field_id] = $this->_generate_admin_form_fields( $template_form_field, $field_id );
+			
+			$template_fields = $this->_generate_admin_form_fields( $template_form_fields );
+
+			if ( is_wp_error($template_fields) ) {
+				$this->_handle_errors($template_fields);
 			}
 
 		} //end if ( !empty($template_field_structure) )
+
+		//setup context switcher
+		$context_switcher_args = array(
+			'page' => 'messages',
+			'action' => 'edit_message_template',
+			'id' => $GRP_ID,
+			'evt_id' => $EVT_ID,
+			'context' => $context
+		);
+		$this->_set_context_switcher($message_template, $context_switcher_args);
 
 
 		$this->template_args['template_fields'] = $template_fields;
@@ -540,7 +604,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->template_args['context'] = $context;
 		$this->template_args['EVT_ID'] = $EVT_ID;
 		$this->template_args['edit_message_template_form_url'] = $edit_message_template_form_url;
-		$this->template_args['context_switcher_url'] = $context_switcher_url;
 		$this->template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
 
 		//add nav tab for this page
@@ -549,7 +612,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->nav_tabs['edit_message_template']['css_class'] = ' nav-tab-active';
 		$this->nav_tabs['edit_message_template']['order'] = 15;
 
-		add_action('action_hook_espresso_before_admin_page_content', array($this, '_add_form_element_before') );
+		add_action('action_hook_espresso_before_admin_page_content', array($this, 'add_context_switcher'), 5 );
+		add_action('action_hook_espresso_before_admin_page_content', array($this, '_add_form_element_before'), 10 );
 		add_action('action_hook_espresso_after_admin_page_content', array($this, '_add_form_element_after') );
 
 		$this->_template_path = $this->template_args['GRP_ID'] ?EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
@@ -561,12 +625,56 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->display_admin_page_with_sidebar();
 	}
 
-	protected function _add_form_element_before() {
-		echo '<form method="get" action="<?php echo $this->template_args["edit_message_template_form_url"]; ?>" id="ee-msg-edit-frm">';
+	public function add_context_switcher() {
+		echo $this->_context_switcher;
 	}
 
-	protected function _add_form_element_after() {
+	public function _add_form_element_before() {
+		echo '<form method="get" action="' . $this->template_args["edit_message_template_form_url"] . '" id="ee-msg-edit-frm">';
+	}
+
+	public function _add_form_element_after() {
 		echo '</form>';
+	}
+
+	/**
+	 * sets up a context switcher for edit forms
+	 *
+	 * @access  private
+	 * @param  object $template_object the template object being displayed on the form
+	 * @param array $args various things the context switcher needs.
+	 * @return void
+	 */
+	private function _set_context_switcher($template_object, $args) {
+		ob_start();
+		?>
+		<form method="get" action="<?php echo EE_MSG_ADMIN_URL; ?>" id="ee-msg-context-switcher-frm">
+			<?php
+				foreach ( $args as $name => $value ) {
+					if ( $name == 'context' || empty($value) ) continue;
+					?>
+					<input type="hidden" name="<?php echo $name; ?>" value = "<?php echo $value; ?>" />
+					<?php
+				}
+				//setup nonce_url
+				wp_nonce_field($args['action'] . '_nonce', '_wpnonce', false);
+			?>
+			<select name="context">
+				<?php 
+				$context_templates = $template_object->context_templates();
+				if ( is_array($context_templates) ) :
+						foreach ( $context_templates as $context => $template_fields ) :
+							$checked = ($context == $args['context']) ? 'selected="selected"' : '';
+				?>
+				<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context; ?></option>
+				<?php endforeach; endif; ?>
+			</select>
+			<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="Switch Context">
+		</form>
+		<?php
+		$output = ob_get_contents();
+		ob_clean();
+		$this->_context_switcher = $output;
 	}
 
 	/**
@@ -611,7 +719,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$query_args = array();
 
 		//if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
-		if ( $new_price ) {
+		if ( $new ) {
 			if ( $edit_array = $this->_generate_new_templates($messenger, $message_type, $evt_id) ) {
 				if ( is_wp_error($edit_array) ) {
 					$success = 0;

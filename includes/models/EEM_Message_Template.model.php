@@ -193,7 +193,8 @@ class EEM_Message_Template extends EEM_Base {
 		
 		$where_cols_n_values = array('GRP_ID' => $GRP_ID);
 		if ($template = $this->select_all_where($where_cols_n_values)) {
-			return $this->_create_objects( $template );
+			$tmplt = $this->_create_objects( $template );
+			return $tmplt[$GRP_ID];
 		} else {
 			return FALSE;
 		}
