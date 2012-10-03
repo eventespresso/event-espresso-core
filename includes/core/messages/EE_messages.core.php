@@ -580,7 +580,7 @@ abstract class EE_message_type {
 		if ( empty( $this->_existing_admin_settings ) && method_exists($this, '_set_existing_admin_settings') )
 			$this->_set_existing_admin_settings();
 
-		return property_exists($this,'_existing_admin_setttings') ? $this->_existing_admin_settings : null;
+		return property_exists($this,'_existing_admin_settings') ? $this->_existing_admin_settings : null;
 	}
 
 	/**
@@ -657,8 +657,8 @@ abstract class EE_message_type {
 		$message = new stdClass();
 		
 		foreach ( $this->templates as $template_type => $context ) {
-			if ( isset( $this->templates[$template_type][$reciever->context] ) ) {
-				$message->$template_type = $this->_shortcode_replace->parse_template($this->templates[$template_type][$reciever->context], $this->data);
+			if ( isset( $this->templates[$template_type][$receiver->context] ) ) {
+				$message->$template_type = $this->_shortcode_replace->parse_template($this->templates[$template_type][$receiver->context], $this->data);
 			}
 		}
 		return $message;

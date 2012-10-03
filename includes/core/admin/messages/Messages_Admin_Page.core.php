@@ -997,7 +997,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			'activate_msg_type_toggle_link' => add_query_arg($switch_view_query_args, $this->admin_base_url),
 			'activate_meta_box_toggle_type' => ucwords(str_replace('_', ' ', $switch_view_toggle_text) ),
 			'on_off_action_on' => wp_nonce_url(add_query_arg($default_edit_query_args, $this->admin_base_url), $nonce_edit_ref),
-			'on_off_action_off' => wp_nonce_url(add_query_arg($default_deactivate_query_args, $this->admin_base_url), $nonce_deactivate_ref)
+			'on_off_action_off' => wp_nonce_url(add_query_arg($default_deactivate_query_args, $this->admin_base_url), $nonce_deactivate_ref),
+			'show_on_off_button' => ''
 			);
 
 		$this->template_args = array_merge($default_template_args, $this->template_args);
@@ -1044,10 +1045,12 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	private function _box_content_active() {
 		//setup content
 		$content = '';
+		$ref = '_active_' . $this->_activate_meta_box_type;
 
 		//fields
 		$settings_fields = $this->_current_message_meta_box_object->get_admin_settings_fields();
-		$existing_settings_fields = $this->_current_message_meta_box_object->get_existing_admin_settings();
+		$existing_settings_fields = isset($this->{$ref}[$this->_current_message_meta_box]['settings']) ? $this->{$ref}[$this->_current_message_meta_box]['settings'] : null;
+
 
 		//if the following condition is met then we need to load the edit form instead.
 		//note that if there are not any existing settings and this is a messengers box display then we show editing even if there are no default fields BECAUSE, messengers need to have selected message types with them.
@@ -1058,6 +1061,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		}
 
 		//we're still here so let's setup the display for this page.
+		//todo:  need to work out a way of NOT displaying hidden fields (maybe don't save to db?) and also make sure message types with messengers are displayed differently!
 		if ( !empty($existing_settings_fields) ) {
 			$content = '<ul>';
 			foreach ( $existing_settings_fields as $field_name => $field_value ) {
@@ -1210,6 +1214,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$this->template_args['on_off_action'] = empty($existing_settings_fields) ? $this->template_args['on_off_action_on'] : $this->template_args['on_off_action_off'];
 			$this->template_args['activate_msgs_on_off_descrp'] = empty($existing_settings_fields) ? __('Activate','event_espresso') : __('Deactivate', 'event_espresso');
 			$this->template_args['on_off_status'] = empty($existing_settings_fields) ? 'inactive' : 'active';
+			$this->template_args['show_on_off_button'] = 'hidden';
 		}
 	}
 
@@ -1266,19 +1271,25 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	private function _update_msg_settings($remove = false) {
 		global $espresso_wp_user, $espresso_notices;
 		$success_msg = array();
+		$update = FALSE;
+		$ref = '_active_' . $this->_activate_meta_box_type;
 		if ( !$remove ) {
-			$this->_active_{$this->_activate_meta_box_type}[$this->_current_message_meta_box]['settings'] = isset($_POST['ee-msg-activate-form']) ? $_POST : NULL;
-			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->_active_{$this->_activate_meta_box_type});
-			$success_msg = sprintf( __('%s has been successfully activated', 'event_espresso'), $this->_current_message_meta_box);
+			if ( isset($_POST['ee-msg-activate-form'] ) ) {
+				unset($_POST['ee-msg-activate-form']);
+				$update = TRUE;
+			}
+			$this->{$ref}[$this->_current_message_meta_box]['settings'] = $update ? $_POST : NULL;
+			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->{$ref});
+			$success_msg = sprintf( __('%s %s has been successfully activated', 'event_espresso'), ucwords(str_replace('_', ' ' , $this->_current_message_meta_box) ), ucwords(str_replace('_', ' ', rtrim($this->_activate_meta_box_type, 's') ) ) );
 			
 			if ( $this->_activate_meta_box_type == 'messengers' && $this->_activate_state == 'active' ) {
 				$templates = $this->_generate_new_templates($this->_current_message_meta_box);
 				//todo: templates aren't getting generated.
 			}
 		} else {
-			unset($this->_active_{$this->_activate_meta_box_type}[$this->_current_message_meta_box]);
-			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->_active_{$this->_activate_meta_box_type});
-			$success_msg = sprintf( sprintf( __('%s has been successfully deactivated', 'event_espresso'), $this->_current_message_meta_box) );
+			unset($this->{$ref}[$this->_current_message_meta_box]);
+			update_user_meta($espresso_wp_user, 'ee_active_' . $this->_activate_meta_box_type, $this->{$ref});
+			$success_msg = sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords(str_replace('_', ' ', $this->_current_message_meta_box) ) , ucwords(str_replace('_', ' ', rtrim($this->_activate_meta_box_type, 's') ) ) );
 			//todo: we need to delete any templates that are associated.  If this is a messenger, then delete all templates matching the messenger.  If this is a message_type, then delete all templates matching the message type.
 		}
 

@@ -21,7 +21,7 @@
 		</form>
 	</div> <!-- end .activate_messages_meta_box_form -->
 
-	<div class="activate_messages_on_off_toggle_container">
+	<div class="activate_messages_on_off_toggle_container <?php echo $show_on_off_button; ?>">
 		<a href="<?php echo $on_off_action; ?>" title="<?php printf( __('Click here to %s', 'event-espresso'), $activate_msgs_on_off_descrp); ?>" class="on-off-<?php echo $on_off_status;?>"></a>
 	</div> <!-- end .activate_messages_on_off_toggle_container -->
 	<div style="clear:both"></div>
