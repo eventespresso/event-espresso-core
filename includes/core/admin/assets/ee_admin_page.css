@@ -1,0 +1,15 @@
+/*** Save buttons ***/
+
+#event_editor_major_buttons_wrapper{
+    border-top: medium none;
+    clear: both;
+    padding: 10px 0 8px;	
+}
+#save-event-floating-btns-spacer {
+	height:45px;
+}
+#event-editor-floating-save-btns {
+	position:fixed; top:0px; right:15px;
+	padding: 35px 11px 10px 11px;
+	background:rgba(255,230,0,.2);
+}

@@ -856,8 +856,10 @@ class EE_Admin_Page {
 
 		$button_text = !empty($text) ? $text : array( __('Save', 'event_espresso'), __('Save and Close', 'event_espresso') );
 		$default_names = array( 'save', 'save_and_close' );
-		$this->template_args['save_buttons'] = '<div id="event_editor_major_buttons_wrapper">';
-		$this->template_args['save_buttons'] .= '<div class="publishing-action">';
+		$init_div = '<div id="event_editor_major_buttons_wrapper">';
+		$alt_div = '<div id="event-editor-floating-save-btns" class="hidden">';
+
+		$this->template_args['save_buttons'] = '<div class="publishing-action">';
 		//add in a hidden index for the current page (so save and close redirects properly)
 		$this->template_args['save_buttons'] .= empty($actions) ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '';
 
@@ -868,6 +870,8 @@ class EE_Admin_Page {
 			if ( !$both ) break;
 		}
 		$this->template_args['save_buttons'] .= '</div><br class="clear" /></div>';
+		$alt_buttons = $alt_div . $this->template_args['save_buttons'];
+		$this->template_args['save_buttons'] = $init_div . $this->template_args['save_buttons'] . $alt_buttons;
 	}
 
 
