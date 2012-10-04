@@ -647,10 +647,16 @@ class EE_Admin_Page {
 		foreach ($input_vars as $input_key => $input_value) {
 
 			// required fields get a * 
-			$required = $input_value['required'] ? ' <span>*</span>: ' : ': ';
+			$required = isset($input_value['required']) && $input_value['required'] ? ' <span>*</span>: ' : ': ';
 			// and the css class "required"
-			$styles = $input_value['required']? 'required ' . $input_value['css_class'] : $input_value['css_class'];
+			$css_class = isset( $input_value['css_class'] ) ? $input_value['css_class'] : '';
+			$styles = $input_value['required']? 'required ' . $css_class : $css_class;
 			$field_id = ($id) ? $id . '-' . $input_key : $input_key;
+
+			//rows or cols?
+			$rows = isset($input_value['rows'] ) ? $input_value['rows'] : '10';
+			$cols = isset($input_value['cols'] ) ? $input_value['cols'] : '80';
+
 			$output .= (!$close) ? '<ul>' : '';
 			$output .= '<li>';
 
@@ -686,7 +692,7 @@ class EE_Admin_Page {
 				case 'textarea' :
 
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '">' . $input_value['value'] . '</textarea>';
+					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="'.$rows.'" cols="'.$cols.'" name="' . $input_value['name'] . '">' . $input_value['value'] . '</textarea>';
 					break;
 
 				case 'hidden' :
@@ -703,7 +709,7 @@ class EE_Admin_Page {
 					$close = false;
 					$editor_settings = array(
 						'textarea_name' => $input_value['name'],
-						'textarea_rows' => 15
+						'textarea_rows' => $rows
 					);
 					$output .= '</li>';
 					$output .= '</ul>';

@@ -376,24 +376,18 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//let's loop through the template_field_structure and actually assemble the input fields!
 		if ( !empty($template_field_structure) ) {
 			$id_prefix= 'ee-msg-edit-template-fields-';
-			foreach ( $template_field_structure[$context] as $template_field => $type ) {
+			foreach ( $template_field_structure[$context] as $template_field => $field_setup_array ) {
 				//if this is an 'extra' template field then we need to remove any existing fields that are keyed up in the extra array and reset them.
 				if ( $template_field == 'extra' ) {
 					$this->template_args['is_extra_fields'] = TRUE;
-					foreach ( $type as $reference_field => $new_fields ) {
-						foreach ( $new_fields as $extra_field =>  $extra_type ) {
-							$template_form_fields[$reference_field . '-' . $extra_field . '-content'] = array(
-									'name' => 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']',
-									'label' => ( $extra_field == 'main' ) ? ucwords(str_replace('_', ' ', $reference_field) ) : ucwords(str_replace('_', ' ', $extra_field) ),
-									'input' => $extra_type,
-									'type' => 'string',
-									'required' => TRUE,
-									'validation' => TRUE,
-									'value' => !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? $message_templates[$context][$reference_field]['content'][$extra_field] : '',
-									'css_class' => '',
-									'format' => '%s',
-									'db-col' => 'MTP_content'
-								);
+					foreach ( $field_setup_array as $reference_field => $new_fields_array ) {
+						foreach ( $new_fields_array as $extra_field =>  $extra_array ) {
+							$field_id = $reference_field . '-' . $extra_field . '-content';
+							$template_form_fields[$field_id] = $extra_array;
+							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
+							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? $message_templates[$context][$reference_field]['content'][$extra_field] : '';
+							$template_form_fields[$field_id]['db-col'] = 'MTP_content';
+							
 						}
 						$templatefield_MTP_id = $reference_field . '-MTP_ID';
 						$templatefield_templatename_id = $reference_field . '-name';
@@ -408,7 +402,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 							'value' => !empty($message_templates) ? $message_templates[$context][$reference_field]['MTP_ID'] : '',
 							'css_class' => '',
 							'format' => '%d',
-							'db-col' => 'MPT_id'
+							'db-col' => 'MTP_id'
 						);
 
 						$template_form_fields[$templatefield_templatename_id] = array(
@@ -426,18 +420,11 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					}
 					continue; //skip the next stuff, we got the necessary fields here for this dataset.
 				} else {
-					$template_form_fields[$template_field . '-content'] = array(
-							'name' => 'MTP_template_fields[' . $template_field . '][content]',
-							'label' => ucwords(str_replace('_', ' ', $template_field) ),
-							'input' => $type,
-							'type' => 'string',
-							'required' => TRUE,
-							'validation' => TRUE,
-							'value' => !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? $message_templates[$context][$template_field]['content'] : '',
-							'css_class' => '',
-							'format' => '%s',
-							'db-col' => 'MTP_content'
-						);
+					$field_id = $template_field . '-content';
+					$template_form_fields[$field_id] = $field_setup_array;
+					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
+					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? $message_templates[$context][$template_field]['content'] : '';
+					$template_form_fields[$field_id]['db-col'] = 'MTP_content';
 				}
 
 				//k took care of content field(s) now let's take care of others.

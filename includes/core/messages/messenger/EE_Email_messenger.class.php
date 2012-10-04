@@ -65,17 +65,58 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_template_fields() {
 		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  Also, notice that the "values" are equal to the field type that messages admin will use to know what kind of field to display. 
 		$this->_template_fields = array(
-				'to' => 'text',
-				'from' => 'text',
-				'subject' => 'text',
-				'content' => 'wp_editor',
-				'extra' => array(
-					'content' => array(
-						'attendee_list' => 'textarea',
-						'main' => 'wp_editor'
-						)
+			'to' => array(
+				'input' => 'text',
+				'label' => __('To', 'event_espresso'),
+				'type' => 'string',
+				'required' => TRUE,
+				'validation' => TRUE,
+				'css_class' => 'large-text',
+				'format' => '%s'
+			),	
+			'from' => array(
+				'input' => 'text',
+				'label' => __('From', 'event_espresso'),
+				'type' => 'string',
+				'required' => TRUE,
+				'validation' => TRUE,
+				'css_class' => 'large-text',
+				'format' => '%s'
+			),
+			'subject' => array(
+				'input' => 'text',
+				'label' => __('Subject', 'event_espresso'),
+				'type' => 'string',
+				'required' => TRUE,
+				'validation' => TRUE,
+				'css_class' => 'large-text',
+				'format' => '%s'
+			),
+			'content' => '', //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
+			'extra' => array(
+				'content' => array(
+					'attendee_list' => array(
+						'input' => 'textarea',
+						'label' => __('Attendee List', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5'
+					),
+					'main' => array(
+						'input' => 'wp_editor',
+						'label' => '',
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'rows' => '15'
 					)
-				);
+				)
+			)
+		);
 
 		$this->_template_fields = apply_filters('filter_hook_espresso_set_template_fields_'.$this->name, $this->_template_fields);
 		$this->_template_fields = apply_filters('filter_hook_espresso_set_template_fields_all', $this->_template_fields);	
