@@ -332,13 +332,17 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		if ( empty($GRP_ID) && $new_template ) {
 			$message_template = $MTP->get_new_template;
 			$action = 'insert_message_template';
+			$button_both = FALSE;
+			$button_text = array( __( 'Save','event_espresso') );
+			$button_actions = array('something_different');
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
-			$button_text = __('Create Template', 'event_espresso');
 		} else {
 			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
 			$action = 'update_message_template';
+			$button_both = TRUE;
+			$button_text = array();
+			$button_actions = array();
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
-			$button_text = __('Update Template', 'event_espresso');
 		}
 
 		//todo: we need to assemble the title from Various details
@@ -393,7 +397,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 						$templatefield_templatename_id = $reference_field . '-name';
 
 						$template_form_fields[$templatefield_MTP_id] = array(
-							'name' => 'MTP_template_fields[' . $reference_field . '][MTP_id]',
+							'name' => 'MTP_template_fields[' . $reference_field . '][MTP_ID]',
 							'label' => NULL,
 							'input' => 'hidden',
 							'type' => 'int',
@@ -402,7 +406,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 							'value' => !empty($message_templates) ? $message_templates[$context][$reference_field]['MTP_ID'] : '',
 							'css_class' => '',
 							'format' => '%d',
-							'db-col' => 'MTP_id'
+							'db-col' => 'MTP_ID'
 						);
 
 						$template_form_fields[$templatefield_templatename_id] = array(
@@ -434,7 +438,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 				//foreach template field there are actually two form fields created
 				$template_form_fields[$templatefield_MTP_id] = array(
-					'name' => 'MTP_template_fields[' . $template_field . '][MTP_id]',
+					'name' => 'MTP_template_fields[' . $template_field . '][MTP_ID]',
 					'label' => NULL,
 					'input' => 'hidden',
 					'type' => 'int',
@@ -564,6 +568,17 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'format' => '%d',
 					'db-col' => 'MTP_deleted'
 				);
+			$sidebar_form_fields['ee-msg-author'] = array(
+				'name' => 'MTP_user_id',
+				'label' => __('Author', 'event_espresso'),
+				'input' => 'hidden',
+				'type'=> 'int',
+				'required' => FALSE,
+				'validation' => FALSE,
+				'value' => !empty($message_templates[$context]['MTP_user_id']) ? $message_templates[$context]['MTP_user_id'] : get_current_user_id(),
+				'format' => '%d',
+				'db-col' => 'MTP_user_id'
+			);
 
 			$sidebar_array = array('ee-msg-is-global', 'ee-msg-is-override', 'ee-msg-deleted');
 
@@ -588,10 +603,10 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		);
 		$this->_set_context_switcher($message_template, $context_switcher_args);
 
-		$form_submit = '<input id="update-msg-template-sbmt" class="button-primary" type="submit" value="' . $button_text . '" />';
+		$this->_set_save_buttons($button_both, $button_text, $button_actions);
 
 		//sidebar box
-		$this->template_args['sidebar_content'] = $sidebar_fields . '<br /><br />' . $form_submit;
+		$this->template_args['sidebar_content'] = $sidebar_fields . $this->template_args['save_buttons'];
 		$this->template_args['sidebar_description'] = '';
 		$this->template_args['sidebar_title'] = '';
 		$sidebar_title = __('Other Details', 'event_espresso');
@@ -649,7 +664,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	}
 
 	public function _add_form_element_before() {
-		echo '<form method="get" action="' . $this->template_args["edit_message_template_form_url"] . '" id="ee-msg-edit-frm">';
+		echo '<form method="post" action="' . $this->template_args["edit_message_template_form_url"] . '" id="ee-msg-edit-frm">';
 	}
 
 	public function _add_form_element_after() {
@@ -707,7 +722,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 */
 	protected function _set_message_template_column_values($index) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
 		$set_column_values = array(
 			'MTP_ID' => absint($_REQUEST['MTP_template_fields'][$index]['MTP_ID']),
 			'EVT_ID' => absint($_REQUEST['EVT_ID']),
@@ -717,9 +731,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			'MTP_message_type' => strtolower($_REQUEST['MTP_message_type']),
 			'MTP_template_field' => strtolower($_REQUEST['MTP_template_fields'][$index]['name']),
 			'MTP_context' => strtolower($_REQUEST['MTP_context']),
-			'MTP_content' => strtolower($_REQUEST['MTP_template_fields'][$index]['content']),
-			'MTP_is_global' => absint($_REQUEST['MTP_is_global']),
-			'MTP_is_override' => absint($_REQUEST['MTP_is_override']),
+			'MTP_content' => maybe_serialize($_REQUEST['MTP_template_fields'][$index]['content']),
+			'MTP_is_global' => isset($_REQUEST['MTP_is_global']) ? absint($_REQUEST['MTP_is_global']) : 0,
+			'MTP_is_override' => isset($_REQUEST['MTP_is_override']) ? absint($_REQUEST['MTP_is_override']) : 0,
 			'MTP_deleted' => absint($_REQUEST['MTP_deleted'])
 		);
 		return $set_column_values;
@@ -729,6 +743,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		
 		do_action ( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$success = 0;
+
 		//setup notices description	
 		$messenger = !empty($_REQUEST['MTP_messenger']) ? ucwords(str_replace('_', ' ', $_REQUEST['MTP_messenger'] ) ) : false;
 		$message_type = !empty($_REQUEST['MTP_message_type']) ? ucwords(str_replace('_', ' ', $_REQUEST['MTP_message_type'] ) ) : false;
@@ -757,29 +772,28 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			}
 			$action_desc = 'created';
 		} else {
-			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Type.model.php');
-			$MTP = EEM_Message_Type::instance();
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+			$MTP = EEM_Message_Template::instance();
 			
 			//run update for each template field in displayed context
 			if ( !isset($_REQUEST['MTP_template_fields']) && empty($_REQUEST['MTP_template_fields'] ) ) {
 				$error =  new WP_Error( __('problem_saving_template_fields', 'event_espresso'), __('There was a problem saving the template fields from the form becuase I didn\'t receive any actual template field data.', 'even_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
 				$this->_handle_errors($error);
 				$success = 0;
+				$action_desc = '';
 				$query_args = array(
 						'id' => $edit_array['GRP_ID'],
 						'evt_id' => $edit_array['EVT_ID'],
 						'context' => $edit_array['MTP_context'],
 						'action' => 'edit_message_template'
 						);
-			}
-
-			if ( $success ) { 	
+			} else {
 				foreach ( $_REQUEST['MTP_template_fields'] as $template_field => $content ) {
 					$set_column_values = $this->_set_message_template_column_values($template_field);
-					$where_cols_n_values = array( 'MTP_ID' => $_REQUEST['MTP_template_field'][$template_field]['MTP_ID']);
+					$where_cols_n_values = array( 'MTP_ID' => $_REQUEST['MTP_template_fields'][$template_field]['MTP_ID']);
 					if ( $updated = $MTP->update( $set_column_values, $where_cols_n_values ) ) {
 						if ( is_wp_error($updated) ) {
-							$this->_handle_errors($edit_array);
+							$this->_handle_errors($updated);
 						} else {
 							$success = 1;
 						}
@@ -788,7 +802,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 				}
 			}
 		
-		$this->_redirect_after_admin_action( $success, $item_desc, $action_desc, $query_args );
+		$this->_redirect_after_action( $success, $item_desc, $action_desc, $query_args );
 
 		}
 	}
@@ -891,7 +905,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		$action_desc = $trash ? 'moved to the trash' : 'restored';
 		$item_desc = $all ? 'Message Template Group' : 'Message Template Context';
-		$this->_redirect_after_admin_action( $success, $item_desc, $action_desc, array() );
+		$this->_redirect_after_action( $success, $item_desc, $action_desc, array() );
 	
 	}
 
@@ -926,63 +940,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			}
 		}
 
-		$this->_redirect_after_admin_action( $success, 'Message Templates', 'deleted', array() );
+		$this->_redirect_after_action( $success, 'Message Templates', 'deleted', array() );
 
-	}
-
-	/**
-	 * 	_redirect_after_admin_action
-	 *	@param int 		$success 				- whether success was for two or more records, or just one, or none
-	 *	@param string 	$what 					- what the action was performed on
-	 *	@param string 	$action_desc 		- what was done ie: updated, deleted, etc
-	 *	@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
-	 *	@access private
-	 *	@return void
-	 */
-	private function _redirect_after_admin_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
-		global $espresso_notices;
-
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
-		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-
-		// overwrite default success messages
-		$espresso_notices['success'] = array();
-		// how many records affected ? more than one record ? or just one ?
-		if ( $success == 2 ) {
-			// set plural msg
-			$espresso_notices['success'][] = __('The ' . $what . ' have been successfully ' . $action_desc . '.', 'event_espresso');
-		} else if ( $success == 1 ) {
-			// set singular msg
-			$espresso_notices['success'][] = __('The ' . $what . ' has been successfully ' . $action_desc . '.', 'event_espresso');
-		}
-
-		// check that $query_args isn't something crazy
-		// check that $query_args isn't something crazy
-		if ( ! is_array( $query_args )) {
-			$query_args = array();
-		}
-		// grab messages
-		$notices = espresso_get_notices( FALSE, TRUE, TRUE, FALSE );
-		//combine $query_args and $notices
-		$query_args = array_merge( $query_args, $notices );
-		// generate redirect url
-
-		// if redirecting to anything other than the main page, add a nonce
-		if ( isset( $query_args['action'] )) {
-			// manually generate wp_nonce
-			$nonce = array( '_wpnonce' => wp_create_nonce( $query_args['action'] . '_nonce' ));
-			// and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
-			$query_args = array_merge( $query_args, $nonce );
-		} 
-		//printr( $query_args, '$query_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		$redirect_url = add_query_arg( $query_args, EE_MSG_ADMIN_URL ); 
-		//echo '<h4>$redirect_url : ' . $redirect_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//die();
-		wp_safe_redirect( $redirect_url );	
-		exit();
-		
 	}
 
 	/**

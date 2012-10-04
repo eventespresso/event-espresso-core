@@ -354,6 +354,7 @@ class Event_Pricing_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		$this->nav_tabs['edit_event_price']['order'] = 15;
 
 		// generate metabox - you MUST create a callback named __FUNCTION__ . '_meta_box'  ( see "_edit_event_price_details_meta_box" below )
+		$this->_template_path = EVT_PRC_TEMPLATE_PATH . 'evt_prc_details_main_meta_box.template.php';
 		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
 
 		// the final template wrapper

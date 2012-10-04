@@ -13,5 +13,4 @@
 		}
 
 		?>
-	</form> <!-- end edit template form -->
 </div> <!-- end #admin-primary-mbox-dv -->

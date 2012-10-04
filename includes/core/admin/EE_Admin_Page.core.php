@@ -126,6 +126,11 @@ class EE_Admin_Page {
 		}
 	}
 
+
+
+
+
+
 	/**
 	 * child classes can call this in their constructor if they want their page to use columns (similar to wp_dashboard)
 	 * @access protected
@@ -134,6 +139,11 @@ class EE_Admin_Page {
 	protected function _use_columns() {
 		add_action( 'admin_print_scripts', array( $this, 'set_screen_options') );
 	}
+
+
+
+
+
 
 
 	/**
@@ -150,6 +160,11 @@ class EE_Admin_Page {
 
 
 
+
+
+
+
+
 	/**
 	 * use for setting screen options on a page.
 	 */
@@ -157,6 +172,11 @@ class EE_Admin_Page {
 		wp_enqueue_script('dashboard');
 		add_screen_option('layout_columns', array('max' => 4, 'default' => 3) );
 	}
+
+
+
+
+
 
 	/**
 	 * 		displays an error message to ppl who have javascript disabled
@@ -250,6 +270,11 @@ class EE_Admin_Page {
 	}
 
 
+
+
+
+
+
 	/**
 	 * 		_add_espresso_meta_boxes
 	*		@access public
@@ -266,6 +291,11 @@ class EE_Admin_Page {
 	}
 
 
+
+
+
+
+
 	/**
 	 * 		set current view for List Table
 	*		@access public
@@ -280,6 +310,11 @@ class EE_Admin_Page {
 			$this->_view = sanitize_key( $_REQUEST['status'] );
 		}
 	}
+
+
+
+
+
 
 
 	/**
@@ -306,6 +341,11 @@ class EE_Admin_Page {
 				)
 		);			
 	}
+
+
+
+
+
 
 
 	/**
@@ -342,6 +382,11 @@ class EE_Admin_Page {
 	}
 
 
+
+
+
+
+
 	/**
 	*		generates  HTML wrapper for an admin details page
 	*		@access public
@@ -354,6 +399,11 @@ class EE_Admin_Page {
 	}
 
 
+
+
+
+
+
 	/**
 	 * 		_set_search_attributes
 	*		@access 		public
@@ -363,6 +413,11 @@ class EE_Admin_Page {
 		$this->template_args['search']['btn_label'] = __( 'Search ' . ucwords( str_replace( '_', ' ', $this->page_slug )), 'event_espresso' );
 		$this->template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
+
+
+
+
+
 
 
 	/**
@@ -412,6 +467,11 @@ class EE_Admin_Page {
 	}
 
 
+
+
+
+
+
 	/**
 	 * facade for add_meta_box
 	 * @param string  $action        where the metabox get's displayed
@@ -439,6 +499,11 @@ class EE_Admin_Page {
 		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, $call_back_func, $this->wp_page_slug, $column, $priority, $callback_args );
 	}
 
+
+
+
+
+
 	/**
 	 * generates HTML wrapper for and admin details page that contains metaboxes in columns
 	 * @return [type] [description]
@@ -460,6 +525,11 @@ class EE_Admin_Page {
 		//the final wrapper
 		$this->admin_page_wrapper();
 	}
+
+
+
+
+
 
 	/**
 	*	generates  HTML wrapper for an admin details page
@@ -490,6 +560,11 @@ class EE_Admin_Page {
 		$this->admin_page_wrapper();
 
 	}
+
+
+
+
+
 
 
 	/**
@@ -542,6 +617,10 @@ class EE_Admin_Page {
 	}
 
 
+
+
+
+
 	/**
 	*		sort nav tabs
 	*		@access public
@@ -556,6 +635,11 @@ class EE_Admin_Page {
 	}
 
 
+
+
+
+
+
 	/**
 	 * 		remove reports tab from admin_page_nav_tabs
 	*		@access private
@@ -567,6 +651,11 @@ class EE_Admin_Page {
 		unset ( $nav_tabs['reports'] );	
 		return $nav_tabs;		
 	}
+
+
+
+
+
 
 
 	/**
@@ -597,6 +686,11 @@ class EE_Admin_Page {
 	}
 
 
+
+
+
+
+
 	/**
 	*		add admin page overlay for modal boxes
 	*		@access public
@@ -608,6 +702,11 @@ class EE_Admin_Page {
 	<div id="espresso-admin-page-overlay-dv" class=""></div>
 ';
 	}
+
+
+
+
+
 
 	/**
 	 * _handle_errors
@@ -624,6 +723,11 @@ class EE_Admin_Page {
 			$espresso_notices['errors'][] = $error_obj->get_error_message();
 		}
 	}
+
+
+
+
+
 
 	/**
 	 * 	generates HTML for the forms used on admin pages
@@ -696,6 +800,8 @@ class EE_Admin_Page {
 					break;
 
 				case 'hidden' :
+					$close = false;
+					$output .= "</li></ul>";
 					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" type="hidden" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '">';
 					break;
 
@@ -729,6 +835,100 @@ class EE_Admin_Page {
 		$output .= ($close) ? '</ul>' : '';
 
 		return $output;
+	}
+
+	
+
+
+
+	/**
+	 * generates the "Save" and "Save & Close" buttons for edit forms
+	 *
+	 * @access protected
+	 * @param bool $both if true then both buttons will be generated.  If false then just the "Save & Close" button.
+	 * @param array $text if included, generator will use the given text for the buttons ( array([0] => 'Save', [1] => 'save & close')
+	 * @param array $actions if included allows us to set the actions that each button will carry out (i.e. via the "name" value in the button).  We can also use this to just dump default actions by submitting some other value.
+	 */
+	protected function _set_save_buttons($both = TRUE, $text = array(), $actions = array() ) {
+		//make sure $text and $actions are in an array
+		$text = (array) $text;
+		$actions = (array) $actions;
+
+		$button_text = !empty($text) ? $text : array( __('Save', 'event_espresso'), __('Save and Close', 'event_espresso') );
+		$default_names = array( 'save', 'save_and_close' );
+		$this->template_args['save_buttons'] = '<div id="event_editor_major_buttons_wrapper">';
+		$this->template_args['save_buttons'] .= '<div class="publishing-action">';
+		//add in a hidden index for the current page (so save and close redirects properly)
+		$this->template_args['save_buttons'] .= empty($actions) ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '';
+
+		foreach ( $button_text as $key => $button ) {
+			$ref = $default_names[$key];
+			$name = !empty($action) ? $actions[$key] : $ref;
+			$this->template_args['save_buttons'] .= '<input type="submit" class="button-primary" value="' . $button . '" name="' . $name . '" id="' . $ref . '" />';
+			if ( !$both ) break;
+		}
+		$this->template_args['save_buttons'] .= '</div><br class="clear" /></div>';
+	}
+
+
+
+
+	/**
+	 * 	_redirect_after_admin_action
+	 *	@param int 		$success 	- whether success was for two or more records, or just one, or none
+	 *	@param string 	$what 		- what the action was performed on
+	 *	@param string 	$action_desc 	- what was done ie: updated, deleted, etc
+	 *	@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
+	 *	@access protected
+	 *	@return void
+	 */
+	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
+		global $espresso_notices;
+
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		// overwrite default success messages
+		$espresso_notices['success'] = array();
+		$redirect_url = $this->admin_base_url;
+
+		// how many records affected ? more than one record ? or just one ?
+		if ( $success == 2 ) {
+			// set plural msg
+			$espresso_notices['success'][] = sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc );
+		} else if ( $success == 1 ) {
+			// set singular msg
+			$espresso_notices['success'][] = sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc);
+		}
+
+		// check that $query_args isn't something crazy
+		if ( ! is_array( $query_args )) {
+			$query_args = array();
+		}
+
+		//calculate where we're going (if we have a "save and close" button pushed)
+		if ( isset($_REQUEST['save'] ) && isset($_REQUEST['save_and_close_referrer'] ) ) {
+			$redirect_url = $_REQUEST['save_and_close_referrer'];
+		}
+		
+		// grab messages
+		$notices = espresso_get_notices( FALSE, TRUE, TRUE, FALSE );
+		//combine $query_args and $notices
+		$query_args = array_merge( $query_args, $notices );
+		// generate redirect url
+
+		// if redirecting to anything other than the main page, add a nonce
+		if ( isset( $query_args['action'] )) {
+			// manually generate wp_nonce
+			$nonce = array( '_wpnonce' => wp_create_nonce( $query_args['action'] . '_nonce' ));
+			// and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
+			$query_args = array_merge( $query_args, $nonce );
+		} 
+
+		$redirect_url = add_query_arg( $query_args, $redirect_url ); 
+
+		wp_safe_redirect( $redirect_url );	
+		exit();
+		
 	}
 	
 }	
