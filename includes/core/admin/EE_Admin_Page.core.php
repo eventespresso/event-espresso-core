@@ -640,24 +640,25 @@ class EE_Admin_Page {
 		}
 		
 		// if you don't behave - this is what you're gonna get !!!
-		$output = '';
+		$close = true;
+		$output = '<ul>'; //this is for using built-in wp styles... watch carefully...
 
 		// cycle thru inputs
 		foreach ($input_vars as $input_key => $input_value) {
 
 			// required fields get a * 
-			$required = $input_value['required'] ? '&nbsp;<em>*</em>' : '';
+			$required = $input_value['required'] ? ' <span>*</span>: ' : ': ';
 			// and the css class "required"
 			$styles = $input_value['required']? 'required ' . $input_value['css_class'] : $input_value['css_class'];
 			$field_id = ($id) ? $id . '-' . $input_key : $input_key;
-			$output .= '<div class="msg-field-section">';
+			$output .= (!$close) ? '<ul>' : '';
+			$output .= '<li>';
 
 			// what type of input are we dealing with ?
 			switch ($input_value['input']) {
 
 				// text inputs
 				case 'text' :
-
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
 					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['name'] . '">';
 					break;
@@ -697,10 +698,29 @@ class EE_Admin_Page {
 					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
 					$output .= "\n\t\t\t" . '<input id="' . $field_id. '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . ' />';
 					break; 
+
+				case 'wp_editor' :
+					$close = false;
+					$editor_settings = array(
+						'textarea_name' => $input_value['name'],
+						'textarea_rows' => 15
+					);
+					$output .= '</li>';
+					$output .= '</ul>';
+					$output .= '<h4>' . $input_value['label'] . '</h4>';
+					ob_start();
+					wp_editor( $input_value['value'], $field_id, $editor_settings);
+					$editor = ob_get_contents();
+					ob_end_clean();
+					$output .= $editor;
+					break;
+
 				}
-				$output .= '</div>';
+				$output .= ($close) ? '</li>' : '';
+				
 			
 		} // end foreach( $input_vars as $input_key => $input_value ) 
+		$output .= ($close) ? '</ul>' : '';
 
 		return $output;
 	}

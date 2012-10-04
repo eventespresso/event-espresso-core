@@ -68,11 +68,12 @@ class EE_Email_messenger extends EE_messenger  {
 				'to' => 'text',
 				'from' => 'text',
 				'subject' => 'text',
-				'content' => 'textarea',
+				'content' => 'wp_editor',
 				'extra' => array(
 					'content' => array(
-						'main' => 'textarea',
-						'attendee_list' => 'textarea')
+						'attendee_list' => 'textarea',
+						'main' => 'wp_editor'
+						)
 					)
 				);
 

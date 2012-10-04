@@ -325,10 +325,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		$context = isset( $_REQUEST['context']) && !empty($_REQUEST['context'] ) ? strtolower($_REQUEST['context']) : 'admin';
 
-		
-		//todo: this localization won't work for translators because the string is variable.
-		$title = __(ucwords( str_replace( '_', ' ', $this->_req_action ) ), 'event_espresso' );
-
 		//let's get the message templates
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
 		$MTP = EEM_Message_Template::instance();
@@ -337,16 +333,20 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$message_template = $MTP->get_new_template;
 			$action = 'insert_message_template';
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
+			$button_text = __('Create Template', 'event_espresso');
 		} else {
 			$message_template = $MTP->get_message_template_by_ID($GRP_ID);
 			$action = 'update_message_template';
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
-			$title .= $message_template->MTP_messenger . ' ' . $message_template->MTP_message_type . ' Template'; 
+			$button_text = __('Update Template', 'event_espresso');
 		}
 
+		//todo: we need to assemble the title from Various details
+		$context_label = sprintf( __('(%s Context)', 'event_espresso'), ucwords(str_replace('_', ' ', $context) ) );
 
-		//todo: let's display the event name rather than ID. 
-		$title .= $EVT_ID ? ' for EVT_ID: ' . $EVT_ID : '';
+		//todo: we should eventually display the event title instead of ID.
+		$event_label = $EVT_ID ? sprintf( __('for Event ID: %s', 'event_espresso'), $EVT_ID) : '';
+		$title = sprintf( __('Edit %s %s Template %s %s', 'event_espresso'), ucwords(str_replace('_', ' ', $message_template->messenger()) ), ucwords(str_replace('_', ' ', $message_template->message_type()) ), $context_label, $event_label );
 
 		$this->template_args['GRP_ID'] = $GRP_ID;
 		$this->template_args['message_template'] = $message_template;
@@ -539,9 +539,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'db-col' => 'MTP_message_type'
 				);
 
-			$template_form_fields['ee-msg-is-global'] = array(
+			$sidebar_form_fields['ee-msg-is-global'] = array(
 					'name' => 'MTP_is_global',
-					'label' => null,
+					'label' => __('Global Template', 'event_espresso'),
 					'input' => 'checkbox',
 					'type' => 'int',
 					'required' => FALSE,
@@ -552,9 +552,9 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'db-col' => 'MTP_is_global'
 				);
 
-			$template_form_fields['ee-msg-is-override'] = array(
+			$sidebar_form_fields['ee-msg-is-override'] = array(
 					'name' => 'MTP_is_override',
-					'label' => null,
+					'label' => __('Override all custom', 'event_espresso'),
 					'input' => 'checkbox',
 					'type' => 'int',
 					'required' => FALSE,
@@ -565,7 +565,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'db-col' => 'MTP_is_override'
 				);
 
-			$template_form_fields['ee-msg-deleted'] = array(
+			$sidebar_form_fields['ee-msg-deleted'] = array(
 					'name' => 'MTP_deleted',
 					'label' => null,
 					'input' => 'hidden',
@@ -578,9 +578,12 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					'db-col' => 'MTP_deleted'
 				);
 
+			$sidebar_array = array('ee-msg-is-global', 'ee-msg-is-override', 'ee-msg-deleted');
+
 			//send to field generator
 			
 			$template_fields = $this->_generate_admin_form_fields( $template_form_fields );
+			$sidebar_fields = $this->_generate_admin_form_fields( $sidebar_form_fields );
 
 			if ( is_wp_error($template_fields) ) {
 				$this->_handle_errors($template_fields);
@@ -598,7 +601,17 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		);
 		$this->_set_context_switcher($message_template, $context_switcher_args);
 
+		$form_submit = '<input id="update-msg-template-sbmt" class="button-primary" type="submit" value="' . $button_text . '" />';
 
+		//sidebar box
+		$this->template_args['sidebar_content'] = $sidebar_fields . '<br /><br />' . $form_submit;
+		$this->template_args['sidebar_description'] = '';
+		$this->template_args['sidebar_title'] = '';
+		$sidebar_title = __('Other Details', 'event_espresso');
+		$sidebar_action = 'update_message_template_sidebar';
+		$sidebar_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_sidebar_edit_meta_box.template.php';
+
+		//main box
 		$this->template_args['template_fields'] = $template_fields;
 		$this->template_args['action'] = $action;
 		$this->template_args['context'] = $context;
@@ -620,6 +633,25 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//generate metabox
 		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
+
+		//sidebar metabox (if we are editing)
+		if ( $this->template_args['GRP_ID'] ) {
+			$this->_template_path = $sidebar_template_path;
+			$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
+		}
+
+		//shortcode metabox (if we are editing)
+		//todo: this should be moved to it's own method.  It's just a placeholder right now but the displayed shortcodes should be dynamic (we might need to create a shortcoode object for holding all valid shortcodes and message_types can register_new shortocdes with the object);
+		if ( $this->template_args['GRP_ID'] ) {
+			$this->template_args['sidebar_content'] = 'Place holder, this will contain shortcodes that can be used with the template';
+			$sidebar_title = __('Shortcodes', 'event_espresso');
+			$sidebar_action = 'update_message_template_sidebar_shortcodes';
+			$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
+		}
+
+		//oh while we're at it... let's remove the espresso metaboxes.  We don't need them on this page.
+		remove_meta_box('espresso_news_post_box', $this->wp_page_slug, 'side');
+		remove_meta_box('espresso_links_post_box', $this->wp_page_slug, 'side');
 
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -648,29 +680,31 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	private function _set_context_switcher($template_object, $args) {
 		ob_start();
 		?>
-		<form method="get" action="<?php echo EE_MSG_ADMIN_URL; ?>" id="ee-msg-context-switcher-frm">
-			<?php
-				foreach ( $args as $name => $value ) {
-					if ( $name == 'context' || empty($value) ) continue;
-					?>
-					<input type="hidden" name="<?php echo $name; ?>" value = "<?php echo $value; ?>" />
-					<?php
-				}
-				//setup nonce_url
-				wp_nonce_field($args['action'] . '_nonce', '_wpnonce', false);
-			?>
-			<select name="context">
-				<?php 
-				$context_templates = $template_object->context_templates();
-				if ( is_array($context_templates) ) :
-						foreach ( $context_templates as $context => $template_fields ) :
-							$checked = ($context == $args['context']) ? 'selected="selected"' : '';
+		<div class="ee-msg-switcher-container">
+			<form method="get" action="<?php echo EE_MSG_ADMIN_URL; ?>" id="ee-msg-context-switcher-frm">
+				<?php
+					foreach ( $args as $name => $value ) {
+						if ( $name == 'context' || empty($value) ) continue;
+						?>
+						<input type="hidden" name="<?php echo $name; ?>" value = "<?php echo $value; ?>" />
+						<?php
+					}
+					//setup nonce_url
+					wp_nonce_field($args['action'] . '_nonce', '_wpnonce', false);
 				?>
-				<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context; ?></option>
-				<?php endforeach; endif; ?>
-			</select>
-			<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="Switch Context">
-		</form>
+				<select name="context">
+					<?php 
+					$context_templates = $template_object->context_templates();
+					if ( is_array($context_templates) ) :
+							foreach ( $context_templates as $context => $template_fields ) :
+								$checked = ($context == $args['context']) ? 'selected="selected"' : '';
+					?>
+					<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context; ?></option>
+					<?php endforeach; endif; ?>
+				</select>
+				<input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit" value="Switch Context">
+			</form>
+		</div> <!-- end .ee-msg-switcher-container -->
 		<?php
 		$output = ob_get_contents();
 		ob_clean();
