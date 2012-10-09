@@ -616,6 +616,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 
 		//main box
 		$this->template_args['template_fields'] = $template_fields;
+		$this->template_args['sidebar_box_id'] = 'details';
 		$this->template_args['action'] = $action;
 		$this->template_args['context'] = $context;
 		$this->template_args['EVT_ID'] = $EVT_ID;
@@ -632,7 +633,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		add_action('action_hook_espresso_before_admin_page_content', array($this, '_add_form_element_before'), 10 );
 		add_action('action_hook_espresso_after_admin_page_content', array($this, '_add_form_element_after') );
 
-		$this->_template_path = $this->template_args['GRP_ID'] ?EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
+		$this->_template_path = $this->template_args['GRP_ID'] ? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
 		//generate metabox
 		$this->_add_admin_page_meta_box( $action, $title, __FUNCTION__, NULL );
@@ -648,9 +649,10 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		if ( $this->template_args['GRP_ID'] ) {
 			$this->template_args['sidebar_content'] = 'Place holder, this will contain shortcodes that can be used with the template';
 			$sidebar_title = __('Shortcodes', 'event_espresso');
+			$this->template_args['sidebar_box_id'] = 'shortcodes';
 			$sidebar_action = 'update_message_template_sidebar_shortcodes';
 			$this->_add_admin_page_meta_box( $sidebar_action, $sidebar_title, __FUNCTION__, NULL, 'side');
-		}
+		}/**/
 
 		//oh while we're at it... let's remove the espresso metaboxes.  We don't need them on this page.
 		remove_meta_box('espresso_news_post_box', $this->wp_page_slug, 'side');

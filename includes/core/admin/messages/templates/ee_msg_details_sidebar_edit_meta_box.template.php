@@ -1,4 +1,4 @@
-<div id="admin-secondary-mbox-dv" class="admin-primary-mbox-dv">
+<div id="admin-secondary-mbox-dv-<?php echo $sidebar_box_id; ?>" class="admin-primary-mbox-dv">
 	
 	<h4 class="admin-secondary-mbox-h4"><?php echo isset($sidebar_h4_title) ? $sidebar_h4_title : ''; ?></h4>
 
