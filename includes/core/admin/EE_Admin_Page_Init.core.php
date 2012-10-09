@@ -202,7 +202,7 @@ class EE_Admin_Page_Init {
 	*/	
 	public function load_core_admin_css() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		wp_register_style('ee_core_css', EE_CORE_ADMIN . 'assets/ee_admin_page.css');
+		wp_register_style('ee_core_css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css');
 		wp_enqueue_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css');
 		wp_enqueue_style('ee_core_css');
 	}
@@ -219,7 +219,7 @@ class EE_Admin_Page_Init {
 	*/	
 	public function load_core_admin_js() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		wp_register_script('ee_core_js', EE_CORE_ADMIN . 'assets/ee_admin_page.js', array('jquery'), false, true);
+		wp_register_script('ee_core_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery'), false, true);
 		wp_enqueue_script('jquery-ui-core');
 		wp_enqueue_script('jquery-ui-tabs');
 		wp_enqueue_script('common');
