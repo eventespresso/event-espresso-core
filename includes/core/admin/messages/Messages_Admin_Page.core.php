@@ -281,16 +281,22 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 */
 	protected function _add_message_template() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
+		$events = array();
 		//we need to ask for a messenger and message type in order to generate the templates.
 		
 		//is this for a custom evt?
 		$EVT_ID = isset( $_REQUEST['evt_id'] ) && !empty( $_REQUEST['evt_id'] ) ? absint( $_REQUEST['evt_id'] ) : FALSE;
+
+		//if we've got an empty EVT_ID then we need to get the list of Events for selection.
+		if ( empty($EVT_ID ) ) {
+			$events = $this->_get_active_events();
+		}
 		
 		$this->template_args['EVT_ID'] = $EVT_ID ? $EVT_ID : FALSE;
 		$this->template_args['event_name'] = $EVT_ID ? $this->_event_name($EVT_ID) : FALSE;
 		$this->template_args['active_messengers'] = $this->_active_messengers;
 		$this->template_args['active_message_types'] = $this->_active_message_types;
+		$this->template_args['active_events'] = $events;
 		$this->template_args['action'] = 'insert_message_template';
 		$this->template_args['edit_message_template_form_url'] = add_query_arg( array( 'action' => 'insert_message_template', 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		$this->template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
@@ -760,7 +766,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		//if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
 		if ( $new ) {
 			if ( $edit_array = $this->_generate_new_templates($messenger, $message_type, $evt_id) ) {
-				if ( is_wp_error($edit_array) ) {
+				if ( empty($edit_array) ) {
 					$success = 0;
 				} else {
 					$success = 1;
@@ -804,10 +810,10 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 					$action_desc = 'updated';
 				}
 			}
-		
-		$this->_redirect_after_action( $success, $item_desc, $action_desc, $query_args );
 
 		}
+
+		$this->_redirect_after_action( $success, $item_desc, $action_desc, $query_args );
 	}
 
 	/**
@@ -851,7 +857,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			}
 			$templates[] = $new_message_template_group;
 		}
-
+		
 		return $templates;
 
 	}
@@ -971,6 +977,21 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$query = "SELECT event_name FROM {$table_name} WHERE id = '{$evt_id}'";
 		$event_name = $wpdb->get_var( $wpdb->prepare($query) );
 		return $event_name;
+	}
+
+	/**
+	 * get_active_events
+	 * This just returns an array of event objects for events that are active. (objects contain event_name and ID);
+	 *
+	 * @access private
+	 * @return array array of objects (event_name, event_id);
+	 */
+	private function _get_active_events() {
+		global $wpdb;
+		$tablename = $wpdb->prefix . 'events_detail';
+		$query = "SELECT event_name, id as event_id FROM {$tablename} WHERE is_active = '1'";
+		$events = $wpdb->get_results( $wpdb->prepare($query) );
+		return $events;
 	}
 
 	/**

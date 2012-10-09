@@ -878,7 +878,7 @@ class EE_Admin_Page {
 
 
 	/**
-	 * 	_redirect_after_admin_action
+	 * 	_redirect_after_action
 	 *	@param int 		$success 	- whether success was for two or more records, or just one, or none
 	 *	@param string 	$what 		- what the action was performed on
 	 *	@param string 	$action_desc 	- what was done ie: updated, deleted, etc
