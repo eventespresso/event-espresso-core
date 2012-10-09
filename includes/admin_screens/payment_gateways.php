@@ -44,7 +44,7 @@ function event_espresso_gateways_options() {
 		if (!espresso_choose_layout($main_post_content, $sidebar_content))
 			return FALSE;
 		?>
-	</div><!-- / #wrap -->';
+	</div><!-- / #wrap -->
 	<?php
 }
 
