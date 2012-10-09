@@ -138,7 +138,7 @@ class EE_Message_Template {
 	 * @access private
 	 * @var boolean
 	 */
-	private $_trashed_count = FALSE;
+	private $_is_trashed_count = FALSE;
 
 	/**
 	 * Message Template constructor
@@ -170,7 +170,7 @@ class EE_Message_Template {
 		$this->_is_active_count = 0;
 		$this->_is_override_count = 0;
 		$this->_is_trashed_count = 0;
-		$group_counts = array_fill_keys( array('total_count', 'MTP_is_override', 'MTP_deleted', 'MTP_is_trashed_count'), 0);
+		$group_counts = array_fill_keys( array('total_count', 'MTP_is_override', 'MTP_deleted'), 0);
 
 		foreach ( $this->_contexts as $context => $template_fields ) {
 			$context = wp_strip_all_tags(strtolower($context) );
@@ -200,9 +200,9 @@ class EE_Message_Template {
 			}
 			
 			$this->_contexts[$context] = $template_fields;
-			$this->_is_active_count = $group_counts['total_count'] - $group_counts['MTP_is_trashed_count'];
+			$this->_is_active_count = $group_counts['total_count'] - $group_counts['MTP_deleted'];
 			$this->_is_override_count = $group_counts['MTP_is_override'];
-			$this->_is_trashed_count = $group_counts['MTP_is_trashed_count'];
+			$this->_is_trashed_count = $group_counts['MTP_deleted'];
 		}
 
 		//load Message Template Model file
@@ -414,8 +414,8 @@ class EE_Message_Template {
 	 * @access  public
 	 * @return int count of trashed context templates in this template group
 	 */
-	public function trash_count() {
-		return $this->_trashed_count;
+	public function is_trashed_count() {
+		return $this->_is_trashed_count;
 	}
 
 	/**

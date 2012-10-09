@@ -692,7 +692,7 @@ abstract class EEM_Base {
 		if ( $row_results > 1 ) {
 			// multiple rows were successfully updated
 			//$update_results = array( 'type' =>  'updated', 'msg' => 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.', 'rows' => $row_results );
-			$espresso_notices['success'][] = 'Details for ' . $results . ' ' . $this->plual_item . ' have been successfully updated.';
+			$espresso_notices['success'][] = 'Details for ' . $row_results . ' ' . $this->plual_item . ' have been successfully updated.';
 			
 		} elseif ( $row_results === 1 ) {
 			// one row was successfully updated

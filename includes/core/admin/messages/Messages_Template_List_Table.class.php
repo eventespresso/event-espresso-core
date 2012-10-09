@@ -214,7 +214,9 @@ class Messages_Template_List_Table extends WP_List_Table {
 			$context_title = ucwords(str_replace('_', ' ', $context ) );
 			$edit_link = wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
 			$do_restore = $template_fields['MTP_deleted'] ? TRUE : FALSE;
-			$trash_restore_link = $do_restore ? wp_nonce_url( add_query_arg( array( 'action'=>'trash_message_template_context', 'id'=>$item->GRP_ID, 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'trash_message_template_nonce' ) : wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template_context', 'id'=>$item->GRP_ID, 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'restore_message_template_nonce' );
+			if ( ($this->_view == 'trashed' && !$do_restore) || ($this->_view == 'in_use' && $do_restore) ) 
+				continue;
+			$trash_restore_link = !$do_restore ? wp_nonce_url( add_query_arg( array( 'action'=>'trash_message_template_context', 'message_type' => $item->message_type(), 'id'=>$item->GRP_ID(), 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'trash_message_template_nonce' ) : wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template_context', 'message_type' => $item->message_type(), 'id'=>$item->GRP_ID(), 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'restore_message_template_nonce' );
 			$trash_img_url = EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/trash-16x16.png';
 			$restore_img_url = EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png';
 			$t_r_image = $do_restore ? $restore_img_url : $trash_img_url;

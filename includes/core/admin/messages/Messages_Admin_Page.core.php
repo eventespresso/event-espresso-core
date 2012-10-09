@@ -176,6 +176,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 */
 	protected function _ee_messages_overview_list_table() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 		//generate URL for Add New Price link
 		$add_new_message_template_url = wp_nonce_url( add_query_arg( array( 'action' => 'add_new_message_template' ), EE_MSG_ADMIN_URL ), 'add_new_message_template_nonce' );
 		// add link to title
@@ -863,8 +864,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 */
 	protected function _trash_or_restore_message_template($trash = TRUE, $all = FALSE ) {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Type.model.php');
-			$MTP = EEM_Message_Type::instance();
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+			$MTP = EEM_Message_Template::instance();
 
 		$success = 1;
 		$MTP_deleted = $trash ? TRUE : FALSE;
@@ -916,8 +917,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 */
 	protected function _delete_message_template() {
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Type.model.php');
-			$MTP = EEM_Message_Type::instance();
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Message_Template.model.php');
+			$MTP = EEM_Message_Template::instance();
 
 		$success = 1;
 

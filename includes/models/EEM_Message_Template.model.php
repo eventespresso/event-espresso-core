@@ -293,8 +293,7 @@ class EEM_Message_Template extends EEM_Base {
 		//now let's loop through the templates and assemble an array that has NO active contexts.
 		if ( $message_templates ) {
 			foreach ( $message_templates as $template_group ) {
-				if ( $template_group->is_active_count() > 0 )
-					continue;
+				if ( $template_group->is_trashed_count() > 0 )
 				$msg_tmps[] = $template_group;
 			}
 		}
