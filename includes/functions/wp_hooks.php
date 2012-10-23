@@ -2,11 +2,9 @@
 
 function espresso_plugin_activation() {
 
-	global $wpdb;
-	$SQL = 'SELECT * FROM '. $wpdb->prefix ."options WHERE option_value LIKE '%event_espresso%'";		// event_espresso		 // Chris Loves Miley Cyrus
-	$results = $wpdb->query($SQL);
-	// WHAT?!?!?! Trying to install this on an existing EE site???
-	if ( $results > 0 ) {
+	$prev_version = get_option( 'events_detail_tbl_version' );
+	if ( $prev_version && version_compare( $prev_version, '3.2.0', '<' )) {
+	
 		wp_die( '
 		<h2 style="color:red; font-size:2em; text-align:center;">' . __( 'Warning!', 'event_espresso' ) . '</h2>
 		<p style="font-size:1.4em; text-align:center;">
