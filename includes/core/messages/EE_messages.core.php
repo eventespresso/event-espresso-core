@@ -272,7 +272,7 @@ class EE_messages {
 					foreach ( $mt_contexts as $context ) {
 						foreach ( $m_fields as $field => $field_type ) {
 							if ( $field !== 'extra' ) {
-								$templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field] : '';
+								$templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field]['content'] : '';
 								$templates[$context][$field] = (!is_serialized($templates[$context][$field]) ) ? maybe_serialize($templates[$context][$field]) : $templates[$context][$field];
 							}
 						}

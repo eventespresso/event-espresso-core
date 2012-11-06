@@ -846,7 +846,6 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			return $error;
 		}
 
-		//todo: may need to explicitly load the file containing the class here.
 		$MSG = new EE_messages();
 		
 		foreach ( $message_types as $message_type ) {
