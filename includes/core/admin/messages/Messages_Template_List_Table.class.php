@@ -183,7 +183,8 @@ class Messages_Template_List_Table extends WP_List_Table {
 	 * @return string       column output
 	 */
 	function column_event($item) {
-		if ( empty($item->EVT_ID ) ) 
+		$event_id = $item->event();
+		if ( empty( $event_id ) ) 
 			return __('Global', 'event_espresso');
 
 		$get_event_name = $this->_event_name($item->event());
@@ -266,7 +267,7 @@ class Messages_Template_List_Table extends WP_List_Table {
 		global $wpdb;
 		$evt_id = absint($evt_id);
 		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name FROM {$table_name} WHERE id = '{$evt_id}'";
+		$query = "SELECT event_name FROM {$tablename} WHERE id = '{$evt_id}'";
 		$event_name = $wpdb->get_var( $wpdb->prepare($query) );
 		return $event_name;
 	}
