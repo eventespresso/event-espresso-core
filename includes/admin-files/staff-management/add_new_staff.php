@@ -98,12 +98,14 @@ function add_new_event_staff(){
 		  
 						<label for="description" class="section-heading">
 			<?php _e('Description','event_espresso'); ?>
-		  </label>
- 															
+		  </label>													
 												
-						<div class="postbox">
-			<?php the_editor('', $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
-   					<table id="staff-descr-add-form"  cellspacing="0">
+				<div class="postbox">
+					<?php
+						$args = array("textarea_rows" => 10, "textarea_name" => "staff-descr", "editor_class" => "my_editor_custom");
+						wp_editor('', "staff-descr", $args);
+					?>
+  					<table id="staff-descr-add-form"  cellspacing="0">
   						<tbody>
   							<tr>
   								<td class="aer-word-count"></td>
@@ -115,7 +117,7 @@ function add_new_event_staff(){
   							</tr>
   						</tbody>
   					</table>
-						</div><!-- /.postbox -->		 
+				</div><!-- /.postbox -->		 
 		 
 		  <p>
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Staff Member'); ?>" id="add_new_staff" />

@@ -80,7 +80,7 @@ function edit_event_venue() {
 											<td colspan="2"><strong>
 	<?php _e('Location', 'event_espresso'); ?>
 												</strong></td>
-										<tr>
+										</tr>
 										<tr>
 											<th><label for="address">
 	<?php _e('Address', 'event_espresso'); ?>
@@ -135,7 +135,7 @@ function edit_event_venue() {
 											<td colspan="2"><strong>
 	<?php _e('Contact Information', 'event_espresso'); ?>
 												</strong></td>
-										<tr>
+										</tr>
 										<tr>
 											<th><label for="contact">
 	<?php _e('Contact Person', 'event_espresso'); ?>
@@ -214,7 +214,10 @@ function edit_event_venue() {
 							<?php _e('Description', 'event_espresso'); ?>
 						</label>
 						<div class="postbox">
-	<?php the_editor(espresso_admin_format_content($meta['description']), $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3); ?>
+						<?php 
+							$args = array("textarea_rows" => 5, "textarea_name" => "venue_desc", "editor_class" => "my_editor_custom");
+							wp_editor( espresso_admin_format_content($meta['description']), "venue_desc", $args);
+						?>	
 							<table id="venue-descr-add-form"  cellspacing="0">
 								<tbody>
 									<tr>

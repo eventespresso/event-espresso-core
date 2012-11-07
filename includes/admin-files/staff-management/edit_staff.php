@@ -114,9 +114,12 @@ function edit_event_staff(){
 			<?php _e('Description','event_espresso'); ?>
 		  </label>
  					
-						<div class="postbox">		
-		 		<?php the_editor(espresso_admin_format_content($meta['description']), $id = 'description', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
-   					<table id="staff-descr-edit-form"  cellspacing="0">
+				<div class="postbox">		
+ 					<?php
+						$args = array("textarea_rows" => 10, "textarea_name" => "staff-descr", "editor_class" => "my_editor_custom");
+						wp_editor( espresso_admin_format_content($meta['description']), "staff-descr", $args );
+					?>
+  					<table id="staff-descr-edit-form"  cellspacing="0">
   						<tbody>
   							<tr>
   								<td class="aer-word-count"></td>
@@ -128,7 +131,7 @@ function edit_event_staff(){
   							</tr>
   						</tbody>
   					</table>
-						</div><!-- /.postbox -->
+				</div><!-- /.postbox -->
 		  <p>
 			<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Staff Member'); ?>" id="update_staff" />
 			<?php wp_nonce_field( 'espresso_form_check', 'update_staff' ) ?>

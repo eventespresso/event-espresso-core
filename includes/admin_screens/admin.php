@@ -192,7 +192,7 @@ function espresso_add_postbox_toggles_for_payment_gateways() {
 <?php	
 }
 
-//Text formatting function for the_editor.
+//Text formatting function for wp_editor.
 //This should fix all of the formatting issues of text output from the database.
 function espresso_admin_format_content($content = '') {
 	return wpautop(stripslashes_deep(html_entity_decode($content, ENT_QUOTES, "UTF-8")));

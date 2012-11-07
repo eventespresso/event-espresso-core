@@ -50,7 +50,10 @@ function edit_event_email(){
 						<tr>
 							<td colspan="2"><div id="descriptiondivrich" class="postarea">
 									<div class="postbox">
-										<?php the_editor(espresso_admin_format_content($email_text), $id = 'email_text', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
+										<?php
+											$args = array("textarea_rows" => 10, "textarea_name" => "email_text", "editor_class" => "my_editor_custom");
+											wp_editor( espresso_admin_format_content($email_text), "email_text", $args );
+										?>
 										<table id="manage-event-email-form" cellspacing="0">
 											<tbody>
 												<tr>
@@ -75,8 +78,6 @@ function edit_event_email(){
 					<input class="button-primary" type="submit" name="Submit" value="<?php _e('Update'); ?>" id="update_email" />
 				</p>
 				<?php wp_nonce_field( 'espresso_form_check', 'update_email' ) ?>
-				</li>
-				</ul>
 			</form>
 		</div>
 	</div>
