@@ -561,7 +561,7 @@ if (!function_exists('espresso_calendar')) {
 							if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
 								$jaer('a.fc-event').addClass('themeroller ui-state-focus');
 								$jaer('a.fc-event div').removeClass('fc-event-skin');
-								$jaer('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
+								//$jaer('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
 								$jaer('.fc-view').addClass('ui-widget-content');
 								$jaer('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
 							<?php
