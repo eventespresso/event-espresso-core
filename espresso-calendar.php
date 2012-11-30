@@ -442,12 +442,12 @@ if (!function_exists('espresso_calendar')) {
 		//echo "<pre>".print_r($espresso_calendar,true)."</pre>";
 		?>
 		<script type="text/javascript">
-			$jaer = jQuery.noConflict();
-			jQuery(document).ready(function($jaer) {
+
+			jQuery(document).ready(function($) {
 
 				var total_images = 0;
 
-				$jaer('#espresso_calendar').fullCalendar({
+				$('#espresso_calendar').fullCalendar({
 
 					/**
 					 * General Display
@@ -552,18 +552,17 @@ if (!function_exists('espresso_calendar')) {
 
 						// if the user selects show in thickbox we add this element
 						//if(event.in_thickbox_url){
-						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
+						//element.after($('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
 						//}
 
 						<?php
 						//Adds the themeroller styles to the links in the calendar
 						if ( function_exists('espresso_version') ) {
 							if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
-								$jaer('a.fc-event').addClass('themeroller ui-state-focus');
-								$jaer('a.fc-event div').removeClass('fc-event-skin');
-								//$jaer('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
-								$jaer('.fc-view').addClass('ui-widget-content');
-								$jaer('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
+								$('a.fc-event').addClass('themeroller ui-state-focus');
+								$('a.fc-event div').removeClass('fc-event-skin');
+								$('.fc-view').addClass('ui-widget-content');
+								$('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
 							<?php
 							}
 						}
@@ -575,7 +574,7 @@ if (!function_exists('espresso_calendar')) {
 						if(event.event_img_thumb){
 							total_images = parseInt( total_images ) + 1;
 							element.addClass('event-has-thumb');							
-							element.find('.fc-event-title').after($jaer('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
+							element.find('.fc-event-title').after($('<span class="thumb-wrap"><img class="ee-event-thumb" src="' + event.event_img_thumb + '" alt="image of ' + event.title + '" \/></span>'));
 						}
 						
 						if( event.expired ) {
@@ -598,7 +597,7 @@ if (!function_exists('espresso_calendar')) {
 								}
 								
 								if ( event.startTime ) {
-									element.find('.fc-event-title').after($jaer('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
+									element.find('.fc-event-title').after($('<p class="time-display-block">' + event.startTime + ' - ' + event.endTime + '</p>'));
 								}
 
 			<?php
@@ -715,20 +714,27 @@ if (!function_exists('espresso_calendar')) {
 
 					//Load the events into json srrsy
 					events: <?php echo json_encode($events) ?>,
+					
+					viewDisplay: function(view) {
+				        $('.ui-state-active').each( function() {
+					 		$(this).removeClass('ui-state-active');
+					 	});
+				        $('.fc-today').addClass('ui-state-active').removeClass('ui-state-highlight');
+				    },
 
 						// if an event in the array has already happened, it is expired and we'll give it an 'expired' class
 						<?php /*if ( json_encode($events['expired'] != '' ) ) { ?>
-							$jaer('a.fc-event div').removeClass('fc-event-skin');
-							$jaer('a.fc-event').removeClass('ui-state-default').addClass('expired ui-state-focus');
+							$('a.fc-event div').removeClass('fc-event-skin');
+							$('a.fc-event').removeClass('ui-state-default').addClass('expired ui-state-focus');
 						<?php } */?>
 					loading: function(bool) {
 						if (bool) $('#loading').show();
-						else $jaer('#loading').hide();
+						else $('#loading').hide();
 					}
 
 											
 				});
-				
+
 				
 				var imgTimeout = total_images * 50;
 				
@@ -751,63 +757,67 @@ if (!function_exists('espresso_calendar')) {
 							months[ monthNames[i] ] = i+1;
 						}
 
-						var monthYear = $jaer('.fc-header-title h2').html();
+						var monthYear = $('.fc-header-title h2').html();
 						var monthYearArray = monthYear.split(' ');
 						thisMonth = months[ monthYearArray[0] ];
 						thisYear = monthYearArray[1];
 						prevMonth = thisMonth - 1;
 						nextMonth =  thisMonth +1;
-//						alert( 'prevMonth = ' + prevMonth + '\n' + 'nextMonth = ' + nextMonth );
+//						console.log( 'prevMonth = ' + prevMonth + '\n' + 'nextMonth = ' + nextMonth );
 
-						$jaer('.fc-view-month .fc-widget-content').each(function(index) {	
+						$('.fc-view-month .fc-widget-content').each(function(index) {	
 							setMonth = thisMonth;
-							if ( $jaer(this).closest('tr').hasClass('fc-first') && $jaer(this).hasClass('fc-other-month') ){
+							if ( $(this).closest('tr').hasClass('fc-first') && $(this).hasClass('fc-other-month') ){
 								setMonth = prevMonth;
-							} else if ( $jaer(this).hasClass('fc-other-month') ){
+							} else if ( $(this).hasClass('fc-other-month') ){
 								setMonth = nextMonth;
 							}
-							setDay =$jaer(this).find('.fc-day-number').html();
+							setDay =$(this).find('.fc-day-number').html();
 							setID = 'md-' + setMonth + '-' + setDay;
-							//alert( 'setID = ' + setID );
-							$jaer(this).find('.fc-day-content > div').attr( 'id', setID );
+							//console.log( 'setID = ' + setID );
+							$(this).find('.fc-day-content > div').attr( 'id', setID );
 						});
 						
-						$jaer('.fc-event').each( function(index){ 						
+						$('.fc-event').each( function(index){ 						
 							// determine what month and day this event is on
-							monthDay = $jaer(this).attr( 'rel' );
-							// alert( 'month Day = ' + monthDay );
+							monthDay = $(this).attr( 'rel' );
+							//console.log( 'monthDay: ' + monthDay );
 							// find day container in calendar
-							dayCnt = $jaer('#md-'+monthDay);
+							dayCnt = $('#md-'+monthDay);
 							dayCntHTML = dayCnt.html();
-							if ( dayCntHTML == '&nbsp;' ) {
-								dayCntHTML = '';
-								dayCnt.html( dayCntHTML );
-								dayCnt.css({ 'height' : 0 });
-							}
+														
+							if ( dayCntHTML != null && dayCntHTML != undefined ) {
+								if ( dayCntHTML == '&nbsp;' ) {
+									dayCntHTML = '';
+									dayCnt.html( dayCntHTML );
+									dayCnt.css({ 'height' : 0 });
+								}
 
-							// grab offset for dayCnt
-							dayCntPos = dayCnt.position();
-							//alert( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
-							dayCntHgt = dayCnt.css( 'height' );
-							if ( dayCntHgt == undefined ){
-								dayCntHgt = '0px';
-							}
-							dayCntHgt = dayCntHgt.replace( 'px', '' );
-							dayCntHgt = parseInt( dayCntHgt );
-							newTop = dayCntPos.top + dayCntHgt;
-							//alert( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
-							$jaer(this).css({ 'top' : newTop });
-							linkHeight = parseInt( $jaer(this).find('.fc-event-inner').outerHeight() );
-							//alert( 'linkHeight = ' + linkHeight );
-							newHeight = dayCntHgt + linkHeight + 3;
-							dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
-							//alert( 'newHeight = ' + newHeight );
-							var parentHeight = dayCnt.parents('tr').outerHeight();
-							//alert( 'parentHeight = ' + parentHeight );
-							//dayCnt.parents('tr').css({ 'background' : 'pink' });
-							if( parentHeight < newHeight ) {
-								newHeight = newHeight + 30;
-								dayCnt.parents('tr').height( newHeight ).css({ 'height' : newHeight + 'px' });
+								// grab offset for dayCnt
+								dayCntPos = dayCnt.position();
+								//console.log( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
+								dayCntHgt = dayCnt.css( 'height' );
+								if ( dayCntHgt == undefined ){
+									dayCntHgt = '0px';
+								}
+								dayCntHgt = dayCntHgt.replace( 'px', '' );
+								dayCntHgt = parseInt( dayCntHgt );
+								newTop = dayCntPos.top + dayCntHgt;
+								//console.log( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
+								$(this).css({ 'top' : newTop });
+								linkHeight = parseInt( $(this).find('.fc-event-inner').outerHeight() );
+								//console.log( 'linkHeight = ' + linkHeight );
+								newHeight = dayCntHgt + linkHeight + 3;
+								dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
+								//console.log( 'newHeight = ' + newHeight );
+								var parentHeight = dayCnt.parents('tr').outerHeight();
+								//console.log( 'parentHeight = ' + parentHeight );
+								//dayCnt.parents('tr').css({ 'background' : 'pink' });
+								if( parentHeight < newHeight ) {
+									newHeight = newHeight + 30;
+									dayCnt.parents('tr').height( newHeight ).css({ 'height' : newHeight + 'px' });
+								}
+							
 							}
 						});
 
