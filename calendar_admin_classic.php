@@ -1,5 +1,5 @@
 <?php
-
+//This file is used for Event Espresso 3.1.*
 function espresso_calendar_add_to_featured_image_meta_box($event_meta) {
 	$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
