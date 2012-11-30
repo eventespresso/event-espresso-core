@@ -299,7 +299,7 @@ function espresso_calendar_do_stuff($show_expired) {
 						break;
 					case 'R':
 					default:
-						//$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
+						//$registration_url = get_home_url(). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
 						$registration_url = espresso_reg_url($event->id, $event->slug);
 		
 						break;
@@ -309,11 +309,11 @@ function espresso_calendar_do_stuff($show_expired) {
 				switch ($espresso_calendar['espresso_page_post']){
 		
 						case 'P':
-							$registration_url = get_option('siteurl'). '/?p=' . $event->post_id;
+							$registration_url = get_home_url(). '/?p=' . $event->post_id;
 						break;
 						case 'R':
 						default:
-							$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
+							$registration_url = get_home_url(). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
 						break;
 		
 					}
