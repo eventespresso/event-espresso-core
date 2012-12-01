@@ -24,7 +24,7 @@
 
 //Define the version of the plugin
 function espresso_calendar_version() {
-	return '2.0.3';
+	return '2.0.4';
 }
 
 //Update notifications
