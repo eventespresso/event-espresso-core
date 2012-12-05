@@ -589,7 +589,7 @@ abstract class EE_message_type {
 	 * @access public
 	 * @return void
 	 */
-	public function get_message_type_admin_page_content($page, $messengers = array() $action = null) {
+	public function get_message_type_admin_page_content($page, $messengers = array(), $action = null) {
 		//we can also further refine the context by action (if present).
 		if ( !empty($action) ) {
 			$page = $page . '_' . $action;
