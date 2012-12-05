@@ -387,6 +387,10 @@ class EE_messages {
 		}
 		return $the_goods;
 	}
+
+	public function get_active_messengers() {
+		return $this->_active_messengers();
+	}
 } 
 //end EE_messages class
 
@@ -427,6 +431,17 @@ abstract class EE_message_type {
 	 */
 	public $name;
 	public $description;
+
+	/**
+	 * This property when set will hold the slugs of all EE admin pages that we will need to retrieve fields for (and used to determine which callback method to call from the childclass)
+	 *
+	 * structure should be
+	 * array(
+	 * 'page_action' => true
+	 * )
+	 * @var array
+	 */
+	public $_admin_registered_pages = array();
 
 	/**
 	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
@@ -510,6 +525,7 @@ abstract class EE_message_type {
 		$this->_set_existing_admin_settings();
 		$this->_set_default_field_content();
 		$this->_set_contexts();
+		$this->_set_admin_pages();
 	}
 
 	/** METHODS **/
@@ -551,14 +567,42 @@ abstract class EE_message_type {
 	 */
 	abstract protected function _set_default_field_content();
 
+
 	/**
-	 * sets the _admin_settings_fields property which needs to be defined by child classes.
+	 * sets any properties on whether a message type interface shows up on a ee administration page.  Child classes have to define this method but don't necessarily have to set the flags as they will be set to false by default.
+	 *
+	 * Child classes use this method to set the `_admin_registered_page` property.  That property is to indicate what EE admin pages we have a corresponding callback for in the child class so Message Type fields/content is included on that admin page. 
 	 *
 	 * @abstract
 	 * @access protected
 	 * @return void
 	 */
-	abstract protected function _set_admin_settings_fields();
+	abstract protected function _set_admin_pages();
+
+	/**
+	 * this public method accepts a page slug (for an EE_admin page) and will return the response from the child class callback function if that page is registered via the `_admin_registered_page` property set by the child class.
+	 *
+	 * * 
+	 * @param string $page the slug of the EE admin page
+	 * @param array $messengers an array of active message type objects 
+	 * @param string $action the page action (to allow for more specific handling - i.e. edit vs. add pages)
+	 * @access public
+	 * @return void
+	 */
+	public function get_message_type_admin_page_content($page, $messengers = array() $action = null) {
+		//we can also further refine the context by action (if present).
+		if ( !empty($action) ) {
+			$page = $page . '_' . $action;
+		}
+
+		if ( !isset( $this->_admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
+
+		//k made it here so let's call the method
+		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($messengers) ) ) ) {
+			return false; //todo this needs to be an exception once we've got exceptions in place.
+		}		
+		return $content;
+	}
 
 	/**
 	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
@@ -704,6 +748,17 @@ abstract class EE_messenger {
 	public $description;
 
 	/**
+	 * This property when set will hold the slugs of all EE admin pages that we will need to retrieve fields for (and used to determine which callback method to call from the childclass)
+	 *
+	 * structure should be
+	 * array(
+	 * 'page_action' => true
+	 * )
+	 * @var array
+	 */
+	public $_admin_registered_pages = array();
+
+	/**
 	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
 	 * @var array
 	 */
@@ -736,12 +791,13 @@ abstract class EE_messenger {
 	public $active_templates = array(); //holds all the active templates saved in the database.
 
 	public function __construct() {
-		$this->_EEM_data = EEM_Message_Template::instance();
+		$this->_EEM_data = EEM_Message_Template::instance(); //todo might move this into the constructor and typehint
 		$this->_set_admin_settings_fields();
 		$this->_set_existing_admin_settings();
 		$this->_set_templates();	
 		$this->_set_template_fields();
 		$this->_set_default_field_content();
+		$this->_set_admin_pages();
 	}
 
 	/**
@@ -766,7 +822,7 @@ abstract class EE_messenger {
 
 	/**
 	 * sets the _admin_settings_fields property which needs to be defined by child classes.
-	 * You will want to set the _admint_settings_fields properties as a multi-dimensional array with the following format
+	 * You will want to set the _admin_settings_fields properties as a multi-dimensional array with the following format
 	 * array(
 	 * 		{field_name - also used for setting index} => array(
 	 * 			'field_type' => {type of field: 'text', 'textarea', 'checkbox'},
@@ -784,6 +840,41 @@ abstract class EE_messenger {
 	 * @return void
 	 */
 	abstract protected function _set_admin_settings_fields();
+
+	/**
+	 * sets any properties on whether a message type interface shows up on a ee administration page.  Child classes have to define this method but don't necessarily have to set the flags as they will be set to false by default.
+	 *
+	 * Child classes use this method to set the `_admin_registered_page` property.  That property is to indicate what EE admin pages we have a corresponding callback for in the child class so Message Type fields/content is included on that admin page. 
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_admin_pages();
+
+	/**
+	 * this public method accepts a page slug (for an EE_admin page) and will return the response from the child class callback function if that page is registered via the `_admin_registered_page` property set by the child class.
+	 * 
+	 * @param string $page the slug of the EE admin page
+	 * @param array $message_types an array of active message type objects 
+	 * @param string $action the page action (to allow for more specific handling - i.e. edit vs. add pages)
+	 * @access public
+	 * @return void
+	 */
+	public function get_messenger_admin_page_content($page, $message_types = array(), $action = null) {
+		//we can also further refine the context by action (if present).
+		if ( !empty($action) ) {
+			$page = $page . '_' . $action;
+		}
+
+		if ( !isset( $this->_admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
+
+		//k made it here so let's call the method
+		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($message_types) ) ) ) {
+			return false; //todo this needs to be an exception once we've got exceptions in place.
+		}		
+		return $content;
+	}
 
 	/**
 	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.

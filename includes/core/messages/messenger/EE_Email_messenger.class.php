@@ -55,6 +55,29 @@ class EE_Email_messenger extends EE_messenger  {
 		parent::__construct();
 	}
 
+
+	/**
+	 * see abstract declaration in parent class for details.
+	 */
+	protected function _set_admin_pages() {
+		$this->_admin_registered_pages = array(
+			'events_edit' => true,
+		);
+	}
+
+	protected function _get_admin_content_events_edit( $message_types ) {
+		//in this case we are EXPECTING message types so let's check for that.
+		if ( empty($message_types) ) return false; //todo exception here?
+
+		$content = '';
+		foreach ( (array) $message_types as $message_type ) {
+			if ( !($message_type instanceof EE_Message_Type ) ) continue; //todo maybe throw an exception here?
+			$content .= $message_type->_get_admin_content_events_edit_for_messenger($this);
+		}
+
+		return $content;
+	}	
+
 	/**
 	 * _set_template_fields
 	 * This sets up the fields that a messenger requires for the message to go out.
