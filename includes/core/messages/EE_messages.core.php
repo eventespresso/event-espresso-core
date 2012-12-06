@@ -677,14 +677,32 @@ abstract class EE_message_type {
 	protected function _get_templates() {
 		//todo: $this->data is set by the message_type child at this point SO... we CAN check for if there is an event_specific template in here eventually. 
 		$current_templates = $this->active_messenger->active_templates;
+		$has_event_template = false;
+		$event_id = null;
+
+		//in vanilla EE we're assuming there's only one event.  Let's get that.
+		foreach ( $this->data->events as $event ) {
+			$event_id = $event['ID'];
+			break;
+		}
+
+		//todo:  we need to determine IF any of the current templates match the event_id - if they do then let's set a temp flag so we know we have an event template in this array.
 
 		if ( isset($current_templates) ) {
+			if ( !empty($event_id) ) {
+				foreach ( $current_templates as $template_object ) {
+					$has_event_template = $template_object->event() == $event_id ? true : false;
+				}
+			}
+
 			foreach ( $current_templates as $template_object ) {
 				if ( $this->name == $template_object->message_type() ) {
 					$templates = $template_object->context_templates();
 					foreach ( $templates as $context => $template_fields ) {
 						foreach ( $template_fields as $template_field => $value ) {
 								if ( is_array($value ) )
+									//todo: if this template DOESN'T match the event_id and the CONTEXT is not an override AND we know there are custom templates for this event in here  OR we know there are NO custom event templates for this event then let's skip.
+									if ( ($template_object->event() != $event_id && !$template_fields['MTP_is_override'] && $has_event_template) || !$has_event_template )
 									$this->templates[$template_field][$context] = $value['content'];
 						}
 					}
