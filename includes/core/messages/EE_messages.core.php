@@ -46,7 +46,7 @@ class EE_messages {
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_get_active_messengers();
-		$this->_load_active_message_types();	
+		$this->_get_active_message_types();	
 	}
 
 	/**
@@ -80,7 +80,7 @@ class EE_messages {
 	 * get active types from db and load the related files.  They don't get instantiated till $this->send_message.
 	 * 
 	 */
-	private function _load_active_message_types() {
+	private function _get_active_message_types() {
 		global $espresso_wp_user;
 		$actives = get_user_meta($espresso_wp_user, 'ee_active_message_types', true);
 		$actives = is_array($actives) ? array_keys($actives) : $actives;
@@ -88,9 +88,18 @@ class EE_messages {
 
 		if ( empty($active_names) ) {
 			return new WP_Error(__('no_active_types', 'event_espresso'), __('No messages have gone out because there are no active message types.', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
-		} 
+		}
 
-		$this->_active_message_types = $active_names;
+		foreach ( $active_names as $name => $class ) {
+			$a = new ReflectionClass( $class );
+			$active = $a->newInstance();
+			if ( is_wp_error($active) ) {
+				//we've got an error so let's bubble up the error_object to be caught by caller.
+				//todo: would be better to just catch the errors and then return any aggregated errors later.
+				return $active;
+			}
+			$this->_active_message_types[$name] = $active;
+		} 
 	}
 
 	/**
@@ -143,17 +152,14 @@ class EE_messages {
 
 	// delegates message sending to messengers
 	public function send_message( $type, $vars ) {
-		
-		//getting classname from $this->active_message_types array.  However, if we don't have it let's set up a default for the error message.
-		$classname = empty($this->_active_message_types[$type]) ? 'EE_' . $type . '_something' : $this->_active_message_types[$type];
+	
 
 		// is that a real class ?
-		if ( class_exists( $classname ) ) {
+		if ( isset(  $this->_active_message_types[$type] ) ) {
 			// then send it
 			foreach ( $this->_active_messengers as $active_messenger ) {
 				// create message data
-				$a = new ReflectionClass( $classname );
-				$messages = $a->newInstance();
+				$messages = $this->_active_messages_types[$type];
 				$messages->set_messages($vars, $active_messenger);
 
 				if ( is_wp_error($messages) ) {
@@ -195,10 +201,9 @@ class EE_messages {
 
 
 		//message type
-		$mt_class = isset($this->_active_message_types[$message_type]) ? $this->_active_message_types[$message_type] : 'non_existant_class';
+		$mt = isset($this->_active_message_types[$message_type]) ? $this->_active_message_types[$message_type] : 'message_type_not_existent';
 
-		$mt = class_exists($mt_class) ? new ReflectionClass($mt_class) : false;
-		$this->_message_type = is_object($mt) ? $mt->newInstance() : null;
+		$this->_message_type = is_object($mt) ? $mt : null;
 
 		//do we have the necessary objects loaded?
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
@@ -389,7 +394,11 @@ class EE_messages {
 	}
 
 	public function get_active_messengers() {
-		return $this->_active_messengers();
+		return $this->_active_messengers;
+	}
+
+	public function get_active_message_types() {
+		return $this->_active_message_types;
 	}
 } 
 //end EE_messages class
