@@ -272,7 +272,7 @@ class EE_messages {
 			//first let's get all templates for this messenger
 			$all_templates = $this->_EEM_data->get_all_message_templates_by_messenger($this->_messenger->name);
 			foreach ( $all_templates as $template_object ) {
-				if ( $this->_message_type->name == $template_object->message_type() ) {
+				if ( $this->_message_type->name == $template_object->message_type() && empty($template_object->event() ) ) {
 					$context_templates = $template_object->context_templates();
 					foreach ( $mt_contexts as $context ) {
 						foreach ( $m_fields as $field => $field_type ) {
