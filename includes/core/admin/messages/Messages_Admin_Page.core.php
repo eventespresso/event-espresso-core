@@ -1049,6 +1049,10 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		$this->display_admin_page_with_metabox_columns();
 	}
 
+	protected function _messages_reports() {
+		//todo: nothing here for now.
+	}
+
 	/**
 	 * this method sets the messenger/message_type metabox contents
 	 * @param  array $metabox arguments passed via the caller
