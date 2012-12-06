@@ -10,7 +10,8 @@
 			<a class="nav-tab<?php echo $nav_tab['css_class'];?>" href="<?php echo $nav_tab['url'];?>"><?php echo $nav_tab['link_text'];?></a>
 		<?php endforeach; ?>
 	</h2>
-
+	<?php do_action('action_hook_espresso_before_admin_page_content'); ?>
 	<?php echo $admin_page_content; ?>
+	<?php do_action('action_hook_espresso_after_admin_page_content'); ?>
 
 </div>

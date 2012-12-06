@@ -1008,6 +1008,8 @@ function espresso_event_editor_venue_metabox($event) {
 }
 
 function espresso_event_editor_email_metabox($event) {
+	//todo: we have to get the available messenger/message types for events.
+	//
 	?>
 	<div class="inside">
 		<table class="form-table">
@@ -1029,6 +1031,29 @@ function espresso_event_editor_email_metabox($event) {
 	</div>
 	<?php
 }
+/* //removing for new metabox (see above)
+function espresso_event_editor_email_metabox($event) {
+	?>
+	<div class="inside">
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<td class="custom_emails"><fieldset id="email-manager">
+							<legend><?php echo __('Email Information', 'event_espresso') ?></legend>
+							<p class="info">Choose a payment confirmation email:</p>
+							<?php echo espresso_email_dd('payment', $event->payment_email_id); ?>
+							<p class="info">Choose a registration confirmation email:</p>
+							<?php echo espresso_email_dd('confirmation', $event->confirmation_email_id); ?>
+						</fieldset></td>
+					<td>
+						<p><a href="admin.php?page=event_emails"><?php echo __('Add emails to the Email Manager', 'event_espresso') ?></a></p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<?php
+} /**/
 
 function espresso_register_event_editor_meta_boxes() {
 

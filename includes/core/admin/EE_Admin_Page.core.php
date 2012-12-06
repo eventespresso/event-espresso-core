@@ -38,6 +38,8 @@ class EE_Admin_Page {
 	protected $nav_tabs = array();
 	// array for passing vars to templates
 	protected $template_args = array();
+	// string for setting a template path
+	protected $_template_path = NULL;
 	// is current request via AJAX ?
 	protected $_AJAX = FALSE;
 	// denotes that current request is for a UI (web facing page) - gets set to false when performing data updates, inserts, deletions etc, so that unecessary resources don't get loaded
@@ -128,6 +130,22 @@ class EE_Admin_Page {
 
 
 
+
+	/**
+	 * child classes can call this in their constructor if they want their page to use columns (similar to wp_dashboard)
+	 * @access protected
+	 * @return void
+	 */
+	protected function _use_columns() {
+		add_action( 'admin_print_scripts', array( $this, 'set_screen_options') );
+	}
+
+
+
+
+
+
+
 	/**
 	 * 		verifies user access for this admin page
 	*		@access 		private
@@ -144,6 +162,22 @@ class EE_Admin_Page {
 
 
 
+
+
+
+	/**
+	 * use for setting screen options on a page.
+	 */
+	public function set_screen_options() {
+		wp_enqueue_script('dashboard');
+		add_screen_option('layout_columns', array('max' => 4, 'default' => 3) );
+	}
+
+
+
+
+
+
 	/**
 	 * 		displays an error message to ppl who have javascript disabled
 	*		@access 		public
@@ -151,14 +185,14 @@ class EE_Admin_Page {
 	*/
 	public function display_no_javascript_warning() {
 		echo '
-<noscript>
-	<div id="no-js-message" class="error">
-		<p style="font-size:1.3em;">
-			<span style="color:red;">' . __( 'Warning!', 'event_espresso' ) . '</span>
-			' . __( 'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso' ) . '
-		</p>
-	</div>
-</noscript>';
+		<noscript>
+			<div id="no-js-message" class="error">
+				<p style="font-size:1.3em;">
+					<span style="color:red;">' . __( 'Warning!', 'event_espresso' ) . '</span>
+					' . __( 'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.', 'event_espresso' ) . '
+				</p>
+			</div>
+		</noscript>';
 	}
 
 
@@ -187,11 +221,6 @@ class EE_Admin_Page {
 	public function route_admin_request() {			
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		echo '<h4>$this->_req_action : ' . $this->_req_action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_req_nonce : ' . $this->_req_nonce . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $_REQUEST, '$_REQUEST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		if ( $this->_req_action != 'default' ) {
 			wp_verify_nonce( $this->_req_nonce );
@@ -231,10 +260,6 @@ class EE_Admin_Page {
 			$args = array();	
 		}
 
-//		echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		die();
-		// and finally,  try to access page route
 		if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
 			$error_msg =  __('An error occured and the  ' . $func . ' page route could not be called.', 'event_espresso');
 			$espresso_notices['errors'][] = $error_msg . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ );
@@ -243,6 +268,8 @@ class EE_Admin_Page {
 		}
 
 	}
+
+
 
 
 
@@ -267,6 +294,8 @@ class EE_Admin_Page {
 
 
 
+
+
 	/**
 	 * 		set current view for List Table
 	*		@access public
@@ -281,6 +310,8 @@ class EE_Admin_Page {
 			$this->_view = sanitize_key( $_REQUEST['status'] );
 		}
 	}
+
+
 
 
 
@@ -310,6 +341,8 @@ class EE_Admin_Page {
 				)
 		);			
 	}
+
+
 
 
 
@@ -352,6 +385,8 @@ class EE_Admin_Page {
 
 
 
+
+
 	/**
 	*		generates  HTML wrapper for an admin details page
 	*		@access public
@@ -367,6 +402,8 @@ class EE_Admin_Page {
 
 
 
+
+
 	/**
 	 * 		_set_search_attributes
 	*		@access 		public
@@ -376,6 +413,8 @@ class EE_Admin_Page {
 		$this->template_args['search']['btn_label'] = __( 'Search ' . ucwords( str_replace( '_', ' ', $this->page_slug )), 'event_espresso' );
 		$this->template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
+
+
 
 
 
@@ -422,7 +461,7 @@ class EE_Admin_Page {
 				</label>
 				<input id="entries-per-page-btn" class="button-secondary" type="submit" value="Go" >
 			</div>
-';			
+		';			
 		return $entries_per_page_dropdown;
 
 	}
@@ -431,25 +470,71 @@ class EE_Admin_Page {
 
 
 
+
+
 	/**
-	*		_add_admin_page_meta_box - facade for add_meta_box
-	*		@access public
-	* 		@param		int 			$max_entries 		total number of rows in the table
-	*		@return void
-	*/		
-	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args ) {	
+	 * facade for add_meta_box
+	 * @param string  $action        where the metabox get's displayed
+	 * @param string  $title         Title of Metabox (output in metabox header)		
+	 * @param string  $callback      If not empty and $create_fun is set to false then we'll use a custom callback instead of the one created in here.
+	 * @param array  $callback_args an array of args supplied for the metabox
+	 * @param string  $column        what metabox column
+	 * @param string  $priority      give this metabox a priority (using accepted priorities for wp meta boxes)
+	 * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function created but just set our own callback for wp's add_meta_box.
+	 */
+	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column = 'normal', $priority = 'high', $create_func = true ) {	
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $callback );
-		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, array( $this, $callback . '_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+
+		//if we have empty callback args and we want to automatically create the metabox callback then we need to make sure the callback args are generated.
+		if ( empty( $callback_args ) && $create_func ) {
+			$callback_args = array(
+				'template_path' => $this->_template_path,
+				'template_args' => $this->template_args,
+				);
+		}
+
+		//if $create_func is true (default) then we automatically create the function for displaying the actual meta box.  If false then we take the $callback reference passed through and use it instead (so callers can define their own callback function/method if they wish)
+		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "action_hook_espresso_log", __FILE__, __FUNCTION__, ""); echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
+
+		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, $call_back_func, $this->wp_page_slug, $column, $priority, $callback_args );
 	}
 
 
 
 
 
+
 	/**
-	*		generates  HTML wrapper for an admin details page
-	*		@access public
-	*		@return void
+	 * generates HTML wrapper for and admin details page that contains metaboxes in columns
+	 * @return [type] [description]
+	 */
+	public function display_admin_page_with_metabox_columns() {
+		$screen = get_current_screen();
+		$this->template_args['current_screen_widget_class'] = 'columns-' . 
+		$screen->get_columns();
+		$this->template_args['current_page'] = $this->wp_page_slug;
+		$template_path = EE_CORE_ADMIN. 'admin_details_metabox_column_wrapper.template.php';
+
+		$this->template_args['screen'] = $screen;
+		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
+		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE);
+
+		//display any espresso_notices (generated from metaboxes)
+		$this->display_espresso_notices();
+
+		//the final wrapper
+		$this->admin_page_wrapper();
+	}
+
+
+
+
+
+
+	/**
+	*	generates  HTML wrapper for an admin details page
+	*	@access public
+	*	@return void
 	*/		
 	public function display_admin_page_with_sidebar() {		
 		
@@ -468,10 +553,15 @@ class EE_Admin_Page {
 		$this->template_args['post_body_content'] = $this->template_args['admin_page_content'];
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 
+		//display any espresso_notices (generated from metaboxes)
+		$this->display_espresso_notices();
+
 		// the final template wrapper
 		$this->admin_page_wrapper();
 
 	}
+
+
 
 
 
@@ -485,6 +575,7 @@ class EE_Admin_Page {
 	public function admin_page_wrapper(  ) {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
 		// tab urls
 		$this->nav_tabs[ $this->default_nav_tab_name ]['url'] = $this->admin_base_url;  
 		$this->nav_tabs[ $this->default_nav_tab_name ]['link_text'] = __( ucwords( str_replace( '_', ' ', $this->default_nav_tab_name )), 'event_espresso' );
@@ -529,6 +620,7 @@ class EE_Admin_Page {
 
 
 
+
 	/**
 	*		sort nav tabs
 	*		@access public
@@ -541,6 +633,8 @@ class EE_Admin_Page {
 	    }
 	    return ($a['order'] < $b['order']) ? -1 : 1;
 	}
+
+
 
 
 
@@ -562,6 +656,8 @@ class EE_Admin_Page {
 
 
 
+
+
 	/**
 	 * 		remove settings tab from admin_page_nav_tabs
 	*		@access private
@@ -573,9 +669,6 @@ class EE_Admin_Page {
 		unset ( $nav_tabs['settings'] );	
 		return $nav_tabs;		
 	}
-
-
-
 
 
 	/**
@@ -596,6 +689,8 @@ class EE_Admin_Page {
 
 
 
+
+
 	/**
 	*		add admin page overlay for modal boxes
 	*		@access public
@@ -607,12 +702,238 @@ class EE_Admin_Page {
 	<div id="espresso-admin-page-overlay-dv" class=""></div>
 ';
 	}
+
+
+
+
+
+
+	/**
+	 * _handle_errors
+	 * This will take an incoming error object and add it to the espresso_notices array.
+	 * @param  object $error_obj a WP_Error object
+	 * @access protected
+	 * @return void
+	 * @todo Currently this is just being used by EE_messages subsystem. IF this works well, we could roll it out to all systems for handling errors and switch things over to using WP_Error objects.
+	 */
+	protected function _handle_errors($error_obj) {
+		global $espresso_notices;
+		
+		if ( is_wp_error($error_obj) ) {
+			$espresso_notices['errors'][] = $error_obj->get_error_message();
+		}
+	}
+
+
+
+
+
+
+	/**
+	 * 	generates HTML for the forms used on admin pages
+	 * 	@access protected
+	 * 	@param	array $input_vars - array of input field details
+	 * 	@param	array $id - used for defining unique identifiers for the form.
+	 * 	@return string
+	 * 	@todo: note this should be extracted eventually into some sort of form-builder/sanitizer/validation library for use with EE.
+	 */
+	protected function _generate_admin_form_fields($input_vars = array(), $id = FALSE) {
+
+		if ( empty($input_vars) ) {
+			return new WP_Error(__('form_field_generator_error', 'event_espresso'), __('missing required variables for the form field generator', 'event_espresso') . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__) );
+		}
+		
+		// if you don't behave - this is what you're gonna get !!!
+		$close = true;
+		$output = '<ul>'; //this is for using built-in wp styles... watch carefully...
+
+		// cycle thru inputs
+		foreach ($input_vars as $input_key => $input_value) {
+
+			// required fields get a * 
+			$required = isset($input_value['required']) && $input_value['required'] ? ' <span>*</span>: ' : ': ';
+			// and the css class "required"
+			$css_class = isset( $input_value['css_class'] ) ? $input_value['css_class'] : '';
+			$styles = $input_value['required']? 'required ' . $css_class : $css_class;
+			$field_id = ($id) ? $id . '-' . $input_key : $input_key;
+
+			//rows or cols?
+			$rows = isset($input_value['rows'] ) ? $input_value['rows'] : '10';
+			$cols = isset($input_value['cols'] ) ? $input_value['cols'] : '80';
+
+			$output .= (!$close) ? '<ul>' : '';
+			$output .= '<li>';
+
+			// what type of input are we dealing with ?
+			switch ($input_value['input']) {
+
+				// text inputs
+				case 'text' :
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . $input_value['value'] . '" name="' . $input_value['name'] . '">';
+					break;
+
+				// dropdowns
+				case 'select' :
+
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '">';
+
+					if (is_array($input_value['options'])) {
+						$options = $input_value['options'];
+					} else {
+						$options = explode(',', $input_value['options']);
+					}
+
+					foreach ($options as $key => $value) {
+						//$key = str_replace( ' ', '_', sanitize_key( $value ));
+						$output .= "\n\t\t\t\t" . '<option value="' . $key . '">' . $value . '</option>';
+					}
+					$output .= "\n\t\t\t" . '</select>';
+
+					break;
+
+				case 'textarea' :
+
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="'.$rows.'" cols="'.$cols.'" name="' . $input_value['name'] . '">' . $input_value['value'] . '</textarea>';
+					break;
+
+				case 'hidden' :
+					$close = false;
+					$output .= "</li></ul>";
+					$output .= "\n\t\t\t" . '<input id="' . $field_id . '" type="hidden" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '">';
+					break;
+
+				case 'checkbox' : 
+					$checked = ( $input_value['value'] == 1 ) ? 'checked="checked"' : '';
+					$output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+					$output .= "\n\t\t\t" . '<input id="' . $field_id. '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . ' />';
+					break; 
+
+				case 'wp_editor' :
+					$close = false;
+					$editor_settings = array(
+						'textarea_name' => $input_value['name'],
+						'textarea_rows' => $rows
+					);
+					$output .= '</li>';
+					$output .= '</ul>';
+					$output .= '<h4>' . $input_value['label'] . '</h4>';
+					ob_start();
+					wp_editor( $input_value['value'], $field_id, $editor_settings);
+					$editor = ob_get_contents();
+					ob_end_clean();
+					$output .= $editor;
+					break;
+
+				}
+				$output .= ($close) ? '</li>' : '';
+				
+			
+		} // end foreach( $input_vars as $input_key => $input_value ) 
+		$output .= ($close) ? '</ul>' : '';
+
+		return $output;
+	}
+
 	
+
+
+
+	/**
+	 * generates the "Save" and "Save & Close" buttons for edit forms
+	 *
+	 * @access protected
+	 * @param bool $both if true then both buttons will be generated.  If false then just the "Save & Close" button.
+	 * @param array $text if included, generator will use the given text for the buttons ( array([0] => 'Save', [1] => 'save & close')
+	 * @param array $actions if included allows us to set the actions that each button will carry out (i.e. via the "name" value in the button).  We can also use this to just dump default actions by submitting some other value.
+	 */
+	protected function _set_save_buttons($both = TRUE, $text = array(), $actions = array() ) {
+		//make sure $text and $actions are in an array
+		$text = (array) $text;
+		$actions = (array) $actions;
+
+		$button_text = !empty($text) ? $text : array( __('Save', 'event_espresso'), __('Save and Close', 'event_espresso') );
+		$default_names = array( 'save', 'save_and_close' );
+		$init_div = '<div id="event_editor_major_buttons_wrapper">';
+		$alt_div = '<div id="event-editor-floating-save-btns" class="hidden">';
+
+		$this->template_args['save_buttons'] = '<div class="publishing-action">';
+		//add in a hidden index for the current page (so save and close redirects properly)
+		$this->template_args['save_buttons'] .= empty($actions) ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '';
+
+		foreach ( $button_text as $key => $button ) {
+			$ref = $default_names[$key];
+			$name = !empty($action) ? $actions[$key] : $ref;
+			$this->template_args['save_buttons'] .= '<input type="submit" class="button-primary" value="' . $button . '" name="' . $name . '" id="' . $ref . '" />';
+			if ( !$both ) break;
+		}
+		$this->template_args['save_buttons'] .= '</div><br class="clear" /></div>';
+		$alt_buttons = $alt_div . $this->template_args['save_buttons'];
+		$this->template_args['save_buttons'] = $init_div . $this->template_args['save_buttons'] . $alt_buttons;
+	}
+
+
+
+
+	/**
+	 * 	_redirect_after_action
+	 *	@param int 		$success 	- whether success was for two or more records, or just one, or none
+	 *	@param string 	$what 		- what the action was performed on
+	 *	@param string 	$action_desc 	- what was done ie: updated, deleted, etc
+	 *	@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
+	 *	@access protected
+	 *	@return void
+	 */
+	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array() ) {
+		global $espresso_notices;
+
+		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
+
+		// overwrite default success messages
+		$espresso_notices['success'] = array();
+		$redirect_url = $this->admin_base_url;
+
+		// how many records affected ? more than one record ? or just one ?
+		if ( $success == 2 ) {
+			// set plural msg
+			$espresso_notices['success'][] = sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc );
+		} else if ( $success == 1 ) {
+			// set singular msg
+			$espresso_notices['success'][] = sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc);
+		}
+
+		// check that $query_args isn't something crazy
+		if ( ! is_array( $query_args )) {
+			$query_args = array();
+		}
+
+		//calculate where we're going (if we have a "save and close" button pushed)
+		if ( isset($_REQUEST['save'] ) && isset($_REQUEST['save_and_close_referrer'] ) ) {
+			$redirect_url = $_REQUEST['save_and_close_referrer'];
+		}
+		
+		// grab messages
+		$notices = espresso_get_notices( FALSE, TRUE, TRUE, FALSE );
+		//combine $query_args and $notices
+		$query_args = array_merge( $query_args, $notices );
+		// generate redirect url
+
+		// if redirecting to anything other than the main page, add a nonce
+		if ( isset( $query_args['action'] )) {
+			// manually generate wp_nonce
+			$nonce = array( '_wpnonce' => wp_create_nonce( $query_args['action'] . '_nonce' ));
+			// and merge that with the query vars becuz the wp_nonce_url function wrecks havoc on some vars
+			$query_args = array_merge( $query_args, $nonce );
+		} 
+
+		$redirect_url = add_query_arg( $query_args, $redirect_url ); 
+
+		wp_safe_redirect( $redirect_url );	
+		exit();
+		
+	}
 	
-
-
-}
-
-
-	
+}	
 // end of file:  includes/core/admin/EE_Admin_Page.core.php
