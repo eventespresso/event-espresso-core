@@ -1008,26 +1008,28 @@ function espresso_event_editor_venue_metabox($event) {
 }
 
 function espresso_event_editor_email_metabox($event) {
-	//todo: we have to get the available messenger/message types for events.
-	//
+	//todo: this needs to be moved into the the Messages_Admin_Page.core.php once the events_admin has been reworked to be in the new admin system.
+
+	//let's get the active messengers (b/c messenger objects have the active message templates)
+	$EEM_controller = new EE_Messages;
+	$active_messengers = $EEM_controller->get_active_messengers();
+	$tabs = array();
+
+	//get content for active messengers
+	foreach ( $active_messengers as $name -> $messenger ) {
+		$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event_id' => $event) );
+	}
+
+	//todo: need to require the helper file here.
+	//we want this to be tabbed content so let's use the EE_Admin_Screen_Helper::tabbed_content utility.
+	$tabbed_content = EE_Tabbed_Content::display($tabs);
+	if ( is_wp_error($tabbed_content) ) {
+		$tabbed_content = $tabbed_content->get_error_message();
+	}
+	
 	?>
 	<div class="inside">
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<td class="custom_emails"><fieldset id="email-manager">
-							<legend><?php echo __('Email Information', 'event_espresso') ?></legend>
-							<p class="info">Choose a payment confirmation email:</p>
-							<?php echo espresso_email_dd('payment', $event->payment_email_id); ?>
-							<p class="info">Choose a registration confirmation email:</p>
-							<?php echo espresso_email_dd('confirmation', $event->confirmation_email_id); ?>
-						</fieldset></td>
-					<td>
-						<p><a href="admin.php?page=event_emails"><?php echo __('Add emails to the Email Manager', 'event_espresso') ?></a></p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<?php echo $tabbed_content; ?>
 	</div>
 	<?php
 }

@@ -887,10 +887,11 @@ abstract class EE_messenger {
 	 * @param string $page the slug of the EE admin page
 	 * @param array $message_types an array of active message type objects 
 	 * @param string $action the page action (to allow for more specific handling - i.e. edit vs. add pages)
+	 * @param array $extra  This is just an extra argument that can be used to pass additional data for setting up page content.
 	 * @access public
 	 * @return void
 	 */
-	public function get_messenger_admin_page_content($page, $message_types = array(), $action = null) {
+	public function get_messenger_admin_page_content( $page, $action = null, $extra = array(), $message_types = array() ) {
 		//we can also further refine the context by action (if present).
 		if ( !empty($action) ) {
 			$page = $page . '_' . $action;
@@ -899,7 +900,7 @@ abstract class EE_messenger {
 		if ( !isset( $this->_admin_registered_pages[$page]) ) return false; //todo: a place to throw an exception?  We need to indicate there is no registered page so this function is not being called correctly.
 
 		//k made it here so let's call the method
-		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($message_types) ) ) ) {
+		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($message_types, $extra) ) ) ) {
 			return false; //todo this needs to be an exception once we've got exceptions in place.
 		}		
 		return $content;
