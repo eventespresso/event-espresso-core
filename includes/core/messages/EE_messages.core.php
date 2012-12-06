@@ -703,6 +703,7 @@ abstract class EE_message_type {
 								if ( is_array($value ) )
 									//todo: if this template DOESN'T match the event_id and the CONTEXT is not an override AND we know there are custom templates for this event in here  OR we know there are NO custom event templates for this event then let's skip.
 									if ( ($template_object->event() != $event_id && !$template_fields['MTP_is_override'] && $has_event_template) || !$has_event_template )
+										continue;
 									$this->templates[$template_field][$context] = $value['content'];
 						}
 					}
