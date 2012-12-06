@@ -65,17 +65,23 @@ class EE_Email_messenger extends EE_messenger  {
 		);
 	}
 
-	protected function _get_admin_content_events_edit( $message_types ) {
-		//in this case we are EXPECTING message types so let's check for that.
-		if ( empty($message_types) ) return false; //todo exception here?
+	protected function _get_admin_content_events_edit( $message_types, $extra ) {
+		//we don't need message types here so we're just going to ignore. we do, however, expect the event id here. The event id is needed to provide a link to setup a custom template for this event.
+		$event_id = isset($extra['event_id']) ? $extra['event_id'] : null;
 
-		$content = '';
-		foreach ( (array) $message_types as $message_type ) {
-			if ( !($message_type instanceof EE_Message_Type ) ) continue; //todo maybe throw an exception here?
-			$content .= $message_type->_get_admin_content_events_edit_for_messenger($this);
+
+		
+		$content = '<div id="message-templates-' . $this->name . '" class="message-templates-container">' . "\n\t";
+		foreach ( $this->active_templates as $template ) {
+			$content .= '<div class="message-template-message-type-container">' . "\n\t";
+			$content .= '<h4>' . $template->message_type() . '</h4>';
+			$content .= '<label for="messenger-' . $template->message_type() . '-dropdown">' . __('Select template', 'event_espresso') . '</label>';
+			$content .= '<select>'; //todo left off here.
+			$content .= '</div>';
 		}
 
-		return $content;
+		$content .= '</div>';
+
 	}	
 
 	/**
