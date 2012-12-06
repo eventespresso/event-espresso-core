@@ -548,6 +548,8 @@ abstract class EE_message_type {
 	 * @return void      
 	 */
 	public function set_messages($data, $active_messenger) {
+		//todo: need to move require into registration hook but for now we'll require here.
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Parse_Shortcodes.helper.php';
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = EE_Parse_Shortcodes::instance();
 		$this->active_messenger = $active_messenger;
