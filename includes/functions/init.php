@@ -333,6 +333,8 @@ function espresso_frontend_init() {
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'shortcodes.php');
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/ical.php');
+	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/affiliate-handling.php');
+
 	//Registration forms
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/form_build.php');
 
