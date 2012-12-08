@@ -121,6 +121,8 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-modal-dialog-apply-payment-lnk').removeClass('hidden');
 		$('#txn-admin-modal-dialog-cancel-lnk').removeClass('hidden');
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
+		var paymentAmount = $('#txn-admin-total-amount-due').html();
+		$('#txn-admin-payment-amount-inp').val( paymentAmount );
 		display_payments_and_refunds_modal_dialog();
 	});
 
@@ -133,6 +135,8 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-payment-id-inp').val(0);
 		$('#txn-admin-payment-type-inp').val(-1);
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
+		var refundAmount = $('#txn-admin-total-amount-due').html();
+		$('#txn-admin-payment-amount-inp').val( refundAmount );
 		display_payments_and_refunds_modal_dialog();
 	});
 
@@ -147,8 +151,10 @@ jQuery(document).ready(function($) {
 				overlay.removeClass('active');
 				//reset form values
 				$('.txn-admin-apply-payment-inp').each( function() {
-					$(this).val('');
+					$(this).val('');			
 				});
+				var regCode = $('#txn-admin-reg-code-inp').val();
+				$('#txn-admin-payment-accounting-inp').val( regCode );
 				$('.txn-admin-apply-payment-slct').each( function() {
 					$(this).val(0);
 				});	
@@ -363,7 +369,6 @@ jQuery(document).ready(function($) {
 	}
 
 
-
 	function update_payment( PAY_ID, response ) {
 		// payment-status
 		$('#payment-status-' + PAY_ID + ' > span').html( response.return_data.status );
@@ -376,7 +381,8 @@ jQuery(document).ready(function($) {
 		// payment-method
 		$('#payment-method-' + PAY_ID).html( response.return_data.method );
 		// payment-gateway
-		$('#payment-gateway-' + PAY_ID).val( response.return_data.gateway );
+		$('#payment-gateway-' + PAY_ID).html( response.return_data.gateway );
+		$('#payment-gateway-id-' + PAY_ID).html( response.return_data.gateway );
 		// payment-gateway_response
 		$('#payment-response-' + PAY_ID).html( response.return_data.gateway_response );
 		// payment-txn_id_chq_nmbr
@@ -384,7 +390,7 @@ jQuery(document).ready(function($) {
 		// payment-po_number
 		$('#payment-po-nmbr-' + PAY_ID).html( response.return_data.po_number );
 		// payment-extra_accntng
-		$('#payment-extra-accntng-' + PAY_ID).html( response.return_data.extra_accntng );
+		$('#payment-accntng-' + PAY_ID).html( response.return_data.extra_accntng );
 		// payment-amount
 		var payment = parseFloat( response.return_data.amount );		
 		$('#payment-amount-' + PAY_ID).html( payment.toFixed(2) );
