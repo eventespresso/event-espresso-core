@@ -909,6 +909,7 @@ Class EEM_Gateways {
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
 	public function process_reg_step_3() {
+		global $EE_Session;
 		$return_page_url = $this->_get_return_page_url();
 		// free event?
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
@@ -929,10 +930,13 @@ Class EEM_Gateways {
 
 		} else {
 			$response = array(
-					'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
-					'forward_url' => $this->_get_return_page_url()
-				);
+				'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
+				'forward_url' => $this->_get_return_page_url()
+			);
 		}
+//		$session2 = $EE_Session->get_session_data();
+//		printr( $session2, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+//		die();
 		return $response;
 	}	
 

@@ -603,6 +603,26 @@ class EE_Price {
 
 
 	/**
+	*		set deleted
+	* 
+	* 		@access		public
+	*		@param		bool		PRC_deleted
+	*/
+	public function set_deleted( $PRC_deleted = NULL ) {
+		global $espresso_notices;
+		if ( $PRC_deleted == NULL ) {
+			$espresso_notices['errors'][] = 'No deleted boolean flag was supplied.';
+			return FALSE;
+		}
+		$this->_PRC_deleted = (bool)absint( $PRC_deleted );
+		return TRUE;
+	}
+
+
+
+
+
+	/**
 	*		save object to db
 	*
 	* 		@access		private

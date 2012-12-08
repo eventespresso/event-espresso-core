@@ -587,6 +587,21 @@ class EE_Registration {
 
 
 	/**
+	*		get Event ID
+	* 		@access		public
+	*/	
+	public function event_name() {
+		if ( empty( $this->_EVT_ID )) {
+			return FALSE;
+		}
+		global $wpdb;
+		$SQL = 'SELECT event_name, slug FROM ' . $wpdb->prefix . 'events_detail WHERE id = %d';
+		return $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ));
+	}
+
+
+
+	/**
 	*		get Attendee ID
 	* 		@access		public
 	*/	

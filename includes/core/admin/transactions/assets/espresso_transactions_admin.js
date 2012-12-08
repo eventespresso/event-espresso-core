@@ -219,21 +219,24 @@ jQuery(document).ready(function($) {
 
 	//modal dialog "submit" buttons
 
-	$('#txn-admin-modal-dialog-apply-payment-lnk').on( 'click', function() {
+	$('#txn-admin-modal-dialog-apply-payment-lnk').on( 'click', function( event ) {
+		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
 			apply_payment_or_refund( 'apply' );
 		}
 	});
 
-	$('#txn-admin-modal-dialog-apply-refund-lnk').on( 'click', function() {
+	$('#txn-admin-modal-dialog-apply-refund-lnk').on( 'click', function( event ) {
+		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
 			apply_payment_or_refund( 'apply' );
 		}
 	});
 
-	$('#txn-admin-modal-dialog-edit-payment-lnk').on( 'click', function() {
+	$('#txn-admin-modal-dialog-edit-payment-lnk').on( 'click', function( event ) {
+		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
 			apply_payment_or_refund( 'edit' );

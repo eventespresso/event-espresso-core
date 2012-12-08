@@ -282,12 +282,12 @@ class EE_Transaction {
 
 
 	/**
-	*		Set session data
+	*		Set session data within the TXN object
 	* 
 	* 		@access		public		
 	*		@param		string		$details 		dump off the entire session object 
 	*/	
-	public function set_session_data( $session_data = FALSE ) {
+	public function set_txn_session_data( $session_data = FALSE ) {
 		
 		if ( ! $session_data ) {
 			global $espresso_notices;

@@ -11,34 +11,42 @@
 					<th class="jst-rght"><?php _e( 'Price Paid', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Email', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Address', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Actions', 'event_espresso' );?></th>
 				</tr>
 			</thead>
 			<tbody>
-	<?php foreach ( $event_attendees as $event_name => $attendees ) : ?>
-	<?php //echo printr( $attendee, 'attendee' ); ?>
-		<?php foreach ( $attendees as $attendee ) : ?>
-			<?php foreach ( $attendee as $att_nmbr => $att_details ) : ?>
-				<?php //echo printr( $att_detail, '$att_detail' ); ?>
+		<?php foreach ( $event_attendees as $event => $attendees ) : ?>
+			<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
+				<?php //echo printr( $attendee, '$attendee' ); 
+					$att = $attendee['att_obj'];
+					$reg = $attendee['reg_obj'];
+				?>
 				<tr>
 					<td class="jst-left"><?php echo$att_nmbr;?></td>
-					<td class="jst-left"><?php echo $event_name;?></td>
-					<td class="jst-left"><?php echo $att_details['fname'] . ' ' . $att_details['lname'];?></td>
-					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $att_details['price_paid'], 2 );?></td>
-					<td class="jst-left"><?php echo $att_details['email'];?></td>
+					<td class="jst-left"><?php echo $event;?></td>
+					<td class="jst-left">
+						<?php 
+						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee['fname'];
+						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee['lname'];
+						$att_link = wp_nonce_url( add_query_arg( array( 'action'=>'edit_attendee', 'id'=>$att->ID() ), ATT_ADMIN_URL ), 'edit_attendee_nonce' ); 
+						?>
+						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
+							<?php echo $attendee_name;?>
+						</a>					
+					</td>
+					<?php $price_paid = is_object( $reg ) && $reg->price_paid() != '' ? $reg->price_paid() : $attendee['price_paid']; ?>
+					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $price_paid, 2 );?></td>
+					<td class="jst-left"><?php echo $att->email() != '' ? $att->email() : $attendee['email'];?></td>
 					<td class="jst-left">
 						<?php
-							echo isset( $att_details['address'] ) ? $att_details['address'] . ', ' : '';
-							echo isset( $att_details['city'] ) ? $att_details['city'] . ', ' : '';
-							echo isset( $att_details['state'] ) ? $att_details['state'] . ', ' : '';
-							echo isset( $att_details['zip'] ) ? $att_details['zip']  : '';
+							echo $att->address() != '' ? $att->address() . ', ' : '';
+							echo $att->city() != '' ? $att->city() . ', ' : '';
+							echo $att->state_ID() != '' ? $att->state_ID() . ', ' : '';
+							echo $att->zip();
 						?>
 					</td>
-					<th class="jst-cntr"><a href="" title="View details for this attendee">view</a></th>
 				</tr>
-			<?php endforeach; // $attendee?>
-		<?php endforeach; // $attendees?>
-	<?php endforeach; // $event_attendees?>
+			<?php endforeach; // $attendees?>
+		<?php endforeach; // $event_attendees?>
 			</tbody>
 		</table>
 	</div>

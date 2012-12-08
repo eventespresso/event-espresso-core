@@ -57,7 +57,8 @@ class EEM_Attendee extends EEM_Base {
 			'ATT_phone'			=> '%s',
 			'ATT_social'				=> '%s',
 			'ATT_comments'		=> '%s',
-			'ATT_notes'				=> '%s'
+			'ATT_notes'				=> '%s',
+			'ATT_deleted'			=> '%d'
 		);
 		// load Attendee object class file
 		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Attendee.class.php');
@@ -115,6 +116,7 @@ class EEM_Attendee extends EEM_Base {
 						$attendee->ATT_social,
 						$attendee->ATT_comments,
 						$attendee->ATT_notes,
+						$attendee->ATT_deleted,
 						$attendee->ATT_ID
 				 	);
 		}	
@@ -131,17 +133,17 @@ class EEM_Attendee extends EEM_Base {
 	* 		@access		public
 	*		@return 		mixed		array on success, FALSE on fail
 	*/	
-	public function get_all_attendees() {
+	public function get_all_attendees( $orderby = 'ATT_lname', $sort = 'ASC' ) {
 	
-		$orderby = 'ATT_lname';
 		// retreive all attendees	
-		if ( $attendees = $this->select_all ( $orderby )) {
+		if ( $attendees = $this->select_all ( $orderby, $sort )) {
 			return $this->_create_objects( $attendees );
 		} else {
 			return FALSE;
 		}
 		
 	}
+
 
 
 
@@ -251,6 +253,40 @@ class EEM_Attendee extends EEM_Base {
 		return $this->_update( $this->table_name, $this->table_data_types, $set_column_values, $where_cols_n_values );	
 	}
 
+
+
+
+	/**
+	*		delete  a single attendee from db via their ID
+	* 
+	* 		@access		public
+	* 		@param		$ATT_ID		
+	*		@return 		mixed		array on success, FALSE on fail
+	*/	
+	public function delete_attendee_by_ID( $ATT_ID = FALSE ) {
+
+		if ( ! $ATT_ID ) {
+			return FALSE;
+		}
+		
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Registration.model.php');
+		$REG_MDL = EEM_Registration::instance();
+		//check if the attendee is associated with any registrations
+		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID )) {
+			global $espresso_notices;
+			$espresso_notices['errors'][] = __('The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso');
+			return FALSE;
+		} 
+				
+		// retreive a particular transaction
+		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
+		if ( $attendee = $this->delete ( $where_cols_n_values )) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+
+	}
 
 
 

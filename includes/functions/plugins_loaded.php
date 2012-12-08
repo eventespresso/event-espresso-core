@@ -16,11 +16,11 @@ function espresso_define_tables_and_paths() {
 	
 	// add ESPRESSO directories to include_path
 	set_include_path(
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'core' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'models' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'classes' . DS . PS .
-		dirname( __FILE__ ) . DS . 'includes' . DS . 'functions' . DS . PS .
-		dirname( __FILE__ ) . DS . 'gateways' . DS . PS .
+		dirname(espresso_main_file()) . DS . 'includes' . DS . 'core' . DS . PS .
+		dirname(espresso_main_file()) . DS . 'includes' . DS . 'models' . DS . PS .
+		dirname(espresso_main_file()) . DS . 'includes' . DS . 'classes' . DS . PS .
+		dirname(espresso_main_file()) . DS . 'includes' . DS . 'functions' . DS . PS .
+		dirname(espresso_main_file()) . DS . 'gateways' . DS . PS .
 		get_include_path()
 	);
 	
@@ -184,16 +184,7 @@ function espresso_EE_Session() {
 	// instantiate !!!
 	$EE_Session = EE_Session::instance();
 	if (!empty($_POST['clear_cart'])) {
-		$EE_Session->reset_data(array(
-				'cart',
-				'gateway_data', 
-				'transaction', 
-				'registration',
-				'primary_attendee',
-				'tax_totals',
-				'taxes',
-				'billing_info'
-				));
+		espresso_clear_session();
 	}
 }
 
@@ -201,6 +192,38 @@ function espresso_EE_Session() {
 
 
 
+/**
+ * 		Clear EE_Session data
+ *
+ * 		@access public
+ * 		@return void
+ */
+function espresso_clear_session() {
+	global $EE_Session;
+	$EE_Session->reset_data(
+		array(
+			'cart',
+			'gateway_data', 
+			'transaction', 
+			'registration',
+			'primary_attendee',
+			'tax_totals',
+			'taxes',
+			'billing_info'
+		)
+	);
+}
+
+
+
+
+
+/**
+ * 		Initialize Event Espresso
+ *
+ * 		@access public
+ * 		@return void
+ */
 function espresso_init() {
 
 //	echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';

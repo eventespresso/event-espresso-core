@@ -1105,9 +1105,9 @@ class EE_Single_Page_Checkout {
 					// create array for query where statement
 					$where_cols_n_values = array('ATT_fname' => $ATT_fname, 'ATT_lname' => $ATT_lname, 'ATT_email' => $ATT_email);
 					// do we already have an existing record for this attendee ?
-					$existing_attendee = $ATT->find_existing_attendee($where_cols_n_values);
-					if ($existing_attendee) {
+					if ( $existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values )) {
 						$ATT_ID = $existing_attendee->ID();
+						$att[$att_nmbr] = $existing_attendee;
 					} else {
 						// create attendee
 						$att[$att_nmbr] = new EE_Attendee(
@@ -1127,6 +1127,9 @@ class EE_Single_Page_Checkout {
 						$att_results = $att[$att_nmbr]->insert();
 						$ATT_ID = $att_results['new-ID'];
 					}
+					
+					// add attendee object to attendee info in session
+					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = $att[$att_nmbr];
 
 					$DTT_ID = $event['options']['dtt_id'];
 					$PRC_ID = $event['options']['price_id'];
@@ -1189,10 +1192,13 @@ class EE_Single_Page_Checkout {
 													$is_group_reg,
 													FALSE,
 													FALSE
-					);
+							);
 					//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
 
 					$reg[$line_item_id]->insert();
+
+					// add attendee object to attendee info in session
+					$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = $reg[$line_item_id];
 
 					// add registration id to session for the primary attendee
 					if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
@@ -1200,19 +1206,28 @@ class EE_Single_Page_Checkout {
 						$primary_attendee['registration_id'] = $new_reg_code;
 						$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 					}
+					
+					$EE_Session->set_session_data( $session['cart'] );
+					
 				}
 			}
-
+			
+			$transaction->set_txn_session_data( $session );
+			$transaction->update();
 			$EE_Session->set_session_data(array( 'registration' => $reg, 'transaction' => $transaction ), 'session_data');
 
-//			$session2 = $EE_Session->get_session_data();
-//			printr( $session2, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+//			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+//			die();
 
 			// attempt to perform transaction via payment gateway
 				$response = $this->gateways->process_reg_step_3();
 				$this->_return_page_url = $response['forward_url'];
 				$success_msg = $response['msg']['success'];
 		}
+		
+		$session = $EE_Session->get_session_data();
+		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
+		//die();
 		
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
 				wp_safe_redirect($this->_return_page_url);

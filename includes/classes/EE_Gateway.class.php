@@ -248,13 +248,14 @@ abstract class EE_Gateway {
 
 	private function _set_session_data() {
 		global $EE_Session;
-		$EE_Session->set_session_data(array(
-				$this->_gateway => array(
-						'form_url' => $this->_form_url,
-						'selected' => $this->_selected,
-						'css_class' => $this->_css_class,
-						'css_link_class' => $this->_css_link_class
-				)
+		$EE_Session->set_session_data(
+				array(
+							$this->_gateway => array(
+									'form_url' => $this->_form_url,
+									'selected' => $this->_selected,
+									'css_class' => $this->_css_class,
+									'css_link_class' => $this->_css_link_class
+							)
 						), 'gateway_data');
 	}
 
@@ -316,7 +317,8 @@ abstract class EE_Gateway {
 
 		// grab session data
 		$session = $EE_Session->get_session_data();
-		//printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+		//printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
+		//die();
 
 		$transaction = $session['transaction'];
 		$txn_results = $session['txn_results'];
@@ -352,7 +354,7 @@ abstract class EE_Gateway {
 				break;
 		}
 		
-		$txn_status = 'TOP';
+		$txn_status = 'TPN';
 		
 		// did transaction require payment now ? later ? or was it free ?
 		if ( $transaction->total() > 0 ) {
@@ -396,7 +398,7 @@ abstract class EE_Gateway {
 		$transaction->set_status($txn_status);
 		$transaction->set_details( $txn_results );
 		unset( $session['transaction'] );
-		$transaction->set_session_data( $session );
+		$transaction->set_txn_session_data( $session );
 
 		if (isset($txn_results['md5_hash'])) {
 			$transaction->set_hash_salt($txn_results['md5_hash']);
@@ -411,7 +413,8 @@ abstract class EE_Gateway {
 
 //printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 //die();
-
+//		printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+//		die();
 
 	}
 
