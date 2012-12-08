@@ -283,7 +283,7 @@ class EEM_Transaction extends EEM_Base {
 
 		global $wpdb;
 		
-		$SQL = 'SELECT att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';		
+		$SQL = 'SELECT att.ATT_fname, att.ATT_lname, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID, txn.TXN_details ';		
 
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';

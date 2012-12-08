@@ -240,6 +240,7 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 
         //Build row actions	
 		$view_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_transaction', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'view_transaction_nonce' );
+		$dl_invoice_lnk_url = add_query_arg( array( 'invoice_launch'=>'true', 'id'=>$item['REG_url_link'] ), home_url() );
 		$view_reg_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'view_registration', 'reg'=>$item['REG_ID'] ), admin_url( 'admin.php?page=registrations' )), 'view_registration_nonce' );
 		$send_pay_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'send_payment_reminder', 'txn'=>$item['TXN_ID'] ), TXN_ADMIN_URL ), 'send_payment_reminder_nonce' );
 		
@@ -253,8 +254,8 @@ class EE_Admin_Transactions_List_Table extends WP_List_Table {
 		
          $dl_invoice_lnk = '
 		<li>
-			<a title="Download Invoice" target="_blank" href="http://localhost/EVENT_ESPRESSO/?invoice_launch=true&id=&r_id=43653465634&html=true&admin=true">
-				<img width="16" height="16" alt="Download Invoice" src="http://localhost/EVENT_ESPRESSO/wp-content/plugins/event-espresso.svn/images/icons/invoice-1-16x16.png">
+			<a title="Download Invoice" target="_blank" href="'.$dl_invoice_lnk_url.'">
+				<img width="16" height="16" alt="Download Invoice" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/icons/invoice-1-16x16.png">
 			</a>
 		</li>';
       
