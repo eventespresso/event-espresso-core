@@ -14,12 +14,13 @@
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ( $event_attendees as $event => $attendees ) : ?>
-			<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
-				<?php //echo printr( $attendee, '$attendee' ); 
-					$att = $attendee['att_obj'];
-					$reg = $attendee['reg_obj'];
-				?>
+		<?php if ( isset( $event_attendees ) && is_array( $event_attendees )) : ?>
+			<?php foreach ( $event_attendees as $event => $attendees ) : ?>
+				<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
+					<?php //echo printr( $attendee, '$attendee' ); 
+						$att = $attendee['att_obj'];
+						$reg = $attendee['reg_obj'];
+					?>
 				<tr>
 					<td class="jst-left"><?php echo$att_nmbr;?></td>
 					<td class="jst-left"><?php echo $event;?></td>
@@ -45,8 +46,9 @@
 						?>
 					</td>
 				</tr>
-			<?php endforeach; // $attendees?>
-		<?php endforeach; // $event_attendees?>
+				<?php endforeach; // $attendees?>
+			<?php endforeach; // $event_attendees?>
+		<?php endif; // isset( $event_attendees )?>
 			</tbody>
 		</table>
 	</div>
