@@ -538,6 +538,11 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 			$espresso_notices['errors'][] = 'An error occured. No event details were submitted. Could not add to cart';
 			return FALSE;
 		}
+		// make sure cart is loaded
+		if (!defined('ESPRESSO_CART')) {
+			require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Cart.class.php');
+			$EE_Cart = EE_Cart::instance();
+		}
 
 		$event['options'] = isset($event['options']) ? $event['options'] : '';
 

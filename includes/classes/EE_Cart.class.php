@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-/**
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * Event Espresso
  *
@@ -98,6 +98,7 @@
 	 */	
   private function __construct() {
  
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 
 		if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
@@ -162,6 +163,7 @@
 	 */	
 	private function default_cart() {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$extra_default_empty_cart_vars = array();
 		// filter hook allows outside functions/classes/plugins to change default empty cart
 		$extra_default_empty_cart_vars = apply_filters( 'filter_hook_espresso_default_empty_cart', $extra_default_empty_cart_vars );		
@@ -181,6 +183,7 @@
 	 */	
 	private function initialize_cart() {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';	
 		global $EE_Session;
 		
@@ -224,6 +227,7 @@
 	 */	
 	public function add_to_cart( $which_cart = 'REG', $items = FALSE ) {
 			
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$save_cart = FALSE;
 
@@ -272,6 +276,7 @@
 	 */	
 	private function _add_item( $which_cart = 'REG', $item ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'item' => $item )); 
@@ -361,6 +366,7 @@
 	 */	
 	public function calculate_cart_totals( $which_cart ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
 		
@@ -416,6 +422,7 @@
 	 */	
 	public function calculate_cart_grand_total( ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->_cart_grand_total_qty = 0;
 		$this->_cart_grand_total_amount = 0;
 		
@@ -445,6 +452,7 @@
 	 */	
 	public function get_cart_grand_totals() {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->calculate_cart_grand_total();
 
 		$cart_grand_totals = array();
@@ -468,6 +476,7 @@
 	 */	
 	public function edit_qty( $which_cart = FALSE, $line_item_id = FALSE, $new_qty = FALSE ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$updates = 0;
 
 		// check for a valid cart properties
@@ -525,6 +534,7 @@
 	 */	
 	public function remove_from_cart( $which_cart = FALSE, $line_item_ids = FALSE ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_ids' => $line_item_ids )); 
@@ -568,6 +578,7 @@
 	 */	
 	public function remove_event_from_cart( $which_cart = FALSE, $line_item_ids = FALSE ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_ids' => $line_item_ids )); 	
 	
@@ -623,6 +634,7 @@
 	 */	
 	public function empty_cart( $return_url = FALSE, $which_cart = 'REG' ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
@@ -688,6 +700,7 @@
 	 */	
 	public function is_event_in_cart( $event_id, $which_cart = 'REG', $section = 'espresso' ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		$session_data =  $this->get_session_data($which_cart);
 //		$events_in_cart = $session_data['event_id_list'];
 		
@@ -717,6 +730,7 @@
 	 */	
 	public function is_in_cart( $item_id, $which_cart = 'REG', $section = 'espresso'  ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
 		
@@ -774,6 +788,7 @@
 	 */	
 	public function whats_in_the_cart( $which_cart = 'REG', $line_item_id = FALSE ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		// check that the passed properties are valid
 		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_id' => $line_item_id )); 
@@ -797,6 +812,7 @@
 	 */	
 	public function _save_cart() {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';		
 		//echo $this->session->pre_r($this->cart);
 		global $EE_Session;
@@ -832,6 +848,7 @@
 	 */	
 	private function _clean_cart() {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		foreach ( $this->cart as $which_cart => $cart ) {
 		if ( isset( $cart['items'] ) && ! empty( $cart['items'] ) ) {
 				foreach ( $cart['items'] as $items ) {
@@ -876,6 +893,7 @@
 	*/	
 	private function _verify_cart_properties ( $properties = array() ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_notices;
 		
 		// WHAT?!?!! check the validity of properties before you validate them ?!?!? geez... my head hurts
@@ -968,6 +986,7 @@
 	*/	
 	public function get_item_id( $line_item_id = FALSE, $which_cart = 'REG' ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! $this->_verify_cart_properties ( array( 'line_item_id' => $line_item_id , 'which_cart' => 'REG' ))) {
 			return FALSE;
 		}
@@ -987,6 +1006,7 @@
 	*/	
 	public function get_cart_event_id_list( $which_cart = 'REG' ) {
 	
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! $this->_verify_cart_properties ( array( 'which_cart' => 'REG' ))) {
 			return FALSE;
 		}
@@ -1006,6 +1026,7 @@
 	*/	
 	public function add_to_cart_event_id_list( $which_cart = 'REG', $event_id = FALSE ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! $this->_verify_cart_properties ( array( 'which_cart' => 'REG', 'event_id' => $event_id ))) {
 			return FALSE;
 		}
@@ -1025,6 +1046,7 @@
 	*/	
 	public function remove_from_cart_event_id_list( $which_cart = 'REG', $event_id = FALSE ) {
 		
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if ( ! $this->_verify_cart_properties ( array( 'which_cart' => 'REG', 'event_id' => $event_id ))) {
 			return FALSE;
 		}
@@ -1070,6 +1092,7 @@
 	*/	
 	public function set_events_in_cart_list( $event_id = FALSE ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		// check $event_id 
 		if ( ! $this->_verify_cart_properties ( array( 'event_id' => $event_id ))) {
 			return FALSE;
@@ -1094,6 +1117,7 @@
 	*/	
 	public function unset_events_in_cart_list( $event_id = FALSE ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_notices;		
 		// check $event_id 
 		if ( ! $event_id or ! is_int( $event_id )) {
@@ -1154,6 +1178,7 @@
 	*/	
 	public function set_line_item_details( $extra_details = FALSE, $line_item_id = FALSE, $which_cart = 'REG'  ) {
 
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		global $espresso_notices;		
 
 		// check $extra_details

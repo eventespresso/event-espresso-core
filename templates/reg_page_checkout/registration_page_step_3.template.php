@@ -11,6 +11,8 @@
 	
 			<input type="hidden" id="mer-reg-page-step-3-action" name="ajax_action" value="espresso_process_registration_step_3" />		
 			<input type="hidden" id="mer-reg-page-step-3-ajax" name="espresso_ajax" value="0" />		
+			<input type="hidden" id="mer-reg-page-step-3-noheader" name="noheader" value="" />		
+			
 <?php	if ( ! $payment_required ) { ?>
 			<input type="hidden" id="reg-page-no-payment-required-step-3" name="reg-page-no-payment-required" value="1" />
 <?php } ?>

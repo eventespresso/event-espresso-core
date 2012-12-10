@@ -1,6 +1,7 @@
 <?php
 
 function espresso_ical() {
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
 	$name = $_REQUEST['event_summary'] . ".ics";
 	$output = "BEGIN:VCALENDAR\n" .
 					"PRODID:-//xyz Corp//NONSGML PDA Calendar Version 1.0//EN\n" .

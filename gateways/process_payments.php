@@ -1,4 +1,5 @@
-<?php
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action('action_hook_espresso_log', __FILE__, ' FILE LOADED', '' );
 /**
  * 		event_espresso_txn
  *
@@ -6,6 +7,7 @@
  * 		@return 		void
  */
 function event_espresso_txn() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	global $wpdb, $org_options, $espresso_wp_user, $payment_settings;
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
@@ -53,6 +55,7 @@ add_shortcode('ESPRESSO_TXN_PAGE', 'event_espresso_txn');
  * 		@return 		void
  */
 function deal_with_ideal() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	if (!empty($_POST['bank_id'])) {
 		$active_gateways = get_option('event_espresso_active_gateways', array());
 		if (!empty($active_gateways['ideal'])) {
@@ -77,6 +80,7 @@ add_action('wp_loaded', 'deal_with_ideal');
  * 		@return 		void
  */
 function espresso_email_after_payment($payment_data) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	global $org_options;
 	if ($payment_data->payment_status == 'Completed') {
 		event_espresso_send_payment_notification(array('attendee_id' => $payment_data->attendee_id));
@@ -98,6 +102,7 @@ function espresso_email_after_payment($payment_data) {
  * 		@return 		void
  */
 function espresso_mail_successful_transaction_debugging_output() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	global $EE_Session, $org_options;
 	$session_data = $EE_Session->get_session_data();
 
@@ -122,6 +127,7 @@ add_action('action_hook_espresso_mail_successful_transaction_debugging_output', 
  * 		@return 		void
  */
 function espresso_mail_failed_transaction_debugging_output() {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	global $EE_Session, $org_options;
 	$session_data = $EE_Session->get_session_data();
 	$subject = 'Instant Payment Notification - Gateway Variable Dump';

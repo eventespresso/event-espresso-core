@@ -1,5 +1,4 @@
-<?php
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * * Singleton logging class. Can be called from anywhere in the plugin to log data to a log file.
  * * Defaults to wp-content/uploads/espresso/logs/espresso_log.txt
@@ -48,7 +47,7 @@ class espresso_log {
 	public function log($message) {
 		if (is_writable($this->file)) {
 			$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
-			fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
+			fwrite($fh, '[' . date("m.d.y H:i:s") . '], ' . basename($message['file']) . ' ->' . $message['function'] . ',  ' . $message['status'] . "\n");
 			fclose($fh);
 		} else {
 			global $notices;
@@ -60,7 +59,7 @@ class espresso_log {
 		global $remote_log;
 		if (empty($remote_log))
 			$remote_log = '';
-		$remote_log .= '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n";
+		$remote_log .= '[' . date("m.d.y H:i:s") . '], ' . basename($message['file']) . ' -> ' . $message['function'] . ',  ' . $message['status'] . "\n";
 	}
 
 	public function send_log($url) {
@@ -164,3 +163,46 @@ function espresso_debug_file() {
 		$notices['errors'][] = sprintf(__('Your debug file is not writable. Check if your server is able to write to %s.', 'event_espresso'), $file);
 	}
 }
+
+
+$hookpoints = array(
+		'setup_theme	',
+		'after_setup_theme',
+		'set_current_user',
+		'init',
+		'widgets_init',
+		'wp_default_scripts',
+		'wp_default_styles',
+		'admin_bar_init',
+		'add_admin_bar_menus',
+		'wp_loaded',
+		'parse_request',
+		'send_headers',
+		'parse_query',
+		'pre_get_posts',
+		'posts_selection',
+		'wp',
+		'template_redirect',
+		'get_header',
+		'wp_head',
+		'wp_enqueue_scripts',
+		'wp_print_styles',
+		'wp_print_scripts',
+		'get_sidebar',
+		'pre_get_posts',
+		'pre_get_comments',
+		'wp_meta',
+		'get_footer',
+		'get_sidebar',
+		'wp_footer',
+		'wp_print_footer_scripts',
+		'admin_bar_menu',
+		'wp_before_admin_bar_render',
+		'wp_after_admin_bar_render',
+		'shutdown'
+	);
+	
+	foreach ( $hookpoints as $hookpoint ) {
+		$mark_hookpoint = create_function('$hookpoint', 'do_action("action_hook_espresso_log", "HOOK", "'.$hookpoint.'", "" );');
+		add_action( $hookpoint, $mark_hookpoint, 1 );		
+	}

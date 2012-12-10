@@ -11,6 +11,7 @@
 
 			<input type="hidden" id="mer-reg-page-step-2-action" name="ajax_action" value="espresso_process_registration_step_2" />
 			<input type="hidden" id="mer-reg-page-step-2-ajax" name="espresso_ajax" value="0" />
+			<input type="hidden" id="mer-reg-page-step-2-noheader" name="noheader" value="" />		
 
 <?php
 		if ( $events_requiring_pre_approval != '' ) { ?>

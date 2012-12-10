@@ -15,6 +15,7 @@
 	
 			<input type="hidden" id="mer-reg-page-step-1-action" name="ajax_action" value="espresso_process_registration_step_1" />		
 			<input type="hidden" id="mer-reg-page-step-1-ajax" name="espresso_ajax" value="0" />		
+			<input type="hidden" id="mer-reg-page-step-1-noheader" name="noheader" value="" />		
 						
 <?php
 	global $css_class;
