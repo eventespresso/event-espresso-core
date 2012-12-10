@@ -343,34 +343,39 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		global $org_options, $EE_Session;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		$session_data = $EE_Session->get_session_data();
+
+		// Enable test mode if needed
 		if ($this->_payment_settings['test_transactions']) {
-			// Enable test mode if needed
 			$this->addField('x_Test_Request', 'TRUE');
 		}
+		// Enable test mode if needed
 		if ($this->_payment_settings['use_sandbox']) {
-			// Enable test mode if needed
 			$this->_gatewayUrl = 'https://test.authorize.net/gateway/transact.dll';
 		}
 
-		$item_num = 1;
+		$session_data = $EE_Session->get_session_data();
 		$registrations = $session_data['cart']['REG']['items'];
+
+		$item_num = 1;
 		foreach ($registrations as $registration) {
-			foreach ($registration['attendees'] as $attendee) {
-				$this->_x_line_items[] = 'item' . $item_num . '<|>' . $registration['name'] . '<|>' . $attendee['fname'] . ' ' . $attendee['lname'] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'] . '<|>1<|>' . $attendee['price_paid'] . '<|>N&';
+			foreach ($registration['attendees'] as $attendee) {			
+				$item_name = substr( $registration['name'], 0, 31 );
+				$item_desc = substr( $attendee['fname'] . ' ' . $attendee['lname'] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
+				$this->_x_line_items[] = $item_num . '<|>' . $item_name . '<|>' . $item_desc . '<|>1<|>' . $attendee['price_paid'] . '<|>N&';
+				$item_num++;				
+			}
+		}
+
+		if (isset($session_data['tax_totals'])) {
+			foreach ($session_data['tax_totals'] as $key => $taxes) {
+				$total = $total + $taxes;
+				$this->_x_line_items[] = $item_num . '<|>' . $session_data['taxes'][$key]['name'] . '<|> <|>1<|>' . $taxes . '<|>N&';
 				$item_num++;
 			}
 		}
 
 		$total = $session_data['_cart_grand_total_amount'];
-		if (isset($session_data['tax_totals'])) {
-			foreach ($session_data['tax_totals'] as $key => $taxes) {
-				$total = $total + $taxes;
-				$this->_x_line_items[] = 'item' . $item_num . '<|>' . $session_data['taxes'][$key]['name'] . '<|>' . 'Tax' . '<|>1<|>' . $taxes . '<|>N&';
-				$item_num++;
-			}
-		}
-
+		
 		$this->_x_post_fields['x_Relay_URL'] = home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment';
 		$this->_x_post_fields['x_Amount'] = number_format($total, 2);
 		$this->_x_post_fields['x_Logo_URL'] = $this->_payment_settings['image_url'];
@@ -378,6 +383,8 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$this->_x_post_fields['x_fp_timestamp'] = time();
 		$this->_x_post_fields['x_Login'] = $this->_payment_settings['authnet_login_id'];
 		$this->_x_post_fields['x_fp_sequence'] = 'au-' . $session_data['id'];
+		$ip_address = explode( ':', $session_data['ip_address'] );
+		$this->_x_post_fields['ip_address'] = substr( $ip_address[0], 0, 15 );
 		$data = $this->_payment_settings['authnet_login_id'] . '^' . $this->_x_post_fields['x_Invoice_num'] . '^' . $this->_x_post_fields['x_fp_timestamp'] . '^' . $this->_x_post_fields['x_Amount'] . '^';
 		if (phpversion() >= '5.1.2') {
 			$this->_x_post_fields['x_fp_hash'] = hash_hmac("md5", $data, $this->_payment_settings['authnet_transaction_key']);
