@@ -1016,12 +1016,13 @@ function espresso_event_editor_email_metabox($event) {
 	$tabs = array();
 
 	//get content for active messengers
-	foreach ( $active_messengers as $name -> $messenger ) {
+	foreach ( $active_messengers as $name => $messenger ) {
 		$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event_id' => $event) );
 	}
 
 	//todo: need to require the helper file here.
-	//we want this to be tabbed content so let's use the EE_Admin_Screen_Helper::tabbed_content utility.
+	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Tabbed_Content.helper.php');
+	//we want this to be tabbed content so let's use the EE_Tabbed_Content::display helper.
 	$tabbed_content = EE_Tabbed_Content::display($tabs);
 	if ( is_wp_error($tabbed_content) ) {
 		$tabbed_content = $tabbed_content->get_error_message();
@@ -1071,7 +1072,7 @@ function espresso_register_event_editor_meta_boxes() {
 
 	add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), 'espresso_event_editor_venue_metabox', 'toplevel_page_events', 'normal', 'core');
 
-	add_meta_box('espresso_event_editor_email', __('Email Confirmation:', 'event_espresso'), 'espresso_event_editor_email_metabox', 'toplevel_page_events', 'advanced', 'core');
+	add_meta_box('espresso_event_editor_email', __('Message Notifications:', 'event_espresso'), 'espresso_event_editor_email_metabox', 'toplevel_page_events', 'advanced', 'core');
 
 	add_meta_box('espresso_event_editor_quick_overview', __('Quick Overview', 'event_espresso'), 'espresso_event_editor_quick_overview_meta_box', 'toplevel_page_events', 'side', 'high');
 

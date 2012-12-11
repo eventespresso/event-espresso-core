@@ -53,8 +53,8 @@ class EE_Tabbed_Content {
 		}
 		
 		//make sure we've got incoming data setup properly
-		$tabs = !empty( $tabs_names ) ? (array) $tabs_names : array_keys( (array) $tabs_content );
-		$tabs_content = !empty( $tabs_names ) ? array_combine( (array) $tabs_names, (array) $tabs_content ) : $tabs_content;
+		$tabs = !empty( $tabs_names ) ? (array) $tabs_names : array_keys( (array) $tabs_contents );
+		$tabs_content = !empty( $tabs_names ) ? array_combine( (array) $tabs_names, (array) $tabs_content ) : $tabs_contents;
 
 		$all_tabs = '<ul class="ee-nav-tab-wrapper nav-tab-wrapper">' . "\n";
 		$all_tabs_content = '';
@@ -76,8 +76,8 @@ class EE_Tabbed_Content {
 	 */
 	static function tab($name) {
 		$name = str_replace(' ', '-', $name);
-		$nice_name = uc_words( preg_replace('/(-|_)/', ' ', $name) );
-		$tab = '<li><a href="#' . $name . '">' . $nice_name . '</a></li>' . "\n\t";
+		$nice_name = ucwords( preg_replace('/(-|_)/', ' ', $name) );
+		$tab = '<li><a href="#ee-tab-' . $name . '">' . $nice_name . '</a></li>' . "\n\t";
 		return $tab;
 	}
 
@@ -87,10 +87,10 @@ class EE_Tabbed_Content {
 	 * @param  string $content content of tab
 	 * @return string          html for content area
 	 */
-	static function tab_content($name, $content) {
+	static function tab_content($name, $tab_content) {
 		$name = str_replace( ' ', '-', $name);
-		$content = "\t" . '<div id="' . $name . '">' . "\n";
-		$content .= $content . "\n";
+		$content = "\t" . '<div id="ee-tab-' . $name . '">' . "\n";
+		$content .= "\t" . $tab_content . "\n";
 		$content .= '</div>';
 		return $content;
 	}

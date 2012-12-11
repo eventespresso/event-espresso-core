@@ -487,6 +487,11 @@ jQuery(document).ready(function($) {
 		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().next().find('.edit-ticket-price-dates').slideUp().parent().animate({ 'padding-top' : '0', 'padding-bottom' : '0' }, 250);
 	});
 
+	/*
+	Tabs for Messages box on Event Editor Page
+	 * todo: this will need to be more dynamic (and have the EE_Tabbed_Content helper setup the correct call for the tabs)
+	 */
+	 $('#ee-tab-email').tabs();
 
 });
 

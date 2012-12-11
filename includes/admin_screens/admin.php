@@ -110,7 +110,7 @@ function event_espresso_config_page_scripts() {
 		$load_datepicker = TRUE;
 		$load_datetimepicker = TRUE;
 		$load_dataTables_and_ColVis = TRUE;
-		wp_register_script('event_editor_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_editor.js"), '', '', true);
+		wp_register_script('event_editor_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_editor.js"), array('jquery-ui-tabs'), '', true);
 		wp_enqueue_script('event_editor_js');
 	}
 
