@@ -375,7 +375,7 @@ function espresso_calendar_do_stuff($show_expired) {
 
 		// Add thumb to eventArray
 		$eventArray['event_img_thumb'] = '';
-		if ($espresso_calendar['enable_calendar_thumbs'] == true) {
+		if (isset($espresso_calendar['enable_calendar_thumbs']) && $espresso_calendar['enable_calendar_thumbs'] == true) {
 			if (isset($event_meta['event_thumbnail_url'])) {
 				$calendar_thumb = $event_meta['event_thumbnail_url'];
 				//Debug:
@@ -393,10 +393,10 @@ function espresso_calendar_do_stuff($show_expired) {
 			//Debug
 			//var_dump($category_data);
 			//This is the class
-			$eventArray['className'] = $category_data['category_identifier'];
+			$eventArray['className'] = isset($category_data['category_identifier']) && !empty($category_data['category_identifier']) ? $category_data['category_identifier'] : '';
 
 			//This can be used to use the category id as the event type
-			$eventArray['eventType'] = $category_data['category_name'];
+			$eventArray['eventType'] = isset($category_data['category_name']) && !empty($category_data['category_name']) ? $category_data['category_name'] : '';
 		}//end if user enabled cat for classes
 		//End custom fields
 		//If set to true, events will be shown as all day events

@@ -436,7 +436,7 @@ function espresso_calendar_basic_settings_metabox($espresso_calendar) {
 							?>
 						</label>
 					</th>
-					<td><?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"'); ?>
+					<td><?php echo select_input('enable_calendar_thumbs', $values, isset($espresso_calendar['enable_calendar_thumbs']) && !empty($espresso_calendar['enable_calendar_thumbs']) ?  $espresso_calendar['enable_calendar_thumbs']: 0, 'id="enable-calendar-thumbs"'); ?>
 						</li></td>
 				</tr>
 			</tbody>

@@ -220,7 +220,7 @@ function espresso_calendar_config_mnu() {
 	<?php _e('Page(s) Displaying the Calendar', 'event_espresso'); ?>
 											</label>
 										</th>
-										<td><input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo $espresso_calendar['calendar_pages'] == '' ? 0 : $espresso_calendar['calendar_pages']; ?>" />
+										<td><input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo isset($espresso_calendar['calendar_pages']) && !empty($espresso_calendar['calendar_pages']) ? $espresso_calendar['calendar_pages'] : 0; ?>" />
 											<br />
 											<span class="description">
 	<?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma seperated list of page ids.', 'event_espresso'); ?>
@@ -241,7 +241,7 @@ function espresso_calendar_config_mnu() {
 	<?php _e('Enable Images in Calendar', 'event_espresso'); ?>
 											</label>
 										</th>
-										<td><?php echo select_input('enable_calendar_thumbs', $values, $espresso_calendar['enable_calendar_thumbs'], 'id="enable-calendar-thumbs"'); ?>
+										<td><?php echo select_input('enable_calendar_thumbs', $values, isset($espresso_calendar['enable_calendar_thumbs']) && !empty($espresso_calendar['enable_calendar_thumbs']) ?  $espresso_calendar['enable_calendar_thumbs']: 0, 'id="enable-calendar-thumbs"'); ?>
 											</li></td>
 									</tr>
 								</tbody>
