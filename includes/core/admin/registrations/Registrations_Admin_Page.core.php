@@ -324,29 +324,32 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		$cart_items = $this->_session['cart']['REG']['items'];
 		$this->template_args['items'] = array();
 		$exclude = array( 'attendees' );
-
-		foreach ( $cart_items as $line_item_ID => $item ) {
-			foreach ( $item as $key => $value ) {
-				if ( ! in_array( $key, $exclude )) {
-					if ( $key == 'options' ) {
-						$options = $value;
-						foreach ( $options as $opt => $option ) {
-							if ( $opt == 'date' ) {
-								$option = strtotime( $option );
-							} else if  ( $opt == 'time' ) {
-								$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
-								$option = strtotime( $option . ' ' . $ampm );
+		
+		if ( ! empty( $cart_items )) {
+			foreach ( $cart_items as $line_item_ID => $item ) {
+				foreach ( $item as $key => $value ) {
+					if ( ! in_array( $key, $exclude )) {
+						if ( $key == 'options' ) {
+							$options = $value;
+							foreach ( $options as $opt => $option ) {
+								if ( $opt == 'date' ) {
+									$option = strtotime( $option );
+								} else if  ( $opt == 'time' ) {
+									$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
+									$option = strtotime( $option . ' ' . $ampm );
+								}
+								$this->template_args['items'][ $item['name'] ][ $opt ] = $option;
 							}
-							$this->template_args['items'][ $item['name'] ][ $opt ] = $option;
+						} else {
+							$this->template_args['items'][ $item['name'] ][ $key ] = $value;
 						}
 					} else {
-						$this->template_args['items'][ $item['name'] ][ $key ] = $value;
+						$this->template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
 					}
-				} else {
-					$this->template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
 				}
 			}
 		}
+
 
 		// process taxes
 		if ( $taxes = maybe_unserialize( $this->_registration->TXN_tax_data )) {
