@@ -165,6 +165,7 @@ class EE_Message_Template {
 		$this->_MTP_message_type = wp_strip_all_tags(strtolower($template_group['MTP_message_type']));
 		$this->_EVT_ID = absint($template_group['EVT_ID']);
 		$this->_contexts = (array) $template_group['templates'];
+		$this->_MTP_is_global = (bool) $template_group['MTP_is_global'];
 
 		//initialize group counts
 		$this->_is_active_count = 0;
@@ -432,6 +433,14 @@ class EE_Message_Template {
 	 */
 	public function is_active_count() {
 		return $this->_is_active_count;
+	}
+
+	/**
+	 * this returns if the template group is global
+	 * @return boolean true if it is, false if it isn't
+	 */
+	public function is_global() {
+		return $this->_is_global();
 	}
 
 	/**
