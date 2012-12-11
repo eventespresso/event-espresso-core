@@ -71,7 +71,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	public function set_page_routes() {			
 
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
 		$this->_page_routes = array(
@@ -780,9 +779,8 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$espresso_notices['errors'][] = __('An error occured. The payment form data could not be loaded.', 'event_espresso');
 		}
 		$notices = espresso_get_notices( FALSE, FALSE, FALSE );
-//		printr( $notices, '$notices' );
-//		printr( $return_data, '$return_data' ); 
-//		die();
+//		printr( $notices, '$notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $return_data, '$return_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		echo json_encode( array( 'return_data' => $return_data, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
 		die();		
 	}

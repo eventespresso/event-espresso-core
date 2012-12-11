@@ -109,6 +109,7 @@
 #admin-modal-dialog-options-ul li + li,
 #txn-admin-payment-options-ul li + li { margin-left:1em; }
 
+#admin-modal-dialog-options-ul .hidden { display:none !important; }
 /*.txn-admin-payment-option-lnk {
 	display:block; width:auto; padding:3px 6px;; margin:0;
 	background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #DFDFDF; border-radius: 3px 3px 3px 3px;

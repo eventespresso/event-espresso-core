@@ -88,7 +88,10 @@ class EE_Admin_Page {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		$this->_check_user_access();
 
-		$this->_AJAX = isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1  ? TRUE : FALSE;
+		global $is_ajax_request;
+		$this->_AJAX = $is_ajax_request;
+		//$this->_AJAX = isset($_POST['espresso_ajax']) && $_POST['espresso_ajax'] == 1  ? TRUE : FALSE;
+		//echo '<h4>AJAX : ' . $this->_AJAX . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
 		if ( isset( $_REQUEST['action2'] ) && $_REQUEST['action'] == -1 ) {
