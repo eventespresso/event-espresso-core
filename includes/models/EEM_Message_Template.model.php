@@ -321,6 +321,18 @@ class EEM_Message_Template extends EEM_Base {
 	}
 
 	/**
+	 * get all GLOBAL message templates for the given messenger and message type
+	 * @param  string $messenger    slug for messenger
+	 * @param  string $message_type slug for message type
+	 * @param  string $orderby      what column to orderby
+	 * @param  string $order        ASC or DESC
+	 * @return ARRAY               message template objects that are global (i.e. non-event)
+	 */
+	public function get_global_message_template_by_m_and_mt($messenger, $message_type, $orderby = 'GRP_ID', $order = 'ASC') {
+		return $this->get_all_message_templates_where(array('MTP_deleted' => FALSE, 'MTP_messenger' => $messenger, 'MTP_message_type' => $message_type, 'MTP_is_global' => TRUE), $orderby, $order );
+	}
+
+	/**
 	 * get_all_event_message_templates 
 	 * @access public
 	 * @return array all message templates that are non-global and are event specific
