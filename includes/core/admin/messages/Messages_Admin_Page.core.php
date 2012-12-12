@@ -540,7 +540,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$sidebar_form_fields['ee-msg-is-global'] = array(
 					'name' => 'MTP_is_global',
 					'label' => __('Global Template', 'event_espresso'),
-					'input' => 'checkbox',
+					'input' => 'hidden',
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
@@ -553,7 +553,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 			$sidebar_form_fields['ee-msg-is-override'] = array(
 					'name' => 'MTP_is_override',
 					'label' => __('Override all custom', 'event_espresso'),
-					'input' => 'checkbox',
+					'input' => $message_template->is_global() ? 'checkbox' : 'hidden',
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
