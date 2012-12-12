@@ -160,7 +160,7 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 				'update_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE )),
 				'trash_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE )),
 				'trash_message_template_context' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE )),
-				'restore_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE )),
+				'restore_message_template'	=> array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE, 'all' => TRUE )),
 				'restore_message_template_context' => array( 'func' => '_trash_or_restore_message_template' , 'args' => array('trash' => FALSE) ),
 				'delete_message_template'	=> '_delete_message_template',
 				'activate'	=> '_activate_messages',
@@ -865,8 +865,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	 * [_trash_or_restore_message_template]
 	 * 
 	 * @access protected
-	 * @param  boolean $trash whether to move an item to trash (TRUE) or restore it (FALSE)
-	 * @param boolean $all whether this is going to trash all contexts within a template group (TRUE) OR just an individual context (FALSE).
+	 * @param  boolean $trash whether to move an item to trash/restore (TRUE) or restore it (FALSE)
+	 * @param boolean $all whether this is going to trash/restore all contexts within a template group (TRUE) OR just an individual context (FALSE).
 	 * @return void
 	 */
 	protected function _trash_or_restore_message_template($trash = TRUE, $all = FALSE ) {

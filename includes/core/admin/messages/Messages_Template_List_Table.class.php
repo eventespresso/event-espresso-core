@@ -160,10 +160,10 @@ class Messages_Template_List_Table extends WP_List_Table {
 			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Template Group to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 		} else {
 			// restore price link
-			$restore_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EVT_PRC_ADMIN_URL ), 'restore_message_template_nonce' );
+			$restore_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL ), 'restore_message_template_nonce' );
 			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Message Template', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 			// delete price link
-			$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EVT_PRC_ADMIN_URL ), 'delete_message_template_nonce' );
+			$delete_lnk_url = wp_nonce_url( add_query_arg( array( 'action'=>'delete_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL ), 'delete_message_template_nonce' );
 			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Template Group Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 		}
 
