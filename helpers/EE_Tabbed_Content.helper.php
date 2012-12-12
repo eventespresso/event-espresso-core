@@ -45,7 +45,7 @@ class EE_Tabbed_Content {
 	 * @param  array $tabs_content an array of the content for each tab [required]
 	 * @return string               the assembled html string containing the tabbed content for display.
 	 */
-	static function display($tabs_contents, $tabs_names = array() ) {
+	static function display($tabs_contents, $tabs_names = array(), $small_tabs = true ) {
 
 		//first check if $tabs_names is not empty then the count must match the count of $tabs_content otherwise we've got a problem houston
 		if ( !empty( $tabs_names) && ( count( (array) $tabs_names) != count( (array) $tabs_content) ) ) {
@@ -75,7 +75,9 @@ class EE_Tabbed_Content {
 
 		$all_tabs .= '</h2>';
 
-		return '<div id="ee-nav-tabs">' . "\n\t" . $all_tabs . $all_tabs_content . "\n" . '</div>';
+		$tab_container_class = $small_tabs ? 'ee-nav-tabs ee-nav-tabs-small' : 'ee-nav-tabs';
+
+		return '<div class="'. $tab_container_class . '">' . "\n\t" . $all_tabs . $all_tabs_content . "\n" . '<div style="clear:both"></div></div>';
 	}
 
 	/**

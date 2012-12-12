@@ -2183,11 +2183,18 @@ pre {
 		cursor: pointer;
 		} 
 
-#ee-nav-tabs .nav-tab-wrapper {
+#poststuff .ee-nav-tabs .nav-tab-wrapper, .ee-nav-tabs .nav-tab-wrapper {
 	margin-bottom: 0px;
 	padding-bottom: 0px;
 }
 
-#ee-nav-tabs .nav-tab-content {
+#poststuff .ee-nav-tabs .nav-tab-content, .ee-nav-tabs .nav-tab-content {
 	margin: 5px;
+	margin-bottom: 15px;
+}
+
+#poststuff .ee-nav-tabs-small .nav-tab, .ee-nav-tabs-small .nav-tab {
+	font-size: 12px;
+	height: 18px;
+	line-height: 18px;
 }
