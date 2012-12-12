@@ -906,6 +906,72 @@ abstract class EE_messenger {
 		return $content;
 	}
 
+	protected function _get_admin_content_events_edit( $message_types, $extra ) {
+		//we don't need message types here so we're just going to ignore. we do, however, expect the event id here. The event id is needed to provide a link to setup a custom template for this event.
+		$event_id = isset($extra['event']) ? $extra['event']->id : null;
+		$event_template_set = array();
+		$event_template_trashed = array();
+		$event_group_id = array();
+
+		//todo: this should be replaced by EE_MSG_ADMIN_URL constant when we have access to it.
+		$ee_msg_admin_url = defined('EE_MSG_ADMIN_URL') ? EE_MSG_ADMIN_URL : admin_url('admin.php?page=messages');
+
+
+		//is there a template for this event (and each message type)?  If so, then we need to indicate that it's been selected and provide the option to switch back to global (which trashes the event template). $this->active_templates ONLY includes non-trashed templates.	
+		if ( count($this->active_templates) > 1 && !empty($event_id) ) {
+			foreach ( $this->active_templates as $template ) {
+				$event_template_set[$template->message_type()] = $template->event() == $event_id ? true : array();
+				if ( $event_id == $template->event() ) {
+					$event_group_id[$template->message_type()] = $template->GRP_ID();
+				}
+			}
+		}
+
+		//now we need to see if there are any untrashed event templates for this event
+		$trashed_evt_templates = $this->_EEM_data->get_all_trashed_message_templates_by_event($event_id);
+		
+		if ( count($trashed_evt_templates) > 0 && $trashed_evt_templates ) {
+			foreach ( $trashed_evt_templates as $trashed ) {
+				$event_template_set[$trashed->message_type()] = true;
+				$event_group_id[$trashed->message_type()] = $trashed->GRP_ID();
+				$event_template_trashed[$trashed->message_type()] = true;
+			}
+		}
+		
+		
+		$content = '<div id="message-templates-' . $this->name . '" class="message-templates-container">' . "\n\t";
+		foreach ( $this->active_templates as $template ) {
+			$et_set = isset($event_template_set[$template->message_type()]) && !empty($event_template_set[$template->message_type()]) ? true : false;
+			$et_trashed = isset($event_template_trashed[$template->message_type()]) ? true : false;
+			$et_group_id = isset($event_group_id[$template->message_type()]) ? $event_group_id[$template->message_type()] : false;
+			
+			//check for existence of Event Template and if present AND the current template in the loop is the event template (or the current template in the loop is a DIFFERENT event template) let's skip (we'll delay until we get to global)
+			if ( $et_set && $event_id != $template->event() && !$template->is_global() ) continue;
+
+
+			//setup current button
+			$button_text = $et_set && !$et_trashed ? __('Switch to a Custom Templates', 'event_espresso') : __('Global Templates', 'event_espresso');
+			$button_link = $et_set && !$et_trashed ? wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$et_group_id), $ee_msg_admin_url ), 'edit_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$template->GRP_ID() ), $ee_msg_admin_url ), 'edit_message_template_nonce');
+
+			//setup switch button
+			$switch_b_text = ($et_set && $et_trashed) || !$et_set ? __('Switch to Custom Templates', 'event_espresso') : __('Switch to Global Templates', 'event_espresso');
+			$switch_b_text = empty($event_id) ? false : $switch_b_text;
+			$switch_b_link = ($et_set && $et_trashed) ? wp_nonce_url( add_query_arg( array('action'=>'restore_message_template', 'message_type' => $template->message_type(), 'id' => $et_group_id), $ee_msg_admin_url ), 'restore_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'trash_message_template', 'id'=>$et_group_id), $ee_msg_admin_url), 'trash_message_template_nonce' );
+			$switch_b_link = !$et_set && !empty($event_id) ? wp_nonce_url( add_query_arg( array('action' => 'add_new_message_template', 'evt_id' => $event_id), $ee_msg_admin_url ), 'add_new_message_template_nonce' ) : $switch_b_link;
+
+			$main_button = '<a class="button-primary" href="' . $button_link . '" title="' . __('Click to Edit', 'event_espresso') . '">' . $button_text . '</a>';
+			$switch_button = $switch_b_text ? sprintf( __('You can %s if you want', 'event_espresso'),'<span class="switch-template-button"><a class="button-secondary" href="' . $switch_b_link . '">' . $switch_b_text . '</a></span>') : '<span class="switch-template-button">' . __('You can\'t create custom templates (for this event) until you\'ve saved this event', 'event_espresso') . '</span>';
+
+			$content .= '<div class="message-template-message-type-container">' . "\n\t";
+			$content .= '<p>';
+			$content .= sprintf( __('This event will use the %s for <span class="message-type-text">%s %s</span> messages. %s.', 'event_espresso'), $main_button, str_replace('_', ' ',$template->message_type()), str_replace('_', ' ', $this->name), $switch_button);
+			$content .= '</p>' . "\n" . '</div>';
+		}
+
+		$content .= '</div>';
+		return $content;
+	}
+
 	/**
 	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
 	 *

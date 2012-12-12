@@ -1017,7 +1017,7 @@ function espresso_event_editor_email_metabox($event) {
 
 	//get content for active messengers
 	foreach ( $active_messengers as $name => $messenger ) {
-		$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event_id' => $event) );
+		$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event) );
 	}
 
 	//todo: need to require the helper file here.
