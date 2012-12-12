@@ -258,8 +258,8 @@ class Messages_Template_List_Table extends WP_List_Table {
 		global $wpdb;
 		$evt_id = absint($evt_id);
 		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name FROM {$tablename} WHERE id = '{$evt_id}'";
-		$event_name = $wpdb->get_var( $wpdb->prepare($query, array()) );
+		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
+		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
 		return $event_name;
 	}
 
