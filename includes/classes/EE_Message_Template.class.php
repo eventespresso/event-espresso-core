@@ -440,7 +440,7 @@ class EE_Message_Template {
 	 * @return boolean true if it is, false if it isn't
 	 */
 	public function is_global() {
-		return $this->_is_global();
+		return $this->_MTP_is_global;
 	}
 
 	/**

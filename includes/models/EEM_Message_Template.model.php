@@ -353,6 +353,16 @@ class EEM_Message_Template extends EEM_Base {
 	}
 
 	/**
+	 * get_all_trashed_message_templates_by_event
+	 * @access public
+	 * @param int $EVT_ID specific event id
+	 * @return array   message template objects that are attached to a specific event.
+	 */
+	public function get_all_trashed_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC') {
+		return $this->get_all_message_templates_where( array( 'EVT_ID' => $EVT_ID, 'MTP_deleted' => TRUE ), $orderby, $order);
+	}
+
+	/**
 	 * 	delete template by GRP_ID
 	 * 	Remember that a message template is actually a GROUP of templates for a given messenger and message_type combination.  Individual templates within a group cannot be deleted. (However a context group could be marked inactive). 
 	 *
