@@ -973,8 +973,8 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 		global $wpdb;
 		$evt_id = absint($evt_id);
 		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name FROM {$table_name} WHERE id = '{$evt_id}'";
-		$event_name = $wpdb->get_var( $wpdb->prepare($query) );
+		$query = "SELECT event_name FROM {$table_name} WHERE id = %d";
+		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
 		return $event_name;
 	}
 
@@ -988,8 +988,10 @@ class Messages_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface 
 	private function _get_active_events() {
 		global $wpdb;
 		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name, id as event_id FROM {$tablename} WHERE is_active = '1'";
-		$events = $wpdb->get_results( $wpdb->prepare($query) );
+		$msg_table = $wpdb->prefix . 'esp_message_template';
+		$sub_query = "SELECT EVT_ID FROM {$msg_table} GROUP BY EVT_ID";
+		$query = "SELECT event_name, id as event_id FROM {$tablename} WHERE is_active = '1' AND id NOT IN ({$sub_query})";
+		$events = $wpdb->get_results( $wpdb->prepare($query,'') );
 		return $events;
 	}
 
