@@ -489,7 +489,6 @@ jQuery(document).ready(function($) {
 
 	/*
 	Tabs for Messages box on Event Editor Page
-	 * todo: this will need to be more dynamic (and have the EE_Tabbed_Content helper setup the correct call for the tabs)
 	 */
 	 $('.nav-tab-wrapper', '#ee-nav-tabs').on('click', '.nav-tab', function(e) {
 	 	e.preventDefault();
