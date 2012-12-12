@@ -214,18 +214,7 @@ class Messages_Template_List_Table extends WP_List_Table {
 		foreach ( $item->context_templates() as $context => $template_fields ) {
 			$context_title = ucwords(str_replace('_', ' ', $context ) );
 			$edit_link = wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL ), 'edit_message_template_nonce' );
-			$do_restore = $template_fields['MTP_deleted'] ? TRUE : FALSE;
-			if ( ($this->_view == 'trashed' && !$do_restore) || ($this->_view == 'in_use' && $do_restore) ) 
-				continue;
-			$trash_restore_link = !$do_restore ? wp_nonce_url( add_query_arg( array( 'action'=>'trash_message_template_context', 'message_type' => $item->message_type(), 'id'=>$item->GRP_ID(), 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'trash_message_template_nonce' ) : wp_nonce_url( add_query_arg( array( 'action'=>'restore_message_template_context', 'message_type' => $item->message_type(), 'id'=>$item->GRP_ID(), 'noheader' => TRUE, 'context' => $context ), EE_MSG_ADMIN_URL ), 'restore_message_template_nonce' );
-			$trash_img_url = EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/trash-16x16.png';
-			$restore_img_url = EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png';
-			$t_r_image = $do_restore ? $restore_img_url : $trash_img_url;
-			$t_r_title = $do_restore ? __('Restore Context', 'event_espresso') : __('Trash Context', 'event_espresso');
-			$t_r_alt = $do_restore ? __('Restore icon', 'event_espresso') : __('Trash icon', 'event_espresso');
-
-
-			$content .= '<li><a href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a><span class="right"><a href="'. $trash_restore_link . '" title="'.$t_r_title . '"><img src="' . $t_r_image . '" alt="' . $t_r_alt . '" /></a></span></li>';  ;
+			$content .= '<li><a href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a></li>';  ;
 		}
 		$content .= '</ul>';
 		return $content;
