@@ -946,11 +946,11 @@ abstract class EE_messenger {
 			$et_group_id = isset($event_group_id[$template->message_type()]) ? $event_group_id[$template->message_type()] : false;
 			
 			//check for existence of Event Template and if present AND the current template in the loop is the event template (or the current template in the loop is a DIFFERENT event template) let's skip (we'll delay until we get to global)
-			if ( $et_set && $event_id != $template->event() && !$template->is_global() ) continue;
+			if ( $et_set && !$template->is_global() ) continue;
 
 
 			//setup current button
-			$button_text = $et_set && !$et_trashed ? __('Switch to a Custom Templates', 'event_espresso') : __('Global Templates', 'event_espresso');
+			$button_text = $et_set && !$et_trashed ? __('Custom Templates', 'event_espresso') : __('Global Templates', 'event_espresso');
 			$button_link = $et_set && !$et_trashed ? wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$et_group_id), $ee_msg_admin_url ), 'edit_message_template_nonce' ) : wp_nonce_url( add_query_arg( array('action'=>'edit_message_template', 'id'=>$template->GRP_ID() ), $ee_msg_admin_url ), 'edit_message_template_nonce');
 
 			//setup switch button
