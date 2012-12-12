@@ -79,7 +79,7 @@ class EE_Parse_Shortcodes {
 	 */
 	private function _set_shortcodes($data=array()) {
 		global $wpdb, $org_options;
-		$event_list_items = $attendee_list_items = array();
+		$event_list_items = $attendee_list_items = '';
 		//TODO this needs to be looked over again... I'm not getting the default data object coming in don't forget.  See 184 of `EE_Payment_message_type` for the format of the data coming in!  We may need to modify that _set_addressees function there so that it includes more info for parsing here.
 
 		//handle any secondary templates (i.e. event_list, attendee_list);
@@ -90,19 +90,11 @@ class EE_Parse_Shortcodes {
 
 		//k now let's assemble the different list items (if present)
 		if ( !empty($data['event_list'] ) ) {
-			$event_list_items = array(
-				'unordered' => $this->_get_unordered($data['event_list']),
-				'ordered' => $this->_get_ordered($data['event_list']),
-				'paragraph' => $this->_get_paragraph($data['event_list'])
-				);
+			$event_list_items = $this->_get_list_items($data['event_list']);
 		}
 
 		if ( !empty($data['attendee_list'] ) ) {
-			$attendee_list_items = array(
-				'unordered' => $this->_get_unordered($data['attendee_list']),
-				'ordered' => $this->_get_ordered($data['attendee_list']),
-				'paragraph' => $this->_get_paragraph($data['attendee_list'])
-				);
+			$attendee_list_items = $this->_get_list_items($data['attendee_list']);
 		}
 		
 		//next let's do straight data/shortcode matches.
@@ -156,12 +148,8 @@ class EE_Parse_Shortcodes {
 			//"[location]" => isset($data->location) ? $data->location : '', //duplication?
 			//"[location_phone]" => isset($data->event->venue_phone) ? $data->event->venue_phone : '', //duplication?
 			"[GOOGLE_MAP_LINK]" => isset($data['meta']['google_map_link']) ? $data['meta']['google_map_link'] : '',
-			"[ATTENDEE_LIST_UNORDERED]" => isset($attendee_list_items['unordered']) ? $attendee_list_items['unordered'] : '', 
-			"[ATTENDEE_LIST_ORDERED]" => isset($attendee_list_items['ordered']) ? $attendee_list_items['ordered'] : '', 
-			"[ATTENDEE_LIST_PARAGRAPH]" => isset($attendee_list_items['paragraph']) ? $attendee_list_items['paragraph'] : '', 
-			"[EVENT_LIST_UNORDERED]" => isset($event_list_items['unordered']) ? $attendee_list_items['unordered'] : '', 
-			"[EVENT_LIST_ORDERED]" => isset($event_list_items['ordered']) ? $attendee_list_items['ordered'] : '', 
-			"[EVENT_LIST_PARAGRAPH]" => isset($event_list_items['paragraph']) ? $attendee_list_items['paragraph'] : '', 
+			"[ATTENDEE_LIST]" => isset($attendee_list_items) ? $attendee_list_items : '', 
+			"[EVENT_LIST]" => isset($event_list_items) ? $event_list_items : '', 
 			//"[custom_questions]" => isset($data->email_questions) ? $data->email_questions : '', //todo what is this?
 			//"[QR_CODE]" => isset($data->qr_code) ? $data->qr_code : '', //I'm assuming that this would get added by the ticketing addon.
 			"[EDIT_ATTENDEE_LINK]" => isset($data['edit_attendee_link']) ? $data['edit_attendee_link'] : '', //todo this would be useful for the admin context... so should be setup in message types
@@ -246,28 +234,10 @@ class EE_Parse_Shortcodes {
 		return $attnds;
 	}
 
-	protected function _get_unordered($items) {
-		$content = '<ul>';
-		foreach ( $items as $item ) {
-			$content .= '<li>' . $item . '</li>';
-		}
-		$content .= '</ul>';
-		return $content;
-	}
-
-	protected function _get_ordered($items) {
-		$content = '<ol>';
-		foreach ( $items as $item ) {
-			$content .= '<li>' . $item . '</li>';
-		}
-		$content .= '</ol>';
-		return $content;
-	}
-
-	protected function _get_paragraph($items) {
+	protected function _get_list_items($items) {
 		$content = '';
 		foreach ( $items as $item ) {
-			$content .= '<p>' . $item . '</p>';
+			$content .= $item;
 		}
 		return $content;
 	}
