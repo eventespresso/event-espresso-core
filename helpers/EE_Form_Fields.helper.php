@@ -20,15 +20,26 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * This is a helper utility class for taking in an array of form field arguments and spitting out the relevant html formatted form fields.
  *
- * @package		EE_Form_Fields
+ * @package		Event Espresso
  * @subpackage	/helper/EE_Form_Fields.helper.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
+
+
+
 class EE_Form_Fields {
 
+	/**
+	 *  Generates HTML for the forms used on admin pages
+	 * 	@access protected
+	 * 	@param	array $input_vars - array of input field details
+	 * 	@param	array $id - used for defining unique identifiers for the form.
+	 * 	@return string
+	 * 	@todo: at some point we can break this down into other static methods to abstract it a bit better.
+	 */	
 	static function get_form_fields( $input_vars = array(), $id = FALSE ) {
 
 		if ( empty($input_vars) ) {
