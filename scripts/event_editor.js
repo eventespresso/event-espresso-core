@@ -489,14 +489,13 @@ jQuery(document).ready(function($) {
 
 	/*
 	Tabs for Messages box on Event Editor Page
-	 * todo: this will need to be more dynamic (and have the EE_Tabbed_Content helper setup the correct call for the tabs)
 	 */
 	 $('.nav-tab-wrapper', '#ee-nav-tabs').on('click', '.nav-tab', function(e) {
 	 	e.preventDefault();
 	 	var content_id = $(this).attr('rel');
 	 	//first set all content as hidden and other nav tabs as not active
-	 	$('#ee-nav-tabs').find('.nav-tab-content').hide();
-	 	$('#ee-nav-tabs').find('.nav-tab').removeClass('nav-tab-active');
+	 	$('#ee-nav-tabs .nav-tab-content').hide();
+	 	$('#ee-nav-tabs .nav-tab').removeClass('nav-tab-active');
 
 	 	//set new active tab
 	 	$(this).addClass('nav-tab-active');
