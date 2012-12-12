@@ -1028,11 +1028,7 @@ function espresso_event_editor_email_metabox($event) {
 		$tabbed_content = $tabbed_content->get_error_message();
 	}
 	
-	?>
-	<div class="inside">
-		<?php echo $tabbed_content; ?>
-	</div>
-	<?php
+	echo $tabbed_content;
 }
 /* //removing for new metabox (see above)
 function espresso_event_editor_email_metabox($event) {

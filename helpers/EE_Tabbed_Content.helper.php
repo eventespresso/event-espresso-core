@@ -56,15 +56,24 @@ class EE_Tabbed_Content {
 		$tabs = !empty( $tabs_names ) ? (array) $tabs_names : array_keys( (array) $tabs_contents );
 		$tabs_content = !empty( $tabs_names ) ? array_combine( (array) $tabs_names, (array) $tabs_content ) : $tabs_contents;
 
-		$all_tabs = '<ul class="ee-nav-tab-wrapper nav-tab-wrapper">' . "\n";
+		$all_tabs = '<h2 class="nav-tab-wrapper">' . "\n";
 		$all_tabs_content = '';
 
+		$index = 0;
 		foreach ( $tabs as $tab ) {
-			$all_tabs .= self::tab($tab);
-			$all_tabs_content .= self::tab_content($tab, $tabs_content[$tab]);
+			$active = $index === 0 ? true : false;
+			$all_tabs .= self::tab($tab, $active);
+			$all_tabs_content .= self::tab_content($tab, $tabs_content[$tab], $active);
+			$index++;
 		}
+		/*
+		sample content for testing
+		 */
+		$all_tabs .= '<a class="nav-tab" rel="ee-tab-anothertab" href="#anothertab">Another Tab</a>';
+		$all_tabs_content .= '<div class="nav-tab-content hidden" id="ee-tab-anothertab">This is just some sample content to show another tab</div>';
+		//end sample content /**/
 
-		$all_tabs .= '</ul>';
+		$all_tabs .= '</h2>';
 
 		return '<div id="ee-nav-tabs">' . "\n\t" . $all_tabs . $all_tabs_content . "\n" . '</div>';
 	}
@@ -74,10 +83,11 @@ class EE_Tabbed_Content {
 	 * @param  string $name    name of tab
 	 * @return string          html for tab
 	 */
-	static function tab($name) {
+	static function tab($name, $active = false) {
 		$name = str_replace(' ', '-', $name);
+		$class = $active ? 'nav-tab nav-tab-active' : 'nav-tab';
 		$nice_name = ucwords( preg_replace('/(-|_)/', ' ', $name) );
-		$tab = '<li><a href="#ee-tab-' . $name . '">' . $nice_name . '</a></li>' . "\n\t";
+		$tab = '<a class="' . $class . '" rel="ee-tab-' . $name . '" href="#' . $name . '">' . $nice_name . '</a>' . "\n\t";
 		return $tab;
 	}
 
@@ -87,9 +97,10 @@ class EE_Tabbed_Content {
 	 * @param  string $content content of tab
 	 * @return string          html for content area
 	 */
-	static function tab_content($name, $tab_content) {
+	static function tab_content($name, $tab_content, $active = false) {
+		$class = $active ? 'nav-tab-content' : 'nav-tab-content hidden';
 		$name = str_replace( ' ', '-', $name);
-		$content = "\t" . '<div id="ee-tab-' . $name . '">' . "\n";
+		$content = "\t" . '<div class="'. $class . '" id="ee-tab-' . $name . '">' . "\n";
 		$content .= "\t" . $tab_content . "\n";
 		$content .= '</div>';
 		return $content;

@@ -13,3 +13,11 @@
 	background:rgba(255,230,0,.2);
 	z-index: 1000;
 }
+#ee-nav-tabs .nav-tab-wrapper {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+#ee-nav-tabs .nav-tab-content {
+	margin: 5px;
+}

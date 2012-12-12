@@ -2182,3 +2182,12 @@ pre {
 		font-size: 22px; font-weight: bold; line-height: .5; color: #aaa; text-shadow: 0 -1px 1px rbga(0,0,0,.6);		
 		cursor: pointer;
 		} 
+
+#ee-nav-tabs .nav-tab-wrapper {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+#ee-nav-tabs .nav-tab-content {
+	margin: 5px;
+}
