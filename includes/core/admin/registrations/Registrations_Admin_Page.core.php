@@ -217,7 +217,7 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 		$this->template_args['reg_overview_url'] = REG_ADMIN_URL;
 		$this->template_args['view_all_url'] = add_query_arg( array( 'per_page' => $this->template_args['table_rows'] ), REG_ADMIN_URL );
 		// grab messages at the last second
-		//$this->template_args['notices'] = espresso_get_notices();
+		//$this->template_args['notices'] = EE_Error::get_notices();
 		// path to template
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_overview.template.php';
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
@@ -294,7 +294,7 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 			
 			global $espresso_notices;
 			$error_msg = __('An error occured and the details for Registration ID #', 'event_espresso') . $REG_ID .  __(' could not be retreived.', 'event_espresso');
-			$espresso_notices['errors'][] = $error_msg . espresso_get_error_code(__FILE__, __FUNCTION__, __LINE__ );			
+			$espresso_notices['errors'][] = $error_msg . EE_Error::generate_error_code( __FILE__, __FUNCTION__, __LINE__ );			
 			
 			$this->template_args['admin_page_header'] = $this->display_espresso_notices();
 
