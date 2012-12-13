@@ -258,7 +258,7 @@ class EE_Single_Page_Checkout {
 
 
 		// retreive all success and error messages
-		$notices = espresso_get_notices(FALSE);
+		$notices = EE_Error::get_notices(FALSE);
 		// success messages
 		$template_args['success_msg'] = empty($notices['success']) ? '' : $notices['success'];
 		$template_args['success_msg_class'] = empty($notices['success']) ? ' ui-helper-hidden' : ' fade-away';
@@ -820,7 +820,7 @@ class EE_Single_Page_Checkout {
 			foreach ($attendees as $line_item_id => $line_item) {
 				foreach ($line_item as $event_id => $attendees_data) {
 					if (!$this->cart->set_line_item_details($attendees_data, $line_item_id)) {
-						$notices = espresso_get_notices(FALSE);
+						$notices = EE_Error::get_notices(FALSE);
 						$error_msg = $notices['errors'];
 					}
 				}
@@ -878,7 +878,7 @@ class EE_Single_Page_Checkout {
 			$this->gateways->process_gateway_selection();
 			
 			//grab notices
-			$notices = espresso_get_notices(FALSE);
+			$notices = EE_Error::get_notices(FALSE);
 			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
 			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 

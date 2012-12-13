@@ -207,7 +207,7 @@ function event_espresso_get_event_details($attributes) {
 <div id="mer-ajax-loading" style="display:none;">
 	<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-grey.gif" /><span>loading...</span>
 </div>
-' . espresso_get_notices() . '
+' . EE_Error::get_notices() . '
 <input id="event-queue-poll-server" type="hidden" value="1" name="event-queue-poll-server">
 
 ';

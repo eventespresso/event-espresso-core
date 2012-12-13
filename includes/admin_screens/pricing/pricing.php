@@ -13,7 +13,7 @@ function espresso_price_manager_menu() {
 	$edit_or_add_pages = array('edit_price', 'edit_price_type', 'add_new_price', 'add_new_price_type');
 	$edit_or_add_page = ( in_array($_REQUEST['action'], $edit_or_add_pages)) ? TRUE : FALSE;
 	
-	echo espresso_get_notices();
+	echo EE_Error::get_notices();
 
 	require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'admin_screens/pricing/EE_Prices_List_Table.class.php');
 	$pricesListTable = new EE_Prices_List_Table();

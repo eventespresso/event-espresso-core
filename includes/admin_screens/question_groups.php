@@ -88,7 +88,7 @@ function event_espresso_question_groups_config_mnu() {
 			<?php
 		}
 	}
-	echo espresso_get_notices();
+	echo EE_Error::get_notices();
 	?>
 	<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
 		<table id="table" class="widefat manage-question-group">

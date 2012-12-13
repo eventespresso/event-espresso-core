@@ -199,7 +199,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		$this->template_args['txn_overview_url'] = TXN_ADMIN_URL;  
 		$this->template_args['view_all_url'] = add_query_arg( array( 'per_page' => $this->template_args['table_rows'] ), TXN_ADMIN_URL );  
 		// grab messages at the last second
-		$this->template_args['notices'] = espresso_get_notices();
+		$this->template_args['notices'] = EE_Error::get_notices();
 		// path to template 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_overview.template.php';
 		$this->template_args['admin_page_content'] = espresso_display_template( $template_path, $this->template_args, TRUE );
@@ -293,7 +293,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_txn_billing_info_side_meta_box' ), $ee_admin_page['transactions'], 'side', 'high' );
 
 		// grab messages at the last second
-		$this->template_args['notices'] = espresso_get_notices();
+		$this->template_args['notices'] = EE_Error::get_notices();
 		// path to template 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_header.template.php';
 		$this->template_args['admin_page_header'] = espresso_display_template( $template_path, $this->template_args, TRUE );
@@ -718,7 +718,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$espresso_notices['errors'][] = __('An error occured. The payment form data could not be loaded.', 'event_espresso');
 		}
 		
-		$notices = espresso_get_notices( FALSE, FALSE, FALSE ); // , TRUE
+		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); // , TRUE
 		
 //		echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $notices, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 //		echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $return_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
@@ -753,7 +753,7 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 		} else {
 			$espresso_notices['errors'][] = __('An error occured. The payment form data could not be loaded.', 'event_espresso');
 		}
-		$notices = espresso_get_notices( FALSE, FALSE, FALSE );
+		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 //		printr( $notices, '$notices' );
 //		printr( $return_data, '$return_data' ); 
 //		die();

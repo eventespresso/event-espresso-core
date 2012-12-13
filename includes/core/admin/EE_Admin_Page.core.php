@@ -172,7 +172,7 @@ class EE_Admin_Page {
 	*/
 	public function display_espresso_notices() {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		echo espresso_get_notices();
+		echo EE_Error::get_notices();
 	}
 
 
@@ -561,7 +561,7 @@ class EE_Admin_Page {
 		$this->template_args['admin_page_title'] = $this->admin_page_title;
 		
 		// grab messages at the last second
-		//$this->template_args['notices'] = espresso_get_notices();
+		$this->template_args['notices'] = EE_Error::get_notices();
 		
 		// load settings page wrapper template
 		$template_path = EE_CORE_ADMIN . 'admin_wrapper.template.php';

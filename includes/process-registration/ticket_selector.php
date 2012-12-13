@@ -321,15 +321,15 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 			}
 
 			if ( isset( $_POST['tkt-slctr-return-url-'.$valid_data['id']] )) {
-				$return_url = add_query_arg( espresso_get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid_data['id']] );
+				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid_data['id']] );
 				wp_safe_redirect( $return_url );
 				exit();
 			} elseif ( isset( $_SERVER['HTTP_REFERER'] )) {
-				$return_url = add_query_arg( espresso_get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
+				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
 				wp_safe_redirect( $return_url );
 				exit();
 			} else {
-				echo espresso_get_notices();			
+				echo EE_Error::get_notices();			
 			}
 			
 			
@@ -340,7 +340,7 @@ function espresso_process_event_prices($prices, $currency_symbol, $surcharge_typ
 		}	
 
 		if ( isset( $_SERVER['HTTP_REFERER'] )) {
-			$return_url = add_query_arg(  espresso_get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
+			$return_url = add_query_arg(  EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
 			wp_safe_redirect( $return_url );
 			exit();
 		}	*/

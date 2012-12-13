@@ -33,7 +33,7 @@ function event_espresso_edit_list() {
 		}
 	}
 	
-	echo espresso_get_notices();
+	echo EE_Error::get_notices();
 
 	require_once('queries.php');
 

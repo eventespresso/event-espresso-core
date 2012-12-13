@@ -182,7 +182,7 @@ function event_espresso_questions_config_mnu() {
 			}
 			?>
 		</h2>
-		<?php echo espresso_get_notices(); ?>
+		<?php echo EE_Error::get_notices(); ?>
 		<?php
 		espresso_choose_layout($main_post_content, $sidebar_content);
 		?>

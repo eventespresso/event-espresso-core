@@ -393,7 +393,7 @@ class Event_datetime extends Espresso_base {
 
 		}
 
-		echo espresso_get_notices();
+		echo EE_Error::get_notices();
 		
 	}
 

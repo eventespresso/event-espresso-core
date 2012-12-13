@@ -83,7 +83,7 @@ function espresso_update_event_price() {
 		$where_cols_n_values = array('PRC_ID' => $_REQUEST['PRC_ID']);
 		// run the update
 		if ($PRC->update($set_column_values, $where_cols_n_values)) {
-			$notices = espresso_get_notices(FALSE, TRUE, TRUE);
+			$notices = EE_Error::get_notices(FALSE, TRUE, TRUE);
 			$redirect_url = add_query_arg($notices, PRC_ADMIN_URL);
 			wp_redirect($redirect_url);
 			exit();
@@ -103,7 +103,7 @@ echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10
 		$set_column_values = espresso_process_price();
 		// run the insert
 		if ($PRC->insert($set_column_values)) {
-			$notices = espresso_get_notices(FALSE, TRUE, TRUE);
+			$notices = EE_Error::get_notices(FALSE, TRUE, TRUE);
 			$redirect_url = add_query_arg($notices, PRC_ADMIN_URL);
 			wp_redirect($redirect_url);
 			exit();
@@ -146,7 +146,7 @@ function espresso_update_event_price_type() {
 		$where_cols_n_values = array('PRT_ID' => absint($_REQUEST['PRT_ID']));
 		// run the update
 		if ($PRT->update($set_column_values, $where_cols_n_values)) {
-			$notices = espresso_get_notices(FALSE, TRUE);
+			$notices = EE_Error::get_notices(FALSE, TRUE);
 			$redirect_url = add_query_arg($notices, PRC_ADMIN_URL);
 			wp_redirect($redirect_url);
 			exit();
@@ -165,7 +165,7 @@ function espresso_add_price_type_to_db() {
 		$set_column_values = espresso_process_price_type();
 		// run the insert
 		if ($PRT->insert($set_column_values)) {
-			$notices = espresso_get_notices(FALSE, TRUE);
+			$notices = EE_Error::get_notices(FALSE, TRUE);
 			$redirect_url = add_query_arg($notices, PRC_ADMIN_URL);
 			wp_redirect($redirect_url);
 			exit();

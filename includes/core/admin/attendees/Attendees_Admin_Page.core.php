@@ -547,7 +547,7 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 			$query_args = array();
 		}
 		// grab messages
-		$notices = espresso_get_notices( FALSE, TRUE, TRUE, FALSE );
+		$notices = EE_Error::get_notices( FALSE, TRUE, TRUE, FALSE );
 		//combine $query_args and $notices
 		$query_args = array_merge( $query_args, $notices );
 		// generate redirect url
