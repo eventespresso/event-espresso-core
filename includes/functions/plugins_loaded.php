@@ -600,6 +600,8 @@ function espresso_admin_pages() {
  * 		@return void
  */
 function espresso_load_admin_page( $admin_page, $page_request ) {
+	
+//	echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 	$admin_page = strtolower( $admin_page );
 	$page_name = ucwords(  str_replace( '_', ' ', $admin_page ));
