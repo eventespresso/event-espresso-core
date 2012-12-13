@@ -55,9 +55,16 @@ class EE_Error extends Exception {
 	/**
 	* 	has JS been loaded ?
 	* 	@access	private
-    *	@var int	
+    *	@var boolean	
 	*/
 	private static $_js_loaded = FALSE;
+
+	/**
+	* 	has shutdown action been added ?
+	* 	@access	private
+    *	@var boolean	
+	*/
+	private static $_action_added = FALSE;
 
 
 
@@ -102,7 +109,11 @@ class EE_Error extends Exception {
 		self::$_all_exceptions[ $x_time ]['string'] 	= $this->getTraceAsString();
 		self::$_error_count++;
 
-		$this->display_errors();
+		//$this->_display_errors();
+		if ( ! self::$_action_added ) {
+			add_action( 'shutdown', array( $this, 'display_errors' ));
+			self::$_action_added = TRUE;
+		}		
 		
 	}
 
@@ -123,7 +134,22 @@ class EE_Error extends Exception {
 ?>
 <script>
 	jQuery(document).ready(function($) {
-		$('#wpbody-content').on( 'click', '.display-ee-error-trace-lnk', function(e) {
+	
+		var message = $('#message');
+		var target;
+		
+		$('#message').remove();
+		if ( $('#content').size() ) {
+			target = $('#content');
+		} else if ( $('#screen-meta-links').size() ) {
+			target = $('#screen-meta-links');
+		} else if ( $('#wpbody-content').size() ) {
+			target = $('#wpbody-content');
+		}		
+		
+		$( target ).after( message );
+			
+		$('body').on( 'click', '.display-ee-error-trace-lnk', function(e) {
 			e.preventDefault();
 			var traceTable = '#' + $(this).attr('rel');
 			$( traceTable ).slideToggle();
@@ -135,7 +161,6 @@ class EE_Error extends Exception {
 		}
 
 		$ouput = '
-
 <div id="message" class="error">';
 
 		if ( ! WP_DEBUG ) {
@@ -226,7 +251,7 @@ class EE_Error extends Exception {
 			<p class="ee-error-dev-msg-pg">
 				<strong class="ee-error-dev-msg-str">An ' . $ex['name'] . ' exception was thrown!</strong>  &nbsp; <span>code: ' . $ex['code'] . '</span><br />
 				<span class="big-text">"' . trim( $ex['msg'] ) . '"</span><br />
-				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' ) &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method info', 'event_espresso' ) . '</a>
+				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' ) &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '</a>
 			</p>
 			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv" style="display:none;">
 				' . $trace_details;
@@ -246,13 +271,8 @@ class EE_Error extends Exception {
 				$ouput .= '				
 			</div>
 		</div>
-		<br />';		
-				
-
-
-
-
-				
+		<br />';
+		
 			}
 			
 			$this->write_to_error_log( $time, $ex );
@@ -325,6 +345,97 @@ class EE_Error extends Exception {
 			$arg_string .= ' )';
 		}
 		return $arg_string;
+	}
+
+
+
+
+
+	/**
+	* 	compile all error or success messages into one string
+	*
+	*	@access public
+	* 	@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
+	* 	@param		boolean		$url_encode			whether or not to urlencode messages for use as REQUEST vars
+	* 	@param		boolean		$remove_empty		whether or not to unset empty messages
+	* 	@return 		array
+	*/
+	public static function get_notices( $format_output = TRUE, $url_encode = FALSE, $remove_empty = TRUE ) {
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
+
+		global $espresso_notices;
+
+		$success_messages = '';
+		$error_messages = '';
+
+		//echo printr($espresso_notices, '$espresso_notices' );
+		// grab any notices that have been sent via REQUEST vars
+		if (isset($_REQUEST['success']) && $_REQUEST['success'] != '') {
+			$espresso_notices['success'][] = urldecode($_REQUEST['success']);
+		}
+		if (isset($_REQUEST['errors']) && $_REQUEST['errors'] != '') {
+			$espresso_notices['errors'][] = urldecode($_REQUEST['errors']);
+		}
+
+		// check for success messages
+		//if ( isset( $espresso_notices['success'] ) && is_array( $espresso_notices['success'] ) && ! empty( $espresso_notices['success'] )) {
+		if ($espresso_notices['success']) {
+			// cycle through all of them
+			foreach ($espresso_notices['success'] as $success) {
+				// compile them into one string of paragraphs
+				$success_messages .= $success . '<br />';
+			}
+			// remove last linebreak
+			$success_messages = substr($success_messages, 0, ( count($success_messages) - 7));
+			// possibly encode for url transmission
+			$success_messages = $url_encode ? urlencode($success_messages) : $success_messages;
+		}
+
+		// check for error messages
+		//if ( isset( $espresso_notices['errors'] ) && is_array( $espresso_notices['errors'] ) && ! empty( $espresso_notices['errors'] )) {
+		if ($espresso_notices['errors']) {
+			// cycle through all of them
+			foreach ($espresso_notices['errors'] as $error) {
+				// compile them into one string of paragraphs
+				$error_messages .= $error . '<br />';
+			}
+			// remove last linebreak
+			$error_messages = substr($error_messages, 0, ( count($error_messages) - 7));
+			$error_messages = $url_encode ? urlencode($error_messages) : $error_messages;
+		}
+
+		if ($format_output) {
+
+			$notices = '';
+
+			if ($success_messages != '') {
+				//showMessage( $success_messages );
+				$notices = '<div id="message" class="updated fade"><p>' . $success_messages . '</p></div>';
+			}
+
+			if ($error_messages != '') {
+				//showMessage( $error_messages, TRUE );
+				$notices .= '<div id="message" class="error fade fade-away"><p>' . $error_messages . '</p></div>';
+			}
+		} else {
+
+			$notices = array(
+					'success' => $success_messages,
+					'errors' => $error_messages
+			);
+			
+			if ( $remove_empty ) {
+				// remove empty notices						
+				foreach ($notices as $type => $notice) {
+					if (empty($notice)) {
+						unset($notices[$type]);
+					}
+				}
+			}
+
+		}
+
+		return $notices;
 	}
 
 
@@ -422,7 +533,7 @@ class EE_Error extends Exception {
 
 			}
 		}
-		$error_code = rtrim( strtoupper( $error_code ), '-' );
+		$error_code = ' ' . rtrim( strtoupper( $error_code ), '-' );
 		return $error_code;
 	}
 
@@ -431,7 +542,7 @@ class EE_Error extends Exception {
 
 
 	/**
-	*	wite exception details to log file
+	*	write exception details to log file
 	* 
 	*	@access public
 	*	@ param timestamp $time
