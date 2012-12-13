@@ -714,8 +714,8 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 			$return_data['extra_accntng'] = $payment->extra_accntng();
 
 		} else {
-			global $espresso_notices;
-			$espresso_notices['errors'][] = __('An error occured. The payment form data could not be loaded.', 'event_espresso');
+			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); // , TRUE
@@ -740,7 +740,6 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 	*/
 	public function delete_payment() {
 	
-		global $espresso_notices;
 		$return_data = FALSE;
 		
 		if ( isset( $_POST['ID'] )) {
@@ -751,7 +750,8 @@ class Transactions_Admin_Page extends EE_Admin_Page implements Admin_Page_Interf
 				$return_data['PAY_ID'] = $PAY_ID;
 			}
 		} else {
-			$espresso_notices['errors'][] = __('An error occured. The payment form data could not be loaded.', 'event_espresso');
+			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 //		printr( $notices, '$notices' );

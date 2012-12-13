@@ -2,7 +2,7 @@
 
 //Function to update question groups in the database
 function event_espresso_form_group_update($group_id) {
-	global $wpdb, $espresso_notices;
+	global $wpdb;
 			
 			if( check_admin_referer('espresso_form_check', 'edit_group') ) {
 	//$group_id = $_POST['group_id'];
@@ -34,9 +34,9 @@ function event_espresso_form_group_update($group_id) {
 			}
 		}
 	}
-			if( $need_a_fail_query_please ) {
-				$espresso_notices['errors'][] = __('There was an error in your submission of group', 'event_espresso') . $group_name .  __(' The group was not updated!', 'event_espresso');
-			}else {
-				$espresso_notices['success'][] = __('The group ', 'event_espresso') . $group_name . __(' has been updated.', 'event_espresso');
-			}
+//			if( $need_a_fail_query_please ) {
+//				$espresso_notices['errors'][] = __('There was an error in your submission of group', 'event_espresso') . $group_name .  __(' The group was not updated!', 'event_espresso');
+//			}else {
+//				$espresso_notices['success'][] = __('The group ', 'event_espresso') . $group_name . __(' has been updated.', 'event_espresso');
+//			}
 }

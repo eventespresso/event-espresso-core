@@ -66,6 +66,13 @@ class EE_Error extends Exception {
 	*/
 	private static $_action_added = FALSE;
 
+	/**
+	* 	has shutdown action been added ?
+	* 	@access	private
+    *	@var boolean	
+	*/
+	private static $_espresso_notices = array( 'success' => FALSE, 'errors' => FALSE );
+
 
 
 
@@ -352,6 +359,99 @@ class EE_Error extends Exception {
 
 
 	/**
+	* 	add error message
+	*
+	*	@access public
+	* 	@param		string		$msg	the message to display to users or developers - adding a double pipe || (OR) creates separate messages for user || dev
+	* 	@param		string		$file		the file that the error occured in - just use __FILE__
+	* 	@param		string		$func	the function/method that the error occured in - just use __FUNCTION__
+	* 	@param		string		$line	the line number where the error occured - just use __LINE__
+	* 	@return 		void
+	*/
+	public static function add_error( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
+		self::_add_notice ( 'errors', $msg, $file, $func, $line );
+	}
+
+
+
+
+
+	/**
+	* 	add success message
+	*
+	*	@access public
+	* 	@param		string		$msg	the message to display to users or developers - adding a double pipe || (OR) creates separate messages for user || dev
+	* 	@param		string		$file		the file that the error occured in - just use __FILE__
+	* 	@param		string		$func	the function/method that the error occured in - just use __FUNCTION__
+	* 	@param		string		$line	the line number where the error occured - just use __LINE__
+	* 	@return 		void
+	*/
+	public static function add_success( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
+		self::_add_notice ( 'success', $msg, $file, $func, $line );
+	}
+
+
+
+
+
+	/**
+	* 	add success message
+	*
+	*	@access public
+	* 	@param		string		$type	whether the message is for a success or error notification
+	* 	@param		string		$msg	the message to display to users or developers - adding a double pipe || (OR) creates separate messages for user || dev
+	* 	@param		string		$file		the file that the error occured in - just use __FILE__
+	* 	@param		string		$func	the function/method that the error occured in - just use __FUNCTION__
+	* 	@param		string		$line	the line number where the error occured - just use __LINE__
+	* 	@return 		void
+	*/
+	private static function _add_notice( $type = 'success', $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
+		// get error code
+		$error_code = self::generate_error_code ( $file, $func, $line );
+		// get separate user and developer messages if they exist		
+		$msg = explode( '||', $msg );
+		$user_msg = $msg[0];
+		$dev_msg = isset( $msg[1] ) ? $msg[1] : $msg[0];
+		$msg = WP_DEBUG ? $dev_msg : $user_msg;
+		// add notice if message exists
+		if ( ! empty( $msg )) {
+			self::$_espresso_notices[ $type ][] = $msg . $error_code;
+		}
+		
+	}
+
+
+
+
+
+	/**
+	* 	in some case it may be necessary to overwrite the existing success messages
+	*
+	*	@access public
+	* 	@return 		void
+	*/
+	public static function overwrite_success() {
+		self::$_espresso_notices['success'] = FALSE;
+	}
+
+
+
+
+
+	/**
+	* 	in some case it may be necessary to overwrite the existing error messages
+	*
+	*	@access public
+	* 	@return 		void
+	*/
+	public static function overwrite_errors() {
+		self::$_espresso_notices['errors'] = FALSE;
+	}
+
+
+
+
+	/**
 	* 	compile all error or success messages into one string
 	*
 	*	@access public
@@ -363,25 +463,24 @@ class EE_Error extends Exception {
 	public static function get_notices( $format_output = TRUE, $url_encode = FALSE, $remove_empty = TRUE ) {
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 
-		global $espresso_notices;
-
 		$success_messages = '';
 		$error_messages = '';
 
-		//echo printr($espresso_notices, '$espresso_notices' );
+		//printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 		// grab any notices that have been sent via REQUEST vars
 		if (isset($_REQUEST['success']) && $_REQUEST['success'] != '') {
-			$espresso_notices['success'][] = urldecode($_REQUEST['success']);
+			self::$_espresso_notices['success'][] = urldecode($_REQUEST['success']);
 		}
 		if (isset($_REQUEST['errors']) && $_REQUEST['errors'] != '') {
-			$espresso_notices['errors'][] = urldecode($_REQUEST['errors']);
+			self::$_espresso_notices['errors'][] = urldecode($_REQUEST['errors']);
 		}
 
 		// check for success messages
-		//if ( isset( $espresso_notices['success'] ) && is_array( $espresso_notices['success'] ) && ! empty( $espresso_notices['success'] )) {
-		if ($espresso_notices['success']) {
+		//if ( isset( self::$_espresso_notices['success'] ) && is_array( self::$_espresso_notices['success'] ) && ! empty( self::$_espresso_notices['success'] )) {
+		if (self::$_espresso_notices['success']) {
 			// cycle through all of them
-			foreach ($espresso_notices['success'] as $success) {
+			foreach (self::$_espresso_notices['success'] as $success) {
 				// compile them into one string of paragraphs
 				$success_messages .= $success . '<br />';
 			}
@@ -392,10 +491,10 @@ class EE_Error extends Exception {
 		}
 
 		// check for error messages
-		//if ( isset( $espresso_notices['errors'] ) && is_array( $espresso_notices['errors'] ) && ! empty( $espresso_notices['errors'] )) {
-		if ($espresso_notices['errors']) {
+		//if ( isset( self::$_espresso_notices['errors'] ) && is_array( self::$_espresso_notices['errors'] ) && ! empty( self::$_espresso_notices['errors'] )) {
+		if (self::$_espresso_notices['errors']) {
 			// cycle through all of them
-			foreach ($espresso_notices['errors'] as $error) {
+			foreach (self::$_espresso_notices['errors'] as $error) {
 				// compile them into one string of paragraphs
 				$error_messages .= $error . '<br />';
 			}
@@ -452,7 +551,7 @@ class EE_Error extends Exception {
 	*	@ param string $line
 	*	@ return string
 	*/
-	public static function generate_error_code (  $file, $func, $line ) {
+	public static function generate_error_code ( $file, $func, $line ) {
 
 	//echo '<h4>$file : ' . $file . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 	//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';

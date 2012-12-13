@@ -302,8 +302,7 @@ class EEM_Transaction extends EEM_Base {
 			}
 			return $transactions;
 		} else {
-//			global $espresso_notices;
-//			$espresso_notices['errors'][] = $wpdb->print_error();
+//			EE_Error::add_error( $wpdb->print_error(), __FILE__, __FUNCTION__, __LINE__ ); print_error echos immediately  >:()
 			return FALSE;
 		}
 
@@ -322,10 +321,9 @@ class EEM_Transaction extends EEM_Base {
 	*/	
 	public function get_transaction_for_admin_page( $TXN_ID = FALSE ) { 
 
-		global $espresso_notices;
-
 		if ( ! $TXN_ID ) {
-			$espresso_notices['errors'][] = 'No Transaction ID was received.';
+			$msg = __( 'No Transaction ID was received.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		
@@ -345,7 +343,7 @@ class EEM_Transaction extends EEM_Base {
 //			echo printr( $payments );
 			return $transaction;
 		} else {
-			$espresso_notices['errors'][] = $wpdb->print_error();
+//			EE_Error::add_error( $wpdb->print_error(), __FILE__, __FUNCTION__, __LINE__ ); print_error echos immediately  >:()
 			return FALSE;
 		}
 

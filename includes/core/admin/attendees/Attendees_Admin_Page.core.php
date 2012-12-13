@@ -261,7 +261,6 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 	protected function _edit_attendee_details() {		
 	
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );
-		global $espresso_notices;
 		
 		$ATT_ID = isset( $_REQUEST['id'] ) && ! empty( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : FALSE;
 
@@ -530,16 +529,17 @@ class Attendees_Admin_Page extends EE_Admin_Page implements Admin_Page_Interface
 	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'action_hook_espresso_log', __FILE__, __FUNCTION__, '' );		
-		global $espresso_notices;
 		// overwrite default success messages
-		$espresso_notices['success'] = array();
+		EE_Error::overwrite_success();
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success == 2 ) {
 			// set plural msg
-			$espresso_notices['success'][] = __('The ' . $what . ' have been successfully ' . $action_desc . '.', 'event_espresso');
+			$msg = sprintf( __( 'The %s have been successfully %s.', 'event_espresso' ), $what, $action_desc );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else if ( $success == 1 ) {
 			// set singular msg
-			$espresso_notices['success'][] = __('The ' . $what . ' has been successfully ' . $action_desc . '.', 'event_espresso');
+			$msg = sprintf( __( 'The %s has been successfully %s.', 'event_espresso' ), $what, $action_desc );
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		// check that $query_args isn't something crazy

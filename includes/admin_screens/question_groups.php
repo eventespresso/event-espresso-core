@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_question_groups_config_mnu() {
-	global $wpdb, $espresso_notices;
+	global $wpdb;
 	
 	// get counts
 	$sql = "SELECT id FROM " . EVENTS_QST_GROUP_TABLE;

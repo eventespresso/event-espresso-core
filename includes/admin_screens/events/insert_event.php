@@ -467,16 +467,28 @@ function add_event_to_db( ) {
 			$wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
 		}
 
-		global $espresso_notices;
 		
 		if (empty($error)) {	
 			
-			$espresso_notices['success'] = array();
-			$edit_event_link = add_query_arg(array('action' => 'edit_event', 'event_id' => $last_event_id ), EVENTS_ADMIN_URL);
+			// overwrite default success messages
+			EE_Error::overwrite_success();
+			//$edit_event_link = add_query_arg(array('action' => 'edit_event', 'event_id' => $last_event_id ), EVENTS_ADMIN_URL);
 			
-			$espresso_notices['success'][] = __('The event', 'event_espresso') . ' <a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a> ' . __('has been added for ', 'event_espresso') . $evt_date;						
+			$msg = sprintf( 
+					__( 'The event %s has been added for %s.', 'event_espresso' ), 
+					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>', 
+					$evt_date 
+			);
+			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+
 		} else { 		
-			$espresso_notices['errors'][] = __('There was an error in your submission, please try again. The event was not saved!', 'event_espresso') . $wpdb->print_error();			
+
+			$msg = sprintf( 
+					__( 'An error occured and the event %s has not been saved to the database.', 'event_espresso' ), 
+					'<a href="' . espresso_reg_url($last_event_id) . '">' . stripslashes_deep($_REQUEST['event']) . '</a>' 
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			
 		}
 
 		return $last_event_id;

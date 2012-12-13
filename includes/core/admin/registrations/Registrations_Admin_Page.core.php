@@ -291,10 +291,9 @@ class Registrations_Admin_Page extends EE_Admin_Page implements Admin_Page_Inter
 			$this->template_args['admin_page_header'] = espresso_display_template( $template_path, $this->template_args, TRUE );
 						
 		} else {
-			
-			global $espresso_notices;
+
 			$error_msg = __('An error occured and the details for Registration ID #', 'event_espresso') . $REG_ID .  __(' could not be retreived.', 'event_espresso');
-			$espresso_notices['errors'][] = $error_msg . EE_Error::generate_error_code( __FILE__, __FUNCTION__, __LINE__ );			
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			
 			$this->template_args['admin_page_header'] = $this->display_espresso_notices();
 

@@ -858,7 +858,7 @@ class EE_Single_Page_Checkout {
 	public function process_registration_step_2() {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session, $espresso_notices;
+		global $EE_Session;
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -869,7 +869,8 @@ class EE_Single_Page_Checkout {
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 			// FREE EVENT !!! YEAH : )
 			if ($EE_Session->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
-				$espresso_notices['success'][] = __('Registration Step 2 completed', 'event_espresso');
+				$msg = __( 'Registration Step 2 completed.', 'event_espresso' );
+				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );	
 			} 
 
 		} else { 
@@ -1277,7 +1278,7 @@ class EE_Single_Page_Checkout {
 	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
 
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-		global $espresso_notices;
+
 		$valid_callback = FALSE;
 		// check for valid callback function
 		if ($callback != FALSE && $callback != '' && !function_exists($callback)) {
@@ -1297,7 +1298,7 @@ class EE_Single_Page_Checkout {
 				die();
 			} else {
 				// not ajax
-				$espresso_notices['success'][] = $success_msg;
+				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
 				// return true to advance to next step
 				return TRUE;
 			}
@@ -1307,7 +1308,7 @@ class EE_Single_Page_Checkout {
 				echo json_encode(array('error' => $error_msg));
 				die();
 			} else {
-				$espresso_notices['errors'][] = $error_msg;
+				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				// return false to return to retry step
 				return FALSE;
 			}

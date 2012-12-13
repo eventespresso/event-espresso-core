@@ -197,7 +197,6 @@ class EE_Admin_Page {
 			wp_verify_nonce( $this->_req_nonce );
 		}		
 
-		global $espresso_notices;
 		$route = FALSE;
 		$func = FALSE;
 		$args = array();	

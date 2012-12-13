@@ -491,7 +491,6 @@ function update_event() {
 
 
 //echo printr( $_POST, '$_POST' );	
-//global $espresso_notices; 
 //echo EE_Error::get_notices();            
 //die();
 

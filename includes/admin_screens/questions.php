@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_questions_config_mnu() {
-	global $wpdb, $espresso_notices;
+	global $wpdb;
 
 	// get counts
 	$sql = "SELECT id FROM " . EVENTS_QUESTION_TABLE;
@@ -194,11 +194,13 @@ function event_espresso_questions_config_mnu() {
 			</h2>
 			<p>
 				<?php _e('The <code>Questions</code> page shows your list of available questions to add to your registration forms for events', 'event_espresso'); ?>
+			</p>
 			<p>
 				<?php _e('Use the add new question button at the top of the page to create a new question to add to the list ', 'event_espresso'); ?>
 				<a href="admin.php?page=form_builder&amp;action=new_question">
 					<?php _e('Add New Question', 'event_espresso'); ?>
-				</a></p>
+				</a>
+			</p>
 			<p>
 				<?php _e('Once you have a built a list of questions you may further organize your questions into <code>Groups.</code> These', 'event_espresso') ?>
 				<a href="admin.php?page=form_groups">

@@ -71,11 +71,10 @@ require_once(dirname(__FILE__) . '/includes/functions/wp_hooks.php');
 
 
 add_action('plugins_loaded', 'espresso_define_tables_and_paths', 1);
-add_action('plugins_loaded', 'espresso_setup_notices', 2);
-add_action('plugins_loaded', 'espresso_autoload', 3);
-add_action('plugins_loaded', 'espresso_get_user_id', 4);
-add_action('plugins_loaded', 'espresso_load_org_options', 5);
-add_action('plugins_loaded', 'espresso_EE_Session', 6);
+add_action('plugins_loaded', 'espresso_autoload', 2);
+add_action('plugins_loaded', 'espresso_get_user_id', 3);
+add_action('plugins_loaded', 'espresso_load_org_options', 4);
+add_action('plugins_loaded', 'espresso_EE_Session', 5);
 add_action('plugins_loaded', 'espresso_init', 25);
 add_action('init', 'espresso_add_rewrite_rules');
 add_filter('query_vars', 'espresso_add_query_vars');
