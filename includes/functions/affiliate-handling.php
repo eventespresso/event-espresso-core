@@ -11,8 +11,9 @@ class espresso_Affiliate_handling {
 	function __construct() {
 		global $espresso_wp_user;
 		$payment_settings = get_option('payment_data_' . $espresso_wp_user);
-		$this->settings = $payment_settings['affiliate'];
-		$this->hook_into_wp();
+		$this->settings = isset($payment_settings['affiliate']) ? $payment_settings['affiliate'] : null;
+		if ( !empty($this->settings) )
+			$this->hook_into_wp();
 	}
 
 	function hook_into_wp() {
